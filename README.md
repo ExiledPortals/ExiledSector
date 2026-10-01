@@ -78,7 +78,7 @@ The Chinese translation is a first draft awaiting review by a native speaker. To
 
 Open a ship's refit screen and click the **Skill Tree** button.
 
-**Pick a starting point.** The first time you open a ship's tree you choose where it starts: Low Tech, Midline or High Tech. The starting node is free and permanent. The other two can still be reached later like any other node.
+**Pick a starting point.** The first time you open a ship's tree you choose where it starts: Low Tech, Midline or High Tech. The starting node is free. Whenever it is the only node allocated, you can click it again to choose a different start. The other two can still be reached later like any other node.
 
 **Nodes cost OP.** Every node costs the ship's unused ordnance points: 1 for frigates, 2 for destroyers, 3 for cruisers and 4 for capitals. A node can only be allocated next to one you already have.
 

@@ -969,6 +969,45 @@ class ShipSkillDataTest {
     }
 
     @Test
+    void theStartingRootCanBeUnchosenWhileItIsTheOnlyAllocatedNodeAndThenChosenAgain() {
+        SkillNode first = rootNode("root_a", List.of());
+        SkillNode second = rootNode("root_b", List.of());
+        ShipSkillData data = new ShipSkillData();
+        data.chooseStartingRoot(first);
+
+        assertTrue(data.canUnchooseStartingRoot());
+        assertTrue(data.unchooseStartingRoot());
+
+        assertFalse(data.isAllocated("root_a"));
+        assertNull(data.resolveStartingRootId(List.of(first, second)));
+        assertTrue(data.chooseStartingRoot(second));
+        assertEquals("root_b", data.resolveStartingRootId(List.of(first, second)));
+    }
+
+    @Test
+    void theStartingRootIsLockedInOnceAnyOtherNodeIsAllocated() {
+        SkillNode root = rootNode("root_a", List.of());
+        SkillNode next = node("small", List.of("root_a"));
+        ShipSkillData data = new ShipSkillData();
+        data.chooseStartingRoot(root);
+        data.allocate(next, 3);
+
+        assertFalse(data.canUnchooseStartingRoot());
+        assertFalse(data.unchooseStartingRoot());
+
+        assertTrue(data.isAllocated("root_a"));
+        assertEquals("root_a", data.resolveStartingRootId(List.of(root, next)));
+    }
+
+    @Test
+    void thereIsNothingToUnchooseBeforeARootIsChosen() {
+        ShipSkillData data = new ShipSkillData();
+
+        assertFalse(data.canUnchooseStartingRoot());
+        assertFalse(data.unchooseStartingRoot());
+    }
+
+    @Test
     void onlyARootNodeCanBeTheStartingRoot() {
         ShipSkillData data = new ShipSkillData();
 

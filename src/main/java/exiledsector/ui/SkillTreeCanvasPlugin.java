@@ -66,6 +66,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private boolean pendingClickCtrlDown;
     private SkillType pendingDropdownOption;
     private CameraPanAnimation cameraPan;
+    private StartingRootCameraFollow startingRootFollow;
     private boolean swallowEscapeUp;
 
     public SkillTreeCanvasPlugin(FleetMemberAPI member, ShipVariantAPI variant, float shipCardHeight, BaseRefitButton refitButton) {
@@ -107,10 +108,20 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         staticImageRenderer.advance(amount);
         ringBeltRenderer.advance(amount);
         starRenderer.advance(amount);
-        boolean followingStartingRoot = nodeRenderer.isStartingRootFlying();
+        boolean followingStartingRoot = nodeRenderer.isStartingRootMoving();
+        if (followingStartingRoot && startingRootFollow == null) {
+            startingRootFollow = new StartingRootCameraFollow(-panX / zoom, panY / zoom,
+                    nodeRenderer.startingRootCameraTargetX(), nodeRenderer.startingRootCameraTargetY(), zoom);
+        }
         nodeRenderer.advance(amount);
         if (followingStartingRoot) {
-            centreOn(nodeRenderer.startingRootOffsetX(), nodeRenderer.startingRootOffsetY());
+            float progress = nodeRenderer.startingRootCameraProgress();
+            zoom = startingRootFollow.zoom(progress);
+            centreOn(startingRootFollow.x(nodeRenderer.startingRootCameraTargetX(), progress),
+                    startingRootFollow.y(nodeRenderer.startingRootCameraTargetY(), progress));
+            if (!nodeRenderer.isStartingRootMoving()) {
+                startingRootFollow = null;
+            }
         }
         templateUi.advance(amount, position);
         ShipOpBudget budget = nodeRenderer.budget();

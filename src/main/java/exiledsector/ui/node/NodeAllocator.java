@@ -151,6 +151,18 @@ final class NodeAllocator {
         return true;
     }
 
+    boolean canUnchooseStartingRoot(SkillNode node) {
+        return isStartingRoot(node) && data().canUnchooseStartingRoot();
+    }
+
+    boolean unchooseStartingRoot(SkillNode node) {
+        if (!canUnchooseStartingRoot(node) || !data().unchooseStartingRoot()) {
+            return false;
+        }
+        refreshShipStats();
+        return true;
+    }
+
     String blockAllocationReason(SkillType type) {
         ShipSkillData data = data();
         if (SkillTypeUnlockStatus.isLocked(type, data)) {

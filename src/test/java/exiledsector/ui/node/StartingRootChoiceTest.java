@@ -78,6 +78,72 @@ class StartingRootChoiceTest {
     }
 
     @Test
+    void flyingOutTheCameraHeadsForTheChosenRootWithEasedProgress() {
+        StartingRootChoice choice = pending();
+        choice.choose(lowTech);
+        assertEquals(0f, choice.cameraProgress(), EPSILON);
+        assertTrue(choice.isMoving());
+
+        choice.advance(StartingRootChoice.FLIGHT_SECONDS / 2f);
+        assertEquals(0.5f, choice.cameraProgress(), EPSILON);
+        assertEquals(choice.offsetX(lowTech), choice.cameraTargetX(), EPSILON);
+        assertEquals(choice.offsetY(lowTech), choice.cameraTargetY(), EPSILON);
+
+        choice.advance(StartingRootChoice.FLIGHT_SECONDS);
+        assertEquals(1f, choice.cameraProgress(), EPSILON);
+        assertEquals(lowTech.getOffsetX(), choice.cameraTargetX(), EPSILON);
+        assertFalse(choice.isMoving());
+    }
+
+    @Test
+    void returningFliesEveryRootBackIntoTheClusterAndReopensTheChoice() {
+        StartingRootChoice clustered = pending();
+        StartingRootChoice choice = StartingRootChoice.returning(List.of(lowTech, midline, highTech), lowTech);
+
+        assertEquals(StartingRootChoice.Phase.RETURNING, choice.phase());
+        assertTrue(choice.isInputLocked());
+        assertEquals(lowTech.getOffsetX(), choice.offsetX(lowTech), EPSILON);
+        assertEquals(1f, choice.treeAlpha(), EPSILON);
+        assertNull(choice.rootForAllocation());
+
+        choice.advance(StartingRootChoice.FLIGHT_SECONDS);
+
+        assertEquals(StartingRootChoice.Phase.CHOOSING, choice.phase());
+        assertNull(choice.chosen());
+        assertEquals(clustered.offsetX(highTech), choice.offsetX(highTech), EPSILON);
+        assertEquals(clustered.offsetY(highTech), choice.offsetY(highTech), EPSILON);
+        assertEquals(NodeSearch.DIM_ALPHA, choice.treeAlpha(), EPSILON);
+        choice.choose(midline);
+        assertEquals(midline, choice.chosen());
+    }
+
+    @Test
+    void returningPansTheCameraBackToTheTreeCentreWithEasedProgress() {
+        StartingRootChoice choice = StartingRootChoice.returning(List.of(lowTech, midline, highTech), lowTech);
+        assertEquals(0f, choice.cameraProgress(), EPSILON);
+        assertEquals(0f, choice.cameraTargetX(), EPSILON);
+        assertEquals(0f, choice.cameraTargetY(), EPSILON);
+
+        choice.advance(StartingRootChoice.FLIGHT_SECONDS / 2f);
+        assertEquals(0.5f, choice.cameraProgress(), EPSILON);
+
+        choice.advance(StartingRootChoice.FLIGHT_SECONDS);
+        assertEquals(1f, choice.cameraProgress(), EPSILON);
+        assertEquals(0f, choice.cameraTargetX(), EPSILON);
+    }
+
+    @Test
+    void onlyAFlyingOrChosenRootCountsAsTheAllocatorsRoot() {
+        StartingRootChoice choice = pending();
+        assertNull(choice.rootForAllocation());
+
+        choice.choose(lowTech);
+        assertEquals(lowTech, choice.rootForAllocation());
+        choice.advance(StartingRootChoice.FLIGHT_SECONDS);
+        assertEquals(lowTech, choice.rootForAllocation());
+    }
+
+    @Test
     void aSecondChoiceIsIgnored() {
         StartingRootChoice choice = pending();
         choice.choose(highTech);

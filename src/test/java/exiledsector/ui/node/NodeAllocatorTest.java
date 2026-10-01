@@ -400,6 +400,30 @@ class NodeAllocatorTest {
         assertTrue(data().isAllocated("root_1"));
     }
 
+    @Test
+    void theStartingRootCanBeUnchosenUntilAnotherNodeIsAllocatedAndUnchoosingRefreshesTheShip() {
+        data().chooseStartingRoot(root);
+        NodeAllocator allocator = allocatorStartingAt(root);
+
+        assertTrue(allocator.canUnchooseStartingRoot(root));
+        assertFalse(allocator.canUnchooseStartingRoot(frontShield));
+        assertTrue(allocator.unchooseStartingRoot(root));
+
+        assertFalse(data().isAllocated("root_1"));
+        verify(member).updateStats();
+    }
+
+    @Test
+    void theStartingRootIsLockedOnceAnotherNodeIsAllocated() {
+        data().chooseStartingRoot(root);
+        data().allocate(frontShield, 0);
+        NodeAllocator allocator = allocatorStartingAt(root);
+
+        assertFalse(allocator.canUnchooseStartingRoot(root));
+        assertFalse(allocator.unchooseStartingRoot(root));
+        assertTrue(data().isAllocated("root_1"));
+    }
+
     private TemplateStepExecutor executor(List<SkillNode> allocated) {
         data().chooseStartingRoot(root);
         NodeAllocator allocator = allocatorStartingAt(root);

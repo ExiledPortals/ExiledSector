@@ -39,7 +39,7 @@ public final class SkillTreeNodeRenderer {
 
     private final BaseRefitButton refitButton;
     private final SkillTreePanelStyle style;
-    private final StartingRootChoice rootChoice;
+    private StartingRootChoice rootChoice;
     private final NodeAllocator allocator;
 
     private final SkillTreeNodeRingRenderer ringRenderer;
@@ -72,7 +72,7 @@ public final class SkillTreeNodeRenderer {
         this.search = search;
         this.style = style;
         this.rootChoice = initialRootChoice(ShipSkillDataManager.get(member.getId()));
-        this.allocator = new NodeAllocator(member, variant, rootChoice::chosen);
+        this.allocator = new NodeAllocator(member, variant, () -> rootChoice.rootForAllocation());
         SkillNode chosenRoot = rootChoice.chosen();
         style.setAccentIconPath(chosenRoot != null ? chosenRoot.getType().getIconPath() : null);
 
@@ -95,13 +95,29 @@ public final class SkillTreeNodeRenderer {
         if (startingRoot != null) {
             return StartingRootChoice.alreadyChosen(startingRoot);
         }
+        return StartingRootChoice.pending(rootNodes());
+    }
+
+    private static List<SkillNode> rootNodes() {
         List<SkillNode> roots = new ArrayList<>();
         for (SkillNode node : SkillTree.getAllNodes().values()) {
             if (node.getType().getTier() == SkillTier.ROOT) {
                 roots.add(node);
             }
         }
-        return StartingRootChoice.pending(roots);
+        return roots;
+    }
+
+    private void unchooseStartingRoot(SkillNode root) {
+        if (!allocator.unchooseStartingRoot(root)) {
+            return;
+        }
+        dropdownRenderer.close();
+        setTemplate(null);
+        search.setQuery("");
+        rootChoice = StartingRootChoice.returning(rootNodes(), root);
+        style.setAccentIconPath(null);
+        afterAllocationChange(root, false);
     }
 
     public SkillNode getStartingRoot() {
@@ -112,8 +128,8 @@ public final class SkillTreeNodeRenderer {
         return rootChoice.phase() == StartingRootChoice.Phase.CHOOSING;
     }
 
-    public boolean isStartingRootFlying() {
-        return rootChoice.phase() == StartingRootChoice.Phase.FLYING;
+    public boolean isStartingRootMoving() {
+        return rootChoice.isMoving();
     }
 
     public boolean isStartingRootInputLocked() {
@@ -124,12 +140,16 @@ public final class SkillTreeNodeRenderer {
         return rootChoice.treeAlpha();
     }
 
-    public float startingRootOffsetX() {
-        return rootChoice.offsetX(rootChoice.chosen());
+    public float startingRootCameraProgress() {
+        return rootChoice.cameraProgress();
     }
 
-    public float startingRootOffsetY() {
-        return rootChoice.offsetY(rootChoice.chosen());
+    public float startingRootCameraTargetX() {
+        return rootChoice.cameraTargetX();
+    }
+
+    public float startingRootCameraTargetY() {
+        return rootChoice.cameraTargetY();
     }
 
     public void chooseStartingRoot(SkillNode root) {
@@ -341,7 +361,7 @@ public final class SkillTreeNodeRenderer {
     }
 
     public SkillNode findNodeAt(TreeViewport viewport, float x, float y) {
-        if (isStartingRootFlying()) {
+        if (isStartingRootMoving()) {
             return null;
         }
         boolean choosing = isChoosingStartingRoot();
@@ -374,6 +394,10 @@ public final class SkillTreeNodeRenderer {
 
     public void toggleAllocation(SkillNode node, boolean ctrlDown) {
         if (isStartingRootInputLocked() || autoRun != null) {
+            return;
+        }
+        if (allocator.canUnchooseStartingRoot(node)) {
+            unchooseStartingRoot(node);
             return;
         }
         boolean wasAllocated = allocator.data().isAllocated(node.getId());

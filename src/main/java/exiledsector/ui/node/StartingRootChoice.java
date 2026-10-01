@@ -12,7 +12,7 @@ import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_SIZE;
 
 final class StartingRootChoice {
 
-    enum Phase { CHOOSING, FLYING, CHOSEN }
+    enum Phase { CHOOSING, FLYING, CHOSEN, RETURNING }
 
     static final float FLIGHT_SECONDS = 1.5f;
     static final float ROOT_FOOTPRINT = NODE_SIZE * SkillTier.ROOT.getSizeMultiplier();
@@ -80,13 +80,37 @@ final class StartingRootChoice {
         flightElapsed = 0f;
     }
 
+    static StartingRootChoice returning(List<SkillNode> roots, SkillNode chosen) {
+        StartingRootChoice choice = pending(roots);
+        if (choice.phase == Phase.CHOOSING && choice.clusterOffsets.containsKey(chosen.getId())) {
+            choice.chosen = chosen;
+            choice.phase = Phase.RETURNING;
+        }
+        return choice;
+    }
+
+    boolean isMoving() {
+        return phase == Phase.FLYING || phase == Phase.RETURNING;
+    }
+
+    SkillNode rootForAllocation() {
+        return phase == Phase.FLYING || phase == Phase.CHOSEN ? chosen : null;
+    }
+
     void advance(float amount) {
-        if (phase != Phase.FLYING) {
+        if (!isMoving()) {
             return;
         }
         flightElapsed = Math.min(FLIGHT_SECONDS, flightElapsed + amount);
-        if (flightElapsed >= FLIGHT_SECONDS) {
+        if (flightElapsed < FLIGHT_SECONDS) {
+            return;
+        }
+        if (phase == Phase.FLYING) {
             phase = Phase.CHOSEN;
+        } else {
+            phase = Phase.CHOOSING;
+            chosen = null;
+            flightElapsed = 0f;
         }
     }
 
@@ -98,6 +122,22 @@ final class StartingRootChoice {
     float offsetY(SkillNode node) {
         Vector2f cluster = clusterOffsets.get(node.getId());
         return cluster == null ? node.getOffsetY() : lerp(cluster.y, node.getOffsetY(), progress());
+    }
+
+    float cameraTargetX() {
+        return headingOut() && chosen != null ? offsetX(chosen) : 0f;
+    }
+
+    float cameraTargetY() {
+        return headingOut() && chosen != null ? offsetY(chosen) : 0f;
+    }
+
+    float cameraProgress() {
+        return headingOut() ? progress() : 1f - progress();
+    }
+
+    private boolean headingOut() {
+        return phase == Phase.FLYING || phase == Phase.CHOSEN;
     }
 
     float treeAlpha() {
@@ -116,11 +156,13 @@ final class StartingRootChoice {
         return switch (phase) {
             case CHOOSING -> 0f;
             case CHOSEN -> 1f;
-            case FLYING -> {
-                float t = flightElapsed / FLIGHT_SECONDS;
-                yield t * t * (3f - 2f * t);
-            }
+            case FLYING -> eased(flightElapsed / FLIGHT_SECONDS);
+            case RETURNING -> 1f - eased(flightElapsed / FLIGHT_SECONDS);
         };
+    }
+
+    private static float eased(float t) {
+        return t * t * (3f - 2f * t);
     }
 
     private static float lerp(float from, float to, float t) {

@@ -227,7 +227,7 @@
     "ui.node.lockedHint": "船插蓝图会是个不错的切入点。",
     "ui.node.optionalHint": "点击选择一个选项。",
     "ui.node.freeNote": "通过升级免费获得。",
-    "ui.node.startingRootPrompt": "选择起点——此选择无法撤销",
+    "ui.node.startingRootPrompt": "选择起点——当它是唯一已分配的节点时，再次点击可更改",
     "ui.stats.group.general": "常规",
     "ui.stats.group.mobility": "机动",
     "ui.stats.group.defense": "防御",

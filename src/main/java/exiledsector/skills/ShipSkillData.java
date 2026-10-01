@@ -83,6 +83,20 @@ public class ShipSkillData {
         return true;
     }
 
+    public boolean canUnchooseStartingRoot() {
+        return startingRootId != null && allocatedNodeIds.size() == 1 && allocatedNodeIds.contains(startingRootId);
+    }
+
+    public boolean unchooseStartingRoot() {
+        if (!canUnchooseStartingRoot()) {
+            return false;
+        }
+        allocatedNodeIds.remove(startingRootId);
+        release(startingRootId);
+        startingRootId = null;
+        return true;
+    }
+
     public boolean isSatisfied(String nodeId, String satisfiedRootId) {
         return isAllocated(nodeId) || nodeId.equals(satisfiedRootId);
     }
