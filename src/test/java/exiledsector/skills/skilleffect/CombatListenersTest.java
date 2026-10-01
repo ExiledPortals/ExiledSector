@@ -28,12 +28,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -255,6 +257,11 @@ class CombatListenersTest {
         return escort;
     }
 
+    private void deploy(ShipAPI... deployed) {
+        ships.addAll(List.of(deployed));
+        gridShips.addAll(List.of(deployed));
+    }
+
     private ShipAPI escortAt(float x, HullSize size) {
         ShipAPI escort = ship(x, 0f, Map.of(MANEUVER_BONUS_KEY, 20f, SPEED_BONUS_KEY, 10f, WEAPON_RANGE_BONUS_KEY, 15f,
                 PROXIMITY_RANGE_KEY, 600f));
@@ -276,7 +283,7 @@ class CombatListenersTest {
     void anEscortCloseToALargerFriendlyShipGetsItsFullBonuses() {
         ShipAPI escort = escortAt(0f, HullSize.FRIGATE);
         EscortStats stats = escortStats(escort);
-        ships.addAll(List.of(escort, friendlyAt(500f, HullSize.CRUISER)));
+        deploy(escort, friendlyAt(500f, HullSize.CRUISER));
         AdvanceableListener listener = attachedListener(CombatSkillEffect.ESCORT_MANEUVER_BONUS_PERCENT, escort, AdvanceableListener.class);
 
         listener.advance(2f);
@@ -294,7 +301,7 @@ class CombatListenersTest {
     void theBonusesFadeOutOverFiveHundredSuPastTheProximityRange() {
         ShipAPI escort = escortAt(0f, HullSize.FRIGATE);
         EscortStats stats = escortStats(escort);
-        ships.addAll(List.of(escort, friendlyAt(1000f, HullSize.CRUISER)));
+        deploy(escort, friendlyAt(1000f, HullSize.CRUISER));
         AdvanceableListener listener = attachedListener(CombatSkillEffect.ESCORT_MANEUVER_BONUS_PERCENT, escort, AdvanceableListener.class);
 
         listener.advance(2f);
@@ -310,7 +317,7 @@ class CombatListenersTest {
         EscortStats stats = escortStats(escort);
         ShipAPI capital = friendlyAt(500f, HullSize.CAPITAL_SHIP);
         when(capital.isCapital()).thenReturn(true);
-        ships.addAll(List.of(escort, capital));
+        deploy(escort, capital);
         AdvanceableListener listener = attachedListener(CombatSkillEffect.ESCORT_MANEUVER_BONUS_PERCENT, escort, AdvanceableListener.class);
 
         listener.advance(2f);
@@ -319,12 +326,27 @@ class CombatListenersTest {
     }
 
     @Test
+    void anEscortTakesTheLargerShipThatGivesTheBiggestBonusRatherThanTheNearestOne() {
+        ShipAPI escort = escortAt(0f, HullSize.DESTROYER);
+        when(escort.isDestroyer()).thenReturn(true);
+        EscortStats stats = escortStats(escort);
+        ShipAPI capital = friendlyAt(1000f, HullSize.CAPITAL_SHIP);
+        when(capital.isCapital()).thenReturn(true);
+        deploy(escort, friendlyAt(900f, HullSize.CRUISER), capital);
+        AdvanceableListener listener = attachedListener(CombatSkillEffect.ESCORT_MANEUVER_BONUS_PERCENT, escort, AdvanceableListener.class);
+
+        listener.advance(2f);
+
+        verify(stats.acceleration()).modifyPercent(ESCORT_BONUS_MOD_ID, 20f);
+    }
+
+    @Test
     void withoutALargerFriendlyShipTheBonusesAreRemoved() {
         ShipAPI escort = escortAt(0f, HullSize.CRUISER);
         EscortStats stats = escortStats(escort);
         ShipAPI enemyCapital = friendlyAt(300f, HullSize.CAPITAL_SHIP);
         when(enemyCapital.getOwner()).thenReturn(1);
-        ships.addAll(List.of(escort, friendlyAt(300f, HullSize.FRIGATE), enemyCapital));
+        deploy(escort, friendlyAt(300f, HullSize.FRIGATE), enemyCapital);
         AdvanceableListener listener = attachedListener(CombatSkillEffect.ESCORT_MANEUVER_BONUS_PERCENT, escort, AdvanceableListener.class);
 
         listener.advance(2f);
@@ -339,12 +361,62 @@ class CombatListenersTest {
     void theEscortOnlyReevaluatesAboutOnceASecond() {
         ShipAPI escort = escortAt(0f, HullSize.FRIGATE);
         EscortStats stats = escortStats(escort);
-        ships.addAll(List.of(escort, friendlyAt(500f, HullSize.CRUISER)));
+        deploy(escort, friendlyAt(500f, HullSize.CRUISER));
         AdvanceableListener listener = attachedListener(CombatSkillEffect.ESCORT_MANEUVER_BONUS_PERCENT, escort, AdvanceableListener.class);
 
         listener.advance(0.5f);
 
         verify(stats.acceleration(), never()).modifyPercent(anyString(), anyFloat());
         verify(stats.acceleration(), never()).unmodify(anyString());
+    }
+
+    private static List<Float> recordedRangePercents(EscortStats stats) {
+        List<Float> percents = new ArrayList<>();
+        doAnswer(call -> percents.add(call.getArgument(1))).when(stats.energyRange()).modifyPercent(eq(ESCORT_BONUS_MOD_ID), anyFloat());
+        return percents;
+    }
+
+    private static void advanceFrames(AdvanceableListener listener, int frames) {
+        for (int frame = 0; frame < frames; frame++) {
+            listener.advance(0.1f);
+        }
+    }
+
+    private static void assertPercents(List<Float> expected, List<Float> actual) {
+        assertEquals(expected.size(), actual.size(), "percents " + actual);
+        for (int i = 0; i < expected.size(); i++) {
+            assertEquals(expected.get(i), actual.get(i), 0.01f, "percents " + actual);
+        }
+    }
+
+    @Test
+    void theRangeBonusGrowsOverHalfASecondSoBeamsLengthenSmoothly() {
+        ShipAPI escort = escortAt(0f, HullSize.FRIGATE);
+        EscortStats stats = escortStats(escort);
+        List<Float> percents = recordedRangePercents(stats);
+        deploy(escort, friendlyAt(500f, HullSize.CRUISER));
+        AdvanceableListener listener = attachedListener(CombatSkillEffect.ESCORT_MANEUVER_BONUS_PERCENT, escort, AdvanceableListener.class);
+
+        advanceFrames(listener, 17);
+
+        assertPercents(List.of(3f, 6f, 9f, 12f, 15f), percents);
+    }
+
+    @Test
+    void theRangeBonusShrinksOverHalfASecondBeforeItIsRemoved() {
+        ShipAPI escort = escortAt(0f, HullSize.FRIGATE);
+        EscortStats stats = escortStats(escort);
+        List<Float> percents = recordedRangePercents(stats);
+        deploy(escort, friendlyAt(500f, HullSize.CRUISER));
+        AdvanceableListener listener = attachedListener(CombatSkillEffect.ESCORT_MANEUVER_BONUS_PERCENT, escort, AdvanceableListener.class);
+        advanceFrames(listener, 17);
+        percents.clear();
+        gridShips.clear();
+        gridShips.add(escort);
+
+        advanceFrames(listener, 9);
+
+        assertPercents(List.of(12f, 9f, 6f, 3f), percents);
+        verify(stats.energyRange(), times(1)).unmodify(ESCORT_BONUS_MOD_ID);
     }
 }

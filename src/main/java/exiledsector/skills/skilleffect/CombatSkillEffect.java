@@ -346,11 +346,17 @@ public enum CombatSkillEffect implements BackedSkillEffect {
         private static final float PROXIMITY_FADE_DISTANCE = 500f;
         private static final float SHIELD_RADIUS_OVERLAP_MULT = 0.75f;
         private static final float DESTROYER_ESCORTING_CAPITAL_MULT = 2f;
+        private static final float SEARCH_MARGIN = 300f;
         private static final float TURN_ACCELERATION_MULT = 2f;
+        private static final float EASE_SECONDS = 0.5f;
+        private static final float MAG_SNAP = 0.001f;
         private static final String ESCORT_BONUS_MOD_ID = "exiledSector_escortBonus";
 
         private final ShipAPI ship;
         private final IntervalUtil interval = new IntervalUtil(0.9f, 1.1f);
+        private float targetMag;
+        private float appliedMag;
+        private float easeRate;
 
         private EscortListener(ShipAPI ship) {
             this.ship = ship;
@@ -362,19 +368,40 @@ public enum CombatSkillEffect implements BackedSkillEffect {
                 return;
             }
             interval.advance(amount);
-            if (!interval.intervalElapsed()) {
-                return;
+            boolean retargeted = interval.intervalElapsed();
+            if (retargeted) {
+                targetMag = proximityMagnitude();
+                easeRate = Math.abs(targetMag - appliedMag) / EASE_SECONDS;
             }
-            applyBonuses(proximityMagnitude());
+            if (retargeted || appliedMag != targetMag) {
+                appliedMag = approach(appliedMag, targetMag, easeRate * amount);
+                applyBonuses(appliedMag);
+            }
+        }
+
+        private static float approach(float current, float target, float maxStep) {
+            if (Math.abs(target - current) <= maxStep + MAG_SNAP) {
+                return target;
+            }
+            return current + Math.signum(target - current) * maxStep;
         }
 
         private float proximityMagnitude() {
-            ShipAPI escorted = findNearestLargerFriendly();
-            if (escorted == null) {
-                return 0f;
-            }
-
             float range = ship.getMutableStats().getDynamic().getValue(PROXIMITY_RANGE_KEY, 0f);
+            float searchRadius = range + PROXIMITY_FADE_DISTANCE + ship.getCollisionRadius() + SEARCH_MARGIN;
+            float best = 0f;
+            for (ShipAPI escorted : CombatQueries.shipsNear(ship.getLocation(), searchRadius, this::isLargerFriendly)) {
+                best = Math.max(best, magnitudeFor(escorted, range));
+            }
+            return best;
+        }
+
+        private boolean isLargerFriendly(ShipAPI candidate) {
+            return candidate != ship && candidate.getOwner() == ship.getOwner() && candidate.isAlive() && !candidate.isHulk()
+                    && candidate.getHullSize().ordinal() > ship.getHullSize().ordinal();
+        }
+
+        private float magnitudeFor(ShipAPI escorted, float range) {
             float radiusOverlap = (ship.getShieldRadiusEvenIfNoShield() + escorted.getShieldRadiusEvenIfNoShield())
                     * SHIELD_RADIUS_OVERLAP_MULT;
             float distance = Vector2f.sub(ship.getShieldCenterEvenIfNoShield(),
@@ -393,21 +420,6 @@ public enum CombatSkillEffect implements BackedSkillEffect {
                 mag *= DESTROYER_ESCORTING_CAPITAL_MULT;
             }
             return mag;
-        }
-
-        private ShipAPI findNearestLargerFriendly() {
-            ShipAPI nearest = null;
-            float nearestDistanceSq = Float.MAX_VALUE;
-            for (ShipAPI other : CombatQueries.shipsMatching(candidate -> candidate != ship
-                    && candidate.getOwner() == ship.getOwner() && candidate.isAlive() && !candidate.isHulk()
-                    && candidate.getHullSize().ordinal() > ship.getHullSize().ordinal())) {
-                float distanceSq = Vector2f.sub(other.getLocation(), ship.getLocation(), null).lengthSquared();
-                if (distanceSq < nearestDistanceSq) {
-                    nearestDistanceSq = distanceSq;
-                    nearest = other;
-                }
-            }
-            return nearest;
         }
 
         private void applyBonuses(float mag) {
