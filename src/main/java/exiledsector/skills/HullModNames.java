@@ -9,7 +9,12 @@ public final class HullModNames {
     }
 
     public static String displayName(String hullModId) {
+        String name = loadedDisplayName(hullModId);
+        return name != null ? name : hullModId;
+    }
+
+    public static String loadedDisplayName(String hullModId) {
         HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
-        return spec != null ? spec.getDisplayName() : hullModId;
+        return spec != null ? spec.getDisplayName() : null;
     }
 }

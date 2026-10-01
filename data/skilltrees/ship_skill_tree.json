@@ -1780,7 +1780,8 @@
 				"small_flux_optional_9",
 				"small_flux_optional_11",
 				"missile_autoloader_1",
-				"pirate_wormhole_1"
+				"pirate_wormhole_1",
+				"armor_6"
 			],
 			"x": 3000,
 			"y": 0,
@@ -5080,6 +5081,50 @@
 			"tags": [
 				"tritachyon"
 			]
+		},
+		{
+			"id": "armor_6",
+			"type": "armor",
+			"connectedTo": [
+				"small_flux_optional_10",
+				"armor_7"
+			],
+			"x": 3344,
+			"y": 444,
+			"orbitAnchorId": "anchor_48",
+			"orbitAngle": 225,
+			"tags": [
+				"inner"
+			]
+		},
+		{
+			"id": "armor_7",
+			"type": "armor",
+			"connectedTo": [
+				"armor_6",
+				"citadel_plating_1"
+			],
+			"x": 3344,
+			"y": 656,
+			"orbitAnchorId": "anchor_48",
+			"orbitAngle": 135,
+			"tags": [
+				"inner"
+			]
+		},
+		{
+			"id": "citadel_plating_1",
+			"type": "citadel_plating",
+			"connectedTo": [
+				"armor_7"
+			],
+			"x": 3556,
+			"y": 656,
+			"orbitAnchorId": "anchor_48",
+			"orbitAngle": 45,
+			"tags": [
+				"inner"
+			]
 		}
 	],
 	"connectorCurves": [
@@ -6546,6 +6591,18 @@
 			"b": "fuel_flat_2",
 			"controlX": 457,
 			"controlY": 890
+		},
+		{
+			"a": "armor_6",
+			"b": "armor_7",
+			"controlX": 3300,
+			"controlY": 550
+		},
+		{
+			"a": "armor_7",
+			"b": "citadel_plating_1",
+			"controlX": 3450,
+			"controlY": 700
 		}
 	],
 	"hiddenConnectors": [
@@ -7069,6 +7126,12 @@
 			"id": "anchor_47",
 			"x": 408,
 			"y": -483,
+			"radius": 150
+		},
+		{
+			"id": "anchor_48",
+			"x": 3450,
+			"y": 550,
 			"radius": 150
 		}
 	],

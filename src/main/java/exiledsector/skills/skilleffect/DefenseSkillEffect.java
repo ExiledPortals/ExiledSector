@@ -1,8 +1,13 @@
 package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import exiledsector.i18n.StyledText;
+
+import java.util.List;
 
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
@@ -44,6 +49,32 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
         @Override
         public StyledText description(float magnitude) {
             return StatMode.MULT.describeStat(magnitude, "stat.armorDamageTakenPerDMod");
+        }
+    },
+    ARMOR_FLAT_FOR_LOW_BASE_ARMOR {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            ShipVariantAPI variant = stats.getVariant();
+            ShipHullSpecAPI hull = variant == null ? null : variant.getHullSpec();
+            if (hull == null || hull.isPhase()) {
+                return;
+            }
+            float bonus = LowBaseArmorBonus.bonus(variant.getHullSize(), hull.getArmorRating());
+            stats.getArmorBonus().modifyFlat(modId, bonus * magnitude);
+        }
+
+        @Override
+        public String blockAllocationReason(FleetMemberAPI member, float magnitude, List<SkillEffect> currentlyAllocatedEffects) {
+            return LowBaseArmorBonus.fits(member.getHullSpec()) ? null : "Requires a non-phase hull with low base armor.";
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this)
+                    .arg("most", LowBaseArmorBonus.mostByHullSize(magnitude))
+                    .arg("least", LowBaseArmorBonus.leastByHullSize(magnitude))
+                    .arg("cutoff", LowBaseArmorBonus.cutoffByHullSize())
+                    .styled();
         }
     },
     DMOD_EFFECT_MULT {

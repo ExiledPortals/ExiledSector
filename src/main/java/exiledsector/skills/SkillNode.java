@@ -114,8 +114,9 @@ public class SkillNode extends SkillTreeObject {
     private static StyledText describeExclusivity(SkillType type) {
         Set<String> hullModNames = new LinkedHashSet<>();
         for (String hullModId : type.getExclusiveHullModIds()) {
-            if (!type.getInstalledHullModIds().contains(hullModId)) {
-                hullModNames.add(HullModNames.displayName(hullModId));
+            String name = type.getInstalledHullModIds().contains(hullModId) ? null : HullModNames.loadedDisplayName(hullModId);
+            if (name != null) {
+                hullModNames.add(name);
             }
         }
         Set<String> nodeNames = new LinkedHashSet<>();

@@ -1474,6 +1474,28 @@
 			]
 		},
 		{
+			"id": "citadel_plating",
+			"name": "Citadel Plating",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "ARMOR_FLAT_FOR_LOW_BASE_ARMOR",
+					"magnitude": 1
+				}
+			],
+			"exclusiveHullMods": [
+				"nskr_criticalArmor",
+				"heavyarmor"
+			],
+			"exclusiveSkillTypes": [
+				"heavyarmor"
+			],
+			"tags": [
+				"armour"
+			]
+		},
+		{
 			"id": "high_scatter_amp",
 			"name": "High Scatter Amplifier",
 			"icon": "graphics/icons/high_scatter_amp.png",

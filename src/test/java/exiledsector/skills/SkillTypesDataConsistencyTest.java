@@ -1,5 +1,6 @@
 package exiledsector.skills;
 
+import exiledsector.skills.npc.RealSkillData;
 import exiledsector.skills.tags.SkillTags;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SkillTypesDataConsistencyTest {
@@ -100,5 +102,20 @@ class SkillTypesDataConsistencyTest {
             }
         }
         assertTrue(unknown.isEmpty(), "Tags outside the vocabulary: " + unknown);
+    }
+
+    @Test
+    void npcBuildsConvertTheHeavyArmorHullModOnlyIntoTheHeavyArmorNode() throws Exception {
+        RealSkillData.load();
+        try {
+            List<String> standIns = SkillTree.getAllTypes().values().stream()
+                    .filter(type -> "heavyarmor".equals(type.getEquivalentHullModId()))
+                    .map(SkillType::getId)
+                    .toList();
+
+            assertEquals(List.of("heavyarmor"), standIns);
+        } finally {
+            RealSkillData.clear();
+        }
     }
 }

@@ -127,6 +127,7 @@
     "effect.GROUND_SUPPORT_PER_MAX_CREW_PERCENT": "行星突袭的有效强度提高本舰最大船员容量（计入修正后）的<good>{value}%</good>（不超过舰队中陆战队的总数）。",
     "effect.BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_PERCENT": "本舰航速每比船体默认值高1级（任何来源），实弹武器伤害提高<good>{value}%</good>。",
     "effect.ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT": "本舰每有1点传感器强度（计入修正后），能量武器射程提高<good>{value}</good>。",
+    "effect.ARMOR_FLAT_FOR_LOW_BASE_ARMOR": "装甲最多提高<good>{most}</good>。舰体基础装甲越低，加成越高：基础装甲为<hl>{cutoff}</hl>时，加成降至<good>{least}</good>（护卫舰/驱逐舰/巡洋舰/主力舰）。不能分配给相位舰或基础装甲高于该数值的舰体。",
 
     "stat.cargoCapacityPerFighterBay": "每个机库提供的货舱容量",
     "stat.maximumCombatReadiness": "最大战备值",
@@ -363,6 +364,7 @@
     "skillType.tactical_superiority.name": "战术优势",
     "skillType.objective_capture_range.name": "目标占领范围",
     "skillType.combat_readiness.name": "战备值",
+    "skillType.citadel_plating.name": "堡垒装甲",
     "skillType.nanoforge_mending.name": "纳米锻炉修复",
     "skillType.disintegration.name": "瓦解",
     "skillType.machine_precision.name": "机械精度",

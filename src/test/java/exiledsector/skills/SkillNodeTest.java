@@ -174,9 +174,12 @@ class SkillNodeTest {
     }
 
     @Test
-    void descriptionFallsBackToRawIdWhenHullModSpecIsUnknown() {
+    void aHullModFromAModThatIsNotInstalledIsLeftOutOfTheExclusivityLine() {
         SettingsAPI settings = mock(SettingsAPI.class);
         globalMock.when(Global::getSettings).thenReturn(settings);
+        HullModSpecAPI escortPackage = mock(HullModSpecAPI.class);
+        when(escortPackage.getDisplayName()).thenReturn("Escort Package");
+        when(settings.getHullModSpec("escort_package")).thenReturn(escortPackage);
         when(settings.getHullModSpec("unknown_hullmod")).thenReturn(null);
 
         SkillType type = new SkillType.Builder("hull", "Hull", "a.png", SkillTier.SMALL)
@@ -186,11 +189,11 @@ class SkillNodeTest {
                 .descriptionOverride(null)
                 .todo(null)
                 .optionalOptionIds(List.of())
-                .exclusiveHullModIds(List.of("unknown_hullmod"))
+                .exclusiveHullModIds(List.of("unknown_hullmod", "escort_package"))
                 .build();
         SkillNode node = new SkillNode("hull_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Mutually exclusive with hullmod: unknown_hullmod.", description(node.getType()));
+        assertEquals("Mutually exclusive with hullmod: Escort Package.", description(node.getType()));
     }
 
     @Test
@@ -281,11 +284,16 @@ class SkillNodeTest {
     void descriptionPluralisesTheLabelWhenExclusiveWithSeveralHullMods() {
         SettingsAPI settings = mock(SettingsAPI.class);
         globalMock.when(Global::getSettings).thenReturn(settings);
+        for (String[] hullMod : new String[][]{{"ground_support", "Ground Support"}, {"advanced_ground_support", "Advanced Ground Support"}}) {
+            HullModSpecAPI spec = mock(HullModSpecAPI.class);
+            when(spec.getDisplayName()).thenReturn(hullMod[1]);
+            when(settings.getHullModSpec(hullMod[0])).thenReturn(spec);
+        }
         SkillType type = new SkillType.Builder("ground_support", "Ground Support", "a.png", SkillTier.NOTABLE)
                 .exclusiveHullModIds(List.of("ground_support", "advanced_ground_support"))
                 .build();
 
-        assertEquals("Mutually exclusive with hullmods: ground_support, advanced_ground_support.",
+        assertEquals("Mutually exclusive with hullmods: Ground Support, Advanced Ground Support.",
                 description(type));
     }
 
