@@ -50,14 +50,14 @@ public final class AutoAllocateRun {
                 return;
             } else {
                 TemplateStep step = pass.get(index++);
-                if (record(step, attempt.apply(step))) {
+                if (tally(step, attempt.apply(step))) {
                     blockedChecks++;
                 }
             }
         }
     }
 
-    private boolean record(TemplateStep step, StepVerdict verdict) {
+    private boolean tally(TemplateStep step, StepVerdict verdict) {
         if (verdict == StepVerdict.ALLOCATE) {
             allocated++;
             progressed = true;
