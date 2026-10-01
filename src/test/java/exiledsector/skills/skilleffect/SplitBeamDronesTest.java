@@ -233,6 +233,23 @@ class SplitBeamDronesTest {
     }
 
     @Test
+    void mirroringCarriesTheBeamHardFluxBonusSoSplitBeamsFromDronesKeepIt() {
+        MutableShipStatsAPI source = mock(MutableShipStatsAPI.class, Answers.RETURNS_DEEP_STUBS);
+        MutableShipStatsAPI drone = mock(MutableShipStatsAPI.class, Answers.RETURNS_DEEP_STUBS);
+        String key = ShieldSkillEffect.BeamHardFluxListener.HARD_FLUX_PERCENT_KEY;
+        StatBonus sourceHardFlux = new StatBonus();
+        StatBonus droneHardFlux = new StatBonus();
+        sourceHardFlux.modifyFlat("exiledSector_skill_beam_1", 50f);
+        droneHardFlux.modifyFlat("stale", 10f);
+        when(source.getDynamic().getMod(key)).thenReturn(sourceHardFlux);
+        when(drone.getDynamic().getMod(key)).thenReturn(droneHardFlux);
+
+        SplitBeamDroneStats.mirror(source, drone);
+
+        assertEquals(50f, droneHardFlux.getFlatBonus(), 0.0001f);
+    }
+
+    @Test
     void droneShareListenerScalesOnlyBeamHitsAndHandsItsModifierBackToTheEngine() {
         DamageDealtModifier shareListener = new SplitBeamDrones.ShareListener();
         DamageAPI beamHit = mock(DamageAPI.class, Answers.RETURNS_DEEP_STUBS);

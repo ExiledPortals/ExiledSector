@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.BeamAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
+import com.fs.starfarer.api.combat.FluxTrackerAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
@@ -27,9 +28,23 @@ final class BeamSplitListener implements DamageDealtModifier, AdvanceableListene
     private static final float SIMULATED_BEAM_FULL_DURATION = 0.05f;
     private static final float SIMULATED_BEAM_FADE_DURATION = 0.15f;
 
+    private static boolean applyingSimulatedHit;
+
     private final ShipAPI ship;
     private final SplitBeamDrones drones;
     private boolean processingSplit;
+
+    static boolean isApplyingSimulatedHit() {
+        return applyingSimulatedHit;
+    }
+
+    static void beginSimulatedHit() {
+        applyingSimulatedHit = true;
+    }
+
+    static void endSimulatedHit() {
+        applyingSimulatedHit = false;
+    }
 
     BeamSplitListener(ShipAPI ship) {
         this.ship = ship;
@@ -105,8 +120,19 @@ final class BeamSplitListener implements DamageDealtModifier, AdvanceableListene
             impactPoint = splitTarget.getLocation();
         }
 
-        engine.applyDamage(sourceBeam, splitTarget, impactPoint, damageAmount, hitDamage.getType(), empAmount,
-                false, !hitDamage.isForceHardFlux(), ship, false);
+        FluxTrackerAPI flux = splitTarget.getFluxTracker();
+        float fluxBefore = flux.getCurrFlux();
+        beginSimulatedHit();
+        try {
+            engine.applyDamage(sourceBeam, splitTarget, impactPoint, damageAmount, hitDamage.getType(), empAmount,
+                    false, !hitDamage.isForceHardFlux(), ship, false);
+        } finally {
+            endSimulatedHit();
+        }
+        if (!hitDamage.isForceHardFlux()) {
+            ShieldSkillEffect.convertToHardFlux(flux, flux.getCurrFlux() - fluxBefore,
+                    ship.getMutableStats().getDynamic().getValue(ShieldSkillEffect.BeamHardFluxListener.HARD_FLUX_PERCENT_KEY, 0f));
+        }
 
         float impactSize = sourceBeam.getWidth() * 2f;
         engine.addHitParticle(impactPoint, new Vector2f(), impactSize, 1f,

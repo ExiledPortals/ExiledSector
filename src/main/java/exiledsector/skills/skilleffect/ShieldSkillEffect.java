@@ -192,9 +192,9 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
         return type;
     }
 
-    private static final class BeamHardFluxListener implements DamageDealtModifier {
+    static final class BeamHardFluxListener implements DamageDealtModifier {
 
-        private static final String HARD_FLUX_PERCENT_KEY = "exiledSector_beamDamageHardFluxPercent";
+        static final String HARD_FLUX_PERCENT_KEY = "exiledSector_beamDamageHardFluxPercent";
 
         @Override
         public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
@@ -216,16 +216,19 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
         @Override
         public void reportDamageApplied(Object source, CombatEntityAPI target, ApplyDamageResultAPI result) {
             float shieldFlux = result.getDamageToShields();
-            if (shieldFlux <= 0f || !(ship.getParamAboutToApplyDamage() instanceof BeamAPI beam) || beam.getSource() == null
+            if (shieldFlux <= 0f || BeamSplitListener.isApplyingSimulatedHit()
+                    || !(ship.getParamAboutToApplyDamage() instanceof BeamAPI beam) || beam.getSource() == null
                     || beam.getDamage().isForceHardFlux()) return;
 
-            float percent = beam.getSource().getMutableStats().getDynamic().getValue(BeamHardFluxListener.HARD_FLUX_PERCENT_KEY, 0f);
-            float converted = shieldFlux * Math.min(percent, 100f) / 100f;
-            if (converted <= 0f) return;
-
-            FluxTrackerAPI flux = ship.getFluxTracker();
-            flux.setHardFlux(Math.min(flux.getCurrFlux(), flux.getHardFlux() + converted));
+            convertToHardFlux(ship.getFluxTracker(), shieldFlux,
+                    beam.getSource().getMutableStats().getDynamic().getValue(BeamHardFluxListener.HARD_FLUX_PERCENT_KEY, 0f));
         }
+    }
+
+    static void convertToHardFlux(FluxTrackerAPI flux, float shieldFlux, float percent) {
+        float converted = shieldFlux * Math.min(percent, 100f) / 100f;
+        if (converted <= 0f) return;
+        flux.setHardFlux(Math.min(flux.getCurrFlux(), flux.getHardFlux() + converted));
     }
 
     private static final class SharedShieldDamageListener implements DamageTakenModifier, DamageListener {

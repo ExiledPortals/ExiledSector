@@ -10,6 +10,7 @@ import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.DamagingProjectileAPI;
+import com.fs.starfarer.api.combat.FluxTrackerAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -1404,6 +1405,7 @@ class SkillEffectTest {
         when(enemy.isAlive()).thenReturn(true);
         when(enemy.isHulk()).thenReturn(false);
         when(enemy.getLocation()).thenReturn(location);
+        when(enemy.getFluxTracker()).thenReturn(mock(FluxTrackerAPI.class));
         return enemy;
     }
 

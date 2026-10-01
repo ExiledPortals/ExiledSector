@@ -181,6 +181,25 @@ class ShieldFluxListenersTest {
     }
 
     @Test
+    void theConverterStandsDownWhileASimulatedSplitHitIsBeingApplied() {
+        ShipAPI target = mock(ShipAPI.class);
+        FluxTrackerAPI flux = mock(FluxTrackerAPI.class);
+        when(target.getFluxTracker()).thenReturn(flux);
+        DamageListener converter = converterOn(target);
+        ShipAPI attacker = ship(HARD_FLUX_PERCENT_KEY, 50f);
+        BeamAPI beam = beamFrom(attacker, false);
+        when(target.getParamAboutToApplyDamage()).thenReturn(beam);
+        BeamSplitListener.beginSimulatedHit();
+        try {
+            converter.reportDamageApplied(attacker, target, shieldFlux(40f));
+        } finally {
+            BeamSplitListener.endSimulatedHit();
+        }
+
+        verify(flux, never()).setHardFlux(anyFloat());
+    }
+
+    @Test
     void theConverterNeverMakesHardFluxExceedTheTotalFlux() {
         ShipAPI target = mock(ShipAPI.class);
         FluxTrackerAPI flux = mock(FluxTrackerAPI.class);

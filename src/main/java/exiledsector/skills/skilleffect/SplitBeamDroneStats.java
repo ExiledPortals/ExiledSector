@@ -33,6 +33,8 @@ final class SplitBeamDroneStats {
             MutableShipStatsAPI::getBeamPDWeaponRangeBonus,
             MutableShipStatsAPI::getHitStrengthBonus);
 
+    private static final List<String> DYNAMIC_MODS = List.of(ShieldSkillEffect.BeamHardFluxListener.HARD_FLUX_PERCENT_KEY);
+
     private SplitBeamDroneStats() {
     }
 
@@ -45,11 +47,17 @@ final class SplitBeamDroneStats {
             target.applyMods(stat.apply(source));
         }
         for (Function<MutableShipStatsAPI, StatBonus> bonus : STAT_BONUSES) {
-            StatBonus target = bonus.apply(drone);
-            target.getFlatBonuses().clear();
-            target.getPercentBonuses().clear();
-            target.getMultBonuses().clear();
-            target.applyMods(bonus.apply(source));
+            copyBonus(bonus.apply(source), bonus.apply(drone));
         }
+        for (String key : DYNAMIC_MODS) {
+            copyBonus(source.getDynamic().getMod(key), drone.getDynamic().getMod(key));
+        }
+    }
+
+    private static void copyBonus(StatBonus source, StatBonus target) {
+        target.getFlatBonuses().clear();
+        target.getPercentBonuses().clear();
+        target.getMultBonuses().clear();
+        target.applyMods(source);
     }
 }
