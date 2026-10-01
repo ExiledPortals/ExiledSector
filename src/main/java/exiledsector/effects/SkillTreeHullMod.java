@@ -250,16 +250,32 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         for (String hullModId : wanted) {
             if (!variant.hasHullMod(hullModId)) {
                 variant.addPermaMod(hullModId);
-                variant.addTag(INSTALLED_HULLMOD_TAG_PREFIX + hullModId);
+                if (!isInstalledBySkillTree(variant, hullModId)) {
+                    variant.addTag(INSTALLED_HULLMOD_TAG_PREFIX + hullModId);
+                }
             }
         }
         for (String tag : new ArrayList<>(variant.getTags())) {
             String hullModId = tag.startsWith(INSTALLED_HULLMOD_TAG_PREFIX) ? tag.substring(INSTALLED_HULLMOD_TAG_PREFIX.length()) : null;
             if (hullModId != null && !wanted.contains(hullModId)) {
-                variant.removePermaMod(hullModId);
+                if (!variant.getSMods().contains(hullModId)) {
+                    variant.removePermaMod(hullModId);
+                }
                 variant.removeTag(tag);
             }
         }
+    }
+
+    public static boolean restoreInstalledPermaMods(ShipVariantAPI variant) {
+        boolean restored = false;
+        for (String tag : variant.getTags()) {
+            String hullModId = tag.startsWith(INSTALLED_HULLMOD_TAG_PREFIX) ? tag.substring(INSTALLED_HULLMOD_TAG_PREFIX.length()) : null;
+            if (hullModId != null && variant.hasHullMod(hullModId) && !variant.getPermaMods().contains(hullModId)) {
+                variant.addPermaMod(hullModId);
+                restored = true;
+            }
+        }
+        return restored;
     }
 
     public static boolean isInstalledBySkillTree(ShipVariantAPI variant, String hullModId) {

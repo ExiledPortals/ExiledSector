@@ -159,6 +159,7 @@
 				"peak_cr_duration_2",
 				"hardened_subsystems_1",
 				{ "id": "small_flux_optional_10", "option": "flux_dissipation" },
+				{ "id": "small_flux_optional_9", "option": "flux_dissipation" },
 				"missile_autoloader_1",
 				{ "id": "small_flux_optional_12", "option": "hull" },
 				"peak_cr_duration_1",
@@ -206,8 +207,7 @@
 				"pd_damage_to_missiles_2",
 				"pd_damage_to_missiles_1",
 				"pointdefenseai_1",
-				{ "id": "small_flux_optional_32", "option": "flux_dissipation" },
-				{ "id": "small_flux_optional_9", "option": "flux_dissipation" }
+				{ "id": "small_flux_optional_32", "option": "flux_dissipation" }
 			]
 		},
 		"midline_line_holder": {

@@ -15,6 +15,7 @@ import exiledsector.i18n.Translation;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
+import java.util.List;
 import java.util.Map;
 
 import static exiledsector.skills.skilleffect.StatMode.MULT;
@@ -44,6 +45,11 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
         @Override
         public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
             SkillEffectSupport.ensureListener(ship, PhaseAnchorDiveListener.class, s -> new PhaseAnchorDiveListener(s, modId));
+        }
+
+        @Override
+        public String blockAllocationReason(FleetMemberAPI member, float magnitude, List<SkillEffect> currentlyAllocatedEffects) {
+            return member.getHullSpec().isPhase() ? null : "Requires a phase hull.";
         }
 
         @Override
@@ -98,7 +104,7 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
             if (diving) {
                 return true;
             }
-            if (damageAmount < ship.getHitpoints()) {
+            if (damageAmount < ship.getHitpoints() || ship.getPhaseCloak() == null) {
                 return false;
             }
 

@@ -54,6 +54,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -1144,6 +1145,12 @@ class SkillEffectTest {
         verify(ship, never()).addListener(any());
     }
 
+    private static ShipAPI phaseShip() {
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.getPhaseCloak()).thenReturn(mock(ShipSystemAPI.class));
+        return ship;
+    }
+
     private Object capturePhaseAnchorDiveListener(ShipAPI ship, float magnitude) {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
@@ -1159,7 +1166,7 @@ class SkillEffectTest {
 
     @Test
     void phaseAnchorDiveIgnoresNonLethalDamage() {
-        ShipAPI ship = mock(ShipAPI.class);
+        ShipAPI ship = phaseShip();
         when(ship.getHitpoints()).thenReturn(100f);
         HullDamageAboutToBeTakenListener listener = (HullDamageAboutToBeTakenListener) capturePhaseAnchorDiveListener(ship, 100f);
 
@@ -1171,7 +1178,7 @@ class SkillEffectTest {
 
     @Test
     void phaseAnchorDiveSavesTheShipOnLethalDamageAndAppliesTheCrPenalty() {
-        ShipAPI ship = mock(ShipAPI.class);
+        ShipAPI ship = phaseShip();
         when(ship.getHitpoints()).thenReturn(100f);
         when(ship.getCurrentCR()).thenReturn(20f);
         FleetMemberAPI member = mock(FleetMemberAPI.class);
@@ -1198,7 +1205,7 @@ class SkillEffectTest {
 
     @Test
     void phaseAnchorDiveTreatsAMissingFleetMemberAsZeroDeployCost() {
-        ShipAPI ship = mock(ShipAPI.class);
+        ShipAPI ship = phaseShip();
         when(ship.getHitpoints()).thenReturn(100f);
         when(ship.getCurrentCR()).thenReturn(0f);
         when(ship.getFleetMember()).thenReturn(null);
@@ -1218,7 +1225,7 @@ class SkillEffectTest {
 
     @Test
     void phaseAnchorDiveIsBlockedWhenAnotherShipAlreadyDoveThisBattle() {
-        ShipAPI ship = mock(ShipAPI.class);
+        ShipAPI ship = phaseShip();
         when(ship.getHitpoints()).thenReturn(100f);
         HullDamageAboutToBeTakenListener listener = (HullDamageAboutToBeTakenListener) capturePhaseAnchorDiveListener(ship, 100f);
 
@@ -1238,7 +1245,7 @@ class SkillEffectTest {
 
     @Test
     void phaseAnchorDiveIsBlockedByInsufficientCombatReadiness() {
-        ShipAPI ship = mock(ShipAPI.class);
+        ShipAPI ship = phaseShip();
         when(ship.getHitpoints()).thenReturn(100f);
         when(ship.getCurrentCR()).thenReturn(5f);
         FleetMemberAPI member = mock(FleetMemberAPI.class);
@@ -1256,6 +1263,28 @@ class SkillEffectTest {
             assertFalse(saved);
         }
         verify(ship, never()).setHitpoints(anyFloat());
+    }
+
+    @Test
+    void phaseAnchorDiveNeverSavesAShipWithoutAPhaseCloak() {
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.getHitpoints()).thenReturn(100f);
+        HullDamageAboutToBeTakenListener listener = (HullDamageAboutToBeTakenListener) capturePhaseAnchorDiveListener(ship, 0f);
+
+        assertFalse(listener.notifyAboutToTakeHullDamage(new Object(), ship, mock(Vector2f.class), 150f));
+        assertFalse(listener.notifyAboutToTakeHullDamage(new Object(), ship, mock(Vector2f.class), 150f));
+        verify(ship, never()).setHitpoints(anyFloat());
+    }
+
+    @Test
+    void phaseAnchorEmergencyDiveCanOnlyBeAllocatedOnPhaseHulls() {
+        FleetMemberAPI phase = mock(FleetMemberAPI.class, Answers.RETURNS_DEEP_STUBS);
+        when(phase.getHullSpec().isPhase()).thenReturn(true);
+        FleetMemberAPI cruiser = mock(FleetMemberAPI.class, Answers.RETURNS_DEEP_STUBS);
+        when(cruiser.getHullSpec().isPhase()).thenReturn(false);
+
+        assertNull(PhaseSkillEffect.PHASE_ANCHOR_EMERGENCY_DIVE.blockAllocationReason(phase, 100f, List.of()));
+        assertNotNull(PhaseSkillEffect.PHASE_ANCHOR_EMERGENCY_DIVE.blockAllocationReason(cruiser, 100f, List.of()));
     }
 
     @Test

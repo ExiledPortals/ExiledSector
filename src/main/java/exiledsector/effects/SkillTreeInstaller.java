@@ -46,6 +46,7 @@ public class SkillTreeInstaller implements EveryFrameScript {
         for (FleetMemberAPI member : playerFleet.getFleetData().getMembersListCopy()) {
             changed |= adoptNpcTree(member);
             changed |= ensureHullModAppliesLast(member);
+            changed |= restoreInstalledHullMods(member);
         }
         if (changed) {
             syncedSinceLoad = true;
@@ -56,12 +57,14 @@ public class SkillTreeInstaller implements EveryFrameScript {
     public static boolean ensureInstalled(FleetMemberAPI member, ShipVariantAPI editedVariant) {
         boolean changed = adoptNpcTree(member);
         changed |= ensureHullModAppliesLast(member);
+        changed |= restoreInstalledHullMods(member);
         if (editedVariant != null && editedVariant != member.getVariant()) {
             if (NpcTreeTag.find(editedVariant) != null) {
                 clearNpcTree(editedVariant);
                 changed = true;
             }
             changed |= ensureAppliesLast(editedVariant);
+            changed |= SkillTreeHullMod.restoreInstalledPermaMods(editedVariant);
         }
         return changed;
     }
@@ -69,6 +72,14 @@ public class SkillTreeInstaller implements EveryFrameScript {
     private static boolean ensureHullModAppliesLast(FleetMemberAPI member) {
         ShipVariantAPI variant = member.getVariant().hasHullMod(SkillTreeHullMod.ID) ? member.getVariant() : ownedVariant(member);
         if (!ensureAppliesLast(variant)) {
+            return false;
+        }
+        member.setStatUpdateNeeded(true);
+        return true;
+    }
+
+    private static boolean restoreInstalledHullMods(FleetMemberAPI member) {
+        if (!SkillTreeHullMod.restoreInstalledPermaMods(member.getVariant())) {
             return false;
         }
         member.setStatUpdateNeeded(true);

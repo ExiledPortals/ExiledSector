@@ -74,7 +74,7 @@
 			"effects": [
 				{
 					"effect": "BALLISTIC_WEAPON_DAMAGE_PERCENT",
-					"magnitude": 5
+					"magnitude": 3
 				}
 			],
 			"tags": [
@@ -152,10 +152,6 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "GROUND_SUPPORT_FLAT",
-					"magnitude": 100
-				},
-				{
 					"effect": "GROUND_SUPPORT_PER_MAX_CREW_PERCENT",
 					"magnitude": 25
 				}
@@ -205,7 +201,7 @@
 			"effects": [
 				{
 					"effect": "MAX_COMBAT_READINESS_PERCENT",
-					"magnitude": 5
+					"magnitude": 2
 				}
 			],
 			"tags": [
@@ -1476,7 +1472,7 @@
 		{
 			"id": "citadel_plating",
 			"name": "Citadel Plating",
-			"icon": "",
+			"icon": "graphics/icons/containment_procedures_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{

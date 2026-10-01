@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -393,6 +394,66 @@ class SkillTreeHullModTest {
         verify(variant).removePermaMod("militarized_subsystems");
         verify(variant).removeTag("exiledSector_installed_militarized_subsystems");
         verify(variant, never()).removeTag("some_other_tag");
+    }
+
+    @Test
+    void syncLeavesAnInstalledHullModTheBuildInDialogMadeNormalAloneSoItCanStillBeBuiltIn() {
+        ShipSkillDataManager.get("ship-a").allocate(registerMilitarizedNode(), 1);
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(variant.hasHullMod("militarized_subsystems")).thenReturn(true);
+        when(variant.hasTag("exiledSector_installed_militarized_subsystems")).thenReturn(true);
+        when(variant.getPermaMods()).thenReturn(new LinkedHashSet<>());
+        when(variant.getTags()).thenReturn(List.of("exiledSector_installed_militarized_subsystems"));
+
+        SkillTreeHullMod.syncInstalledHullMods(memberWithId("ship-a"), variant);
+
+        verify(variant, never()).addPermaMod(anyString());
+        verify(variant, never()).addTag(anyString());
+    }
+
+    @Test
+    void restoringInstalledHullModsMakesOnlyTheTreesOwnNormalCopiesPermanentAgain() {
+        ShipVariantAPI demoted = mock(ShipVariantAPI.class);
+        when(demoted.getTags()).thenReturn(List.of("exiledSector_installed_militarized_subsystems", "some_other_tag"));
+        when(demoted.hasHullMod("militarized_subsystems")).thenReturn(true);
+        when(demoted.getPermaMods()).thenReturn(new LinkedHashSet<>());
+        ShipVariantAPI intact = mock(ShipVariantAPI.class);
+        when(intact.getTags()).thenReturn(List.of("exiledSector_installed_militarized_subsystems"));
+        when(intact.hasHullMod("militarized_subsystems")).thenReturn(true);
+        when(intact.getPermaMods()).thenReturn(new LinkedHashSet<>(List.of("militarized_subsystems")));
+
+        assertTrue(SkillTreeHullMod.restoreInstalledPermaMods(demoted));
+        assertFalse(SkillTreeHullMod.restoreInstalledPermaMods(intact));
+
+        verify(demoted).addPermaMod("militarized_subsystems");
+        verify(intact, never()).addPermaMod(anyString());
+    }
+
+    @Test
+    void aCopyOfTheHullModThePlayerInstalledThemselvesIsNeitherTakenOverNorMadePermanent() {
+        ShipSkillDataManager.get("ship-a").allocate(registerMilitarizedNode(), 1);
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(variant.hasHullMod("militarized_subsystems")).thenReturn(true);
+        when(variant.getPermaMods()).thenReturn(new LinkedHashSet<>());
+        when(variant.getTags()).thenReturn(List.of());
+
+        SkillTreeHullMod.syncInstalledHullMods(memberWithId("ship-a"), variant);
+
+        verify(variant, never()).addPermaMod(anyString());
+        verify(variant, never()).addTag(anyString());
+    }
+
+    @Test
+    void anInstalledHullModThePlayerBuiltInAsAnSModStaysWhenTheNodeIsRemoved() {
+        registerMilitarizedNode();
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(variant.getTags()).thenReturn(List.of("exiledSector_installed_militarized_subsystems"));
+        when(variant.getSMods()).thenReturn(new LinkedHashSet<>(List.of("militarized_subsystems")));
+
+        SkillTreeHullMod.syncInstalledHullMods(memberWithId("ship-a"), variant);
+
+        verify(variant, never()).removePermaMod(anyString());
+        verify(variant).removeTag("exiledSector_installed_militarized_subsystems");
     }
 
     @Test

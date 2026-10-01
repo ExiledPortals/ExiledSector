@@ -31,6 +31,7 @@ import org.mockito.Mockito;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -224,6 +225,22 @@ class SkillTreeInstallerTest {
 
         verify(variant, never()).removePermaMod(SkillTreeHullMod.ID);
         verify(member, never()).setStatUpdateNeeded(anyBoolean());
+    }
+
+    @Test
+    void makesAHullModTheTreeInstalledPermanentAgainOnceTheGameRunsAfterTheBuildInDialogMadeItNormal() {
+        FleetMemberAPI member = mockMember("ship", true);
+        ShipVariantAPI variant = member.getVariant();
+        when(variant.getHullMods()).thenReturn(List.of("militarized_subsystems", SkillTreeHullMod.ID));
+        when(variant.getTags()).thenReturn(List.of("exiledSector_installed_militarized_subsystems"));
+        when(variant.hasHullMod("militarized_subsystems")).thenReturn(true);
+        when(variant.getPermaMods()).thenReturn(new LinkedHashSet<>(List.of(SkillTreeHullMod.ID)));
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
+
+        new SkillTreeInstaller().advance(0.01f);
+
+        verify(variant).addPermaMod("militarized_subsystems");
+        verify(member).setStatUpdateNeeded(true);
     }
 
     @Test
@@ -426,5 +443,26 @@ class SkillTreeInstallerTest {
         assertTrue(copyTags.isEmpty());
         verify(refitCopy).removeMod(SkillTreeHullMod.ID);
         verify(refitCopy).addPermaMod(SkillTreeHullMod.ID);
+    }
+
+    private static void demoteTreeInstalledMilitarizedSubsystems(ShipVariantAPI variant) {
+        when(variant.getHullMods()).thenReturn(List.of("militarized_subsystems", SkillTreeHullMod.ID));
+        when(variant.getTags()).thenReturn(List.of("exiledSector_installed_militarized_subsystems"));
+        when(variant.hasHullMod("militarized_subsystems")).thenReturn(true);
+        when(variant.getPermaMods()).thenReturn(new LinkedHashSet<>(List.of(SkillTreeHullMod.ID)));
+    }
+
+    @Test
+    void thePanelMakesTreeInstalledHullModsPermanentAgainOnTheShipAndTheRefitCopy() {
+        FleetMemberAPI member = mockMember("ship", true);
+        demoteTreeInstalledMilitarizedSubsystems(member.getVariant());
+        ShipVariantAPI refitCopy = mock(ShipVariantAPI.class);
+        when(refitCopy.hasHullMod(SkillTreeHullMod.ID)).thenReturn(true);
+        demoteTreeInstalledMilitarizedSubsystems(refitCopy);
+
+        assertTrue(SkillTreeInstaller.ensureInstalled(member, refitCopy));
+
+        verify(member.getVariant()).addPermaMod("militarized_subsystems");
+        verify(refitCopy).addPermaMod("militarized_subsystems");
     }
 }
