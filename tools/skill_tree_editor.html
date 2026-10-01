@@ -1042,6 +1042,40 @@ function toggleConnectorHidden(a, b){
 function removeHiddenConnectorsForNode(id){
   state.hiddenConnectors = state.hiddenConnectors.filter(function(h){ return h.a !== id && h.b !== id; });
 }
+function renameNodeReferences(n, newId){
+  var oldId = n.id;
+  removeCurvesForNode(newId);
+  removeHiddenConnectorsForNode(newId);
+  n.id = newId;
+  state.nodes.forEach(function(o){
+    o.connectedTo = o.connectedTo.map(function(pid){ return pid === oldId ? newId : pid; });
+    if (o.pairedWith === oldId) o.pairedWith = newId;
+  });
+  state.curves.concat(state.hiddenConnectors).forEach(function(e){
+    if (e.a === oldId) e.a = newId;
+    if (e.b === oldId) e.b = newId;
+  });
+  drag = null;
+}
+function unlinkNodes(n, otherId){
+  n.connectedTo = n.connectedTo.filter(function(pid){ return pid !== otherId; });
+  var other = nodeById(otherId);
+  if (other) other.connectedTo = other.connectedTo.filter(function(pid){ return pid !== n.id; });
+  removeCurve(n.id, otherId);
+  var key = curveKey(n.id, otherId);
+  state.hiddenConnectors = state.hiddenConnectors.filter(function(h){ return curveKey(h.a, h.b) !== key; });
+}
+function isLinkedPair(a, b){
+  var na = nodeById(a), nb = nodeById(b);
+  return !!na && !!nb && ((na.connectedTo || []).indexOf(b) !== -1 || (nb.connectedTo || []).indexOf(a) !== -1);
+}
+function linkedEntries(entries){
+  return entries.filter(function(e){ return isLinkedPair(e.a, e.b); });
+}
+function pruneConnectorEntries(){
+  state.curves = linkedEntries(state.curves);
+  state.hiddenConnectors = linkedEntries(state.hiddenConnectors);
+}
 function snapCurveToStraightIfClose(a, b){
   var c = findCurve(a, b);
   if (!c) return;
@@ -1252,6 +1286,7 @@ function loadLocal(){
     state.anchors = parsed.anchors || [];
     state.images = parsed.images || [];
     state.stars = parsed.stars || [];
+    pruneConnectorEntries();
     return true;
   } catch(e){ return false; }
 }
@@ -2163,8 +2198,7 @@ canvasWrap.addEventListener('wheel', function(ev){
 function toggleLink(aId, bId){
   var a = nodeById(aId), b = nodeById(bId);
   if (!a || !b) return;
-  var idx = a.connectedTo.indexOf(b.id);
-  if (idx === -1) {
+  if (!isLinkedPair(a.id, b.id)) {
     a.connectedTo.push(b.id);
     b.connectedTo.push(a.id);
     if (a.orbitAnchorId && a.orbitAnchorId === b.orbitAnchorId) {
@@ -2173,10 +2207,7 @@ function toggleLink(aId, bId){
     }
     showToast(a.id + ' <-> ' + b.id + ' connected');
   } else {
-    a.connectedTo.splice(idx, 1);
-    var backIdx = b.connectedTo.indexOf(a.id);
-    if (backIdx !== -1) b.connectedTo.splice(backIdx, 1);
-    removeCurve(a.id, b.id);
+    unlinkNodes(a, b.id);
     showToast('Unlinked ' + a.id + ' from ' + b.id);
   }
   saveLocal();
@@ -2393,12 +2424,7 @@ function refreshInspector(){
       if (field === 'id') {
         var newId = inp.value.trim();
         if (!newId || nodeById(newId)) { showToast('Id must be unique and non-empty'); inp.value = n.id; return; }
-        var oldId = n.id;
-        n.id = newId;
-        state.nodes.forEach(function(o){
-          var idx = o.connectedTo.indexOf(oldId);
-          if (idx !== -1) o.connectedTo[idx] = newId;
-        });
+        renameNodeReferences(n, newId);
         state.selectedIds = [newId];
       } else if (field === 'type') {
         n.type = inp.value;
@@ -2462,14 +2488,7 @@ function refreshInspector(){
   });
   body.querySelectorAll('[data-remove-prereq]').forEach(function(btn){
     btn.addEventListener('click', function(){
-      var pid = btn.dataset.removePrereq;
-      var idx = n.connectedTo.indexOf(pid);
-      if (idx !== -1) n.connectedTo.splice(idx, 1);
-      var other = nodeById(pid);
-      if (other) {
-        var backIdx = other.connectedTo.indexOf(n.id);
-        if (backIdx !== -1) other.connectedTo.splice(backIdx, 1);
-      }
+      unlinkNodes(n, btn.dataset.removePrereq);
       saveLocal(); render(); refreshInspector();
     });
   });
@@ -2621,6 +2640,7 @@ function deleteSelectedNodes(){
   });
   ids.forEach(removeCurvesForNode);
   ids.forEach(removeHiddenConnectorsForNode);
+  state.nodes.forEach(function(o){ if (ids.indexOf(o.pairedWith) !== -1) delete o.pairedWith; });
   state.selectedIds = [];
   document.getElementById('inspector').classList.remove('open');
   saveLocal();
@@ -3743,11 +3763,13 @@ function buildTreeExportObject(){
     return out;
   });
   var out = { nodes: nodesOut };
-  if (state.curves.length) {
-    out.connectorCurves = state.curves.map(function(c){ return { a: c.a, b: c.b, controlX: c.controlX, controlY: c.controlY }; });
+  var linkedCurves = linkedEntries(state.curves);
+  var linkedHidden = linkedEntries(state.hiddenConnectors);
+  if (linkedCurves.length) {
+    out.connectorCurves = linkedCurves.map(function(c){ return { a: c.a, b: c.b, controlX: c.controlX, controlY: c.controlY }; });
   }
-  if (state.hiddenConnectors.length) {
-    out.hiddenConnectors = state.hiddenConnectors.map(function(h){ return { a: h.a, b: h.b }; });
+  if (linkedHidden.length) {
+    out.hiddenConnectors = linkedHidden.map(function(h){ return { a: h.a, b: h.b }; });
   }
   if (state.anchors.length) {
     out.orbitAnchors = state.anchors.map(function(a){
@@ -3876,6 +3898,7 @@ document.getElementById('importBtn').addEventListener('click', function(){
     try {
       if (typesRaw) { var pt = JSON.parse(typesRaw); state.types = pt.skillTypes || pt; }
       if (nodesRaw) { var pn = JSON.parse(nodesRaw); state.nodes = pn.nodes || pn; state.curves = pn.connectorCurves || []; state.hiddenConnectors = pn.hiddenConnectors || []; state.anchors = pn.orbitAnchors || []; state.images = normalizeImages(pn.staticImages); state.stars = normalizeStars(pn.stars); }
+      pruneConnectorEntries();
       root.innerHTML = '';
       state.selectedIds = [];
       saveLocal();
@@ -3903,6 +3926,7 @@ document.getElementById('resetBtn').addEventListener('click', function(){
     state.anchors = treeJson.orbitAnchors || [];
     state.images = normalizeImages(treeJson.staticImages);
     state.stars = normalizeStars(treeJson.stars);
+    pruneConnectorEntries();
     try { localStorage.removeItem('skillTreeEditor.v1'); } catch(e){}
     clearAllSelection();
     render();
