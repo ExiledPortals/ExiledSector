@@ -1,7 +1,9 @@
 package exiledsector.skills;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public record AllocatedNode(SkillNode node, SkillType effectiveType) {
 
@@ -26,5 +28,11 @@ public record AllocatedNode(SkillNode node, SkillType effectiveType) {
 
     public boolean isExclusiveWith(AllocatedNode other) {
         return isExclusiveWith(other.node().getType()) || isExclusiveWith(other.effectiveType());
+    }
+
+    public Set<String> exclusiveHullModIds() {
+        Set<String> ids = new LinkedHashSet<>(node.getType().getExclusiveHullModIds());
+        ids.addAll(effectiveType.getExclusiveHullModIds());
+        return ids;
     }
 }

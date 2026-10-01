@@ -422,7 +422,7 @@ public final class SkillTreeNodeRenderer {
 
     private boolean canToggle(SkillNode node, boolean wasAllocated, boolean isOptional) {
         if (!wasAllocated) {
-            return allocator.blockAllocationReason(node.getType()) == null;
+            return allocator.blockAllocationReason(node, null) == null;
         }
 
         boolean canDeallocate = allocator.canDeallocate(node);
@@ -448,7 +448,7 @@ public final class SkillTreeNodeRenderer {
         SkillNode node = dropdownRenderer.getOpenNode();
         dropdownRenderer.close();
         if (node == null) return;
-        if (allocator.blockAllocationReason(chosenOption) != null) return;
+        if (allocator.blockAllocationReason(node, chosenOption) != null) return;
 
         allocateOptionalNode(node, chosenOption);
     }
@@ -456,7 +456,7 @@ public final class SkillTreeNodeRenderer {
     private SkillType repeatableOptionFor(SkillNode node) {
         if (lastChosenOptionalOption == null) return null;
         if (!node.getType().getOptionalOptionIds().contains(lastChosenOptionalOption.getId())) return null;
-        if (allocator.blockAllocationReason(lastChosenOptionalOption) != null) return null;
+        if (allocator.blockAllocationReason(node, lastChosenOptionalOption) != null) return null;
         return lastChosenOptionalOption;
     }
 

@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class NpcLayoutTest {
 
     private static final ShipProfile SHIELDED_BALLISTIC_CRUISER =
-            new ShipProfile(HullSize.CRUISER, ShieldType.FRONT, 0, Set.of(WeaponKind.BALLISTIC), false);
+            new ShipProfile(HullSize.CRUISER, ShieldType.FRONT, 0, Set.of(WeaponKind.BALLISTIC), false, 0f, false);
 
     private static NpcLayout layoutRequiring(String... requires) {
         return new NpcLayout("layout", "Layout", "root", List.of(requires), "", List.of());

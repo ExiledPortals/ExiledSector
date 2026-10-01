@@ -10,8 +10,9 @@ import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.effects.SkillTreeInstaller;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedNode;
-import exiledsector.skills.AllocatedSkillEffects;
 import exiledsector.skills.HullModNames;
+import exiledsector.skills.NodeEligibility;
+import exiledsector.skills.ShipFacts;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillNode;
@@ -22,11 +23,9 @@ import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.ShipOpBudget;
 import exiledsector.skills.progression.SkillNodeOpCost;
 import exiledsector.skills.skilleffect.FleetWideEffects;
-import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -163,32 +162,22 @@ final class NodeAllocator {
         return true;
     }
 
-    String blockAllocationReason(SkillType type) {
+    String blockAllocationReason(SkillNode node, SkillType option) {
         ShipSkillData data = data();
-        if (SkillTypeUnlockStatus.isLocked(type, data)) {
+        SkillType effectiveType = option != null ? option : node.getType();
+        if (SkillTypeUnlockStatus.isLocked(effectiveType, data)) {
             return LOCKED_REASON;
         }
 
-        if (!type.allowsHullSize(member.getHullSpec().getHullSize())) {
-            return WRONG_HULL_SIZE_REASON;
+        if (!AllocatedNode.planned(node, option).exclusiveHullModIds().isEmpty()) {
+            refreshVariantHullMods();
+        }
+        NodeEligibility.Block block = NodeEligibility.check(node, option, data, ShipFacts.of(member.getHullSpec(), this::hasHullMod));
+        if (block != null) {
+            return describe(block);
         }
 
-        String hullModReason = hullModConflictReason(type);
-        if (hullModReason != null) {
-            return hullModReason;
-        }
-
-        String skillTypeReason = skillTypeConflictReason(type, data);
-        if (skillTypeReason != null) {
-            return skillTypeReason;
-        }
-
-        String itemCostReason = itemCostReason(type);
-        if (itemCostReason != null) {
-            return itemCostReason;
-        }
-
-        return effectBlockReason(type);
+        return itemCostReason(effectiveType);
     }
 
     String blockDeallocationReason(SkillNode node) {
@@ -240,43 +229,24 @@ final class NodeAllocator {
                 + " (have " + SkillItemCost.formatQuantity(have) + ").";
     }
 
-    private String hullModConflictReason(SkillType type) {
-        List<String> exclusiveHullModIds = type.getExclusiveHullModIds();
-        if (exclusiveHullModIds.isEmpty()) {
-            return null;
-        }
-
+    private void refreshVariantHullMods() {
         member.setStatUpdateNeeded(true);
         member.updateStats();
         SkillTreeHullMod.syncOpSpentHullMod(member, variant);
-        for (String hullModId : exclusiveHullModIds) {
-            if (variant.hasHullMod(hullModId)) {
-                return "Ship already has " + HullModNames.displayName(hullModId) + " installed.";
-            }
-            if (SecondInCommandCompat.hasDeactivatedSMod(variant, hullModId)) {
-                return "Ship has a deactivated " + HullModNames.displayName(hullModId) + " S-mod that Best of the Best will restore.";
-            }
-        }
-        return null;
     }
 
-    private static String skillTypeConflictReason(SkillType type, ShipSkillData data) {
-        for (AllocatedNode allocated : AllocatedNode.of(data)) {
-            if (allocated.isExclusiveWith(type)) {
-                return "Already have " + allocated.effectiveType().getDisplayName() + " allocated.";
-            }
-        }
-        return null;
+    private boolean hasHullMod(String hullModId) {
+        return variant.hasHullMod(hullModId) || SecondInCommandCompat.hasDeactivatedSMod(variant, hullModId);
     }
 
-    private String effectBlockReason(SkillType type) {
-        List<SkillEffect> currentlyAllocatedEffects = AllocatedSkillEffects.forMember(member);
-        for (SkillTypeEffect effect : type.effectsFor(member.getHullSpec().getHullSize())) {
-            String blockReason = effect.effect().blockAllocationReason(member, effect.magnitude(), currentlyAllocatedEffects);
-            if (blockReason != null) {
-                return blockReason;
-            }
-        }
-        return null;
+    private String describe(NodeEligibility.Block block) {
+        return switch (block.kind()) {
+            case WRONG_HULL_SIZE -> WRONG_HULL_SIZE_REASON;
+            case HULL_MOD_CONFLICT -> variant.hasHullMod(block.detail())
+                    ? "Ship already has " + HullModNames.displayName(block.detail()) + " installed."
+                    : "Ship has a deactivated " + HullModNames.displayName(block.detail()) + " S-mod that Best of the Best will restore.";
+            case TYPE_CONFLICT -> "Already have " + block.conflictingType().getDisplayName() + " allocated.";
+            case EFFECT_BLOCK -> block.detail();
+        };
     }
 }

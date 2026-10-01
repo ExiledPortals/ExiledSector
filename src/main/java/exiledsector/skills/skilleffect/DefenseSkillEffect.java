@@ -1,13 +1,12 @@
 package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import exiledsector.i18n.StyledText;
-
-import java.util.List;
+import exiledsector.skills.ShipFacts;
 
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
@@ -70,8 +69,8 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
         }
 
         @Override
-        public String blockAllocationReason(FleetMemberAPI member, float magnitude, List<SkillEffect> currentlyAllocatedEffects) {
-            return LowBaseArmorBonus.fits(member.getHullSpec()) ? null : "Requires a non-phase hull with low base armor.";
+        public String blockAllocationReason(ShipFacts ship, ShieldAPI.ShieldType currentShieldType) {
+            return LowBaseArmorBonus.fits(ship.hullSize(), ship.phaseHull(), ship.baseArmor()) ? null : "Requires a non-phase hull with low base armor.";
         }
 
         @Override

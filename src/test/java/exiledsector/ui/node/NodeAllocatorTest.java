@@ -133,6 +133,10 @@ class NodeAllocatorTest {
         return new SkillType.Builder(id, name, "a.png", tier);
     }
 
+    private static String blockReason(NodeAllocator allocator, SkillType type) {
+        return allocator.blockAllocationReason(new SkillNode("unplaced_" + type.getId(), type, List.of(), 0f, 0f), null);
+    }
+
     private static SkillNode register(String id, SkillType type, String... connectedTo) {
         SkillNode node = new SkillNode(id, type, List.of(connectedTo), 0f, 0f);
         SkillTree.register(node);
@@ -221,7 +225,7 @@ class NodeAllocatorTest {
         data().chooseStartingRoot(root);
         data().allocate(frontShield, 0);
 
-        assertEquals("Already have Front Shield allocated.", allocatorStartingAt(root).blockAllocationReason(omniShieldType));
+        assertEquals("Already have Front Shield allocated.", blockReason(allocatorStartingAt(root), omniShieldType));
     }
 
     @Test
@@ -232,7 +236,7 @@ class NodeAllocatorTest {
         data().chooseStartingRoot(root);
         data().allocate(lister, 0);
 
-        assertEquals("Already have Lister allocated.", allocatorStartingAt(root).blockAllocationReason(listed));
+        assertEquals("Already have Lister allocated.", blockReason(allocatorStartingAt(root), listed));
     }
 
     @Test
@@ -241,8 +245,8 @@ class NodeAllocatorTest {
         SkillType cruiserOrCapital = type("large_only", "Large Only", SkillTier.SMALL)
                 .requiredHullSizes(List.of(HullSize.CRUISER, HullSize.CAPITAL_SHIP)).build();
 
-        assertNotNull(allocatorStartingAt(root).blockAllocationReason(frigateOnly));
-        assertNull(allocatorStartingAt(root).blockAllocationReason(cruiserOrCapital));
+        assertNotNull(blockReason(allocatorStartingAt(root), frigateOnly));
+        assertNull(blockReason(allocatorStartingAt(root), cruiserOrCapital));
     }
 
     @Test
@@ -252,7 +256,20 @@ class NodeAllocatorTest {
         when(settings.getHullModSpec("heavyarmor")).thenReturn(spec);
         when(variant.hasHullMod("heavyarmor")).thenReturn(true);
 
-        assertEquals("Ship already has Heavy Armor installed.", allocatorStartingAt(root).blockAllocationReason(armorType));
+        assertEquals("Ship already has Heavy Armor installed.", blockReason(allocatorStartingAt(root), armorType));
+    }
+
+    @Test
+    void anOptionalNodesContainerRulesApplyToTheOptionChosen() {
+        HullModSpecAPI spec = mock(HullModSpecAPI.class);
+        when(spec.getDisplayName()).thenReturn("Heavy Armor");
+        when(settings.getHullModSpec("heavyarmor")).thenReturn(spec);
+        when(variant.hasHullMod("heavyarmor")).thenReturn(true);
+        SkillType plain = type("plain", "Plain", SkillTier.SMALL).build();
+        SkillNode slot = register("slot_1", type("slot", "Slot", SkillTier.SMALL).exclusiveHullModIds(List.of("heavyarmor"))
+                .optionalOptionIds(List.of("plain")).build(), "root_1");
+
+        assertEquals("Ship already has Heavy Armor installed.", allocatorStartingAt(root).blockAllocationReason(slot, plain));
     }
 
     @Test
@@ -262,9 +279,9 @@ class NodeAllocatorTest {
         when(settings.getCommoditySpec("alpha_core")).thenReturn(spec);
         NodeAllocator allocator = allocatorStartingAt(root);
 
-        assertEquals("Requires 1 Alpha Core (have 0).", allocator.blockAllocationReason(coreSlot.getType()));
+        assertEquals("Requires 1 Alpha Core (have 0).", allocator.blockAllocationReason(coreSlot, null));
         when(cargo.getCommodityQuantity("alpha_core")).thenReturn(1f);
-        assertNull(allocator.blockAllocationReason(coreSlot.getType()));
+        assertNull(allocator.blockAllocationReason(coreSlot, null));
     }
 
     @Test
@@ -309,7 +326,7 @@ class NodeAllocatorTest {
                 .unlockConditions(List.of(UnlockCondition.minShipLevel(5))).build(), "root_1");
         NodeAllocator allocator = allocatorStartingAt(root);
 
-        assertEquals(NodeAllocator.LOCKED_REASON, allocator.blockAllocationReason(secret.getType()));
+        assertEquals(NodeAllocator.LOCKED_REASON, allocator.blockAllocationReason(secret, null));
         assertTrue(allocator.snapshot().isHidden(secret));
         assertFalse(allocator.snapshot().isHidden(frontShield));
     }
@@ -322,7 +339,7 @@ class NodeAllocatorTest {
         when(variant.hasTag("sc_inactive_smods_heavyarmor")).thenReturn(true);
 
         assertEquals("Ship has a deactivated Heavy Armor S-mod that Best of the Best will restore.",
-                allocatorStartingAt(root).blockAllocationReason(armorType));
+                blockReason(allocatorStartingAt(root), armorType));
     }
 
     @Test
@@ -331,9 +348,9 @@ class NodeAllocatorTest {
         SkillType civilianOnly = type("civilian_only", "Civilian Only", SkillTier.SMALL)
                 .effects(List.of(new SkillTypeEffect(LogisticsSkillEffect.REQUIRES_CIVILIAN_GRADE_HULL, 1f))).build();
 
-        assertNotNull(allocatorStartingAt(root).blockAllocationReason(civilianOnly));
+        assertNotNull(blockReason(allocatorStartingAt(root), civilianOnly));
         when(variant.hasHullMod(HullMods.CIVGRADE)).thenReturn(true);
-        assertNull(allocatorStartingAt(root).blockAllocationReason(civilianOnly));
+        assertNull(blockReason(allocatorStartingAt(root), civilianOnly));
     }
 
     private void fitWingsWithBays(int fittedWings, float bays) {

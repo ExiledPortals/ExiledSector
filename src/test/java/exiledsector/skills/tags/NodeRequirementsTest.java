@@ -18,7 +18,7 @@ class NodeRequirementsTest {
 
     private static ShipProfile profile(HullSize hullSize, ShieldType shieldType, int fighterBays,
                                        Set<WeaponKind> weaponKinds, boolean flagship) {
-        return new ShipProfile(hullSize, shieldType, fighterBays, weaponKinds, flagship);
+        return new ShipProfile(hullSize, shieldType, fighterBays, weaponKinds, flagship, 0f, shieldType == ShieldType.PHASE);
     }
 
     private static ShipProfile hull(HullSize hullSize) {

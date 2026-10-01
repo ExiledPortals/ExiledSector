@@ -5,10 +5,8 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.skills.ShipFacts;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -29,9 +27,7 @@ class LowBaseArmorBonusTest {
     }
 
     private static String blockReason(ShipHullSpecAPI hull) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        when(member.getHullSpec()).thenReturn(hull);
-        return EFFECT.blockAllocationReason(member, 1f, List.of());
+        return EFFECT.blockAllocationReason(ShipFacts.of(hull, hullModId -> false), hull.getShieldType());
     }
 
     @Test

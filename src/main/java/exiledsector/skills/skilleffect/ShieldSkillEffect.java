@@ -12,8 +12,8 @@ import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.combat.listeners.DamageListener;
 import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.i18n.StyledText;
+import exiledsector.skills.ShipFacts;
 import org.lwjgl.util.vector.Vector2f;
 
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
@@ -42,13 +42,8 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
         }
 
         @Override
-        public String blockAllocationReason(FleetMemberAPI member, float magnitude, List<SkillEffect> currentlyAllocatedEffects) {
-            return shieldTypeBlockReason(resolveDisplayShieldType(member.getHullSpec().getShieldType(), currentlyAllocatedEffects));
-        }
-
-        @Override
-        public String shieldTypeBlockReason(ShieldAPI.ShieldType resolvedShieldType) {
-            boolean hasShields = resolvedShieldType == ShieldAPI.ShieldType.FRONT || resolvedShieldType == ShieldAPI.ShieldType.OMNI;
+        public String blockAllocationReason(ShipFacts ship, ShieldAPI.ShieldType currentShieldType) {
+            boolean hasShields = currentShieldType == ShieldAPI.ShieldType.FRONT || currentShieldType == ShieldAPI.ShieldType.OMNI;
             return hasShields ? null : "Ship has no shields.";
         }
     },
@@ -78,13 +73,8 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
         }
 
         @Override
-        public String blockAllocationReason(FleetMemberAPI member, float magnitude, List<SkillEffect> currentlyAllocatedEffects) {
-            return shieldTypeBlockReason(resolveDisplayShieldType(member.getHullSpec().getShieldType(), currentlyAllocatedEffects));
-        }
-
-        @Override
-        public String shieldTypeBlockReason(ShieldAPI.ShieldType resolvedShieldType) {
-            return resolvedShieldType == ShieldAPI.ShieldType.FRONT ? "Ship already has front shields." : null;
+        public String blockAllocationReason(ShipFacts ship, ShieldAPI.ShieldType currentShieldType) {
+            return currentShieldType == ShieldAPI.ShieldType.FRONT ? "Ship already has front shields." : null;
         }
     },
     CONVERT_SHIELD_TO_OMNI {
@@ -101,13 +91,8 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
         }
 
         @Override
-        public String blockAllocationReason(FleetMemberAPI member, float magnitude, List<SkillEffect> currentlyAllocatedEffects) {
-            return shieldTypeBlockReason(resolveDisplayShieldType(member.getHullSpec().getShieldType(), currentlyAllocatedEffects));
-        }
-
-        @Override
-        public String shieldTypeBlockReason(ShieldAPI.ShieldType resolvedShieldType) {
-            return resolvedShieldType == ShieldAPI.ShieldType.OMNI ? "Ship already has omni-directional shields." : null;
+        public String blockAllocationReason(ShipFacts ship, ShieldAPI.ShieldType currentShieldType) {
+            return currentShieldType == ShieldAPI.ShieldType.OMNI ? "Ship already has omni-directional shields." : null;
         }
     },
     SHIELD_ARC_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getShieldArcBonus), StatNames.SHIELD_ARC, false),

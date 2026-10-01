@@ -909,102 +909,33 @@ class SkillEffectTest {
         assertEquals(com.fs.starfarer.api.combat.ShieldAPI.ShieldType.FRONT, result);
     }
 
-    private static FleetMemberAPI mockMemberWithShieldType(com.fs.starfarer.api.combat.ShieldAPI.ShieldType shieldType) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        ShipHullSpecAPI hullSpec = mock(ShipHullSpecAPI.class);
-        when(member.getHullSpec()).thenReturn(hullSpec);
-        when(hullSpec.getShieldType()).thenReturn(shieldType);
-        return member;
+    private static final ShipFacts ANY_SHIP = new ShipFacts(ShipAPI.HullSize.CRUISER,
+            com.fs.starfarer.api.combat.ShieldAPI.ShieldType.FRONT, false, 1000f, hullModId -> false);
+
+    private static String shieldBlock(SkillEffect effect, com.fs.starfarer.api.combat.ShieldAPI.ShieldType currentShieldType) {
+        return effect.blockAllocationReason(ANY_SHIP, currentShieldType);
     }
 
     @Test
-    void convertShieldToFrontBlocksAllocationWhenShipAlreadyHasFrontShields() {
-        FleetMemberAPI member = mockMemberWithShieldType(com.fs.starfarer.api.combat.ShieldAPI.ShieldType.FRONT);
-
-        String reason = ShieldSkillEffect.CONVERT_SHIELD_TO_FRONT.blockAllocationReason(member, 0f, List.of());
-
-        assertEquals("Ship already has front shields.", reason);
-    }
-
-    @Test
-    void convertShieldToFrontAllowsAllocationWhenShipHasOmniShields() {
-        FleetMemberAPI member = mockMemberWithShieldType(com.fs.starfarer.api.combat.ShieldAPI.ShieldType.OMNI);
-
-        String reason = ShieldSkillEffect.CONVERT_SHIELD_TO_FRONT.blockAllocationReason(member, 0f, List.of());
-
-        assertNull(reason);
-    }
-
-    @Test
-    void convertShieldToOmniBlocksAllocationWhenShipAlreadyHasOmniShields() {
-        FleetMemberAPI member = mockMemberWithShieldType(com.fs.starfarer.api.combat.ShieldAPI.ShieldType.OMNI);
-
-        String reason = ShieldSkillEffect.CONVERT_SHIELD_TO_OMNI.blockAllocationReason(member, 0f, List.of());
-
-        assertEquals("Ship already has omni-directional shields.", reason);
-    }
-
-    @Test
-    void convertShieldToOmniAllowsAllocationWhenShipHasFrontShields() {
-        FleetMemberAPI member = mockMemberWithShieldType(com.fs.starfarer.api.combat.ShieldAPI.ShieldType.FRONT);
-
-        String reason = ShieldSkillEffect.CONVERT_SHIELD_TO_OMNI.blockAllocationReason(member, 0f, List.of());
-
-        assertNull(reason);
-    }
-
-    @Test
-    void removeShieldBlocksAllocationWhenShipHasNoShields() {
-        FleetMemberAPI member = mockMemberWithShieldType(com.fs.starfarer.api.combat.ShieldAPI.ShieldType.NONE);
-
-        String reason = ShieldSkillEffect.REMOVE_SHIELD.blockAllocationReason(member, 0f, List.of());
-
-        assertEquals("Ship has no shields.", reason);
-    }
-
-    @Test
-    void removeShieldBlocksAllocationOnPhaseShipsBecauseThePhaseCloakIsNotAShield() {
-        FleetMemberAPI member = mockMemberWithShieldType(com.fs.starfarer.api.combat.ShieldAPI.ShieldType.PHASE);
-
-        String reason = ShieldSkillEffect.REMOVE_SHIELD.blockAllocationReason(member, 0f, List.of());
-
-        assertEquals("Ship has no shields.", reason);
-    }
-
-    @Test
-    void removeShieldAllowsAllocationWhenShipHasShields() {
-        FleetMemberAPI member = mockMemberWithShieldType(com.fs.starfarer.api.combat.ShieldAPI.ShieldType.FRONT);
-
-        String reason = ShieldSkillEffect.REMOVE_SHIELD.blockAllocationReason(member, 0f, List.of());
-
-        assertNull(reason);
-    }
-
-    @Test
-    void convertShieldToFrontAccountsForAlreadyAllocatedShieldEffects() {
-        FleetMemberAPI member = mockMemberWithShieldType(com.fs.starfarer.api.combat.ShieldAPI.ShieldType.NONE);
-
-        String reason = ShieldSkillEffect.CONVERT_SHIELD_TO_FRONT.blockAllocationReason(
-                member, 0f, List.of(ShieldSkillEffect.CREATE_FRONT_SHIELD_IF_NONE));
-
-        assertEquals("Ship already has front shields.", reason);
-    }
-
-    @Test
-    void shieldTypeBlockReasonsNeedOnlyTheResolvedShieldType() {
+    void shieldConversionsAreBlockedOnlyWhenTheShipAlreadyHasThatShield() {
         com.fs.starfarer.api.combat.ShieldAPI.ShieldType front = com.fs.starfarer.api.combat.ShieldAPI.ShieldType.FRONT;
         com.fs.starfarer.api.combat.ShieldAPI.ShieldType omni = com.fs.starfarer.api.combat.ShieldAPI.ShieldType.OMNI;
 
-        assertEquals("Ship already has front shields.", ShieldSkillEffect.CONVERT_SHIELD_TO_FRONT.shieldTypeBlockReason(front));
-        assertNull(ShieldSkillEffect.CONVERT_SHIELD_TO_FRONT.shieldTypeBlockReason(omni));
-        assertEquals("Ship already has omni-directional shields.", ShieldSkillEffect.CONVERT_SHIELD_TO_OMNI.shieldTypeBlockReason(omni));
+        assertEquals("Ship already has front shields.", shieldBlock(ShieldSkillEffect.CONVERT_SHIELD_TO_FRONT, front));
+        assertNull(shieldBlock(ShieldSkillEffect.CONVERT_SHIELD_TO_FRONT, omni));
+        assertEquals("Ship already has omni-directional shields.", shieldBlock(ShieldSkillEffect.CONVERT_SHIELD_TO_OMNI, omni));
+        assertNull(shieldBlock(ShieldSkillEffect.CONVERT_SHIELD_TO_OMNI, front));
+        assertNull(shieldBlock(ShieldSkillEffect.SHIELD_ARC_PERCENT, front));
+    }
+
+    @Test
+    void removeShieldNeedsAShieldAndThePhaseCloakIsNotOne() {
         assertEquals("Ship has no shields.",
-                ShieldSkillEffect.REMOVE_SHIELD.shieldTypeBlockReason(com.fs.starfarer.api.combat.ShieldAPI.ShieldType.NONE));
+                shieldBlock(ShieldSkillEffect.REMOVE_SHIELD, com.fs.starfarer.api.combat.ShieldAPI.ShieldType.NONE));
         assertEquals("Ship has no shields.",
-                ShieldSkillEffect.REMOVE_SHIELD.shieldTypeBlockReason(com.fs.starfarer.api.combat.ShieldAPI.ShieldType.PHASE));
-        assertNull(ShieldSkillEffect.REMOVE_SHIELD.shieldTypeBlockReason(front));
-        assertNull(ShieldSkillEffect.REMOVE_SHIELD.shieldTypeBlockReason(omni));
-        assertNull(ShieldSkillEffect.SHIELD_ARC_PERCENT.shieldTypeBlockReason(front));
+                shieldBlock(ShieldSkillEffect.REMOVE_SHIELD, com.fs.starfarer.api.combat.ShieldAPI.ShieldType.PHASE));
+        assertNull(shieldBlock(ShieldSkillEffect.REMOVE_SHIELD, com.fs.starfarer.api.combat.ShieldAPI.ShieldType.FRONT));
+        assertNull(shieldBlock(ShieldSkillEffect.REMOVE_SHIELD, com.fs.starfarer.api.combat.ShieldAPI.ShieldType.OMNI));
     }
 
     @Test
@@ -1279,13 +1210,12 @@ class SkillEffectTest {
 
     @Test
     void phaseAnchorEmergencyDiveCanOnlyBeAllocatedOnPhaseHulls() {
-        FleetMemberAPI phase = mock(FleetMemberAPI.class, Answers.RETURNS_DEEP_STUBS);
-        when(phase.getHullSpec().isPhase()).thenReturn(true);
-        FleetMemberAPI cruiser = mock(FleetMemberAPI.class, Answers.RETURNS_DEEP_STUBS);
-        when(cruiser.getHullSpec().isPhase()).thenReturn(false);
+        com.fs.starfarer.api.combat.ShieldAPI.ShieldType phaseCloak = com.fs.starfarer.api.combat.ShieldAPI.ShieldType.PHASE;
+        ShipFacts phase = new ShipFacts(ShipAPI.HullSize.CRUISER, phaseCloak, true, 500f, hullModId -> false);
 
-        assertNull(PhaseSkillEffect.PHASE_ANCHOR_EMERGENCY_DIVE.blockAllocationReason(phase, 100f, List.of()));
-        assertNotNull(PhaseSkillEffect.PHASE_ANCHOR_EMERGENCY_DIVE.blockAllocationReason(cruiser, 100f, List.of()));
+        assertNull(PhaseSkillEffect.PHASE_ANCHOR_EMERGENCY_DIVE.blockAllocationReason(phase, phaseCloak));
+        assertNotNull(PhaseSkillEffect.PHASE_ANCHOR_EMERGENCY_DIVE.blockAllocationReason(ANY_SHIP,
+                com.fs.starfarer.api.combat.ShieldAPI.ShieldType.FRONT));
     }
 
     @Test

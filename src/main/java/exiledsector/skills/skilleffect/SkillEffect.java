@@ -5,8 +5,7 @@ import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.i18n.StyledText;
-
-import java.util.List;
+import exiledsector.skills.ShipFacts;
 
 public interface SkillEffect {
 
@@ -43,11 +42,7 @@ public interface SkillEffect {
         return null;
     }
 
-    default String blockAllocationReason(FleetMemberAPI member, float magnitude, List<SkillEffect> currentlyAllocatedEffects) {
-        return null;
-    }
-
-    default String shieldTypeBlockReason(ShieldAPI.ShieldType resolvedShieldType) {
+    default String blockAllocationReason(ShipFacts ship, ShieldAPI.ShieldType currentShieldType) {
         return null;
     }
 

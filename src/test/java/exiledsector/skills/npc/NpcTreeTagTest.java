@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
 class NpcTreeTagTest {
 
     private static final ShipProfile FRIGATE =
-            new ShipProfile(HullSize.FRIGATE, ShieldType.FRONT, 0, Set.of(WeaponKind.BALLISTIC), false);
+            new ShipProfile(HullSize.FRIGATE, ShieldType.FRONT, 0, Set.of(WeaponKind.BALLISTIC), false, 0f, false);
 
     @BeforeEach
     void setUp() {

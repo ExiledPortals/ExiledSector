@@ -315,7 +315,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         boolean conflictFound = false;
         for (AllocatedNode allocated : allocatedNodes) {
             SkillType type = allocated.effectiveType();
-            for (String hullModId : type.getExclusiveHullModIds()) {
+            for (String hullModId : allocated.exclusiveHullModIds()) {
                 if (isRemovableConflict(variant, hullModId)) {
                     MagicIncompatibleHullmods.removeHullmodWithWarning(variant, hullModId, SkillConflictWarningHullMod.ID);
                     variant.removeMod(MAGICLIB_WARNING_HULLMOD_ID);

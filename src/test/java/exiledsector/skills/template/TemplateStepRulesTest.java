@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class TemplateStepRulesTest {
 
     private static final Predicate<SkillNode> ALLOCATABLE = node -> true;
-    private static final Function<SkillType, String> UNBLOCKED = type -> null;
+    private static final BiFunction<SkillNode, SkillType, String> UNBLOCKED = (node, option) -> null;
 
     private ShipSkillData data;
 
@@ -87,7 +87,7 @@ class TemplateStepRulesTest {
     @Test
     void aNodeThatCannotBeAllocatedIsSkippedWithoutConsultingTheBlockRules() {
         AtomicInteger blockChecks = new AtomicInteger();
-        Function<SkillType, String> countingBlock = type -> {
+        BiFunction<SkillNode, SkillType, String> countingBlock = (node, option) -> {
             blockChecks.incrementAndGet();
             return null;
         };
@@ -100,10 +100,10 @@ class TemplateStepRulesTest {
 
     @Test
     void aBlockReasonOnTheNodeOrItsChosenOptionSkipsIt() {
-        Function<SkillType, String> blockHull = type -> type.getId().equals("hull") ? "blocked" : null;
+        BiFunction<SkillNode, SkillType, String> blockHull = (node, option) -> option != null && option.getId().equals("hull") ? "blocked" : null;
 
         assertEquals(StepVerdict.BLOCKED, TemplateStepRules.verdict(new TemplateStep("slot", "hull"), data, "root", ALLOCATABLE, blockHull));
-        assertEquals(StepVerdict.BLOCKED, TemplateStepRules.verdict(new TemplateStep("armor", null), data, "root", ALLOCATABLE, type -> "x"));
+        assertEquals(StepVerdict.BLOCKED, TemplateStepRules.verdict(new TemplateStep("armor", null), data, "root", ALLOCATABLE, (node, option) -> "x"));
     }
 
     @Test

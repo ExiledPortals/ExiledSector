@@ -2,6 +2,7 @@ package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipCommand;
 import com.fs.starfarer.api.combat.ShipSystemAPI;
@@ -12,10 +13,10 @@ import com.fs.starfarer.api.impl.campaign.skills.NeuralLinkScript;
 import com.fs.starfarer.api.util.FaderUtil;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.Translation;
+import exiledsector.skills.ShipFacts;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
-import java.util.List;
 import java.util.Map;
 
 import static exiledsector.skills.skilleffect.StatMode.MULT;
@@ -48,8 +49,8 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
         }
 
         @Override
-        public String blockAllocationReason(FleetMemberAPI member, float magnitude, List<SkillEffect> currentlyAllocatedEffects) {
-            return member.getHullSpec().isPhase() ? null : "Requires a phase hull.";
+        public String blockAllocationReason(ShipFacts ship, ShieldAPI.ShieldType currentShieldType) {
+            return ship.phaseHull() ? null : "Requires a phase hull.";
         }
     };
 

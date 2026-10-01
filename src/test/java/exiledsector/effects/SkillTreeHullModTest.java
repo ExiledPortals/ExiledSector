@@ -490,6 +490,29 @@ class SkillTreeHullModTest {
     }
 
     @Test
+    void removeHullModsConflictingWithAllocatedSkillsAlsoStripsWhatAnOptionalNodesContainerExcludes() {
+        SkillType plain = new SkillType.Builder("plain", "Plain", "a.png", SkillTier.SMALL).build();
+        SkillTree.registerType(plain);
+        SkillType slotType = new SkillType.Builder("slot", "Slot", "a.png", SkillTier.SMALL)
+                .exclusiveHullModIds(List.of("heavyarmor"))
+                .optionalOptionIds(List.of("plain"))
+                .build();
+        SkillNode slotNode = new SkillNode("slot_1", slotType, List.of(), 0f, 0f);
+        SkillTree.register(slotNode);
+        ShipSkillDataManager.get("ship-a").selectOption(slotNode, plain, 1);
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(variant.hasHullMod("heavyarmor")).thenReturn(true);
+        when(variant.getHullMods()).thenReturn(new LinkedHashSet<>(List.of("heavyarmor")));
+        when(variant.getSMods()).thenReturn(new LinkedHashSet<>());
+        globalMock.when(Global::getSettings).thenReturn(mock(SettingsAPI.class));
+
+        SkillTreeHullMod.removeHullModsConflictingWithAllocatedSkills(memberWithId("ship-a"), variant);
+
+        verify(variant).removeMod("heavyarmor");
+        verify(variant).addMod("exiledSector_conflictWarning");
+    }
+
+    @Test
     void removeHullModsConflictingWithAllocatedSkillsDoesNothingWhenNoConflictWasEverPresent() {
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");

@@ -93,7 +93,7 @@ public final class NpcFleetLeveller {
     private static void stripConflictingHullMods(ShipVariantAPI variant, ShipSkillData data) {
         Set<String> removable = NpcHullMods.of(variant).removable();
         for (AllocatedNode allocated : AllocatedNode.of(data)) {
-            for (String hullModId : allocated.effectiveType().getExclusiveHullModIds()) {
+            for (String hullModId : allocated.exclusiveHullModIds()) {
                 if (removable.contains(hullModId)) {
                     variant.removeMod(hullModId);
                 }

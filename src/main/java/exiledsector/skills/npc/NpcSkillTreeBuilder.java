@@ -1,17 +1,15 @@
 package exiledsector.skills.npc;
 
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
-import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.AllocatedNode;
-import exiledsector.skills.AllocatedSkillEffects;
+import exiledsector.skills.NodeEligibility;
+import exiledsector.skills.ShipFacts;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillTreeTopology;
 import exiledsector.skills.SkillType;
-import exiledsector.skills.SkillTypeEffect;
-import exiledsector.skills.skilleffect.ShieldSkillEffect;
 import exiledsector.skills.tags.NodeRequirements;
 import exiledsector.skills.tags.ShipProfile;
 
@@ -21,7 +19,6 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -102,8 +99,8 @@ public final class NpcSkillTreeBuilder {
         static AllocationState of(BuildContext context) {
             ShipSkillData data = context.data();
             ShipProfile profile = context.profile();
-            return new AllocationState(AllocatedNode.of(data), ShieldSkillEffect.resolveDisplayShieldType(profile.shieldType(),
-                    AllocatedSkillEffects.forData(data, profile.hullSize())));
+            return new AllocationState(AllocatedNode.of(data),
+                    NodeEligibility.currentShieldType(data, profile.hullSize(), profile.shieldType()));
         }
     }
 
@@ -316,54 +313,21 @@ public final class NpcSkillTreeBuilder {
 
     private static String fitSkipReason(BuildContext context, AllocationState state, SkillNode node, SkillType option,
                                         Set<String> installed) {
-        HullSize hullSize = context.profile().hullSize();
-        if (!node.getType().allowsHullSize(hullSize) || option != null && !option.allowsHullSize(hullSize)) {
-            return NpcBuildStep.WRONG_HULL_SIZE;
+        NodeEligibility.Block block = NodeEligibility.check(node, option, state.allocated(), state.shieldType(),
+                ShipFacts.of(context.profile(), installed::contains));
+        if (block != null) {
+            return skipReason(block);
         }
         String unmet = NodeRequirements.firstUnmet(node.effectiveTags(option), context.profile());
-        if (unmet != null) {
-            return NpcBuildStep.UNMET_REQUIREMENT + unmet;
-        }
-        for (String hullModId : exclusiveHullModIds(node.getType(), option)) {
-            if (installed.contains(hullModId)) {
-                return NpcBuildStep.INSTALLED_HULLMOD_CONFLICT + hullModId;
-            }
-        }
-        String conflictingType = conflictingAllocatedTypeId(state.allocated(), AllocatedNode.planned(node, option));
-        if (conflictingType != null) {
-            return NpcBuildStep.EXCLUSIVE_TYPE_CONFLICT + conflictingType;
-        }
-        String shipStateReason = shipStateBlockReason(state.shieldType(), option != null ? option : node.getType(), hullSize);
-        if (shipStateReason != null) {
-            return NpcBuildStep.BLOCKED_BY_SHIP_STATE + shipStateReason;
-        }
-        return null;
+        return unmet == null ? null : NpcBuildStep.UNMET_REQUIREMENT + unmet;
     }
 
-    private static String shipStateBlockReason(ShieldType shieldType, SkillType effectiveType, HullSize hullSize) {
-        for (SkillTypeEffect effect : effectiveType.effectsFor(hullSize)) {
-            String reason = effect.effect().shieldTypeBlockReason(shieldType);
-            if (reason != null) {
-                return reason;
-            }
-        }
-        return null;
-    }
-
-    private static Set<String> exclusiveHullModIds(SkillType type, SkillType option) {
-        Set<String> ids = new LinkedHashSet<>(type.getExclusiveHullModIds());
-        if (option != null) {
-            ids.addAll(option.getExclusiveHullModIds());
-        }
-        return ids;
-    }
-
-    private static String conflictingAllocatedTypeId(List<AllocatedNode> allocatedNodes, AllocatedNode candidate) {
-        for (AllocatedNode allocated : allocatedNodes) {
-            if (allocated.isExclusiveWith(candidate)) {
-                return allocated.effectiveType().getId();
-            }
-        }
-        return null;
+    private static String skipReason(NodeEligibility.Block block) {
+        return switch (block.kind()) {
+            case WRONG_HULL_SIZE -> NpcBuildStep.WRONG_HULL_SIZE;
+            case HULL_MOD_CONFLICT -> NpcBuildStep.INSTALLED_HULLMOD_CONFLICT + block.detail();
+            case TYPE_CONFLICT -> NpcBuildStep.EXCLUSIVE_TYPE_CONFLICT + block.detail();
+            case EFFECT_BLOCK -> NpcBuildStep.BLOCKED_BY_SHIP_STATE + block.detail();
+        };
     }
 }

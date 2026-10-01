@@ -1,15 +1,14 @@
 package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
-
-import java.util.List;
+import exiledsector.skills.ShipFacts;
 
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
@@ -117,8 +116,8 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
         }
 
         @Override
-        public String blockAllocationReason(FleetMemberAPI member, float magnitude, List<SkillEffect> currentlyAllocatedEffects) {
-            return member.getVariant().hasHullMod(HullMods.CIVGRADE) ? null : "Requires a civilian-grade hull.";
+        public String blockAllocationReason(ShipFacts ship, ShieldAPI.ShieldType currentShieldType) {
+            return ship.hasHullMod().test(HullMods.CIVGRADE) ? null : "Requires a civilian-grade hull.";
         }
     },
     CREW_LOSS_PERCENT(PERCENT, stat(MutableShipStatsAPI::getCrewLossMult), "stat.crewCasualties", true),

@@ -3,15 +3,16 @@ package exiledsector.skills.skilleffect;
 import com.fs.starfarer.api.combat.FighterWingAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
+import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.loading.WingRole;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.skills.ShipFacts;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -158,16 +159,11 @@ class FighterAndLogisticsEffectsTest {
 
     @Test
     void civilianOnlyNodesAreBlockedOnMilitaryHulls() {
-        FleetMemberAPI civilian = mock(FleetMemberAPI.class);
-        FleetMemberAPI military = mock(FleetMemberAPI.class);
-        ShipVariantAPI civilianVariant = mock(ShipVariantAPI.class);
-        ShipVariantAPI militaryVariant = mock(ShipVariantAPI.class);
-        when(civilian.getVariant()).thenReturn(civilianVariant);
-        when(military.getVariant()).thenReturn(militaryVariant);
-        when(civilianVariant.hasHullMod(HullMods.CIVGRADE)).thenReturn(true);
+        ShipFacts civilian = new ShipFacts(ShipAPI.HullSize.FRIGATE, ShieldAPI.ShieldType.FRONT, false, 100f, HullMods.CIVGRADE::equals);
+        ShipFacts military = new ShipFacts(ShipAPI.HullSize.FRIGATE, ShieldAPI.ShieldType.FRONT, false, 100f, hullModId -> false);
 
-        assertNull(LogisticsSkillEffect.REQUIRES_CIVILIAN_GRADE_HULL.blockAllocationReason(civilian, 1f, List.of()));
-        assertNotNull(LogisticsSkillEffect.REQUIRES_CIVILIAN_GRADE_HULL.blockAllocationReason(military, 1f, List.of()));
+        assertNull(LogisticsSkillEffect.REQUIRES_CIVILIAN_GRADE_HULL.blockAllocationReason(civilian, ShieldAPI.ShieldType.FRONT));
+        assertNotNull(LogisticsSkillEffect.REQUIRES_CIVILIAN_GRADE_HULL.blockAllocationReason(military, ShieldAPI.ShieldType.FRONT));
     }
 
     @Test

@@ -1,7 +1,6 @@
 package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import exiledsector.i18n.NumberText;
 
 import java.util.ArrayList;
@@ -36,9 +35,9 @@ final class LowBaseArmorBonus {
         return scale.bonusWithNoArmor() + (scale.bonusAtCutoff() - scale.bonusWithNoArmor()) * progress;
     }
 
-    static boolean fits(ShipHullSpecAPI hull) {
-        Scale scale = SCALES.get(hull.getHullSize());
-        return scale != null && !hull.isPhase() && hull.getArmorRating() <= scale.cutoff();
+    static boolean fits(HullSize hullSize, boolean phaseHull, float baseArmor) {
+        Scale scale = SCALES.get(hullSize);
+        return scale != null && !phaseHull && baseArmor <= scale.cutoff();
     }
 
     static String mostByHullSize(float magnitude) {

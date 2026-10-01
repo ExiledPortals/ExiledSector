@@ -85,6 +85,20 @@ class ShipProfileTest {
     }
 
     @Test
+    void phaseAndBaseArmorComeFromTheHullSpecNotTheDefenceType() {
+        FleetMemberAPI damperShip = member(HullSize.FRIGATE, ShieldType.PHASE, 0, variant(), false);
+        when(damperShip.getHullSpec().getArmorRating()).thenReturn(600f);
+        FleetMemberAPI phaseShip = member(HullSize.FRIGATE, ShieldType.PHASE, 0, variant(), false);
+        when(phaseShip.getHullSpec().isPhase()).thenReturn(true);
+
+        ShipProfile damper = ShipProfile.of(damperShip);
+
+        assertFalse(damper.phaseHull());
+        assertEquals(600f, damper.baseArmor());
+        assertTrue(ShipProfile.of(phaseShip).phaseHull());
+    }
+
+    @Test
     void fighterBaysAddedByHullmodsCountEvenWhenTheHullHasNone() {
         ShipProfile profile = ShipProfile.of(withFlightDecks(member(HullSize.CRUISER, ShieldType.FRONT, 0, variant(), false), 1));
 
@@ -169,7 +183,7 @@ class ShipProfileTest {
 
     @Test
     void weaponKindsAreNeverNullAndCannotBeModified() {
-        ShipProfile profile = new ShipProfile(HullSize.FRIGATE, ShieldType.NONE, 0, null, false);
+        ShipProfile profile = new ShipProfile(HullSize.FRIGATE, ShieldType.NONE, 0, null, false, 0f, false);
 
         assertTrue(profile.weaponKinds().isEmpty());
         assertThrows(UnsupportedOperationException.class, () -> profile.weaponKinds().add(WeaponKind.MISSILE));

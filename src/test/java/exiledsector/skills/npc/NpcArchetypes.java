@@ -39,6 +39,6 @@ public final class NpcArchetypes {
 
     private static Archetype archetype(String name, HullSize hullSize, ShieldType shieldType, int fighterBays,
                                        WeaponKind first, WeaponKind... rest) {
-        return new Archetype(name, new ShipProfile(hullSize, shieldType, fighterBays, EnumSet.of(first, rest), false));
+        return new Archetype(name, new ShipProfile(hullSize, shieldType, fighterBays, EnumSet.of(first, rest), false, 0f, shieldType == ShieldType.PHASE));
     }
 }

@@ -35,8 +35,8 @@ class NpcLayoutsTest {
     void onlyLayoutsWhoseRequirementsTheShipMeetsAreEligible() {
         NpcLayouts.register(Map.of("carrier", layout("carrier", List.of("req_fighter_bays")),
                 "bulwark", layout("bulwark", List.of())));
-        ShipProfile noBays = new ShipProfile(HullSize.DESTROYER, ShieldType.FRONT, 0, Set.of(WeaponKind.BALLISTIC), false);
-        ShipProfile carrier = new ShipProfile(HullSize.DESTROYER, ShieldType.FRONT, 2, Set.of(WeaponKind.BALLISTIC), false);
+        ShipProfile noBays = new ShipProfile(HullSize.DESTROYER, ShieldType.FRONT, 0, Set.of(WeaponKind.BALLISTIC), false, 0f, false);
+        ShipProfile carrier = new ShipProfile(HullSize.DESTROYER, ShieldType.FRONT, 2, Set.of(WeaponKind.BALLISTIC), false, 0f, false);
 
         assertEquals(List.of("bulwark"), NpcLayouts.eligibleFor(noBays).stream().map(NpcLayout::id).toList());
         assertEquals(List.of("bulwark", "carrier"), NpcLayouts.eligibleFor(carrier).stream().map(NpcLayout::id).toList());

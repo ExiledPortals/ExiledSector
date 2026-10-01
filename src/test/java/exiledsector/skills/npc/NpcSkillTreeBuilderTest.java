@@ -9,6 +9,7 @@ import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.layout.SkillNodeDecoration;
+import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.skills.skilleffect.ShieldSkillEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.tags.ShipProfile;
@@ -29,9 +30,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class NpcSkillTreeBuilderTest {
 
     private static final ShipProfile SHIELDED_BALLISTIC_FRIGATE =
-            new ShipProfile(HullSize.FRIGATE, ShieldType.FRONT, 0, Set.of(WeaponKind.BALLISTIC), false);
+            new ShipProfile(HullSize.FRIGATE, ShieldType.FRONT, 0, Set.of(WeaponKind.BALLISTIC), false, 0f, false);
     private static final ShipProfile OMNI_SHIELDED_FRIGATE =
-            new ShipProfile(HullSize.FRIGATE, ShieldType.OMNI, 0, Set.of(WeaponKind.BALLISTIC), false);
+            new ShipProfile(HullSize.FRIGATE, ShieldType.OMNI, 0, Set.of(WeaponKind.BALLISTIC), false, 0f, false);
     private static final String ROOT = "root";
 
     @BeforeEach
@@ -299,6 +300,16 @@ class NpcSkillTreeBuilderTest {
                 SHIELDED_BALLISTIC_FRIGATE, permanent("expanded_cargo_holds"));
 
         assertEquals(List.of("conflicts with installed hullmod: expanded_cargo_holds"), outcomes(build));
+    }
+
+    @Test
+    void skipsTheLowBaseArmorBonusOnHullsTheUiWouldAlsoRefuse() {
+        node("citadel_1", effectType("citadel", DefenseSkillEffect.ARMOR_FLAT_FOR_LOW_BASE_ARMOR), ROOT);
+        ShipProfile heavilyArmoured = new ShipProfile(HullSize.FRIGATE, ShieldType.FRONT, 0, Set.of(WeaponKind.BALLISTIC), false, 2000f, false);
+
+        NpcTreeBuild build = NpcSkillTreeBuilder.build(layout(entry("citadel_1")), 5, heavilyArmoured, NpcHullMods.NONE);
+
+        assertEquals(List.of("blocked by ship state: Requires a non-phase hull with low base armor."), outcomes(build));
     }
 
     @Test
