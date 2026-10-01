@@ -9,6 +9,7 @@ import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.loading.ProjectileSpecAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
@@ -19,13 +20,17 @@ import com.fs.starfarer.api.combat.listeners.HullDamageAboutToBeTakenListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
 import exiledsector.i18n.StyledText;
+import exiledsector.ui.util.FallbackSupport;
+import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.VectorUtils;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 public enum CombatSkillEffect implements BackedSkillEffect {
@@ -84,6 +89,8 @@ public enum CombatSkillEffect implements BackedSkillEffect {
 
         private static final String CHANCE_KEY = "exiledSector_energyChainChance";
         private static final String FALLOFF_KEY = "exiledSector_energyChainFalloff";
+        private static final Logger LOG = Logger.getLogger(EnergyChainListener.class);
+        private static final Set<String> UNSPAWNABLE_PROJECTILE_IDS = new HashSet<>();
 
         private final ShipAPI ship;
 
@@ -169,12 +176,28 @@ public enum CombatSkillEffect implements BackedSkillEffect {
             return nearest;
         }
 
+        private static boolean canRespawn(DamagingProjectileAPI source) {
+            String projectileId = source.getProjectileSpecId();
+            ProjectileSpecAPI spec = source.getProjectileSpec();
+            return (projectileId == null || !UNSPAWNABLE_PROJECTILE_IDS.contains(projectileId))
+                    && (spec == null || spec.getDamage() != null);
+        }
+
         private void spawnChainProjectile(WeaponAPI weapon, DamagingProjectileAPI source, Vector2f from,
                                           ShipAPI target, ChainShot shot) {
+            if (!canRespawn(source)) {
+                return;
+            }
             CombatEngineAPI engine = Global.getCombatEngine();
             float facing = VectorUtils.getAngle(from, target.getLocation());
-            CombatEntityAPI spawned = engine.spawnProjectile(ship, weapon, weapon.getId(), source.getProjectileSpecId(),
-                    from, facing, new Vector2f());
+            String projectileId = source.getProjectileSpecId();
+            CombatEntityAPI spawned = FallbackSupport.getOrFallback(
+                    () -> engine.spawnProjectile(ship, weapon, weapon.getId(), projectileId, from, facing, new Vector2f()),
+                    null, LOG, "Energy chain could not spawn projectile " + projectileId + " for weapon " + weapon.getId()
+                            + "; chaining from it is off for this session");
+            if (spawned == null && projectileId != null) {
+                UNSPAWNABLE_PROJECTILE_IDS.add(projectileId);
+            }
             if (spawned instanceof DamagingProjectileAPI chainProj) {
                 DamageAPI chainDamage = chainProj.getDamage();
                 float existingScaling = chainDamage.getModifier().getModifiedValue() * chainDamage.getMultiplier();

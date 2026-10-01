@@ -27,6 +27,7 @@ import com.fs.starfarer.api.combat.listeners.HullDamageAboutToBeTakenListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.fleet.RepairTrackerAPI;
 import com.fs.starfarer.api.loading.BeamWeaponSpecAPI;
+import com.fs.starfarer.api.loading.ProjectileSpecAPI;
 import exiledsector.skills.skilleffect.CombatSkillEffect;
 import exiledsector.skills.skilleffect.CsvIdBlocklist;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
@@ -1568,6 +1569,34 @@ class SkillEffectTest {
         verify(chainShot.getDamage()).setDamage(50f);
         verify(chainShot).setCustomData("exiledSector_energyChainDealtMult", 0.8f);
         verify(chainShot).setCustomData("exiledSector_energyChainCount", 1);
+    }
+
+    @Test
+    void aChainShotTheEngineCannotBuildIsSkippedAndNotRetried() {
+        ShipAPI ship = mockEnergyChainShip(0f);
+        DamagingProjectileAPI projectile = mockEnergyProjectile(mockEnergyWeapon("energy_gun", false));
+        when(projectile.getProjectileSpecId()).thenReturn("shot_without_damage_data");
+        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+        when(engine.spawnProjectile(any(), any(), anyString(), anyString(), any(Vector2f.class), anyFloat(), any(Vector2f.class)))
+                .thenThrow(new NullPointerException("spec has no damage"));
+
+        runEnergyChainHit(ship, projectile, engine);
+        runEnergyChainHit(mockEnergyChainShip(0f), projectile, engine);
+
+        verify(engine, times(1)).spawnProjectile(any(), any(), anyString(), anyString(), any(Vector2f.class), anyFloat(),
+                any(Vector2f.class));
+    }
+
+    @Test
+    void energyChainNeverRespawnsAProjectileWhoseSpecHasNoDamage() {
+        DamagingProjectileAPI projectile = mockEnergyProjectile(mockEnergyWeapon("energy_gun", false));
+        ProjectileSpecAPI spec = mock(ProjectileSpecAPI.class);
+        when(projectile.getProjectileSpec()).thenReturn(spec);
+        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+
+        runEnergyChainHit(mockEnergyChainShip(0f), projectile, engine);
+
+        verify(engine, never()).spawnProjectile(any(), any(), anyString(), any(), any(Vector2f.class), anyFloat(), any(Vector2f.class));
     }
 
     @Test
