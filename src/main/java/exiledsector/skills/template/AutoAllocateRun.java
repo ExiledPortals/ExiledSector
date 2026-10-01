@@ -50,21 +50,24 @@ public final class AutoAllocateRun {
                 return;
             } else {
                 TemplateStep step = pass.get(index++);
-                StepVerdict verdict = attempt.apply(step);
-                if (verdict == StepVerdict.ALLOCATE) {
-                    allocated++;
-                    progressed = true;
-                    budget -= stepSeconds;
-                } else if (verdict == StepVerdict.NOT_ALLOCATABLE) {
-                    deferred.add(step);
-                } else if (verdict != StepVerdict.ALREADY_ALLOCATED) {
-                    skipped++;
-                    if (verdict == StepVerdict.BLOCKED) {
-                        blockedChecks++;
-                    }
+                if (record(step, attempt.apply(step))) {
+                    blockedChecks++;
                 }
             }
         }
+    }
+
+    private boolean record(TemplateStep step, StepVerdict verdict) {
+        if (verdict == StepVerdict.ALLOCATE) {
+            allocated++;
+            progressed = true;
+            budget -= stepSeconds;
+        } else if (verdict == StepVerdict.NOT_ALLOCATABLE) {
+            deferred.add(step);
+        } else if (verdict != StepVerdict.ALREADY_ALLOCATED) {
+            skipped++;
+        }
+        return verdict == StepVerdict.BLOCKED;
     }
 
     private void endPass() {
