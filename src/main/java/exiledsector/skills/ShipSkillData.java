@@ -4,7 +4,6 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -52,20 +51,21 @@ public class ShipSkillData {
         optionalSelections.put(node.getId(), chosenOption.getId());
     }
 
-    public String resolveStartingRootId(Collection<SkillNode> allNodes) {
+    public String resolveStartingRootId() {
         if (startingRootId == null) {
-            startingRootId = firstAllocatedRootId(allNodes);
+            startingRootId = firstAllocatedRootId(SkillTree.topology().rootIds());
         }
         return startingRootId;
     }
 
-    private String firstAllocatedRootId(Collection<SkillNode> allNodes) {
-        Set<String> rootIds = new HashSet<>();
-        for (SkillNode candidate : allNodes) {
-            if (candidate.getType().getTier() == SkillTier.ROOT) {
-                rootIds.add(candidate.getId());
-            }
+    public String resolveStartingRootId(Collection<SkillNode> allNodes) {
+        if (startingRootId == null) {
+            startingRootId = firstAllocatedRootId(SkillTreeTopology.rootIdsOf(allNodes));
         }
+        return startingRootId;
+    }
+
+    private String firstAllocatedRootId(Set<String> rootIds) {
         for (String allocatedId : allocatedNodeIds) {
             if (rootIds.contains(allocatedId)) {
                 return allocatedId;
@@ -110,7 +110,7 @@ public class ShipSkillData {
     }
 
     private int paidNodeCount() {
-        String startingRoot = resolveStartingRootId(SkillTree.getAllNodes().values());
+        String startingRoot = resolveStartingRootId();
         int paid = 0;
         for (String nodeId : allocatedNodeIds) {
             if (!isFreeNode(nodeId) && !nodeId.equals(startingRoot)) {
@@ -218,7 +218,7 @@ public class ShipSkillData {
 
     public boolean hasLostStartingRoot(Map<String, SkillNode> tree) {
         if (startingRootId == null) {
-            return !allocatedNodeIds.isEmpty() && firstAllocatedRootId(tree.values()) == null;
+            return !allocatedNodeIds.isEmpty() && firstAllocatedRootId(SkillTreeTopology.rootIdsOf(tree.values())) == null;
         }
         SkillNode root = tree.get(startingRootId);
         return root == null || root.getType().getTier() != SkillTier.ROOT;
@@ -279,22 +279,17 @@ public class ShipSkillData {
     }
 
     public boolean canDeallocate(SkillNode node, Collection<SkillNode> allNodes, String satisfiedRootId) {
-        Map<String, SkillNode> byId = new HashMap<>();
-        Map<String, List<String>> childrenOf = new HashMap<>();
-        for (SkillNode candidate : allNodes) {
-            byId.put(candidate.getId(), candidate);
-            for (String prerequisiteId : candidate.getConnectedNodeIds()) {
-                childrenOf.computeIfAbsent(prerequisiteId, key -> new ArrayList<>()).add(candidate.getId());
-            }
-        }
+        return canDeallocate(node, SkillTreeTopology.of(allNodes), satisfiedRootId);
+    }
 
+    public boolean canDeallocate(SkillNode node, SkillTreeTopology topology, String satisfiedRootId) {
         Set<String> excluded = new HashSet<>();
         excluded.add(node.getId());
         String pairedId = node.getPairedNodeId();
         if (pairedId != null) excluded.add(pairedId);
 
-        Set<String> reachableBefore = reachableAllocatedNodeIds(byId, childrenOf, satisfiedRootId, Set.of());
-        Set<String> reachableAfter = reachableAllocatedNodeIds(byId, childrenOf, satisfiedRootId, excluded);
+        Set<String> reachableBefore = reachableAllocatedNodeIds(topology, satisfiedRootId, Set.of());
+        Set<String> reachableAfter = reachableAllocatedNodeIds(topology, satisfiedRootId, excluded);
 
         for (String allocatedId : reachableBefore) {
             if (excluded.contains(allocatedId)) continue;
@@ -305,16 +300,15 @@ public class ShipSkillData {
         return true;
     }
 
-    private Set<String> reachableAllocatedNodeIds(Map<String, SkillNode> byId, Map<String, List<String>> childrenOf,
-                                                    String satisfiedRootId, Set<String> excludedNodeIds) {
+    private Set<String> reachableAllocatedNodeIds(SkillTreeTopology topology, String satisfiedRootId, Set<String> excludedNodeIds) {
         Set<String> reachable = new HashSet<>();
         Deque<String> queue = new ArrayDeque<>();
-        seedReachableFrontier(byId, satisfiedRootId, excludedNodeIds, reachable, queue);
-        expandReachableFrontier(childrenOf, excludedNodeIds, reachable, queue);
+        seedReachableFrontier(topology, satisfiedRootId, excludedNodeIds, reachable, queue);
+        expandReachableFrontier(topology, excludedNodeIds, reachable, queue);
         return reachable;
     }
 
-    private void seedReachableFrontier(Map<String, SkillNode> byId, String satisfiedRootId, Set<String> excludedNodeIds,
+    private void seedReachableFrontier(SkillTreeTopology topology, String satisfiedRootId, Set<String> excludedNodeIds,
                                         Set<String> reachable, Deque<String> queue) {
         if (satisfiedRootId != null && !excludedNodeIds.contains(satisfiedRootId) && reachable.add(satisfiedRootId)) {
             queue.add(satisfiedRootId);
@@ -323,18 +317,19 @@ public class ShipSkillData {
             if (excludedNodeIds.contains(allocatedId)) {
                 continue;
             }
-            SkillNode allocatedNode = byId.get(allocatedId);
+            SkillNode allocatedNode = topology.node(allocatedId);
             if (allocatedNode != null && allocatedNode.getConnectedNodeIds().isEmpty() && reachable.add(allocatedId)) {
                 queue.add(allocatedId);
             }
         }
     }
 
-    private void expandReachableFrontier(Map<String, List<String>> childrenOf, Set<String> excludedNodeIds,
+    private void expandReachableFrontier(SkillTreeTopology topology, Set<String> excludedNodeIds,
                                           Set<String> reachable, Deque<String> queue) {
         while (!queue.isEmpty()) {
             String currentId = queue.poll();
-            for (String childId : childrenOf.getOrDefault(currentId, List.of())) {
+            for (SkillNode child : topology.dependents(currentId)) {
+                String childId = child.getId();
                 if (excludedNodeIds.contains(childId) || !isAllocated(childId)) {
                     continue;
                 }
@@ -346,8 +341,12 @@ public class ShipSkillData {
     }
 
     public void toggle(SkillNode node, Collection<SkillNode> allNodes, String satisfiedRootId, int totalOp, int opCost, int maxAllocatedNodes) {
+        toggle(node, SkillTreeTopology.of(allNodes), satisfiedRootId, totalOp, opCost, maxAllocatedNodes);
+    }
+
+    public void toggle(SkillNode node, SkillTreeTopology topology, String satisfiedRootId, int totalOp, int opCost, int maxAllocatedNodes) {
         if (isAllocated(node.getId())) {
-            if (canDeallocate(node, allNodes, satisfiedRootId)) {
+            if (canDeallocate(node, topology, satisfiedRootId)) {
                 deallocate(node);
             }
         } else if (canAllocate(node, satisfiedRootId, totalOp, opCost, maxAllocatedNodes)) {

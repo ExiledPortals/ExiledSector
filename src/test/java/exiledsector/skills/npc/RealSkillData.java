@@ -65,15 +65,15 @@ public final class RealSkillData {
         Map<String, SkillType> types = SkillTypeLoader.parseSkillTypes(readJson(projectRoot.resolve(TYPES_FILE)));
         List<SkillNode> nodes = SkillTreeLoader.parseNodes(readJson(projectRoot.resolve(TREE_FILE)), types);
         clear();
-        SkillTree.getAllTypes().putAll(types);
+        types.values().forEach(SkillTree::registerType);
         for (SkillNode node : nodes) {
-            SkillTree.getAllNodes().put(node.getId(), node);
+            SkillTree.register(node);
         }
     }
 
     public static void clear() {
-        SkillTree.getAllNodes().clear();
-        SkillTree.getAllTypes().clear();
+        SkillTree.clearNodes();
+        SkillTree.clearTypes();
     }
 
     public static JSONObject readJson(Path path) throws IOException, JSONException {

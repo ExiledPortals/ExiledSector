@@ -40,12 +40,12 @@ class ShipLevelSystemTest {
 
     @BeforeEach
     void setUp() {
-        SkillTree.getAllTypes().clear();
+        SkillTree.clearTypes();
     }
 
     @AfterEach
     void tearDown() {
-        SkillTree.getAllTypes().clear();
+        SkillTree.clearTypes();
     }
 
     private static ShipLevelSystem.LevelCurve curve(int growthCutoffLevel, int maxLevel) {

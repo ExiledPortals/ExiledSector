@@ -77,16 +77,16 @@ class SkillTreeHullModTest {
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSector).thenReturn(sector);
 
-        SkillTree.getAllNodes().clear();
-        SkillTree.getAllTypes().clear();
+        SkillTree.clearNodes();
+        SkillTree.clearTypes();
     }
 
     @AfterEach
     void tearDown() {
         globalMock.close();
         lunaSettingsMock.close();
-        SkillTree.getAllNodes().clear();
-        SkillTree.getAllTypes().clear();
+        SkillTree.clearNodes();
+        SkillTree.clearTypes();
     }
 
     @Test

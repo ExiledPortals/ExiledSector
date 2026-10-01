@@ -51,13 +51,13 @@ class NpcTreeTagTest {
     }
 
     private static SkillType registerType(SkillType type) {
-        SkillTree.getAllTypes().put(type.getId(), type);
+        SkillTree.registerType(type);
         return type;
     }
 
     private static void register(String id, SkillType type, String... connectedTo) {
         registerType(type);
-        SkillTree.getAllNodes().put(id, new SkillNode(id, type, List.of(connectedTo), 0f, 0f));
+        SkillTree.register(new SkillNode(id, type, List.of(connectedTo), 0f, 0f));
     }
 
     private static NpcTreeBuild build(int nodeCount) {

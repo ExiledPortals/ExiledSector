@@ -43,8 +43,8 @@ class ShipTreeLookupTest {
     @BeforeEach
     void setUp() {
         SkillDataResolver.clearCache();
-        SkillTree.getAllNodes().clear();
-        SkillTree.getAllTypes().clear();
+        SkillTree.clearNodes();
+        SkillTree.clearTypes();
         SkillTree.register(new SkillNode("root_1", new SkillType.Builder("root", "Root", "a.png", SkillTier.ROOT).build(), List.of(), 0f, 0f));
         SkillTree.register(new SkillNode("a_1", new SkillType.Builder("a", "A", "a.png", SkillTier.SMALL).build(), List.of("root_1"), 0f, 0f));
         NpcLayouts.register(Map.of("bulwark", new NpcLayout("bulwark", "Bulwark", "root_1", List.of(), "",
@@ -61,8 +61,8 @@ class ShipTreeLookupTest {
         globalMock.close();
         NpcLayouts.register(Map.of());
         SkillDataResolver.clearCache();
-        SkillTree.getAllNodes().clear();
-        SkillTree.getAllTypes().clear();
+        SkillTree.clearNodes();
+        SkillTree.clearTypes();
     }
 
     private static FleetMemberAPI member(String id, boolean playerFleet, String... tags) {

@@ -19,8 +19,8 @@ class SkillTreeBonusSummaryTest {
 
     @BeforeEach
     void setUp() {
-        SkillTree.getAllNodes().clear();
-        SkillTree.getAllTypes().clear();
+        SkillTree.clearNodes();
+        SkillTree.clearTypes();
         SkillNode root = register("root_1", new SkillType.Builder("root", "Low Tech", "a.png", SkillTier.ROOT)
                 .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f))).build());
         data = new ShipSkillData();
@@ -29,8 +29,8 @@ class SkillTreeBonusSummaryTest {
 
     @AfterEach
     void tearDown() {
-        SkillTree.getAllNodes().clear();
-        SkillTree.getAllTypes().clear();
+        SkillTree.clearNodes();
+        SkillTree.clearTypes();
     }
 
     private static SkillNode register(String id, SkillType type) {

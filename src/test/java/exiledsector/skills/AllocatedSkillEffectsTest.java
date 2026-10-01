@@ -37,15 +37,15 @@ class AllocatedSkillEffectsTest {
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSector).thenReturn(sector);
 
-        SkillTree.getAllNodes().clear();
-        SkillTree.getAllTypes().clear();
+        SkillTree.clearNodes();
+        SkillTree.clearTypes();
     }
 
     @AfterEach
     void tearDown() {
         globalMock.close();
-        SkillTree.getAllNodes().clear();
-        SkillTree.getAllTypes().clear();
+        SkillTree.clearNodes();
+        SkillTree.clearTypes();
     }
 
     private FleetMemberAPI memberWithHullSize(HullSize hullSize) {

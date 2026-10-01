@@ -77,13 +77,13 @@ class SkillTreeInstallerTest {
         when(sector.getPlayerFleet()).thenReturn(playerFleet);
         when(fleetData.getMembersListCopy()).thenReturn(List.of());
 
-        SkillTree.getAllNodes().clear();
+        SkillTree.clearNodes();
     }
 
     @AfterEach
     void tearDown() {
         globalMock.close();
-        SkillTree.getAllNodes().clear();
+        SkillTree.clearNodes();
     }
 
     private static FleetMemberAPI mockMember(String id, boolean hasHullMod) {

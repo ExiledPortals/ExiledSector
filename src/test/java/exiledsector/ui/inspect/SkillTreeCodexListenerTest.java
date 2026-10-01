@@ -35,8 +35,8 @@ class SkillTreeCodexListenerTest {
     void setUp() {
         CodexDataV2.ENTRIES.clear();
         SkillDataResolver.clearCache();
-        SkillTree.getAllNodes().clear();
-        SkillTree.getAllTypes().clear();
+        SkillTree.clearNodes();
+        SkillTree.clearTypes();
         SkillTree.register(new SkillNode("root_1", new SkillType.Builder("root", "Root", "a.png", SkillTier.ROOT).build(), List.of(), 0f, 0f));
         SkillTree.register(new SkillNode("a_1", new SkillType.Builder("a", "A", "a.png", SkillTier.SMALL).build(), List.of("root_1"), 0f, 0f));
     }
@@ -45,8 +45,8 @@ class SkillTreeCodexListenerTest {
     void tearDown() {
         CodexDataV2.ENTRIES.clear();
         SkillDataResolver.clearCache();
-        SkillTree.getAllNodes().clear();
-        SkillTree.getAllTypes().clear();
+        SkillTree.clearNodes();
+        SkillTree.clearTypes();
         NpcLayouts.register(Map.of());
     }
 

@@ -4,6 +4,7 @@ import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
+import exiledsector.skills.SkillTreeTopology;
 import exiledsector.skills.SkillType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +18,6 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 class WormholeOpennessTest {
@@ -38,8 +38,9 @@ class WormholeOpennessTest {
         for (SkillNode node : List.of(node("wormhole_a", SkillTier.WORMHOLE), node("regular", SkillTier.NOTABLE))) {
             nodes.put(node.getId(), node);
         }
+        SkillTreeTopology topology = SkillTreeTopology.of(nodes.values());
         skillTreeMock = Mockito.mockStatic(SkillTree.class);
-        skillTreeMock.when(SkillTree::getAllNodes).thenReturn(nodes);
+        skillTreeMock.when(SkillTree::topology).thenReturn(topology);
         data = mock(ShipSkillData.class);
         openness = new WormholeOpenness();
     }
@@ -77,13 +78,12 @@ class WormholeOpennessTest {
     }
 
     @Test
-    void onlyWormholeNodesAreTrackedAndTheTreeIsScannedOnce() {
+    void onlyWormholeNodesAreTracked() {
         when(data.isAllocated("regular")).thenReturn(true);
 
         openness.advance(1f, data);
         openness.advance(1f, data);
 
         assertEquals(0f, openness.of("regular"), EPSILON);
-        skillTreeMock.verify(SkillTree::getAllNodes, times(1));
     }
 }

@@ -4,6 +4,7 @@ import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
+import exiledsector.skills.SkillTreeTopology;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.layout.SkillNodeDecoration;
 import org.junit.jupiter.api.AfterEach;
@@ -38,8 +39,9 @@ class SkillTreeWormholeGhostFlightsTest {
         Map<String, SkillNode> nodes = new LinkedHashMap<>();
         nodes.put(a.getId(), a);
         nodes.put(b.getId(), b);
+        SkillTreeTopology topology = SkillTreeTopology.of(nodes.values());
         skillTreeMock = Mockito.mockStatic(SkillTree.class);
-        skillTreeMock.when(SkillTree::getAllNodes).thenReturn(nodes);
+        skillTreeMock.when(SkillTree::topology).thenReturn(topology);
         skillTreeMock.when(() -> SkillTree.get("wormhole_a")).thenReturn(a);
         skillTreeMock.when(() -> SkillTree.get("wormhole_b")).thenReturn(b);
         data = mock(ShipSkillData.class);

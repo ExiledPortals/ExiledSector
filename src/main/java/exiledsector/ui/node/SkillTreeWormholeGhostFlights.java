@@ -3,8 +3,8 @@ package exiledsector.ui.node;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
-import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
+import exiledsector.skills.SkillTreeTopology;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.SpriteCache;
 import org.lwjgl.util.vector.Vector2f;
@@ -40,7 +40,6 @@ final class SkillTreeWormholeGhostFlights {
     private final Random random;
     private final Map<String, float[]> secondsUntilNextFlight = new HashMap<>();
     private final List<Flight> flights = new ArrayList<>();
-    private List<WormholePair> pairs;
 
     SkillTreeWormholeGhostFlights(SkillTreeNodeGhostRenderer ghostRenderer, Random random) {
         this.ghostRenderer = ghostRenderer;
@@ -56,8 +55,8 @@ final class SkillTreeWormholeGhostFlights {
                 iterator.remove();
             }
         }
-        for (WormholePair pair : wormholePairs()) {
-            if (data.isAllocated(pair.a().getId()) && data.isAllocated(pair.b().getId())) {
+        for (SkillTreeTopology.WormholePair pair : SkillTree.topology().wormholePairs()) {
+            if (data.isAllocated(pair.first().getId()) && data.isAllocated(pair.second().getId())) {
                 scheduleFlights(pair, amount);
             }
         }
@@ -67,8 +66,8 @@ final class SkillTreeWormholeGhostFlights {
         return flights.size();
     }
 
-    private void scheduleFlights(WormholePair pair, float amount) {
-        String key = pair.a().getId();
+    private void scheduleFlights(SkillTreeTopology.WormholePair pair, float amount) {
+        String key = pair.first().getId();
         float[] remaining = secondsUntilNextFlight.get(key);
         if (remaining == null) {
             remaining = new float[]{random.nextFloat() * MAX_SECONDS_BETWEEN_FLIGHTS};
@@ -86,9 +85,9 @@ final class SkillTreeWormholeGhostFlights {
         flights.add(launch(from, to));
     }
 
-    private Flight launch(WormholePair pair) {
+    private Flight launch(SkillTreeTopology.WormholePair pair) {
         boolean forwards = random.nextBoolean();
-        return forwards ? launch(pair.a(), pair.b()) : launch(pair.b(), pair.a());
+        return forwards ? launch(pair.first(), pair.second()) : launch(pair.second(), pair.first());
     }
 
     private Flight launch(SkillNode from, SkillNode to) {
@@ -100,20 +99,6 @@ final class SkillTreeWormholeGhostFlights {
         flight.arc = (random.nextFloat() * 2f - 1f) * MAX_ARC_RATIO * distance;
         flight.phase = random.nextFloat() * 10f;
         return flight;
-    }
-
-    private List<WormholePair> wormholePairs() {
-        if (pairs == null) {
-            pairs = new ArrayList<>();
-            for (SkillNode node : SkillTree.getAllNodes().values()) {
-                SkillNode paired = node.getPairedNodeId() == null ? null : SkillTree.get(node.getPairedNodeId());
-                boolean isFirstOfPair = paired != null && node.getId().compareTo(paired.getId()) < 0;
-                if (node.getType().getTier() == SkillTier.WORMHOLE && isFirstOfPair) {
-                    pairs.add(new WormholePair(node, paired));
-                }
-            }
-        }
-        return pairs;
     }
 
     void draw(TreeViewport viewport, float alphaMult) {
@@ -156,9 +141,6 @@ final class SkillTreeWormholeGhostFlights {
         }
         side += (float) Math.sin(WOBBLE_FREQUENCY * flight.elapsed + flight.phase + index) * WOBBLE_RATIO * spacing;
         return new Vector2f(heading.x * back - heading.y * side, heading.y * back + heading.x * side);
-    }
-
-    private record WormholePair(SkillNode a, SkillNode b) {
     }
 
     private static final class Flight {

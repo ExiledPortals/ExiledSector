@@ -4,15 +4,14 @@ import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
+import exiledsector.skills.SkillTreeTopology;
 import exiledsector.skills.layout.ConnectorCurve;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.TreeViewport;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 
 import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_CONNECTOR_GLOW_HALO_ALPHA;
@@ -47,7 +46,6 @@ final class SkillTreeNodeConnectorRenderer {
     private final LineBatch glowLines = new LineBatch(NODE_CONNECTOR_GLOW_LINE_THICKNESS);
     private final float[] cumulativeArcLength = new float[CURVE_ARC_SAMPLES + 1];
     private final WormholeOpenness wormholeOpenness;
-    private List<Edge> edges;
 
     SkillTreeNodeConnectorRenderer(SkillTreePanelStyle style, NodeSearch search, WormholeOpenness wormholeOpenness) {
         this.style = style;
@@ -63,49 +61,27 @@ final class SkillTreeNodeConnectorRenderer {
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         clearBatch();
 
-        for (Edge edge : edges()) {
-            drawEdge(edge, viewport, tree, templateNodeIds, fills, alphaMult);
+        for (SkillTreeTopology.Connector connector : SkillTree.topology().connectors()) {
+            drawConnector(connector, viewport, tree, templateNodeIds, fills, alphaMult);
         }
 
         flushBatch();
         GL11.glDisable(GL11.GL_BLEND);
     }
 
-    private List<Edge> edges() {
-        if (edges == null) {
-            List<Edge> built = new ArrayList<>();
-            for (SkillNode node : SkillTree.getAllNodes().values()) {
-                for (String connectedId : node.getConnectedNodeIds()) {
-                    SkillNode other = SkillTree.get(connectedId);
-                    if (other != null && drawsListedEdge(node, other)) {
-                        built.add(new Edge(node, other, SkillTree.getCurve(node.getId(), other.getId())));
-                    }
-                }
-            }
-            edges = built;
+    private void drawConnector(SkillTreeTopology.Connector connector, TreeViewport viewport, NodeAllocator.Snapshot tree,
+                               Set<String> templateNodeIds, ConnectorFills fills, float alphaMult) {
+        if (!viewport.overlaps(viewport.screenX(connector.minX()) - EDGE_CULL_MARGIN, viewport.screenY(connector.maxY()) - EDGE_CULL_MARGIN,
+                viewport.screenX(connector.maxX()) + EDGE_CULL_MARGIN, viewport.screenY(connector.minY()) + EDGE_CULL_MARGIN)) {
+            return;
         }
-        return edges;
-    }
-
-    private void drawEdge(Edge edge, TreeViewport viewport, NodeAllocator.Snapshot tree, Set<String> templateNodeIds,
-                          ConnectorFills fills, float alphaMult) {
-        SkillNode node = edge.from();
-        SkillNode other = edge.to();
-        ConnectorCurve curve = edge.curve();
+        SkillNode node = connector.from();
+        SkillNode other = connector.to();
+        ConnectorCurve curve = connector.curve();
         float nodeX = viewport.screenX(node.getOffsetX());
         float nodeY = viewport.screenY(node.getOffsetY());
         float otherX = viewport.screenX(other.getOffsetX());
         float otherY = viewport.screenY(other.getOffsetY());
-        float controlX = curve == null ? nodeX : viewport.screenX(curve.getControlOffsetX());
-        float controlY = curve == null ? nodeY : viewport.screenY(curve.getControlOffsetY());
-        float bezierX = 2f * controlX - (nodeX + otherX) / 2f;
-        float bezierY = 2f * controlY - (nodeY + otherY) / 2f;
-        if (!viewport.overlaps(Math.min(Math.min(nodeX, otherX), bezierX) - EDGE_CULL_MARGIN,
-                Math.min(Math.min(nodeY, otherY), bezierY) - EDGE_CULL_MARGIN,
-                Math.max(Math.max(nodeX, otherX), bezierX) + EDGE_CULL_MARGIN,
-                Math.max(Math.max(nodeY, otherY), bezierY) + EDGE_CULL_MARGIN)) {
-            return;
-        }
 
         float zoom = viewport.zoom();
         ShipSkillData data = tree.data();
@@ -129,18 +105,9 @@ final class SkillTreeNodeConnectorRenderer {
         if (curve == null) {
             drawStraightNodeConnectorLine(otherEndpoint, nodeEndpoint, fade, edgeFill, zoom, edgeAlpha);
         } else {
-            drawCurvedNodeConnectorLine(otherEndpoint, controlX, controlY, nodeEndpoint, fade, edgeFill, zoom, edgeAlpha);
+            drawCurvedNodeConnectorLine(otherEndpoint, viewport.screenX(curve.getControlOffsetX()),
+                    viewport.screenY(curve.getControlOffsetY()), nodeEndpoint, fade, edgeFill, zoom, edgeAlpha);
         }
-    }
-
-    static boolean drawsEdge(SkillNode from, SkillNode to) {
-        return from.getConnectedNodeIds().contains(to.getId()) && drawsListedEdge(from, to);
-    }
-
-    private static boolean drawsListedEdge(SkillNode from, SkillNode to) {
-        return from.getType().getTier() != SkillTier.ROOT
-                && (to.getType().getTier() == SkillTier.ROOT || from.getId().compareTo(to.getId()) < 0)
-                && SkillTree.isConnectorVisible(from.getId(), to.getId());
     }
 
     private float endpointRadius(SkillNode node, float zoom) {
@@ -459,9 +426,6 @@ final class SkillTreeNodeConnectorRenderer {
         dullLines.flush();
         glowHaloLines.flush();
         glowLines.flush();
-    }
-
-    private record Edge(SkillNode from, SkillNode to, ConnectorCurve curve) {
     }
 
     private record ConnectorEndpoint(float x, float y, float radius) {

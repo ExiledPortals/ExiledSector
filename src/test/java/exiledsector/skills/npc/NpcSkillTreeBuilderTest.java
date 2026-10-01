@@ -50,12 +50,12 @@ class NpcSkillTreeBuilderTest {
     }
 
     private static SkillType registerType(SkillType type) {
-        SkillTree.getAllTypes().put(type.getId(), type);
+        SkillTree.registerType(type);
         return type;
     }
 
     private static SkillNode register(SkillNode node) {
-        SkillTree.getAllNodes().put(node.getId(), node);
+        SkillTree.register(node);
         return node;
     }
 

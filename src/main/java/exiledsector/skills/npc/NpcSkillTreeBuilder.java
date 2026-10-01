@@ -8,6 +8,7 @@ import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
+import exiledsector.skills.SkillTreeTopology;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.ShieldSkillEffect;
@@ -16,7 +17,6 @@ import exiledsector.skills.tags.ShipProfile;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
@@ -125,19 +125,18 @@ public final class NpcSkillTreeBuilder {
 
     private static int convertHullMods(BuildContext context, Set<String> removable, int target,
                                        List<NpcBuildStep> steps, List<String> stripped) {
-        List<SkillNode> sorted = sortedNodes(SkillTree.getAllNodes().values());
-        Map<String, List<SkillNode>> equivalents = equivalentNodesByHullMod(sorted, removable);
+        SkillTreeTopology topology = SkillTree.topology();
+        Map<String, List<SkillNode>> equivalents = equivalentNodesByHullMod(topology.sortedById(), removable);
         if (equivalents.isEmpty()) {
             return 0;
         }
         Set<String> pending = new TreeSet<>(equivalents.keySet());
-        Map<String, List<SkillNode>> dependents = dependentsByNodeId(sorted);
         int allocated = 0;
         while (!pending.isEmpty()) {
             AllocationState state = AllocationState.of(context);
             Conversion best = null;
             for (String hullModId : pending) {
-                List<PathStep> path = shortestPath(context, state, equivalents.get(hullModId), hullModId, dependents);
+                List<PathStep> path = shortestPath(context, state, equivalents.get(hullModId), hullModId, topology);
                 if (path != null && path.size() <= target - allocated
                         && (best == null || path.size() < best.path().size())) {
                     best = new Conversion(hullModId, path);
@@ -180,24 +179,8 @@ public final class NpcSkillTreeBuilder {
         return equivalents;
     }
 
-    private static Map<String, List<SkillNode>> dependentsByNodeId(List<SkillNode> sorted) {
-        Map<String, List<SkillNode>> dependents = new HashMap<>();
-        for (SkillNode node : sorted) {
-            for (String connectedId : node.getConnectedNodeIds()) {
-                dependents.computeIfAbsent(connectedId, key -> new ArrayList<>()).add(node);
-            }
-        }
-        return dependents;
-    }
-
-    private static List<SkillNode> sortedNodes(Collection<SkillNode> nodes) {
-        List<SkillNode> sorted = new ArrayList<>(nodes);
-        sorted.sort((a, b) -> a.getId().compareTo(b.getId()));
-        return sorted;
-    }
-
     private static List<PathStep> shortestPath(BuildContext context, AllocationState state, List<SkillNode> targets,
-                                               String hullModId, Map<String, List<SkillNode>> dependents) {
+                                               String hullModId, SkillTreeTopology topology) {
         Set<String> targetIds = new HashSet<>();
         for (SkillNode targetNode : targets) {
             targetIds.add(targetNode.getId());
@@ -210,7 +193,7 @@ public final class NpcSkillTreeBuilder {
         Set<String> visited = new HashSet<>(queue);
         while (!queue.isEmpty()) {
             String current = queue.poll();
-            for (SkillNode candidate : dependents.getOrDefault(current, List.of())) {
+            for (SkillNode candidate : topology.dependents(current)) {
                 if (!visited.add(candidate.getId())) {
                     continue;
                 }

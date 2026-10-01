@@ -30,8 +30,8 @@ class SkillDataResolverTest {
     @BeforeEach
     void setUp() {
         SkillDataResolver.clearCache();
-        SkillTree.getAllNodes().clear();
-        SkillTree.getAllTypes().clear();
+        SkillTree.clearNodes();
+        SkillTree.clearTypes();
         SkillType rootType = new SkillType.Builder("root_type", "Root", "a.png", SkillTier.ROOT).build();
         SkillType smallType = new SkillType.Builder("a_type", "A", "a.png", SkillTier.SMALL).build();
         SkillTree.register(new SkillNode("root", rootType, List.of(), 0f, 0f));
@@ -43,8 +43,8 @@ class SkillDataResolverTest {
     void tearDown() {
         dataManagerMock.close();
         SkillDataResolver.clearCache();
-        SkillTree.getAllNodes().clear();
-        SkillTree.getAllTypes().clear();
+        SkillTree.clearNodes();
+        SkillTree.clearTypes();
     }
 
     private static ShipVariantAPI variantWithTags(String... tags) {

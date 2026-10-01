@@ -98,7 +98,7 @@ class ExiledSectorModPluginTest {
     @AfterEach
     void tearDown() throws Exception {
         loadTree("");
-        SkillTree.getAllTypes().clear();
+        SkillTree.clearTypes();
         NpcLayouts.register(Map.of());
         settingsCreatorMock.close();
         globalMock.close();

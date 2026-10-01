@@ -2,6 +2,7 @@ package exiledsector.ui.node;
 
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
+import exiledsector.skills.SkillTreeTopology;
 import exiledsector.skills.npc.RealSkillData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -25,8 +26,8 @@ class ConnectorDataTest {
         for (SkillNode node : SkillTree.getAllNodes().values()) {
             for (String connectedId : node.getConnectedNodeIds()) {
                 SkillNode other = SkillTree.get(connectedId);
-                if (other != null && !SkillTreeNodeConnectorRenderer.drawsEdge(node, other)
-                        && !SkillTreeNodeConnectorRenderer.drawsEdge(other, node)) {
+                if (other != null && !SkillTreeTopology.drawsEdge(node, other)
+                        && !SkillTreeTopology.drawsEdge(other, node)) {
                     undrawn.add(node.getId() + " -> " + connectedId);
                 }
             }

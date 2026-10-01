@@ -120,14 +120,14 @@ final class NodeAllocator {
 
     boolean canDeallocate(SkillNode node) {
         return !isStartingRoot(node) && blockDeallocationReason(node) == null
-                && data().canDeallocate(node, SkillTree.getAllNodes().values(), satisfiedRootId());
+                && data().canDeallocate(node, SkillTree.topology(), satisfiedRootId());
     }
 
     boolean toggle(SkillNode node) {
         Snapshot snapshot = snapshot();
         ShipSkillData data = snapshot.data();
         boolean wasAllocated = data.isAllocated(node.getId());
-        data.toggle(node, SkillTree.getAllNodes().values(), snapshot.satisfiedRootId(), snapshot.totalOpBudget(),
+        data.toggle(node, SkillTree.topology(), snapshot.satisfiedRootId(), snapshot.totalOpBudget(),
                 snapshot.opCostFor(node), snapshot.maxAllocatedNodes());
         boolean isAllocatedNow = data.isAllocated(node.getId());
         if (isAllocatedNow == wasAllocated) {

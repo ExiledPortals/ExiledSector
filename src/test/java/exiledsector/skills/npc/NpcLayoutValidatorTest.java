@@ -34,18 +34,18 @@ class NpcLayoutValidatorTest {
 
     private static SkillType type(String id, SkillTier tier, String... tags) {
         SkillType type = new SkillType.Builder(id, id + " name", "a.png", tier).tags(List.of(tags)).build();
-        SkillTree.getAllTypes().put(id, type);
+        SkillTree.registerType(type);
         return type;
     }
 
     private static SkillType optionalType(String id, String... options) {
         SkillType type = new SkillType.Builder(id, id + " name", "a.png", SkillTier.SMALL).optionalOptionIds(List.of(options)).build();
-        SkillTree.getAllTypes().put(id, type);
+        SkillTree.registerType(type);
         return type;
     }
 
     private static void node(String id, SkillType type, List<String> connectedTo, List<String> tags) {
-        SkillTree.getAllNodes().put(id, new SkillNode(id, type, connectedTo, 0f, 0f, SkillNodeDecoration.NONE, tags));
+        SkillTree.register(new SkillNode(id, type, connectedTo, 0f, 0f, SkillNodeDecoration.NONE, tags));
     }
 
     private static void innerNode(String id, String... connectedTo) {

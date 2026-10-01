@@ -21,7 +21,6 @@ import lunalib.lunaRefit.BaseRefitButton;
 import org.lazywizard.lazylib.ui.LazyFont;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -90,22 +89,12 @@ public final class SkillTreeNodeRenderer {
     }
 
     private static StartingRootChoice initialRootChoice(ShipSkillData data) {
-        String startingRootId = data.resolveStartingRootId(SkillTree.getAllNodes().values());
+        String startingRootId = data.resolveStartingRootId();
         SkillNode startingRoot = startingRootId == null ? null : SkillTree.get(startingRootId);
         if (startingRoot != null) {
             return StartingRootChoice.alreadyChosen(startingRoot);
         }
-        return StartingRootChoice.pending(rootNodes());
-    }
-
-    private static List<SkillNode> rootNodes() {
-        List<SkillNode> roots = new ArrayList<>();
-        for (SkillNode node : SkillTree.getAllNodes().values()) {
-            if (node.getType().getTier() == SkillTier.ROOT) {
-                roots.add(node);
-            }
-        }
-        return roots;
+        return StartingRootChoice.pending(SkillTree.topology().roots());
     }
 
     private void unchooseStartingRoot(SkillNode root) {
@@ -115,7 +104,7 @@ public final class SkillTreeNodeRenderer {
         dropdownRenderer.close();
         setTemplate(null);
         search.setQuery("");
-        rootChoice = StartingRootChoice.returning(rootNodes(), root);
+        rootChoice = StartingRootChoice.returning(SkillTree.topology().roots(), root);
         style.setAccentIconPath(null);
         afterAllocationChange(root, false);
     }
@@ -260,19 +249,15 @@ public final class SkillTreeNodeRenderer {
         NodeAllocator.Snapshot allocation = snapshot();
         float treeAlphaMult = alphaMult * rootChoice.treeAlpha();
 
-        for (SkillNode node : SkillTree.getAllNodes().values()) {
-            if (node.getType().getTier() != SkillTier.ROOT) {
-                renderNode(node, viewport, treeAlphaMult, allocation);
-            }
+        for (SkillNode node : SkillTree.topology().nonRoots()) {
+            renderNode(node, viewport, treeAlphaMult, allocation);
         }
 
         connectorRenderer.draw(viewport, allocation, templateNodeIds, connectorFills, treeAlphaMult);
         wormholeGhostFlights.draw(viewport, treeAlphaMult * search.backgroundAlpha());
 
-        for (SkillNode node : SkillTree.getAllNodes().values()) {
-            if (node.getType().getTier() == SkillTier.ROOT) {
-                renderRootNode(node, viewport, alphaMult, allocation);
-            }
+        for (SkillNode node : SkillTree.topology().roots()) {
+            renderRootNode(node, viewport, alphaMult, allocation);
         }
 
         if (isChoosingStartingRoot()) {
@@ -511,10 +496,8 @@ public final class SkillTreeNodeRenderer {
     private boolean startFillsInto(SkillNode node) {
         NodeAllocator.Snapshot tree = snapshot();
         boolean started = false;
-        for (SkillNode neighbour : SkillTree.getAllNodes().values()) {
-            boolean drawn = SkillTreeNodeConnectorRenderer.drawsEdge(node, neighbour)
-                    || SkillTreeNodeConnectorRenderer.drawsEdge(neighbour, node);
-            if (drawn && tree.data().isSatisfied(neighbour.getId(), tree.satisfiedRootId())) {
+        for (SkillNode neighbour : SkillTree.topology().drawnNeighbours(node.getId())) {
+            if (tree.data().isSatisfied(neighbour.getId(), tree.satisfiedRootId())) {
                 connectorFills.start(neighbour.getId(), node.getId());
                 started = true;
             }

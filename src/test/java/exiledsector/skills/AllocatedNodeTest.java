@@ -17,8 +17,8 @@ class AllocatedNodeTest {
 
     @BeforeEach
     void setUp() {
-        SkillTree.getAllNodes().clear();
-        SkillTree.getAllTypes().clear();
+        SkillTree.clearNodes();
+        SkillTree.clearTypes();
         hullOption = new SkillType.Builder("hull_option", "Hull", "a.png", SkillTier.SMALL).build();
         SkillTree.registerType(hullOption);
         root = new SkillNode("root_1", new SkillType.Builder("root", "Root", "a.png", SkillTier.ROOT).build(), List.of(), 0f, 0f);
@@ -30,8 +30,8 @@ class AllocatedNodeTest {
 
     @AfterEach
     void tearDown() {
-        SkillTree.getAllNodes().clear();
-        SkillTree.getAllTypes().clear();
+        SkillTree.clearNodes();
+        SkillTree.clearTypes();
     }
 
     @Test
@@ -49,7 +49,7 @@ class AllocatedNodeTest {
     void skipsAllocatedIdsThatAreNoLongerInTheTree() {
         ShipSkillData data = new ShipSkillData();
         data.chooseStartingRoot(root);
-        SkillTree.getAllNodes().remove("root_1");
+        SkillTree.unregister("root_1");
 
         assertTrue(AllocatedNode.of(data).isEmpty());
     }

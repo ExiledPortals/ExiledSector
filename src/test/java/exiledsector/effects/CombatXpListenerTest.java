@@ -90,14 +90,14 @@ class CombatXpListenerTest {
         when(playerFaction.getBaseUIColor()).thenReturn(Color.CYAN);
         when(sector.getPlayerFaction()).thenReturn(playerFaction);
 
-        SkillTree.getAllNodes().clear();
+        SkillTree.clearNodes();
     }
 
     @AfterEach
     void tearDown() {
         globalMock.close();
         lunaSettingsMock.close();
-        SkillTree.getAllNodes().clear();
+        SkillTree.clearNodes();
     }
 
     private static FleetMemberAPI member(String id) {

@@ -33,14 +33,14 @@ class SkillNodeTest {
 
     @BeforeEach
     void setUp() {
-        SkillTree.getAllTypes().clear();
+        SkillTree.clearTypes();
         globalMock = Mockito.mockStatic(Global.class);
     }
 
     @AfterEach
     void tearDown() {
         globalMock.close();
-        SkillTree.getAllTypes().clear();
+        SkillTree.clearTypes();
     }
 
     @Test

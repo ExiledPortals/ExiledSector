@@ -21,14 +21,14 @@ class ShipSkillDataTest {
 
     @BeforeEach
     void setUp() {
-        SkillTree.getAllTypes().clear();
-        SkillTree.getAllNodes().clear();
+        SkillTree.clearTypes();
+        SkillTree.clearNodes();
     }
 
     @AfterEach
     void tearDown() {
-        SkillTree.getAllTypes().clear();
-        SkillTree.getAllNodes().clear();
+        SkillTree.clearTypes();
+        SkillTree.clearNodes();
     }
 
     private static SkillNode node(String id, List<String> prerequisiteIds) {

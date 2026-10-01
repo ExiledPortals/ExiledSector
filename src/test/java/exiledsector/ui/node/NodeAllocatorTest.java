@@ -96,8 +96,8 @@ class NodeAllocatorTest {
         globalMock.when(Global::getSettings).thenReturn(settings);
         hullModConstruction = Mockito.mockConstruction(SkillTreeHullMod.class);
 
-        SkillTree.getAllNodes().clear();
-        SkillTree.getAllTypes().clear();
+        SkillTree.clearNodes();
+        SkillTree.clearTypes();
         root = register("root_1", type("root", "Low Tech", SkillTier.ROOT).build());
         frontShield = register("frontshield_1", type("frontshield", "Front Shield", SkillTier.NOTABLE).build(), "root_1");
         omniShieldType = type("omnishield", "Omni Shield", SkillTier.NOTABLE).exclusiveSkillTypeIds(List.of("frontshield")).build();
@@ -125,8 +125,8 @@ class NodeAllocatorTest {
         hullModConstruction.close();
         globalMock.close();
         lunaSettingsMock.close();
-        SkillTree.getAllNodes().clear();
-        SkillTree.getAllTypes().clear();
+        SkillTree.clearNodes();
+        SkillTree.clearTypes();
     }
 
     private static SkillType.Builder type(String id, String name, SkillTier tier) {

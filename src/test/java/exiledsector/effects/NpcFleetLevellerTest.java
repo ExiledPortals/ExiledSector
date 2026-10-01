@@ -69,8 +69,8 @@ class NpcFleetLevellerTest {
     @BeforeEach
     void setUp() {
         SkillDataResolver.clearCache();
-        SkillTree.getAllNodes().clear();
-        SkillTree.getAllTypes().clear();
+        SkillTree.clearNodes();
+        SkillTree.clearTypes();
         SkillTree.register(new SkillNode("root_1", type("root", SkillTier.ROOT).build(), List.of(), 0f, 0f));
         SkillTree.register(new SkillNode("a_1", type("a", SkillTier.SMALL).build(), List.of("root_1"), 0f, 0f));
         SkillTree.register(new SkillNode("armor_1", type("heavyarmor", SkillTier.NOTABLE)
@@ -99,8 +99,8 @@ class NpcFleetLevellerTest {
         globalMock.close();
         NpcLayouts.register(Map.of());
         SkillDataResolver.clearCache();
-        SkillTree.getAllNodes().clear();
-        SkillTree.getAllTypes().clear();
+        SkillTree.clearNodes();
+        SkillTree.clearTypes();
     }
 
     private static SkillType.Builder type(String id, SkillTier tier) {

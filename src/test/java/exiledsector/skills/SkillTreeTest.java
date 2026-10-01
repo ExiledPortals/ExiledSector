@@ -20,12 +20,12 @@ class SkillTreeTest {
 
     @BeforeEach
     void setUp() {
-        SkillTree.getAllNodes().clear();
+        SkillTree.clearNodes();
     }
 
     @AfterEach
     void tearDown() {
-        SkillTree.getAllNodes().clear();
+        SkillTree.clearNodes();
     }
 
     @Test

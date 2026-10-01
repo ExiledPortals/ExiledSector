@@ -10,6 +10,7 @@ import exiledsector.skills.loader.WormholePairValidator;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -25,19 +26,16 @@ public class SkillTree {
     private static final List<StaticImage> STATIC_IMAGES = new ArrayList<>();
     private static final List<RingBelt> RING_BELTS = new ArrayList<>();
     private static final List<Star> STARS = new ArrayList<>();
+    private static final Map<String, SkillNode> NODES_VIEW = Collections.unmodifiableMap(NODES);
+    private static final Map<String, SkillType> TYPES_VIEW = Collections.unmodifiableMap(TYPES);
     private static boolean loadedCompletely;
+    private static SkillTreeTopology topology;
 
     private SkillTree() {
     }
 
     public static void load() {
-        NODES.clear();
-        TYPES.clear();
-        CURVES.clear();
-        HIDDEN_CONNECTOR_KEYS.clear();
-        STATIC_IMAGES.clear();
-        RING_BELTS.clear();
-        STARS.clear();
+        clear();
 
         Map<String, SkillType> types = SkillTypeLoader.loadSkillTypes();
         TYPES.putAll(types);
@@ -55,6 +53,33 @@ public class SkillTree {
         STATIC_IMAGES.addAll(parsed.staticImages);
         RING_BELTS.addAll(parsed.ringBelts);
         STARS.addAll(parsed.stars);
+        topology = SkillTreeTopology.of(NODES.values());
+    }
+
+    public static void clear() {
+        clearNodes();
+        clearTypes();
+        CURVES.clear();
+        HIDDEN_CONNECTOR_KEYS.clear();
+        STATIC_IMAGES.clear();
+        RING_BELTS.clear();
+        STARS.clear();
+    }
+
+    public static void clearNodes() {
+        NODES.clear();
+        topology = null;
+    }
+
+    public static void clearTypes() {
+        TYPES.clear();
+    }
+
+    public static SkillTreeTopology topology() {
+        if (topology == null) {
+            topology = SkillTreeTopology.of(NODES.values());
+        }
+        return topology;
     }
 
     public static boolean isLoadedCompletely() {
@@ -66,6 +91,12 @@ public class SkillTree {
             Logger.getLogger(SkillTree.class).error("Duplicate skill node id \"" + node.getId() + "\" - the earlier definition was overwritten.");
         }
         NODES.put(node.getId(), node);
+        topology = null;
+    }
+
+    public static void unregister(String nodeId) {
+        NODES.remove(nodeId);
+        topology = null;
     }
 
     public static SkillNode get(String nodeId) {
@@ -73,7 +104,7 @@ public class SkillTree {
     }
 
     public static Map<String, SkillNode> getAllNodes() {
-        return NODES;
+        return NODES_VIEW;
     }
 
     public static SkillType getType(String typeId) {
@@ -88,7 +119,7 @@ public class SkillTree {
     }
 
     public static Map<String, SkillType> getAllTypes() {
-        return TYPES;
+        return TYPES_VIEW;
     }
 
     public static ConnectorCurve getCurve(String aId, String bId) {
