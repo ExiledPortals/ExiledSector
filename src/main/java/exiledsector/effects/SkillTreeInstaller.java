@@ -90,10 +90,10 @@ public class SkillTreeInstaller implements EveryFrameScript {
     private static boolean hasHullModsAfterOurs(ShipVariantAPI variant) {
         boolean seenOurs = false;
         for (String hullModId : variant.getHullMods()) {
-            if (seenOurs) {
+            if (seenOurs && !SkillConflictWarningHullMod.ID.equals(hullModId)) {
                 return true;
             }
-            seenOurs = SkillTreeHullMod.ID.equals(hullModId);
+            seenOurs |= SkillTreeHullMod.ID.equals(hullModId);
         }
         return false;
     }

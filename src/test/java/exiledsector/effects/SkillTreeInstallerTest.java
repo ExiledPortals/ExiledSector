@@ -214,6 +214,19 @@ class SkillTreeInstallerTest {
     }
 
     @Test
+    void ignoresItsOwnConflictWarningHullModWhichIsReAddedAfterItOnEveryStatsRebuild() {
+        FleetMemberAPI member = mockMember("ship", true);
+        ShipVariantAPI variant = member.getVariant();
+        when(variant.getHullMods()).thenReturn(List.of(SkillTreeHullMod.ID, SkillConflictWarningHullMod.ID));
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
+
+        new SkillTreeInstaller().advance(0.01f);
+
+        verify(variant, never()).removePermaMod(SkillTreeHullMod.ID);
+        verify(member, never()).setStatUpdateNeeded(anyBoolean());
+    }
+
+    @Test
     void leavesItsHullModInPlaceWhenItIsAlreadyLast() {
         FleetMemberAPI member = mockMember("ship", true);
         ShipVariantAPI variant = member.getVariant();
