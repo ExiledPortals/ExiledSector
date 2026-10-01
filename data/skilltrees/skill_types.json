@@ -1695,7 +1695,7 @@
 				"frontemitter",
 				"shield_shunt"
 			],
-			"description": "Converts this ship's shield to omni-directional.",
+			"description": "Replaces the ship's fixed frontal shield emitter with one that can turn to face any direction, at the cost of a narrower arc.",
 			"tags": [
 				"shield",
 				"req_shields"

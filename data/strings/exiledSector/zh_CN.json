@@ -508,7 +508,7 @@
     "skillType.missile_autoloader.description": "为小型导弹槽中的导弹武器提供有限次数的自动装填，装填次数取自一个共享容量池，其大小取决于船体尺寸和导弹槽数量。",
     "skillType.neural_interface.description": "将本舰与旗舰连接，使玩家无需使用穿梭舱即可立即切换所驾驶的舰船。转移时会重置目标舰船的系统冷却并增加一次充能。若两艘舰船的部署点之和足够低，转移将立即完成；否则需要短暂的转移时间。目标舰船不能由军官或AI核心指挥。",
     "skillType.frontemitter.description": "将舰船的全向护盾发射器锁定在前向位置并扩大其角度。与所有前向发射器一样，护盾的展开速度也会提高一倍。",
-    "skillType.adaptiveshields.description": "将本舰的护盾转换为全向护盾。",
+    "skillType.adaptiveshields.description": "将舰船固定的前向护盾发射器替换为可转向任意方向的发射器，代价是护盾角度变窄。",
     "skillType.crustacean_integration.description": "你来决定这些龙虾死得多快。",
     "skillType.wormhole.description": "分配此虫洞会自动分配与其配对的虫洞，无需额外消耗，从而连接技能树的两个分支。\n\n取消分配任意一端都会同时取消两端。\n\n按住Ctrl点击虫洞即可穿越。",
 
