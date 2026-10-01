@@ -97,6 +97,16 @@ public final class NpcSkillTreeBuilder {
                                 Map<String, String> layoutOptions, int opCostPerNode) {
     }
 
+    private record AllocationState(List<AllocatedNode> allocated, ShieldType shieldType) {
+
+        static AllocationState of(BuildContext context) {
+            ShipSkillData data = context.data();
+            ShipProfile profile = context.profile();
+            return new AllocationState(AllocatedNode.of(data), ShieldSkillEffect.resolveDisplayShieldType(profile.shieldType(),
+                    AllocatedSkillEffects.forData(data, profile.hullSize())));
+        }
+    }
+
     private record PathStep(SkillNode node, SkillType option) {
     }
 
@@ -115,14 +125,19 @@ public final class NpcSkillTreeBuilder {
 
     private static int convertHullMods(BuildContext context, Set<String> removable, int target,
                                        List<NpcBuildStep> steps, List<String> stripped) {
-        Map<String, List<SkillNode>> equivalents = equivalentNodesByHullMod(removable);
+        List<SkillNode> sorted = sortedNodes(SkillTree.getAllNodes().values());
+        Map<String, List<SkillNode>> equivalents = equivalentNodesByHullMod(sorted, removable);
+        if (equivalents.isEmpty()) {
+            return 0;
+        }
         Set<String> pending = new TreeSet<>(equivalents.keySet());
-        Map<String, List<SkillNode>> dependents = dependentsByNodeId();
+        Map<String, List<SkillNode>> dependents = dependentsByNodeId(sorted);
         int allocated = 0;
         while (!pending.isEmpty()) {
+            AllocationState state = AllocationState.of(context);
             Conversion best = null;
             for (String hullModId : pending) {
-                List<PathStep> path = shortestPath(context, equivalents.get(hullModId), hullModId, dependents);
+                List<PathStep> path = shortestPath(context, state, equivalents.get(hullModId), hullModId, dependents);
                 if (path != null && path.size() <= target - allocated
                         && (best == null || path.size() < best.path().size())) {
                     best = new Conversion(hullModId, path);
@@ -150,9 +165,12 @@ public final class NpcSkillTreeBuilder {
         return allocated;
     }
 
-    private static Map<String, List<SkillNode>> equivalentNodesByHullMod(Set<String> removable) {
+    private static Map<String, List<SkillNode>> equivalentNodesByHullMod(List<SkillNode> sorted, Set<String> removable) {
         Map<String, List<SkillNode>> equivalents = new TreeMap<>();
-        for (SkillNode node : sortedNodes(SkillTree.getAllNodes().values())) {
+        if (removable.isEmpty()) {
+            return equivalents;
+        }
+        for (SkillNode node : sorted) {
             String hullModId = node.getType().getEquivalentHullModId();
             SkillTier tier = node.getType().getTier();
             if (hullModId != null && removable.contains(hullModId) && tier != SkillTier.WORMHOLE && tier != SkillTier.ROOT) {
@@ -162,9 +180,9 @@ public final class NpcSkillTreeBuilder {
         return equivalents;
     }
 
-    private static Map<String, List<SkillNode>> dependentsByNodeId() {
+    private static Map<String, List<SkillNode>> dependentsByNodeId(List<SkillNode> sorted) {
         Map<String, List<SkillNode>> dependents = new HashMap<>();
-        for (SkillNode node : sortedNodes(SkillTree.getAllNodes().values())) {
+        for (SkillNode node : sorted) {
             for (String connectedId : node.getConnectedNodeIds()) {
                 dependents.computeIfAbsent(connectedId, key -> new ArrayList<>()).add(node);
             }
@@ -178,8 +196,8 @@ public final class NpcSkillTreeBuilder {
         return sorted;
     }
 
-    private static List<PathStep> shortestPath(BuildContext context, List<SkillNode> targets, String hullModId,
-                                               Map<String, List<SkillNode>> dependents) {
+    private static List<PathStep> shortestPath(BuildContext context, AllocationState state, List<SkillNode> targets,
+                                               String hullModId, Map<String, List<SkillNode>> dependents) {
         Set<String> targetIds = new HashSet<>();
         for (SkillNode targetNode : targets) {
             targetIds.add(targetNode.getId());
@@ -199,7 +217,7 @@ public final class NpcSkillTreeBuilder {
                 SkillType option = pathOption(context, candidate);
                 if (option == null && candidate.getType().isOptional()
                         || structuralSkipReason(context.data(), candidate, option == null ? null : option.getId()) != null
-                        || fitSkipReason(context, candidate, option, installedAfterStrip) != null) {
+                        || fitSkipReason(context, state, candidate, option, installedAfterStrip) != null) {
                     continue;
                 }
                 parents.put(candidate.getId(), current);
@@ -267,7 +285,7 @@ public final class NpcSkillTreeBuilder {
             return structuralReason;
         }
         SkillType option = node.getType().isOptional() ? SkillTree.getType(entry.optionTypeId()) : null;
-        String fitReason = fitSkipReason(context, node, option, context.installed());
+        String fitReason = fitSkipReason(context, AllocationState.of(context), node, option, context.installed());
         if (fitReason != null) {
             return fitReason;
         }
@@ -313,7 +331,8 @@ public final class NpcSkillTreeBuilder {
         return null;
     }
 
-    private static String fitSkipReason(BuildContext context, SkillNode node, SkillType option, Set<String> installed) {
+    private static String fitSkipReason(BuildContext context, AllocationState state, SkillNode node, SkillType option,
+                                        Set<String> installed) {
         HullSize hullSize = context.profile().hullSize();
         if (!node.getType().allowsHullSize(hullSize) || option != null && !option.allowsHullSize(hullSize)) {
             return NpcBuildStep.WRONG_HULL_SIZE;
@@ -327,22 +346,19 @@ public final class NpcSkillTreeBuilder {
                 return NpcBuildStep.INSTALLED_HULLMOD_CONFLICT + hullModId;
             }
         }
-        String conflictingType = conflictingAllocatedTypeId(context.data(), AllocatedNode.planned(node, option));
+        String conflictingType = conflictingAllocatedTypeId(state.allocated(), AllocatedNode.planned(node, option));
         if (conflictingType != null) {
             return NpcBuildStep.EXCLUSIVE_TYPE_CONFLICT + conflictingType;
         }
-        String shipStateReason = shipStateBlockReason(context.data(), option != null ? option : node.getType(),
-                context.profile());
+        String shipStateReason = shipStateBlockReason(state.shieldType(), option != null ? option : node.getType(), hullSize);
         if (shipStateReason != null) {
             return NpcBuildStep.BLOCKED_BY_SHIP_STATE + shipStateReason;
         }
         return null;
     }
 
-    private static String shipStateBlockReason(ShipSkillData data, SkillType effectiveType, ShipProfile profile) {
-        ShieldType shieldType = ShieldSkillEffect.resolveDisplayShieldType(profile.shieldType(),
-                AllocatedSkillEffects.forData(data, profile.hullSize()));
-        for (SkillTypeEffect effect : effectiveType.effectsFor(profile.hullSize())) {
+    private static String shipStateBlockReason(ShieldType shieldType, SkillType effectiveType, HullSize hullSize) {
+        for (SkillTypeEffect effect : effectiveType.effectsFor(hullSize)) {
             String reason = effect.effect().shieldTypeBlockReason(shieldType);
             if (reason != null) {
                 return reason;
@@ -359,8 +375,8 @@ public final class NpcSkillTreeBuilder {
         return ids;
     }
 
-    private static String conflictingAllocatedTypeId(ShipSkillData data, AllocatedNode candidate) {
-        for (AllocatedNode allocated : AllocatedNode.of(data)) {
+    private static String conflictingAllocatedTypeId(List<AllocatedNode> allocatedNodes, AllocatedNode candidate) {
+        for (AllocatedNode allocated : allocatedNodes) {
             if (allocated.isExclusiveWith(candidate)) {
                 return allocated.effectiveType().getId();
             }

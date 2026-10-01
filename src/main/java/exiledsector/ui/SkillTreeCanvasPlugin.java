@@ -395,6 +395,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     private TreeViewport viewport() {
         return new TreeViewport(position.getX() + position.getWidth() / 2f + panX,
-                position.getY() + position.getHeight() / 2f + panY, zoom);
+                position.getY() + position.getHeight() / 2f + panY, zoom,
+                position.getX(), position.getY(), position.getX() + position.getWidth(), position.getY() + position.getHeight());
     }
 }

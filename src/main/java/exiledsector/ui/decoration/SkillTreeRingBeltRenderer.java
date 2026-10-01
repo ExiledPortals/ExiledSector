@@ -35,7 +35,7 @@ public class SkillTreeRingBeltRenderer {
             float screenY = viewport.screenY(belt.getY());
             float rotationDeg = belt.getRotation() + belt.getRotationSpeed() * elapsedSeconds;
             RadialBand band = new RadialBand(new Vector2f(screenX, screenY), belt.getInnerRadius() * zoom, belt.getOuterRadius() * zoom);
-            RingBeltRenderer.render(sprite, band, Color.WHITE, alphaMult, rotationDeg);
+            RingBeltRenderer.render(sprite, band, Color.WHITE, alphaMult, rotationDeg, viewport);
         }
     }
 }

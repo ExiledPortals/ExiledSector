@@ -28,9 +28,14 @@ public class SkillTreeStaticImageRenderer {
 
             float screenX = viewport.screenX(image.getX());
             float screenY = viewport.screenY(image.getY());
+            float width = image.getWidth() * zoom;
+            float height = image.getHeight() * zoom;
+            if (!viewport.isVisible(screenX, screenY, (float) Math.hypot(width, height) / 2f)) {
+                continue;
+            }
             float angleDeg = -(image.getRotation() + image.getRotationSpeed() * elapsedSeconds);
             SpriteDraw.drawAtCenter(spriteCache, path, screenX, screenY,
-                    image.getWidth() * zoom, image.getHeight() * zoom, null, alphaMult, angleDeg);
+                    width, height, null, alphaMult, angleDeg);
         }
     }
 }

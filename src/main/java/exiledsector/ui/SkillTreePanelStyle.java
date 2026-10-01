@@ -59,6 +59,7 @@ public final class SkillTreePanelStyle {
     static final String DEFAULT_FONT_PATH = "graphics/fonts/orbitron20aabold.fnt";
     private static LazyFont font;
     private static boolean fontLoadFailed;
+    private static Boolean fakeBold;
 
     private String accentIconPath;
     private Color accentColor;
@@ -70,6 +71,13 @@ public final class SkillTreePanelStyle {
             this.accentIconPath = accentIconPath;
             this.accentColor = null;
         }
+    }
+
+    private static boolean fakeBold() {
+        if (fakeBold == null) {
+            fakeBold = !Translation.has("meta.fakeBold") || !"false".equals(Translation.text("meta.fakeBold"));
+        }
+        return fakeBold;
     }
 
     public static LazyFont font() {
@@ -121,7 +129,7 @@ public final class SkillTreePanelStyle {
         float bodyY = titleY - title.height - TOOLTIP_TITLE_BODY_GAP;
         float titleX = boxX + (boxWidth - title.width) / 2f;
         title.drawable.draw(titleX, titleY);
-        if (!Translation.has("meta.fakeBold") || !"false".equals(Translation.text("meta.fakeBold"))) {
+        if (fakeBold()) {
             title.drawable.draw(titleX + TOOLTIP_TITLE_BOLD_OFFSET, titleY);
         }
         body.drawable.draw(boxX + TOOLTIP_PADDING, bodyY);

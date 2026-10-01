@@ -301,6 +301,9 @@ public final class SkillTreeNodeRenderer {
         float nodeX = viewport.screenX(node.getOffsetX());
         float nodeY = viewport.screenY(node.getOffsetY());
         float footprintSize = NODE_SIZE * zoom * tier.getSizeMultiplier();
+        if (!viewport.isVisible(nodeX, nodeY, ringRenderer.reach(footprintSize, node))) {
+            return;
+        }
 
         if (allocation.isHidden(node)) {
             ghostRenderer.draw(nodeX, nodeY, footprintSize, alphaMult * search.backgroundAlpha(), node.getId());
@@ -330,10 +333,13 @@ public final class SkillTreeNodeRenderer {
         float zoom = viewport.zoom();
         float nodeX = viewport.screenX(rootChoice.offsetX(node));
         float nodeY = viewport.screenY(rootChoice.offsetY(node));
+        float footprintSize = NODE_SIZE * zoom * SkillTier.ROOT.getSizeMultiplier();
+        if (!viewport.isVisible(nodeX, nodeY, ringRenderer.reach(footprintSize, node))) {
+            return;
+        }
         boolean choosing = isChoosingStartingRoot();
         boolean allocated = data.isAllocated(node.getId());
         boolean breathing = choosing || (!allocated && allocation.canAllocate(node));
-        float footprintSize = NODE_SIZE * zoom * SkillTier.ROOT.getSizeMultiplier();
         float nodeAlpha = alphaMult * search.nodeAlpha(node, allocation);
         ringRenderer.draw(nodeX, nodeY, footprintSize, nodeAlpha, allocated, breathing, zoom, node);
 

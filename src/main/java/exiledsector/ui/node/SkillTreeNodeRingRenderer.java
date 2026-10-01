@@ -105,6 +105,9 @@ final class SkillTreeNodeRingRenderer {
     private static final float WORMHOLE_GLOW_SIZE_RATIO = 1.3f;
     private static final float WORMHOLE_GLOW_ALPHA = 0.67f;
 
+    private static final float REACH_FOOTPRINT_RATIO = 2f;
+    private static final float KEYSTONE_BELT_REACH_MARGIN = 1.3f;
+
     private final SkillTreePanelStyle style;
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeNodeRingRenderer.class);
     private final Map<String, Float> pulseElapsed = new HashMap<>();
@@ -141,6 +144,14 @@ final class SkillTreeNodeRingRenderer {
 
     void startPulse(String nodeId) {
         pulseElapsed.put(nodeId, 0f);
+    }
+
+    float reach(float footprintSize, SkillNode node) {
+        float reach = footprintSize * REACH_FOOTPRINT_RATIO;
+        if (node.getType().getTier() == SkillTier.KEYSTONE) {
+            reach = Math.max(reach, beltOuterRadius(footprintSize, resolveRingBeltWidth(node)) * KEYSTONE_BELT_REACH_MARGIN);
+        }
+        return reach;
     }
 
     void draw(float cx, float cy, float footprintSize, float alphaMult, boolean allocated, boolean breathing, float zoom, SkillNode node) {

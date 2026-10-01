@@ -29,6 +29,8 @@ public class SkillTreeStarRenderer {
     private static final String AURORA_TEXTURE_ID = "aurora";
     private static final float AURORA_INNER_RADIUS_MULT = 1.1f;
     private static final float AURORA_OUTER_RADIUS_MULT = 1.6f;
+    private static final float AURORA_MIN_THICKNESS = 10f;
+    private static final float AURORA_VERTEX_WOBBLE = 50f * 0.33f;
     private static final float AURORA_SHORTEN_MULT = 0.85f;
     private static final int AURORA_ALPHA = 25;
     private static final float AURORA_BAND_WIDTH_IN_TEXTURE = 256f;
@@ -75,6 +77,9 @@ public class SkillTreeStarRenderer {
             float screenX = viewport.screenX(star.getX());
             float screenY = viewport.screenY(star.getY());
             float radius = star.getRadius() * zoom;
+            if (!viewport.isVisible(screenX, screenY, radius + 0.5f * zoom)) {
+                continue;
+            }
             float angle = angleById.getOrDefault(star.getId(), 0f);
             Color discColor = resolveColor(star, spec.getPlanetColor());
 
@@ -134,9 +139,9 @@ public class SkillTreeStarRenderer {
 
                 float screenX = viewport.screenX(star.getX());
                 float screenY = viewport.screenY(star.getY());
-                Color color = resolveColor(star, spec.getAtmosphereColor());
-
-                drawAtmosphereRing(texture, screenX, screenY, innerRadius, outerRadius, color, alphaMult);
+                if (viewport.isVisible(screenX, screenY, outerRadius)) {
+                    drawAtmosphereRing(texture, screenX, screenY, innerRadius, outerRadius, resolveColor(star, spec.getAtmosphereColor()), alphaMult);
+                }
             }
         }
     }
@@ -188,6 +193,9 @@ public class SkillTreeStarRenderer {
 
             float screenX = viewport.screenX(star.getX());
             float screenY = viewport.screenY(star.getY());
+            if (!viewport.isVisible(screenX, screenY, auroraReach(radius))) {
+                continue;
+            }
             Color coronaColor = resolveColor(star, spec.getCoronaColor());
 
             AuroraRenderer renderer = getOrCreateAurora(star);
@@ -203,6 +211,12 @@ public class SkillTreeStarRenderer {
             GL11.glDisable(GL11.GL_BLEND);
             GL11.glDisable(GL11.GL_TEXTURE_2D);
         }
+    }
+
+    private static float auroraReach(float radius) {
+        float inner = radius * AURORA_INNER_RADIUS_MULT;
+        float thickness = Math.max(radius * AURORA_OUTER_RADIUS_MULT - inner, AURORA_MIN_THICKNESS);
+        return inner + thickness * (1f + AURORA_SHORTEN_MULT) + AURORA_VERTEX_WOBBLE;
     }
 
     private AuroraRenderer getOrCreateAurora(Star star) {
@@ -230,8 +244,10 @@ public class SkillTreeStarRenderer {
 
             float radius = star.getRadius() * zoom;
             float haloRadius = star.getRadius() * spec.getCoronaSize() * zoom;
-            if (haloRadius > radius) {
-                SpriteDraw.drawAdditiveAtCenter(spriteCache, coronaPath, viewport.screenX(star.getX()), viewport.screenY(star.getY()),
+            float screenX = viewport.screenX(star.getX());
+            float screenY = viewport.screenY(star.getY());
+            if (haloRadius > radius && viewport.isVisible(screenX, screenY, haloRadius)) {
+                SpriteDraw.drawAdditiveAtCenter(spriteCache, coronaPath, screenX, screenY,
                         haloRadius * 2f, haloRadius * 2f, resolveColor(star, spec.getCoronaColor()), alphaMult);
             }
         }

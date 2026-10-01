@@ -10,7 +10,9 @@ import exiledsector.ui.TreeViewport;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_CONNECTOR_GLOW_HALO_ALPHA;
@@ -35,6 +37,7 @@ final class SkillTreeNodeConnectorRenderer {
     private static final int TEMPLATE_RGB = SkillTreePanelStyle.POSITIVE_STAT_COLOR.getRGB();
     private static final float TEMPLATE_ALPHA = 0.9f;
     private static final int BLACK_RGB = Color.BLACK.getRGB();
+    private static final float EDGE_CULL_MARGIN = NODE_CONNECTOR_GLOW_HALO_THICKNESS + NODE_CONNECTOR_PARALLEL_GAP;
 
     private final SkillTreePanelStyle style;
     private final NodeSearch search;
@@ -44,6 +47,7 @@ final class SkillTreeNodeConnectorRenderer {
     private final LineBatch glowLines = new LineBatch(NODE_CONNECTOR_GLOW_LINE_THICKNESS);
     private final float[] cumulativeArcLength = new float[CURVE_ARC_SAMPLES + 1];
     private final WormholeOpenness wormholeOpenness;
+    private List<Edge> edges;
 
     SkillTreeNodeConnectorRenderer(SkillTreePanelStyle style, NodeSearch search, WormholeOpenness wormholeOpenness) {
         this.style = style;
@@ -59,54 +63,73 @@ final class SkillTreeNodeConnectorRenderer {
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         clearBatch();
 
-        for (SkillNode node : SkillTree.getAllNodes().values()) {
-            if (node.getType().getTier() == SkillTier.ROOT) continue;
-
-            ConnectorEndpoint nodeEndpoint = new ConnectorEndpoint(viewport.screenX(node.getOffsetX()),
-                    viewport.screenY(node.getOffsetY()), endpointRadius(node, zoom));
-
-            drawConnectorsFrom(node, nodeEndpoint, viewport, tree, templateNodeIds, fills, alphaMult);
+        for (Edge edge : edges()) {
+            drawEdge(edge, viewport, tree, templateNodeIds, fills, alphaMult);
         }
 
         flushBatch();
         GL11.glDisable(GL11.GL_BLEND);
     }
 
-    private void drawConnectorsFrom(SkillNode node, ConnectorEndpoint nodeEndpoint, TreeViewport viewport,
-                                     NodeAllocator.Snapshot tree, Set<String> templateNodeIds, ConnectorFills fills,
-                                     float alphaMult) {
+    private List<Edge> edges() {
+        if (edges == null) {
+            List<Edge> built = new ArrayList<>();
+            for (SkillNode node : SkillTree.getAllNodes().values()) {
+                for (String connectedId : node.getConnectedNodeIds()) {
+                    SkillNode other = SkillTree.get(connectedId);
+                    if (other != null && drawsListedEdge(node, other)) {
+                        built.add(new Edge(node, other, SkillTree.getCurve(node.getId(), other.getId())));
+                    }
+                }
+            }
+            edges = built;
+        }
+        return edges;
+    }
+
+    private void drawEdge(Edge edge, TreeViewport viewport, NodeAllocator.Snapshot tree, Set<String> templateNodeIds,
+                          ConnectorFills fills, float alphaMult) {
+        SkillNode node = edge.from();
+        SkillNode other = edge.to();
+        ConnectorCurve curve = edge.curve();
+        float nodeX = viewport.screenX(node.getOffsetX());
+        float nodeY = viewport.screenY(node.getOffsetY());
+        float otherX = viewport.screenX(other.getOffsetX());
+        float otherY = viewport.screenY(other.getOffsetY());
+        float controlX = curve == null ? nodeX : viewport.screenX(curve.getControlOffsetX());
+        float controlY = curve == null ? nodeY : viewport.screenY(curve.getControlOffsetY());
+        float bezierX = 2f * controlX - (nodeX + otherX) / 2f;
+        float bezierY = 2f * controlY - (nodeY + otherY) / 2f;
+        if (!viewport.overlaps(Math.min(Math.min(nodeX, otherX), bezierX) - EDGE_CULL_MARGIN,
+                Math.min(Math.min(nodeY, otherY), bezierY) - EDGE_CULL_MARGIN,
+                Math.max(Math.max(nodeX, otherX), bezierX) + EDGE_CULL_MARGIN,
+                Math.max(Math.max(nodeY, otherY), bezierY) + EDGE_CULL_MARGIN)) {
+            return;
+        }
+
         float zoom = viewport.zoom();
         ShipSkillData data = tree.data();
         String satisfiedRootId = tree.satisfiedRootId();
-        for (String connectedId : node.getConnectedNodeIds()) {
-            SkillNode other = SkillTree.get(connectedId);
-            if (other == null || !drawsListedEdge(node, other)) {
-                continue;
-            }
+        ConnectorEndpoint nodeEndpoint = new ConnectorEndpoint(nodeX, nodeY, endpointRadius(node, zoom));
+        ConnectorEndpoint otherEndpoint = new ConnectorEndpoint(otherX, otherY, endpointRadius(other, zoom));
+        boolean bothSatisfied = data.isSatisfied(node.getId(), satisfiedRootId) && data.isSatisfied(other.getId(), satisfiedRootId);
+        boolean nodeInTemplate = templateNodeIds.contains(node.getId());
+        boolean otherInTemplate = templateNodeIds.contains(other.getId());
 
-            ConnectorEndpoint otherEndpoint = new ConnectorEndpoint(viewport.screenX(other.getOffsetX()),
-                    viewport.screenY(other.getOffsetY()), endpointRadius(other, zoom));
-            boolean bothSatisfied = data.isSatisfied(node.getId(), satisfiedRootId) && data.isSatisfied(other.getId(), satisfiedRootId);
-            boolean nodeInTemplate = templateNodeIds.contains(node.getId());
-            boolean otherInTemplate = templateNodeIds.contains(other.getId());
+        ConnectorFade fade = new ConnectorFade(
+                ConnectorKind.of(bothSatisfied, nodeInTemplate, otherInTemplate),
+                isWormhole(other) || tree.isHidden(other),
+                isWormhole(node) || tree.isHidden(node),
+                isOpenWormhole(other, data, satisfiedRootId),
+                isOpenWormhole(node, data, satisfiedRootId));
+        ConnectorFills.FillRange fill = bothSatisfied ? fills.filledRange(other.getId(), node.getId()) : ConnectorFills.FillRange.FULL;
+        EdgeFill edgeFill = fill.isFull() ? EdgeFill.NONE : new EdgeFill(fill, ConnectorKind.of(false, nodeInTemplate, otherInTemplate));
 
-            ConnectorFade fade = new ConnectorFade(
-                    ConnectorKind.of(bothSatisfied, nodeInTemplate, otherInTemplate),
-                    isWormhole(other) || tree.isHidden(other),
-                    isWormhole(node) || tree.isHidden(node),
-                    isOpenWormhole(other, data, satisfiedRootId),
-                    isOpenWormhole(node, data, satisfiedRootId));
-            ConnectorFills.FillRange fill = bothSatisfied ? fills.filledRange(other.getId(), node.getId()) : ConnectorFills.FillRange.FULL;
-            EdgeFill edgeFill = fill.isFull() ? EdgeFill.NONE : new EdgeFill(fill, ConnectorKind.of(false, nodeInTemplate, otherInTemplate));
-
-            float edgeAlpha = alphaMult * search.connectorAlpha(node, other, tree);
-            ConnectorCurve curve = SkillTree.getCurve(node.getId(), other.getId());
-            if (curve == null) {
-                drawStraightNodeConnectorLine(otherEndpoint, nodeEndpoint, fade, edgeFill, zoom, edgeAlpha);
-            } else {
-                drawCurvedNodeConnectorLine(otherEndpoint, viewport.screenX(curve.getControlOffsetX()),
-                        viewport.screenY(curve.getControlOffsetY()), nodeEndpoint, fade, edgeFill, zoom, edgeAlpha);
-            }
+        float edgeAlpha = alphaMult * search.connectorAlpha(node, other, tree);
+        if (curve == null) {
+            drawStraightNodeConnectorLine(otherEndpoint, nodeEndpoint, fade, edgeFill, zoom, edgeAlpha);
+        } else {
+            drawCurvedNodeConnectorLine(otherEndpoint, controlX, controlY, nodeEndpoint, fade, edgeFill, zoom, edgeAlpha);
         }
     }
 
@@ -436,6 +459,9 @@ final class SkillTreeNodeConnectorRenderer {
         dullLines.flush();
         glowHaloLines.flush();
         glowLines.flush();
+    }
+
+    private record Edge(SkillNode from, SkillNode to, ConnectorCurve curve) {
     }
 
     private record ConnectorEndpoint(float x, float y, float radius) {

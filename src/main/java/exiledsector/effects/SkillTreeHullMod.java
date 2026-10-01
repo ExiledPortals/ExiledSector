@@ -47,21 +47,22 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         if (data == null) return;
 
         boolean npcTree = SkillDataResolver.isNpcTree(stats.getVariant());
-        forEachAllocatedEffect(data, hullSize,
+        List<AllocatedNode> allocated = AllocatedNode.of(data);
+        forEachAllocatedEffect(data, allocated, hullSize,
                 (vanillaEffect, vanillaHullModId) -> vanillaEffect.applyEffectsBeforeShipCreation(hullSize, stats, vanillaHullModId),
                 (effect, modId, magnitude) -> {
                     if (!effect.appliesAfterOtherEffects()) effect.apply(stats, modId, magnitude);
                 });
-        forEachAllocatedEffect(data, hullSize, (vanillaEffect, vanillaHullModId) -> { },
+        forEachAllocatedEffect(data, allocated, hullSize, (vanillaEffect, vanillaHullModId) -> { },
                 (effect, modId, magnitude) -> {
                     if (effect.appliesAfterOtherEffects()) effect.apply(stats, modId, magnitude);
                 });
         if (!npcTree) {
             syncOpSpentHullMod(stats.getFleetMember(), stats.getVariant());
         }
-        syncInstalledHullMods(data, stats.getVariant());
+        syncInstalledHullMods(installedHullModIds(allocated), stats.getVariant());
         if (!npcTree) {
-            removeHullModsConflictingWithAllocatedSkills(data, stats.getVariant());
+            removeHullModsConflictingWithAllocatedSkills(allocated, stats.getVariant());
         }
     }
 
@@ -156,7 +157,12 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
                                          VanillaDelegate vanillaDelegate, EffectAction action) {
         if (data == null) return;
 
-        for (AllocatedNode allocated : AllocatedNode.of(data)) {
+        forEachAllocatedEffect(data, AllocatedNode.of(data), hullSize, vanillaDelegate, action);
+    }
+
+    private void forEachAllocatedEffect(ShipSkillData data, List<AllocatedNode> allocatedNodes, HullSize hullSize,
+                                         VanillaDelegate vanillaDelegate, EffectAction action) {
+        for (AllocatedNode allocated : allocatedNodes) {
             SkillType type = allocated.effectiveType();
             String vanillaHullModId = type.getVanillaHullModId();
             if (vanillaHullModId != null) {
@@ -240,13 +246,15 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
     }
 
     public static void syncInstalledHullMods(FleetMemberAPI member, ShipVariantAPI variant) {
-        syncInstalledHullMods(SkillDataResolver.resolve(member, variant), variant);
+        ShipSkillData data = SkillDataResolver.resolve(member, variant);
+        if (data == null) return;
+
+        syncInstalledHullMods(installedHullModIds(AllocatedNode.of(data)), variant);
     }
 
-    private static void syncInstalledHullMods(ShipSkillData data, ShipVariantAPI variant) {
-        if (data == null || variant == null) return;
+    private static void syncInstalledHullMods(Set<String> wanted, ShipVariantAPI variant) {
+        if (variant == null) return;
 
-        Set<String> wanted = installedHullModIds(data);
         for (String hullModId : wanted) {
             if (!variant.hasHullMod(hullModId)) {
                 variant.addPermaMod(hullModId);
@@ -287,9 +295,9 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         return variant.hasHullMod(hullModId) && !builtIn && !isInstalledBySkillTree(variant, hullModId);
     }
 
-    private static Set<String> installedHullModIds(ShipSkillData data) {
+    private static Set<String> installedHullModIds(List<AllocatedNode> allocatedNodes) {
         Set<String> ids = new LinkedHashSet<>();
-        for (AllocatedNode allocated : AllocatedNode.of(data)) {
+        for (AllocatedNode allocated : allocatedNodes) {
             ids.addAll(allocated.effectiveType().getInstalledHullModIds());
         }
         return ids;
@@ -298,14 +306,14 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
     public static void removeHullModsConflictingWithAllocatedSkills(FleetMemberAPI member, ShipVariantAPI variant) {
         if (member == null || SkillDataResolver.isNpcTree(variant)) return;
 
-        removeHullModsConflictingWithAllocatedSkills(ShipSkillDataManager.get(member.getId()), variant);
+        removeHullModsConflictingWithAllocatedSkills(AllocatedNode.of(ShipSkillDataManager.get(member.getId())), variant);
     }
 
-    private static void removeHullModsConflictingWithAllocatedSkills(ShipSkillData data, ShipVariantAPI variant) {
-        if (data == null || variant == null) return;
+    private static void removeHullModsConflictingWithAllocatedSkills(List<AllocatedNode> allocatedNodes, ShipVariantAPI variant) {
+        if (variant == null) return;
 
         boolean conflictFound = false;
-        for (AllocatedNode allocated : AllocatedNode.of(data)) {
+        for (AllocatedNode allocated : allocatedNodes) {
             SkillType type = allocated.effectiveType();
             for (String hullModId : type.getExclusiveHullModIds()) {
                 if (isRemovableConflict(variant, hullModId)) {
