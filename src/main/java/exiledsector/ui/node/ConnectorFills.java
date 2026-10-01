@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 
 final class ConnectorFills {
 
-    static final float FILL_SECONDS = 1f;
+    static final float FILL_SECONDS = 0.5f;
 
     private final Map<String, Fill> fillsByEdge = new HashMap<>();
     private final Map<String, Float> pulseDelays = new HashMap<>();

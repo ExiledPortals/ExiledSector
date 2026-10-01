@@ -28,10 +28,10 @@ class ConnectorFillsTest {
     }
 
     @Test
-    void theFillGrowsFromThePreviouslyAllocatedNodeOverOneSecond() {
+    void theFillGrowsFromThePreviouslyAllocatedNodeOverTheFillDuration() {
         fills.start("old", "new");
 
-        advance(0.25f);
+        advance(0.25f * ConnectorFills.FILL_SECONDS);
         ConnectorFills.FillRange fromOld = fills.filledRange("old", "new");
         assertEquals(0f, fromOld.start(), EPSILON);
         assertEquals(0.25f, fromOld.end(), EPSILON);
@@ -56,11 +56,11 @@ class ConnectorFillsTest {
         fills.start("old", "new");
         fills.schedulePulse("new");
 
-        advance(0.6f);
+        advance(0.75f * ConnectorFills.FILL_SECONDS);
         assertTrue(pulses.isEmpty());
-        advance(0.4f);
+        advance(0.25f * ConnectorFills.FILL_SECONDS);
         assertEquals(List.of("new"), pulses);
-        advance(1f);
+        advance(ConnectorFills.FILL_SECONDS);
         assertEquals(List.of("new"), pulses);
     }
 
@@ -72,7 +72,7 @@ class ConnectorFillsTest {
         fills.schedulePulse("new");
 
         fills.cancel("new");
-        advance(1f);
+        advance(ConnectorFills.FILL_SECONDS);
 
         assertTrue(pulses.isEmpty());
         assertSame(ConnectorFills.FillRange.FULL, fills.filledRange("old", "new"));
