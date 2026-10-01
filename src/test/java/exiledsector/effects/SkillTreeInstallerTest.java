@@ -359,6 +359,26 @@ class SkillTreeInstallerTest {
     }
 
     @Test
+    void adoptingAFleetsNpcTreesOnDemandRequestsASyncOnlyWhenSomethingWasAdopted() {
+        registerNpcTreeNodes();
+        List<String> tags = new ArrayList<>(List.of("exiledSector_npcTree|bulwark|3|root_1,a_1"));
+        FleetMemberAPI recovered = recoveredNpc("recovered", new HashSet<>(), tags);
+        FleetMemberAPI ownShip = mockMember("own-ship", true);
+        CampaignFleetAPI playerFleet = sector.getPlayerFleet();
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(ownShip));
+
+        SkillTreeInstaller.adoptNpcTrees(playerFleet);
+        verify(fleetData, never()).setSyncNeeded();
+
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(ownShip, recovered));
+        SkillTreeInstaller.adoptNpcTrees(playerFleet);
+
+        assertEquals(List.of("root_1", "a_1"), List.copyOf(ShipSkillDataManager.get("recovered").getAllocatedNodeIds()));
+        assertTrue(tags.isEmpty());
+        verify(fleetData).setSyncNeeded();
+    }
+
+    @Test
     void aShipThatAlreadyHasSavedProgressKeepsItAndOnlyLosesTheNpcTag() {
         registerNpcTreeNodes();
         ShipSkillDataManager.get("returning").addXp(40f);

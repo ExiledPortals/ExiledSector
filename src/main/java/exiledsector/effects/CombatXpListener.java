@@ -31,7 +31,7 @@ public class CombatXpListener extends BaseCampaignEventListener {
     @Override
     public void reportPlayerEngagement(EngagementResultAPI result) {
         CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
-        if (result == null || result.getLastCombatDamageData() == null || playerFleet == null) {
+        if (result == null || playerFleet == null) {
             return;
         }
         float defeatedDp = enemyDeploymentPointsDefeated(result);
@@ -41,6 +41,7 @@ public class CombatXpListener extends BaseCampaignEventListener {
                 ShipLevelConfig.xpDifficultyStrength(), ShipLevelConfig.xpDifficultyMaxMultiplier());
         float xp = defeatedDp * ShipLevelConfig.xpPerDeploymentPoint() * lossMultiplier * difficultyMultiplier;
 
+        SkillTreeInstaller.adoptNpcTrees(playerFleet);
         Map<FleetMemberAPI, Integer> levelsBefore = levelsOf(playerFleet);
         ShipLevelSystem.awardXpToFleet(playerFleet, xp);
         I18n.forGameText(() -> report(new CombatXpReport(xp, defeatedDp, lost, difficultyMultiplier, levelUps(levelsBefore))));

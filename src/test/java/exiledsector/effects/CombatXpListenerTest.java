@@ -4,7 +4,6 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
-import com.fs.starfarer.api.campaign.CombatDamageData;
 import com.fs.starfarer.api.campaign.EngagementResultForFleetAPI;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
@@ -15,12 +14,17 @@ import com.fs.starfarer.api.campaign.TextPanelAPI;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.FleetEncounterContext;
+import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.ui.LabelAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.SkillNode;
+import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
+import exiledsector.skills.SkillType;
 import exiledsector.skills.progression.ShipLevelConfig;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
@@ -30,6 +34,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +45,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -123,8 +129,6 @@ class CombatXpListenerTest {
         } else {
             when(result.getWinnerResult()).thenReturn(enemy);
         }
-        CombatDamageData combatDamageData = mock(CombatDamageData.class);
-        when(result.getLastCombatDamageData()).thenReturn(combatDamageData);
         return result;
     }
 
@@ -166,16 +170,41 @@ class CombatXpListenerTest {
     }
 
     @Test
-    void ignoresAutoresolvedEngagementsWithoutCombatData() {
+    void aCapturedNpcShipThatFightsAgainBeforeItsTreeIsAdoptedStillKeepsTheTree() {
+        lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", ShipLevelConfig.XP_BASE_FIELD_ID)).thenReturn(10000);
+        SkillTree.register(new SkillNode("root_1", new SkillType.Builder("root", "Root", "a.png", SkillTier.ROOT).build(),
+                List.of(), 0f, 0f));
+        SkillTree.register(new SkillNode("a_1", new SkillType.Builder("a", "A", "a.png", SkillTier.SMALL).build(),
+                List.of("root_1"), 0f, 0f));
+        FleetMemberAPI captured = member("captured");
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        List<String> tags = new ArrayList<>(List.of("exiledSector_npcTree|bulwark|3|root_1,a_1"));
+        when(captured.getVariant()).thenReturn(variant);
+        when(variant.getSource()).thenReturn(VariantSource.REFIT);
+        when(variant.getTags()).thenAnswer(invocation -> new ArrayList<>(tags));
+        doAnswer(invocation -> tags.remove((String) invocation.getArgument(0))).when(variant).removeTag(anyString());
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(captured));
+
+        new CombatXpListener().reportPlayerEngagement(engagement(true, 40f));
+
+        ShipSkillData data = ShipSkillDataManager.get("captured");
+        assertEquals(List.of("root_1", "a_1"), List.copyOf(data.getAllocatedNodeIds()));
+        assertEquals(3, data.getLevel());
+        assertTrue(tags.isEmpty());
+        verify(textPanel, never()).addPara(eq("%s"), (Color) any(), (Color) any(), contains("reached level"));
+    }
+
+    @Test
+    void awardsXpForAutoresolvedPursuitsWhichCarryNoCombatData() {
         List<FleetMemberAPI> members = List.of(member("ship-a"));
         when(fleetData.getMembersListCopy()).thenReturn(members);
-        EngagementResultAPI autoresolved = engagement(true, 40f);
-        when(autoresolved.getLastCombatDamageData()).thenReturn(null);
+        EngagementResultAPI autoresolvedPursuit = engagement(true, 40f);
+        when(autoresolvedPursuit.getLastCombatDamageData()).thenReturn(null);
 
-        new CombatXpListener().reportPlayerEngagement(autoresolved);
+        new CombatXpListener().reportPlayerEngagement(autoresolvedPursuit);
 
-        assertEquals(0f, ShipSkillDataManager.get("ship-a").getXp());
-        verify(textPanel, never()).addPara(anyString(), any(Color.class), any(Color.class), any(String[].class));
+        assertEquals(40f, ShipSkillDataManager.get("ship-a").getXp());
+        verify(textPanel).addPara(eq("%s"), (Color) any(), (Color) any(), contains("40"));
     }
 
     @Test

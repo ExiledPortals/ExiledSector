@@ -54,6 +54,16 @@ public class SkillTreeInstaller implements EveryFrameScript {
         }
     }
 
+    public static void adoptNpcTrees(CampaignFleetAPI fleet) {
+        boolean changed = false;
+        for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
+            changed |= adoptNpcTree(member);
+        }
+        if (changed) {
+            fleet.getFleetData().setSyncNeeded();
+        }
+    }
+
     public static boolean ensureInstalled(FleetMemberAPI member, ShipVariantAPI editedVariant) {
         boolean changed = adoptNpcTree(member);
         changed |= ensureHullModAppliesLast(member);
