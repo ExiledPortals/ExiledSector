@@ -3530,7 +3530,8 @@
 			"id": "tactical_superiority_1",
 			"type": "tactical_superiority",
 			"connectedTo": [
-				"objective_capture_range_3"
+				"objective_capture_range_3",
+				"objective_capture_range_1"
 			],
 			"x": -26,
 			"y": -8756,
@@ -3828,7 +3829,8 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_55",
-				"luddic_2"
+				"luddic_2",
+				"reduced_D_mod_effect_1"
 			],
 			"x": 4982,
 			"y": 7128,
@@ -5797,24 +5799,6 @@
 			"controlY": 1530
 		},
 		{
-			"a": "wormhole_5",
-			"b": "wormhole_6",
-			"controlX": -41,
-			"controlY": 1808
-		},
-		{
-			"a": "wormhole_3",
-			"b": "wormhole_4",
-			"controlX": 1682,
-			"controlY": -584
-		},
-		{
-			"a": "wormhole_1",
-			"b": "wormhole_2",
-			"controlX": -714,
-			"controlY": -54
-		},
-		{
 			"a": "ballistic_damage_4",
 			"b": "ballistic_damage_5",
 			"controlX": -585,
@@ -6073,30 +6057,6 @@
 			"controlY": -6356
 		},
 		{
-			"a": "small_flux_optional_46",
-			"b": "wormhole_8",
-			"controlX": -955,
-			"controlY": -7073
-		},
-		{
-			"a": "small_flux_optional_48",
-			"b": "wormhole_8",
-			"controlX": 897,
-			"controlY": -7073
-		},
-		{
-			"a": "small_flux_optional_49",
-			"b": "wormhole_10",
-			"controlX": 6798,
-			"controlY": -4518
-		},
-		{
-			"a": "small_flux_optional_51",
-			"b": "wormhole_10",
-			"controlX": 4960,
-			"controlY": -4518
-		},
-		{
 			"a": "neural_interface_1",
 			"b": "small_flux_optional_2",
 			"controlX": 0,
@@ -6113,18 +6073,6 @@
 			"b": "small_flux_optional_51",
 			"controlX": 4960,
 			"controlY": -4518
-		},
-		{
-			"a": "TRITACH_2",
-			"b": "small_flux_optional_46",
-			"controlX": -955,
-			"controlY": -7073
-		},
-		{
-			"a": "TRITACH_2",
-			"b": "small_flux_optional_48",
-			"controlX": 897,
-			"controlY": -7073
 		},
 		{
 			"a": "dictat_wormhole_2",
@@ -6163,12 +6111,6 @@
 			"controlY": 6037
 		},
 		{
-			"a": "small_flux_optional_59",
-			"b": "torpedo_specialisation_1",
-			"controlX": -5215,
-			"controlY": 7185
-		},
-		{
 			"a": "small_flux_optional_57",
 			"b": "small_flux_optional_58",
 			"controlX": -3030,
@@ -6200,12 +6142,6 @@
 		},
 		{
 			"a": "small_flux_optional_55",
-			"b": "violence_of_action_1",
-			"controlX": 3703,
-			"controlY": 7256
-		},
-		{
-			"a": "small_flux_optional_55",
 			"b": "small_flux_optional_56",
 			"controlX": 4598,
 			"controlY": 8057
@@ -6221,12 +6157,6 @@
 			"b": "small_flux_optional_62",
 			"controlX": 7132,
 			"controlY": 878
-		},
-		{
-			"a": "small_flux_optional_60",
-			"b": "waste_not_1",
-			"controlX": 8788,
-			"controlY": 256
 		},
 		{
 			"a": "small_flux_optional_60",
@@ -6693,32 +6623,8 @@
 	],
 	"hiddenConnectors": [
 		{
-			"a": "wormhole_2",
-			"b": "wormhole_1"
-		},
-		{
-			"a": "wormhole_3",
-			"b": "wormhole_4"
-		},
-		{
-			"a": "wormhole_5",
-			"b": "wormhole_6"
-		},
-		{
-			"a": "wormhole_8",
-			"b": "wormhole_7"
-		},
-		{
-			"a": "wormhole_9",
-			"b": "wormhole_10"
-		},
-		{
 			"a": "REDACTED_1",
 			"b": "REDACTED_2"
-		},
-		{
-			"a": "TRITACH_1",
-			"b": "TRITACH_2"
 		},
 		{
 			"a": "midline_wormhole_1",

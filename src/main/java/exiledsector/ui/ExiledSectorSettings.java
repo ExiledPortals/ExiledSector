@@ -131,16 +131,19 @@ public final class ExiledSectorSettings {
                 NpcInspectConfig.DEFAULT_KEY, tab);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_npcNodesHeader", Translation.text("settings.npcNodes.header"), tab);
-        SettingsCreator.addText(MOD_ID, "exiledSector_npcNodesAbout",
-                Translation.msg("settings.npcNodes.about").arg("maxLevel", NpcLevelTable.MAX_PLAYER_LEVEL).text(), tab);
+        SettingsCreator.addText(MOD_ID, "exiledSector_npcNodesAbout", Translation.text("settings.npcNodes.about"), tab);
         for (int level = NpcLevelTable.MIN_PLAYER_LEVEL; level <= NpcLevelTable.MAX_PLAYER_LEVEL; level++) {
+            boolean andAbove = level == NpcLevelTable.MAX_PLAYER_LEVEL;
             SettingsCreator.addHeader(MOD_ID, "exiledSector_npcLevel" + level + "Header",
-                    Translation.msg("settings.npcNodes.levelHeader").arg("level", level).text(), tab);
-            SettingsCreator.addInt(MOD_ID, NpcLevelTable.minNodesFieldId(level),
-                    Translation.text("settings.npcNodes.min.name"), Translation.msg("settings.npcNodes.min.tooltip").arg("level", level).text(),
+                    Translation.msg(andAbove ? "settings.npcNodes.levelHeaderAndAbove" : "settings.npcNodes.levelHeader")
+                            .arg("level", level).text(), tab);
+            SettingsCreator.addInt(MOD_ID, NpcLevelTable.minNodesFieldId(level), Translation.text("settings.npcNodes.min.name"),
+                    Translation.msg(andAbove ? "settings.npcNodes.min.tooltipAndAbove" : "settings.npcNodes.min.tooltip")
+                            .arg("level", level).text(),
                     NpcLevelTable.defaultMinNodes(level), NpcLevelTable.MIN_NODES, NpcLevelTable.MAX_NODES, tab);
-            SettingsCreator.addInt(MOD_ID, NpcLevelTable.maxNodesFieldId(level),
-                    Translation.text("settings.npcNodes.max.name"), Translation.msg("settings.npcNodes.max.tooltip").arg("level", level).text(),
+            SettingsCreator.addInt(MOD_ID, NpcLevelTable.maxNodesFieldId(level), Translation.text("settings.npcNodes.max.name"),
+                    Translation.msg(andAbove ? "settings.npcNodes.max.tooltipAndAbove" : "settings.npcNodes.max.tooltip")
+                            .arg("level", level).text(),
                     NpcLevelTable.defaultMaxNodes(level), NpcLevelTable.MIN_NODES, NpcLevelTable.MAX_NODES, tab);
         }
     }
