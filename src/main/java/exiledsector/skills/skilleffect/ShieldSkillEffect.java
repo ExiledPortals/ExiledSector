@@ -42,11 +42,6 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
         }
 
         @Override
-        public boolean supportsTemporaryGating() {
-            return false;
-        }
-
-        @Override
         public String blockAllocationReason(FleetMemberAPI member, float magnitude, List<SkillEffect> currentlyAllocatedEffects) {
             return shieldTypeBlockReason(resolveDisplayShieldType(member.getHullSpec().getShieldType(), currentlyAllocatedEffects));
         }
@@ -68,11 +63,6 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
                 ship.setShield(ShieldAPI.ShieldType.FRONT, MAKESHIFT_SHIELD_EFFICIENCY, MAKESHIFT_SHIELD_TURN_RATE_MULT, MAKESHIFT_SHIELD_ARC);
             }
         }
-
-        @Override
-        public boolean supportsTemporaryGating() {
-            return false;
-        }
     },
     CONVERT_SHIELD_TO_FRONT {
         @Override
@@ -85,11 +75,6 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
             if (shield != null) {
                 shield.setType(ShieldAPI.ShieldType.FRONT);
             }
-        }
-
-        @Override
-        public boolean supportsTemporaryGating() {
-            return false;
         }
 
         @Override
@@ -113,11 +98,6 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
             if (shield != null) {
                 shield.setType(ShieldAPI.ShieldType.OMNI);
             }
-        }
-
-        @Override
-        public boolean supportsTemporaryGating() {
-            return false;
         }
 
         @Override

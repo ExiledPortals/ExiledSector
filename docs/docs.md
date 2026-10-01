@@ -178,6 +178,9 @@ enemy leaves range or the source ship dies or retreats.
 ## Temporary nodes
 
 A node with `temporaryAfterDeploymentSeconds` only applies its effects for that many seconds after the
-ship deploys, and its tooltip states the duration. Effects that can't be switched off partway through a
-battle can't be used this way; that covers combat listeners, per-weapon ammo changes and the emergency
-dive. If one appears on a temporary node, the loader logs an error and ignores the duration.
+ship deploys, and its tooltip states the duration. Only effects that opt in can be used this way: stats
+the game keeps reading during combat. That covers movement, flux capacity and dissipation, peak CR time and
+CR loss, damage-taken multipliers, combat repair times, fighter refit and relaunch time, and weapon damage, range, flux
+cost, fire rate, projectile speed and recoil. Stats fixed when the ship is built (hull, armor, shield arc,
+fighter bays, weapon ammo), campaign stats, combat listeners and conditional effects can't be. If any other
+effect appears on a temporary node, the loader logs an error and ignores the duration.

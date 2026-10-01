@@ -51,11 +51,6 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
         public String blockAllocationReason(FleetMemberAPI member, float magnitude, List<SkillEffect> currentlyAllocatedEffects) {
             return member.getHullSpec().isPhase() ? null : "Requires a phase hull.";
         }
-
-        @Override
-        public boolean supportsTemporaryGating() {
-            return false;
-        }
     };
 
     private static final String PHASE_ANCHOR_CR_PENALTY_KEY = "exiledSector_phaseAnchorCrPenaltyPercent";

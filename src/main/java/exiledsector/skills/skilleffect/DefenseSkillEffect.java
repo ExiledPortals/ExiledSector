@@ -14,6 +14,7 @@ import static exiledsector.skills.skilleffect.StatMode.MULT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
 import static exiledsector.skills.skilleffect.StatTarget.all;
 import static exiledsector.skills.skilleffect.StatTarget.bonus;
+import static exiledsector.skills.skilleffect.StatTarget.liveStat;
 import static exiledsector.skills.skilleffect.StatTarget.stat;
 
 public enum DefenseSkillEffect implements BackedSkillEffect {
@@ -44,6 +45,11 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getArmorDamageTakenMult().modifyMult(modId, SkillEffectSupport.compoundMultPerDMod(stats, magnitude));
+        }
+
+        @Override
+        public boolean supportsTemporaryGating() {
+            return true;
         }
 
         @Override
@@ -93,19 +99,19 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
             return StatMode.MULT.describeStat(magnitude, "stat.negativeEffectsFromDMods");
         }
     },
-    SHIELD_ABSORPTION_PERCENT(PERCENT, stat(MutableShipStatsAPI::getShieldAbsorptionMult), "stat.damageTakenByShields", true),
-    SHIELD_DAMAGE_TAKEN_MULT(MULT, stat(MutableShipStatsAPI::getShieldDamageTakenMult), "stat.damageTakenByShields", true),
+    SHIELD_ABSORPTION_PERCENT(PERCENT, liveStat(MutableShipStatsAPI::getShieldAbsorptionMult), "stat.damageTakenByShields", true),
+    SHIELD_DAMAGE_TAKEN_MULT(MULT, liveStat(MutableShipStatsAPI::getShieldDamageTakenMult), "stat.damageTakenByShields", true),
     ENGINE_DURABILITY_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getEngineHealthBonus), "stat.engineDurability", false),
-    REPAIR_TIME_PERCENT(PERCENT, all(stat(MutableShipStatsAPI::getCombatWeaponRepairTimeMult),
-            stat(MutableShipStatsAPI::getCombatEngineRepairTimeMult)),
+    REPAIR_TIME_PERCENT(PERCENT, all(liveStat(MutableShipStatsAPI::getCombatWeaponRepairTimeMult),
+            liveStat(MutableShipStatsAPI::getCombatEngineRepairTimeMult)),
             "stat.weaponAndEngineRepairTime", true),
-    REPAIR_TIME_MULT(MULT, all(stat(MutableShipStatsAPI::getCombatWeaponRepairTimeMult),
-            stat(MutableShipStatsAPI::getCombatEngineRepairTimeMult)),
+    REPAIR_TIME_MULT(MULT, all(liveStat(MutableShipStatsAPI::getCombatWeaponRepairTimeMult),
+            liveStat(MutableShipStatsAPI::getCombatEngineRepairTimeMult)),
             "stat.weaponAndEngineRepairTime", true),
-    EMP_DAMAGE_TAKEN_PERCENT(PERCENT, stat(MutableShipStatsAPI::getEmpDamageTakenMult), "stat.empDamageTaken", true),
-    EMP_DAMAGE_TAKEN_MULT(MULT, stat(MutableShipStatsAPI::getEmpDamageTakenMult), "stat.empDamageTaken", true),
-    ENERGY_DAMAGE_TAKEN_PERCENT(PERCENT, all(stat(MutableShipStatsAPI::getEnergyDamageTakenMult),
-            stat(MutableShipStatsAPI::getEnergyShieldDamageTakenMult)),
+    EMP_DAMAGE_TAKEN_PERCENT(PERCENT, liveStat(MutableShipStatsAPI::getEmpDamageTakenMult), "stat.empDamageTaken", true),
+    EMP_DAMAGE_TAKEN_MULT(MULT, liveStat(MutableShipStatsAPI::getEmpDamageTakenMult), "stat.empDamageTaken", true),
+    ENERGY_DAMAGE_TAKEN_PERCENT(PERCENT, all(liveStat(MutableShipStatsAPI::getEnergyDamageTakenMult),
+            liveStat(MutableShipStatsAPI::getEnergyShieldDamageTakenMult)),
             "stat.energyDamageTakenIncludingHitsOnShieldsArmorAndHull", true);
 
     private final EffectBacking backing;

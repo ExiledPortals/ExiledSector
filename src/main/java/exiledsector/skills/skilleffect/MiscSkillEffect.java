@@ -15,8 +15,8 @@ import exiledsector.i18n.StyledText;
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
-import static exiledsector.skills.skilleffect.StatTarget.bonus;
 import static exiledsector.skills.skilleffect.StatTarget.dynamicMod;
+import static exiledsector.skills.skilleffect.StatTarget.liveBonus;
 import static exiledsector.skills.skilleffect.StatTarget.stat;
 
 public enum MiscSkillEffect implements BackedSkillEffect {
@@ -26,21 +26,11 @@ public enum MiscSkillEffect implements BackedSkillEffect {
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getDynamic().getMod(Stats.PD_IGNORES_FLARES).modifyFlat(modId, 1f);
         }
-
-        @Override
-        public boolean supportsTemporaryGating() {
-            return false;
-        }
     },
     PD_BEST_TARGET_LEADING {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getDynamic().getMod(Stats.PD_BEST_TARGET_LEADING).modifyFlat(modId, 1f);
-        }
-
-        @Override
-        public boolean supportsTemporaryGating() {
-            return false;
         }
     },
     PD_DAMAGE_TO_MISSILES_PERCENT(PERCENT, stat(MutableShipStatsAPI::getDamageToMissiles),
@@ -58,11 +48,6 @@ public enum MiscSkillEffect implements BackedSkillEffect {
                     weapon.setPD(true);
                 }
             }
-        }
-
-        @Override
-        public boolean supportsTemporaryGating() {
-            return false;
         }
     },
     ELECTRONIC_WARFARE_PENALTY_PERCENT(PERCENT, dynamicMod(Stats.ELECTRONIC_WARFARE_PENALTY_MOD),
@@ -85,8 +70,8 @@ public enum MiscSkillEffect implements BackedSkillEffect {
     },
     OBJECTIVE_CAPTURE_RANGE_FLAT(FLAT, dynamicMod(Stats.SHIP_OBJECTIVE_CAP_RANGE_MOD),
             "stat.rangeFromWhichCombatObjectivesCanBeCaptured", false),
-    PEAK_CR_DURATION_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getPeakCRDuration), "stat.peakCombatReadinessDuration", false),
-    PEAK_CR_DURATION_MULT(MULT, bonus(MutableShipStatsAPI::getPeakCRDuration), "stat.peakCombatReadinessDuration", false),
+    PEAK_CR_DURATION_PERCENT(PERCENT, liveBonus(MutableShipStatsAPI::getPeakCRDuration), "stat.peakCombatReadinessDuration", false),
+    PEAK_CR_DURATION_MULT(MULT, liveBonus(MutableShipStatsAPI::getPeakCRDuration), "stat.peakCombatReadinessDuration", false),
     COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP(new ConditionalStatEffect(FLAT, dynamicMod("command_point_rate_flat"),
             "stat.commandPointRecoveryWhileFlagship", MiscSkillEffect::isFlagship));
 

@@ -17,6 +17,7 @@ import static exiledsector.skills.skilleffect.StatMode.PERCENT;
 import static exiledsector.skills.skilleffect.StatTarget.bonus;
 import static exiledsector.skills.skilleffect.StatTarget.dynamicMod;
 import static exiledsector.skills.skilleffect.StatTarget.dynamicStat;
+import static exiledsector.skills.skilleffect.StatTarget.liveBonus;
 import static exiledsector.skills.skilleffect.StatTarget.stat;
 
 public enum LogisticsSkillEffect implements BackedSkillEffect {
@@ -59,9 +60,9 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
         }
     },
     REPAIR_RATE_PER_DAY_PERCENT(PERCENT, stat(MutableShipStatsAPI::getRepairRatePercentPerDay), "stat.repairRatePerDay", false),
-    CR_LOSS_PER_SECOND_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getCRLossPerSecondPercent),
+    CR_LOSS_PER_SECOND_PERCENT(PERCENT, liveBonus(MutableShipStatsAPI::getCRLossPerSecondPercent),
             "stat.rateOfCombatReadinessLossFromExtendedDeployment", true),
-    CR_LOSS_PER_SECOND_MULT(MULT, bonus(MutableShipStatsAPI::getCRLossPerSecondPercent),
+    CR_LOSS_PER_SECOND_MULT(MULT, liveBonus(MutableShipStatsAPI::getCRLossPerSecondPercent),
             "stat.rateOfCombatReadinessLossFromExtendedDeployment", true),
     MIN_CREW_MULT(MULT, bonus(MutableShipStatsAPI::getMinCrewMod), StatNames.MIN_CREW_REQUIRED, true),
     MIN_CREW_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getMinCrewMod), StatNames.MIN_CREW_REQUIRED, true),
@@ -109,11 +110,6 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
             stats.getSensorStrength().unmodify("civgrade");
             stats.getSensorProfile().unmodify("civgrade");
         }
-
-        @Override
-        public boolean supportsTemporaryGating() {
-            return false;
-        }
     },
     REQUIRES_CIVILIAN_GRADE_HULL {
         @Override
@@ -159,11 +155,6 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
         }
 
         @Override
-        public boolean supportsTemporaryGating() {
-            return false;
-        }
-
-        @Override
         public StyledText description(float magnitude) {
             return EffectText.templated(this, magnitude);
         }
@@ -178,11 +169,6 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
 
         @Override
         public boolean appliesToNpcShips() {
-            return false;
-        }
-
-        @Override
-        public boolean supportsTemporaryGating() {
             return false;
         }
 
@@ -204,11 +190,6 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
 
         @Override
         public boolean appliesToNpcShips() {
-            return false;
-        }
-
-        @Override
-        public boolean supportsTemporaryGating() {
             return false;
         }
     };

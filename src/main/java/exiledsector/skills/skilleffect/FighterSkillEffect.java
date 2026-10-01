@@ -14,6 +14,7 @@ import static exiledsector.skills.skilleffect.StatMode.PERCENT;
 import static exiledsector.skills.skilleffect.StatTarget.all;
 import static exiledsector.skills.skilleffect.StatTarget.bonus;
 import static exiledsector.skills.skilleffect.StatTarget.dynamicStat;
+import static exiledsector.skills.skilleffect.StatTarget.liveStat;
 import static exiledsector.skills.skilleffect.StatTarget.stat;
 
 public enum FighterSkillEffect implements SkillEffect {
@@ -24,19 +25,14 @@ public enum FighterSkillEffect implements SkillEffect {
             "stat.casualtiesSufferedByFighterPilotsLaunchedFromThisShip", true),
     FIGHTER_CREW_LOSS_MULT(MULT, dynamicStat("fighter_crew_loss_mult"),
             "stat.casualtiesSufferedByFighterPilotsLaunchedFromThisShip", true),
-    FIGHTER_REFIT_TIME_MULT(MULT, stat(MutableShipStatsAPI::getFighterRefitTimeMult), "stat.fighterRefitTime", true),
-    FIGHTER_REFIT_TIME_PERCENT(PERCENT, stat(MutableShipStatsAPI::getFighterRefitTimeMult), "stat.fighterRefitTime", true),
+    FIGHTER_REFIT_TIME_MULT(MULT, liveStat(MutableShipStatsAPI::getFighterRefitTimeMult), "stat.fighterRefitTime", true),
+    FIGHTER_REFIT_TIME_PERCENT(PERCENT, liveStat(MutableShipStatsAPI::getFighterRefitTimeMult), "stat.fighterRefitTime", true),
     FIGHTER_REPLACEMENT_RATE_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             float mult = 1f / SkillEffectSupport.multFrom(magnitude);
             stats.getDynamic().getStat("replacement_rate_decrease_mult").modifyMult(modId, mult);
             stats.getDynamic().getStat("replacement_rate_increase_mult").modifyMult(modId, mult);
-        }
-
-        @Override
-        public boolean supportsTemporaryGating() {
-            return true;
         }
 
         @Override
@@ -125,11 +121,6 @@ public enum FighterSkillEffect implements SkillEffect {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getNumFighterBays().modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public boolean supportsTemporaryGating() {
-            return true;
         }
 
         @Override

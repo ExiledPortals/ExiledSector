@@ -421,19 +421,24 @@ class SkillTypeLoaderTest {
 
     @Test
     void temporaryGatingIsKeptWhenEveryEffectSupportsIt() throws Exception {
-        assertEquals(30f, temporarySecondsFor("\"effects\": [ { \"effect\": \"HULL_PERCENT\", \"magnitude\": 10 } ]"));
+        assertEquals(30f, temporarySecondsFor("\"effects\": [ { \"effect\": \"TOP_SPEED_PERCENT\", \"magnitude\": 10 } ]"));
     }
 
     @Test
     void temporaryGatingIsDroppedWhenTheTypeInstallsHullMods() throws Exception {
-        assertNull(temporarySecondsFor("\"effects\": [ { \"effect\": \"HULL_PERCENT\", \"magnitude\": 10 } ],"
+        assertNull(temporarySecondsFor("\"effects\": [ { \"effect\": \"TOP_SPEED_PERCENT\", \"magnitude\": 10 } ],"
                 + "\"installedHullMods\": [ \"heavyarmor\" ]"));
     }
 
     @Test
     void temporaryGatingIsDroppedWhenAnEffectCannotBeGated() throws Exception {
-        assertNull(temporarySecondsFor("\"effects\": [ { \"effect\": \"HULL_PERCENT\", \"magnitude\": 10 },"
+        assertNull(temporarySecondsFor("\"effects\": [ { \"effect\": \"TOP_SPEED_PERCENT\", \"magnitude\": 10 },"
                 + "{ \"effect\": \"PD_IGNORES_DECOY_FLARES\", \"magnitude\": 1 } ]"));
+    }
+
+    @Test
+    void temporaryGatingIsDroppedForStatsTheGameOnlyReadsWhenTheShipIsBuilt() throws Exception {
+        assertNull(temporarySecondsFor("\"effects\": [ { \"effect\": \"HULL_PERCENT\", \"magnitude\": 10 } ]"));
     }
 
     @Test

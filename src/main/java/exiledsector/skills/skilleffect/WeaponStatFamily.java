@@ -15,6 +15,8 @@ import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
 import static exiledsector.skills.skilleffect.StatTarget.bonus;
+import static exiledsector.skills.skilleffect.StatTarget.liveBonus;
+import static exiledsector.skills.skilleffect.StatTarget.liveStat;
 import static exiledsector.skills.skilleffect.StatTarget.stat;
 import static exiledsector.skills.skilleffect.WeaponScope.ALL;
 import static exiledsector.skills.skilleffect.WeaponScope.BEAM;
@@ -24,30 +26,30 @@ import static exiledsector.skills.skilleffect.WeaponScope.NON_BEAM_ENERGY;
 public enum WeaponStatFamily {
 
     DAMAGE(true, EnumSet.allOf(StatMode.class),
-            Targets.typed(stat(MutableShipStatsAPI::getBallisticWeaponDamageMult),
-                            stat(MutableShipStatsAPI::getMissileWeaponDamageMult),
-                            stat(MutableShipStatsAPI::getEnergyWeaponDamageMult))
-                    .with(BEAM, stat(MutableShipStatsAPI::getBeamWeaponDamageMult))
-                    .with(NON_BEAM_ENERGY, new StatTarget.Compensated(stat(MutableShipStatsAPI::getEnergyWeaponDamageMult),
-                            stat(MutableShipStatsAPI::getBeamWeaponDamageMult), EnumSet.allOf(StatMode.class)))),
+            Targets.typed(liveStat(MutableShipStatsAPI::getBallisticWeaponDamageMult),
+                            liveStat(MutableShipStatsAPI::getMissileWeaponDamageMult),
+                            liveStat(MutableShipStatsAPI::getEnergyWeaponDamageMult))
+                    .with(BEAM, liveStat(MutableShipStatsAPI::getBeamWeaponDamageMult))
+                    .with(NON_BEAM_ENERGY, new StatTarget.Compensated(liveStat(MutableShipStatsAPI::getEnergyWeaponDamageMult),
+                            liveStat(MutableShipStatsAPI::getBeamWeaponDamageMult), EnumSet.allOf(StatMode.class)))),
     RANGE(true, EnumSet.allOf(StatMode.class),
-            Targets.typed(bonus(MutableShipStatsAPI::getBallisticWeaponRangeBonus),
-                            bonus(MutableShipStatsAPI::getMissileWeaponRangeBonus),
-                            bonus(MutableShipStatsAPI::getEnergyWeaponRangeBonus))
-                    .with(BEAM, bonus(MutableShipStatsAPI::getBeamWeaponRangeBonus))
-                    .with(NON_BEAM_ENERGY, new StatTarget.Compensated(bonus(MutableShipStatsAPI::getEnergyWeaponRangeBonus),
-                            bonus(MutableShipStatsAPI::getBeamWeaponRangeBonus), EnumSet.allOf(StatMode.class)))),
+            Targets.typed(liveBonus(MutableShipStatsAPI::getBallisticWeaponRangeBonus),
+                            liveBonus(MutableShipStatsAPI::getMissileWeaponRangeBonus),
+                            liveBonus(MutableShipStatsAPI::getEnergyWeaponRangeBonus))
+                    .with(BEAM, liveBonus(MutableShipStatsAPI::getBeamWeaponRangeBonus))
+                    .with(NON_BEAM_ENERGY, new StatTarget.Compensated(liveBonus(MutableShipStatsAPI::getEnergyWeaponRangeBonus),
+                            liveBonus(MutableShipStatsAPI::getBeamWeaponRangeBonus), EnumSet.allOf(StatMode.class)))),
     FLUX_COST(true, EnumSet.of(PERCENT, MULT),
-            Targets.typed(bonus(MutableShipStatsAPI::getBallisticWeaponFluxCostMod),
-                            bonus(MutableShipStatsAPI::getMissileWeaponFluxCostMod),
-                            bonus(MutableShipStatsAPI::getEnergyWeaponFluxCostMod))
-                    .with(BEAM, stat(MutableShipStatsAPI::getBeamWeaponFluxCostMult))
-                    .with(NON_BEAM_ENERGY, new StatTarget.Compensated(bonus(MutableShipStatsAPI::getEnergyWeaponFluxCostMod),
-                            stat(MutableShipStatsAPI::getBeamWeaponFluxCostMult), EnumSet.of(MULT)))),
+            Targets.typed(liveBonus(MutableShipStatsAPI::getBallisticWeaponFluxCostMod),
+                            liveBonus(MutableShipStatsAPI::getMissileWeaponFluxCostMod),
+                            liveBonus(MutableShipStatsAPI::getEnergyWeaponFluxCostMod))
+                    .with(BEAM, liveStat(MutableShipStatsAPI::getBeamWeaponFluxCostMult))
+                    .with(NON_BEAM_ENERGY, new StatTarget.Compensated(liveBonus(MutableShipStatsAPI::getEnergyWeaponFluxCostMod),
+                            liveStat(MutableShipStatsAPI::getBeamWeaponFluxCostMult), EnumSet.of(MULT)))),
     FIRE_RATE(true, EnumSet.of(PERCENT, MULT),
-            Targets.typed(stat(MutableShipStatsAPI::getBallisticRoFMult),
-                    stat(MutableShipStatsAPI::getMissileRoFMult),
-                    stat(MutableShipStatsAPI::getEnergyRoFMult))) {
+            Targets.typed(liveStat(MutableShipStatsAPI::getBallisticRoFMult),
+                    liveStat(MutableShipStatsAPI::getMissileRoFMult),
+                    liveStat(MutableShipStatsAPI::getEnergyRoFMult))) {
         @Override
         public StyledText description(WeaponScope scope, StatMode mode, float magnitude) {
             StyledText text = super.description(scope, mode, magnitude);
@@ -68,12 +70,12 @@ public enum WeaponStatFamily {
                     .with(BEAM, new StatTarget.PerWeaponAmmo(BEAM, true))
                     .with(NON_BEAM_ENERGY, new StatTarget.PerWeaponAmmo(NON_BEAM_ENERGY, true))),
     PROJECTILE_SPEED(true, EnumSet.of(PERCENT, MULT),
-            Targets.typed(stat(MutableShipStatsAPI::getBallisticProjectileSpeedMult),
-                            bonus(MutableShipStatsAPI::getMissileMaxSpeedBonus),
-                            new StatTarget.Composite(List.of(stat(MutableShipStatsAPI::getEnergyProjectileSpeedMult),
-                                    bonus(MutableShipStatsAPI::getBeamSpeedMod))))
-                    .with(NON_BEAM_ENERGY, stat(MutableShipStatsAPI::getEnergyProjectileSpeedMult))
-                    .with(BEAM, bonus(MutableShipStatsAPI::getBeamSpeedMod))),
+            Targets.typed(liveStat(MutableShipStatsAPI::getBallisticProjectileSpeedMult),
+                            liveBonus(MutableShipStatsAPI::getMissileMaxSpeedBonus),
+                            new StatTarget.Composite(List.of(liveStat(MutableShipStatsAPI::getEnergyProjectileSpeedMult),
+                                    liveBonus(MutableShipStatsAPI::getBeamSpeedMod))))
+                    .with(NON_BEAM_ENERGY, liveStat(MutableShipStatsAPI::getEnergyProjectileSpeedMult))
+                    .with(BEAM, liveBonus(MutableShipStatsAPI::getBeamSpeedMod))),
     TURN_RATE(true, EnumSet.of(PERCENT, MULT),
             Targets.allOnly(new StatTarget.Composite(List.of(bonus(MutableShipStatsAPI::getWeaponTurnRateBonus),
                             bonus(MutableShipStatsAPI::getBeamWeaponTurnRateBonus))))
@@ -81,8 +83,8 @@ public enum WeaponStatFamily {
     DURABILITY(true, EnumSet.of(PERCENT, MULT),
             Targets.allOnly(bonus(MutableShipStatsAPI::getWeaponHealthBonus))),
     RECOIL(true, EnumSet.of(PERCENT, MULT),
-            Targets.allOnly(new StatTarget.Composite(List.of(stat(MutableShipStatsAPI::getMaxRecoilMult),
-                    stat(MutableShipStatsAPI::getRecoilPerShotMult), stat(MutableShipStatsAPI::getRecoilDecayMult))))),
+            Targets.allOnly(new StatTarget.Composite(List.of(liveStat(MutableShipStatsAPI::getMaxRecoilMult),
+                    liveStat(MutableShipStatsAPI::getRecoilPerShotMult), liveStat(MutableShipStatsAPI::getRecoilDecayMult))))),
     RANGE_FALLOFF(true, EnumSet.of(PERCENT, MULT),
             Targets.allOnly(stat(MutableShipStatsAPI::getWeaponRangeMultPastThreshold))),
     RANGE_THRESHOLD(false, EnumSet.of(FLAT),

@@ -15,6 +15,11 @@ public enum WeaponSkillEffect implements SkillEffect {
         }
 
         @Override
+        public boolean supportsTemporaryGating() {
+            return WeaponStatFamily.DAMAGE.target(WeaponScope.ALL).supportsTemporaryGating();
+        }
+
+        @Override
         public StyledText description(float magnitude) {
             return StatMode.MULT.describeStat(magnitude, "stat.weaponDamagePerDMod");
         }

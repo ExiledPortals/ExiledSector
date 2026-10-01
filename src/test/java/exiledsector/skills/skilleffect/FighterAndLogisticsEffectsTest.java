@@ -57,7 +57,7 @@ class FighterAndLogisticsEffectsTest {
 
         assertEquals(0.8f, decay.getModifiedValue(), EPSILON);
         assertEquals(0.8f, recovery.getModifiedValue(), EPSILON);
-        assertTrue(FighterSkillEffect.FIGHTER_REPLACEMENT_RATE_MULT.supportsTemporaryGating());
+        assertFalse(FighterSkillEffect.FIGHTER_REPLACEMENT_RATE_MULT.supportsTemporaryGating());
     }
 
     @Test
@@ -108,7 +108,8 @@ class FighterAndLogisticsEffectsTest {
 
     @Test
     void onlyTheParentShipStatEffectsCanBeGatedTemporarily() {
-        assertTrue(FighterSkillEffect.FIGHTER_CREW_LOSS_PERCENT.supportsTemporaryGating());
+        assertTrue(FighterSkillEffect.FIGHTER_REFIT_TIME_MULT.supportsTemporaryGating());
+        assertFalse(FighterSkillEffect.FIGHTER_CREW_LOSS_PERCENT.supportsTemporaryGating());
         assertFalse(FighterSkillEffect.FIGHTER_ROLE_TOP_SPEED_PERCENT.supportsTemporaryGating());
     }
 

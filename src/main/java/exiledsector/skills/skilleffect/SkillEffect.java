@@ -19,7 +19,7 @@ public interface SkillEffect {
     }
 
     default boolean supportsTemporaryGating() {
-        return true;
+        return false;
     }
 
     default boolean lowerIsBetter() {

@@ -36,7 +36,7 @@ interface BackedSkillEffect extends SkillEffect {
 
     @Override
     default boolean supportsTemporaryGating() {
-        return backing() == null || backing().supportsTemporaryGating();
+        return backing() != null && backing().supportsTemporaryGating();
     }
 
     @Override

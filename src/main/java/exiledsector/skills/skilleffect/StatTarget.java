@@ -18,7 +18,7 @@ sealed interface StatTarget {
     }
 
     default boolean supportsTemporaryGating() {
-        return true;
+        return false;
     }
 
     default boolean supports(StatMode mode) {
@@ -26,11 +26,19 @@ sealed interface StatTarget {
     }
 
     static StatTarget stat(Function<MutableShipStatsAPI, MutableStat> getter) {
-        return new OfStat(getter);
+        return new OfStat(getter, false);
     }
 
     static StatTarget bonus(Function<MutableShipStatsAPI, StatBonus> getter) {
-        return new OfBonus(getter);
+        return new OfBonus(getter, false);
+    }
+
+    static StatTarget liveStat(Function<MutableShipStatsAPI, MutableStat> getter) {
+        return new OfStat(getter, true);
+    }
+
+    static StatTarget liveBonus(Function<MutableShipStatsAPI, StatBonus> getter) {
+        return new OfBonus(getter, true);
     }
 
     static StatTarget dynamicStat(String key) {
@@ -45,17 +53,27 @@ sealed interface StatTarget {
         return new Composite(List.of(parts));
     }
 
-    record OfStat(Function<MutableShipStatsAPI, MutableStat> stat) implements StatTarget {
+    record OfStat(Function<MutableShipStatsAPI, MutableStat> stat, boolean liveInCombat) implements StatTarget {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, StatMode mode, float magnitude) {
             mode.apply(stat.apply(stats), modId, magnitude);
         }
+
+        @Override
+        public boolean supportsTemporaryGating() {
+            return liveInCombat;
+        }
     }
 
-    record OfBonus(Function<MutableShipStatsAPI, StatBonus> bonus) implements StatTarget {
+    record OfBonus(Function<MutableShipStatsAPI, StatBonus> bonus, boolean liveInCombat) implements StatTarget {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, StatMode mode, float magnitude) {
             mode.apply(bonus.apply(stats), modId, magnitude);
+        }
+
+        @Override
+        public boolean supportsTemporaryGating() {
+            return liveInCombat;
         }
     }
 
@@ -93,6 +111,11 @@ sealed interface StatTarget {
         public void apply(MutableShipStatsAPI stats, String modId, StatMode mode, float magnitude) {
             plus.apply(stats, modId, mode, magnitude);
             offset.apply(stats, modId + OFFSET_SUFFIX, mode, mode.inverse(magnitude));
+        }
+
+        @Override
+        public boolean supportsTemporaryGating() {
+            return plus.supportsTemporaryGating() && offset.supportsTemporaryGating();
         }
 
         @Override
@@ -153,11 +176,6 @@ sealed interface StatTarget {
             maxAmmo = (int) (maxAmmo + energy.getFlatBonus() + child.getFlatBonus());
             weapon.setMaxAmmo(maxAmmo);
             weapon.resetAmmo();
-        }
-
-        @Override
-        public boolean supportsTemporaryGating() {
-            return false;
         }
 
         @Override

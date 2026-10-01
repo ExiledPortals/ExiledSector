@@ -71,7 +71,7 @@ public enum CompatSkillEffect implements SkillEffect {
 
     @Override
     public boolean supportsTemporaryGating() {
-        return penalty != null;
+        return penalty != null && penalty.supportsTemporaryGating();
     }
 
     @Override
