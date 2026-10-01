@@ -123,6 +123,7 @@
     "effect.SHIELD_DAMAGE_SHARED_PERCENT": "Disperses {value}% of shield damage taken to nearby allied ships within {range} su that aren't overloaded or venting, split evenly between them as hard flux.",
     "effect.PHASE_FIELD_CONTRIBUTION_PERCENT": "Even if this ship isn't a phase ship, {value}% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.",
     "stat.weaponDamagePerDMod": "weapon damage per D-mod, up to 5 D-mods",
+    "effect.GROUND_SUPPORT_PER_MAX_CREW_PERCENT": "Increases the effective strength of planetary raids by <good>{value}%</good> of this ship's maximum crew capacity (after modifiers), up to the total number of marines in the fleet.",
     "effect.BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_PERCENT": "Grants <good>{value}%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.",
     "effect.ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT": "Increases energy weapon range by <good>{value}</good> for every point of this ship's sensor strength (after modifiers).",
 

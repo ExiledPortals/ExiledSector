@@ -124,6 +124,7 @@
     "effect.SHIELD_DAMAGE_SHARED_PERCENT": "将护盾所受伤害的{value}%分散给{range} su内未过载且未在主动排散的友方舰船，由它们平均承担为硬幅能。",
     "effect.PHASE_FIELD_CONTRIBUTION_PERCENT": "即使本舰不是相位舰，其传感器强度的{value}%也会计入相位舰通常提供的全舰队被发现距离缩减（参见“相位场”船插）——参与的舰船越多、传感器越强，舰队就越难被发现，但收益递减。仅在舰队应答器关闭时生效。",
     "stat.weaponDamagePerDMod": "每个D插（最多计5个）使武器伤害",
+    "effect.GROUND_SUPPORT_PER_MAX_CREW_PERCENT": "行星突袭的有效强度提高本舰最大船员容量（计入修正后）的<good>{value}%</good>（不超过舰队中陆战队的总数）。",
     "effect.BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_PERCENT": "本舰航速每比船体默认值高1级（任何来源），实弹武器伤害提高<good>{value}%</good>。",
     "effect.ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT": "本舰每有1点传感器强度（计入修正后），能量武器射程提高<good>{value}</good>。",
 

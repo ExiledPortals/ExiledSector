@@ -154,6 +154,10 @@
 				{
 					"effect": "GROUND_SUPPORT_FLAT",
 					"magnitude": 100
+				},
+				{
+					"effect": "GROUND_SUPPORT_PER_MAX_CREW_PERCENT",
+					"magnitude": 25
 				}
 			],
 			"exclusiveHullMods": [

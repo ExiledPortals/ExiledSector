@@ -2,6 +2,7 @@ package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
@@ -142,6 +143,31 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
     },
     GROUND_SUPPORT_FLAT(FLAT, dynamicMod(Stats.FLEET_GROUND_SUPPORT),
             "stat.effectiveStrengthOfPlanetaryRaidsUpToTheTotalNumberOfMarinesInTheFleet", false),
+    GROUND_SUPPORT_PER_MAX_CREW_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            ShipVariantAPI variant = stats.getVariant();
+            if (variant == null || variant.getHullSpec() == null) return;
+            float maxCrew = stats.getMaxCrewMod().computeEffective(variant.getHullSpec().getMaxCrew());
+            stats.getDynamic().getMod(Stats.FLEET_GROUND_SUPPORT).modifyFlat(modId + CREW_GROUND_SUPPORT_SUFFIX,
+                    maxCrew * magnitude / 100f);
+        }
+
+        @Override
+        public boolean appliesAfterOtherEffects() {
+            return true;
+        }
+
+        @Override
+        public boolean supportsTemporaryGating() {
+            return false;
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.templated(this, magnitude);
+        }
+    },
     CORONA_RESISTANCE_MULT(MULT, dynamicStat(Stats.CORONA_EFFECT_MULT),
             "stat.combatReadinessLossFromBeingInASolarCoronaOrADeepHyperspaceStorm", true),
     POST_BATTLE_SALVAGE_PERCENT {
@@ -186,6 +212,8 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
             return false;
         }
     };
+
+    private static final String CREW_GROUND_SUPPORT_SUFFIX = "_crewGroundSupport";
 
     private final EffectBacking backing;
 

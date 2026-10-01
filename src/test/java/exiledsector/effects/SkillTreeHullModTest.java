@@ -25,6 +25,7 @@ import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.progression.SkillNodeOpCost;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.skills.skilleffect.FluxSkillEffect;
+import exiledsector.skills.skilleffect.LogisticsSkillEffect;
 import exiledsector.skills.skilleffect.MiscSkillEffect;
 import exiledsector.skills.skilleffect.PhaseSkillEffect;
 import exiledsector.skills.SkillNode;
@@ -1181,6 +1182,36 @@ class SkillTreeHullModTest {
         when(variant.getTags()).thenReturn(List.of("exiledSector_npcTree|bulwark|" + nodeIds.length + "|root_1,"
                 + String.join(",", nodeIds)));
         return variant;
+    }
+
+    @Test
+    void crewBasedGroundSupportCountsCrewBonusesFromNodesAllocatedAfterIt() {
+        registerNpcRoot();
+        SkillType groundType = new SkillType.Builder("ground", "Ground", "a.png", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(LogisticsSkillEffect.GROUND_SUPPORT_PER_MAX_CREW_PERCENT, 25f)))
+                .build();
+        SkillType crewType = new SkillType.Builder("crew", "Crew", "a.png", SkillTier.SMALL)
+                .effects(List.of(new SkillTypeEffect(LogisticsSkillEffect.CREW_CAPACITY_PERCENT, 50f)))
+                .build();
+        SkillTree.register(new SkillNode("ground_1", groundType, List.of("root_1"), 0f, 0f));
+        SkillTree.register(new SkillNode("crew_1", crewType, List.of("root_1"), 0f, 0f));
+        ShipVariantAPI variant = npcVariant("ground_1", "crew_1");
+        ShipHullSpecAPI hullSpec = mock(ShipHullSpecAPI.class);
+        when(hullSpec.getMaxCrew()).thenReturn(400f);
+        when(variant.getHullSpec()).thenReturn(hullSpec);
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
+        StatBonus groundSupport = new StatBonus();
+        FleetMemberAPI raider = memberWithId("npc-raider");
+        when(stats.getFleetMember()).thenReturn(raider);
+        when(stats.getVariant()).thenReturn(variant);
+        when(stats.getMaxCrewMod()).thenReturn(new StatBonus());
+        when(stats.getDynamic()).thenReturn(dynamic);
+        when(dynamic.getMod(Stats.FLEET_GROUND_SUPPORT)).thenReturn(groundSupport);
+
+        new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.CRUISER, stats, SkillTreeHullMod.ID);
+
+        assertEquals(150f, groundSupport.getFlatBonus(), 0.001f);
     }
 
     @Test

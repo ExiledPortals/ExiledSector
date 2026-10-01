@@ -4,10 +4,12 @@ import com.fs.starfarer.api.combat.FighterWingAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
+import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.loading.WingRole;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
 import org.junit.jupiter.api.BeforeEach;
@@ -108,6 +110,35 @@ class FighterAndLogisticsEffectsTest {
     void onlyTheParentShipStatEffectsCanBeGatedTemporarily() {
         assertTrue(FighterSkillEffect.FIGHTER_CREW_LOSS_PERCENT.supportsTemporaryGating());
         assertFalse(FighterSkillEffect.FIGHTER_ROLE_TOP_SPEED_PERCENT.supportsTemporaryGating());
+    }
+
+    @Test
+    void crewBasedGroundSupportAddsAShareOfMaxCrewOnTopOfTheNodesFlatGroundSupport() {
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        ShipHullSpecAPI hullSpec = mock(ShipHullSpecAPI.class);
+        when(hullSpec.getMaxCrew()).thenReturn(400f);
+        when(variant.getHullSpec()).thenReturn(hullSpec);
+        when(stats.getVariant()).thenReturn(variant);
+        StatBonus maxCrew = new StatBonus();
+        maxCrew.modifyPercent("other", 50f);
+        when(stats.getMaxCrewMod()).thenReturn(maxCrew);
+        StatBonus groundSupport = realDynamicMod(Stats.FLEET_GROUND_SUPPORT);
+
+        LogisticsSkillEffect.GROUND_SUPPORT_FLAT.apply(stats, "mod_id", 100f);
+        LogisticsSkillEffect.GROUND_SUPPORT_PER_MAX_CREW_PERCENT.apply(stats, "mod_id", 25f);
+
+        assertEquals(100f + 150f, groundSupport.getFlatBonus(), EPSILON);
+        assertTrue(LogisticsSkillEffect.GROUND_SUPPORT_PER_MAX_CREW_PERCENT.appliesAfterOtherEffects());
+        assertFalse(LogisticsSkillEffect.GROUND_SUPPORT_FLAT.appliesAfterOtherEffects());
+    }
+
+    @Test
+    void crewBasedGroundSupportDoesNothingWithoutAHullSpec() {
+        StatBonus groundSupport = realDynamicMod(Stats.FLEET_GROUND_SUPPORT);
+
+        LogisticsSkillEffect.GROUND_SUPPORT_PER_MAX_CREW_PERCENT.apply(stats, "mod_id", 25f);
+
+        assertEquals(0f, groundSupport.getFlatBonus(), EPSILON);
     }
 
     @Test

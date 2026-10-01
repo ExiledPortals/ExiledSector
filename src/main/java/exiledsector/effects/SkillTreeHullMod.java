@@ -49,7 +49,13 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         boolean npcTree = SkillDataResolver.isNpcTree(stats.getVariant());
         forEachAllocatedEffect(data, hullSize,
                 (vanillaEffect, vanillaHullModId) -> vanillaEffect.applyEffectsBeforeShipCreation(hullSize, stats, vanillaHullModId),
-                (effect, modId, magnitude) -> effect.apply(stats, modId, magnitude));
+                (effect, modId, magnitude) -> {
+                    if (!effect.appliesAfterOtherEffects()) effect.apply(stats, modId, magnitude);
+                });
+        forEachAllocatedEffect(data, hullSize, (vanillaEffect, vanillaHullModId) -> { },
+                (effect, modId, magnitude) -> {
+                    if (effect.appliesAfterOtherEffects()) effect.apply(stats, modId, magnitude);
+                });
         if (!npcTree) {
             syncOpSpentHullMod(stats.getFleetMember(), stats.getVariant());
         }

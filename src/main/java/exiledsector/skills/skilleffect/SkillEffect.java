@@ -26,6 +26,10 @@ public interface SkillEffect {
         return false;
     }
 
+    default boolean appliesAfterOtherEffects() {
+        return false;
+    }
+
     default void advanceInCombat(ShipAPI ship, String modId, float magnitude) {
     }
 
