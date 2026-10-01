@@ -41,7 +41,10 @@ missile_autoloader,Missile Autoloader
 missleracks,Expanded Missile Racks
 nav_relay,Nav Relay
 neural_interface,Neural Interface
+nskr_absorption,ABSORB System
+nskr_acoils,High-Energy Weapon Systems
 nskr_criticalArmor,Critical Point Protection
+nskr_inertial,Inertial Supercharger
 operations_center,Operations Center
 phase_anchor,Phase Anchor
 phasefield,Phase Field
@@ -52,6 +55,8 @@ safetyoverrides,Safety Overrides
 shield_shunt,Shield Shunt
 stabilizedshieldemitter,Stabilized Shields
 surveying_equipment,Surveying Equipment
+tahlan_daemonarmor,Hel Carapace
+tahlan_daemonplating,Hel Plating
 targetingunit,Integrated Targeting Unit
 turretgyros,Advanced Turret Gyros
 unstable_injector,Unstable Injector

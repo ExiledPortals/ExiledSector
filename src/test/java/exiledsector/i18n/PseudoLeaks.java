@@ -10,7 +10,7 @@ public final class PseudoLeaks {
         String previous;
         do {
             previous = remaining;
-            remaining = remaining.replaceAll("\\[[^\\[\\]]*?~]", "");
+            remaining = remaining.replaceAll("\\[(?:[^\\[\\]]|\\[[^\\[\\]~]*])*?~]", "");
         } while (!remaining.equals(previous));
         return remaining;
     }

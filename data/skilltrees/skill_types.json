@@ -1470,9 +1470,9 @@
 			]
 		},
 		{
-			"id": "citadel_plating",
-			"name": "Citadel Plating",
-			"icon": "graphics/icons/containment_procedures_shifted.png",
+			"id": "nskr_criticalArmor",
+			"name": "Critical Point Protection",
+			"icon": "graphics/icons/nskr_criticalArmor_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1482,13 +1482,146 @@
 			],
 			"exclusiveHullMods": [
 				"nskr_criticalArmor",
-				"heavyarmor"
+				"heavyarmor",
+				"tahlan_daemonarmor",
+				"tahlan_daemonplating"
 			],
 			"exclusiveSkillTypes": [
 				"heavyarmor"
 			],
+			"description": "The defenses of lightly armored ships can be significantly reinforced through targeted modifications to critical structural components.",
 			"tags": [
 				"armour"
+			]
+		},
+		{
+			"id": "nskr_inertial",
+			"name": "Inertial Supercharger",
+			"icon": "graphics/icons/nskr_inertial.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT",
+					"magnitude": 0.08
+				}
+			],
+			"exclusiveHullMods": [
+				"nskr_inertial"
+			],
+			"description": "The ship's projectile weapons are supercharged, hitting harder the faster the ship moves.",
+			"tags": [
+				"weapons",
+				"speed"
+			]
+		},
+		{
+			"id": "nskr_acoils",
+			"name": "Kesteven High-Energy Weapon Systems",
+			"icon": "graphics/icons/nskr_acoils_shifted.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "MEDIUM_ENERGY_SLOT_WEAPON_RANGE_FLAT",
+					"magnitude": 100
+				},
+				{
+					"effect": "ENERGY_WEAPON_FLUX_COST_PERCENT",
+					"magnitude": -10
+				}
+			],
+			"exclusiveHullMods": [
+				"nskr_acoils"
+			],
+			"tags": [
+				"energy",
+				"range",
+				"req_energy"
+			]
+		},
+		{
+			"id": "energy_flux_cost",
+			"name": "Energy Weapon Flux Cost",
+			"icon": "graphics/icons/power_grid_manipulation_shifted_shifted_shifted.png",
+			"effects": [
+				{
+					"effect": "ENERGY_WEAPON_FLUX_COST_PERCENT",
+					"magnitude": -5
+				}
+			],
+			"tags": [
+				"energy",
+				"flux",
+				"req_energy"
+			]
+		},
+		{
+			"id": "nskr_absorption",
+			"name": "ABSORB System",
+			"icon": "graphics/icons/frozen_heart_shifted.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "SHIELD_ABSORB_RATE_OF_FIRE_PERCENT",
+					"magnitude": 50
+				}
+			],
+			"exclusiveHullMods": [
+				"nskr_absorption"
+			],
+			"description": "Extensive hull modifications enable this ship to absorb energy from incoming fire and redirect it to its weapon systems.",
+			"tags": [
+				"shield",
+				"weapons",
+				"req_shields"
+			]
+		},
+		{
+			"id": "frozen_heart",
+			"name": "Frozen Heart",
+			"icon": "graphics/icons/frozen_heart2_shifted.png",
+			"tier": "KEYSTONE",
+			"effects": [
+				{
+					"effect": "ACCRETION_ARMOR_RESTORE_PERCENT",
+					"magnitude": 10
+				},
+				{
+					"effect": "ACCRETION_ARMOR_PERCENT_PER_STACK",
+					"magnitude": 5
+				},
+				{
+					"effect": "PEAK_CR_DURATION_PERCENT",
+					"magnitude": 50
+				},
+				{
+					"effect": "MAX_COMBAT_READINESS_PERCENT",
+					"magnitude": 15
+				},
+				{
+					"effect": "CR_LOSS_PER_SECOND_PERCENT",
+					"magnitude": -25
+				},
+				{
+					"effect": "ACCRETION_RADIATION_DISABLES_FLAT",
+					"magnitude": 1
+				},
+				{
+					"effect": "TOP_SPEED_PERCENT",
+					"magnitude": -10
+				},
+				{
+					"effect": "MANEUVERABILITY_PERCENT",
+					"magnitude": -10
+				},
+				{
+					"effect": "ACCRETION_MOBILITY_PENALTY_PERCENT_PER_STACK",
+					"magnitude": 3
+				}
+			],
+			"description": "query. hull?. scanning. [HULL] collect, amass, gather, fuse, keep. The core does not stop. Neither does anything it holds.",
+			"tags": [
+				"armour",
+				"combat_readiness"
 			]
 		},
 		{

@@ -1958,7 +1958,8 @@
 			"connectedTo": [
 				"small_flux_optional_22",
 				"small_flux_optional_20",
-				"small_flux_optional_41"
+				"small_flux_optional_41",
+				"lost_sector_wormhole2"
 			],
 			"x": -2853,
 			"y": -927,
@@ -5106,7 +5107,7 @@
 			"type": "armor",
 			"connectedTo": [
 				"armor_6",
-				"citadel_plating_1"
+				"nskr_criticalArmor_1"
 			],
 			"x": 2623,
 			"y": -150,
@@ -5117,8 +5118,8 @@
 			]
 		},
 		{
-			"id": "citadel_plating_1",
-			"type": "citadel_plating",
+			"id": "nskr_criticalArmor_1",
+			"type": "nskr_criticalArmor",
 			"connectedTo": [
 				"armor_7"
 			],
@@ -5188,6 +5189,229 @@
 			"orbitAngle": 0,
 			"tags": [
 				"pirate"
+			]
+		},
+		{
+			"id": "lost_sector_wormhole1",
+			"type": "wormhole",
+			"connectedTo": [
+				"lost_sector_wormhole2",
+				"frozen_heart_1",
+				"small_flux_optional_68",
+				"small_flux_optional_70"
+			],
+			"x": -11547,
+			"y": -2510,
+			"orbitAnchorId": "anchor_51",
+			"orbitAngle": 0,
+			"wormholeColor": "#fbb434",
+			"pairedWith": "lost_sector_wormhole2",
+			"tags": [
+				"sindrian_dictat"
+			]
+		},
+		{
+			"id": "lost_sector_wormhole2",
+			"type": "wormhole",
+			"connectedTo": [
+				"lost_sector_wormhole1",
+				"small_flux_optional_21"
+			],
+			"x": -3539,
+			"y": -1071,
+			"wormholeColor": "#fbb434",
+			"pairedWith": "lost_sector_wormhole1",
+			"tags": [
+				"sindrian_dictat"
+			]
+		},
+		{
+			"id": "nskr_inertial_1",
+			"type": "nskr_inertial",
+			"connectedTo": [
+				"top_speed_6"
+			],
+			"x": -12754,
+			"y": -1802,
+			"orbitAnchorId": "anchor_54",
+			"orbitAngle": 270,
+			"tags": [
+				"sindrian_dictat"
+			]
+		},
+		{
+			"id": "nskr_acoils_1",
+			"type": "nskr_acoils",
+			"connectedTo": [
+				"energy_flux_cost_1"
+			],
+			"x": -12750,
+			"y": -3185,
+			"orbitAnchorId": "anchor_52",
+			"orbitAngle": 90,
+			"tags": [
+				"sindrian_dictat"
+			]
+		},
+		{
+			"id": "energy_flux_cost_1",
+			"type": "energy_flux_cost",
+			"connectedTo": [
+				"energy_flux_cost_2",
+				"nskr_acoils_1"
+			],
+			"x": -12900,
+			"y": -3335,
+			"orbitAnchorId": "anchor_52",
+			"orbitAngle": 180,
+			"tags": [
+				"sindrian_dictat"
+			]
+		},
+		{
+			"id": "energy_flux_cost_2",
+			"type": "energy_flux_cost",
+			"connectedTo": [
+				"energy_flux_cost_1",
+				"small_flux_optional_70"
+			],
+			"x": -12750,
+			"y": -3485,
+			"orbitAnchorId": "anchor_52",
+			"orbitAngle": 270,
+			"tags": [
+				"sindrian_dictat"
+			]
+		},
+		{
+			"id": "frozen_heart_1",
+			"type": "frozen_heart",
+			"connectedTo": [
+				"lost_sector_wormhole1"
+			],
+			"x": -11950,
+			"y": -2510,
+			"tags": [
+				"sindrian_dictat"
+			]
+		},
+		{
+			"id": "nskr_absorption_1",
+			"type": "nskr_absorption",
+			"connectedTo": [],
+			"x": -13388,
+			"y": -2516,
+			"orbitAnchorId": "anchor_53",
+			"orbitAngle": 0,
+			"tags": [
+				"sindrian_dictat"
+			]
+		},
+		{
+			"id": "shield_damage_taken_multi_3",
+			"type": "shield_damage_taken_multi",
+			"connectedTo": [
+				"shield_damage_taken_multi_4",
+				"small_flux_optional_69"
+			],
+			"x": -13688,
+			"y": -2516,
+			"orbitAnchorId": "anchor_53",
+			"orbitAngle": 180,
+			"tags": [
+				"inner"
+			]
+		},
+		{
+			"id": "top_speed_6",
+			"type": "top_speed",
+			"connectedTo": [
+				"top_speed_7",
+				"nskr_inertial_1"
+			],
+			"x": -12604,
+			"y": -1652,
+			"orbitAnchorId": "anchor_54",
+			"orbitAngle": 0,
+			"tags": [
+				"inner"
+			]
+		},
+		{
+			"id": "small_flux_optional_68",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"lost_sector_wormhole1",
+				"small_flux_optional_69",
+				"top_speed_7"
+			],
+			"x": -12751,
+			"y": -1306,
+			"orbitAnchorId": "anchor_51",
+			"orbitAngle": 90,
+			"tags": [
+				"persean_league"
+			]
+		},
+		{
+			"id": "small_flux_optional_69",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_68",
+				"small_flux_optional_70",
+				"shield_damage_taken_multi_3"
+			],
+			"x": -13955,
+			"y": -2510,
+			"orbitAnchorId": "anchor_51",
+			"orbitAngle": 180,
+			"tags": [
+				"persean_league"
+			]
+		},
+		{
+			"id": "small_flux_optional_70",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_69",
+				"lost_sector_wormhole1",
+				"energy_flux_cost_2"
+			],
+			"x": -12751,
+			"y": -3714,
+			"orbitAnchorId": "anchor_51",
+			"orbitAngle": 270,
+			"tags": [
+				"persean_league"
+			]
+		},
+		{
+			"id": "shield_damage_taken_multi_4",
+			"type": "shield_damage_taken_multi",
+			"connectedTo": [
+				"shield_damage_taken_multi_3"
+			],
+			"x": -13538,
+			"y": -2366,
+			"orbitAnchorId": "anchor_53",
+			"orbitAngle": 90,
+			"tags": [
+				"inner"
+			]
+		},
+		{
+			"id": "top_speed_7",
+			"type": "top_speed",
+			"connectedTo": [
+				"top_speed_6",
+				"small_flux_optional_68"
+			],
+			"x": -12754,
+			"y": -1502,
+			"orbitAnchorId": "anchor_54",
+			"orbitAngle": 90,
+			"tags": [
+				"inner"
 			]
 		}
 	],
@@ -6592,7 +6816,7 @@
 		},
 		{
 			"a": "armor_7",
-			"b": "citadel_plating_1",
+			"b": "nskr_criticalArmor_1",
 			"controlX": 2517,
 			"controlY": -106
 		},
@@ -6619,6 +6843,60 @@
 			"b": "waste_not_1",
 			"controlX": 8656,
 			"controlY": -335
+		},
+		{
+			"a": "energy_flux_cost_1",
+			"b": "energy_flux_cost_2",
+			"controlX": -12856,
+			"controlY": -3441
+		},
+		{
+			"a": "lost_sector_wormhole1",
+			"b": "small_flux_optional_68",
+			"controlX": -11900,
+			"controlY": -1659
+		},
+		{
+			"a": "small_flux_optional_68",
+			"b": "small_flux_optional_69",
+			"controlX": -13602,
+			"controlY": -1659
+		},
+		{
+			"a": "small_flux_optional_69",
+			"b": "small_flux_optional_70",
+			"controlX": -13602,
+			"controlY": -3361
+		},
+		{
+			"a": "lost_sector_wormhole1",
+			"b": "small_flux_optional_70",
+			"controlX": -11900,
+			"controlY": -3361
+		},
+		{
+			"a": "shield_damage_taken_multi_3",
+			"b": "shield_damage_taken_multi_4",
+			"controlX": -13644,
+			"controlY": -2410
+		},
+		{
+			"a": "energy_flux_cost_1",
+			"b": "nskr_acoils_1",
+			"controlX": -12856,
+			"controlY": -3229
+		},
+		{
+			"a": "top_speed_6",
+			"b": "top_speed_7",
+			"controlX": -12648,
+			"controlY": -1546
+		},
+		{
+			"a": "nskr_inertial_1",
+			"b": "top_speed_6",
+			"controlX": -12648,
+			"controlY": -1758
 		}
 	],
 	"hiddenConnectors": [
@@ -6661,6 +6939,10 @@
 		{
 			"a": "pirate_wormhole_2",
 			"b": "pirate_wormhole_1"
+		},
+		{
+			"a": "lost_sector_wormhole2",
+			"b": "lost_sector_wormhole1"
 		}
 	],
 	"orbitAnchors": [
@@ -7143,6 +7425,36 @@
 			"x": 0,
 			"y": 0,
 			"radius": 8000
+		},
+		{
+			"id": "mod_star_ring",
+			"x": 0,
+			"y": 0,
+			"radius": 13000
+		},
+		{
+			"id": "anchor_51",
+			"x": -12751,
+			"y": -2510,
+			"radius": 1204
+		},
+		{
+			"id": "anchor_52",
+			"x": -12750,
+			"y": -3335,
+			"radius": 150
+		},
+		{
+			"id": "anchor_53",
+			"x": -13538,
+			"y": -2516,
+			"radius": 150
+		},
+		{
+			"id": "anchor_54",
+			"x": -12754,
+			"y": -1652,
+			"radius": 150
 		}
 	],
 	"ringBelts": [
@@ -7345,6 +7657,14 @@
 			"radius": 400,
 			"starType": "star_orange",
 			"color": "#f4c537"
+		},
+		{
+			"id": "lost_sector_star",
+			"x": -12751,
+			"y": -2510,
+			"radius": 400,
+			"starType": "star_yellow",
+			"color": "#fbb434"
 		}
 	]
 }

@@ -64,6 +64,44 @@ public enum CombatSkillEffect implements BackedSkillEffect {
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("range", TerrifyingPresenceListener.RANGE).arg("value", magnitude).styled();
         }
+    },
+    NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT(InertialSuperchargerListener.DAMAGE_PERCENT_PER_SPEED_KEY,
+            InertialSuperchargerListener.class, InertialSuperchargerListener::new),
+    MEDIUM_ENERGY_SLOT_WEAPON_RANGE_FLAT(MediumEnergySlotRangeListener.RANGE_FLAT_KEY,
+            MediumEnergySlotRangeListener.class, ship -> new MediumEnergySlotRangeListener()),
+    SHIELD_ABSORB_RATE_OF_FIRE_PERCENT(AbsorbReserveListener.RATE_OF_FIRE_PERCENT_KEY,
+            AbsorbReserveListener.class, AbsorbReserveListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("full", AbsorbReserveListener.FULL_RESERVE)
+                    .arg("drain", AbsorbReserveListener.DRAIN_PER_SECOND).arg("max", AbsorbReserveListener.MAX_RESERVE).styled();
+        }
+    },
+    ACCRETION_ARMOR_RESTORE_PERCENT(AccretionListener.ARMOR_RESTORE_PERCENT_KEY, AccretionListener.class, AccretionListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("range", AccretionListener.RANGE).arg("value", magnitude).styled();
+        }
+    },
+    ACCRETION_ARMOR_PERCENT_PER_STACK(AccretionListener.ARMOR_PERCENT_PER_STACK_KEY, AccretionListener.class, AccretionListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("stacks", AccretionListener.MAX_STACKS)
+                    .arg("max", magnitude * AccretionListener.MAX_STACKS).styled();
+        }
+    },
+    ACCRETION_MOBILITY_PENALTY_PERCENT_PER_STACK(AccretionListener.MOBILITY_PENALTY_PERCENT_PER_STACK_KEY,
+            AccretionListener.class, AccretionListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("max", magnitude * AccretionListener.MAX_STACKS).styled();
+        }
+    },
+    ACCRETION_RADIATION_DISABLES_FLAT(AccretionListener.RADIATION_DISABLES_KEY, AccretionListener.class, AccretionListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).count(Math.round(magnitude)).arg("value", magnitude).styled();
+        }
     };
 
     private static final String NON_BEAM_ENERGY_CHAIN_HIT_LIST_KEY = "exiledSector_energyChainHitList";
