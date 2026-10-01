@@ -24,15 +24,13 @@ public final class SkillTreeTooltipTable {
     private final List<LazyFont.DrawableString> headers = new ArrayList<>();
     private final List<List<LazyFont.DrawableString>> rows = new ArrayList<>();
     private final float[] columnWidths;
-    private final Color accent;
 
-    private SkillTreeTooltipTable(LazyFont.DrawableString heading, float[] columnWidths, Color accent) {
+    private SkillTreeTooltipTable(LazyFont.DrawableString heading, float[] columnWidths) {
         this.heading = heading;
         this.columnWidths = columnWidths;
-        this.accent = accent;
     }
 
-    public static SkillTreeTooltipTable measure(LazyFont font, TooltipTable table, Color accent) {
+    public static SkillTreeTooltipTable measure(LazyFont font, TooltipTable table) {
         int columns = table.headers().size();
         float[] widths = new float[columns];
         for (int i = 0; i < columns; i++) {
@@ -44,7 +42,7 @@ public final class SkillTreeTooltipTable {
         }
 
         SkillTreeTooltipTable measured = new SkillTreeTooltipTable(
-                centered(font, table.heading(), HEADING_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR), widths, accent);
+                centered(font, table.heading(), HEADING_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR), widths);
         for (String header : table.headers()) {
             measured.headers.add(centered(font, header, FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR));
         }
@@ -75,7 +73,7 @@ public final class SkillTreeTooltipTable {
         return HEADING_HEIGHT + HEADING_GAP + ROW_HEIGHT * (1 + rows.size());
     }
 
-    public void draw(float x, float topY, float width, float alphaMult) {
+    public void draw(float x, float topY, float width, Color accent, float alphaMult) {
         GLDraw.fillQuad(x, topY - HEADING_HEIGHT, width, HEADING_HEIGHT, accent, HEADING_FILL_ALPHA * alphaMult);
         heading.draw(x + width / 2f, topY - (HEADING_HEIGHT - HEADING_FONT_SIZE) / 2f);
 

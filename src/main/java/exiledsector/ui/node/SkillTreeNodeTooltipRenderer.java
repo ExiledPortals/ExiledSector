@@ -81,7 +81,7 @@ final class SkillTreeNodeTooltipRenderer {
         }
         List<SkillTreeTooltipTable> measured = new ArrayList<>();
         for (TooltipTable table : HullModTooltipTables.forType(type, member.getHullSpec())) {
-            measured.add(SkillTreeTooltipTable.measure(font, table, style.getAccentColor()));
+            measured.add(SkillTreeTooltipTable.measure(font, table));
         }
         tablesByType.put(type.getId(), measured);
         return measured;
