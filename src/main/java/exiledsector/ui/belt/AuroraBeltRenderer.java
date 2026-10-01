@@ -1,6 +1,7 @@
 package exiledsector.ui.belt;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
+import exiledsector.ui.util.UnitCircle;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
@@ -12,7 +13,9 @@ public final class AuroraBeltRenderer {
     private static final float WOBBLE_RATIO = 0.06f;
     private static final float MAX_SAFE_WOBBLE_FRACTION = 0.3f;
     private static final float PHASE_DEG_PER_SEC = 12f;
-    private static final float MAX_WOBBLE_FREQUENCY = 10f;
+    private static final int FIRST_PASS_WOBBLE_CYCLES = 10;
+    private static final int SECOND_PASS_WOBBLE_CYCLES = 5;
+    private static final float MAX_WOBBLE_FREQUENCY = FIRST_PASS_WOBBLE_CYCLES;
     private static final float MIN_SAMPLES_PER_WOBBLE_CYCLE = 16f;
     private static final float MIN_SEGMENTS_FOR_WOBBLE = MAX_WOBBLE_FREQUENCY * MIN_SAMPLES_PER_WOBBLE_CYCLE;
 
@@ -22,11 +25,11 @@ public final class AuroraBeltRenderer {
     public static void render(SpriteAPI texture, RadialBand band, Color color, float alphaMult, float elapsedSeconds) {
         float innerRadius = band.innerRadius();
         float outerRadius = band.outerRadius();
-        float phaseAngleDeg = (elapsedSeconds * PHASE_DEG_PER_SEC) % 360f;
+        float phaseRad = (float) Math.toRadians((elapsedSeconds * PHASE_DEG_PER_SEC) % 360f);
 
         float circumference = (float) (2 * Math.PI * (innerRadius + outerRadius) / 2f);
         int segments = RadialBandGL.computeSegments(circumference, PIXELS_PER_SEGMENT, MIN_SEGMENTS_FOR_WOBBLE);
-        float anglePerSegment = (float) (2 * Math.PI) / segments;
+        UnitCircle circle = UnitCircle.of(segments);
         float thickness = outerRadius - innerRadius;
 
         float texWidth = texture.getTextureWidth();
@@ -43,30 +46,11 @@ public final class AuroraBeltRenderer {
             float bandIndex = iter == 0 ? 1f : 0f;
             float leftTX = bandIndex * texWidth * BAND_WIDTH_IN_TEXTURE / imageWidth;
             float rightTX = (bandIndex + 1f) * texWidth * BAND_WIDTH_IN_TEXTURE / imageWidth - 0.001f;
-            float texProgress = 0f;
+            RingWave outerWave = iter == 0
+                    ? new RingWave(FIRST_PASS_WOBBLE_CYCLES, phaseRad, wobble)
+                    : new RingWave(SECOND_PASS_WOBBLE_CYCLES, -phaseRad, wobble);
 
-            GL11.glBegin(GL11.GL_QUAD_STRIP);
-            for (int i = 0; i <= segments; i++) {
-                int segIndex = i % segments;
-                float theta = anglePerSegment * segIndex;
-                float phaseAngleRad = iter == 0
-                        ? (float) Math.toRadians(phaseAngleDeg) + segIndex * anglePerSegment * 10f
-                        : (float) Math.toRadians(-phaseAngleDeg) + segIndex * anglePerSegment * 5f;
-
-                float cos = (float) Math.cos(theta);
-                float sin = (float) Math.sin(theta);
-                float x1 = cos * innerRadius;
-                float y1 = sin * innerRadius;
-                float x2 = cos * outerRadius + (float) Math.cos(phaseAngleRad) * wobble;
-                float y2 = sin * outerRadius + (float) Math.sin(phaseAngleRad) * wobble;
-
-                GL11.glTexCoord2f(leftTX, texProgress);
-                GL11.glVertex2f(x1, y1);
-                GL11.glTexCoord2f(rightTX, texProgress);
-                GL11.glVertex2f(x2, y2);
-                texProgress += texPerSegment;
-            }
-            GL11.glEnd();
+            RadialBandGL.strip(circle, 0, segments, innerRadius, outerRadius, leftTX, rightTX, texPerSegment, RingWave.NONE, outerWave);
             GL11.glRotatef(180f, 0f, 0f, 1f);
         }
 

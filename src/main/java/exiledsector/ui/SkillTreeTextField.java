@@ -20,6 +20,7 @@ final class SkillTreeTextField {
     private final int maxLength;
     private final float fontSize;
     private final Color textColor;
+    private final ReusableText display;
 
     private String text = "";
     private boolean focused;
@@ -30,14 +31,12 @@ final class SkillTreeTextField {
     private float fittedWidth;
     private String fittedWithCaret;
     private String fittedWithoutCaret;
-    private LazyFont.DrawableString drawable;
-    private String renderedText;
-    private Color renderedColor;
 
     SkillTreeTextField(int maxLength, float fontSize, Color textColor) {
         this.maxLength = maxLength;
         this.fontSize = fontSize;
         this.textColor = textColor;
+        this.display = new ReusableText(fontSize, textColor);
     }
 
     String text() {
@@ -92,13 +91,9 @@ final class SkillTreeTextField {
         if (font == null) {
             return;
         }
-        LazyFont.DrawableString textDrawable = drawableFor(font, displayText(font, width, placeholder));
-        Color color = text.isEmpty() && !focused ? PLACEHOLDER_COLOR : textColor;
-        if (!color.equals(renderedColor)) {
-            textDrawable.setBaseColor(color);
-            renderedColor = color;
-        }
-        textDrawable.draw(x, bottom + height / 2f + fontSize / 2f);
+        display.set(displayText(font, width, placeholder));
+        display.setColor(text.isEmpty() && !focused ? PLACEHOLDER_COLOR : textColor);
+        display.draw(x, bottom + height / 2f + fontSize / 2f);
     }
 
     private String displayText(LazyFont font, float width, String placeholder) {
@@ -140,16 +135,5 @@ final class SkillTreeTextField {
             fitted = fitted.substring(0, fitted.offsetByCodePoints(fitted.length(), -1));
         }
         return fitted;
-    }
-
-    private LazyFont.DrawableString drawableFor(LazyFont font, String value) {
-        if (drawable == null) {
-            drawable = SkillTreePanelStyle.buildSimpleText(font, value, fontSize, textColor);
-            renderedColor = textColor;
-        } else if (!value.equals(renderedText)) {
-            drawable.setText(value);
-        }
-        renderedText = value;
-        return drawable;
     }
 }

@@ -12,6 +12,7 @@ import exiledsector.ui.belt.WormholeBandRenderer;
 import exiledsector.ui.util.ColorUtil;
 import exiledsector.ui.util.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
+import exiledsector.ui.util.UnitCircle;
 import org.apache.log4j.Logger;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
@@ -38,8 +39,7 @@ import static exiledsector.ui.node.SkillTreeNodeGeometry.donutRadius;
 final class SkillTreeNodeRingRenderer {
 
     private static final int RING_SEGMENTS = 32;
-    private static final float[] RING_COS = unitCircle(true);
-    private static final float[] RING_SIN = unitCircle(false);
+    private static final UnitCircle RING_CIRCLE = UnitCircle.of(RING_SEGMENTS);
     private static final float RING_LINE_THICKNESS = 1.5f;
 
     private static final String[] RING_STACK_TEXTURES = {
@@ -423,20 +423,11 @@ final class SkillTreeNodeRingRenderer {
         float sizeJitter;
     }
 
-    private static float[] unitCircle(boolean cosine) {
-        float[] values = new float[RING_SEGMENTS];
-        for (int i = 0; i < RING_SEGMENTS; i++) {
-            float angle = (float) (2 * Math.PI * i / RING_SEGMENTS);
-            values[i] = (float) (cosine ? Math.cos(angle) : Math.sin(angle));
-        }
-        return values;
-    }
-
     private void drawRingOutline(float cx, float cy, float radius, Color color, float alpha) {
         Misc.setColor(color, alpha);
         GL11.glBegin(GL11.GL_LINE_LOOP);
         for (int i = 0; i < RING_SEGMENTS; i++) {
-            GL11.glVertex2f(cx + RING_COS[i] * radius, cy + RING_SIN[i] * radius);
+            GL11.glVertex2f(cx + RING_CIRCLE.cos(i) * radius, cy + RING_CIRCLE.sin(i) * radius);
         }
         GL11.glEnd();
     }

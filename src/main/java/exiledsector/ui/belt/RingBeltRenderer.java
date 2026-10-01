@@ -2,6 +2,7 @@ package exiledsector.ui.belt;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import exiledsector.ui.TreeViewport;
+import exiledsector.ui.util.UnitCircle;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
@@ -28,7 +29,6 @@ public final class RingBeltRenderer {
         if (range == null) {
             return;
         }
-        float anglePerSegment = (float) FULL_TURN / segments;
         float thickness = outerRadius - innerRadius;
 
         float imageWidth = texture.getWidth();
@@ -39,29 +39,18 @@ public final class RingBeltRenderer {
 
         RadialBandGL.begin(texture, band.center().x, band.center().y, GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, color, alphaMult);
         GL11.glRotatef(rotationDeg, 0f, 0f, 1f);
+        UnitCircle circle = UnitCircle.of(segments);
         if (range[1] <= segments) {
-            drawStrip(range[0], range[1], anglePerSegment, texPerSegment, innerRadius, outerRadius);
+            drawStrip(circle, range[0], range[1], texPerSegment, innerRadius, outerRadius);
         } else {
-            drawStrip(range[0], segments, anglePerSegment, texPerSegment, innerRadius, outerRadius);
-            drawStrip(0, range[1] - segments, anglePerSegment, texPerSegment, innerRadius, outerRadius);
+            drawStrip(circle, range[0], segments, texPerSegment, innerRadius, outerRadius);
+            drawStrip(circle, 0, range[1] - segments, texPerSegment, innerRadius, outerRadius);
         }
         RadialBandGL.end();
     }
 
-    private static void drawStrip(int first, int last, float anglePerSegment, float texPerSegment, float innerRadius, float outerRadius) {
-        GL11.glBegin(GL11.GL_QUAD_STRIP);
-        for (int i = first; i <= last; i++) {
-            float theta = anglePerSegment * i;
-            float cos = (float) Math.cos(theta);
-            float sin = (float) Math.sin(theta);
-            float texProgress = texPerSegment * i;
-
-            GL11.glTexCoord2f(0f, texProgress);
-            GL11.glVertex2f(cos * innerRadius, sin * innerRadius);
-            GL11.glTexCoord2f(1f, texProgress);
-            GL11.glVertex2f(cos * outerRadius, sin * outerRadius);
-        }
-        GL11.glEnd();
+    private static void drawStrip(UnitCircle circle, int first, int last, float texPerSegment, float innerRadius, float outerRadius) {
+        RadialBandGL.strip(circle, first, last, innerRadius, outerRadius, 0f, 1f, texPerSegment, RingWave.NONE, RingWave.NONE);
     }
 
     static int[] visibleVertexRange(float cx, float cy, float innerRadius, float outerRadius, float rotationDeg, int segments,

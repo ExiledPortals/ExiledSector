@@ -7,7 +7,6 @@ import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.TemplateNames;
 import exiledsector.ui.util.BorderedPanel;
 import exiledsector.ui.util.GLDraw;
-import org.lazywizard.lazylib.ui.LazyFont;
 
 import java.awt.Color;
 import java.util.Collection;
@@ -31,15 +30,16 @@ final class SkillTreeTemplateNameDialog {
             SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
     private final SkillTreeUiButton save = new SkillTreeUiButton(Translation.text("ui.template.dialog.save"));
     private final SkillTreeUiButton cancel = new SkillTreeUiButton(Translation.text("ui.template.dialog.cancel"));
-    private final String duplicateText = Translation.text("ui.template.dialog.duplicate");
+    private final ReusableText title = new ReusableText(SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR)
+            .set(Translation.text("ui.template.dialog.title"));
+    private final ReusableText summary = new ReusableText(SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
+    private final ReusableText problemLine = new ReusableText(SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE, PROBLEM_COLOR)
+            .set(Translation.text("ui.template.dialog.duplicate"));
 
     private boolean open;
     private String rootNodeId;
     private Collection<SkillTreeTemplate> existing = List.of();
     private TemplateNames.Problem problem = TemplateNames.Problem.EMPTY;
-    private LazyFont.DrawableString title;
-    private LazyFont.DrawableString summary;
-    private LazyFont.DrawableString problemLine;
 
     void open(String rootNodeId, int nodeCount, Collection<SkillTreeTemplate> existing) {
         this.rootNodeId = rootNodeId;
@@ -48,24 +48,7 @@ final class SkillTreeTemplateNameDialog {
         field.setText("");
         field.focus(true);
         revalidate();
-        LazyFont font = SkillTreePanelStyle.font();
-        if (font != null) {
-            if (title == null) {
-                title = SkillTreePanelStyle.buildSimpleText(font, Translation.text("ui.template.dialog.title"),
-                        SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
-            }
-            String summaryText = Translation.msg("ui.template.dialog.summary").count(nodeCount).text();
-            if (summary == null) {
-                summary = SkillTreePanelStyle.buildSimpleText(font, summaryText, SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE,
-                        SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
-            } else {
-                summary.setText(summaryText);
-            }
-            if (problemLine == null) {
-                problemLine = SkillTreePanelStyle.buildSimpleText(font, duplicateText, SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE,
-                        PROBLEM_COLOR);
-            }
-        }
+        summary.set(Translation.msg("ui.template.dialog.summary").count(nodeCount).text());
     }
 
     void close() {
@@ -119,18 +102,14 @@ final class SkillTreeTemplateNameDialog {
         panel.draw(left, bottom, WIDTH, HEIGHT, alphaMult);
 
         float top = bottom + HEIGHT - PADDING;
-        if (title != null) {
-            title.draw(left + PADDING, top);
-        }
+        title.draw(left + PADDING, top);
         top -= SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE + 8f;
-        if (summary != null) {
-            summary.draw(left + PADDING, top);
-        }
+        summary.draw(left + PADDING, top);
         top -= SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE + 12f;
         float fieldBottom = top - FIELD_HEIGHT;
         fieldPanel.draw(left + PADDING, fieldBottom, WIDTH - PADDING * 2f, FIELD_HEIGHT, alphaMult);
         field.render(left + PADDING + FIELD_TEXT_PADDING, fieldBottom, WIDTH - (PADDING + FIELD_TEXT_PADDING) * 2f, FIELD_HEIGHT, "");
-        if (problem == TemplateNames.Problem.DUPLICATE && problemLine != null) {
+        if (problem == TemplateNames.Problem.DUPLICATE) {
             problemLine.draw(left + PADDING, fieldBottom - 6f);
         }
 

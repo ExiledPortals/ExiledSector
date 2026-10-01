@@ -7,6 +7,7 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.ui.util.CachedText;
 import exiledsector.ui.util.FallbackSupport;
 import exiledsector.ui.util.GLDraw;
+import exiledsector.ui.util.LineBatch;
 import exiledsector.ui.util.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
 import org.apache.log4j.Logger;
@@ -52,6 +53,9 @@ final class SkillTreeReadoutBar {
     private final FaderUtil hoverFader = new FaderUtil(HOVER_FADE_IN, HOVER_FADE_OUT);
 
     private final CachedText<Void, LabelTexts> labelCache = new CachedText<>();
+    private final LineBatch bevelShadowLines = new LineBatch(EDGE_LINE_WIDTH);
+    private final LineBatch bevelHighlightLines = new LineBatch(EDGE_LINE_WIDTH);
+    private final LineBatch cornerAccentLines = new LineBatch(1f);
 
     private Color fillColor;
     private Color overflowColor;
@@ -196,52 +200,39 @@ final class SkillTreeReadoutBar {
 
     private void drawEdgeBevel(float left, float bottom, Color color, float alphaMult, float glowBoost) {
         float top = bottom + BAR_HEIGHT;
-        drawVerticalBevelLine(left, bottom, top, color, alphaMult, glowBoost);
-        drawVerticalBevelLine(left + BAR_WIDTH, bottom, top, color, alphaMult, glowBoost);
-    }
+        float right = left + BAR_WIDTH;
+        Color highlight = Misc.interpolateColor(color, Color.WHITE, EDGE_BEVEL_HOVER_WHITE_BLEND * glowBoost);
+        bevelShadowLines.clear();
+        bevelShadowLines.add(left, bottom, left, top, color, 0.5f * alphaMult);
+        bevelShadowLines.add(right, bottom, right, top, color, 0.5f * alphaMult);
+        bevelHighlightLines.clear();
+        bevelHighlightLines.add(left + 1f, bottom, left + 1f, top, highlight, alphaMult);
+        bevelHighlightLines.add(right + 1f, bottom, right + 1f, top, highlight, alphaMult);
 
-    private void drawVerticalBevelLine(float x, float bottom, float top, Color color, float alphaMult, float glowBoost) {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
-        GL11.glLineWidth(EDGE_LINE_WIDTH);
-
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        Misc.setColor(color, 0.5f * alphaMult);
-        GL11.glBegin(GL11.GL_LINES);
-        GL11.glVertex2f(x, bottom);
-        GL11.glVertex2f(x, top);
-        GL11.glEnd();
-
+        bevelShadowLines.flush();
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-        Misc.setColor(Misc.interpolateColor(color, Color.WHITE, EDGE_BEVEL_HOVER_WHITE_BLEND * glowBoost), alphaMult);
-        GL11.glBegin(GL11.GL_LINES);
-        GL11.glVertex2f(x + 1f, bottom);
-        GL11.glVertex2f(x + 1f, top);
-        GL11.glEnd();
-
+        bevelHighlightLines.flush();
         GL11.glDisable(GL11.GL_BLEND);
     }
 
     private void drawCornerAccents(float left, float bottom, Color color, float alphaMult) {
         float right = left + BAR_WIDTH;
         float top = bottom + BAR_HEIGHT;
-        fadingLine(left + 1f, bottom, left + CORNER_ACCENT_LENGTH, bottom, color, alphaMult);
-        fadingLine(left + 1f, top, left + CORNER_ACCENT_LENGTH, top, color, alphaMult);
-        fadingLine(right - 1f, bottom, right - CORNER_ACCENT_LENGTH, bottom, color, alphaMult);
-        fadingLine(right - 1f, top, right - CORNER_ACCENT_LENGTH, top, color, alphaMult);
-    }
+        int opaque = color.getRGB() | 0xFF000000;
+        int clear = color.getRGB() & 0x00FFFFFF;
+        cornerAccentLines.clear();
+        cornerAccentLines.add(left + 1f, bottom, opaque, left + CORNER_ACCENT_LENGTH, bottom, clear, alphaMult);
+        cornerAccentLines.add(left + 1f, top, opaque, left + CORNER_ACCENT_LENGTH, top, clear, alphaMult);
+        cornerAccentLines.add(right - 1f, bottom, opaque, right - CORNER_ACCENT_LENGTH, bottom, clear, alphaMult);
+        cornerAccentLines.add(right - 1f, top, opaque, right - CORNER_ACCENT_LENGTH, top, clear, alphaMult);
 
-    private void fadingLine(float x0, float y0, float x1, float y1, Color color, float alphaMult) {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glLineWidth(1f);
-        GL11.glBegin(GL11.GL_LINES);
-        glColorAlpha(color, alphaMult);
-        GL11.glVertex2f(x0, y0);
-        glColorAlpha(color, 0f);
-        GL11.glVertex2f(x1, y1);
-        GL11.glEnd();
+        cornerAccentLines.flush();
         GL11.glDisable(GL11.GL_BLEND);
     }
 

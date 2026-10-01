@@ -12,6 +12,7 @@ import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.ColorUtil;
 import exiledsector.ui.util.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
+import exiledsector.ui.util.UnitCircle;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -147,7 +148,7 @@ public class SkillTreeStarRenderer {
     }
 
     private void drawAtmosphereRing(SpriteAPI texture, float centerX, float centerY, float innerRadius, float outerRadius, Color color, float alphaMult) {
-        float anglePerSegment = (float) (Math.PI * 2.0 / ATMOSPHERE_SEGMENTS);
+        UnitCircle circle = UnitCircle.of(ATMOSPHERE_SEGMENTS);
 
         GL11.glPushMatrix();
         GL11.glTranslatef(centerX, centerY, 0f);
@@ -159,9 +160,8 @@ public class SkillTreeStarRenderer {
 
         GL11.glBegin(GL11.GL_QUAD_STRIP);
         for (int i = 0; i <= ATMOSPHERE_SEGMENTS; i++) {
-            float theta = anglePerSegment * (i % ATMOSPHERE_SEGMENTS);
-            float cos = (float) Math.cos(theta);
-            float sin = (float) Math.sin(theta);
+            float cos = circle.cos(i % ATMOSPHERE_SEGMENTS);
+            float sin = circle.sin(i % ATMOSPHERE_SEGMENTS);
             GL11.glTexCoord2f(0f, 0f);
             GL11.glVertex2f(cos * innerRadius, sin * innerRadius);
             GL11.glTexCoord2f(0f, 0.99f);

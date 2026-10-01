@@ -50,13 +50,13 @@ final class SkillTreeTemplateListOverlay {
     private final String confirmText = Translation.text("ui.template.list.confirmDelete");
     private final String emptyRootText = Translation.text("ui.template.list.empty");
     private final String noMatchText = Translation.text("ui.template.list.noMatch");
+    private final ReusableText title = new ReusableText(SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE,
+            SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
+    private final ReusableText emptyLine = new ReusableText(FONT_SIZE, META_COLOR);
 
     private boolean open;
     private TemplateListState state;
     private String assignedId;
-    private LazyFont.DrawableString title;
-    private LazyFont.DrawableString emptyLine;
-    private String emptyText;
     private ScreenRect box = ScreenRect.NONE;
     private ScreenRect listArea = ScreenRect.NONE;
     private int visibleRows;
@@ -76,16 +76,7 @@ final class SkillTreeTemplateListOverlay {
         for (RowSlot slot : slots) {
             slot.unbind();
         }
-        LazyFont font = SkillTreePanelStyle.font();
-        if (font != null) {
-            String titleText = Translation.msg("ui.template.list.title").arg("root", rootName).text();
-            if (title == null) {
-                title = SkillTreePanelStyle.buildSimpleText(font, titleText, SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE,
-                        SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
-            } else {
-                title.setText(titleText);
-            }
-        }
+        title.set(Translation.msg("ui.template.list.title").arg("root", rootName).text());
     }
 
     void setTemplates(Collection<SkillTreeTemplate> templates, String assignedId) {
@@ -169,9 +160,7 @@ final class SkillTreeTemplateListOverlay {
         panel.draw(left, bottom, width, height, alphaMult);
 
         float top = bottom + height - PADDING;
-        if (title != null) {
-            title.draw(left + PADDING, top);
-        }
+        title.draw(left + PADDING, top);
         top -= SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE + 12f;
         float chipBottom = top - CHIP_HEIGHT;
         float chipLeft = left + PADDING;
@@ -214,15 +203,8 @@ final class SkillTreeTemplateListOverlay {
             slot.bind(font, window.get(i), listArea.width() - DELETE_WIDTH - 24f);
             slot.render(listArea.left(), rowBottom, listArea.width(), mouseX, mouseY, alphaMult);
         }
-        if (window.isEmpty() && font != null) {
-            String text = state.hasAnyForRoot() ? noMatchText : emptyRootText;
-            if (emptyLine == null) {
-                emptyLine = SkillTreePanelStyle.buildSimpleText(font, text, FONT_SIZE, META_COLOR);
-            } else if (!text.equals(emptyText)) {
-                emptyLine.setText(text);
-            }
-            emptyText = text;
-            emptyLine.draw(listArea.left(), listTop - 8f);
+        if (window.isEmpty()) {
+            emptyLine.set(state.hasAnyForRoot() ? noMatchText : emptyRootText).draw(listArea.left(), listTop - 8f);
         }
     }
 
@@ -232,8 +214,8 @@ final class SkillTreeTemplateListOverlay {
         private SkillTreeTemplate template;
         private boolean boundArmed;
         private boolean boundAssigned;
-        private LazyFont.DrawableString name;
-        private LazyFont.DrawableString meta;
+        private final ReusableText name = new ReusableText(FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
+        private final ReusableText meta = new ReusableText(FONT_SIZE, META_COLOR);
         private ScreenRect bounds = ScreenRect.NONE;
 
         void bind(LazyFont font, SkillTreeTemplate value, float textWidth) {
@@ -245,10 +227,10 @@ final class SkillTreeTemplateListOverlay {
             template = value;
             boundArmed = armed;
             boundAssigned = assigned;
-            meta = rebuilt(font, meta, metaText(value, assigned), assigned ? SkillTreePanelStyle.POSITIVE_STAT_COLOR : META_COLOR);
-            float nameWidth = textWidth - meta.getWidth() - META_GAP;
+            meta.set(metaText(value, assigned)).setColor(assigned ? SkillTreePanelStyle.POSITIVE_STAT_COLOR : META_COLOR);
+            float nameWidth = textWidth - meta.width() - META_GAP;
             String fittedName = SkillTreeTextField.fitStart(value.name(), nameWidth, text -> font.calcWidth(text, FONT_SIZE));
-            name = rebuilt(font, name, fittedName, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
+            name.set(fittedName);
             delete.setLabel(armed ? confirmText : deleteText);
             delete.setTextColor(armed ? CONFIRM_COLOR : null);
         }
@@ -268,7 +250,7 @@ final class SkillTreeTemplateListOverlay {
             }
             float textY = bottom + ROW_HEIGHT / 2f + FONT_SIZE / 2f;
             name.draw(left + 12f, textY);
-            meta.draw(left + width - DELETE_WIDTH - 12f - meta.getWidth(), textY);
+            meta.draw(left + width - DELETE_WIDTH - 12f - meta.width(), textY);
             delete.place(left + width - DELETE_WIDTH, bottom + 4f, DELETE_WIDTH, ROW_HEIGHT - 8f);
             delete.render(mouseX, mouseY, alphaMult);
         }
@@ -283,15 +265,6 @@ final class SkillTreeTemplateListOverlay {
                 parts.add(Translation.styled("ui.template.list.inUse"));
             }
             return Translation.list(parts).plain();
-        }
-
-        private LazyFont.DrawableString rebuilt(LazyFont font, LazyFont.DrawableString existing, String text, Color color) {
-            if (existing == null) {
-                return SkillTreePanelStyle.buildSimpleText(font, text, FONT_SIZE, color);
-            }
-            existing.setText(text);
-            existing.setBaseColor(color);
-            return existing;
         }
     }
 }

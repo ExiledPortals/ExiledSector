@@ -2,7 +2,6 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.i18n.Translation;
-import org.lazywizard.lazylib.ui.LazyFont;
 
 import java.awt.Color;
 import java.util.HashMap;
@@ -25,11 +24,11 @@ final class SkillTreeTemplateBar {
     private final SkillTreeUiButton auto = new SkillTreeUiButton(Translation.text("ui.template.button.autoAllocate"));
     private final SkillTreeInfoTooltipRenderer tooltip;
     private final Map<String, String> texts = new HashMap<>();
+    private final ReusableText templateLine = new ReusableText(FONT_SIZE, SkillTreePanelStyle.POSITIVE_STAT_COLOR);
+    private final ReusableText resultLine = new ReusableText(FONT_SIZE, RESULT_COLOR);
 
     private TemplateBarState state = TemplateBarState.HIDDEN;
     private String templateName;
-    private LazyFont.DrawableString templateLine;
-    private LazyFont.DrawableString resultLine;
     private String resultText;
     private float resultSeconds;
     private boolean laidOutVisible;
@@ -121,12 +120,11 @@ final class SkillTreeTemplateBar {
         auto.render(mouseX, mouseY, alphaMult);
         float right = position.getX() + position.getWidth() - MARGIN;
         float top = position.getY() + MARGIN + BUTTON_HEIGHT + STATUS_GAP + STATUS_LINE_HEIGHT;
-        if (resultText != null && resultLine != null) {
-            resultLine.draw(right - resultLine.getWidth(), top);
+        if (resultText != null && resultLine.draw(right - resultLine.width(), top)) {
             top += STATUS_LINE_HEIGHT;
         }
-        if (templateName != null && templateLine != null) {
-            templateLine.draw(right - templateLine.getWidth(), top);
+        if (templateName != null) {
+            templateLine.draw(right - templateLine.width(), top);
         }
     }
 
@@ -148,21 +146,8 @@ final class SkillTreeTemplateBar {
     }
 
     private void setLine(boolean templateNameLine, String text) {
-        LazyFont font = SkillTreePanelStyle.font();
-        if (font == null || text == null) {
-            return;
-        }
-        Color color = templateNameLine ? SkillTreePanelStyle.POSITIVE_STAT_COLOR : RESULT_COLOR;
-        LazyFont.DrawableString existing = templateNameLine ? templateLine : resultLine;
-        if (existing == null) {
-            existing = SkillTreePanelStyle.buildSimpleText(font, text, FONT_SIZE, color);
-        } else {
-            existing.setText(text);
-        }
-        if (templateNameLine) {
-            templateLine = existing;
-        } else {
-            resultLine = existing;
+        if (text != null) {
+            (templateNameLine ? templateLine : resultLine).set(text);
         }
     }
 }
