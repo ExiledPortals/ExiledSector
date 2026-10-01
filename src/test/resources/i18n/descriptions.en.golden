@@ -1782,23 +1782,23 @@ type|adaptive_coils|CRUISER|2	0	Mutually exclusive with <hullmod>hullmods</hullm
 type|adaptive_coils|CAPITAL_SHIP|0	0	Phase coils are less able to maintain a connection with normal space as the ship's hard flux levels rise, resulting in a greatly reduced top speed as the coils struggle to gain traction.\n\nThis modification allows the coils to handle higher levels of hard flux, increasing the threshold at which speed bottoms out.
 type|adaptive_coils|CAPITAL_SHIP|1	0	Increases hard flux threshold before phase speed penalty kicks in by <good>40%</good>.
 type|adaptive_coils|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Adaptive Phase Coils, Phase Anchor.\n\nMutually exclusive with <node>node</node>: Phase Anchor.
-type|adaptiveshields|null|0	0	Converts this ship's shield to omni-directional.
+type|adaptiveshields|null|0	0	Replaces the ship's fixed frontal shield emitter with one that can turn to face any direction, at the cost of a narrower arc.
 type|adaptiveshields|null|1	0	<bad>30%</bad> less shield arc.
 type|adaptiveshields|null|2	0	Converts this ship's shield to omni-directional.
 type|adaptiveshields|null|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Omni, Shield Conversion - Front, Shield Shunt.\n\nMutually exclusive with <node>nodes</node>: Shield Conversion - Front, Shield Shunt.
-type|adaptiveshields|FRIGATE|0	0	Converts this ship's shield to omni-directional.
+type|adaptiveshields|FRIGATE|0	0	Replaces the ship's fixed frontal shield emitter with one that can turn to face any direction, at the cost of a narrower arc.
 type|adaptiveshields|FRIGATE|1	0	<bad>30%</bad> less shield arc.
 type|adaptiveshields|FRIGATE|2	0	Converts this ship's shield to omni-directional.
 type|adaptiveshields|FRIGATE|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Omni, Shield Conversion - Front, Shield Shunt.\n\nMutually exclusive with <node>nodes</node>: Shield Conversion - Front, Shield Shunt.
-type|adaptiveshields|DESTROYER|0	0	Converts this ship's shield to omni-directional.
+type|adaptiveshields|DESTROYER|0	0	Replaces the ship's fixed frontal shield emitter with one that can turn to face any direction, at the cost of a narrower arc.
 type|adaptiveshields|DESTROYER|1	0	<bad>30%</bad> less shield arc.
 type|adaptiveshields|DESTROYER|2	0	Converts this ship's shield to omni-directional.
 type|adaptiveshields|DESTROYER|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Omni, Shield Conversion - Front, Shield Shunt.\n\nMutually exclusive with <node>nodes</node>: Shield Conversion - Front, Shield Shunt.
-type|adaptiveshields|CRUISER|0	0	Converts this ship's shield to omni-directional.
+type|adaptiveshields|CRUISER|0	0	Replaces the ship's fixed frontal shield emitter with one that can turn to face any direction, at the cost of a narrower arc.
 type|adaptiveshields|CRUISER|1	0	<bad>30%</bad> less shield arc.
 type|adaptiveshields|CRUISER|2	0	Converts this ship's shield to omni-directional.
 type|adaptiveshields|CRUISER|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Omni, Shield Conversion - Front, Shield Shunt.\n\nMutually exclusive with <node>nodes</node>: Shield Conversion - Front, Shield Shunt.
-type|adaptiveshields|CAPITAL_SHIP|0	0	Converts this ship's shield to omni-directional.
+type|adaptiveshields|CAPITAL_SHIP|0	0	Replaces the ship's fixed frontal shield emitter with one that can turn to face any direction, at the cost of a narrower arc.
 type|adaptiveshields|CAPITAL_SHIP|1	0	<bad>30%</bad> less shield arc.
 type|adaptiveshields|CAPITAL_SHIP|2	0	Converts this ship's shield to omni-directional.
 type|adaptiveshields|CAPITAL_SHIP|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Omni, Shield Conversion - Front, Shield Shunt.\n\nMutually exclusive with <node>nodes</node>: Shield Conversion - Front, Shield Shunt.
