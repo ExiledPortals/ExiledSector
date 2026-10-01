@@ -151,7 +151,7 @@ public class SkillNode extends SkillTreeObject {
     public SkillType resolveEffectiveType(ShipSkillData data) {
         if (!type.isOptional()) return type;
         String selectedId = data.getOptionalSelection(getId());
-        if (selectedId == null) return type;
+        if (selectedId == null || !type.getOptionalOptionIds().contains(selectedId)) return type;
         SkillType chosen = SkillTree.getType(selectedId);
         return chosen != null ? chosen : type;
     }

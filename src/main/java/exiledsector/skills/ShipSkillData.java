@@ -204,16 +204,27 @@ public class ShipSkillData {
         }
     }
 
-    public List<String> forgetUnknownNodes(Map<String, SkillNode> tree) {
+    public List<String> forgetUnknownNodes(Map<String, SkillNode> tree, Map<String, SkillType> types) {
         List<String> forgotten = new ArrayList<>();
         for (String nodeId : List.copyOf(allocatedNodeIds)) {
-            if (!tree.containsKey(nodeId)) {
+            SkillNode node = tree.get(nodeId);
+            if (node == null || hasInvalidOption(node, types)) {
                 allocatedNodeIds.remove(nodeId);
                 release(nodeId);
                 forgotten.add(nodeId);
+            } else if (!node.getType().isOptional() && optionalSelections != null) {
+                optionalSelections.remove(nodeId);
             }
         }
         return forgotten;
+    }
+
+    private boolean hasInvalidOption(SkillNode node, Map<String, SkillType> types) {
+        if (!node.getType().isOptional()) {
+            return false;
+        }
+        String selectedId = getOptionalSelection(node.getId());
+        return selectedId == null || !node.getType().getOptionalOptionIds().contains(selectedId) || !types.containsKey(selectedId);
     }
 
     public boolean hasLostStartingRoot(Map<String, SkillNode> tree) {

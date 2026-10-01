@@ -32,12 +32,17 @@ public final class SkillTypeLoader {
     private SkillTypeLoader() {
     }
 
-    public static Map<String, SkillType> loadSkillTypes() {
+    public record LoadedTypes(Map<String, SkillType> types, int declaredCount) {
+    }
+
+    public static LoadedTypes loadAll() {
         try {
-            return parseSkillTypes(Global.getSettings().loadJSON(DATA_PATH));
+            JSONObject root = Global.getSettings().loadJSON(DATA_PATH);
+            JSONArray declared = root.optJSONArray("skillTypes");
+            return new LoadedTypes(parseSkillTypes(root), declared == null ? 0 : declared.length());
         } catch (IOException | JSONException e) {
             Logger.getLogger(SkillTypeLoader.class).error("Failed to load " + DATA_PATH, e);
-            return new LinkedHashMap<>();
+            return new LoadedTypes(new LinkedHashMap<>(), 0);
         }
     }
 

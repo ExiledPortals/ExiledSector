@@ -1087,12 +1087,12 @@ class ShipSkillDataTest {
         data.allocate(node("free_gone", List.of("root")), 3);
         Map<String, SkillNode> tree = Map.of("root", root, "kept", kept);
 
-        assertEquals(List.of("gone", "free_gone"), data.forgetUnknownNodes(tree));
+        assertEquals(List.of("gone", "free_gone"), data.forgetUnknownNodes(tree, Map.of()));
         assertEquals(List.of("root", "kept"), List.copyOf(data.getAllocatedNodeIds()));
         assertEquals(1, data.getBankedFreeAllocations());
         assertEquals(3, data.getSpentOp(3));
         assertFalse(data.hasLostStartingRoot(tree));
-        assertEquals(List.of(), data.forgetUnknownNodes(tree));
+        assertEquals(List.of(), data.forgetUnknownNodes(tree, Map.of()));
     }
 
     @Test
@@ -1124,8 +1124,47 @@ class ShipSkillDataTest {
         legacy.allocate(child, 3);
 
         assertFalse(legacy.hasLostStartingRoot(Map.of("root", root, "child", child)));
-        legacy.forgetUnknownNodes(Map.of("child", child));
+        legacy.forgetUnknownNodes(Map.of("child", child), Map.of());
         assertTrue(legacy.hasLostStartingRoot(Map.of("child", child)));
         assertFalse(new ShipSkillData().hasLostStartingRoot(Map.of()));
+    }
+
+    private static SkillType plainType(String id) {
+        return new SkillType.Builder(id, id, "a.png", SkillTier.SMALL).effects(List.of()).build();
+    }
+
+    private static SkillType optionalType(String id, String... options) {
+        return new SkillType.Builder(id, id, "a.png", SkillTier.SMALL).effects(List.of()).optionalOptionIds(List.of(options)).build();
+    }
+
+    @Test
+    void forgettingRefundsOptionalNodesWhoseChosenOptionIsNoLongerOfferedOrNoLongerExists() {
+        SkillType hull = plainType("hull");
+        SkillType armor = plainType("armor");
+        SkillType removed = plainType("removed");
+        SkillNode root = rootNode("root", List.of());
+        SkillNode kept = new SkillNode("kept", optionalType("slot", "hull"), List.of("root"), 0f, 0f);
+        SkillNode unlisted = new SkillNode("unlisted", optionalType("slot", "hull"), List.of("root"), 0f, 0f);
+        SkillNode missingType = new SkillNode("missing_type", optionalType("other_slot", "removed"), List.of("root"), 0f, 0f);
+        SkillNode plain = node("plain", List.of("root"));
+        SkillNode unchosen = new SkillNode("unchosen", optionalType("slot", "hull"), List.of("root"), 0f, 0f);
+        ShipSkillData data = new ShipSkillData();
+        data.chooseStartingRoot(root);
+        data.selectOption(kept, hull, 3);
+        data.allocate(unchosen, 3);
+        data.selectOption(unlisted, armor, 3);
+        data.addFreeAllocationCredit();
+        data.selectOption(missingType, removed, 3);
+        data.allocate(plain, 3);
+        data.selectOption(plain, hull, 3);
+        Map<String, SkillNode> tree = Map.of("root", root, "kept", kept, "unlisted", unlisted, "missing_type", missingType,
+                "plain", plain, "unchosen", unchosen);
+
+        assertEquals(List.of("unchosen", "unlisted", "missing_type"), data.forgetUnknownNodes(tree, Map.of("hull", hull, "armor", armor)));
+        assertEquals(List.of("root", "kept", "plain"), List.copyOf(data.getAllocatedNodeIds()));
+        assertEquals(1, data.getBankedFreeAllocations());
+        assertEquals(6, data.getSpentOp(3));
+        assertEquals("hull", data.getOptionalSelection("kept"));
+        assertNull(data.getOptionalSelection("plain"));
     }
 }

@@ -158,7 +158,7 @@ class ShipSkillDataManagerTest {
         rootless.incrementLevel();
         List<SkillItemCost> refunds = new ArrayList<>();
 
-        ShipSkillDataManager.forgetUnknownNodes(Map.of("root", root, "lobster", lobster), refunds::add);
+        ShipSkillDataManager.forgetUnknownNodes(Map.of("root", root, "lobster", lobster), Map.of(), refunds::add);
 
         assertEquals(List.of("root", "lobster"), List.copyOf(healthy.getAllocatedNodeIds()));
         assertTrue(rootless.getAllocatedNodeIds().isEmpty());

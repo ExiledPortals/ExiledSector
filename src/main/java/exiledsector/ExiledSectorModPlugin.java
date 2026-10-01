@@ -80,7 +80,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
             Global.getLogger(ExiledSectorModPlugin.class).warn(LOG_TAG + ": the skill tree did not load completely, so saved allocations were left as they are.");
             return;
         }
-        ShipSkillDataManager.forgetUnknownNodes(SkillTree.getAllNodes(), ExiledSectorModPlugin::refund);
+        ShipSkillDataManager.forgetUnknownNodes(SkillTree.getAllNodes(), SkillTree.getAllTypes(), ExiledSectorModPlugin::refund);
     }
 
     private static void refund(SkillItemCost itemCost) {

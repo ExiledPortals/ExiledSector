@@ -110,7 +110,11 @@ class ExiledSectorModPluginTest {
     }
 
     private void loadTree(String nodes) throws Exception {
-        when(settings.loadJSON("data/skilltrees/skill_types.json")).thenReturn(new JSONObject(TYPES));
+        loadTree(TYPES, nodes);
+    }
+
+    private void loadTree(String types, String nodes) throws Exception {
+        when(settings.loadJSON("data/skilltrees/skill_types.json")).thenReturn(new JSONObject(types));
         when(settings.loadJSON("data/skilltrees/ship_skill_tree.json")).thenReturn(new JSONObject("{ \"nodes\": [ " + nodes + " ] }"));
         SkillTree.load();
     }
@@ -150,6 +154,30 @@ class ExiledSectorModPluginTest {
 
         assertEquals(Map.of(), persistentData.get("exiledSector_opSpentSlots"));
         assertNull(ShipSkillDataManager.find("rootless"));
+    }
+
+    @Test
+    void onGameLoadKeepsAnOptionalNodeWhoseChosenOptionIsStillOffered() throws Exception {
+        loadTree(TYPES.replace(" ] }", ", { \"id\": \"slot\", \"name\": \"Slot\", \"icon\": \"a.png\", \"optionalOptions\": [\"armor\"] } ] }"),
+                NODES + ", { \"id\": \"slot_1\", \"type\": \"slot\", \"connectedTo\": [\"root\"] }");
+        ShipSkillData data = ShipSkillDataManager.get("ship");
+        data.chooseStartingRoot(SkillTree.get("root"));
+        data.selectOption(SkillTree.get("slot_1"), SkillTree.getType("armor"), 3);
+
+        new ExiledSectorModPlugin().onGameLoad(false);
+
+        assertTrue(data.isAllocated("slot_1"));
+        assertEquals("armor", data.getOptionalSelection("slot_1"));
+    }
+
+    @Test
+    void onGameLoadLeavesSavedNodesAloneWhenASkillTypeFailedToLoad() throws Exception {
+        loadTree(TYPES.replace(" ] }", ", { \"id\": \"broken\", \"name\": \"Broken\", \"icon\": \"a.png\", \"tier\": \"BOGUS\" } ] }"), NODES);
+        ShipSkillData data = shipWithARemovedNode();
+
+        new ExiledSectorModPlugin().onGameLoad(false);
+
+        assertTrue(data.isAllocated("removed_by_update"));
     }
 
     @Test

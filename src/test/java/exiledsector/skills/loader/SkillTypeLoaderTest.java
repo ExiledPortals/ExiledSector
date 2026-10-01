@@ -449,7 +449,10 @@ class SkillTypeLoaderTest {
         try (MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
             global.when(Global::getSettings).thenReturn(settings);
 
-            assertTrue(SkillTypeLoader.loadSkillTypes().isEmpty());
+            SkillTypeLoader.LoadedTypes loaded = SkillTypeLoader.loadAll();
+
+            assertTrue(loaded.types().isEmpty());
+            assertEquals(0, loaded.declaredCount());
         }
     }
 

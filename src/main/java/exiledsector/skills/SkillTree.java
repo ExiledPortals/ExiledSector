@@ -37,14 +37,16 @@ public class SkillTree {
     public static void load() {
         clear();
 
-        Map<String, SkillType> types = SkillTypeLoader.loadSkillTypes();
+        SkillTypeLoader.LoadedTypes loadedTypes = SkillTypeLoader.loadAll();
+        Map<String, SkillType> types = loadedTypes.types();
         TYPES.putAll(types);
 
         SkillTreeLoader.ParsedTree parsed = SkillTreeLoader.loadAll(types);
         for (SkillNode node : parsed.nodes) {
             register(node);
         }
-        loadedCompletely = parsed.declaredNodeCount > 0 && NODES.size() == parsed.declaredNodeCount;
+        loadedCompletely = parsed.declaredNodeCount > 0 && NODES.size() == parsed.declaredNodeCount
+                && TYPES.size() == loadedTypes.declaredCount();
         for (String issue : WormholePairValidator.findIssues(NODES.values())) {
             Logger.getLogger(SkillTree.class).error(issue);
         }

@@ -9,6 +9,7 @@ import com.fs.starfarer.api.Global;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillNode;
+import exiledsector.skills.SkillType;
 import org.apache.log4j.Logger;
 
 public class ShipSkillDataManager {
@@ -42,11 +43,11 @@ public class ShipSkillDataManager {
         getStore().values().removeIf(ShipSkillData::isBlank);
     }
 
-    public static void forgetUnknownNodes(Map<String, SkillNode> tree, Consumer<SkillItemCost> refund) {
+    public static void forgetUnknownNodes(Map<String, SkillNode> tree, Map<String, SkillType> types, Consumer<SkillItemCost> refund) {
         Logger logger = Logger.getLogger(ShipSkillDataManager.class);
         for (Map.Entry<String, ShipSkillData> entry : getStore().entrySet()) {
             ShipSkillData data = entry.getValue();
-            List<String> forgotten = data.forgetUnknownNodes(tree);
+            List<String> forgotten = data.forgetUnknownNodes(tree, types);
             if (data.hasLostStartingRoot(tree)) {
                 List<String> released = data.resetAllocations();
                 for (String nodeId : released) {
@@ -58,7 +59,7 @@ public class ShipSkillDataManager {
                 logger.info("[ExiledSector] Reset the skill tree of ship " + entry.getKey()
                         + " because its starting root is no longer in the tree; released " + released + ", removed " + forgotten);
             } else if (!forgotten.isEmpty()) {
-                logger.info("[ExiledSector] Removed nodes that are no longer in the skill tree from ship " + entry.getKey() + ": " + forgotten);
+                logger.info("[ExiledSector] Removed nodes that are no longer in the skill tree or whose chosen option is gone from ship " + entry.getKey() + ": " + forgotten);
             }
         }
     }

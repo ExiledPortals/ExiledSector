@@ -447,4 +447,21 @@ class SkillNodeTest {
 
         assertThrows(UnsupportedOperationException.class, () -> tags.add("shield"));
     }
+
+    @Test
+    void anOptionalNodeOnlyResolvesToAChosenOptionItStillOffers() {
+        SkillType hull = new SkillType.Builder("hull", "Hull", "a.png", SkillTier.SMALL).effects(List.of()).build();
+        SkillType armor = new SkillType.Builder("armor", "Armor", "a.png", SkillTier.SMALL).effects(List.of()).build();
+        SkillTree.registerType(hull);
+        SkillTree.registerType(armor);
+        SkillType slot = new SkillType.Builder("slot", "Slot", "a.png", SkillTier.SMALL).effects(List.of()).optionalOptionIds(List.of("hull")).build();
+        SkillNode listed = new SkillNode("listed", slot, List.of(), 0f, 0f);
+        SkillNode unlisted = new SkillNode("unlisted", slot, List.of(), 0f, 0f);
+        ShipSkillData data = new ShipSkillData();
+        data.selectOption(listed, hull, 0);
+        data.selectOption(unlisted, armor, 0);
+
+        assertSame(hull, listed.resolveEffectiveType(data));
+        assertSame(slot, unlisted.resolveEffectiveType(data));
+    }
 }
