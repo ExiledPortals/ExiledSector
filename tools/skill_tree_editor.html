@@ -3260,7 +3260,7 @@ function buildFolderOptionsHtml(paths, selectedFolder){
 function postImageOp(url, payload, onSuccess){
   fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'X-Skill-Tree-Editor': '1' },
     body: JSON.stringify(payload)
   }).then(function(r){
     return r.json().then(function(data){ return { httpOk: r.ok, data: data }; });
@@ -3833,7 +3833,7 @@ function saveToProject(reason){
   var typesText = toTabbedJson(typesOut, 'skillTypes');
   return fetch('/save', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'X-Skill-Tree-Editor': '1' },
     body: JSON.stringify({ types: typesText, tree: treeText })
   }).then(function(res){
     return res.json().then(function(data){ return { status: res.status, data: data }; });

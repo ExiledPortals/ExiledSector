@@ -9,6 +9,23 @@ $typesPath = Join-Path $projectRoot "data\skilltrees\skill_types.json"
 $treePath = Join-Path $projectRoot "data\skilltrees\ship_skill_tree.json"
 $staticImagesDir = Join-Path $projectRoot "graphics\backgrounds\static_images"
 $graphicsDir = Join-Path $projectRoot "graphics"
+$editorHost = "localhost:$port"
+$editorOrigin = "http://$editorHost"
+$fullProjectRoot = [System.IO.Path]::GetFullPath($projectRoot)
+$projectPrefix = $fullProjectRoot.TrimEnd('\') + '\'
+
+function Resolve-ProjectPath($relPath) {
+    if (-not $relPath) { return $null }
+    $full = [System.IO.Path]::GetFullPath((Join-Path $projectRoot $relPath))
+    if ($full.StartsWith($projectPrefix, [StringComparison]::OrdinalIgnoreCase)) { return $full }
+    return $null
+}
+
+function Test-EditorPost($request) {
+    if ($request.Headers["X-Skill-Tree-Editor"] -ne "1" -or $request.UserHostName -ne $editorHost) { return $false }
+    $origin = $request.Headers["Origin"]
+    return (-not $origin) -or $origin -eq $editorOrigin
+}
 
 function HueToRgbChannel($p, $q, $t) {
     if ($t -lt 0) { $t += 1 }
@@ -104,7 +121,10 @@ try {
         $request = $context.Request
         $response = $context.Response
         try {
-            if ($request.HttpMethod -eq "GET" -and ($request.Url.LocalPath -eq "/" -or $request.Url.LocalPath -eq "/index.html")) {
+            if ($request.HttpMethod -ne "GET" -and -not (Test-EditorPost $request)) {
+                Write-JsonResponse $response 403 @{ ok = $false; message = "Rejected: only the skill tree editor page may change files." }
+            }
+            elseif ($request.HttpMethod -eq "GET" -and ($request.Url.LocalPath -eq "/" -or $request.Url.LocalPath -eq "/index.html")) {
                 $bytes = [System.IO.File]::ReadAllBytes($editorPath)
                 $response.ContentType = "text/html; charset=utf-8"
                 $response.OutputStream.Write($bytes, 0, $bytes.Length)
@@ -177,10 +197,9 @@ try {
                 $hueShift = 0
                 try { $hueShift = [double]$body.hueShift } catch { $hueShift = 0 }
 
-                $srcFull = [System.IO.Path]::GetFullPath((Join-Path $projectRoot $relPath))
-                $fullProjectRoot = [System.IO.Path]::GetFullPath($projectRoot)
+                $srcFull = Resolve-ProjectPath $relPath
 
-                if (-not $relPath -or -not $srcFull.StartsWith($fullProjectRoot, [StringComparison]::OrdinalIgnoreCase) -or -not (Test-Path $srcFull -PathType Leaf)) {
+                if (-not $srcFull -or -not (Test-Path $srcFull -PathType Leaf)) {
                     Write-JsonResponse $response 400 @{ ok = $false; message = "Source image not found." }
                 } elseif (-not $suffix -or $suffix -match '[\\/:]') {
                     Write-JsonResponse $response 400 @{ ok = $false; message = "Suffix is required and cannot contain path separators." }
@@ -205,10 +224,9 @@ try {
                 $relPath = [string]$body.path
                 $suffix = ([string]$body.suffix).Trim()
 
-                $srcFull = [System.IO.Path]::GetFullPath((Join-Path $projectRoot $relPath))
-                $fullProjectRoot = [System.IO.Path]::GetFullPath($projectRoot)
+                $srcFull = Resolve-ProjectPath $relPath
 
-                if (-not $relPath -or -not $srcFull.StartsWith($fullProjectRoot, [StringComparison]::OrdinalIgnoreCase) -or -not (Test-Path $srcFull -PathType Leaf)) {
+                if (-not $srcFull -or -not (Test-Path $srcFull -PathType Leaf)) {
                     Write-JsonResponse $response 400 @{ ok = $false; message = "Source image not found." }
                 } elseif (-not $suffix -or $suffix -match '[\\/:]') {
                     Write-JsonResponse $response 400 @{ ok = $false; message = "Suffix is required and cannot contain path separators." }
@@ -233,11 +251,10 @@ try {
 
                 $fromRel = [string]$body.from
                 $toRel = [string]$body.to
-                $fullProjectRoot = [System.IO.Path]::GetFullPath($projectRoot)
-                $srcFull = [System.IO.Path]::GetFullPath((Join-Path $projectRoot $fromRel))
-                $destFull = [System.IO.Path]::GetFullPath((Join-Path $projectRoot $toRel))
+                $srcFull = Resolve-ProjectPath $fromRel
+                $destFull = Resolve-ProjectPath $toRel
 
-                if (-not $fromRel -or -not $toRel -or -not $srcFull.StartsWith($fullProjectRoot, [StringComparison]::OrdinalIgnoreCase) -or -not $destFull.StartsWith($fullProjectRoot, [StringComparison]::OrdinalIgnoreCase) -or -not (Test-Path $srcFull -PathType Leaf)) {
+                if (-not $srcFull -or -not $destFull -or -not (Test-Path $srcFull -PathType Leaf)) {
                     Write-JsonResponse $response 400 @{ ok = $false; message = "Source image not found." }
                 } elseif (Test-Path $destFull) {
                     Write-JsonResponse $response 400 @{ ok = $false; message = "Destination already exists." }
@@ -259,10 +276,9 @@ try {
                 $body = $bodyText | ConvertFrom-Json
 
                 $relPath = [string]$body.path
-                $srcFull = [System.IO.Path]::GetFullPath((Join-Path $projectRoot $relPath))
-                $fullProjectRoot = [System.IO.Path]::GetFullPath($projectRoot)
+                $srcFull = Resolve-ProjectPath $relPath
 
-                if (-not $relPath -or -not $srcFull.StartsWith($fullProjectRoot, [StringComparison]::OrdinalIgnoreCase) -or -not (Test-Path $srcFull -PathType Leaf)) {
+                if (-not $srcFull -or -not (Test-Path $srcFull -PathType Leaf)) {
                     Write-JsonResponse $response 400 @{ ok = $false; message = "Image not found." }
                 } else {
                     try {
@@ -275,10 +291,8 @@ try {
             }
             elseif ($request.HttpMethod -eq "GET") {
                 $relPath = [Uri]::UnescapeDataString($request.Url.LocalPath.TrimStart('/'))
-                $filePath = Join-Path $projectRoot $relPath
-                $fullFilePath = [System.IO.Path]::GetFullPath($filePath)
-                $fullProjectRoot = [System.IO.Path]::GetFullPath($projectRoot)
-                if ($fullFilePath.StartsWith($fullProjectRoot, [StringComparison]::OrdinalIgnoreCase) -and (Test-Path $fullFilePath -PathType Leaf)) {
+                $fullFilePath = Resolve-ProjectPath $relPath
+                if ($fullFilePath -and (Test-Path $fullFilePath -PathType Leaf)) {
                     $ext = [System.IO.Path]::GetExtension($fullFilePath).ToLowerInvariant()
                     $contentType = switch ($ext) {
                         ".png" { "image/png" }
