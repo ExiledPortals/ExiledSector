@@ -10,7 +10,7 @@ import java.util.function.Predicate;
 
 public final class OpSpentSlotManager {
 
-    public static final int SLOT_COUNT = 1000;
+    public static final int SLOT_COUNT = 10000;
 
     private static final String SLOTS_KEY = "exiledSector_opSpentSlots";
     private static final String LEGACY_NEXT_SLOT_KEY = "exiledSector_opSpentNextSlot";
