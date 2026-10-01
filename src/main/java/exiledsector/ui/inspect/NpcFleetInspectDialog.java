@@ -1,5 +1,6 @@
 package exiledsector.ui.inspect;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CustomUIPanelPlugin;
@@ -21,8 +22,11 @@ import java.util.List;
 
 public class NpcFleetInspectDialog implements CustomVisualDialogDelegate {
 
-    public static final float WIDTH = 720f;
     public static final float HEIGHT = 620f;
+    static final float COLUMN_WIDTH = 720f;
+    static final float COLUMN_GAP = 20f;
+    static final float SCREEN_MARGIN = 120f;
+    private static final float SCROLLBAR_ALLOWANCE = 20f;
     private static final float PAD = 10f;
     private static final float BUTTON_HEIGHT = 25f;
     private static final float BUTTON_WIDTH = 160f;
@@ -44,13 +48,29 @@ public class NpcFleetInspectDialog implements CustomVisualDialogDelegate {
         I18n.forGameText(() -> buildPanel(panel));
     }
 
+    public static float width() {
+        return widthFor(columnsFor(Global.getSettings().getScreenWidth()));
+    }
+
+    static int columnsFor(float screenWidth) {
+        return screenWidth >= widthFor(2) + SCREEN_MARGIN ? 2 : 1;
+    }
+
+    static float widthFor(int columns) {
+        return COLUMN_WIDTH * columns + COLUMN_GAP * (columns - 1);
+    }
+
+    private static int columnsIn(float panelWidth) {
+        return panelWidth >= widthFor(2) ? 2 : 1;
+    }
+
     private void buildPanel(CustomPanelAPI panel) {
         float width = panel.getPosition().getWidth();
         float height = panel.getPosition().getHeight();
 
         TooltipMakerAPI content = panel.createUIElement(width, height - BUTTON_HEIGHT - PAD * 2f, true);
         for (CampaignFleetAPI fleet : fleets) {
-            addFleet(content, fleet);
+            addFleet(content, fleet, width, columnsIn(width));
         }
         panel.addUIElement(content).inTL(0f, 0f);
 
@@ -69,22 +89,55 @@ public class NpcFleetInspectDialog implements CustomVisualDialogDelegate {
         return levelled;
     }
 
-    private static void addFleet(TooltipMakerAPI content, CampaignFleetAPI fleet) {
+    private static void addFleet(TooltipMakerAPI content, CampaignFleetAPI fleet, float width, int columns) {
         NpcFleetLeveller.ensure(fleet);
         List<FleetMemberAPI> members = fleet.getFleetData().getMembersListCopy();
         List<FleetMemberAPI> levelled = levelledMembers(fleet);
         content.addSectionHeading(fleet.getFullName(), Alignment.MID, PAD);
         VanillaText.addPara(content, Translation.msg("inspect.levelledShips").arg("levelled", levelled.size())
                 .arg("total", members.size()).styled(), PAD, Misc.getTextColor());
+        List<ShipEntry> ships = new ArrayList<>();
         for (FleetMemberAPI member : levelled) {
             ShipTreeLookup.ShipTree tree = ShipTreeLookup.find(member);
-            if (tree == null) {
-                continue;
+            if (tree != null) {
+                ships.add(new ShipEntry(member, tree));
             }
-            content.addPara("%s", PAD * 2f, Misc.getBasePlayerColor(), shipTitle(member));
-            content.addShipList(1, 1, ICON_SIZE, fleet.getFaction().getBaseUIColor(), List.of(member), PAD / 2f);
-            ShipTreeSummaryRenderer.render(content, member, tree, PAD / 2f);
         }
+        if (columns <= 1) {
+            for (ShipEntry ship : ships) {
+                addShip(content, fleet, ship, PAD * 2f);
+            }
+            return;
+        }
+        float rowWidth = width - SCROLLBAR_ALLOWANCE;
+        float columnWidth = (rowWidth - COLUMN_GAP * (columns - 1)) / columns;
+        for (int first = 0; first < ships.size(); first += columns) {
+            addShipRow(content, fleet, ships.subList(first, Math.min(ships.size(), first + columns)), rowWidth, columnWidth);
+        }
+    }
+
+    private static void addShipRow(TooltipMakerAPI content, CampaignFleetAPI fleet, List<ShipEntry> ships,
+                                   float width, float columnWidth) {
+        CustomPanelAPI row = Global.getSettings().createCustom(width, 0f, null);
+        float rowHeight = 0f;
+        for (int column = 0; column < ships.size(); column++) {
+            TooltipMakerAPI cell = row.createUIElement(columnWidth, 0f, false);
+            addShip(cell, fleet, ships.get(column), 0f);
+            float cellHeight = cell.getHeightSoFar();
+            row.addUIElement(cell).inTL(column * (columnWidth + COLUMN_GAP), 0f);
+            rowHeight = Math.max(rowHeight, cellHeight);
+        }
+        row.getPosition().setSize(width, rowHeight);
+        content.addCustom(row, PAD * 2f);
+    }
+
+    private static void addShip(TooltipMakerAPI tooltip, CampaignFleetAPI fleet, ShipEntry ship, float pad) {
+        tooltip.addPara("%s", pad, Misc.getBasePlayerColor(), shipTitle(ship.member()));
+        tooltip.addShipList(1, 1, ICON_SIZE, fleet.getFaction().getBaseUIColor(), List.of(ship.member()), PAD / 2f);
+        ShipTreeSummaryRenderer.render(tooltip, ship.member(), ship.tree(), PAD / 2f);
+    }
+
+    private record ShipEntry(FleetMemberAPI member, ShipTreeLookup.ShipTree tree) {
     }
 
     private static String shipTitle(FleetMemberAPI member) {

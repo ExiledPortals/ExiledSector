@@ -54,7 +54,7 @@ public class NpcTreeInspectInput implements CampaignInputListener {
                 || !(dialog.getInteractionTarget() instanceof CampaignFleetAPI target)) {
             return false;
         }
-        dialog.showCustomVisualDialog(NpcFleetInspectDialog.WIDTH, NpcFleetInspectDialog.HEIGHT,
+        dialog.showCustomVisualDialog(NpcFleetInspectDialog.width(), NpcFleetInspectDialog.HEIGHT,
                 new NpcFleetInspectDialog(targetSide(target), null));
         return true;
     }

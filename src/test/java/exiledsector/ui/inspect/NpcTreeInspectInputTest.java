@@ -1,6 +1,7 @@
 package exiledsector.ui.inspect;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.BattleAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
@@ -46,6 +47,9 @@ class NpcTreeInspectInputTest {
         when(sector.getCampaignUI()).thenReturn(campaignUI);
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSector).thenReturn(sector);
+        SettingsAPI settings = mock(SettingsAPI.class);
+        when(settings.getScreenWidth()).thenReturn(1920f);
+        globalMock.when(Global::getSettings).thenReturn(settings);
     }
 
     @AfterEach
