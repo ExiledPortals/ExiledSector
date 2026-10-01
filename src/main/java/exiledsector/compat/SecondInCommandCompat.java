@@ -68,21 +68,6 @@ public final class SecondInCommandCompat {
         return variant != null && variant.hasTag(INACTIVE_SMOD_TAG_PREFIX + hullModId);
     }
 
-    public static boolean isAppliedBeforeController(ShipVariantAPI variant, String hullModId) {
-        if (variant == null || !variant.hasHullMod(CONTROLLER_HULLMOD_ID)) {
-            return false;
-        }
-        for (String id : variant.getHullMods()) {
-            if (id.equals(CONTROLLER_HULLMOD_ID)) {
-                return false;
-            }
-            if (id.equals(hullModId)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private static void resolveMethods() throws ReflectiveOperationException {
         if (getFleetData != null) {
             return;

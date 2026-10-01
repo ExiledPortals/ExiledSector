@@ -6,7 +6,6 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.VariantSource;
-import exiledsector.compat.SecondInCommandCompat;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.npc.NpcTreeTag;
@@ -79,13 +78,24 @@ public class SkillTreeInstaller implements EveryFrameScript {
     private static boolean ensureAppliesLast(ShipVariantAPI variant) {
         if (!variant.hasHullMod(SkillTreeHullMod.ID)) {
             variant.addPermaMod(SkillTreeHullMod.ID);
-        } else if (SecondInCommandCompat.isAppliedBeforeController(variant, SkillTreeHullMod.ID)) {
+        } else if (hasHullModsAfterOurs(variant)) {
             variant.removePermaMod(SkillTreeHullMod.ID);
             variant.addPermaMod(SkillTreeHullMod.ID);
         } else {
             return false;
         }
         return true;
+    }
+
+    private static boolean hasHullModsAfterOurs(ShipVariantAPI variant) {
+        boolean seenOurs = false;
+        for (String hullModId : variant.getHullMods()) {
+            if (seenOurs) {
+                return true;
+            }
+            seenOurs = SkillTreeHullMod.ID.equals(hullModId);
+        }
+        return false;
     }
 
     static boolean adoptNpcTree(FleetMemberAPI member) {

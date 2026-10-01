@@ -116,26 +116,6 @@ class SecondInCommandCompatTest {
     }
 
     @Test
-    void detectsWhenAHullModAppliesBeforeTheController() {
-        ShipVariantAPI variant = mock(ShipVariantAPI.class);
-        when(variant.hasHullMod(SecondInCommandCompat.CONTROLLER_HULLMOD_ID)).thenReturn(true);
-
-        when(variant.getHullMods()).thenReturn(List.of("ours", SecondInCommandCompat.CONTROLLER_HULLMOD_ID));
-        assertTrue(SecondInCommandCompat.isAppliedBeforeController(variant, "ours"));
-
-        when(variant.getHullMods()).thenReturn(List.of(SecondInCommandCompat.CONTROLLER_HULLMOD_ID, "ours"));
-        assertFalse(SecondInCommandCompat.isAppliedBeforeController(variant, "ours"));
-    }
-
-    @Test
-    void noOrderingConcernWithoutTheController() {
-        ShipVariantAPI variant = mock(ShipVariantAPI.class);
-        when(variant.getHullMods()).thenReturn(List.of("ours"));
-
-        assertFalse(SecondInCommandCompat.isAppliedBeforeController(variant, "ours"));
-    }
-
-    @Test
     void countsAsShieldShuntAppliesRedistributionUnderItsOwnModId() {
         enableSecondInCommandWith(SecondInCommandCompat.REDISTRIBUTION_SKILL_ID);
         MutableShipStatsAPI stats = mockStats();

@@ -199,6 +199,34 @@ class SkillTreeInstallerTest {
     }
 
     @Test
+    void movesItsHullModBehindAnyHullModInstalledAfterItSoCrewChangesAreCounted() {
+        FleetMemberAPI member = mockMember("ship", true);
+        ShipVariantAPI variant = member.getVariant();
+        when(variant.getHullMods()).thenReturn(List.of("hardened_shields", SkillTreeHullMod.ID, "additional_berthing"));
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
+
+        new SkillTreeInstaller().advance(0.01f);
+
+        InOrder order = inOrder(variant);
+        order.verify(variant).removePermaMod(SkillTreeHullMod.ID);
+        order.verify(variant).addPermaMod(SkillTreeHullMod.ID);
+        verify(member).setStatUpdateNeeded(true);
+    }
+
+    @Test
+    void leavesItsHullModInPlaceWhenItIsAlreadyLast() {
+        FleetMemberAPI member = mockMember("ship", true);
+        ShipVariantAPI variant = member.getVariant();
+        when(variant.getHullMods()).thenReturn(List.of("hardened_shields", "additional_berthing", SkillTreeHullMod.ID));
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
+
+        new SkillTreeInstaller().advance(0.01f);
+
+        verify(variant, never()).removePermaMod(SkillTreeHullMod.ID);
+        verify(variant, never()).addPermaMod(SkillTreeHullMod.ID);
+    }
+
+    @Test
     void leavesItsHullModInPlaceWhenItAlreadyAppliesAfterTheSecondInCommandController() {
         FleetMemberAPI member = mockMember("ship", true);
         ShipVariantAPI variant = member.getVariant();

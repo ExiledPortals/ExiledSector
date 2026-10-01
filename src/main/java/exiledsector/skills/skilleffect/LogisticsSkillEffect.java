@@ -148,7 +148,7 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             ShipVariantAPI variant = stats.getVariant();
             if (variant == null || variant.getHullSpec() == null) return;
-            float maxCrew = stats.getMaxCrewMod().computeEffective(variant.getHullSpec().getMaxCrew());
+            float maxCrew = (int) stats.getMaxCrewMod().computeEffective(variant.getHullSpec().getMaxCrew());
             stats.getDynamic().getMod(Stats.FLEET_GROUND_SUPPORT).modifyFlat(modId + CREW_GROUND_SUPPORT_SUFFIX,
                     maxCrew * magnitude / 100f);
         }

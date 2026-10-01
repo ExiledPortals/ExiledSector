@@ -148,8 +148,9 @@ Reduced D-mod effect (`DMOD_EFFECT_MULT`) adjusts vanilla's D-mod effect multipl
 the ship's D-mods. D-mods are applied before this mod's hull mod, so without the re-apply they would never
 see the new multiplier.
 
-Ground Support (`GROUND_SUPPORT_FLAT`) is a scalable, flat version of the vanilla hull mod's ground
-support, and is mutually exclusive with Ground Support and Advanced Ground Support.
+Ground Support (`GROUND_SUPPORT_FLAT` plus `GROUND_SUPPORT_PER_MAX_CREW_PERCENT`) grants the vanilla
+hull mod's flat ground support plus a share of the ship's maximum crew capacity, and is mutually
+exclusive with Ground Support and Advanced Ground Support.
 
 Militarized Subsystems installs the real vanilla hull mod as a permanent mod costing no OP, so that vanilla
 and Second-in-Command checks recognise it. It requires a civilian hull.
