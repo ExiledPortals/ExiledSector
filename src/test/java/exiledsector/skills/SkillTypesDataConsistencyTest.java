@@ -82,6 +82,36 @@ class SkillTypesDataConsistencyTest {
         assertTrue(gaps.isEmpty(), String.join("\n", gaps));
     }
 
+    private static Set<String> standInHullMods(JSONObject type) throws Exception {
+        Set<String> standIns = new LinkedHashSet<>(strings(type, "installedHullMods"));
+        standIns.addAll(strings(type, "phantomHullMods"));
+        if (type.has("vanillaHullMod")) {
+            standIns.add(type.getString("vanillaHullMod"));
+        }
+        return standIns;
+    }
+
+    @Test
+    void everyVanillaHullModHasExactlyOneNodeAndEveryNodeStandsInForAtMostOneHullMod() throws Exception {
+        Map<String, List<String>> nodesByHullMod = new HashMap<>();
+        List<String> violations = new ArrayList<>();
+        for (JSONObject type : loadTypes().values()) {
+            Set<String> standIns = standInHullMods(type);
+            if (standIns.size() > 1) {
+                violations.add("node " + type.getString("id") + " stands in for several hull mods: " + standIns);
+            }
+            for (String hullMod : standIns) {
+                nodesByHullMod.computeIfAbsent(hullMod, id -> new ArrayList<>()).add(type.getString("id"));
+            }
+        }
+        nodesByHullMod.forEach((hullMod, nodes) -> {
+            if (nodes.size() > 1) {
+                violations.add("hull mod " + hullMod + " has several nodes: " + nodes.stream().sorted().toList());
+            }
+        });
+        assertTrue(violations.isEmpty(), String.join("\n", violations));
+    }
+
     @Test
     void everySkillTypeAndNodeTagIsInTheTagVocabulary() throws Exception {
         List<String> unknown = new ArrayList<>();

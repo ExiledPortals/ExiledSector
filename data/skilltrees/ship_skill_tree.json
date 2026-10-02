@@ -62,8 +62,7 @@
 			"id": "non_beam_energy_damage_1",
 			"type": "non_beam_energy_damage",
 			"connectedTo": [
-				"non_beam_energy_damage_2",
-				"expanded_magazines_energy_1"
+				"non_beam_energy_damage_2"
 			],
 			"x": -2111,
 			"y": -1555,
@@ -2942,18 +2941,6 @@
 			],
 			"x": -2330,
 			"y": 191,
-			"tags": [
-				"inner"
-			]
-		},
-		{
-			"id": "expanded_magazines_energy_1",
-			"type": "expanded_magazines_energy",
-			"connectedTo": [
-				"non_beam_energy_damage_1"
-			],
-			"x": -2280,
-			"y": -1658,
 			"tags": [
 				"inner"
 			]

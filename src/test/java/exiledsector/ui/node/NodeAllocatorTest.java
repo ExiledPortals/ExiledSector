@@ -260,6 +260,16 @@ class NodeAllocatorTest {
     }
 
     @Test
+    void aHullModTheSkillTreePlacedItselfNeverBlocksANodeThatStandsInForIt() {
+        when(variant.hasHullMod("magazines")).thenReturn(true);
+        when(variant.hasTag("exiledSector_installed_magazines")).thenReturn(true);
+        SkillType magazines = type("magazines", "Expanded Magazines", SkillTier.NOTABLE)
+                .exclusiveHullModIds(List.of("magazines")).phantomHullModIds(List.of("magazines")).build();
+
+        assertNull(blockReason(allocatorStartingAt(root), magazines));
+    }
+
+    @Test
     void anOptionalNodesContainerRulesApplyToTheOptionChosen() {
         HullModSpecAPI spec = mock(HullModSpecAPI.class);
         when(spec.getDisplayName()).thenReturn("Heavy Armor");

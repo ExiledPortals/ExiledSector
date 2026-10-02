@@ -123,6 +123,27 @@ class PhantomHullModsTest {
     }
 
     @Test
+    void aHullModWithAFleetEffectIsNeverSwappedBecauseTheGameCreatesThatEffectSeparately() {
+        effectClass = RecordingFleetHullModEffect.class.getName();
+
+        PhantomHullMods.install(List.of(HULL_MOD));
+
+        assertFalse(PhantomHullMods.isActive(HULL_MOD));
+        assertEquals(RecordingFleetHullModEffect.class.getName(), effectClass);
+        verify(spec, never()).getEffect();
+    }
+
+    @Test
+    void passthroughNodesReachTheVanillaEffectBehindTheWrapper() {
+        engineCreatesEffectsLazily();
+        PhantomHullMods.install(List.of(HULL_MOD));
+
+        assertInstanceOf(RecordingHullModEffect.class, PhantomHullMods.vanillaEffect(createdEffect));
+        HullModEffect plain = new RecordingHullModEffect();
+        assertEquals(plain, PhantomHullMods.vanillaEffect(plain));
+    }
+
+    @Test
     void aMissingHullModOrEffectClassIsNeverSwapped() {
         when(settings.getHullModSpec(HULL_MOD)).thenReturn(null);
         PhantomHullMods.install(List.of(HULL_MOD));
@@ -165,6 +186,7 @@ class PhantomHullModsTest {
         createdEffect.advanceInCombat(ship, 0.1f);
 
         assertTrue(RecordingHullModEffect.CALLS.isEmpty());
+        verify(variant).addPermaMod(HULL_MOD);
         assertTrue(createdEffect.isApplicableToShip(ship));
         assertFalse(createdEffect.shouldAddDescriptionToTooltip(HullSize.CRUISER, ship, false));
         assertFalse(createdEffect.canBeAddedOrRemovedNow(ship, null, CoreUITradeMode.OPEN));

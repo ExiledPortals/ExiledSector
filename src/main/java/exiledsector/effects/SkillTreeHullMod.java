@@ -16,6 +16,8 @@ import exiledsector.persistence.OpSpentSlotManager;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.AllocatedSkillEffects;
+import exiledsector.skills.InstalledHullMods;
+import exiledsector.skills.PhantomHullModStatus;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillType;
@@ -38,7 +40,6 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
     private static final String MOD_ID_PREFIX = "exiledSector_skill_";
     private static final String MAGICLIB_WARNING_HULLMOD_ID = "ML_incompatibleHullmodWarning";
     static final String OP_SPENT_HULLMOD_ID_PREFIX = "exiledSector_opSpent_";
-    private static final String INSTALLED_HULLMOD_TAG_PREFIX = "exiledSector_installed_";
     private static final String COMBAT_PLAN_KEY = "exiledSector_combatPlan";
 
     @Override
@@ -61,16 +62,23 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
             syncOpSpentHullMod(stats.getFleetMember(), stats.getVariant());
         }
         syncInstalledHullMods(installedHullModIds(allocated), stats.getVariant());
-        if (!npcTree) {
+        if (npcTree) {
+            removeHullModsThatTriedToStripAPhantom(allocated, stats.getVariant(), false);
+        } else {
             removeHullModsConflictingWithAllocatedSkills(allocated, stats.getVariant());
         }
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship, String id) {
-        forEachAllocatedEffect(dataFor(ship), ship.getHullSize(),
+        ShipSkillData data = dataFor(ship);
+        forEachAllocatedEffect(data, ship.getHullSize(),
                 (vanillaEffect, vanillaHullModId) -> vanillaEffect.applyEffectsAfterShipCreation(ship, vanillaHullModId),
                 (effect, modId, magnitude) -> effect.applyAfterShipCreation(ship, modId, magnitude));
+        if (data != null) {
+            removeHullModsThatTriedToStripAPhantom(AllocatedNode.of(data), ship.getVariant(),
+                    !SkillDataResolver.isNpcTree(ship.getVariant()));
+        }
     }
 
     @Override
@@ -167,8 +175,9 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
             String vanillaHullModId = type.getVanillaHullModId();
             if (vanillaHullModId != null) {
                 HullModSpecAPI spec = Global.getSettings().getHullModSpec(vanillaHullModId);
-                if (spec != null && spec.getEffect() != null) {
-                    vanillaDelegate.apply(spec.getEffect(), vanillaHullModId);
+                HullModEffect vanillaEffect = spec == null ? null : PhantomHullMods.vanillaEffect(spec.getEffect());
+                if (vanillaEffect != null) {
+                    vanillaDelegate.apply(vanillaEffect, vanillaHullModId);
                 }
             } else {
                 String modId = MOD_ID_PREFIX + allocated.node().getId();
@@ -259,12 +268,12 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
             if (!variant.hasHullMod(hullModId)) {
                 variant.addPermaMod(hullModId);
                 if (!isInstalledBySkillTree(variant, hullModId)) {
-                    variant.addTag(INSTALLED_HULLMOD_TAG_PREFIX + hullModId);
+                    variant.addTag(InstalledHullMods.tag(hullModId));
                 }
             }
         }
         for (String tag : new ArrayList<>(variant.getTags())) {
-            String hullModId = tag.startsWith(INSTALLED_HULLMOD_TAG_PREFIX) ? tag.substring(INSTALLED_HULLMOD_TAG_PREFIX.length()) : null;
+            String hullModId = tag.startsWith(InstalledHullMods.TAG_PREFIX) ? tag.substring(InstalledHullMods.TAG_PREFIX.length()) : null;
             if (hullModId != null && !wanted.contains(hullModId)) {
                 if (!variant.getSMods().contains(hullModId)) {
                     variant.removePermaMod(hullModId);
@@ -277,7 +286,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
     public static boolean restoreInstalledPermaMods(ShipVariantAPI variant) {
         boolean restored = false;
         for (String tag : variant.getTags()) {
-            String hullModId = tag.startsWith(INSTALLED_HULLMOD_TAG_PREFIX) ? tag.substring(INSTALLED_HULLMOD_TAG_PREFIX.length()) : null;
+            String hullModId = tag.startsWith(InstalledHullMods.TAG_PREFIX) ? tag.substring(InstalledHullMods.TAG_PREFIX.length()) : null;
             if (hullModId != null && variant.hasHullMod(hullModId) && !variant.getPermaMods().contains(hullModId)) {
                 variant.addPermaMod(hullModId);
                 restored = true;
@@ -287,11 +296,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
     }
 
     public static boolean isInstalledBySkillTree(ShipVariantAPI variant, String hullModId) {
-        return variant.hasTag(installedTag(hullModId));
-    }
-
-    static String installedTag(String hullModId) {
-        return INSTALLED_HULLMOD_TAG_PREFIX + hullModId;
+        return InstalledHullMods.isInstalledBySkillTree(variant, hullModId);
     }
 
     private static boolean isRemovableConflict(ShipVariantAPI variant, String hullModId) {
@@ -321,7 +326,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
     private static void removeHullModsConflictingWithAllocatedSkills(List<AllocatedNode> allocatedNodes, ShipVariantAPI variant) {
         if (variant == null) return;
 
-        boolean conflictFound = false;
+        boolean conflictFound = removeHullModsThatTriedToStripAPhantom(allocatedNodes, variant, true);
         for (AllocatedNode allocated : allocatedNodes) {
             SkillType type = allocated.effectiveType();
             for (String hullModId : allocated.exclusiveHullModIds()) {
@@ -341,6 +346,39 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
             }
             SkillConflictWarnings.clear(variant);
         }
+    }
+
+    static boolean removeHullModsThatTriedToStripAPhantom(List<AllocatedNode> allocatedNodes, ShipVariantAPI variant, boolean warn) {
+        if (variant == null || !variant.hasHullMod(MAGICLIB_WARNING_HULLMOD_ID)) return false;
+
+        List<String> attempt = MagicIncompatibleHullmods.getReason(variant);
+        if (attempt == null || attempt.size() < 2) return false;
+        String phantomId = attempt.get(0);
+        SkillType provider = phantomProvider(allocatedNodes, phantomId);
+        if (provider == null || !isInstalledBySkillTree(variant, phantomId)) return false;
+
+        variant.removeMod(MAGICLIB_WARNING_HULLMOD_ID);
+        String causeId = attempt.get(1);
+        if (causeId == null || Global.getSettings().getHullModSpec(causeId) == null || !isRemovableConflict(variant, causeId)
+                || variant.getPermaMods().contains(causeId)) {
+            return false;
+        }
+        variant.removeMod(causeId);
+        if (warn) {
+            variant.addMod(SkillConflictWarningHullMod.ID);
+            SkillConflictWarnings.recordRemoval(variant, causeId, I18n.forGameText(provider::getDisplayName));
+        }
+        return true;
+    }
+
+    private static SkillType phantomProvider(List<AllocatedNode> allocatedNodes, String hullModId) {
+        if (!PhantomHullModStatus.isActive(hullModId)) return null;
+        for (AllocatedNode allocated : allocatedNodes) {
+            if (allocated.effectiveType().getPhantomHullModIds().contains(hullModId)) {
+                return allocated.effectiveType();
+            }
+        }
+        return null;
     }
 
     private interface VanillaDelegate {

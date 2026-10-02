@@ -2362,16 +2362,6 @@ type|expanded_deck_crew|CAPITAL_SHIP|0	1	Decreases rate at which fighter replace
 type|expanded_deck_crew|CAPITAL_SHIP|1	0	Increases rate at which fighter replacement capability recovers by <good>25%</good>.
 type|expanded_deck_crew|CAPITAL_SHIP|2	1	Increases minimum crew required per fighter bay by <good>20</good>.
 type|expanded_deck_crew|CAPITAL_SHIP|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Deck Crew.
-type|expanded_magazines_energy|null|0	0	Increases energy weapon ammo capacity by <good>50%</good>.
-type|expanded_magazines_energy|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Magazines.
-type|expanded_magazines_energy|FRIGATE|0	0	Increases energy weapon ammo capacity by <good>50%</good>.
-type|expanded_magazines_energy|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Magazines.
-type|expanded_magazines_energy|DESTROYER|0	0	Increases energy weapon ammo capacity by <good>50%</good>.
-type|expanded_magazines_energy|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Magazines.
-type|expanded_magazines_energy|CRUISER|0	0	Increases energy weapon ammo capacity by <good>50%</good>.
-type|expanded_magazines_energy|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Magazines.
-type|expanded_magazines_energy|CAPITAL_SHIP|0	0	Increases energy weapon ammo capacity by <good>50%</good>.
-type|expanded_magazines_energy|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Magazines.
 type|exposed_fuel_lines|null|0	0	Any collision, however slight, is instantly fatal to this ship.
 type|exposed_fuel_lines|FRIGATE|0	0	Any collision, however slight, is instantly fatal to this ship.
 type|exposed_fuel_lines|DESTROYER|0	0	Any collision, however slight, is instantly fatal to this ship.
@@ -2708,15 +2698,20 @@ type|machine_precision|CAPITAL_SHIP|1	0	Increases energy weapon range by <good>5
 type|machine_precision|CAPITAL_SHIP|2	0	Increases ballistic weapon range by <good>5%</good>.
 type|machine_precision|CAPITAL_SHIP|3	0	Increases beam weapon range by <good>5%</good>.
 type|magazines|null|0	0	Increases ballistic weapon ammo capacity by <good>50%</good>.
-type|magazines|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Magazines.
+type|magazines|null|1	0	Increases energy weapon ammo capacity by <good>50%</good>.
+type|magazines|null|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Magazines.
 type|magazines|FRIGATE|0	0	Increases ballistic weapon ammo capacity by <good>50%</good>.
-type|magazines|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Magazines.
+type|magazines|FRIGATE|1	0	Increases energy weapon ammo capacity by <good>50%</good>.
+type|magazines|FRIGATE|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Magazines.
 type|magazines|DESTROYER|0	0	Increases ballistic weapon ammo capacity by <good>50%</good>.
-type|magazines|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Magazines.
+type|magazines|DESTROYER|1	0	Increases energy weapon ammo capacity by <good>50%</good>.
+type|magazines|DESTROYER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Magazines.
 type|magazines|CRUISER|0	0	Increases ballistic weapon ammo capacity by <good>50%</good>.
-type|magazines|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Magazines.
+type|magazines|CRUISER|1	0	Increases energy weapon ammo capacity by <good>50%</good>.
+type|magazines|CRUISER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Magazines.
 type|magazines|CAPITAL_SHIP|0	0	Increases ballistic weapon ammo capacity by <good>50%</good>.
-type|magazines|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Magazines.
+type|magazines|CAPITAL_SHIP|1	0	Increases energy weapon ammo capacity by <good>50%</good>.
+type|magazines|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Magazines.
 type|maneuverability_percent|null|0	0	Increases maneuverability by <good>25%</good>.
 type|maneuverability_percent|FRIGATE|0	0	Increases maneuverability by <good>25%</good>.
 type|maneuverability_percent|DESTROYER|0	0	Increases maneuverability by <good>25%</good>.

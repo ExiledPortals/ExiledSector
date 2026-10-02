@@ -140,6 +140,9 @@
 			"exclusiveHullMods": [
 				"hbi"
 			],
+			"phantomHullMods": [
+				"hbi"
+			],
 			"tags": [
 				"ballistic",
 				"req_ballistic"
@@ -159,6 +162,9 @@
 			"exclusiveHullMods": [
 				"ground_support",
 				"advanced_ground_support"
+			],
+			"phantomHullMods": [
+				"ground_support"
 			],
 			"tags": [
 				"logistics",
@@ -639,6 +645,9 @@
 			"exclusiveHullMods": [
 				"advancedshieldemitter"
 			],
+			"phantomHullMods": [
+				"advancedshieldemitter"
+			],
 			"tags": [
 				"shield",
 				"req_shields"
@@ -665,6 +674,9 @@
 			"exclusiveHullMods": [
 				"adaptive_coils",
 				"phase_anchor"
+			],
+			"phantomHullMods": [
+				"adaptive_coils"
 			],
 			"exclusiveSkillTypes": [
 				"phase_anchor"
@@ -702,6 +714,9 @@
 				"advancedoptics",
 				"high_scatter_amp"
 			],
+			"phantomHullMods": [
+				"advancedoptics"
+			],
 			"exclusiveSkillTypes": [
 				"high_scatter_amp"
 			],
@@ -730,6 +745,9 @@
 				}
 			],
 			"exclusiveHullMods": [
+				"turretgyros"
+			],
+			"phantomHullMods": [
 				"turretgyros"
 			],
 			"tags": [
@@ -762,6 +780,9 @@
 			"exclusiveHullMods": [
 				"armoredweapons"
 			],
+			"phantomHullMods": [
+				"armoredweapons"
+			],
 			"tags": [
 				"armour",
 				"weapons"
@@ -786,6 +807,9 @@
 				}
 			],
 			"exclusiveHullMods": [
+				"autorepair"
+			],
+			"phantomHullMods": [
 				"autorepair"
 			],
 			"tags": [
@@ -818,6 +842,9 @@
 			"exclusiveHullMods": [
 				"auxiliarythrusters"
 			],
+			"phantomHullMods": [
+				"auxiliarythrusters"
+			],
 			"tags": [
 				"speed"
 			]
@@ -834,6 +861,9 @@
 					"category": "hullmod",
 					"id": "ballistic_rangefinder"
 				}
+			],
+			"phantomHullMods": [
+				"ballistic_rangefinder"
 			],
 			"description": "Extends the base range of small and medium ballistic weapons, based on the size of this ship's largest ballistic weapon slot. Also extends hybrid weapon range, with a larger bonus.",
 			"todo": "Real vanilla effect is a per-weapon-slot range bonus (WeaponBaseRangeModifier) that varies by the ship's largest ballistic slot size and is capped per weapon, with a separate larger bonus for hybrid mounts - not a fixed magnitude on a single MutableShipStatsAPI stat. Deliberately left on vanillaHullMod passthrough rather than approximate it with a flat/percent BALLISTIC_WEAPON_RANGE_PERCENT effect, since that would only be correct for one specific loadout.",
@@ -859,6 +889,9 @@
 				}
 			],
 			"exclusiveHullMods": [
+				"blast_doors"
+			],
+			"phantomHullMods": [
 				"blast_doors"
 			],
 			"tags": [
@@ -907,6 +940,9 @@
 			"exclusiveHullMods": [
 				"converted_hangar"
 			],
+			"phantomHullMods": [
+				"converted_hangar"
+			],
 			"todo": "Real vanilla effect also increases deployment points and supply cost to recover by 1 per 5 OP spent on fighters (min 1), with a proportional increase in CR lost per deployment - deliberately not implemented yet, so right now this node is a buff with no real downside beyond the 4 modifiers above. This node may need other balance considerations once that's added.",
 			"tags": [
 				"fighter",
@@ -939,6 +975,9 @@
 				}
 			],
 			"exclusiveHullMods": [
+				"converted_fighterbay"
+			],
+			"phantomHullMods": [
 				"converted_fighterbay"
 			],
 			"description": "Converts this ship's built-in fighter bays into cargo capacity.",
@@ -979,6 +1018,9 @@
 				"advancedcore",
 				"distributed_fire_control"
 			],
+			"phantomHullMods": [
+				"dedicated_targeting_core"
+			],
 			"exclusiveSkillTypes": [
 				"targetingunit"
 			],
@@ -998,6 +1040,9 @@
 					"category": "hullmod",
 					"id": "defensive_targeting_array"
 				}
+			],
+			"phantomHullMods": [
+				"defensive_targeting_array"
 			],
 			"description": "Increases the damage fighters launched from this ship deal to other fighters and missiles. Also locks launched fighters to stay near the ship instead of patrolling freely.",
 			"todo": "Deliberately kept on vanillaHullMod passthrough as a design choice, not a technical limitation - the fighter-spawn hook needed to convert this now exists (see FIGHTER_PD_DAMAGE_BONUS_PERCENT, reused by other nodes). Real vanilla effect also zeroes the launched fighters' patrol range (locking them near the ship) and tags certain fighter types to stay in front of the ship; neither of those is implemented as a reusable effect yet.",
@@ -1052,6 +1097,9 @@
 			"exclusiveHullMods": [
 				"eccm"
 			],
+			"phantomHullMods": [
+				"eccm"
+			],
 			"tags": [
 				"missile"
 			]
@@ -1078,6 +1126,9 @@
 				}
 			],
 			"exclusiveHullMods": [
+				"ecm"
+			],
+			"phantomHullMods": [
 				"ecm"
 			],
 			"description": "Electronic countermeasures (ECM) represents the effects of electronic warfare as fleets with superior capability imposing range penalties upon their opponents.",
@@ -1153,6 +1204,9 @@
 			"exclusiveHullMods": [
 				"expanded_deck_crew"
 			],
+			"phantomHullMods": [
+				"expanded_deck_crew"
+			],
 			"tags": [
 				"fighter",
 				"req_fighter_bays"
@@ -1201,12 +1255,16 @@
 		},
 		{
 			"id": "magazines",
-			"name": "Expanded Ballistic Magazines",
+			"name": "Expanded Magazines",
 			"icon": "graphics/icons/magazines.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
 					"effect": "BALLISTIC_WEAPON_AMMO_PERCENT",
+					"magnitude": 50
+				},
+				{
+					"effect": "ENERGY_WEAPON_AMMO_PERCENT",
 					"magnitude": 50
 				}
 			],
@@ -1220,10 +1278,13 @@
 			"exclusiveHullMods": [
 				"magazines"
 			],
+			"phantomHullMods": [
+				"magazines"
+			],
 			"tags": [
 				"ballistic",
-				"ammo",
-				"req_ballistic"
+				"energy",
+				"ammo"
 			]
 		},
 		{
@@ -1251,6 +1312,9 @@
 			"exclusiveHullMods": [
 				"missleracks"
 			],
+			"phantomHullMods": [
+				"missleracks"
+			],
 			"tags": [
 				"missile",
 				"req_missile"
@@ -1275,6 +1339,9 @@
 				}
 			],
 			"exclusiveHullMods": [
+				"extendedshieldemitter"
+			],
+			"phantomHullMods": [
 				"extendedshieldemitter"
 			],
 			"tags": [
@@ -1312,6 +1379,9 @@
 				"adaptiveshields",
 				"frontshield"
 			],
+			"phantomHullMods": [
+				"shield_shunt"
+			],
 			"exclusiveSkillTypes": [
 				"frontemitter",
 				"adaptiveshields",
@@ -1347,6 +1417,9 @@
 				"frontshield",
 				"shield_shunt"
 			],
+			"phantomHullMods": [
+				"frontshield"
+			],
 			"exclusiveSkillTypes": [
 				"shield_shunt"
 			],
@@ -1367,6 +1440,9 @@
 					"category": "hullmod",
 					"id": "missile_autoloader"
 				}
+			],
+			"phantomHullMods": [
+				"missile_autoloader"
 			],
 			"description": "Grants a limited number of automatic reloads to missile weapons in small missile mounts, drawn from a shared capacity pool that depends on hull size and mount count.",
 			"todo": "Real vanilla effect is a stateful per-weapon reload simulation (advanceInCombat tracks a shared reload-capacity pool by hull size/small-missile-mount count, per-weapon cooldowns, partial reloads) - not a stat modifier at all, and not expressible as a SkillEffect magnitude. Deliberately left on vanillaHullMod passthrough.",
@@ -1391,6 +1467,9 @@
 					"type": "characterStat",
 					"statId": "has_neural_link"
 				}
+			],
+			"phantomHullMods": [
+				"neural_interface"
 			],
 			"description": "Links this ship with the flagship, allowing the player to instantly switch which ship they are piloting without using a shuttle pod. Transferring resets the destination ship's system cooldown and adds a charge. The transfer is instant if the combined deployment points of both ships are low enough; otherwise a short transfer time applies. The destination ship must not be under the command of an officer or an AI core.",
 			"tags": [
@@ -1422,6 +1501,9 @@
 			"exclusiveHullMods": [
 				"hardenedshieldemitter"
 			],
+			"phantomHullMods": [
+				"hardenedshieldemitter"
+			],
 			"tags": [
 				"shield",
 				"req_shields"
@@ -1439,6 +1521,9 @@
 				}
 			],
 			"exclusiveHullMods": [
+				"hardened_subsystems"
+			],
+			"phantomHullMods": [
 				"hardened_subsystems"
 			],
 			"tags": [
@@ -1484,6 +1569,9 @@
 				}
 			],
 			"exclusiveHullMods": [
+				"heavyarmor"
+			],
+			"phantomHullMods": [
 				"heavyarmor"
 			],
 			"tags": [
@@ -1671,6 +1759,9 @@
 				"high_scatter_amp",
 				"advancedoptics"
 			],
+			"phantomHullMods": [
+				"high_scatter_amp"
+			],
 			"exclusiveSkillTypes": [
 				"advancedoptics"
 			],
@@ -1705,6 +1796,9 @@
 				}
 			],
 			"exclusiveHullMods": [
+				"pointdefenseai"
+			],
+			"phantomHullMods": [
 				"pointdefenseai"
 			],
 			"tags": [
@@ -1745,6 +1839,9 @@
 				"advancedcore",
 				"distributed_fire_control"
 			],
+			"phantomHullMods": [
+				"targetingunit"
+			],
 			"exclusiveSkillTypes": [
 				"dedicated_targeting_core"
 			],
@@ -1774,6 +1871,9 @@
 				}
 			],
 			"exclusiveHullMods": [
+				"nav_relay"
+			],
+			"phantomHullMods": [
 				"nav_relay"
 			],
 			"tags": [
@@ -1807,6 +1907,9 @@
 				"frontemitter",
 				"adaptiveshields",
 				"shield_shunt"
+			],
+			"phantomHullMods": [
+				"frontemitter"
 			],
 			"exclusiveSkillTypes": [
 				"adaptiveshields",
@@ -1845,6 +1948,9 @@
 				"frontemitter",
 				"shield_shunt"
 			],
+			"phantomHullMods": [
+				"adaptiveshields"
+			],
 			"exclusiveSkillTypes": [
 				"frontemitter",
 				"shield_shunt"
@@ -1874,6 +1980,9 @@
 				}
 			],
 			"exclusiveHullMods": [
+				"operations_center"
+			],
+			"phantomHullMods": [
 				"operations_center"
 			],
 			"tags": [
@@ -1911,6 +2020,9 @@
 				"phase_anchor",
 				"adaptive_coils"
 			],
+			"phantomHullMods": [
+				"phase_anchor"
+			],
 			"exclusiveSkillTypes": [
 				"adaptive_coils"
 			],
@@ -1942,6 +2054,9 @@
 			"exclusiveHullMods": [
 				"recovery_shuttles"
 			],
+			"phantomHullMods": [
+				"recovery_shuttles"
+			],
 			"tags": [
 				"fighter",
 				"req_fighter_bays",
@@ -1968,6 +2083,9 @@
 				}
 			],
 			"exclusiveHullMods": [
+				"reinforcedhull"
+			],
+			"phantomHullMods": [
 				"reinforcedhull"
 			],
 			"tags": [
@@ -1999,6 +2117,9 @@
 			"exclusiveHullMods": [
 				"fluxbreakers"
 			],
+			"phantomHullMods": [
+				"fluxbreakers"
+			],
 			"tags": [
 				"flux"
 			]
@@ -2022,6 +2143,9 @@
 				}
 			],
 			"exclusiveHullMods": [
+				"stabilizedshieldemitter"
+			],
+			"phantomHullMods": [
 				"stabilizedshieldemitter"
 			],
 			"tags": [
@@ -2060,6 +2184,9 @@
 			"exclusiveHullMods": [
 				"unstable_injector"
 			],
+			"phantomHullMods": [
+				"unstable_injector"
+			],
 			"tags": [
 				"speed",
 				"range"
@@ -2080,6 +2207,9 @@
 				}
 			],
 			"exclusiveHullMods": [
+				"additional_berthing"
+			],
+			"phantomHullMods": [
 				"additional_berthing"
 			],
 			"tags": [
@@ -2108,6 +2238,9 @@
 			"exclusiveHullMods": [
 				"augmentedengines"
 			],
+			"phantomHullMods": [
+				"augmentedengines"
+			],
 			"tags": [
 				"logistics"
 			]
@@ -2127,6 +2260,9 @@
 				}
 			],
 			"exclusiveHullMods": [
+				"auxiliary_fuel_tanks"
+			],
+			"phantomHullMods": [
 				"auxiliary_fuel_tanks"
 			],
 			"tags": [
@@ -2170,6 +2306,9 @@
 			"exclusiveHullMods": [
 				"efficiency_overhaul"
 			],
+			"phantomHullMods": [
+				"efficiency_overhaul"
+			],
 			"tags": [
 				"logistics",
 				"campaign_only"
@@ -2190,6 +2329,9 @@
 				}
 			],
 			"exclusiveHullMods": [
+				"expanded_cargo_holds"
+			],
+			"phantomHullMods": [
 				"expanded_cargo_holds"
 			],
 			"tags": [
@@ -2252,6 +2394,9 @@
 				}
 			],
 			"exclusiveHullMods": [
+				"insulatedengine"
+			],
+			"phantomHullMods": [
 				"insulatedengine"
 			],
 			"tags": [
@@ -2328,6 +2473,9 @@
 				}
 			],
 			"exclusiveHullMods": [
+				"surveying_equipment"
+			],
+			"phantomHullMods": [
 				"surveying_equipment"
 			],
 			"tags": [
@@ -3017,33 +3165,6 @@
 			],
 			"tags": [
 				"flux"
-			]
-		},
-		{
-			"id": "expanded_magazines_energy",
-			"name": "Expanded Energy Magazines",
-			"icon": "graphics/icons/expanded_magazines_energy.png",
-			"tier": "NOTABLE",
-			"effects": [
-				{
-					"effect": "ENERGY_WEAPON_AMMO_PERCENT",
-					"magnitude": 50
-				}
-			],
-			"unlockConditions": [
-				{
-					"type": "blueprint",
-					"category": "hullmod",
-					"id": "magazines"
-				}
-			],
-			"exclusiveHullMods": [
-				"magazines"
-			],
-			"tags": [
-				"energy",
-				"ammo",
-				"req_energy"
 			]
 		},
 		{

@@ -37,6 +37,7 @@ import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.magiclib.util.MagicIncompatibleHullmods;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -424,6 +425,61 @@ class SkillTreeHullModTest {
 
         verify(variant).addPermaMod("safetyoverrides");
         verify(variant).addTag("exiledSector_installed_safetyoverrides");
+    }
+
+    private static ShipVariantAPI variantWhereAModTriedToStripThePhantomFor(String causeId) {
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(variant.hasHullMod("ML_incompatibleHullmodWarning")).thenReturn(true);
+        when(variant.hasHullMod("safetyoverrides")).thenReturn(true);
+        when(variant.hasHullMod(causeId)).thenReturn(true);
+        when(variant.hasTag("exiledSector_installed_safetyoverrides")).thenReturn(true);
+        when(variant.getHullMods()).thenReturn(new LinkedHashSet<>(List.of("safetyoverrides", causeId)));
+        when(variant.getSMods()).thenReturn(new LinkedHashSet<>());
+        MagicIncompatibleHullmods.removeHullmodWithWarning(variant, "safetyoverrides", causeId);
+        return variant;
+    }
+
+    @Test
+    void aHullModThatTriesToStripAPhantomIsRemovedInsteadAndThePlayerIsWarned() {
+        ShipSkillDataManager.get("ship-a").allocate(registerPhantomSafetyOverridesNode(), 1);
+        makeSafetyOverridesAPhantom();
+        when(Global.getSettings().getHullModSpec("nskr_volatile")).thenReturn(mock(HullModSpecAPI.class));
+        ShipVariantAPI variant = variantWhereAModTriedToStripThePhantomFor("nskr_volatile");
+
+        SkillTreeHullMod.removeHullModsConflictingWithAllocatedSkills(memberWithId("ship-a"), variant);
+
+        verify(variant).removeMod("ML_incompatibleHullmodWarning");
+        verify(variant).removeMod("nskr_volatile");
+        verify(variant).addMod("exiledSector_conflictWarning");
+        assertEquals("nskr_volatile", SkillConflictWarnings.get(variant).removedHullModId);
+    }
+
+    @Test
+    void aPermanentHullModThatTriesToStripAPhantomIsNeverReportedAsRemoved() {
+        ShipSkillDataManager.get("ship-a").allocate(registerPhantomSafetyOverridesNode(), 1);
+        makeSafetyOverridesAPhantom();
+        when(Global.getSettings().getHullModSpec("nskr_volatile")).thenReturn(mock(HullModSpecAPI.class));
+        ShipVariantAPI variant = variantWhereAModTriedToStripThePhantomFor("nskr_volatile");
+        when(variant.getPermaMods()).thenReturn(new LinkedHashSet<>(List.of("safetyoverrides", "nskr_volatile")));
+
+        SkillTreeHullMod.removeHullModsConflictingWithAllocatedSkills(memberWithId("ship-a"), variant);
+
+        verify(variant, never()).removeMod("nskr_volatile");
+        verify(variant, never()).addMod("exiledSector_conflictWarning");
+        assertNull(SkillConflictWarnings.get(variant));
+    }
+
+    @Test
+    void aStripAttemptAgainstAHullModTheTreeDoesNotProvideIsLeftToMagicLib() {
+        ShipSkillDataManager.get("ship-a").allocate(registerMilitarizedNode(), 1);
+        makeSafetyOverridesAPhantom();
+        when(Global.getSettings().getHullModSpec("nskr_volatile")).thenReturn(mock(HullModSpecAPI.class));
+        ShipVariantAPI variant = variantWhereAModTriedToStripThePhantomFor("nskr_volatile");
+
+        SkillTreeHullMod.removeHullModsConflictingWithAllocatedSkills(memberWithId("ship-a"), variant);
+
+        verify(variant, never()).removeMod("ML_incompatibleHullmodWarning");
+        verify(variant, never()).removeMod("nskr_volatile");
     }
 
     @Test

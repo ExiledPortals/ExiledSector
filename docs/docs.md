@@ -159,17 +159,27 @@ For Second-in-Command, `COUNTS_AS_SHIELD_SHUNT` and `COUNTS_AS_SAFETY_OVERRIDES`
 the corresponding hull mods for SiC's skill synergies. The Converted Hangar penalties are waived by the
 vanilla flags or by SiC's Reconfiguration skill.
 
-Safety Overrides is a prototype phantom hull mod (`phantomHullMods`). While the node is allocated, the real
-`safetyoverrides` hull mod sits on the ship as a permanent mod costing no OP, so any mod that checks for it
-(Ship Mastery System masteries, Second-in-Command skills, other mods) sees it. At startup this mod wraps the
-hull mod's vanilla effect: on normal ships it behaves exactly as vanilla, but on copies the skill tree placed
-it does nothing and shows a tooltip naming the node instead, so the node's own effects are the only ones that
-apply. If the game created the effect before this mod could wrap it, the log says so and the node falls back
-to not placing the hull mod, and its tooltip stops claiming it does. The phantom is a permanent mod, so other
-mods' hull mods that strip Safety Overrides as incompatible can't remove it; the node is therefore mutually
-exclusive with each of those it knows about (LOST_SECTOR, HTE, NSP, A_S-F, Tahlan, UAF and Neoteric ones). `COUNTS_AS_SAFETY_OVERRIDES` stands down whenever the hull mod is present, so SiC's
-own skill applies instead of a copy. Removing ExiledSector from a save leaves these hull mods behind as
-real, permanent Safety Overrides, so deallocate the node first.
+Every node that stands in for a vanilla hull mod places that hull mod as a phantom (`phantomHullMods`).
+While the node is allocated, the real hull mod sits on the ship as a permanent mod costing no OP, so any mod
+that checks for it (Ship Mastery System masteries, Second-in-Command skills, other mods) sees it. At startup
+this mod wraps each hull mod's vanilla effect: on normal ships it behaves exactly as vanilla, but on copies
+the skill tree placed it does nothing and shows a tooltip naming the node instead, so the node's own effects
+are the only ones that apply. If the game created the effect before this mod could wrap it, the log says so
+and the node falls back to not placing the hull mod, and its tooltip stops claiming it does. Vanilla hull
+mods and their nodes are always 1:1: no hull mod is split across several node types, and no node type
+stands in for more than one hull mod (`SkillTypesDataConsistencyTest` enforces this).
+
+The phantom is a permanent mod, so another mod's hull mod that strips it as incompatible through MagicLib
+can't remove it; this mod removes the incompatible hull mod instead and shows the usual conflict warning.
+Safety Overrides also stays mutually exclusive with the strippers it knows about (LOST_SECTOR, HTE, NSP,
+A_S-F, Tahlan, UAF and Neoteric ones), which keeps them out of the refit screen in the first place.
+`COUNTS_AS_SHIELD_SHUNT` and `COUNTS_AS_SAFETY_OVERRIDES` stand down whenever the hull mod is present, so
+SiC's own skill applies instead of a copy. Removing ExiledSector from a save leaves these hull mods behind
+as real, permanent hull mods, so deallocate the nodes first.
+
+High Resolution Sensors and Phase Field aren't phantoms, because the game creates their fleet-wide effect
+separately and it can't be wrapped. The LOST_SECTOR nodes and Militarized Subsystems aren't phantoms either;
+Militarized Subsystems installs its real hull mod instead.
 
 Ballistic Rangefinder, Missile Autoloader, Defensive Targeting Array and Neural Interface are passthrough
 nodes (`vanillaHullMod`). Rather than installing the hull mod, they run its code under the hull mod's id.

@@ -11,6 +11,7 @@ import exiledsector.effects.SkillTreeInstaller;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.HullModNames;
+import exiledsector.skills.InstalledHullMods;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.ShipSkillData;
@@ -236,7 +237,7 @@ final class NodeAllocator {
     }
 
     private boolean hasHullMod(String hullModId) {
-        return variant.hasHullMod(hullModId) || SecondInCommandCompat.hasDeactivatedSMod(variant, hullModId);
+        return InstalledHullMods.hasHullModOfItsOwn(variant, hullModId) || SecondInCommandCompat.hasDeactivatedSMod(variant, hullModId);
     }
 
     private String describe(NodeEligibility.Block block) {

@@ -17,6 +17,7 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.skills.InstalledHullMods;
 import exiledsector.ui.VanillaText;
 
 import java.awt.Color;
@@ -32,7 +33,7 @@ public final class PhantomHullModEffect extends BaseHullMod {
     public void init(HullModSpecAPI spec) {
         super.init(spec);
         hullModId = spec.getId();
-        installedTag = SkillTreeHullMod.installedTag(hullModId);
+        installedTag = InstalledHullMods.tag(hullModId);
         HullModEffect created = PhantomHullMods.createOriginal(hullModId);
         if (created != null) {
             original = created;
@@ -45,6 +46,10 @@ public final class PhantomHullModEffect extends BaseHullMod {
         return wrapsOriginal;
     }
 
+    HullModEffect original() {
+        return original;
+    }
+
     private boolean isPhantom(ShipVariantAPI variant) {
         return variant != null && installedTag != null && variant.hasTag(installedTag);
     }
@@ -55,8 +60,11 @@ public final class PhantomHullModEffect extends BaseHullMod {
 
     @Override
     public void applyEffectsBeforeShipCreation(HullSize hullSize, MutableShipStatsAPI stats, String id) {
-        if (!isPhantom(stats.getVariant())) {
+        ShipVariantAPI variant = stats.getVariant();
+        if (!isPhantom(variant)) {
             original.applyEffectsBeforeShipCreation(hullSize, stats, id);
+        } else if (!variant.getPermaMods().contains(hullModId)) {
+            variant.addPermaMod(hullModId);
         }
     }
 

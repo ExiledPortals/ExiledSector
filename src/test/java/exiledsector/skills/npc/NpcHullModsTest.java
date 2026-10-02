@@ -32,6 +32,19 @@ class NpcHullModsTest {
     }
 
     @Test
+    void hullModsTheSkillTreePlacedItselfAreNeitherKeptNorStrippable() {
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(variant.getHullMods()).thenReturn(List.of("safetyoverrides", "eccm"));
+        when(variant.getPermaMods()).thenReturn(Set.of("safetyoverrides"));
+        when(variant.hasTag("exiledSector_installed_safetyoverrides")).thenReturn(true);
+
+        NpcHullMods hullMods = NpcHullMods.of(variant);
+
+        assertEquals(Set.of("eccm"), hullMods.removable());
+        assertEquals(Set.of(), hullMods.permanent());
+    }
+
+    @Test
     void nullCollectionsAndANullVariantAreEmpty() {
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
 

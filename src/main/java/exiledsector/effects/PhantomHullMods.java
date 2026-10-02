@@ -2,6 +2,7 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.HullModEffect;
+import com.fs.starfarer.api.combat.HullModFleetEffect;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.skills.AllocatedNode;
@@ -34,8 +35,14 @@ public final class PhantomHullMods {
         if (isActive(hullModId)) return;
         HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
         String originalClass = spec == null ? null : spec.getEffectClass();
-        if (originalClass == null || instantiate(originalClass) == null) {
+        HullModEffect probe = originalClass == null ? null : instantiate(originalClass);
+        if (probe == null) {
             LOG.error("[ExiledSector] Can't make " + hullModId + " a phantom hull mod: no usable effect class; nodes will not place it.");
+            return;
+        }
+        if (probe instanceof HullModFleetEffect) {
+            LOG.error("[ExiledSector] Can't make " + hullModId + " a phantom hull mod: it has a fleet effect the game creates "
+                    + "separately; nodes will not place it.");
             return;
         }
         ORIGINAL_EFFECT_CLASSES.put(hullModId, originalClass);
@@ -68,6 +75,10 @@ public final class PhantomHullMods {
 
     public static boolean isActive(String hullModId) {
         return PhantomHullModStatus.isActive(hullModId);
+    }
+
+    public static HullModEffect vanillaEffect(HullModEffect effect) {
+        return effect instanceof PhantomHullModEffect phantom ? phantom.original() : effect;
     }
 
     static HullModEffect createOriginal(String hullModId) {

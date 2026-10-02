@@ -531,23 +531,6 @@ class NpcSkillTreeBuilderTest {
     }
 
     @Test
-    void aHullmodSplitAcrossSeveralNotablesConvertsIntoTheHalfTheShipFits() {
-        SkillType energyHalf = registerType(builder("magazines_energy", SkillTier.NOTABLE)
-                .exclusiveHullModIds(List.of("magazines")).tags(List.of("req_energy")).build());
-        SkillType ballisticHalf = registerType(builder("magazines_ballistic", SkillTier.NOTABLE)
-                .exclusiveHullModIds(List.of("magazines")).tags(List.of("req_ballistic")).build());
-        node("energy_1", energyHalf, ROOT);
-        small("a", ROOT);
-        node("ballistic_1", ballisticHalf, "a");
-
-        NpcTreeBuild build = buildWith(layout(), 4, removable("magazines"));
-
-        assertTrue(build.data().isAllocated("ballistic_1"));
-        assertFalse(build.data().isAllocated("energy_1"));
-        assertEquals(List.of("magazines"), build.strippedHullModIds());
-    }
-
-    @Test
     void conversionPathsSpendTheNodeBudgetBeforeTheLayout() {
         small("a", ROOT);
         hullModNode("armor_1", "heavyarmor", "a");

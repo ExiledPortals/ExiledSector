@@ -1,6 +1,7 @@
 package exiledsector.skills.npc;
 
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import exiledsector.skills.InstalledHullMods;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -29,6 +30,8 @@ public record NpcHullMods(Set<String> removable, Set<String> permanent) {
         Set<String> removable = new TreeSet<>();
         addAll(removable, variant.getHullMods());
         removable.removeAll(permanent);
+        permanent.removeIf(hullModId -> InstalledHullMods.isInstalledBySkillTree(variant, hullModId));
+        removable.removeIf(hullModId -> InstalledHullMods.isInstalledBySkillTree(variant, hullModId));
         return new NpcHullMods(removable, permanent);
     }
 
