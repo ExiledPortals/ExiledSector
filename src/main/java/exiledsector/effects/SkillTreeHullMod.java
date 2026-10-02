@@ -58,6 +58,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
                 (effect, modId, magnitude) -> {
                     if (effect.appliesAfterOtherEffects()) effect.apply(stats, modId, magnitude);
                 });
+        if (isOpCostPass(stats)) return;
         if (!npcTree) {
             syncOpSpentHullMod(stats.getFleetMember(), stats.getVariant());
         }
@@ -84,6 +85,10 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
     @Override
     public boolean affectsOPCosts() {
         return true;
+    }
+
+    static boolean isOpCostPass(MutableShipStatsAPI stats) {
+        return stats.getFleetMember() == null;
     }
 
     @Override
