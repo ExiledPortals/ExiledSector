@@ -1,6 +1,9 @@
 package exiledsector.skills.skilleffect;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
@@ -25,7 +28,24 @@ public enum FluxSkillEffect implements BackedSkillEffect {
         }
     },
     FLUX_DISSIPATION_WHILE_VENTING_PERCENT(new ConditionalStatEffect(PERCENT, stat(MutableShipStatsAPI::getFluxDissipation),
-            "stat.fluxDissipationWhileVenting", ship -> ship.getFluxTracker().isVenting()));
+            "stat.fluxDissipationWhileVenting", ship -> ship.getFluxTracker().isVenting())),
+    FLUX_CAPACITOR_EFFECTIVENESS_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            ShipVariantAPI variant = stats.getVariant();
+            int capacitors = variant == null ? 0 : variant.getNumFluxCapacitors();
+            stats.getFluxCapacity().modifyFlat(modId + CAPACITOR_MOD_SUFFIX, capacitors * fluxPerCapacitor() * magnitude / 100f);
+        }
+    };
+
+    private static final String CAPACITOR_MOD_SUFFIX = "_capacitors";
+    private static final String FLUX_PER_CAPACITOR_SETTING = "fluxPerCapacitor";
+    private static final float DEFAULT_FLUX_PER_CAPACITOR = 200f;
+
+    private static float fluxPerCapacitor() {
+        SettingsAPI settings = Global.getSettings();
+        return settings == null ? DEFAULT_FLUX_PER_CAPACITOR : settings.getFloat(FLUX_PER_CAPACITOR_SETTING);
+    }
 
     private final EffectBacking backing;
 

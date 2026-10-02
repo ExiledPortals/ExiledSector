@@ -100,7 +100,11 @@ public enum CombatSkillEffect implements BackedSkillEffect {
     HEARTLESS_MISSILE_DAMAGE_PERCENT_PER_STACK(LiveMunitionsListener.MISSILE_DAMAGE_PERCENT_PER_STACK_KEY,
             LiveMunitionsListener.class, LiveMunitionsListener::new),
     HEARTLESS_MISSILE_SPEED_PERCENT_PER_STACK(LiveMunitionsListener.MISSILE_SPEED_PERCENT_PER_STACK_KEY,
-            LiveMunitionsListener.class, LiveMunitionsListener::new);
+            LiveMunitionsListener.class, LiveMunitionsListener::new),
+    FLUX_SCALED_TOP_SPEED_FLAT(FluxScaledVolatilityListener.TOP_SPEED_KEY,
+            FluxScaledVolatilityListener.class, FluxScaledVolatilityListener::new),
+    FLUX_SCALED_RATE_OF_FIRE_PERCENT(FluxScaledVolatilityListener.RATE_OF_FIRE_KEY,
+            FluxScaledVolatilityListener.class, FluxScaledVolatilityListener::new);
 
     private static final String NON_BEAM_ENERGY_CHAIN_HIT_LIST_KEY = "exiledSector_energyChainHitList";
     private static final String NON_BEAM_ENERGY_CHAIN_COUNT_KEY = "exiledSector_energyChainCount";

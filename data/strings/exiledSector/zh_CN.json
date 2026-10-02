@@ -7,6 +7,8 @@
 
     "combat.xp.header": "Exiled Sector 技能树",
     "combat.liveMunitions.crewLost.other": "{count}名船员死于活体弹药。",
+    "combat.fluxScaled.title": "不稳定幅能",
+    "combat.fluxScaled.status": "最大航速 {speed}，射速 {rateOfFire}%",
     "combat.xp.earned": "你的舰队中每艘舰船都获得了<hl>{xp}</hl>点经验，来源于被摧毁或瘫痪的<hl>{dp}</hl>点敌方部署点。",
     "combat.xp.earnedAfterLoss": "你的舰队中每艘舰船都获得了<hl>{xp}</hl>点经验，来源于被摧毁或瘫痪的<hl>{dp}</hl>点敌方部署点，因战斗失利而有所减少。",
     "combat.xp.difficultyBonus": "其中包含因整体战斗难度获得的<hl>+{percent}%</hl>加成。",
@@ -123,6 +125,9 @@
     "effect.HEARTLESS_CREW_DEATH_CHANCE_PERCENT_PER_STACK": "每层无心使每发射一枚导弹导致一名船员死亡的几率增加<bad>{value}%</bad>。众人皆须效力。",
     "effect.HEARTLESS_MISSILE_DAMAGE_PERCENT_PER_STACK": "只要舰队仍有船员可以献出，每层无心使导弹伤害提高<good>{value}%</good>。",
     "effect.HEARTLESS_MISSILE_SPEED_PERCENT_PER_STACK": "只要舰队仍有船员可以献出，每层无心使导弹最大航速提高<good>{value}%</good>。",
+    "effect.FLUX_SCALED_TOP_SPEED_FLAT": "最大航速随幅能变化：无幅能时提高<good>{value}</good> su/s，半幅能时不变，满幅能时降低<bad>{value}</bad> su/s。幅能低于一半时，加速度和转向加速度还会提高最多<good>{value}%</good>。",
+    "effect.FLUX_SCALED_RATE_OF_FIRE_PERCENT": "武器射速随幅能变化：无幅能时提高<good>{value}%</good>，半幅能时不变，满幅能时降低<bad>{value}%</bad>。主动排散或过载视为满幅能。",
+    "effect.FLUX_CAPACITOR_EFFECTIVENESS_PERCENT": "每个幅能电容提供的幅能容量提高<good>{value}%</good>。",
 
     "effect.FIGHTER_BAYS_FLAT.warning": "至少有1个空机库时才能取消分配。",
     "effect.FIGHTER_REPLACEMENT_RATE_MULT.slower": "战机补充率的衰减与恢复速度减慢<bad>{value}%</bad>。",
@@ -134,6 +139,7 @@
     "fighter.role.BOMBER": "轰炸机",
     "fighter.role.SUPPORT": "支援机",
     "stat.engagementRange": "交战范围",
+    "stat.systemCharges": "舰船系统充能次数",
     "effect.BEAM_WEAPON_HARD_FLUX_PERCENT": "光束武器对护盾造成的伤害中有{value}%转化为硬幅能。",
     "effect.SHIELD_DAMAGE_SHARED_PERCENT": "将护盾所受伤害的{value}%分散给{range} su内未过载且未在主动排散的友方舰船，由它们平均承担为硬幅能。",
     "effect.PHASE_FIELD_CONTRIBUTION_PERCENT": "即使本舰不是相位舰，其传感器强度的{value}%也会计入相位舰通常提供的全舰队被发现距离缩减（参见“相位场”船插）——参与的舰船越多、传感器越强，舰队就越难被发现，但收益递减。仅在舰队应答器关闭时生效。",

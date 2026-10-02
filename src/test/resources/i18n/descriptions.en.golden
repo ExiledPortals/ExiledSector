@@ -688,6 +688,12 @@ effect|FIGHTER_CREW_LOSS_PERCENT|12.5	1	Increases casualties suffered by fighter
 effect|FIGHTER_CREW_LOSS_PERCENT|100.0	1	Increases casualties suffered by fighter pilots launched from this ship by <good>100%</good>.
 effect|FIGHTER_CREW_LOSS_PERCENT|-10.0	1	Decreases casualties suffered by fighter pilots launched from this ship by <bad>10%</bad>.
 effect|FIGHTER_CREW_LOSS_PERCENT|-12.5	1	Decreases casualties suffered by fighter pilots launched from this ship by <bad>12.5%</bad>.
+effect|FIGHTER_ENGAGEMENT_RANGE_MULT|1.0	0	<good>1%</good> more engagement range.
+effect|FIGHTER_ENGAGEMENT_RANGE_MULT|10.0	0	<good>10%</good> more engagement range.
+effect|FIGHTER_ENGAGEMENT_RANGE_MULT|12.5	0	<good>12.5%</good> more engagement range.
+effect|FIGHTER_ENGAGEMENT_RANGE_MULT|100.0	0	<good>100%</good> more engagement range.
+effect|FIGHTER_ENGAGEMENT_RANGE_MULT|-10.0	0	<bad>10%</bad> less engagement range.
+effect|FIGHTER_ENGAGEMENT_RANGE_MULT|-12.5	0	<bad>12.5%</bad> less engagement range.
 effect|FIGHTER_ENGAGEMENT_RANGE_PERCENT|1.0	0	Increases engagement range of fighters launched from this ship by <good>1%</good>.
 effect|FIGHTER_ENGAGEMENT_RANGE_PERCENT|10.0	0	Increases engagement range of fighters launched from this ship by <good>10%</good>.
 effect|FIGHTER_ENGAGEMENT_RANGE_PERCENT|12.5	0	Increases engagement range of fighters launched from this ship by <good>12.5%</good>.
@@ -802,6 +808,12 @@ effect|FIGHTER_WEAPON_RANGE_FLAT|12.5	0	Increases weapon range of fighters launc
 effect|FIGHTER_WEAPON_RANGE_FLAT|100.0	0	Increases weapon range of fighters launched from this ship by <good>100</good>.
 effect|FIGHTER_WEAPON_RANGE_FLAT|-10.0	0	Decreases weapon range of fighters launched from this ship by <bad>10</bad>.
 effect|FIGHTER_WEAPON_RANGE_FLAT|-12.5	0	Decreases weapon range of fighters launched from this ship by <bad>12.5</bad>.
+effect|FLUX_CAPACITOR_EFFECTIVENESS_PERCENT|1.0	0	Each flux capacitor grants <good>1%</good> more flux capacity.
+effect|FLUX_CAPACITOR_EFFECTIVENESS_PERCENT|10.0	0	Each flux capacitor grants <good>10%</good> more flux capacity.
+effect|FLUX_CAPACITOR_EFFECTIVENESS_PERCENT|12.5	0	Each flux capacitor grants <good>12.5%</good> more flux capacity.
+effect|FLUX_CAPACITOR_EFFECTIVENESS_PERCENT|100.0	0	Each flux capacitor grants <good>100%</good> more flux capacity.
+effect|FLUX_CAPACITOR_EFFECTIVENESS_PERCENT|-10.0	0	Each flux capacitor grants <good>-10%</good> more flux capacity.
+effect|FLUX_CAPACITOR_EFFECTIVENESS_PERCENT|-12.5	0	Each flux capacitor grants <good>-12.5%</good> more flux capacity.
 effect|FLUX_CAPACITY_FLAT|1.0	0	Increases flux capacity by <good>1</good>.
 effect|FLUX_CAPACITY_FLAT|10.0	0	Increases flux capacity by <good>10</good>.
 effect|FLUX_CAPACITY_FLAT|12.5	0	Increases flux capacity by <good>12.5</good>.
@@ -844,6 +856,18 @@ effect|FLUX_DISSIPATION_WHILE_VENTING_PERCENT|12.5	0	Increases flux dissipation 
 effect|FLUX_DISSIPATION_WHILE_VENTING_PERCENT|100.0	0	Increases flux dissipation rate while venting by <good>100%</good>.
 effect|FLUX_DISSIPATION_WHILE_VENTING_PERCENT|-10.0	0	Decreases flux dissipation rate while venting by <bad>10%</bad>.
 effect|FLUX_DISSIPATION_WHILE_VENTING_PERCENT|-12.5	0	Decreases flux dissipation rate while venting by <bad>12.5%</bad>.
+effect|FLUX_SCALED_RATE_OF_FIRE_PERCENT|1.0	0	Weapon rate of fire changes with flux, from <good>+1%</good> at no flux to <bad>-1%</bad> at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
+effect|FLUX_SCALED_RATE_OF_FIRE_PERCENT|10.0	0	Weapon rate of fire changes with flux, from <good>+10%</good> at no flux to <bad>-10%</bad> at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
+effect|FLUX_SCALED_RATE_OF_FIRE_PERCENT|12.5	0	Weapon rate of fire changes with flux, from <good>+12.5%</good> at no flux to <bad>-12.5%</bad> at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
+effect|FLUX_SCALED_RATE_OF_FIRE_PERCENT|100.0	0	Weapon rate of fire changes with flux, from <good>+100%</good> at no flux to <bad>-100%</bad> at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
+effect|FLUX_SCALED_RATE_OF_FIRE_PERCENT|-10.0	0	Weapon rate of fire changes with flux, from <good>+-10%</good> at no flux to <bad>--10%</bad> at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
+effect|FLUX_SCALED_RATE_OF_FIRE_PERCENT|-12.5	0	Weapon rate of fire changes with flux, from <good>+-12.5%</good> at no flux to <bad>--12.5%</bad> at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
+effect|FLUX_SCALED_TOP_SPEED_FLAT|1.0	0	Top speed changes with flux, from <good>+1</good> su/s at no flux to <bad>-1</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>1%</good>.
+effect|FLUX_SCALED_TOP_SPEED_FLAT|10.0	0	Top speed changes with flux, from <good>+10</good> su/s at no flux to <bad>-10</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>10%</good>.
+effect|FLUX_SCALED_TOP_SPEED_FLAT|12.5	0	Top speed changes with flux, from <good>+12.5</good> su/s at no flux to <bad>-12.5</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>12.5%</good>.
+effect|FLUX_SCALED_TOP_SPEED_FLAT|100.0	0	Top speed changes with flux, from <good>+100</good> su/s at no flux to <bad>-100</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>100%</good>.
+effect|FLUX_SCALED_TOP_SPEED_FLAT|-10.0	0	Top speed changes with flux, from <good>+-10</good> su/s at no flux to <bad>--10</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>-10%</good>.
+effect|FLUX_SCALED_TOP_SPEED_FLAT|-12.5	0	Top speed changes with flux, from <good>+-12.5</good> su/s at no flux to <bad>--12.5</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>-12.5%</good>.
 effect|FUEL_CAPACITY_FLAT|1.0	0	Increases fuel capacity by <good>1</good>.
 effect|FUEL_CAPACITY_FLAT|10.0	0	Increases fuel capacity by <good>10</good>.
 effect|FUEL_CAPACITY_FLAT|12.5	0	Increases fuel capacity by <good>12.5</good>.
@@ -1588,6 +1612,12 @@ effect|SURVEY_COST_REDUCTION_SUPPLIES|12.5	1	Decreases supplies required to perf
 effect|SURVEY_COST_REDUCTION_SUPPLIES|100.0	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>100</bad>.
 effect|SURVEY_COST_REDUCTION_SUPPLIES|-10.0	1	Increases supplies required to perform surveys (fleet-wide) by <good>10</good>.
 effect|SURVEY_COST_REDUCTION_SUPPLIES|-12.5	1	Increases supplies required to perform surveys (fleet-wide) by <good>12.5</good>.
+effect|SYSTEM_CHARGES_FLAT|1.0	0	Increases ship system charges by <good>1</good>.
+effect|SYSTEM_CHARGES_FLAT|10.0	0	Increases ship system charges by <good>10</good>.
+effect|SYSTEM_CHARGES_FLAT|12.5	0	Increases ship system charges by <good>12.5</good>.
+effect|SYSTEM_CHARGES_FLAT|100.0	0	Increases ship system charges by <good>100</good>.
+effect|SYSTEM_CHARGES_FLAT|-10.0	0	Decreases ship system charges by <bad>10</bad>.
+effect|SYSTEM_CHARGES_FLAT|-12.5	0	Decreases ship system charges by <bad>12.5</bad>.
 effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|1.0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>1%</good>.
 effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|10.0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>10%</good>.
 effect|TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT|12.5	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>12.5%</good>.
