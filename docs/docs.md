@@ -176,7 +176,9 @@ later in the same frame, before anything is drawn. Every refit sync also ends by
 so a `CharacterStatsRefreshListener` hides the main list straight away. It reaches the lists through the
 game's own method names (`UiReflection` is the one file allowed to use reflection). If the screen's structure
 ever changes, it stops quietly or logs one error and the rows stay visible. The dialogs' selectable tables
-still list phantoms. If the game created the effect before this mod could wrap it, the log says so
+still list phantoms. When the Codex opens, a ship's entry drops phantoms from its Related Entries (unless the
+hull's own entry relates to that hull mod); the "Hull mods:" line on ship pages and tooltips still lists them,
+because nothing calls into the hull mod while that line is built. If the game created the effect before this mod could wrap it, the log says so
 and the node falls back to not placing the hull mod, and its tooltip stops claiming it does. Vanilla hull
 mods and their nodes are always 1:1: no hull mod is split across several node types, and no node type
 stands in for more than one hull mod (`SkillTypesDataConsistencyTest` enforces this).

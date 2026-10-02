@@ -1,14 +1,18 @@
 package exiledsector.ui.inspect;
 
 import com.fs.starfarer.api.campaign.listeners.CodexEventListener;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.codex.CodexDataV2;
 import com.fs.starfarer.api.impl.codex.CodexEntryPlugin;
 import exiledsector.i18n.I18n;
+import exiledsector.skills.InstalledHullMods;
+import exiledsector.skills.PhantomHullModStatus;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class SkillTreeCodexListener implements CodexEventListener {
 
@@ -18,8 +22,11 @@ public class SkillTreeCodexListener implements CodexEventListener {
     public void reportAboutToOpenCodex() {
         try {
             for (CodexEntryPlugin entry : new ArrayList<>(CodexDataV2.ENTRIES.values())) {
-                if (entry.getParam() instanceof FleetMemberAPI member && !hasSkillTreeEntry(entry)) {
-                    attach(entry, member);
+                if (entry.getParam() instanceof FleetMemberAPI member) {
+                    unlinkPhantomHullMods(entry, member);
+                    if (!hasSkillTreeEntry(entry)) {
+                        attach(entry, member);
+                    }
                 }
             }
         } catch (RuntimeException e) {
@@ -45,6 +52,36 @@ public class SkillTreeCodexListener implements CodexEventListener {
         memberEntry.addRelatedEntry(treeEntry);
         treeEntry.addRelatedEntry(memberEntry);
         added.add(treeEntry);
+    }
+
+    private static void unlinkPhantomHullMods(CodexEntryPlugin memberEntry, FleetMemberAPI member) {
+        ShipVariantAPI variant = member.getVariant();
+        if (variant == null) {
+            return;
+        }
+        Set<String> hullsOwnLinks = null;
+        for (String hullModId : variant.getHullMods()) {
+            if (!PhantomHullModStatus.isActive(hullModId) || !InstalledHullMods.isInstalledBySkillTree(variant, hullModId)) {
+                continue;
+            }
+            if (hullsOwnLinks == null) {
+                hullsOwnLinks = hullsOwnRelatedEntryIds(member);
+            }
+            String hullModEntryId = CodexDataV2.getHullmodEntryId(hullModId);
+            if (hullsOwnLinks.contains(hullModEntryId)) {
+                continue;
+            }
+            memberEntry.removeRelatedEntry(hullModEntryId);
+            CodexEntryPlugin hullModEntry = CodexDataV2.getEntry(hullModEntryId);
+            if (hullModEntry != null) {
+                hullModEntry.removeRelatedEntry(memberEntry.getId());
+            }
+        }
+    }
+
+    private static Set<String> hullsOwnRelatedEntryIds(FleetMemberAPI member) {
+        CodexEntryPlugin hullEntry = member.getHullSpec() == null ? null : CodexDataV2.getEntry(CodexDataV2.getFleetMemberEntryId(member));
+        return hullEntry == null ? Set.of() : hullEntry.getRelatedEntryIds();
     }
 
     private static boolean hasSkillTreeEntry(CodexEntryPlugin entry) {

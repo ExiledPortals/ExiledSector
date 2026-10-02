@@ -1,5 +1,6 @@
 package exiledsector.ui.inspect;
 
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.codex.CodexDataV2;
@@ -7,6 +8,7 @@ import com.fs.starfarer.api.impl.codex.CodexEntryPlugin;
 import com.fs.starfarer.api.impl.codex.CodexEntryV2;
 import exiledsector.i18n.Catalogue;
 import exiledsector.i18n.I18n;
+import exiledsector.skills.PhantomHullModStatus;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -18,6 +20,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +51,7 @@ class SkillTreeCodexListenerTest {
         SkillTree.clearNodes();
         SkillTree.clearTypes();
         NpcLayouts.register(Map.of());
+        PhantomHullModStatus.clear();
     }
 
     private static FleetMemberAPI npc(String... tags) {
@@ -110,6 +114,79 @@ class SkillTreeCodexListenerTest {
         listener.reportAboutToOpenCodex();
 
         assertEquals(1, skillTreeEntries().size());
+    }
+
+    private static CodexEntryPlugin hullModEntry(String hullModId) {
+        String id = CodexDataV2.getHullmodEntryId(hullModId);
+        CodexEntryV2 entry = new CodexEntryV2(id, hullModId, null, null);
+        CodexDataV2.ENTRIES.put(id, entry);
+        return entry;
+    }
+
+    private static FleetMemberAPI shipWithPhantom(String phantomId, String... otherHullMods) {
+        FleetMemberAPI member = npc();
+        ShipVariantAPI variant = member.getVariant();
+        List<String> hullMods = new ArrayList<>(List.of(otherHullMods));
+        hullMods.add(phantomId);
+        when(variant.getHullMods()).thenReturn(hullMods);
+        when(variant.hasTag("exiledSector_installed_" + phantomId)).thenReturn(true);
+        return member;
+    }
+
+    private static void link(CodexEntryPlugin a, CodexEntryPlugin b) {
+        a.addRelatedEntry(b);
+        b.addRelatedEntry(a);
+    }
+
+    @Test
+    void aPhantomHullModIsNoLongerARelatedEntryOfTheShipItWasPlacedOn() {
+        PhantomHullModStatus.markActive("safetyoverrides");
+        FleetMemberAPI member = shipWithPhantom("safetyoverrides", "eccm");
+        CodexEntryPlugin shipEntry = memberEntry("temp-1", member);
+        CodexEntryPlugin safetyOverrides = hullModEntry("safetyoverrides");
+        CodexEntryPlugin eccm = hullModEntry("eccm");
+        link(shipEntry, safetyOverrides);
+        link(shipEntry, eccm);
+
+        new SkillTreeCodexListener().reportAboutToOpenCodex();
+
+        assertFalse(shipEntry.getRelatedEntries().contains(safetyOverrides));
+        assertFalse(safetyOverrides.getRelatedEntries().contains(shipEntry));
+        assertTrue(shipEntry.getRelatedEntries().contains(eccm));
+        assertTrue(eccm.getRelatedEntries().contains(shipEntry));
+    }
+
+    @Test
+    void aHullModTheHullItselfRelatesToKeepsItsLink() {
+        PhantomHullModStatus.markActive("heavyarmor");
+        FleetMemberAPI member = shipWithPhantom("heavyarmor");
+        ShipHullSpecAPI hullSpec = mock(ShipHullSpecAPI.class);
+        when(hullSpec.isDefaultDHull()).thenReturn(false);
+        when(hullSpec.getHullId()).thenReturn("onslaught");
+        when(member.getHullSpec()).thenReturn(hullSpec);
+        CodexEntryPlugin heavyArmor = hullModEntry("heavyarmor");
+        String hullEntryId = CodexDataV2.getFleetMemberEntryId(member);
+        CodexEntryV2 hullEntry = new CodexEntryV2(hullEntryId, "Onslaught", null, hullSpec);
+        CodexDataV2.ENTRIES.put(hullEntryId, hullEntry);
+        hullEntry.addRelatedEntry(heavyArmor);
+        CodexEntryPlugin shipEntry = memberEntry("temp-1", member);
+        link(shipEntry, heavyArmor);
+
+        new SkillTreeCodexListener().reportAboutToOpenCodex();
+
+        assertTrue(shipEntry.getRelatedEntries().contains(heavyArmor));
+    }
+
+    @Test
+    void aTaggedHullModThatIsNotAnActivePhantomKeepsItsLink() {
+        FleetMemberAPI member = shipWithPhantom("safetyoverrides");
+        CodexEntryPlugin shipEntry = memberEntry("temp-1", member);
+        CodexEntryPlugin safetyOverrides = hullModEntry("safetyoverrides");
+        link(shipEntry, safetyOverrides);
+
+        new SkillTreeCodexListener().reportAboutToOpenCodex();
+
+        assertTrue(shipEntry.getRelatedEntries().contains(safetyOverrides));
     }
 
     @Test
