@@ -169,7 +169,6 @@
     "effect.REMOVE_ALL_FIGHTER_BAYS": "移除本舰的所有机库。",
     "stat.ordnancePointCostOfLargeBallisticWeapons": "大型实弹武器的装配点消耗",
 
-    "compat.countsAs": "在 Second-in-Command 技能“{skill}”中视为{hullmod}船插。",
     "compat.waived": "Second-in-Command 技能“{skill}”可免除此惩罚。",
 
     "weapon.qualified": "{scope}{stat}",

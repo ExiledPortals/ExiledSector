@@ -32,6 +32,7 @@ import exiledsector.ui.ExiledSectorSettings;
 import exiledsector.ui.SkillTreeRefitButton;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
 import exiledsector.ui.inspect.SkillTreeCodexListener;
+import exiledsector.ui.refit.PhantomHullModRefitHider;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -122,5 +123,6 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         Global.getSector().getListenerManager().addListener(new NpcFleetInflationListener(), true);
         Global.getSector().getListenerManager().addListener(new NpcTreeInspectInput(), true);
         Global.getSector().getListenerManager().addListener(new SkillTreeCodexListener(), true);
+        Global.getSector().getListenerManager().addListener(new PhantomHullModRefitHider(), true);
     }
 }

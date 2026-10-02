@@ -158,16 +158,22 @@ places Militarized Subsystems as a phantom, so vanilla's civilian-hull checks (s
 Berthing, Auxiliary Fuel Tanks, Expanded Cargo Holds, Assault Package) and Second-in-Command treat the
 ship as militarized.
 
-For Second-in-Command, `COUNTS_AS_SHIELD_SHUNT` and `COUNTS_AS_SAFETY_OVERRIDES` make those nodes count as
-the corresponding hull mods for SiC's skill synergies. The Converted Hangar penalties are waived by the
-vanilla flags or by SiC's Reconfiguration skill.
+Second-in-Command's hull mod synergies (Redistribution for Shield Shunt, Enhanced Overrides for Safety
+Overrides and so on) work through the phantoms, because SiC checks `variant.hasHullMod`. The Converted
+Hangar penalties are waived by the vanilla flags or by SiC's Reconfiguration skill. The skill check stays
+because SiC sets those flags in its own hull mod, which may apply after ours.
 
 Every node that stands in for a vanilla hull mod places that hull mod as a phantom (`phantomHullMods`).
 While the node is allocated, the real hull mod sits on the ship as a permanent mod costing no OP, so any mod
 that checks for it (Ship Mastery System masteries, Second-in-Command skills, other mods) sees it. At startup
 this mod wraps each hull mod's vanilla effect: on normal ships it behaves exactly as vanilla, but on copies
 the skill tree placed it does nothing and shows a tooltip naming the node instead, so the node's own effects
-are the only ones that apply. If the game created the effect before this mod could wrap it, the log says so
+are the only ones that apply. The refit screen's installed hull mod list hides these copies. Every refit sync
+ends by refreshing character stats, so a `CharacterStatsRefreshListener` removes their rows right after the
+engine rebuilds the list, plus once when the refit tab opens, because its first sync runs before it becomes
+the current tab. It reaches the list through the game's own method names (`UiReflection` is the one file
+allowed to use reflection). If the screen's structure ever changes, it stops quietly or logs one error and
+the rows stay visible. The Add and Build In dialogs still show phantoms in their own lists. If the game created the effect before this mod could wrap it, the log says so
 and the node falls back to not placing the hull mod, and its tooltip stops claiming it does. Vanilla hull
 mods and their nodes are always 1:1: no hull mod is split across several node types, and no node type
 stands in for more than one hull mod (`SkillTypesDataConsistencyTest` enforces this).
@@ -182,8 +188,7 @@ The phantom is a permanent mod, so another mod's hull mod that strips it as inco
 can't remove it; this mod removes the incompatible hull mod instead and shows the usual conflict warning.
 Safety Overrides also stays mutually exclusive with the strippers it knows about (LOST_SECTOR, HTE, NSP,
 A_S-F, Tahlan, UAF and Neoteric ones), which keeps them out of the refit screen in the first place.
-`COUNTS_AS_SHIELD_SHUNT` and `COUNTS_AS_SAFETY_OVERRIDES` stand down whenever the hull mod is present, so
-SiC's own skill applies instead of a copy. Removing ExiledSector from a save leaves these hull mods behind
+Removing ExiledSector from a save leaves these hull mods behind
 as real, permanent hull mods, so deallocate the nodes first.
 
 High Resolution Sensors and Phase Field aren't phantoms, because the game creates their fleet-wide effect

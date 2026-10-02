@@ -406,18 +406,6 @@ effect|CORONA_RESISTANCE_MULT|12.5	1	<good>12.5%</good> more combat readiness lo
 effect|CORONA_RESISTANCE_MULT|100.0	1	<good>100%</good> more combat readiness loss from being in a solar corona or a deep hyperspace storm.
 effect|CORONA_RESISTANCE_MULT|-10.0	1	<bad>10%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 effect|CORONA_RESISTANCE_MULT|-12.5	1	<bad>12.5%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-effect|COUNTS_AS_SAFETY_OVERRIDES|1.0	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-effect|COUNTS_AS_SAFETY_OVERRIDES|10.0	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-effect|COUNTS_AS_SAFETY_OVERRIDES|12.5	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-effect|COUNTS_AS_SAFETY_OVERRIDES|100.0	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-effect|COUNTS_AS_SAFETY_OVERRIDES|-10.0	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-effect|COUNTS_AS_SAFETY_OVERRIDES|-12.5	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-effect|COUNTS_AS_SHIELD_SHUNT|1.0	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-effect|COUNTS_AS_SHIELD_SHUNT|10.0	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-effect|COUNTS_AS_SHIELD_SHUNT|12.5	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-effect|COUNTS_AS_SHIELD_SHUNT|100.0	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-effect|COUNTS_AS_SHIELD_SHUNT|-10.0	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-effect|COUNTS_AS_SHIELD_SHUNT|-12.5	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
 effect|CREATE_FRONT_SHIELD_IF_NONE|1.0	0	Installs a makeshift, front-facing shield if this ship has none.
 effect|CREATE_FRONT_SHIELD_IF_NONE|10.0	0	Installs a makeshift, front-facing shield if this ship has none.
 effect|CREATE_FRONT_SHIELD_IF_NONE|12.5	0	Installs a makeshift, front-facing shield if this ship has none.
@@ -3240,62 +3228,57 @@ type|root_midline|CRUISER|1	0	Increases flux capacity by <good>5%</good>.
 type|root_midline|CAPITAL_SHIP|0	0	Increases hull points by <good>5%</good>.
 type|root_midline|CAPITAL_SHIP|1	0	Increases flux capacity by <good>5%</good>.
 type|safety_overrides|null|0	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-type|safety_overrides|null|1	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-type|safety_overrides|null|2	0	<good>100%</good> more flux dissipation.
-type|safety_overrides|null|3	0	<bad>67%</bad> less peak combat readiness duration.
-type|safety_overrides|null|4	0	<bad>100%</bad> less venting speed.
-type|safety_overrides|null|5	0	Increases range before falloff effectiveness applies by <good>450</good>.
-type|safety_overrides|null|6	0	<bad>75%</bad> less weapon effectiveness past normal range.
-type|safety_overrides|null|7	0	Restricted to <hl>hull sizes</hl>: Frigate, Destroyer, Cruiser.
-type|safety_overrides|null|8	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Volatile Flux Injector, PD Specialization, Enraged Systems, Probability Space Hypervessel, Silberherz Core, Silberherz Subcore, Edge Capacitors Retrofit, Safety Protocols, Guerrilla Overhaul, Extra Propulsion Systems, Prototype Core, Robust Flux Reactor, Repulse-Field, Illusia Resonance, Pristine Condition, Quantum Damper, Singularity Hullmod, Safety Overrides.
+type|safety_overrides|null|1	0	<good>100%</good> more flux dissipation.
+type|safety_overrides|null|2	0	<bad>67%</bad> less peak combat readiness duration.
+type|safety_overrides|null|3	0	<bad>100%</bad> less venting speed.
+type|safety_overrides|null|4	0	Increases range before falloff effectiveness applies by <good>450</good>.
+type|safety_overrides|null|5	0	<bad>75%</bad> less weapon effectiveness past normal range.
+type|safety_overrides|null|6	0	Restricted to <hl>hull sizes</hl>: Frigate, Destroyer, Cruiser.
+type|safety_overrides|null|7	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Volatile Flux Injector, PD Specialization, Enraged Systems, Probability Space Hypervessel, Silberherz Core, Silberherz Subcore, Edge Capacitors Retrofit, Safety Protocols, Guerrilla Overhaul, Extra Propulsion Systems, Prototype Core, Robust Flux Reactor, Repulse-Field, Illusia Resonance, Pristine Condition, Quantum Damper, Singularity Hullmod, Safety Overrides.
 type|safety_overrides|FRIGATE|0	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-type|safety_overrides|FRIGATE|1	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-type|safety_overrides|FRIGATE|2	0	<good>100%</good> more flux dissipation.
-type|safety_overrides|FRIGATE|3	0	<bad>67%</bad> less peak combat readiness duration.
-type|safety_overrides|FRIGATE|4	0	<bad>100%</bad> less venting speed.
-type|safety_overrides|FRIGATE|5	0	Increases range before falloff effectiveness applies by <good>450</good>.
-type|safety_overrides|FRIGATE|6	0	<bad>75%</bad> less weapon effectiveness past normal range.
-type|safety_overrides|FRIGATE|7	0	Increases top speed by <good>50</good>.
-type|safety_overrides|FRIGATE|8	0	Increases acceleration by <good>100</good>.
-type|safety_overrides|FRIGATE|9	0	Increases deceleration by <good>100</good>.
-type|safety_overrides|FRIGATE|10	0	Restricted to <hl>hull sizes</hl>: Frigate, Destroyer, Cruiser.
-type|safety_overrides|FRIGATE|11	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Volatile Flux Injector, PD Specialization, Enraged Systems, Probability Space Hypervessel, Silberherz Core, Silberherz Subcore, Edge Capacitors Retrofit, Safety Protocols, Guerrilla Overhaul, Extra Propulsion Systems, Prototype Core, Robust Flux Reactor, Repulse-Field, Illusia Resonance, Pristine Condition, Quantum Damper, Singularity Hullmod, Safety Overrides.
+type|safety_overrides|FRIGATE|1	0	<good>100%</good> more flux dissipation.
+type|safety_overrides|FRIGATE|2	0	<bad>67%</bad> less peak combat readiness duration.
+type|safety_overrides|FRIGATE|3	0	<bad>100%</bad> less venting speed.
+type|safety_overrides|FRIGATE|4	0	Increases range before falloff effectiveness applies by <good>450</good>.
+type|safety_overrides|FRIGATE|5	0	<bad>75%</bad> less weapon effectiveness past normal range.
+type|safety_overrides|FRIGATE|6	0	Increases top speed by <good>50</good>.
+type|safety_overrides|FRIGATE|7	0	Increases acceleration by <good>100</good>.
+type|safety_overrides|FRIGATE|8	0	Increases deceleration by <good>100</good>.
+type|safety_overrides|FRIGATE|9	0	Restricted to <hl>hull sizes</hl>: Frigate, Destroyer, Cruiser.
+type|safety_overrides|FRIGATE|10	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Volatile Flux Injector, PD Specialization, Enraged Systems, Probability Space Hypervessel, Silberherz Core, Silberherz Subcore, Edge Capacitors Retrofit, Safety Protocols, Guerrilla Overhaul, Extra Propulsion Systems, Prototype Core, Robust Flux Reactor, Repulse-Field, Illusia Resonance, Pristine Condition, Quantum Damper, Singularity Hullmod, Safety Overrides.
 type|safety_overrides|DESTROYER|0	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-type|safety_overrides|DESTROYER|1	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-type|safety_overrides|DESTROYER|2	0	<good>100%</good> more flux dissipation.
-type|safety_overrides|DESTROYER|3	0	<bad>67%</bad> less peak combat readiness duration.
-type|safety_overrides|DESTROYER|4	0	<bad>100%</bad> less venting speed.
-type|safety_overrides|DESTROYER|5	0	Increases range before falloff effectiveness applies by <good>450</good>.
-type|safety_overrides|DESTROYER|6	0	<bad>75%</bad> less weapon effectiveness past normal range.
-type|safety_overrides|DESTROYER|7	0	Increases top speed by <good>30</good>.
-type|safety_overrides|DESTROYER|8	0	Increases acceleration by <good>60</good>.
-type|safety_overrides|DESTROYER|9	0	Increases deceleration by <good>60</good>.
-type|safety_overrides|DESTROYER|10	0	Restricted to <hl>hull sizes</hl>: Frigate, Destroyer, Cruiser.
-type|safety_overrides|DESTROYER|11	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Volatile Flux Injector, PD Specialization, Enraged Systems, Probability Space Hypervessel, Silberherz Core, Silberherz Subcore, Edge Capacitors Retrofit, Safety Protocols, Guerrilla Overhaul, Extra Propulsion Systems, Prototype Core, Robust Flux Reactor, Repulse-Field, Illusia Resonance, Pristine Condition, Quantum Damper, Singularity Hullmod, Safety Overrides.
+type|safety_overrides|DESTROYER|1	0	<good>100%</good> more flux dissipation.
+type|safety_overrides|DESTROYER|2	0	<bad>67%</bad> less peak combat readiness duration.
+type|safety_overrides|DESTROYER|3	0	<bad>100%</bad> less venting speed.
+type|safety_overrides|DESTROYER|4	0	Increases range before falloff effectiveness applies by <good>450</good>.
+type|safety_overrides|DESTROYER|5	0	<bad>75%</bad> less weapon effectiveness past normal range.
+type|safety_overrides|DESTROYER|6	0	Increases top speed by <good>30</good>.
+type|safety_overrides|DESTROYER|7	0	Increases acceleration by <good>60</good>.
+type|safety_overrides|DESTROYER|8	0	Increases deceleration by <good>60</good>.
+type|safety_overrides|DESTROYER|9	0	Restricted to <hl>hull sizes</hl>: Frigate, Destroyer, Cruiser.
+type|safety_overrides|DESTROYER|10	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Volatile Flux Injector, PD Specialization, Enraged Systems, Probability Space Hypervessel, Silberherz Core, Silberherz Subcore, Edge Capacitors Retrofit, Safety Protocols, Guerrilla Overhaul, Extra Propulsion Systems, Prototype Core, Robust Flux Reactor, Repulse-Field, Illusia Resonance, Pristine Condition, Quantum Damper, Singularity Hullmod, Safety Overrides.
 type|safety_overrides|CRUISER|0	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-type|safety_overrides|CRUISER|1	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-type|safety_overrides|CRUISER|2	0	<good>100%</good> more flux dissipation.
-type|safety_overrides|CRUISER|3	0	<bad>67%</bad> less peak combat readiness duration.
-type|safety_overrides|CRUISER|4	0	<bad>100%</bad> less venting speed.
-type|safety_overrides|CRUISER|5	0	Increases range before falloff effectiveness applies by <good>450</good>.
-type|safety_overrides|CRUISER|6	0	<bad>75%</bad> less weapon effectiveness past normal range.
-type|safety_overrides|CRUISER|7	0	Increases top speed by <good>20</good>.
-type|safety_overrides|CRUISER|8	0	Increases acceleration by <good>40</good>.
-type|safety_overrides|CRUISER|9	0	Increases deceleration by <good>40</good>.
-type|safety_overrides|CRUISER|10	0	Restricted to <hl>hull sizes</hl>: Frigate, Destroyer, Cruiser.
-type|safety_overrides|CRUISER|11	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Volatile Flux Injector, PD Specialization, Enraged Systems, Probability Space Hypervessel, Silberherz Core, Silberherz Subcore, Edge Capacitors Retrofit, Safety Protocols, Guerrilla Overhaul, Extra Propulsion Systems, Prototype Core, Robust Flux Reactor, Repulse-Field, Illusia Resonance, Pristine Condition, Quantum Damper, Singularity Hullmod, Safety Overrides.
+type|safety_overrides|CRUISER|1	0	<good>100%</good> more flux dissipation.
+type|safety_overrides|CRUISER|2	0	<bad>67%</bad> less peak combat readiness duration.
+type|safety_overrides|CRUISER|3	0	<bad>100%</bad> less venting speed.
+type|safety_overrides|CRUISER|4	0	Increases range before falloff effectiveness applies by <good>450</good>.
+type|safety_overrides|CRUISER|5	0	<bad>75%</bad> less weapon effectiveness past normal range.
+type|safety_overrides|CRUISER|6	0	Increases top speed by <good>20</good>.
+type|safety_overrides|CRUISER|7	0	Increases acceleration by <good>40</good>.
+type|safety_overrides|CRUISER|8	0	Increases deceleration by <good>40</good>.
+type|safety_overrides|CRUISER|9	0	Restricted to <hl>hull sizes</hl>: Frigate, Destroyer, Cruiser.
+type|safety_overrides|CRUISER|10	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Volatile Flux Injector, PD Specialization, Enraged Systems, Probability Space Hypervessel, Silberherz Core, Silberherz Subcore, Edge Capacitors Retrofit, Safety Protocols, Guerrilla Overhaul, Extra Propulsion Systems, Prototype Core, Robust Flux Reactor, Repulse-Field, Illusia Resonance, Pristine Condition, Quantum Damper, Singularity Hullmod, Safety Overrides.
 type|safety_overrides|CAPITAL_SHIP|0	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-type|safety_overrides|CAPITAL_SHIP|1	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-type|safety_overrides|CAPITAL_SHIP|2	0	<good>100%</good> more flux dissipation.
-type|safety_overrides|CAPITAL_SHIP|3	0	<bad>67%</bad> less peak combat readiness duration.
-type|safety_overrides|CAPITAL_SHIP|4	0	<bad>100%</bad> less venting speed.
-type|safety_overrides|CAPITAL_SHIP|5	0	Increases range before falloff effectiveness applies by <good>450</good>.
-type|safety_overrides|CAPITAL_SHIP|6	0	<bad>75%</bad> less weapon effectiveness past normal range.
-type|safety_overrides|CAPITAL_SHIP|7	0	Increases top speed by <good>10</good>.
-type|safety_overrides|CAPITAL_SHIP|8	0	Increases acceleration by <good>20</good>.
-type|safety_overrides|CAPITAL_SHIP|9	0	Increases deceleration by <good>20</good>.
-type|safety_overrides|CAPITAL_SHIP|10	0	Restricted to <hl>hull sizes</hl>: Frigate, Destroyer, Cruiser.
-type|safety_overrides|CAPITAL_SHIP|11	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Volatile Flux Injector, PD Specialization, Enraged Systems, Probability Space Hypervessel, Silberherz Core, Silberherz Subcore, Edge Capacitors Retrofit, Safety Protocols, Guerrilla Overhaul, Extra Propulsion Systems, Prototype Core, Robust Flux Reactor, Repulse-Field, Illusia Resonance, Pristine Condition, Quantum Damper, Singularity Hullmod, Safety Overrides.
+type|safety_overrides|CAPITAL_SHIP|1	0	<good>100%</good> more flux dissipation.
+type|safety_overrides|CAPITAL_SHIP|2	0	<bad>67%</bad> less peak combat readiness duration.
+type|safety_overrides|CAPITAL_SHIP|3	0	<bad>100%</bad> less venting speed.
+type|safety_overrides|CAPITAL_SHIP|4	0	Increases range before falloff effectiveness applies by <good>450</good>.
+type|safety_overrides|CAPITAL_SHIP|5	0	<bad>75%</bad> less weapon effectiveness past normal range.
+type|safety_overrides|CAPITAL_SHIP|6	0	Increases top speed by <good>10</good>.
+type|safety_overrides|CAPITAL_SHIP|7	0	Increases acceleration by <good>20</good>.
+type|safety_overrides|CAPITAL_SHIP|8	0	Increases deceleration by <good>20</good>.
+type|safety_overrides|CAPITAL_SHIP|9	0	Restricted to <hl>hull sizes</hl>: Frigate, Destroyer, Cruiser.
+type|safety_overrides|CAPITAL_SHIP|10	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Volatile Flux Injector, PD Specialization, Enraged Systems, Probability Space Hypervessel, Silberherz Core, Silberherz Subcore, Edge Capacitors Retrofit, Safety Protocols, Guerrilla Overhaul, Extra Propulsion Systems, Prototype Core, Robust Flux Reactor, Repulse-Field, Illusia Resonance, Pristine Condition, Quantum Damper, Singularity Hullmod, Safety Overrides.
 type|shared_damage_taken|null|0	0	Disperses 5% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 type|shared_damage_taken|FRIGATE|0	0	Disperses 5% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 type|shared_damage_taken|DESTROYER|0	0	Disperses 5% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
@@ -3333,24 +3316,19 @@ type|shield_raise_rate|CRUISER|0	0	Increases shield raise rate by <good>25%</goo
 type|shield_raise_rate|CAPITAL_SHIP|0	0	Increases shield raise rate by <good>25%</good>.
 type|shield_shunt|null|0	0	Increases armor by <good>15%</good>.
 type|shield_shunt|null|1	0	Removes this ship's shield entirely.
-type|shield_shunt|null|2	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-type|shield_shunt|null|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Front, Shield Conversion - Omni, Makeshift Shield Generator, Shield Shunt.
+type|shield_shunt|null|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Front, Shield Conversion - Omni, Makeshift Shield Generator, Shield Shunt.
 type|shield_shunt|FRIGATE|0	0	Increases armor by <good>15%</good>.
 type|shield_shunt|FRIGATE|1	0	Removes this ship's shield entirely.
-type|shield_shunt|FRIGATE|2	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-type|shield_shunt|FRIGATE|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Front, Shield Conversion - Omni, Makeshift Shield Generator, Shield Shunt.
+type|shield_shunt|FRIGATE|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Front, Shield Conversion - Omni, Makeshift Shield Generator, Shield Shunt.
 type|shield_shunt|DESTROYER|0	0	Increases armor by <good>15%</good>.
 type|shield_shunt|DESTROYER|1	0	Removes this ship's shield entirely.
-type|shield_shunt|DESTROYER|2	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-type|shield_shunt|DESTROYER|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Front, Shield Conversion - Omni, Makeshift Shield Generator, Shield Shunt.
+type|shield_shunt|DESTROYER|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Front, Shield Conversion - Omni, Makeshift Shield Generator, Shield Shunt.
 type|shield_shunt|CRUISER|0	0	Increases armor by <good>15%</good>.
 type|shield_shunt|CRUISER|1	0	Removes this ship's shield entirely.
-type|shield_shunt|CRUISER|2	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-type|shield_shunt|CRUISER|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Front, Shield Conversion - Omni, Makeshift Shield Generator, Shield Shunt.
+type|shield_shunt|CRUISER|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Front, Shield Conversion - Omni, Makeshift Shield Generator, Shield Shunt.
 type|shield_shunt|CAPITAL_SHIP|0	0	Increases armor by <good>15%</good>.
 type|shield_shunt|CAPITAL_SHIP|1	0	Removes this ship's shield entirely.
-type|shield_shunt|CAPITAL_SHIP|2	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-type|shield_shunt|CAPITAL_SHIP|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Front, Shield Conversion - Omni, Makeshift Shield Generator, Shield Shunt.
+type|shield_shunt|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Front, Shield Conversion - Omni, Makeshift Shield Generator, Shield Shunt.
 type|shield_turn_rate|null|0	0	Increases shield turn rate by <good>25%</good>.
 type|shield_turn_rate|FRIGATE|0	0	Increases shield turn rate by <good>25%</good>.
 type|shield_turn_rate|DESTROYER|0	0	Increases shield turn rate by <good>25%</good>.
@@ -3703,30 +3681,28 @@ summary|option0|FRIGATE|149	0	If disabled, this ship is almost always recoverabl
 summary|option0|FRIGATE|150	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option0|FRIGATE|151	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 summary|option0|FRIGATE|152	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option0|FRIGATE|153	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-summary|option0|FRIGATE|154	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option0|FRIGATE|155	0	<bad>100%</bad> less venting speed.
-summary|option0|FRIGATE|156	0	Increases top speed by <good>117</good>.
-summary|option0|FRIGATE|157	0	Increases acceleration by <good>100</good>.
-summary|option0|FRIGATE|158	0	Increases deceleration by <good>100</good>.
-summary|option0|FRIGATE|159	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option0|FRIGATE|160	0	Removes this ship's shield entirely.
-summary|option0|FRIGATE|161	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-summary|option0|FRIGATE|162	1	<bad>51.4%</bad> less shield flux upkeep.
-summary|option0|FRIGATE|163	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-summary|option0|FRIGATE|164	0	Increases fuel capacity by <good>24%</good>.
-summary|option0|FRIGATE|165	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>7</bad>.
-summary|option0|FRIGATE|166	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>5</bad>.
-summary|option0|FRIGATE|167	0	Captures combat objectives <good>100%</good> faster.
-summary|option0|FRIGATE|168	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
-summary|option0|FRIGATE|169	0	Increases weapon turn rate by <good>80%</good>.
-summary|option0|FRIGATE|170	0	<bad>15%</bad> less ballistic weapon range.
-summary|option0|FRIGATE|171	0	<bad>15%</bad> less energy weapon range.
-summary|option0|FRIGATE|172	1	Increases fighter refit time by <good>25%</good>.
-summary|option0|FRIGATE|173	0	Increases post-battle salvage recovered (fleet-wide) by <good>3%</good>.
-summary|option0|FRIGATE|174	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
-summary|option0|FRIGATE|175	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
-summary|option0|FRIGATE|176	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
+summary|option0|FRIGATE|153	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option0|FRIGATE|154	0	<bad>100%</bad> less venting speed.
+summary|option0|FRIGATE|155	0	Increases top speed by <good>117</good>.
+summary|option0|FRIGATE|156	0	Increases acceleration by <good>100</good>.
+summary|option0|FRIGATE|157	0	Increases deceleration by <good>100</good>.
+summary|option0|FRIGATE|158	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option0|FRIGATE|159	0	Removes this ship's shield entirely.
+summary|option0|FRIGATE|160	1	<bad>51.4%</bad> less shield flux upkeep.
+summary|option0|FRIGATE|161	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option0|FRIGATE|162	0	Increases fuel capacity by <good>24%</good>.
+summary|option0|FRIGATE|163	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>7</bad>.
+summary|option0|FRIGATE|164	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>5</bad>.
+summary|option0|FRIGATE|165	0	Captures combat objectives <good>100%</good> faster.
+summary|option0|FRIGATE|166	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
+summary|option0|FRIGATE|167	0	Increases weapon turn rate by <good>80%</good>.
+summary|option0|FRIGATE|168	0	<bad>15%</bad> less ballistic weapon range.
+summary|option0|FRIGATE|169	0	<bad>15%</bad> less energy weapon range.
+summary|option0|FRIGATE|170	1	Increases fighter refit time by <good>25%</good>.
+summary|option0|FRIGATE|171	0	Increases post-battle salvage recovered (fleet-wide) by <good>3%</good>.
+summary|option0|FRIGATE|172	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
+summary|option0|FRIGATE|173	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
+summary|option0|FRIGATE|174	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
 summary|option0|DESTROYER|0	0	Increases acceleration by <good>130%</good>.
 summary|option0|DESTROYER|1	0	Increases hard flux threshold before phase speed penalty kicks in by <good>60%</good>.
 summary|option0|DESTROYER|2	0	<bad>7.43%</bad> less shield arc.
@@ -3880,30 +3856,28 @@ summary|option0|DESTROYER|149	0	If disabled, this ship is almost always recovera
 summary|option0|DESTROYER|150	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option0|DESTROYER|151	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 summary|option0|DESTROYER|152	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option0|DESTROYER|153	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-summary|option0|DESTROYER|154	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option0|DESTROYER|155	0	<bad>100%</bad> less venting speed.
-summary|option0|DESTROYER|156	0	Increases top speed by <good>85</good>.
-summary|option0|DESTROYER|157	0	Increases acceleration by <good>60</good>.
-summary|option0|DESTROYER|158	0	Increases deceleration by <good>60</good>.
-summary|option0|DESTROYER|159	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option0|DESTROYER|160	0	Removes this ship's shield entirely.
-summary|option0|DESTROYER|161	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-summary|option0|DESTROYER|162	1	<bad>51.4%</bad> less shield flux upkeep.
-summary|option0|DESTROYER|163	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-summary|option0|DESTROYER|164	0	Increases fuel capacity by <good>24%</good>.
-summary|option0|DESTROYER|165	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>13</bad>.
-summary|option0|DESTROYER|166	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>11</bad>.
-summary|option0|DESTROYER|167	0	Captures combat objectives <good>100%</good> faster.
-summary|option0|DESTROYER|168	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
-summary|option0|DESTROYER|169	0	Increases weapon turn rate by <good>80%</good>.
-summary|option0|DESTROYER|170	0	<bad>15%</bad> less ballistic weapon range.
-summary|option0|DESTROYER|171	0	<bad>15%</bad> less energy weapon range.
-summary|option0|DESTROYER|172	1	Increases fighter refit time by <good>25%</good>.
-summary|option0|DESTROYER|173	0	Increases post-battle salvage recovered (fleet-wide) by <good>6%</good>.
-summary|option0|DESTROYER|174	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
-summary|option0|DESTROYER|175	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
-summary|option0|DESTROYER|176	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
+summary|option0|DESTROYER|153	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option0|DESTROYER|154	0	<bad>100%</bad> less venting speed.
+summary|option0|DESTROYER|155	0	Increases top speed by <good>85</good>.
+summary|option0|DESTROYER|156	0	Increases acceleration by <good>60</good>.
+summary|option0|DESTROYER|157	0	Increases deceleration by <good>60</good>.
+summary|option0|DESTROYER|158	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option0|DESTROYER|159	0	Removes this ship's shield entirely.
+summary|option0|DESTROYER|160	1	<bad>51.4%</bad> less shield flux upkeep.
+summary|option0|DESTROYER|161	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option0|DESTROYER|162	0	Increases fuel capacity by <good>24%</good>.
+summary|option0|DESTROYER|163	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>13</bad>.
+summary|option0|DESTROYER|164	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>11</bad>.
+summary|option0|DESTROYER|165	0	Captures combat objectives <good>100%</good> faster.
+summary|option0|DESTROYER|166	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
+summary|option0|DESTROYER|167	0	Increases weapon turn rate by <good>80%</good>.
+summary|option0|DESTROYER|168	0	<bad>15%</bad> less ballistic weapon range.
+summary|option0|DESTROYER|169	0	<bad>15%</bad> less energy weapon range.
+summary|option0|DESTROYER|170	1	Increases fighter refit time by <good>25%</good>.
+summary|option0|DESTROYER|171	0	Increases post-battle salvage recovered (fleet-wide) by <good>6%</good>.
+summary|option0|DESTROYER|172	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
+summary|option0|DESTROYER|173	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
+summary|option0|DESTROYER|174	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
 summary|option0|CRUISER|0	0	Increases acceleration by <good>130%</good>.
 summary|option0|CRUISER|1	0	Increases hard flux threshold before phase speed penalty kicks in by <good>60%</good>.
 summary|option0|CRUISER|2	0	<bad>7.43%</bad> less shield arc.
@@ -4057,30 +4031,28 @@ summary|option0|CRUISER|149	0	If disabled, this ship is almost always recoverabl
 summary|option0|CRUISER|150	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option0|CRUISER|151	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 summary|option0|CRUISER|152	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option0|CRUISER|153	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-summary|option0|CRUISER|154	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option0|CRUISER|155	0	<bad>100%</bad> less venting speed.
-summary|option0|CRUISER|156	0	Increases top speed by <good>63</good>.
-summary|option0|CRUISER|157	0	Increases acceleration by <good>40</good>.
-summary|option0|CRUISER|158	0	Increases deceleration by <good>40</good>.
-summary|option0|CRUISER|159	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option0|CRUISER|160	0	Removes this ship's shield entirely.
-summary|option0|CRUISER|161	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-summary|option0|CRUISER|162	1	<bad>51.4%</bad> less shield flux upkeep.
-summary|option0|CRUISER|163	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-summary|option0|CRUISER|164	0	Increases fuel capacity by <good>24%</good>.
-summary|option0|CRUISER|165	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>22</bad>.
-summary|option0|CRUISER|166	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>20</bad>.
-summary|option0|CRUISER|167	0	Captures combat objectives <good>100%</good> faster.
-summary|option0|CRUISER|168	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
-summary|option0|CRUISER|169	0	Increases weapon turn rate by <good>80%</good>.
-summary|option0|CRUISER|170	0	<bad>15%</bad> less ballistic weapon range.
-summary|option0|CRUISER|171	0	<bad>15%</bad> less energy weapon range.
-summary|option0|CRUISER|172	1	Increases fighter refit time by <good>25%</good>.
-summary|option0|CRUISER|173	0	Increases post-battle salvage recovered (fleet-wide) by <good>10%</good>.
-summary|option0|CRUISER|174	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
-summary|option0|CRUISER|175	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
-summary|option0|CRUISER|176	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
+summary|option0|CRUISER|153	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option0|CRUISER|154	0	<bad>100%</bad> less venting speed.
+summary|option0|CRUISER|155	0	Increases top speed by <good>63</good>.
+summary|option0|CRUISER|156	0	Increases acceleration by <good>40</good>.
+summary|option0|CRUISER|157	0	Increases deceleration by <good>40</good>.
+summary|option0|CRUISER|158	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option0|CRUISER|159	0	Removes this ship's shield entirely.
+summary|option0|CRUISER|160	1	<bad>51.4%</bad> less shield flux upkeep.
+summary|option0|CRUISER|161	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option0|CRUISER|162	0	Increases fuel capacity by <good>24%</good>.
+summary|option0|CRUISER|163	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>22</bad>.
+summary|option0|CRUISER|164	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>20</bad>.
+summary|option0|CRUISER|165	0	Captures combat objectives <good>100%</good> faster.
+summary|option0|CRUISER|166	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
+summary|option0|CRUISER|167	0	Increases weapon turn rate by <good>80%</good>.
+summary|option0|CRUISER|168	0	<bad>15%</bad> less ballistic weapon range.
+summary|option0|CRUISER|169	0	<bad>15%</bad> less energy weapon range.
+summary|option0|CRUISER|170	1	Increases fighter refit time by <good>25%</good>.
+summary|option0|CRUISER|171	0	Increases post-battle salvage recovered (fleet-wide) by <good>10%</good>.
+summary|option0|CRUISER|172	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
+summary|option0|CRUISER|173	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
+summary|option0|CRUISER|174	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
 summary|option0|CAPITAL_SHIP|0	0	Increases acceleration by <good>130%</good>.
 summary|option0|CAPITAL_SHIP|1	0	Increases hard flux threshold before phase speed penalty kicks in by <good>60%</good>.
 summary|option0|CAPITAL_SHIP|2	0	<bad>7.43%</bad> less shield arc.
@@ -4234,30 +4206,28 @@ summary|option0|CAPITAL_SHIP|149	0	If disabled, this ship is almost always recov
 summary|option0|CAPITAL_SHIP|150	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option0|CAPITAL_SHIP|151	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 summary|option0|CAPITAL_SHIP|152	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option0|CAPITAL_SHIP|153	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-summary|option0|CAPITAL_SHIP|154	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option0|CAPITAL_SHIP|155	0	<bad>100%</bad> less venting speed.
-summary|option0|CAPITAL_SHIP|156	0	Increases top speed by <good>53</good>.
-summary|option0|CAPITAL_SHIP|157	0	Increases acceleration by <good>20</good>.
-summary|option0|CAPITAL_SHIP|158	0	Increases deceleration by <good>20</good>.
-summary|option0|CAPITAL_SHIP|159	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option0|CAPITAL_SHIP|160	0	Removes this ship's shield entirely.
-summary|option0|CAPITAL_SHIP|161	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-summary|option0|CAPITAL_SHIP|162	1	<bad>51.4%</bad> less shield flux upkeep.
-summary|option0|CAPITAL_SHIP|163	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-summary|option0|CAPITAL_SHIP|164	0	Increases fuel capacity by <good>24%</good>.
-summary|option0|CAPITAL_SHIP|165	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>42</bad>.
-summary|option0|CAPITAL_SHIP|166	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>40</bad>.
-summary|option0|CAPITAL_SHIP|167	0	Captures combat objectives <good>100%</good> faster.
-summary|option0|CAPITAL_SHIP|168	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
-summary|option0|CAPITAL_SHIP|169	0	Increases weapon turn rate by <good>80%</good>.
-summary|option0|CAPITAL_SHIP|170	0	<bad>15%</bad> less ballistic weapon range.
-summary|option0|CAPITAL_SHIP|171	0	<bad>15%</bad> less energy weapon range.
-summary|option0|CAPITAL_SHIP|172	1	Increases fighter refit time by <good>25%</good>.
-summary|option0|CAPITAL_SHIP|173	0	Increases post-battle salvage recovered (fleet-wide) by <good>15%</good>.
-summary|option0|CAPITAL_SHIP|174	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
-summary|option0|CAPITAL_SHIP|175	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
-summary|option0|CAPITAL_SHIP|176	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
+summary|option0|CAPITAL_SHIP|153	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option0|CAPITAL_SHIP|154	0	<bad>100%</bad> less venting speed.
+summary|option0|CAPITAL_SHIP|155	0	Increases top speed by <good>53</good>.
+summary|option0|CAPITAL_SHIP|156	0	Increases acceleration by <good>20</good>.
+summary|option0|CAPITAL_SHIP|157	0	Increases deceleration by <good>20</good>.
+summary|option0|CAPITAL_SHIP|158	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option0|CAPITAL_SHIP|159	0	Removes this ship's shield entirely.
+summary|option0|CAPITAL_SHIP|160	1	<bad>51.4%</bad> less shield flux upkeep.
+summary|option0|CAPITAL_SHIP|161	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option0|CAPITAL_SHIP|162	0	Increases fuel capacity by <good>24%</good>.
+summary|option0|CAPITAL_SHIP|163	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>42</bad>.
+summary|option0|CAPITAL_SHIP|164	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>40</bad>.
+summary|option0|CAPITAL_SHIP|165	0	Captures combat objectives <good>100%</good> faster.
+summary|option0|CAPITAL_SHIP|166	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
+summary|option0|CAPITAL_SHIP|167	0	Increases weapon turn rate by <good>80%</good>.
+summary|option0|CAPITAL_SHIP|168	0	<bad>15%</bad> less ballistic weapon range.
+summary|option0|CAPITAL_SHIP|169	0	<bad>15%</bad> less energy weapon range.
+summary|option0|CAPITAL_SHIP|170	1	Increases fighter refit time by <good>25%</good>.
+summary|option0|CAPITAL_SHIP|171	0	Increases post-battle salvage recovered (fleet-wide) by <good>15%</good>.
+summary|option0|CAPITAL_SHIP|172	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
+summary|option0|CAPITAL_SHIP|173	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
+summary|option0|CAPITAL_SHIP|174	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
 summary|option1|FRIGATE|0	0	Increases acceleration by <good>130%</good>.
 summary|option1|FRIGATE|1	0	Increases hard flux threshold before phase speed penalty kicks in by <good>60%</good>.
 summary|option1|FRIGATE|2	0	<bad>7.43%</bad> less shield arc.
@@ -4411,30 +4381,28 @@ summary|option1|FRIGATE|149	0	If disabled, this ship is almost always recoverabl
 summary|option1|FRIGATE|150	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option1|FRIGATE|151	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 summary|option1|FRIGATE|152	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option1|FRIGATE|153	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-summary|option1|FRIGATE|154	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option1|FRIGATE|155	0	<bad>100%</bad> less venting speed.
-summary|option1|FRIGATE|156	0	Increases top speed by <good>117</good>.
-summary|option1|FRIGATE|157	0	Increases acceleration by <good>100</good>.
-summary|option1|FRIGATE|158	0	Increases deceleration by <good>100</good>.
-summary|option1|FRIGATE|159	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option1|FRIGATE|160	0	Removes this ship's shield entirely.
-summary|option1|FRIGATE|161	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-summary|option1|FRIGATE|162	1	<bad>51.4%</bad> less shield flux upkeep.
-summary|option1|FRIGATE|163	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-summary|option1|FRIGATE|164	0	Increases cargo capacity by <good>24%</good>.
-summary|option1|FRIGATE|165	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>7</bad>.
-summary|option1|FRIGATE|166	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>5</bad>.
-summary|option1|FRIGATE|167	0	Captures combat objectives <good>100%</good> faster.
-summary|option1|FRIGATE|168	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
-summary|option1|FRIGATE|169	0	Increases weapon turn rate by <good>80%</good>.
-summary|option1|FRIGATE|170	0	<bad>15%</bad> less ballistic weapon range.
-summary|option1|FRIGATE|171	0	<bad>15%</bad> less energy weapon range.
-summary|option1|FRIGATE|172	1	Increases fighter refit time by <good>25%</good>.
-summary|option1|FRIGATE|173	0	Increases post-battle salvage recovered (fleet-wide) by <good>3%</good>.
-summary|option1|FRIGATE|174	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
-summary|option1|FRIGATE|175	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
-summary|option1|FRIGATE|176	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
+summary|option1|FRIGATE|153	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option1|FRIGATE|154	0	<bad>100%</bad> less venting speed.
+summary|option1|FRIGATE|155	0	Increases top speed by <good>117</good>.
+summary|option1|FRIGATE|156	0	Increases acceleration by <good>100</good>.
+summary|option1|FRIGATE|157	0	Increases deceleration by <good>100</good>.
+summary|option1|FRIGATE|158	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option1|FRIGATE|159	0	Removes this ship's shield entirely.
+summary|option1|FRIGATE|160	1	<bad>51.4%</bad> less shield flux upkeep.
+summary|option1|FRIGATE|161	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option1|FRIGATE|162	0	Increases cargo capacity by <good>24%</good>.
+summary|option1|FRIGATE|163	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>7</bad>.
+summary|option1|FRIGATE|164	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>5</bad>.
+summary|option1|FRIGATE|165	0	Captures combat objectives <good>100%</good> faster.
+summary|option1|FRIGATE|166	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
+summary|option1|FRIGATE|167	0	Increases weapon turn rate by <good>80%</good>.
+summary|option1|FRIGATE|168	0	<bad>15%</bad> less ballistic weapon range.
+summary|option1|FRIGATE|169	0	<bad>15%</bad> less energy weapon range.
+summary|option1|FRIGATE|170	1	Increases fighter refit time by <good>25%</good>.
+summary|option1|FRIGATE|171	0	Increases post-battle salvage recovered (fleet-wide) by <good>3%</good>.
+summary|option1|FRIGATE|172	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
+summary|option1|FRIGATE|173	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
+summary|option1|FRIGATE|174	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
 summary|option1|DESTROYER|0	0	Increases acceleration by <good>130%</good>.
 summary|option1|DESTROYER|1	0	Increases hard flux threshold before phase speed penalty kicks in by <good>60%</good>.
 summary|option1|DESTROYER|2	0	<bad>7.43%</bad> less shield arc.
@@ -4588,30 +4556,28 @@ summary|option1|DESTROYER|149	0	If disabled, this ship is almost always recovera
 summary|option1|DESTROYER|150	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option1|DESTROYER|151	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 summary|option1|DESTROYER|152	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option1|DESTROYER|153	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-summary|option1|DESTROYER|154	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option1|DESTROYER|155	0	<bad>100%</bad> less venting speed.
-summary|option1|DESTROYER|156	0	Increases top speed by <good>85</good>.
-summary|option1|DESTROYER|157	0	Increases acceleration by <good>60</good>.
-summary|option1|DESTROYER|158	0	Increases deceleration by <good>60</good>.
-summary|option1|DESTROYER|159	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option1|DESTROYER|160	0	Removes this ship's shield entirely.
-summary|option1|DESTROYER|161	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-summary|option1|DESTROYER|162	1	<bad>51.4%</bad> less shield flux upkeep.
-summary|option1|DESTROYER|163	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-summary|option1|DESTROYER|164	0	Increases cargo capacity by <good>24%</good>.
-summary|option1|DESTROYER|165	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>13</bad>.
-summary|option1|DESTROYER|166	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>11</bad>.
-summary|option1|DESTROYER|167	0	Captures combat objectives <good>100%</good> faster.
-summary|option1|DESTROYER|168	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
-summary|option1|DESTROYER|169	0	Increases weapon turn rate by <good>80%</good>.
-summary|option1|DESTROYER|170	0	<bad>15%</bad> less ballistic weapon range.
-summary|option1|DESTROYER|171	0	<bad>15%</bad> less energy weapon range.
-summary|option1|DESTROYER|172	1	Increases fighter refit time by <good>25%</good>.
-summary|option1|DESTROYER|173	0	Increases post-battle salvage recovered (fleet-wide) by <good>6%</good>.
-summary|option1|DESTROYER|174	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
-summary|option1|DESTROYER|175	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
-summary|option1|DESTROYER|176	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
+summary|option1|DESTROYER|153	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option1|DESTROYER|154	0	<bad>100%</bad> less venting speed.
+summary|option1|DESTROYER|155	0	Increases top speed by <good>85</good>.
+summary|option1|DESTROYER|156	0	Increases acceleration by <good>60</good>.
+summary|option1|DESTROYER|157	0	Increases deceleration by <good>60</good>.
+summary|option1|DESTROYER|158	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option1|DESTROYER|159	0	Removes this ship's shield entirely.
+summary|option1|DESTROYER|160	1	<bad>51.4%</bad> less shield flux upkeep.
+summary|option1|DESTROYER|161	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option1|DESTROYER|162	0	Increases cargo capacity by <good>24%</good>.
+summary|option1|DESTROYER|163	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>13</bad>.
+summary|option1|DESTROYER|164	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>11</bad>.
+summary|option1|DESTROYER|165	0	Captures combat objectives <good>100%</good> faster.
+summary|option1|DESTROYER|166	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
+summary|option1|DESTROYER|167	0	Increases weapon turn rate by <good>80%</good>.
+summary|option1|DESTROYER|168	0	<bad>15%</bad> less ballistic weapon range.
+summary|option1|DESTROYER|169	0	<bad>15%</bad> less energy weapon range.
+summary|option1|DESTROYER|170	1	Increases fighter refit time by <good>25%</good>.
+summary|option1|DESTROYER|171	0	Increases post-battle salvage recovered (fleet-wide) by <good>6%</good>.
+summary|option1|DESTROYER|172	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
+summary|option1|DESTROYER|173	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
+summary|option1|DESTROYER|174	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
 summary|option1|CRUISER|0	0	Increases acceleration by <good>130%</good>.
 summary|option1|CRUISER|1	0	Increases hard flux threshold before phase speed penalty kicks in by <good>60%</good>.
 summary|option1|CRUISER|2	0	<bad>7.43%</bad> less shield arc.
@@ -4765,30 +4731,28 @@ summary|option1|CRUISER|149	0	If disabled, this ship is almost always recoverabl
 summary|option1|CRUISER|150	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option1|CRUISER|151	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 summary|option1|CRUISER|152	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option1|CRUISER|153	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-summary|option1|CRUISER|154	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option1|CRUISER|155	0	<bad>100%</bad> less venting speed.
-summary|option1|CRUISER|156	0	Increases top speed by <good>63</good>.
-summary|option1|CRUISER|157	0	Increases acceleration by <good>40</good>.
-summary|option1|CRUISER|158	0	Increases deceleration by <good>40</good>.
-summary|option1|CRUISER|159	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option1|CRUISER|160	0	Removes this ship's shield entirely.
-summary|option1|CRUISER|161	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-summary|option1|CRUISER|162	1	<bad>51.4%</bad> less shield flux upkeep.
-summary|option1|CRUISER|163	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-summary|option1|CRUISER|164	0	Increases cargo capacity by <good>24%</good>.
-summary|option1|CRUISER|165	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>22</bad>.
-summary|option1|CRUISER|166	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>20</bad>.
-summary|option1|CRUISER|167	0	Captures combat objectives <good>100%</good> faster.
-summary|option1|CRUISER|168	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
-summary|option1|CRUISER|169	0	Increases weapon turn rate by <good>80%</good>.
-summary|option1|CRUISER|170	0	<bad>15%</bad> less ballistic weapon range.
-summary|option1|CRUISER|171	0	<bad>15%</bad> less energy weapon range.
-summary|option1|CRUISER|172	1	Increases fighter refit time by <good>25%</good>.
-summary|option1|CRUISER|173	0	Increases post-battle salvage recovered (fleet-wide) by <good>10%</good>.
-summary|option1|CRUISER|174	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
-summary|option1|CRUISER|175	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
-summary|option1|CRUISER|176	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
+summary|option1|CRUISER|153	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option1|CRUISER|154	0	<bad>100%</bad> less venting speed.
+summary|option1|CRUISER|155	0	Increases top speed by <good>63</good>.
+summary|option1|CRUISER|156	0	Increases acceleration by <good>40</good>.
+summary|option1|CRUISER|157	0	Increases deceleration by <good>40</good>.
+summary|option1|CRUISER|158	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option1|CRUISER|159	0	Removes this ship's shield entirely.
+summary|option1|CRUISER|160	1	<bad>51.4%</bad> less shield flux upkeep.
+summary|option1|CRUISER|161	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option1|CRUISER|162	0	Increases cargo capacity by <good>24%</good>.
+summary|option1|CRUISER|163	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>22</bad>.
+summary|option1|CRUISER|164	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>20</bad>.
+summary|option1|CRUISER|165	0	Captures combat objectives <good>100%</good> faster.
+summary|option1|CRUISER|166	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
+summary|option1|CRUISER|167	0	Increases weapon turn rate by <good>80%</good>.
+summary|option1|CRUISER|168	0	<bad>15%</bad> less ballistic weapon range.
+summary|option1|CRUISER|169	0	<bad>15%</bad> less energy weapon range.
+summary|option1|CRUISER|170	1	Increases fighter refit time by <good>25%</good>.
+summary|option1|CRUISER|171	0	Increases post-battle salvage recovered (fleet-wide) by <good>10%</good>.
+summary|option1|CRUISER|172	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
+summary|option1|CRUISER|173	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
+summary|option1|CRUISER|174	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
 summary|option1|CAPITAL_SHIP|0	0	Increases acceleration by <good>130%</good>.
 summary|option1|CAPITAL_SHIP|1	0	Increases hard flux threshold before phase speed penalty kicks in by <good>60%</good>.
 summary|option1|CAPITAL_SHIP|2	0	<bad>7.43%</bad> less shield arc.
@@ -4942,30 +4906,28 @@ summary|option1|CAPITAL_SHIP|149	0	If disabled, this ship is almost always recov
 summary|option1|CAPITAL_SHIP|150	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option1|CAPITAL_SHIP|151	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 summary|option1|CAPITAL_SHIP|152	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option1|CAPITAL_SHIP|153	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-summary|option1|CAPITAL_SHIP|154	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option1|CAPITAL_SHIP|155	0	<bad>100%</bad> less venting speed.
-summary|option1|CAPITAL_SHIP|156	0	Increases top speed by <good>53</good>.
-summary|option1|CAPITAL_SHIP|157	0	Increases acceleration by <good>20</good>.
-summary|option1|CAPITAL_SHIP|158	0	Increases deceleration by <good>20</good>.
-summary|option1|CAPITAL_SHIP|159	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option1|CAPITAL_SHIP|160	0	Removes this ship's shield entirely.
-summary|option1|CAPITAL_SHIP|161	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-summary|option1|CAPITAL_SHIP|162	1	<bad>51.4%</bad> less shield flux upkeep.
-summary|option1|CAPITAL_SHIP|163	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-summary|option1|CAPITAL_SHIP|164	0	Increases cargo capacity by <good>24%</good>.
-summary|option1|CAPITAL_SHIP|165	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>42</bad>.
-summary|option1|CAPITAL_SHIP|166	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>40</bad>.
-summary|option1|CAPITAL_SHIP|167	0	Captures combat objectives <good>100%</good> faster.
-summary|option1|CAPITAL_SHIP|168	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
-summary|option1|CAPITAL_SHIP|169	0	Increases weapon turn rate by <good>80%</good>.
-summary|option1|CAPITAL_SHIP|170	0	<bad>15%</bad> less ballistic weapon range.
-summary|option1|CAPITAL_SHIP|171	0	<bad>15%</bad> less energy weapon range.
-summary|option1|CAPITAL_SHIP|172	1	Increases fighter refit time by <good>25%</good>.
-summary|option1|CAPITAL_SHIP|173	0	Increases post-battle salvage recovered (fleet-wide) by <good>15%</good>.
-summary|option1|CAPITAL_SHIP|174	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
-summary|option1|CAPITAL_SHIP|175	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
-summary|option1|CAPITAL_SHIP|176	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
+summary|option1|CAPITAL_SHIP|153	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option1|CAPITAL_SHIP|154	0	<bad>100%</bad> less venting speed.
+summary|option1|CAPITAL_SHIP|155	0	Increases top speed by <good>53</good>.
+summary|option1|CAPITAL_SHIP|156	0	Increases acceleration by <good>20</good>.
+summary|option1|CAPITAL_SHIP|157	0	Increases deceleration by <good>20</good>.
+summary|option1|CAPITAL_SHIP|158	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option1|CAPITAL_SHIP|159	0	Removes this ship's shield entirely.
+summary|option1|CAPITAL_SHIP|160	1	<bad>51.4%</bad> less shield flux upkeep.
+summary|option1|CAPITAL_SHIP|161	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option1|CAPITAL_SHIP|162	0	Increases cargo capacity by <good>24%</good>.
+summary|option1|CAPITAL_SHIP|163	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>42</bad>.
+summary|option1|CAPITAL_SHIP|164	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>40</bad>.
+summary|option1|CAPITAL_SHIP|165	0	Captures combat objectives <good>100%</good> faster.
+summary|option1|CAPITAL_SHIP|166	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
+summary|option1|CAPITAL_SHIP|167	0	Increases weapon turn rate by <good>80%</good>.
+summary|option1|CAPITAL_SHIP|168	0	<bad>15%</bad> less ballistic weapon range.
+summary|option1|CAPITAL_SHIP|169	0	<bad>15%</bad> less energy weapon range.
+summary|option1|CAPITAL_SHIP|170	1	Increases fighter refit time by <good>25%</good>.
+summary|option1|CAPITAL_SHIP|171	0	Increases post-battle salvage recovered (fleet-wide) by <good>15%</good>.
+summary|option1|CAPITAL_SHIP|172	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
+summary|option1|CAPITAL_SHIP|173	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
+summary|option1|CAPITAL_SHIP|174	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
 summary|option2|FRIGATE|0	0	Increases acceleration by <good>130%</good>.
 summary|option2|FRIGATE|1	0	Increases hard flux threshold before phase speed penalty kicks in by <good>60%</good>.
 summary|option2|FRIGATE|2	0	<bad>7.43%</bad> less shield arc.
@@ -5119,30 +5081,28 @@ summary|option2|FRIGATE|149	0	If disabled, this ship is almost always recoverabl
 summary|option2|FRIGATE|150	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option2|FRIGATE|151	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 summary|option2|FRIGATE|152	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option2|FRIGATE|153	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-summary|option2|FRIGATE|154	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option2|FRIGATE|155	0	<bad>100%</bad> less venting speed.
-summary|option2|FRIGATE|156	0	Increases top speed by <good>117</good>.
-summary|option2|FRIGATE|157	0	Increases acceleration by <good>100</good>.
-summary|option2|FRIGATE|158	0	Increases deceleration by <good>100</good>.
-summary|option2|FRIGATE|159	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option2|FRIGATE|160	0	Removes this ship's shield entirely.
-summary|option2|FRIGATE|161	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-summary|option2|FRIGATE|162	1	<bad>51.4%</bad> less shield flux upkeep.
-summary|option2|FRIGATE|163	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-summary|option2|FRIGATE|164	0	Increases crew capacity by <good>24%</good>.
-summary|option2|FRIGATE|165	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>7</bad>.
-summary|option2|FRIGATE|166	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>5</bad>.
-summary|option2|FRIGATE|167	0	Captures combat objectives <good>100%</good> faster.
-summary|option2|FRIGATE|168	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
-summary|option2|FRIGATE|169	0	Increases weapon turn rate by <good>80%</good>.
-summary|option2|FRIGATE|170	0	<bad>15%</bad> less ballistic weapon range.
-summary|option2|FRIGATE|171	0	<bad>15%</bad> less energy weapon range.
-summary|option2|FRIGATE|172	1	Increases fighter refit time by <good>25%</good>.
-summary|option2|FRIGATE|173	0	Increases post-battle salvage recovered (fleet-wide) by <good>3%</good>.
-summary|option2|FRIGATE|174	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
-summary|option2|FRIGATE|175	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
-summary|option2|FRIGATE|176	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
+summary|option2|FRIGATE|153	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option2|FRIGATE|154	0	<bad>100%</bad> less venting speed.
+summary|option2|FRIGATE|155	0	Increases top speed by <good>117</good>.
+summary|option2|FRIGATE|156	0	Increases acceleration by <good>100</good>.
+summary|option2|FRIGATE|157	0	Increases deceleration by <good>100</good>.
+summary|option2|FRIGATE|158	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option2|FRIGATE|159	0	Removes this ship's shield entirely.
+summary|option2|FRIGATE|160	1	<bad>51.4%</bad> less shield flux upkeep.
+summary|option2|FRIGATE|161	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option2|FRIGATE|162	0	Increases crew capacity by <good>24%</good>.
+summary|option2|FRIGATE|163	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>7</bad>.
+summary|option2|FRIGATE|164	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>5</bad>.
+summary|option2|FRIGATE|165	0	Captures combat objectives <good>100%</good> faster.
+summary|option2|FRIGATE|166	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
+summary|option2|FRIGATE|167	0	Increases weapon turn rate by <good>80%</good>.
+summary|option2|FRIGATE|168	0	<bad>15%</bad> less ballistic weapon range.
+summary|option2|FRIGATE|169	0	<bad>15%</bad> less energy weapon range.
+summary|option2|FRIGATE|170	1	Increases fighter refit time by <good>25%</good>.
+summary|option2|FRIGATE|171	0	Increases post-battle salvage recovered (fleet-wide) by <good>3%</good>.
+summary|option2|FRIGATE|172	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
+summary|option2|FRIGATE|173	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
+summary|option2|FRIGATE|174	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
 summary|option2|DESTROYER|0	0	Increases acceleration by <good>130%</good>.
 summary|option2|DESTROYER|1	0	Increases hard flux threshold before phase speed penalty kicks in by <good>60%</good>.
 summary|option2|DESTROYER|2	0	<bad>7.43%</bad> less shield arc.
@@ -5296,30 +5256,28 @@ summary|option2|DESTROYER|149	0	If disabled, this ship is almost always recovera
 summary|option2|DESTROYER|150	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option2|DESTROYER|151	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 summary|option2|DESTROYER|152	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option2|DESTROYER|153	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-summary|option2|DESTROYER|154	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option2|DESTROYER|155	0	<bad>100%</bad> less venting speed.
-summary|option2|DESTROYER|156	0	Increases top speed by <good>85</good>.
-summary|option2|DESTROYER|157	0	Increases acceleration by <good>60</good>.
-summary|option2|DESTROYER|158	0	Increases deceleration by <good>60</good>.
-summary|option2|DESTROYER|159	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option2|DESTROYER|160	0	Removes this ship's shield entirely.
-summary|option2|DESTROYER|161	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-summary|option2|DESTROYER|162	1	<bad>51.4%</bad> less shield flux upkeep.
-summary|option2|DESTROYER|163	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-summary|option2|DESTROYER|164	0	Increases crew capacity by <good>24%</good>.
-summary|option2|DESTROYER|165	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>13</bad>.
-summary|option2|DESTROYER|166	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>11</bad>.
-summary|option2|DESTROYER|167	0	Captures combat objectives <good>100%</good> faster.
-summary|option2|DESTROYER|168	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
-summary|option2|DESTROYER|169	0	Increases weapon turn rate by <good>80%</good>.
-summary|option2|DESTROYER|170	0	<bad>15%</bad> less ballistic weapon range.
-summary|option2|DESTROYER|171	0	<bad>15%</bad> less energy weapon range.
-summary|option2|DESTROYER|172	1	Increases fighter refit time by <good>25%</good>.
-summary|option2|DESTROYER|173	0	Increases post-battle salvage recovered (fleet-wide) by <good>6%</good>.
-summary|option2|DESTROYER|174	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
-summary|option2|DESTROYER|175	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
-summary|option2|DESTROYER|176	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
+summary|option2|DESTROYER|153	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option2|DESTROYER|154	0	<bad>100%</bad> less venting speed.
+summary|option2|DESTROYER|155	0	Increases top speed by <good>85</good>.
+summary|option2|DESTROYER|156	0	Increases acceleration by <good>60</good>.
+summary|option2|DESTROYER|157	0	Increases deceleration by <good>60</good>.
+summary|option2|DESTROYER|158	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option2|DESTROYER|159	0	Removes this ship's shield entirely.
+summary|option2|DESTROYER|160	1	<bad>51.4%</bad> less shield flux upkeep.
+summary|option2|DESTROYER|161	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option2|DESTROYER|162	0	Increases crew capacity by <good>24%</good>.
+summary|option2|DESTROYER|163	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>13</bad>.
+summary|option2|DESTROYER|164	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>11</bad>.
+summary|option2|DESTROYER|165	0	Captures combat objectives <good>100%</good> faster.
+summary|option2|DESTROYER|166	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
+summary|option2|DESTROYER|167	0	Increases weapon turn rate by <good>80%</good>.
+summary|option2|DESTROYER|168	0	<bad>15%</bad> less ballistic weapon range.
+summary|option2|DESTROYER|169	0	<bad>15%</bad> less energy weapon range.
+summary|option2|DESTROYER|170	1	Increases fighter refit time by <good>25%</good>.
+summary|option2|DESTROYER|171	0	Increases post-battle salvage recovered (fleet-wide) by <good>6%</good>.
+summary|option2|DESTROYER|172	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
+summary|option2|DESTROYER|173	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
+summary|option2|DESTROYER|174	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
 summary|option2|CRUISER|0	0	Increases acceleration by <good>130%</good>.
 summary|option2|CRUISER|1	0	Increases hard flux threshold before phase speed penalty kicks in by <good>60%</good>.
 summary|option2|CRUISER|2	0	<bad>7.43%</bad> less shield arc.
@@ -5473,30 +5431,28 @@ summary|option2|CRUISER|149	0	If disabled, this ship is almost always recoverabl
 summary|option2|CRUISER|150	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option2|CRUISER|151	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 summary|option2|CRUISER|152	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option2|CRUISER|153	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-summary|option2|CRUISER|154	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option2|CRUISER|155	0	<bad>100%</bad> less venting speed.
-summary|option2|CRUISER|156	0	Increases top speed by <good>63</good>.
-summary|option2|CRUISER|157	0	Increases acceleration by <good>40</good>.
-summary|option2|CRUISER|158	0	Increases deceleration by <good>40</good>.
-summary|option2|CRUISER|159	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option2|CRUISER|160	0	Removes this ship's shield entirely.
-summary|option2|CRUISER|161	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-summary|option2|CRUISER|162	1	<bad>51.4%</bad> less shield flux upkeep.
-summary|option2|CRUISER|163	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-summary|option2|CRUISER|164	0	Increases crew capacity by <good>24%</good>.
-summary|option2|CRUISER|165	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>22</bad>.
-summary|option2|CRUISER|166	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>20</bad>.
-summary|option2|CRUISER|167	0	Captures combat objectives <good>100%</good> faster.
-summary|option2|CRUISER|168	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
-summary|option2|CRUISER|169	0	Increases weapon turn rate by <good>80%</good>.
-summary|option2|CRUISER|170	0	<bad>15%</bad> less ballistic weapon range.
-summary|option2|CRUISER|171	0	<bad>15%</bad> less energy weapon range.
-summary|option2|CRUISER|172	1	Increases fighter refit time by <good>25%</good>.
-summary|option2|CRUISER|173	0	Increases post-battle salvage recovered (fleet-wide) by <good>10%</good>.
-summary|option2|CRUISER|174	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
-summary|option2|CRUISER|175	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
-summary|option2|CRUISER|176	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
+summary|option2|CRUISER|153	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option2|CRUISER|154	0	<bad>100%</bad> less venting speed.
+summary|option2|CRUISER|155	0	Increases top speed by <good>63</good>.
+summary|option2|CRUISER|156	0	Increases acceleration by <good>40</good>.
+summary|option2|CRUISER|157	0	Increases deceleration by <good>40</good>.
+summary|option2|CRUISER|158	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option2|CRUISER|159	0	Removes this ship's shield entirely.
+summary|option2|CRUISER|160	1	<bad>51.4%</bad> less shield flux upkeep.
+summary|option2|CRUISER|161	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option2|CRUISER|162	0	Increases crew capacity by <good>24%</good>.
+summary|option2|CRUISER|163	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>22</bad>.
+summary|option2|CRUISER|164	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>20</bad>.
+summary|option2|CRUISER|165	0	Captures combat objectives <good>100%</good> faster.
+summary|option2|CRUISER|166	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
+summary|option2|CRUISER|167	0	Increases weapon turn rate by <good>80%</good>.
+summary|option2|CRUISER|168	0	<bad>15%</bad> less ballistic weapon range.
+summary|option2|CRUISER|169	0	<bad>15%</bad> less energy weapon range.
+summary|option2|CRUISER|170	1	Increases fighter refit time by <good>25%</good>.
+summary|option2|CRUISER|171	0	Increases post-battle salvage recovered (fleet-wide) by <good>10%</good>.
+summary|option2|CRUISER|172	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
+summary|option2|CRUISER|173	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
+summary|option2|CRUISER|174	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
 summary|option2|CAPITAL_SHIP|0	0	Increases acceleration by <good>130%</good>.
 summary|option2|CAPITAL_SHIP|1	0	Increases hard flux threshold before phase speed penalty kicks in by <good>60%</good>.
 summary|option2|CAPITAL_SHIP|2	0	<bad>7.43%</bad> less shield arc.
@@ -5650,27 +5606,25 @@ summary|option2|CAPITAL_SHIP|149	0	If disabled, this ship is almost always recov
 summary|option2|CAPITAL_SHIP|150	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option2|CAPITAL_SHIP|151	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 summary|option2|CAPITAL_SHIP|152	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option2|CAPITAL_SHIP|153	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-summary|option2|CAPITAL_SHIP|154	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option2|CAPITAL_SHIP|155	0	<bad>100%</bad> less venting speed.
-summary|option2|CAPITAL_SHIP|156	0	Increases top speed by <good>53</good>.
-summary|option2|CAPITAL_SHIP|157	0	Increases acceleration by <good>20</good>.
-summary|option2|CAPITAL_SHIP|158	0	Increases deceleration by <good>20</good>.
-summary|option2|CAPITAL_SHIP|159	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option2|CAPITAL_SHIP|160	0	Removes this ship's shield entirely.
-summary|option2|CAPITAL_SHIP|161	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-summary|option2|CAPITAL_SHIP|162	1	<bad>51.4%</bad> less shield flux upkeep.
-summary|option2|CAPITAL_SHIP|163	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-summary|option2|CAPITAL_SHIP|164	0	Increases crew capacity by <good>24%</good>.
-summary|option2|CAPITAL_SHIP|165	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>42</bad>.
-summary|option2|CAPITAL_SHIP|166	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>40</bad>.
-summary|option2|CAPITAL_SHIP|167	0	Captures combat objectives <good>100%</good> faster.
-summary|option2|CAPITAL_SHIP|168	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
-summary|option2|CAPITAL_SHIP|169	0	Increases weapon turn rate by <good>80%</good>.
-summary|option2|CAPITAL_SHIP|170	0	<bad>15%</bad> less ballistic weapon range.
-summary|option2|CAPITAL_SHIP|171	0	<bad>15%</bad> less energy weapon range.
-summary|option2|CAPITAL_SHIP|172	1	Increases fighter refit time by <good>25%</good>.
-summary|option2|CAPITAL_SHIP|173	0	Increases post-battle salvage recovered (fleet-wide) by <good>15%</good>.
-summary|option2|CAPITAL_SHIP|174	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
-summary|option2|CAPITAL_SHIP|175	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
-summary|option2|CAPITAL_SHIP|176	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
+summary|option2|CAPITAL_SHIP|153	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option2|CAPITAL_SHIP|154	0	<bad>100%</bad> less venting speed.
+summary|option2|CAPITAL_SHIP|155	0	Increases top speed by <good>53</good>.
+summary|option2|CAPITAL_SHIP|156	0	Increases acceleration by <good>20</good>.
+summary|option2|CAPITAL_SHIP|157	0	Increases deceleration by <good>20</good>.
+summary|option2|CAPITAL_SHIP|158	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option2|CAPITAL_SHIP|159	0	Removes this ship's shield entirely.
+summary|option2|CAPITAL_SHIP|160	1	<bad>51.4%</bad> less shield flux upkeep.
+summary|option2|CAPITAL_SHIP|161	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option2|CAPITAL_SHIP|162	0	Increases crew capacity by <good>24%</good>.
+summary|option2|CAPITAL_SHIP|163	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>42</bad>.
+summary|option2|CAPITAL_SHIP|164	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>40</bad>.
+summary|option2|CAPITAL_SHIP|165	0	Captures combat objectives <good>100%</good> faster.
+summary|option2|CAPITAL_SHIP|166	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
+summary|option2|CAPITAL_SHIP|167	0	Increases weapon turn rate by <good>80%</good>.
+summary|option2|CAPITAL_SHIP|168	0	<bad>15%</bad> less ballistic weapon range.
+summary|option2|CAPITAL_SHIP|169	0	<bad>15%</bad> less energy weapon range.
+summary|option2|CAPITAL_SHIP|170	1	Increases fighter refit time by <good>25%</good>.
+summary|option2|CAPITAL_SHIP|171	0	Increases post-battle salvage recovered (fleet-wide) by <good>15%</good>.
+summary|option2|CAPITAL_SHIP|172	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
+summary|option2|CAPITAL_SHIP|173	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
+summary|option2|CAPITAL_SHIP|174	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.

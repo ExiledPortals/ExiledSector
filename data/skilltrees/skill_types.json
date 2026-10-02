@@ -457,10 +457,6 @@
 					"magnitude": 0
 				},
 				{
-					"effect": "COUNTS_AS_SAFETY_OVERRIDES",
-					"magnitude": 0
-				},
-				{
 					"effect": "FLUX_DISSIPATION_MULT",
 					"magnitude": 100
 				},
@@ -1302,9 +1298,6 @@
 				},
 				{
 					"effect": "REMOVE_SHIELD"
-				},
-				{
-					"effect": "COUNTS_AS_SHIELD_SHUNT"
 				}
 			],
 			"unlockConditions": [

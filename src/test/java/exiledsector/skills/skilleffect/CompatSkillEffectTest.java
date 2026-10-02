@@ -14,10 +14,4 @@ class CompatSkillEffectTest {
         assertTrue(CompatSkillEffect.CONVERTED_HANGAR_MIN_CREW_FLAT.lowerIsBetter());
         assertFalse(CompatSkillEffect.CONVERTED_HANGAR_REPLACEMENT_RATE_MULT.lowerIsBetter());
     }
-
-    @Test
-    void synergyEffectsHaveNoPenaltyToColour() {
-        assertFalse(CompatSkillEffect.COUNTS_AS_SHIELD_SHUNT.lowerIsBetter());
-        assertFalse(CompatSkillEffect.COUNTS_AS_SAFETY_OVERRIDES.lowerIsBetter());
-    }
 }
