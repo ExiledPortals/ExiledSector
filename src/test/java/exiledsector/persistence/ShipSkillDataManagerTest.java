@@ -165,4 +165,24 @@ class ShipSkillDataManagerTest {
         assertEquals(1, rootless.getLevel());
         assertEquals(List.of(new SkillItemCost("lobster", 50f)), refunds);
     }
+
+    @Test
+    void nodesDroppedWithASwitchedOffAreaRefundTheirItemCostAndBankedAllocation() {
+        SkillNode root = typedNode("root", SkillTier.ROOT, null);
+        SkillNode lobster = typedNode("lobster", SkillTier.SMALL, new SkillItemCost("lobster", 50f));
+        SkillNode freebie = typedNode("freebie", SkillTier.SMALL, null);
+        ShipSkillData ship = ShipSkillDataManager.get("ship");
+        ship.chooseStartingRoot(root);
+        ship.allocate(lobster, 3);
+        ship.addFreeAllocationCredit();
+        ship.allocate(freebie, 3);
+        List<SkillItemCost> refunds = new ArrayList<>();
+        Map<String, SkillNode> declared = Map.of("root", root, "lobster", lobster, "freebie", freebie);
+
+        ShipSkillDataManager.forgetUnknownNodes(Map.of("root", root), Map.of(), declared::get, refunds::add);
+
+        assertEquals(List.of("root"), List.copyOf(ship.getAllocatedNodeIds()));
+        assertEquals(List.of(new SkillItemCost("lobster", 50f)), refunds);
+        assertEquals(1, ship.getBankedFreeAllocations());
+    }
 }

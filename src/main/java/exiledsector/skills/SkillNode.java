@@ -23,7 +23,6 @@ public class SkillNode extends SkillTreeObject {
     private final Float ringBeltWidth;
     private final String wormholeColor;
     private final String pairedNodeId;
-    private final List<String> tags;
 
     public SkillNode(String id, SkillType type, List<String> connectedNodeIds, float offsetX, float offsetY) {
         this(id, type, connectedNodeIds, offsetX, offsetY, SkillNodeDecoration.NONE);
@@ -35,7 +34,7 @@ public class SkillNode extends SkillTreeObject {
 
     public SkillNode(String id, SkillType type, List<String> connectedNodeIds, float offsetX, float offsetY,
                      SkillNodeDecoration decoration, List<String> tags) {
-        super(id, offsetX, offsetY);
+        super(id, offsetX, offsetY, tags);
         this.type = type;
         this.connectedNodeIds = connectedNodeIds == null ? Collections.emptyList() : connectedNodeIds;
         this.ringBeltPath = decoration.ringBeltPath();
@@ -43,7 +42,6 @@ public class SkillNode extends SkillTreeObject {
         this.ringBeltWidth = decoration.ringBeltWidth();
         this.wormholeColor = decoration.wormholeColor();
         this.pairedNodeId = decoration.pairedNodeId();
-        this.tags = tags == null ? Collections.emptyList() : tags;
     }
 
     public SkillType getType() {
@@ -169,16 +167,12 @@ public class SkillNode extends SkillTreeObject {
         return chosen != null ? chosen : type;
     }
 
-    public List<String> getTags() {
-        return tags;
-    }
-
     public Set<String> effectiveTags(ShipSkillData data) {
         return effectiveTags(data == null ? null : resolveEffectiveType(data));
     }
 
     public Set<String> effectiveTags(SkillType chosenOption) {
-        Set<String> combined = new LinkedHashSet<>(tags);
+        Set<String> combined = new LinkedHashSet<>(getTags());
         combined.addAll(type.getTags());
         if (chosenOption != null) {
             combined.addAll(chosenOption.getTags());
@@ -188,6 +182,15 @@ public class SkillNode extends SkillTreeObject {
 
     public List<String> getConnectedNodeIds() {
         return connectedNodeIds;
+    }
+
+    public SkillNode withoutConnectionsTo(Set<String> removedNodeIds) {
+        List<String> kept = connectedNodeIds.stream().filter(id -> !removedNodeIds.contains(id)).toList();
+        if (kept.size() == connectedNodeIds.size()) {
+            return this;
+        }
+        return new SkillNode(getId(), type, kept, getX(), getY(),
+                new SkillNodeDecoration(ringBeltPath, ringBeltColor, ringBeltWidth, wormholeColor, pairedNodeId), getTags());
     }
 
     public float getOffsetX() {

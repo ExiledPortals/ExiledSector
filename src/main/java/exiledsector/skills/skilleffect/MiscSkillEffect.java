@@ -15,6 +15,7 @@ import exiledsector.i18n.StyledText;
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
+import static exiledsector.skills.skilleffect.StatTarget.bonus;
 import static exiledsector.skills.skilleffect.StatTarget.dynamicMod;
 import static exiledsector.skills.skilleffect.StatTarget.liveBonus;
 import static exiledsector.skills.skilleffect.StatTarget.stat;
@@ -57,6 +58,7 @@ public enum MiscSkillEffect implements BackedSkillEffect {
 
     ELECTRONIC_WARFARE(FLAT, dynamicMod("electronic_warfare_flat"), "stat.ecmRating", false),
     NAV_RATING(FLAT, dynamicMod("coord_maneuvers_flat"), "stat.fleetNavRating", false),
+    SYSTEM_CHARGES_FLAT(FLAT, bonus(MutableShipStatsAPI::getSystemUsesBonus), "stat.systemCharges", false),
     OBJECTIVE_CAPTURE_RATE_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {

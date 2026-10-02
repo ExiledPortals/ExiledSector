@@ -2,9 +2,9 @@ package exiledsector.skills.tags;
 
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
+import exiledsector.skills.ShipFacts;
 
 import java.util.Collection;
-import java.util.function.Predicate;
 
 public final class NodeRequirements {
 
@@ -24,18 +24,20 @@ public final class NodeRequirements {
         return firstUnmet(tags, profile) == null;
     }
 
-    public static String firstUnmetHullRequirement(Collection<String> tags, Predicate<String> hasHullMod) {
+    public static String firstUnmetHullRequirement(Collection<String> tags, ShipFacts ship) {
         for (String tag : tags) {
-            if (SkillTags.isHullRequirement(tag) && !isHullRequirementMet(tag, hasHullMod)) {
+            if (SkillTags.isHullRequirement(tag) && !isHullRequirementMet(tag, ship)) {
                 return tag;
             }
         }
         return null;
     }
 
-    private static boolean isHullRequirementMet(String requirement, Predicate<String> hasHullMod) {
+    private static boolean isHullRequirementMet(String requirement, ShipFacts ship) {
         return switch (requirement) {
-            case "req_civilian_hull" -> hasHullMod.test(HullMods.CIVGRADE);
+            case "req_civilian_hull" -> ship.hasHullMod().test(HullMods.CIVGRADE);
+            case "req_non_phase_hull" -> !ship.phaseHull();
+            case "req_system_charges" -> ship.limitedSystemCharges();
             default -> false;
         };
     }

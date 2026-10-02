@@ -5099,7 +5099,7 @@
 			"orbitAnchorId": "anchor_48",
 			"orbitAngle": 0,
 			"tags": [
-				"inner"
+				"lost_sector"
 			]
 		},
 		{
@@ -5114,7 +5114,7 @@
 			"orbitAnchorId": "anchor_48",
 			"orbitAngle": 270,
 			"tags": [
-				"inner"
+				"lost_sector"
 			]
 		},
 		{
@@ -5128,7 +5128,7 @@
 			"orbitAnchorId": "anchor_48",
 			"orbitAngle": 180,
 			"tags": [
-				"inner"
+				"lost_sector"
 			]
 		},
 		{
@@ -5228,7 +5228,8 @@
 			"id": "nskr_inertial_1",
 			"type": "nskr_inertial",
 			"connectedTo": [
-				"top_speed_6"
+				"top_speed_6",
+				"nskr_volatile_1"
 			],
 			"x": -11189,
 			"y": 7329,
@@ -5242,7 +5243,9 @@
 			"id": "nskr_acoils_1",
 			"type": "nskr_acoils",
 			"connectedTo": [
-				"energy_flux_cost_1"
+				"energy_flux_cost_1",
+				"nskr_volatile_1",
+				"nskr_bigBats_1"
 			],
 			"x": -11203,
 			"y": 5944,
@@ -5278,6 +5281,36 @@
 			"y": 5644,
 			"orbitAnchorId": "anchor_52",
 			"orbitAngle": 270,
+			"tags": [
+				"lost_sector"
+			]
+		},
+		{
+			"id": "nskr_volatile_1",
+			"type": "nskr_volatile",
+			"connectedTo": [
+				"nskr_acoils_1",
+				"nskr_absorption_1",
+				"nskr_inertial_1",
+				"nskr_bigBats_1"
+			],
+			"x": -11190,
+			"y": 6618,
+			"ringBeltPath": "graphics/planets/aurorae.png",
+			"ringBeltColor": "#642ac9",
+			"tags": [
+				"lost_sector"
+			]
+		},
+		{
+			"id": "nskr_bigBats_1",
+			"type": "nskr_bigBats",
+			"connectedTo": [
+				"nskr_volatile_1",
+				"nskr_acoils_1"
+			],
+			"x": -10716,
+			"y": 6144,
 			"tags": [
 				"lost_sector"
 			]
@@ -5330,7 +5363,8 @@
 			"id": "nskr_absorption_1",
 			"type": "nskr_absorption",
 			"connectedTo": [
-				"shield_damage_taken_multi_4"
+				"shield_damage_taken_multi_4",
+				"nskr_volatile_1"
 			],
 			"x": -11856,
 			"y": 6621,
@@ -7451,7 +7485,10 @@
 			"shape": "asteroidBelt",
 			"beltBandWidth": 350,
 			"beltStyle": "dust",
-			"beltRotationSpeed": 0.6
+			"beltRotationSpeed": 0.6,
+			"tags": [
+				"inner"
+			]
 		},
 		{
 			"id": "outer_ringbelt",
@@ -7461,7 +7498,10 @@
 			"shape": "asteroidBelt",
 			"beltBandWidth": 450,
 			"beltStyle": "dust",
-			"beltRotationSpeed": -0.8
+			"beltRotationSpeed": -0.8,
+			"tags": [
+				"inner"
+			]
 		},
 		{
 			"id": "anchor_20",
@@ -7537,7 +7577,10 @@
 			"radius": 1540,
 			"shape": "asteroidBelt",
 			"beltStyle": "ice",
-			"beltRotationSpeed": -0.8
+			"beltRotationSpeed": -0.8,
+			"tags": [
+				"tritachyon"
+			]
 		},
 		{
 			"id": "REDACTED_inner",
@@ -7746,7 +7789,10 @@
 			"innerRadius": 2100,
 			"outerRadius": 2450,
 			"ringArtPath": "graphics/planets/ring_band_dust.png",
-			"rotationSpeed": 0.6
+			"rotationSpeed": 0.6,
+			"tags": [
+				"inner"
+			]
 		},
 		{
 			"id": "outer_ringbelt",
@@ -7755,7 +7801,10 @@
 			"innerRadius": 2850,
 			"outerRadius": 3300,
 			"ringArtPath": "graphics/planets/ring_band_dust.png",
-			"rotationSpeed": -0.8
+			"rotationSpeed": -0.8,
+			"tags": [
+				"inner"
+			]
 		},
 		{
 			"id": "tritach_asteroids",
@@ -7764,7 +7813,10 @@
 			"innerRadius": 1386,
 			"outerRadius": 1694,
 			"ringArtPath": "graphics/planets/ring_band_ice.png",
-			"rotationSpeed": -0.8
+			"rotationSpeed": -0.8,
+			"tags": [
+				"tritachyon"
+			]
 		}
 	],
 	"staticImages": [
@@ -7775,7 +7827,10 @@
 			"width": 763,
 			"height": 468,
 			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_01.png",
-			"rotation": 264
+			"rotation": 264,
+			"tags": [
+				"inner"
+			]
 		},
 		{
 			"id": "image_6",
@@ -7784,7 +7839,10 @@
 			"width": 757,
 			"height": 724,
 			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_07_lowtech.png",
-			"rotation": 307
+			"rotation": 307,
+			"tags": [
+				"inner"
+			]
 		},
 		{
 			"id": "image_7",
@@ -7792,7 +7850,10 @@
 			"y": 662,
 			"width": 548,
 			"height": 485,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_10_orange.png"
+			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_10_orange.png",
+			"tags": [
+				"inner"
+			]
 		},
 		{
 			"id": "image_1",
@@ -7801,7 +7862,10 @@
 			"width": 501,
 			"height": 533,
 			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_06_lowtech.png",
-			"rotation": 203
+			"rotation": 203,
+			"tags": [
+				"inner"
+			]
 		},
 		{
 			"id": "image_2",
@@ -7810,7 +7874,10 @@
 			"width": 526,
 			"height": 602,
 			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_04_lowtech.png",
-			"rotation": 253
+			"rotation": 253,
+			"tags": [
+				"inner"
+			]
 		},
 		{
 			"id": "image_3",
@@ -7819,7 +7886,10 @@
 			"width": 519,
 			"height": 656,
 			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_09_lowtech.png",
-			"rotation": 164
+			"rotation": 164,
+			"tags": [
+				"inner"
+			]
 		},
 		{
 			"id": "image_10",
@@ -7828,7 +7898,10 @@
 			"width": 749,
 			"height": 889,
 			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_04_orange.png",
-			"rotation": 237
+			"rotation": 237,
+			"tags": [
+				"inner"
+			]
 		},
 		{
 			"id": "image_11",
@@ -7837,7 +7910,10 @@
 			"width": 615,
 			"height": 560,
 			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_09_orange.png",
-			"rotation": 294
+			"rotation": 294,
+			"tags": [
+				"inner"
+			]
 		},
 		{
 			"id": "image_13",
@@ -7846,7 +7922,10 @@
 			"width": 626,
 			"height": 491,
 			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_07_blend_b75.png",
-			"rotation": 94
+			"rotation": 94,
+			"tags": [
+				"inner"
+			]
 		},
 		{
 			"id": "image_14",
@@ -7855,7 +7934,10 @@
 			"width": 561,
 			"height": 549,
 			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_04.png",
-			"rotation": 179
+			"rotation": 179,
+			"tags": [
+				"inner"
+			]
 		},
 		{
 			"id": "image_15",
@@ -7864,7 +7946,10 @@
 			"width": 587,
 			"height": 680,
 			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_01.png",
-			"rotation": 261
+			"rotation": 261,
+			"tags": [
+				"inner"
+			]
 		},
 		{
 			"id": "image_16",
@@ -7873,7 +7958,10 @@
 			"width": 886,
 			"height": 508,
 			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_05.png",
-			"rotation": 230
+			"rotation": 230,
+			"tags": [
+				"inner"
+			]
 		},
 		{
 			"id": "luddic_nebula",
@@ -7882,7 +7970,10 @@
 			"width": 3400,
 			"height": 3400,
 			"imagePath": "graphics/backgrounds/static_images/luddic_nebula_circular.png",
-			"rotation": 285
+			"rotation": 285,
+			"tags": [
+				"luddic"
+			]
 		}
 	],
 	"stars": [
@@ -7891,7 +7982,10 @@
 			"x": 0,
 			"y": 0,
 			"radius": 150,
-			"starType": "star_yellow"
+			"starType": "star_yellow",
+			"tags": [
+				"inner"
+			]
 		},
 		{
 			"id": "tritach_star",
@@ -7899,21 +7993,30 @@
 			"y": -8001,
 			"radius": 400,
 			"starType": "star_blue_giant",
-			"color": "#00479e"
+			"color": "#00479e",
+			"tags": [
+				"tritachyon"
+			]
 		},
 		{
 			"id": "REDACTED_star",
 			"x": 5878,
 			"y": -5435,
 			"radius": 300,
-			"starType": "black_hole"
+			"starType": "black_hole",
+			"tags": [
+				"REDACTED"
+			]
 		},
 		{
 			"id": "pirate_star",
 			"x": 7993,
 			"y": 17,
 			"radius": 400,
-			"starType": "star_red_dwarf"
+			"starType": "star_red_dwarf",
+			"tags": [
+				"pirate"
+			]
 		},
 		{
 			"id": "hegemony_star",
@@ -7921,7 +8024,10 @@
 			"y": 6949,
 			"radius": 400,
 			"starType": "star_red_supergiant",
-			"color": "#ff4900"
+			"color": "#ff4900",
+			"tags": [
+				"hegemony"
+			]
 		},
 		{
 			"id": "dictat_star",
@@ -7929,7 +8035,10 @@
 			"y": -4230,
 			"radius": 400,
 			"starType": "star_browndwarf",
-			"color": "#780039"
+			"color": "#780039",
+			"tags": [
+				"sindrian_dictat"
+			]
 		},
 		{
 			"id": "star_1",
@@ -7937,14 +8046,20 @@
 			"y": 1664,
 			"radius": 400,
 			"starType": "star_orange",
-			"color": "#f4c537"
+			"color": "#f4c537",
+			"tags": [
+				"persean_league"
+			]
 		},
 		{
 			"id": "frozen_heart_star",
 			"x": 6057,
 			"y": -11504,
 			"radius": 400,
-			"starType": "star_blue_supergiant"
+			"starType": "star_blue_supergiant",
+			"tags": [
+				"lost_sector"
+			]
 		},
 		{
 			"id": "kestevan_star",
@@ -7952,7 +8067,10 @@
 			"y": 6618,
 			"radius": 400,
 			"starType": "star_yellow",
-			"color": "#fbb434"
+			"color": "#fbb434",
+			"tags": [
+				"lost_sector"
+			]
 		}
 	]
 }

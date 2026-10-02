@@ -6,6 +6,7 @@ import exiledsector.skills.layout.Star;
 import exiledsector.skills.layout.StaticImage;
 import exiledsector.skills.loader.SkillTreeLoader;
 import exiledsector.skills.loader.SkillTypeLoader;
+import exiledsector.skills.loader.TreeRegionFilter;
 import exiledsector.skills.loader.WormholePairValidator;
 import org.apache.log4j.Logger;
 
@@ -28,6 +29,9 @@ public class SkillTree {
     private static final List<Star> STARS = new ArrayList<>();
     private static final Map<String, SkillNode> NODES_VIEW = Collections.unmodifiableMap(NODES);
     private static final Map<String, SkillType> TYPES_VIEW = Collections.unmodifiableMap(TYPES);
+    private static final Map<String, SkillNode> DECLARED_NODES = new LinkedHashMap<>();
+    private static SkillTreeLoader.ParsedTree declared;
+    private static Set<String> disabledRegions = Set.of();
     private static boolean loadedCompletely;
     private static SkillTreeTopology topology;
 
@@ -41,26 +45,51 @@ public class SkillTree {
         Map<String, SkillType> types = loadedTypes.types();
         TYPES.putAll(types);
 
-        SkillTreeLoader.ParsedTree parsed = SkillTreeLoader.loadAll(types);
-        for (SkillNode node : parsed.nodes) {
-            register(node);
+        declared = SkillTreeLoader.loadAll(types);
+        for (SkillNode node : declared.nodes) {
+            DECLARED_NODES.put(node.getId(), node);
         }
-        loadedCompletely = parsed.declaredNodeCount > 0 && NODES.size() == parsed.declaredNodeCount
+        loadedCompletely = declared.declaredNodeCount > 0 && DECLARED_NODES.size() == declared.declaredNodeCount
                 && TYPES.size() == loadedTypes.declaredCount();
-        for (String issue : WormholePairValidator.findIssues(NODES.values())) {
+        for (String issue : WormholePairValidator.findIssues(DECLARED_NODES.values())) {
             Logger.getLogger(SkillTree.class).error(issue);
         }
-        CURVES.putAll(parsed.connectorCurves);
-        HIDDEN_CONNECTOR_KEYS.addAll(parsed.hiddenConnectors);
-        STATIC_IMAGES.addAll(parsed.staticImages);
-        RING_BELTS.addAll(parsed.ringBelts);
-        STARS.addAll(parsed.stars);
+        activate();
+    }
+
+    public static void applyDisabledRegions(Set<String> regions) {
+        disabledRegions = Set.copyOf(regions);
+        activate();
+    }
+
+    public static Set<String> getDisabledRegions() {
+        return disabledRegions;
+    }
+
+    private static void activate() {
+        if (declared == null) return;
+
+        SkillTreeLoader.ParsedTree active = TreeRegionFilter.apply(declared, disabledRegions);
+        clearLayout();
+        NODES.clear();
+        for (SkillNode node : active.nodes) {
+            register(node);
+        }
+        CURVES.putAll(active.connectorCurves);
+        HIDDEN_CONNECTOR_KEYS.addAll(active.hiddenConnectors);
+        STATIC_IMAGES.addAll(active.staticImages);
+        RING_BELTS.addAll(active.ringBelts);
+        STARS.addAll(active.stars);
         topology = SkillTreeTopology.of(NODES.values());
     }
 
     public static void clear() {
         clearNodes();
         clearTypes();
+        clearLayout();
+    }
+
+    private static void clearLayout() {
         CURVES.clear();
         HIDDEN_CONNECTOR_KEYS.clear();
         STATIC_IMAGES.clear();
@@ -68,8 +97,15 @@ public class SkillTree {
         STARS.clear();
     }
 
+    public static SkillNode getDeclared(String nodeId) {
+        SkillNode node = DECLARED_NODES.get(nodeId);
+        return node != null ? node : NODES.get(nodeId);
+    }
+
     public static void clearNodes() {
         NODES.clear();
+        DECLARED_NODES.clear();
+        declared = null;
         topology = null;
     }
 

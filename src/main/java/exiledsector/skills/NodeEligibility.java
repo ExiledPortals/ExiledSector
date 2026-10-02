@@ -30,7 +30,7 @@ public final class NodeEligibility {
         if (!node.getType().allowsHullSize(hullSize) || !candidate.effectiveType().allowsHullSize(hullSize)) {
             return new Block(Kind.WRONG_HULL_SIZE, null, null);
         }
-        String unmetRequirement = NodeRequirements.firstUnmetHullRequirement(node.effectiveTags(option), ship.hasHullMod());
+        String unmetRequirement = NodeRequirements.firstUnmetHullRequirement(node.effectiveTags(option), ship);
         if (unmetRequirement != null) {
             return new Block(Kind.UNMET_HULL_REQUIREMENT, unmetRequirement, null);
         }

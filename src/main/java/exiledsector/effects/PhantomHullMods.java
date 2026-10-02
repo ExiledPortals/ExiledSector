@@ -34,7 +34,11 @@ public final class PhantomHullMods {
     private static void installOne(String hullModId) {
         if (isActive(hullModId)) return;
         HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
-        String originalClass = spec == null ? null : spec.getEffectClass();
+        if (spec == null) {
+            LOG.info("[ExiledSector] " + hullModId + " isn't loaded, so its nodes won't place it as a phantom hull mod.");
+            return;
+        }
+        String originalClass = spec.getEffectClass();
         HullModEffect probe = originalClass == null ? null : instantiate(originalClass);
         if (probe == null) {
             LOG.error("[ExiledSector] Can't make " + hullModId + " a phantom hull mod: no usable effect class; nodes will not place it.");

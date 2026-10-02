@@ -952,7 +952,7 @@ function uniqueImageId(){
 }
 function normalizeImages(images){
   return (images || []).map(function(img){
-    return { id: img.id, x: img.x, y: img.y, width: img.width, height: img.height, imagePath: img.imagePath || null, rotation: img.rotation || 0, rotationSpeed: img.rotationSpeed || 0 };
+    return { id: img.id, x: img.x, y: img.y, width: img.width, height: img.height, imagePath: img.imagePath || null, rotation: img.rotation || 0, rotationSpeed: img.rotationSpeed || 0, tags: img.tags ? img.tags.slice() : undefined };
   });
 }
 var VANILLA_STAR_TYPES = [
@@ -968,7 +968,7 @@ function uniqueStarId(){
 }
 function normalizeStars(stars){
   return (stars || []).map(function(s){
-    return { id: s.id, x: s.x, y: s.y, radius: s.radius, starType: s.starType || 'star_yellow', color: s.color || null };
+    return { id: s.id, x: s.x, y: s.y, radius: s.radius, starType: s.starType || 'star_yellow', color: s.color || null, tags: s.tags ? s.tags.slice() : undefined };
   });
 }
 function rotateAroundOrigin(localX, localY, deg){
@@ -2691,10 +2691,12 @@ function refreshAnchorInspector(body){
         '<div class="field"><label>Band width</label><input type="number" min="10" value="' + beltBandWidthVal + '" data-anchor-field="beltBandWidth"></div>' +
         '<div class="field"><label>Ring style</label><select data-anchor-field="beltStyle">' + beltStyleOptions + '</select></div>' +
       '</div>' +
-      '<div class="field"><label>Rotation speed (degrees/sec)</label><input type="number" step="0.1" value="' + (a.beltRotationSpeed || 0) + '" data-anchor-field="beltRotationSpeed"></div>'
+      '<div class="field"><label>Rotation speed (degrees/sec)</label><input type="number" step="0.1" value="' + (a.beltRotationSpeed || 0) + '" data-anchor-field="beltRotationSpeed"></div>' +
+      regionTagFieldHtml('anchor', a.tags)
     : '') +
     '<hr class="sep">' +
     '<button class="smallBtn danger" id="deleteAnchorBtn">Delete this anchor <span class="key">Q</span></button>';
+  wireRegionTagChips(body, 'anchor', a);
 
   body.querySelectorAll('[data-anchor-field]').forEach(function(inp){
     inp.addEventListener('change', function(){
@@ -2776,8 +2778,10 @@ function refreshImageInspector(body){
       '<div class="field"><label>Spin (deg/sec)</label><div class="fieldRow"><input type="number" step="0.05" value="' + (img.rotationSpeed || 0) + '" data-image-field="rotationSpeed" style="flex:1"><button class="smallBtn" type="button" id="reverseSpinBtn" title="Flip spin direction">Reverse</button></div></div>' +
     '</div>' +
     '<div class="field"><label>Image</label>' + pickerHtml + '</div>' +
+    regionTagFieldHtml('image', img.tags) +
     '<hr class="sep">' +
     '<button class="smallBtn danger" id="deleteImageBtn">Delete this image <span class="key">Q</span></button>';
+  wireRegionTagChips(body, 'image', img);
 
   body.querySelectorAll('[data-image-field]').forEach(function(inp){
     inp.addEventListener('change', function(){
@@ -2843,8 +2847,10 @@ function refreshStarInspector(body){
       '<input type="color" value="' + (s.color || '#fff2c0') + '" data-star-field="color" style="flex:1">' +
       '<button class="smallBtn" type="button" id="clearStarColorBtn">Use vanilla colour</button>' +
     '</div></div>' +
+    regionTagFieldHtml('star', s.tags) +
     '<hr class="sep">' +
     '<button class="smallBtn danger" id="deleteStarBtn">Delete this star <span class="key">Q</span></button>';
+  wireRegionTagChips(body, 'star', s);
 
   body.querySelectorAll('[data-star-field]').forEach(function(inp){
     inp.addEventListener('change', function(){
@@ -3025,7 +3031,7 @@ var EFFECT_NAMES = ['HULL_PERCENT','HULL_FLAT','HULL_MULT','ARMOR_PERCENT','ARMO
   'CORONA_RESISTANCE_MULT','BALLISTIC_WEAPON_LARGE_OP_COST_FLAT','BALLISTIC_WEAPON_PROJECTILE_SPEED_PERCENT','POST_BATTLE_SALVAGE_PERCENT','PHASE_FIELD_CONTRIBUTION_PERCENT',
   'NANOFORGE_HULL_REGEN_PERCENT','DISINTEGRATION_ARMOR_DAMAGE_PERCENT','WEAPON_AUTOFIRE_ACCURACY_PERCENT','TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT',
   'NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT','MEDIUM_ENERGY_SLOT_WEAPON_RANGE_FLAT','SHIELD_ABSORB_RATE_OF_FIRE_PERCENT',
-  'HEARTLESS_ON_NEARBY_DESTRUCTION_RANGE_FLAT','HEARTLESS_MAX_STACKS_FLAT','HEARTLESS_ARMOR_RESTORE_PERCENT','HEARTLESS_ARMOR_PERCENT_PER_STACK','HEARTLESS_MOBILITY_PENALTY_PERCENT_PER_STACK','HEARTLESS_RADIATION_EMP_FLAT','HEARTLESS_CREW_DEATH_CHANCE_PERCENT_PER_STACK','HEARTLESS_MISSILE_DAMAGE_PERCENT_PER_STACK','HEARTLESS_MISSILE_SPEED_PERCENT_PER_STACK',
+  'HEARTLESS_ON_NEARBY_DESTRUCTION_RANGE_FLAT','HEARTLESS_MAX_STACKS_FLAT','HEARTLESS_ARMOR_RESTORE_PERCENT','HEARTLESS_ARMOR_PERCENT_PER_STACK','HEARTLESS_MOBILITY_PENALTY_PERCENT_PER_STACK','HEARTLESS_RADIATION_EMP_FLAT','HEARTLESS_CREW_DEATH_CHANCE_PERCENT_PER_STACK','HEARTLESS_MISSILE_DAMAGE_PERCENT_PER_STACK','HEARTLESS_MISSILE_SPEED_PERCENT_PER_STACK','FLUX_SCALED_TOP_SPEED_FLAT','FLUX_SCALED_RATE_OF_FIRE_PERCENT','FLUX_CAPACITOR_EFFECTIVENESS_PERCENT','FIGHTER_ENGAGEMENT_RANGE_MULT','SYSTEM_CHARGES_FLAT','AUGMENTED_FLUX_SCALED_PENALTY_REDUCTION_PERCENT','AUGMENTED_INERTIAL_PROJECTILE_SPEED_PERCENT','AUGMENTED_SYSTEM_REGEN_PERCENT',
   'MAX_COMBAT_READINESS_PERCENT',
   'BALLISTIC_WEAPON_AMMO_FLAT','BALLISTIC_WEAPON_AMMO_MULT','BALLISTIC_WEAPON_AMMO_REGEN_MULT','BALLISTIC_WEAPON_DAMAGE_FLAT','BALLISTIC_WEAPON_DAMAGE_MULT','BALLISTIC_WEAPON_FIRE_RATE_MULT','BALLISTIC_WEAPON_FLUX_COST_MULT','BALLISTIC_WEAPON_FLUX_COST_PERCENT','BALLISTIC_WEAPON_PROJECTILE_SPEED_MULT','BALLISTIC_WEAPON_RANGE_FLAT','BEAM_WEAPON_AMMO_FLAT','BEAM_WEAPON_AMMO_MULT','BEAM_WEAPON_AMMO_PERCENT','BEAM_WEAPON_AMMO_REGEN_MULT','BEAM_WEAPON_AMMO_REGEN_PERCENT','BEAM_WEAPON_DAMAGE_FLAT','BEAM_WEAPON_DAMAGE_MULT','BEAM_WEAPON_FLUX_COST_MULT','BEAM_WEAPON_FLUX_COST_PERCENT','BEAM_WEAPON_PROJECTILE_SPEED_MULT','BEAM_WEAPON_PROJECTILE_SPEED_PERCENT','ENERGY_WEAPON_AMMO_FLAT','ENERGY_WEAPON_AMMO_MULT','ENERGY_WEAPON_AMMO_REGEN_MULT','ENERGY_WEAPON_DAMAGE_FLAT','ENERGY_WEAPON_DAMAGE_MULT','ENERGY_WEAPON_FIRE_RATE_MULT','ENERGY_WEAPON_FLUX_COST_MULT','ENERGY_WEAPON_FLUX_COST_PERCENT','ENERGY_WEAPON_PROJECTILE_SPEED_MULT','ENERGY_WEAPON_PROJECTILE_SPEED_PERCENT','ENERGY_WEAPON_RANGE_FLAT','MISSILE_WEAPON_AMMO_FLAT','MISSILE_WEAPON_AMMO_MULT','MISSILE_WEAPON_AMMO_REGEN_MULT','MISSILE_WEAPON_AMMO_REGEN_PERCENT','MISSILE_WEAPON_DAMAGE_FLAT','MISSILE_WEAPON_DAMAGE_MULT','MISSILE_WEAPON_FIRE_RATE_MULT','MISSILE_WEAPON_FLIGHT_ACCELERATION_MULT','MISSILE_WEAPON_FLIGHT_TURN_ACCELERATION_MULT','MISSILE_WEAPON_FLIGHT_TURN_RATE_MULT','MISSILE_WEAPON_FLUX_COST_MULT','MISSILE_WEAPON_FLUX_COST_PERCENT','MISSILE_WEAPON_HEALTH_MULT','MISSILE_WEAPON_HEALTH_PERCENT','MISSILE_WEAPON_PROJECTILE_SPEED_MULT','MISSILE_WEAPON_RANGE_FLAT','NON_BEAM_ENERGY_WEAPON_AMMO_FLAT','NON_BEAM_ENERGY_WEAPON_AMMO_MULT','NON_BEAM_ENERGY_WEAPON_AMMO_PERCENT','NON_BEAM_ENERGY_WEAPON_AMMO_REGEN_MULT','NON_BEAM_ENERGY_WEAPON_AMMO_REGEN_PERCENT','NON_BEAM_ENERGY_WEAPON_DAMAGE_FLAT','NON_BEAM_ENERGY_WEAPON_DAMAGE_MULT','NON_BEAM_ENERGY_WEAPON_FLUX_COST_MULT','NON_BEAM_ENERGY_WEAPON_PROJECTILE_SPEED_MULT','NON_BEAM_ENERGY_WEAPON_PROJECTILE_SPEED_PERCENT','NON_BEAM_ENERGY_WEAPON_RANGE_MULT','NON_BEAM_ENERGY_WEAPON_RANGE_PERCENT','WEAPON_AMMO_FLAT','WEAPON_AMMO_MULT','WEAPON_AMMO_PERCENT','WEAPON_AMMO_REGEN_MULT','WEAPON_AMMO_REGEN_PERCENT','WEAPON_DAMAGE_FLAT','WEAPON_DAMAGE_MULT','WEAPON_DURABILITY_MULT','WEAPON_FIRE_RATE_MULT','WEAPON_FIRE_RATE_PERCENT','WEAPON_FLUX_COST_MULT','WEAPON_FLUX_COST_PERCENT','WEAPON_PROJECTILE_SPEED_MULT','WEAPON_PROJECTILE_SPEED_PERCENT','WEAPON_RANGE_FLAT','WEAPON_RANGE_MULT','WEAPON_RANGE_PERCENT'];
 
@@ -3055,7 +3061,7 @@ var ALL_TAGS = ['flux','shield','armour','hull','speed','logistics','missile','f
   'weapons','point_defense','combat_readiness','repair','fleet_support','d_mods',
   'inner','luddic','tritachyon','hegemony','sindrian_dictat','pirate','REDACTED','persean_league','lost_sector',
   'req_shields','req_no_shields','req_phase','req_fighter_bays','req_no_fighter_bays','req_ballistic','req_missile','req_energy','req_beam','req_offensive_beam','req_non_beam_energy',
-  'req_flagship','req_civilian_hull','campaign_only','player_only'];
+  'req_flagship','req_civilian_hull','req_non_phase_hull','req_system_charges','campaign_only','player_only'];
 
 var REGION_TAGS = ['inner','luddic','tritachyon','hegemony','sindrian_dictat','pirate','REDACTED','persean_league','lost_sector'];
 var TAG_GROUPS = [
@@ -3097,6 +3103,24 @@ function renderTagChips(idPrefix, activeTags, groupKeys){
       }).join('') + '</div>');
   }
   return rows.join('');
+}
+
+function regionTagFieldHtml(idPrefix, tags){
+  return '<div class="field"><label>Area (region tag, used by the in-game area toggles)</label>' +
+    renderTagChips(idPrefix, tags || [], ['region']) + '</div>';
+}
+function wireRegionTagChips(root, idPrefix, obj){
+  var attr = 'data-' + idPrefix + '-toggle-tag';
+  root.querySelectorAll('[' + attr + ']').forEach(function(chip){
+    chip.addEventListener('click', function(){
+      var tag = chip.getAttribute(attr);
+      var current = obj.tags || [];
+      var tags = current.filter(function(other){ return other !== tag && !(isRegionTag(tag) && isRegionTag(other)); });
+      if (current.indexOf(tag) === -1) tags.push(tag);
+      if (tags.length) obj.tags = tags; else delete obj.tags;
+      saveLocal(); render(); refreshInspector();
+    });
+  });
 }
 
 function renderOptionalOptionsSelect(selectedIds, selfId){
@@ -3816,6 +3840,7 @@ function buildTreeExportObject(){
           if (a.beltBandWidth) ao.beltBandWidth = a.beltBandWidth;
           if (a.beltStyle) ao.beltStyle = a.beltStyle;
           if (a.beltRotationSpeed) ao.beltRotationSpeed = a.beltRotationSpeed;
+          if (a.tags && a.tags.length) ao.tags = a.tags;
         }
       }
       return ao;
@@ -3835,6 +3860,7 @@ function buildTreeExportObject(){
         ringArtPath: 'graphics/planets/ring_band_' + (a.beltStyle || 'asteroids') + '.png'
       };
       if (a.beltRotationSpeed) belt.rotationSpeed = a.beltRotationSpeed;
+      if (a.tags && a.tags.length) belt.tags = a.tags;
       return belt;
     });
   }
@@ -3843,6 +3869,7 @@ function buildTreeExportObject(){
       var io = { id: img.id, x: img.x, y: img.y, width: img.width, height: img.height, imagePath: img.imagePath || '' };
       if (img.rotation) io.rotation = img.rotation;
       if (img.rotationSpeed) io.rotationSpeed = img.rotationSpeed;
+      if (img.tags && img.tags.length) io.tags = img.tags;
       return io;
     });
   }
@@ -3850,6 +3877,7 @@ function buildTreeExportObject(){
     out.stars = state.stars.map(function(s){
       var so = { id: s.id, x: s.x, y: s.y, radius: s.radius, starType: s.starType || 'star_yellow' };
       if (s.color) so.color = s.color;
+      if (s.tags && s.tags.length) so.tags = s.tags;
       return so;
     });
   }

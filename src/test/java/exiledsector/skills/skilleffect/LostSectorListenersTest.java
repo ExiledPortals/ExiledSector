@@ -1,6 +1,8 @@
 package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.ModManagerAPI;
+import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.combat.ArmorGridAPI;
 import com.fs.starfarer.api.combat.CollisionGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
@@ -11,11 +13,13 @@ import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipEngineControllerAPI;
 import com.fs.starfarer.api.combat.ShipEngineControllerAPI.ShipEngineAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.compat.LostSectorCompat;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -102,6 +106,55 @@ class LostSectorListenersTest {
 
         verify(ballistic).unmodify("exiledSector_inertialSupercharger_a");
         verify(beam).unmodify("exiledSector_inertialSupercharger_a");
+    }
+
+    private void enableLostSector(boolean enabled) {
+        SettingsAPI settings = mock(SettingsAPI.class);
+        ModManagerAPI mods = mock(ModManagerAPI.class);
+        when(settings.getModManager()).thenReturn(mods);
+        when(mods.isModEnabled("lost_sector")).thenReturn(enabled);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+    }
+
+    private static ShipAPI augmentedInertialShip() {
+        ShipAPI ship = ship("a", 0f, Map.of(InertialSuperchargerListener.DAMAGE_PERCENT_PER_SPEED_KEY, 0.08f,
+                InertialSuperchargerListener.AUGMENTED_PROJECTILE_SPEED_KEY, 100f));
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(variant.hasHullMod(LostSectorCompat.AUGMENTED_SYSTEMS_HULLMOD_ID)).thenReturn(true);
+        when(ship.getVariant()).thenReturn(variant);
+        MutableShipStatsAPI stats = ship.getMutableStats();
+        when(stats.getBallisticWeaponDamageMult()).thenReturn(mock(MutableStat.class));
+        when(stats.getEnergyWeaponDamageMult()).thenReturn(mock(MutableStat.class));
+        when(stats.getBeamWeaponDamageMult()).thenReturn(mock(MutableStat.class));
+        when(stats.getProjectileSpeedMult()).thenReturn(mock(MutableStat.class));
+        return ship;
+    }
+
+    @Test
+    void withLostSectorAugmentedHullsAlsoGainProjectileSpeedFromTheDamageBonus() {
+        enableLostSector(true);
+        ShipAPI ship = augmentedInertialShip();
+        InertialSuperchargerListener listener = new InertialSuperchargerListener(ship);
+
+        ship.getVelocity().set(150f, 0f);
+        listener.advance(0.016f);
+        ship.getVelocity().set(0f, 0f);
+        listener.advance(0.016f);
+
+        verify(ship.getMutableStats().getProjectileSpeedMult()).modifyPercent("exiledSector_inertialSupercharger_a", 12f);
+        verify(ship.getMutableStats().getProjectileSpeedMult()).unmodify("exiledSector_inertialSupercharger_a");
+    }
+
+    @Test
+    void withoutLostSectorTheAugmentedProjectileSpeedNeverApplies() {
+        enableLostSector(false);
+        ShipAPI ship = augmentedInertialShip();
+        InertialSuperchargerListener listener = new InertialSuperchargerListener(ship);
+
+        ship.getVelocity().set(150f, 0f);
+        listener.advance(0.016f);
+
+        verify(ship.getMutableStats().getProjectileSpeedMult(), never()).modifyPercent(anyString(), anyFloat());
     }
 
     private static WeaponAPI weaponIn(WeaponAPI.WeaponType slotType, WeaponAPI.WeaponSize slotSize) {

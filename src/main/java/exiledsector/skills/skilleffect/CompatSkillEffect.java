@@ -2,12 +2,38 @@ package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
+import exiledsector.compat.LostSectorCompat;
 import exiledsector.compat.SecondInCommandCompat;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 
 public enum CompatSkillEffect implements SkillEffect {
 
+    AUGMENTED_SYSTEM_REGEN_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            if (LostSectorCompat.hasAugmentedSystems(stats.getVariant())) {
+                stats.getSystemRegenBonus().modifyPercent(modId, magnitude);
+            } else {
+                stats.getSystemRegenBonus().unmodify(modId);
+            }
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return LostSectorCompat.isModEnabled() ? EffectText.msg(this).arg("value", magnitude).styled() : null;
+        }
+
+        @Override
+        public boolean supportsTemporaryGating() {
+            return false;
+        }
+
+        @Override
+        public boolean lowerIsBetter() {
+            return false;
+        }
+    },
     CONVERTED_HANGAR_REFIT_TIME_MULT(FighterSkillEffect.FIGHTER_REFIT_TIME_MULT, Stats.CONVERTED_HANGAR_NO_REFIT_PENALTY),
     CONVERTED_HANGAR_REPLACEMENT_RATE_MULT(FighterSkillEffect.FIGHTER_REPLACEMENT_RATE_MULT, Stats.CONVERTED_HANGAR_NO_REFIT_PENALTY),
     CONVERTED_HANGAR_RELAUNCH_TIME_FLAT(FighterSkillEffect.FIGHTER_RELAUNCH_TIME_FLAT, Stats.CONVERTED_HANGAR_NO_REARM_INCREASE),
@@ -15,6 +41,10 @@ public enum CompatSkillEffect implements SkillEffect {
 
     private final SkillEffect penalty;
     private final String waiverStatId;
+
+    CompatSkillEffect() {
+        this(null, null);
+    }
 
     CompatSkillEffect(SkillEffect penalty, String waiverStatId) {
         this.penalty = penalty;

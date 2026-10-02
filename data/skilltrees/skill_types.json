@@ -1505,10 +1505,12 @@
 				}
 			],
 			"exclusiveHullMods": [
-				"nskr_criticalArmor",
 				"heavyarmor",
 				"tahlan_daemonarmor",
 				"tahlan_daemonplating"
+			],
+			"phantomHullMods": [
+				"nskr_criticalArmor"
 			],
 			"description": "The defenses of lightly armored ships can be significantly reinforced through targeted modifications to critical structural components.",
 			"tags": [
@@ -1524,9 +1526,13 @@
 				{
 					"effect": "NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT",
 					"magnitude": 0.08
+				},
+				{
+					"effect": "AUGMENTED_INERTIAL_PROJECTILE_SPEED_PERCENT",
+					"magnitude": 100
 				}
 			],
-			"exclusiveHullMods": [
+			"phantomHullMods": [
 				"nskr_inertial"
 			],
 			"description": "The ship's projectile weapons are supercharged, hitting harder the faster the ship moves.",
@@ -1550,7 +1556,7 @@
 					"magnitude": -10
 				}
 			],
-			"exclusiveHullMods": [
+			"phantomHullMods": [
 				"nskr_acoils"
 			],
 			"tags": [
@@ -1586,7 +1592,7 @@
 					"magnitude": 50
 				}
 			],
-			"exclusiveHullMods": [
+			"phantomHullMods": [
 				"nskr_absorption"
 			],
 			"description": "Extensive hull modifications enable this ship to absorb energy from incoming fire and redirect it to its weapon systems.",
@@ -1641,6 +1647,87 @@
 			],
 			"tags": [
 				"armour"
+			]
+		},
+		{
+			"id": "nskr_volatile",
+			"name": "Volatile Flux Injector",
+			"icon": "graphics/icons/nskr_volatile.png",
+			"tier": "KEYSTONE",
+			"effects": [
+				{
+					"effect": "FLUX_SCALED_RATE_OF_FIRE_PERCENT",
+					"magnitude": 40
+				},
+				{
+					"effect": "FLUX_CAPACITY_PERCENT",
+					"magnitude": 67
+				},
+				{
+					"effect": "FLUX_CAPACITOR_EFFECTIVENESS_PERCENT",
+					"magnitude": 67
+				},
+				{
+					"effect": "WEAPON_RANGE_THRESHOLD_FLAT",
+					"magnitude": 800
+				},
+				{
+					"effect": "WEAPON_RANGE_FALLOFF_MULT",
+					"magnitude": -50
+				},
+				{
+					"effect": "FIGHTER_ENGAGEMENT_RANGE_MULT",
+					"magnitude": -75
+				},
+				{
+					"effect": "AUGMENTED_FLUX_SCALED_PENALTY_REDUCTION_PERCENT",
+					"magnitude": 50
+				}
+			],
+			"hullSizeEffects": [
+				{
+					"effect": "FLUX_SCALED_TOP_SPEED_FLAT",
+					"frigate": 50,
+					"destroyer": 40,
+					"cruiser": 30,
+					"capitalShip": 20
+				}
+			],
+			"exclusiveHullMods": [
+				"safetyoverrides"
+			],
+			"phantomHullMods": [
+				"nskr_volatile"
+			],
+			"description": "Modifications to the ship's flux network boost speed and rate of fire while flux is low, but reduce both once flux passes half capacity.",
+			"tags": [
+				"flux",
+				"speed",
+				"weapons",
+				"req_non_phase_hull"
+			]
+		},
+		{
+			"id": "nskr_bigBats",
+			"name": "High Capacitance Banks",
+			"icon": "graphics/icons/nskr_bigBats.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "SYSTEM_CHARGES_FLAT",
+					"magnitude": 1
+				},
+				{
+					"effect": "AUGMENTED_SYSTEM_REGEN_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"phantomHullMods": [
+				"nskr_bigBats"
+			],
+			"description": "Massive reserves of spare power give the ship's systems extra charges, including systems in the defense slot.",
+			"tags": [
+				"req_system_charges"
 			]
 		},
 		{

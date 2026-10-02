@@ -19,6 +19,7 @@ import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.combat.listeners.HullDamageAboutToBeTakenListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
+import exiledsector.compat.LostSectorCompat;
 import exiledsector.i18n.StyledText;
 import exiledsector.ui.util.FallbackSupport;
 import org.apache.log4j.Logger;
@@ -100,7 +101,29 @@ public enum CombatSkillEffect implements BackedSkillEffect {
     HEARTLESS_MISSILE_DAMAGE_PERCENT_PER_STACK(LiveMunitionsListener.MISSILE_DAMAGE_PERCENT_PER_STACK_KEY,
             LiveMunitionsListener.class, LiveMunitionsListener::new),
     HEARTLESS_MISSILE_SPEED_PERCENT_PER_STACK(LiveMunitionsListener.MISSILE_SPEED_PERCENT_PER_STACK_KEY,
-            LiveMunitionsListener.class, LiveMunitionsListener::new);
+            LiveMunitionsListener.class, LiveMunitionsListener::new),
+    FLUX_SCALED_TOP_SPEED_FLAT(FluxScaledVolatilityListener.TOP_SPEED_KEY,
+            FluxScaledVolatilityListener.class, FluxScaledVolatilityListener::new),
+    FLUX_SCALED_RATE_OF_FIRE_PERCENT(FluxScaledVolatilityListener.RATE_OF_FIRE_KEY,
+            FluxScaledVolatilityListener.class, FluxScaledVolatilityListener::new),
+    AUGMENTED_FLUX_SCALED_PENALTY_REDUCTION_PERCENT(FluxScaledVolatilityListener.AUGMENTED_PENALTY_REDUCTION_KEY,
+            FluxScaledVolatilityListener.class, FluxScaledVolatilityListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return lostSectorOnly(super.description(magnitude));
+        }
+    },
+    AUGMENTED_INERTIAL_PROJECTILE_SPEED_PERCENT(InertialSuperchargerListener.AUGMENTED_PROJECTILE_SPEED_KEY,
+            InertialSuperchargerListener.class, InertialSuperchargerListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return lostSectorOnly(super.description(magnitude));
+        }
+    };
+
+    private static StyledText lostSectorOnly(StyledText description) {
+        return LostSectorCompat.isModEnabled() ? description : null;
+    }
 
     private static final String NON_BEAM_ENERGY_CHAIN_HIT_LIST_KEY = "exiledSector_energyChainHitList";
     private static final String NON_BEAM_ENERGY_CHAIN_COUNT_KEY = "exiledSector_energyChainCount";

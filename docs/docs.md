@@ -219,3 +219,23 @@ CR loss, damage-taken multipliers, combat repair times, fighter refit and relaun
 cost, fire rate, projectile speed and recoil. Stats fixed when the ship is built (hull, armor, shield arc,
 fighter bays, weapon ammo), campaign stats, combat listeners and conditional effects can't be. If any other
 effect appears on a temporary node, the loader logs an error and ignores the duration.
+
+## Areas and the area toggles
+
+Every node, star, ring belt and static image carries exactly one region tag: `inner` or one of the faction
+regions (`luddic`, `tritachyon`, `hegemony`, `sindrian_dictat`, `pirate`, `REDACTED`, `persean_league`,
+`lost_sector`). The editor sets it with the Area chips on nodes, stars, static images and asteroid-belt
+anchors. Plain orbit anchors aren't drawn in game and carry no tag. Connector curves and hidden connectors
+belong to the two nodes they join, so they don't need one.
+
+The Optional Areas setting decides which regions are switched off. The Lost Sector area (the Kesteven and
+Frozen Heart stars) is Auto by default, which shows it only when Lost Sector is installed; On and Off
+override that. `SkillTree` keeps the whole parsed tree and builds the active tree from it with
+`TreeRegionFilter`, at startup and again at the start of every game load, so a change takes effect on the
+next load. Switching a region off removes its nodes, every wormhole whose paired end is in it, the
+connections, curves and hidden connectors touching those nodes, and its stars, ring belts and images.
+
+Saved trees then lose the removed nodes through the usual unknown-node cleanup: OP and banked free
+allocations go back to the ship, and item costs go back to the player's cargo. Turning the region back on doesn't restore them. `AreaToggleDataTest` checks that every
+decoration has a region and that switching a toggled region off leaves every remaining node reachable from
+a root, with no dangling links or half wormholes.

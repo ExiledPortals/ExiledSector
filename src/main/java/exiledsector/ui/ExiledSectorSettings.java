@@ -8,6 +8,7 @@ import exiledsector.skills.npc.NpcTreeConfig;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.SkillNodeOpCost;
 import exiledsector.skills.skilleffect.MaxChainCountConfig;
+import exiledsector.skills.tags.AreaToggles;
 import exiledsector.skills.unlock.HiddenNodeDisplayConfig;
 import exiledsector.skills.unlock.UnlockConditionOverrides;
 import exiledsector.ui.inspect.NpcInspectConfig;
@@ -103,6 +104,11 @@ public final class ExiledSectorSettings {
                 Translation.text("settings.unlock.minShipLevel"), "", UnlockConditionOverrides.DEFAULT_DISABLED, MAIN_TAB);
         SettingsCreator.addBoolean(MOD_ID, UnlockConditionOverrides.DISABLE_MEMORY_FLAG_FIELD_ID,
                 Translation.text("settings.unlock.gameState"), "", UnlockConditionOverrides.DEFAULT_DISABLED, MAIN_TAB);
+
+        SettingsCreator.addHeader(MOD_ID, "exiledSector_areasHeader", Translation.text("settings.areas.header"), MAIN_TAB);
+        SettingsCreator.addText(MOD_ID, "exiledSector_areasAbout", Translation.text("settings.areas.about"), MAIN_TAB);
+        SettingsCreator.addRadio(MOD_ID, AreaToggles.LOST_SECTOR_FIELD_ID, Translation.text("settings.areas.lostSector.name"),
+                Translation.text("settings.areas.lostSector.tooltip"), AreaToggles.AUTO, String.join(",", AreaToggles.OPTIONS), MAIN_TAB);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_energyChainHeader", Translation.text("settings.energyChain.header"), MAIN_TAB);
         SettingsCreator.addInt(MOD_ID, MaxChainCountConfig.FIELD_ID,

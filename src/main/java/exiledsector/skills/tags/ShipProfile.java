@@ -8,22 +8,29 @@ import com.fs.starfarer.api.combat.WeaponAPI.AIHints;
 import com.fs.starfarer.api.combat.WeaponAPI.WeaponType;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
+import exiledsector.skills.ShipSystemCharges;
 
 import java.util.EnumSet;
 import java.util.Set;
 
 public record ShipProfile(HullSize hullSize, ShieldAPI.ShieldType shieldType, int fighterBays,
-                          Set<WeaponKind> weaponKinds, boolean flagship, float baseArmor, boolean phaseHull) {
+                          Set<WeaponKind> weaponKinds, boolean flagship, float baseArmor, boolean phaseHull,
+                          boolean limitedSystemCharges) {
 
     public ShipProfile {
         weaponKinds = weaponKinds == null ? Set.of() : Set.copyOf(weaponKinds);
+    }
+
+    public ShipProfile(HullSize hullSize, ShieldAPI.ShieldType shieldType, int fighterBays, Set<WeaponKind> weaponKinds,
+                       boolean flagship, float baseArmor, boolean phaseHull) {
+        this(hullSize, shieldType, fighterBays, weaponKinds, flagship, baseArmor, phaseHull, false);
     }
 
     public static ShipProfile of(FleetMemberAPI member) {
         ShipHullSpecAPI hullSpec = member.getHullSpec();
         return new ShipProfile(hullSpec.getHullSize(), hullSpec.getShieldType(), fighterBays(member, hullSpec),
                 fittedWeaponKinds(member.getVariant()), member.isFlagship(), hullSpec.getArmorRating(),
-                hullSpec.isPhase());
+                hullSpec.isPhase(), ShipSystemCharges.limited(hullSpec));
     }
 
     private static int fighterBays(FleetMemberAPI member, ShipHullSpecAPI hullSpec) {
