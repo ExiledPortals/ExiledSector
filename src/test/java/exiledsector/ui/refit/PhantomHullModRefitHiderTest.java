@@ -1,6 +1,7 @@
 package exiledsector.ui.refit;
 
 import com.fs.starfarer.api.EveryFrameScript;
+import com.fs.starfarer.api.GameState;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.CoreUITabId;
@@ -29,6 +30,7 @@ import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
@@ -37,9 +39,22 @@ class PhantomHullModRefitHiderTest {
 
     public static class Core {
         public final Tab tab = new Tab();
+        public final List<Object> children = new ArrayList<>();
 
         public Tab getCurrentTab() {
             return tab;
+        }
+
+        public List<Object> getChildrenNonCopy() {
+            return children;
+        }
+    }
+
+    public static class Dialog {
+        public final List<Object> children = new ArrayList<>();
+
+        public List<Object> getChildrenNonCopy() {
+            return children;
         }
     }
 
@@ -161,6 +176,7 @@ class PhantomHullModRefitHiderTest {
 
     @BeforeEach
     void setUp() {
+        PhantomHullModRefitHider.resetForTests();
         PhantomHullModStatus.clear();
         PhantomHullModStatus.markActive("safetyoverrides");
         PhantomHullModStatus.markActive("heavyarmor");
@@ -182,6 +198,7 @@ class PhantomHullModRefitHiderTest {
     @AfterEach
     void tearDown() {
         globalMock.close();
+        PhantomHullModRefitHider.resetForTests();
         PhantomHullModStatus.clear();
     }
 
@@ -260,26 +277,71 @@ class PhantomHullModRefitHiderTest {
         assertEquals(1, refitMods().list.items.size());
     }
 
-    @Test
-    void openingTheRefitScreenHidesItsFirstViewOnceTheTabIsInPlace() {
-        refitMods().list.items.add(row("safetyoverrides"));
-
-        new PhantomHullModRefitHider().reportAboutToOpenCoreTab(CoreUITabId.REFIT, null);
+    private EveryFrameScript scheduledHide() {
         ArgumentCaptor<EveryFrameScript> script = ArgumentCaptor.forClass(EveryFrameScript.class);
         verify(sector).addTransientScript(script.capture());
+        return script.getValue();
+    }
 
-        assertTrue(script.getValue().runWhilePaused());
-        assertFalse(script.getValue().isDone());
-        script.getValue().advance(0f);
+    @Test
+    void aListRebuiltWithAPhantomInItIsHiddenByOneScheduledPassWhateverRebuiltIt() {
+        globalMock.when(Global::getCurrentState).thenReturn(GameState.CAMPAIGN);
+        refitMods().list.items.add(row("safetyoverrides"));
 
-        assertTrue(script.getValue().isDone());
+        PhantomHullModRefitHider.requestHide();
+        EveryFrameScript hide = scheduledHide();
+        when(sector.hasTransientScript(any())).thenReturn(true);
+        PhantomHullModRefitHider.requestHide();
+
+        assertTrue(hide.runWhilePaused());
+        assertFalse(hide.isDone());
+        hide.advance(0f);
+
+        assertTrue(hide.isDone());
         assertTrue(refitMods().list.items.isEmpty());
     }
 
     @Test
-    void openingAnyOtherTabSchedulesNothing() {
-        new PhantomHullModRefitHider().reportAboutToOpenCoreTab(CoreUITabId.CARGO, null);
+    void aRebuildAfterThePassRanSchedulesAnotherOne() {
+        globalMock.when(Global::getCurrentState).thenReturn(GameState.CAMPAIGN);
+        when(sector.hasTransientScript(any())).thenReturn(true);
+        PhantomHullModRefitHider.requestHide();
+        scheduledHide().advance(0f);
+
+        PhantomHullModRefitHider.requestHide();
+
+        verify(sector, times(2)).addTransientScript(any());
+    }
+
+    @Test
+    void aPassLostWithAReloadedSaveIsScheduledAgain() {
+        globalMock.when(Global::getCurrentState).thenReturn(GameState.CAMPAIGN);
+        PhantomHullModRefitHider.requestHide();
+
+        PhantomHullModRefitHider.requestHide();
+
+        verify(sector, times(2)).addTransientScript(any());
+    }
+
+    @Test
+    void nothingIsScheduledOutsideTheCampaign() {
+        globalMock.when(Global::getCurrentState).thenReturn(GameState.COMBAT);
+
+        PhantomHullModRefitHider.requestHide();
 
         verify(sector, never()).addTransientScript(any());
+    }
+
+    @Test
+    void theCopyOfTheListInsideTheAddAndBuildInDialogIsHiddenToo() throws Throwable {
+        ModDisplay dialogCopy = new ModDisplay();
+        dialogCopy.mods.list.items.add(row("safetyoverrides"));
+        Dialog dialog = new Dialog();
+        dialog.children.add(dialogCopy);
+        core.children.add(dialog);
+
+        PhantomHullModRefitHider.hidePhantomRows(core);
+
+        assertEquals(List.of(), dialogCopy.mods.list.items);
     }
 }

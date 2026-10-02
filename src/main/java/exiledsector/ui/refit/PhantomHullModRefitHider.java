@@ -1,12 +1,13 @@
 package exiledsector.ui.refit;
 
 import com.fs.starfarer.api.EveryFrameScript;
+import com.fs.starfarer.api.GameState;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.CoreUITabId;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
+import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.listeners.CharacterStatsRefreshListener;
-import com.fs.starfarer.api.campaign.listeners.CoreUITabListener;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
@@ -20,12 +21,13 @@ import java.util.List;
 
 import static exiledsector.ui.refit.UiReflection.call;
 
-public class PhantomHullModRefitHider implements CharacterStatsRefreshListener, CoreUITabListener {
+public class PhantomHullModRefitHider implements CharacterStatsRefreshListener {
 
     private static final Logger LOG = Logger.getLogger(PhantomHullModRefitHider.class);
     static final int MAX_VISIBLE_ROWS = 10;
 
-    private boolean failed;
+    private static boolean failed;
+    private static HideOnce pending;
 
     @Override
     public void reportAboutToRefreshCharacterStatEffects() {
@@ -39,20 +41,26 @@ public class PhantomHullModRefitHider implements CharacterStatsRefreshListener, 
         }
     }
 
-    @Override
-    public void reportAboutToOpenCoreTab(CoreUITabId tab, Object param) {
-        if (tab == CoreUITabId.REFIT && !failed) {
-            Global.getSector().addTransientScript(new HideOnceOpened(this));
-        }
+    public static void requestHide() {
+        if (failed || Global.getCurrentState() != GameState.CAMPAIGN) return;
+        SectorAPI sector = Global.getSector();
+        if (sector == null || pending != null && !pending.done && sector.hasTransientScript(HideOnce.class)) return;
+        pending = new HideOnce();
+        sector.addTransientScript(pending);
     }
 
-    private void hideInRefitScreen(CampaignUIAPI campaignUI) {
+    static void resetForTests() {
+        failed = false;
+        pending = null;
+    }
+
+    private static void hideInRefitScreen(CampaignUIAPI campaignUI) {
         if (failed) return;
         try {
             hidePhantomRows(coreUI(campaignUI));
         } catch (Throwable e) {
             failed = true;
-            LOG.error("[ExiledSector] Could not hide phantom hull mods in the refit screen; they stay visible until the game is reloaded", e);
+            LOG.error("[ExiledSector] Could not hide phantom hull mods in the refit screen; they stay visible until the game is restarted", e);
         }
     }
 
@@ -64,10 +72,21 @@ public class PhantomHullModRefitHider implements CharacterStatsRefreshListener, 
 
     static void hidePhantomRows(Object core) throws Throwable {
         Object refitPanel = call(call(core, "getCurrentTab"), "getRefitPanel");
-        Object modWidget = call(call(refitPanel, "getModDisplay"), "getMods");
-        if (modWidget == null || !(call(call(refitPanel, "getShipDisplay"), "getCurrentVariant") instanceof ShipVariantAPI variant)) {
+        Object modDisplay = call(refitPanel, "getModDisplay");
+        if (modDisplay == null || !(call(call(refitPanel, "getShipDisplay"), "getCurrentVariant") instanceof ShipVariantAPI variant)) {
             return;
         }
+        hidePhantomRows(call(modDisplay, "getMods"), variant);
+        for (Object dialog : UiReflection.children(core)) {
+            for (Object child : UiReflection.children(dialog)) {
+                if (child != modDisplay && child.getClass() == modDisplay.getClass()) {
+                    hidePhantomRows(call(child, "getMods"), variant);
+                }
+            }
+        }
+    }
+
+    private static void hidePhantomRows(Object modWidget, ShipVariantAPI variant) throws Throwable {
         Object list = UiReflection.childWithMethod(modWidget, "collapseEmptySlots", 0);
         if (!(call(list, "getItems") instanceof List<?> rows)) return;
 
@@ -94,14 +113,9 @@ public class PhantomHullModRefitHider implements CharacterStatsRefreshListener, 
         call(modWidget, "pack");
     }
 
-    private static final class HideOnceOpened implements EveryFrameScript {
+    private static final class HideOnce implements EveryFrameScript {
 
-        private final PhantomHullModRefitHider hider;
         private boolean done;
-
-        private HideOnceOpened(PhantomHullModRefitHider hider) {
-            this.hider = hider;
-        }
 
         @Override
         public boolean isDone() {
@@ -119,7 +133,7 @@ public class PhantomHullModRefitHider implements CharacterStatsRefreshListener, 
             done = true;
             CampaignUIAPI campaignUI = Global.getSector().getCampaignUI();
             if (campaignUI != null) {
-                hider.hideInRefitScreen(campaignUI);
+                hideInRefitScreen(campaignUI);
             }
         }
     }

@@ -168,12 +168,14 @@ While the node is allocated, the real hull mod sits on the ship as a permanent m
 that checks for it (Ship Mastery System masteries, Second-in-Command skills, other mods) sees it. At startup
 this mod wraps each hull mod's vanilla effect: on normal ships it behaves exactly as vanilla, but on copies
 the skill tree placed it does nothing and shows a tooltip naming the node instead, so the node's own effects
-are the only ones that apply. The refit screen's installed hull mod list hides these copies. Every refit sync
-ends by refreshing character stats, so a `CharacterStatsRefreshListener` removes their rows right after the
-engine rebuilds the list, plus once when the refit tab opens, because its first sync runs before it becomes
-the current tab. It reaches the list through the game's own method names (`UiReflection` is the one file
-allowed to use reflection). If the screen's structure ever changes, it stops quietly or logs one error and
-the rows stay visible. The Add and Build In dialogs still show phantoms in their own lists. If the game created the effect before this mod could wrap it, the log says so
+are the only ones that apply. The refit screen's installed hull mod lists hide these copies, including the
+copy beside the Add and Build In dialogs. The engine's list widget is the only caller of the wrapper's
+`getDisplayCategoryIndex`, so every rebuild of a list holding a phantom schedules one hide pass that runs
+later in the same frame, before anything is drawn. Every refit sync also ends by refreshing character stats,
+so a `CharacterStatsRefreshListener` hides the main list straight away. It reaches the lists through the
+game's own method names (`UiReflection` is the one file allowed to use reflection). If the screen's structure
+ever changes, it stops quietly or logs one error and the rows stay visible. The dialogs' selectable tables
+still list phantoms. If the game created the effect before this mod could wrap it, the log says so
 and the node falls back to not placing the hull mod, and its tooltip stops claiming it does. Vanilla hull
 mods and their nodes are always 1:1: no hull mod is split across several node types, and no node type
 stands in for more than one hull mod (`SkillTypesDataConsistencyTest` enforces this).

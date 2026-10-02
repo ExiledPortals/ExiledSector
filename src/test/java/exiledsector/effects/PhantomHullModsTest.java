@@ -1,8 +1,10 @@
 package exiledsector.effects;
 
+import com.fs.starfarer.api.GameState;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.CampaignUIAPI.CoreUITradeMode;
+import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.HullModEffect;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -21,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -141,6 +144,19 @@ class PhantomHullModsTest {
         assertInstanceOf(RecordingHullModEffect.class, PhantomHullMods.vanillaEffect(createdEffect));
         HullModEffect plain = new RecordingHullModEffect();
         assertEquals(plain, PhantomHullMods.vanillaEffect(plain));
+    }
+
+    @Test
+    void anyHullModListRebuiltWithThisHullModAsksForTheRefitHidePass() {
+        engineCreatesEffectsLazily();
+        PhantomHullMods.install(List.of(HULL_MOD));
+        SectorAPI sector = mock(SectorAPI.class);
+        globalMock.when(Global::getSector).thenReturn(sector);
+        globalMock.when(Global::getCurrentState).thenReturn(GameState.CAMPAIGN);
+
+        createdEffect.getDisplayCategoryIndex();
+
+        verify(sector).addTransientScript(any());
     }
 
     @Test

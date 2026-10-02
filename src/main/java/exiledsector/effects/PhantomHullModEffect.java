@@ -19,6 +19,7 @@ import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.InstalledHullMods;
 import exiledsector.ui.VanillaText;
+import exiledsector.ui.refit.PhantomHullModRefitHider;
 
 import java.awt.Color;
 
@@ -218,6 +219,7 @@ public final class PhantomHullModEffect extends BaseHullMod {
 
     @Override
     public int getDisplayCategoryIndex() {
+        PhantomHullModRefitHider.requestHide();
         return original.getDisplayCategoryIndex();
     }
 
