@@ -43,6 +43,7 @@ class SkillTypesDataConsistencyTest {
 
     private static Set<String> ownHullMods(JSONObject type) throws Exception {
         Set<String> own = new LinkedHashSet<>(strings(type, "installedHullMods"));
+        own.addAll(strings(type, "phantomHullMods"));
         if (type.has("vanillaHullMod")) {
             own.add(type.getString("vanillaHullMod"));
         }

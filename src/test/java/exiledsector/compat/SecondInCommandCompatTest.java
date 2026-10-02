@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -151,6 +152,20 @@ class SecondInCommandCompatTest {
         String id = "node_" + SecondInCommandCompat.ENHANCED_OVERRIDES_SKILL_ID;
         verify(stats.getPeakCRDuration()).modifyPercent(id, 25f);
         verify(stats.getWeaponRangeThreshold()).modifyFlat(id, 100f);
+    }
+
+    @Test
+    void countsAsSafetyOverridesStandsDownOnceThePhantomHullModLetsTheSkillApplyItself() {
+        enableSecondInCommandWith(SecondInCommandCompat.ENHANCED_OVERRIDES_SKILL_ID);
+        MutableShipStatsAPI stats = mockStats();
+        when(stats.getVariant().hasHullMod("safetyoverrides")).thenReturn(true);
+
+        CompatSkillEffect.COUNTS_AS_SAFETY_OVERRIDES.apply(stats, "node", 0f);
+
+        String id = "node_" + SecondInCommandCompat.ENHANCED_OVERRIDES_SKILL_ID;
+        verify(stats.getPeakCRDuration(), never()).modifyPercent(id, 25f);
+        verify(stats.getPeakCRDuration()).unmodify(id);
+        verify(stats.getWeaponRangeThreshold()).unmodify(id);
     }
 
     @Test

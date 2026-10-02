@@ -1,6 +1,7 @@
 package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import exiledsector.compat.SecondInCommandCompat;
 import exiledsector.i18n.StyledText;
@@ -33,7 +34,8 @@ public enum CompatSkillEffect implements SkillEffect {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             String id = synergyId(modId, SecondInCommandCompat.ENHANCED_OVERRIDES_SKILL_ID);
-            if (isSkillActive(stats, SecondInCommandCompat.ENHANCED_OVERRIDES_SKILL_ID)) {
+            boolean skillSeesTheHullMod = stats.getVariant() != null && stats.getVariant().hasHullMod(HullMods.SAFETYOVERRIDES);
+            if (!skillSeesTheHullMod && isSkillActive(stats, SecondInCommandCompat.ENHANCED_OVERRIDES_SKILL_ID)) {
                 stats.getPeakCRDuration().modifyPercent(id, 25f);
                 stats.getWeaponRangeThreshold().modifyFlat(id, 100f);
             } else {

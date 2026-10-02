@@ -83,6 +83,7 @@ class SkillTreeHullModTest {
 
     @AfterEach
     void tearDown() {
+        PhantomHullMods.clearForTests();
         globalMock.close();
         lunaSettingsMock.close();
         SkillTree.clearNodes();
@@ -381,6 +382,48 @@ class SkillTreeHullModTest {
 
         verify(variant).addPermaMod("militarized_subsystems");
         verify(variant).addTag("exiledSector_installed_militarized_subsystems");
+    }
+
+    private static SkillNode registerPhantomSafetyOverridesNode() {
+        SkillType type = new SkillType.Builder("safety_overrides", "Safety Overrides", "a.png", SkillTier.KEYSTONE)
+                .phantomHullModIds(List.of("safetyoverrides"))
+                .build();
+        SkillNode node = new SkillNode("safety_overrides_1", type, List.of(), 0f, 0f);
+        SkillTree.register(node);
+        return node;
+    }
+
+    private void makeSafetyOverridesAPhantom() {
+        SettingsAPI settings = mock(SettingsAPI.class);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+        when(settings.getScriptClassLoader()).thenReturn(SkillTreeHullModTest.class.getClassLoader());
+        HullModSpecAPI spec = mock(HullModSpecAPI.class);
+        when(settings.getHullModSpec("safetyoverrides")).thenReturn(spec);
+        when(spec.getId()).thenReturn("safetyoverrides");
+        when(spec.getEffectClass()).thenReturn(RecordingHullModEffect.class.getName());
+        when(spec.getEffect()).thenAnswer(invocation -> {
+            PhantomHullModEffect effect = new PhantomHullModEffect();
+            effect.init(spec);
+            return effect;
+        });
+        PhantomHullMods.install(List.of("safetyoverrides"));
+    }
+
+    @Test
+    void aPhantomHullModIsPlacedAsATaggedPermaModOnlyOnceItsVanillaEffectIsWrapped() {
+        PhantomHullMods.clearForTests();
+        ShipSkillDataManager.get("ship-a").allocate(registerPhantomSafetyOverridesNode(), 1);
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(variant.getTags()).thenReturn(List.of());
+
+        SkillTreeHullMod.syncInstalledHullMods(memberWithId("ship-a"), variant);
+        verify(variant, never()).addPermaMod("safetyoverrides");
+
+        makeSafetyOverridesAPhantom();
+        SkillTreeHullMod.syncInstalledHullMods(memberWithId("ship-a"), variant);
+
+        verify(variant).addPermaMod("safetyoverrides");
+        verify(variant).addTag("exiledSector_installed_safetyoverrides");
     }
 
     @Test

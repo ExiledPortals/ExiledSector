@@ -1,4 +1,6 @@
 id,name
+A_S-F_PhantasmagoriaHullmod,Probability Space Hypervessel
+Cheat_Maya7s,Pristine Condition
 adaptive_coils,Adaptive Phase Coils
 adaptiveshields,Shield Conversion - Omni
 additional_berthing,Additional Berthing
@@ -7,17 +9,22 @@ advancedcore,Advanced Targeting Core
 advancedoptics,Advanced Optics
 advancedshieldemitter,Accelerated Shields
 armoredweapons,Armored Weapon Mounts
+attackmode7s,Extra Propulsion Systems
 augmentedengines,Augmented Drive Field
 autorepair,Automated Repair Unit
 auxiliary_fuel_tanks,Auxiliary Fuel Tanks
 auxiliarythrusters,Auxiliary Thrusters
 ballistic_rangefinder,Ballistic Rangefinder
 blast_doors,Blast Doors
+chasemode7s,Prototype Core
+cheat_tempestas7s,Pristine Condition
 converted_fighterbay,Converted Fighter Bay
 converted_hangar,Converted Hangar
 dedicated_targeting_core,Dedicated Targeting Core
+defensemode7s,Robust Flux Reactor
 defensive_targeting_array,Defensive Targeting Array
 distributed_fire_control,Distributed Fire Control
+drg_pdspec,PD Specialization
 eccm,ECCM Package
 ecm,ECM Package
 efficiency_overhaul,Efficiency Overhaul
@@ -25,9 +32,11 @@ expanded_cargo_holds,Expanded Cargo Holds
 expanded_deck_crew,Expanded Deck Crew
 extendedshieldemitter,Extended Shields
 fluxbreakers,Resistant Flux Conduits
+force_field7s,Repulse-Field
 frontemitter,Shield Conversion - Front
 frontshield,Makeshift Shield Generator
 ground_support,Ground Support Package
+guerrilla_overhaul7s,Guerrilla Overhaul
 hardened_subsystems,Hardened Subsystems
 hardenedshieldemitter,Hardened Shields
 hbi,Heavy Ballistics Integration
@@ -45,18 +54,27 @@ nskr_absorption,ABSORB System
 nskr_acoils,High-Energy Weapon Systems
 nskr_criticalArmor,Critical Point Protection
 nskr_inertial,Inertial Supercharger
+nskr_volatile,Volatile Flux Injector
+nsp_sandevistan,Enraged Systems
 operations_center,Operations Center
 phase_anchor,Phase Anchor
 phasefield,Phase Field
 pointdefenseai,Integrated Point Defense AI
+quantum_damper7s,Quantum Damper
 recovery_shuttles,Recovery Shuttles
 reinforcedhull,Reinforced Bulkheads
+resonance7s,Illusia Resonance
+safety_protocols7s,Safety Protocols
 safetyoverrides,Safety Overrides
 shield_shunt,Shield Shunt
+singularity_hullmod7s,Singularity Hullmod
 stabilizedshieldemitter,Stabilized Shields
 surveying_equipment,Surveying Equipment
 tahlan_daemonarmor,Hel Carapace
 tahlan_daemonplating,Hel Plating
+tahlan_silberherz,Silberherz Core
+tahlan_silberherz_minor,Silberherz Subcore
 targetingunit,Integrated Targeting Unit
 turretgyros,Advanced Turret Gyros
+uaf_special_edge_capacitor_retrofit,Edge Capacitors Retrofit
 unstable_injector,Unstable Injector

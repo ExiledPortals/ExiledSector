@@ -508,6 +508,27 @@
 				"CRUISER"
 			],
 			"exclusiveHullMods": [
+				"safetyoverrides",
+				"nskr_volatile",
+				"drg_pdspec",
+				"nsp_sandevistan",
+				"A_S-F_PhantasmagoriaHullmod",
+				"tahlan_silberherz",
+				"tahlan_silberherz_minor",
+				"uaf_special_edge_capacitor_retrofit",
+				"safety_protocols7s",
+				"guerrilla_overhaul7s",
+				"attackmode7s",
+				"chasemode7s",
+				"defensemode7s",
+				"force_field7s",
+				"resonance7s",
+				"Cheat_Maya7s",
+				"quantum_damper7s",
+				"singularity_hullmod7s",
+				"cheat_tempestas7s"
+			],
+			"phantomHullMods": [
 				"safetyoverrides"
 			],
 			"tags": [

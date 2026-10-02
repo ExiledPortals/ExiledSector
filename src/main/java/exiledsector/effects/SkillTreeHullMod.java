@@ -287,7 +287,11 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
     }
 
     public static boolean isInstalledBySkillTree(ShipVariantAPI variant, String hullModId) {
-        return variant.hasTag(INSTALLED_HULLMOD_TAG_PREFIX + hullModId);
+        return variant.hasTag(installedTag(hullModId));
+    }
+
+    static String installedTag(String hullModId) {
+        return INSTALLED_HULLMOD_TAG_PREFIX + hullModId;
     }
 
     private static boolean isRemovableConflict(ShipVariantAPI variant, String hullModId) {
@@ -299,6 +303,11 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         Set<String> ids = new LinkedHashSet<>();
         for (AllocatedNode allocated : allocatedNodes) {
             ids.addAll(allocated.effectiveType().getInstalledHullModIds());
+            for (String phantomHullModId : allocated.effectiveType().getPhantomHullModIds()) {
+                if (PhantomHullMods.isActive(phantomHullModId)) {
+                    ids.add(phantomHullModId);
+                }
+            }
         }
         return ids;
     }
