@@ -158,9 +158,10 @@ places Militarized Subsystems as a phantom, so vanilla's civilian-hull checks (s
 Berthing, Auxiliary Fuel Tanks, Expanded Cargo Holds, Assault Package) and Second-in-Command treat the
 ship as militarized.
 
-For Second-in-Command, `COUNTS_AS_SHIELD_SHUNT` and `COUNTS_AS_SAFETY_OVERRIDES` make those nodes count as
-the corresponding hull mods for SiC's skill synergies. The Converted Hangar penalties are waived by the
-vanilla flags or by SiC's Reconfiguration skill.
+Second-in-Command's hull mod synergies (Redistribution for Shield Shunt, Enhanced Overrides for Safety
+Overrides and so on) work through the phantoms, because SiC checks `variant.hasHullMod`. The Converted
+Hangar penalties are waived by the vanilla flags or by SiC's Reconfiguration skill. The skill check stays
+because SiC sets those flags in its own hull mod, which may apply after ours.
 
 Every node that stands in for a vanilla hull mod places that hull mod as a phantom (`phantomHullMods`).
 While the node is allocated, the real hull mod sits on the ship as a permanent mod costing no OP, so any mod
@@ -187,8 +188,7 @@ The phantom is a permanent mod, so another mod's hull mod that strips it as inco
 can't remove it; this mod removes the incompatible hull mod instead and shows the usual conflict warning.
 Safety Overrides also stays mutually exclusive with the strippers it knows about (LOST_SECTOR, HTE, NSP,
 A_S-F, Tahlan, UAF and Neoteric ones), which keeps them out of the refit screen in the first place.
-`COUNTS_AS_SHIELD_SHUNT` and `COUNTS_AS_SAFETY_OVERRIDES` stand down whenever the hull mod is present, so
-SiC's own skill applies instead of a copy. Removing ExiledSector from a save leaves these hull mods behind
+Removing ExiledSector from a save leaves these hull mods behind
 as real, permanent hull mods, so deallocate the nodes first.
 
 High Resolution Sensors and Phase Field aren't phantoms, because the game creates their fleet-wide effect

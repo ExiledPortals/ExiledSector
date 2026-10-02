@@ -160,10 +160,7 @@
     "effect.REMOVE_ALL_FIGHTER_BAYS": "Removes all of this ship's fighter bays.",
     "stat.ordnancePointCostOfLargeBallisticWeapons": "ordnance point cost of large ballistic weapons",
 
-    "compat.countsAs": "Counts as the {hullmod} hull mod for the Second-in-Command skill {skill}.",
     "compat.waived": "Waived by the Second-in-Command skill {skill}.",
-    "compat.skill.redistribution": "Redistribution",
-    "compat.skill.enhancedOverrides": "Enhanced Overrides",
     "compat.skill.reconfiguration": "Reconfiguration",
 
     "weapon.qualified": "{scope} {stat}",

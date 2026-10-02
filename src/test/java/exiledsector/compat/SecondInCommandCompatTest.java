@@ -24,11 +24,8 @@ import second_in_command.SCUtils;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -85,26 +82,26 @@ class SecondInCommandCompatTest {
 
     @Test
     void skillIsNeverActiveWhenSecondInCommandIsNotEnabled() {
-        SCUtils.ACTIVE_SKILLS.add(SecondInCommandCompat.REDISTRIBUTION_SKILL_ID);
+        SCUtils.ACTIVE_SKILLS.add(SecondInCommandCompat.RECONFIGURATION_SKILL_ID);
 
-        assertFalse(SecondInCommandCompat.isSkillActive(member, SecondInCommandCompat.REDISTRIBUTION_SKILL_ID));
+        assertFalse(SecondInCommandCompat.isSkillActive(member, SecondInCommandCompat.RECONFIGURATION_SKILL_ID));
     }
 
     @Test
     void readsSkillActivityFromSecondInCommandFleetData() {
         enableSecondInCommandWith();
-        assertFalse(SecondInCommandCompat.isSkillActive(member, SecondInCommandCompat.REDISTRIBUTION_SKILL_ID));
+        assertFalse(SecondInCommandCompat.isSkillActive(member, SecondInCommandCompat.RECONFIGURATION_SKILL_ID));
 
-        SCUtils.ACTIVE_SKILLS.add(SecondInCommandCompat.REDISTRIBUTION_SKILL_ID);
+        SCUtils.ACTIVE_SKILLS.add(SecondInCommandCompat.RECONFIGURATION_SKILL_ID);
 
-        assertTrue(SecondInCommandCompat.isSkillActive(member, SecondInCommandCompat.REDISTRIBUTION_SKILL_ID));
+        assertTrue(SecondInCommandCompat.isSkillActive(member, SecondInCommandCompat.RECONFIGURATION_SKILL_ID));
     }
 
     @Test
     void memberWithoutAFleetNeverHasActiveSkills() {
-        enableSecondInCommandWith(SecondInCommandCompat.REDISTRIBUTION_SKILL_ID);
+        enableSecondInCommandWith(SecondInCommandCompat.RECONFIGURATION_SKILL_ID);
 
-        assertFalse(SecondInCommandCompat.isSkillActive(mock(FleetMemberAPI.class), SecondInCommandCompat.REDISTRIBUTION_SKILL_ID));
+        assertFalse(SecondInCommandCompat.isSkillActive(mock(FleetMemberAPI.class), SecondInCommandCompat.RECONFIGURATION_SKILL_ID));
     }
 
     @Test
@@ -114,67 +111,6 @@ class SecondInCommandCompatTest {
 
         assertTrue(SecondInCommandCompat.hasDeactivatedSMod(variant, "hbi"));
         assertFalse(SecondInCommandCompat.hasDeactivatedSMod(variant, "heavyarmor"));
-    }
-
-    @Test
-    void countsAsShieldShuntAppliesRedistributionUnderItsOwnModId() {
-        enableSecondInCommandWith(SecondInCommandCompat.REDISTRIBUTION_SKILL_ID);
-        MutableShipStatsAPI stats = mockStats();
-
-        CompatSkillEffect.COUNTS_AS_SHIELD_SHUNT.apply(stats, "node", 0f);
-
-        String id = "node_" + SecondInCommandCompat.REDISTRIBUTION_SKILL_ID;
-        verify(stats.getFluxDissipation()).modifyPercent(id, 5f);
-        verify(stats.getArmorBonus()).modifyPercent(id, 10f);
-        verify(stats.getEmpDamageTakenMult()).modifyMult(id, 0.75f);
-    }
-
-    @Test
-    void countsAsShieldShuntRemovesRedistributionWhenTheSkillIsInactive() {
-        enableSecondInCommandWith();
-        MutableShipStatsAPI stats = mockStats();
-
-        CompatSkillEffect.COUNTS_AS_SHIELD_SHUNT.apply(stats, "node", 0f);
-
-        String id = "node_" + SecondInCommandCompat.REDISTRIBUTION_SKILL_ID;
-        verify(stats.getFluxDissipation()).unmodify(id);
-        verify(stats.getArmorBonus()).unmodify(id);
-        verify(stats.getEmpDamageTakenMult()).unmodify(id);
-    }
-
-    @Test
-    void countsAsSafetyOverridesAppliesEnhancedOverrides() {
-        enableSecondInCommandWith(SecondInCommandCompat.ENHANCED_OVERRIDES_SKILL_ID);
-        MutableShipStatsAPI stats = mockStats();
-
-        CompatSkillEffect.COUNTS_AS_SAFETY_OVERRIDES.apply(stats, "node", 0f);
-
-        String id = "node_" + SecondInCommandCompat.ENHANCED_OVERRIDES_SKILL_ID;
-        verify(stats.getPeakCRDuration()).modifyPercent(id, 25f);
-        verify(stats.getWeaponRangeThreshold()).modifyFlat(id, 100f);
-    }
-
-    @Test
-    void countsAsSafetyOverridesStandsDownOnceThePhantomHullModLetsTheSkillApplyItself() {
-        enableSecondInCommandWith(SecondInCommandCompat.ENHANCED_OVERRIDES_SKILL_ID);
-        MutableShipStatsAPI stats = mockStats();
-        when(stats.getVariant().hasHullMod("safetyoverrides")).thenReturn(true);
-
-        CompatSkillEffect.COUNTS_AS_SAFETY_OVERRIDES.apply(stats, "node", 0f);
-
-        String id = "node_" + SecondInCommandCompat.ENHANCED_OVERRIDES_SKILL_ID;
-        verify(stats.getPeakCRDuration(), never()).modifyPercent(id, 25f);
-        verify(stats.getPeakCRDuration()).unmodify(id);
-        verify(stats.getWeaponRangeThreshold()).unmodify(id);
-    }
-
-    @Test
-    void synergyEffectsOnlyDescribeThemselvesWhenSecondInCommandIsEnabled() {
-        assertNull(CompatSkillEffect.COUNTS_AS_SHIELD_SHUNT.description(0f));
-
-        enableSecondInCommandWith();
-
-        assertNotNull(CompatSkillEffect.COUNTS_AS_SHIELD_SHUNT.description(0f));
     }
 
     @Test
@@ -212,31 +148,30 @@ class SecondInCommandCompatTest {
     }
 
     @Test
-    void convertedHangarPenaltiesSupportTemporaryGatingButSynergiesDoNot() {
+    void convertedHangarPenaltiesSupportTemporaryGating() {
         assertTrue(CompatSkillEffect.CONVERTED_HANGAR_REFIT_TIME_MULT.supportsTemporaryGating());
-        assertFalse(CompatSkillEffect.COUNTS_AS_SAFETY_OVERRIDES.supportsTemporaryGating());
     }
 
     @Test
     void missingSecondInCommandClassesDisableTheChecksInsteadOfThrowing() {
-        enableSecondInCommandWith(SecondInCommandCompat.REDISTRIBUTION_SKILL_ID);
+        enableSecondInCommandWith(SecondInCommandCompat.RECONFIGURATION_SKILL_ID);
         when(settings.getScriptClassLoader()).thenReturn(new ClassLoader(null) {
         });
 
-        assertFalse(SecondInCommandCompat.isSkillActive(member, SecondInCommandCompat.REDISTRIBUTION_SKILL_ID));
+        assertFalse(SecondInCommandCompat.isSkillActive(member, SecondInCommandCompat.RECONFIGURATION_SKILL_ID));
 
         when(settings.getScriptClassLoader()).thenReturn(getClass().getClassLoader());
-        assertFalse(SecondInCommandCompat.isSkillActive(member, SecondInCommandCompat.REDISTRIBUTION_SKILL_ID));
+        assertFalse(SecondInCommandCompat.isSkillActive(member, SecondInCommandCompat.RECONFIGURATION_SKILL_ID));
     }
 
     @Test
     void anExceptionInsideSecondInCommandDisablesTheChecksInsteadOfCrashing() {
-        enableSecondInCommandWith(SecondInCommandCompat.REDISTRIBUTION_SKILL_ID);
+        enableSecondInCommandWith(SecondInCommandCompat.RECONFIGURATION_SKILL_ID);
         SCUtils.failure = new SecurityException("File access and reflection are not allowed to scripts.");
 
-        assertFalse(SecondInCommandCompat.isSkillActive(member, SecondInCommandCompat.REDISTRIBUTION_SKILL_ID));
+        assertFalse(SecondInCommandCompat.isSkillActive(member, SecondInCommandCompat.RECONFIGURATION_SKILL_ID));
 
         SCUtils.failure = null;
-        assertFalse(SecondInCommandCompat.isSkillActive(member, SecondInCommandCompat.REDISTRIBUTION_SKILL_ID));
+        assertFalse(SecondInCommandCompat.isSkillActive(member, SecondInCommandCompat.RECONFIGURATION_SKILL_ID));
     }
 }

@@ -17,8 +17,6 @@ public final class SecondInCommandCompat {
 
     public static final String MOD_ID = "second_in_command";
     public static final String CONTROLLER_HULLMOD_ID = "sc_skill_controller";
-    public static final String REDISTRIBUTION_SKILL_ID = "sc_improvisation_redistribution";
-    public static final String ENHANCED_OVERRIDES_SKILL_ID = "sc_improvisation_enhanced_overrides";
     public static final String RECONFIGURATION_SKILL_ID = "sc_strikecraft_reconfiguration";
     private static final String INACTIVE_SMOD_TAG_PREFIX = "sc_inactive_smods_";
 
