@@ -42,8 +42,7 @@ class SkillTypesDataConsistencyTest {
     }
 
     private static Set<String> ownHullMods(JSONObject type) throws Exception {
-        Set<String> own = new LinkedHashSet<>(strings(type, "installedHullMods"));
-        own.addAll(strings(type, "phantomHullMods"));
+        Set<String> own = new LinkedHashSet<>(strings(type, "phantomHullMods"));
         if (type.has("vanillaHullMod")) {
             own.add(type.getString("vanillaHullMod"));
         }
@@ -83,8 +82,7 @@ class SkillTypesDataConsistencyTest {
     }
 
     private static Set<String> standInHullMods(JSONObject type) throws Exception {
-        Set<String> standIns = new LinkedHashSet<>(strings(type, "installedHullMods"));
-        standIns.addAll(strings(type, "phantomHullMods"));
+        Set<String> standIns = new LinkedHashSet<>(strings(type, "phantomHullMods"));
         if (type.has("vanillaHullMod")) {
             standIns.add(type.getString("vanillaHullMod"));
         }

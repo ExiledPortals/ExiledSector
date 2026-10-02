@@ -28,7 +28,6 @@ public class SkillType {
     private final String todo;
     private final List<String> optionalOptionIds;
     private final List<String> exclusiveHullModIds;
-    private final List<String> installedHullModIds;
     private final List<String> phantomHullModIds;
     private final List<String> exclusiveSkillTypeIds;
     private final List<UnlockCondition> unlockConditions;
@@ -50,7 +49,6 @@ public class SkillType {
         this.todo = builder.todo;
         this.optionalOptionIds = builder.optionalOptionIds == null ? Collections.emptyList() : builder.optionalOptionIds;
         this.exclusiveHullModIds = builder.exclusiveHullModIds == null ? Collections.emptyList() : builder.exclusiveHullModIds;
-        this.installedHullModIds = builder.installedHullModIds == null ? Collections.emptyList() : builder.installedHullModIds;
         this.phantomHullModIds = builder.phantomHullModIds == null ? Collections.emptyList() : builder.phantomHullModIds;
         this.exclusiveSkillTypeIds = builder.exclusiveSkillTypeIds == null ? Collections.emptyList() : builder.exclusiveSkillTypeIds;
         this.unlockConditions = builder.unlockConditions == null ? Collections.emptyList() : builder.unlockConditions;
@@ -72,7 +70,6 @@ public class SkillType {
         private String todo;
         private List<String> optionalOptionIds = Collections.emptyList();
         private List<String> exclusiveHullModIds = Collections.emptyList();
-        private List<String> installedHullModIds = Collections.emptyList();
         private List<String> phantomHullModIds = Collections.emptyList();
         private List<String> exclusiveSkillTypeIds = Collections.emptyList();
         private List<UnlockCondition> unlockConditions = Collections.emptyList();
@@ -132,11 +129,6 @@ public class SkillType {
 
         public Builder exclusiveHullModIds(List<String> exclusiveHullModIds) {
             this.exclusiveHullModIds = exclusiveHullModIds;
-            return this;
-        }
-
-        public Builder installedHullModIds(List<String> installedHullModIds) {
-            this.installedHullModIds = installedHullModIds;
             return this;
         }
 
@@ -234,11 +226,6 @@ public class SkillType {
         if (vanillaHullModId != null && !combined.contains(vanillaHullModId)) {
             combined.add(vanillaHullModId);
         }
-        for (String installedHullModId : installedHullModIds) {
-            if (!combined.contains(installedHullModId)) {
-                combined.add(installedHullModId);
-            }
-        }
         for (String phantomHullModId : phantomHullModIds) {
             if (!combined.contains(phantomHullModId)) {
                 combined.add(phantomHullModId);
@@ -252,10 +239,6 @@ public class SkillType {
             return vanillaHullModId;
         }
         return exclusiveHullModIds.isEmpty() ? null : exclusiveHullModIds.get(0);
-    }
-
-    public List<String> getInstalledHullModIds() {
-        return installedHullModIds;
     }
 
     public List<String> getPhantomHullModIds() {

@@ -2442,9 +2442,23 @@
 			"effects": [
 				{
 					"effect": "REQUIRES_CIVILIAN_GRADE_HULL"
+				},
+				{
+					"effect": "REMOVE_CIVILIAN_HULL_PENALTY"
+				},
+				{
+					"effect": "BURN_LEVEL_FLAT",
+					"magnitude": 1
+				},
+				{
+					"effect": "MIN_CREW_PERCENT",
+					"magnitude": 100
 				}
 			],
-			"installedHullMods": [
+			"exclusiveHullMods": [
+				"militarized_subsystems"
+			],
+			"phantomHullMods": [
 				"militarized_subsystems"
 			],
 			"tags": [

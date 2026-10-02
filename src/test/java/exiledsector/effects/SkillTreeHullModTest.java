@@ -20,6 +20,7 @@ import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
 import exiledsector.ExiledSectorModPlugin;
 import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.PhantomHullModStatus;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.progression.SkillNodeOpCost;
@@ -360,8 +361,9 @@ class SkillTreeHullModTest {
 
     private static SkillNode registerMilitarizedNode() {
         SkillType militarizedType = new SkillType.Builder("militarized_subsystems", "Militarized Subsystems", "a.png", SkillTier.NOTABLE)
-                .installedHullModIds(List.of("militarized_subsystems"))
+                .phantomHullModIds(List.of("militarized_subsystems"))
                 .build();
+        PhantomHullModStatus.markActive("militarized_subsystems");
         SkillNode militarizedNode = new SkillNode("militarized_subsystems_1", militarizedType, List.of(), 0f, 0f);
         SkillTree.register(militarizedNode);
         return militarizedNode;
@@ -1443,11 +1445,12 @@ class SkillTreeHullModTest {
     }
 
     @Test
-    void anNpcTaggedShipStillGetsTheHullmodsItsNodesInstall() {
+    void anNpcTaggedShipStillGetsThePhantomHullModsItsNodesPlace() {
         registerNpcRoot();
         SkillType militarizedType = new SkillType.Builder("militarized_subsystems", "Militarized Subsystems", "a.png", SkillTier.NOTABLE)
-                .installedHullModIds(List.of("militarized_subsystems"))
+                .phantomHullModIds(List.of("militarized_subsystems"))
                 .build();
+        PhantomHullModStatus.markActive("militarized_subsystems");
         SkillTree.register(new SkillNode("militarized_subsystems_1", militarizedType, List.of("root_1"), 0f, 0f));
         ShipVariantAPI variant = npcVariant("militarized_subsystems_1");
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);

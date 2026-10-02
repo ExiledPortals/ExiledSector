@@ -61,7 +61,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         if (!npcTree) {
             syncOpSpentHullMod(stats.getFleetMember(), stats.getVariant());
         }
-        syncInstalledHullMods(installedHullModIds(allocated), stats.getVariant());
+        syncInstalledHullMods(activePhantomHullModIds(allocated), stats.getVariant());
         if (npcTree) {
             removeHullModsThatTriedToStripAPhantom(allocated, stats.getVariant(), false);
         } else {
@@ -258,7 +258,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         ShipSkillData data = SkillDataResolver.resolve(member, variant);
         if (data == null) return;
 
-        syncInstalledHullMods(installedHullModIds(AllocatedNode.of(data)), variant);
+        syncInstalledHullMods(activePhantomHullModIds(AllocatedNode.of(data)), variant);
     }
 
     private static void syncInstalledHullMods(Set<String> wanted, ShipVariantAPI variant) {
@@ -304,10 +304,9 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         return variant.hasHullMod(hullModId) && !builtIn && !isInstalledBySkillTree(variant, hullModId);
     }
 
-    private static Set<String> installedHullModIds(List<AllocatedNode> allocatedNodes) {
+    private static Set<String> activePhantomHullModIds(List<AllocatedNode> allocatedNodes) {
         Set<String> ids = new LinkedHashSet<>();
         for (AllocatedNode allocated : allocatedNodes) {
-            ids.addAll(allocated.effectiveType().getInstalledHullModIds());
             for (String phantomHullModId : allocated.effectiveType().getPhantomHullModIds()) {
                 if (PhantomHullMods.isActive(phantomHullModId)) {
                     ids.add(phantomHullModId);

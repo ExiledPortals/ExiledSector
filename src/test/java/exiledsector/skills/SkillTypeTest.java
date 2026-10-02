@@ -60,14 +60,14 @@ class SkillTypeTest {
     }
 
     @Test
-    void installedHullModsAreAlsoExclusiveWithoutBeingListedTwice() {
+    void phantomHullModsAreAlsoExclusiveWithoutBeingListedTwice() {
         SkillType type = new SkillType.Builder("t", "T", "a.png", SkillTier.NOTABLE)
                 .exclusiveHullModIds(List.of("frontshield", "militarized_subsystems"))
-                .installedHullModIds(List.of("militarized_subsystems"))
+                .phantomHullModIds(List.of("militarized_subsystems"))
                 .build();
 
         assertEquals(List.of("frontshield", "militarized_subsystems"), type.getExclusiveHullModIds());
-        assertEquals(List.of("militarized_subsystems"), type.getInstalledHullModIds());
+        assertEquals(List.of("militarized_subsystems"), type.getPhantomHullModIds());
     }
 
     @Test
@@ -115,7 +115,7 @@ class SkillTypeTest {
     @Test
     void aTypeWithoutHullmodLinksHasNoEquivalentHullmod() {
         SkillType type = new SkillType.Builder("t", "T", "a.png", SkillTier.SMALL)
-                .installedHullModIds(List.of("militarized_subsystems"))
+                .phantomHullModIds(List.of("militarized_subsystems"))
                 .build();
 
         assertNull(type.getEquivalentHullModId());

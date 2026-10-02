@@ -196,7 +196,6 @@
     "weapon.note.perWeapon": "This is set directly on each weapon: it's correct in combat, but the refit screen's weapon tooltips won't show it.",
     "weapon.guidanceImproved": "Significantly improved missile guidance algorithm.",
 
-    "node.installs": "Installs the {hullmod} hull mod at no OP cost.",
     "node.phantom": "The ship counts as having the {hullmod} hull mod, so other mods' effects that check for it apply. The hull mod itself does nothing and costs no OP.",
     "node.temporary": "These effects only last for the first {seconds} seconds after the ship is deployed.",
     "node.itemCost": "Costs {quantity} {item} to allocate. It is returned to you upon de-allocation.",

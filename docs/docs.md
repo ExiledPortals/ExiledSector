@@ -152,8 +152,11 @@ Ground Support (`GROUND_SUPPORT_FLAT` plus `GROUND_SUPPORT_PER_MAX_CREW_PERCENT`
 hull mod's flat ground support plus a share of the ship's maximum crew capacity, and is mutually
 exclusive with Ground Support and Advanced Ground Support.
 
-Militarized Subsystems installs the real vanilla hull mod as a permanent mod costing no OP, so that vanilla
-and Second-in-Command checks recognise it. It requires a civilian hull.
+Militarized Subsystems requires a civilian hull and applies the vanilla hull mod's effects itself: the
+civilian-grade sensor penalties are removed, maximum burn level goes up by 1 and minimum crew by 100%. It
+places Militarized Subsystems as a phantom, so vanilla's civilian-hull checks (skills, Additional
+Berthing, Auxiliary Fuel Tanks, Expanded Cargo Holds, Assault Package) and Second-in-Command treat the
+ship as militarized.
 
 For Second-in-Command, `COUNTS_AS_SHIELD_SHUNT` and `COUNTS_AS_SAFETY_OVERRIDES` make those nodes count as
 the corresponding hull mods for SiC's skill synergies. The Converted Hangar penalties are waived by the
@@ -178,8 +181,7 @@ SiC's own skill applies instead of a copy. Removing ExiledSector from a save lea
 as real, permanent hull mods, so deallocate the nodes first.
 
 High Resolution Sensors and Phase Field aren't phantoms, because the game creates their fleet-wide effect
-separately and it can't be wrapped. The LOST_SECTOR nodes and Militarized Subsystems aren't phantoms either;
-Militarized Subsystems installs its real hull mod instead.
+separately and it can't be wrapped. The LOST_SECTOR nodes aren't phantoms either.
 
 Ballistic Rangefinder, Missile Autoloader, Defensive Targeting Array and Neural Interface are passthrough
 nodes (`vanillaHullMod`). Rather than installing the hull mod, they run its code under the hull mod's id.

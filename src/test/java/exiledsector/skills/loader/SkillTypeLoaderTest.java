@@ -425,12 +425,6 @@ class SkillTypeLoaderTest {
     }
 
     @Test
-    void temporaryGatingIsDroppedWhenTheTypeInstallsHullMods() throws Exception {
-        assertNull(temporarySecondsFor("\"effects\": [ { \"effect\": \"TOP_SPEED_PERCENT\", \"magnitude\": 10 } ],"
-                + "\"installedHullMods\": [ \"heavyarmor\" ]"));
-    }
-
-    @Test
     void temporaryGatingIsDroppedWhenTheTypePlacesPhantomHullMods() throws Exception {
         assertNull(temporarySecondsFor("\"effects\": [ { \"effect\": \"TOP_SPEED_PERCENT\", \"magnitude\": 10 } ],"
                 + "\"phantomHullMods\": [ \"safetyoverrides\" ]"));

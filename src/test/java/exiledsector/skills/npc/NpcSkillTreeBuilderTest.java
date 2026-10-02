@@ -293,7 +293,7 @@ class NpcSkillTreeBuilderTest {
 
     @Test
     void skipsOptionalNodesWhoseChosenOptionConflictsWithAPermanentHullmod() {
-        registerType(builder("cargo_option", SkillTier.SMALL).installedHullModIds(List.of("expanded_cargo_holds")).build());
+        registerType(builder("cargo_option", SkillTier.SMALL).phantomHullModIds(List.of("expanded_cargo_holds")).build());
         node("optional_1", registerType(builder("optional", SkillTier.SMALL).optionalOptionIds(List.of("cargo_option")).build()), ROOT);
 
         NpcTreeBuild build = NpcSkillTreeBuilder.build(layout(entry("optional_1", "cargo_option")), 5,

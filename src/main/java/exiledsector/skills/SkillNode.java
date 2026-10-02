@@ -64,9 +64,6 @@ public class SkillNode extends SkillTreeObject {
         for (SkillTypeEffect effect : WeaponEffectTooltipAggregator.collapse(described)) {
             addLine(lines, effect.effect().description(effect.magnitude()), effect.effect().lowerIsBetter());
         }
-        for (String hullModId : type.getInstalledHullModIds()) {
-            addLine(lines, Translation.msg("node.installs").arg("hullmod", HullModNames.displayName(hullModId)).styled(), false);
-        }
         for (String hullModId : type.getPhantomHullModIds()) {
             if (PhantomHullModStatus.isActive(hullModId)) {
                 addLine(lines, Translation.msg("node.phantom").arg("hullmod", HullModNames.displayName(hullModId)).styled(), false);
@@ -119,8 +116,7 @@ public class SkillNode extends SkillTreeObject {
     private static StyledText describeExclusivity(SkillType type) {
         Set<String> hullModNames = new LinkedHashSet<>();
         for (String hullModId : type.getExclusiveHullModIds()) {
-            boolean placedByNode = type.getInstalledHullModIds().contains(hullModId)
-                    || type.getPhantomHullModIds().contains(hullModId) && PhantomHullModStatus.isActive(hullModId);
+            boolean placedByNode = type.getPhantomHullModIds().contains(hullModId) && PhantomHullModStatus.isActive(hullModId);
             String name = placedByNode ? null : HullModNames.loadedDisplayName(hullModId);
             if (name != null) {
                 hullModNames.add(name);

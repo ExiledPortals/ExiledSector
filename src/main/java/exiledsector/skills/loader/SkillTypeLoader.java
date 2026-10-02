@@ -73,7 +73,6 @@ public final class SkillTypeLoader {
         List<HullSizeSkillEffect> hullSizeEffects = parseHullSizeEffects(json.optJSONArray("hullSizeEffects"));
         List<String> optionalOptionIds = parseStringArray(json.optJSONArray("optionalOptions"));
         List<String> exclusiveHullModIds = parseStringArray(json.optJSONArray("exclusiveHullMods"));
-        List<String> installedHullModIds = parseStringArray(json.optJSONArray("installedHullMods"));
         List<String> phantomHullModIds = parseStringArray(json.optJSONArray("phantomHullMods"));
         List<String> exclusiveSkillTypeIds = parseStringArray(json.optJSONArray("exclusiveSkillTypes"));
         List<UnlockCondition> unlockConditions = parseUnlockConditions(json.optJSONArray("unlockConditions"));
@@ -82,7 +81,7 @@ public final class SkillTypeLoader {
         String id = json.getString("id");
         Float temporaryAfterDeploymentSeconds = validateTemporaryGating(id,
                 parseTemporaryAfterDeploymentSeconds(json), effects, hullSizeEffects,
-                !installedHullModIds.isEmpty() || !phantomHullModIds.isEmpty());
+                !phantomHullModIds.isEmpty());
         Set<HullSize> requiredHullSizes = parseRequiredHullSizes(id, json.optJSONArray("requiredHullSizes"));
 
         return new SkillType.Builder(id, json.getString("name"), json.getString("icon"), tier)
@@ -96,7 +95,6 @@ public final class SkillTypeLoader {
                 .todo(json.optString("todo", null))
                 .optionalOptionIds(optionalOptionIds)
                 .exclusiveHullModIds(exclusiveHullModIds)
-                .installedHullModIds(installedHullModIds)
                 .phantomHullModIds(phantomHullModIds)
                 .exclusiveSkillTypeIds(exclusiveSkillTypeIds)
                 .unlockConditions(unlockConditions)

@@ -193,7 +193,6 @@
     "weapon.note.perWeapon": "此效果直接作用于每件武器：战斗中数值正确，但改装界面的武器提示不会显示。",
     "weapon.guidanceImproved": "大幅改进导弹制导算法。",
 
-    "node.installs": "免费加装{hullmod}船插，不消耗装配点。",
     "node.phantom": "该舰船视为已安装{hullmod}船插，其他模组中检查此船插的效果都会生效。此船插本身没有效果，也不消耗装配点。",
     "node.temporary": "这些效果仅在舰船部署后的前{seconds}秒内生效。",
     "node.itemCost": "分配需要消耗{item}×{quantity}。取消分配时会返还。",
