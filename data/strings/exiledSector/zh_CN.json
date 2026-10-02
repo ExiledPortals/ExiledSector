@@ -128,6 +128,9 @@
     "effect.FLUX_SCALED_TOP_SPEED_FLAT": "最大航速随幅能变化：无幅能时提高<good>{value}</good> su/s，半幅能时不变，满幅能时降低<bad>{value}</bad> su/s。幅能低于一半时，加速度和转向加速度还会提高最多<good>{value}%</good>。",
     "effect.FLUX_SCALED_RATE_OF_FIRE_PERCENT": "武器射速随幅能变化：无幅能时提高<good>{value}%</good>，半幅能时不变，满幅能时降低<bad>{value}%</bad>。主动排散或过载视为满幅能。",
     "effect.FLUX_CAPACITOR_EFFECTIVENESS_PERCENT": "每个幅能电容提供的幅能容量提高<good>{value}%</good>。",
+    "effect.AUGMENTED_FLUX_SCALED_PENALTY_REDUCTION_PERCENT": "装有增强系统的舰体在高幅能时受到的最大航速和射速惩罚减少<good>{value}%</good>。",
+    "effect.AUGMENTED_INERTIAL_PROJECTILE_SPEED_PERCENT": "装有增强系统的舰体，射弹速度也会提高基于航速的伤害加成的<good>{value}%</good>。",
+    "effect.AUGMENTED_SYSTEM_REGEN_PERCENT": "装有增强系统的舰体，舰船系统充能恢复速度提高<good>{value}%</good>。",
 
     "effect.FIGHTER_BAYS_FLAT.warning": "至少有1个空机库时才能取消分配。",
     "effect.FIGHTER_REPLACEMENT_RATE_MULT.slower": "战机补充率的衰减与恢复速度减慢<bad>{value}%</bad>。",

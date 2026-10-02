@@ -7,6 +7,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.util.IntervalUtil;
+import exiledsector.compat.LostSectorCompat;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 
@@ -17,6 +18,7 @@ final class FluxScaledVolatilityListener implements AdvanceableListener {
 
     static final String TOP_SPEED_KEY = "exiledSector_fluxScaledTopSpeed";
     static final String RATE_OF_FIRE_KEY = "exiledSector_fluxScaledRateOfFire";
+    static final String AUGMENTED_PENALTY_REDUCTION_KEY = "exiledSector_fluxScaledAugmentedPenaltyReduction";
     private static final String MOD_ID_PREFIX = "exiledSector_fluxScaled_";
     private static final String STATUS_KEY = "exiledSector_fluxScaledStatus";
     private static final String STATUS_ICON = "graphics/icons/hullsys/high_energy_focus.png";
@@ -32,6 +34,7 @@ final class FluxScaledVolatilityListener implements AdvanceableListener {
     private final String modId;
     private final IntervalUtil afterimageTimer = new IntervalUtil(AFTERIMAGE_INTERVAL, AFTERIMAGE_INTERVAL);
     private float appliedRatio = Float.NaN;
+    private Float penaltyScale;
     private Color afterimageColor = AFTERIMAGE_COLOR;
     private String statusTitle;
     private String statusText;
@@ -57,8 +60,9 @@ final class FluxScaledVolatilityListener implements AdvanceableListener {
             return;
         }
         float ratio = ratio(ship.getFluxTracker());
-        float topSpeed = magnitude(TOP_SPEED_KEY);
-        float rateOfFire = magnitude(RATE_OF_FIRE_KEY);
+        float scale = ratio < 0f ? penaltyScale() : 1f;
+        float topSpeed = magnitude(TOP_SPEED_KEY) * scale;
+        float rateOfFire = magnitude(RATE_OF_FIRE_KEY) * scale;
         if (ratio != appliedRatio) {
             applyRatio(ratio, topSpeed, rateOfFire);
         }
@@ -101,6 +105,14 @@ final class FluxScaledVolatilityListener implements AdvanceableListener {
                     ship.getVelocity().y * AFTERIMAGE_DRIFT, 0f, 0f, 0f, AFTERIMAGE_DURATION, true, true, false);
         }
         ship.getEngineController().fadeToOtherColor(this, ENGINE_COLOR, null, 1f, ENGINE_TINT_STRENGTH * ratio);
+    }
+
+    private float penaltyScale() {
+        if (penaltyScale == null) {
+            float reduction = LostSectorCompat.hasAugmentedSystems(ship.getVariant()) ? magnitude(AUGMENTED_PENALTY_REDUCTION_KEY) : 0f;
+            penaltyScale = Math.max(0f, 1f - reduction / 100f);
+        }
+        return penaltyScale;
     }
 
     private static String signed(float value) {

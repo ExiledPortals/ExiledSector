@@ -1,13 +1,17 @@
 package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.ModManagerAPI;
+import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.FluxTrackerAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipEngineControllerAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.compat.LostSectorCompat;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -136,6 +140,44 @@ class FluxScaledVolatilityListenerTest {
 
         verify(maxSpeed, times(2)).modifyFlat(eq(MOD_ID), anyFloat());
         verify(maxSpeed).modifyFlat(MOD_ID, -25f);
+    }
+
+    private void augmentWithLostSectorEnabled(boolean enabled) {
+        SettingsAPI settings = mock(SettingsAPI.class);
+        ModManagerAPI mods = mock(ModManagerAPI.class);
+        when(settings.getModManager()).thenReturn(mods);
+        when(mods.isModEnabled(LostSectorCompat.MOD_ID)).thenReturn(enabled);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(variant.hasHullMod(LostSectorCompat.AUGMENTED_SYSTEMS_HULLMOD_ID)).thenReturn(true);
+        when(ship.getVariant()).thenReturn(variant);
+        when(stats.getDynamic().getValue(FluxScaledVolatilityListener.AUGMENTED_PENALTY_REDUCTION_KEY, 0f)).thenReturn(50f);
+    }
+
+    @Test
+    void withLostSectorAugmentedHullsTakeAReducedPenaltyButTheFullBonus() {
+        augmentWithLostSectorEnabled(true);
+        when(flux.getFluxLevel()).thenReturn(1f);
+        FluxScaledVolatilityListener listener = new FluxScaledVolatilityListener(ship);
+
+        listener.advance(0.016f);
+        when(flux.getFluxLevel()).thenReturn(0f);
+        listener.advance(0.016f);
+
+        verify(stats.getMaxSpeed()).modifyFlat(MOD_ID, -25f);
+        verify(stats.getBallisticRoFMult()).modifyPercent(MOD_ID, -20f);
+        verify(stats.getMaxSpeed()).modifyFlat(MOD_ID, 50f);
+        verify(stats.getBallisticRoFMult()).modifyPercent(MOD_ID, 40f);
+    }
+
+    @Test
+    void withoutLostSectorAugmentedSystemsNeverReducesThePenalty() {
+        augmentWithLostSectorEnabled(false);
+        when(flux.getFluxLevel()).thenReturn(1f);
+
+        new FluxScaledVolatilityListener(ship).advance(0.016f);
+
+        verify(stats.getMaxSpeed()).modifyFlat(MOD_ID, -50f);
     }
 
     @Test

@@ -128,6 +128,9 @@
     "effect.FLUX_SCALED_TOP_SPEED_FLAT": "Top speed changes with flux, from <good>+{value}</good> su/s at no flux to <bad>-{value}</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>{value}%</good>.",
     "effect.FLUX_SCALED_RATE_OF_FIRE_PERCENT": "Weapon rate of fire changes with flux, from <good>+{value}%</good> at no flux to <bad>-{value}%</bad> at full flux, with no change at half flux. Venting or being overloaded counts as full flux.",
     "effect.FLUX_CAPACITOR_EFFECTIVENESS_PERCENT": "Each flux capacitor grants <good>{value}%</good> more flux capacity.",
+    "effect.AUGMENTED_FLUX_SCALED_PENALTY_REDUCTION_PERCENT": "On hulls with Augmented Systems, the high-flux top speed and rate of fire penalties are <good>{value}%</good> smaller.",
+    "effect.AUGMENTED_INERTIAL_PROJECTILE_SPEED_PERCENT": "On hulls with Augmented Systems, projectile speed also rises by <good>{value}%</good> of the speed-based damage bonus.",
+    "effect.AUGMENTED_SYSTEM_REGEN_PERCENT": "On hulls with Augmented Systems, ship system charges regenerate <good>{value}%</good> faster.",
 
     "effect.FIGHTER_BAYS_FLAT.warning": "Cannot be unallocated without at least 1 empty fighter bay.",
     "effect.FIGHTER_REPLACEMENT_RATE_MULT.slower": "<bad>{value}%</bad> slower fighter replacement rate decay and recovery.",

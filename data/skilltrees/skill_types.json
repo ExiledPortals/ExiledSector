@@ -1533,6 +1533,10 @@
 				{
 					"effect": "NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT",
 					"magnitude": 0.08
+				},
+				{
+					"effect": "AUGMENTED_INERTIAL_PROJECTILE_SPEED_PERCENT",
+					"magnitude": 100
 				}
 			],
 			"phantomHullMods": [
@@ -1681,6 +1685,10 @@
 				{
 					"effect": "FIGHTER_ENGAGEMENT_RANGE_MULT",
 					"magnitude": -75
+				},
+				{
+					"effect": "AUGMENTED_FLUX_SCALED_PENALTY_REDUCTION_PERCENT",
+					"magnitude": 50
 				}
 			],
 			"hullSizeEffects": [
@@ -1715,6 +1723,10 @@
 				{
 					"effect": "SYSTEM_CHARGES_FLAT",
 					"magnitude": 1
+				},
+				{
+					"effect": "AUGMENTED_SYSTEM_REGEN_PERCENT",
+					"magnitude": 10
 				}
 			],
 			"phantomHullMods": [
