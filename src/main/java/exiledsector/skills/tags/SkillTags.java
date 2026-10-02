@@ -11,7 +11,7 @@ public final class SkillTags {
             "dmgtypeenergy", "weapons", "point_defense", "combat_readiness", "repair", "fleet_support", "d_mods");
 
     public static final List<String> REGION = List.of(
-            "inner", "luddic", "tritachyon", "hegemony", "sindrian_dictat", "pirate", "REDACTED", "persean_league");
+            "inner", "luddic", "tritachyon", "hegemony", "sindrian_dictat", "pirate", "REDACTED", "persean_league", "lost_sector");
 
     public static final List<String> REQUIREMENT = List.of(
             "req_shields", "req_no_shields", "req_phase", "req_fighter_bays", "req_no_fighter_bays", "req_ballistic",

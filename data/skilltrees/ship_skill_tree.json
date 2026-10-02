@@ -1712,7 +1712,8 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_2",
-				"small_flux_optional_7"
+				"small_flux_optional_7",
+				"lost_sector_wormhole2"
 			],
 			"x": 927,
 			"y": -2853,
@@ -1908,7 +1909,8 @@
 			"connectedTo": [
 				"small_flux_optional_19",
 				"small_flux_optional_17",
-				"small_flux_optional_38"
+				"small_flux_optional_38",
+				"kestevan_wormhole2"
 			],
 			"x": -2427,
 			"y": 1763,
@@ -1957,8 +1959,7 @@
 			"connectedTo": [
 				"small_flux_optional_22",
 				"small_flux_optional_20",
-				"small_flux_optional_41",
-				"lost_sector_wormhole2"
+				"small_flux_optional_41"
 			],
 			"x": -2853,
 			"y": -927,
@@ -5183,18 +5184,16 @@
 			"type": "wormhole",
 			"connectedTo": [
 				"lost_sector_wormhole2",
-				"frozen_heart_1",
-				"small_flux_optional_68",
-				"small_flux_optional_70"
+				"frozen_heart_1"
 			],
-			"x": -11547,
-			"y": -2510,
+			"x": 5434,
+			"y": -10474,
 			"orbitAnchorId": "anchor_51",
-			"orbitAngle": 0,
-			"wormholeColor": "#fbb434",
+			"orbitAngle": 121.18398114452106,
+			"wormholeColor": "#3254fb",
 			"pairedWith": "lost_sector_wormhole2",
 			"tags": [
-				"sindrian_dictat"
+				"lost_sector"
 			]
 		},
 		{
@@ -5202,11 +5201,11 @@
 			"type": "wormhole",
 			"connectedTo": [
 				"lost_sector_wormhole1",
-				"small_flux_optional_21"
+				"small_flux_optional_6"
 			],
-			"x": -3539,
-			"y": -1071,
-			"wormholeColor": "#fbb434",
+			"x": 1636,
+			"y": -4128,
+			"wormholeColor": "#3254fb",
 			"pairedWith": "lost_sector_wormhole1",
 			"tags": [
 				"sindrian_dictat"
@@ -5218,12 +5217,12 @@
 			"connectedTo": [
 				"top_speed_6"
 			],
-			"x": -12754,
-			"y": -1802,
+			"x": -11189,
+			"y": 7329,
 			"orbitAnchorId": "anchor_54",
 			"orbitAngle": 270,
 			"tags": [
-				"sindrian_dictat"
+				"lost_sector"
 			]
 		},
 		{
@@ -5232,12 +5231,12 @@
 			"connectedTo": [
 				"energy_flux_cost_1"
 			],
-			"x": -12750,
-			"y": -3185,
+			"x": -11203,
+			"y": 5944,
 			"orbitAnchorId": "anchor_52",
 			"orbitAngle": 90,
 			"tags": [
-				"sindrian_dictat"
+				"lost_sector"
 			]
 		},
 		{
@@ -5247,12 +5246,12 @@
 				"energy_flux_cost_2",
 				"nskr_acoils_1"
 			],
-			"x": -12900,
-			"y": -3335,
+			"x": -11353,
+			"y": 5794,
 			"orbitAnchorId": "anchor_52",
 			"orbitAngle": 180,
 			"tags": [
-				"sindrian_dictat"
+				"lost_sector"
 			]
 		},
 		{
@@ -5262,36 +5261,70 @@
 				"energy_flux_cost_1",
 				"small_flux_optional_70"
 			],
-			"x": -12750,
-			"y": -3485,
+			"x": -11203,
+			"y": 5644,
 			"orbitAnchorId": "anchor_52",
 			"orbitAngle": 270,
 			"tags": [
-				"sindrian_dictat"
+				"lost_sector"
 			]
 		},
 		{
 			"id": "frozen_heart_1",
 			"type": "frozen_heart",
 			"connectedTo": [
-				"lost_sector_wormhole1"
+				"lost_sector_wormhole1",
+				"husk_plating_1",
+				"live_munitions_1"
 			],
-			"x": -11950,
-			"y": -2510,
+			"x": 6057,
+			"y": -11504,
+			"ringBeltPath": "graphics/planets/aurorae.png",
+			"ringBeltColor": "#c2f8ff",
 			"tags": [
-				"sindrian_dictat"
+				"lost_sector"
+			]
+		},
+		{
+			"id": "live_munitions_1",
+			"type": "live_munitions",
+			"connectedTo": [
+				"frozen_heart_1"
+			],
+			"x": 7089,
+			"y": -10884,
+			"orbitAnchorId": "anchor_51",
+			"orbitAngle": 31,
+			"tags": [
+				"lost_sector"
+			]
+		},
+		{
+			"id": "husk_plating_1",
+			"type": "husk_plating",
+			"connectedTo": [
+				"frozen_heart_1"
+			],
+			"x": 6680,
+			"y": -12534,
+			"orbitAnchorId": "anchor_51",
+			"orbitAngle": -58.83217046170237,
+			"tags": [
+				"lost_sector"
 			]
 		},
 		{
 			"id": "nskr_absorption_1",
 			"type": "nskr_absorption",
-			"connectedTo": [],
-			"x": -13388,
-			"y": -2516,
+			"connectedTo": [
+				"shield_damage_taken_multi_4"
+			],
+			"x": -11856,
+			"y": 6621,
 			"orbitAnchorId": "anchor_53",
 			"orbitAngle": 0,
 			"tags": [
-				"sindrian_dictat"
+				"lost_sector"
 			]
 		},
 		{
@@ -5301,12 +5334,12 @@
 				"shield_damage_taken_multi_4",
 				"small_flux_optional_69"
 			],
-			"x": -13688,
-			"y": -2516,
+			"x": -12156,
+			"y": 6621,
 			"orbitAnchorId": "anchor_53",
 			"orbitAngle": 180,
 			"tags": [
-				"inner"
+				"lost_sector"
 			]
 		},
 		{
@@ -5316,28 +5349,58 @@
 				"top_speed_7",
 				"nskr_inertial_1"
 			],
-			"x": -12604,
-			"y": -1652,
+			"x": -11039,
+			"y": 7479,
 			"orbitAnchorId": "anchor_54",
 			"orbitAngle": 0,
 			"tags": [
-				"inner"
+				"lost_sector"
+			]
+		},
+		{
+			"id": "shield_damage_taken_multi_4",
+			"type": "shield_damage_taken_multi",
+			"connectedTo": [
+				"shield_damage_taken_multi_3",
+				"nskr_absorption_1"
+			],
+			"x": -12006,
+			"y": 6771,
+			"orbitAnchorId": "anchor_53",
+			"orbitAngle": 90,
+			"tags": [
+				"lost_sector"
+			]
+		},
+		{
+			"id": "top_speed_7",
+			"type": "top_speed",
+			"connectedTo": [
+				"top_speed_6",
+				"small_flux_optional_68"
+			],
+			"x": -11189,
+			"y": 7629,
+			"orbitAnchorId": "anchor_54",
+			"orbitAngle": 90,
+			"tags": [
+				"lost_sector"
 			]
 		},
 		{
 			"id": "small_flux_optional_68",
 			"type": "small_flux_optional",
 			"connectedTo": [
-				"lost_sector_wormhole1",
 				"small_flux_optional_69",
-				"top_speed_7"
+				"top_speed_7",
+				"kestevan_wormhole1"
 			],
-			"x": -12751,
-			"y": -1306,
-			"orbitAnchorId": "anchor_51",
+			"x": -11190,
+			"y": 7918,
+			"orbitAnchorId": "kestevan_inner",
 			"orbitAngle": 90,
 			"tags": [
-				"persean_league"
+				"lost_sector"
 			]
 		},
 		{
@@ -5348,12 +5411,12 @@
 				"small_flux_optional_70",
 				"shield_damage_taken_multi_3"
 			],
-			"x": -13955,
-			"y": -2510,
-			"orbitAnchorId": "anchor_51",
+			"x": -12490,
+			"y": 6618,
+			"orbitAnchorId": "kestevan_inner",
 			"orbitAngle": 180,
 			"tags": [
-				"persean_league"
+				"lost_sector"
 			]
 		},
 		{
@@ -5361,42 +5424,46 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_69",
-				"lost_sector_wormhole1",
-				"energy_flux_cost_2"
+				"energy_flux_cost_2",
+				"kestevan_wormhole1"
 			],
-			"x": -12751,
-			"y": -3714,
-			"orbitAnchorId": "anchor_51",
+			"x": -11190,
+			"y": 5318,
+			"orbitAnchorId": "kestevan_inner",
 			"orbitAngle": 270,
 			"tags": [
-				"persean_league"
+				"lost_sector"
 			]
 		},
 		{
-			"id": "shield_damage_taken_multi_4",
-			"type": "shield_damage_taken_multi",
+			"id": "kestevan_wormhole1",
+			"type": "wormhole",
 			"connectedTo": [
-				"shield_damage_taken_multi_3"
+				"small_flux_optional_70",
+				"small_flux_optional_68",
+				"kestevan_wormhole2"
 			],
-			"x": -13538,
-			"y": -2366,
-			"orbitAnchorId": "anchor_53",
-			"orbitAngle": 90,
+			"x": -9890,
+			"y": 6618,
+			"orbitAnchorId": "kestevan_inner",
+			"orbitAngle": 0,
+			"wormholeColor": "#fbb434",
+			"pairedWith": "kestevan_wormhole2",
 			"tags": [
-				"inner"
+				"lost_sector"
 			]
 		},
 		{
-			"id": "top_speed_7",
-			"type": "top_speed",
+			"id": "kestevan_wormhole2",
+			"type": "wormhole",
 			"connectedTo": [
-				"top_speed_6",
-				"small_flux_optional_68"
+				"kestevan_wormhole1",
+				"small_flux_optional_18"
 			],
-			"x": -12754,
-			"y": -1502,
-			"orbitAnchorId": "anchor_54",
-			"orbitAngle": 90,
+			"x": -3776,
+			"y": 2723,
+			"wormholeColor": "#fbb434",
+			"pairedWith": "kestevan_wormhole1",
 			"tags": [
 				"inner"
 			]
@@ -6834,56 +6901,62 @@
 		{
 			"a": "energy_flux_cost_1",
 			"b": "energy_flux_cost_2",
-			"controlX": -12856,
-			"controlY": -3441
-		},
-		{
-			"a": "lost_sector_wormhole1",
-			"b": "small_flux_optional_68",
-			"controlX": -11900,
-			"controlY": -1659
-		},
-		{
-			"a": "small_flux_optional_68",
-			"b": "small_flux_optional_69",
-			"controlX": -13602,
-			"controlY": -1659
-		},
-		{
-			"a": "small_flux_optional_69",
-			"b": "small_flux_optional_70",
-			"controlX": -13602,
-			"controlY": -3361
-		},
-		{
-			"a": "lost_sector_wormhole1",
-			"b": "small_flux_optional_70",
-			"controlX": -11900,
-			"controlY": -3361
+			"controlX": -11309,
+			"controlY": 5688
 		},
 		{
 			"a": "shield_damage_taken_multi_3",
 			"b": "shield_damage_taken_multi_4",
-			"controlX": -13644,
-			"controlY": -2410
+			"controlX": -12112,
+			"controlY": 6727
 		},
 		{
 			"a": "energy_flux_cost_1",
 			"b": "nskr_acoils_1",
-			"controlX": -12856,
-			"controlY": -3229
+			"controlX": -11309,
+			"controlY": 5900
 		},
 		{
 			"a": "top_speed_6",
 			"b": "top_speed_7",
-			"controlX": -12648,
-			"controlY": -1546
+			"controlX": -11083,
+			"controlY": 7585
 		},
 		{
 			"a": "nskr_inertial_1",
 			"b": "top_speed_6",
-			"controlX": -12648,
-			"controlY": -1758
+			"controlX": -11083,
+			"controlY": 7373
+		},
+		{
+			"a": "nskr_absorption_1",
+			"b": "shield_damage_taken_multi_4",
+			"controlX": -11900,
+			"controlY": 6727
+		},
+		{
+			"a": "small_flux_optional_68",
+			"b": "small_flux_optional_69",
+			"controlX": -12109,
+			"controlY": 7537
+		},
+		{
+			"a": "small_flux_optional_69",
+			"b": "small_flux_optional_70",
+			"controlX": -12109,
+			"controlY": 5699
+		},
+		{
+			"a": "kestevan_wormhole1",
+			"b": "small_flux_optional_70",
+			"controlX": -10271,
+			"controlY": 5699
+		},
+		{
+			"a": "kestevan_wormhole1",
+			"b": "small_flux_optional_68",
+			"controlX": -10271,
+			"controlY": 7537
 		}
 	],
 	"hiddenConnectors": [
@@ -6930,6 +7003,10 @@
 		{
 			"a": "lost_sector_wormhole2",
 			"b": "lost_sector_wormhole1"
+		},
+		{
+			"a": "kestevan_wormhole2",
+			"b": "kestevan_wormhole1"
 		}
 	],
 	"orbitAnchors": [
@@ -7421,27 +7498,33 @@
 		},
 		{
 			"id": "anchor_51",
-			"x": -12751,
-			"y": -2510,
+			"x": 6057,
+			"y": -11504,
 			"radius": 1204
 		},
 		{
 			"id": "anchor_52",
-			"x": -12750,
-			"y": -3335,
+			"x": -11203,
+			"y": 5794,
 			"radius": 150
 		},
 		{
 			"id": "anchor_53",
-			"x": -13538,
-			"y": -2516,
+			"x": -12006,
+			"y": 6621,
 			"radius": 150
 		},
 		{
 			"id": "anchor_54",
-			"x": -12754,
-			"y": -1652,
+			"x": -11189,
+			"y": 7479,
 			"radius": 150
+		},
+		{
+			"id": "kestevan_inner",
+			"x": -11190,
+			"y": 6618,
+			"radius": 1300
 		}
 	],
 	"ringBelts": [
@@ -7646,9 +7729,16 @@
 			"color": "#f4c537"
 		},
 		{
-			"id": "lost_sector_star",
-			"x": -12751,
-			"y": -2510,
+			"id": "frozen_heart_star",
+			"x": 6057,
+			"y": -11504,
+			"radius": 400,
+			"starType": "star_blue_supergiant"
+		},
+		{
+			"id": "kestevan_star",
+			"x": -11190,
+			"y": 6618,
 			"radius": 400,
 			"starType": "star_yellow",
 			"color": "#fbb434"

@@ -2540,6 +2540,10 @@ function refreshInspector(){
         saveLocal(); refreshInspector();
       });
     });
+    wireMoveRowButtons(body, 'insp-move-effect-row', function(){ syncEffectRowsFromInputs('insp', t.effects); },
+      function(){ return t.effects; }, function(){ saveLocal(); refreshInspector(); });
+    wireMoveRowButtons(body, 'insp-move-hs-row', function(){ syncHullSizeEffectsFromInputs('insp', t.hullSizeEffects); },
+      function(){ return t.hullSizeEffects; }, function(){ saveLocal(); refreshInspector(); });
     var addStatBtn = document.getElementById('addStatRowBtn');
     if (addStatBtn) {
       addStatBtn.addEventListener('click', function(){
@@ -3021,7 +3025,7 @@ var EFFECT_NAMES = ['HULL_PERCENT','HULL_FLAT','HULL_MULT','ARMOR_PERCENT','ARMO
   'CORONA_RESISTANCE_MULT','BALLISTIC_WEAPON_LARGE_OP_COST_FLAT','BALLISTIC_WEAPON_PROJECTILE_SPEED_PERCENT','POST_BATTLE_SALVAGE_PERCENT','PHASE_FIELD_CONTRIBUTION_PERCENT',
   'NANOFORGE_HULL_REGEN_PERCENT','DISINTEGRATION_ARMOR_DAMAGE_PERCENT','WEAPON_AUTOFIRE_ACCURACY_PERCENT','TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT',
   'NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT','MEDIUM_ENERGY_SLOT_WEAPON_RANGE_FLAT','SHIELD_ABSORB_RATE_OF_FIRE_PERCENT',
-  'ACCRETION_ARMOR_RESTORE_PERCENT','ACCRETION_ARMOR_PERCENT_PER_STACK','ACCRETION_MOBILITY_PENALTY_PERCENT_PER_STACK','ACCRETION_RADIATION_DISABLES_FLAT',
+  'HEARTLESS_ON_NEARBY_DESTRUCTION_RANGE_FLAT','HEARTLESS_MAX_STACKS_FLAT','HEARTLESS_ARMOR_RESTORE_PERCENT','HEARTLESS_ARMOR_PERCENT_PER_STACK','HEARTLESS_MOBILITY_PENALTY_PERCENT_PER_STACK','HEARTLESS_RADIATION_EMP_FLAT','HEARTLESS_CREW_DEATH_CHANCE_PERCENT_PER_STACK','HEARTLESS_MISSILE_DAMAGE_PERCENT_PER_STACK','HEARTLESS_MISSILE_SPEED_PERCENT_PER_STACK',
   'MAX_COMBAT_READINESS_PERCENT',
   'BALLISTIC_WEAPON_AMMO_FLAT','BALLISTIC_WEAPON_AMMO_MULT','BALLISTIC_WEAPON_AMMO_REGEN_MULT','BALLISTIC_WEAPON_DAMAGE_FLAT','BALLISTIC_WEAPON_DAMAGE_MULT','BALLISTIC_WEAPON_FIRE_RATE_MULT','BALLISTIC_WEAPON_FLUX_COST_MULT','BALLISTIC_WEAPON_FLUX_COST_PERCENT','BALLISTIC_WEAPON_PROJECTILE_SPEED_MULT','BALLISTIC_WEAPON_RANGE_FLAT','BEAM_WEAPON_AMMO_FLAT','BEAM_WEAPON_AMMO_MULT','BEAM_WEAPON_AMMO_PERCENT','BEAM_WEAPON_AMMO_REGEN_MULT','BEAM_WEAPON_AMMO_REGEN_PERCENT','BEAM_WEAPON_DAMAGE_FLAT','BEAM_WEAPON_DAMAGE_MULT','BEAM_WEAPON_FLUX_COST_MULT','BEAM_WEAPON_FLUX_COST_PERCENT','BEAM_WEAPON_PROJECTILE_SPEED_MULT','BEAM_WEAPON_PROJECTILE_SPEED_PERCENT','ENERGY_WEAPON_AMMO_FLAT','ENERGY_WEAPON_AMMO_MULT','ENERGY_WEAPON_AMMO_REGEN_MULT','ENERGY_WEAPON_DAMAGE_FLAT','ENERGY_WEAPON_DAMAGE_MULT','ENERGY_WEAPON_FIRE_RATE_MULT','ENERGY_WEAPON_FLUX_COST_MULT','ENERGY_WEAPON_FLUX_COST_PERCENT','ENERGY_WEAPON_PROJECTILE_SPEED_MULT','ENERGY_WEAPON_PROJECTILE_SPEED_PERCENT','ENERGY_WEAPON_RANGE_FLAT','MISSILE_WEAPON_AMMO_FLAT','MISSILE_WEAPON_AMMO_MULT','MISSILE_WEAPON_AMMO_REGEN_MULT','MISSILE_WEAPON_AMMO_REGEN_PERCENT','MISSILE_WEAPON_DAMAGE_FLAT','MISSILE_WEAPON_DAMAGE_MULT','MISSILE_WEAPON_FIRE_RATE_MULT','MISSILE_WEAPON_FLIGHT_ACCELERATION_MULT','MISSILE_WEAPON_FLIGHT_TURN_ACCELERATION_MULT','MISSILE_WEAPON_FLIGHT_TURN_RATE_MULT','MISSILE_WEAPON_FLUX_COST_MULT','MISSILE_WEAPON_FLUX_COST_PERCENT','MISSILE_WEAPON_HEALTH_MULT','MISSILE_WEAPON_HEALTH_PERCENT','MISSILE_WEAPON_PROJECTILE_SPEED_MULT','MISSILE_WEAPON_RANGE_FLAT','NON_BEAM_ENERGY_WEAPON_AMMO_FLAT','NON_BEAM_ENERGY_WEAPON_AMMO_MULT','NON_BEAM_ENERGY_WEAPON_AMMO_PERCENT','NON_BEAM_ENERGY_WEAPON_AMMO_REGEN_MULT','NON_BEAM_ENERGY_WEAPON_AMMO_REGEN_PERCENT','NON_BEAM_ENERGY_WEAPON_DAMAGE_FLAT','NON_BEAM_ENERGY_WEAPON_DAMAGE_MULT','NON_BEAM_ENERGY_WEAPON_FLUX_COST_MULT','NON_BEAM_ENERGY_WEAPON_PROJECTILE_SPEED_MULT','NON_BEAM_ENERGY_WEAPON_PROJECTILE_SPEED_PERCENT','NON_BEAM_ENERGY_WEAPON_RANGE_MULT','NON_BEAM_ENERGY_WEAPON_RANGE_PERCENT','WEAPON_AMMO_FLAT','WEAPON_AMMO_MULT','WEAPON_AMMO_PERCENT','WEAPON_AMMO_REGEN_MULT','WEAPON_AMMO_REGEN_PERCENT','WEAPON_DAMAGE_FLAT','WEAPON_DAMAGE_MULT','WEAPON_DURABILITY_MULT','WEAPON_FIRE_RATE_MULT','WEAPON_FIRE_RATE_PERCENT','WEAPON_FLUX_COST_MULT','WEAPON_FLUX_COST_PERCENT','WEAPON_PROJECTILE_SPEED_MULT','WEAPON_PROJECTILE_SPEED_PERCENT','WEAPON_RANGE_FLAT','WEAPON_RANGE_MULT','WEAPON_RANGE_PERCENT'];
 
@@ -3049,11 +3053,11 @@ function wireEffectFilters(root){
 
 var ALL_TAGS = ['flux','shield','armour','hull','speed','logistics','missile','fighter','energy','ballistic','phase','beam','range','ammo','dmgtypekinetic','dmgtypehighexplosive','dmgtypefragmentation','dmgtypeenergy',
   'weapons','point_defense','combat_readiness','repair','fleet_support','d_mods',
-  'inner','luddic','tritachyon','hegemony','sindrian_dictat','pirate','REDACTED','persean_league',
+  'inner','luddic','tritachyon','hegemony','sindrian_dictat','pirate','REDACTED','persean_league','lost_sector',
   'req_shields','req_no_shields','req_phase','req_fighter_bays','req_no_fighter_bays','req_ballistic','req_missile','req_energy','req_beam','req_offensive_beam','req_non_beam_energy',
   'req_flagship','campaign_only','player_only'];
 
-var REGION_TAGS = ['inner','luddic','tritachyon','hegemony','sindrian_dictat','pirate','REDACTED','persean_league'];
+var REGION_TAGS = ['inner','luddic','tritachyon','hegemony','sindrian_dictat','pirate','REDACTED','persean_league','lost_sector'];
 var TAG_GROUPS = [
   { key: 'theme', label: 'Theme' },
   { key: 'region', label: 'Region' },
@@ -3118,6 +3122,27 @@ function renderOptionEditRows(optionIds){
   }).join('');
 }
 
+function moveListItem(list, index, delta){
+  var target = index + delta;
+  if (index < 0 || index >= list.length || target < 0 || target >= list.length) return false;
+  var item = list[index];
+  list[index] = list[target];
+  list[target] = item;
+  return true;
+}
+function moveRowButtonsHtml(attr, i, count){
+  return '<button class="smallBtn" type="button" title="Move up" data-' + attr + '="' + i + '" data-dir="-1"' + (i === 0 ? ' disabled' : '') + '>&#9650;</button>' +
+    '<button class="smallBtn" type="button" title="Move down" data-' + attr + '="' + i + '" data-dir="1"' + (i === count - 1 ? ' disabled' : '') + '>&#9660;</button>';
+}
+function wireMoveRowButtons(root, attr, beforeMove, list, afterMove){
+  root.querySelectorAll('[data-' + attr + ']').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      beforeMove();
+      if (moveListItem(list(), parseInt(btn.getAttribute('data-' + attr), 10), parseInt(btn.dataset.dir, 10))) afterMove();
+    });
+  });
+}
+
 function renderEffectRows(idPrefix, effectsDraft, emptyHintHtml){
   var rows = effectsDraft.map(function(e, i){
     var options = sortedEffectOptionsHtml(e.effect);
@@ -3125,6 +3150,7 @@ function renderEffectRows(idPrefix, effectsDraft, emptyHintHtml){
     return '<div class="fieldRow" style="align-items:flex-end">' +
       '<div class="field" style="flex:2"><label>Effect ' + (i+1) + '</label>' + effectFilterHtml(selectId) + '<select id="' + selectId + '">' + options + '</select></div>' +
       '<div class="field" style="flex:1"><label>Magnitude</label><input id="' + idPrefix + 'Mag' + i + '" type="number" step="0.1" value="' + (e.magnitude || 0) + '"></div>' +
+      moveRowButtonsHtml(idPrefix + '-move-effect-row', i, effectsDraft.length) +
       '<button class="smallBtn danger" type="button" data-' + idPrefix + '-remove-effect-row="' + i + '">X</button>' +
     '</div>';
   }).join('');
@@ -3230,6 +3256,7 @@ function renderHullSizeEffectRows(idPrefix, hullSizeEffectsDraft){
       '<div class="field" style="flex:1 1 70px"><label>Destroyer</label><input id="' + idPrefix + 'HsDestroyer' + i + '" type="number" step="0.1" value="' + e.destroyer + '"></div>' +
       '<div class="field" style="flex:1 1 70px"><label>Cruiser</label><input id="' + idPrefix + 'HsCruiser' + i + '" type="number" step="0.1" value="' + e.cruiser + '"></div>' +
       '<div class="field" style="flex:1 1 70px"><label>Capital</label><input id="' + idPrefix + 'HsCapital' + i + '" type="number" step="0.1" value="' + e.capitalShip + '"></div>' +
+      moveRowButtonsHtml(idPrefix + '-move-hs-row', i, hullSizeEffectsDraft.length) +
       '<button class="smallBtn danger" type="button" data-' + idPrefix + '-remove-hs-row="' + i + '">X</button>' +
     '</div>';
   }).join('');
@@ -3612,6 +3639,8 @@ function openTypeModal(existingType, onSave, onClose){
         renderModal();
       });
     });
+    wireMoveRowButtons(root, 't-move-effect-row', syncDraftFromInputs, function(){ return effectsDraft; }, renderModal);
+    wireMoveRowButtons(root, 't-move-hs-row', syncDraftFromInputs, function(){ return hullSizeEffectsDraft; }, renderModal);
     document.getElementById('addHsEffectRowBtn').addEventListener('click', function(){
       syncDraftFromInputs();
       hullSizeEffectsDraft.push({ effect: EFFECT_NAMES[0], frigate: 0, destroyer: 0, cruiser: 0, capitalShip: 0 });
