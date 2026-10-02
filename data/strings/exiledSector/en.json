@@ -151,6 +151,9 @@
     "effect.BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_PERCENT": "Grants <good>{value}%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.",
     "effect.ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT": "Increases energy weapon range by <good>{value}</good> for every point of this ship's sensor strength (after modifiers).",
     "effect.ARMOR_FLAT_FOR_LOW_BASE_ARMOR": "Increases armor by up to <good>{most}</good>. Hulls with less base armor gain more: the bonus falls to <good>{least}</good> at <hl>{cutoff}</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.",
+    "effect.ARMOR_FLAT_FOR_LOW_BASE_ARMOR.hullSize": "Increases armor by up to <good>{most}</good>. Hulls with less base armor gain more: the bonus falls to <good>{least}</good> at <hl>{cutoff}</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.",
+    "effect.REPAIR_TIME_MULT.reduces": "Reduces weapon and engine repair time by <good>{value}%</good>.",
+    "effect.REPAIR_TIME_MULT.increases": "Increases weapon and engine repair time by <bad>{value}%</bad>.",
 
     "stat.cargoCapacityPerFighterBay": "cargo capacity per fighter bay",
     "stat.maximumCombatReadiness": "maximum combat readiness",

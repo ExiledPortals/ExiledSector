@@ -1444,12 +1444,12 @@ effect|REPAIR_RATE_PER_DAY_PERCENT|12.5	0	Increases repair rate per day by <good
 effect|REPAIR_RATE_PER_DAY_PERCENT|100.0	0	Increases repair rate per day by <good>100%</good>.
 effect|REPAIR_RATE_PER_DAY_PERCENT|-10.0	0	Decreases repair rate per day by <bad>10%</bad>.
 effect|REPAIR_RATE_PER_DAY_PERCENT|-12.5	0	Decreases repair rate per day by <bad>12.5%</bad>.
-effect|REPAIR_TIME_MULT|1.0	1	<good>1%</good> more weapon and engine repair time.
-effect|REPAIR_TIME_MULT|10.0	1	<good>10%</good> more weapon and engine repair time.
-effect|REPAIR_TIME_MULT|12.5	1	<good>12.5%</good> more weapon and engine repair time.
-effect|REPAIR_TIME_MULT|100.0	1	<good>100%</good> more weapon and engine repair time.
-effect|REPAIR_TIME_MULT|-10.0	1	<bad>10%</bad> less weapon and engine repair time.
-effect|REPAIR_TIME_MULT|-12.5	1	<bad>12.5%</bad> less weapon and engine repair time.
+effect|REPAIR_TIME_MULT|1.0	0	Increases weapon and engine repair time by <bad>1%</bad>.
+effect|REPAIR_TIME_MULT|10.0	0	Increases weapon and engine repair time by <bad>10%</bad>.
+effect|REPAIR_TIME_MULT|12.5	0	Increases weapon and engine repair time by <bad>12.5%</bad>.
+effect|REPAIR_TIME_MULT|100.0	0	Increases weapon and engine repair time by <bad>100%</bad>.
+effect|REPAIR_TIME_MULT|-10.0	0	Reduces weapon and engine repair time by <good>10%</good>.
+effect|REPAIR_TIME_MULT|-12.5	0	Reduces weapon and engine repair time by <good>12.5%</good>.
 effect|REPAIR_TIME_PERCENT|1.0	1	Increases weapon and engine repair time by <good>1%</good>.
 effect|REPAIR_TIME_PERCENT|10.0	1	Increases weapon and engine repair time by <good>10%</good>.
 effect|REPAIR_TIME_PERCENT|12.5	1	Increases weapon and engine repair time by <good>12.5%</good>.
@@ -1997,15 +1997,15 @@ type|augmentedengines|CRUISER|0	0	Increases max burn level by <good>1</good>.
 type|augmentedengines|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Augmented Drive Field.
 type|augmentedengines|CAPITAL_SHIP|0	0	Increases max burn level by <good>1</good>.
 type|augmentedengines|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Augmented Drive Field.
-type|autorepair|null|0	1	<bad>25%</bad> less weapon and engine repair time.
+type|autorepair|null|0	0	Reduces weapon and engine repair time by <good>25%</good>.
 type|autorepair|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Automated Repair Unit.
-type|autorepair|FRIGATE|0	1	<bad>25%</bad> less weapon and engine repair time.
+type|autorepair|FRIGATE|0	0	Reduces weapon and engine repair time by <good>25%</good>.
 type|autorepair|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Automated Repair Unit.
-type|autorepair|DESTROYER|0	1	<bad>25%</bad> less weapon and engine repair time.
+type|autorepair|DESTROYER|0	0	Reduces weapon and engine repair time by <good>25%</good>.
 type|autorepair|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Automated Repair Unit.
-type|autorepair|CRUISER|0	1	<bad>25%</bad> less weapon and engine repair time.
+type|autorepair|CRUISER|0	0	Reduces weapon and engine repair time by <good>25%</good>.
 type|autorepair|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Automated Repair Unit.
-type|autorepair|CAPITAL_SHIP|0	1	<bad>25%</bad> less weapon and engine repair time.
+type|autorepair|CAPITAL_SHIP|0	0	Reduces weapon and engine repair time by <good>25%</good>.
 type|autorepair|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Automated Repair Unit.
 type|auxiliary_fuel_tanks|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Auxiliary Fuel Tanks.
 type|auxiliary_fuel_tanks|FRIGATE|0	0	Increases fuel capacity by <good>25</good>.
@@ -2935,16 +2935,16 @@ type|nskr_criticalArmor|null|0	0	The defenses of lightly armored ships can be si
 type|nskr_criticalArmor|null|1	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
 type|nskr_criticalArmor|null|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Heavy Armor, Hel Carapace, Hel Plating, Critical Point Protection.
 type|nskr_criticalArmor|FRIGATE|0	0	The defenses of lightly armored ships can be significantly reinforced through targeted modifications to critical structural components.
-type|nskr_criticalArmor|FRIGATE|1	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
+type|nskr_criticalArmor|FRIGATE|1	0	Increases armor by up to <good>400</good>. Hulls with less base armor gain more: the bonus falls to <good>150</good> at <hl>400</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
 type|nskr_criticalArmor|FRIGATE|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Heavy Armor, Hel Carapace, Hel Plating, Critical Point Protection.
 type|nskr_criticalArmor|DESTROYER|0	0	The defenses of lightly armored ships can be significantly reinforced through targeted modifications to critical structural components.
-type|nskr_criticalArmor|DESTROYER|1	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
+type|nskr_criticalArmor|DESTROYER|1	0	Increases armor by up to <good>700</good>. Hulls with less base armor gain more: the bonus falls to <good>300</good> at <hl>700</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
 type|nskr_criticalArmor|DESTROYER|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Heavy Armor, Hel Carapace, Hel Plating, Critical Point Protection.
 type|nskr_criticalArmor|CRUISER|0	0	The defenses of lightly armored ships can be significantly reinforced through targeted modifications to critical structural components.
-type|nskr_criticalArmor|CRUISER|1	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
+type|nskr_criticalArmor|CRUISER|1	0	Increases armor by up to <good>900</good>. Hulls with less base armor gain more: the bonus falls to <good>400</good> at <hl>900</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
 type|nskr_criticalArmor|CRUISER|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Heavy Armor, Hel Carapace, Hel Plating, Critical Point Protection.
 type|nskr_criticalArmor|CAPITAL_SHIP|0	0	The defenses of lightly armored ships can be significantly reinforced through targeted modifications to critical structural components.
-type|nskr_criticalArmor|CAPITAL_SHIP|1	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
+type|nskr_criticalArmor|CAPITAL_SHIP|1	0	Increases armor by up to <good>1200</good>. Hulls with less base armor gain more: the bonus falls to <good>500</good> at <hl>1200</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
 type|nskr_criticalArmor|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Heavy Armor, Hel Carapace, Hel Plating, Critical Point Protection.
 type|nskr_inertial|null|0	0	The ship's projectile weapons are supercharged, hitting harder the faster the ship moves.
 type|nskr_inertial|null|1	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
@@ -3189,11 +3189,11 @@ type|reinforcedhull|CAPITAL_SHIP|0	0	Increases hull points by <good>40%</good>.
 type|reinforcedhull|CAPITAL_SHIP|1	0	If disabled, this ship is almost always recoverable after the battle.
 type|reinforcedhull|CAPITAL_SHIP|2	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 type|reinforcedhull|CAPITAL_SHIP|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Reinforced Bulkheads.
-type|repair_time|null|0	1	<bad>15%</bad> less weapon and engine repair time.
-type|repair_time|FRIGATE|0	1	<bad>15%</bad> less weapon and engine repair time.
-type|repair_time|DESTROYER|0	1	<bad>15%</bad> less weapon and engine repair time.
-type|repair_time|CRUISER|0	1	<bad>15%</bad> less weapon and engine repair time.
-type|repair_time|CAPITAL_SHIP|0	1	<bad>15%</bad> less weapon and engine repair time.
+type|repair_time|null|0	0	Reduces weapon and engine repair time by <good>15%</good>.
+type|repair_time|FRIGATE|0	0	Reduces weapon and engine repair time by <good>15%</good>.
+type|repair_time|DESTROYER|0	0	Reduces weapon and engine repair time by <good>15%</good>.
+type|repair_time|CRUISER|0	0	Reduces weapon and engine repair time by <good>15%</good>.
+type|repair_time|CAPITAL_SHIP|0	0	Reduces weapon and engine repair time by <good>15%</good>.
 type|restriction_breeds_creativity|null|0	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 type|restriction_breeds_creativity|FRIGATE|0	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 type|restriction_breeds_creativity|DESTROYER|0	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
@@ -3546,7 +3546,7 @@ summary|option0|FRIGATE|14	0	<bad>25%</bad> less weapon turn rate.
 summary|option0|FRIGATE|15	1	<bad>25%</bad> less weapon recoil.
 summary|option0|FRIGATE|16	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
 summary|option0|FRIGATE|17	0	Increases max burn level by <good>3</good>.
-summary|option0|FRIGATE|18	1	<bad>45.81%</bad> less weapon and engine repair time.
+summary|option0|FRIGATE|18	0	Reduces weapon and engine repair time by <good>45.81%</good>.
 summary|option0|FRIGATE|19	0	Increases fuel capacity by <good>35</good>.
 summary|option0|FRIGATE|20	0	Increases deceleration by <good>50%</good>.
 summary|option0|FRIGATE|21	0	Increases turn acceleration by <good>160%</good>.
@@ -3721,7 +3721,7 @@ summary|option0|DESTROYER|14	0	<bad>25%</bad> less weapon turn rate.
 summary|option0|DESTROYER|15	1	<bad>25%</bad> less weapon recoil.
 summary|option0|DESTROYER|16	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
 summary|option0|DESTROYER|17	0	Increases max burn level by <good>3</good>.
-summary|option0|DESTROYER|18	1	<bad>45.81%</bad> less weapon and engine repair time.
+summary|option0|DESTROYER|18	0	Reduces weapon and engine repair time by <good>45.81%</good>.
 summary|option0|DESTROYER|19	0	Increases fuel capacity by <good>65</good>.
 summary|option0|DESTROYER|20	0	Increases deceleration by <good>50%</good>.
 summary|option0|DESTROYER|21	0	Increases turn acceleration by <good>160%</good>.
@@ -3896,7 +3896,7 @@ summary|option0|CRUISER|14	0	<bad>25%</bad> less weapon turn rate.
 summary|option0|CRUISER|15	1	<bad>25%</bad> less weapon recoil.
 summary|option0|CRUISER|16	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
 summary|option0|CRUISER|17	0	Increases max burn level by <good>3</good>.
-summary|option0|CRUISER|18	1	<bad>45.81%</bad> less weapon and engine repair time.
+summary|option0|CRUISER|18	0	Reduces weapon and engine repair time by <good>45.81%</good>.
 summary|option0|CRUISER|19	0	Increases fuel capacity by <good>110</good>.
 summary|option0|CRUISER|20	0	Increases deceleration by <good>50%</good>.
 summary|option0|CRUISER|21	0	Increases turn acceleration by <good>160%</good>.
@@ -4071,7 +4071,7 @@ summary|option0|CAPITAL_SHIP|14	0	<bad>25%</bad> less weapon turn rate.
 summary|option0|CAPITAL_SHIP|15	1	<bad>25%</bad> less weapon recoil.
 summary|option0|CAPITAL_SHIP|16	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
 summary|option0|CAPITAL_SHIP|17	0	Increases max burn level by <good>3</good>.
-summary|option0|CAPITAL_SHIP|18	1	<bad>45.81%</bad> less weapon and engine repair time.
+summary|option0|CAPITAL_SHIP|18	0	Reduces weapon and engine repair time by <good>45.81%</good>.
 summary|option0|CAPITAL_SHIP|19	0	Increases fuel capacity by <good>225</good>.
 summary|option0|CAPITAL_SHIP|20	0	Increases deceleration by <good>50%</good>.
 summary|option0|CAPITAL_SHIP|21	0	Increases turn acceleration by <good>160%</good>.
@@ -4246,7 +4246,7 @@ summary|option1|FRIGATE|14	0	<bad>25%</bad> less weapon turn rate.
 summary|option1|FRIGATE|15	1	<bad>25%</bad> less weapon recoil.
 summary|option1|FRIGATE|16	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
 summary|option1|FRIGATE|17	0	Increases max burn level by <good>3</good>.
-summary|option1|FRIGATE|18	1	<bad>45.81%</bad> less weapon and engine repair time.
+summary|option1|FRIGATE|18	0	Reduces weapon and engine repair time by <good>45.81%</good>.
 summary|option1|FRIGATE|19	0	Increases fuel capacity by <good>35</good>.
 summary|option1|FRIGATE|20	0	Increases deceleration by <good>50%</good>.
 summary|option1|FRIGATE|21	0	Increases turn acceleration by <good>160%</good>.
@@ -4421,7 +4421,7 @@ summary|option1|DESTROYER|14	0	<bad>25%</bad> less weapon turn rate.
 summary|option1|DESTROYER|15	1	<bad>25%</bad> less weapon recoil.
 summary|option1|DESTROYER|16	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
 summary|option1|DESTROYER|17	0	Increases max burn level by <good>3</good>.
-summary|option1|DESTROYER|18	1	<bad>45.81%</bad> less weapon and engine repair time.
+summary|option1|DESTROYER|18	0	Reduces weapon and engine repair time by <good>45.81%</good>.
 summary|option1|DESTROYER|19	0	Increases fuel capacity by <good>65</good>.
 summary|option1|DESTROYER|20	0	Increases deceleration by <good>50%</good>.
 summary|option1|DESTROYER|21	0	Increases turn acceleration by <good>160%</good>.
@@ -4596,7 +4596,7 @@ summary|option1|CRUISER|14	0	<bad>25%</bad> less weapon turn rate.
 summary|option1|CRUISER|15	1	<bad>25%</bad> less weapon recoil.
 summary|option1|CRUISER|16	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
 summary|option1|CRUISER|17	0	Increases max burn level by <good>3</good>.
-summary|option1|CRUISER|18	1	<bad>45.81%</bad> less weapon and engine repair time.
+summary|option1|CRUISER|18	0	Reduces weapon and engine repair time by <good>45.81%</good>.
 summary|option1|CRUISER|19	0	Increases fuel capacity by <good>110</good>.
 summary|option1|CRUISER|20	0	Increases deceleration by <good>50%</good>.
 summary|option1|CRUISER|21	0	Increases turn acceleration by <good>160%</good>.
@@ -4771,7 +4771,7 @@ summary|option1|CAPITAL_SHIP|14	0	<bad>25%</bad> less weapon turn rate.
 summary|option1|CAPITAL_SHIP|15	1	<bad>25%</bad> less weapon recoil.
 summary|option1|CAPITAL_SHIP|16	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
 summary|option1|CAPITAL_SHIP|17	0	Increases max burn level by <good>3</good>.
-summary|option1|CAPITAL_SHIP|18	1	<bad>45.81%</bad> less weapon and engine repair time.
+summary|option1|CAPITAL_SHIP|18	0	Reduces weapon and engine repair time by <good>45.81%</good>.
 summary|option1|CAPITAL_SHIP|19	0	Increases fuel capacity by <good>225</good>.
 summary|option1|CAPITAL_SHIP|20	0	Increases deceleration by <good>50%</good>.
 summary|option1|CAPITAL_SHIP|21	0	Increases turn acceleration by <good>160%</good>.
@@ -4946,7 +4946,7 @@ summary|option2|FRIGATE|14	0	<bad>25%</bad> less weapon turn rate.
 summary|option2|FRIGATE|15	1	<bad>25%</bad> less weapon recoil.
 summary|option2|FRIGATE|16	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
 summary|option2|FRIGATE|17	0	Increases max burn level by <good>3</good>.
-summary|option2|FRIGATE|18	1	<bad>45.81%</bad> less weapon and engine repair time.
+summary|option2|FRIGATE|18	0	Reduces weapon and engine repair time by <good>45.81%</good>.
 summary|option2|FRIGATE|19	0	Increases fuel capacity by <good>35</good>.
 summary|option2|FRIGATE|20	0	Increases deceleration by <good>50%</good>.
 summary|option2|FRIGATE|21	0	Increases turn acceleration by <good>160%</good>.
@@ -5121,7 +5121,7 @@ summary|option2|DESTROYER|14	0	<bad>25%</bad> less weapon turn rate.
 summary|option2|DESTROYER|15	1	<bad>25%</bad> less weapon recoil.
 summary|option2|DESTROYER|16	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
 summary|option2|DESTROYER|17	0	Increases max burn level by <good>3</good>.
-summary|option2|DESTROYER|18	1	<bad>45.81%</bad> less weapon and engine repair time.
+summary|option2|DESTROYER|18	0	Reduces weapon and engine repair time by <good>45.81%</good>.
 summary|option2|DESTROYER|19	0	Increases fuel capacity by <good>65</good>.
 summary|option2|DESTROYER|20	0	Increases deceleration by <good>50%</good>.
 summary|option2|DESTROYER|21	0	Increases turn acceleration by <good>160%</good>.
@@ -5296,7 +5296,7 @@ summary|option2|CRUISER|14	0	<bad>25%</bad> less weapon turn rate.
 summary|option2|CRUISER|15	1	<bad>25%</bad> less weapon recoil.
 summary|option2|CRUISER|16	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
 summary|option2|CRUISER|17	0	Increases max burn level by <good>3</good>.
-summary|option2|CRUISER|18	1	<bad>45.81%</bad> less weapon and engine repair time.
+summary|option2|CRUISER|18	0	Reduces weapon and engine repair time by <good>45.81%</good>.
 summary|option2|CRUISER|19	0	Increases fuel capacity by <good>110</good>.
 summary|option2|CRUISER|20	0	Increases deceleration by <good>50%</good>.
 summary|option2|CRUISER|21	0	Increases turn acceleration by <good>160%</good>.
@@ -5471,7 +5471,7 @@ summary|option2|CAPITAL_SHIP|14	0	<bad>25%</bad> less weapon turn rate.
 summary|option2|CAPITAL_SHIP|15	1	<bad>25%</bad> less weapon recoil.
 summary|option2|CAPITAL_SHIP|16	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
 summary|option2|CAPITAL_SHIP|17	0	Increases max burn level by <good>3</good>.
-summary|option2|CAPITAL_SHIP|18	1	<bad>45.81%</bad> less weapon and engine repair time.
+summary|option2|CAPITAL_SHIP|18	0	Reduces weapon and engine repair time by <good>45.81%</good>.
 summary|option2|CAPITAL_SHIP|19	0	Increases fuel capacity by <good>225</good>.
 summary|option2|CAPITAL_SHIP|20	0	Increases deceleration by <good>50%</good>.
 summary|option2|CAPITAL_SHIP|21	0	Increases turn acceleration by <good>160%</good>.

@@ -13,6 +13,10 @@ public interface SkillEffect {
 
     StyledText description(float magnitude);
 
+    default StyledText description(float magnitude, ShipAPI.HullSize hullSize) {
+        return description(magnitude);
+    }
+
     default boolean isConditional() {
         return false;
     }

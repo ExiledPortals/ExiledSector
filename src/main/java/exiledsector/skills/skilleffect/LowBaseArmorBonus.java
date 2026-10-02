@@ -40,6 +40,22 @@ final class LowBaseArmorBonus {
         return scale != null && !phaseHull && baseArmor <= scale.cutoff();
     }
 
+    static boolean covers(HullSize hullSize) {
+        return hullSize != null && SCALES.containsKey(hullSize);
+    }
+
+    static String most(HullSize hullSize, float magnitude) {
+        return NumberText.format(SCALES.get(hullSize).bonusWithNoArmor() * magnitude);
+    }
+
+    static String least(HullSize hullSize, float magnitude) {
+        return NumberText.format(SCALES.get(hullSize).bonusAtCutoff() * magnitude);
+    }
+
+    static String cutoff(HullSize hullSize) {
+        return NumberText.format(SCALES.get(hullSize).cutoff());
+    }
+
     static String mostByHullSize(float magnitude) {
         return byHullSize(scale -> scale.bonusWithNoArmor() * magnitude);
     }
