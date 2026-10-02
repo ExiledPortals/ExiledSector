@@ -5,11 +5,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 
 final class CatalogueLint {
 
     private static final String ONE_SUFFIX = ".one";
     private static final String OTHER_SUFFIX = ".other";
+    private static final Pattern UNSPACED_SU = Pattern.compile("[0-9}]su(?![A-Za-z])");
 
     private CatalogueLint() {
     }
@@ -90,6 +92,9 @@ final class CatalogueLint {
         }
         if (key.startsWith("settings.") && value.indexOf('%') >= 0) {
             problems.add(locale + " " + key + ": LunaLib runs settings text through String.format, so it must not contain '%'");
+        }
+        if (UNSPACED_SU.matcher(value).find()) {
+            problems.add(locale + " " + key + ": write a space before 'su', as vanilla does ('1000 su')");
         }
     }
 

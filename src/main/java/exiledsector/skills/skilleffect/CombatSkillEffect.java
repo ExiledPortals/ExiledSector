@@ -77,32 +77,30 @@ public enum CombatSkillEffect implements BackedSkillEffect {
                     .arg("drain", AbsorbReserveListener.DRAIN_PER_SECOND).arg("max", AbsorbReserveListener.MAX_RESERVE).styled();
         }
     },
-    ACCRETION_ARMOR_RESTORE_PERCENT(AccretionListener.ARMOR_RESTORE_PERCENT_KEY, AccretionListener.class, AccretionListener::new) {
+    HEARTLESS_ON_NEARBY_DESTRUCTION_RANGE_FLAT(NearbyDestructionHeartless.RANGE_KEY,
+            NearbyDestructionHeartless.class, NearbyDestructionHeartless::new) {
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("range", AccretionListener.RANGE).arg("value", magnitude).styled();
+            return EffectText.msg(this).arg("value", magnitude).arg("stacks", HeartlessStacks.DEFAULT_MAX_STACKS).styled();
         }
     },
-    ACCRETION_ARMOR_PERCENT_PER_STACK(AccretionListener.ARMOR_PERCENT_PER_STACK_KEY, AccretionListener.class, AccretionListener::new) {
+    HEARTLESS_MAX_STACKS_FLAT(HeartlessStacks.MAX_STACKS_KEY, HeartlessStacks.class, HeartlessStacks::new) {
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).arg("stacks", AccretionListener.MAX_STACKS)
-                    .arg("max", magnitude * AccretionListener.MAX_STACKS).styled();
+            return EffectText.signed(this, magnitude).styled();
         }
     },
-    ACCRETION_MOBILITY_PENALTY_PERCENT_PER_STACK(AccretionListener.MOBILITY_PENALTY_PERCENT_PER_STACK_KEY,
-            AccretionListener.class, AccretionListener::new) {
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).arg("max", magnitude * AccretionListener.MAX_STACKS).styled();
-        }
-    },
-    ACCRETION_RADIATION_DISABLES_FLAT(AccretionListener.RADIATION_DISABLES_KEY, AccretionListener.class, AccretionListener::new) {
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.msg(this).count(Math.round(magnitude)).arg("value", magnitude).styled();
-        }
-    };
+    HEARTLESS_ARMOR_RESTORE_PERCENT(HeartlessStacks.ARMOR_RESTORE_PERCENT_KEY, HeartlessStacks.class, HeartlessStacks::new),
+    HEARTLESS_ARMOR_PERCENT_PER_STACK(HeartlessStacks.ARMOR_PERCENT_PER_STACK_KEY, HeartlessStacks.class, HeartlessStacks::new),
+    HEARTLESS_MOBILITY_PENALTY_PERCENT_PER_STACK(HeartlessStacks.MOBILITY_PENALTY_PERCENT_PER_STACK_KEY,
+            HeartlessStacks.class, HeartlessStacks::new),
+    HEARTLESS_RADIATION_EMP_FLAT(HeartlessStacks.RADIATION_EMP_KEY, HeartlessStacks.class, HeartlessStacks::new),
+    HEARTLESS_CREW_DEATH_CHANCE_PERCENT_PER_STACK(LiveMunitionsListener.CREW_DEATH_CHANCE_PERCENT_PER_STACK_KEY,
+            LiveMunitionsListener.class, LiveMunitionsListener::new),
+    HEARTLESS_MISSILE_DAMAGE_PERCENT_PER_STACK(LiveMunitionsListener.MISSILE_DAMAGE_PERCENT_PER_STACK_KEY,
+            LiveMunitionsListener.class, LiveMunitionsListener::new),
+    HEARTLESS_MISSILE_SPEED_PERCENT_PER_STACK(LiveMunitionsListener.MISSILE_SPEED_PERCENT_PER_STACK_KEY,
+            LiveMunitionsListener.class, LiveMunitionsListener::new);
 
     private static final String NON_BEAM_ENERGY_CHAIN_HIT_LIST_KEY = "exiledSector_energyChainHitList";
     private static final String NON_BEAM_ENERGY_CHAIN_COUNT_KEY = "exiledSector_energyChainCount";

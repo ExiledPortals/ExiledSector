@@ -1576,34 +1576,69 @@
 			]
 		},
 		{
+			"id": "live_munitions",
+			"name": "Live Munitions",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "HEARTLESS_CREW_DEATH_CHANCE_PERCENT_PER_STACK",
+					"magnitude": 3
+				},
+				{
+					"effect": "HEARTLESS_MISSILE_DAMAGE_PERCENT_PER_STACK",
+					"magnitude": 3
+				},
+				{
+					"effect": "HEARTLESS_MISSILE_SPEED_PERCENT_PER_STACK",
+					"magnitude": 3
+				}
+			],
+			"tags": [
+				"missile",
+				"req_missile"
+			]
+		},
+		{
+			"id": "husk_plating",
+			"name": "Husk Plating",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "HEARTLESS_ARMOR_RESTORE_PERCENT",
+					"magnitude": 5
+				},
+				{
+					"effect": "HEARTLESS_ARMOR_PERCENT_PER_STACK",
+					"magnitude": 2
+				},
+				{
+					"effect": "HEARTLESS_MOBILITY_PENALTY_PERCENT_PER_STACK",
+					"magnitude": 3
+				}
+			],
+			"tags": [
+				"armour"
+			]
+		},
+		{
 			"id": "frozen_heart",
 			"name": "Frozen Heart",
 			"icon": "graphics/icons/frozen_heart2_shifted.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
-					"effect": "ACCRETION_ARMOR_RESTORE_PERCENT",
-					"magnitude": 10
+					"effect": "HEARTLESS_ON_NEARBY_DESTRUCTION_RANGE_FLAT",
+					"magnitude": 1500
 				},
 				{
-					"effect": "ACCRETION_ARMOR_PERCENT_PER_STACK",
-					"magnitude": 5
-				},
-				{
-					"effect": "PEAK_CR_DURATION_PERCENT",
-					"magnitude": 50
+					"effect": "HEARTLESS_RADIATION_EMP_FLAT",
+					"magnitude": 400
 				},
 				{
 					"effect": "MAX_COMBAT_READINESS_PERCENT",
 					"magnitude": 15
-				},
-				{
-					"effect": "CR_LOSS_PER_SECOND_PERCENT",
-					"magnitude": -25
-				},
-				{
-					"effect": "ACCRETION_RADIATION_DISABLES_FLAT",
-					"magnitude": 1
 				},
 				{
 					"effect": "TOP_SPEED_PERCENT",
@@ -1612,10 +1647,6 @@
 				{
 					"effect": "MANEUVERABILITY_PERCENT",
 					"magnitude": -10
-				},
-				{
-					"effect": "ACCRETION_MOBILITY_PENALTY_PERCENT_PER_STACK",
-					"magnitude": 3
 				}
 			],
 			"description": "query. hull?. scanning. [HULL] collect, amass, gather, fuse, keep. The core does not stop. Neither does anything it holds.",

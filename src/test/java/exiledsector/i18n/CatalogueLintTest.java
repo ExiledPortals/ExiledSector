@@ -131,6 +131,13 @@ class CatalogueLintTest {
     }
 
     @Test
+    void flagsDistancesWrittenWithoutASpaceBeforeSu() {
+        assertEquals(List.of(), CatalogueLint.englishProblems(Map.of("a", "Within {range} su and 1000 su/second; a subsystem.")));
+        assertEquals(1, CatalogueLint.englishProblems(Map.of("b", "Within {range}su.")).size());
+        assertEquals(1, CatalogueLint.englishProblems(Map.of("c", "Within 1500su.")).size());
+    }
+
+    @Test
     void metadataKeysNeedNoEnglishSource() {
         assertEquals(List.of(), CatalogueLint.translationProblems("zh_CN", Map.of(),
                 Map.of("meta.font", "graphics/fonts/exiledSector/notosanssc.fnt", "meta.fakeBold", "false"), Map.of()));
