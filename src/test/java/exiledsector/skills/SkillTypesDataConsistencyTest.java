@@ -81,6 +81,39 @@ class SkillTypesDataConsistencyTest {
         assertTrue(gaps.isEmpty(), String.join("\n", gaps));
     }
 
+    @Test
+    void noNodeListsItsOwnPhantomOrPassthroughHullModAsExclusive() throws Exception {
+        List<String> redundant = new ArrayList<>();
+        for (JSONObject type : loadTypes().values()) {
+            for (String hullMod : standInHullMods(type)) {
+                if (strings(type, "exclusiveHullMods").contains(hullMod)) {
+                    redundant.add(type.getString("id") + " lists its own hull mod " + hullMod);
+                }
+            }
+        }
+        assertTrue(redundant.isEmpty(), String.join("\n", redundant));
+    }
+
+    @Test
+    void noExplicitNodeExclusionIsAlreadyImpliedByTheHullModLists() throws Exception {
+        Map<String, JSONObject> types = loadTypes();
+        List<String> redundant = new ArrayList<>();
+        for (JSONObject type : types.values()) {
+            for (String otherId : strings(type, "exclusiveSkillTypes")) {
+                JSONObject other = types.get(otherId);
+                if (other != null && (excludesAny(type, standInHullMods(other)) || excludesAny(other, standInHullMods(type)))) {
+                    redundant.add(type.getString("id") + " lists node " + otherId + ", which its hull mod lists already exclude");
+                }
+            }
+        }
+        assertTrue(redundant.isEmpty(), String.join("\n", redundant));
+    }
+
+    private static boolean excludesAny(JSONObject type, Set<String> hullMods) throws Exception {
+        Set<String> exclusive = strings(type, "exclusiveHullMods");
+        return hullMods.stream().anyMatch(exclusive::contains);
+    }
+
     private static Set<String> standInHullMods(JSONObject type) throws Exception {
         Set<String> standIns = new LinkedHashSet<>(strings(type, "phantomHullMods"));
         if (type.has("vanillaHullMod")) {

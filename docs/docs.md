@@ -172,6 +172,12 @@ and the node falls back to not placing the hull mod, and its tooltip stops claim
 mods and their nodes are always 1:1: no hull mod is split across several node types, and no node type
 stands in for more than one hull mod (`SkillTypesDataConsistencyTest` enforces this).
 
+A node's own hull mods (its phantoms and its passthrough `vanillaHullMod`) always count as exclusive, so
+`exclusiveHullMods` only lists other hull mods. Two nodes are mutually exclusive whenever either one's
+`exclusiveHullMods` names the other's own hull mod, so Advanced Optics listing `high_scatter_amp` is enough to
+keep the two nodes apart. `exclusiveSkillTypes` is only for nodes with no hull mod of their own; the data
+test rejects entries the hull mod lists already imply.
+
 The phantom is a permanent mod, so another mod's hull mod that strips it as incompatible through MagicLib
 can't remove it; this mod removes the incompatible hull mod instead and shows the usual conflict warning.
 Safety Overrides also stays mutually exclusive with the strippers it knows about (LOST_SECTOR, HTE, NSP,

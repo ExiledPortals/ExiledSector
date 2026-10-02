@@ -113,11 +113,57 @@ class SkillTypeTest {
     }
 
     @Test
-    void aTypeWithoutHullmodLinksHasNoEquivalentHullmod() {
-        SkillType type = new SkillType.Builder("t", "T", "a.png", SkillTier.SMALL)
-                .phantomHullModIds(List.of("militarized_subsystems"))
+    void theEquivalentHullmodIsThePhantomBeforeAnyExclusiveHullmod() {
+        SkillType type = new SkillType.Builder("t", "T", "a.png", SkillTier.KEYSTONE)
+                .exclusiveHullModIds(List.of("nskr_volatile"))
+                .phantomHullModIds(List.of("safetyoverrides"))
                 .build();
 
+        assertEquals("safetyoverrides", type.getEquivalentHullModId());
+    }
+
+    @Test
+    void aTypeWithoutHullmodLinksHasNoEquivalentHullmod() {
+        SkillType type = new SkillType.Builder("t", "T", "a.png", SkillTier.SMALL).build();
+
         assertNull(type.getEquivalentHullModId());
+    }
+
+    @Test
+    void aTypeThatExcludesAnotherTypesOwnHullModIsExclusiveWithThatTypeBothWays() {
+        SkillType optics = new SkillType.Builder("advancedoptics", "Advanced Optics", "a.png", SkillTier.NOTABLE)
+                .exclusiveHullModIds(List.of("high_scatter_amp"))
+                .phantomHullModIds(List.of("advancedoptics"))
+                .build();
+        SkillType scatter = new SkillType.Builder("high_scatter_amp", "High Scatter Amplifier", "a.png", SkillTier.NOTABLE)
+                .phantomHullModIds(List.of("high_scatter_amp"))
+                .build();
+        SkillType rangefinder = new SkillType.Builder("ballistic_rangefinder", "Ballistic Rangefinder", "a.png", SkillTier.KEYSTONE)
+                .vanillaHullModId("ballistic_rangefinder")
+                .build();
+        SkillType rangeHater = new SkillType.Builder("t", "T", "a.png", SkillTier.SMALL)
+                .exclusiveHullModIds(List.of("ballistic_rangefinder"))
+                .build();
+
+        assertTrue(optics.isExclusiveWith(scatter));
+        assertTrue(scatter.isExclusiveWith(optics));
+        assertTrue(rangeHater.isExclusiveWith(rangefinder));
+        assertTrue(rangefinder.isExclusiveWith(rangeHater));
+        assertFalse(optics.isExclusiveWith(rangefinder));
+    }
+
+    @Test
+    void aTypeIsNeverExclusiveWithItselfThroughItsOwnHullMod() {
+        SkillType armor = new SkillType.Builder("heavyarmor", "Heavy Armor", "a.png", SkillTier.NOTABLE)
+                .exclusiveHullModIds(List.of("heavyarmor"))
+                .phantomHullModIds(List.of("heavyarmor"))
+                .build();
+        SkillType sameTypeElsewhere = new SkillType.Builder("heavyarmor", "Heavy Armor", "a.png", SkillTier.NOTABLE)
+                .exclusiveHullModIds(List.of("heavyarmor"))
+                .phantomHullModIds(List.of("heavyarmor"))
+                .build();
+
+        assertFalse(armor.isExclusiveWith(armor));
+        assertFalse(armor.isExclusiveWith(sameTypeElsewhere));
     }
 }

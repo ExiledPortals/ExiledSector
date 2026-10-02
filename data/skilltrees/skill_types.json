@@ -137,9 +137,6 @@
 					"magnitude": -5
 				}
 			],
-			"exclusiveHullMods": [
-				"hbi"
-			],
 			"phantomHullMods": [
 				"hbi"
 			],
@@ -160,7 +157,6 @@
 				}
 			],
 			"exclusiveHullMods": [
-				"ground_support",
 				"advanced_ground_support"
 			],
 			"phantomHullMods": [
@@ -514,7 +510,6 @@
 				"CRUISER"
 			],
 			"exclusiveHullMods": [
-				"safetyoverrides",
 				"nskr_volatile",
 				"drg_pdspec",
 				"nsp_sandevistan",
@@ -642,9 +637,6 @@
 					"id": "advancedshieldemitter"
 				}
 			],
-			"exclusiveHullMods": [
-				"advancedshieldemitter"
-			],
 			"phantomHullMods": [
 				"advancedshieldemitter"
 			],
@@ -672,14 +664,10 @@
 				}
 			],
 			"exclusiveHullMods": [
-				"adaptive_coils",
 				"phase_anchor"
 			],
 			"phantomHullMods": [
 				"adaptive_coils"
-			],
-			"exclusiveSkillTypes": [
-				"phase_anchor"
 			],
 			"description": "Phase coils are less able to maintain a connection with normal space as the ship's hard flux levels rise, resulting in a greatly reduced top speed as the coils struggle to gain traction.\n\nThis modification allows the coils to handle higher levels of hard flux, increasing the threshold at which speed bottoms out.",
 			"tags": [
@@ -711,14 +699,10 @@
 				}
 			],
 			"exclusiveHullMods": [
-				"advancedoptics",
 				"high_scatter_amp"
 			],
 			"phantomHullMods": [
 				"advancedoptics"
-			],
-			"exclusiveSkillTypes": [
-				"high_scatter_amp"
 			],
 			"tags": [
 				"energy",
@@ -743,9 +727,6 @@
 					"category": "hullmod",
 					"id": "turretgyros"
 				}
-			],
-			"exclusiveHullMods": [
-				"turretgyros"
 			],
 			"phantomHullMods": [
 				"turretgyros"
@@ -777,9 +758,6 @@
 					"magnitude": -25
 				}
 			],
-			"exclusiveHullMods": [
-				"armoredweapons"
-			],
 			"phantomHullMods": [
 				"armoredweapons"
 			],
@@ -805,9 +783,6 @@
 					"category": "hullmod",
 					"id": "autorepair"
 				}
-			],
-			"exclusiveHullMods": [
-				"autorepair"
 			],
 			"phantomHullMods": [
 				"autorepair"
@@ -838,9 +813,6 @@
 					"effect": "MANEUVERABILITY_PERCENT",
 					"magnitude": 35
 				}
-			],
-			"exclusiveHullMods": [
-				"auxiliarythrusters"
 			],
 			"phantomHullMods": [
 				"auxiliarythrusters"
@@ -888,9 +860,6 @@
 					"magnitude": -60
 				}
 			],
-			"exclusiveHullMods": [
-				"blast_doors"
-			],
 			"phantomHullMods": [
 				"blast_doors"
 			],
@@ -937,9 +906,6 @@
 					"id": "converted_hangar"
 				}
 			],
-			"exclusiveHullMods": [
-				"converted_hangar"
-			],
 			"phantomHullMods": [
 				"converted_hangar"
 			],
@@ -973,9 +939,6 @@
 					"category": "hullmod",
 					"id": "converted_fighterbay"
 				}
-			],
-			"exclusiveHullMods": [
-				"converted_fighterbay"
 			],
 			"phantomHullMods": [
 				"converted_fighterbay"
@@ -1013,16 +976,12 @@
 				"CAPITAL_SHIP"
 			],
 			"exclusiveHullMods": [
-				"dedicated_targeting_core",
 				"targetingunit",
 				"advancedcore",
 				"distributed_fire_control"
 			],
 			"phantomHullMods": [
 				"dedicated_targeting_core"
-			],
-			"exclusiveSkillTypes": [
-				"targetingunit"
 			],
 			"tags": [
 				"range"
@@ -1094,9 +1053,6 @@
 					"id": "eccm"
 				}
 			],
-			"exclusiveHullMods": [
-				"eccm"
-			],
 			"phantomHullMods": [
 				"eccm"
 			],
@@ -1124,9 +1080,6 @@
 					"category": "hullmod",
 					"id": "ecm"
 				}
-			],
-			"exclusiveHullMods": [
-				"ecm"
 			],
 			"phantomHullMods": [
 				"ecm"
@@ -1201,9 +1154,6 @@
 					"id": "expanded_deck_crew"
 				}
 			],
-			"exclusiveHullMods": [
-				"expanded_deck_crew"
-			],
 			"phantomHullMods": [
 				"expanded_deck_crew"
 			],
@@ -1275,9 +1225,6 @@
 					"id": "magazines"
 				}
 			],
-			"exclusiveHullMods": [
-				"magazines"
-			],
 			"phantomHullMods": [
 				"magazines"
 			],
@@ -1309,9 +1256,6 @@
 					"id": "missleracks"
 				}
 			],
-			"exclusiveHullMods": [
-				"missleracks"
-			],
 			"phantomHullMods": [
 				"missleracks"
 			],
@@ -1337,9 +1281,6 @@
 					"category": "hullmod",
 					"id": "extendedshieldemitter"
 				}
-			],
-			"exclusiveHullMods": [
-				"extendedshieldemitter"
 			],
 			"phantomHullMods": [
 				"extendedshieldemitter"
@@ -1374,18 +1315,12 @@
 				}
 			],
 			"exclusiveHullMods": [
-				"shield_shunt",
 				"frontemitter",
 				"adaptiveshields",
 				"frontshield"
 			],
 			"phantomHullMods": [
 				"shield_shunt"
-			],
-			"exclusiveSkillTypes": [
-				"frontemitter",
-				"adaptiveshields",
-				"frontshield"
 			],
 			"tags": [
 				"armour",
@@ -1414,14 +1349,10 @@
 				}
 			],
 			"exclusiveHullMods": [
-				"frontshield",
 				"shield_shunt"
 			],
 			"phantomHullMods": [
 				"frontshield"
-			],
-			"exclusiveSkillTypes": [
-				"shield_shunt"
 			],
 			"tags": [
 				"shield",
@@ -1498,9 +1429,6 @@
 					"id": "hardenedshieldemitter"
 				}
 			],
-			"exclusiveHullMods": [
-				"hardenedshieldemitter"
-			],
 			"phantomHullMods": [
 				"hardenedshieldemitter"
 			],
@@ -1519,9 +1447,6 @@
 					"effect": "CR_LOSS_PER_SECOND_MULT",
 					"magnitude": -30
 				}
-			],
-			"exclusiveHullMods": [
-				"hardened_subsystems"
 			],
 			"phantomHullMods": [
 				"hardened_subsystems"
@@ -1568,9 +1493,6 @@
 					"id": "heavyarmor"
 				}
 			],
-			"exclusiveHullMods": [
-				"heavyarmor"
-			],
 			"phantomHullMods": [
 				"heavyarmor"
 			],
@@ -1594,9 +1516,6 @@
 				"heavyarmor",
 				"tahlan_daemonarmor",
 				"tahlan_daemonplating"
-			],
-			"exclusiveSkillTypes": [
-				"heavyarmor"
 			],
 			"description": "The defenses of lightly armored ships can be significantly reinforced through targeted modifications to critical structural components.",
 			"tags": [
@@ -1787,14 +1706,10 @@
 				}
 			],
 			"exclusiveHullMods": [
-				"high_scatter_amp",
 				"advancedoptics"
 			],
 			"phantomHullMods": [
 				"high_scatter_amp"
-			],
-			"exclusiveSkillTypes": [
-				"advancedoptics"
 			],
 			"todo": "Placeholder magnitudes (50% hard flux, -25% range) pending real balance numbers. Reimplemented as a scalable percentage instead of vanilla's all-or-nothing forced-hard-flux-on-every-beam-hit, and the range reduction is a flat percentage instead of vanilla's reduce-only-the-portion-past-200-units logic - deliberate simplifications, not oversights. The +10% beam damage part (vanilla BEAM_DAMAGE_PERCENT) is not yet added; can reuse the existing BEAM_DAMAGE_PERCENT effect for that later.",
 			"tags": [
@@ -1825,9 +1740,6 @@
 					"category": "hullmod",
 					"id": "pointdefenseai"
 				}
-			],
-			"exclusiveHullMods": [
-				"pointdefenseai"
 			],
 			"phantomHullMods": [
 				"pointdefenseai"
@@ -1865,16 +1777,12 @@
 				}
 			],
 			"exclusiveHullMods": [
-				"targetingunit",
 				"dedicated_targeting_core",
 				"advancedcore",
 				"distributed_fire_control"
 			],
 			"phantomHullMods": [
 				"targetingunit"
-			],
-			"exclusiveSkillTypes": [
-				"dedicated_targeting_core"
 			],
 			"tags": [
 				"range"
@@ -1900,9 +1808,6 @@
 					"category": "hullmod",
 					"id": "nav_relay"
 				}
-			],
-			"exclusiveHullMods": [
-				"nav_relay"
 			],
 			"phantomHullMods": [
 				"nav_relay"
@@ -1935,16 +1840,11 @@
 				}
 			],
 			"exclusiveHullMods": [
-				"frontemitter",
 				"adaptiveshields",
 				"shield_shunt"
 			],
 			"phantomHullMods": [
 				"frontemitter"
-			],
-			"exclusiveSkillTypes": [
-				"adaptiveshields",
-				"shield_shunt"
 			],
 			"description": "Locks the ship's omni-directional shield emitter to a front-facing position and extends its arc. As with all frontal emitters, the shield will also deploy twice as quickly.",
 			"tags": [
@@ -1975,16 +1875,11 @@
 				}
 			],
 			"exclusiveHullMods": [
-				"adaptiveshields",
 				"frontemitter",
 				"shield_shunt"
 			],
 			"phantomHullMods": [
 				"adaptiveshields"
-			],
-			"exclusiveSkillTypes": [
-				"frontemitter",
-				"shield_shunt"
 			],
 			"description": "Replaces the ship's fixed frontal shield emitter with one that can turn to face any direction, at the cost of a narrower arc.",
 			"tags": [
@@ -2009,9 +1904,6 @@
 					"category": "hullmod",
 					"id": "operations_center"
 				}
-			],
-			"exclusiveHullMods": [
-				"operations_center"
 			],
 			"phantomHullMods": [
 				"operations_center"
@@ -2048,14 +1940,10 @@
 				}
 			],
 			"exclusiveHullMods": [
-				"phase_anchor",
 				"adaptive_coils"
 			],
 			"phantomHullMods": [
 				"phase_anchor"
-			],
-			"exclusiveSkillTypes": [
-				"adaptive_coils"
 			],
 			"tags": [
 				"flux",
@@ -2081,9 +1969,6 @@
 					"category": "hullmod",
 					"id": "recovery_shuttles"
 				}
-			],
-			"exclusiveHullMods": [
-				"recovery_shuttles"
 			],
 			"phantomHullMods": [
 				"recovery_shuttles"
@@ -2112,9 +1997,6 @@
 					"effect": "BREAK_PROBABILITY_PERCENT",
 					"magnitude": -100
 				}
-			],
-			"exclusiveHullMods": [
-				"reinforcedhull"
 			],
 			"phantomHullMods": [
 				"reinforcedhull"
@@ -2145,9 +2027,6 @@
 					"id": "fluxbreakers"
 				}
 			],
-			"exclusiveHullMods": [
-				"fluxbreakers"
-			],
 			"phantomHullMods": [
 				"fluxbreakers"
 			],
@@ -2172,9 +2051,6 @@
 					"category": "hullmod",
 					"id": "stabilizedshieldemitter"
 				}
-			],
-			"exclusiveHullMods": [
-				"stabilizedshieldemitter"
 			],
 			"phantomHullMods": [
 				"stabilizedshieldemitter"
@@ -2212,9 +2088,6 @@
 					"capitalShip": 15
 				}
 			],
-			"exclusiveHullMods": [
-				"unstable_injector"
-			],
 			"phantomHullMods": [
 				"unstable_injector"
 			],
@@ -2236,9 +2109,6 @@
 					"cruiser": 60,
 					"capitalShip": 125
 				}
-			],
-			"exclusiveHullMods": [
-				"additional_berthing"
 			],
 			"phantomHullMods": [
 				"additional_berthing"
@@ -2266,9 +2136,6 @@
 					"id": "augmentedengines"
 				}
 			],
-			"exclusiveHullMods": [
-				"augmentedengines"
-			],
 			"phantomHullMods": [
 				"augmentedengines"
 			],
@@ -2289,9 +2156,6 @@
 					"cruiser": 60,
 					"capitalShip": 125
 				}
-			],
-			"exclusiveHullMods": [
-				"auxiliary_fuel_tanks"
 			],
 			"phantomHullMods": [
 				"auxiliary_fuel_tanks"
@@ -2334,9 +2198,6 @@
 					"id": "efficiency_overhaul"
 				}
 			],
-			"exclusiveHullMods": [
-				"efficiency_overhaul"
-			],
 			"phantomHullMods": [
 				"efficiency_overhaul"
 			],
@@ -2358,9 +2219,6 @@
 					"cruiser": 60,
 					"capitalShip": 125
 				}
-			],
-			"exclusiveHullMods": [
-				"expanded_cargo_holds"
 			],
 			"phantomHullMods": [
 				"expanded_cargo_holds"
@@ -2424,9 +2282,6 @@
 					"id": "insulatedengine"
 				}
 			],
-			"exclusiveHullMods": [
-				"insulatedengine"
-			],
 			"phantomHullMods": [
 				"insulatedengine"
 			],
@@ -2451,9 +2306,6 @@
 					"effect": "MIN_CREW_PERCENT",
 					"magnitude": 100
 				}
-			],
-			"exclusiveHullMods": [
-				"militarized_subsystems"
 			],
 			"phantomHullMods": [
 				"militarized_subsystems"
@@ -2514,9 +2366,6 @@
 					"category": "hullmod",
 					"id": "surveying_equipment"
 				}
-			],
-			"exclusiveHullMods": [
-				"surveying_equipment"
 			],
 			"phantomHullMods": [
 				"surveying_equipment"

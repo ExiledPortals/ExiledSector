@@ -121,20 +121,24 @@ public class SkillNode extends SkillTreeObject {
 
     private static StyledText describeExclusivity(SkillType type) {
         Set<String> hullModNames = new LinkedHashSet<>();
+        Set<String> namedHullModIds = new LinkedHashSet<>();
         for (String hullModId : type.getExclusiveHullModIds()) {
             boolean placedByNode = type.getPhantomHullModIds().contains(hullModId) && PhantomHullModStatus.isActive(hullModId);
             String name = placedByNode ? null : HullModNames.loadedDisplayName(hullModId);
             if (name != null) {
                 hullModNames.add(name);
+                namedHullModIds.add(hullModId);
             }
         }
         Set<String> nodeNames = new LinkedHashSet<>();
         for (String skillTypeId : type.getExclusiveSkillTypeIds()) {
-            SkillType other = SkillTree.getType(skillTypeId);
-            nodeNames.add(other != null ? other.getDisplayName() : skillTypeId);
+            if (SkillTree.getType(skillTypeId) == null) {
+                nodeNames.add(skillTypeId);
+            }
         }
         for (SkillType other : SkillTree.getAllTypes().values()) {
-            if (other != type && type.isExclusiveWith(other)) {
+            boolean namedAsHullMod = !other.getOwnHullModIds().isEmpty() && namedHullModIds.containsAll(other.getOwnHullModIds());
+            if (other != type && type.isExclusiveWith(other) && !namedAsHullMod) {
                 nodeNames.add(other.getDisplayName());
             }
         }

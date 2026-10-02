@@ -29,6 +29,7 @@ public class SkillType {
     private final List<String> optionalOptionIds;
     private final List<String> exclusiveHullModIds;
     private final List<String> phantomHullModIds;
+    private final List<String> ownHullModIds;
     private final List<String> exclusiveSkillTypeIds;
     private final List<UnlockCondition> unlockConditions;
     private final List<String> tags;
@@ -50,6 +51,7 @@ public class SkillType {
         this.optionalOptionIds = builder.optionalOptionIds == null ? Collections.emptyList() : builder.optionalOptionIds;
         this.exclusiveHullModIds = builder.exclusiveHullModIds == null ? Collections.emptyList() : builder.exclusiveHullModIds;
         this.phantomHullModIds = builder.phantomHullModIds == null ? Collections.emptyList() : builder.phantomHullModIds;
+        this.ownHullModIds = ownHullModIds(vanillaHullModId, phantomHullModIds);
         this.exclusiveSkillTypeIds = builder.exclusiveSkillTypeIds == null ? Collections.emptyList() : builder.exclusiveSkillTypeIds;
         this.unlockConditions = builder.unlockConditions == null ? Collections.emptyList() : builder.unlockConditions;
         this.tags = builder.tags == null ? Collections.emptyList() : builder.tags;
@@ -223,20 +225,36 @@ public class SkillType {
 
     public List<String> getExclusiveHullModIds() {
         List<String> combined = new ArrayList<>(exclusiveHullModIds);
-        if (vanillaHullModId != null && !combined.contains(vanillaHullModId)) {
-            combined.add(vanillaHullModId);
-        }
-        for (String phantomHullModId : phantomHullModIds) {
-            if (!combined.contains(phantomHullModId)) {
-                combined.add(phantomHullModId);
+        for (String ownHullModId : getOwnHullModIds()) {
+            if (!combined.contains(ownHullModId)) {
+                combined.add(ownHullModId);
             }
         }
         return combined;
     }
 
+    public List<String> getOwnHullModIds() {
+        return ownHullModIds;
+    }
+
+    private static List<String> ownHullModIds(String vanillaHullModId, List<String> phantomHullModIds) {
+        if (vanillaHullModId == null) {
+            return phantomHullModIds;
+        }
+        List<String> own = new ArrayList<>();
+        own.add(vanillaHullModId);
+        for (String phantomHullModId : phantomHullModIds) {
+            if (!own.contains(phantomHullModId)) {
+                own.add(phantomHullModId);
+            }
+        }
+        return Collections.unmodifiableList(own);
+    }
+
     public String getEquivalentHullModId() {
-        if (vanillaHullModId != null) {
-            return vanillaHullModId;
+        List<String> own = getOwnHullModIds();
+        if (!own.isEmpty()) {
+            return own.get(0);
         }
         return exclusiveHullModIds.isEmpty() ? null : exclusiveHullModIds.get(0);
     }
@@ -250,7 +268,23 @@ public class SkillType {
     }
 
     public boolean isExclusiveWith(SkillType other) {
-        return exclusiveSkillTypeIds.contains(other.getId()) || other.getExclusiveSkillTypeIds().contains(id);
+        if (exclusiveSkillTypeIds.contains(other.getId()) || other.getExclusiveSkillTypeIds().contains(id)) {
+            return true;
+        }
+        return !id.equals(other.getId()) && (excludesOwnHullModOf(other) || other.excludesOwnHullModOf(this));
+    }
+
+    private boolean excludesOwnHullModOf(SkillType other) {
+        List<String> otherOwn = other.getOwnHullModIds();
+        if (otherOwn.isEmpty()) {
+            return false;
+        }
+        for (String hullModId : exclusiveHullModIds) {
+            if (otherOwn.contains(hullModId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public List<UnlockCondition> getUnlockConditions() {
