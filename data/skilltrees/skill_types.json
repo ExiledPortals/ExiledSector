@@ -332,7 +332,7 @@
 			"effects": [
 				{
 					"effect": "NON_BEAM_ENERGY_WEAPON_DAMAGE_PERCENT",
-					"magnitude": 10
+					"magnitude": 3
 				}
 			],
 			"tags": [
