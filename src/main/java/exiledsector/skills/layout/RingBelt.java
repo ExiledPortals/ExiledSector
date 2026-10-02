@@ -1,5 +1,7 @@
 package exiledsector.skills.layout;
 
+import java.util.List;
+
 public class RingBelt extends SkillTreeObject {
 
     private final float innerRadius;
@@ -9,7 +11,12 @@ public class RingBelt extends SkillTreeObject {
 
     public RingBelt(String id, float x, float y, float innerRadius, float outerRadius, String ringArtPath,
                      Rotation rotation) {
-        super(id, x, y);
+        this(id, x, y, innerRadius, outerRadius, ringArtPath, rotation, null);
+    }
+
+    public RingBelt(String id, float x, float y, float innerRadius, float outerRadius, String ringArtPath,
+                    Rotation rotation, List<String> tags) {
+        super(id, x, y, tags);
         this.innerRadius = innerRadius;
         this.outerRadius = outerRadius;
         this.ringArtPath = ringArtPath;

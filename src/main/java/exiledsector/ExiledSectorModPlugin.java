@@ -28,6 +28,7 @@ import exiledsector.skills.SkillType;
 import exiledsector.skills.npc.NpcLayouts;
 import exiledsector.skills.skilleffect.CsvIdBlocklist;
 import exiledsector.skills.skilleffect.FleetWideEffects;
+import exiledsector.skills.tags.AreaToggles;
 import exiledsector.ui.ExiledSectorSettings;
 import exiledsector.ui.SkillTreeRefitButton;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
@@ -53,6 +54,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         SkillTreeRefitButton.addButton();
         ExiledSectorSettings.register();
         SkillTree.load();
+        SkillTree.applyDisabledRegions(AreaToggles.disabledRegions());
         PhantomHullMods.install(phantomHullModIds());
         CsvIdBlocklist.loadAll();
         NpcLayouts.load();
@@ -95,7 +97,8 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
             Global.getLogger(ExiledSectorModPlugin.class).warn(LOG_TAG + ": the skill tree did not load completely, so saved allocations were left as they are.");
             return;
         }
-        ShipSkillDataManager.forgetUnknownNodes(SkillTree.getAllNodes(), SkillTree.getAllTypes(), ExiledSectorModPlugin::refund);
+        ShipSkillDataManager.forgetUnknownNodes(SkillTree.getAllNodes(), SkillTree.getAllTypes(), SkillTree::getDeclared,
+                ExiledSectorModPlugin::refund);
     }
 
     private static void refund(SkillItemCost itemCost) {
@@ -107,6 +110,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
 
     @Override
     public void onGameLoad(boolean newGame) {
+        SkillTree.applyDisabledRegions(AreaToggles.disabledRegions());
         SkillDataResolver.clearCache();
         OpSpentSlotManager.releaseUnless(ShipSkillDataManager::hasProgress);
         ShipSkillDataManager.removeBlankRecords();

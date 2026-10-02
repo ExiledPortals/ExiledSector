@@ -1,5 +1,7 @@
 package exiledsector.skills.layout;
 
+import java.util.List;
+
 public class StaticImage extends SkillTreeObject {
 
     private final float width;
@@ -8,7 +10,12 @@ public class StaticImage extends SkillTreeObject {
     private final Rotation rotation;
 
     public StaticImage(String id, float x, float y, float width, float height, String imagePath, Rotation rotation) {
-        super(id, x, y);
+        this(id, x, y, width, height, imagePath, rotation, null);
+    }
+
+    public StaticImage(String id, float x, float y, float width, float height, String imagePath, Rotation rotation,
+                       List<String> tags) {
+        super(id, x, y, tags);
         this.width = width;
         this.height = height;
         this.imagePath = imagePath;

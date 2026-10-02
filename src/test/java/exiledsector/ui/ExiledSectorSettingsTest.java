@@ -8,6 +8,7 @@ import exiledsector.i18n.RealCatalogue;
 import exiledsector.skills.npc.NpcLevelTable;
 import exiledsector.skills.npc.NpcTreeConfig;
 import exiledsector.skills.progression.ShipLevelConfig;
+import exiledsector.skills.tags.AreaToggles;
 import exiledsector.ui.inspect.NpcInspectConfig;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
@@ -84,6 +85,13 @@ class ExiledSectorSettingsTest {
     }
 
     @Test
+    void registersTheLostSectorAreaToggleDefaultingToAuto() {
+        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addRadio(eq("exiledSector"),
+                eq(AreaToggles.LOST_SECTOR_FIELD_ID), anyString(), anyString(), eq(AreaToggles.AUTO),
+                eq(String.join(",", AreaToggles.OPTIONS)), eq("")));
+    }
+
+    @Test
     void noSettingTextContainsAPercentSignBecauseLunaLibFormatsItBeforeDisplaying() {
         assertFalse(registeredTexts.isEmpty());
         for (String text : registeredTexts) {
@@ -98,9 +106,10 @@ class ExiledSectorSettingsTest {
         ExiledSectorSettings.registerLanguage();
         ExiledSectorSettings.register();
         String options = String.join(",", LanguageSetting.OPTIONS);
+        String areaOptions = String.join(",", AreaToggles.OPTIONS);
         for (String text : registeredTexts) {
             boolean untranslated = text.isEmpty() || text.startsWith("exiledSector") || text.equals(options)
-                    || LanguageSetting.OPTIONS.contains(text);
+                    || LanguageSetting.OPTIONS.contains(text) || text.equals(areaOptions) || AreaToggles.OPTIONS.contains(text);
             assertFalse(!untranslated && PseudoLeaks.hasLeak(text), () -> "Hardcoded settings text: " + text);
         }
     }
