@@ -64,14 +64,35 @@ class SkillTreeBonusSummaryTest {
     }
 
     @Test
-    void multiplicativeBonusesCompound() {
-        SkillType flux = small("flux", new SkillTypeEffect(FluxSkillEffect.FLUX_CAPACITY_MULT, 10f));
+    void multipliersFromSeveralNodesAddTogetherLikeTheyApply() {
+        SkillType flux = small("flux", new SkillTypeEffect(FluxSkillEffect.FLUX_CAPACITY_MULT, 2f));
         allocate("flux_1", flux);
         allocate("flux_2", flux);
 
         Summary summary = SkillTreeBonusSummary.of(data, HullSize.CRUISER);
 
-        assertTrue(texts(summary).contains(FluxSkillEffect.FLUX_CAPACITY_MULT.description(21f).plain()), texts(summary).toString());
+        assertTrue(texts(summary).contains(FluxSkillEffect.FLUX_CAPACITY_MULT.description(4f).plain()), texts(summary).toString());
+    }
+
+    @Test
+    void multipliersThatCancelOutLeaveNoLine() {
+        allocate("more_1", small("more", new SkillTypeEffect(FluxSkillEffect.FLUX_CAPACITY_MULT, 15f)));
+        allocate("less_1", small("less", new SkillTypeEffect(FluxSkillEffect.FLUX_CAPACITY_MULT, -15f)));
+
+        Summary summary = SkillTreeBonusSummary.of(data, HullSize.CRUISER);
+
+        assertTrue(texts(summary).stream().noneMatch(text -> text.contains("flux capacity")), texts(summary).toString());
+    }
+
+    @Test
+    void addedMultipliersStopAtOneHundredPercentLess() {
+        SkillType flux = small("flux", new SkillTypeEffect(FluxSkillEffect.FLUX_CAPACITY_MULT, -60f));
+        allocate("flux_1", flux);
+        allocate("flux_2", flux);
+
+        Summary summary = SkillTreeBonusSummary.of(data, HullSize.CRUISER);
+
+        assertTrue(texts(summary).contains(FluxSkillEffect.FLUX_CAPACITY_MULT.description(-100f).plain()), texts(summary).toString());
     }
 
     @Test

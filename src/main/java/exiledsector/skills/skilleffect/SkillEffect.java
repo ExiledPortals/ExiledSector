@@ -60,6 +60,14 @@ public interface SkillEffect {
 
     String name();
 
+    default boolean isMultiplicative() {
+        return name().endsWith("_MULT");
+    }
+
+    static float addedMultiplier(float totalMagnitude) {
+        return Math.max(totalMagnitude, -100f);
+    }
+
     static SkillEffect byName(String name) {
         return SkillEffectRegistry.byName(name);
     }

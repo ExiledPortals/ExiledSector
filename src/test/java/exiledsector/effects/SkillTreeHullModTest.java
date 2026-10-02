@@ -54,6 +54,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.doAnswer;
@@ -115,6 +116,47 @@ class SkillTreeHullModTest {
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
 
         verify(hullStatBonus).modifyPercent("exiledSector_skill_hull_1", 10f);
+    }
+
+    private com.fs.starfarer.api.combat.StatBonus hullBonusAfterAllocating(float... hullMultMagnitudes) {
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+        for (int i = 0; i < hullMultMagnitudes.length; i++) {
+            SkillType type = new SkillType.Builder("hull_mult_" + i, "Hull", "a.png", SkillTier.SMALL)
+                    .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_MULT, hullMultMagnitudes[i]))).build();
+            SkillNode node = new SkillNode("hull_mult_node_" + i, type, List.of(), 0f, 0f);
+            SkillTree.register(node);
+            ShipSkillDataManager.get("ship-a").allocate(node, 1);
+        }
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        when(stats.getFleetMember()).thenReturn(member);
+        com.fs.starfarer.api.combat.StatBonus hullBonus = mock(com.fs.starfarer.api.combat.StatBonus.class);
+        when(stats.getHullBonus()).thenReturn(hullBonus);
+
+        new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
+        return hullBonus;
+    }
+
+    @Test
+    void moreMultipliersFromSeveralNodesAddIntoOneMultiplierInsteadOfCompounding() {
+        com.fs.starfarer.api.combat.StatBonus hullBonus = hullBonusAfterAllocating(2f, 2f, 5f);
+
+        verify(hullBonus).modifyMult("exiledSector_skillMult_HULL_MULT", 1.09f);
+        verify(hullBonus, never()).modifyMult(eq("exiledSector_skill_hull_mult_node_0"), anyFloat());
+    }
+
+    @Test
+    void moreAndLessMultipliersOnOneEffectAddTogether() {
+        com.fs.starfarer.api.combat.StatBonus hullBonus = hullBonusAfterAllocating(15f, -30f);
+
+        verify(hullBonus).modifyMult("exiledSector_skillMult_HULL_MULT", 0.85f);
+    }
+
+    @Test
+    void addedMultipliersNeverGoBelowOneHundredPercentLess() {
+        com.fs.starfarer.api.combat.StatBonus hullBonus = hullBonusAfterAllocating(-75f, -50f);
+
+        verify(hullBonus).modifyMult("exiledSector_skillMult_HULL_MULT", 0f);
     }
 
     @Test

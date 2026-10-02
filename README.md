@@ -122,12 +122,12 @@ modified *= mult;
 |---|---|---|
 | "**Increases** / **Decreases** flux capacity by 10%" | Percent | All percent bonuses on a stat are **added together** first, including those from vanilla hullmods and skills. |
 | "**Increases** flux capacity by 600" | Flat | Added after percent bonuses, so percent bonuses don't scale it. This is different to Path of Exile. |
-| "10% **more** / **less** flux capacity" | Multiplier | Applied last, to the total. Multipliers **multiply** each other. |
+| "10% **more** / **less** flux capacity" | Multiplier | Applied last, to the total. The tree's multipliers are **added together** first (10% more + 10% more = 20% more; 15% more + 30% less = 15% less), and never go past 100% less. They still multiply with multipliers from vanilla hullmods and skills. |
 
 For example, with a base of 1000 flux capacity:
 
 - Two "Increases flux capacity by 10%" nodes give 1000 × (1 + 0.10 + 0.10) = **1200**.
-- Two "10% more flux capacity" nodes give 1000 × 1.1 × 1.1 = **1210**.
+- Two "10% more flux capacity" nodes give 1000 × (1 + 0.10 + 0.10) = **1200**, applied after everything else.
 - "Increases by 15%", "Increases by 600", a +10% hullmod and "20% more" together give (1000 + 250 + 600) × 1.2 = **2220**.
 
 Numbers are green when they help your ship and orange when they hurt it.

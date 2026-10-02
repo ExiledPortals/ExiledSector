@@ -42,28 +42,23 @@ public final class SkillTreeBonusSummary {
                     key -> new LinkedHashMap<>());
             for (SkillTypeEffect typeEffect : AllocatedSkillEffects.appliedEffects(data, type, hullSize)) {
                 SkillEffect effect = typeEffect.effect();
-                group.merge(effect, typeEffect.magnitude(), (a, b) -> combine(effect, a, b));
+                group.merge(effect, typeEffect.magnitude(), Float::sum);
             }
         }
         return new Summary(root, data.getLevel(), nodeCount, notables, describe(totals));
-    }
-
-    static float combine(SkillEffect effect, float a, float b) {
-        if (isMultiplicative(effect)) {
-            return ((1f + a / 100f) * (1f + b / 100f) - 1f) * 100f;
-        }
-        return a + b;
-    }
-
-    private static boolean isMultiplicative(SkillEffect effect) {
-        return effect.name().endsWith("_MULT");
     }
 
     private static List<DescriptionLine> describe(Map<Group, Map<SkillEffect, Float>> totals) {
         List<DescriptionLine> lines = new ArrayList<>();
         for (Map.Entry<Group, Map<SkillEffect, Float>> group : totals.entrySet()) {
             List<SkillTypeEffect> effects = new ArrayList<>();
-            group.getValue().forEach((effect, total) -> effects.add(new SkillTypeEffect(effect, rounded(total))));
+            group.getValue().forEach((effect, total) -> {
+                if (!effect.isMultiplicative()) {
+                    effects.add(new SkillTypeEffect(effect, rounded(total)));
+                } else if (rounded(total) != 0f) {
+                    effects.add(new SkillTypeEffect(effect, rounded(SkillEffect.addedMultiplier(total))));
+                }
+            });
             for (SkillTypeEffect effect : WeaponEffectTooltipAggregator.collapse(effects)) {
                 StyledText text = effect.effect().description(effect.magnitude());
                 if (text != null) {

@@ -108,13 +108,13 @@ modified *= mult;[/code]
 [tr][td][b]Tooltip wording[/b][/td][td][b]Kind[/b][/td][td][b]How it stacks[/b][/td][/tr]
 [tr][td]"[b]Increases[/b] / [b]Decreases[/b] flux capacity by 10%"[/td][td]Percent[/td][td]All percent bonuses on a stat are [b]added together[/b] first, including those from vanilla hullmods and skills.[/td][/tr]
 [tr][td]"[b]Increases[/b] flux capacity by 600"[/td][td]Flat[/td][td]Added after percent bonuses, so percent bonuses don't scale it. This is different to Path of Exile.[/td][/tr]
-[tr][td]"10% [b]more[/b] / [b]less[/b] flux capacity"[/td][td]Multiplier[/td][td]Applied last, to the total. Multipliers [b]multiply[/b] each other.[/td][/tr]
+[tr][td]"10% [b]more[/b] / [b]less[/b] flux capacity"[/td][td]Multiplier[/td][td]Applied last, to the total. The tree's multipliers are [b]added together[/b] first (10% more + 10% more = 20% more; 15% more + 30% less = 15% less), and never go past 100% less. They still multiply with multipliers from vanilla hullmods and skills.[/td][/tr]
 [/table]
 
 For example, with a base of 1000 flux capacity:
 [list]
 [li]Two "Increases flux capacity by 10%" nodes give 1000 × (1 + 0.10 + 0.10) = [b]1200[/b].[/li]
-[li]Two "10% more flux capacity" nodes give 1000 × 1.1 × 1.1 = [b]1210[/b].[/li]
+[li]Two "10% more flux capacity" nodes give 1000 × (1 + 0.10 + 0.10) = [b]1200[/b], applied after everything else.[/li]
 [li]"Increases by 15%", "Increases by 600", a +10% hullmod and "20% more" together give (1000 + 250 + 600) × 1.2 = [b]2220[/b].[/li]
 [/list]
 

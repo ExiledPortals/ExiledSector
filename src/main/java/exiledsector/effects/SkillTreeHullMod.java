@@ -29,6 +29,7 @@ import exiledsector.skills.skilleffect.SkillEffect;
 import org.magiclib.util.MagicIncompatibleHullmods;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
     public static final String ID = "exiledSector_core";
 
     private static final String MOD_ID_PREFIX = "exiledSector_skill_";
+    private static final String MULTIPLIER_MOD_ID_PREFIX = "exiledSector_skillMult_";
     static final String OP_SPENT_HULLMOD_ID_PREFIX = "exiledSector_opSpent_";
     private static final String COMBAT_PLAN_KEY = "exiledSector_combatPlan";
 
@@ -175,6 +177,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
 
     private void forEachAllocatedEffect(ShipSkillData data, List<AllocatedNode> allocatedNodes, HullSize hullSize,
                                          VanillaDelegate vanillaDelegate, EffectAction action) {
+        Map<SkillEffect, Float> multipliers = new LinkedHashMap<>();
         for (AllocatedNode allocated : allocatedNodes) {
             SkillType type = allocated.effectiveType();
             String vanillaHullModId = type.getVanillaHullModId();
@@ -186,11 +189,18 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
                 }
             } else {
                 String modId = MOD_ID_PREFIX + allocated.node().getId();
+                boolean temporary = type.getTemporaryAfterDeploymentSeconds() != null;
                 for (SkillTypeEffect effect : AllocatedSkillEffects.appliedEffects(data, type, hullSize)) {
-                    action.apply(effect.effect(), modId, effect.magnitude());
+                    if (!temporary && effect.effect().isMultiplicative()) {
+                        multipliers.merge(effect.effect(), effect.magnitude(), Float::sum);
+                    } else {
+                        action.apply(effect.effect(), modId, effect.magnitude());
+                    }
                 }
             }
         }
+        multipliers.forEach((effect, total) ->
+                action.apply(effect, MULTIPLIER_MOD_ID_PREFIX + effect.name(), SkillEffect.addedMultiplier(total)));
     }
 
     public static void syncOpSpentHullMod(FleetMemberAPI member, ShipVariantAPI variant) {
