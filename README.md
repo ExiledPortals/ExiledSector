@@ -1,67 +1,71 @@
-# Exiled Sector
+<h1 align="center">Exiled Sector</h1>
 
-Still sane, Exile?
+<p align="center"><i>Still sane, exile?</i></p>
 
-Designed to be an overhaul of the simple hullmod system based on the infamous Path of Exile skill tree, ExiledSector is a [Starsector](https://fractalsoftworks.com/) mod that gives every ship in your fleet its own skill tree.
+Designed to be an overhaul of the simple hullmod system based on the infamous Path of Exile skill tree, Exiled Sector is a Starsector mod that gives every ship in your fleet its own skill tree.
 
-[![Install with TriOS](https://trilink.wispborne.com/badges/install-badge.svg)](https://trilink.wispborne.com/open.html?mod=%7B%22url%22%3A%22https%3A%2F%2Fraw.githubusercontent.com%2FExiledPortals%2FExiledSector%2Fmain%2FExiledSector.version%22%2C%22id%22%3A%22exiledSector%22%2C%22version%22%3A%220.1.0%22%7D&dep=%7B%22url%22%3A%22https%3A%2F%2Fraw.githubusercontent.com%2FLazyWizard%2Flazylib%2Fmaster%2Fmod%2Flazylib.version%22%2C%22id%22%3A%22lw_lazylib%22%2C%22version%22%3A%223.0.0%22%7D&dep=%7B%22url%22%3A%22https%3A%2F%2Fraw.githubusercontent.com%2FMagicLibStarsector%2FMagicLib%2Fmaster%2Fmagiclib.version%22%2C%22id%22%3A%22MagicLib%22%2C%22version%22%3A%221.5.6%22%7D&dep=%7B%22url%22%3A%22https%3A%2F%2Fraw.githubusercontent.com%2FLukas22041%2FLunaLib%2Fmain%2FLunaLib.version%22%2C%22id%22%3A%22lunalib%22%2C%22version%22%3A%222.0.5%22%7D) 
+<p align="center">
+<a href="https://trilink.wispborne.com/open.html?mod=%7B%22url%22%3A%22https%3A%2F%2Fraw.githubusercontent.com%2FExiledPortals%2FExiledSector%2Fmain%2FExiledSector.version%22%2C%22id%22%3A%22exiledSector%22%2C%22version%22%3A%220.1.0%22%7D&dep=%7B%22url%22%3A%22https%3A%2F%2Fraw.githubusercontent.com%2FLazyWizard%2Flazylib%2Fmaster%2Fmod%2Flazylib.version%22%2C%22id%22%3A%22lw_lazylib%22%2C%22version%22%3A%223.0.0%22%7D&dep=%7B%22url%22%3A%22https%3A%2F%2Fraw.githubusercontent.com%2FMagicLibStarsector%2FMagicLib%2Fmaster%2Fmagiclib.version%22%2C%22id%22%3A%22MagicLib%22%2C%22version%22%3A%221.5.6%22%7D&dep=%7B%22url%22%3A%22https%3A%2F%2Fraw.githubusercontent.com%2FLukas22041%2FLunaLib%2Fmain%2FLunaLib.version%22%2C%22id%22%3A%22lunalib%22%2C%22version%22%3A%222.0.5%22%7D"><img src="https://trilink.wispborne.com/badges/install-badge.svg" alt="Install with TriOS"></a>
+</p>
 
-[Manual download](https://github.com/ExiledPortals/ExiledSector/releases/latest/download/ExiledSector.zip)
+<p align="center"><b><a href="https://github.com/ExiledPortals/ExiledSector/releases/latest/download/ExiledSector.zip">Manual download</a></b> | <a href="https://github.com/ExiledPortals/ExiledSector">Source (GitHub)</a></p>
 
 ## Features
 
-- Navigate to the outfit screen and click the skill tree button on any of your ships to explore an entirely new sector:
+Open the refit screen and click the skill tree button on any of your ships. There's a whole new sector in there:
 
 <img src="graphics/description/teaser.gif" alt="The skill tree">
 
-- A 400+ node tree per ship.
-- Multi-choice travel nodes.
+- Every ship gets its own tree, with over 300 nodes.
+- Some nodes are travel nodes that let you choose between several options.
 
-<img src="graphics/description/teaser_choice.gif" alt="Choice Node">
+<img src="graphics/description/teaser_choice.gif" alt="Choice node">
 
-- **Synergistic allocation** 
-  - Every allocated node initially costs OP: 1 for frigates, 2 for destroyers, 3 for cruisers and 4 for capitals.
-  - Ships also earn XP in combat, and can level up. 
-  - Each level allows you to allocate one node on the tree for free, so veteran ships get their ordnance points back. The crew gets nothing, as is tradition.
-- Hidden, unlockable nodes.
+- Nodes start out costing OP: 1 for frigates, 2 for destroyers, 3 for cruisers and 4 for capitals. Ships also earn XP in combat and level up, and every level lets you take a node for free. Veteran ships get their ordnance points back. The crew gets nothing, as is tradition.
+- Some nodes are hidden until you unlock them.
 
-<img src="graphics/description/Unidentified_node.png" alt="Hidden Node">
-  
-- Unique passive effects
-- **Beam splitting** 
-  - Your Tachyon Lance can now disappoint multiple enemies at once.
-  
+<img src="graphics/description/Unidentified_node.png" alt="Hidden node">
+
+- Plenty of nodes have effects you won't find anywhere in vanilla.
+- Beams can split between targets, so your Tachyon Lance can finally disappoint several enemies at once.
+
 <img src="graphics/description/lions_gaze.png" alt="Lion's Gaze">
-<img src="graphics/description/lions_gaze2.png" alt="Lion's Gaze2">
+<img src="graphics/description/lions_gaze2.png" alt="Lion's Gaze 2">
 
-- **Faction themed**
-  - Your ship's main goal can be to blow up, and act like it don't know nobody
+- Each faction has its own corner of the tree with thematic nodes. For example, your ship's main goal can be to blow up, and act like it don't know nobody.
 
-<img src="graphics/description/Ludds_Light.png" alt="Ludds Light">
+<img src="graphics/description/Ludds_Light.png" alt="Ludd's Light">
 <img src="graphics/description/at_any_cost.png" alt="At Any Cost">
 
 ## Requirements
 
 - Starsector 0.98a-RC8
-- [LazyLib](https://fractalsoftworks.com/forum/index.php?topic=5444.225)
+- [LazyLib](https://fractalsoftworks.com/forum/index.php?topic=5444.0)
 - [MagicLib](https://fractalsoftworks.com/forum/index.php?topic=25868.0)
 - [LunaLib](https://fractalsoftworks.com/forum/index.php?topic=25658.0)
-
 
 Optional:
 
 - Console Commands adds `ExiledSectorGrantFleetXp [amount]`.
-- a healthy disregard for vanilla balance.
+- A healthy disregard for vanilla balance.
 
-## Configuration
+## Compatibility
 
-Play your own way – all settings are in the LunaLib mod settings menu:
+> [!WARNING]
+> Exiled Sector adds permanent hull mods to the ships in your fleet. It is not safe to remove after being used.
 
-- OP cost per node, by hull size
-- Leveling curve: max level, XP per level, XP growth, XP gained from a lost battle, and how much battle difficulty boosts XP
-- Maximum number of allocated nodes per ship
-- Whether hidden nodes are revealed, and which unlock conditions are enforced
-- Language: Auto (follows the game), English or Simplified Chinese
+It should be safe to add to an existing save.
+
+I have done what I can for some mods, but there is a long way to go for complete mod compatibility.
+
+**[Second-in-Command](https://fractalsoftworks.com/forum/index.php?topic=30407.0)** is (theoretically) supported.
+
+Some weapons from other mods misbehave (often hilariously) when their beams are split or their shots are chained. These are listed in:
+
+- `data/config/exiledSector/split_beam_effect_blocklist.csv`
+- `data/config/exiledSector/energy_chain_blocklist.csv`
+
+Both files are merged across mods, so other mods can opt their own weapons out (or you can opt them back in, at your own risk).
 
 ## Languages
 
@@ -69,7 +73,7 @@ Exiled Sector is available in English and Simplified Chinese. By default it foll
 
 The skill tree screen always shows the chosen language, using a bundled Noto Sans SC font. Text the game draws itself (settings, dialogs, the codex) stays in English unless the game can display Chinese characters.
 
-The Chinese translation is a first draft awaiting review by a native speaker. To add another language, see [docs/i18n/README.md](docs/i18n/README.md).
+The Chinese translation is a first draft awaiting review by a native speaker. To add another language, see the [localisation guide](docs/i18n/README.md).
 
 ## FAQ
 
@@ -78,19 +82,19 @@ The Chinese translation is a first draft awaiting review by a native speaker. To
 
 Open a ship's refit screen and click the **Skill Tree** button.
 
-**Pick a starting point.** The first time you open a ship's tree you choose where it starts: Low Tech, Midline or High Tech. The starting node is free. Whenever it is the only node allocated, you can click it again to choose a different start. The other two can still be reached later like any other node.
+The first time you open a ship's tree you choose where it starts: Low Tech, Midline or High Tech. The starting node is free. Whenever it is the only node allocated, you can click it again to choose a different start. The other two can still be reached later like any other node.
 
-**Nodes cost OP.** Every node costs the ship's unused ordnance points: 1 for frigates, 2 for destroyers, 3 for cruisers and 4 for capitals. A node can only be allocated next to one you already have.
+Every node costs the ship's unused ordnance points: 1 for frigates, 2 for destroyers, 3 for cruisers and 4 for capitals. A node can only be allocated next to one you already have.
 
-**Ships earn XP from battles.** After every engagement, each ship in your fleet gains XP equal to the deployment points of the enemy ships destroyed or disabled, whether it deployed or not. Harder fights pay more: the same battle difficulty bonus vanilla shows before combat ("Additional XP due to overall battle difficulty") multiplies it, up to 6×. You get half as much if you lose.
+After every engagement, each ship in your fleet gains XP equal to the deployment points of the enemy ships destroyed or disabled, whether it deployed or not. Harder fights pay more: the same battle difficulty bonus vanilla shows before combat ("Additional XP due to overall battle difficulty") multiplies it, up to 6×. Easier fights never reduce it. You get half as much if you lose.
 
-**Levels give OP back.** Each level makes your most recently bought node free and refunds its OP. If every node you have is already free, the level is banked, and your next node costs nothing. The first level takes 60 XP, each level after that takes 13% more until level 25, and ships cap at level 50.
+Each level makes your most recently bought node free and refunds its OP. If every node you have is already free, the level is banked, and your next node costs nothing. The first level takes 60 XP, each level after that takes 13% more until level 25, and ships cap at level 50.
 
-**Changing your mind is free.** Click an allocated node to remove it. OP-paid nodes refund their OP, and free nodes return their free allocation. You can't remove a node that other nodes depend on to connect back to your starting point, and you can't remove the starting point itself.
+Click an allocated node to remove it. OP-paid nodes refund their OP, and free nodes return their free allocation. You can't remove a node that other nodes depend on to connect back to your starting point, and you can't remove the starting point itself.
 
-**Multi-choice nodes** open a dropdown so you can pick an option. Ctrl+click repeats your last choice.
+For multi-choice nodes, click to open a dropdown so you can pick an option. Ctrl+click repeats your last choice.
 
-Each ship can have a max of 60 nodes. 
+Each ship can have a max of 60 nodes.
 
 Every number in this section can be changed in LunaLib settings.
 
@@ -127,11 +131,11 @@ Numbers are green when they help your ship and orange when they hurt it.
 <details>
 <summary><b>How do NPC fleets get skill trees?</b></summary>
 
-**Which fleets?** Every fleet except yours can have trees, in every faction, including your own faction's fleets and your allies. Stations don't get them.
+Every fleet can have trees, in every faction, including your own faction's fleets and your allies. Stations don't get them.
 
-**Which ships?** Ships with officers and the flagship always get a tree. Each other ship has a 30% chance. Civilian and mothballed ships are left out. The roll is fixed per ship, so reloading a save won't reroll it.
+Ships with officers and the flagship always get a tree. Each other ship has a 30% chance. Civilian and mothballed ships are left out. The roll is fixed per ship, so reloading a save won't reroll it.
 
-**How many nodes?** The number of nodes depends on your character level when the fleet is first spawned:
+The number of nodes depends on your character level when the fleet is first spawned:
 
 | Your level | Nodes |
 |---|---|
@@ -140,7 +144,7 @@ Numbers are green when they help your ship and orange when they hurt it.
 | 10 | 13–28 |
 | 15+ | 16–42 |
 
-**Which build?** There are nine builds, three for each starting point. Each ship gets a random build out of the ones that suit it:
+There are nine builds, three for each starting point. Each ship gets a random build out of the ones that suit it:
 
 | Starting point | Build | Needs |
 |---|---|---|
@@ -162,7 +166,7 @@ NPCs never take wormholes, so the faction regions of the tree are yours alone (f
 
 If you recover a ship that has a tree, it keeps its tree, and the tree becomes a normal player tree. Reinforced Bulkheads' near-guaranteed recovery is switched off on NPC ships, so levelled enemies aren't free loot.
 
-**How do I view their trees?** Press **X** (rebindable) during a fleet encounter, or while hovering over a fleet on the map, to see which ships have trees along with their build, level, key nodes and combined bonuses. Pressing **F2** on a ship's tooltip opens a Codex entry with the same summary.
+Press **X** (rebindable) during a fleet encounter, or while hovering over a fleet on the map, to see which ships have trees along with their build, level, key nodes and combined bonuses. Pressing **F2** on a ship's tooltip opens a Codex entry with the same summary.
 
 All of this, including the table of nodes per level, can be changed on the **NPC Scaling** tab in LunaLib settings.
 
@@ -173,11 +177,11 @@ All of this, including the table of nodes per level, can be changed on the **NPC
 
 Hidden nodes show up as flickering sensor ghosts until you unlock them.
 
-**Wormholes** unlock when you gain access to the Gate network, the same point vanilla does: using the Janus Device at the end of the Galatia Academy storyline.
+Wormholes unlock when you gain access to the Gate network, the same point vanilla does: using the Janus Device at the end of the Galatia Academy storyline.
 
-**How wormholes work.** Wormholes come in linked pairs. Allocate one end and the other end comes free. It costs nothing extra, but it still counts toward your node limit. Removing either end removes both. Ctrl+click an allocated wormhole to jump the camera to the other end.
+Wormholes come in linked pairs. Allocate one end and the other end comes free. It costs nothing extra, but it still counts toward your node limit. Removing either end removes both. Ctrl+click an allocated wormhole to jump the camera to the other end.
 
-**Hullmod nodes** unlock when you learn the matching hullmod blueprint. Neural Interface also unlocks if you have the relevant Neural Link skill.
+Hullmod nodes unlock when you learn the matching hullmod blueprint. Neural Interface also unlocks if you have the relevant Neural Link skill.
 
 If you'd rather skip all of this, LunaLib settings can reveal hidden nodes, or switch off each kind of unlock condition.
 
@@ -187,6 +191,8 @@ If you'd rather skip all of this, LunaLib settings can reveal hidden nodes, or s
 <summary><b>How does this fit into the lore?</b></summary>
 
 The tree isn't your ship gaining sentience and learning kung fu. It's a picture of you and your crew making lots of small changes that pull the ship away from its factory spec: rerouted conduits, flux grids tuned to the captain's habits, armour patched where it keeps getting hit. That's the same thing vanilla's hullmods represent, just in finer steps. A veteran hull that has survived a dozen campaigns shouldn't fly like one fresh off a Domain-era template, and a ship your crew has been iterating on for years is going to be much more familiar to them. They'll learn the ins and outs of its quirks and get every edge they can.
+
+I may also add a node that teaches your ship kung fu.
 
 Exiled Sector is designed to replace the vanilla hullmod system. I wasn't comfortable disabling hullmods entirely, because that would make the mod parasitic and incompatible with the many mods that add their own. Instead, the OP cost and levelling hybrid is meant to make the tree the better deal most of the time. Every hullmod you install is 3–4 nodes you didn't take. Keep a hullmod when its unique effect, probably from another mod, is worth that trade.
 
@@ -204,33 +210,17 @@ Exiled Sector is designed to replace the vanilla hullmod system. I wasn't comfor
 
 ## Disclaimer
 
-This mod is in (very) early development. 
+This mod is in (very) early development.
 
 It is my first mod, and first foray into OpenGL/game development, and is by no means feature complete or bug free.
 
-I have used starsector-core graphics and royalty-free art assets for all art in the mod. I have not and will not use LLM-generated art.
+AI usage: I am a Java software engineer working in the regulatory sector where AI use is heavily restricted at this stage. I started this project as a way to educate myself on the capabilities of LLMs for clean, maintainable code, so that when people asked my opinion I can definitively state that LLMs are not the godsend Sam Altman claims. I still think giving inexperienced devs access to an LLM is like giving an 8 year old a powerdrill. Claude's Opus 5.5 was my chosen model for much of the code.
 
-I am seeking any feedback, bug reports, node suggestions, or faction designs. 
+I have only used starsector-core graphics and royalty-free art assets for all art in the mod. I have not and will not use LLM-generated art.
 
-You can find me on the [Unofficial Starsector Discord](https://fractalsoftworks.com/forum/index.php?topic=11488.0) or by direct message: @portals_ 
+I am seeking any feedback, bug reports, node suggestions, or faction designs.
 
-### Compatibility
-
-> [!WARNING]
-> Exiled Sector adds permanent hull mods to the ships in your fleet. Don't remove it from a save that has used it.
-
-It should be safe to add to an existing save.
-
-I have done what I can for some mods, but there is a long way to go for complete mod compatibility.
-
-**[Second-in-Command](https://fractalsoftworks.com/forum/index.php?topic=30407.0)** is (theoretically) supported.
-
-Some weapons from other mods misbehave (sometimes hilariously) when their beams are split or their shots are chained. These are listed in:
-
-- `data/config/exiledSector/split_beam_effect_blocklist.csv`
-- `data/config/exiledSector/energy_chain_blocklist.csv`
-
-Both files are merged across mods, so other mods can opt their own weapons out.
+You can find me on the [Unofficial Starsector Discord](https://fractalsoftworks.com/forum/index.php?topic=11488.0) or by direct message @portals_
 
 ## License
 
