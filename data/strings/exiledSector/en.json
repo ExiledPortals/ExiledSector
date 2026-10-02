@@ -261,7 +261,7 @@
     "ui.node.lockedHint": "Hullmod blueprints would be a good place to start searching.",
     "ui.node.optionalHint": "Click to choose an option.",
     "ui.node.freeNote": "Granted free by a level-up.",
-    "ui.node.startingRootPrompt": "Choose a starting location - while it is your only allocated node, click it again to change it",
+    "ui.node.startingRootPrompt": "Choose a starting location",
     "ui.stats.group.general": "General",
     "ui.stats.group.mobility": "Mobility",
     "ui.stats.group.defense": "Defense",
