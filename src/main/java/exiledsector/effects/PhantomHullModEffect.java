@@ -219,7 +219,7 @@ public final class PhantomHullModEffect extends BaseHullMod {
 
     @Override
     public int getDisplayCategoryIndex() {
-        PhantomHullModRefitHider.requestHide();
+        PhantomHullModRefitHider.requestRefresh();
         return original.getDisplayCategoryIndex();
     }
 

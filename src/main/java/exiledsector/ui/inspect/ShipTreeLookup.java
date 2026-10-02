@@ -2,6 +2,7 @@ package exiledsector.ui.inspect;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.i18n.Translation;
 import exiledsector.persistence.ShipSkillDataManager;
@@ -32,6 +33,15 @@ public final class ShipTreeLookup {
         }
         ShipSkillData data = ShipSkillDataManager.get(member.getId());
         return data.isBlank() ? null : new ShipTree(data, null);
+    }
+
+    public static ShipTree forShip(FleetMemberAPI member, ShipVariantAPI variant) {
+        String tag = NpcTreeTag.find(variant);
+        if (tag != null) {
+            return new ShipTree(SkillDataResolver.resolve(member, variant), layoutName(NpcTreeTag.layoutId(tag)));
+        }
+        ShipSkillData data = member == null ? null : ShipSkillDataManager.find(member.getId());
+        return data == null || data.isBlank() ? null : new ShipTree(data, null);
     }
 
     public static boolean isLevelledNpc(FleetMemberAPI member) {

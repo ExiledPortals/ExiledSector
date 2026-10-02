@@ -172,7 +172,7 @@ NPCs never take wormholes, so the faction regions of the tree are yours alone (f
 
 If you recover a ship that has a tree, it keeps its tree, and the tree becomes a normal player tree. Reinforced Bulkheads' near-guaranteed recovery is switched off on NPC ships, so levelled enemies aren't free loot.
 
-Press **X** (rebindable) during a fleet encounter, or while hovering over a fleet on the map, to see which ships have trees along with their build, level, key nodes and combined bonuses. Pressing **F2** on a ship's tooltip opens a Codex entry with the same summary.
+Press **X** (rebindable) during a fleet encounter, or while hovering over a fleet on the map, to see which ships have trees along with their build, level, key nodes and combined bonuses. Pressing **F2** on a ship's tooltip opens a Codex entry with the same summary. In the refit screen, every ship with a tree also shows an **Exiled Sector Skill Tree** hull mod: hover it for the same summary of that ship's bonuses, or click it to open the skill tree.
 
 All of this, including the table of nodes per level, can be changed on the **NPC Scaling** tab in LunaLib settings.
 

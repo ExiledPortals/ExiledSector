@@ -288,10 +288,10 @@ class PhantomHullModRefitHiderTest {
         globalMock.when(Global::getCurrentState).thenReturn(GameState.CAMPAIGN);
         refitMods().list.items.add(row("safetyoverrides"));
 
-        PhantomHullModRefitHider.requestHide();
+        PhantomHullModRefitHider.requestRefresh();
         EveryFrameScript hide = scheduledHide();
         when(sector.hasTransientScript(any())).thenReturn(true);
-        PhantomHullModRefitHider.requestHide();
+        PhantomHullModRefitHider.requestRefresh();
 
         assertTrue(hide.runWhilePaused());
         assertFalse(hide.isDone());
@@ -305,10 +305,10 @@ class PhantomHullModRefitHiderTest {
     void aRebuildAfterThePassRanSchedulesAnotherOne() {
         globalMock.when(Global::getCurrentState).thenReturn(GameState.CAMPAIGN);
         when(sector.hasTransientScript(any())).thenReturn(true);
-        PhantomHullModRefitHider.requestHide();
+        PhantomHullModRefitHider.requestRefresh();
         scheduledHide().advance(0f);
 
-        PhantomHullModRefitHider.requestHide();
+        PhantomHullModRefitHider.requestRefresh();
 
         verify(sector, times(2)).addTransientScript(any());
     }
@@ -316,9 +316,9 @@ class PhantomHullModRefitHiderTest {
     @Test
     void aPassLostWithAReloadedSaveIsScheduledAgain() {
         globalMock.when(Global::getCurrentState).thenReturn(GameState.CAMPAIGN);
-        PhantomHullModRefitHider.requestHide();
+        PhantomHullModRefitHider.requestRefresh();
 
-        PhantomHullModRefitHider.requestHide();
+        PhantomHullModRefitHider.requestRefresh();
 
         verify(sector, times(2)).addTransientScript(any());
     }
@@ -327,7 +327,7 @@ class PhantomHullModRefitHiderTest {
     void nothingIsScheduledOutsideTheCampaign() {
         globalMock.when(Global::getCurrentState).thenReturn(GameState.COMBAT);
 
-        PhantomHullModRefitHider.requestHide();
+        PhantomHullModRefitHider.requestRefresh();
 
         verify(sector, never()).addTransientScript(any());
     }

@@ -12,6 +12,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
+import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.skills.InstalledHullMods;
 import exiledsector.skills.PhantomHullModStatus;
 import org.apache.log4j.Logger;
@@ -41,7 +42,7 @@ public class PhantomHullModRefitHider implements CharacterStatsRefreshListener {
         }
     }
 
-    public static void requestHide() {
+    public static void requestRefresh() {
         if (failed || Global.getCurrentState() != GameState.CAMPAIGN) return;
         SectorAPI sector = Global.getSector();
         if (sector == null || pending != null && !pending.done && sector.hasTransientScript(HideOnce.class)) return;
@@ -52,6 +53,7 @@ public class PhantomHullModRefitHider implements CharacterStatsRefreshListener {
     static void resetForTests() {
         failed = false;
         pending = null;
+        SkillTreeChipClickTarget.resetForTests();
     }
 
     private static void hideInRefitScreen(CampaignUIAPI campaignUI) {
@@ -76,7 +78,9 @@ public class PhantomHullModRefitHider implements CharacterStatsRefreshListener {
         if (modDisplay == null || !(call(call(refitPanel, "getShipDisplay"), "getCurrentVariant") instanceof ShipVariantAPI variant)) {
             return;
         }
-        hidePhantomRows(call(modDisplay, "getMods"), variant);
+        Object refitMods = call(modDisplay, "getMods");
+        hidePhantomRows(refitMods, variant);
+        attachChipClick(refitMods);
         for (Object dialog : UiReflection.children(core)) {
             for (Object child : UiReflection.children(dialog)) {
                 if (child != modDisplay && child.getClass() == modDisplay.getClass()) {
@@ -103,6 +107,20 @@ public class PhantomHullModRefitHider implements CharacterStatsRefreshListener {
         }
         call(list, "collapseEmptySlots");
         resize(modWidget, list, rows.size());
+    }
+
+    private static void attachChipClick(Object modWidget) throws Throwable {
+        Object list = UiReflection.childWithMethod(modWidget, "collapseEmptySlots", 0);
+        Object chipRow = null;
+        if (call(list, "getItems") instanceof List<?> rows) {
+            for (Object row : rows) {
+                HullModSpecAPI spec = UiReflection.fieldOfType(row, HullModSpecAPI.class);
+                if (spec != null && SkillTreeHullMod.ID.equals(spec.getId())) {
+                    chipRow = row;
+                }
+            }
+        }
+        SkillTreeChipClickTarget.attach(modWidget, list, chipRow);
     }
 
     private static void resize(Object modWidget, Object list, int rowCount) throws Throwable {

@@ -2,6 +2,8 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.CampaignUIAPI.CoreUITradeMode;
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.BaseHullMod;
 import com.fs.starfarer.api.combat.HullModEffect;
 import com.fs.starfarer.api.combat.HullModFleetEffect;
@@ -11,8 +13,11 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
+import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
 import exiledsector.compat.MagicLibCompat;
 import exiledsector.i18n.I18n;
+import exiledsector.i18n.Translation;
 import exiledsector.persistence.OpSpentSlotManager;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedNode;
@@ -26,6 +31,10 @@ import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.progression.SkillNodeOpCost;
 import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.ui.VanillaText;
+import exiledsector.ui.inspect.ShipTreeLookup;
+import exiledsector.ui.inspect.ShipTreeSummaryRenderer;
+import exiledsector.ui.refit.PhantomHullModRefitHider;
 import org.magiclib.util.MagicIncompatibleHullmods;
 
 import java.util.ArrayList;
@@ -41,6 +50,10 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
 
     private static final String MOD_ID_PREFIX = "exiledSector_skill_";
     private static final String MULTIPLIER_MOD_ID_PREFIX = "exiledSector_skillMult_";
+    private static final float TOOLTIP_PAD = 10f;
+    private static final float TOOLTIP_WIDTH = 480f;
+    private static final int MAX_TOOLTIP_BONUS_LINES = 25;
+    private static final int DISPLAY_SORT_ORDER = 0;
     static final String OP_SPENT_HULLMOD_ID_PREFIX = "exiledSector_opSpent_";
     private static final String COMBAT_PLAN_KEY = "exiledSector_combatPlan";
 
@@ -91,6 +104,46 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
 
     static boolean isOpCostPass(MutableShipStatsAPI stats) {
         return stats.getFleetMember() == null;
+    }
+
+    @Override
+    public void addPostDescriptionSection(TooltipMakerAPI tooltip, HullSize hullSize, ShipAPI ship, float width, boolean isForModSpec) {
+        if (ship == null || isForModSpec) return;
+
+        FleetMemberAPI member = ship.getFleetMember() != null ? ship.getFleetMember() : ship.getMutableStats().getFleetMember();
+        ShipTreeLookup.ShipTree tree = ShipTreeLookup.forShip(member, ship.getVariant());
+        if (tree == null) {
+            I18n.forGameText(() -> VanillaText.addPara(tooltip, Translation.styled("hullmod.exiledSector_core.noTree"), TOOLTIP_PAD,
+                    Misc.getGrayColor()));
+            return;
+        }
+        ShipTreeSummaryRenderer.render(tooltip, tree, hullSize, TOOLTIP_PAD, MAX_TOOLTIP_BONUS_LINES);
+    }
+
+    @Override
+    public float getTooltipWidth() {
+        return TOOLTIP_WIDTH;
+    }
+
+    @Override
+    public boolean canBeAddedOrRemovedNow(ShipAPI ship, MarketAPI marketOrNull, CoreUITradeMode mode) {
+        return false;
+    }
+
+    @Override
+    public String getCanNotBeInstalledNowReason(ShipAPI ship, MarketAPI marketOrNull, CoreUITradeMode mode) {
+        return I18n.forGameText(() -> Translation.text("hullmod.exiledSector_core.locked"));
+    }
+
+    @Override
+    public int getDisplaySortOrder() {
+        return DISPLAY_SORT_ORDER;
+    }
+
+    @Override
+    public int getDisplayCategoryIndex() {
+        PhantomHullModRefitHider.requestRefresh();
+        return super.getDisplayCategoryIndex();
     }
 
     @Override

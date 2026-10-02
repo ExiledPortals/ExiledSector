@@ -1,5 +1,6 @@
 package exiledsector.ui.inspect;
 
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -26,11 +27,16 @@ public final class ShipTreeSummaryRenderer {
     }
 
     public static void render(TooltipMakerAPI info, FleetMemberAPI member, ShipTreeLookup.ShipTree tree, float pad) {
-        I18n.forGameText(() -> renderSummary(info, member, tree, pad));
+        render(info, tree, member.getHullSpec().getHullSize(), pad, Integer.MAX_VALUE);
     }
 
-    private static void renderSummary(TooltipMakerAPI info, FleetMemberAPI member, ShipTreeLookup.ShipTree tree, float pad) {
-        Summary summary = SkillTreeBonusSummary.of(tree.data(), member.getHullSpec().getHullSize());
+    public static void render(TooltipMakerAPI info, ShipTreeLookup.ShipTree tree, HullSize hullSize, float pad, int maxBonusLines) {
+        I18n.forGameText(() -> renderSummary(info, tree, hullSize, pad, maxBonusLines));
+    }
+
+    private static void renderSummary(TooltipMakerAPI info, ShipTreeLookup.ShipTree tree, HullSize hullSize, float pad,
+                                      int maxBonusLines) {
+        Summary summary = SkillTreeBonusSummary.of(tree.data(), hullSize);
 
         List<String> parts = new ArrayList<>();
         parts.add(Translation.msg("summary.level").arg("level", summary.level()).text());
@@ -56,8 +62,14 @@ public final class ShipTreeSummaryRenderer {
 
         if (!summary.bonuses().isEmpty()) {
             VanillaText.addPara(info, Translation.styled("summary.bonuses"), SECTION_PAD, Misc.getTextColor());
-            for (DescriptionLine line : summary.bonuses()) {
+            List<DescriptionLine> bonuses = summary.bonuses();
+            int shown = Math.min(bonuses.size(), maxBonusLines);
+            for (DescriptionLine line : bonuses.subList(0, shown)) {
                 VanillaText.addPara(info, StyledText.of(BULLET).append(line.display()), LINE_PAD, Misc.getTextColor());
+            }
+            if (shown < bonuses.size()) {
+                VanillaText.addPara(info, Translation.msg("summary.more").count(bonuses.size() - shown).styled(), LINE_PAD,
+                        Misc.getGrayColor());
             }
         }
     }
