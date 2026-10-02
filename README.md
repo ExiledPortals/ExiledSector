@@ -58,7 +58,13 @@ It should be safe to add to an existing save.
 
 I have done what I can for some mods, but there is a long way to go for complete mod compatibility.
 
-**[Second-in-Command](https://fractalsoftworks.com/forum/index.php?topic=30407.0)** is (theoretically) supported.
+These mods have dedicated compatibility. The version listed is the one I last tested against. Newer versions usually work; if one doesn't, `starsector.log` says so at startup and lists anything Exiled Sector can no longer find.
+
+| Mod | Tested version | What Exiled Sector does with it |
+|---|---|---|
+| [Second-in-Command](https://fractalsoftworks.com/forum/index.php?topic=30407.0) | 2.0.0 | Its skills see the hull mods your nodes stand in for, and Reconfiguration waives the Converted Hangar penalties. |
+| Lost Sector | 0.6.2d | The Kesteven and Frozen Heart areas of the tree appear, and Augmented Systems hulls get the same bonuses from those nodes as from the hull mods. |
+| [MagicLib](https://fractalsoftworks.com/forum/index.php?topic=25868.0) | 1.5.6 | Required. A hull mod that tries to strip one of your nodes' hull mods through MagicLib is removed instead. |
 
 Some weapons from other mods misbehave (often hilariously) when their beams are split or their shots are chained. These are listed in:
 
