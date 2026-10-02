@@ -62,10 +62,11 @@
 			"id": "non_beam_energy_damage_1",
 			"type": "non_beam_energy_damage",
 			"connectedTo": [
-				"non_beam_energy_damage_2"
+				"non_beam_energy_damage_2",
+				"magazines_1"
 			],
-			"x": -2111,
-			"y": -1555,
+			"x": -815,
+			"y": 1674,
 			"tags": [
 				"inner"
 			]
@@ -323,12 +324,11 @@
 			"id": "magazines_1",
 			"type": "magazines",
 			"connectedTo": [
-				"ballistic_damage_4"
+				"ballistic_damage_4",
+				"non_beam_energy_damage_1"
 			],
-			"x": -390,
-			"y": 1733,
-			"orbitAnchorId": "anchor_19",
-			"orbitAngle": 29.99999999999998,
+			"x": -561,
+			"y": 1627,
 			"tags": [
 				"inner"
 			]
@@ -924,11 +924,11 @@
 			"id": "non_beam_energy_damage_2",
 			"type": "non_beam_energy_damage",
 			"connectedTo": [
-				"small_flux_optional_42",
-				"non_beam_energy_damage_1"
+				"non_beam_energy_damage_1",
+				"small_flux_optional_37"
 			],
-			"x": -1942,
-			"y": -1456,
+			"x": -1066,
+			"y": 1729,
 			"tags": [
 				"inner"
 			]
@@ -2319,7 +2319,8 @@
 				"small_flux_optional_15",
 				"armor_2",
 				"armor_4",
-				"small_flux_optional_3"
+				"small_flux_optional_3",
+				"ballistic_damage_5"
 			],
 			"x": 0,
 			"y": 2200,
@@ -2335,7 +2336,6 @@
 			"connectedTo": [
 				"small_flux_optional_35",
 				"small_flux_optional_37",
-				"ballistic_damage_5",
 				"defensive_targeting_array_1"
 			],
 			"x": -745,
@@ -2351,7 +2351,8 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_36",
-				"small_flux_optional_38"
+				"small_flux_optional_38",
+				"non_beam_energy_damage_2"
 			],
 			"x": -1292,
 			"y": 1781,
@@ -2441,8 +2442,7 @@
 			"connectedTo": [
 				"small_flux_optional_41",
 				"small_flux_optional_43",
-				"ballistic_and_energy_weapon_range_2",
-				"non_beam_energy_damage_2"
+				"ballistic_and_energy_weapon_range_2"
 			],
 			"x": -1744,
 			"y": -1341,
@@ -3087,10 +3087,8 @@
 				"ballistic_damage_5",
 				"magazines_1"
 			],
-			"x": -520,
-			"y": 1508,
-			"orbitAnchorId": "anchor_19",
-			"orbitAngle": 270,
+			"x": -392,
+			"y": 1798,
 			"tags": [
 				"inner"
 			]
@@ -3100,12 +3098,10 @@
 			"type": "ballistic_damage",
 			"connectedTo": [
 				"ballistic_damage_4",
-				"small_flux_optional_36"
+				"small_flux_optional_35"
 			],
-			"x": -650,
-			"y": 1733,
-			"orbitAnchorId": "anchor_19",
-			"orbitAngle": 150.00000000000003,
+			"x": -218,
+			"y": 1973,
 			"tags": [
 				"inner"
 			]
@@ -6077,18 +6073,6 @@
 			"controlY": 1530
 		},
 		{
-			"a": "ballistic_damage_4",
-			"b": "ballistic_damage_5",
-			"controlX": -585,
-			"controlY": 1621
-		},
-		{
-			"a": "ballistic_damage_4",
-			"b": "magazines_1",
-			"controlX": -455,
-			"controlY": 1621
-		},
-		{
 			"a": "missile_damage_3",
 			"b": "missile_damage_4",
 			"controlX": -1539,
@@ -7244,13 +7228,6 @@
 			"beltBandWidth": 450,
 			"beltStyle": "dust",
 			"beltRotationSpeed": -0.8
-		},
-		{
-			"id": "anchor_19",
-			"x": -520,
-			"y": 1658,
-			"radius": 150,
-			"shape": "triangle"
 		},
 		{
 			"id": "anchor_20",
