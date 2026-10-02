@@ -47,13 +47,13 @@ Each column lists the notables/keystones first reached in that node-count range;
 
 | Archetype | Nodes at 42 | 1-5 | 6-10 | 11-20 | 21-30 | 31-42 |
 |---|---|---|---|---|---|---|
-| frigate_energy_shielded | 42 | - | - | Integrated Targeting Unit (18) | Efficient Vents (21), Packed Capacitors (24) | Optimised Lenses (31), Stabilized Shields (34), ECM Package (37) |
-| frigate_phase | 42 | - | - | Integrated Targeting Unit (18) | Efficient Vents (21), Packed Capacitors (24) | Optimised Lenses (31), Adaptive Phase Coils (34), ECM Package (37) |
-| cruiser_midline | 42 | - | - | Dedicated Targeting Core (16) | Efficient Vents (21), Packed Capacitors (24) | Optimised Lenses (31), Stabilized Shields (34), ECM Package (37) |
-| cruiser_hightech_beam | 42 | - | - | Dedicated Targeting Core (16) | Efficient Vents (21), Packed Capacitors (24), Advanced Optics (29) | Optimised Lenses (34), Stabilized Shields (37), ECM Package (40) |
-| cruiser_phase | 42 | - | - | Dedicated Targeting Core (16) | Efficient Vents (21), Packed Capacitors (24) | Optimised Lenses (31), Adaptive Phase Coils (34), ECM Package (37) |
-| capital_battleship | 42 | - | - | Dedicated Targeting Core (14), Efficient Vents (19) | Packed Capacitors (22), Advanced Optics (27) | Stabilized Shields (34), ECM Package (37) |
-| capital_carrier | 42 | - | - | Dedicated Targeting Core (16) | Efficient Vents (21), Packed Capacitors (24) | Optimised Lenses (31), Stabilized Shields (34), ECM Package (37) |
+| frigate_energy_shielded | 42 | - | - | - | Integrated Targeting Unit (23), Efficient Vents (26), Packed Capacitors (29) | Optimised Lenses (34), Stabilized Shields (37), ECM Package (40) |
+| frigate_phase | 42 | - | - | - | Integrated Targeting Unit (23), Efficient Vents (26), Packed Capacitors (29) | Optimised Lenses (34), Adaptive Phase Coils (37), ECM Package (40) |
+| cruiser_midline | 42 | - | - | - | Dedicated Targeting Core (21), Efficient Vents (26), Packed Capacitors (29) | Optimised Lenses (34), Stabilized Shields (37), ECM Package (40) |
+| cruiser_hightech_beam | 42 | - | - | - | Dedicated Targeting Core (21), Efficient Vents (26), Packed Capacitors (29) | Advanced Optics (32), Optimised Lenses (37), Stabilized Shields (40) |
+| cruiser_phase | 42 | - | - | - | Dedicated Targeting Core (21), Efficient Vents (26), Packed Capacitors (29) | Optimised Lenses (34), Adaptive Phase Coils (37), ECM Package (40) |
+| capital_battleship | 42 | - | - | Dedicated Targeting Core (19) | Efficient Vents (24), Packed Capacitors (27), Advanced Optics (30) | Stabilized Shields (37), ECM Package (40) |
+| capital_carrier | 42 | - | - | - | Dedicated Targeting Core (21), Efficient Vents (26), Packed Capacitors (29) | Optimised Lenses (34), Stabilized Shields (37), ECM Package (40) |
 
 ### Build path
 
@@ -64,66 +64,67 @@ Each column lists the notables/keystones first reached in that node-count range;
 | 3 | `small_flux_optional_44` | Caps, Vents or Hull | Flux Capacity | SMALL |
 | 4 | `small_flux_optional_43` | Caps, Vents or Hull | Flux Dissipation | SMALL |
 | 5 | `small_flux_optional_42` | Caps, Vents or Hull | Flux Capacity | SMALL |
-| 6 | `non_beam_energy_damage_2` | Non-Beam Energy Weapon Damage | - | SMALL |
-| 7 | `non_beam_energy_damage_1` | Non-Beam Energy Weapon Damage | - | SMALL |
-| 8 | `small_flux_optional_25` | Caps, Vents or Hull | Flux Dissipation | SMALL |
-| 9 | `small_flux_optional_26` | Caps, Vents or Hull | Flux Capacity | SMALL |
-| 10 | `small_flux_optional_27` | Caps, Vents or Hull | Flux Dissipation | SMALL |
-| 11 | `small_flux_optional_28` | Caps, Vents or Hull | Flux Capacity | SMALL |
-| 12 | `small_flux_optional_29` | Caps, Vents or Hull | Flux Dissipation | SMALL |
-| 13 | `small_flux_optional_30` | Caps, Vents or Hull | Flux Dissipation | SMALL |
-| 14 | `ballistic_and_energy_weapon_range_4` | Weapon Range | - | SMALL |
-| 15 | `ballistic_and_energy_weapon_range_3` | Weapon Range | - | SMALL |
-| 16 | `dedicated_targeting_core_1` | Dedicated Targeting Core | - | NOTABLE |
-| 17 | `ballistic_and_energy_weapon_range_2` | Weapon Range | - | SMALL |
-| 18 | `ballistic_and_energy_weapon_range_1` | Weapon Range | - | SMALL |
-| 19 | `targetingunit_1` | Integrated Targeting Unit | - | NOTABLE |
-| 20 | `flux_dissipation_1` | Flux Dissipation | - | SMALL |
-| 21 | `flux_dissipation_2` | Flux Dissipation | - | SMALL |
-| 22 | `efficient_vents_1` | Efficient Vents | - | NOTABLE |
-| 23 | `flux_capacity_1` | Flux Capacity | - | SMALL |
-| 24 | `flux_capacity_3` | Flux Capacity | - | SMALL |
-| 25 | `packed_capacitors_1` | Packed Capacitors | - | NOTABLE |
-| 26 | `small_flux_optional_41` | Caps, Vents or Hull | Flux Dissipation | SMALL |
-| 27 | `small_flux_optional_40` | Caps, Vents or Hull | Flux Capacity | SMALL |
-| 28 | `beam_damage_3` | Beam Weapon Damage | - | SMALL |
-| 29 | `beam_damage_2` | Beam Weapon Damage | - | SMALL |
-| 30 | `advancedoptics_1` | Advanced Optics | - | NOTABLE |
-| 31 | `small_flux_optional_21` | Caps, Vents or Hull | Flux Dissipation | SMALL |
-| 32 | `small_flux_optional_20` | Caps, Vents or Hull | Flux Capacity | SMALL |
-| 33 | `combat_vision_2` | Combat Vision | - | SMALL |
-| 34 | `combat_vision_1` | Combat Vision | - | SMALL |
-| 35 | `optimised_lenses_1` | Optimised Lenses | - | NOTABLE |
-| 36 | `shield_upkeep_multi_2` | Shield Upkeep Reduction | - | SMALL |
-| 37 | `shield_upkeep_multi_1` | Shield Upkeep Reduction | - | SMALL |
-| 38 | `stabilizedshieldemitter_1` | Stabilized Shields | - | NOTABLE |
-| 39 | `phase_cloak_flux_threshold_1` | Phase Cloak Flux Threshold | - | SMALL |
-| 40 | `phase_cloak_flux_threshold_2` | Phase Cloak Flux Threshold | - | SMALL |
-| 41 | `adaptive_coils_1` | Adaptive Phase Coils | - | NOTABLE |
-| 42 | `ballistic_and_energy_weapon_range_5` | Weapon Range | - | SMALL |
-| 43 | `ballistic_and_energy_weapon_range_6` | Weapon Range | - | SMALL |
-| 44 | `ecm_1` | ECM Package | - | NOTABLE |
-| 45 | `top_speed_1` | Top Speed | - | SMALL |
-| 46 | `top_speed_2` | Top Speed | - | SMALL |
-| 47 | `vent_rate_and_emp_damage_1` | Vent rate and EMP damage | - | SMALL |
-| 48 | `increased_vent_rate_2` | Increased vent rate | - | SMALL |
-| 49 | `increased_vent_rate_1` | Increased vent rate | - | SMALL |
-| 50 | `fluxbreakers_1` | Resistant Flux Conduits | - | NOTABLE |
-| 51 | `emp_damage_taken_multi_2` | Less EMP damage taken | - | SMALL |
-| 52 | `emp_damage_taken_multi_1` | Less EMP damage taken | - | SMALL |
-| 53 | `shield_damage_taken_multi_2` | Shield flux/damage reduction | - | SMALL |
-| 54 | `shield_damage_taken_multi_1` | Shield flux/damage reduction | - | SMALL |
-| 55 | `hardenedshieldemitter_1` | Hardened Shields | - | NOTABLE |
-| 56 | `beam_damage_1` | Beam Weapon Damage | - | SMALL |
-| 57 | `beam_damage_5` | Beam Weapon Damage | - | SMALL |
-| 58 | `small_flux_optional_39` | Caps, Vents or Hull | Flux Capacity | SMALL |
-| 59 | `small_flux_optional_38` | Caps, Vents or Hull | Flux Dissipation | SMALL |
-| 60 | `weapon_turn_rate_1` | Weapon Turn Rate | - | SMALL |
-| 61 | `weapon_turn_rate_2` | Weapon Turn Rate | - | SMALL |
-| 62 | `turretgyros_1` | Advanced Turret Gyros | - | NOTABLE |
-| 63 | `repair_time_1` | Repair Time | - | SMALL |
-| 64 | `repair_time_2` | Repair Time | - | SMALL |
-| 65 | `autorepair_1` | Automated Repair Unit | - | NOTABLE |
+| 6 | `small_flux_optional_41` | Caps, Vents or Hull | Flux Dissipation | SMALL |
+| 7 | `small_flux_optional_40` | Caps, Vents or Hull | Flux Capacity | SMALL |
+| 8 | `small_flux_optional_39` | Caps, Vents or Hull | Flux Capacity | SMALL |
+| 9 | `small_flux_optional_38` | Caps, Vents or Hull | Flux Dissipation | SMALL |
+| 10 | `small_flux_optional_37` | Caps, Vents or Hull | Flux Dissipation | SMALL |
+| 11 | `non_beam_energy_damage_2` | Non-Beam Energy Weapon Damage | - | SMALL |
+| 12 | `non_beam_energy_damage_1` | Non-Beam Energy Weapon Damage | - | SMALL |
+| 13 | `small_flux_optional_25` | Caps, Vents or Hull | Flux Dissipation | SMALL |
+| 14 | `small_flux_optional_26` | Caps, Vents or Hull | Flux Capacity | SMALL |
+| 15 | `small_flux_optional_27` | Caps, Vents or Hull | Flux Dissipation | SMALL |
+| 16 | `small_flux_optional_28` | Caps, Vents or Hull | Flux Capacity | SMALL |
+| 17 | `small_flux_optional_29` | Caps, Vents or Hull | Flux Dissipation | SMALL |
+| 18 | `small_flux_optional_30` | Caps, Vents or Hull | Flux Dissipation | SMALL |
+| 19 | `ballistic_and_energy_weapon_range_4` | Weapon Range | - | SMALL |
+| 20 | `ballistic_and_energy_weapon_range_3` | Weapon Range | - | SMALL |
+| 21 | `dedicated_targeting_core_1` | Dedicated Targeting Core | - | NOTABLE |
+| 22 | `ballistic_and_energy_weapon_range_2` | Weapon Range | - | SMALL |
+| 23 | `ballistic_and_energy_weapon_range_1` | Weapon Range | - | SMALL |
+| 24 | `targetingunit_1` | Integrated Targeting Unit | - | NOTABLE |
+| 25 | `flux_dissipation_1` | Flux Dissipation | - | SMALL |
+| 26 | `flux_dissipation_2` | Flux Dissipation | - | SMALL |
+| 27 | `efficient_vents_1` | Efficient Vents | - | NOTABLE |
+| 28 | `flux_capacity_1` | Flux Capacity | - | SMALL |
+| 29 | `flux_capacity_3` | Flux Capacity | - | SMALL |
+| 30 | `packed_capacitors_1` | Packed Capacitors | - | NOTABLE |
+| 31 | `beam_damage_3` | Beam Weapon Damage | - | SMALL |
+| 32 | `beam_damage_2` | Beam Weapon Damage | - | SMALL |
+| 33 | `advancedoptics_1` | Advanced Optics | - | NOTABLE |
+| 34 | `small_flux_optional_21` | Caps, Vents or Hull | Flux Dissipation | SMALL |
+| 35 | `small_flux_optional_20` | Caps, Vents or Hull | Flux Capacity | SMALL |
+| 36 | `combat_vision_2` | Combat Vision | - | SMALL |
+| 37 | `combat_vision_1` | Combat Vision | - | SMALL |
+| 38 | `optimised_lenses_1` | Optimised Lenses | - | NOTABLE |
+| 39 | `shield_upkeep_multi_2` | Shield Upkeep Reduction | - | SMALL |
+| 40 | `shield_upkeep_multi_1` | Shield Upkeep Reduction | - | SMALL |
+| 41 | `stabilizedshieldemitter_1` | Stabilized Shields | - | NOTABLE |
+| 42 | `phase_cloak_flux_threshold_1` | Phase Cloak Flux Threshold | - | SMALL |
+| 43 | `phase_cloak_flux_threshold_2` | Phase Cloak Flux Threshold | - | SMALL |
+| 44 | `adaptive_coils_1` | Adaptive Phase Coils | - | NOTABLE |
+| 45 | `ballistic_and_energy_weapon_range_5` | Weapon Range | - | SMALL |
+| 46 | `ballistic_and_energy_weapon_range_6` | Weapon Range | - | SMALL |
+| 47 | `ecm_1` | ECM Package | - | NOTABLE |
+| 48 | `top_speed_1` | Top Speed | - | SMALL |
+| 49 | `top_speed_2` | Top Speed | - | SMALL |
+| 50 | `vent_rate_and_emp_damage_1` | Vent rate and EMP damage | - | SMALL |
+| 51 | `increased_vent_rate_2` | Increased vent rate | - | SMALL |
+| 52 | `increased_vent_rate_1` | Increased vent rate | - | SMALL |
+| 53 | `fluxbreakers_1` | Resistant Flux Conduits | - | NOTABLE |
+| 54 | `emp_damage_taken_multi_2` | Less EMP damage taken | - | SMALL |
+| 55 | `emp_damage_taken_multi_1` | Less EMP damage taken | - | SMALL |
+| 56 | `shield_damage_taken_multi_2` | Shield flux/damage reduction | - | SMALL |
+| 57 | `shield_damage_taken_multi_1` | Shield flux/damage reduction | - | SMALL |
+| 58 | `hardenedshieldemitter_1` | Hardened Shields | - | NOTABLE |
+| 59 | `beam_damage_1` | Beam Weapon Damage | - | SMALL |
+| 60 | `beam_damage_5` | Beam Weapon Damage | - | SMALL |
+| 61 | `weapon_turn_rate_1` | Weapon Turn Rate | - | SMALL |
+| 62 | `weapon_turn_rate_2` | Weapon Turn Rate | - | SMALL |
+| 63 | `turretgyros_1` | Advanced Turret Gyros | - | NOTABLE |
+| 64 | `repair_time_1` | Repair Time | - | SMALL |
+| 65 | `repair_time_2` | Repair Time | - | SMALL |
+| 66 | `autorepair_1` | Automated Repair Unit | - | NOTABLE |
 
 ## Flux Fortress
 
@@ -232,9 +233,9 @@ Each column lists the notables/keystones first reached in that node-count range;
 
 | Archetype | Nodes at 42 | 1-5 | 6-10 | 11-20 | 21-30 | 31-42 |
 |---|---|---|---|---|---|---|
-| frigate_phase | 42 | - | Adaptive Phase Coils (7) | Packed Capacitors (12), Efficient Vents (14) | Resistant Flux Conduits (23), Optimised Lenses (29) | Auxiliary Thrusters (38), Integrated Targeting Unit (42) |
-| frigate_phase_ballistic | 42 | - | Adaptive Phase Coils (7) | Packed Capacitors (12), Efficient Vents (14) | Resistant Flux Conduits (21) | Auxiliary Thrusters (35), Integrated Targeting Unit (39), Nav Relay (42) |
-| cruiser_phase | 42 | - | Adaptive Phase Coils (7) | Packed Capacitors (12), Efficient Vents (14) | Resistant Flux Conduits (23), Optimised Lenses (29) | Dedicated Targeting Core (36), Auxiliary Thrusters (39) |
+| frigate_phase | 42 | - | Adaptive Phase Coils (7) | Packed Capacitors (12), Efficient Vents (14) | Resistant Flux Conduits (28) | Optimised Lenses (33), Auxiliary Thrusters (42) |
+| frigate_phase_ballistic | 42 | - | Adaptive Phase Coils (7) | Packed Capacitors (12), Efficient Vents (14) | Resistant Flux Conduits (26) | Auxiliary Thrusters (39) |
+| cruiser_phase | 42 | - | Adaptive Phase Coils (7) | Packed Capacitors (12), Efficient Vents (14) | Resistant Flux Conduits (28) | Optimised Lenses (33), Dedicated Targeting Core (40) |
 
 ### Build path
 
@@ -255,50 +256,54 @@ Each column lists the notables/keystones first reached in that node-count range;
 | 13 | `flux_dissipation_2` | Flux Dissipation | - | SMALL |
 | 14 | `efficient_vents_1` | Efficient Vents | - | NOTABLE |
 | 15 | `small_flux_optional_42` | Caps, Vents or Hull | Flux Capacity | SMALL |
-| 16 | `non_beam_energy_damage_2` | Non-Beam Energy Weapon Damage | - | SMALL |
-| 17 | `non_beam_energy_damage_1` | Non-Beam Energy Weapon Damage | - | SMALL |
-| 18 | `small_flux_optional_25` | Caps, Vents or Hull | Flux Dissipation | SMALL |
-| 19 | `small_flux_optional_26` | Caps, Vents or Hull | Flux Capacity | SMALL |
-| 20 | `vent_rate_and_emp_damage_1` | Vent rate and EMP damage | - | SMALL |
-| 21 | `increased_vent_rate_2` | Increased vent rate | - | SMALL |
-| 22 | `increased_vent_rate_1` | Increased vent rate | - | SMALL |
-| 23 | `fluxbreakers_1` | Resistant Flux Conduits | - | NOTABLE |
-| 24 | `small_flux_optional_41` | Caps, Vents or Hull | Flux Dissipation | SMALL |
-| 25 | `small_flux_optional_21` | Caps, Vents or Hull | Hull | SMALL |
-| 26 | `small_flux_optional_20` | Caps, Vents or Hull | Hull | SMALL |
-| 27 | `combat_vision_2` | Combat Vision | - | SMALL |
-| 28 | `combat_vision_1` | Combat Vision | - | SMALL |
-| 29 | `optimised_lenses_1` | Optimised Lenses | - | NOTABLE |
-| 30 | `small_flux_optional_27` | Caps, Vents or Hull | Hull | SMALL |
-| 31 | `small_flux_optional_28` | Caps, Vents or Hull | Flux Capacity | SMALL |
-| 32 | `small_flux_optional_29` | Caps, Vents or Hull | Hull | SMALL |
-| 33 | `small_flux_optional_30` | Caps, Vents or Hull | Flux Dissipation | SMALL |
-| 34 | `ballistic_and_energy_weapon_range_4` | Weapon Range | - | SMALL |
-| 35 | `ballistic_and_energy_weapon_range_3` | Weapon Range | - | SMALL |
-| 36 | `dedicated_targeting_core_1` | Dedicated Targeting Core | - | NOTABLE |
-| 37 | `turn_acceleration_percent_1` | Turn speed | - | SMALL |
-| 38 | `maneuverability_percent_1` | Maneuverability | - | SMALL |
-| 39 | `auxiliarythrusters_1` | Auxiliary Thrusters | - | NOTABLE |
-| 40 | `acceleration_percent_1` | Acceleration | - | SMALL |
-| 41 | `ballistic_and_energy_weapon_range_2` | Weapon Range | - | SMALL |
-| 42 | `ballistic_and_energy_weapon_range_1` | Weapon Range | - | SMALL |
-| 43 | `targetingunit_1` | Integrated Targeting Unit | - | NOTABLE |
-| 44 | `top_speed_1` | Top Speed | - | SMALL |
-| 45 | `top_speed_2` | Top Speed | - | SMALL |
-| 46 | `nav_relay_1` | Nav Relay | - | NOTABLE |
-| 47 | `small_flux_optional_11` | Caps, Vents or Hull | Hull | SMALL |
-| 48 | `peak_cr_duration_2` | Peak CR Duration | - | SMALL |
-| 49 | `hardened_subsystems_1` | Hardened Subsystems | - | NOTABLE |
-| 50 | `peak_cr_duration_1` | Peak CR Duration | - | SMALL |
-| 51 | `small_flux_optional_23` | Caps, Vents or Hull | Flux Capacity | SMALL |
-| 52 | `small_flux_optional_22` | Caps, Vents or Hull | Flux Dissipation | SMALL |
-| 53 | `ballistic_and_energy_weapon_range_5` | Weapon Range | - | SMALL |
-| 54 | `ballistic_and_energy_weapon_range_6` | Weapon Range | - | SMALL |
-| 55 | `ecm_1` | ECM Package | - | NOTABLE |
-| 56 | `emp_damage_taken_multi_2` | Less EMP damage taken | - | SMALL |
-| 57 | `emp_damage_taken_multi_1` | Less EMP damage taken | - | SMALL |
-| 58 | `small_flux_optional_7` | Caps, Vents or Hull | Hull | SMALL |
-| 59 | `small_flux_optional_6` | Caps, Vents or Hull | Flux Capacity | SMALL |
+| 16 | `small_flux_optional_41` | Caps, Vents or Hull | Flux Dissipation | SMALL |
+| 17 | `small_flux_optional_40` | Caps, Vents or Hull | Flux Capacity | SMALL |
+| 18 | `small_flux_optional_39` | Caps, Vents or Hull | Flux Dissipation | SMALL |
+| 19 | `small_flux_optional_38` | Caps, Vents or Hull | Flux Capacity | SMALL |
+| 20 | `small_flux_optional_37` | Caps, Vents or Hull | Flux Dissipation | SMALL |
+| 21 | `non_beam_energy_damage_2` | Non-Beam Energy Weapon Damage | - | SMALL |
+| 22 | `non_beam_energy_damage_1` | Non-Beam Energy Weapon Damage | - | SMALL |
+| 23 | `small_flux_optional_25` | Caps, Vents or Hull | Flux Dissipation | SMALL |
+| 24 | `small_flux_optional_26` | Caps, Vents or Hull | Flux Capacity | SMALL |
+| 25 | `vent_rate_and_emp_damage_1` | Vent rate and EMP damage | - | SMALL |
+| 26 | `increased_vent_rate_2` | Increased vent rate | - | SMALL |
+| 27 | `increased_vent_rate_1` | Increased vent rate | - | SMALL |
+| 28 | `fluxbreakers_1` | Resistant Flux Conduits | - | NOTABLE |
+| 29 | `small_flux_optional_21` | Caps, Vents or Hull | Hull | SMALL |
+| 30 | `small_flux_optional_20` | Caps, Vents or Hull | Hull | SMALL |
+| 31 | `combat_vision_2` | Combat Vision | - | SMALL |
+| 32 | `combat_vision_1` | Combat Vision | - | SMALL |
+| 33 | `optimised_lenses_1` | Optimised Lenses | - | NOTABLE |
+| 34 | `small_flux_optional_27` | Caps, Vents or Hull | Hull | SMALL |
+| 35 | `small_flux_optional_28` | Caps, Vents or Hull | Flux Capacity | SMALL |
+| 36 | `small_flux_optional_29` | Caps, Vents or Hull | Hull | SMALL |
+| 37 | `small_flux_optional_30` | Caps, Vents or Hull | Flux Dissipation | SMALL |
+| 38 | `ballistic_and_energy_weapon_range_4` | Weapon Range | - | SMALL |
+| 39 | `ballistic_and_energy_weapon_range_3` | Weapon Range | - | SMALL |
+| 40 | `dedicated_targeting_core_1` | Dedicated Targeting Core | - | NOTABLE |
+| 41 | `turn_acceleration_percent_1` | Turn speed | - | SMALL |
+| 42 | `maneuverability_percent_1` | Maneuverability | - | SMALL |
+| 43 | `auxiliarythrusters_1` | Auxiliary Thrusters | - | NOTABLE |
+| 44 | `acceleration_percent_1` | Acceleration | - | SMALL |
+| 45 | `ballistic_and_energy_weapon_range_2` | Weapon Range | - | SMALL |
+| 46 | `ballistic_and_energy_weapon_range_1` | Weapon Range | - | SMALL |
+| 47 | `targetingunit_1` | Integrated Targeting Unit | - | NOTABLE |
+| 48 | `top_speed_1` | Top Speed | - | SMALL |
+| 49 | `top_speed_2` | Top Speed | - | SMALL |
+| 50 | `nav_relay_1` | Nav Relay | - | NOTABLE |
+| 51 | `small_flux_optional_11` | Caps, Vents or Hull | Hull | SMALL |
+| 52 | `peak_cr_duration_2` | Peak CR Duration | - | SMALL |
+| 53 | `hardened_subsystems_1` | Hardened Subsystems | - | NOTABLE |
+| 54 | `peak_cr_duration_1` | Peak CR Duration | - | SMALL |
+| 55 | `small_flux_optional_23` | Caps, Vents or Hull | Flux Capacity | SMALL |
+| 56 | `small_flux_optional_22` | Caps, Vents or Hull | Flux Dissipation | SMALL |
+| 57 | `ballistic_and_energy_weapon_range_5` | Weapon Range | - | SMALL |
+| 58 | `ballistic_and_energy_weapon_range_6` | Weapon Range | - | SMALL |
+| 59 | `ecm_1` | ECM Package | - | NOTABLE |
+| 60 | `emp_damage_taken_multi_2` | Less EMP damage taken | - | SMALL |
+| 61 | `emp_damage_taken_multi_1` | Less EMP damage taken | - | SMALL |
+| 62 | `small_flux_optional_7` | Caps, Vents or Hull | Hull | SMALL |
+| 63 | `small_flux_optional_6` | Caps, Vents or Hull | Flux Capacity | SMALL |
 
 ## Brawler
 
