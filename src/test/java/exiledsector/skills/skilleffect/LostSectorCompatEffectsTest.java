@@ -57,17 +57,30 @@ class LostSectorCompatEffectsTest {
 
     @Test
     void augmentedSystemsOnlyCountsWhileLostSectorIsEnabled() {
-        when(mods.isModEnabled(LostSectorCompat.MOD_ID)).thenReturn(true);
+        when(mods.isModEnabled("lost_sector")).thenReturn(true);
         assertTrue(LostSectorCompat.hasAugmentedSystems(variant(true)));
         assertFalse(LostSectorCompat.hasAugmentedSystems(variant(false)));
 
-        when(mods.isModEnabled(LostSectorCompat.MOD_ID)).thenReturn(false);
+        when(mods.isModEnabled("lost_sector")).thenReturn(false);
         assertFalse(LostSectorCompat.hasAugmentedSystems(variant(true)));
     }
 
     @Test
+    void bothTheReleasedAndTheUpcomingLostSectorModIdsCount() {
+        when(mods.isModEnabled("lost_sector")).thenReturn(true);
+        assertTrue(LostSectorCompat.isModEnabled());
+
+        when(mods.isModEnabled("lost_sector")).thenReturn(false);
+        when(mods.isModEnabled("lost.sector")).thenReturn(true);
+        assertTrue(LostSectorCompat.isModEnabled());
+
+        when(mods.isModEnabled("lost.sector")).thenReturn(false);
+        assertFalse(LostSectorCompat.isModEnabled());
+    }
+
+    @Test
     void theRechargeBonusAppliesOnlyToAugmentedHullsWithLostSectorEnabled() {
-        when(mods.isModEnabled(LostSectorCompat.MOD_ID)).thenReturn(true);
+        when(mods.isModEnabled("lost_sector")).thenReturn(true);
         ShipVariantAPI augmentedVariant = variant(true);
         ShipVariantAPI plainVariant = variant(false);
         MutableShipStatsAPI augmented = mock(MutableShipStatsAPI.class);
@@ -89,12 +102,12 @@ class LostSectorCompatEffectsTest {
 
     @Test
     void theAugmentedBonusesOnlyAppearInTooltipsWhenLostSectorIsInstalled() {
-        when(mods.isModEnabled(LostSectorCompat.MOD_ID)).thenReturn(false);
+        when(mods.isModEnabled("lost_sector")).thenReturn(false);
         for (SkillEffect effect : AUGMENTED_EFFECTS) {
             assertNull(effect.description(10f), effect.toString());
         }
 
-        when(mods.isModEnabled(LostSectorCompat.MOD_ID)).thenReturn(true);
+        when(mods.isModEnabled("lost_sector")).thenReturn(true);
         for (SkillEffect effect : AUGMENTED_EFFECTS) {
             assertNotNull(effect.description(10f), effect.toString());
         }

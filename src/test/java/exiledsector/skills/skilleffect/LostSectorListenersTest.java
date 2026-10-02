@@ -112,7 +112,7 @@ class LostSectorListenersTest {
         SettingsAPI settings = mock(SettingsAPI.class);
         ModManagerAPI mods = mock(ModManagerAPI.class);
         when(settings.getModManager()).thenReturn(mods);
-        when(mods.isModEnabled(LostSectorCompat.MOD_ID)).thenReturn(enabled);
+        when(mods.isModEnabled("lost_sector")).thenReturn(enabled);
         globalMock.when(Global::getSettings).thenReturn(settings);
     }
 
