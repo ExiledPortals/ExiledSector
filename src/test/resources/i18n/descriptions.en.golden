@@ -3039,11 +3039,11 @@ type|recovery_shuttles|CRUISER|0	1	<bad>75%</bad> less casualties suffered by fi
 type|recovery_shuttles|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Recovery Shuttles.
 type|recovery_shuttles|CAPITAL_SHIP|0	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
 type|recovery_shuttles|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Recovery Shuttles.
-type|reduced_D_mod_effect|null|0	1	<bad>5%</bad> less negative effects from D-mods.
-type|reduced_D_mod_effect|FRIGATE|0	1	<bad>5%</bad> less negative effects from D-mods.
-type|reduced_D_mod_effect|DESTROYER|0	1	<bad>5%</bad> less negative effects from D-mods.
-type|reduced_D_mod_effect|CRUISER|0	1	<bad>5%</bad> less negative effects from D-mods.
-type|reduced_D_mod_effect|CAPITAL_SHIP|0	1	<bad>5%</bad> less negative effects from D-mods.
+type|reduced_D_mod_effect|null|0	1	<bad>4%</bad> less negative effects from D-mods.
+type|reduced_D_mod_effect|FRIGATE|0	1	<bad>4%</bad> less negative effects from D-mods.
+type|reduced_D_mod_effect|DESTROYER|0	1	<bad>4%</bad> less negative effects from D-mods.
+type|reduced_D_mod_effect|CRUISER|0	1	<bad>4%</bad> less negative effects from D-mods.
+type|reduced_D_mod_effect|CAPITAL_SHIP|0	1	<bad>4%</bad> less negative effects from D-mods.
 type|reduced_monthly_supplies|null|0	1	<bad>5%</bad> less supply use for maintenance.
 type|reduced_monthly_supplies|FRIGATE|0	1	<bad>5%</bad> less supply use for maintenance.
 type|reduced_monthly_supplies|DESTROYER|0	1	<bad>5%</bad> less supply use for maintenance.
@@ -3427,8 +3427,8 @@ summary|option0|FRIGATE|5	0	Increases beam weapon range by <good>200</good>.
 summary|option0|FRIGATE|6	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option0|FRIGATE|7	0	Increases shield turn rate by <good>100%</good>.
 summary|option0|FRIGATE|8	0	Increases shield raise rate by <good>125%</good>.
-summary|option0|FRIGATE|9	0	Increases ballistic weapon ammo capacity by <good>90%</good>.
-summary|option0|FRIGATE|10	0	Increases energy weapon ammo capacity by <good>90%</good>.
+summary|option0|FRIGATE|9	0	Increases ballistic weapon ammo capacity by <good>110%</good>.
+summary|option0|FRIGATE|10	0	Increases energy weapon ammo capacity by <good>110%</good>.
 summary|option0|FRIGATE|11	0	Increases armor by <good>310</good>.
 summary|option0|FRIGATE|12	0	Increases armor by <good>55%</good>.
 summary|option0|FRIGATE|13	0	Increases weapon durability by <good>110%</good>.
@@ -3443,15 +3443,15 @@ summary|option0|FRIGATE|21	0	Increases turn acceleration by <good>160%</good>.
 summary|option0|FRIGATE|22	0	Increases maneuverability by <good>55%</good>.
 summary|option0|FRIGATE|23	0	Increases ballistic weapon range by <good>31%</good>.
 summary|option0|FRIGATE|24	0	Increases energy weapon range by <good>31%</good>.
-summary|option0|FRIGATE|25	0	Increases ballistic weapon damage by <good>18%</good>.
+summary|option0|FRIGATE|25	0	Increases ballistic weapon damage by <good>21%</good>.
 summary|option0|FRIGATE|26	0	Grants <good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
-summary|option0|FRIGATE|27	0	Increases ballistic weapon projectile speed by <good>30%</good>.
+summary|option0|FRIGATE|27	0	Increases ballistic weapon projectile speed by <good>40%</good>.
 summary|option0|FRIGATE|28	0	Increases beam weapon damage by <good>30%</good>.
 summary|option0|FRIGATE|29	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 summary|option0|FRIGATE|30	0	Increases hull points by <good>70%</good>.
 summary|option0|FRIGATE|31	1	<bad>60%</bad> less crew casualties.
 summary|option0|FRIGATE|32	0	Increases cargo capacity by <good>35</good>.
-summary|option0|FRIGATE|33	0	Increases maximum combat readiness by <good>27%</good>.
+summary|option0|FRIGATE|33	0	Increases maximum combat readiness by <good>29%</good>.
 summary|option0|FRIGATE|34	0	Increases in-combat sensor/vision range by <good>1000</good>.
 summary|option0|FRIGATE|35	0	Removes all of this ship's fighter bays.
 summary|option0|FRIGATE|36	1	Decreases minimum crew required per fighter bay (capped at -80% total) by <bad>20%</bad>.
@@ -3483,8 +3483,8 @@ summary|option0|FRIGATE|61	1	<bad>54.48%</bad> less EMP damage taken.
 summary|option0|FRIGATE|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
 summary|option0|FRIGATE|63	0	Each successive hit in a non-beam energy chain deals <bad>20%</bad> less damage than the one before it.
 summary|option0|FRIGATE|64	1	Decreases energy weapon flux cost by <bad>20%</bad>.
-summary|option0|FRIGATE|65	0	Increases engine durability by <good>160%</good>.
-summary|option0|FRIGATE|66	1	Decreases sensor profile by <bad>40%</bad>.
+summary|option0|FRIGATE|65	0	Increases engine durability by <good>185%</good>.
+summary|option0|FRIGATE|66	1	Decreases sensor profile by <bad>50%</bad>.
 summary|option0|FRIGATE|67	0	While within range of a larger friendly ship, increases maneuverability (acceleration, deceleration, and turn rate) by up to 25%, fading with distance. Doubled for a destroyer escorting a capital ship.
 summary|option0|FRIGATE|68	0	While within range of a larger friendly ship, increases top speed by up to 10%, fading with distance. Doubled for a destroyer escorting a capital ship.
 summary|option0|FRIGATE|69	0	While within range of a larger friendly ship, increases ballistic and energy weapon range by up to 20%, fading with distance. Doubled for a destroyer escorting a capital ship.
@@ -3513,7 +3513,7 @@ summary|option0|FRIGATE|91	1	Decreases ordnance point cost of large ballistic we
 summary|option0|FRIGATE|92	0	Increases hull points by <good>100</good>.
 summary|option0|FRIGATE|93	0	Causes 50% of beam weapon damage dealt to shields to be hard flux.
 summary|option0|FRIGATE|94	0	<bad>25%</bad> less beam weapon range.
-summary|option0|FRIGATE|95	0	Increases sensor strength by <good>80</good>.
+summary|option0|FRIGATE|95	0	Increases sensor strength by <good>90</good>.
 summary|option0|FRIGATE|96	0	Increases energy weapon ammo regeneration rate by <good>50%</good>.
 summary|option0|FRIGATE|97	0	Increases ballistic weapon ammo regeneration rate by <good>50%</good>.
 summary|option0|FRIGATE|98	0	<good>34.01%</good> more hull points.
@@ -3556,7 +3556,7 @@ summary|option0|FRIGATE|134	0	All small non-missile, non-strike weapons are clas
 summary|option0|FRIGATE|135	1	Increases crew casualties by <good>50%</good>.
 summary|option0|FRIGATE|136	0	Increases weapon damage by <good>10%</good>.
 summary|option0|FRIGATE|137	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option0|FRIGATE|138	1	<bad>18.55%</bad> less negative effects from D-mods.
+summary|option0|FRIGATE|138	1	<bad>21.72%</bad> less negative effects from D-mods.
 summary|option0|FRIGATE|139	0	If disabled, this ship is almost always recoverable after the battle.
 summary|option0|FRIGATE|140	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option0|FRIGATE|141	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
@@ -3596,8 +3596,8 @@ summary|option0|DESTROYER|5	0	Increases beam weapon range by <good>200</good>.
 summary|option0|DESTROYER|6	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option0|DESTROYER|7	0	Increases shield turn rate by <good>100%</good>.
 summary|option0|DESTROYER|8	0	Increases shield raise rate by <good>125%</good>.
-summary|option0|DESTROYER|9	0	Increases ballistic weapon ammo capacity by <good>90%</good>.
-summary|option0|DESTROYER|10	0	Increases energy weapon ammo capacity by <good>90%</good>.
+summary|option0|DESTROYER|9	0	Increases ballistic weapon ammo capacity by <good>110%</good>.
+summary|option0|DESTROYER|10	0	Increases energy weapon ammo capacity by <good>110%</good>.
 summary|option0|DESTROYER|11	0	Increases armor by <good>550</good>.
 summary|option0|DESTROYER|12	0	Increases armor by <good>55%</good>.
 summary|option0|DESTROYER|13	0	Increases weapon durability by <good>110%</good>.
@@ -3612,15 +3612,15 @@ summary|option0|DESTROYER|21	0	Increases turn acceleration by <good>160%</good>.
 summary|option0|DESTROYER|22	0	Increases maneuverability by <good>55%</good>.
 summary|option0|DESTROYER|23	0	Increases ballistic weapon range by <good>52%</good>.
 summary|option0|DESTROYER|24	0	Increases energy weapon range by <good>52%</good>.
-summary|option0|DESTROYER|25	0	Increases ballistic weapon damage by <good>18%</good>.
+summary|option0|DESTROYER|25	0	Increases ballistic weapon damage by <good>21%</good>.
 summary|option0|DESTROYER|26	0	Grants <good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
-summary|option0|DESTROYER|27	0	Increases ballistic weapon projectile speed by <good>30%</good>.
+summary|option0|DESTROYER|27	0	Increases ballistic weapon projectile speed by <good>40%</good>.
 summary|option0|DESTROYER|28	0	Increases beam weapon damage by <good>30%</good>.
 summary|option0|DESTROYER|29	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 summary|option0|DESTROYER|30	0	Increases hull points by <good>70%</good>.
 summary|option0|DESTROYER|31	1	<bad>60%</bad> less crew casualties.
 summary|option0|DESTROYER|32	0	Increases cargo capacity by <good>65</good>.
-summary|option0|DESTROYER|33	0	Increases maximum combat readiness by <good>27%</good>.
+summary|option0|DESTROYER|33	0	Increases maximum combat readiness by <good>29%</good>.
 summary|option0|DESTROYER|34	0	Increases in-combat sensor/vision range by <good>1600</good>.
 summary|option0|DESTROYER|35	0	Removes all of this ship's fighter bays.
 summary|option0|DESTROYER|36	1	Decreases minimum crew required per fighter bay (capped at -80% total) by <bad>20%</bad>.
@@ -3652,8 +3652,8 @@ summary|option0|DESTROYER|61	1	<bad>54.48%</bad> less EMP damage taken.
 summary|option0|DESTROYER|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
 summary|option0|DESTROYER|63	0	Each successive hit in a non-beam energy chain deals <bad>20%</bad> less damage than the one before it.
 summary|option0|DESTROYER|64	1	Decreases energy weapon flux cost by <bad>20%</bad>.
-summary|option0|DESTROYER|65	0	Increases engine durability by <good>160%</good>.
-summary|option0|DESTROYER|66	1	Decreases sensor profile by <bad>40%</bad>.
+summary|option0|DESTROYER|65	0	Increases engine durability by <good>185%</good>.
+summary|option0|DESTROYER|66	1	Decreases sensor profile by <bad>50%</bad>.
 summary|option0|DESTROYER|67	0	While within range of a larger friendly ship, increases maneuverability (acceleration, deceleration, and turn rate) by up to 25%, fading with distance. Doubled for a destroyer escorting a capital ship.
 summary|option0|DESTROYER|68	0	While within range of a larger friendly ship, increases top speed by up to 10%, fading with distance. Doubled for a destroyer escorting a capital ship.
 summary|option0|DESTROYER|69	0	While within range of a larger friendly ship, increases ballistic and energy weapon range by up to 20%, fading with distance. Doubled for a destroyer escorting a capital ship.
@@ -3682,7 +3682,7 @@ summary|option0|DESTROYER|91	1	Decreases ordnance point cost of large ballistic 
 summary|option0|DESTROYER|92	0	Increases hull points by <good>200</good>.
 summary|option0|DESTROYER|93	0	Causes 50% of beam weapon damage dealt to shields to be hard flux.
 summary|option0|DESTROYER|94	0	<bad>25%</bad> less beam weapon range.
-summary|option0|DESTROYER|95	0	Increases sensor strength by <good>98</good>.
+summary|option0|DESTROYER|95	0	Increases sensor strength by <good>110</good>.
 summary|option0|DESTROYER|96	0	Increases energy weapon ammo regeneration rate by <good>50%</good>.
 summary|option0|DESTROYER|97	0	Increases ballistic weapon ammo regeneration rate by <good>50%</good>.
 summary|option0|DESTROYER|98	0	<good>34.01%</good> more hull points.
@@ -3725,7 +3725,7 @@ summary|option0|DESTROYER|134	0	All small non-missile, non-strike weapons are cl
 summary|option0|DESTROYER|135	1	Increases crew casualties by <good>50%</good>.
 summary|option0|DESTROYER|136	0	Increases weapon damage by <good>10%</good>.
 summary|option0|DESTROYER|137	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option0|DESTROYER|138	1	<bad>18.55%</bad> less negative effects from D-mods.
+summary|option0|DESTROYER|138	1	<bad>21.72%</bad> less negative effects from D-mods.
 summary|option0|DESTROYER|139	0	If disabled, this ship is almost always recoverable after the battle.
 summary|option0|DESTROYER|140	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option0|DESTROYER|141	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
@@ -3765,8 +3765,8 @@ summary|option0|CRUISER|5	0	Increases beam weapon range by <good>200</good>.
 summary|option0|CRUISER|6	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option0|CRUISER|7	0	Increases shield turn rate by <good>100%</good>.
 summary|option0|CRUISER|8	0	Increases shield raise rate by <good>125%</good>.
-summary|option0|CRUISER|9	0	Increases ballistic weapon ammo capacity by <good>90%</good>.
-summary|option0|CRUISER|10	0	Increases energy weapon ammo capacity by <good>90%</good>.
+summary|option0|CRUISER|9	0	Increases ballistic weapon ammo capacity by <good>110%</good>.
+summary|option0|CRUISER|10	0	Increases energy weapon ammo capacity by <good>110%</good>.
 summary|option0|CRUISER|11	0	Increases armor by <good>1000</good>.
 summary|option0|CRUISER|12	0	Increases armor by <good>55%</good>.
 summary|option0|CRUISER|13	0	Increases weapon durability by <good>110%</good>.
@@ -3781,15 +3781,15 @@ summary|option0|CRUISER|21	0	Increases turn acceleration by <good>160%</good>.
 summary|option0|CRUISER|22	0	Increases maneuverability by <good>55%</good>.
 summary|option0|CRUISER|23	0	Increases ballistic weapon range by <good>114%</good>.
 summary|option0|CRUISER|24	0	Increases energy weapon range by <good>114%</good>.
-summary|option0|CRUISER|25	0	Increases ballistic weapon damage by <good>18%</good>.
+summary|option0|CRUISER|25	0	Increases ballistic weapon damage by <good>21%</good>.
 summary|option0|CRUISER|26	0	Grants <good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
-summary|option0|CRUISER|27	0	Increases ballistic weapon projectile speed by <good>30%</good>.
+summary|option0|CRUISER|27	0	Increases ballistic weapon projectile speed by <good>40%</good>.
 summary|option0|CRUISER|28	0	Increases beam weapon damage by <good>30%</good>.
 summary|option0|CRUISER|29	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 summary|option0|CRUISER|30	0	Increases hull points by <good>70%</good>.
 summary|option0|CRUISER|31	1	<bad>60%</bad> less crew casualties.
 summary|option0|CRUISER|32	0	Increases cargo capacity by <good>110</good>.
-summary|option0|CRUISER|33	0	Increases maximum combat readiness by <good>27%</good>.
+summary|option0|CRUISER|33	0	Increases maximum combat readiness by <good>29%</good>.
 summary|option0|CRUISER|34	0	Increases in-combat sensor/vision range by <good>2200</good>.
 summary|option0|CRUISER|35	0	Removes all of this ship's fighter bays.
 summary|option0|CRUISER|36	1	Decreases minimum crew required per fighter bay (capped at -80% total) by <bad>20%</bad>.
@@ -3821,8 +3821,8 @@ summary|option0|CRUISER|61	1	<bad>54.48%</bad> less EMP damage taken.
 summary|option0|CRUISER|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
 summary|option0|CRUISER|63	0	Each successive hit in a non-beam energy chain deals <bad>20%</bad> less damage than the one before it.
 summary|option0|CRUISER|64	1	Decreases energy weapon flux cost by <bad>20%</bad>.
-summary|option0|CRUISER|65	0	Increases engine durability by <good>160%</good>.
-summary|option0|CRUISER|66	1	Decreases sensor profile by <bad>40%</bad>.
+summary|option0|CRUISER|65	0	Increases engine durability by <good>185%</good>.
+summary|option0|CRUISER|66	1	Decreases sensor profile by <bad>50%</bad>.
 summary|option0|CRUISER|67	0	While within range of a larger friendly ship, increases maneuverability (acceleration, deceleration, and turn rate) by up to 25%, fading with distance. Doubled for a destroyer escorting a capital ship.
 summary|option0|CRUISER|68	0	While within range of a larger friendly ship, increases top speed by up to 10%, fading with distance. Doubled for a destroyer escorting a capital ship.
 summary|option0|CRUISER|69	0	While within range of a larger friendly ship, increases ballistic and energy weapon range by up to 20%, fading with distance. Doubled for a destroyer escorting a capital ship.
@@ -3851,7 +3851,7 @@ summary|option0|CRUISER|91	1	Decreases ordnance point cost of large ballistic we
 summary|option0|CRUISER|92	0	Increases hull points by <good>300</good>.
 summary|option0|CRUISER|93	0	Causes 50% of beam weapon damage dealt to shields to be hard flux.
 summary|option0|CRUISER|94	0	<bad>25%</bad> less beam weapon range.
-summary|option0|CRUISER|95	0	Increases sensor strength by <good>140</good>.
+summary|option0|CRUISER|95	0	Increases sensor strength by <good>160</good>.
 summary|option0|CRUISER|96	0	Increases energy weapon ammo regeneration rate by <good>50%</good>.
 summary|option0|CRUISER|97	0	Increases ballistic weapon ammo regeneration rate by <good>50%</good>.
 summary|option0|CRUISER|98	0	<good>34.01%</good> more hull points.
@@ -3894,7 +3894,7 @@ summary|option0|CRUISER|134	0	All small non-missile, non-strike weapons are clas
 summary|option0|CRUISER|135	1	Increases crew casualties by <good>50%</good>.
 summary|option0|CRUISER|136	0	Increases weapon damage by <good>10%</good>.
 summary|option0|CRUISER|137	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option0|CRUISER|138	1	<bad>18.55%</bad> less negative effects from D-mods.
+summary|option0|CRUISER|138	1	<bad>21.72%</bad> less negative effects from D-mods.
 summary|option0|CRUISER|139	0	If disabled, this ship is almost always recoverable after the battle.
 summary|option0|CRUISER|140	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option0|CRUISER|141	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
@@ -3934,8 +3934,8 @@ summary|option0|CAPITAL_SHIP|5	0	Increases beam weapon range by <good>200</good>
 summary|option0|CAPITAL_SHIP|6	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option0|CAPITAL_SHIP|7	0	Increases shield turn rate by <good>100%</good>.
 summary|option0|CAPITAL_SHIP|8	0	Increases shield raise rate by <good>125%</good>.
-summary|option0|CAPITAL_SHIP|9	0	Increases ballistic weapon ammo capacity by <good>90%</good>.
-summary|option0|CAPITAL_SHIP|10	0	Increases energy weapon ammo capacity by <good>90%</good>.
+summary|option0|CAPITAL_SHIP|9	0	Increases ballistic weapon ammo capacity by <good>110%</good>.
+summary|option0|CAPITAL_SHIP|10	0	Increases energy weapon ammo capacity by <good>110%</good>.
 summary|option0|CAPITAL_SHIP|11	0	Increases armor by <good>1275</good>.
 summary|option0|CAPITAL_SHIP|12	0	Increases armor by <good>55%</good>.
 summary|option0|CAPITAL_SHIP|13	0	Increases weapon durability by <good>110%</good>.
@@ -3950,15 +3950,15 @@ summary|option0|CAPITAL_SHIP|21	0	Increases turn acceleration by <good>160%</goo
 summary|option0|CAPITAL_SHIP|22	0	Increases maneuverability by <good>55%</good>.
 summary|option0|CAPITAL_SHIP|23	0	Increases ballistic weapon range by <good>158%</good>.
 summary|option0|CAPITAL_SHIP|24	0	Increases energy weapon range by <good>158%</good>.
-summary|option0|CAPITAL_SHIP|25	0	Increases ballistic weapon damage by <good>18%</good>.
+summary|option0|CAPITAL_SHIP|25	0	Increases ballistic weapon damage by <good>21%</good>.
 summary|option0|CAPITAL_SHIP|26	0	Grants <good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
-summary|option0|CAPITAL_SHIP|27	0	Increases ballistic weapon projectile speed by <good>30%</good>.
+summary|option0|CAPITAL_SHIP|27	0	Increases ballistic weapon projectile speed by <good>40%</good>.
 summary|option0|CAPITAL_SHIP|28	0	Increases beam weapon damage by <good>30%</good>.
 summary|option0|CAPITAL_SHIP|29	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 summary|option0|CAPITAL_SHIP|30	0	Increases hull points by <good>70%</good>.
 summary|option0|CAPITAL_SHIP|31	1	<bad>60%</bad> less crew casualties.
 summary|option0|CAPITAL_SHIP|32	0	Increases cargo capacity by <good>225</good>.
-summary|option0|CAPITAL_SHIP|33	0	Increases maximum combat readiness by <good>27%</good>.
+summary|option0|CAPITAL_SHIP|33	0	Increases maximum combat readiness by <good>29%</good>.
 summary|option0|CAPITAL_SHIP|34	0	Increases in-combat sensor/vision range by <good>2800</good>.
 summary|option0|CAPITAL_SHIP|35	0	Removes all of this ship's fighter bays.
 summary|option0|CAPITAL_SHIP|36	1	Decreases minimum crew required per fighter bay (capped at -80% total) by <bad>20%</bad>.
@@ -3990,8 +3990,8 @@ summary|option0|CAPITAL_SHIP|61	1	<bad>54.48%</bad> less EMP damage taken.
 summary|option0|CAPITAL_SHIP|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
 summary|option0|CAPITAL_SHIP|63	0	Each successive hit in a non-beam energy chain deals <bad>20%</bad> less damage than the one before it.
 summary|option0|CAPITAL_SHIP|64	1	Decreases energy weapon flux cost by <bad>20%</bad>.
-summary|option0|CAPITAL_SHIP|65	0	Increases engine durability by <good>160%</good>.
-summary|option0|CAPITAL_SHIP|66	1	Decreases sensor profile by <bad>40%</bad>.
+summary|option0|CAPITAL_SHIP|65	0	Increases engine durability by <good>185%</good>.
+summary|option0|CAPITAL_SHIP|66	1	Decreases sensor profile by <bad>50%</bad>.
 summary|option0|CAPITAL_SHIP|67	0	While within range of a larger friendly ship, increases maneuverability (acceleration, deceleration, and turn rate) by up to 25%, fading with distance. Doubled for a destroyer escorting a capital ship.
 summary|option0|CAPITAL_SHIP|68	0	While within range of a larger friendly ship, increases top speed by up to 10%, fading with distance. Doubled for a destroyer escorting a capital ship.
 summary|option0|CAPITAL_SHIP|69	0	While within range of a larger friendly ship, increases ballistic and energy weapon range by up to 20%, fading with distance. Doubled for a destroyer escorting a capital ship.
@@ -4020,7 +4020,7 @@ summary|option0|CAPITAL_SHIP|91	1	Decreases ordnance point cost of large ballist
 summary|option0|CAPITAL_SHIP|92	0	Increases hull points by <good>400</good>.
 summary|option0|CAPITAL_SHIP|93	0	Causes 50% of beam weapon damage dealt to shields to be hard flux.
 summary|option0|CAPITAL_SHIP|94	0	<bad>25%</bad> less beam weapon range.
-summary|option0|CAPITAL_SHIP|95	0	Increases sensor strength by <good>190</good>.
+summary|option0|CAPITAL_SHIP|95	0	Increases sensor strength by <good>220</good>.
 summary|option0|CAPITAL_SHIP|96	0	Increases energy weapon ammo regeneration rate by <good>50%</good>.
 summary|option0|CAPITAL_SHIP|97	0	Increases ballistic weapon ammo regeneration rate by <good>50%</good>.
 summary|option0|CAPITAL_SHIP|98	0	<good>34.01%</good> more hull points.
@@ -4063,7 +4063,7 @@ summary|option0|CAPITAL_SHIP|134	0	All small non-missile, non-strike weapons are
 summary|option0|CAPITAL_SHIP|135	1	Increases crew casualties by <good>50%</good>.
 summary|option0|CAPITAL_SHIP|136	0	Increases weapon damage by <good>10%</good>.
 summary|option0|CAPITAL_SHIP|137	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option0|CAPITAL_SHIP|138	1	<bad>18.55%</bad> less negative effects from D-mods.
+summary|option0|CAPITAL_SHIP|138	1	<bad>21.72%</bad> less negative effects from D-mods.
 summary|option0|CAPITAL_SHIP|139	0	If disabled, this ship is almost always recoverable after the battle.
 summary|option0|CAPITAL_SHIP|140	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option0|CAPITAL_SHIP|141	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
@@ -4103,8 +4103,8 @@ summary|option1|FRIGATE|5	0	Increases beam weapon range by <good>200</good>.
 summary|option1|FRIGATE|6	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option1|FRIGATE|7	0	Increases shield turn rate by <good>125%</good>.
 summary|option1|FRIGATE|8	0	Increases shield raise rate by <good>100%</good>.
-summary|option1|FRIGATE|9	0	Increases ballistic weapon ammo capacity by <good>90%</good>.
-summary|option1|FRIGATE|10	0	Increases energy weapon ammo capacity by <good>90%</good>.
+summary|option1|FRIGATE|9	0	Increases ballistic weapon ammo capacity by <good>110%</good>.
+summary|option1|FRIGATE|10	0	Increases energy weapon ammo capacity by <good>110%</good>.
 summary|option1|FRIGATE|11	0	Increases armor by <good>310</good>.
 summary|option1|FRIGATE|12	0	Increases armor by <good>55%</good>.
 summary|option1|FRIGATE|13	0	Increases weapon durability by <good>110%</good>.
@@ -4119,15 +4119,15 @@ summary|option1|FRIGATE|21	0	Increases turn acceleration by <good>160%</good>.
 summary|option1|FRIGATE|22	0	Increases maneuverability by <good>55%</good>.
 summary|option1|FRIGATE|23	0	Increases ballistic weapon range by <good>31%</good>.
 summary|option1|FRIGATE|24	0	Increases energy weapon range by <good>31%</good>.
-summary|option1|FRIGATE|25	0	Increases ballistic weapon damage by <good>18%</good>.
+summary|option1|FRIGATE|25	0	Increases ballistic weapon damage by <good>21%</good>.
 summary|option1|FRIGATE|26	0	Grants <good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
-summary|option1|FRIGATE|27	0	Increases ballistic weapon projectile speed by <good>30%</good>.
+summary|option1|FRIGATE|27	0	Increases ballistic weapon projectile speed by <good>40%</good>.
 summary|option1|FRIGATE|28	0	Increases beam weapon damage by <good>30%</good>.
 summary|option1|FRIGATE|29	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 summary|option1|FRIGATE|30	0	Increases hull points by <good>70%</good>.
 summary|option1|FRIGATE|31	1	<bad>60%</bad> less crew casualties.
 summary|option1|FRIGATE|32	0	Increases cargo capacity by <good>35</good>.
-summary|option1|FRIGATE|33	0	Increases maximum combat readiness by <good>27%</good>.
+summary|option1|FRIGATE|33	0	Increases maximum combat readiness by <good>29%</good>.
 summary|option1|FRIGATE|34	0	Increases in-combat sensor/vision range by <good>1000</good>.
 summary|option1|FRIGATE|35	0	Removes all of this ship's fighter bays.
 summary|option1|FRIGATE|36	1	Decreases minimum crew required per fighter bay (capped at -80% total) by <bad>20%</bad>.
@@ -4159,8 +4159,8 @@ summary|option1|FRIGATE|61	1	<bad>54.48%</bad> less EMP damage taken.
 summary|option1|FRIGATE|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
 summary|option1|FRIGATE|63	0	Each successive hit in a non-beam energy chain deals <bad>20%</bad> less damage than the one before it.
 summary|option1|FRIGATE|64	1	Decreases energy weapon flux cost by <bad>20%</bad>.
-summary|option1|FRIGATE|65	0	Increases engine durability by <good>160%</good>.
-summary|option1|FRIGATE|66	1	Decreases sensor profile by <bad>40%</bad>.
+summary|option1|FRIGATE|65	0	Increases engine durability by <good>185%</good>.
+summary|option1|FRIGATE|66	1	Decreases sensor profile by <bad>50%</bad>.
 summary|option1|FRIGATE|67	0	While within range of a larger friendly ship, increases maneuverability (acceleration, deceleration, and turn rate) by up to 25%, fading with distance. Doubled for a destroyer escorting a capital ship.
 summary|option1|FRIGATE|68	0	While within range of a larger friendly ship, increases top speed by up to 10%, fading with distance. Doubled for a destroyer escorting a capital ship.
 summary|option1|FRIGATE|69	0	While within range of a larger friendly ship, increases ballistic and energy weapon range by up to 20%, fading with distance. Doubled for a destroyer escorting a capital ship.
@@ -4189,7 +4189,7 @@ summary|option1|FRIGATE|91	1	Decreases ordnance point cost of large ballistic we
 summary|option1|FRIGATE|92	0	Increases hull points by <good>100</good>.
 summary|option1|FRIGATE|93	0	Causes 50% of beam weapon damage dealt to shields to be hard flux.
 summary|option1|FRIGATE|94	0	<bad>25%</bad> less beam weapon range.
-summary|option1|FRIGATE|95	0	Increases sensor strength by <good>80</good>.
+summary|option1|FRIGATE|95	0	Increases sensor strength by <good>90</good>.
 summary|option1|FRIGATE|96	0	Increases energy weapon ammo regeneration rate by <good>50%</good>.
 summary|option1|FRIGATE|97	0	Increases ballistic weapon ammo regeneration rate by <good>50%</good>.
 summary|option1|FRIGATE|98	0	<good>34.01%</good> more hull points.
@@ -4232,7 +4232,7 @@ summary|option1|FRIGATE|134	0	All small non-missile, non-strike weapons are clas
 summary|option1|FRIGATE|135	1	Increases crew casualties by <good>50%</good>.
 summary|option1|FRIGATE|136	0	Increases weapon damage by <good>10%</good>.
 summary|option1|FRIGATE|137	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option1|FRIGATE|138	1	<bad>18.55%</bad> less negative effects from D-mods.
+summary|option1|FRIGATE|138	1	<bad>21.72%</bad> less negative effects from D-mods.
 summary|option1|FRIGATE|139	0	If disabled, this ship is almost always recoverable after the battle.
 summary|option1|FRIGATE|140	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option1|FRIGATE|141	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
@@ -4272,8 +4272,8 @@ summary|option1|DESTROYER|5	0	Increases beam weapon range by <good>200</good>.
 summary|option1|DESTROYER|6	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option1|DESTROYER|7	0	Increases shield turn rate by <good>125%</good>.
 summary|option1|DESTROYER|8	0	Increases shield raise rate by <good>100%</good>.
-summary|option1|DESTROYER|9	0	Increases ballistic weapon ammo capacity by <good>90%</good>.
-summary|option1|DESTROYER|10	0	Increases energy weapon ammo capacity by <good>90%</good>.
+summary|option1|DESTROYER|9	0	Increases ballistic weapon ammo capacity by <good>110%</good>.
+summary|option1|DESTROYER|10	0	Increases energy weapon ammo capacity by <good>110%</good>.
 summary|option1|DESTROYER|11	0	Increases armor by <good>550</good>.
 summary|option1|DESTROYER|12	0	Increases armor by <good>55%</good>.
 summary|option1|DESTROYER|13	0	Increases weapon durability by <good>110%</good>.
@@ -4288,15 +4288,15 @@ summary|option1|DESTROYER|21	0	Increases turn acceleration by <good>160%</good>.
 summary|option1|DESTROYER|22	0	Increases maneuverability by <good>55%</good>.
 summary|option1|DESTROYER|23	0	Increases ballistic weapon range by <good>52%</good>.
 summary|option1|DESTROYER|24	0	Increases energy weapon range by <good>52%</good>.
-summary|option1|DESTROYER|25	0	Increases ballistic weapon damage by <good>18%</good>.
+summary|option1|DESTROYER|25	0	Increases ballistic weapon damage by <good>21%</good>.
 summary|option1|DESTROYER|26	0	Grants <good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
-summary|option1|DESTROYER|27	0	Increases ballistic weapon projectile speed by <good>30%</good>.
+summary|option1|DESTROYER|27	0	Increases ballistic weapon projectile speed by <good>40%</good>.
 summary|option1|DESTROYER|28	0	Increases beam weapon damage by <good>30%</good>.
 summary|option1|DESTROYER|29	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 summary|option1|DESTROYER|30	0	Increases hull points by <good>70%</good>.
 summary|option1|DESTROYER|31	1	<bad>60%</bad> less crew casualties.
 summary|option1|DESTROYER|32	0	Increases cargo capacity by <good>65</good>.
-summary|option1|DESTROYER|33	0	Increases maximum combat readiness by <good>27%</good>.
+summary|option1|DESTROYER|33	0	Increases maximum combat readiness by <good>29%</good>.
 summary|option1|DESTROYER|34	0	Increases in-combat sensor/vision range by <good>1600</good>.
 summary|option1|DESTROYER|35	0	Removes all of this ship's fighter bays.
 summary|option1|DESTROYER|36	1	Decreases minimum crew required per fighter bay (capped at -80% total) by <bad>20%</bad>.
@@ -4328,8 +4328,8 @@ summary|option1|DESTROYER|61	1	<bad>54.48%</bad> less EMP damage taken.
 summary|option1|DESTROYER|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
 summary|option1|DESTROYER|63	0	Each successive hit in a non-beam energy chain deals <bad>20%</bad> less damage than the one before it.
 summary|option1|DESTROYER|64	1	Decreases energy weapon flux cost by <bad>20%</bad>.
-summary|option1|DESTROYER|65	0	Increases engine durability by <good>160%</good>.
-summary|option1|DESTROYER|66	1	Decreases sensor profile by <bad>40%</bad>.
+summary|option1|DESTROYER|65	0	Increases engine durability by <good>185%</good>.
+summary|option1|DESTROYER|66	1	Decreases sensor profile by <bad>50%</bad>.
 summary|option1|DESTROYER|67	0	While within range of a larger friendly ship, increases maneuverability (acceleration, deceleration, and turn rate) by up to 25%, fading with distance. Doubled for a destroyer escorting a capital ship.
 summary|option1|DESTROYER|68	0	While within range of a larger friendly ship, increases top speed by up to 10%, fading with distance. Doubled for a destroyer escorting a capital ship.
 summary|option1|DESTROYER|69	0	While within range of a larger friendly ship, increases ballistic and energy weapon range by up to 20%, fading with distance. Doubled for a destroyer escorting a capital ship.
@@ -4358,7 +4358,7 @@ summary|option1|DESTROYER|91	1	Decreases ordnance point cost of large ballistic 
 summary|option1|DESTROYER|92	0	Increases hull points by <good>200</good>.
 summary|option1|DESTROYER|93	0	Causes 50% of beam weapon damage dealt to shields to be hard flux.
 summary|option1|DESTROYER|94	0	<bad>25%</bad> less beam weapon range.
-summary|option1|DESTROYER|95	0	Increases sensor strength by <good>98</good>.
+summary|option1|DESTROYER|95	0	Increases sensor strength by <good>110</good>.
 summary|option1|DESTROYER|96	0	Increases energy weapon ammo regeneration rate by <good>50%</good>.
 summary|option1|DESTROYER|97	0	Increases ballistic weapon ammo regeneration rate by <good>50%</good>.
 summary|option1|DESTROYER|98	0	<good>34.01%</good> more hull points.
@@ -4401,7 +4401,7 @@ summary|option1|DESTROYER|134	0	All small non-missile, non-strike weapons are cl
 summary|option1|DESTROYER|135	1	Increases crew casualties by <good>50%</good>.
 summary|option1|DESTROYER|136	0	Increases weapon damage by <good>10%</good>.
 summary|option1|DESTROYER|137	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option1|DESTROYER|138	1	<bad>18.55%</bad> less negative effects from D-mods.
+summary|option1|DESTROYER|138	1	<bad>21.72%</bad> less negative effects from D-mods.
 summary|option1|DESTROYER|139	0	If disabled, this ship is almost always recoverable after the battle.
 summary|option1|DESTROYER|140	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option1|DESTROYER|141	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
@@ -4441,8 +4441,8 @@ summary|option1|CRUISER|5	0	Increases beam weapon range by <good>200</good>.
 summary|option1|CRUISER|6	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option1|CRUISER|7	0	Increases shield turn rate by <good>125%</good>.
 summary|option1|CRUISER|8	0	Increases shield raise rate by <good>100%</good>.
-summary|option1|CRUISER|9	0	Increases ballistic weapon ammo capacity by <good>90%</good>.
-summary|option1|CRUISER|10	0	Increases energy weapon ammo capacity by <good>90%</good>.
+summary|option1|CRUISER|9	0	Increases ballistic weapon ammo capacity by <good>110%</good>.
+summary|option1|CRUISER|10	0	Increases energy weapon ammo capacity by <good>110%</good>.
 summary|option1|CRUISER|11	0	Increases armor by <good>1000</good>.
 summary|option1|CRUISER|12	0	Increases armor by <good>55%</good>.
 summary|option1|CRUISER|13	0	Increases weapon durability by <good>110%</good>.
@@ -4457,15 +4457,15 @@ summary|option1|CRUISER|21	0	Increases turn acceleration by <good>160%</good>.
 summary|option1|CRUISER|22	0	Increases maneuverability by <good>55%</good>.
 summary|option1|CRUISER|23	0	Increases ballistic weapon range by <good>114%</good>.
 summary|option1|CRUISER|24	0	Increases energy weapon range by <good>114%</good>.
-summary|option1|CRUISER|25	0	Increases ballistic weapon damage by <good>18%</good>.
+summary|option1|CRUISER|25	0	Increases ballistic weapon damage by <good>21%</good>.
 summary|option1|CRUISER|26	0	Grants <good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
-summary|option1|CRUISER|27	0	Increases ballistic weapon projectile speed by <good>30%</good>.
+summary|option1|CRUISER|27	0	Increases ballistic weapon projectile speed by <good>40%</good>.
 summary|option1|CRUISER|28	0	Increases beam weapon damage by <good>30%</good>.
 summary|option1|CRUISER|29	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 summary|option1|CRUISER|30	0	Increases hull points by <good>70%</good>.
 summary|option1|CRUISER|31	1	<bad>60%</bad> less crew casualties.
 summary|option1|CRUISER|32	0	Increases cargo capacity by <good>110</good>.
-summary|option1|CRUISER|33	0	Increases maximum combat readiness by <good>27%</good>.
+summary|option1|CRUISER|33	0	Increases maximum combat readiness by <good>29%</good>.
 summary|option1|CRUISER|34	0	Increases in-combat sensor/vision range by <good>2200</good>.
 summary|option1|CRUISER|35	0	Removes all of this ship's fighter bays.
 summary|option1|CRUISER|36	1	Decreases minimum crew required per fighter bay (capped at -80% total) by <bad>20%</bad>.
@@ -4497,8 +4497,8 @@ summary|option1|CRUISER|61	1	<bad>54.48%</bad> less EMP damage taken.
 summary|option1|CRUISER|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
 summary|option1|CRUISER|63	0	Each successive hit in a non-beam energy chain deals <bad>20%</bad> less damage than the one before it.
 summary|option1|CRUISER|64	1	Decreases energy weapon flux cost by <bad>20%</bad>.
-summary|option1|CRUISER|65	0	Increases engine durability by <good>160%</good>.
-summary|option1|CRUISER|66	1	Decreases sensor profile by <bad>40%</bad>.
+summary|option1|CRUISER|65	0	Increases engine durability by <good>185%</good>.
+summary|option1|CRUISER|66	1	Decreases sensor profile by <bad>50%</bad>.
 summary|option1|CRUISER|67	0	While within range of a larger friendly ship, increases maneuverability (acceleration, deceleration, and turn rate) by up to 25%, fading with distance. Doubled for a destroyer escorting a capital ship.
 summary|option1|CRUISER|68	0	While within range of a larger friendly ship, increases top speed by up to 10%, fading with distance. Doubled for a destroyer escorting a capital ship.
 summary|option1|CRUISER|69	0	While within range of a larger friendly ship, increases ballistic and energy weapon range by up to 20%, fading with distance. Doubled for a destroyer escorting a capital ship.
@@ -4527,7 +4527,7 @@ summary|option1|CRUISER|91	1	Decreases ordnance point cost of large ballistic we
 summary|option1|CRUISER|92	0	Increases hull points by <good>300</good>.
 summary|option1|CRUISER|93	0	Causes 50% of beam weapon damage dealt to shields to be hard flux.
 summary|option1|CRUISER|94	0	<bad>25%</bad> less beam weapon range.
-summary|option1|CRUISER|95	0	Increases sensor strength by <good>140</good>.
+summary|option1|CRUISER|95	0	Increases sensor strength by <good>160</good>.
 summary|option1|CRUISER|96	0	Increases energy weapon ammo regeneration rate by <good>50%</good>.
 summary|option1|CRUISER|97	0	Increases ballistic weapon ammo regeneration rate by <good>50%</good>.
 summary|option1|CRUISER|98	0	<good>34.01%</good> more hull points.
@@ -4570,7 +4570,7 @@ summary|option1|CRUISER|134	0	All small non-missile, non-strike weapons are clas
 summary|option1|CRUISER|135	1	Increases crew casualties by <good>50%</good>.
 summary|option1|CRUISER|136	0	Increases weapon damage by <good>10%</good>.
 summary|option1|CRUISER|137	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option1|CRUISER|138	1	<bad>18.55%</bad> less negative effects from D-mods.
+summary|option1|CRUISER|138	1	<bad>21.72%</bad> less negative effects from D-mods.
 summary|option1|CRUISER|139	0	If disabled, this ship is almost always recoverable after the battle.
 summary|option1|CRUISER|140	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option1|CRUISER|141	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
@@ -4610,8 +4610,8 @@ summary|option1|CAPITAL_SHIP|5	0	Increases beam weapon range by <good>200</good>
 summary|option1|CAPITAL_SHIP|6	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option1|CAPITAL_SHIP|7	0	Increases shield turn rate by <good>125%</good>.
 summary|option1|CAPITAL_SHIP|8	0	Increases shield raise rate by <good>100%</good>.
-summary|option1|CAPITAL_SHIP|9	0	Increases ballistic weapon ammo capacity by <good>90%</good>.
-summary|option1|CAPITAL_SHIP|10	0	Increases energy weapon ammo capacity by <good>90%</good>.
+summary|option1|CAPITAL_SHIP|9	0	Increases ballistic weapon ammo capacity by <good>110%</good>.
+summary|option1|CAPITAL_SHIP|10	0	Increases energy weapon ammo capacity by <good>110%</good>.
 summary|option1|CAPITAL_SHIP|11	0	Increases armor by <good>1275</good>.
 summary|option1|CAPITAL_SHIP|12	0	Increases armor by <good>55%</good>.
 summary|option1|CAPITAL_SHIP|13	0	Increases weapon durability by <good>110%</good>.
@@ -4626,15 +4626,15 @@ summary|option1|CAPITAL_SHIP|21	0	Increases turn acceleration by <good>160%</goo
 summary|option1|CAPITAL_SHIP|22	0	Increases maneuverability by <good>55%</good>.
 summary|option1|CAPITAL_SHIP|23	0	Increases ballistic weapon range by <good>158%</good>.
 summary|option1|CAPITAL_SHIP|24	0	Increases energy weapon range by <good>158%</good>.
-summary|option1|CAPITAL_SHIP|25	0	Increases ballistic weapon damage by <good>18%</good>.
+summary|option1|CAPITAL_SHIP|25	0	Increases ballistic weapon damage by <good>21%</good>.
 summary|option1|CAPITAL_SHIP|26	0	Grants <good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
-summary|option1|CAPITAL_SHIP|27	0	Increases ballistic weapon projectile speed by <good>30%</good>.
+summary|option1|CAPITAL_SHIP|27	0	Increases ballistic weapon projectile speed by <good>40%</good>.
 summary|option1|CAPITAL_SHIP|28	0	Increases beam weapon damage by <good>30%</good>.
 summary|option1|CAPITAL_SHIP|29	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 summary|option1|CAPITAL_SHIP|30	0	Increases hull points by <good>70%</good>.
 summary|option1|CAPITAL_SHIP|31	1	<bad>60%</bad> less crew casualties.
 summary|option1|CAPITAL_SHIP|32	0	Increases cargo capacity by <good>225</good>.
-summary|option1|CAPITAL_SHIP|33	0	Increases maximum combat readiness by <good>27%</good>.
+summary|option1|CAPITAL_SHIP|33	0	Increases maximum combat readiness by <good>29%</good>.
 summary|option1|CAPITAL_SHIP|34	0	Increases in-combat sensor/vision range by <good>2800</good>.
 summary|option1|CAPITAL_SHIP|35	0	Removes all of this ship's fighter bays.
 summary|option1|CAPITAL_SHIP|36	1	Decreases minimum crew required per fighter bay (capped at -80% total) by <bad>20%</bad>.
@@ -4666,8 +4666,8 @@ summary|option1|CAPITAL_SHIP|61	1	<bad>54.48%</bad> less EMP damage taken.
 summary|option1|CAPITAL_SHIP|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
 summary|option1|CAPITAL_SHIP|63	0	Each successive hit in a non-beam energy chain deals <bad>20%</bad> less damage than the one before it.
 summary|option1|CAPITAL_SHIP|64	1	Decreases energy weapon flux cost by <bad>20%</bad>.
-summary|option1|CAPITAL_SHIP|65	0	Increases engine durability by <good>160%</good>.
-summary|option1|CAPITAL_SHIP|66	1	Decreases sensor profile by <bad>40%</bad>.
+summary|option1|CAPITAL_SHIP|65	0	Increases engine durability by <good>185%</good>.
+summary|option1|CAPITAL_SHIP|66	1	Decreases sensor profile by <bad>50%</bad>.
 summary|option1|CAPITAL_SHIP|67	0	While within range of a larger friendly ship, increases maneuverability (acceleration, deceleration, and turn rate) by up to 25%, fading with distance. Doubled for a destroyer escorting a capital ship.
 summary|option1|CAPITAL_SHIP|68	0	While within range of a larger friendly ship, increases top speed by up to 10%, fading with distance. Doubled for a destroyer escorting a capital ship.
 summary|option1|CAPITAL_SHIP|69	0	While within range of a larger friendly ship, increases ballistic and energy weapon range by up to 20%, fading with distance. Doubled for a destroyer escorting a capital ship.
@@ -4696,7 +4696,7 @@ summary|option1|CAPITAL_SHIP|91	1	Decreases ordnance point cost of large ballist
 summary|option1|CAPITAL_SHIP|92	0	Increases hull points by <good>400</good>.
 summary|option1|CAPITAL_SHIP|93	0	Causes 50% of beam weapon damage dealt to shields to be hard flux.
 summary|option1|CAPITAL_SHIP|94	0	<bad>25%</bad> less beam weapon range.
-summary|option1|CAPITAL_SHIP|95	0	Increases sensor strength by <good>190</good>.
+summary|option1|CAPITAL_SHIP|95	0	Increases sensor strength by <good>220</good>.
 summary|option1|CAPITAL_SHIP|96	0	Increases energy weapon ammo regeneration rate by <good>50%</good>.
 summary|option1|CAPITAL_SHIP|97	0	Increases ballistic weapon ammo regeneration rate by <good>50%</good>.
 summary|option1|CAPITAL_SHIP|98	0	<good>34.01%</good> more hull points.
@@ -4739,7 +4739,7 @@ summary|option1|CAPITAL_SHIP|134	0	All small non-missile, non-strike weapons are
 summary|option1|CAPITAL_SHIP|135	1	Increases crew casualties by <good>50%</good>.
 summary|option1|CAPITAL_SHIP|136	0	Increases weapon damage by <good>10%</good>.
 summary|option1|CAPITAL_SHIP|137	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option1|CAPITAL_SHIP|138	1	<bad>18.55%</bad> less negative effects from D-mods.
+summary|option1|CAPITAL_SHIP|138	1	<bad>21.72%</bad> less negative effects from D-mods.
 summary|option1|CAPITAL_SHIP|139	0	If disabled, this ship is almost always recoverable after the battle.
 summary|option1|CAPITAL_SHIP|140	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option1|CAPITAL_SHIP|141	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
@@ -4779,8 +4779,8 @@ summary|option2|FRIGATE|5	0	Increases beam weapon range by <good>200</good>.
 summary|option2|FRIGATE|6	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option2|FRIGATE|7	0	Increases shield turn rate by <good>125%</good>.
 summary|option2|FRIGATE|8	0	Increases shield raise rate by <good>100%</good>.
-summary|option2|FRIGATE|9	0	Increases ballistic weapon ammo capacity by <good>90%</good>.
-summary|option2|FRIGATE|10	0	Increases energy weapon ammo capacity by <good>90%</good>.
+summary|option2|FRIGATE|9	0	Increases ballistic weapon ammo capacity by <good>110%</good>.
+summary|option2|FRIGATE|10	0	Increases energy weapon ammo capacity by <good>110%</good>.
 summary|option2|FRIGATE|11	0	Increases armor by <good>310</good>.
 summary|option2|FRIGATE|12	0	Increases armor by <good>55%</good>.
 summary|option2|FRIGATE|13	0	Increases weapon durability by <good>110%</good>.
@@ -4795,15 +4795,15 @@ summary|option2|FRIGATE|21	0	Increases turn acceleration by <good>160%</good>.
 summary|option2|FRIGATE|22	0	Increases maneuverability by <good>55%</good>.
 summary|option2|FRIGATE|23	0	Increases ballistic weapon range by <good>31%</good>.
 summary|option2|FRIGATE|24	0	Increases energy weapon range by <good>31%</good>.
-summary|option2|FRIGATE|25	0	Increases ballistic weapon damage by <good>18%</good>.
+summary|option2|FRIGATE|25	0	Increases ballistic weapon damage by <good>21%</good>.
 summary|option2|FRIGATE|26	0	Grants <good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
-summary|option2|FRIGATE|27	0	Increases ballistic weapon projectile speed by <good>30%</good>.
+summary|option2|FRIGATE|27	0	Increases ballistic weapon projectile speed by <good>40%</good>.
 summary|option2|FRIGATE|28	0	Increases beam weapon damage by <good>30%</good>.
 summary|option2|FRIGATE|29	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 summary|option2|FRIGATE|30	0	Increases hull points by <good>70%</good>.
 summary|option2|FRIGATE|31	1	<bad>60%</bad> less crew casualties.
 summary|option2|FRIGATE|32	0	Increases cargo capacity by <good>35</good>.
-summary|option2|FRIGATE|33	0	Increases maximum combat readiness by <good>27%</good>.
+summary|option2|FRIGATE|33	0	Increases maximum combat readiness by <good>29%</good>.
 summary|option2|FRIGATE|34	0	Increases in-combat sensor/vision range by <good>1000</good>.
 summary|option2|FRIGATE|35	0	Removes all of this ship's fighter bays.
 summary|option2|FRIGATE|36	1	Decreases minimum crew required per fighter bay (capped at -80% total) by <bad>20%</bad>.
@@ -4835,8 +4835,8 @@ summary|option2|FRIGATE|61	1	<bad>54.48%</bad> less EMP damage taken.
 summary|option2|FRIGATE|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
 summary|option2|FRIGATE|63	0	Each successive hit in a non-beam energy chain deals <bad>20%</bad> less damage than the one before it.
 summary|option2|FRIGATE|64	1	Decreases energy weapon flux cost by <bad>20%</bad>.
-summary|option2|FRIGATE|65	0	Increases engine durability by <good>160%</good>.
-summary|option2|FRIGATE|66	1	Decreases sensor profile by <bad>40%</bad>.
+summary|option2|FRIGATE|65	0	Increases engine durability by <good>185%</good>.
+summary|option2|FRIGATE|66	1	Decreases sensor profile by <bad>50%</bad>.
 summary|option2|FRIGATE|67	0	While within range of a larger friendly ship, increases maneuverability (acceleration, deceleration, and turn rate) by up to 25%, fading with distance. Doubled for a destroyer escorting a capital ship.
 summary|option2|FRIGATE|68	0	While within range of a larger friendly ship, increases top speed by up to 10%, fading with distance. Doubled for a destroyer escorting a capital ship.
 summary|option2|FRIGATE|69	0	While within range of a larger friendly ship, increases ballistic and energy weapon range by up to 20%, fading with distance. Doubled for a destroyer escorting a capital ship.
@@ -4865,7 +4865,7 @@ summary|option2|FRIGATE|91	1	Decreases ordnance point cost of large ballistic we
 summary|option2|FRIGATE|92	0	Increases hull points by <good>100</good>.
 summary|option2|FRIGATE|93	0	Causes 50% of beam weapon damage dealt to shields to be hard flux.
 summary|option2|FRIGATE|94	0	<bad>25%</bad> less beam weapon range.
-summary|option2|FRIGATE|95	0	Increases sensor strength by <good>80</good>.
+summary|option2|FRIGATE|95	0	Increases sensor strength by <good>90</good>.
 summary|option2|FRIGATE|96	0	Increases energy weapon ammo regeneration rate by <good>50%</good>.
 summary|option2|FRIGATE|97	0	Increases ballistic weapon ammo regeneration rate by <good>50%</good>.
 summary|option2|FRIGATE|98	0	<good>650.5%</good> more hull points.
@@ -4908,7 +4908,7 @@ summary|option2|FRIGATE|134	0	All small non-missile, non-strike weapons are clas
 summary|option2|FRIGATE|135	1	Increases crew casualties by <good>50%</good>.
 summary|option2|FRIGATE|136	0	Increases weapon damage by <good>10%</good>.
 summary|option2|FRIGATE|137	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option2|FRIGATE|138	1	<bad>18.55%</bad> less negative effects from D-mods.
+summary|option2|FRIGATE|138	1	<bad>21.72%</bad> less negative effects from D-mods.
 summary|option2|FRIGATE|139	0	If disabled, this ship is almost always recoverable after the battle.
 summary|option2|FRIGATE|140	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option2|FRIGATE|141	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
@@ -4948,8 +4948,8 @@ summary|option2|DESTROYER|5	0	Increases beam weapon range by <good>200</good>.
 summary|option2|DESTROYER|6	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option2|DESTROYER|7	0	Increases shield turn rate by <good>125%</good>.
 summary|option2|DESTROYER|8	0	Increases shield raise rate by <good>100%</good>.
-summary|option2|DESTROYER|9	0	Increases ballistic weapon ammo capacity by <good>90%</good>.
-summary|option2|DESTROYER|10	0	Increases energy weapon ammo capacity by <good>90%</good>.
+summary|option2|DESTROYER|9	0	Increases ballistic weapon ammo capacity by <good>110%</good>.
+summary|option2|DESTROYER|10	0	Increases energy weapon ammo capacity by <good>110%</good>.
 summary|option2|DESTROYER|11	0	Increases armor by <good>550</good>.
 summary|option2|DESTROYER|12	0	Increases armor by <good>55%</good>.
 summary|option2|DESTROYER|13	0	Increases weapon durability by <good>110%</good>.
@@ -4964,15 +4964,15 @@ summary|option2|DESTROYER|21	0	Increases turn acceleration by <good>160%</good>.
 summary|option2|DESTROYER|22	0	Increases maneuverability by <good>55%</good>.
 summary|option2|DESTROYER|23	0	Increases ballistic weapon range by <good>52%</good>.
 summary|option2|DESTROYER|24	0	Increases energy weapon range by <good>52%</good>.
-summary|option2|DESTROYER|25	0	Increases ballistic weapon damage by <good>18%</good>.
+summary|option2|DESTROYER|25	0	Increases ballistic weapon damage by <good>21%</good>.
 summary|option2|DESTROYER|26	0	Grants <good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
-summary|option2|DESTROYER|27	0	Increases ballistic weapon projectile speed by <good>30%</good>.
+summary|option2|DESTROYER|27	0	Increases ballistic weapon projectile speed by <good>40%</good>.
 summary|option2|DESTROYER|28	0	Increases beam weapon damage by <good>30%</good>.
 summary|option2|DESTROYER|29	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 summary|option2|DESTROYER|30	0	Increases hull points by <good>70%</good>.
 summary|option2|DESTROYER|31	1	<bad>60%</bad> less crew casualties.
 summary|option2|DESTROYER|32	0	Increases cargo capacity by <good>65</good>.
-summary|option2|DESTROYER|33	0	Increases maximum combat readiness by <good>27%</good>.
+summary|option2|DESTROYER|33	0	Increases maximum combat readiness by <good>29%</good>.
 summary|option2|DESTROYER|34	0	Increases in-combat sensor/vision range by <good>1600</good>.
 summary|option2|DESTROYER|35	0	Removes all of this ship's fighter bays.
 summary|option2|DESTROYER|36	1	Decreases minimum crew required per fighter bay (capped at -80% total) by <bad>20%</bad>.
@@ -5004,8 +5004,8 @@ summary|option2|DESTROYER|61	1	<bad>54.48%</bad> less EMP damage taken.
 summary|option2|DESTROYER|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
 summary|option2|DESTROYER|63	0	Each successive hit in a non-beam energy chain deals <bad>20%</bad> less damage than the one before it.
 summary|option2|DESTROYER|64	1	Decreases energy weapon flux cost by <bad>20%</bad>.
-summary|option2|DESTROYER|65	0	Increases engine durability by <good>160%</good>.
-summary|option2|DESTROYER|66	1	Decreases sensor profile by <bad>40%</bad>.
+summary|option2|DESTROYER|65	0	Increases engine durability by <good>185%</good>.
+summary|option2|DESTROYER|66	1	Decreases sensor profile by <bad>50%</bad>.
 summary|option2|DESTROYER|67	0	While within range of a larger friendly ship, increases maneuverability (acceleration, deceleration, and turn rate) by up to 25%, fading with distance. Doubled for a destroyer escorting a capital ship.
 summary|option2|DESTROYER|68	0	While within range of a larger friendly ship, increases top speed by up to 10%, fading with distance. Doubled for a destroyer escorting a capital ship.
 summary|option2|DESTROYER|69	0	While within range of a larger friendly ship, increases ballistic and energy weapon range by up to 20%, fading with distance. Doubled for a destroyer escorting a capital ship.
@@ -5034,7 +5034,7 @@ summary|option2|DESTROYER|91	1	Decreases ordnance point cost of large ballistic 
 summary|option2|DESTROYER|92	0	Increases hull points by <good>200</good>.
 summary|option2|DESTROYER|93	0	Causes 50% of beam weapon damage dealt to shields to be hard flux.
 summary|option2|DESTROYER|94	0	<bad>25%</bad> less beam weapon range.
-summary|option2|DESTROYER|95	0	Increases sensor strength by <good>98</good>.
+summary|option2|DESTROYER|95	0	Increases sensor strength by <good>110</good>.
 summary|option2|DESTROYER|96	0	Increases energy weapon ammo regeneration rate by <good>50%</good>.
 summary|option2|DESTROYER|97	0	Increases ballistic weapon ammo regeneration rate by <good>50%</good>.
 summary|option2|DESTROYER|98	0	<good>650.5%</good> more hull points.
@@ -5077,7 +5077,7 @@ summary|option2|DESTROYER|134	0	All small non-missile, non-strike weapons are cl
 summary|option2|DESTROYER|135	1	Increases crew casualties by <good>50%</good>.
 summary|option2|DESTROYER|136	0	Increases weapon damage by <good>10%</good>.
 summary|option2|DESTROYER|137	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option2|DESTROYER|138	1	<bad>18.55%</bad> less negative effects from D-mods.
+summary|option2|DESTROYER|138	1	<bad>21.72%</bad> less negative effects from D-mods.
 summary|option2|DESTROYER|139	0	If disabled, this ship is almost always recoverable after the battle.
 summary|option2|DESTROYER|140	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option2|DESTROYER|141	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
@@ -5117,8 +5117,8 @@ summary|option2|CRUISER|5	0	Increases beam weapon range by <good>200</good>.
 summary|option2|CRUISER|6	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option2|CRUISER|7	0	Increases shield turn rate by <good>125%</good>.
 summary|option2|CRUISER|8	0	Increases shield raise rate by <good>100%</good>.
-summary|option2|CRUISER|9	0	Increases ballistic weapon ammo capacity by <good>90%</good>.
-summary|option2|CRUISER|10	0	Increases energy weapon ammo capacity by <good>90%</good>.
+summary|option2|CRUISER|9	0	Increases ballistic weapon ammo capacity by <good>110%</good>.
+summary|option2|CRUISER|10	0	Increases energy weapon ammo capacity by <good>110%</good>.
 summary|option2|CRUISER|11	0	Increases armor by <good>1000</good>.
 summary|option2|CRUISER|12	0	Increases armor by <good>55%</good>.
 summary|option2|CRUISER|13	0	Increases weapon durability by <good>110%</good>.
@@ -5133,15 +5133,15 @@ summary|option2|CRUISER|21	0	Increases turn acceleration by <good>160%</good>.
 summary|option2|CRUISER|22	0	Increases maneuverability by <good>55%</good>.
 summary|option2|CRUISER|23	0	Increases ballistic weapon range by <good>114%</good>.
 summary|option2|CRUISER|24	0	Increases energy weapon range by <good>114%</good>.
-summary|option2|CRUISER|25	0	Increases ballistic weapon damage by <good>18%</good>.
+summary|option2|CRUISER|25	0	Increases ballistic weapon damage by <good>21%</good>.
 summary|option2|CRUISER|26	0	Grants <good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
-summary|option2|CRUISER|27	0	Increases ballistic weapon projectile speed by <good>30%</good>.
+summary|option2|CRUISER|27	0	Increases ballistic weapon projectile speed by <good>40%</good>.
 summary|option2|CRUISER|28	0	Increases beam weapon damage by <good>30%</good>.
 summary|option2|CRUISER|29	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 summary|option2|CRUISER|30	0	Increases hull points by <good>70%</good>.
 summary|option2|CRUISER|31	1	<bad>60%</bad> less crew casualties.
 summary|option2|CRUISER|32	0	Increases cargo capacity by <good>110</good>.
-summary|option2|CRUISER|33	0	Increases maximum combat readiness by <good>27%</good>.
+summary|option2|CRUISER|33	0	Increases maximum combat readiness by <good>29%</good>.
 summary|option2|CRUISER|34	0	Increases in-combat sensor/vision range by <good>2200</good>.
 summary|option2|CRUISER|35	0	Removes all of this ship's fighter bays.
 summary|option2|CRUISER|36	1	Decreases minimum crew required per fighter bay (capped at -80% total) by <bad>20%</bad>.
@@ -5173,8 +5173,8 @@ summary|option2|CRUISER|61	1	<bad>54.48%</bad> less EMP damage taken.
 summary|option2|CRUISER|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
 summary|option2|CRUISER|63	0	Each successive hit in a non-beam energy chain deals <bad>20%</bad> less damage than the one before it.
 summary|option2|CRUISER|64	1	Decreases energy weapon flux cost by <bad>20%</bad>.
-summary|option2|CRUISER|65	0	Increases engine durability by <good>160%</good>.
-summary|option2|CRUISER|66	1	Decreases sensor profile by <bad>40%</bad>.
+summary|option2|CRUISER|65	0	Increases engine durability by <good>185%</good>.
+summary|option2|CRUISER|66	1	Decreases sensor profile by <bad>50%</bad>.
 summary|option2|CRUISER|67	0	While within range of a larger friendly ship, increases maneuverability (acceleration, deceleration, and turn rate) by up to 25%, fading with distance. Doubled for a destroyer escorting a capital ship.
 summary|option2|CRUISER|68	0	While within range of a larger friendly ship, increases top speed by up to 10%, fading with distance. Doubled for a destroyer escorting a capital ship.
 summary|option2|CRUISER|69	0	While within range of a larger friendly ship, increases ballistic and energy weapon range by up to 20%, fading with distance. Doubled for a destroyer escorting a capital ship.
@@ -5203,7 +5203,7 @@ summary|option2|CRUISER|91	1	Decreases ordnance point cost of large ballistic we
 summary|option2|CRUISER|92	0	Increases hull points by <good>300</good>.
 summary|option2|CRUISER|93	0	Causes 50% of beam weapon damage dealt to shields to be hard flux.
 summary|option2|CRUISER|94	0	<bad>25%</bad> less beam weapon range.
-summary|option2|CRUISER|95	0	Increases sensor strength by <good>140</good>.
+summary|option2|CRUISER|95	0	Increases sensor strength by <good>160</good>.
 summary|option2|CRUISER|96	0	Increases energy weapon ammo regeneration rate by <good>50%</good>.
 summary|option2|CRUISER|97	0	Increases ballistic weapon ammo regeneration rate by <good>50%</good>.
 summary|option2|CRUISER|98	0	<good>650.5%</good> more hull points.
@@ -5246,7 +5246,7 @@ summary|option2|CRUISER|134	0	All small non-missile, non-strike weapons are clas
 summary|option2|CRUISER|135	1	Increases crew casualties by <good>50%</good>.
 summary|option2|CRUISER|136	0	Increases weapon damage by <good>10%</good>.
 summary|option2|CRUISER|137	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option2|CRUISER|138	1	<bad>18.55%</bad> less negative effects from D-mods.
+summary|option2|CRUISER|138	1	<bad>21.72%</bad> less negative effects from D-mods.
 summary|option2|CRUISER|139	0	If disabled, this ship is almost always recoverable after the battle.
 summary|option2|CRUISER|140	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option2|CRUISER|141	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
@@ -5286,8 +5286,8 @@ summary|option2|CAPITAL_SHIP|5	0	Increases beam weapon range by <good>200</good>
 summary|option2|CAPITAL_SHIP|6	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option2|CAPITAL_SHIP|7	0	Increases shield turn rate by <good>125%</good>.
 summary|option2|CAPITAL_SHIP|8	0	Increases shield raise rate by <good>100%</good>.
-summary|option2|CAPITAL_SHIP|9	0	Increases ballistic weapon ammo capacity by <good>90%</good>.
-summary|option2|CAPITAL_SHIP|10	0	Increases energy weapon ammo capacity by <good>90%</good>.
+summary|option2|CAPITAL_SHIP|9	0	Increases ballistic weapon ammo capacity by <good>110%</good>.
+summary|option2|CAPITAL_SHIP|10	0	Increases energy weapon ammo capacity by <good>110%</good>.
 summary|option2|CAPITAL_SHIP|11	0	Increases armor by <good>1275</good>.
 summary|option2|CAPITAL_SHIP|12	0	Increases armor by <good>55%</good>.
 summary|option2|CAPITAL_SHIP|13	0	Increases weapon durability by <good>110%</good>.
@@ -5302,15 +5302,15 @@ summary|option2|CAPITAL_SHIP|21	0	Increases turn acceleration by <good>160%</goo
 summary|option2|CAPITAL_SHIP|22	0	Increases maneuverability by <good>55%</good>.
 summary|option2|CAPITAL_SHIP|23	0	Increases ballistic weapon range by <good>158%</good>.
 summary|option2|CAPITAL_SHIP|24	0	Increases energy weapon range by <good>158%</good>.
-summary|option2|CAPITAL_SHIP|25	0	Increases ballistic weapon damage by <good>18%</good>.
+summary|option2|CAPITAL_SHIP|25	0	Increases ballistic weapon damage by <good>21%</good>.
 summary|option2|CAPITAL_SHIP|26	0	Grants <good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
-summary|option2|CAPITAL_SHIP|27	0	Increases ballistic weapon projectile speed by <good>30%</good>.
+summary|option2|CAPITAL_SHIP|27	0	Increases ballistic weapon projectile speed by <good>40%</good>.
 summary|option2|CAPITAL_SHIP|28	0	Increases beam weapon damage by <good>30%</good>.
 summary|option2|CAPITAL_SHIP|29	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 summary|option2|CAPITAL_SHIP|30	0	Increases hull points by <good>70%</good>.
 summary|option2|CAPITAL_SHIP|31	1	<bad>60%</bad> less crew casualties.
 summary|option2|CAPITAL_SHIP|32	0	Increases cargo capacity by <good>225</good>.
-summary|option2|CAPITAL_SHIP|33	0	Increases maximum combat readiness by <good>27%</good>.
+summary|option2|CAPITAL_SHIP|33	0	Increases maximum combat readiness by <good>29%</good>.
 summary|option2|CAPITAL_SHIP|34	0	Increases in-combat sensor/vision range by <good>2800</good>.
 summary|option2|CAPITAL_SHIP|35	0	Removes all of this ship's fighter bays.
 summary|option2|CAPITAL_SHIP|36	1	Decreases minimum crew required per fighter bay (capped at -80% total) by <bad>20%</bad>.
@@ -5342,8 +5342,8 @@ summary|option2|CAPITAL_SHIP|61	1	<bad>54.48%</bad> less EMP damage taken.
 summary|option2|CAPITAL_SHIP|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
 summary|option2|CAPITAL_SHIP|63	0	Each successive hit in a non-beam energy chain deals <bad>20%</bad> less damage than the one before it.
 summary|option2|CAPITAL_SHIP|64	1	Decreases energy weapon flux cost by <bad>20%</bad>.
-summary|option2|CAPITAL_SHIP|65	0	Increases engine durability by <good>160%</good>.
-summary|option2|CAPITAL_SHIP|66	1	Decreases sensor profile by <bad>40%</bad>.
+summary|option2|CAPITAL_SHIP|65	0	Increases engine durability by <good>185%</good>.
+summary|option2|CAPITAL_SHIP|66	1	Decreases sensor profile by <bad>50%</bad>.
 summary|option2|CAPITAL_SHIP|67	0	While within range of a larger friendly ship, increases maneuverability (acceleration, deceleration, and turn rate) by up to 25%, fading with distance. Doubled for a destroyer escorting a capital ship.
 summary|option2|CAPITAL_SHIP|68	0	While within range of a larger friendly ship, increases top speed by up to 10%, fading with distance. Doubled for a destroyer escorting a capital ship.
 summary|option2|CAPITAL_SHIP|69	0	While within range of a larger friendly ship, increases ballistic and energy weapon range by up to 20%, fading with distance. Doubled for a destroyer escorting a capital ship.
@@ -5372,7 +5372,7 @@ summary|option2|CAPITAL_SHIP|91	1	Decreases ordnance point cost of large ballist
 summary|option2|CAPITAL_SHIP|92	0	Increases hull points by <good>400</good>.
 summary|option2|CAPITAL_SHIP|93	0	Causes 50% of beam weapon damage dealt to shields to be hard flux.
 summary|option2|CAPITAL_SHIP|94	0	<bad>25%</bad> less beam weapon range.
-summary|option2|CAPITAL_SHIP|95	0	Increases sensor strength by <good>190</good>.
+summary|option2|CAPITAL_SHIP|95	0	Increases sensor strength by <good>220</good>.
 summary|option2|CAPITAL_SHIP|96	0	Increases energy weapon ammo regeneration rate by <good>50%</good>.
 summary|option2|CAPITAL_SHIP|97	0	Increases ballistic weapon ammo regeneration rate by <good>50%</good>.
 summary|option2|CAPITAL_SHIP|98	0	<good>650.5%</good> more hull points.
@@ -5415,7 +5415,7 @@ summary|option2|CAPITAL_SHIP|134	0	All small non-missile, non-strike weapons are
 summary|option2|CAPITAL_SHIP|135	1	Increases crew casualties by <good>50%</good>.
 summary|option2|CAPITAL_SHIP|136	0	Increases weapon damage by <good>10%</good>.
 summary|option2|CAPITAL_SHIP|137	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option2|CAPITAL_SHIP|138	1	<bad>18.55%</bad> less negative effects from D-mods.
+summary|option2|CAPITAL_SHIP|138	1	<bad>21.72%</bad> less negative effects from D-mods.
 summary|option2|CAPITAL_SHIP|139	0	If disabled, this ship is almost always recoverable after the battle.
 summary|option2|CAPITAL_SHIP|140	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
 summary|option2|CAPITAL_SHIP|141	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
