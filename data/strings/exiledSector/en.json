@@ -197,6 +197,8 @@
 
     "node.phantom": "The ship counts as having the {hullmod} hull mod, so other mods' effects that check for it apply. The hull mod itself does nothing and costs no OP.",
     "node.requires.req_civilian_hull": "Can only be allocated on civilian-grade hulls.",
+    "node.requires.req_non_phase_hull": "Can't be allocated on phase ships.",
+    "node.requires.req_system_charges": "Can only be allocated on ships whose ship system or defense system uses charges.",
     "node.temporary": "These effects only last for the first {seconds} seconds after the ship is deployed.",
     "node.itemCost": "Costs {quantity} {item} to allocate. It is returned to you upon de-allocation.",
     "node.hullSizes.one": "Restricted to <hl>hull size</hl>: {hullSizes}.",

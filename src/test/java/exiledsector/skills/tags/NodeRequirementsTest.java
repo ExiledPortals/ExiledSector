@@ -3,12 +3,14 @@ package exiledsector.skills.tags;
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
+import exiledsector.skills.ShipFacts;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -192,16 +194,28 @@ class NodeRequirementsTest {
     void reqCivilianHullNeedsTheCivilianGradeHullModAndIsLeftToTheEligibilityRule() {
         List<String> tags = List.of("logistics", "req_civilian_hull");
 
-        assertNull(NodeRequirements.firstUnmetHullRequirement(tags, HullMods.CIVGRADE::equals));
-        assertEquals("req_civilian_hull", NodeRequirements.firstUnmetHullRequirement(tags, hullModId -> false));
+        assertNull(NodeRequirements.firstUnmetHullRequirement(tags, facts(false, false, HullMods.CIVGRADE::equals)));
+        assertEquals("req_civilian_hull", NodeRequirements.firstUnmetHullRequirement(tags, facts(false, false, hullModId -> false)));
         assertTrue(NodeRequirements.isSatisfiedBy(tags, everything()));
     }
 
     @Test
     void everyHullRequirementCanBeBothMetAndUnmet() {
         for (String requirement : SkillTags.HULL_REQUIREMENT) {
-            assertNull(NodeRequirements.firstUnmetHullRequirement(List.of(requirement), hullModId -> true), requirement);
-            assertEquals(requirement, NodeRequirements.firstUnmetHullRequirement(List.of(requirement), hullModId -> false));
+            assertNull(NodeRequirements.firstUnmetHullRequirement(List.of(requirement), facts(false, true, hullModId -> true)), requirement);
+            assertEquals(requirement, NodeRequirements.firstUnmetHullRequirement(List.of(requirement), facts(true, false, hullModId -> false)));
         }
+    }
+
+    @Test
+    void reqNonPhaseHullRejectsPhaseHullsAndReqSystemChargesNeedsAChargedSystem() {
+        assertEquals("req_non_phase_hull", NodeRequirements.firstUnmetHullRequirement(List.of("req_non_phase_hull"), facts(true, true, id -> false)));
+        assertNull(NodeRequirements.firstUnmetHullRequirement(List.of("req_non_phase_hull"), facts(false, false, id -> false)));
+        assertEquals("req_system_charges", NodeRequirements.firstUnmetHullRequirement(List.of("req_system_charges"), facts(false, false, id -> false)));
+        assertNull(NodeRequirements.firstUnmetHullRequirement(List.of("req_system_charges"), facts(true, true, id -> false)));
+    }
+
+    private static ShipFacts facts(boolean phaseHull, boolean limitedSystemCharges, Predicate<String> hasHullMod) {
+        return new ShipFacts(HullSize.FRIGATE, phaseHull ? ShieldType.PHASE : ShieldType.FRONT, phaseHull, 100f, limitedSystemCharges, hasHullMod);
     }
 }
