@@ -201,10 +201,13 @@ Exiled Sector is designed to replace the vanilla hullmod system. I wasn't comfor
 <details>
 <summary><b>Why does every ship have its own tree, instead of one for my character?</b></summary>
 
-1. **Compatibility.** Overhauls of the character skill system are a well-explored space, and I didn't want to build something that fights Second-in-Command or other overhaul mods. Playing nicely with other mods matters to me.
-2. **Something new to level.** A per-ship tree means that finding a cool new ship, at any point in a playthrough, gives you something new to build up.
-3. **Ship design.** One of the things I love most about Starsector is losing myself in designing a ship. Hullmods are the least flexible part of vanilla customisation, and I wanted to replace them with something more interesting.
-4. **The future.** I have plans for features that work much better when each ship has its own tree.
+Overhauls of the character skill system are a well-explored space, and playing nicely with other mods matters to me, so I didn't want to build something that fights Second-in-Command or the other overhaul mods.
+
+A tree per ship also means that finding a cool new ship, at any point in a playthrough, gives you something new to build up.
+
+One of the things I love most about Starsector is losing myself in designing a ship. Hullmods are the least flexible part of vanilla customisation, and I wanted to replace them with something more interesting.
+
+I also have plans for future features that work much better when each ship has its own tree.
 
 </details>
 
