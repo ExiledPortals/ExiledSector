@@ -5228,8 +5228,7 @@
 			"id": "nskr_inertial_1",
 			"type": "nskr_inertial",
 			"connectedTo": [
-				"top_speed_6",
-				"nskr_volatile_1"
+				"top_speed_6"
 			],
 			"x": -11189,
 			"y": 7329,
@@ -5240,29 +5239,13 @@
 			]
 		},
 		{
-			"id": "nskr_acoils_1",
-			"type": "nskr_acoils",
-			"connectedTo": [
-				"energy_flux_cost_1",
-				"nskr_volatile_1",
-				"nskr_bigBats_1"
-			],
-			"x": -11203,
-			"y": 5944,
-			"orbitAnchorId": "anchor_52",
-			"orbitAngle": 90,
-			"tags": [
-				"lost_sector"
-			]
-		},
-		{
 			"id": "energy_flux_cost_1",
 			"type": "energy_flux_cost",
 			"connectedTo": [
 				"energy_flux_cost_2",
-				"nskr_acoils_1"
+				"nskr_volatile_1"
 			],
-			"x": -11353,
+			"x": -11337,
 			"y": 5794,
 			"orbitAnchorId": "anchor_52",
 			"orbitAngle": 180,
@@ -5277,7 +5260,7 @@
 				"energy_flux_cost_1",
 				"small_flux_optional_70"
 			],
-			"x": -11203,
+			"x": -11187,
 			"y": 5644,
 			"orbitAnchorId": "anchor_52",
 			"orbitAngle": 270,
@@ -5289,28 +5272,14 @@
 			"id": "nskr_volatile_1",
 			"type": "nskr_volatile",
 			"connectedTo": [
-				"nskr_acoils_1",
-				"nskr_absorption_1",
-				"nskr_inertial_1",
-				"nskr_bigBats_1"
+				"energy_flux_cost_1"
 			],
-			"x": -11190,
-			"y": 6618,
+			"x": -11187,
+			"y": 5944,
+			"orbitAnchorId": "anchor_52",
+			"orbitAngle": 90,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#642ac9",
-			"tags": [
-				"lost_sector"
-			]
-		},
-		{
-			"id": "nskr_bigBats_1",
-			"type": "nskr_bigBats",
-			"connectedTo": [
-				"nskr_volatile_1",
-				"nskr_acoils_1"
-			],
-			"x": -10716,
-			"y": 6144,
 			"tags": [
 				"lost_sector"
 			]
@@ -5363,8 +5332,7 @@
 			"id": "nskr_absorption_1",
 			"type": "nskr_absorption",
 			"connectedTo": [
-				"shield_damage_taken_multi_4",
-				"nskr_volatile_1"
+				"shield_damage_taken_multi_4"
 			],
 			"x": -11856,
 			"y": 6621,
@@ -7051,7 +7019,7 @@
 		{
 			"a": "energy_flux_cost_1",
 			"b": "energy_flux_cost_2",
-			"controlX": -11309,
+			"controlX": -11293,
 			"controlY": 5688
 		},
 		{
@@ -7059,12 +7027,6 @@
 			"b": "shield_damage_taken_multi_4",
 			"controlX": -12112,
 			"controlY": 6727
-		},
-		{
-			"a": "energy_flux_cost_1",
-			"b": "nskr_acoils_1",
-			"controlX": -11309,
-			"controlY": 5900
 		},
 		{
 			"a": "top_speed_6",
@@ -7209,6 +7171,12 @@
 			"b": "waste_not_1",
 			"controlX": 7286,
 			"controlY": 118
+		},
+		{
+			"a": "energy_flux_cost_1",
+			"b": "nskr_volatile_1",
+			"controlX": -11293,
+			"controlY": 5900
 		}
 	],
 	"hiddenConnectors": [
@@ -7758,7 +7726,7 @@
 		},
 		{
 			"id": "anchor_52",
-			"x": -11203,
+			"x": -11187,
 			"y": 5794,
 			"radius": 150
 		},

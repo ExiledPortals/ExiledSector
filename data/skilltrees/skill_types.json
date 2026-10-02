@@ -176,6 +176,10 @@
 				{
 					"effect": "OBJECTIVE_CAPTURE_RATE_MULT",
 					"magnitude": 100
+				},
+				{
+					"effect": "CORONA_RESISTANCE_MULT",
+					"magnitude": -25
 				}
 			],
 			"tags": [
@@ -1653,7 +1657,7 @@
 			"id": "nskr_volatile",
 			"name": "Volatile Flux Injector",
 			"icon": "graphics/icons/nskr_volatile.png",
-			"tier": "KEYSTONE",
+			"tier": "NOTABLE",
 			"effects": [
 				{
 					"effect": "FLUX_SCALED_RATE_OF_FIRE_PERCENT",
@@ -3233,7 +3237,7 @@
 				},
 				{
 					"effect": "FIGHTER_REPLACEMENT_DECAY_PERCENT",
-					"magnitude": 5
+					"magnitude": -5
 				}
 			],
 			"tags": [
