@@ -4,6 +4,7 @@ import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
+import exiledsector.compat.CompatChecks;
 import exiledsector.effects.CombatXpListener;
 import exiledsector.effects.LiveMunitionsCrewListener;
 import exiledsector.effects.NpcFleetDialogListener;
@@ -58,6 +59,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         PhantomHullMods.install(phantomHullModIds());
         CsvIdBlocklist.loadAll();
         NpcLayouts.load();
+        CompatChecks.logAtStartup();
     }
 
     private static Set<String> phantomHullModIds() {

@@ -18,9 +18,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static exiledsector.ui.SkillTreePanelStyle.NODE_TOOLTIP_MAX_TEXT_WIDTH;
 import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_BODY_COLOR;
 import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE;
-import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_MAX_TEXT_WIDTH;
 import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_TITLE_COLOR;
 import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE;
 
@@ -112,11 +112,11 @@ final class SkillTreeNodeTooltipRenderer {
     }
 
     private SkillTreePanelStyle.TooltipText buildBodyText(LazyFont font, List<DescriptionLine> lines) {
-        return style.buildHighlightedWrappedText(font, lines, TOOLTIP_BODY_FONT_SIZE, TOOLTIP_MAX_TEXT_WIDTH,
+        return style.buildHighlightedWrappedText(font, lines, TOOLTIP_BODY_FONT_SIZE, NODE_TOOLTIP_MAX_TEXT_WIDTH,
                 TOOLTIP_MAX_TEXT_HEIGHT, TOOLTIP_BODY_COLOR);
     }
 
     private SkillTreePanelStyle.TooltipText buildTooltipText(LazyFont font, String rawText, float fontSize, Color color) {
-        return SkillTreePanelStyle.buildWrappedText(font, rawText, fontSize, TOOLTIP_MAX_TEXT_WIDTH, TOOLTIP_MAX_TEXT_HEIGHT, color);
+        return SkillTreePanelStyle.buildWrappedText(font, rawText, fontSize, NODE_TOOLTIP_MAX_TEXT_WIDTH, TOOLTIP_MAX_TEXT_HEIGHT, color);
     }
 }

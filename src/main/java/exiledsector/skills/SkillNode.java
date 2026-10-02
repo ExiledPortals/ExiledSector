@@ -61,7 +61,7 @@ public class SkillNode extends SkillTreeObject {
         addLine(lines, type.getDescriptionText(), false);
         List<SkillTypeEffect> described = hullSize == null ? type.getEffects() : type.effectsFor(hullSize);
         for (SkillTypeEffect effect : WeaponEffectTooltipAggregator.collapse(described)) {
-            addLine(lines, effect.effect().description(effect.magnitude()), effect.effect().lowerIsBetter());
+            addLine(lines, effect.effect().description(effect.magnitude(), hullSize), effect.effect().lowerIsBetter());
         }
         for (String hullModId : type.getPhantomHullModIds()) {
             if (PhantomHullModStatus.isActive(hullModId)) {

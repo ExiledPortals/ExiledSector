@@ -93,7 +93,8 @@ A parent scope always covers all of its children. FLAT adds a fixed amount, PERC
 cleanly are generated; any other name is rejected when the data loads.
 
 Flat and percentage modifiers from every scope that reaches a weapon are added together before the vanilla 
-formula runs, so +10% to all weapons and +10% to beams gives beams +20%. MULT modifiers always multiply. 
+formula runs, so +10% to all weapons and +10% to beams gives beams +20%. The same MULT effect from several nodes is
+added into one multiplier (never past 100% less), which then multiplies with every other multiplier on the stat.
 The engine's energy stats already apply to beams, so an ENERGY effect writes only to the energy stat and 
 beams no longer receive the bonus twice.
 

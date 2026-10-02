@@ -58,7 +58,13 @@ It should be safe to add to an existing save.
 
 I have done what I can for some mods, but there is a long way to go for complete mod compatibility.
 
-**[Second-in-Command](https://fractalsoftworks.com/forum/index.php?topic=30407.0)** is (theoretically) supported.
+These mods have dedicated compatibility. The version listed is the one I last tested against. Newer versions usually work; if one doesn't, `starsector.log` says so at startup and lists anything Exiled Sector can no longer find.
+
+| Mod | Tested version | What Exiled Sector does with it |
+|---|---|---|
+| [Second-in-Command](https://fractalsoftworks.com/forum/index.php?topic=30407.0) | 2.0.0 | Its skills see the hull mods your nodes stand in for, and Reconfiguration waives the Converted Hangar penalties. |
+| Lost Sector | 0.6.2d | The Kesteven and Frozen Heart areas of the tree appear, and Augmented Systems hulls get the same bonuses from those nodes as from the hull mods. |
+| [MagicLib](https://fractalsoftworks.com/forum/index.php?topic=25868.0) | 1.5.6 | Required. A hull mod that tries to strip one of your nodes' hull mods through MagicLib is removed instead. |
 
 Some weapons from other mods misbehave (often hilariously) when their beams are split or their shots are chained. These are listed in:
 
@@ -116,12 +122,12 @@ modified *= mult;
 |---|---|---|
 | "**Increases** / **Decreases** flux capacity by 10%" | Percent | All percent bonuses on a stat are **added together** first, including those from vanilla hullmods and skills. |
 | "**Increases** flux capacity by 600" | Flat | Added after percent bonuses, so percent bonuses don't scale it. This is different to Path of Exile. |
-| "10% **more** / **less** flux capacity" | Multiplier | Applied last, to the total. Multipliers **multiply** each other. |
+| "10% **more** / **less** flux capacity" | Multiplier | Applied last, to the total. The tree's multipliers are **added together** first (10% more + 10% more = 20% more; 15% more + 30% less = 15% less), and never go past 100% less. They still multiply with multipliers from vanilla hullmods and skills. |
 
 For example, with a base of 1000 flux capacity:
 
 - Two "Increases flux capacity by 10%" nodes give 1000 × (1 + 0.10 + 0.10) = **1200**.
-- Two "10% more flux capacity" nodes give 1000 × 1.1 × 1.1 = **1210**.
+- Two "10% more flux capacity" nodes give 1000 × (1 + 0.10 + 0.10) = **1200**, applied after everything else.
 - "Increases by 15%", "Increases by 600", a +10% hullmod and "20% more" together give (1000 + 250 + 600) × 1.2 = **2220**.
 
 Numbers are green when they help your ship and orange when they hurt it.

@@ -54,6 +54,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.doAnswer;
@@ -115,6 +116,47 @@ class SkillTreeHullModTest {
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
 
         verify(hullStatBonus).modifyPercent("exiledSector_skill_hull_1", 10f);
+    }
+
+    private com.fs.starfarer.api.combat.StatBonus hullBonusAfterAllocating(float... hullMultMagnitudes) {
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+        for (int i = 0; i < hullMultMagnitudes.length; i++) {
+            SkillType type = new SkillType.Builder("hull_mult_" + i, "Hull", "a.png", SkillTier.SMALL)
+                    .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_MULT, hullMultMagnitudes[i]))).build();
+            SkillNode node = new SkillNode("hull_mult_node_" + i, type, List.of(), 0f, 0f);
+            SkillTree.register(node);
+            ShipSkillDataManager.get("ship-a").allocate(node, 1);
+        }
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        when(stats.getFleetMember()).thenReturn(member);
+        com.fs.starfarer.api.combat.StatBonus hullBonus = mock(com.fs.starfarer.api.combat.StatBonus.class);
+        when(stats.getHullBonus()).thenReturn(hullBonus);
+
+        new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
+        return hullBonus;
+    }
+
+    @Test
+    void moreMultipliersFromSeveralNodesAddIntoOneMultiplierInsteadOfCompounding() {
+        com.fs.starfarer.api.combat.StatBonus hullBonus = hullBonusAfterAllocating(2f, 2f, 5f);
+
+        verify(hullBonus).modifyMult("exiledSector_skillMult_HULL_MULT", 1.09f);
+        verify(hullBonus, never()).modifyMult(eq("exiledSector_skill_hull_mult_node_0"), anyFloat());
+    }
+
+    @Test
+    void moreAndLessMultipliersOnOneEffectAddTogether() {
+        com.fs.starfarer.api.combat.StatBonus hullBonus = hullBonusAfterAllocating(15f, -30f);
+
+        verify(hullBonus).modifyMult("exiledSector_skillMult_HULL_MULT", 0.85f);
+    }
+
+    @Test
+    void addedMultipliersNeverGoBelowOneHundredPercentLess() {
+        com.fs.starfarer.api.combat.StatBonus hullBonus = hullBonusAfterAllocating(-75f, -50f);
+
+        verify(hullBonus).modifyMult("exiledSector_skillMult_HULL_MULT", 0f);
     }
 
     @Test
@@ -1453,13 +1495,39 @@ class SkillTreeHullModTest {
         PhantomHullModStatus.markActive("militarized_subsystems");
         SkillTree.register(new SkillNode("militarized_subsystems_1", militarizedType, List.of("root_1"), 0f, 0f));
         ShipVariantAPI variant = npcVariant("militarized_subsystems_1");
+        FleetMemberAPI member = memberWithId("npc-ship");
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         when(stats.getVariant()).thenReturn(variant);
+        when(stats.getFleetMember()).thenReturn(member);
 
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, SkillTreeHullMod.ID);
 
         verify(variant).addPermaMod("militarized_subsystems");
         verify(variant).addTag("exiledSector_installed_militarized_subsystems");
+    }
+
+    @Test
+    void theGamesOpCostPassAppliesNodeStatsButNeverEditsTheVariant() {
+        registerNpcRoot();
+        SkillType militarizedType = new SkillType.Builder("militarized_subsystems", "Militarized Subsystems", "a.png", SkillTier.NOTABLE)
+                .phantomHullModIds(List.of("militarized_subsystems"))
+                .effects(List.of(new SkillTypeEffect(LogisticsSkillEffect.BURN_LEVEL_FLAT, 1f)))
+                .build();
+        PhantomHullModStatus.markActive("militarized_subsystems");
+        SkillTree.register(new SkillNode("militarized_subsystems_1", militarizedType, List.of("root_1"), 0f, 0f));
+        ShipVariantAPI variant = npcVariant("militarized_subsystems_1");
+        MutableShipStatsAPI opCostStats = mock(MutableShipStatsAPI.class);
+        MutableStat burnLevel = mock(MutableStat.class);
+        when(opCostStats.getVariant()).thenReturn(variant);
+        when(opCostStats.getMaxBurnLevel()).thenReturn(burnLevel);
+
+        new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, opCostStats, SkillTreeHullMod.ID);
+
+        verify(burnLevel).modifyFlat("exiledSector_skill_militarized_subsystems_1", 1f);
+        verify(variant, never()).addPermaMod(anyString());
+        verify(variant, never()).addTag(anyString());
+        verify(variant, never()).addMod(anyString());
+        verify(variant, never()).removeMod(anyString());
     }
 
     @Test

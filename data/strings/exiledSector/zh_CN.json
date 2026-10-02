@@ -151,6 +151,9 @@
     "effect.BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_PERCENT": "本舰航速每比船体默认值高1级（任何来源），实弹武器伤害提高<good>{value}%</good>。",
     "effect.ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT": "本舰每有1点传感器强度（计入修正后），能量武器射程提高<good>{value}</good>。",
     "effect.ARMOR_FLAT_FOR_LOW_BASE_ARMOR": "装甲最多提高<good>{most}</good>。舰体基础装甲越低，加成越高：基础装甲为<hl>{cutoff}</hl>时，加成降至<good>{least}</good>（护卫舰/驱逐舰/巡洋舰/主力舰）。不能分配给相位舰或基础装甲高于该数值的舰体。",
+    "effect.ARMOR_FLAT_FOR_LOW_BASE_ARMOR.hullSize": "装甲最多提高<good>{most}</good>。舰体基础装甲越低，加成越高：基础装甲为<hl>{cutoff}</hl>时，加成降至<good>{least}</good>。不能分配给相位舰或基础装甲高于该数值的舰体。",
+    "effect.REPAIR_TIME_MULT.reduces": "武器和引擎维修时间缩短<good>{value}%</good>。",
+    "effect.REPAIR_TIME_MULT.increases": "武器和引擎维修时间延长<bad>{value}%</bad>。",
 
     "stat.cargoCapacityPerFighterBay": "每个机库提供的货舱容量",
     "stat.maximumCombatReadiness": "最大战备值",

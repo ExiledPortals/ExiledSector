@@ -13,6 +13,10 @@ public interface SkillEffect {
 
     StyledText description(float magnitude);
 
+    default StyledText description(float magnitude, ShipAPI.HullSize hullSize) {
+        return description(magnitude);
+    }
+
     default boolean isConditional() {
         return false;
     }
@@ -55,6 +59,14 @@ public interface SkillEffect {
     }
 
     String name();
+
+    default boolean isMultiplicative() {
+        return name().endsWith("_MULT");
+    }
+
+    static float addedMultiplier(float totalMagnitude) {
+        return Math.max(totalMagnitude, -100f);
+    }
 
     static SkillEffect byName(String name) {
         return SkillEffectRegistry.byName(name);

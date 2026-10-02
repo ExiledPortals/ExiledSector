@@ -64,7 +64,7 @@ public final class PhantomHullModEffect extends BaseHullMod {
         ShipVariantAPI variant = stats.getVariant();
         if (!isPhantom(variant)) {
             original.applyEffectsBeforeShipCreation(hullSize, stats, id);
-        } else if (!variant.getPermaMods().contains(hullModId)) {
+        } else if (!SkillTreeHullMod.isOpCostPass(stats) && !variant.getPermaMods().contains(hullModId)) {
             variant.addPermaMod(hullModId);
         }
     }

@@ -2,6 +2,7 @@ package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
@@ -81,6 +82,18 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
                     .arg("cutoff", LowBaseArmorBonus.cutoffByHullSize())
                     .styled();
         }
+
+        @Override
+        public StyledText description(float magnitude, ShipAPI.HullSize hullSize) {
+            if (!LowBaseArmorBonus.covers(hullSize)) {
+                return description(magnitude);
+            }
+            return EffectText.msg(this, "hullSize")
+                    .arg("most", LowBaseArmorBonus.most(hullSize, magnitude))
+                    .arg("least", LowBaseArmorBonus.least(hullSize, magnitude))
+                    .arg("cutoff", LowBaseArmorBonus.cutoff(hullSize))
+                    .styled();
+        }
     },
     DMOD_EFFECT_MULT {
         @Override
@@ -106,7 +119,17 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
             "stat.weaponAndEngineRepairTime", true),
     REPAIR_TIME_MULT(MULT, all(liveStat(MutableShipStatsAPI::getCombatWeaponRepairTimeMult),
             liveStat(MutableShipStatsAPI::getCombatEngineRepairTimeMult)),
-            "stat.weaponAndEngineRepairTime", true),
+            "stat.weaponAndEngineRepairTime", true) {
+        @Override
+        public boolean lowerIsBetter() {
+            return false;
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this, magnitude <= 0f ? "reduces" : "increases").arg("value", Math.abs(magnitude)).styled();
+        }
+    },
     EMP_DAMAGE_TAKEN_PERCENT(PERCENT, liveStat(MutableShipStatsAPI::getEmpDamageTakenMult), "stat.empDamageTaken", true),
     EMP_DAMAGE_TAKEN_MULT(MULT, liveStat(MutableShipStatsAPI::getEmpDamageTakenMult), "stat.empDamageTaken", true),
     ENERGY_DAMAGE_TAKEN_PERCENT(PERCENT, all(liveStat(MutableShipStatsAPI::getEnergyDamageTakenMult),

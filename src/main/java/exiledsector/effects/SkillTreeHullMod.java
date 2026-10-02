@@ -11,6 +11,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
+import exiledsector.compat.MagicLibCompat;
 import exiledsector.i18n.I18n;
 import exiledsector.persistence.OpSpentSlotManager;
 import exiledsector.persistence.ShipSkillDataManager;
@@ -28,6 +29,7 @@ import exiledsector.skills.skilleffect.SkillEffect;
 import org.magiclib.util.MagicIncompatibleHullmods;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +40,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
     public static final String ID = "exiledSector_core";
 
     private static final String MOD_ID_PREFIX = "exiledSector_skill_";
-    private static final String MAGICLIB_WARNING_HULLMOD_ID = "ML_incompatibleHullmodWarning";
+    private static final String MULTIPLIER_MOD_ID_PREFIX = "exiledSector_skillMult_";
     static final String OP_SPENT_HULLMOD_ID_PREFIX = "exiledSector_opSpent_";
     private static final String COMBAT_PLAN_KEY = "exiledSector_combatPlan";
 
@@ -58,6 +60,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
                 (effect, modId, magnitude) -> {
                     if (effect.appliesAfterOtherEffects()) effect.apply(stats, modId, magnitude);
                 });
+        if (isOpCostPass(stats)) return;
         if (!npcTree) {
             syncOpSpentHullMod(stats.getFleetMember(), stats.getVariant());
         }
@@ -84,6 +87,10 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
     @Override
     public boolean affectsOPCosts() {
         return true;
+    }
+
+    static boolean isOpCostPass(MutableShipStatsAPI stats) {
+        return stats.getFleetMember() == null;
     }
 
     @Override
@@ -170,6 +177,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
 
     private void forEachAllocatedEffect(ShipSkillData data, List<AllocatedNode> allocatedNodes, HullSize hullSize,
                                          VanillaDelegate vanillaDelegate, EffectAction action) {
+        Map<SkillEffect, Float> multipliers = new LinkedHashMap<>();
         for (AllocatedNode allocated : allocatedNodes) {
             SkillType type = allocated.effectiveType();
             String vanillaHullModId = type.getVanillaHullModId();
@@ -181,11 +189,18 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
                 }
             } else {
                 String modId = MOD_ID_PREFIX + allocated.node().getId();
+                boolean temporary = type.getTemporaryAfterDeploymentSeconds() != null;
                 for (SkillTypeEffect effect : AllocatedSkillEffects.appliedEffects(data, type, hullSize)) {
-                    action.apply(effect.effect(), modId, effect.magnitude());
+                    if (!temporary && effect.effect().isMultiplicative()) {
+                        multipliers.merge(effect.effect(), effect.magnitude(), Float::sum);
+                    } else {
+                        action.apply(effect.effect(), modId, effect.magnitude());
+                    }
                 }
             }
         }
+        multipliers.forEach((effect, total) ->
+                action.apply(effect, MULTIPLIER_MOD_ID_PREFIX + effect.name(), SkillEffect.addedMultiplier(total)));
     }
 
     public static void syncOpSpentHullMod(FleetMemberAPI member, ShipVariantAPI variant) {
@@ -331,7 +346,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
             for (String hullModId : allocated.exclusiveHullModIds()) {
                 if (isRemovableConflict(variant, hullModId)) {
                     MagicIncompatibleHullmods.removeHullmodWithWarning(variant, hullModId, SkillConflictWarningHullMod.ID);
-                    variant.removeMod(MAGICLIB_WARNING_HULLMOD_ID);
+                    variant.removeMod(MagicLibCompat.WARNING_HULLMOD_ID);
                     variant.addMod(SkillConflictWarningHullMod.ID);
                     SkillConflictWarnings.recordRemoval(variant, hullModId, I18n.forGameText(type::getDisplayName));
                     conflictFound = true;
@@ -348,7 +363,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
     }
 
     static boolean removeHullModsThatTriedToStripAPhantom(List<AllocatedNode> allocatedNodes, ShipVariantAPI variant, boolean warn) {
-        if (variant == null || !variant.hasHullMod(MAGICLIB_WARNING_HULLMOD_ID)) return false;
+        if (variant == null || !variant.hasHullMod(MagicLibCompat.WARNING_HULLMOD_ID)) return false;
 
         List<String> attempt = MagicIncompatibleHullmods.getReason(variant);
         if (attempt == null || attempt.size() < 2) return false;
@@ -356,7 +371,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         SkillType provider = phantomProvider(allocatedNodes, phantomId);
         if (provider == null || !isInstalledBySkillTree(variant, phantomId)) return false;
 
-        variant.removeMod(MAGICLIB_WARNING_HULLMOD_ID);
+        variant.removeMod(MagicLibCompat.WARNING_HULLMOD_ID);
         String causeId = attempt.get(1);
         if (causeId == null || Global.getSettings().getHullModSpec(causeId) == null || !isRemovableConflict(variant, causeId)
                 || variant.getPermaMods().contains(causeId)) {

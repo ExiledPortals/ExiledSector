@@ -10,6 +10,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -197,6 +198,7 @@ class PhantomHullModsTest {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         ShipVariantAPI variant = ship.getVariant();
         when(stats.getVariant()).thenReturn(variant);
+        when(stats.getFleetMember()).thenReturn(mock(FleetMemberAPI.class));
 
         createdEffect.applyEffectsBeforeShipCreation(HullSize.CRUISER, stats, HULL_MOD);
         createdEffect.advanceInCombat(ship, 0.1f);
@@ -207,5 +209,19 @@ class PhantomHullModsTest {
         assertFalse(createdEffect.shouldAddDescriptionToTooltip(HullSize.CRUISER, ship, false));
         assertFalse(createdEffect.canBeAddedOrRemovedNow(ship, null, CoreUITradeMode.OPEN));
         assertFalse(createdEffect.hasSModEffectSection(HullSize.CRUISER, ship, false));
+    }
+
+    @Test
+    void theGamesOpCostPassNeverEditsTheVariantBecauseItWouldResetTheGamesOpCostCache() {
+        engineCreatesEffectsLazily();
+        PhantomHullMods.install(List.of(HULL_MOD));
+        ShipAPI ship = shipWith(true);
+        MutableShipStatsAPI opCostStats = mock(MutableShipStatsAPI.class);
+        ShipVariantAPI variant = ship.getVariant();
+        when(opCostStats.getVariant()).thenReturn(variant);
+
+        createdEffect.applyEffectsBeforeShipCreation(HullSize.CRUISER, opCostStats, HULL_MOD);
+
+        verify(variant, never()).addPermaMod(anyString());
     }
 }

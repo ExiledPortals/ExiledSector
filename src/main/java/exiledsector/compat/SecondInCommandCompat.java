@@ -12,12 +12,17 @@ import org.apache.log4j.Logger;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class SecondInCommandCompat {
 
     public static final String MOD_ID = "second_in_command";
     public static final String CONTROLLER_HULLMOD_ID = "sc_skill_controller";
     public static final String RECONFIGURATION_SKILL_ID = "sc_strikecraft_reconfiguration";
+    public static final List<String> TESTED_VERSIONS = List.of("2.0.0");
+    public static final CompatTarget TARGET = new CompatTarget("Second-in-Command", List.of(MOD_ID), TESTED_VERSIONS,
+            SecondInCommandCompat::missingFeatures);
     private static final String INACTIVE_SMOD_TAG_PREFIX = "sc_inactive_smods_";
 
     private static final String SC_UTILS_CLASS = "second_in_command.SCUtils";
@@ -64,6 +69,16 @@ public final class SecondInCommandCompat {
 
     public static boolean hasDeactivatedSMod(ShipVariantAPI variant, String hullModId) {
         return variant != null && variant.hasTag(INACTIVE_SMOD_TAG_PREFIX + hullModId);
+    }
+
+    static List<String> missingFeatures() {
+        List<String> missing = new ArrayList<>(CompatTarget.missingHullMods(List.of(CONTROLLER_HULLMOD_ID)));
+        try {
+            resolveMethods();
+        } catch (ReflectiveOperationException | LinkageError e) {
+            missing.add("SCUtils.getFleetData and SCData.isSkillActive, used to check its skills");
+        }
+        return missing;
     }
 
     private static void resolveMethods() throws ReflectiveOperationException {
