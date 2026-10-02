@@ -159,6 +159,18 @@ For Second-in-Command, `COUNTS_AS_SHIELD_SHUNT` and `COUNTS_AS_SAFETY_OVERRIDES`
 the corresponding hull mods for SiC's skill synergies. The Converted Hangar penalties are waived by the
 vanilla flags or by SiC's Reconfiguration skill.
 
+Safety Overrides is a prototype phantom hull mod (`phantomHullMods`). While the node is allocated, the real
+`safetyoverrides` hull mod sits on the ship as a permanent mod costing no OP, so any mod that checks for it
+(Ship Mastery System masteries, Second-in-Command skills, other mods) sees it. At startup this mod wraps the
+hull mod's vanilla effect: on normal ships it behaves exactly as vanilla, but on copies the skill tree placed
+it does nothing and shows a tooltip naming the node instead, so the node's own effects are the only ones that
+apply. If the game created the effect before this mod could wrap it, the log says so and the node falls back
+to not placing the hull mod, and its tooltip stops claiming it does. The phantom is a permanent mod, so other
+mods' hull mods that strip Safety Overrides as incompatible can't remove it; the node is therefore mutually
+exclusive with each of those it knows about (LOST_SECTOR, HTE, NSP, A_S-F, Tahlan, UAF and Neoteric ones). `COUNTS_AS_SAFETY_OVERRIDES` stands down whenever the hull mod is present, so SiC's
+own skill applies instead of a copy. Removing ExiledSector from a save leaves these hull mods behind as
+real, permanent Safety Overrides, so deallocate the node first.
+
 Ballistic Rangefinder, Missile Autoloader, Defensive Targeting Array and Neural Interface are passthrough
 nodes (`vanillaHullMod`). Rather than installing the hull mod, they run its code under the hull mod's id.
 The Ballistic Rangefinder and Missile Autoloader tooltips include vanilla-style tables built from vanilla's

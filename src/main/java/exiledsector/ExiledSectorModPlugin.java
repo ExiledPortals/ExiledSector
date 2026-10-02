@@ -8,6 +8,7 @@ import exiledsector.effects.CombatXpListener;
 import exiledsector.effects.NpcFleetDialogListener;
 import exiledsector.effects.NpcFleetInflationListener;
 import exiledsector.effects.NpcFleetSweepScript;
+import exiledsector.effects.PhantomHullMods;
 import exiledsector.effects.SalvageBonusListener;
 import exiledsector.effects.SkillConflictWarningHullMod;
 import exiledsector.effects.SkillTreeHullMod;
@@ -22,6 +23,7 @@ import exiledsector.persistence.SkillTreeTemplateStore;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillTree;
+import exiledsector.skills.SkillType;
 import exiledsector.skills.npc.NpcLayouts;
 import exiledsector.skills.skilleffect.CsvIdBlocklist;
 import exiledsector.skills.skilleffect.FleetWideEffects;
@@ -30,8 +32,10 @@ import exiledsector.ui.SkillTreeRefitButton;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
 import exiledsector.ui.inspect.SkillTreeCodexListener;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 public class ExiledSectorModPlugin extends BaseModPlugin {
 
@@ -47,8 +51,17 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         SkillTreeRefitButton.addButton();
         ExiledSectorSettings.register();
         SkillTree.load();
+        PhantomHullMods.install(phantomHullModIds());
         CsvIdBlocklist.loadAll();
         NpcLayouts.load();
+    }
+
+    private static Set<String> phantomHullModIds() {
+        Set<String> ids = new LinkedHashSet<>();
+        for (SkillType type : SkillTree.getAllTypes().values()) {
+            ids.addAll(type.getPhantomHullModIds());
+        }
+        return ids;
     }
 
     private static void loadLanguage() {

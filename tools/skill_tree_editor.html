@@ -3537,6 +3537,7 @@ function openTypeModal(existingType, onSave, onClose){
     t.vanillaHullMod = document.getElementById('tVanilla').value;
     t.exclusiveHullMods = document.getElementById('tExclusiveHullMods').value.split(',').map(function(s){ return s.trim(); }).filter(function(s){ return s; });
     t.installedHullMods = document.getElementById('tInstalledHullMods').value.split(',').map(function(s){ return s.trim(); }).filter(function(s){ return s; });
+    t.phantomHullMods = document.getElementById('tPhantomHullMods').value.split(',').map(function(s){ return s.trim(); }).filter(function(s){ return s; });
     t.exclusiveSkillTypes = document.getElementById('tExclusiveSkillTypes').value.split(',').map(function(s){ return s.trim(); }).filter(function(s){ return s; });
     var optSelect = document.getElementById('tOptionalOptions');
     if (optSelect) {
@@ -3579,6 +3580,7 @@ function openTypeModal(existingType, onSave, onClose){
       '<div class="btnRow"><button class="smallBtn" type="button" id="addUnlockConditionRowBtn">+ Add condition</button></div>' +
       '<div class="field"><label>Exclusive with hullmod ids (comma-separated)</label><input id="tExclusiveHullMods" value="' + ((t.exclusiveHullMods||[]).join(', ')) + '"></div>' +
       '<div class="field"><label>Installs hullmod ids (comma-separated)</label><input id="tInstalledHullMods" value="' + ((t.installedHullMods||[]).join(', ')) + '"></div>' +
+      '<div class="field"><label>Counts as hullmod ids, effect suppressed (comma-separated)</label><input id="tPhantomHullMods" value="' + ((t.phantomHullMods||[]).join(', ')) + '"></div>' +
       '<div class="field"><label>Exclusive with skill type ids (comma-separated)</label><input id="tExclusiveSkillTypes" value="' + ((t.exclusiveSkillTypes||[]).join(', ')) + '"></div>' +
       '<hr class="sep">' +
       '<div class="field"><label>Item cost</label><div class="fieldRow"><input id="tItemCostId" placeholder="commodity id, e.g. lobster" value="' + (itemCostDraft.itemId||'') + '" style="flex:2"><input id="tItemCostQuantity" type="number" placeholder="quantity" value="' + (itemCostDraft.quantity||0) + '" style="flex:1"></div></div>' +
@@ -3686,6 +3688,7 @@ function openTypeModal(existingType, onSave, onClose){
         unlockConditions: unlockConditionsDraft,
         exclusiveHullMods: t.exclusiveHullMods || [],
         installedHullMods: t.installedHullMods || [],
+        phantomHullMods: t.phantomHullMods || [],
         exclusiveSkillTypes: t.exclusiveSkillTypes || [],
         optionalOptions: t.optionalOptions || [],
         description: (t.description||'').trim(),
@@ -3744,6 +3747,7 @@ function serializeType(t){
   if (unlockConditionsOut.length) out.unlockConditions = unlockConditionsOut;
   if (t.exclusiveHullMods && t.exclusiveHullMods.length) out.exclusiveHullMods = t.exclusiveHullMods;
   if (t.installedHullMods && t.installedHullMods.length) out.installedHullMods = t.installedHullMods;
+  if (t.phantomHullMods && t.phantomHullMods.length) out.phantomHullMods = t.phantomHullMods;
   if (t.exclusiveSkillTypes && t.exclusiveSkillTypes.length) out.exclusiveSkillTypes = t.exclusiveSkillTypes;
   if (t.optionalOptions && t.optionalOptions.length) out.optionalOptions = t.optionalOptions;
   if (t.description) out.description = t.description;

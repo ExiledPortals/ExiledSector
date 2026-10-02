@@ -431,6 +431,23 @@ class SkillTypeLoaderTest {
     }
 
     @Test
+    void temporaryGatingIsDroppedWhenTheTypePlacesPhantomHullMods() throws Exception {
+        assertNull(temporarySecondsFor("\"effects\": [ { \"effect\": \"TOP_SPEED_PERCENT\", \"magnitude\": 10 } ],"
+                + "\"phantomHullMods\": [ \"safetyoverrides\" ]"));
+    }
+
+    @Test
+    void phantomHullModsAreParsedAndCountAsExclusive() throws Exception {
+        JSONObject root = new JSONObject("{ \"skillTypes\": [ { \"id\": \"so\", \"name\": \"SO\", \"icon\": \"a.png\","
+                + "\"phantomHullMods\": [ \"safetyoverrides\" ] } ] }");
+
+        SkillType type = SkillTypeLoader.parseSkillTypes(root).get("so");
+
+        assertEquals(List.of("safetyoverrides"), type.getPhantomHullModIds());
+        assertEquals(List.of("safetyoverrides"), type.getExclusiveHullModIds());
+    }
+
+    @Test
     void temporaryGatingIsDroppedWhenAnEffectCannotBeGated() throws Exception {
         assertNull(temporarySecondsFor("\"effects\": [ { \"effect\": \"TOP_SPEED_PERCENT\", \"magnitude\": 10 },"
                 + "{ \"effect\": \"PD_IGNORES_DECOY_FLARES\", \"magnitude\": 1 } ]"));

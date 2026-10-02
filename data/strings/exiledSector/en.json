@@ -190,6 +190,7 @@
     "weapon.guidanceImproved": "Significantly improved missile guidance algorithm.",
 
     "node.installs": "Installs the {hullmod} hull mod at no OP cost.",
+    "node.phantom": "The ship counts as having the {hullmod} hull mod, so other mods' effects that check for it apply. The hull mod itself does nothing and costs no OP.",
     "node.temporary": "These effects only last for the first {seconds} seconds after the ship is deployed.",
     "node.itemCost": "Costs {quantity} {item} to allocate. It is returned to you upon de-allocation.",
     "node.hullSizes.one": "Restricted to <hl>hull size</hl>: {hullSizes}.",
@@ -359,6 +360,9 @@
     "settings.npcNodes.max.tooltipAndAbove": "Most nodes a levelled NPC ship gets at player level {level} and above.",
     "hullmod.conflict.title": "Conflict detected",
     "hullmod.conflict.text": "The <hl>{removed}</hl> hullmod has been removed due to the presence of the <hl>{cause}</hl> skill.",
+    "hullmod.phantom.providedBy": "Provided by the <hl>{node}</hl> skill tree node, which applies its effects. This hull mod does nothing on its own and costs no OP.",
+    "hullmod.phantom.generic": "Provided by the skill tree, which applies its effects. This hull mod does nothing on its own and costs no OP.",
+    "hullmod.phantom.locked": "Provided by the skill tree. Deallocate the node to remove it.",
     "codex.title": "Exiled Sector skill tree",
     "modifier.shipSkillTree": "Ship skill tree",
     "modifier.phaseSensorNetworks": "Phase ships and phase sensor networks in fleet",

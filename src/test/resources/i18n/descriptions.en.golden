@@ -3071,7 +3071,7 @@ type|safety_overrides|null|4	0	<bad>100%</bad> less venting speed.
 type|safety_overrides|null|5	0	Increases range before falloff effectiveness applies by <good>450</good>.
 type|safety_overrides|null|6	0	<bad>75%</bad> less weapon effectiveness past normal range.
 type|safety_overrides|null|7	0	Restricted to <hl>hull sizes</hl>: Frigate, Destroyer, Cruiser.
-type|safety_overrides|null|8	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Safety Overrides.
+type|safety_overrides|null|8	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Safety Overrides, Volatile Flux Injector, PD Specialization, Enraged Systems, Probability Space Hypervessel, Silberherz Core, Silberherz Subcore, Edge Capacitors Retrofit, Safety Protocols, Guerrilla Overhaul, Extra Propulsion Systems, Prototype Core, Robust Flux Reactor, Repulse-Field, Illusia Resonance, Pristine Condition, Quantum Damper, Singularity Hullmod.
 type|safety_overrides|FRIGATE|0	0	Allows the zero-flux speed boost to take effect regardless of flux level.
 type|safety_overrides|FRIGATE|1	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
 type|safety_overrides|FRIGATE|2	0	<good>100%</good> more flux dissipation.
@@ -3083,7 +3083,7 @@ type|safety_overrides|FRIGATE|7	0	Increases top speed by <good>50</good>.
 type|safety_overrides|FRIGATE|8	0	Increases acceleration by <good>100</good>.
 type|safety_overrides|FRIGATE|9	0	Increases deceleration by <good>100</good>.
 type|safety_overrides|FRIGATE|10	0	Restricted to <hl>hull sizes</hl>: Frigate, Destroyer, Cruiser.
-type|safety_overrides|FRIGATE|11	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Safety Overrides.
+type|safety_overrides|FRIGATE|11	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Safety Overrides, Volatile Flux Injector, PD Specialization, Enraged Systems, Probability Space Hypervessel, Silberherz Core, Silberherz Subcore, Edge Capacitors Retrofit, Safety Protocols, Guerrilla Overhaul, Extra Propulsion Systems, Prototype Core, Robust Flux Reactor, Repulse-Field, Illusia Resonance, Pristine Condition, Quantum Damper, Singularity Hullmod.
 type|safety_overrides|DESTROYER|0	0	Allows the zero-flux speed boost to take effect regardless of flux level.
 type|safety_overrides|DESTROYER|1	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
 type|safety_overrides|DESTROYER|2	0	<good>100%</good> more flux dissipation.
@@ -3095,7 +3095,7 @@ type|safety_overrides|DESTROYER|7	0	Increases top speed by <good>30</good>.
 type|safety_overrides|DESTROYER|8	0	Increases acceleration by <good>60</good>.
 type|safety_overrides|DESTROYER|9	0	Increases deceleration by <good>60</good>.
 type|safety_overrides|DESTROYER|10	0	Restricted to <hl>hull sizes</hl>: Frigate, Destroyer, Cruiser.
-type|safety_overrides|DESTROYER|11	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Safety Overrides.
+type|safety_overrides|DESTROYER|11	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Safety Overrides, Volatile Flux Injector, PD Specialization, Enraged Systems, Probability Space Hypervessel, Silberherz Core, Silberherz Subcore, Edge Capacitors Retrofit, Safety Protocols, Guerrilla Overhaul, Extra Propulsion Systems, Prototype Core, Robust Flux Reactor, Repulse-Field, Illusia Resonance, Pristine Condition, Quantum Damper, Singularity Hullmod.
 type|safety_overrides|CRUISER|0	0	Allows the zero-flux speed boost to take effect regardless of flux level.
 type|safety_overrides|CRUISER|1	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
 type|safety_overrides|CRUISER|2	0	<good>100%</good> more flux dissipation.
@@ -3107,7 +3107,7 @@ type|safety_overrides|CRUISER|7	0	Increases top speed by <good>20</good>.
 type|safety_overrides|CRUISER|8	0	Increases acceleration by <good>40</good>.
 type|safety_overrides|CRUISER|9	0	Increases deceleration by <good>40</good>.
 type|safety_overrides|CRUISER|10	0	Restricted to <hl>hull sizes</hl>: Frigate, Destroyer, Cruiser.
-type|safety_overrides|CRUISER|11	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Safety Overrides.
+type|safety_overrides|CRUISER|11	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Safety Overrides, Volatile Flux Injector, PD Specialization, Enraged Systems, Probability Space Hypervessel, Silberherz Core, Silberherz Subcore, Edge Capacitors Retrofit, Safety Protocols, Guerrilla Overhaul, Extra Propulsion Systems, Prototype Core, Robust Flux Reactor, Repulse-Field, Illusia Resonance, Pristine Condition, Quantum Damper, Singularity Hullmod.
 type|safety_overrides|CAPITAL_SHIP|0	0	Allows the zero-flux speed boost to take effect regardless of flux level.
 type|safety_overrides|CAPITAL_SHIP|1	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
 type|safety_overrides|CAPITAL_SHIP|2	0	<good>100%</good> more flux dissipation.
@@ -3119,7 +3119,7 @@ type|safety_overrides|CAPITAL_SHIP|7	0	Increases top speed by <good>10</good>.
 type|safety_overrides|CAPITAL_SHIP|8	0	Increases acceleration by <good>20</good>.
 type|safety_overrides|CAPITAL_SHIP|9	0	Increases deceleration by <good>20</good>.
 type|safety_overrides|CAPITAL_SHIP|10	0	Restricted to <hl>hull sizes</hl>: Frigate, Destroyer, Cruiser.
-type|safety_overrides|CAPITAL_SHIP|11	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Safety Overrides.
+type|safety_overrides|CAPITAL_SHIP|11	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Safety Overrides, Volatile Flux Injector, PD Specialization, Enraged Systems, Probability Space Hypervessel, Silberherz Core, Silberherz Subcore, Edge Capacitors Retrofit, Safety Protocols, Guerrilla Overhaul, Extra Propulsion Systems, Prototype Core, Robust Flux Reactor, Repulse-Field, Illusia Resonance, Pristine Condition, Quantum Damper, Singularity Hullmod.
 type|shared_damage_taken|null|0	0	Disperses 5% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 type|shared_damage_taken|FRIGATE|0	0	Disperses 5% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 type|shared_damage_taken|DESTROYER|0	0	Disperses 5% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
