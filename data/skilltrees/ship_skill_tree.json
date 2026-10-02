@@ -5228,7 +5228,8 @@
 			"id": "nskr_inertial_1",
 			"type": "nskr_inertial",
 			"connectedTo": [
-				"top_speed_6"
+				"top_speed_6",
+				"nskr_volatile_1"
 			],
 			"x": -11189,
 			"y": 7329,
@@ -5242,7 +5243,9 @@
 			"id": "nskr_acoils_1",
 			"type": "nskr_acoils",
 			"connectedTo": [
-				"energy_flux_cost_1"
+				"energy_flux_cost_1",
+				"nskr_volatile_1",
+				"nskr_bigBats_1"
 			],
 			"x": -11203,
 			"y": 5944,
@@ -5278,6 +5281,36 @@
 			"y": 5644,
 			"orbitAnchorId": "anchor_52",
 			"orbitAngle": 270,
+			"tags": [
+				"lost_sector"
+			]
+		},
+		{
+			"id": "nskr_volatile_1",
+			"type": "nskr_volatile",
+			"connectedTo": [
+				"nskr_acoils_1",
+				"nskr_absorption_1",
+				"nskr_inertial_1",
+				"nskr_bigBats_1"
+			],
+			"x": -11190,
+			"y": 6618,
+			"ringBeltPath": "graphics/planets/aurorae.png",
+			"ringBeltColor": "#642ac9",
+			"tags": [
+				"lost_sector"
+			]
+		},
+		{
+			"id": "nskr_bigBats_1",
+			"type": "nskr_bigBats",
+			"connectedTo": [
+				"nskr_volatile_1",
+				"nskr_acoils_1"
+			],
+			"x": -10716,
+			"y": 6144,
 			"tags": [
 				"lost_sector"
 			]
@@ -5330,7 +5363,8 @@
 			"id": "nskr_absorption_1",
 			"type": "nskr_absorption",
 			"connectedTo": [
-				"shield_damage_taken_multi_4"
+				"shield_damage_taken_multi_4",
+				"nskr_volatile_1"
 			],
 			"x": -11856,
 			"y": 6621,
