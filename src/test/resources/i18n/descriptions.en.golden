@@ -1426,12 +1426,6 @@ effect|REPAIR_TIME_PERCENT|12.5	1	Increases weapon and engine repair time by <go
 effect|REPAIR_TIME_PERCENT|100.0	1	Increases weapon and engine repair time by <good>100%</good>.
 effect|REPAIR_TIME_PERCENT|-10.0	1	Decreases weapon and engine repair time by <bad>10%</bad>.
 effect|REPAIR_TIME_PERCENT|-12.5	1	Decreases weapon and engine repair time by <bad>12.5%</bad>.
-effect|REQUIRES_CIVILIAN_GRADE_HULL|1.0	0	Can only be allocated on civilian-grade hulls.
-effect|REQUIRES_CIVILIAN_GRADE_HULL|10.0	0	Can only be allocated on civilian-grade hulls.
-effect|REQUIRES_CIVILIAN_GRADE_HULL|12.5	0	Can only be allocated on civilian-grade hulls.
-effect|REQUIRES_CIVILIAN_GRADE_HULL|100.0	0	Can only be allocated on civilian-grade hulls.
-effect|REQUIRES_CIVILIAN_GRADE_HULL|-10.0	0	Can only be allocated on civilian-grade hulls.
-effect|REQUIRES_CIVILIAN_GRADE_HULL|-12.5	0	Can only be allocated on civilian-grade hulls.
 effect|SENSOR_PROFILE_MULT|1.0	1	<good>1%</good> more sensor profile.
 effect|SENSOR_PROFILE_MULT|10.0	1	<good>10%</good> more sensor profile.
 effect|SENSOR_PROFILE_MULT|12.5	1	<good>12.5%</good> more sensor profile.
@@ -2757,30 +2751,30 @@ type|maneuverability_percent|FRIGATE|0	0	Increases maneuverability by <good>25%<
 type|maneuverability_percent|DESTROYER|0	0	Increases maneuverability by <good>25%</good>.
 type|maneuverability_percent|CRUISER|0	0	Increases maneuverability by <good>25%</good>.
 type|maneuverability_percent|CAPITAL_SHIP|0	0	Increases maneuverability by <good>25%</good>.
-type|militarized_subsystems|null|0	0	Can only be allocated on civilian-grade hulls.
-type|militarized_subsystems|null|1	0	Removes the penalties of a civilian-grade hull.
-type|militarized_subsystems|null|2	0	Increases max burn level by <good>1</good>.
-type|militarized_subsystems|null|3	1	Increases minimum crew required by <good>100%</good>.
+type|militarized_subsystems|null|0	0	Removes the penalties of a civilian-grade hull.
+type|militarized_subsystems|null|1	0	Increases max burn level by <good>1</good>.
+type|militarized_subsystems|null|2	1	Increases minimum crew required by <good>100%</good>.
+type|militarized_subsystems|null|3	0	Can only be allocated on civilian-grade hulls.
 type|militarized_subsystems|null|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Militarized Subsystems.
-type|militarized_subsystems|FRIGATE|0	0	Can only be allocated on civilian-grade hulls.
-type|militarized_subsystems|FRIGATE|1	0	Removes the penalties of a civilian-grade hull.
-type|militarized_subsystems|FRIGATE|2	0	Increases max burn level by <good>1</good>.
-type|militarized_subsystems|FRIGATE|3	1	Increases minimum crew required by <good>100%</good>.
+type|militarized_subsystems|FRIGATE|0	0	Removes the penalties of a civilian-grade hull.
+type|militarized_subsystems|FRIGATE|1	0	Increases max burn level by <good>1</good>.
+type|militarized_subsystems|FRIGATE|2	1	Increases minimum crew required by <good>100%</good>.
+type|militarized_subsystems|FRIGATE|3	0	Can only be allocated on civilian-grade hulls.
 type|militarized_subsystems|FRIGATE|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Militarized Subsystems.
-type|militarized_subsystems|DESTROYER|0	0	Can only be allocated on civilian-grade hulls.
-type|militarized_subsystems|DESTROYER|1	0	Removes the penalties of a civilian-grade hull.
-type|militarized_subsystems|DESTROYER|2	0	Increases max burn level by <good>1</good>.
-type|militarized_subsystems|DESTROYER|3	1	Increases minimum crew required by <good>100%</good>.
+type|militarized_subsystems|DESTROYER|0	0	Removes the penalties of a civilian-grade hull.
+type|militarized_subsystems|DESTROYER|1	0	Increases max burn level by <good>1</good>.
+type|militarized_subsystems|DESTROYER|2	1	Increases minimum crew required by <good>100%</good>.
+type|militarized_subsystems|DESTROYER|3	0	Can only be allocated on civilian-grade hulls.
 type|militarized_subsystems|DESTROYER|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Militarized Subsystems.
-type|militarized_subsystems|CRUISER|0	0	Can only be allocated on civilian-grade hulls.
-type|militarized_subsystems|CRUISER|1	0	Removes the penalties of a civilian-grade hull.
-type|militarized_subsystems|CRUISER|2	0	Increases max burn level by <good>1</good>.
-type|militarized_subsystems|CRUISER|3	1	Increases minimum crew required by <good>100%</good>.
+type|militarized_subsystems|CRUISER|0	0	Removes the penalties of a civilian-grade hull.
+type|militarized_subsystems|CRUISER|1	0	Increases max burn level by <good>1</good>.
+type|militarized_subsystems|CRUISER|2	1	Increases minimum crew required by <good>100%</good>.
+type|militarized_subsystems|CRUISER|3	0	Can only be allocated on civilian-grade hulls.
 type|militarized_subsystems|CRUISER|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Militarized Subsystems.
-type|militarized_subsystems|CAPITAL_SHIP|0	0	Can only be allocated on civilian-grade hulls.
-type|militarized_subsystems|CAPITAL_SHIP|1	0	Removes the penalties of a civilian-grade hull.
-type|militarized_subsystems|CAPITAL_SHIP|2	0	Increases max burn level by <good>1</good>.
-type|militarized_subsystems|CAPITAL_SHIP|3	1	Increases minimum crew required by <good>100%</good>.
+type|militarized_subsystems|CAPITAL_SHIP|0	0	Removes the penalties of a civilian-grade hull.
+type|militarized_subsystems|CAPITAL_SHIP|1	0	Increases max burn level by <good>1</good>.
+type|militarized_subsystems|CAPITAL_SHIP|2	1	Increases minimum crew required by <good>100%</good>.
+type|militarized_subsystems|CAPITAL_SHIP|3	0	Can only be allocated on civilian-grade hulls.
 type|militarized_subsystems|CAPITAL_SHIP|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Militarized Subsystems.
 type|missile_autoloader|null|0	0	Grants a limited number of automatic reloads to missile weapons in small missile mounts, drawn from a shared capacity pool that depends on hull size and mount count.
 type|missile_autoloader|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Missile Autoloader.
@@ -3533,67 +3527,66 @@ summary|option0|FRIGATE|105	0	Each Heartless stack increases missile damage by <
 summary|option0|FRIGATE|106	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
 summary|option0|FRIGATE|107	0	Increases target leading accuracy of autofiring weapons by <good>20%</good>.
 summary|option0|FRIGATE|108	0	Increases beam weapon range by <good>5%</good>.
-summary|option0|FRIGATE|109	0	Can only be allocated on civilian-grade hulls.
-summary|option0|FRIGATE|110	0	Removes the penalties of a civilian-grade hull.
-summary|option0|FRIGATE|111	1	Increases minimum crew required by <good>100%</good>.
-summary|option0|FRIGATE|112	0	Increases missile weapon damage by <good>25%</good>.
-summary|option0|FRIGATE|113	0	Increases missile weapon ammo capacity by <good>100%</good>.
-summary|option0|FRIGATE|114	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
-summary|option0|FRIGATE|115	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
-summary|option0|FRIGATE|116	0	Increases fleet nav rating by <good>2</good>.
-summary|option0|FRIGATE|117	0	Increases non-beam energy weapon damage by <good>15%</good>.
-summary|option0|FRIGATE|118	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
-summary|option0|FRIGATE|119	0	Increases the base range of weapons in medium energy slots by <good>100</good>.
-summary|option0|FRIGATE|120	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
-summary|option0|FRIGATE|121	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
-summary|option0|FRIGATE|122	0	Increases range from which combat objectives can be captured by <good>105</good>.
-summary|option0|FRIGATE|123	0	Increases command point recovery rate while this ship is the flagship by <good>2.5</good>.
-summary|option0|FRIGATE|124	0	Increases non-beam energy weapon range by <good>100</good>.
-summary|option0|FRIGATE|125	0	Increases flux capacity by <good>15%</good>.
-summary|option0|FRIGATE|126	0	Increases flux capacity by <good>620</good>.
-summary|option0|FRIGATE|127	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
-summary|option0|FRIGATE|128	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
-summary|option0|FRIGATE|129	1	<bad>100%</bad> less phase cloak activation cost.
-summary|option0|FRIGATE|130	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
-summary|option0|FRIGATE|131	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
-summary|option0|FRIGATE|132	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-summary|option0|FRIGATE|133	0	Point-defense weapons can identify and ignore decoy flares.
-summary|option0|FRIGATE|134	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-summary|option0|FRIGATE|135	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option0|FRIGATE|136	1	Increases crew casualties by <good>50%</good>.
-summary|option0|FRIGATE|137	0	Increases weapon damage by <good>10%</good>.
-summary|option0|FRIGATE|138	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option0|FRIGATE|139	1	<bad>18.55%</bad> less negative effects from D-mods.
-summary|option0|FRIGATE|140	0	If disabled, this ship is almost always recoverable after the battle.
-summary|option0|FRIGATE|141	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option0|FRIGATE|142	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option0|FRIGATE|143	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option0|FRIGATE|144	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-summary|option0|FRIGATE|145	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option0|FRIGATE|146	0	<bad>100%</bad> less venting speed.
-summary|option0|FRIGATE|147	0	Increases range before falloff effectiveness applies by <good>450</good>.
-summary|option0|FRIGATE|148	0	<bad>75%</bad> less weapon effectiveness past normal range.
-summary|option0|FRIGATE|149	0	Increases top speed by <good>117</good>.
-summary|option0|FRIGATE|150	0	Increases acceleration by <good>100</good>.
-summary|option0|FRIGATE|151	0	Increases deceleration by <good>100</good>.
-summary|option0|FRIGATE|152	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option0|FRIGATE|153	0	Removes this ship's shield entirely.
-summary|option0|FRIGATE|154	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-summary|option0|FRIGATE|155	1	<bad>51.4%</bad> less shield flux upkeep.
-summary|option0|FRIGATE|156	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-summary|option0|FRIGATE|157	0	Increases fuel capacity by <good>24%</good>.
-summary|option0|FRIGATE|158	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>7</bad>.
-summary|option0|FRIGATE|159	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>5</bad>.
-summary|option0|FRIGATE|160	0	Captures combat objectives <good>100%</good> faster.
-summary|option0|FRIGATE|161	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
-summary|option0|FRIGATE|162	0	Increases weapon turn rate by <good>80%</good>.
-summary|option0|FRIGATE|163	0	<bad>15%</bad> less ballistic weapon range.
-summary|option0|FRIGATE|164	0	<bad>15%</bad> less energy weapon range.
-summary|option0|FRIGATE|165	1	Increases fighter refit time by <good>25%</good>.
-summary|option0|FRIGATE|166	0	Increases post-battle salvage recovered (fleet-wide) by <good>3%</good>.
-summary|option0|FRIGATE|167	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
-summary|option0|FRIGATE|168	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
-summary|option0|FRIGATE|169	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
+summary|option0|FRIGATE|109	0	Removes the penalties of a civilian-grade hull.
+summary|option0|FRIGATE|110	1	Increases minimum crew required by <good>100%</good>.
+summary|option0|FRIGATE|111	0	Increases missile weapon damage by <good>25%</good>.
+summary|option0|FRIGATE|112	0	Increases missile weapon ammo capacity by <good>100%</good>.
+summary|option0|FRIGATE|113	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
+summary|option0|FRIGATE|114	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+summary|option0|FRIGATE|115	0	Increases fleet nav rating by <good>2</good>.
+summary|option0|FRIGATE|116	0	Increases non-beam energy weapon damage by <good>15%</good>.
+summary|option0|FRIGATE|117	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
+summary|option0|FRIGATE|118	0	Increases the base range of weapons in medium energy slots by <good>100</good>.
+summary|option0|FRIGATE|119	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
+summary|option0|FRIGATE|120	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
+summary|option0|FRIGATE|121	0	Increases range from which combat objectives can be captured by <good>105</good>.
+summary|option0|FRIGATE|122	0	Increases command point recovery rate while this ship is the flagship by <good>2.5</good>.
+summary|option0|FRIGATE|123	0	Increases non-beam energy weapon range by <good>100</good>.
+summary|option0|FRIGATE|124	0	Increases flux capacity by <good>15%</good>.
+summary|option0|FRIGATE|125	0	Increases flux capacity by <good>620</good>.
+summary|option0|FRIGATE|126	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
+summary|option0|FRIGATE|127	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
+summary|option0|FRIGATE|128	1	<bad>100%</bad> less phase cloak activation cost.
+summary|option0|FRIGATE|129	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
+summary|option0|FRIGATE|130	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
+summary|option0|FRIGATE|131	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+summary|option0|FRIGATE|132	0	Point-defense weapons can identify and ignore decoy flares.
+summary|option0|FRIGATE|133	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
+summary|option0|FRIGATE|134	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
+summary|option0|FRIGATE|135	1	Increases crew casualties by <good>50%</good>.
+summary|option0|FRIGATE|136	0	Increases weapon damage by <good>10%</good>.
+summary|option0|FRIGATE|137	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
+summary|option0|FRIGATE|138	1	<bad>18.55%</bad> less negative effects from D-mods.
+summary|option0|FRIGATE|139	0	If disabled, this ship is almost always recoverable after the battle.
+summary|option0|FRIGATE|140	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
+summary|option0|FRIGATE|141	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+summary|option0|FRIGATE|142	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option0|FRIGATE|143	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
+summary|option0|FRIGATE|144	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option0|FRIGATE|145	0	<bad>100%</bad> less venting speed.
+summary|option0|FRIGATE|146	0	Increases range before falloff effectiveness applies by <good>450</good>.
+summary|option0|FRIGATE|147	0	<bad>75%</bad> less weapon effectiveness past normal range.
+summary|option0|FRIGATE|148	0	Increases top speed by <good>117</good>.
+summary|option0|FRIGATE|149	0	Increases acceleration by <good>100</good>.
+summary|option0|FRIGATE|150	0	Increases deceleration by <good>100</good>.
+summary|option0|FRIGATE|151	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option0|FRIGATE|152	0	Removes this ship's shield entirely.
+summary|option0|FRIGATE|153	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
+summary|option0|FRIGATE|154	1	<bad>51.4%</bad> less shield flux upkeep.
+summary|option0|FRIGATE|155	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option0|FRIGATE|156	0	Increases fuel capacity by <good>24%</good>.
+summary|option0|FRIGATE|157	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>7</bad>.
+summary|option0|FRIGATE|158	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>5</bad>.
+summary|option0|FRIGATE|159	0	Captures combat objectives <good>100%</good> faster.
+summary|option0|FRIGATE|160	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
+summary|option0|FRIGATE|161	0	Increases weapon turn rate by <good>80%</good>.
+summary|option0|FRIGATE|162	0	<bad>15%</bad> less ballistic weapon range.
+summary|option0|FRIGATE|163	0	<bad>15%</bad> less energy weapon range.
+summary|option0|FRIGATE|164	1	Increases fighter refit time by <good>25%</good>.
+summary|option0|FRIGATE|165	0	Increases post-battle salvage recovered (fleet-wide) by <good>3%</good>.
+summary|option0|FRIGATE|166	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
+summary|option0|FRIGATE|167	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
+summary|option0|FRIGATE|168	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
 summary|option0|DESTROYER|0	0	Increases acceleration by <good>130%</good>.
 summary|option0|DESTROYER|1	0	Increases hard flux threshold before phase speed penalty kicks in by <good>60%</good>.
 summary|option0|DESTROYER|2	0	<bad>7.43%</bad> less shield arc.
@@ -3703,67 +3696,66 @@ summary|option0|DESTROYER|105	0	Each Heartless stack increases missile damage by
 summary|option0|DESTROYER|106	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
 summary|option0|DESTROYER|107	0	Increases target leading accuracy of autofiring weapons by <good>20%</good>.
 summary|option0|DESTROYER|108	0	Increases beam weapon range by <good>5%</good>.
-summary|option0|DESTROYER|109	0	Can only be allocated on civilian-grade hulls.
-summary|option0|DESTROYER|110	0	Removes the penalties of a civilian-grade hull.
-summary|option0|DESTROYER|111	1	Increases minimum crew required by <good>100%</good>.
-summary|option0|DESTROYER|112	0	Increases missile weapon damage by <good>25%</good>.
-summary|option0|DESTROYER|113	0	Increases missile weapon ammo capacity by <good>100%</good>.
-summary|option0|DESTROYER|114	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
-summary|option0|DESTROYER|115	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
-summary|option0|DESTROYER|116	0	Increases fleet nav rating by <good>3</good>.
-summary|option0|DESTROYER|117	0	Increases non-beam energy weapon damage by <good>15%</good>.
-summary|option0|DESTROYER|118	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
-summary|option0|DESTROYER|119	0	Increases the base range of weapons in medium energy slots by <good>100</good>.
-summary|option0|DESTROYER|120	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
-summary|option0|DESTROYER|121	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
-summary|option0|DESTROYER|122	0	Increases range from which combat objectives can be captured by <good>105</good>.
-summary|option0|DESTROYER|123	0	Increases command point recovery rate while this ship is the flagship by <good>2.5</good>.
-summary|option0|DESTROYER|124	0	Increases non-beam energy weapon range by <good>100</good>.
-summary|option0|DESTROYER|125	0	Increases flux capacity by <good>15%</good>.
-summary|option0|DESTROYER|126	0	Increases flux capacity by <good>640</good>.
-summary|option0|DESTROYER|127	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
-summary|option0|DESTROYER|128	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
-summary|option0|DESTROYER|129	1	<bad>100%</bad> less phase cloak activation cost.
-summary|option0|DESTROYER|130	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
-summary|option0|DESTROYER|131	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
-summary|option0|DESTROYER|132	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-summary|option0|DESTROYER|133	0	Point-defense weapons can identify and ignore decoy flares.
-summary|option0|DESTROYER|134	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-summary|option0|DESTROYER|135	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option0|DESTROYER|136	1	Increases crew casualties by <good>50%</good>.
-summary|option0|DESTROYER|137	0	Increases weapon damage by <good>10%</good>.
-summary|option0|DESTROYER|138	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option0|DESTROYER|139	1	<bad>18.55%</bad> less negative effects from D-mods.
-summary|option0|DESTROYER|140	0	If disabled, this ship is almost always recoverable after the battle.
-summary|option0|DESTROYER|141	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option0|DESTROYER|142	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option0|DESTROYER|143	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option0|DESTROYER|144	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-summary|option0|DESTROYER|145	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option0|DESTROYER|146	0	<bad>100%</bad> less venting speed.
-summary|option0|DESTROYER|147	0	Increases range before falloff effectiveness applies by <good>450</good>.
-summary|option0|DESTROYER|148	0	<bad>75%</bad> less weapon effectiveness past normal range.
-summary|option0|DESTROYER|149	0	Increases top speed by <good>85</good>.
-summary|option0|DESTROYER|150	0	Increases acceleration by <good>60</good>.
-summary|option0|DESTROYER|151	0	Increases deceleration by <good>60</good>.
-summary|option0|DESTROYER|152	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option0|DESTROYER|153	0	Removes this ship's shield entirely.
-summary|option0|DESTROYER|154	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-summary|option0|DESTROYER|155	1	<bad>51.4%</bad> less shield flux upkeep.
-summary|option0|DESTROYER|156	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-summary|option0|DESTROYER|157	0	Increases fuel capacity by <good>24%</good>.
-summary|option0|DESTROYER|158	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>13</bad>.
-summary|option0|DESTROYER|159	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>11</bad>.
-summary|option0|DESTROYER|160	0	Captures combat objectives <good>100%</good> faster.
-summary|option0|DESTROYER|161	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
-summary|option0|DESTROYER|162	0	Increases weapon turn rate by <good>80%</good>.
-summary|option0|DESTROYER|163	0	<bad>15%</bad> less ballistic weapon range.
-summary|option0|DESTROYER|164	0	<bad>15%</bad> less energy weapon range.
-summary|option0|DESTROYER|165	1	Increases fighter refit time by <good>25%</good>.
-summary|option0|DESTROYER|166	0	Increases post-battle salvage recovered (fleet-wide) by <good>6%</good>.
-summary|option0|DESTROYER|167	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
-summary|option0|DESTROYER|168	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
-summary|option0|DESTROYER|169	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
+summary|option0|DESTROYER|109	0	Removes the penalties of a civilian-grade hull.
+summary|option0|DESTROYER|110	1	Increases minimum crew required by <good>100%</good>.
+summary|option0|DESTROYER|111	0	Increases missile weapon damage by <good>25%</good>.
+summary|option0|DESTROYER|112	0	Increases missile weapon ammo capacity by <good>100%</good>.
+summary|option0|DESTROYER|113	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
+summary|option0|DESTROYER|114	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+summary|option0|DESTROYER|115	0	Increases fleet nav rating by <good>3</good>.
+summary|option0|DESTROYER|116	0	Increases non-beam energy weapon damage by <good>15%</good>.
+summary|option0|DESTROYER|117	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
+summary|option0|DESTROYER|118	0	Increases the base range of weapons in medium energy slots by <good>100</good>.
+summary|option0|DESTROYER|119	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
+summary|option0|DESTROYER|120	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
+summary|option0|DESTROYER|121	0	Increases range from which combat objectives can be captured by <good>105</good>.
+summary|option0|DESTROYER|122	0	Increases command point recovery rate while this ship is the flagship by <good>2.5</good>.
+summary|option0|DESTROYER|123	0	Increases non-beam energy weapon range by <good>100</good>.
+summary|option0|DESTROYER|124	0	Increases flux capacity by <good>15%</good>.
+summary|option0|DESTROYER|125	0	Increases flux capacity by <good>640</good>.
+summary|option0|DESTROYER|126	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
+summary|option0|DESTROYER|127	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
+summary|option0|DESTROYER|128	1	<bad>100%</bad> less phase cloak activation cost.
+summary|option0|DESTROYER|129	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
+summary|option0|DESTROYER|130	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
+summary|option0|DESTROYER|131	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+summary|option0|DESTROYER|132	0	Point-defense weapons can identify and ignore decoy flares.
+summary|option0|DESTROYER|133	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
+summary|option0|DESTROYER|134	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
+summary|option0|DESTROYER|135	1	Increases crew casualties by <good>50%</good>.
+summary|option0|DESTROYER|136	0	Increases weapon damage by <good>10%</good>.
+summary|option0|DESTROYER|137	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
+summary|option0|DESTROYER|138	1	<bad>18.55%</bad> less negative effects from D-mods.
+summary|option0|DESTROYER|139	0	If disabled, this ship is almost always recoverable after the battle.
+summary|option0|DESTROYER|140	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
+summary|option0|DESTROYER|141	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+summary|option0|DESTROYER|142	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option0|DESTROYER|143	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
+summary|option0|DESTROYER|144	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option0|DESTROYER|145	0	<bad>100%</bad> less venting speed.
+summary|option0|DESTROYER|146	0	Increases range before falloff effectiveness applies by <good>450</good>.
+summary|option0|DESTROYER|147	0	<bad>75%</bad> less weapon effectiveness past normal range.
+summary|option0|DESTROYER|148	0	Increases top speed by <good>85</good>.
+summary|option0|DESTROYER|149	0	Increases acceleration by <good>60</good>.
+summary|option0|DESTROYER|150	0	Increases deceleration by <good>60</good>.
+summary|option0|DESTROYER|151	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option0|DESTROYER|152	0	Removes this ship's shield entirely.
+summary|option0|DESTROYER|153	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
+summary|option0|DESTROYER|154	1	<bad>51.4%</bad> less shield flux upkeep.
+summary|option0|DESTROYER|155	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option0|DESTROYER|156	0	Increases fuel capacity by <good>24%</good>.
+summary|option0|DESTROYER|157	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>13</bad>.
+summary|option0|DESTROYER|158	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>11</bad>.
+summary|option0|DESTROYER|159	0	Captures combat objectives <good>100%</good> faster.
+summary|option0|DESTROYER|160	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
+summary|option0|DESTROYER|161	0	Increases weapon turn rate by <good>80%</good>.
+summary|option0|DESTROYER|162	0	<bad>15%</bad> less ballistic weapon range.
+summary|option0|DESTROYER|163	0	<bad>15%</bad> less energy weapon range.
+summary|option0|DESTROYER|164	1	Increases fighter refit time by <good>25%</good>.
+summary|option0|DESTROYER|165	0	Increases post-battle salvage recovered (fleet-wide) by <good>6%</good>.
+summary|option0|DESTROYER|166	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
+summary|option0|DESTROYER|167	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
+summary|option0|DESTROYER|168	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
 summary|option0|CRUISER|0	0	Increases acceleration by <good>130%</good>.
 summary|option0|CRUISER|1	0	Increases hard flux threshold before phase speed penalty kicks in by <good>60%</good>.
 summary|option0|CRUISER|2	0	<bad>7.43%</bad> less shield arc.
@@ -3873,67 +3865,66 @@ summary|option0|CRUISER|105	0	Each Heartless stack increases missile damage by <
 summary|option0|CRUISER|106	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
 summary|option0|CRUISER|107	0	Increases target leading accuracy of autofiring weapons by <good>20%</good>.
 summary|option0|CRUISER|108	0	Increases beam weapon range by <good>5%</good>.
-summary|option0|CRUISER|109	0	Can only be allocated on civilian-grade hulls.
-summary|option0|CRUISER|110	0	Removes the penalties of a civilian-grade hull.
-summary|option0|CRUISER|111	1	Increases minimum crew required by <good>100%</good>.
-summary|option0|CRUISER|112	0	Increases missile weapon damage by <good>25%</good>.
-summary|option0|CRUISER|113	0	Increases missile weapon ammo capacity by <good>100%</good>.
-summary|option0|CRUISER|114	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
-summary|option0|CRUISER|115	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
-summary|option0|CRUISER|116	0	Increases fleet nav rating by <good>4</good>.
-summary|option0|CRUISER|117	0	Increases non-beam energy weapon damage by <good>15%</good>.
-summary|option0|CRUISER|118	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
-summary|option0|CRUISER|119	0	Increases the base range of weapons in medium energy slots by <good>100</good>.
-summary|option0|CRUISER|120	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
-summary|option0|CRUISER|121	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
-summary|option0|CRUISER|122	0	Increases range from which combat objectives can be captured by <good>105</good>.
-summary|option0|CRUISER|123	0	Increases command point recovery rate while this ship is the flagship by <good>2.5</good>.
-summary|option0|CRUISER|124	0	Increases non-beam energy weapon range by <good>100</good>.
-summary|option0|CRUISER|125	0	Increases flux capacity by <good>15%</good>.
-summary|option0|CRUISER|126	0	Increases flux capacity by <good>660</good>.
-summary|option0|CRUISER|127	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
-summary|option0|CRUISER|128	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
-summary|option0|CRUISER|129	1	<bad>100%</bad> less phase cloak activation cost.
-summary|option0|CRUISER|130	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
-summary|option0|CRUISER|131	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
-summary|option0|CRUISER|132	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-summary|option0|CRUISER|133	0	Point-defense weapons can identify and ignore decoy flares.
-summary|option0|CRUISER|134	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-summary|option0|CRUISER|135	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option0|CRUISER|136	1	Increases crew casualties by <good>50%</good>.
-summary|option0|CRUISER|137	0	Increases weapon damage by <good>10%</good>.
-summary|option0|CRUISER|138	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option0|CRUISER|139	1	<bad>18.55%</bad> less negative effects from D-mods.
-summary|option0|CRUISER|140	0	If disabled, this ship is almost always recoverable after the battle.
-summary|option0|CRUISER|141	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option0|CRUISER|142	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option0|CRUISER|143	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option0|CRUISER|144	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-summary|option0|CRUISER|145	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option0|CRUISER|146	0	<bad>100%</bad> less venting speed.
-summary|option0|CRUISER|147	0	Increases range before falloff effectiveness applies by <good>450</good>.
-summary|option0|CRUISER|148	0	<bad>75%</bad> less weapon effectiveness past normal range.
-summary|option0|CRUISER|149	0	Increases top speed by <good>63</good>.
-summary|option0|CRUISER|150	0	Increases acceleration by <good>40</good>.
-summary|option0|CRUISER|151	0	Increases deceleration by <good>40</good>.
-summary|option0|CRUISER|152	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option0|CRUISER|153	0	Removes this ship's shield entirely.
-summary|option0|CRUISER|154	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-summary|option0|CRUISER|155	1	<bad>51.4%</bad> less shield flux upkeep.
-summary|option0|CRUISER|156	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-summary|option0|CRUISER|157	0	Increases fuel capacity by <good>24%</good>.
-summary|option0|CRUISER|158	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>22</bad>.
-summary|option0|CRUISER|159	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>20</bad>.
-summary|option0|CRUISER|160	0	Captures combat objectives <good>100%</good> faster.
-summary|option0|CRUISER|161	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
-summary|option0|CRUISER|162	0	Increases weapon turn rate by <good>80%</good>.
-summary|option0|CRUISER|163	0	<bad>15%</bad> less ballistic weapon range.
-summary|option0|CRUISER|164	0	<bad>15%</bad> less energy weapon range.
-summary|option0|CRUISER|165	1	Increases fighter refit time by <good>25%</good>.
-summary|option0|CRUISER|166	0	Increases post-battle salvage recovered (fleet-wide) by <good>10%</good>.
-summary|option0|CRUISER|167	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
-summary|option0|CRUISER|168	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
-summary|option0|CRUISER|169	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
+summary|option0|CRUISER|109	0	Removes the penalties of a civilian-grade hull.
+summary|option0|CRUISER|110	1	Increases minimum crew required by <good>100%</good>.
+summary|option0|CRUISER|111	0	Increases missile weapon damage by <good>25%</good>.
+summary|option0|CRUISER|112	0	Increases missile weapon ammo capacity by <good>100%</good>.
+summary|option0|CRUISER|113	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
+summary|option0|CRUISER|114	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+summary|option0|CRUISER|115	0	Increases fleet nav rating by <good>4</good>.
+summary|option0|CRUISER|116	0	Increases non-beam energy weapon damage by <good>15%</good>.
+summary|option0|CRUISER|117	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
+summary|option0|CRUISER|118	0	Increases the base range of weapons in medium energy slots by <good>100</good>.
+summary|option0|CRUISER|119	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
+summary|option0|CRUISER|120	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
+summary|option0|CRUISER|121	0	Increases range from which combat objectives can be captured by <good>105</good>.
+summary|option0|CRUISER|122	0	Increases command point recovery rate while this ship is the flagship by <good>2.5</good>.
+summary|option0|CRUISER|123	0	Increases non-beam energy weapon range by <good>100</good>.
+summary|option0|CRUISER|124	0	Increases flux capacity by <good>15%</good>.
+summary|option0|CRUISER|125	0	Increases flux capacity by <good>660</good>.
+summary|option0|CRUISER|126	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
+summary|option0|CRUISER|127	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
+summary|option0|CRUISER|128	1	<bad>100%</bad> less phase cloak activation cost.
+summary|option0|CRUISER|129	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
+summary|option0|CRUISER|130	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
+summary|option0|CRUISER|131	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+summary|option0|CRUISER|132	0	Point-defense weapons can identify and ignore decoy flares.
+summary|option0|CRUISER|133	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
+summary|option0|CRUISER|134	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
+summary|option0|CRUISER|135	1	Increases crew casualties by <good>50%</good>.
+summary|option0|CRUISER|136	0	Increases weapon damage by <good>10%</good>.
+summary|option0|CRUISER|137	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
+summary|option0|CRUISER|138	1	<bad>18.55%</bad> less negative effects from D-mods.
+summary|option0|CRUISER|139	0	If disabled, this ship is almost always recoverable after the battle.
+summary|option0|CRUISER|140	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
+summary|option0|CRUISER|141	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+summary|option0|CRUISER|142	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option0|CRUISER|143	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
+summary|option0|CRUISER|144	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option0|CRUISER|145	0	<bad>100%</bad> less venting speed.
+summary|option0|CRUISER|146	0	Increases range before falloff effectiveness applies by <good>450</good>.
+summary|option0|CRUISER|147	0	<bad>75%</bad> less weapon effectiveness past normal range.
+summary|option0|CRUISER|148	0	Increases top speed by <good>63</good>.
+summary|option0|CRUISER|149	0	Increases acceleration by <good>40</good>.
+summary|option0|CRUISER|150	0	Increases deceleration by <good>40</good>.
+summary|option0|CRUISER|151	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option0|CRUISER|152	0	Removes this ship's shield entirely.
+summary|option0|CRUISER|153	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
+summary|option0|CRUISER|154	1	<bad>51.4%</bad> less shield flux upkeep.
+summary|option0|CRUISER|155	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option0|CRUISER|156	0	Increases fuel capacity by <good>24%</good>.
+summary|option0|CRUISER|157	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>22</bad>.
+summary|option0|CRUISER|158	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>20</bad>.
+summary|option0|CRUISER|159	0	Captures combat objectives <good>100%</good> faster.
+summary|option0|CRUISER|160	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
+summary|option0|CRUISER|161	0	Increases weapon turn rate by <good>80%</good>.
+summary|option0|CRUISER|162	0	<bad>15%</bad> less ballistic weapon range.
+summary|option0|CRUISER|163	0	<bad>15%</bad> less energy weapon range.
+summary|option0|CRUISER|164	1	Increases fighter refit time by <good>25%</good>.
+summary|option0|CRUISER|165	0	Increases post-battle salvage recovered (fleet-wide) by <good>10%</good>.
+summary|option0|CRUISER|166	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
+summary|option0|CRUISER|167	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
+summary|option0|CRUISER|168	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
 summary|option0|CAPITAL_SHIP|0	0	Increases acceleration by <good>130%</good>.
 summary|option0|CAPITAL_SHIP|1	0	Increases hard flux threshold before phase speed penalty kicks in by <good>60%</good>.
 summary|option0|CAPITAL_SHIP|2	0	<bad>7.43%</bad> less shield arc.
@@ -4043,67 +4034,66 @@ summary|option0|CAPITAL_SHIP|105	0	Each Heartless stack increases missile damage
 summary|option0|CAPITAL_SHIP|106	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
 summary|option0|CAPITAL_SHIP|107	0	Increases target leading accuracy of autofiring weapons by <good>20%</good>.
 summary|option0|CAPITAL_SHIP|108	0	Increases beam weapon range by <good>5%</good>.
-summary|option0|CAPITAL_SHIP|109	0	Can only be allocated on civilian-grade hulls.
-summary|option0|CAPITAL_SHIP|110	0	Removes the penalties of a civilian-grade hull.
-summary|option0|CAPITAL_SHIP|111	1	Increases minimum crew required by <good>100%</good>.
-summary|option0|CAPITAL_SHIP|112	0	Increases missile weapon damage by <good>25%</good>.
-summary|option0|CAPITAL_SHIP|113	0	Increases missile weapon ammo capacity by <good>100%</good>.
-summary|option0|CAPITAL_SHIP|114	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
-summary|option0|CAPITAL_SHIP|115	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
-summary|option0|CAPITAL_SHIP|116	0	Increases fleet nav rating by <good>5</good>.
-summary|option0|CAPITAL_SHIP|117	0	Increases non-beam energy weapon damage by <good>15%</good>.
-summary|option0|CAPITAL_SHIP|118	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
-summary|option0|CAPITAL_SHIP|119	0	Increases the base range of weapons in medium energy slots by <good>100</good>.
-summary|option0|CAPITAL_SHIP|120	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
-summary|option0|CAPITAL_SHIP|121	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
-summary|option0|CAPITAL_SHIP|122	0	Increases range from which combat objectives can be captured by <good>105</good>.
-summary|option0|CAPITAL_SHIP|123	0	Increases command point recovery rate while this ship is the flagship by <good>2.5</good>.
-summary|option0|CAPITAL_SHIP|124	0	Increases non-beam energy weapon range by <good>100</good>.
-summary|option0|CAPITAL_SHIP|125	0	Increases flux capacity by <good>15%</good>.
-summary|option0|CAPITAL_SHIP|126	0	Increases flux capacity by <good>680</good>.
-summary|option0|CAPITAL_SHIP|127	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
-summary|option0|CAPITAL_SHIP|128	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
-summary|option0|CAPITAL_SHIP|129	1	<bad>100%</bad> less phase cloak activation cost.
-summary|option0|CAPITAL_SHIP|130	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
-summary|option0|CAPITAL_SHIP|131	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
-summary|option0|CAPITAL_SHIP|132	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-summary|option0|CAPITAL_SHIP|133	0	Point-defense weapons can identify and ignore decoy flares.
-summary|option0|CAPITAL_SHIP|134	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-summary|option0|CAPITAL_SHIP|135	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option0|CAPITAL_SHIP|136	1	Increases crew casualties by <good>50%</good>.
-summary|option0|CAPITAL_SHIP|137	0	Increases weapon damage by <good>10%</good>.
-summary|option0|CAPITAL_SHIP|138	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option0|CAPITAL_SHIP|139	1	<bad>18.55%</bad> less negative effects from D-mods.
-summary|option0|CAPITAL_SHIP|140	0	If disabled, this ship is almost always recoverable after the battle.
-summary|option0|CAPITAL_SHIP|141	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option0|CAPITAL_SHIP|142	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option0|CAPITAL_SHIP|143	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option0|CAPITAL_SHIP|144	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-summary|option0|CAPITAL_SHIP|145	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option0|CAPITAL_SHIP|146	0	<bad>100%</bad> less venting speed.
-summary|option0|CAPITAL_SHIP|147	0	Increases range before falloff effectiveness applies by <good>450</good>.
-summary|option0|CAPITAL_SHIP|148	0	<bad>75%</bad> less weapon effectiveness past normal range.
-summary|option0|CAPITAL_SHIP|149	0	Increases top speed by <good>53</good>.
-summary|option0|CAPITAL_SHIP|150	0	Increases acceleration by <good>20</good>.
-summary|option0|CAPITAL_SHIP|151	0	Increases deceleration by <good>20</good>.
-summary|option0|CAPITAL_SHIP|152	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option0|CAPITAL_SHIP|153	0	Removes this ship's shield entirely.
-summary|option0|CAPITAL_SHIP|154	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-summary|option0|CAPITAL_SHIP|155	1	<bad>51.4%</bad> less shield flux upkeep.
-summary|option0|CAPITAL_SHIP|156	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-summary|option0|CAPITAL_SHIP|157	0	Increases fuel capacity by <good>24%</good>.
-summary|option0|CAPITAL_SHIP|158	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>42</bad>.
-summary|option0|CAPITAL_SHIP|159	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>40</bad>.
-summary|option0|CAPITAL_SHIP|160	0	Captures combat objectives <good>100%</good> faster.
-summary|option0|CAPITAL_SHIP|161	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
-summary|option0|CAPITAL_SHIP|162	0	Increases weapon turn rate by <good>80%</good>.
-summary|option0|CAPITAL_SHIP|163	0	<bad>15%</bad> less ballistic weapon range.
-summary|option0|CAPITAL_SHIP|164	0	<bad>15%</bad> less energy weapon range.
-summary|option0|CAPITAL_SHIP|165	1	Increases fighter refit time by <good>25%</good>.
-summary|option0|CAPITAL_SHIP|166	0	Increases post-battle salvage recovered (fleet-wide) by <good>15%</good>.
-summary|option0|CAPITAL_SHIP|167	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
-summary|option0|CAPITAL_SHIP|168	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
-summary|option0|CAPITAL_SHIP|169	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
+summary|option0|CAPITAL_SHIP|109	0	Removes the penalties of a civilian-grade hull.
+summary|option0|CAPITAL_SHIP|110	1	Increases minimum crew required by <good>100%</good>.
+summary|option0|CAPITAL_SHIP|111	0	Increases missile weapon damage by <good>25%</good>.
+summary|option0|CAPITAL_SHIP|112	0	Increases missile weapon ammo capacity by <good>100%</good>.
+summary|option0|CAPITAL_SHIP|113	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
+summary|option0|CAPITAL_SHIP|114	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+summary|option0|CAPITAL_SHIP|115	0	Increases fleet nav rating by <good>5</good>.
+summary|option0|CAPITAL_SHIP|116	0	Increases non-beam energy weapon damage by <good>15%</good>.
+summary|option0|CAPITAL_SHIP|117	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
+summary|option0|CAPITAL_SHIP|118	0	Increases the base range of weapons in medium energy slots by <good>100</good>.
+summary|option0|CAPITAL_SHIP|119	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
+summary|option0|CAPITAL_SHIP|120	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
+summary|option0|CAPITAL_SHIP|121	0	Increases range from which combat objectives can be captured by <good>105</good>.
+summary|option0|CAPITAL_SHIP|122	0	Increases command point recovery rate while this ship is the flagship by <good>2.5</good>.
+summary|option0|CAPITAL_SHIP|123	0	Increases non-beam energy weapon range by <good>100</good>.
+summary|option0|CAPITAL_SHIP|124	0	Increases flux capacity by <good>15%</good>.
+summary|option0|CAPITAL_SHIP|125	0	Increases flux capacity by <good>680</good>.
+summary|option0|CAPITAL_SHIP|126	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
+summary|option0|CAPITAL_SHIP|127	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
+summary|option0|CAPITAL_SHIP|128	1	<bad>100%</bad> less phase cloak activation cost.
+summary|option0|CAPITAL_SHIP|129	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
+summary|option0|CAPITAL_SHIP|130	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
+summary|option0|CAPITAL_SHIP|131	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+summary|option0|CAPITAL_SHIP|132	0	Point-defense weapons can identify and ignore decoy flares.
+summary|option0|CAPITAL_SHIP|133	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
+summary|option0|CAPITAL_SHIP|134	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
+summary|option0|CAPITAL_SHIP|135	1	Increases crew casualties by <good>50%</good>.
+summary|option0|CAPITAL_SHIP|136	0	Increases weapon damage by <good>10%</good>.
+summary|option0|CAPITAL_SHIP|137	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
+summary|option0|CAPITAL_SHIP|138	1	<bad>18.55%</bad> less negative effects from D-mods.
+summary|option0|CAPITAL_SHIP|139	0	If disabled, this ship is almost always recoverable after the battle.
+summary|option0|CAPITAL_SHIP|140	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
+summary|option0|CAPITAL_SHIP|141	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+summary|option0|CAPITAL_SHIP|142	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option0|CAPITAL_SHIP|143	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
+summary|option0|CAPITAL_SHIP|144	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option0|CAPITAL_SHIP|145	0	<bad>100%</bad> less venting speed.
+summary|option0|CAPITAL_SHIP|146	0	Increases range before falloff effectiveness applies by <good>450</good>.
+summary|option0|CAPITAL_SHIP|147	0	<bad>75%</bad> less weapon effectiveness past normal range.
+summary|option0|CAPITAL_SHIP|148	0	Increases top speed by <good>53</good>.
+summary|option0|CAPITAL_SHIP|149	0	Increases acceleration by <good>20</good>.
+summary|option0|CAPITAL_SHIP|150	0	Increases deceleration by <good>20</good>.
+summary|option0|CAPITAL_SHIP|151	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option0|CAPITAL_SHIP|152	0	Removes this ship's shield entirely.
+summary|option0|CAPITAL_SHIP|153	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
+summary|option0|CAPITAL_SHIP|154	1	<bad>51.4%</bad> less shield flux upkeep.
+summary|option0|CAPITAL_SHIP|155	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option0|CAPITAL_SHIP|156	0	Increases fuel capacity by <good>24%</good>.
+summary|option0|CAPITAL_SHIP|157	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>42</bad>.
+summary|option0|CAPITAL_SHIP|158	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>40</bad>.
+summary|option0|CAPITAL_SHIP|159	0	Captures combat objectives <good>100%</good> faster.
+summary|option0|CAPITAL_SHIP|160	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
+summary|option0|CAPITAL_SHIP|161	0	Increases weapon turn rate by <good>80%</good>.
+summary|option0|CAPITAL_SHIP|162	0	<bad>15%</bad> less ballistic weapon range.
+summary|option0|CAPITAL_SHIP|163	0	<bad>15%</bad> less energy weapon range.
+summary|option0|CAPITAL_SHIP|164	1	Increases fighter refit time by <good>25%</good>.
+summary|option0|CAPITAL_SHIP|165	0	Increases post-battle salvage recovered (fleet-wide) by <good>15%</good>.
+summary|option0|CAPITAL_SHIP|166	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
+summary|option0|CAPITAL_SHIP|167	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
+summary|option0|CAPITAL_SHIP|168	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
 summary|option1|FRIGATE|0	0	Increases acceleration by <good>130%</good>.
 summary|option1|FRIGATE|1	0	Increases hard flux threshold before phase speed penalty kicks in by <good>60%</good>.
 summary|option1|FRIGATE|2	0	<bad>7.43%</bad> less shield arc.
@@ -4213,67 +4203,66 @@ summary|option1|FRIGATE|105	0	Each Heartless stack increases missile damage by <
 summary|option1|FRIGATE|106	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
 summary|option1|FRIGATE|107	0	Increases target leading accuracy of autofiring weapons by <good>20%</good>.
 summary|option1|FRIGATE|108	0	Increases beam weapon range by <good>5%</good>.
-summary|option1|FRIGATE|109	0	Can only be allocated on civilian-grade hulls.
-summary|option1|FRIGATE|110	0	Removes the penalties of a civilian-grade hull.
-summary|option1|FRIGATE|111	1	Increases minimum crew required by <good>100%</good>.
-summary|option1|FRIGATE|112	0	Increases missile weapon damage by <good>25%</good>.
-summary|option1|FRIGATE|113	0	Increases missile weapon ammo capacity by <good>100%</good>.
-summary|option1|FRIGATE|114	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
-summary|option1|FRIGATE|115	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
-summary|option1|FRIGATE|116	0	Increases fleet nav rating by <good>2</good>.
-summary|option1|FRIGATE|117	0	Increases non-beam energy weapon damage by <good>15%</good>.
-summary|option1|FRIGATE|118	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
-summary|option1|FRIGATE|119	0	Increases the base range of weapons in medium energy slots by <good>100</good>.
-summary|option1|FRIGATE|120	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
-summary|option1|FRIGATE|121	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
-summary|option1|FRIGATE|122	0	Increases range from which combat objectives can be captured by <good>105</good>.
-summary|option1|FRIGATE|123	0	Increases command point recovery rate while this ship is the flagship by <good>2.5</good>.
-summary|option1|FRIGATE|124	0	Increases non-beam energy weapon range by <good>100</good>.
-summary|option1|FRIGATE|125	0	Increases flux capacity by <good>15%</good>.
-summary|option1|FRIGATE|126	0	Increases flux capacity by <good>620</good>.
-summary|option1|FRIGATE|127	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
-summary|option1|FRIGATE|128	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
-summary|option1|FRIGATE|129	1	<bad>100%</bad> less phase cloak activation cost.
-summary|option1|FRIGATE|130	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
-summary|option1|FRIGATE|131	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
-summary|option1|FRIGATE|132	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-summary|option1|FRIGATE|133	0	Point-defense weapons can identify and ignore decoy flares.
-summary|option1|FRIGATE|134	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-summary|option1|FRIGATE|135	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option1|FRIGATE|136	1	Increases crew casualties by <good>50%</good>.
-summary|option1|FRIGATE|137	0	Increases weapon damage by <good>10%</good>.
-summary|option1|FRIGATE|138	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option1|FRIGATE|139	1	<bad>18.55%</bad> less negative effects from D-mods.
-summary|option1|FRIGATE|140	0	If disabled, this ship is almost always recoverable after the battle.
-summary|option1|FRIGATE|141	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option1|FRIGATE|142	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option1|FRIGATE|143	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option1|FRIGATE|144	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-summary|option1|FRIGATE|145	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option1|FRIGATE|146	0	<bad>100%</bad> less venting speed.
-summary|option1|FRIGATE|147	0	Increases range before falloff effectiveness applies by <good>450</good>.
-summary|option1|FRIGATE|148	0	<bad>75%</bad> less weapon effectiveness past normal range.
-summary|option1|FRIGATE|149	0	Increases top speed by <good>117</good>.
-summary|option1|FRIGATE|150	0	Increases acceleration by <good>100</good>.
-summary|option1|FRIGATE|151	0	Increases deceleration by <good>100</good>.
-summary|option1|FRIGATE|152	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option1|FRIGATE|153	0	Removes this ship's shield entirely.
-summary|option1|FRIGATE|154	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-summary|option1|FRIGATE|155	1	<bad>51.4%</bad> less shield flux upkeep.
-summary|option1|FRIGATE|156	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-summary|option1|FRIGATE|157	0	Increases cargo capacity by <good>24%</good>.
-summary|option1|FRIGATE|158	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>7</bad>.
-summary|option1|FRIGATE|159	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>5</bad>.
-summary|option1|FRIGATE|160	0	Captures combat objectives <good>100%</good> faster.
-summary|option1|FRIGATE|161	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
-summary|option1|FRIGATE|162	0	Increases weapon turn rate by <good>80%</good>.
-summary|option1|FRIGATE|163	0	<bad>15%</bad> less ballistic weapon range.
-summary|option1|FRIGATE|164	0	<bad>15%</bad> less energy weapon range.
-summary|option1|FRIGATE|165	1	Increases fighter refit time by <good>25%</good>.
-summary|option1|FRIGATE|166	0	Increases post-battle salvage recovered (fleet-wide) by <good>3%</good>.
-summary|option1|FRIGATE|167	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
-summary|option1|FRIGATE|168	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
-summary|option1|FRIGATE|169	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
+summary|option1|FRIGATE|109	0	Removes the penalties of a civilian-grade hull.
+summary|option1|FRIGATE|110	1	Increases minimum crew required by <good>100%</good>.
+summary|option1|FRIGATE|111	0	Increases missile weapon damage by <good>25%</good>.
+summary|option1|FRIGATE|112	0	Increases missile weapon ammo capacity by <good>100%</good>.
+summary|option1|FRIGATE|113	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
+summary|option1|FRIGATE|114	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+summary|option1|FRIGATE|115	0	Increases fleet nav rating by <good>2</good>.
+summary|option1|FRIGATE|116	0	Increases non-beam energy weapon damage by <good>15%</good>.
+summary|option1|FRIGATE|117	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
+summary|option1|FRIGATE|118	0	Increases the base range of weapons in medium energy slots by <good>100</good>.
+summary|option1|FRIGATE|119	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
+summary|option1|FRIGATE|120	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
+summary|option1|FRIGATE|121	0	Increases range from which combat objectives can be captured by <good>105</good>.
+summary|option1|FRIGATE|122	0	Increases command point recovery rate while this ship is the flagship by <good>2.5</good>.
+summary|option1|FRIGATE|123	0	Increases non-beam energy weapon range by <good>100</good>.
+summary|option1|FRIGATE|124	0	Increases flux capacity by <good>15%</good>.
+summary|option1|FRIGATE|125	0	Increases flux capacity by <good>620</good>.
+summary|option1|FRIGATE|126	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
+summary|option1|FRIGATE|127	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
+summary|option1|FRIGATE|128	1	<bad>100%</bad> less phase cloak activation cost.
+summary|option1|FRIGATE|129	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
+summary|option1|FRIGATE|130	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
+summary|option1|FRIGATE|131	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+summary|option1|FRIGATE|132	0	Point-defense weapons can identify and ignore decoy flares.
+summary|option1|FRIGATE|133	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
+summary|option1|FRIGATE|134	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
+summary|option1|FRIGATE|135	1	Increases crew casualties by <good>50%</good>.
+summary|option1|FRIGATE|136	0	Increases weapon damage by <good>10%</good>.
+summary|option1|FRIGATE|137	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
+summary|option1|FRIGATE|138	1	<bad>18.55%</bad> less negative effects from D-mods.
+summary|option1|FRIGATE|139	0	If disabled, this ship is almost always recoverable after the battle.
+summary|option1|FRIGATE|140	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
+summary|option1|FRIGATE|141	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+summary|option1|FRIGATE|142	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option1|FRIGATE|143	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
+summary|option1|FRIGATE|144	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option1|FRIGATE|145	0	<bad>100%</bad> less venting speed.
+summary|option1|FRIGATE|146	0	Increases range before falloff effectiveness applies by <good>450</good>.
+summary|option1|FRIGATE|147	0	<bad>75%</bad> less weapon effectiveness past normal range.
+summary|option1|FRIGATE|148	0	Increases top speed by <good>117</good>.
+summary|option1|FRIGATE|149	0	Increases acceleration by <good>100</good>.
+summary|option1|FRIGATE|150	0	Increases deceleration by <good>100</good>.
+summary|option1|FRIGATE|151	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option1|FRIGATE|152	0	Removes this ship's shield entirely.
+summary|option1|FRIGATE|153	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
+summary|option1|FRIGATE|154	1	<bad>51.4%</bad> less shield flux upkeep.
+summary|option1|FRIGATE|155	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option1|FRIGATE|156	0	Increases cargo capacity by <good>24%</good>.
+summary|option1|FRIGATE|157	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>7</bad>.
+summary|option1|FRIGATE|158	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>5</bad>.
+summary|option1|FRIGATE|159	0	Captures combat objectives <good>100%</good> faster.
+summary|option1|FRIGATE|160	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
+summary|option1|FRIGATE|161	0	Increases weapon turn rate by <good>80%</good>.
+summary|option1|FRIGATE|162	0	<bad>15%</bad> less ballistic weapon range.
+summary|option1|FRIGATE|163	0	<bad>15%</bad> less energy weapon range.
+summary|option1|FRIGATE|164	1	Increases fighter refit time by <good>25%</good>.
+summary|option1|FRIGATE|165	0	Increases post-battle salvage recovered (fleet-wide) by <good>3%</good>.
+summary|option1|FRIGATE|166	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
+summary|option1|FRIGATE|167	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
+summary|option1|FRIGATE|168	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
 summary|option1|DESTROYER|0	0	Increases acceleration by <good>130%</good>.
 summary|option1|DESTROYER|1	0	Increases hard flux threshold before phase speed penalty kicks in by <good>60%</good>.
 summary|option1|DESTROYER|2	0	<bad>7.43%</bad> less shield arc.
@@ -4383,67 +4372,66 @@ summary|option1|DESTROYER|105	0	Each Heartless stack increases missile damage by
 summary|option1|DESTROYER|106	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
 summary|option1|DESTROYER|107	0	Increases target leading accuracy of autofiring weapons by <good>20%</good>.
 summary|option1|DESTROYER|108	0	Increases beam weapon range by <good>5%</good>.
-summary|option1|DESTROYER|109	0	Can only be allocated on civilian-grade hulls.
-summary|option1|DESTROYER|110	0	Removes the penalties of a civilian-grade hull.
-summary|option1|DESTROYER|111	1	Increases minimum crew required by <good>100%</good>.
-summary|option1|DESTROYER|112	0	Increases missile weapon damage by <good>25%</good>.
-summary|option1|DESTROYER|113	0	Increases missile weapon ammo capacity by <good>100%</good>.
-summary|option1|DESTROYER|114	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
-summary|option1|DESTROYER|115	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
-summary|option1|DESTROYER|116	0	Increases fleet nav rating by <good>3</good>.
-summary|option1|DESTROYER|117	0	Increases non-beam energy weapon damage by <good>15%</good>.
-summary|option1|DESTROYER|118	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
-summary|option1|DESTROYER|119	0	Increases the base range of weapons in medium energy slots by <good>100</good>.
-summary|option1|DESTROYER|120	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
-summary|option1|DESTROYER|121	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
-summary|option1|DESTROYER|122	0	Increases range from which combat objectives can be captured by <good>105</good>.
-summary|option1|DESTROYER|123	0	Increases command point recovery rate while this ship is the flagship by <good>2.5</good>.
-summary|option1|DESTROYER|124	0	Increases non-beam energy weapon range by <good>100</good>.
-summary|option1|DESTROYER|125	0	Increases flux capacity by <good>15%</good>.
-summary|option1|DESTROYER|126	0	Increases flux capacity by <good>640</good>.
-summary|option1|DESTROYER|127	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
-summary|option1|DESTROYER|128	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
-summary|option1|DESTROYER|129	1	<bad>100%</bad> less phase cloak activation cost.
-summary|option1|DESTROYER|130	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
-summary|option1|DESTROYER|131	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
-summary|option1|DESTROYER|132	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-summary|option1|DESTROYER|133	0	Point-defense weapons can identify and ignore decoy flares.
-summary|option1|DESTROYER|134	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-summary|option1|DESTROYER|135	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option1|DESTROYER|136	1	Increases crew casualties by <good>50%</good>.
-summary|option1|DESTROYER|137	0	Increases weapon damage by <good>10%</good>.
-summary|option1|DESTROYER|138	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option1|DESTROYER|139	1	<bad>18.55%</bad> less negative effects from D-mods.
-summary|option1|DESTROYER|140	0	If disabled, this ship is almost always recoverable after the battle.
-summary|option1|DESTROYER|141	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option1|DESTROYER|142	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option1|DESTROYER|143	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option1|DESTROYER|144	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-summary|option1|DESTROYER|145	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option1|DESTROYER|146	0	<bad>100%</bad> less venting speed.
-summary|option1|DESTROYER|147	0	Increases range before falloff effectiveness applies by <good>450</good>.
-summary|option1|DESTROYER|148	0	<bad>75%</bad> less weapon effectiveness past normal range.
-summary|option1|DESTROYER|149	0	Increases top speed by <good>85</good>.
-summary|option1|DESTROYER|150	0	Increases acceleration by <good>60</good>.
-summary|option1|DESTROYER|151	0	Increases deceleration by <good>60</good>.
-summary|option1|DESTROYER|152	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option1|DESTROYER|153	0	Removes this ship's shield entirely.
-summary|option1|DESTROYER|154	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-summary|option1|DESTROYER|155	1	<bad>51.4%</bad> less shield flux upkeep.
-summary|option1|DESTROYER|156	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-summary|option1|DESTROYER|157	0	Increases cargo capacity by <good>24%</good>.
-summary|option1|DESTROYER|158	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>13</bad>.
-summary|option1|DESTROYER|159	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>11</bad>.
-summary|option1|DESTROYER|160	0	Captures combat objectives <good>100%</good> faster.
-summary|option1|DESTROYER|161	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
-summary|option1|DESTROYER|162	0	Increases weapon turn rate by <good>80%</good>.
-summary|option1|DESTROYER|163	0	<bad>15%</bad> less ballistic weapon range.
-summary|option1|DESTROYER|164	0	<bad>15%</bad> less energy weapon range.
-summary|option1|DESTROYER|165	1	Increases fighter refit time by <good>25%</good>.
-summary|option1|DESTROYER|166	0	Increases post-battle salvage recovered (fleet-wide) by <good>6%</good>.
-summary|option1|DESTROYER|167	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
-summary|option1|DESTROYER|168	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
-summary|option1|DESTROYER|169	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
+summary|option1|DESTROYER|109	0	Removes the penalties of a civilian-grade hull.
+summary|option1|DESTROYER|110	1	Increases minimum crew required by <good>100%</good>.
+summary|option1|DESTROYER|111	0	Increases missile weapon damage by <good>25%</good>.
+summary|option1|DESTROYER|112	0	Increases missile weapon ammo capacity by <good>100%</good>.
+summary|option1|DESTROYER|113	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
+summary|option1|DESTROYER|114	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+summary|option1|DESTROYER|115	0	Increases fleet nav rating by <good>3</good>.
+summary|option1|DESTROYER|116	0	Increases non-beam energy weapon damage by <good>15%</good>.
+summary|option1|DESTROYER|117	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
+summary|option1|DESTROYER|118	0	Increases the base range of weapons in medium energy slots by <good>100</good>.
+summary|option1|DESTROYER|119	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
+summary|option1|DESTROYER|120	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
+summary|option1|DESTROYER|121	0	Increases range from which combat objectives can be captured by <good>105</good>.
+summary|option1|DESTROYER|122	0	Increases command point recovery rate while this ship is the flagship by <good>2.5</good>.
+summary|option1|DESTROYER|123	0	Increases non-beam energy weapon range by <good>100</good>.
+summary|option1|DESTROYER|124	0	Increases flux capacity by <good>15%</good>.
+summary|option1|DESTROYER|125	0	Increases flux capacity by <good>640</good>.
+summary|option1|DESTROYER|126	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
+summary|option1|DESTROYER|127	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
+summary|option1|DESTROYER|128	1	<bad>100%</bad> less phase cloak activation cost.
+summary|option1|DESTROYER|129	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
+summary|option1|DESTROYER|130	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
+summary|option1|DESTROYER|131	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+summary|option1|DESTROYER|132	0	Point-defense weapons can identify and ignore decoy flares.
+summary|option1|DESTROYER|133	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
+summary|option1|DESTROYER|134	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
+summary|option1|DESTROYER|135	1	Increases crew casualties by <good>50%</good>.
+summary|option1|DESTROYER|136	0	Increases weapon damage by <good>10%</good>.
+summary|option1|DESTROYER|137	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
+summary|option1|DESTROYER|138	1	<bad>18.55%</bad> less negative effects from D-mods.
+summary|option1|DESTROYER|139	0	If disabled, this ship is almost always recoverable after the battle.
+summary|option1|DESTROYER|140	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
+summary|option1|DESTROYER|141	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+summary|option1|DESTROYER|142	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option1|DESTROYER|143	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
+summary|option1|DESTROYER|144	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option1|DESTROYER|145	0	<bad>100%</bad> less venting speed.
+summary|option1|DESTROYER|146	0	Increases range before falloff effectiveness applies by <good>450</good>.
+summary|option1|DESTROYER|147	0	<bad>75%</bad> less weapon effectiveness past normal range.
+summary|option1|DESTROYER|148	0	Increases top speed by <good>85</good>.
+summary|option1|DESTROYER|149	0	Increases acceleration by <good>60</good>.
+summary|option1|DESTROYER|150	0	Increases deceleration by <good>60</good>.
+summary|option1|DESTROYER|151	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option1|DESTROYER|152	0	Removes this ship's shield entirely.
+summary|option1|DESTROYER|153	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
+summary|option1|DESTROYER|154	1	<bad>51.4%</bad> less shield flux upkeep.
+summary|option1|DESTROYER|155	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option1|DESTROYER|156	0	Increases cargo capacity by <good>24%</good>.
+summary|option1|DESTROYER|157	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>13</bad>.
+summary|option1|DESTROYER|158	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>11</bad>.
+summary|option1|DESTROYER|159	0	Captures combat objectives <good>100%</good> faster.
+summary|option1|DESTROYER|160	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
+summary|option1|DESTROYER|161	0	Increases weapon turn rate by <good>80%</good>.
+summary|option1|DESTROYER|162	0	<bad>15%</bad> less ballistic weapon range.
+summary|option1|DESTROYER|163	0	<bad>15%</bad> less energy weapon range.
+summary|option1|DESTROYER|164	1	Increases fighter refit time by <good>25%</good>.
+summary|option1|DESTROYER|165	0	Increases post-battle salvage recovered (fleet-wide) by <good>6%</good>.
+summary|option1|DESTROYER|166	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
+summary|option1|DESTROYER|167	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
+summary|option1|DESTROYER|168	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
 summary|option1|CRUISER|0	0	Increases acceleration by <good>130%</good>.
 summary|option1|CRUISER|1	0	Increases hard flux threshold before phase speed penalty kicks in by <good>60%</good>.
 summary|option1|CRUISER|2	0	<bad>7.43%</bad> less shield arc.
@@ -4553,67 +4541,66 @@ summary|option1|CRUISER|105	0	Each Heartless stack increases missile damage by <
 summary|option1|CRUISER|106	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
 summary|option1|CRUISER|107	0	Increases target leading accuracy of autofiring weapons by <good>20%</good>.
 summary|option1|CRUISER|108	0	Increases beam weapon range by <good>5%</good>.
-summary|option1|CRUISER|109	0	Can only be allocated on civilian-grade hulls.
-summary|option1|CRUISER|110	0	Removes the penalties of a civilian-grade hull.
-summary|option1|CRUISER|111	1	Increases minimum crew required by <good>100%</good>.
-summary|option1|CRUISER|112	0	Increases missile weapon damage by <good>25%</good>.
-summary|option1|CRUISER|113	0	Increases missile weapon ammo capacity by <good>100%</good>.
-summary|option1|CRUISER|114	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
-summary|option1|CRUISER|115	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
-summary|option1|CRUISER|116	0	Increases fleet nav rating by <good>4</good>.
-summary|option1|CRUISER|117	0	Increases non-beam energy weapon damage by <good>15%</good>.
-summary|option1|CRUISER|118	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
-summary|option1|CRUISER|119	0	Increases the base range of weapons in medium energy slots by <good>100</good>.
-summary|option1|CRUISER|120	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
-summary|option1|CRUISER|121	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
-summary|option1|CRUISER|122	0	Increases range from which combat objectives can be captured by <good>105</good>.
-summary|option1|CRUISER|123	0	Increases command point recovery rate while this ship is the flagship by <good>2.5</good>.
-summary|option1|CRUISER|124	0	Increases non-beam energy weapon range by <good>100</good>.
-summary|option1|CRUISER|125	0	Increases flux capacity by <good>15%</good>.
-summary|option1|CRUISER|126	0	Increases flux capacity by <good>660</good>.
-summary|option1|CRUISER|127	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
-summary|option1|CRUISER|128	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
-summary|option1|CRUISER|129	1	<bad>100%</bad> less phase cloak activation cost.
-summary|option1|CRUISER|130	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
-summary|option1|CRUISER|131	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
-summary|option1|CRUISER|132	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-summary|option1|CRUISER|133	0	Point-defense weapons can identify and ignore decoy flares.
-summary|option1|CRUISER|134	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-summary|option1|CRUISER|135	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option1|CRUISER|136	1	Increases crew casualties by <good>50%</good>.
-summary|option1|CRUISER|137	0	Increases weapon damage by <good>10%</good>.
-summary|option1|CRUISER|138	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option1|CRUISER|139	1	<bad>18.55%</bad> less negative effects from D-mods.
-summary|option1|CRUISER|140	0	If disabled, this ship is almost always recoverable after the battle.
-summary|option1|CRUISER|141	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option1|CRUISER|142	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option1|CRUISER|143	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option1|CRUISER|144	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-summary|option1|CRUISER|145	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option1|CRUISER|146	0	<bad>100%</bad> less venting speed.
-summary|option1|CRUISER|147	0	Increases range before falloff effectiveness applies by <good>450</good>.
-summary|option1|CRUISER|148	0	<bad>75%</bad> less weapon effectiveness past normal range.
-summary|option1|CRUISER|149	0	Increases top speed by <good>63</good>.
-summary|option1|CRUISER|150	0	Increases acceleration by <good>40</good>.
-summary|option1|CRUISER|151	0	Increases deceleration by <good>40</good>.
-summary|option1|CRUISER|152	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option1|CRUISER|153	0	Removes this ship's shield entirely.
-summary|option1|CRUISER|154	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-summary|option1|CRUISER|155	1	<bad>51.4%</bad> less shield flux upkeep.
-summary|option1|CRUISER|156	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-summary|option1|CRUISER|157	0	Increases cargo capacity by <good>24%</good>.
-summary|option1|CRUISER|158	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>22</bad>.
-summary|option1|CRUISER|159	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>20</bad>.
-summary|option1|CRUISER|160	0	Captures combat objectives <good>100%</good> faster.
-summary|option1|CRUISER|161	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
-summary|option1|CRUISER|162	0	Increases weapon turn rate by <good>80%</good>.
-summary|option1|CRUISER|163	0	<bad>15%</bad> less ballistic weapon range.
-summary|option1|CRUISER|164	0	<bad>15%</bad> less energy weapon range.
-summary|option1|CRUISER|165	1	Increases fighter refit time by <good>25%</good>.
-summary|option1|CRUISER|166	0	Increases post-battle salvage recovered (fleet-wide) by <good>10%</good>.
-summary|option1|CRUISER|167	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
-summary|option1|CRUISER|168	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
-summary|option1|CRUISER|169	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
+summary|option1|CRUISER|109	0	Removes the penalties of a civilian-grade hull.
+summary|option1|CRUISER|110	1	Increases minimum crew required by <good>100%</good>.
+summary|option1|CRUISER|111	0	Increases missile weapon damage by <good>25%</good>.
+summary|option1|CRUISER|112	0	Increases missile weapon ammo capacity by <good>100%</good>.
+summary|option1|CRUISER|113	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
+summary|option1|CRUISER|114	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+summary|option1|CRUISER|115	0	Increases fleet nav rating by <good>4</good>.
+summary|option1|CRUISER|116	0	Increases non-beam energy weapon damage by <good>15%</good>.
+summary|option1|CRUISER|117	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
+summary|option1|CRUISER|118	0	Increases the base range of weapons in medium energy slots by <good>100</good>.
+summary|option1|CRUISER|119	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
+summary|option1|CRUISER|120	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
+summary|option1|CRUISER|121	0	Increases range from which combat objectives can be captured by <good>105</good>.
+summary|option1|CRUISER|122	0	Increases command point recovery rate while this ship is the flagship by <good>2.5</good>.
+summary|option1|CRUISER|123	0	Increases non-beam energy weapon range by <good>100</good>.
+summary|option1|CRUISER|124	0	Increases flux capacity by <good>15%</good>.
+summary|option1|CRUISER|125	0	Increases flux capacity by <good>660</good>.
+summary|option1|CRUISER|126	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
+summary|option1|CRUISER|127	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
+summary|option1|CRUISER|128	1	<bad>100%</bad> less phase cloak activation cost.
+summary|option1|CRUISER|129	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
+summary|option1|CRUISER|130	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
+summary|option1|CRUISER|131	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+summary|option1|CRUISER|132	0	Point-defense weapons can identify and ignore decoy flares.
+summary|option1|CRUISER|133	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
+summary|option1|CRUISER|134	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
+summary|option1|CRUISER|135	1	Increases crew casualties by <good>50%</good>.
+summary|option1|CRUISER|136	0	Increases weapon damage by <good>10%</good>.
+summary|option1|CRUISER|137	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
+summary|option1|CRUISER|138	1	<bad>18.55%</bad> less negative effects from D-mods.
+summary|option1|CRUISER|139	0	If disabled, this ship is almost always recoverable after the battle.
+summary|option1|CRUISER|140	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
+summary|option1|CRUISER|141	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+summary|option1|CRUISER|142	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option1|CRUISER|143	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
+summary|option1|CRUISER|144	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option1|CRUISER|145	0	<bad>100%</bad> less venting speed.
+summary|option1|CRUISER|146	0	Increases range before falloff effectiveness applies by <good>450</good>.
+summary|option1|CRUISER|147	0	<bad>75%</bad> less weapon effectiveness past normal range.
+summary|option1|CRUISER|148	0	Increases top speed by <good>63</good>.
+summary|option1|CRUISER|149	0	Increases acceleration by <good>40</good>.
+summary|option1|CRUISER|150	0	Increases deceleration by <good>40</good>.
+summary|option1|CRUISER|151	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option1|CRUISER|152	0	Removes this ship's shield entirely.
+summary|option1|CRUISER|153	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
+summary|option1|CRUISER|154	1	<bad>51.4%</bad> less shield flux upkeep.
+summary|option1|CRUISER|155	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option1|CRUISER|156	0	Increases cargo capacity by <good>24%</good>.
+summary|option1|CRUISER|157	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>22</bad>.
+summary|option1|CRUISER|158	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>20</bad>.
+summary|option1|CRUISER|159	0	Captures combat objectives <good>100%</good> faster.
+summary|option1|CRUISER|160	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
+summary|option1|CRUISER|161	0	Increases weapon turn rate by <good>80%</good>.
+summary|option1|CRUISER|162	0	<bad>15%</bad> less ballistic weapon range.
+summary|option1|CRUISER|163	0	<bad>15%</bad> less energy weapon range.
+summary|option1|CRUISER|164	1	Increases fighter refit time by <good>25%</good>.
+summary|option1|CRUISER|165	0	Increases post-battle salvage recovered (fleet-wide) by <good>10%</good>.
+summary|option1|CRUISER|166	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
+summary|option1|CRUISER|167	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
+summary|option1|CRUISER|168	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
 summary|option1|CAPITAL_SHIP|0	0	Increases acceleration by <good>130%</good>.
 summary|option1|CAPITAL_SHIP|1	0	Increases hard flux threshold before phase speed penalty kicks in by <good>60%</good>.
 summary|option1|CAPITAL_SHIP|2	0	<bad>7.43%</bad> less shield arc.
@@ -4723,67 +4710,66 @@ summary|option1|CAPITAL_SHIP|105	0	Each Heartless stack increases missile damage
 summary|option1|CAPITAL_SHIP|106	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
 summary|option1|CAPITAL_SHIP|107	0	Increases target leading accuracy of autofiring weapons by <good>20%</good>.
 summary|option1|CAPITAL_SHIP|108	0	Increases beam weapon range by <good>5%</good>.
-summary|option1|CAPITAL_SHIP|109	0	Can only be allocated on civilian-grade hulls.
-summary|option1|CAPITAL_SHIP|110	0	Removes the penalties of a civilian-grade hull.
-summary|option1|CAPITAL_SHIP|111	1	Increases minimum crew required by <good>100%</good>.
-summary|option1|CAPITAL_SHIP|112	0	Increases missile weapon damage by <good>25%</good>.
-summary|option1|CAPITAL_SHIP|113	0	Increases missile weapon ammo capacity by <good>100%</good>.
-summary|option1|CAPITAL_SHIP|114	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
-summary|option1|CAPITAL_SHIP|115	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
-summary|option1|CAPITAL_SHIP|116	0	Increases fleet nav rating by <good>5</good>.
-summary|option1|CAPITAL_SHIP|117	0	Increases non-beam energy weapon damage by <good>15%</good>.
-summary|option1|CAPITAL_SHIP|118	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
-summary|option1|CAPITAL_SHIP|119	0	Increases the base range of weapons in medium energy slots by <good>100</good>.
-summary|option1|CAPITAL_SHIP|120	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
-summary|option1|CAPITAL_SHIP|121	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
-summary|option1|CAPITAL_SHIP|122	0	Increases range from which combat objectives can be captured by <good>105</good>.
-summary|option1|CAPITAL_SHIP|123	0	Increases command point recovery rate while this ship is the flagship by <good>2.5</good>.
-summary|option1|CAPITAL_SHIP|124	0	Increases non-beam energy weapon range by <good>100</good>.
-summary|option1|CAPITAL_SHIP|125	0	Increases flux capacity by <good>15%</good>.
-summary|option1|CAPITAL_SHIP|126	0	Increases flux capacity by <good>680</good>.
-summary|option1|CAPITAL_SHIP|127	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
-summary|option1|CAPITAL_SHIP|128	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
-summary|option1|CAPITAL_SHIP|129	1	<bad>100%</bad> less phase cloak activation cost.
-summary|option1|CAPITAL_SHIP|130	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
-summary|option1|CAPITAL_SHIP|131	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
-summary|option1|CAPITAL_SHIP|132	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-summary|option1|CAPITAL_SHIP|133	0	Point-defense weapons can identify and ignore decoy flares.
-summary|option1|CAPITAL_SHIP|134	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-summary|option1|CAPITAL_SHIP|135	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option1|CAPITAL_SHIP|136	1	Increases crew casualties by <good>50%</good>.
-summary|option1|CAPITAL_SHIP|137	0	Increases weapon damage by <good>10%</good>.
-summary|option1|CAPITAL_SHIP|138	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option1|CAPITAL_SHIP|139	1	<bad>18.55%</bad> less negative effects from D-mods.
-summary|option1|CAPITAL_SHIP|140	0	If disabled, this ship is almost always recoverable after the battle.
-summary|option1|CAPITAL_SHIP|141	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option1|CAPITAL_SHIP|142	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option1|CAPITAL_SHIP|143	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option1|CAPITAL_SHIP|144	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-summary|option1|CAPITAL_SHIP|145	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option1|CAPITAL_SHIP|146	0	<bad>100%</bad> less venting speed.
-summary|option1|CAPITAL_SHIP|147	0	Increases range before falloff effectiveness applies by <good>450</good>.
-summary|option1|CAPITAL_SHIP|148	0	<bad>75%</bad> less weapon effectiveness past normal range.
-summary|option1|CAPITAL_SHIP|149	0	Increases top speed by <good>53</good>.
-summary|option1|CAPITAL_SHIP|150	0	Increases acceleration by <good>20</good>.
-summary|option1|CAPITAL_SHIP|151	0	Increases deceleration by <good>20</good>.
-summary|option1|CAPITAL_SHIP|152	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option1|CAPITAL_SHIP|153	0	Removes this ship's shield entirely.
-summary|option1|CAPITAL_SHIP|154	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-summary|option1|CAPITAL_SHIP|155	1	<bad>51.4%</bad> less shield flux upkeep.
-summary|option1|CAPITAL_SHIP|156	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-summary|option1|CAPITAL_SHIP|157	0	Increases cargo capacity by <good>24%</good>.
-summary|option1|CAPITAL_SHIP|158	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>42</bad>.
-summary|option1|CAPITAL_SHIP|159	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>40</bad>.
-summary|option1|CAPITAL_SHIP|160	0	Captures combat objectives <good>100%</good> faster.
-summary|option1|CAPITAL_SHIP|161	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
-summary|option1|CAPITAL_SHIP|162	0	Increases weapon turn rate by <good>80%</good>.
-summary|option1|CAPITAL_SHIP|163	0	<bad>15%</bad> less ballistic weapon range.
-summary|option1|CAPITAL_SHIP|164	0	<bad>15%</bad> less energy weapon range.
-summary|option1|CAPITAL_SHIP|165	1	Increases fighter refit time by <good>25%</good>.
-summary|option1|CAPITAL_SHIP|166	0	Increases post-battle salvage recovered (fleet-wide) by <good>15%</good>.
-summary|option1|CAPITAL_SHIP|167	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
-summary|option1|CAPITAL_SHIP|168	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
-summary|option1|CAPITAL_SHIP|169	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
+summary|option1|CAPITAL_SHIP|109	0	Removes the penalties of a civilian-grade hull.
+summary|option1|CAPITAL_SHIP|110	1	Increases minimum crew required by <good>100%</good>.
+summary|option1|CAPITAL_SHIP|111	0	Increases missile weapon damage by <good>25%</good>.
+summary|option1|CAPITAL_SHIP|112	0	Increases missile weapon ammo capacity by <good>100%</good>.
+summary|option1|CAPITAL_SHIP|113	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
+summary|option1|CAPITAL_SHIP|114	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+summary|option1|CAPITAL_SHIP|115	0	Increases fleet nav rating by <good>5</good>.
+summary|option1|CAPITAL_SHIP|116	0	Increases non-beam energy weapon damage by <good>15%</good>.
+summary|option1|CAPITAL_SHIP|117	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
+summary|option1|CAPITAL_SHIP|118	0	Increases the base range of weapons in medium energy slots by <good>100</good>.
+summary|option1|CAPITAL_SHIP|119	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
+summary|option1|CAPITAL_SHIP|120	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
+summary|option1|CAPITAL_SHIP|121	0	Increases range from which combat objectives can be captured by <good>105</good>.
+summary|option1|CAPITAL_SHIP|122	0	Increases command point recovery rate while this ship is the flagship by <good>2.5</good>.
+summary|option1|CAPITAL_SHIP|123	0	Increases non-beam energy weapon range by <good>100</good>.
+summary|option1|CAPITAL_SHIP|124	0	Increases flux capacity by <good>15%</good>.
+summary|option1|CAPITAL_SHIP|125	0	Increases flux capacity by <good>680</good>.
+summary|option1|CAPITAL_SHIP|126	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
+summary|option1|CAPITAL_SHIP|127	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
+summary|option1|CAPITAL_SHIP|128	1	<bad>100%</bad> less phase cloak activation cost.
+summary|option1|CAPITAL_SHIP|129	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
+summary|option1|CAPITAL_SHIP|130	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
+summary|option1|CAPITAL_SHIP|131	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+summary|option1|CAPITAL_SHIP|132	0	Point-defense weapons can identify and ignore decoy flares.
+summary|option1|CAPITAL_SHIP|133	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
+summary|option1|CAPITAL_SHIP|134	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
+summary|option1|CAPITAL_SHIP|135	1	Increases crew casualties by <good>50%</good>.
+summary|option1|CAPITAL_SHIP|136	0	Increases weapon damage by <good>10%</good>.
+summary|option1|CAPITAL_SHIP|137	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
+summary|option1|CAPITAL_SHIP|138	1	<bad>18.55%</bad> less negative effects from D-mods.
+summary|option1|CAPITAL_SHIP|139	0	If disabled, this ship is almost always recoverable after the battle.
+summary|option1|CAPITAL_SHIP|140	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
+summary|option1|CAPITAL_SHIP|141	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+summary|option1|CAPITAL_SHIP|142	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option1|CAPITAL_SHIP|143	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
+summary|option1|CAPITAL_SHIP|144	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option1|CAPITAL_SHIP|145	0	<bad>100%</bad> less venting speed.
+summary|option1|CAPITAL_SHIP|146	0	Increases range before falloff effectiveness applies by <good>450</good>.
+summary|option1|CAPITAL_SHIP|147	0	<bad>75%</bad> less weapon effectiveness past normal range.
+summary|option1|CAPITAL_SHIP|148	0	Increases top speed by <good>53</good>.
+summary|option1|CAPITAL_SHIP|149	0	Increases acceleration by <good>20</good>.
+summary|option1|CAPITAL_SHIP|150	0	Increases deceleration by <good>20</good>.
+summary|option1|CAPITAL_SHIP|151	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option1|CAPITAL_SHIP|152	0	Removes this ship's shield entirely.
+summary|option1|CAPITAL_SHIP|153	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
+summary|option1|CAPITAL_SHIP|154	1	<bad>51.4%</bad> less shield flux upkeep.
+summary|option1|CAPITAL_SHIP|155	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option1|CAPITAL_SHIP|156	0	Increases cargo capacity by <good>24%</good>.
+summary|option1|CAPITAL_SHIP|157	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>42</bad>.
+summary|option1|CAPITAL_SHIP|158	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>40</bad>.
+summary|option1|CAPITAL_SHIP|159	0	Captures combat objectives <good>100%</good> faster.
+summary|option1|CAPITAL_SHIP|160	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
+summary|option1|CAPITAL_SHIP|161	0	Increases weapon turn rate by <good>80%</good>.
+summary|option1|CAPITAL_SHIP|162	0	<bad>15%</bad> less ballistic weapon range.
+summary|option1|CAPITAL_SHIP|163	0	<bad>15%</bad> less energy weapon range.
+summary|option1|CAPITAL_SHIP|164	1	Increases fighter refit time by <good>25%</good>.
+summary|option1|CAPITAL_SHIP|165	0	Increases post-battle salvage recovered (fleet-wide) by <good>15%</good>.
+summary|option1|CAPITAL_SHIP|166	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
+summary|option1|CAPITAL_SHIP|167	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
+summary|option1|CAPITAL_SHIP|168	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
 summary|option2|FRIGATE|0	0	Increases acceleration by <good>130%</good>.
 summary|option2|FRIGATE|1	0	Increases hard flux threshold before phase speed penalty kicks in by <good>60%</good>.
 summary|option2|FRIGATE|2	0	<bad>7.43%</bad> less shield arc.
@@ -4893,67 +4879,66 @@ summary|option2|FRIGATE|105	0	Each Heartless stack increases missile damage by <
 summary|option2|FRIGATE|106	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
 summary|option2|FRIGATE|107	0	Increases target leading accuracy of autofiring weapons by <good>20%</good>.
 summary|option2|FRIGATE|108	0	Increases beam weapon range by <good>5%</good>.
-summary|option2|FRIGATE|109	0	Can only be allocated on civilian-grade hulls.
-summary|option2|FRIGATE|110	0	Removes the penalties of a civilian-grade hull.
-summary|option2|FRIGATE|111	1	Increases minimum crew required by <good>100%</good>.
-summary|option2|FRIGATE|112	0	Increases missile weapon damage by <good>25%</good>.
-summary|option2|FRIGATE|113	0	Increases missile weapon ammo capacity by <good>100%</good>.
-summary|option2|FRIGATE|114	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
-summary|option2|FRIGATE|115	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
-summary|option2|FRIGATE|116	0	Increases fleet nav rating by <good>2</good>.
-summary|option2|FRIGATE|117	0	Increases non-beam energy weapon damage by <good>15%</good>.
-summary|option2|FRIGATE|118	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
-summary|option2|FRIGATE|119	0	Increases the base range of weapons in medium energy slots by <good>100</good>.
-summary|option2|FRIGATE|120	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
-summary|option2|FRIGATE|121	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
-summary|option2|FRIGATE|122	0	Increases range from which combat objectives can be captured by <good>105</good>.
-summary|option2|FRIGATE|123	0	Increases command point recovery rate while this ship is the flagship by <good>2.5</good>.
-summary|option2|FRIGATE|124	0	Increases non-beam energy weapon range by <good>100</good>.
-summary|option2|FRIGATE|125	0	Increases flux capacity by <good>15%</good>.
-summary|option2|FRIGATE|126	0	Increases flux capacity by <good>620</good>.
-summary|option2|FRIGATE|127	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
-summary|option2|FRIGATE|128	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
-summary|option2|FRIGATE|129	1	<bad>100%</bad> less phase cloak activation cost.
-summary|option2|FRIGATE|130	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
-summary|option2|FRIGATE|131	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
-summary|option2|FRIGATE|132	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-summary|option2|FRIGATE|133	0	Point-defense weapons can identify and ignore decoy flares.
-summary|option2|FRIGATE|134	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-summary|option2|FRIGATE|135	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option2|FRIGATE|136	1	Increases crew casualties by <good>50%</good>.
-summary|option2|FRIGATE|137	0	Increases weapon damage by <good>10%</good>.
-summary|option2|FRIGATE|138	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option2|FRIGATE|139	1	<bad>18.55%</bad> less negative effects from D-mods.
-summary|option2|FRIGATE|140	0	If disabled, this ship is almost always recoverable after the battle.
-summary|option2|FRIGATE|141	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option2|FRIGATE|142	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option2|FRIGATE|143	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option2|FRIGATE|144	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-summary|option2|FRIGATE|145	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option2|FRIGATE|146	0	<bad>100%</bad> less venting speed.
-summary|option2|FRIGATE|147	0	Increases range before falloff effectiveness applies by <good>450</good>.
-summary|option2|FRIGATE|148	0	<bad>75%</bad> less weapon effectiveness past normal range.
-summary|option2|FRIGATE|149	0	Increases top speed by <good>117</good>.
-summary|option2|FRIGATE|150	0	Increases acceleration by <good>100</good>.
-summary|option2|FRIGATE|151	0	Increases deceleration by <good>100</good>.
-summary|option2|FRIGATE|152	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option2|FRIGATE|153	0	Removes this ship's shield entirely.
-summary|option2|FRIGATE|154	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-summary|option2|FRIGATE|155	1	<bad>51.4%</bad> less shield flux upkeep.
-summary|option2|FRIGATE|156	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-summary|option2|FRIGATE|157	0	Increases crew capacity by <good>24%</good>.
-summary|option2|FRIGATE|158	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>7</bad>.
-summary|option2|FRIGATE|159	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>5</bad>.
-summary|option2|FRIGATE|160	0	Captures combat objectives <good>100%</good> faster.
-summary|option2|FRIGATE|161	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
-summary|option2|FRIGATE|162	0	Increases weapon turn rate by <good>80%</good>.
-summary|option2|FRIGATE|163	0	<bad>15%</bad> less ballistic weapon range.
-summary|option2|FRIGATE|164	0	<bad>15%</bad> less energy weapon range.
-summary|option2|FRIGATE|165	1	Increases fighter refit time by <good>25%</good>.
-summary|option2|FRIGATE|166	0	Increases post-battle salvage recovered (fleet-wide) by <good>3%</good>.
-summary|option2|FRIGATE|167	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
-summary|option2|FRIGATE|168	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
-summary|option2|FRIGATE|169	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
+summary|option2|FRIGATE|109	0	Removes the penalties of a civilian-grade hull.
+summary|option2|FRIGATE|110	1	Increases minimum crew required by <good>100%</good>.
+summary|option2|FRIGATE|111	0	Increases missile weapon damage by <good>25%</good>.
+summary|option2|FRIGATE|112	0	Increases missile weapon ammo capacity by <good>100%</good>.
+summary|option2|FRIGATE|113	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
+summary|option2|FRIGATE|114	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+summary|option2|FRIGATE|115	0	Increases fleet nav rating by <good>2</good>.
+summary|option2|FRIGATE|116	0	Increases non-beam energy weapon damage by <good>15%</good>.
+summary|option2|FRIGATE|117	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
+summary|option2|FRIGATE|118	0	Increases the base range of weapons in medium energy slots by <good>100</good>.
+summary|option2|FRIGATE|119	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
+summary|option2|FRIGATE|120	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
+summary|option2|FRIGATE|121	0	Increases range from which combat objectives can be captured by <good>105</good>.
+summary|option2|FRIGATE|122	0	Increases command point recovery rate while this ship is the flagship by <good>2.5</good>.
+summary|option2|FRIGATE|123	0	Increases non-beam energy weapon range by <good>100</good>.
+summary|option2|FRIGATE|124	0	Increases flux capacity by <good>15%</good>.
+summary|option2|FRIGATE|125	0	Increases flux capacity by <good>620</good>.
+summary|option2|FRIGATE|126	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
+summary|option2|FRIGATE|127	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
+summary|option2|FRIGATE|128	1	<bad>100%</bad> less phase cloak activation cost.
+summary|option2|FRIGATE|129	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
+summary|option2|FRIGATE|130	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
+summary|option2|FRIGATE|131	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+summary|option2|FRIGATE|132	0	Point-defense weapons can identify and ignore decoy flares.
+summary|option2|FRIGATE|133	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
+summary|option2|FRIGATE|134	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
+summary|option2|FRIGATE|135	1	Increases crew casualties by <good>50%</good>.
+summary|option2|FRIGATE|136	0	Increases weapon damage by <good>10%</good>.
+summary|option2|FRIGATE|137	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
+summary|option2|FRIGATE|138	1	<bad>18.55%</bad> less negative effects from D-mods.
+summary|option2|FRIGATE|139	0	If disabled, this ship is almost always recoverable after the battle.
+summary|option2|FRIGATE|140	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
+summary|option2|FRIGATE|141	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+summary|option2|FRIGATE|142	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option2|FRIGATE|143	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
+summary|option2|FRIGATE|144	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option2|FRIGATE|145	0	<bad>100%</bad> less venting speed.
+summary|option2|FRIGATE|146	0	Increases range before falloff effectiveness applies by <good>450</good>.
+summary|option2|FRIGATE|147	0	<bad>75%</bad> less weapon effectiveness past normal range.
+summary|option2|FRIGATE|148	0	Increases top speed by <good>117</good>.
+summary|option2|FRIGATE|149	0	Increases acceleration by <good>100</good>.
+summary|option2|FRIGATE|150	0	Increases deceleration by <good>100</good>.
+summary|option2|FRIGATE|151	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option2|FRIGATE|152	0	Removes this ship's shield entirely.
+summary|option2|FRIGATE|153	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
+summary|option2|FRIGATE|154	1	<bad>51.4%</bad> less shield flux upkeep.
+summary|option2|FRIGATE|155	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option2|FRIGATE|156	0	Increases crew capacity by <good>24%</good>.
+summary|option2|FRIGATE|157	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>7</bad>.
+summary|option2|FRIGATE|158	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>5</bad>.
+summary|option2|FRIGATE|159	0	Captures combat objectives <good>100%</good> faster.
+summary|option2|FRIGATE|160	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
+summary|option2|FRIGATE|161	0	Increases weapon turn rate by <good>80%</good>.
+summary|option2|FRIGATE|162	0	<bad>15%</bad> less ballistic weapon range.
+summary|option2|FRIGATE|163	0	<bad>15%</bad> less energy weapon range.
+summary|option2|FRIGATE|164	1	Increases fighter refit time by <good>25%</good>.
+summary|option2|FRIGATE|165	0	Increases post-battle salvage recovered (fleet-wide) by <good>3%</good>.
+summary|option2|FRIGATE|166	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
+summary|option2|FRIGATE|167	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
+summary|option2|FRIGATE|168	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
 summary|option2|DESTROYER|0	0	Increases acceleration by <good>130%</good>.
 summary|option2|DESTROYER|1	0	Increases hard flux threshold before phase speed penalty kicks in by <good>60%</good>.
 summary|option2|DESTROYER|2	0	<bad>7.43%</bad> less shield arc.
@@ -5063,67 +5048,66 @@ summary|option2|DESTROYER|105	0	Each Heartless stack increases missile damage by
 summary|option2|DESTROYER|106	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
 summary|option2|DESTROYER|107	0	Increases target leading accuracy of autofiring weapons by <good>20%</good>.
 summary|option2|DESTROYER|108	0	Increases beam weapon range by <good>5%</good>.
-summary|option2|DESTROYER|109	0	Can only be allocated on civilian-grade hulls.
-summary|option2|DESTROYER|110	0	Removes the penalties of a civilian-grade hull.
-summary|option2|DESTROYER|111	1	Increases minimum crew required by <good>100%</good>.
-summary|option2|DESTROYER|112	0	Increases missile weapon damage by <good>25%</good>.
-summary|option2|DESTROYER|113	0	Increases missile weapon ammo capacity by <good>100%</good>.
-summary|option2|DESTROYER|114	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
-summary|option2|DESTROYER|115	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
-summary|option2|DESTROYER|116	0	Increases fleet nav rating by <good>3</good>.
-summary|option2|DESTROYER|117	0	Increases non-beam energy weapon damage by <good>15%</good>.
-summary|option2|DESTROYER|118	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
-summary|option2|DESTROYER|119	0	Increases the base range of weapons in medium energy slots by <good>100</good>.
-summary|option2|DESTROYER|120	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
-summary|option2|DESTROYER|121	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
-summary|option2|DESTROYER|122	0	Increases range from which combat objectives can be captured by <good>105</good>.
-summary|option2|DESTROYER|123	0	Increases command point recovery rate while this ship is the flagship by <good>2.5</good>.
-summary|option2|DESTROYER|124	0	Increases non-beam energy weapon range by <good>100</good>.
-summary|option2|DESTROYER|125	0	Increases flux capacity by <good>15%</good>.
-summary|option2|DESTROYER|126	0	Increases flux capacity by <good>640</good>.
-summary|option2|DESTROYER|127	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
-summary|option2|DESTROYER|128	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
-summary|option2|DESTROYER|129	1	<bad>100%</bad> less phase cloak activation cost.
-summary|option2|DESTROYER|130	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
-summary|option2|DESTROYER|131	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
-summary|option2|DESTROYER|132	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-summary|option2|DESTROYER|133	0	Point-defense weapons can identify and ignore decoy flares.
-summary|option2|DESTROYER|134	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-summary|option2|DESTROYER|135	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option2|DESTROYER|136	1	Increases crew casualties by <good>50%</good>.
-summary|option2|DESTROYER|137	0	Increases weapon damage by <good>10%</good>.
-summary|option2|DESTROYER|138	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option2|DESTROYER|139	1	<bad>18.55%</bad> less negative effects from D-mods.
-summary|option2|DESTROYER|140	0	If disabled, this ship is almost always recoverable after the battle.
-summary|option2|DESTROYER|141	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option2|DESTROYER|142	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option2|DESTROYER|143	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option2|DESTROYER|144	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-summary|option2|DESTROYER|145	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option2|DESTROYER|146	0	<bad>100%</bad> less venting speed.
-summary|option2|DESTROYER|147	0	Increases range before falloff effectiveness applies by <good>450</good>.
-summary|option2|DESTROYER|148	0	<bad>75%</bad> less weapon effectiveness past normal range.
-summary|option2|DESTROYER|149	0	Increases top speed by <good>85</good>.
-summary|option2|DESTROYER|150	0	Increases acceleration by <good>60</good>.
-summary|option2|DESTROYER|151	0	Increases deceleration by <good>60</good>.
-summary|option2|DESTROYER|152	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option2|DESTROYER|153	0	Removes this ship's shield entirely.
-summary|option2|DESTROYER|154	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-summary|option2|DESTROYER|155	1	<bad>51.4%</bad> less shield flux upkeep.
-summary|option2|DESTROYER|156	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-summary|option2|DESTROYER|157	0	Increases crew capacity by <good>24%</good>.
-summary|option2|DESTROYER|158	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>13</bad>.
-summary|option2|DESTROYER|159	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>11</bad>.
-summary|option2|DESTROYER|160	0	Captures combat objectives <good>100%</good> faster.
-summary|option2|DESTROYER|161	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
-summary|option2|DESTROYER|162	0	Increases weapon turn rate by <good>80%</good>.
-summary|option2|DESTROYER|163	0	<bad>15%</bad> less ballistic weapon range.
-summary|option2|DESTROYER|164	0	<bad>15%</bad> less energy weapon range.
-summary|option2|DESTROYER|165	1	Increases fighter refit time by <good>25%</good>.
-summary|option2|DESTROYER|166	0	Increases post-battle salvage recovered (fleet-wide) by <good>6%</good>.
-summary|option2|DESTROYER|167	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
-summary|option2|DESTROYER|168	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
-summary|option2|DESTROYER|169	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
+summary|option2|DESTROYER|109	0	Removes the penalties of a civilian-grade hull.
+summary|option2|DESTROYER|110	1	Increases minimum crew required by <good>100%</good>.
+summary|option2|DESTROYER|111	0	Increases missile weapon damage by <good>25%</good>.
+summary|option2|DESTROYER|112	0	Increases missile weapon ammo capacity by <good>100%</good>.
+summary|option2|DESTROYER|113	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
+summary|option2|DESTROYER|114	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+summary|option2|DESTROYER|115	0	Increases fleet nav rating by <good>3</good>.
+summary|option2|DESTROYER|116	0	Increases non-beam energy weapon damage by <good>15%</good>.
+summary|option2|DESTROYER|117	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
+summary|option2|DESTROYER|118	0	Increases the base range of weapons in medium energy slots by <good>100</good>.
+summary|option2|DESTROYER|119	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
+summary|option2|DESTROYER|120	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
+summary|option2|DESTROYER|121	0	Increases range from which combat objectives can be captured by <good>105</good>.
+summary|option2|DESTROYER|122	0	Increases command point recovery rate while this ship is the flagship by <good>2.5</good>.
+summary|option2|DESTROYER|123	0	Increases non-beam energy weapon range by <good>100</good>.
+summary|option2|DESTROYER|124	0	Increases flux capacity by <good>15%</good>.
+summary|option2|DESTROYER|125	0	Increases flux capacity by <good>640</good>.
+summary|option2|DESTROYER|126	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
+summary|option2|DESTROYER|127	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
+summary|option2|DESTROYER|128	1	<bad>100%</bad> less phase cloak activation cost.
+summary|option2|DESTROYER|129	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
+summary|option2|DESTROYER|130	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
+summary|option2|DESTROYER|131	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+summary|option2|DESTROYER|132	0	Point-defense weapons can identify and ignore decoy flares.
+summary|option2|DESTROYER|133	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
+summary|option2|DESTROYER|134	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
+summary|option2|DESTROYER|135	1	Increases crew casualties by <good>50%</good>.
+summary|option2|DESTROYER|136	0	Increases weapon damage by <good>10%</good>.
+summary|option2|DESTROYER|137	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
+summary|option2|DESTROYER|138	1	<bad>18.55%</bad> less negative effects from D-mods.
+summary|option2|DESTROYER|139	0	If disabled, this ship is almost always recoverable after the battle.
+summary|option2|DESTROYER|140	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
+summary|option2|DESTROYER|141	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+summary|option2|DESTROYER|142	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option2|DESTROYER|143	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
+summary|option2|DESTROYER|144	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option2|DESTROYER|145	0	<bad>100%</bad> less venting speed.
+summary|option2|DESTROYER|146	0	Increases range before falloff effectiveness applies by <good>450</good>.
+summary|option2|DESTROYER|147	0	<bad>75%</bad> less weapon effectiveness past normal range.
+summary|option2|DESTROYER|148	0	Increases top speed by <good>85</good>.
+summary|option2|DESTROYER|149	0	Increases acceleration by <good>60</good>.
+summary|option2|DESTROYER|150	0	Increases deceleration by <good>60</good>.
+summary|option2|DESTROYER|151	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option2|DESTROYER|152	0	Removes this ship's shield entirely.
+summary|option2|DESTROYER|153	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
+summary|option2|DESTROYER|154	1	<bad>51.4%</bad> less shield flux upkeep.
+summary|option2|DESTROYER|155	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option2|DESTROYER|156	0	Increases crew capacity by <good>24%</good>.
+summary|option2|DESTROYER|157	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>13</bad>.
+summary|option2|DESTROYER|158	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>11</bad>.
+summary|option2|DESTROYER|159	0	Captures combat objectives <good>100%</good> faster.
+summary|option2|DESTROYER|160	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
+summary|option2|DESTROYER|161	0	Increases weapon turn rate by <good>80%</good>.
+summary|option2|DESTROYER|162	0	<bad>15%</bad> less ballistic weapon range.
+summary|option2|DESTROYER|163	0	<bad>15%</bad> less energy weapon range.
+summary|option2|DESTROYER|164	1	Increases fighter refit time by <good>25%</good>.
+summary|option2|DESTROYER|165	0	Increases post-battle salvage recovered (fleet-wide) by <good>6%</good>.
+summary|option2|DESTROYER|166	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
+summary|option2|DESTROYER|167	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
+summary|option2|DESTROYER|168	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
 summary|option2|CRUISER|0	0	Increases acceleration by <good>130%</good>.
 summary|option2|CRUISER|1	0	Increases hard flux threshold before phase speed penalty kicks in by <good>60%</good>.
 summary|option2|CRUISER|2	0	<bad>7.43%</bad> less shield arc.
@@ -5233,67 +5217,66 @@ summary|option2|CRUISER|105	0	Each Heartless stack increases missile damage by <
 summary|option2|CRUISER|106	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
 summary|option2|CRUISER|107	0	Increases target leading accuracy of autofiring weapons by <good>20%</good>.
 summary|option2|CRUISER|108	0	Increases beam weapon range by <good>5%</good>.
-summary|option2|CRUISER|109	0	Can only be allocated on civilian-grade hulls.
-summary|option2|CRUISER|110	0	Removes the penalties of a civilian-grade hull.
-summary|option2|CRUISER|111	1	Increases minimum crew required by <good>100%</good>.
-summary|option2|CRUISER|112	0	Increases missile weapon damage by <good>25%</good>.
-summary|option2|CRUISER|113	0	Increases missile weapon ammo capacity by <good>100%</good>.
-summary|option2|CRUISER|114	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
-summary|option2|CRUISER|115	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
-summary|option2|CRUISER|116	0	Increases fleet nav rating by <good>4</good>.
-summary|option2|CRUISER|117	0	Increases non-beam energy weapon damage by <good>15%</good>.
-summary|option2|CRUISER|118	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
-summary|option2|CRUISER|119	0	Increases the base range of weapons in medium energy slots by <good>100</good>.
-summary|option2|CRUISER|120	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
-summary|option2|CRUISER|121	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
-summary|option2|CRUISER|122	0	Increases range from which combat objectives can be captured by <good>105</good>.
-summary|option2|CRUISER|123	0	Increases command point recovery rate while this ship is the flagship by <good>2.5</good>.
-summary|option2|CRUISER|124	0	Increases non-beam energy weapon range by <good>100</good>.
-summary|option2|CRUISER|125	0	Increases flux capacity by <good>15%</good>.
-summary|option2|CRUISER|126	0	Increases flux capacity by <good>660</good>.
-summary|option2|CRUISER|127	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
-summary|option2|CRUISER|128	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
-summary|option2|CRUISER|129	1	<bad>100%</bad> less phase cloak activation cost.
-summary|option2|CRUISER|130	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
-summary|option2|CRUISER|131	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
-summary|option2|CRUISER|132	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-summary|option2|CRUISER|133	0	Point-defense weapons can identify and ignore decoy flares.
-summary|option2|CRUISER|134	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-summary|option2|CRUISER|135	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option2|CRUISER|136	1	Increases crew casualties by <good>50%</good>.
-summary|option2|CRUISER|137	0	Increases weapon damage by <good>10%</good>.
-summary|option2|CRUISER|138	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option2|CRUISER|139	1	<bad>18.55%</bad> less negative effects from D-mods.
-summary|option2|CRUISER|140	0	If disabled, this ship is almost always recoverable after the battle.
-summary|option2|CRUISER|141	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option2|CRUISER|142	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option2|CRUISER|143	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option2|CRUISER|144	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-summary|option2|CRUISER|145	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option2|CRUISER|146	0	<bad>100%</bad> less venting speed.
-summary|option2|CRUISER|147	0	Increases range before falloff effectiveness applies by <good>450</good>.
-summary|option2|CRUISER|148	0	<bad>75%</bad> less weapon effectiveness past normal range.
-summary|option2|CRUISER|149	0	Increases top speed by <good>63</good>.
-summary|option2|CRUISER|150	0	Increases acceleration by <good>40</good>.
-summary|option2|CRUISER|151	0	Increases deceleration by <good>40</good>.
-summary|option2|CRUISER|152	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option2|CRUISER|153	0	Removes this ship's shield entirely.
-summary|option2|CRUISER|154	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-summary|option2|CRUISER|155	1	<bad>51.4%</bad> less shield flux upkeep.
-summary|option2|CRUISER|156	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-summary|option2|CRUISER|157	0	Increases crew capacity by <good>24%</good>.
-summary|option2|CRUISER|158	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>22</bad>.
-summary|option2|CRUISER|159	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>20</bad>.
-summary|option2|CRUISER|160	0	Captures combat objectives <good>100%</good> faster.
-summary|option2|CRUISER|161	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
-summary|option2|CRUISER|162	0	Increases weapon turn rate by <good>80%</good>.
-summary|option2|CRUISER|163	0	<bad>15%</bad> less ballistic weapon range.
-summary|option2|CRUISER|164	0	<bad>15%</bad> less energy weapon range.
-summary|option2|CRUISER|165	1	Increases fighter refit time by <good>25%</good>.
-summary|option2|CRUISER|166	0	Increases post-battle salvage recovered (fleet-wide) by <good>10%</good>.
-summary|option2|CRUISER|167	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
-summary|option2|CRUISER|168	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
-summary|option2|CRUISER|169	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
+summary|option2|CRUISER|109	0	Removes the penalties of a civilian-grade hull.
+summary|option2|CRUISER|110	1	Increases minimum crew required by <good>100%</good>.
+summary|option2|CRUISER|111	0	Increases missile weapon damage by <good>25%</good>.
+summary|option2|CRUISER|112	0	Increases missile weapon ammo capacity by <good>100%</good>.
+summary|option2|CRUISER|113	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
+summary|option2|CRUISER|114	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+summary|option2|CRUISER|115	0	Increases fleet nav rating by <good>4</good>.
+summary|option2|CRUISER|116	0	Increases non-beam energy weapon damage by <good>15%</good>.
+summary|option2|CRUISER|117	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
+summary|option2|CRUISER|118	0	Increases the base range of weapons in medium energy slots by <good>100</good>.
+summary|option2|CRUISER|119	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
+summary|option2|CRUISER|120	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
+summary|option2|CRUISER|121	0	Increases range from which combat objectives can be captured by <good>105</good>.
+summary|option2|CRUISER|122	0	Increases command point recovery rate while this ship is the flagship by <good>2.5</good>.
+summary|option2|CRUISER|123	0	Increases non-beam energy weapon range by <good>100</good>.
+summary|option2|CRUISER|124	0	Increases flux capacity by <good>15%</good>.
+summary|option2|CRUISER|125	0	Increases flux capacity by <good>660</good>.
+summary|option2|CRUISER|126	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
+summary|option2|CRUISER|127	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
+summary|option2|CRUISER|128	1	<bad>100%</bad> less phase cloak activation cost.
+summary|option2|CRUISER|129	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
+summary|option2|CRUISER|130	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
+summary|option2|CRUISER|131	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+summary|option2|CRUISER|132	0	Point-defense weapons can identify and ignore decoy flares.
+summary|option2|CRUISER|133	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
+summary|option2|CRUISER|134	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
+summary|option2|CRUISER|135	1	Increases crew casualties by <good>50%</good>.
+summary|option2|CRUISER|136	0	Increases weapon damage by <good>10%</good>.
+summary|option2|CRUISER|137	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
+summary|option2|CRUISER|138	1	<bad>18.55%</bad> less negative effects from D-mods.
+summary|option2|CRUISER|139	0	If disabled, this ship is almost always recoverable after the battle.
+summary|option2|CRUISER|140	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
+summary|option2|CRUISER|141	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+summary|option2|CRUISER|142	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option2|CRUISER|143	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
+summary|option2|CRUISER|144	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option2|CRUISER|145	0	<bad>100%</bad> less venting speed.
+summary|option2|CRUISER|146	0	Increases range before falloff effectiveness applies by <good>450</good>.
+summary|option2|CRUISER|147	0	<bad>75%</bad> less weapon effectiveness past normal range.
+summary|option2|CRUISER|148	0	Increases top speed by <good>63</good>.
+summary|option2|CRUISER|149	0	Increases acceleration by <good>40</good>.
+summary|option2|CRUISER|150	0	Increases deceleration by <good>40</good>.
+summary|option2|CRUISER|151	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option2|CRUISER|152	0	Removes this ship's shield entirely.
+summary|option2|CRUISER|153	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
+summary|option2|CRUISER|154	1	<bad>51.4%</bad> less shield flux upkeep.
+summary|option2|CRUISER|155	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option2|CRUISER|156	0	Increases crew capacity by <good>24%</good>.
+summary|option2|CRUISER|157	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>22</bad>.
+summary|option2|CRUISER|158	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>20</bad>.
+summary|option2|CRUISER|159	0	Captures combat objectives <good>100%</good> faster.
+summary|option2|CRUISER|160	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
+summary|option2|CRUISER|161	0	Increases weapon turn rate by <good>80%</good>.
+summary|option2|CRUISER|162	0	<bad>15%</bad> less ballistic weapon range.
+summary|option2|CRUISER|163	0	<bad>15%</bad> less energy weapon range.
+summary|option2|CRUISER|164	1	Increases fighter refit time by <good>25%</good>.
+summary|option2|CRUISER|165	0	Increases post-battle salvage recovered (fleet-wide) by <good>10%</good>.
+summary|option2|CRUISER|166	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
+summary|option2|CRUISER|167	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
+summary|option2|CRUISER|168	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
 summary|option2|CAPITAL_SHIP|0	0	Increases acceleration by <good>130%</good>.
 summary|option2|CAPITAL_SHIP|1	0	Increases hard flux threshold before phase speed penalty kicks in by <good>60%</good>.
 summary|option2|CAPITAL_SHIP|2	0	<bad>7.43%</bad> less shield arc.
@@ -5403,64 +5386,63 @@ summary|option2|CAPITAL_SHIP|105	0	Each Heartless stack increases missile damage
 summary|option2|CAPITAL_SHIP|106	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
 summary|option2|CAPITAL_SHIP|107	0	Increases target leading accuracy of autofiring weapons by <good>20%</good>.
 summary|option2|CAPITAL_SHIP|108	0	Increases beam weapon range by <good>5%</good>.
-summary|option2|CAPITAL_SHIP|109	0	Can only be allocated on civilian-grade hulls.
-summary|option2|CAPITAL_SHIP|110	0	Removes the penalties of a civilian-grade hull.
-summary|option2|CAPITAL_SHIP|111	1	Increases minimum crew required by <good>100%</good>.
-summary|option2|CAPITAL_SHIP|112	0	Increases missile weapon damage by <good>25%</good>.
-summary|option2|CAPITAL_SHIP|113	0	Increases missile weapon ammo capacity by <good>100%</good>.
-summary|option2|CAPITAL_SHIP|114	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
-summary|option2|CAPITAL_SHIP|115	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
-summary|option2|CAPITAL_SHIP|116	0	Increases fleet nav rating by <good>5</good>.
-summary|option2|CAPITAL_SHIP|117	0	Increases non-beam energy weapon damage by <good>15%</good>.
-summary|option2|CAPITAL_SHIP|118	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
-summary|option2|CAPITAL_SHIP|119	0	Increases the base range of weapons in medium energy slots by <good>100</good>.
-summary|option2|CAPITAL_SHIP|120	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
-summary|option2|CAPITAL_SHIP|121	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
-summary|option2|CAPITAL_SHIP|122	0	Increases range from which combat objectives can be captured by <good>105</good>.
-summary|option2|CAPITAL_SHIP|123	0	Increases command point recovery rate while this ship is the flagship by <good>2.5</good>.
-summary|option2|CAPITAL_SHIP|124	0	Increases non-beam energy weapon range by <good>100</good>.
-summary|option2|CAPITAL_SHIP|125	0	Increases flux capacity by <good>15%</good>.
-summary|option2|CAPITAL_SHIP|126	0	Increases flux capacity by <good>680</good>.
-summary|option2|CAPITAL_SHIP|127	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
-summary|option2|CAPITAL_SHIP|128	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
-summary|option2|CAPITAL_SHIP|129	1	<bad>100%</bad> less phase cloak activation cost.
-summary|option2|CAPITAL_SHIP|130	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
-summary|option2|CAPITAL_SHIP|131	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
-summary|option2|CAPITAL_SHIP|132	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-summary|option2|CAPITAL_SHIP|133	0	Point-defense weapons can identify and ignore decoy flares.
-summary|option2|CAPITAL_SHIP|134	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-summary|option2|CAPITAL_SHIP|135	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option2|CAPITAL_SHIP|136	1	Increases crew casualties by <good>50%</good>.
-summary|option2|CAPITAL_SHIP|137	0	Increases weapon damage by <good>10%</good>.
-summary|option2|CAPITAL_SHIP|138	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option2|CAPITAL_SHIP|139	1	<bad>18.55%</bad> less negative effects from D-mods.
-summary|option2|CAPITAL_SHIP|140	0	If disabled, this ship is almost always recoverable after the battle.
-summary|option2|CAPITAL_SHIP|141	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option2|CAPITAL_SHIP|142	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option2|CAPITAL_SHIP|143	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option2|CAPITAL_SHIP|144	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
-summary|option2|CAPITAL_SHIP|145	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option2|CAPITAL_SHIP|146	0	<bad>100%</bad> less venting speed.
-summary|option2|CAPITAL_SHIP|147	0	Increases range before falloff effectiveness applies by <good>450</good>.
-summary|option2|CAPITAL_SHIP|148	0	<bad>75%</bad> less weapon effectiveness past normal range.
-summary|option2|CAPITAL_SHIP|149	0	Increases top speed by <good>53</good>.
-summary|option2|CAPITAL_SHIP|150	0	Increases acceleration by <good>20</good>.
-summary|option2|CAPITAL_SHIP|151	0	Increases deceleration by <good>20</good>.
-summary|option2|CAPITAL_SHIP|152	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option2|CAPITAL_SHIP|153	0	Removes this ship's shield entirely.
-summary|option2|CAPITAL_SHIP|154	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
-summary|option2|CAPITAL_SHIP|155	1	<bad>51.4%</bad> less shield flux upkeep.
-summary|option2|CAPITAL_SHIP|156	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-summary|option2|CAPITAL_SHIP|157	0	Increases crew capacity by <good>24%</good>.
-summary|option2|CAPITAL_SHIP|158	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>42</bad>.
-summary|option2|CAPITAL_SHIP|159	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>40</bad>.
-summary|option2|CAPITAL_SHIP|160	0	Captures combat objectives <good>100%</good> faster.
-summary|option2|CAPITAL_SHIP|161	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
-summary|option2|CAPITAL_SHIP|162	0	Increases weapon turn rate by <good>80%</good>.
-summary|option2|CAPITAL_SHIP|163	0	<bad>15%</bad> less ballistic weapon range.
-summary|option2|CAPITAL_SHIP|164	0	<bad>15%</bad> less energy weapon range.
-summary|option2|CAPITAL_SHIP|165	1	Increases fighter refit time by <good>25%</good>.
-summary|option2|CAPITAL_SHIP|166	0	Increases post-battle salvage recovered (fleet-wide) by <good>15%</good>.
-summary|option2|CAPITAL_SHIP|167	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
-summary|option2|CAPITAL_SHIP|168	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
-summary|option2|CAPITAL_SHIP|169	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.
+summary|option2|CAPITAL_SHIP|109	0	Removes the penalties of a civilian-grade hull.
+summary|option2|CAPITAL_SHIP|110	1	Increases minimum crew required by <good>100%</good>.
+summary|option2|CAPITAL_SHIP|111	0	Increases missile weapon damage by <good>25%</good>.
+summary|option2|CAPITAL_SHIP|112	0	Increases missile weapon ammo capacity by <good>100%</good>.
+summary|option2|CAPITAL_SHIP|113	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
+summary|option2|CAPITAL_SHIP|114	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+summary|option2|CAPITAL_SHIP|115	0	Increases fleet nav rating by <good>5</good>.
+summary|option2|CAPITAL_SHIP|116	0	Increases non-beam energy weapon damage by <good>15%</good>.
+summary|option2|CAPITAL_SHIP|117	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
+summary|option2|CAPITAL_SHIP|118	0	Increases the base range of weapons in medium energy slots by <good>100</good>.
+summary|option2|CAPITAL_SHIP|119	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
+summary|option2|CAPITAL_SHIP|120	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
+summary|option2|CAPITAL_SHIP|121	0	Increases range from which combat objectives can be captured by <good>105</good>.
+summary|option2|CAPITAL_SHIP|122	0	Increases command point recovery rate while this ship is the flagship by <good>2.5</good>.
+summary|option2|CAPITAL_SHIP|123	0	Increases non-beam energy weapon range by <good>100</good>.
+summary|option2|CAPITAL_SHIP|124	0	Increases flux capacity by <good>15%</good>.
+summary|option2|CAPITAL_SHIP|125	0	Increases flux capacity by <good>680</good>.
+summary|option2|CAPITAL_SHIP|126	0	Increases damage dealt to missiles by point defence weapons by <good>50%</good>.
+summary|option2|CAPITAL_SHIP|127	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
+summary|option2|CAPITAL_SHIP|128	1	<bad>100%</bad> less phase cloak activation cost.
+summary|option2|CAPITAL_SHIP|129	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
+summary|option2|CAPITAL_SHIP|130	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
+summary|option2|CAPITAL_SHIP|131	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+summary|option2|CAPITAL_SHIP|132	0	Point-defense weapons can identify and ignore decoy flares.
+summary|option2|CAPITAL_SHIP|133	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
+summary|option2|CAPITAL_SHIP|134	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
+summary|option2|CAPITAL_SHIP|135	1	Increases crew casualties by <good>50%</good>.
+summary|option2|CAPITAL_SHIP|136	0	Increases weapon damage by <good>10%</good>.
+summary|option2|CAPITAL_SHIP|137	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
+summary|option2|CAPITAL_SHIP|138	1	<bad>18.55%</bad> less negative effects from D-mods.
+summary|option2|CAPITAL_SHIP|139	0	If disabled, this ship is almost always recoverable after the battle.
+summary|option2|CAPITAL_SHIP|140	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
+summary|option2|CAPITAL_SHIP|141	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+summary|option2|CAPITAL_SHIP|142	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option2|CAPITAL_SHIP|143	0	Counts as the Safety Overrides hull mod for the Second-in-Command skill Enhanced Overrides.
+summary|option2|CAPITAL_SHIP|144	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option2|CAPITAL_SHIP|145	0	<bad>100%</bad> less venting speed.
+summary|option2|CAPITAL_SHIP|146	0	Increases range before falloff effectiveness applies by <good>450</good>.
+summary|option2|CAPITAL_SHIP|147	0	<bad>75%</bad> less weapon effectiveness past normal range.
+summary|option2|CAPITAL_SHIP|148	0	Increases top speed by <good>53</good>.
+summary|option2|CAPITAL_SHIP|149	0	Increases acceleration by <good>20</good>.
+summary|option2|CAPITAL_SHIP|150	0	Increases deceleration by <good>20</good>.
+summary|option2|CAPITAL_SHIP|151	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option2|CAPITAL_SHIP|152	0	Removes this ship's shield entirely.
+summary|option2|CAPITAL_SHIP|153	0	Counts as the Shield Shunt hull mod for the Second-in-Command skill Redistribution.
+summary|option2|CAPITAL_SHIP|154	1	<bad>51.4%</bad> less shield flux upkeep.
+summary|option2|CAPITAL_SHIP|155	1	<bad>81.25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option2|CAPITAL_SHIP|156	0	Increases crew capacity by <good>24%</good>.
+summary|option2|CAPITAL_SHIP|157	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>42</bad>.
+summary|option2|CAPITAL_SHIP|158	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>40</bad>.
+summary|option2|CAPITAL_SHIP|159	0	Captures combat objectives <good>100%</good> faster.
+summary|option2|CAPITAL_SHIP|160	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>.
+summary|option2|CAPITAL_SHIP|161	0	Increases weapon turn rate by <good>80%</good>.
+summary|option2|CAPITAL_SHIP|162	0	<bad>15%</bad> less ballistic weapon range.
+summary|option2|CAPITAL_SHIP|163	0	<bad>15%</bad> less energy weapon range.
+summary|option2|CAPITAL_SHIP|164	1	Increases fighter refit time by <good>25%</good>.
+summary|option2|CAPITAL_SHIP|165	0	Increases post-battle salvage recovered (fleet-wide) by <good>15%</good>.
+summary|option2|CAPITAL_SHIP|166	0	For the first 90 seconds after deployment: Increases acceleration by <good>100%</good>.
+summary|option2|CAPITAL_SHIP|167	0	For the first 60 seconds after deployment: Increases acceleration by <good>20%</good>.
+summary|option2|CAPITAL_SHIP|168	0	For the first 60 seconds after deployment: Increases top speed by <good>25%</good>.

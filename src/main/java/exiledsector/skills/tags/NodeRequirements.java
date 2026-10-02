@@ -1,8 +1,10 @@
 package exiledsector.skills.tags;
 
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
+import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 
 import java.util.Collection;
+import java.util.function.Predicate;
 
 public final class NodeRequirements {
 
@@ -11,7 +13,7 @@ public final class NodeRequirements {
 
     public static String firstUnmet(Collection<String> tags, ShipProfile profile) {
         for (String tag : tags) {
-            if (SkillTags.isRequirement(tag) && !isMet(tag, profile)) {
+            if (SkillTags.isRequirement(tag) && !SkillTags.isHullRequirement(tag) && !isMet(tag, profile)) {
                 return tag;
             }
         }
@@ -20,6 +22,22 @@ public final class NodeRequirements {
 
     public static boolean isSatisfiedBy(Collection<String> tags, ShipProfile profile) {
         return firstUnmet(tags, profile) == null;
+    }
+
+    public static String firstUnmetHullRequirement(Collection<String> tags, Predicate<String> hasHullMod) {
+        for (String tag : tags) {
+            if (SkillTags.isHullRequirement(tag) && !isHullRequirementMet(tag, hasHullMod)) {
+                return tag;
+            }
+        }
+        return null;
+    }
+
+    private static boolean isHullRequirementMet(String requirement, Predicate<String> hasHullMod) {
+        return switch (requirement) {
+            case "req_civilian_hull" -> hasHullMod.test(HullMods.CIVGRADE);
+            default -> false;
+        };
     }
 
     private static boolean isMet(String requirement, ShipProfile profile) {

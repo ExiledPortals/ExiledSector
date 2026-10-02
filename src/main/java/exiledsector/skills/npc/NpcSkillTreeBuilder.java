@@ -325,6 +325,7 @@ public final class NpcSkillTreeBuilder {
     private static String skipReason(NodeEligibility.Block block) {
         return switch (block.kind()) {
             case WRONG_HULL_SIZE -> NpcBuildStep.WRONG_HULL_SIZE;
+            case UNMET_HULL_REQUIREMENT -> NpcBuildStep.UNMET_REQUIREMENT + block.detail();
             case HULL_MOD_CONFLICT -> NpcBuildStep.INSTALLED_HULLMOD_CONFLICT + block.detail();
             case TYPE_CONFLICT -> NpcBuildStep.EXCLUSIVE_TYPE_CONFLICT + block.detail();
             case EFFECT_BLOCK -> NpcBuildStep.BLOCKED_BY_SHIP_STATE + block.detail();

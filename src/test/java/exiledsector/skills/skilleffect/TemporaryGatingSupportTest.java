@@ -20,8 +20,7 @@ class TemporaryGatingSupportTest {
             "ARMOR_PERCENT",
             "SHIELD_ARC_PERCENT",
             "CARGO_CAPACITY_FLAT",
-            "SHIP_RECOVERY_CHANCE_BONUS",
-            "REQUIRES_CIVILIAN_GRADE_HULL"
+            "SHIP_RECOVERY_CHANCE_BONUS"
     })
     void effectsTheGameCannotUndoMidBattleDoNotClaimTemporaryGating(String name) {
         SkillEffect effect = SkillEffect.byName(name);

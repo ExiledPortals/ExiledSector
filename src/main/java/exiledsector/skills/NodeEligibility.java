@@ -3,13 +3,14 @@ package exiledsector.skills;
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.skilleffect.ShieldSkillEffect;
+import exiledsector.skills.tags.NodeRequirements;
 
 import java.util.List;
 
 public final class NodeEligibility {
 
     public enum Kind {
-        WRONG_HULL_SIZE, HULL_MOD_CONFLICT, TYPE_CONFLICT, EFFECT_BLOCK
+        WRONG_HULL_SIZE, UNMET_HULL_REQUIREMENT, HULL_MOD_CONFLICT, TYPE_CONFLICT, EFFECT_BLOCK
     }
 
     public record Block(Kind kind, String detail, SkillType conflictingType) {
@@ -28,6 +29,10 @@ public final class NodeEligibility {
         HullSize hullSize = ship.hullSize();
         if (!node.getType().allowsHullSize(hullSize) || !candidate.effectiveType().allowsHullSize(hullSize)) {
             return new Block(Kind.WRONG_HULL_SIZE, null, null);
+        }
+        String unmetRequirement = NodeRequirements.firstUnmetHullRequirement(node.effectiveTags(option), ship.hasHullMod());
+        if (unmetRequirement != null) {
+            return new Block(Kind.UNMET_HULL_REQUIREMENT, unmetRequirement, null);
         }
         for (String hullModId : candidate.exclusiveHullModIds()) {
             if (ship.hasHullMod().test(hullModId)) {

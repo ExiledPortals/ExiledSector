@@ -2,6 +2,7 @@ package exiledsector.skills.tags;
 
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -176,11 +177,31 @@ class NodeRequirementsTest {
         profiles.add(profile(HullSize.FRIGATE, ShieldType.NONE, 0, Set.of(), false));
 
         for (String requirement : SkillTags.REQUIREMENT) {
+            if (SkillTags.isHullRequirement(requirement)) {
+                continue;
+            }
             boolean everMet = profiles.stream().anyMatch(p -> met(requirement, p));
             boolean everUnmet = profiles.stream().anyMatch(p -> !met(requirement, p));
             boolean npcExcluded = requirement.equals("campaign_only") || requirement.equals("player_only");
             assertEquals(!npcExcluded, everMet, requirement + " met by some profile");
             assertTrue(everUnmet, requirement + " unmet by some profile");
+        }
+    }
+
+    @Test
+    void reqCivilianHullNeedsTheCivilianGradeHullModAndIsLeftToTheEligibilityRule() {
+        List<String> tags = List.of("logistics", "req_civilian_hull");
+
+        assertNull(NodeRequirements.firstUnmetHullRequirement(tags, HullMods.CIVGRADE::equals));
+        assertEquals("req_civilian_hull", NodeRequirements.firstUnmetHullRequirement(tags, hullModId -> false));
+        assertTrue(NodeRequirements.isSatisfiedBy(tags, everything()));
+    }
+
+    @Test
+    void everyHullRequirementCanBeBothMetAndUnmet() {
+        for (String requirement : SkillTags.HULL_REQUIREMENT) {
+            assertNull(NodeRequirements.firstUnmetHullRequirement(List.of(requirement), hullModId -> true), requirement);
+            assertEquals(requirement, NodeRequirements.firstUnmetHullRequirement(List.of(requirement), hullModId -> false));
         }
     }
 }

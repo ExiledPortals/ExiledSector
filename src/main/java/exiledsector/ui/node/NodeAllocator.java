@@ -8,6 +8,7 @@ import exiledsector.compat.SecondInCommandCompat;
 import exiledsector.effects.OpReserveParity;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.effects.SkillTreeInstaller;
+import exiledsector.i18n.Translation;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.HullModNames;
@@ -243,6 +244,7 @@ final class NodeAllocator {
     private String describe(NodeEligibility.Block block) {
         return switch (block.kind()) {
             case WRONG_HULL_SIZE -> WRONG_HULL_SIZE_REASON;
+            case UNMET_HULL_REQUIREMENT -> Translation.text("node.requires." + block.detail());
             case HULL_MOD_CONFLICT -> variant.hasHullMod(block.detail())
                     ? "Ship already has " + HullModNames.displayName(block.detail()) + " installed."
                     : "Ship has a deactivated " + HullModNames.displayName(block.detail()) + " S-mod that Best of the Best will restore.";

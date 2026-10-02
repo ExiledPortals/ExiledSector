@@ -2441,9 +2441,6 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "REQUIRES_CIVILIAN_GRADE_HULL"
-				},
-				{
 					"effect": "REMOVE_CIVILIAN_HULL_PENALTY"
 				},
 				{
@@ -2463,6 +2460,7 @@
 			],
 			"tags": [
 				"logistics",
+				"req_civilian_hull",
 				"campaign_only"
 			]
 		},

@@ -3,16 +3,13 @@ package exiledsector.skills.skilleffect;
 import com.fs.starfarer.api.combat.FighterWingAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
-import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
-import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.loading.WingRole;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
-import exiledsector.skills.ShipFacts;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,8 +17,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -157,14 +152,6 @@ class FighterAndLogisticsEffectsTest {
         assertFalse(LogisticsSkillEffect.REMOVE_CIVILIAN_HULL_PENALTY.supportsTemporaryGating());
     }
 
-    @Test
-    void civilianOnlyNodesAreBlockedOnMilitaryHulls() {
-        ShipFacts civilian = new ShipFacts(ShipAPI.HullSize.FRIGATE, ShieldAPI.ShieldType.FRONT, false, 100f, HullMods.CIVGRADE::equals);
-        ShipFacts military = new ShipFacts(ShipAPI.HullSize.FRIGATE, ShieldAPI.ShieldType.FRONT, false, 100f, hullModId -> false);
-
-        assertNull(LogisticsSkillEffect.REQUIRES_CIVILIAN_GRADE_HULL.blockAllocationReason(civilian, ShieldAPI.ShieldType.FRONT));
-        assertNotNull(LogisticsSkillEffect.REQUIRES_CIVILIAN_GRADE_HULL.blockAllocationReason(military, ShieldAPI.ShieldType.FRONT));
-    }
 
     @Test
     void fleetWideContributionsAreStoredOnTheShipForThePlayerFleetOnly() {

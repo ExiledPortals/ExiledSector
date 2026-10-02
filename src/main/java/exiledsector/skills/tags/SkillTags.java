@@ -13,10 +13,12 @@ public final class SkillTags {
     public static final List<String> REGION = List.of(
             "inner", "luddic", "tritachyon", "hegemony", "sindrian_dictat", "pirate", "REDACTED", "persean_league", "lost_sector");
 
-    public static final List<String> REQUIREMENT = List.of(
+    public static final List<String> HULL_REQUIREMENT = List.of("req_civilian_hull");
+
+    public static final List<String> REQUIREMENT = Stream.of(List.of(
             "req_shields", "req_no_shields", "req_phase", "req_fighter_bays", "req_no_fighter_bays", "req_ballistic",
             "req_missile", "req_energy", "req_beam", "req_offensive_beam", "req_non_beam_energy", "req_flagship",
-            "campaign_only", "player_only");
+            "campaign_only", "player_only"), HULL_REQUIREMENT).flatMap(List::stream).toList();
 
     public static final List<String> ALL = Stream.of(THEME, REGION, REQUIREMENT).flatMap(List::stream).toList();
 
@@ -29,5 +31,9 @@ public final class SkillTags {
 
     public static boolean isRequirement(String tag) {
         return tag != null && REQUIREMENT.contains(tag);
+    }
+
+    public static boolean isHullRequirement(String tag) {
+        return tag != null && HULL_REQUIREMENT.contains(tag);
     }
 }

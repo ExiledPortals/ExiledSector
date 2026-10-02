@@ -87,6 +87,23 @@ class NodeEligibilityTest {
     }
 
     @Test
+    void aHullRequirementTagOnTheTypeOrTheChosenOptionBlocksShipsThatDoNotMeetIt() {
+        SkillNode militarized = node("militarized", registered(type("militarized_type", SkillTier.NOTABLE)
+                .tags(List.of("logistics", "req_civilian_hull")).build()));
+        SkillType civilianOption = registered(type("civilian_option", SkillTier.SMALL).tags(List.of("req_civilian_hull")).build());
+        SkillNode slot = optionalNode("slot", type("slot_type", SkillTier.SMALL), civilianOption);
+        ShipFacts civilian = facts(ShieldType.FRONT, Set.of("civgrade"));
+
+        NodeEligibility.Block block = check(militarized, null, FRONT_SHIELDED_FRIGATE);
+
+        assertEquals(NodeEligibility.Kind.UNMET_HULL_REQUIREMENT, block.kind());
+        assertEquals("req_civilian_hull", block.detail());
+        assertEquals(NodeEligibility.Kind.UNMET_HULL_REQUIREMENT, check(slot, civilianOption, FRONT_SHIELDED_FRIGATE).kind());
+        assertNull(check(militarized, null, civilian));
+        assertNull(check(slot, civilianOption, civilian));
+    }
+
+    @Test
     void anExclusivityDeclaredAgainstTheCandidatesContainerBlocksItsOptions() {
         SkillNode guard = node("guard", registered(type("guard_type", SkillTier.SMALL)
                 .exclusiveSkillTypeIds(List.of("slot_type")).build()));

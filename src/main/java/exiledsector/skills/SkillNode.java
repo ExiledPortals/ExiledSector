@@ -6,6 +6,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.layout.SkillTreeObject;
 import exiledsector.skills.skilleffect.WeaponEffectTooltipAggregator;
+import exiledsector.skills.tags.SkillTags;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -72,6 +73,11 @@ public class SkillNode extends SkillTreeObject {
         addLine(lines, describeTemporaryDuration(type), false);
         for (SkillTypeEffect effect : described) {
             addLine(lines, effect.effect().deallocationWarning(effect.magnitude()), false);
+        }
+        for (String tag : type.getTags()) {
+            if (SkillTags.isHullRequirement(tag)) {
+                addLine(lines, Translation.styled("node.requires." + tag), false);
+            }
         }
         addLine(lines, describeHullSizes(type), false);
         addLine(lines, describeItemCost(type), false);

@@ -27,7 +27,6 @@ import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.progression.SkillNodeOpCost;
 import exiledsector.skills.skilleffect.FighterSkillEffect;
-import exiledsector.skills.skilleffect.LogisticsSkillEffect;
 import exiledsector.skills.template.StepVerdict;
 import exiledsector.skills.template.TemplateStep;
 import exiledsector.skills.unlock.UnlockCondition;
@@ -353,10 +352,10 @@ class NodeAllocatorTest {
     }
 
     @Test
-    void anEffectsOwnAllocationRuleBlocksTheNode() {
+    void aHullRequirementTagBlocksTheNodeUntilTheHullMeetsIt() {
         when(member.getVariant()).thenReturn(variant);
         SkillType civilianOnly = type("civilian_only", "Civilian Only", SkillTier.SMALL)
-                .effects(List.of(new SkillTypeEffect(LogisticsSkillEffect.REQUIRES_CIVILIAN_GRADE_HULL, 1f))).build();
+                .tags(List.of("req_civilian_hull")).build();
 
         assertNotNull(blockReason(allocatorStartingAt(root), civilianOnly));
         when(variant.hasHullMod(HullMods.CIVGRADE)).thenReturn(true);
