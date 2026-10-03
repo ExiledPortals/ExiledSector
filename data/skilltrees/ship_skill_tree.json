@@ -5601,7 +5601,7 @@
 			"orbitAnchorId": "anchor_19",
 			"orbitAngle": 90,
 			"tags": [
-				"hegemony"
+				"lost_sector"
 			]
 		},
 		{
@@ -5616,7 +5616,7 @@
 			"orbitAnchorId": "anchor_19",
 			"orbitAngle": 180,
 			"tags": [
-				"hegemony"
+				"lost_sector"
 			]
 		},
 		{
@@ -5676,7 +5676,7 @@
 			"orbitAnchorId": "anchor_55",
 			"orbitAngle": 180,
 			"tags": [
-				"inner"
+				"lost_sector"
 			]
 		},
 		{
@@ -5691,7 +5691,7 @@
 			"orbitAnchorId": "anchor_55",
 			"orbitAngle": 90,
 			"tags": [
-				"inner"
+				"lost_sector"
 			]
 		}
 	],
