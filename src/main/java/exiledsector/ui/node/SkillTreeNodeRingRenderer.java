@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.function.Function;
 
 import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_CONNECTOR_GLOW_HALO_ALPHA;
 import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_CONNECTOR_GLOW_HALO_THICKNESS;
@@ -66,7 +67,7 @@ final class SkillTreeNodeRingRenderer {
     private static final float NOTABLE_RING_RADIUS_DECAY = 0.88f;
     private static final int NOTABLE_RING_COUNT = 10;
 
-    private static final String DEFAULT_KEYSTONE_RING_BELT_PATH = "graphics/planets/ring_band_asteroids.png";
+    private static final String DEFAULT_KEYSTONE_RING_BELT_PATH = "graphics/planets/aurorae.png";
     private static final float KEYSTONE_BELT_WIDTH_RATIO = 1.1f;
 
     private static final String AURORA_TEXTURE_PATH = "graphics/planets/aurorae.png";
@@ -107,6 +108,13 @@ final class SkillTreeNodeRingRenderer {
 
     private static final float REACH_FOOTPRINT_RATIO = 2f;
     private static final float KEYSTONE_BELT_REACH_MARGIN = 1.3f;
+
+    private static final Function<String, List<RingInstance>> NOTABLE_RINGS =
+            id -> generateRingInstances(id, NOTABLE_RING_COUNT, NOTABLE_RING_RADIUS_DECAY);
+    private static final Function<String, List<RingInstance>> NOTABLE_PINK_RINGS =
+            id -> generateRingInstances(id + "_pink", NOTABLE_RING_COUNT, NOTABLE_RING_RADIUS_DECAY);
+    private static final Function<String, List<RingInstance>> WORMHOLE_RINGS =
+            id -> generateRingInstances(id, WORMHOLE_RING_COUNT, WORMHOLE_RING_RADIUS_DECAY);
 
     private final SkillTreePanelStyle style;
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeNodeRingRenderer.class);
@@ -154,7 +162,8 @@ final class SkillTreeNodeRingRenderer {
         return reach;
     }
 
-    void draw(float cx, float cy, float footprintSize, float alphaMult, boolean allocated, boolean breathing, float zoom, SkillNode node) {
+    void draw(float cx, float cy, float footprintSize, float alphaMult, RingState state, float zoom, SkillNode node) {
+        boolean allocated = state.allocated;
         SkillTier tier = node.getType().getTier();
         String nodeId = node.getId();
         float half = footprintSize / 2f;
@@ -166,8 +175,7 @@ final class SkillTreeNodeRingRenderer {
         float ringRadius = donutRadius(footprintSize);
         if (tier == SkillTier.NOTABLE) {
             float stateAlpha = allocated ? 1f : UNALLOCATED_ALPHA_MULT;
-            drawRingStack(cx, cy, footprintSize * NOTABLE_RING_OUTER_RADIUS_RATIO, nodeId,
-                    NOTABLE_RING_COUNT, NOTABLE_RING_RADIUS_DECAY, stateAlpha, alphaMult);
+            drawNotableRingStack(cx, cy, footprintSize * NOTABLE_RING_OUTER_RADIUS_RATIO, nodeId, stateAlpha * alphaMult);
             drawAmbientGlow(cx, cy, footprintSize, stateAlpha, alphaMult);
         } else if (tier == SkillTier.KEYSTONE) {
             float stateAlpha = allocated ? 1f : UNALLOCATED_ALPHA_MULT;
@@ -188,7 +196,7 @@ final class SkillTreeNodeRingRenderer {
 
         if (tier != SkillTier.WORMHOLE) {
             drawNodeDonut(cx, cy, ringRadius, scale, zoom, allocated, alphaMult);
-            if (breathing) {
+            if (state.breathing) {
                 drawBreathingOutline(cx, cy, ringRadius, scale, zoom, alphaMult);
             }
             drawPulseOutline(cx, cy, half, nodeId, zoom, alphaMult);
@@ -233,34 +241,15 @@ final class SkillTreeNodeRingRenderer {
         drawRingOutline(cx, cy, radius + gapRadius, RING_DULL_COLOR, alphaMult * RING_DULL_ALPHA);
     }
 
-    private void drawRingStack(float cx, float cy, float outerRadius, String nodeId,
-                                int count, float radiusDecay, float stateAlpha, float alphaMult) {
-        drawRingStackPass(cx, cy, outerRadius, ringStack(nodeId, count, radiusDecay), Color.WHITE, 1f, stateAlpha, alphaMult);
-        drawRingStackPass(cx, cy, outerRadius, pinkRingStack(nodeId, count, radiusDecay),
-                RING_PINK_COLOR, RING_PINK_SCALE_RATIO, stateAlpha, alphaMult);
-    }
-
-    private List<RingInstance> ringStack(String nodeId, int count, float radiusDecay) {
-        List<RingInstance> stack = ringStacks.get(nodeId);
-        if (stack == null) {
-            stack = generateRingInstances(nodeId, count, radiusDecay);
-            ringStacks.put(nodeId, stack);
-        }
-        return stack;
-    }
-
-    private List<RingInstance> pinkRingStack(String nodeId, int count, float radiusDecay) {
-        List<RingInstance> stack = pinkRingStacks.get(nodeId);
-        if (stack == null) {
-            stack = generateRingInstances(nodeId + "_pink", count, radiusDecay);
-            pinkRingStacks.put(nodeId, stack);
-        }
-        return stack;
+    private void drawNotableRingStack(float cx, float cy, float outerRadius, String nodeId, float alpha) {
+        drawRingStackPass(cx, cy, outerRadius, ringStacks.computeIfAbsent(nodeId, NOTABLE_RINGS), Color.WHITE, 1f, alpha);
+        drawRingStackPass(cx, cy, outerRadius, pinkRingStacks.computeIfAbsent(nodeId, NOTABLE_PINK_RINGS),
+                RING_PINK_COLOR, RING_PINK_SCALE_RATIO, alpha);
     }
 
     private void drawRingStackPass(float cx, float cy, float outerRadius, List<RingInstance> instances,
-                                    Color color, float scaleRatio, float stateAlpha, float alphaMult) {
-        float alpha = RING_INSTANCE_BASE_ALPHA * stateAlpha * alphaMult;
+                                    Color color, float scaleRatio, float stackAlpha) {
+        float alpha = RING_INSTANCE_BASE_ALPHA * stackAlpha;
 
         for (RingInstance instance : instances) {
             String path = RING_STACK_TEXTURES[instance.textureIndex];
@@ -314,8 +303,8 @@ final class SkillTreeNodeRingRenderer {
 
         if (openness > 0f) {
             drawRingStackPass(cx, cy, baseRadius * 2f * WORMHOLE_RING_OUTER_RADIUS_RATIO,
-                    ringStack(nodeId, WORMHOLE_RING_COUNT, WORMHOLE_RING_RADIUS_DECAY),
-                    color, 1f, openness, alphaMult);
+                    ringStacks.computeIfAbsent(nodeId, WORMHOLE_RINGS),
+                    color, 1f, openness * alphaMult);
         }
 
         if (openness < 1f) {
@@ -411,6 +400,24 @@ final class SkillTreeNodeRingRenderer {
             instances.add(instance);
         }
         return instances;
+    }
+
+    enum RingState {
+        IDLE(false, false), BREATHING(false, true), ALLOCATED(true, false), ALLOCATED_BREATHING(true, true);
+
+        private static final RingState[] BY_FLAGS = values();
+
+        final boolean allocated;
+        final boolean breathing;
+
+        RingState(boolean allocated, boolean breathing) {
+            this.allocated = allocated;
+            this.breathing = breathing;
+        }
+
+        static RingState of(boolean allocated, boolean breathing) {
+            return BY_FLAGS[(allocated ? 2 : 0) + (breathing ? 1 : 0)];
+        }
     }
 
     private static final class RingInstance {

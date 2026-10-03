@@ -301,7 +301,7 @@ public final class SkillTreeNodeRenderer {
         float iconSize = footprintSize * ICON_INSET_RATIO;
 
         float nodeAlpha = alphaMult * search.nodeAlpha(node, allocation);
-        ringRenderer.draw(nodeX, nodeY, footprintSize, nodeAlpha, allocated, breathing, zoom, node);
+        ringRenderer.draw(nodeX, nodeY, footprintSize, nodeAlpha, SkillTreeNodeRingRenderer.RingState.of(allocated, breathing), zoom, node);
 
         if (tier != SkillTier.WORMHOLE) {
             Color tint = iconTint(node, allocation, allocated);
@@ -326,7 +326,7 @@ public final class SkillTreeNodeRenderer {
         boolean allocated = data.isAllocated(node.getId());
         boolean breathing = choosing || (!allocated && allocation.canAllocate(node));
         float nodeAlpha = alphaMult * search.nodeAlpha(node, allocation);
-        ringRenderer.draw(nodeX, nodeY, footprintSize, nodeAlpha, allocated, breathing, zoom, node);
+        ringRenderer.draw(nodeX, nodeY, footprintSize, nodeAlpha, SkillTreeNodeRingRenderer.RingState.of(allocated, breathing), zoom, node);
 
         Color tint = choosing ? ALLOCATED_TINT : iconTint(node, allocation, allocated);
         iconRenderer.drawIcon(node.getType().getIconPath(), nodeX, nodeY, footprintSize, nodeAlpha, tint);

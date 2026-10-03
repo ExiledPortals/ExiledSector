@@ -1109,7 +1109,7 @@ var RING_BELT_STYLES = [
 var AURORA_RING_BELT_PATH = 'graphics/planets/aurorae.png';
 var KEYSTONE_BELT_DEFAULT_WIDTH = 1.1;
 function isAuroraBelt(n){
-  return n.ringBeltPath === AURORA_RING_BELT_PATH;
+  return !n.ringBeltPath || n.ringBeltPath === AURORA_RING_BELT_PATH;
 }
 var ANCHOR_RECTANGLE_ASPECT = 1.6;
 function anchorShapeVertices(anchor){
@@ -2393,7 +2393,7 @@ function refreshInspector(){
     '</div>' +
     (tier === 'KEYSTONE' ?
       '<div class="field"><label>Ring belt art (optional)</label><div class="fieldRow">' +
-        '<input value="' + (n.ringBeltPath || '') + '" placeholder="graphics/planets/ring_band_asteroids.png" data-field="ringBeltPath" style="flex:1">' +
+        '<input value="' + (n.ringBeltPath || '') + '" placeholder="' + AURORA_RING_BELT_PATH + '" data-field="ringBeltPath" style="flex:1">' +
         '<button class="smallBtn" type="button" id="selectRingBeltBtn">Select Image</button>' +
       '</div></div>' +
       (isAuroraBelt(n) ?
