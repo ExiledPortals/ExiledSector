@@ -4,7 +4,9 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.CustomUIPanelPlugin;
 import com.fs.starfarer.api.input.InputEventAPI;
+import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
+import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
@@ -41,12 +43,31 @@ class SkillTreeChipClickTargetTest {
         }
     }
 
+    public abstract static class ChipRow implements UIComponentAPI {
+        public final List<Object> children = new ArrayList<>();
+
+        public List<Object> getChildrenNonCopy() {
+            return children;
+        }
+    }
+
+    private static final float ICON_X = 290;
+    private static final float ICON_Y = 280;
+
     private MockedStatic<Global> globalMock;
     private MockedStatic<SkillTreeRefitButton> buttonMock;
     private UIPanelAPI widget;
     private RowList list;
-    private UIComponentAPI chip;
+    private ChipRow chip;
+    private ButtonAPI icon;
     private CustomUIPanelPlugin plugin;
+
+    private static ButtonAPI button(String text, PositionAPI position) {
+        ButtonAPI button = mock(ButtonAPI.class);
+        when(button.getText()).thenReturn(text);
+        when(button.getPosition()).thenReturn(position);
+        return button;
+    }
 
     private static PositionAPI position(float x, float y, float width, float height) {
         PositionAPI position = mock(PositionAPI.class);
@@ -77,9 +98,13 @@ class SkillTreeChipClickTargetTest {
         list = mock(RowList.class, withSettings().useConstructor().defaultAnswer(CALLS_REAL_METHODS));
         PositionAPI listPosition = position(10, 100, 300, 200);
         doReturn(listPosition).when(list).getPosition();
-        chip = mock(UIComponentAPI.class);
+        chip = mock(ChipRow.class, withSettings().useConstructor().defaultAnswer(CALLS_REAL_METHODS));
         PositionAPI chipPosition = position(10, 260, 300, 40);
-        when(chip.getPosition()).thenReturn(chipPosition);
+        doReturn(chipPosition).when(chip).getPosition();
+        icon = button(null, position(271, 263, 34, 34));
+        chip.children.add(mock(LabelAPI.class));
+        chip.children.add(button("-", position(240, 268, 24, 24)));
+        chip.children.add(icon);
         list.items.add(chip);
 
         SettingsAPI settings = mock(SettingsAPI.class);
@@ -103,8 +128,8 @@ class SkillTreeChipClickTargetTest {
 
     @Test
     void clickingTheChipOpensTheTreeAndSwallowsTheClickAndItsRelease() {
-        InputEventAPI down = lmb(true, 50, 280);
-        InputEventAPI up = lmb(false, 50, 280);
+        InputEventAPI down = lmb(true, ICON_X, ICON_Y);
+        InputEventAPI up = lmb(false, ICON_X, ICON_Y);
         plugin.processInput(List.of(down, up));
 
         buttonMock.verify(() -> SkillTreeRefitButton.openPanel(down));
@@ -114,8 +139,8 @@ class SkillTreeChipClickTargetTest {
 
     @Test
     void aReleaseConsumedElsewhereStillEndsTheSwallowedClick() {
-        InputEventAPI down = lmb(true, 50, 280);
-        InputEventAPI consumedUp = lmb(false, 50, 280);
+        InputEventAPI down = lmb(true, ICON_X, ICON_Y);
+        InputEventAPI consumedUp = lmb(false, ICON_X, ICON_Y);
         when(consumedUp.isConsumed()).thenReturn(true);
         plugin.processInput(List.of(down, consumedUp));
 
@@ -137,19 +162,40 @@ class SkillTreeChipClickTargetTest {
     }
 
     @Test
+    void clickingTheChipsNameOrTheRestOfItsRowIsLeftToTheGame() {
+        InputEventAPI onName = lmb(true, 50, ICON_Y);
+        InputEventAPI onRemoveButton = lmb(true, 250, ICON_Y);
+        plugin.processInput(List.of(onName, onRemoveButton));
+
+        buttonMock.verify(() -> SkillTreeRefitButton.openPanel(any()), never());
+        verify(onName, never()).consume();
+        verify(onRemoveButton, never()).consume();
+    }
+
+    @Test
     void aChipScrolledOutOfTheListIsNotClickable() {
-        PositionAPI scrolledAway = position(10, 320, 300, 40);
-        when(chip.getPosition()).thenReturn(scrolledAway);
-        InputEventAPI down = lmb(true, 50, 340);
+        PositionAPI scrolledAway = position(271, 323, 34, 34);
+        when(icon.getPosition()).thenReturn(scrolledAway);
+        InputEventAPI down = lmb(true, ICON_X, 340);
         plugin.processInput(List.of(down));
 
         verify(down, never()).consume();
     }
 
     @Test
+    void aChipWithoutAnIconGetsNoClickTarget() {
+        ChipRow iconless = mock(ChipRow.class, withSettings().useConstructor().defaultAnswer(CALLS_REAL_METHODS));
+        iconless.children.add(mock(LabelAPI.class));
+
+        SkillTreeChipClickTarget.attach(widget, list, iconless);
+
+        verify(widget, Mockito.times(1)).addComponent(any());
+    }
+
+    @Test
     void aChipRemovedFromTheListIsNotClickable() {
         list.items.clear();
-        InputEventAPI down = lmb(true, 50, 280);
+        InputEventAPI down = lmb(true, ICON_X, ICON_Y);
         plugin.processInput(List.of(down));
 
         verify(down, never()).consume();
@@ -158,8 +204,8 @@ class SkillTreeChipClickTargetTest {
     @Test
     void theClickIsLeftAloneWhenThePanelCannotOpen() {
         buttonMock.when(() -> SkillTreeRefitButton.openPanel(any())).thenReturn(false);
-        InputEventAPI down = lmb(true, 50, 280);
-        InputEventAPI up = lmb(false, 50, 280);
+        InputEventAPI down = lmb(true, ICON_X, ICON_Y);
+        InputEventAPI up = lmb(false, ICON_X, ICON_Y);
         plugin.processInput(List.of(down, up));
 
         verify(down, never()).consume();
@@ -169,9 +215,9 @@ class SkillTreeChipClickTargetTest {
     @Test
     void aBrokenOpenerDisablesClickToOpenInsteadOfCrashing() {
         buttonMock.when(() -> SkillTreeRefitButton.openPanel(any())).thenThrow(new NoSuchMethodError("lunalib changed"));
-        InputEventAPI first = lmb(true, 50, 280);
+        InputEventAPI first = lmb(true, ICON_X, ICON_Y);
         plugin.processInput(List.of(first));
-        InputEventAPI second = lmb(true, 50, 280);
+        InputEventAPI second = lmb(true, ICON_X, ICON_Y);
         plugin.processInput(List.of(second));
 
         verify(first, never()).consume();

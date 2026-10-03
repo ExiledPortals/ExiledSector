@@ -3,6 +3,7 @@ package exiledsector.ui.refit;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.input.InputEventAPI;
+import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
@@ -23,11 +24,13 @@ final class SkillTreeChipClickTarget extends BaseCustomUIPanelPlugin {
 
     private final Object list;
     private final UIComponentAPI row;
+    private final ButtonAPI icon;
     private boolean swallowMouseUp;
 
-    private SkillTreeChipClickTarget(Object list, UIComponentAPI row) {
+    private SkillTreeChipClickTarget(Object list, UIComponentAPI row, ButtonAPI icon) {
         this.list = list;
         this.row = row;
+        this.icon = icon;
     }
 
     static void attach(Object modWidget, Object list, Object chipRow) {
@@ -35,13 +38,24 @@ final class SkillTreeChipClickTarget extends BaseCustomUIPanelPlugin {
         try {
             removeExisting(widget);
             if (!(chipRow instanceof UIComponentAPI row) || !(list instanceof UIComponentAPI)) return;
+            ButtonAPI icon = iconOf(row);
+            if (icon == null) return;
             PositionAPI widgetPosition = widget.getPosition();
             CustomPanelAPI overlay = Global.getSettings().createCustom(widgetPosition.getWidth(), widgetPosition.getHeight(),
-                    new SkillTreeChipClickTarget(list, row));
+                    new SkillTreeChipClickTarget(list, row, icon));
             widget.addComponent(overlay).inTL(0f, 0f);
         } catch (Throwable e) {
             disable(e);
         }
+    }
+
+    private static ButtonAPI iconOf(UIComponentAPI row) throws Throwable {
+        for (Object child : UiReflection.children(row)) {
+            if (child instanceof ButtonAPI button && (button.getText() == null || button.getText().isBlank())) {
+                return button;
+            }
+        }
+        return null;
     }
 
     static void resetForTests() {
@@ -79,7 +93,7 @@ final class SkillTreeChipClickTarget extends BaseCustomUIPanelPlugin {
         try {
             return list instanceof UIComponentAPI listComponent
                     && contains(listComponent.getPosition(), x, y)
-                    && contains(row.getPosition(), x, y)
+                    && contains(icon.getPosition(), x, y)
                     && call(list, "getItems") instanceof List<?> rows && rows.contains(row);
         } catch (Throwable e) {
             disable(e);
