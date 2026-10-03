@@ -57,10 +57,10 @@
 			"hullSizeEffects": [
 				{
 					"effect": "ARMOR_FLAT",
-					"frigate": 30,
-					"destroyer": 50,
-					"cruiser": 100,
-					"capitalShip": 125
+					"frigate": 20,
+					"destroyer": 40,
+					"cruiser": 80,
+					"capitalShip": 100
 				}
 			],
 			"tags": [
@@ -317,7 +317,7 @@
 			"effects": [
 				{
 					"effect": "MISSILE_WEAPON_DAMAGE_PERCENT",
-					"magnitude": 5
+					"magnitude": 3
 				}
 			],
 			"tags": [
@@ -1464,19 +1464,12 @@
 				},
 				{
 					"effect": "ARMOR_PERCENT",
-					"magnitude": 30
+					"magnitude": 40
 				}
 			],
 			"hullSizeEffects": [
 				{
 					"effect": "HULL_FLAT",
-					"frigate": 100,
-					"destroyer": 200,
-					"cruiser": 300,
-					"capitalShip": 400
-				},
-				{
-					"effect": "ARMOR_FLAT",
 					"frigate": 100,
 					"destroyer": 200,
 					"cruiser": 300,
@@ -2232,6 +2225,12 @@
 			"name": "Auxiliary Fuel Tanks",
 			"icon": "graphics/icons/auxiliary_fuel_tanks.png",
 			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "FUEL_CAPACITY_PERCENT",
+					"magnitude": 20
+				}
+			],
 			"hullSizeEffects": [
 				{
 					"effect": "FUEL_CAPACITY_FLAT",
@@ -2295,6 +2294,12 @@
 			"name": "Expanded Cargo Holds",
 			"icon": "graphics/icons/expanded_cargo_holds.png",
 			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CARGO_CAPACITY_PERCENT",
+					"magnitude": 20
+				}
+			],
 			"hullSizeEffects": [
 				{
 					"effect": "CARGO_CAPACITY_FLAT",
@@ -3150,7 +3155,7 @@
 			"effects": [
 				{
 					"effect": "WEAPON_DURABILITY_PERCENT",
-					"magnitude": 15
+					"magnitude": 10
 				}
 			],
 			"tags": [
@@ -3441,6 +3446,17 @@
 			],
 			"tags": [
 				"weapons"
+			]
+		},
+		{
+			"id": "ecm_resistance",
+			"name": "ECM Resistance",
+			"icon": "graphics/icons/cybernetic_augmentation_shifted.png",
+			"effects": [
+				{
+					"effect": "ELECTRONIC_WARFARE_PENALTY_MULT",
+					"magnitude": -15
+				}
 			]
 		}
 	]
