@@ -82,7 +82,7 @@ public enum FighterSkillEffect implements SkillEffect {
     FIGHTER_SHIELD_DAMAGE_TAKEN_PERCENT(RoleStat.SHIELD_DAMAGE_TAKEN),
     FIGHTER_RATE_OF_FIRE_PERCENT(RoleStat.RATE_OF_FIRE),
     FIGHTER_ENGAGEMENT_RANGE_PERCENT(RoleStat.ENGAGEMENT_RANGE),
-    FIGHTER_ENGAGEMENT_RANGE_MULT(MULT, bonus(MutableShipStatsAPI::getFighterWingRange), "stat.engagementRange", false),
+    FIGHTER_ENGAGEMENT_RANGE_MULT(MULT, bonus(MutableShipStatsAPI::getFighterWingRange), "stat.fighterEngagementRange", false),
     FIGHTER_WEAPON_RANGE_FLAT(RoleStat.WEAPON_RANGE),
     FIGHTER_ROLE_DAMAGE_PERCENT(WingRole.FIGHTER, RoleStat.WEAPON_DAMAGE),
     FIGHTER_ROLE_TOP_SPEED_PERCENT(WingRole.FIGHTER, RoleStat.TOP_SPEED),

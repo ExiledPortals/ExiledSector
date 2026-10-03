@@ -143,6 +143,7 @@
     "fighter.role.BOMBER": "轰炸机",
     "fighter.role.SUPPORT": "支援机",
     "stat.engagementRange": "交战范围",
+    "stat.fighterEngagementRange": "战机交战范围",
     "stat.systemCharges": "舰船系统充能次数",
     "effect.BEAM_WEAPON_HARD_FLUX_PERCENT": "光束武器对护盾造成的伤害中有{value}%转化为硬幅能。",
     "effect.SHIELD_DAMAGE_SHARED_PERCENT": "将护盾所受伤害的{value}%分散给{range} su内未过载且未在主动排散的友方舰船，由它们平均承担为硬幅能。",

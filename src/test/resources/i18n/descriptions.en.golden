@@ -694,12 +694,12 @@ effect|FIGHTER_CREW_LOSS_PERCENT|12.5	1	Increases casualties suffered by fighter
 effect|FIGHTER_CREW_LOSS_PERCENT|100.0	1	Increases casualties suffered by fighter pilots launched from this ship by <good>100%</good>.
 effect|FIGHTER_CREW_LOSS_PERCENT|-10.0	1	Decreases casualties suffered by fighter pilots launched from this ship by <bad>10%</bad>.
 effect|FIGHTER_CREW_LOSS_PERCENT|-12.5	1	Decreases casualties suffered by fighter pilots launched from this ship by <bad>12.5%</bad>.
-effect|FIGHTER_ENGAGEMENT_RANGE_MULT|1.0	0	<good>1%</good> more engagement range.
-effect|FIGHTER_ENGAGEMENT_RANGE_MULT|10.0	0	<good>10%</good> more engagement range.
-effect|FIGHTER_ENGAGEMENT_RANGE_MULT|12.5	0	<good>12.5%</good> more engagement range.
-effect|FIGHTER_ENGAGEMENT_RANGE_MULT|100.0	0	<good>100%</good> more engagement range.
-effect|FIGHTER_ENGAGEMENT_RANGE_MULT|-10.0	0	<bad>10%</bad> less engagement range.
-effect|FIGHTER_ENGAGEMENT_RANGE_MULT|-12.5	0	<bad>12.5%</bad> less engagement range.
+effect|FIGHTER_ENGAGEMENT_RANGE_MULT|1.0	0	<good>1%</good> more fighter engagement range.
+effect|FIGHTER_ENGAGEMENT_RANGE_MULT|10.0	0	<good>10%</good> more fighter engagement range.
+effect|FIGHTER_ENGAGEMENT_RANGE_MULT|12.5	0	<good>12.5%</good> more fighter engagement range.
+effect|FIGHTER_ENGAGEMENT_RANGE_MULT|100.0	0	<good>100%</good> more fighter engagement range.
+effect|FIGHTER_ENGAGEMENT_RANGE_MULT|-10.0	0	<bad>10%</bad> less fighter engagement range.
+effect|FIGHTER_ENGAGEMENT_RANGE_MULT|-12.5	0	<bad>12.5%</bad> less fighter engagement range.
 effect|FIGHTER_ENGAGEMENT_RANGE_PERCENT|1.0	0	Increases engagement range of fighters launched from this ship by <good>1%</good>.
 effect|FIGHTER_ENGAGEMENT_RANGE_PERCENT|10.0	0	Increases engagement range of fighters launched from this ship by <good>10%</good>.
 effect|FIGHTER_ENGAGEMENT_RANGE_PERCENT|12.5	0	Increases engagement range of fighters launched from this ship by <good>12.5%</good>.
@@ -2983,7 +2983,7 @@ type|nskr_volatile|null|2	0	Increases flux capacity by <good>67%</good>.
 type|nskr_volatile|null|3	0	Each flux capacitor grants <good>67%</good> more flux capacity.
 type|nskr_volatile|null|4	0	Increases range before falloff effectiveness applies by <good>800</good>.
 type|nskr_volatile|null|5	0	<bad>50%</bad> less weapon effectiveness past normal range.
-type|nskr_volatile|null|6	0	<bad>75%</bad> less engagement range.
+type|nskr_volatile|null|6	0	<bad>75%</bad> less fighter engagement range.
 type|nskr_volatile|null|7	0	On hulls with Augmented Systems, the high-flux top speed and rate of fire penalties are <good>50%</good> smaller.
 type|nskr_volatile|null|8	0	Can't be allocated on phase ships.
 type|nskr_volatile|null|9	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Safety Overrides, Volatile Flux Injector.
@@ -2993,7 +2993,7 @@ type|nskr_volatile|FRIGATE|2	0	Increases flux capacity by <good>67%</good>.
 type|nskr_volatile|FRIGATE|3	0	Each flux capacitor grants <good>67%</good> more flux capacity.
 type|nskr_volatile|FRIGATE|4	0	Increases range before falloff effectiveness applies by <good>800</good>.
 type|nskr_volatile|FRIGATE|5	0	<bad>50%</bad> less weapon effectiveness past normal range.
-type|nskr_volatile|FRIGATE|6	0	<bad>75%</bad> less engagement range.
+type|nskr_volatile|FRIGATE|6	0	<bad>75%</bad> less fighter engagement range.
 type|nskr_volatile|FRIGATE|7	0	On hulls with Augmented Systems, the high-flux top speed and rate of fire penalties are <good>50%</good> smaller.
 type|nskr_volatile|FRIGATE|8	0	Top speed changes with flux, from <good>+50</good> su/s at no flux to <bad>-50</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>50%</good>.
 type|nskr_volatile|FRIGATE|9	0	Can't be allocated on phase ships.
@@ -3004,7 +3004,7 @@ type|nskr_volatile|DESTROYER|2	0	Increases flux capacity by <good>67%</good>.
 type|nskr_volatile|DESTROYER|3	0	Each flux capacitor grants <good>67%</good> more flux capacity.
 type|nskr_volatile|DESTROYER|4	0	Increases range before falloff effectiveness applies by <good>800</good>.
 type|nskr_volatile|DESTROYER|5	0	<bad>50%</bad> less weapon effectiveness past normal range.
-type|nskr_volatile|DESTROYER|6	0	<bad>75%</bad> less engagement range.
+type|nskr_volatile|DESTROYER|6	0	<bad>75%</bad> less fighter engagement range.
 type|nskr_volatile|DESTROYER|7	0	On hulls with Augmented Systems, the high-flux top speed and rate of fire penalties are <good>50%</good> smaller.
 type|nskr_volatile|DESTROYER|8	0	Top speed changes with flux, from <good>+40</good> su/s at no flux to <bad>-40</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>40%</good>.
 type|nskr_volatile|DESTROYER|9	0	Can't be allocated on phase ships.
@@ -3015,7 +3015,7 @@ type|nskr_volatile|CRUISER|2	0	Increases flux capacity by <good>67%</good>.
 type|nskr_volatile|CRUISER|3	0	Each flux capacitor grants <good>67%</good> more flux capacity.
 type|nskr_volatile|CRUISER|4	0	Increases range before falloff effectiveness applies by <good>800</good>.
 type|nskr_volatile|CRUISER|5	0	<bad>50%</bad> less weapon effectiveness past normal range.
-type|nskr_volatile|CRUISER|6	0	<bad>75%</bad> less engagement range.
+type|nskr_volatile|CRUISER|6	0	<bad>75%</bad> less fighter engagement range.
 type|nskr_volatile|CRUISER|7	0	On hulls with Augmented Systems, the high-flux top speed and rate of fire penalties are <good>50%</good> smaller.
 type|nskr_volatile|CRUISER|8	0	Top speed changes with flux, from <good>+30</good> su/s at no flux to <bad>-30</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>30%</good>.
 type|nskr_volatile|CRUISER|9	0	Can't be allocated on phase ships.
@@ -3026,7 +3026,7 @@ type|nskr_volatile|CAPITAL_SHIP|2	0	Increases flux capacity by <good>67%</good>.
 type|nskr_volatile|CAPITAL_SHIP|3	0	Each flux capacitor grants <good>67%</good> more flux capacity.
 type|nskr_volatile|CAPITAL_SHIP|4	0	Increases range before falloff effectiveness applies by <good>800</good>.
 type|nskr_volatile|CAPITAL_SHIP|5	0	<bad>50%</bad> less weapon effectiveness past normal range.
-type|nskr_volatile|CAPITAL_SHIP|6	0	<bad>75%</bad> less engagement range.
+type|nskr_volatile|CAPITAL_SHIP|6	0	<bad>75%</bad> less fighter engagement range.
 type|nskr_volatile|CAPITAL_SHIP|7	0	On hulls with Augmented Systems, the high-flux top speed and rate of fire penalties are <good>50%</good> smaller.
 type|nskr_volatile|CAPITAL_SHIP|8	0	Top speed changes with flux, from <good>+20</good> su/s at no flux to <bad>-20</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>20%</good>.
 type|nskr_volatile|CAPITAL_SHIP|9	0	Can't be allocated on phase ships.
@@ -3671,7 +3671,7 @@ summary|option0|FRIGATE|123	0	Increases flux capacity by <good>82%</good>.
 summary|option0|FRIGATE|124	0	Each flux capacitor grants <good>67%</good> more flux capacity.
 summary|option0|FRIGATE|125	0	Increases range before falloff effectiveness applies by <good>1250</good>.
 summary|option0|FRIGATE|126	0	<bad>100%</bad> less weapon effectiveness past normal range.
-summary|option0|FRIGATE|127	0	<bad>75%</bad> less engagement range.
+summary|option0|FRIGATE|127	0	<bad>75%</bad> less fighter engagement range.
 summary|option0|FRIGATE|128	0	On hulls with Augmented Systems, the high-flux top speed and rate of fire penalties are <good>50%</good> smaller.
 summary|option0|FRIGATE|129	0	Top speed changes with flux, from <good>+50</good> su/s at no flux to <bad>-50</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>50%</good>.
 summary|option0|FRIGATE|130	0	Increases range from which combat objectives can be captured by <good>105</good>.
@@ -3843,7 +3843,7 @@ summary|option0|DESTROYER|123	0	Increases flux capacity by <good>82%</good>.
 summary|option0|DESTROYER|124	0	Each flux capacitor grants <good>67%</good> more flux capacity.
 summary|option0|DESTROYER|125	0	Increases range before falloff effectiveness applies by <good>1250</good>.
 summary|option0|DESTROYER|126	0	<bad>100%</bad> less weapon effectiveness past normal range.
-summary|option0|DESTROYER|127	0	<bad>75%</bad> less engagement range.
+summary|option0|DESTROYER|127	0	<bad>75%</bad> less fighter engagement range.
 summary|option0|DESTROYER|128	0	On hulls with Augmented Systems, the high-flux top speed and rate of fire penalties are <good>50%</good> smaller.
 summary|option0|DESTROYER|129	0	Top speed changes with flux, from <good>+40</good> su/s at no flux to <bad>-40</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>40%</good>.
 summary|option0|DESTROYER|130	0	Increases range from which combat objectives can be captured by <good>105</good>.
@@ -4015,7 +4015,7 @@ summary|option0|CRUISER|123	0	Increases flux capacity by <good>82%</good>.
 summary|option0|CRUISER|124	0	Each flux capacitor grants <good>67%</good> more flux capacity.
 summary|option0|CRUISER|125	0	Increases range before falloff effectiveness applies by <good>1250</good>.
 summary|option0|CRUISER|126	0	<bad>100%</bad> less weapon effectiveness past normal range.
-summary|option0|CRUISER|127	0	<bad>75%</bad> less engagement range.
+summary|option0|CRUISER|127	0	<bad>75%</bad> less fighter engagement range.
 summary|option0|CRUISER|128	0	On hulls with Augmented Systems, the high-flux top speed and rate of fire penalties are <good>50%</good> smaller.
 summary|option0|CRUISER|129	0	Top speed changes with flux, from <good>+30</good> su/s at no flux to <bad>-30</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>30%</good>.
 summary|option0|CRUISER|130	0	Increases range from which combat objectives can be captured by <good>105</good>.
@@ -4187,7 +4187,7 @@ summary|option0|CAPITAL_SHIP|123	0	Increases flux capacity by <good>82%</good>.
 summary|option0|CAPITAL_SHIP|124	0	Each flux capacitor grants <good>67%</good> more flux capacity.
 summary|option0|CAPITAL_SHIP|125	0	Increases range before falloff effectiveness applies by <good>1250</good>.
 summary|option0|CAPITAL_SHIP|126	0	<bad>100%</bad> less weapon effectiveness past normal range.
-summary|option0|CAPITAL_SHIP|127	0	<bad>75%</bad> less engagement range.
+summary|option0|CAPITAL_SHIP|127	0	<bad>75%</bad> less fighter engagement range.
 summary|option0|CAPITAL_SHIP|128	0	On hulls with Augmented Systems, the high-flux top speed and rate of fire penalties are <good>50%</good> smaller.
 summary|option0|CAPITAL_SHIP|129	0	Top speed changes with flux, from <good>+20</good> su/s at no flux to <bad>-20</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>20%</good>.
 summary|option0|CAPITAL_SHIP|130	0	Increases range from which combat objectives can be captured by <good>105</good>.
@@ -4359,7 +4359,7 @@ summary|option1|FRIGATE|123	0	Increases flux capacity by <good>82%</good>.
 summary|option1|FRIGATE|124	0	Each flux capacitor grants <good>67%</good> more flux capacity.
 summary|option1|FRIGATE|125	0	Increases range before falloff effectiveness applies by <good>1250</good>.
 summary|option1|FRIGATE|126	0	<bad>100%</bad> less weapon effectiveness past normal range.
-summary|option1|FRIGATE|127	0	<bad>75%</bad> less engagement range.
+summary|option1|FRIGATE|127	0	<bad>75%</bad> less fighter engagement range.
 summary|option1|FRIGATE|128	0	On hulls with Augmented Systems, the high-flux top speed and rate of fire penalties are <good>50%</good> smaller.
 summary|option1|FRIGATE|129	0	Top speed changes with flux, from <good>+50</good> su/s at no flux to <bad>-50</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>50%</good>.
 summary|option1|FRIGATE|130	0	Increases range from which combat objectives can be captured by <good>105</good>.
@@ -4531,7 +4531,7 @@ summary|option1|DESTROYER|123	0	Increases flux capacity by <good>82%</good>.
 summary|option1|DESTROYER|124	0	Each flux capacitor grants <good>67%</good> more flux capacity.
 summary|option1|DESTROYER|125	0	Increases range before falloff effectiveness applies by <good>1250</good>.
 summary|option1|DESTROYER|126	0	<bad>100%</bad> less weapon effectiveness past normal range.
-summary|option1|DESTROYER|127	0	<bad>75%</bad> less engagement range.
+summary|option1|DESTROYER|127	0	<bad>75%</bad> less fighter engagement range.
 summary|option1|DESTROYER|128	0	On hulls with Augmented Systems, the high-flux top speed and rate of fire penalties are <good>50%</good> smaller.
 summary|option1|DESTROYER|129	0	Top speed changes with flux, from <good>+40</good> su/s at no flux to <bad>-40</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>40%</good>.
 summary|option1|DESTROYER|130	0	Increases range from which combat objectives can be captured by <good>105</good>.
@@ -4703,7 +4703,7 @@ summary|option1|CRUISER|123	0	Increases flux capacity by <good>82%</good>.
 summary|option1|CRUISER|124	0	Each flux capacitor grants <good>67%</good> more flux capacity.
 summary|option1|CRUISER|125	0	Increases range before falloff effectiveness applies by <good>1250</good>.
 summary|option1|CRUISER|126	0	<bad>100%</bad> less weapon effectiveness past normal range.
-summary|option1|CRUISER|127	0	<bad>75%</bad> less engagement range.
+summary|option1|CRUISER|127	0	<bad>75%</bad> less fighter engagement range.
 summary|option1|CRUISER|128	0	On hulls with Augmented Systems, the high-flux top speed and rate of fire penalties are <good>50%</good> smaller.
 summary|option1|CRUISER|129	0	Top speed changes with flux, from <good>+30</good> su/s at no flux to <bad>-30</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>30%</good>.
 summary|option1|CRUISER|130	0	Increases range from which combat objectives can be captured by <good>105</good>.
@@ -4875,7 +4875,7 @@ summary|option1|CAPITAL_SHIP|123	0	Increases flux capacity by <good>82%</good>.
 summary|option1|CAPITAL_SHIP|124	0	Each flux capacitor grants <good>67%</good> more flux capacity.
 summary|option1|CAPITAL_SHIP|125	0	Increases range before falloff effectiveness applies by <good>1250</good>.
 summary|option1|CAPITAL_SHIP|126	0	<bad>100%</bad> less weapon effectiveness past normal range.
-summary|option1|CAPITAL_SHIP|127	0	<bad>75%</bad> less engagement range.
+summary|option1|CAPITAL_SHIP|127	0	<bad>75%</bad> less fighter engagement range.
 summary|option1|CAPITAL_SHIP|128	0	On hulls with Augmented Systems, the high-flux top speed and rate of fire penalties are <good>50%</good> smaller.
 summary|option1|CAPITAL_SHIP|129	0	Top speed changes with flux, from <good>+20</good> su/s at no flux to <bad>-20</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>20%</good>.
 summary|option1|CAPITAL_SHIP|130	0	Increases range from which combat objectives can be captured by <good>105</good>.
@@ -5047,7 +5047,7 @@ summary|option2|FRIGATE|123	0	Increases flux capacity by <good>82%</good>.
 summary|option2|FRIGATE|124	0	Each flux capacitor grants <good>67%</good> more flux capacity.
 summary|option2|FRIGATE|125	0	Increases range before falloff effectiveness applies by <good>1250</good>.
 summary|option2|FRIGATE|126	0	<bad>100%</bad> less weapon effectiveness past normal range.
-summary|option2|FRIGATE|127	0	<bad>75%</bad> less engagement range.
+summary|option2|FRIGATE|127	0	<bad>75%</bad> less fighter engagement range.
 summary|option2|FRIGATE|128	0	On hulls with Augmented Systems, the high-flux top speed and rate of fire penalties are <good>50%</good> smaller.
 summary|option2|FRIGATE|129	0	Top speed changes with flux, from <good>+50</good> su/s at no flux to <bad>-50</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>50%</good>.
 summary|option2|FRIGATE|130	0	Increases range from which combat objectives can be captured by <good>105</good>.
@@ -5220,7 +5220,7 @@ summary|option2|DESTROYER|123	0	Increases flux capacity by <good>82%</good>.
 summary|option2|DESTROYER|124	0	Each flux capacitor grants <good>67%</good> more flux capacity.
 summary|option2|DESTROYER|125	0	Increases range before falloff effectiveness applies by <good>1250</good>.
 summary|option2|DESTROYER|126	0	<bad>100%</bad> less weapon effectiveness past normal range.
-summary|option2|DESTROYER|127	0	<bad>75%</bad> less engagement range.
+summary|option2|DESTROYER|127	0	<bad>75%</bad> less fighter engagement range.
 summary|option2|DESTROYER|128	0	On hulls with Augmented Systems, the high-flux top speed and rate of fire penalties are <good>50%</good> smaller.
 summary|option2|DESTROYER|129	0	Top speed changes with flux, from <good>+40</good> su/s at no flux to <bad>-40</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>40%</good>.
 summary|option2|DESTROYER|130	0	Increases range from which combat objectives can be captured by <good>105</good>.
@@ -5393,7 +5393,7 @@ summary|option2|CRUISER|123	0	Increases flux capacity by <good>82%</good>.
 summary|option2|CRUISER|124	0	Each flux capacitor grants <good>67%</good> more flux capacity.
 summary|option2|CRUISER|125	0	Increases range before falloff effectiveness applies by <good>1250</good>.
 summary|option2|CRUISER|126	0	<bad>100%</bad> less weapon effectiveness past normal range.
-summary|option2|CRUISER|127	0	<bad>75%</bad> less engagement range.
+summary|option2|CRUISER|127	0	<bad>75%</bad> less fighter engagement range.
 summary|option2|CRUISER|128	0	On hulls with Augmented Systems, the high-flux top speed and rate of fire penalties are <good>50%</good> smaller.
 summary|option2|CRUISER|129	0	Top speed changes with flux, from <good>+30</good> su/s at no flux to <bad>-30</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>30%</good>.
 summary|option2|CRUISER|130	0	Increases range from which combat objectives can be captured by <good>105</good>.
@@ -5566,7 +5566,7 @@ summary|option2|CAPITAL_SHIP|123	0	Increases flux capacity by <good>82%</good>.
 summary|option2|CAPITAL_SHIP|124	0	Each flux capacitor grants <good>67%</good> more flux capacity.
 summary|option2|CAPITAL_SHIP|125	0	Increases range before falloff effectiveness applies by <good>1250</good>.
 summary|option2|CAPITAL_SHIP|126	0	<bad>100%</bad> less weapon effectiveness past normal range.
-summary|option2|CAPITAL_SHIP|127	0	<bad>75%</bad> less engagement range.
+summary|option2|CAPITAL_SHIP|127	0	<bad>75%</bad> less fighter engagement range.
 summary|option2|CAPITAL_SHIP|128	0	On hulls with Augmented Systems, the high-flux top speed and rate of fire penalties are <good>50%</good> smaller.
 summary|option2|CAPITAL_SHIP|129	0	Top speed changes with flux, from <good>+20</good> su/s at no flux to <bad>-20</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>20%</good>.
 summary|option2|CAPITAL_SHIP|130	0	Increases range from which combat objectives can be captured by <good>105</good>.
