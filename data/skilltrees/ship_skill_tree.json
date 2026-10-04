@@ -888,7 +888,7 @@
 			"connectedTo": [
 				"small_logistics_optional_9"
 			],
-			"x": 263,
+			"x": 242,
 			"y": 411,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#7d67fe",
@@ -5292,8 +5292,8 @@
 			"connectedTo": [
 				"crew_capacity_flat_5"
 			],
-			"x": 5166,
-			"y": -11502,
+			"x": 4954,
+			"y": -11499,
 			"orbitAnchorId": "anchor_56",
 			"orbitAngle": 180,
 			"tags": [
@@ -5306,7 +5306,7 @@
 			"connectedTo": [
 				"missile_damage_6"
 			],
-			"x": 7012,
+			"x": 7116,
 			"y": -11498,
 			"orbitAnchorId": "anchor_19",
 			"orbitAngle": 0,
@@ -5320,8 +5320,8 @@
 			"connectedTo": [
 				"weapon_durability_3"
 			],
-			"x": 6055,
-			"y": -12381,
+			"x": 6052,
+			"y": -12560,
 			"orbitAnchorId": "anchor_55",
 			"orbitAngle": 270,
 			"tags": [
@@ -5611,8 +5611,8 @@
 				"missile_damage_7",
 				"live_munitions_1"
 			],
-			"x": 6836,
-			"y": -11322,
+			"x": 6895,
+			"y": -11277,
 			"orbitAnchorId": "anchor_19",
 			"orbitAngle": 90,
 			"tags": [
@@ -5626,7 +5626,7 @@
 				"missile_damage_6",
 				"frozen_heart_1"
 			],
-			"x": 6660,
+			"x": 6674,
 			"y": -11498,
 			"orbitAnchorId": "anchor_19",
 			"orbitAngle": 180,
@@ -5686,8 +5686,8 @@
 				"weapon_durability_4",
 				"husk_plating_1"
 			],
-			"x": 5905,
-			"y": -12231,
+			"x": 5831,
+			"y": -12339,
 			"orbitAnchorId": "anchor_55",
 			"orbitAngle": 180,
 			"tags": [
@@ -5701,8 +5701,8 @@
 				"weapon_durability_3",
 				"frozen_heart_1"
 			],
-			"x": 6055,
-			"y": -12081,
+			"x": 6052,
+			"y": -12118,
 			"orbitAnchorId": "anchor_55",
 			"orbitAngle": 90,
 			"tags": [
@@ -5716,8 +5716,8 @@
 				"all_must_serve_1",
 				"crew_capacity_flat_6"
 			],
-			"x": 5316,
-			"y": -11652,
+			"x": 5175,
+			"y": -11720,
 			"orbitAnchorId": "anchor_56",
 			"orbitAngle": 270,
 			"tags": [
@@ -5731,8 +5731,8 @@
 				"crew_capacity_flat_5",
 				"frozen_heart_1"
 			],
-			"x": 5466,
-			"y": -11502,
+			"x": 5396,
+			"y": -11499,
 			"orbitAnchorId": "anchor_56",
 			"orbitAngle": 0,
 			"tags": [
@@ -7298,14 +7298,14 @@
 		{
 			"a": "missile_damage_6",
 			"b": "missile_damage_7",
-			"controlX": 6712,
-			"controlY": -11374
+			"controlX": 6739,
+			"controlY": -11342
 		},
 		{
 			"a": "live_munitions_1",
 			"b": "missile_damage_6",
-			"controlX": 6960,
-			"controlY": -11374
+			"controlX": 7051,
+			"controlY": -11342
 		},
 		{
 			"a": "fighter_weapon_damage_1",
@@ -7340,26 +7340,26 @@
 		{
 			"a": "weapon_durability_3",
 			"b": "weapon_durability_4",
-			"controlX": 5949,
-			"controlY": -12125
+			"controlX": 5896,
+			"controlY": -12183
 		},
 		{
 			"a": "husk_plating_1",
 			"b": "weapon_durability_3",
-			"controlX": 5949,
-			"controlY": -12337
+			"controlX": 5896,
+			"controlY": -12495
 		},
 		{
 			"a": "all_must_serve_1",
 			"b": "crew_capacity_flat_5",
-			"controlX": 5210,
-			"controlY": -11608
+			"controlX": 5019,
+			"controlY": -11655
 		},
 		{
 			"a": "crew_capacity_flat_5",
 			"b": "crew_capacity_flat_6",
-			"controlX": 5422,
-			"controlY": -11608
+			"controlX": 5331,
+			"controlY": -11655
 		}
 	],
 	"hiddenConnectors": [
@@ -7909,9 +7909,9 @@
 		},
 		{
 			"id": "anchor_19",
-			"x": 6836,
+			"x": 6895,
 			"y": -11498,
-			"radius": 176
+			"radius": 221
 		},
 		{
 			"id": "wormhole_anchor",
@@ -7921,15 +7921,15 @@
 		},
 		{
 			"id": "anchor_55",
-			"x": 6055,
-			"y": -12231,
-			"radius": 150
+			"x": 6052,
+			"y": -12339,
+			"radius": 221
 		},
 		{
 			"id": "anchor_56",
-			"x": 5316,
-			"y": -11502,
-			"radius": 150
+			"x": 5175,
+			"y": -11499,
+			"radius": 221
 		}
 	],
 	"ringBelts": [
