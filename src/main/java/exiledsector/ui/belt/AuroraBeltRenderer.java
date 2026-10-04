@@ -22,13 +22,14 @@ public final class AuroraBeltRenderer {
     private AuroraBeltRenderer() {
     }
 
-    public static void render(SpriteAPI texture, RadialBand band, Color color, float alphaMult, float elapsedSeconds) {
+    public static void render(SpriteAPI texture, RadialBand band, Color color, float alphaMult, float elapsedSeconds,
+                              float detailScale) {
         float innerRadius = band.innerRadius();
         float outerRadius = band.outerRadius();
         float phaseRad = (float) Math.toRadians((elapsedSeconds * PHASE_DEG_PER_SEC) % 360f);
 
         float circumference = (float) (2 * Math.PI * (innerRadius + outerRadius) / 2f);
-        int segments = RadialBandGL.computeSegments(circumference, PIXELS_PER_SEGMENT, MIN_SEGMENTS_FOR_WOBBLE);
+        int segments = RadialBandGL.computeSegments(circumference * detailScale, PIXELS_PER_SEGMENT, MIN_SEGMENTS_FOR_WOBBLE);
         UnitCircle circle = UnitCircle.of(segments);
         float thickness = outerRadius - innerRadius;
 

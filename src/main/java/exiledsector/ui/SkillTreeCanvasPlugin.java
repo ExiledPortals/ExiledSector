@@ -30,9 +30,6 @@ import java.util.List;
 
 public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
-    private static final float MIN_ZOOM = 0.2f;
-    private static final float MAX_ZOOM = 2.5f;
-    private static final float ZOOM_STEP = 1.1f;
     private static final float SHIP_CARD_FRAME_OUTSET = 8f;
 
 
@@ -53,6 +50,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final SkillTreeTemplateController templateUi;
     private final BorderedPanel shipCardPanel = new BorderedPanel(SkillTreeCanvasPlugin.class);
     private final float shipCardHeight;
+    private final SmoothZoom smoothZoom = new SmoothZoom(1f);
 
     private PositionAPI position;
     private boolean dragging = false;
@@ -103,6 +101,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     @Override
     public void advance(float amount) {
+        advanceZoom(amount);
         advanceCameraPan(amount);
         searchBar.advance(amount);
         starfieldRenderer.advance(amount);
@@ -118,6 +117,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         if (followingStartingRoot) {
             float progress = nodeRenderer.startingRootCameraProgress();
             zoom = startingRootFollow.zoom(progress);
+            smoothZoom.jumpTo(zoom);
             centreOn(startingRootFollow.x(nodeRenderer.startingRootCameraTargetX(), progress),
                     startingRootFollow.y(nodeRenderer.startingRootCameraTargetY(), progress));
             if (!nodeRenderer.isStartingRootMoving()) {
@@ -130,6 +130,14 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         statPanel.refresh(budget, nodeRenderer.statsRevision());
         ordnancePointsBar.advance(amount, position, budget.used, budget.total, mouseX, mouseY, pointerLive);
         levelBar.advance(amount, position, mouseX, mouseY, pointerLive);
+    }
+
+    private void advanceZoom(float amount) {
+        smoothZoom.advance(amount);
+        float zoomRatio = smoothZoom.current() / zoom;
+        zoom = smoothZoom.current();
+        panX *= zoomRatio;
+        panY *= zoomRatio;
     }
 
     private void advanceCameraPan(float amount) {
@@ -317,15 +325,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void handleMouseScroll(InputEventAPI event) {
-        float oldZoom = zoom;
-        if (event.getEventValue() > 0) {
-            zoom = Math.min(MAX_ZOOM, zoom * ZOOM_STEP);
-        } else {
-            zoom = Math.max(MIN_ZOOM, zoom / ZOOM_STEP);
-        }
-        float zoomRatio = zoom / oldZoom;
-        panX *= zoomRatio;
-        panY *= zoomRatio;
+        smoothZoom.scroll(event.getEventValue() > 0);
         event.consume();
     }
 
