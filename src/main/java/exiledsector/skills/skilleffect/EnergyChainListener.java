@@ -51,7 +51,7 @@ final class EnergyChainListener implements DamageDealtModifier, DroneSpawner {
 
     private static boolean canChainFrom(WeaponAPI weapon) {
         return weapon != null && !weapon.isBeam() && weapon.getType() == WeaponAPI.WeaponType.ENERGY
-                && !CsvIdBlocklist.ENERGY_CHAIN_WEAPONS.contains(weapon.getId());
+                && !CsvIdList.ENERGY_CHAIN_WEAPONS.contains(weapon.getId());
     }
 
     private void tryChain(WeaponAPI weapon, ShipAPI hitShip, Vector2f point, ChainLink link) {

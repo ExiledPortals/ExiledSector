@@ -1588,6 +1588,7 @@ class SkillEffectTest {
             globalMock.when(Global::getFactory).thenReturn(factory);
 
             when(shipStats.getTimeMult()).thenReturn(new MutableStat(1f));
+            when(ship.getVariant()).thenReturn(mock(ShipVariantAPI.class));
             returnedModifierId = listener.modifyDamageDealt(beam, primaryTarget, damage, new Vector2f(0f, 0f), true);
             ArgumentCaptor<Object> droneListeners = ArgumentCaptor.forClass(Object.class);
             verify(drone, Mockito.atLeastOnce()).addListener(droneListeners.capture());

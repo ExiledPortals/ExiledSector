@@ -240,8 +240,10 @@ class EnergyChainListenerTest {
                 .thenReturn(rows);
         when(settings.getMergedSpreadsheetDataForMod("plugin", "data/config/exiledSector/split_beam_effect_blocklist.csv", "exiledSector"))
                 .thenReturn(new org.json.JSONArray());
+        when(settings.getMergedSpreadsheetDataForMod("hullmod", "data/config/exiledSector/drone_marker_hullmods.csv", "exiledSector"))
+                .thenReturn(new org.json.JSONArray());
         global.when(Global::getSettings).thenReturn(settings);
-        CsvIdBlocklist.loadAll();
+        CsvIdList.loadAll();
         ShipAPI hit = enemy(new Vector2f(0f, 0f));
         stubShips(ship, hit, enemy(new Vector2f(100f, 0f)));
 

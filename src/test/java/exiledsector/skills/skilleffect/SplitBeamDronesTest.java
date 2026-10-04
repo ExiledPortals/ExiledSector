@@ -181,6 +181,29 @@ class SplitBeamDronesTest {
     }
 
     @Test
+    void aDroneCopiesTheFiringShipsMarkerHullModsOnceOnItsFirstTick() {
+        ShipAPI firingShip = liveFiringShip(1f);
+        ShipAPI drone = droneWith(mock(WeaponAPI.class));
+        WeaponAPI primaryWeapon = mock(WeaponAPI.class);
+        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+
+        try (MockedStatic<WeaponDroneFactory> factory = Mockito.mockStatic(WeaponDroneFactory.class);
+             MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
+            factory.when(() -> WeaponDroneFactory.create(Mockito.eq(firingShip), Mockito.eq(primaryWeapon), any())).thenReturn(drone);
+            global.when(Global::getCombatEngine).thenReturn(engine);
+            new SplitBeamDrones(firingShip).refresh(primaryWeapon, shieldedShipAtOrigin(100f), liveTarget(new Vector2f(500f, 0f)),
+                    new Vector2f(100f, 0f), 0.5f);
+            factory.verify(() -> WeaponDroneFactory.mirrorMarkerHullMods(any(), any()), never());
+            AdvanceableListener tick = selfTickingListenerOn(drone);
+
+            tick.advance(0.016f);
+            tick.advance(0.016f);
+
+            factory.verify(() -> WeaponDroneFactory.mirrorMarkerHullMods(firingShip, drone), Mockito.times(1));
+        }
+    }
+
+    @Test
     void aDroneWaitsForItsBeamToFinishFadingBeforeRemovingItself() {
         ShipAPI firingShip = liveFiringShip(1f);
         WeaponAPI droneWeapon = mock(WeaponAPI.class);

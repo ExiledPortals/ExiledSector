@@ -56,6 +56,15 @@ frame. Distance-based bonuses such as Energy Weapon Mastery's range falloff are 
 because that is where the split beam starts. The split share is applied before any shared listener sees
 the hit, so effects that scale with damage dealt work from the shared amount.
 
+Drones don't carry the firing ship's hull mods, because those would apply their full effects again.
+Some weapon scripts check their ship for a hull mod, though, such as the ET-IX Dawnstar generator
+modes or the feedback-error misfire hull mods. Hull mods listed in
+`data/config/exiledSector/drone_marker_hullmods.csv` are copied onto the drone on its first tick when the
+firing ship has them, so those checks see the same answer. The copy happens after the game has applied
+the drone's hull mods, so their creation effects never run on it. Each listed hull mod's per-frame code
+still runs on the drone, so only hull mods that are pure markers in combat belong on the list. The same
+applies to Refracting Projectiles drones. Other mods can add rows to the file.
+
 Once a drone starts firing it keeps going for at least one second, and after that for as long as the
 original beam keeps hitting, plus a 0.3 second grace period. Both times run on the firing ship's clock,
 so time dilation doesn't cut them short. It stops straight away if its target dies or

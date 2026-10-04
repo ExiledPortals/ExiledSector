@@ -65,6 +65,7 @@ final class SplitBeamDrones {
         private float secondsSinceStart;
         private float secondsSinceMirror;
         private boolean removed;
+        private boolean markersMirrored;
 
         private SplitDrone(SplitKey key, ShipAPI drone, ShareListener shareListener) {
             this.key = key;
@@ -89,6 +90,10 @@ final class SplitBeamDrones {
         public void advance(float amount) {
             if (removed) {
                 return;
+            }
+            if (!markersMirrored) {
+                WeaponDroneFactory.mirrorMarkerHullMods(firingShip, drone);
+                markersMirrored = true;
             }
             boolean firingShipGone = !firingShip.isAlive();
             float firingShipAmount = firingShipGone ? amount : amount * firingShip.getMutableStats().getTimeMult().getModifiedValue();

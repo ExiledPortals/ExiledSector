@@ -1,0 +1,7 @@
+hullmod,mod,reason
+ix_dawnstar_proton,ET-IX,Dawnstar and Daythorn beams read it to pick their fire mode and burst
+ix_dawnstar_neutron,ET-IX,Dawnstar and Daythorn beams read it to pick their fire mode and burst
+ix_dawnstar_electron,ET-IX,Dawnstar and Daythorn beams read it to pick their fire mode and burst
+ix_dawnstar_lacerator,ET-IX,Daythorn beams read it to pick their fire mode
+ix_feedback_error,ET-IX,Beam scripts read it to decide whether the weapon can misfire
+vice_feedback_error,Emergent Threats,Beam scripts read it to decide whether the weapon can misfire

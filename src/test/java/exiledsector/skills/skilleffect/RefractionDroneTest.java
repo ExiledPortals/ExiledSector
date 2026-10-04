@@ -7,6 +7,7 @@ import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.loading.ProjectileSpecAPI;
@@ -88,8 +89,12 @@ class RefractionDroneTest {
         when(droneShip.getMouseTarget()).thenReturn(new Vector2f());
         when(engine.isEntityInPlay(droneShip)).thenReturn(true);
 
+        ShipVariantAPI droneVariant = mock(ShipVariantAPI.class);
+        when(droneVariant.getHullMods()).thenReturn(new java.util.LinkedHashSet<>());
+        when(droneShip.getVariant()).thenReturn(droneVariant);
         firingShip = mock(ShipAPI.class);
         when(firingShip.getMutableStats()).thenReturn(mock(MutableShipStatsAPI.class));
+        when(firingShip.getVariant()).thenReturn(mock(ShipVariantAPI.class));
         pool = mock(RefractionDrones.class);
         when(pool.firingShip()).thenReturn(firingShip);
         chain = mock(EnergyChainListener.class);

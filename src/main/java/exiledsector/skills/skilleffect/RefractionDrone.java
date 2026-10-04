@@ -44,6 +44,7 @@ final class RefractionDrone implements DamageDealtModifier, AdvanceableListener 
     private boolean firing;
     private boolean shotSeen;
     private boolean removed;
+    private boolean markersMirrored;
     private float firingSeconds;
     private float firedSeconds;
     private float idleSeconds;
@@ -97,6 +98,10 @@ final class RefractionDrone implements DamageDealtModifier, AdvanceableListener 
     public void advance(float amount) {
         if (removed) {
             return;
+        }
+        if (!markersMirrored) {
+            WeaponDroneFactory.mirrorMarkerHullMods(pool.firingShip(), drone);
+            markersMirrored = true;
         }
         if (firing) {
             advanceFiring(amount);

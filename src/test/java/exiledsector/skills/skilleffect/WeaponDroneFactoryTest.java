@@ -161,6 +161,32 @@ class WeaponDroneFactoryTest {
     }
 
     @Test
+    void dronesCopyOnlyTheListedMarkerHullModsTheFiringShipHasWithoutDuplicates() throws Exception {
+        when(settings.getMergedSpreadsheetDataForMod("hullmod", "data/config/exiledSector/drone_marker_hullmods.csv", "exiledSector"))
+                .thenReturn(new org.json.JSONArray().put(new org.json.JSONObject().put("hullmod", "ix_dawnstar_neutron"))
+                        .put(new org.json.JSONObject().put("hullmod", "ix_feedback_error")));
+        when(settings.getMergedSpreadsheetDataForMod("weapon", "data/config/exiledSector/energy_chain_blocklist.csv", "exiledSector"))
+                .thenReturn(new org.json.JSONArray());
+        when(settings.getMergedSpreadsheetDataForMod("plugin", "data/config/exiledSector/split_beam_effect_blocklist.csv", "exiledSector"))
+                .thenReturn(new org.json.JSONArray());
+        CsvIdList.loadAll();
+        ShipAPI firingShip = mock(ShipAPI.class);
+        ShipVariantAPI firingVariant = mock(ShipVariantAPI.class);
+        when(firingShip.getVariant()).thenReturn(firingVariant);
+        when(firingVariant.getHullMods()).thenReturn(List.of("ix_dawnstar_neutron", "exiledSector_core", "safetyoverrides"));
+        ShipAPI drone = mock(ShipAPI.class);
+        ShipVariantAPI droneVariant = mock(ShipVariantAPI.class);
+        java.util.Set<String> droneMods = new java.util.LinkedHashSet<>();
+        when(drone.getVariant()).thenReturn(droneVariant);
+        when(droneVariant.getHullMods()).thenReturn(droneMods);
+
+        WeaponDroneFactory.mirrorMarkerHullMods(firingShip, drone);
+        WeaponDroneFactory.mirrorMarkerHullMods(firingShip, drone);
+
+        assertEquals(java.util.Set.of("ix_dawnstar_neutron"), droneMods);
+    }
+
+    @Test
     void aSplitBeamDronesShareListenerRunsBeforeTheSharedListenersSoTheySeeTheSharedDamage() {
         ShipAPI drone = droneThatRecordsTheSharedSpec();
         ShipAPI firingShip = mock(ShipAPI.class);

@@ -23,6 +23,7 @@ import com.fs.starfarer.api.loading.WeaponGroupSpec;
 import com.fs.starfarer.api.loading.WeaponGroupType;
 import org.lwjgl.util.vector.Vector2f;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -66,7 +67,7 @@ final class WeaponDroneFactory {
     }
 
     private static boolean isBlocklistedBeam(BeamWeaponSpecAPI spec) {
-        return spec.getBeamEffect() != null && CsvIdBlocklist.SPLIT_BEAM_EFFECTS.contains(spec.getBeamEffect().getClass().getName());
+        return spec.getBeamEffect() != null && CsvIdList.SPLIT_BEAM_EFFECTS.contains(spec.getBeamEffect().getClass().getName());
     }
 
     private static boolean canMountOnDrone(WeaponAPI weapon) {
@@ -154,6 +155,15 @@ final class WeaponDroneFactory {
             }
             drone.removeListenerOfClass(listener.getClass());
             drone.addListener(listener instanceof AdvanceableListener ? new SharedDamageModifier(listener) : listener);
+        }
+    }
+
+    static void mirrorMarkerHullMods(ShipAPI firingShip, ShipAPI drone) {
+        Collection<String> droneMods = drone.getVariant().getHullMods();
+        for (String hullModId : firingShip.getVariant().getHullMods()) {
+            if (CsvIdList.DRONE_MARKER_HULLMODS.contains(hullModId) && !droneMods.contains(hullModId)) {
+                droneMods.add(hullModId);
+            }
         }
     }
 
