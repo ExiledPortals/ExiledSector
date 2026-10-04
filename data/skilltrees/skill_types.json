@@ -1624,8 +1624,8 @@
 			]
 		},
 		{
-			"id": "press_gang",
-			"name": "Press Gang",
+			"id": "all_must_serve",
+			"name": "All Must Serve",
 			"icon": "graphics/hullmods/recovery_shuttles.png",
 			"tier": "NOTABLE",
 			"effects": [

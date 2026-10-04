@@ -5276,7 +5276,7 @@
 				"lost_sector_wormhole1",
 				"missile_damage_7",
 				"weapon_durability_4",
-				"press_gang_1"
+				"all_must_serve_1"
 			],
 			"x": 6057,
 			"y": -11504,
@@ -5287,8 +5287,8 @@
 			]
 		},
 		{
-			"id": "press_gang_1",
-			"type": "press_gang",
+			"id": "all_must_serve_1",
+			"type": "all_must_serve",
 			"connectedTo": [
 				"frozen_heart_1"
 			],
