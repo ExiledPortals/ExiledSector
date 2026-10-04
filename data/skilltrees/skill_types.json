@@ -1626,7 +1626,7 @@
 		{
 			"id": "all_must_serve",
 			"name": "All Must Serve",
-			"icon": "graphics/hullmods/recovery_shuttles.png",
+			"icon": "graphics/icons/recovery_shuttles_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
