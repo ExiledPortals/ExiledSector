@@ -1,14 +1,7 @@
 plugin,mod,reason
-data.scripts.weapons.BlackHoleBeamEffect,Superweapons,Spawns a full singularity per split and can leave the firing ship immobile
-data.scripts.weapons.AnnihilatorBeamEffect,Superweapons,Spawns a full end-of-shot detonation and arc storm per split
-data.scripts.weapons.DevastatorBeamEffect,Superweapons,Repeats the self-feedback arc on the firing ship per split
-data.scripts.weapons.ass_WhiplashBeamEffect,ArthrsShipsNShit,Pulls the firing ship and turns the weapon once per split
-data.scripts.sbe.EWAROnFire,ET-IX,Repeats the EMP burst on the firing ship's nearest enemy per split and shares a static timer
-data.scripts.sbe.SBEOnFire,ET-IX,Repeats the feedback-error self-explosion per split
-data.scripts.asm.weapons.FermionDecouplerEffect,Emergent Threats,Repeats the feedback-error self-arc per split
-data.scripts.vice.weapons.ElectrolaserPulse,Emergent Threats,Repeats the feedback-error self-arc per split
-unthemedweapons.combat.scripts.LimitedAmmoBeamEffect,Unthemed Weapons,Drains weapon ammo once per split every frame
-data.weapons.onhit.PlasmaAcceleratorEffect7s,Rumours of Neoteric,Fires a free extra bolt from the primary target per split
-data.kaysaar.aotd.vok.weapons.AoTDShadowLanceBeamEffect,AotD VoK,Repeats the area flux spike including allies and the firing ship per split
-data.scripts.weapons.gr_SadalmelikLaser_BeamEffect,Galactic Constellate,Vents the firing ship's hard flux once per split and races on the shared damage modifier
-data.scripts.weapons.gr_Destiny_Spear_BeamEffect,Galactic Constellate,Writes the real beam's shared damage modifier so the bonus follows the split target
+data.scripts.weapons.BlackHoleBeamEffect,Superweapons,Spawns a second full unshared implosion and singularity per split and makes split drones collidable
+data.scripts.weapons.AnnihilatorBeamEffect,Superweapons,Spawns a full unshared arc storm and end-of-shot detonation per split that can also arc the firing ship
+data.scripts.sbe.EWAROnFire,ET-IX,Each split fires a full EMP burst around the primary target and speeds up the static timer shared by every EWAR suite
+data.weapons.onhit.PlasmaAcceleratorEffect7s,Rumours of Neoteric,Each split drone fires its own full unshared 1000-damage bolt which carries most of the weapon's damage
+data.kaysaar.aotd.vok.weapons.AoTDShadowLanceBeamEffect,AotD VoK,Repeats the 30% hard-flux spike on every big ship near each split impact including allies and the primary target
+data.scripts.weapons.gr_SadalmelikLaser_BeamEffect,Galactic Constellate,Its hull-hit listener calls getSystem() on the system-less drone and crashes
