@@ -41,6 +41,12 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
     SENSOR_PROFILE_MULT(MULT, stat(MutableShipStatsAPI::getSensorProfile), "stat.sensorProfile", true),
     SENSOR_STRENGTH_PERCENT(PERCENT, stat(MutableShipStatsAPI::getSensorStrength), "stat.sensorStrength", false),
     SENSOR_STRENGTH_FLAT(FLAT, stat(MutableShipStatsAPI::getSensorStrength), "stat.sensorStrength", false),
+    SENSOR_STRENGTH_ALWAYS_COUNTS {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod(FleetWideEffects.SENSOR_STRENGTH_ALWAYS_COUNTS_KEY).modifyFlat(modId, 1f);
+        }
+    },
     COMBAT_VISION(FLAT, bonus(MutableShipStatsAPI::getSightRadiusMod), "stat.inCombatSensorVisionRange", false),
     CR_RECOVERY_RATE_PERCENT(PERCENT, stat(MutableShipStatsAPI::getBaseCRRecoveryRatePercentPerDay),
             "stat.combatReadinessRecoveryRate", false),

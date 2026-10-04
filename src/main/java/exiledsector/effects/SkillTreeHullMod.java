@@ -163,6 +163,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         if (fleet != null && fleet.isPlayerFleet()) {
             FleetWideEffects.markPhaseFieldStale();
         }
+        FleetWideEffects.applyAlwaysCountingSensorStrength(fleet);
     }
 
     @Override

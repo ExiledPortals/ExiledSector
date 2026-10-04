@@ -54,6 +54,7 @@ class FleetWideEffectsTest {
         when(playerFleet.isPlayerFleet()).thenReturn(true);
         when(playerFleet.isTransponderOn()).thenReturn(true);
         when(fleetStats.getDetectedRangeMod()).thenReturn(detectedRange);
+        when(fleetStats.getSensorStrengthMod()).thenReturn(new com.fs.starfarer.api.combat.StatBonus());
         when(fleetData.getMembersListCopy()).thenReturn(List.of());
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSector).thenReturn(sector);
