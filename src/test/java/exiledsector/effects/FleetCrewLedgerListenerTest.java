@@ -1,9 +1,16 @@
 package exiledsector.effects;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
+import com.fs.starfarer.api.campaign.FleetEncounterContextPlugin.DataForEncounterSide;
+import com.fs.starfarer.api.campaign.InteractionDialogAPI;
+import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
+import com.fs.starfarer.api.fleet.CrewCompositionAPI;
+import com.fs.starfarer.api.impl.campaign.FleetEncounterContext;
 import exiledsector.skills.skilleffect.FleetCrewLedger;
 import exiledsector.skills.skilleffect.FleetCrewLedger.CrewChange;
 import org.junit.jupiter.api.AfterEach;
@@ -43,9 +50,7 @@ class FleetCrewLedgerListenerTest {
 
     @Test
     void aNetGainJoinsTheFleetOnlyUpToItsFreeCrewSpace() {
-        when(cargo.getFreeCrewSpace()).thenReturn(3);
-
-        FleetCrewLedgerListener.Outcome outcome = FleetCrewLedgerListener.apply(new CrewChange(10, 2), cargo);
+        FleetCrewLedgerListener.Outcome outcome = FleetCrewLedgerListener.apply(new CrewChange(10, 2), cargo, 3);
 
         assertEquals(new FleetCrewLedgerListener.Outcome(3, 5, 0), outcome);
         verify(cargo).addCrew(3);
@@ -56,7 +61,7 @@ class FleetCrewLedgerListenerTest {
     void aNetLossIsTakenFromTheFleetButNeverBelowZero() {
         when(cargo.getCrew()).thenReturn(2);
 
-        FleetCrewLedgerListener.Outcome outcome = FleetCrewLedgerListener.apply(new CrewChange(1, 5), cargo);
+        FleetCrewLedgerListener.Outcome outcome = FleetCrewLedgerListener.apply(new CrewChange(1, 5), cargo, 10);
 
         assertEquals(new FleetCrewLedgerListener.Outcome(0, 0, 2), outcome);
         verify(cargo).removeCrew(2);
@@ -65,13 +70,46 @@ class FleetCrewLedgerListenerTest {
 
     @Test
     void stolenCrewThatLiveMunitionsSpentNeedsNoRoom() {
-        when(cargo.getFreeCrewSpace()).thenReturn(0);
-
-        FleetCrewLedgerListener.Outcome outcome = FleetCrewLedgerListener.apply(new CrewChange(4, 4), cargo);
+        FleetCrewLedgerListener.Outcome outcome = FleetCrewLedgerListener.apply(new CrewChange(4, 4), cargo, 0);
 
         assertEquals(new FleetCrewLedgerListener.Outcome(0, 0, 0), outcome);
         verify(cargo, never()).addCrew(anyInt());
         verify(cargo, never()).removeCrew(anyInt());
+    }
+
+    private CampaignFleetAPI encounterWithRecoverableCrew(boolean playerWon, int recoverable) {
+        CampaignFleetAPI playerFleet = mock(CampaignFleetAPI.class);
+        FleetEncounterContext context = mock(FleetEncounterContext.class);
+        when(context.didPlayerWinMostRecentBattleOfEncounter()).thenReturn(playerWon);
+        DataForEncounterSide data = mock(DataForEncounterSide.class);
+        CrewCompositionAPI crew = mock(CrewCompositionAPI.class);
+        when(crew.getCrewInt()).thenReturn(recoverable);
+        when(data.getRecoverableCrewLosses()).thenReturn(crew);
+        when(context.getDataFor(playerFleet)).thenReturn(data);
+        InteractionDialogPlugin plugin = mock(InteractionDialogPlugin.class);
+        when(plugin.getContext()).thenReturn(context);
+        InteractionDialogAPI dialog = mock(InteractionDialogAPI.class);
+        when(dialog.getPlugin()).thenReturn(plugin);
+        CampaignUIAPI campaignUI = mock(CampaignUIAPI.class);
+        when(campaignUI.getCurrentInteractionDialog()).thenReturn(dialog);
+        when(sector.getCampaignUI()).thenReturn(campaignUI);
+        return playerFleet;
+    }
+
+    @Test
+    void crewTheGameWillStillRecoverAfterAWinIsReservedOutOfTheFreeSpace() {
+        CampaignFleetAPI playerFleet = encounterWithRecoverableCrew(true, 60);
+
+        assertEquals(60, FleetCrewLedgerListener.crewStillToBeRecovered(playerFleet));
+    }
+
+    @Test
+    void nothingIsReservedAfterALossOrOutsideAnEncounter() {
+        CampaignFleetAPI lost = encounterWithRecoverableCrew(false, 60);
+        assertEquals(0, FleetCrewLedgerListener.crewStillToBeRecovered(lost));
+
+        when(sector.getCampaignUI().getCurrentInteractionDialog()).thenReturn(null);
+        assertEquals(0, FleetCrewLedgerListener.crewStillToBeRecovered(lost));
     }
 
     @Test
