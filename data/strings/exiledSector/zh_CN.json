@@ -219,8 +219,9 @@
     "node.temporary": "这些效果仅在舰船部署后的前{seconds}秒内生效。",
     "node.itemCost": "分配需要消耗{item}×{quantity}。取消分配时会返还。",
     "node.hullSizes.other": "仅限<hl>船体尺寸</hl>：{hullSizes}。",
-    "node.exclusive.hullmods.other": "与以下<hullmod>船插</hullmod>互斥：{names}。",
-    "node.exclusive.nodes.other": "与以下<node>节点</node>互斥：{names}。",
+    "node.exclusive.hullmods.other": "与以下<hullmod>船插</hullmod>互斥：",
+    "node.exclusive.nodes.other": "与以下<node>节点</node>互斥：",
+    "node.exclusive.item": "• {name}",
     "summary.forFirst": "部署后的前{seconds}秒内：{text}",
 
     "ui.readout.title": "等级、经验与装配点",
