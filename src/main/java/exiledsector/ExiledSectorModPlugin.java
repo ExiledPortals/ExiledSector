@@ -4,6 +4,7 @@ import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
+import com.thoughtworks.xstream.XStream;
 import exiledsector.compat.CompatChecks;
 import exiledsector.effects.CombatXpListener;
 import exiledsector.effects.FleetCrewLedgerListener;
@@ -30,6 +31,8 @@ import exiledsector.skills.npc.NpcFactionVolumes;
 import exiledsector.skills.skilleffect.CsvIdList;
 import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.skills.tags.AreaToggles;
+import exiledsector.socketables.SocketableDefinitions;
+import exiledsector.socketables.SocketableSaveAliases;
 import exiledsector.ui.ExiledSectorSettings;
 import exiledsector.ui.SkillTreeRefitButton;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
@@ -59,6 +62,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         PhantomHullMods.install(phantomHullModIds());
         CsvIdList.loadAll();
         NpcFactionVolumes.load();
+        SocketableDefinitions.load();
         CompatChecks.logAtStartup();
     }
 
@@ -108,6 +112,11 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         if (playerFleet != null) {
             playerFleet.getCargo().addCommodity(itemCost.itemId(), itemCost.quantity());
         }
+    }
+
+    @Override
+    public void configureXStream(XStream x) {
+        SocketableSaveAliases.register(x);
     }
 
     @Override

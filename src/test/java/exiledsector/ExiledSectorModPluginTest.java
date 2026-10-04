@@ -18,6 +18,8 @@ import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.npc.NpcFactionVolumes;
+import exiledsector.socketables.SocketableDefinitions;
+import exiledsector.socketables.SocketableKind;
 import exiledsector.ui.SkillTreeRefitButton;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
 import exiledsector.ui.inspect.SkillTreeCodexListener;
@@ -85,6 +87,8 @@ class ExiledSectorModPluginTest {
                 .thenReturn(new JSONArray());
         when(settings.getMergedSpreadsheetDataForMod("faction", "data/config/exiledSector/npc_faction_volumes.csv", "exiledSector"))
                 .thenReturn(new JSONArray("[{\"faction\": \"hegemony\", \"region\": \"hegemony\"}]"));
+        when(settings.getMergedSpreadsheetDataForMod("id", "data/config/exiledSector/socketables.csv", "exiledSector"))
+                .thenReturn(new JSONArray("[{\"id\": \"chip\", \"kind\": \"subroutine\", \"pool\": \"HULL_MULT:4:6\"}]"));
 
         Logger logger = mock(Logger.class);
 
@@ -101,6 +105,7 @@ class ExiledSectorModPluginTest {
         loadTree("");
         SkillTree.clearTypes();
         NpcFactionVolumes.clear();
+        SocketableDefinitions.clear();
         settingsCreatorMock.close();
         globalMock.close();
         lunaSettingsMock.close();
@@ -276,6 +281,13 @@ class ExiledSectorModPluginTest {
         new ExiledSectorModPlugin().onGameLoad(false);
 
         assertNotSame(before, SkillDataResolver.resolve(null, variant));
+    }
+
+    @Test
+    void onApplicationLoadLoadsTheSocketableDefinitionsMergedAcrossMods() throws Exception {
+        new ExiledSectorModPlugin().onApplicationLoad();
+
+        assertEquals(SocketableKind.SUBROUTINE, SocketableDefinitions.get("chip").kind());
     }
 
     @Test

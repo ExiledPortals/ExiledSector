@@ -28,6 +28,7 @@ class CatalogueLintTest {
     private static final Path REPORT_DIRECTORY = Path.of("target/i18n");
     private static final Set<String> REPORTED_LOCALES = Set.of(LocaleChain.SIMPLIFIED_CHINESE);
     private static final String HULL_MODS_FILE = "data/hullmods/hull_mods.csv";
+    private static final String SOCKETABLES_FILE = "data/config/exiledSector/socketables.csv";
 
     static Map<String, String> dataSources() throws IOException, JSONException {
         Path root = RealSkillData.projectRoot();
@@ -41,6 +42,12 @@ class CatalogueLintTest {
             if (!description.isEmpty()) {
                 sources.put("skillType." + id + ".description", description);
             }
+        }
+        String socketableRows = Files.readString(root.resolve(SOCKETABLES_FILE), StandardCharsets.UTF_8).replace("\r\n", "\n");
+        JSONArray socketables = CDL.toJSONArray(socketableRows);
+        for (int i = 0; i < socketables.length(); i++) {
+            JSONObject socketable = socketables.getJSONObject(i);
+            sources.put("socketable." + socketable.getString("id") + ".name", socketable.getString("name"));
         }
         String hullModRows = Files.readString(root.resolve(HULL_MODS_FILE), StandardCharsets.UTF_8).replace("\r\n", "\n");
         JSONArray hullMods = CDL.toJSONArray(hullModRows);
