@@ -496,6 +496,7 @@
     "skillType.defensive_targeting_array.name": "防御瞄准阵列",
     "skillType.eccm.name": "ECCM套件",
     "skillType.ecm.name": "ECM套件",
+    "skillType.ecm_resistance.name": "ECM抗性",
     "skillType.escort_package.name": "护航套件",
     "skillType.expanded_deck_crew.name": "扩充甲板人员",
     "skillType.phase_hull_upgrades.name": "相位船体升级",
