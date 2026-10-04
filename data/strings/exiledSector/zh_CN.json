@@ -356,6 +356,7 @@
     "settings.language.tooltip": "Exiled Sector 文本所用的语言。Auto 跟随游戏语言。重启游戏后生效。游戏自身绘制的文本（例如这些设置、对话框和百科）仍为英文，除非游戏能够显示中文字符。",
     "settings.about": "为每艘舰船提供独立的技能树。打开舰船的改装界面，使用“技能树”按钮来分配节点。",
     "settings.refit.header": "改装界面",
+    "settings.refit.about": "如果其他模组也在船插下方放置了按钮，导致“技能树”按钮与其重叠，请关闭此按钮。之后可从 LunaLib 的“附加选项”菜单打开技能树。",
     "settings.refit.buttonUnderHullMods.name": "在船插下方显示技能树按钮",
     "settings.refit.buttonUnderHullMods.tooltip": "在船插按钮下方显示“技能树”按钮（快捷键 K）。关闭后，改为从 LunaLib 的“附加选项”菜单打开技能树。",
     "settings.opCost.header": "技能节点装配点消耗",

@@ -49,6 +49,7 @@ public final class ExiledSectorSettings {
         SettingsCreator.addText(MOD_ID, "exiledSector_about", Translation.text("settings.about"), MAIN_TAB);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_refitHeader", Translation.text("settings.refit.header"), MAIN_TAB);
+        SettingsCreator.addText(MOD_ID, "exiledSector_refitAbout", Translation.text("settings.refit.about"), MAIN_TAB);
         SettingsCreator.addBoolean(MOD_ID, RefitButtonConfig.FIELD_ID,
                 Translation.text("settings.refit.buttonUnderHullMods.name"), Translation.text("settings.refit.buttonUnderHullMods.tooltip"),
                 RefitButtonConfig.DEFAULT, MAIN_TAB);

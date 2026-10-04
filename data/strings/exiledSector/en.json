@@ -368,6 +368,7 @@
     "settings.language.tooltip": "Language for Exiled Sector's text. Auto follows the game's language. Takes effect after restarting the game. Text the game draws itself, such as these settings, dialogs and the codex, stays in English unless the game can display Chinese characters.",
     "settings.about": "Gives each ship its own skill tree. Open a ship's refit screen and use the Skill Tree button to allocate nodes.",
     "settings.refit.header": "Refit Screen",
+    "settings.refit.about": "If another mod places its own buttons under the hull mods and the Skill Tree button overlaps them, turn the button off. The skill tree then opens from LunaLib's Additional Options menu instead.",
     "settings.refit.buttonUnderHullMods.name": "Skill Tree Button Under Hull Mods",
     "settings.refit.buttonUnderHullMods.tooltip": "Shows the Skill Tree button (hotkey K) below the hull mod buttons. When off, the skill tree opens from LunaLib's Additional Options menu instead.",
     "settings.opCost.header": "Skill Node Ordnance Point Cost",
