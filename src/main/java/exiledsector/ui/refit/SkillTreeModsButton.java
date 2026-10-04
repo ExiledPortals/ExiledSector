@@ -30,7 +30,12 @@ final class SkillTreeModsButton extends BaseCustomUIPanelPlugin {
     static void attach(Object modWidget) {
         if (failed || !(modWidget instanceof UIPanelAPI widget)) return;
         try {
-            if (isAttached(widget) || !(call(widget, "getPerm") instanceof ButtonAPI buildIn)) return;
+            CustomPanelAPI attached = attached(widget);
+            if (!RefitButtonConfig.buttonUnderHullMods()) {
+                if (attached != null) widget.removeComponent(attached);
+                return;
+            }
+            if (attached != null || !(call(widget, "getPerm") instanceof ButtonAPI buildIn)) return;
             PositionAPI buildInPosition = buildIn.getPosition();
             float width = buildInPosition.getWidth();
             float height = buildInPosition.getHeight();
@@ -51,13 +56,13 @@ final class SkillTreeModsButton extends BaseCustomUIPanelPlugin {
         failed = false;
     }
 
-    private static boolean isAttached(UIPanelAPI widget) throws Throwable {
+    private static CustomPanelAPI attached(UIPanelAPI widget) throws Throwable {
         for (Object child : UiReflection.children(widget)) {
             if (child instanceof CustomPanelAPI panel && panel.getPlugin() instanceof SkillTreeModsButton) {
-                return true;
+                return panel;
             }
         }
-        return false;
+        return null;
     }
 
     private static void disable(Throwable e) {

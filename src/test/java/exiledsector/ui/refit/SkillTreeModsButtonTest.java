@@ -12,6 +12,7 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
 import exiledsector.ui.SkillTreeRefitButton;
+import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -53,6 +55,7 @@ class SkillTreeModsButtonTest {
 
     private MockedStatic<Global> globalMock;
     private MockedStatic<SkillTreeRefitButton> refitButtonMock;
+    private MockedStatic<LunaSettings> lunaSettingsMock;
     private ModWidget widget;
     private ButtonAPI buildIn;
     private PositionAPI placement;
@@ -89,10 +92,13 @@ class SkillTreeModsButtonTest {
         globalMock.when(Global::getSettings).thenReturn(settings);
         globalMock.when(Global::getSector).thenReturn(mock(SectorAPI.class, Mockito.RETURNS_DEEP_STUBS));
         refitButtonMock = Mockito.mockStatic(SkillTreeRefitButton.class);
+        lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
+        buttonUnderHullMods(true);
     }
 
     @AfterEach
     void tearDown() {
+        lunaSettingsMock.close();
         refitButtonMock.close();
         globalMock.close();
         SkillTreeModsButton.resetForTests();
@@ -148,12 +154,32 @@ class SkillTreeModsButtonTest {
     }
 
     @Test
-    void theAdditionalOptionsDropdownNoLongerListsTheSkillTree() {
+    void turningTheSettingOffRemovesTheButtonAndAddsNoNewOne() {
+        SkillTreeModsButton.attach(widget);
+        widget.children.add(container);
+        buttonUnderHullMods(false);
+
+        SkillTreeModsButton.attach(widget);
+        widget.children.clear();
+        SkillTreeModsButton.attach(widget);
+
+        verify(widget).removeComponent(container);
+        verify(widget, times(1)).addComponent(any());
+    }
+
+    @Test
+    void theAdditionalOptionsDropdownListsTheSkillTreeOnlyWhenTheButtonIsOff() {
         refitButtonMock.close();
         try {
             assertFalse(new SkillTreeRefitButton().shouldShow(null, null, null));
+            buttonUnderHullMods(false);
+            assertTrue(new SkillTreeRefitButton().shouldShow(null, null, null));
         } finally {
             refitButtonMock = Mockito.mockStatic(SkillTreeRefitButton.class);
         }
+    }
+
+    private void buttonUnderHullMods(boolean value) {
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", RefitButtonConfig.FIELD_ID)).thenReturn(value);
     }
 }

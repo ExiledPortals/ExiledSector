@@ -86,7 +86,7 @@ The Chinese translation is a first draft awaiting review by a native speaker. To
 <details>
 <summary><b>How do I earn and spend points?</b></summary>
 
-Open a ship's refit screen and click the **Skill Tree** button under the hull mods, or press **K**.
+Open a ship's refit screen and click the **Skill Tree** button under the hull mods, or press **K**. If you prefer the old LunaLib Additional Options entry, switch the button off in LunaLib settings.
 
 The first time you open a ship's tree you choose where it starts: Low Tech, Midline or High Tech. The starting node is free. Whenever it is the only node allocated, you can click it again to choose a different start. The other two can still be reached later like any other node.
 
