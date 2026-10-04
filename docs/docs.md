@@ -254,7 +254,8 @@ highest share among the thieves in range. Live Munitions and Press Gang share on
 (`FleetCrewLedger`): it starts at the fleet's cargo crew, Live Munitions spends from it, and stolen crew is
 added as it is claimed (the stolen total rounded up), so Live Munitions can keep firing on captured crew.
 After the battle, win or lose, only the net change is applied: a gain joins the fleet up to its free crew
-space and a loss comes out of its crew. That happens one frame after `reportPlayerEngagement`, because the
+space, less any crew the game will still recover after a win, and a loss comes out of its crew. That happens
+one frame after `reportPlayerEngagement`, because the
 game applies its own crew losses and removes destroyed ships after reporting the engagement. Simulator,
 mission and auto-resolved battles change nothing, and NPC ships never take the node (`player_only`).
 

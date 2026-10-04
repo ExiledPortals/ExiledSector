@@ -212,6 +212,19 @@ class CrewStealTest {
     }
 
     @Test
+    void withoutAPlayerFleetTheCrewPoolNeverRunsOutEvenAfterSacrificesAndCredits() {
+        when(Global.getSector().getPlayerFleet()).thenReturn(null);
+        FleetCrewLedger ledger = FleetCrewLedger.forCurrentCombat();
+
+        ledger.sacrifice();
+        ledger.credit(new Object(), 30f);
+        ledger.sacrifice();
+
+        assertTrue(ledger.hasCrew());
+        assertEquals(new FleetCrewLedger.CrewChange(0, 0), FleetCrewLedger.drain());
+    }
+
+    @Test
     void roundingUpIgnoresFloatingPointNoise() {
         assertEquals(0, FleetCrewLedger.roundUp(0f));
         assertEquals(1, FleetCrewLedger.roundUp(0.2f));

@@ -16,14 +16,16 @@ public final class FleetCrewLedger {
     private static int pendingSacrificed;
 
     private final boolean recorded;
+    private final boolean unlimited;
     private final Map<Object, Float> creditedWrecks = new HashMap<>();
     private int remaining;
     private float stolen;
     private int sacrificed;
 
-    FleetCrewLedger(int remaining, boolean recorded) {
+    FleetCrewLedger(int remaining, boolean recorded, boolean unlimited) {
         this.remaining = remaining;
         this.recorded = recorded;
+        this.unlimited = unlimited;
     }
 
     public record CrewChange(int stolen, int sacrificed) {
@@ -36,15 +38,15 @@ public final class FleetCrewLedger {
     static FleetCrewLedger forCurrentCombat() {
         CombatEngineAPI engine = Global.getCombatEngine();
         if (engine == null) {
-            return new FleetCrewLedger(0, false);
+            return new FleetCrewLedger(0, false, false);
         }
         if (engine.getCustomData().get(LEDGER_KEY) instanceof FleetCrewLedger existing) {
             return existing;
         }
         CampaignFleetAPI playerFleet = playerFleet();
         boolean recorded = playerFleet != null && engine.isInCampaign() && !engine.isInCampaignSim() && !engine.isSimulation();
-        int crew = playerFleet == null ? Integer.MAX_VALUE : (int) playerFleet.getCargo().getCrew();
-        FleetCrewLedger ledger = new FleetCrewLedger(crew, recorded);
+        int crew = playerFleet == null ? 0 : (int) playerFleet.getCargo().getCrew();
+        FleetCrewLedger ledger = new FleetCrewLedger(crew, recorded, playerFleet == null);
         if (recorded) {
             pendingStolen = 0f;
             pendingSacrificed = 0;
@@ -59,14 +61,16 @@ public final class FleetCrewLedger {
     }
 
     boolean hasCrew() {
-        return remaining > 0;
+        return unlimited || remaining > 0;
     }
 
     void sacrifice() {
-        if (remaining <= 0) {
+        if (!hasCrew()) {
             return;
         }
-        remaining--;
+        if (!unlimited) {
+            remaining--;
+        }
         sacrificed++;
         if (recorded) {
             pendingSacrificed = sacrificed;
@@ -82,9 +86,7 @@ public final class FleetCrewLedger {
         creditedWrecks.put(wreck, crew);
         int wholeBefore = roundUp(stolen);
         stolen += crew - already;
-        if (remaining != Integer.MAX_VALUE) {
-            remaining += roundUp(stolen) - wholeBefore;
-        }
+        remaining += roundUp(stolen) - wholeBefore;
         if (recorded) {
             pendingStolen = stolen;
         }
