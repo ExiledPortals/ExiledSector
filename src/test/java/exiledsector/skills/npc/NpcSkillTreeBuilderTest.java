@@ -135,6 +135,21 @@ class NpcSkillTreeBuilderTest {
     }
 
     @Test
+    void npcsNeverAllocateASocketOrPathThroughOne() {
+        root();
+        SkillType socket = registerType(builder("socket", SkillTier.SOCKET).build());
+        node("socket_1", socket, ROOT);
+        notable("behind_socket", "socket_1");
+        chain("n", 3, ROOT);
+
+        List<String> allocated = allocated(generate(10));
+
+        assertFalse(allocated.contains("socket_1"));
+        assertFalse(allocated.contains("behind_socket"));
+        assertTrue(allocated.contains("n3"));
+    }
+
+    @Test
     void theRootIsFreeAndTheTreeReachesTheRolledCount() {
         root();
         chain("n", 10, ROOT);

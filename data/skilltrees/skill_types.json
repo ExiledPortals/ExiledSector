@@ -3205,6 +3205,13 @@
 			"description": "Allocating this wormhole automatically allocates its paired wormhole as well at no extra cost, connecting both branches of the tree. \n\nDeallocating either end deallocates both.\n\nCtrl click on a wormhole to travel through it."
 		},
 		{
+			"id": "modular_hull_socket",
+			"name": "Modular Hull Socket",
+			"icon": "",
+			"tier": "SOCKET",
+			"description": "An empty compartment stripped back to bare frame and power conduit. Domain subroutines need hardware to run on, and officers and specialist teams need somewhere to live and work. Whatever you install here will have a place aboard."
+		},
+		{
 			"id": "pd_damage_to_missiles",
 			"name": "Point Defence Damage to Missiles",
 			"icon": "graphics/icons/pd_damage_to_missiles.png",

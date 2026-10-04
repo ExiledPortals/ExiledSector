@@ -433,10 +433,11 @@ public final class NpcSkillTreeBuilder {
         }
 
         private boolean traversable(SkillNode node, State state) {
-            if (data.isAllocated(node.getId()) || node.getType().getTier() == SkillTier.ROOT || !regionAllowed(node.getRegion())) {
+            SkillTier tier = node.getType().getTier();
+            if (data.isAllocated(node.getId()) || tier == SkillTier.ROOT || tier == SkillTier.SOCKET || !regionAllowed(node.getRegion())) {
                 return false;
             }
-            if (node.getType().getTier() == SkillTier.WORMHOLE && !wormholeAllowed(node)) {
+            if (tier == SkillTier.WORMHOLE && !wormholeAllowed(node)) {
                 return false;
             }
             SkillType option = option(node, state);

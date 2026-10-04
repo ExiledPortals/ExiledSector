@@ -63,6 +63,9 @@ The zh_CN catalogue was drafted by Claude and still needs review by a native spe
 | Theme labels (`theme.*`) | 幅能, 护盾, 装甲, 结构, 速度, 后勤, 导弹, 战机, 能量, 实弹, 相位, 光束, 射程, 弹药, 动能, 高爆, 破片, 能量伤害, 武器, 点防御, 战备值, 维修, 舰队支援, D插 | Reuse the core terms above |
 | Template / auto-allocate | 模板 / 自动分配 | A saved set of nodes a ship can follow |
 | Wormhole | 虫洞 | |
+| Modular Hull Socket | 模块化船体插槽 | The skill tree socket node |
+| Domain (of Man) | 人类领域 | As in the community translation of vanilla |
+| Subroutine / officer / team / AI core | 子程序 / 军官 / 团队 / AI核心 | What a Modular Hull Socket holds |
 | Escort | 护航 | |
 | Refraction / refract | 折射 | Refracting Projectiles' shots, matching its name 折射弹体 |
 | Volume (a region on the hyperspace view) | 星域 | "Sindrian volume" is 辛达强权星域 |

@@ -42,6 +42,14 @@ final class SkillTreeNodeGeometry {
         return donutOuterRadius(footprintSize, tier, zoom);
     }
 
+    static float squareEdgeDistance(float halfSize, float dx, float dy) {
+        float largest = Math.max(Math.abs(dx), Math.abs(dy));
+        if (largest == 0f) {
+            return halfSize;
+        }
+        return halfSize * (float) Math.hypot(dx, dy) / largest;
+    }
+
     static float beltInnerRadius(float footprintSize) {
         return footprintSize * ICON_INSET_RATIO / 2f;
     }

@@ -247,6 +247,7 @@
     "node.requires.req_non_phase_hull": "Can't be allocated on phase ships.",
     "node.requires.req_system_charges": "Can only be allocated on ships whose ship system or defense system uses charges.",
     "node.temporary": "These effects only last for the first {seconds} seconds after the ship is deployed.",
+    "node.socket.holds": "Holds one subroutine, officer, team or AI core.",
     "node.itemCost": "Costs {quantity} {item} to allocate. It is returned to you upon de-allocation.",
     "node.hullSizes.one": "Restricted to <hl>hull size</hl>: {hullSizes}.",
     "node.hullSizes.other": "Restricted to <hl>hull sizes</hl>: {hullSizes}.",

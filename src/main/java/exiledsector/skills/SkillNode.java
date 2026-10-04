@@ -71,6 +71,9 @@ public class SkillNode extends SkillTreeObject {
         addLine(effects, describeTemporaryDuration(type), false);
 
         List<DescriptionLine> details = new ArrayList<>();
+        if (type.getTier() == SkillTier.SOCKET) {
+            addLine(details, Translation.styled("node.socket.holds"), false);
+        }
         for (SkillTypeEffect effect : described) {
             addLine(details, effect.effect().deallocationWarning(effect.magnitude()), false);
         }

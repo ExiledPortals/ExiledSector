@@ -107,6 +107,19 @@ class SkillNodeTest {
     }
 
     @Test
+    void aSocketsLoreIsItsEffectTextAndWhatItHoldsIsOnlyInTheDetails() {
+        SkillType type = new SkillType.Builder("socket", "Socket", "", SkillTier.SOCKET)
+                .descriptionOverride("An empty room.")
+                .build();
+
+        NodeDescription description = SkillNode.describeType(type, null);
+
+        assertEquals(List.of("An empty room."), description.effects().stream().map(DescriptionLine::plain).toList());
+        assertEquals(List.of("Holds one subroutine, officer, team or AI core."),
+                description.details().stream().map(DescriptionLine::plain).toList());
+    }
+
+    @Test
     void descriptionIsEmptyForATypeWithNoEffectsAndNoOverride() {
         SkillType type = new SkillType.Builder("cosmetic", "Cosmetic", "graphics/hullmods/flux_coil_adjunct.png", SkillTier.SMALL)
                 .effects(List.of())

@@ -43,6 +43,7 @@ public final class SkillTreeNodeRenderer {
 
     private final SkillTreeNodeRingRenderer ringRenderer;
     private final SkillTreeNodeIconRenderer iconRenderer;
+    private final SkillTreeSocketRenderer socketRenderer = new SkillTreeSocketRenderer();
     private final SkillTreeNodeGhostRenderer ghostRenderer;
     private final SkillTreeWormholeGhostFlights wormholeGhostFlights;
     private final SkillTreeNodeConnectorRenderer connectorRenderer;
@@ -160,6 +161,7 @@ public final class SkillTreeNodeRenderer {
         ringRenderer.advance(amount);
         connectorFills.advance(amount, startPulse);
         ghostRenderer.advance(amount);
+        socketRenderer.advance(amount);
         ShipSkillData data = snapshot().data();
         wormholeGhostFlights.advance(amount, data);
         wormholeOpenness.advance(amount, data);
@@ -360,9 +362,17 @@ public final class SkillTreeNodeRenderer {
         float iconSize = footprintSize * ICON_INSET_RATIO;
 
         float nodeAlpha = alphaMult * search.nodeAlpha(node, allocation);
+        if (tier == SkillTier.SOCKET) {
+            socketRenderer.drawFrame(nodeX, nodeY, footprintSize, allocated, style.getAccentColor(), null,
+                    iconTint(node, allocation, allocated), nodeAlpha);
+        }
         ringRenderer.draw(nodeX, nodeY, footprintSize, nodeAlpha, SkillTreeNodeRingRenderer.RingState.of(allocated, breathing), zoom, node);
 
-        if (tier != SkillTier.WORMHOLE) {
+        if (tier == SkillTier.SOCKET) {
+            if (allocated) {
+                socketRenderer.drawArcs(node.getId(), nodeX, nodeY, footprintSize, style.getAccentColor(), nodeAlpha);
+            }
+        } else if (tier != SkillTier.WORMHOLE) {
             Color tint = iconTint(node, allocation, allocated);
             if (effectiveType.isOptional()) {
                 iconRenderer.drawSplitIcon(effectiveType, nodeX, nodeY, iconSize, nodeAlpha, tint);

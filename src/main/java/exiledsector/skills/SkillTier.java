@@ -6,7 +6,8 @@ public enum SkillTier {
     NOTABLE(1f),
     KEYSTONE(1f),
     WORMHOLE(1.3f),
-    ROOT(2.5f);
+    ROOT(2.5f),
+    SOCKET(1.2f);
 
     private final float sizeMultiplier;
 

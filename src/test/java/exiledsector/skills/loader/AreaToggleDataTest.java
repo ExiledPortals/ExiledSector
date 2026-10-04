@@ -1,7 +1,6 @@
 package exiledsector.skills.loader;
 
 import exiledsector.skills.SkillNode;
-import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.layout.SkillTreeObject;
 import exiledsector.skills.npc.RealSkillData;
@@ -11,11 +10,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -85,7 +81,7 @@ class AreaToggleDataTest {
                     problems.add(area + " off: wormhole " + node.getId() + " lost its pair " + node.getPairedNodeId());
                 }
             }
-            Set<String> reached = reachableFromRoots(filtered.nodes, byId);
+            Set<String> reached = TreeReachability.fromRoots(filtered.nodes, node -> true);
             for (SkillNode node : filtered.nodes) {
                 if (!reached.contains(node.getId())) {
                     problems.add(area + " off: " + node.getId() + " can no longer be reached from any root");
@@ -94,30 +90,5 @@ class AreaToggleDataTest {
         }
 
         assertTrue(problems.isEmpty(), String.join("\n", problems));
-    }
-
-    private static Set<String> reachableFromRoots(List<SkillNode> nodes, Map<String, SkillNode> byId) {
-        Map<String, Set<String>> links = new HashMap<>();
-        for (SkillNode node : nodes) {
-            for (String other : node.getConnectedNodeIds()) {
-                links.computeIfAbsent(node.getId(), key -> new HashSet<>()).add(other);
-                links.computeIfAbsent(other, key -> new HashSet<>()).add(node.getId());
-            }
-        }
-        Set<String> reached = new HashSet<>();
-        Deque<String> queue = new ArrayDeque<>();
-        for (SkillNode node : nodes) {
-            if (node.getType().getTier() == SkillTier.ROOT && reached.add(node.getId())) {
-                queue.add(node.getId());
-            }
-        }
-        while (!queue.isEmpty()) {
-            for (String next : links.getOrDefault(queue.poll(), Set.of())) {
-                if (byId.containsKey(next) && reached.add(next)) {
-                    queue.add(next);
-                }
-            }
-        }
-        return reached;
     }
 }

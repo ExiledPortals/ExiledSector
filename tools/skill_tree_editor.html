@@ -18,6 +18,7 @@
     --notable: #5fd0ff;
     --keystone: #ffb454;
     --wormhole: #ff5ad1;
+    --socket: #4fd1c5;
     --root: #b98aff;
     --danger: #ff6b6b;
     --danger-dim: #4a2626;
@@ -43,6 +44,7 @@
       --notable: #0d84ad;
       --keystone: #b9720a;
       --wormhole: #a3168a;
+      --socket: #0f8a7e;
       --root: #7c4dff;
       --danger: #c8393a;
       --danger-dim: #fbdede;
@@ -66,6 +68,7 @@
     --notable: #0d84ad;
     --keystone: #b9720a;
     --wormhole: #a3168a;
+    --socket: #0f8a7e;
     --root: #7c4dff;
     --danger: #c8393a;
     --danger-dim: #fbdede;
@@ -596,6 +599,7 @@
       <div class="legendRow"><span class="legendDot" style="background:var(--notable)"></span>Notable</div>
       <div class="legendRow"><span class="legendDot" style="background:var(--keystone)"></span>Keystone</div>
       <div class="legendRow"><span class="legendDot" style="background:var(--wormhole)"></span>Wormhole</div>
+      <div class="legendRow"><span class="legendDot" style="background:var(--socket);border-radius:2px"></span>Modular Hull Socket</div>
       <div class="legendRow"><span class="legendDot" style="background:var(--root)"></span>Root (ship start)</div>
       <label class="legendRow" for="labelsToggle" style="cursor:pointer"><input type="checkbox" id="labelsToggle" checked> Show labels</label>
     </div>
@@ -903,13 +907,14 @@ var SHIPPED_ANCHORS = [
 var SHIPPED_IMAGES = [];
 var SHIPPED_STARS = [];
 
-var SMALL_R = 32, NOTABLE_R = 38.4, KEYSTONE_R = 44.8, WORMHOLE_R = 41.6, ROOT_R = 80;
+var SMALL_R = 32, NOTABLE_R = 38.4, KEYSTONE_R = 44.8, WORMHOLE_R = 41.6, ROOT_R = 80, SOCKET_R = 38.4;
 function tierOf(type){ return (type && type.tier) ? type.tier : 'SMALL'; }
 function radiusFor(tier){
   if (tier === 'KEYSTONE') return KEYSTONE_R;
   if (tier === 'NOTABLE') return NOTABLE_R;
   if (tier === 'WORMHOLE') return WORMHOLE_R;
   if (tier === 'ROOT') return ROOT_R;
+  if (tier === 'SOCKET') return SOCKET_R;
   return SMALL_R;
 }
 function colorVarFor(tier){
@@ -917,6 +922,7 @@ function colorVarFor(tier){
   if (tier === 'NOTABLE') return '--notable';
   if (tier === 'WORMHOLE') return '--wormhole';
   if (tier === 'ROOT') return '--root';
+  if (tier === 'SOCKET') return '--socket';
   return '--small';
 }
 
@@ -1301,10 +1307,10 @@ var canvasWrap = document.getElementById('canvasWrap');
 var NS = 'http://www.w3.org/2000/svg';
 var layerRoot, layerStars, layerImages, layerAnchors, layerEdges, layerNodes, layerLabels, layerAnchorHandles, layerImageHandles, layerStarHandles;
 
-var NODE_ICON_CLIP_IDS = { SMALL: 'nodeClipSmall', NOTABLE: 'nodeClipNotable', KEYSTONE: 'nodeClipKeystone', WORMHOLE: 'nodeClipWormhole', ROOT: 'nodeClipRoot' };
+var NODE_ICON_CLIP_IDS = { SMALL: 'nodeClipSmall', NOTABLE: 'nodeClipNotable', KEYSTONE: 'nodeClipKeystone', WORMHOLE: 'nodeClipWormhole', ROOT: 'nodeClipRoot', SOCKET: 'nodeClipSocket' };
 function buildIconClipDefs(){
   var defs = document.createElementNS(NS, 'defs');
-  var radiusByTier = { SMALL: SMALL_R, NOTABLE: NOTABLE_R, KEYSTONE: KEYSTONE_R, WORMHOLE: WORMHOLE_R, ROOT: ROOT_R };
+  var radiusByTier = { SMALL: SMALL_R, NOTABLE: NOTABLE_R, KEYSTONE: KEYSTONE_R, WORMHOLE: WORMHOLE_R, ROOT: ROOT_R, SOCKET: SOCKET_R };
   Object.keys(NODE_ICON_CLIP_IDS).forEach(function(tier){
     var clip = document.createElementNS(NS, 'clipPath');
     clip.setAttribute('id', NODE_ICON_CLIP_IDS[tier]);
@@ -1635,8 +1641,16 @@ function render(){
       layerNodes.appendChild(iconGroup);
     }
 
-    var c = document.createElementNS(NS, 'circle');
-    c.setAttribute('cx', pos.sx); c.setAttribute('cy', pos.sy); c.setAttribute('r', r);
+    var c;
+    if (tier === 'SOCKET') {
+      c = document.createElementNS(NS, 'rect');
+      c.setAttribute('x', pos.sx - r); c.setAttribute('y', pos.sy - r);
+      c.setAttribute('width', r * 2); c.setAttribute('height', r * 2);
+      c.setAttribute('rx', 3);
+    } else {
+      c = document.createElementNS(NS, 'circle');
+      c.setAttribute('cx', pos.sx); c.setAttribute('cy', pos.sy); c.setAttribute('r', r);
+    }
     c.setAttribute('class', 'node-circle');
     c.setAttribute('fill', color);
     c.setAttribute('fill-opacity', hasIcon ? 0 : (dim ? 0.25 : (isSelected ? 1 : 0.85)));
@@ -1695,7 +1709,7 @@ function updateWarnBadge(){
 var drag = null;
 
 function attachNodeHandlers(){
-  var circles = layerNodes.querySelectorAll('circle');
+  var circles = layerNodes.querySelectorAll('.node-circle');
   circles.forEach(function(c){
     c.addEventListener('pointerdown', function(ev){
       ev.stopPropagation();
@@ -2947,6 +2961,7 @@ function openAddNodeModal(x, y){
       '<option value="NOTABLE">Notable</option>' +
       '<option value="KEYSTONE">Keystone</option>' +
       '<option value="WORMHOLE">Wormhole</option>' +
+      '<option value="SOCKET">Modular Hull Socket</option>' +
       '<option value="ROOT">Root</option>' +
     '</select></div>' +
     '<div class="field"><label>Type</label><select id="mAddType">' + addNodeTypeOptionsHtml('ALL') + '</select></div>' +
@@ -3606,7 +3621,7 @@ function openTypeModal(existingType, onSave, onClose){
   }
 
   function renderModal(){
-    var tierOptions = ['SMALL','NOTABLE','KEYSTONE','WORMHOLE','ROOT'].map(function(tr){ return '<option value="'+tr+'"'+(tr===tierOf(t)?' selected':'')+'>'+tr+'</option>'; }).join('');
+    var tierOptions = ['SMALL','NOTABLE','KEYSTONE','WORMHOLE','ROOT','SOCKET'].map(function(tr){ return '<option value="'+tr+'"'+(tr===tierOf(t)?' selected':'')+'>'+tr+'</option>'; }).join('');
     var effectRows = renderEffectRows('t', effectsDraft, '<div class="hint">No effects yet.</div>');
 
     root.innerHTML =

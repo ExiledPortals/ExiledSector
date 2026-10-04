@@ -956,12 +956,25 @@
 				"small_logistics_optional_11",
 				"small_logistics_optional_31",
 				"small_logistics_optional_14",
-				"small_flux_optional_34"
+				"small_flux_optional_34",
+				"modular_hull_socket_1"
 			],
 			"x": 1517,
 			"y": 863,
 			"orbitAnchorId": "inner_ring",
 			"orbitAngle": 29.635150566120704,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "modular_hull_socket_1",
+			"type": "modular_hull_socket",
+			"connectedTo": [
+				"root_low_tech_1"
+			],
+			"x": 1595,
+			"y": 1306,
 			"tags": [
 				"core"
 			]
