@@ -14,32 +14,34 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static exiledsector.ExiledSectorModPlugin.MOD_ID;
 
-public final class CsvIdBlocklist {
+public final class CsvIdList {
 
-    private static final List<CsvIdBlocklist> ALL = new ArrayList<>();
+    private static final List<CsvIdList> ALL = new ArrayList<>();
 
-    public static final CsvIdBlocklist SPLIT_BEAM_EFFECTS =
+    public static final CsvIdList SPLIT_BEAM_EFFECTS =
             register("data/config/exiledSector/split_beam_effect_blocklist.csv", "plugin");
-    public static final CsvIdBlocklist ENERGY_CHAIN_WEAPONS =
+    public static final CsvIdList ENERGY_CHAIN_WEAPONS =
             register("data/config/exiledSector/energy_chain_blocklist.csv", "weapon");
+    public static final CsvIdList DRONE_MARKER_HULLMODS =
+            register("data/config/exiledSector/drone_marker_hullmods.csv", "hullmod");
 
     private final String path;
     private final String idColumn;
     private final AtomicReference<Set<String>> ids = new AtomicReference<>(Set.of());
 
-    private CsvIdBlocklist(String path, String idColumn) {
+    private CsvIdList(String path, String idColumn) {
         this.path = path;
         this.idColumn = idColumn;
     }
 
-    private static CsvIdBlocklist register(String path, String idColumn) {
-        CsvIdBlocklist blocklist = new CsvIdBlocklist(path, idColumn);
+    private static CsvIdList register(String path, String idColumn) {
+        CsvIdList blocklist = new CsvIdList(path, idColumn);
         ALL.add(blocklist);
         return blocklist;
     }
 
     public static void loadAll() {
-        for (CsvIdBlocklist blocklist : ALL) {
+        for (CsvIdList blocklist : ALL) {
             blocklist.load();
         }
     }
@@ -56,7 +58,7 @@ public final class CsvIdBlocklist {
             }
             ids.set(Set.copyOf(loaded));
         } catch (IOException | JSONException e) {
-            Logger.getLogger(CsvIdBlocklist.class).error("Failed to load " + path, e);
+            Logger.getLogger(CsvIdList.class).error("Failed to load " + path, e);
         }
     }
 

@@ -7,6 +7,8 @@ import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.characters.PersonalityAPI;
 import com.fs.starfarer.api.characters.SkillSpecAPI;
+import com.fs.starfarer.api.combat.BeamAPI;
+import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
@@ -14,17 +16,21 @@ import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
+import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
+import org.magiclib.plugins.MagicFakeBeamPlugin;
 import org.mockito.Answers;
+import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -33,7 +39,7 @@ import static org.mockito.Mockito.when;
 
 class SplitBeamDronesTest {
 
-    private static final class FakeSplitter implements DamageDealtModifier, SplitBeamSource {
+    private static final class FakeSplitter implements DamageDealtModifier, DroneSpawner {
         @Override
         public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
             return null;
@@ -50,57 +56,61 @@ class SplitBeamDronesTest {
         return ship;
     }
 
-    @Test
-    void refractionStartsAtTheImpactPointWhenTheSplitTargetIsAwayFromThePrimary() {
-        ShipAPI primary = shieldedShipAtOrigin(100f);
-
-        Vector2f origin = SplitBeamDrones.refractionOrigin(primary, new Vector2f(100f, 0f), new Vector2f(500f, 0f));
-
-        assertEquals(new Vector2f(100f, 0f), origin);
+    private static ShipAPI liveFiringShip(float timeMult) {
+        ShipAPI firingShip = mock(ShipAPI.class, Answers.RETURNS_DEEP_STUBS);
+        when(firingShip.isAlive()).thenReturn(true);
+        when(firingShip.getMutableStats().getTimeMult().getModifiedValue()).thenReturn(timeMult);
+        return firingShip;
     }
 
-    @Test
-    void refractionStartsBeyondThePrimarysFarSideWhenTheSplitTargetIsBehindIt() {
-        ShipAPI primary = shieldedShipAtOrigin(100f);
+    private static ShipAPI liveTarget(Vector2f location) {
+        ShipAPI target = mock(ShipAPI.class);
+        when(target.isAlive()).thenReturn(true);
+        when(target.getLocation()).thenReturn(location);
+        return target;
+    }
 
-        Vector2f origin = SplitBeamDrones.refractionOrigin(primary, new Vector2f(100f, 0f), new Vector2f(-500f, 0f));
+    private static ShipAPI droneWith(WeaponAPI droneWeapon) {
+        ShipAPI drone = mock(ShipAPI.class, Answers.RETURNS_DEEP_STUBS);
+        when(drone.getLocation()).thenReturn(new Vector2f());
+        when(drone.getAllWeapons()).thenReturn(List.of(droneWeapon));
+        return drone;
+    }
 
-        assertEquals(-110f, origin.x, 0.01f);
-        assertEquals(0f, origin.y, 0.01f);
+    private static AdvanceableListener selfTickingListenerOn(ShipAPI drone) {
+        ArgumentCaptor<Object> added = ArgumentCaptor.forClass(Object.class);
+        verify(drone, Mockito.atLeastOnce()).addListener(added.capture());
+        return added.getAllValues().stream().filter(AdvanceableListener.class::isInstance)
+                .map(AdvanceableListener.class::cast).findFirst().orElseThrow();
     }
 
     @Test
     void drawsTheVisibleBeamFromThePrimaryImpactPointWhileTheDroneFiresFromBeyondThePrimary() {
-        ShipAPI firingShip = mock(ShipAPI.class, Answers.RETURNS_DEEP_STUBS);
-        when(firingShip.isAlive()).thenReturn(true);
+        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+        ShipAPI firingShip = liveFiringShip(1f);
         ShipAPI primary = shieldedShipAtOrigin(100f);
-        ShipAPI splitTarget = mock(ShipAPI.class);
-        when(splitTarget.isAlive()).thenReturn(true);
-        when(splitTarget.getLocation()).thenReturn(new Vector2f(-500f, 0f));
-        ShipAPI drone = mock(ShipAPI.class, Answers.RETURNS_DEEP_STUBS);
-        Vector2f droneLocation = new Vector2f();
-        when(drone.getLocation()).thenReturn(droneLocation);
-        com.fs.starfarer.api.combat.WeaponAPI droneWeapon = mock(com.fs.starfarer.api.combat.WeaponAPI.class);
-        com.fs.starfarer.api.combat.BeamAPI droneBeam = mock(com.fs.starfarer.api.combat.BeamAPI.class);
-        when(drone.getAllWeapons()).thenReturn(List.of(droneWeapon));
+        ShipAPI splitTarget = liveTarget(new Vector2f(-500f, 0f));
+        WeaponAPI droneWeapon = mock(WeaponAPI.class);
+        ShipAPI drone = droneWith(droneWeapon);
+        BeamAPI droneBeam = mock(BeamAPI.class);
         when(droneWeapon.getBeams()).thenReturn(List.of(droneBeam));
         when(droneBeam.getBrightness()).thenReturn(1f);
         when(droneBeam.getWidth()).thenReturn(12f);
         when(droneBeam.getCoreColor()).thenReturn(java.awt.Color.WHITE);
         when(droneBeam.getFringeColor()).thenReturn(java.awt.Color.CYAN);
-        com.fs.starfarer.api.combat.WeaponAPI primaryWeapon = mock(com.fs.starfarer.api.combat.WeaponAPI.class);
-        Vector2f impactPoint = new Vector2f(100f, 0f);
+        WeaponAPI primaryWeapon = mock(WeaponAPI.class);
 
-        try (MockedStatic<SplitBeamDroneFactory> factory = Mockito.mockStatic(SplitBeamDroneFactory.class);
-             MockedStatic<org.magiclib.plugins.MagicFakeBeamPlugin> fakeBeams = Mockito.mockStatic(org.magiclib.plugins.MagicFakeBeamPlugin.class)) {
-            factory.when(() -> SplitBeamDroneFactory.create(firingShip, primaryWeapon)).thenReturn(drone);
-            SplitBeamDrones drones = new SplitBeamDrones(firingShip);
+        try (MockedStatic<WeaponDroneFactory> factory = Mockito.mockStatic(WeaponDroneFactory.class);
+             MockedStatic<MagicFakeBeamPlugin> fakeBeams = Mockito.mockStatic(MagicFakeBeamPlugin.class);
+             MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
+            factory.when(() -> WeaponDroneFactory.create(Mockito.eq(firingShip), Mockito.eq(primaryWeapon), any())).thenReturn(drone);
+            global.when(Global::getCombatEngine).thenReturn(engine);
+            new SplitBeamDrones(firingShip).refresh(primaryWeapon, primary, splitTarget, new Vector2f(100f, 0f), 0.5f);
 
-            drones.refresh(primaryWeapon, primary, splitTarget, impactPoint, 0.5f);
-            drones.advance(0.016f);
+            selfTickingListenerOn(drone).advance(0.016f);
 
-            assertEquals(-110f, droneLocation.x, 0.01f);
-            fakeBeams.verify(() -> org.magiclib.plugins.MagicFakeBeamPlugin.addBeam(
+            assertEquals(-110f, drone.getLocation().x, 0.01f);
+            fakeBeams.verify(() -> MagicFakeBeamPlugin.addBeam(
                     Mockito.eq(0f), Mockito.eq(0f), Mockito.eq(12f), Mockito.eq(new Vector2f(100f, 0f)),
                     Mockito.anyFloat(), Mockito.anyFloat(), any(), any()));
         }
@@ -108,33 +118,181 @@ class SplitBeamDronesTest {
 
     @Test
     void keepsFiringForAtLeastOneSecondAfterTheSplitStartsEvenWithoutFurtherHits() {
-        ShipAPI firingShip = mock(ShipAPI.class, Answers.RETURNS_DEEP_STUBS);
-        when(firingShip.isAlive()).thenReturn(true);
-        ShipAPI primary = shieldedShipAtOrigin(100f);
-        ShipAPI splitTarget = mock(ShipAPI.class);
-        when(splitTarget.isAlive()).thenReturn(true);
-        when(splitTarget.getLocation()).thenReturn(new Vector2f(500f, 0f));
-        ShipAPI drone = mock(ShipAPI.class, Answers.RETURNS_DEEP_STUBS);
-        when(drone.getLocation()).thenReturn(new Vector2f());
-        com.fs.starfarer.api.combat.WeaponAPI droneWeapon = mock(com.fs.starfarer.api.combat.WeaponAPI.class);
-        when(drone.getAllWeapons()).thenReturn(List.of(droneWeapon));
-        com.fs.starfarer.api.combat.WeaponAPI primaryWeapon = mock(com.fs.starfarer.api.combat.WeaponAPI.class);
-        com.fs.starfarer.api.combat.CombatEngineAPI engine = mock(com.fs.starfarer.api.combat.CombatEngineAPI.class);
+        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+        ShipAPI firingShip = liveFiringShip(1f);
+        WeaponAPI droneWeapon = mock(WeaponAPI.class);
+        ShipAPI drone = droneWith(droneWeapon);
+        WeaponAPI primaryWeapon = mock(WeaponAPI.class);
 
-        try (MockedStatic<SplitBeamDroneFactory> factory = Mockito.mockStatic(SplitBeamDroneFactory.class);
+        try (MockedStatic<WeaponDroneFactory> factory = Mockito.mockStatic(WeaponDroneFactory.class);
              MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
-            factory.when(() -> SplitBeamDroneFactory.create(firingShip, primaryWeapon)).thenReturn(drone);
+            factory.when(() -> WeaponDroneFactory.create(Mockito.eq(firingShip), Mockito.eq(primaryWeapon), any())).thenReturn(drone);
             global.when(Global::getCombatEngine).thenReturn(engine);
-            SplitBeamDrones drones = new SplitBeamDrones(firingShip);
+            new SplitBeamDrones(firingShip).refresh(primaryWeapon, shieldedShipAtOrigin(100f), liveTarget(new Vector2f(500f, 0f)),
+                    new Vector2f(100f, 0f), 0.5f);
+            AdvanceableListener split = selfTickingListenerOn(drone);
 
-            drones.refresh(primaryWeapon, primary, splitTarget, new Vector2f(100f, 0f), 0.5f);
-            drones.advance(0.8f);
+            split.advance(0.8f);
             verify(droneWeapon, Mockito.atLeastOnce()).setForceFireOneFrame(true);
             verify(engine, never()).removeEntity(drone);
 
-            drones.advance(0.3f);
+            split.advance(0.3f);
             verify(engine).removeEntity(drone);
         }
+    }
+
+    private interface SplitScenario {
+        void run(SplitBeamDrones drones, CombatEngineAPI engine);
+    }
+
+    private static void withDrones(ShipAPI firingShip, WeaponAPI primaryWeapon, SplitScenario scenario, ShipAPI... drones) {
+        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+        try (MockedStatic<WeaponDroneFactory> factory = Mockito.mockStatic(WeaponDroneFactory.class);
+             MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
+            factory.when(() -> WeaponDroneFactory.create(Mockito.eq(firingShip), Mockito.eq(primaryWeapon), any()))
+                    .thenReturn(drones[0], java.util.Arrays.copyOfRange(drones, 1, drones.length));
+            global.when(Global::getCombatEngine).thenReturn(engine);
+            scenario.run(new SplitBeamDrones(firingShip), engine);
+            factory.verify(() -> WeaponDroneFactory.create(Mockito.eq(firingShip), Mockito.eq(primaryWeapon), any()),
+                    Mockito.times(drones.length));
+        }
+    }
+
+    private static void split(SplitBeamDrones drones, WeaponAPI primaryWeapon, ShipAPI splitTarget) {
+        drones.refresh(primaryWeapon, shieldedShipAtOrigin(100f), splitTarget, new Vector2f(100f, 0f), 0.5f);
+    }
+
+    @Test
+    void aDroneStopsAndRemovesItselfOnceItsFiringShipIsGoneEvenThoughThatShipNoLongerTicks() {
+        ShipAPI firingShip = liveFiringShip(1f);
+        WeaponAPI droneWeapon = mock(WeaponAPI.class);
+        ShipAPI drone = droneWith(droneWeapon);
+        WeaponAPI primaryWeapon = mock(WeaponAPI.class);
+
+        withDrones(firingShip, primaryWeapon, (drones, engine) -> {
+            split(drones, primaryWeapon, liveTarget(new Vector2f(500f, 0f)));
+            when(firingShip.isAlive()).thenReturn(false);
+
+            selfTickingListenerOn(drone).advance(0.016f);
+
+            verify(droneWeapon, never()).setForceFireOneFrame(true);
+            verify(engine).removeEntity(drone);
+        }, drone);
+    }
+
+    @Test
+    void aDroneCopiesTheFiringShipsMarkerHullModsOnceOnItsFirstTick() {
+        ShipAPI firingShip = liveFiringShip(1f);
+        ShipAPI drone = droneWith(mock(WeaponAPI.class));
+        WeaponAPI primaryWeapon = mock(WeaponAPI.class);
+        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+
+        try (MockedStatic<WeaponDroneFactory> factory = Mockito.mockStatic(WeaponDroneFactory.class);
+             MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
+            factory.when(() -> WeaponDroneFactory.create(Mockito.eq(firingShip), Mockito.eq(primaryWeapon), any())).thenReturn(drone);
+            global.when(Global::getCombatEngine).thenReturn(engine);
+            new SplitBeamDrones(firingShip).refresh(primaryWeapon, shieldedShipAtOrigin(100f), liveTarget(new Vector2f(500f, 0f)),
+                    new Vector2f(100f, 0f), 0.5f);
+            factory.verify(() -> WeaponDroneFactory.mirrorMarkerHullMods(any(), any()), never());
+            AdvanceableListener tick = selfTickingListenerOn(drone);
+
+            tick.advance(0.016f);
+            tick.advance(0.016f);
+
+            factory.verify(() -> WeaponDroneFactory.mirrorMarkerHullMods(firingShip, drone), Mockito.times(1));
+        }
+    }
+
+    @Test
+    void aDroneWaitsForItsBeamToFinishFadingBeforeRemovingItself() {
+        ShipAPI firingShip = liveFiringShip(1f);
+        WeaponAPI droneWeapon = mock(WeaponAPI.class);
+        ShipAPI drone = droneWith(droneWeapon);
+        WeaponAPI primaryWeapon = mock(WeaponAPI.class);
+        when(droneWeapon.isFiring()).thenReturn(true);
+
+        withDrones(firingShip, primaryWeapon, (drones, engine) -> {
+            split(drones, primaryWeapon, liveTarget(new Vector2f(500f, 0f)));
+            AdvanceableListener tick = selfTickingListenerOn(drone);
+
+            tick.advance(2f);
+            verify(engine, never()).removeEntity(drone);
+            verify(droneWeapon).setForceFireOneFrame(false);
+
+            when(droneWeapon.isFiring()).thenReturn(false);
+            tick.advance(0.016f);
+            tick.advance(0.016f);
+            verify(engine, Mockito.times(1)).removeEntity(drone);
+        }, drone);
+    }
+
+    @Test
+    void theSplitWindowRunsOnTheFiringShipsClockSoTimeDilationDoesNotCutItShort() {
+        ShipAPI firingShip = liveFiringShip(0.5f);
+        WeaponAPI droneWeapon = mock(WeaponAPI.class);
+        ShipAPI drone = droneWith(droneWeapon);
+        WeaponAPI primaryWeapon = mock(WeaponAPI.class);
+
+        withDrones(firingShip, primaryWeapon, (drones, engine) -> {
+            split(drones, primaryWeapon, liveTarget(new Vector2f(500f, 0f)));
+
+            selfTickingListenerOn(drone).advance(1.5f);
+
+            verify(engine, never()).removeEntity(drone);
+            verify(droneWeapon).setForceFireOneFrame(true);
+        }, drone);
+    }
+
+    @Test
+    void aDroneStillInPlayIsReusedForTheSameWeaponAndTarget() {
+        ShipAPI firingShip = liveFiringShip(1f);
+        ShipAPI drone = droneWith(mock(WeaponAPI.class));
+        WeaponAPI primaryWeapon = mock(WeaponAPI.class);
+        ShipAPI splitTarget = liveTarget(new Vector2f(500f, 0f));
+
+        withDrones(firingShip, primaryWeapon, (drones, engine) -> {
+            when(engine.isEntityInPlay(drone)).thenReturn(true);
+            split(drones, primaryWeapon, splitTarget);
+            split(drones, primaryWeapon, splitTarget);
+        }, drone);
+    }
+
+    @Test
+    void aDroneThatRemovedItselfIsReplacedByAFreshOneOnTheNextSplit() {
+        ShipAPI firingShip = liveFiringShip(1f);
+        ShipAPI first = droneWith(mock(WeaponAPI.class));
+        ShipAPI second = droneWith(mock(WeaponAPI.class));
+        WeaponAPI primaryWeapon = mock(WeaponAPI.class);
+        ShipAPI splitTarget = liveTarget(new Vector2f(500f, 0f));
+
+        withDrones(firingShip, primaryWeapon, (drones, engine) -> {
+            when(engine.isEntityInPlay(first)).thenReturn(true);
+            split(drones, primaryWeapon, splitTarget);
+            selfTickingListenerOn(first).advance(2f);
+            verify(engine).removeEntity(first);
+
+            split(drones, primaryWeapon, splitTarget);
+
+            selfTickingListenerOn(second);
+        }, first, second);
+    }
+
+    @Test
+    void aDroneRemovedBySomethingElseIsReplacedInsteadOfBlockingThatSplitForTheRestOfTheBattle() {
+        ShipAPI firingShip = liveFiringShip(1f);
+        ShipAPI first = droneWith(mock(WeaponAPI.class));
+        ShipAPI second = droneWith(mock(WeaponAPI.class));
+        WeaponAPI primaryWeapon = mock(WeaponAPI.class);
+        ShipAPI splitTarget = liveTarget(new Vector2f(500f, 0f));
+
+        withDrones(firingShip, primaryWeapon, (drones, engine) -> {
+            split(drones, primaryWeapon, splitTarget);
+            when(engine.isEntityInPlay(first)).thenReturn(false);
+
+            split(drones, primaryWeapon, splitTarget);
+
+            selfTickingListenerOn(second);
+        }, first, second);
     }
 
     @Test
@@ -160,7 +318,7 @@ class SplitBeamDronesTest {
         try (MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
             global.when(Global::getFactory).thenReturn(factory);
 
-            SplitBeamDroneFactory.officerCopy(captain);
+            WeaponDroneFactory.officerCopy(captain);
         }
 
         verify(copy).setName(name);
@@ -171,17 +329,43 @@ class SplitBeamDronesTest {
     }
 
     @Test
-    void sharesOnlyDamageListenersThatDoNotTickEveryFrameAndAreNotAlreadyOnTheDrone() {
+    void sharesTickingDamageListenersThroughAPassThroughSoTheyStillTickOnlyOnTheFiringShip() {
         ShipAPI firingShip = mock(ShipAPI.class);
         ShipAPI drone = mock(ShipAPI.class);
         DamageDealtModifier plain = mock(DamageDealtModifier.class);
         DamageDealtModifier ticking = mock(DamageDealtModifier.class, Mockito.withSettings().extraInterfaces(AdvanceableListener.class));
         when(firingShip.getListeners(DamageDealtModifier.class)).thenReturn(List.of(plain, ticking));
 
-        SplitBeamDroneFactory.shareDamageListeners(firingShip, drone);
+        WeaponDroneFactory.shareDamageListeners(firingShip, drone);
 
         verify(drone).addListener(plain);
         verify(drone, never()).addListener(ticking);
+        ArgumentCaptor<Object> added = ArgumentCaptor.forClass(Object.class);
+        verify(drone, Mockito.times(2)).addListener(added.capture());
+        Object passThrough = added.getAllValues().get(1);
+        assertFalse(passThrough instanceof AdvanceableListener);
+        BeamAPI beam = mock(BeamAPI.class);
+        CombatEntityAPI target = mock(CombatEntityAPI.class);
+        DamageAPI damage = mock(DamageAPI.class);
+        when(ticking.modifyDamageDealt(beam, target, damage, new Vector2f(), true)).thenReturn("ewm_dam_mod");
+
+        String result = ((DamageDealtModifier) passThrough).modifyDamageDealt(beam, target, damage, new Vector2f(), true);
+
+        assertEquals("ewm_dam_mod", result);
+    }
+
+    @Test
+    void theDronesOwnCopyOfATickingListenerIsSwappedForTheFiringShipsSoBonusesReadTheFiringShipsFlux() {
+        ShipAPI firingShip = mock(ShipAPI.class);
+        ShipAPI drone = mock(ShipAPI.class);
+        DamageDealtModifier ticking = mock(DamageDealtModifier.class, Mockito.withSettings().extraInterfaces(AdvanceableListener.class));
+        when(firingShip.getListeners(DamageDealtModifier.class)).thenReturn(List.of(ticking));
+
+        WeaponDroneFactory.shareDamageListeners(firingShip, drone);
+
+        org.mockito.InOrder order = Mockito.inOrder(drone);
+        order.verify(drone).removeListenerOfClass(ticking.getClass());
+        order.verify(drone).addListener(any(WeaponDroneFactory.SharedDamageModifier.class));
     }
 
     @Test
@@ -191,7 +375,7 @@ class SplitBeamDronesTest {
         DamageDealtModifier listener = mock(DamageDealtModifier.class);
         when(firingShip.getListeners(DamageDealtModifier.class)).thenReturn(List.of(listener));
 
-        SplitBeamDroneFactory.shareDamageListeners(firingShip, drone);
+        WeaponDroneFactory.shareDamageListeners(firingShip, drone);
 
         org.mockito.InOrder order = Mockito.inOrder(drone);
         order.verify(drone).removeListenerOfClass(listener.getClass());
@@ -205,9 +389,42 @@ class SplitBeamDronesTest {
         DamageDealtModifier splitter = new FakeSplitter();
         when(firingShip.getListeners(DamageDealtModifier.class)).thenReturn(List.of(splitter));
 
-        SplitBeamDroneFactory.shareDamageListeners(firingShip, drone);
+        WeaponDroneFactory.shareDamageListeners(firingShip, drone);
 
         verify(drone, never()).addListener(any());
+    }
+
+    @Test
+    void neverSharesTheRefractionListenerSoDroneHitsAreNeverReducedOrRefractedTwice() {
+        ShipAPI firingShip = mock(ShipAPI.class);
+        ShipAPI drone = mock(ShipAPI.class);
+        DamageDealtModifier refraction = new EnergyChainListener(firingShip, mock(RefractionDrones.class));
+        when(firingShip.getListeners(DamageDealtModifier.class)).thenReturn(List.of(refraction));
+
+        WeaponDroneFactory.shareDamageListeners(firingShip, drone);
+
+        verify(drone, never()).addListener(any());
+    }
+
+    @Test
+    void mirroringCarriesProjectileSpeedAndSubsystemDamageSoRefractedShotsMatchTheOriginal() {
+        MutableShipStatsAPI source = mock(MutableShipStatsAPI.class, Answers.RETURNS_DEEP_STUBS);
+        MutableShipStatsAPI drone = mock(MutableShipStatsAPI.class, Answers.RETURNS_DEEP_STUBS);
+        MutableStat sourceSpeed = new MutableStat(1f);
+        MutableStat droneSpeed = new MutableStat(1f);
+        MutableStat sourceEngines = new MutableStat(1f);
+        MutableStat droneEngines = new MutableStat(1f);
+        sourceSpeed.modifyPercent("node", 25f);
+        sourceEngines.modifyMult("skill", 1.5f);
+        when(source.getEnergyProjectileSpeedMult()).thenReturn(sourceSpeed);
+        when(drone.getEnergyProjectileSpeedMult()).thenReturn(droneSpeed);
+        when(source.getDamageToTargetEnginesMult()).thenReturn(sourceEngines);
+        when(drone.getDamageToTargetEnginesMult()).thenReturn(droneEngines);
+
+        WeaponDroneStats.mirror(source, drone);
+
+        assertEquals(1.25f, droneSpeed.getModifiedValue(), 0.0001f);
+        assertEquals(1.5f, droneEngines.getModifiedValue(), 0.0001f);
     }
 
     @Test
@@ -226,7 +443,7 @@ class SplitBeamDronesTest {
         when(drone.getBeamWeaponRangeBonus()).thenReturn(droneBeamRange);
         when(source.getBeamWeaponRangeBonus()).thenReturn(sourceBeamRange);
 
-        SplitBeamDroneStats.mirror(source, drone);
+        WeaponDroneStats.mirror(source, drone);
 
         assertEquals(1.5f, droneEnergyDamage.getModifiedValue(), 0.0001f);
         assertEquals(120f, droneBeamRange.computeEffective(100f), 0.0001f);
@@ -244,7 +461,7 @@ class SplitBeamDronesTest {
         when(source.getDynamic().getMod(key)).thenReturn(sourceHardFlux);
         when(drone.getDynamic().getMod(key)).thenReturn(droneHardFlux);
 
-        SplitBeamDroneStats.mirror(source, drone);
+        WeaponDroneStats.mirror(source, drone);
 
         assertEquals(50f, droneHardFlux.getFlatBonus(), 0.0001f);
     }

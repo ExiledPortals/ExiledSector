@@ -7,7 +7,7 @@ import com.fs.starfarer.api.combat.StatBonus;
 import java.util.List;
 import java.util.function.Function;
 
-final class SplitBeamDroneStats {
+final class WeaponDroneStats {
 
     private static final List<Function<MutableShipStatsAPI, MutableStat>> MUTABLE_STATS = List.of(
             MutableShipStatsAPI::getBallisticWeaponDamageMult,
@@ -16,6 +16,10 @@ final class SplitBeamDroneStats {
             MutableShipStatsAPI::getBeamWeaponDamageMult,
             MutableShipStatsAPI::getDamageToTargetShieldsMult,
             MutableShipStatsAPI::getDamageToTargetHullMult,
+            MutableShipStatsAPI::getDamageToTargetEnginesMult,
+            MutableShipStatsAPI::getDamageToTargetWeaponsMult,
+            MutableShipStatsAPI::getProjectileSpeedMult,
+            MutableShipStatsAPI::getEnergyProjectileSpeedMult,
             MutableShipStatsAPI::getDamageToFighters,
             MutableShipStatsAPI::getDamageToMissiles,
             MutableShipStatsAPI::getDamageToFrigates,
@@ -35,7 +39,7 @@ final class SplitBeamDroneStats {
 
     private static final List<String> DYNAMIC_MODS = List.of(ShieldSkillEffect.BeamHardFluxListener.HARD_FLUX_PERCENT_KEY);
 
-    private SplitBeamDroneStats() {
+    private WeaponDroneStats() {
     }
 
     static void mirror(MutableShipStatsAPI source, MutableShipStatsAPI drone) {

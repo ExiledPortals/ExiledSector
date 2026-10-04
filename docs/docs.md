@@ -31,7 +31,8 @@ Lion's Gaze is the beam-splitting keystone (`beam_split`, using `BEAM_WEAPON_SPL
 
 Any beam hit on an enemy ship starts a split, whether it lands on shield or hull. The split looks for up
 to N additional targets, where N is the total magnitude, choosing the nearest other hostile ships that are
-alive and within half the beam weapon's range of the impact point. The beam's damage is then shared evenly
+alive, can be hit (phased ships and other effects' drones are skipped) and are within half the beam
+weapon's range of the impact point. The beam's damage is then shared evenly
 between the original target and the split targets, so with one extra target each receives half. The
 original target's reduction is applied as a damage modifier, which also scales the EMP of that hit. The
 beam's own special effects, such as those of the Graviton Beam or Tachyon Lance, are not reduced; only the
@@ -46,11 +47,29 @@ normal hard and soft flux rules apply, and the AI reacts to it as it would to an
 
 The drone is set up to behave like the ship it's standing in for. It receives a copy of the ship's
 captain, with the same personality, AI core, level and skills. The ship's weapon stat modifiers are copied
-onto it every quarter of a second, and so are its damage-dealt listeners (apart from other beam splitters
-and per-frame listeners), so on-hit effects from other nodes still apply. The drone's damage is then
-multiplied by the split share. Once a drone starts firing it keeps going for at least one second, and
-after that for as long as the original beam keeps hitting, plus a 0.3 second grace period. It stops
-straight away if its target dies or the firing ship is lost.
+onto it every quarter of a second. The ship's damage-dealt listeners are shared with it when it is
+created (apart from other drone-spawning effects), so on-hit effects from other nodes still apply.
+Listeners that also run every frame, such as Energy Weapon Mastery's, are attached through a pass-through
+that calls the firing ship's own listener. The drone's own copy of such a listener is removed, so the
+bonus follows the firing ship's flux rather than the drone's, and the listener still runs only once per
+frame. Distance-based bonuses such as Energy Weapon Mastery's range falloff are measured from the drone,
+because that is where the split beam starts. The split share is applied before any shared listener sees
+the hit, so effects that scale with damage dealt work from the shared amount.
+
+Drones don't carry the firing ship's hull mods, because those would apply their full effects again.
+Some weapon scripts check their ship for a hull mod, though, such as the ET-IX Dawnstar generator
+modes or the feedback-error misfire hull mods. Hull mods listed in
+`data/config/exiledSector/drone_marker_hullmods.csv` are copied onto the drone on its first tick when the
+firing ship has them, so those checks see the same answer. The copy happens after the game has applied
+the drone's hull mods, so their creation effects never run on it. Each listed hull mod's per-frame code
+still runs on the drone, so only hull mods that are pure markers in combat belong on the list. The same
+applies to Refracting Projectiles drones. Other mods can add rows to the file.
+
+Once a drone starts firing it keeps going for at least one second, and after that for as long as the
+original beam keeps hitting, plus a 0.3 second grace period. Both times run on the firing ship's clock,
+so time dilation doesn't cut them short. It stops straight away if its target dies or
+the firing ship is destroyed or leaves the battle. Each drone runs its own timer, so it stops and removes
+itself even after the firing ship has stopped running.
 
 Some beams can't be put on a drone. That happens when the weapon's effect code is listed in
 `data/config/exiledSector/split_beam_effect_blocklist.csv`, when the weapon's size has no drone slot, or
@@ -119,18 +138,40 @@ When a node has matching child effects with the same stat, mode and value, its t
 the parent. Ballistic, missile, non-beam energy and beam damage at +10% each read simply as "Increases
 weapon damage by 10%". A parent and a child on the same node stay on separate lines, because they stack.
 
-## Energy chain
+## Refracting Projectiles
 
 `NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT` gives a non-beam energy projectile that hits a shield a
-chance to spawn a copy of itself at the point of impact. The copy flies at the nearest enemy within the
-weapon's range that the chain hasn't hit yet, and it can chain again, up to the "Max Chain Count" setting
-(5 by default). Beams never chain, and neither do weapons listed in
-`data/config/exiledSector/energy_chain_blocklist.csv`.
+chance to refract. The refracted shot goes for the nearest enemy ship within the weapon's range of the
+impact point that the chain hasn't hit yet. If it hits an enemy shield, it can refract again, up to the
+"Max Refractions" setting (5 by default). Beams never refract, and neither do weapons that fire missiles or
+weapons listed in `data/config/exiledSector/energy_chain_blocklist.csv`.
 
-`NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT` makes each link weaker, but only in terms of damage dealt.
-On-hit effects run at full strength and EMP has no falloff at all. To achieve that, the falloff lowers the
-hit's base damage and restores it immediately afterwards, rather than using a damage modifier, because
-damage modifiers would scale the EMP as well.
+The refracted shot is fired by the real weapon, in the same way as Lion's Gaze. An invisible,
+invulnerable drone carrying a copy of the weapon is placed at the shield that was hit, on the line
+towards the next target. If that target is behind the hit ship, the drone sits just past the far side
+of the shield, otherwise just in front of the impact point. It fires once, leading a moving target. A
+brief streak in the projectile's colours is drawn from the impact point to the drone, so the shot looks
+as if it passed through the shield. Because the weapon really fires, its own effect code, sound and
+muzzle flash all run.
+
+The drone's copy of the weapon is built as an instant single shot: no charge-up, a burst of one, and a
+long cooldown that is reset whenever the drone is reused. A Pulse Laser or Ion Pulser therefore refracts
+as exactly one bolt with no delay. The drone copies the ship's weapon stat modifiers (damage, range,
+projectile speed) before each shot, and a flat range bonus stretches its range to match the firing
+weapon's, including range from slot-based effects. Each ship keeps a pool of up to 8 drones, reusing an
+idle drone with the same weapon. A drone that stays idle for 3 seconds is removed.
+
+Right after firing, the drone tags its shot with the chain state (the ships already hit, the number of
+refractions so far and its damage multiplier) and hands the shot back to the firing ship. From then on
+the shot behaves like one of the ship's own: it can't hit the ship that fired it, the ship's own on-hit
+effects apply (Energy Weapon Mastery included), and kills are credited to it. A shot that hits in the
+same frame it was fired is handled by the drone instead, using the drone's copies of the ship's
+damage-dealt listeners.
+
+`NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT` makes each refraction weaker, but only in terms of damage
+dealt. On-hit effects run at full strength and EMP has no falloff at all. To achieve that, the falloff
+lowers the hit's base damage and restores it immediately afterwards, rather than using a damage
+modifier, because damage modifiers would scale the EMP as well.
 
 ## Reworked vanilla hull mods
 

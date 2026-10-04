@@ -2,13 +2,13 @@ package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.BeamAPI;
+import com.fs.starfarer.api.combat.CollisionClass;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.FluxTrackerAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
-import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import org.lazywizard.lazylib.MathUtils;
 import org.lazywizard.lazylib.VectorUtils;
@@ -19,7 +19,7 @@ import org.magiclib.util.MagicFakeBeam;
 import java.util.Comparator;
 import java.util.List;
 
-final class BeamSplitListener implements DamageDealtModifier, AdvanceableListener, SplitBeamSource {
+final class BeamSplitListener implements DamageDealtModifier, DroneSpawner {
 
     static final String TARGETS_KEY = "exiledSector_beamSplitTargets";
 
@@ -52,11 +52,6 @@ final class BeamSplitListener implements DamageDealtModifier, AdvanceableListene
     }
 
     @Override
-    public void advance(float amount) {
-        drones.advance(amount);
-    }
-
-    @Override
     public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
         if (processingSplit || !(param instanceof BeamAPI beam) || !(target instanceof ShipAPI primaryTarget)) {
             return null;
@@ -70,7 +65,7 @@ final class BeamSplitListener implements DamageDealtModifier, AdvanceableListene
         }
 
         float share = 1f / (1 + splitTargets.size());
-        if (SplitBeamDroneFactory.supports(weapon)) {
+        if (WeaponDroneFactory.supportsBeam(weapon)) {
             for (ShipAPI splitTarget : splitTargets) {
                 drones.refresh(weapon, primaryTarget, splitTarget, point, share);
             }
@@ -104,7 +99,7 @@ final class BeamSplitListener implements DamageDealtModifier, AdvanceableListene
 
     private List<ShipAPI> findNearbyEnemies(ShipAPI primaryTarget, Vector2f point, float radius, int count) {
         List<ShipAPI> candidates = CombatQueries.shipsNear(point, radius, other -> other != ship && other != primaryTarget
-                && other.isAlive() && !other.isHulk()
+                && other.isAlive() && !other.isHulk() && other.getCollisionClass() != CollisionClass.NONE
                 && CombatQueries.isHostile(ship, other) && CombatQueries.withinRadius(other.getLocation(), point, radius));
         candidates.sort(Comparator.comparingDouble(other -> Vector2f.sub(other.getLocation(), point, null).lengthSquared()));
         return candidates.size() > count ? candidates.subList(0, count) : candidates;

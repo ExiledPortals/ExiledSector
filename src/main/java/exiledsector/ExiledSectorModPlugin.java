@@ -27,7 +27,7 @@ import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.npc.NpcLayouts;
-import exiledsector.skills.skilleffect.CsvIdBlocklist;
+import exiledsector.skills.skilleffect.CsvIdList;
 import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.skills.tags.AreaToggles;
 import exiledsector.ui.ExiledSectorSettings;
@@ -57,7 +57,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         SkillTree.load();
         SkillTree.applyDisabledRegions(AreaToggles.disabledRegions());
         PhantomHullMods.install(phantomHullModIds());
-        CsvIdBlocklist.loadAll();
+        CsvIdList.loadAll();
         NpcLayouts.load();
         CompatChecks.logAtStartup();
     }

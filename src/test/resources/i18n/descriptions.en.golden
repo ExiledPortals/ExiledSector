@@ -1282,18 +1282,18 @@ effect|NON_BEAM_ENERGY_WEAPON_AMMO_REGEN_PERCENT|12.5	0	Increases non-beam energ
 effect|NON_BEAM_ENERGY_WEAPON_AMMO_REGEN_PERCENT|100.0	0	Increases non-beam energy weapon ammo regeneration rate by <good>100%</good>. This is set directly on each weapon: it's correct in combat, but the refit screen's weapon tooltips won't show it.
 effect|NON_BEAM_ENERGY_WEAPON_AMMO_REGEN_PERCENT|-10.0	0	Decreases non-beam energy weapon ammo regeneration rate by <bad>10%</bad>. This is set directly on each weapon: it's correct in combat, but the refit screen's weapon tooltips won't show it.
 effect|NON_BEAM_ENERGY_WEAPON_AMMO_REGEN_PERCENT|-12.5	0	Decreases non-beam energy weapon ammo regeneration rate by <bad>12.5%</bad>. This is set directly on each weapon: it's correct in combat, but the refit screen's weapon tooltips won't show it.
-effect|NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT|1.0	0	Non-beam energy weapon hits that land on an enemy shield have a 1% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
-effect|NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT|10.0	0	Non-beam energy weapon hits that land on an enemy shield have a 10% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
-effect|NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT|12.5	0	Non-beam energy weapon hits that land on an enemy shield have a 12.5% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
-effect|NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT|100.0	0	Non-beam energy weapon hits that land on an enemy shield have a 100% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
-effect|NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT|-10.0	0	Non-beam energy weapon hits that land on an enemy shield have a -10% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
-effect|NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT|-12.5	0	Non-beam energy weapon hits that land on an enemy shield have a -12.5% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
-effect|NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT|1.0	0	Each successive hit in a non-beam energy chain deals <bad>1%</bad> less damage than the one before it.
-effect|NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT|10.0	0	Each successive hit in a non-beam energy chain deals <bad>10%</bad> less damage than the one before it.
-effect|NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT|12.5	0	Each successive hit in a non-beam energy chain deals <bad>12.5%</bad> less damage than the one before it.
-effect|NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT|100.0	0	Each successive hit in a non-beam energy chain deals <bad>100%</bad> less damage than the one before it.
-effect|NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT|-10.0	0	Each successive hit in a non-beam energy chain deals <bad>-10%</bad> less damage than the one before it.
-effect|NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT|-12.5	0	Each successive hit in a non-beam energy chain deals <bad>-12.5%</bad> less damage than the one before it.
+effect|NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT|1.0	0	Non-beam energy weapon hits that land on an enemy shield have a 1% chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+effect|NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT|10.0	0	Non-beam energy weapon hits that land on an enemy shield have a 10% chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+effect|NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT|12.5	0	Non-beam energy weapon hits that land on an enemy shield have a 12.5% chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+effect|NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT|100.0	0	Non-beam energy weapon hits that land on an enemy shield have a 100% chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+effect|NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT|-10.0	0	Non-beam energy weapon hits that land on an enemy shield have a -10% chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+effect|NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT|-12.5	0	Non-beam energy weapon hits that land on an enemy shield have a -12.5% chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+effect|NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT|1.0	0	Each refraction deals <bad>1%</bad> less damage than the shot before it.
+effect|NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT|10.0	0	Each refraction deals <bad>10%</bad> less damage than the shot before it.
+effect|NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT|12.5	0	Each refraction deals <bad>12.5%</bad> less damage than the shot before it.
+effect|NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT|100.0	0	Each refraction deals <bad>100%</bad> less damage than the shot before it.
+effect|NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT|-10.0	0	Each refraction deals <bad>-10%</bad> less damage than the shot before it.
+effect|NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT|-12.5	0	Each refraction deals <bad>-12.5%</bad> less damage than the shot before it.
 effect|NON_BEAM_ENERGY_WEAPON_DAMAGE_FLAT|1.0	0	Increases non-beam energy weapon damage by <good>1</good>.
 effect|NON_BEAM_ENERGY_WEAPON_DAMAGE_FLAT|10.0	0	Increases non-beam energy weapon damage by <good>10</good>.
 effect|NON_BEAM_ENERGY_WEAPON_DAMAGE_FLAT|12.5	0	Increases non-beam energy weapon damage by <good>12.5</good>.
@@ -2365,16 +2365,16 @@ type|emp_damage_taken_multi|FRIGATE|0	1	<bad>15%</bad> less EMP damage taken.
 type|emp_damage_taken_multi|DESTROYER|0	1	<bad>15%</bad> less EMP damage taken.
 type|emp_damage_taken_multi|CRUISER|0	1	<bad>15%</bad> less EMP damage taken.
 type|emp_damage_taken_multi|CAPITAL_SHIP|0	1	<bad>15%</bad> less EMP damage taken.
-type|energy_chain|null|0	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
-type|energy_chain|null|1	0	Each successive hit in a non-beam energy chain deals <bad>20%</bad> less damage than the one before it.
-type|energy_chain|FRIGATE|0	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
-type|energy_chain|FRIGATE|1	0	Each successive hit in a non-beam energy chain deals <bad>20%</bad> less damage than the one before it.
-type|energy_chain|DESTROYER|0	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
-type|energy_chain|DESTROYER|1	0	Each successive hit in a non-beam energy chain deals <bad>20%</bad> less damage than the one before it.
-type|energy_chain|CRUISER|0	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
-type|energy_chain|CRUISER|1	0	Each successive hit in a non-beam energy chain deals <bad>20%</bad> less damage than the one before it.
-type|energy_chain|CAPITAL_SHIP|0	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
-type|energy_chain|CAPITAL_SHIP|1	0	Each successive hit in a non-beam energy chain deals <bad>20%</bad> less damage than the one before it.
+type|energy_chain|null|0	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+type|energy_chain|null|1	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
+type|energy_chain|FRIGATE|0	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+type|energy_chain|FRIGATE|1	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
+type|energy_chain|DESTROYER|0	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+type|energy_chain|DESTROYER|1	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
+type|energy_chain|CRUISER|0	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+type|energy_chain|CRUISER|1	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
+type|energy_chain|CAPITAL_SHIP|0	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+type|energy_chain|CAPITAL_SHIP|1	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 type|energy_flux_cost|null|0	1	Decreases energy weapon flux cost by <bad>5%</bad>.
 type|energy_flux_cost|FRIGATE|0	1	Decreases energy weapon flux cost by <bad>5%</bad>.
 type|energy_flux_cost|DESTROYER|0	1	Decreases energy weapon flux cost by <bad>5%</bad>.
@@ -3628,8 +3628,8 @@ summary|option0|FRIGATE|58	0	Increases repair rate per day by <good>50%</good>.
 summary|option0|FRIGATE|59	0	Increases flux dissipation by <good>25%</good>.
 summary|option0|FRIGATE|60	0	Increases flux dissipation by <good>50</good>.
 summary|option0|FRIGATE|61	1	<bad>70%</bad> less EMP damage taken.
-summary|option0|FRIGATE|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
-summary|option0|FRIGATE|63	0	Each successive hit in a non-beam energy chain deals <bad>20%</bad> less damage than the one before it.
+summary|option0|FRIGATE|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+summary|option0|FRIGATE|63	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 summary|option0|FRIGATE|64	1	Decreases energy weapon flux cost by <bad>10%</bad>.
 summary|option0|FRIGATE|65	0	Increases engine durability by <good>185%</good>.
 summary|option0|FRIGATE|66	1	Decreases sensor profile by <bad>50%</bad>.
@@ -3802,8 +3802,8 @@ summary|option0|DESTROYER|58	0	Increases repair rate per day by <good>50%</good>
 summary|option0|DESTROYER|59	0	Increases flux dissipation by <good>25%</good>.
 summary|option0|DESTROYER|60	0	Increases flux dissipation by <good>50</good>.
 summary|option0|DESTROYER|61	1	<bad>70%</bad> less EMP damage taken.
-summary|option0|DESTROYER|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
-summary|option0|DESTROYER|63	0	Each successive hit in a non-beam energy chain deals <bad>20%</bad> less damage than the one before it.
+summary|option0|DESTROYER|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+summary|option0|DESTROYER|63	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 summary|option0|DESTROYER|64	1	Decreases energy weapon flux cost by <bad>10%</bad>.
 summary|option0|DESTROYER|65	0	Increases engine durability by <good>185%</good>.
 summary|option0|DESTROYER|66	1	Decreases sensor profile by <bad>50%</bad>.
@@ -3976,8 +3976,8 @@ summary|option0|CRUISER|58	0	Increases repair rate per day by <good>50%</good>.
 summary|option0|CRUISER|59	0	Increases flux dissipation by <good>25%</good>.
 summary|option0|CRUISER|60	0	Increases flux dissipation by <good>50</good>.
 summary|option0|CRUISER|61	1	<bad>70%</bad> less EMP damage taken.
-summary|option0|CRUISER|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
-summary|option0|CRUISER|63	0	Each successive hit in a non-beam energy chain deals <bad>20%</bad> less damage than the one before it.
+summary|option0|CRUISER|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+summary|option0|CRUISER|63	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 summary|option0|CRUISER|64	1	Decreases energy weapon flux cost by <bad>10%</bad>.
 summary|option0|CRUISER|65	0	Increases engine durability by <good>185%</good>.
 summary|option0|CRUISER|66	1	Decreases sensor profile by <bad>50%</bad>.
@@ -4150,8 +4150,8 @@ summary|option0|CAPITAL_SHIP|58	0	Increases repair rate per day by <good>50%</go
 summary|option0|CAPITAL_SHIP|59	0	Increases flux dissipation by <good>25%</good>.
 summary|option0|CAPITAL_SHIP|60	0	Increases flux dissipation by <good>50</good>.
 summary|option0|CAPITAL_SHIP|61	1	<bad>70%</bad> less EMP damage taken.
-summary|option0|CAPITAL_SHIP|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
-summary|option0|CAPITAL_SHIP|63	0	Each successive hit in a non-beam energy chain deals <bad>20%</bad> less damage than the one before it.
+summary|option0|CAPITAL_SHIP|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+summary|option0|CAPITAL_SHIP|63	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 summary|option0|CAPITAL_SHIP|64	1	Decreases energy weapon flux cost by <bad>10%</bad>.
 summary|option0|CAPITAL_SHIP|65	0	Increases engine durability by <good>185%</good>.
 summary|option0|CAPITAL_SHIP|66	1	Decreases sensor profile by <bad>50%</bad>.
@@ -4324,8 +4324,8 @@ summary|option1|FRIGATE|58	0	Increases repair rate per day by <good>50%</good>.
 summary|option1|FRIGATE|59	0	Increases flux dissipation by <good>25%</good>.
 summary|option1|FRIGATE|60	0	Increases flux dissipation by <good>50</good>.
 summary|option1|FRIGATE|61	1	<bad>70%</bad> less EMP damage taken.
-summary|option1|FRIGATE|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
-summary|option1|FRIGATE|63	0	Each successive hit in a non-beam energy chain deals <bad>20%</bad> less damage than the one before it.
+summary|option1|FRIGATE|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+summary|option1|FRIGATE|63	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 summary|option1|FRIGATE|64	1	Decreases energy weapon flux cost by <bad>10%</bad>.
 summary|option1|FRIGATE|65	0	Increases engine durability by <good>185%</good>.
 summary|option1|FRIGATE|66	1	Decreases sensor profile by <bad>50%</bad>.
@@ -4498,8 +4498,8 @@ summary|option1|DESTROYER|58	0	Increases repair rate per day by <good>50%</good>
 summary|option1|DESTROYER|59	0	Increases flux dissipation by <good>25%</good>.
 summary|option1|DESTROYER|60	0	Increases flux dissipation by <good>50</good>.
 summary|option1|DESTROYER|61	1	<bad>70%</bad> less EMP damage taken.
-summary|option1|DESTROYER|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
-summary|option1|DESTROYER|63	0	Each successive hit in a non-beam energy chain deals <bad>20%</bad> less damage than the one before it.
+summary|option1|DESTROYER|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+summary|option1|DESTROYER|63	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 summary|option1|DESTROYER|64	1	Decreases energy weapon flux cost by <bad>10%</bad>.
 summary|option1|DESTROYER|65	0	Increases engine durability by <good>185%</good>.
 summary|option1|DESTROYER|66	1	Decreases sensor profile by <bad>50%</bad>.
@@ -4672,8 +4672,8 @@ summary|option1|CRUISER|58	0	Increases repair rate per day by <good>50%</good>.
 summary|option1|CRUISER|59	0	Increases flux dissipation by <good>25%</good>.
 summary|option1|CRUISER|60	0	Increases flux dissipation by <good>50</good>.
 summary|option1|CRUISER|61	1	<bad>70%</bad> less EMP damage taken.
-summary|option1|CRUISER|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
-summary|option1|CRUISER|63	0	Each successive hit in a non-beam energy chain deals <bad>20%</bad> less damage than the one before it.
+summary|option1|CRUISER|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+summary|option1|CRUISER|63	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 summary|option1|CRUISER|64	1	Decreases energy weapon flux cost by <bad>10%</bad>.
 summary|option1|CRUISER|65	0	Increases engine durability by <good>185%</good>.
 summary|option1|CRUISER|66	1	Decreases sensor profile by <bad>50%</bad>.
@@ -4846,8 +4846,8 @@ summary|option1|CAPITAL_SHIP|58	0	Increases repair rate per day by <good>50%</go
 summary|option1|CAPITAL_SHIP|59	0	Increases flux dissipation by <good>25%</good>.
 summary|option1|CAPITAL_SHIP|60	0	Increases flux dissipation by <good>50</good>.
 summary|option1|CAPITAL_SHIP|61	1	<bad>70%</bad> less EMP damage taken.
-summary|option1|CAPITAL_SHIP|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
-summary|option1|CAPITAL_SHIP|63	0	Each successive hit in a non-beam energy chain deals <bad>20%</bad> less damage than the one before it.
+summary|option1|CAPITAL_SHIP|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+summary|option1|CAPITAL_SHIP|63	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 summary|option1|CAPITAL_SHIP|64	1	Decreases energy weapon flux cost by <bad>10%</bad>.
 summary|option1|CAPITAL_SHIP|65	0	Increases engine durability by <good>185%</good>.
 summary|option1|CAPITAL_SHIP|66	1	Decreases sensor profile by <bad>50%</bad>.
@@ -5020,8 +5020,8 @@ summary|option2|FRIGATE|58	0	Increases repair rate per day by <good>50%</good>.
 summary|option2|FRIGATE|59	0	Increases flux dissipation by <good>25%</good>.
 summary|option2|FRIGATE|60	0	Increases flux dissipation by <good>50</good>.
 summary|option2|FRIGATE|61	1	<bad>70%</bad> less EMP damage taken.
-summary|option2|FRIGATE|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
-summary|option2|FRIGATE|63	0	Each successive hit in a non-beam energy chain deals <bad>20%</bad> less damage than the one before it.
+summary|option2|FRIGATE|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+summary|option2|FRIGATE|63	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 summary|option2|FRIGATE|64	1	Decreases energy weapon flux cost by <bad>10%</bad>.
 summary|option2|FRIGATE|65	0	Increases engine durability by <good>185%</good>.
 summary|option2|FRIGATE|66	1	Decreases sensor profile by <bad>50%</bad>.
@@ -5195,8 +5195,8 @@ summary|option2|DESTROYER|58	0	Increases repair rate per day by <good>50%</good>
 summary|option2|DESTROYER|59	0	Increases flux dissipation by <good>25%</good>.
 summary|option2|DESTROYER|60	0	Increases flux dissipation by <good>50</good>.
 summary|option2|DESTROYER|61	1	<bad>70%</bad> less EMP damage taken.
-summary|option2|DESTROYER|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
-summary|option2|DESTROYER|63	0	Each successive hit in a non-beam energy chain deals <bad>20%</bad> less damage than the one before it.
+summary|option2|DESTROYER|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+summary|option2|DESTROYER|63	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 summary|option2|DESTROYER|64	1	Decreases energy weapon flux cost by <bad>10%</bad>.
 summary|option2|DESTROYER|65	0	Increases engine durability by <good>185%</good>.
 summary|option2|DESTROYER|66	1	Decreases sensor profile by <bad>50%</bad>.
@@ -5370,8 +5370,8 @@ summary|option2|CRUISER|58	0	Increases repair rate per day by <good>50%</good>.
 summary|option2|CRUISER|59	0	Increases flux dissipation by <good>25%</good>.
 summary|option2|CRUISER|60	0	Increases flux dissipation by <good>50</good>.
 summary|option2|CRUISER|61	1	<bad>70%</bad> less EMP damage taken.
-summary|option2|CRUISER|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
-summary|option2|CRUISER|63	0	Each successive hit in a non-beam energy chain deals <bad>20%</bad> less damage than the one before it.
+summary|option2|CRUISER|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+summary|option2|CRUISER|63	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 summary|option2|CRUISER|64	1	Decreases energy weapon flux cost by <bad>10%</bad>.
 summary|option2|CRUISER|65	0	Increases engine durability by <good>185%</good>.
 summary|option2|CRUISER|66	1	Decreases sensor profile by <bad>50%</bad>.
@@ -5545,8 +5545,8 @@ summary|option2|CAPITAL_SHIP|58	0	Increases repair rate per day by <good>50%</go
 summary|option2|CAPITAL_SHIP|59	0	Increases flux dissipation by <good>25%</good>.
 summary|option2|CAPITAL_SHIP|60	0	Increases flux dissipation by <good>50</good>.
 summary|option2|CAPITAL_SHIP|61	1	<bad>70%</bad> less EMP damage taken.
-summary|option2|CAPITAL_SHIP|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to chain to a nearby enemy ship. The chaining projectile has an equal chance to chain again, as long as it hits a shield.
-summary|option2|CAPITAL_SHIP|63	0	Each successive hit in a non-beam energy chain deals <bad>20%</bad> less damage than the one before it.
+summary|option2|CAPITAL_SHIP|62	0	Non-beam energy weapon hits that land on an enemy shield have a 20% chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+summary|option2|CAPITAL_SHIP|63	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 summary|option2|CAPITAL_SHIP|64	1	Decreases energy weapon flux cost by <bad>10%</bad>.
 summary|option2|CAPITAL_SHIP|65	0	Increases engine durability by <good>185%</good>.
 summary|option2|CAPITAL_SHIP|66	1	Decreases sensor profile by <bad>50%</bad>.

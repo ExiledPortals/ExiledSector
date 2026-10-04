@@ -82,6 +82,8 @@ class ExiledSectorModPluginTest {
                 .thenReturn(new JSONArray());
         when(settings.getMergedSpreadsheetDataForMod("weapon", "data/config/exiledSector/energy_chain_blocklist.csv", "exiledSector"))
                 .thenReturn(new JSONArray());
+        when(settings.getMergedSpreadsheetDataForMod("hullmod", "data/config/exiledSector/drone_marker_hullmods.csv", "exiledSector"))
+                .thenReturn(new JSONArray());
         when(settings.getMergedJSON("data/config/exiledSector/npc_layouts.json")).thenReturn(new JSONObject(
                 "{ \"layouts\": { \"bulwark\": { \"root\": \"root_low_tech_1\", \"nodes\": [\"a\"] } } }"));
 
@@ -205,11 +207,12 @@ class ExiledSectorModPluginTest {
     }
 
     @Test
-    void onApplicationLoadLoadsBothCombatBlocklistsMergedAcrossMods() throws Exception {
+    void onApplicationLoadLoadsEveryCombatListMergedAcrossMods() throws Exception {
         new ExiledSectorModPlugin().onApplicationLoad();
 
         verify(Global.getSettings()).getMergedSpreadsheetDataForMod("plugin", "data/config/exiledSector/split_beam_effect_blocklist.csv", "exiledSector");
         verify(Global.getSettings()).getMergedSpreadsheetDataForMod("weapon", "data/config/exiledSector/energy_chain_blocklist.csv", "exiledSector");
+        verify(Global.getSettings()).getMergedSpreadsheetDataForMod("hullmod", "data/config/exiledSector/drone_marker_hullmods.csv", "exiledSector");
     }
 
     @Test
