@@ -9,7 +9,6 @@ import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamageType;
-import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.FluxTrackerAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
@@ -21,20 +20,16 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
-import com.fs.starfarer.api.combat.listeners.CombatListenerManagerAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.combat.listeners.HullDamageAboutToBeTakenListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.fleet.RepairTrackerAPI;
 import com.fs.starfarer.api.loading.BeamWeaponSpecAPI;
-import com.fs.starfarer.api.loading.ProjectileSpecAPI;
 import exiledsector.skills.skilleffect.CombatSkillEffect;
-import exiledsector.skills.skilleffect.CsvIdBlocklist;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.skills.skilleffect.FighterSkillEffect;
 import exiledsector.skills.skilleffect.FluxSkillEffect;
 import exiledsector.skills.skilleffect.LogisticsSkillEffect;
-import exiledsector.skills.skilleffect.MaxChainCountConfig;
 import exiledsector.skills.skilleffect.MiscSkillEffect;
 import exiledsector.skills.skilleffect.MovementSkillEffect;
 import exiledsector.skills.skilleffect.PhaseSkillEffect;
@@ -1491,221 +1486,10 @@ class SkillEffectTest {
         }
     }
 
-    private ShipAPI mockEnergyChainShip(float falloffPercent) {
-        ShipAPI ship = mock(ShipAPI.class);
-        when(ship.getOwner()).thenReturn(0);
-        MutableShipStatsAPI shipStats = mock(MutableShipStatsAPI.class);
-        com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
-        when(ship.getMutableStats()).thenReturn(shipStats);
-        when(shipStats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getValue("exiledSector_energyChainChance", 0f)).thenReturn(100f);
-        when(dynamic.getValue("exiledSector_energyChainFalloff", 0f)).thenReturn(falloffPercent);
-        return ship;
-    }
-
-    private DamageDealtModifier captureEnergyChainListener(ShipAPI ship) {
-        when(ship.hasListenerOfClass(any())).thenReturn(false);
-        CombatSkillEffect.NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT.applyAfterShipCreation(ship, "mod_id", 100f);
-        ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
-        verify(ship).addListener(captor.capture());
-        return (DamageDealtModifier) captor.getValue();
-    }
-
-    private DamagingProjectileAPI mockEnergyProjectile(WeaponAPI weapon) {
-        DamagingProjectileAPI projectile = mock(DamagingProjectileAPI.class);
-        when(projectile.getWeapon()).thenReturn(weapon);
-        when(projectile.getCustomData()).thenReturn(new java.util.HashMap<>());
-        when(projectile.getProjectileSpecId()).thenReturn("energy_gun_overcharged_shot");
-        return projectile;
-    }
-
     private static void stubShipGrid(CombatEngineAPI engine, ShipAPI... ships) {
         CollisionGridAPI grid = mock(CollisionGridAPI.class);
         when(engine.getShipGrid()).thenReturn(grid);
         when(grid.getCheckIterator(any(), anyFloat(), anyFloat())).thenAnswer(invocation -> List.<Object>of(ships).iterator());
-    }
-
-    private WeaponAPI mockEnergyWeapon(String id, boolean isBeam) {
-        WeaponAPI weapon = mock(WeaponAPI.class);
-        when(weapon.getType()).thenReturn(WeaponAPI.WeaponType.ENERGY);
-        when(weapon.isBeam()).thenReturn(isBeam);
-        when(weapon.getRange()).thenReturn(1000f);
-        when(weapon.getId()).thenReturn(id);
-        return weapon;
-    }
-
-    private void runEnergyChainHit(ShipAPI ship, DamagingProjectileAPI projectile, CombatEngineAPI engine) {
-        DamageDealtModifier listener = captureEnergyChainListener(ship);
-        ShipAPI shieldedTarget = mockBeamSplitEnemy(1, new Vector2f(0f, 0f));
-        ShipAPI nextTarget = mockBeamSplitEnemy(1, new Vector2f(100f, 0f));
-        DamageAPI damage = mock(DamageAPI.class);
-        when(damage.getDamage()).thenReturn(100f);
-        stubShipGrid(engine, ship, shieldedTarget, nextTarget);
-
-        try (MockedStatic<lunalib.lunaSettings.LunaSettings> lunaMock = Mockito.mockStatic(lunalib.lunaSettings.LunaSettings.class);
-             MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
-            globalMock.when(Global::getCombatEngine).thenReturn(engine);
-            lunaMock.when(() -> lunalib.lunaSettings.LunaSettings.getInt(anyString(), anyString())).thenReturn(MaxChainCountConfig.DEFAULT);
-
-            listener.modifyDamageDealt(projectile, shieldedTarget, damage, new Vector2f(0f, 0f), true);
-        }
-    }
-
-    @Test
-    void energyChainSpawnsTheProjectileThatHitAtFullDamageAndCarriesTheFalloffSeparately() {
-        ShipAPI ship = mockEnergyChainShip(20f);
-        WeaponAPI weapon = mockEnergyWeapon("energy_gun", false);
-        CombatEngineAPI engine = mock(CombatEngineAPI.class);
-        DamagingProjectileAPI chainShot = mock(DamagingProjectileAPI.class, Answers.RETURNS_DEEP_STUBS);
-        when(chainShot.getDamage().getModifier().getModifiedValue()).thenReturn(2f);
-        when(chainShot.getDamage().getMultiplier()).thenReturn(1f);
-        when(engine.spawnProjectile(any(), any(), anyString(), anyString(), any(Vector2f.class), anyFloat(), any(Vector2f.class)))
-                .thenReturn(chainShot);
-
-        runEnergyChainHit(ship, mockEnergyProjectile(weapon), engine);
-
-        verify(engine).spawnProjectile(eq(ship), eq(weapon), eq("energy_gun"), eq("energy_gun_overcharged_shot"),
-                any(Vector2f.class), anyFloat(), any(Vector2f.class));
-        verify(chainShot.getDamage()).setDamage(50f);
-        verify(chainShot).setCustomData("exiledSector_energyChainDealtMult", 0.8f);
-        verify(chainShot).setCustomData("exiledSector_energyChainCount", 1);
-    }
-
-    @Test
-    void aChainShotTheEngineCannotBuildIsSkippedAndNotRetried() {
-        ShipAPI ship = mockEnergyChainShip(0f);
-        DamagingProjectileAPI projectile = mockEnergyProjectile(mockEnergyWeapon("energy_gun", false));
-        when(projectile.getProjectileSpecId()).thenReturn("shot_without_damage_data");
-        CombatEngineAPI engine = mock(CombatEngineAPI.class);
-        when(engine.spawnProjectile(any(), any(), anyString(), anyString(), any(Vector2f.class), anyFloat(), any(Vector2f.class)))
-                .thenThrow(new NullPointerException("spec has no damage"));
-
-        runEnergyChainHit(ship, projectile, engine);
-        runEnergyChainHit(mockEnergyChainShip(0f), projectile, engine);
-
-        verify(engine, times(1)).spawnProjectile(any(), any(), anyString(), anyString(), any(Vector2f.class), anyFloat(),
-                any(Vector2f.class));
-    }
-
-    @Test
-    void energyChainNeverRespawnsAProjectileWhoseSpecHasNoDamage() {
-        DamagingProjectileAPI projectile = mockEnergyProjectile(mockEnergyWeapon("energy_gun", false));
-        ProjectileSpecAPI spec = mock(ProjectileSpecAPI.class);
-        when(projectile.getProjectileSpec()).thenReturn(spec);
-        CombatEngineAPI engine = mock(CombatEngineAPI.class);
-
-        runEnergyChainHit(mockEnergyChainShip(0f), projectile, engine);
-
-        verify(engine, never()).spawnProjectile(any(), any(), anyString(), any(), any(Vector2f.class), anyFloat(), any(Vector2f.class));
-    }
-
-    @Test
-    void energyChainNeverChainsAProjectileWhoseParentWeaponIsABeam() {
-        CombatEngineAPI engine = mock(CombatEngineAPI.class);
-
-        runEnergyChainHit(mockEnergyChainShip(0f), mockEnergyProjectile(mockEnergyWeapon("energy_gun", true)), engine);
-
-        verify(engine, never()).spawnProjectile(any(), any(), anyString(), any(), any(Vector2f.class), anyFloat(), any(Vector2f.class));
-    }
-
-    @Test
-    void energyChainNeverChainsBlocklistedWeapons() throws Exception {
-        SettingsAPI settings = mock(SettingsAPI.class);
-        org.json.JSONArray rows = new org.json.JSONArray().put(new org.json.JSONObject().put("weapon", "blocklisted_gun"));
-        when(settings.getMergedSpreadsheetDataForMod("weapon", "data/config/exiledSector/energy_chain_blocklist.csv", "exiledSector"))
-                .thenReturn(rows);
-        when(settings.getMergedSpreadsheetDataForMod("plugin", "data/config/exiledSector/split_beam_effect_blocklist.csv", "exiledSector"))
-                .thenReturn(new org.json.JSONArray());
-        try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
-            globalMock.when(Global::getSettings).thenReturn(settings);
-            CsvIdBlocklist.loadAll();
-        }
-        CombatEngineAPI engine = mock(CombatEngineAPI.class);
-
-        runEnergyChainHit(mockEnergyChainShip(0f), mockEnergyProjectile(mockEnergyWeapon("blocklisted_gun", false)), engine);
-
-        verify(engine, never()).spawnProjectile(any(), any(), anyString(), any(), any(Vector2f.class), anyFloat(), any(Vector2f.class));
-    }
-
-    private DamagingProjectileAPI mockChainedProjectile(WeaponAPI weapon, float dealtMult, int chainCount, List<ShipAPI> hitSoFar) {
-        DamagingProjectileAPI projectile = mockEnergyProjectile(weapon);
-        projectile.getCustomData().put("exiledSector_energyChainDealtMult", dealtMult);
-        projectile.getCustomData().put("exiledSector_energyChainCount", chainCount);
-        projectile.getCustomData().put("exiledSector_energyChainHitList", hitSoFar);
-        return projectile;
-    }
-
-    private DamageAPI runChainedHit(ShipAPI ship, DamagingProjectileAPI projectile, CombatEngineAPI engine, ShipAPI target,
-                                    boolean shieldHit, ShipAPI... gridShips) {
-        DamageDealtModifier listener = captureEnergyChainListener(ship);
-        DamageAPI damage = mock(DamageAPI.class);
-        when(damage.getDamage()).thenReturn(100f);
-        when(damage.getBaseDamage()).thenReturn(100f);
-        CombatListenerManagerAPI listenerManager = mock(CombatListenerManagerAPI.class);
-        when(engine.getListenerManager()).thenReturn(listenerManager);
-        stubShipGrid(engine, gridShips);
-
-        try (MockedStatic<lunalib.lunaSettings.LunaSettings> lunaMock = Mockito.mockStatic(lunalib.lunaSettings.LunaSettings.class);
-             MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
-            globalMock.when(Global::getCombatEngine).thenReturn(engine);
-            lunaMock.when(() -> lunalib.lunaSettings.LunaSettings.getInt(anyString(), anyString())).thenReturn(MaxChainCountConfig.DEFAULT);
-
-            listener.modifyDamageDealt(projectile, target, damage, target.getLocation(), shieldHit);
-        }
-        return damage;
-    }
-
-    @Test
-    void aChainedShotDealsItsReducedShareAndChainsOnToTheNearestShipNotAlreadyHit() {
-        ShipAPI ship = mockEnergyChainShip(20f);
-        WeaponAPI weapon = mockEnergyWeapon("energy_gun", false);
-        ShipAPI firstTarget = mockBeamSplitEnemy(1, new Vector2f(100f, 150f));
-        ShipAPI currentTarget = mockBeamSplitEnemy(1, new Vector2f(100f, 0f));
-        ShipAPI fartherTarget = mockBeamSplitEnemy(1, new Vector2f(400f, 0f));
-        CombatEngineAPI engine = mock(CombatEngineAPI.class);
-        DamagingProjectileAPI chainShot = mock(DamagingProjectileAPI.class, Answers.RETURNS_DEEP_STUBS);
-        when(chainShot.getDamage().getModifier().getModifiedValue()).thenReturn(1f);
-        when(chainShot.getDamage().getMultiplier()).thenReturn(1f);
-        when(engine.spawnProjectile(any(), any(), anyString(), anyString(), any(Vector2f.class), anyFloat(), any(Vector2f.class)))
-                .thenReturn(chainShot);
-
-        DamageAPI damage = runChainedHit(ship, mockChainedProjectile(weapon, 0.8f, 1, List.of(ship, firstTarget)), engine,
-                currentTarget, true, ship, firstTarget, currentTarget, fartherTarget);
-
-        verify(damage).setDamage(80f);
-        verify(engine).spawnProjectile(eq(ship), eq(weapon), eq("energy_gun"), eq("energy_gun_overcharged_shot"),
-                any(Vector2f.class), eq(0f), any(Vector2f.class));
-        verify(chainShot).setCustomData("exiledSector_energyChainHitList", List.of(ship, firstTarget, currentTarget));
-        verify(chainShot).setCustomData("exiledSector_energyChainCount", 2);
-        verify(chainShot).setCustomData("exiledSector_energyChainDealtMult", 0.8f * (1f - 20f / 100f));
-        verify(chainShot.getDamage()).setDamage(100f);
-    }
-
-    @Test
-    void aShotThatHasReachedTheChainCapNeverChainsFurther() {
-        ShipAPI ship = mockEnergyChainShip(0f);
-        ShipAPI currentTarget = mockBeamSplitEnemy(1, new Vector2f(100f, 0f));
-        ShipAPI nextTarget = mockBeamSplitEnemy(1, new Vector2f(200f, 0f));
-        CombatEngineAPI engine = mock(CombatEngineAPI.class);
-
-        runChainedHit(ship, mockChainedProjectile(mockEnergyWeapon("energy_gun", false), 1f, MaxChainCountConfig.DEFAULT,
-                List.of(ship)), engine, currentTarget, true, ship, currentTarget, nextTarget);
-
-        verify(engine, never()).spawnProjectile(any(), any(), anyString(), any(), any(Vector2f.class), anyFloat(), any(Vector2f.class));
-    }
-
-    @Test
-    void aChainedShotThatHitsHullDealsItsReducedShareWithoutChaining() {
-        ShipAPI ship = mockEnergyChainShip(0f);
-        ShipAPI currentTarget = mockBeamSplitEnemy(1, new Vector2f(100f, 0f));
-        ShipAPI nextTarget = mockBeamSplitEnemy(1, new Vector2f(200f, 0f));
-        CombatEngineAPI engine = mock(CombatEngineAPI.class);
-
-        DamageAPI damage = runChainedHit(ship, mockChainedProjectile(mockEnergyWeapon("energy_gun", false), 0.5f, 1,
-                List.of(ship)), engine, currentTarget, false, ship, currentTarget, nextTarget);
-
-        verify(damage).setDamage(50f);
-        verify(engine, never()).spawnProjectile(any(), any(), anyString(), any(), any(Vector2f.class), anyFloat(), any(Vector2f.class));
     }
 
     @Test

@@ -1,4 +1,4 @@
 package exiledsector.skills.skilleffect;
 
-interface SplitBeamSource {
+interface DroneSpawner {
 }

@@ -4,7 +4,6 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.BeamAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
-import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
@@ -22,7 +21,6 @@ final class SplitBeamDrones {
 
     private static final float SPLIT_TIMEOUT_SECONDS = 0.3f;
     private static final float MIN_FIRING_SECONDS = 1f;
-    private static final float EXIT_MARGIN = 10f;
     private static final float CONNECTOR_OVERLAP = 20f;
     private static final float STAT_MIRROR_INTERVAL_SECONDS = 0.25f;
     private static final String SHARE_MOD_ID = "exiledSector_splitBeamDroneShare";
@@ -36,8 +34,8 @@ final class SplitBeamDrones {
 
     void refresh(WeaponAPI weapon, ShipAPI primaryTarget, ShipAPI splitTarget, Vector2f impactPoint, float share) {
         SplitDrone split = drones.computeIfAbsent(new SplitKey(weapon, splitTarget),
-                key -> new SplitDrone(SplitBeamDroneFactory.create(firingShip, weapon), splitTarget));
-        split.retarget(impactPoint, refractionOrigin(primaryTarget, impactPoint, splitTarget.getLocation()), share);
+                key -> new SplitDrone(WeaponDroneFactory.create(firingShip, weapon), splitTarget));
+        split.retarget(impactPoint, Refraction.origin(primaryTarget, impactPoint, splitTarget.getLocation()), share);
     }
 
     void advance(float amount) {
@@ -53,29 +51,6 @@ final class SplitBeamDrones {
                 iterator.remove();
             }
         }
-    }
-
-    static Vector2f refractionOrigin(ShipAPI primaryTarget, Vector2f impactPoint, Vector2f towards) {
-        Vector2f direction = Vector2f.sub(towards, impactPoint, null);
-        if (direction.lengthSquared() <= 0f) {
-            return new Vector2f(impactPoint);
-        }
-        direction.normalise();
-        Vector2f offset = Vector2f.sub(impactPoint, primaryTarget.getShieldCenterEvenIfNoShield(), null);
-        float radius = blockingRadius(primaryTarget);
-        float along = Vector2f.dot(offset, direction);
-        float discriminant = along * along - (offset.lengthSquared() - radius * radius);
-        float exitDistance = discriminant < 0f ? 0f : -along + (float) Math.sqrt(discriminant);
-        if (exitDistance <= 0f) {
-            return new Vector2f(impactPoint);
-        }
-        float travel = exitDistance + EXIT_MARGIN;
-        return new Vector2f(impactPoint.x + direction.x * travel, impactPoint.y + direction.y * travel);
-    }
-
-    private static float blockingRadius(ShipAPI ship) {
-        ShieldAPI shield = ship.getShield();
-        return shield != null && shield.isOn() ? shield.getRadius() : ship.getCollisionRadius();
     }
 
     private record SplitKey(WeaponAPI weapon, ShipAPI splitTarget) {
@@ -117,7 +92,7 @@ final class SplitBeamDrones {
             }
             secondsSinceMirror += amount;
             if (!firingShipGone && secondsSinceMirror >= STAT_MIRROR_INTERVAL_SECONDS) {
-                SplitBeamDroneStats.mirror(firingShip.getMutableStats(), drone.getMutableStats());
+                WeaponDroneStats.mirror(firingShip.getMutableStats(), drone.getMutableStats());
                 secondsSinceMirror = 0f;
             }
             float angle = VectorUtils.getAngle(origin, splitTarget.getLocation());

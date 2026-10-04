@@ -5,33 +5,21 @@ import com.fs.starfarer.api.combat.BoundsAPI;
 import com.fs.starfarer.api.combat.CollisionClass;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
-import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamageType;
-import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
-import com.fs.starfarer.api.loading.ProjectileSpecAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
-import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
-import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.combat.listeners.HullDamageAboutToBeTakenListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
 import exiledsector.compat.LostSectorCompat;
 import exiledsector.i18n.StyledText;
-import exiledsector.ui.util.FallbackSupport;
-import org.apache.log4j.Logger;
-import org.lazywizard.lazylib.VectorUtils;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 
 public enum CombatSkillEffect implements BackedSkillEffect {
@@ -125,10 +113,6 @@ public enum CombatSkillEffect implements BackedSkillEffect {
         return LostSectorCompat.isModEnabled() ? description : null;
     }
 
-    private static final String NON_BEAM_ENERGY_CHAIN_HIT_LIST_KEY = "exiledSector_energyChainHitList";
-    private static final String NON_BEAM_ENERGY_CHAIN_COUNT_KEY = "exiledSector_energyChainCount";
-    private static final String NON_BEAM_ENERGY_CHAIN_DEALT_MULT_KEY = "exiledSector_energyChainDealtMult";
-
     private final EffectBacking backing;
 
     <T> CombatSkillEffect(Class<T> listenerType, Function<ShipAPI, ? extends T> listenerFactory) {
@@ -142,135 +126,6 @@ public enum CombatSkillEffect implements BackedSkillEffect {
     @Override
     public EffectBacking backing() {
         return backing;
-    }
-
-    private static final class EnergyChainListener implements DamageDealtModifier {
-
-        private static final String CHANCE_KEY = "exiledSector_energyChainChance";
-        private static final String FALLOFF_KEY = "exiledSector_energyChainFalloff";
-        private static final Logger LOG = Logger.getLogger(EnergyChainListener.class);
-        private static final Set<String> UNSPAWNABLE_PROJECTILE_IDS = new HashSet<>();
-
-        private final ShipAPI ship;
-
-        private EnergyChainListener(ShipAPI ship) {
-            this.ship = ship;
-        }
-
-        @Override
-        public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
-            if (!(param instanceof DamagingProjectileAPI proj) || !(target instanceof ShipAPI targetShip)
-                    || !canChainFrom(proj.getWeapon())) {
-                return null;
-            }
-            WeaponAPI weapon = proj.getWeapon();
-
-            float fullDamage = damage.getDamage();
-            float dealtMult = dealtMultOf(proj);
-            if (dealtMult < 1f) {
-                ChainHitDamageRestorer.reduceForThisHit(damage, dealtMult, targetShip);
-            }
-            if (shieldHit) {
-                tryChain(proj, weapon, targetShip, point, fullDamage, dealtMult);
-            }
-            return null;
-        }
-
-        private static boolean canChainFrom(WeaponAPI weapon) {
-            return weapon != null && !weapon.isBeam() && weapon.getType() == WeaponAPI.WeaponType.ENERGY
-                    && !CsvIdBlocklist.ENERGY_CHAIN_WEAPONS.contains(weapon.getId());
-        }
-
-        private static float dealtMultOf(DamagingProjectileAPI proj) {
-            return proj.getCustomData().get(NON_BEAM_ENERGY_CHAIN_DEALT_MULT_KEY) instanceof Float mult ? mult : 1f;
-        }
-
-        private void tryChain(DamagingProjectileAPI proj, WeaponAPI weapon, ShipAPI target, Vector2f point,
-                              float fullDamage, float dealtMult) {
-            Map<String, Object> customData = proj.getCustomData();
-            int chainCount = customData.get(NON_BEAM_ENERGY_CHAIN_COUNT_KEY) instanceof Integer integer ? integer : 0;
-            float chancePercent = ship.getMutableStats().getDynamic().getValue(CHANCE_KEY, 0f);
-            boolean chains = chainCount < MaxChainCountConfig.get() && chancePercent > 0f
-                    && Math.random() < chancePercent / 100.0;
-            if (!chains) {
-                return;
-            }
-
-            List<ShipAPI> hitSoFar = hitList(customData);
-            hitSoFar.add(target);
-            ShipAPI nextTarget = findNearestChainTarget(point, weapon.getRange(), hitSoFar);
-            float falloffPercent = ship.getMutableStats().getDynamic().getValue(FALLOFF_KEY, 0f);
-            float nextDealtMult = dealtMult * (1f - falloffPercent / 100f);
-            if (nextTarget == null || nextDealtMult <= 0f) {
-                return;
-            }
-
-            ChainShot shot = new ChainShot(fullDamage, nextDealtMult, hitSoFar, chainCount + 1);
-            spawnChainProjectile(weapon, proj, point, nextTarget, shot);
-        }
-
-        // unchecked: the hit list is only ever written by this class as List<ShipAPI>
-        @SuppressWarnings("unchecked")
-        private List<ShipAPI> hitList(Map<String, Object> customData) {
-            List<ShipAPI> hitSoFar = new ArrayList<>();
-            if (customData.get(NON_BEAM_ENERGY_CHAIN_HIT_LIST_KEY) instanceof List<?> storedHits) {
-                hitSoFar.addAll((List<ShipAPI>) storedHits);
-            } else {
-                hitSoFar.add(ship);
-            }
-            return hitSoFar;
-        }
-
-        private ShipAPI findNearestChainTarget(Vector2f point, float range, List<ShipAPI> excluded) {
-            ShipAPI nearest = null;
-            float nearestDistanceSq = Float.MAX_VALUE;
-            for (ShipAPI candidate : CombatQueries.shipsNear(point, range, other -> !excluded.contains(other) && other.isAlive() && !other.isHulk()
-                    && CombatQueries.isHostile(ship, other) && CombatQueries.withinRadius(other.getLocation(), point, range))) {
-                float distanceSq = Vector2f.sub(candidate.getLocation(), point, null).lengthSquared();
-                if (distanceSq < nearestDistanceSq) {
-                    nearestDistanceSq = distanceSq;
-                    nearest = candidate;
-                }
-            }
-            return nearest;
-        }
-
-        private static boolean canRespawn(DamagingProjectileAPI source) {
-            String projectileId = source.getProjectileSpecId();
-            ProjectileSpecAPI spec = source.getProjectileSpec();
-            return (projectileId == null || !UNSPAWNABLE_PROJECTILE_IDS.contains(projectileId))
-                    && (spec == null || spec.getDamage() != null);
-        }
-
-        private void spawnChainProjectile(WeaponAPI weapon, DamagingProjectileAPI source, Vector2f from,
-                                          ShipAPI target, ChainShot shot) {
-            if (!canRespawn(source)) {
-                return;
-            }
-            CombatEngineAPI engine = Global.getCombatEngine();
-            float facing = VectorUtils.getAngle(from, target.getLocation());
-            String projectileId = source.getProjectileSpecId();
-            CombatEntityAPI spawned = FallbackSupport.getOrFallback(
-                    () -> engine.spawnProjectile(ship, weapon, weapon.getId(), projectileId, from, facing, new Vector2f()),
-                    null, LOG, "Energy chain could not spawn projectile " + projectileId + " for weapon " + weapon.getId()
-                            + "; chaining from it is off for this session");
-            if (spawned == null && projectileId != null) {
-                UNSPAWNABLE_PROJECTILE_IDS.add(projectileId);
-            }
-            if (spawned instanceof DamagingProjectileAPI chainProj) {
-                DamageAPI chainDamage = chainProj.getDamage();
-                float existingScaling = chainDamage.getModifier().getModifiedValue() * chainDamage.getMultiplier();
-                if (existingScaling > 0f) {
-                    chainDamage.setDamage(shot.fullDamage() / existingScaling);
-                }
-                chainProj.setCustomData(NON_BEAM_ENERGY_CHAIN_HIT_LIST_KEY, shot.hitSoFar());
-                chainProj.setCustomData(NON_BEAM_ENERGY_CHAIN_COUNT_KEY, shot.chainCount());
-                chainProj.setCustomData(NON_BEAM_ENERGY_CHAIN_DEALT_MULT_KEY, shot.dealtMult());
-            }
-        }
-
-        private record ChainShot(float fullDamage, float dealtMult, List<ShipAPI> hitSoFar, int chainCount) {
-        }
     }
 
     private static final class DeathExplosionListener implements HullDamageAboutToBeTakenListener {

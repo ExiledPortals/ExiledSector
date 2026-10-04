@@ -31,7 +31,8 @@ Lion's Gaze is the beam-splitting keystone (`beam_split`, using `BEAM_WEAPON_SPL
 
 Any beam hit on an enemy ship starts a split, whether it lands on shield or hull. The split looks for up
 to N additional targets, where N is the total magnitude, choosing the nearest other hostile ships that are
-alive and within half the beam weapon's range of the impact point. The beam's damage is then shared evenly
+alive, can be hit (phased ships and other effects' drones are skipped) and are within half the beam
+weapon's range of the impact point. The beam's damage is then shared evenly
 between the original target and the split targets, so with one extra target each receives half. The
 original target's reduction is applied as a damage modifier, which also scales the EMP of that hit. The
 beam's own special effects, such as those of the Graviton Beam or Tachyon Lance, are not reduced; only the
@@ -119,18 +120,40 @@ When a node has matching child effects with the same stat, mode and value, its t
 the parent. Ballistic, missile, non-beam energy and beam damage at +10% each read simply as "Increases
 weapon damage by 10%". A parent and a child on the same node stay on separate lines, because they stack.
 
-## Energy chain
+## Refracting Projectiles
 
 `NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT` gives a non-beam energy projectile that hits a shield a
-chance to spawn a copy of itself at the point of impact. The copy flies at the nearest enemy within the
-weapon's range that the chain hasn't hit yet, and it can chain again, up to the "Max Chain Count" setting
-(5 by default). Beams never chain, and neither do weapons listed in
-`data/config/exiledSector/energy_chain_blocklist.csv`.
+chance to refract. The refracted shot goes for the nearest enemy ship within the weapon's range of the
+impact point that the chain hasn't hit yet. If it hits an enemy shield, it can refract again, up to the
+"Max Refractions" setting (5 by default). Beams never refract, and neither do weapons that fire missiles or
+weapons listed in `data/config/exiledSector/energy_chain_blocklist.csv`.
 
-`NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT` makes each link weaker, but only in terms of damage dealt.
-On-hit effects run at full strength and EMP has no falloff at all. To achieve that, the falloff lowers the
-hit's base damage and restores it immediately afterwards, rather than using a damage modifier, because
-damage modifiers would scale the EMP as well.
+The refracted shot is fired by the real weapon, in the same way as Lion's Gaze. An invisible,
+invulnerable drone carrying a copy of the weapon is placed at the shield that was hit, on the line
+towards the next target. If that target is behind the hit ship, the drone sits just past the far side
+of the shield, otherwise just in front of the impact point. It fires once, leading a moving target. A
+brief streak in the projectile's colours is drawn from the impact point to the drone, so the shot looks
+as if it passed through the shield. Because the weapon really fires, its own effect code, sound and
+muzzle flash all run.
+
+The drone's copy of the weapon is built as an instant single shot: no charge-up, a burst of one, and a
+long cooldown that is reset whenever the drone is reused. A Pulse Laser or Ion Pulser therefore refracts
+as exactly one bolt with no delay. The drone copies the ship's weapon stat modifiers (damage, range,
+projectile speed) before each shot, and a flat range bonus stretches its range to match the firing
+weapon's, including range from slot-based effects. Each ship keeps a pool of up to 8 drones, reusing an
+idle drone with the same weapon. A drone that stays idle for 3 seconds is removed.
+
+Right after firing, the drone tags its shot with the chain state (the ships already hit, the number of
+refractions so far and its damage multiplier) and hands the shot back to the firing ship. From then on
+the shot behaves like one of the ship's own: it can't hit the ship that fired it, the ship's own on-hit
+effects apply (Energy Weapon Mastery included), and kills are credited to it. A shot that hits in the
+same frame it was fired is handled by the drone instead, using the drone's copies of the ship's
+damage-dealt listeners.
+
+`NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT` makes each refraction weaker, but only in terms of damage
+dealt. On-hit effects run at full strength and EMP has no falloff at all. To achieve that, the falloff
+lowers the hit's base damage and restores it immediately afterwards, rather than using a damage
+modifier, because damage modifiers would scale the EMP as well.
 
 ## Reworked vanilla hull mods
 

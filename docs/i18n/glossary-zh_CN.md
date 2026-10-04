@@ -61,6 +61,7 @@ The zh_CN catalogue was drafted by Claude and still needs review by a native spe
 | Template / auto-allocate | 模板 / 自动分配 | A saved set of nodes a ship can follow |
 | Wormhole | 虫洞 | |
 | Escort | 护航 | |
+| Refraction / refract | 折射 | Refracting Projectiles' shots, matching its name 折射弹体 |
 
 ## Left in English on purpose
 
