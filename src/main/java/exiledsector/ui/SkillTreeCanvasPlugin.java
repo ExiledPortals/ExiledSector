@@ -133,7 +133,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         boolean followingStartingRoot = nodeRenderer.isStartingRootMoving();
         if (followingStartingRoot && startingRootFollow == null) {
             startingRootFollow = new StartingRootCameraFollow(-panX / zoom, panY / zoom,
-                    nodeRenderer.startingRootCameraTargetX(), nodeRenderer.startingRootCameraTargetY(), zoom);
+                    nodeRenderer.startingRootCameraTargetX(), nodeRenderer.startingRootCameraTargetY(), zoom,
+                    nodeRenderer.isStartingRootFlyingOut() ? SmoothZoom.MIN_ZOOM : StartingRootCameraFollow.CHOOSING_ZOOM);
         }
         nodeRenderer.advance(amount);
         if (followingStartingRoot) {

@@ -130,6 +130,10 @@ public final class SkillTreeNodeRenderer {
         return rootChoice.treeAlpha();
     }
 
+    public boolean isStartingRootFlyingOut() {
+        return rootChoice.phase() == StartingRootChoice.Phase.FLYING;
+    }
+
     public float startingRootCameraProgress() {
         return rootChoice.cameraProgress();
     }
