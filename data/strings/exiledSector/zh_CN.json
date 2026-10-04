@@ -263,6 +263,8 @@
     "ui.node.lockedHint": "船插蓝图会是个不错的切入点。",
     "ui.node.optionalHint": "点击选择一个选项。",
     "ui.node.freeNote": "通过升级免费获得。",
+    "ui.tooltip.expandHint": "按 <hl>F1</hl> 查看更多信息。",
+    "ui.tooltip.collapseHint": "按 <hl>F1</hl> 收起详细信息。",
     "ui.node.startingRootPrompt": "选择起点",
     "ui.stats.group.general": "常规",
     "ui.stats.group.mobility": "机动",

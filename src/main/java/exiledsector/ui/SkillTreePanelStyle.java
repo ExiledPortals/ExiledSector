@@ -108,10 +108,10 @@ public final class SkillTreePanelStyle {
     }
 
     public void drawTitleBodyTooltip(TooltipText title, TooltipText body, float mouseX, float mouseY, float alphaMult) {
-        drawTitleBodyTooltip(title, body, List.of(), mouseX, mouseY, alphaMult);
+        drawTitleBodyTooltip(title, body, List.of(), null, mouseX, mouseY, alphaMult);
     }
 
-    public void drawTitleBodyTooltip(TooltipText title, TooltipText body, List<SkillTreeTooltipTable> tables,
+    public void drawTitleBodyTooltip(TooltipText title, TooltipText body, List<SkillTreeTooltipTable> tables, TooltipText footer,
                                      float mouseX, float mouseY, float alphaMult) {
         float contentWidth = Math.max(title.width, body.width);
         float tablesHeight = 0f;
@@ -119,8 +119,13 @@ public final class SkillTreePanelStyle {
             contentWidth = Math.max(contentWidth, table.width());
             tablesHeight += TOOLTIP_TABLE_GAP + table.height();
         }
+        float footerHeight = 0f;
+        if (footer != null) {
+            contentWidth = Math.max(contentWidth, footer.width);
+            footerHeight = TOOLTIP_TABLE_GAP + footer.height;
+        }
         float boxWidth = contentWidth + TOOLTIP_PADDING * 2f + TOOLTIP_WIDTH_SAFETY_MARGIN;
-        float boxHeight = title.height + TOOLTIP_TITLE_BODY_GAP + body.height + tablesHeight + TOOLTIP_PADDING * 2f;
+        float boxHeight = title.height + TOOLTIP_TITLE_BODY_GAP + body.height + tablesHeight + footerHeight + TOOLTIP_PADDING * 2f;
         float boxX = tooltipLeft(mouseX, boxWidth, Global.getSettings().getScreenWidth());
         float boxY = Math.max(TOOLTIP_SCREEN_MARGIN, mouseY - boxHeight - TOOLTIP_CURSOR_OFFSET);
 
@@ -142,6 +147,9 @@ public final class SkillTreePanelStyle {
             tableTop -= TOOLTIP_TABLE_GAP;
             table.draw(boxX + TOOLTIP_PADDING, tableTop, tableWidth, accent, alphaMult);
             tableTop -= table.height();
+        }
+        if (footer != null) {
+            footer.drawable.draw(boxX + TOOLTIP_PADDING, tableTop - TOOLTIP_TABLE_GAP);
         }
     }
 

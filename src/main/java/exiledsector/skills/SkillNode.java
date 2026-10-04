@@ -57,25 +57,31 @@ public class SkillNode extends SkillTreeObject {
     }
 
     public static List<DescriptionLine> describeTypeLines(SkillType type, HullSize hullSize) {
-        List<DescriptionLine> lines = new ArrayList<>();
-        addLine(lines, type.getDescriptionText(), false);
+        return describeType(type, hullSize).all();
+    }
+
+    public static NodeDescription describeType(SkillType type, HullSize hullSize) {
+        List<DescriptionLine> effects = new ArrayList<>();
+        addLine(effects, type.getDescriptionText(), false);
         List<SkillTypeEffect> described = hullSize == null ? type.getEffects() : type.effectsFor(hullSize);
         for (SkillTypeEffect effect : WeaponEffectTooltipAggregator.collapse(described)) {
-            addLine(lines, effect.effect().description(effect.magnitude(), hullSize), effect.effect().lowerIsBetter());
+            addLine(effects, effect.effect().description(effect.magnitude(), hullSize), effect.effect().lowerIsBetter());
         }
-        addLine(lines, describeTemporaryDuration(type), false);
+        addLine(effects, describeTemporaryDuration(type), false);
+
+        List<DescriptionLine> details = new ArrayList<>();
         for (SkillTypeEffect effect : described) {
-            addLine(lines, effect.effect().deallocationWarning(effect.magnitude()), false);
+            addLine(details, effect.effect().deallocationWarning(effect.magnitude()), false);
         }
         for (String tag : type.getTags()) {
             if (SkillTags.isHullRequirement(tag)) {
-                addLine(lines, Translation.styled("node.requires." + tag), false);
+                addLine(details, Translation.styled("node.requires." + tag), false);
             }
         }
-        addLine(lines, describeHullSizes(type), false);
-        addLine(lines, describeItemCost(type), false);
-        addLine(lines, describeExclusivity(type), false);
-        return lines;
+        addLine(details, describeHullSizes(type), false);
+        addLine(details, describeItemCost(type), false);
+        addLine(details, describeExclusivity(type), false);
+        return new NodeDescription(effects, details);
     }
 
     private static void addLine(List<DescriptionLine> lines, StyledText text, boolean lowerIsBetter) {
@@ -116,8 +122,7 @@ public class SkillNode extends SkillTreeObject {
         Set<String> hullModNames = new LinkedHashSet<>();
         Set<String> namedHullModIds = new LinkedHashSet<>();
         for (String hullModId : type.getExclusiveHullModIds()) {
-            boolean placedByNode = type.getPhantomHullModIds().contains(hullModId) && PhantomHullModStatus.isActive(hullModId);
-            String name = placedByNode ? null : HullModNames.loadedDisplayName(hullModId);
+            String name = HullModNames.loadedDisplayName(hullModId);
             if (name != null) {
                 hullModNames.add(name);
                 namedHullModIds.add(hullModId);

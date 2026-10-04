@@ -464,4 +464,44 @@ class SkillNodeTest {
         assertSame(hull, listed.resolveEffectiveType(data));
         assertSame(slot, unlisted.resolveEffectiveType(data));
     }
+
+    @Test
+    void effectsAndRestrictionsAreDescribedSeparately() {
+        SettingsAPI settings = mock(SettingsAPI.class);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+        HullModSpecAPI armoredCladding = mock(HullModSpecAPI.class);
+        when(armoredCladding.getDisplayName()).thenReturn("Armored Cladding");
+        when(settings.getHullModSpec("armoredcladding")).thenReturn(armoredCladding);
+
+        SkillType type = new SkillType.Builder("heavyarmor", "Heavy Armor", "a.png", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.ARMOR_PERCENT, 15f)))
+                .requiredHullSizes(List.of(HullSize.FRIGATE))
+                .exclusiveHullModIds(List.of("armoredcladding"))
+                .build();
+
+        NodeDescription description = SkillNode.describeType(type, null);
+
+        assertEquals(List.of("Increases armor by 15%."), description.effects().stream().map(DescriptionLine::plain).toList());
+        assertEquals(List.of("Restricted to hull size: Frigate.", "Mutually exclusive with hullmod: Armored Cladding."),
+                description.details().stream().map(DescriptionLine::plain).toList());
+    }
+
+    @Test
+    void aNodePlacingAPhantomCopyStillNamesTheRealHullModItExcludes() {
+        SettingsAPI settings = mock(SettingsAPI.class);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+        HullModSpecAPI navRelay = mock(HullModSpecAPI.class);
+        when(navRelay.getDisplayName()).thenReturn("Nav Relay");
+        when(settings.getHullModSpec("nav_relay")).thenReturn(navRelay);
+        PhantomHullModStatus.markActive("nav_relay");
+        try {
+            SkillType type = new SkillType.Builder("nav_relay", "Nav Relay", "a.png", SkillTier.NOTABLE)
+                    .phantomHullModIds(List.of("nav_relay"))
+                    .build();
+
+            assertEquals("Mutually exclusive with hullmod: Nav Relay.", description(type));
+        } finally {
+            PhantomHullModStatus.clear();
+        }
+    }
 }

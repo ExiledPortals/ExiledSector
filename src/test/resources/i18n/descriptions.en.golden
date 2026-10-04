@@ -1889,78 +1889,78 @@ type|acceleration_percent|CRUISER|0	0	Increases acceleration by <good>30%</good>
 type|acceleration_percent|CAPITAL_SHIP|0	0	Increases acceleration by <good>30%</good>.
 type|adaptive_coils|null|0	0	Phase coils are less able to maintain a connection with normal space as the ship's hard flux levels rise, resulting in a greatly reduced top speed as the coils struggle to gain traction.\n\nThis modification allows the coils to handle higher levels of hard flux, increasing the threshold at which speed bottoms out.
 type|adaptive_coils|null|1	0	Increases hard flux threshold before phase speed penalty kicks in by <good>40%</good>.
-type|adaptive_coils|null|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Phase Anchor, Adaptive Phase Coils.
+type-detail|adaptive_coils|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Phase Anchor, Adaptive Phase Coils.
 type|adaptive_coils|FRIGATE|0	0	Phase coils are less able to maintain a connection with normal space as the ship's hard flux levels rise, resulting in a greatly reduced top speed as the coils struggle to gain traction.\n\nThis modification allows the coils to handle higher levels of hard flux, increasing the threshold at which speed bottoms out.
 type|adaptive_coils|FRIGATE|1	0	Increases hard flux threshold before phase speed penalty kicks in by <good>40%</good>.
-type|adaptive_coils|FRIGATE|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Phase Anchor, Adaptive Phase Coils.
+type-detail|adaptive_coils|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Phase Anchor, Adaptive Phase Coils.
 type|adaptive_coils|DESTROYER|0	0	Phase coils are less able to maintain a connection with normal space as the ship's hard flux levels rise, resulting in a greatly reduced top speed as the coils struggle to gain traction.\n\nThis modification allows the coils to handle higher levels of hard flux, increasing the threshold at which speed bottoms out.
 type|adaptive_coils|DESTROYER|1	0	Increases hard flux threshold before phase speed penalty kicks in by <good>40%</good>.
-type|adaptive_coils|DESTROYER|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Phase Anchor, Adaptive Phase Coils.
+type-detail|adaptive_coils|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Phase Anchor, Adaptive Phase Coils.
 type|adaptive_coils|CRUISER|0	0	Phase coils are less able to maintain a connection with normal space as the ship's hard flux levels rise, resulting in a greatly reduced top speed as the coils struggle to gain traction.\n\nThis modification allows the coils to handle higher levels of hard flux, increasing the threshold at which speed bottoms out.
 type|adaptive_coils|CRUISER|1	0	Increases hard flux threshold before phase speed penalty kicks in by <good>40%</good>.
-type|adaptive_coils|CRUISER|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Phase Anchor, Adaptive Phase Coils.
+type-detail|adaptive_coils|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Phase Anchor, Adaptive Phase Coils.
 type|adaptive_coils|CAPITAL_SHIP|0	0	Phase coils are less able to maintain a connection with normal space as the ship's hard flux levels rise, resulting in a greatly reduced top speed as the coils struggle to gain traction.\n\nThis modification allows the coils to handle higher levels of hard flux, increasing the threshold at which speed bottoms out.
 type|adaptive_coils|CAPITAL_SHIP|1	0	Increases hard flux threshold before phase speed penalty kicks in by <good>40%</good>.
-type|adaptive_coils|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Phase Anchor, Adaptive Phase Coils.
+type-detail|adaptive_coils|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Phase Anchor, Adaptive Phase Coils.
 type|adaptiveshields|null|0	0	Replaces the ship's fixed frontal shield emitter with one that can turn to face any direction, at the cost of a narrower arc.
 type|adaptiveshields|null|1	0	<bad>30%</bad> less shield arc.
 type|adaptiveshields|null|2	0	Converts this ship's shield to omni-directional.
-type|adaptiveshields|null|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Front, Shield Shunt, Shield Conversion - Omni.
+type-detail|adaptiveshields|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Front, Shield Shunt, Shield Conversion - Omni.
 type|adaptiveshields|FRIGATE|0	0	Replaces the ship's fixed frontal shield emitter with one that can turn to face any direction, at the cost of a narrower arc.
 type|adaptiveshields|FRIGATE|1	0	<bad>30%</bad> less shield arc.
 type|adaptiveshields|FRIGATE|2	0	Converts this ship's shield to omni-directional.
-type|adaptiveshields|FRIGATE|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Front, Shield Shunt, Shield Conversion - Omni.
+type-detail|adaptiveshields|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Front, Shield Shunt, Shield Conversion - Omni.
 type|adaptiveshields|DESTROYER|0	0	Replaces the ship's fixed frontal shield emitter with one that can turn to face any direction, at the cost of a narrower arc.
 type|adaptiveshields|DESTROYER|1	0	<bad>30%</bad> less shield arc.
 type|adaptiveshields|DESTROYER|2	0	Converts this ship's shield to omni-directional.
-type|adaptiveshields|DESTROYER|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Front, Shield Shunt, Shield Conversion - Omni.
+type-detail|adaptiveshields|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Front, Shield Shunt, Shield Conversion - Omni.
 type|adaptiveshields|CRUISER|0	0	Replaces the ship's fixed frontal shield emitter with one that can turn to face any direction, at the cost of a narrower arc.
 type|adaptiveshields|CRUISER|1	0	<bad>30%</bad> less shield arc.
 type|adaptiveshields|CRUISER|2	0	Converts this ship's shield to omni-directional.
-type|adaptiveshields|CRUISER|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Front, Shield Shunt, Shield Conversion - Omni.
+type-detail|adaptiveshields|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Front, Shield Shunt, Shield Conversion - Omni.
 type|adaptiveshields|CAPITAL_SHIP|0	0	Replaces the ship's fixed frontal shield emitter with one that can turn to face any direction, at the cost of a narrower arc.
 type|adaptiveshields|CAPITAL_SHIP|1	0	<bad>30%</bad> less shield arc.
 type|adaptiveshields|CAPITAL_SHIP|2	0	Converts this ship's shield to omni-directional.
-type|adaptiveshields|CAPITAL_SHIP|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Front, Shield Shunt, Shield Conversion - Omni.
-type|additional_berthing|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Additional Berthing.
+type-detail|adaptiveshields|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Front, Shield Shunt, Shield Conversion - Omni.
+type-detail|additional_berthing|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Additional Berthing.
 type|additional_berthing|FRIGATE|0	0	Increases crew capacity by <good>25</good>.
-type|additional_berthing|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Additional Berthing.
+type-detail|additional_berthing|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Additional Berthing.
 type|additional_berthing|DESTROYER|0	0	Increases crew capacity by <good>35</good>.
-type|additional_berthing|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Additional Berthing.
+type-detail|additional_berthing|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Additional Berthing.
 type|additional_berthing|CRUISER|0	0	Increases crew capacity by <good>60</good>.
-type|additional_berthing|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Additional Berthing.
+type-detail|additional_berthing|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Additional Berthing.
 type|additional_berthing|CAPITAL_SHIP|0	0	Increases crew capacity by <good>125</good>.
-type|additional_berthing|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Additional Berthing.
+type-detail|additional_berthing|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Additional Berthing.
 type|advancedoptics|null|0	0	Increases beam weapon range by <good>200</good>.
 type|advancedoptics|null|1	0	<bad>30%</bad> less beam weapon turn rate.
-type|advancedoptics|null|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: High Scatter Amplifier, Advanced Optics.
+type-detail|advancedoptics|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: High Scatter Amplifier, Advanced Optics.
 type|advancedoptics|FRIGATE|0	0	Increases beam weapon range by <good>200</good>.
 type|advancedoptics|FRIGATE|1	0	<bad>30%</bad> less beam weapon turn rate.
-type|advancedoptics|FRIGATE|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: High Scatter Amplifier, Advanced Optics.
+type-detail|advancedoptics|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: High Scatter Amplifier, Advanced Optics.
 type|advancedoptics|DESTROYER|0	0	Increases beam weapon range by <good>200</good>.
 type|advancedoptics|DESTROYER|1	0	<bad>30%</bad> less beam weapon turn rate.
-type|advancedoptics|DESTROYER|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: High Scatter Amplifier, Advanced Optics.
+type-detail|advancedoptics|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: High Scatter Amplifier, Advanced Optics.
 type|advancedoptics|CRUISER|0	0	Increases beam weapon range by <good>200</good>.
 type|advancedoptics|CRUISER|1	0	<bad>30%</bad> less beam weapon turn rate.
-type|advancedoptics|CRUISER|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: High Scatter Amplifier, Advanced Optics.
+type-detail|advancedoptics|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: High Scatter Amplifier, Advanced Optics.
 type|advancedoptics|CAPITAL_SHIP|0	0	Increases beam weapon range by <good>200</good>.
 type|advancedoptics|CAPITAL_SHIP|1	0	<bad>30%</bad> less beam weapon turn rate.
-type|advancedoptics|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: High Scatter Amplifier, Advanced Optics.
+type-detail|advancedoptics|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: High Scatter Amplifier, Advanced Optics.
 type|advancedshieldemitter|null|0	0	Increases shield turn rate by <good>50%</good>.
 type|advancedshieldemitter|null|1	0	Increases shield raise rate by <good>50%</good>.
-type|advancedshieldemitter|null|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Accelerated Shields.
+type-detail|advancedshieldemitter|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Accelerated Shields.
 type|advancedshieldemitter|FRIGATE|0	0	Increases shield turn rate by <good>50%</good>.
 type|advancedshieldemitter|FRIGATE|1	0	Increases shield raise rate by <good>50%</good>.
-type|advancedshieldemitter|FRIGATE|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Accelerated Shields.
+type-detail|advancedshieldemitter|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Accelerated Shields.
 type|advancedshieldemitter|DESTROYER|0	0	Increases shield turn rate by <good>50%</good>.
 type|advancedshieldemitter|DESTROYER|1	0	Increases shield raise rate by <good>50%</good>.
-type|advancedshieldemitter|DESTROYER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Accelerated Shields.
+type-detail|advancedshieldemitter|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Accelerated Shields.
 type|advancedshieldemitter|CRUISER|0	0	Increases shield turn rate by <good>50%</good>.
 type|advancedshieldemitter|CRUISER|1	0	Increases shield raise rate by <good>50%</good>.
-type|advancedshieldemitter|CRUISER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Accelerated Shields.
+type-detail|advancedshieldemitter|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Accelerated Shields.
 type|advancedshieldemitter|CAPITAL_SHIP|0	0	Increases shield turn rate by <good>50%</good>.
 type|advancedshieldemitter|CAPITAL_SHIP|1	0	Increases shield raise rate by <good>50%</good>.
-type|advancedshieldemitter|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Accelerated Shields.
+type-detail|advancedshieldemitter|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Accelerated Shields.
 type|all_must_serve|null|0	0	Enemy ships destroyed within 1500 su of this ship have their survivors pressed into service. Each wreck is only claimed once.
 type|all_must_serve|null|1	0	Takes <good>10%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, win or lose, the rest join your fleet if there is room.
 type|all_must_serve|FRIGATE|0	0	Enemy ships destroyed within 1500 su of this ship have their survivors pressed into service. Each wreck is only claimed once.
@@ -1989,91 +1989,91 @@ type|armoredweapons|null|0	0	Increases armor by <good>10%</good>.
 type|armoredweapons|null|1	0	Increases weapon durability by <good>80%</good>.
 type|armoredweapons|null|2	0	<bad>25%</bad> less weapon turn rate.
 type|armoredweapons|null|3	1	<bad>25%</bad> less weapon recoil.
-type|armoredweapons|null|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Armored Weapon Mounts.
+type-detail|armoredweapons|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Armored Weapon Mounts.
 type|armoredweapons|FRIGATE|0	0	Increases armor by <good>10%</good>.
 type|armoredweapons|FRIGATE|1	0	Increases weapon durability by <good>80%</good>.
 type|armoredweapons|FRIGATE|2	0	<bad>25%</bad> less weapon turn rate.
 type|armoredweapons|FRIGATE|3	1	<bad>25%</bad> less weapon recoil.
-type|armoredweapons|FRIGATE|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Armored Weapon Mounts.
+type-detail|armoredweapons|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Armored Weapon Mounts.
 type|armoredweapons|DESTROYER|0	0	Increases armor by <good>10%</good>.
 type|armoredweapons|DESTROYER|1	0	Increases weapon durability by <good>80%</good>.
 type|armoredweapons|DESTROYER|2	0	<bad>25%</bad> less weapon turn rate.
 type|armoredweapons|DESTROYER|3	1	<bad>25%</bad> less weapon recoil.
-type|armoredweapons|DESTROYER|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Armored Weapon Mounts.
+type-detail|armoredweapons|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Armored Weapon Mounts.
 type|armoredweapons|CRUISER|0	0	Increases armor by <good>10%</good>.
 type|armoredweapons|CRUISER|1	0	Increases weapon durability by <good>80%</good>.
 type|armoredweapons|CRUISER|2	0	<bad>25%</bad> less weapon turn rate.
 type|armoredweapons|CRUISER|3	1	<bad>25%</bad> less weapon recoil.
-type|armoredweapons|CRUISER|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Armored Weapon Mounts.
+type-detail|armoredweapons|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Armored Weapon Mounts.
 type|armoredweapons|CAPITAL_SHIP|0	0	Increases armor by <good>10%</good>.
 type|armoredweapons|CAPITAL_SHIP|1	0	Increases weapon durability by <good>80%</good>.
 type|armoredweapons|CAPITAL_SHIP|2	0	<bad>25%</bad> less weapon turn rate.
 type|armoredweapons|CAPITAL_SHIP|3	1	<bad>25%</bad> less weapon recoil.
-type|armoredweapons|CAPITAL_SHIP|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Armored Weapon Mounts.
+type-detail|armoredweapons|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Armored Weapon Mounts.
 type|attuned_sensors|null|0	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
 type|attuned_sensors|FRIGATE|0	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
 type|attuned_sensors|DESTROYER|0	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
 type|attuned_sensors|CRUISER|0	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
 type|attuned_sensors|CAPITAL_SHIP|0	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
 type|augmentedengines|null|0	0	Increases max burn level by <good>1</good>.
-type|augmentedengines|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Augmented Drive Field.
+type-detail|augmentedengines|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Augmented Drive Field.
 type|augmentedengines|FRIGATE|0	0	Increases max burn level by <good>1</good>.
-type|augmentedengines|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Augmented Drive Field.
+type-detail|augmentedengines|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Augmented Drive Field.
 type|augmentedengines|DESTROYER|0	0	Increases max burn level by <good>1</good>.
-type|augmentedengines|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Augmented Drive Field.
+type-detail|augmentedengines|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Augmented Drive Field.
 type|augmentedengines|CRUISER|0	0	Increases max burn level by <good>1</good>.
-type|augmentedengines|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Augmented Drive Field.
+type-detail|augmentedengines|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Augmented Drive Field.
 type|augmentedengines|CAPITAL_SHIP|0	0	Increases max burn level by <good>1</good>.
-type|augmentedengines|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Augmented Drive Field.
+type-detail|augmentedengines|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Augmented Drive Field.
 type|autorepair|null|0	0	Reduces weapon and engine repair time by <good>25%</good>.
-type|autorepair|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Automated Repair Unit.
+type-detail|autorepair|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Automated Repair Unit.
 type|autorepair|FRIGATE|0	0	Reduces weapon and engine repair time by <good>25%</good>.
-type|autorepair|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Automated Repair Unit.
+type-detail|autorepair|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Automated Repair Unit.
 type|autorepair|DESTROYER|0	0	Reduces weapon and engine repair time by <good>25%</good>.
-type|autorepair|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Automated Repair Unit.
+type-detail|autorepair|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Automated Repair Unit.
 type|autorepair|CRUISER|0	0	Reduces weapon and engine repair time by <good>25%</good>.
-type|autorepair|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Automated Repair Unit.
+type-detail|autorepair|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Automated Repair Unit.
 type|autorepair|CAPITAL_SHIP|0	0	Reduces weapon and engine repair time by <good>25%</good>.
-type|autorepair|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Automated Repair Unit.
+type-detail|autorepair|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Automated Repair Unit.
 type|auxiliary_fuel_tanks|null|0	0	Increases fuel capacity by <good>20%</good>.
-type|auxiliary_fuel_tanks|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Auxiliary Fuel Tanks.
+type-detail|auxiliary_fuel_tanks|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Auxiliary Fuel Tanks.
 type|auxiliary_fuel_tanks|FRIGATE|0	0	Increases fuel capacity by <good>20%</good>.
 type|auxiliary_fuel_tanks|FRIGATE|1	0	Increases fuel capacity by <good>25</good>.
-type|auxiliary_fuel_tanks|FRIGATE|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Auxiliary Fuel Tanks.
+type-detail|auxiliary_fuel_tanks|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Auxiliary Fuel Tanks.
 type|auxiliary_fuel_tanks|DESTROYER|0	0	Increases fuel capacity by <good>20%</good>.
 type|auxiliary_fuel_tanks|DESTROYER|1	0	Increases fuel capacity by <good>35</good>.
-type|auxiliary_fuel_tanks|DESTROYER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Auxiliary Fuel Tanks.
+type-detail|auxiliary_fuel_tanks|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Auxiliary Fuel Tanks.
 type|auxiliary_fuel_tanks|CRUISER|0	0	Increases fuel capacity by <good>20%</good>.
 type|auxiliary_fuel_tanks|CRUISER|1	0	Increases fuel capacity by <good>60</good>.
-type|auxiliary_fuel_tanks|CRUISER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Auxiliary Fuel Tanks.
+type-detail|auxiliary_fuel_tanks|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Auxiliary Fuel Tanks.
 type|auxiliary_fuel_tanks|CAPITAL_SHIP|0	0	Increases fuel capacity by <good>20%</good>.
 type|auxiliary_fuel_tanks|CAPITAL_SHIP|1	0	Increases fuel capacity by <good>125</good>.
-type|auxiliary_fuel_tanks|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Auxiliary Fuel Tanks.
+type-detail|auxiliary_fuel_tanks|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Auxiliary Fuel Tanks.
 type|auxiliarythrusters|null|0	0	Increases acceleration by <good>70%</good>.
 type|auxiliarythrusters|null|1	0	Increases deceleration by <good>50%</good>.
 type|auxiliarythrusters|null|2	0	Increases turn acceleration by <good>60%</good>.
 type|auxiliarythrusters|null|3	0	Increases maneuverability by <good>35%</good>.
-type|auxiliarythrusters|null|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Auxiliary Thrusters.
+type-detail|auxiliarythrusters|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Auxiliary Thrusters.
 type|auxiliarythrusters|FRIGATE|0	0	Increases acceleration by <good>70%</good>.
 type|auxiliarythrusters|FRIGATE|1	0	Increases deceleration by <good>50%</good>.
 type|auxiliarythrusters|FRIGATE|2	0	Increases turn acceleration by <good>60%</good>.
 type|auxiliarythrusters|FRIGATE|3	0	Increases maneuverability by <good>35%</good>.
-type|auxiliarythrusters|FRIGATE|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Auxiliary Thrusters.
+type-detail|auxiliarythrusters|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Auxiliary Thrusters.
 type|auxiliarythrusters|DESTROYER|0	0	Increases acceleration by <good>70%</good>.
 type|auxiliarythrusters|DESTROYER|1	0	Increases deceleration by <good>50%</good>.
 type|auxiliarythrusters|DESTROYER|2	0	Increases turn acceleration by <good>60%</good>.
 type|auxiliarythrusters|DESTROYER|3	0	Increases maneuverability by <good>35%</good>.
-type|auxiliarythrusters|DESTROYER|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Auxiliary Thrusters.
+type-detail|auxiliarythrusters|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Auxiliary Thrusters.
 type|auxiliarythrusters|CRUISER|0	0	Increases acceleration by <good>70%</good>.
 type|auxiliarythrusters|CRUISER|1	0	Increases deceleration by <good>50%</good>.
 type|auxiliarythrusters|CRUISER|2	0	Increases turn acceleration by <good>60%</good>.
 type|auxiliarythrusters|CRUISER|3	0	Increases maneuverability by <good>35%</good>.
-type|auxiliarythrusters|CRUISER|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Auxiliary Thrusters.
+type-detail|auxiliarythrusters|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Auxiliary Thrusters.
 type|auxiliarythrusters|CAPITAL_SHIP|0	0	Increases acceleration by <good>70%</good>.
 type|auxiliarythrusters|CAPITAL_SHIP|1	0	Increases deceleration by <good>50%</good>.
 type|auxiliarythrusters|CAPITAL_SHIP|2	0	Increases turn acceleration by <good>60%</good>.
 type|auxiliarythrusters|CAPITAL_SHIP|3	0	Increases maneuverability by <good>35%</good>.
-type|auxiliarythrusters|CAPITAL_SHIP|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Auxiliary Thrusters.
+type-detail|auxiliarythrusters|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Auxiliary Thrusters.
 type|ballistic_and_energy_weapon_range|FRIGATE|0	0	Increases ballistic weapon range by <good>3%</good>.
 type|ballistic_and_energy_weapon_range|FRIGATE|1	0	Increases energy weapon range by <good>3%</good>.
 type|ballistic_and_energy_weapon_range|DESTROYER|0	0	Increases ballistic weapon range by <good>4%</good>.
@@ -2098,15 +2098,15 @@ type|ballistic_projectile_speed|DESTROYER|0	0	Increases ballistic weapon project
 type|ballistic_projectile_speed|CRUISER|0	0	Increases ballistic weapon projectile speed by <good>10%</good>.
 type|ballistic_projectile_speed|CAPITAL_SHIP|0	0	Increases ballistic weapon projectile speed by <good>10%</good>.
 type|ballistic_rangefinder|null|0	0	Extends the base range of small and medium ballistic weapons, based on the size of this ship's largest ballistic weapon slot. Also extends hybrid weapon range, with a larger bonus.
-type|ballistic_rangefinder|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Ballistic Rangefinder.
+type-detail|ballistic_rangefinder|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Ballistic Rangefinder.
 type|ballistic_rangefinder|FRIGATE|0	0	Extends the base range of small and medium ballistic weapons, based on the size of this ship's largest ballistic weapon slot. Also extends hybrid weapon range, with a larger bonus.
-type|ballistic_rangefinder|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Ballistic Rangefinder.
+type-detail|ballistic_rangefinder|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Ballistic Rangefinder.
 type|ballistic_rangefinder|DESTROYER|0	0	Extends the base range of small and medium ballistic weapons, based on the size of this ship's largest ballistic weapon slot. Also extends hybrid weapon range, with a larger bonus.
-type|ballistic_rangefinder|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Ballistic Rangefinder.
+type-detail|ballistic_rangefinder|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Ballistic Rangefinder.
 type|ballistic_rangefinder|CRUISER|0	0	Extends the base range of small and medium ballistic weapons, based on the size of this ship's largest ballistic weapon slot. Also extends hybrid weapon range, with a larger bonus.
-type|ballistic_rangefinder|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Ballistic Rangefinder.
+type-detail|ballistic_rangefinder|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Ballistic Rangefinder.
 type|ballistic_rangefinder|CAPITAL_SHIP|0	0	Extends the base range of small and medium ballistic weapons, based on the size of this ship's largest ballistic weapon slot. Also extends hybrid weapon range, with a larger bonus.
-type|ballistic_rangefinder|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Ballistic Rangefinder.
+type-detail|ballistic_rangefinder|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Ballistic Rangefinder.
 type|beam_damage|null|0	0	Increases beam weapon damage by <good>5%</good>.
 type|beam_damage|FRIGATE|0	0	Increases beam weapon damage by <good>5%</good>.
 type|beam_damage|DESTROYER|0	0	Increases beam weapon damage by <good>5%</good>.
@@ -2124,19 +2124,19 @@ type|beam_split_reduced_damage|CRUISER|0	0	Beam weapon hits split their damage e
 type|beam_split_reduced_damage|CAPITAL_SHIP|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 type|blast_doors|null|0	0	Increases hull points by <good>20%</good>.
 type|blast_doors|null|1	1	<bad>60%</bad> less crew casualties.
-type|blast_doors|null|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Blast Doors.
+type-detail|blast_doors|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Blast Doors.
 type|blast_doors|FRIGATE|0	0	Increases hull points by <good>20%</good>.
 type|blast_doors|FRIGATE|1	1	<bad>60%</bad> less crew casualties.
-type|blast_doors|FRIGATE|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Blast Doors.
+type-detail|blast_doors|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Blast Doors.
 type|blast_doors|DESTROYER|0	0	Increases hull points by <good>20%</good>.
 type|blast_doors|DESTROYER|1	1	<bad>60%</bad> less crew casualties.
-type|blast_doors|DESTROYER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Blast Doors.
+type-detail|blast_doors|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Blast Doors.
 type|blast_doors|CRUISER|0	0	Increases hull points by <good>20%</good>.
 type|blast_doors|CRUISER|1	1	<bad>60%</bad> less crew casualties.
-type|blast_doors|CRUISER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Blast Doors.
+type-detail|blast_doors|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Blast Doors.
 type|blast_doors|CAPITAL_SHIP|0	0	Increases hull points by <good>20%</good>.
 type|blast_doors|CAPITAL_SHIP|1	1	<bad>60%</bad> less crew casualties.
-type|blast_doors|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Blast Doors.
+type-detail|blast_doors|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Blast Doors.
 type|cargo_capacity_flat|FRIGATE|0	0	Increases cargo capacity by <good>5</good>.
 type|cargo_capacity_flat|DESTROYER|0	0	Increases cargo capacity by <good>15</good>.
 type|cargo_capacity_flat|CRUISER|0	0	Increases cargo capacity by <good>25</good>.
@@ -2154,67 +2154,67 @@ type|converted_fighterbay|null|0	0	Converts this ship's built-in fighter bays in
 type|converted_fighterbay|null|1	0	Removes all of this ship's fighter bays.
 type|converted_fighterbay|null|2	1	Decreases minimum crew required per fighter bay (capped at -80% total) by <bad>20%</bad>.
 type|converted_fighterbay|null|3	0	Increases cargo capacity per fighter bay by <good>50</good>.
-type|converted_fighterbay|null|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Converted Fighter Bay.
+type-detail|converted_fighterbay|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Converted Fighter Bay.
 type|converted_fighterbay|FRIGATE|0	0	Converts this ship's built-in fighter bays into cargo capacity.
 type|converted_fighterbay|FRIGATE|1	0	Removes all of this ship's fighter bays.
 type|converted_fighterbay|FRIGATE|2	1	Decreases minimum crew required per fighter bay (capped at -80% total) by <bad>20%</bad>.
 type|converted_fighterbay|FRIGATE|3	0	Increases cargo capacity per fighter bay by <good>50</good>.
-type|converted_fighterbay|FRIGATE|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Converted Fighter Bay.
+type-detail|converted_fighterbay|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Converted Fighter Bay.
 type|converted_fighterbay|DESTROYER|0	0	Converts this ship's built-in fighter bays into cargo capacity.
 type|converted_fighterbay|DESTROYER|1	0	Removes all of this ship's fighter bays.
 type|converted_fighterbay|DESTROYER|2	1	Decreases minimum crew required per fighter bay (capped at -80% total) by <bad>20%</bad>.
 type|converted_fighterbay|DESTROYER|3	0	Increases cargo capacity per fighter bay by <good>50</good>.
-type|converted_fighterbay|DESTROYER|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Converted Fighter Bay.
+type-detail|converted_fighterbay|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Converted Fighter Bay.
 type|converted_fighterbay|CRUISER|0	0	Converts this ship's built-in fighter bays into cargo capacity.
 type|converted_fighterbay|CRUISER|1	0	Removes all of this ship's fighter bays.
 type|converted_fighterbay|CRUISER|2	1	Decreases minimum crew required per fighter bay (capped at -80% total) by <bad>20%</bad>.
 type|converted_fighterbay|CRUISER|3	0	Increases cargo capacity per fighter bay by <good>50</good>.
-type|converted_fighterbay|CRUISER|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Converted Fighter Bay.
+type-detail|converted_fighterbay|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Converted Fighter Bay.
 type|converted_fighterbay|CAPITAL_SHIP|0	0	Converts this ship's built-in fighter bays into cargo capacity.
 type|converted_fighterbay|CAPITAL_SHIP|1	0	Removes all of this ship's fighter bays.
 type|converted_fighterbay|CAPITAL_SHIP|2	1	Decreases minimum crew required per fighter bay (capped at -80% total) by <bad>20%</bad>.
 type|converted_fighterbay|CAPITAL_SHIP|3	0	Increases cargo capacity per fighter bay by <good>50</good>.
-type|converted_fighterbay|CAPITAL_SHIP|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Converted Fighter Bay.
+type-detail|converted_fighterbay|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Converted Fighter Bay.
 type|converted_hangar|null|0	0	Increases number of fighter bays by <good>1</good>.
 type|converted_hangar|null|1	1	<good>50%</good> more fighter refit time. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|null|2	0	<bad>50%</bad> slower fighter replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|null|3	1	Increases fighter relaunch time, as a % of base refit time by <good>40</good>. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|null|4	1	Increases minimum crew required by <good>20</good>. Waived by the Second-in-Command skill Reconfiguration.
-type|converted_hangar|null|5	0	Cannot be unallocated without at least 1 empty fighter bay.
-type|converted_hangar|null|6	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
-type|converted_hangar|null|7	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Converted Hangar.
+type-detail|converted_hangar|null|0	0	Cannot be unallocated without at least 1 empty fighter bay.
+type-detail|converted_hangar|null|1	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
+type-detail|converted_hangar|null|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Converted Hangar.
 type|converted_hangar|FRIGATE|0	0	Increases number of fighter bays by <good>1</good>.
 type|converted_hangar|FRIGATE|1	1	<good>50%</good> more fighter refit time. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|FRIGATE|2	0	<bad>50%</bad> slower fighter replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|FRIGATE|3	1	Increases fighter relaunch time, as a % of base refit time by <good>40</good>. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|FRIGATE|4	1	Increases minimum crew required by <good>20</good>. Waived by the Second-in-Command skill Reconfiguration.
-type|converted_hangar|FRIGATE|5	0	Cannot be unallocated without at least 1 empty fighter bay.
-type|converted_hangar|FRIGATE|6	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
-type|converted_hangar|FRIGATE|7	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Converted Hangar.
+type-detail|converted_hangar|FRIGATE|0	0	Cannot be unallocated without at least 1 empty fighter bay.
+type-detail|converted_hangar|FRIGATE|1	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
+type-detail|converted_hangar|FRIGATE|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Converted Hangar.
 type|converted_hangar|DESTROYER|0	0	Increases number of fighter bays by <good>1</good>.
 type|converted_hangar|DESTROYER|1	1	<good>50%</good> more fighter refit time. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|DESTROYER|2	0	<bad>50%</bad> slower fighter replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|DESTROYER|3	1	Increases fighter relaunch time, as a % of base refit time by <good>40</good>. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|DESTROYER|4	1	Increases minimum crew required by <good>20</good>. Waived by the Second-in-Command skill Reconfiguration.
-type|converted_hangar|DESTROYER|5	0	Cannot be unallocated without at least 1 empty fighter bay.
-type|converted_hangar|DESTROYER|6	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
-type|converted_hangar|DESTROYER|7	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Converted Hangar.
+type-detail|converted_hangar|DESTROYER|0	0	Cannot be unallocated without at least 1 empty fighter bay.
+type-detail|converted_hangar|DESTROYER|1	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
+type-detail|converted_hangar|DESTROYER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Converted Hangar.
 type|converted_hangar|CRUISER|0	0	Increases number of fighter bays by <good>1</good>.
 type|converted_hangar|CRUISER|1	1	<good>50%</good> more fighter refit time. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|CRUISER|2	0	<bad>50%</bad> slower fighter replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|CRUISER|3	1	Increases fighter relaunch time, as a % of base refit time by <good>40</good>. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|CRUISER|4	1	Increases minimum crew required by <good>20</good>. Waived by the Second-in-Command skill Reconfiguration.
-type|converted_hangar|CRUISER|5	0	Cannot be unallocated without at least 1 empty fighter bay.
-type|converted_hangar|CRUISER|6	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
-type|converted_hangar|CRUISER|7	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Converted Hangar.
+type-detail|converted_hangar|CRUISER|0	0	Cannot be unallocated without at least 1 empty fighter bay.
+type-detail|converted_hangar|CRUISER|1	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
+type-detail|converted_hangar|CRUISER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Converted Hangar.
 type|converted_hangar|CAPITAL_SHIP|0	0	Increases number of fighter bays by <good>1</good>.
 type|converted_hangar|CAPITAL_SHIP|1	1	<good>50%</good> more fighter refit time. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|CAPITAL_SHIP|2	0	<bad>50%</bad> slower fighter replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|CAPITAL_SHIP|3	1	Increases fighter relaunch time, as a % of base refit time by <good>40</good>. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|CAPITAL_SHIP|4	1	Increases minimum crew required by <good>20</good>. Waived by the Second-in-Command skill Reconfiguration.
-type|converted_hangar|CAPITAL_SHIP|5	0	Cannot be unallocated without at least 1 empty fighter bay.
-type|converted_hangar|CAPITAL_SHIP|6	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
-type|converted_hangar|CAPITAL_SHIP|7	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Converted Hangar.
+type-detail|converted_hangar|CAPITAL_SHIP|0	0	Cannot be unallocated without at least 1 empty fighter bay.
+type-detail|converted_hangar|CAPITAL_SHIP|1	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
+type-detail|converted_hangar|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Converted Hangar.
 type|crew_capacity_flat|FRIGATE|0	0	Increases crew capacity by <good>5</good>.
 type|crew_capacity_flat|DESTROYER|0	0	Increases crew capacity by <good>15</good>.
 type|crew_capacity_flat|CRUISER|0	0	Increases crew capacity by <good>25</good>.
@@ -2223,55 +2223,55 @@ type|crustacean_integration|null|0	0	You control the speed at which these lobste
 type|crustacean_integration|null|1	0	Increases combat readiness recovery rate by <good>15%</good>.
 type|crustacean_integration|null|2	0	Increases top speed by <good>10%</good>.
 type|crustacean_integration|null|3	0	Increases peak combat readiness duration by <good>30%</good>.
-type|crustacean_integration|null|4	0	Costs 1000 lobster to allocate. It is returned to you upon de-allocation.
+type-detail|crustacean_integration|null|0	0	Costs 1000 lobster to allocate. It is returned to you upon de-allocation.
 type|crustacean_integration|FRIGATE|0	0	You control the speed at which these lobsters die.
 type|crustacean_integration|FRIGATE|1	0	Increases combat readiness recovery rate by <good>15%</good>.
 type|crustacean_integration|FRIGATE|2	0	Increases top speed by <good>10%</good>.
 type|crustacean_integration|FRIGATE|3	0	Increases peak combat readiness duration by <good>30%</good>.
-type|crustacean_integration|FRIGATE|4	0	Costs 1000 lobster to allocate. It is returned to you upon de-allocation.
+type-detail|crustacean_integration|FRIGATE|0	0	Costs 1000 lobster to allocate. It is returned to you upon de-allocation.
 type|crustacean_integration|DESTROYER|0	0	You control the speed at which these lobsters die.
 type|crustacean_integration|DESTROYER|1	0	Increases combat readiness recovery rate by <good>15%</good>.
 type|crustacean_integration|DESTROYER|2	0	Increases top speed by <good>10%</good>.
 type|crustacean_integration|DESTROYER|3	0	Increases peak combat readiness duration by <good>30%</good>.
-type|crustacean_integration|DESTROYER|4	0	Costs 1000 lobster to allocate. It is returned to you upon de-allocation.
+type-detail|crustacean_integration|DESTROYER|0	0	Costs 1000 lobster to allocate. It is returned to you upon de-allocation.
 type|crustacean_integration|CRUISER|0	0	You control the speed at which these lobsters die.
 type|crustacean_integration|CRUISER|1	0	Increases combat readiness recovery rate by <good>15%</good>.
 type|crustacean_integration|CRUISER|2	0	Increases top speed by <good>10%</good>.
 type|crustacean_integration|CRUISER|3	0	Increases peak combat readiness duration by <good>30%</good>.
-type|crustacean_integration|CRUISER|4	0	Costs 1000 lobster to allocate. It is returned to you upon de-allocation.
+type-detail|crustacean_integration|CRUISER|0	0	Costs 1000 lobster to allocate. It is returned to you upon de-allocation.
 type|crustacean_integration|CAPITAL_SHIP|0	0	You control the speed at which these lobsters die.
 type|crustacean_integration|CAPITAL_SHIP|1	0	Increases combat readiness recovery rate by <good>15%</good>.
 type|crustacean_integration|CAPITAL_SHIP|2	0	Increases top speed by <good>10%</good>.
 type|crustacean_integration|CAPITAL_SHIP|3	0	Increases peak combat readiness duration by <good>30%</good>.
-type|crustacean_integration|CAPITAL_SHIP|4	0	Costs 1000 lobster to allocate. It is returned to you upon de-allocation.
-type|dedicated_targeting_core|null|0	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
-type|dedicated_targeting_core|null|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Integrated Targeting Unit, Advanced Targeting Core, Distributed Fire Control, Dedicated Targeting Core.
+type-detail|crustacean_integration|CAPITAL_SHIP|0	0	Costs 1000 lobster to allocate. It is returned to you upon de-allocation.
+type-detail|dedicated_targeting_core|null|0	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
+type-detail|dedicated_targeting_core|null|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Integrated Targeting Unit, Advanced Targeting Core, Distributed Fire Control, Dedicated Targeting Core.
 type|dedicated_targeting_core|FRIGATE|0	0	Increases ballistic weapon range by <good>0%</good>.
 type|dedicated_targeting_core|FRIGATE|1	0	Increases energy weapon range by <good>0%</good>.
-type|dedicated_targeting_core|FRIGATE|2	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
-type|dedicated_targeting_core|FRIGATE|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Integrated Targeting Unit, Advanced Targeting Core, Distributed Fire Control, Dedicated Targeting Core.
+type-detail|dedicated_targeting_core|FRIGATE|0	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
+type-detail|dedicated_targeting_core|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Integrated Targeting Unit, Advanced Targeting Core, Distributed Fire Control, Dedicated Targeting Core.
 type|dedicated_targeting_core|DESTROYER|0	0	Increases ballistic weapon range by <good>0%</good>.
 type|dedicated_targeting_core|DESTROYER|1	0	Increases energy weapon range by <good>0%</good>.
-type|dedicated_targeting_core|DESTROYER|2	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
-type|dedicated_targeting_core|DESTROYER|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Integrated Targeting Unit, Advanced Targeting Core, Distributed Fire Control, Dedicated Targeting Core.
+type-detail|dedicated_targeting_core|DESTROYER|0	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
+type-detail|dedicated_targeting_core|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Integrated Targeting Unit, Advanced Targeting Core, Distributed Fire Control, Dedicated Targeting Core.
 type|dedicated_targeting_core|CRUISER|0	0	Increases ballistic weapon range by <good>35%</good>.
 type|dedicated_targeting_core|CRUISER|1	0	Increases energy weapon range by <good>35%</good>.
-type|dedicated_targeting_core|CRUISER|2	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
-type|dedicated_targeting_core|CRUISER|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Integrated Targeting Unit, Advanced Targeting Core, Distributed Fire Control, Dedicated Targeting Core.
+type-detail|dedicated_targeting_core|CRUISER|0	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
+type-detail|dedicated_targeting_core|CRUISER|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Integrated Targeting Unit, Advanced Targeting Core, Distributed Fire Control, Dedicated Targeting Core.
 type|dedicated_targeting_core|CAPITAL_SHIP|0	0	Increases ballistic weapon range by <good>50%</good>.
 type|dedicated_targeting_core|CAPITAL_SHIP|1	0	Increases energy weapon range by <good>50%</good>.
-type|dedicated_targeting_core|CAPITAL_SHIP|2	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
-type|dedicated_targeting_core|CAPITAL_SHIP|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Integrated Targeting Unit, Advanced Targeting Core, Distributed Fire Control, Dedicated Targeting Core.
+type-detail|dedicated_targeting_core|CAPITAL_SHIP|0	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
+type-detail|dedicated_targeting_core|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Integrated Targeting Unit, Advanced Targeting Core, Distributed Fire Control, Dedicated Targeting Core.
 type|defensive_targeting_array|null|0	0	Increases the damage fighters launched from this ship deal to other fighters and missiles. Also locks launched fighters to stay near the ship instead of patrolling freely.
-type|defensive_targeting_array|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Defensive Targeting Array.
+type-detail|defensive_targeting_array|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Defensive Targeting Array.
 type|defensive_targeting_array|FRIGATE|0	0	Increases the damage fighters launched from this ship deal to other fighters and missiles. Also locks launched fighters to stay near the ship instead of patrolling freely.
-type|defensive_targeting_array|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Defensive Targeting Array.
+type-detail|defensive_targeting_array|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Defensive Targeting Array.
 type|defensive_targeting_array|DESTROYER|0	0	Increases the damage fighters launched from this ship deal to other fighters and missiles. Also locks launched fighters to stay near the ship instead of patrolling freely.
-type|defensive_targeting_array|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Defensive Targeting Array.
+type-detail|defensive_targeting_array|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Defensive Targeting Array.
 type|defensive_targeting_array|CRUISER|0	0	Increases the damage fighters launched from this ship deal to other fighters and missiles. Also locks launched fighters to stay near the ship instead of patrolling freely.
-type|defensive_targeting_array|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Defensive Targeting Array.
+type-detail|defensive_targeting_array|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Defensive Targeting Array.
 type|defensive_targeting_array|CAPITAL_SHIP|0	0	Increases the damage fighters launched from this ship deal to other fighters and missiles. Also locks launched fighters to stay near the ship instead of patrolling freely.
-type|defensive_targeting_array|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Defensive Targeting Array.
+type-detail|defensive_targeting_array|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Defensive Targeting Array.
 type|disintegration|null|0	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.
 type|disintegration|FRIGATE|0	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.
 type|disintegration|DESTROYER|0	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.
@@ -2284,7 +2284,7 @@ type|eccm|null|3	0	Increases missile acceleration by <good>150%</good>.
 type|eccm|null|4	0	Increases missile turn rate by <good>50%</good>.
 type|eccm|null|5	0	Increases missile turn acceleration by <good>150%</good>.
 type|eccm|null|6	1	<bad>50%</bad> less electronic warfare penalty against this ship's weapon range.
-type|eccm|null|7	0	Mutually exclusive with <hullmod>hullmod</hullmod>: ECCM Package.
+type-detail|eccm|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: ECCM Package.
 type|eccm|FRIGATE|0	0	Increases chance for missiles to resist enemy ECM and flares by <good>50%</good>.
 type|eccm|FRIGATE|1	0	Significantly improved missile guidance algorithm.
 type|eccm|FRIGATE|2	0	Increases missile weapon projectile speed by <good>25%</good>.
@@ -2292,7 +2292,7 @@ type|eccm|FRIGATE|3	0	Increases missile acceleration by <good>150%</good>.
 type|eccm|FRIGATE|4	0	Increases missile turn rate by <good>50%</good>.
 type|eccm|FRIGATE|5	0	Increases missile turn acceleration by <good>150%</good>.
 type|eccm|FRIGATE|6	1	<bad>50%</bad> less electronic warfare penalty against this ship's weapon range.
-type|eccm|FRIGATE|7	0	Mutually exclusive with <hullmod>hullmod</hullmod>: ECCM Package.
+type-detail|eccm|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: ECCM Package.
 type|eccm|DESTROYER|0	0	Increases chance for missiles to resist enemy ECM and flares by <good>50%</good>.
 type|eccm|DESTROYER|1	0	Significantly improved missile guidance algorithm.
 type|eccm|DESTROYER|2	0	Increases missile weapon projectile speed by <good>25%</good>.
@@ -2300,7 +2300,7 @@ type|eccm|DESTROYER|3	0	Increases missile acceleration by <good>150%</good>.
 type|eccm|DESTROYER|4	0	Increases missile turn rate by <good>50%</good>.
 type|eccm|DESTROYER|5	0	Increases missile turn acceleration by <good>150%</good>.
 type|eccm|DESTROYER|6	1	<bad>50%</bad> less electronic warfare penalty against this ship's weapon range.
-type|eccm|DESTROYER|7	0	Mutually exclusive with <hullmod>hullmod</hullmod>: ECCM Package.
+type-detail|eccm|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: ECCM Package.
 type|eccm|CRUISER|0	0	Increases chance for missiles to resist enemy ECM and flares by <good>50%</good>.
 type|eccm|CRUISER|1	0	Significantly improved missile guidance algorithm.
 type|eccm|CRUISER|2	0	Increases missile weapon projectile speed by <good>25%</good>.
@@ -2308,7 +2308,7 @@ type|eccm|CRUISER|3	0	Increases missile acceleration by <good>150%</good>.
 type|eccm|CRUISER|4	0	Increases missile turn rate by <good>50%</good>.
 type|eccm|CRUISER|5	0	Increases missile turn acceleration by <good>150%</good>.
 type|eccm|CRUISER|6	1	<bad>50%</bad> less electronic warfare penalty against this ship's weapon range.
-type|eccm|CRUISER|7	0	Mutually exclusive with <hullmod>hullmod</hullmod>: ECCM Package.
+type-detail|eccm|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: ECCM Package.
 type|eccm|CAPITAL_SHIP|0	0	Increases chance for missiles to resist enemy ECM and flares by <good>50%</good>.
 type|eccm|CAPITAL_SHIP|1	0	Significantly improved missile guidance algorithm.
 type|eccm|CAPITAL_SHIP|2	0	Increases missile weapon projectile speed by <good>25%</good>.
@@ -2316,21 +2316,21 @@ type|eccm|CAPITAL_SHIP|3	0	Increases missile acceleration by <good>150%</good>.
 type|eccm|CAPITAL_SHIP|4	0	Increases missile turn rate by <good>50%</good>.
 type|eccm|CAPITAL_SHIP|5	0	Increases missile turn acceleration by <good>150%</good>.
 type|eccm|CAPITAL_SHIP|6	1	<bad>50%</bad> less electronic warfare penalty against this ship's weapon range.
-type|eccm|CAPITAL_SHIP|7	0	Mutually exclusive with <hullmod>hullmod</hullmod>: ECCM Package.
+type-detail|eccm|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: ECCM Package.
 type|ecm|null|0	0	Electronic countermeasures (ECM) represents the effects of electronic warfare as fleets with superior capability imposing range penalties upon their opponents.
-type|ecm|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: ECM Package.
+type-detail|ecm|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: ECM Package.
 type|ecm|FRIGATE|0	0	Electronic countermeasures (ECM) represents the effects of electronic warfare as fleets with superior capability imposing range penalties upon their opponents.
 type|ecm|FRIGATE|1	0	Increases ECM rating by <good>1</good>.
-type|ecm|FRIGATE|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: ECM Package.
+type-detail|ecm|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: ECM Package.
 type|ecm|DESTROYER|0	0	Electronic countermeasures (ECM) represents the effects of electronic warfare as fleets with superior capability imposing range penalties upon their opponents.
 type|ecm|DESTROYER|1	0	Increases ECM rating by <good>2</good>.
-type|ecm|DESTROYER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: ECM Package.
+type-detail|ecm|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: ECM Package.
 type|ecm|CRUISER|0	0	Electronic countermeasures (ECM) represents the effects of electronic warfare as fleets with superior capability imposing range penalties upon their opponents.
 type|ecm|CRUISER|1	0	Increases ECM rating by <good>3</good>.
-type|ecm|CRUISER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: ECM Package.
+type-detail|ecm|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: ECM Package.
 type|ecm|CAPITAL_SHIP|0	0	Electronic countermeasures (ECM) represents the effects of electronic warfare as fleets with superior capability imposing range penalties upon their opponents.
 type|ecm|CAPITAL_SHIP|1	0	Increases ECM rating by <good>4</good>.
-type|ecm|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: ECM Package.
+type-detail|ecm|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: ECM Package.
 type|ecm_resistance|null|0	1	<bad>15%</bad> less electronic warfare penalty against this ship's weapon range.
 type|ecm_resistance|FRIGATE|0	1	<bad>15%</bad> less electronic warfare penalty against this ship's weapon range.
 type|ecm_resistance|DESTROYER|0	1	<bad>15%</bad> less electronic warfare penalty against this ship's weapon range.
@@ -2341,31 +2341,31 @@ type|efficiency_overhaul|null|1	1	<bad>20%</bad> less supply use for maintenance
 type|efficiency_overhaul|null|2	1	<bad>20%</bad> less fuel consumption rate.
 type|efficiency_overhaul|null|3	0	Increases combat readiness recovery rate by <good>50%</good>.
 type|efficiency_overhaul|null|4	0	Increases repair rate per day by <good>50%</good>.
-type|efficiency_overhaul|null|5	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Efficiency Overhaul.
+type-detail|efficiency_overhaul|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Efficiency Overhaul.
 type|efficiency_overhaul|FRIGATE|0	1	<bad>20%</bad> less minimum crew required.
 type|efficiency_overhaul|FRIGATE|1	1	<bad>20%</bad> less supply use for maintenance.
 type|efficiency_overhaul|FRIGATE|2	1	<bad>20%</bad> less fuel consumption rate.
 type|efficiency_overhaul|FRIGATE|3	0	Increases combat readiness recovery rate by <good>50%</good>.
 type|efficiency_overhaul|FRIGATE|4	0	Increases repair rate per day by <good>50%</good>.
-type|efficiency_overhaul|FRIGATE|5	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Efficiency Overhaul.
+type-detail|efficiency_overhaul|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Efficiency Overhaul.
 type|efficiency_overhaul|DESTROYER|0	1	<bad>20%</bad> less minimum crew required.
 type|efficiency_overhaul|DESTROYER|1	1	<bad>20%</bad> less supply use for maintenance.
 type|efficiency_overhaul|DESTROYER|2	1	<bad>20%</bad> less fuel consumption rate.
 type|efficiency_overhaul|DESTROYER|3	0	Increases combat readiness recovery rate by <good>50%</good>.
 type|efficiency_overhaul|DESTROYER|4	0	Increases repair rate per day by <good>50%</good>.
-type|efficiency_overhaul|DESTROYER|5	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Efficiency Overhaul.
+type-detail|efficiency_overhaul|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Efficiency Overhaul.
 type|efficiency_overhaul|CRUISER|0	1	<bad>20%</bad> less minimum crew required.
 type|efficiency_overhaul|CRUISER|1	1	<bad>20%</bad> less supply use for maintenance.
 type|efficiency_overhaul|CRUISER|2	1	<bad>20%</bad> less fuel consumption rate.
 type|efficiency_overhaul|CRUISER|3	0	Increases combat readiness recovery rate by <good>50%</good>.
 type|efficiency_overhaul|CRUISER|4	0	Increases repair rate per day by <good>50%</good>.
-type|efficiency_overhaul|CRUISER|5	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Efficiency Overhaul.
+type-detail|efficiency_overhaul|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Efficiency Overhaul.
 type|efficiency_overhaul|CAPITAL_SHIP|0	1	<bad>20%</bad> less minimum crew required.
 type|efficiency_overhaul|CAPITAL_SHIP|1	1	<bad>20%</bad> less supply use for maintenance.
 type|efficiency_overhaul|CAPITAL_SHIP|2	1	<bad>20%</bad> less fuel consumption rate.
 type|efficiency_overhaul|CAPITAL_SHIP|3	0	Increases combat readiness recovery rate by <good>50%</good>.
 type|efficiency_overhaul|CAPITAL_SHIP|4	0	Increases repair rate per day by <good>50%</good>.
-type|efficiency_overhaul|CAPITAL_SHIP|5	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Efficiency Overhaul.
+type-detail|efficiency_overhaul|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Efficiency Overhaul.
 type|efficient_vents|null|0	0	Increases flux dissipation by <good>15%</good>.
 type|efficient_vents|null|1	0	Increases flux dissipation by <good>50</good>.
 type|efficient_vents|FRIGATE|0	0	Increases flux dissipation by <good>15%</good>.
@@ -2410,76 +2410,76 @@ type|escort_package|null|0	0	While within range of a larger friendly ship, incre
 type|escort_package|null|1	0	While within range of a larger friendly ship, increases top speed by up to 10%, fading with distance. Doubled for a destroyer escorting a capital ship.
 type|escort_package|null|2	0	While within range of a larger friendly ship, increases ballistic and energy weapon range by up to 20%, fading with distance. Doubled for a destroyer escorting a capital ship.
 type|escort_package|null|3	0	The escort bonuses above apply at full strength within 700 su of the larger friendly ship, fading out over an additional 500 su beyond that.
-type|escort_package|null|4	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser.
+type-detail|escort_package|null|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser.
 type|escort_package|FRIGATE|0	0	While within range of a larger friendly ship, increases maneuverability (acceleration, deceleration, and turn rate) by up to 25%, fading with distance. Doubled for a destroyer escorting a capital ship.
 type|escort_package|FRIGATE|1	0	While within range of a larger friendly ship, increases top speed by up to 10%, fading with distance. Doubled for a destroyer escorting a capital ship.
 type|escort_package|FRIGATE|2	0	While within range of a larger friendly ship, increases ballistic and energy weapon range by up to 20%, fading with distance. Doubled for a destroyer escorting a capital ship.
 type|escort_package|FRIGATE|3	0	The escort bonuses above apply at full strength within 700 su of the larger friendly ship, fading out over an additional 500 su beyond that.
-type|escort_package|FRIGATE|4	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser.
+type-detail|escort_package|FRIGATE|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser.
 type|escort_package|DESTROYER|0	0	While within range of a larger friendly ship, increases maneuverability (acceleration, deceleration, and turn rate) by up to 25%, fading with distance. Doubled for a destroyer escorting a capital ship.
 type|escort_package|DESTROYER|1	0	While within range of a larger friendly ship, increases top speed by up to 10%, fading with distance. Doubled for a destroyer escorting a capital ship.
 type|escort_package|DESTROYER|2	0	While within range of a larger friendly ship, increases ballistic and energy weapon range by up to 20%, fading with distance. Doubled for a destroyer escorting a capital ship.
 type|escort_package|DESTROYER|3	0	The escort bonuses above apply at full strength within 700 su of the larger friendly ship, fading out over an additional 500 su beyond that.
-type|escort_package|DESTROYER|4	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser.
+type-detail|escort_package|DESTROYER|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser.
 type|escort_package|CRUISER|0	0	While within range of a larger friendly ship, increases maneuverability (acceleration, deceleration, and turn rate) by up to 25%, fading with distance. Doubled for a destroyer escorting a capital ship.
 type|escort_package|CRUISER|1	0	While within range of a larger friendly ship, increases top speed by up to 10%, fading with distance. Doubled for a destroyer escorting a capital ship.
 type|escort_package|CRUISER|2	0	While within range of a larger friendly ship, increases ballistic and energy weapon range by up to 20%, fading with distance. Doubled for a destroyer escorting a capital ship.
 type|escort_package|CRUISER|3	0	The escort bonuses above apply at full strength within 700 su of the larger friendly ship, fading out over an additional 500 su beyond that.
-type|escort_package|CRUISER|4	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser.
+type-detail|escort_package|CRUISER|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser.
 type|escort_package|CAPITAL_SHIP|0	0	While within range of a larger friendly ship, increases maneuverability (acceleration, deceleration, and turn rate) by up to 25%, fading with distance. Doubled for a destroyer escorting a capital ship.
 type|escort_package|CAPITAL_SHIP|1	0	While within range of a larger friendly ship, increases top speed by up to 10%, fading with distance. Doubled for a destroyer escorting a capital ship.
 type|escort_package|CAPITAL_SHIP|2	0	While within range of a larger friendly ship, increases ballistic and energy weapon range by up to 20%, fading with distance. Doubled for a destroyer escorting a capital ship.
 type|escort_package|CAPITAL_SHIP|3	0	The escort bonuses above apply at full strength within 700 su of the larger friendly ship, fading out over an additional 500 su beyond that.
-type|escort_package|CAPITAL_SHIP|4	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser.
+type-detail|escort_package|CAPITAL_SHIP|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser.
 type|expanded_cargo_holds|null|0	0	Increases cargo capacity by <good>20%</good>.
-type|expanded_cargo_holds|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Cargo Holds.
+type-detail|expanded_cargo_holds|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Cargo Holds.
 type|expanded_cargo_holds|FRIGATE|0	0	Increases cargo capacity by <good>20%</good>.
 type|expanded_cargo_holds|FRIGATE|1	0	Increases cargo capacity by <good>25</good>.
-type|expanded_cargo_holds|FRIGATE|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Cargo Holds.
+type-detail|expanded_cargo_holds|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Cargo Holds.
 type|expanded_cargo_holds|DESTROYER|0	0	Increases cargo capacity by <good>20%</good>.
 type|expanded_cargo_holds|DESTROYER|1	0	Increases cargo capacity by <good>35</good>.
-type|expanded_cargo_holds|DESTROYER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Cargo Holds.
+type-detail|expanded_cargo_holds|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Cargo Holds.
 type|expanded_cargo_holds|CRUISER|0	0	Increases cargo capacity by <good>20%</good>.
 type|expanded_cargo_holds|CRUISER|1	0	Increases cargo capacity by <good>60</good>.
-type|expanded_cargo_holds|CRUISER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Cargo Holds.
+type-detail|expanded_cargo_holds|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Cargo Holds.
 type|expanded_cargo_holds|CAPITAL_SHIP|0	0	Increases cargo capacity by <good>20%</good>.
 type|expanded_cargo_holds|CAPITAL_SHIP|1	0	Increases cargo capacity by <good>125</good>.
-type|expanded_cargo_holds|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Cargo Holds.
+type-detail|expanded_cargo_holds|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Cargo Holds.
 type|expanded_deck_crew|null|0	1	Decreases rate at which fighter replacement capability decays from losses by <bad>15%</bad>.
 type|expanded_deck_crew|null|1	0	Increases rate at which fighter replacement capability recovers by <good>25%</good>.
 type|expanded_deck_crew|null|2	1	Increases minimum crew required per fighter bay by <good>20</good>.
-type|expanded_deck_crew|null|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Deck Crew.
+type-detail|expanded_deck_crew|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Deck Crew.
 type|expanded_deck_crew|FRIGATE|0	1	Decreases rate at which fighter replacement capability decays from losses by <bad>15%</bad>.
 type|expanded_deck_crew|FRIGATE|1	0	Increases rate at which fighter replacement capability recovers by <good>25%</good>.
 type|expanded_deck_crew|FRIGATE|2	1	Increases minimum crew required per fighter bay by <good>20</good>.
-type|expanded_deck_crew|FRIGATE|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Deck Crew.
+type-detail|expanded_deck_crew|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Deck Crew.
 type|expanded_deck_crew|DESTROYER|0	1	Decreases rate at which fighter replacement capability decays from losses by <bad>15%</bad>.
 type|expanded_deck_crew|DESTROYER|1	0	Increases rate at which fighter replacement capability recovers by <good>25%</good>.
 type|expanded_deck_crew|DESTROYER|2	1	Increases minimum crew required per fighter bay by <good>20</good>.
-type|expanded_deck_crew|DESTROYER|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Deck Crew.
+type-detail|expanded_deck_crew|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Deck Crew.
 type|expanded_deck_crew|CRUISER|0	1	Decreases rate at which fighter replacement capability decays from losses by <bad>15%</bad>.
 type|expanded_deck_crew|CRUISER|1	0	Increases rate at which fighter replacement capability recovers by <good>25%</good>.
 type|expanded_deck_crew|CRUISER|2	1	Increases minimum crew required per fighter bay by <good>20</good>.
-type|expanded_deck_crew|CRUISER|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Deck Crew.
+type-detail|expanded_deck_crew|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Deck Crew.
 type|expanded_deck_crew|CAPITAL_SHIP|0	1	Decreases rate at which fighter replacement capability decays from losses by <bad>15%</bad>.
 type|expanded_deck_crew|CAPITAL_SHIP|1	0	Increases rate at which fighter replacement capability recovers by <good>25%</good>.
 type|expanded_deck_crew|CAPITAL_SHIP|2	1	Increases minimum crew required per fighter bay by <good>20</good>.
-type|expanded_deck_crew|CAPITAL_SHIP|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Deck Crew.
+type-detail|expanded_deck_crew|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Deck Crew.
 type|exposed_fuel_lines|null|0	0	Any collision, however slight, is instantly fatal to this ship.
 type|exposed_fuel_lines|FRIGATE|0	0	Any collision, however slight, is instantly fatal to this ship.
 type|exposed_fuel_lines|DESTROYER|0	0	Any collision, however slight, is instantly fatal to this ship.
 type|exposed_fuel_lines|CRUISER|0	0	Any collision, however slight, is instantly fatal to this ship.
 type|exposed_fuel_lines|CAPITAL_SHIP|0	0	Any collision, however slight, is instantly fatal to this ship.
 type|extendedshieldemitter|null|0	0	Increases shield arc by <good>40</good>.
-type|extendedshieldemitter|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Extended Shields.
+type-detail|extendedshieldemitter|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Extended Shields.
 type|extendedshieldemitter|FRIGATE|0	0	Increases shield arc by <good>40</good>.
-type|extendedshieldemitter|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Extended Shields.
+type-detail|extendedshieldemitter|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Extended Shields.
 type|extendedshieldemitter|DESTROYER|0	0	Increases shield arc by <good>40</good>.
-type|extendedshieldemitter|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Extended Shields.
+type-detail|extendedshieldemitter|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Extended Shields.
 type|extendedshieldemitter|CRUISER|0	0	Increases shield arc by <good>40</good>.
-type|extendedshieldemitter|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Extended Shields.
+type-detail|extendedshieldemitter|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Extended Shields.
 type|extendedshieldemitter|CAPITAL_SHIP|0	0	Increases shield arc by <good>40</good>.
-type|extendedshieldemitter|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Extended Shields.
+type-detail|extendedshieldemitter|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Extended Shields.
 type|fighter_replacement|null|0	0	Increases rate at which fighter replacement capability recovers by <good>5%</good>.
 type|fighter_replacement|null|1	1	Decreases rate at which fighter replacement capability decays from losses by <bad>5%</bad>.
 type|fighter_replacement|FRIGATE|0	0	Increases rate at which fighter replacement capability recovers by <good>5%</good>.
@@ -2512,54 +2512,54 @@ type|flux_dissipation|CRUISER|0	0	<good>2%</good> more flux dissipation.
 type|flux_dissipation|CAPITAL_SHIP|0	0	<good>2%</good> more flux dissipation.
 type|fluxbreakers|null|0	1	<bad>30%</bad> less EMP damage taken.
 type|fluxbreakers|null|1	0	Increases venting speed by <good>10%</good>.
-type|fluxbreakers|null|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Resistant Flux Conduits.
+type-detail|fluxbreakers|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Resistant Flux Conduits.
 type|fluxbreakers|FRIGATE|0	1	<bad>30%</bad> less EMP damage taken.
 type|fluxbreakers|FRIGATE|1	0	Increases venting speed by <good>10%</good>.
-type|fluxbreakers|FRIGATE|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Resistant Flux Conduits.
+type-detail|fluxbreakers|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Resistant Flux Conduits.
 type|fluxbreakers|DESTROYER|0	1	<bad>30%</bad> less EMP damage taken.
 type|fluxbreakers|DESTROYER|1	0	Increases venting speed by <good>10%</good>.
-type|fluxbreakers|DESTROYER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Resistant Flux Conduits.
+type-detail|fluxbreakers|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Resistant Flux Conduits.
 type|fluxbreakers|CRUISER|0	1	<bad>30%</bad> less EMP damage taken.
 type|fluxbreakers|CRUISER|1	0	Increases venting speed by <good>10%</good>.
-type|fluxbreakers|CRUISER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Resistant Flux Conduits.
+type-detail|fluxbreakers|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Resistant Flux Conduits.
 type|fluxbreakers|CAPITAL_SHIP|0	1	<bad>30%</bad> less EMP damage taken.
 type|fluxbreakers|CAPITAL_SHIP|1	0	Increases venting speed by <good>10%</good>.
-type|fluxbreakers|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Resistant Flux Conduits.
+type-detail|fluxbreakers|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Resistant Flux Conduits.
 type|frontemitter|null|0	0	Locks the ship's omni-directional shield emitter to a front-facing position and extends its arc. As with all frontal emitters, the shield will also deploy twice as quickly.
 type|frontemitter|null|1	0	Increases shield arc by <good>100%</good>.
 type|frontemitter|null|2	0	Converts this ship's shield to front-facing.
-type|frontemitter|null|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Omni, Shield Shunt, Shield Conversion - Front.
+type-detail|frontemitter|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Omni, Shield Shunt, Shield Conversion - Front.
 type|frontemitter|FRIGATE|0	0	Locks the ship's omni-directional shield emitter to a front-facing position and extends its arc. As with all frontal emitters, the shield will also deploy twice as quickly.
 type|frontemitter|FRIGATE|1	0	Increases shield arc by <good>100%</good>.
 type|frontemitter|FRIGATE|2	0	Converts this ship's shield to front-facing.
-type|frontemitter|FRIGATE|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Omni, Shield Shunt, Shield Conversion - Front.
+type-detail|frontemitter|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Omni, Shield Shunt, Shield Conversion - Front.
 type|frontemitter|DESTROYER|0	0	Locks the ship's omni-directional shield emitter to a front-facing position and extends its arc. As with all frontal emitters, the shield will also deploy twice as quickly.
 type|frontemitter|DESTROYER|1	0	Increases shield arc by <good>100%</good>.
 type|frontemitter|DESTROYER|2	0	Converts this ship's shield to front-facing.
-type|frontemitter|DESTROYER|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Omni, Shield Shunt, Shield Conversion - Front.
+type-detail|frontemitter|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Omni, Shield Shunt, Shield Conversion - Front.
 type|frontemitter|CRUISER|0	0	Locks the ship's omni-directional shield emitter to a front-facing position and extends its arc. As with all frontal emitters, the shield will also deploy twice as quickly.
 type|frontemitter|CRUISER|1	0	Increases shield arc by <good>100%</good>.
 type|frontemitter|CRUISER|2	0	Converts this ship's shield to front-facing.
-type|frontemitter|CRUISER|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Omni, Shield Shunt, Shield Conversion - Front.
+type-detail|frontemitter|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Omni, Shield Shunt, Shield Conversion - Front.
 type|frontemitter|CAPITAL_SHIP|0	0	Locks the ship's omni-directional shield emitter to a front-facing position and extends its arc. As with all frontal emitters, the shield will also deploy twice as quickly.
 type|frontemitter|CAPITAL_SHIP|1	0	Increases shield arc by <good>100%</good>.
 type|frontemitter|CAPITAL_SHIP|2	0	Converts this ship's shield to front-facing.
-type|frontemitter|CAPITAL_SHIP|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Omni, Shield Shunt, Shield Conversion - Front.
+type-detail|frontemitter|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Omni, Shield Shunt, Shield Conversion - Front.
 type|frontshield|null|0	0	<bad>20%</bad> less top speed.
 type|frontshield|null|1	0	Installs a makeshift, front-facing shield if this ship has none.
-type|frontshield|null|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Shunt, Makeshift Shield Generator.
+type-detail|frontshield|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Shunt, Makeshift Shield Generator.
 type|frontshield|FRIGATE|0	0	<bad>20%</bad> less top speed.
 type|frontshield|FRIGATE|1	0	Installs a makeshift, front-facing shield if this ship has none.
-type|frontshield|FRIGATE|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Shunt, Makeshift Shield Generator.
+type-detail|frontshield|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Shunt, Makeshift Shield Generator.
 type|frontshield|DESTROYER|0	0	<bad>20%</bad> less top speed.
 type|frontshield|DESTROYER|1	0	Installs a makeshift, front-facing shield if this ship has none.
-type|frontshield|DESTROYER|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Shunt, Makeshift Shield Generator.
+type-detail|frontshield|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Shunt, Makeshift Shield Generator.
 type|frontshield|CRUISER|0	0	<bad>20%</bad> less top speed.
 type|frontshield|CRUISER|1	0	Installs a makeshift, front-facing shield if this ship has none.
-type|frontshield|CRUISER|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Shunt, Makeshift Shield Generator.
+type-detail|frontshield|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Shunt, Makeshift Shield Generator.
 type|frontshield|CAPITAL_SHIP|0	0	<bad>20%</bad> less top speed.
 type|frontshield|CAPITAL_SHIP|1	0	Installs a makeshift, front-facing shield if this ship has none.
-type|frontshield|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Shunt, Makeshift Shield Generator.
+type-detail|frontshield|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Shunt, Makeshift Shield Generator.
 type|frozen_heart|null|0	0	query. hull?. scanning. [HULL] collect, amass, gather, fuse, keep. The core does not stop. Neither does anything it holds.
 type|frozen_heart|null|1	0	Whenever a non-fighter ship is destroyed within 1500 su, this ship gains a Heartless stack until the end of combat. By default, ships can hold a maximum of 5 Heartless stacks.
 type|frozen_heart|null|2	0	Each new Heartless stack sets off a radiation surge that deals <bad>400</bad> EMP damage to a random weapon and to a random engine on this ship.
@@ -2600,98 +2600,98 @@ type|fuel_flat|DESTROYER|0	0	Increases fuel capacity by <good>15</good>.
 type|fuel_flat|CRUISER|0	0	Increases fuel capacity by <good>25</good>.
 type|fuel_flat|CAPITAL_SHIP|0	0	Increases fuel capacity by <good>50</good>.
 type|ground_support|null|0	0	Increases the effective strength of planetary raids by <good>25%</good> of this ship's maximum crew capacity (after modifiers), up to the total number of marines in the fleet.
-type|ground_support|null|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Advanced Ground Support, Ground Support Package.
+type-detail|ground_support|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Advanced Ground Support, Ground Support Package.
 type|ground_support|FRIGATE|0	0	Increases the effective strength of planetary raids by <good>25%</good> of this ship's maximum crew capacity (after modifiers), up to the total number of marines in the fleet.
-type|ground_support|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Advanced Ground Support, Ground Support Package.
+type-detail|ground_support|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Advanced Ground Support, Ground Support Package.
 type|ground_support|DESTROYER|0	0	Increases the effective strength of planetary raids by <good>25%</good> of this ship's maximum crew capacity (after modifiers), up to the total number of marines in the fleet.
-type|ground_support|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Advanced Ground Support, Ground Support Package.
+type-detail|ground_support|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Advanced Ground Support, Ground Support Package.
 type|ground_support|CRUISER|0	0	Increases the effective strength of planetary raids by <good>25%</good> of this ship's maximum crew capacity (after modifiers), up to the total number of marines in the fleet.
-type|ground_support|CRUISER|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Advanced Ground Support, Ground Support Package.
+type-detail|ground_support|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Advanced Ground Support, Ground Support Package.
 type|ground_support|CAPITAL_SHIP|0	0	Increases the effective strength of planetary raids by <good>25%</good> of this ship's maximum crew capacity (after modifiers), up to the total number of marines in the fleet.
-type|ground_support|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Advanced Ground Support, Ground Support Package.
+type-detail|ground_support|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Advanced Ground Support, Ground Support Package.
 type|hardened_subsystems|null|0	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
-type|hardened_subsystems|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Hardened Subsystems.
+type-detail|hardened_subsystems|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Hardened Subsystems.
 type|hardened_subsystems|FRIGATE|0	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
-type|hardened_subsystems|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Hardened Subsystems.
+type-detail|hardened_subsystems|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Hardened Subsystems.
 type|hardened_subsystems|DESTROYER|0	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
-type|hardened_subsystems|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Hardened Subsystems.
+type-detail|hardened_subsystems|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Hardened Subsystems.
 type|hardened_subsystems|CRUISER|0	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
-type|hardened_subsystems|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Hardened Subsystems.
+type-detail|hardened_subsystems|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Hardened Subsystems.
 type|hardened_subsystems|CAPITAL_SHIP|0	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
-type|hardened_subsystems|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Hardened Subsystems.
+type-detail|hardened_subsystems|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Hardened Subsystems.
 type|hardenedshieldemitter|null|0	1	<bad>10%</bad> less damage taken by shields.
 type|hardenedshieldemitter|null|1	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
-type|hardenedshieldemitter|null|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Hardened Shields.
+type-detail|hardenedshieldemitter|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Hardened Shields.
 type|hardenedshieldemitter|FRIGATE|0	1	<bad>10%</bad> less damage taken by shields.
 type|hardenedshieldemitter|FRIGATE|1	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
-type|hardenedshieldemitter|FRIGATE|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Hardened Shields.
+type-detail|hardenedshieldemitter|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Hardened Shields.
 type|hardenedshieldemitter|DESTROYER|0	1	<bad>10%</bad> less damage taken by shields.
 type|hardenedshieldemitter|DESTROYER|1	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
-type|hardenedshieldemitter|DESTROYER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Hardened Shields.
+type-detail|hardenedshieldemitter|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Hardened Shields.
 type|hardenedshieldemitter|CRUISER|0	1	<bad>10%</bad> less damage taken by shields.
 type|hardenedshieldemitter|CRUISER|1	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
-type|hardenedshieldemitter|CRUISER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Hardened Shields.
+type-detail|hardenedshieldemitter|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Hardened Shields.
 type|hardenedshieldemitter|CAPITAL_SHIP|0	1	<bad>10%</bad> less damage taken by shields.
 type|hardenedshieldemitter|CAPITAL_SHIP|1	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
-type|hardenedshieldemitter|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Hardened Shields.
+type-detail|hardenedshieldemitter|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Hardened Shields.
 type|heavy_ballistics_integration|null|0	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
-type|heavy_ballistics_integration|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Heavy Ballistics Integration.
+type-detail|heavy_ballistics_integration|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Heavy Ballistics Integration.
 type|heavy_ballistics_integration|FRIGATE|0	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
-type|heavy_ballistics_integration|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Heavy Ballistics Integration.
+type-detail|heavy_ballistics_integration|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Heavy Ballistics Integration.
 type|heavy_ballistics_integration|DESTROYER|0	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
-type|heavy_ballistics_integration|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Heavy Ballistics Integration.
+type-detail|heavy_ballistics_integration|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Heavy Ballistics Integration.
 type|heavy_ballistics_integration|CRUISER|0	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
-type|heavy_ballistics_integration|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Heavy Ballistics Integration.
+type-detail|heavy_ballistics_integration|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Heavy Ballistics Integration.
 type|heavy_ballistics_integration|CAPITAL_SHIP|0	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
-type|heavy_ballistics_integration|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Heavy Ballistics Integration.
+type-detail|heavy_ballistics_integration|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Heavy Ballistics Integration.
 type|heavyarmor|null|0	0	Decreases maneuverability by <bad>20%</bad>.
 type|heavyarmor|null|1	0	Increases armor by <good>40%</good>.
-type|heavyarmor|null|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Heavy Armor.\n\nMutually exclusive with <node>node</node>: Critical Point Protection.
+type-detail|heavyarmor|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Heavy Armor.\n\nMutually exclusive with <node>node</node>: Critical Point Protection.
 type|heavyarmor|FRIGATE|0	0	Decreases maneuverability by <bad>20%</bad>.
 type|heavyarmor|FRIGATE|1	0	Increases armor by <good>40%</good>.
 type|heavyarmor|FRIGATE|2	0	Increases hull points by <good>100</good>.
-type|heavyarmor|FRIGATE|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Heavy Armor.\n\nMutually exclusive with <node>node</node>: Critical Point Protection.
+type-detail|heavyarmor|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Heavy Armor.\n\nMutually exclusive with <node>node</node>: Critical Point Protection.
 type|heavyarmor|DESTROYER|0	0	Decreases maneuverability by <bad>20%</bad>.
 type|heavyarmor|DESTROYER|1	0	Increases armor by <good>40%</good>.
 type|heavyarmor|DESTROYER|2	0	Increases hull points by <good>200</good>.
-type|heavyarmor|DESTROYER|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Heavy Armor.\n\nMutually exclusive with <node>node</node>: Critical Point Protection.
+type-detail|heavyarmor|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Heavy Armor.\n\nMutually exclusive with <node>node</node>: Critical Point Protection.
 type|heavyarmor|CRUISER|0	0	Decreases maneuverability by <bad>20%</bad>.
 type|heavyarmor|CRUISER|1	0	Increases armor by <good>40%</good>.
 type|heavyarmor|CRUISER|2	0	Increases hull points by <good>300</good>.
-type|heavyarmor|CRUISER|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Heavy Armor.\n\nMutually exclusive with <node>node</node>: Critical Point Protection.
+type-detail|heavyarmor|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Heavy Armor.\n\nMutually exclusive with <node>node</node>: Critical Point Protection.
 type|heavyarmor|CAPITAL_SHIP|0	0	Decreases maneuverability by <bad>20%</bad>.
 type|heavyarmor|CAPITAL_SHIP|1	0	Increases armor by <good>40%</good>.
 type|heavyarmor|CAPITAL_SHIP|2	0	Increases hull points by <good>400</good>.
-type|heavyarmor|CAPITAL_SHIP|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Heavy Armor.\n\nMutually exclusive with <node>node</node>: Critical Point Protection.
+type-detail|heavyarmor|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Heavy Armor.\n\nMutually exclusive with <node>node</node>: Critical Point Protection.
 type|high_scatter_amp|null|0	0	Causes 50% of beam weapon damage dealt to shields to be hard flux.
 type|high_scatter_amp|null|1	0	<bad>25%</bad> less beam weapon range.
-type|high_scatter_amp|null|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Advanced Optics, High Scatter Amplifier.
+type-detail|high_scatter_amp|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Advanced Optics, High Scatter Amplifier.
 type|high_scatter_amp|FRIGATE|0	0	Causes 50% of beam weapon damage dealt to shields to be hard flux.
 type|high_scatter_amp|FRIGATE|1	0	<bad>25%</bad> less beam weapon range.
-type|high_scatter_amp|FRIGATE|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Advanced Optics, High Scatter Amplifier.
+type-detail|high_scatter_amp|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Advanced Optics, High Scatter Amplifier.
 type|high_scatter_amp|DESTROYER|0	0	Causes 50% of beam weapon damage dealt to shields to be hard flux.
 type|high_scatter_amp|DESTROYER|1	0	<bad>25%</bad> less beam weapon range.
-type|high_scatter_amp|DESTROYER|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Advanced Optics, High Scatter Amplifier.
+type-detail|high_scatter_amp|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Advanced Optics, High Scatter Amplifier.
 type|high_scatter_amp|CRUISER|0	0	Causes 50% of beam weapon damage dealt to shields to be hard flux.
 type|high_scatter_amp|CRUISER|1	0	<bad>25%</bad> less beam weapon range.
-type|high_scatter_amp|CRUISER|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Advanced Optics, High Scatter Amplifier.
+type-detail|high_scatter_amp|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Advanced Optics, High Scatter Amplifier.
 type|high_scatter_amp|CAPITAL_SHIP|0	0	Causes 50% of beam weapon damage dealt to shields to be hard flux.
 type|high_scatter_amp|CAPITAL_SHIP|1	0	<bad>25%</bad> less beam weapon range.
-type|high_scatter_amp|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Advanced Optics, High Scatter Amplifier.
+type-detail|high_scatter_amp|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Advanced Optics, High Scatter Amplifier.
 type|hiressensors|null|0	0	This ship's sensor strength always contributes to fleet-wide sensor strength.
-type|hiressensors|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: High Resolution Sensors.
+type-detail|hiressensors|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: High Resolution Sensors.
 type|hiressensors|FRIGATE|0	0	This ship's sensor strength always contributes to fleet-wide sensor strength.
 type|hiressensors|FRIGATE|1	0	Increases this ship's sensor strength by <good>40</good>.
-type|hiressensors|FRIGATE|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: High Resolution Sensors.
+type-detail|hiressensors|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: High Resolution Sensors.
 type|hiressensors|DESTROYER|0	0	This ship's sensor strength always contributes to fleet-wide sensor strength.
 type|hiressensors|DESTROYER|1	0	Increases this ship's sensor strength by <good>50</good>.
-type|hiressensors|DESTROYER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: High Resolution Sensors.
+type-detail|hiressensors|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: High Resolution Sensors.
 type|hiressensors|CRUISER|0	0	This ship's sensor strength always contributes to fleet-wide sensor strength.
 type|hiressensors|CRUISER|1	0	Increases this ship's sensor strength by <good>60</good>.
-type|hiressensors|CRUISER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: High Resolution Sensors.
+type-detail|hiressensors|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: High Resolution Sensors.
 type|hiressensors|CAPITAL_SHIP|0	0	This ship's sensor strength always contributes to fleet-wide sensor strength.
 type|hiressensors|CAPITAL_SHIP|1	0	Increases this ship's sensor strength by <good>70</good>.
-type|hiressensors|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: High Resolution Sensors.
+type-detail|hiressensors|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: High Resolution Sensors.
 type|hoarded_arms|null|0	0	Increases energy weapon ammo regeneration rate by <good>50%</good>.
 type|hoarded_arms|null|1	0	Increases ballistic weapon ammo regeneration rate by <good>50%</good>.
 type|hoarded_arms|FRIGATE|0	0	Increases energy weapon ammo regeneration rate by <good>50%</good>.
@@ -2754,23 +2754,23 @@ type|increased_vent_rate|CAPITAL_SHIP|0	0	Increases venting speed by <good>10%</
 type|insulatedengine|null|0	0	Increases engine durability by <good>60%</good>.
 type|insulatedengine|null|1	0	Increases hull points by <good>10%</good>.
 type|insulatedengine|null|2	1	<bad>50%</bad> less sensor profile.
-type|insulatedengine|null|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Insulated Engine Assembly.
+type-detail|insulatedengine|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Insulated Engine Assembly.
 type|insulatedengine|FRIGATE|0	0	Increases engine durability by <good>60%</good>.
 type|insulatedengine|FRIGATE|1	0	Increases hull points by <good>10%</good>.
 type|insulatedengine|FRIGATE|2	1	<bad>50%</bad> less sensor profile.
-type|insulatedengine|FRIGATE|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Insulated Engine Assembly.
+type-detail|insulatedengine|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Insulated Engine Assembly.
 type|insulatedengine|DESTROYER|0	0	Increases engine durability by <good>60%</good>.
 type|insulatedengine|DESTROYER|1	0	Increases hull points by <good>10%</good>.
 type|insulatedengine|DESTROYER|2	1	<bad>50%</bad> less sensor profile.
-type|insulatedengine|DESTROYER|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Insulated Engine Assembly.
+type-detail|insulatedengine|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Insulated Engine Assembly.
 type|insulatedengine|CRUISER|0	0	Increases engine durability by <good>60%</good>.
 type|insulatedengine|CRUISER|1	0	Increases hull points by <good>10%</good>.
 type|insulatedengine|CRUISER|2	1	<bad>50%</bad> less sensor profile.
-type|insulatedengine|CRUISER|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Insulated Engine Assembly.
+type-detail|insulatedengine|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Insulated Engine Assembly.
 type|insulatedengine|CAPITAL_SHIP|0	0	Increases engine durability by <good>60%</good>.
 type|insulatedengine|CAPITAL_SHIP|1	0	Increases hull points by <good>10%</good>.
 type|insulatedengine|CAPITAL_SHIP|2	1	<bad>50%</bad> less sensor profile.
-type|insulatedengine|CAPITAL_SHIP|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Insulated Engine Assembly.
+type-detail|insulatedengine|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Insulated Engine Assembly.
 type|less_energy_damage_taken|null|0	1	Decreases energy damage taken, including hits on shields, armor, and hull by <bad>5%</bad>.
 type|less_energy_damage_taken|FRIGATE|0	1	Decreases energy damage taken, including hits on shields, armor, and hull by <bad>5%</bad>.
 type|less_energy_damage_taken|DESTROYER|0	1	Decreases energy damage taken, including hits on shields, armor, and hull by <bad>5%</bad>.
@@ -2813,19 +2813,19 @@ type|machine_precision|CAPITAL_SHIP|2	0	Increases ballistic weapon range by <goo
 type|machine_precision|CAPITAL_SHIP|3	0	Increases beam weapon range by <good>5%</good>.
 type|magazines|null|0	0	Increases ballistic weapon ammo capacity by <good>50%</good>.
 type|magazines|null|1	0	Increases energy weapon ammo capacity by <good>50%</good>.
-type|magazines|null|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Magazines.
+type-detail|magazines|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Magazines.
 type|magazines|FRIGATE|0	0	Increases ballistic weapon ammo capacity by <good>50%</good>.
 type|magazines|FRIGATE|1	0	Increases energy weapon ammo capacity by <good>50%</good>.
-type|magazines|FRIGATE|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Magazines.
+type-detail|magazines|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Magazines.
 type|magazines|DESTROYER|0	0	Increases ballistic weapon ammo capacity by <good>50%</good>.
 type|magazines|DESTROYER|1	0	Increases energy weapon ammo capacity by <good>50%</good>.
-type|magazines|DESTROYER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Magazines.
+type-detail|magazines|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Magazines.
 type|magazines|CRUISER|0	0	Increases ballistic weapon ammo capacity by <good>50%</good>.
 type|magazines|CRUISER|1	0	Increases energy weapon ammo capacity by <good>50%</good>.
-type|magazines|CRUISER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Magazines.
+type-detail|magazines|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Magazines.
 type|magazines|CAPITAL_SHIP|0	0	Increases ballistic weapon ammo capacity by <good>50%</good>.
 type|magazines|CAPITAL_SHIP|1	0	Increases energy weapon ammo capacity by <good>50%</good>.
-type|magazines|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Magazines.
+type-detail|magazines|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Magazines.
 type|maneuverability_percent|null|0	0	Increases maneuverability by <good>25%</good>.
 type|maneuverability_percent|FRIGATE|0	0	Increases maneuverability by <good>25%</good>.
 type|maneuverability_percent|DESTROYER|0	0	Increases maneuverability by <good>25%</good>.
@@ -2834,38 +2834,38 @@ type|maneuverability_percent|CAPITAL_SHIP|0	0	Increases maneuverability by <good
 type|militarized_subsystems|null|0	0	Removes the penalties of a civilian-grade hull.
 type|militarized_subsystems|null|1	0	Increases max burn level by <good>1</good>.
 type|militarized_subsystems|null|2	1	Increases minimum crew required by <good>100%</good>.
-type|militarized_subsystems|null|3	0	Can only be allocated on civilian-grade hulls.
-type|militarized_subsystems|null|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Militarized Subsystems.
+type-detail|militarized_subsystems|null|0	0	Can only be allocated on civilian-grade hulls.
+type-detail|militarized_subsystems|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Militarized Subsystems.
 type|militarized_subsystems|FRIGATE|0	0	Removes the penalties of a civilian-grade hull.
 type|militarized_subsystems|FRIGATE|1	0	Increases max burn level by <good>1</good>.
 type|militarized_subsystems|FRIGATE|2	1	Increases minimum crew required by <good>100%</good>.
-type|militarized_subsystems|FRIGATE|3	0	Can only be allocated on civilian-grade hulls.
-type|militarized_subsystems|FRIGATE|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Militarized Subsystems.
+type-detail|militarized_subsystems|FRIGATE|0	0	Can only be allocated on civilian-grade hulls.
+type-detail|militarized_subsystems|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Militarized Subsystems.
 type|militarized_subsystems|DESTROYER|0	0	Removes the penalties of a civilian-grade hull.
 type|militarized_subsystems|DESTROYER|1	0	Increases max burn level by <good>1</good>.
 type|militarized_subsystems|DESTROYER|2	1	Increases minimum crew required by <good>100%</good>.
-type|militarized_subsystems|DESTROYER|3	0	Can only be allocated on civilian-grade hulls.
-type|militarized_subsystems|DESTROYER|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Militarized Subsystems.
+type-detail|militarized_subsystems|DESTROYER|0	0	Can only be allocated on civilian-grade hulls.
+type-detail|militarized_subsystems|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Militarized Subsystems.
 type|militarized_subsystems|CRUISER|0	0	Removes the penalties of a civilian-grade hull.
 type|militarized_subsystems|CRUISER|1	0	Increases max burn level by <good>1</good>.
 type|militarized_subsystems|CRUISER|2	1	Increases minimum crew required by <good>100%</good>.
-type|militarized_subsystems|CRUISER|3	0	Can only be allocated on civilian-grade hulls.
-type|militarized_subsystems|CRUISER|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Militarized Subsystems.
+type-detail|militarized_subsystems|CRUISER|0	0	Can only be allocated on civilian-grade hulls.
+type-detail|militarized_subsystems|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Militarized Subsystems.
 type|militarized_subsystems|CAPITAL_SHIP|0	0	Removes the penalties of a civilian-grade hull.
 type|militarized_subsystems|CAPITAL_SHIP|1	0	Increases max burn level by <good>1</good>.
 type|militarized_subsystems|CAPITAL_SHIP|2	1	Increases minimum crew required by <good>100%</good>.
-type|militarized_subsystems|CAPITAL_SHIP|3	0	Can only be allocated on civilian-grade hulls.
-type|militarized_subsystems|CAPITAL_SHIP|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Militarized Subsystems.
+type-detail|militarized_subsystems|CAPITAL_SHIP|0	0	Can only be allocated on civilian-grade hulls.
+type-detail|militarized_subsystems|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Militarized Subsystems.
 type|missile_autoloader|null|0	0	Grants a limited number of automatic reloads to missile weapons in small missile mounts, drawn from a shared capacity pool that depends on hull size and mount count.
-type|missile_autoloader|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Missile Autoloader.
+type-detail|missile_autoloader|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Missile Autoloader.
 type|missile_autoloader|FRIGATE|0	0	Grants a limited number of automatic reloads to missile weapons in small missile mounts, drawn from a shared capacity pool that depends on hull size and mount count.
-type|missile_autoloader|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Missile Autoloader.
+type-detail|missile_autoloader|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Missile Autoloader.
 type|missile_autoloader|DESTROYER|0	0	Grants a limited number of automatic reloads to missile weapons in small missile mounts, drawn from a shared capacity pool that depends on hull size and mount count.
-type|missile_autoloader|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Missile Autoloader.
+type-detail|missile_autoloader|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Missile Autoloader.
 type|missile_autoloader|CRUISER|0	0	Grants a limited number of automatic reloads to missile weapons in small missile mounts, drawn from a shared capacity pool that depends on hull size and mount count.
-type|missile_autoloader|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Missile Autoloader.
+type-detail|missile_autoloader|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Missile Autoloader.
 type|missile_autoloader|CAPITAL_SHIP|0	0	Grants a limited number of automatic reloads to missile weapons in small missile mounts, drawn from a shared capacity pool that depends on hull size and mount count.
-type|missile_autoloader|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Missile Autoloader.
+type-detail|missile_autoloader|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Missile Autoloader.
 type|missile_damage|null|0	0	Increases missile weapon damage by <good>3%</good>.
 type|missile_damage|FRIGATE|0	0	Increases missile weapon damage by <good>3%</good>.
 type|missile_damage|DESTROYER|0	0	Increases missile weapon damage by <good>3%</good>.
@@ -2878,43 +2878,43 @@ type|missile_top_speed|CRUISER|0	0	Increases missile weapon projectile speed by 
 type|missile_top_speed|CAPITAL_SHIP|0	0	Increases missile weapon projectile speed by <good>5%</good>.
 type|missleracks|null|0	0	Increases missile weapon ammo capacity by <good>100%</good>.
 type|missleracks|null|1	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
-type|missleracks|null|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Missile Racks.
+type-detail|missleracks|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Missile Racks.
 type|missleracks|FRIGATE|0	0	Increases missile weapon ammo capacity by <good>100%</good>.
 type|missleracks|FRIGATE|1	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
-type|missleracks|FRIGATE|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Missile Racks.
+type-detail|missleracks|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Missile Racks.
 type|missleracks|DESTROYER|0	0	Increases missile weapon ammo capacity by <good>100%</good>.
 type|missleracks|DESTROYER|1	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
-type|missleracks|DESTROYER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Missile Racks.
+type-detail|missleracks|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Missile Racks.
 type|missleracks|CRUISER|0	0	Increases missile weapon ammo capacity by <good>100%</good>.
 type|missleracks|CRUISER|1	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
-type|missleracks|CRUISER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Missile Racks.
+type-detail|missleracks|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Missile Racks.
 type|missleracks|CAPITAL_SHIP|0	0	Increases missile weapon ammo capacity by <good>100%</good>.
 type|missleracks|CAPITAL_SHIP|1	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
-type|missleracks|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Missile Racks.
+type-detail|missleracks|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Expanded Missile Racks.
 type|nanoforge_mending|null|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 type|nanoforge_mending|FRIGATE|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 type|nanoforge_mending|DESTROYER|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 type|nanoforge_mending|CRUISER|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 type|nanoforge_mending|CAPITAL_SHIP|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
-type|nav_relay|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Nav Relay.
+type-detail|nav_relay|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Nav Relay.
 type|nav_relay|FRIGATE|0	0	Increases fleet nav rating by <good>2</good>.
-type|nav_relay|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Nav Relay.
+type-detail|nav_relay|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Nav Relay.
 type|nav_relay|DESTROYER|0	0	Increases fleet nav rating by <good>3</good>.
-type|nav_relay|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Nav Relay.
+type-detail|nav_relay|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Nav Relay.
 type|nav_relay|CRUISER|0	0	Increases fleet nav rating by <good>4</good>.
-type|nav_relay|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Nav Relay.
+type-detail|nav_relay|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Nav Relay.
 type|nav_relay|CAPITAL_SHIP|0	0	Increases fleet nav rating by <good>5</good>.
-type|nav_relay|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Nav Relay.
+type-detail|nav_relay|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Nav Relay.
 type|neural_interface|null|0	0	Links this ship with the flagship, allowing the player to instantly switch which ship they are piloting without using a shuttle pod. Transferring resets the destination ship's system cooldown and adds a charge. The transfer is instant if the combined deployment points of both ships are low enough; otherwise a short transfer time applies. The destination ship must not be under the command of an officer or an AI core.
-type|neural_interface|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Neural Interface.
+type-detail|neural_interface|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Neural Interface.
 type|neural_interface|FRIGATE|0	0	Links this ship with the flagship, allowing the player to instantly switch which ship they are piloting without using a shuttle pod. Transferring resets the destination ship's system cooldown and adds a charge. The transfer is instant if the combined deployment points of both ships are low enough; otherwise a short transfer time applies. The destination ship must not be under the command of an officer or an AI core.
-type|neural_interface|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Neural Interface.
+type-detail|neural_interface|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Neural Interface.
 type|neural_interface|DESTROYER|0	0	Links this ship with the flagship, allowing the player to instantly switch which ship they are piloting without using a shuttle pod. Transferring resets the destination ship's system cooldown and adds a charge. The transfer is instant if the combined deployment points of both ships are low enough; otherwise a short transfer time applies. The destination ship must not be under the command of an officer or an AI core.
-type|neural_interface|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Neural Interface.
+type-detail|neural_interface|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Neural Interface.
 type|neural_interface|CRUISER|0	0	Links this ship with the flagship, allowing the player to instantly switch which ship they are piloting without using a shuttle pod. Transferring resets the destination ship's system cooldown and adds a charge. The transfer is instant if the combined deployment points of both ships are low enough; otherwise a short transfer time applies. The destination ship must not be under the command of an officer or an AI core.
-type|neural_interface|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Neural Interface.
+type-detail|neural_interface|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Neural Interface.
 type|neural_interface|CAPITAL_SHIP|0	0	Links this ship with the flagship, allowing the player to instantly switch which ship they are piloting without using a shuttle pod. Transferring resets the destination ship's system cooldown and adds a charge. The transfer is instant if the combined deployment points of both ships are low enough; otherwise a short transfer time applies. The destination ship must not be under the command of an officer or an AI core.
-type|neural_interface|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Neural Interface.
+type-detail|neural_interface|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Neural Interface.
 type|non_beam_energy_damage|null|0	0	Increases non-beam energy weapon damage by <good>3%</good>.
 type|non_beam_energy_damage|FRIGATE|0	0	Increases non-beam energy weapon damage by <good>3%</good>.
 type|non_beam_energy_damage|DESTROYER|0	0	Increases non-beam energy weapon damage by <good>3%</good>.
@@ -2922,94 +2922,94 @@ type|non_beam_energy_damage|CRUISER|0	0	Increases non-beam energy weapon damage 
 type|non_beam_energy_damage|CAPITAL_SHIP|0	0	Increases non-beam energy weapon damage by <good>3%</good>.
 type|nskr_absorption|null|0	0	Extensive hull modifications enable this ship to absorb energy from incoming fire and redirect it to its weapon systems.
 type|nskr_absorption|null|1	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
-type|nskr_absorption|null|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: ABSORB System.
+type-detail|nskr_absorption|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: ABSORB System.
 type|nskr_absorption|FRIGATE|0	0	Extensive hull modifications enable this ship to absorb energy from incoming fire and redirect it to its weapon systems.
 type|nskr_absorption|FRIGATE|1	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
-type|nskr_absorption|FRIGATE|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: ABSORB System.
+type-detail|nskr_absorption|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: ABSORB System.
 type|nskr_absorption|DESTROYER|0	0	Extensive hull modifications enable this ship to absorb energy from incoming fire and redirect it to its weapon systems.
 type|nskr_absorption|DESTROYER|1	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
-type|nskr_absorption|DESTROYER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: ABSORB System.
+type-detail|nskr_absorption|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: ABSORB System.
 type|nskr_absorption|CRUISER|0	0	Extensive hull modifications enable this ship to absorb energy from incoming fire and redirect it to its weapon systems.
 type|nskr_absorption|CRUISER|1	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
-type|nskr_absorption|CRUISER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: ABSORB System.
+type-detail|nskr_absorption|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: ABSORB System.
 type|nskr_absorption|CAPITAL_SHIP|0	0	Extensive hull modifications enable this ship to absorb energy from incoming fire and redirect it to its weapon systems.
 type|nskr_absorption|CAPITAL_SHIP|1	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
-type|nskr_absorption|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: ABSORB System.
+type-detail|nskr_absorption|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: ABSORB System.
 type|nskr_acoils|null|0	0	Increases the base range of weapons in medium energy slots by <good>100</good>.
 type|nskr_acoils|null|1	1	Decreases energy weapon flux cost by <bad>10%</bad>.
-type|nskr_acoils|null|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: High-Energy Weapon Systems.
+type-detail|nskr_acoils|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: High-Energy Weapon Systems.
 type|nskr_acoils|FRIGATE|0	0	Increases the base range of weapons in medium energy slots by <good>100</good>.
 type|nskr_acoils|FRIGATE|1	1	Decreases energy weapon flux cost by <bad>10%</bad>.
-type|nskr_acoils|FRIGATE|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: High-Energy Weapon Systems.
+type-detail|nskr_acoils|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: High-Energy Weapon Systems.
 type|nskr_acoils|DESTROYER|0	0	Increases the base range of weapons in medium energy slots by <good>100</good>.
 type|nskr_acoils|DESTROYER|1	1	Decreases energy weapon flux cost by <bad>10%</bad>.
-type|nskr_acoils|DESTROYER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: High-Energy Weapon Systems.
+type-detail|nskr_acoils|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: High-Energy Weapon Systems.
 type|nskr_acoils|CRUISER|0	0	Increases the base range of weapons in medium energy slots by <good>100</good>.
 type|nskr_acoils|CRUISER|1	1	Decreases energy weapon flux cost by <bad>10%</bad>.
-type|nskr_acoils|CRUISER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: High-Energy Weapon Systems.
+type-detail|nskr_acoils|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: High-Energy Weapon Systems.
 type|nskr_acoils|CAPITAL_SHIP|0	0	Increases the base range of weapons in medium energy slots by <good>100</good>.
 type|nskr_acoils|CAPITAL_SHIP|1	1	Decreases energy weapon flux cost by <bad>10%</bad>.
-type|nskr_acoils|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: High-Energy Weapon Systems.
+type-detail|nskr_acoils|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: High-Energy Weapon Systems.
 type|nskr_bigBats|null|0	0	Massive reserves of spare power give the ship's systems extra charges, including systems in the defense slot.
 type|nskr_bigBats|null|1	0	Increases ship system charges by <good>1</good>.
 type|nskr_bigBats|null|2	0	On hulls with Augmented Systems, ship system charges regenerate <good>10%</good> faster.
-type|nskr_bigBats|null|3	0	Can only be allocated on ships whose ship system or defense system uses charges.
-type|nskr_bigBats|null|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: High Capacitance Banks.
+type-detail|nskr_bigBats|null|0	0	Can only be allocated on ships whose ship system or defense system uses charges.
+type-detail|nskr_bigBats|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: High Capacitance Banks.
 type|nskr_bigBats|FRIGATE|0	0	Massive reserves of spare power give the ship's systems extra charges, including systems in the defense slot.
 type|nskr_bigBats|FRIGATE|1	0	Increases ship system charges by <good>1</good>.
 type|nskr_bigBats|FRIGATE|2	0	On hulls with Augmented Systems, ship system charges regenerate <good>10%</good> faster.
-type|nskr_bigBats|FRIGATE|3	0	Can only be allocated on ships whose ship system or defense system uses charges.
-type|nskr_bigBats|FRIGATE|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: High Capacitance Banks.
+type-detail|nskr_bigBats|FRIGATE|0	0	Can only be allocated on ships whose ship system or defense system uses charges.
+type-detail|nskr_bigBats|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: High Capacitance Banks.
 type|nskr_bigBats|DESTROYER|0	0	Massive reserves of spare power give the ship's systems extra charges, including systems in the defense slot.
 type|nskr_bigBats|DESTROYER|1	0	Increases ship system charges by <good>1</good>.
 type|nskr_bigBats|DESTROYER|2	0	On hulls with Augmented Systems, ship system charges regenerate <good>10%</good> faster.
-type|nskr_bigBats|DESTROYER|3	0	Can only be allocated on ships whose ship system or defense system uses charges.
-type|nskr_bigBats|DESTROYER|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: High Capacitance Banks.
+type-detail|nskr_bigBats|DESTROYER|0	0	Can only be allocated on ships whose ship system or defense system uses charges.
+type-detail|nskr_bigBats|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: High Capacitance Banks.
 type|nskr_bigBats|CRUISER|0	0	Massive reserves of spare power give the ship's systems extra charges, including systems in the defense slot.
 type|nskr_bigBats|CRUISER|1	0	Increases ship system charges by <good>1</good>.
 type|nskr_bigBats|CRUISER|2	0	On hulls with Augmented Systems, ship system charges regenerate <good>10%</good> faster.
-type|nskr_bigBats|CRUISER|3	0	Can only be allocated on ships whose ship system or defense system uses charges.
-type|nskr_bigBats|CRUISER|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: High Capacitance Banks.
+type-detail|nskr_bigBats|CRUISER|0	0	Can only be allocated on ships whose ship system or defense system uses charges.
+type-detail|nskr_bigBats|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: High Capacitance Banks.
 type|nskr_bigBats|CAPITAL_SHIP|0	0	Massive reserves of spare power give the ship's systems extra charges, including systems in the defense slot.
 type|nskr_bigBats|CAPITAL_SHIP|1	0	Increases ship system charges by <good>1</good>.
 type|nskr_bigBats|CAPITAL_SHIP|2	0	On hulls with Augmented Systems, ship system charges regenerate <good>10%</good> faster.
-type|nskr_bigBats|CAPITAL_SHIP|3	0	Can only be allocated on ships whose ship system or defense system uses charges.
-type|nskr_bigBats|CAPITAL_SHIP|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: High Capacitance Banks.
+type-detail|nskr_bigBats|CAPITAL_SHIP|0	0	Can only be allocated on ships whose ship system or defense system uses charges.
+type-detail|nskr_bigBats|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: High Capacitance Banks.
 type|nskr_criticalArmor|null|0	0	The defenses of lightly armored ships can be significantly reinforced through targeted modifications to critical structural components.
 type|nskr_criticalArmor|null|1	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
-type|nskr_criticalArmor|null|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Heavy Armor, Hel Carapace, Hel Plating, Critical Point Protection.
+type-detail|nskr_criticalArmor|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Heavy Armor, Hel Carapace, Hel Plating, Critical Point Protection.
 type|nskr_criticalArmor|FRIGATE|0	0	The defenses of lightly armored ships can be significantly reinforced through targeted modifications to critical structural components.
 type|nskr_criticalArmor|FRIGATE|1	0	Increases armor by up to <good>400</good>. Hulls with less base armor gain more: the bonus falls to <good>150</good> at <hl>400</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
-type|nskr_criticalArmor|FRIGATE|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Heavy Armor, Hel Carapace, Hel Plating, Critical Point Protection.
+type-detail|nskr_criticalArmor|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Heavy Armor, Hel Carapace, Hel Plating, Critical Point Protection.
 type|nskr_criticalArmor|DESTROYER|0	0	The defenses of lightly armored ships can be significantly reinforced through targeted modifications to critical structural components.
 type|nskr_criticalArmor|DESTROYER|1	0	Increases armor by up to <good>700</good>. Hulls with less base armor gain more: the bonus falls to <good>300</good> at <hl>700</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
-type|nskr_criticalArmor|DESTROYER|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Heavy Armor, Hel Carapace, Hel Plating, Critical Point Protection.
+type-detail|nskr_criticalArmor|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Heavy Armor, Hel Carapace, Hel Plating, Critical Point Protection.
 type|nskr_criticalArmor|CRUISER|0	0	The defenses of lightly armored ships can be significantly reinforced through targeted modifications to critical structural components.
 type|nskr_criticalArmor|CRUISER|1	0	Increases armor by up to <good>900</good>. Hulls with less base armor gain more: the bonus falls to <good>400</good> at <hl>900</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
-type|nskr_criticalArmor|CRUISER|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Heavy Armor, Hel Carapace, Hel Plating, Critical Point Protection.
+type-detail|nskr_criticalArmor|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Heavy Armor, Hel Carapace, Hel Plating, Critical Point Protection.
 type|nskr_criticalArmor|CAPITAL_SHIP|0	0	The defenses of lightly armored ships can be significantly reinforced through targeted modifications to critical structural components.
 type|nskr_criticalArmor|CAPITAL_SHIP|1	0	Increases armor by up to <good>1200</good>. Hulls with less base armor gain more: the bonus falls to <good>500</good> at <hl>1200</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
-type|nskr_criticalArmor|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Heavy Armor, Hel Carapace, Hel Plating, Critical Point Protection.
+type-detail|nskr_criticalArmor|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Heavy Armor, Hel Carapace, Hel Plating, Critical Point Protection.
 type|nskr_inertial|null|0	0	The ship's projectile weapons are supercharged, hitting harder the faster the ship moves.
 type|nskr_inertial|null|1	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
 type|nskr_inertial|null|2	0	On hulls with Augmented Systems, projectile speed also rises by <good>100%</good> of the speed-based damage bonus.
-type|nskr_inertial|null|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Inertial Supercharger.
+type-detail|nskr_inertial|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Inertial Supercharger.
 type|nskr_inertial|FRIGATE|0	0	The ship's projectile weapons are supercharged, hitting harder the faster the ship moves.
 type|nskr_inertial|FRIGATE|1	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
 type|nskr_inertial|FRIGATE|2	0	On hulls with Augmented Systems, projectile speed also rises by <good>100%</good> of the speed-based damage bonus.
-type|nskr_inertial|FRIGATE|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Inertial Supercharger.
+type-detail|nskr_inertial|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Inertial Supercharger.
 type|nskr_inertial|DESTROYER|0	0	The ship's projectile weapons are supercharged, hitting harder the faster the ship moves.
 type|nskr_inertial|DESTROYER|1	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
 type|nskr_inertial|DESTROYER|2	0	On hulls with Augmented Systems, projectile speed also rises by <good>100%</good> of the speed-based damage bonus.
-type|nskr_inertial|DESTROYER|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Inertial Supercharger.
+type-detail|nskr_inertial|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Inertial Supercharger.
 type|nskr_inertial|CRUISER|0	0	The ship's projectile weapons are supercharged, hitting harder the faster the ship moves.
 type|nskr_inertial|CRUISER|1	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
 type|nskr_inertial|CRUISER|2	0	On hulls with Augmented Systems, projectile speed also rises by <good>100%</good> of the speed-based damage bonus.
-type|nskr_inertial|CRUISER|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Inertial Supercharger.
+type-detail|nskr_inertial|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Inertial Supercharger.
 type|nskr_inertial|CAPITAL_SHIP|0	0	The ship's projectile weapons are supercharged, hitting harder the faster the ship moves.
 type|nskr_inertial|CAPITAL_SHIP|1	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
 type|nskr_inertial|CAPITAL_SHIP|2	0	On hulls with Augmented Systems, projectile speed also rises by <good>100%</good> of the speed-based damage bonus.
-type|nskr_inertial|CAPITAL_SHIP|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Inertial Supercharger.
+type-detail|nskr_inertial|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Inertial Supercharger.
 type|nskr_volatile|null|0	0	Modifications to the ship's flux network boost speed and rate of fire while flux is low, but reduce both once flux passes half capacity.
 type|nskr_volatile|null|1	0	Weapon rate of fire changes with flux, from <good>+40%</good> at no flux to <bad>-40%</bad> at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
 type|nskr_volatile|null|2	0	Increases flux capacity by <good>67%</good>.
@@ -3018,8 +3018,8 @@ type|nskr_volatile|null|4	0	Increases range before falloff effectiveness applies
 type|nskr_volatile|null|5	0	<bad>50%</bad> less weapon effectiveness past normal range.
 type|nskr_volatile|null|6	0	<bad>75%</bad> less fighter engagement range.
 type|nskr_volatile|null|7	0	On hulls with Augmented Systems, the high-flux top speed and rate of fire penalties are <good>50%</good> smaller.
-type|nskr_volatile|null|8	0	Can't be allocated on phase ships.
-type|nskr_volatile|null|9	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Safety Overrides, Volatile Flux Injector.
+type-detail|nskr_volatile|null|0	0	Can't be allocated on phase ships.
+type-detail|nskr_volatile|null|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Safety Overrides, Volatile Flux Injector.
 type|nskr_volatile|FRIGATE|0	0	Modifications to the ship's flux network boost speed and rate of fire while flux is low, but reduce both once flux passes half capacity.
 type|nskr_volatile|FRIGATE|1	0	Weapon rate of fire changes with flux, from <good>+40%</good> at no flux to <bad>-40%</bad> at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
 type|nskr_volatile|FRIGATE|2	0	Increases flux capacity by <good>67%</good>.
@@ -3029,8 +3029,8 @@ type|nskr_volatile|FRIGATE|5	0	<bad>50%</bad> less weapon effectiveness past nor
 type|nskr_volatile|FRIGATE|6	0	<bad>75%</bad> less fighter engagement range.
 type|nskr_volatile|FRIGATE|7	0	On hulls with Augmented Systems, the high-flux top speed and rate of fire penalties are <good>50%</good> smaller.
 type|nskr_volatile|FRIGATE|8	0	Top speed changes with flux, from <good>+50</good> su/s at no flux to <bad>-50</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>50%</good>.
-type|nskr_volatile|FRIGATE|9	0	Can't be allocated on phase ships.
-type|nskr_volatile|FRIGATE|10	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Safety Overrides, Volatile Flux Injector.
+type-detail|nskr_volatile|FRIGATE|0	0	Can't be allocated on phase ships.
+type-detail|nskr_volatile|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Safety Overrides, Volatile Flux Injector.
 type|nskr_volatile|DESTROYER|0	0	Modifications to the ship's flux network boost speed and rate of fire while flux is low, but reduce both once flux passes half capacity.
 type|nskr_volatile|DESTROYER|1	0	Weapon rate of fire changes with flux, from <good>+40%</good> at no flux to <bad>-40%</bad> at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
 type|nskr_volatile|DESTROYER|2	0	Increases flux capacity by <good>67%</good>.
@@ -3040,8 +3040,8 @@ type|nskr_volatile|DESTROYER|5	0	<bad>50%</bad> less weapon effectiveness past n
 type|nskr_volatile|DESTROYER|6	0	<bad>75%</bad> less fighter engagement range.
 type|nskr_volatile|DESTROYER|7	0	On hulls with Augmented Systems, the high-flux top speed and rate of fire penalties are <good>50%</good> smaller.
 type|nskr_volatile|DESTROYER|8	0	Top speed changes with flux, from <good>+40</good> su/s at no flux to <bad>-40</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>40%</good>.
-type|nskr_volatile|DESTROYER|9	0	Can't be allocated on phase ships.
-type|nskr_volatile|DESTROYER|10	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Safety Overrides, Volatile Flux Injector.
+type-detail|nskr_volatile|DESTROYER|0	0	Can't be allocated on phase ships.
+type-detail|nskr_volatile|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Safety Overrides, Volatile Flux Injector.
 type|nskr_volatile|CRUISER|0	0	Modifications to the ship's flux network boost speed and rate of fire while flux is low, but reduce both once flux passes half capacity.
 type|nskr_volatile|CRUISER|1	0	Weapon rate of fire changes with flux, from <good>+40%</good> at no flux to <bad>-40%</bad> at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
 type|nskr_volatile|CRUISER|2	0	Increases flux capacity by <good>67%</good>.
@@ -3051,8 +3051,8 @@ type|nskr_volatile|CRUISER|5	0	<bad>50%</bad> less weapon effectiveness past nor
 type|nskr_volatile|CRUISER|6	0	<bad>75%</bad> less fighter engagement range.
 type|nskr_volatile|CRUISER|7	0	On hulls with Augmented Systems, the high-flux top speed and rate of fire penalties are <good>50%</good> smaller.
 type|nskr_volatile|CRUISER|8	0	Top speed changes with flux, from <good>+30</good> su/s at no flux to <bad>-30</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>30%</good>.
-type|nskr_volatile|CRUISER|9	0	Can't be allocated on phase ships.
-type|nskr_volatile|CRUISER|10	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Safety Overrides, Volatile Flux Injector.
+type-detail|nskr_volatile|CRUISER|0	0	Can't be allocated on phase ships.
+type-detail|nskr_volatile|CRUISER|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Safety Overrides, Volatile Flux Injector.
 type|nskr_volatile|CAPITAL_SHIP|0	0	Modifications to the ship's flux network boost speed and rate of fire while flux is low, but reduce both once flux passes half capacity.
 type|nskr_volatile|CAPITAL_SHIP|1	0	Weapon rate of fire changes with flux, from <good>+40%</good> at no flux to <bad>-40%</bad> at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
 type|nskr_volatile|CAPITAL_SHIP|2	0	Increases flux capacity by <good>67%</good>.
@@ -3062,23 +3062,23 @@ type|nskr_volatile|CAPITAL_SHIP|5	0	<bad>50%</bad> less weapon effectiveness pas
 type|nskr_volatile|CAPITAL_SHIP|6	0	<bad>75%</bad> less fighter engagement range.
 type|nskr_volatile|CAPITAL_SHIP|7	0	On hulls with Augmented Systems, the high-flux top speed and rate of fire penalties are <good>50%</good> smaller.
 type|nskr_volatile|CAPITAL_SHIP|8	0	Top speed changes with flux, from <good>+20</good> su/s at no flux to <bad>-20</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>20%</good>.
-type|nskr_volatile|CAPITAL_SHIP|9	0	Can't be allocated on phase ships.
-type|nskr_volatile|CAPITAL_SHIP|10	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Safety Overrides, Volatile Flux Injector.
+type-detail|nskr_volatile|CAPITAL_SHIP|0	0	Can't be allocated on phase ships.
+type-detail|nskr_volatile|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Safety Overrides, Volatile Flux Injector.
 type|objective_capture_range|null|0	0	Increases range from which combat objectives can be captured by <good>35</good>.
 type|objective_capture_range|FRIGATE|0	0	Increases range from which combat objectives can be captured by <good>35</good>.
 type|objective_capture_range|DESTROYER|0	0	Increases range from which combat objectives can be captured by <good>35</good>.
 type|objective_capture_range|CRUISER|0	0	Increases range from which combat objectives can be captured by <good>35</good>.
 type|objective_capture_range|CAPITAL_SHIP|0	0	Increases range from which combat objectives can be captured by <good>35</good>.
 type|operations_center|null|0	0	Increases command point recovery rate while this ship is the flagship by <good>2.5</good>.
-type|operations_center|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Operations Center.
+type-detail|operations_center|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Operations Center.
 type|operations_center|FRIGATE|0	0	Increases command point recovery rate while this ship is the flagship by <good>2.5</good>.
-type|operations_center|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Operations Center.
+type-detail|operations_center|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Operations Center.
 type|operations_center|DESTROYER|0	0	Increases command point recovery rate while this ship is the flagship by <good>2.5</good>.
-type|operations_center|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Operations Center.
+type-detail|operations_center|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Operations Center.
 type|operations_center|CRUISER|0	0	Increases command point recovery rate while this ship is the flagship by <good>2.5</good>.
-type|operations_center|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Operations Center.
+type-detail|operations_center|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Operations Center.
 type|operations_center|CAPITAL_SHIP|0	0	Increases command point recovery rate while this ship is the flagship by <good>2.5</good>.
-type|operations_center|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Operations Center.
+type-detail|operations_center|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Operations Center.
 type|optimised_lenses|null|0	0	Increases non-beam energy weapon range by <good>100</good>.
 type|optimised_lenses|FRIGATE|0	0	Increases non-beam energy weapon range by <good>100</good>.
 type|optimised_lenses|FRIGATE|1	0	Increases in-combat sensor/vision range by <good>400</good>.
@@ -3116,58 +3116,58 @@ type|perseverence_through_faith|CAPITAL_SHIP|0	0	<good>2%</good> more weapon dam
 type|phase_anchor|null|0	1	<bad>100%</bad> less phase cloak activation cost.
 type|phase_anchor|null|1	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 type|phase_anchor|null|2	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
-type|phase_anchor|null|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Adaptive Phase Coils, Phase Anchor.
+type-detail|phase_anchor|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Adaptive Phase Coils, Phase Anchor.
 type|phase_anchor|FRIGATE|0	1	<bad>100%</bad> less phase cloak activation cost.
 type|phase_anchor|FRIGATE|1	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 type|phase_anchor|FRIGATE|2	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
-type|phase_anchor|FRIGATE|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Adaptive Phase Coils, Phase Anchor.
+type-detail|phase_anchor|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Adaptive Phase Coils, Phase Anchor.
 type|phase_anchor|DESTROYER|0	1	<bad>100%</bad> less phase cloak activation cost.
 type|phase_anchor|DESTROYER|1	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 type|phase_anchor|DESTROYER|2	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
-type|phase_anchor|DESTROYER|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Adaptive Phase Coils, Phase Anchor.
+type-detail|phase_anchor|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Adaptive Phase Coils, Phase Anchor.
 type|phase_anchor|CRUISER|0	1	<bad>100%</bad> less phase cloak activation cost.
 type|phase_anchor|CRUISER|1	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 type|phase_anchor|CRUISER|2	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
-type|phase_anchor|CRUISER|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Adaptive Phase Coils, Phase Anchor.
+type-detail|phase_anchor|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Adaptive Phase Coils, Phase Anchor.
 type|phase_anchor|CAPITAL_SHIP|0	1	<bad>100%</bad> less phase cloak activation cost.
 type|phase_anchor|CAPITAL_SHIP|1	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 type|phase_anchor|CAPITAL_SHIP|2	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
-type|phase_anchor|CAPITAL_SHIP|3	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Adaptive Phase Coils, Phase Anchor.
+type-detail|phase_anchor|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Adaptive Phase Coils, Phase Anchor.
 type|phase_cloak_flux_threshold|null|0	0	Increases hard flux threshold before phase speed penalty kicks in by <good>10%</good>.
 type|phase_cloak_flux_threshold|FRIGATE|0	0	Increases hard flux threshold before phase speed penalty kicks in by <good>10%</good>.
 type|phase_cloak_flux_threshold|DESTROYER|0	0	Increases hard flux threshold before phase speed penalty kicks in by <good>10%</good>.
 type|phase_cloak_flux_threshold|CRUISER|0	0	Increases hard flux threshold before phase speed penalty kicks in by <good>10%</good>.
 type|phase_cloak_flux_threshold|CAPITAL_SHIP|0	0	Increases hard flux threshold before phase speed penalty kicks in by <good>10%</good>.
 type|phase_sensor_upgrades|null|0	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-type|phase_sensor_upgrades|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Phase Field.
+type-detail|phase_sensor_upgrades|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Phase Field.
 type|phase_sensor_upgrades|FRIGATE|0	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-type|phase_sensor_upgrades|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Phase Field.
+type-detail|phase_sensor_upgrades|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Phase Field.
 type|phase_sensor_upgrades|DESTROYER|0	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-type|phase_sensor_upgrades|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Phase Field.
+type-detail|phase_sensor_upgrades|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Phase Field.
 type|phase_sensor_upgrades|CRUISER|0	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-type|phase_sensor_upgrades|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Phase Field.
+type-detail|phase_sensor_upgrades|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Phase Field.
 type|phase_sensor_upgrades|CAPITAL_SHIP|0	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-type|phase_sensor_upgrades|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Phase Field.
+type-detail|phase_sensor_upgrades|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Phase Field.
 type|pointdefenseai|null|0	0	Point-defense weapons can identify and ignore decoy flares.
 type|pointdefenseai|null|1	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
 type|pointdefenseai|null|2	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-type|pointdefenseai|null|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Integrated Point Defense AI.
+type-detail|pointdefenseai|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Integrated Point Defense AI.
 type|pointdefenseai|FRIGATE|0	0	Point-defense weapons can identify and ignore decoy flares.
 type|pointdefenseai|FRIGATE|1	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
 type|pointdefenseai|FRIGATE|2	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-type|pointdefenseai|FRIGATE|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Integrated Point Defense AI.
+type-detail|pointdefenseai|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Integrated Point Defense AI.
 type|pointdefenseai|DESTROYER|0	0	Point-defense weapons can identify and ignore decoy flares.
 type|pointdefenseai|DESTROYER|1	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
 type|pointdefenseai|DESTROYER|2	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-type|pointdefenseai|DESTROYER|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Integrated Point Defense AI.
+type-detail|pointdefenseai|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Integrated Point Defense AI.
 type|pointdefenseai|CRUISER|0	0	Point-defense weapons can identify and ignore decoy flares.
 type|pointdefenseai|CRUISER|1	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
 type|pointdefenseai|CRUISER|2	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-type|pointdefenseai|CRUISER|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Integrated Point Defense AI.
+type-detail|pointdefenseai|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Integrated Point Defense AI.
 type|pointdefenseai|CAPITAL_SHIP|0	0	Point-defense weapons can identify and ignore decoy flares.
 type|pointdefenseai|CAPITAL_SHIP|1	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
 type|pointdefenseai|CAPITAL_SHIP|2	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-type|pointdefenseai|CAPITAL_SHIP|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Integrated Point Defense AI.
+type-detail|pointdefenseai|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Integrated Point Defense AI.
 type|rationing|null|0	1	<bad>10%</bad> less supply use for maintenance.
 type|rationing|null|1	1	<bad>10%</bad> less fuel consumption rate.
 type|rationing|FRIGATE|0	1	<bad>10%</bad> less supply use for maintenance.
@@ -3194,15 +3194,15 @@ type|reckless_assault|CAPITAL_SHIP|0	1	Increases crew casualties by <good>50%</g
 type|reckless_assault|CAPITAL_SHIP|1	0	Increases weapon damage by <good>30%</good>.
 type|reckless_assault|CAPITAL_SHIP|2	1	<good>10%</good> more damage taken by shields.
 type|recovery_shuttles|null|0	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-type|recovery_shuttles|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Recovery Shuttles.
+type-detail|recovery_shuttles|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Recovery Shuttles.
 type|recovery_shuttles|FRIGATE|0	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-type|recovery_shuttles|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Recovery Shuttles.
+type-detail|recovery_shuttles|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Recovery Shuttles.
 type|recovery_shuttles|DESTROYER|0	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-type|recovery_shuttles|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Recovery Shuttles.
+type-detail|recovery_shuttles|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Recovery Shuttles.
 type|recovery_shuttles|CRUISER|0	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-type|recovery_shuttles|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Recovery Shuttles.
+type-detail|recovery_shuttles|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Recovery Shuttles.
 type|recovery_shuttles|CAPITAL_SHIP|0	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-type|recovery_shuttles|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Recovery Shuttles.
+type-detail|recovery_shuttles|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Recovery Shuttles.
 type|reduced_D_mod_effect|null|0	1	<bad>4%</bad> less negative effects from D-mods.
 type|reduced_D_mod_effect|FRIGATE|0	1	<bad>4%</bad> less negative effects from D-mods.
 type|reduced_D_mod_effect|DESTROYER|0	1	<bad>4%</bad> less negative effects from D-mods.
@@ -3216,23 +3216,23 @@ type|reduced_monthly_supplies|CAPITAL_SHIP|0	1	<bad>5%</bad> less supply use for
 type|reinforcedhull|null|0	0	Increases hull points by <good>40%</good>.
 type|reinforcedhull|null|1	0	If disabled, this ship is almost always recoverable after the battle.
 type|reinforcedhull|null|2	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-type|reinforcedhull|null|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Reinforced Bulkheads.
+type-detail|reinforcedhull|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Reinforced Bulkheads.
 type|reinforcedhull|FRIGATE|0	0	Increases hull points by <good>40%</good>.
 type|reinforcedhull|FRIGATE|1	0	If disabled, this ship is almost always recoverable after the battle.
 type|reinforcedhull|FRIGATE|2	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-type|reinforcedhull|FRIGATE|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Reinforced Bulkheads.
+type-detail|reinforcedhull|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Reinforced Bulkheads.
 type|reinforcedhull|DESTROYER|0	0	Increases hull points by <good>40%</good>.
 type|reinforcedhull|DESTROYER|1	0	If disabled, this ship is almost always recoverable after the battle.
 type|reinforcedhull|DESTROYER|2	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-type|reinforcedhull|DESTROYER|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Reinforced Bulkheads.
+type-detail|reinforcedhull|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Reinforced Bulkheads.
 type|reinforcedhull|CRUISER|0	0	Increases hull points by <good>40%</good>.
 type|reinforcedhull|CRUISER|1	0	If disabled, this ship is almost always recoverable after the battle.
 type|reinforcedhull|CRUISER|2	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-type|reinforcedhull|CRUISER|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Reinforced Bulkheads.
+type-detail|reinforcedhull|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Reinforced Bulkheads.
 type|reinforcedhull|CAPITAL_SHIP|0	0	Increases hull points by <good>40%</good>.
 type|reinforcedhull|CAPITAL_SHIP|1	0	If disabled, this ship is almost always recoverable after the battle.
 type|reinforcedhull|CAPITAL_SHIP|2	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-type|reinforcedhull|CAPITAL_SHIP|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Reinforced Bulkheads.
+type-detail|reinforcedhull|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Reinforced Bulkheads.
 type|repair_time|null|0	0	Reduces weapon and engine repair time by <good>15%</good>.
 type|repair_time|FRIGATE|0	0	Reduces weapon and engine repair time by <good>15%</good>.
 type|repair_time|DESTROYER|0	0	Reduces weapon and engine repair time by <good>15%</good>.
@@ -3277,8 +3277,8 @@ type|safety_overrides|null|2	0	<bad>67%</bad> less peak combat readiness duratio
 type|safety_overrides|null|3	0	<bad>100%</bad> less venting speed.
 type|safety_overrides|null|4	0	Increases range before falloff effectiveness applies by <good>450</good>.
 type|safety_overrides|null|5	0	<bad>75%</bad> less weapon effectiveness past normal range.
-type|safety_overrides|null|6	0	Restricted to <hl>hull sizes</hl>: Frigate, Destroyer, Cruiser.
-type|safety_overrides|null|7	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Volatile Flux Injector, PD Specialization, Enraged Systems, Probability Space Hypervessel, Silberherz Core, Silberherz Subcore, Edge Capacitors Retrofit, Safety Protocols, Guerrilla Overhaul, Extra Propulsion Systems, Prototype Core, Robust Flux Reactor, Repulse-Field, Illusia Resonance, Pristine Condition, Quantum Damper, Singularity Hullmod, Safety Overrides.
+type-detail|safety_overrides|null|0	0	Restricted to <hl>hull sizes</hl>: Frigate, Destroyer, Cruiser.
+type-detail|safety_overrides|null|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Volatile Flux Injector, PD Specialization, Enraged Systems, Probability Space Hypervessel, Silberherz Core, Silberherz Subcore, Edge Capacitors Retrofit, Safety Protocols, Guerrilla Overhaul, Extra Propulsion Systems, Prototype Core, Robust Flux Reactor, Repulse-Field, Illusia Resonance, Pristine Condition, Quantum Damper, Singularity Hullmod, Safety Overrides.
 type|safety_overrides|FRIGATE|0	0	Allows the zero-flux speed boost to take effect regardless of flux level.
 type|safety_overrides|FRIGATE|1	0	<good>100%</good> more flux dissipation.
 type|safety_overrides|FRIGATE|2	0	<bad>67%</bad> less peak combat readiness duration.
@@ -3288,8 +3288,8 @@ type|safety_overrides|FRIGATE|5	0	<bad>75%</bad> less weapon effectiveness past 
 type|safety_overrides|FRIGATE|6	0	Increases top speed by <good>50</good>.
 type|safety_overrides|FRIGATE|7	0	Increases acceleration by <good>100</good>.
 type|safety_overrides|FRIGATE|8	0	Increases deceleration by <good>100</good>.
-type|safety_overrides|FRIGATE|9	0	Restricted to <hl>hull sizes</hl>: Frigate, Destroyer, Cruiser.
-type|safety_overrides|FRIGATE|10	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Volatile Flux Injector, PD Specialization, Enraged Systems, Probability Space Hypervessel, Silberherz Core, Silberherz Subcore, Edge Capacitors Retrofit, Safety Protocols, Guerrilla Overhaul, Extra Propulsion Systems, Prototype Core, Robust Flux Reactor, Repulse-Field, Illusia Resonance, Pristine Condition, Quantum Damper, Singularity Hullmod, Safety Overrides.
+type-detail|safety_overrides|FRIGATE|0	0	Restricted to <hl>hull sizes</hl>: Frigate, Destroyer, Cruiser.
+type-detail|safety_overrides|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Volatile Flux Injector, PD Specialization, Enraged Systems, Probability Space Hypervessel, Silberherz Core, Silberherz Subcore, Edge Capacitors Retrofit, Safety Protocols, Guerrilla Overhaul, Extra Propulsion Systems, Prototype Core, Robust Flux Reactor, Repulse-Field, Illusia Resonance, Pristine Condition, Quantum Damper, Singularity Hullmod, Safety Overrides.
 type|safety_overrides|DESTROYER|0	0	Allows the zero-flux speed boost to take effect regardless of flux level.
 type|safety_overrides|DESTROYER|1	0	<good>100%</good> more flux dissipation.
 type|safety_overrides|DESTROYER|2	0	<bad>67%</bad> less peak combat readiness duration.
@@ -3299,8 +3299,8 @@ type|safety_overrides|DESTROYER|5	0	<bad>75%</bad> less weapon effectiveness pas
 type|safety_overrides|DESTROYER|6	0	Increases top speed by <good>30</good>.
 type|safety_overrides|DESTROYER|7	0	Increases acceleration by <good>60</good>.
 type|safety_overrides|DESTROYER|8	0	Increases deceleration by <good>60</good>.
-type|safety_overrides|DESTROYER|9	0	Restricted to <hl>hull sizes</hl>: Frigate, Destroyer, Cruiser.
-type|safety_overrides|DESTROYER|10	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Volatile Flux Injector, PD Specialization, Enraged Systems, Probability Space Hypervessel, Silberherz Core, Silberherz Subcore, Edge Capacitors Retrofit, Safety Protocols, Guerrilla Overhaul, Extra Propulsion Systems, Prototype Core, Robust Flux Reactor, Repulse-Field, Illusia Resonance, Pristine Condition, Quantum Damper, Singularity Hullmod, Safety Overrides.
+type-detail|safety_overrides|DESTROYER|0	0	Restricted to <hl>hull sizes</hl>: Frigate, Destroyer, Cruiser.
+type-detail|safety_overrides|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Volatile Flux Injector, PD Specialization, Enraged Systems, Probability Space Hypervessel, Silberherz Core, Silberherz Subcore, Edge Capacitors Retrofit, Safety Protocols, Guerrilla Overhaul, Extra Propulsion Systems, Prototype Core, Robust Flux Reactor, Repulse-Field, Illusia Resonance, Pristine Condition, Quantum Damper, Singularity Hullmod, Safety Overrides.
 type|safety_overrides|CRUISER|0	0	Allows the zero-flux speed boost to take effect regardless of flux level.
 type|safety_overrides|CRUISER|1	0	<good>100%</good> more flux dissipation.
 type|safety_overrides|CRUISER|2	0	<bad>67%</bad> less peak combat readiness duration.
@@ -3310,8 +3310,8 @@ type|safety_overrides|CRUISER|5	0	<bad>75%</bad> less weapon effectiveness past 
 type|safety_overrides|CRUISER|6	0	Increases top speed by <good>20</good>.
 type|safety_overrides|CRUISER|7	0	Increases acceleration by <good>40</good>.
 type|safety_overrides|CRUISER|8	0	Increases deceleration by <good>40</good>.
-type|safety_overrides|CRUISER|9	0	Restricted to <hl>hull sizes</hl>: Frigate, Destroyer, Cruiser.
-type|safety_overrides|CRUISER|10	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Volatile Flux Injector, PD Specialization, Enraged Systems, Probability Space Hypervessel, Silberherz Core, Silberherz Subcore, Edge Capacitors Retrofit, Safety Protocols, Guerrilla Overhaul, Extra Propulsion Systems, Prototype Core, Robust Flux Reactor, Repulse-Field, Illusia Resonance, Pristine Condition, Quantum Damper, Singularity Hullmod, Safety Overrides.
+type-detail|safety_overrides|CRUISER|0	0	Restricted to <hl>hull sizes</hl>: Frigate, Destroyer, Cruiser.
+type-detail|safety_overrides|CRUISER|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Volatile Flux Injector, PD Specialization, Enraged Systems, Probability Space Hypervessel, Silberherz Core, Silberherz Subcore, Edge Capacitors Retrofit, Safety Protocols, Guerrilla Overhaul, Extra Propulsion Systems, Prototype Core, Robust Flux Reactor, Repulse-Field, Illusia Resonance, Pristine Condition, Quantum Damper, Singularity Hullmod, Safety Overrides.
 type|safety_overrides|CAPITAL_SHIP|0	0	Allows the zero-flux speed boost to take effect regardless of flux level.
 type|safety_overrides|CAPITAL_SHIP|1	0	<good>100%</good> more flux dissipation.
 type|safety_overrides|CAPITAL_SHIP|2	0	<bad>67%</bad> less peak combat readiness duration.
@@ -3321,8 +3321,8 @@ type|safety_overrides|CAPITAL_SHIP|5	0	<bad>75%</bad> less weapon effectiveness 
 type|safety_overrides|CAPITAL_SHIP|6	0	Increases top speed by <good>10</good>.
 type|safety_overrides|CAPITAL_SHIP|7	0	Increases acceleration by <good>20</good>.
 type|safety_overrides|CAPITAL_SHIP|8	0	Increases deceleration by <good>20</good>.
-type|safety_overrides|CAPITAL_SHIP|9	0	Restricted to <hl>hull sizes</hl>: Frigate, Destroyer, Cruiser.
-type|safety_overrides|CAPITAL_SHIP|10	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Volatile Flux Injector, PD Specialization, Enraged Systems, Probability Space Hypervessel, Silberherz Core, Silberherz Subcore, Edge Capacitors Retrofit, Safety Protocols, Guerrilla Overhaul, Extra Propulsion Systems, Prototype Core, Robust Flux Reactor, Repulse-Field, Illusia Resonance, Pristine Condition, Quantum Damper, Singularity Hullmod, Safety Overrides.
+type-detail|safety_overrides|CAPITAL_SHIP|0	0	Restricted to <hl>hull sizes</hl>: Frigate, Destroyer, Cruiser.
+type-detail|safety_overrides|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Volatile Flux Injector, PD Specialization, Enraged Systems, Probability Space Hypervessel, Silberherz Core, Silberherz Subcore, Edge Capacitors Retrofit, Safety Protocols, Guerrilla Overhaul, Extra Propulsion Systems, Prototype Core, Robust Flux Reactor, Repulse-Field, Illusia Resonance, Pristine Condition, Quantum Damper, Singularity Hullmod, Safety Overrides.
 type|shared_damage_taken|null|0	0	Disperses 5% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 type|shared_damage_taken|FRIGATE|0	0	Disperses 5% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 type|shared_damage_taken|DESTROYER|0	0	Disperses 5% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
@@ -3360,19 +3360,19 @@ type|shield_raise_rate|CRUISER|0	0	Increases shield raise rate by <good>25%</goo
 type|shield_raise_rate|CAPITAL_SHIP|0	0	Increases shield raise rate by <good>25%</good>.
 type|shield_shunt|null|0	0	Increases armor by <good>15%</good>.
 type|shield_shunt|null|1	0	Removes this ship's shield entirely.
-type|shield_shunt|null|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Front, Shield Conversion - Omni, Makeshift Shield Generator, Shield Shunt.
+type-detail|shield_shunt|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Front, Shield Conversion - Omni, Makeshift Shield Generator, Shield Shunt.
 type|shield_shunt|FRIGATE|0	0	Increases armor by <good>15%</good>.
 type|shield_shunt|FRIGATE|1	0	Removes this ship's shield entirely.
-type|shield_shunt|FRIGATE|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Front, Shield Conversion - Omni, Makeshift Shield Generator, Shield Shunt.
+type-detail|shield_shunt|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Front, Shield Conversion - Omni, Makeshift Shield Generator, Shield Shunt.
 type|shield_shunt|DESTROYER|0	0	Increases armor by <good>15%</good>.
 type|shield_shunt|DESTROYER|1	0	Removes this ship's shield entirely.
-type|shield_shunt|DESTROYER|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Front, Shield Conversion - Omni, Makeshift Shield Generator, Shield Shunt.
+type-detail|shield_shunt|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Front, Shield Conversion - Omni, Makeshift Shield Generator, Shield Shunt.
 type|shield_shunt|CRUISER|0	0	Increases armor by <good>15%</good>.
 type|shield_shunt|CRUISER|1	0	Removes this ship's shield entirely.
-type|shield_shunt|CRUISER|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Front, Shield Conversion - Omni, Makeshift Shield Generator, Shield Shunt.
+type-detail|shield_shunt|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Front, Shield Conversion - Omni, Makeshift Shield Generator, Shield Shunt.
 type|shield_shunt|CAPITAL_SHIP|0	0	Increases armor by <good>15%</good>.
 type|shield_shunt|CAPITAL_SHIP|1	0	Removes this ship's shield entirely.
-type|shield_shunt|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Front, Shield Conversion - Omni, Makeshift Shield Generator, Shield Shunt.
+type-detail|shield_shunt|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Shield Conversion - Front, Shield Conversion - Omni, Makeshift Shield Generator, Shield Shunt.
 type|shield_turn_rate|null|0	0	Increases shield turn rate by <good>25%</good>.
 type|shield_turn_rate|FRIGATE|0	0	Increases shield turn rate by <good>25%</good>.
 type|shield_turn_rate|DESTROYER|0	0	Increases shield turn rate by <good>25%</good>.
@@ -3399,15 +3399,15 @@ type|solar_shielding|DESTROYER|0	1	<bad>75%</bad> less combat readiness loss fro
 type|solar_shielding|CRUISER|0	1	<bad>75%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type|solar_shielding|CAPITAL_SHIP|0	1	<bad>75%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type|stabilizedshieldemitter|null|0	1	<bad>40%</bad> less shield flux upkeep.
-type|stabilizedshieldemitter|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Stabilized Shields.
+type-detail|stabilizedshieldemitter|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Stabilized Shields.
 type|stabilizedshieldemitter|FRIGATE|0	1	<bad>40%</bad> less shield flux upkeep.
-type|stabilizedshieldemitter|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Stabilized Shields.
+type-detail|stabilizedshieldemitter|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Stabilized Shields.
 type|stabilizedshieldemitter|DESTROYER|0	1	<bad>40%</bad> less shield flux upkeep.
-type|stabilizedshieldemitter|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Stabilized Shields.
+type-detail|stabilizedshieldemitter|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Stabilized Shields.
 type|stabilizedshieldemitter|CRUISER|0	1	<bad>40%</bad> less shield flux upkeep.
-type|stabilizedshieldemitter|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Stabilized Shields.
+type-detail|stabilizedshieldemitter|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Stabilized Shields.
 type|stabilizedshieldemitter|CAPITAL_SHIP|0	1	<bad>40%</bad> less shield flux upkeep.
-type|stabilizedshieldemitter|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Stabilized Shields.
+type-detail|stabilizedshieldemitter|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Stabilized Shields.
 type|survey_generic_cost_reduction|FRIGATE|0	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>1</bad>.
 type|survey_generic_cost_reduction|FRIGATE|1	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>1</bad>.
 type|survey_generic_cost_reduction|DESTROYER|0	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>3</bad>.
@@ -3424,37 +3424,37 @@ type|survey_supplies_cost_reduction|FRIGATE|0	1	Decreases supplies required to p
 type|survey_supplies_cost_reduction|DESTROYER|0	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>4</bad>.
 type|survey_supplies_cost_reduction|CRUISER|0	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>7</bad>.
 type|survey_supplies_cost_reduction|CAPITAL_SHIP|0	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>15</bad>.
-type|surveying_equipment|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Surveying Equipment.
+type-detail|surveying_equipment|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Surveying Equipment.
 type|surveying_equipment|FRIGATE|0	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>5</bad>.
 type|surveying_equipment|FRIGATE|1	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>3</bad>.
-type|surveying_equipment|FRIGATE|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Surveying Equipment.
+type-detail|surveying_equipment|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Surveying Equipment.
 type|surveying_equipment|DESTROYER|0	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>7</bad>.
 type|surveying_equipment|DESTROYER|1	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>5</bad>.
-type|surveying_equipment|DESTROYER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Surveying Equipment.
+type-detail|surveying_equipment|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Surveying Equipment.
 type|surveying_equipment|CRUISER|0	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>12</bad>.
 type|surveying_equipment|CRUISER|1	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>10</bad>.
-type|surveying_equipment|CRUISER|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Surveying Equipment.
+type-detail|surveying_equipment|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Surveying Equipment.
 type|surveying_equipment|CAPITAL_SHIP|0	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>22</bad>.
 type|surveying_equipment|CAPITAL_SHIP|1	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>20</bad>.
-type|surveying_equipment|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Surveying Equipment.
+type-detail|surveying_equipment|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Surveying Equipment.
 type|tactical_superiority|null|0	0	Captures combat objectives <good>100%</good> faster.
 type|tactical_superiority|FRIGATE|0	0	Captures combat objectives <good>100%</good> faster.
 type|tactical_superiority|DESTROYER|0	0	Captures combat objectives <good>100%</good> faster.
 type|tactical_superiority|CRUISER|0	0	Captures combat objectives <good>100%</good> faster.
 type|tactical_superiority|CAPITAL_SHIP|0	0	Captures combat objectives <good>100%</good> faster.
-type|targetingunit|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Dedicated Targeting Core, Advanced Targeting Core, Distributed Fire Control, Integrated Targeting Unit.
+type-detail|targetingunit|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Dedicated Targeting Core, Advanced Targeting Core, Distributed Fire Control, Integrated Targeting Unit.
 type|targetingunit|FRIGATE|0	0	Increases ballistic weapon range by <good>5%</good>.
 type|targetingunit|FRIGATE|1	0	Increases energy weapon range by <good>5%</good>.
-type|targetingunit|FRIGATE|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Dedicated Targeting Core, Advanced Targeting Core, Distributed Fire Control, Integrated Targeting Unit.
+type-detail|targetingunit|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Dedicated Targeting Core, Advanced Targeting Core, Distributed Fire Control, Integrated Targeting Unit.
 type|targetingunit|DESTROYER|0	0	Increases ballistic weapon range by <good>12%</good>.
 type|targetingunit|DESTROYER|1	0	Increases energy weapon range by <good>12%</good>.
-type|targetingunit|DESTROYER|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Dedicated Targeting Core, Advanced Targeting Core, Distributed Fire Control, Integrated Targeting Unit.
+type-detail|targetingunit|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Dedicated Targeting Core, Advanced Targeting Core, Distributed Fire Control, Integrated Targeting Unit.
 type|targetingunit|CRUISER|0	0	Increases ballistic weapon range by <good>25%</good>.
 type|targetingunit|CRUISER|1	0	Increases energy weapon range by <good>25%</good>.
-type|targetingunit|CRUISER|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Dedicated Targeting Core, Advanced Targeting Core, Distributed Fire Control, Integrated Targeting Unit.
+type-detail|targetingunit|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Dedicated Targeting Core, Advanced Targeting Core, Distributed Fire Control, Integrated Targeting Unit.
 type|targetingunit|CAPITAL_SHIP|0	0	Increases ballistic weapon range by <good>40%</good>.
 type|targetingunit|CAPITAL_SHIP|1	0	Increases energy weapon range by <good>40%</good>.
-type|targetingunit|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Dedicated Targeting Core, Advanced Targeting Core, Distributed Fire Control, Integrated Targeting Unit.
+type-detail|targetingunit|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>: Dedicated Targeting Core, Advanced Targeting Core, Distributed Fire Control, Integrated Targeting Unit.
 type|temporary_acceleration|null|0	0	Increases acceleration by <good>50%</good>.
 type|temporary_acceleration|null|1	0	These effects only last for the first 90 seconds after the ship is deployed.
 type|temporary_acceleration|FRIGATE|0	0	Increases acceleration by <good>50%</good>.
@@ -3490,39 +3490,39 @@ type|turn_acceleration_percent|DESTROYER|0	0	Increases turn acceleration by <goo
 type|turn_acceleration_percent|CRUISER|0	0	Increases turn acceleration by <good>50%</good>.
 type|turn_acceleration_percent|CAPITAL_SHIP|0	0	Increases turn acceleration by <good>50%</good>.
 type|turretgyros|null|0	0	Increases weapon turn rate by <good>40%</good>.
-type|turretgyros|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Advanced Turret Gyros.
+type-detail|turretgyros|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Advanced Turret Gyros.
 type|turretgyros|FRIGATE|0	0	Increases weapon turn rate by <good>40%</good>.
-type|turretgyros|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Advanced Turret Gyros.
+type-detail|turretgyros|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Advanced Turret Gyros.
 type|turretgyros|DESTROYER|0	0	Increases weapon turn rate by <good>40%</good>.
-type|turretgyros|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Advanced Turret Gyros.
+type-detail|turretgyros|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Advanced Turret Gyros.
 type|turretgyros|CRUISER|0	0	Increases weapon turn rate by <good>40%</good>.
-type|turretgyros|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Advanced Turret Gyros.
+type-detail|turretgyros|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Advanced Turret Gyros.
 type|turretgyros|CAPITAL_SHIP|0	0	Increases weapon turn rate by <good>40%</good>.
-type|turretgyros|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Advanced Turret Gyros.
+type-detail|turretgyros|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Advanced Turret Gyros.
 type|unstable_injector|null|0	0	<bad>15%</bad> less ballistic weapon range.
 type|unstable_injector|null|1	0	<bad>15%</bad> less energy weapon range.
 type|unstable_injector|null|2	1	Increases fighter refit time by <good>25%</good>.
-type|unstable_injector|null|3	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Unstable Injector.
+type-detail|unstable_injector|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Unstable Injector.
 type|unstable_injector|FRIGATE|0	0	<bad>15%</bad> less ballistic weapon range.
 type|unstable_injector|FRIGATE|1	0	<bad>15%</bad> less energy weapon range.
 type|unstable_injector|FRIGATE|2	1	Increases fighter refit time by <good>25%</good>.
 type|unstable_injector|FRIGATE|3	0	Increases top speed by <good>25</good>.
-type|unstable_injector|FRIGATE|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Unstable Injector.
+type-detail|unstable_injector|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Unstable Injector.
 type|unstable_injector|DESTROYER|0	0	<bad>15%</bad> less ballistic weapon range.
 type|unstable_injector|DESTROYER|1	0	<bad>15%</bad> less energy weapon range.
 type|unstable_injector|DESTROYER|2	1	Increases fighter refit time by <good>25%</good>.
 type|unstable_injector|DESTROYER|3	0	Increases top speed by <good>20</good>.
-type|unstable_injector|DESTROYER|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Unstable Injector.
+type-detail|unstable_injector|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Unstable Injector.
 type|unstable_injector|CRUISER|0	0	<bad>15%</bad> less ballistic weapon range.
 type|unstable_injector|CRUISER|1	0	<bad>15%</bad> less energy weapon range.
 type|unstable_injector|CRUISER|2	1	Increases fighter refit time by <good>25%</good>.
 type|unstable_injector|CRUISER|3	0	Increases top speed by <good>15</good>.
-type|unstable_injector|CRUISER|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Unstable Injector.
+type-detail|unstable_injector|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Unstable Injector.
 type|unstable_injector|CAPITAL_SHIP|0	0	<bad>15%</bad> less ballistic weapon range.
 type|unstable_injector|CAPITAL_SHIP|1	0	<bad>15%</bad> less energy weapon range.
 type|unstable_injector|CAPITAL_SHIP|2	1	Increases fighter refit time by <good>25%</good>.
 type|unstable_injector|CAPITAL_SHIP|3	0	Increases top speed by <good>15</good>.
-type|unstable_injector|CAPITAL_SHIP|4	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Unstable Injector.
+type-detail|unstable_injector|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>: Unstable Injector.
 type|vent_rate_and_emp_damage|null|0	0	Increases venting speed by <good>5%</good>.
 type|vent_rate_and_emp_damage|null|1	1	<bad>10%</bad> less EMP damage taken.
 type|vent_rate_and_emp_damage|FRIGATE|0	0	Increases venting speed by <good>5%</good>.
