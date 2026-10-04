@@ -54,6 +54,7 @@ public class PhantomHullModRefitHider implements CharacterStatsRefreshListener {
         failed = false;
         pending = null;
         SkillTreeChipClickTarget.resetForTests();
+        SkillTreeModsButton.resetForTests();
     }
 
     private static void hideInRefitScreen(CampaignUIAPI campaignUI) {
@@ -81,6 +82,7 @@ public class PhantomHullModRefitHider implements CharacterStatsRefreshListener {
         Object refitMods = call(modDisplay, "getMods");
         hidePhantomRows(refitMods, variant);
         attachChipClick(refitMods);
+        SkillTreeModsButton.attach(refitMods);
         for (Object dialog : UiReflection.children(core)) {
             for (Object child : UiReflection.children(dialog)) {
                 if (child != modDisplay && child.getClass() == modDisplay.getClass()) {

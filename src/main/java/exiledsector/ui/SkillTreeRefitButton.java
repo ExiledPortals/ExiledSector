@@ -92,6 +92,11 @@ public class SkillTreeRefitButton extends BaseRefitButton {
     }
 
     @Override
+    public boolean shouldShow(FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market) {
+        return false;
+    }
+
+    @Override
     public boolean hasPanel(FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market) {
         return true;
     }
