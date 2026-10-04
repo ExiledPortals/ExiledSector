@@ -442,7 +442,7 @@ class SkillNodeTest {
 
     @Test
     void effectiveTagsCannotBeModified() {
-        SkillNode node = taggedNode(taggedType("hull", List.of(), List.of("hull")), List.of("inner"));
+        SkillNode node = taggedNode(taggedType("hull", List.of(), List.of("hull")), List.of("core"));
         Set<String> tags = node.effectiveTags((SkillType) null);
 
         assertThrows(UnsupportedOperationException.class, () -> tags.add("shield"));

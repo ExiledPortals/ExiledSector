@@ -50,7 +50,18 @@ public class SkillTreeStarRenderer {
     private Map<String, PlanetSpecAPI> specsByType;
     private SpriteAPI atmosphereTexture;
     private SpriteAPI auroraTexture;
+    private float mapRadius;
+    private float mapAmount;
     private final Map<String, Map<Color, Color>> resolvedColors = new HashMap<>();
+
+    public void setMapRadius(float mapRadius, float mapAmount) {
+        this.mapRadius = mapRadius;
+        this.mapAmount = mapAmount;
+    }
+
+    private float radiusOf(Star star) {
+        return star.getRadius() + (mapRadius - star.getRadius()) * mapAmount;
+    }
 
     public void advance(float amount) {
         if (amount <= 0f) return;
@@ -78,7 +89,7 @@ public class SkillTreeStarRenderer {
 
             float screenX = viewport.screenX(star.getX());
             float screenY = viewport.screenY(star.getY());
-            float radius = star.getRadius() * zoom;
+            float radius = radiusOf(star) * zoom;
             if (!viewport.isVisible(screenX, screenY, radius + 0.5f * zoom)) {
                 continue;
             }
@@ -133,8 +144,8 @@ public class SkillTreeStarRenderer {
                 continue;
             }
 
-            float radius = star.getRadius() * zoom;
-            float thickness = Math.max(star.getRadius() * spec.getAtmosphereThickness(), spec.getAtmosphereThicknessMin()) * zoom;
+            float radius = radiusOf(star) * zoom;
+            float thickness = Math.max(radiusOf(star) * spec.getAtmosphereThickness(), spec.getAtmosphereThicknessMin()) * zoom;
             if (thickness > 0f) {
                 float innerRadius = radius - thickness * ATMOSPHERE_INNER_INSET_MULT;
                 float outerRadius = innerRadius + thickness;
@@ -191,7 +202,7 @@ public class SkillTreeStarRenderer {
             if (spec == null) continue;
 
             float detailRadius = star.getRadius() * SmoothZoom.MAX_ZOOM;
-            float screenScale = zoom / SmoothZoom.MAX_ZOOM;
+            float screenScale = zoom * radiusOf(star) / star.getRadius() / SmoothZoom.MAX_ZOOM;
 
             float screenX = viewport.screenX(star.getX());
             float screenY = viewport.screenY(star.getY());
@@ -248,8 +259,8 @@ public class SkillTreeStarRenderer {
                 continue;
             }
 
-            float radius = star.getRadius() * zoom;
-            float haloRadius = star.getRadius() * spec.getCoronaSize() * zoom;
+            float radius = radiusOf(star) * zoom;
+            float haloRadius = radiusOf(star) * spec.getCoronaSize() * zoom;
             float screenX = viewport.screenX(star.getX());
             float screenY = viewport.screenY(star.getY());
             if (haloRadius > radius && viewport.isVisible(screenX, screenY, haloRadius)) {

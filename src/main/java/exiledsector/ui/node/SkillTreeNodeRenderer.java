@@ -80,7 +80,7 @@ public final class SkillTreeNodeRenderer {
         this.startPulse = ringRenderer::startPulse;
         this.iconRenderer = new SkillTreeNodeIconRenderer();
         this.ghostRenderer = new SkillTreeNodeGhostRenderer();
-        this.wormholeGhostFlights = new SkillTreeWormholeGhostFlights(ghostRenderer, new Random());
+        this.wormholeGhostFlights = new SkillTreeWormholeGhostFlights(new Random());
         this.connectorRenderer = new SkillTreeNodeConnectorRenderer(style, search, wormholeOpenness);
         this.tooltipRenderer = new SkillTreeNodeTooltipRenderer(member, style);
         this.dropdownRenderer = new SkillTreeNodeDropdownRenderer(style);

@@ -28,6 +28,14 @@ public final class SmoothZoom {
         target = in ? Math.min(MAX_ZOOM, target * STEP) : Math.max(MIN_ZOOM, target / STEP);
     }
 
+    static float panAbout(float pan, float pivot, float zoomRatio) {
+        return pivot + (pan - pivot) * zoomRatio;
+    }
+
+    boolean isSettledAtMinimum() {
+        return current == MIN_ZOOM && target == MIN_ZOOM;
+    }
+
     void jumpTo(float zoom) {
         current = zoom;
         target = zoom;

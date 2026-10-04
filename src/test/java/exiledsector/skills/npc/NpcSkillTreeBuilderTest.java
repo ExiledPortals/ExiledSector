@@ -232,7 +232,7 @@ class NpcSkillTreeBuilderTest {
     @Test
     void skipsNodesWhoseNodeTagsHaveAnUnmetRequirement() {
         register(new SkillNode("phase_1", registerType(builder("phase", SkillTier.SMALL).build()), List.of(ROOT), 0f, 0f,
-                SkillNodeDecoration.NONE, List.of("inner", "req_phase")));
+                SkillNodeDecoration.NONE, List.of("core", "req_phase")));
 
         assertEquals(List.of("unmet requirement: req_phase"), outcomes(build(layout(entry("phase_1")), 5)));
     }

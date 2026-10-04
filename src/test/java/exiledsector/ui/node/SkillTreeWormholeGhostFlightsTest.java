@@ -56,7 +56,7 @@ class SkillTreeWormholeGhostFlightsTest {
     void launchesOneFlightPerPairAtMostEveryFewSecondsOnceBothEndsAreAllocated() {
         when(data.isAllocated("wormhole_a")).thenReturn(true);
         when(data.isAllocated("wormhole_b")).thenReturn(true);
-        SkillTreeWormholeGhostFlights flights = new SkillTreeWormholeGhostFlights(null, new Random(1));
+        SkillTreeWormholeGhostFlights flights = new SkillTreeWormholeGhostFlights(new Random(1));
 
         flights.advance(SkillTreeWormholeGhostFlights.MAX_SECONDS_BETWEEN_FLIGHTS, data);
         assertEquals(1, flights.activeFlightCount());
@@ -67,7 +67,7 @@ class SkillTreeWormholeGhostFlightsTest {
 
     @Test
     void launchFromStartsAFlightImmediatelyRegardlessOfTheSchedule() {
-        SkillTreeWormholeGhostFlights flights = new SkillTreeWormholeGhostFlights(null, new Random(1));
+        SkillTreeWormholeGhostFlights flights = new SkillTreeWormholeGhostFlights(new Random(1));
 
         flights.launchFrom(SkillTree.get("wormhole_b"), SkillTree.get("wormhole_a"));
 
@@ -76,7 +76,7 @@ class SkillTreeWormholeGhostFlightsTest {
 
     @Test
     void neverLaunchesWhileThePairIsUnallocated() {
-        SkillTreeWormholeGhostFlights flights = new SkillTreeWormholeGhostFlights(null, new Random(1));
+        SkillTreeWormholeGhostFlights flights = new SkillTreeWormholeGhostFlights(new Random(1));
 
         for (int i = 0; i < 10; i++) {
             flights.advance(SkillTreeWormholeGhostFlights.MAX_SECONDS_BETWEEN_FLIGHTS, data);
@@ -89,7 +89,7 @@ class SkillTreeWormholeGhostFlightsTest {
     void flightsExpireAfterCrossingToTheOtherNode() {
         when(data.isAllocated("wormhole_a")).thenReturn(true);
         when(data.isAllocated("wormhole_b")).thenReturn(true);
-        SkillTreeWormholeGhostFlights flights = new SkillTreeWormholeGhostFlights(null, new Random(1));
+        SkillTreeWormholeGhostFlights flights = new SkillTreeWormholeGhostFlights(new Random(1));
         flights.advance(SkillTreeWormholeGhostFlights.MAX_SECONDS_BETWEEN_FLIGHTS, data);
 
         when(data.isAllocated("wormhole_a")).thenReturn(false);

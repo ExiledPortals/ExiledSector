@@ -20,7 +20,7 @@ public final class NpcLayoutValidator {
 
     public static final int TARGET_NODE_COUNT = 42;
     public static final int MAX_NODE_COUNT = NpcSkillTreeBuilder.MAX_NODE_COUNT;
-    public static final String INNER_REGION = "inner";
+    public static final String CORE_REGION = "core";
     public static final List<String> NPC_NEVER_SATISFIED = List.of("campaign_only", "player_only");
 
     public record Milestone(int nodeCount, String nodeId, String displayName, SkillTier tier) {
@@ -220,8 +220,8 @@ public final class NpcLayoutValidator {
 
     private static void addRegionProblems(SkillNode node, String label, List<String> problems) {
         List<String> regions = node.getTags().stream().filter(SkillTags::isRegion).toList();
-        if (!regions.contains(INNER_REGION)) {
-            problems.add(label + " is not in region " + INNER_REGION + " (regions: " + regions + ")");
+        if (!regions.contains(CORE_REGION)) {
+            problems.add(label + " is not in region " + CORE_REGION + " (regions: " + regions + ")");
         }
     }
 

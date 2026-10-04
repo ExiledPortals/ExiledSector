@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AreaToggleDataTest {
 
-    private static final List<String> TOGGLED_REGIONS = List.of(AreaToggles.LOST_SECTOR_REGION);
+    private static final List<Set<String>> TOGGLED_AREAS = List.of(AreaToggles.LOST_SECTOR_REGIONS);
 
     private static JSONObject treeJson() throws Exception {
         return RealSkillData.readJson(RealSkillData.projectRoot().resolve(RealSkillData.TREE_FILE));
@@ -71,24 +71,24 @@ class AreaToggleDataTest {
     void switchingAToggledAreaOffStrandsNothingAndLeavesNoHalfWormholes() throws Exception {
         SkillTreeLoader.ParsedTree tree = realTree();
         List<String> problems = new ArrayList<>();
-        for (String region : TOGGLED_REGIONS) {
-            SkillTreeLoader.ParsedTree filtered = TreeRegionFilter.apply(tree, Set.of(region));
+        for (Set<String> area : TOGGLED_AREAS) {
+            SkillTreeLoader.ParsedTree filtered = TreeRegionFilter.apply(tree, area);
             Map<String, SkillNode> byId = new HashMap<>();
             filtered.nodes.forEach(node -> byId.put(node.getId(), node));
             for (SkillNode node : filtered.nodes) {
                 for (String other : node.getConnectedNodeIds()) {
                     if (!byId.containsKey(other)) {
-                        problems.add(region + " off: " + node.getId() + " still links to missing " + other);
+                        problems.add(area + " off: " + node.getId() + " still links to missing " + other);
                     }
                 }
                 if (node.getPairedNodeId() != null && !byId.containsKey(node.getPairedNodeId())) {
-                    problems.add(region + " off: wormhole " + node.getId() + " lost its pair " + node.getPairedNodeId());
+                    problems.add(area + " off: wormhole " + node.getId() + " lost its pair " + node.getPairedNodeId());
                 }
             }
             Set<String> reached = reachableFromRoots(filtered.nodes, byId);
             for (SkillNode node : filtered.nodes) {
                 if (!reached.contains(node.getId())) {
-                    problems.add(region + " off: " + node.getId() + " can no longer be reached from any root");
+                    problems.add(area + " off: " + node.getId() + " can no longer be reached from any root");
                 }
             }
         }

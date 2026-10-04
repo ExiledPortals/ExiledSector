@@ -59,6 +59,24 @@ class SmoothZoomTest {
     }
 
     @Test
+    void zoomingAboutTheCursorKeepsTheWorldPointUnderItInPlace() {
+        float zoom = 0.5f;
+        float pan = 40f;
+        float cursor = 300f;
+        float worldUnderCursor = (cursor - pan) / zoom;
+
+        float newZoom = zoom * SmoothZoom.STEP;
+        float newPan = SmoothZoom.panAbout(pan, cursor, newZoom / zoom);
+
+        assertEquals(cursor, newPan + worldUnderCursor * newZoom, 1e-3f);
+    }
+
+    @Test
+    void zoomingAboutTheCentreJustScalesThePan() {
+        assertEquals(44f, SmoothZoom.panAbout(40f, 0f, 1.1f), 1e-4f);
+    }
+
+    @Test
     void jumpingSetsBothTheCurrentZoomAndTheTarget() {
         SmoothZoom zoom = new SmoothZoom(1f);
         zoom.scroll(true);

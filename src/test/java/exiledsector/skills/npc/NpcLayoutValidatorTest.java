@@ -24,7 +24,7 @@ class NpcLayoutValidatorTest {
     @BeforeEach
     void setUp() {
         RealSkillData.clear();
-        node(ROOT, type("root_type", SkillTier.ROOT), List.of(), List.of("inner"));
+        node(ROOT, type("root_type", SkillTier.ROOT), List.of(), List.of("core"));
     }
 
     @AfterEach
@@ -49,7 +49,7 @@ class NpcLayoutValidatorTest {
     }
 
     private static void innerNode(String id, String... connectedTo) {
-        node(id, type(id + "_type", SkillTier.SMALL), List.of(connectedTo), List.of("inner"));
+        node(id, type(id + "_type", SkillTier.SMALL), List.of(connectedTo), List.of("core"));
     }
 
     private static NpcLayout layout(List<String> requires, NpcLayoutEntry... entries) {
@@ -96,22 +96,22 @@ class NpcLayoutValidatorTest {
 
     @Test
     void flagsWormholeEntries() {
-        node("wormhole_1", type("wormhole", SkillTier.WORMHOLE), List.of(ROOT), List.of("inner"));
+        node("wormhole_1", type("wormhole", SkillTier.WORMHOLE), List.of(ROOT), List.of("core"));
 
         assertSingleProblemContaining(layout(List.of(), entry("wormhole_1")), "wormhole");
     }
 
     @Test
-    void flagsEntriesOutsideTheInnerRegion() {
+    void flagsEntriesOutsideTheCoreRegion() {
         node("pirate_1", type("pirate", SkillTier.SMALL), List.of(ROOT), List.of("pirate"));
 
-        assertSingleProblemContaining(layout(List.of(), entry("pirate_1")), "not in region inner");
+        assertSingleProblemContaining(layout(List.of(), entry("pirate_1")), "not in region core");
     }
 
     @Test
     void flagsCampaignOnlyAndPlayerOnlyNodes() {
-        node("logistics_1", type("logistics", SkillTier.SMALL, "campaign_only"), List.of(ROOT), List.of("inner"));
-        node("flagship_1", type("flagship", SkillTier.SMALL), List.of(ROOT), List.of("inner", "player_only"));
+        node("logistics_1", type("logistics", SkillTier.SMALL, "campaign_only"), List.of(ROOT), List.of("core"));
+        node("flagship_1", type("flagship", SkillTier.SMALL), List.of(ROOT), List.of("core", "player_only"));
 
         List<String> problems = problems(layout(List.of(), entry("logistics_1"), entry("flagship_1")));
 
@@ -123,7 +123,7 @@ class NpcLayoutValidatorTest {
     @Test
     void flagsCampaignOnlyOptions() {
         type("cargo", SkillTier.SMALL, "campaign_only");
-        node("optional_1", optionalType("optional", "cargo"), List.of(ROOT), List.of("inner"));
+        node("optional_1", optionalType("optional", "cargo"), List.of(ROOT), List.of("core"));
 
         assertSingleProblemContaining(layout(List.of(), new NpcLayoutEntry("optional_1", "cargo")), "campaign_only");
     }
@@ -132,8 +132,8 @@ class NpcLayoutValidatorTest {
     void flagsOptionalNodesWithoutAValidOptionAndOptionsOnNonOptionalNodes() {
         type("caps", SkillTier.SMALL);
         type("stranger", SkillTier.SMALL);
-        node("optional_1", optionalType("optional", "caps"), List.of(ROOT), List.of("inner"));
-        node("optional_2", optionalType("optional_b", "caps"), List.of(ROOT), List.of("inner"));
+        node("optional_1", optionalType("optional", "caps"), List.of(ROOT), List.of("core"));
+        node("optional_2", optionalType("optional_b", "caps"), List.of(ROOT), List.of("core"));
         innerNode("a", ROOT);
 
         List<String> problems = problems(layout(List.of(),
@@ -223,9 +223,9 @@ class NpcLayoutValidatorTest {
     @Test
     void milestonesRecordTheNodeCountAtWhichNotablesAndKeystonesArrive() {
         innerNode("a", ROOT);
-        node("notable_1", type("notable", SkillTier.NOTABLE), List.of("a"), List.of("inner"));
+        node("notable_1", type("notable", SkillTier.NOTABLE), List.of("a"), List.of("core"));
         innerNode("b", "notable_1");
-        node("keystone_1", type("keystone", SkillTier.KEYSTONE), List.of("b"), List.of("inner"));
+        node("keystone_1", type("keystone", SkillTier.KEYSTONE), List.of("b"), List.of("core"));
 
         NpcTreeBuild build = NpcSkillTreeBuilder.build(
                 layout(List.of(), entry("a"), entry("notable_1"), entry("b"), entry("keystone_1")), 10,

@@ -45,7 +45,7 @@ class SkillTagsTest {
         assertTrue(SkillTags.isRequirement("req_shields"));
         assertTrue(SkillTags.isRequirement("campaign_only"));
         assertFalse(SkillTags.isRequirement("shield"));
-        assertFalse(SkillTags.isRequirement("inner"));
+        assertFalse(SkillTags.isRequirement("core"));
         assertFalse(SkillTags.isRequirement(null));
     }
 }

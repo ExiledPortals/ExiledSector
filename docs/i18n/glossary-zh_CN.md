@@ -44,6 +44,8 @@ The zh_CN catalogue was drafted by Claude and still needs review by a native spe
 | Refit screen | 改装界面 | |
 | Codex | 百科 | |
 | su (space units) | su | Left untranslated |
+| Hegemony / Tri-Tachyon / Luddic / Sindrian Diktat / Persean League / pirates | 霸主 / 速子科技 / 卢德 / 辛达强权 / 英仙座联盟 / 海盗 | Faction names; check against the official localisation |
+| [REDACTED] | [数据删除] | |
 
 ## Mod terms
 
@@ -62,6 +64,7 @@ The zh_CN catalogue was drafted by Claude and still needs review by a native spe
 | Wormhole | 虫洞 | |
 | Escort | 护航 | |
 | Refraction / refract | 折射 | Refracting Projectiles' shots, matching its name 折射弹体 |
+| Volume (a region on the hyperspace view) | 星域 | "Sindrian volume" is 辛达强权星域 |
 
 ## Left in English on purpose
 
