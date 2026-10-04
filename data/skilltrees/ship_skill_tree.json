@@ -5276,7 +5276,7 @@
 				"lost_sector_wormhole1",
 				"missile_damage_7",
 				"weapon_durability_4",
-				"press_gang_1"
+				"crew_capacity_flat_6"
 			],
 			"x": 6057,
 			"y": -11504,
@@ -5287,13 +5287,15 @@
 			]
 		},
 		{
-			"id": "press_gang_1",
-			"type": "press_gang",
+			"id": "all_must_serve_1",
+			"type": "all_must_serve",
 			"connectedTo": [
-				"frozen_heart_1"
+				"crew_capacity_flat_5"
 			],
-			"x": 5454,
-			"y": -11504,
+			"x": 5166,
+			"y": -11502,
+			"orbitAnchorId": "anchor_56",
+			"orbitAngle": 180,
 			"tags": [
 				"lost_sector"
 			]
@@ -5703,6 +5705,36 @@
 			"y": -12081,
 			"orbitAnchorId": "anchor_55",
 			"orbitAngle": 90,
+			"tags": [
+				"lost_sector"
+			]
+		},
+		{
+			"id": "crew_capacity_flat_5",
+			"type": "crew_capacity_flat",
+			"connectedTo": [
+				"all_must_serve_1",
+				"crew_capacity_flat_6"
+			],
+			"x": 5316,
+			"y": -11652,
+			"orbitAnchorId": "anchor_56",
+			"orbitAngle": 270,
+			"tags": [
+				"lost_sector"
+			]
+		},
+		{
+			"id": "crew_capacity_flat_6",
+			"type": "crew_capacity_flat",
+			"connectedTo": [
+				"crew_capacity_flat_5",
+				"frozen_heart_1"
+			],
+			"x": 5466,
+			"y": -11502,
+			"orbitAnchorId": "anchor_56",
+			"orbitAngle": 0,
 			"tags": [
 				"lost_sector"
 			]
@@ -7316,6 +7348,18 @@
 			"b": "weapon_durability_3",
 			"controlX": 5949,
 			"controlY": -12337
+		},
+		{
+			"a": "all_must_serve_1",
+			"b": "crew_capacity_flat_5",
+			"controlX": 5210,
+			"controlY": -11608
+		},
+		{
+			"a": "crew_capacity_flat_5",
+			"b": "crew_capacity_flat_6",
+			"controlX": 5422,
+			"controlY": -11608
 		}
 	],
 	"hiddenConnectors": [
@@ -7879,6 +7923,12 @@
 			"id": "anchor_55",
 			"x": 6055,
 			"y": -12231,
+			"radius": 150
+		},
+		{
+			"id": "anchor_56",
+			"x": 5316,
+			"y": -11502,
 			"radius": 150
 		}
 	],

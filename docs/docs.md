@@ -247,10 +247,10 @@ own numbers, with the row that applies to the current ship highlighted.
 
 ## Other notables worth describing
 
-Press Gang (`CREW_STEAL_RANGE_FLAT`, `CREW_STEAL_SKELETON_CREW_PERCENT`), next to Frozen Heart, takes a
+All Must Serve (`CREW_STEAL_RANGE_FLAT`, `CREW_STEAL_SKELETON_CREW_PERCENT`), next to Frozen Heart, takes a
 share of the skeleton crew of each enemy ship destroyed within range of one of the player's own ships that
 has it. Fighters, drones, modules and ships that retreat never count, and each wreck is claimed once, at the
-highest share among the thieves in range. Live Munitions and Press Gang share one crew account per battle
+highest share among the thieves in range. Live Munitions and All Must Serve share one crew account per battle
 (`FleetCrewLedger`): it starts at the fleet's cargo crew, Live Munitions spends from it, and stolen crew is
 added as it is claimed (the stolen total rounded up), so Live Munitions can keep firing on captured crew.
 After the battle, win or lose, only the net change is applied: a gain joins the fleet up to its free crew
