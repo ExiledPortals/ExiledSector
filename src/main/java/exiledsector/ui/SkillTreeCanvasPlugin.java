@@ -221,6 +221,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         } else if (event.isLMBDownEvent() && position.containsEvent(event)) {
             pendingClickNode = isOverOverlay(event.getX(), event.getY())
                     ? null : nodeRenderer.findNodeAt(viewport(), event.getX(), event.getY());
+            pendingClickCtrlDown = false;
+            pendingClickShiftDown = false;
             event.consume();
         } else if (event.isLMBUpEvent() && pendingClickNode != null) {
             nodeRenderer.chooseStartingRoot(pendingClickNode);
@@ -285,7 +287,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             pendingDropdownOption = null;
         } else if (pendingClickNode != null) {
             SkillNode jumpTarget = nodeRenderer.wormholeJumpTarget(pendingClickNode, pendingClickCtrlDown);
-            if (pendingClickCtrlDown && pendingClickShiftDown) {
+            if (pendingClickCtrlDown && pendingClickShiftDown && nodeRenderer.isAllocated(pendingClickNode)) {
                 nodeRenderer.startRespec(pendingClickNode);
             } else if (jumpTarget != null) {
                 cameraPan = new CameraPanAnimation(-panX / zoom, panY / zoom, jumpTarget.getOffsetX(), jumpTarget.getOffsetY());

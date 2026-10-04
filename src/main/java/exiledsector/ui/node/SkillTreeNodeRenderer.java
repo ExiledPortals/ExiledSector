@@ -197,6 +197,10 @@ public final class SkillTreeNodeRenderer {
         return true;
     }
 
+    public boolean isAllocated(SkillNode node) {
+        return allocator.data().isAllocated(node.getId());
+    }
+
     public boolean isRespeccing() {
         return respecRun != null;
     }

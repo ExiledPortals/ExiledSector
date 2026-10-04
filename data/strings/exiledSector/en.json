@@ -234,7 +234,7 @@
     "ui.readout.title": "Level, XP & Ordnance Points",
     "ui.readout.xp": "Earn XP by destroying enemy ships. The larger the hull, the more XP gained. Losing combat awards {lossPercent}% of the XP.",
     "ui.readout.xpWithDifficulty": "Earn XP by destroying enemy ships. The larger the hull, the more XP gained. Harder battles give up to +{maxBonus}% more XP, based on vanilla's battle difficulty rating. Losing combat awards {lossPercent}% of the XP.",
-    "ui.readout.body": "Allocating nodes costs ordnance points (different based on hull size). For this hull, the cost is {opCost}\n\nEach level this ship gains allows one free allocation. When the ship levels up, it will refund ordnance points spent on the skill tree.\n\nYou can allocate a maximum of {maxNodes} nodes.\n\n{xpRules}\n\nHold Ctrl while allocating an optional node to allocate the same type again without reopening the picker.",
+    "ui.readout.body": "Allocating nodes costs ordnance points (different based on hull size). For this hull, the cost is {opCost}\n\nEach level this ship gains allows one free allocation. When the ship levels up, it will refund ordnance points spent on the skill tree.\n\nYou can allocate a maximum of {maxNodes} nodes.\n\n{xpRules}\n\nHold Ctrl while allocating an optional node to allocate the same type again without reopening the picker.\n\nCtrl+Shift+click an allocated node to remove it along with every node that depends on it. Doing this on your starting point clears the tree so you can choose a new one.",
     "ui.levelBar.level": "Level {level}",
     "ui.levelBar.levelWithFree": "Level {level} - +{free} Free",
     "ui.search.placeholder": "Search nodes...",
