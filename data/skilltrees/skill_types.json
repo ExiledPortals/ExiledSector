@@ -176,10 +176,6 @@
 				{
 					"effect": "OBJECTIVE_CAPTURE_RATE_MULT",
 					"magnitude": 100
-				},
-				{
-					"effect": "CORONA_RESISTANCE_MULT",
-					"magnitude": -25
 				}
 			],
 			"tags": [
@@ -2342,6 +2338,12 @@
 			"name": "High Resolution Sensors",
 			"icon": "graphics/icons/hiressensors.png",
 			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "SENSOR_STRENGTH_ALWAYS_COUNTS",
+					"magnitude": 0
+				}
+			],
 			"hullSizeEffects": [
 				{
 					"effect": "SENSOR_STRENGTH_FLAT",
@@ -3021,16 +3023,16 @@
 				{
 					"effect": "BALLISTIC_WEAPON_RANGE_PERCENT",
 					"frigate": 3,
-					"destroyer": 5,
-					"cruiser": 7,
-					"capitalShip": 9
+					"destroyer": 4,
+					"cruiser": 5,
+					"capitalShip": 6
 				},
 				{
 					"effect": "ENERGY_WEAPON_RANGE_PERCENT",
 					"frigate": 3,
-					"destroyer": 5,
-					"cruiser": 7,
-					"capitalShip": 9
+					"destroyer": 4,
+					"cruiser": 5,
+					"capitalShip": 6
 				}
 			],
 			"tags": [

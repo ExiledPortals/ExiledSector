@@ -15,6 +15,10 @@ public final class FleetWideEffects {
 
     static final String POST_BATTLE_SALVAGE_CONTRIBUTION_KEY = "exiledSector_postBattleSalvageContribution";
     static final String PHASE_FIELD_CONTRIBUTION_KEY = "exiledSector_phaseFieldContributionPercent";
+    static final String SENSOR_STRENGTH_ALWAYS_COUNTS_KEY = "exiledSector_sensorStrengthAlwaysCounts";
+    private static final String SENSOR_STRENGTH_ALWAYS_COUNTS_MOD_ID = "exiledSector_sensorStrengthAlwaysCounts";
+    private static final String MAX_SENSOR_SHIPS_SETTING = "maxSensorShips";
+    private static final int DEFAULT_MAX_SENSOR_SHIPS = 5;
     private static final String POST_BATTLE_SALVAGE_FLEET_MOD_ID = "exiledSector_postBattleSalvage";
     private static final String EXTENDED_PHASE_FIELD_MOD_ID = "exiledSector_extendedPhaseField";
 
@@ -40,6 +44,58 @@ public final class FleetWideEffects {
         }
         fleet.getStats().getDynamic().getStat(Stats.BATTLE_SALVAGE_MULT_FLEET)
                 .modifyFlat(POST_BATTLE_SALVAGE_FLEET_MOD_ID, totalPercent / 100f);
+    }
+
+    public static void applyAlwaysCountingSensorStrength(CampaignFleetAPI fleet) {
+        if (fleet == null || fleet.getFleetData() == null) {
+            return;
+        }
+        List<FleetMemberAPI> members = fleet.getFleetData().getMembersListCopy();
+        float[] strengths = new float[members.size()];
+        boolean[] alwaysCounts = new boolean[members.size()];
+        boolean any = false;
+        for (int i = 0; i < members.size(); i++) {
+            FleetMemberAPI member = members.get(i);
+            if (member.isMothballed()) {
+                continue;
+            }
+            strengths[i] = Math.round(member.getStats().getSensorStrength().getModifiedValue());
+            alwaysCounts[i] = member.getStats().getDynamic().getValue(SENSOR_STRENGTH_ALWAYS_COUNTS_KEY, 0f) > 0f;
+            any |= alwaysCounts[i];
+        }
+        float extra = any ? strengthLeftOutOfTheTop(strengths, alwaysCounts, maxSensorShips()) : 0f;
+        if (extra > 0f) {
+            fleet.getStats().getSensorStrengthMod().modifyFlat(SENSOR_STRENGTH_ALWAYS_COUNTS_MOD_ID, extra,
+                    Translation.gameText("fleet.sensorStrengthAlwaysCounts"));
+        } else {
+            fleet.getStats().getSensorStrengthMod().unmodifyFlat(SENSOR_STRENGTH_ALWAYS_COUNTS_MOD_ID);
+        }
+    }
+
+    static float strengthLeftOutOfTheTop(float[] strengths, boolean[] alwaysCounts, int counted) {
+        List<Integer> order = new ArrayList<>(strengths.length);
+        for (int i = 0; i < strengths.length; i++) {
+            order.add(i);
+        }
+        order.sort((a, b) -> strengths[a] != strengths[b]
+                ? Float.compare(strengths[b], strengths[a])
+                : Boolean.compare(alwaysCounts[a], alwaysCounts[b]));
+        float extra = 0f;
+        for (int rank = counted; rank < order.size(); rank++) {
+            int index = order.get(rank);
+            if (alwaysCounts[index]) {
+                extra += strengths[index];
+            }
+        }
+        return extra;
+    }
+
+    private static int maxSensorShips() {
+        try {
+            return Global.getSettings().getInt(MAX_SENSOR_SHIPS_SETTING);
+        } catch (RuntimeException e) {
+            return DEFAULT_MAX_SENSOR_SHIPS;
+        }
     }
 
     public static void markPhaseFieldStale() {
