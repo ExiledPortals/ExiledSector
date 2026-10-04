@@ -1159,14 +1159,18 @@
 			]
 		},
 		{
-			"id": "phase_sensor_upgrades",
-			"name": "Phase Sensor Upgrades",
+			"id": "phase_hull_upgrades",
+			"name": "Phase Hull Upgrades",
 			"icon": "graphics/icons/phase_sensor_upgrades.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
 					"effect": "PHASE_FIELD_CONTRIBUTION_PERCENT",
-					"magnitude": 100
+					"magnitude": 50
+				},
+				{
+					"effect": "CORONA_RESISTANCE_MULT",
+					"magnitude": -25
 				}
 			],
 			"exclusiveHullMods": [

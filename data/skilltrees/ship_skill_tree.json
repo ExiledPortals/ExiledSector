@@ -3467,7 +3467,7 @@
 		},
 		{
 			"id": "phase_sensor_upgrades_1",
-			"type": "phase_sensor_upgrades",
+			"type": "phase_hull_upgrades",
 			"connectedTo": [
 				"engine_durability_4",
 				"engine_durability_5"

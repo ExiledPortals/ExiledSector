@@ -3138,16 +3138,21 @@ type|phase_cloak_flux_threshold|FRIGATE|0	0	Increases hard flux threshold before
 type|phase_cloak_flux_threshold|DESTROYER|0	0	Increases hard flux threshold before phase speed penalty kicks in by <good>10%</good>.
 type|phase_cloak_flux_threshold|CRUISER|0	0	Increases hard flux threshold before phase speed penalty kicks in by <good>10%</good>.
 type|phase_cloak_flux_threshold|CAPITAL_SHIP|0	0	Increases hard flux threshold before phase speed penalty kicks in by <good>10%</good>.
-type|phase_sensor_upgrades|null|0	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-type-detail|phase_sensor_upgrades|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Phase Field</hullmod>
-type|phase_sensor_upgrades|FRIGATE|0	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-type-detail|phase_sensor_upgrades|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Phase Field</hullmod>
-type|phase_sensor_upgrades|DESTROYER|0	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-type-detail|phase_sensor_upgrades|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Phase Field</hullmod>
-type|phase_sensor_upgrades|CRUISER|0	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-type-detail|phase_sensor_upgrades|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Phase Field</hullmod>
-type|phase_sensor_upgrades|CAPITAL_SHIP|0	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-type-detail|phase_sensor_upgrades|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Phase Field</hullmod>
+type|phase_hull_upgrades|null|0	0	Even if this ship isn't a phase ship, 50% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+type|phase_hull_upgrades|null|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+type-detail|phase_hull_upgrades|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Phase Field</hullmod>
+type|phase_hull_upgrades|FRIGATE|0	0	Even if this ship isn't a phase ship, 50% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+type|phase_hull_upgrades|FRIGATE|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+type-detail|phase_hull_upgrades|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Phase Field</hullmod>
+type|phase_hull_upgrades|DESTROYER|0	0	Even if this ship isn't a phase ship, 50% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+type|phase_hull_upgrades|DESTROYER|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+type-detail|phase_hull_upgrades|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Phase Field</hullmod>
+type|phase_hull_upgrades|CRUISER|0	0	Even if this ship isn't a phase ship, 50% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+type|phase_hull_upgrades|CRUISER|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+type-detail|phase_hull_upgrades|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Phase Field</hullmod>
+type|phase_hull_upgrades|CAPITAL_SHIP|0	0	Even if this ship isn't a phase ship, 50% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+type|phase_hull_upgrades|CAPITAL_SHIP|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+type-detail|phase_hull_upgrades|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Phase Field</hullmod>
 type|pointdefenseai|null|0	0	Point-defense weapons can identify and ignore decoy flares.
 type|pointdefenseai|null|1	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
 type|pointdefenseai|null|2	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
@@ -3714,27 +3719,27 @@ summary|option0|FRIGATE|138	0	<good>2%</good> more weapon damage per D-mod, up t
 summary|option0|FRIGATE|139	1	<bad>100%</bad> less phase cloak activation cost.
 summary|option0|FRIGATE|140	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 summary|option0|FRIGATE|141	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
-summary|option0|FRIGATE|142	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-summary|option0|FRIGATE|143	0	Point-defense weapons can identify and ignore decoy flares.
-summary|option0|FRIGATE|144	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-summary|option0|FRIGATE|145	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option0|FRIGATE|146	1	Increases crew casualties by <good>50%</good>.
-summary|option0|FRIGATE|147	0	Increases weapon damage by <good>10%</good>.
-summary|option0|FRIGATE|148	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option0|FRIGATE|149	1	<bad>24%</bad> less negative effects from D-mods.
-summary|option0|FRIGATE|150	0	If disabled, this ship is almost always recoverable after the battle.
-summary|option0|FRIGATE|151	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option0|FRIGATE|152	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option0|FRIGATE|153	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option0|FRIGATE|154	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option0|FRIGATE|155	0	<bad>100%</bad> less venting speed.
-summary|option0|FRIGATE|156	0	Increases top speed by <good>117</good>.
-summary|option0|FRIGATE|157	0	Increases acceleration by <good>100</good>.
-summary|option0|FRIGATE|158	0	Increases deceleration by <good>100</good>.
-summary|option0|FRIGATE|159	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option0|FRIGATE|160	0	Removes this ship's shield entirely.
-summary|option0|FRIGATE|161	1	<bad>60%</bad> less shield flux upkeep.
-summary|option0|FRIGATE|162	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option0|FRIGATE|142	0	Even if this ship isn't a phase ship, 50% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+summary|option0|FRIGATE|143	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option0|FRIGATE|144	0	Point-defense weapons can identify and ignore decoy flares.
+summary|option0|FRIGATE|145	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
+summary|option0|FRIGATE|146	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
+summary|option0|FRIGATE|147	1	Increases crew casualties by <good>50%</good>.
+summary|option0|FRIGATE|148	0	Increases weapon damage by <good>10%</good>.
+summary|option0|FRIGATE|149	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
+summary|option0|FRIGATE|150	1	<bad>24%</bad> less negative effects from D-mods.
+summary|option0|FRIGATE|151	0	If disabled, this ship is almost always recoverable after the battle.
+summary|option0|FRIGATE|152	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
+summary|option0|FRIGATE|153	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+summary|option0|FRIGATE|154	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option0|FRIGATE|155	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option0|FRIGATE|156	0	<bad>100%</bad> less venting speed.
+summary|option0|FRIGATE|157	0	Increases top speed by <good>117</good>.
+summary|option0|FRIGATE|158	0	Increases acceleration by <good>100</good>.
+summary|option0|FRIGATE|159	0	Increases deceleration by <good>100</good>.
+summary|option0|FRIGATE|160	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option0|FRIGATE|161	0	Removes this ship's shield entirely.
+summary|option0|FRIGATE|162	1	<bad>60%</bad> less shield flux upkeep.
 summary|option0|FRIGATE|163	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>7</bad>.
 summary|option0|FRIGATE|164	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>5</bad>.
 summary|option0|FRIGATE|165	0	Captures combat objectives <good>100%</good> faster.
@@ -3889,27 +3894,27 @@ summary|option0|DESTROYER|138	0	<good>2%</good> more weapon damage per D-mod, up
 summary|option0|DESTROYER|139	1	<bad>100%</bad> less phase cloak activation cost.
 summary|option0|DESTROYER|140	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 summary|option0|DESTROYER|141	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
-summary|option0|DESTROYER|142	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-summary|option0|DESTROYER|143	0	Point-defense weapons can identify and ignore decoy flares.
-summary|option0|DESTROYER|144	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-summary|option0|DESTROYER|145	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option0|DESTROYER|146	1	Increases crew casualties by <good>50%</good>.
-summary|option0|DESTROYER|147	0	Increases weapon damage by <good>10%</good>.
-summary|option0|DESTROYER|148	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option0|DESTROYER|149	1	<bad>24%</bad> less negative effects from D-mods.
-summary|option0|DESTROYER|150	0	If disabled, this ship is almost always recoverable after the battle.
-summary|option0|DESTROYER|151	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option0|DESTROYER|152	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option0|DESTROYER|153	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option0|DESTROYER|154	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option0|DESTROYER|155	0	<bad>100%</bad> less venting speed.
-summary|option0|DESTROYER|156	0	Increases top speed by <good>85</good>.
-summary|option0|DESTROYER|157	0	Increases acceleration by <good>60</good>.
-summary|option0|DESTROYER|158	0	Increases deceleration by <good>60</good>.
-summary|option0|DESTROYER|159	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option0|DESTROYER|160	0	Removes this ship's shield entirely.
-summary|option0|DESTROYER|161	1	<bad>60%</bad> less shield flux upkeep.
-summary|option0|DESTROYER|162	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option0|DESTROYER|142	0	Even if this ship isn't a phase ship, 50% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+summary|option0|DESTROYER|143	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option0|DESTROYER|144	0	Point-defense weapons can identify and ignore decoy flares.
+summary|option0|DESTROYER|145	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
+summary|option0|DESTROYER|146	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
+summary|option0|DESTROYER|147	1	Increases crew casualties by <good>50%</good>.
+summary|option0|DESTROYER|148	0	Increases weapon damage by <good>10%</good>.
+summary|option0|DESTROYER|149	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
+summary|option0|DESTROYER|150	1	<bad>24%</bad> less negative effects from D-mods.
+summary|option0|DESTROYER|151	0	If disabled, this ship is almost always recoverable after the battle.
+summary|option0|DESTROYER|152	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
+summary|option0|DESTROYER|153	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+summary|option0|DESTROYER|154	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option0|DESTROYER|155	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option0|DESTROYER|156	0	<bad>100%</bad> less venting speed.
+summary|option0|DESTROYER|157	0	Increases top speed by <good>85</good>.
+summary|option0|DESTROYER|158	0	Increases acceleration by <good>60</good>.
+summary|option0|DESTROYER|159	0	Increases deceleration by <good>60</good>.
+summary|option0|DESTROYER|160	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option0|DESTROYER|161	0	Removes this ship's shield entirely.
+summary|option0|DESTROYER|162	1	<bad>60%</bad> less shield flux upkeep.
 summary|option0|DESTROYER|163	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>13</bad>.
 summary|option0|DESTROYER|164	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>11</bad>.
 summary|option0|DESTROYER|165	0	Captures combat objectives <good>100%</good> faster.
@@ -4064,27 +4069,27 @@ summary|option0|CRUISER|138	0	<good>2%</good> more weapon damage per D-mod, up t
 summary|option0|CRUISER|139	1	<bad>100%</bad> less phase cloak activation cost.
 summary|option0|CRUISER|140	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 summary|option0|CRUISER|141	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
-summary|option0|CRUISER|142	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-summary|option0|CRUISER|143	0	Point-defense weapons can identify and ignore decoy flares.
-summary|option0|CRUISER|144	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-summary|option0|CRUISER|145	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option0|CRUISER|146	1	Increases crew casualties by <good>50%</good>.
-summary|option0|CRUISER|147	0	Increases weapon damage by <good>10%</good>.
-summary|option0|CRUISER|148	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option0|CRUISER|149	1	<bad>24%</bad> less negative effects from D-mods.
-summary|option0|CRUISER|150	0	If disabled, this ship is almost always recoverable after the battle.
-summary|option0|CRUISER|151	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option0|CRUISER|152	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option0|CRUISER|153	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option0|CRUISER|154	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option0|CRUISER|155	0	<bad>100%</bad> less venting speed.
-summary|option0|CRUISER|156	0	Increases top speed by <good>63</good>.
-summary|option0|CRUISER|157	0	Increases acceleration by <good>40</good>.
-summary|option0|CRUISER|158	0	Increases deceleration by <good>40</good>.
-summary|option0|CRUISER|159	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option0|CRUISER|160	0	Removes this ship's shield entirely.
-summary|option0|CRUISER|161	1	<bad>60%</bad> less shield flux upkeep.
-summary|option0|CRUISER|162	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option0|CRUISER|142	0	Even if this ship isn't a phase ship, 50% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+summary|option0|CRUISER|143	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option0|CRUISER|144	0	Point-defense weapons can identify and ignore decoy flares.
+summary|option0|CRUISER|145	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
+summary|option0|CRUISER|146	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
+summary|option0|CRUISER|147	1	Increases crew casualties by <good>50%</good>.
+summary|option0|CRUISER|148	0	Increases weapon damage by <good>10%</good>.
+summary|option0|CRUISER|149	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
+summary|option0|CRUISER|150	1	<bad>24%</bad> less negative effects from D-mods.
+summary|option0|CRUISER|151	0	If disabled, this ship is almost always recoverable after the battle.
+summary|option0|CRUISER|152	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
+summary|option0|CRUISER|153	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+summary|option0|CRUISER|154	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option0|CRUISER|155	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option0|CRUISER|156	0	<bad>100%</bad> less venting speed.
+summary|option0|CRUISER|157	0	Increases top speed by <good>63</good>.
+summary|option0|CRUISER|158	0	Increases acceleration by <good>40</good>.
+summary|option0|CRUISER|159	0	Increases deceleration by <good>40</good>.
+summary|option0|CRUISER|160	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option0|CRUISER|161	0	Removes this ship's shield entirely.
+summary|option0|CRUISER|162	1	<bad>60%</bad> less shield flux upkeep.
 summary|option0|CRUISER|163	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>22</bad>.
 summary|option0|CRUISER|164	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>20</bad>.
 summary|option0|CRUISER|165	0	Captures combat objectives <good>100%</good> faster.
@@ -4239,27 +4244,27 @@ summary|option0|CAPITAL_SHIP|138	0	<good>2%</good> more weapon damage per D-mod,
 summary|option0|CAPITAL_SHIP|139	1	<bad>100%</bad> less phase cloak activation cost.
 summary|option0|CAPITAL_SHIP|140	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 summary|option0|CAPITAL_SHIP|141	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
-summary|option0|CAPITAL_SHIP|142	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-summary|option0|CAPITAL_SHIP|143	0	Point-defense weapons can identify and ignore decoy flares.
-summary|option0|CAPITAL_SHIP|144	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-summary|option0|CAPITAL_SHIP|145	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option0|CAPITAL_SHIP|146	1	Increases crew casualties by <good>50%</good>.
-summary|option0|CAPITAL_SHIP|147	0	Increases weapon damage by <good>10%</good>.
-summary|option0|CAPITAL_SHIP|148	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option0|CAPITAL_SHIP|149	1	<bad>24%</bad> less negative effects from D-mods.
-summary|option0|CAPITAL_SHIP|150	0	If disabled, this ship is almost always recoverable after the battle.
-summary|option0|CAPITAL_SHIP|151	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option0|CAPITAL_SHIP|152	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option0|CAPITAL_SHIP|153	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option0|CAPITAL_SHIP|154	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option0|CAPITAL_SHIP|155	0	<bad>100%</bad> less venting speed.
-summary|option0|CAPITAL_SHIP|156	0	Increases top speed by <good>53</good>.
-summary|option0|CAPITAL_SHIP|157	0	Increases acceleration by <good>20</good>.
-summary|option0|CAPITAL_SHIP|158	0	Increases deceleration by <good>20</good>.
-summary|option0|CAPITAL_SHIP|159	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option0|CAPITAL_SHIP|160	0	Removes this ship's shield entirely.
-summary|option0|CAPITAL_SHIP|161	1	<bad>60%</bad> less shield flux upkeep.
-summary|option0|CAPITAL_SHIP|162	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option0|CAPITAL_SHIP|142	0	Even if this ship isn't a phase ship, 50% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+summary|option0|CAPITAL_SHIP|143	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option0|CAPITAL_SHIP|144	0	Point-defense weapons can identify and ignore decoy flares.
+summary|option0|CAPITAL_SHIP|145	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
+summary|option0|CAPITAL_SHIP|146	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
+summary|option0|CAPITAL_SHIP|147	1	Increases crew casualties by <good>50%</good>.
+summary|option0|CAPITAL_SHIP|148	0	Increases weapon damage by <good>10%</good>.
+summary|option0|CAPITAL_SHIP|149	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
+summary|option0|CAPITAL_SHIP|150	1	<bad>24%</bad> less negative effects from D-mods.
+summary|option0|CAPITAL_SHIP|151	0	If disabled, this ship is almost always recoverable after the battle.
+summary|option0|CAPITAL_SHIP|152	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
+summary|option0|CAPITAL_SHIP|153	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+summary|option0|CAPITAL_SHIP|154	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option0|CAPITAL_SHIP|155	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option0|CAPITAL_SHIP|156	0	<bad>100%</bad> less venting speed.
+summary|option0|CAPITAL_SHIP|157	0	Increases top speed by <good>53</good>.
+summary|option0|CAPITAL_SHIP|158	0	Increases acceleration by <good>20</good>.
+summary|option0|CAPITAL_SHIP|159	0	Increases deceleration by <good>20</good>.
+summary|option0|CAPITAL_SHIP|160	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option0|CAPITAL_SHIP|161	0	Removes this ship's shield entirely.
+summary|option0|CAPITAL_SHIP|162	1	<bad>60%</bad> less shield flux upkeep.
 summary|option0|CAPITAL_SHIP|163	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>42</bad>.
 summary|option0|CAPITAL_SHIP|164	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>40</bad>.
 summary|option0|CAPITAL_SHIP|165	0	Captures combat objectives <good>100%</good> faster.
@@ -4414,27 +4419,27 @@ summary|option1|FRIGATE|138	0	<good>2%</good> more weapon damage per D-mod, up t
 summary|option1|FRIGATE|139	1	<bad>100%</bad> less phase cloak activation cost.
 summary|option1|FRIGATE|140	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 summary|option1|FRIGATE|141	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
-summary|option1|FRIGATE|142	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-summary|option1|FRIGATE|143	0	Point-defense weapons can identify and ignore decoy flares.
-summary|option1|FRIGATE|144	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-summary|option1|FRIGATE|145	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option1|FRIGATE|146	1	Increases crew casualties by <good>50%</good>.
-summary|option1|FRIGATE|147	0	Increases weapon damage by <good>10%</good>.
-summary|option1|FRIGATE|148	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option1|FRIGATE|149	1	<bad>24%</bad> less negative effects from D-mods.
-summary|option1|FRIGATE|150	0	If disabled, this ship is almost always recoverable after the battle.
-summary|option1|FRIGATE|151	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option1|FRIGATE|152	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option1|FRIGATE|153	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option1|FRIGATE|154	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option1|FRIGATE|155	0	<bad>100%</bad> less venting speed.
-summary|option1|FRIGATE|156	0	Increases top speed by <good>117</good>.
-summary|option1|FRIGATE|157	0	Increases acceleration by <good>100</good>.
-summary|option1|FRIGATE|158	0	Increases deceleration by <good>100</good>.
-summary|option1|FRIGATE|159	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option1|FRIGATE|160	0	Removes this ship's shield entirely.
-summary|option1|FRIGATE|161	1	<bad>60%</bad> less shield flux upkeep.
-summary|option1|FRIGATE|162	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option1|FRIGATE|142	0	Even if this ship isn't a phase ship, 50% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+summary|option1|FRIGATE|143	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option1|FRIGATE|144	0	Point-defense weapons can identify and ignore decoy flares.
+summary|option1|FRIGATE|145	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
+summary|option1|FRIGATE|146	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
+summary|option1|FRIGATE|147	1	Increases crew casualties by <good>50%</good>.
+summary|option1|FRIGATE|148	0	Increases weapon damage by <good>10%</good>.
+summary|option1|FRIGATE|149	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
+summary|option1|FRIGATE|150	1	<bad>24%</bad> less negative effects from D-mods.
+summary|option1|FRIGATE|151	0	If disabled, this ship is almost always recoverable after the battle.
+summary|option1|FRIGATE|152	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
+summary|option1|FRIGATE|153	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+summary|option1|FRIGATE|154	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option1|FRIGATE|155	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option1|FRIGATE|156	0	<bad>100%</bad> less venting speed.
+summary|option1|FRIGATE|157	0	Increases top speed by <good>117</good>.
+summary|option1|FRIGATE|158	0	Increases acceleration by <good>100</good>.
+summary|option1|FRIGATE|159	0	Increases deceleration by <good>100</good>.
+summary|option1|FRIGATE|160	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option1|FRIGATE|161	0	Removes this ship's shield entirely.
+summary|option1|FRIGATE|162	1	<bad>60%</bad> less shield flux upkeep.
 summary|option1|FRIGATE|163	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>7</bad>.
 summary|option1|FRIGATE|164	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>5</bad>.
 summary|option1|FRIGATE|165	0	Captures combat objectives <good>100%</good> faster.
@@ -4589,27 +4594,27 @@ summary|option1|DESTROYER|138	0	<good>2%</good> more weapon damage per D-mod, up
 summary|option1|DESTROYER|139	1	<bad>100%</bad> less phase cloak activation cost.
 summary|option1|DESTROYER|140	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 summary|option1|DESTROYER|141	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
-summary|option1|DESTROYER|142	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-summary|option1|DESTROYER|143	0	Point-defense weapons can identify and ignore decoy flares.
-summary|option1|DESTROYER|144	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-summary|option1|DESTROYER|145	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option1|DESTROYER|146	1	Increases crew casualties by <good>50%</good>.
-summary|option1|DESTROYER|147	0	Increases weapon damage by <good>10%</good>.
-summary|option1|DESTROYER|148	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option1|DESTROYER|149	1	<bad>24%</bad> less negative effects from D-mods.
-summary|option1|DESTROYER|150	0	If disabled, this ship is almost always recoverable after the battle.
-summary|option1|DESTROYER|151	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option1|DESTROYER|152	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option1|DESTROYER|153	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option1|DESTROYER|154	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option1|DESTROYER|155	0	<bad>100%</bad> less venting speed.
-summary|option1|DESTROYER|156	0	Increases top speed by <good>85</good>.
-summary|option1|DESTROYER|157	0	Increases acceleration by <good>60</good>.
-summary|option1|DESTROYER|158	0	Increases deceleration by <good>60</good>.
-summary|option1|DESTROYER|159	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option1|DESTROYER|160	0	Removes this ship's shield entirely.
-summary|option1|DESTROYER|161	1	<bad>60%</bad> less shield flux upkeep.
-summary|option1|DESTROYER|162	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option1|DESTROYER|142	0	Even if this ship isn't a phase ship, 50% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+summary|option1|DESTROYER|143	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option1|DESTROYER|144	0	Point-defense weapons can identify and ignore decoy flares.
+summary|option1|DESTROYER|145	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
+summary|option1|DESTROYER|146	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
+summary|option1|DESTROYER|147	1	Increases crew casualties by <good>50%</good>.
+summary|option1|DESTROYER|148	0	Increases weapon damage by <good>10%</good>.
+summary|option1|DESTROYER|149	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
+summary|option1|DESTROYER|150	1	<bad>24%</bad> less negative effects from D-mods.
+summary|option1|DESTROYER|151	0	If disabled, this ship is almost always recoverable after the battle.
+summary|option1|DESTROYER|152	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
+summary|option1|DESTROYER|153	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+summary|option1|DESTROYER|154	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option1|DESTROYER|155	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option1|DESTROYER|156	0	<bad>100%</bad> less venting speed.
+summary|option1|DESTROYER|157	0	Increases top speed by <good>85</good>.
+summary|option1|DESTROYER|158	0	Increases acceleration by <good>60</good>.
+summary|option1|DESTROYER|159	0	Increases deceleration by <good>60</good>.
+summary|option1|DESTROYER|160	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option1|DESTROYER|161	0	Removes this ship's shield entirely.
+summary|option1|DESTROYER|162	1	<bad>60%</bad> less shield flux upkeep.
 summary|option1|DESTROYER|163	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>13</bad>.
 summary|option1|DESTROYER|164	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>11</bad>.
 summary|option1|DESTROYER|165	0	Captures combat objectives <good>100%</good> faster.
@@ -4764,27 +4769,27 @@ summary|option1|CRUISER|138	0	<good>2%</good> more weapon damage per D-mod, up t
 summary|option1|CRUISER|139	1	<bad>100%</bad> less phase cloak activation cost.
 summary|option1|CRUISER|140	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 summary|option1|CRUISER|141	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
-summary|option1|CRUISER|142	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-summary|option1|CRUISER|143	0	Point-defense weapons can identify and ignore decoy flares.
-summary|option1|CRUISER|144	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-summary|option1|CRUISER|145	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option1|CRUISER|146	1	Increases crew casualties by <good>50%</good>.
-summary|option1|CRUISER|147	0	Increases weapon damage by <good>10%</good>.
-summary|option1|CRUISER|148	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option1|CRUISER|149	1	<bad>24%</bad> less negative effects from D-mods.
-summary|option1|CRUISER|150	0	If disabled, this ship is almost always recoverable after the battle.
-summary|option1|CRUISER|151	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option1|CRUISER|152	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option1|CRUISER|153	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option1|CRUISER|154	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option1|CRUISER|155	0	<bad>100%</bad> less venting speed.
-summary|option1|CRUISER|156	0	Increases top speed by <good>63</good>.
-summary|option1|CRUISER|157	0	Increases acceleration by <good>40</good>.
-summary|option1|CRUISER|158	0	Increases deceleration by <good>40</good>.
-summary|option1|CRUISER|159	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option1|CRUISER|160	0	Removes this ship's shield entirely.
-summary|option1|CRUISER|161	1	<bad>60%</bad> less shield flux upkeep.
-summary|option1|CRUISER|162	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option1|CRUISER|142	0	Even if this ship isn't a phase ship, 50% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+summary|option1|CRUISER|143	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option1|CRUISER|144	0	Point-defense weapons can identify and ignore decoy flares.
+summary|option1|CRUISER|145	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
+summary|option1|CRUISER|146	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
+summary|option1|CRUISER|147	1	Increases crew casualties by <good>50%</good>.
+summary|option1|CRUISER|148	0	Increases weapon damage by <good>10%</good>.
+summary|option1|CRUISER|149	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
+summary|option1|CRUISER|150	1	<bad>24%</bad> less negative effects from D-mods.
+summary|option1|CRUISER|151	0	If disabled, this ship is almost always recoverable after the battle.
+summary|option1|CRUISER|152	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
+summary|option1|CRUISER|153	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+summary|option1|CRUISER|154	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option1|CRUISER|155	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option1|CRUISER|156	0	<bad>100%</bad> less venting speed.
+summary|option1|CRUISER|157	0	Increases top speed by <good>63</good>.
+summary|option1|CRUISER|158	0	Increases acceleration by <good>40</good>.
+summary|option1|CRUISER|159	0	Increases deceleration by <good>40</good>.
+summary|option1|CRUISER|160	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option1|CRUISER|161	0	Removes this ship's shield entirely.
+summary|option1|CRUISER|162	1	<bad>60%</bad> less shield flux upkeep.
 summary|option1|CRUISER|163	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>22</bad>.
 summary|option1|CRUISER|164	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>20</bad>.
 summary|option1|CRUISER|165	0	Captures combat objectives <good>100%</good> faster.
@@ -4939,27 +4944,27 @@ summary|option1|CAPITAL_SHIP|138	0	<good>2%</good> more weapon damage per D-mod,
 summary|option1|CAPITAL_SHIP|139	1	<bad>100%</bad> less phase cloak activation cost.
 summary|option1|CAPITAL_SHIP|140	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 summary|option1|CAPITAL_SHIP|141	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
-summary|option1|CAPITAL_SHIP|142	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-summary|option1|CAPITAL_SHIP|143	0	Point-defense weapons can identify and ignore decoy flares.
-summary|option1|CAPITAL_SHIP|144	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-summary|option1|CAPITAL_SHIP|145	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option1|CAPITAL_SHIP|146	1	Increases crew casualties by <good>50%</good>.
-summary|option1|CAPITAL_SHIP|147	0	Increases weapon damage by <good>10%</good>.
-summary|option1|CAPITAL_SHIP|148	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option1|CAPITAL_SHIP|149	1	<bad>24%</bad> less negative effects from D-mods.
-summary|option1|CAPITAL_SHIP|150	0	If disabled, this ship is almost always recoverable after the battle.
-summary|option1|CAPITAL_SHIP|151	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option1|CAPITAL_SHIP|152	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option1|CAPITAL_SHIP|153	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option1|CAPITAL_SHIP|154	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option1|CAPITAL_SHIP|155	0	<bad>100%</bad> less venting speed.
-summary|option1|CAPITAL_SHIP|156	0	Increases top speed by <good>53</good>.
-summary|option1|CAPITAL_SHIP|157	0	Increases acceleration by <good>20</good>.
-summary|option1|CAPITAL_SHIP|158	0	Increases deceleration by <good>20</good>.
-summary|option1|CAPITAL_SHIP|159	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option1|CAPITAL_SHIP|160	0	Removes this ship's shield entirely.
-summary|option1|CAPITAL_SHIP|161	1	<bad>60%</bad> less shield flux upkeep.
-summary|option1|CAPITAL_SHIP|162	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option1|CAPITAL_SHIP|142	0	Even if this ship isn't a phase ship, 50% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+summary|option1|CAPITAL_SHIP|143	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option1|CAPITAL_SHIP|144	0	Point-defense weapons can identify and ignore decoy flares.
+summary|option1|CAPITAL_SHIP|145	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
+summary|option1|CAPITAL_SHIP|146	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
+summary|option1|CAPITAL_SHIP|147	1	Increases crew casualties by <good>50%</good>.
+summary|option1|CAPITAL_SHIP|148	0	Increases weapon damage by <good>10%</good>.
+summary|option1|CAPITAL_SHIP|149	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
+summary|option1|CAPITAL_SHIP|150	1	<bad>24%</bad> less negative effects from D-mods.
+summary|option1|CAPITAL_SHIP|151	0	If disabled, this ship is almost always recoverable after the battle.
+summary|option1|CAPITAL_SHIP|152	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
+summary|option1|CAPITAL_SHIP|153	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+summary|option1|CAPITAL_SHIP|154	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option1|CAPITAL_SHIP|155	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option1|CAPITAL_SHIP|156	0	<bad>100%</bad> less venting speed.
+summary|option1|CAPITAL_SHIP|157	0	Increases top speed by <good>53</good>.
+summary|option1|CAPITAL_SHIP|158	0	Increases acceleration by <good>20</good>.
+summary|option1|CAPITAL_SHIP|159	0	Increases deceleration by <good>20</good>.
+summary|option1|CAPITAL_SHIP|160	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option1|CAPITAL_SHIP|161	0	Removes this ship's shield entirely.
+summary|option1|CAPITAL_SHIP|162	1	<bad>60%</bad> less shield flux upkeep.
 summary|option1|CAPITAL_SHIP|163	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>42</bad>.
 summary|option1|CAPITAL_SHIP|164	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>40</bad>.
 summary|option1|CAPITAL_SHIP|165	0	Captures combat objectives <good>100%</good> faster.
@@ -5114,27 +5119,27 @@ summary|option2|FRIGATE|138	0	<good>2%</good> more weapon damage per D-mod, up t
 summary|option2|FRIGATE|139	1	<bad>100%</bad> less phase cloak activation cost.
 summary|option2|FRIGATE|140	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 summary|option2|FRIGATE|141	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
-summary|option2|FRIGATE|142	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-summary|option2|FRIGATE|143	0	Point-defense weapons can identify and ignore decoy flares.
-summary|option2|FRIGATE|144	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-summary|option2|FRIGATE|145	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option2|FRIGATE|146	1	Increases crew casualties by <good>50%</good>.
-summary|option2|FRIGATE|147	0	Increases weapon damage by <good>10%</good>.
-summary|option2|FRIGATE|148	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option2|FRIGATE|149	1	<bad>24%</bad> less negative effects from D-mods.
-summary|option2|FRIGATE|150	0	If disabled, this ship is almost always recoverable after the battle.
-summary|option2|FRIGATE|151	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option2|FRIGATE|152	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option2|FRIGATE|153	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option2|FRIGATE|154	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option2|FRIGATE|155	0	<bad>100%</bad> less venting speed.
-summary|option2|FRIGATE|156	0	Increases top speed by <good>117</good>.
-summary|option2|FRIGATE|157	0	Increases acceleration by <good>100</good>.
-summary|option2|FRIGATE|158	0	Increases deceleration by <good>100</good>.
-summary|option2|FRIGATE|159	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option2|FRIGATE|160	0	Removes this ship's shield entirely.
-summary|option2|FRIGATE|161	1	<bad>60%</bad> less shield flux upkeep.
-summary|option2|FRIGATE|162	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option2|FRIGATE|142	0	Even if this ship isn't a phase ship, 50% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+summary|option2|FRIGATE|143	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option2|FRIGATE|144	0	Point-defense weapons can identify and ignore decoy flares.
+summary|option2|FRIGATE|145	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
+summary|option2|FRIGATE|146	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
+summary|option2|FRIGATE|147	1	Increases crew casualties by <good>50%</good>.
+summary|option2|FRIGATE|148	0	Increases weapon damage by <good>10%</good>.
+summary|option2|FRIGATE|149	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
+summary|option2|FRIGATE|150	1	<bad>24%</bad> less negative effects from D-mods.
+summary|option2|FRIGATE|151	0	If disabled, this ship is almost always recoverable after the battle.
+summary|option2|FRIGATE|152	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
+summary|option2|FRIGATE|153	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+summary|option2|FRIGATE|154	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option2|FRIGATE|155	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option2|FRIGATE|156	0	<bad>100%</bad> less venting speed.
+summary|option2|FRIGATE|157	0	Increases top speed by <good>117</good>.
+summary|option2|FRIGATE|158	0	Increases acceleration by <good>100</good>.
+summary|option2|FRIGATE|159	0	Increases deceleration by <good>100</good>.
+summary|option2|FRIGATE|160	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option2|FRIGATE|161	0	Removes this ship's shield entirely.
+summary|option2|FRIGATE|162	1	<bad>60%</bad> less shield flux upkeep.
 summary|option2|FRIGATE|163	0	Increases crew capacity by <good>24%</good>.
 summary|option2|FRIGATE|164	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>7</bad>.
 summary|option2|FRIGATE|165	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>5</bad>.
@@ -5290,27 +5295,27 @@ summary|option2|DESTROYER|138	0	<good>2%</good> more weapon damage per D-mod, up
 summary|option2|DESTROYER|139	1	<bad>100%</bad> less phase cloak activation cost.
 summary|option2|DESTROYER|140	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 summary|option2|DESTROYER|141	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
-summary|option2|DESTROYER|142	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-summary|option2|DESTROYER|143	0	Point-defense weapons can identify and ignore decoy flares.
-summary|option2|DESTROYER|144	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-summary|option2|DESTROYER|145	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option2|DESTROYER|146	1	Increases crew casualties by <good>50%</good>.
-summary|option2|DESTROYER|147	0	Increases weapon damage by <good>10%</good>.
-summary|option2|DESTROYER|148	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option2|DESTROYER|149	1	<bad>24%</bad> less negative effects from D-mods.
-summary|option2|DESTROYER|150	0	If disabled, this ship is almost always recoverable after the battle.
-summary|option2|DESTROYER|151	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option2|DESTROYER|152	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option2|DESTROYER|153	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option2|DESTROYER|154	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option2|DESTROYER|155	0	<bad>100%</bad> less venting speed.
-summary|option2|DESTROYER|156	0	Increases top speed by <good>85</good>.
-summary|option2|DESTROYER|157	0	Increases acceleration by <good>60</good>.
-summary|option2|DESTROYER|158	0	Increases deceleration by <good>60</good>.
-summary|option2|DESTROYER|159	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option2|DESTROYER|160	0	Removes this ship's shield entirely.
-summary|option2|DESTROYER|161	1	<bad>60%</bad> less shield flux upkeep.
-summary|option2|DESTROYER|162	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option2|DESTROYER|142	0	Even if this ship isn't a phase ship, 50% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+summary|option2|DESTROYER|143	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option2|DESTROYER|144	0	Point-defense weapons can identify and ignore decoy flares.
+summary|option2|DESTROYER|145	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
+summary|option2|DESTROYER|146	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
+summary|option2|DESTROYER|147	1	Increases crew casualties by <good>50%</good>.
+summary|option2|DESTROYER|148	0	Increases weapon damage by <good>10%</good>.
+summary|option2|DESTROYER|149	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
+summary|option2|DESTROYER|150	1	<bad>24%</bad> less negative effects from D-mods.
+summary|option2|DESTROYER|151	0	If disabled, this ship is almost always recoverable after the battle.
+summary|option2|DESTROYER|152	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
+summary|option2|DESTROYER|153	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+summary|option2|DESTROYER|154	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option2|DESTROYER|155	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option2|DESTROYER|156	0	<bad>100%</bad> less venting speed.
+summary|option2|DESTROYER|157	0	Increases top speed by <good>85</good>.
+summary|option2|DESTROYER|158	0	Increases acceleration by <good>60</good>.
+summary|option2|DESTROYER|159	0	Increases deceleration by <good>60</good>.
+summary|option2|DESTROYER|160	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option2|DESTROYER|161	0	Removes this ship's shield entirely.
+summary|option2|DESTROYER|162	1	<bad>60%</bad> less shield flux upkeep.
 summary|option2|DESTROYER|163	0	Increases crew capacity by <good>24%</good>.
 summary|option2|DESTROYER|164	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>13</bad>.
 summary|option2|DESTROYER|165	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>11</bad>.
@@ -5466,27 +5471,27 @@ summary|option2|CRUISER|138	0	<good>2%</good> more weapon damage per D-mod, up t
 summary|option2|CRUISER|139	1	<bad>100%</bad> less phase cloak activation cost.
 summary|option2|CRUISER|140	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 summary|option2|CRUISER|141	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
-summary|option2|CRUISER|142	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-summary|option2|CRUISER|143	0	Point-defense weapons can identify and ignore decoy flares.
-summary|option2|CRUISER|144	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-summary|option2|CRUISER|145	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option2|CRUISER|146	1	Increases crew casualties by <good>50%</good>.
-summary|option2|CRUISER|147	0	Increases weapon damage by <good>10%</good>.
-summary|option2|CRUISER|148	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option2|CRUISER|149	1	<bad>24%</bad> less negative effects from D-mods.
-summary|option2|CRUISER|150	0	If disabled, this ship is almost always recoverable after the battle.
-summary|option2|CRUISER|151	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option2|CRUISER|152	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option2|CRUISER|153	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option2|CRUISER|154	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option2|CRUISER|155	0	<bad>100%</bad> less venting speed.
-summary|option2|CRUISER|156	0	Increases top speed by <good>63</good>.
-summary|option2|CRUISER|157	0	Increases acceleration by <good>40</good>.
-summary|option2|CRUISER|158	0	Increases deceleration by <good>40</good>.
-summary|option2|CRUISER|159	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option2|CRUISER|160	0	Removes this ship's shield entirely.
-summary|option2|CRUISER|161	1	<bad>60%</bad> less shield flux upkeep.
-summary|option2|CRUISER|162	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option2|CRUISER|142	0	Even if this ship isn't a phase ship, 50% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+summary|option2|CRUISER|143	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option2|CRUISER|144	0	Point-defense weapons can identify and ignore decoy flares.
+summary|option2|CRUISER|145	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
+summary|option2|CRUISER|146	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
+summary|option2|CRUISER|147	1	Increases crew casualties by <good>50%</good>.
+summary|option2|CRUISER|148	0	Increases weapon damage by <good>10%</good>.
+summary|option2|CRUISER|149	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
+summary|option2|CRUISER|150	1	<bad>24%</bad> less negative effects from D-mods.
+summary|option2|CRUISER|151	0	If disabled, this ship is almost always recoverable after the battle.
+summary|option2|CRUISER|152	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
+summary|option2|CRUISER|153	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+summary|option2|CRUISER|154	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option2|CRUISER|155	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option2|CRUISER|156	0	<bad>100%</bad> less venting speed.
+summary|option2|CRUISER|157	0	Increases top speed by <good>63</good>.
+summary|option2|CRUISER|158	0	Increases acceleration by <good>40</good>.
+summary|option2|CRUISER|159	0	Increases deceleration by <good>40</good>.
+summary|option2|CRUISER|160	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option2|CRUISER|161	0	Removes this ship's shield entirely.
+summary|option2|CRUISER|162	1	<bad>60%</bad> less shield flux upkeep.
 summary|option2|CRUISER|163	0	Increases crew capacity by <good>24%</good>.
 summary|option2|CRUISER|164	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>22</bad>.
 summary|option2|CRUISER|165	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>20</bad>.
@@ -5642,27 +5647,27 @@ summary|option2|CAPITAL_SHIP|138	0	<good>2%</good> more weapon damage per D-mod,
 summary|option2|CAPITAL_SHIP|139	1	<bad>100%</bad> less phase cloak activation cost.
 summary|option2|CAPITAL_SHIP|140	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 summary|option2|CAPITAL_SHIP|141	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
-summary|option2|CAPITAL_SHIP|142	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-summary|option2|CAPITAL_SHIP|143	0	Point-defense weapons can identify and ignore decoy flares.
-summary|option2|CAPITAL_SHIP|144	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-summary|option2|CAPITAL_SHIP|145	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
-summary|option2|CAPITAL_SHIP|146	1	Increases crew casualties by <good>50%</good>.
-summary|option2|CAPITAL_SHIP|147	0	Increases weapon damage by <good>10%</good>.
-summary|option2|CAPITAL_SHIP|148	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
-summary|option2|CAPITAL_SHIP|149	1	<bad>24%</bad> less negative effects from D-mods.
-summary|option2|CAPITAL_SHIP|150	0	If disabled, this ship is almost always recoverable after the battle.
-summary|option2|CAPITAL_SHIP|151	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
-summary|option2|CAPITAL_SHIP|152	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option2|CAPITAL_SHIP|153	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option2|CAPITAL_SHIP|154	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option2|CAPITAL_SHIP|155	0	<bad>100%</bad> less venting speed.
-summary|option2|CAPITAL_SHIP|156	0	Increases top speed by <good>53</good>.
-summary|option2|CAPITAL_SHIP|157	0	Increases acceleration by <good>20</good>.
-summary|option2|CAPITAL_SHIP|158	0	Increases deceleration by <good>20</good>.
-summary|option2|CAPITAL_SHIP|159	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option2|CAPITAL_SHIP|160	0	Removes this ship's shield entirely.
-summary|option2|CAPITAL_SHIP|161	1	<bad>60%</bad> less shield flux upkeep.
-summary|option2|CAPITAL_SHIP|162	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option2|CAPITAL_SHIP|142	0	Even if this ship isn't a phase ship, 50% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+summary|option2|CAPITAL_SHIP|143	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+summary|option2|CAPITAL_SHIP|144	0	Point-defense weapons can identify and ignore decoy flares.
+summary|option2|CAPITAL_SHIP|145	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
+summary|option2|CAPITAL_SHIP|146	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.
+summary|option2|CAPITAL_SHIP|147	1	Increases crew casualties by <good>50%</good>.
+summary|option2|CAPITAL_SHIP|148	0	Increases weapon damage by <good>10%</good>.
+summary|option2|CAPITAL_SHIP|149	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
+summary|option2|CAPITAL_SHIP|150	1	<bad>24%</bad> less negative effects from D-mods.
+summary|option2|CAPITAL_SHIP|151	0	If disabled, this ship is almost always recoverable after the battle.
+summary|option2|CAPITAL_SHIP|152	1	Decreases chance of this ship breaking apart when destroyed by <bad>100%</bad>.
+summary|option2|CAPITAL_SHIP|153	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+summary|option2|CAPITAL_SHIP|154	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option2|CAPITAL_SHIP|155	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option2|CAPITAL_SHIP|156	0	<bad>100%</bad> less venting speed.
+summary|option2|CAPITAL_SHIP|157	0	Increases top speed by <good>53</good>.
+summary|option2|CAPITAL_SHIP|158	0	Increases acceleration by <good>20</good>.
+summary|option2|CAPITAL_SHIP|159	0	Increases deceleration by <good>20</good>.
+summary|option2|CAPITAL_SHIP|160	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option2|CAPITAL_SHIP|161	0	Removes this ship's shield entirely.
+summary|option2|CAPITAL_SHIP|162	1	<bad>60%</bad> less shield flux upkeep.
 summary|option2|CAPITAL_SHIP|163	0	Increases crew capacity by <good>24%</good>.
 summary|option2|CAPITAL_SHIP|164	1	Decreases heavy machinery required to perform surveys (fleet-wide) by <bad>42</bad>.
 summary|option2|CAPITAL_SHIP|165	1	Decreases supplies required to perform surveys (fleet-wide) by <bad>40</bad>.
