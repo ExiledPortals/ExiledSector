@@ -54,11 +54,19 @@ class SocketableDefinitionsTest {
                 .put(row("unknown_effect", "subroutine", "NOT_AN_EFFECT:1:2"))
                 .put(row("not_a_number", "subroutine", "HULL_MULT:one:2"))
                 .put(row("empty_pool", "subroutine", " ; "))
-                .put(row("zero_weight", "subroutine", "HULL_MULT:1:2:0")));
+                .put(row("zero_weight", "subroutine", "HULL_MULT:1:2:0"))
+                .put(row("duplicate_effect", "subroutine", "HULL_MULT:1:2; HULL_MULT:3:4")));
 
         assertNotNull(SocketableDefinitions.get(MILITARY));
         assertEquals(1, SocketableDefinitions.all().size());
         assertNull(SocketableDefinitions.get("unknown_kind"));
+    }
+
+    @Test
+    void aBlankNameFallsBackToTheId() throws Exception {
+        SocketableDefinitions.register(new JSONArray().put(row("nameless", "team", "HULL_MULT:4:6").put("name", "")));
+
+        assertEquals("nameless", SocketableDefinitions.get("nameless").name());
     }
 
     @Test

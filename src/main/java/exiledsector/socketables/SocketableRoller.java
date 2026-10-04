@@ -19,10 +19,18 @@ public final class SocketableRoller {
         List<RolledEffect> rolled = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
             SocketableDefinition.PoolEntry entry = remaining.remove(pick(remaining, random.nextFloat()));
-            float magnitude = Math.round(entry.min() + random.nextFloat() * (entry.max() - entry.min()));
-            rolled.add(new RolledEffect(entry.effectName(), magnitude));
+            rolled.add(new RolledEffect(entry.effectName(), wholeNumberBetween(entry.min(), entry.max(), random)));
         }
         return rolled;
+    }
+
+    static float wholeNumberBetween(float min, float max, Random random) {
+        int low = (int) Math.ceil(min);
+        int high = (int) Math.floor(max);
+        if (high < low) {
+            return Math.round(min);
+        }
+        return low + random.nextInt(high - low + 1);
     }
 
     static long scramble(long seed) {

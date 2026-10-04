@@ -65,6 +65,20 @@ class SocketableRollerTest {
     }
 
     @Test
+    void everyWholeNumberInARangeIsEquallyLikelyIncludingTheEnds() {
+        java.util.Random random = new java.util.Random(5);
+        int[] counts = new int[3];
+        for (int i = 0; i < 30000; i++) {
+            counts[(int) SocketableRoller.wholeNumberBetween(4f, 6f, random) - 4]++;
+        }
+        for (int count : counts) {
+            assertEquals(1 / 3.0, count / 30000.0, 0.02);
+        }
+        assertEquals(-12f, SocketableRoller.wholeNumberBetween(-12.5f, -11.5f, random));
+        assertEquals(2f, SocketableRoller.wholeNumberBetween(1.6f, 1.9f, random));
+    }
+
+    @Test
     void theEffectCountThresholdsFollowTheProposedOdds() {
         assertEquals(2, SocketableRoller.effectCount(0f));
         assertEquals(2, SocketableRoller.effectCount(0.549f));

@@ -48,6 +48,9 @@ public final class SocketableStore {
                 continue;
             }
             int count = Math.round(stack.getSize());
+            if (count < 1) {
+                continue;
+            }
             for (int i = 0; i < count; i++) {
                 add(definition, item.seed());
             }

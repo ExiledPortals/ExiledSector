@@ -62,6 +62,10 @@ public abstract class Socketable {
                     .arg("grade", definition.gradeName())
                     .arg("alignment", definition.alignmentName())
                     .styled());
+            StyledText description = definition.descriptionText();
+            if (description != null) {
+                lines.add(description);
+            }
         }
         for (RolledEffect effect : effects) {
             StyledText description = effect.description();

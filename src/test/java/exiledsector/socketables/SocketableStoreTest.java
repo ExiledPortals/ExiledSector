@@ -83,7 +83,8 @@ class SocketableStoreTest {
         CargoStackAPI unknown = stack(new SocketableItemData("removed_mod_item", 13L).toSpecialItem(), 1f);
         CargoStackAPI other = stack(new SpecialItemData("pristine_nanoforge", null), 1f);
         CargoStackAPI supplies = stack(null, 100f);
-        when(cargo.getStacksCopy()).thenReturn(List.of(pair, single, unknown, other, supplies));
+        CargoStackAPI sliver = stack(new SocketableItemData(military.id(), 14L).toSpecialItem(), 0.3f);
+        when(cargo.getStacksCopy()).thenReturn(List.of(pair, single, unknown, other, supplies, sliver));
 
         int moved = SocketableStore.get().absorbFrom(cargo);
 
@@ -94,5 +95,6 @@ class SocketableStoreTest {
         verify(cargo, never()).removeStack(unknown);
         verify(cargo, never()).removeStack(other);
         verify(cargo, never()).removeStack(supplies);
+        verify(cargo, never()).removeStack(sliver);
     }
 }

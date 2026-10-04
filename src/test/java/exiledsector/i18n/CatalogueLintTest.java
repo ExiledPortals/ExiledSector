@@ -48,6 +48,10 @@ class CatalogueLintTest {
         for (int i = 0; i < socketables.length(); i++) {
             JSONObject socketable = socketables.getJSONObject(i);
             sources.put("socketable." + socketable.getString("id") + ".name", socketable.getString("name"));
+            String description = socketable.optString("description", "");
+            if (!description.isEmpty()) {
+                sources.put("socketable." + socketable.getString("id") + ".description", description);
+            }
         }
         String hullModRows = Files.readString(root.resolve(HULL_MODS_FILE), StandardCharsets.UTF_8).replace("\r\n", "\n");
         JSONArray hullMods = CDL.toJSONArray(hullModRows);

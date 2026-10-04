@@ -556,6 +556,19 @@
   }
   .imageBrowserPreview img { max-width: 100%; max-height: 100%; }
   .imageBrowserPath { font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); word-break: break-all; }
+  .socketableLayout { display: flex; gap: 14px; align-items: flex-start; }
+  .socketableList {
+    width: 230px; flex-shrink: 0; max-height: 62vh; overflow-y: auto; display: flex; flex-direction: column; gap: 4px;
+    padding: 4px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 6px;
+  }
+  .socketableListItem { display: flex; align-items: center; gap: 8px; padding: 4px; border: 2px solid transparent; border-radius: 4px; cursor: pointer; }
+  .socketableListItem:hover { border-color: var(--accent-dim); }
+  .socketableListItem.selected { border-color: var(--accent); }
+  .socketableListItem img { width: 36px; height: 36px; object-fit: contain; background: #000; border-radius: 3px; flex-shrink: 0; }
+  .socketableListItem .socketableName { font-size: 12px; line-height: 1.25; }
+  .socketableListItem .socketableMeta { font-size: 10px; color: var(--text-faint); font-family: var(--font-mono); }
+  .socketableDetail { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; max-height: 62vh; overflow-y: auto; padding-right: 4px; }
+  .socketableIconPreview { width: 64px; height: 64px; flex-shrink: 0; background: #000; border: 1px solid var(--line); border-radius: 6px; object-fit: contain; }
 
   ::-webkit-scrollbar { width: 10px; height: 10px; }
   ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 5px; }
@@ -624,6 +637,13 @@
       <div class="label">Images</div>
       <div class="btnRow">
         <button class="smallBtn" id="imageEditorBtn">Image Editor...</button>
+      </div>
+    </div>
+
+    <div class="toolSection">
+      <div class="label">Modular Hull Sockets</div>
+      <div class="btnRow">
+        <button class="smallBtn" id="socketableEditorBtn">Socketable Editor...</button>
       </div>
     </div>
   </div>
@@ -3584,6 +3604,331 @@ function openImageEditorModal(){
   else fetchAllProjectImages(buildShell);
 }
 
+var SOCKETABLE_COLUMNS = ['id', 'kind', 'name', 'icon', 'grade', 'alignment', 'rarity', 'description', 'pool'];
+var SOCKETABLE_KINDS = ['subroutine', 'officer', 'team', 'ai_core'];
+var SOCKETABLE_GRADES = ['military', 'industrial', 'consumer'];
+var SOCKETABLE_ALIGNMENTS = ['high_tech', 'midline', 'low_tech'];
+
+function parseCsv(text){
+  var rows = [], row = [], field = '', inQuotes = false;
+  text = String(text).replace(/^﻿/, '');
+  for (var i = 0; i < text.length; i++) {
+    var c = text[i];
+    if (inQuotes) {
+      if (c === '"' && text[i + 1] === '"') { field += '"'; i++; }
+      else if (c === '"') inQuotes = false;
+      else field += c;
+    } else if (c === '"') inQuotes = true;
+    else if (c === ',') { row.push(field); field = ''; }
+    else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+    else if (c !== '\r') field += c;
+  }
+  if (field !== '' || row.length) { row.push(field); rows.push(row); }
+  return rows.filter(function(r){ return r.some(function(f){ return f.trim() !== ''; }); });
+}
+
+function csvField(value){
+  var text = value === undefined || value === null ? '' : String(value);
+  return /[",\r\n]/.test(text) || text !== text.trim() ? '"' + text.replace(/"/g, '""') + '"' : text;
+}
+
+function parseSocketablePool(text){
+  return String(text || '').split(';').map(function(entry){ return entry.trim(); }).filter(Boolean).map(function(entry){
+    var parts = entry.split(':');
+    return { effect: (parts[0] || '').trim(), min: parseFloat(parts[1]) || 0, max: parseFloat(parts[2]) || 0,
+      weight: parts.length > 3 ? (parseFloat(parts[3]) || 0) : 1 };
+  });
+}
+
+function formatSocketablePool(pool){
+  return pool.map(function(e){
+    return e.effect + ':' + e.min + ':' + e.max + (e.weight === 1 ? '' : ':' + e.weight);
+  }).join('; ');
+}
+
+function parseSocketablesCsv(text){
+  var rows = parseCsv(text);
+  var header = (rows.shift() || []).map(function(h){ return h.trim(); });
+  var defs = rows.map(function(cells){
+    var def = { extra: {} };
+    header.forEach(function(column, i){
+      var value = cells[i] === undefined ? '' : cells[i];
+      if (column === 'pool') def.pool = parseSocketablePool(value);
+      else if (SOCKETABLE_COLUMNS.indexOf(column) !== -1) def[column] = value.trim();
+      else def.extra[column] = value;
+    });
+    SOCKETABLE_COLUMNS.forEach(function(column){ if (def[column] === undefined) def[column] = column === 'pool' ? [] : ''; });
+    return def;
+  });
+  var extraColumns = header.filter(function(column){ return SOCKETABLE_COLUMNS.indexOf(column) === -1; });
+  return { defs: defs, extraColumns: extraColumns };
+}
+
+function serializeSocketablesCsv(defs, extraColumns){
+  var header = SOCKETABLE_COLUMNS.concat(extraColumns);
+  var lines = [header.join(',')];
+  defs.forEach(function(def){
+    lines.push(header.map(function(column){
+      if (column === 'pool') return csvField(formatSocketablePool(def.pool));
+      if (SOCKETABLE_COLUMNS.indexOf(column) !== -1) return csvField(def[column]);
+      return csvField(def.extra[column]);
+    }).join(','));
+  });
+  return lines.join('\n') + '\n';
+}
+
+function validateSocketables(defs){
+  var issues = [], seen = {};
+  defs.forEach(function(def, i){
+    var label = def.id || ('row ' + (i + 1));
+    if (!/^[a-z0-9_]+$/.test(def.id)) issues.push(label + ': id must use only lowercase letters, digits and underscores');
+    if (seen[def.id]) issues.push(label + ': id is used more than once');
+    seen[def.id] = true;
+    if (SOCKETABLE_KINDS.indexOf(def.kind) === -1) issues.push(label + ': kind must be one of ' + SOCKETABLE_KINDS.join(', '));
+    if (!def.pool.length) issues.push(label + ': the effect pool is empty');
+    if (!(parseFloat(def.rarity) >= 0)) issues.push(label + ': rarity must be zero or more');
+    var poolEffects = {};
+    def.pool.forEach(function(e){
+      if (poolEffects[e.effect]) issues.push(label + ': ' + e.effect + ' is in the pool more than once');
+      poolEffects[e.effect] = true;
+      if (EFFECT_NAMES.indexOf(e.effect) === -1) issues.push(label + ': unknown effect ' + e.effect);
+      if (!(e.weight > 0)) issues.push(label + ': ' + e.effect + ' needs a weight above zero');
+    });
+  });
+  return issues;
+}
+
+function socketableEffectOptionsHtml(selected){
+  var names = EFFECT_NAMES_SORTED.indexOf(selected) === -1 && selected ? [selected].concat(EFFECT_NAMES_SORTED) : EFFECT_NAMES_SORTED;
+  return names.map(function(name){
+    return '<option value="' + name + '"' + (name === selected ? ' selected' : '') + '>' + name + '</option>';
+  }).join('');
+}
+
+function datalistHtml(id, values){
+  return '<datalist id="' + id + '">' + values.map(function(v){ return '<option value="' + v + '">'; }).join('') + '</datalist>';
+}
+
+function openSocketableEditorModal(){
+  var root = document.getElementById('modalRoot');
+  var defs = [], extraColumns = [], selectedIndex = -1, dirty = false;
+
+  function load(){
+    fetch('/data/socketables').then(function(r){ if (!r.ok) throw new Error('socketables ' + r.status); return r.text(); }).then(function(text){
+      var parsed = parseSocketablesCsv(text);
+      defs = parsed.defs;
+      extraColumns = parsed.extraColumns;
+      selectedIndex = defs.length ? 0 : -1;
+      dirty = false;
+      render();
+    }).catch(function(){
+      showToast('Could not load socketables.csv - run tools\\skill_tree_server.ps1');
+    });
+  }
+
+  function close(){
+    if (dirty && !confirm('Discard unsaved socketable changes?')) return;
+    root.innerHTML = '';
+  }
+
+  function markDirty(){
+    dirty = true;
+    var status = document.getElementById('sockStatus');
+    if (status) status.textContent = 'Unsaved changes';
+  }
+
+  function render(){
+    root.innerHTML =
+      '<div class="modalOverlay"><div class="modal wide">' +
+      '<h3>Socketable Editor</h3>' +
+      '<div class="hint">Edits data/config/exiledSector/socketables.csv. Names and descriptions are English; add zh text under socketable.&lt;id&gt;.name / .description in zh_CN.json.</div>' +
+      '<div class="socketableLayout">' +
+        '<div class="socketableList" id="sockList"></div>' +
+        '<div class="socketableDetail" id="sockDetail"></div>' +
+      '</div>' +
+      '<div class="modalBtns">' +
+        '<span class="hint" id="sockStatus" style="margin-right:auto">' + (dirty ? 'Unsaved changes' : '') + '</span>' +
+        '<button class="smallBtn" id="sockNew">+ New socketable</button>' +
+        '<button class="smallBtn" id="sockReload">Reload from disk</button>' +
+        '<button class="smallBtn primary" id="sockSave">Save to project</button>' +
+        '<button class="smallBtn" id="sockClose">Close</button>' +
+      '</div>' +
+      '</div></div>';
+    document.getElementById('sockClose').addEventListener('click', close);
+    document.getElementById('sockReload').addEventListener('click', function(){
+      if (dirty && !confirm('Discard unsaved socketable changes and reload from disk?')) return;
+      load();
+    });
+    document.getElementById('sockNew').addEventListener('click', function(){
+      defs.push({ id: uniqueSocketableId('new_socketable'), kind: 'subroutine', name: 'New Socketable', icon: '', grade: '', alignment: '',
+        rarity: '10', description: '', pool: [{ effect: EFFECT_NAMES_SORTED[0], min: 1, max: 2, weight: 1 }], extra: {} });
+      selectedIndex = defs.length - 1;
+      markDirty();
+      renderList();
+      renderDetail();
+    });
+    document.getElementById('sockSave').addEventListener('click', save);
+    renderList();
+    renderDetail();
+  }
+
+  function uniqueSocketableId(base){
+    var id = base, n = 2;
+    while (defs.some(function(d){ return d.id === id; })) id = base + '_' + n++;
+    return id;
+  }
+
+  function renderList(){
+    var list = document.getElementById('sockList');
+    list.innerHTML = defs.map(function(def, i){
+      return '<div class="socketableListItem' + (i === selectedIndex ? ' selected' : '') + '" data-sock-index="' + i + '">' +
+        '<img src="' + escapeHtml(def.icon || 'graphics/icons/cargo/chip1.png') + '" alt="">' +
+        '<div><div class="socketableName">' + escapeHtml(def.name || def.id) + '</div>' +
+        '<div class="socketableMeta">' + escapeHtml(def.kind) + ' - ' + def.pool.length + ' effects</div></div>' +
+      '</div>';
+    }).join('') || '<div class="hint">No socketables yet.</div>';
+    list.querySelectorAll('[data-sock-index]').forEach(function(el){
+      el.addEventListener('click', function(){
+        selectedIndex = parseInt(el.dataset.sockIndex, 10);
+        renderList();
+        renderDetail();
+      });
+    });
+  }
+
+  function renderDetail(){
+    var detail = document.getElementById('sockDetail');
+    var def = defs[selectedIndex];
+    if (!def) { detail.innerHTML = '<div class="hint">Select a socketable, or add a new one.</div>'; return; }
+    var kindOptions = SOCKETABLE_KINDS.map(function(k){ return '<option value="' + k + '"' + (k === def.kind ? ' selected' : '') + '>' + k + '</option>'; }).join('');
+    var poolRows = def.pool.map(function(e, i){
+      var selectId = 'sockEffect' + i;
+      return '<div class="fieldRow" style="align-items:flex-end">' +
+        '<div class="field" style="flex:3"><label>Effect ' + (i + 1) + '</label>' + effectFilterHtml(selectId) +
+          '<select id="' + selectId + '" data-pool-field="effect" data-pool-index="' + i + '">' + socketableEffectOptionsHtml(e.effect) + '</select></div>' +
+        '<div class="field" style="flex:1"><label>Min</label><input type="number" step="0.5" value="' + e.min + '" data-pool-field="min" data-pool-index="' + i + '"></div>' +
+        '<div class="field" style="flex:1"><label>Max</label><input type="number" step="0.5" value="' + e.max + '" data-pool-field="max" data-pool-index="' + i + '"></div>' +
+        '<div class="field" style="flex:1"><label>Weight</label><input type="number" step="0.5" min="0" value="' + e.weight + '" data-pool-field="weight" data-pool-index="' + i + '"></div>' +
+        moveRowButtonsHtml('sock-move-pool-row', i, def.pool.length) +
+        '<button class="smallBtn danger" type="button" data-sock-remove-pool-row="' + i + '">X</button>' +
+      '</div>';
+    }).join('');
+    detail.innerHTML =
+      '<div class="fieldRow" style="align-items:flex-end">' +
+        '<img class="socketableIconPreview" src="' + escapeHtml(def.icon || 'graphics/icons/cargo/chip1.png') + '" alt="">' +
+        '<div class="field" style="flex:1"><label>Icon path</label><div class="fieldRow">' +
+          '<input data-sock-field="icon" value="' + escapeHtml(def.icon) + '" style="flex:1">' +
+          '<button class="smallBtn" type="button" id="sockSelectIcon">Select Image</button></div></div>' +
+      '</div>' +
+      '<div class="fieldRow">' +
+        '<div class="field" style="flex:2"><label>Id</label><input data-sock-field="id" value="' + escapeHtml(def.id) + '"></div>' +
+        '<div class="field" style="flex:1"><label>Kind</label><select data-sock-field="kind">' + kindOptions + '</select></div>' +
+      '</div>' +
+      '<div class="field"><label>Name</label><input data-sock-field="name" value="' + escapeHtml(def.name) + '"></div>' +
+      '<div class="fieldRow">' +
+        '<div class="field" style="flex:1"><label>Grade</label><input data-sock-field="grade" list="sockGrades" value="' + escapeHtml(def.grade) + '"></div>' +
+        '<div class="field" style="flex:1"><label>Alignment</label><input data-sock-field="alignment" list="sockAlignments" value="' + escapeHtml(def.alignment) + '"></div>' +
+        '<div class="field" style="flex:1"><label>Rarity (loot weight)</label><input type="number" min="0" step="1" data-sock-field="rarity" value="' + escapeHtml(def.rarity) + '"></div>' +
+      '</div>' +
+      datalistHtml('sockGrades', SOCKETABLE_GRADES) + datalistHtml('sockAlignments', SOCKETABLE_ALIGNMENTS) +
+      '<div class="field"><label>Tooltip description (optional)</label><textarea data-sock-field="description" rows="3" style="width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12.5px;padding:7px 9px;resize:vertical;">' + escapeHtml(def.description) + '</textarea></div>' +
+      '<hr class="sep">' +
+      '<div class="field"><label>Effect pool - each item rolls 2-4 of these (55/35/10%), weighted, values rounded to whole numbers</label>' +
+        (poolRows || '<div class="hint">No effects yet.</div>') + '</div>' +
+      '<div class="btnRow"><button class="smallBtn" type="button" id="sockAddPoolRow">+ Add effect</button></div>' +
+      '<hr class="sep">' +
+      '<div class="btnRow">' +
+        '<button class="smallBtn" type="button" id="sockDuplicate">Duplicate</button>' +
+        '<button class="smallBtn danger" type="button" id="sockDelete">Delete this socketable</button>' +
+      '</div>';
+
+    detail.querySelectorAll('[data-sock-field]').forEach(function(el){
+      var update = function(){
+        def[el.dataset.sockField] = el.value;
+        markDirty();
+        if (el.dataset.sockField === 'icon') detail.querySelector('.socketableIconPreview').src = el.value || 'graphics/icons/cargo/chip1.png';
+      };
+      el.addEventListener('input', update);
+      el.addEventListener('change', function(){ update(); renderList(); });
+    });
+    detail.querySelectorAll('[data-pool-field]').forEach(function(el){
+      var update = function(){
+        var entry = def.pool[parseInt(el.dataset.poolIndex, 10)];
+        entry[el.dataset.poolField] = el.dataset.poolField === 'effect' ? el.value : (parseFloat(el.value) || 0);
+        markDirty();
+      };
+      el.addEventListener('input', update);
+      el.addEventListener('change', update);
+    });
+    wireEffectFilters(detail);
+    wireMoveRowButtons(detail, 'sock-move-pool-row', function(){}, function(){ return def.pool; }, function(){ markDirty(); renderDetail(); });
+    detail.querySelectorAll('[data-sock-remove-pool-row]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        def.pool.splice(parseInt(btn.dataset.sockRemovePoolRow, 10), 1);
+        markDirty();
+        renderList();
+        renderDetail();
+      });
+    });
+    document.getElementById('sockAddPoolRow').addEventListener('click', function(){
+      def.pool.push({ effect: EFFECT_NAMES_SORTED[0], min: 1, max: 2, weight: 1 });
+      markDirty();
+      renderList();
+      renderDetail();
+    });
+    document.getElementById('sockSelectIcon').addEventListener('click', function(){
+      openImagePickerModal(function(path){
+        def.icon = path;
+        markDirty();
+        render();
+      }, function(){ render(); });
+    });
+    document.getElementById('sockDuplicate').addEventListener('click', function(){
+      var copy = deepCopy(def);
+      copy.id = uniqueSocketableId(def.id + '_copy');
+      defs.splice(selectedIndex + 1, 0, copy);
+      selectedIndex++;
+      markDirty();
+      renderList();
+      renderDetail();
+    });
+    document.getElementById('sockDelete').addEventListener('click', function(){
+      if (!confirm('Delete "' + def.id + '"? Items players already own keep their rolls but will show as unrecognised.')) return;
+      defs.splice(selectedIndex, 1);
+      selectedIndex = Math.min(selectedIndex, defs.length - 1);
+      markDirty();
+      renderList();
+      renderDetail();
+    });
+  }
+
+  function save(){
+    var issues = validateSocketables(defs);
+    if (issues.length) { alert('Not saved:\n' + issues.join('\n')); return; }
+    fetch('/save-socketables', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Skill-Tree-Editor': '1' },
+      body: JSON.stringify({ csv: serializeSocketablesCsv(defs, extraColumns) })
+    }).then(function(r){
+      return r.json().then(function(data){ return { httpOk: r.ok, data: data }; });
+    }).then(function(result){
+      if (!result.httpOk || !result.data.ok) {
+        showToast('Could not save: ' + (result.data && result.data.message ? result.data.message : 'unknown error'));
+        return;
+      }
+      dirty = false;
+      var status = document.getElementById('sockStatus');
+      if (status) status.textContent = 'Saved';
+      showToast('Saved socketables.csv');
+    }).catch(function(){
+      showToast('Could not reach local server - run tools\\skill_tree_server.ps1');
+    });
+  }
+
+  root.innerHTML = '<div class="modalOverlay"><div class="modal"><div class="hint">Loading socketables...</div></div></div>';
+  load();
+}
+
 function openTypeModal(existingType, onSave, onClose){
   var isNew = !existingType;
   var t = existingType ? deepCopy(existingType) : { id: '', name: '', icon: '', tier: 'NOTABLE', vanillaHullMod: '', description: '', todo: '', tags: [], optionalOptions: [], exclusiveHullMods: [], exclusiveSkillTypes: [], unlockConditions: [] };
@@ -4030,6 +4375,7 @@ function fitToScreen(){
 }
 document.getElementById('fitBtn').addEventListener('click', fitToScreen);
 document.getElementById('imageEditorBtn').addEventListener('click', function(){ openImageEditorModal(); });
+document.getElementById('socketableEditorBtn').addEventListener('click', function(){ openSocketableEditorModal(); });
 
 document.getElementById('labelsToggle').addEventListener('change', function(ev){ state.showLabels = ev.target.checked; render(); });
 document.getElementById('searchBox').addEventListener('input', function(ev){ state.search = ev.target.value; render(); });

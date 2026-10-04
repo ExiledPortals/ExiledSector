@@ -1,5 +1,6 @@
 package exiledsector.socketables;
 
+import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.skilleffect.SkillEffect;
 import org.json.JSONObject;
@@ -8,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public record SocketableDefinition(String id, SocketableKind kind, String name, String icon, String grade, String alignment,
-                                   float rarity, List<PoolEntry> pool) {
+                                   float rarity, String description, List<PoolEntry> pool) {
 
     public static final String FALLBACK_ICON = "graphics/icons/cargo/chip1.png";
     private static final String ENTRY_SEPARATOR = ";";
@@ -31,9 +32,13 @@ public record SocketableDefinition(String id, SocketableKind kind, String name, 
         if (pool.isEmpty()) {
             throw new IllegalArgumentException("the effect pool is empty");
         }
-        return new SocketableDefinition(id, SocketableKind.byId(row.optString("kind", "").trim()), row.optString("name", id).trim(),
+        return new SocketableDefinition(id, SocketableKind.byId(row.optString("kind", "").trim()), nameOrId(row.optString("name", "").trim(), id),
                 icon.isEmpty() ? FALLBACK_ICON : icon, row.optString("grade", "").trim(), row.optString("alignment", "").trim(),
-                rarity, pool);
+                rarity, row.optString("description", "").trim(), pool);
+    }
+
+    private static String nameOrId(String name, String id) {
+        return name.isEmpty() ? id : name;
     }
 
     private static List<PoolEntry> parsePool(String text) {
@@ -49,6 +54,9 @@ public record SocketableDefinition(String id, SocketableKind kind, String name, 
             }
             String effectName = fields[0].trim();
             SkillEffect.byName(effectName);
+            if (pool.stream().anyMatch(existing -> existing.effectName().equals(effectName))) {
+                throw new IllegalArgumentException("the pool lists " + effectName + " more than once");
+            }
             float first = parseNumber(fields[1], trimmed);
             float second = parseNumber(fields[2], trimmed);
             float weight = fields.length == 4 ? parseNumber(fields[3], trimmed) : 1f;
@@ -78,5 +86,9 @@ public record SocketableDefinition(String id, SocketableKind kind, String name, 
 
     public String alignmentName() {
         return Translation.data("socketable.alignment." + alignment, alignment);
+    }
+
+    public StyledText descriptionText() {
+        return description.isEmpty() ? null : Translation.dataStyled("socketable." + id + ".description", description);
     }
 }
