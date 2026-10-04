@@ -173,101 +173,6 @@ dealt. On-hit effects run at full strength and EMP has no falloff at all. To ach
 lowers the hit's base damage and restores it immediately afterwards, rather than using a damage
 modifier, because damage modifiers would scale the EMP as well.
 
-## Reworked vanilla hull mods
-
-Escort Package keeps vanilla's structure but splits it into four separately tunable magnitudes:
-manoeuvrability, speed, weapon range and the proximity range. The defaults match vanilla at +25%, +10% and
-+20% within 700 su, fading out over the next 500 su and doubled for a destroyer escorting a capital. The
-bonus is recalculated about once a second. Vanilla's S-mod shield damage reduction for destroyers isn't
-included.
-
-The Phase Anchor emergency dive (`PHASE_ANCHOR_EMERGENCY_DIVE`) uses vanilla's trigger, animation and
-timing. It also shares vanilla's once-per-battle flag, so a ship with the vanilla Phase Anchor and a ship
-with this node share one dive per battle between them. Where vanilla charges the ship's full deployment
-cost in CR, the node charges a percentage of it set by its magnitude. It can't be used on temporary nodes.
-
-Reduced D-mod effect (`DMOD_EFFECT_MULT`) adjusts vanilla's D-mod effect multiplier and then re-applies
-the ship's D-mods. D-mods are applied before this mod's hull mod, so without the re-apply they would never
-see the new multiplier.
-
-Ground Support (`GROUND_SUPPORT_FLAT` plus `GROUND_SUPPORT_PER_MAX_CREW_PERCENT`) grants the vanilla
-hull mod's flat ground support plus a share of the ship's maximum crew capacity, and is mutually
-exclusive with Ground Support and Advanced Ground Support.
-
-Militarized Subsystems requires a civilian hull and applies the vanilla hull mod's effects itself: the
-civilian-grade sensor penalties are removed, maximum burn level goes up by 1 and minimum crew by 100%. It
-places Militarized Subsystems as a phantom, so vanilla's civilian-hull checks (skills, Additional
-Berthing, Auxiliary Fuel Tanks, Expanded Cargo Holds, Assault Package) and Second-in-Command treat the
-ship as militarized.
-
-Second-in-Command's hull mod synergies (Redistribution for Shield Shunt, Enhanced Overrides for Safety
-Overrides and so on) work through the phantoms, because SiC checks `variant.hasHullMod`. The Converted
-Hangar penalties are waived by the vanilla flags or by SiC's Reconfiguration skill. The skill check stays
-because SiC sets those flags in its own hull mod, which may apply after ours.
-
-Every node that stands in for a vanilla hull mod places that hull mod as a phantom (`phantomHullMods`).
-While the node is allocated, the real hull mod sits on the ship as a permanent mod costing no OP, so any mod
-that checks for it (Ship Mastery System masteries, Second-in-Command skills, other mods) sees it. At startup
-this mod wraps each hull mod's vanilla effect: on normal ships it behaves exactly as vanilla, but on copies
-the skill tree placed it does nothing and shows a tooltip naming the node instead, so the node's own effects
-are the only ones that apply. The refit screen's installed hull mod lists hide these copies, including the
-copy beside the Add and Build In dialogs. The engine's list widget is the only caller of the wrapper's
-`getDisplayCategoryIndex`, so every rebuild of a list holding a phantom schedules one hide pass that runs
-later in the same frame, before anything is drawn. Every refit sync also ends by refreshing character stats,
-so a `CharacterStatsRefreshListener` hides the main list straight away. It reaches the lists through the
-game's own method names (`UiReflection` is the one file allowed to use reflection). If the screen's structure
-ever changes, it stops quietly or logs one error and the rows stay visible. The dialogs' selectable tables
-still list phantoms. When the Codex opens, a ship's entry drops phantoms from its Related Entries (unless the
-hull's own entry relates to that hull mod); the "Hull mods:" line on ship pages and tooltips still lists them,
-because nothing calls into the hull mod while that line is built. If the game created the effect before this mod could wrap it, the log says so
-and the node falls back to not placing the hull mod, and its tooltip stops claiming it does. Vanilla hull
-mods and their nodes are always 1:1: no hull mod is split across several node types, and no node type
-stands in for more than one hull mod (`SkillTypesDataConsistencyTest` enforces this).
-
-A node's own hull mods (its phantoms and its passthrough `vanillaHullMod`) always count as exclusive, so
-`exclusiveHullMods` only lists other hull mods. Two nodes are mutually exclusive whenever either one's
-`exclusiveHullMods` names the other's own hull mod, so Advanced Optics listing `high_scatter_amp` is enough to
-keep the two nodes apart. `exclusiveSkillTypes` is only for nodes with no hull mod of their own; the data
-test rejects entries the hull mod lists already imply.
-
-The phantom is a permanent mod, so another mod's hull mod that strips it as incompatible through MagicLib
-can't remove it; this mod removes the incompatible hull mod instead and shows the usual conflict warning.
-Safety Overrides also stays mutually exclusive with the strippers it knows about (LOST_SECTOR, HTE, NSP,
-A_S-F, Tahlan, UAF and Neoteric ones), which keeps them out of the refit screen in the first place.
-Removing ExiledSector from a save leaves these hull mods behind
-as real, permanent hull mods, so deallocate the nodes first.
-
-High Resolution Sensors and Phase Field aren't phantoms, because the game creates their fleet-wide effect
-separately and it can't be wrapped. The LOST_SECTOR nodes aren't phantoms either.
-
-Ballistic Rangefinder, Missile Autoloader, Defensive Targeting Array and Neural Interface are passthrough
-nodes (`vanillaHullMod`). Rather than installing the hull mod, they run its code under the hull mod's id.
-The Ballistic Rangefinder and Missile Autoloader tooltips include vanilla-style tables built from vanilla's
-own numbers, with the row that applies to the current ship highlighted.
-
-## Other notables worth describing
-
-All Must Serve (`CREW_STEAL_RANGE_FLAT`, `CREW_STEAL_SKELETON_CREW_PERCENT`), next to Frozen Heart, takes a
-share of the skeleton crew of each enemy ship destroyed within range of one of the player's own ships that
-has it. Fighters, drones, modules and ships that retreat never count, and each wreck is claimed once, at the
-highest share among the thieves in range. Live Munitions and All Must Serve share one crew account per battle
-(`FleetCrewLedger`): it starts at the fleet's cargo crew, Live Munitions spends from it, and stolen crew is
-added as it is claimed (the stolen total rounded up), so Live Munitions can keep firing on captured crew.
-After the battle, win or lose, only the net change is applied: a gain joins the fleet up to its free crew
-space, less any crew the game will still recover after a win, and a loss comes out of its crew. That happens
-one frame after `reportPlayerEngagement`, because the
-game applies its own crew losses and removes destroyed ships after reporting the engagement. Simulator,
-mission and auto-resolved battles change nothing, and NPC ships never take the node (`player_only`).
-
-Disintegration makes energy hits on armour strip an extra percentage of the hit's damage directly from the
-surrounding armour cells, using vanilla's own armour damage spread (1/15 to the inner 3×3 cells and 1/30
-to the outer ring, skipping the corners). It respects the target's armour damage resistance, treats each
-beam damage tick as a separate hit, never damages hull, and shows no floating damage numbers.
-
-Terrifying Presence reduces the autofire aim accuracy of enemy ships within 1000 su by a number of
-percentage points. It updates four times a second, stacks across several sources, and lifts as soon as an
-enemy leaves range or the source ship dies or retreats.
-
 ## Temporary nodes
 
 A node with `temporaryAfterDeploymentSeconds` only applies its effects for that many seconds after the
@@ -278,22 +183,86 @@ cost, fire rate, projectile speed and recoil. Stats fixed when the ship is built
 fighter bays, weapon ammo), campaign stats, combat listeners and conditional effects can't be. If any other
 effect appears on a temporary node, the loader logs an error and ignores the duration.
 
-## Areas and the area toggles
+## Phantom hull mods
 
-Every node, star, ring belt and static image carries exactly one region tag: `inner` or one of the faction
-regions (`luddic`, `tritachyon`, `hegemony`, `sindrian_dictat`, `pirate`, `REDACTED`, `persean_league`,
-`lost_sector`). The editor sets it with the Area chips on nodes, stars, static images and asteroid-belt
-anchors. Plain orbit anchors aren't drawn in game and carry no tag. Connector curves and hidden connectors
-belong to the two nodes they join, so they don't need one.
+Many nodes recreate a vanilla hull mod (Safety Overrides, Hardened Shields and so on) with the mod's own
+effects. Other mods only check whether a ship has the real hull mod (`variant.hasHullMod`), so without
+help they would miss these nodes. Examples are Ship Mastery System masteries and Second-in-Command skills.
+Each such node therefore also places the real hull mod on the ship as a phantom. It's a permanent hull
+mod that costs no OP, carries the tag `exiledSector_installed_<id>`, and does nothing on its own, because
+the node already applies the effects.
 
-The Optional Areas setting decides which regions are switched off. The Lost Sector area (the Kesteven and
-Frozen Heart stars) is Auto by default, which shows it only when Lost Sector is installed; On and Off
-override that. `SkillTree` keeps the whole parsed tree and builds the active tree from it with
-`TreeRegionFilter`, at startup and again at the start of every game load, so a change takes effect on the
-next load. Switching a region off removes its nodes, every wormhole whose paired end is in it, the
-connections, curves and hidden connectors touching those nodes, and its stars, ring belts and images.
+At startup, `PhantomHullMods.install` points each of those hull mods' effect class at
+`PhantomHullModEffect`. That wrapper keeps the original vanilla effect and forwards everything to it,
+except on ships where the tree placed the copy. There it applies nothing, can't be removed, and its
+tooltip names the node that provides it. A copy installed the normal way still works as usual.
+Phantoms are hidden from the refit screen's installed hull mod list and from the ship's Codex related
+entries. Hull mods with fleet-wide effects (High Resolution Sensors, Phase Field) can't be wrapped and
+so are never phantoms. Phantoms for another mod's hull mods only activate when that mod is installed.
 
-Saved trees then lose the removed nodes through the usual unknown-node cleanup: OP and banked free
-allocations go back to the ship, and item costs go back to the player's cargo. Turning the region back on doesn't restore them. `AreaToggleDataTest` checks that every
-decoration has a region and that switching a toggled region off leaves every remaining node reachable from
-a root, with no dangling links or half wormholes.
+## Reflection
+
+Starsector's script class loader won't load a mod class whose source names `java.lang.reflect` (it also
+blocks direct file access), and `ScriptSandboxRestrictionsTest` fails the build if any source file does.
+Where the mod has to reach code the API doesn't expose, it goes through `java.lang.invoke` method handles
+instead. Every use is guarded. If a lookup or call fails, for example because a game or mod update
+renamed something, that one feature logs the error once and switches itself off until the game
+restarts, and everything else keeps working.
+
+### The refit screen (`ui/refit/UiReflection`)
+
+The refit screen's widgets are obfuscated engine classes outside the API. `UiReflection` reaches them by
+calling `Class.getMethods` and `Class.getDeclaredFields` through method handles, loading the
+`java.lang.reflect` types by name so the source never mentions them. It finds methods by name and
+parameter count and fields by type, caches what it finds per class, and makes them accessible with
+`trySetAccessible`. All of the uses below run from `PhantomHullModRefitHider`. That runs whenever the game
+rebuilds an installed hull mod list (the phantom and skill tree hull mods trigger it from
+`getDisplayCategoryIndex`) and after character stats refresh.
+
+- **Finding the refit panel.** From the core UI (`getCoreUI` on an open interaction dialog, otherwise
+  `getCore` on the campaign UI), `getCurrentTab`, then `getRefitPanel`, `getModDisplay` and
+  `getShipDisplay().getCurrentVariant()`.
+- **Hiding phantom hull mods.** In the installed hull mod list (the child widget with
+  `collapseEmptySlots`), each row's `HullModSpecAPI` field identifies its hull mod. Rows for phantoms the
+  tree placed are taken out with `removeItem` and `collapseEmptySlots`. The list is then resized from
+  `getItemHeight` and `getItemPad`, and the widget re-laid out with `pack`. Mod lists inside dialogs
+  opened over the refit screen get the same treatment.
+- **Clicking the Exiled Sector Skill Tree hull mod.** `SkillTreeChipClickTarget` finds that hull mod's row
+  and its icon button, lays an invisible click target over the list, and checks `getItems` on each click
+  to make sure the row is still shown before opening the tree.
+- **The Skill Tree button under Build In.** `SkillTreeModsButton` reads the hull mod panel's Build In
+  button (`getPerm`) to size and place its own button directly below it.
+
+If any of these fails, phantom hull mods stay visible, clicking the hull mod does nothing, or the button
+doesn't appear. The LunaLib refit button always still works.
+
+### Second-in-Command (`compat/SecondInCommandCompat`)
+
+To check whether a Second-in-Command skill is active for a fleet without depending on that mod at compile
+time, the mod loads `second_in_command.SCUtils` and `second_in_command.SCData` by name through the game's
+script class loader. It then looks up `SCUtils.getFleetData` and `SCData.isSkillActive` as public method
+handles. If either lookup or call fails, the Second-in-Command checks switch off. The startup
+compatibility self-check reports the two methods as missing if they can't be found.
+
+### MagicLib (`compat/MagicLibCompat`)
+
+MagicLib is a normal dependency, so its calls are made directly. Reflection is only used by the startup
+self-check, which looks up `MagicIncompatibleHullmods.getReason` and `removeHullmodWithWarning` as public
+method handles. That confirms they still exist with the expected signatures, and the log says so if not.
+
+### Phantom hull mods (`effects/PhantomHullMods`)
+
+Each phantom wraps the vanilla hull mod's own effect. The original effect class is loaded by name through
+the script class loader and created with its public no-argument constructor, called as a method handle.
+If that fails, the error is logged, and a copy of that hull mod installed the normal way does nothing in
+that session.
+
+### Engine internals used without reflection
+
+These don't use reflection, but they rely on behaviour outside the API, so they can break the same way:
+
+- `SkillTreeRefitButton.openPanel` finds LunaLib's `RefitButtonAdder` among the sector's transient scripts
+  and opens the skill tree panel the same way LunaLib's own refit button does.
+- `WeaponDroneFactory.createSingleShot` builds a refraction drone's weapon while the shared weapon spec
+  briefly has no charge-up, a burst of one and a long refire delay, because the engine copies those values
+  when it builds a weapon. The spec is restored in a `finally` block.
