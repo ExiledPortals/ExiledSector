@@ -8,6 +8,7 @@ import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import java.util.Collection;
+import java.util.List;
 
 public final class ShipLevelSystem {
 
@@ -16,11 +17,18 @@ public final class ShipLevelSystem {
 
     public static void awardXpToFleet(CampaignFleetAPI fleet, float xpAmount) {
         if (fleet == null) return;
+        awardXpToMembers(fleet.getFleetData().getMembersListCopy(), xpAmount);
+    }
 
+    public static void awardXpToMember(FleetMemberAPI member, float xpAmount) {
+        awardXpToMembers(List.of(member), xpAmount);
+    }
+
+    private static void awardXpToMembers(List<FleetMemberAPI> members, float xpAmount) {
         LevelCurve curve = new LevelCurve(ShipLevelConfig.xpBase(), ShipLevelConfig.xpGrowth(),
                 ShipLevelConfig.xpGrowthCutoffLevel(), ShipLevelConfig.maxLevel());
         Collection<SkillNode> allNodes = SkillTree.getAllNodes().values();
-        for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
+        for (FleetMemberAPI member : members) {
             ShipSkillData data = ShipSkillDataManager.get(member.getId());
             awardXp(data, xpAmount, curve, allNodes);
         }

@@ -218,6 +218,24 @@ class ShipLevelSystemTest {
     }
 
     @Test
+    void awardXpToMemberAwardsXpToThatShipOnly() {
+        Map<String, Object> persistentData = new HashMap<>();
+        SectorAPI sector = mock(SectorAPI.class);
+        when(sector.getPersistentData()).thenReturn(persistentData);
+
+        try (MockedStatic<LunaSettings> lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
+             MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
+            lunaSettingsMock.when(() -> LunaSettings.getInt(anyString(), anyString())).thenReturn(null);
+            globalMock.when(Global::getSector).thenReturn(sector);
+
+            ShipLevelSystem.awardXpToMember(mockMember("ship-a"), 40f);
+
+            assertEquals(40f, ShipSkillDataManager.get("ship-a").getXp());
+            assertEquals(0f, ShipSkillDataManager.get("ship-b").getXp());
+        }
+    }
+
+    @Test
     void awardXpToFleetDoesNothingWhenFleetIsNull() {
         assertDoesNotThrow(() -> ShipLevelSystem.awardXpToFleet(null, 40f));
     }
