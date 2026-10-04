@@ -140,6 +140,11 @@ public enum FighterSkillEffect implements SkillEffect {
         }
 
         @Override
+        public boolean hasDeallocationCondition() {
+            return true;
+        }
+
+        @Override
         public StyledText deallocationWarning(float magnitude) {
             return EffectText.msg(this, "warning").styled();
         }

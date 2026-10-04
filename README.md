@@ -98,6 +98,8 @@ Each level makes your most recently bought node free and refunds its OP. If ever
 
 Click an allocated node to remove it. OP-paid nodes refund their OP, and free nodes return their free allocation. You can't remove a node that other nodes depend on to connect back to your starting point, and you can't remove the starting point itself.
 
+Ctrl+Shift+click an allocated node to remove it along with every node that depends on it, starting with the farthest. Doing this on your starting point clears the whole tree and lets you choose a new start. For now it does nothing if any of those nodes has its own removal condition, such as fighter bays that still hold wings.
+
 For multi-choice nodes, click to open a dropdown so you can pick an option. Ctrl+click repeats your last choice.
 
 Each ship can have a max of 60 nodes.

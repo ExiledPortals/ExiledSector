@@ -46,6 +46,10 @@ public interface SkillEffect {
         return null;
     }
 
+    default boolean hasDeallocationCondition() {
+        return false;
+    }
+
     default String blockAllocationReason(ShipFacts ship, ShieldAPI.ShieldType currentShieldType) {
         return null;
     }

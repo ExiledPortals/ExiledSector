@@ -311,7 +311,7 @@ public class ShipSkillData {
         return true;
     }
 
-    private Set<String> reachableAllocatedNodeIds(SkillTreeTopology topology, String satisfiedRootId, Set<String> excludedNodeIds) {
+    Set<String> reachableAllocatedNodeIds(SkillTreeTopology topology, String satisfiedRootId, Set<String> excludedNodeIds) {
         Set<String> reachable = new HashSet<>();
         Deque<String> queue = new ArrayDeque<>();
         seedReachableFrontier(topology, satisfiedRootId, excludedNodeIds, reachable, queue);

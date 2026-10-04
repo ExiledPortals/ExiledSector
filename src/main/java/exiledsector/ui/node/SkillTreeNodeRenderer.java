@@ -64,6 +64,7 @@ public final class SkillTreeNodeRenderer {
     private Set<String> templateNodeIds = Set.of();
     private AutoAllocateRun autoRun;
     private AutoAllocateRun.Summary lastRunSummary;
+    private RespecRun respecRun;
 
     public SkillTreeNodeRenderer(FleetMemberAPI member, ShipVariantAPI variant, SkillTreePanelStyle style, BaseRefitButton refitButton,
                                  NodeSearch search) {
@@ -159,6 +160,7 @@ public final class SkillTreeNodeRenderer {
         wormholeGhostFlights.advance(amount, data);
         wormholeOpenness.advance(amount, data);
         advanceAutoAllocate(amount);
+        advanceRespec(amount);
     }
 
     private void advanceAutoAllocate(float amount) {
@@ -172,6 +174,55 @@ public final class SkillTreeNodeRenderer {
         }
     }
 
+    private void advanceRespec(float amount) {
+        if (respecRun == null || rootChoice.isInputLocked()) {
+            return;
+        }
+        respecRun.advance(amount, this::removeForRespec);
+        if (respecRun.isFinished()) {
+            respecRun = null;
+        }
+    }
+
+    public boolean startRespec(SkillNode node) {
+        if (isStartingRootInputLocked() || autoRun != null || respecRun != null) {
+            return false;
+        }
+        List<SkillNode> plan = allocator.respecPlan(node);
+        if (plan.isEmpty() || plan.stream().anyMatch(allocator::hasDeallocationCondition)) {
+            return false;
+        }
+        dropdownRenderer.close();
+        respecRun = new RespecRun(plan);
+        return true;
+    }
+
+    public boolean isRespeccing() {
+        return respecRun != null;
+    }
+
+    public void cancelRespec() {
+        if (respecRun != null) {
+            respecRun.cancel();
+            respecRun = null;
+        }
+    }
+
+    private boolean removeForRespec(SkillNode node) {
+        if (allocator.canUnchooseStartingRoot(node)) {
+            unchooseStartingRoot(node);
+            return true;
+        }
+        if (!allocator.data().isAllocated(node.getId())) {
+            return true;
+        }
+        if (!allocator.canDeallocate(node) || !allocator.toggle(node)) {
+            return false;
+        }
+        afterAllocationChange(node, false);
+        return true;
+    }
+
     public void setTemplate(SkillTreeTemplate template) {
         cancelAutoAllocate();
         this.template = template;
@@ -183,7 +234,7 @@ public final class SkillTreeNodeRenderer {
     }
 
     public boolean startAutoAllocate() {
-        if (template == null || autoRun != null || rootChoice.isInputLocked()) {
+        if (template == null || autoRun != null || respecRun != null || rootChoice.isInputLocked()) {
             return false;
         }
         dropdownRenderer.close();
@@ -384,7 +435,7 @@ public final class SkillTreeNodeRenderer {
     }
 
     public void toggleAllocation(SkillNode node, boolean ctrlDown) {
-        if (isStartingRootInputLocked() || autoRun != null) {
+        if (isStartingRootInputLocked() || autoRun != null || respecRun != null) {
             return;
         }
         if (allocator.canUnchooseStartingRoot(node)) {

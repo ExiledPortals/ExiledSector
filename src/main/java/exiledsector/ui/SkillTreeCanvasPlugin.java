@@ -64,6 +64,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private boolean mouseKnown = false;
     private SkillNode pendingClickNode;
     private boolean pendingClickCtrlDown;
+    private boolean pendingClickShiftDown;
     private SkillType pendingDropdownOption;
     private CameraPanAnimation cameraPan;
     private StartingRootCameraFollow startingRootFollow;
@@ -169,6 +170,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         } else if (nodeRenderer.isAutoAllocating() && interruptsAutoAllocate(event)) {
             nodeRenderer.cancelAutoAllocate();
             consume(event);
+        } else if (nodeRenderer.isRespeccing() && interruptsAutoAllocate(event)) {
+            nodeRenderer.cancelRespec();
+            consume(event);
         } else if (event.isLMBDownEvent() && position.containsEvent(event)) {
             handleLmbDown(event);
         } else if (event.isLMBUpEvent()) {
@@ -257,6 +261,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             if (clicked != null) {
                 pendingClickNode = clicked;
                 pendingClickCtrlDown = event.isCtrlDown();
+                pendingClickShiftDown = event.isShiftDown();
             } else {
                 dragging = true;
                 cameraPan = null;
@@ -280,7 +285,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             pendingDropdownOption = null;
         } else if (pendingClickNode != null) {
             SkillNode jumpTarget = nodeRenderer.wormholeJumpTarget(pendingClickNode, pendingClickCtrlDown);
-            if (jumpTarget != null) {
+            if (pendingClickCtrlDown && pendingClickShiftDown) {
+                nodeRenderer.startRespec(pendingClickNode);
+            } else if (jumpTarget != null) {
                 cameraPan = new CameraPanAnimation(-panX / zoom, panY / zoom, jumpTarget.getOffsetX(), jumpTarget.getOffsetY());
                 nodeRenderer.launchWormholeGhosts(pendingClickNode, jumpTarget);
             } else {

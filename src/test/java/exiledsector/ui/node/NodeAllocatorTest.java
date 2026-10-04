@@ -388,6 +388,20 @@ class NodeAllocatorTest {
     }
 
     @Test
+    void aRespecSkipsNodesWithADeallocationConditionEvenWhenItIsCurrentlyMet() {
+        SkillNode hangar = register("hangar_1", type("hangar", "Hangar", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(FighterSkillEffect.FIGHTER_BAYS_FLAT, 1f))).build(), "root_1");
+        data().chooseStartingRoot(root);
+        data().allocate(hangar, 0);
+        NodeAllocator allocator = allocatorStartingAt(root);
+        fitWingsWithBays(0, 2f);
+
+        assertTrue(allocator.hasDeallocationCondition(hangar));
+        assertFalse(allocator.hasDeallocationCondition(root));
+        assertEquals(List.of(hangar, root), allocator.respecPlan(root));
+    }
+
+    @Test
     void allocatingAnOptionChargesTheNodeRecordsTheChoiceAndRefreshesTheShip() {
         SkillType hangarOption = type("hangar_option", "Hangar Option", SkillTier.NOTABLE)
                 .effects(List.of(new SkillTypeEffect(FighterSkillEffect.FIGHTER_BAYS_FLAT, 1f))).build();

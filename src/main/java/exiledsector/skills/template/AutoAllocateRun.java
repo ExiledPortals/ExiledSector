@@ -31,8 +31,12 @@ public final class AutoAllocateRun {
 
     public AutoAllocateRun(List<TemplateStep> steps, int pendingCount) {
         this.pass = List.copyOf(steps);
-        this.stepSeconds = Math.min(BASE_STEP_SECONDS, TARGET_TOTAL_SECONDS / Math.max(1, pendingCount));
+        this.stepSeconds = stepSecondsFor(pendingCount);
         this.budget = stepSeconds;
+    }
+
+    public static float stepSecondsFor(int pendingCount) {
+        return Math.min(BASE_STEP_SECONDS, TARGET_TOTAL_SECONDS / Math.max(1, pendingCount));
     }
 
     public void advance(float amount, Function<TemplateStep, StepVerdict> attempt, BooleanSupplier pointsLeft) {

@@ -14,6 +14,7 @@ import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.HullModNames;
 import exiledsector.skills.InstalledHullMods;
 import exiledsector.skills.NodeEligibility;
+import exiledsector.skills.RespecPlan;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillItemCost;
@@ -28,6 +29,7 @@ import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -180,6 +182,20 @@ final class NodeAllocator {
         }
 
         return itemCostReason(effectiveType);
+    }
+
+    List<SkillNode> respecPlan(SkillNode node) {
+        return RespecPlan.of(data(), SkillTree.topology(), satisfiedRootId(), node);
+    }
+
+    boolean hasDeallocationCondition(SkillNode node) {
+        SkillType type = node.resolveEffectiveType(data());
+        for (SkillTypeEffect effect : type.effectsFor(member.getHullSpec().getHullSize())) {
+            if (effect.effect().hasDeallocationCondition()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     String blockDeallocationReason(SkillNode node) {
