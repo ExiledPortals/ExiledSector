@@ -18,17 +18,18 @@ public final class NpcTreeTag {
     private static final String NODE_SEPARATOR = ",";
     private static final String OPTION_SEPARATOR = "=";
     private static final int CHARGED_NODE_COST = 1;
+    static final String GENERATED = "generated";
 
     private NpcTreeTag() {
     }
 
-    public static String encode(String layoutId, ShipSkillData data) {
+    public static String encode(ShipSkillData data) {
         List<String> nodes = new ArrayList<>();
         for (String nodeId : data.getAllocatedNodeIds()) {
             String option = data.getOptionalSelection(nodeId);
             nodes.add(option == null ? nodeId : nodeId + OPTION_SEPARATOR + option);
         }
-        return PREFIX + layoutId + FIELD_SEPARATOR + data.getLevel() + FIELD_SEPARATOR + String.join(NODE_SEPARATOR, nodes);
+        return PREFIX + GENERATED + FIELD_SEPARATOR + data.getLevel() + FIELD_SEPARATOR + String.join(NODE_SEPARATOR, nodes);
     }
 
     public static String find(ShipVariantAPI variant) {
@@ -47,11 +48,6 @@ public final class NpcTreeTag {
         for (String tag = find(variant); tag != null; tag = find(variant)) {
             variant.removeTag(tag);
         }
-    }
-
-    public static String layoutId(String tag) {
-        String[] fields = fields(tag);
-        return fields == null ? null : fields[0];
     }
 
     public static ShipSkillData decode(String tag) {

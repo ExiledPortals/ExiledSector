@@ -10,6 +10,11 @@ public final class SkillTags {
             "phase", "beam", "range", "ammo", "dmgtypekinetic", "dmgtypehighexplosive", "dmgtypefragmentation",
             "dmgtypeenergy", "weapons", "point_defense", "combat_readiness", "repair", "fleet_support", "d_mods");
 
+    public static final String CORE_REGION = "core";
+
+    public static final List<String> FACTION_VOLUMES = List.of(
+            "luddic", "tritachyon", "hegemony", "sindrian_dictat", "pirate", "REDACTED", "persean_league");
+
     public static final List<String> REGION = List.of(
             "core", "luddic", "tritachyon", "hegemony", "sindrian_dictat", "pirate", "REDACTED", "persean_league", "enigma", "kesteven");
 

@@ -56,7 +56,7 @@ Optional:
 
 It should be safe to add to an existing save.
 
-I have done what I can for some mods, but there is a long way to go for complete mod compatibility.
+Nodes that copy a vanilla hull mod also place the real hull mod on the ship as a phantom: it costs no OP and does nothing itself, but other mods that check for that hull mod see it. That should make most mods work with the tree's nodes without needing dedicated support.
 
 These mods have dedicated compatibility. The version listed is the one I last tested against. Newer versions usually work; if one doesn't, `starsector.log` says so at startup and lists anything Exiled Sector can no longer find.
 
@@ -152,25 +152,15 @@ The number of nodes depends on your character level when the fleet is first spaw
 | 10 | 13–28 |
 | 15+ | 16–42 |
 
-There are nine builds, three for each starting point. Each ship gets a random build out of the ones that suit it:
+Every NPC captain reads their ship's specs and makes a plan. The plan is usually sensible and occasionally baffling.
 
-| Starting point | Build | Needs |
-|---|---|---|
-| Low Tech | Bulwark | – |
-| Low Tech | Gunline | Ballistic weapons |
-| Low Tech | Brawler | No fighter bays |
-| Midline | Line Holder | – |
-| Midline | Lancer | Shields and a non-PD beam |
-| Midline | Carrier | Fighter bays |
-| High Tech | Flux Fortress | Shields |
-| High Tech | Energy Striker | Energy weapons |
-| High Tech | Phase Stalker | Phase cloak |
+They start from the root that matches their hull's design type (Low Tech, Midline or High Tech), or from wherever their academy, priest or AI author happened to teach. Their first job is replacing refit hullmods the tree offers a node for. The OP that frees up buys extra nodes, but if the node is out of reach they keep the hullmod. Built-in hullmods and S-mods are never touched.
 
-The build lists its nodes in order, and the ship takes them one by one. It skips any node it can't use, such as a shield node on a shieldless hull.
+Faction captains owe their volume a visit. Ships from a faction with its own volume cross vast expanses to take one notable or keystone there, if they can afford the trip.
 
-NPCs trade hullmods for nodes. If a ship has a hullmod that the tree has a matching node for, the node replaces the hullmod. The OP the hullmod used then buys extra nodes. Built-in hullmods and S-mods are never touched.
+After that it's down to taste. A captain picks notables and keystones that suit their weapons, fighters, shields or phase cloak, armour and built-in hullmods, but their choices are often like the sector: random and brutal. Two captains in identical ships will rarely agree. They take the nearest first, pick up small nodes only on the way, and never (theoretically) take a node their ship can't use.
 
-NPCs never take wormholes, so the faction regions of the tree are yours alone (for now).
+Other mods can map their own factions to a volume in `data/config/exiledSector/npc_faction_volumes.csv`.
 
 If you recover a ship that has a tree, it keeps its tree, and the tree becomes a normal player tree. Reinforced Bulkheads' near-guaranteed recovery is switched off on NPC ships, so levelled enemies aren't free loot.
 

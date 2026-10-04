@@ -5,10 +5,9 @@ the English source for everything the Java code shows, and `zh_CN.json` holds th
 translation.
 
 A few kinds of text keep their English source in the data files instead: skill type names and
-descriptions in `data/skilltrees/skill_types.json`, NPC layout names in
-`data/config/exiledSector/npc_layouts.json`, and our hull mods' names and descriptions in
+descriptions in `data/skilltrees/skill_types.json`, and our hull mods' names and descriptions in
 `data/hullmods/hull_mods.csv`. Translations refer to these by id, using the keys
-`skillType.<id>.name`, `skillType.<id>.description`, `npcLayout.<id>.name`, `hullmod.<id>.name` and
+`skillType.<id>.name`, `skillType.<id>.description`, `hullmod.<id>.name` and
 `hullmod.<id>.description`.
 
 ## Choosing the language

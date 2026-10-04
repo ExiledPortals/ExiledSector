@@ -40,8 +40,8 @@ public final class ShipTreeSummaryRenderer {
 
         List<String> parts = new ArrayList<>();
         parts.add(Translation.msg("summary.level").arg("level", summary.level()).text());
-        if (tree.layoutName() != null) {
-            parts.add(Translation.msg("summary.build").arg("layout", tree.layoutName()).text());
+        if (!tree.buildThemes().isEmpty()) {
+            parts.add(Translation.msg("summary.build").arg("layout", NpcBuildLabel.name(tree.buildThemes())).text());
         }
         if (summary.root() != null) {
             parts.add(Translation.msg("summary.start").arg("root", summary.root().getDisplayName()).text());

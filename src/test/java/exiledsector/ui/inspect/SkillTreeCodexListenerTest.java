@@ -14,8 +14,6 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledsector.skills.npc.NpcLayout;
-import exiledsector.skills.npc.NpcLayouts;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,7 +39,7 @@ class SkillTreeCodexListenerTest {
         SkillTree.clearNodes();
         SkillTree.clearTypes();
         SkillTree.register(new SkillNode("root_1", new SkillType.Builder("root", "Root", "a.png", SkillTier.ROOT).build(), List.of(), 0f, 0f));
-        SkillTree.register(new SkillNode("a_1", new SkillType.Builder("a", "A", "a.png", SkillTier.SMALL).build(), List.of("root_1"), 0f, 0f));
+        SkillTree.register(new SkillNode("a_1", new SkillType.Builder("a", "A", "a.png", SkillTier.SMALL).tags(List.of("ballistic")).build(), List.of("root_1"), 0f, 0f));
     }
 
     @AfterEach
@@ -50,7 +48,6 @@ class SkillTreeCodexListenerTest {
         SkillDataResolver.clearCache();
         SkillTree.clearNodes();
         SkillTree.clearTypes();
-        NpcLayouts.register(Map.of());
         PhantomHullModStatus.clear();
     }
 
@@ -86,14 +83,13 @@ class SkillTreeCodexListenerTest {
 
     @Test
     void theBuildNameIsResolvedInTheGameLanguageEvenWhenTheSkillTreeUsesAnother() {
-        NpcLayouts.register(Map.of("bulwark", new NpcLayout("bulwark", "Bulwark", "root_1", List.of(), "", List.of())));
-        I18n.install(new Catalogue("zh_CN", Map.of("npcLayout.bulwark.name", "壁垒")), new Catalogue("en", Map.of()));
+        I18n.install(new Catalogue("zh_CN", Map.of("theme.ballistic", "实弹")), new Catalogue("en", Map.of("theme.ballistic", "Ballistic")));
         memberEntry("temp-1", npc(NPC_TAG));
 
         new SkillTreeCodexListener().reportAboutToOpenCodex();
 
         SkillTreeCodexEntry added = (SkillTreeCodexEntry) skillTreeEntries().get(0);
-        assertEquals("Bulwark", added.tree().layoutName());
+        assertEquals(List.of("ballistic"), added.tree().buildThemes());
     }
 
     @Test

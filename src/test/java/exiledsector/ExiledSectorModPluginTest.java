@@ -17,8 +17,7 @@ import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
-import exiledsector.skills.npc.NpcLayout;
-import exiledsector.skills.npc.NpcLayouts;
+import exiledsector.skills.npc.NpcFactionVolumes;
 import exiledsector.ui.SkillTreeRefitButton;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
 import exiledsector.ui.inspect.SkillTreeCodexListener;
@@ -84,8 +83,8 @@ class ExiledSectorModPluginTest {
                 .thenReturn(new JSONArray());
         when(settings.getMergedSpreadsheetDataForMod("hullmod", "data/config/exiledSector/drone_marker_hullmods.csv", "exiledSector"))
                 .thenReturn(new JSONArray());
-        when(settings.getMergedJSON("data/config/exiledSector/npc_layouts.json")).thenReturn(new JSONObject(
-                "{ \"layouts\": { \"bulwark\": { \"root\": \"root_low_tech_1\", \"nodes\": [\"a\"] } } }"));
+        when(settings.getMergedSpreadsheetDataForMod("faction", "data/config/exiledSector/npc_faction_volumes.csv", "exiledSector"))
+                .thenReturn(new JSONArray("[{\"faction\": \"hegemony\", \"region\": \"hegemony\"}]"));
 
         Logger logger = mock(Logger.class);
 
@@ -101,7 +100,7 @@ class ExiledSectorModPluginTest {
     void tearDown() throws Exception {
         loadTree("");
         SkillTree.clearTypes();
-        NpcLayouts.register(Map.of());
+        NpcFactionVolumes.clear();
         settingsCreatorMock.close();
         globalMock.close();
         lunaSettingsMock.close();
@@ -280,10 +279,10 @@ class ExiledSectorModPluginTest {
     }
 
     @Test
-    void onApplicationLoadLoadsTheNpcLayoutsMergedAcrossMods() throws Exception {
+    void onApplicationLoadLoadsTheNpcFactionVolumesMergedAcrossMods() throws Exception {
         new ExiledSectorModPlugin().onApplicationLoad();
 
-        assertEquals(List.of("bulwark"), NpcLayouts.all().stream().map(NpcLayout::id).toList());
+        assertEquals("hegemony", NpcFactionVolumes.regionFor("hegemony"));
     }
 
     @Test

@@ -1119,6 +1119,9 @@
 					"id": "escort_package"
 				}
 			],
+			"exclusiveHullMods": [
+				"escort_package"
+			],
 			"tags": [
 				"fleet_support",
 				"speed"

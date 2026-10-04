@@ -200,6 +200,38 @@ Phantoms are hidden from the refit screen's installed hull mod list and from the
 entries. Hull mods with fleet-wide effects (High Resolution Sensors, Phase Field) can't be wrapped and
 so are never phantoms. Phantoms for another mod's hull mods only activate when that mod is installed.
 
+## Generated NPC trees
+
+NPC trees are generated per ship by `NpcSkillTreeBuilder.generate`, seeded from the sector seed, fleet id
+and member id, so a ship always gets the same tree. The result is stored as a variant tag (`NpcTreeTag`);
+the build name shown in the inspector comes from the two most common theme tags among its nodes.
+
+The hull's design type (`getManufacturer`, falling back to the base hull's for skins) picks the Low Tech,
+Midline or High Tech root, and any other design type picks one at random.
+
+Removable hull mods with an equivalent node are stripped first. Their nodes are taken nearest first, and the
+stripped OP becomes extra nodes at the per-node OP cost. A hull mod whose node is out of reach is put back
+and its OP is never counted, so the budget can't be overspent. While this happens the ship is judged as if
+the stripped hull mods were already gone, so Converted Hangar's own bay doesn't stop it taking the
+no-fighter-bays node that replaces it.
+
+Next, `npc_faction_volumes.csv` maps the fleet's faction to one of the seven vanilla faction volumes. If it
+has one, the ship takes one notable or keystone there, weighted by relevance and tier, when the budget
+reaches it.
+
+The rest of the budget goes to goals. Notables and keystones are drawn by seeded weighted random
+(relevance × tier) until their path lengths cover the remaining budget, and the ship then takes the
+nearest affordable goal, path and all, one at a time. Small nodes are only taken as path steps until no
+notable or keystone fits, and then they fill whatever is left.
+
+Every step is a breadth-first search from the allocated nodes. A node is traversable only if the ship can
+use it: requirement tags, exclusivity and hull size are checked through `NodeEligibility`, and optional
+nodes pick an option the ship can use. Only the wormhole pair joining the core to the ship's own faction
+volume can be crossed. Its far end comes free, as for players.
+
+`NpcRelevance` weights theme tags: matching weapon kinds, fighter bays, shields, phase cloaks and heavy armour
+lift their themes, and so do the themes of nodes that own the ship's built-in hull mods.
+
 ## Reflection
 
 Starsector's script class loader won't load a mod class whose source names `java.lang.reflect` (it also
@@ -219,19 +251,20 @@ parameter count and fields by type, caches what it finds per class, and makes th
 rebuilds an installed hull mod list (the phantom and skill tree hull mods trigger it from
 `getDisplayCategoryIndex`) and after character stats refresh.
 
-- **Finding the refit panel.** From the core UI (`getCoreUI` on an open interaction dialog, otherwise
-  `getCore` on the campaign UI), `getCurrentTab`, then `getRefitPanel`, `getModDisplay` and
-  `getShipDisplay().getCurrentVariant()`.
-- **Hiding phantom hull mods.** In the installed hull mod list (the child widget with
-  `collapseEmptySlots`), each row's `HullModSpecAPI` field identifies its hull mod. Rows for phantoms the
-  tree placed are taken out with `removeItem` and `collapseEmptySlots`. The list is then resized from
-  `getItemHeight` and `getItemPad`, and the widget re-laid out with `pack`. Mod lists inside dialogs
-  opened over the refit screen get the same treatment.
-- **Clicking the Exiled Sector Skill Tree hull mod.** `SkillTreeChipClickTarget` finds that hull mod's row
-  and its icon button, lays an invisible click target over the list, and checks `getItems` on each click
-  to make sure the row is still shown before opening the tree.
-- **The Skill Tree button under Build In.** `SkillTreeModsButton` reads the hull mod panel's Build In
-  button (`getPerm`) to size and place its own button directly below it.
+The refit panel is found from the core UI (`getCoreUI` on an open interaction dialog, otherwise `getCore`
+on the campaign UI) through `getCurrentTab`, then `getRefitPanel`, `getModDisplay` and
+`getShipDisplay().getCurrentVariant()`.
+
+To hide phantom hull mods, the installed hull mod list (the child widget with `collapseEmptySlots`) is
+walked row by row, and each row's `HullModSpecAPI` field identifies its hull mod. Rows for phantoms the tree
+placed are taken out with `removeItem` and `collapseEmptySlots`, the list is resized from `getItemHeight`
+and `getItemPad`, and the widget is re-laid out with `pack`. Mod lists inside dialogs opened over the refit
+screen get the same treatment.
+
+`SkillTreeChipClickTarget` makes the Exiled Sector Skill Tree hull mod clickable. It finds that hull mod's
+row and icon button, lays an invisible click target over the list, and checks `getItems` on each click to
+make sure the row is still shown before opening the tree. `SkillTreeModsButton` reads the hull mod panel's
+Build In button (`getPerm`) to size and place the Skill Tree button directly below it.
 
 If any of these fails, phantom hull mods stay visible, clicking the hull mod does nothing, or the button
 doesn't appear. The LunaLib refit button always still works.

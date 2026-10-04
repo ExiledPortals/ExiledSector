@@ -14,7 +14,6 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,12 +41,6 @@ class CatalogueLintTest {
             if (!description.isEmpty()) {
                 sources.put("skillType." + id + ".description", description);
             }
-        }
-        JSONObject layouts = RealSkillData.readJson(root.resolve(RealSkillData.LAYOUTS_FILE)).getJSONObject("layouts");
-        Iterator<?> ids = layouts.keys();
-        while (ids.hasNext()) {
-            String id = String.valueOf(ids.next());
-            sources.put("npcLayout." + id + ".name", layouts.getJSONObject(id).getString("name"));
         }
         String hullModRows = Files.readString(root.resolve(HULL_MODS_FILE), StandardCharsets.UTF_8).replace("\r\n", "\n");
         JSONArray hullMods = CDL.toJSONArray(hullModRows);

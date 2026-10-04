@@ -74,22 +74,22 @@ class ShipTreeSummaryRendererTest {
     }
 
     @Test
-    void showsLevelBuildStartAndNodeCountOnOneLine() {
-        ShipTreeSummaryRenderer.render(info, member, new ShipTreeLookup.ShipTree(data, "Bulwark"), 5f);
+    void showsLevelBuildThemesStartAndNodeCountOnOneLine() {
+        ShipTreeSummaryRenderer.render(info, member, new ShipTreeLookup.ShipTree(data, List.of("ballistic", "armour")), 5f);
 
-        verify(info).addPara(eq("%s"), eq(5f), (Color) any(), eq("Level 1  |  Bulwark build  |  Low Tech start  |  1 node"));
+        verify(info).addPara(eq("%s"), eq(5f), (Color) any(), eq("Level 1  |  Ballistic / Armor build  |  Low Tech start  |  1 node"));
     }
 
     @Test
-    void leavesTheBuildOutWhenTheTreeHasNoLayout() {
-        ShipTreeSummaryRenderer.render(info, member, new ShipTreeLookup.ShipTree(data, null), 5f);
+    void leavesTheBuildOutWhenTheTreeHasNoThemes() {
+        ShipTreeSummaryRenderer.render(info, member, new ShipTreeLookup.ShipTree(data, List.of()), 5f);
 
         verify(info).addPara(eq("%s"), eq(5f), (Color) any(), eq("Level 1  |  Low Tech start  |  1 node"));
     }
 
     @Test
     void highlightsNotableNamesAndColoursBonusNumbers() {
-        ShipTreeSummaryRenderer.render(info, member, new ShipTreeLookup.ShipTree(data, "Bulwark"), 5f);
+        ShipTreeSummaryRenderer.render(info, member, new ShipTreeLookup.ShipTree(data, List.of("ballistic", "armour")), 5f);
 
         verify(info).addPara(eq("%s"), anyFloat(), (Color) any(), (Color) any(), eq("Notables and keystones: Heavy Armor"));
         verify(label).setHighlight("Heavy Armor");
