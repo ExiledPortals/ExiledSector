@@ -3808,7 +3808,7 @@ function openSocketableEditorModal(){
           '<select id="' + selectId + '" data-pool-field="effect" data-pool-index="' + i + '">' + socketableEffectOptionsHtml(e.effect) + '</select></div>' +
         '<div class="field" style="flex:1"><label>Min</label><input type="number" step="0.5" value="' + e.min + '" data-pool-field="min" data-pool-index="' + i + '"></div>' +
         '<div class="field" style="flex:1"><label>Max</label><input type="number" step="0.5" value="' + e.max + '" data-pool-field="max" data-pool-index="' + i + '"></div>' +
-        '<div class="field" style="flex:1"><label>Weight</label><input type="number" step="0.5" min="0" value="' + e.weight + '" data-pool-field="weight" data-pool-index="' + i + '"></div>' +
+        '<div class="field" style="flex:1"><label title="How often this effect is picked compared with the others in the pool">Rarity weight <span class="hint" data-pool-share="' + i + '"></span></label><input type="number" step="0.5" min="0" value="' + e.weight + '" data-pool-field="weight" data-pool-index="' + i + '"></div>' +
         moveRowButtonsHtml('sock-move-pool-row', i, def.pool.length) +
         '<button class="smallBtn danger" type="button" data-sock-remove-pool-row="' + i + '">X</button>' +
       '</div>';
@@ -3833,7 +3833,7 @@ function openSocketableEditorModal(){
       datalistHtml('sockGrades', SOCKETABLE_GRADES) + datalistHtml('sockAlignments', SOCKETABLE_ALIGNMENTS) +
       '<div class="field"><label>Tooltip description (optional)</label><textarea data-sock-field="description" rows="3" style="width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12.5px;padding:7px 9px;resize:vertical;">' + escapeHtml(def.description) + '</textarea></div>' +
       '<hr class="sep">' +
-      '<div class="field"><label>Effect pool - each item rolls 2-4 of these (55/35/10%), weighted, values rounded to whole numbers</label>' +
+      '<div class="field"><label>Effect pool - each item rolls 2-4 of these (55/35/10%) without repeats; a higher rarity weight makes an effect come up more often; values are whole numbers between min and max</label>' +
         (poolRows || '<div class="hint">No effects yet.</div>') + '</div>' +
       '<div class="btnRow"><button class="smallBtn" type="button" id="sockAddPoolRow">+ Add effect</button></div>' +
       '<hr class="sep">' +
@@ -3856,10 +3856,19 @@ function openSocketableEditorModal(){
         var entry = def.pool[parseInt(el.dataset.poolIndex, 10)];
         entry[el.dataset.poolField] = el.dataset.poolField === 'effect' ? el.value : (parseFloat(el.value) || 0);
         markDirty();
+        updatePoolShares();
       };
       el.addEventListener('input', update);
       el.addEventListener('change', update);
     });
+    function updatePoolShares(){
+      var total = def.pool.reduce(function(sum, e){ return sum + Math.max(0, e.weight); }, 0);
+      detail.querySelectorAll('[data-pool-share]').forEach(function(span){
+        var weight = Math.max(0, def.pool[parseInt(span.dataset.poolShare, 10)].weight);
+        span.textContent = total > 0 ? '(' + Math.round(weight / total * 100) + '% of first picks)' : '';
+      });
+    }
+    updatePoolShares();
     wireEffectFilters(detail);
     wireMoveRowButtons(detail, 'sock-move-pool-row', function(){}, function(){ return def.pool; }, function(){ markDirty(); renderDetail(); });
     detail.querySelectorAll('[data-sock-remove-pool-row]').forEach(function(btn){
