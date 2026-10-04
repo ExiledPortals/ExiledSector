@@ -35,6 +35,10 @@ public final class SocketableStore {
         return socketable;
     }
 
+    public boolean remove(Socketable socketable) {
+        return owned.remove(socketable);
+    }
+
     public int absorbFrom(CargoAPI cargo) {
         int moved = 0;
         for (CargoStackAPI stack : cargo.getStacksCopy()) {

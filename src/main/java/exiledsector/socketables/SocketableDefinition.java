@@ -81,10 +81,18 @@ public record SocketableDefinition(String id, SocketableKind kind, String name, 
     }
 
     public String gradeName() {
-        return Translation.data("socketable.grade." + grade, grade);
+        return gradeName(grade);
     }
 
     public String alignmentName() {
+        return alignmentName(alignment);
+    }
+
+    public static String gradeName(String grade) {
+        return Translation.data("socketable.grade." + grade, grade);
+    }
+
+    public static String alignmentName(String alignment) {
         return Translation.data("socketable.alignment." + alignment, alignment);
     }
 
