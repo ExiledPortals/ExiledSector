@@ -43,9 +43,16 @@ public abstract class Socketable {
         return SocketableDefinitions.get(definitionId);
     }
 
+    public SocketableName displayName() {
+        return SocketableNames.nameFor(definition(), kind(), seed, effects);
+    }
+
     public String name() {
-        SocketableDefinition definition = definition();
-        return definition == null ? Translation.text("socketable.unknown") : definition.displayName();
+        return displayName().title();
+    }
+
+    public SocketableRarity rarity() {
+        return SocketableRarity.of(definition(), effects.size());
     }
 
     public String iconPath() {

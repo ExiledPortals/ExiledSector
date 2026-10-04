@@ -14,14 +14,32 @@ public final class SocketableRoller {
 
     public static List<RolledEffect> roll(SocketableDefinition definition, long seed) {
         Random random = new Random(scramble(seed));
-        List<SocketableDefinition.PoolEntry> remaining = new ArrayList<>(definition.pool());
-        int count = Math.min(remaining.size(), effectCount(random.nextFloat()));
+        if (definition.unique()) {
+            List<RolledEffect> rolled = new ArrayList<>(definition.pool().size());
+            for (SocketableDefinition.PoolEntry entry : definition.pool()) {
+                rolled.add(new RolledEffect(entry.effectName(), wholeNumberBetween(entry.min(), entry.max(), random)));
+            }
+            return rolled;
+        }
+        int count = effectCount(random.nextFloat());
+        int prefixCount = prefixCount(count, random.nextBoolean());
         List<RolledEffect> rolled = new ArrayList<>(count);
-        for (int i = 0; i < count; i++) {
+        draw(definition.prefixes(), prefixCount, random, rolled);
+        draw(definition.suffixes(), count - prefixCount, random, rolled);
+        return rolled;
+    }
+
+    static int prefixCount(int effectCount, boolean morePrefixes) {
+        int even = effectCount / 2;
+        return effectCount % 2 == 0 ? even : even + (morePrefixes ? 1 : 0);
+    }
+
+    private static void draw(List<SocketableDefinition.PoolEntry> pool, int count, Random random, List<RolledEffect> rolled) {
+        List<SocketableDefinition.PoolEntry> remaining = new ArrayList<>(pool);
+        for (int i = 0; i < Math.min(count, pool.size()); i++) {
             SocketableDefinition.PoolEntry entry = remaining.remove(pick(remaining, random.nextFloat()));
             rolled.add(new RolledEffect(entry.effectName(), wholeNumberBetween(entry.min(), entry.max(), random)));
         }
-        return rolled;
     }
 
     static float wholeNumberBetween(float min, float max, Random random) {

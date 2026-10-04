@@ -453,7 +453,10 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         String icon = row.socketable().iconPath();
         ICONS.ensureLoaded(icon);
         TooltipMakerAPI body = text.beginImageWithText(icon, ICON_SIZE);
-        body.addPara("%s", 0f, Misc.getHighlightColor(), Misc.getHighlightColor(), row.name());
+        body.addPara("%s", 0f, row.rarity().color(), row.rarity().color(), row.name());
+        if (row.baseName() != null) {
+            body.addPara("%s", 0f, Misc.getGrayColor(), Misc.getGrayColor(), row.baseName());
+        }
         for (StyledText line : row.headerLines()) {
             VanillaText.addPara(body, line, LINE_PAD, Misc.getTextColor());
         }

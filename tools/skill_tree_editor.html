@@ -3604,7 +3604,12 @@ function openImageEditorModal(){
   else fetchAllProjectImages(buildShell);
 }
 
-var SOCKETABLE_COLUMNS = ['id', 'kind', 'name', 'icon', 'grade', 'alignment', 'rarity', 'description', 'pool'];
+var SOCKETABLE_COLUMNS = ['id', 'kind', 'name', 'icon', 'grade', 'alignment', 'rarity', 'unique', 'description', 'prefixes', 'suffixes'];
+var SOCKETABLE_AFFIX_GROUPS = [
+  { key: 'prefixes', label: 'Prefixes', hint: 'a magic item rolls 1, a rare 1-2' },
+  { key: 'suffixes', label: 'Suffixes', hint: 'a magic item rolls 1, a rare 1-2' }
+];
+function isSocketableAffixColumn(column){ return column === 'prefixes' || column === 'suffixes'; }
 var SOCKETABLE_KINDS = ['subroutine', 'officer', 'team', 'ai_core'];
 var SOCKETABLE_GRADES = ['military', 'industrial', 'consumer'];
 var SOCKETABLE_ALIGNMENTS = ['high_tech', 'midline', 'low_tech'];
@@ -3653,14 +3658,15 @@ function parseSocketablesCsv(text){
     var def = { extra: {} };
     header.forEach(function(column, i){
       var value = cells[i] === undefined ? '' : cells[i];
-      if (column === 'pool') def.pool = parseSocketablePool(value);
+      if (isSocketableAffixColumn(column)) def[column] = parseSocketablePool(value);
+      else if (column === 'pool') def.prefixes = (def.prefixes || []).concat(parseSocketablePool(value));
       else if (SOCKETABLE_COLUMNS.indexOf(column) !== -1) def[column] = value.trim();
       else def.extra[column] = value;
     });
-    SOCKETABLE_COLUMNS.forEach(function(column){ if (def[column] === undefined) def[column] = column === 'pool' ? [] : ''; });
+    SOCKETABLE_COLUMNS.forEach(function(column){ if (def[column] === undefined) def[column] = isSocketableAffixColumn(column) ? [] : ''; });
     return def;
   });
-  var extraColumns = header.filter(function(column){ return SOCKETABLE_COLUMNS.indexOf(column) === -1; });
+  var extraColumns = header.filter(function(column){ return SOCKETABLE_COLUMNS.indexOf(column) === -1 && column !== 'pool'; });
   return { defs: defs, extraColumns: extraColumns };
 }
 
@@ -3669,7 +3675,7 @@ function serializeSocketablesCsv(defs, extraColumns){
   var lines = [header.join(',')];
   defs.forEach(function(def){
     lines.push(header.map(function(column){
-      if (column === 'pool') return csvField(formatSocketablePool(def.pool));
+      if (isSocketableAffixColumn(column)) return csvField(formatSocketablePool(def[column]));
       if (SOCKETABLE_COLUMNS.indexOf(column) !== -1) return csvField(def[column]);
       return csvField(def.extra[column]);
     }).join(','));
@@ -3685,11 +3691,11 @@ function validateSocketables(defs){
     if (seen[def.id]) issues.push(label + ': id is used more than once');
     seen[def.id] = true;
     if (SOCKETABLE_KINDS.indexOf(def.kind) === -1) issues.push(label + ': kind must be one of ' + SOCKETABLE_KINDS.join(', '));
-    if (!def.pool.length) issues.push(label + ': the effect pool is empty');
+    if (!def.prefixes.length && !def.suffixes.length) issues.push(label + ': it has no prefixes or suffixes');
     if (!(parseFloat(def.rarity) >= 0)) issues.push(label + ': rarity must be zero or more');
     var poolEffects = {};
-    def.pool.forEach(function(e){
-      if (poolEffects[e.effect]) issues.push(label + ': ' + e.effect + ' is in the pool more than once');
+    def.prefixes.concat(def.suffixes).forEach(function(e){
+      if (poolEffects[e.effect]) issues.push(label + ': ' + e.effect + ' is listed more than once across its prefixes and suffixes');
       poolEffects[e.effect] = true;
       if (EFFECT_NAMES.indexOf(e.effect) === -1) issues.push(label + ': unknown effect ' + e.effect);
       if (!(e.weight > 0)) issues.push(label + ': ' + e.effect + ' needs a weight above zero');
@@ -3761,7 +3767,8 @@ function openSocketableEditorModal(){
     });
     document.getElementById('sockNew').addEventListener('click', function(){
       defs.push({ id: uniqueSocketableId('new_socketable'), kind: 'subroutine', name: 'New Socketable', icon: '', grade: '', alignment: '',
-        rarity: '10', description: '', pool: [{ effect: EFFECT_NAMES_SORTED[0], min: 1, max: 2, weight: 1 }], extra: {} });
+        rarity: '10', unique: '', description: '', prefixes: [{ effect: EFFECT_NAMES_SORTED[0], min: 1, max: 2, weight: 1 }],
+        suffixes: [{ effect: EFFECT_NAMES_SORTED[1], min: 1, max: 2, weight: 1 }], extra: {} });
       selectedIndex = defs.length - 1;
       markDirty();
       renderList();
@@ -3784,7 +3791,8 @@ function openSocketableEditorModal(){
       return '<div class="socketableListItem' + (i === selectedIndex ? ' selected' : '') + '" data-sock-index="' + i + '">' +
         '<img src="' + escapeHtml(def.icon || 'graphics/icons/cargo/chip1.png') + '" alt="">' +
         '<div><div class="socketableName">' + escapeHtml(def.name || def.id) + '</div>' +
-        '<div class="socketableMeta">' + escapeHtml(def.kind) + ' - ' + def.pool.length + ' effects</div></div>' +
+        '<div class="socketableMeta">' + escapeHtml(def.kind) + ' - ' + def.prefixes.length + ' prefixes, ' + def.suffixes.length +
+          ' suffixes</div></div>' +
       '</div>';
     }).join('') || '<div class="hint">No socketables yet.</div>';
     list.querySelectorAll('[data-sock-index]').forEach(function(el){
@@ -3801,18 +3809,29 @@ function openSocketableEditorModal(){
     var def = defs[selectedIndex];
     if (!def) { detail.innerHTML = '<div class="hint">Select a socketable, or add a new one.</div>'; return; }
     var kindOptions = SOCKETABLE_KINDS.map(function(k){ return '<option value="' + k + '"' + (k === def.kind ? ' selected' : '') + '>' + k + '</option>'; }).join('');
-    var poolRows = def.pool.map(function(e, i){
-      var selectId = 'sockEffect' + i;
-      return '<div class="fieldRow" style="align-items:flex-end">' +
-        '<div class="field" style="flex:3"><label>Effect ' + (i + 1) + '</label>' + effectFilterHtml(selectId) +
-          '<select id="' + selectId + '" data-pool-field="effect" data-pool-index="' + i + '">' + socketableEffectOptionsHtml(e.effect) + '</select></div>' +
-        '<div class="field" style="flex:1"><label>Min</label><input type="number" step="0.5" value="' + e.min + '" data-pool-field="min" data-pool-index="' + i + '"></div>' +
-        '<div class="field" style="flex:1"><label>Max</label><input type="number" step="0.5" value="' + e.max + '" data-pool-field="max" data-pool-index="' + i + '"></div>' +
-        '<div class="field" style="flex:1"><label title="How often this effect is picked compared with the others in the pool">Rarity weight <span class="hint" data-pool-share="' + i + '"></span></label><input type="number" step="0.5" min="0" value="' + e.weight + '" data-pool-field="weight" data-pool-index="' + i + '"></div>' +
-        moveRowButtonsHtml('sock-move-pool-row', i, def.pool.length) +
-        '<button class="smallBtn danger" type="button" data-sock-remove-pool-row="' + i + '">X</button>' +
-      '</div>';
-    }).join('');
+    function affixRowsHtml(group){
+      var list = def[group];
+      return list.map(function(e, i){
+        var selectId = 'sockEffect-' + group + '-' + i;
+        var at = ' data-pool-group="' + group + '" data-pool-index="' + i + '"';
+        return '<div class="fieldRow" style="align-items:flex-end">' +
+          '<div class="field" style="flex:3"><label>Effect ' + (i + 1) + '</label>' + effectFilterHtml(selectId) +
+            '<select id="' + selectId + '" data-pool-field="effect"' + at + '>' + socketableEffectOptionsHtml(e.effect) + '</select></div>' +
+          '<div class="field" style="flex:1"><label>Min</label><input type="number" step="0.5" value="' + e.min + '" data-pool-field="min"' + at + '></div>' +
+          '<div class="field" style="flex:1"><label>Max</label><input type="number" step="0.5" value="' + e.max + '" data-pool-field="max"' + at + '></div>' +
+          '<div class="field" style="flex:1"><label title="How often this effect is picked compared with the others in this group">Rarity weight ' +
+            '<span class="hint" data-pool-share="' + i + '" data-pool-group="' + group + '"></span></label>' +
+            '<input type="number" step="0.5" min="0" value="' + e.weight + '" data-pool-field="weight"' + at + '></div>' +
+          moveRowButtonsHtml('sock-move-' + group, i, list.length) +
+          '<button class="smallBtn danger" type="button" data-sock-remove-row="' + i + '" data-pool-group="' + group + '">X</button>' +
+        '</div>';
+      }).join('') || '<div class="hint">None yet.</div>';
+    }
+    var affixGroupsHtml = SOCKETABLE_AFFIX_GROUPS.map(function(group){
+      return '<div class="field"><label>' + group.label + ' - ' + group.hint + '</label>' + affixRowsHtml(group.key) + '</div>' +
+        '<div class="btnRow"><button class="smallBtn" type="button" data-sock-add-row="' + group.key + '">+ Add ' +
+          group.label.toLowerCase().replace(/es$/, '') + '</button></div>';
+    }).join('<hr class="sep">');
     detail.innerHTML =
       '<div class="fieldRow" style="align-items:flex-end">' +
         '<img class="socketableIconPreview" src="' + escapeHtml(def.icon || 'graphics/icons/cargo/chip1.png') + '" alt="">' +
@@ -3831,11 +3850,14 @@ function openSocketableEditorModal(){
         '<div class="field" style="flex:1"><label>Rarity (loot weight)</label><input type="number" min="0" step="1" data-sock-field="rarity" value="' + escapeHtml(def.rarity) + '"></div>' +
       '</div>' +
       datalistHtml('sockGrades', SOCKETABLE_GRADES) + datalistHtml('sockAlignments', SOCKETABLE_ALIGNMENTS) +
+      '<label class="legendRow" style="cursor:pointer"><input type="checkbox" id="sockUnique"' + (def.unique === 'true' ? ' checked' : '') +
+        '> Unique - shown with the name above in orange, and rolls every prefix and suffix</label>' +
       '<div class="field"><label>Tooltip description (optional)</label><textarea data-sock-field="description" rows="3" style="width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12.5px;padding:7px 9px;resize:vertical;">' + escapeHtml(def.description) + '</textarea></div>' +
       '<hr class="sep">' +
-      '<div class="field"><label>Effect pool - each item rolls 2-4 of these (55/35/10%) without repeats; a higher rarity weight makes an effect come up more often; values are whole numbers between min and max</label>' +
-        (poolRows || '<div class="hint">No effects yet.</div>') + '</div>' +
-      '<div class="btnRow"><button class="smallBtn" type="button" id="sockAddPoolRow">+ Add effect</button></div>' +
+      '<div class="hint">Items roll 2 effects (magic: 1 prefix + 1 suffix) 55% of the time, 3 (rare: 2+1 or 1+2) 35% and 4 (rare: 2+2) 10%, ' +
+        'never repeating an effect. A higher rarity weight makes an effect come up more often within its group; values are whole numbers ' +
+        'between min and max.</div>' +
+      affixGroupsHtml +
       '<hr class="sep">' +
       '<div class="btnRow">' +
         '<button class="smallBtn" type="button" id="sockDuplicate">Duplicate</button>' +
@@ -3851,9 +3873,13 @@ function openSocketableEditorModal(){
       el.addEventListener('input', update);
       el.addEventListener('change', function(){ update(); renderList(); });
     });
+    document.getElementById('sockUnique').addEventListener('change', function(e){
+      def.unique = e.target.checked ? 'true' : '';
+      markDirty();
+    });
     detail.querySelectorAll('[data-pool-field]').forEach(function(el){
       var update = function(){
-        var entry = def.pool[parseInt(el.dataset.poolIndex, 10)];
+        var entry = def[el.dataset.poolGroup][parseInt(el.dataset.poolIndex, 10)];
         entry[el.dataset.poolField] = el.dataset.poolField === 'effect' ? el.value : (parseFloat(el.value) || 0);
         markDirty();
         updatePoolShares();
@@ -3862,28 +3888,34 @@ function openSocketableEditorModal(){
       el.addEventListener('change', update);
     });
     function updatePoolShares(){
-      var total = def.pool.reduce(function(sum, e){ return sum + Math.max(0, e.weight); }, 0);
       detail.querySelectorAll('[data-pool-share]').forEach(function(span){
-        var weight = Math.max(0, def.pool[parseInt(span.dataset.poolShare, 10)].weight);
+        var list = def[span.dataset.poolGroup];
+        var total = list.reduce(function(sum, e){ return sum + Math.max(0, e.weight); }, 0);
+        var weight = Math.max(0, list[parseInt(span.dataset.poolShare, 10)].weight);
         span.textContent = total > 0 ? '(' + Math.round(weight / total * 100) + '% of first picks)' : '';
       });
     }
     updatePoolShares();
     wireEffectFilters(detail);
-    wireMoveRowButtons(detail, 'sock-move-pool-row', function(){}, function(){ return def.pool; }, function(){ markDirty(); renderDetail(); });
-    detail.querySelectorAll('[data-sock-remove-pool-row]').forEach(function(btn){
+    SOCKETABLE_AFFIX_GROUPS.forEach(function(group){
+      wireMoveRowButtons(detail, 'sock-move-' + group.key, function(){}, function(){ return def[group.key]; },
+        function(){ markDirty(); renderDetail(); });
+    });
+    detail.querySelectorAll('[data-sock-remove-row]').forEach(function(btn){
       btn.addEventListener('click', function(){
-        def.pool.splice(parseInt(btn.dataset.sockRemovePoolRow, 10), 1);
+        def[btn.dataset.poolGroup].splice(parseInt(btn.dataset.sockRemoveRow, 10), 1);
         markDirty();
         renderList();
         renderDetail();
       });
     });
-    document.getElementById('sockAddPoolRow').addEventListener('click', function(){
-      def.pool.push({ effect: EFFECT_NAMES_SORTED[0], min: 1, max: 2, weight: 1 });
-      markDirty();
-      renderList();
-      renderDetail();
+    detail.querySelectorAll('[data-sock-add-row]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        def[btn.dataset.sockAddRow].push({ effect: EFFECT_NAMES_SORTED[0], min: 1, max: 2, weight: 1 });
+        markDirty();
+        renderList();
+        renderDetail();
+      });
     });
     document.getElementById('sockSelectIcon').addEventListener('click', function(){
       openImagePickerModal(function(path){

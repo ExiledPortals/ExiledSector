@@ -11,9 +11,11 @@ import java.nio.file.Files;
 import java.util.List;
 
 import static exiledsector.socketables.SocketableFixtures.MILITARY;
-import static exiledsector.socketables.SocketableFixtures.MILITARY_POOL;
+import static exiledsector.socketables.SocketableFixtures.MILITARY_PREFIXES;
+import static exiledsector.socketables.SocketableFixtures.MILITARY_SUFFIXES;
 import static exiledsector.socketables.SocketableFixtures.row;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -28,15 +30,19 @@ class SocketableDefinitionsTest {
     }
 
     @Test
-    void aRowBecomesADefinitionWithItsPoolInOrderAndRangesLowToHigh() throws Exception {
+    void aRowBecomesADefinitionWithItsPrefixesAndSuffixesInOrderAndRangesLowToHigh() throws Exception {
         SocketableDefinition definition = SocketableFixtures.registerMilitary();
 
         assertEquals(SocketableKind.SUBROUTINE, definition.kind());
         assertEquals("military", definition.grade());
         assertEquals("high_tech", definition.alignment());
         assertEquals(20f, definition.rarity());
-        assertEquals(5, definition.pool().size());
-        assertEquals(new SocketableDefinition.PoolEntry("SHIELD_DAMAGE_TAKEN_MULT", -15f, -10f, 1f), definition.pool().get(0));
+        assertEquals(List.of("FLUX_CAPACITY_MULT", "FLUX_DISSIPATION_MULT", "BEAM_WEAPON_DAMAGE_PERCENT"),
+                definition.prefixes().stream().map(SocketableDefinition.PoolEntry::effectName).toList());
+        assertEquals(new SocketableDefinition.PoolEntry("SHIELD_DAMAGE_TAKEN_MULT", -15f, -10f, 1f), definition.suffixes().get(0));
+        assertEquals(6, definition.pool().size());
+        assertTrue(definition.isPrefix("FLUX_CAPACITY_MULT") && definition.isSuffix("HULL_MULT"));
+        assertFalse(definition.isPrefix("HULL_MULT") || definition.isSuffix("FLUX_CAPACITY_MULT"));
     }
 
     @Test
@@ -49,13 +55,14 @@ class SocketableDefinitionsTest {
     @Test
     void badRowsAreSkippedWithoutLosingTheGoodOnes() throws Exception {
         SocketableDefinitions.register(new JSONArray()
-                .put(row(MILITARY, "subroutine", MILITARY_POOL))
-                .put(row("unknown_kind", "drone", MILITARY_POOL))
+                .put(row(MILITARY, "subroutine", MILITARY_PREFIXES, MILITARY_SUFFIXES))
+                .put(row("unknown_kind", "drone", MILITARY_PREFIXES, MILITARY_SUFFIXES))
                 .put(row("unknown_effect", "subroutine", "NOT_AN_EFFECT:1:2"))
                 .put(row("not_a_number", "subroutine", "HULL_MULT:one:2"))
                 .put(row("empty_pool", "subroutine", " ; "))
                 .put(row("zero_weight", "subroutine", "HULL_MULT:1:2:0"))
-                .put(row("duplicate_effect", "subroutine", "HULL_MULT:1:2; HULL_MULT:3:4")));
+                .put(row("duplicate_effect", "subroutine", "HULL_MULT:1:2; HULL_MULT:3:4"))
+                .put(row("both_sides", "subroutine", "HULL_MULT:1:2", "HULL_MULT:3:4")));
 
         assertNotNull(SocketableDefinitions.get(MILITARY));
         assertEquals(1, SocketableDefinitions.all().size());
@@ -94,7 +101,8 @@ class SocketableDefinitionsTest {
             SocketableDefinition definition = SocketableDefinitions.get("domain_subroutine_" + grade);
             assertNotNull(definition, grade);
             assertEquals(SocketableKind.SUBROUTINE, definition.kind());
-            assertTrue(definition.pool().size() >= 4, grade + " needs room for a four-effect roll");
+            assertTrue(definition.prefixes().size() >= 2 && definition.suffixes().size() >= 2,
+                    grade + " needs two prefixes and two suffixes for a four-effect roll");
         }
     }
 }

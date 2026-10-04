@@ -1,6 +1,7 @@
 package exiledsector.ui.socket;
 
 import exiledsector.socketables.SocketableKind;
+import exiledsector.socketables.SocketableRarity;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -14,7 +15,8 @@ class SocketStorageQueryTest {
     private static SocketStorageRow row(int order, String name, SocketableKind kind, String grade, String alignment, Set<String> themes,
                                         int effectCount, String effectText, String installedIn) {
         String search = (name + "\n" + effectText).toLowerCase();
-        return new SocketStorageRow(null, order, name, kind, grade, alignment, themes, effectCount, search, installedIn, List.of(), List.of());
+        return new SocketStorageRow(null, order, name, SocketableRarity.MAGIC, null, kind, grade, alignment, themes, effectCount, search,
+                installedIn, List.of(), List.of());
     }
 
     private static final SocketStorageRow MILITARY = row(0, "Military-grade Domain Subroutine", SocketableKind.SUBROUTINE, "military",

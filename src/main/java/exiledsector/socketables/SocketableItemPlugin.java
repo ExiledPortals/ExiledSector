@@ -37,9 +37,15 @@ public class SocketableItemPlugin extends BaseSpecialItemPlugin {
 
     @Override
     public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, CargoTransferHandlerAPI transferHandler, Object stackSource) {
-        tooltip.addTitle(getName());
         I18n.forGameText(() -> {
-            if (preview != null) {
+            if (preview == null) {
+                tooltip.addTitle(Translation.text("socketable.unknown"));
+            } else {
+                SocketableName name = preview.displayName();
+                tooltip.addTitle(name.title(), name.rarity().color());
+                if (name.baseName() != null) {
+                    tooltip.addPara("%s", 0f, Misc.getGrayColor(), Misc.getGrayColor(), name.baseName());
+                }
                 addLines(tooltip, preview.headerLines());
                 List<StyledText> effects = preview.effectLines();
                 if (!effects.isEmpty()) {

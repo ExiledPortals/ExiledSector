@@ -32,6 +32,7 @@ import exiledsector.skills.skilleffect.CsvIdList;
 import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.skills.tags.AreaToggles;
 import exiledsector.socketables.SocketableDefinitions;
+import exiledsector.socketables.SocketableNames;
 import exiledsector.socketables.SocketableSaveAliases;
 import exiledsector.ui.ExiledSectorSettings;
 import exiledsector.ui.SkillTreeRefitButton;
@@ -63,6 +64,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         CsvIdList.loadAll();
         NpcFactionVolumes.load();
         SocketableDefinitions.load();
+        SocketableNames.load();
         CompatChecks.logAtStartup();
     }
 

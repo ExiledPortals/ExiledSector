@@ -79,6 +79,32 @@ class SocketableRollerTest {
     }
 
     @Test
+    void magicRollsOnePrefixAndOneSuffixAndRaresNeverMoreThanTwoOfEither() {
+        boolean twoPrefixes = false;
+        boolean twoSuffixes = false;
+        for (long seed = 0; seed < SAMPLES; seed++) {
+            List<RolledEffect> rolled = SocketableRoller.roll(military, seed);
+            long prefixes = rolled.stream().filter(effect -> military.isPrefix(effect.effectName())).count();
+            long suffixes = rolled.size() - prefixes;
+            assertTrue(prefixes <= 2 && suffixes <= 2, rolled.toString());
+            if (rolled.size() == 2) {
+                assertEquals(1, prefixes, rolled.toString());
+            }
+            twoPrefixes |= rolled.size() == 3 && prefixes == 2;
+            twoSuffixes |= rolled.size() == 3 && suffixes == 2;
+        }
+        assertTrue(twoPrefixes && twoSuffixes, "three-effect rolls should split both ways");
+    }
+
+    @Test
+    void theSplitPutsTheOddEffectOnEitherSide() {
+        assertEquals(1, SocketableRoller.prefixCount(2, true));
+        assertEquals(2, SocketableRoller.prefixCount(3, true));
+        assertEquals(1, SocketableRoller.prefixCount(3, false));
+        assertEquals(2, SocketableRoller.prefixCount(4, false));
+    }
+
+    @Test
     void theEffectCountThresholdsFollowTheProposedOdds() {
         assertEquals(2, SocketableRoller.effectCount(0f));
         assertEquals(2, SocketableRoller.effectCount(0.549f));

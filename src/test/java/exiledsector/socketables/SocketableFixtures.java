@@ -7,13 +7,17 @@ import org.json.JSONObject;
 final class SocketableFixtures {
 
     static final String MILITARY = "military_subroutine";
-    static final String MILITARY_POOL = "SHIELD_DAMAGE_TAKEN_MULT:-15:-10; FLUX_CAPACITY_MULT:4:6; FLUX_DISSIPATION_MULT:4:6;"
-            + " BEAM_WEAPON_DAMAGE_PERCENT:10:15; ENERGY_WEAPON_FLUX_COST_PERCENT:-15:-10";
+    static final String MILITARY_PREFIXES = "FLUX_CAPACITY_MULT:4:6; FLUX_DISSIPATION_MULT:4:6; BEAM_WEAPON_DAMAGE_PERCENT:10:15";
+    static final String MILITARY_SUFFIXES = "SHIELD_DAMAGE_TAKEN_MULT:-15:-10; ARMOR_PERCENT:6:9; HULL_MULT:4:6";
 
     private SocketableFixtures() {
     }
 
-    static JSONObject row(String id, String kind, String pool) throws JSONException {
+    static JSONObject row(String id, String kind, String prefixes) throws JSONException {
+        return row(id, kind, prefixes, "");
+    }
+
+    static JSONObject row(String id, String kind, String prefixes, String suffixes) throws JSONException {
         return new JSONObject()
                 .put("id", id)
                 .put("kind", kind)
@@ -22,11 +26,12 @@ final class SocketableFixtures {
                 .put("grade", "military")
                 .put("alignment", "high_tech")
                 .put("rarity", "20")
-                .put("pool", pool);
+                .put("prefixes", prefixes)
+                .put("suffixes", suffixes);
     }
 
     static SocketableDefinition registerMilitary() throws JSONException {
-        SocketableDefinitions.register(new JSONArray().put(row(MILITARY, "subroutine", MILITARY_POOL)));
+        SocketableDefinitions.register(new JSONArray().put(row(MILITARY, "subroutine", MILITARY_PREFIXES, MILITARY_SUFFIXES)));
         return SocketableDefinitions.get(MILITARY);
     }
 }

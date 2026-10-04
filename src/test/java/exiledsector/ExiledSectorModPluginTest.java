@@ -20,6 +20,7 @@ import exiledsector.skills.SkillTree;
 import exiledsector.skills.npc.NpcFactionVolumes;
 import exiledsector.socketables.SocketableDefinitions;
 import exiledsector.socketables.SocketableKind;
+import exiledsector.socketables.SocketableNames;
 import exiledsector.ui.SkillTreeRefitButton;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
 import exiledsector.ui.inspect.SkillTreeCodexListener;
@@ -88,7 +89,10 @@ class ExiledSectorModPluginTest {
         when(settings.getMergedSpreadsheetDataForMod("faction", "data/config/exiledSector/npc_faction_volumes.csv", "exiledSector"))
                 .thenReturn(new JSONArray("[{\"faction\": \"hegemony\", \"region\": \"hegemony\"}]"));
         when(settings.getMergedSpreadsheetDataForMod("id", "data/config/exiledSector/socketables.csv", "exiledSector"))
-                .thenReturn(new JSONArray("[{\"id\": \"chip\", \"kind\": \"subroutine\", \"pool\": \"HULL_MULT:4:6\"}]"));
+                .thenReturn(new JSONArray("[{\"id\": \"chip\", \"kind\": \"subroutine\", \"prefixes\": \"HULL_MULT:4:6\"}]"));
+        when(settings.getMergedJSONForMod("data/config/exiledSector/socketable_names.json", "exiledSector")).thenReturn(new JSONObject("{}"));
+        when(settings.getMergedSpreadsheetDataForMod("effect", "data/config/exiledSector/socketable_affixes.csv", "exiledSector"))
+                .thenReturn(new JSONArray());
 
         Logger logger = mock(Logger.class);
 
@@ -106,6 +110,7 @@ class ExiledSectorModPluginTest {
         SkillTree.clearTypes();
         NpcFactionVolumes.clear();
         SocketableDefinitions.clear();
+        SocketableNames.clear();
         settingsCreatorMock.close();
         globalMock.close();
         lunaSettingsMock.close();
