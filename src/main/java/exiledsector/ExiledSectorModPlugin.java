@@ -6,7 +6,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.compat.CompatChecks;
 import exiledsector.effects.CombatXpListener;
-import exiledsector.effects.LiveMunitionsCrewListener;
+import exiledsector.effects.FleetCrewLedgerListener;
 import exiledsector.effects.NpcFleetDialogListener;
 import exiledsector.effects.NpcFleetInflationListener;
 import exiledsector.effects.NpcFleetSweepScript;
@@ -122,7 +122,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         Global.getSector().removeScriptsOfClass(SkillTreeInstaller.class);
         Global.getSector().addTransientScript(new SkillTreeInstaller());
         Global.getSector().addTransientListener(new CombatXpListener());
-        Global.getSector().addTransientListener(new LiveMunitionsCrewListener());
+        Global.getSector().addTransientListener(new FleetCrewLedgerListener());
         Global.getSector().addTransientListener(new SalvageBonusListener());
         Global.getSector().addTransientScript(new NpcFleetSweepScript());
         Global.getSector().addTransientListener(new NpcFleetDialogListener());

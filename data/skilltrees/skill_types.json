@@ -1624,6 +1624,26 @@
 			]
 		},
 		{
+			"id": "press_gang",
+			"name": "Press Gang",
+			"icon": "graphics/hullmods/recovery_shuttles.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CREW_STEAL_RANGE_FLAT",
+					"magnitude": 1500
+				},
+				{
+					"effect": "CREW_STEAL_SKELETON_CREW_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"logistics",
+				"player_only"
+			]
+		},
+		{
 			"id": "husk_plating",
 			"name": "Husk Plating",
 			"icon": "graphics/icons/armor_shifted.png",

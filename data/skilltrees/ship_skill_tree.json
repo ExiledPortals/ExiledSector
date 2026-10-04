@@ -5275,12 +5275,25 @@
 			"connectedTo": [
 				"lost_sector_wormhole1",
 				"missile_damage_7",
-				"weapon_durability_4"
+				"weapon_durability_4",
+				"press_gang_1"
 			],
 			"x": 6057,
 			"y": -11504,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#c2f8ff",
+			"tags": [
+				"lost_sector"
+			]
+		},
+		{
+			"id": "press_gang_1",
+			"type": "press_gang",
+			"connectedTo": [
+				"frozen_heart_1"
+			],
+			"x": 5454,
+			"y": -11504,
 			"tags": [
 				"lost_sector"
 			]

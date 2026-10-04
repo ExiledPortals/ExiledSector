@@ -55,12 +55,12 @@ class LiveMunitionsTest {
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getCombatEngine).thenReturn(engine);
         globalMock.when(Global::getSector).thenReturn(sector);
-        LiveMunitionsCrew.drainPendingDeaths();
+        FleetCrewLedger.drain();
     }
 
     @AfterEach
     void tearDown() {
-        LiveMunitionsCrew.drainPendingDeaths();
+        FleetCrewLedger.drain();
         globalMock.close();
     }
 
@@ -118,7 +118,7 @@ class LiveMunitionsTest {
         when(armed.launcher().getAmmo()).thenReturn(5);
         listener.advance(0.016f);
 
-        assertEquals(2, LiveMunitionsCrew.drainPendingDeaths());
+        assertEquals(2, FleetCrewLedger.drain().sacrificed());
         verify(armed.damage()).unmodify(MOD_ID);
         verify(armed.speed()).unmodify(MOD_ID);
     }
@@ -139,7 +139,7 @@ class LiveMunitionsTest {
         when(armed.launcher().getAmmo()).thenReturn(7);
         listener.advance(0.016f);
 
-        assertEquals(1, LiveMunitionsCrew.drainPendingDeaths());
+        assertEquals(1, FleetCrewLedger.drain().sacrificed());
     }
 
     @Test
@@ -151,7 +151,7 @@ class LiveMunitionsTest {
         when(armed.launcher().getAmmo()).thenReturn(4);
         listener.advance(0.016f);
 
-        assertEquals(0, LiveMunitionsCrew.drainPendingDeaths());
+        assertEquals(0, FleetCrewLedger.drain().sacrificed());
         verify(armed.damage(), never()).modifyPercent(anyString(), anyFloat());
     }
 
@@ -165,7 +165,7 @@ class LiveMunitionsTest {
         when(armed.launcher().getAmmo()).thenReturn(0);
         listener.advance(0.016f);
 
-        assertEquals(0, LiveMunitionsCrew.drainPendingDeaths());
+        assertEquals(0, FleetCrewLedger.drain().sacrificed());
         verify(armed.damage(), never()).unmodify(MOD_ID);
     }
 
@@ -179,13 +179,13 @@ class LiveMunitionsTest {
         when(armed.launcher().getAmmo()).thenReturn(9);
         listener.advance(0.016f);
 
-        assertEquals(0, LiveMunitionsCrew.drainPendingDeaths());
+        assertEquals(0, FleetCrewLedger.drain().sacrificed());
     }
 
     @Test
     void theCrewPoolIsCountedOncePerBattleAndSharedByEveryShip() {
-        LiveMunitionsCrew first = LiveMunitionsCrew.forCurrentCombat();
-        LiveMunitionsCrew second = LiveMunitionsCrew.forCurrentCombat();
+        FleetCrewLedger first = FleetCrewLedger.forCurrentCombat();
+        FleetCrewLedger second = FleetCrewLedger.forCurrentCombat();
 
         first.sacrifice();
         second.sacrifice();
@@ -193,6 +193,6 @@ class LiveMunitionsTest {
 
         assertSame(first, second);
         assertFalse(first.hasCrew());
-        assertEquals(2, LiveMunitionsCrew.drainPendingDeaths());
+        assertEquals(2, FleetCrewLedger.drain().sacrificed());
     }
 }

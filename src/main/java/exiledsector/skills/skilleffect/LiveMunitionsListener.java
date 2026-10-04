@@ -22,7 +22,7 @@ final class LiveMunitionsListener implements AdvanceableListener {
     private int[] lastAmmo;
     private float[] lastReload;
     private HeartlessStacks stacks;
-    private LiveMunitionsCrew crew;
+    private FleetCrewLedger crew;
     private int appliedStacks;
 
     LiveMunitionsListener(ShipAPI ship) {
@@ -87,7 +87,7 @@ final class LiveMunitionsListener implements AdvanceableListener {
             return true;
         }
         if (crew == null) {
-            crew = LiveMunitionsCrew.forCurrentCombat();
+            crew = FleetCrewLedger.forCurrentCombat();
         }
         return crew.hasCrew();
     }

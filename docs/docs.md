@@ -206,6 +206,17 @@ own numbers, with the row that applies to the current ship highlighted.
 
 ## Other notables worth describing
 
+Press Gang (`CREW_STEAL_RANGE_FLAT`, `CREW_STEAL_SKELETON_CREW_PERCENT`), next to Frozen Heart, takes a
+share of the skeleton crew of each enemy ship destroyed within range of one of the player's own ships that
+has it. Fighters, drones, modules and ships that retreat never count, and each wreck is claimed once, at the
+highest share among the thieves in range. Live Munitions and Press Gang share one crew account per battle
+(`FleetCrewLedger`): it starts at the fleet's cargo crew, Live Munitions spends from it, and stolen crew is
+added as it is claimed (the stolen total rounded up), so Live Munitions can keep firing on captured crew.
+After the battle, win or lose, only the net change is applied: a gain joins the fleet up to its free crew
+space and a loss comes out of its crew. That happens one frame after `reportPlayerEngagement`, because the
+game applies its own crew losses and removes destroyed ships after reporting the engagement. Simulator,
+mission and auto-resolved battles change nothing, and NPC ships never take the node (`player_only`).
+
 Disintegration makes energy hits on armour strip an extra percentage of the hit's damage directly from the
 surrounding armour cells, using vanilla's own armour damage spread (1/15 to the inner 3×3 cells and 1/30
 to the outer ring, skipping the corners). It respects the target's armour damage resistance, treats each

@@ -102,6 +102,8 @@ public enum CombatSkillEffect implements BackedSkillEffect {
             LiveMunitionsListener.class, LiveMunitionsListener::new),
     HEARTLESS_MISSILE_SPEED_PERCENT_PER_STACK(LiveMunitionsListener.MISSILE_SPEED_PERCENT_PER_STACK_KEY,
             LiveMunitionsListener.class, LiveMunitionsListener::new),
+    CREW_STEAL_RANGE_FLAT(CrewStealListener.RANGE_KEY, CrewStealListener.class, CrewStealListener::new),
+    CREW_STEAL_SKELETON_CREW_PERCENT(CrewStealListener.SKELETON_CREW_PERCENT_KEY, CrewStealListener.class, CrewStealListener::new),
     FLUX_SCALED_TOP_SPEED_FLAT(FluxScaledVolatilityListener.TOP_SPEED_KEY,
             FluxScaledVolatilityListener.class, FluxScaledVolatilityListener::new),
     FLUX_SCALED_RATE_OF_FIRE_PERCENT(FluxScaledVolatilityListener.RATE_OF_FIRE_KEY,
