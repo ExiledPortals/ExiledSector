@@ -14,7 +14,7 @@ class SocketStorageQueryTest {
     private static SocketStorageRow row(int order, String name, SocketableKind kind, String grade, String alignment, Set<String> themes,
                                         int effectCount, String effectText, String installedIn) {
         String search = (name + "\n" + effectText).toLowerCase();
-        return new SocketStorageRow(null, order, name, kind, grade, alignment, themes, effectCount, search, installedIn, List.of());
+        return new SocketStorageRow(null, order, name, kind, grade, alignment, themes, effectCount, search, installedIn, List.of(), List.of());
     }
 
     private static final SocketStorageRow MILITARY = row(0, "Military-grade Domain Subroutine", SocketableKind.SUBROUTINE, "military",

@@ -54,6 +54,12 @@ public abstract class Socketable {
     }
 
     public List<StyledText> tooltipLines() {
+        List<StyledText> lines = new ArrayList<>(headerLines());
+        lines.addAll(effectLines());
+        return lines;
+    }
+
+    public List<StyledText> headerLines() {
         List<StyledText> lines = new ArrayList<>();
         SocketableDefinition definition = definition();
         if (definition != null) {
@@ -67,6 +73,11 @@ public abstract class Socketable {
                 lines.add(description);
             }
         }
+        return lines;
+    }
+
+    public List<StyledText> effectLines() {
+        List<StyledText> lines = new ArrayList<>();
         for (RolledEffect effect : effects) {
             StyledText description = effect.description();
             if (description != null) {

@@ -254,6 +254,7 @@
     "socketable.alignment.midline": "中端科技",
     "socketable.alignment.low_tech": "低科技",
     "socketable.tooltip.summary": "{kind}，{grade}，{alignment}",
+    "socketable.tooltip.primaryData": "主要数据",
     "socketable.tooltip.storage": "从舰船技能树打开模块化船体插槽面板，或将其安装到插槽中，都会把它从货舱移入插槽仓库。",
     "ui.socketStorage.button": "插槽仓库（{count}）",
     "ui.socketStorage.title": "插槽仓库",

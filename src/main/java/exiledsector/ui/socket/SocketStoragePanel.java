@@ -3,6 +3,8 @@ package exiledsector.ui.socket;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
+import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.Fonts;
@@ -25,6 +27,7 @@ import exiledsector.ui.VanillaText;
 import exiledsector.ui.util.BorderedPanel;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.SpriteCache;
+import org.lwjgl.input.Keyboard;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -99,9 +102,10 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     private float windowHeight;
     private float listTop;
     private UIComponentAPI controls;
-    private UIComponentAPI list;
+    private TooltipMakerAPI list;
     private UIComponentAPI pager;
     private CustomPanelAPI confirm;
+    private CustomPanelAPI confirmBlocker;
     private TextFieldAPI searchField;
     private String typedQuery;
     private float searchDelay;
@@ -175,7 +179,7 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
             queued = null;
             I18n.forGameText(action);
         }
-        if (root == null || searchField == null) {
+        if (root == null || searchField == null || confirm != null) {
             return;
         }
         String text = searchField.getText();
@@ -187,6 +191,23 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
             if (searchDelay <= 0f) {
                 filter.setQuery(typedQuery);
                 I18n.forGameText(this::rebuildList);
+            }
+        }
+    }
+
+    @Override
+    public void processInput(List<InputEventAPI> events) {
+        consumeAll(events, false);
+    }
+
+    private static void consumeAll(List<InputEventAPI> events, boolean keyboardToo) {
+        for (InputEventAPI event : events) {
+            if (event.isConsumed()) {
+                continue;
+            }
+            boolean escape = event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE;
+            if (event.isMouseEvent() || (keyboardToo && event.isKeyboardEvent() && !escape)) {
+                event.consume();
             }
         }
     }
@@ -284,6 +305,9 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
             built.add(SocketStorageRow.of(owned.get(i), i, themes, installedIn));
         }
         rows = built;
+        Set<String> present = new LinkedHashSet<>();
+        built.forEach(row -> present.addAll(row.themes()));
+        filter.themes.retainAll(present);
     }
 
     private void rebuildControls() {
@@ -397,7 +421,7 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
 
     private void rebuildList() {
         if (list != null) {
-            root.removeComponent(list);
+            root.removeComponent(list.getExternalScroller() != null ? list.getExternalScroller() : list);
         }
         if (pager != null) {
             root.removeComponent(pager);
@@ -430,9 +454,14 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         ICONS.ensureLoaded(icon);
         TooltipMakerAPI body = text.beginImageWithText(icon, ICON_SIZE);
         body.addPara("%s", 0f, Misc.getHighlightColor(), Misc.getHighlightColor(), row.name());
-        for (StyledText line : row.lines()) {
+        for (StyledText line : row.headerLines()) {
             VanillaText.addPara(body, line, LINE_PAD, Misc.getTextColor());
         }
+        body.setBulletedListMode(BaseIntelPlugin.BULLET);
+        for (StyledText line : row.effectLines()) {
+            VanillaText.addPara(body, line, LINE_PAD, Misc.getTextColor());
+        }
+        body.setBulletedListMode(null);
         text.addImageWithText(0f);
         panel.addUIElement(text).inTL(0f, 0f);
         float height = Math.max(ROW_MIN_HEIGHT, text.getHeightSoFar());
@@ -490,13 +519,25 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
                 FIELD_HEIGHT, 0f);
         cancel.getPosition().inBR(buttonWidth + CHIP_GAP, 0f);
         confirm.addUIElement(element).inTL(PAD, PAD);
+        confirmBlocker = Global.getSettings().createCustom(root.getPosition().getWidth(), root.getPosition().getHeight(), new Blocker());
+        root.addComponent(confirmBlocker).inTL(0f, 0f);
         root.addComponent(confirm).inTL(windowLeft + (windowWidth - CONFIRM_WIDTH) / 2f, windowTop + (windowHeight - CONFIRM_HEIGHT) / 2f);
     }
 
     private void closeConfirm() {
         root.removeComponent(confirm);
+        root.removeComponent(confirmBlocker);
+        confirmBlocker = null;
         confirm = null;
         pendingDestroy = null;
+    }
+
+    private static final class Blocker extends BaseCustomUIPanelPlugin {
+
+        @Override
+        public void processInput(List<InputEventAPI> events) {
+            consumeAll(events, true);
+        }
     }
 
     private static final class Child extends BaseCustomUIPanelPlugin {

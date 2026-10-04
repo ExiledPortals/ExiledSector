@@ -311,6 +311,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
             storagePanel.escape();
             consume(event);
+        } else if (event.isKeyUpEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
+            event.consume();
         }
     }
 

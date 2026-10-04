@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.CargoTransferHandlerAPI;
 import com.fs.starfarer.api.campaign.impl.items.BaseSpecialItemPlugin;
 import com.fs.starfarer.api.graphics.SpriteAPI;
+import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
@@ -11,6 +12,8 @@ import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.ui.VanillaText;
 import exiledsector.ui.util.SpriteCache;
+
+import java.util.List;
 
 public class SocketableItemPlugin extends BaseSpecialItemPlugin {
 
@@ -37,15 +40,24 @@ public class SocketableItemPlugin extends BaseSpecialItemPlugin {
         tooltip.addTitle(getName());
         I18n.forGameText(() -> {
             if (preview != null) {
-                float pad = PAD;
-                for (StyledText line : preview.tooltipLines()) {
-                    VanillaText.addPara(tooltip, line, pad, Misc.getTextColor());
-                    pad = LINE_PAD;
+                addLines(tooltip, preview.headerLines());
+                List<StyledText> effects = preview.effectLines();
+                if (!effects.isEmpty()) {
+                    tooltip.addSectionHeading(Translation.text("socketable.tooltip.primaryData"), Alignment.MID, PAD);
+                    addLines(tooltip, effects);
                 }
             }
             VanillaText.addPara(tooltip, Translation.styled("socketable.tooltip.storage"), PAD, Misc.getGrayColor());
         });
         addCostLabel(tooltip, PAD, transferHandler, stackSource);
+    }
+
+    private static void addLines(TooltipMakerAPI tooltip, List<StyledText> lines) {
+        float pad = PAD;
+        for (StyledText line : lines) {
+            VanillaText.addPara(tooltip, line, pad, Misc.getTextColor());
+            pad = LINE_PAD;
+        }
     }
 
     @Override

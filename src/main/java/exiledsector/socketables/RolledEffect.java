@@ -1,6 +1,7 @@
 package exiledsector.socketables;
 
 import exiledsector.i18n.StyledText;
+import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.skilleffect.SkillEffect;
 
 import java.util.Objects;
@@ -33,7 +34,10 @@ public final class RolledEffect {
 
     public StyledText description() {
         SkillEffect effect = effect();
-        return effect == null ? null : effect.description(magnitude);
+        if (effect == null) {
+            return null;
+        }
+        return new DescriptionLine(effect.description(magnitude), effect.lowerIsBetter()).display();
     }
 
     @Override

@@ -260,6 +260,7 @@
     "socketable.alignment.midline": "Midline",
     "socketable.alignment.low_tech": "Low Tech",
     "socketable.tooltip.summary": "{kind}, {grade}, {alignment}",
+    "socketable.tooltip.primaryData": "Primary data",
     "socketable.tooltip.storage": "Opening the Modular Hull Socket panel from a ship's skill tree, or installing this in a socket, moves it from your cargo into socket storage.",
     "ui.socketStorage.button": "Socket Storage ({count})",
     "ui.socketStorage.title": "Socket Storage",

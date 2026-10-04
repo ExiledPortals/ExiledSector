@@ -28,6 +28,15 @@ class SocketableTooltipTest {
     }
 
     @Test
+    void effectsWhereLessIsBetterAreColouredLikeTheTreeColoursThem() {
+        RolledEffect upkeep = new RolledEffect("SHIELD_UPKEEP_MULT", -25f);
+        RolledEffect beam = new RolledEffect("BEAM_WEAPON_DAMAGE_PERCENT", 12f);
+
+        assertEquals(upkeep.effect().description(-25f).inverted(), upkeep.description());
+        assertEquals(beam.effect().description(12f), beam.description());
+    }
+
+    @Test
     void aDescriptionFollowsTheSummaryLine() throws Exception {
         SocketableDefinitions.register(new org.json.JSONArray().put(SocketableFixtures.row("described", "subroutine", "HULL_MULT:4:6")
                 .put("description", "Pulled from a Domain-era warship.")));
