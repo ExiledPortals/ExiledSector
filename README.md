@@ -171,9 +171,9 @@ All of this, including the table of nodes per level, can be changed on the **NPC
 </details>
 
 <details>
-<summary><b>How do I unlock wormholes and other hidden nodes?</b></summary>
+<summary><b>How do I unlock hidden nodes?</b></summary>
 
-Hidden nodes show up as flickering sensor ghosts until you unlock them.
+Hidden nodes show up as sensor ghosts until you unlock them.
 
 Wormholes unlock when you gain access to the Gate network, the same point vanilla does: using the Janus Device at the end of the Galatia Academy storyline.
 
