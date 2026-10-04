@@ -161,6 +161,22 @@ class WeaponDroneFactoryTest {
     }
 
     @Test
+    void aSplitBeamDronesShareListenerRunsBeforeTheSharedListenersSoTheySeeTheSharedDamage() {
+        ShipAPI drone = droneThatRecordsTheSharedSpec();
+        ShipAPI firingShip = mock(ShipAPI.class);
+        DamageDealtModifier sharedListener = mock(DamageDealtModifier.class);
+        when(firingShip.getListeners(DamageDealtModifier.class)).thenReturn(List.of(sharedListener));
+        DamageDealtModifier share = mock(DamageDealtModifier.class);
+
+        WeaponDroneFactory.create(firingShip, weaponWith(shared, WeaponAPI.WeaponSize.SMALL), share);
+
+        InOrder order = Mockito.inOrder(drone, engine);
+        order.verify(drone).addListener(share);
+        order.verify(drone).addListener(sharedListener);
+        order.verify(engine).addEntity(drone);
+    }
+
+    @Test
     void theRefractionControllerIsAddedBeforeTheFiringShipsSharedListeners() {
         ShipAPI drone = droneThatRecordsTheSharedSpec();
         ShipAPI firingShip = mock(ShipAPI.class);

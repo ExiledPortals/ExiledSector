@@ -47,11 +47,20 @@ normal hard and soft flux rules apply, and the AI reacts to it as it would to an
 
 The drone is set up to behave like the ship it's standing in for. It receives a copy of the ship's
 captain, with the same personality, AI core, level and skills. The ship's weapon stat modifiers are copied
-onto it every quarter of a second, and so are its damage-dealt listeners (apart from other beam splitters
-and per-frame listeners), so on-hit effects from other nodes still apply. The drone's damage is then
-multiplied by the split share. Once a drone starts firing it keeps going for at least one second, and
-after that for as long as the original beam keeps hitting, plus a 0.3 second grace period. It stops
-straight away if its target dies or the firing ship is lost.
+onto it every quarter of a second. The ship's damage-dealt listeners are shared with it when it is
+created (apart from other drone-spawning effects), so on-hit effects from other nodes still apply.
+Listeners that also run every frame, such as Energy Weapon Mastery's, are attached through a pass-through
+that calls the firing ship's own listener. The drone's own copy of such a listener is removed, so the
+bonus follows the firing ship's flux rather than the drone's, and the listener still runs only once per
+frame. Distance-based bonuses such as Energy Weapon Mastery's range falloff are measured from the drone,
+because that is where the split beam starts. The split share is applied before any shared listener sees
+the hit, so effects that scale with damage dealt work from the shared amount.
+
+Once a drone starts firing it keeps going for at least one second, and after that for as long as the
+original beam keeps hitting, plus a 0.3 second grace period. Both times run on the firing ship's clock,
+so time dilation doesn't cut them short. It stops straight away if its target dies or
+the firing ship is destroyed or leaves the battle. Each drone runs its own timer, so it stops and removes
+itself even after the firing ship has stopped running.
 
 Some beams can't be put on a drone. That happens when the weapon's effect code is listed in
 `data/config/exiledSector/split_beam_effect_blocklist.csv`, when the weapon's size has no drone slot, or

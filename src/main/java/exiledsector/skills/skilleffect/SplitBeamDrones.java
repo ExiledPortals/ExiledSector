@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
+import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import org.lazywizard.lazylib.MathUtils;
 import org.lazywizard.lazylib.VectorUtils;
@@ -14,7 +15,6 @@ import org.magiclib.plugins.MagicFakeBeamPlugin;
 
 import java.awt.Color;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 final class SplitBeamDrones {
@@ -33,46 +33,49 @@ final class SplitBeamDrones {
     }
 
     void refresh(WeaponAPI weapon, ShipAPI primaryTarget, ShipAPI splitTarget, Vector2f impactPoint, float share) {
-        SplitDrone split = drones.computeIfAbsent(new SplitKey(weapon, splitTarget),
-                key -> new SplitDrone(WeaponDroneFactory.create(firingShip, weapon), splitTarget));
+        SplitKey key = new SplitKey(weapon, splitTarget);
+        SplitDrone split = drones.get(key);
+        if (split == null || !split.isInPlay()) {
+            split = start(key, weapon);
+            drones.put(key, split);
+        }
         split.retarget(impactPoint, Refraction.origin(primaryTarget, impactPoint, splitTarget.getLocation()), share);
     }
 
-    void advance(float amount) {
-        if (drones.isEmpty()) {
-            return;
-        }
-        boolean firingShipGone = !firingShip.isAlive();
-        Iterator<SplitDrone> iterator = drones.values().iterator();
-        while (iterator.hasNext()) {
-            SplitDrone split = iterator.next();
-            if (split.advance(amount, firingShipGone)) {
-                Global.getCombatEngine().removeEntity(split.drone);
-                iterator.remove();
-            }
-        }
+    private SplitDrone start(SplitKey key, WeaponAPI weapon) {
+        ShareListener shareListener = new ShareListener();
+        SplitDrone split = new SplitDrone(key, WeaponDroneFactory.create(firingShip, weapon, shareListener), shareListener);
+        split.drone.addListener(split);
+        return split;
     }
 
     private record SplitKey(WeaponAPI weapon, ShipAPI splitTarget) {
     }
 
-    private final class SplitDrone {
+    private final class SplitDrone implements AdvanceableListener {
 
+        private final SplitKey key;
         private final ShipAPI drone;
         private final WeaponAPI droneWeapon;
         private final ShipAPI splitTarget;
-        private final ShareListener shareListener = new ShareListener();
+        private final ShareListener shareListener;
         private final Vector2f impactPoint = new Vector2f();
         private final Vector2f origin = new Vector2f();
         private float secondsSinceRefresh;
         private float secondsSinceStart;
         private float secondsSinceMirror;
+        private boolean removed;
 
-        private SplitDrone(ShipAPI drone, ShipAPI splitTarget) {
+        private SplitDrone(SplitKey key, ShipAPI drone, ShareListener shareListener) {
+            this.key = key;
             this.drone = drone;
             this.droneWeapon = drone.getAllWeapons().get(0);
-            this.splitTarget = splitTarget;
-            drone.addListener(shareListener);
+            this.splitTarget = key.splitTarget();
+            this.shareListener = shareListener;
+        }
+
+        private boolean isInPlay() {
+            return !removed && Global.getCombatEngine().isEntityInPlay(drone);
         }
 
         private void retarget(Vector2f newImpactPoint, Vector2f newOrigin, float share) {
@@ -82,13 +85,20 @@ final class SplitBeamDrones {
             secondsSinceRefresh = 0f;
         }
 
-        private boolean advance(float amount, boolean firingShipGone) {
-            secondsSinceRefresh += amount;
-            secondsSinceStart += amount;
+        @Override
+        public void advance(float amount) {
+            if (removed) {
+                return;
+            }
+            boolean firingShipGone = !firingShip.isAlive();
+            float firingShipAmount = firingShipGone ? amount : amount * firingShip.getMutableStats().getTimeMult().getModifiedValue();
+            secondsSinceRefresh += firingShipAmount;
+            secondsSinceStart += firingShipAmount;
             boolean withinSplitWindow = secondsSinceStart <= MIN_FIRING_SECONDS || secondsSinceRefresh <= SPLIT_TIMEOUT_SECONDS;
             boolean firing = !firingShipGone && withinSplitWindow && splitTarget.isAlive();
             if (!firing && !droneWeapon.isFiring()) {
-                return true;
+                remove();
+                return;
             }
             secondsSinceMirror += amount;
             if (!firingShipGone && secondsSinceMirror >= STAT_MIRROR_INTERVAL_SECONDS) {
@@ -102,7 +112,12 @@ final class SplitBeamDrones {
             droneWeapon.setFacing(angle);
             droneWeapon.updateBeamFromPoints();
             drawRefractionConnector(amount, angle);
-            return false;
+        }
+
+        private void remove() {
+            removed = true;
+            Global.getCombatEngine().removeEntity(drone);
+            drones.remove(key, this);
         }
 
         private void drawRefractionConnector(float amount, float angle) {

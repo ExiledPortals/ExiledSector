@@ -5,6 +5,8 @@ import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.CollisionClass;
 import com.fs.starfarer.api.combat.CombatEngineLayers;
+import com.fs.starfarer.api.combat.CombatEntityAPI;
+import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipCommand;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
@@ -19,6 +21,7 @@ import com.fs.starfarer.api.loading.ProjectileSpecAPI;
 import com.fs.starfarer.api.loading.ProjectileWeaponSpecAPI;
 import com.fs.starfarer.api.loading.WeaponGroupSpec;
 import com.fs.starfarer.api.loading.WeaponGroupType;
+import org.lwjgl.util.vector.Vector2f;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -70,9 +73,10 @@ final class WeaponDroneFactory {
         return SLOT_IDS.containsKey(weapon.getSize()) && Global.getSettings().getHullSpec(HULL_ID) != null;
     }
 
-    static ShipAPI create(ShipAPI firingShip, WeaponAPI weapon) {
+    static ShipAPI create(ShipAPI firingShip, WeaponAPI weapon, DamageDealtModifier firstListener) {
         ShipAPI drone = Global.getCombatEngine().createFXDrone(variantFor(weapon));
         setUp(firingShip, drone);
+        drone.addListener(firstListener);
         shareDamageListeners(firingShip, drone);
         Global.getCombatEngine().addEntity(drone);
         return drone;
@@ -145,16 +149,19 @@ final class WeaponDroneFactory {
 
     static void shareDamageListeners(ShipAPI firingShip, ShipAPI drone) {
         for (DamageDealtModifier listener : firingShip.getListeners(DamageDealtModifier.class)) {
-            if (isShareable(listener)) {
-                drone.removeListenerOfClass(listener.getClass());
-                drone.addListener(listener);
+            if (listener instanceof DroneSpawner) {
+                continue;
             }
+            drone.removeListenerOfClass(listener.getClass());
+            drone.addListener(listener instanceof AdvanceableListener ? new SharedDamageModifier(listener) : listener);
         }
     }
 
-    private static boolean isShareable(DamageDealtModifier listener) {
-        boolean splitsBeams = listener instanceof DroneSpawner;
-        boolean wouldTickTwicePerFrame = listener instanceof AdvanceableListener;
-        return !splitsBeams && !wouldTickTwicePerFrame;
+    record SharedDamageModifier(DamageDealtModifier listener) implements DamageDealtModifier {
+
+        @Override
+        public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
+            return listener.modifyDamageDealt(param, target, damage, point, shieldHit);
+        }
     }
 }

@@ -9,7 +9,6 @@ import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.FluxTrackerAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
-import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import org.lazywizard.lazylib.MathUtils;
 import org.lazywizard.lazylib.VectorUtils;
@@ -20,7 +19,7 @@ import org.magiclib.util.MagicFakeBeam;
 import java.util.Comparator;
 import java.util.List;
 
-final class BeamSplitListener implements DamageDealtModifier, AdvanceableListener, DroneSpawner {
+final class BeamSplitListener implements DamageDealtModifier, DroneSpawner {
 
     static final String TARGETS_KEY = "exiledSector_beamSplitTargets";
 
@@ -50,11 +49,6 @@ final class BeamSplitListener implements DamageDealtModifier, AdvanceableListene
     BeamSplitListener(ShipAPI ship) {
         this.ship = ship;
         this.drones = new SplitBeamDrones(ship);
-    }
-
-    @Override
-    public void advance(float amount) {
-        drones.advance(amount);
     }
 
     @Override

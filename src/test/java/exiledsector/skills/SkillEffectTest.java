@@ -1587,8 +1587,13 @@ class SkillEffectTest {
             globalMock.when(Global::getSettings).thenReturn(settings);
             globalMock.when(Global::getFactory).thenReturn(factory);
 
+            when(shipStats.getTimeMult()).thenReturn(new MutableStat(1f));
             returnedModifierId = listener.modifyDamageDealt(beam, primaryTarget, damage, new Vector2f(0f, 0f), true);
-            ((AdvanceableListener) listener).advance(0.016f);
+            ArgumentCaptor<Object> droneListeners = ArgumentCaptor.forClass(Object.class);
+            verify(drone, Mockito.atLeastOnce()).addListener(droneListeners.capture());
+            AdvanceableListener split = droneListeners.getAllValues().stream().filter(AdvanceableListener.class::isInstance)
+                    .map(AdvanceableListener.class::cast).findFirst().orElseThrow();
+            split.advance(0.016f);
 
             verify(variant).addWeapon("WS MEDIUM", "tachyonlance");
             verify(engine).addEntity(drone);
@@ -1596,7 +1601,7 @@ class SkillEffectTest {
             verify(droneWeapon).setForceFireOneFrame(true);
             verify(engine, never()).applyDamage(any(), any(), any(), anyFloat(), any(), anyFloat(), anyBoolean(), anyBoolean(), any(), anyBoolean());
 
-            ((AdvanceableListener) listener).advance(1f);
+            split.advance(1f);
             verify(engine).removeEntity(drone);
         }
         verify(damage.getModifier()).modifyMult("exiledSector_beamSplitShare", 1f / 2);
