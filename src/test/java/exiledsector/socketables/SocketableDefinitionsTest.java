@@ -104,5 +104,10 @@ class SocketableDefinitionsTest {
             assertTrue(definition.prefixes().size() >= 2 && definition.suffixes().size() >= 2,
                     grade + " needs two prefixes and two suffixes for a four-effect roll");
         }
+        for (SocketableDefinition definition : SocketableDefinitions.all()) {
+            String icon = definition.icon();
+            assertFalse(icon.startsWith("graphics/unused/") || icon.startsWith("graphics/description/"),
+                    definition.id() + " uses " + icon + ", which build-common.ps1 leaves out of deploys and releases");
+        }
     }
 }
