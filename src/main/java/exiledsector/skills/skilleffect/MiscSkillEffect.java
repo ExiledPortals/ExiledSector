@@ -74,7 +74,8 @@ public enum MiscSkillEffect implements BackedSkillEffect {
             "stat.rangeFromWhichCombatObjectivesCanBeCaptured", false),
     PEAK_CR_DURATION_PERCENT(PERCENT, liveBonus(MutableShipStatsAPI::getPeakCRDuration), "stat.peakCombatReadinessDuration", false),
     PEAK_CR_DURATION_MULT(MULT, liveBonus(MutableShipStatsAPI::getPeakCRDuration), "stat.peakCombatReadinessDuration", false),
-    COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP(new ConditionalStatEffect(FLAT, dynamicMod("command_point_rate_flat"),
+    COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP(new ConditionalStatEffect(PERCENT,
+            new StatTarget.BonusPercentagePoints(stats -> stats.getDynamic().getMod("command_point_rate_flat")),
             "stat.commandPointRecoveryWhileFlagship", MiscSkillEffect::isFlagship));
 
     private static boolean isFlagship(ShipAPI ship) {

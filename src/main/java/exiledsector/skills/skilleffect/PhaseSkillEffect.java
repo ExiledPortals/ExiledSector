@@ -31,7 +31,7 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
     PHASE_CLOAK_ACTIVATION_COST_MULT(MULT, bonus(MutableShipStatsAPI::getPhaseCloakActivationCostBonus),
             "stat.phaseCloakActivationCost", true),
     PHASE_CLOAK_FLUX_THRESHOLD_PERCENT(PERCENT, dynamicMod("phase_cloak_flux_level_for_min_speed_mod"),
-            "stat.hardFluxThresholdBeforePhaseSpeedPenaltyKicksIn", false),
+            "stat.hardFluxLevelForMinimumPhaseSpeed", false),
     COMBAT_BOOST_WHILE_PHASED(new ConditionalStatEffect(MULT, all(stat(MutableShipStatsAPI::getFluxDissipation),
             stat(MutableShipStatsAPI::getBallisticRoFMult), stat(MutableShipStatsAPI::getEnergyRoFMult),
             stat(MutableShipStatsAPI::getMissileRoFMult), stat(MutableShipStatsAPI::getBallisticAmmoRegenMult),

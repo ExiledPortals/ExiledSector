@@ -97,7 +97,7 @@ public enum WeaponStatFamily {
             Targets.missileOnly(bonus(MutableShipStatsAPI::getMissileMaxTurnRateBonus))),
     FLIGHT_TURN_ACCELERATION(false, EnumSet.of(PERCENT, MULT),
             Targets.missileOnly(bonus(MutableShipStatsAPI::getMissileTurnAccelerationBonus))),
-    GUIDANCE(false, EnumSet.of(FLAT, PERCENT),
+    GUIDANCE(false, EnumSet.of(FLAT),
             Targets.missileOnly(stat(MutableShipStatsAPI::getMissileGuidance))) {
         @Override
         public StyledText description(WeaponScope scope, StatMode mode, float magnitude) {

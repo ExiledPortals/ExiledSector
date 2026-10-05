@@ -423,7 +423,7 @@ public final class NpcSkillTreeBuilder {
                 }
             }
             ShipProfile current = new ShipProfile(profile.hullSize(), shieldType, Math.max(0, fighterBays), profile.weaponKinds(),
-                    profile.flagship(), profile.baseArmor(), profile.phaseHull(), profile.limitedSystemCharges());
+                    profile.flagship(), profile.baseArmor(), profile.phaseHull(), profile.limitedSystemCharges(), profile.onlyBuiltInWings());
             boolean shieldInvested = false;
             for (AllocatedNode node : allocated) {
                 List<String> tags = node.effectiveType().getTags();

@@ -249,6 +249,9 @@ class LostSectorListenersTest {
         MutableStat turnRate = mock(MutableStat.class);
         when(stats.getMaxSpeed()).thenReturn(maxSpeed);
         when(stats.getMaxTurnRate()).thenReturn(turnRate);
+        when(stats.getAcceleration()).thenReturn(mock(MutableStat.class));
+        when(stats.getDeceleration()).thenReturn(mock(MutableStat.class));
+        when(stats.getTurnAcceleration()).thenReturn(mock(MutableStat.class));
 
         WeaponAPI weapon = mock(WeaponAPI.class);
         when(weapon.getLocation()).thenReturn(new Vector2f(10f, 0f));
@@ -292,6 +295,8 @@ class LostSectorListenersTest {
         assertEquals(15f, heart.cells()[1][0]);
         verify(heart.maxSpeed()).modifyPercent(HEARTLESS_MOD_ID, -3f);
         verify(heart.turnRate()).modifyPercent(HEARTLESS_MOD_ID, -3f);
+        verify(heart.ship().getMutableStats().getTurnAcceleration()).modifyPercent(HEARTLESS_MOD_ID, -6f);
+        verify(heart.ship().getMutableStats().getAcceleration()).modifyPercent(HEARTLESS_MOD_ID, -3f);
         verifyEmpAt(heart.ship(), 10f, 1);
         verifyEmpAt(heart.ship(), -20f, 1);
         verify(heart.ship()).syncWithArmorGridState();

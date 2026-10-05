@@ -12,9 +12,10 @@ class TemporaryGatingSupportTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
-            "BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_PERCENT",
+            "BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_MULT",
             "ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT",
             "FIGHTER_BAYS_FLAT",
+            "CONVERTED_HANGAR_FIGHTER_BAYS_FLAT",
             "ARMOR_FLAT_FOR_LOW_BASE_ARMOR",
             "HULL_PERCENT",
             "ARMOR_PERCENT",
@@ -32,7 +33,7 @@ class TemporaryGatingSupportTest {
     @ParameterizedTest
     @ValueSource(strings = {
             "TOP_SPEED_PERCENT",
-            "ACCELERATION_PERCENT",
+            "MANEUVERABILITY_PERCENT",
             "FLUX_CAPACITY_PERCENT",
             "FLUX_DISSIPATION_FLAT",
             "PEAK_CR_DURATION_PERCENT",

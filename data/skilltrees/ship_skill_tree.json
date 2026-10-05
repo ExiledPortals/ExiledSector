@@ -3126,7 +3126,7 @@
 		},
 		{
 			"id": "acceleration_percent_1",
-			"type": "acceleration_percent",
+			"type": "maneuverability_percent",
 			"connectedTo": [
 				"turn_acceleration_percent_1",
 				"auxiliarythrusters_1"
@@ -3141,7 +3141,7 @@
 		},
 		{
 			"id": "turn_acceleration_percent_1",
-			"type": "turn_acceleration_percent",
+			"type": "maneuverability_percent",
 			"connectedTo": [
 				"maneuverability_percent_1",
 				"small_flux_optional_29",
@@ -4846,7 +4846,7 @@
 		},
 		{
 			"id": "turn_acceleration_percent_2",
-			"type": "turn_acceleration_percent",
+			"type": "maneuverability_percent",
 			"connectedTo": [
 				"small_flux_optional_60",
 				"maneuverability_percent_2",
@@ -4862,7 +4862,7 @@
 		},
 		{
 			"id": "acceleration_percent_2",
-			"type": "acceleration_percent",
+			"type": "maneuverability_percent",
 			"connectedTo": [
 				"turn_acceleration_percent_2",
 				"reckless_assault_1"

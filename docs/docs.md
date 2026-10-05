@@ -117,6 +117,10 @@ added into one multiplier (never past 100% less), which then multiplies with eve
 The engine's energy stats already apply to beams, so an ENERGY effect writes only to the energy stat and 
 beams no longer receive the bonus twice.
 
+Beam flux cost is the exception to that pooling: the engine multiplies the energy flux cost modifiers by the
+beam flux cost multiplier, so a BEAM flux cost percentage stacks multiplicatively with WEAPON and ENERGY ones.
+-10% and -10% gives beams 81% of their base flux cost, not 80%.
+
 The engine has no stat for non-beam energy weapons only. NON_BEAM_ENERGY damage and range therefore put
 the bonus on the energy stat and a matching cancelling entry on the beam stat. Because damage and range
 pool per weapon, beams end up exactly where they would have been without the node. The cancelling entry

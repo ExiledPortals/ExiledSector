@@ -3,12 +3,15 @@ package exiledsector.skills.skilleffect;
 import com.fs.starfarer.api.combat.ArmorGridAPI;
 import com.fs.starfarer.api.combat.FighterWingAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.loading.WingRole;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.skills.ShipFacts;
 
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
@@ -113,7 +116,12 @@ public enum FighterSkillEffect implements SkillEffect {
     REMOVE_ALL_FIGHTER_BAYS {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getNumFighterBays().modifyMult(modId, 0f);
+            stats.getNumFighterBays().modifyFlat(modId, -Math.round(stats.getNumFighterBays().getBaseValue()));
+        }
+
+        @Override
+        public String blockAllocationReason(ShipFacts ship, ShieldAPI.ShieldType currentShieldType) {
+            return ship.onlyBuiltInWings() ? null : Translation.text("node.block.builtInWingsOnly");
         }
     },
     FIGHTER_BAYS_FLAT {
@@ -132,7 +140,7 @@ public enum FighterSkillEffect implements SkillEffect {
             int fittedWings = member.getVariant().getFittedWings().size();
             float baysWithoutThis = member.getStats().getNumFighterBays().getModifiedValue() - magnitude;
             if (fittedWings > baysWithoutThis) {
-                return "Remove a fighter wing first - not enough empty fighter bays without this skill.";
+                return Translation.text("node.block.fighterBaysInUse");
             }
             return null;
         }
@@ -146,7 +154,37 @@ public enum FighterSkillEffect implements SkillEffect {
         public StyledText deallocationWarning(float magnitude) {
             return EffectText.msg(this, "warning").styled();
         }
+    },
+    CONVERTED_HANGAR_FIGHTER_BAYS_FLAT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            FIGHTER_BAYS_FLAT.apply(stats, modId, magnitude + convertedHangarBonusBays(stats));
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).styled();
+        }
+
+        @Override
+        public String blockDeallocationReason(FleetMemberAPI member, float magnitude) {
+            return FIGHTER_BAYS_FLAT.blockDeallocationReason(member, magnitude + convertedHangarBonusBays(member.getStats()));
+        }
+
+        @Override
+        public boolean hasDeallocationCondition() {
+            return true;
+        }
+
+        @Override
+        public StyledText deallocationWarning(float magnitude) {
+            return FIGHTER_BAYS_FLAT.deallocationWarning(magnitude);
+        }
     };
+
+    private static float convertedHangarBonusBays(MutableShipStatsAPI stats) {
+        return stats.getDynamic().getMod(Stats.CONVERTED_HANGAR_MOD).computeEffective(0f);
+    }
 
     private static WingRole effectiveRole(ShipAPI fighter) {
         FighterWingAPI wing = fighter.getWing();

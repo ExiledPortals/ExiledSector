@@ -258,7 +258,7 @@ final class SkillTreeStatPanel {
             List<StatLine> defense = new ArrayList<>();
             defense.add(new StatLine(Translation.text("ui.stats.shieldType"), Translation.text("shieldType." + shieldType.name())));
             ShipHullSpecAPI.ShieldSpecAPI shieldSpec = getShieldSpecOrNull(hullSpec);
-            if (shieldSpec != null) {
+            if (shieldSpec != null && hullSpec.getShieldType() != ShieldAPI.ShieldType.NONE) {
                 addComparedStat(defense, Translation.text("ui.stats.shieldArc"), stats.getShieldArcBonus().computeEffective(shieldSpec.getArc()), shieldSpec.getArc());
                 addShieldFluxPerDamage(defense, hullSpec.getBaseShieldFluxPerDamageAbsorbed() * shieldFluxPerDamageMult(stats),
                         hullSpec.getBaseShieldFluxPerDamageAbsorbed());
@@ -269,6 +269,8 @@ final class SkillTreeStatPanel {
                 addStat(defense, Translation.text("ui.stats.shieldArc"), stats.getShieldArcBonus().computeEffective(ShieldSkillEffect.MAKESHIFT_SHIELD_ARC));
                 addShieldFluxPerDamage(defense, ShieldSkillEffect.MAKESHIFT_SHIELD_EFFICIENCY * shieldFluxPerDamageMult(stats),
                         ShieldSkillEffect.MAKESHIFT_SHIELD_EFFICIENCY);
+                addStat(defense, Translation.text("ui.stats.shieldUpkeep"),
+                        ShieldSkillEffect.MAKESHIFT_SHIELD_UPKEEP * stats.getShieldUpkeepMult().getModifiedValue());
             }
             groups.add(new StatGroup(Translation.text("ui.stats.group.defense"), defense));
         }

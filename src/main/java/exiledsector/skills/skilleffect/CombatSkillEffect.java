@@ -7,7 +7,6 @@ import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
-import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
@@ -210,26 +209,31 @@ public enum CombatSkillEffect implements BackedSkillEffect {
             if (aliveTime < COLLISION_CHECK_GRACE_PERIOD || ship.getCollisionClass() == CollisionClass.NONE) {
                 return;
             }
-            if (isHullTouchingAnything()) {
+            if (isHullTouchingAnotherShip()) {
                 triggered = true;
                 Global.getCombatEngine().applyDamage(ship, ship.getLocation(), LETHAL_DAMAGE,
                         DamageType.HIGH_EXPLOSIVE, 0f, true, false, ship);
             }
         }
 
-        private boolean isHullTouchingAnything() {
+        private boolean isHullTouchingAnotherShip() {
             Vector2f loc = ship.getLocation();
             float queryRadius = ship.getCollisionRadius() * BROAD_PHASE_MARGIN;
             CombatEngineAPI engine = Global.getCombatEngine();
             return CombatQueries.anyNear(engine.getShipGrid(), loc, queryRadius,
-                    candidate -> candidate instanceof ShipAPI other && isCollidableShip(other) && isTouching(other))
-                    || CombatQueries.anyNear(engine.getAsteroidGrid(), loc, queryRadius,
-                    candidate -> candidate instanceof CombatEntityAPI asteroid && isTouching(asteroid));
+                    candidate -> candidate instanceof ShipAPI other && isCollidableShip(other) && isTouching(other));
         }
 
         private boolean isCollidableShip(ShipAPI other) {
             return other != ship && !other.isFighter() && !other.isHulk() && !other.isShuttlePod()
-                    && other.getCollisionClass() != CollisionClass.NONE;
+                    && other.getCollisionClass() != CollisionClass.NONE
+                    && !isSameStation(other);
+        }
+
+        private boolean isSameStation(ShipAPI other) {
+            ShipAPI parent = ship.getParentStation();
+            ShipAPI otherParent = other.getParentStation();
+            return otherParent == ship || parent == other || (parent != null && parent == otherParent);
         }
 
         private boolean isTouching(CombatEntityAPI other) {
@@ -286,7 +290,6 @@ public enum CombatSkillEffect implements BackedSkillEffect {
         private static final float SHIELD_RADIUS_OVERLAP_MULT = 0.75f;
         private static final float DESTROYER_ESCORTING_CAPITAL_MULT = 2f;
         private static final float SEARCH_MARGIN = 300f;
-        private static final float TURN_ACCELERATION_MULT = 2f;
         private static final float EASE_SECONDS = 0.5f;
         private static final float MAG_SNAP = 0.001f;
         private static final String ESCORT_BONUS_MOD_ID = "exiledSector_escortBonus";
@@ -363,14 +366,10 @@ public enum CombatSkillEffect implements BackedSkillEffect {
 
         private void applyBonuses(float mag) {
             MutableShipStatsAPI stats = ship.getMutableStats();
-            MutableStat[] maneuverStats = {stats.getAcceleration(), stats.getDeceleration(), stats.getMaxTurnRate()};
             StatBonus[] rangeStats = {stats.getBallisticWeaponRangeBonus(), stats.getEnergyWeaponRangeBonus()};
 
             if (mag <= 0f) {
-                for (MutableStat stat : maneuverStats) {
-                    stat.unmodify(ESCORT_BONUS_MOD_ID);
-                }
-                stats.getTurnAcceleration().unmodify(ESCORT_BONUS_MOD_ID);
+                Maneuverability.unmodify(stats, ESCORT_BONUS_MOD_ID);
                 stats.getMaxSpeed().unmodify(ESCORT_BONUS_MOD_ID);
                 for (StatBonus stat : rangeStats) {
                     stat.unmodify(ESCORT_BONUS_MOD_ID);
@@ -379,10 +378,7 @@ public enum CombatSkillEffect implements BackedSkillEffect {
             }
 
             float maneuverPercent = stats.getDynamic().getValue(MANEUVER_BONUS_KEY, 0f) * mag;
-            for (MutableStat stat : maneuverStats) {
-                stat.modifyPercent(ESCORT_BONUS_MOD_ID, maneuverPercent);
-            }
-            stats.getTurnAcceleration().modifyPercent(ESCORT_BONUS_MOD_ID, maneuverPercent * TURN_ACCELERATION_MULT);
+            Maneuverability.modifyPercent(stats, ESCORT_BONUS_MOD_ID, maneuverPercent);
             stats.getMaxSpeed().modifyPercent(ESCORT_BONUS_MOD_ID,
                     stats.getDynamic().getValue(SPEED_BONUS_KEY, 0f) * mag);
 

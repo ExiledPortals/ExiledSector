@@ -13,6 +13,7 @@ import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.combat.listeners.DamageListener;
 import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
 import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
 import exiledsector.skills.ShipFacts;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -54,9 +55,14 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
 
         @Override
         public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
-            if (ship.getShield() == null) {
-                ship.setShield(ShieldAPI.ShieldType.FRONT, MAKESHIFT_SHIELD_EFFICIENCY, MAKESHIFT_SHIELD_TURN_RATE_MULT, MAKESHIFT_SHIELD_ARC);
+            if (ship.getShield() == null && !isPhaseHull(ship)) {
+                ship.setShield(ShieldAPI.ShieldType.FRONT, MAKESHIFT_SHIELD_UPKEEP, MAKESHIFT_SHIELD_EFFICIENCY, MAKESHIFT_SHIELD_ARC);
             }
+        }
+
+        @Override
+        public String blockAllocationReason(ShipFacts ship, ShieldAPI.ShieldType currentShieldType) {
+            return phaseHullReason(currentShieldType);
         }
     },
     CONVERT_SHIELD_TO_FRONT {
@@ -74,7 +80,10 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
 
         @Override
         public String blockAllocationReason(ShipFacts ship, ShieldAPI.ShieldType currentShieldType) {
-            return currentShieldType == ShieldAPI.ShieldType.FRONT ? "Ship already has front shields." : null;
+            if (currentShieldType == ShieldAPI.ShieldType.FRONT) {
+                return "Ship already has front shields.";
+            }
+            return phaseHullReason(currentShieldType);
         }
     },
     CONVERT_SHIELD_TO_OMNI {
@@ -92,7 +101,10 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
 
         @Override
         public String blockAllocationReason(ShipFacts ship, ShieldAPI.ShieldType currentShieldType) {
-            return currentShieldType == ShieldAPI.ShieldType.OMNI ? "Ship already has omni-directional shields." : null;
+            if (currentShieldType == ShieldAPI.ShieldType.OMNI) {
+                return "Ship already has omni-directional shields.";
+            }
+            return phaseHullReason(currentShieldType);
         }
     },
     SHIELD_ARC_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getShieldArcBonus), StatNames.SHIELD_ARC, false),
@@ -114,8 +126,8 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
 
     private static final float SHARED_SHIELD_DAMAGE_RANGE = 1000f;
 
-    public static final float MAKESHIFT_SHIELD_EFFICIENCY = 0.5f;
-    public static final float MAKESHIFT_SHIELD_TURN_RATE_MULT = 1.2f;
+    public static final float MAKESHIFT_SHIELD_UPKEEP = 0.5f;
+    public static final float MAKESHIFT_SHIELD_EFFICIENCY = 1.2f;
     public static final float MAKESHIFT_SHIELD_ARC = 90f;
 
     private final EffectBacking backing;
@@ -148,13 +160,25 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
                 type = ShieldAPI.ShieldType.NONE;
             } else if (effect == CREATE_FRONT_SHIELD_IF_NONE && type == ShieldAPI.ShieldType.NONE) {
                 type = ShieldAPI.ShieldType.FRONT;
-            } else if (effect == CONVERT_SHIELD_TO_FRONT && type != ShieldAPI.ShieldType.NONE) {
+            } else if (effect == CONVERT_SHIELD_TO_FRONT && hasShields(type)) {
                 type = ShieldAPI.ShieldType.FRONT;
-            } else if (effect == CONVERT_SHIELD_TO_OMNI && type != ShieldAPI.ShieldType.NONE) {
+            } else if (effect == CONVERT_SHIELD_TO_OMNI && hasShields(type)) {
                 type = ShieldAPI.ShieldType.OMNI;
             }
         }
         return type;
+    }
+
+    private static boolean hasShields(ShieldAPI.ShieldType type) {
+        return type == ShieldAPI.ShieldType.FRONT || type == ShieldAPI.ShieldType.OMNI;
+    }
+
+    private static boolean isPhaseHull(ShipAPI ship) {
+        return ship.getHullSpec().getShieldType() == ShieldAPI.ShieldType.PHASE;
+    }
+
+    private static String phaseHullReason(ShieldAPI.ShieldType currentShieldType) {
+        return currentShieldType == ShieldAPI.ShieldType.PHASE ? Translation.text("node.requires.req_non_phase_hull") : null;
     }
 
     static final class BeamHardFluxListener implements DamageDealtModifier {

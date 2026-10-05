@@ -584,7 +584,7 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_PERCENT",
+					"effect": "BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_MULT",
 					"magnitude": 10
 				}
 			],
@@ -794,20 +794,8 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "ACCELERATION_PERCENT",
-					"magnitude": 70
-				},
-				{
-					"effect": "DECELERATION_PERCENT",
-					"magnitude": 50
-				},
-				{
-					"effect": "TURN_ACCELERATION_PERCENT",
-					"magnitude": 60
-				},
-				{
 					"effect": "MANEUVERABILITY_PERCENT",
-					"magnitude": 35
+					"magnitude": 50
 				}
 			],
 			"phantomHullMods": [
@@ -870,7 +858,7 @@
 			"tier": "KEYSTONE",
 			"effects": [
 				{
-					"effect": "FIGHTER_BAYS_FLAT",
+					"effect": "CONVERTED_HANGAR_FIGHTER_BAYS_FLAT",
 					"magnitude": 1
 				},
 				{
@@ -901,6 +889,9 @@
 					"category": "hullmod",
 					"id": "converted_hangar"
 				}
+			],
+			"exclusiveHullMods": [
+				"converted_fighterbay"
 			],
 			"phantomHullMods": [
 				"converted_hangar"
@@ -1995,7 +1986,7 @@
 			"effects": [
 				{
 					"effect": "COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP",
-					"magnitude": 2.5
+					"magnitude": 250
 				}
 			],
 			"unlockConditions": [
@@ -2793,7 +2784,7 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "ACCELERATION_PERCENT",
+					"effect": "MANEUVERABILITY_PERCENT",
 					"magnitude": 20
 				},
 				{
@@ -3240,34 +3231,6 @@
 			]
 		},
 		{
-			"id": "acceleration_percent",
-			"name": "Acceleration",
-			"icon": "graphics/icons/acceleration_percent.png",
-			"effects": [
-				{
-					"effect": "ACCELERATION_PERCENT",
-					"magnitude": 30
-				}
-			],
-			"tags": [
-				"speed"
-			]
-		},
-		{
-			"id": "turn_acceleration_percent",
-			"name": "Turn speed",
-			"icon": "graphics/icons/turn_acceleration_percent.png",
-			"effects": [
-				{
-					"effect": "TURN_ACCELERATION_PERCENT",
-					"magnitude": 50
-				}
-			],
-			"tags": [
-				"speed"
-			]
-		},
-		{
 			"id": "fighter_replacement",
 			"name": "Fighter Replacement",
 			"icon": "graphics/icons/fighter_replacement.png",
@@ -3448,11 +3411,11 @@
 		},
 		{
 			"id": "temporary_acceleration",
-			"name": "Temporary Acceleration",
+			"name": "Temporary Maneuverability",
 			"icon": "graphics/icons/temporary_acceleration.png",
 			"effects": [
 				{
-					"effect": "ACCELERATION_PERCENT",
+					"effect": "MANEUVERABILITY_PERCENT",
 					"magnitude": 50
 				}
 			],

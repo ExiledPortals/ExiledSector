@@ -18,6 +18,7 @@ import com.fs.starfarer.api.combat.ShipSystemAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
+import com.fs.starfarer.api.util.DynamicStatsAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
@@ -238,17 +239,6 @@ class SkillEffectTest {
     @Test
     void describeUsesTheUnqualifiedNameForTheAllWeaponsScope() {
         assertEquals("Increases weapon damage by 5%.", SkillEffect.byName("WEAPON_DAMAGE_PERCENT").description(5f).plain());
-    }
-
-    @Test
-    void maneuverabilityModifiesTheMaxTurnRateStat() {
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        MutableStat turnRate = mock(MutableStat.class);
-        when(stats.getMaxTurnRate()).thenReturn(turnRate);
-
-        MovementSkillEffect.MANEUVERABILITY_PERCENT.apply(stats, "mod_id", 15f);
-
-        verify(turnRate).modifyPercent("mod_id", 15f);
     }
 
     @Test
@@ -543,9 +533,9 @@ class SkillEffectTest {
         MutableStat missileGuidance = mock(MutableStat.class);
         when(stats.getMissileGuidance()).thenReturn(missileGuidance);
 
-        SkillEffect.byName("MISSILE_WEAPON_GUIDANCE_PERCENT").apply(stats, "mod_id", 20f);
+        SkillEffect.byName("MISSILE_WEAPON_GUIDANCE_FLAT").apply(stats, "mod_id", 1f);
 
-        verify(missileGuidance).modifyPercent("mod_id", 20f);
+        verify(missileGuidance).modifyFlat("mod_id", 1f);
     }
 
     @Test
@@ -727,15 +717,41 @@ class SkillEffectTest {
     }
 
     @Test
-    void removeAllFighterBaysZeroesOutTheFinalBayCountRegardlessOfOtherModifiers() {
+    void removeAllFighterBaysTakesAwayOnlyTheHullsOwnBaysLikeVanilla() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        MutableStat numFighterBays = mock(MutableStat.class);
+        MutableStat numFighterBays = new MutableStat(2f);
+        numFighterBays.modifyFlat("other", 1f);
         when(stats.getNumFighterBays()).thenReturn(numFighterBays);
 
         FighterSkillEffect.REMOVE_ALL_FIGHTER_BAYS.apply(stats, "mod_id", 0f);
 
-        verify(numFighterBays).modifyMult("mod_id", 0f);
-        verify(numFighterBays, never()).modifyFlat(any(), anyFloat());
+        assertEquals(1f, numFighterBays.getModifiedValue(), 1e-4f);
+    }
+
+    @Test
+    void convertedFighterBayCanOnlyBeAllocatedWhenEveryWingIsBuiltIn() {
+        com.fs.starfarer.api.combat.ShieldAPI.ShieldType front = com.fs.starfarer.api.combat.ShieldAPI.ShieldType.FRONT;
+        ShipFacts builtInWingsOnly = new ShipFacts(ShipAPI.HullSize.CRUISER, front, false, 1000f, false, hullModId -> false, true);
+
+        assertNull(FighterSkillEffect.REMOVE_ALL_FIGHTER_BAYS.blockAllocationReason(builtInWingsOnly, front));
+        assertNotNull(FighterSkillEffect.REMOVE_ALL_FIGHTER_BAYS.blockAllocationReason(ANY_SHIP, front));
+    }
+
+    @Test
+    void convertedHangarAddsTheExtraBayVastHangarGrants() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
+        StatBonus convertedHangarMod = new StatBonus();
+        convertedHangarMod.modifyFlat("vast_hangar", 1f);
+        when(stats.getDynamic()).thenReturn(dynamic);
+        when(dynamic.getMod(com.fs.starfarer.api.impl.campaign.ids.Stats.CONVERTED_HANGAR_MOD)).thenReturn(convertedHangarMod);
+        MutableStat numFighterBays = new MutableStat(0f);
+        when(stats.getNumFighterBays()).thenReturn(numFighterBays);
+
+        FighterSkillEffect.CONVERTED_HANGAR_FIGHTER_BAYS_FLAT.apply(stats, "mod_id", 1f);
+
+        assertEquals(2f, numFighterBays.getModifiedValue(), 1e-4f);
+        assertTrue(FighterSkillEffect.CONVERTED_HANGAR_FIGHTER_BAYS_FLAT.hasDeallocationCondition());
     }
 
     @Test
@@ -793,6 +809,9 @@ class SkillEffectTest {
     void createFrontShieldIfNoneInstallsAShieldWhenTheShipHasNone() {
         ShipAPI ship = mock(ShipAPI.class);
         when(ship.getShield()).thenReturn(null);
+        ShipHullSpecAPI hullSpec = mock(ShipHullSpecAPI.class);
+        when(hullSpec.getShieldType()).thenReturn(com.fs.starfarer.api.combat.ShieldAPI.ShieldType.NONE);
+        when(ship.getHullSpec()).thenReturn(hullSpec);
 
         ShieldSkillEffect.CREATE_FRONT_SHIELD_IF_NONE.applyAfterShipCreation(ship, "mod_id", 0f);
 
@@ -1849,5 +1868,59 @@ class SkillEffectTest {
             verify(engine, never()).applyDamage(eq(beam), eq(neutralBystander), any(Vector2f.class), anyFloat(),
                     any(), anyFloat(), anyBoolean(), anyBoolean(), any(), anyBoolean());
         }
+    }
+
+    @Test
+    void shieldConversionsAndMakeshiftShieldsAreRefusedOnPhaseHulls() {
+        com.fs.starfarer.api.combat.ShieldAPI.ShieldType phaseCloak = com.fs.starfarer.api.combat.ShieldAPI.ShieldType.PHASE;
+        ShipFacts phase = new ShipFacts(ShipAPI.HullSize.CRUISER, phaseCloak, true, 500f, hullModId -> false);
+
+        for (SkillEffect effect : List.of(ShieldSkillEffect.CREATE_FRONT_SHIELD_IF_NONE, ShieldSkillEffect.CONVERT_SHIELD_TO_FRONT,
+                ShieldSkillEffect.CONVERT_SHIELD_TO_OMNI)) {
+            assertNotNull(effect.blockAllocationReason(phase, phaseCloak), effect.name());
+        }
+        assertNull(ShieldSkillEffect.CREATE_FRONT_SHIELD_IF_NONE.blockAllocationReason(ANY_SHIP,
+                com.fs.starfarer.api.combat.ShieldAPI.ShieldType.NONE));
+        assertEquals(phaseCloak, ShieldSkillEffect.resolveDisplayShieldType(phaseCloak,
+                List.of(ShieldSkillEffect.CREATE_FRONT_SHIELD_IF_NONE, ShieldSkillEffect.CONVERT_SHIELD_TO_OMNI)));
+    }
+
+    @Test
+    void makeshiftFrontShieldIsNeverBuiltOnAPhaseHull() {
+        ShipAPI ship = mock(ShipAPI.class);
+        ShipHullSpecAPI hullSpec = mock(ShipHullSpecAPI.class);
+        when(hullSpec.getShieldType()).thenReturn(com.fs.starfarer.api.combat.ShieldAPI.ShieldType.PHASE);
+        when(ship.getHullSpec()).thenReturn(hullSpec);
+
+        ShieldSkillEffect.CREATE_FRONT_SHIELD_IF_NONE.applyAfterShipCreation(ship, "mod_id", 1f);
+
+        verify(ship, never()).setShield(any(), anyFloat(), anyFloat(), anyFloat());
+    }
+
+    @Test
+    void maneuverabilityRaisesEveryMovementStatAndDoublesTurnAccelerationLikeVanilla() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        MutableStat acceleration = new MutableStat(100f);
+        MutableStat deceleration = new MutableStat(100f);
+        MutableStat turnAcceleration = new MutableStat(100f);
+        MutableStat maxTurnRate = new MutableStat(100f);
+        when(stats.getAcceleration()).thenReturn(acceleration);
+        when(stats.getDeceleration()).thenReturn(deceleration);
+        when(stats.getTurnAcceleration()).thenReturn(turnAcceleration);
+        when(stats.getMaxTurnRate()).thenReturn(maxTurnRate);
+
+        MovementSkillEffect.MANEUVERABILITY_PERCENT.apply(stats, "mod_id", 20f);
+
+        assertEquals(20f, acceleration.getPercentMod(), 1e-4f);
+        assertEquals(20f, deceleration.getPercentMod(), 1e-4f);
+        assertEquals(40f, turnAcceleration.getPercentMod(), 1e-4f);
+        assertEquals(20f, maxTurnRate.getPercentMod(), 1e-4f);
+        assertTrue(MovementSkillEffect.MANEUVERABILITY_PERCENT.supportsTemporaryGating());
+    }
+
+    @Test
+    void commandPointRecoveryIsDescribedAsAPercentage() {
+        assertEquals("Increases command point recovery rate while this ship is the flagship by 250%.",
+                MiscSkillEffect.COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP.description(250f).plain());
     }
 }

@@ -71,7 +71,7 @@ final class HeartlessStacks {
         float mobilityPenalty = magnitude(MOBILITY_PENALTY_PERCENT_PER_STACK_KEY);
         if (mobilityPenalty > 0f) {
             stats.getMaxSpeed().modifyPercent(modId, -mobilityPenalty * stacks);
-            stats.getMaxTurnRate().modifyPercent(modId, -mobilityPenalty * stacks);
+            Maneuverability.modifyPercent(stats, modId, -mobilityPenalty * stacks);
         }
         radiationBurst(magnitude(RADIATION_EMP_KEY));
     }

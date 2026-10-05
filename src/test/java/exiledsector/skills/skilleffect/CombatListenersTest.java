@@ -213,7 +213,7 @@ class CombatListenersTest {
     }
 
     @Test
-    void touchingAnAsteroidAlsoDestroysTheShip() {
+    void touchingAnAsteroidNeverDestroysTheShip() {
         ShipAPI ship = collidingShip();
         CombatEntityAPI asteroid = mock(CombatEntityAPI.class);
         when(asteroid.getLocation()).thenReturn(new Vector2f(5f, 0f));
@@ -225,7 +225,20 @@ class CombatListenersTest {
 
         listener.advance(2f);
 
-        assertDestroyedByCollision(ship, 1);
+        assertDestroyedByCollision(ship, 0);
+    }
+
+    @Test
+    void theShipsOwnModulesNeverCountAsACollision() {
+        ShipAPI ship = collidingShip();
+        ShipAPI module = otherShipAt(5f, boundsWithSegment(0f, -10f, 0f, 10f));
+        when(module.getParentStation()).thenReturn(ship);
+        gridShips.addAll(List.of(ship, module));
+        AdvanceableListener listener = attachedListener(CombatSkillEffect.DEATH_ON_COLLISION, ship, AdvanceableListener.class);
+
+        listener.advance(2f);
+
+        assertDestroyedByCollision(ship, 0);
     }
 
     @Test

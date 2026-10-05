@@ -53,6 +53,10 @@ sealed interface StatTarget {
         return new Composite(List.of(parts));
     }
 
+    static StatTarget scaled(StatTarget target, float factor) {
+        return new Scaled(target, factor);
+    }
+
     record OfStat(Function<MutableShipStatsAPI, MutableStat> stat, boolean liveInCombat) implements StatTarget {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, StatMode mode, float magnitude) {
@@ -103,6 +107,28 @@ sealed interface StatTarget {
         }
     }
 
+    record Scaled(StatTarget target, float factor) implements StatTarget {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, StatMode mode, float magnitude) {
+            target.apply(stats, modId, mode, magnitude * factor);
+        }
+
+        @Override
+        public void applyAfterShipCreation(ShipAPI ship) {
+            target.applyAfterShipCreation(ship);
+        }
+
+        @Override
+        public boolean supportsTemporaryGating() {
+            return target.supportsTemporaryGating();
+        }
+
+        @Override
+        public boolean supports(StatMode mode) {
+            return mode != StatMode.MULT && target.supports(mode);
+        }
+    }
+
     record Compensated(StatTarget plus, StatTarget offset, Set<StatMode> modes) implements StatTarget {
 
         static final String OFFSET_SUFFIX = "_nonBeamOffset";
@@ -128,6 +154,18 @@ sealed interface StatTarget {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, StatMode mode, float magnitude) {
             stat.apply(stats).modifyFlat(modId, magnitude / 100f);
+        }
+
+        @Override
+        public boolean supports(StatMode mode) {
+            return mode == StatMode.PERCENT;
+        }
+    }
+
+    record BonusPercentagePoints(Function<MutableShipStatsAPI, StatBonus> bonus) implements StatTarget {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, StatMode mode, float magnitude) {
+            bonus.apply(stats).modifyFlat(modId, magnitude / 100f);
         }
 
         @Override

@@ -24,7 +24,7 @@ public enum WeaponSkillEffect implements SkillEffect {
             return StatMode.MULT.describeStat(magnitude, "stat.weaponDamagePerDMod");
         }
     },
-    BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_PERCENT {
+    BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
         }
@@ -34,7 +34,7 @@ public enum WeaponSkillEffect implements SkillEffect {
             MutableShipStatsAPI stats = ship.getMutableStats();
             MutableStat burnLevel = stats.getMaxBurnLevel();
             float burnOverDefault = Math.max(0f, burnLevel.getModifiedValue() - burnLevel.getBaseValue());
-            WeaponStatFamily.DAMAGE.target(WeaponScope.BALLISTIC).apply(stats, modId, StatMode.PERCENT, burnOverDefault * magnitude);
+            WeaponStatFamily.DAMAGE.target(WeaponScope.BALLISTIC).apply(stats, modId, StatMode.MULT, burnOverDefault * magnitude);
         }
     },
     ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT {

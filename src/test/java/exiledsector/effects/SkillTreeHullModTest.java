@@ -1296,7 +1296,7 @@ class SkillTreeHullModTest {
     @Test
     void advanceInCombatGrantsCommandPointRecoveryWhenFlagship() {
         SkillType opsType = new SkillType.Builder("operations_center", "Operations Center", "graphics/icons/notable_hullmods/operations_center.png", SkillTier.NOTABLE)
-                .effects(List.of(new SkillTypeEffect(MiscSkillEffect.COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP, 2.5f)))
+                .effects(List.of(new SkillTypeEffect(MiscSkillEffect.COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP, 250f)))
                 .vanillaHullModId(null)
                 .descriptionOverride(null)
                 .todo(null)
@@ -1327,7 +1327,7 @@ class SkillTreeHullModTest {
     @Test
     void advanceInCombatWithholdsCommandPointRecoveryWhenNotFlagship() {
         SkillType opsType = new SkillType.Builder("operations_center", "Operations Center", "graphics/icons/notable_hullmods/operations_center.png", SkillTier.NOTABLE)
-                .effects(List.of(new SkillTypeEffect(MiscSkillEffect.COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP, 2.5f)))
+                .effects(List.of(new SkillTypeEffect(MiscSkillEffect.COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP, 250f)))
                 .vanillaHullModId(null)
                 .descriptionOverride(null)
                 .todo(null)

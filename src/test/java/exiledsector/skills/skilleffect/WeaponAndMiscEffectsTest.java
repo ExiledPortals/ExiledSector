@@ -107,19 +107,19 @@ class WeaponAndMiscEffectsTest {
         MutableStat ballistic = new MutableStat(1f);
         when(stats.getMaxBurnLevel()).thenReturn(burn);
         when(stats.getBallisticWeaponDamageMult()).thenReturn(ballistic);
-        WeaponSkillEffect.BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_PERCENT.apply(stats, "mod_id", 5f);
-        WeaponSkillEffect.BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_PERCENT.applyAfterShipCreation(ship, "mod_id", 5f);
+        WeaponSkillEffect.BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_MULT.apply(stats, "mod_id", 5f);
+        WeaponSkillEffect.BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_MULT.applyAfterShipCreation(ship, "mod_id", 5f);
         return ballistic;
     }
 
     @Test
     void ballisticDamageGrowsWithEachBurnLevelAboveTheHullsDefault() {
-        assertEquals(10f, ballisticDamageWithBurnLevel(9f, 2f).getPercentMod(), EPSILON);
+        assertEquals(1.1f, ballisticDamageWithBurnLevel(9f, 2f).getModifiedValue(), EPSILON);
     }
 
     @Test
     void aBurnLevelBelowTheHullsDefaultNeverReducesBallisticDamage() {
-        assertEquals(0f, ballisticDamageWithBurnLevel(9f, -3f).getPercentMod(), EPSILON);
+        assertEquals(1f, ballisticDamageWithBurnLevel(9f, -3f).getModifiedValue(), EPSILON);
     }
 
     @Test
@@ -204,7 +204,7 @@ class WeaponAndMiscEffectsTest {
         StatBonus commandPointRate = realDynamicMod("command_point_rate_flat");
         when(stats.getFleetMember()).thenReturn(member);
         when(ship.getCaptain()).thenReturn(captain);
-        MiscSkillEffect.COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP.advanceInCombat(ship, "mod_id", 2.5f);
+        MiscSkillEffect.COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP.advanceInCombat(ship, "mod_id", 250f);
         return commandPointRate.getFlatBonus();
     }
 

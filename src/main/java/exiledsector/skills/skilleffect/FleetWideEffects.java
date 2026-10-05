@@ -40,6 +40,9 @@ public final class FleetWideEffects {
         }
         float totalPercent = 0f;
         for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
+            if (member.isMothballed()) {
+                continue;
+            }
             totalPercent += member.getStats().getDynamic().getValue(POST_BATTLE_SALVAGE_CONTRIBUTION_KEY, 0f);
         }
         fleet.getStats().getDynamic().getStat(Stats.BATTLE_SALVAGE_MULT_FLEET)
