@@ -10,6 +10,7 @@ $treePath = Join-Path $projectRoot "data\skilltrees\ship_skill_tree.json"
 $socketablesPath = Join-Path $projectRoot "data\config\exiledSector\socketables.csv"
 $socketableAffixesPath = Join-Path $projectRoot "data\config\exiledSector\socketable_affixes.csv"
 $socketableNamesPath = Join-Path $projectRoot "data\config\exiledSector\socketable_names.json"
+$socketableSalvagePath = Join-Path $projectRoot "data\config\exiledSector\socketable_salvage.csv"
 $vanillaCoreDir = Join-Path (Split-Path -Parent $projectRoot) "Starsector\starsector-core"
 $vanillaPrefix = [System.IO.Path]::GetFullPath($vanillaCoreDir).TrimEnd('\') + '\'
 $vanillaCargoIconsDir = Join-Path $vanillaCoreDir "graphics\icons\cargo"
@@ -213,6 +214,23 @@ try {
                     $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
                     [System.IO.File]::WriteAllText($socketableAffixesPath, $affixes, $utf8NoBom)
                     [System.IO.File]::WriteAllText($socketableNamesPath, $names, $utf8NoBom)
+                    Write-JsonResponse $response 200 @{ ok = $true; message = "Saved." }
+                }
+            }
+            elseif ($request.HttpMethod -eq "GET" -and $request.Url.LocalPath -eq "/data/socketable-salvage") {
+                $bytes = [System.IO.File]::ReadAllBytes($socketableSalvagePath)
+                $response.ContentType = "text/csv; charset=utf-8"
+                $response.OutputStream.Write($bytes, 0, $bytes.Length)
+            }
+            elseif ($request.HttpMethod -eq "POST" -and $request.Url.LocalPath -eq "/save-socketable-salvage") {
+                $reader = New-Object System.IO.StreamReader($request.InputStream, [System.Text.Encoding]::UTF8)
+                $body = $reader.ReadToEnd() | ConvertFrom-Json
+                $csv = [string]$body.csv
+                if (-not $csv.StartsWith("site,")) {
+                    Write-JsonResponse $response 400 @{ ok = $false; message = "Nothing was written - the CSV must start with the site column." }
+                } else {
+                    $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+                    [System.IO.File]::WriteAllText($socketableSalvagePath, $csv, $utf8NoBom)
                     Write-JsonResponse $response 200 @{ ok = $true; message = "Saved." }
                 }
             }
