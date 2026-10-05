@@ -107,10 +107,45 @@ class NpcSocketablesTest {
         Set<String> drawn = new HashSet<>();
         Random random = new Random(3L);
         for (int i = 0; i < 200; i++) {
-            drawn.add(NpcSocketables.pickDefinition(random).id());
+            drawn.add(NpcSocketables.pickDefinition(random, definition -> false).id());
         }
 
         assertEquals(Set.of(MILITARY), drawn);
+    }
+
+    @Test
+    void aSmallShareOfFleetSocketablesAreUniquesWhenAUniqueCanDrop() {
+        Random random = new Random(5L);
+        int uniques = 0;
+        int trials = 20000;
+        for (int i = 0; i < trials; i++) {
+            if (NpcSocketables.pickDefinition(random, definition -> true).unique()) {
+                uniques++;
+            }
+        }
+
+        assertEquals(NpcSocketables.UNIQUE_SHARE, uniques / (float) trials, 0.004f);
+    }
+
+    @Test
+    void onlyUniqueSocketedItemsAreReportedAsCarriedUniques() {
+        SkillType rootType = new SkillType.Builder("root_type", "root", "a.png", SkillTier.ROOT).build();
+        SkillType socketType = new SkillType.Builder("socket", "socket", "a.png", SkillTier.SOCKET).build();
+        SkillTree.registerType(rootType);
+        SkillTree.registerType(socketType);
+        SkillTree.register(new SkillNode("root", rootType, List.of(), 0f, 0f));
+        SkillTree.register(new SkillNode("socket_a", socketType, List.of("root"), 0f, 0f));
+        SkillTree.register(new SkillNode("socket_b", socketType, List.of("root"), 0f, 0f));
+        ShipSkillData data = NpcSkillTreeBuilder.rootedTree(SkillTree.get("root"), 2);
+        data.allocate(SkillTree.get("socket_a"), 1);
+        data.allocate(SkillTree.get("socket_b"), 1);
+        data.socketItem("socket_a", NpcSocketables.id(MILITARY, 1L));
+        data.socketItem("socket_b", NpcSocketables.id("relic", 2L));
+
+        List<Socketable> uniques = NpcSocketables.uniquesCarriedBy(data);
+
+        assertEquals(List.of("relic"), uniques.stream().map(Socketable::definitionId).toList());
+        assertTrue(NpcSocketables.uniquesCarriedBy(null).isEmpty());
     }
 
     @Test

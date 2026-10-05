@@ -24,10 +24,12 @@ import exiledsector.skills.tags.ShipProfile;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.socketables.NpcSocketables;
 import exiledsector.socketables.SocketableDefinition;
+import exiledsector.socketables.SocketableUnlock;
 
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public final class NpcFleetLeveller {
 
@@ -53,8 +55,10 @@ public final class NpcFleetLeveller {
                 }
                 Random socketableRandom = member.isFlagship() && carriesSocketables(fleet)
                         ? new Random((seedPrefix + member.getId() + SOCKETABLE_SEED_SUFFIX).hashCode()) : null;
-                record = decide(member, playerLevel, factionRegion, new Random((seedPrefix + member.getId()).hashCode()), socketableRandom);
+                record = decide(member, playerLevel, factionRegion, new Random((seedPrefix + member.getId()).hashCode()), socketableRandom,
+                        definition -> SocketableUnlock.canDrop(definition, Global.getSector()));
                 records.put(member.getId(), record);
+                NpcUniqueAlerts.markIfCarrying(fleet, record);
             }
             if (NpcTreeRecords.isLevelled(record)) {
                 apply(member, record);
@@ -76,6 +80,11 @@ public final class NpcFleetLeveller {
     }
 
     static String decide(FleetMemberAPI member, int playerLevel, String factionRegion, Random random, Random socketableRandom) {
+        return decide(member, playerLevel, factionRegion, random, socketableRandom, definition -> false);
+    }
+
+    static String decide(FleetMemberAPI member, int playerLevel, String factionRegion, Random random, Random socketableRandom,
+                         Predicate<SocketableDefinition> uniqueAllowed) {
         if (!NpcShipSelector.isCandidate(member) || !NpcShipSelector.isChosen(member, random)) {
             return NpcTreeRecords.NOT_LEVELLED;
         }
@@ -87,7 +96,7 @@ public final class NpcFleetLeveller {
         NpcTreeBuild build = NpcSkillTreeBuilder.generate(new NpcBuildRequest(profile, designType, factionRegion, hullMods,
                 NpcFreedOp.of(member, hullMods), nodeCount, socketables, type -> SkillTypeUnlockStatus.isLocked(type, null)), random);
         for (String socket : build.claimedSockets()) {
-            SocketableDefinition definition = NpcSocketables.pickDefinition(socketableRandom);
+            SocketableDefinition definition = NpcSocketables.pickDefinition(socketableRandom, uniqueAllowed);
             if (definition != null) {
                 build.data().socketItem(socket, NpcSocketables.id(definition.id(), socketableRandom.nextLong()));
             }

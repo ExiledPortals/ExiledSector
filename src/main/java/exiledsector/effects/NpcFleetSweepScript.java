@@ -39,9 +39,13 @@ public class NpcFleetSweepScript implements EveryFrameScript {
 
         Vector2f origin = playerFleet.getLocation();
         for (CampaignFleetAPI fleet : location.getFleets()) {
-            if (fleet != playerFleet && isWithin(origin, fleet.getLocation(), range)) {
+            if (fleet == playerFleet) {
+                continue;
+            }
+            if (isWithin(origin, fleet.getLocation(), range)) {
                 NpcFleetLeveller.ensure(fleet);
             }
+            NpcUniqueAlerts.alertIfSensed(fleet);
         }
     }
 
