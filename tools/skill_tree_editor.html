@@ -3398,9 +3398,9 @@ function postImageOp(url, payload, onSuccess){
   });
 }
 
-function moveIconIfNeeded(newPath){
+function moveIconIfNeeded(newPath, folder){
   if (newPath && newPath.indexOf('graphics/unused/') === 0) {
-    var finalPath = 'graphics/icons/' + newPath.split('/').pop();
+    var finalPath = (folder || 'graphics/icons/') + newPath.split('/').pop();
     postImageOp('/move-image', { from: newPath, to: finalPath }, function(){
       fetchAllProjectImages();
     });
@@ -3931,7 +3931,7 @@ function openSocketableEditorModal(){
     });
     document.getElementById('sockSelectIcon').addEventListener('click', function(){
       openImagePickerModal(function(path){
-        def.icon = path;
+        def.icon = moveIconIfNeeded(path, 'graphics/icons/socketables/');
         markDirty();
         render();
       }, function(){ render(); });
