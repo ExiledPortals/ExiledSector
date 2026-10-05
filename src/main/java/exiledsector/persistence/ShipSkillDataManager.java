@@ -1,5 +1,6 @@
 package exiledsector.persistence;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,10 @@ public class ShipSkillDataManager {
 
     public static ShipSkillData get(String shipId) {
         return getStore().computeIfAbsent(shipId, key -> new ShipSkillData());
+    }
+
+    public static Map<String, ShipSkillData> all() {
+        return Collections.unmodifiableMap(getStore());
     }
 
     public static ShipSkillData find(String shipId) {

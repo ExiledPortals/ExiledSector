@@ -40,7 +40,7 @@ public final class SkillTreeBonusSummary {
             }
             Map<SkillEffect, Float> group = totals.computeIfAbsent(new Group(type.getTemporaryAfterDeploymentSeconds()),
                     key -> new LinkedHashMap<>());
-            for (SkillTypeEffect typeEffect : AllocatedSkillEffects.appliedEffects(data, type, hullSize)) {
+            for (SkillTypeEffect typeEffect : AllocatedSkillEffects.appliedEffects(data, allocated, hullSize)) {
                 SkillEffect effect = typeEffect.effect();
                 group.merge(effect, typeEffect.magnitude(), Float::sum);
             }

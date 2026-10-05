@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,10 +19,23 @@ public final class SocketableStore {
 
     private final List<Socketable> owned = new ArrayList<>();
     private long nextId = 1;
+    private transient Map<String, Socketable> byId;
 
     public static SocketableStore get() {
         Map<String, Object> persistentData = Global.getSector().getPersistentData();
         return (SocketableStore) persistentData.computeIfAbsent(DATA_KEY, key -> new SocketableStore());
+    }
+
+    public static Socketable lookup(String socketableId) {
+        return socketableId == null || Global.getSector() == null ? null : get().find(socketableId);
+    }
+
+    public Socketable find(String socketableId) {
+        if (byId == null) {
+            byId = new HashMap<>();
+            owned.forEach(socketable -> byId.put(socketable.id(), socketable));
+        }
+        return byId.get(socketableId);
     }
 
     public List<Socketable> owned() {
@@ -32,11 +46,18 @@ public final class SocketableStore {
         Socketable socketable = definition.kind().create(ID_PREFIX + nextId++, definition.id(), seed,
                 SocketableRoller.roll(definition, seed));
         owned.add(socketable);
+        if (byId != null) {
+            byId.put(socketable.id(), socketable);
+        }
         return socketable;
     }
 
     public boolean remove(Socketable socketable) {
-        return owned.remove(socketable);
+        boolean removed = owned.remove(socketable);
+        if (removed && byId != null) {
+            byId.remove(socketable.id());
+        }
+        return removed;
     }
 
     public int absorbFrom(CargoAPI cargo) {

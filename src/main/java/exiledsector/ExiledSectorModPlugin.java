@@ -33,6 +33,8 @@ import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.skills.tags.AreaToggles;
 import exiledsector.socketables.SocketableDefinitions;
 import exiledsector.socketables.SocketableNames;
+import exiledsector.socketables.SocketCustody;
+import exiledsector.socketables.SocketLossListener;
 import exiledsector.socketables.SocketableSaveAliases;
 import exiledsector.ui.ExiledSectorSettings;
 import exiledsector.ui.SkillTreeRefitButton;
@@ -141,5 +143,9 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         Global.getSector().getListenerManager().addListener(new NpcTreeInspectInput(), true);
         Global.getSector().getListenerManager().addListener(new SkillTreeCodexListener(), true);
         Global.getSector().getListenerManager().addListener(new PhantomHullModRefitHider(), true);
+        SocketLossListener socketLossListener = new SocketLossListener();
+        Global.getSector().addTransientListener(socketLossListener);
+        Global.getSector().getListenerManager().addListener(socketLossListener, true);
+        SocketCustody.reconcile();
     }
 }

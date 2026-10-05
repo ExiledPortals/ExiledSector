@@ -2,6 +2,10 @@ package exiledsector.socketables;
 
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.skills.SkillNode;
+import exiledsector.skills.SkillTier;
+import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -81,6 +85,21 @@ public abstract class Socketable {
             }
         }
         return lines;
+    }
+
+    public boolean canSocketInto(SkillNode socket) {
+        return socket != null && socket.getType().getTier() == SkillTier.SOCKET;
+    }
+
+    public List<SkillTypeEffect> skillEffects() {
+        List<SkillTypeEffect> applied = new ArrayList<>(effects.size());
+        for (RolledEffect effect : effects) {
+            SkillEffect resolved = effect.effect();
+            if (resolved != null) {
+                applied.add(new SkillTypeEffect(resolved, effect.magnitude()));
+            }
+        }
+        return applied;
     }
 
     public List<StyledText> effectLines() {
