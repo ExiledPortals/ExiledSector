@@ -8,6 +8,8 @@ $editorPath = Join-Path $toolsDir "skill_tree_editor.html"
 $typesPath = Join-Path $projectRoot "data\skilltrees\skill_types.json"
 $treePath = Join-Path $projectRoot "data\skilltrees\ship_skill_tree.json"
 $socketablesPath = Join-Path $projectRoot "data\config\exiledSector\socketables.csv"
+$socketableAffixesPath = Join-Path $projectRoot "data\config\exiledSector\socketable_affixes.csv"
+$socketableNamesPath = Join-Path $projectRoot "data\config\exiledSector\socketable_names.json"
 $vanillaCoreDir = Join-Path (Split-Path -Parent $projectRoot) "Starsector\starsector-core"
 $vanillaPrefix = [System.IO.Path]::GetFullPath($vanillaCoreDir).TrimEnd('\') + '\'
 $vanillaCargoIconsDir = Join-Path $vanillaCoreDir "graphics\icons\cargo"
@@ -186,6 +188,31 @@ try {
                 } else {
                     $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
                     [System.IO.File]::WriteAllText($socketablesPath, $csv, $utf8NoBom)
+                    Write-JsonResponse $response 200 @{ ok = $true; message = "Saved." }
+                }
+            }
+            elseif ($request.HttpMethod -eq "GET" -and $request.Url.LocalPath -eq "/data/socketable-names") {
+                $payload = @{
+                    affixes = [System.IO.File]::ReadAllText($socketableAffixesPath, [System.Text.Encoding]::UTF8)
+                    names = [System.IO.File]::ReadAllText($socketableNamesPath, [System.Text.Encoding]::UTF8)
+                }
+                Write-JsonResponse $response 200 $payload
+            }
+            elseif ($request.HttpMethod -eq "POST" -and $request.Url.LocalPath -eq "/save-socketable-names") {
+                $reader = New-Object System.IO.StreamReader($request.InputStream, [System.Text.Encoding]::UTF8)
+                $body = $reader.ReadToEnd() | ConvertFrom-Json
+                $affixes = [string]$body.affixes
+                $names = [string]$body.names
+                $namesOk = $true
+                try { $null = $names | ConvertFrom-Json } catch { $namesOk = $false }
+                if (-not $affixes.StartsWith("effect,")) {
+                    Write-JsonResponse $response 400 @{ ok = $false; message = "Nothing was written - the affix CSV must start with the effect column." }
+                } elseif (-not $namesOk) {
+                    Write-JsonResponse $response 400 @{ ok = $false; message = "Nothing was written - socketable_names.json did not parse as JSON." }
+                } else {
+                    $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+                    [System.IO.File]::WriteAllText($socketableAffixesPath, $affixes, $utf8NoBom)
+                    [System.IO.File]::WriteAllText($socketableNamesPath, $names, $utf8NoBom)
                     Write-JsonResponse $response 200 @{ ok = $true; message = "Saved." }
                 }
             }
