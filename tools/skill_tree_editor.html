@@ -4311,15 +4311,18 @@ function formatPercent(value){
 
 function openSocketableDropsModal(){
   var root = document.getElementById('modalRoot');
-  var rows = [], filterText = '', dirty = false;
+  var rows = [], filterText = '', dirty = false, file = 'socketable_salvage.csv', files = [file];
 
   function load(){
-    fetch('/data/socketable-salvage').then(function(r){ if (!r.ok) throw new Error('salvage ' + r.status); return r.text(); }).then(function(text){
+    fetch('/list-socketable-salvage').then(function(r){ return r.ok ? r.json() : [file]; }).catch(function(){ return [file]; }).then(function(list){
+      files = list && list.length ? list : [file];
+      return fetch('/data/socketable-salvage?file=' + encodeURIComponent(file));
+    }).then(function(r){ if (!r.ok) throw new Error('salvage ' + r.status); return r.text(); }).then(function(text){
       rows = parseSalvageCsv(text);
       dirty = false;
       render();
     }).catch(function(){
-      showToast('Could not load socketable_salvage.csv - run tools\\skill_tree_server.ps1');
+      showToast('Could not load ' + file + ' - run tools\\skill_tree_server.ps1');
     });
   }
 
@@ -4379,7 +4382,11 @@ function openSocketableDropsModal(){
     root.innerHTML =
       '<div class="modalOverlay"><div class="modal wide">' +
       '<h3>Socketable Drops</h3>' +
-      '<div class="hint">Edits data/config/exiledSector/socketable_salvage.csv. Each site rolls item 1; item 2 only rolls if item 1 dropped, and so on. ' +
+      '<div class="fieldRow" style="align-items:flex-end"><div class="field" style="flex:1"><label>File</label><select id="dropsFile">' +
+        files.map(function(name){ return '<option value="' + escapeHtml(name) + '"' + (name === file ? ' selected' : '') + '>' + escapeHtml(name) + '</option>'; }).join('') +
+        '</select></div></div>' +
+      '<div class="hint">Files under compat/salvage/ only load when that mod is enabled, and only drop while the LunaLib setting "Drops From Other Mods\x27 Sites" is on.</div>' +
+      '<div class="hint">Edits data/config/exiledSector/' + escapeHtml(file) + '. Each site rolls item 1; item 2 only rolls if item 1 dropped, and so on. ' +
         'Leave a slot blank to stop there. Unique is a separate roll. "techmining_first_find" is the first Tech Mining harvest on a ruins colony; ' +
         '"techmining_monthly" is every later month and decays 5% a month. A site id is the custom entity type (or salvage spec override) of the thing salvaged.</div>' +
       '<div class="fieldRow" style="align-items:flex-end">' +
@@ -4439,6 +4446,12 @@ function openSocketableDropsModal(){
       markDirty();
       render();
     });
+    document.getElementById('dropsFile').addEventListener('change', function(e){
+      if (dirty && !confirm('Discard unsaved drop changes in ' + file + '?')) { e.target.value = file; return; }
+      file = e.target.value;
+      filterText = '';
+      load();
+    });
     document.getElementById('dropsClose').addEventListener('click', close);
     document.getElementById('dropsReload').addEventListener('click', function(){
       if (dirty && !confirm('Discard unsaved drop changes and reload from disk?')) return;
@@ -4469,7 +4482,7 @@ function openSocketableDropsModal(){
     fetch('/save-socketable-salvage', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Skill-Tree-Editor': '1' },
-      body: JSON.stringify({ csv: serializeSalvageCsv(rows) })
+      body: JSON.stringify({ file: file, csv: serializeSalvageCsv(rows) })
     }).then(function(r){
       return r.json().then(function(data){ return { httpOk: r.ok, data: data }; });
     }).then(function(result){
@@ -4480,7 +4493,7 @@ function openSocketableDropsModal(){
       dirty = false;
       var status = document.getElementById('dropsStatus');
       if (status) status.textContent = 'Saved';
-      showToast('Saved socketable_salvage.csv');
+      showToast('Saved ' + file);
     }).catch(function(){
       showToast('Could not reach local server - run tools\\skill_tree_server.ps1');
     });

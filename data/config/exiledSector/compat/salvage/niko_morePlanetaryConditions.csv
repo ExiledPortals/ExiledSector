@@ -1,0 +1,16 @@
+site,chances,uniqueChance
+MPC_station_corona_resist,1;0.6;0.3;0.1,0.19
+MPC_station_researchMagnetarOne,1;0.6;0.3;0.1,0.19
+MPC_omegaDerelict_probe,0.5,0
+MPC_omegaDerelict_survey_ship,0.8;0.15,0
+MPC_omegaDerelict_mothership,1;0.4;0.15,0
+MPC_corrupted_supply_cache,0.4;0.1,0
+MPC_corrupted_supply_cache_small,0.4;0.1,0
+MPC_corrupted_weapons_cache,0.4;0.1,0
+MPC_corrupted_weapons_cache_low,0.4;0.1,0
+MPC_corrupted_weapons_cache_high,0.4;0.1,0
+MPC_corrupted_weapons_cache_small,0.4;0.1,0
+MPC_corrupted_weapons_cache_small_low,0.4;0.1,0
+MPC_corrupted_weapons_cache_small_high,0.4;0.1,0
+MPC_corrupted_equipment_cache,0.4;0.1,0
+MPC_corrupted_equipment_cache_small,0.4;0.1,0

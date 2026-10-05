@@ -98,7 +98,9 @@ class CompatChecksTest {
             assertFalse(target.modIds().isEmpty(), target.name());
             assertFalse(target.testedVersions().isEmpty(), target.name());
         }
-        assertEquals(List.of("Lost Sector", "Second-in-Command", "MagicLib"), names);
+        assertEquals(List.of("Lost Sector", "Second-in-Command", "MagicLib"), names.subList(0, 3));
+        assertEquals(3 + SalvageSiteCompat.SOURCES.size(), names.size());
+        assertTrue(names.contains("Random Assortment of Things salvage sites"));
     }
 
     @Test

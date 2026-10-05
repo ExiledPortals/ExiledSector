@@ -1,5 +1,6 @@
 package exiledsector.ui;
 
+import exiledsector.compat.SalvageSiteCompat;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.LanguageSetting;
 import exiledsector.i18n.Translation;
@@ -59,6 +60,9 @@ public final class ExiledSectorSettings {
         SettingsCreator.addKeybind(MOD_ID, SocketStorageConfig.FAVOURITE_KEY_FIELD_ID,
                 Translation.text("settings.socketStorage.favouriteKey.name"), Translation.text("settings.socketStorage.favouriteKey.tooltip"),
                 SocketStorageConfig.DEFAULT_FAVOURITE_KEY, MAIN_TAB);
+        SettingsCreator.addBoolean(MOD_ID, SalvageSiteCompat.DROPS_FIELD_ID,
+                Translation.text("settings.socketStorage.otherModDrops.name"), Translation.text("settings.socketStorage.otherModDrops.tooltip"),
+                SalvageSiteCompat.DEFAULT_DROPS, MAIN_TAB);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_opCostHeader", Translation.text("settings.opCost.header"), MAIN_TAB);
         SettingsCreator.addText(MOD_ID, "exiledSector_opCostAbout", Translation.text("settings.opCost.about"), MAIN_TAB);

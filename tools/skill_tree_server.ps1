@@ -11,6 +11,15 @@ $socketablesPath = Join-Path $projectRoot "data\config\exiledSector\socketables.
 $socketableAffixesPath = Join-Path $projectRoot "data\config\exiledSector\socketable_affixes.csv"
 $socketableNamesPath = Join-Path $projectRoot "data\config\exiledSector\socketable_names.json"
 $socketableSalvagePath = Join-Path $projectRoot "data\config\exiledSector\socketable_salvage.csv"
+$socketableSalvageCompatDir = Join-Path $projectRoot "data\config\exiledSector\compat\salvage"
+
+function Resolve-SalvagePath($file) {
+    if (-not $file -or $file -eq "socketable_salvage.csv") { return $socketableSalvagePath }
+    if ($file -match '^compat/salvage/[A-Za-z0-9_.-]+\.csv$') {
+        return Join-Path $socketableSalvageCompatDir ($file.Substring("compat/salvage/".Length))
+    }
+    return $null
+}
 $vanillaCoreDir = Join-Path (Split-Path -Parent $projectRoot) "Starsector\starsector-core"
 $vanillaPrefix = [System.IO.Path]::GetFullPath($vanillaCoreDir).TrimEnd('\') + '\'
 $vanillaCargoIconsDir = Join-Path $vanillaCoreDir "graphics\icons\cargo"
@@ -217,20 +226,39 @@ try {
                     Write-JsonResponse $response 200 @{ ok = $true; message = "Saved." }
                 }
             }
-            elseif ($request.HttpMethod -eq "GET" -and $request.Url.LocalPath -eq "/data/socketable-salvage") {
-                $bytes = [System.IO.File]::ReadAllBytes($socketableSalvagePath)
-                $response.ContentType = "text/csv; charset=utf-8"
+            elseif ($request.HttpMethod -eq "GET" -and $request.Url.LocalPath -eq "/list-socketable-salvage") {
+                $files = @("socketable_salvage.csv")
+                if (Test-Path $socketableSalvageCompatDir) {
+                    $files += Get-ChildItem -Path $socketableSalvageCompatDir -Filter "*.csv" -File | Sort-Object Name |
+                        ForEach-Object { "compat/salvage/" + $_.Name }
+                }
+                $json = ConvertTo-Json -InputObject @($files)
+                $bytes = [System.Text.Encoding]::UTF8.GetBytes($json)
+                $response.ContentType = "application/json; charset=utf-8"
                 $response.OutputStream.Write($bytes, 0, $bytes.Length)
+            }
+            elseif ($request.HttpMethod -eq "GET" -and $request.Url.LocalPath -eq "/data/socketable-salvage") {
+                $path = Resolve-SalvagePath $request.QueryString["file"]
+                if (-not $path -or -not (Test-Path $path)) {
+                    Write-JsonResponse $response 404 @{ ok = $false; message = "Unknown socketable drop file." }
+                } else {
+                    $bytes = [System.IO.File]::ReadAllBytes($path)
+                    $response.ContentType = "text/csv; charset=utf-8"
+                    $response.OutputStream.Write($bytes, 0, $bytes.Length)
+                }
             }
             elseif ($request.HttpMethod -eq "POST" -and $request.Url.LocalPath -eq "/save-socketable-salvage") {
                 $reader = New-Object System.IO.StreamReader($request.InputStream, [System.Text.Encoding]::UTF8)
                 $body = $reader.ReadToEnd() | ConvertFrom-Json
                 $csv = [string]$body.csv
-                if (-not $csv.StartsWith("site,")) {
+                $path = Resolve-SalvagePath ([string]$body.file)
+                if (-not $path) {
+                    Write-JsonResponse $response 400 @{ ok = $false; message = "Nothing was written - unknown socketable drop file." }
+                } elseif (-not $csv.StartsWith("site,")) {
                     Write-JsonResponse $response 400 @{ ok = $false; message = "Nothing was written - the CSV must start with the site column." }
                 } else {
                     $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
-                    [System.IO.File]::WriteAllText($socketableSalvagePath, $csv, $utf8NoBom)
+                    [System.IO.File]::WriteAllText($path, $csv, $utf8NoBom)
                     Write-JsonResponse $response 200 @{ ok = $true; message = "Saved." }
                 }
             }

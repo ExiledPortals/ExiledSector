@@ -1,0 +1,13 @@
+site,chances,uniqueChance
+rat_abyss_drone,0.5,0
+rat_abyss_research,1;0.6;0.3;0.1,0.19
+rat_abyss_research_complex,1;0.6;0.3;0.1,0.19
+rat_abyssal_shipyard,1;0.6;0.3;0.1,0.19
+rat_abyss_fabrication,1;0.6;0.3;0.1,0.19
+rat_abyss_accumalator,1;0.6;0.3;0.1,0.19
+rat_abyss_transmitter,1;0.6;0.3;0.1,0.19
+rat_development_station,1;0.6;0.3;0.1,0.19
+rat_gravitational_dynamo,1;0.6;0.3;0.1,0.19
+rat_medical_laboratory,1;0.6;0.3;0.1,0.19
+rat_spatial_laboratory,1;0.6;0.3;0.1,0.19
+rat_damaged_cryosleeper,1;0.6;0.3;0.1,0.19

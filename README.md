@@ -65,6 +65,17 @@ These mods have dedicated compatibility. The version listed is the one I last te
 | [Second-in-Command](https://fractalsoftworks.com/forum/index.php?topic=30407.0) | 2.0.0 | Its skills see the hull mods your nodes stand in for, and Reconfiguration waives the Converted Hangar penalties. |
 | Lost Sector | 0.6.2d | The Kesteven and Frozen Heart areas of the tree appear, and Augmented Systems hulls get the same bonuses from those nodes as from the hull mods. |
 | [MagicLib](https://fractalsoftworks.com/forum/index.php?topic=25868.0) | 1.5.6 | Required. A hull mod that tries to strip one of your nodes' hull mods through MagicLib is removed instead. |
+| Random Assortment of Things | 3.3.1 | Modular Hull Socket items can drop from its abyssal structures, abyssal drones and relic sites. |
+| Industrial Evolution | 4.1.b | Modular Hull Socket items can drop from its orbital laboratories and arsenal stations. |
+| Knights of Ludd | 1.4.0 | Modular Hull Socket items can drop from its research stations and shielded caches. |
+| Secrets of the Frontier | 0.15.1 | Modular Hull Socket items can drop from its salvageable stations. |
+| Arthr's Ships n Shit | 0.100-dev | Modular Hull Socket items can drop from its Exodyne research stations. |
+| What We Left Behind | 4.5.3 | Modular Hull Socket items can drop from its corrupted caches, Omega derelicts and research stations. |
+| Ship Mastery System | 2.0.8 | Modular Hull Socket items can drop from its concealed stations and probes. |
+| Unthemed Weapons Collection | 0.7.4 | Modular Hull Socket items can drop from its weapon caches, including the fortified ones. |
+| DIY Planets | 1.0.30 | Modular Hull Socket items can drop from its genesis terraforming stations. |
+
+Socket item drops at other mods' sites can be turned off with "Drops From Other Mods' Sites" in the LunaLib settings. Each mod's sites are listed in its own file under `data/config/exiledSector/compat/salvage/`, which only loads when that mod is installed.
 
 Some weapons from other mods misbehave (often hilariously) when their beams are split or their shots are chained. These are listed in:
 

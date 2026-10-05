@@ -1,6 +1,7 @@
 package exiledsector.socketables;
 
 import com.fs.starfarer.api.Global;
+import exiledsector.compat.SalvageSiteCompat;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,7 +28,7 @@ public final class SocketableDrops {
     private static final Logger LOG = Logger.getLogger(SocketableDrops.class);
     private static final AtomicReference<Map<String, Rule>> RULES = new AtomicReference<>(Map.of());
 
-    record Rule(List<Float> chances, float uniqueChance) {
+    record Rule(List<Float> chances, float uniqueChance, boolean otherMod) {
     }
 
     private SocketableDrops() {
@@ -39,9 +40,26 @@ public final class SocketableDrops {
         } catch (IOException | JSONException e) {
             LOG.error("Failed to load " + DATA_PATH, e);
         }
+        for (SalvageSiteCompat.Source source : SalvageSiteCompat.enabledSources()) {
+            try {
+                registerOtherMod(SalvageSiteCompat.rows(source));
+            } catch (IOException | JSONException | RuntimeException e) {
+                LOG.error("Failed to load " + source.file(), e);
+            }
+        }
     }
 
     public static void register(JSONArray rows) throws JSONException {
+        RULES.set(Map.copyOf(parse(rows, false)));
+    }
+
+    public static void registerOtherMod(JSONArray rows) throws JSONException {
+        Map<String, Rule> merged = new HashMap<>(parse(rows, true));
+        merged.putAll(RULES.get());
+        RULES.set(Map.copyOf(merged));
+    }
+
+    private static Map<String, Rule> parse(JSONArray rows, boolean otherMod) throws JSONException {
         Map<String, Rule> loaded = new HashMap<>();
         for (int i = 0; i < rows.length(); i++) {
             JSONObject row = rows.getJSONObject(i);
@@ -57,16 +75,17 @@ public final class SocketableDrops {
                     }
                 }
                 String unique = row.optString("uniqueChance", "").trim();
-                loaded.put(site, new Rule(List.copyOf(chances), unique.isEmpty() ? 0f : Float.parseFloat(unique)));
+                loaded.put(site, new Rule(List.copyOf(chances), unique.isEmpty() ? 0f : Float.parseFloat(unique), otherMod));
             } catch (NumberFormatException e) {
-                LOG.error("Skipping row for site " + site + " in " + DATA_PATH + ": " + e.getMessage());
+                LOG.error("Skipping the salvage drop row for site " + site + ": " + e.getMessage());
             }
         }
-        RULES.set(Map.copyOf(loaded));
+        return loaded;
     }
 
     public static boolean hasRule(String site) {
-        return site != null && RULES.get().containsKey(site);
+        Rule rule = site == null ? null : RULES.get().get(site);
+        return rule != null && (!rule.otherMod() || SalvageSiteCompat.dropsEnabled());
     }
 
     public static List<SocketableItemData> roll(String site, Random random) {
@@ -76,7 +95,7 @@ public final class SocketableDrops {
     public static List<SocketableItemData> roll(String site, Random random, float chanceMult) {
         List<SocketableItemData> items = new ArrayList<>();
         Rule rule = site == null ? null : RULES.get().get(site);
-        if (rule == null) {
+        if (rule == null || rule.otherMod() && !SalvageSiteCompat.dropsEnabled()) {
             return items;
         }
         for (float chance : rule.chances()) {

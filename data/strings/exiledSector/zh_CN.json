@@ -521,6 +521,8 @@
     "settings.socketStorage.header": "插槽仓库",
     "settings.socketStorage.favouriteKey.name": "收藏按键",
     "settings.socketStorage.favouriteKey.tooltip": "在插槽仓库中将鼠标悬停于物品上时，按下此键可将其标记为收藏，或取消标记。",
+    "settings.socketStorage.otherModDrops.name": "其他模组地点掉落",
+    "settings.socketStorage.otherModDrops.tooltip": "允许模块化船体插槽物品从其他受支持模组添加的打捞地点掉落，例如Random Assortment of Things的深渊地点或Industrial Evolution的空间站。原版地点始终可以掉落。",
     "settings.opCost.header": "技能节点装配点消耗",
     "settings.opCost.about": "每个已分配的技能节点按船体尺寸消耗的装配点。",
     "settings.opCost.frigate": "护卫舰每节点装配点",

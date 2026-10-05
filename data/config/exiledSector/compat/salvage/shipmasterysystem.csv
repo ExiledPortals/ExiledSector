@@ -1,0 +1,4 @@
+site,chances,uniqueChance
+sms_concealed_station,1;0.6;0.3;0.1,0.19
+sms_station_nucleus,1;0.6;0.3;0.1,0.19
+sms_concealed_probe,0.5,0

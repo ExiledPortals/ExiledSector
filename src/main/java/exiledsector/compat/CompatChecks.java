@@ -25,7 +25,9 @@ public final class CompatChecks {
     }
 
     public static List<CompatTarget> targets() {
-        return List.of(LostSectorCompat.TARGET, SecondInCommandCompat.TARGET, MagicLibCompat.TARGET);
+        List<CompatTarget> targets = new ArrayList<>(List.of(LostSectorCompat.TARGET, SecondInCommandCompat.TARGET, MagicLibCompat.TARGET));
+        targets.addAll(SalvageSiteCompat.targets());
+        return targets;
     }
 
     public static void logAtStartup() {
