@@ -56,7 +56,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private static final float STORAGE_PANEL_MARGIN = 16f;
     private static final float STORAGE_PANEL_TOP = 100f;
     private static final float STORAGE_PANEL_GAP = 12f;
-    private static final float STORAGE_PANEL_WIDTH_FRACTION = 0.25f;
+    private static final float STORAGE_PANEL_WIDTH_FRACTION = 0.375f;
 
     private final String readoutTooltipTitle = Translation.text("ui.readout.title");
     private final String readoutTooltipBody;
