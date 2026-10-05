@@ -3201,18 +3201,23 @@ type|rationing|CAPITAL_SHIP|1	1	<bad>10%</bad> less fuel consumption rate.
 type|reckless_assault|null|0	1	Increases crew casualties by <good>50%</good>.
 type|reckless_assault|null|1	0	Increases weapon damage by <good>30%</good>.
 type|reckless_assault|null|2	1	<good>10%</good> more damage taken by shields.
+type|reckless_assault|null|3	0	Decreases armor by <bad>10%</bad>.
 type|reckless_assault|FRIGATE|0	1	Increases crew casualties by <good>50%</good>.
 type|reckless_assault|FRIGATE|1	0	Increases weapon damage by <good>30%</good>.
 type|reckless_assault|FRIGATE|2	1	<good>10%</good> more damage taken by shields.
+type|reckless_assault|FRIGATE|3	0	Decreases armor by <bad>10%</bad>.
 type|reckless_assault|DESTROYER|0	1	Increases crew casualties by <good>50%</good>.
 type|reckless_assault|DESTROYER|1	0	Increases weapon damage by <good>30%</good>.
 type|reckless_assault|DESTROYER|2	1	<good>10%</good> more damage taken by shields.
+type|reckless_assault|DESTROYER|3	0	Decreases armor by <bad>10%</bad>.
 type|reckless_assault|CRUISER|0	1	Increases crew casualties by <good>50%</good>.
 type|reckless_assault|CRUISER|1	0	Increases weapon damage by <good>30%</good>.
 type|reckless_assault|CRUISER|2	1	<good>10%</good> more damage taken by shields.
+type|reckless_assault|CRUISER|3	0	Decreases armor by <bad>10%</bad>.
 type|reckless_assault|CAPITAL_SHIP|0	1	Increases crew casualties by <good>50%</good>.
 type|reckless_assault|CAPITAL_SHIP|1	0	Increases weapon damage by <good>30%</good>.
 type|reckless_assault|CAPITAL_SHIP|2	1	<good>10%</good> more damage taken by shields.
+type|reckless_assault|CAPITAL_SHIP|3	0	Decreases armor by <bad>10%</bad>.
 type|recovery_shuttles|null|0	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
 type-detail|recovery_shuttles|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Recovery Shuttles</hullmod>
 type|recovery_shuttles|FRIGATE|0	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
@@ -3605,7 +3610,7 @@ summary|option0|FRIGATE|9	0	Takes <good>10%</good> of each such wreck's skeleton
 summary|option0|FRIGATE|10	0	Increases ballistic weapon ammo capacity by <good>110%</good>.
 summary|option0|FRIGATE|11	0	Increases energy weapon ammo capacity by <good>110%</good>.
 summary|option0|FRIGATE|12	0	Increases armor by <good>140</good>.
-summary|option0|FRIGATE|13	0	Increases armor by <good>65%</good>.
+summary|option0|FRIGATE|13	0	Increases armor by <good>55%</good>.
 summary|option0|FRIGATE|14	0	Increases weapon durability by <good>120%</good>.
 summary|option0|FRIGATE|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option0|FRIGATE|16	1	<bad>25%</bad> less weapon recoil.
@@ -3672,7 +3677,7 @@ summary|option0|FRIGATE|76	1	Increases minimum crew required per fighter bay by 
 summary|option0|FRIGATE|77	0	Any collision, however slight, is instantly fatal to this ship.
 summary|option0|FRIGATE|78	0	Increases shield arc by <good>100</good>.
 summary|option0|FRIGATE|79	0	Increases weapon damage of fighters launched from this ship by <good>10%</good>.
-summary|option0|FRIGATE|80	0	<good>178%</good> more flux capacity.
+summary|option0|FRIGATE|80	0	<good>162%</good> more flux capacity.
 summary|option0|FRIGATE|81	0	<good>104%</good> more flux dissipation.
 summary|option0|FRIGATE|82	0	Increases venting speed by <good>35%</good>.
 summary|option0|FRIGATE|83	0	Increases shield arc by <good>100%</good>.
@@ -3780,7 +3785,7 @@ summary|option0|DESTROYER|9	0	Takes <good>10%</good> of each such wreck's skelet
 summary|option0|DESTROYER|10	0	Increases ballistic weapon ammo capacity by <good>110%</good>.
 summary|option0|DESTROYER|11	0	Increases energy weapon ammo capacity by <good>110%</good>.
 summary|option0|DESTROYER|12	0	Increases armor by <good>280</good>.
-summary|option0|DESTROYER|13	0	Increases armor by <good>65%</good>.
+summary|option0|DESTROYER|13	0	Increases armor by <good>55%</good>.
 summary|option0|DESTROYER|14	0	Increases weapon durability by <good>120%</good>.
 summary|option0|DESTROYER|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option0|DESTROYER|16	1	<bad>25%</bad> less weapon recoil.
@@ -3847,7 +3852,7 @@ summary|option0|DESTROYER|76	1	Increases minimum crew required per fighter bay b
 summary|option0|DESTROYER|77	0	Any collision, however slight, is instantly fatal to this ship.
 summary|option0|DESTROYER|78	0	Increases shield arc by <good>100</good>.
 summary|option0|DESTROYER|79	0	Increases weapon damage of fighters launched from this ship by <good>10%</good>.
-summary|option0|DESTROYER|80	0	<good>178%</good> more flux capacity.
+summary|option0|DESTROYER|80	0	<good>162%</good> more flux capacity.
 summary|option0|DESTROYER|81	0	<good>104%</good> more flux dissipation.
 summary|option0|DESTROYER|82	0	Increases venting speed by <good>35%</good>.
 summary|option0|DESTROYER|83	0	Increases shield arc by <good>100%</good>.
@@ -3955,7 +3960,7 @@ summary|option0|CRUISER|9	0	Takes <good>10%</good> of each such wreck's skeleton
 summary|option0|CRUISER|10	0	Increases ballistic weapon ammo capacity by <good>110%</good>.
 summary|option0|CRUISER|11	0	Increases energy weapon ammo capacity by <good>110%</good>.
 summary|option0|CRUISER|12	0	Increases armor by <good>560</good>.
-summary|option0|CRUISER|13	0	Increases armor by <good>65%</good>.
+summary|option0|CRUISER|13	0	Increases armor by <good>55%</good>.
 summary|option0|CRUISER|14	0	Increases weapon durability by <good>120%</good>.
 summary|option0|CRUISER|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option0|CRUISER|16	1	<bad>25%</bad> less weapon recoil.
@@ -4022,7 +4027,7 @@ summary|option0|CRUISER|76	1	Increases minimum crew required per fighter bay by 
 summary|option0|CRUISER|77	0	Any collision, however slight, is instantly fatal to this ship.
 summary|option0|CRUISER|78	0	Increases shield arc by <good>100</good>.
 summary|option0|CRUISER|79	0	Increases weapon damage of fighters launched from this ship by <good>10%</good>.
-summary|option0|CRUISER|80	0	<good>178%</good> more flux capacity.
+summary|option0|CRUISER|80	0	<good>162%</good> more flux capacity.
 summary|option0|CRUISER|81	0	<good>104%</good> more flux dissipation.
 summary|option0|CRUISER|82	0	Increases venting speed by <good>35%</good>.
 summary|option0|CRUISER|83	0	Increases shield arc by <good>100%</good>.
@@ -4130,7 +4135,7 @@ summary|option0|CAPITAL_SHIP|9	0	Takes <good>10%</good> of each such wreck's ske
 summary|option0|CAPITAL_SHIP|10	0	Increases ballistic weapon ammo capacity by <good>110%</good>.
 summary|option0|CAPITAL_SHIP|11	0	Increases energy weapon ammo capacity by <good>110%</good>.
 summary|option0|CAPITAL_SHIP|12	0	Increases armor by <good>700</good>.
-summary|option0|CAPITAL_SHIP|13	0	Increases armor by <good>65%</good>.
+summary|option0|CAPITAL_SHIP|13	0	Increases armor by <good>55%</good>.
 summary|option0|CAPITAL_SHIP|14	0	Increases weapon durability by <good>120%</good>.
 summary|option0|CAPITAL_SHIP|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option0|CAPITAL_SHIP|16	1	<bad>25%</bad> less weapon recoil.
@@ -4197,7 +4202,7 @@ summary|option0|CAPITAL_SHIP|76	1	Increases minimum crew required per fighter ba
 summary|option0|CAPITAL_SHIP|77	0	Any collision, however slight, is instantly fatal to this ship.
 summary|option0|CAPITAL_SHIP|78	0	Increases shield arc by <good>100</good>.
 summary|option0|CAPITAL_SHIP|79	0	Increases weapon damage of fighters launched from this ship by <good>10%</good>.
-summary|option0|CAPITAL_SHIP|80	0	<good>178%</good> more flux capacity.
+summary|option0|CAPITAL_SHIP|80	0	<good>162%</good> more flux capacity.
 summary|option0|CAPITAL_SHIP|81	0	<good>104%</good> more flux dissipation.
 summary|option0|CAPITAL_SHIP|82	0	Increases venting speed by <good>35%</good>.
 summary|option0|CAPITAL_SHIP|83	0	Increases shield arc by <good>100%</good>.
@@ -4305,7 +4310,7 @@ summary|option1|FRIGATE|9	0	Takes <good>10%</good> of each such wreck's skeleton
 summary|option1|FRIGATE|10	0	Increases ballistic weapon ammo capacity by <good>110%</good>.
 summary|option1|FRIGATE|11	0	Increases energy weapon ammo capacity by <good>110%</good>.
 summary|option1|FRIGATE|12	0	Increases armor by <good>140</good>.
-summary|option1|FRIGATE|13	0	Increases armor by <good>65%</good>.
+summary|option1|FRIGATE|13	0	Increases armor by <good>55%</good>.
 summary|option1|FRIGATE|14	0	Increases weapon durability by <good>120%</good>.
 summary|option1|FRIGATE|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option1|FRIGATE|16	1	<bad>25%</bad> less weapon recoil.
@@ -4373,7 +4378,7 @@ summary|option1|FRIGATE|77	0	Any collision, however slight, is instantly fatal t
 summary|option1|FRIGATE|78	0	Increases shield arc by <good>100</good>.
 summary|option1|FRIGATE|79	0	Increases weapon damage of fighters launched from this ship by <good>10%</good>.
 summary|option1|FRIGATE|80	0	<good>4%</good> more flux capacity.
-summary|option1|FRIGATE|81	0	<good>278%</good> more flux dissipation.
+summary|option1|FRIGATE|81	0	<good>262%</good> more flux dissipation.
 summary|option1|FRIGATE|82	0	Increases venting speed by <good>35%</good>.
 summary|option1|FRIGATE|83	0	Increases shield arc by <good>100%</good>.
 summary|option1|FRIGATE|84	0	Converts this ship's shield to front-facing.
@@ -4480,7 +4485,7 @@ summary|option1|DESTROYER|9	0	Takes <good>10%</good> of each such wreck's skelet
 summary|option1|DESTROYER|10	0	Increases ballistic weapon ammo capacity by <good>110%</good>.
 summary|option1|DESTROYER|11	0	Increases energy weapon ammo capacity by <good>110%</good>.
 summary|option1|DESTROYER|12	0	Increases armor by <good>280</good>.
-summary|option1|DESTROYER|13	0	Increases armor by <good>65%</good>.
+summary|option1|DESTROYER|13	0	Increases armor by <good>55%</good>.
 summary|option1|DESTROYER|14	0	Increases weapon durability by <good>120%</good>.
 summary|option1|DESTROYER|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option1|DESTROYER|16	1	<bad>25%</bad> less weapon recoil.
@@ -4548,7 +4553,7 @@ summary|option1|DESTROYER|77	0	Any collision, however slight, is instantly fatal
 summary|option1|DESTROYER|78	0	Increases shield arc by <good>100</good>.
 summary|option1|DESTROYER|79	0	Increases weapon damage of fighters launched from this ship by <good>10%</good>.
 summary|option1|DESTROYER|80	0	<good>4%</good> more flux capacity.
-summary|option1|DESTROYER|81	0	<good>278%</good> more flux dissipation.
+summary|option1|DESTROYER|81	0	<good>262%</good> more flux dissipation.
 summary|option1|DESTROYER|82	0	Increases venting speed by <good>35%</good>.
 summary|option1|DESTROYER|83	0	Increases shield arc by <good>100%</good>.
 summary|option1|DESTROYER|84	0	Converts this ship's shield to front-facing.
@@ -4655,7 +4660,7 @@ summary|option1|CRUISER|9	0	Takes <good>10%</good> of each such wreck's skeleton
 summary|option1|CRUISER|10	0	Increases ballistic weapon ammo capacity by <good>110%</good>.
 summary|option1|CRUISER|11	0	Increases energy weapon ammo capacity by <good>110%</good>.
 summary|option1|CRUISER|12	0	Increases armor by <good>560</good>.
-summary|option1|CRUISER|13	0	Increases armor by <good>65%</good>.
+summary|option1|CRUISER|13	0	Increases armor by <good>55%</good>.
 summary|option1|CRUISER|14	0	Increases weapon durability by <good>120%</good>.
 summary|option1|CRUISER|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option1|CRUISER|16	1	<bad>25%</bad> less weapon recoil.
@@ -4723,7 +4728,7 @@ summary|option1|CRUISER|77	0	Any collision, however slight, is instantly fatal t
 summary|option1|CRUISER|78	0	Increases shield arc by <good>100</good>.
 summary|option1|CRUISER|79	0	Increases weapon damage of fighters launched from this ship by <good>10%</good>.
 summary|option1|CRUISER|80	0	<good>4%</good> more flux capacity.
-summary|option1|CRUISER|81	0	<good>278%</good> more flux dissipation.
+summary|option1|CRUISER|81	0	<good>262%</good> more flux dissipation.
 summary|option1|CRUISER|82	0	Increases venting speed by <good>35%</good>.
 summary|option1|CRUISER|83	0	Increases shield arc by <good>100%</good>.
 summary|option1|CRUISER|84	0	Converts this ship's shield to front-facing.
@@ -4830,7 +4835,7 @@ summary|option1|CAPITAL_SHIP|9	0	Takes <good>10%</good> of each such wreck's ske
 summary|option1|CAPITAL_SHIP|10	0	Increases ballistic weapon ammo capacity by <good>110%</good>.
 summary|option1|CAPITAL_SHIP|11	0	Increases energy weapon ammo capacity by <good>110%</good>.
 summary|option1|CAPITAL_SHIP|12	0	Increases armor by <good>700</good>.
-summary|option1|CAPITAL_SHIP|13	0	Increases armor by <good>65%</good>.
+summary|option1|CAPITAL_SHIP|13	0	Increases armor by <good>55%</good>.
 summary|option1|CAPITAL_SHIP|14	0	Increases weapon durability by <good>120%</good>.
 summary|option1|CAPITAL_SHIP|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option1|CAPITAL_SHIP|16	1	<bad>25%</bad> less weapon recoil.
@@ -4898,7 +4903,7 @@ summary|option1|CAPITAL_SHIP|77	0	Any collision, however slight, is instantly fa
 summary|option1|CAPITAL_SHIP|78	0	Increases shield arc by <good>100</good>.
 summary|option1|CAPITAL_SHIP|79	0	Increases weapon damage of fighters launched from this ship by <good>10%</good>.
 summary|option1|CAPITAL_SHIP|80	0	<good>4%</good> more flux capacity.
-summary|option1|CAPITAL_SHIP|81	0	<good>278%</good> more flux dissipation.
+summary|option1|CAPITAL_SHIP|81	0	<good>262%</good> more flux dissipation.
 summary|option1|CAPITAL_SHIP|82	0	Increases venting speed by <good>35%</good>.
 summary|option1|CAPITAL_SHIP|83	0	Increases shield arc by <good>100%</good>.
 summary|option1|CAPITAL_SHIP|84	0	Converts this ship's shield to front-facing.
@@ -5005,7 +5010,7 @@ summary|option2|FRIGATE|9	0	Takes <good>10%</good> of each such wreck's skeleton
 summary|option2|FRIGATE|10	0	Increases ballistic weapon ammo capacity by <good>110%</good>.
 summary|option2|FRIGATE|11	0	Increases energy weapon ammo capacity by <good>110%</good>.
 summary|option2|FRIGATE|12	0	Increases armor by <good>140</good>.
-summary|option2|FRIGATE|13	0	Increases armor by <good>65%</good>.
+summary|option2|FRIGATE|13	0	Increases armor by <good>55%</good>.
 summary|option2|FRIGATE|14	0	Increases weapon durability by <good>120%</good>.
 summary|option2|FRIGATE|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option2|FRIGATE|16	1	<bad>25%</bad> less weapon recoil.
@@ -5094,7 +5099,7 @@ summary|option2|FRIGATE|98	0	This ship's sensor strength always contributes to f
 summary|option2|FRIGATE|99	0	Increases this ship's sensor strength by <good>90</good>.
 summary|option2|FRIGATE|100	0	Increases energy weapon ammo regeneration rate by <good>50%</good>.
 summary|option2|FRIGATE|101	0	Increases ballistic weapon ammo regeneration rate by <good>50%</good>.
-summary|option2|FRIGATE|102	0	<good>204%</good> more hull points.
+summary|option2|FRIGATE|102	0	<good>188%</good> more hull points.
 summary|option2|FRIGATE|103	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option2|FRIGATE|104	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
 summary|option2|FRIGATE|105	0	Each Heartless stack reduces top speed and maneuverability by <bad>3%</bad>.
@@ -5181,7 +5186,7 @@ summary|option2|DESTROYER|9	0	Takes <good>10%</good> of each such wreck's skelet
 summary|option2|DESTROYER|10	0	Increases ballistic weapon ammo capacity by <good>110%</good>.
 summary|option2|DESTROYER|11	0	Increases energy weapon ammo capacity by <good>110%</good>.
 summary|option2|DESTROYER|12	0	Increases armor by <good>280</good>.
-summary|option2|DESTROYER|13	0	Increases armor by <good>65%</good>.
+summary|option2|DESTROYER|13	0	Increases armor by <good>55%</good>.
 summary|option2|DESTROYER|14	0	Increases weapon durability by <good>120%</good>.
 summary|option2|DESTROYER|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option2|DESTROYER|16	1	<bad>25%</bad> less weapon recoil.
@@ -5270,7 +5275,7 @@ summary|option2|DESTROYER|98	0	This ship's sensor strength always contributes to
 summary|option2|DESTROYER|99	0	Increases this ship's sensor strength by <good>110</good>.
 summary|option2|DESTROYER|100	0	Increases energy weapon ammo regeneration rate by <good>50%</good>.
 summary|option2|DESTROYER|101	0	Increases ballistic weapon ammo regeneration rate by <good>50%</good>.
-summary|option2|DESTROYER|102	0	<good>204%</good> more hull points.
+summary|option2|DESTROYER|102	0	<good>188%</good> more hull points.
 summary|option2|DESTROYER|103	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option2|DESTROYER|104	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
 summary|option2|DESTROYER|105	0	Each Heartless stack reduces top speed and maneuverability by <bad>3%</bad>.
@@ -5357,7 +5362,7 @@ summary|option2|CRUISER|9	0	Takes <good>10%</good> of each such wreck's skeleton
 summary|option2|CRUISER|10	0	Increases ballistic weapon ammo capacity by <good>110%</good>.
 summary|option2|CRUISER|11	0	Increases energy weapon ammo capacity by <good>110%</good>.
 summary|option2|CRUISER|12	0	Increases armor by <good>560</good>.
-summary|option2|CRUISER|13	0	Increases armor by <good>65%</good>.
+summary|option2|CRUISER|13	0	Increases armor by <good>55%</good>.
 summary|option2|CRUISER|14	0	Increases weapon durability by <good>120%</good>.
 summary|option2|CRUISER|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option2|CRUISER|16	1	<bad>25%</bad> less weapon recoil.
@@ -5446,7 +5451,7 @@ summary|option2|CRUISER|98	0	This ship's sensor strength always contributes to f
 summary|option2|CRUISER|99	0	Increases this ship's sensor strength by <good>160</good>.
 summary|option2|CRUISER|100	0	Increases energy weapon ammo regeneration rate by <good>50%</good>.
 summary|option2|CRUISER|101	0	Increases ballistic weapon ammo regeneration rate by <good>50%</good>.
-summary|option2|CRUISER|102	0	<good>204%</good> more hull points.
+summary|option2|CRUISER|102	0	<good>188%</good> more hull points.
 summary|option2|CRUISER|103	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option2|CRUISER|104	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
 summary|option2|CRUISER|105	0	Each Heartless stack reduces top speed and maneuverability by <bad>3%</bad>.
@@ -5533,7 +5538,7 @@ summary|option2|CAPITAL_SHIP|9	0	Takes <good>10%</good> of each such wreck's ske
 summary|option2|CAPITAL_SHIP|10	0	Increases ballistic weapon ammo capacity by <good>110%</good>.
 summary|option2|CAPITAL_SHIP|11	0	Increases energy weapon ammo capacity by <good>110%</good>.
 summary|option2|CAPITAL_SHIP|12	0	Increases armor by <good>700</good>.
-summary|option2|CAPITAL_SHIP|13	0	Increases armor by <good>65%</good>.
+summary|option2|CAPITAL_SHIP|13	0	Increases armor by <good>55%</good>.
 summary|option2|CAPITAL_SHIP|14	0	Increases weapon durability by <good>120%</good>.
 summary|option2|CAPITAL_SHIP|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option2|CAPITAL_SHIP|16	1	<bad>25%</bad> less weapon recoil.
@@ -5622,7 +5627,7 @@ summary|option2|CAPITAL_SHIP|98	0	This ship's sensor strength always contributes
 summary|option2|CAPITAL_SHIP|99	0	Increases this ship's sensor strength by <good>220</good>.
 summary|option2|CAPITAL_SHIP|100	0	Increases energy weapon ammo regeneration rate by <good>50%</good>.
 summary|option2|CAPITAL_SHIP|101	0	Increases ballistic weapon ammo regeneration rate by <good>50%</good>.
-summary|option2|CAPITAL_SHIP|102	0	<good>204%</good> more hull points.
+summary|option2|CAPITAL_SHIP|102	0	<good>188%</good> more hull points.
 summary|option2|CAPITAL_SHIP|103	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option2|CAPITAL_SHIP|104	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
 summary|option2|CAPITAL_SHIP|105	0	Each Heartless stack reduces top speed and maneuverability by <bad>3%</bad>.

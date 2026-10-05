@@ -93,6 +93,8 @@ class ExiledSectorModPluginTest {
         when(settings.getMergedJSONForMod("data/config/exiledSector/socketable_names.json", "exiledSector")).thenReturn(new JSONObject("{}"));
         when(settings.getMergedSpreadsheetDataForMod("effect", "data/config/exiledSector/socketable_affixes.csv", "exiledSector"))
                 .thenReturn(new JSONArray());
+        when(settings.getMergedSpreadsheetDataForMod("old", "data/config/exiledSector/node_replacements.csv", "exiledSector"))
+                .thenReturn(new JSONArray());
 
         Logger logger = mock(Logger.class);
 

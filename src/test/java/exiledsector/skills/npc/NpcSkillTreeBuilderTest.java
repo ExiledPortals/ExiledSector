@@ -135,17 +135,18 @@ class NpcSkillTreeBuilderTest {
     }
 
     @Test
-    void npcsNeverAllocateASocketOrPathThroughOne() {
+    void npcsPassThroughASocketOnTheWayButNeverAimForOne() {
         root();
         SkillType socket = registerType(builder("socket", SkillTier.SOCKET).build());
         node("socket_1", socket, ROOT);
         notable("behind_socket", "socket_1");
+        node("dead_end_socket", socket, ROOT);
         chain("n", 3, ROOT);
 
         List<String> allocated = allocated(generate(10));
 
-        assertFalse(allocated.contains("socket_1"));
-        assertFalse(allocated.contains("behind_socket"));
+        assertTrue(allocated.contains("socket_1") && allocated.contains("behind_socket"));
+        assertFalse(allocated.contains("dead_end_socket"));
         assertTrue(allocated.contains("n3"));
     }
 

@@ -227,6 +227,26 @@ public class ShipSkillData {
         }
     }
 
+    public boolean replaceNode(String oldId, String newId) {
+        if (!allocatedNodeIds.contains(oldId) || allocatedNodeIds.contains(newId)) {
+            return false;
+        }
+        List<String> order = new ArrayList<>(allocatedNodeIds);
+        allocatedNodeIds.clear();
+        order.forEach(id -> allocatedNodeIds.add(id.equals(oldId) ? newId : id));
+        if (freeNodeIds().remove(oldId)) {
+            freeNodeIds().add(newId);
+        }
+        if (pairedFreeNodeIds().remove(oldId)) {
+            pairedFreeNodeIds().add(newId);
+        }
+        if (optionalSelections != null) {
+            optionalSelections.remove(oldId);
+        }
+        unsocketItem(oldId);
+        return true;
+    }
+
     public List<String> forgetUnknownNodes(Map<String, SkillNode> tree, Map<String, SkillType> types) {
         List<String> forgotten = new ArrayList<>();
         for (String nodeId : List.copyOf(allocatedNodeIds)) {

@@ -23,6 +23,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.persistence.OpSpentSlotManager;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
+import exiledsector.skills.NodeReplacements;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillTree;
@@ -67,6 +68,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         NpcFactionVolumes.load();
         SocketableDefinitions.load();
         SocketableNames.load();
+        NodeReplacements.load();
         CompatChecks.logAtStartup();
     }
 
@@ -107,6 +109,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
             Global.getLogger(ExiledSectorModPlugin.class).warn(LOG_TAG + ": the skill tree did not load completely, so saved allocations were left as they are.");
             return;
         }
+        ShipSkillDataManager.replaceRemovedNodes(SkillTree.getAllNodes(), NodeReplacements.all());
         ShipSkillDataManager.forgetUnknownNodes(SkillTree.getAllNodes(), SkillTree.getAllTypes(), SkillTree::getDeclared,
                 ExiledSectorModPlugin::refund);
     }

@@ -49,6 +49,14 @@ public class ShipSkillDataManager {
         getStore().values().removeIf(ShipSkillData::isBlank);
     }
 
+    public static void replaceRemovedNodes(Map<String, SkillNode> tree, Map<String, String> replacements) {
+        replacements.forEach((oldId, newId) -> {
+            if (!tree.containsKey(oldId) && tree.containsKey(newId)) {
+                getStore().values().forEach(data -> data.replaceNode(oldId, newId));
+            }
+        });
+    }
+
     public static void forgetUnknownNodes(Map<String, SkillNode> tree, Map<String, SkillType> types, Consumer<SkillItemCost> refund) {
         forgetUnknownNodes(tree, types, tree::get, refund);
     }

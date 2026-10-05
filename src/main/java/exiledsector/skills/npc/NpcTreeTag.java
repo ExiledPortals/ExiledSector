@@ -1,6 +1,7 @@
 package exiledsector.skills.npc;
 
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import exiledsector.skills.NodeReplacements;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -75,12 +76,12 @@ public final class NpcTreeTag {
 
     private static void restore(ShipSkillData data, String entry) {
         int optionAt = entry.indexOf(OPTION_SEPARATOR);
-        String nodeId = optionAt < 0 ? entry : entry.substring(0, optionAt);
+        String nodeId = NodeReplacements.resolve(optionAt < 0 ? entry : entry.substring(0, optionAt));
         SkillNode node = SkillTree.get(nodeId);
         if (node == null || data.isAllocated(nodeId) || node.getType().getTier() == SkillTier.ROOT) {
             return;
         }
-        if (optionAt < 0) {
+        if (optionAt < 0 || !node.getType().isOptional()) {
             if (!node.getType().isOptional()) {
                 data.allocate(node, CHARGED_NODE_COST);
             }

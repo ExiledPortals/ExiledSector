@@ -3478,6 +3478,10 @@
 				{
 					"effect": "SHIELD_DAMAGE_TAKEN_MULT",
 					"magnitude": 10
+				},
+				{
+					"effect": "ARMOR_PERCENT",
+					"magnitude": -10
 				}
 			],
 			"tags": [
