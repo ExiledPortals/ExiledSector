@@ -8,6 +8,7 @@ import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.TemplateFilter;
 import exiledsector.ui.util.BorderedPanel;
 import exiledsector.ui.util.GLDraw;
+import exiledsector.ui.util.HoloTransition;
 import org.lazywizard.lazylib.ui.LazyFont;
 
 import java.awt.Color;
@@ -40,6 +41,7 @@ final class SkillTreeTemplateListOverlay {
     private static final Color CONFIRM_COLOR = SkillTreePanelStyle.NEGATIVE_STAT_COLOR;
 
     private final BorderedPanel panel = new BorderedPanel(SkillTreeTemplateListOverlay.class);
+    private final HoloTransition transition = new HoloTransition();
     private final SkillTreePanelStyle style;
     private final Map<HullSize, SkillTreeUiButton> chips = new EnumMap<>(HullSize.class);
     private final SkillTreeUiButton clear = new SkillTreeUiButton(Translation.text("ui.template.list.clear"));
@@ -72,6 +74,7 @@ final class SkillTreeTemplateListOverlay {
         this.state = new TemplateListState(templates, rootNodeId, currentHullSize);
         this.assignedId = assignedId;
         this.open = true;
+        transition.open();
         deleteConfirmation.disarm();
         for (RowSlot slot : slots) {
             slot.unbind();
@@ -89,6 +92,7 @@ final class SkillTreeTemplateListOverlay {
 
     void close() {
         open = false;
+        transition.close();
         box = ScreenRect.NONE;
         listArea = ScreenRect.NONE;
         deleteConfirmation.disarm();
@@ -114,6 +118,7 @@ final class SkillTreeTemplateListOverlay {
     }
 
     void advance(float amount) {
+        transition.advance(amount);
         deleteConfirmation.advance(amount);
     }
 
@@ -147,16 +152,36 @@ final class SkillTreeTemplateListOverlay {
     }
 
     void render(PositionAPI position, float mouseX, float mouseY, float alphaMult) {
-        if (!open) {
+        if (!transition.isVisible()) {
             return;
         }
-        LazyFont font = SkillTreePanelStyle.font();
-        GLDraw.fillQuad(position.getX(), position.getY(), position.getWidth(), position.getHeight(), Color.BLACK, BACKDROP_ALPHA * alphaMult);
+        GLDraw.fillQuad(position.getX(), position.getY(), position.getWidth(), position.getHeight(), Color.BLACK,
+                BACKDROP_ALPHA * transition.backdropAlpha() * alphaMult);
         float width = Math.min(MAX_WIDTH, position.getWidth() - SIDE_CLEARANCE * 2f);
         float height = Math.min(MAX_HEIGHT, position.getHeight() - VERTICAL_CLEARANCE * 2f);
         float left = position.getX() + (position.getWidth() - width) / 2f;
         float bottom = position.getY() + (position.getHeight() - height) / 2f;
-        box = new ScreenRect(left, bottom, width, height);
+        if (open) {
+            box = new ScreenRect(left, bottom, width, height);
+        }
+        Color accent = style.getAccentColor();
+        transition.drawProjection(left, bottom, width, height, accent, alphaMult);
+        if (transition.contentAlpha() <= 0f) {
+            return;
+        }
+        boolean clipped = transition.beginReveal(left, bottom, width, height);
+        try {
+            renderContent(left, bottom, width, height, mouseX, mouseY, alphaMult);
+        } finally {
+            if (clipped) {
+                HoloTransition.endReveal();
+            }
+        }
+        transition.drawRevealLine(left, bottom, width, height, accent, alphaMult);
+    }
+
+    private void renderContent(float left, float bottom, float width, float height, float mouseX, float mouseY, float alphaMult) {
+        LazyFont font = SkillTreePanelStyle.font();
         panel.draw(left, bottom, width, height, alphaMult);
 
         float top = bottom + height - PADDING;

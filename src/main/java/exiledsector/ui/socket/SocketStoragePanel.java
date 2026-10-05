@@ -19,8 +19,10 @@ import exiledsector.socketables.Socketable;
 import exiledsector.socketables.SocketableDefinition;
 import exiledsector.socketables.SocketableRarity;
 import exiledsector.socketables.SocketableStore;
+import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.util.BorderedPanel;
 import exiledsector.ui.util.GLDraw;
+import exiledsector.ui.util.HoloTransition;
 import exiledsector.ui.util.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
 import org.lwjgl.input.Keyboard;
@@ -59,11 +61,8 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     private static final float CONFIRM_HEIGHT = 130f;
     private static final float SEARCH_DELAY_SECONDS = 0.25f;
     private static final float INSTALLED_ICON_ALPHA = 0.35f;
-    private static final String FAVOURITE_ICON = "graphics/icons/socketables/favourite.png";
-    private static final float FAVOURITE_ICON_WIDTH = 11f;
-    private static final float FAVOURITE_ICON_HEIGHT = 13f;
-    private static final float FAVOURITE_ICON_SCALE = 2f;
-    private static final float FAVOURITE_ICON_MARGIN = 6f;
+    private static final float FAVOURITE_GLOW_WIDTH = 14f;
+    private static final float FAVOURITE_GLOW_ALPHA = 0.6f;
     private static final Color CELL_BACKGROUND = new Color(0, 0, 0, 200);
     private static final SpriteCache ICONS = new SpriteCache(SocketStoragePanel.class);
 
@@ -93,6 +92,8 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     private final Listener listener;
     private final SocketStorageFilter filter = SocketStorageFilter.SESSION;
     private final BorderedPanel frame = new BorderedPanel(SocketStoragePanel.class);
+    private final HoloTransition transition = new HoloTransition();
+    private boolean closing;
 
     private Function<Socketable, String> installedIn;
     private CustomPanelAPI root;
@@ -132,6 +133,8 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         host.addComponent(panel.root).inTL(left, top);
         panel.movedFromCargo = absorbPlayerCargo();
         I18n.forGameText(panel::build);
+        panel.transition.open();
+        panel.applyContentOpacity(0f);
         return panel;
     }
 
@@ -141,16 +144,29 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     }
 
     public void close() {
-        if (root != null) {
-            hideHoverTooltip();
-            host.removeComponent(root);
-            root = null;
-            listener.closed();
+        if (root == null || closing) {
+            return;
+        }
+        closing = true;
+        hideHoverTooltip();
+        transition.close();
+        listener.closed();
+    }
+
+    private void applyContentOpacity(float opacity) {
+        for (UIComponentAPI component : new UIComponentAPI[]{controls, grid == null ? null : gridComponent(), notice, summary, confirm, confirmBlocker}) {
+            if (component != null) {
+                component.setOpacity(opacity);
+            }
         }
     }
 
+    private UIComponentAPI gridComponent() {
+        return grid.getExternalScroller() != null ? grid.getExternalScroller() : grid;
+    }
+
     public boolean contains(float x, float y) {
-        return position != null && root != null && x >= position.getX() && x <= position.getX() + position.getWidth()
+        return position != null && root != null && !closing && x >= position.getX() && x <= position.getX() + position.getWidth()
                 && y >= position.getY() && y <= position.getY() + position.getHeight();
     }
 
@@ -182,13 +198,22 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
 
     @Override
     public void renderBelow(float alphaMult) {
-        if (position != null) {
-            frame.draw(position.getX(), position.getY(), position.getWidth(), position.getHeight(), alphaMult);
+        if (position == null) {
+            return;
+        }
+        transition.drawProjection(position.getX(), position.getY(), position.getWidth(), position.getHeight(),
+                SkillTreePanelStyle.GLOW_COLOR, alphaMult);
+        float content = transition.contentAlpha();
+        if (content > 0f) {
+            frame.draw(position.getX(), position.getY(), position.getWidth(), position.getHeight(), content * alphaMult);
         }
     }
 
     @Override
     public void processInput(List<InputEventAPI> events) {
+        if (closing) {
+            return;
+        }
         for (InputEventAPI event : events) {
             if (event.isMouseScrollEvent() && contains(event.getX(), event.getY())) {
                 queued.add(this::hideHoverTooltip);
@@ -202,6 +227,17 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
 
     @Override
     public void advance(float amount) {
+        if (transition.isAnimating()) {
+            transition.advance(amount);
+            applyContentOpacity(transition.contentAlpha());
+        }
+        if (closing) {
+            if (transition.isFullyClosed() && root != null) {
+                host.removeComponent(root);
+                root = null;
+            }
+            return;
+        }
         if (!queued.isEmpty()) {
             List<Runnable> actions = List.copyOf(queued);
             queued.clear();
@@ -499,7 +535,12 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
             GLDraw.fillQuad(position.getX(), position.getY(), position.getWidth(), position.getHeight(), CELL_BACKGROUND, alphaMult);
             boolean chosen = row.socketable() == owner.selected;
             Color border = chosen ? Misc.getBrightPlayerColor() : row.rarity().color();
-            float borderAlpha = chosen || hovered ? 1f : 0.55f;
+            boolean favourite = row.socketable().isFavourite();
+            if (favourite) {
+                GLDraw.innerGlow(position.getX(), position.getY(), position.getWidth(), position.getHeight(), FAVOURITE_GLOW_WIDTH,
+                        row.rarity().color(), FAVOURITE_GLOW_ALPHA * alphaMult);
+            }
+            float borderAlpha = chosen || hovered || favourite ? 1f : 0.55f;
             GLDraw.strokeQuad(position.getX(), position.getY(), position.getWidth(), position.getHeight(), border, chosen ? 3f : 1.5f,
                     borderAlpha * alphaMult);
         }
@@ -513,12 +554,6 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
             float iconAlpha = row.installed() ? INSTALLED_ICON_ALPHA : 1f;
             SpriteDraw.drawAtCenter(ICONS, row.socketable().iconPath(), position.getCenterX(), position.getCenterY(), size, size,
                     Color.WHITE, iconAlpha * alphaMult);
-            if (row.socketable().isFavourite()) {
-                float width = FAVOURITE_ICON_WIDTH * FAVOURITE_ICON_SCALE;
-                float height = FAVOURITE_ICON_HEIGHT * FAVOURITE_ICON_SCALE;
-                SpriteDraw.drawAtCenter(ICONS, FAVOURITE_ICON, position.getX() + position.getWidth() - FAVOURITE_ICON_MARGIN - width / 2f,
-                        position.getY() + position.getHeight() - FAVOURITE_ICON_MARGIN - height / 2f, width, height, Color.WHITE, alphaMult);
-            }
         }
 
         @Override
