@@ -92,6 +92,7 @@ public final class SkillTypeLoader {
                 .temporaryAfterDeploymentSeconds(temporaryAfterDeploymentSeconds)
                 .requiredHullSizes(requiredHullSizes)
                 .descriptionOverride(json.optString("description", null))
+                .flavourOverride(json.optString("flavour", null))
                 .todo(json.optString("todo", null))
                 .optionalOptionIds(optionalOptionIds)
                 .exclusiveHullModIds(exclusiveHullModIds)

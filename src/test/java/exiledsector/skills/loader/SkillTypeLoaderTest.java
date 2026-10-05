@@ -124,6 +124,26 @@ class SkillTypeLoaderTest {
     }
 
     @Test
+    void parsesFlavourTextAndTreatsBlankAsNone() throws Exception {
+        JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
+                + "\"id\": \"hull\","
+                + "\"name\": \"Hull\","
+                + "\"icon\": \"a.png\","
+                + "\"flavour\": \"Steel remembers.\""
+                + "}, {"
+                + "\"id\": \"armor\","
+                + "\"name\": \"Armor\","
+                + "\"icon\": \"b.png\","
+                + "\"flavour\": \"  \""
+                + "} ] }");
+
+        Map<String, SkillType> types = SkillTypeLoader.parseSkillTypes(root);
+
+        assertEquals("Steel remembers.", types.get("hull").getFlavourText());
+        assertNull(types.get("armor").getFlavourText());
+    }
+
+    @Test
     void missingOptionalOptionsFieldMeansNotOptional() throws Exception {
         JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
                 + "\"id\": \"hull\","

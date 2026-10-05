@@ -2400,6 +2400,9 @@ function refreshInspector(){
     if (!t.effects) t.effects = [];
     if (!t.hullSizeEffects) t.hullSizeEffects = [];
     statsHtml =
+      '<div class="field"><label>Flavour text (optional, italic line under the title, shared by type "' + t.id + '")</label>' +
+        '<textarea id="inspFlavour" rows="2" style="width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12.5px;padding:7px 9px;resize:vertical;">' + escapeHtml(t.flavour||'') + '</textarea>' +
+      '</div>' +
       '<div class="field"><label>Description override (optional, shared by type "' + t.id + '")</label>' +
         '<textarea id="inspDescription" rows="3" style="width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12.5px;padding:7px 9px;resize:vertical;">' + escapeHtml(t.description||'') + '</textarea>' +
       '</div>' +
@@ -2545,6 +2548,13 @@ function refreshInspector(){
     });
   });
   if (t) {
+    var inspFlavourInput = document.getElementById('inspFlavour');
+    if (inspFlavourInput) {
+      inspFlavourInput.addEventListener('change', function(){
+        t.flavour = inspFlavourInput.value;
+        saveLocal(); refreshInspector();
+      });
+    }
     var inspDescInput = document.getElementById('inspDescription');
     if (inspDescInput) {
       inspDescInput.addEventListener('change', function(){
@@ -4271,7 +4281,7 @@ function openSocketableNamesModal(){
 
 function openTypeModal(existingType, onSave, onClose){
   var isNew = !existingType;
-  var t = existingType ? deepCopy(existingType) : { id: '', name: '', icon: '', tier: 'NOTABLE', vanillaHullMod: '', description: '', todo: '', tags: [], optionalOptions: [], exclusiveHullMods: [], exclusiveSkillTypes: [], unlockConditions: [] };
+  var t = existingType ? deepCopy(existingType) : { id: '', name: '', icon: '', tier: 'NOTABLE', vanillaHullMod: '', flavour: '', description: '', todo: '', tags: [], optionalOptions: [], exclusiveHullMods: [], exclusiveSkillTypes: [], unlockConditions: [] };
   var effectsDraft = deepCopy(t.effects || []);
   var hullSizeEffectsDraft = deepCopy(t.hullSizeEffects || []);
   var unlockConditionsDraft = deepCopy(t.unlockConditions || []);
@@ -4293,6 +4303,7 @@ function openTypeModal(existingType, onSave, onClose){
     if (optSelect) {
       t.optionalOptions = Array.from(optSelect.selectedOptions).map(function(o){ return o.value; }).filter(function(v){ return v; });
     }
+    t.flavour = document.getElementById('tFlavour').value;
     t.description = document.getElementById('tDescription').value;
     t.todo = document.getElementById('tTodo').value;
     itemCostDraft.itemId = document.getElementById('tItemCostId').value.trim();
@@ -4339,6 +4350,7 @@ function openTypeModal(existingType, onSave, onClose){
       '<hr class="sep">' +
       '<div class="field"><label>Optional slot options</label>' + renderOptionalOptionsSelect(t.optionalOptions||[], t.id) + '</div>' +
       '<div class="field"><label>Edit each option\u0027s type</label><div class="prereqList">' + renderOptionEditRows(t.optionalOptions||[]) + '</div></div>' +
+      '<div class="field"><label>Flavour text (optional, italic line under the title)</label><textarea id="tFlavour" rows="2" style="width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12.5px;padding:7px 9px;resize:vertical;">' + escapeHtml(t.flavour||'') + '</textarea></div>' +
       '<div class="field"><label>Description override (optional)</label><textarea id="tDescription" rows="4" style="width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12.5px;padding:7px 9px;resize:vertical;">' + escapeHtml(t.description||'') + '</textarea></div>' +
       '<div class="field"><label>Todo (optional)</label><input id="tTodo" value="' + escapeHtml(t.todo||'') + '"></div>' +
       '<div class="modalBtns">' +
@@ -4441,6 +4453,7 @@ function openTypeModal(existingType, onSave, onClose){
         phantomHullMods: t.phantomHullMods || [],
         exclusiveSkillTypes: t.exclusiveSkillTypes || [],
         optionalOptions: t.optionalOptions || [],
+        flavour: (t.flavour||'').trim(),
         description: (t.description||'').trim(),
         todo: (t.todo||'').trim(),
         tags: tagsDraft
@@ -4499,6 +4512,7 @@ function serializeType(t){
   if (t.phantomHullMods && t.phantomHullMods.length) out.phantomHullMods = t.phantomHullMods;
   if (t.exclusiveSkillTypes && t.exclusiveSkillTypes.length) out.exclusiveSkillTypes = t.exclusiveSkillTypes;
   if (t.optionalOptions && t.optionalOptions.length) out.optionalOptions = t.optionalOptions;
+  if (t.flavour) out.flavour = t.flavour;
   if (t.description) out.description = t.description;
   if (t.todo) out.todo = t.todo;
   if (t.tags && t.tags.length) out.tags = t.tags;

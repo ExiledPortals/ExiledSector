@@ -43,6 +43,10 @@ class CatalogueLintTest {
             if (!description.isEmpty()) {
                 sources.put("skillType." + id + ".description", description);
             }
+            String flavour = type.optString("flavour", "");
+            if (!flavour.isEmpty()) {
+                sources.put("skillType." + id + ".flavour", flavour);
+            }
         }
         String socketableRows = Files.readString(root.resolve(SOCKETABLES_FILE), StandardCharsets.UTF_8).replace("\r\n", "\n");
         JSONArray socketables = CDL.toJSONArray(socketableRows);

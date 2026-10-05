@@ -11,12 +11,16 @@ import exiledsector.ui.util.FallbackSupport;
 import exiledsector.ui.util.GLDraw;
 import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.ui.LazyFont;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
 
 import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.FloatBuffer;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +32,8 @@ public final class SkillTreePanelStyle {
     public static final float TOOLTIP_BODY_FONT_SIZE = 20f;
     public static final Color TOOLTIP_TITLE_COLOR = Color.WHITE;
     public static final Color TOOLTIP_BODY_COLOR = new Color(230, 230, 230);
+    public static final float TOOLTIP_FLAVOUR_FONT_SIZE = 17f;
+    public static final Color TOOLTIP_FLAVOUR_COLOR = new Color(150, 150, 150);
     public static final float TOOLTIP_MAX_TEXT_WIDTH = 480f;
     public static final float NODE_TOOLTIP_MAX_TEXT_WIDTH = TOOLTIP_MAX_TEXT_WIDTH * 1.2f;
     public static final float FONT_LINE_HEIGHT_FACTOR = 1f;
@@ -56,6 +62,9 @@ public final class SkillTreePanelStyle {
     private static final float TOOLTIP_TITLE_BOLD_OFFSET = 1f;
     private static final float TOOLTIP_TABLE_GAP = 14f;
     private static final float TOOLTIP_SCREEN_MARGIN = 4f;
+    private static final float TOOLTIP_FLAVOUR_GAP = 8f;
+    private static final float ITALIC_SLANT = 0.2f;
+    private static final FloatBuffer ITALIC_SHEAR = italicShear(ITALIC_SLANT);
 
     static final String DEFAULT_FONT_PATH = "graphics/fonts/orbitron20aabold.fnt";
     private static LazyFont font;
@@ -113,7 +122,17 @@ public final class SkillTreePanelStyle {
 
     public void drawTitleBodyTooltip(TooltipText title, TooltipText body, List<SkillTreeTooltipTable> tables, TooltipText footer,
                                      float mouseX, float mouseY, float alphaMult) {
+        drawTitleBodyTooltip(title, null, body, tables, footer, mouseX, mouseY, alphaMult);
+    }
+
+    public void drawTitleBodyTooltip(TooltipText title, ItalicText flavour, TooltipText body, List<SkillTreeTooltipTable> tables,
+                                     TooltipText footer, float mouseX, float mouseY, float alphaMult) {
         float contentWidth = Math.max(title.width, body.width);
+        float flavourHeight = 0f;
+        if (flavour != null) {
+            contentWidth = Math.max(contentWidth, flavour.width);
+            flavourHeight = flavour.height + TOOLTIP_FLAVOUR_GAP;
+        }
         float tablesHeight = 0f;
         for (SkillTreeTooltipTable table : tables) {
             contentWidth = Math.max(contentWidth, table.width());
@@ -125,7 +144,7 @@ public final class SkillTreePanelStyle {
             footerHeight = TOOLTIP_TABLE_GAP + footer.height;
         }
         float boxWidth = contentWidth + TOOLTIP_PADDING * 2f + TOOLTIP_WIDTH_SAFETY_MARGIN;
-        float boxHeight = title.height + TOOLTIP_TITLE_BODY_GAP + body.height + tablesHeight + footerHeight + TOOLTIP_PADDING * 2f;
+        float boxHeight = title.height + TOOLTIP_TITLE_BODY_GAP + flavourHeight + body.height + tablesHeight + footerHeight + TOOLTIP_PADDING * 2f;
         float boxX = tooltipLeft(mouseX, boxWidth, Global.getSettings().getScreenWidth());
         float boxY = Math.max(TOOLTIP_SCREEN_MARGIN, mouseY - boxHeight - TOOLTIP_CURSOR_OFFSET);
 
@@ -133,11 +152,15 @@ public final class SkillTreePanelStyle {
         drawTooltipBackground(boxX, boxY, boxWidth, boxHeight, alphaMult, accent);
 
         float titleY = boxY + boxHeight - TOOLTIP_PADDING;
-        float bodyY = titleY - title.height - TOOLTIP_TITLE_BODY_GAP;
+        float flavourY = titleY - title.height - TOOLTIP_TITLE_BODY_GAP;
+        float bodyY = flavourY - flavourHeight;
         float titleX = boxX + (boxWidth - title.width) / 2f;
         title.drawable.draw(titleX, titleY);
         if (fakeBold()) {
             title.drawable.draw(titleX + TOOLTIP_TITLE_BOLD_OFFSET, titleY);
+        }
+        if (flavour != null) {
+            flavour.draw(boxX + TOOLTIP_PADDING, flavourY);
         }
         body.drawable.draw(boxX + TOOLTIP_PADDING, bodyY);
 
@@ -340,6 +363,51 @@ public final class SkillTreePanelStyle {
             this.drawable = drawable;
             this.width = width;
             this.height = height;
+        }
+    }
+
+    public static ItalicText buildItalicText(LazyFont font, String rawText, float fontSize, float maxWidth, float maxHeight, Color color) {
+        float slantWidth = fontSize * FONT_LINE_HEIGHT_FACTOR * ITALIC_SLANT;
+        String wrapped = wrap(font, StyledText.of(rawText), fontSize, maxWidth - slantWidth, maxHeight).plain();
+        List<LazyFont.DrawableString> lines = new ArrayList<>();
+        float width = 0f;
+        for (String line : wrapped.split("\n", -1)) {
+            width = Math.max(width, font.calcWidth(line, fontSize));
+            lines.add(buildSimpleText(font, line, fontSize, color));
+        }
+        float lineHeight = fontSize * FONT_LINE_HEIGHT_FACTOR;
+        return new ItalicText(lines, lineHeight, width + slantWidth, lines.size() * lineHeight);
+    }
+
+    private static FloatBuffer italicShear(float slant) {
+        FloatBuffer matrix = BufferUtils.createFloatBuffer(16);
+        matrix.put(new float[]{1f, 0f, 0f, 0f, slant, 1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f});
+        matrix.flip();
+        return matrix;
+    }
+
+    public static final class ItalicText {
+        private final List<LazyFont.DrawableString> lines;
+        private final float lineHeight;
+        public final float width;
+        public final float height;
+
+        ItalicText(List<LazyFont.DrawableString> lines, float lineHeight, float width, float height) {
+            this.lines = lines;
+            this.lineHeight = lineHeight;
+            this.width = width;
+            this.height = height;
+        }
+
+        public void draw(float x, float topY) {
+            for (int i = 0; i < lines.size(); i++) {
+                GL11.glPushMatrix();
+                GL11.glTranslatef(x, topY - (i + 1) * lineHeight, 0f);
+                ITALIC_SHEAR.rewind();
+                GL11.glMultMatrix(ITALIC_SHEAR);
+                lines.get(i).draw(0f, lineHeight);
+                GL11.glPopMatrix();
+            }
         }
     }
 }

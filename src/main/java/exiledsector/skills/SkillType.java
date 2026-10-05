@@ -25,6 +25,7 @@ public class SkillType {
     private final Float temporaryAfterDeploymentSeconds;
     private final Set<HullSize> requiredHullSizes;
     private final String descriptionOverride;
+    private final String flavourOverride;
     private final String todo;
     private final List<String> optionalOptionIds;
     private final List<String> exclusiveHullModIds;
@@ -47,6 +48,7 @@ public class SkillType {
         this.requiredHullSizes = builder.requiredHullSizes == null || builder.requiredHullSizes.isEmpty()
                 ? Collections.emptySet() : Collections.unmodifiableSet(EnumSet.copyOf(builder.requiredHullSizes));
         this.descriptionOverride = builder.descriptionOverride;
+        this.flavourOverride = builder.flavourOverride;
         this.todo = builder.todo;
         this.optionalOptionIds = builder.optionalOptionIds == null ? Collections.emptyList() : builder.optionalOptionIds;
         this.exclusiveHullModIds = builder.exclusiveHullModIds == null ? Collections.emptyList() : builder.exclusiveHullModIds;
@@ -69,6 +71,7 @@ public class SkillType {
         private Float temporaryAfterDeploymentSeconds;
         private Collection<HullSize> requiredHullSizes;
         private String descriptionOverride;
+        private String flavourOverride;
         private String todo;
         private List<String> optionalOptionIds = Collections.emptyList();
         private List<String> exclusiveHullModIds = Collections.emptyList();
@@ -116,6 +119,11 @@ public class SkillType {
 
         public Builder descriptionOverride(String descriptionOverride) {
             this.descriptionOverride = descriptionOverride;
+            return this;
+        }
+
+        public Builder flavourOverride(String flavourOverride) {
+            this.flavourOverride = flavourOverride;
             return this;
         }
 
@@ -175,6 +183,10 @@ public class SkillType {
         return Translation.dataStyled("skillType." + id + ".description", descriptionOverride);
     }
 
+    public String getFlavourText() {
+        return flavourOverride == null || flavourOverride.isBlank() ? null : Translation.data("skillType." + id + ".flavour", flavourOverride);
+    }
+
     public String getIconPath() {
         return iconPath;
     }
@@ -209,6 +221,10 @@ public class SkillType {
 
     public String getDescriptionOverride() {
         return descriptionOverride;
+    }
+
+    public String getFlavourOverride() {
+        return flavourOverride;
     }
 
     public String getTodo() {
