@@ -13,6 +13,7 @@ import exiledsector.skills.unlock.HiddenNodeDisplayConfig;
 import exiledsector.skills.unlock.UnlockConditionOverrides;
 import exiledsector.ui.inspect.NpcInspectConfig;
 import exiledsector.ui.refit.RefitButtonConfig;
+import exiledsector.ui.socket.SocketStorageConfig;
 import lunalib.lunaSettings.LunaSettings.SettingsCreator;
 
 import static exiledsector.ExiledSectorModPlugin.MOD_ID;
@@ -53,6 +54,11 @@ public final class ExiledSectorSettings {
         SettingsCreator.addBoolean(MOD_ID, RefitButtonConfig.FIELD_ID,
                 Translation.text("settings.refit.buttonUnderHullMods.name"), Translation.text("settings.refit.buttonUnderHullMods.tooltip"),
                 RefitButtonConfig.DEFAULT, MAIN_TAB);
+
+        SettingsCreator.addHeader(MOD_ID, "exiledSector_socketStorageHeader", Translation.text("settings.socketStorage.header"), MAIN_TAB);
+        SettingsCreator.addKeybind(MOD_ID, SocketStorageConfig.FAVOURITE_KEY_FIELD_ID,
+                Translation.text("settings.socketStorage.favouriteKey.name"), Translation.text("settings.socketStorage.favouriteKey.tooltip"),
+                SocketStorageConfig.DEFAULT_FAVOURITE_KEY, MAIN_TAB);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_opCostHeader", Translation.text("settings.opCost.header"), MAIN_TAB);
         SettingsCreator.addText(MOD_ID, "exiledSector_opCostAbout", Translation.text("settings.opCost.about"), MAIN_TAB);

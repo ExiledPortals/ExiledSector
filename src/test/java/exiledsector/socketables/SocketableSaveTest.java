@@ -48,6 +48,22 @@ class SocketableSaveTest {
     }
 
     @Test
+    void aFavouriteSurvivesASaveAndOlderSavesLoadAsNotFavourite() throws Exception {
+        SocketableDefinition military = SocketableFixtures.registerMilitary();
+        SocketableStore store = new SocketableStore();
+        store.add(military, 1L).toggleFavourite();
+        store.add(military, 2L);
+
+        String xml = xstream().toXML(store);
+        SocketableStore loaded = (SocketableStore) xstream().fromXML(xml);
+        SocketableStore older = (SocketableStore) xstream().fromXML(xml.replaceAll("\\s*<favourite>[^<]*</favourite>", ""));
+
+        assertTrue(loaded.owned().get(0).isFavourite());
+        assertFalse(loaded.owned().get(1).isFavourite());
+        assertFalse(older.owned().get(0).isFavourite());
+    }
+
+    @Test
     void everyConcreteKindHasASaveAlias() {
         for (SocketableKind kind : SocketableKind.values()) {
             Class<?> type = kind.create("a", "d", 1L, List.of()).getClass();

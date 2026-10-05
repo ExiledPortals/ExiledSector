@@ -59,6 +59,11 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     private static final float CONFIRM_HEIGHT = 130f;
     private static final float SEARCH_DELAY_SECONDS = 0.25f;
     private static final float INSTALLED_ICON_ALPHA = 0.35f;
+    private static final String FAVOURITE_ICON = "graphics/icons/socketables/favourite.png";
+    private static final float FAVOURITE_ICON_WIDTH = 11f;
+    private static final float FAVOURITE_ICON_HEIGHT = 13f;
+    private static final float FAVOURITE_ICON_SCALE = 2f;
+    private static final float FAVOURITE_ICON_MARGIN = 6f;
     private static final Color CELL_BACKGROUND = new Color(0, 0, 0, 200);
     private static final SpriteCache ICONS = new SpriteCache(SocketStoragePanel.class);
 
@@ -428,10 +433,25 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     }
 
     private static List<StyledText> cellFooter(SocketStorageRow row) {
+        String favouriteKey = row.socketable().isFavourite() ? "ui.socketStorage.cell.unfavourite" : "ui.socketStorage.cell.favourite";
+        StyledText favourite = Translation.msg(favouriteKey).arg("key", Keyboard.getKeyName(SocketStorageConfig.favouriteKey())).styled();
         if (row.installed()) {
-            return List.of(Translation.msg("ui.socketStorage.cell.installed").arg("ship", row.installedIn()).styled());
+            return List.of(Translation.msg("ui.socketStorage.cell.installed").arg("ship", row.installedIn()).styled(), favourite);
         }
-        return List.of(Translation.styled("ui.socketStorage.cell.free"), Translation.styled("ui.socketStorage.cell.destroy"));
+        return List.of(Translation.styled("ui.socketStorage.cell.free"), Translation.styled("ui.socketStorage.cell.destroy"), favourite);
+    }
+
+    private boolean isSearchFocused() {
+        return searchField != null && searchField.hasFocus();
+    }
+
+    private void cellFavouriteToggled(SocketStorageRow row, PositionAPI cell) {
+        row.socketable().toggleFavourite();
+        queued.add(() -> {
+            if (hoverTooltip.isShowing(row)) {
+                showHoverTooltip(row, cell);
+            }
+        });
     }
 
     private void cellHovered(SocketStorageRow row, PositionAPI cell) {
@@ -493,6 +513,12 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
             float iconAlpha = row.installed() ? INSTALLED_ICON_ALPHA : 1f;
             SpriteDraw.drawAtCenter(ICONS, row.socketable().iconPath(), position.getCenterX(), position.getCenterY(), size, size,
                     Color.WHITE, iconAlpha * alphaMult);
+            if (row.socketable().isFavourite()) {
+                float width = FAVOURITE_ICON_WIDTH * FAVOURITE_ICON_SCALE;
+                float height = FAVOURITE_ICON_HEIGHT * FAVOURITE_ICON_SCALE;
+                SpriteDraw.drawAtCenter(ICONS, FAVOURITE_ICON, position.getX() + position.getWidth() - FAVOURITE_ICON_MARGIN - width / 2f,
+                        position.getY() + position.getHeight() - FAVOURITE_ICON_MARGIN - height / 2f, width, height, Color.WHITE, alphaMult);
+            }
         }
 
         @Override
@@ -501,6 +527,9 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
                 return;
             }
             for (InputEventAPI event : events) {
+                if (event.isMouseScrollEvent()) {
+                    hovered = false;
+                }
                 if (event.isConsumed()) {
                     continue;
                 }
@@ -519,6 +548,10 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
                     event.consume();
                 } else if (inside && event.isRMBDownEvent()) {
                     owner.cellRightClicked(row);
+                    event.consume();
+                } else if (hovered && !owner.isSearchFocused() && event.isKeyDownEvent()
+                        && event.getEventValue() == SocketStorageConfig.favouriteKey()) {
+                    owner.cellFavouriteToggled(row, position);
                     event.consume();
                 }
             }
