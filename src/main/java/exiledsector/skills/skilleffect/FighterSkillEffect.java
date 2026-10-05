@@ -1,8 +1,10 @@
 package exiledsector.skills.skilleffect;
 
+import com.fs.starfarer.api.combat.ArmorGridAPI;
 import com.fs.starfarer.api.combat.FighterWingAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.WingRole;
 import exiledsector.i18n.StyledText;
@@ -81,7 +83,7 @@ public enum FighterSkillEffect implements SkillEffect {
     FIGHTER_ARMOR_PERCENT(RoleStat.ARMOR),
     FIGHTER_SHIELD_DAMAGE_TAKEN_PERCENT(RoleStat.SHIELD_DAMAGE_TAKEN),
     FIGHTER_RATE_OF_FIRE_PERCENT(RoleStat.RATE_OF_FIRE),
-    FIGHTER_ENGAGEMENT_RANGE_PERCENT(RoleStat.ENGAGEMENT_RANGE),
+    FIGHTER_ENGAGEMENT_RANGE_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getFighterWingRange), "stat.fighterEngagementRange", false),
     FIGHTER_ENGAGEMENT_RANGE_MULT(MULT, bonus(MutableShipStatsAPI::getFighterWingRange), "stat.fighterEngagementRange", false),
     FIGHTER_WEAPON_RANGE_FLAT(RoleStat.WEAPON_RANGE),
     FIGHTER_ROLE_DAMAGE_PERCENT(WingRole.FIGHTER, RoleStat.WEAPON_DAMAGE),
@@ -89,28 +91,24 @@ public enum FighterSkillEffect implements SkillEffect {
     FIGHTER_ROLE_ARMOR_PERCENT(WingRole.FIGHTER, RoleStat.ARMOR),
     FIGHTER_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT(WingRole.FIGHTER, RoleStat.SHIELD_DAMAGE_TAKEN),
     FIGHTER_ROLE_RATE_OF_FIRE_PERCENT(WingRole.FIGHTER, RoleStat.RATE_OF_FIRE),
-    FIGHTER_ROLE_ENGAGEMENT_RANGE_PERCENT(WingRole.FIGHTER, RoleStat.ENGAGEMENT_RANGE),
 
     INTERCEPTOR_ROLE_DAMAGE_PERCENT(WingRole.INTERCEPTOR, RoleStat.WEAPON_DAMAGE),
     INTERCEPTOR_ROLE_TOP_SPEED_PERCENT(WingRole.INTERCEPTOR, RoleStat.TOP_SPEED),
     INTERCEPTOR_ROLE_ARMOR_PERCENT(WingRole.INTERCEPTOR, RoleStat.ARMOR),
     INTERCEPTOR_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT(WingRole.INTERCEPTOR, RoleStat.SHIELD_DAMAGE_TAKEN),
     INTERCEPTOR_ROLE_RATE_OF_FIRE_PERCENT(WingRole.INTERCEPTOR, RoleStat.RATE_OF_FIRE),
-    INTERCEPTOR_ROLE_ENGAGEMENT_RANGE_PERCENT(WingRole.INTERCEPTOR, RoleStat.ENGAGEMENT_RANGE),
 
     BOMBER_ROLE_DAMAGE_PERCENT(WingRole.BOMBER, RoleStat.WEAPON_DAMAGE),
     BOMBER_ROLE_TOP_SPEED_PERCENT(WingRole.BOMBER, RoleStat.TOP_SPEED),
     BOMBER_ROLE_ARMOR_PERCENT(WingRole.BOMBER, RoleStat.ARMOR),
     BOMBER_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT(WingRole.BOMBER, RoleStat.SHIELD_DAMAGE_TAKEN),
     BOMBER_ROLE_RATE_OF_FIRE_PERCENT(WingRole.BOMBER, RoleStat.RATE_OF_FIRE),
-    BOMBER_ROLE_ENGAGEMENT_RANGE_PERCENT(WingRole.BOMBER, RoleStat.ENGAGEMENT_RANGE),
 
     SUPPORT_ROLE_DAMAGE_PERCENT(WingRole.SUPPORT, RoleStat.WEAPON_DAMAGE),
     SUPPORT_ROLE_TOP_SPEED_PERCENT(WingRole.SUPPORT, RoleStat.TOP_SPEED),
     SUPPORT_ROLE_ARMOR_PERCENT(WingRole.SUPPORT, RoleStat.ARMOR),
     SUPPORT_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT(WingRole.SUPPORT, RoleStat.SHIELD_DAMAGE_TAKEN),
     SUPPORT_ROLE_RATE_OF_FIRE_PERCENT(WingRole.SUPPORT, RoleStat.RATE_OF_FIRE),
-    SUPPORT_ROLE_ENGAGEMENT_RANGE_PERCENT(WingRole.SUPPORT, RoleStat.ENGAGEMENT_RANGE),
 
     REMOVE_ALL_FIGHTER_BAYS {
         @Override
@@ -216,7 +214,7 @@ public enum FighterSkillEffect implements SkillEffect {
     @Override
     public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
         if (roleStat != null && matchesRole(fighter, role)) {
-            roleStat.stat.apply(fighter.getMutableStats(), modId, magnitude);
+            roleStat.applyTo(fighter, modId, magnitude);
         }
     }
 
@@ -235,11 +233,21 @@ public enum FighterSkillEffect implements SkillEffect {
     private enum RoleStat {
         WEAPON_DAMAGE(PERCENT, WeaponStatFamily.DAMAGE.target(WeaponScope.ALL), "weapon.stat.DAMAGE"),
         TOP_SPEED(PERCENT, stat(MutableShipStatsAPI::getMaxSpeed), "stat.topSpeed"),
-        ARMOR(PERCENT, bonus(MutableShipStatsAPI::getArmorBonus), "stat.armor"),
+        ARMOR(PERCENT, bonus(MutableShipStatsAPI::getArmorBonus), "stat.armor") {
+            @Override
+            void applyTo(ShipAPI fighter, String modId, float magnitude) {
+                StatBonus armor = fighter.getMutableStats().getArmorBonus();
+                float baseArmor = fighter.getHullSpec().getArmorRating();
+                float before = armor.computeEffective(baseArmor);
+                super.applyTo(fighter, modId, magnitude);
+                if (before > 0f) {
+                    scaleArmorCells(fighter.getArmorGrid(), armor.computeEffective(baseArmor) / before);
+                }
+            }
+        },
         SHIELD_DAMAGE_TAKEN(new SimpleStatEffect(PERCENT, stat(MutableShipStatsAPI::getShieldDamageTakenMult), "stat.damageTakenByShields", true)),
         RATE_OF_FIRE(PERCENT, all(stat(MutableShipStatsAPI::getBallisticRoFMult), stat(MutableShipStatsAPI::getEnergyRoFMult),
                 stat(MutableShipStatsAPI::getMissileRoFMult)), "weapon.stat.FIRE_RATE"),
-        ENGAGEMENT_RANGE(PERCENT, bonus(MutableShipStatsAPI::getFighterWingRange), "stat.engagementRange"),
         WEAPON_RANGE(FLAT, all(bonus(MutableShipStatsAPI::getBallisticWeaponRangeBonus), bonus(MutableShipStatsAPI::getEnergyWeaponRangeBonus)),
                 "weapon.stat.RANGE");
 
@@ -251,6 +259,22 @@ public enum FighterSkillEffect implements SkillEffect {
 
         RoleStat(SimpleStatEffect stat) {
             this.stat = stat;
+        }
+
+        void applyTo(ShipAPI fighter, String modId, float magnitude) {
+            stat.apply(fighter.getMutableStats(), modId, magnitude);
+        }
+
+        private static void scaleArmorCells(ArmorGridAPI grid, float factor) {
+            if (grid == null || factor == 1f) {
+                return;
+            }
+            float[][] cells = grid.getGrid();
+            for (int x = 0; x < cells.length; x++) {
+                for (int y = 0; y < cells[x].length; y++) {
+                    grid.setArmorValue(x, y, grid.getArmorValue(x, y) * factor);
+                }
+            }
         }
     }
 }

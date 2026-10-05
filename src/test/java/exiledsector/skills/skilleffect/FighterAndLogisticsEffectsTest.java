@@ -1,5 +1,6 @@
 package exiledsector.skills.skilleffect;
 
+import com.fs.starfarer.api.combat.ArmorGridAPI;
 import com.fs.starfarer.api.combat.FighterWingAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
@@ -18,6 +19,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyFloat;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -168,5 +172,50 @@ class FighterAndLogisticsEffectsTest {
             assertFalse(effect.appliesToNpcShips(), effect.name());
             assertFalse(effect.supportsTemporaryGating(), effect.name());
         }
+    }
+
+    private static ShipAPI armoredFighter(WingRole role, float[][] cells, StatBonus armor) {
+        ShipAPI fighter = fighter(role, true);
+        when(fighter.getMutableStats().getArmorBonus()).thenReturn(armor);
+        ShipHullSpecAPI hullSpec = mock(ShipHullSpecAPI.class);
+        when(hullSpec.getArmorRating()).thenReturn(150f);
+        when(fighter.getHullSpec()).thenReturn(hullSpec);
+        ArmorGridAPI grid = mock(ArmorGridAPI.class);
+        when(grid.getGrid()).thenReturn(cells);
+        when(grid.getArmorValue(anyInt(), anyInt())).thenAnswer(call -> cells[(int) call.getArgument(0)][(int) call.getArgument(1)]);
+        doAnswer(call -> {
+            cells[(int) call.getArgument(0)][(int) call.getArgument(1)] = call.getArgument(2);
+            return null;
+        }).when(grid).setArmorValue(anyInt(), anyInt(), anyFloat());
+        when(fighter.getArmorGrid()).thenReturn(grid);
+        return fighter;
+    }
+
+    @Test
+    void armorBonusScalesTheAlreadyBuiltArmorCellsBecauseTheGridReadsTheBonusOnlyOnce() {
+        float[][] cells = {{10f, 4f}, {0f, 10f}};
+        StatBonus armor = new StatBonus();
+        ShipAPI fighter = armoredFighter(WingRole.BOMBER, cells, armor);
+
+        FighterSkillEffect.FIGHTER_ARMOR_PERCENT.applyToFighterSpawnedByShip(fighter, mock(ShipAPI.class), "first", 20f);
+        FighterSkillEffect.BOMBER_ROLE_ARMOR_PERCENT.applyToFighterSpawnedByShip(fighter, mock(ShipAPI.class), "second", 30f);
+
+        assertEquals(50f, armor.getPercentMod(), EPSILON);
+        assertEquals(15f, cells[0][0], EPSILON);
+        assertEquals(6f, cells[0][1], EPSILON);
+        assertEquals(0f, cells[1][0], EPSILON);
+        assertEquals(15f, cells[1][1], EPSILON);
+    }
+
+    @Test
+    void armorCellsOfFightersOutsideTheRoleAreLeftAlone() {
+        float[][] cells = {{10f}};
+        StatBonus armor = new StatBonus();
+        ShipAPI fighter = armoredFighter(WingRole.INTERCEPTOR, cells, armor);
+
+        FighterSkillEffect.BOMBER_ROLE_ARMOR_PERCENT.applyToFighterSpawnedByShip(fighter, mock(ShipAPI.class), "mod_id", 30f);
+
+        assertEquals(0f, armor.getPercentMod(), EPSILON);
+        assertEquals(10f, cells[0][0], EPSILON);
     }
 }

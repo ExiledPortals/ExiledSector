@@ -153,7 +153,6 @@
     "fighter.role.INTERCEPTOR": "Interceptors",
     "fighter.role.BOMBER": "Bombers",
     "fighter.role.SUPPORT": "Support fighters",
-    "stat.engagementRange": "engagement range",
     "stat.fighterEngagementRange": "fighter engagement range",
     "stat.systemCharges": "ship system charges",
     "effect.BEAM_WEAPON_HARD_FLUX_PERCENT": "Causes {value}% of beam weapon damage dealt to shields to be hard flux.",

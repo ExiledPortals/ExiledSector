@@ -292,12 +292,6 @@ effect|BOMBER_ROLE_DAMAGE_PERCENT|12.5	0	Increases weapon damage of Bombers laun
 effect|BOMBER_ROLE_DAMAGE_PERCENT|100.0	0	Increases weapon damage of Bombers launched from this ship by <good>100%</good>.
 effect|BOMBER_ROLE_DAMAGE_PERCENT|-10.0	0	Decreases weapon damage of Bombers launched from this ship by <bad>10%</bad>.
 effect|BOMBER_ROLE_DAMAGE_PERCENT|-12.5	0	Decreases weapon damage of Bombers launched from this ship by <bad>12.5%</bad>.
-effect|BOMBER_ROLE_ENGAGEMENT_RANGE_PERCENT|1.0	0	Increases engagement range of Bombers launched from this ship by <good>1%</good>.
-effect|BOMBER_ROLE_ENGAGEMENT_RANGE_PERCENT|10.0	0	Increases engagement range of Bombers launched from this ship by <good>10%</good>.
-effect|BOMBER_ROLE_ENGAGEMENT_RANGE_PERCENT|12.5	0	Increases engagement range of Bombers launched from this ship by <good>12.5%</good>.
-effect|BOMBER_ROLE_ENGAGEMENT_RANGE_PERCENT|100.0	0	Increases engagement range of Bombers launched from this ship by <good>100%</good>.
-effect|BOMBER_ROLE_ENGAGEMENT_RANGE_PERCENT|-10.0	0	Decreases engagement range of Bombers launched from this ship by <bad>10%</bad>.
-effect|BOMBER_ROLE_ENGAGEMENT_RANGE_PERCENT|-12.5	0	Decreases engagement range of Bombers launched from this ship by <bad>12.5%</bad>.
 effect|BOMBER_ROLE_RATE_OF_FIRE_PERCENT|1.0	0	Increases weapon rate of fire of Bombers launched from this ship by <good>1%</good>.
 effect|BOMBER_ROLE_RATE_OF_FIRE_PERCENT|10.0	0	Increases weapon rate of fire of Bombers launched from this ship by <good>10%</good>.
 effect|BOMBER_ROLE_RATE_OF_FIRE_PERCENT|12.5	0	Increases weapon rate of fire of Bombers launched from this ship by <good>12.5%</good>.
@@ -712,12 +706,12 @@ effect|FIGHTER_ENGAGEMENT_RANGE_MULT|12.5	0	<good>12.5%</good> more fighter enga
 effect|FIGHTER_ENGAGEMENT_RANGE_MULT|100.0	0	<good>100%</good> more fighter engagement range.
 effect|FIGHTER_ENGAGEMENT_RANGE_MULT|-10.0	0	<bad>10%</bad> less fighter engagement range.
 effect|FIGHTER_ENGAGEMENT_RANGE_MULT|-12.5	0	<bad>12.5%</bad> less fighter engagement range.
-effect|FIGHTER_ENGAGEMENT_RANGE_PERCENT|1.0	0	Increases engagement range of fighters launched from this ship by <good>1%</good>.
-effect|FIGHTER_ENGAGEMENT_RANGE_PERCENT|10.0	0	Increases engagement range of fighters launched from this ship by <good>10%</good>.
-effect|FIGHTER_ENGAGEMENT_RANGE_PERCENT|12.5	0	Increases engagement range of fighters launched from this ship by <good>12.5%</good>.
-effect|FIGHTER_ENGAGEMENT_RANGE_PERCENT|100.0	0	Increases engagement range of fighters launched from this ship by <good>100%</good>.
-effect|FIGHTER_ENGAGEMENT_RANGE_PERCENT|-10.0	0	Decreases engagement range of fighters launched from this ship by <bad>10%</bad>.
-effect|FIGHTER_ENGAGEMENT_RANGE_PERCENT|-12.5	0	Decreases engagement range of fighters launched from this ship by <bad>12.5%</bad>.
+effect|FIGHTER_ENGAGEMENT_RANGE_PERCENT|1.0	0	Increases fighter engagement range by <good>1%</good>.
+effect|FIGHTER_ENGAGEMENT_RANGE_PERCENT|10.0	0	Increases fighter engagement range by <good>10%</good>.
+effect|FIGHTER_ENGAGEMENT_RANGE_PERCENT|12.5	0	Increases fighter engagement range by <good>12.5%</good>.
+effect|FIGHTER_ENGAGEMENT_RANGE_PERCENT|100.0	0	Increases fighter engagement range by <good>100%</good>.
+effect|FIGHTER_ENGAGEMENT_RANGE_PERCENT|-10.0	0	Decreases fighter engagement range by <bad>10%</bad>.
+effect|FIGHTER_ENGAGEMENT_RANGE_PERCENT|-12.5	0	Decreases fighter engagement range by <bad>12.5%</bad>.
 effect|FIGHTER_PD_DAMAGE_BONUS_PERCENT|1.0	0	Increases damage dealt by fighters launched from this ship to other fighters and missiles by <good>1%</good>.
 effect|FIGHTER_PD_DAMAGE_BONUS_PERCENT|10.0	0	Increases damage dealt by fighters launched from this ship to other fighters and missiles by <good>10%</good>.
 effect|FIGHTER_PD_DAMAGE_BONUS_PERCENT|12.5	0	Increases damage dealt by fighters launched from this ship to other fighters and missiles by <good>12.5%</good>.
@@ -778,12 +772,6 @@ effect|FIGHTER_ROLE_DAMAGE_PERCENT|12.5	0	Increases weapon damage of Fighters la
 effect|FIGHTER_ROLE_DAMAGE_PERCENT|100.0	0	Increases weapon damage of Fighters launched from this ship by <good>100%</good>.
 effect|FIGHTER_ROLE_DAMAGE_PERCENT|-10.0	0	Decreases weapon damage of Fighters launched from this ship by <bad>10%</bad>.
 effect|FIGHTER_ROLE_DAMAGE_PERCENT|-12.5	0	Decreases weapon damage of Fighters launched from this ship by <bad>12.5%</bad>.
-effect|FIGHTER_ROLE_ENGAGEMENT_RANGE_PERCENT|1.0	0	Increases engagement range of Fighters launched from this ship by <good>1%</good>.
-effect|FIGHTER_ROLE_ENGAGEMENT_RANGE_PERCENT|10.0	0	Increases engagement range of Fighters launched from this ship by <good>10%</good>.
-effect|FIGHTER_ROLE_ENGAGEMENT_RANGE_PERCENT|12.5	0	Increases engagement range of Fighters launched from this ship by <good>12.5%</good>.
-effect|FIGHTER_ROLE_ENGAGEMENT_RANGE_PERCENT|100.0	0	Increases engagement range of Fighters launched from this ship by <good>100%</good>.
-effect|FIGHTER_ROLE_ENGAGEMENT_RANGE_PERCENT|-10.0	0	Decreases engagement range of Fighters launched from this ship by <bad>10%</bad>.
-effect|FIGHTER_ROLE_ENGAGEMENT_RANGE_PERCENT|-12.5	0	Decreases engagement range of Fighters launched from this ship by <bad>12.5%</bad>.
 effect|FIGHTER_ROLE_RATE_OF_FIRE_PERCENT|1.0	0	Increases weapon rate of fire of Fighters launched from this ship by <good>1%</good>.
 effect|FIGHTER_ROLE_RATE_OF_FIRE_PERCENT|10.0	0	Increases weapon rate of fire of Fighters launched from this ship by <good>10%</good>.
 effect|FIGHTER_ROLE_RATE_OF_FIRE_PERCENT|12.5	0	Increases weapon rate of fire of Fighters launched from this ship by <good>12.5%</good>.
@@ -1000,12 +988,6 @@ effect|INTERCEPTOR_ROLE_DAMAGE_PERCENT|12.5	0	Increases weapon damage of Interce
 effect|INTERCEPTOR_ROLE_DAMAGE_PERCENT|100.0	0	Increases weapon damage of Interceptors launched from this ship by <good>100%</good>.
 effect|INTERCEPTOR_ROLE_DAMAGE_PERCENT|-10.0	0	Decreases weapon damage of Interceptors launched from this ship by <bad>10%</bad>.
 effect|INTERCEPTOR_ROLE_DAMAGE_PERCENT|-12.5	0	Decreases weapon damage of Interceptors launched from this ship by <bad>12.5%</bad>.
-effect|INTERCEPTOR_ROLE_ENGAGEMENT_RANGE_PERCENT|1.0	0	Increases engagement range of Interceptors launched from this ship by <good>1%</good>.
-effect|INTERCEPTOR_ROLE_ENGAGEMENT_RANGE_PERCENT|10.0	0	Increases engagement range of Interceptors launched from this ship by <good>10%</good>.
-effect|INTERCEPTOR_ROLE_ENGAGEMENT_RANGE_PERCENT|12.5	0	Increases engagement range of Interceptors launched from this ship by <good>12.5%</good>.
-effect|INTERCEPTOR_ROLE_ENGAGEMENT_RANGE_PERCENT|100.0	0	Increases engagement range of Interceptors launched from this ship by <good>100%</good>.
-effect|INTERCEPTOR_ROLE_ENGAGEMENT_RANGE_PERCENT|-10.0	0	Decreases engagement range of Interceptors launched from this ship by <bad>10%</bad>.
-effect|INTERCEPTOR_ROLE_ENGAGEMENT_RANGE_PERCENT|-12.5	0	Decreases engagement range of Interceptors launched from this ship by <bad>12.5%</bad>.
 effect|INTERCEPTOR_ROLE_RATE_OF_FIRE_PERCENT|1.0	0	Increases weapon rate of fire of Interceptors launched from this ship by <good>1%</good>.
 effect|INTERCEPTOR_ROLE_RATE_OF_FIRE_PERCENT|10.0	0	Increases weapon rate of fire of Interceptors launched from this ship by <good>10%</good>.
 effect|INTERCEPTOR_ROLE_RATE_OF_FIRE_PERCENT|12.5	0	Increases weapon rate of fire of Interceptors launched from this ship by <good>12.5%</good>.
@@ -1600,12 +1582,6 @@ effect|SUPPORT_ROLE_DAMAGE_PERCENT|12.5	0	Increases weapon damage of Support fig
 effect|SUPPORT_ROLE_DAMAGE_PERCENT|100.0	0	Increases weapon damage of Support fighters launched from this ship by <good>100%</good>.
 effect|SUPPORT_ROLE_DAMAGE_PERCENT|-10.0	0	Decreases weapon damage of Support fighters launched from this ship by <bad>10%</bad>.
 effect|SUPPORT_ROLE_DAMAGE_PERCENT|-12.5	0	Decreases weapon damage of Support fighters launched from this ship by <bad>12.5%</bad>.
-effect|SUPPORT_ROLE_ENGAGEMENT_RANGE_PERCENT|1.0	0	Increases engagement range of Support fighters launched from this ship by <good>1%</good>.
-effect|SUPPORT_ROLE_ENGAGEMENT_RANGE_PERCENT|10.0	0	Increases engagement range of Support fighters launched from this ship by <good>10%</good>.
-effect|SUPPORT_ROLE_ENGAGEMENT_RANGE_PERCENT|12.5	0	Increases engagement range of Support fighters launched from this ship by <good>12.5%</good>.
-effect|SUPPORT_ROLE_ENGAGEMENT_RANGE_PERCENT|100.0	0	Increases engagement range of Support fighters launched from this ship by <good>100%</good>.
-effect|SUPPORT_ROLE_ENGAGEMENT_RANGE_PERCENT|-10.0	0	Decreases engagement range of Support fighters launched from this ship by <bad>10%</bad>.
-effect|SUPPORT_ROLE_ENGAGEMENT_RANGE_PERCENT|-12.5	0	Decreases engagement range of Support fighters launched from this ship by <bad>12.5%</bad>.
 effect|SUPPORT_ROLE_RATE_OF_FIRE_PERCENT|1.0	0	Increases weapon rate of fire of Support fighters launched from this ship by <good>1%</good>.
 effect|SUPPORT_ROLE_RATE_OF_FIRE_PERCENT|10.0	0	Increases weapon rate of fire of Support fighters launched from this ship by <good>10%</good>.
 effect|SUPPORT_ROLE_RATE_OF_FIRE_PERCENT|12.5	0	Increases weapon rate of fire of Support fighters launched from this ship by <good>12.5%</good>.
