@@ -585,7 +585,7 @@
 			"effects": [
 				{
 					"effect": "BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_MULT",
-					"magnitude": 10
+					"magnitude": 3
 				}
 			],
 			"tags": [

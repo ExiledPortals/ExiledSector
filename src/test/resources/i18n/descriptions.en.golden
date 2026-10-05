@@ -2061,11 +2061,11 @@ type|ballistic_damage|FRIGATE|0	0	<good>3%</good> increased ballistic weapon dam
 type|ballistic_damage|DESTROYER|0	0	<good>3%</good> increased ballistic weapon damage.
 type|ballistic_damage|CRUISER|0	0	<good>3%</good> increased ballistic weapon damage.
 type|ballistic_damage|CAPITAL_SHIP|0	0	<good>3%</good> increased ballistic weapon damage.
-type|ballistic_momentum|null|0	0	Grants <good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
-type|ballistic_momentum|FRIGATE|0	0	Grants <good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
-type|ballistic_momentum|DESTROYER|0	0	Grants <good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
-type|ballistic_momentum|CRUISER|0	0	Grants <good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
-type|ballistic_momentum|CAPITAL_SHIP|0	0	Grants <good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
+type|ballistic_momentum|null|0	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
+type|ballistic_momentum|FRIGATE|0	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
+type|ballistic_momentum|DESTROYER|0	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
+type|ballistic_momentum|CRUISER|0	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
+type|ballistic_momentum|CAPITAL_SHIP|0	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
 type|ballistic_projectile_speed|null|0	0	<good>10%</good> increased ballistic weapon projectile speed.
 type|ballistic_projectile_speed|FRIGATE|0	0	<good>10%</good> increased ballistic weapon projectile speed.
 type|ballistic_projectile_speed|DESTROYER|0	0	<good>10%</good> increased ballistic weapon projectile speed.
@@ -3586,7 +3586,7 @@ summary|option0|FRIGATE|21	0	Increases fuel capacity by <good>35</good>.
 summary|option0|FRIGATE|22	0	<good>25%</good> increased ballistic weapon range.
 summary|option0|FRIGATE|23	0	<good>25%</good> increased energy weapon range.
 summary|option0|FRIGATE|24	0	<good>21%</good> increased ballistic weapon damage.
-summary|option0|FRIGATE|25	0	Grants <good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
+summary|option0|FRIGATE|25	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
 summary|option0|FRIGATE|26	0	<good>40%</good> increased ballistic weapon projectile speed.
 summary|option0|FRIGATE|27	0	<good>25%</good> increased beam weapon damage.
 summary|option0|FRIGATE|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
@@ -3758,7 +3758,7 @@ summary|option0|DESTROYER|21	0	Increases fuel capacity by <good>65</good>.
 summary|option0|DESTROYER|22	0	<good>37%</good> increased ballistic weapon range.
 summary|option0|DESTROYER|23	0	<good>37%</good> increased energy weapon range.
 summary|option0|DESTROYER|24	0	<good>21%</good> increased ballistic weapon damage.
-summary|option0|DESTROYER|25	0	Grants <good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
+summary|option0|DESTROYER|25	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
 summary|option0|DESTROYER|26	0	<good>40%</good> increased ballistic weapon projectile speed.
 summary|option0|DESTROYER|27	0	<good>25%</good> increased beam weapon damage.
 summary|option0|DESTROYER|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
@@ -3930,7 +3930,7 @@ summary|option0|CRUISER|21	0	Increases fuel capacity by <good>110</good>.
 summary|option0|CRUISER|22	0	<good>90%</good> increased ballistic weapon range.
 summary|option0|CRUISER|23	0	<good>90%</good> increased energy weapon range.
 summary|option0|CRUISER|24	0	<good>21%</good> increased ballistic weapon damage.
-summary|option0|CRUISER|25	0	Grants <good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
+summary|option0|CRUISER|25	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
 summary|option0|CRUISER|26	0	<good>40%</good> increased ballistic weapon projectile speed.
 summary|option0|CRUISER|27	0	<good>25%</good> increased beam weapon damage.
 summary|option0|CRUISER|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
@@ -4102,7 +4102,7 @@ summary|option0|CAPITAL_SHIP|21	0	Increases fuel capacity by <good>225</good>.
 summary|option0|CAPITAL_SHIP|22	0	<good>125%</good> increased ballistic weapon range.
 summary|option0|CAPITAL_SHIP|23	0	<good>125%</good> increased energy weapon range.
 summary|option0|CAPITAL_SHIP|24	0	<good>21%</good> increased ballistic weapon damage.
-summary|option0|CAPITAL_SHIP|25	0	Grants <good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
+summary|option0|CAPITAL_SHIP|25	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
 summary|option0|CAPITAL_SHIP|26	0	<good>40%</good> increased ballistic weapon projectile speed.
 summary|option0|CAPITAL_SHIP|27	0	<good>25%</good> increased beam weapon damage.
 summary|option0|CAPITAL_SHIP|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
@@ -4274,7 +4274,7 @@ summary|option1|FRIGATE|21	0	Increases fuel capacity by <good>35</good>.
 summary|option1|FRIGATE|22	0	<good>25%</good> increased ballistic weapon range.
 summary|option1|FRIGATE|23	0	<good>25%</good> increased energy weapon range.
 summary|option1|FRIGATE|24	0	<good>21%</good> increased ballistic weapon damage.
-summary|option1|FRIGATE|25	0	Grants <good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
+summary|option1|FRIGATE|25	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
 summary|option1|FRIGATE|26	0	<good>40%</good> increased ballistic weapon projectile speed.
 summary|option1|FRIGATE|27	0	<good>25%</good> increased beam weapon damage.
 summary|option1|FRIGATE|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
@@ -4446,7 +4446,7 @@ summary|option1|DESTROYER|21	0	Increases fuel capacity by <good>65</good>.
 summary|option1|DESTROYER|22	0	<good>37%</good> increased ballistic weapon range.
 summary|option1|DESTROYER|23	0	<good>37%</good> increased energy weapon range.
 summary|option1|DESTROYER|24	0	<good>21%</good> increased ballistic weapon damage.
-summary|option1|DESTROYER|25	0	Grants <good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
+summary|option1|DESTROYER|25	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
 summary|option1|DESTROYER|26	0	<good>40%</good> increased ballistic weapon projectile speed.
 summary|option1|DESTROYER|27	0	<good>25%</good> increased beam weapon damage.
 summary|option1|DESTROYER|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
@@ -4618,7 +4618,7 @@ summary|option1|CRUISER|21	0	Increases fuel capacity by <good>110</good>.
 summary|option1|CRUISER|22	0	<good>90%</good> increased ballistic weapon range.
 summary|option1|CRUISER|23	0	<good>90%</good> increased energy weapon range.
 summary|option1|CRUISER|24	0	<good>21%</good> increased ballistic weapon damage.
-summary|option1|CRUISER|25	0	Grants <good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
+summary|option1|CRUISER|25	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
 summary|option1|CRUISER|26	0	<good>40%</good> increased ballistic weapon projectile speed.
 summary|option1|CRUISER|27	0	<good>25%</good> increased beam weapon damage.
 summary|option1|CRUISER|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
@@ -4790,7 +4790,7 @@ summary|option1|CAPITAL_SHIP|21	0	Increases fuel capacity by <good>225</good>.
 summary|option1|CAPITAL_SHIP|22	0	<good>125%</good> increased ballistic weapon range.
 summary|option1|CAPITAL_SHIP|23	0	<good>125%</good> increased energy weapon range.
 summary|option1|CAPITAL_SHIP|24	0	<good>21%</good> increased ballistic weapon damage.
-summary|option1|CAPITAL_SHIP|25	0	Grants <good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
+summary|option1|CAPITAL_SHIP|25	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
 summary|option1|CAPITAL_SHIP|26	0	<good>40%</good> increased ballistic weapon projectile speed.
 summary|option1|CAPITAL_SHIP|27	0	<good>25%</good> increased beam weapon damage.
 summary|option1|CAPITAL_SHIP|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
@@ -4962,7 +4962,7 @@ summary|option2|FRIGATE|21	0	Increases fuel capacity by <good>35</good>.
 summary|option2|FRIGATE|22	0	<good>25%</good> increased ballistic weapon range.
 summary|option2|FRIGATE|23	0	<good>25%</good> increased energy weapon range.
 summary|option2|FRIGATE|24	0	<good>21%</good> increased ballistic weapon damage.
-summary|option2|FRIGATE|25	0	Grants <good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
+summary|option2|FRIGATE|25	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
 summary|option2|FRIGATE|26	0	<good>40%</good> increased ballistic weapon projectile speed.
 summary|option2|FRIGATE|27	0	<good>25%</good> increased beam weapon damage.
 summary|option2|FRIGATE|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
@@ -5135,7 +5135,7 @@ summary|option2|DESTROYER|21	0	Increases fuel capacity by <good>65</good>.
 summary|option2|DESTROYER|22	0	<good>37%</good> increased ballistic weapon range.
 summary|option2|DESTROYER|23	0	<good>37%</good> increased energy weapon range.
 summary|option2|DESTROYER|24	0	<good>21%</good> increased ballistic weapon damage.
-summary|option2|DESTROYER|25	0	Grants <good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
+summary|option2|DESTROYER|25	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
 summary|option2|DESTROYER|26	0	<good>40%</good> increased ballistic weapon projectile speed.
 summary|option2|DESTROYER|27	0	<good>25%</good> increased beam weapon damage.
 summary|option2|DESTROYER|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
@@ -5308,7 +5308,7 @@ summary|option2|CRUISER|21	0	Increases fuel capacity by <good>110</good>.
 summary|option2|CRUISER|22	0	<good>90%</good> increased ballistic weapon range.
 summary|option2|CRUISER|23	0	<good>90%</good> increased energy weapon range.
 summary|option2|CRUISER|24	0	<good>21%</good> increased ballistic weapon damage.
-summary|option2|CRUISER|25	0	Grants <good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
+summary|option2|CRUISER|25	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
 summary|option2|CRUISER|26	0	<good>40%</good> increased ballistic weapon projectile speed.
 summary|option2|CRUISER|27	0	<good>25%</good> increased beam weapon damage.
 summary|option2|CRUISER|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
@@ -5481,7 +5481,7 @@ summary|option2|CAPITAL_SHIP|21	0	Increases fuel capacity by <good>225</good>.
 summary|option2|CAPITAL_SHIP|22	0	<good>125%</good> increased ballistic weapon range.
 summary|option2|CAPITAL_SHIP|23	0	<good>125%</good> increased energy weapon range.
 summary|option2|CAPITAL_SHIP|24	0	<good>21%</good> increased ballistic weapon damage.
-summary|option2|CAPITAL_SHIP|25	0	Grants <good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
+summary|option2|CAPITAL_SHIP|25	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
 summary|option2|CAPITAL_SHIP|26	0	<good>40%</good> increased ballistic weapon projectile speed.
 summary|option2|CAPITAL_SHIP|27	0	<good>25%</good> increased beam weapon damage.
 summary|option2|CAPITAL_SHIP|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
