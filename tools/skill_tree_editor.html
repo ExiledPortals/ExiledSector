@@ -3616,7 +3616,7 @@ function openImageEditorModal(){
   else fetchAllProjectImages(buildShell);
 }
 
-var SOCKETABLE_COLUMNS = ['id', 'kind', 'name', 'icon', 'grade', 'alignment', 'rarity', 'unique', 'description', 'prefixes', 'suffixes'];
+var SOCKETABLE_COLUMNS = ['id', 'kind', 'name', 'icon', 'grade', 'alignment', 'rarity', 'unique', 'description', 'prefixes', 'suffixes', 'unlock'];
 var SOCKETABLE_AFFIX_GROUPS = [
   { key: 'prefixes', label: 'Prefixes', hint: 'a magic item rolls 1, a rare 1-2' },
   { key: 'suffixes', label: 'Suffixes', hint: 'a magic item rolls 1, a rare 1-2' }
@@ -3625,6 +3625,7 @@ function isSocketableAffixColumn(column){ return column === 'prefixes' || column
 var SOCKETABLE_KINDS = ['subroutine', 'officer', 'team', 'ai_core'];
 var SOCKETABLE_GRADES = ['military', 'industrial', 'consumer'];
 var SOCKETABLE_ALIGNMENTS = ['high_tech', 'midline', 'low_tech'];
+var SOCKETABLE_UNLOCKS = [['', 'None'], ['found_onslaught_mk1', 'Found the Onslaught Mk.I in the Abyss'], ['found_gate_hauler', 'Found the Gate Hauler'], ['found_planetkiller', 'Recovered the first Planetkiller']];
 
 function parseCsv(text){
   var rows = [], row = [], field = '', inQuotes = false;
@@ -3779,7 +3780,7 @@ function openSocketableEditorModal(){
     });
     document.getElementById('sockNew').addEventListener('click', function(){
       defs.push({ id: uniqueSocketableId('new_socketable'), kind: 'subroutine', name: 'New Socketable', icon: '', grade: '', alignment: '',
-        rarity: '10', unique: '', description: '', prefixes: [{ effect: EFFECT_NAMES_SORTED[0], min: 1, max: 2, weight: 1 }],
+        rarity: '10', unique: '', unlock: '', description: '', prefixes: [{ effect: EFFECT_NAMES_SORTED[0], min: 1, max: 2, weight: 1 }],
         suffixes: [{ effect: EFFECT_NAMES_SORTED[1], min: 1, max: 2, weight: 1 }], extra: {} });
       selectedIndex = defs.length - 1;
       markDirty();
@@ -3864,6 +3865,13 @@ function openSocketableEditorModal(){
       datalistHtml('sockGrades', SOCKETABLE_GRADES) + datalistHtml('sockAlignments', SOCKETABLE_ALIGNMENTS) +
       '<label class="legendRow" style="cursor:pointer"><input type="checkbox" id="sockUnique"' + (def.unique === 'true' ? ' checked' : '') +
         '> Unique - shown with the name above in orange, and rolls every prefix and suffix</label>' +
+      (def.unique === 'true'
+        ? '<div class="field"><label>Drop condition (uniques never drop before player level 15)</label><select data-sock-field="unlock">' +
+            SOCKETABLE_UNLOCKS.map(function(option){
+              return '<option value="' + escapeHtml(option[0]) + '"' + (def.unlock === option[0] ? ' selected' : '') + '>' + escapeHtml(option[1]) + '</option>';
+            }).join('') +
+          '</select></div>'
+        : '') +
       '<div class="field"><label>Tooltip description (optional)</label><textarea data-sock-field="description" rows="3" style="width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12.5px;padding:7px 9px;resize:vertical;">' + escapeHtml(def.description) + '</textarea></div>' +
       '<hr class="sep">' +
       '<div class="hint">Items roll 2 effects (magic: 1 prefix + 1 suffix) 55% of the time, 3 (rare: 2+1 or 1+2) 35% and 4 (rare: 2+2) 10%, ' +
@@ -3888,6 +3896,7 @@ function openSocketableEditorModal(){
     document.getElementById('sockUnique').addEventListener('change', function(e){
       def.unique = e.target.checked ? 'true' : '';
       markDirty();
+      renderDetail();
     });
     detail.querySelectorAll('[data-pool-field]').forEach(function(el){
       var update = function(){

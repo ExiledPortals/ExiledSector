@@ -51,10 +51,15 @@ class SocketableDropsTest {
     }
 
     private static double share(String site, float mult, java.util.function.Predicate<List<SocketableItemData>> test) {
+        return share(site, mult, definition -> true, test);
+    }
+
+    private static double share(String site, float mult, java.util.function.Predicate<SocketableDefinition> uniqueAllowed,
+                                java.util.function.Predicate<List<SocketableItemData>> test) {
         Random random = new Random(11L);
         int hits = 0;
         for (int i = 0; i < TRIALS; i++) {
-            if (test.test(SocketableDrops.roll(site, random, mult))) {
+            if (test.test(SocketableDrops.roll(site, random, mult, uniqueAllowed))) {
                 hits++;
             }
         }
@@ -81,6 +86,15 @@ class SocketableDropsTest {
     }
 
     @Test
+    void aUniqueThatCannotDropYetIsNeverPickedAndTheRollWithoutASectorDropsNoUniques() {
+        assertEquals(0.0, share("station", 1f, definition -> false, items -> items.stream().anyMatch(item -> "relic".equals(item.definitionId()))), 0.0);
+        Random random = new Random(2L);
+        for (int i = 0; i < 200; i++) {
+            assertTrue(SocketableDrops.roll("station", random).stream().noneMatch(item -> "relic".equals(item.definitionId())));
+        }
+    }
+
+    @Test
     void aChanceMultiplierScalesEveryRoll() {
         assertEquals(0.25, share("probe", 0.5f, items -> !items.isEmpty()), 0.02);
     }
@@ -97,7 +111,7 @@ class SocketableDropsTest {
         Random random = new Random(5L);
         for (int i = 0; i < 200; i++) {
             assertEquals(MILITARY, SocketableDrops.pickBasic(random).id());
-            assertEquals("relic", SocketableDrops.pickUnique(random).id());
+            assertEquals("relic", SocketableDrops.pickUnique(random, definition -> true).id());
         }
     }
 

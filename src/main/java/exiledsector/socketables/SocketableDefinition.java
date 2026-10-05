@@ -10,7 +10,7 @@ import java.util.List;
 
 public record SocketableDefinition(String id, SocketableKind kind, String name, String icon, String grade, String alignment,
                                    float rarity, boolean unique, String description, List<PoolEntry> prefixes,
-                                   List<PoolEntry> suffixes) {
+                                   List<PoolEntry> suffixes, String unlock) {
 
     public static final String FALLBACK_ICON = "graphics/icons/cargo/chip1.png";
     private static final String ENTRY_SEPARATOR = ";";
@@ -43,7 +43,8 @@ public record SocketableDefinition(String id, SocketableKind kind, String name, 
         return new SocketableDefinition(id, SocketableKind.byId(row.optString("kind", "").trim()),
                 nameOrId(row.optString("name", "").trim(), id), icon.isEmpty() ? FALLBACK_ICON : icon,
                 row.optString("grade", "").trim(), row.optString("alignment", "").trim(), rarity, unique,
-                row.optString("description", "").trim(), prefixes, suffixes);
+                row.optString("description", "").trim(), prefixes, suffixes,
+                row.optString("unlock", "").trim());
     }
 
     public List<PoolEntry> pool() {

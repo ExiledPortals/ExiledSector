@@ -93,6 +93,11 @@ public final class SocketableDrops {
     }
 
     public static List<SocketableItemData> roll(String site, Random random, float chanceMult) {
+        return roll(site, random, chanceMult, definition -> SocketableUnlock.canDrop(definition, Global.getSector()));
+    }
+
+    public static List<SocketableItemData> roll(String site, Random random, float chanceMult,
+                                                Predicate<SocketableDefinition> uniqueAllowed) {
         List<SocketableItemData> items = new ArrayList<>();
         Rule rule = site == null ? null : RULES.get().get(site);
         if (rule == null || rule.otherMod() && !SalvageSiteCompat.dropsEnabled()) {
@@ -108,7 +113,7 @@ public final class SocketableDrops {
             }
         }
         if (random.nextFloat() < rule.uniqueChance() * chanceMult) {
-            SocketableDefinition unique = pickUnique(random);
+            SocketableDefinition unique = pickUnique(random, uniqueAllowed);
             if (unique != null) {
                 items.add(new SocketableItemData(unique.id(), random.nextLong()));
             }
@@ -120,8 +125,8 @@ public final class SocketableDrops {
         return pick(random, definition -> definition.kind() == SocketableKind.SUBROUTINE && !definition.unique());
     }
 
-    public static SocketableDefinition pickUnique(Random random) {
-        return pick(random, SocketableDefinition::unique);
+    public static SocketableDefinition pickUnique(Random random, Predicate<SocketableDefinition> allowed) {
+        return pick(random, definition -> definition.unique() && allowed.test(definition));
     }
 
     private static SocketableDefinition pick(Random random, Predicate<SocketableDefinition> filter) {
