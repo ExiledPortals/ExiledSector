@@ -228,17 +228,17 @@ class SkillEffectTest {
 
     @Test
     void describeFormatsAWholeNumberMagnitudeWithoutADecimal() {
-        assertEquals("Increases hull points by 10%.", DefenseSkillEffect.HULL_PERCENT.description(10f).plain());
+        assertEquals("10% increased hull points.", DefenseSkillEffect.HULL_PERCENT.description(10f).plain());
     }
 
     @Test
     void describeFormatsAFractionalMagnitudeWithADecimal() {
-        assertEquals("Increases flux capacity by 0.5%.", FluxSkillEffect.FLUX_CAPACITY_PERCENT.description(0.5f).plain());
+        assertEquals("0.5% increased flux capacity.", FluxSkillEffect.FLUX_CAPACITY_PERCENT.description(0.5f).plain());
     }
 
     @Test
     void describeUsesTheUnqualifiedNameForTheAllWeaponsScope() {
-        assertEquals("Increases weapon damage by 5%.", SkillEffect.byName("WEAPON_DAMAGE_PERCENT").description(5f).plain());
+        assertEquals("5% increased weapon damage.", SkillEffect.byName("WEAPON_DAMAGE_PERCENT").description(5f).plain());
     }
 
     @Test
@@ -576,12 +576,12 @@ class SkillEffectTest {
 
     @Test
     void describeUsesIncreasesForAPositiveBidirectionalMagnitude() {
-        assertEquals("Increases peak combat readiness duration by 20%.", MiscSkillEffect.PEAK_CR_DURATION_PERCENT.description(20f).plain());
+        assertEquals("20% increased peak combat readiness duration.", MiscSkillEffect.PEAK_CR_DURATION_PERCENT.description(20f).plain());
     }
 
     @Test
     void describeUsesDecreasesForANegativeBidirectionalMagnitude() {
-        assertEquals("Decreases peak combat readiness duration by 20%.", MiscSkillEffect.PEAK_CR_DURATION_PERCENT.description(-20f).plain());
+        assertEquals("20% reduced peak combat readiness duration.", MiscSkillEffect.PEAK_CR_DURATION_PERCENT.description(-20f).plain());
     }
 
     @Test
@@ -1920,7 +1920,7 @@ class SkillEffectTest {
 
     @Test
     void commandPointRecoveryIsDescribedAsAPercentage() {
-        assertEquals("Increases command point recovery rate while this ship is the flagship by 250%.",
+        assertEquals("250% increased command point recovery rate while this ship is the flagship.",
                 MiscSkillEffect.COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP.description(250f).plain());
     }
 }

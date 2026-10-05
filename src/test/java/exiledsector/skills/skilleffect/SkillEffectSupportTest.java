@@ -130,7 +130,7 @@ class SkillEffectSupportTest {
         String percentText = FluxSkillEffect.FLUX_DISSIPATION_PERCENT.description(30f).plain();
         String multText = FluxSkillEffect.FLUX_DISSIPATION_MULT.description(30f).plain();
 
-        assertEquals("Increases flux dissipation by 30%.", percentText);
+        assertEquals("30% increased flux dissipation.", percentText);
         assertEquals("30% more flux dissipation.", multText);
     }
 }

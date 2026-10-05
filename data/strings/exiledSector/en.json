@@ -64,8 +64,8 @@
     "summary.more.one": "...and {count} more bonus. Open the skill tree to see the full list.",
     "summary.more.other": "...and {count} more bonuses. Open the skill tree to see the full list.",
 
-    "desc.pct.up": "Increases {stat} by <good>{value}%</good>.",
-    "desc.pct.down": "Decreases {stat} by <bad>{value}%</bad>.",
+    "desc.pct.up": "<good>{value}%</good> increased {stat}.",
+    "desc.pct.down": "<bad>{value}%</bad> reduced {stat}.",
     "desc.flat.up": "Increases {stat} by <good>{value}</good>.",
     "desc.flat.down": "Decreases {stat} by <bad>{value}</bad>.",
     "desc.mult.up": "<good>{value}%</good> more {stat}.",

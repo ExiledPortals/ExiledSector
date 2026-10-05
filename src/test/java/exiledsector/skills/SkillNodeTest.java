@@ -65,7 +65,7 @@ class SkillNodeTest {
                 .build();
         SkillNode node = new SkillNode("hull_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Increases hull points by 10%.", description(node.getType()));
+        assertEquals("10% increased hull points.", description(node.getType()));
     }
 
     @Test
@@ -75,7 +75,7 @@ class SkillNodeTest {
                 .temporaryAfterDeploymentSeconds(60f)
                 .build();
 
-        assertEquals("Increases hull points by 10%.\n\nThese effects only last for the first 60 seconds after the ship is deployed.",
+        assertEquals("10% increased hull points.\n\nThese effects only last for the first 60 seconds after the ship is deployed.",
                 description(type));
     }
 
@@ -89,7 +89,7 @@ class SkillNodeTest {
                 .build();
         SkillNode node = new SkillNode("heavyarmor_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Increases armor by 15%.\n\nIncreases hull points by 5%.", description(node.getType()));
+        assertEquals("15% increased armor.\n\n5% increased hull points.", description(node.getType()));
     }
 
     @Test
@@ -103,7 +103,7 @@ class SkillNodeTest {
         SkillNode node = new SkillNode("converted_hangar_1", type, List.of(), 0f, 0f);
 
         assertEquals(
-                "Increases number of fighter bays by 1.\n\nIncreases hull points by 5%.\n\nCannot be unallocated without at least 1 empty fighter bay.",
+                "Increases number of fighter bays by 1.\n\n5% increased hull points.\n\nCannot be unallocated without at least 1 empty fighter bay.",
                 description(node.getType()));
     }
 
@@ -142,7 +142,7 @@ class SkillNodeTest {
                 .build();
         SkillNode node = new SkillNode("hull_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Custom flavor text.\n\nIncreases hull points by 10%.", description(node.getType()));
+        assertEquals("Custom flavor text.\n\n10% increased hull points.", description(node.getType()));
     }
 
     @Test
@@ -183,7 +183,7 @@ class SkillNodeTest {
                 .build();
         SkillNode node = new SkillNode("heavyarmor_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Increases armor by 15%.\n\nMutually exclusive with hullmod:\n• Armored Cladding", description(node.getType()));
+        assertEquals("15% increased armor.\n\nMutually exclusive with hullmod:\n• Armored Cladding", description(node.getType()));
     }
 
     @Test
@@ -494,7 +494,7 @@ class SkillNodeTest {
 
         NodeDescription description = SkillNode.describeType(type, null);
 
-        assertEquals(List.of("Increases armor by 15%."), description.effects().stream().map(DescriptionLine::plain).toList());
+        assertEquals(List.of("15% increased armor."), description.effects().stream().map(DescriptionLine::plain).toList());
         assertEquals(List.of("Restricted to hull size: Frigate.", "Mutually exclusive with hullmod:\n• Armored Cladding"),
                 description.details().stream().map(DescriptionLine::plain).toList());
     }

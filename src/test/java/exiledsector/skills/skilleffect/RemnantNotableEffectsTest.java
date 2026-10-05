@@ -60,7 +60,7 @@ class RemnantNotableEffectsTest {
 
     @Test
     void weaponTurnRateDescriptionsCoverAllWeapons() {
-        assertEquals("Increases weapon turn rate by 50%.", SkillEffect.byName("WEAPON_TURN_RATE_PERCENT").description(50f).plain());
+        assertEquals("50% increased weapon turn rate.", SkillEffect.byName("WEAPON_TURN_RATE_PERCENT").description(50f).plain());
         assertEquals("25% less weapon turn rate.", SkillEffect.byName("WEAPON_TURN_RATE_MULT").description(-25f).plain());
     }
 
@@ -73,7 +73,7 @@ class RemnantNotableEffectsTest {
         LogisticsSkillEffect.MAX_COMBAT_READINESS_PERCENT.apply(stats, "mod_id", 5f);
 
         verify(maxCr).modifyFlat("mod_id", 0.05f, "Ship skill tree");
-        assertEquals("Increases maximum combat readiness by 5%.",
+        assertEquals("5% increased maximum combat readiness.",
                 LogisticsSkillEffect.MAX_COMBAT_READINESS_PERCENT.description(5f).plain());
     }
 

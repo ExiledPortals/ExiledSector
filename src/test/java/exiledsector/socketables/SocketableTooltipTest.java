@@ -24,7 +24,7 @@ class SocketableTooltipTest {
         List<String> lines = socketable.tooltipLines().stream().map(StyledText::plain).toList();
 
         assertEquals("Military-grade Domain Subroutine", socketable.name());
-        assertEquals(List.of("Increases beam weapon damage by 12%."), lines);
+        assertEquals(List.of("12% increased beam weapon damage."), lines);
     }
 
     @Test
