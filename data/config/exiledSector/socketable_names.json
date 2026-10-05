@@ -1,15 +1,13 @@
 {
 	"military": {
 		"style": "codename",
-		"first": ["Fulgurite", "Iklwa", "Obsidian", "Halberd", "Sarissa", "Tyrfing", "Cinder", "Basilisk", "Vigil", "Pale", "Solemn", "Gorgon", "Ashen", "Talon"],
-		"second": ["Arbiter", "Lattice", "Warden", "Vector", "Aegis", "Sentence", "Doctrine", "Edict", "Lance", "Ward", "Verdict", "Bastion"]
+		"first": ["Askonia", "Corvus", "Galatia", "Hybrasil", "Magec", "Duzahk", "Thule", "Aztlan", "Samarra", "Zagan", "Valhalla", "Mayasura", "Eos", "Canaan"],
+		"second": ["Battlegroup", "Doctrine", "Protocol", "Directive", "Picket", "Cordon", "Vanguard", "Sentinel", "Mandate", "Interdict", "Tribunal", "Overwatch"]
 	},
 	"industrial": {
-		"style": "revision",
+		"style": "codename",
 		"first": ["Ilmari", "Hephaestus", "Basalt", "Tungsten", "Anvil", "Gantry", "Crucible", "Foundry", "Mantle", "Bulwark", "Keel", "Rivet"],
-		"second": ["Governor", "Regulator", "Manifold", "Coupling", "Loom", "Spindle", "Ballast", "Harness", "Gauge", "Relay"],
-		"revisionMin": 1,
-		"revisionMax": 20
+		"second": ["Governor", "Regulator", "Manifold", "Coupling", "Loom", "Spindle", "Ballast", "Harness", "Gauge", "Relay"]
 	},
 	"consumer": {
 		"style": "product",

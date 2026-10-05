@@ -27,15 +27,13 @@ public final class SocketableNames {
     static final float COMPOUND_CHANCE = 0.3f;
     static final float MODEL_CHANCE = 0.4f;
     private static final long NAME_SALT = 0x6E616D6573L;
-    private static final int DEFAULT_REVISION_MIN = 1;
-    private static final int DEFAULT_REVISION_MAX = 20;
     private static final Logger LOG = Logger.getLogger(SocketableNames.class);
     private static final AtomicReference<Map<String, GradeWords>> WORDS = new AtomicReference<>(Map.of());
     private static final AtomicReference<Map<String, Affix>> AFFIXES = new AtomicReference<>(Map.of());
 
-    enum Style {CODENAME, REVISION, PRODUCT}
+    enum Style {CODENAME, PRODUCT}
 
-    record GradeWords(Style style, List<String> first, List<String> second, int revisionMin, int revisionMax, List<String> models) {
+    record GradeWords(Style style, List<String> first, List<String> second, List<String> models) {
     }
 
     record Affix(String prefix, String suffix) {
@@ -64,9 +62,7 @@ public final class SocketableNames {
             String grade = String.valueOf(grades.next());
             JSONObject words = root.getJSONObject(grade);
             loaded.put(grade, new GradeWords(style(grade, words.optString("style", "codename")), strings(words.optJSONArray("first")),
-                    strings(words.optJSONArray("second")), words.optInt("revisionMin", DEFAULT_REVISION_MIN),
-                    Math.max(words.optInt("revisionMin", DEFAULT_REVISION_MIN), words.optInt("revisionMax", DEFAULT_REVISION_MAX)),
-                    strings(words.optJSONArray("models"))));
+                    strings(words.optJSONArray("second")), strings(words.optJSONArray("models"))));
         }
         WORDS.set(Map.copyOf(loaded));
     }
@@ -117,6 +113,7 @@ public final class SocketableNames {
         String form = prefix == null ? "suffix" : suffix == null ? "prefix" : "both";
         Message message = Translation.msg("socketable.magicName." + form)
                 .arg("grade", definition.gradeName())
+                .arg("gradeInline", definition.gradeName().toLowerCase(Locale.ROOT))
                 .arg("noun", Translation.text("socketable.noun." + kind.id()));
         if (prefix != null) {
             message.arg("prefix", prefix);
@@ -156,8 +153,6 @@ public final class SocketableNames {
         String second = pick(words.second(), random);
         return switch (words.style()) {
             case CODENAME -> Translation.msg("socketable.rareName.codename").arg("first", first).arg("second", second).text();
-            case REVISION -> Translation.msg("socketable.rareName.revision").arg("first", first).arg("second", second)
-                    .arg("revision", words.revisionMin() + random.nextInt(words.revisionMax() - words.revisionMin() + 1)).text();
             case PRODUCT -> productName(words, first, second, random);
         };
     }
