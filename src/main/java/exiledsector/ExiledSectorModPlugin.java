@@ -44,6 +44,7 @@ import exiledsector.ui.SkillTreeRefitButton;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
 import exiledsector.ui.inspect.SkillTreeCodexListener;
 import exiledsector.ui.refit.PhantomHullModRefitHider;
+import exiledsector.ui.util.TexturePreloader;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -72,6 +73,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         SocketableNames.load();
         NodeReplacements.load();
         CompatChecks.logAtStartup();
+        TexturePreloader.preloadAll(MOD_ID);
     }
 
     private static Set<String> phantomHullModIds() {

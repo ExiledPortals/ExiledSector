@@ -101,6 +101,8 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     private float width;
     private float height;
     private float gridTop;
+    private UIComponentAPI header;
+    private UIComponentAPI searchRow;
     private UIComponentAPI controls;
     private TooltipMakerAPI grid;
     private UIComponentAPI notice;
@@ -150,10 +152,17 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         closing = true;
         hideHoverTooltip();
         transition.close();
+        applyContentOpacity(transition.contentAlpha());
         listener.closed();
     }
 
     private void applyContentOpacity(float opacity) {
+        float chromeOpacity = opacity >= 1f && !closing ? 1f : 0f;
+        for (UIComponentAPI component : new UIComponentAPI[]{header, searchRow}) {
+            if (component != null) {
+                component.setOpacity(chromeOpacity);
+            }
+        }
         for (UIComponentAPI component : new UIComponentAPI[]{controls, grid == null ? null : gridComponent(), notice, summary, confirm, confirmBlocker}) {
             if (component != null) {
                 component.setOpacity(opacity);
@@ -327,6 +336,7 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         ButtonAPI close = element.addButton(Translation.text("ui.socketStorage.close"), Control.CLOSE, CLOSE_BUTTON_WIDTH, CHIP_HEIGHT, 0f);
         close.getPosition().inTR(0f, 0f);
         root.addUIElement(element).inTL(PAD, PAD);
+        header = element;
     }
 
     private void buildSearch() {
@@ -338,6 +348,7 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         searchField.setText(filter.query);
         typedQuery = filter.query;
         root.addUIElement(element).inTL(PAD, PAD + HEADER_HEIGHT + GAP);
+        searchRow = element;
     }
 
     private void reloadRows() {

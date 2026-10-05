@@ -69,6 +69,20 @@ function Copy-ModFiles {
     Get-ChildItem (Join-Path $ProjectRoot "graphics") |
         Where-Object { $excludedGraphics -notcontains $_.Name } |
         ForEach-Object { Copy-Item -Path $_.FullName -Destination $graphics.FullName -Recurse -Force }
+    Write-TexturePreloadList -ProjectRoot $ProjectRoot -Destination $Destination -ExcludedFolders ($excludedGraphics + "fonts")
+}
+
+function Write-TexturePreloadList {
+    param([string]$ProjectRoot, [string]$Destination, [string[]]$ExcludedFolders)
+
+    $graphicsRoot = (Resolve-Path (Join-Path $ProjectRoot "graphics")).Path
+    $paths = Get-ChildItem $graphicsRoot -Directory |
+        Where-Object { $ExcludedFolders -notcontains $_.Name } |
+        ForEach-Object { Get-ChildItem $_.FullName -Recurse -File -Filter "*.png" } |
+        ForEach-Object { "graphics/" + $_.FullName.Substring($graphicsRoot.Length + 1).Replace("\", "/") } |
+        Sort-Object
+    $listFile = Join-Path $Destination "data\config\exiledSector\texture_preload.csv"
+    [System.IO.File]::WriteAllLines($listFile, [string[]](@("path") + $paths))
 }
 
 function Save-ReleasedSkillNodes {
