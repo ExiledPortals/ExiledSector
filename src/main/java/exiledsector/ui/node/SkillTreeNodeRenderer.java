@@ -15,6 +15,9 @@ import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.StepVerdict;
 import exiledsector.skills.template.TemplateCapture;
 import exiledsector.skills.template.TemplateStep;
+import exiledsector.socketables.SocketCustody;
+import exiledsector.socketables.Socketable;
+import exiledsector.socketables.SocketableStore;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.TreeViewport;
 import lunalib.lunaRefit.BaseRefitButton;
@@ -43,6 +46,7 @@ public final class SkillTreeNodeRenderer {
 
     private final SkillTreeNodeRingRenderer ringRenderer;
     private final SkillTreeNodeIconRenderer iconRenderer;
+    private final SkillTreeSocketRenderer socketRenderer = new SkillTreeSocketRenderer();
     private final SkillTreeNodeGhostRenderer ghostRenderer;
     private final SkillTreeWormholeGhostFlights wormholeGhostFlights;
     private final SkillTreeNodeConnectorRenderer connectorRenderer;
@@ -80,7 +84,7 @@ public final class SkillTreeNodeRenderer {
         this.startPulse = ringRenderer::startPulse;
         this.iconRenderer = new SkillTreeNodeIconRenderer();
         this.ghostRenderer = new SkillTreeNodeGhostRenderer();
-        this.wormholeGhostFlights = new SkillTreeWormholeGhostFlights(ghostRenderer, new Random());
+        this.wormholeGhostFlights = new SkillTreeWormholeGhostFlights(new Random());
         this.connectorRenderer = new SkillTreeNodeConnectorRenderer(style, search, wormholeOpenness);
         this.tooltipRenderer = new SkillTreeNodeTooltipRenderer(member, style);
         this.dropdownRenderer = new SkillTreeNodeDropdownRenderer(style);
@@ -130,6 +134,10 @@ public final class SkillTreeNodeRenderer {
         return rootChoice.treeAlpha();
     }
 
+    public boolean isStartingRootFlyingOut() {
+        return rootChoice.phase() == StartingRootChoice.Phase.FLYING;
+    }
+
     public float startingRootCameraProgress() {
         return rootChoice.cameraProgress();
     }
@@ -156,6 +164,7 @@ public final class SkillTreeNodeRenderer {
         ringRenderer.advance(amount);
         connectorFills.advance(amount, startPulse);
         ghostRenderer.advance(amount);
+        socketRenderer.advance(amount);
         ShipSkillData data = snapshot().data();
         wormholeGhostFlights.advance(amount, data);
         wormholeOpenness.advance(amount, data);
@@ -356,9 +365,18 @@ public final class SkillTreeNodeRenderer {
         float iconSize = footprintSize * ICON_INSET_RATIO;
 
         float nodeAlpha = alphaMult * search.nodeAlpha(node, allocation);
+        if (tier == SkillTier.SOCKET) {
+            socketRenderer.drawFrame(nodeX, nodeY, footprintSize, allocated, style.getAccentColor(), nodeAlpha);
+            socketRenderer.drawContent(nodeX, nodeY, footprintSize, socketedIcon(data, node), iconTint(node, allocation, allocated),
+                    nodeAlpha);
+        }
         ringRenderer.draw(nodeX, nodeY, footprintSize, nodeAlpha, SkillTreeNodeRingRenderer.RingState.of(allocated, breathing), zoom, node);
 
-        if (tier != SkillTier.WORMHOLE) {
+        if (tier == SkillTier.SOCKET) {
+            if (allocated) {
+                socketRenderer.drawArcs(node.getId(), nodeX, nodeY, footprintSize, style.getAccentColor(), nodeAlpha);
+            }
+        } else if (tier != SkillTier.WORMHOLE) {
             Color tint = iconTint(node, allocation, allocated);
             if (effectiveType.isOptional()) {
                 iconRenderer.drawSplitIcon(effectiveType, nodeX, nodeY, iconSize, nodeAlpha, tint);
@@ -461,6 +479,38 @@ public final class SkillTreeNodeRenderer {
         if (allocator.toggle(node)) {
             afterAllocationChange(node, !wasAllocated);
         }
+    }
+
+    private static String socketedIcon(ShipSkillData data, SkillNode node) {
+        Socketable socketed = SocketableStore.lookup(data.getSocketedItem(node.getId()));
+        return socketed == null ? null : socketed.iconPath();
+    }
+
+    public Socketable socketedItem(SkillNode node) {
+        return SocketableStore.lookup(allocator.data().getSocketedItem(node.getId()));
+    }
+
+    public boolean installInSocket(SkillNode node, Socketable socketable) {
+        if (isSocketEditLocked() || !socketable.canSocketInto(node)
+                || SocketCustody.installations(ShipSkillDataManager.all()).containsKey(socketable.id())
+                || !allocator.socketItem(node, socketable.id())) {
+            return false;
+        }
+        refreshAfterAllocation();
+        ringRenderer.startPulse(node.getId());
+        return true;
+    }
+
+    public boolean emptySocket(SkillNode node) {
+        if (isSocketEditLocked() || !allocator.unsocketItem(node)) {
+            return false;
+        }
+        refreshAfterAllocation();
+        return true;
+    }
+
+    private boolean isSocketEditLocked() {
+        return isStartingRootInputLocked() || autoRun != null || respecRun != null;
     }
 
     private void toggleOptionalAllocation(SkillNode node, boolean ctrlDown) {

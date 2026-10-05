@@ -9,6 +9,7 @@ import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
 import exiledsector.i18n.Translation;
+import exiledsector.ui.refit.RefitButtonConfig;
 import lunalib.backend.ui.refit.RefitButtonAdder;
 import lunalib.backend.ui.refit.RefitPanelBackgroundPlugin;
 import lunalib.lunaRefit.BaseRefitButton;
@@ -93,7 +94,7 @@ public class SkillTreeRefitButton extends BaseRefitButton {
 
     @Override
     public boolean shouldShow(FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market) {
-        return false;
+        return !RefitButtonConfig.buttonUnderHullMods();
     }
 
     @Override
@@ -114,7 +115,8 @@ public class SkillTreeRefitButton extends BaseRefitButton {
         backgroundPanel.addUIElement(element);
         element.getPosition().inTL(0f, 0f);
 
-        CustomPanelAPI canvas = Global.getSettings().createCustom(panelWidth, panelHeight, new SkillTreeCanvasPlugin(member, variant, shipCardHeight, this));
+        SkillTreeCanvasPlugin plugin = new SkillTreeCanvasPlugin(member, variant, shipCardHeight, this, backgroundPanel);
+        CustomPanelAPI canvas = Global.getSettings().createCustom(panelWidth, panelHeight, plugin);
         element.addCustom(canvas, 0f).getPosition().inTL(0f, 0f);
 
         backgroundPanel.addUIElement(shipCard);

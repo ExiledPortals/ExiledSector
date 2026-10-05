@@ -2,15 +2,16 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
+import exiledsector.skills.npc.NpcBuildRequest;
+import exiledsector.skills.npc.NpcFactionVolumes;
 import exiledsector.skills.npc.NpcFreedOp;
 import exiledsector.skills.npc.NpcHullMods;
-import exiledsector.skills.npc.NpcLayout;
-import exiledsector.skills.npc.NpcLayouts;
 import exiledsector.skills.npc.NpcLevelTable;
 import exiledsector.skills.npc.NpcShipSelector;
 import exiledsector.skills.npc.NpcSkillTreeBuilder;
@@ -21,7 +22,6 @@ import exiledsector.skills.npc.NpcTreeTag;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.tags.ShipProfile;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -38,6 +38,7 @@ public final class NpcFleetLeveller {
         Map<String, String> records = NpcTreeRecords.of(fleet.getMemoryWithoutUpdate());
         String seedPrefix = null;
         int playerLevel = 0;
+        String factionRegion = fleet.getFaction() == null ? null : NpcFactionVolumes.regionFor(fleet.getFaction().getId());
         for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
             String record = records.get(member.getId());
             if (record == null) {
@@ -45,7 +46,7 @@ public final class NpcFleetLeveller {
                     playerLevel = Global.getSector().getPlayerStats().getLevel();
                     seedPrefix = Global.getSector().getSeedString() + "|" + fleet.getId() + "|";
                 }
-                record = decide(member, playerLevel, new Random((seedPrefix + member.getId()).hashCode()));
+                record = decide(member, playerLevel, factionRegion, new Random((seedPrefix + member.getId()).hashCode()));
                 records.put(member.getId(), record);
             }
             if (NpcTreeRecords.isLevelled(record)) {
@@ -59,20 +60,29 @@ public final class NpcFleetLeveller {
                 && fleet.getContainingLocation() != null && fleet.getFleetData() != null;
     }
 
-    static String decide(FleetMemberAPI member, int playerLevel, Random random) {
+    static String decide(FleetMemberAPI member, int playerLevel, String factionRegion, Random random) {
         if (!NpcShipSelector.isCandidate(member) || !NpcShipSelector.isChosen(member, random)) {
             return NpcTreeRecords.NOT_LEVELLED;
         }
         ShipProfile profile = ShipProfile.of(member);
-        List<NpcLayout> eligible = NpcLayouts.eligibleFor(profile);
-        if (eligible.isEmpty()) {
-            return NpcTreeRecords.NOT_LEVELLED;
-        }
-        NpcLayout layout = eligible.get(random.nextInt(eligible.size()));
         int nodeCount = Math.min(NpcLevelTable.roll(playerLevel, random), ShipLevelConfig.maxAllocatedNodesBesidesRoot());
         NpcHullMods hullMods = NpcHullMods.of(member.getVariant());
-        NpcTreeBuild build = NpcSkillTreeBuilder.build(layout, nodeCount, profile, hullMods, NpcFreedOp.of(member, hullMods));
-        return NpcTreeTag.encode(layout.id(), build.data());
+        String designType = designType(member.getHullSpec());
+        NpcTreeBuild build = NpcSkillTreeBuilder.generate(new NpcBuildRequest(profile, designType, factionRegion, hullMods,
+                NpcFreedOp.of(member, hullMods), nodeCount), random);
+        return NpcTreeTag.encode(build.data());
+    }
+
+    static String designType(ShipHullSpecAPI hullSpec) {
+        if (hullSpec == null) {
+            return null;
+        }
+        String designType = hullSpec.getManufacturer();
+        ShipHullSpecAPI baseHull = hullSpec.getBaseHull();
+        if (!NpcSkillTreeBuilder.hasRootFor(designType) && baseHull != null && baseHull != hullSpec) {
+            return baseHull.getManufacturer();
+        }
+        return designType;
     }
 
     static void apply(FleetMemberAPI member, String tag) {

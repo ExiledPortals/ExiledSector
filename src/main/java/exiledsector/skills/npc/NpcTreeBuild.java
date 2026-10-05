@@ -10,12 +10,4 @@ public record NpcTreeBuild(ShipSkillData data, List<NpcBuildStep> steps, List<St
         steps = List.copyOf(steps);
         strippedHullModIds = strippedHullModIds == null ? List.of() : List.copyOf(strippedHullModIds);
     }
-
-    public List<String> allocatedNodeIds() {
-        return steps.stream().filter(NpcBuildStep::isAllocated).map(NpcBuildStep::nodeId).toList();
-    }
-
-    public int allocatedCount() {
-        return (int) steps.stream().filter(NpcBuildStep::isAllocated).count();
-    }
 }

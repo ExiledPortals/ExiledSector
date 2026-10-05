@@ -12,6 +12,8 @@ import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.SkillTreeBonusSummary;
 import exiledsector.skills.SkillTreeBonusSummary.Summary;
 import exiledsector.skills.SkillType;
+import exiledsector.socketables.Socketable;
+import exiledsector.socketables.SocketableStore;
 import exiledsector.ui.VanillaText;
 
 import java.util.ArrayList;
@@ -40,8 +42,8 @@ public final class ShipTreeSummaryRenderer {
 
         List<String> parts = new ArrayList<>();
         parts.add(Translation.msg("summary.level").arg("level", summary.level()).text());
-        if (tree.layoutName() != null) {
-            parts.add(Translation.msg("summary.build").arg("layout", tree.layoutName()).text());
+        if (!tree.buildThemes().isEmpty()) {
+            parts.add(Translation.msg("summary.build").arg("layout", NpcBuildLabel.name(tree.buildThemes())).text());
         }
         if (summary.root() != null) {
             parts.add(Translation.msg("summary.start").arg("root", summary.root().getDisplayName()).text());
@@ -57,6 +59,18 @@ public final class ShipTreeSummaryRenderer {
                 names.add(StyledText.styled(notable.getDisplayName(), Style.HIGHLIGHT));
             }
             VanillaText.addPara(info, Translation.msg("summary.notables").arg("names", Translation.list(names)).styled(), LINE_PAD,
+                    Misc.getTextColor());
+        }
+
+        List<StyledText> socketed = new ArrayList<>();
+        for (String socketableId : tree.data().getSocketedItems().values()) {
+            Socketable socketable = SocketableStore.lookup(socketableId);
+            if (socketable != null) {
+                socketed.add(StyledText.styled(socketable.name(), Style.HIGHLIGHT));
+            }
+        }
+        if (!socketed.isEmpty()) {
+            VanillaText.addPara(info, Translation.msg("summary.sockets").arg("names", Translation.list(socketed)).styled(), LINE_PAD,
                     Misc.getTextColor());
         }
 

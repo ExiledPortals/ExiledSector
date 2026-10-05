@@ -7,6 +7,10 @@ $projectRoot = Split-Path -Parent $toolsDir
 $editorPath = Join-Path $toolsDir "skill_tree_editor.html"
 $typesPath = Join-Path $projectRoot "data\skilltrees\skill_types.json"
 $treePath = Join-Path $projectRoot "data\skilltrees\ship_skill_tree.json"
+$socketablesPath = Join-Path $projectRoot "data\config\exiledSector\socketables.csv"
+$vanillaCoreDir = Join-Path (Split-Path -Parent $projectRoot) "Starsector\starsector-core"
+$vanillaPrefix = [System.IO.Path]::GetFullPath($vanillaCoreDir).TrimEnd('\') + '\'
+$vanillaCargoIconsDir = Join-Path $vanillaCoreDir "graphics\icons\cargo"
 $staticImagesDir = Join-Path $projectRoot "graphics\backgrounds\static_images"
 $graphicsDir = Join-Path $projectRoot "graphics"
 $editorHost = "localhost:$port"
@@ -18,6 +22,13 @@ function Resolve-ProjectPath($relPath) {
     if (-not $relPath) { return $null }
     $full = [System.IO.Path]::GetFullPath((Join-Path $projectRoot $relPath))
     if ($full.StartsWith($projectPrefix, [StringComparison]::OrdinalIgnoreCase)) { return $full }
+    return $null
+}
+
+function Resolve-VanillaPath($relPath) {
+    if (-not $relPath -or -not (Test-Path $vanillaCoreDir)) { return $null }
+    $full = [System.IO.Path]::GetFullPath((Join-Path $vanillaCoreDir $relPath))
+    if ($full.StartsWith($vanillaPrefix, [StringComparison]::OrdinalIgnoreCase)) { return $full }
     return $null
 }
 
@@ -161,6 +172,23 @@ try {
                     Write-JsonResponse $response 200 @{ ok = $true; message = "Saved." }
                 }
             }
+            elseif ($request.HttpMethod -eq "GET" -and $request.Url.LocalPath -eq "/data/socketables") {
+                $bytes = [System.IO.File]::ReadAllBytes($socketablesPath)
+                $response.ContentType = "text/csv; charset=utf-8"
+                $response.OutputStream.Write($bytes, 0, $bytes.Length)
+            }
+            elseif ($request.HttpMethod -eq "POST" -and $request.Url.LocalPath -eq "/save-socketables") {
+                $reader = New-Object System.IO.StreamReader($request.InputStream, [System.Text.Encoding]::UTF8)
+                $body = $reader.ReadToEnd() | ConvertFrom-Json
+                $csv = [string]$body.csv
+                if (-not $csv.StartsWith("id,")) {
+                    Write-JsonResponse $response 400 @{ ok = $false; message = "Nothing was written - the CSV must start with the id column." }
+                } else {
+                    $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+                    [System.IO.File]::WriteAllText($socketablesPath, $csv, $utf8NoBom)
+                    Write-JsonResponse $response 200 @{ ok = $true; message = "Saved." }
+                }
+            }
             elseif ($request.HttpMethod -eq "GET" -and $request.Url.LocalPath -eq "/list-images") {
                 $files = @()
                 if (Test-Path $staticImagesDir) {
@@ -181,6 +209,11 @@ try {
                             $rel = $_.FullName.Substring($projectRoot.Length + 1) -replace '\\', '/'
                             $rel
                         } | Sort-Object
+                }
+                if (Test-Path $vanillaCargoIconsDir) {
+                    $files = @($files) + @(Get-ChildItem -Path $vanillaCargoIconsDir -Filter "*.png" -File |
+                        Sort-Object Name |
+                        ForEach-Object { "graphics/icons/cargo/" + $_.Name })
                 }
                 $json = ConvertTo-Json -InputObject @($files)
                 $bytes = [System.Text.Encoding]::UTF8.GetBytes($json)
@@ -292,6 +325,9 @@ try {
             elseif ($request.HttpMethod -eq "GET") {
                 $relPath = [Uri]::UnescapeDataString($request.Url.LocalPath.TrimStart('/'))
                 $fullFilePath = Resolve-ProjectPath $relPath
+                if (-not $fullFilePath -or -not (Test-Path $fullFilePath -PathType Leaf)) {
+                    $fullFilePath = Resolve-VanillaPath $relPath
+                }
                 if ($fullFilePath -and (Test-Path $fullFilePath -PathType Leaf)) {
                     $ext = [System.IO.Path]::GetExtension($fullFilePath).ToLowerInvariant()
                     $contentType = switch ($ext) {

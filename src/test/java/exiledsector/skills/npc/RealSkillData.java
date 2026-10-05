@@ -22,7 +22,6 @@ public final class RealSkillData {
     public static final String ROOT_PROPERTY = "exiledsector.root";
     public static final Path TYPES_FILE = Path.of("data/skilltrees/skill_types.json");
     public static final Path TREE_FILE = Path.of("data/skilltrees/ship_skill_tree.json");
-    public static final Path LAYOUTS_FILE = Path.of(NpcLayoutLoader.DATA_PATH);
 
     private RealSkillData() {
     }

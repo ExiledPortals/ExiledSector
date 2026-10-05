@@ -35,6 +35,7 @@ public final class GLDraw {
         GL11.glVertex2f(x + width, y + height);
         GL11.glVertex2f(x, y + height);
         GL11.glEnd();
+        GL11.glLineWidth(1f);
         GL11.glDisable(GL11.GL_BLEND);
     }
 }

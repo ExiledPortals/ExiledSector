@@ -9,18 +9,16 @@ import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.layout.SkillNodeDecoration;
-import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.skills.skilleffect.ShieldSkillEffect;
-import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.tags.ShipProfile;
 import exiledsector.skills.tags.WeaponKind;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,16 +27,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class NpcSkillTreeBuilderTest {
 
-    private static final ShipProfile SHIELDED_BALLISTIC_FRIGATE =
+    private static final ShipProfile BALLISTIC_FRIGATE =
             new ShipProfile(HullSize.FRIGATE, ShieldType.FRONT, 0, Set.of(WeaponKind.BALLISTIC), false, 0f, false);
-    private static final ShipProfile OMNI_SHIELDED_FRIGATE =
-            new ShipProfile(HullSize.FRIGATE, ShieldType.OMNI, 0, Set.of(WeaponKind.BALLISTIC), false, 0f, false);
     private static final String ROOT = "root";
 
     @BeforeEach
     void setUp() {
         RealSkillData.clear();
-        register(new SkillNode(ROOT, registerType(builder("root_type", SkillTier.ROOT).build()), List.of(), 0f, 0f));
     }
 
     @AfterEach
@@ -55,645 +50,331 @@ class NpcSkillTreeBuilderTest {
         return type;
     }
 
-    private static SkillNode register(SkillNode node) {
+    private static SkillNode node(String id, SkillType type, List<String> tags, String... connectedTo) {
+        SkillNode node = new SkillNode(id, type, List.of(connectedTo), 0f, 0f, SkillNodeDecoration.NONE, tags);
         SkillTree.register(node);
         return node;
     }
 
     private static SkillNode node(String id, SkillType type, String... connectedTo) {
-        return register(new SkillNode(id, type, List.of(connectedTo), 0f, 0f));
+        return node(id, type, List.of(), connectedTo);
+    }
+
+    private static void root() {
+        node(ROOT, registerType(builder("root_type", SkillTier.ROOT).build()));
     }
 
     private static SkillNode small(String id, String... connectedTo) {
         return node(id, registerType(builder(id + "_type", SkillTier.SMALL).build()), connectedTo);
     }
 
-    private static SkillType effectType(String typeId, SkillEffect effect) {
-        return registerType(builder(typeId, SkillTier.NOTABLE).effects(List.of(new SkillTypeEffect(effect, 100f))).build());
+    private static SkillNode notable(String id, String... connectedTo) {
+        return node(id, registerType(builder(id + "_type", SkillTier.NOTABLE).build()), connectedTo);
     }
 
-    private static NpcLayoutEntry entry(String nodeId) {
-        return new NpcLayoutEntry(nodeId, null);
-    }
-
-    private static NpcLayoutEntry entry(String nodeId, String optionTypeId) {
-        return new NpcLayoutEntry(nodeId, optionTypeId);
-    }
-
-    private static NpcLayout layout(NpcLayoutEntry... entries) {
-        return layoutWithRoot(ROOT, entries);
-    }
-
-    private static NpcLayout layoutWithRoot(String rootNodeId, NpcLayoutEntry... entries) {
-        return new NpcLayout("layout", "Layout", rootNodeId, List.of(), "", List.of(entries));
-    }
-
-    private static NpcTreeBuild build(NpcLayout layout, int nodeCount) {
-        return NpcSkillTreeBuilder.build(layout, nodeCount, SHIELDED_BALLISTIC_FRIGATE, NpcHullMods.NONE);
-    }
-
-    private static NpcHullMods permanent(String... hullModIds) {
-        return new NpcHullMods(Set.of(), Set.of(hullModIds));
-    }
-
-    private static NpcHullMods removable(String... hullModIds) {
-        return new NpcHullMods(Set.of(hullModIds), Set.of());
-    }
-
-    private static NpcTreeBuild buildWith(NpcLayout layout, int nodeCount, NpcHullMods hullMods) {
-        return NpcSkillTreeBuilder.build(layout, nodeCount, SHIELDED_BALLISTIC_FRIGATE, hullMods);
-    }
-
-    private static SkillNode hullModNode(String id, String hullModId, String... connectedTo) {
-        return node(id, registerType(builder(hullModId + "_node", SkillTier.NOTABLE).exclusiveHullModIds(List.of(hullModId)).build()),
-                connectedTo);
-    }
-
-    private static List<String> outcomes(NpcTreeBuild build) {
-        return build.steps().stream().map(NpcBuildStep::outcome).toList();
-    }
-
-    private static void chain(int length) {
-        String previous = ROOT;
+    private static void chain(String prefix, int length, String from) {
+        String previous = from;
         for (int i = 1; i <= length; i++) {
-            small("n" + i, previous);
-            previous = "n" + i;
+            small(prefix + i, previous);
+            previous = prefix + i;
         }
     }
 
-    private static NpcLayout chainLayout(int length) {
-        List<NpcLayoutEntry> entries = new ArrayList<>();
-        for (int i = 1; i <= length; i++) {
-            entries.add(entry("n" + i));
-        }
-        return layout(entries.toArray(new NpcLayoutEntry[0]));
+    private static void wormholePair(String core, String far, String coreRegion, String farRegion, String coreLink) {
+        SkillType wormhole = SkillTree.getType("wormhole") != null ? SkillTree.getType("wormhole")
+                : registerType(builder("wormhole", SkillTier.WORMHOLE).build());
+        SkillTree.register(new SkillNode(core, wormhole, List.of(coreLink, far), 0f, 0f,
+                new SkillNodeDecoration(null, null, null, null, far), List.of(coreRegion)));
+        SkillTree.register(new SkillNode(far, wormhole, List.of(core), 0f, 0f,
+                new SkillNodeDecoration(null, null, null, null, core), List.of(farRegion)));
+    }
+
+    private static NpcTreeBuild generate(int nodeCount) {
+        return generate(nodeCount, null, NpcHullMods.NONE, NpcFreedOp.NONE, 1L);
+    }
+
+    private static NpcTreeBuild generate(int nodeCount, String factionRegion, NpcHullMods hullMods, NpcFreedOp freedOp, long seed) {
+        return generate(BALLISTIC_FRIGATE, null, nodeCount, factionRegion, hullMods, freedOp, seed);
+    }
+
+    private static NpcTreeBuild generate(ShipProfile profile, String designType, int nodeCount, String factionRegion,
+                                         NpcHullMods hullMods, NpcFreedOp freedOp, long seed) {
+        return NpcSkillTreeBuilder.generate(new NpcBuildRequest(profile, designType, factionRegion, hullMods, freedOp, nodeCount),
+                new Random(seed));
+    }
+
+    private static List<String> allocated(NpcTreeBuild build) {
+        return List.copyOf(build.data().getAllocatedNodeIds());
     }
 
     @Test
-    void theRootIsAllocatedForFreeOnTopOfTheNodeCount() {
-        chain(3);
+    void theRootMatchesTheHullsDesignType() {
+        for (String type : List.of("root_low_tech", "root_midline", "root_high_tech")) {
+            node(type + "_1", registerType(builder(type, SkillTier.ROOT).build()));
+        }
 
-        NpcTreeBuild build = build(chainLayout(3), 2);
+        assertEquals("root_midline_1", allocated(generate(BALLISTIC_FRIGATE, "Midline", 0, null, NpcHullMods.NONE,
+                NpcFreedOp.NONE, 1L)).get(0));
+        assertEquals("root_low_tech_1", allocated(generate(BALLISTIC_FRIGATE, "Low Tech", 0, null, NpcHullMods.NONE,
+                NpcFreedOp.NONE, 1L)).get(0));
+        assertEquals("root_high_tech_1", allocated(generate(BALLISTIC_FRIGATE, "High Tech", 0, null, NpcHullMods.NONE,
+                NpcFreedOp.NONE, 1L)).get(0));
+    }
 
-        assertEquals(List.of(ROOT, "n1", "n2"), List.copyOf(build.data().getAllocatedNodeIds()));
-        assertEquals(2, build.allocatedCount());
+    @Test
+    void anUnknownDesignTypeStartsAtARandomRootThatTheSeedDecides() {
+        for (String type : List.of("root_low_tech", "root_midline", "root_high_tech")) {
+            node(type + "_1", registerType(builder(type, SkillTier.ROOT).build()));
+        }
+
+        String first = allocated(generate(BALLISTIC_FRIGATE, "Pirate", 0, null, NpcHullMods.NONE, NpcFreedOp.NONE, 7L)).get(0);
+        String again = allocated(generate(BALLISTIC_FRIGATE, "Pirate", 0, null, NpcHullMods.NONE, NpcFreedOp.NONE, 7L)).get(0);
+
+        assertEquals(first, again);
+        assertTrue(first.startsWith("root_"));
+    }
+
+    @Test
+    void npcsPassThroughASocketOnTheWayButNeverAimForOne() {
+        root();
+        SkillType socket = registerType(builder("socket", SkillTier.SOCKET).build());
+        node("socket_1", socket, ROOT);
+        notable("behind_socket", "socket_1");
+        node("dead_end_socket", socket, ROOT);
+        chain("n", 3, ROOT);
+
+        List<String> allocated = allocated(generate(10));
+
+        assertTrue(allocated.contains("socket_1") && allocated.contains("behind_socket"));
+        assertFalse(allocated.contains("dead_end_socket"));
+        assertTrue(allocated.contains("n3"));
+    }
+
+    @Test
+    void theRootIsFreeAndTheTreeReachesTheRolledCount() {
+        root();
+        chain("n", 10, ROOT);
+
+        NpcTreeBuild build = generate(7);
+
+        assertEquals(8, build.data().getAllocatedNodeIds().size());
+        assertEquals(7, build.data().getLevel());
         assertEquals(0, build.data().getSpentOp(1));
     }
 
     @Test
-    void stopsOnceTheNodeCountIsReached() {
-        chain(4);
+    void theNodeCountIsCappedAtTheMaximum() {
+        root();
+        chain("n", 80, ROOT);
 
-        NpcTreeBuild build = build(chainLayout(4), 2);
-
-        assertEquals(List.of("allocated", "allocated", "count reached", "count reached"), outcomes(build));
-        assertFalse(build.data().isAllocated("n3"));
+        assertEquals(NpcSkillTreeBuilder.MAX_NODE_COUNT + 1, generate(500).data().getAllocatedNodeIds().size());
     }
 
     @Test
-    void everyAllocatedNonRootNodeIsFree() {
-        chain(3);
+    void strippingAHullmodTheTreeReplacesBuysExtraNodesWithItsOp() {
+        root();
+        node("armor_node", registerType(builder("armor_node_type", SkillTier.NOTABLE).exclusiveHullModIds(List.of("heavyarmor")).build()), ROOT);
+        chain("n", 10, "armor_node");
+        NpcFreedOp freedOp = new NpcFreedOp(2, Map.of("heavyarmor", 6), 60);
 
-        ShipSkillData data = build(chainLayout(3), 3).data();
+        NpcTreeBuild build = generate(1, null, new NpcHullMods(Set.of("heavyarmor"), Set.of()), freedOp, 1L);
 
-        assertTrue(data.isFreeNode("n1"));
-        assertTrue(data.isFreeNode("n2"));
-        assertTrue(data.isFreeNode("n3"));
-        assertEquals(0, data.getSpentOp(1));
-        assertEquals(0, data.getBankedFreeAllocations());
-    }
-
-    @Test
-    void theLevelEqualsTheNodeCountEvenWhenTheLayoutRunsOut() {
-        chain(3);
-
-        NpcTreeBuild build = build(chainLayout(3), 5);
-
-        assertEquals(5, build.data().getLevel());
-        assertEquals(3, build.allocatedCount());
-    }
-
-    @Test
-    void theNodeCountIsCappedAtSixty() {
-        chain(70);
-
-        NpcTreeBuild build = build(chainLayout(70), 75);
-
-        assertEquals(NpcSkillTreeBuilder.MAX_NODE_COUNT, build.allocatedCount());
-        assertEquals(NpcSkillTreeBuilder.MAX_NODE_COUNT, build.data().getLevel());
-    }
-
-    @Test
-    void aNegativeNodeCountAllocatesOnlyTheRoot() {
-        chain(2);
-
-        NpcTreeBuild build = build(chainLayout(2), -3);
-
-        assertEquals(List.of(ROOT), List.copyOf(build.data().getAllocatedNodeIds()));
-        assertEquals(0, build.data().getLevel());
-        assertEquals(List.of("count reached", "count reached"), outcomes(build));
-    }
-
-    @Test
-    void skipsUnknownNodesWithoutUsingUpTheCount() {
-        chain(2);
-
-        NpcTreeBuild build = build(layout(entry("ghost"), entry("n1"), entry("n2")), 2);
-
-        assertEquals(List.of("unknown node", "allocated", "allocated"), outcomes(build));
-    }
-
-    @Test
-    void skipsTheRootAndRepeatedEntries() {
-        chain(1);
-
-        NpcTreeBuild build = build(layout(entry(ROOT), entry("n1"), entry("n1")), 5);
-
-        assertEquals(List.of("already allocated", "allocated", "already allocated"), outcomes(build));
-    }
-
-    @Test
-    void skipsWormholeNodes() {
-        node("wormhole_1", registerType(builder("wormhole", SkillTier.WORMHOLE).build()), ROOT);
-
-        assertEquals(List.of("wormhole"), outcomes(build(layout(entry("wormhole_1")), 5)));
-    }
-
-    @Test
-    void skipsOtherRootNodes() {
-        node("other_root", registerType(builder("other_root_type", SkillTier.ROOT).build()), ROOT);
-
-        NpcTreeBuild build = build(layout(entry("other_root")), 5);
-
-        assertEquals(List.of("root node"), outcomes(build));
-        assertFalse(build.data().isAllocated("other_root"));
-    }
-
-    @Test
-    void skipsNodesWhoseNodeTagsHaveAnUnmetRequirement() {
-        register(new SkillNode("phase_1", registerType(builder("phase", SkillTier.SMALL).build()), List.of(ROOT), 0f, 0f,
-                SkillNodeDecoration.NONE, List.of("inner", "req_phase")));
-
-        assertEquals(List.of("unmet requirement: req_phase"), outcomes(build(layout(entry("phase_1")), 5)));
-    }
-
-    @Test
-    void skipsNodesWhoseTypeTagsHaveAnUnmetRequirement() {
-        node("missile_1", registerType(builder("missile", SkillTier.SMALL).tags(List.of("missile", "req_missile")).build()), ROOT);
-
-        assertEquals(List.of("unmet requirement: req_missile"), outcomes(build(layout(entry("missile_1")), 5)));
-    }
-
-    @Test
-    void skipsOptionalNodesWhoseChosenOptionHasAnUnmetRequirement() {
-        registerType(builder("fighter_option", SkillTier.SMALL).tags(List.of("req_fighter_bays")).build());
-        registerType(builder("hull_option", SkillTier.SMALL).build());
-        node("optional_1", registerType(builder("optional", SkillTier.SMALL)
-                .optionalOptionIds(List.of("fighter_option", "hull_option")).build()), ROOT);
-
-        NpcTreeBuild blocked = build(layout(entry("optional_1", "fighter_option")), 5);
-        NpcTreeBuild allowed = build(layout(entry("optional_1", "hull_option")), 5);
-
-        assertEquals(List.of("unmet requirement: req_fighter_bays"), outcomes(blocked));
-        assertEquals(List.of("allocated"), outcomes(allowed));
-    }
-
-    @Test
-    void skipsNodesRestrictedToOtherHullSizes() {
-        node("escort_1", registerType(builder("escort", SkillTier.SMALL)
-                .requiredHullSizes(List.of(HullSize.DESTROYER, HullSize.CRUISER)).build()), ROOT);
-        node("frigate_1", registerType(builder("frigate_only", SkillTier.SMALL)
-                .requiredHullSizes(List.of(HullSize.FRIGATE)).build()), ROOT);
-
-        assertEquals(List.of(NpcBuildStep.WRONG_HULL_SIZE, NpcBuildStep.ALLOCATED),
-                outcomes(build(layout(entry("escort_1"), entry("frigate_1")), 5)));
-    }
-
-    @Test
-    void skipsOptionalNodesWhoseChosenOptionIsRestrictedToOtherHullSizes() {
-        registerType(builder("capital_option", SkillTier.SMALL).requiredHullSizes(List.of(HullSize.CAPITAL_SHIP)).build());
-        node("optional_1", registerType(builder("optional", SkillTier.SMALL)
-                .optionalOptionIds(List.of("capital_option")).build()), ROOT);
-
-        assertEquals(List.of(NpcBuildStep.WRONG_HULL_SIZE), outcomes(build(layout(entry("optional_1", "capital_option")), 5)));
-    }
-
-    @Test
-    void skipsNodesThatConflictWithAPermanentHullmod() {
-        node("so_1", registerType(builder("so", SkillTier.SMALL).exclusiveHullModIds(List.of("safetyoverrides")).build()), ROOT);
-        node("armor_1", registerType(builder("armor", SkillTier.SMALL).vanillaHullModId("heavyarmor").build()), ROOT);
-        NpcLayout layout = layout(entry("so_1"), entry("armor_1"));
-
-        NpcTreeBuild build = NpcSkillTreeBuilder.build(layout, 5, SHIELDED_BALLISTIC_FRIGATE,
-                permanent("safetyoverrides", "heavyarmor"));
-
-        assertEquals(List.of("conflicts with installed hullmod: safetyoverrides", "conflicts with installed hullmod: heavyarmor"),
-                outcomes(build));
-    }
-
-    @Test
-    void skipsOptionalNodesWhoseChosenOptionConflictsWithAPermanentHullmod() {
-        registerType(builder("cargo_option", SkillTier.SMALL).phantomHullModIds(List.of("expanded_cargo_holds")).build());
-        node("optional_1", registerType(builder("optional", SkillTier.SMALL).optionalOptionIds(List.of("cargo_option")).build()), ROOT);
-
-        NpcTreeBuild build = NpcSkillTreeBuilder.build(layout(entry("optional_1", "cargo_option")), 5,
-                SHIELDED_BALLISTIC_FRIGATE, permanent("expanded_cargo_holds"));
-
-        assertEquals(List.of("conflicts with installed hullmod: expanded_cargo_holds"), outcomes(build));
-    }
-
-    @Test
-    void skipsTheLowBaseArmorBonusOnHullsTheUiWouldAlsoRefuse() {
-        node("citadel_1", effectType("citadel", DefenseSkillEffect.ARMOR_FLAT_FOR_LOW_BASE_ARMOR), ROOT);
-        ShipProfile heavilyArmoured = new ShipProfile(HullSize.FRIGATE, ShieldType.FRONT, 0, Set.of(WeaponKind.BALLISTIC), false, 2000f, false);
-
-        NpcTreeBuild build = NpcSkillTreeBuilder.build(layout(entry("citadel_1")), 5, heavilyArmoured, NpcHullMods.NONE);
-
-        assertEquals(List.of("blocked by ship state: Requires a non-phase hull with low base armor."), outcomes(build));
-    }
-
-    @Test
-    void nullHullmodsAreTreatedAsNone() {
-        node("so_1", registerType(builder("so", SkillTier.SMALL).exclusiveHullModIds(List.of("safetyoverrides")).build()), ROOT);
-
-        NpcTreeBuild build = NpcSkillTreeBuilder.build(layout(entry("so_1")), 5, SHIELDED_BALLISTIC_FRIGATE, null);
-
-        assertEquals(List.of("allocated"), outcomes(build));
-    }
-
-    @Test
-    void skipsANodeWhoseTypeExcludesAnAllocatedType() {
-        node("first_1", registerType(builder("first", SkillTier.SMALL).build()), ROOT);
-        node("second_1", registerType(builder("second", SkillTier.SMALL).exclusiveSkillTypeIds(List.of("first")).build()), ROOT);
-
-        NpcTreeBuild build = build(layout(entry("first_1"), entry("second_1")), 5);
-
-        assertEquals(List.of("allocated", "exclusive with allocated type: first"), outcomes(build));
-    }
-
-    @Test
-    void skipsANodeWhoseTypeIsExcludedByAnAllocatedType() {
-        node("first_1", registerType(builder("first", SkillTier.SMALL).exclusiveSkillTypeIds(List.of("second")).build()), ROOT);
-        node("second_1", registerType(builder("second", SkillTier.SMALL).build()), ROOT);
-
-        NpcTreeBuild build = build(layout(entry("first_1"), entry("second_1")), 5);
-
-        assertEquals(List.of("allocated", "exclusive with allocated type: first"), outcomes(build));
-        assertFalse(build.data().isAllocated("second_1"));
-    }
-
-    @Test
-    void exclusivityConsidersTheOptionChosenOnAnAllocatedOptionalNode() {
-        registerType(builder("vents_option", SkillTier.SMALL).exclusiveSkillTypeIds(List.of("second")).build());
-        node("optional_1", registerType(builder("optional", SkillTier.SMALL).optionalOptionIds(List.of("vents_option")).build()), ROOT);
-        node("second_1", registerType(builder("second", SkillTier.SMALL).build()), ROOT);
-
-        NpcTreeBuild build = build(layout(entry("optional_1", "vents_option"), entry("second_1")), 5);
-
-        assertEquals(List.of("allocated", "exclusive with allocated type: vents_option"), outcomes(build));
-    }
-
-    @Test
-    void exclusivityConsidersTheOptionChosenOnTheCandidate() {
-        node("first_1", registerType(builder("first", SkillTier.SMALL).build()), ROOT);
-        registerType(builder("vents_option", SkillTier.SMALL).exclusiveSkillTypeIds(List.of("first")).build());
-        node("optional_1", registerType(builder("optional", SkillTier.SMALL).optionalOptionIds(List.of("vents_option")).build()), ROOT);
-
-        NpcTreeBuild build = build(layout(entry("first_1"), entry("optional_1", "vents_option")), 5);
-
-        assertEquals(List.of("allocated", "exclusive with allocated type: first"), outcomes(build));
-    }
-
-    @Test
-    void skipsNodesThatAreNotConnectedYetAndNeverRevisitsThem() {
-        small("a", ROOT);
-        small("b", "a");
-
-        NpcTreeBuild build = build(layout(entry("b"), entry("a")), 5);
-
-        assertEquals(List.of("not connected", "allocated"), outcomes(build));
-        assertFalse(build.data().isAllocated("b"));
-    }
-
-    @Test
-    void connectivityOnlyFollowsTheCandidatesOwnConnections() {
-        small("a", ROOT, "x");
-        small("x", "elsewhere");
-
-        NpcTreeBuild build = build(layout(entry("a"), entry("x")), 5);
-
-        assertEquals(List.of("allocated", "not connected"), outcomes(build));
-    }
-
-    @Test
-    void selectsTheChosenOptionOnOptionalNodes() {
-        registerType(builder("caps", SkillTier.SMALL).build());
-        registerType(builder("vents", SkillTier.SMALL).build());
-        node("optional_1", registerType(builder("optional", SkillTier.SMALL).optionalOptionIds(List.of("caps", "vents")).build()), ROOT);
-
-        ShipSkillData data = build(layout(entry("optional_1", "vents")), 5).data();
-
-        assertTrue(data.isAllocated("optional_1"));
-        assertEquals("vents", data.getOptionalSelection("optional_1"));
-        assertTrue(data.isFreeNode("optional_1"));
-    }
-
-    @Test
-    void skipsOptionalNodesWithAMissingOrInvalidOption() {
-        registerType(builder("caps", SkillTier.SMALL).build());
-        registerType(builder("stranger", SkillTier.SMALL).build());
-        node("optional_1", registerType(builder("optional", SkillTier.SMALL).optionalOptionIds(List.of("caps", "ghost")).build()), ROOT);
-
-        NpcTreeBuild build = build(layout(entry("optional_1"), entry("optional_1", "stranger"), entry("optional_1", "ghost")), 5);
-
-        assertEquals(List.of("missing option", "invalid option: stranger", "invalid option: ghost"), outcomes(build));
-    }
-
-    @Test
-    void skipsAnOptionGivenForANonOptionalNode() {
-        registerType(builder("caps", SkillTier.SMALL).build());
-        small("a", ROOT);
-
-        assertEquals(List.of("unexpected option: caps"), outcomes(build(layout(entry("a", "caps")), 5)));
-    }
-
-    @Test
-    void anUnknownOrNonRootRootAllocatesNothing() {
-        small("a", ROOT);
-
-        NpcTreeBuild unknownRoot = build(layoutWithRoot("ghost", entry("a")), 5);
-        NpcTreeBuild smallRoot = build(layoutWithRoot("a", entry("a")), 5);
-
-        assertEquals(List.of("invalid root: ghost"), outcomes(unknownRoot));
-        assertTrue(unknownRoot.data().getAllocatedNodeIds().isEmpty());
-        assertEquals(List.of("invalid root: a"), outcomes(smallRoot));
-        assertTrue(smallRoot.data().getAllocatedNodeIds().isEmpty());
-    }
-
-    @Test
-    void anInvalidRootBuildsTheSameEmptyTreeItsTagDecodesTo() {
-        small("a", ROOT);
-
-        ShipSkillData built = build(layoutWithRoot("ghost", entry("a")), 5).data();
-        ShipSkillData decoded = NpcTreeTag.decode(NpcTreeTag.encode("layout", built));
-
-        assertEquals(0, built.getLevel());
-        assertEquals(built.getLevel(), decoded.getLevel());
-        assertEquals(built.getBankedFreeAllocations(), decoded.getBankedFreeAllocations());
-        assertTrue(built.isNpcBuild());
-        assertTrue(decoded.isNpcBuild());
-    }
-
-    @Test
-    void recordsEveryEntryInOrder() {
-        chain(2);
-
-        NpcTreeBuild build = build(layout(entry("n2"), entry("ghost"), entry("n1"), entry("n2")), 5);
-
-        assertEquals(List.of("n2", "ghost", "n1", "n2"), build.steps().stream().map(NpcBuildStep::nodeId).toList());
-        assertEquals(List.of("not connected", "unknown node", "allocated", "allocated"), outcomes(build));
-        assertEquals(List.of("n1", "n2"), build.allocatedNodeIds());
-    }
-
-    @Test
-    void theBuiltDataIsMarkedAsAnNpcBuild() {
-        chain(1);
-
-        assertTrue(build(chainLayout(1), 1).data().isNpcBuild());
-    }
-
-    @Test
-    void skipsAFrontShieldConversionOnAShipThatAlreadyHasFrontShields() {
-        node("front_1", effectType("front", ShieldSkillEffect.CONVERT_SHIELD_TO_FRONT), ROOT);
-
-        NpcTreeBuild frontShielded = build(layout(entry("front_1")), 5);
-        NpcTreeBuild omniShielded = NpcSkillTreeBuilder.build(layout(entry("front_1")), 5, OMNI_SHIELDED_FRIGATE, NpcHullMods.NONE);
-
-        assertEquals(List.of("blocked by ship state: Ship already has front shields."), outcomes(frontShielded));
-        assertFalse(frontShielded.data().isAllocated("front_1"));
-        assertEquals(List.of("allocated"), outcomes(omniShielded));
-    }
-
-    @Test
-    void shieldStateBlocksFollowConversionsAllocatedEarlierInTheBuild() {
-        node("omni_1", effectType("omni", ShieldSkillEffect.CONVERT_SHIELD_TO_OMNI), ROOT);
-        node("front_1", effectType("front", ShieldSkillEffect.CONVERT_SHIELD_TO_FRONT), ROOT);
-        node("front_2", effectType("front_again", ShieldSkillEffect.CONVERT_SHIELD_TO_FRONT), ROOT);
-
-        NpcTreeBuild build = NpcSkillTreeBuilder.build(layout(entry("omni_1"), entry("front_1"), entry("front_2")), 5,
-                OMNI_SHIELDED_FRIGATE, NpcHullMods.NONE);
-
-        assertEquals(List.of("blocked by ship state: Ship already has omni-directional shields.", "allocated",
-                "blocked by ship state: Ship already has front shields."), outcomes(build));
-    }
-
-    @Test
-    void shieldStateBlocksApplyToTheChosenOptionOfAnOptionalNode() {
-        effectType("front_option", ShieldSkillEffect.CONVERT_SHIELD_TO_FRONT);
-        registerType(builder("hull_option", SkillTier.SMALL).build());
-        node("optional_1", registerType(builder("optional", SkillTier.SMALL)
-                .optionalOptionIds(List.of("front_option", "hull_option")).build()), ROOT);
-
-        NpcTreeBuild blocked = build(layout(entry("optional_1", "front_option")), 5);
-        NpcTreeBuild allowed = build(layout(entry("optional_1", "hull_option")), 5);
-
-        assertEquals(List.of("blocked by ship state: Ship already has front shields."), outcomes(blocked));
-        assertEquals(List.of("allocated"), outcomes(allowed));
-    }
-
-    @Test
-    void buildsAreDeterministic() {
-        chain(10);
-        small("side", "n3");
-        NpcLayout layout = layout(entry("n1"), entry("side"), entry("n2"), entry("n3"), entry("side"), entry("n4"));
-
-        NpcTreeBuild first = build(layout, 4);
-        NpcTreeBuild second = build(layout, 4);
-
-        assertEquals(first.steps(), second.steps());
-        assertEquals(List.copyOf(first.data().getAllocatedNodeIds()), List.copyOf(second.data().getAllocatedNodeIds()));
-    }
-
-    @Test
-    void aRemovableHullmodIsConvertedByPathingToItsEquivalentNodeAndStripped() {
-        small("a", ROOT);
-        hullModNode("armor_1", "heavyarmor", "a");
-        small("b", ROOT);
-
-        NpcTreeBuild build = buildWith(layout(entry("b"), entry("armor_1")), 4, removable("heavyarmor"));
-
-        assertEquals(List.of("allocated: path to converted hullmod heavyarmor", "allocated: converts hullmod heavyarmor",
-                "allocated", "already allocated"), outcomes(build));
         assertEquals(List.of("heavyarmor"), build.strippedHullModIds());
-        assertTrue(build.data().isAllocated("armor_1"));
-        assertTrue(build.data().isFreeNode("armor_1"));
-        assertEquals(3, build.allocatedCount());
+        assertEquals(List.of(ROOT, "armor_node", "n1", "n2", "n3"), allocated(build));
+        assertEquals(6, build.data().getSpentOp(2));
+        assertTrue(build.steps().get(0).outcome().startsWith(NpcBuildStep.CONVERTED_HULLMOD));
     }
 
     @Test
-    void conversionPathsSpendTheNodeBudgetBeforeTheLayout() {
-        small("a", ROOT);
-        hullModNode("armor_1", "heavyarmor", "a");
-        chain(3);
+    void aHullmodWhoseNodeIsOutOfReachIsPutBackAndItsOpIsNotSpent() {
+        root();
+        chain("n", 5, ROOT);
+        node("armor_node", registerType(builder("armor_node_type", SkillTier.NOTABLE).exclusiveHullModIds(List.of("heavyarmor")).build()), "n5");
+        NpcFreedOp freedOp = new NpcFreedOp(2, Map.of("heavyarmor", 2), 60);
 
-        NpcTreeBuild build = buildWith(chainLayout(3), 3, removable("heavyarmor"));
-
-        assertEquals(List.of("a", "armor_1", "n1"), build.allocatedNodeIds());
-        assertEquals(List.of("allocated: path to converted hullmod heavyarmor", "allocated: converts hullmod heavyarmor",
-                "allocated", "count reached", "count reached"), outcomes(build));
-    }
-
-    @Test
-    void aHullmodWhoseEquivalentNodeIsOutOfReachIsKeptAndItsNodeStaysBlocked() {
-        small("a", ROOT);
-        small("b", "a");
-        hullModNode("armor_1", "heavyarmor", "b");
-
-        NpcTreeBuild build = buildWith(layout(entry("a"), entry("b"), entry("armor_1")), 2, removable("heavyarmor"));
-
-        assertEquals(List.of("hullmod kept, equivalent node out of reach: heavyarmor", "allocated", "allocated", "count reached"),
-                outcomes(build));
-        assertTrue(build.strippedHullModIds().isEmpty());
-        assertFalse(build.data().isAllocated("armor_1"));
-    }
-
-    private static NpcTreeBuild buildWithFreedOp(NpcLayout layout, int nodeCount, NpcHullMods hullMods, NpcFreedOp freedOp) {
-        return NpcSkillTreeBuilder.build(layout, nodeCount, SHIELDED_BALLISTIC_FRIGATE, hullMods, freedOp);
-    }
-
-    private static NpcLayout armorThenChain() {
-        small("a", ROOT);
-        hullModNode("armor_1", "heavyarmor", "a");
-        small("b", "armor_1");
-        small("c", "b");
-        small("d", "c");
-        return layout(entry("b"), entry("c"), entry("d"));
-    }
-
-    @Test
-    void opFreedByAStrippedHullmodBuysExtraLayoutNodesChargedAtThePerNodeCost() {
-        NpcTreeBuild build = buildWithFreedOp(armorThenChain(), 2, removable("heavyarmor"),
-                new NpcFreedOp(3, Map.of("heavyarmor", 7), 60));
-
-        assertEquals(List.of("allocated: path to converted hullmod heavyarmor", "allocated: converts hullmod heavyarmor",
-                NpcBuildStep.ALLOCATED_WITH_FREED_OP, NpcBuildStep.ALLOCATED_WITH_FREED_OP, "count reached"), outcomes(build));
-        ShipSkillData data = build.data();
-        assertEquals(6, data.getSpentOp(3));
-        assertEquals(0, data.getBankedFreeAllocations());
-        assertTrue(data.isFreeNode("armor_1"));
-        assertFalse(data.isFreeNode("b"));
-        assertFalse(data.isFreeNode("c"));
-        assertEquals(2, data.getLevel());
-    }
-
-    @Test
-    void extraNodesFromFreedOpStopAtTheMaxNodeCount() {
-        NpcTreeBuild build = buildWithFreedOp(armorThenChain(), 2, removable("heavyarmor"),
-                new NpcFreedOp(1, Map.of("heavyarmor", 10), 3));
-
-        assertEquals(1, build.steps().stream().filter(step -> NpcBuildStep.ALLOCATED_WITH_FREED_OP.equals(step.outcome())).count());
-        assertEquals(1, build.data().getSpentOp(1));
-    }
-
-    @Test
-    void aHullmodThatIsKeptFreesNoOp() {
-        NpcTreeBuild build = buildWithFreedOp(armorThenChain(), 1, removable("heavyarmor"),
-                new NpcFreedOp(1, Map.of("heavyarmor", 10), 60));
+        NpcTreeBuild build = generate(2, null, new NpcHullMods(Set.of("heavyarmor"), Set.of()), freedOp, 1L);
 
         assertTrue(build.strippedHullModIds().isEmpty());
-        assertEquals(0, build.data().getSpentOp(1));
-        assertFalse(outcomes(build).contains(NpcBuildStep.ALLOCATED_WITH_FREED_OP));
+        assertTrue(build.steps().stream().anyMatch(step -> step.outcome().equals(NpcBuildStep.HULLMOD_KEPT + "heavyarmor")));
+        assertEquals(3, build.data().getAllocatedNodeIds().size());
+        assertEquals(0, build.data().getSpentOp(2));
     }
 
     @Test
-    void permanentHullmodsAreNeverConverted() {
-        hullModNode("armor_1", "heavyarmor", ROOT);
+    void aShortBudgetGoesToTheNearestChosenNotablesWithoutSmallDetours() {
+        root();
+        small("s1", ROOT);
+        notable("near", "s1");
+        small("t1", ROOT);
+        small("t2", "t1");
+        notable("far", "t2");
+        small("leaf", ROOT);
 
-        NpcTreeBuild build = buildWith(layout(entry("armor_1")), 5, permanent("heavyarmor"));
+        for (long seed = 1; seed <= 20; seed++) {
+            NpcTreeBuild build = generate(5, null, NpcHullMods.NONE, NpcFreedOp.NONE, seed);
 
-        assertEquals(List.of("conflicts with installed hullmod: heavyarmor"), outcomes(build));
-        assertTrue(build.strippedHullModIds().isEmpty());
+            assertEquals(List.of(ROOT, "s1", "near", "t1", "t2", "far"), allocated(build), "seed " + seed);
+        }
     }
 
     @Test
-    void theNearestConversionsAreMadeFirstWhenTheBudgetCannotCoverAll() {
-        small("a", ROOT);
-        small("b", "a");
-        hullModNode("far_1", "farmod", "b");
-        hullModNode("near_1", "nearmod", ROOT);
+    void smallNodesFillTheBudgetOnlyWhenNoNotableIsAffordable() {
+        root();
+        small("s1", ROOT);
+        notable("notable", "s1");
+        small("leaf", ROOT);
 
-        NpcTreeBuild build = buildWith(layout(), 2, removable("farmod", "nearmod"));
+        NpcTreeBuild build = generate(1);
 
-        assertEquals(List.of("nearmod"), build.strippedHullModIds());
-        assertTrue(build.data().isAllocated("near_1"));
-        assertFalse(build.data().isAllocated("far_1"));
-        assertEquals("hullmod kept, equivalent node out of reach: farmod", outcomes(build).get(1));
+        assertEquals(2, build.data().getAllocatedNodeIds().size());
+        assertFalse(build.data().isAllocated("notable"));
     }
 
     @Test
-    void conversionPathsReuseNodesAlreadyAllocatedByEarlierConversions() {
-        small("a", ROOT);
-        hullModNode("first_1", "firstmod", "a");
-        hullModNode("second_1", "secondmod", "a");
+    void aFactionShipCrossesItsOwnWormholeForANotableInItsVolume() {
+        root();
+        small("s1", ROOT);
+        wormholePair("gate_core", "gate_far", "core", "hegemony", "s1");
+        node("pride", registerType(builder("pride_type", SkillTier.NOTABLE).build()), List.of("hegemony"), "gate_far");
+        notable("core_notable", ROOT);
 
-        NpcTreeBuild build = buildWith(layout(), 3, removable("firstmod", "secondmod"));
+        NpcTreeBuild build = generate(3, "hegemony", NpcHullMods.NONE, NpcFreedOp.NONE, 1L);
 
-        assertEquals(List.of("firstmod", "secondmod"), build.strippedHullModIds());
-        assertEquals(List.of("a", "first_1", "second_1"), build.allocatedNodeIds());
+        assertTrue(build.data().isAllocated("pride"));
+        assertTrue(build.data().isAllocated("gate_far"));
+        assertTrue(build.steps().stream().anyMatch(step -> step.outcome().equals(NpcBuildStep.FACTION_GOAL)));
     }
 
     @Test
-    void conversionPathsAvoidNodesTheShipCannotTake() {
-        node("shield_1", registerType(builder("shield_type", SkillTier.SMALL).tags(List.of("req_no_shields")).build()), ROOT);
-        hullModNode("armor_1", "heavyarmor", "shield_1");
-        small("a", ROOT);
-        small("b", "a");
-        register(new SkillNode("armor_2", SkillTree.getType("heavyarmor_node"), List.of("b"), 0f, 0f));
+    void theFactionNotableIsSkippedWhenTheBudgetCannotReachIt() {
+        root();
+        small("s1", ROOT);
+        wormholePair("gate_core", "gate_far", "core", "hegemony", "s1");
+        node("pride", registerType(builder("pride_type", SkillTier.NOTABLE).build()), List.of("hegemony"), "gate_far");
+        notable("core_notable", ROOT);
 
-        NpcTreeBuild build = buildWith(layout(), 5, removable("heavyarmor"));
+        NpcTreeBuild build = generate(1, "hegemony", NpcHullMods.NONE, NpcFreedOp.NONE, 1L);
 
-        assertEquals(List.of("a", "b", "armor_2"), build.allocatedNodeIds());
-        assertEquals(List.of("heavyarmor"), build.strippedHullModIds());
+        assertFalse(build.data().isAllocated("pride"));
+        assertTrue(build.data().isAllocated("core_notable"));
     }
 
     @Test
-    void conversionPathsUseTheLayoutsOptionForOptionalNodes() {
+    void shipsNeverCrossAnyWormholeButTheirOwnFactions() {
+        root();
+        chain("c", 3, ROOT);
+        wormholePair("heg_core", "heg_far", "core", "hegemony", "c1");
+        node("heg_notable", registerType(builder("heg_type", SkillTier.NOTABLE).build()), List.of("hegemony"), "heg_far");
+        wormholePair("tt_core", "tt_far", "core", "tritachyon", "c2");
+        node("tt_notable", registerType(builder("tt_type", SkillTier.NOTABLE).build()), List.of("tritachyon"), "tt_far");
+        wormholePair("short_a", "short_b", "core", "core", "c3");
+        node("beyond_shortcut", registerType(builder("beyond_type", SkillTier.NOTABLE).build()), List.of("core"), "short_b");
+        wormholePair("lost_a", "lost_b", "hegemony", "enigma", "heg_notable");
+        node("enigma_notable", registerType(builder("enigma_type", SkillTier.NOTABLE).build()), List.of("enigma"), "lost_b");
+
+        NpcTreeBuild hegemony = generate(30, "hegemony", NpcHullMods.NONE, NpcFreedOp.NONE, 1L);
+        NpcTreeBuild independent = generate(30, null, NpcHullMods.NONE, NpcFreedOp.NONE, 1L);
+
+        assertTrue(hegemony.data().isAllocated("heg_notable"));
+        for (String forbidden : List.of("tt_core", "tt_notable", "short_a", "beyond_shortcut", "lost_a", "enigma_notable")) {
+            assertFalse(hegemony.data().isAllocated(forbidden), forbidden);
+        }
+        for (String forbidden : List.of("heg_core", "heg_notable", "tt_core", "short_a")) {
+            assertFalse(independent.data().isAllocated(forbidden), forbidden);
+        }
+    }
+
+    @Test
+    void nodesTheShipCannotUseAreNeverTaken() {
+        root();
+        node("missile_notable", registerType(builder("missile_notable_type", SkillTier.NOTABLE).tags(List.of("req_missile")).build()), ROOT);
+        node("first", registerType(builder("first_type", SkillTier.NOTABLE).exclusiveSkillTypeIds(List.of("second_type")).build()), ROOT);
+        node("second", registerType(builder("second_type", SkillTier.NOTABLE).build()), ROOT);
+
+        NpcTreeBuild build = generate(10);
+
+        assertFalse(build.data().isAllocated("missile_notable"));
+        assertTrue(build.data().isAllocated("first") ^ build.data().isAllocated("second"));
+    }
+
+    @Test
+    void optionalNodesOnlyPickOptionsTheShipCanUse() {
+        root();
+        registerType(builder("missile_option", SkillTier.SMALL).tags(List.of("req_missile")).build());
         registerType(builder("hull_option", SkillTier.SMALL).build());
-        registerType(builder("flux_option", SkillTier.SMALL).build());
-        node("optional_1", registerType(builder("optional", SkillTier.SMALL)
-                .optionalOptionIds(List.of("flux_option", "hull_option")).build()), ROOT);
-        hullModNode("armor_1", "heavyarmor", "optional_1");
+        node("optional", registerType(builder("optional_type", SkillTier.SMALL)
+                .optionalOptionIds(List.of("missile_option", "hull_option")).build()), ROOT);
 
-        NpcTreeBuild withLayoutOption = buildWith(layout(entry("optional_1", "hull_option")), 5, removable("heavyarmor"));
-        NpcTreeBuild withoutLayoutOption = buildWith(layout(), 5, removable("heavyarmor"));
+        for (long seed = 1; seed <= 10; seed++) {
+            ShipSkillData data = generate(1, null, NpcHullMods.NONE, NpcFreedOp.NONE, seed).data();
 
-        assertEquals("hull_option", withLayoutOption.data().getOptionalSelection("optional_1"));
-        assertEquals("flux_option", withoutLayoutOption.data().getOptionalSelection("optional_1"));
+            assertEquals("hull_option", data.getOptionalSelection("optional"));
+        }
     }
 
     @Test
-    void theVanillaHullmodIdTakesPriorityAsTheEquivalentHullmod() {
-        node("rangefinder_1", registerType(builder("rangefinder", SkillTier.KEYSTONE)
-                .vanillaHullModId("ballistic_rangefinder").exclusiveHullModIds(List.of("other")).build()), ROOT);
+    void theSameSeedAlwaysGrowsTheSameTree() {
+        root();
+        for (int branch = 1; branch <= 4; branch++) {
+            chain("b" + branch + "_", 3, ROOT);
+            notable("goal" + branch, "b" + branch + "_3");
+        }
 
-        NpcTreeBuild viaVanillaId = buildWith(layout(), 5, removable("ballistic_rangefinder"));
-        NpcTreeBuild viaExclusiveId = buildWith(layout(entry("rangefinder_1")), 5, removable("other"));
-
-        assertEquals(List.of("ballistic_rangefinder"), viaVanillaId.strippedHullModIds());
-        assertTrue(viaExclusiveId.strippedHullModIds().isEmpty());
-        assertEquals(List.of("conflicts with installed hullmod: other"), outcomes(viaExclusiveId));
+        assertEquals(allocated(generate(9, null, NpcHullMods.NONE, NpcFreedOp.NONE, 42L)),
+                allocated(generate(9, null, NpcHullMods.NONE, NpcFreedOp.NONE, 42L)));
     }
 
     @Test
-    void conversionIsDeterministic() {
-        small("a", ROOT);
-        hullModNode("first_1", "firstmod", "a");
-        hullModNode("second_1", "secondmod", ROOT);
+    void relevanceFavoursNodesThatMatchTheShip() {
+        NpcRelevance relevance = NpcRelevance.of(BALLISTIC_FRIGATE, Set.of());
 
-        NpcTreeBuild first = buildWith(layout(), 2, removable("secondmod", "firstmod"));
-        NpcTreeBuild second = buildWith(layout(), 2, removable("firstmod", "secondmod"));
+        assertTrue(relevance.of(List.of("ballistic")) > relevance.of(List.of("missile")));
+        assertTrue(relevance.of(List.of("shield")) > relevance.of(List.of("fighter")));
+        assertEquals(NpcRelevance.UNTHEMED, relevance.of(List.of("core")));
+    }
 
-        assertEquals(first.steps(), second.steps());
-        assertEquals(first.strippedHullModIds(), second.strippedHullModIds());
+    @Test
+    void aShipNeverPairsShieldShuntWithShieldNodes() {
+        root();
+        node("shunt", registerType(builder("shunt_type", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(ShieldSkillEffect.REMOVE_SHIELD, 1f))).build()), ROOT);
+        node("emitter", registerType(builder("emitter_type", SkillTier.NOTABLE).tags(List.of("shield", "req_shields")).build()), ROOT);
+        small("arc", "emitter");
+        node("raise", registerType(builder("raise_type", SkillTier.SMALL).tags(List.of("req_shields")).build()), "shunt");
+
+        for (long seed = 1; seed <= 30; seed++) {
+            ShipSkillData data = generate(4, null, NpcHullMods.NONE, NpcFreedOp.NONE, seed).data();
+
+            assertFalse(data.isAllocated("shunt") && (data.isAllocated("emitter") || data.isAllocated("raise")), "seed " + seed);
+        }
+    }
+
+    @Test
+    void aShipWithConvertedHangarCanTradeItForTheNoFighterBaysNode() {
+        root();
+        node("hangar", registerType(builder("hangar_type", SkillTier.KEYSTONE).tags(List.of("fighter", "req_no_fighter_bays"))
+                .exclusiveHullModIds(List.of("converted_hangar")).build()), ROOT);
+        ShipProfile hangarShip = new ShipProfile(HullSize.DESTROYER, ShieldType.FRONT, 1, Set.of(WeaponKind.BALLISTIC), false, 0f, false);
+        NpcHullMods hullMods = new NpcHullMods(Set.of("converted_hangar"), Set.of());
+
+        NpcTreeBuild counted = generate(hangarShip, null, 1, null, hullMods,
+                new NpcFreedOp(2, Map.of("converted_hangar", 10), Map.of("converted_hangar", 1), 60), 1L);
+        NpcTreeBuild unknown = generate(hangarShip, null, 1, null, hullMods, new NpcFreedOp(2, Map.of("converted_hangar", 10), 60), 1L);
+
+        assertTrue(counted.data().isAllocated("hangar"));
+        assertEquals(List.of("converted_hangar"), counted.strippedHullModIds());
+        assertFalse(unknown.data().isAllocated("hangar"));
+    }
+
+    @Test
+    void theFactionPickCanLandOnAKeystone() {
+        root();
+        wormholePair("gate_core", "gate_far", "core", "sindrian_dictat", ROOT);
+        node("lions_gaze", registerType(builder("lions_gaze_type", SkillTier.KEYSTONE).build()), List.of("sindrian_dictat"), "gate_far");
+
+        NpcTreeBuild build = generate(2, "sindrian_dictat", NpcHullMods.NONE, NpcFreedOp.NONE, 1L);
+
+        assertTrue(build.data().isAllocated("lions_gaze"));
+        assertTrue(build.steps().stream().anyMatch(step -> step.outcome().equals(NpcBuildStep.FACTION_GOAL)));
     }
 }

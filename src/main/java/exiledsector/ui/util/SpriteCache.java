@@ -29,7 +29,7 @@ public final class SpriteCache {
             Global.getSettings().loadTexture(path);
             loadedSprites.add(path);
             return true;
-        } catch (IOException e) {
+        } catch (IOException | RuntimeException e) {
             logger.error("Failed to load texture " + path, e);
             failedSprites.add(path);
             return false;

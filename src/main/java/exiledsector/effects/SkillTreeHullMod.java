@@ -210,7 +210,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
 
             String modId = MOD_ID_PREFIX + allocated.node().getId();
             List<ShipCombatPlan.AppliedEffect> effects = new ArrayList<>();
-            for (SkillTypeEffect effect : AllocatedSkillEffects.appliedEffects(data, type, hullSize)) {
+            for (SkillTypeEffect effect : AllocatedSkillEffects.appliedEffects(data, allocated, hullSize)) {
                 effects.add(new ShipCombatPlan.AppliedEffect(effect.effect(), modId, effect.magnitude()));
             }
             plan.addTemporaryNode(durationSeconds, effects);
@@ -244,7 +244,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
             } else {
                 String modId = MOD_ID_PREFIX + allocated.node().getId();
                 boolean temporary = type.getTemporaryAfterDeploymentSeconds() != null;
-                for (SkillTypeEffect effect : AllocatedSkillEffects.appliedEffects(data, type, hullSize)) {
+                for (SkillTypeEffect effect : AllocatedSkillEffects.appliedEffects(data, allocated, hullSize)) {
                     if (!temporary && effect.effect().isMultiplicative()) {
                         multipliers.merge(effect.effect(), effect.magnitude(), Float::sum);
                     } else {

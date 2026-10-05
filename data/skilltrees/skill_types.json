@@ -1119,6 +1119,9 @@
 					"id": "escort_package"
 				}
 			],
+			"exclusiveHullMods": [
+				"escort_package"
+			],
 			"tags": [
 				"fleet_support",
 				"speed"
@@ -1159,14 +1162,18 @@
 			]
 		},
 		{
-			"id": "phase_sensor_upgrades",
-			"name": "Phase Sensor Upgrades",
+			"id": "phase_hull_upgrades",
+			"name": "Phase Hull Upgrades",
 			"icon": "graphics/icons/phase_sensor_upgrades.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
 					"effect": "PHASE_FIELD_CONTRIBUTION_PERCENT",
-					"magnitude": 100
+					"magnitude": 50
+				},
+				{
+					"effect": "CORONA_RESISTANCE_MULT",
+					"magnitude": -25
 				}
 			],
 			"exclusiveHullMods": [
@@ -3198,6 +3205,13 @@
 			"description": "Allocating this wormhole automatically allocates its paired wormhole as well at no extra cost, connecting both branches of the tree. \n\nDeallocating either end deallocates both.\n\nCtrl click on a wormhole to travel through it."
 		},
 		{
+			"id": "modular_hull_socket",
+			"name": "Modular Hull Socket",
+			"icon": "",
+			"tier": "SOCKET",
+			"description": "An empty compartment stripped back to bare frame and power conduit. Domain subroutines need hardware to run on, and officers and specialist teams need somewhere to live and work. Whatever you install here will have a place aboard."
+		},
+		{
 			"id": "pd_damage_to_missiles",
 			"name": "Point Defence Damage to Missiles",
 			"icon": "graphics/icons/pd_damage_to_missiles.png",
@@ -3464,6 +3478,10 @@
 				{
 					"effect": "SHIELD_DAMAGE_TAKEN_MULT",
 					"magnitude": 10
+				},
+				{
+					"effect": "ARMOR_PERCENT",
+					"magnitude": -10
 				}
 			],
 			"tags": [

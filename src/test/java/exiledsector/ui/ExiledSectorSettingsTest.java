@@ -10,6 +10,7 @@ import exiledsector.skills.npc.NpcTreeConfig;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.tags.AreaToggles;
 import exiledsector.ui.inspect.NpcInspectConfig;
+import exiledsector.ui.refit.RefitButtonConfig;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -89,6 +90,12 @@ class ExiledSectorSettingsTest {
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addRadio(eq("exiledSector"),
                 eq(AreaToggles.LOST_SECTOR_FIELD_ID), anyString(), anyString(), eq(AreaToggles.AUTO),
                 eq(String.join(",", AreaToggles.OPTIONS)), eq("")));
+    }
+
+    @Test
+    void registersTheRefitButtonToggleDefaultingToTheButtonUnderTheHullMods() {
+        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addBoolean(eq("exiledSector"),
+                eq(RefitButtonConfig.FIELD_ID), anyString(), anyString(), eq(true), eq("")));
     }
 
     @Test

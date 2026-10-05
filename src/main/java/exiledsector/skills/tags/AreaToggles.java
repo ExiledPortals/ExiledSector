@@ -9,7 +9,7 @@ import java.util.Set;
 public final class AreaToggles {
 
     public static final String LOST_SECTOR_FIELD_ID = "exiledSector_lostSectorArea";
-    public static final String LOST_SECTOR_REGION = "lost_sector";
+    public static final Set<String> LOST_SECTOR_REGIONS = Set.of("enigma", "kesteven");
     public static final String AUTO = "Auto";
     public static final String ON = "On";
     public static final String OFF = "Off";
@@ -28,6 +28,6 @@ public final class AreaToggles {
             case OFF -> false;
             default -> lostSectorInstalled;
         };
-        return shown ? Set.of() : Set.of(LOST_SECTOR_REGION);
+        return shown ? Set.of() : LOST_SECTOR_REGIONS;
     }
 }

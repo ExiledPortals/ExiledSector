@@ -17,8 +17,10 @@ import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
-import exiledsector.skills.npc.NpcLayout;
-import exiledsector.skills.npc.NpcLayouts;
+import exiledsector.skills.npc.NpcFactionVolumes;
+import exiledsector.socketables.SocketableDefinitions;
+import exiledsector.socketables.SocketableKind;
+import exiledsector.socketables.SocketableNames;
 import exiledsector.ui.SkillTreeRefitButton;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
 import exiledsector.ui.inspect.SkillTreeCodexListener;
@@ -84,8 +86,15 @@ class ExiledSectorModPluginTest {
                 .thenReturn(new JSONArray());
         when(settings.getMergedSpreadsheetDataForMod("hullmod", "data/config/exiledSector/drone_marker_hullmods.csv", "exiledSector"))
                 .thenReturn(new JSONArray());
-        when(settings.getMergedJSON("data/config/exiledSector/npc_layouts.json")).thenReturn(new JSONObject(
-                "{ \"layouts\": { \"bulwark\": { \"root\": \"root_low_tech_1\", \"nodes\": [\"a\"] } } }"));
+        when(settings.getMergedSpreadsheetDataForMod("faction", "data/config/exiledSector/npc_faction_volumes.csv", "exiledSector"))
+                .thenReturn(new JSONArray("[{\"faction\": \"hegemony\", \"region\": \"hegemony\"}]"));
+        when(settings.getMergedSpreadsheetDataForMod("id", "data/config/exiledSector/socketables.csv", "exiledSector"))
+                .thenReturn(new JSONArray("[{\"id\": \"chip\", \"kind\": \"subroutine\", \"prefixes\": \"HULL_MULT:4:6\"}]"));
+        when(settings.getMergedJSONForMod("data/config/exiledSector/socketable_names.json", "exiledSector")).thenReturn(new JSONObject("{}"));
+        when(settings.getMergedSpreadsheetDataForMod("effect", "data/config/exiledSector/socketable_affixes.csv", "exiledSector"))
+                .thenReturn(new JSONArray());
+        when(settings.getMergedSpreadsheetDataForMod("old", "data/config/exiledSector/node_replacements.csv", "exiledSector"))
+                .thenReturn(new JSONArray());
 
         Logger logger = mock(Logger.class);
 
@@ -101,7 +110,9 @@ class ExiledSectorModPluginTest {
     void tearDown() throws Exception {
         loadTree("");
         SkillTree.clearTypes();
-        NpcLayouts.register(Map.of());
+        NpcFactionVolumes.clear();
+        SocketableDefinitions.clear();
+        SocketableNames.clear();
         settingsCreatorMock.close();
         globalMock.close();
         lunaSettingsMock.close();
@@ -280,10 +291,17 @@ class ExiledSectorModPluginTest {
     }
 
     @Test
-    void onApplicationLoadLoadsTheNpcLayoutsMergedAcrossMods() throws Exception {
+    void onApplicationLoadLoadsTheSocketableDefinitionsMergedAcrossMods() throws Exception {
         new ExiledSectorModPlugin().onApplicationLoad();
 
-        assertEquals(List.of("bulwark"), NpcLayouts.all().stream().map(NpcLayout::id).toList());
+        assertEquals(SocketableKind.SUBROUTINE, SocketableDefinitions.get("chip").kind());
+    }
+
+    @Test
+    void onApplicationLoadLoadsTheNpcFactionVolumesMergedAcrossMods() throws Exception {
+        new ExiledSectorModPlugin().onApplicationLoad();
+
+        assertEquals("hegemony", NpcFactionVolumes.regionFor("hegemony"));
     }
 
     @Test

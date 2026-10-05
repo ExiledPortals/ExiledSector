@@ -14,7 +14,6 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +28,8 @@ class CatalogueLintTest {
     private static final Path REPORT_DIRECTORY = Path.of("target/i18n");
     private static final Set<String> REPORTED_LOCALES = Set.of(LocaleChain.SIMPLIFIED_CHINESE);
     private static final String HULL_MODS_FILE = "data/hullmods/hull_mods.csv";
+    private static final String SOCKETABLES_FILE = "data/config/exiledSector/socketables.csv";
+    private static final String SOCKETABLE_AFFIXES_FILE = "data/config/exiledSector/socketable_affixes.csv";
 
     static Map<String, String> dataSources() throws IOException, JSONException {
         Path root = RealSkillData.projectRoot();
@@ -43,11 +44,23 @@ class CatalogueLintTest {
                 sources.put("skillType." + id + ".description", description);
             }
         }
-        JSONObject layouts = RealSkillData.readJson(root.resolve(RealSkillData.LAYOUTS_FILE)).getJSONObject("layouts");
-        Iterator<?> ids = layouts.keys();
-        while (ids.hasNext()) {
-            String id = String.valueOf(ids.next());
-            sources.put("npcLayout." + id + ".name", layouts.getJSONObject(id).getString("name"));
+        String socketableRows = Files.readString(root.resolve(SOCKETABLES_FILE), StandardCharsets.UTF_8).replace("\r\n", "\n");
+        JSONArray socketables = CDL.toJSONArray(socketableRows);
+        for (int i = 0; i < socketables.length(); i++) {
+            JSONObject socketable = socketables.getJSONObject(i);
+            sources.put("socketable." + socketable.getString("id") + ".name", socketable.getString("name"));
+            String description = socketable.optString("description", "");
+            if (!description.isEmpty()) {
+                sources.put("socketable." + socketable.getString("id") + ".description", description);
+            }
+        }
+        String affixRows = Files.readString(root.resolve(SOCKETABLE_AFFIXES_FILE), StandardCharsets.UTF_8).replace("\r\n", "\n");
+        JSONArray affixes = CDL.toJSONArray(affixRows);
+        for (int i = 0; i < affixes.length(); i++) {
+            JSONObject affix = affixes.getJSONObject(i);
+            String key = "socketable.affix." + affix.getString("effect");
+            sources.put(key + ".prefix", affix.getString("prefix"));
+            sources.put(key + ".suffix", affix.getString("suffix"));
         }
         String hullModRows = Files.readString(root.resolve(HULL_MODS_FILE), StandardCharsets.UTF_8).replace("\r\n", "\n");
         JSONArray hullMods = CDL.toJSONArray(hullModRows);

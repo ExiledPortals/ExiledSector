@@ -1,11 +1,7 @@
 package exiledsector.ui.node;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.graphics.SpriteAPI;
-import com.fs.starfarer.api.impl.campaign.ids.Factions;
-import exiledsector.ui.util.FallbackSupport;
 import exiledsector.ui.util.SpriteCache;
-import org.apache.log4j.Logger;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -17,7 +13,6 @@ import java.util.Random;
 final class SkillTreeNodeGhostRenderer {
 
     static final String GHOST_TEXTURE_PATH = "graphics/icons/fleet_triangle.png";
-    private static final Color FALLBACK_GHOST_COLOR = new Color(155, 155, 155);
 
     private static final int GHOST_COUNT = 3;
     private static final float GHOST_SIZE_RATIO = 0.4f;
@@ -29,7 +24,6 @@ final class SkillTreeNodeGhostRenderer {
 
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeNodeGhostRenderer.class);
     private final Map<String, List<GhostInstance>> ghostsByNode = new HashMap<>();
-    private Color cachedGhostColor;
     private float elapsedSeconds = 0f;
 
     void advance(float amount) {
@@ -41,7 +35,7 @@ final class SkillTreeNodeGhostRenderer {
         if (sprite == null) return;
 
         List<GhostInstance> ghosts = ghostsByNode.computeIfAbsent(nodeId, id -> generateGhosts(id));
-        Color color = ghostColor();
+        Color color = GhostFlight.color();
         float size = footprintSize * GHOST_SIZE_RATIO;
 
         for (GhostInstance ghost : ghosts) {
@@ -54,14 +48,6 @@ final class SkillTreeNodeGhostRenderer {
             sprite.setAlphaMult(alpha);
             sprite.renderAtCenter(cx + ghost.offsetXFraction * footprintSize, cy + ghost.offsetYFraction * footprintSize);
         }
-    }
-
-    Color ghostColor() {
-        if (cachedGhostColor != null) return cachedGhostColor;
-        cachedGhostColor = FallbackSupport.getOrFallback(
-                () -> Global.getSector().getFaction(Factions.NEUTRAL).getBaseUIColor(), FALLBACK_GHOST_COLOR,
-                Logger.getLogger(SkillTreeNodeGhostRenderer.class), "Failed to read neutral faction colour");
-        return cachedGhostColor;
     }
 
     private static List<GhostInstance> generateGhosts(String seedKey) {

@@ -4,6 +4,7 @@ import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
+import com.thoughtworks.xstream.XStream;
 import exiledsector.compat.CompatChecks;
 import exiledsector.effects.CombatXpListener;
 import exiledsector.effects.FleetCrewLedgerListener;
@@ -22,14 +23,20 @@ import exiledsector.i18n.Translation;
 import exiledsector.persistence.OpSpentSlotManager;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
+import exiledsector.skills.NodeReplacements;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledsector.skills.npc.NpcLayouts;
+import exiledsector.skills.npc.NpcFactionVolumes;
 import exiledsector.skills.skilleffect.CsvIdList;
 import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.skills.tags.AreaToggles;
+import exiledsector.socketables.SocketableDefinitions;
+import exiledsector.socketables.SocketableNames;
+import exiledsector.socketables.SocketCustody;
+import exiledsector.socketables.SocketLossListener;
+import exiledsector.socketables.SocketableSaveAliases;
 import exiledsector.ui.ExiledSectorSettings;
 import exiledsector.ui.SkillTreeRefitButton;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
@@ -58,7 +65,10 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         SkillTree.applyDisabledRegions(AreaToggles.disabledRegions());
         PhantomHullMods.install(phantomHullModIds());
         CsvIdList.loadAll();
-        NpcLayouts.load();
+        NpcFactionVolumes.load();
+        SocketableDefinitions.load();
+        SocketableNames.load();
+        NodeReplacements.load();
         CompatChecks.logAtStartup();
     }
 
@@ -99,6 +109,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
             Global.getLogger(ExiledSectorModPlugin.class).warn(LOG_TAG + ": the skill tree did not load completely, so saved allocations were left as they are.");
             return;
         }
+        ShipSkillDataManager.replaceRemovedNodes(SkillTree.getAllNodes(), NodeReplacements.all());
         ShipSkillDataManager.forgetUnknownNodes(SkillTree.getAllNodes(), SkillTree.getAllTypes(), SkillTree::getDeclared,
                 ExiledSectorModPlugin::refund);
     }
@@ -108,6 +119,11 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         if (playerFleet != null) {
             playerFleet.getCargo().addCommodity(itemCost.itemId(), itemCost.quantity());
         }
+    }
+
+    @Override
+    public void configureXStream(XStream x) {
+        SocketableSaveAliases.register(x);
     }
 
     @Override
@@ -130,5 +146,9 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         Global.getSector().getListenerManager().addListener(new NpcTreeInspectInput(), true);
         Global.getSector().getListenerManager().addListener(new SkillTreeCodexListener(), true);
         Global.getSector().getListenerManager().addListener(new PhantomHullModRefitHider(), true);
+        SocketLossListener socketLossListener = new SocketLossListener();
+        Global.getSector().addTransientListener(socketLossListener);
+        Global.getSector().getListenerManager().addListener(socketLossListener, true);
+        SocketCustody.reconcile();
     }
 }

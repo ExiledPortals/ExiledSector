@@ -107,6 +107,19 @@ class SkillNodeTest {
     }
 
     @Test
+    void aSocketsLoreIsItsEffectTextAndWhatItHoldsIsOnlyInTheDetails() {
+        SkillType type = new SkillType.Builder("socket", "Socket", "", SkillTier.SOCKET)
+                .descriptionOverride("An empty room.")
+                .build();
+
+        NodeDescription description = SkillNode.describeType(type, null);
+
+        assertEquals(List.of("An empty room."), description.effects().stream().map(DescriptionLine::plain).toList());
+        assertEquals(List.of("Holds one subroutine, officer, team or AI core."),
+                description.details().stream().map(DescriptionLine::plain).toList());
+    }
+
+    @Test
     void descriptionIsEmptyForATypeWithNoEffectsAndNoOverride() {
         SkillType type = new SkillType.Builder("cosmetic", "Cosmetic", "graphics/hullmods/flux_coil_adjunct.png", SkillTier.SMALL)
                 .effects(List.of())
@@ -148,7 +161,7 @@ class SkillNodeTest {
                 .build();
         SkillNode node = new SkillNode("escort_package_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Mutually exclusive with hullmod: Escort Package.", description(node.getType()));
+        assertEquals("Mutually exclusive with hullmod:\n• Escort Package", description(node.getType()));
     }
 
     @Test
@@ -170,7 +183,7 @@ class SkillNodeTest {
                 .build();
         SkillNode node = new SkillNode("heavyarmor_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Increases armor by 15%.\n\nMutually exclusive with hullmod: Armored Cladding.", description(node.getType()));
+        assertEquals("Increases armor by 15%.\n\nMutually exclusive with hullmod:\n• Armored Cladding", description(node.getType()));
     }
 
     @Test
@@ -193,7 +206,7 @@ class SkillNodeTest {
                 .build();
         SkillNode node = new SkillNode("hull_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Mutually exclusive with hullmod: Escort Package.", description(node.getType()));
+        assertEquals("Mutually exclusive with hullmod:\n• Escort Package", description(node.getType()));
     }
 
     @Test
@@ -218,7 +231,7 @@ class SkillNodeTest {
                 .build();
         SkillNode node = new SkillNode("frontemitter_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Mutually exclusive with node: Shield Conversion - Omni.", description(node.getType()));
+        assertEquals("Mutually exclusive with node:\n• Shield Conversion - Omni", description(node.getType()));
     }
 
     @Test
@@ -229,7 +242,7 @@ class SkillNodeTest {
         SkillType type = new SkillType.Builder("frontemitter", "Shield Conversion - Front", "a.png", SkillTier.NOTABLE).build();
         SkillNode node = new SkillNode("frontemitter_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Mutually exclusive with node: Shield Conversion - Omni.", description(node.getType()));
+        assertEquals("Mutually exclusive with node:\n• Shield Conversion - Omni", description(node.getType()));
     }
 
     @Test
@@ -246,7 +259,7 @@ class SkillNodeTest {
                 .build();
         SkillNode node = new SkillNode("frontemitter_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Mutually exclusive with node: unknown_type.", description(node.getType()));
+        assertEquals("Mutually exclusive with node:\n• unknown_type", description(node.getType()));
     }
 
     @Test
@@ -277,7 +290,7 @@ class SkillNodeTest {
                 .build();
         SkillNode node = new SkillNode("frontemitter_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Mutually exclusive with hullmod: Escort Package.\n\nMutually exclusive with node: Shield Conversion - Omni.", description(node.getType()));
+        assertEquals("Mutually exclusive with hullmod:\n• Escort Package\n\nMutually exclusive with node:\n• Shield Conversion - Omni", description(node.getType()));
     }
 
     @Test
@@ -293,7 +306,7 @@ class SkillNodeTest {
                 .exclusiveHullModIds(List.of("ground_support", "advanced_ground_support"))
                 .build();
 
-        assertEquals("Mutually exclusive with hullmods: Ground Support, Advanced Ground Support.",
+        assertEquals("Mutually exclusive with hullmods:\n• Ground Support\n• Advanced Ground Support",
                 description(type));
     }
 
@@ -325,7 +338,7 @@ class SkillNodeTest {
                 .build();
         SkillNode node = new SkillNode("frontemitter_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Mutually exclusive with hullmod: Shield Shunt.\n\nMutually exclusive with node: Shield Shunt.", description(node.getType()));
+        assertEquals("Mutually exclusive with hullmod:\n• Shield Shunt\n\nMutually exclusive with node:\n• Shield Shunt", description(node.getType()));
     }
 
     @Test
@@ -442,7 +455,7 @@ class SkillNodeTest {
 
     @Test
     void effectiveTagsCannotBeModified() {
-        SkillNode node = taggedNode(taggedType("hull", List.of(), List.of("hull")), List.of("inner"));
+        SkillNode node = taggedNode(taggedType("hull", List.of(), List.of("hull")), List.of("core"));
         Set<String> tags = node.effectiveTags((SkillType) null);
 
         assertThrows(UnsupportedOperationException.class, () -> tags.add("shield"));
@@ -463,5 +476,45 @@ class SkillNodeTest {
 
         assertSame(hull, listed.resolveEffectiveType(data));
         assertSame(slot, unlisted.resolveEffectiveType(data));
+    }
+
+    @Test
+    void effectsAndRestrictionsAreDescribedSeparately() {
+        SettingsAPI settings = mock(SettingsAPI.class);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+        HullModSpecAPI armoredCladding = mock(HullModSpecAPI.class);
+        when(armoredCladding.getDisplayName()).thenReturn("Armored Cladding");
+        when(settings.getHullModSpec("armoredcladding")).thenReturn(armoredCladding);
+
+        SkillType type = new SkillType.Builder("heavyarmor", "Heavy Armor", "a.png", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.ARMOR_PERCENT, 15f)))
+                .requiredHullSizes(List.of(HullSize.FRIGATE))
+                .exclusiveHullModIds(List.of("armoredcladding"))
+                .build();
+
+        NodeDescription description = SkillNode.describeType(type, null);
+
+        assertEquals(List.of("Increases armor by 15%."), description.effects().stream().map(DescriptionLine::plain).toList());
+        assertEquals(List.of("Restricted to hull size: Frigate.", "Mutually exclusive with hullmod:\n• Armored Cladding"),
+                description.details().stream().map(DescriptionLine::plain).toList());
+    }
+
+    @Test
+    void aNodePlacingAPhantomCopyStillNamesTheRealHullModItExcludes() {
+        SettingsAPI settings = mock(SettingsAPI.class);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+        HullModSpecAPI navRelay = mock(HullModSpecAPI.class);
+        when(navRelay.getDisplayName()).thenReturn("Nav Relay");
+        when(settings.getHullModSpec("nav_relay")).thenReturn(navRelay);
+        PhantomHullModStatus.markActive("nav_relay");
+        try {
+            SkillType type = new SkillType.Builder("nav_relay", "Nav Relay", "a.png", SkillTier.NOTABLE)
+                    .phantomHullModIds(List.of("nav_relay"))
+                    .build();
+
+            assertEquals("Mutually exclusive with hullmod:\n• Nav Relay", description(type));
+        } finally {
+            PhantomHullModStatus.clear();
+        }
     }
 }

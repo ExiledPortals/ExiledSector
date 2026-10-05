@@ -7,6 +7,7 @@ import exiledsector.ui.util.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
 
 import java.util.List;
+import java.util.Set;
 
 public class SkillTreeStaticImageRenderer {
 
@@ -18,6 +19,10 @@ public class SkillTreeStaticImageRenderer {
     }
 
     public void render(TreeViewport viewport, float alphaMult) {
+        render(viewport, alphaMult, Set.of(), 1f);
+    }
+
+    public void render(TreeViewport viewport, float alphaMult, Set<String> keptIds, float othersAlphaMult) {
         float zoom = viewport.zoom();
         List<StaticImage> images = SkillTree.getStaticImages();
         if (images.isEmpty()) return;
@@ -25,6 +30,8 @@ public class SkillTreeStaticImageRenderer {
         for (StaticImage image : images) {
             String path = image.getImagePath();
             if (path == null || path.isEmpty()) continue;
+            float alpha = keptIds.contains(image.getId()) ? alphaMult : alphaMult * othersAlphaMult;
+            if (alpha <= 0f) continue;
 
             float screenX = viewport.screenX(image.getX());
             float screenY = viewport.screenY(image.getY());
@@ -35,7 +42,7 @@ public class SkillTreeStaticImageRenderer {
             }
             float angleDeg = -(image.getRotation() + image.getRotationSpeed() * elapsedSeconds);
             SpriteDraw.drawAtCenter(spriteCache, path, screenX, screenY,
-                    width, height, null, alphaMult, angleDeg);
+                    width, height, null, alpha, angleDeg);
         }
     }
 }

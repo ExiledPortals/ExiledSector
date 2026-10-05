@@ -1,0 +1,568 @@
+package exiledsector.ui.socket;
+
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.input.InputEventAPI;
+import com.fs.starfarer.api.ui.ButtonAPI;
+import com.fs.starfarer.api.ui.CustomPanelAPI;
+import com.fs.starfarer.api.ui.Fonts;
+import com.fs.starfarer.api.ui.PositionAPI;
+import com.fs.starfarer.api.ui.TextFieldAPI;
+import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.ui.UIComponentAPI;
+import com.fs.starfarer.api.util.Misc;
+import exiledsector.i18n.I18n;
+import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
+import exiledsector.socketables.Socketable;
+import exiledsector.socketables.SocketableStore;
+import exiledsector.socketables.SocketableTooltip;
+import exiledsector.ui.util.BorderedPanel;
+import exiledsector.ui.util.GLDraw;
+import exiledsector.ui.util.SpriteCache;
+import exiledsector.ui.util.SpriteDraw;
+import org.lwjgl.input.Keyboard;
+
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.function.Function;
+
+public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
+
+    public interface Listener {
+
+        void selected(Socketable socketable);
+
+        void closed();
+    }
+
+    private static final float PAD = 12f;
+    private static final float LINE_PAD = 3f;
+    private static final float GAP = 6f;
+    private static final float HEADER_HEIGHT = 28f;
+    private static final float FIELD_HEIGHT = 26f;
+    private static final float CHIP_HEIGHT = 24f;
+    private static final float CHIP_TEXT_PADDING = 28f;
+    private static final float LABEL_WIDTH = 70f;
+    private static final float CLOSE_BUTTON_WIDTH = 70f;
+    private static final float NOTICE_HEIGHT = 56f;
+    private static final float FOOTER_HEIGHT = 20f;
+    private static final float SCROLLBAR_ROOM = 14f;
+    private static final float CELL_SIZE = 64f;
+    private static final float CELL_ICON_INSET = 6f;
+    private static final float TOOLTIP_WIDTH = 420f;
+    private static final float CONFIRM_HEIGHT = 130f;
+    private static final float SEARCH_DELAY_SECONDS = 0.25f;
+    private static final float INSTALLED_ICON_ALPHA = 0.35f;
+    private static final Color CELL_BACKGROUND = new Color(0, 0, 0, 200);
+    private static final SpriteCache ICONS = new SpriteCache(SocketStoragePanel.class);
+
+    private enum Control {CLOSE, SORT, DIRECTION, CONFIRM_DESTROY, CANCEL_DESTROY}
+
+    private record StatusChip(SocketStorageFilter.Status status) {
+    }
+
+    private final CustomPanelAPI host;
+    private final Listener listener;
+    private final SocketStorageFilter filter = SocketStorageFilter.SESSION;
+    private final BorderedPanel frame = new BorderedPanel(SocketStoragePanel.class);
+
+    private Function<Socketable, String> installedIn;
+    private CustomPanelAPI root;
+    private PositionAPI position;
+    private float width;
+    private float height;
+    private float gridTop;
+    private UIComponentAPI controls;
+    private TooltipMakerAPI grid;
+    private UIComponentAPI notice;
+    private UIComponentAPI summary;
+    private CustomPanelAPI confirm;
+    private CustomPanelAPI confirmBlocker;
+    private TextFieldAPI searchField;
+    private String typedQuery;
+    private float searchDelay;
+    private List<SocketStorageRow> rows = List.of();
+    private Socketable selected;
+    private Socketable pendingDestroy;
+    private final List<Runnable> queued = new ArrayList<>();
+    private int movedFromCargo;
+    private CustomPanelAPI hoverTooltip;
+    private SocketStorageRow hoverRow;
+
+    private SocketStoragePanel(CustomPanelAPI host, Function<Socketable, String> installedIn, Listener listener) {
+        this.host = host;
+        this.installedIn = installedIn;
+        this.listener = listener;
+    }
+
+    public static SocketStoragePanel open(CustomPanelAPI host, float left, float top, float width, float height,
+                                          Function<Socketable, String> installedIn, Listener listener) {
+        SocketStoragePanel panel = new SocketStoragePanel(host, installedIn, listener);
+        panel.width = width;
+        panel.height = height;
+        panel.root = Global.getSettings().createCustom(width, height, panel);
+        host.addComponent(panel.root).inTL(left, top);
+        panel.movedFromCargo = absorbPlayerCargo();
+        I18n.forGameText(panel::build);
+        return panel;
+    }
+
+    private static int absorbPlayerCargo() {
+        CampaignFleetAPI fleet = Global.getSector() == null ? null : Global.getSector().getPlayerFleet();
+        return fleet == null ? 0 : SocketableStore.get().absorbFrom(fleet.getCargo());
+    }
+
+    public void close() {
+        if (root != null) {
+            hideHoverTooltip();
+            host.removeComponent(root);
+            root = null;
+            listener.closed();
+        }
+    }
+
+    public boolean contains(float x, float y) {
+        return position != null && root != null && x >= position.getX() && x <= position.getX() + position.getWidth()
+                && y >= position.getY() && y <= position.getY() + position.getHeight();
+    }
+
+    public void setSelected(Socketable socketable) {
+        selected = socketable;
+        queued.add(() -> rebuildFooter(SocketStorageQuery.apply(rows, filter).size()));
+    }
+
+    public void refresh(Function<Socketable, String> installedIn) {
+        this.installedIn = installedIn;
+        queued.add(() -> {
+            reloadRows();
+            rebuildGrid();
+        });
+    }
+
+    public boolean escape() {
+        if (confirm == null) {
+            return false;
+        }
+        queued.add(this::closeConfirm);
+        return true;
+    }
+
+    @Override
+    public void positionChanged(PositionAPI position) {
+        this.position = position;
+    }
+
+    @Override
+    public void renderBelow(float alphaMult) {
+        if (position != null) {
+            frame.draw(position.getX(), position.getY(), position.getWidth(), position.getHeight(), alphaMult);
+        }
+    }
+
+    @Override
+    public void processInput(List<InputEventAPI> events) {
+        for (InputEventAPI event : events) {
+            if (event.isMouseScrollEvent() && hoverTooltip != null && contains(event.getX(), event.getY())) {
+                queued.add(this::hideHoverTooltip);
+            }
+            boolean press = event.isMouseDownEvent() || event.isMouseScrollEvent();
+            if (!event.isConsumed() && press && contains(event.getX(), event.getY())) {
+                event.consume();
+            }
+        }
+    }
+
+    @Override
+    public void advance(float amount) {
+        if (!queued.isEmpty()) {
+            List<Runnable> actions = List.copyOf(queued);
+            queued.clear();
+            for (Runnable action : actions) {
+                if (root != null) {
+                    I18n.forGameText(action);
+                }
+            }
+        }
+        if (root == null || searchField == null || confirm != null) {
+            return;
+        }
+        String text = searchField.getText();
+        if (!text.equals(typedQuery)) {
+            typedQuery = text;
+            searchDelay = SEARCH_DELAY_SECONDS;
+        } else if (searchDelay > 0f) {
+            searchDelay -= amount;
+            if (searchDelay <= 0f) {
+                filter.setQuery(typedQuery);
+                I18n.forGameText(this::rebuildGrid);
+            }
+        }
+    }
+
+    @Override
+    public void buttonPressed(Object id) {
+        queued.add(() -> handleButton(id));
+    }
+
+    private void handleButton(Object id) {
+        if (confirm != null) {
+            if (id == Control.CONFIRM_DESTROY) {
+                if (pendingDestroy == selected) {
+                    listener.selected(null);
+                }
+                SocketableStore.get().remove(pendingDestroy);
+                closeConfirm();
+                reloadRows();
+                rebuildControls();
+            } else if (id == Control.CANCEL_DESTROY) {
+                closeConfirm();
+            }
+            return;
+        }
+        if (id == Control.CLOSE) {
+            close();
+        } else if (id == Control.SORT) {
+            filter.cycleSort();
+            rebuildControls();
+        } else if (id == Control.DIRECTION) {
+            filter.flipDirection();
+            rebuildControls();
+        } else if (id instanceof StatusChip chip) {
+            filter.setStatus(chip.status());
+            rebuildControls();
+        }
+    }
+
+    private void cellClicked(SocketStorageRow row) {
+        if (confirm == null && !row.installed()) {
+            queued.add(() -> listener.selected(row.socketable() == selected ? null : row.socketable()));
+        }
+    }
+
+    private void cellRightClicked(SocketStorageRow row) {
+        if (confirm == null && !row.installed()) {
+            queued.add(() -> openConfirm(row.socketable()));
+        }
+    }
+
+    private float innerWidth() {
+        return width - PAD * 2f;
+    }
+
+    private void build() {
+        buildHeader();
+        buildSearch();
+        reloadRows();
+        rebuildControls();
+    }
+
+    private void buildHeader() {
+        TooltipMakerAPI element = root.createUIElement(innerWidth(), HEADER_HEIGHT, false);
+        element.setParaFont(Fonts.ORBITRON_20AABOLD);
+        element.addPara("%s", 0f, Misc.getBasePlayerColor(), Misc.getBasePlayerColor(), Translation.text("ui.socketStorage.title"));
+        ButtonAPI close = element.addButton(Translation.text("ui.socketStorage.close"), Control.CLOSE, CLOSE_BUTTON_WIDTH, CHIP_HEIGHT, 0f);
+        close.getPosition().inTR(0f, 0f);
+        root.addUIElement(element).inTL(PAD, PAD);
+    }
+
+    private void buildSearch() {
+        TooltipMakerAPI element = root.createUIElement(innerWidth(), FIELD_HEIGHT, false);
+        element.addPara("%s", 0f, Misc.getGrayColor(), Misc.getGrayColor(), Translation.text("ui.socketStorage.search"))
+                .getPosition().inTL(0f, LINE_PAD * 2f);
+        searchField = element.addTextField(innerWidth() - LABEL_WIDTH, FIELD_HEIGHT, Fonts.DEFAULT_SMALL, 0f);
+        searchField.getPosition().inTL(LABEL_WIDTH, 0f);
+        searchField.setText(filter.query);
+        typedQuery = filter.query;
+        root.addUIElement(element).inTL(PAD, PAD + HEADER_HEIGHT + GAP);
+    }
+
+    private void reloadRows() {
+        List<Socketable> owned = SocketableStore.get().owned();
+        List<SocketStorageRow> built = new ArrayList<>(owned.size());
+        for (int i = 0; i < owned.size(); i++) {
+            built.add(SocketStorageRow.of(owned.get(i), i, installedIn));
+        }
+        rows = built;
+    }
+
+    private void rebuildControls() {
+        if (controls != null) {
+            root.removeComponent(controls);
+        }
+        TooltipMakerAPI element = root.createUIElement(innerWidth(), CHIP_HEIGHT * 2f + GAP, false);
+        float x = 0f;
+        for (SocketStorageFilter.Status status : SocketStorageFilter.Status.values()) {
+            String label = Translation.text("ui.socketStorage.status." + status.name().toLowerCase(Locale.ROOT));
+            float chipWidth = Global.getSettings().computeStringWidth(label, Fonts.ORBITRON_12) + CHIP_TEXT_PADDING;
+            ButtonAPI chip = element.addAreaCheckbox(label, new StatusChip(status), Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
+                    Misc.getBrightPlayerColor(), chipWidth, CHIP_HEIGHT, 0f);
+            chip.setChecked(filter.status == status);
+            chip.getPosition().inTL(x, 0f);
+            x += chipWidth + GAP;
+        }
+        float half = (innerWidth() - GAP) / 2f;
+        String sortLabel = Translation.msg("ui.socketStorage.sort").arg("sort",
+                Translation.text("ui.socketStorage.sort." + filter.sort.name().toLowerCase(Locale.ROOT))).text();
+        element.addButton(sortLabel, Control.SORT, half, CHIP_HEIGHT, 0f).getPosition().inTL(0f, CHIP_HEIGHT + GAP);
+        element.addButton(Translation.text(filter.descending ? "ui.socketStorage.descending" : "ui.socketStorage.ascending"),
+                Control.DIRECTION, half, CHIP_HEIGHT, 0f).getPosition().inTL(half + GAP, CHIP_HEIGHT + GAP);
+        float top = PAD + HEADER_HEIGHT + GAP + FIELD_HEIGHT + GAP;
+        root.addUIElement(element).inTL(PAD, top);
+        controls = element;
+        gridTop = top + CHIP_HEIGHT * 2f + GAP * 2f + NOTICE_HEIGHT;
+        rebuildGrid();
+    }
+
+    private void rebuildGrid() {
+        hideHoverTooltip();
+        if (grid != null) {
+            root.removeComponent(grid.getExternalScroller() != null ? grid.getExternalScroller() : grid);
+        }
+        List<SocketStorageRow> matching = SocketStorageQuery.apply(rows, filter);
+        float gridHeight = Math.max(CELL_SIZE, height - PAD - FOOTER_HEIGHT - GAP - gridTop);
+        TooltipMakerAPI element = root.createUIElement(innerWidth(), gridHeight, true);
+        if (matching.isEmpty()) {
+            String key = rows.isEmpty() ? "ui.socketStorage.empty" : "ui.socketStorage.noMatches";
+            element.addPara("%s", 0f, Misc.getGrayColor(), Misc.getGrayColor(), Translation.text(key));
+        }
+        int columns = Math.max(1, (int) ((innerWidth() - SCROLLBAR_ROOM + GAP) / (CELL_SIZE + GAP)));
+        for (int start = 0; start < matching.size(); start += columns) {
+            CustomPanelAPI line = Global.getSettings().createCustom(innerWidth() - SCROLLBAR_ROOM, CELL_SIZE, null);
+            for (int i = start; i < Math.min(matching.size(), start + columns); i++) {
+                SocketStorageRow row = matching.get(i);
+                CustomPanelAPI cell = Global.getSettings().createCustom(CELL_SIZE, CELL_SIZE, new Cell(this, row));
+                line.addComponent(cell).inTL((i - start) * (CELL_SIZE + GAP), 0f);
+            }
+            element.addCustom(line, start == 0 ? 0f : GAP);
+        }
+        root.addUIElement(element).inTL(PAD, gridTop);
+        grid = element;
+        rebuildFooter(matching.size());
+    }
+
+    private void rebuildFooter(int shown) {
+        if (notice != null) {
+            root.removeComponent(notice);
+        }
+        if (summary != null) {
+            root.removeComponent(summary);
+        }
+        TooltipMakerAPI noticeElement = root.createUIElement(innerWidth(), NOTICE_HEIGHT, false);
+        if (selected != null) {
+            noticeElement.addPara("%s", 0f, Misc.getPositiveHighlightColor(), Misc.getPositiveHighlightColor(),
+                    Translation.msg("ui.socketStorage.placingHint").arg("name", selected.name()).text());
+        } else if (movedFromCargo > 0) {
+            noticeElement.addPara("%s", 0f, Misc.getPositiveHighlightColor(), Misc.getPositiveHighlightColor(),
+                    Translation.msg("ui.socketStorage.moved").count(movedFromCargo).arg("count", movedFromCargo).text());
+        }
+        root.addUIElement(noticeElement).inTL(PAD, gridTop - NOTICE_HEIGHT);
+        notice = noticeElement;
+
+        TooltipMakerAPI summaryElement = root.createUIElement(innerWidth(), FOOTER_HEIGHT, false);
+        int installed = (int) rows.stream().filter(SocketStorageRow::installed).count();
+        summaryElement.addPara("%s", 0f, Misc.getGrayColor(), Misc.getGrayColor(), Translation.msg("ui.socketStorage.summary")
+                .arg("shown", shown).arg("stored", rows.size()).arg("installed", installed).text());
+        root.addUIElement(summaryElement).inTL(PAD, height - PAD - FOOTER_HEIGHT);
+        summary = summaryElement;
+    }
+
+    private void openConfirm(Socketable socketable) {
+        pendingDestroy = socketable;
+        confirmBlocker = Global.getSettings().createCustom(width, height, new Blocker());
+        root.addComponent(confirmBlocker).inTL(0f, 0f);
+        float confirmWidth = innerWidth();
+        confirm = Global.getSettings().createCustom(confirmWidth, CONFIRM_HEIGHT, new Framed(this));
+        TooltipMakerAPI element = confirm.createUIElement(confirmWidth - PAD * 2f, CONFIRM_HEIGHT - PAD * 2f, false);
+        element.addPara("%s", 0f, socketable.rarity().color(), socketable.rarity().color(),
+                Translation.msg("ui.socketStorage.confirm.title").arg("name", socketable.name()).text());
+        element.addPara("%s", LINE_PAD * 2f, Misc.getTextColor(), Misc.getTextColor(), Translation.text("ui.socketStorage.confirm.body"));
+        float buttonWidth = (confirmWidth - PAD * 2f - GAP) / 2f;
+        element.addButton(Translation.text("ui.socketStorage.confirm.destroy"), Control.CONFIRM_DESTROY, buttonWidth, FIELD_HEIGHT, 0f)
+                .getPosition().inBR(0f, 0f);
+        element.addButton(Translation.text("ui.socketStorage.confirm.cancel"), Control.CANCEL_DESTROY, buttonWidth, FIELD_HEIGHT, 0f)
+                .getPosition().inBL(0f, 0f);
+        confirm.addUIElement(element).inTL(PAD, PAD);
+        root.addComponent(confirm).inTL(PAD, (height - CONFIRM_HEIGHT) / 2f);
+    }
+
+    private void closeConfirm() {
+        if (confirm == null) {
+            return;
+        }
+        root.removeComponent(confirm);
+        root.removeComponent(confirmBlocker);
+        confirm = null;
+        confirmBlocker = null;
+        pendingDestroy = null;
+    }
+
+    private static List<StyledText> cellFooter(SocketStorageRow row) {
+        if (row.installed()) {
+            return List.of(Translation.msg("ui.socketStorage.cell.installed").arg("ship", row.installedIn()).styled());
+        }
+        return List.of(Translation.styled("ui.socketStorage.cell.free"), Translation.styled("ui.socketStorage.cell.destroy"));
+    }
+
+    private void cellHovered(SocketStorageRow row, PositionAPI cell) {
+        queued.add(() -> showHoverTooltip(row, cell));
+    }
+
+    private void cellLeft(SocketStorageRow row) {
+        queued.add(() -> {
+            if (hoverRow == row) {
+                hideHoverTooltip();
+            }
+        });
+    }
+
+    private void showHoverTooltip(SocketStorageRow row, PositionAPI cell) {
+        hideHoverTooltip();
+        CustomPanelAPI panel = Global.getSettings().createCustom(TOOLTIP_WIDTH, CELL_SIZE, new Framed(this));
+        TooltipMakerAPI element = panel.createUIElement(TOOLTIP_WIDTH - PAD * 2f, 0f, false);
+        SocketableTooltip.write(element, row.socketable(), () -> cellFooter(row));
+        float contentHeight = element.getHeightSoFar();
+        element.getPosition().setSize(TOOLTIP_WIDTH - PAD * 2f, contentHeight);
+        float tooltipHeight = contentHeight + PAD * 2f;
+        panel.getPosition().setSize(TOOLTIP_WIDTH, tooltipHeight);
+        panel.addUIElement(element).inTL(PAD, PAD);
+        PositionAPI hostPosition = host.getPosition();
+        float left = cell.getX() + cell.getWidth() + GAP - hostPosition.getX();
+        float top = hostPosition.getY() + hostPosition.getHeight() - (cell.getY() + cell.getHeight());
+        top = Math.max(0f, Math.min(top, hostPosition.getHeight() - tooltipHeight));
+        host.addComponent(panel).inTL(left, top);
+        hoverTooltip = panel;
+        hoverRow = row;
+    }
+
+    private void hideHoverTooltip() {
+        if (hoverTooltip != null) {
+            host.removeComponent(hoverTooltip);
+        }
+        hoverTooltip = null;
+        hoverRow = null;
+    }
+
+    private static final class Cell extends BaseCustomUIPanelPlugin {
+
+        private final SocketStoragePanel owner;
+        private final SocketStorageRow row;
+        private PositionAPI position;
+        private boolean hovered;
+
+        Cell(SocketStoragePanel owner, SocketStorageRow row) {
+            this.owner = owner;
+            this.row = row;
+        }
+
+        @Override
+        public void positionChanged(PositionAPI position) {
+            this.position = position;
+        }
+
+        @Override
+        public void renderBelow(float alphaMult) {
+            if (position == null) {
+                return;
+            }
+            GLDraw.fillQuad(position.getX(), position.getY(), position.getWidth(), position.getHeight(), CELL_BACKGROUND, alphaMult);
+            boolean chosen = row.socketable() == owner.selected;
+            Color border = chosen ? Misc.getBrightPlayerColor() : row.rarity().color();
+            float borderAlpha = chosen || hovered ? 1f : 0.55f;
+            GLDraw.strokeQuad(position.getX(), position.getY(), position.getWidth(), position.getHeight(), border, chosen ? 3f : 1.5f,
+                    borderAlpha * alphaMult);
+        }
+
+        @Override
+        public void render(float alphaMult) {
+            if (position == null) {
+                return;
+            }
+            float size = CELL_SIZE - CELL_ICON_INSET * 2f;
+            float iconAlpha = row.installed() ? INSTALLED_ICON_ALPHA : 1f;
+            SpriteDraw.drawAtCenter(ICONS, row.socketable().iconPath(), position.getCenterX(), position.getCenterY(), size, size,
+                    Color.WHITE, iconAlpha * alphaMult);
+        }
+
+        @Override
+        public void processInput(List<InputEventAPI> events) {
+            if (position == null) {
+                return;
+            }
+            for (InputEventAPI event : events) {
+                if (event.isConsumed()) {
+                    continue;
+                }
+                boolean inside = position.containsEvent(event);
+                if (event.isMouseMoveEvent()) {
+                    if (inside != hovered) {
+                        hovered = inside;
+                        if (inside) {
+                            owner.cellHovered(row, position);
+                        } else {
+                            owner.cellLeft(row);
+                        }
+                    }
+                } else if (inside && event.isLMBDownEvent()) {
+                    owner.cellClicked(row);
+                    event.consume();
+                } else if (inside && event.isRMBDownEvent()) {
+                    owner.cellRightClicked(row);
+                    event.consume();
+                }
+            }
+        }
+    }
+
+    private static final class Framed extends BaseCustomUIPanelPlugin {
+
+        private final SocketStoragePanel owner;
+        private final BorderedPanel frame = new BorderedPanel(Framed.class);
+        private PositionAPI position;
+
+        Framed(SocketStoragePanel owner) {
+            this.owner = owner;
+        }
+
+        @Override
+        public void positionChanged(PositionAPI position) {
+            this.position = position;
+        }
+
+        @Override
+        public void renderBelow(float alphaMult) {
+            if (position != null) {
+                frame.draw(position.getX(), position.getY(), position.getWidth(), position.getHeight(), alphaMult);
+            }
+        }
+
+        @Override
+        public void buttonPressed(Object id) {
+            owner.buttonPressed(id);
+        }
+    }
+
+    private static final class Blocker extends BaseCustomUIPanelPlugin {
+
+        private PositionAPI position;
+
+        @Override
+        public void positionChanged(PositionAPI position) {
+            this.position = position;
+        }
+
+        @Override
+        public void processInput(List<InputEventAPI> events) {
+            for (InputEventAPI event : events) {
+                boolean escape = event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE;
+                boolean press = (event.isMouseDownEvent() || event.isMouseScrollEvent()) && position != null && position.containsEvent(event);
+                if (!event.isConsumed() && (press || (event.isKeyboardEvent() && !escape))) {
+                    event.consume();
+                }
+            }
+        }
+    }
+}

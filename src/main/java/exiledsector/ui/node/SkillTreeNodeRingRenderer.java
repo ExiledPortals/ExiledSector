@@ -5,6 +5,7 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.ui.SkillTreePanelStyle;
+import exiledsector.ui.SmoothZoom;
 import exiledsector.ui.belt.AuroraBeltRenderer;
 import exiledsector.ui.belt.RadialBand;
 import exiledsector.ui.belt.RingBeltRenderer;
@@ -182,7 +183,7 @@ final class SkillTreeNodeRingRenderer {
             String ringBeltPath = resolveRingBeltPath(node);
             float ringBeltWidth = resolveRingBeltWidth(node);
             if (AURORA_TEXTURE_PATH.equals(ringBeltPath)) {
-                drawKeystoneAuroraBelt(cx, cy, footprintSize, ringBeltWidth, resolveRingBeltColor(node), stateAlpha, alphaMult);
+                drawKeystoneAuroraBelt(cx, cy, footprintSize, ringBeltWidth, resolveRingBeltColor(node), stateAlpha, alphaMult, zoom);
             } else {
                 drawKeystoneRingBelt(cx, cy, footprintSize, ringBeltWidth, ringBeltPath, stateAlpha, alphaMult);
             }
@@ -194,7 +195,7 @@ final class SkillTreeNodeRingRenderer {
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        if (tier != SkillTier.WORMHOLE) {
+        if (tier != SkillTier.WORMHOLE && tier != SkillTier.SOCKET) {
             drawNodeDonut(cx, cy, ringRadius, scale, zoom, allocated, alphaMult);
             if (state.breathing) {
                 drawBreathingOutline(cx, cy, ringRadius, scale, zoom, alphaMult);
@@ -281,12 +282,13 @@ final class SkillTreeNodeRingRenderer {
         RingBeltRenderer.render(sprite, band, Color.WHITE, stateAlpha * alphaMult);
     }
 
-    private void drawKeystoneAuroraBelt(float cx, float cy, float footprintSize, float widthRatio, Color tint, float stateAlpha, float alphaMult) {
+    private void drawKeystoneAuroraBelt(float cx, float cy, float footprintSize, float widthRatio, Color tint, float stateAlpha, float alphaMult,
+                                        float zoom) {
         SpriteAPI sprite = spriteCache.texture(AURORA_TEXTURE_PATH);
         if (sprite == null) return;
         AuroraBeltRenderer.render(sprite,
                 new RadialBand(new Vector2f(cx, cy), beltInnerRadius(footprintSize), beltOuterRadius(footprintSize, widthRatio)),
-                tint, stateAlpha * alphaMult, elapsedSeconds);
+                tint, stateAlpha * alphaMult, elapsedSeconds, SmoothZoom.MAX_ZOOM / zoom);
     }
 
     private void drawWormhole(float cx, float cy, float footprintSize, float alphaMult, String nodeId, Color color) {

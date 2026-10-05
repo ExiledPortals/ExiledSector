@@ -1,6 +1,7 @@
 package exiledsector.ui.node;
 
 import exiledsector.skills.SkillNode;
+import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 
@@ -16,6 +17,7 @@ public final class NodeSearch {
     private String query = "";
     private String needle = "";
     private NodeAllocator.Snapshot matchedTree;
+    private boolean socketFocus;
 
     public String getQuery() {
         return query;
@@ -28,7 +30,16 @@ public final class NodeSearch {
     }
 
     public boolean isActive() {
-        return !query.isEmpty();
+        return socketFocus || !query.isEmpty();
+    }
+
+    public void setSocketFocus(boolean focus) {
+        socketFocus = focus;
+        matchesByNodeId.clear();
+    }
+
+    public boolean isSocketFocus() {
+        return socketFocus;
     }
 
     public float backgroundAlpha() {
@@ -38,6 +49,9 @@ public final class NodeSearch {
     boolean matches(SkillNode node, NodeAllocator.Snapshot tree) {
         if (!isActive() || tree.isHidden(node)) {
             return false;
+        }
+        if (socketFocus) {
+            return node.getType().getTier() == SkillTier.SOCKET && tree.data().isAllocated(node.getId());
         }
         if (tree != matchedTree) {
             matchesByNodeId.clear();

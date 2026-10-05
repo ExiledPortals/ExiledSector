@@ -6,6 +6,7 @@ import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.skills.DescriptionLine;
+import exiledsector.skills.NodeDescription;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -133,10 +134,14 @@ class DescriptionGoldenTest {
         secondInCommandEnabled = true;
         for (SkillType type : sortedTypes()) {
             for (HullSize hullSize : HULL_SIZES) {
-                List<DescriptionLine> typeLines = SkillNode.describeTypeLines(type, hullSize);
-                for (int i = 0; i < typeLines.size(); i++) {
-                    DescriptionLine line = typeLines.get(i);
+                NodeDescription description = SkillNode.describeType(type, hullSize);
+                for (int i = 0; i < description.effects().size(); i++) {
+                    DescriptionLine line = description.effects().get(i);
                     addLine(lines, "type|" + type.getId() + "|" + hullSize + "|" + i, line.text(), line.lowerIsBetter());
+                }
+                for (int i = 0; i < description.details().size(); i++) {
+                    DescriptionLine line = description.details().get(i);
+                    addLine(lines, "type-detail|" + type.getId() + "|" + hullSize + "|" + i, line.text(), line.lowerIsBetter());
                 }
             }
         }

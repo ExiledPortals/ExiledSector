@@ -1,6 +1,7 @@
 package exiledsector.skills.npc;
 
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import exiledsector.skills.NodeReplacements;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -18,17 +19,18 @@ public final class NpcTreeTag {
     private static final String NODE_SEPARATOR = ",";
     private static final String OPTION_SEPARATOR = "=";
     private static final int CHARGED_NODE_COST = 1;
+    static final String GENERATED = "generated";
 
     private NpcTreeTag() {
     }
 
-    public static String encode(String layoutId, ShipSkillData data) {
+    public static String encode(ShipSkillData data) {
         List<String> nodes = new ArrayList<>();
         for (String nodeId : data.getAllocatedNodeIds()) {
             String option = data.getOptionalSelection(nodeId);
             nodes.add(option == null ? nodeId : nodeId + OPTION_SEPARATOR + option);
         }
-        return PREFIX + layoutId + FIELD_SEPARATOR + data.getLevel() + FIELD_SEPARATOR + String.join(NODE_SEPARATOR, nodes);
+        return PREFIX + GENERATED + FIELD_SEPARATOR + data.getLevel() + FIELD_SEPARATOR + String.join(NODE_SEPARATOR, nodes);
     }
 
     public static String find(ShipVariantAPI variant) {
@@ -47,11 +49,6 @@ public final class NpcTreeTag {
         for (String tag = find(variant); tag != null; tag = find(variant)) {
             variant.removeTag(tag);
         }
-    }
-
-    public static String layoutId(String tag) {
-        String[] fields = fields(tag);
-        return fields == null ? null : fields[0];
     }
 
     public static ShipSkillData decode(String tag) {
@@ -79,12 +76,12 @@ public final class NpcTreeTag {
 
     private static void restore(ShipSkillData data, String entry) {
         int optionAt = entry.indexOf(OPTION_SEPARATOR);
-        String nodeId = optionAt < 0 ? entry : entry.substring(0, optionAt);
+        String nodeId = NodeReplacements.resolve(optionAt < 0 ? entry : entry.substring(0, optionAt));
         SkillNode node = SkillTree.get(nodeId);
         if (node == null || data.isAllocated(nodeId) || node.getType().getTier() == SkillTier.ROOT) {
             return;
         }
-        if (optionAt < 0) {
+        if (optionAt < 0 || !node.getType().isOptional()) {
             if (!node.getType().isOptional()) {
                 data.allocate(node, CHARGED_NODE_COST);
             }

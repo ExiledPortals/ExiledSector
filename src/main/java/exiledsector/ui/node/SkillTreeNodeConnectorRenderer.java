@@ -86,8 +86,14 @@ final class SkillTreeNodeConnectorRenderer {
         float zoom = viewport.zoom();
         ShipSkillData data = tree.data();
         String satisfiedRootId = tree.satisfiedRootId();
-        ConnectorEndpoint nodeEndpoint = new ConnectorEndpoint(nodeX, nodeY, endpointRadius(node, zoom));
-        ConnectorEndpoint otherEndpoint = new ConnectorEndpoint(otherX, otherY, endpointRadius(other, zoom));
+        float nodeTowardX = curve == null ? otherX : 2f * viewport.screenX(curve.getControlOffsetX()) - (nodeX + otherX) / 2f;
+        float nodeTowardY = curve == null ? otherY : 2f * viewport.screenY(curve.getControlOffsetY()) - (nodeY + otherY) / 2f;
+        float otherTowardX = curve == null ? nodeX : nodeTowardX;
+        float otherTowardY = curve == null ? nodeY : nodeTowardY;
+        ConnectorEndpoint nodeEndpoint = new ConnectorEndpoint(nodeX, nodeY,
+                endpointRadius(node, zoom, nodeTowardX - nodeX, nodeTowardY - nodeY));
+        ConnectorEndpoint otherEndpoint = new ConnectorEndpoint(otherX, otherY,
+                endpointRadius(other, zoom, otherTowardX - otherX, otherTowardY - otherY));
         boolean bothSatisfied = data.isSatisfied(node.getId(), satisfiedRootId) && data.isSatisfied(other.getId(), satisfiedRootId);
         boolean nodeInTemplate = templateNodeIds.contains(node.getId());
         boolean otherInTemplate = templateNodeIds.contains(other.getId());
@@ -110,9 +116,12 @@ final class SkillTreeNodeConnectorRenderer {
         }
     }
 
-    private float endpointRadius(SkillNode node, float zoom) {
-        float fullRadius = connectorEndpointRadius(node.getType().getTier(), NODE_SIZE * zoom * node.getType().getTier().getSizeMultiplier(), zoom);
-        if (node.getType().getTier() != SkillTier.WORMHOLE) return fullRadius;
+    private float endpointRadius(SkillNode node, float zoom, float towardX, float towardY) {
+        SkillTier tier = node.getType().getTier();
+        float footprintSize = NODE_SIZE * zoom * tier.getSizeMultiplier();
+        if (tier == SkillTier.SOCKET) return SkillTreeSocketRenderer.visibleEdgeDistance(footprintSize, towardX, towardY);
+        float fullRadius = connectorEndpointRadius(tier, footprintSize, zoom);
+        if (tier != SkillTier.WORMHOLE) return fullRadius;
         return fullRadius * (1f - wormholeOpenness.of(node.getId()));
     }
 

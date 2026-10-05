@@ -3,6 +3,7 @@ package exiledsector.skills;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -22,6 +23,7 @@ public class ShipSkillData {
     private Set<String> pairedFreeNodeIds = new LinkedHashSet<>();
     private String startingRootId;
     private boolean npcBuild;
+    private Map<String, String> socketedItems;
 
     private Set<String> freeNodeIds() {
         if (freeNodeIds == null) freeNodeIds = new LinkedHashSet<>();
@@ -31,6 +33,27 @@ public class ShipSkillData {
     private Set<String> pairedFreeNodeIds() {
         if (pairedFreeNodeIds == null) pairedFreeNodeIds = new LinkedHashSet<>();
         return pairedFreeNodeIds;
+    }
+
+    public String getSocketedItem(String nodeId) {
+        return socketedItems == null ? null : socketedItems.get(nodeId);
+    }
+
+    public Map<String, String> getSocketedItems() {
+        return socketedItems == null ? Map.of() : Collections.unmodifiableMap(socketedItems);
+    }
+
+    public boolean socketItem(String nodeId, String socketableId) {
+        if (!isAllocated(nodeId)) {
+            return false;
+        }
+        if (socketedItems == null) socketedItems = new LinkedHashMap<>();
+        socketedItems.put(nodeId, socketableId);
+        return true;
+    }
+
+    public String unsocketItem(String nodeId) {
+        return socketedItems == null ? null : socketedItems.remove(nodeId);
     }
 
     public boolean isAllocated(String nodeId) {
@@ -204,6 +227,26 @@ public class ShipSkillData {
         }
     }
 
+    public boolean replaceNode(String oldId, String newId) {
+        if (!allocatedNodeIds.contains(oldId) || allocatedNodeIds.contains(newId)) {
+            return false;
+        }
+        List<String> order = new ArrayList<>(allocatedNodeIds);
+        allocatedNodeIds.clear();
+        order.forEach(id -> allocatedNodeIds.add(id.equals(oldId) ? newId : id));
+        if (freeNodeIds().remove(oldId)) {
+            freeNodeIds().add(newId);
+        }
+        if (pairedFreeNodeIds().remove(oldId)) {
+            pairedFreeNodeIds().add(newId);
+        }
+        if (optionalSelections != null) {
+            optionalSelections.remove(oldId);
+        }
+        unsocketItem(oldId);
+        return true;
+    }
+
     public List<String> forgetUnknownNodes(Map<String, SkillNode> tree, Map<String, SkillType> types) {
         List<String> forgotten = new ArrayList<>();
         for (String nodeId : List.copyOf(allocatedNodeIds)) {
@@ -212,8 +255,13 @@ public class ShipSkillData {
                 allocatedNodeIds.remove(nodeId);
                 release(nodeId);
                 forgotten.add(nodeId);
-            } else if (!node.getType().isOptional() && optionalSelections != null) {
-                optionalSelections.remove(nodeId);
+            } else {
+                if (!node.getType().isOptional() && optionalSelections != null) {
+                    optionalSelections.remove(nodeId);
+                }
+                if (node.getType().getTier() != SkillTier.SOCKET) {
+                    unsocketItem(nodeId);
+                }
             }
         }
         return forgotten;
@@ -256,6 +304,7 @@ public class ShipSkillData {
     }
 
     private void release(String nodeId) {
+        unsocketItem(nodeId);
         if (optionalSelections != null) {
             optionalSelections.remove(nodeId);
         }

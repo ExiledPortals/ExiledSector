@@ -161,7 +161,7 @@ class NodeRequirementsTest {
 
     @Test
     void firstUnmetReturnsTheEarliestFailingRequirementInTagOrder() {
-        List<String> tags = List.of("shield", "req_shields", "req_flagship", "req_phase", "inner");
+        List<String> tags = List.of("shield", "req_shields", "req_flagship", "req_phase", "core");
 
         assertEquals("req_flagship", NodeRequirements.firstUnmet(tags, shield(ShieldType.FRONT)));
     }

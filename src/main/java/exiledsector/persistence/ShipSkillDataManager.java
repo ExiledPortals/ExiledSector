@@ -1,5 +1,6 @@
 package exiledsector.persistence;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,10 @@ public class ShipSkillDataManager {
         return getStore().computeIfAbsent(shipId, key -> new ShipSkillData());
     }
 
+    public static Map<String, ShipSkillData> all() {
+        return Collections.unmodifiableMap(getStore());
+    }
+
     public static ShipSkillData find(String shipId) {
         return getStore().get(shipId);
     }
@@ -42,6 +47,14 @@ public class ShipSkillDataManager {
 
     public static void removeBlankRecords() {
         getStore().values().removeIf(ShipSkillData::isBlank);
+    }
+
+    public static void replaceRemovedNodes(Map<String, SkillNode> tree, Map<String, String> replacements) {
+        replacements.forEach((oldId, newId) -> {
+            if (!tree.containsKey(oldId) && tree.containsKey(newId)) {
+                getStore().values().forEach(data -> data.replaceNode(oldId, newId));
+            }
+        });
     }
 
     public static void forgetUnknownNodes(Map<String, SkillNode> tree, Map<String, SkillType> types, Consumer<SkillItemCost> refund) {

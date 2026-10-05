@@ -12,6 +12,7 @@ import exiledsector.skills.tags.AreaToggles;
 import exiledsector.skills.unlock.HiddenNodeDisplayConfig;
 import exiledsector.skills.unlock.UnlockConditionOverrides;
 import exiledsector.ui.inspect.NpcInspectConfig;
+import exiledsector.ui.refit.RefitButtonConfig;
 import lunalib.lunaSettings.LunaSettings.SettingsCreator;
 
 import static exiledsector.ExiledSectorModPlugin.MOD_ID;
@@ -46,6 +47,12 @@ public final class ExiledSectorSettings {
 
     private static void registerGeneral() {
         SettingsCreator.addText(MOD_ID, "exiledSector_about", Translation.text("settings.about"), MAIN_TAB);
+
+        SettingsCreator.addHeader(MOD_ID, "exiledSector_refitHeader", Translation.text("settings.refit.header"), MAIN_TAB);
+        SettingsCreator.addText(MOD_ID, "exiledSector_refitAbout", Translation.text("settings.refit.about"), MAIN_TAB);
+        SettingsCreator.addBoolean(MOD_ID, RefitButtonConfig.FIELD_ID,
+                Translation.text("settings.refit.buttonUnderHullMods.name"), Translation.text("settings.refit.buttonUnderHullMods.tooltip"),
+                RefitButtonConfig.DEFAULT, MAIN_TAB);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_opCostHeader", Translation.text("settings.opCost.header"), MAIN_TAB);
         SettingsCreator.addText(MOD_ID, "exiledSector_opCostAbout", Translation.text("settings.opCost.about"), MAIN_TAB);

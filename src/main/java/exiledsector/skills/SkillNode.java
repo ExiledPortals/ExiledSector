@@ -1,6 +1,7 @@
 package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.layout.SkillNodeDecoration;
@@ -57,30 +58,34 @@ public class SkillNode extends SkillTreeObject {
     }
 
     public static List<DescriptionLine> describeTypeLines(SkillType type, HullSize hullSize) {
-        List<DescriptionLine> lines = new ArrayList<>();
-        addLine(lines, type.getDescriptionText(), false);
+        return describeType(type, hullSize).all();
+    }
+
+    public static NodeDescription describeType(SkillType type, HullSize hullSize) {
+        List<DescriptionLine> effects = new ArrayList<>();
+        addLine(effects, type.getDescriptionText(), false);
         List<SkillTypeEffect> described = hullSize == null ? type.getEffects() : type.effectsFor(hullSize);
         for (SkillTypeEffect effect : WeaponEffectTooltipAggregator.collapse(described)) {
-            addLine(lines, effect.effect().description(effect.magnitude(), hullSize), effect.effect().lowerIsBetter());
+            addLine(effects, effect.effect().description(effect.magnitude(), hullSize), effect.effect().lowerIsBetter());
         }
-        for (String hullModId : type.getPhantomHullModIds()) {
-            if (PhantomHullModStatus.isActive(hullModId)) {
-                addLine(lines, Translation.msg("node.phantom").arg("hullmod", HullModNames.displayName(hullModId)).styled(), false);
-            }
+        addLine(effects, describeTemporaryDuration(type), false);
+
+        List<DescriptionLine> details = new ArrayList<>();
+        if (type.getTier() == SkillTier.SOCKET) {
+            addLine(details, Translation.styled("node.socket.holds"), false);
         }
-        addLine(lines, describeTemporaryDuration(type), false);
         for (SkillTypeEffect effect : described) {
-            addLine(lines, effect.effect().deallocationWarning(effect.magnitude()), false);
+            addLine(details, effect.effect().deallocationWarning(effect.magnitude()), false);
         }
         for (String tag : type.getTags()) {
             if (SkillTags.isHullRequirement(tag)) {
-                addLine(lines, Translation.styled("node.requires." + tag), false);
+                addLine(details, Translation.styled("node.requires." + tag), false);
             }
         }
-        addLine(lines, describeHullSizes(type), false);
-        addLine(lines, describeItemCost(type), false);
-        addLine(lines, describeExclusivity(type), false);
-        return lines;
+        addLine(details, describeHullSizes(type), false);
+        addLine(details, describeItemCost(type), false);
+        addLine(details, describeExclusivity(type), false);
+        return new NodeDescription(effects, details);
     }
 
     private static void addLine(List<DescriptionLine> lines, StyledText text, boolean lowerIsBetter) {
@@ -119,13 +124,10 @@ public class SkillNode extends SkillTreeObject {
 
     private static StyledText describeExclusivity(SkillType type) {
         Set<String> hullModNames = new LinkedHashSet<>();
-        Set<String> namedHullModIds = new LinkedHashSet<>();
         for (String hullModId : type.getExclusiveHullModIds()) {
-            boolean placedByNode = type.getPhantomHullModIds().contains(hullModId) && PhantomHullModStatus.isActive(hullModId);
-            String name = placedByNode ? null : HullModNames.loadedDisplayName(hullModId);
+            String name = HullModNames.loadedDisplayName(hullModId);
             if (name != null) {
                 hullModNames.add(name);
-                namedHullModIds.add(hullModId);
             }
         }
         Set<String> nodeNames = new LinkedHashSet<>();
@@ -135,28 +137,28 @@ public class SkillNode extends SkillTreeObject {
             }
         }
         for (SkillType other : SkillTree.getAllTypes().values()) {
-            boolean namedAsHullMod = !other.getOwnHullModIds().isEmpty() && namedHullModIds.containsAll(other.getOwnHullModIds());
-            if (other != type && type.isExclusiveWith(other) && !namedAsHullMod) {
+            if (other != type && type.isExclusiveWith(other)) {
                 nodeNames.add(other.getDisplayName());
             }
         }
 
         List<StyledText> lines = new ArrayList<>();
         if (!hullModNames.isEmpty()) {
-            lines.add(exclusivityLine("node.exclusive.hullmods", hullModNames));
+            lines.add(exclusivityList("node.exclusive.hullmods", Style.HULLMOD, hullModNames));
         }
         if (!nodeNames.isEmpty()) {
-            lines.add(exclusivityLine("node.exclusive.nodes", nodeNames));
+            lines.add(exclusivityList("node.exclusive.nodes", Style.NODE, nodeNames));
         }
         return lines.isEmpty() ? null : StyledText.join(StyledText.of("\n\n"), lines);
     }
 
-    private static StyledText exclusivityLine(String key, Set<String> names) {
-        List<StyledText> styledNames = new ArrayList<>();
+    private static StyledText exclusivityList(String key, Style style, Set<String> names) {
+        List<StyledText> lines = new ArrayList<>();
+        lines.add(Translation.msg(key).count(names.size()).styled());
         for (String name : names) {
-            styledNames.add(StyledText.of(name));
+            lines.add(Translation.msg("node.exclusive.item").arg("name", StyledText.styled(name, style)).styled());
         }
-        return Translation.msg(key).count(names.size()).arg("names", Translation.list(styledNames)).styled();
+        return StyledText.join(StyledText.of("\n"), lines);
     }
 
     public SkillType resolveEffectiveType(ShipSkillData data) {

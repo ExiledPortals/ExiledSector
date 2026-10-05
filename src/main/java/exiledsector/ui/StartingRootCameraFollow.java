@@ -7,11 +7,13 @@ final class StartingRootCameraFollow {
     private final float gapX;
     private final float gapY;
     private final float startZoom;
+    private final float endZoom;
 
-    StartingRootCameraFollow(float cameraX, float cameraY, float targetX, float targetY, float startZoom) {
+    StartingRootCameraFollow(float cameraX, float cameraY, float targetX, float targetY, float startZoom, float endZoom) {
         this.gapX = cameraX - targetX;
         this.gapY = cameraY - targetY;
         this.startZoom = startZoom;
+        this.endZoom = endZoom;
     }
 
     float x(float targetX, float progress) {
@@ -23,6 +25,6 @@ final class StartingRootCameraFollow {
     }
 
     float zoom(float progress) {
-        return startZoom + (CHOOSING_ZOOM - startZoom) * progress;
+        return (float) (startZoom * Math.pow(endZoom / startZoom, progress));
     }
 }

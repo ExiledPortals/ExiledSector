@@ -44,6 +44,8 @@ The zh_CN catalogue was drafted by Claude and still needs review by a native spe
 | Refit screen | 改装界面 | |
 | Codex | 百科 | |
 | su (space units) | su | Left untranslated |
+| Hegemony / Tri-Tachyon / Luddic / Sindrian Diktat / Persean League / pirates | 霸主 / 速子科技 / 卢德 / 辛达强权 / 英仙座联盟 / 海盗 | Faction names; check against the official localisation |
+| [REDACTED] | [数据删除] | |
 
 ## Mod terms
 
@@ -57,11 +59,17 @@ The zh_CN catalogue was drafted by Claude and still needs review by a native spe
 | Allocate / deallocate | 分配 / 取消分配 | |
 | Free allocation | 免费分配 | |
 | Level / XP | 等级 / 经验 | |
-| Build (NPC layout) | 构筑 | |
+| Build (NPC tree) | 构筑 | The inspector labels a build by its two main themes, e.g. "Ballistic / Armor build" is 实弹 / 装甲构筑 |
+| Theme labels (`theme.*`) | 幅能, 护盾, 装甲, 结构, 速度, 后勤, 导弹, 战机, 能量, 实弹, 相位, 光束, 射程, 弹药, 动能, 高爆, 破片, 能量伤害, 武器, 点防御, 战备值, 维修, 舰队支援, D插 | Reuse the core terms above |
 | Template / auto-allocate | 模板 / 自动分配 | A saved set of nodes a ship can follow |
 | Wormhole | 虫洞 | |
+| Modular Hull Socket | 模块化船体插槽 | The skill tree socket node |
+| Domain (of Man) | 人类领域 | As in the community translation of vanilla |
+| Subroutine / officer / team / AI core | 子程序 / 军官 / 团队 / AI核心 | What a Modular Hull Socket holds |
+| Military-grade / Industrial-grade / Consumer-grade | 军用级 / 工业级 / 民用级 | Socketable grades |
 | Escort | 护航 | |
 | Refraction / refract | 折射 | Refracting Projectiles' shots, matching its name 折射弹体 |
+| Volume (a region on the hyperspace view) | 星域 | "Sindrian volume" is 辛达强权星域 |
 
 ## Left in English on purpose
 

@@ -47,7 +47,7 @@ Optional:
 
 It should be safe to add to an existing save.
 
-I have done what I can for some mods, but there is a long way to go for complete mod compatibility.
+Nodes that copy a vanilla hull mod also place the real hull mod on the ship as a phantom: it costs no OP and does nothing itself, but other mods that check for that hull mod see it. That should make most mods work with the tree's nodes without needing dedicated support.
 
 These mods have dedicated compatibility. The version listed is the one I last tested against. Newer versions usually work; if one doesn't, [tt]starsector.log[/tt] says so at startup and lists anything Exiled Sector can no longer find.
 
@@ -77,11 +77,11 @@ The Chinese translation is a first draft awaiting review by a native speaker. To
 
 [b]How do I earn and spend points?[/b]
 [spoiler]
-Open a ship's refit screen and click the [b]Skill Tree[/b] button under the hull mods, or press [b]K[/b].
+Open a ship's refit screen and click the [b]Skill Tree[/b] button under the hull mods, or press [b]K[/b]. If you prefer the old LunaLib Additional Options entry, switch the button off in LunaLib settings.
 
 The first time you open a ship's tree you choose where it starts: Low Tech, Midline or High Tech. The starting node is free. Whenever it is the only node allocated, you can click it again to choose a different start. The other two can still be reached later like any other node.
 
-Every node costs the ship's unused ordnance points: 1 for frigates, 2 for destroyers, 3 for cruisers and 4 for capitals. A node can only be allocated next to one you already have.
+Every node costs the ship's unused ordnance points: 1 for frigates, 2 for destroyers, 3 for cruisers and 4 for capitals. A node can only be allocated next to one you already have. Node tooltips show only what a node does. Press [b]F1[/b] while hovering one to also see its restrictions, such as the hull mods and nodes it is mutually exclusive with.
 
 After every engagement, each ship in your fleet gains XP equal to the deployment points of the enemy ships destroyed or disabled, whether it deployed or not. Harder fights pay more: the same battle difficulty bonus vanilla shows before combat ("Additional XP due to overall battle difficulty") multiplies it, up to 6×. Easier fights never reduce it. You get half as much if you lose.
 
@@ -139,26 +139,15 @@ The number of nodes depends on your character level when the fleet is first spaw
 [tr][td]15+[/td][td]16–42[/td][/tr]
 [/table]
 
-There are nine builds, three for each starting point. Each ship gets a random build out of the ones that suit it:
+Every NPC captain reads their ship's specs and makes a plan. The plan is usually sensible and occasionally baffling.
 
-[table]
-[tr][td][b]Starting point[/b][/td][td][b]Build[/b][/td][td][b]Needs[/b][/td][/tr]
-[tr][td]Low Tech[/td][td]Bulwark[/td][td]–[/td][/tr]
-[tr][td]Low Tech[/td][td]Gunline[/td][td]Ballistic weapons[/td][/tr]
-[tr][td]Low Tech[/td][td]Brawler[/td][td]No fighter bays[/td][/tr]
-[tr][td]Midline[/td][td]Line Holder[/td][td]–[/td][/tr]
-[tr][td]Midline[/td][td]Lancer[/td][td]Shields and a non-PD beam[/td][/tr]
-[tr][td]Midline[/td][td]Carrier[/td][td]Fighter bays[/td][/tr]
-[tr][td]High Tech[/td][td]Flux Fortress[/td][td]Shields[/td][/tr]
-[tr][td]High Tech[/td][td]Energy Striker[/td][td]Energy weapons[/td][/tr]
-[tr][td]High Tech[/td][td]Phase Stalker[/td][td]Phase cloak[/td][/tr]
-[/table]
+They start from the root that matches their hull's design type (Low Tech, Midline or High Tech), or from wherever their academy, priest or AI author happened to teach. Their first job is replacing refit hullmods the tree offers a node for. The OP that frees up buys extra nodes, but if the node is out of reach they keep the hullmod. Built-in hullmods and S-mods are never touched.
 
-The build lists its nodes in order, and the ship takes them one by one. It skips any node it can't use, such as a shield node on a shieldless hull.
+Faction captains owe their volume a visit. Ships from a faction with its own volume cross vast expanses to take one notable or keystone there, if they can afford the trip.
 
-NPCs trade hullmods for nodes. If a ship has a hullmod that the tree has a matching node for, the node replaces the hullmod. The OP the hullmod used then buys extra nodes. Built-in hullmods and S-mods are never touched.
+After that it's down to taste. A captain picks notables and keystones that suit their weapons, fighters, shields or phase cloak, armour and built-in hullmods, but their choices are often like the sector: random and brutal. Two captains in identical ships will rarely agree. They take the nearest first, pick up small nodes only on the way, and never (theoretically) take a node their ship can't use.
 
-NPCs never take wormholes, so the faction regions of the tree are yours alone (for now).
+Other mods can map their own factions to a volume in data/config/exiledSector/npc_faction_volumes.csv.
 
 If you recover a ship that has a tree, it keeps its tree, and the tree becomes a normal player tree. Reinforced Bulkheads' near-guaranteed recovery is switched off on NPC ships, so levelled enemies aren't free loot.
 
@@ -167,9 +156,9 @@ Press [b]X[/b] (rebindable) during a fleet encounter, or while hovering over a f
 All of this, including the table of nodes per level, can be changed on the [b]NPC Scaling[/b] tab in LunaLib settings.
 [/spoiler]
 
-[b]How do I unlock wormholes and other hidden nodes?[/b]
+[b]How do I unlock hidden nodes?[/b]
 [spoiler]
-Hidden nodes show up as flickering sensor ghosts until you unlock them.
+Hidden nodes show up as sensor ghosts until you unlock them.
 
 Wormholes unlock when you gain access to the Gate network, the same point vanilla does: using the Janus Device at the end of the Galatia Academy storyline.
 
@@ -208,7 +197,7 @@ It is my first mod, and first foray into OpenGL/game development, and is by no m
 
 AI usage: I am a Java software engineer working in the regulatory sector where AI use is heavily restricted at this stage. I started this project as a way to educate myself on the capabilities of LLMs for clean, maintainable code, so that when people asked my opinion I can definitively state that LLMs are not the godsend Sam Altman claims. I still think giving inexperienced devs access to an LLM is like giving an 8 year old a powerdrill. Claude's Opus 5.5 was my chosen model for much of the code.
 
-I have only used starsector-core graphics and royalty-free art assets for all art in the mod. I have not and will not use LLM-generated art.
+I have only used starsector-core graphics and royalty-free art assets for all art in the mod. To my knowledge, I have not used LLM-generated art.
 
 I am seeking any feedback, bug reports, node suggestions, or faction designs.
 
@@ -219,6 +208,93 @@ You can find me on the [url=https://fractalsoftworks.com/forum/index.php?topic=1
 Exiled Sector is licensed under the [url=https://github.com/ExiledPortals/ExiledSector/blob/main/LICENSE]GNU General Public License v3.0[/url]. Fork it, reuse it, change it; just keep your version open source under the same license.
 
 [size=14pt][b]Changelog[/b][/size]
+
+[b]0.6.0[/b]
+[spoiler]
+[b]New features[/b]
+[list]
+[li]Added a hyperspace map. If you keep scrolling out past the minimum zoom, the view glides out to a map of every region's main star.[/li]
+[li]Added smart respec. Ctrl+Shift+click an allocated node to remove it and every node that depends on it, one at a time at auto-allocate's pace, farthest first, with the clicked node last. Doing this on the starting point clears the tree and returns you to the starting point choice. A click or Escape cancels a respec in progress. It does nothing if any node it would remove has its own removal condition.[/li]
+[li]The starting root can now be chosen again. While it is the only allocated node, click it to undo the choice.[/li]
+[li]Added Lost Sector themed areas to the skill tree (with permission). These new areas are optional, with direct ports of some Kesteven hullmods and some thematic designs of my own.
+[list]
+[li]Auto shows it only when Lost Sector is installed, and On and Off in Lunalib override that.[/li]
+[li]Switching an area off removes its nodes from every ship and refunds their OP, banked allocations and item costs. The change applies on the next save load.[/li]
+[/list][/li]
+[li]The refit screen has a new Skill Tree button (hotkey K) one slot below Build In. With Ship Mastery System installed, it sits directly under the Mastery button. This replaces the old button to open the skill tree.[/li]
+[li]The Exiled Sector Skill Tree hull mod is now visible in the refit screen.
+[list]
+[li]Hovering it lists an aggregate of every bonus from the ship's allocated nodes, up to 25 lines plus a count of the rest.[/li]
+[li]Clicking its icon opens the skill tree.[/li]
+[/list][/li]
+[li]Nodes that copy a vanilla hull mod now place the real hull mod on the ship as a phantom.
+[list]
+[li]The phantom is permanent, costs 0 OP and does nothing by itself, but other mods that check for that hull mod see it.[/li]
+[li]High Resolution Sensors and Phase Field are the exceptions.[/li]
+[li]Phantoms are hidden from the refit screen's installed hull mod lists and from ships' Codex related entries, and their tooltip names the node that provides them. They still appear as hullmods in some areas.[/li]
+[/list][/li]
+[li]Multipliers from the skill tree ("% more / % less") now add together instead of compounding.
+[list]
+[li]For example, 2% + 2% more is now 4% more, and 15% more plus 30% less is 15% less. The total never goes past 100% less.[/li]
+[li]Temporary nodes still apply their own multiplier that can compound.[/li]
+[li]The X panel summary adds them the same way and hides multipliers that cancel out.[/li]
+[/list][/li]
+[li]Added drastically improved NPC fleet generation logic, introducing themed randomness to all NPC fleets.[/li]
+[li]Node tooltips now show only the description, effects and temporary duration.
+[list]
+[li]Press F1 in the skill tree to show or hide the rest: mutual exclusivity, hull requirements, hull sizes, item cost, deallocation warnings and the free-node note.[/li]
+[/list][/li]
+[/list]
+
+[b]Compatibility[/b]
+[list]
+[li]Lost Sector (tested with 0.6.2d) is optional.
+[list]
+[li]With it installed, the Kesteven and Frozen Heart areas appear, controlled by the Optional Areas setting.[/li]
+[li]Kesteven nodes place Lost Sector's own hull mods as phantoms.[/li]
+[li]On hulls with Augmented Systems, these nodes give the same extra bonuses as Lost Sector's hull mods. Volatile Flux Injector's high-flux penalties are halved, and Inertial Supercharger also raises projectile speed by its damage bonus.[/li]
+[/list][/li]
+[li]Second-in-Command changes:
+[list]
+[li]It now sees the real Shield Shunt and Safety Overrides hull mods through their phantoms, so its own Redistribution and Enhanced Overrides bonuses apply.[/li]
+[li]The tree's "counts as" stand-in lines are gone.[/li]
+[li]It also sees Militarized Subsystems as installed.[/li]
+[/list][/li]
+[li]MagicLib: when another hull mod tries to strip one of a node's phantom hull mods through MagicLib, that hull mod is removed instead.[/li]
+[li]Ship Mastery System and other mods that check for Safety Overrides now see it on ships with the node.[/li]
+[li]The skill tree hull mod now applies after every other hull mod, including D-mods and Second-in-Command's controller, so crew-based effects see the final values.[/li]
+[li]Split-beam and refraction drones now copy marker hull mods from the firing ship.
+[list]
+[li]This makes ET-IX's Dawnstar and Daythorn beams, and the misfire checks of ET-IX and Emergent Threats beams, work on drones.[/li]
+[li]The list is in data/config/exiledSector/drone_marker_hullmods.csv, which merges across mods.[/li]
+[/list][/li]
+[li]The beam split and refraction blocklists were re-checked against the new drones.
+[list]
+[li]The Repulser, the energy ball launcher and the Supernova now refract normally, so the refraction blocklist is empty.[/li]
+[li]Devastator, Whiplash, Limited Ammo, SBE, Fermion Decoupler, Electrolaser Pulse and Destiny Spear beams now split normally.[/li]
+[li]Six beam effects stay blocked.[/li]
+[/list][/li]
+[li]At startup, starsector.log gets a self-check line for Lost Sector, Second-in-Command and MagicLib. It says whether each mod is absent, at the tested version, at an untested version, or missing something Exiled Sector relies on.[/li]
+[li]The mod no longer ships a copy of vanilla's Orbitron 20 bold font, which broke campaign UI text alongside font or localisation mods.[/li]
+[/list]
+
+[b]Bug fixes[/b]
+[list]
+[li]Fixed Refracting Projectiles crashing combat on some modded projectiles. Refracted shots also no longer appear on the shield they just hit, or break on special projectiles.[/li]
+[li]Fixed Lion's Gaze split-beam drones staying in battle forever after the firing ship retreated or its wreck was removed.[/li]
+[li]Fixed a crash on loading a save, caused by the tree changing hull mods during the game's OP-cost calculation.[/li]
+[li]Fixed Fighter Replacement nodes speeding up fighter replacement rate decay instead of slowing it.[/li]
+[li]Fixed Phase Anchor's emergency dive trying to trigger on ships without a phase cloak.[/li]
+[li]Fixed XP not being awarded for auto-resolved pursuits.[/li]
+[li]Fixed captured NPC ships losing their skill tree when another fight followed straight away.[/li]
+[li]Fixed two one-way links in the tree. They now unlock from either end.[/li]
+[li]Choice nodes whose chosen option no longer exists, or is no longer offered, are now removed and refunded on load. A skill type that fails to load no longer changes saves.[/li]
+[li]Choice nodes are now checked against the restrictions of both the node and the chosen option, everywhere.[/li]
+[li]Nodes removed from the tree, or from a switched-off area, now also refund their item cost.[/li]
+[li]Tooltip tables now use the current root's accent colour instead of the colour they were first drawn with.[/li]
+[li]Raised the limit on ships that can hold paid skill tree nodes at the same time from 1,000 to 10,000.[/li]
+[/list]
+[/spoiler]
 
 [b]0.5.0[/b]
 [spoiler]

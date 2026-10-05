@@ -12,6 +12,8 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
+import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
@@ -25,15 +27,15 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledsector.skills.npc.NpcLayout;
-import exiledsector.skills.npc.NpcLayoutEntry;
-import exiledsector.skills.npc.NpcLayouts;
+import exiledsector.skills.layout.SkillNodeDecoration;
+import exiledsector.skills.npc.NpcFactionVolumes;
 import exiledsector.skills.npc.NpcTreeConfig;
 import exiledsector.skills.npc.NpcTreeRecords;
 import exiledsector.skills.npc.NpcTreeTag;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.SkillNodeOpCost;
 import lunalib.lunaSettings.LunaSettings;
+import org.json.JSONArray;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -75,8 +77,6 @@ class NpcFleetLevellerTest {
         SkillTree.register(new SkillNode("a_1", type("a", SkillTier.SMALL).build(), List.of("root_1"), 0f, 0f));
         SkillTree.register(new SkillNode("armor_1", type("heavyarmor", SkillTier.NOTABLE)
                 .exclusiveHullModIds(List.of("heavyarmor")).build(), List.of("a_1"), 0f, 0f));
-        NpcLayouts.register(Map.of("bulwark", new NpcLayout("bulwark", "Bulwark", "root_1", List.of(), "",
-                List.of(new NpcLayoutEntry("a_1", null), new NpcLayoutEntry("armor_1", null)))));
 
         playerStats = mock(MutableCharacterStatsAPI.class);
         when(playerStats.getLevel()).thenReturn(15);
@@ -97,7 +97,7 @@ class NpcFleetLevellerTest {
     void tearDown() {
         lunaSettingsMock.close();
         globalMock.close();
-        NpcLayouts.register(Map.of());
+        NpcFactionVolumes.clear();
         SkillDataResolver.clearCache();
         SkillTree.clearNodes();
         SkillTree.clearTypes();
@@ -177,7 +177,6 @@ class NpcFleetLevellerTest {
 
         String tag = NpcTreeTag.find(officered.getVariant());
         assertNotNull(tag);
-        assertEquals("bulwark", NpcTreeTag.layoutId(tag));
         assertTrue(tag.endsWith("root_1,a_1,armor_1"));
         assertTrue(hullMods.contains(SkillTreeHullMod.ID));
         assertFalse(hullMods.contains("heavyarmor"));
@@ -197,14 +196,11 @@ class NpcFleetLevellerTest {
 
     @Test
     void opFreedByAStrippedHullmodIsSpentOnExtraTreeNodes() {
-        List<NpcLayoutEntry> entries = new ArrayList<>(List.of(new NpcLayoutEntry("a_1", null), new NpcLayoutEntry("armor_1", null)));
         String previous = "armor_1";
         for (String id : List.of("b_1", "c_1", "d_1", "e_1", "f_1", "g_1")) {
             SkillTree.register(new SkillNode(id, type(id, SkillTier.SMALL).build(), List.of(previous), 0f, 0f));
-            entries.add(new NpcLayoutEntry(id, null));
             previous = id;
         }
-        NpcLayouts.register(Map.of("bulwark", new NpcLayout("bulwark", "Bulwark", "root_1", List.of(), "", entries)));
         when(playerStats.getLevel()).thenReturn(2);
         SettingsAPI settings = mock(SettingsAPI.class);
         HullModSpecAPI heavyArmor = mock(HullModSpecAPI.class);
@@ -229,7 +225,7 @@ class NpcFleetLevellerTest {
 
         NpcFleetLeveller.ensure(fleet);
         String firstRecord = records(fleet).get("m1");
-        NpcLayouts.register(Map.of());
+        NpcFactionVolumes.clear();
         when(playerStats.getLevel()).thenReturn(1);
         NpcFleetLeveller.ensure(fleet);
 
@@ -409,5 +405,73 @@ class NpcFleetLevellerTest {
         new NpcFleetInflationListener().reportFleetInflated(fleet, null);
 
         assertNotNull(NpcTreeTag.find(officered.getVariant()));
+    }
+
+    @Test
+    void aFactionShipCrossesItsOwnWormholeForANotableInItsFactionVolume() throws Exception {
+        SkillType wormhole = type("wormhole", SkillTier.WORMHOLE).build();
+        SkillTree.register(new SkillNode("gate_core", wormhole, List.of("a_1", "gate_far"), 0f, 0f,
+                new SkillNodeDecoration(null, null, null, null, "gate_far"), List.of("core")));
+        SkillTree.register(new SkillNode("gate_far", wormhole, List.of("gate_core"), 0f, 0f,
+                new SkillNodeDecoration(null, null, null, null, "gate_core"), List.of("hegemony")));
+        SkillTree.register(new SkillNode("hegemony_notable", type("pride", SkillTier.NOTABLE).build(), List.of("gate_far"), 0f, 0f,
+                SkillNodeDecoration.NONE, List.of("hegemony")));
+        NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"hegemony\", \"region\": \"hegemony\"}]"));
+        FleetMemberAPI officered = member("m1", statefulVariant(new LinkedHashSet<>(), new ArrayList<>()), true);
+        CampaignFleetAPI fleet = fleetOf(officered);
+        when(fleet.getFaction().getId()).thenReturn("hegemony");
+
+        NpcFleetLeveller.ensure(fleet);
+
+        String tag = NpcTreeTag.find(officered.getVariant());
+        assertTrue(tag.contains("gate_core") && tag.contains("gate_far") && tag.contains("hegemony_notable"), tag);
+    }
+
+    @Test
+    void aHullmodWhoseNodeIsOutOfReachStaysOnTheShip() {
+        lunaSettingsMock.when(() -> LunaSettings.getInt(ExiledSectorModPlugin.MOD_ID, ShipLevelConfig.MAX_ALLOCATED_NODES_FIELD_ID))
+                .thenReturn(2);
+        Set<String> hullMods = new LinkedHashSet<>(List.of("heavyarmor"));
+        FleetMemberAPI officered = member("m1", statefulVariant(hullMods, new ArrayList<>()), true);
+
+        NpcFleetLeveller.ensure(fleetOf(officered));
+
+        assertTrue(NpcTreeTag.find(officered.getVariant()).endsWith("|root_1,a_1"));
+        assertTrue(hullMods.contains("heavyarmor"));
+    }
+
+    @Test
+    void hullSkinsUseTheirBaseHullsDesignTypeWhenTheirOwnHasNoRoot() {
+        ShipHullSpecAPI base = mock(ShipHullSpecAPI.class);
+        when(base.getManufacturer()).thenReturn("Low Tech");
+        ShipHullSpecAPI skin = mock(ShipHullSpecAPI.class);
+        when(skin.getManufacturer()).thenReturn("Luddic Path");
+        when(skin.getBaseHull()).thenReturn(base);
+        ShipHullSpecAPI midline = mock(ShipHullSpecAPI.class);
+        when(midline.getManufacturer()).thenReturn("Midline");
+        when(midline.getBaseHull()).thenReturn(base);
+
+        assertEquals("Low Tech", NpcFleetLeveller.designType(skin));
+        assertEquals("Midline", NpcFleetLeveller.designType(midline));
+        assertNull(NpcFleetLeveller.designType(null));
+    }
+
+    @Test
+    void aShipFittedWithConvertedHangarSwapsItForTheHangarNode() {
+        SkillTree.register(new SkillNode("hangar_1", type("hangar", SkillTier.KEYSTONE).tags(List.of("req_no_fighter_bays"))
+                .exclusiveHullModIds(List.of("converted_hangar")).build(), List.of("root_1"), 0f, 0f));
+        Set<String> hullMods = new LinkedHashSet<>(List.of("converted_hangar"));
+        FleetMemberAPI officered = member("m1", statefulVariant(hullMods, new ArrayList<>()), true);
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        MutableStat bays = new MutableStat(0f);
+        bays.modifyFlat("converted_hangar", 1f);
+        when(stats.getNumFighterBays()).thenReturn(bays);
+        when(officered.getStats()).thenReturn(stats);
+        when(officered.getNumFlightDecks()).thenReturn(1);
+
+        NpcFleetLeveller.ensure(fleetOf(officered));
+
+        assertTrue(NpcTreeTag.find(officered.getVariant()).contains("hangar_1"));
+        assertFalse(hullMods.contains("converted_hangar"));
     }
 }

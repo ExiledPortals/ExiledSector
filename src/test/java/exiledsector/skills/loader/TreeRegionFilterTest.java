@@ -34,22 +34,22 @@ class TreeRegionFilterTest {
 
     private static SkillTreeLoader.ParsedTree tree() {
         List<SkillNode> nodes = List.of(
-                node("root", "inner", List.of("gate_out", "plain")),
-                node("plain", "inner", List.of("root")),
-                wormhole("gate_out", "inner", "gate_in", List.of("root", "gate_in")),
-                wormhole("gate_in", "lost_sector", "gate_out", List.of("gate_out", "heart")),
-                node("heart", "lost_sector", List.of("gate_in")));
+                node("root", "core", List.of("gate_out", "plain")),
+                node("plain", "core", List.of("root")),
+                wormhole("gate_out", "core", "gate_in", List.of("root", "gate_in")),
+                wormhole("gate_in", "enigma", "gate_out", List.of("gate_out", "heart")),
+                node("heart", "enigma", List.of("gate_in")));
         Map<String, ConnectorCurve> curves = new LinkedHashMap<>();
         curves.put(SkillTree.curveKey("root", "plain"), new ConnectorCurve(1f, 1f));
         curves.put(SkillTree.curveKey("root", "gate_out"), new ConnectorCurve(2f, 2f));
         curves.put(SkillTree.curveKey("gate_in", "heart"), new ConnectorCurve(3f, 3f));
         return new SkillTreeLoader.ParsedTree(nodes, nodes.size(), curves,
                 Set.of(SkillTree.curveKey("root", "gate_out"), SkillTree.curveKey("root", "plain")),
-                List.of(new StaticImage("cloud", 0f, 0f, 1f, 1f, "a.png", new Rotation(0f, 0f), List.of("inner")),
+                List.of(new StaticImage("cloud", 0f, 0f, 1f, 1f, "a.png", new Rotation(0f, 0f), List.of("core")),
                         new StaticImage("untagged", 0f, 0f, 1f, 1f, "a.png", new Rotation(0f, 0f))),
-                List.of(new RingBelt("belt", 0f, 0f, 1f, 2f, "a.png", new Rotation(0f, 0f), List.of("lost_sector"))),
-                List.of(new Star("sun", 0f, 0f, 1f, "star_yellow", null, List.of("inner")),
-                        new Star("frozen", 0f, 0f, 1f, "star_yellow", null, List.of("lost_sector"))));
+                List.of(new RingBelt("belt", 0f, 0f, 1f, 2f, "a.png", new Rotation(0f, 0f), List.of("enigma"))),
+                List.of(new Star("sun", 0f, 0f, 1f, "star_yellow", null, List.of("core")),
+                        new Star("frozen", 0f, 0f, 1f, "star_yellow", null, List.of("enigma"))));
     }
 
     @Test
@@ -61,7 +61,7 @@ class TreeRegionFilterTest {
 
     @Test
     void switchingAnAreaOffRemovesItsNodesAndTheWormholeEndsThatLeadIntoIt() {
-        SkillTreeLoader.ParsedTree filtered = TreeRegionFilter.apply(tree(), Set.of("lost_sector"));
+        SkillTreeLoader.ParsedTree filtered = TreeRegionFilter.apply(tree(), Set.of("enigma"));
 
         assertEquals(List.of("root", "plain"), filtered.nodes.stream().map(SkillNode::getId).toList());
         assertEquals(List.of("plain"), filtered.nodes.get(0).getConnectedNodeIds());
@@ -72,7 +72,7 @@ class TreeRegionFilterTest {
 
     @Test
     void switchingAnAreaOffHidesItsStarsAndBeltsButKeepsUntaggedDecorations() {
-        SkillTreeLoader.ParsedTree filtered = TreeRegionFilter.apply(tree(), Set.of("lost_sector"));
+        SkillTreeLoader.ParsedTree filtered = TreeRegionFilter.apply(tree(), Set.of("enigma"));
 
         assertEquals(List.of("sun"), filtered.stars.stream().map(Star::getId).toList());
         assertEquals(List.of(), filtered.ringBelts);
@@ -81,6 +81,6 @@ class TreeRegionFilterTest {
 
     @Test
     void theWormholeEndsLeadingIntoADisabledAreaAreDisabledToo() {
-        assertEquals(Set.of("gate_in", "heart", "gate_out"), TreeRegionFilter.disabledNodeIds(tree().nodes, Set.of("lost_sector")));
+        assertEquals(Set.of("gate_in", "heart", "gate_out"), TreeRegionFilter.disabledNodeIds(tree().nodes, Set.of("enigma")));
     }
 }

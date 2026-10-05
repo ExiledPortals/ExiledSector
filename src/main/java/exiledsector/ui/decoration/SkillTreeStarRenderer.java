@@ -8,6 +8,7 @@ import com.fs.starfarer.api.impl.campaign.terrain.RangeBlockerUtil;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.layout.Star;
+import exiledsector.ui.SmoothZoom;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.ColorUtil;
 import exiledsector.ui.util.SpriteCache;
@@ -49,7 +50,18 @@ public class SkillTreeStarRenderer {
     private Map<String, PlanetSpecAPI> specsByType;
     private SpriteAPI atmosphereTexture;
     private SpriteAPI auroraTexture;
+    private float mapRadius;
+    private float mapAmount;
     private final Map<String, Map<Color, Color>> resolvedColors = new HashMap<>();
+
+    public void setMapRadius(float mapRadius, float mapAmount) {
+        this.mapRadius = mapRadius;
+        this.mapAmount = mapAmount;
+    }
+
+    private float radiusOf(Star star) {
+        return star.getRadius() + (mapRadius - star.getRadius()) * mapAmount;
+    }
 
     public void advance(float amount) {
         if (amount <= 0f) return;
@@ -77,7 +89,7 @@ public class SkillTreeStarRenderer {
 
             float screenX = viewport.screenX(star.getX());
             float screenY = viewport.screenY(star.getY());
-            float radius = star.getRadius() * zoom;
+            float radius = radiusOf(star) * zoom;
             if (!viewport.isVisible(screenX, screenY, radius + 0.5f * zoom)) {
                 continue;
             }
@@ -132,8 +144,8 @@ public class SkillTreeStarRenderer {
                 continue;
             }
 
-            float radius = star.getRadius() * zoom;
-            float thickness = Math.max(star.getRadius() * spec.getAtmosphereThickness(), spec.getAtmosphereThicknessMin()) * zoom;
+            float radius = radiusOf(star) * zoom;
+            float thickness = Math.max(radiusOf(star) * spec.getAtmosphereThickness(), spec.getAtmosphereThicknessMin()) * zoom;
             if (thickness > 0f) {
                 float innerRadius = radius - thickness * ATMOSPHERE_INNER_INSET_MULT;
                 float outerRadius = innerRadius + thickness;
@@ -189,24 +201,29 @@ public class SkillTreeStarRenderer {
             PlanetSpecAPI spec = resolveSpec(star.getStarType());
             if (spec == null) continue;
 
-            float radius = star.getRadius() * zoom;
+            float detailRadius = star.getRadius() * SmoothZoom.MAX_ZOOM;
+            float screenScale = zoom * radiusOf(star) / star.getRadius() / SmoothZoom.MAX_ZOOM;
 
             float screenX = viewport.screenX(star.getX());
             float screenY = viewport.screenY(star.getY());
-            if (!viewport.isVisible(screenX, screenY, auroraReach(radius))) {
+            if (!viewport.isVisible(screenX, screenY, auroraReach(detailRadius) * screenScale)) {
                 continue;
             }
             Color coronaColor = resolveColor(star, spec.getCoronaColor());
 
             AuroraRenderer renderer = getOrCreateAurora(star);
             AuroraDelegate delegate = auroraDelegateById.get(star.getId());
-            delegate.centerLoc.set(screenX, screenY);
-            delegate.innerRadius = radius * AURORA_INNER_RADIUS_MULT;
-            delegate.outerRadius = radius * AURORA_OUTER_RADIUS_MULT;
+            delegate.centerLoc.set(0f, 0f);
+            delegate.innerRadius = detailRadius * AURORA_INNER_RADIUS_MULT;
+            delegate.outerRadius = detailRadius * AURORA_OUTER_RADIUS_MULT;
             delegate.color = Misc.setAlpha(coronaColor, AURORA_ALPHA);
             delegate.texture = texture;
 
+            GL11.glPushMatrix();
+            GL11.glTranslatef(screenX, screenY, 0f);
+            GL11.glScalef(screenScale, screenScale, 1f);
             renderer.render(alphaMult);
+            GL11.glPopMatrix();
 
             GL11.glDisable(GL11.GL_BLEND);
             GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -242,8 +259,8 @@ public class SkillTreeStarRenderer {
                 continue;
             }
 
-            float radius = star.getRadius() * zoom;
-            float haloRadius = star.getRadius() * spec.getCoronaSize() * zoom;
+            float radius = radiusOf(star) * zoom;
+            float haloRadius = radiusOf(star) * spec.getCoronaSize() * zoom;
             float screenX = viewport.screenX(star.getX());
             float screenY = viewport.screenY(star.getY());
             if (haloRadius > radius && viewport.isVisible(screenX, screenY, haloRadius)) {
