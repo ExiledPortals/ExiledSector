@@ -63,13 +63,13 @@ class SocketableNamesTest {
         SocketableName name = name("military", 1L, List.of(DISSIPATION, SHIELDING));
 
         assertEquals(SocketableRarity.MAGIC, name.rarity());
-        assertEquals("Dissipation military-grade subroutine of Shielding", name.title());
+        assertEquals("Vent-efficient military-grade subroutine of Shielding", name.title());
         assertNull(name.baseName());
     }
 
     @Test
     void theMagicNameFollowsEachEffectsRoleNotItsOrder() {
-        assertEquals("Dissipation military-grade subroutine of Shielding", name("military", 1L, List.of(SHIELDING, DISSIPATION)).title());
+        assertEquals("Vent-efficient military-grade subroutine of Shielding", name("military", 1L, List.of(SHIELDING, DISSIPATION)).title());
     }
 
     @Test
