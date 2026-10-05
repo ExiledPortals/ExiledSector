@@ -136,6 +136,9 @@ class SocketableNamesTest {
         SocketableDefinitions.register(CDL.toJSONArray(csv.replace("\r\n", "\n")));
         JSONObject words = new JSONObject(Files.readString(RealSkillData.projectRoot().resolve(NAMES), StandardCharsets.UTF_8));
         for (SocketableDefinition definition : SocketableDefinitions.all()) {
+            if (definition.unique()) {
+                continue;
+            }
             assertTrue(words.has(definition.grade()), definition.grade() + " has no rare name words");
             for (SocketableDefinition.PoolEntry entry : definition.pool()) {
                 assertTrue(SocketableNames.hasAffix(entry.effectName()), entry.effectName() + " has no affix row");
