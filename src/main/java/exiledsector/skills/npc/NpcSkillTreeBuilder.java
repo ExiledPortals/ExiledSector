@@ -54,7 +54,7 @@ public final class NpcSkillTreeBuilder {
         }
         Generation generation = new Generation(request, data, target, random);
         generation.run();
-        return new NpcTreeBuild(data, generation.steps, generation.stripped);
+        return new NpcTreeBuild(data, generation.steps, generation.stripped, generation.claimedSockets);
     }
 
     public static boolean hasRootFor(String designType) {
@@ -171,6 +171,8 @@ public final class NpcSkillTreeBuilder {
         private final Set<String> rejected = new HashSet<>();
         private final List<NpcBuildStep> steps = new ArrayList<>();
         private final List<String> stripped = new ArrayList<>();
+        private final List<String> claimedSockets = new ArrayList<>();
+        private final int socketables;
         private int budget;
         private int spent;
 
@@ -187,12 +189,55 @@ public final class NpcSkillTreeBuilder {
             this.relevance = NpcRelevance.of(profile, hullMods.permanent());
             this.installed = new TreeSet<>(hullMods.installed());
             this.budget = Math.min(target, maxNodes);
+            this.socketables = request.socketables();
         }
 
         void run() {
             convertHullMods();
+            claimSockets();
             tasteFactionVolume();
             pursueGoals();
+        }
+
+        private void claimSockets() {
+            for (int i = 0; i < socketables; i++) {
+                String socket = unclaimedAllocatedSocket();
+                if (socket == null) {
+                    socket = reachSocket();
+                }
+                if (socket == null) {
+                    steps.add(new NpcBuildStep("", NpcBuildStep.SOCKETABLE_DISCARDED));
+                } else {
+                    claimedSockets.add(socket);
+                }
+            }
+        }
+
+        private String unclaimedAllocatedSocket() {
+            for (String id : data.getAllocatedNodeIds()) {
+                SkillNode node = topology.node(id);
+                if (node != null && node.getType().getTier() == SkillTier.SOCKET && !claimedSockets.contains(id)) {
+                    return id;
+                }
+            }
+            return null;
+        }
+
+        private String reachSocket() {
+            while (true) {
+                Search search = search(currentInstalled());
+                String nearest = null;
+                for (String id : search.reached()) {
+                    if (topology.node(id).getType().getTier() == SkillTier.SOCKET && !rejected.contains(id)
+                            && affordable(search, id, remaining()) && (nearest == null || search.cost(id) < search.cost(nearest))) {
+                        nearest = id;
+                    }
+                }
+                if (nearest == null || allocatePath(search, nearest, NpcBuildStep.SOCKET_GOAL, NpcBuildStep.PATH_TO_GOAL)) {
+                    return nearest;
+                }
+                rejected.add(nearest);
+            }
         }
 
         private int remaining() {

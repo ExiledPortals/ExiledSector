@@ -9,6 +9,7 @@ import com.fs.starfarer.api.loading.VariantSource;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.npc.NpcTreeTag;
+import exiledsector.socketables.NpcSocketables;
 import exiledsector.skills.skilleffect.FleetWideEffects;
 
 public class SkillTreeInstaller implements EveryFrameScript {
@@ -126,7 +127,10 @@ public class SkillTreeInstaller implements EveryFrameScript {
         ShipSkillData npcTree = NpcTreeTag.decode(tag);
         if (npcTree != null && ShipSkillDataManager.get(member.getId()).isBlank()) {
             npcTree.clearNpcBuild();
+            NpcSocketables.claimForPlayer(npcTree);
             ShipSkillDataManager.put(member.getId(), npcTree);
+        } else if (npcTree != null) {
+            NpcSocketables.storeForPlayer(npcTree);
         }
 
         clearNpcTree(ownedVariant(member));

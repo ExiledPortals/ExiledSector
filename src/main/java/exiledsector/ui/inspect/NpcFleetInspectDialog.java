@@ -13,7 +13,10 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.effects.NpcFleetLeveller;
 import exiledsector.i18n.I18n;
+import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.socketables.Socketable;
+import exiledsector.socketables.SocketableStore;
 import exiledsector.ui.VanillaText;
 import org.lwjgl.input.Keyboard;
 
@@ -70,7 +73,7 @@ public class NpcFleetInspectDialog implements CustomVisualDialogDelegate {
 
         TooltipMakerAPI content = panel.createUIElement(width, height - BUTTON_HEIGHT - PAD * 2f, true);
         for (CampaignFleetAPI fleet : fleets) {
-            addFleet(content, fleet, width, columnsIn(width));
+            addFleet(panel, content, fleet, width, columnsIn(width));
         }
         panel.addUIElement(content).inTL(0f, 0f);
 
@@ -89,13 +92,10 @@ public class NpcFleetInspectDialog implements CustomVisualDialogDelegate {
         return levelled;
     }
 
-    private static void addFleet(TooltipMakerAPI content, CampaignFleetAPI fleet, float width, int columns) {
+    private static void addFleet(CustomPanelAPI panel, TooltipMakerAPI content, CampaignFleetAPI fleet, float width, int columns) {
         NpcFleetLeveller.ensure(fleet);
         List<FleetMemberAPI> members = fleet.getFleetData().getMembersListCopy();
         List<FleetMemberAPI> levelled = levelledMembers(fleet);
-        content.addSectionHeading(fleet.getFullName(), Alignment.MID, PAD);
-        VanillaText.addPara(content, Translation.msg("inspect.levelledShips").arg("levelled", levelled.size())
-                .arg("total", members.size()).styled(), PAD, Misc.getTextColor());
         List<ShipEntry> ships = new ArrayList<>();
         for (FleetMemberAPI member : levelled) {
             ShipTreeLookup.ShipTree tree = ShipTreeLookup.find(member);
@@ -103,6 +103,10 @@ public class NpcFleetInspectDialog implements CustomVisualDialogDelegate {
                 ships.add(new ShipEntry(member, tree));
             }
         }
+        content.addSectionHeading(fleet.getFullName(), Alignment.MID, PAD);
+        addSocketables(panel, content, ships, width - SCROLLBAR_ALLOWANCE);
+        VanillaText.addPara(content, Translation.msg("inspect.levelledShips").arg("levelled", levelled.size())
+                .arg("total", members.size()).styled(), PAD, Misc.getTextColor());
         if (columns <= 1) {
             for (ShipEntry ship : ships) {
                 addShip(content, fleet, ship, PAD * 2f);
@@ -114,6 +118,25 @@ public class NpcFleetInspectDialog implements CustomVisualDialogDelegate {
         for (int first = 0; first < ships.size(); first += columns) {
             addShipRow(content, fleet, ships.subList(first, Math.min(ships.size(), first + columns)), rowWidth, columnWidth);
         }
+    }
+
+    private static void addSocketables(CustomPanelAPI panel, TooltipMakerAPI content, List<ShipEntry> ships, float width) {
+        List<SocketableIconStrip.Entry> entries = new ArrayList<>();
+        for (ShipEntry ship : ships) {
+            List<StyledText> footer = List.of(Translation.msg("inspect.socketable.installedIn").arg("ship", shipTitle(ship.member())).styled(),
+                    Translation.styled("inspect.socketable.drops"));
+            for (String socketableId : ship.tree().data().getSocketedItems().values()) {
+                Socketable socketable = SocketableStore.lookup(socketableId);
+                if (socketable != null) {
+                    entries.add(new SocketableIconStrip.Entry(socketable, footer));
+                }
+            }
+        }
+        if (entries.isEmpty()) {
+            return;
+        }
+        content.addPara("%s", PAD, Misc.getBasePlayerColor(), Translation.text("inspect.socketables"));
+        content.addCustom(SocketableIconStrip.create(panel, width, entries), PAD / 2f);
     }
 
     private static void addShipRow(TooltipMakerAPI content, CampaignFleetAPI fleet, List<ShipEntry> ships,
