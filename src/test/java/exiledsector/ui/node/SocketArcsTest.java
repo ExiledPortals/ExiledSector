@@ -62,10 +62,20 @@ class SocketArcsTest {
     }
 
     @Test
-    void theSquareEdgeIsHalfTheSizeStraightOnAndFurtherTowardsACorner() {
-        assertEquals(10f, SkillTreeNodeGeometry.squareEdgeDistance(10f, 5f, 0f), EPSILON);
-        assertEquals(10f, SkillTreeNodeGeometry.squareEdgeDistance(10f, 0f, -3f), EPSILON);
-        assertEquals(10f * (float) Math.sqrt(2), SkillTreeNodeGeometry.squareEdgeDistance(10f, 4f, 4f), EPSILON);
-        assertEquals(10f, SkillTreeNodeGeometry.squareEdgeDistance(10f, 0f, 0f), EPSILON);
+    void theOctagonEdgeIsHalfTheSizeStraightOnAndCutShortAcrossABevelledCorner() {
+        assertEquals(10f, SkillTreeNodeGeometry.octagonEdgeDistance(10f, 16f, 5f, 0f), EPSILON);
+        assertEquals(10f, SkillTreeNodeGeometry.octagonEdgeDistance(10f, 16f, 0f, -3f), EPSILON);
+        assertEquals(8f * (float) Math.sqrt(2), SkillTreeNodeGeometry.octagonEdgeDistance(10f, 16f, 4f, 4f), EPSILON);
+        assertEquals(10f * (float) Math.sqrt(2), SkillTreeNodeGeometry.octagonEdgeDistance(10f, 20f, 4f, 4f), EPSILON);
+        assertEquals(10f, SkillTreeNodeGeometry.octagonEdgeDistance(10f, 16f, 0f, 0f), EPSILON);
+    }
+
+    @Test
+    void connectorsEndOnTheVisibleFrameInsideTheTransparentMargin() {
+        float straight = SkillTreeSocketRenderer.visibleEdgeDistance(100f, 1f, 0f);
+        float diagonal = SkillTreeSocketRenderer.visibleEdgeDistance(100f, 1f, 1f);
+
+        assertTrue(straight < 50f && straight > 40f);
+        assertTrue(diagonal < straight * (float) Math.sqrt(2));
     }
 }

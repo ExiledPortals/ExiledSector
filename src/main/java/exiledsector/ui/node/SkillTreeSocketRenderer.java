@@ -7,7 +7,9 @@ import exiledsector.ui.util.SpriteDraw;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 final class SkillTreeSocketRenderer {
 
@@ -23,6 +25,8 @@ final class SkillTreeSocketRenderer {
     private static final String BOTTOM_RIGHT = FRAME_PREFIX + "bot_right.png";
     private static final float CORNER_RATIO = 0.25f;
     private static final float CONTENT_RATIO = 0.7f;
+    private static final float EDGE_MARGIN_RATIO = 8f / 31f;
+    private static final float BEVEL_RATIO = 27f / 31f;
 
     private static final Color UNALLOCATED_TINT = new Color(120, 120, 120);
     private static final float UNALLOCATED_ALPHA = 0.6f;
@@ -35,12 +39,21 @@ final class SkillTreeSocketRenderer {
     private static final Color ARC_CORE_COLOR = new Color(235, 245, 255);
 
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeSocketRenderer.class);
+    private final SpriteCache frameCache = new SpriteCache(SkillTreeSocketRenderer.class);
+    private final Set<String> insetPieces = new HashSet<>();
     private final SocketArcs arcs = new SocketArcs(new Random());
     private Color tintedAccent;
     private Color allocatedTint;
 
     void advance(float amount) {
         arcs.advance(amount);
+    }
+
+    static float visibleEdgeDistance(float size, float towardX, float towardY) {
+        float half = size / 2f;
+        float corner = size * CORNER_RATIO;
+        return SkillTreeNodeGeometry.octagonEdgeDistance(half - corner * EDGE_MARGIN_RATIO, 2f * half - corner * BEVEL_RATIO,
+                towardX, towardY);
     }
 
     void drawFrame(float cx, float cy, float size, boolean allocated, Color accent, String contentIconPath, Color iconTint,
@@ -123,6 +136,20 @@ final class SkillTreeSocketRenderer {
 
     private void drawPiece(String path, float cx, float cy, float width, float height, Color tint, float alphaMult) {
         if (width <= 0f || height <= 0f) return;
-        SpriteDraw.drawAtCenter(spriteCache, path, cx, cy, width, height, tint, alphaMult);
+        SpriteAPI sprite = frameCache.sprite(path);
+        if (sprite == null) return;
+        if (insetPieces.add(path)) {
+            insetByHalfATexel(sprite);
+        }
+        SpriteDraw.drawAtCenter(frameCache, path, cx, cy, width, height, tint, alphaMult);
+    }
+
+    private static void insetByHalfATexel(SpriteAPI sprite) {
+        float texelWidth = sprite.getTextureWidth() / sprite.getWidth();
+        float texelHeight = sprite.getTextureHeight() / sprite.getHeight();
+        sprite.setTexX(texelWidth / 2f);
+        sprite.setTexY(texelHeight / 2f);
+        sprite.setTexWidth(sprite.getTextureWidth() - texelWidth);
+        sprite.setTexHeight(sprite.getTextureHeight() - texelHeight);
     }
 }

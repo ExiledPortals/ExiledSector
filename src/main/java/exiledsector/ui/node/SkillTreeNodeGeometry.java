@@ -42,12 +42,15 @@ final class SkillTreeNodeGeometry {
         return donutOuterRadius(footprintSize, tier, zoom);
     }
 
-    static float squareEdgeDistance(float halfSize, float dx, float dy) {
-        float largest = Math.max(Math.abs(dx), Math.abs(dy));
+    static float octagonEdgeDistance(float halfSize, float diagonalLimit, float dx, float dy) {
+        float absX = Math.abs(dx);
+        float absY = Math.abs(dy);
+        float largest = Math.max(absX, absY);
         if (largest == 0f) {
             return halfSize;
         }
-        return halfSize * (float) Math.hypot(dx, dy) / largest;
+        float length = (float) Math.hypot(dx, dy);
+        return Math.min(halfSize * length / largest, diagonalLimit * length / (absX + absY));
     }
 
     static float beltInnerRadius(float footprintSize) {

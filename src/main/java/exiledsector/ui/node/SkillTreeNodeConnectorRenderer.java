@@ -23,7 +23,6 @@ import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_SIZE;
 import static exiledsector.ui.node.SkillTreeNodeGeometry.RING_DULL_ALPHA;
 import static exiledsector.ui.node.SkillTreeNodeGeometry.RING_DULL_COLOR;
 import static exiledsector.ui.node.SkillTreeNodeGeometry.connectorEndpointRadius;
-import static exiledsector.ui.node.SkillTreeNodeGeometry.squareEdgeDistance;
 
 final class SkillTreeNodeConnectorRenderer {
 
@@ -120,7 +119,7 @@ final class SkillTreeNodeConnectorRenderer {
     private float endpointRadius(SkillNode node, float zoom, float towardX, float towardY) {
         SkillTier tier = node.getType().getTier();
         float footprintSize = NODE_SIZE * zoom * tier.getSizeMultiplier();
-        if (tier == SkillTier.SOCKET) return squareEdgeDistance(footprintSize / 2f, towardX, towardY);
+        if (tier == SkillTier.SOCKET) return SkillTreeSocketRenderer.visibleEdgeDistance(footprintSize, towardX, towardY);
         float fullRadius = connectorEndpointRadius(tier, footprintSize, zoom);
         if (tier != SkillTier.WORMHOLE) return fullRadius;
         return fullRadius * (1f - wormholeOpenness.of(node.getId()));
