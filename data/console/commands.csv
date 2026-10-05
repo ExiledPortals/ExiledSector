@@ -1,3 +1,4 @@
 command,class,tags,syntax,help
 ExiledSectorGrantFleetXp,exiledsector.console.GrantFleetXpCommand,"cheat,campaign",exiledsectorgrantfleetxp [amount],"Grants the given amount of Exiled Sector XP to every ship in the player's fleet. Defaults to 1000 if no amount is given."
 ExiledSectorGrantShipXp,exiledsector.console.GrantShipXpCommand,"cheat,campaign",exiledsectorgrantshipxp <ship name> [amount],"Grants the given amount of Exiled Sector XP to one ship in the player's fleet, found by its name (or part of it). Defaults to 1000 if no amount is given."
+ExiledSectorGrantSocketables,exiledsector.console.GrantSocketablesCommand,"cheat,campaign",exiledsectorgrantsocketables [copies],"Adds copies of every socketable type to the player's cargo, each with a random roll. Defaults to 5 copies of each if no number is given."

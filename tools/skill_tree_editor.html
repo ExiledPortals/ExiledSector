@@ -644,6 +644,7 @@
       <div class="label">Modular Hull Sockets</div>
       <div class="btnRow">
         <button class="smallBtn" id="socketableEditorBtn">Socketable Editor...</button>
+        <button class="smallBtn" id="socketableNamesBtn">Socketable Names...</button>
       </div>
     </div>
   </div>
@@ -3970,6 +3971,304 @@ function openSocketableEditorModal(){
   load();
 }
 
+var RARE_NAME_STYLES = [
+  { id: 'codename', label: 'Codename - "First Second"' },
+  { id: 'product', label: 'Product - "First Second", sometimes a compound first word and a model' }
+];
+
+function parseAffixesCsv(text){
+  var rows = parseCsv(text);
+  var header = (rows.shift() || []).map(function(h){ return h.trim(); });
+  var at = function(name){ return header.indexOf(name); };
+  return rows.map(function(cells){
+    var cell = function(name){ var i = at(name); return i < 0 || cells[i] === undefined ? '' : cells[i].trim(); };
+    return { effect: cell('effect'), prefix: cell('prefix'), suffix: cell('suffix') };
+  });
+}
+
+function serializeAffixesCsv(rows){
+  return ['effect,prefix,suffix'].concat(rows.map(function(row){
+    return [row.effect, row.prefix, row.suffix].map(csvField).join(',');
+  })).join('\n') + '\n';
+}
+
+function wordList(text){
+  return String(text || '').split(/[\n,]/).map(function(w){ return w.trim(); }).filter(Boolean);
+}
+
+function serializeRareNames(names){
+  var grades = Object.keys(names);
+  return '{\n' + grades.map(function(grade){
+    var words = names[grade];
+    var keys = Object.keys(words);
+    return '\t' + JSON.stringify(grade) + ': {\n' + keys.map(function(key){
+      return '\t\t' + JSON.stringify(key) + ': ' + (Array.isArray(words[key])
+        ? '[' + words[key].map(function(w){ return JSON.stringify(w); }).join(', ') + ']'
+        : JSON.stringify(words[key]));
+    }).join(',\n') + '\n\t}';
+  }).join(',\n') + '\n}\n';
+}
+
+function openSocketableNamesModal(){
+  var root = document.getElementById('modalRoot');
+  var affixes = [], names = {}, usedEffects = {}, tab = 'affixes', filterText = '', dirty = false;
+
+  function load(){
+    Promise.all([
+      fetch('/data/socketable-names').then(function(r){ if (!r.ok) throw new Error('names ' + r.status); return r.json(); }),
+      fetch('/data/socketables').then(function(r){ return r.ok ? r.text() : ''; })
+    ]).then(function(results){
+      affixes = parseAffixesCsv(results[0].affixes);
+      names = JSON.parse(results[0].names);
+      usedEffects = {};
+      parseSocketablesCsv(results[1]).defs.forEach(function(def){
+        def.prefixes.concat(def.suffixes).forEach(function(e){ (usedEffects[e.effect] = usedEffects[e.effect] || []).push(def.id); });
+      });
+      dirty = false;
+      render();
+    }).catch(function(){
+      showToast('Could not load socketable names - run tools\\skill_tree_server.ps1');
+    });
+  }
+
+  function close(){
+    if (dirty && !confirm('Discard unsaved name changes?')) return;
+    root.innerHTML = '';
+  }
+
+  function markDirty(){
+    dirty = true;
+    var status = document.getElementById('namesStatus');
+    if (status) status.textContent = 'Unsaved changes';
+  }
+
+  function missingEffects(){
+    return Object.keys(usedEffects).filter(function(effect){
+      return !affixes.some(function(row){ return row.effect === effect; });
+    }).sort();
+  }
+
+  function render(){
+    root.innerHTML =
+      '<div class="modalOverlay"><div class="modal wide">' +
+      '<h3>Socketable Names</h3>' +
+      '<div class="exportTabs">' +
+        '<div class="exportTab' + (tab === 'affixes' ? ' active' : '') + '" data-names-tab="affixes">Prefix and suffix names</div>' +
+        '<div class="exportTab' + (tab === 'rare' ? ' active' : '') + '" data-names-tab="rare">Rare names</div>' +
+      '</div>' +
+      '<div id="namesBody" class="socketableDetail" style="margin-top:10px"></div>' +
+      '<div class="modalBtns">' +
+        '<span class="hint" id="namesStatus" style="margin-right:auto">' + (dirty ? 'Unsaved changes' : '') + '</span>' +
+        '<button class="smallBtn" id="namesReload">Reload from disk</button>' +
+        '<button class="smallBtn primary" id="namesSave">Save to project</button>' +
+        '<button class="smallBtn" id="namesClose">Close</button>' +
+      '</div>' +
+      '</div></div>';
+    root.querySelectorAll('[data-names-tab]').forEach(function(el){
+      el.addEventListener('click', function(){ tab = el.dataset.namesTab; render(); });
+    });
+    document.getElementById('namesClose').addEventListener('click', close);
+    document.getElementById('namesReload').addEventListener('click', function(){
+      if (dirty && !confirm('Discard unsaved name changes and reload from disk?')) return;
+      load();
+    });
+    document.getElementById('namesSave').addEventListener('click', save);
+    if (tab === 'affixes') renderAffixes(); else renderRareNames();
+  }
+
+  function renderAffixes(){
+    var body = document.getElementById('namesBody');
+    var missing = missingEffects();
+    var needle = filterText.toLowerCase();
+    var rowsHtml = affixes.map(function(row, i){
+      var haystack = (row.effect + ' ' + row.prefix + ' ' + row.suffix).toLowerCase();
+      if (needle && haystack.indexOf(needle) === -1) return '';
+      var users = usedEffects[row.effect];
+      var usage = users ? 'Used by ' + users.join(', ') : 'Not used by any socketable';
+      return '<div class="fieldRow" style="align-items:flex-end">' +
+        '<div class="field" style="flex:3"><label title="' + escapeHtml(usage) + '">' + escapeHtml(row.effect) +
+          (users ? '' : ' <span class="hint">(unused)</span>') + '</label>' +
+          '<div class="hint">' + escapeHtml(row.prefix || '...') + ' military-grade subroutine of ' + escapeHtml(row.suffix || '...') + '</div></div>' +
+        '<div class="field" style="flex:2"><label>Prefix</label><input data-affix-index="' + i + '" data-affix-field="prefix" value="' + escapeHtml(row.prefix) + '"></div>' +
+        '<div class="field" style="flex:2"><label>Suffix (after "of")</label><input data-affix-index="' + i + '" data-affix-field="suffix" value="' + escapeHtml(row.suffix) + '"></div>' +
+        '<button class="smallBtn danger" type="button" data-affix-remove="' + i + '">X</button>' +
+      '</div>';
+    }).join('');
+    var addOptions = EFFECT_NAMES_SORTED.filter(function(name){
+      return !affixes.some(function(row){ return row.effect === name; });
+    }).map(function(name){
+      return '<option value="' + name + '">' + name + (usedEffects[name] ? ' (used, needs names)' : '') + '</option>';
+    }).join('');
+    body.innerHTML =
+      '<div class="hint">Edits data/config/exiledSector/socketable_affixes.csv. A magic item is named "&lt;prefix&gt; &lt;grade&gt; &lt;noun&gt; of &lt;suffix&gt;" ' +
+        'from its first prefix and first suffix effect. Every effect a socketable can roll needs a row. Chinese words go under ' +
+        'socketable.affix.&lt;EFFECT&gt;.prefix / .suffix in zh_CN.json.</div>' +
+      (missing.length ? '<div class="hint" style="color:var(--danger)">Used by socketables but missing names: ' + escapeHtml(missing.join(', ')) + '</div>' : '') +
+      '<div class="fieldRow" style="align-items:flex-end">' +
+        '<div class="field" style="flex:1"><label>Filter</label><input id="affixFilter" value="' + escapeHtml(filterText) + '" placeholder="effect or word"></div>' +
+        '<div class="field" style="flex:1"><label>Add an effect</label><select id="affixAddSelect">' + addOptions + '</select></div>' +
+        '<button class="smallBtn" type="button" id="affixAdd">+ Add</button>' +
+      '</div>' +
+      '<hr class="sep">' +
+      (rowsHtml || '<div class="hint">No rows match.</div>');
+
+    var filter = document.getElementById('affixFilter');
+    filter.addEventListener('input', function(){
+      filterText = filter.value;
+      renderAffixes();
+      var refocused = document.getElementById('affixFilter');
+      refocused.focus();
+      refocused.setSelectionRange(refocused.value.length, refocused.value.length);
+    });
+    body.querySelectorAll('[data-affix-field]').forEach(function(el){
+      el.addEventListener('input', function(){
+        var row = affixes[parseInt(el.dataset.affixIndex, 10)];
+        row[el.dataset.affixField] = el.value;
+        markDirty();
+        el.closest('.fieldRow').querySelector('.hint').textContent =
+          (row.prefix || '...') + ' military-grade subroutine of ' + (row.suffix || '...');
+      });
+    });
+    body.querySelectorAll('[data-affix-remove]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        affixes.splice(parseInt(btn.dataset.affixRemove, 10), 1);
+        markDirty();
+        renderAffixes();
+      });
+    });
+    document.getElementById('affixAdd').addEventListener('click', function(){
+      var effect = document.getElementById('affixAddSelect').value;
+      if (!effect) return;
+      affixes.push({ effect: effect, prefix: '', suffix: '' });
+      filterText = effect;
+      markDirty();
+      renderAffixes();
+    });
+  }
+
+  function sampleNames(words){
+    var first = words.first || [], second = words.second || [], models = words.models || [];
+    if (!first.length || !second.length) return [];
+    var pick = function(list){ return list[Math.floor(Math.random() * list.length)]; };
+    var samples = [];
+    for (var i = 0; i < 5; i++) {
+      var name = pick(first);
+      if (words.style === 'product' && first.length > 1 && Math.random() < 0.3) name += pick(first.filter(function(w){ return w !== name; }));
+      name += ' ' + pick(second);
+      if (words.style === 'product' && models.length && Math.random() < 0.4) name += ' ' + pick(models);
+      samples.push(name);
+    }
+    return samples;
+  }
+
+  function renderRareNames(){
+    var body = document.getElementById('namesBody');
+    var textareaStyle = 'width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);' +
+      'font-family:var(--font-mono);font-size:12.5px;padding:7px 9px;resize:vertical;';
+    var gradesHtml = Object.keys(names).map(function(grade){
+      var words = names[grade];
+      var styleOptions = RARE_NAME_STYLES.map(function(s){
+        return '<option value="' + s.id + '"' + (s.id === (words.style || 'codename') ? ' selected' : '') + '>' + s.label + '</option>';
+      }).join('');
+      var listField = function(key, label){
+        return '<div class="field" style="flex:1"><label>' + label + ' <span class="hint">(' + (words[key] || []).length + ')</span></label>' +
+          '<textarea rows="6" data-rare-grade="' + escapeHtml(grade) + '" data-rare-list="' + key + '" style="' + textareaStyle + '">' +
+          escapeHtml((words[key] || []).join('\n')) + '</textarea></div>';
+      };
+      return '<div class="field"><label style="font-size:13px">' + escapeHtml(grade) + '</label>' +
+        '<div class="fieldRow" style="align-items:flex-end">' +
+          '<div class="field" style="flex:1"><label>Style</label><select data-rare-grade="' + escapeHtml(grade) + '" data-rare-style>' + styleOptions + '</select></div>' +
+          '<button class="smallBtn danger" type="button" data-rare-remove="' + escapeHtml(grade) + '">Remove grade</button>' +
+        '</div>' +
+        '<div class="fieldRow">' + listField('first', 'First words') + listField('second', 'Second words') +
+          ((words.style === 'product') ? listField('models', 'Models') : '') + '</div>' +
+        '<div class="hint" data-rare-samples="' + escapeHtml(grade) + '">e.g. ' + escapeHtml(sampleNames(words).join(', ')) + '</div>' +
+      '</div>';
+    }).join('<hr class="sep">');
+    body.innerHTML =
+      '<div class="hint">Edits data/config/exiledSector/socketable_names.json. Rare items (3-4 effects) take a name built from their grade\'s words, ' +
+        'shown above the item\'s base name. One word per line. The grade must match the grade column in socketables.csv.</div>' +
+      '<hr class="sep">' + (gradesHtml || '<div class="hint">No grades yet.</div>') +
+      '<hr class="sep"><div class="btnRow"><button class="smallBtn" type="button" id="rareAddGrade">+ Add grade</button></div>';
+
+    body.querySelectorAll('[data-rare-list]').forEach(function(el){
+      el.addEventListener('input', function(){
+        var words = names[el.dataset.rareGrade];
+        words[el.dataset.rareList] = wordList(el.value);
+        markDirty();
+        el.previousElementSibling.querySelector('.hint').textContent = '(' + words[el.dataset.rareList].length + ')';
+        body.querySelector('[data-rare-samples="' + el.dataset.rareGrade + '"]').textContent = 'e.g. ' + sampleNames(words).join(', ');
+      });
+    });
+    body.querySelectorAll('[data-rare-style]').forEach(function(el){
+      el.addEventListener('change', function(){
+        names[el.dataset.rareGrade].style = el.value;
+        markDirty();
+        renderRareNames();
+      });
+    });
+    body.querySelectorAll('[data-rare-remove]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        if (!confirm('Remove the rare name words for "' + btn.dataset.rareRemove + '"? Its rare items would fall back to their base name.')) return;
+        delete names[btn.dataset.rareRemove];
+        markDirty();
+        renderRareNames();
+      });
+    });
+    document.getElementById('rareAddGrade').addEventListener('click', function(){
+      var grade = (prompt('Grade id (as in the grade column of socketables.csv):') || '').trim();
+      if (!grade) return;
+      if (names[grade]) { showToast('That grade already has words'); return; }
+      names[grade] = { style: 'codename', first: [], second: [] };
+      markDirty();
+      renderRareNames();
+    });
+  }
+
+  function validate(){
+    var issues = [], seen = {};
+    affixes.forEach(function(row, i){
+      var label = row.effect || ('row ' + (i + 1));
+      if (!row.effect) issues.push(label + ': pick an effect');
+      if (seen[row.effect]) issues.push(label + ': listed more than once');
+      seen[row.effect] = true;
+      if (usedEffects[row.effect] && (!row.prefix.trim() || !row.suffix.trim())) issues.push(label + ': used by socketables, so it needs both a prefix and a suffix');
+    });
+    missingEffects().forEach(function(effect){ issues.push(effect + ': used by ' + usedEffects[effect].join(', ') + ' but has no names'); });
+    Object.keys(names).forEach(function(grade){
+      var words = names[grade];
+      if (!(words.first || []).length || !(words.second || []).length) issues.push(grade + ': needs at least one first word and one second word');
+    });
+    return issues;
+  }
+
+  function save(){
+    var issues = validate();
+    if (issues.length) { alert('Not saved:\n' + issues.join('\n')); return; }
+    fetch('/save-socketable-names', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Skill-Tree-Editor': '1' },
+      body: JSON.stringify({ affixes: serializeAffixesCsv(affixes), names: serializeRareNames(names) })
+    }).then(function(r){
+      return r.json().then(function(data){ return { httpOk: r.ok, data: data }; });
+    }).then(function(result){
+      if (!result.httpOk || !result.data.ok) {
+        showToast('Could not save: ' + (result.data && result.data.message ? result.data.message : 'unknown error'));
+        return;
+      }
+      dirty = false;
+      var status = document.getElementById('namesStatus');
+      if (status) status.textContent = 'Saved';
+      showToast('Saved socketable_affixes.csv and socketable_names.json');
+    }).catch(function(){
+      showToast('Could not reach local server - run tools\\skill_tree_server.ps1');
+    });
+  }
+
+  root.innerHTML = '<div class="modalOverlay"><div class="modal"><div class="hint">Loading names...</div></div></div>';
+  load();
+}
+
 function openTypeModal(existingType, onSave, onClose){
   var isNew = !existingType;
   var t = existingType ? deepCopy(existingType) : { id: '', name: '', icon: '', tier: 'NOTABLE', vanillaHullMod: '', description: '', todo: '', tags: [], optionalOptions: [], exclusiveHullMods: [], exclusiveSkillTypes: [], unlockConditions: [] };
@@ -4417,6 +4716,7 @@ function fitToScreen(){
 document.getElementById('fitBtn').addEventListener('click', fitToScreen);
 document.getElementById('imageEditorBtn').addEventListener('click', function(){ openImageEditorModal(); });
 document.getElementById('socketableEditorBtn').addEventListener('click', function(){ openSocketableEditorModal(); });
+document.getElementById('socketableNamesBtn').addEventListener('click', function(){ openSocketableNamesModal(); });
 
 document.getElementById('labelsToggle').addEventListener('change', function(ev){ state.showLabels = ev.target.checked; render(); });
 document.getElementById('searchBox').addEventListener('input', function(ev){ state.search = ev.target.value; render(); });

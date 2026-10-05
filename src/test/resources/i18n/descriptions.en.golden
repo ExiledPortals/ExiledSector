@@ -2872,16 +2872,11 @@ type-detail|missleracks|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hu
 type|missleracks|CAPITAL_SHIP|0	0	Increases missile weapon ammo capacity by <good>100%</good>.
 type|missleracks|CAPITAL_SHIP|1	0	Decreases missile weapon rate of fire by <bad>15%</bad>.
 type-detail|missleracks|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Expanded Missile Racks</hullmod>
-type|modular_hull_socket|null|0	0	An empty compartment stripped back to bare frame and power conduit. Domain subroutines need hardware to run on, and officers and specialist teams need somewhere to live and work. Whatever you install here will have a place aboard.
-type-detail|modular_hull_socket|null|0	0	Holds one subroutine, officer, team or AI core.
-type|modular_hull_socket|FRIGATE|0	0	An empty compartment stripped back to bare frame and power conduit. Domain subroutines need hardware to run on, and officers and specialist teams need somewhere to live and work. Whatever you install here will have a place aboard.
-type-detail|modular_hull_socket|FRIGATE|0	0	Holds one subroutine, officer, team or AI core.
-type|modular_hull_socket|DESTROYER|0	0	An empty compartment stripped back to bare frame and power conduit. Domain subroutines need hardware to run on, and officers and specialist teams need somewhere to live and work. Whatever you install here will have a place aboard.
-type-detail|modular_hull_socket|DESTROYER|0	0	Holds one subroutine, officer, team or AI core.
-type|modular_hull_socket|CRUISER|0	0	An empty compartment stripped back to bare frame and power conduit. Domain subroutines need hardware to run on, and officers and specialist teams need somewhere to live and work. Whatever you install here will have a place aboard.
-type-detail|modular_hull_socket|CRUISER|0	0	Holds one subroutine, officer, team or AI core.
-type|modular_hull_socket|CAPITAL_SHIP|0	0	An empty compartment stripped back to bare frame and power conduit. Domain subroutines need hardware to run on, and officers and specialist teams need somewhere to live and work. Whatever you install here will have a place aboard.
-type-detail|modular_hull_socket|CAPITAL_SHIP|0	0	Holds one subroutine, officer, team or AI core.
+type|modular_hull_socket|null|0	0	An empty compartment in this ship stripped back to bare frame and power conduits. You could store artifacts, specialist teams or important staff here to improve the workings of your ship.
+type|modular_hull_socket|FRIGATE|0	0	An empty compartment in this ship stripped back to bare frame and power conduits. You could store artifacts, specialist teams or important staff here to improve the workings of your ship.
+type|modular_hull_socket|DESTROYER|0	0	An empty compartment in this ship stripped back to bare frame and power conduits. You could store artifacts, specialist teams or important staff here to improve the workings of your ship.
+type|modular_hull_socket|CRUISER|0	0	An empty compartment in this ship stripped back to bare frame and power conduits. You could store artifacts, specialist teams or important staff here to improve the workings of your ship.
+type|modular_hull_socket|CAPITAL_SHIP|0	0	An empty compartment in this ship stripped back to bare frame and power conduits. You could store artifacts, specialist teams or important staff here to improve the workings of your ship.
 type|nanoforge_mending|null|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 type|nanoforge_mending|FRIGATE|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 type|nanoforge_mending|DESTROYER|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.

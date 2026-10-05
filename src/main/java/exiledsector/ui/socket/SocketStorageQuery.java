@@ -10,15 +10,13 @@ final class SocketStorageQuery {
     }
 
     static List<SocketStorageRow> apply(List<SocketStorageRow> rows, SocketStorageFilter filter) {
-        String[] words = filter.query.trim().toLowerCase(Locale.ROOT).split("\\s+");
-        Comparator<SocketStorageRow> order = comparator(filter.sort);
-        if (filter.descending) {
-            order = order.reversed();
-        }
+        String[] words = filter.query.trim().toLowerCase(Locale.ROOT).split("\s+");
         return rows.stream()
                 .filter(row -> matchesStatus(row, filter.status))
+                .filter(row -> filter.rarities.isEmpty() || filter.rarities.contains(row.rarity()))
+                .filter(row -> filter.grades.isEmpty() || filter.grades.contains(row.grade()))
                 .filter(row -> matchesWords(row, words))
-                .sorted(order.thenComparingInt(SocketStorageRow::order))
+                .sorted(Comparator.comparingInt(SocketStorageRow::order).reversed())
                 .toList();
     }
 
@@ -37,16 +35,5 @@ final class SocketStorageQuery {
             }
         }
         return true;
-    }
-
-    private static Comparator<SocketStorageRow> comparator(SocketStorageFilter.Sort sort) {
-        return switch (sort) {
-            case ACQUIRED -> Comparator.comparingInt(SocketStorageRow::order);
-            case NAME -> Comparator.comparing(row -> row.name().toLowerCase(Locale.ROOT));
-            case KIND -> Comparator.comparing(SocketStorageRow::kind);
-            case GRADE -> Comparator.comparing(SocketStorageRow::grade);
-            case ALIGNMENT -> Comparator.comparing(SocketStorageRow::alignment);
-            case EFFECT_COUNT -> Comparator.comparingInt(SocketStorageRow::effectCount);
-        };
     }
 }

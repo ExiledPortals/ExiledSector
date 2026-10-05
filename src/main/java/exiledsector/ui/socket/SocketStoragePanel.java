@@ -16,6 +16,8 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.socketables.Socketable;
+import exiledsector.socketables.SocketableDefinition;
+import exiledsector.socketables.SocketableRarity;
 import exiledsector.socketables.SocketableStore;
 import exiledsector.socketables.SocketableTooltip;
 import exiledsector.ui.util.BorderedPanel;
@@ -46,13 +48,15 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     private static final float FIELD_HEIGHT = 26f;
     private static final float CHIP_HEIGHT = 24f;
     private static final float CHIP_TEXT_PADDING = 28f;
+    private static final float CHIP_DARK_SCALE = 0.3f;
+    private static final int CONTROL_ROWS = 3;
     private static final float LABEL_WIDTH = 70f;
     private static final float CLOSE_BUTTON_WIDTH = 70f;
     private static final float NOTICE_HEIGHT = 56f;
     private static final float FOOTER_HEIGHT = 20f;
     private static final float SCROLLBAR_ROOM = 14f;
-    private static final float CELL_SIZE = 64f;
-    private static final float CELL_ICON_INSET = 6f;
+    private static final float CELL_SIZE = 96f;
+    private static final float CELL_ICON_INSET = 9f;
     private static final float TOOLTIP_WIDTH = 420f;
     private static final float CONFIRM_HEIGHT = 130f;
     private static final float SEARCH_DELAY_SECONDS = 0.25f;
@@ -60,9 +64,26 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     private static final Color CELL_BACKGROUND = new Color(0, 0, 0, 200);
     private static final SpriteCache ICONS = new SpriteCache(SocketStoragePanel.class);
 
-    private enum Control {CLOSE, SORT, DIRECTION, CONFIRM_DESTROY, CANCEL_DESTROY}
+    private enum Control {CLOSE, CONFIRM_DESTROY, CANCEL_DESTROY}
 
     private record StatusChip(SocketStorageFilter.Status status) {
+    }
+
+    private record RarityChip(SocketableRarity rarity) {
+    }
+
+    private record GradeChip(String grade) {
+    }
+
+    private record ChipColors(Color base, Color dark, Color bright) {
+
+        static ChipColors of(Color base) {
+            return new ChipColors(base, Misc.scaleColorOnly(base, CHIP_DARK_SCALE), base.brighter());
+        }
+
+        static ChipColors player() {
+            return new ChipColors(Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(), Misc.getBrightPlayerColor());
+        }
     }
 
     private final CustomPanelAPI host;
@@ -225,14 +246,14 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         }
         if (id == Control.CLOSE) {
             close();
-        } else if (id == Control.SORT) {
-            filter.cycleSort();
-            rebuildControls();
-        } else if (id == Control.DIRECTION) {
-            filter.flipDirection();
-            rebuildControls();
         } else if (id instanceof StatusChip chip) {
             filter.setStatus(chip.status());
+            rebuildControls();
+        } else if (id instanceof RarityChip chip) {
+            filter.toggleRarity(chip.rarity());
+            rebuildControls();
+        } else if (id instanceof GradeChip chip) {
+            filter.toggleGrade(chip.grade());
             rebuildControls();
         }
     }
@@ -293,28 +314,36 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         if (controls != null) {
             root.removeComponent(controls);
         }
-        TooltipMakerAPI element = root.createUIElement(innerWidth(), CHIP_HEIGHT * 2f + GAP, false);
+        TooltipMakerAPI element = root.createUIElement(innerWidth(), CONTROL_ROWS * CHIP_HEIGHT + (CONTROL_ROWS - 1) * GAP, false);
         float x = 0f;
         for (SocketStorageFilter.Status status : SocketStorageFilter.Status.values()) {
             String label = Translation.text("ui.socketStorage.status." + status.name().toLowerCase(Locale.ROOT));
-            float chipWidth = Global.getSettings().computeStringWidth(label, Fonts.ORBITRON_12) + CHIP_TEXT_PADDING;
-            ButtonAPI chip = element.addAreaCheckbox(label, new StatusChip(status), Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
-                    Misc.getBrightPlayerColor(), chipWidth, CHIP_HEIGHT, 0f);
-            chip.setChecked(filter.status == status);
-            chip.getPosition().inTL(x, 0f);
-            x += chipWidth + GAP;
+            x += addChip(element, label, new StatusChip(status), ChipColors.player(), filter.status == status, x, 0) + GAP;
         }
-        float half = (innerWidth() - GAP) / 2f;
-        String sortLabel = Translation.msg("ui.socketStorage.sort").arg("sort",
-                Translation.text("ui.socketStorage.sort." + filter.sort.name().toLowerCase(Locale.ROOT))).text();
-        element.addButton(sortLabel, Control.SORT, half, CHIP_HEIGHT, 0f).getPosition().inTL(0f, CHIP_HEIGHT + GAP);
-        element.addButton(Translation.text(filter.descending ? "ui.socketStorage.descending" : "ui.socketStorage.ascending"),
-                Control.DIRECTION, half, CHIP_HEIGHT, 0f).getPosition().inTL(half + GAP, CHIP_HEIGHT + GAP);
+        x = 0f;
+        for (SocketableRarity rarity : SocketableRarity.values()) {
+            String label = Translation.text("ui.socketStorage.rarity." + rarity.name().toLowerCase(Locale.ROOT));
+            x += addChip(element, label, new RarityChip(rarity), ChipColors.of(rarity.color()), filter.rarities.contains(rarity), x, 1)
+                    + GAP;
+        }
+        x = 0f;
+        for (String grade : SocketStorageFilter.GRADES) {
+            x += addChip(element, SocketableDefinition.gradeName(grade), new GradeChip(grade), ChipColors.player(),
+                    filter.grades.contains(grade), x, 2) + GAP;
+        }
         float top = PAD + HEADER_HEIGHT + GAP + FIELD_HEIGHT + GAP;
         root.addUIElement(element).inTL(PAD, top);
         controls = element;
-        gridTop = top + CHIP_HEIGHT * 2f + GAP * 2f + NOTICE_HEIGHT;
+        gridTop = top + CONTROL_ROWS * (CHIP_HEIGHT + GAP) + NOTICE_HEIGHT;
         rebuildGrid();
+    }
+
+    private static float addChip(TooltipMakerAPI element, String label, Object data, ChipColors colors, boolean checked, float x, int row) {
+        float width = Global.getSettings().computeStringWidth(label, Fonts.ORBITRON_12) + CHIP_TEXT_PADDING;
+        ButtonAPI chip = element.addAreaCheckbox(label, data, colors.base(), colors.dark(), colors.bright(), width, CHIP_HEIGHT, 0f);
+        chip.setChecked(checked);
+        chip.getPosition().inTL(x, row * (CHIP_HEIGHT + GAP));
+        return width;
     }
 
     private void rebuildGrid() {

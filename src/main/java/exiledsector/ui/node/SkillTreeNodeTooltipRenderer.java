@@ -67,7 +67,9 @@ final class SkillTreeNodeTooltipRenderer {
                 socketed == null ? "" : socketed.id());
 
         SkillTreePanelStyle.TooltipText title = tooltipTitles.get(node.getId(), signature,
-                id -> buildTooltipText(font, titleText(effectiveType, hidden), TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR));
+                id -> socketed != null
+                        ? buildTooltipText(font, socketed.name(), TOOLTIP_TITLE_FONT_SIZE, socketed.rarity().color())
+                        : buildTooltipText(font, titleText(effectiveType, hidden), TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR));
         Body body = tooltipBodies.get(node.getId(), signature,
                 id -> buildBody(font, describe(effectiveType, hidden, free, showOptionalHint, socket, socketed), expanded));
 
@@ -123,6 +125,10 @@ final class SkillTreeNodeTooltipRenderer {
         if (hidden) {
             return new NodeDescription(List.of(plainLine("ui.node.lockedBody"), plainLine("ui.node.lockedHint")), List.of());
         }
+        if (socketed != null) {
+            List<DescriptionLine> lines = socketed.effectLines().stream().map(line -> new DescriptionLine(line, false)).toList();
+            return new NodeDescription(lines, free ? List.of(plainLine("ui.node.freeNote")) : List.of());
+        }
         List<DescriptionLine> effects = new ArrayList<>();
         List<DescriptionLine> details = new ArrayList<>();
         if (showOptionalHint) {
@@ -133,23 +139,12 @@ final class SkillTreeNodeTooltipRenderer {
             details.addAll(description.details());
         }
         if (socket) {
-            addSocketLines(effects, socketed);
+            effects.add(plainLine("ui.node.socket.installHint"));
         }
         if (free) {
             details.add(plainLine("ui.node.freeNote"));
         }
         return new NodeDescription(effects, details);
-    }
-
-    private static void addSocketLines(List<DescriptionLine> effects, Socketable socketed) {
-        if (socketed == null) {
-            effects.add(plainLine("ui.node.socket.empty"));
-            effects.add(plainLine("ui.node.socket.installHint"));
-        } else {
-            effects.add(new DescriptionLine(Translation.msg("ui.node.socket.installed").arg("name", socketed.name()).styled(), false));
-            socketed.effectLines().forEach(line -> effects.add(new DescriptionLine(line, false)));
-            effects.add(plainLine("ui.node.socket.removeHint"));
-        }
     }
 
     private static DescriptionLine plainLine(String key) {

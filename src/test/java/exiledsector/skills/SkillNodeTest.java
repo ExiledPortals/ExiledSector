@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -107,7 +108,7 @@ class SkillNodeTest {
     }
 
     @Test
-    void aSocketsLoreIsItsEffectTextAndWhatItHoldsIsOnlyInTheDetails() {
+    void aSocketsLoreIsItsOnlyTextSoNothingSpoilsWhatCanBeInstalled() {
         SkillType type = new SkillType.Builder("socket", "Socket", "", SkillTier.SOCKET)
                 .descriptionOverride("An empty room.")
                 .build();
@@ -115,8 +116,7 @@ class SkillNodeTest {
         NodeDescription description = SkillNode.describeType(type, null);
 
         assertEquals(List.of("An empty room."), description.effects().stream().map(DescriptionLine::plain).toList());
-        assertEquals(List.of("Holds one subroutine, officer, team or AI core."),
-                description.details().stream().map(DescriptionLine::plain).toList());
+        assertTrue(description.details().isEmpty());
     }
 
     @Test

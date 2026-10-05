@@ -63,13 +63,13 @@ class SocketableNamesTest {
         SocketableName name = name("military", 1L, List.of(DISSIPATION, SHIELDING));
 
         assertEquals(SocketableRarity.MAGIC, name.rarity());
-        assertEquals("Military-grade Dissipation subroutine of Shielding", name.title());
+        assertEquals("Vent-efficient military-grade subroutine of Shielding", name.title());
         assertNull(name.baseName());
     }
 
     @Test
     void theMagicNameFollowsEachEffectsRoleNotItsOrder() {
-        assertEquals("Military-grade Dissipation subroutine of Shielding", name("military", 1L, List.of(SHIELDING, DISSIPATION)).title());
+        assertEquals("Vent-efficient military-grade subroutine of Shielding", name("military", 1L, List.of(SHIELDING, DISSIPATION)).title());
     }
 
     @Test
@@ -78,7 +78,7 @@ class SocketableNamesTest {
                 .put(new JSONObject().put("effect", "FLUX_DISSIPATION_MULT").put("prefix", "Dissipation").put("suffix", ""))
                 .put(new JSONObject().put("effect", "HULL_MULT").put("prefix", "").put("suffix", "Fortitude")));
 
-        assertEquals("Military-grade Dissipation subroutine", name("military", 1L, List.of(DISSIPATION, ARMOR)).title());
+        assertEquals("Dissipation military-grade subroutine", name("military", 1L, List.of(DISSIPATION, ARMOR)).title());
         assertEquals("Military-grade subroutine of Fortitude",
                 name("military", 1L, List.of(new RolledEffect("REMOVED_EFFECT", 1f), HULL)).title());
     }
@@ -99,10 +99,10 @@ class SocketableNamesTest {
     }
 
     @Test
-    void industrialRaresCarryARevisionNumber() {
+    void industrialRaresAreTwoWordNamesWithNoRevisionNumber() {
         for (long seed = 0; seed < 200; seed++) {
             String title = name("industrial", seed, List.of(HULL, ARMOR, DISSIPATION)).title();
-            assertTrue(title.matches("[A-Z][a-z]+ [A-Z][a-z]+ rev\\. ([1-9]|1[0-9]|20)"), title);
+            assertTrue(title.matches("[A-Z][a-z]+ [A-Z][a-z]+"), title);
         }
     }
 

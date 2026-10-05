@@ -20,6 +20,7 @@ import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.ui.LazyFont;
 
 import java.awt.Color;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -259,15 +260,15 @@ final class SkillTreeStatPanel {
             ShipHullSpecAPI.ShieldSpecAPI shieldSpec = getShieldSpecOrNull(hullSpec);
             if (shieldSpec != null) {
                 addComparedStat(defense, Translation.text("ui.stats.shieldArc"), stats.getShieldArcBonus().computeEffective(shieldSpec.getArc()), shieldSpec.getArc());
-                addComparedStat(defense, Translation.text("ui.stats.shieldEfficiency"),
-                        hullSpec.getBaseShieldFluxPerDamageAbsorbed() * stats.getShieldAbsorptionMult().getModifiedValue(),
-                        hullSpec.getBaseShieldFluxPerDamageAbsorbed() * stats.getShieldAbsorptionMult().getBaseValue());
+                addShieldFluxPerDamage(defense, hullSpec.getBaseShieldFluxPerDamageAbsorbed() * shieldFluxPerDamageMult(stats),
+                        hullSpec.getBaseShieldFluxPerDamageAbsorbed());
                 addComparedStatLowerIsBetter(defense, Translation.text("ui.stats.shieldUpkeep"),
                         shieldSpec.getUpkeepCost() * stats.getShieldUpkeepMult().getModifiedValue(),
                         shieldSpec.getUpkeepCost() * stats.getShieldUpkeepMult().getBaseValue());
             } else {
                 addStat(defense, Translation.text("ui.stats.shieldArc"), stats.getShieldArcBonus().computeEffective(ShieldSkillEffect.MAKESHIFT_SHIELD_ARC));
-                addStat(defense, Translation.text("ui.stats.shieldEfficiency"), ShieldSkillEffect.MAKESHIFT_SHIELD_EFFICIENCY * stats.getShieldAbsorptionMult().getModifiedValue());
+                addShieldFluxPerDamage(defense, ShieldSkillEffect.MAKESHIFT_SHIELD_EFFICIENCY * shieldFluxPerDamageMult(stats),
+                        ShieldSkillEffect.MAKESHIFT_SHIELD_EFFICIENCY);
             }
             groups.add(new StatGroup(Translation.text("ui.stats.group.defense"), defense));
         }
@@ -292,6 +293,10 @@ final class SkillTreeStatPanel {
         groups.add(new StatGroup(Translation.text("ui.stats.group.logistics"), logistics));
 
         return groups;
+    }
+
+    private static float shieldFluxPerDamageMult(MutableShipStatsAPI stats) {
+        return stats.getShieldAbsorptionMult().getModifiedValue() * stats.getShieldDamageTakenMult().getModifiedValue();
     }
 
     private static ShipHullSpecAPI.ShieldSpecAPI getShieldSpecOrNull(ShipHullSpecAPI hullSpec) {
@@ -416,6 +421,11 @@ final class SkillTreeStatPanel {
 
     private static void addComparedStatLowerIsBetter(List<StatLine> lines, String label, float current, float base, String suffix) {
         lines.add(new StatLine(label, formatStat(current) + suffix, colorForComparison(current, base, true)));
+    }
+
+    private static void addShieldFluxPerDamage(List<StatLine> lines, float current, float base) {
+        String value = BigDecimal.valueOf(Math.round(current * 100f) / 100.0).stripTrailingZeros().toPlainString();
+        lines.add(new StatLine(Translation.text("ui.stats.shieldFluxPerDamage"), value, colorForComparison(current, base, true)));
     }
 
     private static Color colorForComparison(float current, float base, boolean lowerIsBetter) {
