@@ -446,10 +446,12 @@ public final class SkillTreeNodeRenderer {
     public SkillNode wormholeJumpTarget(SkillNode node, boolean ctrlDown) {
         if (!ctrlDown) return null;
         if (node.getType().getTier() != SkillTier.WORMHOLE) return null;
-        if (!allocator.data().isAllocated(node.getId())) return null;
         String pairedId = node.getPairedNodeId();
-        if (pairedId == null) return null;
-        return SkillTree.get(pairedId);
+        SkillNode paired = pairedId == null ? null : SkillTree.get(pairedId);
+        if (paired == null) return null;
+        NodeAllocator.Snapshot tree = snapshot();
+        if (tree.isHidden(node) || tree.isHidden(paired)) return null;
+        return paired;
     }
 
     public void launchWormholeGhosts(SkillNode from, SkillNode to) {
