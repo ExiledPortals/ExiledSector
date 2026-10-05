@@ -90,6 +90,8 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     private Socketable pendingDestroy;
     private final List<Runnable> queued = new ArrayList<>();
     private int movedFromCargo;
+    private CustomPanelAPI hoverTooltip;
+    private SocketStorageRow hoverRow;
 
     private SocketStoragePanel(CustomPanelAPI host, Function<Socketable, String> installedIn, Listener listener) {
         this.host = host;
@@ -116,6 +118,7 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
 
     public void close() {
         if (root != null) {
+            hideHoverTooltip();
             host.removeComponent(root);
             root = null;
             listener.closed();
@@ -163,6 +166,9 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     @Override
     public void processInput(List<InputEventAPI> events) {
         for (InputEventAPI event : events) {
+            if (event.isMouseScrollEvent() && hoverTooltip != null && contains(event.getX(), event.getY())) {
+                queued.add(this::hideHoverTooltip);
+            }
             boolean press = event.isMouseDownEvent() || event.isMouseScrollEvent();
             if (!event.isConsumed() && press && contains(event.getX(), event.getY())) {
                 event.consume();
@@ -312,6 +318,7 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     }
 
     private void rebuildGrid() {
+        hideHoverTooltip();
         if (grid != null) {
             root.removeComponent(grid.getExternalScroller() != null ? grid.getExternalScroller() : grid);
         }
@@ -329,7 +336,6 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
                 SocketStorageRow row = matching.get(i);
                 CustomPanelAPI cell = Global.getSettings().createCustom(CELL_SIZE, CELL_SIZE, new Cell(this, row));
                 line.addComponent(cell).inTL((i - start) * (CELL_SIZE + GAP), 0f);
-                element.addTooltipTo(new CellTooltip(row), cell, TooltipMakerAPI.TooltipLocation.RIGHT);
             }
             element.addCustom(line, start == 0 ? 0f : GAP);
         }
@@ -401,22 +407,43 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         return List.of(Translation.styled("ui.socketStorage.cell.free"), Translation.styled("ui.socketStorage.cell.destroy"));
     }
 
-    private record CellTooltip(SocketStorageRow row) implements TooltipMakerAPI.TooltipCreator {
+    private void cellHovered(SocketStorageRow row, PositionAPI cell) {
+        queued.add(() -> showHoverTooltip(row, cell));
+    }
 
-        @Override
-        public boolean isTooltipExpandable(Object tooltipParam) {
-            return false;
-        }
+    private void cellLeft(SocketStorageRow row) {
+        queued.add(() -> {
+            if (hoverRow == row) {
+                hideHoverTooltip();
+            }
+        });
+    }
 
-        @Override
-        public float getTooltipWidth(Object tooltipParam) {
-            return TOOLTIP_WIDTH;
-        }
+    private void showHoverTooltip(SocketStorageRow row, PositionAPI cell) {
+        hideHoverTooltip();
+        CustomPanelAPI panel = Global.getSettings().createCustom(TOOLTIP_WIDTH, CELL_SIZE, new Framed(this));
+        TooltipMakerAPI element = panel.createUIElement(TOOLTIP_WIDTH - PAD * 2f, 0f, false);
+        SocketableTooltip.write(element, row.socketable(), () -> cellFooter(row));
+        float contentHeight = element.getHeightSoFar();
+        element.getPosition().setSize(TOOLTIP_WIDTH - PAD * 2f, contentHeight);
+        float tooltipHeight = contentHeight + PAD * 2f;
+        panel.getPosition().setSize(TOOLTIP_WIDTH, tooltipHeight);
+        panel.addUIElement(element).inTL(PAD, PAD);
+        PositionAPI hostPosition = host.getPosition();
+        float left = cell.getX() + cell.getWidth() + GAP - hostPosition.getX();
+        float top = hostPosition.getY() + hostPosition.getHeight() - (cell.getY() + cell.getHeight());
+        top = Math.max(0f, Math.min(top, hostPosition.getHeight() - tooltipHeight));
+        host.addComponent(panel).inTL(left, top);
+        hoverTooltip = panel;
+        hoverRow = row;
+    }
 
-        @Override
-        public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
-            SocketableTooltip.write(tooltip, row.socketable(), () -> cellFooter(row));
+    private void hideHoverTooltip() {
+        if (hoverTooltip != null) {
+            host.removeComponent(hoverTooltip);
         }
+        hoverTooltip = null;
+        hoverRow = null;
     }
 
     private static final class Cell extends BaseCustomUIPanelPlugin {
@@ -471,7 +498,14 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
                 }
                 boolean inside = position.containsEvent(event);
                 if (event.isMouseMoveEvent()) {
-                    hovered = inside;
+                    if (inside != hovered) {
+                        hovered = inside;
+                        if (inside) {
+                            owner.cellHovered(row, position);
+                        } else {
+                            owner.cellLeft(row);
+                        }
+                    }
                 } else if (inside && event.isLMBDownEvent()) {
                     owner.cellClicked(row);
                     event.consume();
