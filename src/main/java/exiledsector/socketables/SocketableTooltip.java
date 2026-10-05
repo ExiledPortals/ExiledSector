@@ -8,6 +8,7 @@ import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.ui.VanillaText;
 
+import java.awt.Color;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -32,11 +33,11 @@ public final class SocketableTooltip {
                 if (name.baseName() != null) {
                     tooltip.addPara("%s", 0f, Misc.getGrayColor(), Misc.getGrayColor(), name.baseName());
                 }
-                addLines(tooltip, socketable.headerLines());
+                addLines(tooltip, socketable.headerLines(), Misc.getGrayColor());
                 List<StyledText> effects = socketable.effectLines();
                 if (!effects.isEmpty()) {
                     tooltip.addSectionHeading(Translation.text("socketable.tooltip.primaryData"), Alignment.MID, PAD);
-                    addLines(tooltip, effects);
+                    addLines(tooltip, effects, Misc.getTextColor());
                 }
             }
             float pad = PAD;
@@ -48,10 +49,10 @@ public final class SocketableTooltip {
         });
     }
 
-    private static void addLines(TooltipMakerAPI tooltip, List<StyledText> lines) {
+    private static void addLines(TooltipMakerAPI tooltip, List<StyledText> lines, Color color) {
         float pad = PAD;
         for (StyledText line : lines) {
-            VanillaText.addPara(tooltip, line, pad, Misc.getTextColor());
+            VanillaText.addPara(tooltip, line, pad, color);
             pad = LINE_PAD;
         }
     }

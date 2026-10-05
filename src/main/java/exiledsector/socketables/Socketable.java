@@ -1,7 +1,6 @@
 package exiledsector.socketables;
 
 import exiledsector.i18n.StyledText;
-import exiledsector.i18n.Translation;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTypeEffect;
@@ -83,11 +82,6 @@ public abstract class Socketable {
         List<StyledText> lines = new ArrayList<>();
         SocketableDefinition definition = definition();
         if (definition != null) {
-            lines.add(Translation.msg("socketable.tooltip.summary")
-                    .arg("kind", kind().displayName())
-                    .arg("grade", definition.gradeName())
-                    .arg("alignment", definition.alignmentName())
-                    .styled());
             StyledText description = definition.descriptionText();
             if (description != null) {
                 lines.add(description);

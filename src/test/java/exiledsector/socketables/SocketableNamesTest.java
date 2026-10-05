@@ -18,7 +18,6 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SocketableNamesTest {
@@ -59,12 +58,12 @@ class SocketableNamesTest {
     }
 
     @Test
-    void twoEffectsMakeAMagicItemNamedAfterThem() {
+    void twoEffectsMakeAMagicItemNamedAfterThemWithItsTypeUnderneath() {
         SocketableName name = name("military", 1L, List.of(DISSIPATION, SHIELDING));
 
         assertEquals(SocketableRarity.MAGIC, name.rarity());
         assertEquals("Vent-efficient military-grade subroutine of Shielding", name.title());
-        assertNull(name.baseName());
+        assertEquals("Military-grade Domain Subroutine", name.baseName());
     }
 
     @Test

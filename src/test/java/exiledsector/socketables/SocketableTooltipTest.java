@@ -16,7 +16,7 @@ class SocketableTooltipTest {
     }
 
     @Test
-    void theTooltipNamesTheKindGradeAndAlignmentThenListsEachRolledEffect() throws Exception {
+    void theTooltipListsEachRolledEffectWithoutAKindGradeAndAlignmentLine() throws Exception {
         SocketableFixtures.registerMilitary();
         Socketable socketable = SocketableKind.SUBROUTINE.create("socketable_1", SocketableFixtures.MILITARY, 1L,
                 List.of(new RolledEffect("BEAM_WEAPON_DAMAGE_PERCENT", 12f), new RolledEffect("REMOVED_EFFECT", 3f)));
@@ -24,7 +24,7 @@ class SocketableTooltipTest {
         List<String> lines = socketable.tooltipLines().stream().map(StyledText::plain).toList();
 
         assertEquals("Military-grade Domain Subroutine", socketable.name());
-        assertEquals(List.of("Subroutine, Military-grade, High Tech", "Increases beam weapon damage by 12%."), lines);
+        assertEquals(List.of("Increases beam weapon damage by 12%."), lines);
     }
 
     @Test
@@ -37,14 +37,14 @@ class SocketableTooltipTest {
     }
 
     @Test
-    void aDescriptionFollowsTheSummaryLine() throws Exception {
+    void theDescriptionIsTheOnlyLineAboveTheEffects() throws Exception {
         SocketableDefinitions.register(new org.json.JSONArray().put(SocketableFixtures.row("described", "subroutine", "HULL_MULT:4:6")
                 .put("description", "Pulled from a Domain-era warship.")));
         Socketable socketable = SocketableKind.SUBROUTINE.create("socketable_3", "described", 1L, List.of());
 
         List<String> lines = socketable.tooltipLines().stream().map(StyledText::plain).toList();
 
-        assertEquals(List.of("Subroutine, Military-grade, High Tech", "Pulled from a Domain-era warship."), lines);
+        assertEquals(List.of("Pulled from a Domain-era warship."), lines);
     }
 
     @Test

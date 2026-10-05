@@ -264,7 +264,6 @@
     "socketable.alignment.high_tech": "High Tech",
     "socketable.alignment.midline": "Midline",
     "socketable.alignment.low_tech": "Low Tech",
-    "socketable.tooltip.summary": "{kind}, {grade}, {alignment}",
     "socketable.tooltip.primaryData": "Primary data",
     "socketable.noun.subroutine": "subroutine",
     "socketable.noun.officer": "officer",

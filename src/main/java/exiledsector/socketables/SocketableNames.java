@@ -95,7 +95,7 @@ public final class SocketableNames {
         }
         return switch (rarity) {
             case UNIQUE -> new SocketableName(definition.displayName(), null, rarity);
-            case MAGIC -> new SocketableName(magicName(definition, kind, effects), null, rarity);
+            case MAGIC -> new SocketableName(magicName(definition, kind, effects), definition.displayName(), rarity);
             case RARE -> {
                 String rare = rareName(definition.grade(), seed);
                 yield rare == null ? new SocketableName(definition.displayName(), null, rarity)

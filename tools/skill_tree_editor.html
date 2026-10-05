@@ -2400,7 +2400,7 @@ function refreshInspector(){
     if (!t.effects) t.effects = [];
     if (!t.hullSizeEffects) t.hullSizeEffects = [];
     statsHtml =
-      '<div class="field"><label>Flavour text (optional, italic line under the title, shared by type "' + t.id + '")</label>' +
+      '<div class="field"><label>Flavour text (optional, grey line under the title, shared by type "' + t.id + '")</label>' +
         '<textarea id="inspFlavour" rows="2" style="width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12.5px;padding:7px 9px;resize:vertical;">' + escapeHtml(t.flavour||'') + '</textarea>' +
       '</div>' +
       '<div class="field"><label>Description override (optional, shared by type "' + t.id + '")</label>' +
@@ -4350,7 +4350,7 @@ function openTypeModal(existingType, onSave, onClose){
       '<hr class="sep">' +
       '<div class="field"><label>Optional slot options</label>' + renderOptionalOptionsSelect(t.optionalOptions||[], t.id) + '</div>' +
       '<div class="field"><label>Edit each option\u0027s type</label><div class="prereqList">' + renderOptionEditRows(t.optionalOptions||[]) + '</div></div>' +
-      '<div class="field"><label>Flavour text (optional, italic line under the title)</label><textarea id="tFlavour" rows="2" style="width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12.5px;padding:7px 9px;resize:vertical;">' + escapeHtml(t.flavour||'') + '</textarea></div>' +
+      '<div class="field"><label>Flavour text (optional, grey line under the title)</label><textarea id="tFlavour" rows="2" style="width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12.5px;padding:7px 9px;resize:vertical;">' + escapeHtml(t.flavour||'') + '</textarea></div>' +
       '<div class="field"><label>Description override (optional)</label><textarea id="tDescription" rows="4" style="width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12.5px;padding:7px 9px;resize:vertical;">' + escapeHtml(t.description||'') + '</textarea></div>' +
       '<div class="field"><label>Todo (optional)</label><input id="tTodo" value="' + escapeHtml(t.todo||'') + '"></div>' +
       '<div class="modalBtns">' +

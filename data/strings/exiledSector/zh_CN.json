@@ -258,7 +258,6 @@
     "socketable.alignment.high_tech": "高科技",
     "socketable.alignment.midline": "中端科技",
     "socketable.alignment.low_tech": "低科技",
-    "socketable.tooltip.summary": "{kind}，{grade}，{alignment}",
     "socketable.tooltip.primaryData": "主要数据",
     "socketable.noun.subroutine": "子程序",
     "socketable.noun.officer": "军官",

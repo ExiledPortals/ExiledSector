@@ -19,6 +19,11 @@ public record SocketStorageRow(Socketable socketable, int order, String name, So
         if (name.baseName() != null) {
             search.append('\n').append(name.baseName());
         }
+        if (definition != null) {
+            search.append('\n').append(socketable.kind().displayName())
+                    .append('\n').append(definition.gradeName())
+                    .append('\n').append(definition.alignmentName());
+        }
         for (StyledText line : socketable.tooltipLines()) {
             search.append('\n').append(line.plain());
         }
