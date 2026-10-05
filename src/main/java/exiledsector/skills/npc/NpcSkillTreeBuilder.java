@@ -29,6 +29,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.function.Predicate;
 import java.util.function.ToDoubleFunction;
 
 public final class NpcSkillTreeBuilder {
@@ -173,6 +174,7 @@ public final class NpcSkillTreeBuilder {
         private final List<String> stripped = new ArrayList<>();
         private final List<String> claimedSockets = new ArrayList<>();
         private final int socketables;
+        private final Predicate<SkillType> locked;
         private int budget;
         private int spent;
 
@@ -190,6 +192,7 @@ public final class NpcSkillTreeBuilder {
             this.installed = new TreeSet<>(hullMods.installed());
             this.budget = Math.min(target, maxNodes);
             this.socketables = request.socketables();
+            this.locked = request.locked();
         }
 
         void run() {
@@ -514,7 +517,7 @@ public final class NpcSkillTreeBuilder {
 
         private boolean wormholeAllowed(SkillNode wormhole) {
             SkillNode exit = topology.node(wormhole.getPairedNodeId());
-            if (factionRegion == null || exit == null) {
+            if (factionRegion == null || exit == null || locked.test(wormhole.getType())) {
                 return false;
             }
             String here = wormhole.getRegion();

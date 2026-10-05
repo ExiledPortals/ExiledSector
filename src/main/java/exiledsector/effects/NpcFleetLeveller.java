@@ -21,6 +21,7 @@ import exiledsector.skills.npc.NpcTreeRecords;
 import exiledsector.skills.npc.NpcTreeTag;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.tags.ShipProfile;
+import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.socketables.NpcSocketables;
 import exiledsector.socketables.SocketableDefinition;
 
@@ -84,7 +85,7 @@ public final class NpcFleetLeveller {
         String designType = designType(member.getHullSpec());
         int socketables = socketableRandom == null ? 0 : NpcSocketables.rollCount(playerLevel, socketableRandom);
         NpcTreeBuild build = NpcSkillTreeBuilder.generate(new NpcBuildRequest(profile, designType, factionRegion, hullMods,
-                NpcFreedOp.of(member, hullMods), nodeCount, socketables), random);
+                NpcFreedOp.of(member, hullMods), nodeCount, socketables, type -> SkillTypeUnlockStatus.isLocked(type, null)), random);
         for (String socket : build.claimedSockets()) {
             SocketableDefinition definition = NpcSocketables.pickDefinition(socketableRandom);
             if (definition != null) {

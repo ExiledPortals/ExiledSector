@@ -293,6 +293,23 @@ class NpcSkillTreeBuilderTest {
     }
 
     @Test
+    void aLockedWormholeIsNeverCrossedUntilItUnlocks() {
+        root();
+        small("s1", ROOT);
+        wormholePair("gate_core", "gate_far", "core", "hegemony", "s1");
+        node("pride", registerType(builder("pride_type", SkillTier.NOTABLE).build()), List.of("hegemony"), "gate_far");
+        notable("core_notable", ROOT);
+
+        NpcTreeBuild locked = NpcSkillTreeBuilder.generate(new NpcBuildRequest(BALLISTIC_FRIGATE, null, "hegemony", NpcHullMods.NONE,
+                NpcFreedOp.NONE, 3, 0, type -> type.getTier() == SkillTier.WORMHOLE), new Random(1L));
+        NpcTreeBuild unlocked = NpcSkillTreeBuilder.generate(new NpcBuildRequest(BALLISTIC_FRIGATE, null, "hegemony", NpcHullMods.NONE,
+                NpcFreedOp.NONE, 3, 0, type -> false), new Random(1L));
+
+        assertFalse(locked.data().isAllocated("gate_core") || locked.data().isAllocated("gate_far") || locked.data().isAllocated("pride"));
+        assertTrue(unlocked.data().isAllocated("gate_far") && unlocked.data().isAllocated("pride"));
+    }
+
+    @Test
     void aFactionShipCrossesItsOwnWormholeForANotableInItsVolume() {
         root();
         small("s1", ROOT);
