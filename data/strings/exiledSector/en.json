@@ -381,7 +381,7 @@
     "ui.stats.acceleration": "Acceleration",
     "ui.stats.shieldType": "Shield Type",
     "ui.stats.shieldArc": "Shield Arc",
-    "ui.stats.shieldEfficiency": "Shield Efficiency",
+    "ui.stats.shieldFluxPerDamage": "Shield Flux/Damage",
     "ui.stats.shieldUpkeep": "Shield Upkeep",
     "ui.stats.crew": "Crew",
     "ui.stats.cargoCapacity": "Cargo Capacity",

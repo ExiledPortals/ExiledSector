@@ -421,7 +421,7 @@
     "ui.stats.acceleration": "加速度",
     "ui.stats.shieldType": "护盾类型",
     "ui.stats.shieldArc": "护盾角度",
-    "ui.stats.shieldEfficiency": "护盾效率",
+    "ui.stats.shieldFluxPerDamage": "护盾通量/伤害",
     "ui.stats.shieldUpkeep": "护盾维持",
     "ui.stats.crew": "船员",
     "ui.stats.cargoCapacity": "货舱容量",
