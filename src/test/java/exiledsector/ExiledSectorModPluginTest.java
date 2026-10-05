@@ -95,6 +95,8 @@ class ExiledSectorModPluginTest {
                 .thenReturn(new JSONArray());
         when(settings.getMergedSpreadsheetDataForMod("old", "data/config/exiledSector/node_replacements.csv", "exiledSector"))
                 .thenReturn(new JSONArray());
+        when(settings.getMergedSpreadsheetDataForMod("site", "data/config/exiledSector/socketable_salvage.csv", "exiledSector"))
+                .thenReturn(new JSONArray());
 
         Logger logger = mock(Logger.class);
 

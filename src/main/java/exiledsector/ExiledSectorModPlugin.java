@@ -17,6 +17,8 @@ import exiledsector.effects.SkillConflictWarningHullMod;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.effects.SkillTreeInstaller;
 import exiledsector.effects.SocketableLootListener;
+import exiledsector.effects.SocketableSalvageListener;
+import exiledsector.effects.TechMiningSocketableListener;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.LanguageSetting;
 import exiledsector.i18n.Languages;
@@ -36,6 +38,7 @@ import exiledsector.skills.tags.AreaToggles;
 import exiledsector.socketables.SocketableDefinitions;
 import exiledsector.socketables.SocketableNames;
 import exiledsector.socketables.NpcSocketables;
+import exiledsector.socketables.SocketableDrops;
 import exiledsector.socketables.SocketCustody;
 import exiledsector.socketables.SocketLossListener;
 import exiledsector.socketables.SocketableSaveAliases;
@@ -72,6 +75,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         SocketableDefinitions.load();
         SocketableNames.load();
         NodeReplacements.load();
+        SocketableDrops.load();
         CompatChecks.logAtStartup();
         TexturePreloader.preloadAll(MOD_ID);
     }
@@ -157,6 +161,8 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         SocketableLootListener socketableLootListener = new SocketableLootListener();
         Global.getSector().addTransientListener(socketableLootListener);
         Global.getSector().getListenerManager().addListener(socketableLootListener, true);
+        Global.getSector().getListenerManager().addListener(new SocketableSalvageListener(), true);
+        Global.getSector().getListenerManager().addListener(new TechMiningSocketableListener(), true);
         SocketCustody.reconcile();
     }
 }

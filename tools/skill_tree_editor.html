@@ -645,6 +645,7 @@
       <div class="btnRow">
         <button class="smallBtn" id="socketableEditorBtn">Socketable Editor...</button>
         <button class="smallBtn" id="socketableNamesBtn">Socketable Names...</button>
+        <button class="smallBtn" id="socketableDropsBtn">Socketable Drops...</button>
       </div>
     </div>
   </div>
@@ -4279,6 +4280,216 @@ function openSocketableNamesModal(){
   load();
 }
 
+var SOCKETABLE_DROP_SLOTS = 5;
+
+function parseSalvageCsv(text){
+  var rows = parseCsv(text);
+  var header = (rows.shift() || []).map(function(h){ return h.trim(); });
+  var at = function(name){ return header.indexOf(name); };
+  return rows.map(function(cells){
+    var cell = function(name){ var i = at(name); return i < 0 || cells[i] === undefined ? '' : cells[i].trim(); };
+    var chances = cell('chances').split(';').map(function(c){ return c.trim(); }).filter(Boolean).map(function(c){ return parseFloat(c) * 100; });
+    var unique = parseFloat(cell('uniqueChance'));
+    return { site: cell('site'), chances: chances, unique: isNaN(unique) ? 0 : unique * 100 };
+  }).filter(function(row){ return row.site; });
+}
+
+function percentToFraction(percent){
+  return String(Number((percent / 100).toFixed(4)));
+}
+
+function serializeSalvageCsv(rows){
+  return ['site,chances,uniqueChance'].concat(rows.map(function(row){
+    var chances = row.chances.filter(function(c){ return c !== null && !isNaN(c); }).map(percentToFraction).join(';');
+    return [row.site, chances, percentToFraction(row.unique || 0)].map(csvField).join(',');
+  })).join('\n') + '\n';
+}
+
+function formatPercent(value){
+  return value === null || value === undefined || isNaN(value) ? '' : String(Number(value.toFixed(2)));
+}
+
+function openSocketableDropsModal(){
+  var root = document.getElementById('modalRoot');
+  var rows = [], filterText = '', dirty = false;
+
+  function load(){
+    fetch('/data/socketable-salvage').then(function(r){ if (!r.ok) throw new Error('salvage ' + r.status); return r.text(); }).then(function(text){
+      rows = parseSalvageCsv(text);
+      dirty = false;
+      render();
+    }).catch(function(){
+      showToast('Could not load socketable_salvage.csv - run tools\\skill_tree_server.ps1');
+    });
+  }
+
+  function close(){
+    if (dirty && !confirm('Discard unsaved drop changes?')) return;
+    root.innerHTML = '';
+  }
+
+  function markDirty(){
+    dirty = true;
+    var status = document.getElementById('dropsStatus');
+    if (status) status.textContent = 'Unsaved changes';
+  }
+
+  function atLeast(row, count){
+    var chance = 1;
+    for (var i = 0; i < count; i++) {
+      var c = row.chances[i];
+      if (c === null || c === undefined || isNaN(c)) return 0;
+      chance *= c / 100;
+    }
+    return chance * 100;
+  }
+
+  function summary(row){
+    var parts = [];
+    for (var n = 1; n <= SOCKETABLE_DROP_SLOTS; n++) {
+      var p = atLeast(row, n);
+      if (p <= 0) break;
+      parts.push(n + '+: ' + formatPercent(p) + '%');
+    }
+    return parts.join(', ');
+  }
+
+  function render(){
+    var needle = filterText.toLowerCase();
+    var cellStyle = 'padding:3px 4px;';
+    var inputStyle = 'width:62px;text-align:right;';
+    var head = '<tr><th style="' + cellStyle + 'text-align:left">Site</th>';
+    for (var n = 1; n <= SOCKETABLE_DROP_SLOTS; n++) {
+      head += '<th style="' + cellStyle + '" title="Chance of item ' + n + ', rolled only if the previous one dropped">Item ' + n + ' %</th>';
+    }
+    head += '<th style="' + cellStyle + '" title="Separate roll for a unique socketable">Unique %</th><th style="' + cellStyle + 'text-align:left">At least</th><th></th></tr>';
+    var body = rows.map(function(row, i){
+      if (needle && row.site.toLowerCase().indexOf(needle) === -1) return '';
+      var html = '<tr><td style="' + cellStyle + '"><input data-drop-index="' + i + '" data-drop-field="site" value="' + escapeHtml(row.site) + '" style="width:230px"></td>';
+      for (var n = 0; n < SOCKETABLE_DROP_SLOTS; n++) {
+        html += '<td style="' + cellStyle + '"><input type="number" min="0" max="100" step="1" data-drop-index="' + i + '" data-drop-slot="' + n + '" value="' +
+          formatPercent(row.chances[n]) + '" style="' + inputStyle + '"></td>';
+      }
+      html += '<td style="' + cellStyle + '"><input type="number" min="0" max="100" step="0.1" data-drop-index="' + i + '" data-drop-field="unique" value="' +
+        formatPercent(row.unique) + '" style="' + inputStyle + '"></td>' +
+        '<td style="' + cellStyle + '" class="hint" data-drop-summary="' + i + '">' + escapeHtml(summary(row)) + '</td>' +
+        '<td style="' + cellStyle + '"><button class="smallBtn danger" type="button" data-drop-remove="' + i + '">X</button></td></tr>';
+      return html;
+    }).join('');
+    root.innerHTML =
+      '<div class="modalOverlay"><div class="modal wide">' +
+      '<h3>Socketable Drops</h3>' +
+      '<div class="hint">Edits data/config/exiledSector/socketable_salvage.csv. Each site rolls item 1; item 2 only rolls if item 1 dropped, and so on. ' +
+        'Leave a slot blank to stop there. Unique is a separate roll. "techmining_first_find" is the first Tech Mining harvest on a ruins colony; ' +
+        '"techmining_monthly" is every later month and decays 5% a month. A site id is the custom entity type (or salvage spec override) of the thing salvaged.</div>' +
+      '<div class="fieldRow" style="align-items:flex-end">' +
+        '<div class="field" style="flex:1"><label>Filter</label><input id="dropsFilter" value="' + escapeHtml(filterText) + '" placeholder="site id"></div>' +
+        '<button class="smallBtn" type="button" id="dropsAdd">+ Add site</button>' +
+      '</div>' +
+      '<div class="socketableDetail" style="margin-top:8px"><table style="border-collapse:collapse;font-size:12px">' + head + body + '</table></div>' +
+      '<div class="modalBtns">' +
+        '<span class="hint" id="dropsStatus" style="margin-right:auto">' + (dirty ? 'Unsaved changes' : '') + '</span>' +
+        '<button class="smallBtn" id="dropsReload">Reload from disk</button>' +
+        '<button class="smallBtn primary" id="dropsSave">Save to project</button>' +
+        '<button class="smallBtn" id="dropsClose">Close</button>' +
+      '</div>' +
+      '</div></div>';
+
+    var filter = document.getElementById('dropsFilter');
+    filter.addEventListener('input', function(){
+      filterText = filter.value;
+      render();
+      var refocused = document.getElementById('dropsFilter');
+      refocused.focus();
+      refocused.setSelectionRange(refocused.value.length, refocused.value.length);
+    });
+    root.querySelectorAll('[data-drop-index]').forEach(function(el){
+      el.addEventListener('input', function(){
+        var row = rows[parseInt(el.dataset.dropIndex, 10)];
+        if (el.dataset.dropField === 'site') {
+          row.site = el.value.trim();
+        } else if (el.dataset.dropField === 'unique') {
+          row.unique = el.value === '' ? 0 : parseFloat(el.value);
+        } else {
+          var slot = parseInt(el.dataset.dropSlot, 10);
+          while (row.chances.length < slot) row.chances.push(null);
+          row.chances[slot] = el.value === '' ? null : parseFloat(el.value);
+          while (row.chances.length && (row.chances[row.chances.length - 1] === null || isNaN(row.chances[row.chances.length - 1]))) {
+            row.chances.pop();
+          }
+        }
+        markDirty();
+        var summaryCell = root.querySelector('[data-drop-summary="' + el.dataset.dropIndex + '"]');
+        if (summaryCell) summaryCell.textContent = summary(row);
+      });
+    });
+    root.querySelectorAll('[data-drop-remove]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        rows.splice(parseInt(btn.dataset.dropRemove, 10), 1);
+        markDirty();
+        render();
+      });
+    });
+    document.getElementById('dropsAdd').addEventListener('click', function(){
+      var site = (prompt('Site id (custom entity type or salvage spec id):') || '').trim();
+      if (!site) return;
+      if (rows.some(function(row){ return row.site === site; })) { showToast('That site is already listed'); return; }
+      rows.push({ site: site, chances: [10], unique: 0 });
+      filterText = site;
+      markDirty();
+      render();
+    });
+    document.getElementById('dropsClose').addEventListener('click', close);
+    document.getElementById('dropsReload').addEventListener('click', function(){
+      if (dirty && !confirm('Discard unsaved drop changes and reload from disk?')) return;
+      load();
+    });
+    document.getElementById('dropsSave').addEventListener('click', save);
+  }
+
+  function validate(){
+    var issues = [], seen = {};
+    rows.forEach(function(row, i){
+      var label = row.site || ('row ' + (i + 1));
+      if (!/^[A-Za-z0-9_.-]+$/.test(row.site)) issues.push(label + ': site ids may only use letters, digits, _ . and -');
+      if (seen[row.site]) issues.push(label + ': listed more than once');
+      seen[row.site] = true;
+      row.chances.forEach(function(c, n){
+        if (c === null || isNaN(c)) issues.push(label + ': item ' + (n + 1) + ' is blank but a later item is set');
+        else if (c < 0 || c > 100) issues.push(label + ': item ' + (n + 1) + ' must be between 0 and 100');
+      });
+      if (isNaN(row.unique) || row.unique < 0 || row.unique > 100) issues.push(label + ': unique must be between 0 and 100');
+    });
+    return issues;
+  }
+
+  function save(){
+    var issues = validate();
+    if (issues.length) { alert('Not saved:\n' + issues.join('\n')); return; }
+    fetch('/save-socketable-salvage', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Skill-Tree-Editor': '1' },
+      body: JSON.stringify({ csv: serializeSalvageCsv(rows) })
+    }).then(function(r){
+      return r.json().then(function(data){ return { httpOk: r.ok, data: data }; });
+    }).then(function(result){
+      if (!result.httpOk || !result.data.ok) {
+        showToast('Could not save: ' + (result.data && result.data.message ? result.data.message : 'unknown error'));
+        return;
+      }
+      dirty = false;
+      var status = document.getElementById('dropsStatus');
+      if (status) status.textContent = 'Saved';
+      showToast('Saved socketable_salvage.csv');
+    }).catch(function(){
+      showToast('Could not reach local server - run tools\\skill_tree_server.ps1');
+    });
+  }
+
+  root.innerHTML = '<div class="modalOverlay"><div class="modal"><div class="hint">Loading drops...</div></div></div>';
+  load();
+}
+
 function openTypeModal(existingType, onSave, onClose){
   var isNew = !existingType;
   var t = existingType ? deepCopy(existingType) : { id: '', name: '', icon: '', tier: 'NOTABLE', vanillaHullMod: '', flavour: '', description: '', todo: '', tags: [], optionalOptions: [], exclusiveHullMods: [], exclusiveSkillTypes: [], unlockConditions: [] };
@@ -4731,6 +4942,7 @@ document.getElementById('fitBtn').addEventListener('click', fitToScreen);
 document.getElementById('imageEditorBtn').addEventListener('click', function(){ openImageEditorModal(); });
 document.getElementById('socketableEditorBtn').addEventListener('click', function(){ openSocketableEditorModal(); });
 document.getElementById('socketableNamesBtn').addEventListener('click', function(){ openSocketableNamesModal(); });
+document.getElementById('socketableDropsBtn').addEventListener('click', function(){ openSocketableDropsModal(); });
 
 document.getElementById('labelsToggle').addEventListener('change', function(ev){ state.showLabels = ev.target.checked; render(); });
 document.getElementById('searchBox').addEventListener('input', function(ev){ state.search = ev.target.value; render(); });

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Pattern;
 
 public final class NpcSocketables {
 
@@ -18,7 +17,6 @@ public final class NpcSocketables {
     static final int SECOND_ROLL_PLAYER_LEVEL = 15;
     static final float SECOND_CHANCE = 0.05f;
     private static final Map<String, Socketable> PREVIEWS = new ConcurrentHashMap<>();
-    private static final Pattern TAG_SAFE_ID = Pattern.compile("[A-Za-z0-9_.-]+");
 
     private NpcSocketables() {
     }
@@ -75,26 +73,7 @@ public final class NpcSocketables {
     }
 
     public static SocketableDefinition pickDefinition(Random random) {
-        List<SocketableDefinition> candidates = new ArrayList<>();
-        float total = 0f;
-        for (SocketableDefinition definition : SocketableDefinitions.all()) {
-            if (definition.kind() == SocketableKind.SUBROUTINE && !definition.unique() && definition.rarity() > 0f
-                    && TAG_SAFE_ID.matcher(definition.id()).matches()) {
-                candidates.add(definition);
-                total += definition.rarity();
-            }
-        }
-        if (candidates.isEmpty()) {
-            return null;
-        }
-        float roll = random.nextFloat() * total;
-        for (SocketableDefinition definition : candidates) {
-            roll -= definition.rarity();
-            if (roll < 0f) {
-                return definition;
-            }
-        }
-        return candidates.get(candidates.size() - 1);
+        return SocketableDrops.pickBasic(random);
     }
 
     public static List<SocketableItemData> carriedBy(ShipSkillData data) {
