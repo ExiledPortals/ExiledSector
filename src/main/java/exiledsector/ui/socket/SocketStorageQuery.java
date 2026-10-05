@@ -1,13 +1,10 @@
 package exiledsector.ui.socket;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
 final class SocketStorageQuery {
-
-    static final int PAGE_SIZE = 40;
 
     private SocketStorageQuery() {
     }
@@ -19,27 +16,10 @@ final class SocketStorageQuery {
             order = order.reversed();
         }
         return rows.stream()
-                .filter(row -> !filter.hiddenKinds.contains(row.kind()))
-                .filter(row -> !filter.hiddenGrades.contains(row.grade()))
-                .filter(row -> !filter.hiddenAlignments.contains(row.alignment()))
-                .filter(row -> filter.themes.isEmpty() || !Collections.disjoint(row.themes(), filter.themes))
                 .filter(row -> matchesStatus(row, filter.status))
                 .filter(row -> matchesWords(row, words))
                 .sorted(order.thenComparingInt(SocketStorageRow::order))
                 .toList();
-    }
-
-    static int pageCount(int rowCount) {
-        return Math.max(1, (rowCount + PAGE_SIZE - 1) / PAGE_SIZE);
-    }
-
-    static int clampPage(int page, int rowCount) {
-        return Math.max(0, Math.min(page, pageCount(rowCount) - 1));
-    }
-
-    static List<SocketStorageRow> page(List<SocketStorageRow> rows, int page) {
-        int first = clampPage(page, rows.size()) * PAGE_SIZE;
-        return rows.subList(first, Math.min(rows.size(), first + PAGE_SIZE));
     }
 
     private static boolean matchesStatus(SocketStorageRow row, SocketStorageFilter.Status status) {

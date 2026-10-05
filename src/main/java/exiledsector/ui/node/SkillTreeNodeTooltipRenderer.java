@@ -6,7 +6,10 @@ import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.NodeDescription;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
+import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillType;
+import exiledsector.socketables.Socketable;
+import exiledsector.socketables.SocketableStore;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeTooltipTable;
 import exiledsector.ui.TooltipExpansion;
@@ -58,12 +61,15 @@ final class SkillTreeNodeTooltipRenderer {
         boolean showOptionalHint = effectiveType == node.getType() && effectiveType.isOptional()
                 && effectiveType.getDescriptionOverride() == null;
         boolean expanded = TooltipExpansion.isExpanded();
-        List<Object> signature = List.of(effectiveType.getId(), hidden, free, showOptionalHint, expanded);
+        boolean socket = node.getType().getTier() == SkillTier.SOCKET && data.isAllocated(node.getId());
+        Socketable socketed = socket ? SocketableStore.lookup(data.getSocketedItem(node.getId())) : null;
+        List<Object> signature = List.of(effectiveType.getId(), hidden, free, showOptionalHint, expanded, socket,
+                socketed == null ? "" : socketed.id());
 
         SkillTreePanelStyle.TooltipText title = tooltipTitles.get(node.getId(), signature,
                 id -> buildTooltipText(font, titleText(effectiveType, hidden), TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR));
         Body body = tooltipBodies.get(node.getId(), signature,
-                id -> buildBody(font, describe(effectiveType, hidden, free, showOptionalHint), expanded));
+                id -> buildBody(font, describe(effectiveType, hidden, free, showOptionalHint, socket, socketed), expanded));
 
         List<SkillTreeTooltipTable> tables = showOptionalHint || hidden ? List.of() : tablesFor(font, effectiveType);
         style.drawTitleBodyTooltip(title, body.text(), tables, footer(font, body, expanded), mouseX, mouseY, alphaMult);
@@ -112,7 +118,8 @@ final class SkillTreeNodeTooltipRenderer {
         return hidden ? Translation.text("ui.node.lockedTitle") : effectiveType.getDisplayName();
     }
 
-    private NodeDescription describe(SkillType effectiveType, boolean hidden, boolean free, boolean showOptionalHint) {
+    private NodeDescription describe(SkillType effectiveType, boolean hidden, boolean free, boolean showOptionalHint, boolean socket,
+                                     Socketable socketed) {
         if (hidden) {
             return new NodeDescription(List.of(plainLine("ui.node.lockedBody"), plainLine("ui.node.lockedHint")), List.of());
         }
@@ -125,10 +132,24 @@ final class SkillTreeNodeTooltipRenderer {
             effects.addAll(description.effects());
             details.addAll(description.details());
         }
+        if (socket) {
+            addSocketLines(effects, socketed);
+        }
         if (free) {
             details.add(plainLine("ui.node.freeNote"));
         }
         return new NodeDescription(effects, details);
+    }
+
+    private static void addSocketLines(List<DescriptionLine> effects, Socketable socketed) {
+        if (socketed == null) {
+            effects.add(plainLine("ui.node.socket.empty"));
+            effects.add(plainLine("ui.node.socket.installHint"));
+        } else {
+            effects.add(new DescriptionLine(Translation.msg("ui.node.socket.installed").arg("name", socketed.name()).styled(), false));
+            socketed.effectLines().forEach(line -> effects.add(new DescriptionLine(line, false)));
+            effects.add(plainLine("ui.node.socket.removeHint"));
+        }
     }
 
     private static DescriptionLine plainLine(String key) {

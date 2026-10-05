@@ -13,12 +13,15 @@ import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.effects.SkillTreeInstaller;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.SkillNode;
+import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.ShipLevelSystem;
 import exiledsector.skills.progression.ShipOpBudget;
 import exiledsector.skills.progression.SkillNodeOpCost;
+import exiledsector.socketables.SocketCustody;
+import exiledsector.socketables.Socketable;
 import exiledsector.socketables.SocketableStore;
 import exiledsector.ui.decoration.SkillTreeRingBeltRenderer;
 import exiledsector.ui.decoration.SkillTreeStarRenderer;
@@ -30,7 +33,6 @@ import exiledsector.ui.hyperspace.HyperspaceRoute;
 import exiledsector.ui.hyperspace.HyperspaceTransition;
 import exiledsector.ui.node.NodeSearch;
 import exiledsector.ui.node.SkillTreeNodeRenderer;
-import exiledsector.ui.socket.SocketStorageMode;
 import exiledsector.ui.socket.SocketStoragePanel;
 import exiledsector.ui.util.BorderedPanel;
 import lunalib.lunaRefit.BaseRefitButton;
@@ -38,6 +40,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -50,6 +53,10 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private static final float STORAGE_BUTTON_MARGIN = 16f;
     private static final float STORAGE_BUTTON_HEIGHT = 40f;
     private static final float STORAGE_BUTTON_MIN_WIDTH = 150f;
+    private static final float STORAGE_PANEL_MARGIN = 16f;
+    private static final float STORAGE_PANEL_TOP = 100f;
+    private static final float STORAGE_PANEL_GAP = 12f;
+    private static final float STORAGE_PANEL_WIDTH_FRACTION = 0.25f;
 
     private final String readoutTooltipTitle = Translation.text("ui.readout.title");
     private final String readoutTooltipBody;
@@ -70,6 +77,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final SkillTreeUiButton storageButton = new SkillTreeUiButton("");
     private final CustomPanelAPI host;
     private SocketStoragePanel storagePanel;
+    private Socketable placing;
+    private int storageRevision;
+    private Map<String, FleetMemberAPI> ownedShips = Map.of();
     private final float shipCardHeight;
     private final SmoothZoom smoothZoom = new SmoothZoom(1f);
     private final HyperspaceTransition hyperspace = new HyperspaceTransition();
@@ -104,6 +114,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         }
         OpReserveParity.warnIfOutOfSync(member, variant, "before the skill tree re-synced it");
         SkillTreeHullMod.syncOpSpentHullMod(member, variant);
+        SocketCustody.reconcile();
         SkillTreePanelStyle style = new SkillTreePanelStyle();
         this.starfieldRenderer = new SkillTreeStarfieldRenderer(style);
         this.staticImageRenderer = new SkillTreeStaticImageRenderer();
@@ -163,6 +174,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         }
         templateUi.advance(amount, position);
         layoutStorageButton();
+        advanceStorage();
         ShipOpBudget budget = nodeRenderer.budget();
         boolean pointerLive = mouseKnown && !isModalOpen();
         statPanel.refresh(budget, nodeRenderer.statsRevision());
@@ -241,11 +253,10 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void handleEvent(InputEventAPI event) {
-        if (swallowEscapeUp && event.isKeyUpEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
+        boolean escapeUp = event.isKeyUpEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE;
+        if (escapeUp && (swallowEscapeUp || storagePanel != null || placing != null)) {
             swallowEscapeUp = false;
             event.consume();
-        } else if (storagePanel != null) {
-            handleStoragePanelEvent(event);
         } else if (!templateUi.isModalOpen() && TooltipExpansion.isToggle(event)) {
             TooltipExpansion.toggle();
             event.consume();
@@ -261,6 +272,11 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         } else if (nodeRenderer.isRespeccing() && interruptsAutoAllocate(event)) {
             nodeRenderer.cancelRespec();
             consume(event);
+        } else if ((placing != null || storagePanel != null) && event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
+            escapeStorage();
+            consume(event);
+        } else if (event.isRMBDownEvent() && position.containsEvent(event) && emptySocketAt(event.getX(), event.getY())) {
+            event.consume();
         } else if (event.isLMBDownEvent() && position.containsEvent(event)) {
             handleLmbDown(event);
         } else if (event.isLMBUpEvent()) {
@@ -303,21 +319,68 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         consume(event);
     }
 
-    private void handleStoragePanelEvent(InputEventAPI event) {
-        if (event.isMouseMoveEvent()) {
-            mouseX = event.getX();
-            mouseY = event.getY();
-            mouseKnown = true;
-        } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
-            storagePanel.escape();
-            consume(event);
-        } else if (event.isKeyUpEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
-            event.consume();
+    private void escapeStorage() {
+        if (storagePanel != null && storagePanel.escape()) {
+            return;
+        }
+        if (placing != null) {
+            stopPlacing();
+        } else if (storagePanel != null) {
+            storagePanel.close();
+        }
+    }
+
+    private boolean emptySocketAt(float x, float y) {
+        if (isOverOverlay(x, y)) {
+            return false;
+        }
+        SkillNode node = nodeRenderer.findNodeAt(viewport(), x, y);
+        if (node == null || node.getType().getTier() != SkillTier.SOCKET) {
+            return false;
+        }
+        if (nodeRenderer.emptySocket(node)) {
+            refreshStorage();
+        }
+        return true;
+    }
+
+    private void startPlacing(Socketable socketable) {
+        placing = socketable;
+        search.setSocketFocus(true);
+        if (storagePanel != null) {
+            storagePanel.setSelected(socketable);
+        }
+    }
+
+    private void stopPlacing() {
+        placing = null;
+        search.setSocketFocus(false);
+        if (storagePanel != null) {
+            storagePanel.setSelected(null);
+        }
+    }
+
+    private void refreshStorage() {
+        refreshStorageButtonLabel();
+        if (storagePanel != null) {
+            storageRevision = nodeRenderer.statsRevision();
+            storagePanel.refresh(SocketCustody.shipNames(ownedShips));
+        }
+    }
+
+    private void advanceStorage() {
+        if (storagePanel == null) {
+            return;
+        }
+        if (templateUi.isModalOpen() || hyperspace.isActive() || nodeRenderer.isStartingRootInputLocked()) {
+            storagePanel.close();
+        } else if (nodeRenderer.statsRevision() != storageRevision) {
+            refreshStorage();
         }
     }
 
     private boolean isModalOpen() {
-        return storagePanel != null || templateUi.isModalOpen();
+        return templateUi.isModalOpen();
     }
 
     private boolean isStorageButtonShown() {
@@ -336,19 +399,40 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void refreshStorageButtonLabel() {
-        storageButton.setLabel(Translation.msg("ui.socketStorage.button").arg("count", Global.getSector() == null ? 0 : SocketableStore.get().owned().size()).text());
+        int stored = Global.getSector() == null ? 0 : SocketableStore.get().owned().size();
+        storageButton.setLabel(Translation.msg("ui.socketStorage.button").arg("count", stored).text());
     }
 
-    private void openStorage() {
-        dragging = false;
-        cameraPan = null;
-        pendingClickNode = null;
+    private void toggleStorage() {
+        if (storagePanel != null) {
+            storagePanel.close();
+            return;
+        }
         nodeRenderer.closeDropdown();
         searchBar.unfocus();
-        storagePanel = SocketStoragePanel.open(host, new SocketStorageMode.Manage(), socketable -> null, () -> {
-            storagePanel = null;
-            refreshStorageButtonLabel();
-        });
+        ownedShips = SocketCustody.reconcile();
+        storageRevision = nodeRenderer.statsRevision();
+        ScreenRect shipCard = shipCardFrame();
+        float top = STORAGE_PANEL_TOP;
+        float bottom = shipCard.bottom() + shipCard.height() - position.getY() + STORAGE_PANEL_GAP;
+        storagePanel = SocketStoragePanel.open(host, STORAGE_PANEL_MARGIN, top, position.getWidth() * STORAGE_PANEL_WIDTH_FRACTION,
+                position.getHeight() - top - bottom, SocketCustody.shipNames(ownedShips), new SocketStoragePanel.Listener() {
+                    @Override
+                    public void selected(Socketable socketable) {
+                        if (socketable == null) {
+                            stopPlacing();
+                        } else {
+                            startPlacing(socketable);
+                        }
+                    }
+
+                    @Override
+                    public void closed() {
+                        storagePanel = null;
+                        stopPlacing();
+                        refreshStorageButtonLabel();
+                    }
+                });
     }
 
     private void handleHyperspaceEvent(InputEventAPI event) {
@@ -414,7 +498,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             return;
         }
         if (storageButton.isClickable(event.getX(), event.getY())) {
-            openStorage();
+            toggleStorage();
             event.consume();
             return;
         }
@@ -467,7 +551,12 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             pendingDropdownOption = null;
         } else if (pendingClickNode != null) {
             SkillNode jumpTarget = nodeRenderer.wormholeJumpTarget(pendingClickNode, pendingClickCtrlDown);
-            if (pendingClickCtrlDown && pendingClickShiftDown && nodeRenderer.isAllocated(pendingClickNode)) {
+            if (placing != null) {
+                if (nodeRenderer.installInSocket(pendingClickNode, placing)) {
+                    stopPlacing();
+                    refreshStorage();
+                }
+            } else if (pendingClickCtrlDown && pendingClickShiftDown && nodeRenderer.isAllocated(pendingClickNode)) {
                 nodeRenderer.startRespec(pendingClickNode);
             } else if (jumpTarget != null) {
                 cameraPan = new CameraPanAnimation(-panX / zoom, panY / zoom, jumpTarget.getOffsetX(), jumpTarget.getOffsetY());
@@ -598,6 +687,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                 || (!nodeRenderer.isStartingRootInputLocked() && !hyperspace.isActive() && SkillTreeSearchBar.contains(position, x, y))
                 || templateUi.barContains(x, y)
                 || storageButton.contains(x, y)
+                || (storagePanel != null && storagePanel.contains(x, y))
                 || shipCardFrame().contains(x, y);
     }
 

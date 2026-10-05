@@ -15,6 +15,9 @@ import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.StepVerdict;
 import exiledsector.skills.template.TemplateCapture;
 import exiledsector.skills.template.TemplateStep;
+import exiledsector.socketables.SocketCustody;
+import exiledsector.socketables.Socketable;
+import exiledsector.socketables.SocketableStore;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.TreeViewport;
 import lunalib.lunaRefit.BaseRefitButton;
@@ -363,7 +366,7 @@ public final class SkillTreeNodeRenderer {
 
         float nodeAlpha = alphaMult * search.nodeAlpha(node, allocation);
         if (tier == SkillTier.SOCKET) {
-            socketRenderer.drawFrame(nodeX, nodeY, footprintSize, allocated, style.getAccentColor(), null,
+            socketRenderer.drawFrame(nodeX, nodeY, footprintSize, allocated, style.getAccentColor(), socketedIcon(data, node),
                     iconTint(node, allocation, allocated), nodeAlpha);
         }
         ringRenderer.draw(nodeX, nodeY, footprintSize, nodeAlpha, SkillTreeNodeRingRenderer.RingState.of(allocated, breathing), zoom, node);
@@ -475,6 +478,38 @@ public final class SkillTreeNodeRenderer {
         if (allocator.toggle(node)) {
             afterAllocationChange(node, !wasAllocated);
         }
+    }
+
+    private static String socketedIcon(ShipSkillData data, SkillNode node) {
+        Socketable socketed = SocketableStore.lookup(data.getSocketedItem(node.getId()));
+        return socketed == null ? null : socketed.iconPath();
+    }
+
+    public Socketable socketedItem(SkillNode node) {
+        return SocketableStore.lookup(allocator.data().getSocketedItem(node.getId()));
+    }
+
+    public boolean installInSocket(SkillNode node, Socketable socketable) {
+        if (isSocketEditLocked() || !socketable.canSocketInto(node)
+                || SocketCustody.installations(ShipSkillDataManager.all()).containsKey(socketable.id())
+                || !allocator.socketItem(node, socketable.id())) {
+            return false;
+        }
+        refreshAfterAllocation();
+        ringRenderer.startPulse(node.getId());
+        return true;
+    }
+
+    public boolean emptySocket(SkillNode node) {
+        if (isSocketEditLocked() || !allocator.unsocketItem(node)) {
+            return false;
+        }
+        refreshAfterAllocation();
+        return true;
+    }
+
+    private boolean isSocketEditLocked() {
+        return isStartingRootInputLocked() || autoRun != null || respecRun != null;
     }
 
     private void toggleOptionalAllocation(SkillNode node, boolean ctrlDown) {

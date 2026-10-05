@@ -146,6 +146,22 @@ final class NodeAllocator {
         refreshShipStats();
     }
 
+    boolean socketItem(SkillNode node, String socketableId) {
+        if (!data().socketItem(node.getId(), socketableId)) {
+            return false;
+        }
+        refreshShipStats();
+        return true;
+    }
+
+    boolean unsocketItem(SkillNode node) {
+        if (data().unsocketItem(node.getId()) == null) {
+            return false;
+        }
+        refreshShipStats();
+        return true;
+    }
+
     boolean chooseStartingRoot(SkillNode root) {
         if (!data().chooseStartingRoot(root)) {
             return false;

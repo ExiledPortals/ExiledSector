@@ -4,21 +4,15 @@ import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.CargoTransferHandlerAPI;
 import com.fs.starfarer.api.campaign.impl.items.BaseSpecialItemPlugin;
 import com.fs.starfarer.api.graphics.SpriteAPI;
-import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
-import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
-import exiledsector.ui.VanillaText;
 import exiledsector.ui.util.SpriteCache;
 
 import java.util.List;
 
 public class SocketableItemPlugin extends BaseSpecialItemPlugin {
 
-    private static final float PAD = 10f;
-    private static final float LINE_PAD = 3f;
     private static final SpriteCache SPRITES = new SpriteCache(SocketableItemPlugin.class);
 
     private Socketable preview;
@@ -37,33 +31,8 @@ public class SocketableItemPlugin extends BaseSpecialItemPlugin {
 
     @Override
     public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, CargoTransferHandlerAPI transferHandler, Object stackSource) {
-        I18n.forGameText(() -> {
-            if (preview == null) {
-                tooltip.addTitle(Translation.text("socketable.unknown"));
-            } else {
-                SocketableName name = preview.displayName();
-                tooltip.addTitle(name.title(), name.rarity().color());
-                if (name.baseName() != null) {
-                    tooltip.addPara("%s", 0f, Misc.getGrayColor(), Misc.getGrayColor(), name.baseName());
-                }
-                addLines(tooltip, preview.headerLines());
-                List<StyledText> effects = preview.effectLines();
-                if (!effects.isEmpty()) {
-                    tooltip.addSectionHeading(Translation.text("socketable.tooltip.primaryData"), Alignment.MID, PAD);
-                    addLines(tooltip, effects);
-                }
-            }
-            VanillaText.addPara(tooltip, Translation.styled("socketable.tooltip.storage"), PAD, Misc.getGrayColor());
-        });
-        addCostLabel(tooltip, PAD, transferHandler, stackSource);
-    }
-
-    private static void addLines(TooltipMakerAPI tooltip, List<StyledText> lines) {
-        float pad = PAD;
-        for (StyledText line : lines) {
-            VanillaText.addPara(tooltip, line, pad, Misc.getTextColor());
-            pad = LINE_PAD;
-        }
+        SocketableTooltip.write(tooltip, preview, () -> List.of(Translation.styled("socketable.tooltip.storage")));
+        addCostLabel(tooltip, SocketableTooltip.PAD, transferHandler, stackSource);
     }
 
     @Override
