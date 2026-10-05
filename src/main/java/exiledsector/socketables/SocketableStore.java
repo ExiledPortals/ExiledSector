@@ -27,6 +27,9 @@ public final class SocketableStore {
     }
 
     public static Socketable lookup(String socketableId) {
+        if (NpcSocketables.isNpcId(socketableId)) {
+            return NpcSocketables.resolve(socketableId);
+        }
         return socketableId == null || Global.getSector() == null ? null : get().find(socketableId);
     }
 

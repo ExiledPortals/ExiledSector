@@ -7,6 +7,7 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
+import exiledsector.socketables.NpcSocketables;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ public final class NpcTreeTag {
     private static final String OPTION_SEPARATOR = "=";
     private static final int CHARGED_NODE_COST = 1;
     static final String GENERATED = "generated";
+    static final String SOCKETS_MARKER = "sockets:";
 
     private NpcTreeTag() {
     }
@@ -30,7 +32,14 @@ public final class NpcTreeTag {
             String option = data.getOptionalSelection(nodeId);
             nodes.add(option == null ? nodeId : nodeId + OPTION_SEPARATOR + option);
         }
-        return PREFIX + GENERATED + FIELD_SEPARATOR + data.getLevel() + FIELD_SEPARATOR + String.join(NODE_SEPARATOR, nodes);
+        String tag = PREFIX + GENERATED + FIELD_SEPARATOR + data.getLevel() + FIELD_SEPARATOR + String.join(NODE_SEPARATOR, nodes);
+        List<String> sockets = new ArrayList<>();
+        data.getSocketedItems().forEach((nodeId, socketableId) -> {
+            if (NpcSocketables.isNpcId(socketableId)) {
+                sockets.add(nodeId + OPTION_SEPARATOR + socketableId);
+            }
+        });
+        return sockets.isEmpty() ? tag : tag + FIELD_SEPARATOR + SOCKETS_MARKER + String.join(NODE_SEPARATOR, sockets);
     }
 
     public static String find(ShipVariantAPI variant) {
@@ -71,7 +80,25 @@ public final class NpcTreeTag {
         for (int i = 1; i < entries.length; i++) {
             restore(data, entries[i]);
         }
+        if (fields.length == 4 && fields[3].startsWith(SOCKETS_MARKER)) {
+            restoreSockets(data, fields[3].substring(SOCKETS_MARKER.length()));
+        }
         return data;
+    }
+
+    private static void restoreSockets(ShipSkillData data, String sockets) {
+        for (String entry : sockets.split(NODE_SEPARATOR)) {
+            int separator = entry.indexOf(OPTION_SEPARATOR);
+            if (separator <= 0) {
+                continue;
+            }
+            String nodeId = NodeReplacements.resolve(entry.substring(0, separator));
+            String socketableId = entry.substring(separator + 1);
+            SkillNode node = SkillTree.get(nodeId);
+            if (node != null && node.getType().getTier() == SkillTier.SOCKET && NpcSocketables.item(socketableId) != null) {
+                data.socketItem(nodeId, socketableId);
+            }
+        }
     }
 
     private static void restore(ShipSkillData data, String entry) {

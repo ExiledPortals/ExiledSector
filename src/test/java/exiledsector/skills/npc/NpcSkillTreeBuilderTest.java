@@ -107,6 +107,68 @@ class NpcSkillTreeBuilderTest {
         return List.copyOf(build.data().getAllocatedNodeIds());
     }
 
+    private static NpcTreeBuild generateWithSocketables(int nodeCount, int socketables) {
+        return NpcSkillTreeBuilder.generate(new NpcBuildRequest(BALLISTIC_FRIGATE, null, null, NpcHullMods.NONE, NpcFreedOp.NONE,
+                nodeCount, socketables), new Random(1L));
+    }
+
+    @Test
+    void aRolledSocketableClaimsTheNearestSocketBeforeAnyOtherGoal() {
+        root();
+        SkillType socket = registerType(builder("socket", SkillTier.SOCKET).build());
+        chain("a", 2, ROOT);
+        node("near_socket", socket, "a2");
+        chain("b", 4, ROOT);
+        node("far_socket", socket, "b4");
+        notable("prize", ROOT);
+
+        NpcTreeBuild build = generateWithSocketables(3, 1);
+
+        assertEquals(List.of("near_socket"), build.claimedSockets());
+        assertTrue(allocated(build).containsAll(List.of("a1", "a2", "near_socket")));
+        assertFalse(allocated(build).contains("prize"));
+    }
+
+    @Test
+    void aSocketableIsDiscardedWhenNoSocketIsWithinTheBudget() {
+        root();
+        SkillType socket = registerType(builder("socket", SkillTier.SOCKET).build());
+        chain("a", 4, ROOT);
+        node("distant_socket", socket, "a4");
+
+        NpcTreeBuild build = generateWithSocketables(3, 1);
+
+        assertEquals(List.of(), build.claimedSockets());
+        assertFalse(allocated(build).contains("distant_socket"));
+        assertTrue(build.steps().stream().anyMatch(step -> NpcBuildStep.SOCKETABLE_DISCARDED.equals(step.outcome())));
+    }
+
+    @Test
+    void twoSocketablesNeedTwoSocketsAndTheSecondIsDiscardedWithoutOne() {
+        root();
+        SkillType socket = registerType(builder("socket", SkillTier.SOCKET).build());
+        node("only_socket", socket, ROOT);
+        chain("a", 3, ROOT);
+
+        NpcTreeBuild build = generateWithSocketables(3, 2);
+
+        assertEquals(List.of("only_socket"), build.claimedSockets());
+        assertEquals(1, build.steps().stream().filter(step -> NpcBuildStep.SOCKETABLE_DISCARDED.equals(step.outcome())).count());
+    }
+
+    @Test
+    void withoutARolledSocketableTheBuilderStillNeverAimsForASocket() {
+        root();
+        SkillType socket = registerType(builder("socket", SkillTier.SOCKET).build());
+        node("lonely_socket", socket, ROOT);
+        chain("a", 3, ROOT);
+
+        NpcTreeBuild build = generateWithSocketables(3, 0);
+
+        assertEquals(List.of(), build.claimedSockets());
+        assertFalse(allocated(build).contains("lonely_socket"));
+    }
+
     @Test
     void theRootMatchesTheHullsDesignType() {
         for (String type : List.of("root_low_tech", "root_midline", "root_high_tech")) {

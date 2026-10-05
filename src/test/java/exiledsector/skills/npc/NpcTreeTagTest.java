@@ -6,6 +6,7 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
+import exiledsector.socketables.NpcSocketables;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -70,6 +71,42 @@ class NpcTreeTagTest {
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         when(variant.getTags()).thenReturn(List.of(tags));
         return variant;
+    }
+
+    private static ShipSkillData withSocket() {
+        register("socket_1", type("socket", SkillTier.SOCKET), "a");
+        ShipSkillData data = NpcSkillTreeBuilder.rootedTree(SkillTree.get("root"), 2);
+        data.allocate(SkillTree.get("a"), 1);
+        data.allocate(SkillTree.get("socket_1"), 1);
+        return data;
+    }
+
+    @Test
+    void anNpcSocketableSurvivesEncodingAndDecodingInItsSocket() {
+        ShipSkillData data = withSocket();
+        data.socketItem("socket_1", NpcSocketables.id("domain_subroutine_military", -42L));
+
+        String tag = NpcTreeTag.encode(data);
+        ShipSkillData decoded = NpcTreeTag.decode(tag);
+
+        assertEquals("exiledSector_npcTree|generated|2|root,a,socket_1|sockets:socket_1=npc:domain_subroutine_military/-42", tag);
+        assertEquals("npc:domain_subroutine_military/-42", decoded.getSocketedItem("socket_1"));
+    }
+
+    @Test
+    void aTreeWithoutSocketablesKeepsTheThreeFieldFormat() {
+        assertEquals("exiledSector_npcTree|generated|2|root,a,socket_1", NpcTreeTag.encode(withSocket()));
+    }
+
+    @Test
+    void socketEntriesThatAreNotNpcItemsOrNotSocketsAreIgnored() {
+        withSocket();
+
+        ShipSkillData decoded = NpcTreeTag.decode(
+                "exiledSector_npcTree|generated|2|root,a,socket_1|sockets:socket_1=socketable_7,a=npc:x/1,missing=npc:x/1,socket_1");
+
+        assertTrue(decoded.getSocketedItems().isEmpty());
+        assertTrue(decoded.isAllocated("socket_1"));
     }
 
     @Test

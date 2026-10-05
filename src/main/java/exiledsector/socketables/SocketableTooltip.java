@@ -13,6 +13,7 @@ import java.util.function.Supplier;
 
 public final class SocketableTooltip {
 
+    public static final float WIDTH = 700f;
     static final float PAD = 10f;
     private static final float LINE_PAD = 3f;
 
@@ -21,6 +22,8 @@ public final class SocketableTooltip {
 
     public static void write(TooltipMakerAPI tooltip, Socketable socketable, Supplier<List<StyledText>> footer) {
         I18n.forGameText(() -> {
+            tooltip.setTitleOrbitronVeryLarge();
+            tooltip.setParaInsigniaVeryLarge();
             if (socketable == null) {
                 tooltip.addTitle(Translation.text("socketable.unknown"));
             } else {
@@ -41,6 +44,7 @@ public final class SocketableTooltip {
                 VanillaText.addPara(tooltip, line, pad, Misc.getGrayColor());
                 pad = LINE_PAD;
             }
+            tooltip.setParaFontDefault();
         });
     }
 

@@ -30,6 +30,11 @@ public class SocketableItemPlugin extends BaseSpecialItemPlugin {
     }
 
     @Override
+    public float getTooltipWidth() {
+        return SocketableTooltip.WIDTH;
+    }
+
+    @Override
     public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, CargoTransferHandlerAPI transferHandler, Object stackSource) {
         SocketableTooltip.write(tooltip, preview, () -> List.of(Translation.styled("socketable.tooltip.storage")));
         addCostLabel(tooltip, SocketableTooltip.PAD, transferHandler, stackSource);

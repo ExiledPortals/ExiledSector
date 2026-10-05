@@ -16,6 +16,7 @@ import exiledsector.effects.SalvageBonusListener;
 import exiledsector.effects.SkillConflictWarningHullMod;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.effects.SkillTreeInstaller;
+import exiledsector.effects.SocketableLootListener;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.LanguageSetting;
 import exiledsector.i18n.Languages;
@@ -34,6 +35,7 @@ import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.skills.tags.AreaToggles;
 import exiledsector.socketables.SocketableDefinitions;
 import exiledsector.socketables.SocketableNames;
+import exiledsector.socketables.NpcSocketables;
 import exiledsector.socketables.SocketCustody;
 import exiledsector.socketables.SocketLossListener;
 import exiledsector.socketables.SocketableSaveAliases;
@@ -130,6 +132,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
     public void onGameLoad(boolean newGame) {
         SkillTree.applyDisabledRegions(AreaToggles.disabledRegions());
         SkillDataResolver.clearCache();
+        NpcSocketables.clearCache();
         OpSpentSlotManager.releaseUnless(ShipSkillDataManager::hasProgress);
         ShipSkillDataManager.removeBlankRecords();
         forgetUnknownNodes();
@@ -149,6 +152,9 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         SocketLossListener socketLossListener = new SocketLossListener();
         Global.getSector().addTransientListener(socketLossListener);
         Global.getSector().getListenerManager().addListener(socketLossListener, true);
+        SocketableLootListener socketableLootListener = new SocketableLootListener();
+        Global.getSector().addTransientListener(socketableLootListener);
+        Global.getSector().getListenerManager().addListener(socketableLootListener, true);
         SocketCustody.reconcile();
     }
 }
