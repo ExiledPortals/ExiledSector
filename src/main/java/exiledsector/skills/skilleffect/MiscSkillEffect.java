@@ -59,6 +59,23 @@ public enum MiscSkillEffect implements BackedSkillEffect {
     ELECTRONIC_WARFARE(FLAT, dynamicMod("electronic_warfare_flat"), "stat.ecmRating", false),
     NAV_RATING(FLAT, dynamicMod("coord_maneuvers_flat"), "stat.fleetNavRating", false),
     SYSTEM_CHARGES_FLAT(FLAT, bonus(MutableShipStatsAPI::getSystemUsesBonus), "stat.systemCharges", false),
+    DAMAGE_TO_CAPITAL_PERCENT(PERCENT, stat(MutableShipStatsAPI::getDamageToCapital), "stat.damageToCapitalShips", false),
+    WEAPON_MALFUNCTION_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getWeaponMalfunctionChance().modifyFlat(modId, magnitude / 100f);
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return StatMode.PERCENT.describeStat(magnitude, "stat.weaponMalfunctionChance");
+        }
+
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+    },
     OBJECTIVE_CAPTURE_RATE_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {

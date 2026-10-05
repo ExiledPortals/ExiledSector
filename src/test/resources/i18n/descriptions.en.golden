@@ -466,6 +466,12 @@ effect|CR_RECOVERY_RATE_PERCENT|12.5	0	<good>12.5%</good> increased combat readi
 effect|CR_RECOVERY_RATE_PERCENT|100.0	0	<good>100%</good> increased combat readiness recovery rate.
 effect|CR_RECOVERY_RATE_PERCENT|-10.0	0	<bad>10%</bad> reduced combat readiness recovery rate.
 effect|CR_RECOVERY_RATE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced combat readiness recovery rate.
+effect|DAMAGE_TO_CAPITAL_PERCENT|1.0	0	<good>1%</good> increased damage to capital ships and stations.
+effect|DAMAGE_TO_CAPITAL_PERCENT|10.0	0	<good>10%</good> increased damage to capital ships and stations.
+effect|DAMAGE_TO_CAPITAL_PERCENT|12.5	0	<good>12.5%</good> increased damage to capital ships and stations.
+effect|DAMAGE_TO_CAPITAL_PERCENT|100.0	0	<good>100%</good> increased damage to capital ships and stations.
+effect|DAMAGE_TO_CAPITAL_PERCENT|-10.0	0	<bad>10%</bad> reduced damage to capital ships and stations.
+effect|DAMAGE_TO_CAPITAL_PERCENT|-12.5	0	<bad>12.5%</bad> reduced damage to capital ships and stations.
 effect|DEATH_ON_COLLISION|1.0	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Fighters, wrecks and asteroids don't count.
 effect|DEATH_ON_COLLISION|10.0	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Fighters, wrecks and asteroids don't count.
 effect|DEATH_ON_COLLISION|12.5	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Fighters, wrecks and asteroids don't count.
@@ -1402,6 +1408,12 @@ effect|PHASE_FIELD_CONTRIBUTION_PERCENT|12.5	0	Even if this ship isn't a phase s
 effect|PHASE_FIELD_CONTRIBUTION_PERCENT|100.0	0	Even if this ship isn't a phase ship, 100% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
 effect|PHASE_FIELD_CONTRIBUTION_PERCENT|-10.0	0	Even if this ship isn't a phase ship, -10% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
 effect|PHASE_FIELD_CONTRIBUTION_PERCENT|-12.5	0	Even if this ship isn't a phase ship, -12.5% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+effect|PHASE_TOP_SPEED_PERCENT|1.0	0	<good>1%</good> increased top speed while phased.
+effect|PHASE_TOP_SPEED_PERCENT|10.0	0	<good>10%</good> increased top speed while phased.
+effect|PHASE_TOP_SPEED_PERCENT|12.5	0	<good>12.5%</good> increased top speed while phased.
+effect|PHASE_TOP_SPEED_PERCENT|100.0	0	<good>100%</good> increased top speed while phased.
+effect|PHASE_TOP_SPEED_PERCENT|-10.0	0	<bad>10%</bad> reduced top speed while phased.
+effect|PHASE_TOP_SPEED_PERCENT|-12.5	0	<bad>12.5%</bad> reduced top speed while phased.
 effect|POST_BATTLE_SALVAGE_PERCENT|1.0	0	<good>1%</good> increased post-battle salvage recovered (fleet-wide).
 effect|POST_BATTLE_SALVAGE_PERCENT|10.0	0	<good>10%</good> increased post-battle salvage recovered (fleet-wide).
 effect|POST_BATTLE_SALVAGE_PERCENT|12.5	0	<good>12.5%</good> increased post-battle salvage recovered (fleet-wide).
@@ -1744,6 +1756,12 @@ effect|WEAPON_FLUX_COST_PERCENT|12.5	1	<good>12.5%</good> increased weapon flux 
 effect|WEAPON_FLUX_COST_PERCENT|100.0	1	<good>100%</good> increased weapon flux cost.
 effect|WEAPON_FLUX_COST_PERCENT|-10.0	1	<bad>10%</bad> reduced weapon flux cost.
 effect|WEAPON_FLUX_COST_PERCENT|-12.5	1	<bad>12.5%</bad> reduced weapon flux cost.
+effect|WEAPON_MALFUNCTION_PERCENT|1.0	1	<good>1%</good> increased weapon malfunction chance.
+effect|WEAPON_MALFUNCTION_PERCENT|10.0	1	<good>10%</good> increased weapon malfunction chance.
+effect|WEAPON_MALFUNCTION_PERCENT|12.5	1	<good>12.5%</good> increased weapon malfunction chance.
+effect|WEAPON_MALFUNCTION_PERCENT|100.0	1	<good>100%</good> increased weapon malfunction chance.
+effect|WEAPON_MALFUNCTION_PERCENT|-10.0	1	<bad>10%</bad> reduced weapon malfunction chance.
+effect|WEAPON_MALFUNCTION_PERCENT|-12.5	1	<bad>12.5%</bad> reduced weapon malfunction chance.
 effect|WEAPON_PROJECTILE_SPEED_MULT|1.0	0	<good>1%</good> more weapon projectile speed.
 effect|WEAPON_PROJECTILE_SPEED_MULT|10.0	0	<good>10%</good> more weapon projectile speed.
 effect|WEAPON_PROJECTILE_SPEED_MULT|12.5	0	<good>12.5%</good> more weapon projectile speed.
@@ -1822,6 +1840,12 @@ effect|ZERO_FLUX_ALWAYS_ON|12.5	0	Allows the zero-flux speed boost to take effec
 effect|ZERO_FLUX_ALWAYS_ON|100.0	0	Allows the zero-flux speed boost to take effect regardless of flux level.
 effect|ZERO_FLUX_ALWAYS_ON|-10.0	0	Allows the zero-flux speed boost to take effect regardless of flux level.
 effect|ZERO_FLUX_ALWAYS_ON|-12.5	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+effect|ZERO_FLUX_SPEED_FLAT|1.0	0	Increases zero-flux speed bonus by <good>1</good>.
+effect|ZERO_FLUX_SPEED_FLAT|10.0	0	Increases zero-flux speed bonus by <good>10</good>.
+effect|ZERO_FLUX_SPEED_FLAT|12.5	0	Increases zero-flux speed bonus by <good>12.5</good>.
+effect|ZERO_FLUX_SPEED_FLAT|100.0	0	Increases zero-flux speed bonus by <good>100</good>.
+effect|ZERO_FLUX_SPEED_FLAT|-10.0	0	Decreases zero-flux speed bonus by <bad>10</bad>.
+effect|ZERO_FLUX_SPEED_FLAT|-12.5	0	Decreases zero-flux speed bonus by <bad>12.5</bad>.
 effect-noSiC|CONVERTED_HANGAR_REFIT_TIME_MULT|1.0	1	<good>1%</good> more fighter refit time.
 effect-noSiC|CONVERTED_HANGAR_REFIT_TIME_MULT|10.0	1	<good>10%</good> more fighter refit time.
 effect-noSiC|CONVERTED_HANGAR_REFIT_TIME_MULT|12.5	1	<good>12.5%</good> more fighter refit time.

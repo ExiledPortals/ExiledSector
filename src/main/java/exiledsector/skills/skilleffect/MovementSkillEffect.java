@@ -14,7 +14,8 @@ public enum MovementSkillEffect implements BackedSkillEffect {
     TOP_SPEED_FLAT(FLAT, liveStat(MutableShipStatsAPI::getMaxSpeed), StatNames.TOP_SPEED, false),
     TOP_SPEED_MULT(MULT, liveStat(MutableShipStatsAPI::getMaxSpeed), StatNames.TOP_SPEED, false),
     ACCELERATION_FLAT(FLAT, liveStat(MutableShipStatsAPI::getAcceleration), "stat.acceleration", false),
-    DECELERATION_FLAT(FLAT, liveStat(MutableShipStatsAPI::getDeceleration), "stat.deceleration", false);
+    DECELERATION_FLAT(FLAT, liveStat(MutableShipStatsAPI::getDeceleration), "stat.deceleration", false),
+    ZERO_FLUX_SPEED_FLAT(FLAT, liveStat(MutableShipStatsAPI::getZeroFluxSpeedBoost), "stat.zeroFluxSpeedBoost", false);
 
     private final EffectBacking backing;
 
