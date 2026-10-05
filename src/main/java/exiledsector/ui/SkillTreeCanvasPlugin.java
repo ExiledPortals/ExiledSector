@@ -406,6 +406,13 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private void toggleStorage() {
         if (storagePanel != null) {
             storagePanel.close();
+        } else {
+            openStorage();
+        }
+    }
+
+    private void openStorage() {
+        if (storagePanel != null) {
             return;
         }
         nodeRenderer.closeDropdown();
@@ -558,6 +565,13 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                 }
             } else if (pendingClickCtrlDown && pendingClickShiftDown && nodeRenderer.isAllocated(pendingClickNode)) {
                 nodeRenderer.startRespec(pendingClickNode);
+            } else if (pendingClickCtrlDown && pendingClickNode.getType().getTier() == SkillTier.SOCKET) {
+                if (!nodeRenderer.isAllocated(pendingClickNode)) {
+                    nodeRenderer.toggleAllocation(pendingClickNode, false);
+                }
+                if (nodeRenderer.isAllocated(pendingClickNode)) {
+                    openStorage();
+                }
             } else if (jumpTarget != null) {
                 cameraPan = new CameraPanAnimation(-panX / zoom, panY / zoom, jumpTarget.getOffsetX(), jumpTarget.getOffsetY());
                 nodeRenderer.launchWormholeGhosts(pendingClickNode, jumpTarget);

@@ -358,7 +358,7 @@
     "ui.readout.title": "等级、经验与装配点",
     "ui.readout.xp": "摧毁敌舰即可获得经验。船体越大，获得的经验越多。战斗失利获得{lossPercent}%的经验。",
     "ui.readout.xpWithDifficulty": "摧毁敌舰即可获得经验。船体越大，获得的经验越多。战斗越困难，获得的经验越多，最多额外获得+{maxBonus}%（依据原版的战斗难度评估）。战斗失利获得{lossPercent}%的经验。",
-    "ui.readout.body": "分配节点需要消耗装配点（因船体尺寸而异）。此船体每个节点消耗{opCost}点。\n\n本舰每提升一级可免费分配一个节点。舰船升级时，会返还花费在技能树上的装配点。\n\n最多可分配{maxNodes}个节点。\n\n{xpRules}\n\n分配可选节点时按住Ctrl，即可再次分配相同类型，无需重新打开选择器。\n\n按住Ctrl+Shift点击已分配的节点，可将其与所有依赖它的节点一并取消分配。对起始点执行此操作会清空技能树，以便重新选择起始点。",
+    "ui.readout.body": "分配节点需要消耗装配点（因船体尺寸而异）。此船体每个节点消耗{opCost}点。\n\n本舰每提升一级可免费分配一个节点。舰船升级时，会返还花费在技能树上的装配点。\n\n最多可分配{maxNodes}个节点。\n\n{xpRules}\n\n分配可选节点时按住Ctrl，即可再次分配相同类型，无需重新打开选择器。\n\n按住Ctrl+Shift点击已分配的节点，可将其与所有依赖它的节点一并取消分配。对起始点执行此操作会清空技能树，以便重新选择起始点。\n\n按住Ctrl点击模块化船体插槽可打开插槽仓库；若该插槽尚未分配，会先进行分配。",
     "ui.levelBar.level": "等级{level}",
     "ui.levelBar.levelWithFree": "等级{level} - +{free}免费",
     "ui.search.placeholder": "搜索节点...",
