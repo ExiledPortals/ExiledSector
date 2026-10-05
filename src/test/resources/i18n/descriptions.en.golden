@@ -1060,6 +1060,12 @@ effect|MIN_CREW_PER_FIGHTER_BAY|12.5	1	Increases minimum crew required per fight
 effect|MIN_CREW_PER_FIGHTER_BAY|100.0	1	Increases minimum crew required per fighter bay by <good>100</good>.
 effect|MIN_CREW_PER_FIGHTER_BAY|-10.0	1	Decreases minimum crew required per fighter bay by <bad>10</bad>.
 effect|MIN_CREW_PER_FIGHTER_BAY|-12.5	1	Decreases minimum crew required per fighter bay by <bad>12.5</bad>.
+effect|MISSILE_RELOAD_PERCENT_PER_MINUTE|1.0	0	Missile weapons that cannot regenerate ammo reload <good>1%</good> of their base ammo every minute in combat.
+effect|MISSILE_RELOAD_PERCENT_PER_MINUTE|10.0	0	Missile weapons that cannot regenerate ammo reload <good>10%</good> of their base ammo every minute in combat.
+effect|MISSILE_RELOAD_PERCENT_PER_MINUTE|12.5	0	Missile weapons that cannot regenerate ammo reload <good>12.5%</good> of their base ammo every minute in combat.
+effect|MISSILE_RELOAD_PERCENT_PER_MINUTE|100.0	0	Missile weapons that cannot regenerate ammo reload <good>100%</good> of their base ammo every minute in combat.
+effect|MISSILE_RELOAD_PERCENT_PER_MINUTE|-10.0	0	Missile weapons that cannot regenerate ammo reload <good>-10%</good> of their base ammo every minute in combat.
+effect|MISSILE_RELOAD_PERCENT_PER_MINUTE|-12.5	0	Missile weapons that cannot regenerate ammo reload <good>-12.5%</good> of their base ammo every minute in combat.
 effect|MISSILE_WEAPON_AMMO_FLAT|1.0	0	Increases missile weapon ammo capacity by <good>1</good>.
 effect|MISSILE_WEAPON_AMMO_FLAT|10.0	0	Increases missile weapon ammo capacity by <good>10</good>.
 effect|MISSILE_WEAPON_AMMO_FLAT|12.5	0	Increases missile weapon ammo capacity by <good>12.5</good>.

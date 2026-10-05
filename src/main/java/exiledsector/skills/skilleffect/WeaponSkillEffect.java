@@ -49,6 +49,21 @@ public enum WeaponSkillEffect implements SkillEffect {
             WeaponStatFamily.RANGE.target(WeaponScope.ENERGY).apply(stats, modId, StatMode.FLAT, rangeBonus);
         }
     },
+    MISSILE_RELOAD_PERCENT_PER_MINUTE {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public boolean isConditional() {
+            return true;
+        }
+
+        @Override
+        public void advanceInCombat(ShipAPI ship, String modId, float magnitude, float amount) {
+            MissileReloader.advance(ship, modId, magnitude, amount);
+        }
+    },
     BALLISTIC_WEAPON_LARGE_OP_COST_FLAT {
         @Override
         public boolean lowerIsBetter() {

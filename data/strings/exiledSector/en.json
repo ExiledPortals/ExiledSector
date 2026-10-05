@@ -195,6 +195,7 @@
     "stat.weaponDamagePerDMod": "weapon damage per D-mod, up to 5 D-mods",
     "effect.GROUND_SUPPORT_PER_MAX_CREW_PERCENT": "Increases the effective strength of planetary raids by <good>{value}%</good> of this ship's maximum crew capacity (after modifiers), up to the total number of marines in the fleet.",
     "effect.BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_MULT": "Grants <good>{value}%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.",
+    "effect.MISSILE_RELOAD_PERCENT_PER_MINUTE": "Missile weapons that cannot regenerate ammo reload <good>{value}%</good> of their base ammo every minute in combat.",
     "effect.ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT": "Increases energy weapon range by <good>{value}</good> for every point of this ship's sensor strength (after modifiers).",
     "effect.ARMOR_FLAT_FOR_LOW_BASE_ARMOR": "Increases armor by up to <good>{most}</good>. Hulls with less base armor gain more: the bonus falls to <good>{least}</good> at <hl>{cutoff}</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.",
     "effect.ARMOR_FLAT_FOR_LOW_BASE_ARMOR.hullSize": "Increases armor by up to <good>{most}</good>. Hulls with less base armor gain more: the bonus falls to <good>{least}</good> at <hl>{cutoff}</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.",

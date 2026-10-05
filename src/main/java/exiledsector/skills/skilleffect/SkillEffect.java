@@ -36,6 +36,10 @@ public interface SkillEffect {
     default void advanceInCombat(ShipAPI ship, String modId, float magnitude) {
     }
 
+    default void advanceInCombat(ShipAPI ship, String modId, float magnitude, float amount) {
+        advanceInCombat(ship, modId, magnitude);
+    }
+
     default void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
     }
 

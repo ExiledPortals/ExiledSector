@@ -33,7 +33,7 @@ final class ShipCombatPlan {
             vanillaEffect.advanceInCombat(ship, amount);
         }
         for (AppliedEffect conditional : conditionalEffects) {
-            conditional.effect().advanceInCombat(ship, conditional.modId(), conditional.magnitude());
+            conditional.effect().advanceInCombat(ship, conditional.modId(), conditional.magnitude(), amount);
         }
         if (!temporaryNodes.isEmpty()) {
             expireTemporaryNodes(ship);
