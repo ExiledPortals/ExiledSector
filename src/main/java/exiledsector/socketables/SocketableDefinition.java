@@ -52,6 +52,18 @@ public record SocketableDefinition(String id, SocketableKind kind, String name, 
         return pool;
     }
 
+    public PoolEntry rollRange(String effectName) {
+        PoolEntry range = null;
+        for (PoolEntry entry : pool()) {
+            if (!entry.effectName().equals(effectName)) {
+                continue;
+            }
+            range = range == null ? entry : new PoolEntry(effectName, Math.min(range.min(), entry.min()),
+                    Math.max(range.max(), entry.max()), range.weight());
+        }
+        return range;
+    }
+
     public boolean isPrefix(String effectName) {
         return prefixes.stream().anyMatch(entry -> entry.effectName().equals(effectName));
     }

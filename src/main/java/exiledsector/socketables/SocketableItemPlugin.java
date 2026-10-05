@@ -35,8 +35,13 @@ public class SocketableItemPlugin extends BaseSpecialItemPlugin {
     }
 
     @Override
+    public boolean isTooltipExpandable() {
+        return true;
+    }
+
+    @Override
     public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, CargoTransferHandlerAPI transferHandler, Object stackSource) {
-        SocketableTooltip.write(tooltip, preview, () -> List.of(Translation.styled("socketable.tooltip.storage")));
+        SocketableTooltip.write(tooltip, preview, () -> List.of(Translation.styled("socketable.tooltip.storage")), expanded);
         addCostLabel(tooltip, SocketableTooltip.PAD, transferHandler, stackSource);
     }
 

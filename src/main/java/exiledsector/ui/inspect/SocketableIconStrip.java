@@ -58,6 +58,7 @@ final class SocketableIconStrip extends BaseCustomUIPanelPlugin {
 
     @Override
     public void advance(float amount) {
+        tooltip.refreshIfExpansionChanged();
         if (queued.isEmpty()) {
             return;
         }

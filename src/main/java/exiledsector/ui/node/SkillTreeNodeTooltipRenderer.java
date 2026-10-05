@@ -74,7 +74,7 @@ final class SkillTreeNodeTooltipRenderer {
                         ? buildTooltipText(font, socketed.name(), TOOLTIP_TITLE_FONT_SIZE, socketed.rarity().color())
                         : buildTooltipText(font, titleText(effectiveType, hidden), TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR));
         Body body = tooltipBodies.get(node.getId(), signature,
-                id -> buildBody(font, describe(effectiveType, hidden, free, showOptionalHint, socket, socketed), expanded));
+                id -> buildBody(font, describe(effectiveType, hidden, free, showOptionalHint, socket, socketed, expanded), expanded));
 
         List<SkillTreeTooltipTable> tables = showOptionalHint || hidden ? List.of() : tablesFor(font, effectiveType);
         SkillTreePanelStyle.TooltipText flavour = hidden || socketed != null ? null : flavourFor(font, effectiveType);
@@ -133,12 +133,12 @@ final class SkillTreeNodeTooltipRenderer {
     }
 
     private NodeDescription describe(SkillType effectiveType, boolean hidden, boolean free, boolean showOptionalHint, boolean socket,
-                                     Socketable socketed) {
+                                     Socketable socketed, boolean expanded) {
         if (hidden) {
             return new NodeDescription(List.of(plainLine("ui.node.lockedBody"), plainLine("ui.node.lockedHint")), List.of());
         }
         if (socketed != null) {
-            List<DescriptionLine> lines = socketed.effectLines().stream().map(line -> new DescriptionLine(line, false)).toList();
+            List<DescriptionLine> lines = socketed.effectLines(expanded).stream().map(line -> new DescriptionLine(line, false)).toList();
             return new NodeDescription(lines, free ? List.of(plainLine("ui.node.freeNote")) : List.of());
         }
         List<DescriptionLine> effects = new ArrayList<>();

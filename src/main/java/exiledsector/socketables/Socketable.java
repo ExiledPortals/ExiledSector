@@ -106,9 +106,14 @@ public abstract class Socketable {
     }
 
     public List<StyledText> effectLines() {
+        return effectLines(false);
+    }
+
+    public List<StyledText> effectLines(boolean withRollRanges) {
+        SocketableDefinition definition = withRollRanges ? definition() : null;
         List<StyledText> lines = new ArrayList<>();
         for (RolledEffect effect : effects) {
-            StyledText description = effect.description();
+            StyledText description = effect.description(definition == null ? null : definition.rollRange(effect.effectName()));
             if (description != null) {
                 lines.add(description);
             }

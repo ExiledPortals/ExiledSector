@@ -33,11 +33,39 @@ public final class RolledEffect {
     }
 
     public StyledText description() {
+        return description(null);
+    }
+
+    public StyledText description(SocketableDefinition.PoolEntry range) {
         SkillEffect effect = effect();
         if (effect == null) {
             return null;
         }
+        StyledText text = display(effect, magnitude);
+        if (range == null || range.min() == range.max() || text.spans().isEmpty()) {
+            return text;
+        }
+        float low = Math.abs(range.min()) <= Math.abs(range.max()) ? range.min() : range.max();
+        float high = low == range.min() ? range.max() : range.min();
+        String lowText = valueText(effect, low);
+        String highText = valueText(effect, high);
+        if (lowText == null || highText == null) {
+            return text;
+        }
+        return text.insert(text.spans().get(0).end(), " (" + lowText + "-" + highText + ")");
+    }
+
+    private static StyledText display(SkillEffect effect, float magnitude) {
         return new DescriptionLine(effect.description(magnitude), effect.lowerIsBetter()).display();
+    }
+
+    private static String valueText(SkillEffect effect, float magnitude) {
+        StyledText text = effect.description(magnitude);
+        if (text.spans().isEmpty()) {
+            return null;
+        }
+        StyledText.Span value = text.spans().get(0);
+        return text.plain().substring(value.start(), value.end());
     }
 
     @Override

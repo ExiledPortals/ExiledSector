@@ -21,7 +21,7 @@ public final class SocketableTooltip {
     private SocketableTooltip() {
     }
 
-    public static void write(TooltipMakerAPI tooltip, Socketable socketable, Supplier<List<StyledText>> footer) {
+    public static void write(TooltipMakerAPI tooltip, Socketable socketable, Supplier<List<StyledText>> footer, boolean showRollRanges) {
         I18n.forGameText(() -> {
             tooltip.setTitleOrbitronVeryLarge();
             tooltip.setParaInsigniaVeryLarge();
@@ -34,7 +34,7 @@ public final class SocketableTooltip {
                     tooltip.addPara("%s", 0f, Misc.getGrayColor(), Misc.getGrayColor(), name.baseName());
                 }
                 addLines(tooltip, socketable.headerLines(), Misc.getGrayColor());
-                List<StyledText> effects = socketable.effectLines();
+                List<StyledText> effects = socketable.effectLines(showRollRanges);
                 if (!effects.isEmpty()) {
                     tooltip.addSectionHeading(Translation.text("socketable.tooltip.primaryData"), Alignment.MID, PAD);
                     addLines(tooltip, effects, Misc.getTextColor());

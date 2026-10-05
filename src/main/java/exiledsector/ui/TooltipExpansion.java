@@ -16,6 +16,10 @@ public final class TooltipExpansion {
         return expanded;
     }
 
+    public static boolean isExpandedOrHeld() {
+        return expanded || (Keyboard.isCreated() && Keyboard.isKeyDown(HOTKEY));
+    }
+
     public static boolean isToggle(InputEventAPI event) {
         return event.isKeyDownEvent() && event.getEventValue() == HOTKEY;
     }

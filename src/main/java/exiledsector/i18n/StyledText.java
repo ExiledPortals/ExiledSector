@@ -59,6 +59,17 @@ public record StyledText(String plain, List<Span> spans) {
         return new StyledText(plain + other.plain, combined);
     }
 
+    public StyledText insert(int index, String literal) {
+        List<Span> shifted = new ArrayList<>(spans.size());
+        int length = literal.length();
+        for (Span span : spans) {
+            int start = span.start() >= index ? span.start() + length : span.start();
+            int end = span.end() > index ? span.end() + length : span.end();
+            shifted.add(new Span(start, end, span.style()));
+        }
+        return new StyledText(plain.substring(0, index) + literal + plain.substring(index), shifted);
+    }
+
     public static StyledText join(StyledText separator, List<StyledText> parts) {
         StyledText joined = EMPTY;
         for (int i = 0; i < parts.size(); i++) {

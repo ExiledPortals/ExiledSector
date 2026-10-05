@@ -29,6 +29,13 @@ class StyledTextTest {
     }
 
     @Test
+    void insertingTextShiftsTheSpansAfterItAndLeavesTheOnesBeforeIt() {
+        StyledText text = StyledText.parse("<good>10%</good> more <bad>hull</bad>.");
+
+        assertEquals("<good>10%</good> (8%-12%) more <bad>hull</bad>.", text.insert(3, " (8%-12%)").toMarkup());
+    }
+
+    @Test
     void rejectsOverlappingOrOutOfRangeSpans() {
         assertThrows(IllegalArgumentException.class, () -> new StyledText("abc", List.of(
                 new StyledText.Span(0, 2, Style.GOOD), new StyledText.Span(1, 3, Style.BAD))));

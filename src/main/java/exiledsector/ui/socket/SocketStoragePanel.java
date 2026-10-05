@@ -256,6 +256,9 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
                 }
             }
         }
+        if (root != null) {
+            hoverTooltip.refreshIfExpansionChanged();
+        }
         if (root == null || searchField == null || confirm != null) {
             return;
         }
