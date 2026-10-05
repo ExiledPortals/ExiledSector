@@ -366,8 +366,9 @@ public final class SkillTreeNodeRenderer {
 
         float nodeAlpha = alphaMult * search.nodeAlpha(node, allocation);
         if (tier == SkillTier.SOCKET) {
-            socketRenderer.drawFrame(nodeX, nodeY, footprintSize, allocated, style.getAccentColor(), socketedIcon(data, node),
-                    iconTint(node, allocation, allocated), nodeAlpha);
+            socketRenderer.drawFrame(nodeX, nodeY, footprintSize, allocated, style.getAccentColor(), nodeAlpha);
+            socketRenderer.drawContent(nodeX, nodeY, footprintSize, socketedIcon(data, node), iconTint(node, allocation, allocated),
+                    nodeAlpha);
         }
         ringRenderer.draw(nodeX, nodeY, footprintSize, nodeAlpha, SkillTreeNodeRingRenderer.RingState.of(allocated, breathing), zoom, node);
 

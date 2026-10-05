@@ -25,8 +25,8 @@ final class SkillTreeSocketRenderer {
     private static final String BOTTOM_RIGHT = FRAME_PREFIX + "bot_right.png";
     private static final float CORNER_RATIO = 0.25f;
     private static final float CONTENT_RATIO = 0.7f;
-    private static final float EDGE_MARGIN_RATIO = 8f / 31f;
-    private static final float BEVEL_RATIO = 27f / 31f;
+    private static final float EDGE_MARGIN_RATIO = 10f / 31f;
+    private static final float BEVEL_RATIO = 30f / 31f;
 
     private static final Color UNALLOCATED_TINT = new Color(120, 120, 120);
     private static final float UNALLOCATED_ALPHA = 0.6f;
@@ -56,8 +56,7 @@ final class SkillTreeSocketRenderer {
                 towardX, towardY);
     }
 
-    void drawFrame(float cx, float cy, float size, boolean allocated, Color accent, String contentIconPath, Color iconTint,
-                   float alphaMult) {
+    void drawFrame(float cx, float cy, float size, boolean allocated, Color accent, float alphaMult) {
         Color tint = allocated ? allocatedTint(accent) : UNALLOCATED_TINT;
         float alpha = allocated ? alphaMult : alphaMult * UNALLOCATED_ALPHA;
         float half = size / 2f;
@@ -74,7 +73,9 @@ final class SkillTreeSocketRenderer {
         drawPiece(TOP_RIGHT, cx + edgeOffset, cy + edgeOffset, corner, corner, tint, alpha);
         drawPiece(BOTTOM_LEFT, cx - edgeOffset, cy - edgeOffset, corner, corner, tint, alpha);
         drawPiece(BOTTOM_RIGHT, cx + edgeOffset, cy - edgeOffset, corner, corner, tint, alpha);
+    }
 
+    void drawContent(float cx, float cy, float size, String contentIconPath, Color iconTint, float alphaMult) {
         if (contentIconPath != null && !contentIconPath.isEmpty()) {
             float contentSize = size * CONTENT_RATIO;
             SpriteDraw.drawAtCenter(spriteCache, contentIconPath, cx, cy, contentSize, contentSize, iconTint, alphaMult);
@@ -91,17 +92,17 @@ final class SkillTreeSocketRenderer {
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
         for (SocketArcs.Arc arc : arcs.arcs(nodeId)) {
             float alpha = arc.alpha() * alphaMult;
-            drawArcStrip(fringe, arc, cx, cy, half, size * ARC_FRINGE_WIDTH_RATIO, accent, alpha);
-            drawArcStrip(core, arc, cx, cy, half, size * ARC_CORE_WIDTH_RATIO, ARC_CORE_COLOR, alpha);
+            Misc.setColor(accent, alpha);
+            drawArcStrip(fringe, arc, cx, cy, half, size * ARC_FRINGE_WIDTH_RATIO);
+            Misc.setColor(ARC_CORE_COLOR, alpha);
+            drawArcStrip(core, arc, cx, cy, half, size * ARC_CORE_WIDTH_RATIO);
         }
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
     }
 
-    private static void drawArcStrip(SpriteAPI texture, SocketArcs.Arc arc, float cx, float cy, float half, float width,
-                                     Color color, float alpha) {
+    private static void drawArcStrip(SpriteAPI texture, SocketArcs.Arc arc, float cx, float cy, float half, float width) {
         texture.bindTexture();
-        Misc.setColor(color, alpha);
         int last = arc.pointCount() - 1;
         float texWidth = texture.getTextureWidth();
         float texHeight = texture.getTextureHeight();
