@@ -3209,7 +3209,7 @@
 			"name": "Modular Hull Socket",
 			"icon": "",
 			"tier": "SOCKET",
-			"description": "An empty compartment stripped back to bare frame and power conduit. Domain subroutines need hardware to run on, and officers and specialist teams need somewhere to live and work. Whatever you install here will have a place aboard."
+			"description": "An empty compartment in this ship stripped back to bare frame and power conduits. You could store artifacts, specialist teams or important staff here to improve the workings of your ship."
 		},
 		{
 			"id": "pd_damage_to_missiles",

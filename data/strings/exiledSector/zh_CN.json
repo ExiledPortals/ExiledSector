@@ -242,11 +242,7 @@
     "node.requires.req_non_phase_hull": "不能在相位舰船上分配。",
     "node.requires.req_system_charges": "只能在舰船系统或防御系统使用充能的舰船上分配。",
     "node.temporary": "这些效果仅在舰船部署后的前{seconds}秒内生效。",
-    "node.socket.holds": "可容纳一个子程序、军官、团队或AI核心。",
-    "ui.node.socket.empty": "未安装任何物品。",
-    "ui.node.socket.installed": "已安装：<hl>{name}</hl>",
     "ui.node.socket.installHint": "在插槽仓库中选择一件物品，然后点击此插槽进行安装。",
-    "ui.node.socket.removeHint": "右键点击可将其移除并放回插槽仓库。",
     "socketable.unknown": "无法识别的船体插槽模块",
     "socketable.kind.subroutine": "子程序",
     "socketable.kind.officer": "军官",
@@ -725,5 +721,5 @@
     "skillType.frozen_heart.description": "query. hull?. scanning. [HULL] collect, amass, gather, fuse, keep. 核心从未停歇。它所容纳的一切也是如此。",
     "skillType.crustacean_integration.description": "你来决定这些龙虾死得多快。",
     "skillType.wormhole.description": "分配此虫洞会自动分配与其配对的虫洞，无需额外消耗，从而连接技能树的两个分支。\n\n取消分配任意一端都会同时取消两端。\n\n按住Ctrl点击虫洞即可穿越。",
-    "skillType.modular_hull_socket.description": "一间被拆到只剩骨架和能源导管的空舱室。人类领域的子程序需要运行它们的硬件，军官和专业团队需要生活和工作的地方。无论你在这里安装什么，它都能在船上找到一席之地。"
+    "skillType.modular_hull_socket.description": "这艘船上一间被拆到只剩骨架和能源导管的空舱室。你可以在这里存放文物、专业团队或重要人员，以改善船只的运作。"
 }
