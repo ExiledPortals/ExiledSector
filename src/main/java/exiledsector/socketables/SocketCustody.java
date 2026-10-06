@@ -66,6 +66,20 @@ public final class SocketCustody {
         return owned;
     }
 
+    public static boolean isInstalled(Socketable socketable) {
+        return isInstalled(ShipSkillDataManager.all(), socketable);
+    }
+
+    static boolean isInstalled(Map<String, ShipSkillData> ships, Socketable socketable) {
+        String id = socketable.id();
+        for (ShipSkillData data : ships.values()) {
+            if (data.getSocketedItems().containsValue(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static void recordLostInCombat(Collection<FleetMemberAPI> members) {
         Set<String> lost = lostInCombat();
         members.forEach(member -> lost.add(member.getId()));

@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -48,6 +49,17 @@ class SocketCustodyTest {
         data.socketItem("socket", socketable.id());
         ships.put(shipId, data);
         return socketable;
+    }
+
+    @Test
+    void anItemCountsAsInstalledOnlyWhileASocketHoldsIt() {
+        Socketable socketable = install("ship-a");
+        Socketable loose = store.add(SocketableDefinitions.get(SocketableFixtures.MILITARY), 7L);
+
+        assertTrue(SocketCustody.isInstalled(ships, socketable));
+        assertFalse(SocketCustody.isInstalled(ships, loose));
+        ships.get("ship-a").unsocketItem("socket");
+        assertFalse(SocketCustody.isInstalled(ships, socketable));
     }
 
     @Test

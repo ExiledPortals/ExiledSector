@@ -15,6 +15,7 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.socketables.SocketCustody;
 import exiledsector.socketables.Socketable;
 import exiledsector.socketables.SocketableDefinition;
 import exiledsector.socketables.SocketableRarity;
@@ -198,6 +199,9 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     public void refresh(Function<Socketable, String> installedIn) {
         this.installedIn = installedIn;
         queued.add(() -> {
+            if (pendingDestroy != null && SocketCustody.isInstalled(pendingDestroy)) {
+                closeConfirm();
+            }
             reloadRows();
             rebuildGrid();
         });
@@ -294,6 +298,10 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     private void handleButton(Object id) {
         if (confirm != null) {
             if (id == Control.CONFIRM_DESTROY) {
+                if (SocketCustody.isInstalled(pendingDestroy)) {
+                    closeConfirm();
+                    return;
+                }
                 if (pendingDestroy == selected) {
                     listener.selected(null);
                 }
