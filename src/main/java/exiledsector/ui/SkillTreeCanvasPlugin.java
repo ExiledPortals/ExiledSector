@@ -78,6 +78,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final CustomPanelAPI host;
     private SocketStoragePanel storagePanel;
     private Socketable placing;
+    private SkillNode targetSocket;
     private int storageRevision;
     private Map<String, FleetMemberAPI> ownedShips = Map.of();
     private final float shipCardHeight;
@@ -326,6 +327,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         }
         if (placing != null) {
             stopPlacing();
+        } else if (targetSocket != null && storagePanel != null) {
+            clearTargetSocket();
         } else if (storagePanel != null) {
             storagePanel.close();
         }
@@ -377,6 +380,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             storagePanel.close();
         } else if (nodeRenderer.statsRevision() != storageRevision) {
             refreshStorage();
+            if (targetSocket != null && !nodeRenderer.isAllocatedSocket(targetSocket)) {
+                clearTargetSocket();
+            }
         }
     }
 
@@ -430,7 +436,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                     public void selected(Socketable socketable) {
                         if (socketable == null) {
                             stopPlacing();
-                        } else {
+                        } else if (!installInTargetSocket(socketable)) {
                             startPlacing(socketable);
                         }
                     }
@@ -439,9 +445,42 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                     public void closed() {
                         storagePanel = null;
                         stopPlacing();
+                        clearTargetSocket();
                         refreshStorageButtonLabel();
                     }
                 });
+        storagePanel.setTargetingSocket(targetSocket != null);
+    }
+
+    private void setTargetSocket(SkillNode socket) {
+        stopPlacing();
+        targetSocket = socket;
+        nodeRenderer.setTargetedSocket(socket);
+        if (storagePanel != null) {
+            storagePanel.setTargetingSocket(socket != null);
+        }
+    }
+
+    private void clearTargetSocket() {
+        targetSocket = null;
+        nodeRenderer.setTargetedSocket(null);
+        if (storagePanel != null) {
+            storagePanel.setTargetingSocket(false);
+        }
+    }
+
+    private boolean installInTargetSocket(Socketable socketable) {
+        if (targetSocket == null) {
+            return false;
+        }
+        if (!nodeRenderer.isAllocatedSocket(targetSocket)) {
+            clearTargetSocket();
+            return false;
+        }
+        if (nodeRenderer.installInSocket(targetSocket, socketable)) {
+            refreshStorage();
+        }
+        return true;
     }
 
     private void handleHyperspaceEvent(InputEventAPI event) {
@@ -574,8 +613,11 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                     nodeRenderer.toggleAllocation(pendingClickNode, false);
                 }
                 if (nodeRenderer.isAllocated(pendingClickNode)) {
+                    setTargetSocket(pendingClickNode);
                     openStorage();
                 }
+            } else if (targetSocket != null && storagePanel != null && nodeRenderer.isAllocatedSocket(pendingClickNode)) {
+                setTargetSocket(pendingClickNode);
             } else if (jumpTarget != null) {
                 cameraPan = new CameraPanAnimation(-panX / zoom, panY / zoom, jumpTarget.getOffsetX(), jumpTarget.getOffsetY());
                 nodeRenderer.launchWormholeGhosts(pendingClickNode, jumpTarget);

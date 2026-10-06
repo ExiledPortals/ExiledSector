@@ -155,6 +155,10 @@ final class SkillTreeNodeRingRenderer {
         pulseElapsed.put(nodeId, 0f);
     }
 
+    boolean isPulsing(String nodeId) {
+        return pulseElapsed.containsKey(nodeId);
+    }
+
     float reach(float footprintSize, SkillNode node) {
         float reach = footprintSize * REACH_FOOTPRINT_RATIO;
         if (node.getType().getTier() == SkillTier.KEYSTONE) {

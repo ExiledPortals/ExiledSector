@@ -63,6 +63,7 @@ public final class SkillTreeNodeRenderer {
     private final BooleanSupplier pointsLeft;
 
     private SkillType lastChosenOptionalOption;
+    private String targetedSocketId;
     private LazyFont.DrawableString startingRootPrompt;
     private NodeAllocator.Snapshot snapshot;
     private SkillTreeTemplate template;
@@ -163,6 +164,9 @@ public final class SkillTreeNodeRenderer {
     public void advance(float amount) {
         rootChoice.advance(amount);
         ringRenderer.advance(amount);
+        if (targetedSocketId != null && !ringRenderer.isPulsing(targetedSocketId)) {
+            ringRenderer.startPulse(targetedSocketId);
+        }
         connectorFills.advance(amount, startPulse);
         ghostRenderer.advance(amount);
         socketRenderer.advance(amount);
@@ -205,6 +209,17 @@ public final class SkillTreeNodeRenderer {
         dropdownRenderer.close();
         respecRun = new RespecRun(plan);
         return true;
+    }
+
+    public boolean isAllocatedSocket(SkillNode node) {
+        return node != null && node.getType().getTier() == SkillTier.SOCKET && isAllocated(node);
+    }
+
+    public void setTargetedSocket(SkillNode socket) {
+        targetedSocketId = socket == null ? null : socket.getId();
+        if (targetedSocketId != null) {
+            ringRenderer.startPulse(targetedSocketId);
+        }
     }
 
     public boolean isAllocated(SkillNode node) {

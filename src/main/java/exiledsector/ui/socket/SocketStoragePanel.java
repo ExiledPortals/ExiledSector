@@ -114,6 +114,7 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     private float searchDelay;
     private List<SocketStorageRow> rows = List.of();
     private Socketable selected;
+    private boolean targetingSocket;
     private Socketable pendingDestroy;
     private final List<Runnable> queued = new ArrayList<>();
     private int movedFromCargo;
@@ -181,6 +182,14 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
 
     public void setSelected(Socketable socketable) {
         selected = socketable;
+        queued.add(() -> rebuildFooter(SocketStorageQuery.apply(rows, filter).size()));
+    }
+
+    public void setTargetingSocket(boolean targeting) {
+        if (targeting == targetingSocket) {
+            return;
+        }
+        targetingSocket = targeting;
         queued.add(() -> rebuildFooter(SocketStorageQuery.apply(rows, filter).size()));
     }
 
@@ -437,6 +446,9 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         if (selected != null) {
             noticeElement.addPara("%s", 0f, Misc.getPositiveHighlightColor(), Misc.getPositiveHighlightColor(),
                     Translation.msg("ui.socketStorage.placingHint").arg("name", selected.name()).text());
+        } else if (targetingSocket) {
+            noticeElement.addPara("%s", 0f, Misc.getPositiveHighlightColor(), Misc.getPositiveHighlightColor(),
+                    Translation.text("ui.socketStorage.targetHint"));
         } else if (movedFromCargo > 0) {
             noticeElement.addPara("%s", 0f, Misc.getPositiveHighlightColor(), Misc.getPositiveHighlightColor(),
                     Translation.msg("ui.socketStorage.moved").count(movedFromCargo).arg("count", movedFromCargo).text());
@@ -482,11 +494,12 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         pendingDestroy = null;
     }
 
-    private static List<StyledText> cellFooter(SocketStorageRow row) {
+    private List<StyledText> cellFooter(SocketStorageRow row) {
         if (row.installed()) {
             return List.of(Translation.msg("ui.socketStorage.cell.installed").arg("ship", row.installedIn()).styled());
         }
-        return List.of(Translation.styled("ui.socketStorage.cell.free"), Translation.styled("ui.socketStorage.cell.destroy"));
+        String install = targetingSocket ? "ui.socketStorage.cell.freeTarget" : "ui.socketStorage.cell.free";
+        return List.of(Translation.styled(install), Translation.styled("ui.socketStorage.cell.destroy"));
     }
 
     private void cellHovered(SocketStorageRow row, PositionAPI cell) {
