@@ -1,12 +1,9 @@
 package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.combat.CollisionClass;
-import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamagingProjectileAPI;
-import com.fs.starfarer.api.combat.ProximityFuseAIAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
@@ -28,23 +25,20 @@ final class PierceDrone implements DamageDealtModifier, AdvanceableListener {
     private static final float CLEARANCE = 10f;
     private static final float RANGE_TOLERANCE = 1f;
     private static final float MIN_TRAVEL_SPEED = 100f;
-    private static final float TRAVEL_TIMEOUT_MARGIN_SECONDS = 0.25f;
 
-    private enum State {IDLE, TRAVELLING, FIRING}
+    private enum State {IDLE, CROSSING, FIRING}
 
     private final ShipAPI drone;
     private final WeaponAPI weapon;
     private final PierceDrones pool;
     private final String weaponId;
-    private final Vector2f impact = new Vector2f();
     private final Vector2f origin = new Vector2f();
     private final Vector2f localImpact = new Vector2f();
     private final Vector2f direction = new Vector2f();
     private ShipAPI hitShip;
     private State state = State.IDLE;
-    private CombatEntityAPI visual;
-    private float travelDistance;
-    private float travelTimeout;
+    private float crossingSeconds;
+    private float travelFacing;
     private float fireFacing;
     private boolean shotSeen;
     private boolean removed;
@@ -84,16 +78,14 @@ final class PierceDrone implements DamageDealtModifier, AdvanceableListener {
         }
         this.hitShip = hitShip;
         direction.set(Misc.getUnitVectorAtDegreeAngle(travelFacing));
-        impact.set(impactPoint);
         toShipFrame(hitShip, impactPoint, localImpact);
         updateOrigin();
-        travelDistance = MathUtils.getDistance(impact, origin);
-        fireFacing = travelFacing + MathUtils.getRandomNumberInRange(-MAX_DEVIATION_DEGREES, MAX_DEVIATION_DEGREES);
-        park();
-        visual = spawnVisual(travelFacing);
         float speed = Math.max(MIN_TRAVEL_SPEED, weapon.getProjectileSpeed());
-        travelTimeout = travelDistance / speed * 2f + TRAVEL_TIMEOUT_MARGIN_SECONDS;
-        state = State.TRAVELLING;
+        crossingSeconds = MathUtils.getDistance(impactPoint, origin) / speed;
+        this.travelFacing = travelFacing;
+        fireFacing = travelFacing;
+        park();
+        state = State.CROSSING;
         stateSeconds = 0f;
         idleSeconds = 0f;
     }
@@ -108,7 +100,7 @@ final class PierceDrone implements DamageDealtModifier, AdvanceableListener {
             markersMirrored = true;
         }
         switch (state) {
-            case TRAVELLING -> advanceTravelling(amount);
+            case CROSSING -> advanceCrossing(amount);
             case FIRING -> advanceFiring(amount);
             case IDLE -> {
                 idleSeconds += amount;
@@ -131,22 +123,18 @@ final class PierceDrone implements DamageDealtModifier, AdvanceableListener {
         removed = true;
         state = State.IDLE;
         hitShip = null;
-        removeVisual();
         Global.getCombatEngine().removeEntity(drone);
         pool.forget(this);
     }
 
-    private void advanceTravelling(float amount) {
+    private void advanceCrossing(float amount) {
         stateSeconds += amount;
-        CombatEngineAPI engine = Global.getCombatEngine();
-        boolean arrived = visual == null || !engine.isEntityInPlay(visual)
-                || MathUtils.getDistance(visual.getLocation(), impact) >= travelDistance || stateSeconds >= travelTimeout;
         updateOrigin();
-        if (!arrived) {
+        if (stateSeconds < crossingSeconds) {
             park();
             return;
         }
-        removeVisual();
+        fireFacing = travelFacing + deviationAwayFrom(hitShip);
         hitShip = null;
         state = State.FIRING;
         stateSeconds = 0f;
@@ -173,21 +161,14 @@ final class PierceDrone implements DamageDealtModifier, AdvanceableListener {
         }
     }
 
-    private CombatEntityAPI spawnVisual(float travelFacing) {
-        CombatEntityAPI spawned = Global.getCombatEngine().spawnProjectile(pool.firingShip(), null, weaponId, new Vector2f(impact),
-                travelFacing, new Vector2f());
-        if (spawned == null) {
-            return null;
+    private float deviationAwayFrom(ShipAPI ship) {
+        float deviation = MathUtils.getRandomNumberInRange(0f, MAX_DEVIATION_DEGREES);
+        if (ship == null) {
+            return deviation;
         }
-        spawned.setCollisionClass(CollisionClass.NONE);
-        if (spawned instanceof DamagingProjectileAPI projectile) {
-            projectile.setDamageAmount(0f);
-            if (projectile.getAI() instanceof ProximityFuseAIAPI fuse) {
-                fuse.updateDamage();
-            }
-            BallisticPierceListener.markPierced(projectile);
-        }
-        return spawned;
+        Vector2f fromCentre = Vector2f.sub(origin, ship.getLocation(), null);
+        float side = direction.x * fromCentre.y - direction.y * fromCentre.x;
+        return side >= 0f ? deviation : -deviation;
     }
 
     private void updateOrigin() {
@@ -216,13 +197,6 @@ final class PierceDrone implements DamageDealtModifier, AdvanceableListener {
         float cos = (float) Math.cos(radians);
         float sin = (float) Math.sin(radians);
         return new Vector2f(ship.getLocation().x + local.x * cos - local.y * sin, ship.getLocation().y + local.x * sin + local.y * cos);
-    }
-
-    private void removeVisual() {
-        if (visual != null && Global.getCombatEngine().isEntityInPlay(visual)) {
-            Global.getCombatEngine().removeEntity(visual);
-        }
-        visual = null;
     }
 
     private void tagShots() {
