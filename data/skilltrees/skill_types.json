@@ -578,6 +578,22 @@
 			]
 		},
 		{
+			"id": "hull_breacher",
+			"name": "Hull Breacher Rounds",
+			"icon": "graphics/icons/explosion3_shifted.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT",
+					"magnitude": 20
+				}
+			],
+			"tags": [
+				"ballistic",
+				"req_ballistic"
+			]
+		},
+		{
 			"id": "ballistic_momentum",
 			"name": "Ballistic Momentum",
 			"icon": "graphics/icons/ballistic_momentum.png",

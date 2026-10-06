@@ -3793,13 +3793,26 @@
 			"connectedTo": [
 				"hegemony_1",
 				"small_flux_optional_57",
-				"small_flux_optional_59"
+				"small_flux_optional_59",
+				"ballistic_projectile_speed_5"
 			],
 			"x": -5640,
 			"y": 10413,
 			"orbitAnchorId": "hegemony_inner",
 			"orbitAngle": 270,
 			"pairedWith": "hegemony_1",
+			"tags": [
+				"hegemony"
+			]
+		},
+		{
+			"id": "hull_breacher_1",
+			"type": "hull_breacher",
+			"connectedTo": [
+				"ballistic_projectile_speed_6"
+			],
+			"x": -5642,
+			"y": 11106,
 			"tags": [
 				"hegemony"
 			]
@@ -5744,6 +5757,32 @@
 			"orbitAngle": 180,
 			"tags": [
 				"sindrian_dictat"
+			]
+		},
+		{
+			"id": "ballistic_projectile_speed_5",
+			"type": "ballistic_projectile_speed",
+			"connectedTo": [
+				"ballistic_projectile_speed_6",
+				"hegemony_2"
+			],
+			"x": -5642,
+			"y": 10649,
+			"tags": [
+				"hegemony"
+			]
+		},
+		{
+			"id": "ballistic_projectile_speed_6",
+			"type": "ballistic_projectile_speed",
+			"connectedTo": [
+				"ballistic_projectile_speed_5",
+				"hull_breacher_1"
+			],
+			"x": -5642,
+			"y": 10881,
+			"tags": [
+				"hegemony"
 			]
 		}
 	],
