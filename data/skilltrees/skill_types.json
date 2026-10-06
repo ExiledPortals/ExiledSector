@@ -251,7 +251,7 @@
 			"effects": [
 				{
 					"effect": "WEAPON_AUTOFIRE_ACCURACY_PERCENT",
-					"magnitude": 20
+					"magnitude": 100
 				},
 				{
 					"effect": "ENERGY_WEAPON_RANGE_PERCENT",

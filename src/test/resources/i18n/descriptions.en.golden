@@ -2770,23 +2770,23 @@ type|live_munitions|CRUISER|2	0	Each Heartless stack increases missile top speed
 type|live_munitions|CAPITAL_SHIP|0	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
 type|live_munitions|CAPITAL_SHIP|1	0	Each Heartless stack increases missile damage by <good>3%</good> while the fleet has crew left to give.
 type|live_munitions|CAPITAL_SHIP|2	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
-type|machine_precision|null|0	0	<good>20%</good> increased target leading accuracy of autofiring weapons.
+type|machine_precision|null|0	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
 type|machine_precision|null|1	0	<good>5%</good> increased energy weapon range.
 type|machine_precision|null|2	0	<good>5%</good> increased ballistic weapon range.
 type|machine_precision|null|3	0	<good>5%</good> increased beam weapon range.
-type|machine_precision|FRIGATE|0	0	<good>20%</good> increased target leading accuracy of autofiring weapons.
+type|machine_precision|FRIGATE|0	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
 type|machine_precision|FRIGATE|1	0	<good>5%</good> increased energy weapon range.
 type|machine_precision|FRIGATE|2	0	<good>5%</good> increased ballistic weapon range.
 type|machine_precision|FRIGATE|3	0	<good>5%</good> increased beam weapon range.
-type|machine_precision|DESTROYER|0	0	<good>20%</good> increased target leading accuracy of autofiring weapons.
+type|machine_precision|DESTROYER|0	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
 type|machine_precision|DESTROYER|1	0	<good>5%</good> increased energy weapon range.
 type|machine_precision|DESTROYER|2	0	<good>5%</good> increased ballistic weapon range.
 type|machine_precision|DESTROYER|3	0	<good>5%</good> increased beam weapon range.
-type|machine_precision|CRUISER|0	0	<good>20%</good> increased target leading accuracy of autofiring weapons.
+type|machine_precision|CRUISER|0	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
 type|machine_precision|CRUISER|1	0	<good>5%</good> increased energy weapon range.
 type|machine_precision|CRUISER|2	0	<good>5%</good> increased ballistic weapon range.
 type|machine_precision|CRUISER|3	0	<good>5%</good> increased beam weapon range.
-type|machine_precision|CAPITAL_SHIP|0	0	<good>20%</good> increased target leading accuracy of autofiring weapons.
+type|machine_precision|CAPITAL_SHIP|0	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
 type|machine_precision|CAPITAL_SHIP|1	0	<good>5%</good> increased energy weapon range.
 type|machine_precision|CAPITAL_SHIP|2	0	<good>5%</good> increased ballistic weapon range.
 type|machine_precision|CAPITAL_SHIP|3	0	<good>5%</good> increased beam weapon range.
@@ -3669,7 +3669,7 @@ summary|option0|FRIGATE|104	1	<bad>10%</bad> reduced energy damage taken, includ
 summary|option0|FRIGATE|105	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
 summary|option0|FRIGATE|106	0	Each Heartless stack increases missile damage by <good>3%</good> while the fleet has crew left to give.
 summary|option0|FRIGATE|107	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
-summary|option0|FRIGATE|108	0	<good>20%</good> increased target leading accuracy of autofiring weapons.
+summary|option0|FRIGATE|108	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
 summary|option0|FRIGATE|109	0	<good>5%</good> increased beam weapon range.
 summary|option0|FRIGATE|110	0	Removes the penalties of a civilian-grade hull.
 summary|option0|FRIGATE|111	1	<good>100%</good> increased minimum crew required.
@@ -3841,7 +3841,7 @@ summary|option0|DESTROYER|104	1	<bad>10%</bad> reduced energy damage taken, incl
 summary|option0|DESTROYER|105	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
 summary|option0|DESTROYER|106	0	Each Heartless stack increases missile damage by <good>3%</good> while the fleet has crew left to give.
 summary|option0|DESTROYER|107	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
-summary|option0|DESTROYER|108	0	<good>20%</good> increased target leading accuracy of autofiring weapons.
+summary|option0|DESTROYER|108	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
 summary|option0|DESTROYER|109	0	<good>5%</good> increased beam weapon range.
 summary|option0|DESTROYER|110	0	Removes the penalties of a civilian-grade hull.
 summary|option0|DESTROYER|111	1	<good>100%</good> increased minimum crew required.
@@ -4013,7 +4013,7 @@ summary|option0|CRUISER|104	1	<bad>10%</bad> reduced energy damage taken, includ
 summary|option0|CRUISER|105	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
 summary|option0|CRUISER|106	0	Each Heartless stack increases missile damage by <good>3%</good> while the fleet has crew left to give.
 summary|option0|CRUISER|107	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
-summary|option0|CRUISER|108	0	<good>20%</good> increased target leading accuracy of autofiring weapons.
+summary|option0|CRUISER|108	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
 summary|option0|CRUISER|109	0	<good>5%</good> increased beam weapon range.
 summary|option0|CRUISER|110	0	Removes the penalties of a civilian-grade hull.
 summary|option0|CRUISER|111	1	<good>100%</good> increased minimum crew required.
@@ -4185,7 +4185,7 @@ summary|option0|CAPITAL_SHIP|104	1	<bad>10%</bad> reduced energy damage taken, i
 summary|option0|CAPITAL_SHIP|105	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
 summary|option0|CAPITAL_SHIP|106	0	Each Heartless stack increases missile damage by <good>3%</good> while the fleet has crew left to give.
 summary|option0|CAPITAL_SHIP|107	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
-summary|option0|CAPITAL_SHIP|108	0	<good>20%</good> increased target leading accuracy of autofiring weapons.
+summary|option0|CAPITAL_SHIP|108	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
 summary|option0|CAPITAL_SHIP|109	0	<good>5%</good> increased beam weapon range.
 summary|option0|CAPITAL_SHIP|110	0	Removes the penalties of a civilian-grade hull.
 summary|option0|CAPITAL_SHIP|111	1	<good>100%</good> increased minimum crew required.
@@ -4357,7 +4357,7 @@ summary|option1|FRIGATE|104	1	<bad>10%</bad> reduced energy damage taken, includ
 summary|option1|FRIGATE|105	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
 summary|option1|FRIGATE|106	0	Each Heartless stack increases missile damage by <good>3%</good> while the fleet has crew left to give.
 summary|option1|FRIGATE|107	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
-summary|option1|FRIGATE|108	0	<good>20%</good> increased target leading accuracy of autofiring weapons.
+summary|option1|FRIGATE|108	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
 summary|option1|FRIGATE|109	0	<good>5%</good> increased beam weapon range.
 summary|option1|FRIGATE|110	0	Removes the penalties of a civilian-grade hull.
 summary|option1|FRIGATE|111	1	<good>100%</good> increased minimum crew required.
@@ -4529,7 +4529,7 @@ summary|option1|DESTROYER|104	1	<bad>10%</bad> reduced energy damage taken, incl
 summary|option1|DESTROYER|105	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
 summary|option1|DESTROYER|106	0	Each Heartless stack increases missile damage by <good>3%</good> while the fleet has crew left to give.
 summary|option1|DESTROYER|107	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
-summary|option1|DESTROYER|108	0	<good>20%</good> increased target leading accuracy of autofiring weapons.
+summary|option1|DESTROYER|108	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
 summary|option1|DESTROYER|109	0	<good>5%</good> increased beam weapon range.
 summary|option1|DESTROYER|110	0	Removes the penalties of a civilian-grade hull.
 summary|option1|DESTROYER|111	1	<good>100%</good> increased minimum crew required.
@@ -4701,7 +4701,7 @@ summary|option1|CRUISER|104	1	<bad>10%</bad> reduced energy damage taken, includ
 summary|option1|CRUISER|105	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
 summary|option1|CRUISER|106	0	Each Heartless stack increases missile damage by <good>3%</good> while the fleet has crew left to give.
 summary|option1|CRUISER|107	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
-summary|option1|CRUISER|108	0	<good>20%</good> increased target leading accuracy of autofiring weapons.
+summary|option1|CRUISER|108	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
 summary|option1|CRUISER|109	0	<good>5%</good> increased beam weapon range.
 summary|option1|CRUISER|110	0	Removes the penalties of a civilian-grade hull.
 summary|option1|CRUISER|111	1	<good>100%</good> increased minimum crew required.
@@ -4873,7 +4873,7 @@ summary|option1|CAPITAL_SHIP|104	1	<bad>10%</bad> reduced energy damage taken, i
 summary|option1|CAPITAL_SHIP|105	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
 summary|option1|CAPITAL_SHIP|106	0	Each Heartless stack increases missile damage by <good>3%</good> while the fleet has crew left to give.
 summary|option1|CAPITAL_SHIP|107	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
-summary|option1|CAPITAL_SHIP|108	0	<good>20%</good> increased target leading accuracy of autofiring weapons.
+summary|option1|CAPITAL_SHIP|108	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
 summary|option1|CAPITAL_SHIP|109	0	<good>5%</good> increased beam weapon range.
 summary|option1|CAPITAL_SHIP|110	0	Removes the penalties of a civilian-grade hull.
 summary|option1|CAPITAL_SHIP|111	1	<good>100%</good> increased minimum crew required.
@@ -5045,7 +5045,7 @@ summary|option2|FRIGATE|104	1	<bad>10%</bad> reduced energy damage taken, includ
 summary|option2|FRIGATE|105	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
 summary|option2|FRIGATE|106	0	Each Heartless stack increases missile damage by <good>3%</good> while the fleet has crew left to give.
 summary|option2|FRIGATE|107	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
-summary|option2|FRIGATE|108	0	<good>20%</good> increased target leading accuracy of autofiring weapons.
+summary|option2|FRIGATE|108	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
 summary|option2|FRIGATE|109	0	<good>5%</good> increased beam weapon range.
 summary|option2|FRIGATE|110	0	Removes the penalties of a civilian-grade hull.
 summary|option2|FRIGATE|111	1	<good>100%</good> increased minimum crew required.
@@ -5218,7 +5218,7 @@ summary|option2|DESTROYER|104	1	<bad>10%</bad> reduced energy damage taken, incl
 summary|option2|DESTROYER|105	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
 summary|option2|DESTROYER|106	0	Each Heartless stack increases missile damage by <good>3%</good> while the fleet has crew left to give.
 summary|option2|DESTROYER|107	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
-summary|option2|DESTROYER|108	0	<good>20%</good> increased target leading accuracy of autofiring weapons.
+summary|option2|DESTROYER|108	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
 summary|option2|DESTROYER|109	0	<good>5%</good> increased beam weapon range.
 summary|option2|DESTROYER|110	0	Removes the penalties of a civilian-grade hull.
 summary|option2|DESTROYER|111	1	<good>100%</good> increased minimum crew required.
@@ -5391,7 +5391,7 @@ summary|option2|CRUISER|104	1	<bad>10%</bad> reduced energy damage taken, includ
 summary|option2|CRUISER|105	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
 summary|option2|CRUISER|106	0	Each Heartless stack increases missile damage by <good>3%</good> while the fleet has crew left to give.
 summary|option2|CRUISER|107	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
-summary|option2|CRUISER|108	0	<good>20%</good> increased target leading accuracy of autofiring weapons.
+summary|option2|CRUISER|108	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
 summary|option2|CRUISER|109	0	<good>5%</good> increased beam weapon range.
 summary|option2|CRUISER|110	0	Removes the penalties of a civilian-grade hull.
 summary|option2|CRUISER|111	1	<good>100%</good> increased minimum crew required.
@@ -5564,7 +5564,7 @@ summary|option2|CAPITAL_SHIP|104	1	<bad>10%</bad> reduced energy damage taken, i
 summary|option2|CAPITAL_SHIP|105	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
 summary|option2|CAPITAL_SHIP|106	0	Each Heartless stack increases missile damage by <good>3%</good> while the fleet has crew left to give.
 summary|option2|CAPITAL_SHIP|107	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
-summary|option2|CAPITAL_SHIP|108	0	<good>20%</good> increased target leading accuracy of autofiring weapons.
+summary|option2|CAPITAL_SHIP|108	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
 summary|option2|CAPITAL_SHIP|109	0	<good>5%</good> increased beam weapon range.
 summary|option2|CAPITAL_SHIP|110	0	Removes the penalties of a civilian-grade hull.
 summary|option2|CAPITAL_SHIP|111	1	<good>100%</good> increased minimum crew required.
