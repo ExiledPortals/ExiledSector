@@ -14,7 +14,6 @@ import exiledsector.skills.unlock.HiddenNodeDisplayConfig;
 import exiledsector.skills.unlock.UnlockConditionOverrides;
 import exiledsector.ui.inspect.NpcInspectConfig;
 import exiledsector.ui.refit.RefitButtonConfig;
-import exiledsector.ui.socket.SocketStorageConfig;
 import lunalib.lunaSettings.LunaSettings.SettingsCreator;
 
 import static exiledsector.ExiledSectorModPlugin.MOD_ID;
@@ -57,9 +56,6 @@ public final class ExiledSectorSettings {
                 RefitButtonConfig.DEFAULT, MAIN_TAB);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_socketStorageHeader", Translation.text("settings.socketStorage.header"), MAIN_TAB);
-        SettingsCreator.addKeybind(MOD_ID, SocketStorageConfig.FAVOURITE_KEY_FIELD_ID,
-                Translation.text("settings.socketStorage.favouriteKey.name"), Translation.text("settings.socketStorage.favouriteKey.tooltip"),
-                SocketStorageConfig.DEFAULT_FAVOURITE_KEY, MAIN_TAB);
         SettingsCreator.addBoolean(MOD_ID, SalvageSiteCompat.DROPS_FIELD_ID,
                 Translation.text("settings.socketStorage.otherModDrops.name"), Translation.text("settings.socketStorage.otherModDrops.tooltip"),
                 SalvageSiteCompat.DEFAULT_DROPS, MAIN_TAB);

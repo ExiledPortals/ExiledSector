@@ -48,19 +48,18 @@ class SocketableSaveTest {
     }
 
     @Test
-    void aFavouriteSurvivesASaveAndOlderSavesLoadAsNotFavourite() throws Exception {
+    void savesFromWhenSocketablesCouldBeFavouritedStillLoad() throws Exception {
         SocketableDefinition military = SocketableFixtures.registerMilitary();
         SocketableStore store = new SocketableStore();
-        store.add(military, 1L).toggleFavourite();
-        store.add(military, 2L);
+        Socketable saved = store.add(military, 1L);
+        XStream gameLike = xstream();
+        gameLike.ignoreUnknownElements();
 
-        String xml = xstream().toXML(store);
-        SocketableStore loaded = (SocketableStore) xstream().fromXML(xml);
-        SocketableStore older = (SocketableStore) xstream().fromXML(xml.replaceAll("\\s*<favourite>[^<]*</favourite>", ""));
+        String xml = xstream().toXML(store).replace("</effects>", "</effects>\n<favourite>true</favourite>");
+        SocketableStore loaded = (SocketableStore) gameLike.fromXML(xml);
 
-        assertTrue(loaded.owned().get(0).isFavourite());
-        assertFalse(loaded.owned().get(1).isFavourite());
-        assertFalse(older.owned().get(0).isFavourite());
+        assertTrue(xml.contains("<favourite>true</favourite>"), xml);
+        assertEquals(saved.effects(), loaded.owned().get(0).effects());
     }
 
     @Test

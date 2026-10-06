@@ -16,7 +16,6 @@ public abstract class Socketable {
     private final String definitionId;
     private final long seed;
     private final List<RolledEffect> effects;
-    private boolean favourite;
     private FrozenName frozenName;
 
     protected Socketable(String id, String definitionId, long seed, List<RolledEffect> effects) {
@@ -42,14 +41,6 @@ public abstract class Socketable {
 
     public List<RolledEffect> effects() {
         return Collections.unmodifiableList(effects);
-    }
-
-    public boolean isFavourite() {
-        return favourite;
-    }
-
-    public void toggleFavourite() {
-        favourite = !favourite;
     }
 
     public SocketableDefinition definition() {

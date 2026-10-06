@@ -61,8 +61,8 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     private static final float CONFIRM_HEIGHT = 130f;
     private static final float SEARCH_DELAY_SECONDS = 0.25f;
     private static final float INSTALLED_ICON_ALPHA = 0.35f;
-    private static final float FAVOURITE_GLOW_WIDTH = 14f;
-    private static final float FAVOURITE_GLOW_ALPHA = 0.6f;
+    private static final float CELL_GLOW_WIDTH = 14f;
+    private static final float CELL_GLOW_ALPHA = 0.6f;
     private static final Color CELL_BACKGROUND = new Color(0, 0, 0, 200);
     private static final SpriteCache ICONS = new SpriteCache(SocketStoragePanel.class);
 
@@ -483,25 +483,10 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     }
 
     private static List<StyledText> cellFooter(SocketStorageRow row) {
-        String favouriteKey = row.socketable().isFavourite() ? "ui.socketStorage.cell.unfavourite" : "ui.socketStorage.cell.favourite";
-        StyledText favourite = Translation.msg(favouriteKey).arg("key", Keyboard.getKeyName(SocketStorageConfig.favouriteKey())).styled();
         if (row.installed()) {
-            return List.of(Translation.msg("ui.socketStorage.cell.installed").arg("ship", row.installedIn()).styled(), favourite);
+            return List.of(Translation.msg("ui.socketStorage.cell.installed").arg("ship", row.installedIn()).styled());
         }
-        return List.of(Translation.styled("ui.socketStorage.cell.free"), Translation.styled("ui.socketStorage.cell.destroy"), favourite);
-    }
-
-    private boolean isSearchFocused() {
-        return searchField != null && searchField.hasFocus();
-    }
-
-    private void cellFavouriteToggled(SocketStorageRow row, PositionAPI cell) {
-        row.socketable().toggleFavourite();
-        queued.add(() -> {
-            if (hoverTooltip.isShowing(row)) {
-                showHoverTooltip(row, cell);
-            }
-        });
+        return List.of(Translation.styled("ui.socketStorage.cell.free"), Translation.styled("ui.socketStorage.cell.destroy"));
     }
 
     private void cellHovered(SocketStorageRow row, PositionAPI cell) {
@@ -549,14 +534,10 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
             GLDraw.fillQuad(position.getX(), position.getY(), position.getWidth(), position.getHeight(), CELL_BACKGROUND, alphaMult);
             boolean chosen = row.socketable() == owner.selected;
             Color border = chosen ? Misc.getBrightPlayerColor() : row.rarity().color();
-            boolean favourite = row.socketable().isFavourite();
-            if (favourite) {
-                GLDraw.innerGlow(position.getX(), position.getY(), position.getWidth(), position.getHeight(), FAVOURITE_GLOW_WIDTH,
-                        row.rarity().color(), FAVOURITE_GLOW_ALPHA * alphaMult);
-            }
-            float borderAlpha = chosen || hovered || favourite ? 1f : 0.55f;
+            GLDraw.innerGlow(position.getX(), position.getY(), position.getWidth(), position.getHeight(), CELL_GLOW_WIDTH,
+                    row.rarity().color(), CELL_GLOW_ALPHA * alphaMult);
             GLDraw.strokeQuad(position.getX(), position.getY(), position.getWidth(), position.getHeight(), border, chosen ? 3f : 1.5f,
-                    borderAlpha * alphaMult);
+                    alphaMult);
         }
 
         @Override
@@ -597,10 +578,6 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
                     event.consume();
                 } else if (inside && event.isRMBDownEvent()) {
                     owner.cellRightClicked(row);
-                    event.consume();
-                } else if (hovered && !owner.isSearchFocused() && event.isKeyDownEvent()
-                        && event.getEventValue() == SocketStorageConfig.favouriteKey()) {
-                    owner.cellFavouriteToggled(row, position);
                     event.consume();
                 }
             }
