@@ -27,6 +27,7 @@ import exiledsector.persistence.OpSpentSlotManager;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
 import exiledsector.skills.NodeReplacements;
+import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillTree;
@@ -60,6 +61,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
 
     public static final String LOG_TAG = "ExiledSector";
     public static final String MOD_ID = "exiledSector";
+    static final String SHIP_SKILL_DATA_ALIAS = "exiledSector.ShipSkillData";
     public static final List<String> LOCALISED_HULLMODS = List.of(SkillTreeHullMod.ID, SkillConflictWarningHullMod.ID);
 
     @Override
@@ -147,6 +149,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
     @Override
     public void configureXStream(XStream x) {
         SocketableSaveAliases.register(x);
+        x.alias(SHIP_SKILL_DATA_ALIAS, ShipSkillData.class);
     }
 
     @Override
