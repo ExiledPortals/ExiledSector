@@ -52,7 +52,7 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
 
         @Override
         public String blockAllocationReason(ShipFacts ship, ShieldAPI.ShieldType currentShieldType) {
-            return ship.phaseHull() ? null : "Requires a phase hull.";
+            return ship.phaseHull() ? null : Translation.text("node.block.phaseHull");
         }
     };
 

@@ -2,6 +2,7 @@ package exiledsector.ui.node;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
+import com.fs.starfarer.api.characters.SkillSpecAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
@@ -373,6 +374,9 @@ class NodeAllocatorTest {
         when(spec.getDisplayName()).thenReturn("Heavy Armor");
         when(settings.getHullModSpec("heavyarmor")).thenReturn(spec);
         when(variant.hasTag("sc_inactive_smods_heavyarmor")).thenReturn(true);
+        SkillSpecAPI skill = mock(SkillSpecAPI.class);
+        when(skill.getName()).thenReturn("Best of the Best");
+        when(settings.getSkillSpec("best_of_the_best")).thenReturn(skill);
 
         assertEquals("Ship has a deactivated Heavy Armor S-mod that Best of the Best will restore.",
                 blockReason(allocatorStartingAt(root), armorType));

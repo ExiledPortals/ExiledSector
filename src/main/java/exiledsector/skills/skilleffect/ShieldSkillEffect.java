@@ -45,7 +45,7 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
         @Override
         public String blockAllocationReason(ShipFacts ship, ShieldAPI.ShieldType currentShieldType) {
             boolean hasShields = currentShieldType == ShieldAPI.ShieldType.FRONT || currentShieldType == ShieldAPI.ShieldType.OMNI;
-            return hasShields ? null : "Ship has no shields.";
+            return hasShields ? null : Translation.text("node.block.noShields");
         }
     },
     CREATE_FRONT_SHIELD_IF_NONE {
@@ -81,7 +81,7 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
         @Override
         public String blockAllocationReason(ShipFacts ship, ShieldAPI.ShieldType currentShieldType) {
             if (currentShieldType == ShieldAPI.ShieldType.FRONT) {
-                return "Ship already has front shields.";
+                return Translation.text("node.block.hasFrontShield");
             }
             return phaseHullReason(currentShieldType);
         }
@@ -102,7 +102,7 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
         @Override
         public String blockAllocationReason(ShipFacts ship, ShieldAPI.ShieldType currentShieldType) {
             if (currentShieldType == ShieldAPI.ShieldType.OMNI) {
-                return "Ship already has omni-directional shields.";
+                return Translation.text("node.block.hasOmniShield");
             }
             return phaseHullReason(currentShieldType);
         }

@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
+import com.fs.starfarer.api.characters.SkillSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.FighterWingSpecAPI;
@@ -43,7 +44,7 @@ import java.util.function.Supplier;
 final class NodeAllocator {
 
     static final String LOCKED_REASON = "Unidentified - explore the sector to discover this node.";
-    private static final String WRONG_HULL_SIZE_REASON = "This node can't be allocated on this hull size.";
+    private static final String BEST_OF_THE_BEST_SKILL_ID = "best_of_the_best";
 
     record Snapshot(ShipSkillData data, String satisfiedRootId, ShipOpBudget budget, int totalOpBudget, int opCostPerNode,
                     int maxAllocatedNodes, int revision, Set<String> hiddenNodeIds, Set<String> allocatableNodeIds) {
@@ -288,8 +289,8 @@ final class NodeAllocator {
         if (have >= itemCost.quantity()) {
             return null;
         }
-        return "Requires " + itemCost.formattedQuantity() + " " + itemCost.commodityName()
-                + " (have " + SkillItemCost.formatQuantity(have) + ").";
+        return Translation.msg("node.block.itemCost").arg("quantity", itemCost.formattedQuantity()).arg("item", itemCost.commodityName())
+                .arg("have", SkillItemCost.formatQuantity(have)).text();
     }
 
     private void refreshVariantHullMods() {
@@ -302,14 +303,20 @@ final class NodeAllocator {
         return InstalledHullMods.hasHullModOfItsOwn(variant, hullModId) || SecondInCommandCompat.hasDeactivatedSMod(variant, hullModId);
     }
 
+    private static String bestOfTheBestName() {
+        SkillSpecAPI spec = Global.getSettings().getSkillSpec(BEST_OF_THE_BEST_SKILL_ID);
+        return spec == null ? BEST_OF_THE_BEST_SKILL_ID : spec.getName();
+    }
+
     private String describe(NodeEligibility.Block block) {
         return switch (block.kind()) {
-            case WRONG_HULL_SIZE -> WRONG_HULL_SIZE_REASON;
+            case WRONG_HULL_SIZE -> Translation.text("node.block.wrongHullSize");
             case UNMET_HULL_REQUIREMENT -> Translation.text("node.requires." + block.detail());
             case HULL_MOD_CONFLICT -> variant.hasHullMod(block.detail())
-                    ? "Ship already has " + HullModNames.displayName(block.detail()) + " installed."
-                    : "Ship has a deactivated " + HullModNames.displayName(block.detail()) + " S-mod that Best of the Best will restore.";
-            case TYPE_CONFLICT -> "Already have " + block.conflictingType().getDisplayName() + " allocated.";
+                    ? Translation.msg("node.block.hullModInstalled").arg("hullmod", HullModNames.displayName(block.detail())).text()
+                    : Translation.msg("node.block.deactivatedSMod").arg("hullmod", HullModNames.displayName(block.detail()))
+                            .arg("skill", bestOfTheBestName()).text();
+            case TYPE_CONFLICT -> Translation.msg("node.block.typeAllocated").arg("node", block.conflictingType().getDisplayName()).text();
             case EFFECT_BLOCK -> block.detail();
         };
     }
