@@ -137,7 +137,7 @@
     "effect.EXPLODE_ON_DEATH": "本舰被摧毁时会剧烈爆炸，对附近舰船造成最高相当于其最大燃料容量{value}%的高爆伤害，伤害随距离衰减。",
     "effect.NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT": "命中敌方护盾的非光束能量武器有{value}%的几率发生折射：同一武器会从该护盾处向武器射程内最近的另一艘敌舰射出同样的弹体。折射出的弹体命中敌方护盾时，有相同的几率再次折射。",
     "effect.NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT": "每次折射造成的伤害比上一发降低<bad>{value}%</bad>。",
-    "effect.BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT": "实弹武器的弹丸命中敌舰装甲或船体时，有{value}%的几率贯穿：弹丸穿过舰体，同一武器从另一侧发射一枚副本，弹道略有偏移。贯穿后的弹丸不会再次贯穿。",
+    "effect.BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT": "实弹武器的弹丸命中敌舰装甲或船体时，有{value}%的几率贯穿。贯穿后的弹丸不会再次贯穿。",
     "effect.ESCORT_MANEUVER_BONUS_PERCENT": "处于更大的友方舰船范围内时，机动性（加速度、减速度和转向速度）最多提高{value}%，随距离减弱。驱逐舰为主力舰护航时效果翻倍。",
     "effect.ESCORT_SPEED_BONUS_PERCENT": "处于更大的友方舰船范围内时，最高速度最多提高{value}%，随距离减弱。驱逐舰为主力舰护航时效果翻倍。",
     "effect.ESCORT_WEAPON_RANGE_BONUS_PERCENT": "处于更大的友方舰船范围内时，实弹和能量武器射程最多提高{value}%，随距离减弱。驱逐舰为主力舰护航时效果翻倍。",

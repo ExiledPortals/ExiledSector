@@ -130,12 +130,12 @@ effect|BALLISTIC_WEAPON_LARGE_OP_COST_FLAT|12.5	1	Increases ordnance point cost 
 effect|BALLISTIC_WEAPON_LARGE_OP_COST_FLAT|100.0	1	Increases ordnance point cost of large ballistic weapons by <good>100</good>.
 effect|BALLISTIC_WEAPON_LARGE_OP_COST_FLAT|-10.0	1	Decreases ordnance point cost of large ballistic weapons by <bad>10</bad>.
 effect|BALLISTIC_WEAPON_LARGE_OP_COST_FLAT|-12.5	1	Decreases ordnance point cost of large ballistic weapons by <bad>12.5</bad>.
-effect|BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT|1.0	0	Ballistic projectile hits on an enemy ship's armor or hull have a 1% chance to pierce: the shot carries on through the ship and the same weapon fires a copy of it out of the far side, tumbling slightly off its original line. A pierced shot cannot pierce again.
-effect|BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT|10.0	0	Ballistic projectile hits on an enemy ship's armor or hull have a 10% chance to pierce: the shot carries on through the ship and the same weapon fires a copy of it out of the far side, tumbling slightly off its original line. A pierced shot cannot pierce again.
-effect|BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT|12.5	0	Ballistic projectile hits on an enemy ship's armor or hull have a 12.5% chance to pierce: the shot carries on through the ship and the same weapon fires a copy of it out of the far side, tumbling slightly off its original line. A pierced shot cannot pierce again.
-effect|BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT|100.0	0	Ballistic projectile hits on an enemy ship's armor or hull have a 100% chance to pierce: the shot carries on through the ship and the same weapon fires a copy of it out of the far side, tumbling slightly off its original line. A pierced shot cannot pierce again.
-effect|BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT|-10.0	0	Ballistic projectile hits on an enemy ship's armor or hull have a -10% chance to pierce: the shot carries on through the ship and the same weapon fires a copy of it out of the far side, tumbling slightly off its original line. A pierced shot cannot pierce again.
-effect|BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT|-12.5	0	Ballistic projectile hits on an enemy ship's armor or hull have a -12.5% chance to pierce: the shot carries on through the ship and the same weapon fires a copy of it out of the far side, tumbling slightly off its original line. A pierced shot cannot pierce again.
+effect|BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT|1.0	0	Ballistic projectile hits on an enemy ship's armor or hull have a 1% chance to pierce. A pierced shot cannot pierce again.
+effect|BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT|10.0	0	Ballistic projectile hits on an enemy ship's armor or hull have a 10% chance to pierce. A pierced shot cannot pierce again.
+effect|BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT|12.5	0	Ballistic projectile hits on an enemy ship's armor or hull have a 12.5% chance to pierce. A pierced shot cannot pierce again.
+effect|BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT|100.0	0	Ballistic projectile hits on an enemy ship's armor or hull have a 100% chance to pierce. A pierced shot cannot pierce again.
+effect|BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT|-10.0	0	Ballistic projectile hits on an enemy ship's armor or hull have a -10% chance to pierce. A pierced shot cannot pierce again.
+effect|BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT|-12.5	0	Ballistic projectile hits on an enemy ship's armor or hull have a -12.5% chance to pierce. A pierced shot cannot pierce again.
 effect|BALLISTIC_WEAPON_PROJECTILE_SPEED_MULT|1.0	0	<good>1%</good> more ballistic weapon projectile speed.
 effect|BALLISTIC_WEAPON_PROJECTILE_SPEED_MULT|10.0	0	<good>10%</good> more ballistic weapon projectile speed.
 effect|BALLISTIC_WEAPON_PROJECTILE_SPEED_MULT|12.5	0	<good>12.5%</good> more ballistic weapon projectile speed.
@@ -2692,11 +2692,11 @@ type|hull|FRIGATE|0	0	<good>2%</good> more hull points.
 type|hull|DESTROYER|0	0	<good>2%</good> more hull points.
 type|hull|CRUISER|0	0	<good>2%</good> more hull points.
 type|hull|CAPITAL_SHIP|0	0	<good>2%</good> more hull points.
-type|hull_breacher|null|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce: the shot carries on through the ship and the same weapon fires a copy of it out of the far side, tumbling slightly off its original line. A pierced shot cannot pierce again.
-type|hull_breacher|FRIGATE|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce: the shot carries on through the ship and the same weapon fires a copy of it out of the far side, tumbling slightly off its original line. A pierced shot cannot pierce again.
-type|hull_breacher|DESTROYER|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce: the shot carries on through the ship and the same weapon fires a copy of it out of the far side, tumbling slightly off its original line. A pierced shot cannot pierce again.
-type|hull_breacher|CRUISER|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce: the shot carries on through the ship and the same weapon fires a copy of it out of the far side, tumbling slightly off its original line. A pierced shot cannot pierce again.
-type|hull_breacher|CAPITAL_SHIP|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce: the shot carries on through the ship and the same weapon fires a copy of it out of the far side, tumbling slightly off its original line. A pierced shot cannot pierce again.
+type|hull_breacher|null|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce. A pierced shot cannot pierce again.
+type|hull_breacher|FRIGATE|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce. A pierced shot cannot pierce again.
+type|hull_breacher|DESTROYER|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce. A pierced shot cannot pierce again.
+type|hull_breacher|CRUISER|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce. A pierced shot cannot pierce again.
+type|hull_breacher|CAPITAL_SHIP|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce. A pierced shot cannot pierce again.
 type|hull_multi|null|0	0	<good>5%</good> more hull points.
 type|hull_multi|FRIGATE|0	0	<good>5%</good> more hull points.
 type|hull_multi|DESTROYER|0	0	<good>5%</good> more hull points.
@@ -3671,7 +3671,7 @@ summary|option0|FRIGATE|95	0	This ship's sensor strength always contributes to f
 summary|option0|FRIGATE|96	0	Increases this ship's sensor strength by <good>90</good>.
 summary|option0|FRIGATE|97	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option0|FRIGATE|98	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
-summary|option0|FRIGATE|99	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce: the shot carries on through the ship and the same weapon fires a copy of it out of the far side, tumbling slightly off its original line. A pierced shot cannot pierce again.
+summary|option0|FRIGATE|99	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce. A pierced shot cannot pierce again.
 summary|option0|FRIGATE|100	0	<good>30%</good> more hull points.
 summary|option0|FRIGATE|101	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option0|FRIGATE|102	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
@@ -3844,7 +3844,7 @@ summary|option0|DESTROYER|95	0	This ship's sensor strength always contributes to
 summary|option0|DESTROYER|96	0	Increases this ship's sensor strength by <good>110</good>.
 summary|option0|DESTROYER|97	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option0|DESTROYER|98	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
-summary|option0|DESTROYER|99	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce: the shot carries on through the ship and the same weapon fires a copy of it out of the far side, tumbling slightly off its original line. A pierced shot cannot pierce again.
+summary|option0|DESTROYER|99	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce. A pierced shot cannot pierce again.
 summary|option0|DESTROYER|100	0	<good>30%</good> more hull points.
 summary|option0|DESTROYER|101	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option0|DESTROYER|102	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
@@ -4017,7 +4017,7 @@ summary|option0|CRUISER|95	0	This ship's sensor strength always contributes to f
 summary|option0|CRUISER|96	0	Increases this ship's sensor strength by <good>160</good>.
 summary|option0|CRUISER|97	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option0|CRUISER|98	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
-summary|option0|CRUISER|99	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce: the shot carries on through the ship and the same weapon fires a copy of it out of the far side, tumbling slightly off its original line. A pierced shot cannot pierce again.
+summary|option0|CRUISER|99	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce. A pierced shot cannot pierce again.
 summary|option0|CRUISER|100	0	<good>30%</good> more hull points.
 summary|option0|CRUISER|101	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option0|CRUISER|102	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
@@ -4190,7 +4190,7 @@ summary|option0|CAPITAL_SHIP|95	0	This ship's sensor strength always contributes
 summary|option0|CAPITAL_SHIP|96	0	Increases this ship's sensor strength by <good>220</good>.
 summary|option0|CAPITAL_SHIP|97	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option0|CAPITAL_SHIP|98	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
-summary|option0|CAPITAL_SHIP|99	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce: the shot carries on through the ship and the same weapon fires a copy of it out of the far side, tumbling slightly off its original line. A pierced shot cannot pierce again.
+summary|option0|CAPITAL_SHIP|99	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce. A pierced shot cannot pierce again.
 summary|option0|CAPITAL_SHIP|100	0	<good>30%</good> more hull points.
 summary|option0|CAPITAL_SHIP|101	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option0|CAPITAL_SHIP|102	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
@@ -4363,7 +4363,7 @@ summary|option1|FRIGATE|95	0	This ship's sensor strength always contributes to f
 summary|option1|FRIGATE|96	0	Increases this ship's sensor strength by <good>90</good>.
 summary|option1|FRIGATE|97	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option1|FRIGATE|98	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
-summary|option1|FRIGATE|99	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce: the shot carries on through the ship and the same weapon fires a copy of it out of the far side, tumbling slightly off its original line. A pierced shot cannot pierce again.
+summary|option1|FRIGATE|99	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce. A pierced shot cannot pierce again.
 summary|option1|FRIGATE|100	0	<good>30%</good> more hull points.
 summary|option1|FRIGATE|101	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option1|FRIGATE|102	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
@@ -4536,7 +4536,7 @@ summary|option1|DESTROYER|95	0	This ship's sensor strength always contributes to
 summary|option1|DESTROYER|96	0	Increases this ship's sensor strength by <good>110</good>.
 summary|option1|DESTROYER|97	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option1|DESTROYER|98	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
-summary|option1|DESTROYER|99	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce: the shot carries on through the ship and the same weapon fires a copy of it out of the far side, tumbling slightly off its original line. A pierced shot cannot pierce again.
+summary|option1|DESTROYER|99	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce. A pierced shot cannot pierce again.
 summary|option1|DESTROYER|100	0	<good>30%</good> more hull points.
 summary|option1|DESTROYER|101	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option1|DESTROYER|102	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
@@ -4709,7 +4709,7 @@ summary|option1|CRUISER|95	0	This ship's sensor strength always contributes to f
 summary|option1|CRUISER|96	0	Increases this ship's sensor strength by <good>160</good>.
 summary|option1|CRUISER|97	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option1|CRUISER|98	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
-summary|option1|CRUISER|99	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce: the shot carries on through the ship and the same weapon fires a copy of it out of the far side, tumbling slightly off its original line. A pierced shot cannot pierce again.
+summary|option1|CRUISER|99	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce. A pierced shot cannot pierce again.
 summary|option1|CRUISER|100	0	<good>30%</good> more hull points.
 summary|option1|CRUISER|101	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option1|CRUISER|102	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
@@ -4882,7 +4882,7 @@ summary|option1|CAPITAL_SHIP|95	0	This ship's sensor strength always contributes
 summary|option1|CAPITAL_SHIP|96	0	Increases this ship's sensor strength by <good>220</good>.
 summary|option1|CAPITAL_SHIP|97	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option1|CAPITAL_SHIP|98	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
-summary|option1|CAPITAL_SHIP|99	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce: the shot carries on through the ship and the same weapon fires a copy of it out of the far side, tumbling slightly off its original line. A pierced shot cannot pierce again.
+summary|option1|CAPITAL_SHIP|99	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce. A pierced shot cannot pierce again.
 summary|option1|CAPITAL_SHIP|100	0	<good>30%</good> more hull points.
 summary|option1|CAPITAL_SHIP|101	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option1|CAPITAL_SHIP|102	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
@@ -5055,7 +5055,7 @@ summary|option2|FRIGATE|95	0	This ship's sensor strength always contributes to f
 summary|option2|FRIGATE|96	0	Increases this ship's sensor strength by <good>90</good>.
 summary|option2|FRIGATE|97	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option2|FRIGATE|98	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
-summary|option2|FRIGATE|99	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce: the shot carries on through the ship and the same weapon fires a copy of it out of the far side, tumbling slightly off its original line. A pierced shot cannot pierce again.
+summary|option2|FRIGATE|99	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce. A pierced shot cannot pierce again.
 summary|option2|FRIGATE|100	0	<good>182%</good> more hull points.
 summary|option2|FRIGATE|101	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option2|FRIGATE|102	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
@@ -5229,7 +5229,7 @@ summary|option2|DESTROYER|95	0	This ship's sensor strength always contributes to
 summary|option2|DESTROYER|96	0	Increases this ship's sensor strength by <good>110</good>.
 summary|option2|DESTROYER|97	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option2|DESTROYER|98	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
-summary|option2|DESTROYER|99	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce: the shot carries on through the ship and the same weapon fires a copy of it out of the far side, tumbling slightly off its original line. A pierced shot cannot pierce again.
+summary|option2|DESTROYER|99	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce. A pierced shot cannot pierce again.
 summary|option2|DESTROYER|100	0	<good>182%</good> more hull points.
 summary|option2|DESTROYER|101	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option2|DESTROYER|102	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
@@ -5403,7 +5403,7 @@ summary|option2|CRUISER|95	0	This ship's sensor strength always contributes to f
 summary|option2|CRUISER|96	0	Increases this ship's sensor strength by <good>160</good>.
 summary|option2|CRUISER|97	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option2|CRUISER|98	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
-summary|option2|CRUISER|99	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce: the shot carries on through the ship and the same weapon fires a copy of it out of the far side, tumbling slightly off its original line. A pierced shot cannot pierce again.
+summary|option2|CRUISER|99	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce. A pierced shot cannot pierce again.
 summary|option2|CRUISER|100	0	<good>182%</good> more hull points.
 summary|option2|CRUISER|101	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option2|CRUISER|102	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
@@ -5577,7 +5577,7 @@ summary|option2|CAPITAL_SHIP|95	0	This ship's sensor strength always contributes
 summary|option2|CAPITAL_SHIP|96	0	Increases this ship's sensor strength by <good>220</good>.
 summary|option2|CAPITAL_SHIP|97	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option2|CAPITAL_SHIP|98	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
-summary|option2|CAPITAL_SHIP|99	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce: the shot carries on through the ship and the same weapon fires a copy of it out of the far side, tumbling slightly off its original line. A pierced shot cannot pierce again.
+summary|option2|CAPITAL_SHIP|99	0	Ballistic projectile hits on an enemy ship's armor or hull have a 20% chance to pierce. A pierced shot cannot pierce again.
 summary|option2|CAPITAL_SHIP|100	0	<good>182%</good> more hull points.
 summary|option2|CAPITAL_SHIP|101	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option2|CAPITAL_SHIP|102	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
