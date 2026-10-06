@@ -121,12 +121,307 @@ function MakeCircularImage($srcPath, $destPath) {
     }
 }
 
+$utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+
+function Write-TextFileAtomic($path, $text) {
+    $fullPath = [System.IO.Path]::GetFullPath($path)
+    $directory = [System.IO.Path]::GetDirectoryName($fullPath)
+    $tempPath = Join-Path $directory ("." + [System.IO.Path]::GetFileName($fullPath) + "." + [Guid]::NewGuid().ToString("N") + ".tmp")
+    try {
+        [System.IO.File]::WriteAllText($tempPath, $text, $utf8NoBom)
+        if ([System.IO.File]::Exists($fullPath)) {
+            [System.IO.File]::Replace($tempPath, $fullPath, [NullString]::Value)
+        } else {
+            [System.IO.File]::Move($tempPath, $fullPath)
+        }
+    } finally {
+        if ([System.IO.File]::Exists($tempPath)) { [System.IO.File]::Delete($tempPath) }
+    }
+}
 
 function Write-JsonResponse($response, $statusCode, $payload) {
     $response.StatusCode = $statusCode
     $response.ContentType = "application/json; charset=utf-8"
     $bytes = [System.Text.Encoding]::UTF8.GetBytes(($payload | ConvertTo-Json))
     $response.OutputStream.Write($bytes, 0, $bytes.Length)
+}
+
+function Write-JsonArrayResponse($response, $items) {
+    $bytes = [System.Text.Encoding]::UTF8.GetBytes((ConvertTo-Json -InputObject @($items)))
+    $response.ContentType = "application/json; charset=utf-8"
+    $response.OutputStream.Write($bytes, 0, $bytes.Length)
+}
+
+function Write-FileResponse($response, $path, $contentType) {
+    $bytes = [System.IO.File]::ReadAllBytes($path)
+    $response.ContentType = $contentType
+    $response.OutputStream.Write($bytes, 0, $bytes.Length)
+}
+
+function Read-JsonBody($request) {
+    $reader = New-Object System.IO.StreamReader($request.InputStream, [System.Text.Encoding]::UTF8)
+    return $reader.ReadToEnd() | ConvertFrom-Json
+}
+
+function Get-ProjectRelativePath($fullPath) {
+    return $fullPath.Substring($fullProjectRoot.Length + 1) -replace '\\', '/'
+}
+
+$serveEditor = {
+    param($request, $response)
+    Write-FileResponse $response $editorPath "text/html; charset=utf-8"
+}
+
+$routes = @{
+    "GET /" = $serveEditor
+    "GET /index.html" = $serveEditor
+
+    "GET /data/types" = {
+        param($request, $response)
+        Write-FileResponse $response $typesPath "application/json; charset=utf-8"
+    }
+
+    "GET /data/tree" = {
+        param($request, $response)
+        Write-FileResponse $response $treePath "application/json; charset=utf-8"
+    }
+
+    "POST /save" = {
+        param($request, $response)
+        $body = Read-JsonBody $request
+        $typesOk = $true
+        $treeOk = $true
+        try { $null = $body.types | ConvertFrom-Json } catch { $typesOk = $false }
+        try { $null = $body.tree | ConvertFrom-Json } catch { $treeOk = $false }
+        if (-not $typesOk -or -not $treeOk) {
+            $parts = @()
+            if (-not $typesOk) { $parts += "skill_types.json body did not parse as JSON" }
+            if (-not $treeOk) { $parts += "ship_skill_tree.json body did not parse as JSON" }
+            Write-JsonResponse $response 400 @{ ok = $false; message = ("Nothing was written - " + ($parts -join "; ") + ".") }
+            return
+        }
+        Write-TextFileAtomic $typesPath $body.types
+        Write-TextFileAtomic $treePath $body.tree
+        Write-JsonResponse $response 200 @{ ok = $true; message = "Saved." }
+    }
+
+    "GET /data/socketables" = {
+        param($request, $response)
+        Write-FileResponse $response $socketablesPath "text/csv; charset=utf-8"
+    }
+
+    "POST /save-socketables" = {
+        param($request, $response)
+        $body = Read-JsonBody $request
+        $csv = [string]$body.csv
+        if (-not $csv.StartsWith("id,")) {
+            Write-JsonResponse $response 400 @{ ok = $false; message = "Nothing was written - the CSV must start with the id column." }
+            return
+        }
+        Write-TextFileAtomic $socketablesPath $csv
+        Write-JsonResponse $response 200 @{ ok = $true; message = "Saved." }
+    }
+
+    "GET /data/socketable-names" = {
+        param($request, $response)
+        Write-JsonResponse $response 200 @{
+            affixes = [System.IO.File]::ReadAllText($socketableAffixesPath, [System.Text.Encoding]::UTF8)
+            names = [System.IO.File]::ReadAllText($socketableNamesPath, [System.Text.Encoding]::UTF8)
+        }
+    }
+
+    "POST /save-socketable-names" = {
+        param($request, $response)
+        $body = Read-JsonBody $request
+        $affixes = [string]$body.affixes
+        $names = [string]$body.names
+        $namesOk = $true
+        try { $null = $names | ConvertFrom-Json } catch { $namesOk = $false }
+        if (-not $affixes.StartsWith("effect,")) {
+            Write-JsonResponse $response 400 @{ ok = $false; message = "Nothing was written - the affix CSV must start with the effect column." }
+            return
+        }
+        if (-not $namesOk) {
+            Write-JsonResponse $response 400 @{ ok = $false; message = "Nothing was written - socketable_names.json did not parse as JSON." }
+            return
+        }
+        Write-TextFileAtomic $socketableAffixesPath $affixes
+        Write-TextFileAtomic $socketableNamesPath $names
+        Write-JsonResponse $response 200 @{ ok = $true; message = "Saved." }
+    }
+
+    "GET /list-socketable-salvage" = {
+        param($request, $response)
+        $files = @("socketable_salvage.csv")
+        if (Test-Path $socketableSalvageCompatDir) {
+            $files += Get-ChildItem -Path $socketableSalvageCompatDir -Filter "*.csv" -File | Sort-Object Name |
+                ForEach-Object { "compat/salvage/" + $_.Name }
+        }
+        Write-JsonArrayResponse $response $files
+    }
+
+    "GET /data/socketable-salvage" = {
+        param($request, $response)
+        $path = Resolve-SalvagePath $request.QueryString["file"]
+        if (-not $path -or -not (Test-Path $path)) {
+            Write-JsonResponse $response 404 @{ ok = $false; message = "Unknown socketable drop file." }
+            return
+        }
+        Write-FileResponse $response $path "text/csv; charset=utf-8"
+    }
+
+    "POST /save-socketable-salvage" = {
+        param($request, $response)
+        $body = Read-JsonBody $request
+        $csv = [string]$body.csv
+        $path = Resolve-SalvagePath ([string]$body.file)
+        if (-not $path) {
+            Write-JsonResponse $response 400 @{ ok = $false; message = "Nothing was written - unknown socketable drop file." }
+            return
+        }
+        if (-not $csv.StartsWith("site,")) {
+            Write-JsonResponse $response 400 @{ ok = $false; message = "Nothing was written - the CSV must start with the site column." }
+            return
+        }
+        Write-TextFileAtomic $path $csv
+        Write-JsonResponse $response 200 @{ ok = $true; message = "Saved." }
+    }
+
+    "GET /list-images" = {
+        param($request, $response)
+        $files = @()
+        if (Test-Path $staticImagesDir) {
+            $files = Get-ChildItem -Path $staticImagesDir -Filter "*.png" -File |
+                Sort-Object Name |
+                ForEach-Object { "graphics/backgrounds/static_images/" + $_.Name }
+        }
+        Write-JsonArrayResponse $response $files
+    }
+
+    "GET /list-all-images" = {
+        param($request, $response)
+        $files = @()
+        if (Test-Path $graphicsDir) {
+            $files = Get-ChildItem -Path $graphicsDir -Filter "*.png" -File -Recurse |
+                ForEach-Object { $_.FullName.Substring($projectRoot.Length + 1) -replace '\\', '/' } |
+                Sort-Object
+        }
+        if (Test-Path $vanillaCargoIconsDir) {
+            $files = @($files) + @(Get-ChildItem -Path $vanillaCargoIconsDir -Filter "*.png" -File |
+                Sort-Object Name |
+                ForEach-Object { "graphics/icons/cargo/" + $_.Name })
+        }
+        Write-JsonArrayResponse $response $files
+    }
+
+    "POST /colorshift" = {
+        param($request, $response)
+        $body = Read-JsonBody $request
+        $suffix = ([string]$body.suffix).Trim()
+        $hueShift = 0
+        try { $hueShift = [double]$body.hueShift } catch { $hueShift = 0 }
+        $srcFull = Resolve-ProjectPath ([string]$body.path)
+        if (-not $srcFull -or -not (Test-Path $srcFull -PathType Leaf)) {
+            Write-JsonResponse $response 400 @{ ok = $false; message = "Source image not found." }
+            return
+        }
+        if (-not $suffix -or $suffix -match '[\\/:]') {
+            Write-JsonResponse $response 400 @{ ok = $false; message = "Suffix is required and cannot contain path separators." }
+            return
+        }
+        $dir = [System.IO.Path]::GetDirectoryName($srcFull)
+        $baseName = [System.IO.Path]::GetFileNameWithoutExtension($srcFull)
+        $destFull = Join-Path $dir ($baseName + "_" + $suffix + ".png")
+        try {
+            HueShiftImage $srcFull $destFull $hueShift
+            Write-JsonResponse $response 200 @{ ok = $true; path = (Get-ProjectRelativePath $destFull) }
+        } catch {
+            Write-JsonResponse $response 500 @{ ok = $false; message = $_.Exception.Message }
+        }
+    }
+
+    "POST /make-circular" = {
+        param($request, $response)
+        $body = Read-JsonBody $request
+        $suffix = ([string]$body.suffix).Trim()
+        $srcFull = Resolve-ProjectPath ([string]$body.path)
+        if (-not $srcFull -or -not (Test-Path $srcFull -PathType Leaf)) {
+            Write-JsonResponse $response 400 @{ ok = $false; message = "Source image not found." }
+            return
+        }
+        if (-not $suffix -or $suffix -match '[\\/:]') {
+            Write-JsonResponse $response 400 @{ ok = $false; message = "Suffix is required and cannot contain path separators." }
+            return
+        }
+        $dir = Join-Path $projectRoot "graphics\unused\circular"
+        if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Force -Path $dir | Out-Null }
+        $baseName = [System.IO.Path]::GetFileNameWithoutExtension($srcFull)
+        $destFull = Join-Path $dir ($baseName + "_" + $suffix + ".png")
+        try {
+            MakeCircularImage $srcFull $destFull
+            Write-JsonResponse $response 200 @{ ok = $true; path = (Get-ProjectRelativePath $destFull) }
+        } catch {
+            Write-JsonResponse $response 500 @{ ok = $false; message = $_.Exception.Message }
+        }
+    }
+
+    "POST /move-image" = {
+        param($request, $response)
+        $body = Read-JsonBody $request
+        $srcFull = Resolve-ProjectPath ([string]$body.from)
+        $destFull = Resolve-ProjectPath ([string]$body.to)
+        if (-not $srcFull -or -not $destFull -or -not (Test-Path $srcFull -PathType Leaf)) {
+            Write-JsonResponse $response 400 @{ ok = $false; message = "Source image not found." }
+            return
+        }
+        if (Test-Path $destFull) {
+            Write-JsonResponse $response 400 @{ ok = $false; message = "Destination already exists." }
+            return
+        }
+        try {
+            $destDir = [System.IO.Path]::GetDirectoryName($destFull)
+            if (-not (Test-Path $destDir)) { New-Item -ItemType Directory -Force -Path $destDir | Out-Null }
+            Move-Item -Path $srcFull -Destination $destFull
+            Write-JsonResponse $response 200 @{ ok = $true; path = (Get-ProjectRelativePath $destFull) }
+        } catch {
+            Write-JsonResponse $response 500 @{ ok = $false; message = $_.Exception.Message }
+        }
+    }
+
+    "POST /delete-image" = {
+        param($request, $response)
+        $body = Read-JsonBody $request
+        $srcFull = Resolve-ProjectPath ([string]$body.path)
+        if (-not $srcFull -or -not (Test-Path $srcFull -PathType Leaf)) {
+            Write-JsonResponse $response 400 @{ ok = $false; message = "Image not found." }
+            return
+        }
+        try {
+            Remove-Item -Path $srcFull -Force
+            Write-JsonResponse $response 200 @{ ok = $true }
+        } catch {
+            Write-JsonResponse $response 500 @{ ok = $false; message = $_.Exception.Message }
+        }
+    }
+}
+
+function Send-StaticFile($request, $response) {
+    $relPath = [Uri]::UnescapeDataString($request.Url.LocalPath.TrimStart('/'))
+    $fullFilePath = Resolve-ProjectPath $relPath
+    if (-not $fullFilePath -or -not (Test-Path $fullFilePath -PathType Leaf)) {
+        $fullFilePath = Resolve-VanillaPath $relPath
+    }
+    if (-not $fullFilePath -or -not (Test-Path $fullFilePath -PathType Leaf)) {
+        $response.StatusCode = 404
+        return
+    }
+    $contentType = switch ([System.IO.Path]::GetExtension($fullFilePath).ToLowerInvariant()) {
+        ".png" { "image/png" }
+        ".jpg" { "image/jpeg" }
+        ".jpeg" { "image/jpeg" }
+        default { "application/octet-stream" }
+    }
+    Write-FileResponse $response $fullFilePath $contentType
 }
 
 $listener = New-Object System.Net.HttpListener
@@ -144,279 +439,14 @@ try {
         $request = $context.Request
         $response = $context.Response
         try {
+            $routeKey = $request.HttpMethod + " " + $request.Url.LocalPath
             if ($request.HttpMethod -ne "GET" -and -not (Test-EditorPost $request)) {
                 Write-JsonResponse $response 403 @{ ok = $false; message = "Rejected: only the skill tree editor page may change files." }
-            }
-            elseif ($request.HttpMethod -eq "GET" -and ($request.Url.LocalPath -eq "/" -or $request.Url.LocalPath -eq "/index.html")) {
-                $bytes = [System.IO.File]::ReadAllBytes($editorPath)
-                $response.ContentType = "text/html; charset=utf-8"
-                $response.OutputStream.Write($bytes, 0, $bytes.Length)
-            }
-            elseif ($request.HttpMethod -eq "GET" -and $request.Url.LocalPath -eq "/data/types") {
-                $bytes = [System.IO.File]::ReadAllBytes($typesPath)
-                $response.ContentType = "application/json; charset=utf-8"
-                $response.OutputStream.Write($bytes, 0, $bytes.Length)
-            }
-            elseif ($request.HttpMethod -eq "GET" -and $request.Url.LocalPath -eq "/data/tree") {
-                $bytes = [System.IO.File]::ReadAllBytes($treePath)
-                $response.ContentType = "application/json; charset=utf-8"
-                $response.OutputStream.Write($bytes, 0, $bytes.Length)
-            }
-            elseif ($request.HttpMethod -eq "POST" -and $request.Url.LocalPath -eq "/save") {
-                $reader = New-Object System.IO.StreamReader($request.InputStream, [System.Text.Encoding]::UTF8)
-                $bodyText = $reader.ReadToEnd()
-                $body = $bodyText | ConvertFrom-Json
-
-                $typesOk = $true
-                $treeOk = $true
-                try { $null = $body.types | ConvertFrom-Json } catch { $typesOk = $false }
-                try { $null = $body.tree | ConvertFrom-Json } catch { $treeOk = $false }
-
-                if (-not $typesOk -or -not $treeOk) {
-                    $parts = @()
-                    if (-not $typesOk) { $parts += "skill_types.json body did not parse as JSON" }
-                    if (-not $treeOk) { $parts += "ship_skill_tree.json body did not parse as JSON" }
-                    Write-JsonResponse $response 400 @{ ok = $false; message = ("Nothing was written - " + ($parts -join "; ") + ".") }
-                } else {
-                    $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
-                    [System.IO.File]::WriteAllText($typesPath, $body.types, $utf8NoBom)
-                    [System.IO.File]::WriteAllText($treePath, $body.tree, $utf8NoBom)
-                    Write-JsonResponse $response 200 @{ ok = $true; message = "Saved." }
-                }
-            }
-            elseif ($request.HttpMethod -eq "GET" -and $request.Url.LocalPath -eq "/data/socketables") {
-                $bytes = [System.IO.File]::ReadAllBytes($socketablesPath)
-                $response.ContentType = "text/csv; charset=utf-8"
-                $response.OutputStream.Write($bytes, 0, $bytes.Length)
-            }
-            elseif ($request.HttpMethod -eq "POST" -and $request.Url.LocalPath -eq "/save-socketables") {
-                $reader = New-Object System.IO.StreamReader($request.InputStream, [System.Text.Encoding]::UTF8)
-                $body = $reader.ReadToEnd() | ConvertFrom-Json
-                $csv = [string]$body.csv
-                if (-not $csv.StartsWith("id,")) {
-                    Write-JsonResponse $response 400 @{ ok = $false; message = "Nothing was written - the CSV must start with the id column." }
-                } else {
-                    $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
-                    [System.IO.File]::WriteAllText($socketablesPath, $csv, $utf8NoBom)
-                    Write-JsonResponse $response 200 @{ ok = $true; message = "Saved." }
-                }
-            }
-            elseif ($request.HttpMethod -eq "GET" -and $request.Url.LocalPath -eq "/data/socketable-names") {
-                $payload = @{
-                    affixes = [System.IO.File]::ReadAllText($socketableAffixesPath, [System.Text.Encoding]::UTF8)
-                    names = [System.IO.File]::ReadAllText($socketableNamesPath, [System.Text.Encoding]::UTF8)
-                }
-                Write-JsonResponse $response 200 $payload
-            }
-            elseif ($request.HttpMethod -eq "POST" -and $request.Url.LocalPath -eq "/save-socketable-names") {
-                $reader = New-Object System.IO.StreamReader($request.InputStream, [System.Text.Encoding]::UTF8)
-                $body = $reader.ReadToEnd() | ConvertFrom-Json
-                $affixes = [string]$body.affixes
-                $names = [string]$body.names
-                $namesOk = $true
-                try { $null = $names | ConvertFrom-Json } catch { $namesOk = $false }
-                if (-not $affixes.StartsWith("effect,")) {
-                    Write-JsonResponse $response 400 @{ ok = $false; message = "Nothing was written - the affix CSV must start with the effect column." }
-                } elseif (-not $namesOk) {
-                    Write-JsonResponse $response 400 @{ ok = $false; message = "Nothing was written - socketable_names.json did not parse as JSON." }
-                } else {
-                    $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
-                    [System.IO.File]::WriteAllText($socketableAffixesPath, $affixes, $utf8NoBom)
-                    [System.IO.File]::WriteAllText($socketableNamesPath, $names, $utf8NoBom)
-                    Write-JsonResponse $response 200 @{ ok = $true; message = "Saved." }
-                }
-            }
-            elseif ($request.HttpMethod -eq "GET" -and $request.Url.LocalPath -eq "/list-socketable-salvage") {
-                $files = @("socketable_salvage.csv")
-                if (Test-Path $socketableSalvageCompatDir) {
-                    $files += Get-ChildItem -Path $socketableSalvageCompatDir -Filter "*.csv" -File | Sort-Object Name |
-                        ForEach-Object { "compat/salvage/" + $_.Name }
-                }
-                $json = ConvertTo-Json -InputObject @($files)
-                $bytes = [System.Text.Encoding]::UTF8.GetBytes($json)
-                $response.ContentType = "application/json; charset=utf-8"
-                $response.OutputStream.Write($bytes, 0, $bytes.Length)
-            }
-            elseif ($request.HttpMethod -eq "GET" -and $request.Url.LocalPath -eq "/data/socketable-salvage") {
-                $path = Resolve-SalvagePath $request.QueryString["file"]
-                if (-not $path -or -not (Test-Path $path)) {
-                    Write-JsonResponse $response 404 @{ ok = $false; message = "Unknown socketable drop file." }
-                } else {
-                    $bytes = [System.IO.File]::ReadAllBytes($path)
-                    $response.ContentType = "text/csv; charset=utf-8"
-                    $response.OutputStream.Write($bytes, 0, $bytes.Length)
-                }
-            }
-            elseif ($request.HttpMethod -eq "POST" -and $request.Url.LocalPath -eq "/save-socketable-salvage") {
-                $reader = New-Object System.IO.StreamReader($request.InputStream, [System.Text.Encoding]::UTF8)
-                $body = $reader.ReadToEnd() | ConvertFrom-Json
-                $csv = [string]$body.csv
-                $path = Resolve-SalvagePath ([string]$body.file)
-                if (-not $path) {
-                    Write-JsonResponse $response 400 @{ ok = $false; message = "Nothing was written - unknown socketable drop file." }
-                } elseif (-not $csv.StartsWith("site,")) {
-                    Write-JsonResponse $response 400 @{ ok = $false; message = "Nothing was written - the CSV must start with the site column." }
-                } else {
-                    $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
-                    [System.IO.File]::WriteAllText($path, $csv, $utf8NoBom)
-                    Write-JsonResponse $response 200 @{ ok = $true; message = "Saved." }
-                }
-            }
-            elseif ($request.HttpMethod -eq "GET" -and $request.Url.LocalPath -eq "/list-images") {
-                $files = @()
-                if (Test-Path $staticImagesDir) {
-                    $files = Get-ChildItem -Path $staticImagesDir -Filter "*.png" -File |
-                        Sort-Object Name |
-                        ForEach-Object { "graphics/backgrounds/static_images/" + $_.Name }
-                }
-                $json = ConvertTo-Json -InputObject @($files)
-                $bytes = [System.Text.Encoding]::UTF8.GetBytes($json)
-                $response.ContentType = "application/json; charset=utf-8"
-                $response.OutputStream.Write($bytes, 0, $bytes.Length)
-            }
-            elseif ($request.HttpMethod -eq "GET" -and $request.Url.LocalPath -eq "/list-all-images") {
-                $files = @()
-                if (Test-Path $graphicsDir) {
-                    $files = Get-ChildItem -Path $graphicsDir -Filter "*.png" -File -Recurse |
-                        ForEach-Object {
-                            $rel = $_.FullName.Substring($projectRoot.Length + 1) -replace '\\', '/'
-                            $rel
-                        } | Sort-Object
-                }
-                if (Test-Path $vanillaCargoIconsDir) {
-                    $files = @($files) + @(Get-ChildItem -Path $vanillaCargoIconsDir -Filter "*.png" -File |
-                        Sort-Object Name |
-                        ForEach-Object { "graphics/icons/cargo/" + $_.Name })
-                }
-                $json = ConvertTo-Json -InputObject @($files)
-                $bytes = [System.Text.Encoding]::UTF8.GetBytes($json)
-                $response.ContentType = "application/json; charset=utf-8"
-                $response.OutputStream.Write($bytes, 0, $bytes.Length)
-            }
-            elseif ($request.HttpMethod -eq "POST" -and $request.Url.LocalPath -eq "/colorshift") {
-                $reader = New-Object System.IO.StreamReader($request.InputStream, [System.Text.Encoding]::UTF8)
-                $bodyText = $reader.ReadToEnd()
-                $body = $bodyText | ConvertFrom-Json
-
-                $relPath = [string]$body.path
-                $suffix = ([string]$body.suffix).Trim()
-                $hueShift = 0
-                try { $hueShift = [double]$body.hueShift } catch { $hueShift = 0 }
-
-                $srcFull = Resolve-ProjectPath $relPath
-
-                if (-not $srcFull -or -not (Test-Path $srcFull -PathType Leaf)) {
-                    Write-JsonResponse $response 400 @{ ok = $false; message = "Source image not found." }
-                } elseif (-not $suffix -or $suffix -match '[\\/:]') {
-                    Write-JsonResponse $response 400 @{ ok = $false; message = "Suffix is required and cannot contain path separators." }
-                } else {
-                    $dir = [System.IO.Path]::GetDirectoryName($srcFull)
-                    $baseName = [System.IO.Path]::GetFileNameWithoutExtension($srcFull)
-                    $destFull = Join-Path $dir ($baseName + "_" + $suffix + ".png")
-                    try {
-                        HueShiftImage $srcFull $destFull $hueShift
-                        $destRel = $destFull.Substring($fullProjectRoot.Length + 1) -replace '\\', '/'
-                        Write-JsonResponse $response 200 @{ ok = $true; path = $destRel }
-                    } catch {
-                        Write-JsonResponse $response 500 @{ ok = $false; message = $_.Exception.Message }
-                    }
-                }
-            }
-            elseif ($request.HttpMethod -eq "POST" -and $request.Url.LocalPath -eq "/make-circular") {
-                $reader = New-Object System.IO.StreamReader($request.InputStream, [System.Text.Encoding]::UTF8)
-                $bodyText = $reader.ReadToEnd()
-                $body = $bodyText | ConvertFrom-Json
-
-                $relPath = [string]$body.path
-                $suffix = ([string]$body.suffix).Trim()
-
-                $srcFull = Resolve-ProjectPath $relPath
-
-                if (-not $srcFull -or -not (Test-Path $srcFull -PathType Leaf)) {
-                    Write-JsonResponse $response 400 @{ ok = $false; message = "Source image not found." }
-                } elseif (-not $suffix -or $suffix -match '[\\/:]') {
-                    Write-JsonResponse $response 400 @{ ok = $false; message = "Suffix is required and cannot contain path separators." }
-                } else {
-                    $dir = Join-Path $projectRoot "graphics\unused\circular"
-                    if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Force -Path $dir | Out-Null }
-                    $baseName = [System.IO.Path]::GetFileNameWithoutExtension($srcFull)
-                    $destFull = Join-Path $dir ($baseName + "_" + $suffix + ".png")
-                    try {
-                        MakeCircularImage $srcFull $destFull
-                        $destRel = $destFull.Substring($fullProjectRoot.Length + 1) -replace '\\', '/'
-                        Write-JsonResponse $response 200 @{ ok = $true; path = $destRel }
-                    } catch {
-                        Write-JsonResponse $response 500 @{ ok = $false; message = $_.Exception.Message }
-                    }
-                }
-            }
-            elseif ($request.HttpMethod -eq "POST" -and $request.Url.LocalPath -eq "/move-image") {
-                $reader = New-Object System.IO.StreamReader($request.InputStream, [System.Text.Encoding]::UTF8)
-                $bodyText = $reader.ReadToEnd()
-                $body = $bodyText | ConvertFrom-Json
-
-                $fromRel = [string]$body.from
-                $toRel = [string]$body.to
-                $srcFull = Resolve-ProjectPath $fromRel
-                $destFull = Resolve-ProjectPath $toRel
-
-                if (-not $srcFull -or -not $destFull -or -not (Test-Path $srcFull -PathType Leaf)) {
-                    Write-JsonResponse $response 400 @{ ok = $false; message = "Source image not found." }
-                } elseif (Test-Path $destFull) {
-                    Write-JsonResponse $response 400 @{ ok = $false; message = "Destination already exists." }
-                } else {
-                    try {
-                        $destDir = [System.IO.Path]::GetDirectoryName($destFull)
-                        if (-not (Test-Path $destDir)) { New-Item -ItemType Directory -Force -Path $destDir | Out-Null }
-                        Move-Item -Path $srcFull -Destination $destFull
-                        $destRel = $destFull.Substring($fullProjectRoot.Length + 1) -replace '\\', '/'
-                        Write-JsonResponse $response 200 @{ ok = $true; path = $destRel }
-                    } catch {
-                        Write-JsonResponse $response 500 @{ ok = $false; message = $_.Exception.Message }
-                    }
-                }
-            }
-            elseif ($request.HttpMethod -eq "POST" -and $request.Url.LocalPath -eq "/delete-image") {
-                $reader = New-Object System.IO.StreamReader($request.InputStream, [System.Text.Encoding]::UTF8)
-                $bodyText = $reader.ReadToEnd()
-                $body = $bodyText | ConvertFrom-Json
-
-                $relPath = [string]$body.path
-                $srcFull = Resolve-ProjectPath $relPath
-
-                if (-not $srcFull -or -not (Test-Path $srcFull -PathType Leaf)) {
-                    Write-JsonResponse $response 400 @{ ok = $false; message = "Image not found." }
-                } else {
-                    try {
-                        Remove-Item -Path $srcFull -Force
-                        Write-JsonResponse $response 200 @{ ok = $true }
-                    } catch {
-                        Write-JsonResponse $response 500 @{ ok = $false; message = $_.Exception.Message }
-                    }
-                }
-            }
-            elseif ($request.HttpMethod -eq "GET") {
-                $relPath = [Uri]::UnescapeDataString($request.Url.LocalPath.TrimStart('/'))
-                $fullFilePath = Resolve-ProjectPath $relPath
-                if (-not $fullFilePath -or -not (Test-Path $fullFilePath -PathType Leaf)) {
-                    $fullFilePath = Resolve-VanillaPath $relPath
-                }
-                if ($fullFilePath -and (Test-Path $fullFilePath -PathType Leaf)) {
-                    $ext = [System.IO.Path]::GetExtension($fullFilePath).ToLowerInvariant()
-                    $contentType = switch ($ext) {
-                        ".png" { "image/png" }
-                        ".jpg" { "image/jpeg" }
-                        ".jpeg" { "image/jpeg" }
-                        default { "application/octet-stream" }
-                    }
-                    $bytes = [System.IO.File]::ReadAllBytes($fullFilePath)
-                    $response.ContentType = $contentType
-                    $response.OutputStream.Write($bytes, 0, $bytes.Length)
-                } else {
-                    $response.StatusCode = 404
-                }
-            }
-            else {
+            } elseif ($routes.ContainsKey($routeKey)) {
+                & $routes[$routeKey] $request $response
+            } elseif ($request.HttpMethod -eq "GET") {
+                Send-StaticFile $request $response
+            } else {
                 $response.StatusCode = 404
             }
         } catch {

@@ -522,6 +522,25 @@
     transition: opacity .2s;
   }
   .toast.show { opacity: 1; }
+  .serverError {
+    position: fixed;
+    top: 64px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(640px, 92vw);
+    background: var(--panel);
+    border: 1px solid var(--danger);
+    color: var(--danger);
+    font-size: 12.5px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    z-index: 150;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .serverError[hidden] { display: none; }
+  .serverError code { font-family: var(--font-mono); }
 
   .modalOverlay {
     position: fixed; inset: 0; background: rgba(0,0,0,.5);
@@ -689,245 +708,15 @@
 </div>
 
 <div class="toast" id="toast"></div>
+<div class="serverError" id="serverError" role="alert" hidden>
+  <div style="flex:1">Could not load skill_types.json and ship_skill_tree.json from the local server. Run <code>tools\skill_tree_server.ps1</code> and open this editor from <code>http://localhost:8791/</code>. <span id="serverErrorDetail"></span></div>
+  <button class="smallBtn" id="serverErrorRetry">Retry</button>
+</div>
 <div id="modalRoot"></div>
 
 <script>
 (function(){
 "use strict";
-
-var SHIPPED_TYPES = [
-{"id":"flux_capacity","name":"Flux Capacity","icon":"graphics/icons/circular/small_passives/containment_procedures.png","effects":[{"effect":"FLUX_CAPACITY_MULT","magnitude":2}],"tags":["flux"]},
-{"id":"flux_dissipation","name":"Flux Dissipation","icon":"graphics/icons/circular/small_passives/systems_expertise.png","effects":[{"effect":"FLUX_DISSIPATION_PERCENT","magnitude":1}],"tags":["flux"]},
-{"id":"hybrid_flux","name":"Flux Capacity and Dissipation","icon":"graphics/icons/circular/small_passives/flux_dynamics.png","tags":["flux"]},
-{"id":"hull","name":"Hull","icon":"graphics/icons/circular/small_passives/damage_control2.png","tags":["hull"]},
-{"id":"armor","name":"Armor","icon":"graphics/icons/circular/small_passives/polarized_armor.png","tags":["armour"]},
-{"id":"ballistic_damage","name":"Ballistic Weapon Damage","icon":"graphics/icons/circular/small_passives/ranged_specialization.png"},
-{"id":"missile_damage","name":"Missile Weapon Damage","icon":"graphics/icons/circular/small_passives/missile_specialization2.png","tags":["missile"]},
-{"id":"non_beam_energy_damage","name":"Non-Beam Energy Weapon Damage","icon":"graphics/icons/circular/small_passives/non_beam_energy_weapon_blue.png"},
-{"id":"beam_damage","name":"Beam Weapon Damage","icon":"graphics/icons/circular/small_passives/hypercognition.png"},
-{"id":"energy_damage","name":"Energy Weapon Damage","icon":"graphics/icons/circular/small_passives/energy_weapon_mastery.png"},
-{"id":"weapon_damage","name":"All Weapon Damage","icon":"graphics/icons/circular/small_passives/weapon_drills.png"},
-{"id":"packed_capacitors","name":"Packed Capacitors","icon":"graphics/icons/circular/notable_passives/power_grid_manipulation.png","tier":"NOTABLE","effects":[{"effect":"FLUX_CAPACITY_PERCENT","magnitude":5}],"hullSizeEffects":[{"effect":"FLUX_CAPACITY_FLAT","frigate":200,"destroyer":400,"cruiser":600,"capitalShip":1000}],"tags":["flux"]},
-{"id":"safety_overrides","name":"Safety Overrides","icon":"graphics/icons/circular/keystones/helmsmanship.png","tier":"KEYSTONE","effects":[{"effect":"ZERO_FLUX_ALWAYS_ON","magnitude":0},{"effect":"FLUX_DISSIPATION_PERCENT","magnitude":100},{"effect":"PEAK_CR_DURATION_PERCENT","magnitude":-67},{"effect":"VENT_RATE_PERCENT","magnitude":-100},{"effect":"WEAPON_RANGE_THRESHOLD_FLAT","magnitude":450},{"effect":"WEAPON_RANGE_FALLOFF_PERCENT","magnitude":-75}],"hullSizeEffects":[{"effect":"TOP_SPEED_FLAT","frigate":50,"destroyer":30,"cruiser":20,"capitalShip":10},{"effect":"ACCELERATION_FLAT","frigate":100,"destroyer":60,"cruiser":40,"capitalShip":20},{"effect":"DECELERATION_FLAT","frigate":100,"destroyer":60,"cruiser":40,"capitalShip":20}]},
-{"id":"advancedshieldemitter","name":"Accelerated Shields","icon":"graphics/icons/circular/notable_passives/accelerated_shields.png","tier":"NOTABLE","effects":[{"effect":"SHIELD_TURN_RATE_PERCENT","magnitude":100},{"effect":"SHIELD_RAISE_RATE_PERCENT","magnitude":100}],"tags":["shield"]},
-{"id":"adaptive_coils","name":"Adaptive Phase Coils","icon":"graphics/icons/circular/notable_passives/phase_field.png","tier":"NOTABLE","effects":[{"effect":"PHASE_CLOAK_FLUX_THRESHOLD_PERCENT","magnitude":50}],"tags":["flux","phase"]},
-{"id":"advancedoptics","name":"Advanced Optics","icon":"graphics/icons/circular/notable_passives/advanced_optics.png","tier":"NOTABLE","effects":[{"effect":"BEAM_WEAPON_RANGE_FLAT","magnitude":200},{"effect":"BEAM_WEAPON_TURN_RATE_PERCENT","magnitude":-30}],"tags":["energy","beam"]},
-{"id":"turretgyros","name":"Advanced Turret Gyros","icon":"graphics/icons/circular/notable_passives/advanced_turret_gyros.png","tier":"NOTABLE","effects":[{"effect":"WEAPON_TURN_RATE_PERCENT","magnitude":75}]},
-{"id":"armoredweapons","name":"Armored Weapon Mounts","icon":"graphics/icons/circular/notable_passives/armored_weapon_emplacements.png","tier":"NOTABLE","effects":[{"effect":"ARMOR_PERCENT","magnitude":10},{"effect":"WEAPON_DURABILITY_PERCENT","magnitude":100},{"effect":"WEAPON_TURN_RATE_PERCENT","magnitude":-25},{"effect":"WEAPON_RECOIL_PERCENT","magnitude":-25}],"tags":["armour"]},
-{"id":"autorepair","name":"Automated Repair Unit","icon":"graphics/icons/circular/notable_passives/automated_repair_unit.png","tier":"NOTABLE","effects":[{"effect":"REPAIR_TIME_PERCENT","magnitude":-50}]},
-{"id":"auxiliarythrusters","name":"Auxiliary Thrusters","icon":"graphics/icons/circular/notable_passives/auxilliary_thrusters.png","tier":"NOTABLE","effects":[{"effect":"ACCELERATION_PERCENT","magnitude":100},{"effect":"DECELERATION_PERCENT","magnitude":50},{"effect":"TURN_ACCELERATION_PERCENT","magnitude":100},{"effect":"MANEUVERABILITY_PERCENT","magnitude":50}]},
-{"id":"ballistic_rangefinder","name":"Ballistic Rangefinder","icon":"graphics/icons/circular/notable_passives/ballistic_rangefinder.png","tier":"KEYSTONE","vanillaHullMod":"ballistic_rangefinder","description":"Extends the base range of small and medium ballistic weapons, based on the size of this ship\u0027s largest ballistic weapon slot. Also extends hybrid weapon range, with a larger bonus.","todo":"Real vanilla effect is a per-weapon-slot range bonus (WeaponBaseRangeModifier) that varies by the ship\u0027s largest ballistic slot size and is capped per weapon, with a separate larger bonus for hybrid mounts - not a fixed magnitude on a single MutableShipStatsAPI stat. Deliberately left on vanillaHullMod passthrough rather than approximate it with a flat/percent BALLISTIC_WEAPON_RANGE_PERCENT effect, since that would only be correct for one specific loadout."},
-{"id":"blast_doors","name":"Blast Doors","icon":"graphics/icons/circular/notable_passives/blast_doors.png","tier":"NOTABLE","effects":[{"effect":"HULL_PERCENT","magnitude":20},{"effect":"CREW_LOSS_PERCENT","magnitude":-60}],"tags":["logistics"]},
-{"id":"converted_hangar","name":"Converted Hangar","icon":"graphics/icons/circular/keystones/converted_hangar.png","tier":"KEYSTONE","effects":[{"effect":"FIGHTER_BAYS_FLAT","magnitude":1},{"effect":"FIGHTER_REFIT_TIME_MULT","magnitude":50},{"effect":"FIGHTER_REPLACEMENT_RATE_MULT","magnitude":50},{"effect":"FIGHTER_RELAUNCH_TIME_FLAT","magnitude":40},{"effect":"MIN_CREW_FLAT","magnitude":20}],"todo":"Real vanilla effect also increases deployment points and supply cost to recover by 1 per 5 OP spent on fighters (min 1), with a proportional increase in CR lost per deployment - deliberately not implemented yet, so right now this node is a buff with no real downside beyond the 4 modifiers above. This node may need other balance considerations once that\u0027s added.","tags":["fighter"]},
-{"id":"converted_fighterbay","name":"Converted Fighter Bay","icon":"graphics/icons/circular/keystones/converted_fighter_bay.png","tier":"KEYSTONE","effects":[{"effect":"REMOVE_ALL_FIGHTER_BAYS","magnitude":0},{"effect":"MIN_CREW_PERCENT_PER_FIGHTER_BAY","magnitude":-20},{"effect":"CARGO_CAPACITY_PER_FIGHTER_BAY","magnitude":50}],"description":"Converts this ship\u0027s built-in fighter bays into cargo capacity, reducing crew requirements per bay converted.","tags":["logistics"]},
-{"id":"dedicated_targeting_core","name":"Dedicated Targeting Core","icon":"graphics/icons/circular/notable_passives/targeting_core.png","tier":"NOTABLE","hullSizeEffects":[{"effect":"BALLISTIC_WEAPON_RANGE_PERCENT","frigate":0,"destroyer":0,"cruiser":35,"capitalShip":50},{"effect":"ENERGY_WEAPON_RANGE_PERCENT","frigate":0,"destroyer":0,"cruiser":35,"capitalShip":50}],"tags":["range"]},
-{"id":"defensive_targeting_array","name":"Defensive Targeting Array","icon":"graphics/icons/circular/notable_passives/defensive_targeting_array.png","tier":"KEYSTONE","vanillaHullMod":"defensive_targeting_array","description":"Increases the damage fighters launched from this ship deal to other fighters and missiles. Also locks launched fighters to stay near the ship instead of patrolling freely.","todo":"Deliberately kept on vanillaHullMod passthrough as a design choice, not a technical limitation - the fighter-spawn hook needed to convert this now exists (see FIGHTER_PD_DAMAGE_BONUS_PERCENT, reused by other nodes). Real vanilla effect also zeroes the launched fighters\u0027 patrol range (locking them near the ship) and tags certain fighter types to stay in front of the ship; neither of those is implemented as a reusable effect yet.","tags":["range"]},
-{"id":"eccm","name":"ECCM Package","icon":"graphics/icons/circular/notable_passives/eccm_package.png","tier":"NOTABLE","effects":[{"effect":"MISSILE_WEAPON_ECCM_CHANCE_PERCENT","magnitude":50},{"effect":"MISSILE_WEAPON_GUIDANCE_FLAT","magnitude":1},{"effect":"MISSILE_WEAPON_PROJECTILE_SPEED_PERCENT","magnitude":25},{"effect":"MISSILE_WEAPON_RANGE_PERCENT","magnitude":-20},{"effect":"MISSILE_WEAPON_FLIGHT_ACCELERATION_PERCENT","magnitude":150},{"effect":"MISSILE_WEAPON_FLIGHT_TURN_RATE_PERCENT","magnitude":50},{"effect":"MISSILE_WEAPON_FLIGHT_TURN_ACCELERATION_PERCENT","magnitude":150},{"effect":"ELECTRONIC_WARFARE_PENALTY_PERCENT","magnitude":-50}],"tags":["missile"]},
-{"id":"ecm","name":"ECM Package","icon":"graphics/icons/circular/notable_passives/ecm_package.png","tier":"NOTABLE","hullSizeEffects":[{"effect":"ELECTRONIC_WARFARE","frigate":1,"destroyer":2,"cruiser":3,"capitalShip":4}],"tags":["logistics"]},
-{"id":"escort_package","name":"Escort Package","icon":"graphics/icons/circular/notable_passives/escort_package.png","tier":"KEYSTONE","effects":[{"effect":"ESCORT_MANEUVER_BONUS_PERCENT","magnitude":25},{"effect":"ESCORT_SPEED_BONUS_PERCENT","magnitude":10},{"effect":"ESCORT_WEAPON_RANGE_BONUS_PERCENT","magnitude":20},{"effect":"ESCORT_PROXIMITY_RANGE_FLAT","magnitude":700}],"description":"When this ship is within approximately 700 su of a larger friendly vessel, increases this ship\u0027s maneuverability by 25%, and top speed by 10%. Also increases ballistic and energy weapon range by 20%. These bonuses fade out over an additional 500 su beyond that range.\n\nThese bonuses are doubled for destroyers when the nearby friendly is a capital ship."},
-{"id":"expanded_deck_crew","name":"Expanded Deck Crew","icon":"graphics/icons/circular/notable_passives/expanded_deck_crew.png","tier":"NOTABLE","effects":[{"effect":"FIGHTER_REPLACEMENT_DECAY_PERCENT","magnitude":-15},{"effect":"FIGHTER_REPLACEMENT_RECOVERY_PERCENT","magnitude":25},{"effect":"MIN_CREW_PER_FIGHTER_BAY","magnitude":20}],"tags":["fighter"]},
-{"id":"magazines","name":"Expanded Magazines","icon":"graphics/icons/circular/notable_passives/expanded_magazines2.png","tier":"NOTABLE","effects":[{"effect":"BALLISTIC_WEAPON_AMMO_PERCENT","magnitude":50},{"effect":"ENERGY_WEAPON_AMMO_PERCENT","magnitude":50}]},
-{"id":"missleracks","name":"Expanded Missile Racks","icon":"graphics/icons/circular/notable_passives/expanded_missile_racks.png","tier":"NOTABLE","effects":[{"effect":"MISSILE_WEAPON_AMMO_PERCENT","magnitude":100}],"tags":["missile"]},
-{"id":"extendedshieldemitter","name":"Extended Shields","icon":"graphics/icons/circular/notable_passives/extended_shields.png","tier":"NOTABLE","effects":[{"effect":"SHIELD_ARC_FLAT","magnitude":60}],"tags":["shield"]},
-{"id":"fluxcoil","name":"Flux Coil Adjunct","icon":"graphics/icons/circular/notable_passives/flux_coil_adjunct.png","tier":"NOTABLE","hullSizeEffects":[{"effect":"FLUX_CAPACITY_FLAT","frigate":600,"destroyer":1200,"cruiser":1800,"capitalShip":3000}],"tags":["flux"]},
-{"id":"fluxdistributor","name":"Flux Distributor","icon":"graphics/icons/circular/notable_passives/flux_distributor.png","tier":"NOTABLE","hullSizeEffects":[{"effect":"FLUX_DISSIPATION_FLAT","frigate":30,"destroyer":60,"cruiser":90,"capitalShip":150}],"tags":["flux"]},
-{"id":"shield_shunt","name":"Shield Shunt","icon":"graphics/icons/circular/notable_passives/shield_shunt.png","tier":"NOTABLE","effects":[{"effect":"ARMOR_PERCENT","magnitude":15},{"effect":"REMOVE_SHIELD","magnitude":0}],"description":"Removes this ship\u0027s shields entirely, increasing its armor in exchange.","tags":["armour"]},
-{"id":"frontshield","name":"Makeshift Shield Generator","icon":"graphics/icons/circular/keystones/front_shield_generator.png","tier":"KEYSTONE","effects":[{"effect":"TOP_SPEED_MULT","magnitude":-20},{"effect":"CREATE_FRONT_SHIELD_IF_NONE","magnitude":0}],"description":"Installs a makeshift, front-facing shield on a ship that would otherwise have none, at the cost of reduced top speed.","tags":["shield"]},
-{"id":"missile_autoloader","name":"Missile Autoloader","icon":"graphics/icons/circular/notable_passives/missile_autoloader.png","tier":"KEYSTONE","vanillaHullMod":"missile_autoloader","description":"Grants a limited number of automatic reloads to missile weapons in small missile mounts, drawn from a shared capacity pool that depends on hull size and mount count.","todo":"Real vanilla effect is a stateful per-weapon reload simulation (advanceInCombat tracks a shared reload-capacity pool by hull size/small-missile-mount count, per-weapon cooldowns, partial reloads) - not a stat modifier at all, and not expressible as a SkillEffect magnitude. Deliberately left on vanillaHullMod passthrough.","tags":["missile"]},
-{"id":"neural_interface","name":"Neural Interface","icon":"graphics/icons/circular/notable_passives/neural_interface.png","tier":"KEYSTONE","vanillaHullMod":"neural_interface","description":"Links this ship with the flagship, allowing the player to instantly switch which ship they are piloting without using a shuttle pod. Transferring resets the destination ship's system cooldown and adds a charge. The transfer is instant if the combined deployment points of both ships are low enough; otherwise a short transfer time applies. The destination ship must not be under the command of an officer or an AI core.","todo":"Real vanilla effect links two ships and lets the player instantly swap which one they're piloting, resetting the destination ship's system cooldown and granting a charge, with transfer time gated by the combined deployment point total of both ships - a campaign/combat control-transfer mechanic, not a MutableShipStatsAPI stat modifier. Deliberately left on vanillaHullMod passthrough."},
-{"id":"hardenedshieldemitter","name":"Hardened Shields","icon":"graphics/icons/circular/notable_passives/hardened_shields.png","tier":"NOTABLE","effects":[{"effect":"SHIELD_ABSORPTION_PERCENT","magnitude":-20},{"effect":"SHIELD_PIERCE_CHANCE_PERCENT","magnitude":-50}],"tags":["shield"]},
-{"id":"hardened_subsystems","name":"Hardened Subsystems","icon":"graphics/icons/circular/notable_passives/hardened_subsystems.png","tier":"NOTABLE","effects":[{"effect":"PEAK_CR_DURATION_PERCENT","magnitude":50},{"effect":"CR_LOSS_PER_SECOND_PERCENT","magnitude":-25}]},
-{"id":"heavyarmor","name":"Heavy Armor","icon":"graphics/icons/circular/notable_passives/heavy_armor.png","tier":"NOTABLE","hullSizeEffects":[{"effect":"ARMOR_FLAT","frigate":150,"destroyer":300,"cruiser":400,"capitalShip":500}],"tags":["armour"]},
-{"id":"high_scatter_amp","name":"High Scatter Amplifier","icon":"graphics/icons/circular/notable_passives/high_scatter_amp.png","tier":"NOTABLE","effects":[{"effect":"BEAM_WEAPON_HARD_FLUX_PERCENT","magnitude":50},{"effect":"BEAM_WEAPON_RANGE_MULT","magnitude":-25}],"todo":"Placeholder magnitudes (50% hard flux, -25% range) pending real balance numbers. Reimplemented as a scalable percentage instead of vanilla\u0027s all-or-nothing forced-hard-flux-on-every-beam-hit, and the range reduction is a flat percentage instead of vanilla\u0027s reduce-only-the-portion-past-200-units logic - deliberate simplifications, not oversights. The +10% beam damage part (vanilla BEAM_DAMAGE_PERCENT) is not yet added; can reuse the existing BEAM_DAMAGE_PERCENT effect for that later.","tags":["energy","beam"]},
-{"id":"pointdefenseai","name":"Integrated Point Defense AI","icon":"graphics/icons/circular/notable_passives/integrated_point_defense_ai.png","tier":"NOTABLE","effects":[{"effect":"PD_IGNORES_DECOY_FLARES","magnitude":0},{"effect":"PD_BEST_TARGET_LEADING","magnitude":0},{"effect":"PD_DAMAGE_TO_MISSILES_PERCENT","magnitude":50},{"effect":"PD_RECLASSIFY_SMALL_WEAPONS","magnitude":0}]},
-{"id":"targetingunit","name":"Integrated Targeting Unit","icon":"graphics/icons/circular/notable_passives/integrated_targeting_unit.png","tier":"NOTABLE","hullSizeEffects":[{"effect":"BALLISTIC_WEAPON_RANGE_PERCENT","frigate":10,"destroyer":20,"cruiser":40,"capitalShip":60},{"effect":"ENERGY_WEAPON_RANGE_PERCENT","frigate":10,"destroyer":20,"cruiser":40,"capitalShip":60}],"tags":["range"]},
-{"id":"nav_relay","name":"Nav Relay","icon":"graphics/icons/circular/notable_passives/nav_relay.png","tier":"NOTABLE","hullSizeEffects":[{"effect":"NAV_RATING","frigate":2,"destroyer":3,"cruiser":4,"capitalShip":5}],"tags":["logistics"]},
-{"id":"frontemitter","name":"Shield Conversion - Front","icon":"graphics/icons/circular/notable_passives/front_shield_emitter.png","tier":"NOTABLE","effects":[{"effect":"SHIELD_ARC_PERCENT","magnitude":100},{"effect":"CONVERT_SHIELD_TO_FRONT","magnitude":0}],"description":"Converts this ship\u0027s shield to a front-facing arc, extending its coverage but locking it to only cover the front.","tags":["shield"]},
-{"id":"adaptiveshields","name":"Shield Conversion - Omni","icon":"graphics/icons/circular/notable_passives/omni_shield_emitter_mod.png","tier":"NOTABLE","effects":[{"effect":"SHIELD_ARC_MULT","magnitude":-30},{"effect":"CONVERT_SHIELD_TO_OMNI","magnitude":0}],"description":"Converts this ship\u0027s shield to omni-directional coverage, reducing its arc in exchange.","tags":["shield"]},
-{"id":"operations_center","name":"Operations Center","icon":"graphics/icons/circular/notable_passives/operations_center.png","tier":"NOTABLE","effects":[{"effect":"COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP","magnitude":2.5}],"tags":["logistics"]},
-{"id":"phase_anchor","name":"Phase Anchor","icon":"graphics/icons/circular/notable_passives/phase_anchor.png","tier":"NOTABLE","effects":[{"effect":"PHASE_CLOAK_ACTIVATION_COST_MULT","magnitude":-100},{"effect":"COMBAT_BOOST_WHILE_PHASED","magnitude":100}],"tags":["flux","phase"]},
-{"id":"recovery_shuttles","name":"Recovery Shuttles","icon":"graphics/icons/circular/notable_passives/recovery_shuttles.png","tier":"NOTABLE","effects":[{"effect":"FIGHTER_CREW_LOSS_PERCENT","magnitude":-75}],"tags":["fighter"]},
-{"id":"reinforcedhull","name":"Reinforced Bulkheads","icon":"graphics/icons/circular/notable_passives/reinforced_bulkheads.png","tier":"NOTABLE","effects":[{"effect":"HULL_PERCENT","magnitude":40},{"effect":"SHIP_RECOVERY_CHANCE_BONUS","magnitude":1000},{"effect":"BREAK_PROBABILITY_PERCENT","magnitude":-100}],"tags":["hull"]},
-{"id":"fluxbreakers","name":"Resistant Flux Conduits","icon":"graphics/icons/circular/notable_passives/resistant_flux_conduits.png","tier":"NOTABLE","effects":[{"effect":"EMP_DAMAGE_TAKEN_PERCENT","magnitude":-50},{"effect":"FLUX_DISSIPATION_WHILE_VENTING_PERCENT","magnitude":25}],"tags":["flux","phase"]},
-{"id":"stabilizedshieldemitter","name":"Stabilized Shields","icon":"graphics/icons/circular/notable_passives/stabilized_shields.png","tier":"NOTABLE","effects":[{"effect":"SHIELD_UPKEEP_PERCENT","magnitude":-50}],"tags":["shield"]},
-{"id":"unstable_injector","name":"Unstable Injector","icon":"graphics/icons/circular/keystones/unstable_injector.png","tier":"KEYSTONE","effects":[{"effect":"BALLISTIC_WEAPON_RANGE_PERCENT","magnitude":-15},{"effect":"ENERGY_WEAPON_RANGE_PERCENT","magnitude":-15},{"effect":"FIGHTER_REFIT_TIME_MULT","magnitude":25}],"hullSizeEffects":[{"effect":"TOP_SPEED_FLAT","frigate":25,"destroyer":20,"cruiser":15,"capitalShip":15}]},
-{"id":"additional_berthing","name":"Additional Berthing","icon":"graphics/icons/circular/notable_passives/berthing.png","tier":"NOTABLE","hullSizeEffects":[{"effect":"CREW_CAPACITY_FLAT","frigate":30,"destroyer":60,"cruiser":100,"capitalShip":200}],"tags":["logistics"]},
-{"id":"augmentedengines","name":"Augmented Drive Field","icon":"graphics/icons/circular/notable_passives/augmented_drive_field2.png","tier":"NOTABLE","effects":[{"effect":"BURN_LEVEL_FLAT","magnitude":1}],"tags":["logistics"]},
-{"id":"auxiliary_fuel_tanks","name":"Auxiliary Fuel Tanks","icon":"graphics/icons/circular/notable_passives/fuel_tanks.png","tier":"NOTABLE","hullSizeEffects":[{"effect":"FUEL_CAPACITY_FLAT","frigate":30,"destroyer":60,"cruiser":100,"capitalShip":200}],"tags":["logistics"]},
-{"id":"efficiency_overhaul","name":"Efficiency Overhaul","icon":"graphics/icons/circular/keystones/efficiency.png","tier":"KEYSTONE","effects":[{"effect":"MIN_CREW_MULT","magnitude":-20},{"effect":"SUPPLIES_PER_MONTH_MULT","magnitude":-20},{"effect":"FUEL_USE_MULT","magnitude":-20},{"effect":"CR_RECOVERY_RATE_PERCENT","magnitude":50},{"effect":"REPAIR_RATE_PER_DAY_PERCENT","magnitude":50}],"tags":["logistics"]},
-{"id":"expanded_cargo_holds","name":"Expanded Cargo Holds","icon":"graphics/icons/circular/notable_passives/expanded_cargo.png","tier":"NOTABLE","hullSizeEffects":[{"effect":"CARGO_CAPACITY_FLAT","frigate":30,"destroyer":60,"cruiser":100,"capitalShip":200}],"tags":["logistics"]},
-{"id":"hiressensors","name":"High Resolution Sensors","icon":"graphics/icons/circular/notable_passives/high_res_sensors.png","tier":"NOTABLE","hullSizeEffects":[{"effect":"SENSOR_STRENGTH_FLAT","frigate":50,"destroyer":75,"cruiser":100,"capitalShip":150}],"tags":["logistics"]},
-{"id":"insulatedengine","name":"Insulated Engine Assembly","icon":"graphics/icons/circular/notable_passives/insulated_engine_assembly.png","tier":"NOTABLE","effects":[{"effect":"ENGINE_DURABILITY_PERCENT","magnitude":100},{"effect":"HULL_PERCENT","magnitude":10}],"tags":["logistics"]},
-{"id":"militarized_subsystems","name":"Militarized Subsystems","icon":"graphics/icons/circular/notable_passives/militarized_subsystems.png","tier":"NOTABLE","effects":[{"effect":"BURN_LEVEL_FLAT","magnitude":1},{"effect":"MIN_CREW_PERCENT","magnitude":100},{"effect":"REMOVE_CIVILIAN_HULL_PENALTY","magnitude":0}],"tags":["logistics"]},
-{"id":"solar_shielding","name":"Solar Shielding","icon":"graphics/icons/circular/notable_passives/solar_shielding2.png","tier":"NOTABLE","effects":[{"effect":"ENERGY_DAMAGE_TAKEN_PERCENT","magnitude":-10},{"effect":"CORONA_RESISTANCE_MULT","magnitude":-75}],"description":"Reduces energy damage taken in combat, and greatly reduces combat readiness loss from solar coronas and deep hyperspace storms.","tags":["logistics"]},
-{"id":"surveying_equipment","name":"Surveying Equipment","icon":"graphics/icons/circular/notable_passives/surveying_equipment.png","tier":"NOTABLE","hullSizeEffects":[{"effect":"SURVEY_COST_REDUCTION_HEAVY_MACHINERY","frigate":3,"destroyer":5,"cruiser":10,"capitalShip":20},{"effect":"SURVEY_COST_REDUCTION_SUPPLIES","frigate":3,"destroyer":5,"cruiser":10,"capitalShip":20}],"tags":["logistics"]},
-{"id":"root_low_tech","name":"Low Tech Root","icon":"graphics/icons/circular/roots/crest_lowtech.png","tier":"ROOT"},
-{"id":"root_midline","name":"Midline Root","icon":"graphics/icons/circular/roots/crest_midline.png","tier":"ROOT"},
-{"id":"root_high_tech","name":"High Tech Root","icon":"graphics/icons/circular/roots/crest_hightech.png","tier":"ROOT"},
-{"id":"increased_fuel","name":"Increased Fuel Capacity","icon":"graphics/icons/circular/small_passives/navigation.png","effects":[{"effect":"FUEL_CAPACITY_PERCENT","magnitude":15}],"tags":["logistics"]},
-{"id":"increased_cargo","name":"Increased Cargo Capacity","icon":"graphics/icons/circular/small_passives/bulk_transport.png","effects":[{"effect":"CARGO_CAPACITY_PERCENT","magnitude":15}],"tags":["logistics"]},
-{"id":"increased_crew","name":"Increased Crew Capacity","icon":"graphics/icons/circular/small_passives/crew_training.png","effects":[{"effect":"CREW_CAPACITY_PERCENT","magnitude":10}],"tags":["logistics"]},
-{"id":"fighter_weapon_damage","name":"Fighter Weapon Damage","icon":"graphics/icons/circular/small_passives/fighter_uplink2.png","effects":[{"effect":"FIGHTER_WEAPON_DAMAGE_PERCENT","magnitude":15}],"todo":"Placeholder magnitude (15%) pending real balance numbers.","tags":["fighter"]},
-{"id":"fighter_speed","name":"Fighter Speed","icon":"graphics/icons/circular/small_passives/wing_commander.png","effects":[{"effect":"FIGHTER_TOP_SPEED_PERCENT","magnitude":15}],"todo":"Placeholder magnitude (15%) pending real balance numbers.","tags":["fighter"]},
-{"id":"small_logistics_optional","name":"Fuel, Crew or Cargo","icon":"graphics/icons/circular/small_passives/compact_storage.png","optionalOptions":["increased_fuel","increased_cargo","increased_crew"],"tags":["logistics"]},
-{"id":"small_flux_optional","name":"Caps or Vents","icon":"","optionalOptions":["flux_capacity","flux_dissipation"],"tags":["flux"]},
-{"id":"efficient_vents","name":"Efficient Vents","icon":"","tier":"NOTABLE","effects":[{"effect":"FLUX_DISSIPATION_PERCENT","magnitude":5}],"hullSizeEffects":[{"effect":"FLUX_DISSIPATION_FLAT","frigate":10,"destroyer":20,"cruiser":30,"capitalShip":50}],"tags":["flux"]},
-{"id":"survey_mach_cost","name":"Survey Heavy Machinery Cost Reduction","icon":"","hullSizeEffects":[{"effect":"SURVEY_COST_REDUCTION_HEAVY_MACHINERY","frigate":2,"destroyer":4,"cruiser":7,"capitalShip":15}],"tags":["logistics"]},
-{"id":"survey_supplies_cost_reduction","name":"Survey supplies cost reduction","icon":"","hullSizeEffects":[{"effect":"SURVEY_COST_REDUCTION_SUPPLIES","frigate":2,"destroyer":4,"cruiser":7,"capitalShip":15}],"tags":["logistics"]},
-{"id":"survey_generic_cost_reduction","name":"Survey cost reduction","icon":"","hullSizeEffects":[{"effect":"SURVEY_COST_REDUCTION_HEAVY_MACHINERY","frigate":1,"destroyer":3,"cruiser":5,"capitalShip":10},{"effect":"SURVEY_COST_REDUCTION_SUPPLIES","frigate":1,"destroyer":3,"cruiser":5,"capitalShip":10}],"tags":["logistics"]},
-{"id":"increased_sensor_strength","name":"Increased Sensor Strength","icon":"","hullSizeEffects":[{"effect":"SENSOR_STRENGTH_FLAT","frigate":50,"destroyer":75,"cruiser":100,"capitalShip":150}],"tags":["logistics"]}
-];
-
-var SHIPPED_NODES = [
-{"id":"flux_capacity_1","type":"flux_capacity","connectedTo":["flux_capacity_3"],"x":-859,"y":-1086},
-{"id":"flux_dissipation_1","type":"flux_dissipation","connectedTo":["flux_dissipation_2"],"x":-344,"y":-1087},
-{"id":"missile_damage_1","type":"missile_damage","connectedTo":[],"x":1293,"y":-274},
-{"id":"ballistic_damage_1","type":"ballistic_damage","connectedTo":[],"x":1181,"y":715},
-{"id":"hull_1","type":"hull","connectedTo":[],"x":-291,"y":1023},
-{"id":"beam_damage_1","type":"beam_damage","connectedTo":["beam_damage_2","beam_damage_5"],"x":-1457,"y":-675},
-{"id":"non_beam_energy_damage_1","type":"non_beam_energy_damage","connectedTo":["energy_damage_1","non_beam_energy_damage_2"],"x":-1385,"y":-775},
-{"id":"energy_damage_1","type":"energy_damage","connectedTo":["non_beam_energy_damage_1","beam_damage_2"],"x":-1301,"y":-746},
-{"id":"armor_1","type":"armor","connectedTo":[],"x":-378,"y":1038},
-{"id":"packed_capacitors_1","type":"packed_capacitors","connectedTo":["flux_capacity_3"],"x":-799,"y":-1194},
-{"id":"safety_overrides_1","type":"safety_overrides","connectedTo":[],"x":1676,"y":454},
-{"id":"heavyarmor_1","type":"heavyarmor","connectedTo":[],"x":-415,"y":964},
-{"id":"armoredweapons_1","type":"armoredweapons","connectedTo":[],"x":-613,"y":976},
-{"id":"reinforcedhull_1","type":"reinforcedhull","connectedTo":[],"x":-176,"y":1023},
-{"id":"blast_doors_1","type":"blast_doors","connectedTo":[],"x":562,"y":430},
-{"id":"fluxcoil_1","type":"fluxcoil","connectedTo":[],"x":-1540,"y":-1363},
-{"id":"fluxbreakers_1","type":"fluxbreakers","connectedTo":[],"x":-1156,"y":-1300},
-{"id":"fluxdistributor_1","type":"fluxdistributor","connectedTo":[],"x":-1517,"y":-1489},
-{"id":"autorepair_1","type":"autorepair","connectedTo":[],"x":1314,"y":207},
-{"id":"hardened_subsystems_1","type":"hardened_subsystems","connectedTo":[],"x":1200,"y":74},
-{"id":"turretgyros_1","type":"turretgyros","connectedTo":[],"x":1316,"y":134},
-{"id":"ballistic_rangefinder_1","type":"ballistic_rangefinder","connectedTo":[],"x":1131,"y":808},
-{"id":"magazines_1","type":"magazines","connectedTo":[],"x":1465,"y":67},
-{"id":"pointdefenseai_1","type":"pointdefenseai","connectedTo":[],"x":1329,"y":51},
-{"id":"missleracks_1","type":"missleracks","connectedTo":[],"x":1292,"y":-402},
-{"id":"missile_autoloader_1","type":"missile_autoloader","connectedTo":[],"x":1231,"y":-336},
-{"id":"eccm_1","type":"eccm","connectedTo":[],"x":1329,"y":-344},
-{"id":"high_scatter_amp_1","type":"high_scatter_amp","connectedTo":[],"x":-1337,"y":90},
-{"id":"advancedoptics_1","type":"advancedoptics","connectedTo":[],"x":-1306,"y":197},
-{"id":"dedicated_targeting_core_1","type":"dedicated_targeting_core","connectedTo":[],"x":1787,"y":153},
-{"id":"targetingunit_1","type":"targetingunit","connectedTo":[],"x":1771,"y":227},
-{"id":"ecm_1","type":"ecm","connectedTo":[],"x":-1062,"y":-424},
-{"id":"defensive_targeting_array_1","type":"defensive_targeting_array","connectedTo":[],"x":1883,"y":202},
-{"id":"advancedshieldemitter_1","type":"advancedshieldemitter","connectedTo":[],"x":921,"y":-1212},
-{"id":"extendedshieldemitter_1","type":"extendedshieldemitter","connectedTo":[],"x":677,"y":-1244},
-{"id":"hardenedshieldemitter_1","type":"hardenedshieldemitter","connectedTo":[],"x":778,"y":-1204},
-{"id":"stabilizedshieldemitter_1","type":"stabilizedshieldemitter","connectedTo":[],"x":841,"y":-1124},
-{"id":"shield_shunt_1","type":"shield_shunt","connectedTo":[],"x":-582,"y":911},
-{"id":"frontshield_1","type":"frontshield","connectedTo":[],"x":789,"y":-1346},
-{"id":"frontemitter_1","type":"frontemitter","connectedTo":[],"x":873,"y":-1296},
-{"id":"adaptiveshields_1","type":"adaptiveshields","connectedTo":[],"x":736,"y":-1060},
-{"id":"auxiliarythrusters_1","type":"auxiliarythrusters","connectedTo":[],"x":1443,"y":222},
-{"id":"unstable_injector_1","type":"unstable_injector","connectedTo":[],"x":1461,"y":478},
-{"id":"nav_relay_1","type":"nav_relay","connectedTo":[],"x":-1153,"y":-322},
-{"id":"adaptive_coils_1","type":"adaptive_coils","connectedTo":[],"x":-943,"y":-1569},
-{"id":"phase_anchor_1","type":"phase_anchor","connectedTo":[],"x":-844,"y":-1569},
-{"id":"additional_berthing_1","type":"additional_berthing","connectedTo":[],"x":-871,"y":368},
-{"id":"augmentedengines_1","type":"augmentedengines","connectedTo":[],"x":-583,"y":-321,"orbitAnchorId":"anchor_1","orbitAngle":180},
-{"id":"auxiliary_fuel_tanks_1","type":"auxiliary_fuel_tanks","connectedTo":[],"x":687,"y":256},
-{"id":"efficiency_overhaul_1","type":"efficiency_overhaul","connectedTo":["small_logistics_optional_4","small_logistics_optional_5"],"x":-164,"y":-106},
-{"id":"expanded_cargo_holds_1","type":"expanded_cargo_holds","connectedTo":[],"x":-818,"y":421},
-{"id":"hiressensors_1","type":"hiressensors","connectedTo":["increased_sensor_strength_1"],"x":-114,"y":-610},
-{"id":"insulatedengine_1","type":"insulatedengine","connectedTo":[],"x":-887,"y":280},
-{"id":"militarized_subsystems_1","type":"militarized_subsystems","connectedTo":[],"x":507,"y":94},
-{"id":"solar_shielding_1","type":"solar_shielding","connectedTo":[],"x":-769,"y":511},
-{"id":"surveying_equipment_1","type":"surveying_equipment","connectedTo":["survey_generic_cost_reduction_2"],"x":270,"y":-411},
-{"id":"converted_hangar_1","type":"converted_hangar","connectedTo":[],"x":1117,"y":-528},
-{"id":"converted_fighterbay_1","type":"converted_fighterbay","connectedTo":["small_logistics_optional_5","small_logistics_optional_9"],"x":171,"y":-105},
-{"id":"expanded_deck_crew_1","type":"expanded_deck_crew","connectedTo":[],"x":1027,"y":-734},
-{"id":"recovery_shuttles_1","type":"recovery_shuttles","connectedTo":[],"x":965,"y":-664},
-{"id":"operations_center_1","type":"operations_center","connectedTo":["small_logistics_optional_5","small_logistics_optional_4","small_logistics_optional_9"],"x":0,"y":0},
-{"id":"escort_package_1","type":"escort_package","connectedTo":[],"x":1453,"y":144},
-{"id":"beam_damage_2","type":"beam_damage","connectedTo":["beam_damage_1","energy_damage_1"],"x":-1380,"y":-704},
-{"id":"beam_damage_5","type":"beam_damage","connectedTo":["beam_damage_1"],"x":-1542,"y":-684},
-{"id":"flux_capacity_2","type":"flux_capacity","connectedTo":[],"x":-604,"y":-1277},
-{"id":"non_beam_energy_damage_2","type":"non_beam_energy_damage","connectedTo":["non_beam_energy_damage_1","non_beam_energy_damage_3"],"x":-1464,"y":-787},
-{"id":"non_beam_energy_damage_3","type":"non_beam_energy_damage","connectedTo":["non_beam_energy_damage_2"],"x":-1548,"y":-765},
-{"id":"root_low_tech_1","type":"root_low_tech","connectedTo":["small_logistics_optional_11","small_logistics_optional_31","small_logistics_optional_14"],"x":719,"y":415},
-{"id":"root_midline_1","type":"root_midline","connectedTo":["small_logistics_optional_21","small_logistics_optional_27","small_logistics_optional_1"],"x":-719,"y":415},
-{"id":"root_high_tech_1","type":"root_high_tech","connectedTo":["small_logistics_optional_3","small_logistics_optional_17","small_flux_optional_1","small_flux_optional_2","small_logistics_optional_10"],"x":0,"y":-830},
-{"id":"fighter_weapon_damage_1","type":"fighter_weapon_damage","connectedTo":[],"x":881,"y":-595},
-{"id":"fighter_speed_1","type":"fighter_speed","connectedTo":[],"x":997,"y":-581},
-{"id":"small_logistics_optional_3","type":"small_logistics_optional","connectedTo":["root_high_tech_1","small_logistics_optional_6"],"x":284,"y":-780},
-{"id":"small_logistics_optional_6","type":"small_logistics_optional","connectedTo":["small_logistics_optional_8","small_logistics_optional_3"],"x":534,"y":-636},
-{"id":"small_logistics_optional_8","type":"small_logistics_optional","connectedTo":["small_logistics_optional_6","small_logistics_optional_12"],"x":719,"y":-415},
-{"id":"small_logistics_optional_12","type":"small_logistics_optional","connectedTo":["small_logistics_optional_8","small_logistics_optional_11"],"x":817,"y":-144},
-{"id":"small_logistics_optional_11","type":"small_logistics_optional","connectedTo":["small_logistics_optional_12","root_low_tech_1"],"x":817,"y":144},
-{"id":"small_logistics_optional_17","type":"small_logistics_optional","connectedTo":["root_high_tech_1","small_logistics_optional_18"],"x":-284,"y":-780},
-{"id":"small_logistics_optional_18","type":"small_logistics_optional","connectedTo":["small_logistics_optional_17","small_logistics_optional_19"],"x":-534,"y":-636},
-{"id":"small_logistics_optional_19","type":"small_logistics_optional","connectedTo":["small_logistics_optional_18","small_logistics_optional_20"],"x":-719,"y":-415},
-{"id":"small_logistics_optional_20","type":"small_logistics_optional","connectedTo":["small_logistics_optional_19","small_logistics_optional_21"],"x":-817,"y":-144},
-{"id":"small_logistics_optional_21","type":"small_logistics_optional","connectedTo":["small_logistics_optional_20","root_midline_1"],"x":-817,"y":144},
-{"id":"small_logistics_optional_27","type":"small_logistics_optional","connectedTo":["root_midline_1","small_logistics_optional_28"],"x":-534,"y":636},
-{"id":"small_logistics_optional_28","type":"small_logistics_optional","connectedTo":["small_logistics_optional_27","small_logistics_optional_29"],"x":-284,"y":780},
-{"id":"small_logistics_optional_29","type":"small_logistics_optional","connectedTo":["small_logistics_optional_28","small_logistics_optional_30"],"x":0,"y":830},
-{"id":"small_logistics_optional_30","type":"small_logistics_optional","connectedTo":["small_logistics_optional_29","small_logistics_optional_31"],"x":284,"y":780},
-{"id":"small_logistics_optional_31","type":"small_logistics_optional","connectedTo":["small_logistics_optional_30","root_low_tech_1"],"x":534,"y":636},
-{"id":"small_flux_optional_1","type":"small_flux_optional","connectedTo":["root_high_tech_1","small_flux_optional_4"],"x":99,"y":-999},
-{"id":"small_flux_optional_3","type":"small_flux_optional","connectedTo":["small_flux_optional_4","small_flux_optional_6"],"x":336,"y":-1390},
-{"id":"small_flux_optional_4","type":"small_flux_optional","connectedTo":["small_flux_optional_3","small_flux_optional_1"],"x":217,"y":-1192},
-{"id":"flux_capacity_3","type":"flux_capacity","connectedTo":["packed_capacitors_1","flux_capacity_1"],"x":-877,"y":-975},
-{"id":"efficient_vents_1","type":"efficient_vents","connectedTo":["flux_dissipation_2"],"x":-548,"y":-861},
-{"id":"flux_dissipation_2","type":"flux_dissipation","connectedTo":["efficient_vents_1","flux_dissipation_1"],"x":-501,"y":-1009},
-{"id":"small_flux_optional_5","type":"small_flux_optional","connectedTo":[],"x":-806,"y":-865},
-{"id":"small_flux_optional_6","type":"small_flux_optional","connectedTo":["small_flux_optional_3","small_flux_optional_7"],"x":445,"y":-1580},
-{"id":"small_flux_optional_7","type":"small_flux_optional","connectedTo":["small_flux_optional_6","small_flux_optional_8"],"x":529,"y":-1742},
-{"id":"small_flux_optional_8","type":"small_flux_optional","connectedTo":["small_flux_optional_7"],"x":603,"y":-1884},
-{"id":"small_flux_optional_2","type":"small_flux_optional","connectedTo":["root_high_tech_1"],"x":-122,"y":-990},
-{"id":"small_logistics_optional_1","type":"small_logistics_optional","connectedTo":["root_midline_1","small_logistics_optional_2"],"x":-529,"y":309},
-{"id":"small_logistics_optional_2","type":"small_logistics_optional","connectedTo":["small_logistics_optional_1","small_logistics_optional_4"],"x":-325,"y":196},
-{"id":"small_logistics_optional_4","type":"small_logistics_optional","connectedTo":["small_logistics_optional_2","efficiency_overhaul_1","small_logistics_optional_5","small_logistics_optional_9","operations_center_1"],"x":-146,"y":90},
-{"id":"small_logistics_optional_5","type":"small_logistics_optional","connectedTo":["small_logistics_optional_4","small_logistics_optional_7","small_logistics_optional_9","efficiency_overhaul_1","converted_fighterbay_1","operations_center_1"],"x":0,"y":-159},
-{"id":"small_logistics_optional_7","type":"small_logistics_optional","connectedTo":["small_logistics_optional_5","small_logistics_optional_10","survey_generic_cost_reduction_1","small_logistics_optional_15"],"x":1,"y":-401},
-{"id":"small_logistics_optional_9","type":"small_logistics_optional","connectedTo":["small_logistics_optional_5","small_logistics_optional_4","small_logistics_optional_13","converted_fighterbay_1","operations_center_1"],"x":153,"y":87},
-{"id":"small_logistics_optional_10","type":"small_logistics_optional","connectedTo":["small_logistics_optional_7","root_high_tech_1","increased_sensor_strength_3"],"x":2,"y":-609},
-{"id":"small_logistics_optional_13","type":"small_logistics_optional","connectedTo":["small_logistics_optional_9","small_logistics_optional_14"],"x":339,"y":184},
-{"id":"small_logistics_optional_14","type":"small_logistics_optional","connectedTo":["small_logistics_optional_13","root_low_tech_1"],"x":512,"y":293},
-{"id":"survey_mach_cost_1","type":"survey_mach_cost","connectedTo":["survey_generic_cost_reduction_1","survey_generic_cost_reduction_2"],"x":270,"y":-325},
-{"id":"survey_supplies_cost_reduction_1","type":"survey_supplies_cost_reduction","connectedTo":["survey_generic_cost_reduction_1","survey_generic_cost_reduction_2"],"x":264,"y":-502},
-{"id":"survey_generic_cost_reduction_1","type":"survey_generic_cost_reduction","connectedTo":["small_logistics_optional_7","survey_supplies_cost_reduction_1","survey_mach_cost_1"],"x":149,"y":-403},
-{"id":"survey_generic_cost_reduction_2","type":"survey_generic_cost_reduction","connectedTo":["surveying_equipment_1","survey_supplies_cost_reduction_1","survey_mach_cost_1"],"x":394,"y":-413},
-{"id":"increased_sensor_strength_1","type":"increased_sensor_strength","connectedTo":["hiressensors_1","increased_sensor_strength_2"],"x":-115,"y":-726},
-{"id":"increased_sensor_strength_2","type":"increased_sensor_strength","connectedTo":["increased_sensor_strength_1","increased_sensor_strength_3"],"x":-232,"y":-609},
-{"id":"increased_sensor_strength_3","type":"increased_sensor_strength","connectedTo":["increased_sensor_strength_2","small_logistics_optional_10"],"x":-115,"y":-492},
-{"id":"small_logistics_optional_15","type":"small_logistics_optional","connectedTo":["small_logistics_optional_7","small_logistics_optional_16","small_logistics_optional_22"],"x":-109,"y":-335},
-{"id":"small_logistics_optional_16","type":"small_logistics_optional","connectedTo":["small_logistics_optional_15"],"x":-221,"y":-367},
-{"id":"small_logistics_optional_22","type":"small_logistics_optional","connectedTo":["small_logistics_optional_15"],"x":-184,"y":-248},
-{"id":"augmentedengines_2","type":"augmentedengines","connectedTo":[],"x":-445,"y":438}
-];
-
-var SHIPPED_CURVES = [
-{"a":"root_high_tech_1","b":"small_logistics_optional_3","controlX":144,"controlY":-817},
-{"a":"small_logistics_optional_3","b":"small_logistics_optional_6","controlX":415,"controlY":-719},
-{"a":"small_logistics_optional_6","b":"small_logistics_optional_8","controlX":636,"controlY":-534},
-{"a":"small_logistics_optional_8","b":"small_logistics_optional_12","controlX":780,"controlY":-284},
-{"a":"small_logistics_optional_12","b":"small_logistics_optional_11","controlX":830,"controlY":0},
-{"a":"small_logistics_optional_11","b":"root_low_tech_1","controlX":780,"controlY":284},
-{"a":"root_high_tech_1","b":"small_logistics_optional_17","controlX":-144,"controlY":-817},
-{"a":"small_logistics_optional_17","b":"small_logistics_optional_18","controlX":-415,"controlY":-719},
-{"a":"small_logistics_optional_18","b":"small_logistics_optional_19","controlX":-636,"controlY":-534},
-{"a":"small_logistics_optional_19","b":"small_logistics_optional_20","controlX":-780,"controlY":-284},
-{"a":"small_logistics_optional_20","b":"small_logistics_optional_21","controlX":-830,"controlY":0},
-{"a":"small_logistics_optional_21","b":"root_midline_1","controlX":-780,"controlY":284},
-{"a":"root_midline_1","b":"small_logistics_optional_27","controlX":-636,"controlY":534},
-{"a":"small_logistics_optional_27","b":"small_logistics_optional_28","controlX":-415,"controlY":719},
-{"a":"small_logistics_optional_28","b":"small_logistics_optional_29","controlX":-144,"controlY":817},
-{"a":"small_logistics_optional_29","b":"small_logistics_optional_30","controlX":144,"controlY":817},
-{"a":"small_logistics_optional_30","b":"small_logistics_optional_31","controlX":415,"controlY":719},
-{"a":"small_logistics_optional_31","b":"root_low_tech_1","controlX":636,"controlY":534},
-{"a":"increased_sensor_strength_2","b":"increased_sensor_strength_3","controlX":-198,"controlY":-526},
-{"a":"increased_sensor_strength_1","b":"increased_sensor_strength_2","controlX":-198,"controlY":-692},
-{"a":"increased_sensor_strength_3","b":"small_logistics_optional_10","controlX":-32,"controlY":-526}
-];
-
-var SHIPPED_ANCHORS = [
-{"id":"anchor_1","x":-488,"y":-321,"radius":95}
-];
-var SHIPPED_IMAGES = [];
-var SHIPPED_STARS = [];
 
 var SMALL_R = 32, NOTABLE_R = 38.4, KEYSTONE_R = 44.8, WORMHOLE_R = 41.6, ROOT_R = 80, SOCKET_R = 38.4;
 function tierOf(type){ return (type && type.tier) ? type.tier : 'SMALL'; }
@@ -1289,14 +1078,46 @@ function deleteAnchor(id){
   state.nodes.forEach(function(n){ if (n.orbitAnchorId === id) detachNodeFromAnchor(n); });
 }
 
-function loadShipped(){
-  state.types = deepCopy(SHIPPED_TYPES);
-  state.nodes = deepCopy(SHIPPED_NODES);
-  state.curves = deepCopy(SHIPPED_CURVES);
-  state.hiddenConnectors = [];
-  state.anchors = deepCopy(SHIPPED_ANCHORS);
-  state.images = deepCopy(SHIPPED_IMAGES);
-  state.stars = deepCopy(SHIPPED_STARS);
+function anchorsFromTree(treeJson){
+  var anchors = treeJson.orbitAnchors || [];
+  (treeJson.ringBelts || []).forEach(function(belt){
+    if (!belt.rotation) return;
+    anchors.forEach(function(a){
+      if (a.id === belt.id && a.shape === 'asteroidBelt' && a.beltRotation === undefined) a.beltRotation = belt.rotation;
+    });
+  });
+  return anchors;
+}
+
+function applyTreeFiles(typesJson, treeJson){
+  state.types = typesJson.skillTypes || typesJson;
+  state.nodes = treeJson.nodes || treeJson;
+  state.curves = treeJson.connectorCurves || [];
+  state.hiddenConnectors = treeJson.hiddenConnectors || [];
+  state.anchors = anchorsFromTree(treeJson);
+  state.images = normalizeImages(treeJson.staticImages);
+  state.stars = normalizeStars(treeJson.stars);
+  pruneConnectorEntries();
+}
+
+function fetchTreeFiles(){
+  return Promise.all([
+    fetch('/data/types').then(function(r){ if (!r.ok) throw new Error('skill_types.json ' + r.status); return r.json(); }),
+    fetch('/data/tree').then(function(r){ if (!r.ok) throw new Error('ship_skill_tree.json ' + r.status); return r.json(); })
+  ]).then(function(results){
+    applyTreeFiles(results[0], results[1]);
+    hideServerError();
+  });
+}
+
+function showServerError(error){
+  var el = document.getElementById('serverError');
+  document.getElementById('serverErrorDetail').textContent = error && error.message ? '(' + error.message + ')' : '';
+  el.hidden = false;
+}
+
+function hideServerError(){
+  document.getElementById('serverError').hidden = true;
 }
 
 function saveLocal(){
@@ -1322,7 +1143,7 @@ function loadLocal(){
   } catch(e){ return false; }
 }
 
-if (!loadLocal()) loadShipped();
+var loadedLocalDraft = loadLocal();
 
 var svg = document.getElementById('stage');
 var canvasWrap = document.getElementById('canvasWrap');
@@ -2737,7 +2558,10 @@ function refreshAnchorInspector(body){
         '<div class="field"><label>Band width</label><input type="number" min="10" value="' + beltBandWidthVal + '" data-anchor-field="beltBandWidth"></div>' +
         '<div class="field"><label>Ring style</label><select data-anchor-field="beltStyle">' + beltStyleOptions + '</select></div>' +
       '</div>' +
-      '<div class="field"><label>Rotation speed (degrees/sec)</label><input type="number" step="0.1" value="' + (a.beltRotationSpeed || 0) + '" data-anchor-field="beltRotationSpeed"></div>' +
+      '<div class="fieldRow">' +
+        '<div class="field"><label>Start angle (degrees)</label><input type="number" step="1" value="' + (a.beltRotation || 0) + '" data-anchor-field="beltRotation"></div>' +
+        '<div class="field"><label>Rotation speed (degrees/sec)</label><input type="number" step="0.1" value="' + (a.beltRotationSpeed || 0) + '" data-anchor-field="beltRotationSpeed"></div>' +
+      '</div>' +
       regionTagFieldHtml('anchor', a.tags)
     : '') +
     '<hr class="sep">' +
@@ -2774,6 +2598,9 @@ function refreshAnchorInspector(body){
         a.beltBandWidth = Math.max(10, parseInt(inp.value, 10) || 10);
       } else if (field === 'beltStyle') {
         a.beltStyle = inp.value;
+      } else if (field === 'beltRotation') {
+        var beltDeg = parseFloat(inp.value);
+        a.beltRotation = ((isNaN(beltDeg) ? 0 : beltDeg) % 360 + 360) % 360;
       } else if (field === 'beltRotationSpeed') {
         a.beltRotationSpeed = parseFloat(inp.value) || 0;
       }
@@ -3728,9 +3555,84 @@ function datalistHtml(id, values){
   return '<datalist id="' + id + '">' + values.map(function(v){ return '<option value="' + v + '">'; }).join('') + '</datalist>';
 }
 
-function openSocketableEditorModal(){
+function openDataModal(options){
   var root = document.getElementById('modalRoot');
-  var defs = [], extraColumns = [], selectedIndex = -1, dirty = false;
+  var modal = { dirty: false };
+
+  function setStatus(text){
+    var status = document.getElementById('dataModalStatus');
+    if (status) status.textContent = text;
+  }
+
+  modal.markDirty = function(){
+    modal.dirty = true;
+    setStatus('Unsaved changes');
+  };
+
+  modal.confirmDiscard = function(question){
+    return !modal.dirty || confirm(question);
+  };
+
+  modal.close = function(){
+    if (!modal.confirmDiscard('Discard unsaved ' + options.noun + ' changes?')) return;
+    root.innerHTML = '';
+  };
+
+  modal.render = function(contentHtml, extraButtonsHtml){
+    root.innerHTML =
+      '<div class="modalOverlay"><div class="modal wide">' +
+      '<h3>' + options.title + '</h3>' +
+      contentHtml +
+      '<div class="modalBtns">' +
+        '<span class="hint" id="dataModalStatus" style="margin-right:auto">' + (modal.dirty ? 'Unsaved changes' : '') + '</span>' +
+        (extraButtonsHtml || '') +
+        '<button class="smallBtn" id="dataModalReload">Reload from disk</button>' +
+        '<button class="smallBtn primary" id="dataModalSave">Save to project</button>' +
+        '<button class="smallBtn" id="dataModalClose">Close</button>' +
+      '</div>' +
+      '</div></div>';
+    document.getElementById('dataModalClose').addEventListener('click', modal.close);
+    document.getElementById('dataModalReload').addEventListener('click', function(){
+      if (!modal.confirmDiscard('Discard unsaved ' + options.noun + ' changes and reload from disk?')) return;
+      options.load();
+    });
+    document.getElementById('dataModalSave').addEventListener('click', options.save);
+    return root;
+  };
+
+  modal.loadFailed = function(what){
+    showToast('Could not load ' + what + ' - run tools\\skill_tree_server.ps1');
+  };
+
+  modal.save = function(issues, url, payload, savedMessage){
+    if (issues.length) { alert('Not saved:\n' + issues.join('\n')); return; }
+    fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Skill-Tree-Editor': '1' },
+      body: JSON.stringify(payload)
+    }).then(function(r){
+      return r.json().then(function(data){ return { httpOk: r.ok, data: data }; });
+    }).then(function(result){
+      if (!result.httpOk || !result.data.ok) {
+        showToast('Could not save: ' + (result.data && result.data.message ? result.data.message : 'unknown error'));
+        return;
+      }
+      modal.dirty = false;
+      setStatus('Saved');
+      showToast(savedMessage);
+    }).catch(function(){
+      showToast('Could not reach local server - run tools\\skill_tree_server.ps1');
+    });
+  };
+
+  root.innerHTML = '<div class="modalOverlay"><div class="modal"><div class="hint">' + options.loadingText + '</div></div></div>';
+  return modal;
+}
+
+function openSocketableEditorModal(){
+  var defs = [], extraColumns = [], selectedIndex = -1;
+  var modal = openDataModal({ title: 'Socketable Editor', noun: 'socketable', loadingText: 'Loading socketables...', load: load, save: save });
+  var markDirty = modal.markDirty;
 
   function load(){
     fetch('/data/socketables').then(function(r){ if (!r.ok) throw new Error('socketables ' + r.status); return r.text(); }).then(function(text){
@@ -3738,46 +3640,21 @@ function openSocketableEditorModal(){
       defs = parsed.defs;
       extraColumns = parsed.extraColumns;
       selectedIndex = defs.length ? 0 : -1;
-      dirty = false;
+      modal.dirty = false;
       render();
     }).catch(function(){
-      showToast('Could not load socketables.csv - run tools\\skill_tree_server.ps1');
+      modal.loadFailed('socketables.csv');
     });
   }
 
-  function close(){
-    if (dirty && !confirm('Discard unsaved socketable changes?')) return;
-    root.innerHTML = '';
-  }
-
-  function markDirty(){
-    dirty = true;
-    var status = document.getElementById('sockStatus');
-    if (status) status.textContent = 'Unsaved changes';
-  }
-
   function render(){
-    root.innerHTML =
-      '<div class="modalOverlay"><div class="modal wide">' +
-      '<h3>Socketable Editor</h3>' +
+    modal.render(
       '<div class="hint">Edits data/config/exiledSector/socketables.csv. Names and descriptions are English; add zh text under socketable.&lt;id&gt;.name / .description in zh_CN.json.</div>' +
       '<div class="socketableLayout">' +
         '<div class="socketableList" id="sockList"></div>' +
         '<div class="socketableDetail" id="sockDetail"></div>' +
-      '</div>' +
-      '<div class="modalBtns">' +
-        '<span class="hint" id="sockStatus" style="margin-right:auto">' + (dirty ? 'Unsaved changes' : '') + '</span>' +
-        '<button class="smallBtn" id="sockNew">+ New socketable</button>' +
-        '<button class="smallBtn" id="sockReload">Reload from disk</button>' +
-        '<button class="smallBtn primary" id="sockSave">Save to project</button>' +
-        '<button class="smallBtn" id="sockClose">Close</button>' +
-      '</div>' +
-      '</div></div>';
-    document.getElementById('sockClose').addEventListener('click', close);
-    document.getElementById('sockReload').addEventListener('click', function(){
-      if (dirty && !confirm('Discard unsaved socketable changes and reload from disk?')) return;
-      load();
-    });
+      '</div>',
+      '<button class="smallBtn" id="sockNew">+ New socketable</button>');
     document.getElementById('sockNew').addEventListener('click', function(){
       defs.push({ id: uniqueSocketableId('new_socketable'), kind: 'subroutine', name: 'New Socketable', icon: '', grade: '', alignment: '',
         rarity: '10', unique: '', unlock: '', description: '', prefixes: [{ effect: EFFECT_NAMES_SORTED[0], min: 1, max: 2, weight: 1 }],
@@ -3787,7 +3664,6 @@ function openSocketableEditorModal(){
       renderList();
       renderDetail();
     });
-    document.getElementById('sockSave').addEventListener('click', save);
     renderList();
     renderDetail();
   }
@@ -3965,29 +3841,9 @@ function openSocketableEditorModal(){
   }
 
   function save(){
-    var issues = validateSocketables(defs);
-    if (issues.length) { alert('Not saved:\n' + issues.join('\n')); return; }
-    fetch('/save-socketables', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Skill-Tree-Editor': '1' },
-      body: JSON.stringify({ csv: serializeSocketablesCsv(defs, extraColumns) })
-    }).then(function(r){
-      return r.json().then(function(data){ return { httpOk: r.ok, data: data }; });
-    }).then(function(result){
-      if (!result.httpOk || !result.data.ok) {
-        showToast('Could not save: ' + (result.data && result.data.message ? result.data.message : 'unknown error'));
-        return;
-      }
-      dirty = false;
-      var status = document.getElementById('sockStatus');
-      if (status) status.textContent = 'Saved';
-      showToast('Saved socketables.csv');
-    }).catch(function(){
-      showToast('Could not reach local server - run tools\\skill_tree_server.ps1');
-    });
+    modal.save(validateSocketables(defs), '/save-socketables', { csv: serializeSocketablesCsv(defs, extraColumns) }, 'Saved socketables.csv');
   }
 
-  root.innerHTML = '<div class="modalOverlay"><div class="modal"><div class="hint">Loading socketables...</div></div></div>';
   load();
 }
 
@@ -4030,8 +3886,9 @@ function serializeRareNames(names){
 }
 
 function openSocketableNamesModal(){
-  var root = document.getElementById('modalRoot');
-  var affixes = [], names = {}, usedEffects = {}, tab = 'affixes', filterText = '', dirty = false;
+  var affixes = [], names = {}, usedEffects = {}, tab = 'affixes', filterText = '';
+  var modal = openDataModal({ title: 'Socketable Names', noun: 'name', loadingText: 'Loading names...', load: load, save: save });
+  var markDirty = modal.markDirty;
 
   function load(){
     Promise.all([
@@ -4044,22 +3901,11 @@ function openSocketableNamesModal(){
       parseSocketablesCsv(results[1]).defs.forEach(function(def){
         def.prefixes.concat(def.suffixes).forEach(function(e){ (usedEffects[e.effect] = usedEffects[e.effect] || []).push(def.id); });
       });
-      dirty = false;
+      modal.dirty = false;
       render();
     }).catch(function(){
-      showToast('Could not load socketable names - run tools\\skill_tree_server.ps1');
+      modal.loadFailed('socketable names');
     });
-  }
-
-  function close(){
-    if (dirty && !confirm('Discard unsaved name changes?')) return;
-    root.innerHTML = '';
-  }
-
-  function markDirty(){
-    dirty = true;
-    var status = document.getElementById('namesStatus');
-    if (status) status.textContent = 'Unsaved changes';
   }
 
   function missingEffects(){
@@ -4069,30 +3915,15 @@ function openSocketableNamesModal(){
   }
 
   function render(){
-    root.innerHTML =
-      '<div class="modalOverlay"><div class="modal wide">' +
-      '<h3>Socketable Names</h3>' +
+    var root = modal.render(
       '<div class="exportTabs">' +
         '<div class="exportTab' + (tab === 'affixes' ? ' active' : '') + '" data-names-tab="affixes">Prefix and suffix names</div>' +
         '<div class="exportTab' + (tab === 'rare' ? ' active' : '') + '" data-names-tab="rare">Rare names</div>' +
       '</div>' +
-      '<div id="namesBody" class="socketableDetail" style="margin-top:10px"></div>' +
-      '<div class="modalBtns">' +
-        '<span class="hint" id="namesStatus" style="margin-right:auto">' + (dirty ? 'Unsaved changes' : '') + '</span>' +
-        '<button class="smallBtn" id="namesReload">Reload from disk</button>' +
-        '<button class="smallBtn primary" id="namesSave">Save to project</button>' +
-        '<button class="smallBtn" id="namesClose">Close</button>' +
-      '</div>' +
-      '</div></div>';
+      '<div id="namesBody" class="socketableDetail" style="margin-top:10px"></div>');
     root.querySelectorAll('[data-names-tab]').forEach(function(el){
       el.addEventListener('click', function(){ tab = el.dataset.namesTab; render(); });
     });
-    document.getElementById('namesClose').addEventListener('click', close);
-    document.getElementById('namesReload').addEventListener('click', function(){
-      if (dirty && !confirm('Discard unsaved name changes and reload from disk?')) return;
-      load();
-    });
-    document.getElementById('namesSave').addEventListener('click', save);
     if (tab === 'affixes') renderAffixes(); else renderRareNames();
   }
 
@@ -4263,29 +4094,10 @@ function openSocketableNamesModal(){
   }
 
   function save(){
-    var issues = validate();
-    if (issues.length) { alert('Not saved:\n' + issues.join('\n')); return; }
-    fetch('/save-socketable-names', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Skill-Tree-Editor': '1' },
-      body: JSON.stringify({ affixes: serializeAffixesCsv(affixes), names: serializeRareNames(names) })
-    }).then(function(r){
-      return r.json().then(function(data){ return { httpOk: r.ok, data: data }; });
-    }).then(function(result){
-      if (!result.httpOk || !result.data.ok) {
-        showToast('Could not save: ' + (result.data && result.data.message ? result.data.message : 'unknown error'));
-        return;
-      }
-      dirty = false;
-      var status = document.getElementById('namesStatus');
-      if (status) status.textContent = 'Saved';
-      showToast('Saved socketable_affixes.csv and socketable_names.json');
-    }).catch(function(){
-      showToast('Could not reach local server - run tools\\skill_tree_server.ps1');
-    });
+    modal.save(validate(), '/save-socketable-names', { affixes: serializeAffixesCsv(affixes), names: serializeRareNames(names) },
+      'Saved socketable_affixes.csv and socketable_names.json');
   }
 
-  root.innerHTML = '<div class="modalOverlay"><div class="modal"><div class="hint">Loading names...</div></div></div>';
   load();
 }
 
@@ -4319,8 +4131,9 @@ function formatPercent(value){
 }
 
 function openSocketableDropsModal(){
-  var root = document.getElementById('modalRoot');
-  var rows = [], filterText = '', dirty = false, file = 'socketable_salvage.csv', files = [file];
+  var rows = [], filterText = '', file = 'socketable_salvage.csv', files = [file];
+  var modal = openDataModal({ title: 'Socketable Drops', noun: 'drop', loadingText: 'Loading drops...', load: load, save: save });
+  var markDirty = modal.markDirty;
 
   function load(){
     fetch('/list-socketable-salvage').then(function(r){ return r.ok ? r.json() : [file]; }).catch(function(){ return [file]; }).then(function(list){
@@ -4328,22 +4141,11 @@ function openSocketableDropsModal(){
       return fetch('/data/socketable-salvage?file=' + encodeURIComponent(file));
     }).then(function(r){ if (!r.ok) throw new Error('salvage ' + r.status); return r.text(); }).then(function(text){
       rows = parseSalvageCsv(text);
-      dirty = false;
+      modal.dirty = false;
       render();
     }).catch(function(){
-      showToast('Could not load ' + file + ' - run tools\\skill_tree_server.ps1');
+      modal.loadFailed(file);
     });
-  }
-
-  function close(){
-    if (dirty && !confirm('Discard unsaved drop changes?')) return;
-    root.innerHTML = '';
-  }
-
-  function markDirty(){
-    dirty = true;
-    var status = document.getElementById('dropsStatus');
-    if (status) status.textContent = 'Unsaved changes';
   }
 
   function atLeast(row, count){
@@ -4388,9 +4190,7 @@ function openSocketableDropsModal(){
         '<td style="' + cellStyle + '"><button class="smallBtn danger" type="button" data-drop-remove="' + i + '">X</button></td></tr>';
       return html;
     }).join('');
-    root.innerHTML =
-      '<div class="modalOverlay"><div class="modal wide">' +
-      '<h3>Socketable Drops</h3>' +
+    var root = modal.render(
       '<div class="fieldRow" style="align-items:flex-end"><div class="field" style="flex:1"><label>File</label><select id="dropsFile">' +
         files.map(function(name){ return '<option value="' + escapeHtml(name) + '"' + (name === file ? ' selected' : '') + '>' + escapeHtml(name) + '</option>'; }).join('') +
         '</select></div></div>' +
@@ -4402,14 +4202,7 @@ function openSocketableDropsModal(){
         '<div class="field" style="flex:1"><label>Filter</label><input id="dropsFilter" value="' + escapeHtml(filterText) + '" placeholder="site id"></div>' +
         '<button class="smallBtn" type="button" id="dropsAdd">+ Add site</button>' +
       '</div>' +
-      '<div class="socketableDetail" style="margin-top:8px"><table style="border-collapse:collapse;font-size:12px">' + head + body + '</table></div>' +
-      '<div class="modalBtns">' +
-        '<span class="hint" id="dropsStatus" style="margin-right:auto">' + (dirty ? 'Unsaved changes' : '') + '</span>' +
-        '<button class="smallBtn" id="dropsReload">Reload from disk</button>' +
-        '<button class="smallBtn primary" id="dropsSave">Save to project</button>' +
-        '<button class="smallBtn" id="dropsClose">Close</button>' +
-      '</div>' +
-      '</div></div>';
+      '<div class="socketableDetail" style="margin-top:8px"><table style="border-collapse:collapse;font-size:12px">' + head + body + '</table></div>');
 
     var filter = document.getElementById('dropsFilter');
     filter.addEventListener('input', function(){
@@ -4456,17 +4249,11 @@ function openSocketableDropsModal(){
       render();
     });
     document.getElementById('dropsFile').addEventListener('change', function(e){
-      if (dirty && !confirm('Discard unsaved drop changes in ' + file + '?')) { e.target.value = file; return; }
+      if (!modal.confirmDiscard('Discard unsaved drop changes in ' + file + '?')) { e.target.value = file; return; }
       file = e.target.value;
       filterText = '';
       load();
     });
-    document.getElementById('dropsClose').addEventListener('click', close);
-    document.getElementById('dropsReload').addEventListener('click', function(){
-      if (dirty && !confirm('Discard unsaved drop changes and reload from disk?')) return;
-      load();
-    });
-    document.getElementById('dropsSave').addEventListener('click', save);
   }
 
   function validate(){
@@ -4486,29 +4273,9 @@ function openSocketableDropsModal(){
   }
 
   function save(){
-    var issues = validate();
-    if (issues.length) { alert('Not saved:\n' + issues.join('\n')); return; }
-    fetch('/save-socketable-salvage', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Skill-Tree-Editor': '1' },
-      body: JSON.stringify({ file: file, csv: serializeSalvageCsv(rows) })
-    }).then(function(r){
-      return r.json().then(function(data){ return { httpOk: r.ok, data: data }; });
-    }).then(function(result){
-      if (!result.httpOk || !result.data.ok) {
-        showToast('Could not save: ' + (result.data && result.data.message ? result.data.message : 'unknown error'));
-        return;
-      }
-      dirty = false;
-      var status = document.getElementById('dropsStatus');
-      if (status) status.textContent = 'Saved';
-      showToast('Saved ' + file);
-    }).catch(function(){
-      showToast('Could not reach local server - run tools\\skill_tree_server.ps1');
-    });
+    modal.save(validate(), '/save-socketable-salvage', { file: file, csv: serializeSalvageCsv(rows) }, 'Saved ' + file);
   }
 
-  root.innerHTML = '<div class="modalOverlay"><div class="modal"><div class="hint">Loading drops...</div></div></div>';
   load();
 }
 
@@ -4751,23 +4518,67 @@ function serializeType(t){
   if (t.tags && t.tags.length) out.tags = t.tags;
   return out;
 }
-function toTabbedJson(obj, rootKey){
-  var wrapper = {}; wrapper[rootKey] = obj;
-  return JSON.stringify(wrapper, null, '\t');
+function serializeSkillTypesFile(){
+  return JSON.stringify({ skillTypes: state.types.map(serializeType) }, null, '\t');
+}
+function serializeTreeNode(n){
+  var out = { id: n.id, type: n.type, connectedTo: n.connectedTo, x: n.x, y: n.y };
+  if (n.orbitAnchorId) { out.orbitAnchorId = n.orbitAnchorId; out.orbitAngle = n.orbitAngle; }
+  if (n.ringBeltPath) out.ringBeltPath = n.ringBeltPath;
+  if (n.ringBeltColor) out.ringBeltColor = n.ringBeltColor;
+  if (n.ringBeltWidth) out.ringBeltWidth = n.ringBeltWidth;
+  if (n.wormholeColor) out.wormholeColor = n.wormholeColor;
+  if (n.pairedWith) out.pairedWith = n.pairedWith;
+  if (n.tags && n.tags.length) out.tags = n.tags;
+  return out;
+}
+function serializeOrbitAnchor(a){
+  var ao = { id: a.id, x: a.x, y: a.y, radius: a.radius };
+  if (a.shape && a.shape !== 'circle') {
+    ao.shape = a.shape;
+    if (a.shape === 'rectangle') ao.aspectRatio = a.aspectRatio || ANCHOR_RECTANGLE_ASPECT;
+    if (a.rotation) ao.rotation = a.rotation;
+    if (a.shape === 'asteroidBelt') {
+      if (a.beltBandWidth) ao.beltBandWidth = a.beltBandWidth;
+      if (a.beltStyle) ao.beltStyle = a.beltStyle;
+      if (a.beltRotation) ao.beltRotation = a.beltRotation;
+      if (a.beltRotationSpeed) ao.beltRotationSpeed = a.beltRotationSpeed;
+      if (a.tags && a.tags.length) ao.tags = a.tags;
+    }
+  }
+  return ao;
+}
+function serializeRingBelt(a){
+  var bandWidth = a.beltBandWidth || Math.max(60, Math.round(a.radius * 0.2));
+  var half = bandWidth / 2;
+  var belt = {
+    id: a.id,
+    x: a.x,
+    y: a.y,
+    innerRadius: Math.max(0, a.radius - half),
+    outerRadius: a.radius + half,
+    ringArtPath: 'graphics/planets/ring_band_' + (a.beltStyle || 'asteroids') + '.png'
+  };
+  if (a.beltRotation) belt.rotation = a.beltRotation;
+  if (a.beltRotationSpeed) belt.rotationSpeed = a.beltRotationSpeed;
+  if (a.tags && a.tags.length) belt.tags = a.tags;
+  return belt;
+}
+function serializeStaticImage(img){
+  var io = { id: img.id, x: img.x, y: img.y, width: img.width, height: img.height, imagePath: img.imagePath || '' };
+  if (img.rotation) io.rotation = img.rotation;
+  if (img.rotationSpeed) io.rotationSpeed = img.rotationSpeed;
+  if (img.tags && img.tags.length) io.tags = img.tags;
+  return io;
+}
+function serializeStar(s){
+  var so = { id: s.id, x: s.x, y: s.y, radius: s.radius, starType: s.starType || 'star_yellow' };
+  if (s.color) so.color = s.color;
+  if (s.tags && s.tags.length) so.tags = s.tags;
+  return so;
 }
 function buildTreeExportObject(){
-  var nodesOut = state.nodes.map(function(n){
-    var out = { id: n.id, type: n.type, connectedTo: n.connectedTo, x: n.x, y: n.y };
-    if (n.orbitAnchorId) { out.orbitAnchorId = n.orbitAnchorId; out.orbitAngle = n.orbitAngle; }
-    if (n.ringBeltPath) out.ringBeltPath = n.ringBeltPath;
-    if (n.ringBeltColor) out.ringBeltColor = n.ringBeltColor;
-    if (n.ringBeltWidth) out.ringBeltWidth = n.ringBeltWidth;
-    if (n.wormholeColor) out.wormholeColor = n.wormholeColor;
-    if (n.pairedWith) out.pairedWith = n.pairedWith;
-    if (n.tags && n.tags.length) out.tags = n.tags;
-    return out;
-  });
-  var out = { nodes: nodesOut };
+  var out = { nodes: state.nodes.map(serializeTreeNode) };
   var linkedCurves = linkedEntries(state.curves);
   var linkedHidden = linkedEntries(state.hiddenConnectors);
   if (linkedCurves.length) {
@@ -4776,58 +4587,11 @@ function buildTreeExportObject(){
   if (linkedHidden.length) {
     out.hiddenConnectors = linkedHidden.map(function(h){ return { a: h.a, b: h.b }; });
   }
-  if (state.anchors.length) {
-    out.orbitAnchors = state.anchors.map(function(a){
-      var ao = { id: a.id, x: a.x, y: a.y, radius: a.radius };
-      if (a.shape && a.shape !== 'circle') {
-        ao.shape = a.shape;
-        if (a.shape === 'rectangle') ao.aspectRatio = a.aspectRatio || ANCHOR_RECTANGLE_ASPECT;
-        if (a.rotation) ao.rotation = a.rotation;
-        if (a.shape === 'asteroidBelt') {
-          if (a.beltBandWidth) ao.beltBandWidth = a.beltBandWidth;
-          if (a.beltStyle) ao.beltStyle = a.beltStyle;
-          if (a.beltRotationSpeed) ao.beltRotationSpeed = a.beltRotationSpeed;
-          if (a.tags && a.tags.length) ao.tags = a.tags;
-        }
-      }
-      return ao;
-    });
-  }
+  if (state.anchors.length) out.orbitAnchors = state.anchors.map(serializeOrbitAnchor);
   var beltAnchors = state.anchors.filter(function(a){ return a.shape === 'asteroidBelt'; });
-  if (beltAnchors.length) {
-    out.ringBelts = beltAnchors.map(function(a){
-      var bandWidth = a.beltBandWidth || Math.max(60, Math.round(a.radius * 0.2));
-      var half = bandWidth / 2;
-      var belt = {
-        id: a.id,
-        x: a.x,
-        y: a.y,
-        innerRadius: Math.max(0, a.radius - half),
-        outerRadius: a.radius + half,
-        ringArtPath: 'graphics/planets/ring_band_' + (a.beltStyle || 'asteroids') + '.png'
-      };
-      if (a.beltRotationSpeed) belt.rotationSpeed = a.beltRotationSpeed;
-      if (a.tags && a.tags.length) belt.tags = a.tags;
-      return belt;
-    });
-  }
-  if (state.images.length) {
-    out.staticImages = state.images.map(function(img){
-      var io = { id: img.id, x: img.x, y: img.y, width: img.width, height: img.height, imagePath: img.imagePath || '' };
-      if (img.rotation) io.rotation = img.rotation;
-      if (img.rotationSpeed) io.rotationSpeed = img.rotationSpeed;
-      if (img.tags && img.tags.length) io.tags = img.tags;
-      return io;
-    });
-  }
-  if (state.stars.length) {
-    out.stars = state.stars.map(function(s){
-      var so = { id: s.id, x: s.x, y: s.y, radius: s.radius, starType: s.starType || 'star_yellow' };
-      if (s.color) so.color = s.color;
-      if (s.tags && s.tags.length) so.tags = s.tags;
-      return so;
-    });
-  }
+  if (beltAnchors.length) out.ringBelts = beltAnchors.map(serializeRingBelt);
+  if (state.images.length) out.staticImages = state.images.map(serializeStaticImage);
+  if (state.stars.length) out.stars = state.stars.map(serializeStar);
   return out;
 }
 var currentExportTab = 'tree';
@@ -4837,8 +4601,7 @@ function refreshExport(){
     text = JSON.stringify(buildTreeExportObject(), null, '\t');
     document.getElementById('exportHint').textContent = 'Paste over data/skilltrees/ship_skill_tree.json';
   } else {
-    var typesOut = state.types.map(serializeType);
-    text = toTabbedJson(typesOut, 'skillTypes');
+    text = serializeSkillTypesFile();
     document.getElementById('exportHint').textContent = 'Paste over data/skilltrees/skill_types.json';
   }
   document.getElementById('exportText').value = text;
@@ -4860,8 +4623,7 @@ function saveToProject(reason){
     return Promise.resolve(null);
   }
   var treeText = JSON.stringify(buildTreeExportObject(), null, '\t');
-  var typesOut = state.types.map(serializeType);
-  var typesText = toTabbedJson(typesOut, 'skillTypes');
+  var typesText = serializeSkillTypesFile();
   return fetch('/save', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'X-Skill-Tree-Editor': '1' },
@@ -4906,7 +4668,7 @@ document.getElementById('importBtn').addEventListener('click', function(){
     var nodesRaw = document.getElementById('impNodes').value.trim();
     try {
       if (typesRaw) { var pt = JSON.parse(typesRaw); state.types = pt.skillTypes || pt; }
-      if (nodesRaw) { var pn = JSON.parse(nodesRaw); state.nodes = pn.nodes || pn; state.curves = pn.connectorCurves || []; state.hiddenConnectors = pn.hiddenConnectors || []; state.anchors = pn.orbitAnchors || []; state.images = normalizeImages(pn.staticImages); state.stars = normalizeStars(pn.stars); }
+      if (nodesRaw) { var pn = JSON.parse(nodesRaw); state.nodes = pn.nodes || pn; state.curves = pn.connectorCurves || []; state.hiddenConnectors = pn.hiddenConnectors || []; state.anchors = anchorsFromTree(pn); state.images = normalizeImages(pn.staticImages); state.stars = normalizeStars(pn.stars); }
       pruneConnectorEntries();
       root.innerHTML = '';
       state.selectedIds = [];
@@ -4923,19 +4685,7 @@ document.getElementById('importBtn').addEventListener('click', function(){
 
 document.getElementById('resetBtn').addEventListener('click', function(){
   if (!confirm('Discard all changes in this browser and reload skill_types.json / ship_skill_tree.json from disk?')) return;
-  Promise.all([
-    fetch('/data/types').then(function(r){ if (!r.ok) throw new Error('types ' + r.status); return r.json(); }),
-    fetch('/data/tree').then(function(r){ if (!r.ok) throw new Error('tree ' + r.status); return r.json(); })
-  ]).then(function(results){
-    var typesJson = results[0], treeJson = results[1];
-    state.types = typesJson.skillTypes || typesJson;
-    state.nodes = treeJson.nodes || treeJson;
-    state.curves = treeJson.connectorCurves || [];
-    state.hiddenConnectors = treeJson.hiddenConnectors || [];
-    state.anchors = treeJson.orbitAnchors || [];
-    state.images = normalizeImages(treeJson.staticImages);
-    state.stars = normalizeStars(treeJson.stars);
-    pruneConnectorEntries();
+  fetchTreeFiles().then(function(){
     try { localStorage.removeItem('skillTreeEditor.v1'); } catch(e){}
     clearAllSelection();
     render();
@@ -5087,5 +4837,17 @@ window.addEventListener('resize', render);
 fitToScreen();
 render();
 refreshExport();
+
+function loadInitialTree(){
+  fetchTreeFiles().then(function(){
+    clearAllSelection();
+    render();
+    refreshInspector();
+    fitToScreen();
+    refreshExport();
+  }).catch(showServerError);
+}
+document.getElementById('serverErrorRetry').addEventListener('click', loadInitialTree);
+if (!loadedLocalDraft) loadInitialTree();
 })();
 </script>
