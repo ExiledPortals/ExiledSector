@@ -8,6 +8,7 @@ import com.fs.starfarer.api.impl.campaign.FleetEncounterContext;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
+import com.fs.starfarer.api.ui.UIComponentAPI;
 import exiledsector.effects.OpReserveParity;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.effects.SkillTreeInstaller;
@@ -67,6 +68,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final SkillTreeNodeRenderer nodeRenderer;
     private final SkillTreeStatPanel statPanel;
     private boolean reopenStatsAfterHyperspace;
+    private UIComponentAPI shipCard;
+    private boolean shipCardHidden;
     private final SkillTreeReadoutBar ordnancePointsBar = new SkillTreeReadoutBar(SkillTreeCanvasPlugin.class, 0);
     private final SkillTreeLevelBar levelBar;
     private final SkillTreeInfoTooltipRenderer readoutTooltipRenderer;
@@ -178,6 +181,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         advanceStorage();
         ShipOpBudget budget = nodeRenderer.budget();
         boolean pointerLive = mouseKnown && !isModalOpen();
+        hideShipCardBehindModals();
         statPanel.refresh(budget, nodeRenderer.statsRevision());
         if (reopenStatsAfterHyperspace && (!hyperspace.isActive() || (hyperspace.isLeaving() && hyperspace.chromeAlpha() >= 1f))) {
             reopenStatsAfterHyperspace = false;
@@ -390,6 +394,19 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             if (targetSocket != null && !nodeRenderer.isAllocatedSocket(targetSocket)) {
                 clearTargetSocket();
             }
+        }
+    }
+
+    void setShipCard(UIComponentAPI component) {
+        shipCard = component;
+        shipCardHidden = false;
+    }
+
+    private void hideShipCardBehindModals() {
+        boolean hide = isModalOpen();
+        if (shipCard != null && hide != shipCardHidden) {
+            shipCardHidden = hide;
+            shipCard.setOpacity(hide ? 0f : 1f);
         }
     }
 

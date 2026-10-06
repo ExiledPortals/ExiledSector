@@ -121,5 +121,6 @@ public class SkillTreeRefitButton extends BaseRefitButton {
 
         backgroundPanel.addUIElement(shipCard);
         shipCard.getPosition().inBL(SHIP_CARD_MARGIN, SHIP_CARD_MARGIN);
+        plugin.setShipCard(shipCard);
     }
 }
