@@ -6,7 +6,6 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.loading.WingRole;
 import exiledsector.i18n.StyledText;
@@ -136,21 +135,6 @@ public enum FighterSkillEffect implements SkillEffect {
         }
 
         @Override
-        public String blockDeallocationReason(FleetMemberAPI member, float magnitude) {
-            int fittedWings = member.getVariant().getFittedWings().size();
-            float baysWithoutThis = member.getStats().getNumFighterBays().getModifiedValue() - magnitude;
-            if (fittedWings > baysWithoutThis) {
-                return Translation.text("node.block.fighterBaysInUse");
-            }
-            return null;
-        }
-
-        @Override
-        public boolean hasDeallocationCondition() {
-            return true;
-        }
-
-        @Override
         public StyledText deallocationWarning(float magnitude) {
             return EffectText.msg(this, "warning").styled();
         }
@@ -164,16 +148,6 @@ public enum FighterSkillEffect implements SkillEffect {
         @Override
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("value", magnitude).styled();
-        }
-
-        @Override
-        public String blockDeallocationReason(FleetMemberAPI member, float magnitude) {
-            return FIGHTER_BAYS_FLAT.blockDeallocationReason(member, magnitude + convertedHangarBonusBays(member.getStats()));
-        }
-
-        @Override
-        public boolean hasDeallocationCondition() {
-            return true;
         }
 
         @Override

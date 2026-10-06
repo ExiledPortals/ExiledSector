@@ -26,7 +26,8 @@ import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.progression.SkillNodeOpCost;
-import exiledsector.skills.skilleffect.FighterSkillEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.i18n.StyledText;
 import exiledsector.skills.template.StepVerdict;
 import exiledsector.skills.template.TemplateStep;
 import exiledsector.skills.unlock.UnlockCondition;
@@ -62,6 +63,32 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 class NodeAllocatorTest {
+
+    private static final SkillEffect GUARDED = new SkillEffect() {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return StyledText.of("guarded");
+        }
+
+        @Override
+        public String blockDeallocationReason(FleetMemberAPI member, float magnitude) {
+            return member.getVariant().getFittedWings().size() > 1 ? "blocked" : null;
+        }
+
+        @Override
+        public boolean hasDeallocationCondition() {
+            return true;
+        }
+
+        @Override
+        public String name() {
+            return "GUARDED";
+        }
+    };
 
     private MockedStatic<LunaSettings> lunaSettingsMock;
     private MockedStatic<Global> globalMock;
@@ -373,7 +400,7 @@ class NodeAllocatorTest {
     @Test
     void anEffectsOwnDeallocationRuleKeepsTheNodeAllocatedUntilItIsSafeToRemove() {
         SkillNode hangar = register("hangar_1", type("hangar", "Hangar", SkillTier.NOTABLE)
-                .effects(List.of(new SkillTypeEffect(FighterSkillEffect.FIGHTER_BAYS_FLAT, 1f))).build(), "root_1");
+                .effects(List.of(new SkillTypeEffect(GUARDED, 1f))).build(), "root_1");
         data().chooseStartingRoot(root);
         data().allocate(hangar, 0);
         NodeAllocator allocator = allocatorStartingAt(root);
@@ -390,7 +417,7 @@ class NodeAllocatorTest {
     @Test
     void aRespecSkipsNodesWithADeallocationConditionEvenWhenItIsCurrentlyMet() {
         SkillNode hangar = register("hangar_1", type("hangar", "Hangar", SkillTier.NOTABLE)
-                .effects(List.of(new SkillTypeEffect(FighterSkillEffect.FIGHTER_BAYS_FLAT, 1f))).build(), "root_1");
+                .effects(List.of(new SkillTypeEffect(GUARDED, 1f))).build(), "root_1");
         data().chooseStartingRoot(root);
         data().allocate(hangar, 0);
         NodeAllocator allocator = allocatorStartingAt(root);
@@ -404,7 +431,7 @@ class NodeAllocatorTest {
     @Test
     void allocatingAnOptionChargesTheNodeRecordsTheChoiceAndRefreshesTheShip() {
         SkillType hangarOption = type("hangar_option", "Hangar Option", SkillTier.NOTABLE)
-                .effects(List.of(new SkillTypeEffect(FighterSkillEffect.FIGHTER_BAYS_FLAT, 1f))).build();
+                .effects(List.of(new SkillTypeEffect(GUARDED, 1f))).build();
         SkillTree.registerType(hangarOption);
         SkillNode choice = register("choice_1", type("choice", "Choice", SkillTier.NOTABLE)
                 .optionalOptionIds(List.of("hangar_option")).build(), "root_1");

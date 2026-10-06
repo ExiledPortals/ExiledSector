@@ -103,7 +103,7 @@ class SkillNodeTest {
         SkillNode node = new SkillNode("converted_hangar_1", type, List.of(), 0f, 0f);
 
         assertEquals(
-                "Increases number of fighter bays by 1.\n\n5% increased hull points.\n\nCannot be unallocated without at least 1 empty fighter bay.",
+                "Increases number of fighter bays by 1.\n\n5% increased hull points.\n\nUnallocating it returns any fighter wing in the bay it adds to your cargo.",
                 description(node.getType()));
     }
 

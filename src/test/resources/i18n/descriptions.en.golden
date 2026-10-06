@@ -353,17 +353,17 @@ effect|COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP|100.0	0	<good>100%</good> increased
 effect|COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP|-10.0	0	<bad>10%</bad> reduced command point recovery rate while this ship is the flagship.
 effect|COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP|-12.5	0	<bad>12.5%</bad> reduced command point recovery rate while this ship is the flagship.
 effect|CONVERTED_HANGAR_FIGHTER_BAYS_FLAT|1.0	0	Increases number of fighter bays by <good>1</good>, plus any extra bays from Vast Hangar.
-warning|CONVERTED_HANGAR_FIGHTER_BAYS_FLAT|1.0	0	Cannot be unallocated without at least 1 empty fighter bay.
+warning|CONVERTED_HANGAR_FIGHTER_BAYS_FLAT|1.0	0	Unallocating it returns any fighter wing in the bay it adds to your cargo.
 effect|CONVERTED_HANGAR_FIGHTER_BAYS_FLAT|10.0	0	Increases number of fighter bays by <good>10</good>, plus any extra bays from Vast Hangar.
-warning|CONVERTED_HANGAR_FIGHTER_BAYS_FLAT|10.0	0	Cannot be unallocated without at least 1 empty fighter bay.
+warning|CONVERTED_HANGAR_FIGHTER_BAYS_FLAT|10.0	0	Unallocating it returns any fighter wing in the bay it adds to your cargo.
 effect|CONVERTED_HANGAR_FIGHTER_BAYS_FLAT|12.5	0	Increases number of fighter bays by <good>12.5</good>, plus any extra bays from Vast Hangar.
-warning|CONVERTED_HANGAR_FIGHTER_BAYS_FLAT|12.5	0	Cannot be unallocated without at least 1 empty fighter bay.
+warning|CONVERTED_HANGAR_FIGHTER_BAYS_FLAT|12.5	0	Unallocating it returns any fighter wing in the bay it adds to your cargo.
 effect|CONVERTED_HANGAR_FIGHTER_BAYS_FLAT|100.0	0	Increases number of fighter bays by <good>100</good>, plus any extra bays from Vast Hangar.
-warning|CONVERTED_HANGAR_FIGHTER_BAYS_FLAT|100.0	0	Cannot be unallocated without at least 1 empty fighter bay.
+warning|CONVERTED_HANGAR_FIGHTER_BAYS_FLAT|100.0	0	Unallocating it returns any fighter wing in the bay it adds to your cargo.
 effect|CONVERTED_HANGAR_FIGHTER_BAYS_FLAT|-10.0	0	Increases number of fighter bays by <good>-10</good>, plus any extra bays from Vast Hangar.
-warning|CONVERTED_HANGAR_FIGHTER_BAYS_FLAT|-10.0	0	Cannot be unallocated without at least 1 empty fighter bay.
+warning|CONVERTED_HANGAR_FIGHTER_BAYS_FLAT|-10.0	0	Unallocating it returns any fighter wing in the bay it adds to your cargo.
 effect|CONVERTED_HANGAR_FIGHTER_BAYS_FLAT|-12.5	0	Increases number of fighter bays by <good>-12.5</good>, plus any extra bays from Vast Hangar.
-warning|CONVERTED_HANGAR_FIGHTER_BAYS_FLAT|-12.5	0	Cannot be unallocated without at least 1 empty fighter bay.
+warning|CONVERTED_HANGAR_FIGHTER_BAYS_FLAT|-12.5	0	Unallocating it returns any fighter wing in the bay it adds to your cargo.
 effect|CONVERTED_HANGAR_MIN_CREW_FLAT|1.0	1	Increases minimum crew required by <good>1</good>. Waived by the Second-in-Command skill Reconfiguration.
 effect|CONVERTED_HANGAR_MIN_CREW_FLAT|10.0	1	Increases minimum crew required by <good>10</good>. Waived by the Second-in-Command skill Reconfiguration.
 effect|CONVERTED_HANGAR_MIN_CREW_FLAT|12.5	1	Increases minimum crew required by <good>12.5</good>. Waived by the Second-in-Command skill Reconfiguration.
@@ -683,17 +683,17 @@ effect|FIGHTER_ARMOR_PERCENT|100.0	0	<good>100%</good> increased armor of fighte
 effect|FIGHTER_ARMOR_PERCENT|-10.0	0	<bad>10%</bad> reduced armor of fighters launched from this ship.
 effect|FIGHTER_ARMOR_PERCENT|-12.5	0	<bad>12.5%</bad> reduced armor of fighters launched from this ship.
 effect|FIGHTER_BAYS_FLAT|1.0	0	Increases number of fighter bays by <good>1</good>.
-warning|FIGHTER_BAYS_FLAT|1.0	0	Cannot be unallocated without at least 1 empty fighter bay.
+warning|FIGHTER_BAYS_FLAT|1.0	0	Unallocating it returns any fighter wing in the bay it adds to your cargo.
 effect|FIGHTER_BAYS_FLAT|10.0	0	Increases number of fighter bays by <good>10</good>.
-warning|FIGHTER_BAYS_FLAT|10.0	0	Cannot be unallocated without at least 1 empty fighter bay.
+warning|FIGHTER_BAYS_FLAT|10.0	0	Unallocating it returns any fighter wing in the bay it adds to your cargo.
 effect|FIGHTER_BAYS_FLAT|12.5	0	Increases number of fighter bays by <good>12.5</good>.
-warning|FIGHTER_BAYS_FLAT|12.5	0	Cannot be unallocated without at least 1 empty fighter bay.
+warning|FIGHTER_BAYS_FLAT|12.5	0	Unallocating it returns any fighter wing in the bay it adds to your cargo.
 effect|FIGHTER_BAYS_FLAT|100.0	0	Increases number of fighter bays by <good>100</good>.
-warning|FIGHTER_BAYS_FLAT|100.0	0	Cannot be unallocated without at least 1 empty fighter bay.
+warning|FIGHTER_BAYS_FLAT|100.0	0	Unallocating it returns any fighter wing in the bay it adds to your cargo.
 effect|FIGHTER_BAYS_FLAT|-10.0	0	Decreases number of fighter bays by <bad>10</bad>.
-warning|FIGHTER_BAYS_FLAT|-10.0	0	Cannot be unallocated without at least 1 empty fighter bay.
+warning|FIGHTER_BAYS_FLAT|-10.0	0	Unallocating it returns any fighter wing in the bay it adds to your cargo.
 effect|FIGHTER_BAYS_FLAT|-12.5	0	Decreases number of fighter bays by <bad>12.5</bad>.
-warning|FIGHTER_BAYS_FLAT|-12.5	0	Cannot be unallocated without at least 1 empty fighter bay.
+warning|FIGHTER_BAYS_FLAT|-12.5	0	Unallocating it returns any fighter wing in the bay it adds to your cargo.
 effect|FIGHTER_CREW_LOSS_MULT|1.0	1	<good>1%</good> more casualties suffered by fighter pilots launched from this ship.
 effect|FIGHTER_CREW_LOSS_MULT|10.0	1	<good>10%</good> more casualties suffered by fighter pilots launched from this ship.
 effect|FIGHTER_CREW_LOSS_MULT|12.5	1	<good>12.5%</good> more casualties suffered by fighter pilots launched from this ship.
@@ -2154,7 +2154,7 @@ type|converted_hangar|null|1	1	<good>50%</good> more fighter refit time. Waived 
 type|converted_hangar|null|2	0	<bad>50%</bad> slower fighter replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|null|3	1	Increases fighter relaunch time, as a % of base refit time by <good>40</good>. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|null|4	1	Increases minimum crew required by <good>20</good>. Waived by the Second-in-Command skill Reconfiguration.
-type-detail|converted_hangar|null|0	0	Cannot be unallocated without at least 1 empty fighter bay.
+type-detail|converted_hangar|null|0	0	Unallocating it returns any fighter wing in the bay it adds to your cargo.
 type-detail|converted_hangar|null|1	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
 type-detail|converted_hangar|null|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Converted Fighter Bay</hullmod>\n• <hullmod>Converted Hangar</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Converted Fighter Bay</node>
 type|converted_hangar|FRIGATE|0	0	Increases number of fighter bays by <good>1</good>, plus any extra bays from Vast Hangar.
@@ -2162,7 +2162,7 @@ type|converted_hangar|FRIGATE|1	1	<good>50%</good> more fighter refit time. Waiv
 type|converted_hangar|FRIGATE|2	0	<bad>50%</bad> slower fighter replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|FRIGATE|3	1	Increases fighter relaunch time, as a % of base refit time by <good>40</good>. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|FRIGATE|4	1	Increases minimum crew required by <good>20</good>. Waived by the Second-in-Command skill Reconfiguration.
-type-detail|converted_hangar|FRIGATE|0	0	Cannot be unallocated without at least 1 empty fighter bay.
+type-detail|converted_hangar|FRIGATE|0	0	Unallocating it returns any fighter wing in the bay it adds to your cargo.
 type-detail|converted_hangar|FRIGATE|1	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
 type-detail|converted_hangar|FRIGATE|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Converted Fighter Bay</hullmod>\n• <hullmod>Converted Hangar</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Converted Fighter Bay</node>
 type|converted_hangar|DESTROYER|0	0	Increases number of fighter bays by <good>1</good>, plus any extra bays from Vast Hangar.
@@ -2170,7 +2170,7 @@ type|converted_hangar|DESTROYER|1	1	<good>50%</good> more fighter refit time. Wa
 type|converted_hangar|DESTROYER|2	0	<bad>50%</bad> slower fighter replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|DESTROYER|3	1	Increases fighter relaunch time, as a % of base refit time by <good>40</good>. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|DESTROYER|4	1	Increases minimum crew required by <good>20</good>. Waived by the Second-in-Command skill Reconfiguration.
-type-detail|converted_hangar|DESTROYER|0	0	Cannot be unallocated without at least 1 empty fighter bay.
+type-detail|converted_hangar|DESTROYER|0	0	Unallocating it returns any fighter wing in the bay it adds to your cargo.
 type-detail|converted_hangar|DESTROYER|1	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
 type-detail|converted_hangar|DESTROYER|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Converted Fighter Bay</hullmod>\n• <hullmod>Converted Hangar</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Converted Fighter Bay</node>
 type|converted_hangar|CRUISER|0	0	Increases number of fighter bays by <good>1</good>, plus any extra bays from Vast Hangar.
@@ -2178,7 +2178,7 @@ type|converted_hangar|CRUISER|1	1	<good>50%</good> more fighter refit time. Waiv
 type|converted_hangar|CRUISER|2	0	<bad>50%</bad> slower fighter replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|CRUISER|3	1	Increases fighter relaunch time, as a % of base refit time by <good>40</good>. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|CRUISER|4	1	Increases minimum crew required by <good>20</good>. Waived by the Second-in-Command skill Reconfiguration.
-type-detail|converted_hangar|CRUISER|0	0	Cannot be unallocated without at least 1 empty fighter bay.
+type-detail|converted_hangar|CRUISER|0	0	Unallocating it returns any fighter wing in the bay it adds to your cargo.
 type-detail|converted_hangar|CRUISER|1	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
 type-detail|converted_hangar|CRUISER|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Converted Fighter Bay</hullmod>\n• <hullmod>Converted Hangar</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Converted Fighter Bay</node>
 type|converted_hangar|CAPITAL_SHIP|0	0	Increases number of fighter bays by <good>1</good>, plus any extra bays from Vast Hangar.
@@ -2186,7 +2186,7 @@ type|converted_hangar|CAPITAL_SHIP|1	1	<good>50%</good> more fighter refit time.
 type|converted_hangar|CAPITAL_SHIP|2	0	<bad>50%</bad> slower fighter replacement rate decay and recovery. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|CAPITAL_SHIP|3	1	Increases fighter relaunch time, as a % of base refit time by <good>40</good>. Waived by the Second-in-Command skill Reconfiguration.
 type|converted_hangar|CAPITAL_SHIP|4	1	Increases minimum crew required by <good>20</good>. Waived by the Second-in-Command skill Reconfiguration.
-type-detail|converted_hangar|CAPITAL_SHIP|0	0	Cannot be unallocated without at least 1 empty fighter bay.
+type-detail|converted_hangar|CAPITAL_SHIP|0	0	Unallocating it returns any fighter wing in the bay it adds to your cargo.
 type-detail|converted_hangar|CAPITAL_SHIP|1	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
 type-detail|converted_hangar|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Converted Fighter Bay</hullmod>\n• <hullmod>Converted Hangar</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Converted Fighter Bay</node>
 type|crew_capacity_flat|FRIGATE|0	0	Increases crew capacity by <good>5</good>.

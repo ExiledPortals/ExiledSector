@@ -1,10 +1,16 @@
 package exiledsector.ui.node;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.loading.FighterWingSpecAPI;
+import com.fs.starfarer.api.util.Misc;
 import exiledsector.compat.SecondInCommandCompat;
+import exiledsector.effects.FighterBayOverflow;
+import exiledsector.i18n.I18n;
 import exiledsector.effects.OpReserveParity;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.effects.SkillTreeInstaller;
@@ -234,6 +240,27 @@ final class NodeAllocator {
         SkillTreeHullMod.syncInstalledHullMods(member, variant);
         member.setStatUpdateNeeded(true);
         member.updateStats();
+        returnUnhousedWings();
+    }
+
+    private void returnUnhousedWings() {
+        CampaignFleetAPI playerFleet = Global.getSector() == null ? null : Global.getSector().getPlayerFleet();
+        List<String> returned = FighterBayOverflow.returnUnhousedWings(member, variant, playerFleet == null ? null : playerFleet.getCargo());
+        if (returned.isEmpty()) {
+            return;
+        }
+        member.setStatUpdateNeeded(true);
+        member.updateStats();
+        CampaignUIAPI ui = Global.getSector().getCampaignUI();
+        if (ui == null) {
+            return;
+        }
+        for (String wingId : returned) {
+            FighterWingSpecAPI wing = Global.getSettings().getFighterWingSpec(wingId);
+            String name = wing == null ? wingId : wing.getWingName();
+            String message = I18n.forGameText(() -> Translation.msg("fighterBay.returned").arg("wing", name).text());
+            ui.addMessage(message.replace("%", "%%"), Misc.getTextColor());
+        }
     }
 
     private static void applyItemCost(SkillType type, boolean allocated) {

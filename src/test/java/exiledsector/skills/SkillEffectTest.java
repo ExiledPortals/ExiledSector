@@ -602,7 +602,7 @@ class SkillEffectTest {
 
     @Test
     void fighterBaysFlatHasADeallocationWarning() {
-        assertEquals("Cannot be unallocated without at least 1 empty fighter bay.",
+        assertEquals("Unallocating it returns any fighter wing in the bay it adds to your cargo.",
                 FighterSkillEffect.FIGHTER_BAYS_FLAT.deallocationWarning(1f).plain());
     }
 
@@ -612,37 +612,12 @@ class SkillEffectTest {
     }
 
     @Test
-    void fighterBaysFlatBlocksDeallocationWhenNoEmptyBayWouldRemain() {
+    void fighterBayEffectsNeverBlockDeallocationBecauseTheWingGoesBackToCargo() {
         FleetMemberAPI member = mock(FleetMemberAPI.class);
-        ShipVariantAPI variant = mock(ShipVariantAPI.class);
-        when(member.getVariant()).thenReturn(variant);
-        when(variant.getFittedWings()).thenReturn(List.of("wing_1"));
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        when(member.getStats()).thenReturn(stats);
-        MutableStat numFighterBays = mock(MutableStat.class);
-        when(stats.getNumFighterBays()).thenReturn(numFighterBays);
-        when(numFighterBays.getModifiedValue()).thenReturn(1f);
 
-        String reason = FighterSkillEffect.FIGHTER_BAYS_FLAT.blockDeallocationReason(member, 1f);
-
-        assertEquals("Remove a fighter wing first - not enough empty fighter bays without this skill.", reason);
-    }
-
-    @Test
-    void fighterBaysFlatAllowsDeallocationWhenAnEmptyBayWouldRemain() {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        ShipVariantAPI variant = mock(ShipVariantAPI.class);
-        when(member.getVariant()).thenReturn(variant);
-        when(variant.getFittedWings()).thenReturn(List.of("wing_1"));
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        when(member.getStats()).thenReturn(stats);
-        MutableStat numFighterBays = mock(MutableStat.class);
-        when(stats.getNumFighterBays()).thenReturn(numFighterBays);
-        when(numFighterBays.getModifiedValue()).thenReturn(2f);
-
-        String reason = FighterSkillEffect.FIGHTER_BAYS_FLAT.blockDeallocationReason(member, 1f);
-
-        assertNull(reason);
+        assertNull(FighterSkillEffect.FIGHTER_BAYS_FLAT.blockDeallocationReason(member, 1f));
+        assertNull(FighterSkillEffect.CONVERTED_HANGAR_FIGHTER_BAYS_FLAT.blockDeallocationReason(member, 1f));
+        assertFalse(FighterSkillEffect.FIGHTER_BAYS_FLAT.hasDeallocationCondition());
     }
 
     @Test
@@ -751,7 +726,7 @@ class SkillEffectTest {
         FighterSkillEffect.CONVERTED_HANGAR_FIGHTER_BAYS_FLAT.apply(stats, "mod_id", 1f);
 
         assertEquals(2f, numFighterBays.getModifiedValue(), 1e-4f);
-        assertTrue(FighterSkillEffect.CONVERTED_HANGAR_FIGHTER_BAYS_FLAT.hasDeallocationCondition());
+        assertFalse(FighterSkillEffect.CONVERTED_HANGAR_FIGHTER_BAYS_FLAT.hasDeallocationCondition());
     }
 
     @Test
