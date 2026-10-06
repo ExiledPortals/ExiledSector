@@ -112,12 +112,14 @@ final class SkillTreeTemplateBar {
     }
 
     void render(PositionAPI position, float mouseX, float mouseY, float alphaMult) {
-        if (!state.visible()) {
-            return;
-        }
         save.render(mouseX, mouseY, alphaMult);
         load.render(mouseX, mouseY, alphaMult);
         auto.render(mouseX, mouseY, alphaMult);
+        if (!state.visible()) {
+            return;
+        }
+        resultLine.setAlpha(alphaMult);
+        templateLine.setAlpha(alphaMult);
         float right = position.getX() + position.getWidth() - MARGIN;
         float top = position.getY() + MARGIN + BUTTON_HEIGHT + STATUS_GAP + STATUS_LINE_HEIGHT;
         if (resultText != null && resultLine.draw(right - resultLine.width(), top)) {

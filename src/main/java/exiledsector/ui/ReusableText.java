@@ -12,6 +12,8 @@ final class ReusableText {
     private LazyFont.DrawableString drawable;
     private String drawnText;
     private Color drawnColor;
+    private int alpha = 255;
+    private int drawnAlpha = 255;
 
     ReusableText(float fontSize, Color color) {
         this.fontSize = fontSize;
@@ -25,6 +27,11 @@ final class ReusableText {
 
     ReusableText setColor(Color value) {
         color = value;
+        return this;
+    }
+
+    ReusableText setAlpha(float value) {
+        alpha = Math.round(Math.max(0f, Math.min(1f, value)) * 255f);
         return this;
     }
 
@@ -51,18 +58,24 @@ final class ReusableText {
             if (font == null) {
                 return null;
             }
-            drawable = SkillTreePanelStyle.buildSimpleText(font, text, fontSize, color);
+            drawable = SkillTreePanelStyle.buildSimpleText(font, text, fontSize, withAlpha(color, alpha));
             drawnText = text;
             drawnColor = color;
+            drawnAlpha = alpha;
         }
         if (!text.equals(drawnText)) {
             drawable.setText(text);
             drawnText = text;
         }
-        if (!color.equals(drawnColor)) {
-            drawable.setBaseColor(color);
+        if (!color.equals(drawnColor) || alpha != drawnAlpha) {
+            drawable.setBaseColor(withAlpha(color, alpha));
             drawnColor = color;
+            drawnAlpha = alpha;
         }
         return drawable;
+    }
+
+    private static Color withAlpha(Color color, int alpha) {
+        return alpha == 255 ? color : new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha * color.getAlpha() / 255);
     }
 }
