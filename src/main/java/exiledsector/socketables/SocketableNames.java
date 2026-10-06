@@ -169,7 +169,7 @@ public final class SocketableNames {
         String second = pick(words.second(), random);
         return switch (words.style()) {
             case CODENAME -> new FrozenName(null, null, first, second);
-            case PRODUCT -> new FrozenName(null, null, productName(words, first, second, random), null);
+            case PRODUCT -> productName(words, first, second, random);
         };
     }
 
@@ -177,29 +177,44 @@ public final class SocketableNames {
         if (parts.rareFirst() == null) {
             return null;
         }
-        if (parts.rareSecond() == null) {
+        if (parts.isAssembledText()) {
             return parts.rareFirst();
         }
-        return Translation.msg("socketable.rareName.codename").arg("first", parts.rareFirst()).arg("second", parts.rareSecond()).text();
+        String first = word(parts.rareFirst());
+        String second = word(parts.rareSecond());
+        if (!parts.isProduct()) {
+            return Translation.msg("socketable.rareName.codename").arg("first", first).arg("second", second).text();
+        }
+        String brand = parts.rareBrand() == null ? first : first + word(parts.rareBrand());
+        Message message = Translation.msg(parts.rareModel() == null ? "socketable.rareName.product" : "socketable.rareName.productModel")
+                .arg("brand", brand).arg("second", second);
+        if (parts.rareModel() != null) {
+            message.arg("model", word(parts.rareModel()));
+        }
+        return message.text();
     }
 
-    private static String productName(GradeWords words, String first, String second, Random random) {
-        String brand = first;
+    private static String word(String word) {
+        return Translation.data("socketable.nameWord." + word, word);
+    }
+
+    private static FrozenName productName(GradeWords words, String first, String second, Random random) {
+        String brand = null;
         if (words.first().size() > 1 && random.nextFloat() < COMPOUND_CHANCE) {
             String other = pick(words.first(), random);
             while (other.equals(first)) {
                 other = pick(words.first(), random);
             }
-            brand = first + other;
+            brand = other;
         }
-        String name = brand + " " + second;
+        String model = null;
         if (!words.models().isEmpty() && random.nextFloat() < MODEL_CHANCE) {
-            String model = pick(words.models(), random);
-            if (!model.equals(second)) {
-                name += " " + model;
+            String picked = pick(words.models(), random);
+            if (!picked.equals(second)) {
+                model = picked;
             }
         }
-        return name;
+        return FrozenName.product(first, brand, second, model);
     }
 
     private static String pick(List<String> words, Random random) {

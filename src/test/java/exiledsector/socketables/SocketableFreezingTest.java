@@ -62,6 +62,33 @@ class SocketableFreezingTest {
         registerWords("Zagan", "Thule", "Eos", "Magec", "Duzahk");
     }
 
+    private static void registerGadget() throws Exception {
+        SocketableDefinitions.register(new JSONArray().put(row("gadget", "subroutine", BEFORE_PREFIXES, BEFORE_SUFFIXES).put("grade", "consumer")
+                .put("name", "Consumer-grade Domain Subroutine")));
+        SocketableNames.registerWords(new JSONObject().put("consumer", new JSONObject().put("style", "product")
+                .put("first", new JSONArray(List.of("Sunny"))).put("second", new JSONArray(List.of("Pal")))));
+    }
+
+    @Test
+    void consumerProductNamesFreezeTheirWordsSoTheyCanBeTranslated() throws Exception {
+        registerGadget();
+        SocketableItemData item = new SocketableItemData("gadget", 42L, RARE, SocketableNames.freeze(SocketableDefinitions.get("gadget"), 42L, RARE));
+
+        assertEquals(FrozenName.product("Sunny", null, "Pal", null), item.name());
+        assertEquals(item, SocketableItemData.of(item.toSpecialItem()));
+        assertEquals("Sunny Pal", item.preview().name());
+    }
+
+    @Test
+    void anAssembledProductNameFromAnOlderSaveIsRefrozenFromItsSeed() throws Exception {
+        registerGadget();
+        Socketable owned = SocketableKind.SUBROUTINE.create("socketable_1", "gadget", 42L, RARE);
+        owned.freezeName(new FrozenName(null, null, "Sunny Pal", null));
+
+        assertEquals("Sunny Pal", owned.name());
+        assertEquals(FrozenName.product("Sunny", null, "Pal", null), owned.frozenName());
+    }
+
     @Test
     void aFrozenCargoItemSurvivesTheSaveFormatWithItsRollsAndName() {
         SocketableItemData item = frozen(RARE);

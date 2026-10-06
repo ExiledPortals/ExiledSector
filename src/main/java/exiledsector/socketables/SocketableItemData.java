@@ -18,6 +18,9 @@ public record SocketableItemData(String definitionId, long seed, List<RolledEffe
     private static final String SUFFIX_KEY = "ns";
     private static final String RARE_FIRST_KEY = "r1";
     private static final String RARE_SECOND_KEY = "r2";
+    private static final String RARE_BRAND_KEY = "rb";
+    private static final String RARE_MODEL_KEY = "rm";
+    private static final String PRODUCT_KEY = "rp";
 
     public SocketableItemData {
         effects = effects == null ? null : List.copyOf(effects);
@@ -58,12 +61,18 @@ public record SocketableItemData(String definitionId, long seed, List<RolledEffe
                 return null;
             }
             List<RolledEffect> effects = json.has(EFFECTS_KEY) ? RolledEffect.decode(json.getString(EFFECTS_KEY)) : null;
-            FrozenName name = effects == null || !json.optBoolean(NAMED_KEY, false) ? null
-                    : new FrozenName(text(json, PREFIX_KEY), text(json, SUFFIX_KEY), text(json, RARE_FIRST_KEY), text(json, RARE_SECOND_KEY));
+            FrozenName name = effects == null || !json.optBoolean(NAMED_KEY, false) ? null : frozenName(json);
             return new SocketableItemData(definitionId, json.getLong(SEED_KEY), effects, name);
         } catch (JSONException e) {
             return null;
         }
+    }
+
+    private static FrozenName frozenName(JSONObject json) {
+        if (json.optBoolean(PRODUCT_KEY, false)) {
+            return FrozenName.product(text(json, RARE_FIRST_KEY), text(json, RARE_BRAND_KEY), text(json, RARE_SECOND_KEY), text(json, RARE_MODEL_KEY));
+        }
+        return new FrozenName(text(json, PREFIX_KEY), text(json, SUFFIX_KEY), text(json, RARE_FIRST_KEY), text(json, RARE_SECOND_KEY));
     }
 
     private static String text(JSONObject json, String key) {
@@ -92,6 +101,11 @@ public record SocketableItemData(String definitionId, long seed, List<RolledEffe
                 putText(json, SUFFIX_KEY, frozen.suffixEffect());
                 putText(json, RARE_FIRST_KEY, frozen.rareFirst());
                 putText(json, RARE_SECOND_KEY, frozen.rareSecond());
+                putText(json, RARE_BRAND_KEY, frozen.rareBrand());
+                putText(json, RARE_MODEL_KEY, frozen.rareModel());
+                if (frozen.isProduct()) {
+                    json.put(PRODUCT_KEY, true);
+                }
             }
             return new SpecialItemData(ITEM_ID, json.toString());
         } catch (JSONException e) {

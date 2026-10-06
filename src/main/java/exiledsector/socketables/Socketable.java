@@ -57,8 +57,11 @@ public abstract class Socketable {
     }
 
     private FrozenName frozenName(SocketableDefinition definition) {
-        if (frozenName == null && definition != null) {
-            frozenName = SocketableNames.freeze(definition, seed, effects);
+        if (definition != null && (frozenName == null || frozenName.isAssembledText())) {
+            FrozenName fresh = SocketableNames.freeze(definition, seed, effects);
+            if (fresh != null || frozenName == null) {
+                frozenName = fresh;
+            }
         }
         return frozenName;
     }

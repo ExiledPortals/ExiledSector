@@ -14,6 +14,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ class CatalogueLintTest {
     private static final String HULL_MODS_FILE = "data/hullmods/hull_mods.csv";
     private static final String SOCKETABLES_FILE = "data/config/exiledSector/socketables.csv";
     private static final String SOCKETABLE_AFFIXES_FILE = "data/config/exiledSector/socketable_affixes.csv";
+    private static final String SOCKETABLE_NAMES_FILE = "data/config/exiledSector/socketable_names.json";
 
     static Map<String, String> dataSources() throws IOException, JSONException {
         Path root = RealSkillData.projectRoot();
@@ -65,6 +67,16 @@ class CatalogueLintTest {
             String key = "socketable.affix." + affix.getString("effect");
             sources.put(key + ".prefix", affix.getString("prefix"));
             sources.put(key + ".suffix", affix.getString("suffix"));
+        }
+        JSONObject nameWords = RealSkillData.readJson(root.resolve(SOCKETABLE_NAMES_FILE));
+        for (Iterator<?> grades = nameWords.keys(); grades.hasNext(); ) {
+            JSONObject words = nameWords.getJSONObject(String.valueOf(grades.next()));
+            for (String list : List.of("first", "second", "models")) {
+                JSONArray entries = words.optJSONArray(list);
+                for (int i = 0; entries != null && i < entries.length(); i++) {
+                    sources.put("socketable.nameWord." + entries.getString(i), entries.getString(i));
+                }
+            }
         }
         String hullModRows = Files.readString(root.resolve(HULL_MODS_FILE), StandardCharsets.UTF_8).replace("\r\n", "\n");
         JSONArray hullMods = CDL.toJSONArray(hullModRows);

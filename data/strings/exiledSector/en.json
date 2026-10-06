@@ -288,6 +288,8 @@
     "socketable.commonName.prefix": "{prefix} {gradeInline} {noun}",
     "socketable.commonName.suffix": "{grade} {noun} of {suffix}",
     "socketable.rareName.codename": "{first} {second}",
+    "socketable.rareName.product": "{brand} {second}",
+    "socketable.rareName.productModel": "{brand} {second} {model}",
     "socketable.tooltip.storage": "Opening the Modular Hull Socket panel from a ship's skill tree, or installing this in a socket, moves it from your cargo into socket storage.",
     "socketable.salvaged": "Recovered {name} from the wreckage and added it to your cargo.",
     "fighterBay.returned": "{wing} returned to your cargo: the fighter bay it was in is gone.",
