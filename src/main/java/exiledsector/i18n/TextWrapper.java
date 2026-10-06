@@ -107,48 +107,48 @@ public final class TextWrapper {
             out.append('\n', -1);
             return end;
         }
-    }
 
-    private static boolean isBlank(String text, int start, int end) {
-        for (int i = start; i < end; i++) {
-            if (!Character.isWhitespace(text.charAt(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private static int fittingLength(String text, int start, int end, Metrics metrics, float maxWidth) {
-        for (int length = 1; start + length <= end; length++) {
-            if (metrics.width(text.substring(start, start + length)) > maxWidth) {
-                return length - 1;
-            }
-        }
-        return end - start;
-    }
-
-    private static int cjkBreak(String text, int start, int end, List<StyledText.Span> spans) {
-        int insideSpan = -1;
-        for (int position = end; position > start; position--) {
-            if (canBreakBefore(text, position)) {
-                if (!insideSpan(spans, position)) {
-                    return position;
-                }
-                if (insideSpan < 0) {
-                    insideSpan = position;
+        private static boolean isBlank(String text, int start, int end) {
+            for (int i = start; i < end; i++) {
+                if (!Character.isWhitespace(text.charAt(i))) {
+                    return false;
                 }
             }
+            return true;
         }
-        return insideSpan;
-    }
 
-    private static boolean insideSpan(List<StyledText.Span> spans, int position) {
-        for (StyledText.Span span : spans) {
-            if (span.start() < position && position < span.end()) {
-                return true;
+        private static int fittingLength(String text, int start, int end, Metrics metrics, float maxWidth) {
+            for (int length = 1; start + length <= end; length++) {
+                if (metrics.width(text.substring(start, start + length)) > maxWidth) {
+                    return length - 1;
+                }
             }
+            return end - start;
         }
-        return false;
+
+        private static int cjkBreak(String text, int start, int end, List<StyledText.Span> spans) {
+            int insideSpan = -1;
+            for (int position = end; position > start; position--) {
+                if (canBreakBefore(text, position)) {
+                    if (!insideSpan(spans, position)) {
+                        return position;
+                    }
+                    if (insideSpan < 0) {
+                        insideSpan = position;
+                    }
+                }
+            }
+            return insideSpan;
+        }
+
+        private static boolean insideSpan(List<StyledText.Span> spans, int position) {
+            for (StyledText.Span span : spans) {
+                if (span.start() < position && position < span.end()) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 
     static boolean canBreakBefore(String text, int position) {

@@ -280,13 +280,10 @@ public class SkillTreeStarRenderer {
 
     private Color resolveColor(Star star, Color fallback) {
         Map<Color, Color> byFallback = resolvedColors.computeIfAbsent(star.getId(), id -> new HashMap<>());
-        Color resolved = byFallback.get(fallback);
-        if (resolved == null) {
-            Color parsed = ColorUtil.parseHexColor(star.getColor(), fallback);
-            resolved = new Color(parsed.getRed(), parsed.getGreen(), parsed.getBlue(), fallback.getAlpha());
-            byFallback.put(fallback, resolved);
-        }
-        return resolved;
+        return byFallback.computeIfAbsent(fallback, base -> {
+            Color parsed = ColorUtil.parseHexColor(star.getColor(), base);
+            return new Color(parsed.getRed(), parsed.getGreen(), parsed.getBlue(), base.getAlpha());
+        });
     }
 
     private PlanetSpecAPI resolveSpec(String starType) {
