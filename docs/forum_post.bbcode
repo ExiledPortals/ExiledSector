@@ -26,6 +26,16 @@ Open the refit screen and click the skill tree button on any of your ships. Ther
 [/list]
 [spoiler][img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/Ludds_Light.png[/img]
 [img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/at_any_cost.png[/img][/spoiler]
+[list][li]Some nodes are Modular Hull Sockets: empty sections of the ship that you allocate like any other node and then fill with a socketable. Socketables turn up at salvage sites, through Tech Mining and aboard NPC flagships.[/li]
+[li]Ctrl+click a socket to open Socket Storage, which holds every socketable you own. Filter by rarity and grade, search by name, and pick what goes in.[/li][/list]
+[spoiler][img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/socket_storage.png[/img][/spoiler]
+[list][li]Common socketables are Domain Subroutines in three grades, each rolling one prefix and one suffix.[/li]
+[li]Rare ones roll three or four mods and get a name of their own.[/li][/list]
+[spoiler][img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/common_socketable.png[/img]
+[img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/rare_socketable.png[/img][/spoiler]
+[list][li]Unique socketables can be officers, crews and Domain relics with unique effects. They only start turning up once you reach level 15.[/li][/list]
+[spoiler][img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/unique_socketable.png[/img]
+[img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/socketed_unique.png[/img][/spoiler]
 
 [size=14pt][b]Requirements[/b][/size]
 
@@ -45,6 +55,7 @@ Optional:
 
 [color=red][b]Warning:[/b] Exiled Sector adds permanent hull mods to the ships in your fleet. It is not safe to remove after being used.[/color]
 
+[spoiler]
 It should be safe to add to an existing save.
 
 Nodes that copy a vanilla hull mod also place the real hull mod on the ship as a phantom: it costs no OP and does nothing itself, but other mods that check for that hull mod see it. That should make most mods work with the tree's nodes without needing dedicated support.
@@ -57,17 +68,7 @@ These mods have dedicated compatibility. The version listed is the one I last te
 [tr][td]Lost Sector[/td][td]0.6.2d[/td][td]The Kesteven and Frozen Heart areas of the tree appear, and Augmented Systems hulls get the same bonuses from those nodes as from the hull mods.[/td][/tr]
 [tr][td][url=https://fractalsoftworks.com/forum/index.php?topic=25868.0]MagicLib[/url][/td][td]1.5.6[/td][td]Required. A hull mod that tries to strip one of your nodes' hull mods through MagicLib is removed instead.[/td][/tr]
 [tr][td]Random Assortment of Things[/td][td]3.3.1[/td][td]Modular Hull Socket items can drop from its abyssal structures, abyssal drones and relic sites.[/td][/tr]
-[tr][td]Industrial Evolution[/td][td]4.1.b[/td][td]Modular Hull Socket items can drop from its orbital laboratories and arsenal stations.[/td][/tr]
-[tr][td]Knights of Ludd[/td][td]1.4.0[/td][td]Modular Hull Socket items can drop from its research stations and shielded caches.[/td][/tr]
-[tr][td]Secrets of the Frontier[/td][td]0.15.1[/td][td]Modular Hull Socket items can drop from its salvageable stations.[/td][/tr]
-[tr][td]Arthr's Ships n Shit[/td][td]0.100-dev[/td][td]Modular Hull Socket items can drop from its Exodyne research stations.[/td][/tr]
-[tr][td]What We Left Behind[/td][td]4.5.3[/td][td]Modular Hull Socket items can drop from its corrupted caches, Omega derelicts and research stations.[/td][/tr]
-[tr][td]Ship Mastery System[/td][td]2.0.8[/td][td]Modular Hull Socket items can drop from its concealed stations and probes.[/td][/tr]
-[tr][td]Unthemed Weapons Collection[/td][td]0.7.4[/td][td]Modular Hull Socket items can drop from its weapon caches, including the fortified ones.[/td][/tr]
-[tr][td]DIY Planets[/td][td]1.0.30[/td][td]Modular Hull Socket items can drop from its genesis terraforming stations.[/td][/tr]
 [/table]
-
-Socket item drops at other mods' sites can be turned off with "Drops From Other Mods' Sites" in the LunaLib settings. Each mod's sites are listed in its own file under [tt]data/config/exiledSector/compat/salvage/[/tt], which only loads when that mod is installed.
 
 Some weapons from other mods misbehave (often hilariously) when their beams are split or their shots are chained. These are listed in:
 [list]
@@ -75,14 +76,7 @@ Some weapons from other mods misbehave (often hilariously) when their beams are 
 [li][tt]data/config/exiledSector/energy_chain_blocklist.csv[/tt][/li]
 [/list]
 Both files are merged across mods, so other mods can opt their own weapons out (or you can opt them back in, at your own risk).
-
-[size=14pt][b]Languages[/b][/size]
-
-Exiled Sector is available in English and Simplified Chinese. By default it follows the game's language, so a Chinese-localised Starsector shows the skill tree in Chinese automatically. You can also pick a language in the LunaLib settings; the change takes effect after a restart.
-
-The skill tree screen always shows the chosen language, using a bundled Noto Sans SC font. Text the game draws itself (settings, dialogs, the codex) stays in English unless the game can display Chinese characters.
-
-The Chinese translation is a first draft awaiting review by a native speaker. To add another language, see the [url=https://github.com/ExiledPortals/ExiledSector/blob/main/docs/i18n/README.md]localisation guide[/url].
+[/spoiler]
 
 [size=14pt][b]FAQ[/b][/size]
 
@@ -200,8 +194,18 @@ One of the things I love most about Starsector is losing myself in designing a s
 I also have plans for future features that work much better when each ship has its own tree.
 [/spoiler]
 
+[b]What languages is Exiled Sector available in?[/b]
+[spoiler]
+Exiled Sector is available in English and Simplified Chinese. By default it follows the game's language, so a Chinese-localised Starsector shows the skill tree in Chinese automatically. You can also pick a language in the LunaLib settings; the change takes effect after a restart.
+
+The skill tree screen always shows the chosen language, using a bundled Noto Sans SC font. Text the game draws itself (settings, dialogs, the codex) stays in English unless the game can display Chinese characters.
+
+The Chinese translation is a first draft awaiting review by a native speaker. To add another language, see the [url=https://github.com/ExiledPortals/ExiledSector/blob/main/docs/i18n/README.md]localisation guide[/url].
+[/spoiler]
+
 [size=14pt][b]Disclaimer[/b][/size]
 
+[spoiler]
 This mod is in (very) early development.
 
 It is my first mod, and first foray into OpenGL/game development, and is by no means feature complete or bug free.
@@ -213,12 +217,33 @@ I have only used starsector-core graphics and royalty-free art assets for all ar
 I am seeking any feedback, bug reports, node suggestions, or faction designs.
 
 You can find me on the [url=https://fractalsoftworks.com/forum/index.php?topic=11488.0]Unofficial Starsector Discord[/url] or by direct message @portals_
+[/spoiler]
 
 [size=14pt][b]License[/b][/size]
 
+[spoiler]
 Exiled Sector is licensed under the [url=https://github.com/ExiledPortals/ExiledSector/blob/main/LICENSE]GNU General Public License v3.0[/url]. Fork it, reuse it, change it; just keep your version open source under the same license.
+[/spoiler]
 
 [size=14pt][b]Changelog[/b][/size]
+
+[b]0.7.0[/b]
+[spoiler]
+[list]
+[li]The skill tree now has Modular Hull Sockets: empty sections in the ship that you allocate like any other node and then fill with a socketable. Ctrl+clicking a socket opens Socket Storage so you can pick what goes in it.[/li]
+[li]Socket Storage is a new sidebar that holds every socketable you own. Socketables in your cargo move into it when you open it or install something. You can filter by rarity and grade, search by name, kind or tech level, and destroy items you don't want.[/li]
+[li]The common socketables are Domain Subroutines in three grades. Military grade leans towards shields, flux and energy weapons, industrial towards missiles and a mix of flux, armor and shields, and consumer towards armor, speed and ballistics. Their mods are split into prefixes and suffixes.[/li]
+[li]A common socketable rolls two mods, one prefix and one suffix. A rare one rolls three or four mods, split as evenly as possible between prefixes and suffixes. Each mod's value is a whole number inside its range, and F1 shows that range in brackets. The rolls and the name are fixed when the item is created.[/li]
+[li]Unique socketables are something else entirely. You can find officers, research teams, raiding parties and other Domain relics. Uniques only start dropping once you reach level 15.[/li]
+[li]Socketables turn up at salvage sites across the Sector, from derelict probes and survey ships to motherships, research and mining stations, orbital habitats, caches and wrecks. The bigger and more valuable the site, the better your odds, and some sites can hold a unique. Tech Mining can also find socketables.[/li]
+[li]NPC flagships from non-player factions can carry socketables in their own sockets, and the odds grow as you level up. If you destroy or disable a flagship without recovering it, everything it carried drops in the loot. If you recover the ship, the socketable will remain in its tree.[/li]
+[li]If you are lucky enough to have an NPC fleet spawn with a unique, a message tells you what it carries and, if you can identify the fleet, which fleet it is.[/li]
+[li]A full pass fixed effects that didn't do what they said. Fighter armor and engagement range now work, Heavy Ballistics Integration now reduces weapon OP on your own ships, and maneuverability now covers acceleration, deceleration and turning the way vanilla does. Converted Hangar gives the Invictus its second bay, Converted Fighter Bay follows vanilla's built-in wing rule, and shield conversions can no longer be taken on phase ships. Death on Collision ignores asteroids and the ship's own modules. Fighter wings go back to cargo when the bay holding them is removed.[/li]
+[li]The skill tree interface is smoother. Socket Storage and the template list unfold with a short hologram-style animation, the stats panel has a Show/Hide Stats button, and buttons fade in and out. Core UI sounds have been added, and textures load during the game's loading screen, so zooming out to the hyperspace map no longer stutters the first time.[/li]
+[li]Ships lost in combat now have their skill trees cleaned up. Node refunds only go to ships you still own, and installed socketables can no longer be destroyed by accident.[/li]
+[li]There's a fix for a refit screen crash when MagicLib's paintjob button is present. There are new console commands to grant XP to a single ship, every socketable type, or one copy of each unique.[/li]
+[/list]
+[/spoiler]
 
 [b]0.6.0[/b]
 [spoiler]

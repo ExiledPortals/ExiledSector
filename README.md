@@ -37,6 +37,22 @@ Open the refit screen and click the skill tree button on any of your ships. Ther
 <img src="graphics/description/Ludds_Light.png" alt="Ludd's Light">
 <img src="graphics/description/at_any_cost.png" alt="At Any Cost">
 
+- Some nodes are Modular Hull Sockets: empty sections of the ship that you allocate like any other node and then fill with a socketable. Socketables turn up at salvage sites, through Tech Mining and aboard NPC flagships.
+- Ctrl+click a socket to open Socket Storage, which holds every socketable you own. Filter by rarity and grade, search by name, and pick what goes in.
+
+<img src="graphics/description/socket_storage.png" alt="Socket Storage">
+
+- Common socketables are Domain Subroutines in three grades, each rolling one prefix and one suffix.
+- Rare ones roll three or four mods and get a name of their own.
+
+<img src="graphics/description/common_socketable.png" alt="A common socketable">
+<img src="graphics/description/rare_socketable.png" alt="A rare socketable">
+
+- Unique socketables can be officers, crews and Domain relics with unique effects. They only start turning up once you reach level 15.
+
+<img src="graphics/description/unique_socketable.png" alt="A unique socketable">
+<img src="graphics/description/socketed_unique.png" alt="A unique in its socket">
+
 ## Requirements
 
 - Starsector 0.98a-RC8
@@ -66,16 +82,6 @@ These mods have dedicated compatibility. The version listed is the one I last te
 | Lost Sector | 0.6.2d | The Kesteven and Frozen Heart areas of the tree appear, and Augmented Systems hulls get the same bonuses from those nodes as from the hull mods. |
 | [MagicLib](https://fractalsoftworks.com/forum/index.php?topic=25868.0) | 1.5.6 | Required. A hull mod that tries to strip one of your nodes' hull mods through MagicLib is removed instead. |
 | Random Assortment of Things | 3.3.1 | Modular Hull Socket items can drop from its abyssal structures, abyssal drones and relic sites. |
-| Industrial Evolution | 4.1.b | Modular Hull Socket items can drop from its orbital laboratories and arsenal stations. |
-| Knights of Ludd | 1.4.0 | Modular Hull Socket items can drop from its research stations and shielded caches. |
-| Secrets of the Frontier | 0.15.1 | Modular Hull Socket items can drop from its salvageable stations. |
-| Arthr's Ships n Shit | 0.100-dev | Modular Hull Socket items can drop from its Exodyne research stations. |
-| What We Left Behind | 4.5.3 | Modular Hull Socket items can drop from its corrupted caches, Omega derelicts and research stations. |
-| Ship Mastery System | 2.0.8 | Modular Hull Socket items can drop from its concealed stations and probes. |
-| Unthemed Weapons Collection | 0.7.4 | Modular Hull Socket items can drop from its weapon caches, including the fortified ones. |
-| DIY Planets | 1.0.30 | Modular Hull Socket items can drop from its genesis terraforming stations. |
-
-Socket item drops at other mods' sites can be turned off with "Drops From Other Mods' Sites" in the LunaLib settings. Each mod's sites are listed in its own file under `data/config/exiledSector/compat/salvage/`, which only loads when that mod is installed.
 
 Some weapons from other mods misbehave (often hilariously) when their beams are split or their shots are chained. These are listed in:
 
@@ -83,14 +89,6 @@ Some weapons from other mods misbehave (often hilariously) when their beams are 
 - `data/config/exiledSector/energy_chain_blocklist.csv`
 
 Both files are merged across mods, so other mods can opt their own weapons out (or you can opt them back in, at your own risk).
-
-## Languages
-
-Exiled Sector is available in English and Simplified Chinese. By default it follows the game's language, so a Chinese-localised Starsector shows the skill tree in Chinese automatically. You can also pick a language in the LunaLib settings; the change takes effect after a restart.
-
-The skill tree screen always shows the chosen language, using a bundled Noto Sans SC font. Text the game draws itself (settings, dialogs, the codex) stays in English unless the game can display Chinese characters.
-
-The Chinese translation is a first draft awaiting review by a native speaker. To add another language, see the [localisation guide](docs/i18n/README.md).
 
 ## FAQ
 
@@ -217,6 +215,17 @@ A tree per ship also means that finding a cool new ship, at any point in a playt
 One of the things I love most about Starsector is losing myself in designing a ship. Hullmods are the least flexible part of vanilla customisation, and I wanted to replace them with something more interesting.
 
 I also have plans for future features that work much better when each ship has its own tree.
+
+</details>
+
+<details>
+<summary><b>What languages is Exiled Sector available in?</b></summary>
+
+Exiled Sector is available in English and Simplified Chinese. By default it follows the game's language, so a Chinese-localised Starsector shows the skill tree in Chinese automatically. You can also pick a language in the LunaLib settings; the change takes effect after a restart.
+
+The skill tree screen always shows the chosen language, using a bundled Noto Sans SC font. Text the game draws itself (settings, dialogs, the codex) stays in English unless the game can display Chinese characters.
+
+The Chinese translation is a first draft awaiting review by a native speaker. To add another language, see the [localisation guide](docs/i18n/README.md).
 
 </details>
 
