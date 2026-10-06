@@ -89,24 +89,40 @@ public final class SocketableNames {
     }
 
     static SocketableName nameFor(SocketableDefinition definition, SocketableKind kind, long seed, List<RolledEffect> effects) {
+        return render(definition, kind, effects, freeze(definition, seed, effects));
+    }
+
+    static FrozenName freeze(SocketableDefinition definition, long seed, List<RolledEffect> effects) {
+        if (definition == null) {
+            return null;
+        }
+        return switch (SocketableRarity.of(definition, effects.size())) {
+            case UNIQUE -> FrozenName.NONE;
+            case MAGIC -> new FrozenName(firstInRole(definition, effects, true), firstInRole(definition, effects, false), null, null);
+            case RARE -> rareWords(definition.grade(), seed);
+        };
+    }
+
+    static SocketableName render(SocketableDefinition definition, SocketableKind kind, List<RolledEffect> effects, FrozenName frozen) {
         SocketableRarity rarity = SocketableRarity.of(definition, effects.size());
         if (definition == null) {
             return new SocketableName(Translation.text("socketable.unknown"), null, rarity);
         }
+        FrozenName parts = frozen == null ? FrozenName.NONE : frozen;
         return switch (rarity) {
             case UNIQUE -> new SocketableName(definition.displayName(), null, rarity);
-            case MAGIC -> new SocketableName(magicName(definition, kind, effects), definition.displayName(), rarity);
+            case MAGIC -> new SocketableName(magicName(definition, kind, parts), definition.displayName(), rarity);
             case RARE -> {
-                String rare = rareName(definition.grade(), seed);
+                String rare = rareName(parts);
                 yield rare == null ? new SocketableName(definition.displayName(), null, rarity)
                         : new SocketableName(rare, definition.displayName(), rarity);
             }
         };
     }
 
-    private static String magicName(SocketableDefinition definition, SocketableKind kind, List<RolledEffect> effects) {
-        String prefix = firstAffix(definition, effects, true);
-        String suffix = firstAffix(definition, effects, false);
+    private static String magicName(SocketableDefinition definition, SocketableKind kind, FrozenName parts) {
+        String prefix = parts.prefixEffect() == null ? null : affix(parts.prefixEffect(), true);
+        String suffix = parts.suffixEffect() == null ? null : affix(parts.suffixEffect(), false);
         if (prefix == null && suffix == null) {
             return definition.displayName();
         }
@@ -124,11 +140,11 @@ public final class SocketableNames {
         return message.text().trim().replaceAll("\\s+", " ");
     }
 
-    private static String firstAffix(SocketableDefinition definition, List<RolledEffect> effects, boolean prefix) {
+    private static String firstInRole(SocketableDefinition definition, List<RolledEffect> effects, boolean prefix) {
         for (RolledEffect effect : effects) {
             String effectName = effect.effectName();
             if (prefix ? definition.isPrefix(effectName) : definition.isSuffix(effectName)) {
-                return affix(effectName, prefix);
+                return effectName;
             }
         }
         return null;
@@ -143,7 +159,7 @@ public final class SocketableNames {
         return Translation.data("socketable.affix." + effectName + (prefix ? ".prefix" : ".suffix"), english);
     }
 
-    private static String rareName(String grade, long seed) {
+    private static FrozenName rareWords(String grade, long seed) {
         GradeWords words = WORDS.get().get(grade);
         if (words == null || words.first().isEmpty() || words.second().isEmpty()) {
             return null;
@@ -152,9 +168,19 @@ public final class SocketableNames {
         String first = pick(words.first(), random);
         String second = pick(words.second(), random);
         return switch (words.style()) {
-            case CODENAME -> Translation.msg("socketable.rareName.codename").arg("first", first).arg("second", second).text();
-            case PRODUCT -> productName(words, first, second, random);
+            case CODENAME -> new FrozenName(null, null, first, second);
+            case PRODUCT -> new FrozenName(null, null, productName(words, first, second, random), null);
         };
+    }
+
+    private static String rareName(FrozenName parts) {
+        if (parts.rareFirst() == null) {
+            return null;
+        }
+        if (parts.rareSecond() == null) {
+            return parts.rareFirst();
+        }
+        return Translation.msg("socketable.rareName.codename").arg("first", parts.rareFirst()).arg("second", parts.rareSecond()).text();
     }
 
     private static String productName(GradeWords words, String first, String second, Random random) {

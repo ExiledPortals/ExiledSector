@@ -24,6 +24,7 @@ import exiledsector.skills.tags.ShipProfile;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.socketables.NpcSocketables;
 import exiledsector.socketables.SocketableDefinition;
+import exiledsector.socketables.SocketableItemData;
 import exiledsector.socketables.SocketableUnlock;
 
 import java.util.Map;
@@ -98,7 +99,7 @@ public final class NpcFleetLeveller {
         for (String socket : build.claimedSockets()) {
             SocketableDefinition definition = NpcSocketables.pickDefinition(socketableRandom, uniqueAllowed);
             if (definition != null) {
-                build.data().socketItem(socket, NpcSocketables.id(definition.id(), socketableRandom.nextLong()));
+                build.data().socketItem(socket, NpcSocketables.id(SocketableItemData.rolled(definition, socketableRandom.nextLong())));
             }
         }
         return NpcTreeTag.encode(build.data());

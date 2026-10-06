@@ -109,13 +109,13 @@ public final class SocketableDrops {
             }
             SocketableDefinition basic = pickBasic(random);
             if (basic != null) {
-                items.add(new SocketableItemData(basic.id(), random.nextLong()));
+                items.add(SocketableItemData.rolled(basic, random.nextLong()));
             }
         }
         if (random.nextFloat() < rule.uniqueChance() * chanceMult) {
             SocketableDefinition unique = pickUnique(random, uniqueAllowed);
             if (unique != null) {
-                items.add(new SocketableItemData(unique.id(), random.nextLong()));
+                items.add(SocketableItemData.rolled(unique, random.nextLong()));
             }
         }
         return items;

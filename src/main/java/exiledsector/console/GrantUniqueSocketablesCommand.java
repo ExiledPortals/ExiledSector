@@ -42,7 +42,7 @@ public class GrantUniqueSocketablesCommand implements BaseCommand {
         int uniques = 0;
         for (SocketableDefinition definition : SocketableDefinitions.all()) {
             if (definition.unique()) {
-                playerFleet.getCargo().addSpecial(new SocketableItemData(definition.id(), random.nextLong()).toSpecialItem(), 1f);
+                playerFleet.getCargo().addSpecial(SocketableItemData.rolled(definition, random.nextLong()).toSpecialItem(), 1f);
                 uniques++;
             }
         }

@@ -13,6 +13,7 @@ public final class NpcSocketables {
 
     public static final String ID_PREFIX = "npc:";
     private static final String SEED_SEPARATOR = "/";
+    private static final String EFFECT_MARKER = ":";
     static final float BASE_CHANCE = 0.05f;
     static final float CHANCE_PER_PLAYER_LEVEL = 0.01f;
     static final int SECOND_ROLL_PLAYER_LEVEL = 15;
@@ -25,6 +26,11 @@ public final class NpcSocketables {
 
     public static String id(String definitionId, long seed) {
         return ID_PREFIX + definitionId + SEED_SEPARATOR + seed;
+    }
+
+    public static String id(SocketableItemData item) {
+        String id = id(item.definitionId(), item.seed());
+        return item.effects() == null ? id : id + SEED_SEPARATOR + RolledEffect.encode(item.effects());
     }
 
     public static boolean isNpcId(String id) {
@@ -40,8 +46,14 @@ public final class NpcSocketables {
         if (separator <= 0) {
             return null;
         }
+        String last = body.substring(separator + 1);
+        if (last.isEmpty() || last.contains(EFFECT_MARKER)) {
+            SocketableItemData legacy = item(ID_PREFIX + body.substring(0, separator));
+            List<RolledEffect> effects = RolledEffect.decode(last);
+            return legacy == null || effects == null ? null : new SocketableItemData(legacy.definitionId(), legacy.seed(), effects, null);
+        }
         try {
-            return new SocketableItemData(body.substring(0, separator), Long.parseLong(body.substring(separator + 1)));
+            return new SocketableItemData(body.substring(0, separator), Long.parseLong(last));
         } catch (NumberFormatException e) {
             return null;
         }
@@ -52,10 +64,7 @@ public final class NpcSocketables {
         if (item == null || item.definition() == null) {
             return null;
         }
-        return PREVIEWS.computeIfAbsent(id, key -> {
-            SocketableDefinition definition = item.definition();
-            return definition.kind().create(key, definition.id(), item.seed(), SocketableRoller.roll(definition, item.seed()));
-        });
+        return PREVIEWS.computeIfAbsent(id, item::create);
     }
 
     public static float firstChance(int playerLevel) {
@@ -119,19 +128,16 @@ public final class NpcSocketables {
                 continue;
             }
             data.unsocketItem(socketed.getKey());
-            SocketableDefinition definition = item.definition();
-            if (definition != null) {
-                data.socketItem(socketed.getKey(), SocketableStore.get().add(definition, item.seed()).id());
+            Socketable owned = SocketableStore.get().add(item);
+            if (owned != null) {
+                data.socketItem(socketed.getKey(), owned.id());
             }
         }
     }
 
     public static void storeForPlayer(ShipSkillData data) {
         for (SocketableItemData item : carriedBy(data)) {
-            SocketableDefinition definition = item.definition();
-            if (definition != null) {
-                SocketableStore.get().add(definition, item.seed());
-            }
+            SocketableStore.get().add(item);
         }
     }
 

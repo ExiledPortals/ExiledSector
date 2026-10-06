@@ -42,6 +42,7 @@ import exiledsector.socketables.SocketableDrops;
 import exiledsector.socketables.SocketCustody;
 import exiledsector.socketables.SocketLossListener;
 import exiledsector.socketables.SocketableSaveAliases;
+import exiledsector.socketables.SocketableStore;
 import exiledsector.ui.ExiledSectorSettings;
 import exiledsector.ui.SkillTreeRefitButton;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
@@ -139,6 +140,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         SkillTree.applyDisabledRegions(AreaToggles.disabledRegions());
         SkillDataResolver.clearCache();
         NpcSocketables.clearCache();
+        SocketableStore.get().freezeNames();
         OpSpentSlotManager.releaseUnless(ShipSkillDataManager::hasProgress);
         ShipSkillDataManager.removeBlankRecords();
         forgetUnknownNodes();

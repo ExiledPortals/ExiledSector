@@ -46,13 +46,24 @@ public final class SocketableStore {
     }
 
     public Socketable add(SocketableDefinition definition, long seed) {
-        Socketable socketable = definition.kind().create(ID_PREFIX + nextId++, definition.id(), seed,
-                SocketableRoller.roll(definition, seed));
+        return add(SocketableItemData.rolled(definition, seed));
+    }
+
+    public Socketable add(SocketableItemData item) {
+        if (item.definition() == null) {
+            return null;
+        }
+        Socketable socketable = item.create(ID_PREFIX + nextId++);
+        socketable.freezeName();
         owned.add(socketable);
         if (byId != null) {
             byId.put(socketable.id(), socketable);
         }
         return socketable;
+    }
+
+    public void freezeNames() {
+        owned.forEach(Socketable::freezeName);
     }
 
     public boolean remove(Socketable socketable) {
@@ -80,7 +91,7 @@ public final class SocketableStore {
                 continue;
             }
             for (int i = 0; i < count; i++) {
-                add(definition, item.seed());
+                add(item);
             }
             cargo.removeStack(stack);
             moved += count;

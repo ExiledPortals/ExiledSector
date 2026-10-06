@@ -17,6 +17,7 @@ public abstract class Socketable {
     private final long seed;
     private final List<RolledEffect> effects;
     private boolean favourite;
+    private FrozenName frozenName;
 
     protected Socketable(String id, String definitionId, long seed, List<RolledEffect> effects) {
         this.id = id;
@@ -56,7 +57,29 @@ public abstract class Socketable {
     }
 
     public SocketableName displayName() {
-        return SocketableNames.nameFor(definition(), kind(), seed, effects);
+        SocketableDefinition definition = definition();
+        return SocketableNames.render(definition, kind(), effects, frozenName(definition));
+    }
+
+    FrozenName frozenName() {
+        return frozenName(definition());
+    }
+
+    private FrozenName frozenName(SocketableDefinition definition) {
+        if (frozenName == null && definition != null) {
+            frozenName = SocketableNames.freeze(definition, seed, effects);
+        }
+        return frozenName;
+    }
+
+    void freezeName() {
+        frozenName(definition());
+    }
+
+    void freezeName(FrozenName name) {
+        if (name != null) {
+            frozenName = name;
+        }
     }
 
     public String name() {

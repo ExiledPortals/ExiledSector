@@ -59,7 +59,7 @@ public class GrantSocketablesCommand implements BaseCommand {
         int types = 0;
         for (SocketableDefinition definition : SocketableDefinitions.all()) {
             for (int i = 0; i < copies; i++) {
-                playerFleet.getCargo().addSpecial(new SocketableItemData(definition.id(), random.nextLong()).toSpecialItem(), 1f);
+                playerFleet.getCargo().addSpecial(SocketableItemData.rolled(definition, random.nextLong()).toSpecialItem(), 1f);
             }
             types++;
         }

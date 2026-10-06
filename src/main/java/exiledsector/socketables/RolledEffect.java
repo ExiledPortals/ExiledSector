@@ -4,9 +4,14 @@ import exiledsector.i18n.StyledText;
 import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.skilleffect.SkillEffect;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public final class RolledEffect {
+
+    private static final String ENTRY_SEPARATOR = ";";
+    private static final String VALUE_SEPARATOR = ":";
 
     private final String effectName;
     private final float magnitude;
@@ -14,6 +19,41 @@ public final class RolledEffect {
     public RolledEffect(String effectName, float magnitude) {
         this.effectName = effectName;
         this.magnitude = magnitude;
+    }
+
+    static String encode(List<RolledEffect> effects) {
+        StringBuilder encoded = new StringBuilder();
+        for (RolledEffect effect : effects) {
+            if (!encoded.isEmpty()) {
+                encoded.append(ENTRY_SEPARATOR);
+            }
+            String magnitude = Float.toString(effect.magnitude);
+            encoded.append(effect.effectName).append(VALUE_SEPARATOR)
+                    .append(magnitude.endsWith(".0") ? magnitude.substring(0, magnitude.length() - 2) : magnitude);
+        }
+        return encoded.toString();
+    }
+
+    static List<RolledEffect> decode(String encoded) {
+        if (encoded == null) {
+            return null;
+        }
+        List<RolledEffect> effects = new ArrayList<>();
+        for (String entry : encoded.split(ENTRY_SEPARATOR)) {
+            if (entry.isEmpty()) {
+                continue;
+            }
+            int separator = entry.lastIndexOf(VALUE_SEPARATOR);
+            if (separator <= 0) {
+                return null;
+            }
+            try {
+                effects.add(new RolledEffect(entry.substring(0, separator), Float.parseFloat(entry.substring(separator + 1))));
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        }
+        return effects;
     }
 
     public String effectName() {
