@@ -54,6 +54,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public class ExiledSectorModPlugin extends BaseModPlugin {
 
@@ -120,7 +121,20 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         }
         ShipSkillDataManager.replaceRemovedNodes(SkillTree.getAllNodes(), NodeReplacements.all());
         ShipSkillDataManager.forgetUnknownNodes(SkillTree.getAllNodes(), SkillTree.getAllTypes(), SkillTree::getDeclared,
-                ExiledSectorModPlugin::refund);
+                new OwnedShips(), ExiledSectorModPlugin::refund);
+    }
+
+    private static final class OwnedShips implements Predicate<String> {
+
+        private Set<String> ids;
+
+        @Override
+        public boolean test(String shipId) {
+            if (ids == null) {
+                ids = SocketCustody.ownedShipIds();
+            }
+            return ids.contains(shipId);
+        }
     }
 
     private static void refund(SkillItemCost itemCost) {

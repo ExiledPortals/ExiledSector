@@ -66,6 +66,14 @@ public final class SocketCustody {
         return owned;
     }
 
+    public static Set<String> ownedShipIds() {
+        SectorAPI sector = Global.getSector();
+        if (sector == null || sector.getPlayerFleet() == null) {
+            return Set.of();
+        }
+        return ownedShips().keySet();
+    }
+
     public static boolean isInstalled(Socketable socketable) {
         return isInstalled(ShipSkillDataManager.all(), socketable);
     }

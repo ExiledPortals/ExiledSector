@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import com.fs.starfarer.api.Global;
 import exiledsector.skills.ShipSkillData;
@@ -57,19 +58,15 @@ public class ShipSkillDataManager {
         });
     }
 
-    public static void forgetUnknownNodes(Map<String, SkillNode> tree, Map<String, SkillType> types, Consumer<SkillItemCost> refund) {
-        forgetUnknownNodes(tree, types, tree::get, refund);
-    }
-
     public static void forgetUnknownNodes(Map<String, SkillNode> tree, Map<String, SkillType> types,
-                                          Function<String, SkillNode> declaredNodes, Consumer<SkillItemCost> refund) {
+                                          Function<String, SkillNode> declaredNodes, Predicate<String> owned, Consumer<SkillItemCost> refund) {
         Logger logger = Logger.getLogger(ShipSkillDataManager.class);
         for (Map.Entry<String, ShipSkillData> entry : getStore().entrySet()) {
             ShipSkillData data = entry.getValue();
             List<String> forgotten = data.forgetUnknownNodes(tree, types);
             for (String nodeId : forgotten) {
                 SkillItemCost itemCost = chargedItemCost(declaredNodes.apply(nodeId));
-                if (itemCost != null) {
+                if (itemCost != null && owned.test(entry.getKey())) {
                     refund.accept(itemCost);
                 }
             }
@@ -77,7 +74,7 @@ public class ShipSkillDataManager {
                 List<String> released = data.resetAllocations();
                 for (String nodeId : released) {
                     SkillNode node = tree.get(nodeId);
-                    if (node != null && node.getType().getItemCost() != null) {
+                    if (node != null && node.getType().getItemCost() != null && owned.test(entry.getKey())) {
                         refund.accept(node.getType().getItemCost());
                     }
                 }

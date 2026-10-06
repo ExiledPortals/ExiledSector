@@ -157,8 +157,9 @@ class ShipSkillDataManagerTest {
         rootless.allocate(lobster, 3);
         rootless.incrementLevel();
         List<SkillItemCost> refunds = new ArrayList<>();
+        Map<String, SkillNode> tree = Map.of("root", root, "lobster", lobster);
 
-        ShipSkillDataManager.forgetUnknownNodes(Map.of("root", root, "lobster", lobster), Map.of(), refunds::add);
+        ShipSkillDataManager.forgetUnknownNodes(tree, Map.of(), tree::get, shipId -> true, refunds::add);
 
         assertEquals(List.of("root", "lobster"), List.copyOf(healthy.getAllocatedNodeIds()));
         assertTrue(rootless.getAllocatedNodeIds().isEmpty());
@@ -179,10 +180,34 @@ class ShipSkillDataManagerTest {
         List<SkillItemCost> refunds = new ArrayList<>();
         Map<String, SkillNode> declared = Map.of("root", root, "lobster", lobster, "freebie", freebie);
 
-        ShipSkillDataManager.forgetUnknownNodes(Map.of("root", root), Map.of(), declared::get, refunds::add);
+        ShipSkillDataManager.forgetUnknownNodes(Map.of("root", root), Map.of(), declared::get, shipId -> true, refunds::add);
 
         assertEquals(List.of("root"), List.copyOf(ship.getAllocatedNodeIds()));
         assertEquals(List.of(new SkillItemCost("lobster", 50f)), refunds);
         assertEquals(1, ship.getBankedFreeAllocations());
+    }
+
+    @Test
+    void shipsThePlayerNoLongerOwnsLoseRemovedNodesWithoutARefund() {
+        SkillNode root = typedNode("root", SkillTier.ROOT, null);
+        SkillNode lobster = typedNode("lobster", SkillTier.SMALL, new SkillItemCost("lobster", 50f));
+        SkillNode removedRoot = typedNode("removed_root", SkillTier.ROOT, null);
+        ShipSkillData owned = ShipSkillDataManager.get("owned");
+        owned.chooseStartingRoot(root);
+        owned.allocate(lobster, 3);
+        ShipSkillData sold = ShipSkillDataManager.get("sold");
+        sold.chooseStartingRoot(root);
+        sold.allocate(lobster, 3);
+        ShipSkillData destroyed = ShipSkillDataManager.get("destroyed");
+        destroyed.chooseStartingRoot(removedRoot);
+        destroyed.allocate(lobster, 3);
+        List<SkillItemCost> refunds = new ArrayList<>();
+        Map<String, SkillNode> declared = Map.of("root", root, "lobster", lobster);
+
+        ShipSkillDataManager.forgetUnknownNodes(Map.of("root", root), Map.of(), declared::get, "owned"::equals, refunds::add);
+
+        assertEquals(List.of("root"), List.copyOf(sold.getAllocatedNodeIds()));
+        assertTrue(destroyed.getAllocatedNodeIds().isEmpty());
+        assertEquals(List.of(new SkillItemCost("lobster", 50f)), refunds);
     }
 }
