@@ -14,8 +14,7 @@ import exiledsector.skills.skilleffect.ShieldSkillEffect;
 import exiledsector.ui.util.BorderedPanel;
 import exiledsector.ui.util.CachedText;
 import exiledsector.ui.util.FallbackSupport;
-import exiledsector.ui.util.SpriteCache;
-import exiledsector.ui.util.SpriteDraw;
+import exiledsector.ui.util.HoloTransition;
 import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.ui.LazyFont;
 
@@ -49,15 +48,16 @@ final class SkillTreeStatPanel {
     private static final Color STAT_INCREASED_COLOR = SkillTreePanelStyle.POSITIVE_STAT_COLOR;
     private static final float STAT_COMPARISON_EPSILON = 0.001f;
 
-    private static final String COLLAPSE_ICON_PATH = "graphics/icons/ship_store.png";
-    private static final String EXPAND_ICON_PATH = "graphics/icons/ship_take.png";
-    private static final float COLLAPSE_BUTTON_SIZE = 40f;
-    private static final float COLLAPSE_BUTTON_MARGIN = 8f;
-    private static final float COLLAPSED_PANEL_SIZE = COLLAPSE_BUTTON_MARGIN * 2f + COLLAPSE_BUTTON_SIZE;
+    private static final float TOGGLE_HEIGHT = 40f;
+    private static final float TOGGLE_MIN_WIDTH = 150f;
+    private static final float TOGGLE_GAP = 8f;
 
     private final FleetMemberAPI member;
     private final BorderedPanel borderedPanel = new BorderedPanel(SkillTreeStatPanel.class);
-    private final SpriteCache spriteCache = new SpriteCache(SkillTreeStatPanel.class);
+    private final HoloTransition transition = new HoloTransition();
+    private final SkillTreeUiButton toggleButton = new SkillTreeUiButton("");
+    private final String showLabel = Translation.text("ui.stats.show");
+    private final String hideLabel = Translation.text("ui.stats.hide");
     private final CachedText<String, GroupTexts> groupTextCache = new CachedText<>();
     private final Map<String, LazyFont.DrawableString> statGroupHeaderText = new HashMap<>();
 
@@ -70,11 +70,19 @@ final class SkillTreeStatPanel {
     private float cachedLayoutWidth;
     private float cachedLayoutHeight;
 
-    private boolean collapsed = false;
-    private ScreenRect drawnBounds = ScreenRect.NONE;
+    private boolean open = true;
+    private float toggleWidth;
+    private PanelLayout drawnLayout;
+    private float placedToggleRight = Float.NaN;
+    private float placedToggleTop = Float.NaN;
 
     SkillTreeStatPanel(FleetMemberAPI member) {
         this.member = member;
+        transition.openInstantly();
+        toggleButton.setLabel(showLabel);
+        float showWidth = toggleButton.preferredWidth();
+        toggleButton.setLabel(hideLabel);
+        toggleWidth = Math.max(TOGGLE_MIN_WIDTH, Math.max(showWidth, toggleButton.preferredWidth()));
     }
 
     void refresh(ShipOpBudget budget, int revision) {
@@ -83,44 +91,92 @@ final class SkillTreeStatPanel {
         groupsRevision = revision;
     }
 
-    void toggleCollapsed() {
-        collapsed = !collapsed;
-        if (!collapsed) {
+    boolean isOpen() {
+        return open;
+    }
+
+    void toggle() {
+        if (open) {
+            close();
+        } else {
+            open(true);
+        }
+    }
+
+    void open(boolean withSound) {
+        if (open) return;
+        open = true;
+        transition.open();
+        toggleButton.setLabel(hideLabel);
+        if (withSound) {
             SkillTreeSounds.panelOpened();
         }
     }
 
-    boolean isCollapseButtonHit(PositionAPI position, float x, float y) {
-        LazyFont font = SkillTreePanelStyle.font();
-        if (font == null) return false;
-        PanelLayout layout = layoutPanel(position, font);
-        if (layout == null) return false;
+    void close() {
+        if (!open) return;
+        open = false;
+        transition.close();
+        toggleButton.setLabel(showLabel);
+    }
 
-        return isWithinButton(collapseButtonCenterX(layout), collapseButtonCenterY(layout), COLLAPSE_BUTTON_SIZE, x, y);
+    void advance(float amount) {
+        if (transition.isAnimating()) {
+            transition.advance(amount);
+        }
+    }
+
+    boolean isToggleHit(float x, float y) {
+        return toggleButton.isClickable(x, y);
     }
 
     boolean contains(float x, float y) {
-        return drawnBounds.contains(x, y);
+        if (toggleButton.contains(x, y)) return true;
+        PanelLayout layout = drawnLayout;
+        return layout != null && x >= layout.x && x <= layout.x + layout.width
+                && y >= layout.topY - layout.fullHeight && y <= layout.topY;
     }
 
-    void render(PositionAPI position, float alphaMult) {
-        drawnBounds = ScreenRect.NONE;
+    void render(PositionAPI position, float mouseX, float mouseY, float alphaMult, float toggleAlpha) {
+        drawnLayout = null;
+        placeToggle(position, toggleAlpha);
         LazyFont font = SkillTreePanelStyle.font();
         if (font == null) return;
 
         PanelLayout layout = layoutPanel(position, font);
-        if (layout == null) return;
+        if (layout != null && transition.isVisible()) {
+            drawnLayout = layout;
+            renderPanel(layout, alphaMult);
+        }
+        if (toggleAlpha > 0f) {
+            toggleButton.render(mouseX, mouseY, alphaMult * toggleAlpha);
+        }
+    }
 
-        float panelWidth = collapsed ? COLLAPSED_PANEL_SIZE : layout.width;
-        float panelHeight = collapsed ? COLLAPSED_PANEL_SIZE : layout.fullHeight;
-        float rightEdge = layout.x + layout.width;
-        float panelX = rightEdge - panelWidth;
-        float bottomY = layout.topY - panelHeight;
+    private void placeToggle(PositionAPI position, float toggleAlpha) {
+        if (toggleAlpha <= 0f) {
+            toggleButton.hide();
+            placedToggleRight = Float.NaN;
+            return;
+        }
+        float right = position.getX() + position.getWidth() - STAT_PANEL_MARGIN;
+        float top = position.getY() + position.getHeight() - STAT_PANEL_MARGIN;
+        if (right == placedToggleRight && top == placedToggleTop) return;
+        toggleButton.place(right - toggleWidth, top - TOGGLE_HEIGHT, toggleWidth, TOGGLE_HEIGHT);
+        placedToggleRight = right;
+        placedToggleTop = top;
+    }
 
-        drawnBounds = new ScreenRect(panelX, bottomY, panelWidth, panelHeight);
-        borderedPanel.draw(panelX, bottomY, panelWidth, panelHeight, alphaMult);
+    private void renderPanel(PanelLayout layout, float alphaMult) {
+        float bottomY = layout.topY - layout.fullHeight;
+        Color accent = SkillTreePanelStyle.GLOW_COLOR;
+        transition.drawProjection(layout.x, bottomY, layout.width, layout.fullHeight, accent, alphaMult);
+        float content = transition.contentAlpha();
+        if (content <= 0f) return;
 
-        if (!collapsed) {
+        boolean clipped = transition.beginReveal(layout.x, bottomY, layout.width, layout.fullHeight);
+        try {
+            borderedPanel.draw(layout.x, bottomY, layout.width, layout.fullHeight, content * alphaMult);
             float rowStep = STAT_PANEL_FONT_SIZE * FONT_LINE_HEIGHT_FACTOR;
             for (GroupContent group : layout.groups) {
                 group.headerText.draw(layout.x + layout.width / 2f, group.headerTextY);
@@ -132,30 +188,12 @@ final class SkillTreeStatPanel {
                     rowY -= rowStep;
                 }
             }
+        } finally {
+            if (clipped) {
+                HoloTransition.endReveal();
+            }
         }
-
-        drawCollapseButton(layout, alphaMult);
-    }
-
-    private void drawCollapseButton(PanelLayout layout, float alphaMult) {
-        String iconPath = collapsed ? COLLAPSE_ICON_PATH : EXPAND_ICON_PATH;
-        SpriteDraw.drawAtCenter(spriteCache, iconPath,
-                collapseButtonCenterX(layout), collapseButtonCenterY(layout),
-                COLLAPSE_BUTTON_SIZE, COLLAPSE_BUTTON_SIZE, null, alphaMult);
-    }
-
-    private static float collapseButtonCenterX(PanelLayout layout) {
-        return layout.x + layout.width - COLLAPSE_BUTTON_MARGIN - COLLAPSE_BUTTON_SIZE / 2f;
-    }
-
-    private static float collapseButtonCenterY(PanelLayout layout) {
-        return layout.topY - COLLAPSE_BUTTON_MARGIN - COLLAPSE_BUTTON_SIZE / 2f;
-    }
-
-    static boolean isWithinButton(float buttonCenterX, float buttonCenterY, float buttonSize, float x, float y) {
-        float half = buttonSize / 2f;
-        return x >= buttonCenterX - half && x <= buttonCenterX + half
-                && y >= buttonCenterY - half && y <= buttonCenterY + half;
+        transition.drawRevealLine(layout.x, bottomY, layout.width, layout.fullHeight, accent, alphaMult);
     }
 
     private PanelLayout layoutPanel(PositionAPI position, LazyFont font) {
@@ -188,7 +226,7 @@ final class SkillTreeStatPanel {
         }
         float fullHeight = STAT_PANEL_PADDING * 2f + contentHeight;
 
-        float topY = position.getY() + position.getHeight() - STAT_PANEL_MARGIN;
+        float topY = position.getY() + position.getHeight() - STAT_PANEL_MARGIN - TOGGLE_HEIGHT - TOGGLE_GAP;
         float x = position.getX() + position.getWidth() - width - STAT_PANEL_MARGIN;
 
         List<GroupContent> contents = new ArrayList<>();

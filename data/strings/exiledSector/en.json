@@ -379,6 +379,8 @@
     "hyperspace.region.persean_league": "Persean volume",
     "hyperspace.region.enigma": "Enigma volume",
     "hyperspace.region.kesteven": "Kesteven volume",
+    "ui.stats.show": "Show Stats",
+    "ui.stats.hide": "Hide Stats",
     "ui.stats.group.general": "General",
     "ui.stats.group.mobility": "Mobility",
     "ui.stats.group.defense": "Defense",

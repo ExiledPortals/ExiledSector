@@ -491,6 +491,8 @@
     "hyperspace.region.persean_league": "英仙座联盟星域",
     "hyperspace.region.enigma": "谜团星域",
     "hyperspace.region.kesteven": "凯斯特文星域",
+    "ui.stats.show": "显示属性",
+    "ui.stats.hide": "隐藏属性",
     "ui.stats.group.general": "常规",
     "ui.stats.group.mobility": "机动",
     "ui.stats.group.defense": "防御",

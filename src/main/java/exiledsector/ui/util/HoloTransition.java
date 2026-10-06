@@ -30,6 +30,11 @@ public final class HoloTransition {
         opening = false;
     }
 
+    public void openInstantly() {
+        opening = true;
+        progress = 1f;
+    }
+
     public void advance(float amount) {
         float step = amount / (opening ? OPEN_SECONDS : CLOSE_SECONDS);
         progress = clamp(progress + (opening ? step : -step));

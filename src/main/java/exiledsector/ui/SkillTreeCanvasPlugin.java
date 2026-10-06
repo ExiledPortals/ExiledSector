@@ -67,6 +67,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final SkillTreeStarRenderer starRenderer;
     private final SkillTreeNodeRenderer nodeRenderer;
     private final SkillTreeStatPanel statPanel;
+    private boolean reopenStatsAfterHyperspace;
     private final SkillTreeReadoutBar ordnancePointsBar = new SkillTreeReadoutBar(SkillTreeCanvasPlugin.class, 0);
     private final SkillTreeLevelBar levelBar;
     private final SkillTreeInfoTooltipRenderer readoutTooltipRenderer;
@@ -179,6 +180,11 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         ShipOpBudget budget = nodeRenderer.budget();
         boolean pointerLive = mouseKnown && !isModalOpen();
         statPanel.refresh(budget, nodeRenderer.statsRevision());
+        if (reopenStatsAfterHyperspace && (!hyperspace.isActive() || (hyperspace.isLeaving() && hyperspace.chromeAlpha() >= 1f))) {
+            reopenStatsAfterHyperspace = false;
+            statPanel.open(false);
+        }
+        statPanel.advance(amount);
         ordnancePointsBar.advance(amount, position, budget.used, budget.total, mouseX, mouseY, pointerLive);
         levelBar.advance(amount, position, mouseX, mouseY, pointerLive);
     }
@@ -225,6 +231,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         HyperspaceCamera map = new HyperspaceCamera(fit.x(), fit.y(), Math.min(fit.zoom(), zoom));
         hyperspace.enter(currentCamera(), map);
         SkillTreeSounds.hyperspaceOut();
+        reopenStatsAfterHyperspace = reopenStatsAfterHyperspace || statPanel.isOpen();
+        statPanel.close();
     }
 
     private void advanceCameraPan(float amount) {
@@ -391,7 +399,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private boolean isStorageButtonShown() {
-        return !nodeRenderer.isStartingRootInputLocked() && !hyperspace.isActive();
+        return !nodeRenderer.isStartingRootInputLocked() && (!hyperspace.isActive() || hyperspace.chromeAlpha() > 0f);
     }
 
     private void layoutStorageButton() {
@@ -488,9 +496,6 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         if (event.isMouseMoveEvent()) {
             handleMouseMove(event);
         } else if (event.isLMBDownEvent() && inside && isOverOverlay(event.getX(), event.getY())) {
-            if (statPanel.isCollapseButtonHit(position, event.getX(), event.getY())) {
-                statPanel.toggleCollapsed();
-            }
             event.consume();
         } else if (event.isLMBDownEvent() && inside) {
             if (hyperspace.isOnMap()) {
@@ -556,8 +561,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             event.consume();
             return;
         }
-        if (statPanel.isCollapseButtonHit(position, event.getX(), event.getY())) {
-            statPanel.toggleCollapsed();
+        if (statPanel.isToggleHit(event.getX(), event.getY())) {
+            statPanel.toggle();
             event.consume();
             return;
         }
@@ -685,14 +690,17 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             hyperspaceGhosts.draw(viewport, alphaMult * hyperspace.labelAlpha());
             hyperspaceLabels.render(viewport, hyperspaceAnchors, hyperspaceStarRadius, mapAmount, hovered, alphaMult * hyperspace.labelAlpha());
         }
-        statPanel.render(position, alphaMult);
+        float chromeAlpha = inHyperspace ? hyperspace.chromeAlpha() : 1f;
+        statPanel.render(position, mouseX, mouseY, alphaMult, chromeAlpha);
         ordnancePointsBar.render(position, alphaMult, null);
         levelBar.render(position, alphaMult);
         if (!nodeRenderer.isStartingRootInputLocked() && treeAlpha > 0f) {
             searchBar.render(position, alphaMult * treeAlpha);
         }
-        templateUi.renderBar(position, mouseX, mouseY, alphaMult);
-        storageButton.render(mouseX, mouseY, alphaMult);
+        if (chromeAlpha > 0f) {
+            templateUi.renderBar(position, mouseX, mouseY, alphaMult * chromeAlpha);
+        }
+        storageButton.render(mouseX, mouseY, alphaMult * chromeAlpha);
         drawShipCardFrame(alphaMult);
 
         if (!dragging && mouseKnown && !isModalOpen()) {
@@ -706,7 +714,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                 readoutTooltipRenderer.render(Translation.text("ui.socketStorage.title"), Translation.text("ui.socketStorage.hint"),
                         mouseX, mouseY, alphaMult);
             }
-            templateUi.renderBarTooltip(mouseX, mouseY, alphaMult);
+            if (!inHyperspace) {
+                templateUi.renderBarTooltip(mouseX, mouseY, alphaMult);
+            }
         }
         templateUi.renderModals(position, mouseX, mouseY, alphaMult);
     }
@@ -742,12 +752,13 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private boolean isOverOverlay(float x, float y) {
-        return statPanel.contains(x, y)
+        boolean onTree = !hyperspace.isActive();
+        return (onTree && statPanel.contains(x, y))
                 || ordnancePointsBar.isHovered(position, x, y)
                 || levelBar.isHovered(position, x, y)
-                || (!nodeRenderer.isStartingRootInputLocked() && !hyperspace.isActive() && SkillTreeSearchBar.contains(position, x, y))
-                || templateUi.barContains(x, y)
-                || storageButton.contains(x, y)
+                || (!nodeRenderer.isStartingRootInputLocked() && onTree && SkillTreeSearchBar.contains(position, x, y))
+                || (onTree && templateUi.barContains(x, y))
+                || (onTree && storageButton.contains(x, y))
                 || (storagePanel != null && storagePanel.contains(x, y))
                 || shipCardFrame().contains(x, y);
     }

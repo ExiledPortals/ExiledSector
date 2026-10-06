@@ -1,26 +1,34 @@
 package exiledsector.ui;
 
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
 class SkillTreeStatPanelTest {
 
     @Test
-    void buttonHitTestAcceptsThePointAtTheButtonsCenter() {
-        assertTrue(SkillTreeStatPanel.isWithinButton(100f, 200f, 20f, 100f, 200f));
+    void theStatsStartOpenAndTheButtonTogglesThem() {
+        SkillTreeStatPanel panel = new SkillTreeStatPanel(mock(FleetMemberAPI.class));
+
+        assertTrue(panel.isOpen());
+        panel.toggle();
+        assertFalse(panel.isOpen());
+        panel.toggle();
+        assertTrue(panel.isOpen());
     }
 
     @Test
-    void buttonHitTestAcceptsPointsOnTheEdgeOfTheButton() {
-        assertTrue(SkillTreeStatPanel.isWithinButton(100f, 200f, 20f, 110f, 210f));
-        assertTrue(SkillTreeStatPanel.isWithinButton(100f, 200f, 20f, 90f, 190f));
-    }
+    void openingAndClosingAreIdempotentSoHyperspaceCanCallThemFreely() {
+        SkillTreeStatPanel panel = new SkillTreeStatPanel(mock(FleetMemberAPI.class));
 
-    @Test
-    void buttonHitTestRejectsAPointJustOutsideTheButton() {
-        assertFalse(SkillTreeStatPanel.isWithinButton(100f, 200f, 20f, 111f, 200f));
-        assertFalse(SkillTreeStatPanel.isWithinButton(100f, 200f, 20f, 100f, 211f));
+        panel.close();
+        panel.close();
+        assertFalse(panel.isOpen());
+        panel.open(false);
+        panel.open(false);
+        assertTrue(panel.isOpen());
     }
 }

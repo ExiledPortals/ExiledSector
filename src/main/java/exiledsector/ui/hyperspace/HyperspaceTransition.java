@@ -5,6 +5,8 @@ public final class HyperspaceTransition {
     static final float DURATION_SECONDS = 0.9f;
     static final float TREE_FADE_END = 0.55f;
     static final float LABEL_FADE_START = 0.7f;
+    static final float CHROME_FADE_START = 0.25f;
+    static final float CHROME_FADE_END = 0.6f;
 
     private HyperspaceCamera treeCamera;
     private HyperspaceCamera mapCamera;
@@ -66,6 +68,14 @@ public final class HyperspaceTransition {
 
     public float treeAlpha() {
         return 1f - smoothstep(0f, TREE_FADE_END, progress);
+    }
+
+    public boolean isLeaving() {
+        return direction < 0;
+    }
+
+    public float chromeAlpha() {
+        return 1f - smoothstep(CHROME_FADE_START, CHROME_FADE_END, progress);
     }
 
     public float labelAlpha() {
