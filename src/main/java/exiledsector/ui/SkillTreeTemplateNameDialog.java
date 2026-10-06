@@ -108,7 +108,7 @@ final class SkillTreeTemplateNameDialog {
         top -= SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE + 12f;
         float fieldBottom = top - FIELD_HEIGHT;
         fieldPanel.draw(left + PADDING, fieldBottom, WIDTH - PADDING * 2f, FIELD_HEIGHT, alphaMult);
-        field.render(left + PADDING + FIELD_TEXT_PADDING, fieldBottom, WIDTH - (PADDING + FIELD_TEXT_PADDING) * 2f, FIELD_HEIGHT, "");
+        field.render(left + PADDING + FIELD_TEXT_PADDING, fieldBottom, WIDTH - (PADDING + FIELD_TEXT_PADDING) * 2f, FIELD_HEIGHT, "", alphaMult);
         if (problem == TemplateNames.Problem.DUPLICATE) {
             problemLine.draw(left + PADDING, fieldBottom - 6f);
         }

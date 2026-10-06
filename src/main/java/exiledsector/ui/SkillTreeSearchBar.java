@@ -63,7 +63,7 @@ final class SkillTreeSearchBar {
         float y = bottom(position);
         panel.draw(x, y, WIDTH, HEIGHT, alphaMult);
         field.setText(search.getQuery());
-        field.render(x + TEXT_PADDING, y, TEXT_WIDTH, HEIGHT, placeholder);
+        field.render(x + TEXT_PADDING, y, TEXT_WIDTH, HEIGHT, placeholder, alphaMult);
     }
 
     static String fitEnd(String value, ToDoubleFunction<String> widthOf) {

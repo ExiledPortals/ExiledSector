@@ -86,13 +86,14 @@ final class SkillTreeTextField {
         caretSeconds += amount;
     }
 
-    void render(float x, float bottom, float width, float height, String placeholder) {
+    void render(float x, float bottom, float width, float height, String placeholder, float alphaMult) {
         LazyFont font = SkillTreePanelStyle.font();
         if (font == null) {
             return;
         }
         display.set(displayText(font, width, placeholder));
         display.setColor(text.isEmpty() && !focused ? PLACEHOLDER_COLOR : textColor);
+        display.setAlpha(alphaMult);
         display.draw(x, bottom + height / 2f + fontSize / 2f);
     }
 
