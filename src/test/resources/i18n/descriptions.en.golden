@@ -3575,7 +3575,7 @@ type|wormhole|CAPITAL_SHIP|0	0	Allocating this wormhole automatically allocates 
 summary|option0|FRIGATE|0	0	<good>170%</good> increased maneuverability.
 summary|option0|FRIGATE|1	0	<good>60%</good> increased hard flux level at which phased speed reaches its minimum.
 summary|option0|FRIGATE|2	0	Converts this ship's shield to omni-directional.
-summary|option0|FRIGATE|3	0	Increases crew capacity by <good>55</good>.
+summary|option0|FRIGATE|3	0	Increases crew capacity by <good>60</good>.
 summary|option0|FRIGATE|4	0	Increases beam weapon range by <good>200</good>.
 summary|option0|FRIGATE|5	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option0|FRIGATE|6	0	<good>100%</good> increased shield turn rate.
@@ -3586,7 +3586,7 @@ summary|option0|FRIGATE|10	0	<good>110%</good> increased ballistic weapon ammo c
 summary|option0|FRIGATE|11	0	<good>110%</good> increased energy weapon ammo capacity.
 summary|option0|FRIGATE|12	0	Increases armor by <good>140</good>.
 summary|option0|FRIGATE|13	0	<good>55%</good> increased armor.
-summary|option0|FRIGATE|14	0	<good>120%</good> increased weapon durability.
+summary|option0|FRIGATE|14	0	<good>130%</good> increased weapon durability.
 summary|option0|FRIGATE|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option0|FRIGATE|16	1	<bad>25%</bad> less weapon recoil.
 summary|option0|FRIGATE|17	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
@@ -3685,7 +3685,7 @@ summary|option0|FRIGATE|109	0	<good>100%</good> increased target leading accurac
 summary|option0|FRIGATE|110	0	<good>5%</good> increased beam weapon range.
 summary|option0|FRIGATE|111	0	Removes the penalties of a civilian-grade hull.
 summary|option0|FRIGATE|112	1	<good>100%</good> increased minimum crew required.
-summary|option0|FRIGATE|113	0	<good>21%</good> increased missile weapon damage.
+summary|option0|FRIGATE|113	0	<good>24%</good> increased missile weapon damage.
 summary|option0|FRIGATE|114	0	<good>100%</good> increased missile weapon ammo capacity.
 summary|option0|FRIGATE|115	0	<bad>15%</bad> reduced missile weapon rate of fire.
 summary|option0|FRIGATE|116	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
@@ -3748,7 +3748,7 @@ summary|option0|FRIGATE|172	0	For the first 60 seconds after deployment: <good>2
 summary|option0|DESTROYER|0	0	<good>170%</good> increased maneuverability.
 summary|option0|DESTROYER|1	0	<good>60%</good> increased hard flux level at which phased speed reaches its minimum.
 summary|option0|DESTROYER|2	0	Converts this ship's shield to omni-directional.
-summary|option0|DESTROYER|3	0	Increases crew capacity by <good>125</good>.
+summary|option0|DESTROYER|3	0	Increases crew capacity by <good>140</good>.
 summary|option0|DESTROYER|4	0	Increases beam weapon range by <good>200</good>.
 summary|option0|DESTROYER|5	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option0|DESTROYER|6	0	<good>100%</good> increased shield turn rate.
@@ -3759,7 +3759,7 @@ summary|option0|DESTROYER|10	0	<good>110%</good> increased ballistic weapon ammo
 summary|option0|DESTROYER|11	0	<good>110%</good> increased energy weapon ammo capacity.
 summary|option0|DESTROYER|12	0	Increases armor by <good>280</good>.
 summary|option0|DESTROYER|13	0	<good>55%</good> increased armor.
-summary|option0|DESTROYER|14	0	<good>120%</good> increased weapon durability.
+summary|option0|DESTROYER|14	0	<good>130%</good> increased weapon durability.
 summary|option0|DESTROYER|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option0|DESTROYER|16	1	<bad>25%</bad> less weapon recoil.
 summary|option0|DESTROYER|17	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
@@ -3858,7 +3858,7 @@ summary|option0|DESTROYER|109	0	<good>100%</good> increased target leading accur
 summary|option0|DESTROYER|110	0	<good>5%</good> increased beam weapon range.
 summary|option0|DESTROYER|111	0	Removes the penalties of a civilian-grade hull.
 summary|option0|DESTROYER|112	1	<good>100%</good> increased minimum crew required.
-summary|option0|DESTROYER|113	0	<good>21%</good> increased missile weapon damage.
+summary|option0|DESTROYER|113	0	<good>24%</good> increased missile weapon damage.
 summary|option0|DESTROYER|114	0	<good>100%</good> increased missile weapon ammo capacity.
 summary|option0|DESTROYER|115	0	<bad>15%</bad> reduced missile weapon rate of fire.
 summary|option0|DESTROYER|116	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
@@ -3921,7 +3921,7 @@ summary|option0|DESTROYER|172	0	For the first 60 seconds after deployment: <good
 summary|option0|CRUISER|0	0	<good>170%</good> increased maneuverability.
 summary|option0|CRUISER|1	0	<good>60%</good> increased hard flux level at which phased speed reaches its minimum.
 summary|option0|CRUISER|2	0	Converts this ship's shield to omni-directional.
-summary|option0|CRUISER|3	0	Increases crew capacity by <good>210</good>.
+summary|option0|CRUISER|3	0	Increases crew capacity by <good>235</good>.
 summary|option0|CRUISER|4	0	Increases beam weapon range by <good>200</good>.
 summary|option0|CRUISER|5	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option0|CRUISER|6	0	<good>100%</good> increased shield turn rate.
@@ -3932,7 +3932,7 @@ summary|option0|CRUISER|10	0	<good>110%</good> increased ballistic weapon ammo c
 summary|option0|CRUISER|11	0	<good>110%</good> increased energy weapon ammo capacity.
 summary|option0|CRUISER|12	0	Increases armor by <good>560</good>.
 summary|option0|CRUISER|13	0	<good>55%</good> increased armor.
-summary|option0|CRUISER|14	0	<good>120%</good> increased weapon durability.
+summary|option0|CRUISER|14	0	<good>130%</good> increased weapon durability.
 summary|option0|CRUISER|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option0|CRUISER|16	1	<bad>25%</bad> less weapon recoil.
 summary|option0|CRUISER|17	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
@@ -4031,7 +4031,7 @@ summary|option0|CRUISER|109	0	<good>100%</good> increased target leading accurac
 summary|option0|CRUISER|110	0	<good>5%</good> increased beam weapon range.
 summary|option0|CRUISER|111	0	Removes the penalties of a civilian-grade hull.
 summary|option0|CRUISER|112	1	<good>100%</good> increased minimum crew required.
-summary|option0|CRUISER|113	0	<good>21%</good> increased missile weapon damage.
+summary|option0|CRUISER|113	0	<good>24%</good> increased missile weapon damage.
 summary|option0|CRUISER|114	0	<good>100%</good> increased missile weapon ammo capacity.
 summary|option0|CRUISER|115	0	<bad>15%</bad> reduced missile weapon rate of fire.
 summary|option0|CRUISER|116	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
@@ -4094,7 +4094,7 @@ summary|option0|CRUISER|172	0	For the first 60 seconds after deployment: <good>2
 summary|option0|CAPITAL_SHIP|0	0	<good>170%</good> increased maneuverability.
 summary|option0|CAPITAL_SHIP|1	0	<good>60%</good> increased hard flux level at which phased speed reaches its minimum.
 summary|option0|CAPITAL_SHIP|2	0	Converts this ship's shield to omni-directional.
-summary|option0|CAPITAL_SHIP|3	0	Increases crew capacity by <good>425</good>.
+summary|option0|CAPITAL_SHIP|3	0	Increases crew capacity by <good>475</good>.
 summary|option0|CAPITAL_SHIP|4	0	Increases beam weapon range by <good>200</good>.
 summary|option0|CAPITAL_SHIP|5	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option0|CAPITAL_SHIP|6	0	<good>100%</good> increased shield turn rate.
@@ -4105,7 +4105,7 @@ summary|option0|CAPITAL_SHIP|10	0	<good>110%</good> increased ballistic weapon a
 summary|option0|CAPITAL_SHIP|11	0	<good>110%</good> increased energy weapon ammo capacity.
 summary|option0|CAPITAL_SHIP|12	0	Increases armor by <good>700</good>.
 summary|option0|CAPITAL_SHIP|13	0	<good>55%</good> increased armor.
-summary|option0|CAPITAL_SHIP|14	0	<good>120%</good> increased weapon durability.
+summary|option0|CAPITAL_SHIP|14	0	<good>130%</good> increased weapon durability.
 summary|option0|CAPITAL_SHIP|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option0|CAPITAL_SHIP|16	1	<bad>25%</bad> less weapon recoil.
 summary|option0|CAPITAL_SHIP|17	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
@@ -4204,7 +4204,7 @@ summary|option0|CAPITAL_SHIP|109	0	<good>100%</good> increased target leading ac
 summary|option0|CAPITAL_SHIP|110	0	<good>5%</good> increased beam weapon range.
 summary|option0|CAPITAL_SHIP|111	0	Removes the penalties of a civilian-grade hull.
 summary|option0|CAPITAL_SHIP|112	1	<good>100%</good> increased minimum crew required.
-summary|option0|CAPITAL_SHIP|113	0	<good>21%</good> increased missile weapon damage.
+summary|option0|CAPITAL_SHIP|113	0	<good>24%</good> increased missile weapon damage.
 summary|option0|CAPITAL_SHIP|114	0	<good>100%</good> increased missile weapon ammo capacity.
 summary|option0|CAPITAL_SHIP|115	0	<bad>15%</bad> reduced missile weapon rate of fire.
 summary|option0|CAPITAL_SHIP|116	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
@@ -4267,7 +4267,7 @@ summary|option0|CAPITAL_SHIP|172	0	For the first 60 seconds after deployment: <g
 summary|option1|FRIGATE|0	0	<good>170%</good> increased maneuverability.
 summary|option1|FRIGATE|1	0	<good>60%</good> increased hard flux level at which phased speed reaches its minimum.
 summary|option1|FRIGATE|2	0	Converts this ship's shield to omni-directional.
-summary|option1|FRIGATE|3	0	Increases crew capacity by <good>55</good>.
+summary|option1|FRIGATE|3	0	Increases crew capacity by <good>60</good>.
 summary|option1|FRIGATE|4	0	Increases beam weapon range by <good>200</good>.
 summary|option1|FRIGATE|5	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option1|FRIGATE|6	0	<good>125%</good> increased shield turn rate.
@@ -4278,7 +4278,7 @@ summary|option1|FRIGATE|10	0	<good>110%</good> increased ballistic weapon ammo c
 summary|option1|FRIGATE|11	0	<good>110%</good> increased energy weapon ammo capacity.
 summary|option1|FRIGATE|12	0	Increases armor by <good>140</good>.
 summary|option1|FRIGATE|13	0	<good>55%</good> increased armor.
-summary|option1|FRIGATE|14	0	<good>120%</good> increased weapon durability.
+summary|option1|FRIGATE|14	0	<good>130%</good> increased weapon durability.
 summary|option1|FRIGATE|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option1|FRIGATE|16	1	<bad>25%</bad> less weapon recoil.
 summary|option1|FRIGATE|17	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
@@ -4377,7 +4377,7 @@ summary|option1|FRIGATE|109	0	<good>100%</good> increased target leading accurac
 summary|option1|FRIGATE|110	0	<good>5%</good> increased beam weapon range.
 summary|option1|FRIGATE|111	0	Removes the penalties of a civilian-grade hull.
 summary|option1|FRIGATE|112	1	<good>100%</good> increased minimum crew required.
-summary|option1|FRIGATE|113	0	<good>21%</good> increased missile weapon damage.
+summary|option1|FRIGATE|113	0	<good>24%</good> increased missile weapon damage.
 summary|option1|FRIGATE|114	0	<good>100%</good> increased missile weapon ammo capacity.
 summary|option1|FRIGATE|115	0	<bad>15%</bad> reduced missile weapon rate of fire.
 summary|option1|FRIGATE|116	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
@@ -4440,7 +4440,7 @@ summary|option1|FRIGATE|172	0	For the first 60 seconds after deployment: <good>2
 summary|option1|DESTROYER|0	0	<good>170%</good> increased maneuverability.
 summary|option1|DESTROYER|1	0	<good>60%</good> increased hard flux level at which phased speed reaches its minimum.
 summary|option1|DESTROYER|2	0	Converts this ship's shield to omni-directional.
-summary|option1|DESTROYER|3	0	Increases crew capacity by <good>125</good>.
+summary|option1|DESTROYER|3	0	Increases crew capacity by <good>140</good>.
 summary|option1|DESTROYER|4	0	Increases beam weapon range by <good>200</good>.
 summary|option1|DESTROYER|5	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option1|DESTROYER|6	0	<good>125%</good> increased shield turn rate.
@@ -4451,7 +4451,7 @@ summary|option1|DESTROYER|10	0	<good>110%</good> increased ballistic weapon ammo
 summary|option1|DESTROYER|11	0	<good>110%</good> increased energy weapon ammo capacity.
 summary|option1|DESTROYER|12	0	Increases armor by <good>280</good>.
 summary|option1|DESTROYER|13	0	<good>55%</good> increased armor.
-summary|option1|DESTROYER|14	0	<good>120%</good> increased weapon durability.
+summary|option1|DESTROYER|14	0	<good>130%</good> increased weapon durability.
 summary|option1|DESTROYER|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option1|DESTROYER|16	1	<bad>25%</bad> less weapon recoil.
 summary|option1|DESTROYER|17	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
@@ -4550,7 +4550,7 @@ summary|option1|DESTROYER|109	0	<good>100%</good> increased target leading accur
 summary|option1|DESTROYER|110	0	<good>5%</good> increased beam weapon range.
 summary|option1|DESTROYER|111	0	Removes the penalties of a civilian-grade hull.
 summary|option1|DESTROYER|112	1	<good>100%</good> increased minimum crew required.
-summary|option1|DESTROYER|113	0	<good>21%</good> increased missile weapon damage.
+summary|option1|DESTROYER|113	0	<good>24%</good> increased missile weapon damage.
 summary|option1|DESTROYER|114	0	<good>100%</good> increased missile weapon ammo capacity.
 summary|option1|DESTROYER|115	0	<bad>15%</bad> reduced missile weapon rate of fire.
 summary|option1|DESTROYER|116	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
@@ -4613,7 +4613,7 @@ summary|option1|DESTROYER|172	0	For the first 60 seconds after deployment: <good
 summary|option1|CRUISER|0	0	<good>170%</good> increased maneuverability.
 summary|option1|CRUISER|1	0	<good>60%</good> increased hard flux level at which phased speed reaches its minimum.
 summary|option1|CRUISER|2	0	Converts this ship's shield to omni-directional.
-summary|option1|CRUISER|3	0	Increases crew capacity by <good>210</good>.
+summary|option1|CRUISER|3	0	Increases crew capacity by <good>235</good>.
 summary|option1|CRUISER|4	0	Increases beam weapon range by <good>200</good>.
 summary|option1|CRUISER|5	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option1|CRUISER|6	0	<good>125%</good> increased shield turn rate.
@@ -4624,7 +4624,7 @@ summary|option1|CRUISER|10	0	<good>110%</good> increased ballistic weapon ammo c
 summary|option1|CRUISER|11	0	<good>110%</good> increased energy weapon ammo capacity.
 summary|option1|CRUISER|12	0	Increases armor by <good>560</good>.
 summary|option1|CRUISER|13	0	<good>55%</good> increased armor.
-summary|option1|CRUISER|14	0	<good>120%</good> increased weapon durability.
+summary|option1|CRUISER|14	0	<good>130%</good> increased weapon durability.
 summary|option1|CRUISER|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option1|CRUISER|16	1	<bad>25%</bad> less weapon recoil.
 summary|option1|CRUISER|17	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
@@ -4723,7 +4723,7 @@ summary|option1|CRUISER|109	0	<good>100%</good> increased target leading accurac
 summary|option1|CRUISER|110	0	<good>5%</good> increased beam weapon range.
 summary|option1|CRUISER|111	0	Removes the penalties of a civilian-grade hull.
 summary|option1|CRUISER|112	1	<good>100%</good> increased minimum crew required.
-summary|option1|CRUISER|113	0	<good>21%</good> increased missile weapon damage.
+summary|option1|CRUISER|113	0	<good>24%</good> increased missile weapon damage.
 summary|option1|CRUISER|114	0	<good>100%</good> increased missile weapon ammo capacity.
 summary|option1|CRUISER|115	0	<bad>15%</bad> reduced missile weapon rate of fire.
 summary|option1|CRUISER|116	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
@@ -4786,7 +4786,7 @@ summary|option1|CRUISER|172	0	For the first 60 seconds after deployment: <good>2
 summary|option1|CAPITAL_SHIP|0	0	<good>170%</good> increased maneuverability.
 summary|option1|CAPITAL_SHIP|1	0	<good>60%</good> increased hard flux level at which phased speed reaches its minimum.
 summary|option1|CAPITAL_SHIP|2	0	Converts this ship's shield to omni-directional.
-summary|option1|CAPITAL_SHIP|3	0	Increases crew capacity by <good>425</good>.
+summary|option1|CAPITAL_SHIP|3	0	Increases crew capacity by <good>475</good>.
 summary|option1|CAPITAL_SHIP|4	0	Increases beam weapon range by <good>200</good>.
 summary|option1|CAPITAL_SHIP|5	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option1|CAPITAL_SHIP|6	0	<good>125%</good> increased shield turn rate.
@@ -4797,7 +4797,7 @@ summary|option1|CAPITAL_SHIP|10	0	<good>110%</good> increased ballistic weapon a
 summary|option1|CAPITAL_SHIP|11	0	<good>110%</good> increased energy weapon ammo capacity.
 summary|option1|CAPITAL_SHIP|12	0	Increases armor by <good>700</good>.
 summary|option1|CAPITAL_SHIP|13	0	<good>55%</good> increased armor.
-summary|option1|CAPITAL_SHIP|14	0	<good>120%</good> increased weapon durability.
+summary|option1|CAPITAL_SHIP|14	0	<good>130%</good> increased weapon durability.
 summary|option1|CAPITAL_SHIP|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option1|CAPITAL_SHIP|16	1	<bad>25%</bad> less weapon recoil.
 summary|option1|CAPITAL_SHIP|17	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
@@ -4896,7 +4896,7 @@ summary|option1|CAPITAL_SHIP|109	0	<good>100%</good> increased target leading ac
 summary|option1|CAPITAL_SHIP|110	0	<good>5%</good> increased beam weapon range.
 summary|option1|CAPITAL_SHIP|111	0	Removes the penalties of a civilian-grade hull.
 summary|option1|CAPITAL_SHIP|112	1	<good>100%</good> increased minimum crew required.
-summary|option1|CAPITAL_SHIP|113	0	<good>21%</good> increased missile weapon damage.
+summary|option1|CAPITAL_SHIP|113	0	<good>24%</good> increased missile weapon damage.
 summary|option1|CAPITAL_SHIP|114	0	<good>100%</good> increased missile weapon ammo capacity.
 summary|option1|CAPITAL_SHIP|115	0	<bad>15%</bad> reduced missile weapon rate of fire.
 summary|option1|CAPITAL_SHIP|116	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
@@ -4959,7 +4959,7 @@ summary|option1|CAPITAL_SHIP|172	0	For the first 60 seconds after deployment: <g
 summary|option2|FRIGATE|0	0	<good>170%</good> increased maneuverability.
 summary|option2|FRIGATE|1	0	<good>60%</good> increased hard flux level at which phased speed reaches its minimum.
 summary|option2|FRIGATE|2	0	Converts this ship's shield to omni-directional.
-summary|option2|FRIGATE|3	0	Increases crew capacity by <good>55</good>.
+summary|option2|FRIGATE|3	0	Increases crew capacity by <good>60</good>.
 summary|option2|FRIGATE|4	0	Increases beam weapon range by <good>200</good>.
 summary|option2|FRIGATE|5	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option2|FRIGATE|6	0	<good>125%</good> increased shield turn rate.
@@ -4970,7 +4970,7 @@ summary|option2|FRIGATE|10	0	<good>110%</good> increased ballistic weapon ammo c
 summary|option2|FRIGATE|11	0	<good>110%</good> increased energy weapon ammo capacity.
 summary|option2|FRIGATE|12	0	Increases armor by <good>140</good>.
 summary|option2|FRIGATE|13	0	<good>55%</good> increased armor.
-summary|option2|FRIGATE|14	0	<good>120%</good> increased weapon durability.
+summary|option2|FRIGATE|14	0	<good>130%</good> increased weapon durability.
 summary|option2|FRIGATE|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option2|FRIGATE|16	1	<bad>25%</bad> less weapon recoil.
 summary|option2|FRIGATE|17	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
@@ -5069,7 +5069,7 @@ summary|option2|FRIGATE|109	0	<good>100%</good> increased target leading accurac
 summary|option2|FRIGATE|110	0	<good>5%</good> increased beam weapon range.
 summary|option2|FRIGATE|111	0	Removes the penalties of a civilian-grade hull.
 summary|option2|FRIGATE|112	1	<good>100%</good> increased minimum crew required.
-summary|option2|FRIGATE|113	0	<good>21%</good> increased missile weapon damage.
+summary|option2|FRIGATE|113	0	<good>24%</good> increased missile weapon damage.
 summary|option2|FRIGATE|114	0	<good>100%</good> increased missile weapon ammo capacity.
 summary|option2|FRIGATE|115	0	<bad>15%</bad> reduced missile weapon rate of fire.
 summary|option2|FRIGATE|116	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
@@ -5133,7 +5133,7 @@ summary|option2|FRIGATE|173	0	For the first 60 seconds after deployment: <good>2
 summary|option2|DESTROYER|0	0	<good>170%</good> increased maneuverability.
 summary|option2|DESTROYER|1	0	<good>60%</good> increased hard flux level at which phased speed reaches its minimum.
 summary|option2|DESTROYER|2	0	Converts this ship's shield to omni-directional.
-summary|option2|DESTROYER|3	0	Increases crew capacity by <good>125</good>.
+summary|option2|DESTROYER|3	0	Increases crew capacity by <good>140</good>.
 summary|option2|DESTROYER|4	0	Increases beam weapon range by <good>200</good>.
 summary|option2|DESTROYER|5	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option2|DESTROYER|6	0	<good>125%</good> increased shield turn rate.
@@ -5144,7 +5144,7 @@ summary|option2|DESTROYER|10	0	<good>110%</good> increased ballistic weapon ammo
 summary|option2|DESTROYER|11	0	<good>110%</good> increased energy weapon ammo capacity.
 summary|option2|DESTROYER|12	0	Increases armor by <good>280</good>.
 summary|option2|DESTROYER|13	0	<good>55%</good> increased armor.
-summary|option2|DESTROYER|14	0	<good>120%</good> increased weapon durability.
+summary|option2|DESTROYER|14	0	<good>130%</good> increased weapon durability.
 summary|option2|DESTROYER|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option2|DESTROYER|16	1	<bad>25%</bad> less weapon recoil.
 summary|option2|DESTROYER|17	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
@@ -5243,7 +5243,7 @@ summary|option2|DESTROYER|109	0	<good>100%</good> increased target leading accur
 summary|option2|DESTROYER|110	0	<good>5%</good> increased beam weapon range.
 summary|option2|DESTROYER|111	0	Removes the penalties of a civilian-grade hull.
 summary|option2|DESTROYER|112	1	<good>100%</good> increased minimum crew required.
-summary|option2|DESTROYER|113	0	<good>21%</good> increased missile weapon damage.
+summary|option2|DESTROYER|113	0	<good>24%</good> increased missile weapon damage.
 summary|option2|DESTROYER|114	0	<good>100%</good> increased missile weapon ammo capacity.
 summary|option2|DESTROYER|115	0	<bad>15%</bad> reduced missile weapon rate of fire.
 summary|option2|DESTROYER|116	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
@@ -5307,7 +5307,7 @@ summary|option2|DESTROYER|173	0	For the first 60 seconds after deployment: <good
 summary|option2|CRUISER|0	0	<good>170%</good> increased maneuverability.
 summary|option2|CRUISER|1	0	<good>60%</good> increased hard flux level at which phased speed reaches its minimum.
 summary|option2|CRUISER|2	0	Converts this ship's shield to omni-directional.
-summary|option2|CRUISER|3	0	Increases crew capacity by <good>210</good>.
+summary|option2|CRUISER|3	0	Increases crew capacity by <good>235</good>.
 summary|option2|CRUISER|4	0	Increases beam weapon range by <good>200</good>.
 summary|option2|CRUISER|5	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option2|CRUISER|6	0	<good>125%</good> increased shield turn rate.
@@ -5318,7 +5318,7 @@ summary|option2|CRUISER|10	0	<good>110%</good> increased ballistic weapon ammo c
 summary|option2|CRUISER|11	0	<good>110%</good> increased energy weapon ammo capacity.
 summary|option2|CRUISER|12	0	Increases armor by <good>560</good>.
 summary|option2|CRUISER|13	0	<good>55%</good> increased armor.
-summary|option2|CRUISER|14	0	<good>120%</good> increased weapon durability.
+summary|option2|CRUISER|14	0	<good>130%</good> increased weapon durability.
 summary|option2|CRUISER|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option2|CRUISER|16	1	<bad>25%</bad> less weapon recoil.
 summary|option2|CRUISER|17	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
@@ -5417,7 +5417,7 @@ summary|option2|CRUISER|109	0	<good>100%</good> increased target leading accurac
 summary|option2|CRUISER|110	0	<good>5%</good> increased beam weapon range.
 summary|option2|CRUISER|111	0	Removes the penalties of a civilian-grade hull.
 summary|option2|CRUISER|112	1	<good>100%</good> increased minimum crew required.
-summary|option2|CRUISER|113	0	<good>21%</good> increased missile weapon damage.
+summary|option2|CRUISER|113	0	<good>24%</good> increased missile weapon damage.
 summary|option2|CRUISER|114	0	<good>100%</good> increased missile weapon ammo capacity.
 summary|option2|CRUISER|115	0	<bad>15%</bad> reduced missile weapon rate of fire.
 summary|option2|CRUISER|116	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
@@ -5481,7 +5481,7 @@ summary|option2|CRUISER|173	0	For the first 60 seconds after deployment: <good>2
 summary|option2|CAPITAL_SHIP|0	0	<good>170%</good> increased maneuverability.
 summary|option2|CAPITAL_SHIP|1	0	<good>60%</good> increased hard flux level at which phased speed reaches its minimum.
 summary|option2|CAPITAL_SHIP|2	0	Converts this ship's shield to omni-directional.
-summary|option2|CAPITAL_SHIP|3	0	Increases crew capacity by <good>425</good>.
+summary|option2|CAPITAL_SHIP|3	0	Increases crew capacity by <good>475</good>.
 summary|option2|CAPITAL_SHIP|4	0	Increases beam weapon range by <good>200</good>.
 summary|option2|CAPITAL_SHIP|5	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option2|CAPITAL_SHIP|6	0	<good>125%</good> increased shield turn rate.
@@ -5492,7 +5492,7 @@ summary|option2|CAPITAL_SHIP|10	0	<good>110%</good> increased ballistic weapon a
 summary|option2|CAPITAL_SHIP|11	0	<good>110%</good> increased energy weapon ammo capacity.
 summary|option2|CAPITAL_SHIP|12	0	Increases armor by <good>700</good>.
 summary|option2|CAPITAL_SHIP|13	0	<good>55%</good> increased armor.
-summary|option2|CAPITAL_SHIP|14	0	<good>120%</good> increased weapon durability.
+summary|option2|CAPITAL_SHIP|14	0	<good>130%</good> increased weapon durability.
 summary|option2|CAPITAL_SHIP|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option2|CAPITAL_SHIP|16	1	<bad>25%</bad> less weapon recoil.
 summary|option2|CAPITAL_SHIP|17	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
@@ -5591,7 +5591,7 @@ summary|option2|CAPITAL_SHIP|109	0	<good>100%</good> increased target leading ac
 summary|option2|CAPITAL_SHIP|110	0	<good>5%</good> increased beam weapon range.
 summary|option2|CAPITAL_SHIP|111	0	Removes the penalties of a civilian-grade hull.
 summary|option2|CAPITAL_SHIP|112	1	<good>100%</good> increased minimum crew required.
-summary|option2|CAPITAL_SHIP|113	0	<good>21%</good> increased missile weapon damage.
+summary|option2|CAPITAL_SHIP|113	0	<good>24%</good> increased missile weapon damage.
 summary|option2|CAPITAL_SHIP|114	0	<good>100%</good> increased missile weapon ammo capacity.
 summary|option2|CAPITAL_SHIP|115	0	<bad>15%</bad> reduced missile weapon rate of fire.
 summary|option2|CAPITAL_SHIP|116	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.

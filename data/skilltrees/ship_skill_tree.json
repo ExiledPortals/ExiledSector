@@ -64,8 +64,8 @@
 			"id": "non_beam_energy_damage_1",
 			"type": "non_beam_energy_damage",
 			"connectedTo": [
-				"non_beam_energy_damage_2",
-				"magazines_1"
+				"magazines_1",
+				"non_beam_energy_damage_2"
 			],
 			"x": -913,
 			"y": 2176,
@@ -938,13 +938,13 @@
 			"id": "non_beam_energy_damage_2",
 			"type": "non_beam_energy_damage",
 			"connectedTo": [
-				"non_beam_energy_damage_1",
-				"small_flux_optional_37"
+				"small_flux_optional_37",
+				"non_beam_energy_damage_1"
 			],
-			"x": -927,
-			"y": 2351,
+			"x": -903,
+			"y": 2393,
 			"orbitAnchorId": "anchor_57",
-			"orbitAngle": 157.12357191136437,
+			"orbitAngle": 142.5252930230804,
 			"tags": [
 				"core"
 			]
@@ -1331,13 +1331,13 @@
 				"small_logistics_optional_2",
 				"efficiency_overhaul_1",
 				"solar_shielding_1",
-				"small_logistics_optional_5",
-				"small_logistics_optional_9"
+				"small_logistics_optional_9",
+				"small_logistics_optional_5"
 			],
 			"x": -246,
-			"y": 133,
+			"y": 135,
 			"orbitAnchorId": "core_star_ring_anchor",
-			"orbitAngle": 151.60221619371455,
+			"orbitAngle": 151.2705134545586,
 			"tags": [
 				"core"
 			]
@@ -1383,10 +1383,10 @@
 				"converted_fighterbay_1",
 				"small_logistics_optional_4"
 			],
-			"x": 242,
-			"y": 141,
+			"x": 240,
+			"y": 145,
 			"orbitAnchorId": "core_star_ring_anchor",
-			"orbitAngle": 30.22698675259779,
+			"orbitAngle": 31.08306620176788,
 			"tags": [
 				"core"
 			]
@@ -5165,7 +5165,8 @@
 			"id": "all_must_serve_1",
 			"type": "all_must_serve",
 			"connectedTo": [
-				"crew_capacity_flat_5"
+				"crew_capacity_flat_5",
+				"crew_capacity_flat_7"
 			],
 			"x": 7283,
 			"y": -15923,
@@ -5179,7 +5180,8 @@
 			"id": "live_munitions_1",
 			"type": "live_munitions",
 			"connectedTo": [
-				"missile_damage_6"
+				"missile_damage_6",
+				"missile_damage_8"
 			],
 			"x": 9445,
 			"y": -15922,
@@ -5193,7 +5195,8 @@
 			"id": "husk_plating_1",
 			"type": "husk_plating",
 			"connectedTo": [
-				"weapon_durability_3"
+				"weapon_durability_3",
+				"weapon_durability_5"
 			],
 			"x": 8381,
 			"y": -16984,
@@ -5483,7 +5486,8 @@
 			"type": "missile_damage",
 			"connectedTo": [
 				"missile_damage_6",
-				"frozen_heart_1"
+				"frozen_heart_1",
+				"missile_damage_8"
 			],
 			"x": 9003,
 			"y": -15922,
@@ -5558,7 +5562,8 @@
 			"type": "weapon_durability",
 			"connectedTo": [
 				"weapon_durability_3",
-				"frozen_heart_1"
+				"frozen_heart_1",
+				"weapon_durability_5"
 			],
 			"x": 8381,
 			"y": -16542,
@@ -5588,7 +5593,8 @@
 			"type": "crew_capacity_flat",
 			"connectedTo": [
 				"crew_capacity_flat_5",
-				"frozen_heart_1"
+				"frozen_heart_1",
+				"crew_capacity_flat_7"
 			],
 			"x": 7725,
 			"y": -15923,
@@ -5783,6 +5789,51 @@
 			"y": 10881,
 			"tags": [
 				"hegemony"
+			]
+		},
+		{
+			"id": "crew_capacity_flat_7",
+			"type": "crew_capacity_flat",
+			"connectedTo": [
+				"crew_capacity_flat_6",
+				"all_must_serve_1"
+			],
+			"x": 7504,
+			"y": -15702,
+			"orbitAnchorId": "anchor_56",
+			"orbitAngle": 90,
+			"tags": [
+				"enigma"
+			]
+		},
+		{
+			"id": "weapon_durability_5",
+			"type": "weapon_durability",
+			"connectedTo": [
+				"weapon_durability_4",
+				"husk_plating_1"
+			],
+			"x": 8602,
+			"y": -16763,
+			"orbitAnchorId": "anchor_55",
+			"orbitAngle": 0,
+			"tags": [
+				"enigma"
+			]
+		},
+		{
+			"id": "missile_damage_8",
+			"type": "missile_damage",
+			"connectedTo": [
+				"missile_damage_7",
+				"live_munitions_1"
+			],
+			"x": 9224,
+			"y": -16143,
+			"orbitAnchorId": "anchor_19",
+			"orbitAngle": 270,
+			"tags": [
+				"enigma"
 			]
 		}
 	],
@@ -6414,8 +6465,8 @@
 		{
 			"a": "small_logistics_optional_5",
 			"b": "small_logistics_optional_9",
-			"controlX": 223,
-			"controlY": -131
+			"controlX": 228,
+			"controlY": -125
 		},
 		{
 			"a": "armor_1",
@@ -6704,12 +6755,6 @@
 			"b": "increased_sensor_strength_3",
 			"controlX": -12551,
 			"controlY": 2142
-		},
-		{
-			"a": "small_logistics_optional_4",
-			"b": "small_logistics_optional_5",
-			"controlX": -218,
-			"controlY": -138
 		},
 		{
 			"a": "beam_damage_4",
@@ -7234,12 +7279,6 @@
 			"controlY": -974
 		},
 		{
-			"a": "non_beam_energy_damage_1",
-			"b": "non_beam_energy_damage_2",
-			"controlX": -941,
-			"controlY": 2262
-		},
-		{
 			"a": "ballistic_damage_4",
 			"b": "ballistic_damage_5",
 			"controlX": -577,
@@ -7297,7 +7336,7 @@
 			"a": "small_logistics_optional_4",
 			"b": "small_logistics_optional_9",
 			"controlX": -8,
-			"controlY": 245
+			"controlY": 259
 		},
 		{
 			"a": "nav_relay_1",
@@ -7448,6 +7487,54 @@
 			"b": "weapon_turn_rate_2",
 			"controlX": -1515,
 			"controlY": 1693
+		},
+		{
+			"a": "non_beam_energy_damage_1",
+			"b": "non_beam_energy_damage_2",
+			"controlX": -942,
+			"controlY": 2286
+		},
+		{
+			"a": "small_logistics_optional_4",
+			"b": "small_logistics_optional_5",
+			"controlX": -221,
+			"controlY": -138
+		},
+		{
+			"a": "crew_capacity_flat_6",
+			"b": "crew_capacity_flat_7",
+			"controlX": 7660,
+			"controlY": -15767
+		},
+		{
+			"a": "all_must_serve_1",
+			"b": "crew_capacity_flat_7",
+			"controlX": 7348,
+			"controlY": -15767
+		},
+		{
+			"a": "weapon_durability_4",
+			"b": "weapon_durability_5",
+			"controlX": 8537,
+			"controlY": -16607
+		},
+		{
+			"a": "husk_plating_1",
+			"b": "weapon_durability_5",
+			"controlX": 8537,
+			"controlY": -16919
+		},
+		{
+			"a": "missile_damage_7",
+			"b": "missile_damage_8",
+			"controlX": 9068,
+			"controlY": -16078
+		},
+		{
+			"a": "live_munitions_1",
+			"b": "missile_damage_8",
+			"controlX": 9380,
+			"controlY": -16078
 		}
 	],
 	"hiddenConnectors": [
