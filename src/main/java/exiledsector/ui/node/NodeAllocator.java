@@ -21,6 +21,7 @@ import exiledsector.skills.HullModNames;
 import exiledsector.skills.InstalledHullMods;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.RespecPlan;
+import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillItemCost;
@@ -236,6 +237,7 @@ final class NodeAllocator {
         SkillTreeInstaller.ensureInstalled(member, variant);
         FleetWideEffects.markPhaseFieldStale();
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(member.getHullSpec().getHullSize(), member.getStats(), SkillTreeHullMod.ID);
+        SkillDataResolver.syncShipTag(member, variant);
         SkillTreeHullMod.syncOpSpentHullMod(member, variant);
         SkillTreeHullMod.syncInstalledHullMods(member, variant);
         member.setStatUpdateNeeded(true);

@@ -691,6 +691,7 @@ class SkillTreeHullModTest {
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         when(stats.getVariant()).thenReturn(variant);
         when(variant.hasHullMod("adaptiveshields")).thenReturn(false);
+        when(variant.hasTag(SkillDataResolver.SHIP_TAG_PREFIX + "ship-a")).thenReturn(true);
 
         SettingsAPI settings = mock(SettingsAPI.class);
         globalMock.when(Global::getSettings).thenReturn(settings);

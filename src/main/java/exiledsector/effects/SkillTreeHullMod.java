@@ -75,6 +75,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
                 });
         if (isOpCostPass(stats)) return;
         if (!npcTree) {
+            SkillDataResolver.syncShipTag(stats.getFleetMember(), stats.getVariant());
             syncOpSpentHullMod(stats.getFleetMember(), stats.getVariant());
         }
         syncInstalledHullMods(activePhantomHullModIds(allocated), stats.getVariant());

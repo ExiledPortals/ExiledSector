@@ -117,6 +117,44 @@ class SkillDataResolverTest {
     }
 
     @Test
+    void theOpCostPassFindsAPlayerShipsTreeThroughItsShipTag() {
+        ShipSkillData saved = new ShipSkillData();
+        dataManagerMock.when(() -> ShipSkillDataManager.find("ship-a")).thenReturn(saved);
+
+        assertSame(saved, SkillDataResolver.resolve(null, variantWithTags(SkillDataResolver.SHIP_TAG_PREFIX + "ship-a")));
+        assertNull(SkillDataResolver.resolve(null, variantWithTags(SkillDataResolver.SHIP_TAG_PREFIX + "sold")));
+    }
+
+    @Test
+    void syncingTheShipTagReplacesAStaleTagAndForgetsTheCachedOpCostStats() {
+        dataManagerMock.when(() -> ShipSkillDataManager.find("ship-a")).thenReturn(new ShipSkillData());
+        ShipVariantAPI variant = variantWithTags(SkillDataResolver.SHIP_TAG_PREFIX + "copied-from");
+
+        SkillDataResolver.syncShipTag(member("ship-a"), variant);
+
+        Mockito.verify(variant).removeTag(SkillDataResolver.SHIP_TAG_PREFIX + "copied-from");
+        Mockito.verify(variant).addTag(SkillDataResolver.SHIP_TAG_PREFIX + "ship-a");
+        Mockito.verify(variant).removeMod(Mockito.anyString());
+    }
+
+    @Test
+    void aShipWithoutASavedTreeLosesItsShipTagAndAnUpToDateTagIsLeftAlone() {
+        ShipVariantAPI untreed = variantWithTags(SkillDataResolver.SHIP_TAG_PREFIX + "ship-b");
+        dataManagerMock.when(() -> ShipSkillDataManager.find("ship-a")).thenReturn(new ShipSkillData());
+        ShipVariantAPI current = variantWithTags(SkillDataResolver.SHIP_TAG_PREFIX + "ship-a");
+        when(current.hasTag(SkillDataResolver.SHIP_TAG_PREFIX + "ship-a")).thenReturn(true);
+
+        SkillDataResolver.syncShipTag(member("ship-b"), untreed);
+        SkillDataResolver.syncShipTag(member("ship-a"), current);
+
+        Mockito.verify(untreed).removeTag(SkillDataResolver.SHIP_TAG_PREFIX + "ship-b");
+        Mockito.verify(untreed, never()).addTag(Mockito.anyString());
+        Mockito.verify(current, never()).removeTag(Mockito.anyString());
+        Mockito.verify(current, never()).addTag(Mockito.anyString());
+        Mockito.verify(current, never()).addMod(Mockito.anyString());
+    }
+
+    @Test
     void reportsWhetherAVariantCarriesAnNpcTree() {
         assertTrue(SkillDataResolver.isNpcTree(variantWithTags(NPC_TAG)));
         assertFalse(SkillDataResolver.isNpcTree(variantWithTags("exiledSector_installed_x")));
