@@ -69,10 +69,6 @@ public final class Catalogue {
         return entries.get(key);
     }
 
-    public Set<String> keys() {
-        return entries.keySet();
-    }
-
     public int size() {
         return entries.size();
     }

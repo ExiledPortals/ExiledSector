@@ -14,7 +14,7 @@ record ConditionalStatEffect(StatMode mode, StatTarget target, String statKey, P
     }
 
     @Override
-    public boolean isConditional() {
+    public boolean advancesInCombat() {
         return true;
     }
 

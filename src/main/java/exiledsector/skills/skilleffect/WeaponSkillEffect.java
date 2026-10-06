@@ -5,7 +5,7 @@ import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import exiledsector.i18n.StyledText;
 
-public enum WeaponSkillEffect implements SkillEffect {
+public enum WeaponSkillEffect implements BackedSkillEffect {
 
     WEAPON_DAMAGE_MULT_PER_DMOD {
         @Override
@@ -27,6 +27,11 @@ public enum WeaponSkillEffect implements SkillEffect {
     BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public StatMode statMode() {
+            return StatMode.MULT;
         }
 
         @Override
@@ -55,7 +60,7 @@ public enum WeaponSkillEffect implements SkillEffect {
         }
 
         @Override
-        public boolean isConditional() {
+        public boolean advancesInCombat() {
             return true;
         }
 
@@ -72,8 +77,6 @@ public enum WeaponSkillEffect implements SkillEffect {
 
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            // "large_ballistic_mod" is the same dynamic stat key vanilla's own Heavy Ballistics
-            // Integration hull mod reads to reduce the ordnance point cost of large ballistic weapons
             stats.getDynamic().getMod(LARGE_BALLISTIC_OP_COST_KEY).modifyFlat(modId, magnitude);
         }
 
@@ -86,7 +89,7 @@ public enum WeaponSkillEffect implements SkillEffect {
     private static final String LARGE_BALLISTIC_OP_COST_KEY = "large_ballistic_mod";
 
     @Override
-    public StyledText description(float magnitude) {
-        return EffectText.templated(this, magnitude);
+    public EffectBacking backing() {
+        return null;
     }
 }

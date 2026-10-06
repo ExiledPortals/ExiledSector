@@ -2,7 +2,6 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.combat.HullModEffect;
 import com.fs.starfarer.api.combat.ShipAPI;
-import exiledsector.skills.skilleffect.SkillEffect;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -11,18 +10,18 @@ import java.util.List;
 final class ShipCombatPlan {
 
     private final List<HullModEffect> vanillaEffects = new ArrayList<>();
-    private final List<AppliedEffect> conditionalEffects = new ArrayList<>();
+    private final List<ResolvedTree.EffectEntry> combatUpdates = new ArrayList<>();
     private final List<TemporaryNode> temporaryNodes = new ArrayList<>();
 
     void addVanillaEffect(HullModEffect effect) {
         vanillaEffects.add(effect);
     }
 
-    void addConditionalEffect(AppliedEffect effect) {
-        conditionalEffects.add(effect);
+    void addCombatUpdate(ResolvedTree.EffectEntry effect) {
+        combatUpdates.add(effect);
     }
 
-    void addTemporaryNode(float durationSeconds, List<AppliedEffect> effects) {
+    void addTemporaryNode(float durationSeconds, List<ResolvedTree.EffectEntry> effects) {
         if (!effects.isEmpty()) {
             temporaryNodes.add(new TemporaryNode(durationSeconds, effects));
         }
@@ -32,8 +31,8 @@ final class ShipCombatPlan {
         for (HullModEffect vanillaEffect : vanillaEffects) {
             vanillaEffect.advanceInCombat(ship, amount);
         }
-        for (AppliedEffect conditional : conditionalEffects) {
-            conditional.effect().advanceInCombat(ship, conditional.modId(), conditional.magnitude(), amount);
+        for (ResolvedTree.EffectEntry update : combatUpdates) {
+            update.effect().advanceInCombat(ship, update.modId(), update.magnitude(), amount);
         }
         if (!temporaryNodes.isEmpty()) {
             expireTemporaryNodes(ship);
@@ -48,16 +47,13 @@ final class ShipCombatPlan {
             if (deployedSeconds < node.durationSeconds()) {
                 continue;
             }
-            for (AppliedEffect effect : node.effects()) {
+            for (ResolvedTree.EffectEntry effect : node.effects()) {
                 effect.effect().apply(ship.getMutableStats(), effect.modId(), 0f);
             }
             iterator.remove();
         }
     }
 
-    record AppliedEffect(SkillEffect effect, String modId, float magnitude) {
-    }
-
-    private record TemporaryNode(float durationSeconds, List<AppliedEffect> effects) {
+    private record TemporaryNode(float durationSeconds, List<ResolvedTree.EffectEntry> effects) {
     }
 }

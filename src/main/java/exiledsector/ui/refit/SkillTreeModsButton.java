@@ -88,7 +88,7 @@ final class SkillTreeModsButton extends BaseCustomUIPanelPlugin {
         if (!shown || !BUTTON_ID.equals(buttonId)) return;
         try {
             SkillTreeRefitButton.openPanel(null);
-        } catch (Throwable e) {
+        } catch (RuntimeException | LinkageError e) {
             disable(e);
         }
     }

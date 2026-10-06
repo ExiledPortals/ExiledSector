@@ -19,6 +19,8 @@ public final class SocketableStore {
 
     private final List<Socketable> owned = new ArrayList<>();
     private long nextId = 1;
+    // XStream skips transient fields, so this lookup index is rebuilt after loading instead of being written into saves
+    @SuppressWarnings("java:S2065")
     private transient Map<String, Socketable> byId;
 
     public static SocketableStore get() {
@@ -77,25 +79,28 @@ public final class SocketableStore {
     public int absorbFrom(CargoAPI cargo) {
         int moved = 0;
         for (CargoStackAPI stack : cargo.getStacksCopy()) {
-            SocketableItemData item = SocketableItemData.of(stack.getSpecialDataIfSpecial());
-            if (item == null) {
-                continue;
-            }
-            SocketableDefinition definition = item.definition();
-            if (definition == null) {
-                LOG.warn("Leaving a socketable in cargo: its definition \"" + item.definitionId() + "\" is not loaded");
-                continue;
-            }
-            int count = Math.round(stack.getSize());
-            if (count < 1) {
-                continue;
-            }
-            for (int i = 0; i < count; i++) {
-                add(item);
-            }
-            cargo.removeStack(stack);
-            moved += count;
+            moved += absorbStack(cargo, stack);
         }
         return moved;
+    }
+
+    private int absorbStack(CargoAPI cargo, CargoStackAPI stack) {
+        SocketableItemData item = SocketableItemData.of(stack.getSpecialDataIfSpecial());
+        if (item == null) {
+            return 0;
+        }
+        if (item.definition() == null) {
+            LOG.warn("Leaving a socketable in cargo: its definition \"" + item.definitionId() + "\" is not loaded");
+            return 0;
+        }
+        int count = Math.round(stack.getSize());
+        if (count < 1) {
+            return 0;
+        }
+        for (int i = 0; i < count; i++) {
+            add(item);
+        }
+        cargo.removeStack(stack);
+        return count;
     }
 }

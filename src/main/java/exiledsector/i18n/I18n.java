@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 public final class I18n {
@@ -17,16 +18,20 @@ public final class I18n {
 
     private static final String MISSING_FILE_MESSAGE = "resource, not found in";
     private static final Logger LOG = Logger.getLogger(I18n.class);
-    private static final ThreadLocal<Boolean> GAME_TEXT = ThreadLocal.withInitial(() -> Boolean.FALSE);
+    private static final ThreadLocal<Boolean> GAME_TEXT = new ThreadLocal<>();
 
-    private static volatile Catalogue ui = new Catalogue(LocaleChain.ENGLISH, Map.of());
-    private static volatile Catalogue game = ui;
+    private static final Catalogue ENGLISH_FALLBACK = new Catalogue(LocaleChain.ENGLISH, Map.of());
+    private static final AtomicReference<Installed> INSTALLED = new AtomicReference<>(new Installed(ENGLISH_FALLBACK, ENGLISH_FALLBACK));
+
+    private record Installed(Catalogue ui, Catalogue game) {
+    }
 
     private I18n() {
     }
 
     public static Catalogue catalogue() {
-        return GAME_TEXT.get() ? game : ui;
+        Installed installed = INSTALLED.get();
+        return Boolean.TRUE.equals(GAME_TEXT.get()) ? installed.game() : installed.ui();
     }
 
     public static String locale() {
@@ -34,7 +39,8 @@ public final class I18n {
     }
 
     public static Languages languages() {
-        return new Languages(ui.locale(), game.locale());
+        Installed installed = INSTALLED.get();
+        return new Languages(installed.ui().locale(), installed.game().locale());
     }
 
     public static void install(Catalogue catalogue) {
@@ -42,8 +48,7 @@ public final class I18n {
     }
 
     public static void install(Catalogue uiCatalogue, Catalogue gameCatalogue) {
-        ui = uiCatalogue;
-        game = gameCatalogue;
+        INSTALLED.set(new Installed(uiCatalogue, gameCatalogue));
     }
 
     public static void forGameText(Runnable action) {
@@ -54,12 +59,14 @@ public final class I18n {
     }
 
     public static <T> T forGameText(Supplier<T> action) {
-        boolean previous = GAME_TEXT.get();
+        boolean previous = Boolean.TRUE.equals(GAME_TEXT.get());
         GAME_TEXT.set(Boolean.TRUE);
         try {
             return action.get();
         } finally {
-            GAME_TEXT.set(previous);
+            if (!previous) {
+                GAME_TEXT.remove();
+            }
         }
     }
 

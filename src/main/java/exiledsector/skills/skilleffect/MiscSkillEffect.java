@@ -78,6 +78,11 @@ public enum MiscSkillEffect implements BackedSkillEffect {
     },
     OBJECTIVE_CAPTURE_RATE_MULT {
         @Override
+        public StatMode statMode() {
+            return StatMode.MULT;
+        }
+
+        @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             SkillEffectSupport.applyMult(stats.getDynamic().getStat(Stats.SHIP_OBJECTIVE_CAP_RATE_MULT), modId, magnitude);
         }

@@ -9,6 +9,7 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
 import exiledsector.ui.SkillTreeRefitButton;
+import exiledsector.ui.util.Rects;
 import org.apache.log4j.Logger;
 
 import java.util.List;
@@ -107,14 +108,13 @@ final class SkillTreeChipClickTarget extends BaseCustomUIPanelPlugin {
     private static boolean open(InputEventAPI event) {
         try {
             return SkillTreeRefitButton.openPanel(event);
-        } catch (Throwable e) {
+        } catch (RuntimeException | LinkageError e) {
             disable(e);
             return false;
         }
     }
 
     static boolean contains(PositionAPI position, float x, float y) {
-        return position != null && x >= position.getX() && x <= position.getX() + position.getWidth()
-                && y >= position.getY() && y <= position.getY() + position.getHeight();
+        return Rects.contains(position, x, y);
     }
 }

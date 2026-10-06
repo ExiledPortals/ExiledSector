@@ -100,10 +100,9 @@ public final class SkillTreeLoader {
                     beltJson.getString("id"),
                     (float) beltJson.getDouble("x"),
                     (float) beltJson.getDouble("y"),
-                    (float) beltJson.getDouble("innerRadius"),
-                    (float) beltJson.getDouble("outerRadius"),
-                    beltJson.getString("ringArtPath"),
-                    new Rotation((float) beltJson.optDouble("rotation", 0.0), (float) beltJson.optDouble("rotationSpeed", 0.0)),
+                    new RingBelt.Shape((float) beltJson.getDouble("innerRadius"), (float) beltJson.getDouble("outerRadius"),
+                            beltJson.getString("ringArtPath"),
+                            new Rotation((float) beltJson.optDouble("rotation", 0.0), (float) beltJson.optDouble("rotationSpeed", 0.0))),
                     SkillTypeLoader.parseStringArray(beltJson.optJSONArray("tags"))));
         }
         return ringBelts;
@@ -119,10 +118,9 @@ public final class SkillTreeLoader {
                     imageJson.getString("id"),
                     (float) imageJson.getDouble("x"),
                     (float) imageJson.getDouble("y"),
-                    (float) imageJson.getDouble("width"),
-                    (float) imageJson.getDouble("height"),
-                    imageJson.getString("imagePath"),
-                    new Rotation((float) imageJson.optDouble("rotation", 0.0), (float) imageJson.optDouble("rotationSpeed", 0.0)),
+                    new StaticImage.Shape((float) imageJson.getDouble("width"), (float) imageJson.getDouble("height"),
+                            imageJson.getString("imagePath"),
+                            new Rotation((float) imageJson.optDouble("rotation", 0.0), (float) imageJson.optDouble("rotationSpeed", 0.0))),
                     SkillTypeLoader.parseStringArray(imageJson.optJSONArray("tags"))));
         }
         return images;

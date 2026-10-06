@@ -38,10 +38,6 @@ public final class NodeSearch {
         matchesByNodeId.clear();
     }
 
-    public boolean isSocketFocus() {
-        return socketFocus;
-    }
-
     public float backgroundAlpha() {
         return isActive() ? DIM_ALPHA : 1f;
     }

@@ -20,6 +20,8 @@ import java.util.Map;
 public final class PhantomHullMods {
 
     private static final Logger LOG = Logger.getLogger(PhantomHullMods.class);
+    private static final String LOG_PREFIX = "[ExiledSector] ";
+    private static final String CANNOT_MAKE = LOG_PREFIX + "Can't make ";
     private static final Map<String, String> ORIGINAL_EFFECT_CLASSES = new HashMap<>();
 
     private PhantomHullMods() {
@@ -35,17 +37,17 @@ public final class PhantomHullMods {
         if (isActive(hullModId)) return;
         HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
         if (spec == null) {
-            LOG.info("[ExiledSector] " + hullModId + " isn't loaded, so its nodes won't place it as a phantom hull mod.");
+            LOG.info(LOG_PREFIX + hullModId + " isn't loaded, so its nodes won't place it as a phantom hull mod.");
             return;
         }
         String originalClass = spec.getEffectClass();
         HullModEffect probe = originalClass == null ? null : instantiate(originalClass);
         if (probe == null) {
-            LOG.error("[ExiledSector] Can't make " + hullModId + " a phantom hull mod: no usable effect class; nodes will not place it.");
+            LOG.error(CANNOT_MAKE + hullModId + " a phantom hull mod: no usable effect class; nodes will not place it.");
             return;
         }
         if (probe instanceof HullModFleetEffect) {
-            LOG.error("[ExiledSector] Can't make " + hullModId + " a phantom hull mod: it has a fleet effect the game creates "
+            LOG.error(CANNOT_MAKE + hullModId + " a phantom hull mod: it has a fleet effect the game creates "
                     + "separately; nodes will not place it.");
             return;
         }
@@ -54,17 +56,17 @@ public final class PhantomHullMods {
         HullModEffect effect = createdEffect(spec);
         if (effect instanceof PhantomHullModEffect phantom && phantom.wrapsOriginal()) {
             PhantomHullModStatus.markActive(hullModId);
-            LOG.info("[ExiledSector] " + hullModId + " is now a phantom hull mod (vanilla effect " + originalClass + ").");
+            LOG.info(LOG_PREFIX + hullModId + " is now a phantom hull mod (vanilla effect " + originalClass + ").");
             return;
         }
         if (effect instanceof PhantomHullModEffect) {
-            LOG.error("[ExiledSector] " + hullModId + " could not recreate its vanilla effect " + originalClass
+            LOG.error(LOG_PREFIX + hullModId + " could not recreate its vanilla effect " + originalClass
                     + "; the hull mod will do nothing this session and nodes will not place it.");
             return;
         }
         spec.setEffectClass(originalClass);
         ORIGINAL_EFFECT_CLASSES.remove(hullModId);
-        LOG.error("[ExiledSector] Can't make " + hullModId + " a phantom hull mod: the game already created its effect; "
+        LOG.error(CANNOT_MAKE + hullModId + " a phantom hull mod: the game already created its effect; "
                 + "nodes will not place it.");
     }
 
@@ -72,7 +74,7 @@ public final class PhantomHullMods {
         try {
             return spec.getEffect();
         } catch (RuntimeException e) {
-            LOG.error("[ExiledSector] The game failed to create the phantom effect for " + spec.getId(), e);
+            LOG.error(LOG_PREFIX + "The game failed to create the phantom effect for " + spec.getId(), e);
             return null;
         }
     }
@@ -96,7 +98,7 @@ public final class PhantomHullMods {
             Object effect = MethodHandles.publicLookup().findConstructor(type, MethodType.methodType(void.class)).invoke();
             return effect instanceof HullModEffect hullModEffect ? hullModEffect : null;
         } catch (Throwable e) {
-            LOG.error("[ExiledSector] Could not create hull mod effect " + className, e);
+            LOG.error(LOG_PREFIX + "Could not create hull mod effect " + className, e);
             return null;
         }
     }

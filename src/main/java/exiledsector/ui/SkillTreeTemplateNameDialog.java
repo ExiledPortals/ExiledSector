@@ -6,7 +6,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.TemplateNames;
 import exiledsector.ui.util.BorderedPanel;
-import exiledsector.ui.util.GLDraw;
+import exiledsector.ui.util.ReusableText;
 
 import java.awt.Color;
 import java.util.Collection;
@@ -21,10 +21,9 @@ final class SkillTreeTemplateNameDialog {
     private static final float FIELD_TEXT_PADDING = 18f;
     private static final float BUTTON_WIDTH = 140f;
     private static final float BUTTON_HEIGHT = 36f;
-    private static final float BACKDROP_ALPHA = 0.55f;
     private static final Color PROBLEM_COLOR = SkillTreePanelStyle.NEGATIVE_STAT_COLOR;
 
-    private final BorderedPanel panel = new BorderedPanel(SkillTreeTemplateNameDialog.class);
+    private final ModalFrame frame = new ModalFrame(SkillTreeTemplateNameDialog.class);
     private final BorderedPanel fieldPanel = new BorderedPanel(SkillTreeTemplateNameDialog.class);
     private final SkillTreeTextField field = new SkillTreeTextField(TemplateNames.MAX_LENGTH,
             SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
@@ -45,6 +44,7 @@ final class SkillTreeTemplateNameDialog {
         this.rootNodeId = rootNodeId;
         this.existing = existing;
         this.open = true;
+        frame.open();
         field.setText("");
         field.focus(true);
         revalidate();
@@ -53,6 +53,7 @@ final class SkillTreeTemplateNameDialog {
 
     void close() {
         open = false;
+        frame.close();
         field.focus(false);
     }
 
@@ -87,19 +88,18 @@ final class SkillTreeTemplateNameDialog {
     }
 
     void advance(float amount) {
+        frame.advance(amount);
         if (open) {
             field.advance(amount);
         }
     }
 
     void render(PositionAPI position, float mouseX, float mouseY, float alphaMult) {
-        if (!open) {
-            return;
-        }
-        GLDraw.fillQuad(position.getX(), position.getY(), position.getWidth(), position.getHeight(), Color.BLACK, BACKDROP_ALPHA * alphaMult);
-        float left = position.getX() + (position.getWidth() - WIDTH) / 2f;
-        float bottom = position.getY() + (position.getHeight() - HEIGHT) / 2f;
-        panel.draw(left, bottom, WIDTH, HEIGHT, alphaMult);
+        frame.render(position, WIDTH, HEIGHT, SkillTreePanelStyle.GLOW_COLOR, alphaMult,
+                (box, frameAlpha) -> renderContent(box.left(), box.bottom(), mouseX, mouseY, frameAlpha));
+    }
+
+    private void renderContent(float left, float bottom, float mouseX, float mouseY, float alphaMult) {
 
         float top = bottom + HEIGHT - PADDING;
         title.draw(left + PADDING, top);

@@ -12,7 +12,9 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.compat.SecondInCommandCompat;
 import exiledsector.effects.FighterBayOverflow;
 import exiledsector.i18n.I18n;
+import exiledsector.effects.OpReserveHullMods;
 import exiledsector.effects.OpReserveParity;
+import exiledsector.effects.PhantomInstallSync;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.effects.SkillTreeInstaller;
 import exiledsector.i18n.Translation;
@@ -43,7 +45,6 @@ import java.util.function.Supplier;
 
 final class NodeAllocator {
 
-    static final String LOCKED_REASON = "Unidentified - explore the sector to discover this node.";
     private static final String BEST_OF_THE_BEST_SKILL_ID = "best_of_the_best";
 
     record Snapshot(ShipSkillData data, String satisfiedRootId, ShipOpBudget budget, int totalOpBudget, int opCostPerNode,
@@ -192,20 +193,15 @@ final class NodeAllocator {
 
     String blockAllocationReason(SkillNode node, SkillType option) {
         ShipSkillData data = data();
-        SkillType effectiveType = option != null ? option : node.getType();
-        if (SkillTypeUnlockStatus.isLocked(effectiveType, data)) {
-            return LOCKED_REASON;
-        }
-
         if (!AllocatedNode.planned(node, option).exclusiveHullModIds().isEmpty()) {
             refreshVariantHullMods();
         }
-        NodeEligibility.Block block = NodeEligibility.check(node, option, data, ShipFacts.of(member.getHullSpec(), this::hasHullMod));
+        NodeEligibility.Block block = NodeEligibility.check(node, option, NodeEligibility.Context.of(data,
+                ShipFacts.of(member.getHullSpec(), this::hasHullMod), type -> SkillTypeUnlockStatus.isLocked(type, data)));
         if (block != null) {
             return describe(block);
         }
-
-        return itemCostReason(effectiveType);
+        return itemCostReason(option != null ? option : node.getType());
     }
 
     List<SkillNode> respecPlan(SkillNode node) {
@@ -239,8 +235,8 @@ final class NodeAllocator {
         FleetWideEffects.markPhaseFieldStale();
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(member.getHullSpec().getHullSize(), member.getStats(), SkillTreeHullMod.ID);
         SkillDataResolver.syncShipTag(member, variant);
-        SkillTreeHullMod.syncOpSpentHullMod(member, variant);
-        SkillTreeHullMod.syncInstalledHullMods(member, variant);
+        OpReserveHullMods.sync(member, variant);
+        PhantomInstallSync.sync(member, variant);
         member.setStatUpdateNeeded(true);
         member.updateStats();
         returnUnhousedWings();
@@ -296,7 +292,7 @@ final class NodeAllocator {
     private void refreshVariantHullMods() {
         member.setStatUpdateNeeded(true);
         member.updateStats();
-        SkillTreeHullMod.syncOpSpentHullMod(member, variant);
+        OpReserveHullMods.sync(member, variant);
     }
 
     private boolean hasHullMod(String hullModId) {
@@ -310,8 +306,10 @@ final class NodeAllocator {
 
     private String describe(NodeEligibility.Block block) {
         return switch (block.kind()) {
+            case LOCKED -> Translation.text("node.block.locked");
+            case INVALID_OPTION -> Translation.text("node.block.invalidOption");
             case WRONG_HULL_SIZE -> Translation.text("node.block.wrongHullSize");
-            case UNMET_HULL_REQUIREMENT -> Translation.text("node.requires." + block.detail());
+            case UNMET_HULL_REQUIREMENT, UNMET_SHIP_REQUIREMENT -> Translation.text("node.requires." + block.detail());
             case HULL_MOD_CONFLICT -> variant.hasHullMod(block.detail())
                     ? Translation.msg("node.block.hullModInstalled").arg("hullmod", HullModNames.displayName(block.detail())).text()
                     : Translation.msg("node.block.deactivatedSMod").arg("hullmod", HullModNames.displayName(block.detail()))

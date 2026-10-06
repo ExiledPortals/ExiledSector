@@ -8,10 +8,6 @@ public class Star extends SkillTreeObject {
     private final String starType;
     private final String color;
 
-    public Star(String id, float x, float y, float radius, String starType, String color) {
-        this(id, x, y, radius, starType, color, null);
-    }
-
     public Star(String id, float x, float y, float radius, String starType, String color, List<String> tags) {
         super(id, x, y, tags);
         this.radius = radius;

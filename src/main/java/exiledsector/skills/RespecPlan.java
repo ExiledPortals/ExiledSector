@@ -1,9 +1,7 @@
 package exiledsector.skills;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -62,23 +60,9 @@ public final class RespecPlan {
     }
 
     private static Map<String, Integer> distancesAwayFrom(Set<String> removed, Set<String> dependents, SkillTreeTopology topology) {
+        TreeSearch search = TreeSearch.from(topology, removed, child -> dependents.contains(child.getId()));
         Map<String, Integer> distance = new HashMap<>();
-        Deque<String> queue = new ArrayDeque<>();
-        for (String id : removed) {
-            distance.put(id, 0);
-            queue.add(id);
-        }
-        while (!queue.isEmpty()) {
-            String current = queue.poll();
-            int next = distance.get(current) + 1;
-            for (SkillNode child : topology.dependents(current)) {
-                String childId = child.getId();
-                if (dependents.contains(childId) && !distance.containsKey(childId)) {
-                    distance.put(childId, next);
-                    queue.add(childId);
-                }
-            }
-        }
+        search.reached().forEach(id -> distance.put(id, search.distance(id)));
         for (String id : dependents) {
             SkillNode node = topology.node(id);
             String partner = node == null ? null : node.getPairedNodeId();

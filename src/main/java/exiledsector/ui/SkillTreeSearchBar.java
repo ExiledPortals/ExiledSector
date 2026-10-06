@@ -5,6 +5,7 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.i18n.Translation;
 import exiledsector.ui.node.NodeSearch;
 import exiledsector.ui.util.BorderedPanel;
+import exiledsector.ui.util.Rects;
 
 import java.util.function.ToDoubleFunction;
 
@@ -75,9 +76,7 @@ final class SkillTreeSearchBar {
     }
 
     static boolean contains(PositionAPI position, float x, float y) {
-        float left = left(position);
-        float bottom = bottom(position);
-        return x >= left && x <= left + WIDTH && y >= bottom && y <= bottom + HEIGHT;
+        return Rects.contains(left(position), bottom(position), WIDTH, HEIGHT, x, y);
     }
 
     private static float left(PositionAPI position) {

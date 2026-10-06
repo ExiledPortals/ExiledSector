@@ -23,7 +23,7 @@ class HyperspaceTest {
     }
 
     private static StaticImage image(String id, String region) {
-        return new StaticImage(id, 3000f, 7000f, 3400f, 2000f, "a.png", new Rotation(0f, 0f), List.of(region));
+        return new StaticImage(id, 3000f, 7000f, new StaticImage.Shape(3400f, 2000f, "a.png", new Rotation(0f, 0f)), List.of(region));
     }
 
     @Test

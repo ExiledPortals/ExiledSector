@@ -303,6 +303,7 @@ class NodeAllocatorTest {
         when(settings.getHullModSpec("heavyarmor")).thenReturn(spec);
         when(variant.hasHullMod("heavyarmor")).thenReturn(true);
         SkillType plain = type("plain", "Plain", SkillTier.SMALL).build();
+        SkillTree.registerType(plain);
         SkillNode slot = register("slot_1", type("slot", "Slot", SkillTier.SMALL).exclusiveHullModIds(List.of("heavyarmor"))
                 .optionalOptionIds(List.of("plain")).build(), "root_1");
 
@@ -363,7 +364,7 @@ class NodeAllocatorTest {
                 .unlockConditions(List.of(UnlockCondition.minShipLevel(5))).build(), "root_1");
         NodeAllocator allocator = allocatorStartingAt(root);
 
-        assertEquals(NodeAllocator.LOCKED_REASON, allocator.blockAllocationReason(secret, null));
+        assertEquals("Unidentified - explore the sector to discover this node.", allocator.blockAllocationReason(secret, null));
         assertTrue(allocator.snapshot().isHidden(secret));
         assertFalse(allocator.snapshot().isHidden(frontShield));
     }

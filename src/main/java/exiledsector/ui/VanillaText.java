@@ -8,12 +8,30 @@ import exiledsector.i18n.StyledText;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 public final class VanillaText {
 
     public record Prepared(String text, String[] highlights, Color[] colors) {
+
+        @Override
+        public boolean equals(Object other) {
+            return other instanceof Prepared prepared && Objects.equals(text, prepared.text)
+                    && Arrays.equals(highlights, prepared.highlights) && Arrays.equals(colors, prepared.colors);
+        }
+
+        @Override
+        public int hashCode() {
+            return 31 * (31 * Objects.hashCode(text) + Arrays.hashCode(highlights)) + Arrays.hashCode(colors);
+        }
+
+        @Override
+        public String toString() {
+            return "Prepared[" + text + ", " + Arrays.toString(highlights) + ", " + Arrays.toString(colors) + "]";
+        }
     }
 
     private static final String HIGHLIGHT_BOUNDARY_PUNCTUATION = "/.,;:\"'[]+-=!@$%^&*(){}|\\?<>`~";

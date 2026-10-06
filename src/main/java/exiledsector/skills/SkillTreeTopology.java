@@ -61,26 +61,13 @@ public final class SkillTreeTopology {
         List<SkillNode> sorted = new ArrayList<>(byId.values());
         sorted.sort(Comparator.comparing(SkillNode::getId));
         sortedById = List.copyOf(sorted);
-        Map<String, List<SkillNode>> dependentsById = new HashMap<>();
-        for (SkillNode node : sortedById) {
-            for (String connectedId : node.getConnectedNodeIds()) {
-                dependentsById.computeIfAbsent(connectedId, key -> new ArrayList<>()).add(node);
-            }
-        }
-        dependents = frozen(dependentsById);
+        dependents = frozen(dependentsOf(sortedById));
 
         List<Connector> drawn = new ArrayList<>();
         Map<String, Set<String>> neighbourIds = new HashMap<>();
         List<WormholePair> pairs = new ArrayList<>();
         for (SkillNode node : byId.values()) {
-            for (String connectedId : node.getConnectedNodeIds()) {
-                SkillNode other = byId.get(connectedId);
-                if (other != null && drawsListedEdge(node, other)) {
-                    drawn.add(connector(node, other, SkillTree.getCurve(node.getId(), other.getId())));
-                    neighbourIds.computeIfAbsent(node.getId(), key -> new LinkedHashSet<>()).add(other.getId());
-                    neighbourIds.computeIfAbsent(other.getId(), key -> new LinkedHashSet<>()).add(node.getId());
-                }
-            }
+            addDrawnEdges(node, byId, drawn, neighbourIds);
             SkillNode paired = node.getPairedNodeId() == null ? null : byId.get(node.getPairedNodeId());
             if (node.getType().getTier() == SkillTier.WORMHOLE && paired != null && node.getId().compareTo(paired.getId()) < 0) {
                 pairs.add(new WormholePair(node, paired));
@@ -88,14 +75,39 @@ public final class SkillTreeTopology {
         }
         connectors = List.copyOf(drawn);
         wormholePairs = List.copyOf(pairs);
+        drawnNeighbours = frozen(neighboursOf(byId.values(), neighbourIds));
+    }
 
+    private static Map<String, List<SkillNode>> dependentsOf(List<SkillNode> sortedNodes) {
+        Map<String, List<SkillNode>> dependentsById = new HashMap<>();
+        for (SkillNode node : sortedNodes) {
+            for (String connectedId : node.getConnectedNodeIds()) {
+                dependentsById.computeIfAbsent(connectedId, key -> new ArrayList<>()).add(node);
+            }
+        }
+        return dependentsById;
+    }
+
+    private static void addDrawnEdges(SkillNode node, Map<String, SkillNode> nodesById, List<Connector> drawn,
+                                      Map<String, Set<String>> neighbourIds) {
+        for (String connectedId : node.getConnectedNodeIds()) {
+            SkillNode other = nodesById.get(connectedId);
+            if (other != null && drawsListedEdge(node, other)) {
+                drawn.add(connector(node, other, SkillTree.getCurve(node.getId(), other.getId())));
+                neighbourIds.computeIfAbsent(node.getId(), key -> new LinkedHashSet<>()).add(other.getId());
+                neighbourIds.computeIfAbsent(other.getId(), key -> new LinkedHashSet<>()).add(node.getId());
+            }
+        }
+    }
+
+    private static Map<String, List<SkillNode>> neighboursOf(Collection<SkillNode> nodes, Map<String, Set<String>> neighbourIds) {
         Map<String, List<SkillNode>> neighbours = new HashMap<>();
-        for (SkillNode node : byId.values()) {
+        for (SkillNode node : nodes) {
             for (String neighbourId : neighbourIds.getOrDefault(node.getId(), Set.of())) {
                 neighbours.computeIfAbsent(neighbourId, key -> new ArrayList<>()).add(node);
             }
         }
-        drawnNeighbours = frozen(neighbours);
+        return neighbours;
     }
 
     public static SkillTreeTopology of(Collection<SkillNode> nodes) {

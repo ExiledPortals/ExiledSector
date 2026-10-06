@@ -21,7 +21,7 @@ import static exiledsector.skills.skilleffect.StatTarget.dynamicStat;
 import static exiledsector.skills.skilleffect.StatTarget.liveStat;
 import static exiledsector.skills.skilleffect.StatTarget.stat;
 
-public enum FighterSkillEffect implements SkillEffect {
+public enum FighterSkillEffect implements BackedSkillEffect {
 
     FIGHTER_WEAPON_DAMAGE_PERCENT(RoleStat.WEAPON_DAMAGE),
     FIGHTER_TOP_SPEED_PERCENT(RoleStat.TOP_SPEED),
@@ -32,6 +32,11 @@ public enum FighterSkillEffect implements SkillEffect {
     FIGHTER_REFIT_TIME_MULT(MULT, liveStat(MutableShipStatsAPI::getFighterRefitTimeMult), "stat.fighterRefitTime", true),
     FIGHTER_REFIT_TIME_PERCENT(PERCENT, liveStat(MutableShipStatsAPI::getFighterRefitTimeMult), "stat.fighterRefitTime", true),
     FIGHTER_REPLACEMENT_RATE_MULT {
+        @Override
+        public StatMode statMode() {
+            return StatMode.MULT;
+        }
+
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             float mult = 1f / SkillEffectSupport.multFrom(magnitude);
@@ -177,69 +182,63 @@ public enum FighterSkillEffect implements SkillEffect {
         return "fighter.role." + (role == null ? "ALL" : role.name());
     }
 
-    private final WingRole role;
-    private final RoleStat roleStat;
-    private final SimpleStatEffect simpleStat;
+    private final EffectBacking backing;
 
     FighterSkillEffect() {
-        this(null, null, null);
+        this((EffectBacking) null);
     }
 
     FighterSkillEffect(RoleStat roleStat) {
-        this(null, roleStat, null);
+        this(new RoleBacking(null, roleStat));
     }
 
     FighterSkillEffect(WingRole role, RoleStat roleStat) {
-        this(role, roleStat, null);
+        this(new RoleBacking(role, roleStat));
     }
 
     FighterSkillEffect(StatMode mode, StatTarget target, String statKey, boolean lowerIsBetter) {
-        this(null, null, new SimpleStatEffect(mode, target, statKey, lowerIsBetter));
+        this(new SimpleStatEffect(mode, target, statKey, lowerIsBetter));
     }
 
-    FighterSkillEffect(WingRole role, RoleStat roleStat, SimpleStatEffect simpleStat) {
-        this.role = role;
-        this.roleStat = roleStat;
-        this.simpleStat = simpleStat;
-    }
-
-    @Override
-    public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-        if (simpleStat != null) {
-            simpleStat.apply(stats, modId, magnitude);
-        }
+    FighterSkillEffect(EffectBacking backing) {
+        this.backing = backing;
     }
 
     @Override
-    public boolean supportsTemporaryGating() {
-        return simpleStat != null && simpleStat.supportsTemporaryGating();
+    public EffectBacking backing() {
+        return backing;
     }
 
-    @Override
-    public boolean lowerIsBetter() {
-        if (simpleStat != null) {
-            return simpleStat.lowerIsBetter();
-        }
-        return roleStat != null && roleStat.stat.lowerIsBetter();
-    }
+    record RoleBacking(WingRole role, RoleStat roleStat) implements EffectBacking {
 
-    @Override
-    public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
-        if (roleStat != null && matchesRole(fighter, role)) {
-            roleStat.applyTo(fighter, modId, magnitude);
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            if (matchesRole(fighter, role)) {
+                roleStat.applyTo(fighter, modId, magnitude);
+            }
         }
-    }
 
-    @Override
-    public StyledText description(float magnitude) {
-        if (simpleStat != null) {
-            return simpleStat.description(magnitude);
+        @Override
+        public StatMode mode() {
+            return roleStat.stat.mode();
         }
-        if (roleStat == null) {
-            return EffectText.templated(this, magnitude);
+
+        @Override
+        public boolean supportsTemporaryGating() {
+            return false;
         }
-        String stat = Translation.msg("fighter.launched").arg("stat", Translation.text(roleStat.stat.statKey())).arg("role", Translation.text(roleKey(role))).text();
-        return roleStat.stat.mode().description(magnitude, stat);
+
+        @Override
+        public boolean lowerIsBetter() {
+            return roleStat.stat.lowerIsBetter();
+        }
+
+        @Override
+        public StyledText description(SkillEffect effect, float magnitude) {
+            String stat = Translation.msg("fighter.launched").arg("stat", Translation.text(roleStat.stat.statKey()))
+                    .arg("role", Translation.text(roleKey(role))).text();
+            return roleStat.stat.mode().description(magnitude, stat);
+        }
     }
 
     private enum RoleStat {

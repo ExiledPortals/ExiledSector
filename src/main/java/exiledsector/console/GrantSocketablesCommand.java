@@ -26,6 +26,17 @@ public class GrantSocketablesCommand implements BaseCommand {
         this.random = random;
     }
 
+    private static int parseCopies(String args) {
+        if (args.isEmpty()) {
+            return DEFAULT_COPIES;
+        }
+        try {
+            return Integer.parseInt(args.trim());
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
     @Override
     public CommandResult runCommand(String args, CommandContext context) {
         if (!context.isInCampaign()) {
@@ -33,22 +44,13 @@ public class GrantSocketablesCommand implements BaseCommand {
             return CommandResult.WRONG_CONTEXT;
         }
 
-        int copies;
-        if (args.isEmpty()) {
-            copies = DEFAULT_COPIES;
-        } else {
-            try {
-                copies = Integer.parseInt(args.trim());
-            } catch (NumberFormatException e) {
-                return CommandResult.BAD_SYNTAX;
-            }
-            if (copies < 1) {
-                return CommandResult.BAD_SYNTAX;
-            }
-            if (copies > MAX_COPIES) {
-                Console.showMessage("At most " + MAX_COPIES + " copies of each socketable can be granted at once.");
-                return CommandResult.BAD_SYNTAX;
-            }
+        int copies = parseCopies(args);
+        if (copies < 1) {
+            return CommandResult.BAD_SYNTAX;
+        }
+        if (copies > MAX_COPIES) {
+            Console.showMessage("At most " + MAX_COPIES + " copies of each socketable can be granted at once.");
+            return CommandResult.BAD_SYNTAX;
         }
 
         CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();

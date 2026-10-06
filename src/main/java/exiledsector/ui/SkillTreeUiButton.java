@@ -2,6 +2,7 @@ package exiledsector.ui;
 
 import exiledsector.ui.util.BorderedPanel;
 import exiledsector.ui.util.GLDraw;
+import exiledsector.ui.util.ReusableText;
 
 import java.awt.Color;
 

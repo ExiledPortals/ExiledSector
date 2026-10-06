@@ -98,6 +98,11 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
     },
     DMOD_EFFECT_MULT {
         @Override
+        public StatMode statMode() {
+            return StatMode.MULT;
+        }
+
+        @Override
         public boolean lowerIsBetter() {
             return true;
         }

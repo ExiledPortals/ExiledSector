@@ -6,9 +6,8 @@ import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.TemplateFilter;
-import exiledsector.ui.util.BorderedPanel;
 import exiledsector.ui.util.GLDraw;
-import exiledsector.ui.util.HoloTransition;
+import exiledsector.ui.util.ReusableText;
 import org.lazywizard.lazylib.ui.LazyFont;
 
 import java.awt.Color;
@@ -33,15 +32,13 @@ final class SkillTreeTemplateListOverlay {
     private static final float META_GAP = 16f;
     private static final float FOOTER_BUTTON_WIDTH = 170f;
     private static final float FOOTER_HEIGHT = 36f;
-    private static final float BACKDROP_ALPHA = 0.55f;
     private static final float ROW_FILL_ALPHA = 0.06f;
     private static final float ROW_HOVER_ALPHA = 0.2f;
     private static final float FONT_SIZE = SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE;
     private static final Color META_COLOR = new Color(170, 170, 170);
     private static final Color CONFIRM_COLOR = SkillTreePanelStyle.NEGATIVE_STAT_COLOR;
 
-    private final BorderedPanel panel = new BorderedPanel(SkillTreeTemplateListOverlay.class);
-    private final HoloTransition transition = new HoloTransition();
+    private final ModalFrame frame = new ModalFrame(SkillTreeTemplateListOverlay.class);
     private final SkillTreePanelStyle style;
     private final Map<HullSize, SkillTreeUiButton> chips = new EnumMap<>(HullSize.class);
     private final SkillTreeUiButton clear = new SkillTreeUiButton(Translation.text("ui.template.list.clear"));
@@ -74,7 +71,7 @@ final class SkillTreeTemplateListOverlay {
         this.state = new TemplateListState(templates, rootNodeId, currentHullSize);
         this.assignedId = assignedId;
         this.open = true;
-        transition.open();
+        frame.open();
         deleteConfirmation.disarm();
         for (RowSlot slot : slots) {
             slot.unbind();
@@ -92,7 +89,7 @@ final class SkillTreeTemplateListOverlay {
 
     void close() {
         open = false;
-        transition.close();
+        frame.close();
         box = ScreenRect.NONE;
         listArea = ScreenRect.NONE;
         deleteConfirmation.disarm();
@@ -118,7 +115,7 @@ final class SkillTreeTemplateListOverlay {
     }
 
     void advance(float amount) {
-        transition.advance(amount);
+        frame.advance(amount);
         deleteConfirmation.advance(amount);
     }
 
@@ -152,37 +149,18 @@ final class SkillTreeTemplateListOverlay {
     }
 
     void render(PositionAPI position, float mouseX, float mouseY, float alphaMult) {
-        if (!transition.isVisible()) {
-            return;
-        }
-        GLDraw.fillQuad(position.getX(), position.getY(), position.getWidth(), position.getHeight(), Color.BLACK,
-                BACKDROP_ALPHA * transition.backdropAlpha() * alphaMult);
         float width = Math.min(MAX_WIDTH, position.getWidth() - SIDE_CLEARANCE * 2f);
         float height = Math.min(MAX_HEIGHT, position.getHeight() - VERTICAL_CLEARANCE * 2f);
-        float left = position.getX() + (position.getWidth() - width) / 2f;
-        float bottom = position.getY() + (position.getHeight() - height) / 2f;
-        if (open) {
-            box = new ScreenRect(left, bottom, width, height);
+        ScreenRect drawn = frame.render(position, width, height, style.getAccentColor(), alphaMult,
+                (frameBox, frameAlpha) -> renderContent(frameBox.left(), frameBox.bottom(), frameBox.width(), frameBox.height(),
+                        mouseX, mouseY, frameAlpha));
+        if (open && drawn != null) {
+            box = drawn;
         }
-        Color accent = style.getAccentColor();
-        transition.drawProjection(left, bottom, width, height, accent, alphaMult);
-        if (transition.contentAlpha() <= 0f) {
-            return;
-        }
-        boolean clipped = transition.beginReveal(left, bottom, width, height);
-        try {
-            renderContent(left, bottom, width, height, mouseX, mouseY, alphaMult);
-        } finally {
-            if (clipped) {
-                HoloTransition.endReveal();
-            }
-        }
-        transition.drawRevealLine(left, bottom, width, height, accent, alphaMult);
     }
 
     private void renderContent(float left, float bottom, float width, float height, float mouseX, float mouseY, float alphaMult) {
         LazyFont font = SkillTreePanelStyle.font();
-        panel.draw(left, bottom, width, height, alphaMult);
 
         float top = bottom + height - PADDING;
         title.draw(left + PADDING, top);

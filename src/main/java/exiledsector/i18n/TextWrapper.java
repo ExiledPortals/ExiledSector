@@ -25,63 +25,88 @@ public final class TextWrapper {
         if (maxWidth <= 0f) {
             return StyledText.EMPTY;
         }
-        String source = text.plain();
-        Output out = new Output(source.length());
-        int numLines = 0;
-        int lineStart = 0;
-        while (lineStart <= source.length()) {
-            int lineEnd = source.indexOf('\n', lineStart);
-            if (lineEnd < 0) {
-                lineEnd = source.length();
-            }
-            if (isBlank(source, lineStart, lineEnd)) {
-                out.append('\n', -1);
-                numLines++;
-            } else {
-                int cursor = lineStart;
-                while (!isBlank(source, cursor, lineEnd)) {
-                    if (numLines >= maxLines) {
-                        break;
-                    }
-                    int fits = fittingLength(source, cursor, lineEnd, metrics, maxWidth);
-                    if (cursor + fits == lineEnd) {
-                        out.copy(source, cursor, lineEnd);
-                        out.append('\n', -1);
-                        numLines++;
-                        break;
-                    }
-                    int lastSpace = source.lastIndexOf(' ', cursor + fits - 1);
-                    lastSpace = lastSpace >= cursor ? lastSpace : -1;
-                    int cjkBreak = cjkBreak(source, cursor, cursor + fits, text.spans());
-                    if (cjkBreak > lastSpace && cjkBreak > cursor) {
-                        out.copy(source, cursor, cjkBreak);
-                        out.append('\n', -1);
-                        cursor = cjkBreak;
-                    } else if (lastSpace >= 0) {
-                        out.copy(source, cursor, lastSpace);
-                        out.append('\n', lastSpace);
-                        cursor = lastSpace + 1;
-                    } else {
-                        int split = Math.max(1, fittingLength("-" + source.substring(cursor, lineEnd), 0,
-                                lineEnd - cursor + 1, metrics, maxWidth) - 1);
-                        if (split < lineEnd - cursor) {
-                            out.copy(source, cursor, cursor + split);
-                            out.append('-', -1);
-                            out.append('\n', -1);
-                            cursor += split;
-                        } else {
-                            out.copy(source, cursor, lineEnd);
-                            out.append('\n', -1);
-                            numLines++;
-                            break;
-                        }
-                    }
-                    numLines++;
-                }
-            }
-            lineStart = lineEnd + 1;
+        return new Wrapping(text, metrics, maxWidth, maxLines).run();
+    }
+
+    private static final class Wrapping {
+        private final String source;
+        private final List<StyledText.Span> spans;
+        private final Metrics metrics;
+        private final float maxWidth;
+        private final int maxLines;
+        private final Output out;
+        private int numLines;
+
+        Wrapping(StyledText text, Metrics metrics, float maxWidth, int maxLines) {
+            this.source = text.plain();
+            this.spans = text.spans();
+            this.metrics = metrics;
+            this.maxWidth = maxWidth;
+            this.maxLines = maxLines;
+            this.out = new Output(source.length());
         }
-        return out.result(text.spans());
+
+        StyledText run() {
+            int lineStart = 0;
+            while (lineStart <= source.length()) {
+                int lineEnd = source.indexOf('\n', lineStart);
+                if (lineEnd < 0) {
+                    lineEnd = source.length();
+                }
+                if (isBlank(source, lineStart, lineEnd)) {
+                    out.append('\n', -1);
+                    numLines++;
+                } else {
+                    wrapParagraph(lineStart, lineEnd);
+                }
+                lineStart = lineEnd + 1;
+            }
+            return out.result(spans);
+        }
+
+        private void wrapParagraph(int start, int end) {
+            int cursor = start;
+            while (numLines < maxLines && !isBlank(source, cursor, end)) {
+                cursor = writeLine(cursor, end);
+                numLines++;
+            }
+        }
+
+        private int writeLine(int cursor, int end) {
+            int fits = fittingLength(source, cursor, end, metrics, maxWidth);
+            if (cursor + fits == end) {
+                out.copy(source, cursor, end);
+                out.append('\n', -1);
+                return end;
+            }
+            int lastSpace = source.lastIndexOf(' ', cursor + fits - 1);
+            lastSpace = lastSpace >= cursor ? lastSpace : -1;
+            int cjkBreak = cjkBreak(source, cursor, cursor + fits, spans);
+            if (cjkBreak > lastSpace && cjkBreak > cursor) {
+                out.copy(source, cursor, cjkBreak);
+                out.append('\n', -1);
+                return cjkBreak;
+            }
+            if (lastSpace >= 0) {
+                out.copy(source, cursor, lastSpace);
+                out.append('\n', lastSpace);
+                return lastSpace + 1;
+            }
+            return hyphenate(cursor, end);
+        }
+
+        private int hyphenate(int cursor, int end) {
+            int split = Math.max(1, fittingLength("-" + source.substring(cursor, end), 0, end - cursor + 1, metrics, maxWidth) - 1);
+            if (split < end - cursor) {
+                out.copy(source, cursor, cursor + split);
+                out.append('-', -1);
+                out.append('\n', -1);
+                return cursor + split;
+            }
+            out.copy(source, cursor, end);
+            out.append('\n', -1);
+            return end;
+        }
     }
 
     private static boolean isBlank(String text, int start, int end) {

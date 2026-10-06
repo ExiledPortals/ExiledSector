@@ -64,21 +64,21 @@ public final class GLDraw {
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glBegin(GL11.GL_QUADS);
-        glowEdge(color, alphaMult, x, y, x + width, y, right, bottom, left, bottom);
-        glowEdge(color, alphaMult, x + width, y, x + width, y + height, right, top, right, bottom);
-        glowEdge(color, alphaMult, x + width, y + height, x, y + height, left, top, right, top);
-        glowEdge(color, alphaMult, x, y + height, x, y, left, bottom, left, top);
+        edge(color, alphaMult, x, y, x + width, y);
+        edge(color, 0f, right, bottom, left, bottom);
+        edge(color, alphaMult, x + width, y, x + width, y + height);
+        edge(color, 0f, right, top, right, bottom);
+        edge(color, alphaMult, x + width, y + height, x, y + height);
+        edge(color, 0f, left, top, right, top);
+        edge(color, alphaMult, x, y + height, x, y);
+        edge(color, 0f, left, bottom, left, top);
         GL11.glEnd();
         GL11.glDisable(GL11.GL_BLEND);
     }
 
-    private static void glowEdge(Color color, float alphaMult, float outerAx, float outerAy, float outerBx, float outerBy,
-                                 float innerBx, float innerBy, float innerAx, float innerAy) {
-        Misc.setColor(color, alphaMult);
-        GL11.glVertex2f(outerAx, outerAy);
-        GL11.glVertex2f(outerBx, outerBy);
-        Misc.setColor(color, 0f);
-        GL11.glVertex2f(innerBx, innerBy);
-        GL11.glVertex2f(innerAx, innerAy);
+    private static void edge(Color color, float alpha, float ax, float ay, float bx, float by) {
+        Misc.setColor(color, alpha);
+        GL11.glVertex2f(ax, ay);
+        GL11.glVertex2f(bx, by);
     }
 }

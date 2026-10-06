@@ -63,7 +63,7 @@ class NodeEligibilityTest {
     }
 
     private NodeEligibility.Block check(SkillNode node, SkillType option, ShipFacts ship) {
-        return NodeEligibility.check(node, option, data, ship);
+        return NodeEligibility.check(node, option, NodeEligibility.Context.of(data, ship, null));
     }
 
     @Test

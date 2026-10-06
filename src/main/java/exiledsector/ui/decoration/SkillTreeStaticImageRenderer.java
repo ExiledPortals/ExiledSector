@@ -18,10 +18,6 @@ public class SkillTreeStaticImageRenderer {
         elapsedSeconds += amount;
     }
 
-    public void render(TreeViewport viewport, float alphaMult) {
-        render(viewport, alphaMult, Set.of(), 1f);
-    }
-
     public void render(TreeViewport viewport, float alphaMult, Set<String> keptIds, float othersAlphaMult) {
         float zoom = viewport.zoom();
         List<StaticImage> images = SkillTree.getStaticImages();

@@ -76,14 +76,6 @@ public final class NpcFleetLeveller {
         return fleet.getFaction() != null && !fleet.getFaction().isPlayerFaction();
     }
 
-    static String decide(FleetMemberAPI member, int playerLevel, String factionRegion, Random random) {
-        return decide(member, playerLevel, factionRegion, random, null);
-    }
-
-    static String decide(FleetMemberAPI member, int playerLevel, String factionRegion, Random random, Random socketableRandom) {
-        return decide(member, playerLevel, factionRegion, random, socketableRandom, definition -> false);
-    }
-
     static String decide(FleetMemberAPI member, int playerLevel, String factionRegion, Random random, Random socketableRandom,
                          Predicate<SocketableDefinition> uniqueAllowed) {
         if (!NpcShipSelector.isCandidate(member) || !NpcShipSelector.isChosen(member, random)) {

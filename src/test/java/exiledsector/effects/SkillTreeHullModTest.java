@@ -388,14 +388,14 @@ class SkillTreeHullModTest {
         SettingsAPI settings = mock(SettingsAPI.class);
         globalMock.when(Global::getSettings).thenReturn(settings);
 
-        SkillTreeHullMod.removeHullModsConflictingWithAllocatedSkills(member, variant);
+        HullModConflictResolver.removeConflicts(member, variant);
         verify(variant).addMod("exiledSector_conflictWarning");
 
         data.deallocate(frontNode);
         when(variant.hasHullMod("adaptiveshields")).thenReturn(false);
         when(variant.hasHullMod("exiledSector_conflictWarning")).thenReturn(true);
 
-        SkillTreeHullMod.removeHullModsConflictingWithAllocatedSkills(member, variant);
+        HullModConflictResolver.removeConflicts(member, variant);
 
         verify(variant).removeMod("exiledSector_conflictWarning");
         assertNull(SkillConflictWarnings.get(variant));
@@ -423,7 +423,7 @@ class SkillTreeHullModTest {
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         when(variant.getTags()).thenReturn(List.of());
 
-        SkillTreeHullMod.syncInstalledHullMods(memberWithId("ship-a"), variant);
+        PhantomInstallSync.sync(memberWithId("ship-a"), variant);
 
         verify(variant).addPermaMod("militarized_subsystems");
         verify(variant).addTag("exiledSector_installed_militarized_subsystems");
@@ -461,11 +461,11 @@ class SkillTreeHullModTest {
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         when(variant.getTags()).thenReturn(List.of());
 
-        SkillTreeHullMod.syncInstalledHullMods(memberWithId("ship-a"), variant);
+        PhantomInstallSync.sync(memberWithId("ship-a"), variant);
         verify(variant, never()).addPermaMod("safetyoverrides");
 
         makeSafetyOverridesAPhantom();
-        SkillTreeHullMod.syncInstalledHullMods(memberWithId("ship-a"), variant);
+        PhantomInstallSync.sync(memberWithId("ship-a"), variant);
 
         verify(variant).addPermaMod("safetyoverrides");
         verify(variant).addTag("exiledSector_installed_safetyoverrides");
@@ -490,7 +490,7 @@ class SkillTreeHullModTest {
         when(Global.getSettings().getHullModSpec("nskr_volatile")).thenReturn(mock(HullModSpecAPI.class));
         ShipVariantAPI variant = variantWhereAModTriedToStripThePhantomFor("nskr_volatile");
 
-        SkillTreeHullMod.removeHullModsConflictingWithAllocatedSkills(memberWithId("ship-a"), variant);
+        HullModConflictResolver.removeConflicts(memberWithId("ship-a"), variant);
 
         verify(variant).removeMod("ML_incompatibleHullmodWarning");
         verify(variant).removeMod("nskr_volatile");
@@ -506,7 +506,7 @@ class SkillTreeHullModTest {
         ShipVariantAPI variant = variantWhereAModTriedToStripThePhantomFor("nskr_volatile");
         when(variant.getPermaMods()).thenReturn(new LinkedHashSet<>(List.of("safetyoverrides", "nskr_volatile")));
 
-        SkillTreeHullMod.removeHullModsConflictingWithAllocatedSkills(memberWithId("ship-a"), variant);
+        HullModConflictResolver.removeConflicts(memberWithId("ship-a"), variant);
 
         verify(variant, never()).removeMod("nskr_volatile");
         verify(variant, never()).addMod("exiledSector_conflictWarning");
@@ -520,7 +520,7 @@ class SkillTreeHullModTest {
         when(Global.getSettings().getHullModSpec("nskr_volatile")).thenReturn(mock(HullModSpecAPI.class));
         ShipVariantAPI variant = variantWhereAModTriedToStripThePhantomFor("nskr_volatile");
 
-        SkillTreeHullMod.removeHullModsConflictingWithAllocatedSkills(memberWithId("ship-a"), variant);
+        HullModConflictResolver.removeConflicts(memberWithId("ship-a"), variant);
 
         verify(variant, never()).removeMod("ML_incompatibleHullmodWarning");
         verify(variant, never()).removeMod("nskr_volatile");
@@ -532,7 +532,7 @@ class SkillTreeHullModTest {
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         when(variant.getTags()).thenReturn(List.of("exiledSector_installed_militarized_subsystems", "some_other_tag"));
 
-        SkillTreeHullMod.syncInstalledHullMods(memberWithId("ship-a"), variant);
+        PhantomInstallSync.sync(memberWithId("ship-a"), variant);
 
         verify(variant).removePermaMod("militarized_subsystems");
         verify(variant).removeTag("exiledSector_installed_militarized_subsystems");
@@ -548,7 +548,7 @@ class SkillTreeHullModTest {
         when(variant.getPermaMods()).thenReturn(new LinkedHashSet<>());
         when(variant.getTags()).thenReturn(List.of("exiledSector_installed_militarized_subsystems"));
 
-        SkillTreeHullMod.syncInstalledHullMods(memberWithId("ship-a"), variant);
+        PhantomInstallSync.sync(memberWithId("ship-a"), variant);
 
         verify(variant, never()).addPermaMod(anyString());
         verify(variant, never()).addTag(anyString());
@@ -565,8 +565,8 @@ class SkillTreeHullModTest {
         when(intact.hasHullMod("militarized_subsystems")).thenReturn(true);
         when(intact.getPermaMods()).thenReturn(new LinkedHashSet<>(List.of("militarized_subsystems")));
 
-        assertTrue(SkillTreeHullMod.restoreInstalledPermaMods(demoted));
-        assertFalse(SkillTreeHullMod.restoreInstalledPermaMods(intact));
+        assertTrue(PhantomInstallSync.restoreInstalledPermaMods(demoted));
+        assertFalse(PhantomInstallSync.restoreInstalledPermaMods(intact));
 
         verify(demoted).addPermaMod("militarized_subsystems");
         verify(intact, never()).addPermaMod(anyString());
@@ -580,7 +580,7 @@ class SkillTreeHullModTest {
         when(variant.getPermaMods()).thenReturn(new LinkedHashSet<>());
         when(variant.getTags()).thenReturn(List.of());
 
-        SkillTreeHullMod.syncInstalledHullMods(memberWithId("ship-a"), variant);
+        PhantomInstallSync.sync(memberWithId("ship-a"), variant);
 
         verify(variant, never()).addPermaMod(anyString());
         verify(variant, never()).addTag(anyString());
@@ -593,7 +593,7 @@ class SkillTreeHullModTest {
         when(variant.getTags()).thenReturn(List.of("exiledSector_installed_militarized_subsystems"));
         when(variant.getSMods()).thenReturn(new LinkedHashSet<>(List.of("militarized_subsystems")));
 
-        SkillTreeHullMod.syncInstalledHullMods(memberWithId("ship-a"), variant);
+        PhantomInstallSync.sync(memberWithId("ship-a"), variant);
 
         verify(variant, never()).removePermaMod(anyString());
         verify(variant).removeTag("exiledSector_installed_militarized_subsystems");
@@ -606,7 +606,7 @@ class SkillTreeHullModTest {
         when(variant.hasHullMod("militarized_subsystems")).thenReturn(true);
         when(variant.hasTag("exiledSector_installed_militarized_subsystems")).thenReturn(true);
 
-        SkillTreeHullMod.removeHullModsConflictingWithAllocatedSkills(memberWithId("ship-a"), variant);
+        HullModConflictResolver.removeConflicts(memberWithId("ship-a"), variant);
 
         verify(variant, never()).removeMod("militarized_subsystems");
         verify(variant, never()).addMod("exiledSector_conflictWarning");
@@ -626,7 +626,7 @@ class SkillTreeHullModTest {
         when(hullSpec.isBuiltInMod("advancedcore")).thenReturn(true);
         when(variant.hasHullMod("advancedcore")).thenReturn(true);
 
-        SkillTreeHullMod.removeHullModsConflictingWithAllocatedSkills(memberWithId("ship-a"), variant);
+        HullModConflictResolver.removeConflicts(memberWithId("ship-a"), variant);
 
         verify(variant, never()).removeMod("advancedcore");
         verify(variant, never()).addMod("exiledSector_conflictWarning");
@@ -649,7 +649,7 @@ class SkillTreeHullModTest {
         when(variant.getSMods()).thenReturn(new LinkedHashSet<>());
         globalMock.when(Global::getSettings).thenReturn(mock(SettingsAPI.class));
 
-        SkillTreeHullMod.removeHullModsConflictingWithAllocatedSkills(memberWithId("ship-a"), variant);
+        HullModConflictResolver.removeConflicts(memberWithId("ship-a"), variant);
 
         verify(variant).removeMod("heavyarmor");
         verify(variant).addMod("exiledSector_conflictWarning");
@@ -663,7 +663,7 @@ class SkillTreeHullModTest {
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         when(variant.hasHullMod("exiledSector_conflictWarning")).thenReturn(false);
 
-        SkillTreeHullMod.removeHullModsConflictingWithAllocatedSkills(member, variant);
+        HullModConflictResolver.removeConflicts(member, variant);
 
         verify(variant, never()).removeMod("exiledSector_conflictWarning");
     }
@@ -788,7 +788,7 @@ class SkillTreeHullModTest {
         ShipVariantAPI sharedVariant = mock(ShipVariantAPI.class);
         when(sharedVariant.getHullMods()).thenReturn(List.of("exiledSector_opSpent_4"));
 
-        SkillTreeHullMod.syncOpSpentHullMod(memberWithId("temporary-copy"), sharedVariant);
+        OpReserveHullMods.sync(memberWithId("temporary-copy"), sharedVariant);
 
         verify(sharedVariant, never()).removeMod(anyString());
         assertEquals(Map.of("real-ship", 4), reserveSlots());
@@ -800,7 +800,7 @@ class SkillTreeHullModTest {
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         when(variant.getHullMods()).thenReturn(List.of("exiledSector_opSpent_4", "exiledSector_opSpent_9", "hardenedshieldemitter"));
 
-        SkillTreeHullMod.syncOpSpentHullMod(memberWithId("reset-ship"), variant);
+        OpReserveHullMods.sync(memberWithId("reset-ship"), variant);
 
         verify(variant).removeMod("exiledSector_opSpent_9");
         verify(variant, never()).removeMod("exiledSector_opSpent_4");
@@ -821,7 +821,7 @@ class SkillTreeHullModTest {
         globalMock.when(Global::getSettings).thenReturn(settings);
         when(settings.getHullModSpec("exiledSector_opSpent_0")).thenReturn(mock(HullModSpecAPI.class));
 
-        SkillTreeHullMod.syncOpSpentHullMod(member, variant);
+        OpReserveHullMods.sync(member, variant);
 
         verify(variant).removeMod("exiledSector_opSpent_7");
         verify(variant, never()).removeMod("hardenedshieldemitter");
@@ -841,8 +841,8 @@ class SkillTreeHullModTest {
         ShipVariantAPI refitWorkingCopy = mock(ShipVariantAPI.class);
         FleetMemberAPI member = memberWithId("ship-a");
 
-        SkillTreeHullMod.syncOpSpentHullMod(member, memberVariant);
-        SkillTreeHullMod.syncOpSpentHullMod(member, refitWorkingCopy);
+        OpReserveHullMods.sync(member, memberVariant);
+        OpReserveHullMods.sync(member, refitWorkingCopy);
 
         verify(memberVariant).removeMod("exiledSector_opSpent_3");
         verify(refitWorkingCopy).removeMod("exiledSector_opSpent_3");
@@ -1251,7 +1251,7 @@ class SkillTreeHullModTest {
 
         new SkillTreeHullMod().advanceInCombat(ship, 0.1f);
 
-        verify(dissipation).modifyMult("exiledSector_skill_phase_anchor_1", 2f);
+        verify(dissipation).modifyMult("exiledSector_skillMult_COMBAT_BOOST_WHILE_PHASED", 2f);
         verify(dissipation, never()).unmodifyMult(anyString());
     }
 
@@ -1290,8 +1290,8 @@ class SkillTreeHullModTest {
 
         new SkillTreeHullMod().advanceInCombat(ship, 0.1f);
 
-        verify(dissipation).modifyMult("exiledSector_skill_phase_anchor_1", 1f);
-        verify(missileAmmoRegen).modifyMult("exiledSector_skill_phase_anchor_1", 1f);
+        verify(dissipation).modifyMult("exiledSector_skillMult_COMBAT_BOOST_WHILE_PHASED", 1f);
+        verify(missileAmmoRegen).modifyMult("exiledSector_skillMult_COMBAT_BOOST_WHILE_PHASED", 1f);
     }
 
     @Test
@@ -1538,8 +1538,8 @@ class SkillTreeHullModTest {
         SettingsAPI settings = mock(SettingsAPI.class);
         globalMock.when(Global::getSettings).thenReturn(settings);
 
-        SkillTreeHullMod.syncOpSpentHullMod(memberWithId("npc-ship"), variant);
-        SkillTreeHullMod.removeHullModsConflictingWithAllocatedSkills(memberWithId("npc-ship"), variant);
+        OpReserveHullMods.sync(memberWithId("npc-ship"), variant);
+        HullModConflictResolver.removeConflicts(memberWithId("npc-ship"), variant);
 
         verify(settings, never()).getHullModSpec(anyString());
         verify(variant, never()).addMod(anyString());

@@ -69,7 +69,7 @@ class MissileReloaderTest {
 
     @Test
     void itIsAConditionalEffectSoItRunsEveryCombatFrame() {
-        assertTrue(reload.isConditional());
+        assertTrue(reload.advancesInCombat());
     }
 
     @Test

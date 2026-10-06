@@ -51,7 +51,8 @@ public final class AuroraBeltRenderer {
                     ? new RingWave(FIRST_PASS_WOBBLE_CYCLES, phaseRad, wobble)
                     : new RingWave(SECOND_PASS_WOBBLE_CYCLES, -phaseRad, wobble);
 
-            RadialBandGL.strip(circle, 0, segments, innerRadius, outerRadius, leftTX, rightTX, texPerSegment, RingWave.NONE, outerWave);
+            RadialBandGL.strip(circle, 0, segments,
+                    new RadialBandGL.StripSpec(innerRadius, outerRadius, leftTX, rightTX, texPerSegment, RingWave.NONE, outerWave));
             GL11.glRotatef(180f, 0f, 0f, 1f);
         }
 

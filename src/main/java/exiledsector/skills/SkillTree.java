@@ -62,10 +62,6 @@ public class SkillTree {
         activate();
     }
 
-    public static Set<String> getDisabledRegions() {
-        return disabledRegions;
-    }
-
     private static void activate() {
         if (declared == null) return;
 

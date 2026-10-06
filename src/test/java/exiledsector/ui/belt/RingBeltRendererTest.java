@@ -4,7 +4,7 @@ import exiledsector.ui.TreeViewport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class RingBeltRendererTest {
 
@@ -20,8 +20,8 @@ class RingBeltRendererTest {
 
     @Test
     void aBeltThatMissesTheScreenOrSurroundsItIsSkipped() {
-        assertNull(RingBeltRenderer.visibleVertexRange(0f, 0f, 100f, 120f, 0f, 360, clip(500f, 500f, 600f, 600f)));
-        assertNull(RingBeltRenderer.visibleVertexRange(0f, 0f, 1000f, 1100f, 0f, 360, clip(-10f, -10f, 10f, 10f)));
+        assertEquals(0, RingBeltRenderer.visibleVertexRange(0f, 0f, 100f, 120f, 0f, 360, clip(500f, 500f, 600f, 600f)).length);
+        assertEquals(0, RingBeltRenderer.visibleVertexRange(0f, 0f, 1000f, 1100f, 0f, 360, clip(-10f, -10f, 10f, 10f)).length);
     }
 
     @Test

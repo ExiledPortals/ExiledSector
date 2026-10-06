@@ -7,6 +7,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import exiledsector.i18n.Translation;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +16,7 @@ public class NpcFleetInspectPlugin implements InteractionDialogPlugin {
     private static final String CLOSE = "exiledSector_inspectLeave";
 
     private final CampaignFleetAPI fleet;
+    private final Map<String, MemoryAPI> memoryMap = new HashMap<>();
     private InteractionDialogAPI dialog;
 
     public NpcFleetInspectPlugin(CampaignFleetAPI fleet) {
@@ -55,6 +57,6 @@ public class NpcFleetInspectPlugin implements InteractionDialogPlugin {
 
     @Override
     public Map<String, MemoryAPI> getMemoryMap() {
-        return null;
+        return memoryMap;
     }
 }

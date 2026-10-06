@@ -11,7 +11,7 @@ public final class SocketStorageFilter {
 
     public enum Status {ALL, FREE, INSTALLED}
 
-    static final List<String> GRADES = List.of("consumer", "industrial", "military");
+    static final List<String> ALL_GRADES = List.of("consumer", "industrial", "military");
 
     static final SocketStorageFilter SESSION = new SocketStorageFilter();
 

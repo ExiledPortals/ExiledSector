@@ -11,18 +11,15 @@ import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillTreeTopology;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.TreeSearch;
 import exiledsector.skills.skilleffect.ShieldSkillEffect;
-import exiledsector.skills.tags.NodeRequirements;
 import exiledsector.skills.tags.ShipProfile;
 import exiledsector.skills.tags.SkillTags;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -97,16 +94,15 @@ public final class NpcSkillTreeBuilder {
     }
 
     static String optionSkipReason(SkillType type, String optionTypeId) {
-        if (!type.isOptional()) {
-            return optionTypeId == null ? null : NpcBuildStep.UNEXPECTED_OPTION + optionTypeId;
+        NodeEligibility.OptionProblem problem = NodeEligibility.optionProblem(type, optionTypeId);
+        if (problem == null) {
+            return null;
         }
-        if (optionTypeId == null) {
-            return NpcBuildStep.MISSING_OPTION;
-        }
-        if (!type.getOptionalOptionIds().contains(optionTypeId) || SkillTree.getType(optionTypeId) == null) {
-            return NpcBuildStep.INVALID_OPTION + optionTypeId;
-        }
-        return null;
+        return switch (problem) {
+            case UNEXPECTED -> NpcBuildStep.UNEXPECTED_OPTION + optionTypeId;
+            case MISSING -> NpcBuildStep.MISSING_OPTION;
+            case INVALID -> NpcBuildStep.INVALID_OPTION + optionTypeId;
+        };
     }
 
     static <T> T weightedPick(List<T> items, ToDoubleFunction<T> weight, Random random) {
@@ -137,21 +133,32 @@ public final class NpcSkillTreeBuilder {
     private record PathStep(SkillNode node, SkillType option, boolean wormholeExit) {
     }
 
-    private static final class Search {
-        private final Map<String, Integer> cost = new LinkedHashMap<>();
-        private final Map<String, String> parent = new HashMap<>();
-        private final Set<String> exits = new HashSet<>();
+    private record Search(TreeSearch tree, List<String> reached) {
+
+        static Search of(TreeSearch tree) {
+            List<String> reached = new ArrayList<>();
+            for (String id : tree.reached()) {
+                if (!tree.isSeed(id) && !tree.isJump(id)) {
+                    reached.add(id);
+                }
+            }
+            return new Search(tree, List.copyOf(reached));
+        }
 
         boolean reaches(String nodeId) {
-            return cost.containsKey(nodeId);
+            return tree.reaches(nodeId) && !tree.isSeed(nodeId) && !tree.isJump(nodeId);
         }
 
         int cost(String nodeId) {
-            return cost.getOrDefault(nodeId, Integer.MAX_VALUE);
+            return reaches(nodeId) ? tree.distance(nodeId) : Integer.MAX_VALUE;
         }
 
-        List<String> reached() {
-            return List.copyOf(cost.keySet());
+        String parent(String nodeId) {
+            return tree.parent(nodeId);
+        }
+
+        boolean isExit(String nodeId) {
+            return tree.isJump(nodeId);
         }
     }
 
@@ -174,7 +181,7 @@ public final class NpcSkillTreeBuilder {
         private final List<String> stripped = new ArrayList<>();
         private final List<String> claimedSockets = new ArrayList<>();
         private final int socketables;
-        private final Predicate<SkillType> locked;
+        private final Predicate<SkillType> lockedWormhole;
         private int budget;
         private int spent;
 
@@ -192,7 +199,8 @@ public final class NpcSkillTreeBuilder {
             this.installed = new TreeSet<>(hullMods.installed());
             this.budget = Math.min(target, maxNodes);
             this.socketables = request.socketables();
-            this.locked = request.locked();
+            Predicate<SkillType> locked = request.locked();
+            this.lockedWormhole = type -> type.getTier() == SkillTier.WORMHOLE && locked.test(type);
         }
 
         void run() {
@@ -434,35 +442,9 @@ public final class NpcSkillTreeBuilder {
         }
 
         private Search search(Set<String> fitInstalled) {
-            Search search = new Search();
             State state = state(fitInstalled);
-            Deque<String> queue = new ArrayDeque<>(new TreeSet<>(data.getAllocatedNodeIds()));
-            Set<String> visited = new HashSet<>(queue);
-            Map<String, Integer> depth = new HashMap<>();
-            queue.forEach(id -> depth.put(id, 0));
-            while (!queue.isEmpty()) {
-                String current = queue.poll();
-                int currentCost = depth.get(current);
-                for (SkillNode candidate : topology.dependents(current)) {
-                    String id = candidate.getId();
-                    if (visited.contains(id) || !traversable(candidate, state)) {
-                        continue;
-                    }
-                    visited.add(id);
-                    depth.put(id, currentCost + 1);
-                    search.cost.put(id, currentCost + 1);
-                    search.parent.put(id, current);
-                    queue.add(id);
-                    String exitId = candidate.getPairedNodeId();
-                    if (candidate.getType().getTier() == SkillTier.WORMHOLE && exitId != null && visited.add(exitId)) {
-                        depth.put(exitId, currentCost + 1);
-                        search.parent.put(exitId, id);
-                        search.exits.add(exitId);
-                        queue.add(exitId);
-                    }
-                }
-            }
-            return search;
+            return Search.of(TreeSearch.from(topology, new TreeSet<>(data.getAllocatedNodeIds()), candidate -> traversable(candidate, state),
+                    candidate -> candidate.getType().getTier() == SkillTier.WORMHOLE ? candidate.getPairedNodeId() : null));
         }
 
         private State state(Set<String> fitInstalled) {
@@ -502,8 +484,8 @@ public final class NpcSkillTreeBuilder {
         }
 
         private boolean usable(SkillNode node, SkillType option, State state) {
-            return NodeEligibility.check(node, option, state.allocated(), state.shieldType(), state.facts()) == null
-                    && NodeRequirements.firstUnmet(node.effectiveTags(option), state.profile()) == null;
+            return NodeEligibility.check(node, option, new NodeEligibility.Context(state.allocated(), state.shieldType(), state.facts(),
+                    lockedWormhole, state.profile())) == null;
         }
 
         private boolean removesShield(SkillType type) {
@@ -521,7 +503,7 @@ public final class NpcSkillTreeBuilder {
 
         private boolean wormholeAllowed(SkillNode wormhole) {
             SkillNode exit = topology.node(wormhole.getPairedNodeId());
-            if (factionRegion == null || exit == null || locked.test(wormhole.getType())) {
+            if (factionRegion == null || exit == null) {
                 return false;
             }
             String here = wormhole.getRegion();
@@ -558,7 +540,7 @@ public final class NpcSkillTreeBuilder {
             String current = targetId;
             while (current != null && !data.isAllocated(current)) {
                 size++;
-                current = search.parent.get(current);
+                current = search.parent(current);
             }
             return size;
         }
@@ -568,8 +550,8 @@ public final class NpcSkillTreeBuilder {
             String current = targetId;
             while (current != null && !data.isAllocated(current)) {
                 SkillNode node = topology.node(current);
-                path.add(new PathStep(node, chosenOptions.get(current), search.exits.contains(current)));
-                current = search.parent.get(current);
+                path.add(new PathStep(node, chosenOptions.get(current), search.isExit(current)));
+                current = search.parent(current);
             }
             Collections.reverse(path);
             return path;

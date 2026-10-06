@@ -15,6 +15,8 @@ import exiledsector.ui.util.BorderedPanel;
 import exiledsector.ui.util.CachedText;
 import exiledsector.ui.util.FallbackSupport;
 import exiledsector.ui.util.HoloTransition;
+import exiledsector.ui.util.ReusableText;
+import exiledsector.ui.util.Rects;
 import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.ui.LazyFont;
 
@@ -59,7 +61,7 @@ final class SkillTreeStatPanel {
     private final String showLabel = Translation.text("ui.stats.show");
     private final String hideLabel = Translation.text("ui.stats.hide");
     private final CachedText<String, GroupTexts> groupTextCache = new CachedText<>();
-    private final Map<String, LazyFont.DrawableString> statGroupHeaderText = new HashMap<>();
+    private final Map<String, ReusableText> statGroupHeaderText = new HashMap<>();
 
     private List<StatGroup> groups;
     private int groupsRevision;
@@ -133,8 +135,7 @@ final class SkillTreeStatPanel {
     boolean contains(float x, float y) {
         if (toggleButton.contains(x, y)) return true;
         PanelLayout layout = drawnLayout;
-        return layout != null && x >= layout.x && x <= layout.x + layout.width
-                && y >= layout.topY - layout.fullHeight && y <= layout.topY;
+        return layout != null && Rects.contains(layout.x, layout.topY - layout.fullHeight, layout.width, layout.fullHeight, x, y);
     }
 
     void render(PositionAPI position, float mouseX, float mouseY, float alphaMult, float toggleAlpha) {
@@ -183,7 +184,7 @@ final class SkillTreeStatPanel {
                 group.labelText.drawable.draw(layout.x + STAT_PANEL_PADDING, group.bodyTextY);
 
                 float rowY = group.bodyTextY;
-                for (LazyFont.DrawableString valueLine : group.valueLines) {
+                for (ReusableText valueLine : group.valueLines) {
                     valueLine.draw(layout.x + layout.width - STAT_PANEL_PADDING, rowY);
                     rowY -= rowStep;
                 }
@@ -206,7 +207,7 @@ final class SkillTreeStatPanel {
         }
 
         List<SkillTreePanelStyle.TooltipText> labelTexts = new ArrayList<>();
-        List<List<LazyFont.DrawableString>> valueLinesList = new ArrayList<>();
+        List<List<ReusableText>> valueLinesList = new ArrayList<>();
         float headerHeight = STAT_PANEL_HEADER_FONT_SIZE * FONT_LINE_HEIGHT_FACTOR;
         float width = 0f;
 
@@ -234,12 +235,12 @@ final class SkillTreeStatPanel {
         for (int i = 0; i < groups.size(); i++) {
             StatGroup group = groups.get(i);
             SkillTreePanelStyle.TooltipText labelText = labelTexts.get(i);
-            List<LazyFont.DrawableString> valueLines = valueLinesList.get(i);
+            List<ReusableText> valueLines = valueLinesList.get(i);
 
             float headerTextY = cursorY;
             float bodyTextY = headerTextY - headerHeight - STAT_PANEL_HEADER_GAP;
 
-            contents.add(new GroupContent(getStatGroupHeaderText(font, group.name), labelText, valueLines, headerTextY, bodyTextY));
+            contents.add(new GroupContent(getStatGroupHeaderText(group.name), labelText, valueLines, headerTextY, bodyTextY));
 
             float groupHeight = headerHeight + STAT_PANEL_HEADER_GAP + labelText.height;
             cursorY = headerTextY - groupHeight - STAT_PANEL_GROUP_GAP;
@@ -254,9 +255,9 @@ final class SkillTreeStatPanel {
         return cachedLayout;
     }
 
-    private LazyFont.DrawableString getStatGroupHeaderText(LazyFont font, String name) {
+    private ReusableText getStatGroupHeaderText(String name) {
         return statGroupHeaderText.computeIfAbsent(name,
-                n -> SkillTreePanelStyle.buildSimpleText(font, n, STAT_PANEL_HEADER_FONT_SIZE, STAT_PANEL_HEADER_TEXT_COLOR, LazyFont.TextAnchor.TOP_CENTER));
+                n -> new ReusableText(STAT_PANEL_HEADER_FONT_SIZE, STAT_PANEL_HEADER_TEXT_COLOR, LazyFont.TextAnchor.TOP_CENTER).set(n));
     }
 
     private GroupTexts getGroupTexts(LazyFont font, StatGroup group) {
@@ -265,11 +266,11 @@ final class SkillTreeStatPanel {
 
     private GroupTexts buildGroupTexts(LazyFont font, StatGroup group) {
         List<String> labels = new ArrayList<>();
-        List<LazyFont.DrawableString> valueLines = new ArrayList<>();
+        List<ReusableText> valueLines = new ArrayList<>();
         float valueWidth = 0f;
         for (StatLine line : group.statLines) {
             labels.add(line.label);
-            valueLines.add(SkillTreePanelStyle.buildSimpleText(font, line.value, STAT_PANEL_FONT_SIZE, line.valueColor, LazyFont.TextAnchor.TOP_RIGHT));
+            valueLines.add(new ReusableText(STAT_PANEL_FONT_SIZE, line.valueColor, LazyFont.TextAnchor.TOP_RIGHT).set(line.value));
             valueWidth = Math.max(valueWidth, font.calcWidth(line.value, STAT_PANEL_FONT_SIZE));
         }
         SkillTreePanelStyle.TooltipText labelText = SkillTreePanelStyle.buildJoinedText(font, labels, STAT_PANEL_FONT_SIZE, STAT_PANEL_LABEL_COLOR);
@@ -415,10 +416,10 @@ final class SkillTreeStatPanel {
 
     private static final class GroupTexts {
         final SkillTreePanelStyle.TooltipText labelText;
-        final List<LazyFont.DrawableString> valueLines;
+        final List<ReusableText> valueLines;
         final float valueWidth;
 
-        GroupTexts(SkillTreePanelStyle.TooltipText labelText, List<LazyFont.DrawableString> valueLines, float valueWidth) {
+        GroupTexts(SkillTreePanelStyle.TooltipText labelText, List<ReusableText> valueLines, float valueWidth) {
             this.labelText = labelText;
             this.valueLines = valueLines;
             this.valueWidth = valueWidth;
@@ -426,14 +427,14 @@ final class SkillTreeStatPanel {
     }
 
     private static final class GroupContent {
-        final LazyFont.DrawableString headerText;
+        final ReusableText headerText;
         final SkillTreePanelStyle.TooltipText labelText;
-        final List<LazyFont.DrawableString> valueLines;
+        final List<ReusableText> valueLines;
         final float headerTextY;
         final float bodyTextY;
 
-        GroupContent(LazyFont.DrawableString headerText, SkillTreePanelStyle.TooltipText labelText,
-                     List<LazyFont.DrawableString> valueLines, float headerTextY, float bodyTextY) {
+        GroupContent(ReusableText headerText, SkillTreePanelStyle.TooltipText labelText,
+                     List<ReusableText> valueLines, float headerTextY, float bodyTextY) {
             this.headerText = headerText;
             this.labelText = labelText;
             this.valueLines = valueLines;

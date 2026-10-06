@@ -1,7 +1,6 @@
 package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -9,7 +8,7 @@ import exiledsector.i18n.StyledText;
 import exiledsector.socketables.Socketable;
 import exiledsector.socketables.SocketableTooltip;
 import exiledsector.ui.TooltipExpansion;
-import exiledsector.ui.util.BorderedPanel;
+import exiledsector.ui.util.FramedPanelPlugin;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -39,7 +38,7 @@ public final class SocketableHoverTooltip {
         hide();
         boolean expanded = TooltipExpansion.isExpandedOrHeld();
         float width = SocketableTooltip.WIDTH;
-        CustomPanelAPI panel = Global.getSettings().createCustom(width, anchor.getHeight(), new Frame());
+        CustomPanelAPI panel = Global.getSettings().createCustom(width, anchor.getHeight(), new FramedPanelPlugin(SocketableHoverTooltip.class));
         TooltipMakerAPI element = panel.createUIElement(width - PAD * 2f, 0f, false);
         SocketableTooltip.write(element, socketable, footer, expanded);
         float contentHeight = element.getHeightSoFar();
@@ -90,23 +89,5 @@ public final class SocketableHoverTooltip {
         shownSocketable = null;
         shownFooter = null;
         shownAnchor = null;
-    }
-
-    private static final class Frame extends BaseCustomUIPanelPlugin {
-
-        private final BorderedPanel frame = new BorderedPanel(SocketableHoverTooltip.class);
-        private PositionAPI position;
-
-        @Override
-        public void positionChanged(PositionAPI position) {
-            this.position = position;
-        }
-
-        @Override
-        public void renderBelow(float alphaMult) {
-            if (position != null) {
-                frame.draw(position.getX(), position.getY(), position.getWidth(), position.getHeight(), alphaMult);
-            }
-        }
     }
 }

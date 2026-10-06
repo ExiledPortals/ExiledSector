@@ -12,6 +12,7 @@ import exiledsector.effects.NpcFleetDialogListener;
 import exiledsector.effects.NpcFleetInflationListener;
 import exiledsector.effects.NpcFleetSweepScript;
 import exiledsector.effects.PhantomHullMods;
+import exiledsector.effects.ResolvedTree;
 import exiledsector.effects.SalvageBonusListener;
 import exiledsector.effects.SkillConflictWarningHullMod;
 import exiledsector.effects.SkillTreeHullMod;
@@ -156,6 +157,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
     public void onGameLoad(boolean newGame) {
         SkillTree.applyDisabledRegions(AreaToggles.disabledRegions());
         SkillDataResolver.clearCache();
+        ResolvedTree.clearCache();
         NpcSocketables.clearCache();
         SocketableStore.get().freezeNames();
         OpSpentSlotManager.releaseUnless(ShipSkillDataManager::hasProgress);

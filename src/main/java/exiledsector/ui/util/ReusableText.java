@@ -1,12 +1,14 @@
-package exiledsector.ui;
+package exiledsector.ui.util;
 
+import exiledsector.ui.SkillTreePanelStyle;
 import org.lazywizard.lazylib.ui.LazyFont;
 
 import java.awt.Color;
 
-final class ReusableText {
+public final class ReusableText {
 
     private final float fontSize;
+    private final LazyFont.TextAnchor anchor;
     private String text;
     private Color color;
     private LazyFont.DrawableString drawable;
@@ -15,27 +17,32 @@ final class ReusableText {
     private int alpha = 255;
     private int drawnAlpha = 255;
 
-    ReusableText(float fontSize, Color color) {
-        this.fontSize = fontSize;
-        this.color = color;
+    public ReusableText(float fontSize, Color color) {
+        this(fontSize, color, LazyFont.TextAnchor.TOP_LEFT);
     }
 
-    ReusableText set(String value) {
+    public ReusableText(float fontSize, Color color, LazyFont.TextAnchor anchor) {
+        this.fontSize = fontSize;
+        this.color = color;
+        this.anchor = anchor;
+    }
+
+    public ReusableText set(String value) {
         text = value;
         return this;
     }
 
-    ReusableText setColor(Color value) {
+    public ReusableText setColor(Color value) {
         color = value;
         return this;
     }
 
-    ReusableText setAlpha(float value) {
+    public ReusableText setAlpha(float value) {
         alpha = Math.round(Math.max(0f, Math.min(1f, value)) * 255f);
         return this;
     }
 
-    boolean draw(float x, float y) {
+    public boolean draw(float x, float y) {
         LazyFont.DrawableString current = current();
         if (current == null) {
             return false;
@@ -44,7 +51,7 @@ final class ReusableText {
         return true;
     }
 
-    float width() {
+    public float width() {
         LazyFont.DrawableString current = current();
         return current == null ? 0f : current.getWidth();
     }
@@ -58,7 +65,7 @@ final class ReusableText {
             if (font == null) {
                 return null;
             }
-            drawable = SkillTreePanelStyle.buildSimpleText(font, text, fontSize, withAlpha(color, alpha));
+            drawable = SkillTreePanelStyle.buildSimpleText(font, text, fontSize, withAlpha(color, alpha), anchor);
             drawnText = text;
             drawnColor = color;
             drawnAlpha = alpha;

@@ -22,6 +22,7 @@ public final class NpcTreeTag {
     private static final int CHARGED_NODE_COST = 1;
     static final String GENERATED = "generated";
     static final String SOCKETS_MARKER = "sockets:";
+    private static final String[] NO_FIELDS = new String[0];
 
     private NpcTreeTag() {
     }
@@ -62,7 +63,7 @@ public final class NpcTreeTag {
 
     public static ShipSkillData decode(String tag) {
         String[] fields = fields(tag);
-        if (fields == null) {
+        if (fields.length == 0) {
             return null;
         }
         int level;
@@ -124,10 +125,10 @@ public final class NpcTreeTag {
     private static String[] fields(String tag) {
         int prefixLength = prefixLength(tag);
         if (prefixLength == 0) {
-            return null;
+            return NO_FIELDS;
         }
         String[] fields = tag.substring(prefixLength).split("\\" + FIELD_SEPARATOR, -1);
-        return (fields.length == 3 || fields.length == 4) && !fields[0].isEmpty() ? fields : null;
+        return (fields.length == 3 || fields.length == 4) && !fields[0].isEmpty() ? fields : NO_FIELDS;
     }
 
     private static int prefixLength(String tag) {

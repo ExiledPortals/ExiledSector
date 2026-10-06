@@ -10,7 +10,7 @@ final class SocketStorageQuery {
     }
 
     static List<SocketStorageRow> apply(List<SocketStorageRow> rows, SocketStorageFilter filter) {
-        String[] words = filter.query.trim().toLowerCase(Locale.ROOT).split("\s+");
+        String[] words = filter.query.trim().toLowerCase(Locale.ROOT).split("\\s+");
         return rows.stream()
                 .filter(row -> matchesStatus(row, filter.status))
                 .filter(row -> filter.rarities.isEmpty() || filter.rarities.contains(row.rarity()))

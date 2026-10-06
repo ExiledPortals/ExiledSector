@@ -73,7 +73,7 @@ public final class FleetCrewLedger {
         }
         sacrificed++;
         if (recorded) {
-            pendingSacrificed = sacrificed;
+            publishSacrificed(sacrificed);
         }
     }
 
@@ -88,8 +88,16 @@ public final class FleetCrewLedger {
         stolen += crew - already;
         remaining += roundUp(stolen) - wholeBefore;
         if (recorded) {
-            pendingStolen = stolen;
+            publishStolen(stolen);
         }
+    }
+
+    private static void publishSacrificed(int value) {
+        pendingSacrificed = value;
+    }
+
+    private static void publishStolen(float value) {
+        pendingStolen = value;
     }
 
     static int roundUp(float crew) {

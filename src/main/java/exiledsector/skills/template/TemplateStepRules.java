@@ -1,5 +1,6 @@
 package exiledsector.skills.template;
 
+import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
@@ -43,10 +44,6 @@ public final class TemplateStepRules {
     }
 
     public static SkillType optionFor(TemplateStep step, SkillType type) {
-        String optionId = step.optionTypeId();
-        if (optionId == null || !type.getOptionalOptionIds().contains(optionId)) {
-            return null;
-        }
-        return SkillTree.getType(optionId);
+        return NodeEligibility.validOption(type, step.optionTypeId());
     }
 }

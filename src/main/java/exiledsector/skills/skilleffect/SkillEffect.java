@@ -17,7 +17,7 @@ public interface SkillEffect {
         return description(magnitude);
     }
 
-    default boolean isConditional() {
+    default boolean advancesInCombat() {
         return false;
     }
 
@@ -68,8 +68,12 @@ public interface SkillEffect {
 
     String name();
 
+    default StatMode statMode() {
+        return null;
+    }
+
     default boolean isMultiplicative() {
-        return name().endsWith("_MULT");
+        return statMode() == StatMode.MULT;
     }
 
     static float addedMultiplier(float totalMagnitude) {

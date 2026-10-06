@@ -2,6 +2,7 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.ui.util.GLDraw;
+import exiledsector.ui.util.ReusableText;
 import org.lazywizard.lazylib.ui.LazyFont;
 
 import java.awt.Color;
@@ -20,12 +21,12 @@ public final class SkillTreeTooltipTable {
     private static final float HEADING_FILL_ALPHA = 0.45f;
     private static final float HEADER_FILL_ALPHA = 0.25f;
 
-    private final LazyFont.DrawableString heading;
-    private final List<LazyFont.DrawableString> headers = new ArrayList<>();
-    private final List<List<LazyFont.DrawableString>> rows = new ArrayList<>();
+    private final ReusableText heading;
+    private final List<ReusableText> headers = new ArrayList<>();
+    private final List<List<ReusableText>> rows = new ArrayList<>();
     private final float[] columnWidths;
 
-    private SkillTreeTooltipTable(LazyFont.DrawableString heading, float[] columnWidths) {
+    private SkillTreeTooltipTable(ReusableText heading, float[] columnWidths) {
         this.heading = heading;
         this.columnWidths = columnWidths;
     }
@@ -42,23 +43,23 @@ public final class SkillTreeTooltipTable {
         }
 
         SkillTreeTooltipTable measured = new SkillTreeTooltipTable(
-                centered(font, table.heading(), HEADING_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR), widths);
+                centered(table.heading(), HEADING_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR), widths);
         for (String header : table.headers()) {
-            measured.headers.add(centered(font, header, FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR));
+            measured.headers.add(centered(header, FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR));
         }
         for (TooltipTable.Row row : table.rows()) {
             Color color = row.highlighted() ? Misc.getHighlightColor() : Misc.getGrayColor();
-            List<LazyFont.DrawableString> cells = new ArrayList<>();
+            List<ReusableText> cells = new ArrayList<>();
             for (String cell : row.cells()) {
-                cells.add(centered(font, cell, FONT_SIZE, color));
+                cells.add(centered(cell, FONT_SIZE, color));
             }
             measured.rows.add(cells);
         }
         return measured;
     }
 
-    private static LazyFont.DrawableString centered(LazyFont font, String text, float size, Color color) {
-        return SkillTreePanelStyle.buildSimpleText(font, text, size, color, LazyFont.TextAnchor.TOP_CENTER);
+    private static ReusableText centered(String text, float size, Color color) {
+        return new ReusableText(size, color, LazyFont.TextAnchor.TOP_CENTER).set(text);
     }
 
     public float width() {
@@ -89,7 +90,7 @@ public final class SkillTreeTooltipTable {
         }
     }
 
-    private static void drawRow(List<LazyFont.DrawableString> cells, float x, float rowTop, float[] widths) {
+    private static void drawRow(List<ReusableText> cells, float x, float rowTop, float[] widths) {
         float textTop = rowTop - (ROW_HEIGHT - FONT_SIZE) / 2f;
         float cellLeft = x;
         for (int i = 0; i < cells.size(); i++) {

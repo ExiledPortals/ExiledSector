@@ -4,12 +4,13 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.util.FaderUtil;
 import com.fs.starfarer.api.util.Misc;
-import exiledsector.ui.util.CachedText;
+import exiledsector.ui.util.ReusableText;
 import exiledsector.ui.util.FallbackSupport;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.LineBatch;
 import exiledsector.ui.util.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
+import exiledsector.ui.util.Rects;
 import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.ui.LazyFont;
 import org.lwjgl.opengl.GL11;
@@ -52,7 +53,8 @@ final class SkillTreeReadoutBar {
     private final int row;
     private final FaderUtil hoverFader = new FaderUtil(HOVER_FADE_IN, HOVER_FADE_OUT);
 
-    private final CachedText<Void, LabelTexts> labelCache = new CachedText<>();
+    private final ReusableText labelText = new ReusableText(FONT_SIZE, TEXT_COLOR);
+    private final ReusableText labelShadowText = new ReusableText(FONT_SIZE, TEXT_SHADOW_COLOR);
     private final LineBatch bevelShadowLines = new LineBatch(EDGE_LINE_WIDTH);
     private final LineBatch bevelHighlightLines = new LineBatch(EDGE_LINE_WIDTH);
     private final LineBatch cornerAccentLines = new LineBatch(1f);
@@ -97,9 +99,7 @@ final class SkillTreeReadoutBar {
 
     boolean isHovered(PositionAPI position, float x, float y) {
         if (position == null) return false;
-        float left = left(position);
-        float bottom = bottom(position);
-        return x >= left && x <= left + BAR_WIDTH && y >= bottom && y <= bottom + BAR_HEIGHT;
+        return Rects.contains(left(position), bottom(position), BAR_WIDTH, BAR_HEIGHT, x, y);
     }
 
     private static float left(PositionAPI position) {
@@ -142,7 +142,7 @@ final class SkillTreeReadoutBar {
         drawCornerAccents(left, bottom, barColor, alphaMult);
 
         String label = labelOverride != null ? labelOverride : spentOfTotalLabel();
-        drawLabel(font, label, left, bottom);
+        drawLabel(font, label, left, bottom, alphaMult);
     }
 
     private String spentOfTotalLabel() {
@@ -241,17 +241,14 @@ final class SkillTreeReadoutBar {
                 (byte) (int) (255f * Math.max(0f, Math.min(1f, alpha))));
     }
 
-    private void drawLabel(LazyFont font, String label, float left, float bottom) {
+    private void drawLabel(LazyFont font, String label, float left, float bottom, float alphaMult) {
         float textWidth = font.calcWidth(label, FONT_SIZE);
         float textHeight = FONT_SIZE * SkillTreePanelStyle.FONT_LINE_HEIGHT_FACTOR;
         float textX = left + (BAR_WIDTH - textWidth) / 2f;
         float textY = bottom + (BAR_HEIGHT + textHeight) / 2f;
 
-        LabelTexts texts = labelCache.get(label, () -> new LabelTexts(
-                SkillTreePanelStyle.buildSimpleText(font, label, FONT_SIZE, TEXT_COLOR),
-                SkillTreePanelStyle.buildSimpleText(font, label, FONT_SIZE, TEXT_SHADOW_COLOR)));
-        texts.labelShadowText.draw(textX + TEXT_SHADOW_OFFSET_X, textY + TEXT_SHADOW_OFFSET_Y);
-        texts.labelText.draw(textX, textY);
+        labelShadowText.set(label).setAlpha(alphaMult).draw(textX + TEXT_SHADOW_OFFSET_X, textY + TEXT_SHADOW_OFFSET_Y);
+        labelText.set(label).setAlpha(alphaMult).draw(textX, textY);
     }
 
     private Color getFillColor() {
@@ -271,15 +268,5 @@ final class SkillTreeReadoutBar {
     private Color colorOrFallback(String settingsKey, Color fallback) {
         return FallbackSupport.getOrFallback(() -> Global.getSettings().getColor(settingsKey), fallback,
                 Logger.getLogger(SkillTreeReadoutBar.class), "Failed to read settings colour " + settingsKey);
-    }
-
-    private static final class LabelTexts {
-        final LazyFont.DrawableString labelText;
-        final LazyFont.DrawableString labelShadowText;
-
-        LabelTexts(LazyFont.DrawableString labelText, LazyFont.DrawableString labelShadowText) {
-            this.labelText = labelText;
-            this.labelShadowText = labelShadowText;
-        }
     }
 }

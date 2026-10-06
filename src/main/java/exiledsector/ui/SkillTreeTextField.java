@@ -1,6 +1,7 @@
 package exiledsector.ui;
 
 import com.fs.starfarer.api.input.InputEventAPI;
+import exiledsector.ui.util.ReusableText;
 import org.lazywizard.lazylib.ui.LazyFont;
 import org.lwjgl.input.Keyboard;
 
@@ -65,7 +66,7 @@ final class SkillTreeTextField {
             if (text.isEmpty()) {
                 return KeyResult.CONSUMED;
             }
-            text = text.substring(0, text.offsetByCodePoints(text.length(), -1));
+            text = withoutLastCodePoint(text);
             return KeyResult.EDITED;
         }
         if (keyCode == Keyboard.KEY_ESCAPE) {
@@ -125,7 +126,7 @@ final class SkillTreeTextField {
     static String fitEnd(String value, double maxWidth, ToDoubleFunction<String> widthOf) {
         String fitted = value;
         while (!fitted.isEmpty() && widthOf.applyAsDouble(fitted) > maxWidth) {
-            fitted = fitted.substring(fitted.offsetByCodePoints(0, 1));
+            fitted = fitted.substring(Character.charCount(fitted.codePointAt(0)));
         }
         return fitted;
     }
@@ -133,8 +134,12 @@ final class SkillTreeTextField {
     static String fitStart(String value, double maxWidth, ToDoubleFunction<String> widthOf) {
         String fitted = value;
         while (!fitted.isEmpty() && widthOf.applyAsDouble(fitted) > maxWidth) {
-            fitted = fitted.substring(0, fitted.offsetByCodePoints(fitted.length(), -1));
+            fitted = withoutLastCodePoint(fitted);
         }
         return fitted;
+    }
+
+    private static String withoutLastCodePoint(String value) {
+        return value.substring(0, value.length() - Character.charCount(value.codePointBefore(value.length())));
     }
 }

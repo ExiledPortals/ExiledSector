@@ -30,8 +30,20 @@ interface BackedSkillEffect extends SkillEffect {
     }
 
     @Override
-    default boolean isConditional() {
-        return backing() != null && backing().isConditional();
+    default void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+        if (backing() != null) {
+            backing().applyToFighterSpawnedByShip(fighter, parentShip, modId, magnitude);
+        }
+    }
+
+    @Override
+    default StatMode statMode() {
+        return backing() == null ? null : backing().mode();
+    }
+
+    @Override
+    default boolean advancesInCombat() {
+        return backing() != null && backing().advancesInCombat();
     }
 
     @Override

@@ -7,11 +7,12 @@ import exiledsector.skills.template.TemplateFilter;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 final class TemplateListState {
 
     private final String rootNodeId;
-    private final EnumSet<HullSize> hullSizes;
+    private final Set<HullSize> hullSizes;
     private Collection<SkillTreeTemplate> templates;
     private List<SkillTreeTemplate> shown;
     private boolean anyForRoot;

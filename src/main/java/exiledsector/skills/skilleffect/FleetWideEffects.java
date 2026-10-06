@@ -121,11 +121,6 @@ public final class FleetWideEffects {
     }
 
     private static void recomputeExtendedPhaseField(CampaignFleetAPI fleet) {
-
-        // This replaces vanilla's own Phase Field fleet-wide calculation (which only ever counts
-        // real phase ships) with one that also folds in ships with this node, so both share a
-        // single pool and a single floor instead of stacking two independently-clamped
-        // multipliers (which could otherwise compound below vanilla's intended floor).
         fleet.getStats().getDetectedRangeMod().unmodifyMult(PhaseField.MOD_KEY);
 
         if (fleet.isTransponderOn()) {

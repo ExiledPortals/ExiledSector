@@ -9,17 +9,15 @@ public class StaticImage extends SkillTreeObject {
     private final String imagePath;
     private final Rotation rotation;
 
-    public StaticImage(String id, float x, float y, float width, float height, String imagePath, Rotation rotation) {
-        this(id, x, y, width, height, imagePath, rotation, null);
+    public record Shape(float width, float height, String imagePath, Rotation rotation) {
     }
 
-    public StaticImage(String id, float x, float y, float width, float height, String imagePath, Rotation rotation,
-                       List<String> tags) {
+    public StaticImage(String id, float x, float y, Shape shape, List<String> tags) {
         super(id, x, y, tags);
-        this.width = width;
-        this.height = height;
-        this.imagePath = imagePath;
-        this.rotation = rotation;
+        this.width = shape.width();
+        this.height = shape.height();
+        this.imagePath = shape.imagePath();
+        this.rotation = shape.rotation();
     }
 
     public float getWidth() {

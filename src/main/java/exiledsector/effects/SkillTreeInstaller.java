@@ -75,7 +75,7 @@ public class SkillTreeInstaller implements EveryFrameScript {
                 changed = true;
             }
             changed |= ensureAppliesLast(editedVariant);
-            changed |= SkillTreeHullMod.restoreInstalledPermaMods(editedVariant);
+            changed |= PhantomInstallSync.restoreInstalledPermaMods(editedVariant);
         }
         return changed;
     }
@@ -90,7 +90,7 @@ public class SkillTreeInstaller implements EveryFrameScript {
     }
 
     private static boolean restoreInstalledHullMods(FleetMemberAPI member) {
-        if (!SkillTreeHullMod.restoreInstalledPermaMods(member.getVariant())) {
+        if (!PhantomInstallSync.restoreInstalledPermaMods(member.getVariant())) {
             return false;
         }
         member.setStatUpdateNeeded(true);

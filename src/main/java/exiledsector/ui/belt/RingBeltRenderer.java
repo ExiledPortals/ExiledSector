@@ -11,6 +11,7 @@ public final class RingBeltRenderer {
     private static final float PIXELS_PER_SEGMENT = 5f;
     private static final float MAX_TILE_COUNT = 60f;
     private static final double FULL_TURN = 2 * Math.PI;
+    private static final int[] HIDDEN = new int[0];
 
     private RingBeltRenderer() {
     }
@@ -26,7 +27,7 @@ public final class RingBeltRenderer {
         float circumference = (float) (FULL_TURN * middleRadius);
         int segments = Math.max(1, RadialBandGL.computeSegments(circumference, PIXELS_PER_SEGMENT, 0));
         int[] range = visibleVertexRange(band.center().x, band.center().y, innerRadius, outerRadius, rotationDeg, segments, clip);
-        if (range == null) {
+        if (range.length == 0) {
             return;
         }
         float thickness = outerRadius - innerRadius;
@@ -40,17 +41,15 @@ public final class RingBeltRenderer {
         RadialBandGL.begin(texture, band.center().x, band.center().y, GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, color, alphaMult);
         GL11.glRotatef(rotationDeg, 0f, 0f, 1f);
         UnitCircle circle = UnitCircle.of(segments);
+        RadialBandGL.StripSpec spec = new RadialBandGL.StripSpec(innerRadius, outerRadius, 0f, 1f, texPerSegment, RingWave.NONE,
+                RingWave.NONE);
         if (range[1] <= segments) {
-            drawStrip(circle, range[0], range[1], texPerSegment, innerRadius, outerRadius);
+            RadialBandGL.strip(circle, range[0], range[1], spec);
         } else {
-            drawStrip(circle, range[0], segments, texPerSegment, innerRadius, outerRadius);
-            drawStrip(circle, 0, range[1] - segments, texPerSegment, innerRadius, outerRadius);
+            RadialBandGL.strip(circle, range[0], segments, spec);
+            RadialBandGL.strip(circle, 0, range[1] - segments, spec);
         }
         RadialBandGL.end();
-    }
-
-    private static void drawStrip(UnitCircle circle, int first, int last, float texPerSegment, float innerRadius, float outerRadius) {
-        RadialBandGL.strip(circle, first, last, innerRadius, outerRadius, 0f, 1f, texPerSegment, RingWave.NONE, RingWave.NONE);
     }
 
     static int[] visibleVertexRange(float cx, float cy, float innerRadius, float outerRadius, float rotationDeg, int segments,
@@ -62,7 +61,7 @@ public final class RingBeltRenderer {
         float nearestY = Math.max(clip.bottom(), Math.min(cy, clip.top()));
         double nearest = Math.hypot(cx - nearestX, cy - nearestY);
         if (nearest > outerRadius) {
-            return null;
+            return HIDDEN;
         }
         float[] cornerXs = {clip.left(), clip.right(), clip.right(), clip.left()};
         float[] cornerYs = {clip.bottom(), clip.bottom(), clip.top(), clip.top()};
@@ -71,7 +70,7 @@ public final class RingBeltRenderer {
             farthest = Math.max(farthest, Math.hypot(cornerXs[i] - cx, cornerYs[i] - cy));
         }
         if (farthest < innerRadius) {
-            return null;
+            return HIDDEN;
         }
         if (nearest == 0) {
             return new int[]{0, segments};

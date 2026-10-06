@@ -14,6 +14,8 @@ import java.util.Set;
 
 public class SkillType {
 
+    private static final String KEY_PREFIX = "skillType.";
+
     private final String id;
     private final String displayName;
     private final String iconPath;
@@ -172,7 +174,7 @@ public class SkillType {
     }
 
     public String getDisplayName() {
-        return Translation.data("skillType." + id + ".name", displayName);
+        return Translation.data(KEY_PREFIX + id + ".name", displayName);
     }
 
     public String getSourceName() {
@@ -180,11 +182,11 @@ public class SkillType {
     }
 
     public StyledText getDescriptionText() {
-        return Translation.dataStyled("skillType." + id + ".description", descriptionOverride);
+        return Translation.dataStyled(KEY_PREFIX + id + ".description", descriptionOverride);
     }
 
     public String getFlavourText() {
-        return flavourOverride == null || flavourOverride.isBlank() ? null : Translation.data("skillType." + id + ".flavour", flavourOverride);
+        return flavourOverride == null || flavourOverride.isBlank() ? null : Translation.data(KEY_PREFIX + id + ".flavour", flavourOverride);
     }
 
     public String getIconPath() {
@@ -221,10 +223,6 @@ public class SkillType {
 
     public String getDescriptionOverride() {
         return descriptionOverride;
-    }
-
-    public String getFlavourOverride() {
-        return flavourOverride;
     }
 
     public String getTodo() {

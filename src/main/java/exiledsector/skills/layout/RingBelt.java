@@ -9,18 +9,15 @@ public class RingBelt extends SkillTreeObject {
     private final String ringArtPath;
     private final Rotation rotation;
 
-    public RingBelt(String id, float x, float y, float innerRadius, float outerRadius, String ringArtPath,
-                     Rotation rotation) {
-        this(id, x, y, innerRadius, outerRadius, ringArtPath, rotation, null);
+    public record Shape(float innerRadius, float outerRadius, String ringArtPath, Rotation rotation) {
     }
 
-    public RingBelt(String id, float x, float y, float innerRadius, float outerRadius, String ringArtPath,
-                    Rotation rotation, List<String> tags) {
+    public RingBelt(String id, float x, float y, Shape shape, List<String> tags) {
         super(id, x, y, tags);
-        this.innerRadius = innerRadius;
-        this.outerRadius = outerRadius;
-        this.ringArtPath = ringArtPath;
-        this.rotation = rotation;
+        this.innerRadius = shape.innerRadius();
+        this.outerRadius = shape.outerRadius();
+        this.ringArtPath = shape.ringArtPath();
+        this.rotation = shape.rotation();
     }
 
     public float getInnerRadius() {

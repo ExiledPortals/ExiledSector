@@ -45,9 +45,9 @@ class TreeRegionFilterTest {
         curves.put(SkillTree.curveKey("gate_in", "heart"), new ConnectorCurve(3f, 3f));
         return new SkillTreeLoader.ParsedTree(nodes, nodes.size(), curves,
                 Set.of(SkillTree.curveKey("root", "gate_out"), SkillTree.curveKey("root", "plain")),
-                List.of(new StaticImage("cloud", 0f, 0f, 1f, 1f, "a.png", new Rotation(0f, 0f), List.of("core")),
-                        new StaticImage("untagged", 0f, 0f, 1f, 1f, "a.png", new Rotation(0f, 0f))),
-                List.of(new RingBelt("belt", 0f, 0f, 1f, 2f, "a.png", new Rotation(0f, 0f), List.of("enigma"))),
+                List.of(new StaticImage("cloud", 0f, 0f, new StaticImage.Shape(1f, 1f, "a.png", new Rotation(0f, 0f)), List.of("core")),
+                        new StaticImage("untagged", 0f, 0f, new StaticImage.Shape(1f, 1f, "a.png", new Rotation(0f, 0f)), List.of())),
+                List.of(new RingBelt("belt", 0f, 0f, new RingBelt.Shape(1f, 2f, "a.png", new Rotation(0f, 0f)), List.of("enigma"))),
                 List.of(new Star("sun", 0f, 0f, 1f, "star_yellow", null, List.of("core")),
                         new Star("frozen", 0f, 0f, 1f, "star_yellow", null, List.of("enigma"))));
     }

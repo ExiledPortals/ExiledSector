@@ -6,6 +6,8 @@ import exiledsector.skills.SkillType;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.GLDraw;
+import exiledsector.ui.util.ReusableText;
+import exiledsector.ui.util.Rects;
 import org.lazywizard.lazylib.ui.LazyFont;
 
 import java.util.ArrayList;
@@ -27,7 +29,7 @@ final class SkillTreeNodeDropdownRenderer {
     private static final float DROPDOWN_HOVER_ALPHA = 0.35f;
 
     private final SkillTreePanelStyle style;
-    private final Map<String, LazyFont.DrawableString> dropdownRowText = new HashMap<>();
+    private final Map<String, ReusableText> dropdownRowText = new HashMap<>();
     private SkillNode openNode;
 
     SkillTreeNodeDropdownRenderer(SkillTreePanelStyle style) {
@@ -85,9 +87,8 @@ final class SkillTreeNodeDropdownRenderer {
             if (mouseKnown && row.contains(mouseX, mouseY)) {
                 drawDropdownRowHighlight(row, alphaMult);
             }
-            LazyFont.DrawableString text = getDropdownRowText(font, row.option);
             float textY = row.y + row.height / 2f + (DROPDOWN_FONT_SIZE * FONT_LINE_HEIGHT_FACTOR) / 2f;
-            text.draw(row.x + DROPDOWN_ROW_PADDING, textY);
+            dropdownRowText(row.option).setAlpha(alphaMult).draw(row.x + DROPDOWN_ROW_PADDING, textY);
         }
     }
 
@@ -126,9 +127,9 @@ final class SkillTreeNodeDropdownRenderer {
         GLDraw.fillQuad(row.x, row.y, row.width, row.height, GLOW_COLOR, DROPDOWN_HOVER_ALPHA * alphaMult);
     }
 
-    private LazyFont.DrawableString getDropdownRowText(LazyFont font, SkillType option) {
+    private ReusableText dropdownRowText(SkillType option) {
         return dropdownRowText.computeIfAbsent(option.getId(),
-                id -> SkillTreePanelStyle.buildSimpleText(font, option.getDisplayName(), DROPDOWN_FONT_SIZE, TOOLTIP_BODY_COLOR));
+                id -> new ReusableText(DROPDOWN_FONT_SIZE, TOOLTIP_BODY_COLOR).set(option.getDisplayName()));
     }
 
     private static final class DropdownRow {
@@ -147,7 +148,7 @@ final class SkillTreeNodeDropdownRenderer {
         }
 
         boolean contains(float px, float py) {
-            return px >= x && px <= x + width && py >= y && py <= y + height;
+            return Rects.contains(x, y, width, height, px, py);
         }
     }
 }

@@ -63,6 +63,11 @@ public final class ScopedWeaponEffect implements SkillEffect {
         return mode;
     }
 
+    @Override
+    public StatMode statMode() {
+        return mode;
+    }
+
     void applyTo(MutableShipStatsAPI stats, String modId, float magnitude) {
         family.target(scope).apply(stats, modId, mode, magnitude);
     }

@@ -25,7 +25,7 @@ public final class NpcTreeRecords {
         return records;
     }
 
-    public static boolean isLevelled(String record) {
-        return record != null && record.startsWith(NpcTreeTag.PREFIX);
+    public static boolean isLevelled(String value) {
+        return value != null && value.startsWith(NpcTreeTag.PREFIX);
     }
 }

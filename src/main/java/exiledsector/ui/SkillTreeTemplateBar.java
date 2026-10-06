@@ -2,6 +2,7 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.i18n.Translation;
+import exiledsector.ui.util.ReusableText;
 
 import java.awt.Color;
 import java.util.HashMap;

@@ -42,8 +42,8 @@ public final class WormholeBandRenderer {
 
         RadialBandGL.begin(texture, band.center().x, band.center().y, GL11.GL_SRC_ALPHA, GL11.GL_ONE, color, alphaMult);
         GL11.glRotatef(rotationDeg, 0f, 0f, 1f);
-        RadialBandGL.strip(UnitCircle.of(segments), 0, segments, innerRadius, outerRadius, leftTX, rightTX, texPerSegment,
-                new RingWave(WOBBLE_FREQUENCY, phaseRad, wobble), RingWave.NONE);
+        RadialBandGL.strip(UnitCircle.of(segments), 0, segments, new RadialBandGL.StripSpec(innerRadius, outerRadius, leftTX, rightTX,
+                texPerSegment, new RingWave(WOBBLE_FREQUENCY, phaseRad, wobble), RingWave.NONE));
         RadialBandGL.end();
     }
 }

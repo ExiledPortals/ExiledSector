@@ -21,6 +21,7 @@ import exiledsector.socketables.SocketableStore;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.TreeViewport;
+import exiledsector.ui.util.ReusableText;
 import lunalib.lunaRefit.BaseRefitButton;
 import org.lazywizard.lazylib.ui.LazyFont;
 
@@ -64,7 +65,8 @@ public final class SkillTreeNodeRenderer {
 
     private SkillType lastChosenOptionalOption;
     private String targetedSocketId;
-    private LazyFont.DrawableString startingRootPrompt;
+    private final ReusableText startingRootPrompt = new ReusableText(SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE,
+            SkillTreePanelStyle.TOOLTIP_TITLE_COLOR, LazyFont.TextAnchor.BOTTOM_CENTER).set(Translation.text("ui.node.startingRootPrompt"));
     private NodeAllocator.Snapshot snapshot;
     private SkillTreeTemplate template;
     private Set<String> templateNodeIds = Set.of();
@@ -341,22 +343,14 @@ public final class SkillTreeNodeRenderer {
         }
 
         if (isChoosingStartingRoot()) {
-            renderStartingRootPrompt(viewport.centerX(), viewport.screenY(rootChoice.promptOffsetY()));
+            renderStartingRootPrompt(viewport.centerX(), viewport.screenY(rootChoice.promptOffsetY()), alphaMult);
         }
 
         dropdownRenderer.render(viewport, mouseX, mouseY, mouseKnown, alphaMult);
     }
 
-    private void renderStartingRootPrompt(float x, float y) {
-        LazyFont font = SkillTreePanelStyle.font();
-        if (font == null) {
-            return;
-        }
-        if (startingRootPrompt == null) {
-            startingRootPrompt = SkillTreePanelStyle.buildSimpleText(font, Translation.text("ui.node.startingRootPrompt"),
-                    SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR, LazyFont.TextAnchor.BOTTOM_CENTER);
-        }
-        startingRootPrompt.draw(x, y);
+    private void renderStartingRootPrompt(float x, float y, float alphaMult) {
+        startingRootPrompt.setAlpha(alphaMult).draw(x, y);
     }
 
     private void renderNode(SkillNode node, TreeViewport viewport, float alphaMult, NodeAllocator.Snapshot allocation) {
@@ -502,10 +496,6 @@ public final class SkillTreeNodeRenderer {
     private static String socketedIcon(ShipSkillData data, SkillNode node) {
         Socketable socketed = SocketableStore.lookup(data.getSocketedItem(node.getId()));
         return socketed == null ? null : socketed.iconPath();
-    }
-
-    public Socketable socketedItem(SkillNode node) {
-        return SocketableStore.lookup(allocator.data().getSocketedItem(node.getId()));
     }
 
     public boolean installInSocket(SkillNode node, Socketable socketable) {

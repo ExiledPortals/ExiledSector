@@ -80,51 +80,55 @@ public class SkillTreeStarRenderer {
         if (stars.isEmpty()) return;
 
         for (Star star : stars) {
-            PlanetSpecAPI spec = resolveSpec(star.getStarType());
-            String texturePath = spec == null ? null : spec.getTexture();
-            SpriteAPI texture = texturePath == null || texturePath.isEmpty() ? null : spriteCache.texture(texturePath);
-            if (texture == null) {
-                continue;
-            }
-
-            float screenX = viewport.screenX(star.getX());
-            float screenY = viewport.screenY(star.getY());
-            float radius = radiusOf(star) * zoom;
-            if (!viewport.isVisible(screenX, screenY, radius + 0.5f * zoom)) {
-                continue;
-            }
-            float angle = angleById.getOrDefault(star.getId(), 0f);
-            Color discColor = resolveColor(star, spec.getPlanetColor());
-
-            GL11.glEnable(GL11.GL_TEXTURE_2D);
-            GL11.glEnable(GL11.GL_BLEND);
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            GL11.glEnable(GL11.GL_CULL_FACE);
-            // TODO: if the star renders inside-out in-game, swap GL11.GL_CW <-> GL11.GL_CCW here.
-            GL11.glFrontFace(GL11.GL_CW);
-            GL11.glCullFace(GL11.GL_BACK);
-
-            GL11.glPushMatrix();
-            GL11.glTranslatef(screenX, screenY, 0f);
-            GL11.glRotatef(spec.getTilt(), 0f, 0f, 1f);
-            GL11.glRotatef(spec.getPitch(), 1f, 0f, 0f);
-            GL11.glRotatef(angle, 0f, 1f, 0f);
-            GL11.glRotatef(-90f, 1f, 0f, 0f);
-            texture.bindTexture();
-
-            Misc.setColor(discColor, alphaMult);
-            sphere.draw(radius);
-            Misc.setColor(discColor, alphaMult * RIM_ALPHA_MULT);
-            sphere.draw(radius + 0.25f * zoom);
-            sphere.draw(radius + 0.5f * zoom);
-
-            GL11.glPopMatrix();
-
-            GL11.glFrontFace(GL11.GL_CCW);
-            GL11.glDisable(GL11.GL_CULL_FACE);
-            GL11.glDisable(GL11.GL_BLEND);
-            GL11.glDisable(GL11.GL_TEXTURE_2D);
+            renderStarDisc(star, viewport, zoom, alphaMult);
         }
+    }
+
+    private void renderStarDisc(Star star, TreeViewport viewport, float zoom, float alphaMult) {
+        PlanetSpecAPI spec = resolveSpec(star.getStarType());
+        String texturePath = spec == null ? null : spec.getTexture();
+        SpriteAPI texture = texturePath == null || texturePath.isEmpty() ? null : spriteCache.texture(texturePath);
+        if (texture == null) {
+            return;
+        }
+
+        float screenX = viewport.screenX(star.getX());
+        float screenY = viewport.screenY(star.getY());
+        float radius = radiusOf(star) * zoom;
+        if (!viewport.isVisible(screenX, screenY, radius + 0.5f * zoom)) {
+            return;
+        }
+        float angle = angleById.getOrDefault(star.getId(), 0f);
+        Color discColor = resolveColor(star, spec.getPlanetColor());
+
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glEnable(GL11.GL_CULL_FACE);
+        // TODO: if the star renders inside-out in-game, swap GL11.GL_CW <-> GL11.GL_CCW here.
+        GL11.glFrontFace(GL11.GL_CW);
+        GL11.glCullFace(GL11.GL_BACK);
+
+        GL11.glPushMatrix();
+        GL11.glTranslatef(screenX, screenY, 0f);
+        GL11.glRotatef(spec.getTilt(), 0f, 0f, 1f);
+        GL11.glRotatef(spec.getPitch(), 1f, 0f, 0f);
+        GL11.glRotatef(angle, 0f, 1f, 0f);
+        GL11.glRotatef(-90f, 1f, 0f, 0f);
+        texture.bindTexture();
+
+        Misc.setColor(discColor, alphaMult);
+        sphere.draw(radius);
+        Misc.setColor(discColor, alphaMult * RIM_ALPHA_MULT);
+        sphere.draw(radius + 0.25f * zoom);
+        sphere.draw(radius + 0.5f * zoom);
+
+        GL11.glPopMatrix();
+
+        GL11.glFrontFace(GL11.GL_CCW);
+        GL11.glDisable(GL11.GL_CULL_FACE);
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
     }
 
     public void renderAtmosphere(TreeViewport viewport, float alphaMult) {
@@ -198,36 +202,40 @@ public class SkillTreeStarRenderer {
         if (texture == null) return;
 
         for (Star star : stars) {
-            PlanetSpecAPI spec = resolveSpec(star.getStarType());
-            if (spec == null) continue;
-
-            float detailRadius = star.getRadius() * SmoothZoom.MAX_ZOOM;
-            float screenScale = zoom * radiusOf(star) / star.getRadius() / SmoothZoom.MAX_ZOOM;
-
-            float screenX = viewport.screenX(star.getX());
-            float screenY = viewport.screenY(star.getY());
-            if (!viewport.isVisible(screenX, screenY, auroraReach(detailRadius) * screenScale)) {
-                continue;
-            }
-            Color coronaColor = resolveColor(star, spec.getCoronaColor());
-
-            AuroraRenderer renderer = getOrCreateAurora(star);
-            AuroraDelegate delegate = auroraDelegateById.get(star.getId());
-            delegate.centerLoc.set(0f, 0f);
-            delegate.innerRadius = detailRadius * AURORA_INNER_RADIUS_MULT;
-            delegate.outerRadius = detailRadius * AURORA_OUTER_RADIUS_MULT;
-            delegate.color = Misc.setAlpha(coronaColor, AURORA_ALPHA);
-            delegate.texture = texture;
-
-            GL11.glPushMatrix();
-            GL11.glTranslatef(screenX, screenY, 0f);
-            GL11.glScalef(screenScale, screenScale, 1f);
-            renderer.render(alphaMult);
-            GL11.glPopMatrix();
-
-            GL11.glDisable(GL11.GL_BLEND);
-            GL11.glDisable(GL11.GL_TEXTURE_2D);
+            renderStarAurora(star, viewport, zoom, alphaMult, texture);
         }
+    }
+
+    private void renderStarAurora(Star star, TreeViewport viewport, float zoom, float alphaMult, SpriteAPI texture) {
+        PlanetSpecAPI spec = resolveSpec(star.getStarType());
+        if (spec == null) return;
+
+        float detailRadius = star.getRadius() * SmoothZoom.MAX_ZOOM;
+        float screenScale = zoom * radiusOf(star) / star.getRadius() / SmoothZoom.MAX_ZOOM;
+
+        float screenX = viewport.screenX(star.getX());
+        float screenY = viewport.screenY(star.getY());
+        if (!viewport.isVisible(screenX, screenY, auroraReach(detailRadius) * screenScale)) {
+            return;
+        }
+        Color coronaColor = resolveColor(star, spec.getCoronaColor());
+
+        AuroraRenderer renderer = getOrCreateAurora(star);
+        AuroraDelegate delegate = auroraDelegateById.get(star.getId());
+        delegate.centerLoc.set(0f, 0f);
+        delegate.innerRadius = detailRadius * AURORA_INNER_RADIUS_MULT;
+        delegate.outerRadius = detailRadius * AURORA_OUTER_RADIUS_MULT;
+        delegate.color = Misc.setAlpha(coronaColor, AURORA_ALPHA);
+        delegate.texture = texture;
+
+        GL11.glPushMatrix();
+        GL11.glTranslatef(screenX, screenY, 0f);
+        GL11.glScalef(screenScale, screenScale, 1f);
+        renderer.render(alphaMult);
+        GL11.glPopMatrix();
+
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
     }
 
     private static float auroraReach(float radius) {
@@ -271,11 +279,7 @@ public class SkillTreeStarRenderer {
     }
 
     private Color resolveColor(Star star, Color fallback) {
-        Map<Color, Color> byFallback = resolvedColors.get(star.getId());
-        if (byFallback == null) {
-            byFallback = new HashMap<>();
-            resolvedColors.put(star.getId(), byFallback);
-        }
+        Map<Color, Color> byFallback = resolvedColors.computeIfAbsent(star.getId(), id -> new HashMap<>());
         Color resolved = byFallback.get(fallback);
         if (resolved == null) {
             Color parsed = ColorUtil.parseHexColor(star.getColor(), fallback);

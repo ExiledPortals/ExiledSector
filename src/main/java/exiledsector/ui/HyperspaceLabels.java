@@ -4,6 +4,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.ui.hyperspace.HyperspaceAnchor;
 import exiledsector.ui.hyperspace.HyperspaceCamera;
 import exiledsector.ui.util.BorderedPanel;
+import exiledsector.ui.util.ReusableText;
 
 import java.awt.Color;
 import java.util.HashMap;

@@ -44,6 +44,8 @@ final class SkillTreeNodeConnectorRenderer {
     private final LineBatch dullLines = new LineBatch(NODE_CONNECTOR_LINE_THICKNESS);
     private final LineBatch glowHaloLines = new LineBatch(NODE_CONNECTOR_GLOW_HALO_THICKNESS);
     private final LineBatch glowLines = new LineBatch(NODE_CONNECTOR_GLOW_LINE_THICKNESS);
+    private final Segment segment = new Segment();
+    private final Segment part = new Segment();
     private final float[] cumulativeArcLength = new float[CURVE_ARC_SAMPLES + 1];
     private final WormholeOpenness wormholeOpenness;
 
@@ -55,7 +57,6 @@ final class SkillTreeNodeConnectorRenderer {
 
     void draw(TreeViewport viewport, NodeAllocator.Snapshot tree, Set<String> templateNodeIds, ConnectorFills fills,
               float alphaMult) {
-        float zoom = viewport.zoom();
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -107,12 +108,12 @@ final class SkillTreeNodeConnectorRenderer {
         ConnectorFills.FillRange fill = bothSatisfied ? fills.filledRange(other.getId(), node.getId()) : ConnectorFills.FillRange.FULL;
         EdgeFill edgeFill = fill.isFull() ? EdgeFill.NONE : new EdgeFill(fill, ConnectorKind.of(false, nodeInTemplate, otherInTemplate));
 
-        float edgeAlpha = alphaMult * search.connectorAlpha(node, other, tree);
+        LineStyle lineStyle = new LineStyle(fade, edgeFill, zoom, alphaMult * search.connectorAlpha(node, other, tree));
         if (curve == null) {
-            drawStraightNodeConnectorLine(otherEndpoint, nodeEndpoint, fade, edgeFill, zoom, edgeAlpha);
+            drawStraightNodeConnectorLine(otherEndpoint, nodeEndpoint, lineStyle);
         } else {
             drawCurvedNodeConnectorLine(otherEndpoint, viewport.screenX(curve.getControlOffsetX()),
-                    viewport.screenY(curve.getControlOffsetY()), nodeEndpoint, fade, edgeFill, zoom, edgeAlpha);
+                    viewport.screenY(curve.getControlOffsetY()), nodeEndpoint, lineStyle);
         }
     }
 
@@ -133,8 +134,7 @@ final class SkillTreeNodeConnectorRenderer {
         return node.getType().getTier() == SkillTier.WORMHOLE;
     }
 
-    private void drawStraightNodeConnectorLine(ConnectorEndpoint a, ConnectorEndpoint b, ConnectorFade fade, EdgeFill edgeFill,
-                                               float zoom, float alphaMult) {
+    private void drawStraightNodeConnectorLine(ConnectorEndpoint a, ConnectorEndpoint b, LineStyle lineStyle) {
         float x1 = a.x();
         float y1 = a.y();
         float r1 = a.radius();
@@ -152,15 +152,16 @@ final class SkillTreeNodeConnectorRenderer {
         float startY = y1 + dirY * r1;
         float endX = x2 - dirX * r2;
         float endY = y2 - dirY * r2;
-        SegmentFade segmentFade = segmentFade(fade, edgeFill, length - r1 - r2, zoom, alphaMult);
+        SegmentFade segmentFade = segmentFade(lineStyle, length - r1 - r2);
 
         float[] breakpoints = straightBreakpoints(segmentFade);
         for (int i = 1; i < breakpoints.length; i++) {
             float from = breakpoints[i - 1];
             float to = breakpoints[i];
             if (to > from) {
-                drawFadedSegment(startX + (endX - startX) * from, startY + (endY - startY) * from,
-                        startX + (endX - startX) * to, startY + (endY - startY) * to, from, to, segmentFade);
+                segment.set(startX + (endX - startX) * from, startY + (endY - startY) * from,
+                        startX + (endX - startX) * to, startY + (endY - startY) * to, from, to);
+                drawFadedSegment(segment, segmentFade);
             }
         }
     }
@@ -175,11 +176,12 @@ final class SkillTreeNodeConnectorRenderer {
         return PLAIN_BREAKPOINTS;
     }
 
-    private static SegmentFade segmentFade(ConnectorFade fade, EdgeFill edgeFill, float visibleLength, float zoom, float alphaMult) {
+    private static SegmentFade segmentFade(LineStyle lineStyle, float visibleLength) {
+        ConnectorFade fade = lineStyle.fade();
         return new SegmentFade(fade,
-                tipFraction(fade.glowing() && fade.tipFadeR1ToBlack(), visibleLength, zoom),
-                tipFraction(fade.glowing() && fade.tipFadeR2ToBlack(), visibleLength, zoom),
-                alphaMult, edgeFill);
+                tipFraction(fade.glowing() && fade.tipFadeR1ToBlack(), visibleLength, lineStyle.zoom()),
+                tipFraction(fade.glowing() && fade.tipFadeR2ToBlack(), visibleLength, lineStyle.zoom()),
+                lineStyle.alphaMult(), lineStyle.edgeFill());
     }
 
     private static float tipFraction(boolean fades, float visibleLength, float zoom) {
@@ -189,78 +191,61 @@ final class SkillTreeNodeConnectorRenderer {
         return Math.min(WORMHOLE_TIP_FADE_LENGTH * zoom, visibleLength * WORMHOLE_TIP_FADE_MAX_FRACTION) / visibleLength;
     }
 
-    private void drawFadedSegment(float x1, float y1, float x2, float y2, float progress1, float progress2,
-                                  SegmentFade segmentFade) {
+    private void drawFadedSegment(Segment s, SegmentFade segmentFade) {
         if (segmentFade.edgeFill() != EdgeFill.NONE) {
-            drawPartiallyFilledSegment(x1, y1, x2, y2, progress1, progress2, segmentFade);
+            drawPartiallyFilledSegment(s, segmentFade);
             return;
         }
-        drawSegmentAsIs(x1, y1, x2, y2, progress1, progress2, segmentFade);
+        drawSegmentAsIs(s, segmentFade);
     }
 
-    private void drawPartiallyFilledSegment(float x1, float y1, float x2, float y2, float progress1, float progress2,
-                                            SegmentFade segmentFade) {
+    private void drawPartiallyFilledSegment(Segment s, SegmentFade segmentFade) {
         ConnectorFills.FillRange fill = segmentFade.edgeFill().range();
-        float fillStart = Math.max(progress1, Math.min(progress2, fill.start()));
-        float fillEnd = Math.max(progress1, Math.min(progress2, fill.end()));
+        float fillStart = Math.max(s.progress1, Math.min(s.progress2, fill.start()));
+        float fillEnd = Math.max(s.progress1, Math.min(s.progress2, fill.end()));
         if (segmentFade.fade().glowTipFading()) {
-            drawWormholeSegmentWithInnerLineFill(x1, y1, x2, y2, progress1, progress2, fillStart, fillEnd, segmentFade);
+            drawWormholeSegmentWithInnerLineFill(s, fillStart, fillEnd, segmentFade);
             return;
         }
-        drawFillPart(x1, y1, x2, y2, progress1, progress2, progress1, fillStart, segmentFade);
-        drawFillPart(x1, y1, x2, y2, progress1, progress2, fillStart, fillEnd, segmentFade);
-        drawFillPart(x1, y1, x2, y2, progress1, progress2, fillEnd, progress2, segmentFade);
+        drawFillPart(s, s.progress1, fillStart, segmentFade);
+        drawFillPart(s, fillStart, fillEnd, segmentFade);
+        drawFillPart(s, fillEnd, s.progress2, segmentFade);
     }
 
-    private void drawWormholeSegmentWithInnerLineFill(float x1, float y1, float x2, float y2, float progress1, float progress2,
-                                                      float fillStart, float fillEnd, SegmentFade segmentFade) {
-        float tip1 = segmentFade.tipFraction1();
-        float tip2 = segmentFade.tipFraction2();
-        float alphaMult = segmentFade.alphaMult();
-        addTipFadeLine(glowHaloLines, x1, y1, x2, y2, progress1, progress2, tip1, tip2, alphaMult * NODE_CONNECTOR_GLOW_HALO_ALPHA);
-        if (fillEnd <= fillStart || progress2 <= progress1) return;
-        float f0 = (fillStart - progress1) / (progress2 - progress1);
-        float f1 = (fillEnd - progress1) / (progress2 - progress1);
-        addTipFadeLine(glowLines, x1 + (x2 - x1) * f0, y1 + (y2 - y1) * f0, x1 + (x2 - x1) * f1, y1 + (y2 - y1) * f1,
-                fillStart, fillEnd, tip1, tip2, alphaMult);
+    private void drawWormholeSegmentWithInnerLineFill(Segment s, float fillStart, float fillEnd, SegmentFade segmentFade) {
+        addTipFadeLine(glowHaloLines, s, segmentFade, segmentFade.alphaMult() * NODE_CONNECTOR_GLOW_HALO_ALPHA);
+        if (fillEnd <= fillStart || s.progress2 <= s.progress1) return;
+        addTipFadeLine(glowLines, part.setPart(s, fillStart, fillEnd), segmentFade, segmentFade.alphaMult());
     }
 
-    private void drawFillPart(float x1, float y1, float x2, float y2, float progress1, float progress2,
-                              float from, float to, SegmentFade segmentFade) {
-        if (to <= from || progress2 <= progress1) return;
-        float f0 = (from - progress1) / (progress2 - progress1);
-        float f1 = (to - progress1) / (progress2 - progress1);
-        float xa = x1 + (x2 - x1) * f0;
-        float ya = y1 + (y2 - y1) * f0;
-        float xb = x1 + (x2 - x1) * f1;
-        float yb = y1 + (y2 - y1) * f1;
+    private void drawFillPart(Segment s, float from, float to, SegmentFade segmentFade) {
+        if (to <= from || s.progress2 <= s.progress1) return;
+        part.setPart(s, from, to);
         if (segmentFade.edgeFill().range().contains(from, to)) {
-            drawSegmentAsIs(xa, ya, xb, yb, from, to, segmentFade);
+            drawSegmentAsIs(part, segmentFade);
             return;
         }
         ConnectorFade fade = segmentFade.fade();
         if (fade.fadeR1ToBlack() || fade.fadeR2ToBlack()) return;
-        drawConnectorSegment(xa, ya, xb, yb, segmentFade.edgeFill().unfilledKind(), segmentFade.alphaMult());
+        drawConnectorSegment(part, segmentFade.edgeFill().unfilledKind(), segmentFade.alphaMult());
     }
 
-    private void drawSegmentAsIs(float x1, float y1, float x2, float y2, float progress1, float progress2,
-                                 SegmentFade segmentFade) {
+    private void drawSegmentAsIs(Segment s, SegmentFade segmentFade) {
         ConnectorFade fade = segmentFade.fade();
         float alphaMult = segmentFade.alphaMult();
         if (fade.dullFading() && fade.kind() == ConnectorKind.TEMPLATE) {
-            drawFadedTemplateSegment(x1, y1, x2, y2, progress1, progress2, fade.fadeR1ToBlack(), fade.fadeR2ToBlack(), alphaMult);
+            drawFadedTemplateSegment(s, fade, alphaMult);
         } else if (fade.dullFading()) {
-            drawFadedDullSegment(x1, y1, x2, y2, progress1, progress2, fade.fadeR1ToBlack(), fade.fadeR2ToBlack(), alphaMult);
+            drawFadedDullSegment(s, fade, alphaMult);
         } else if (fade.glowTipFading()) {
-            drawGlowingSegmentWithTipFade(x1, y1, x2, y2, progress1, progress2,
-                    segmentFade.tipFraction1(), segmentFade.tipFraction2(), alphaMult);
+            drawGlowingSegmentWithTipFade(s, segmentFade);
         } else {
-            drawConnectorSegment(x1, y1, x2, y2, fade.kind(), alphaMult);
+            drawConnectorSegment(s, fade.kind(), alphaMult);
         }
     }
 
     private void drawCurvedNodeConnectorLine(ConnectorEndpoint a, float throughX, float throughY, ConnectorEndpoint b,
-                                             ConnectorFade fade, EdgeFill edgeFill, float zoom, float alphaMult) {
+                                             LineStyle lineStyle) {
         float r1 = a.radius();
         float r2 = b.radius();
         float cx = 2f * throughX - (a.x() + b.x()) / 2f;
@@ -275,7 +260,7 @@ final class SkillTreeNodeConnectorRenderer {
         float tEnd = curveParamAtArcLength(cumLen, totalLength - r2);
         if (tEnd <= tStart) return;
 
-        renderCurveSegments(curve, tStart, tEnd, totalLength - r1 - r2, fade, edgeFill, zoom, alphaMult);
+        renderCurveSegments(curve, tStart, tEnd, segmentFade(lineStyle, totalLength - r1 - r2));
     }
 
     private float[] computeCumulativeArcLength(QuadraticCurve curve) {
@@ -296,10 +281,7 @@ final class SkillTreeNodeConnectorRenderer {
         return cumLen;
     }
 
-    private void renderCurveSegments(QuadraticCurve curve, float tStart, float tEnd, float visibleArcLength,
-                                      ConnectorFade fade, EdgeFill edgeFill, float zoom, float alphaMult) {
-        SegmentFade segmentFade = segmentFade(fade, edgeFill, visibleArcLength, zoom, alphaMult);
-
+    private void renderCurveSegments(QuadraticCurve curve, float tStart, float tEnd, SegmentFade segmentFade) {
         float prevX = curve.xAt(tStart);
         float prevY = curve.yAt(tStart);
         for (int i = 1; i <= CURVE_RENDER_SEGMENTS; i++) {
@@ -308,7 +290,7 @@ final class SkillTreeNodeConnectorRenderer {
             float y = curve.yAt(t);
             float progressPrev = (float) (i - 1) / CURVE_RENDER_SEGMENTS;
             float progressCur = (float) i / CURVE_RENDER_SEGMENTS;
-            drawFadedSegment(prevX, prevY, x, y, progressPrev, progressCur, segmentFade);
+            drawFadedSegment(segment.set(prevX, prevY, x, y, progressPrev, progressCur), segmentFade);
             prevX = x;
             prevY = y;
         }
@@ -327,70 +309,54 @@ final class SkillTreeNodeConnectorRenderer {
         return 1f;
     }
 
-    private void drawConnectorSegment(float x1, float y1, float x2, float y2, ConnectorKind kind, float alphaMult) {
+    private void drawConnectorSegment(Segment s, ConnectorKind kind, float alphaMult) {
         if (kind == ConnectorKind.GLOW) {
             int accent = style.getAccentColor().getRGB();
-            glowHaloLines.add(x1, y1, accent, x2, y2, accent, alphaMult * NODE_CONNECTOR_GLOW_HALO_ALPHA);
-            glowLines.add(x1, y1, accent, x2, y2, accent, alphaMult);
+            glowHaloLines.add(s.x1, s.y1, accent, s.x2, s.y2, accent, alphaMult * NODE_CONNECTOR_GLOW_HALO_ALPHA);
+            glowLines.add(s.x1, s.y1, accent, s.x2, s.y2, accent, alphaMult);
             return;
         }
         if (kind == ConnectorKind.TEMPLATE) {
-            glowLines.add(x1, y1, TEMPLATE_RGB, x2, y2, TEMPLATE_RGB, alphaMult * TEMPLATE_ALPHA);
+            glowLines.add(s.x1, s.y1, TEMPLATE_RGB, s.x2, s.y2, TEMPLATE_RGB, alphaMult * TEMPLATE_ALPHA);
             return;
         }
+        addDullPair(s, RING_DULL_RGB, RING_DULL_RGB, alphaMult * RING_DULL_ALPHA);
+    }
 
-        float dx = x2 - x1;
-        float dy = y2 - y1;
+    private void drawFadedDullSegment(Segment s, ConnectorFade fade, float alphaMult) {
+        int color0 = colorForFadeProgress(s.progress1, fade.fadeR1ToBlack(), fade.fadeR2ToBlack(), RING_DULL_RGB);
+        int color1 = colorForFadeProgress(s.progress2, fade.fadeR1ToBlack(), fade.fadeR2ToBlack(), RING_DULL_RGB);
+        addDullPair(s, color0, color1, alphaMult * RING_DULL_ALPHA);
+    }
+
+    private void addDullPair(Segment s, int color0, int color1, float alpha) {
+        float dx = s.x2 - s.x1;
+        float dy = s.y2 - s.y1;
         float length = (float) Math.sqrt(dx * dx + dy * dy);
         if (length <= 0.0001f) return;
         float dirX = dx / length;
         float dirY = dy / length;
         float perpX = -dirY * (NODE_CONNECTOR_PARALLEL_GAP / 2f);
         float perpY = dirX * (NODE_CONNECTOR_PARALLEL_GAP / 2f);
-
-        float alpha = alphaMult * RING_DULL_ALPHA;
-        dullLines.add(x1 + perpX, y1 + perpY, RING_DULL_RGB, x2 + perpX, y2 + perpY, RING_DULL_RGB, alpha);
-        dullLines.add(x1 - perpX, y1 - perpY, RING_DULL_RGB, x2 - perpX, y2 - perpY, RING_DULL_RGB, alpha);
+        dullLines.add(s.x1 + perpX, s.y1 + perpY, color0, s.x2 + perpX, s.y2 + perpY, color1, alpha);
+        dullLines.add(s.x1 - perpX, s.y1 - perpY, color0, s.x2 - perpX, s.y2 - perpY, color1, alpha);
     }
 
-    private void drawFadedDullSegment(float x1, float y1, float x2, float y2, float progress0, float progress1,
-                                       boolean fadeR1ToBlack, boolean fadeR2ToBlack, float alphaMult) {
-        float dx = x2 - x1;
-        float dy = y2 - y1;
-        float length = (float) Math.sqrt(dx * dx + dy * dy);
-        if (length <= 0.0001f) return;
-        float dirX = dx / length;
-        float dirY = dy / length;
-        float perpX = -dirY * (NODE_CONNECTOR_PARALLEL_GAP / 2f);
-        float perpY = dirX * (NODE_CONNECTOR_PARALLEL_GAP / 2f);
-
-        int color0 = colorForFadeProgress(progress0, fadeR1ToBlack, fadeR2ToBlack, RING_DULL_RGB);
-        int color1 = colorForFadeProgress(progress1, fadeR1ToBlack, fadeR2ToBlack, RING_DULL_RGB);
-        float alpha = alphaMult * RING_DULL_ALPHA;
-
-        dullLines.add(x1 + perpX, y1 + perpY, color0, x2 + perpX, y2 + perpY, color1, alpha);
-        dullLines.add(x1 - perpX, y1 - perpY, color0, x2 - perpX, y2 - perpY, color1, alpha);
+    private void drawFadedTemplateSegment(Segment s, ConnectorFade fade, float alphaMult) {
+        int color0 = colorForFadeProgress(s.progress1, fade.fadeR1ToBlack(), fade.fadeR2ToBlack(), TEMPLATE_RGB);
+        int color1 = colorForFadeProgress(s.progress2, fade.fadeR1ToBlack(), fade.fadeR2ToBlack(), TEMPLATE_RGB);
+        glowLines.add(s.x1, s.y1, color0, s.x2, s.y2, color1, alphaMult * TEMPLATE_ALPHA);
     }
 
-    private void drawFadedTemplateSegment(float x1, float y1, float x2, float y2, float progress0, float progress1,
-                                          boolean fadeR1ToBlack, boolean fadeR2ToBlack, float alphaMult) {
-        int color0 = colorForFadeProgress(progress0, fadeR1ToBlack, fadeR2ToBlack, TEMPLATE_RGB);
-        int color1 = colorForFadeProgress(progress1, fadeR1ToBlack, fadeR2ToBlack, TEMPLATE_RGB);
-        glowLines.add(x1, y1, color0, x2, y2, color1, alphaMult * TEMPLATE_ALPHA);
+    private void drawGlowingSegmentWithTipFade(Segment s, SegmentFade segmentFade) {
+        addTipFadeLine(glowHaloLines, s, segmentFade, segmentFade.alphaMult() * NODE_CONNECTOR_GLOW_HALO_ALPHA);
+        addTipFadeLine(glowLines, s, segmentFade, segmentFade.alphaMult());
     }
 
-    private void drawGlowingSegmentWithTipFade(float x1, float y1, float x2, float y2, float progress0, float progress1,
-                                                float tipFraction1, float tipFraction2, float alphaMult) {
-        addTipFadeLine(glowHaloLines, x1, y1, x2, y2, progress0, progress1, tipFraction1, tipFraction2,
-                alphaMult * NODE_CONNECTOR_GLOW_HALO_ALPHA);
-        addTipFadeLine(glowLines, x1, y1, x2, y2, progress0, progress1, tipFraction1, tipFraction2, alphaMult);
-    }
-
-    private void addTipFadeLine(LineBatch batch, float x1, float y1, float x2, float y2, float progress0, float progress1,
-                                float tipFraction1, float tipFraction2, float alphaMult) {
-        int color0 = colorForTipFade(progress0, tipFraction1, tipFraction2);
-        int color1 = colorForTipFade(progress1, tipFraction1, tipFraction2);
-        batch.add(x1, y1, color0, x2, y2, color1, alphaMult);
+    private void addTipFadeLine(LineBatch batch, Segment s, SegmentFade segmentFade, float alphaMult) {
+        int color0 = colorForTipFade(s.progress1, segmentFade.tipFraction1(), segmentFade.tipFraction2());
+        int color1 = colorForTipFade(s.progress2, segmentFade.tipFraction1(), segmentFade.tipFraction2());
+        batch.add(s.x1, s.y1, color0, s.x2, s.y2, color1, alphaMult);
     }
 
     private int colorForTipFade(float progress, float tipFraction1, float tipFraction2) {
@@ -438,6 +404,35 @@ final class SkillTreeNodeConnectorRenderer {
     }
 
     private record ConnectorEndpoint(float x, float y, float radius) {
+    }
+
+    private record LineStyle(ConnectorFade fade, EdgeFill edgeFill, float zoom, float alphaMult) {
+    }
+
+    private static final class Segment {
+        float x1;
+        float y1;
+        float x2;
+        float y2;
+        float progress1;
+        float progress2;
+
+        Segment set(float x1, float y1, float x2, float y2, float progress1, float progress2) {
+            this.x1 = x1;
+            this.y1 = y1;
+            this.x2 = x2;
+            this.y2 = y2;
+            this.progress1 = progress1;
+            this.progress2 = progress2;
+            return this;
+        }
+
+        Segment setPart(Segment whole, float from, float to) {
+            float f0 = (from - whole.progress1) / (whole.progress2 - whole.progress1);
+            float f1 = (to - whole.progress1) / (whole.progress2 - whole.progress1);
+            return set(whole.x1 + (whole.x2 - whole.x1) * f0, whole.y1 + (whole.y2 - whole.y1) * f0,
+                    whole.x1 + (whole.x2 - whole.x1) * f1, whole.y1 + (whole.y2 - whole.y1) * f1, from, to);
+        }
     }
 
     private record ConnectorFade(ConnectorKind kind, boolean fadeR1ToBlack, boolean fadeR2ToBlack,

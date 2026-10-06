@@ -30,22 +30,27 @@ final class RadialBandGL {
         return (int) Math.max(minSegments, Math.round(circumference / pixelsPerSegment));
     }
 
-    static void strip(UnitCircle circle, int first, int last, float innerRadius, float outerRadius,
-                      float innerTexX, float outerTexX, float texPerSegment, RingWave radialWave, RingWave outerWave) {
+    record StripSpec(float innerRadius, float outerRadius, float innerTexX, float outerTexX, float texPerSegment, RingWave radialWave,
+                     RingWave outerWave) {
+    }
+
+    static void strip(UnitCircle circle, int first, int last, StripSpec spec) {
         int segments = circle.segments();
+        RingWave radialWave = spec.radialWave();
+        RingWave outerWave = spec.outerWave();
         GL11.glBegin(GL11.GL_QUAD_STRIP);
         for (int i = first; i <= last; i++) {
             int segment = i % segments;
             float cos = circle.cos(segment);
             float sin = circle.sin(segment);
             float shift = radialWave.sinAt(circle, segment);
-            float inner = innerRadius + shift;
-            float outer = outerRadius + shift;
-            float texY = texPerSegment * i;
+            float inner = spec.innerRadius() + shift;
+            float outer = spec.outerRadius() + shift;
+            float texY = spec.texPerSegment() * i;
 
-            GL11.glTexCoord2f(innerTexX, texY);
+            GL11.glTexCoord2f(spec.innerTexX(), texY);
             GL11.glVertex2f(cos * inner, sin * inner);
-            GL11.glTexCoord2f(outerTexX, texY);
+            GL11.glTexCoord2f(spec.outerTexX(), texY);
             GL11.glVertex2f(cos * outer + outerWave.cosAt(circle, segment), sin * outer + outerWave.sinAt(circle, segment));
         }
         GL11.glEnd();

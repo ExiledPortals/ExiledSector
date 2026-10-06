@@ -266,6 +266,8 @@
     "node.block.hullModInstalled": "Ship already has {hullmod} installed.",
     "node.block.deactivatedSMod": "Ship has a deactivated {hullmod} S-mod that {skill} will restore.",
     "node.block.typeAllocated": "Already have {node} allocated.",
+    "node.block.invalidOption": "That option isn't available on this node.",
+    "node.block.locked": "Unidentified - explore the sector to discover this node.",
     "node.temporary": "These effects only last for the first {seconds} seconds after the ship is deployed.",
     "ui.node.socket.installHint": "Pick an item in Socket Storage, then click this socket to install it.",
     "socketable.unknown": "Unrecognised hull socket module",

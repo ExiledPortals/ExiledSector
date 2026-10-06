@@ -20,7 +20,7 @@ public final class TemplateFilter {
     private TemplateFilter() {
     }
 
-    public static EnumSet<HullSize> defaultFilter(HullSize current) {
+    public static Set<HullSize> defaultFilter(HullSize current) {
         return isFilterable(current) ? EnumSet.of(current) : EnumSet.copyOf(FILTERABLE);
     }
 

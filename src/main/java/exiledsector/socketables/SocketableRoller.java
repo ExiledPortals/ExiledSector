@@ -31,13 +31,17 @@ public final class SocketableRoller {
 
     static int prefixCount(int effectCount, boolean morePrefixes) {
         int even = effectCount / 2;
-        return effectCount % 2 == 0 ? even : even + (morePrefixes ? 1 : 0);
+        if (effectCount % 2 == 0 || !morePrefixes) {
+            return even;
+        }
+        return even + 1;
     }
 
     private static void draw(List<SocketableDefinition.PoolEntry> pool, int count, Random random, List<RolledEffect> rolled) {
         List<SocketableDefinition.PoolEntry> remaining = new ArrayList<>(pool);
-        for (int i = 0; i < Math.min(count, pool.size()); i++) {
-            SocketableDefinition.PoolEntry entry = remaining.remove(pick(remaining, random.nextFloat()));
+        for (int left = Math.min(count, pool.size()); left > 0; left--) {
+            int index = pick(remaining, random.nextFloat());
+            SocketableDefinition.PoolEntry entry = remaining.remove(index);
             rolled.add(new RolledEffect(entry.effectName(), wholeNumberBetween(entry.min(), entry.max(), random)));
         }
     }
@@ -48,7 +52,7 @@ public final class SocketableRoller {
         if (high < low) {
             return Math.round(min);
         }
-        return low + random.nextInt(high - low + 1);
+        return (float) low + random.nextInt(high - low + 1);
     }
 
     static long scramble(long seed) {

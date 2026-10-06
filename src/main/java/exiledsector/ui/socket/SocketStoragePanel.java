@@ -22,10 +22,9 @@ import exiledsector.socketables.SocketableRarity;
 import exiledsector.socketables.SocketableStore;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.util.BorderedPanel;
-import exiledsector.ui.util.GLDraw;
+import exiledsector.ui.util.FramedPanelPlugin;
 import exiledsector.ui.util.HoloTransition;
-import exiledsector.ui.util.SpriteCache;
-import exiledsector.ui.util.SpriteDraw;
+import exiledsector.ui.util.Rects;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.Color;
@@ -60,14 +59,9 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     private static final float CELL_SIZE = 96f;
     private static final int COLUMNS = 6;
     private static final float WIDTH = PAD * 2f + SCROLLBAR_ROOM + COLUMNS * CELL_SIZE + (COLUMNS - 1) * GAP;
-    private static final float CELL_ICON_INSET = 9f;
     private static final float CONFIRM_HEIGHT = 130f;
     private static final float SEARCH_DELAY_SECONDS = 0.25f;
-    private static final float INSTALLED_ICON_ALPHA = 0.35f;
-    private static final float CELL_GLOW_WIDTH = 14f;
-    private static final float CELL_GLOW_ALPHA = 0.6f;
-    private static final Color CELL_BACKGROUND = new Color(0, 0, 0, 200);
-    private static final SpriteCache ICONS = new SpriteCache(SocketStoragePanel.class);
+    private static final SocketableCell.Look CELL_LOOK = new SocketableCell.Look(9f, true, 1f);
 
     private enum Control {CLOSE, CONFIRM_DESTROY, CANCEL_DESTROY}
 
@@ -179,8 +173,7 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     }
 
     public boolean contains(float x, float y) {
-        return position != null && root != null && !closing && x >= position.getX() && x <= position.getX() + position.getWidth()
-                && y >= position.getY() && y <= position.getY() + position.getHeight();
+        return root != null && !closing && Rects.contains(position, x, y);
     }
 
     public void setSelected(Socketable socketable) {
@@ -399,7 +392,7 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
                     + GAP;
         }
         x = 0f;
-        for (String grade : SocketStorageFilter.GRADES) {
+        for (String grade : SocketStorageFilter.ALL_GRADES) {
             x += addChip(element, SocketableDefinition.gradeName(grade), new GradeChip(grade), ChipColors.player(),
                     filter.grades.contains(grade), x, 2) + GAP;
         }
@@ -434,7 +427,7 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
             CustomPanelAPI line = Global.getSettings().createCustom(innerWidth() - SCROLLBAR_ROOM, CELL_SIZE, null);
             for (int i = start; i < Math.min(matching.size(), start + COLUMNS); i++) {
                 SocketStorageRow row = matching.get(i);
-                CustomPanelAPI cell = Global.getSettings().createCustom(CELL_SIZE, CELL_SIZE, new Cell(this, row));
+                CustomPanelAPI cell = Global.getSettings().createCustom(CELL_SIZE, CELL_SIZE, cellFor(row));
                 line.addComponent(cell).inTL((i - start) * (CELL_SIZE + GAP), 0f);
             }
             element.addCustom(line, start == 0 ? 0f : GAP);
@@ -478,7 +471,8 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         confirmBlocker = Global.getSettings().createCustom(width, height, new Blocker());
         root.addComponent(confirmBlocker).inTL(0f, 0f);
         float confirmWidth = innerWidth();
-        confirm = Global.getSettings().createCustom(confirmWidth, CONFIRM_HEIGHT, new Framed(this));
+        confirm = Global.getSettings().createCustom(confirmWidth, CONFIRM_HEIGHT,
+                new FramedPanelPlugin(SocketStoragePanel.class, this::buttonPressed));
         TooltipMakerAPI element = confirm.createUIElement(confirmWidth - PAD * 2f, CONFIRM_HEIGHT - PAD * 2f, false);
         element.addPara("%s", 0f, socketable.rarity().color(), socketable.rarity().color(),
                 Translation.msg("ui.socketStorage.confirm.title").arg("name", socketable.name()).text());
@@ -511,6 +505,42 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         return List.of(Translation.styled(install), Translation.styled("ui.socketStorage.cell.destroy"));
     }
 
+    private SocketableCell cellFor(SocketStorageRow row) {
+        return new SocketableCell(row.socketable(), CELL_LOOK, new SocketableCell.Listener() {
+            @Override
+            public void hovered(PositionAPI cell) {
+                cellHovered(row, cell);
+            }
+
+            @Override
+            public void left() {
+                cellLeft(row);
+            }
+
+            @Override
+            public boolean clicked() {
+                cellClicked(row);
+                return true;
+            }
+
+            @Override
+            public boolean rightClicked() {
+                cellRightClicked(row);
+                return true;
+            }
+
+            @Override
+            public boolean selected() {
+                return row.socketable() == selected;
+            }
+
+            @Override
+            public boolean dimmed() {
+                return row.installed();
+            }
+        });
+    }
+
     private void cellHovered(SocketStorageRow row, PositionAPI cell) {
         queued.add(() -> showHoverTooltip(row, cell));
     }
@@ -531,108 +561,7 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         hoverTooltip.hide();
     }
 
-    private static final class Cell extends BaseCustomUIPanelPlugin {
 
-        private final SocketStoragePanel owner;
-        private final SocketStorageRow row;
-        private PositionAPI position;
-        private boolean hovered;
-
-        Cell(SocketStoragePanel owner, SocketStorageRow row) {
-            this.owner = owner;
-            this.row = row;
-        }
-
-        @Override
-        public void positionChanged(PositionAPI position) {
-            this.position = position;
-        }
-
-        @Override
-        public void renderBelow(float alphaMult) {
-            if (position == null) {
-                return;
-            }
-            GLDraw.fillQuad(position.getX(), position.getY(), position.getWidth(), position.getHeight(), CELL_BACKGROUND, alphaMult);
-            boolean chosen = row.socketable() == owner.selected;
-            Color border = chosen ? Misc.getBrightPlayerColor() : row.rarity().color();
-            GLDraw.innerGlow(position.getX(), position.getY(), position.getWidth(), position.getHeight(), CELL_GLOW_WIDTH,
-                    row.rarity().color(), CELL_GLOW_ALPHA * alphaMult);
-            GLDraw.strokeQuad(position.getX(), position.getY(), position.getWidth(), position.getHeight(), border, chosen ? 3f : 1.5f,
-                    alphaMult);
-        }
-
-        @Override
-        public void render(float alphaMult) {
-            if (position == null) {
-                return;
-            }
-            float size = CELL_SIZE - CELL_ICON_INSET * 2f;
-            float iconAlpha = row.installed() ? INSTALLED_ICON_ALPHA : 1f;
-            SpriteDraw.drawAtCenter(ICONS, row.socketable().iconPath(), position.getCenterX(), position.getCenterY(), size, size,
-                    Color.WHITE, iconAlpha * alphaMult);
-        }
-
-        @Override
-        public void processInput(List<InputEventAPI> events) {
-            if (position == null) {
-                return;
-            }
-            for (InputEventAPI event : events) {
-                if (event.isMouseScrollEvent()) {
-                    hovered = false;
-                }
-                if (event.isConsumed()) {
-                    continue;
-                }
-                boolean inside = position.containsEvent(event);
-                if (event.isMouseMoveEvent()) {
-                    if (inside != hovered) {
-                        hovered = inside;
-                        if (inside) {
-                            owner.cellHovered(row, position);
-                        } else {
-                            owner.cellLeft(row);
-                        }
-                    }
-                } else if (inside && event.isLMBDownEvent()) {
-                    owner.cellClicked(row);
-                    event.consume();
-                } else if (inside && event.isRMBDownEvent()) {
-                    owner.cellRightClicked(row);
-                    event.consume();
-                }
-            }
-        }
-    }
-
-    private static final class Framed extends BaseCustomUIPanelPlugin {
-
-        private final SocketStoragePanel owner;
-        private final BorderedPanel frame = new BorderedPanel(Framed.class);
-        private PositionAPI position;
-
-        Framed(SocketStoragePanel owner) {
-            this.owner = owner;
-        }
-
-        @Override
-        public void positionChanged(PositionAPI position) {
-            this.position = position;
-        }
-
-        @Override
-        public void renderBelow(float alphaMult) {
-            if (position != null) {
-                frame.draw(position.getX(), position.getY(), position.getWidth(), position.getHeight(), alphaMult);
-            }
-        }
-
-        @Override
-        public void buttonPressed(Object id) {
-            owner.buttonPressed(id);
-        }
-    }
 
     private static final class Blocker extends BaseCustomUIPanelPlugin {
 

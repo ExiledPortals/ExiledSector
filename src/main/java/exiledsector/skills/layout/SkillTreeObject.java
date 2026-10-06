@@ -12,10 +12,6 @@ public abstract class SkillTreeObject {
     private final float y;
     private final List<String> tags;
 
-    protected SkillTreeObject(String id, float x, float y) {
-        this(id, x, y, null);
-    }
-
     protected SkillTreeObject(String id, float x, float y, List<String> tags) {
         this.id = id;
         this.x = x;
