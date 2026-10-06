@@ -372,6 +372,8 @@
     "socketable.affix.SHIELD_RAISE_RATE_PERCENT.suffix": "戒备",
     "socketable.affix.WEAPON_DAMAGE_MULT_PER_DMOD.prefix": "孤注",
     "socketable.affix.WEAPON_DAMAGE_MULT_PER_DMOD.suffix": "绝境",
+    "socketable.affix.BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT.prefix": "穿甲",
+    "socketable.affix.BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT.suffix": "贯穿",
     "socketable.tooltip.storage": "从舰船技能树打开模块化船体插槽面板，或将其安装到插槽中，都会把它从货舱移入插槽仓库。",
     "socketable.salvaged": "从残骸中回收了{name}，已放入你的货舱。",
     "fighterBay.returned": "{wing}已退回你的货舱：其所在的机库已不存在。",
