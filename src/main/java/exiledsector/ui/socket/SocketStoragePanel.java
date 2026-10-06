@@ -57,6 +57,8 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     private static final float FOOTER_HEIGHT = 20f;
     private static final float SCROLLBAR_ROOM = 14f;
     private static final float CELL_SIZE = 96f;
+    private static final int COLUMNS = 6;
+    private static final float WIDTH = PAD * 2f + SCROLLBAR_ROOM + COLUMNS * CELL_SIZE + (COLUMNS - 1) * GAP;
     private static final float CELL_ICON_INSET = 9f;
     private static final float CONFIRM_HEIGHT = 130f;
     private static final float SEARCH_DELAY_SECONDS = 0.25f;
@@ -127,12 +129,12 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         this.listener = listener;
     }
 
-    public static SocketStoragePanel open(CustomPanelAPI host, float left, float top, float width, float height,
+    public static SocketStoragePanel open(CustomPanelAPI host, float left, float top, float height,
                                           Function<Socketable, String> installedIn, Listener listener) {
         SocketStoragePanel panel = new SocketStoragePanel(host, installedIn, listener);
-        panel.width = width;
+        panel.width = WIDTH;
         panel.height = height;
-        panel.root = Global.getSettings().createCustom(width, height, panel);
+        panel.root = Global.getSettings().createCustom(WIDTH, height, panel);
         host.addComponent(panel.root).inTL(left, top);
         panel.movedFromCargo = absorbPlayerCargo();
         I18n.forGameText(panel::build);
@@ -420,10 +422,9 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
             String key = rows.isEmpty() ? "ui.socketStorage.empty" : "ui.socketStorage.noMatches";
             element.addPara("%s", 0f, Misc.getGrayColor(), Misc.getGrayColor(), Translation.text(key));
         }
-        int columns = Math.max(1, (int) ((innerWidth() - SCROLLBAR_ROOM + GAP) / (CELL_SIZE + GAP)));
-        for (int start = 0; start < matching.size(); start += columns) {
+        for (int start = 0; start < matching.size(); start += COLUMNS) {
             CustomPanelAPI line = Global.getSettings().createCustom(innerWidth() - SCROLLBAR_ROOM, CELL_SIZE, null);
-            for (int i = start; i < Math.min(matching.size(), start + columns); i++) {
+            for (int i = start; i < Math.min(matching.size(), start + COLUMNS); i++) {
                 SocketStorageRow row = matching.get(i);
                 CustomPanelAPI cell = Global.getSettings().createCustom(CELL_SIZE, CELL_SIZE, new Cell(this, row));
                 line.addComponent(cell).inTL((i - start) * (CELL_SIZE + GAP), 0f);

@@ -56,7 +56,6 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private static final float STORAGE_PANEL_MARGIN = 16f;
     private static final float STORAGE_PANEL_TOP = 100f;
     private static final float STORAGE_PANEL_GAP = 12f;
-    private static final float STORAGE_PANEL_WIDTH_FRACTION = 0.375f;
 
     private final String readoutTooltipTitle = Translation.text("ui.readout.title");
     private final String readoutTooltipBody;
@@ -438,8 +437,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         ScreenRect shipCard = shipCardFrame();
         float top = STORAGE_PANEL_TOP;
         float bottom = shipCard.bottom() + shipCard.height() - position.getY() + STORAGE_PANEL_GAP;
-        storagePanel = SocketStoragePanel.open(host, STORAGE_PANEL_MARGIN, top, position.getWidth() * STORAGE_PANEL_WIDTH_FRACTION,
-                position.getHeight() - top - bottom, SocketCustody.shipNames(ownedShips), new SocketStoragePanel.Listener() {
+        storagePanel = SocketStoragePanel.open(host, STORAGE_PANEL_MARGIN, top, position.getHeight() - top - bottom,
+                SocketCustody.shipNames(ownedShips), new SocketStoragePanel.Listener() {
                     @Override
                     public void selected(Socketable socketable) {
                         if (socketable == null) {
