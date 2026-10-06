@@ -79,7 +79,7 @@ class SocketableRollerTest {
     }
 
     @Test
-    void magicRollsOnePrefixAndOneSuffixAndRaresNeverMoreThanTwoOfEither() {
+    void commonRollsOnePrefixAndOneSuffixAndRaresNeverMoreThanTwoOfEither() {
         boolean twoPrefixes = false;
         boolean twoSuffixes = false;
         for (long seed = 0; seed < SAMPLES; seed++) {

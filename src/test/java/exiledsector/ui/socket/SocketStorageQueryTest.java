@@ -15,7 +15,7 @@ class SocketStorageQueryTest {
         return new SocketStorageRow(null, order, name, rarity, grade, search, installedIn);
     }
 
-    private static final SocketStorageRow MILITARY = row(0, "Military-grade Domain Subroutine", SocketableRarity.MAGIC, "military",
+    private static final SocketStorageRow MILITARY = row(0, "Military-grade Domain Subroutine", SocketableRarity.COMMON, "military",
             "Reduces shield upkeep by 25%. Increases beam weapon damage by 12%.", null);
     private static final SocketStorageRow CONSUMER = row(1, "Consumer-grade Domain Subroutine", SocketableRarity.RARE, "consumer",
             "Increases top speed by 7%. Increases ballistic weapon damage by 8%.", "ISS Ravenous");
@@ -56,13 +56,13 @@ class SocketStorageQueryTest {
     @Test
     void rarityChipsShowAnyChosenRarityAndTogglingOneOffRemovesIt() {
         SocketStorageFilter filter = everything();
-        filter.toggleRarity(SocketableRarity.MAGIC);
+        filter.toggleRarity(SocketableRarity.COMMON);
         assertEquals(names(List.of(MILITARY)), shown(filter));
 
         filter.toggleRarity(SocketableRarity.UNIQUE);
         assertEquals(names(List.of(CORE, MILITARY)), shown(filter));
 
-        filter.toggleRarity(SocketableRarity.MAGIC);
+        filter.toggleRarity(SocketableRarity.COMMON);
         filter.toggleRarity(SocketableRarity.UNIQUE);
         assertEquals(names(List.of(CORE, CONSUMER, MILITARY)), shown(filter));
     }

@@ -98,7 +98,7 @@ public final class SocketableNames {
         }
         return switch (SocketableRarity.of(definition, effects.size())) {
             case UNIQUE -> FrozenName.NONE;
-            case MAGIC -> new FrozenName(firstInRole(definition, effects, true), firstInRole(definition, effects, false), null, null);
+            case COMMON -> new FrozenName(firstInRole(definition, effects, true), firstInRole(definition, effects, false), null, null);
             case RARE -> rareWords(definition.grade(), seed);
         };
     }
@@ -111,7 +111,7 @@ public final class SocketableNames {
         FrozenName parts = frozen == null ? FrozenName.NONE : frozen;
         return switch (rarity) {
             case UNIQUE -> new SocketableName(definition.displayName(), null, rarity);
-            case MAGIC -> new SocketableName(magicName(definition, kind, parts), definition.displayName(), rarity);
+            case COMMON -> new SocketableName(commonName(definition, kind, parts), definition.displayName(), rarity);
             case RARE -> {
                 String rare = rareName(parts);
                 yield rare == null ? new SocketableName(definition.displayName(), null, rarity)
@@ -120,14 +120,14 @@ public final class SocketableNames {
         };
     }
 
-    private static String magicName(SocketableDefinition definition, SocketableKind kind, FrozenName parts) {
+    private static String commonName(SocketableDefinition definition, SocketableKind kind, FrozenName parts) {
         String prefix = parts.prefixEffect() == null ? null : affix(parts.prefixEffect(), true);
         String suffix = parts.suffixEffect() == null ? null : affix(parts.suffixEffect(), false);
         if (prefix == null && suffix == null) {
             return definition.displayName();
         }
         String form = prefix == null ? "suffix" : suffix == null ? "prefix" : "both";
-        Message message = Translation.msg("socketable.magicName." + form)
+        Message message = Translation.msg("socketable.commonName." + form)
                 .arg("grade", definition.gradeName())
                 .arg("gradeInline", definition.gradeName().toLowerCase(Locale.ROOT))
                 .arg("noun", Translation.text("socketable.noun." + kind.id()));

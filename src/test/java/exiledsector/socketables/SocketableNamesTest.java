@@ -58,21 +58,21 @@ class SocketableNamesTest {
     }
 
     @Test
-    void twoEffectsMakeAMagicItemNamedAfterThemWithItsTypeUnderneath() {
+    void twoEffectsMakeACommonItemNamedAfterThemWithItsTypeUnderneath() {
         SocketableName name = name("military", 1L, List.of(DISSIPATION, SHIELDING));
 
-        assertEquals(SocketableRarity.MAGIC, name.rarity());
+        assertEquals(SocketableRarity.COMMON, name.rarity());
         assertEquals("Vent-efficient military-grade subroutine of Shielding", name.title());
         assertEquals("Military-grade Domain Subroutine", name.baseName());
     }
 
     @Test
-    void theMagicNameFollowsEachEffectsRoleNotItsOrder() {
+    void theCommonNameFollowsEachEffectsRoleNotItsOrder() {
         assertEquals("Vent-efficient military-grade subroutine of Shielding", name("military", 1L, List.of(SHIELDING, DISSIPATION)).title());
     }
 
     @Test
-    void aMagicItemMissingAnAffixKeepsTheOtherOne() throws Exception {
+    void aCommonItemMissingAnAffixKeepsTheOtherOne() throws Exception {
         SocketableNames.registerAffixes(new JSONArray()
                 .put(new JSONObject().put("effect", "FLUX_DISSIPATION_MULT").put("prefix", "Dissipation").put("suffix", ""))
                 .put(new JSONObject().put("effect", "HULL_MULT").put("prefix", "").put("suffix", "Fortitude")));

@@ -4,11 +4,11 @@ import java.awt.Color;
 
 public enum SocketableRarity {
 
-    MAGIC(new Color(120, 150, 255)),
+    COMMON(new Color(120, 150, 255)),
     RARE(new Color(255, 225, 90)),
     UNIQUE(new Color(255, 140, 40));
 
-    static final int MAGIC_MAX_EFFECTS = 2;
+    static final int COMMON_MAX_EFFECTS = 2;
 
     private final Color color;
 
@@ -24,6 +24,6 @@ public enum SocketableRarity {
         if (definition != null && definition.unique()) {
             return UNIQUE;
         }
-        return effectCount <= MAGIC_MAX_EFFECTS ? MAGIC : RARE;
+        return effectCount <= COMMON_MAX_EFFECTS ? COMMON : RARE;
     }
 }

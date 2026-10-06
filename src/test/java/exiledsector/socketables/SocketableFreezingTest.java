@@ -22,7 +22,7 @@ class SocketableFreezingTest {
 
     private static final String BEFORE_PREFIXES = "FIGHTER_ARMOR_PERCENT:10:15; FLUX_DISSIPATION_MULT:4:6";
     private static final String BEFORE_SUFFIXES = "HULL_MULT:4:6; ARMOR_PERCENT:6:9";
-    private static final List<RolledEffect> MAGIC = List.of(new RolledEffect("FIGHTER_ARMOR_PERCENT", 12f), new RolledEffect("HULL_MULT", 5f));
+    private static final List<RolledEffect> COMMON = List.of(new RolledEffect("FIGHTER_ARMOR_PERCENT", 12f), new RolledEffect("HULL_MULT", 5f));
     private static final List<RolledEffect> RARE = List.of(new RolledEffect("FIGHTER_ARMOR_PERCENT", 12f),
             new RolledEffect("FLUX_DISSIPATION_MULT", 5f), new RolledEffect("ARMOR_PERCENT", 7f));
 
@@ -86,19 +86,19 @@ class SocketableFreezingTest {
 
     @Test
     void aRebalanceLeavesFrozenCargoItemsAndTheirNamesAlone() throws Exception {
-        SocketableItemData magic = frozen(MAGIC);
+        SocketableItemData common = frozen(COMMON);
         SocketableItemData rare = frozen(RARE);
-        String magicName = magic.preview().name();
+        String commonName = common.preview().name();
         String rareName = rare.preview().name();
 
         rebalance();
         SocketableStore store = new SocketableStore();
-        Socketable claimedMagic = store.add(SocketableItemData.of(magic.toSpecialItem()));
+        Socketable claimedCommon = store.add(SocketableItemData.of(common.toSpecialItem()));
         Socketable claimedRare = store.add(SocketableItemData.of(rare.toSpecialItem()));
 
-        assertEquals("Plated military-grade subroutine of Fortitude", magicName);
-        assertEquals(MAGIC, claimedMagic.effects());
-        assertEquals(magicName, claimedMagic.name());
+        assertEquals("Plated military-grade subroutine of Fortitude", commonName);
+        assertEquals(COMMON, claimedCommon.effects());
+        assertEquals(commonName, claimedCommon.name());
         assertEquals(RARE, claimedRare.effects());
         assertEquals(rareName, claimedRare.name());
     }
