@@ -82,6 +82,17 @@ class TemplateUiStateTest {
     }
 
     @Test
+    void onTheHyperspaceMapOnlyLoadIsGreyedOut() {
+        TemplateBarState onMap = TemplateBarState.of(true, 4, true, false, true, true);
+        TemplateBarState onTree = TemplateBarState.of(true, 4, true, false, true, false);
+
+        assertFalse(onMap.loadEnabled());
+        assertTrue(onTree.loadEnabled());
+        assertEquals(onTree.saveEnabled(), onMap.saveEnabled());
+        assertEquals(onTree.autoEnabled(), onMap.autoEnabled());
+    }
+
+    @Test
     void scrollingIsClampedToTheRowsThatExist() {
         TemplateListState state = new TemplateListState(templates(10, HullSize.CRUISER), "root", HullSize.CRUISER);
 

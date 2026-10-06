@@ -173,7 +173,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                 startingRootFollow = null;
             }
         }
-        templateUi.advance(amount, position);
+        templateUi.advance(amount, position, hyperspace.isActive());
         layoutStorageButton();
         advanceStorage();
         ShipOpBudget budget = nodeRenderer.budget();

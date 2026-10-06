@@ -6,22 +6,28 @@ record TemplateBarState(boolean visible, boolean saveEnabled, boolean loadEnable
     static final TemplateBarState HIDDEN = new TemplateBarState(false, false, false, false,
             "ui.template.hint.save", "ui.template.hint.auto");
 
-    private static final TemplateBarState[] VISIBLE = new TemplateBarState[16];
+    private static final TemplateBarState[] VISIBLE = new TemplateBarState[32];
 
     static {
         for (int i = 0; i < VISIBLE.length; i++) {
-            VISIBLE[i] = visible((i & 1) != 0, (i & 2) != 0, (i & 4) != 0, (i & 8) != 0);
+            VISIBLE[i] = visible((i & 1) != 0, (i & 2) != 0, (i & 4) != 0, (i & 8) != 0, (i & 16) != 0);
         }
     }
 
     static TemplateBarState of(boolean rootChosen, int allocatedCount, boolean hasTemplate, boolean running, boolean pointsLeft) {
+        return of(rootChosen, allocatedCount, hasTemplate, running, pointsLeft, false);
+    }
+
+    static TemplateBarState of(boolean rootChosen, int allocatedCount, boolean hasTemplate, boolean running, boolean pointsLeft,
+                               boolean loadBlocked) {
         if (!rootChosen) {
             return HIDDEN;
         }
-        return VISIBLE[(allocatedCount > 1 ? 1 : 0) | (hasTemplate ? 2 : 0) | (running ? 4 : 0) | (pointsLeft ? 8 : 0)];
+        return VISIBLE[(allocatedCount > 1 ? 1 : 0) | (hasTemplate ? 2 : 0) | (running ? 4 : 0) | (pointsLeft ? 8 : 0)
+                | (loadBlocked ? 16 : 0)];
     }
 
-    private static TemplateBarState visible(boolean hasNodes, boolean hasTemplate, boolean running, boolean pointsLeft) {
+    private static TemplateBarState visible(boolean hasNodes, boolean hasTemplate, boolean running, boolean pointsLeft, boolean loadBlocked) {
         String saveHint = hasNodes ? "ui.template.hint.save" : "ui.template.hint.saveEmpty";
         String autoHint;
         if (!hasTemplate) {
@@ -31,7 +37,7 @@ record TemplateBarState(boolean visible, boolean saveEnabled, boolean loadEnable
         } else {
             autoHint = "ui.template.hint.auto";
         }
-        return new TemplateBarState(true, hasNodes && !running, !running, hasTemplate && pointsLeft && !running,
+        return new TemplateBarState(true, hasNodes && !running, !running && !loadBlocked, hasTemplate && pointsLeft && !running,
                 saveHint, autoHint);
     }
 }

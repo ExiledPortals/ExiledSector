@@ -44,12 +44,12 @@ final class SkillTreeTemplateController {
         return bar.contains(x, y);
     }
 
-    void advance(float amount, PositionAPI position) {
+    void advance(float amount, PositionAPI position, boolean onHyperspaceMap) {
         SkillTreeTemplate template = nodeRenderer.template();
         boolean running = nodeRenderer.isAutoAllocating();
         boolean pointsLeft = template != null && nodeRenderer.hasPointsLeft();
         state = TemplateBarState.of(nodeRenderer.getStartingRoot() != null, nodeRenderer.allocatedNodeCount(),
-                template != null, running, pointsLeft);
+                template != null, running, pointsLeft, onHyperspaceMap);
         bar.update(state, template == null ? null : template.name());
         AutoAllocateRun.Summary summary = nodeRenderer.takeLastRunSummary();
         if (summary != null) {
