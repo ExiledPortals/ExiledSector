@@ -103,6 +103,17 @@ class GrantSocketablesCommandTest {
     }
 
     @Test
+    void moreThanTwoHundredCopiesIsRejectedWithoutAddingAnything() {
+        GrantSocketablesCommand command = new GrantSocketablesCommand(new Random(3L));
+
+        assertEquals(CommandResult.BAD_SYNTAX, command.runCommand("201", CommandContext.CAMPAIGN_MAP));
+        assertEquals(CommandResult.BAD_SYNTAX, command.runCommand("1000000", CommandContext.CAMPAIGN_MAP));
+        verify(cargo, never()).addSpecial(any(), anyFloat());
+        assertEquals(CommandResult.SUCCESS, command.runCommand("200", CommandContext.CAMPAIGN_MAP));
+        assertEquals(400, granted(400).size());
+    }
+
+    @Test
     void itOnlyWorksInTheCampaign() {
         assertEquals(CommandResult.WRONG_CONTEXT, new GrantSocketablesCommand().runCommand("", CommandContext.COMBAT_SIMULATION));
 

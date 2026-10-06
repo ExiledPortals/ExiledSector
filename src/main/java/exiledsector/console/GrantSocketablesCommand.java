@@ -14,6 +14,7 @@ import java.util.Random;
 public class GrantSocketablesCommand implements BaseCommand {
 
     static final int DEFAULT_COPIES = 5;
+    static final int MAX_COPIES = 200;
 
     private final Random random;
 
@@ -42,6 +43,10 @@ public class GrantSocketablesCommand implements BaseCommand {
                 return CommandResult.BAD_SYNTAX;
             }
             if (copies < 1) {
+                return CommandResult.BAD_SYNTAX;
+            }
+            if (copies > MAX_COPIES) {
+                Console.showMessage("At most " + MAX_COPIES + " copies of each socketable can be granted at once.");
                 return CommandResult.BAD_SYNTAX;
             }
         }
