@@ -85,6 +85,19 @@ class SkillDataResolverTest {
     }
 
     @Test
+    void theNpcTreeCacheDropsTheLeastRecentlyUsedTreesOnceFull() {
+        ShipSkillData first = SkillDataResolver.resolve(null, variantWithTags("exiledSector_npcTree|first|2|root,a"));
+        ShipSkillData kept = SkillDataResolver.resolve(null, variantWithTags(NPC_TAG));
+        for (int i = 0; i < 1023; i++) {
+            SkillDataResolver.resolve(null, variantWithTags("exiledSector_npcTree|filler" + i + "|2|root,a"));
+            SkillDataResolver.resolve(null, variantWithTags(NPC_TAG));
+        }
+
+        assertSame(kept, SkillDataResolver.resolve(null, variantWithTags(NPC_TAG)));
+        assertNotSame(first, SkillDataResolver.resolve(null, variantWithTags("exiledSector_npcTree|first|2|root,a")));
+    }
+
+    @Test
     void aMalformedNpcTagGivesAnEmptyNpcTreeInsteadOfTheSavedOne() {
         ShipSkillData data = SkillDataResolver.resolve(member("npc-1"), variantWithTags("exiledSector_npcTree|broken"));
 

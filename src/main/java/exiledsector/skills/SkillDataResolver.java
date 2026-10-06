@@ -7,7 +7,7 @@ import exiledsector.skills.npc.NpcSkillTreeBuilder;
 import exiledsector.skills.npc.NpcTreeTag;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +16,13 @@ public final class SkillDataResolver {
     public static final String SHIP_TAG_PREFIX = "exiledSector_ship_";
 
     private static final String OP_COST_REFRESH_MOD_ID = "exiledSector_opCostRefresh";
-    private static final Map<String, ShipSkillData> NPC_TREES = new HashMap<>();
+    private static final int MAX_CACHED_NPC_TREES = 1024;
+    private static final Map<String, ShipSkillData> NPC_TREES = new LinkedHashMap<>(16, 0.75f, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<String, ShipSkillData> eldest) {
+            return size() > MAX_CACHED_NPC_TREES;
+        }
+    };
 
     private SkillDataResolver() {
     }
