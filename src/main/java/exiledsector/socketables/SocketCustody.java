@@ -10,7 +10,9 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
+import exiledsector.persistence.OpSpentSlotManager;
 import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.persistence.SkillTreeTemplateStore;
 import exiledsector.skills.ShipSkillData;
 
 import java.util.Collection;
@@ -38,8 +40,10 @@ public final class SocketCustody {
         return installations;
     }
 
-    static void reconcile(Map<String, ShipSkillData> ships, Set<String> ownedShipIds, Set<String> lostInCombat, SocketableStore store) {
+    static Set<String> reconcile(Map<String, ShipSkillData> ships, Set<String> ownedShipIds, Set<String> lostInCombat, SocketableStore store) {
         lostInCombat.removeIf(ownedShipIds::contains);
+        Set<String> lostForGood = new HashSet<>(lostInCombat);
+        lostForGood.retainAll(ships.keySet());
         ships.forEach((shipId, data) -> {
             if (ownedShipIds.contains(shipId) || data.getSocketedItems().isEmpty()) {
                 return;
@@ -54,6 +58,7 @@ public final class SocketCustody {
             }
         });
         lostInCombat.removeIf(shipId -> !ships.containsKey(shipId) || ships.get(shipId).getSocketedItems().isEmpty());
+        return lostForGood;
     }
 
     public static Map<String, FleetMemberAPI> reconcile() {
@@ -62,8 +67,18 @@ public final class SocketCustody {
             return Map.of();
         }
         Map<String, FleetMemberAPI> owned = ownedShips();
-        reconcile(ShipSkillDataManager.all(), owned.keySet(), lostInCombat(), SocketableStore.get());
+        Set<String> lostForGood = reconcile(ShipSkillDataManager.all(), owned.keySet(), lostInCombat(), SocketableStore.get());
+        if (!lostForGood.isEmpty()) {
+            forget(lostForGood);
+        }
         return owned;
+    }
+
+    private static void forget(Set<String> lostShipIds) {
+        lostShipIds.forEach(ShipSkillDataManager::remove);
+        lostShipIds.forEach(SkillTreeTemplateStore::clearAssignment);
+        OpSpentSlotManager.releaseUnless(shipId -> !lostShipIds.contains(shipId));
+        Global.getLogger(SocketCustody.class).info("[ExiledSector] Forgot the skill trees of ships lost in combat: " + lostShipIds);
     }
 
     public static Set<String> ownedShipIds() {

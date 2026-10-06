@@ -101,6 +101,19 @@ class SocketCustodyTest {
     }
 
     @Test
+    void shipsLostInCombatAndNotRecoveredAreReportedLostForGoodWithOrWithoutItems() {
+        install("ship-a");
+        ships.put("ship-b", new ShipSkillData());
+        ships.put("ship-c", new ShipSkillData());
+        ships.put("sold", new ShipSkillData());
+        lost.addAll(Set.of("ship-a", "ship-b", "ship-c", "no-record"));
+
+        Set<String> lostForGood = SocketCustody.reconcile(ships, Set.of("ship-c"), lost, store);
+
+        assertEquals(Set.of("ship-a", "ship-b"), lostForGood);
+    }
+
+    @Test
     void aRecoveredShipKeepsItsItemsAndIsNoLongerCountedAsLost() {
         Socketable socketable = install("ship-a");
         lost.add("ship-a");

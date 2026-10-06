@@ -46,6 +46,10 @@ public class ShipSkillDataManager {
         return data != null && !data.isBlank();
     }
 
+    public static void remove(String shipId) {
+        getStore().remove(shipId);
+    }
+
     public static void removeBlankRecords() {
         getStore().values().removeIf(ShipSkillData::isBlank);
     }
