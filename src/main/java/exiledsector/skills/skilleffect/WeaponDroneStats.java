@@ -19,6 +19,7 @@ final class WeaponDroneStats {
             MutableShipStatsAPI::getDamageToTargetEnginesMult,
             MutableShipStatsAPI::getDamageToTargetWeaponsMult,
             MutableShipStatsAPI::getProjectileSpeedMult,
+            MutableShipStatsAPI::getBallisticProjectileSpeedMult,
             MutableShipStatsAPI::getEnergyProjectileSpeedMult,
             MutableShipStatsAPI::getDamageToFighters,
             MutableShipStatsAPI::getDamageToMissiles,

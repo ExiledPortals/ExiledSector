@@ -243,6 +243,8 @@ class EnergyChainListenerTest {
         when(settings.getMergedSpreadsheetDataForMod("hullmod", "data/config/exiledSector/drone_marker_hullmods.csv", "exiledSector"))
                 .thenReturn(new org.json.JSONArray());
         global.when(Global::getSettings).thenReturn(settings);
+        when(settings.getMergedSpreadsheetDataForMod("weapon", "data/config/exiledSector/ballistic_pierce_blocklist.csv", "exiledSector"))
+                .thenReturn(new org.json.JSONArray());
         CsvIdList.loadAll();
         ShipAPI hit = enemy(new Vector2f(0f, 0f));
         stubShips(ship, hit, enemy(new Vector2f(100f, 0f)));

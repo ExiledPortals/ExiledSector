@@ -17,16 +17,19 @@ final class Refraction {
             return new Vector2f(impactPoint);
         }
         direction.normalise();
-        Vector2f offset = Vector2f.sub(impactPoint, hitShip.getShieldCenterEvenIfNoShield(), null);
-        float radius = blockingRadius(hitShip);
-        float along = Vector2f.dot(offset, direction);
-        float discriminant = along * along - (offset.lengthSquared() - radius * radius);
-        float exitDistance = discriminant < 0f ? 0f : -along + (float) Math.sqrt(discriminant);
+        float exitDistance = exitDistance(hitShip.getShieldCenterEvenIfNoShield(), blockingRadius(hitShip), impactPoint, direction);
         if (exitDistance <= 0f) {
             return new Vector2f(impactPoint);
         }
         float travel = exitDistance + EXIT_MARGIN;
         return new Vector2f(impactPoint.x + direction.x * travel, impactPoint.y + direction.y * travel);
+    }
+
+    static float exitDistance(Vector2f center, float radius, Vector2f point, Vector2f direction) {
+        Vector2f offset = Vector2f.sub(point, center, null);
+        float along = Vector2f.dot(offset, direction);
+        float discriminant = along * along - (offset.lengthSquared() - radius * radius);
+        return discriminant < 0f ? 0f : -along + (float) Math.sqrt(discriminant);
     }
 
     private static float blockingRadius(ShipAPI ship) {

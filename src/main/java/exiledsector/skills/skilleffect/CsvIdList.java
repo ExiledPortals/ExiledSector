@@ -22,6 +22,8 @@ public final class CsvIdList {
             register("data/config/exiledSector/split_beam_effect_blocklist.csv", "plugin");
     public static final CsvIdList ENERGY_CHAIN_WEAPONS =
             register("data/config/exiledSector/energy_chain_blocklist.csv", "weapon");
+    public static final CsvIdList BALLISTIC_PIERCE_WEAPONS =
+            register("data/config/exiledSector/ballistic_pierce_blocklist.csv", "weapon");
     public static final CsvIdList DRONE_MARKER_HULLMODS =
             register("data/config/exiledSector/drone_marker_hullmods.csv", "hullmod");
 
