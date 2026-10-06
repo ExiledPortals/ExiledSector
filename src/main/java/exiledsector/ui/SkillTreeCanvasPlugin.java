@@ -726,7 +726,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             if (ordnancePointsBar.isHovered(position, mouseX, mouseY) || levelBar.isHovered(position, mouseX, mouseY)) {
                 readoutTooltipRenderer.render(readoutTooltipTitle, readoutTooltipBody, mouseX, mouseY, alphaMult);
             }
-            if (storageButton.contains(mouseX, mouseY)) {
+            if (!inHyperspace && storageButton.contains(mouseX, mouseY)) {
                 readoutTooltipRenderer.render(Translation.text("ui.socketStorage.title"), Translation.text("ui.socketStorage.hint"),
                         mouseX, mouseY, alphaMult);
             }
