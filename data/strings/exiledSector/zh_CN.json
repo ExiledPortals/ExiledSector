@@ -284,6 +284,7 @@
     "socketable.rareName.codename": "{first} {second}",
     "socketable.rareName.product": "{brand}{second}",
     "socketable.rareName.productModel": "{brand}{second} {model}",
+    "socketable.rollRange": "（{low}-{high}）",
     "socketable.nameWord.Sunny": "阳光",
     "socketable.nameWord.Happy": "快乐",
     "socketable.nameWord.Comfort": "舒适",

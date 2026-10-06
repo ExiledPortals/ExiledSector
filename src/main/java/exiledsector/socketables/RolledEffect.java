@@ -1,6 +1,7 @@
 package exiledsector.socketables;
 
 import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
 import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.skilleffect.SkillEffect;
 
@@ -92,7 +93,7 @@ public final class RolledEffect {
         if (lowText == null || highText == null) {
             return text;
         }
-        return text.insert(text.spans().get(0).end(), " (" + lowText + "-" + highText + ")");
+        return text.insert(text.spans().get(0).end(), Translation.msg("socketable.rollRange").arg("low", lowText).arg("high", highText).text());
     }
 
     private static StyledText display(SkillEffect effect, float magnitude) {
