@@ -7,6 +7,7 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.socketables.NpcSocketables;
+import exiledsector.socketables.RolledEffect;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -91,6 +92,22 @@ class NpcTreeTagTest {
 
         assertEquals("exiledSector_npcTree|generated|2|root,a,socket_1|sockets:socket_1=npc:domain_subroutine_military/-42", tag);
         assertEquals("npc:domain_subroutine_military/-42", decoded.getSocketedItem("socket_1"));
+    }
+
+    @Test
+    void socketTagsAlreadyWrittenIntoSavedFleetsStillDecodeWithTheirRolls() {
+        withSocket();
+        String rolled = "npc:domain_subroutine_military/-42/HULL_MULT:5;ARMOR_PERCENT:-0.25";
+        String saved = "exiledSector_npcTree|generated|2|root,a,socket_1|sockets:socket_1=" + rolled;
+
+        ShipSkillData decoded = NpcTreeTag.decode(saved);
+        ShipSkillData legacy = NpcTreeTag.decode(NpcTreeTag.LEGACY_PREFIX + saved.substring(NpcTreeTag.PREFIX.length()));
+
+        assertEquals(rolled, decoded.getSocketedItem("socket_1"));
+        assertEquals(rolled, legacy.getSocketedItem("socket_1"));
+        assertEquals(saved, NpcTreeTag.encode(decoded));
+        assertEquals(List.of(new RolledEffect("HULL_MULT", 5f), new RolledEffect("ARMOR_PERCENT", -0.25f)),
+                NpcSocketables.item(decoded.getSocketedItem("socket_1")).effects());
     }
 
     @Test

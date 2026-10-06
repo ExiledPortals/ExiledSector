@@ -98,7 +98,7 @@ class RefractionDroneTest {
         pool = mock(RefractionDrones.class);
         when(pool.firingShip()).thenReturn(firingShip);
         chain = mock(EnergyChainListener.class);
-        drone = new RefractionDrone(droneShip, pool, chain);
+        drone = new RefractionDrone(droneShip, pool);
     }
 
     @AfterEach
@@ -140,7 +140,7 @@ class RefractionDroneTest {
     }
 
     private void launchBehindTheHitShip() {
-        drone.launch(shieldedShipAtOrigin(100f), new Vector2f(100f, 0f), target(new Vector2f(-500f, 0f), new Vector2f()),
+        drone.launch(chain, shieldedShipAtOrigin(100f), new Vector2f(100f, 0f), target(new Vector2f(-500f, 0f), new Vector2f()),
                 link(), 600f);
     }
 
@@ -160,7 +160,7 @@ class RefractionDroneTest {
 
     @Test
     void launchLeadsAMovingTarget() {
-        drone.launch(shieldedShipAtOrigin(100f), new Vector2f(100f, 0f), target(new Vector2f(500f, 0f), new Vector2f(0f, 200f)),
+        drone.launch(chain, shieldedShipAtOrigin(100f), new Vector2f(100f, 0f), target(new Vector2f(500f, 0f), new Vector2f(0f, 200f)),
                 link(), 600f);
 
         Vector2f aim = droneShip.getMouseTarget();
@@ -180,7 +180,7 @@ class RefractionDroneTest {
     void launchStretchesTheDronesRangeStatSoTheShotTravelsAsFarAsTheFiringWeapons() {
         when(weapon.getRange()).thenAnswer(invocation -> rangeBonus.computeEffective(600f) * 1.5f + 30f);
 
-        drone.launch(shieldedShipAtOrigin(100f), new Vector2f(100f, 0f), target(new Vector2f(-500f, 0f), new Vector2f()),
+        drone.launch(chain, shieldedShipAtOrigin(100f), new Vector2f(100f, 0f), target(new Vector2f(-500f, 0f), new Vector2f()),
                 link(), 1230f);
 
         assertEquals(1230f, weapon.getRange(), 0.01f);
@@ -247,7 +247,7 @@ class RefractionDroneTest {
     void aWeaponThatNeverFiresGivesUpAfterTheTimeout() {
         launchBehindTheHitShip();
 
-        drone.advance(RefractionDrone.FIRE_TIMEOUT_SECONDS + FRAME);
+        drone.advance(SingleShotDrone.FIRE_TIMEOUT_SECONDS + FRAME);
 
         assertTrue(drone.isReady());
     }
@@ -280,7 +280,7 @@ class RefractionDroneTest {
 
     @Test
     void anIdleDroneRemovesItselfFromTheBattleAndThePool() {
-        drone.advance(RefractionDrone.IDLE_REMOVE_SECONDS + FRAME);
+        drone.advance(SingleShotDrone.IDLE_REMOVE_SECONDS + FRAME);
 
         verify(engine).removeEntity(droneShip);
         verify(pool).forget(drone);

@@ -1,18 +1,13 @@
 package exiledsector.skills.skilleffect;
 
-import com.fs.starfarer.api.Global;
+import exiledsector.ModCsv;
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static exiledsector.ExiledSectorModPlugin.MOD_ID;
 
 public final class CsvIdList {
 
@@ -49,19 +44,16 @@ public final class CsvIdList {
     }
 
     private void load() {
-        try {
-            JSONArray rows = Global.getSettings().getMergedSpreadsheetDataForMod(idColumn, path, MOD_ID);
+        ModCsv.load(idColumn, path, Logger.getLogger(CsvIdList.class), rows -> {
             Set<String> loaded = new HashSet<>();
-            for (int i = 0; i < rows.length(); i++) {
-                String id = rows.getJSONObject(i).optString(idColumn, "").trim();
+            ModCsv.forEach(rows, (index, row) -> {
+                String id = ModCsv.text(row, idColumn);
                 if (!id.isEmpty()) {
                     loaded.add(id);
                 }
-            }
+            });
             ids.set(Set.copyOf(loaded));
-        } catch (IOException | JSONException e) {
-            Logger.getLogger(CsvIdList.class).error("Failed to load " + path, e);
-        }
+        });
     }
 
     public boolean contains(String id) {

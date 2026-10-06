@@ -1,11 +1,11 @@
 package exiledsector.socketables;
 
 import com.fs.starfarer.api.Global;
+import exiledsector.ModCsv;
 import exiledsector.compat.SalvageSiteCompat;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,8 +16,6 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
-
-import static exiledsector.ExiledSectorModPlugin.MOD_ID;
 
 public final class SocketableDrops {
 
@@ -35,11 +33,7 @@ public final class SocketableDrops {
     }
 
     public static void load() {
-        try {
-            register(Global.getSettings().getMergedSpreadsheetDataForMod("site", DATA_PATH, MOD_ID));
-        } catch (IOException | JSONException e) {
-            LOG.error("Failed to load " + DATA_PATH, e);
-        }
+        ModCsv.load("site", DATA_PATH, LOG, SocketableDrops::register);
         for (SalvageSiteCompat.Source source : SalvageSiteCompat.enabledSources()) {
             try {
                 registerOtherMod(SalvageSiteCompat.rows(source));
@@ -61,11 +55,10 @@ public final class SocketableDrops {
 
     private static Map<String, Rule> parse(JSONArray rows, boolean otherMod) throws JSONException {
         Map<String, Rule> loaded = new HashMap<>();
-        for (int i = 0; i < rows.length(); i++) {
-            JSONObject row = rows.getJSONObject(i);
-            String site = row.optString("site", "").trim();
+        ModCsv.forEach(rows, (index, row) -> {
+            String site = ModCsv.text(row, "site");
             if (site.isEmpty()) {
-                continue;
+                return;
             }
             try {
                 List<Float> chances = new ArrayList<>();
@@ -74,12 +67,12 @@ public final class SocketableDrops {
                         chances.add(Float.parseFloat(chance.trim()));
                     }
                 }
-                String unique = row.optString("uniqueChance", "").trim();
+                String unique = ModCsv.text(row, "uniqueChance");
                 loaded.put(site, new Rule(List.copyOf(chances), unique.isEmpty() ? 0f : Float.parseFloat(unique), otherMod));
             } catch (NumberFormatException e) {
                 LOG.error("Skipping the salvage drop row for site " + site + ": " + e.getMessage());
             }
-        }
+        });
         return loaded;
     }
 

@@ -76,7 +76,7 @@ class RefractionDronesTest {
 
         launch(weapon);
 
-        verify(drone, times(2)).launch(eq(hitShip), any(), eq(target), eq(link), eq(700f));
+        verify(drone, times(2)).launch(eq(chain), eq(hitShip), any(), eq(target), eq(link), eq(700f));
         factory.verify(() -> WeaponDroneFactory.createSingleShot(any(), any(), any()), times(1));
     }
 
@@ -89,14 +89,14 @@ class RefractionDronesTest {
 
         launch(weapon);
 
-        verify(busy).launch(any(), any(), any(), any(), anyFloat());
-        verify(second).launch(any(), any(), any(), any(), anyFloat());
+        verify(busy).launch(any(), any(), any(), any(), any(), anyFloat());
+        verify(second).launch(any(), any(), any(), any(), any(), anyFloat());
     }
 
     @Test
     void atTheCapTheLongestIdleDroneOfAnotherWeaponIsRecycled() {
         RefractionDrone longestIdle = null;
-        for (int i = 0; i < RefractionDrones.MAX_DRONES; i++) {
+        for (int i = 0; i < SingleShotDrones.MAX_DRONES; i++) {
             RefractionDrone drone = queueDrone("other_gun_" + i);
             launch(weapon("other_gun_" + i));
             when(drone.isReady()).thenReturn(true);
@@ -108,12 +108,12 @@ class RefractionDronesTest {
         launch(weapon("energy_gun"));
 
         verify(longestIdle).remove();
-        verify(fresh).launch(any(), any(), any(), any(), anyFloat());
+        verify(fresh).launch(any(), any(), any(), any(), any(), anyFloat());
     }
 
     @Test
     void atTheCapWithEveryDroneBusyTheRefractionIsSkipped() {
-        for (int i = 0; i < RefractionDrones.MAX_DRONES; i++) {
+        for (int i = 0; i < SingleShotDrones.MAX_DRONES; i++) {
             queueDrone("energy_gun");
             launch(weapon("energy_gun"));
         }
@@ -121,7 +121,7 @@ class RefractionDronesTest {
 
         launch(weapon("energy_gun"));
 
-        verify(extra, never()).launch(any(), any(), any(), any(), anyFloat());
+        verify(extra, never()).launch(any(), any(), any(), any(), any(), anyFloat());
     }
 
     @Test
@@ -145,7 +145,7 @@ class RefractionDronesTest {
 
         launch(weapon);
 
-        verify(gone, times(1)).launch(any(), any(), any(), any(), anyFloat());
-        verify(replacement).launch(any(), any(), any(), any(), anyFloat());
+        verify(gone, times(1)).launch(any(), any(), any(), any(), any(), anyFloat());
+        verify(replacement).launch(any(), any(), any(), any(), any(), anyFloat());
     }
 }

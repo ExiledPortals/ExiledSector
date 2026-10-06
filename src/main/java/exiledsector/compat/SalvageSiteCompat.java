@@ -3,6 +3,7 @@ package exiledsector.compat;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ModManagerAPI;
 import com.fs.starfarer.api.SettingsAPI;
+import exiledsector.ModCsv;
 import exiledsector.ModSettings;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -10,8 +11,6 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static exiledsector.ExiledSectorModPlugin.MOD_ID;
 
 public final class SalvageSiteCompat {
 
@@ -62,19 +61,18 @@ public final class SalvageSiteCompat {
     }
 
     public static JSONArray rows(Source source) throws IOException, JSONException {
-        return Global.getSettings().getMergedSpreadsheetDataForMod("site", source.file(), MOD_ID);
+        return ModCsv.rows("site", source.file());
     }
 
     private static List<String> missingSites(Source source) {
         List<String> missing = new ArrayList<>();
         try {
-            JSONArray rows = rows(source);
-            for (int i = 0; i < rows.length(); i++) {
-                String site = rows.getJSONObject(i).optString("site", "").trim();
+            ModCsv.forEach(rows(source), (index, row) -> {
+                String site = ModCsv.text(row, "site");
                 if (!site.isEmpty() && !hasEntitySpec(site)) {
                     missing.add("the salvage site " + site);
                 }
-            }
+            });
         } catch (IOException | JSONException e) {
             missing.add("a readable " + source.file() + " (" + e.getMessage() + ")");
         }

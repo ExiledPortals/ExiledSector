@@ -1,18 +1,14 @@
 package exiledsector.skills.npc;
 
-import com.fs.starfarer.api.Global;
+import exiledsector.ModCsv;
 import exiledsector.skills.tags.SkillTags;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static exiledsector.ExiledSectorModPlugin.MOD_ID;
 
 public final class NpcFactionVolumes {
 
@@ -26,29 +22,24 @@ public final class NpcFactionVolumes {
     }
 
     public static void load() {
-        try {
-            register(Global.getSettings().getMergedSpreadsheetDataForMod(FACTION_COLUMN, DATA_PATH, MOD_ID));
-        } catch (IOException | JSONException e) {
-            LOG.error("Failed to load " + DATA_PATH, e);
-        }
+        ModCsv.load(FACTION_COLUMN, DATA_PATH, LOG, NpcFactionVolumes::register);
     }
 
     public static void register(JSONArray rows) throws JSONException {
         Map<String, String> loaded = new HashMap<>();
-        for (int i = 0; i < rows.length(); i++) {
-            JSONObject row = rows.getJSONObject(i);
-            String faction = row.optString(FACTION_COLUMN, "").trim();
-            String region = row.optString(REGION_COLUMN, "").trim();
+        ModCsv.forEach(rows, (index, row) -> {
+            String faction = ModCsv.text(row, FACTION_COLUMN);
+            String region = ModCsv.text(row, REGION_COLUMN);
             if (faction.isEmpty()) {
-                continue;
+                return;
             }
             if (!SkillTags.FACTION_VOLUMES.contains(region)) {
                 LOG.warn("Ignoring faction " + faction + " in " + DATA_PATH + ": '" + region
                         + "' is not a vanilla faction volume " + SkillTags.FACTION_VOLUMES);
-                continue;
+                return;
             }
             loaded.put(faction, region);
-        }
+        });
         REGION_BY_FACTION.set(Map.copyOf(loaded));
     }
 

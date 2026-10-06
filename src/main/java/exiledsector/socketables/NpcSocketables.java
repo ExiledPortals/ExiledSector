@@ -11,9 +11,7 @@ import java.util.function.Predicate;
 
 public final class NpcSocketables {
 
-    public static final String ID_PREFIX = "npc:";
-    private static final String SEED_SEPARATOR = "/";
-    private static final String EFFECT_MARKER = ":";
+    public static final String ID_PREFIX = SocketableCodec.NPC_PREFIX;
     static final float BASE_CHANCE = 0.05f;
     static final float CHANCE_PER_PLAYER_LEVEL = 0.01f;
     static final int SECOND_ROLL_PLAYER_LEVEL = 15;
@@ -25,38 +23,19 @@ public final class NpcSocketables {
     }
 
     public static String id(String definitionId, long seed) {
-        return ID_PREFIX + definitionId + SEED_SEPARATOR + seed;
+        return SocketableCodec.npc(definitionId, seed);
     }
 
     public static String id(SocketableItemData item) {
-        String id = id(item.definitionId(), item.seed());
-        return item.effects() == null ? id : id + SEED_SEPARATOR + RolledEffect.encode(item.effects());
+        return SocketableCodec.npc(item);
     }
 
     public static boolean isNpcId(String id) {
-        return id != null && id.startsWith(ID_PREFIX);
+        return SocketableCodec.isNpc(id);
     }
 
     public static SocketableItemData item(String id) {
-        if (!isNpcId(id)) {
-            return null;
-        }
-        String body = id.substring(ID_PREFIX.length());
-        int separator = body.lastIndexOf(SEED_SEPARATOR);
-        if (separator <= 0) {
-            return null;
-        }
-        String last = body.substring(separator + 1);
-        if (last.isEmpty() || last.contains(EFFECT_MARKER)) {
-            SocketableItemData legacy = item(ID_PREFIX + body.substring(0, separator));
-            List<RolledEffect> effects = RolledEffect.decode(last);
-            return legacy == null || effects == null ? null : new SocketableItemData(legacy.definitionId(), legacy.seed(), effects, null);
-        }
-        try {
-            return new SocketableItemData(body.substring(0, separator), Long.parseLong(last));
-        } catch (NumberFormatException e) {
-            return null;
-        }
+        return isNpcId(id) ? SocketableCodec.decode(id) : null;
     }
 
     static Socketable resolve(String id) {

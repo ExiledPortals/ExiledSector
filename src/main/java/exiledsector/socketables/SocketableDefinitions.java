@@ -1,18 +1,15 @@
 package exiledsector.socketables;
 
-import com.fs.starfarer.api.Global;
+import exiledsector.ModCsv;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static exiledsector.ExiledSectorModPlugin.MOD_ID;
 
 public final class SocketableDefinitions {
 
@@ -25,23 +22,19 @@ public final class SocketableDefinitions {
     }
 
     public static void load() {
-        try {
-            register(Global.getSettings().getMergedSpreadsheetDataForMod(ID_COLUMN, DATA_PATH, MOD_ID));
-        } catch (IOException | JSONException e) {
-            LOG.error("Failed to load " + DATA_PATH, e);
-        }
+        ModCsv.load(ID_COLUMN, DATA_PATH, LOG, SocketableDefinitions::register);
     }
 
     public static void register(JSONArray rows) throws JSONException {
         Map<String, SocketableDefinition> loaded = new LinkedHashMap<>();
-        for (int i = 0; i < rows.length(); i++) {
+        ModCsv.forEach(rows, (index, row) -> {
             try {
-                SocketableDefinition definition = SocketableDefinition.parse(rows.getJSONObject(i));
+                SocketableDefinition definition = SocketableDefinition.parse(row);
                 loaded.put(definition.id(), definition);
             } catch (IllegalArgumentException e) {
-                LOG.error("Skipping row " + (i + 1) + " of " + DATA_PATH + ": " + e.getMessage());
+                LOG.error("Skipping row " + (index + 1) + " of " + DATA_PATH + ": " + e.getMessage());
             }
-        }
+        });
         BY_ID.set(Collections.unmodifiableMap(loaded));
     }
 

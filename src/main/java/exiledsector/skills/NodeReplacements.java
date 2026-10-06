@@ -1,17 +1,13 @@
 package exiledsector.skills;
 
-import com.fs.starfarer.api.Global;
+import exiledsector.ModCsv;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static exiledsector.ExiledSectorModPlugin.MOD_ID;
 
 public final class NodeReplacements {
 
@@ -23,23 +19,18 @@ public final class NodeReplacements {
     }
 
     public static void load() {
-        try {
-            register(Global.getSettings().getMergedSpreadsheetDataForMod("old", DATA_PATH, MOD_ID));
-        } catch (IOException | JSONException e) {
-            LOG.error("Failed to load " + DATA_PATH, e);
-        }
+        ModCsv.load("old", DATA_PATH, LOG, NodeReplacements::register);
     }
 
     public static void register(JSONArray rows) throws JSONException {
         Map<String, String> loaded = new LinkedHashMap<>();
-        for (int i = 0; i < rows.length(); i++) {
-            JSONObject row = rows.getJSONObject(i);
-            String oldId = row.optString("old", "").trim();
-            String newId = row.optString("new", "").trim();
+        ModCsv.forEach(rows, (index, row) -> {
+            String oldId = ModCsv.text(row, "old");
+            String newId = ModCsv.text(row, "new");
             if (!oldId.isEmpty() && !newId.isEmpty()) {
                 loaded.put(oldId, newId);
             }
-        }
+        });
         BY_OLD_ID.set(Map.copyOf(loaded));
     }
 

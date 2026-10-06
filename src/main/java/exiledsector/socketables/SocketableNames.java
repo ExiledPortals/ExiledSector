@@ -1,6 +1,7 @@
 package exiledsector.socketables;
 
 import com.fs.starfarer.api.Global;
+import exiledsector.ModCsv;
 import exiledsector.i18n.Message;
 import exiledsector.i18n.Translation;
 import org.apache.log4j.Logger;
@@ -48,11 +49,7 @@ public final class SocketableNames {
         } catch (IOException | JSONException e) {
             LOG.error("Failed to load " + NAMES_PATH, e);
         }
-        try {
-            registerAffixes(Global.getSettings().getMergedSpreadsheetDataForMod("effect", AFFIXES_PATH, MOD_ID));
-        } catch (IOException | JSONException e) {
-            LOG.error("Failed to load " + AFFIXES_PATH, e);
-        }
+        ModCsv.load("effect", AFFIXES_PATH, LOG, SocketableNames::registerAffixes);
     }
 
     public static void registerWords(JSONObject root) throws JSONException {
@@ -69,13 +66,12 @@ public final class SocketableNames {
 
     public static void registerAffixes(JSONArray rows) throws JSONException {
         Map<String, Affix> loaded = new HashMap<>();
-        for (int i = 0; i < rows.length(); i++) {
-            JSONObject row = rows.getJSONObject(i);
-            String effect = row.optString("effect", "").trim();
+        ModCsv.forEach(rows, (index, row) -> {
+            String effect = ModCsv.text(row, "effect");
             if (!effect.isEmpty()) {
-                loaded.put(effect, new Affix(row.optString("prefix", "").trim(), row.optString("suffix", "").trim()));
+                loaded.put(effect, new Affix(ModCsv.text(row, "prefix"), ModCsv.text(row, "suffix")));
             }
-        }
+        });
         AFFIXES.set(Map.copyOf(loaded));
     }
 
