@@ -685,8 +685,8 @@
 			"connectedTo": [
 				"small_flux_optional_24"
 			],
-			"x": -1090,
-			"y": -3345,
+			"x": -1159,
+			"y": -3182,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#ab10fe",
 			"tags": [
