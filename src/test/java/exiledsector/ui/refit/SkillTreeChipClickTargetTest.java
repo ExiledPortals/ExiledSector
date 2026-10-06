@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -34,6 +35,14 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
 class SkillTreeChipClickTargetTest {
+
+    public abstract static class Widget implements UIPanelAPI {
+        public final List<Object> children = new ArrayList<>();
+
+        public List<Object> getChildrenNonCopy() {
+            return children;
+        }
+    }
 
     public abstract static class RowList implements UIComponentAPI {
         public final List<Object> items = new ArrayList<>();
@@ -56,7 +65,7 @@ class SkillTreeChipClickTargetTest {
 
     private MockedStatic<Global> globalMock;
     private MockedStatic<SkillTreeRefitButton> buttonMock;
-    private UIPanelAPI widget;
+    private Widget widget;
     private RowList list;
     private ChipRow chip;
     private ButtonAPI icon;
@@ -90,10 +99,13 @@ class SkillTreeChipClickTargetTest {
     @BeforeEach
     void setUp() {
         PhantomHullModRefitHider.resetForTests();
-        widget = mock(UIPanelAPI.class);
+        widget = mock(Widget.class, withSettings().useConstructor().defaultAnswer(CALLS_REAL_METHODS));
         PositionAPI widgetPosition = position(0, 0, 400, 600);
-        when(widget.getPosition()).thenReturn(widgetPosition);
-        when(widget.addComponent(any())).thenReturn(mock(PositionAPI.class));
+        doReturn(widgetPosition).when(widget).getPosition();
+        doAnswer(call -> {
+            widget.children.add(call.getArgument(0));
+            return mock(PositionAPI.class);
+        }).when(widget).addComponent(any());
 
         list = mock(RowList.class, withSettings().useConstructor().defaultAnswer(CALLS_REAL_METHODS));
         PositionAPI listPosition = position(10, 100, 300, 200);
@@ -109,7 +121,12 @@ class SkillTreeChipClickTargetTest {
 
         SettingsAPI settings = mock(SettingsAPI.class);
         ArgumentCaptor<CustomUIPanelPlugin> captor = ArgumentCaptor.forClass(CustomUIPanelPlugin.class);
-        when(settings.createCustom(anyFloat(), anyFloat(), captor.capture())).thenReturn(mock(CustomPanelAPI.class));
+        when(settings.createCustom(anyFloat(), anyFloat(), captor.capture())).thenAnswer(call -> {
+            CustomPanelAPI panel = mock(CustomPanelAPI.class);
+            when(panel.getPlugin()).thenReturn(call.getArgument(2));
+            when(panel.getPosition()).thenReturn(mock(PositionAPI.class));
+            return panel;
+        });
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSettings).thenReturn(settings);
         buttonMock = Mockito.mockStatic(SkillTreeRefitButton.class);
@@ -184,6 +201,7 @@ class SkillTreeChipClickTargetTest {
 
     @Test
     void aChipWithoutAnIconGetsNoClickTarget() {
+        widget.children.clear();
         ChipRow iconless = mock(ChipRow.class, withSettings().useConstructor().defaultAnswer(CALLS_REAL_METHODS));
         iconless.children.add(mock(LabelAPI.class));
 
@@ -192,6 +210,22 @@ class SkillTreeChipClickTargetTest {
         verify(widget, Mockito.times(1)).addComponent(any());
     }
 
+    @Test
+    void laterPassesRetargetTheSameOverlayAndNeverRemoveItSoOtherModsAnchoredOnItKeepWorking() {
+        SkillTreeChipClickTarget.attach(widget, list, chip);
+        SkillTreeChipClickTarget.attach(widget, list, null);
+
+        verify(widget, Mockito.times(1)).addComponent(any());
+        verify(widget, never()).removeComponent(any());
+        InputEventAPI inert = lmb(true, ICON_X, ICON_Y);
+        plugin.processInput(List.of(inert));
+        verify(inert, never()).consume();
+
+        SkillTreeChipClickTarget.attach(widget, list, chip);
+        InputEventAPI live = lmb(true, ICON_X, ICON_Y);
+        plugin.processInput(List.of(live));
+        verify(live).consume();
+    }
     @Test
     void aChipRemovedFromTheListIsNotClickable() {
         list.items.clear();

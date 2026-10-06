@@ -154,17 +154,33 @@ class SkillTreeModsButtonTest {
     }
 
     @Test
-    void turningTheSettingOffRemovesTheButtonAndAddsNoNewOne() {
+    void turningTheSettingOffHidesTheButtonWithoutRemovingItSinceOtherModsMayAnchorOnIt() {
         SkillTreeModsButton.attach(widget);
         widget.children.add(container);
         buttonUnderHullMods(false);
 
         SkillTreeModsButton.attach(widget);
-        widget.children.clear();
+        plugin.getValue().buttonPressed(SkillTreeModsButton.BUTTON_ID);
+
+        verify(widget, never()).removeComponent(any());
+        verify(container).setOpacity(0f);
+        verify(button).setEnabled(false);
+        refitButtonMock.verify(() -> SkillTreeRefitButton.openPanel(null), never());
+
+        buttonUnderHullMods(true);
         SkillTreeModsButton.attach(widget);
 
-        verify(widget).removeComponent(container);
+        verify(container).setOpacity(1f);
         verify(widget, times(1)).addComponent(any());
+    }
+
+    @Test
+    void withTheSettingOffANewRefitScreenGetsNoButton() {
+        buttonUnderHullMods(false);
+
+        SkillTreeModsButton.attach(widget);
+
+        verify(widget, never()).addComponent(any());
     }
 
     @Test

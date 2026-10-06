@@ -11,7 +11,6 @@ import com.fs.starfarer.api.ui.UIPanelAPI;
 import exiledsector.ui.SkillTreeRefitButton;
 import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static exiledsector.ui.refit.UiReflection.call;
@@ -22,28 +21,31 @@ final class SkillTreeChipClickTarget extends BaseCustomUIPanelPlugin {
 
     private static boolean failed;
 
-    private final Object list;
-    private final UIComponentAPI row;
-    private final ButtonAPI icon;
+    private Object list;
+    private UIComponentAPI row;
+    private ButtonAPI icon;
     private boolean swallowMouseUp;
-
-    private SkillTreeChipClickTarget(Object list, UIComponentAPI row, ButtonAPI icon) {
-        this.list = list;
-        this.row = row;
-        this.icon = icon;
-    }
 
     static void attach(Object modWidget, Object list, Object chipRow) {
         if (failed || !(modWidget instanceof UIPanelAPI widget)) return;
         try {
-            removeExisting(widget);
-            if (!(chipRow instanceof UIComponentAPI row) || !(list instanceof UIComponentAPI)) return;
-            ButtonAPI icon = iconOf(row);
-            if (icon == null) return;
+            UIComponentAPI row = chipRow instanceof UIComponentAPI component && list instanceof UIComponentAPI ? component : null;
+            ButtonAPI icon = row == null ? null : iconOf(row);
             PositionAPI widgetPosition = widget.getPosition();
-            CustomPanelAPI overlay = Global.getSettings().createCustom(widgetPosition.getWidth(), widgetPosition.getHeight(),
-                    new SkillTreeChipClickTarget(list, row, icon));
-            widget.addComponent(overlay).inTL(0f, 0f);
+            CustomPanelAPI overlay = existing(widget);
+            SkillTreeChipClickTarget target;
+            if (overlay == null) {
+                if (icon == null) return;
+                target = new SkillTreeChipClickTarget();
+                overlay = Global.getSettings().createCustom(widgetPosition.getWidth(), widgetPosition.getHeight(), target);
+                widget.addComponent(overlay).inTL(0f, 0f);
+            } else {
+                target = (SkillTreeChipClickTarget) overlay.getPlugin();
+                overlay.getPosition().setSize(widgetPosition.getWidth(), widgetPosition.getHeight());
+            }
+            target.list = list;
+            target.row = icon == null ? null : row;
+            target.icon = icon;
         } catch (Throwable e) {
             disable(e);
         }
@@ -62,12 +64,13 @@ final class SkillTreeChipClickTarget extends BaseCustomUIPanelPlugin {
         failed = false;
     }
 
-    private static void removeExisting(UIPanelAPI widget) throws Throwable {
-        for (Object child : new ArrayList<>(UiReflection.children(widget))) {
+    private static CustomPanelAPI existing(UIPanelAPI widget) throws Throwable {
+        for (Object child : UiReflection.children(widget)) {
             if (child instanceof CustomPanelAPI panel && panel.getPlugin() instanceof SkillTreeChipClickTarget) {
-                widget.removeComponent(panel);
+                return panel;
             }
         }
+        return null;
     }
 
     private static void disable(Throwable e) {
@@ -91,7 +94,7 @@ final class SkillTreeChipClickTarget extends BaseCustomUIPanelPlugin {
 
     private boolean isOverChip(float x, float y) {
         try {
-            return list instanceof UIComponentAPI listComponent
+            return icon != null && list instanceof UIComponentAPI listComponent
                     && contains(listComponent.getPosition(), x, y)
                     && contains(icon.getPosition(), x, y)
                     && call(list, "getItems") instanceof List<?> rows && rows.contains(row);

@@ -27,29 +27,42 @@ final class SkillTreeModsButton extends BaseCustomUIPanelPlugin {
 
     private static boolean failed;
 
+    private ButtonAPI button;
+    private boolean shown = true;
+
     static void attach(Object modWidget) {
         if (failed || !(modWidget instanceof UIPanelAPI widget)) return;
         try {
             CustomPanelAPI attached = attached(widget);
-            if (!RefitButtonConfig.buttonUnderHullMods()) {
-                if (attached != null) widget.removeComponent(attached);
+            boolean wanted = RefitButtonConfig.buttonUnderHullMods();
+            if (attached != null) {
+                if (attached.getPlugin() instanceof SkillTreeModsButton plugin) plugin.show(attached, wanted);
                 return;
             }
-            if (attached != null || !(call(widget, "getPerm") instanceof ButtonAPI buildIn)) return;
+            if (!wanted || !(call(widget, "getPerm") instanceof ButtonAPI buildIn)) return;
             PositionAPI buildInPosition = buildIn.getPosition();
             float width = buildInPosition.getWidth();
             float height = buildInPosition.getHeight();
-            CustomPanelAPI container = Global.getSettings().createCustom(width, height, new SkillTreeModsButton());
+            SkillTreeModsButton plugin = new SkillTreeModsButton();
+            CustomPanelAPI container = Global.getSettings().createCustom(width, height, plugin);
             TooltipMakerAPI element = container.createUIElement(width, height, false);
             element.setButtonFontOrbitron20();
             ButtonAPI button = element.addButton(Translation.gameText("ui.refitButton"), BUTTON_ID,
                     Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(), Alignment.MID, CutStyle.BOTTOM, width, height, 0f);
             button.setShortcut(HOTKEY, true);
+            plugin.button = button;
             container.addUIElement(element);
             widget.addComponent(container).belowMid(buildIn, GAP_BELOW_BUILD_IN).setXAlignOffset(X_ALIGN_OFFSET);
         } catch (Throwable e) {
             disable(e);
         }
+    }
+
+    private void show(CustomPanelAPI container, boolean visible) {
+        if (visible == shown) return;
+        shown = visible;
+        container.setOpacity(visible ? 1f : 0f);
+        if (button != null) button.setEnabled(visible);
     }
 
     static void resetForTests() {
@@ -72,7 +85,7 @@ final class SkillTreeModsButton extends BaseCustomUIPanelPlugin {
 
     @Override
     public void buttonPressed(Object buttonId) {
-        if (!BUTTON_ID.equals(buttonId)) return;
+        if (!shown || !BUTTON_ID.equals(buttonId)) return;
         try {
             SkillTreeRefitButton.openPanel(null);
         } catch (Throwable e) {
