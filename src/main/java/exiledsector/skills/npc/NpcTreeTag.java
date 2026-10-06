@@ -105,7 +105,7 @@ public final class NpcTreeTag {
         int optionAt = entry.indexOf(OPTION_SEPARATOR);
         String nodeId = NodeReplacements.resolve(optionAt < 0 ? entry : entry.substring(0, optionAt));
         SkillNode node = SkillTree.get(nodeId);
-        if (node == null || data.isAllocated(nodeId) || node.getType().getTier() == SkillTier.ROOT) {
+        if (node == null || data.isAllocated(nodeId)) {
             return;
         }
         if (optionAt < 0 || !node.getType().isOptional()) {

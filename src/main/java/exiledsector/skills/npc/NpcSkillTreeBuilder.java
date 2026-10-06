@@ -398,7 +398,7 @@ public final class NpcSkillTreeBuilder {
             int nearest = Integer.MAX_VALUE;
             List<String> candidates = new ArrayList<>();
             for (String id : search.reached()) {
-                if (topology.node(id).getType().getTier() != SkillTier.SMALL || rejected.contains(id) || !affordable(search, id, remaining())) {
+                if (!isFillTier(topology.node(id).getType().getTier()) || rejected.contains(id) || !affordable(search, id, remaining())) {
                     continue;
                 }
                 int cost = search.cost(id);
@@ -418,6 +418,10 @@ public final class NpcSkillTreeBuilder {
                 rejected.add(pick);
             }
             return true;
+        }
+
+        private static boolean isFillTier(SkillTier tier) {
+            return tier == SkillTier.SMALL || tier == SkillTier.ROOT;
         }
 
         private float tierWeight(String nodeId) {
@@ -481,7 +485,7 @@ public final class NpcSkillTreeBuilder {
         }
 
         private boolean traversable(SkillNode node, State state) {
-            if (data.isAllocated(node.getId()) || node.getType().getTier() == SkillTier.ROOT || !regionAllowed(node.getRegion())) {
+            if (data.isAllocated(node.getId()) || !regionAllowed(node.getRegion())) {
                 return false;
             }
             if (node.getType().getTier() == SkillTier.WORMHOLE && !wormholeAllowed(node)) {

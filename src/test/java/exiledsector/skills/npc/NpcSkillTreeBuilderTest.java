@@ -293,6 +293,29 @@ class NpcSkillTreeBuilderTest {
     }
 
     @Test
+    void anotherRootIsBoughtAsAPaidNodeOnTheWayToANotableAndSurvivesTheTag() {
+        root();
+        node("other_root", registerType(builder("other_root_type", SkillTier.ROOT).build()), ROOT);
+        notable("notable", "other_root");
+
+        NpcTreeBuild build = generate(2);
+        ShipSkillData decoded = NpcTreeTag.decode(NpcTreeTag.encode(build.data()));
+
+        assertEquals(List.of(ROOT, "other_root", "notable"), allocated(build));
+        assertEquals(ROOT, build.data().resolveStartingRootId());
+        assertEquals(allocated(build), List.copyOf(decoded.getAllocatedNodeIds()));
+        assertEquals(ROOT, decoded.resolveStartingRootId());
+    }
+
+    @Test
+    void anotherRootCanFillTheBudgetLikeASmallNode() {
+        root();
+        node("other_root", registerType(builder("other_root_type", SkillTier.ROOT).build()), ROOT);
+
+        assertEquals(List.of(ROOT, "other_root"), allocated(generate(1)));
+    }
+
+    @Test
     void aLockedWormholeIsNeverCrossedUntilItUnlocks() {
         root();
         small("s1", ROOT);
