@@ -61,6 +61,7 @@ class SocketableUnlockTest {
                 .put(SocketableFixtures.row("vambrace", "subroutine", "HULL_MULT:4:6").put("unique", "true").put("unlock", "found_onslaught_mk1"))
                 .put(SocketableFixtures.row("coil", "subroutine", "HULL_MULT:4:6").put("unique", "true").put("unlock", "found_gate_hauler"))
                 .put(SocketableFixtures.row("circuit", "subroutine", "HULL_MULT:4:6").put("unique", "true").put("unlock", "found_planetkiller"))
+                .put(SocketableFixtures.row("survivor", "officer", "HULL_MULT:4:6").put("unique", "true").put("unlock", "defeated_ziggurat"))
                 .put(SocketableFixtures.row("mystery", "subroutine", "HULL_MULT:4:6").put("unique", "true").put("unlock", "found_something_else")));
     }
 
@@ -140,6 +141,15 @@ class SocketableUnlockTest {
     }
 
     @Test
+    void theAlphaSiteSurvivorWaitsForTheZigguratToBeDefeated() {
+        assertFalse(canDrop("survivor"));
+
+        globals.put("$defeatedZiggurat", true);
+
+        assertTrue(canDrop("survivor"));
+    }
+
+    @Test
     void anUnknownConditionNeverUnlocks() {
         globals.put("$foundOneslaught", true);
         globals.put("$pk_recovered", true);
@@ -162,7 +172,7 @@ class SocketableUnlockTest {
             }
         }
         assertEquals(Map.of("unique_vambrace_plating", "found_onslaught_mk1", "unique_gate_hauler_coil", "found_gate_hauler",
-                "unique_planetkiller_circuit", "found_planetkiller"), unlocks);
+                "unique_planetkiller_circuit", "found_planetkiller", "unique_alpha_site_survivor", "defeated_ziggurat"), unlocks);
 
         String editor = Files.readString(RealSkillData.projectRoot().resolve("tools/skill_tree_editor.html"), StandardCharsets.UTF_8);
         Matcher list = Pattern.compile("var SOCKETABLE_UNLOCKS = (.*);").matcher(editor);

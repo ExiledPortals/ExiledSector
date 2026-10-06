@@ -12,7 +12,8 @@ public enum SocketableUnlock {
 
     FOUND_ONSLAUGHT_MK1("found_onslaught_mk1", sector -> sector.getMemoryWithoutUpdate().getBoolean("$foundOneslaught")),
     FOUND_GATE_HAULER("found_gate_hauler", SocketableUnlock::foundGateHauler),
-    FOUND_PLANETKILLER("found_planetkiller", sector -> sector.getMemoryWithoutUpdate().getBoolean("$pk_recovered"));
+    FOUND_PLANETKILLER("found_planetkiller", sector -> sector.getMemoryWithoutUpdate().getBoolean("$pk_recovered")),
+    DEFEATED_ZIGGURAT("defeated_ziggurat", sector -> sector.getMemoryWithoutUpdate().getBoolean("$defeatedZiggurat"));
 
     public static final int UNIQUE_MIN_PLAYER_LEVEL = 15;
     private static final String LATCH_PREFIX = "$exiledSector_socketUnlock_";
