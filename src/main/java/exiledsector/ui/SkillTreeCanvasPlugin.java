@@ -223,6 +223,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                 HYPERSPACE_MARGIN, HyperspaceLabels.LABEL_SPACE);
         HyperspaceCamera map = new HyperspaceCamera(fit.x(), fit.y(), Math.min(fit.zoom(), zoom));
         hyperspace.enter(currentCamera(), map);
+        SkillTreeSounds.hyperspaceOut();
     }
 
     private void advanceCameraPan(float amount) {
@@ -415,6 +416,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         if (storagePanel != null) {
             return;
         }
+        SkillTreeSounds.panelOpened();
         nodeRenderer.closeDropdown();
         searchBar.unfocus();
         ownedShips = SocketCustody.reconcile();
@@ -457,6 +459,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                         event.getX(), event.getY());
                 if (clicked != null) {
                     hyperspace.leaveTo(currentCamera(), new HyperspaceCamera(clicked.x(), clicked.y(), HYPERSPACE_RETURN_ZOOM));
+                    SkillTreeSounds.hyperspaceIn();
                 } else {
                     dragging = true;
                 }
@@ -472,6 +475,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                 float worldX = (event.getX() - viewport.centerX()) / zoom;
                 float worldY = (viewport.centerY() - event.getY()) / zoom;
                 hyperspace.zoomInAbout(currentCamera(), worldX, worldY, SmoothZoom.MIN_ZOOM);
+                SkillTreeSounds.hyperspaceIn();
             }
             event.consume();
         }
@@ -575,6 +579,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             } else if (jumpTarget != null) {
                 cameraPan = new CameraPanAnimation(-panX / zoom, panY / zoom, jumpTarget.getOffsetX(), jumpTarget.getOffsetY());
                 nodeRenderer.launchWormholeGhosts(pendingClickNode, jumpTarget);
+                SkillTreeSounds.wormholeJumped();
             } else {
                 nodeRenderer.toggleAllocation(pendingClickNode, pendingClickCtrlDown);
             }

@@ -19,6 +19,7 @@ import exiledsector.socketables.SocketCustody;
 import exiledsector.socketables.Socketable;
 import exiledsector.socketables.SocketableStore;
 import exiledsector.ui.SkillTreePanelStyle;
+import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.TreeViewport;
 import lunalib.lunaRefit.BaseRefitButton;
 import org.lazywizard.lazylib.ui.LazyFont;
@@ -499,6 +500,7 @@ public final class SkillTreeNodeRenderer {
             return false;
         }
         refreshAfterAllocation();
+        SkillTreeSounds.socketed();
         ringRenderer.startPulse(node.getId());
         return true;
     }
@@ -573,6 +575,7 @@ public final class SkillTreeNodeRenderer {
         lastChosenOptionalOption = chosenOption;
         if (wasAllocated) {
             refreshAfterAllocation();
+            SkillTreeSounds.allocated(node.getType().getTier());
             ringRenderer.startPulse(node.getId());
         } else {
             afterAllocationChange(node, true);
@@ -588,6 +591,11 @@ public final class SkillTreeNodeRenderer {
 
     private void afterAllocationChange(SkillNode node, boolean isAllocatedNow) {
         refreshAfterAllocation();
+        if (isAllocatedNow) {
+            SkillTreeSounds.allocated(node.getType().getTier());
+        } else {
+            SkillTreeSounds.deallocated();
+        }
         if (!isAllocatedNow) {
             connectorFills.cancel(node.getId());
             if (node.getPairedNodeId() != null) {

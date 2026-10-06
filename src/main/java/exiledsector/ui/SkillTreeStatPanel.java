@@ -85,6 +85,9 @@ final class SkillTreeStatPanel {
 
     void toggleCollapsed() {
         collapsed = !collapsed;
+        if (!collapsed) {
+            SkillTreeSounds.panelOpened();
+        }
     }
 
     boolean isCollapseButtonHit(PositionAPI position, float x, float y) {

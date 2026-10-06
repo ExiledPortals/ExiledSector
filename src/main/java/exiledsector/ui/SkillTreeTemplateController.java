@@ -174,6 +174,7 @@ final class SkillTreeTemplateController {
             return;
         }
         nodeRenderer.closeDropdown();
+        SkillTreeSounds.panelOpened();
         listOverlay.open(root.getId(), root.getType().getDisplayName(), hullSize(), SkillTreeTemplateStore.all(), assignedTemplateId());
     }
 
