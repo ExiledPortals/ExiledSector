@@ -13,14 +13,14 @@ public final class AllocationGate {
 
     public record Verdict(Refusal refusal, NodeEligibility.Block block) {
 
-        public static final Verdict ALLOWED = new Verdict(null, null);
+        public static final Verdict GRANTED = new Verdict(null, null);
 
         static Verdict refused(Refusal refusal) {
             return new Verdict(refusal, null);
         }
 
         static Verdict fromBlock(NodeEligibility.Block block) {
-            return block == null ? ALLOWED : new Verdict(Refusal.INELIGIBLE, block);
+            return block == null ? GRANTED : new Verdict(Refusal.INELIGIBLE, block);
         }
 
         public boolean allowed() {
@@ -157,7 +157,7 @@ public final class AllocationGate {
         for (SkillType option : options(node)) {
             Verdict optionVerdict = allocation(node, option);
             if (optionVerdict.allowed()) {
-                return Verdict.ALLOWED;
+                return Verdict.GRANTED;
             }
             if (firstRefusal == null) {
                 firstRefusal = optionVerdict;
@@ -182,7 +182,7 @@ public final class AllocationGate {
         if (opCost > 0 && data.getBankedFreeAllocations() <= 0 && spentOp + opCost > budget.totalOp()) {
             return Verdict.refused(Refusal.OUT_OF_OP);
         }
-        return Verdict.ALLOWED;
+        return Verdict.GRANTED;
     }
 
     private boolean isConnected(SkillNode node) {
@@ -204,7 +204,7 @@ public final class AllocationGate {
         if (node.getId().equals(rootId)) {
             return Verdict.refused(Refusal.STARTING_ROOT);
         }
-        return data.canDeallocate(node, topology, rootId) ? Verdict.ALLOWED : Verdict.refused(Refusal.STRANDS_NODES);
+        return data.canDeallocate(node, topology, rootId) ? Verdict.GRANTED : Verdict.refused(Refusal.STRANDS_NODES);
     }
 
     private Verdict computeOptionSwitch(SkillNode node, SkillType option) {

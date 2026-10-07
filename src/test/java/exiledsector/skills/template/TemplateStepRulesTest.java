@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TemplateStepRulesTest {
 
-    private static final BiFunction<SkillNode, SkillType, AllocationGate.Verdict> ALLOWED = (node, option) -> AllocationGate.Verdict.ALLOWED;
+    private static final BiFunction<SkillNode, SkillType, AllocationGate.Verdict> ALLOWED = (node, option) -> AllocationGate.Verdict.GRANTED;
 
     private ShipSkillData data;
 
@@ -99,7 +99,7 @@ class TemplateStepRulesTest {
         BiFunction<SkillNode, SkillType, AllocationGate.Verdict> blockHull = (node, option) -> {
             askedOptions.add(option == null ? null : option.getId());
             return option != null && option.getId().equals("hull") ? new AllocationGate.Verdict(AllocationGate.Refusal.INELIGIBLE, null)
-                    : AllocationGate.Verdict.ALLOWED;
+                    : AllocationGate.Verdict.GRANTED;
         };
 
         assertEquals(StepVerdict.BLOCKED, TemplateStepRules.verdict(new TemplateStep("slot", "hull"), data, "root", blockHull));
