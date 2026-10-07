@@ -53,16 +53,19 @@ public final class ResolvedTree {
     }
 
     private final HullSize hullSize;
+    private final float bonusScale;
     private final int shipDataRevision;
     private final List<AllocatedNode> allocatedNodes;
     private final List<Entry> entries;
     private final List<TemporaryNode> temporaryNodes;
     private final Set<String> phantomHullModIds;
 
-    private ResolvedTree(ShipSkillData shipData, HullSize hullSize) {
+    private ResolvedTree(ShipSkillData shipData, HullSize hullSize, float bonusScale) {
         this.hullSize = hullSize;
+        this.bonusScale = bonusScale;
         this.shipDataRevision = shipData.revision();
         this.allocatedNodes = List.copyOf(AllocatedNode.of(shipData));
+        NpcBonusScaling scaling = NpcBonusScaling.of(bonusScale, shipData, allocatedNodes, hullSize);
         List<Entry> resolvedEntries = new ArrayList<>();
         List<TemporaryNode> resolvedTemporaryNodes = new ArrayList<>();
         Map<SkillEffect, Float> multiplierTotals = new LinkedHashMap<>();
@@ -71,9 +74,9 @@ public final class ResolvedTree {
             if (vanillaHullModId != null) {
                 addVanillaEntry(vanillaHullModId, resolvedEntries);
             } else if (node.effectiveType().getTemporaryAfterDeploymentSeconds() != null) {
-                addTemporaryNode(shipData, node, hullSize, resolvedEntries, resolvedTemporaryNodes);
+                addTemporaryNode(shipData, node, hullSize, scaling, resolvedEntries, resolvedTemporaryNodes);
             } else {
-                addEffects(shipData, node, hullSize, resolvedEntries, multiplierTotals);
+                addEffects(shipData, node, hullSize, scaling, resolvedEntries, multiplierTotals);
             }
         }
         multiplierTotals.forEach((effect, multiplierTotal) ->
@@ -121,12 +124,13 @@ public final class ResolvedTree {
         }
     }
 
-    private static void addTemporaryNode(ShipSkillData shipData, AllocatedNode node, HullSize hullSize, List<Entry> resolvedEntries,
+    private static void addTemporaryNode(ShipSkillData shipData, AllocatedNode node, HullSize hullSize, NpcBonusScaling scaling,
+                                         List<Entry> resolvedEntries,
                                          List<TemporaryNode> resolvedTemporaryNodes) {
         String modId = MOD_ID_PREFIX + node.node().getId();
         List<EffectEntry> nodeEffects = new ArrayList<>();
         for (SkillTypeEffect effect : AllocatedSkillEffects.appliedEffects(shipData, node, hullSize)) {
-            EffectEntry effectEntry = new EffectEntry(effect.effect(), modId, effect.magnitude());
+            EffectEntry effectEntry = new EffectEntry(effect.effect(), modId, scaling.scaled(node, effect.effect(), effect.magnitude()));
             nodeEffects.add(effectEntry);
             resolvedEntries.add(effectEntry);
         }
@@ -135,27 +139,33 @@ public final class ResolvedTree {
         }
     }
 
-    private static void addEffects(ShipSkillData shipData, AllocatedNode node, HullSize hullSize, List<Entry> resolvedEntries,
-                                   Map<SkillEffect, Float> multiplierTotals) {
+    private static void addEffects(ShipSkillData shipData, AllocatedNode node, HullSize hullSize, NpcBonusScaling scaling,
+                                   List<Entry> resolvedEntries, Map<SkillEffect, Float> multiplierTotals) {
         String modId = MOD_ID_PREFIX + node.node().getId();
         for (SkillTypeEffect effect : AllocatedSkillEffects.appliedEffects(shipData, node, hullSize)) {
+            float magnitude = scaling.scaled(node, effect.effect(), effect.magnitude());
             if (effect.effect().isMultiplicative()) {
-                multiplierTotals.merge(effect.effect(), effect.magnitude(), Float::sum);
+                multiplierTotals.merge(effect.effect(), magnitude, Float::sum);
             } else {
-                resolvedEntries.add(new EffectEntry(effect.effect(), modId, effect.magnitude()));
+                resolvedEntries.add(new EffectEntry(effect.effect(), modId, magnitude));
             }
         }
     }
 
     static ResolvedTree of(ShipSkillData shipData, HullSize hullSize) {
+        return of(shipData, hullSize, 1f);
+    }
+
+    static ResolvedTree of(ShipSkillData shipData, HullSize hullSize, float bonusScale) {
         if (shipData == null) {
             return null;
         }
         ResolvedTree cachedTree = CACHE.get(shipData);
-        if (cachedTree != null && cachedTree.shipDataRevision == shipData.revision() && cachedTree.hullSize == hullSize) {
+        if (cachedTree != null && cachedTree.shipDataRevision == shipData.revision() && cachedTree.hullSize == hullSize
+                && Float.compare(cachedTree.bonusScale, bonusScale) == 0) {
             return cachedTree;
         }
-        ResolvedTree resolvedTree = new ResolvedTree(shipData, hullSize);
+        ResolvedTree resolvedTree = new ResolvedTree(shipData, hullSize, bonusScale);
         CACHE.put(shipData, resolvedTree);
         return resolvedTree;
     }

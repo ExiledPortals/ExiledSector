@@ -1,6 +1,7 @@
 package exiledsector.ui;
 
 import exiledsector.compat.SalvageSiteCompat;
+import exiledsector.effects.NpcBonusScale;
 import exiledsector.socketables.SocketableDrops;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.LanguageSetting;
@@ -161,6 +162,21 @@ public final class ExiledSectorSettings {
         SettingsCreator.addKeybind(MOD_ID, NpcInspectConfig.KEYBIND_FIELD_ID,
                 Translation.text("settings.npc.inspectKey.name"), Translation.text("settings.npc.inspectKey.tooltip"),
                 NpcInspectConfig.DEFAULT_KEY, npcTab);
+
+        SettingsCreator.addHeader(MOD_ID, "exiledSector_npcBonusScaleHeader", Translation.text("settings.npcBonusScale.header"), npcTab);
+        SettingsCreator.addText(MOD_ID, "exiledSector_npcBonusScaleAbout", Translation.text("settings.npcBonusScale.about"), npcTab);
+        SettingsCreator.addInt(MOD_ID, NpcBonusScale.START_PLAYER_LEVEL_FIELD_ID,
+                Translation.text("settings.npcBonusScale.startPlayerLevel.name"), Translation.text("settings.npcBonusScale.startPlayerLevel.tooltip"),
+                NpcBonusScale.DEFAULT_START_PLAYER_LEVEL, 1, 100, npcTab);
+        SettingsCreator.addInt(MOD_ID, NpcBonusScale.LOW_SHIP_LEVEL_FIELD_ID,
+                Translation.text("settings.npcBonusScale.lowShipLevel.name"), Translation.text("settings.npcBonusScale.lowShipLevel.tooltip"),
+                NpcBonusScale.DEFAULT_LOW_SHIP_LEVEL, 0, 200, npcTab);
+        SettingsCreator.addInt(MOD_ID, NpcBonusScale.HIGH_SHIP_LEVEL_FIELD_ID,
+                Translation.text("settings.npcBonusScale.highShipLevel.name"), Translation.text("settings.npcBonusScale.highShipLevel.tooltip"),
+                NpcBonusScale.DEFAULT_HIGH_SHIP_LEVEL, 1, 200, npcTab);
+        SettingsCreator.addDouble(MOD_ID, NpcBonusScale.MAX_MULTIPLIER_FIELD_ID,
+                Translation.text("settings.npcBonusScale.maxMultiplier.name"), Translation.text("settings.npcBonusScale.maxMultiplier.tooltip"),
+                NpcBonusScale.DEFAULT_MAX_MULTIPLIER, 1.0, 10.0, npcTab);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_npcNodesHeader", Translation.text("settings.npcNodes.header"), npcTab);
         SettingsCreator.addText(MOD_ID, "exiledSector_npcNodesAbout", Translation.text("settings.npcNodes.about"), npcTab);

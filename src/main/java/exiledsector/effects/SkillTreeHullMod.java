@@ -8,6 +8,7 @@ import com.fs.starfarer.api.combat.HullModFleetEffect;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -38,7 +39,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         ShipSkillData shipData = SkillDataResolver.resolve(stats.getFleetMember(), stats.getVariant());
         if (shipData == null) return;
 
-        ResolvedTree resolvedTree = ResolvedTree.of(shipData, hullSize);
+        ResolvedTree resolvedTree = ResolvedTree.of(shipData, hullSize, bonusScale(stats.getVariant()));
         for (ResolvedTree.Entry entry : resolvedTree.entries()) {
             if (entry instanceof ResolvedTree.VanillaEntry vanillaEntry) {
                 vanillaEntry.effect().applyEffectsBeforeShipCreation(hullSize, stats, vanillaEntry.hullModId());
@@ -201,7 +202,12 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
     }
 
     private static ResolvedTree treeFor(ShipAPI ship) {
-        ShipSkillData shipData = SkillDataResolver.resolve(ship.getMutableStats().getFleetMember(), ship.getVariant());
-        return ResolvedTree.of(shipData, ship.getHullSize());
+        ShipVariantAPI variant = ship.getVariant();
+        ShipSkillData shipData = SkillDataResolver.resolve(ship.getMutableStats().getFleetMember(), variant);
+        return ResolvedTree.of(shipData, ship.getHullSize(), bonusScale(variant));
+    }
+
+    private static float bonusScale(ShipVariantAPI variant) {
+        return SkillDataResolver.isNpcTree(variant) ? NpcBonusScale.current() : 1f;
     }
 }
