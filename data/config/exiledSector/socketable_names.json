@@ -14,5 +14,10 @@
 		"first": ["Sunny", "Happy", "Comfort", "Easy", "Safe", "Family", "Bright", "Cozy", "Smart", "Trusty", "Daily", "Home"],
 		"second": ["Pal", "Helper", "Buddy", "Assist", "Companion", "Navigator", "Guardian", "Friend", "Pilot", "Plus"],
 		"models": ["3000", "2000", "500", "Plus", "Pro", "Max", "Deluxe", "Lite", "XL"]
+	},
+	"domain_subroutine_management": {
+		"style": "codename",
+		"first": ["Talon", "Broadsword", "Longbow", "Warthog", "Wasp", "Dagger", "Trident", "Piranha", "Thunder", "Gladius", "Khopesh", "Sarissa", "Spark", "Claw"],
+		"second": ["Roster", "Rotation", "Muster", "Turnaround", "Requisition", "Dispatch", "Manifest", "Tasking", "Readiness", "Allocation", "Ledger", "Scramble"]
 	}
 }
