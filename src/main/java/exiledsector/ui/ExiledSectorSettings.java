@@ -100,6 +100,15 @@ public final class ExiledSectorSettings {
         SettingsCreator.addInt(MOD_ID, ShipLevelConfig.MAX_ALLOCATED_NODES_FIELD_ID,
                 Translation.text("settings.level.maxAllocatedNodes.name"), Translation.text("settings.level.maxAllocatedNodes.tooltip"),
                 ShipLevelConfig.DEFAULT_MAX_ALLOCATED_NODES, 1, 500, MAIN_TAB);
+        SettingsCreator.addDouble(MOD_ID, ShipLevelConfig.CATCH_UP_PER_LEVEL_FIELD_ID,
+                Translation.text("settings.level.catchUpPerLevel.name"), Translation.text("settings.level.catchUpPerLevel.tooltip"),
+                ShipLevelConfig.DEFAULT_CATCH_UP_PER_LEVEL, 0.0, 1.0, MAIN_TAB);
+        SettingsCreator.addDouble(MOD_ID, ShipLevelConfig.CATCH_UP_MAX_MULTIPLIER_FIELD_ID,
+                Translation.text("settings.level.catchUpMaxMultiplier.name"), Translation.text("settings.level.catchUpMaxMultiplier.tooltip"),
+                ShipLevelConfig.DEFAULT_CATCH_UP_MAX_MULTIPLIER, 1.0, 20.0, MAIN_TAB);
+        SettingsCreator.addInt(MOD_ID, ShipLevelConfig.LEVEL_FLOOR_PERCENT_FIELD_ID,
+                Translation.text("settings.level.levelFloorPercent.name"), Translation.text("settings.level.levelFloorPercent.tooltip"),
+                ShipLevelConfig.DEFAULT_LEVEL_FLOOR_PERCENT, 0, 100, MAIN_TAB);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_hiddenNodesHeader", Translation.text("settings.hiddenNodes.header"), MAIN_TAB);
         SettingsCreator.addText(MOD_ID, "exiledSector_hiddenNodesAbout", Translation.text("settings.hiddenNodes.about"), MAIN_TAB);

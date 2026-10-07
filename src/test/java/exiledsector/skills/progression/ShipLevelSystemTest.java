@@ -26,6 +26,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -238,6 +239,75 @@ class ShipLevelSystemTest {
     @Test
     void awardXpToFleetDoesNothingWhenFleetIsNull() {
         assertDoesNotThrow(() -> ShipLevelSystem.awardXpToFleet(null, 40f));
+    }
+
+    @Test
+    void shipsBelowTheFleetsHighestLevelShipEarnCatchUpXp() {
+        Map<String, Object> persistentData = new HashMap<>();
+        SectorAPI sector = mock(SectorAPI.class);
+        when(sector.getPersistentData()).thenReturn(persistentData);
+
+        try (MockedStatic<LunaSettings> lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
+             MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
+            lunaSettingsMock.when(() -> LunaSettings.getInt(anyString(), anyString())).thenReturn(null);
+            lunaSettingsMock.when(() -> LunaSettings.getFloat(anyString(), anyString())).thenReturn(null);
+            globalMock.when(Global::getSector).thenReturn(sector);
+            ShipLevelSystem.raiseToLevel(ShipSkillDataManager.get("veteran"), 20, List.of());
+            ShipLevelSystem.raiseToLevel(ShipSkillDataManager.get("middling"), 15, List.of());
+
+            CampaignFleetAPI fleet = mock(CampaignFleetAPI.class);
+            FleetDataAPI fleetData = mock(FleetDataAPI.class);
+            when(fleet.getFleetData()).thenReturn(fleetData);
+            List<FleetMemberAPI> members = List.of(mockMember("veteran"), mockMember("middling"), mockMember("fresh"));
+            when(fleetData.getMembersListCopy()).thenReturn(members);
+
+            float highest = ShipLevelSystem.awardXpToFleet(fleet, 10f);
+
+            assertEquals(10f, ShipSkillDataManager.get("veteran").getXp(), 0.001f);
+            assertEquals(15f, ShipSkillDataManager.get("middling").getXp(), 0.001f);
+            assertEquals(30f, ShipSkillDataManager.get("fresh").getXp(), 0.001f);
+            assertEquals(3f, highest, 0.001f);
+        }
+    }
+
+    @Test
+    void catchUpGrowsPerLevelBehindUpToItsCap() {
+        assertEquals(1f, ShipLevelSystem.catchUpMultiplier(0, 0.1f, 4f));
+        assertEquals(1f, ShipLevelSystem.catchUpMultiplier(-5, 0.1f, 4f));
+        assertEquals(2f, ShipLevelSystem.catchUpMultiplier(10, 0.1f, 4f), 0.0001f);
+        assertEquals(4f, ShipLevelSystem.catchUpMultiplier(45, 0.1f, 4f));
+        assertEquals(1f, ShipLevelSystem.catchUpMultiplier(10, 0f, 4f));
+        assertEquals(1f, ShipLevelSystem.catchUpMultiplier(10, -1f, 4f));
+        assertEquals(1f, ShipLevelSystem.catchUpMultiplier(10, Float.NaN, 4f));
+        assertEquals(1f, ShipLevelSystem.catchUpMultiplier(10, 0.1f, 0.5f));
+    }
+
+    @Test
+    void theLevelFloorIsAPercentageOfThePlayersLevelCappedAtTheMaxLevel() {
+        assertEquals(15, ShipLevelSystem.levelFloor(15, 100, 50));
+        assertEquals(7, ShipLevelSystem.levelFloor(15, 50, 50));
+        assertEquals(0, ShipLevelSystem.levelFloor(15, 0, 50));
+        assertEquals(15, ShipLevelSystem.levelFloor(15, 250, 50));
+        assertEquals(0, ShipLevelSystem.levelFloor(15, -10, 50));
+        assertEquals(10, ShipLevelSystem.levelFloor(15, 100, 10));
+    }
+
+    @Test
+    void raisingToALevelGrantsEachLevelUpWithoutTouchingXp() {
+        SkillNode paid = node("paid");
+        ShipSkillData data = new ShipSkillData();
+        data.allocate(paid, OP_COST_PER_NODE);
+        data.addXp(12f);
+
+        assertTrue(ShipLevelSystem.raiseToLevel(data, 3, List.of(paid)));
+
+        assertEquals(3, data.getLevel());
+        assertTrue(data.isFreeNode("paid"));
+        assertEquals(2, data.getBankedFreeAllocations());
+        assertEquals(12f, data.getXp());
+        assertFalse(ShipLevelSystem.raiseToLevel(data, 3, List.of(paid)));
+        assertFalse(ShipLevelSystem.raiseToLevel(data, 1, List.of(paid)));
+        assertEquals(3, data.getLevel());
     }
 
     private static FleetMemberAPI mockMember(String id) {

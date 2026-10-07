@@ -42,9 +42,11 @@ public class CombatXpListener extends BaseCampaignEventListener {
         float xp = defeatedDp * ShipLevelConfig.xpPerDeploymentPoint() * lossMultiplier * difficultyMultiplier;
 
         SkillTreeInstaller.adoptNpcTrees(playerFleet);
+        SkillTreeInstaller.raiseToLevelFloor(playerFleet);
         Map<FleetMemberAPI, Integer> levelsBefore = levelsOf(playerFleet);
-        ShipLevelSystem.awardXpToFleet(playerFleet, xp);
-        I18n.forGameText(() -> report(new CombatXpReport(xp, defeatedDp, lost, difficultyMultiplier, levelUps(levelsBefore))));
+        float catchUpMultiplier = ShipLevelSystem.awardXpToFleet(playerFleet, xp);
+        I18n.forGameText(() -> report(new CombatXpReport(xp, defeatedDp, lost, difficultyMultiplier, catchUpMultiplier,
+                levelUps(levelsBefore))));
     }
 
     private static float enemyDeploymentPointsDefeated(EngagementResultAPI result) {
@@ -100,12 +102,17 @@ public class CombatXpListener extends BaseCampaignEventListener {
             VanillaText.addPara(text, Translation.msg("combat.xp.difficultyBonus").arg("percent", report.difficultyBonusText()).styled(),
                     Misc.getTextColor());
         }
+        if (report.hasCatchUpBonus()) {
+            VanillaText.addPara(text, Translation.msg("combat.xp.catchUpBonus").arg("multiplier", report.catchUpText()).styled(),
+                    Misc.getTextColor());
+        }
         for (String levelUp : report.levelUps()) {
             VanillaText.addPara(text, StyledText.of(levelUp), Misc.getPositiveHighlightColor());
         }
     }
 
-    record CombatXpReport(float xp, float defeatedDp, boolean lost, float difficultyMultiplier, List<String> levelUps) {
+    record CombatXpReport(float xp, float defeatedDp, boolean lost, float difficultyMultiplier, float catchUpMultiplier,
+                         List<String> levelUps) {
 
         String xpText() {
             return String.valueOf(Math.round(xp));
@@ -121,6 +128,15 @@ public class CombatXpListener extends BaseCampaignEventListener {
 
         String difficultyBonusText() {
             return String.valueOf(difficultyBonusPercent());
+        }
+
+        boolean hasCatchUpBonus() {
+            return Math.round(xp) > 0 && catchUpMultiplier >= 1.05f;
+        }
+
+        String catchUpText() {
+            int tenths = Math.round(catchUpMultiplier * 10f);
+            return tenths % 10 == 0 ? String.valueOf(tenths / 10) : tenths / 10 + "." + tenths % 10;
         }
 
         private int difficultyBonusPercent() {

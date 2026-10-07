@@ -7,6 +7,7 @@ import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -15,23 +16,38 @@ public final class ShipLevelSystem {
     private ShipLevelSystem() {
     }
 
-    public static void awardXpToFleet(CampaignFleetAPI fleet, float xpAmount) {
-        if (fleet == null) return;
-        awardXpToMembers(fleet.getFleetData().getMembersListCopy(), xpAmount);
+    public static float awardXpToFleet(CampaignFleetAPI fleet, float xpAmount) {
+        if (fleet == null) return 1f;
+        List<ShipSkillData> records = new ArrayList<>();
+        int topLevel = 0;
+        for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
+            ShipSkillData data = ShipSkillDataManager.get(member.getId());
+            records.add(data);
+            topLevel = Math.max(topLevel, data.getLevel());
+        }
+
+        LevelCurve curve = currentCurve();
+        Collection<SkillNode> allNodes = SkillTree.getAllNodes().values();
+        float perLevel = ShipLevelConfig.catchUpPerLevel();
+        float cap = ShipLevelConfig.catchUpMaxMultiplier();
+        float highestCatchUp = 1f;
+        for (ShipSkillData data : records) {
+            float catchUp = catchUpMultiplier(topLevel - data.getLevel(), perLevel, cap);
+            if (data.getLevel() < curve.maxLevel()) {
+                highestCatchUp = Math.max(highestCatchUp, catchUp);
+            }
+            awardXp(data, xpAmount * catchUp, curve, allNodes);
+        }
+        return highestCatchUp;
     }
 
     public static void awardXpToMember(FleetMemberAPI member, float xpAmount) {
-        awardXpToMembers(List.of(member), xpAmount);
+        awardXp(ShipSkillDataManager.get(member.getId()), xpAmount, currentCurve(), SkillTree.getAllNodes().values());
     }
 
-    private static void awardXpToMembers(List<FleetMemberAPI> members, float xpAmount) {
-        LevelCurve curve = new LevelCurve(ShipLevelConfig.xpBase(), ShipLevelConfig.xpGrowth(),
+    private static LevelCurve currentCurve() {
+        return new LevelCurve(ShipLevelConfig.xpBase(), ShipLevelConfig.xpGrowth(),
                 ShipLevelConfig.xpGrowthCutoffLevel(), ShipLevelConfig.maxLevel());
-        Collection<SkillNode> allNodes = SkillTree.getAllNodes().values();
-        for (FleetMemberAPI member : members) {
-            ShipSkillData data = ShipSkillDataManager.get(member.getId());
-            awardXp(data, xpAmount, curve, allNodes);
-        }
     }
 
     public static float xpToReachNextLevel(int currentLevel, float xpBase, float xpGrowth, int growthCutoffLevel) {
@@ -47,6 +63,26 @@ public final class ShipLevelSystem {
         return Math.max(1f, Math.min(cap, 1f + bonus));
     }
 
+    public static float catchUpMultiplier(int levelsBehind, float perLevel, float cap) {
+        if (levelsBehind <= 0 || !Float.isFinite(perLevel) || !Float.isFinite(cap)) {
+            return 1f;
+        }
+        return Math.max(1f, Math.min(cap, 1f + levelsBehind * Math.max(0f, perLevel)));
+    }
+
+    public static int levelFloor(int playerLevel, int floorPercent, int maxLevel) {
+        int percent = Math.max(0, Math.min(100, floorPercent));
+        return Math.max(0, Math.min(maxLevel, playerLevel * percent / 100));
+    }
+
+    public static boolean raiseToLevel(ShipSkillData data, int level, Collection<SkillNode> allNodes) {
+        if (data.getLevel() >= level) return false;
+        while (data.getLevel() < level) {
+            levelUp(data, allNodes);
+        }
+        return true;
+    }
+
     public static void awardXp(ShipSkillData data, float xpAmount, LevelCurve curve,
                                 Collection<SkillNode> allNodes) {
         if (data.getLevel() >= curve.maxLevel() || !Float.isFinite(xpAmount)) return;
@@ -57,10 +93,14 @@ public final class ShipLevelSystem {
             if (data.getXp() < required) break;
 
             data.subtractXp(required);
-            data.incrementLevel();
-            if (!data.convertMostRecentAllocationToFree(allNodes)) {
-                data.addFreeAllocationCredit();
-            }
+            levelUp(data, allNodes);
+        }
+    }
+
+    private static void levelUp(ShipSkillData data, Collection<SkillNode> allNodes) {
+        data.incrementLevel();
+        if (!data.convertMostRecentAllocationToFree(allNodes)) {
+            data.addFreeAllocationCredit();
         }
     }
 

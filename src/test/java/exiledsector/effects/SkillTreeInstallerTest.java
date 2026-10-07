@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
@@ -21,6 +22,8 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.progression.ShipLevelConfig;
+import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,6 +46,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -484,5 +488,115 @@ class SkillTreeInstallerTest {
 
         verify(member.getVariant()).addPermaMod("militarized_subsystems");
         verify(refitCopy).addPermaMod("militarized_subsystems");
+    }
+
+    @Test
+    void aNewShipStartsAtThePlayersLevelWithAFreeAllocationForEveryLevel() {
+        try (MockedStatic<LunaSettings> luna = noLunaSettings()) {
+            playerLevel(15);
+            FleetMemberAPI member = mockMember("bought", true);
+            when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
+
+            SkillTreeInstaller.raiseToLevelFloor(sector.getPlayerFleet());
+
+            ShipSkillData data = ShipSkillDataManager.get("bought");
+            assertEquals(15, data.getLevel());
+            assertEquals(15, data.getBankedFreeAllocations());
+            assertEquals(0f, data.getXp());
+            verify(member).setStatUpdateNeeded(true);
+            verify(fleetData).setSyncNeeded();
+        }
+    }
+
+    @Test
+    void aRecoveredNpcShipKeepsItsTreeAndIsRaisedToThePlayersLevelWhenTheFloorIsApplied() {
+        try (MockedStatic<LunaSettings> luna = noLunaSettings()) {
+            playerLevel(10);
+            registerNpcTreeNodes();
+            List<String> tags = new ArrayList<>(List.of("exiledSector_npcTree|bulwark|3|root_1,a_1"));
+            FleetMemberAPI member = recoveredNpc("recovered", new HashSet<>(Set.of(SkillTreeHullMod.ID)), tags);
+            when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
+
+            new SkillTreeInstaller().advance(0.01f);
+            SkillTreeInstaller.raiseToLevelFloor(sector.getPlayerFleet());
+
+            ShipSkillData data = ShipSkillDataManager.get("recovered");
+            assertEquals(List.of("root_1", "a_1"), List.copyOf(data.getAllocatedNodeIds()));
+            assertEquals(10, data.getLevel());
+            assertEquals(9, data.getBankedFreeAllocations());
+        }
+    }
+
+    @Test
+    void thePeriodicCheckLeavesShipLevelsAlone() {
+        try (MockedStatic<LunaSettings> luna = noLunaSettings()) {
+            playerLevel(15);
+            FleetMemberAPI member = mockMember("bought", true);
+            when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
+
+            new SkillTreeInstaller().advance(0.01f);
+
+            assertEquals(0, ShipSkillDataManager.get("bought").getLevel());
+        }
+    }
+
+    @Test
+    void shipsAlreadyAtOrAboveTheFloorAreLeftAlone() {
+        try (MockedStatic<LunaSettings> luna = noLunaSettings()) {
+            playerLevel(15);
+            ShipSkillData veteran = ShipSkillDataManager.get("veteran");
+            for (int i = 0; i < 30; i++) {
+                veteran.incrementLevel();
+            }
+            veteran.addXp(25f);
+            FleetMemberAPI member = mockMember("veteran", true);
+            when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
+
+            assertFalse(SkillTreeInstaller.raiseToLevelFloor(member, SkillTreeInstaller.currentLevelFloor()));
+            assertEquals(30, veteran.getLevel());
+            assertEquals(0, veteran.getBankedFreeAllocations());
+            assertEquals(25f, veteran.getXp());
+            verify(member, never()).setStatUpdateNeeded(true);
+        }
+    }
+
+    @Test
+    void theFloorIsTheConfiguredPercentageOfThePlayersLevel() {
+        try (MockedStatic<LunaSettings> luna = noLunaSettings()) {
+            luna.when(() -> LunaSettings.getInt(anyString(), eq(ShipLevelConfig.LEVEL_FLOOR_PERCENT_FIELD_ID))).thenReturn(50);
+            playerLevel(15);
+
+            assertEquals(7, SkillTreeInstaller.currentLevelFloor());
+        }
+    }
+
+    @Test
+    void thereIsNoFloorWithoutPlayerStats() {
+        assertEquals(0, SkillTreeInstaller.currentLevelFloor());
+        assertFalse(SkillTreeInstaller.raiseToLevelFloor(mockMember("any", true), 0));
+    }
+
+    @Test
+    void thePanelRaisesAShipBoughtWhilePausedToTheFloor() {
+        try (MockedStatic<LunaSettings> luna = noLunaSettings()) {
+            playerLevel(12);
+            FleetMemberAPI member = mockMember("bought-while-paused", true);
+
+            assertTrue(SkillTreeInstaller.ensureInstalled(member, member.getVariant()));
+            assertEquals(12, ShipSkillDataManager.get("bought-while-paused").getLevel());
+        }
+    }
+
+    private void playerLevel(int level) {
+        MutableCharacterStatsAPI playerStats = mock(MutableCharacterStatsAPI.class);
+        when(playerStats.getLevel()).thenReturn(level);
+        when(sector.getPlayerStats()).thenReturn(playerStats);
+    }
+
+    private static MockedStatic<LunaSettings> noLunaSettings() {
+        MockedStatic<LunaSettings> luna = Mockito.mockStatic(LunaSettings.class);
+        luna.when(() -> LunaSettings.getInt(anyString(), anyString())).thenReturn(null);
+        luna.when(() -> LunaSettings.getFloat(anyString(), anyString())).thenReturn(null);
+        return luna;
     }
 }

@@ -3,11 +3,16 @@ package exiledsector.effects;
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.VariantSource;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.SkillTree;
+import exiledsector.skills.progression.ShipLevelConfig;
+import exiledsector.skills.progression.ShipLevelSystem;
 import exiledsector.skills.npc.NpcTreeTag;
 import exiledsector.socketables.NpcSocketables;
 import exiledsector.skills.skilleffect.FleetWideEffects;
@@ -55,6 +60,32 @@ public class SkillTreeInstaller implements EveryFrameScript {
         }
     }
 
+    public static void raiseToLevelFloor(CampaignFleetAPI fleet) {
+        int levelFloor = currentLevelFloor();
+        boolean changed = false;
+        for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
+            changed |= raiseToLevelFloor(member, levelFloor);
+        }
+        if (changed) {
+            fleet.getFleetData().setSyncNeeded();
+        }
+    }
+
+    static int currentLevelFloor() {
+        SectorAPI sector = Global.getSector();
+        MutableCharacterStatsAPI playerStats = sector == null ? null : sector.getPlayerStats();
+        if (playerStats == null) return 0;
+        return ShipLevelSystem.levelFloor(playerStats.getLevel(), ShipLevelConfig.levelFloorPercent(), ShipLevelConfig.maxLevel());
+    }
+
+    static boolean raiseToLevelFloor(FleetMemberAPI member, int levelFloor) {
+        if (levelFloor <= 0) return false;
+        ShipSkillData data = ShipSkillDataManager.get(member.getId());
+        if (!ShipLevelSystem.raiseToLevel(data, levelFloor, SkillTree.getAllNodes().values())) return false;
+        member.setStatUpdateNeeded(true);
+        return true;
+    }
+
     public static void adoptNpcTrees(CampaignFleetAPI fleet) {
         boolean changed = false;
         for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
@@ -67,6 +98,7 @@ public class SkillTreeInstaller implements EveryFrameScript {
 
     public static boolean ensureInstalled(FleetMemberAPI member, ShipVariantAPI editedVariant) {
         boolean changed = adoptNpcTree(member);
+        changed |= raiseToLevelFloor(member, currentLevelFloor());
         changed |= ensureHullModAppliesLast(member);
         changed |= restoreInstalledHullMods(member);
         if (editedVariant != null && editedVariant != member.getVariant()) {
