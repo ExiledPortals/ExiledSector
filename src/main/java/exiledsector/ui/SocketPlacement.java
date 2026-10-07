@@ -193,6 +193,11 @@ final class SocketPlacement {
                         clearTargetSocket();
                         refreshButtonLabel();
                     }
+
+                    @Override
+                    public void pressedInside() {
+                        searchBar.unfocus();
+                    }
                 });
         storagePanel.setTargetingSocket(targetSocket != null);
     }

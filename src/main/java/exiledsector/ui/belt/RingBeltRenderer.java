@@ -21,6 +21,9 @@ public final class RingBeltRenderer {
     }
 
     public static void render(SpriteAPI texture, RadialBand band, Color color, float alphaMult, float rotationDeg, TreeViewport clip) {
+        if (alphaMult <= 0f) {
+            return;
+        }
         float innerRadius = band.innerRadius();
         float outerRadius = band.outerRadius();
         float middleRadius = (innerRadius + outerRadius) / 2f;

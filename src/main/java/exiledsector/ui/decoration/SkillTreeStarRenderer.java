@@ -11,6 +11,7 @@ import exiledsector.skills.layout.Star;
 import exiledsector.ui.SmoothZoom;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.ColorUtil;
+import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
 import exiledsector.ui.util.UnitCircle;
@@ -101,34 +102,28 @@ public class SkillTreeStarRenderer {
         float rotationAngle = rotationAngleById.getOrDefault(star.getId(), 0f);
         Color discColor = resolveColor(star, spec.getPlanetColor());
 
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glEnable(GL11.GL_CULL_FACE);
-        // TODO: if the star renders inside-out in-game, swap GL11.GL_CW <-> GL11.GL_CCW here.
-        GL11.glFrontFace(GL11.GL_CW);
-        GL11.glCullFace(GL11.GL_BACK);
+        try (GlScope scope = GlScope.save(GlScope.DRAW_ATTRIBS | GL11.GL_POLYGON_BIT).enable(GL11.GL_TEXTURE_2D).normalBlend()
+                .enable(GL11.GL_CULL_FACE)) {
+            // TODO: if the star renders inside-out in-game, swap GL11.GL_CW <-> GL11.GL_CCW here.
+            GL11.glFrontFace(GL11.GL_CW);
+            GL11.glCullFace(GL11.GL_BACK);
 
-        GL11.glPushMatrix();
-        GL11.glTranslatef(screenX, screenY, 0f);
-        GL11.glRotatef(spec.getTilt(), 0f, 0f, 1f);
-        GL11.glRotatef(spec.getPitch(), 1f, 0f, 0f);
-        GL11.glRotatef(rotationAngle, 0f, 1f, 0f);
-        GL11.glRotatef(-90f, 1f, 0f, 0f);
-        discTexture.bindTexture();
+            GL11.glPushMatrix();
+            GL11.glTranslatef(screenX, screenY, 0f);
+            GL11.glRotatef(spec.getTilt(), 0f, 0f, 1f);
+            GL11.glRotatef(spec.getPitch(), 1f, 0f, 0f);
+            GL11.glRotatef(rotationAngle, 0f, 1f, 0f);
+            GL11.glRotatef(-90f, 1f, 0f, 0f);
+            discTexture.bindTexture();
 
-        Misc.setColor(discColor, alphaMult);
-        unitSphere.draw(discRadius);
-        Misc.setColor(discColor, alphaMult * RIM_ALPHA_MULT);
-        unitSphere.draw(discRadius + 0.25f * zoom);
-        unitSphere.draw(discRadius + 0.5f * zoom);
+            Misc.setColor(discColor, alphaMult);
+            unitSphere.draw(discRadius);
+            Misc.setColor(discColor, alphaMult * RIM_ALPHA_MULT);
+            unitSphere.draw(discRadius + 0.25f * zoom);
+            unitSphere.draw(discRadius + 0.5f * zoom);
 
-        GL11.glPopMatrix();
-
-        GL11.glFrontFace(GL11.GL_CCW);
-        GL11.glDisable(GL11.GL_CULL_FACE);
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
+            GL11.glPopMatrix();
+        }
     }
 
     public void renderAtmosphere(TreeViewport viewport, float alphaMult) {
@@ -166,28 +161,24 @@ public class SkillTreeStarRenderer {
     private void drawAtmosphereRing(SpriteAPI texture, float centerX, float centerY, float innerRadius, float outerRadius, Color atmosphereColor, float alphaMult) {
         UnitCircle circle = UnitCircle.of(ATMOSPHERE_SEGMENTS);
 
-        GL11.glPushMatrix();
-        GL11.glTranslatef(centerX, centerY, 0f);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        texture.bindTexture();
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-        Misc.setColor(atmosphereColor, alphaMult);
+        try (GlScope scope = GlScope.textured(GL11.GL_SRC_ALPHA, GL11.GL_ONE)) {
+            GL11.glPushMatrix();
+            GL11.glTranslatef(centerX, centerY, 0f);
+            texture.bindTexture();
+            Misc.setColor(atmosphereColor, alphaMult);
 
-        GL11.glBegin(GL11.GL_QUAD_STRIP);
-        for (int i = 0; i <= ATMOSPHERE_SEGMENTS; i++) {
-            float cos = circle.cos(i % ATMOSPHERE_SEGMENTS);
-            float sin = circle.sin(i % ATMOSPHERE_SEGMENTS);
-            GL11.glTexCoord2f(0f, 0f);
-            GL11.glVertex2f(cos * innerRadius, sin * innerRadius);
-            GL11.glTexCoord2f(0f, 0.99f);
-            GL11.glVertex2f(cos * outerRadius, sin * outerRadius);
+            GL11.glBegin(GL11.GL_QUAD_STRIP);
+            for (int i = 0; i <= ATMOSPHERE_SEGMENTS; i++) {
+                float cos = circle.cos(i % ATMOSPHERE_SEGMENTS);
+                float sin = circle.sin(i % ATMOSPHERE_SEGMENTS);
+                GL11.glTexCoord2f(0f, 0f);
+                GL11.glVertex2f(cos * innerRadius, sin * innerRadius);
+                GL11.glTexCoord2f(0f, 0.99f);
+                GL11.glVertex2f(cos * outerRadius, sin * outerRadius);
+            }
+            GL11.glEnd();
+            GL11.glPopMatrix();
         }
-        GL11.glEnd();
-
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glPopMatrix();
     }
 
     public void renderAurora(TreeViewport viewport, float alphaMult) {
@@ -228,14 +219,13 @@ public class SkillTreeStarRenderer {
         auroraDelegate.bandColor = Misc.setAlpha(coronaColor, AURORA_ALPHA);
         auroraDelegate.bandTexture = texture;
 
-        GL11.glPushMatrix();
-        GL11.glTranslatef(screenX, screenY, 0f);
-        GL11.glScalef(screenScale, screenScale, 1f);
-        auroraRenderer.render(alphaMult);
-        GL11.glPopMatrix();
-
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        try (GlScope scope = GlScope.save(GlScope.DRAW_ATTRIBS)) {
+            GL11.glPushMatrix();
+            GL11.glTranslatef(screenX, screenY, 0f);
+            GL11.glScalef(screenScale, screenScale, 1f);
+            auroraRenderer.render(alphaMult);
+            GL11.glPopMatrix();
+        }
     }
 
     private static float auroraReach(float radius) {

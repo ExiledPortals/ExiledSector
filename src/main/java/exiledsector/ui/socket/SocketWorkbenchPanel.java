@@ -1,11 +1,8 @@
 package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
-import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.Fonts;
 import com.fs.starfarer.api.ui.LabelAPI;
@@ -13,7 +10,6 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.socketables.SocketCurrency;
@@ -21,7 +17,6 @@ import exiledsector.socketables.Socketable;
 import exiledsector.socketables.SocketableCrafting;
 import exiledsector.socketables.SocketableDefinition;
 import exiledsector.socketables.SocketableDefinitions;
-import exiledsector.socketables.SocketableDisassembly;
 import exiledsector.socketables.SocketableKind;
 import exiledsector.socketables.SocketableName;
 import exiledsector.socketables.SocketableRarity;
@@ -30,10 +25,7 @@ import exiledsector.socketables.SocketableUnlock;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.VanillaText;
-import exiledsector.ui.util.BorderedPanel;
 import exiledsector.ui.util.FramedPanelPlugin;
-import exiledsector.ui.util.HoloTransition;
-import exiledsector.ui.util.Rects;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -42,29 +34,24 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.function.Predicate;
 
-public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
+public final class SocketWorkbenchPanel extends HoloPanel {
 
     public interface Listener {
 
         void changed(Socketable loaded);
 
         void closed();
+
+        void pressedInside();
     }
 
     public static final float WIDTH = 520f;
-    private static final float PAD = 12f;
-    private static final float GAP = 6f;
-    private static final float LINE_PAD = 3f;
-    private static final float HEADER_HEIGHT = 28f;
     private static final float BUTTON_HEIGHT = 24f;
-    private static final float CLOSE_BUTTON_WIDTH = 70f;
     private static final float TILE_SIZE = 80f;
     private static final float TILE_GAP = 10f;
     private static final int TILE_COLUMNS = 2;
     private static final float COUNT_LEFT = 12f;
     private static final float COUNT_WIDTH = 120f;
-    private static final float ICON_SIZE = 24f;
-    private static final float COUNT_TEXT_TOP = 5f;
     private static final float NOTICE_HEIGHT = 36f;
     private static final float MIN_SOCKET_AREA = 110f;
     private static final float MIN_DETAILS_HEIGHT = 110f;
@@ -97,19 +84,10 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
 
     private enum Control {CLOSE}
 
-    private final CustomPanelAPI hostPanel;
     private final Listener workbenchListener;
-    private final BorderedPanel panelFrame = new BorderedPanel(SocketWorkbenchPanel.class);
-    private final HoloTransition holoTransition = new HoloTransition();
     private final SocketWorkbenchFlair socketFlair = new SocketWorkbenchFlair();
-    private final List<Runnable> queuedActions = new ArrayList<>();
     private final Random craftingRandom = new Random();
-    private CustomPanelAPI panelRoot;
-    private PositionAPI panelPosition;
-    private float panelWidth;
-    private float panelHeight;
     private float socketAreaHeight;
-    private boolean closing;
     private UIComponentAPI headerElement;
     private UIComponentAPI recipesElement;
     private UIComponentAPI detailsElement;
@@ -120,21 +98,15 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
     private String noticeText;
 
     private SocketWorkbenchPanel(CustomPanelAPI hostPanel, Listener workbenchListener) {
-        this.hostPanel = hostPanel;
+        super(hostPanel, SocketWorkbenchPanel.class);
         this.workbenchListener = workbenchListener;
     }
 
     public static SocketWorkbenchPanel open(CustomPanelAPI hostPanel, float panelLeft, float panelTop, float panelHeight,
                                             Listener workbenchListener) {
         SocketWorkbenchPanel workbenchPanel = new SocketWorkbenchPanel(hostPanel, workbenchListener);
-        workbenchPanel.panelWidth = WIDTH;
-        workbenchPanel.panelHeight = panelHeight;
         workbenchPanel.socketAreaHeight = socketAreaFor(panelHeight);
-        workbenchPanel.panelRoot = Global.getSettings().createCustom(WIDTH, panelHeight, workbenchPanel);
-        hostPanel.addComponent(workbenchPanel.panelRoot).inTL(panelLeft, panelTop);
-        I18n.forGameText(workbenchPanel::build);
-        workbenchPanel.holoTransition.open();
-        workbenchPanel.applyContentOpacity(0f);
+        workbenchPanel.attach(panelLeft, panelTop, WIDTH, panelHeight);
         return workbenchPanel;
     }
 
@@ -166,7 +138,7 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
     }
 
     public void load(Socketable socketable) {
-        queuedActions.add(() -> {
+        queue(() -> {
             if (socketable == loadedSocketable) {
                 return;
             }
@@ -178,7 +150,7 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
     }
 
     public void refresh() {
-        queuedActions.add(() -> {
+        queue(() -> {
             if (loadedSocketable != null && !SocketableStore.get().owned().contains(loadedSocketable)) {
                 loadedSocketable = null;
             }
@@ -187,42 +159,25 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
         });
     }
 
-    public void close() {
-        if (panelRoot == null || closing) {
-            return;
-        }
-        closing = true;
+    @Override
+    protected void onClose() {
         hideTooltip();
-        holoTransition.close();
-        applyContentOpacity(holoTransition.contentAlpha());
         workbenchListener.closed();
     }
 
-    public boolean isVisible() {
-        return panelRoot != null;
-    }
-
-    public boolean contains(float x, float y) {
-        return panelRoot != null && !closing && Rects.contains(panelPosition, x, y);
+    @Override
+    protected void onPressInside() {
+        workbenchListener.pressedInside();
     }
 
     @Override
-    public void positionChanged(PositionAPI panelPosition) {
-        this.panelPosition = panelPosition;
+    protected UIComponentAPI[] chromeComponents() {
+        return new UIComponentAPI[]{headerElement};
     }
 
     @Override
-    public void renderBelow(float alphaMult) {
-        if (panelPosition == null) {
-            return;
-        }
-        holoTransition.drawProjection(panelPosition.getX(), panelPosition.getY(), panelPosition.getWidth(), panelPosition.getHeight(),
-                SkillTreePanelStyle.GLOW_COLOR, alphaMult);
-        float contentAlpha = holoTransition.contentAlpha();
-        if (contentAlpha > 0f) {
-            panelFrame.draw(panelPosition.getX(), panelPosition.getY(), panelPosition.getWidth(), panelPosition.getHeight(),
-                    contentAlpha * alphaMult);
-        }
+    protected UIComponentAPI[] contentComponents() {
+        return new UIComponentAPI[]{recipesElement, detailsElement, noticeElement};
     }
 
     @Override
@@ -230,7 +185,7 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
         if (panelPosition == null) {
             return;
         }
-        float contentAlpha = holoTransition.contentAlpha() * alphaMult;
+        float contentAlpha = contentAlpha() * alphaMult;
         float cx = panelPosition.getX() + panelWidth / 2f;
         float cy = panelPosition.getY() + panelHeight - socketAreaTop() - socketAreaHeight / 2f;
         Color subjectColor = loadedSocketable == null ? null : loadedSocketable.rarity().color();
@@ -239,46 +194,13 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
     }
 
     @Override
-    public void processInput(List<InputEventAPI> events) {
-        if (closing) {
-            return;
-        }
-        for (InputEventAPI event : events) {
-            boolean press = event.isMouseDownEvent() || event.isMouseScrollEvent();
-            if (!event.isConsumed() && press && contains(event.getX(), event.getY())) {
-                event.consume();
-            }
-        }
-    }
-
-    @Override
-    public void advance(float amount) {
-        if (holoTransition.isAnimating()) {
-            holoTransition.advance(amount);
-            applyContentOpacity(holoTransition.contentAlpha());
-        }
+    protected void advanceAlways(float amount) {
         socketFlair.advance(amount, loadedSocketable != null);
-        if (closing) {
-            if (holoTransition.isFullyClosed() && panelRoot != null) {
-                hostPanel.removeComponent(panelRoot);
-                panelRoot = null;
-            }
-            return;
-        }
-        if (!queuedActions.isEmpty()) {
-            List<Runnable> actions = List.copyOf(queuedActions);
-            queuedActions.clear();
-            for (Runnable action : actions) {
-                if (panelRoot != null) {
-                    I18n.forGameText(action);
-                }
-            }
-        }
     }
 
     @Override
     public void buttonPressed(Object id) {
-        queuedActions.add(() -> handleButton(id));
+        queue(() -> handleButton(id));
     }
 
     private void handleButton(Object id) {
@@ -302,7 +224,7 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
     }
 
     private boolean synthesise(Recipe recipe) {
-        CargoAPI cargo = cargo();
+        CargoAPI cargo = playerCargo();
         if (cargo == null) {
             return false;
         }
@@ -333,7 +255,7 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
     }
 
     private void use(SocketCurrency currency) {
-        CargoAPI cargo = cargo();
+        CargoAPI cargo = playerCargo();
         if (cargo == null) {
             return;
         }
@@ -370,7 +292,7 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
     private void showNotice(String text) {
         noticeText = text;
         rebuildNotice();
-        applyContentOpacity(holoTransition.contentAlpha());
+        refreshOpacity();
     }
 
     private void afterChange() {
@@ -383,62 +305,22 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
         return definition -> SocketableUnlock.unlockConditionMet(definition, Global.getSector());
     }
 
-    private static CargoAPI cargo() {
-        CampaignFleetAPI fleet = Global.getSector() == null ? null : Global.getSector().getPlayerFleet();
-        return fleet == null ? null : fleet.getCargo();
-    }
-
-    private void applyContentOpacity(float opacity) {
-        float chromeOpacity = opacity >= 1f && !closing ? 1f : 0f;
-        if (headerElement != null) {
-            headerElement.setOpacity(chromeOpacity);
-        }
-        for (UIComponentAPI component : new UIComponentAPI[]{recipesElement, detailsElement, noticeElement}) {
-            if (component != null) {
-                component.setOpacity(opacity);
-            }
-        }
-    }
-
-    private void build() {
+    @Override
+    protected void build() {
         buildHeader();
         rebuildContent();
     }
 
     private void buildHeader() {
-        if (headerElement != null) {
-            panelRoot.removeComponent(headerElement);
-        }
-        TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), HEADER_HEIGHT, false);
-        element.setParaFont(Fonts.ORBITRON_20AABOLD);
-        element.addPara("%s", 0f, Misc.getBasePlayerColor(), Misc.getBasePlayerColor(), Translation.text("ui.workbench.title"));
-        element.addButton(Translation.text("ui.workbench.close"), Control.CLOSE, CLOSE_BUTTON_WIDTH, BUTTON_HEIGHT, 0f)
-                .getPosition().inTR(0f, 0f);
-        addPartsCount(element);
-        panelRoot.addUIElement(element).inTL(PAD, PAD);
-        headerElement = element;
-    }
-
-    private static void addPartsCount(TooltipMakerAPI element) {
-        CommoditySpecAPI partsSpec = Global.getSettings().getCommoditySpec(SocketableDisassembly.PARTS_COMMODITY_ID);
-        if (partsSpec == null) {
-            return;
-        }
-        String countText = String.valueOf(SocketableCrafting.parts(cargo()));
-        float countWidth = Global.getSettings().computeStringWidth(countText, Fonts.ORBITRON_12) + LINE_PAD;
-        float countRight = CLOSE_BUTTON_WIDTH + GAP * 2f;
-        element.setParaFont(Fonts.ORBITRON_12);
-        LabelAPI countLabel = element.addPara("%s", 0f, Misc.getTextColor(), Misc.getTextColor(), countText);
-        countLabel.autoSizeToWidth(countWidth).inTR(countRight, COUNT_TEXT_TOP);
-        element.addImage(partsSpec.getIconName(), ICON_SIZE, ICON_SIZE, 0f);
-        element.getPrev().getPosition().inTR(countRight + countWidth + LINE_PAD, 0f);
+        TooltipMakerAPI element = startHeader("ui.workbench.title", "ui.workbench.close", Control.CLOSE);
+        headerElement = finishHeader(element, headerElement, CLOSE_BUTTON_WIDTH + GAP * 2f);
     }
 
     private void rebuildContent() {
         rebuildTiles();
         rebuildDetails();
         rebuildNotice();
-        applyContentOpacity(holoTransition.contentAlpha());
+        refreshOpacity();
     }
 
     private void rebuildTiles() {
@@ -447,7 +329,7 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
             panelRoot.removeComponent(recipesElement);
         }
         TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), tilesHeight(), false);
-        CargoAPI cargo = cargo();
+        CargoAPI cargo = playerCargo();
         Recipe[] allRecipes = Recipe.values();
         float cellWidth = innerWidth() / TILE_COLUMNS;
         for (int i = 0; i < allRecipes.length; i++) {
@@ -464,12 +346,12 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
                 new WorkbenchTile.Listener() {
                     @Override
                     public void hovered(PositionAPI tilePosition) {
-                        queuedActions.add(() -> showTooltip(recipe, tilePosition));
+                        queue(() -> showTooltip(recipe, tilePosition));
                     }
 
                     @Override
                     public void left() {
-                        queuedActions.add(() -> {
+                        queue(() -> {
                             if (tooltipRecipe == recipe) {
                                 hideTooltip();
                             }
@@ -478,12 +360,12 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
 
                     @Override
                     public void clicked() {
-                        queuedActions.add(() -> tileClicked(recipe));
+                        queue(() -> tileClicked(recipe));
                     }
 
                     @Override
                     public void rightClicked() {
-                        queuedActions.add(() -> tileRightClicked(recipe));
+                        queue(() -> tileRightClicked(recipe));
                     }
                 }));
         element.addCustom(tilePanel, 0f).getPosition().inTL(tileLeft, tileTop);
@@ -500,7 +382,7 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
 
     private void showTooltip(Recipe recipe, PositionAPI anchor) {
         hideTooltip();
-        if (closing) {
+        if (isClosing()) {
             return;
         }
         CustomPanelAPI newTooltipPanel = Global.getSettings().createCustom(TOOLTIP_WIDTH, TILE_SIZE,
@@ -533,7 +415,7 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
             return List.of(synthesiseHint);
         }
         List<String> hints = new ArrayList<>();
-        int ownedCount = SocketableCrafting.count(cargo(), recipe.currency.commodityId());
+        int ownedCount = SocketableCrafting.count(playerCargo(), recipe.currency.commodityId());
         hints.add(Translation.msg("ui.workbench.tile.inStorage").arg("count", ownedCount).text());
         if (ownedCount == 0) {
             hints.add(Translation.text("ui.workbench.tile.noneOwned"));

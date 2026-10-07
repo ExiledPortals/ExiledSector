@@ -11,12 +11,10 @@ import exiledsector.skills.AllocatedSkillEffects;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.progression.ShipOpBudget;
 import exiledsector.skills.skilleffect.ShieldSkillEffect;
-import exiledsector.ui.util.BorderedPanel;
-import exiledsector.ui.util.CachedText;
 import exiledsector.ui.util.FallbackSupport;
-import exiledsector.ui.util.HoloTransition;
-import exiledsector.ui.util.ReusableText;
+import exiledsector.ui.util.HoloFrame;
 import exiledsector.ui.util.Rects;
+import exiledsector.ui.util.TextLabel;
 import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.ui.LazyFont;
 
@@ -55,13 +53,11 @@ final class SkillTreeStatPanel {
     private static final float TOGGLE_GAP = 8f;
 
     private final FleetMemberAPI member;
-    private final BorderedPanel borderedPanel = new BorderedPanel(SkillTreeStatPanel.class);
-    private final HoloTransition holoTransition = new HoloTransition();
+    private final HoloFrame panelFrame = new HoloFrame(SkillTreeStatPanel.class, HoloFrame.Look.PANEL);
     private final SkillTreeUiButton toggleButton = new SkillTreeUiButton("");
     private final String showLabel = Translation.text("ui.stats.show");
     private final String hideLabel = Translation.text("ui.stats.hide");
-    private final CachedText<String, GroupTexts> groupTextCache = new CachedText<>();
-    private final Map<String, ReusableText> statGroupHeaderText = new HashMap<>();
+    private final Map<String, GroupLabels> groupLabels = new HashMap<>();
 
     private List<StatGroup> statGroups;
     private int statGroupsRevision;
@@ -80,7 +76,7 @@ final class SkillTreeStatPanel {
 
     SkillTreeStatPanel(FleetMemberAPI member) {
         this.member = member;
-        holoTransition.openInstantly();
+        panelFrame.openInstantly();
         toggleButton.setLabel(showLabel);
         float showWidth = toggleButton.preferredWidth();
         toggleButton.setLabel(hideLabel);
@@ -108,7 +104,7 @@ final class SkillTreeStatPanel {
     void open(boolean withSound) {
         if (panelOpen) return;
         panelOpen = true;
-        holoTransition.open();
+        panelFrame.open();
         toggleButton.setLabel(hideLabel);
         if (withSound) {
             SkillTreeSounds.panelOpened();
@@ -118,14 +114,12 @@ final class SkillTreeStatPanel {
     void close() {
         if (!panelOpen) return;
         panelOpen = false;
-        holoTransition.close();
+        panelFrame.close();
         toggleButton.setLabel(showLabel);
     }
 
     void advance(float amount) {
-        if (holoTransition.isAnimating()) {
-            holoTransition.advance(amount);
-        }
+        panelFrame.advance(amount);
     }
 
     boolean isToggleHit(float x, float y) {
@@ -144,10 +138,11 @@ final class SkillTreeStatPanel {
         LazyFont font = SkillTreePanelStyle.font();
         if (font == null) return;
 
-        PanelLayout layout = layoutPanel(canvasPosition, font);
-        if (layout != null && holoTransition.isVisible()) {
+        PanelLayout layout = layoutPanel(canvasPosition);
+        if (layout != null && panelFrame.isVisible()) {
             drawnLayout = layout;
-            renderPanel(layout, alphaMult);
+            panelFrame.render(layout.x, layout.topY - layout.fullHeight, layout.width, layout.fullHeight, SkillTreePanelStyle.GLOW_COLOR,
+                    alphaMult, (frameLeft, frameBottom, frameWidth, frameHeight, frameAlpha) -> renderGroups(layout, frameAlpha));
         }
         if (toggleAlpha > 0f) {
             toggleButton.render(mouseX, mouseY, alphaMult * toggleAlpha);
@@ -168,36 +163,22 @@ final class SkillTreeStatPanel {
         placedToggleTop = toggleTop;
     }
 
-    private void renderPanel(PanelLayout layout, float alphaMult) {
-        float bottomY = layout.topY - layout.fullHeight;
-        Color accentColor = SkillTreePanelStyle.GLOW_COLOR;
-        holoTransition.drawProjection(layout.x, bottomY, layout.width, layout.fullHeight, accentColor, alphaMult);
-        float contentAlpha = holoTransition.contentAlpha();
-        if (contentAlpha <= 0f) return;
+    private static void renderGroups(PanelLayout layout, float alphaMult) {
+        float rowStep = STAT_PANEL_FONT_SIZE * FONT_LINE_HEIGHT_FACTOR;
+        for (GroupContent group : layout.groupContents) {
+            GroupLabels labels = group.labels;
+            labels.header.setAlpha(alphaMult).draw(layout.x + layout.width / 2f, group.headerTextY);
+            labels.statNames.setAlpha(alphaMult).draw(layout.x + STAT_PANEL_PADDING, group.bodyTextY);
 
-        boolean clipped = holoTransition.beginReveal(layout.x, bottomY, layout.width, layout.fullHeight);
-        try {
-            borderedPanel.draw(layout.x, bottomY, layout.width, layout.fullHeight, contentAlpha * alphaMult);
-            float rowStep = STAT_PANEL_FONT_SIZE * FONT_LINE_HEIGHT_FACTOR;
-            for (GroupContent group : layout.groupContents) {
-                group.headerText.draw(layout.x + layout.width / 2f, group.headerTextY);
-                group.labelText.drawable.draw(layout.x + STAT_PANEL_PADDING, group.bodyTextY);
-
-                float rowY = group.bodyTextY;
-                for (ReusableText valueLine : group.valueLines) {
-                    valueLine.draw(layout.x + layout.width - STAT_PANEL_PADDING, rowY);
-                    rowY -= rowStep;
-                }
-            }
-        } finally {
-            if (clipped) {
-                HoloTransition.endReveal();
+            float rowY = group.bodyTextY;
+            for (TextLabel valueLine : labels.values) {
+                valueLine.setAlpha(alphaMult).draw(layout.x + layout.width - STAT_PANEL_PADDING, rowY);
+                rowY -= rowStep;
             }
         }
-        holoTransition.drawRevealLine(layout.x, bottomY, layout.width, layout.fullHeight, accentColor, alphaMult);
     }
 
-    private PanelLayout layoutPanel(PositionAPI canvasPosition, LazyFont font) {
+    private PanelLayout layoutPanel(PositionAPI canvasPosition) {
         if (statGroups == null || statGroups.isEmpty()) return null;
 
         if (cachedLayout != null && statGroups.equals(cachedLayoutGroups)
@@ -206,24 +187,22 @@ final class SkillTreeStatPanel {
             return cachedLayout;
         }
 
-        List<SkillTreePanelStyle.TooltipText> labelTexts = new ArrayList<>();
-        List<List<ReusableText>> valueLinesList = new ArrayList<>();
+        List<GroupLabels> labelsByGroup = new ArrayList<>();
         float headerHeight = STAT_PANEL_HEADER_FONT_SIZE * FONT_LINE_HEIGHT_FACTOR;
         float panelWidth = 0f;
 
         for (StatGroup group : statGroups) {
-            GroupTexts texts = getGroupTexts(font, group);
-            labelTexts.add(texts.labelText);
-            valueLinesList.add(texts.valueLines);
-            float headerMinWidth = font.calcWidth(group.name, STAT_PANEL_HEADER_FONT_SIZE) + STAT_PANEL_PADDING * 2f;
-            float bodyWidth = texts.labelText.width + STAT_PANEL_COLUMN_GAP + texts.valueWidth + STAT_PANEL_PADDING * 2f;
+            GroupLabels labels = groupLabels.computeIfAbsent(group.name, GroupLabels::new).update(group);
+            labelsByGroup.add(labels);
+            float headerMinWidth = labels.header.width() + STAT_PANEL_PADDING * 2f;
+            float bodyWidth = labels.statNames.width() + STAT_PANEL_COLUMN_GAP + labels.valueWidth() + STAT_PANEL_PADDING * 2f;
             panelWidth = Math.max(panelWidth, Math.max(headerMinWidth, bodyWidth));
         }
 
         float contentHeight = 0f;
-        for (int i = 0; i < statGroups.size(); i++) {
-            contentHeight += headerHeight + STAT_PANEL_HEADER_GAP + labelTexts.get(i).height;
-            if (i < statGroups.size() - 1) contentHeight += STAT_PANEL_GROUP_GAP;
+        for (int i = 0; i < labelsByGroup.size(); i++) {
+            contentHeight += headerHeight + STAT_PANEL_HEADER_GAP + labelsByGroup.get(i).statNames.height();
+            if (i < labelsByGroup.size() - 1) contentHeight += STAT_PANEL_GROUP_GAP;
         }
         float fullHeight = STAT_PANEL_PADDING * 2f + contentHeight;
 
@@ -232,17 +211,11 @@ final class SkillTreeStatPanel {
 
         List<GroupContent> groupContents = new ArrayList<>();
         float cursorY = topY - STAT_PANEL_PADDING;
-        for (int i = 0; i < statGroups.size(); i++) {
-            StatGroup group = statGroups.get(i);
-            SkillTreePanelStyle.TooltipText labelText = labelTexts.get(i);
-            List<ReusableText> valueLines = valueLinesList.get(i);
-
+        for (GroupLabels labels : labelsByGroup) {
             float headerTextY = cursorY;
             float bodyTextY = headerTextY - headerHeight - STAT_PANEL_HEADER_GAP;
-
-            groupContents.add(new GroupContent(getStatGroupHeaderText(group.name), labelText, valueLines, headerTextY, bodyTextY));
-
-            float groupHeight = headerHeight + STAT_PANEL_HEADER_GAP + labelText.height;
+            groupContents.add(new GroupContent(labels, headerTextY, bodyTextY));
+            float groupHeight = headerHeight + STAT_PANEL_HEADER_GAP + labels.statNames.height();
             cursorY = headerTextY - groupHeight - STAT_PANEL_GROUP_GAP;
         }
 
@@ -253,28 +226,6 @@ final class SkillTreeStatPanel {
         cachedLayoutWidth = canvasPosition.getWidth();
         cachedLayoutHeight = canvasPosition.getHeight();
         return cachedLayout;
-    }
-
-    private ReusableText getStatGroupHeaderText(String name) {
-        return statGroupHeaderText.computeIfAbsent(name,
-                n -> new ReusableText(STAT_PANEL_HEADER_FONT_SIZE, STAT_PANEL_HEADER_TEXT_COLOR, LazyFont.TextAnchor.TOP_CENTER).set(n));
-    }
-
-    private GroupTexts getGroupTexts(LazyFont font, StatGroup group) {
-        return groupTextCache.get(group.name, group.statLines, name -> buildGroupTexts(font, group));
-    }
-
-    private GroupTexts buildGroupTexts(LazyFont font, StatGroup group) {
-        List<String> labels = new ArrayList<>();
-        List<ReusableText> valueLines = new ArrayList<>();
-        float valueWidth = 0f;
-        for (StatLine line : group.statLines) {
-            labels.add(line.label);
-            valueLines.add(new ReusableText(STAT_PANEL_FONT_SIZE, line.valueColor, LazyFont.TextAnchor.TOP_RIGHT).set(line.value));
-            valueWidth = Math.max(valueWidth, font.calcWidth(line.value, STAT_PANEL_FONT_SIZE));
-        }
-        SkillTreePanelStyle.TooltipText labelText = SkillTreePanelStyle.buildJoinedText(font, labels, STAT_PANEL_FONT_SIZE, STAT_PANEL_LABEL_COLOR);
-        return new GroupTexts(labelText, valueLines, valueWidth);
     }
 
     private List<StatGroup> buildStatGroups(ShipOpBudget budget) {
@@ -414,30 +365,53 @@ final class SkillTreeStatPanel {
         }
     }
 
-    private static final class GroupTexts {
-        final SkillTreePanelStyle.TooltipText labelText;
-        final List<ReusableText> valueLines;
-        final float valueWidth;
+    private static final class GroupLabels {
+        final TextLabel header;
+        final TextLabel statNames = new TextLabel(STAT_PANEL_FONT_SIZE, STAT_PANEL_LABEL_COLOR);
+        final List<TextLabel> values = new ArrayList<>();
+        private List<StatLine> shownLines = List.of();
 
-        GroupTexts(SkillTreePanelStyle.TooltipText labelText, List<ReusableText> valueLines, float valueWidth) {
-            this.labelText = labelText;
-            this.valueLines = valueLines;
-            this.valueWidth = valueWidth;
+        GroupLabels(String groupName) {
+            header = new TextLabel(STAT_PANEL_HEADER_FONT_SIZE, STAT_PANEL_HEADER_TEXT_COLOR, LazyFont.TextAnchor.TOP_CENTER).set(groupName);
+        }
+
+        GroupLabels update(StatGroup group) {
+            if (group.statLines.equals(shownLines)) {
+                return this;
+            }
+            shownLines = group.statLines;
+            List<String> names = new ArrayList<>(shownLines.size());
+            for (int i = 0; i < shownLines.size(); i++) {
+                StatLine line = shownLines.get(i);
+                names.add(line.label);
+                if (i == values.size()) {
+                    values.add(new TextLabel(STAT_PANEL_FONT_SIZE, line.valueColor, LazyFont.TextAnchor.TOP_RIGHT));
+                }
+                values.get(i).setColor(line.valueColor).set(line.value);
+            }
+            while (values.size() > shownLines.size()) {
+                values.remove(values.size() - 1).dispose();
+            }
+            statNames.set(String.join("\n", names));
+            return this;
+        }
+
+        float valueWidth() {
+            float widest = 0f;
+            for (TextLabel value : values) {
+                widest = Math.max(widest, value.width());
+            }
+            return widest;
         }
     }
 
     private static final class GroupContent {
-        final ReusableText headerText;
-        final SkillTreePanelStyle.TooltipText labelText;
-        final List<ReusableText> valueLines;
+        final GroupLabels labels;
         final float headerTextY;
         final float bodyTextY;
 
-        GroupContent(ReusableText headerText, SkillTreePanelStyle.TooltipText labelText,
-                     List<ReusableText> valueLines, float headerTextY, float bodyTextY) {
-            this.headerText = headerText;
-            this.labelText = labelText;
-            this.valueLines = valueLines;
+        GroupContent(GroupLabels labels, float headerTextY, float bodyTextY) {
+            this.labels = labels;
             this.headerTextY = headerTextY;
             this.bodyTextY = bodyTextY;
         }

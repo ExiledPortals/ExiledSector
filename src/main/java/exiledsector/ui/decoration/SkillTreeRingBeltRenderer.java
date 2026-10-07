@@ -22,6 +22,7 @@ public class SkillTreeRingBeltRenderer {
     }
 
     public void render(TreeViewport viewport, float alphaMult) {
+        if (alphaMult <= 0f) return;
         float zoom = viewport.zoom();
         List<RingBelt> ringBelts = SkillTree.getRingBelts();
         if (ringBelts.isEmpty()) return;

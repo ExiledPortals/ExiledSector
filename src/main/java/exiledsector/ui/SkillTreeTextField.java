@@ -1,7 +1,7 @@
 package exiledsector.ui;
 
 import com.fs.starfarer.api.input.InputEventAPI;
-import exiledsector.ui.util.ReusableText;
+import exiledsector.ui.util.TextLabel;
 import org.lazywizard.lazylib.ui.LazyFont;
 import org.lwjgl.input.Keyboard;
 
@@ -21,7 +21,7 @@ final class SkillTreeTextField {
     private final int maxLength;
     private final float fontSize;
     private final Color textColor;
-    private final ReusableText displayLine;
+    private final TextLabel displayLine;
 
     private String enteredText = "";
     private boolean focused;
@@ -37,7 +37,7 @@ final class SkillTreeTextField {
         this.maxLength = maxLength;
         this.fontSize = fontSize;
         this.textColor = textColor;
-        this.displayLine = new ReusableText(fontSize, textColor);
+        this.displayLine = new TextLabel(fontSize, textColor);
     }
 
     String text() {

@@ -1,7 +1,6 @@
 package exiledsector.ui.util;
 
 import com.fs.starfarer.api.Global;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 
@@ -38,6 +37,10 @@ public final class HoloTransition {
     public void advance(float amount) {
         float step = amount / (opening ? OPEN_SECONDS : CLOSE_SECONDS);
         openProgress = clamp(openProgress + (opening ? step : -step));
+    }
+
+    public boolean isOpening() {
+        return opening;
     }
 
     public boolean isVisible() {
@@ -84,22 +87,15 @@ public final class HoloTransition {
         GLDraw.fillQuad(left, bottom, currentWidth, EDGE_THICKNESS, accent, alpha);
     }
 
-    public boolean beginReveal(float x, float y, float width, float height) {
+    public GlScope reveal(float x, float y, float width, float height) {
         float reveal = contentAlpha();
         if (reveal >= 1f) {
-            return false;
+            return null;
         }
         float screenScale = Global.getSettings().getScreenScaleMult();
         float visibleHeight = height * reveal;
-        GL11.glPushAttrib(GL11.GL_SCISSOR_BIT);
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GL11.glScissor((int) Math.floor(x * screenScale), (int) Math.floor((y + height - visibleHeight) * screenScale),
+        return GlScope.clip((int) Math.floor(x * screenScale), (int) Math.floor((y + height - visibleHeight) * screenScale),
                 (int) Math.ceil(width * screenScale), (int) Math.ceil(visibleHeight * screenScale));
-        return true;
-    }
-
-    public static void endReveal() {
-        GL11.glPopAttrib();
     }
 
     public void drawRevealLine(float x, float y, float width, float height, Color accent, float alphaMult) {

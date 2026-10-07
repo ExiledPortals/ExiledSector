@@ -4,7 +4,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.ui.hyperspace.HyperspaceAnchor;
 import exiledsector.ui.hyperspace.HyperspaceCamera;
 import exiledsector.ui.util.BorderedPanel;
-import exiledsector.ui.util.ReusableText;
+import exiledsector.ui.util.TextLabel;
 
 import java.awt.Color;
 import java.util.HashMap;
@@ -23,7 +23,7 @@ final class HyperspaceLabels {
     private static final Color HOVER_COLOR = SkillTreePanelStyle.GLOW_COLOR;
 
     private final BorderedPanel labelPanel = new BorderedPanel(HyperspaceLabels.class);
-    private final Map<String, ReusableText> regionTexts = new HashMap<>();
+    private final Map<String, TextLabel> regionTexts = new HashMap<>();
     private int textAlpha = -1;
     private Color textColor = TEXT_COLOR;
     private Color hoverColor = HOVER_COLOR;
@@ -40,7 +40,7 @@ final class HyperspaceLabels {
             hoverColor = withAlpha(HOVER_COLOR, alpha);
         }
         for (HyperspaceAnchor anchor : anchors) {
-            ReusableText labelText = text(anchor);
+            TextLabel labelText = text(anchor);
             ScreenRect labelBox = box(viewport, anchor, mapStarRadius, mapAmount, labelText.width());
             labelPanel.draw(labelBox.left(), labelBox.bottom(), labelBox.width(), labelBox.height(), alphaMult);
             labelText.setColor(anchor.equals(hovered) ? hoverColor : textColor);
@@ -68,9 +68,9 @@ final class HyperspaceLabels {
         return null;
     }
 
-    private ReusableText text(HyperspaceAnchor anchor) {
+    private TextLabel text(HyperspaceAnchor anchor) {
         return regionTexts.computeIfAbsent(anchor.region(),
-                region -> new ReusableText(FONT_SIZE, TEXT_COLOR).set(Translation.text("hyperspace.region." + region)));
+                region -> new TextLabel(FONT_SIZE, TEXT_COLOR).set(Translation.text("hyperspace.region." + region)));
     }
 
     private static ScreenRect box(TreeViewport viewport, HyperspaceAnchor anchor, float mapStarRadius, float mapAmount, float textWidth) {

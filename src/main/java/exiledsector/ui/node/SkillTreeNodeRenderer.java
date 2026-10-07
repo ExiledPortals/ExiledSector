@@ -21,7 +21,7 @@ import exiledsector.socketables.SocketableStore;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.TreeViewport;
-import exiledsector.ui.util.ReusableText;
+import exiledsector.ui.util.TextLabel;
 import lunalib.lunaRefit.BaseRefitButton;
 import org.lazywizard.lazylib.ui.LazyFont;
 
@@ -65,7 +65,7 @@ public final class SkillTreeNodeRenderer {
 
     private SkillType lastChosenOptionalOption;
     private String targetedSocketId;
-    private final ReusableText startingRootPrompt = new ReusableText(SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE,
+    private final TextLabel startingRootPrompt = new TextLabel(SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE,
             SkillTreePanelStyle.TOOLTIP_TITLE_COLOR, LazyFont.TextAnchor.BOTTOM_CENTER).set(Translation.text("ui.node.startingRootPrompt"));
     private NodeAllocator.Snapshot allocationSnapshot;
     private SkillTreeTemplate template;

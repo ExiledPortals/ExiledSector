@@ -15,14 +15,14 @@ import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeTooltipTable;
 import exiledsector.ui.TooltipExpansion;
 import exiledsector.ui.TooltipTable;
-import exiledsector.ui.util.CachedText;
+import exiledsector.ui.util.TextLabel;
 import org.lazywizard.lazylib.ui.LazyFont;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import static exiledsector.ui.SkillTreePanelStyle.NODE_TOOLTIP_MAX_TEXT_WIDTH;
 import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_BODY_COLOR;
@@ -35,17 +35,15 @@ final class SkillTreeNodeTooltipRenderer {
 
     private static final float TOOLTIP_MAX_TEXT_HEIGHT = 800f;
 
-    private record Body(SkillTreePanelStyle.TooltipText bodyText, boolean expandable) {
-    }
-
     private final FleetMemberAPI fleetMember;
     private final SkillTreePanelStyle panelStyle;
-    private final CachedText<String, SkillTreePanelStyle.TooltipText> tooltipTitles = new CachedText<>();
-    private final CachedText<String, Body> tooltipBodies = new CachedText<>();
-    private final CachedText<String, SkillTreePanelStyle.TooltipText> typeTooltipTitles = new CachedText<>();
-    private final CachedText<String, Body> typeTooltipBodies = new CachedText<>();
-    private final CachedText<Boolean, SkillTreePanelStyle.TooltipText> footers = new CachedText<>();
-    private final CachedText<String, SkillTreePanelStyle.TooltipText> flavours = new CachedText<>();
+    private final Map<String, TextLabel> tooltipTitles = new HashMap<>();
+    private final Map<String, TextLabel> tooltipBodies = new HashMap<>();
+    private final Map<String, TextLabel> typeTooltipTitles = new HashMap<>();
+    private final Map<String, TextLabel> typeTooltipBodies = new HashMap<>();
+    private final Map<TextLabel, Boolean> expandableBodies = new HashMap<>();
+    private final Map<Boolean, TextLabel> footers = new HashMap<>();
+    private final Map<String, TextLabel> flavours = new HashMap<>();
     private final Map<String, List<SkillTreeTooltipTable>> tablesByType = new HashMap<>();
 
     SkillTreeNodeTooltipRenderer(FleetMemberAPI fleetMember, SkillTreePanelStyle panelStyle) {
@@ -68,16 +66,19 @@ final class SkillTreeNodeTooltipRenderer {
         List<Object> signature = List.of(effectiveType.getId(), hidden, showOptionalHint, expanded, allocatedSocket,
                 socketed == null ? "" : socketed.id());
 
-        SkillTreePanelStyle.TooltipText title = tooltipTitles.get(node.getId(), signature,
-                id -> socketed != null
-                        ? buildTooltipText(font, socketed.name(), TOOLTIP_TITLE_FONT_SIZE, socketed.rarity().color())
-                        : buildTooltipText(font, titleText(effectiveType, hidden), TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR));
-        Body body = tooltipBodies.get(node.getId(), signature,
-                id -> buildBody(font, describe(effectiveType, hidden, showOptionalHint, allocatedSocket, socketed, expanded), expanded));
+        TextLabel title = tooltipTitles.computeIfAbsent(node.getId(), id -> titleLabel()).refresh(signature, label -> {
+            if (socketed != null) {
+                label.setColor(socketed.rarity().color()).setWrapped(socketed.name(), NODE_TOOLTIP_MAX_TEXT_WIDTH, TOOLTIP_MAX_TEXT_HEIGHT);
+            } else {
+                label.setColor(TOOLTIP_TITLE_COLOR).setWrapped(titleText(effectiveType, hidden), NODE_TOOLTIP_MAX_TEXT_WIDTH, TOOLTIP_MAX_TEXT_HEIGHT);
+            }
+        });
+        TextLabel body = body(tooltipBodies, node.getId(), signature,
+                () -> describe(effectiveType, hidden, showOptionalHint, allocatedSocket, socketed, expanded), expanded);
 
         List<SkillTreeTooltipTable> tables = showOptionalHint || hidden ? List.of() : tablesFor(font, effectiveType);
-        SkillTreePanelStyle.TooltipText flavour = hidden || socketed != null ? null : flavourFor(font, effectiveType);
-        panelStyle.drawTitleBodyTooltip(title, flavour, body.bodyText(), tables, footer(font, body, expanded), mouseX, mouseY, alphaMult);
+        TextLabel flavour = hidden || socketed != null ? null : flavourFor(effectiveType);
+        panelStyle.drawTitleBodyTooltip(title, flavour, body, tables, footer(body, expanded), mouseX, mouseY, alphaMult);
     }
 
     void renderTooltipForType(SkillType type, float mouseX, float mouseY, float alphaMult) {
@@ -85,33 +86,43 @@ final class SkillTreeNodeTooltipRenderer {
         if (font == null) return;
 
         boolean expanded = TooltipExpansion.isExpanded();
-        SkillTreePanelStyle.TooltipText title = typeTooltipTitles.get(type.getId(), type.getId(),
-                id -> buildTooltipText(font, type.getDisplayName(), TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR));
-        Body body = typeTooltipBodies.get(type.getId(), List.of(type.getId(), expanded),
-                id -> buildBody(font, SkillNode.describeType(type, fleetMember.getHullSpec().getHullSize()), expanded));
+        TextLabel title = typeTooltipTitles.computeIfAbsent(type.getId(), id -> titleLabel()).refresh(type.getId(),
+                label -> label.setWrapped(type.getDisplayName(), NODE_TOOLTIP_MAX_TEXT_WIDTH, TOOLTIP_MAX_TEXT_HEIGHT));
+        TextLabel body = body(typeTooltipBodies, type.getId(), List.of(type.getId(), expanded),
+                () -> SkillNode.describeType(type, fleetMember.getHullSpec().getHullSize()), expanded);
 
-        panelStyle.drawTitleBodyTooltip(title, flavourFor(font, type), body.bodyText(), tablesFor(font, type), footer(font, body, expanded), mouseX, mouseY, alphaMult);
+        panelStyle.drawTitleBodyTooltip(title, flavourFor(type), body, tablesFor(font, type), footer(body, expanded), mouseX, mouseY, alphaMult);
     }
 
-    private Body buildBody(LazyFont font, NodeDescription description, boolean expanded) {
-        List<DescriptionLine> lines = expanded ? description.all() : description.effects();
-        return new Body(buildBodyText(font, lines), !description.details().isEmpty());
+    private static TextLabel titleLabel() {
+        return new TextLabel(TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR);
     }
 
-    private SkillTreePanelStyle.TooltipText footer(LazyFont font, Body body, boolean expanded) {
-        if (!body.expandable()) {
+    private TextLabel body(Map<String, TextLabel> bodies, String key, Object signature, Supplier<NodeDescription> description, boolean expanded) {
+        TextLabel bodyLabel = bodies.computeIfAbsent(key, id -> new TextLabel(TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR));
+        bodyLabel.refresh(signature, label -> {
+            NodeDescription described = description.get();
+            writeBodyText(label, expanded ? described.all() : described.effects());
+            expandableBodies.put(label, !described.details().isEmpty());
+        });
+        return bodyLabel;
+    }
+
+    private TextLabel footer(TextLabel body, boolean expanded) {
+        if (!expandableBodies.getOrDefault(body, false)) {
             return null;
         }
-        return footers.get(expanded, expanded,
-                footerExpanded -> buildBodyText(font, List.of(plainLine(footerExpanded ? "ui.tooltip.collapseHint" : "ui.tooltip.expandHint"))));
+        return footers.computeIfAbsent(expanded, footerExpanded -> writeBodyText(new TextLabel(TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR),
+                List.of(plainLine(Boolean.TRUE.equals(footerExpanded) ? "ui.tooltip.collapseHint" : "ui.tooltip.expandHint"))));
     }
 
-    private SkillTreePanelStyle.TooltipText flavourFor(LazyFont font, SkillType type) {
-        return flavours.get(type.getId(), type.getId(), id -> {
-            String flavour = type.getFlavourText();
-            return flavour == null ? null : SkillTreePanelStyle.buildWrappedText(font, flavour, TOOLTIP_FLAVOUR_FONT_SIZE,
-                    NODE_TOOLTIP_MAX_TEXT_WIDTH, TOOLTIP_MAX_TEXT_HEIGHT, Misc.getGrayColor());
-        });
+    private TextLabel flavourFor(SkillType type) {
+        String flavour = type.getFlavourText();
+        if (flavour == null) {
+            return null;
+        }
+        return flavours.computeIfAbsent(type.getId(), id -> new TextLabel(TOOLTIP_FLAVOUR_FONT_SIZE, Misc.getGrayColor())
+                .setWrapped(flavour, NODE_TOOLTIP_MAX_TEXT_WIDTH, TOOLTIP_MAX_TEXT_HEIGHT));
     }
 
     private List<SkillTreeTooltipTable> tablesFor(LazyFont font, SkillType type) {
@@ -159,12 +170,7 @@ final class SkillTreeNodeTooltipRenderer {
         return new DescriptionLine(Translation.styled(key), false);
     }
 
-    private SkillTreePanelStyle.TooltipText buildBodyText(LazyFont font, List<DescriptionLine> lines) {
-        return panelStyle.buildHighlightedWrappedText(font, lines, TOOLTIP_BODY_FONT_SIZE, NODE_TOOLTIP_MAX_TEXT_WIDTH,
-                TOOLTIP_MAX_TEXT_HEIGHT, TOOLTIP_BODY_COLOR);
-    }
-
-    private SkillTreePanelStyle.TooltipText buildTooltipText(LazyFont font, String rawText, float fontSize, Color color) {
-        return SkillTreePanelStyle.buildWrappedText(font, rawText, fontSize, NODE_TOOLTIP_MAX_TEXT_WIDTH, TOOLTIP_MAX_TEXT_HEIGHT, color);
+    private TextLabel writeBodyText(TextLabel label, List<DescriptionLine> lines) {
+        return panelStyle.writeDescription(label, lines, NODE_TOOLTIP_MAX_TEXT_WIDTH, TOOLTIP_MAX_TEXT_HEIGHT);
     }
 }

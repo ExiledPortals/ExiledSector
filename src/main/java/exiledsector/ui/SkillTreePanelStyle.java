@@ -4,11 +4,11 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
-import exiledsector.i18n.TextWrapper;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.DescriptionLine;
 import exiledsector.ui.util.FallbackSupport;
 import exiledsector.ui.util.GLDraw;
+import exiledsector.ui.util.TextLabel;
 import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.ui.LazyFont;
 
@@ -17,6 +17,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,9 +44,6 @@ public final class SkillTreePanelStyle {
     private static final Color FALLBACK_HIGH_TECH_COLOR = new Color(90, 190, 255);
     private static final String LOW_TECH_DESIGN_TYPE = "Low Tech";
     private static final String HIGH_TECH_DESIGN_TYPE = "High Tech";
-    // TODO: drop this if LazyLib stops applying DrawableString colour changes one character early
-    private static final int LAZYFONT_COLOR_INDEX_OFFSET = 1;
-    private static final String PARAGRAPH_SEPARATOR = "\n\n";
 
     private static final Color DEFAULT_ACCENT_COLOR = GLOW_COLOR;
     private static final int COLOR_QUANTIZE_STEP = 24;
@@ -112,22 +110,17 @@ public final class SkillTreePanelStyle {
         GLDraw.strokeQuad(x, y, width, height, borderColor, TOOLTIP_BORDER_THICKNESS, alphaMult);
     }
 
-    public void drawTitleBodyTooltip(TooltipText title, TooltipText body, float mouseX, float mouseY, float alphaMult) {
-        drawTitleBodyTooltip(title, body, List.of(), null, mouseX, mouseY, alphaMult);
+    public void drawTitleBodyTooltip(TextLabel title, TextLabel body, float mouseX, float mouseY, float alphaMult) {
+        drawTitleBodyTooltip(title, null, body, List.of(), null, mouseX, mouseY, alphaMult);
     }
 
-    public void drawTitleBodyTooltip(TooltipText title, TooltipText body, List<SkillTreeTooltipTable> tables, TooltipText footer,
-                                     float mouseX, float mouseY, float alphaMult) {
-        drawTitleBodyTooltip(title, null, body, tables, footer, mouseX, mouseY, alphaMult);
-    }
-
-    public void drawTitleBodyTooltip(TooltipText title, TooltipText flavour, TooltipText body, List<SkillTreeTooltipTable> tables,
-                                     TooltipText footer, float mouseX, float mouseY, float alphaMult) {
-        float contentWidth = Math.max(title.width, body.width);
+    public void drawTitleBodyTooltip(TextLabel title, TextLabel flavour, TextLabel body, List<SkillTreeTooltipTable> tables,
+                                     TextLabel footer, float mouseX, float mouseY, float alphaMult) {
+        float contentWidth = Math.max(title.width(), body.width());
         float flavourHeight = 0f;
         if (flavour != null) {
-            contentWidth = Math.max(contentWidth, flavour.width);
-            flavourHeight = flavour.height + TOOLTIP_FLAVOUR_GAP;
+            contentWidth = Math.max(contentWidth, flavour.width());
+            flavourHeight = flavour.height() + TOOLTIP_FLAVOUR_GAP;
         }
         float tablesHeight = 0f;
         for (SkillTreeTooltipTable table : tables) {
@@ -136,11 +129,12 @@ public final class SkillTreePanelStyle {
         }
         float footerHeight = 0f;
         if (footer != null) {
-            contentWidth = Math.max(contentWidth, footer.width);
-            footerHeight = TOOLTIP_TABLE_GAP + footer.height;
+            contentWidth = Math.max(contentWidth, footer.width());
+            footerHeight = TOOLTIP_TABLE_GAP + footer.height();
         }
         float boxWidth = contentWidth + TOOLTIP_PADDING * 2f + TOOLTIP_WIDTH_SAFETY_MARGIN;
-        float boxHeight = title.height + TOOLTIP_TITLE_BODY_GAP + flavourHeight + body.height + tablesHeight + footerHeight + TOOLTIP_PADDING * 2f;
+        float boxHeight = title.height() + TOOLTIP_TITLE_BODY_GAP + flavourHeight + body.height() + tablesHeight + footerHeight
+                + TOOLTIP_PADDING * 2f;
         float boxX = tooltipLeft(mouseX, boxWidth, Global.getSettings().getScreenWidth());
         float boxY = Math.max(TOOLTIP_SCREEN_MARGIN, mouseY - boxHeight - TOOLTIP_CURSOR_OFFSET);
 
@@ -148,19 +142,19 @@ public final class SkillTreePanelStyle {
         drawTooltipBackground(boxX, boxY, boxWidth, boxHeight, alphaMult, accent);
 
         float titleY = boxY + boxHeight - TOOLTIP_PADDING;
-        float flavourY = titleY - title.height - TOOLTIP_TITLE_BODY_GAP;
+        float flavourY = titleY - title.height() - TOOLTIP_TITLE_BODY_GAP;
         float bodyY = flavourY - flavourHeight;
-        float titleX = boxX + (boxWidth - title.width) / 2f;
-        title.drawable.draw(titleX, titleY);
+        float titleX = boxX + (boxWidth - title.width()) / 2f;
+        title.setAlpha(alphaMult).draw(titleX, titleY);
         if (fakeBold()) {
-            title.drawable.draw(titleX + TOOLTIP_TITLE_BOLD_OFFSET, titleY);
+            title.draw(titleX + TOOLTIP_TITLE_BOLD_OFFSET, titleY);
         }
         if (flavour != null) {
-            flavour.drawable.draw(boxX + TOOLTIP_PADDING, flavourY);
+            flavour.setAlpha(alphaMult).draw(boxX + TOOLTIP_PADDING, flavourY);
         }
-        body.drawable.draw(boxX + TOOLTIP_PADDING, bodyY);
+        body.setAlpha(alphaMult).draw(boxX + TOOLTIP_PADDING, bodyY);
 
-        float tableTop = bodyY - body.height;
+        float tableTop = bodyY - body.height();
         float tableWidth = boxWidth - TOOLTIP_PADDING * 2f;
         for (SkillTreeTooltipTable table : tables) {
             tableTop -= TOOLTIP_TABLE_GAP;
@@ -168,7 +162,7 @@ public final class SkillTreePanelStyle {
             tableTop -= table.height();
         }
         if (footer != null) {
-            footer.drawable.draw(boxX + TOOLTIP_PADDING, tableTop - TOOLTIP_TABLE_GAP);
+            footer.setAlpha(alphaMult).draw(boxX + TOOLTIP_PADDING, tableTop - TOOLTIP_TABLE_GAP);
         }
     }
 
@@ -278,91 +272,11 @@ public final class SkillTreePanelStyle {
                 Logger.getLogger(SkillTreePanelStyle.class), "Failed to read the " + designType + " design type colour");
     }
 
-    public TooltipText buildHighlightedWrappedText(LazyFont font, List<DescriptionLine> paragraphs, float fontSize,
-                                                   float maxWidth, float maxHeight, Color color) {
-        StyledText wrapped = StyledText.EMPTY;
+    public TextLabel writeDescription(TextLabel label, List<DescriptionLine> paragraphs, float maxWidth, float maxHeight) {
+        List<StyledText> displayed = new ArrayList<>(paragraphs.size());
         for (DescriptionLine paragraph : paragraphs) {
-            if (!wrapped.isEmpty()) {
-                wrapped = wrapped.append(PARAGRAPH_SEPARATOR);
-            }
-            wrapped = wrapped.append(wrap(font, paragraph.display(), fontSize, maxWidth, maxHeight));
+            displayed.add(paragraph.display());
         }
-        TooltipText measured = buildMeasuredText(font, wrapped.plain(), fontSize, color,
-                LazyFont.TextAlignment.LEFT, LazyFont.TextAnchor.TOP_LEFT);
-        appendHighlighted(measured.drawable, wrapped.plain() + " ", wrapped.spans());
-        return measured;
-    }
-
-    private static StyledText wrap(LazyFont font, StyledText text, float fontSize, float maxWidth, float maxHeight) {
-        return TextWrapper.wrap(text, line -> font.calcWidth(line, fontSize), fontSize, maxWidth, maxHeight);
-    }
-
-    private void appendHighlighted(LazyFont.DrawableString drawable, String text, List<StyledText.Span> spans) {
-        drawable.setText("");
-        int cursor = 0;
-        for (StyledText.Span span : spans) {
-            int start = colourChangeIndex(text, span.start());
-            int end = colourChangeIndex(text, span.end());
-            drawable.append(text.substring(cursor, start));
-            drawable.append(text.substring(start, end), highlightColor(span.style()));
-            cursor = end;
-        }
-        drawable.append(text.substring(cursor));
-    }
-
-    private static int colourChangeIndex(String text, int boundary) {
-        int drawnBoundary = boundary;
-        while (drawnBoundary < text.length() && text.charAt(drawnBoundary) == '\n') {
-            drawnBoundary++;
-        }
-        return Math.min(text.length(), drawnBoundary + LAZYFONT_COLOR_INDEX_OFFSET);
-    }
-
-    public static TooltipText buildWrappedText(LazyFont font, String rawText, float fontSize, float maxWidth, float maxHeight, Color color) {
-        return buildMeasuredText(font, wrap(font, StyledText.of(rawText), fontSize, maxWidth, maxHeight).plain(), fontSize, color,
-                LazyFont.TextAlignment.LEFT, LazyFont.TextAnchor.TOP_LEFT);
-    }
-
-    public static TooltipText buildJoinedText(LazyFont font, List<String> lines, float fontSize, Color color) {
-        return buildMeasuredText(font, String.join("\n", lines), fontSize, color,
-                LazyFont.TextAlignment.LEFT, LazyFont.TextAnchor.TOP_LEFT);
-    }
-
-    private static TooltipText buildMeasuredText(LazyFont font, String text, float fontSize, Color color,
-                                                   LazyFont.TextAlignment alignment, LazyFont.TextAnchor anchor) {
-        String[] lines = text.split("\n", -1);
-        float textWidth = 0f;
-        for (String line : lines) {
-            textWidth = Math.max(textWidth, font.calcWidth(line, fontSize));
-        }
-        float textHeight = lines.length * fontSize * FONT_LINE_HEIGHT_FACTOR;
-
-        LazyFont.DrawableString drawable = font.createText(text, color, fontSize);
-        drawable.setAlignment(alignment);
-        drawable.setAnchor(anchor);
-        return new TooltipText(drawable, textWidth, textHeight);
-    }
-
-    public static LazyFont.DrawableString buildSimpleText(LazyFont font, String text, float fontSize, Color color) {
-        return buildSimpleText(font, text, fontSize, color, LazyFont.TextAnchor.TOP_LEFT);
-    }
-
-    public static LazyFont.DrawableString buildSimpleText(LazyFont font, String text, float fontSize, Color color, LazyFont.TextAnchor anchor) {
-        LazyFont.DrawableString drawable = font.createText(text, color, fontSize);
-        drawable.setAlignment(LazyFont.TextAlignment.LEFT);
-        drawable.setAnchor(anchor);
-        return drawable;
-    }
-
-    public static final class TooltipText {
-        public final LazyFont.DrawableString drawable;
-        public final float width;
-        public final float height;
-
-        public TooltipText(LazyFont.DrawableString drawable, float width, float height) {
-            this.drawable = drawable;
-            this.width = width;
-            this.height = height;
-        }
+        return label.setParagraphs(displayed, maxWidth, maxHeight, this::highlightColor);
     }
 }

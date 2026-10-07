@@ -4,13 +4,14 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.util.FaderUtil;
 import com.fs.starfarer.api.util.Misc;
-import exiledsector.ui.util.ReusableText;
 import exiledsector.ui.util.FallbackSupport;
 import exiledsector.ui.util.GLDraw;
+import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.LineBatch;
 import exiledsector.ui.util.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
 import exiledsector.ui.util.Rects;
+import exiledsector.ui.util.TextLabel;
 import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.ui.LazyFont;
 import org.lwjgl.opengl.GL11;
@@ -53,8 +54,8 @@ final class SkillTreeReadoutBar {
     private final int row;
     private final FaderUtil hoverFader = new FaderUtil(HOVER_FADE_IN, HOVER_FADE_OUT);
 
-    private final ReusableText labelText = new ReusableText(FONT_SIZE, TEXT_COLOR);
-    private final ReusableText labelShadowText = new ReusableText(FONT_SIZE, TEXT_SHADOW_COLOR);
+    private final TextLabel labelText = new TextLabel(FONT_SIZE, TEXT_COLOR);
+    private final TextLabel labelShadowText = new TextLabel(FONT_SIZE, TEXT_SHADOW_COLOR);
     private final LineBatch bevelShadowLines = new LineBatch(EDGE_LINE_WIDTH);
     private final LineBatch bevelHighlightLines = new LineBatch(EDGE_LINE_WIDTH);
     private final LineBatch cornerAccentLines = new LineBatch(1f);
@@ -173,29 +174,25 @@ final class SkillTreeReadoutBar {
 
         float peakAlpha = alphaMult * (INNER_GLOW_PEAK_ALPHA_MULT + INNER_GLOW_PEAK_HOVER_BOOST * glowBoost);
 
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+        try (GlScope scope = GlScope.flat().additive()) {
+            GL11.glBegin(GL11.GL_QUADS);
+            glColorAlpha(color, 0f);
+            GL11.glVertex2f(barLeft, barBottom);
+            GL11.glVertex2f(barLeft + fillWidth, barBottom);
+            glColorAlpha(color, peakAlpha);
+            GL11.glVertex2f(barLeft + fillWidth, barMid);
+            GL11.glVertex2f(barLeft, barMid);
+            GL11.glEnd();
 
-        GL11.glBegin(GL11.GL_QUADS);
-        glColorAlpha(color, 0f);
-        GL11.glVertex2f(barLeft, barBottom);
-        GL11.glVertex2f(barLeft + fillWidth, barBottom);
-        glColorAlpha(color, peakAlpha);
-        GL11.glVertex2f(barLeft + fillWidth, barMid);
-        GL11.glVertex2f(barLeft, barMid);
-        GL11.glEnd();
-
-        GL11.glBegin(GL11.GL_QUADS);
-        glColorAlpha(color, peakAlpha);
-        GL11.glVertex2f(barLeft, barMid);
-        GL11.glVertex2f(barLeft + fillWidth, barMid);
-        glColorAlpha(color, 0f);
-        GL11.glVertex2f(barLeft + fillWidth, barTop);
-        GL11.glVertex2f(barLeft, barTop);
-        GL11.glEnd();
-
-        GL11.glDisable(GL11.GL_BLEND);
+            GL11.glBegin(GL11.GL_QUADS);
+            glColorAlpha(color, peakAlpha);
+            GL11.glVertex2f(barLeft, barMid);
+            GL11.glVertex2f(barLeft + fillWidth, barMid);
+            glColorAlpha(color, 0f);
+            GL11.glVertex2f(barLeft + fillWidth, barTop);
+            GL11.glVertex2f(barLeft, barTop);
+            GL11.glEnd();
+        }
     }
 
     private void drawEdgeBevel(float barLeft, float barBottom, Color color, float alphaMult, float glowBoost) {
@@ -209,13 +206,11 @@ final class SkillTreeReadoutBar {
         bevelHighlightLines.add(barLeft + 1f, barBottom, barLeft + 1f, barTop, highlight, alphaMult);
         bevelHighlightLines.add(barRight + 1f, barBottom, barRight + 1f, barTop, highlight, alphaMult);
 
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        bevelShadowLines.flush();
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-        bevelHighlightLines.flush();
-        GL11.glDisable(GL11.GL_BLEND);
+        try (GlScope scope = GlScope.flat()) {
+            bevelShadowLines.flush();
+            scope.additive();
+            bevelHighlightLines.flush();
+        }
     }
 
     private void drawCornerAccents(float barLeft, float barBottom, Color color, float alphaMult) {
@@ -229,11 +224,9 @@ final class SkillTreeReadoutBar {
         cornerAccentLines.add(barRight - 1f, barBottom, opaque, barRight - CORNER_ACCENT_LENGTH, barBottom, clear, alphaMult);
         cornerAccentLines.add(barRight - 1f, barTop, opaque, barRight - CORNER_ACCENT_LENGTH, barTop, clear, alphaMult);
 
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        cornerAccentLines.flush();
-        GL11.glDisable(GL11.GL_BLEND);
+        try (GlScope scope = GlScope.flat()) {
+            cornerAccentLines.flush();
+        }
     }
 
     private void glColorAlpha(Color color, float alpha) {

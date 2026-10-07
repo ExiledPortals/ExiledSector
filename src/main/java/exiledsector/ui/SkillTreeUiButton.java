@@ -2,7 +2,7 @@ package exiledsector.ui;
 
 import exiledsector.ui.util.BorderedPanel;
 import exiledsector.ui.util.GLDraw;
-import exiledsector.ui.util.ReusableText;
+import exiledsector.ui.util.TextLabel;
 
 import java.awt.Color;
 
@@ -19,7 +19,7 @@ final class SkillTreeUiButton {
     private static final float MAX_FADE_STEP_SECONDS = 0.1f;
 
     private final BorderedPanel borderPanel = new BorderedPanel(SkillTreeUiButton.class);
-    private final ReusableText labelText = new ReusableText(FONT_SIZE, TEXT_COLOR);
+    private final TextLabel labelText = new TextLabel(FONT_SIZE, TEXT_COLOR);
     private Color textColor = TEXT_COLOR;
     private ScreenRect buttonBounds = ScreenRect.NONE;
     private boolean buttonEnabled = true;

@@ -4,12 +4,10 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
-import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.Fonts;
-import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TextFieldAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -23,12 +21,8 @@ import exiledsector.socketables.Socketable;
 import exiledsector.socketables.SocketableDisassembly;
 import exiledsector.socketables.SocketableRarity;
 import exiledsector.socketables.SocketableStore;
-import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeSounds;
-import exiledsector.ui.util.BorderedPanel;
 import exiledsector.ui.util.FramedPanelPlugin;
-import exiledsector.ui.util.HoloTransition;
-import exiledsector.ui.util.Rects;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.Color;
@@ -39,26 +33,23 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.function.Function;
 
-public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
+public final class SocketStoragePanel extends HoloPanel {
 
     public interface Listener {
 
         void selected(Socketable socketable);
 
         void closed();
+
+        void pressedInside();
     }
 
-    private static final float PAD = 12f;
-    private static final float LINE_PAD = 3f;
-    private static final float GAP = 6f;
-    private static final float HEADER_HEIGHT = 28f;
     private static final float FIELD_HEIGHT = 26f;
     private static final float CHIP_HEIGHT = 24f;
     private static final float CHIP_TEXT_PADDING = 28f;
     private static final float CHIP_DARK_SCALE = 0.3f;
     private static final int CONTROL_ROWS = 2;
     private static final float LABEL_WIDTH = 70f;
-    private static final float CLOSE_BUTTON_WIDTH = 70f;
     private static final float NOTICE_HEIGHT = 56f;
     private static final float FOOTER_HEIGHT = 24f;
     private static final float SCROLLBAR_ROOM = 14f;
@@ -69,8 +60,6 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     private static final float WORKBENCH_GAP = 12f;
     private static final float BATCH_CONFIRM_HEIGHT = 170f;
     private static final float BUTTON_TEXT_PADDING = 30f;
-    private static final float PARTS_ICON_SIZE = 24f;
-    private static final float PARTS_TEXT_TOP = 5f;
     private static final float SEARCH_DELAY_SECONDS = 0.25f;
     private static final SocketableCell.Look CELL_LOOK = new SocketableCell.Look(9f, true, 1f);
 
@@ -93,22 +82,12 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         }
     }
 
-    private final CustomPanelAPI hostPanel;
     private final Listener storageListener;
     private final SocketStorageFilter storageFilter = SocketStorageFilter.SESSION;
-    private final BorderedPanel panelFrame = new BorderedPanel(SocketStoragePanel.class);
-    private final HoloTransition holoTransition = new HoloTransition();
-    private boolean closing;
 
     private Function<Socketable, String> installedShipLookup;
-    private CustomPanelAPI panelRoot;
     private SocketWorkbenchPanel workbenchPanel;
     private SocketWorkbenchPanel fadingWorkbenchPanel;
-    private float panelLeft;
-    private float panelTop;
-    private PositionAPI panelPosition;
-    private float panelWidth;
-    private float panelHeight;
     private float gridTop;
     private UIComponentAPI headerElement;
     private UIComponentAPI searchRowElement;
@@ -127,13 +106,12 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     private List<Socketable> pendingDisassembly = List.of();
     private boolean disassemblyMode;
     private final Set<Socketable> markedForDisassembly = new LinkedHashSet<>();
-    private final List<Runnable> queuedActions = new ArrayList<>();
     private int movedFromCargo;
     private String disassembledNotice;
     private final SocketableHoverTooltip hoverTooltip;
 
     private SocketStoragePanel(CustomPanelAPI hostPanel, Function<Socketable, String> installedShipLookup, Listener storageListener) {
-        this.hostPanel = hostPanel;
+        super(hostPanel, SocketStoragePanel.class);
         this.hoverTooltip = new SocketableHoverTooltip(hostPanel);
         this.installedShipLookup = installedShipLookup;
         this.storageListener = storageListener;
@@ -142,59 +120,38 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     public static SocketStoragePanel open(CustomPanelAPI hostPanel, float panelLeft, float panelTop, float panelHeight,
                                           Function<Socketable, String> installedShipLookup, Listener storageListener) {
         SocketStoragePanel storagePanel = new SocketStoragePanel(hostPanel, installedShipLookup, storageListener);
-        storagePanel.panelWidth = WIDTH;
-        storagePanel.panelHeight = panelHeight;
-        storagePanel.panelLeft = panelLeft;
-        storagePanel.panelTop = panelTop;
-        storagePanel.panelRoot = Global.getSettings().createCustom(WIDTH, panelHeight, storagePanel);
-        hostPanel.addComponent(storagePanel.panelRoot).inTL(panelLeft, panelTop);
         storagePanel.movedFromCargo = absorbPlayerCargo();
-        I18n.forGameText(storagePanel::build);
-        storagePanel.holoTransition.open();
-        storagePanel.applyContentOpacity(0f);
+        storagePanel.attach(panelLeft, panelTop, WIDTH, panelHeight);
         return storagePanel;
     }
 
     private static int absorbPlayerCargo() {
-        CampaignFleetAPI fleet = Global.getSector() == null ? null : Global.getSector().getPlayerFleet();
-        return fleet == null ? 0 : SocketableStore.get().absorbFrom(fleet.getCargo());
+        CargoAPI cargo = playerCargo();
+        return cargo == null ? 0 : SocketableStore.get().absorbFrom(cargo);
     }
 
-    public void close() {
-        if (panelRoot == null || closing) {
-            return;
-        }
-        closing = true;
+    @Override
+    protected void onClose() {
         hideHoverTooltip();
         if (workbenchPanel != null) {
             workbenchPanel.close();
         }
-        holoTransition.close();
-        applyContentOpacity(holoTransition.contentAlpha());
         storageListener.closed();
     }
 
-    private void applyContentOpacity(float opacity) {
-        float chromeOpacity = opacity >= 1f && !closing ? 1f : 0f;
-        for (UIComponentAPI component : new UIComponentAPI[]{headerElement, searchRowElement}) {
-            if (component != null) {
-                component.setOpacity(chromeOpacity);
-            }
-        }
-        for (UIComponentAPI component : new UIComponentAPI[]{controlsElement, gridElement == null ? null : gridComponent(), noticeElement,
-                summaryElement, confirmPanel, confirmBlocker}) {
-            if (component != null) {
-                component.setOpacity(opacity);
-            }
-        }
+    @Override
+    protected UIComponentAPI[] chromeComponents() {
+        return new UIComponentAPI[]{headerElement, searchRowElement};
+    }
+
+    @Override
+    protected UIComponentAPI[] contentComponents() {
+        return new UIComponentAPI[]{controlsElement, gridElement == null ? null : gridComponent(), noticeElement, summaryElement, confirmPanel,
+                confirmBlocker};
     }
 
     private UIComponentAPI gridComponent() {
         return gridElement.getExternalScroller() != null ? gridElement.getExternalScroller() : gridElement;
-    }
-
-    public boolean contains(float x, float y) {
-        return panelRoot != null && !closing && Rects.contains(panelPosition, x, y);
     }
 
     public void setSelected(Socketable socketable) {
@@ -202,7 +159,7 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         if (socketable != null) {
             leaveDisassemblyMode();
         }
-        queuedActions.add(() -> rebuildFooter(SocketStorageQuery.apply(storageRows, storageFilter)));
+        queue(() -> rebuildFooter(SocketStorageQuery.apply(storageRows, storageFilter)));
     }
 
     public void setTargetingSocket(boolean targeting) {
@@ -213,12 +170,12 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         if (targeting) {
             leaveDisassemblyMode();
         }
-        queuedActions.add(() -> rebuildFooter(SocketStorageQuery.apply(storageRows, storageFilter)));
+        queue(() -> rebuildFooter(SocketStorageQuery.apply(storageRows, storageFilter)));
     }
 
     public void refresh(Function<Socketable, String> installedShipLookup) {
         this.installedShipLookup = installedShipLookup;
-        queuedActions.add(() -> {
+        queue(() -> {
             if (pendingDisassembly.stream().anyMatch(SocketCustody::isInstalled)) {
                 closeConfirm();
             }
@@ -234,18 +191,18 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
 
     public boolean escape() {
         if (confirmPanel != null) {
-            queuedActions.add(this::closeConfirm);
+            queue(this::closeConfirm);
             return true;
         }
         if (disassemblyMode) {
-            queuedActions.add(() -> {
+            queue(() -> {
                 leaveDisassemblyMode();
                 rebuildGrid();
             });
             return true;
         }
         if (workbenchPanel != null) {
-            queuedActions.add(workbenchPanel::close);
+            queue(workbenchPanel::close);
             return true;
         }
         return false;
@@ -257,66 +214,19 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     }
 
     @Override
-    public void positionChanged(PositionAPI panelPosition) {
-        this.panelPosition = panelPosition;
+    protected void onScrollInside() {
+        queue(this::hideHoverTooltip);
     }
 
     @Override
-    public void renderBelow(float alphaMult) {
-        if (panelPosition == null) {
-            return;
-        }
-        holoTransition.drawProjection(panelPosition.getX(), panelPosition.getY(), panelPosition.getWidth(), panelPosition.getHeight(),
-                SkillTreePanelStyle.GLOW_COLOR, alphaMult);
-        float contentAlpha = holoTransition.contentAlpha();
-        if (contentAlpha > 0f) {
-            panelFrame.draw(panelPosition.getX(), panelPosition.getY(), panelPosition.getWidth(), panelPosition.getHeight(),
-                    contentAlpha * alphaMult);
-        }
+    protected void onPressInside() {
+        storageListener.pressedInside();
     }
 
     @Override
-    public void processInput(List<InputEventAPI> events) {
-        if (closing) {
-            return;
-        }
-        for (InputEventAPI event : events) {
-            if (event.isMouseScrollEvent() && contains(event.getX(), event.getY())) {
-                queuedActions.add(this::hideHoverTooltip);
-            }
-            boolean press = event.isMouseDownEvent() || event.isMouseScrollEvent();
-            if (!event.isConsumed() && press && contains(event.getX(), event.getY())) {
-                event.consume();
-            }
-        }
-    }
-
-    @Override
-    public void advance(float amount) {
-        if (holoTransition.isAnimating()) {
-            holoTransition.advance(amount);
-            applyContentOpacity(holoTransition.contentAlpha());
-        }
-        if (closing) {
-            if (holoTransition.isFullyClosed() && panelRoot != null) {
-                hostPanel.removeComponent(panelRoot);
-                panelRoot = null;
-            }
-            return;
-        }
-        if (!queuedActions.isEmpty()) {
-            List<Runnable> actions = List.copyOf(queuedActions);
-            queuedActions.clear();
-            for (Runnable action : actions) {
-                if (panelRoot != null) {
-                    I18n.forGameText(action);
-                }
-            }
-        }
-        if (panelRoot != null) {
-            hoverTooltip.refreshIfExpansionChanged();
-        }
-        if (panelRoot == null || searchField == null || confirmPanel != null) {
+    protected void advanceOpen(float amount) {
+        hoverTooltip.refreshIfExpansionChanged();
+        if (searchField == null || confirmPanel != null) {
             return;
         }
         String searchText = searchField.getText();
@@ -334,7 +244,7 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
 
     @Override
     public void buttonPressed(Object id) {
-        queuedActions.add(() -> handleButton(id));
+        queue(() -> handleButton(id));
     }
 
     private void handleButton(Object id) {
@@ -395,7 +305,7 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
             return;
         }
         if (disassemblyMode) {
-            queuedActions.add(() -> {
+            queue(() -> {
                 if (!markedForDisassembly.remove(row.socketable())) {
                     markedForDisassembly.add(row.socketable());
                 }
@@ -407,7 +317,7 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
             workbenchPanel.load(row.socketable());
             return;
         }
-        queuedActions.add(() -> storageListener.selected(row.socketable() == selectedSocketable ? null : row.socketable()));
+        queue(() -> storageListener.selected(row.socketable() == selectedSocketable ? null : row.socketable()));
     }
 
     public boolean isWorkbenchOpen() {
@@ -446,12 +356,17 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
                         fadingWorkbenchPanel = workbenchPanel;
                         workbenchPanel = null;
                     }
+
+                    @Override
+                    public void pressedInside() {
+                        storageListener.pressedInside();
+                    }
                 });
     }
 
     private void cellRightClicked(SocketStorageRow row) {
         if (confirmPanel == null && !disassemblyMode && !row.installed()) {
-            queuedActions.add(() -> openConfirm(List.of(row.socketable())));
+            queue(() -> openConfirm(List.of(row.socketable())));
         }
     }
 
@@ -459,7 +374,8 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         return panelWidth - PAD * 2f;
     }
 
-    private void build() {
+    @Override
+    protected void build() {
         buildHeader();
         buildSearch();
         reloadRows();
@@ -467,63 +383,12 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     }
 
     private void buildHeader() {
-        if (headerElement != null) {
-            panelRoot.removeComponent(headerElement);
-        }
-        TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), HEADER_HEIGHT, false);
-        element.setParaFont(Fonts.ORBITRON_20AABOLD);
-        element.addPara("%s", 0f, Misc.getBasePlayerColor(), Misc.getBasePlayerColor(), Translation.text("ui.socketStorage.title"));
-        ButtonAPI closeButton = element.addButton(Translation.text("ui.socketStorage.close"), Control.CLOSE, CLOSE_BUTTON_WIDTH, CHIP_HEIGHT,
-                0f);
-        closeButton.getPosition().inTR(0f, 0f);
+        TooltipMakerAPI element = startHeader("ui.socketStorage.title", "ui.socketStorage.close", Control.CLOSE);
         String workbenchLabel = Translation.text("ui.socketStorage.workbench");
         float workbenchButtonWidth = Global.getSettings().computeStringWidth(workbenchLabel, Fonts.ORBITRON_20AA) + BUTTON_TEXT_PADDING;
-        element.addButton(workbenchLabel, Control.WORKBENCH, workbenchButtonWidth, CHIP_HEIGHT, 0f).getPosition()
+        element.addButton(workbenchLabel, Control.WORKBENCH, workbenchButtonWidth, HEADER_BUTTON_HEIGHT, 0f).getPosition()
                 .inTR(CLOSE_BUTTON_WIDTH + GAP, 0f);
-        addPartsCount(element, CLOSE_BUTTON_WIDTH + GAP + workbenchButtonWidth + GAP * 2f);
-        panelRoot.addUIElement(element).inTL(PAD, PAD);
-        headerElement = element;
-    }
-
-    private static void addPartsCount(TooltipMakerAPI element, float countRight) {
-        CommoditySpecAPI partsSpec = Global.getSettings().getCommoditySpec(SocketableDisassembly.PARTS_COMMODITY_ID);
-        if (partsSpec == null) {
-            return;
-        }
-        String countText = String.valueOf(partsInCargo());
-        float countWidth = Global.getSettings().computeStringWidth(countText, Fonts.ORBITRON_12) + LINE_PAD;
-        element.setParaFont(Fonts.ORBITRON_12);
-        LabelAPI countLabel = element.addPara("%s", 0f, Misc.getTextColor(), Misc.getTextColor(), countText);
-        countLabel.autoSizeToWidth(countWidth).inTR(countRight, PARTS_TEXT_TOP);
-        element.addImage(partsSpec.getIconName(), PARTS_ICON_SIZE, PARTS_ICON_SIZE, 0f);
-        element.getPrev().getPosition().inTR(countRight + countWidth + LINE_PAD, 0f);
-        element.addTooltipToPrevious(new PartsTooltip(partsSpec.getName()), TooltipMakerAPI.TooltipLocation.BELOW);
-    }
-
-    private static int partsInCargo() {
-        CampaignFleetAPI fleet = Global.getSector() == null ? null : Global.getSector().getPlayerFleet();
-        return fleet == null ? 0 : Math.round(fleet.getCargo().getCommodityQuantity(SocketableDisassembly.PARTS_COMMODITY_ID));
-    }
-
-    private record PartsTooltip(String partsName) implements TooltipMakerAPI.TooltipCreator {
-
-        private static final float WIDTH = 300f;
-
-        @Override
-        public boolean isTooltipExpandable(Object tooltipParam) {
-            return false;
-        }
-
-        @Override
-        public float getTooltipWidth(Object tooltipParam) {
-            return WIDTH;
-        }
-
-        @Override
-        public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
-            tooltip.addPara("%s", 0f, Misc.getTextColor(), Misc.getTextColor(),
-                    Translation.msg("ui.socketStorage.parts.tooltip").arg("name", partsName).text());
-        }
+        headerElement = finishHeader(element, headerElement, CLOSE_BUTTON_WIDTH + GAP + workbenchButtonWidth + GAP * 2f);
     }
 
     private void buildSearch() {
@@ -802,11 +667,11 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     }
 
     private void cellHovered(SocketStorageRow row, PositionAPI cellPosition) {
-        queuedActions.add(() -> showHoverTooltip(row, cellPosition));
+        queue(() -> showHoverTooltip(row, cellPosition));
     }
 
     private void cellLeft(SocketStorageRow row) {
-        queuedActions.add(() -> {
+        queue(() -> {
             if (hoverTooltip.isShowing(row)) {
                 hideHoverTooltip();
             }

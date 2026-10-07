@@ -46,14 +46,14 @@ public final class LineBatch {
     public void flush() {
         if (vertexCount == 0) return;
 
-        GL11.glLineWidth(thickness);
-        GL11.glBegin(GL11.GL_LINES);
-        for (int i = 0; i < vertexCount; i++) {
-            int argb = colors[i];
-            GL11.glColor4ub((byte) (argb >> 16), (byte) (argb >> 8), (byte) argb, (byte) ((argb >>> 24) * alphas[i]));
-            GL11.glVertex2f(positions[i * 2], positions[i * 2 + 1]);
+        try (GlScope scope = GlScope.save(GL11.GL_LINE_BIT | GL11.GL_CURRENT_BIT).lineWidth(thickness)) {
+            GL11.glBegin(GL11.GL_LINES);
+            for (int i = 0; i < vertexCount; i++) {
+                int argb = colors[i];
+                GL11.glColor4ub((byte) (argb >> 16), (byte) (argb >> 8), (byte) argb, (byte) ((argb >>> 24) * alphas[i]));
+                GL11.glVertex2f(positions[i * 2], positions[i * 2 + 1]);
+            }
+            GL11.glEnd();
         }
-        GL11.glEnd();
-        GL11.glLineWidth(1f);
     }
 }

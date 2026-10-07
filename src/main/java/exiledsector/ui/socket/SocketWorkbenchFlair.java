@@ -2,6 +2,7 @@ package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.ui.util.GLDraw;
+import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
 import org.lwjgl.opengl.GL11;
@@ -52,6 +53,12 @@ final class SocketWorkbenchFlair {
         if (alpha <= 0f) {
             return;
         }
+        try (GlScope scope = GlScope.save(GlScope.DRAW_ATTRIBS)) {
+            renderLayers(cx, cy, radius, accent, subjectColor, iconPath, alpha);
+        }
+    }
+
+    private void renderLayers(float cx, float cy, float radius, Color accent, Color subjectColor, String iconPath, float alpha) {
         float easedLoad = 1f - (1f - loadProgress) * (1f - loadProgress);
         float pulse = 0.5f + 0.5f * (float) Math.sin(elapsedSeconds * 2.2f);
         float half = radius * 0.42f;

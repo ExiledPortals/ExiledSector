@@ -2,7 +2,7 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.i18n.Translation;
-import exiledsector.ui.util.ReusableText;
+import exiledsector.ui.util.TextLabel;
 
 import java.awt.Color;
 import java.util.HashMap;
@@ -25,8 +25,8 @@ final class SkillTreeTemplateBar {
     private final SkillTreeUiButton autoAllocateButton = new SkillTreeUiButton(Translation.text("ui.template.button.autoAllocate"));
     private final SkillTreeInfoTooltipRenderer tooltipRenderer;
     private final Map<String, String> translatedTexts = new HashMap<>();
-    private final ReusableText templateLine = new ReusableText(FONT_SIZE, SkillTreePanelStyle.POSITIVE_STAT_COLOR);
-    private final ReusableText resultLine = new ReusableText(FONT_SIZE, RESULT_COLOR);
+    private final TextLabel templateLine = new TextLabel(FONT_SIZE, SkillTreePanelStyle.POSITIVE_STAT_COLOR);
+    private final TextLabel resultLine = new TextLabel(FONT_SIZE, RESULT_COLOR);
 
     private TemplateBarState barState = TemplateBarState.HIDDEN;
     private String templateName;

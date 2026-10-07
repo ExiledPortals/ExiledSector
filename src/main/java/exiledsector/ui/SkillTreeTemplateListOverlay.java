@@ -7,7 +7,8 @@ import exiledsector.i18n.Translation;
 import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.TemplateFilter;
 import exiledsector.ui.util.GLDraw;
-import exiledsector.ui.util.ReusableText;
+import exiledsector.ui.util.HoloFrame;
+import exiledsector.ui.util.TextLabel;
 import org.lazywizard.lazylib.ui.LazyFont;
 
 import java.awt.Color;
@@ -38,7 +39,7 @@ final class SkillTreeTemplateListOverlay {
     private static final Color META_COLOR = new Color(170, 170, 170);
     private static final Color CONFIRM_COLOR = SkillTreePanelStyle.NEGATIVE_STAT_COLOR;
 
-    private final ModalFrame modalFrame = new ModalFrame(SkillTreeTemplateListOverlay.class);
+    private final HoloFrame modalFrame = new HoloFrame(SkillTreeTemplateListOverlay.class, HoloFrame.Look.MODAL);
     private final SkillTreePanelStyle panelStyle;
     private final Map<HullSize, SkillTreeUiButton> hullSizeChips = new EnumMap<>(HullSize.class);
     private final SkillTreeUiButton clearButton = new SkillTreeUiButton(Translation.text("ui.template.list.clear"));
@@ -49,9 +50,9 @@ final class SkillTreeTemplateListOverlay {
     private final String confirmText = Translation.text("ui.template.list.confirmDelete");
     private final String emptyRootText = Translation.text("ui.template.list.empty");
     private final String noMatchText = Translation.text("ui.template.list.noMatch");
-    private final ReusableText titleLine = new ReusableText(SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE,
+    private final TextLabel titleLine = new TextLabel(SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE,
             SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
-    private final ReusableText emptyLine = new ReusableText(FONT_SIZE, META_COLOR);
+    private final TextLabel emptyLine = new TextLabel(FONT_SIZE, META_COLOR);
 
     private boolean overlayOpen;
     private TemplateListState templateListState;
@@ -72,10 +73,8 @@ final class SkillTreeTemplateListOverlay {
         this.assignedTemplateId = assignedTemplateId;
         this.overlayOpen = true;
         modalFrame.open();
+        hideButtons();
         deleteConfirmation.disarm();
-        for (RowSlot slot : rowSlots) {
-            slot.unbind();
-        }
         titleLine.set(Translation.msg("ui.template.list.title").arg("root", rootName).text());
     }
 
@@ -90,6 +89,7 @@ final class SkillTreeTemplateListOverlay {
     void close() {
         overlayOpen = false;
         modalFrame.close();
+        hideButtons();
         overlayBox = ScreenRect.NONE;
         listArea = ScreenRect.NONE;
         deleteConfirmation.disarm();
@@ -97,6 +97,21 @@ final class SkillTreeTemplateListOverlay {
 
     boolean isOpen() {
         return overlayOpen;
+    }
+
+    boolean isBlocking() {
+        return overlayOpen || modalFrame.isBlocking();
+    }
+
+    private void hideButtons() {
+        for (SkillTreeUiButton chip : hullSizeChips.values()) {
+            chip.hide();
+        }
+        clearButton.hide();
+        closeButton.hide();
+        for (RowSlot slot : rowSlots) {
+            slot.unbind();
+        }
     }
 
     void toggle(HullSize hullSize) {
@@ -151,10 +166,15 @@ final class SkillTreeTemplateListOverlay {
     void render(PositionAPI canvasPosition, float mouseX, float mouseY, float alphaMult) {
         float overlayWidth = Math.min(MAX_WIDTH, canvasPosition.getWidth() - SIDE_CLEARANCE * 2f);
         float overlayHeight = Math.min(MAX_HEIGHT, canvasPosition.getHeight() - VERTICAL_CLEARANCE * 2f);
-        ScreenRect drawnBox = modalFrame.render(canvasPosition, overlayWidth, overlayHeight, panelStyle.getAccentColor(), alphaMult,
-                (frameBox, frameAlpha) -> renderContent(frameBox.left(), frameBox.bottom(), frameBox.width(), frameBox.height(),
+        if (!modalFrame.isVisible()) {
+            return;
+        }
+        ScreenRect drawnBox = ScreenRect.centeredIn(canvasPosition, overlayWidth, overlayHeight);
+        modalFrame.renderBackdrop(canvasPosition, alphaMult);
+        modalFrame.render(drawnBox.left(), drawnBox.bottom(), overlayWidth, overlayHeight, panelStyle.getAccentColor(), alphaMult,
+                (frameLeft, frameBottom, frameWidth, frameHeight, frameAlpha) -> renderContent(frameLeft, frameBottom, frameWidth, frameHeight,
                         mouseX, mouseY, frameAlpha));
-        if (overlayOpen && drawnBox != null) {
+        if (overlayOpen) {
             overlayBox = drawnBox;
         }
     }
@@ -163,7 +183,7 @@ final class SkillTreeTemplateListOverlay {
         LazyFont font = SkillTreePanelStyle.font();
 
         float cursorTop = overlayBottom + overlayHeight - PADDING;
-        titleLine.draw(overlayLeft + PADDING, cursorTop);
+        titleLine.setAlpha(alphaMult).draw(overlayLeft + PADDING, cursorTop);
         cursorTop -= SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE + 12f;
         float chipBottom = cursorTop - CHIP_HEIGHT;
         float chipLeft = overlayLeft + PADDING;
@@ -207,7 +227,7 @@ final class SkillTreeTemplateListOverlay {
             slot.render(listArea.left(), rowBottom, listArea.width(), mouseX, mouseY, alphaMult);
         }
         if (visibleTemplates.isEmpty()) {
-            emptyLine.set(templateListState.hasAnyForRoot() ? noMatchText : emptyRootText).draw(listArea.left(), listTop - 8f);
+            emptyLine.set(templateListState.hasAnyForRoot() ? noMatchText : emptyRootText).setAlpha(alphaMult).draw(listArea.left(), listTop - 8f);
         }
     }
 
@@ -217,8 +237,8 @@ final class SkillTreeTemplateListOverlay {
         private SkillTreeTemplate template;
         private boolean boundArmed;
         private boolean boundAssigned;
-        private final ReusableText nameLine = new ReusableText(FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
-        private final ReusableText metaLine = new ReusableText(FONT_SIZE, META_COLOR);
+        private final TextLabel nameLine = new TextLabel(FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
+        private final TextLabel metaLine = new TextLabel(FONT_SIZE, META_COLOR);
         private ScreenRect rowBounds = ScreenRect.NONE;
 
         void bind(LazyFont font, SkillTreeTemplate rowTemplate, float textWidth) {
@@ -252,8 +272,8 @@ final class SkillTreeTemplateListOverlay {
                 GLDraw.strokeQuad(rowLeft, rowBottom, rowWidth, ROW_HEIGHT, panelStyle.getAccentColor(), 1.5f, alphaMult);
             }
             float textY = rowBottom + ROW_HEIGHT / 2f + FONT_SIZE / 2f;
-            nameLine.draw(rowLeft + 12f, textY);
-            metaLine.draw(rowLeft + rowWidth - DELETE_WIDTH - 12f - metaLine.width(), textY);
+            nameLine.setAlpha(alphaMult).draw(rowLeft + 12f, textY);
+            metaLine.setAlpha(alphaMult).draw(rowLeft + rowWidth - DELETE_WIDTH - 12f - metaLine.width(), textY);
             deleteButton.place(rowLeft + rowWidth - DELETE_WIDTH, rowBottom + 4f, DELETE_WIDTH, ROW_HEIGHT - 8f);
             deleteButton.render(mouseX, mouseY, alphaMult);
         }

@@ -37,7 +37,7 @@ final class SkillTreeTemplateController {
     }
 
     boolean isModalOpen() {
-        return nameDialog.isOpen() || listOverlay.isOpen();
+        return nameDialog.isBlocking() || listOverlay.isBlocking();
     }
 
     boolean barContains(float x, float y) {
@@ -132,7 +132,10 @@ final class SkillTreeTemplateController {
     }
 
     private TemplateAction modalActionAt(float x, float y) {
-        return nameDialog.isOpen() ? nameDialog.actionAt(x, y) : listOverlay.actionAt(x, y);
+        if (nameDialog.isOpen()) {
+            return nameDialog.actionAt(x, y);
+        }
+        return listOverlay.isOpen() ? listOverlay.actionAt(x, y) : TemplateAction.NONE;
     }
 
     private void perform(TemplateAction action) {
@@ -166,6 +169,7 @@ final class SkillTreeTemplateController {
             return;
         }
         nodeRenderer.closeDropdown();
+        SkillTreeSounds.panelOpened();
         nameDialog.open(startingRoot.getId(), nodeRenderer.allocatedNodeCount() - 1, SkillTreeTemplateStore.all());
     }
 

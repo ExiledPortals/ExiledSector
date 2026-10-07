@@ -6,8 +6,8 @@ import exiledsector.skills.SkillType;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.GLDraw;
-import exiledsector.ui.util.ReusableText;
 import exiledsector.ui.util.Rects;
+import exiledsector.ui.util.TextLabel;
 import org.lazywizard.lazylib.ui.LazyFont;
 
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ final class SkillTreeNodeDropdownRenderer {
     private static final float DROPDOWN_HOVER_ALPHA = 0.35f;
 
     private final SkillTreePanelStyle panelStyle;
-    private final Map<String, ReusableText> dropdownRowText = new HashMap<>();
+    private final Map<String, TextLabel> dropdownRowText = new HashMap<>();
     private SkillNode openNode;
 
     SkillTreeNodeDropdownRenderer(SkillTreePanelStyle panelStyle) {
@@ -127,9 +127,9 @@ final class SkillTreeNodeDropdownRenderer {
         GLDraw.fillQuad(row.rowX, row.rowY, row.rowWidth, row.rowHeight, GLOW_COLOR, DROPDOWN_HOVER_ALPHA * alphaMult);
     }
 
-    private ReusableText dropdownRowText(SkillType option) {
+    private TextLabel dropdownRowText(SkillType option) {
         return dropdownRowText.computeIfAbsent(option.getId(),
-                id -> new ReusableText(DROPDOWN_FONT_SIZE, TOOLTIP_BODY_COLOR).set(option.getDisplayName()));
+                id -> new TextLabel(DROPDOWN_FONT_SIZE, TOOLTIP_BODY_COLOR).set(option.getDisplayName()));
     }
 
     private static final class DropdownRow {
