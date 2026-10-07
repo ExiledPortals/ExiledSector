@@ -14,7 +14,10 @@ import java.awt.Color;
 import java.util.List;
 import java.util.Random;
 
-final class HeartlessStacks {
+import static exiledsector.skills.skilleffect.ScaledBonus.percent;
+import static exiledsector.skills.skilleffect.StatTarget.liveStat;
+
+final class HeartlessStacks extends ShipCombatListener {
 
     static final String ARMOR_RESTORE_PERCENT_KEY = "exiledSector_heartlessArmorRestorePercent";
     static final String ARMOR_PERCENT_PER_STACK_KEY = "exiledSector_heartlessArmorPercentPerStack";
@@ -25,9 +28,10 @@ final class HeartlessStacks {
     private static final float ARC_THICKNESS = 12f;
     private static final Color ARC_FRINGE = new Color(120, 200, 255, 200);
     private static final String MOD_ID_PREFIX = "exiledSector_heartless_";
+    private static final ScaledBonus MOBILITY_PENALTY = new ScaledBonus(percent(StatTarget.scaled(
+            StatTarget.all(liveStat(MutableShipStatsAPI::getMaxSpeed), Maneuverability.target()), -1f),
+            MOBILITY_PENALTY_PERCENT_PER_STACK_KEY));
 
-    private final ShipAPI ownerShip;
-    private final String modId;
     private final Random random;
     private int stackCount;
 
@@ -36,8 +40,7 @@ final class HeartlessStacks {
     }
 
     HeartlessStacks(ShipAPI ownerShip, Random random) {
-        this.ownerShip = ownerShip;
-        this.modId = MOD_ID_PREFIX + ownerShip.getId();
+        super(ownerShip, MOD_ID_PREFIX);
         this.random = random;
     }
 
@@ -56,11 +59,10 @@ final class HeartlessStacks {
     }
 
     void gain() {
-        if (stackCount >= maxStacks() || !ownerShip.isAlive() || ownerShip.isHulk()) {
+        if (stackCount >= maxStacks() || !ownerIsAliveNotHulk()) {
             return;
         }
         stackCount++;
-        MutableShipStatsAPI stats = ownerShip.getMutableStats();
         float armorPercentPerStack = magnitude(ARMOR_PERCENT_PER_STACK_KEY);
         float restorePercent = magnitude(ARMOR_RESTORE_PERCENT_KEY);
         if (armorPercentPerStack > 0f || restorePercent > 0f) {
@@ -68,20 +70,14 @@ final class HeartlessStacks {
             restoreArmor(restorePercent, armorPercentPerStack);
             ownerShip.syncWithArmorGridState();
         }
-        float mobilityPenalty = magnitude(MOBILITY_PENALTY_PERCENT_PER_STACK_KEY);
-        if (mobilityPenalty > 0f) {
-            stats.getMaxSpeed().modifyPercent(modId, -mobilityPenalty * stackCount);
-            Maneuverability.modifyPercent(stats, modId, -mobilityPenalty * stackCount);
+        if (magnitude(MOBILITY_PENALTY_PERCENT_PER_STACK_KEY) > 0f) {
+            MOBILITY_PENALTY.apply(ownerShip.getMutableStats(), modId, stackCount);
         }
         radiationBurst(magnitude(RADIATION_EMP_KEY));
     }
 
     int maxStacks() {
         return Math.max(0, DEFAULT_MAX_STACKS + Math.round(magnitude(MAX_STACKS_KEY)));
-    }
-
-    private float magnitude(String key) {
-        return ownerShip.getMutableStats().getDynamic().getValue(key, 0f);
     }
 
     private void addArmorToEveryCell(float percent) {

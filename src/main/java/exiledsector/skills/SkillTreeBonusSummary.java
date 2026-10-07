@@ -3,20 +3,14 @@ package exiledsector.skills;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
-import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.WeaponEffectTooltipAggregator;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 public final class SkillTreeBonusSummary {
 
     public record Summary(SkillType root, int level, int nodeCount, List<SkillType> notables, List<DescriptionLine> bonuses) {
-    }
-
-    private record Group(Float temporarySeconds) {
     }
 
     private SkillTreeBonusSummary() {
@@ -30,9 +24,7 @@ public final class SkillTreeBonusSummary {
         SkillType root = null;
         int nodeCount = 0;
         List<SkillType> notables = new ArrayList<>();
-        Map<Group, Map<SkillEffect, Float>> totalsByGroup = new LinkedHashMap<>();
         List<AllocatedNode> allocatedNodes = AllocatedNode.of(data);
-        NpcBonusScaling scaling = NpcBonusScaling.of(bonusScale, data, allocatedNodes, hullSize);
         for (AllocatedNode allocated : allocatedNodes) {
             SkillType type = allocated.effectiveType();
             SkillTier tier = allocated.node().getType().getTier();
@@ -44,35 +36,25 @@ public final class SkillTreeBonusSummary {
             if (tier == SkillTier.NOTABLE || tier == SkillTier.KEYSTONE) {
                 notables.add(type);
             }
-            Map<SkillEffect, Float> groupTotals = totalsByGroup.computeIfAbsent(new Group(type.getTemporaryAfterDeploymentSeconds()),
-                    key -> new LinkedHashMap<>());
-            for (SkillTypeEffect typeEffect : AllocatedSkillEffects.appliedEffects(data, allocated, hullSize)) {
-                SkillEffect effect = typeEffect.effect();
-                groupTotals.merge(effect, scaling.scaled(allocated, effect, typeEffect.magnitude()), Float::sum);
-            }
         }
-        return new Summary(root, data.getLevel(), nodeCount, notables, describe(totalsByGroup));
+        EffectTotals effectTotals = EffectTotals.of(data, allocatedNodes, hullSize, bonusScale);
+        return new Summary(root, data.getLevel(), nodeCount, notables, describe(effectTotals.groups()));
     }
 
-    private static List<DescriptionLine> describe(Map<Group, Map<SkillEffect, Float>> totalsByGroup) {
+    private static List<DescriptionLine> describe(List<EffectTotals.Group> groups) {
         List<DescriptionLine> lines = new ArrayList<>();
-        for (Map.Entry<Group, Map<SkillEffect, Float>> groupEntry : totalsByGroup.entrySet()) {
-            if (groupEntry.getKey().temporarySeconds() == null) {
-                DamageTakenCaps.capTotals(groupEntry.getValue());
-            }
+        for (EffectTotals.Group group : groups) {
             List<SkillTypeEffect> effects = new ArrayList<>();
-            groupEntry.getValue().forEach((effect, total) -> {
-                if (!effect.isMultiplicative()) {
-                    effects.add(new SkillTypeEffect(effect, rounded(total)));
-                } else if (rounded(total) != 0f) {
-                    effects.add(new SkillTypeEffect(effect, rounded(SkillEffect.addedMultiplier(total))));
+            group.totals().forEach((effect, total) -> {
+                float shownTotal = rounded(total);
+                if (!effect.isMultiplicative() || shownTotal != 0f) {
+                    effects.add(new SkillTypeEffect(effect, shownTotal));
                 }
             });
             for (SkillTypeEffect effect : WeaponEffectTooltipAggregator.collapse(effects)) {
                 StyledText text = effect.effect().description(effect.magnitude());
                 if (text != null) {
-                    lines.add(new DescriptionLine(withDuration(text, groupEntry.getKey().temporarySeconds()),
-                            effect.effect().lowerIsBetter()));
+                    lines.add(new DescriptionLine(withDuration(text, group.temporarySeconds()), effect.effect().lowerIsBetter()));
                 }
             }
         }

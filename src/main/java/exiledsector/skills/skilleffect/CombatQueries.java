@@ -16,6 +16,10 @@ final class CombatQueries {
     private CombatQueries() {
     }
 
+    static boolean isAliveNotHulk(ShipAPI ship) {
+        return ship.isAlive() && !ship.isHulk();
+    }
+
     static boolean isHostile(ShipAPI source, ShipAPI other) {
         return other.getOwner() != source.getOwner() && other.getOwner() != Misc.OWNER_NEUTRAL;
     }

@@ -25,7 +25,7 @@ final class NearbyWrecks {
         List<ShipAPI> wrecks = new ArrayList<>();
         Set<ShipAPI> stillAlive = new HashSet<>();
         for (ShipAPI other : CombatQueries.shipsNear(ownerShip.getLocation(), range + SEARCH_MARGIN, other -> other != ownerShip)) {
-            if (other.isAlive() && !other.isHulk()) {
+            if (CombatQueries.isAliveNotHulk(other)) {
                 if (wreckFilter.test(other)) {
                     stillAlive.add(other);
                 }

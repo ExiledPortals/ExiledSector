@@ -11,12 +11,11 @@ import com.fs.starfarer.api.loading.ProjectileSpawnType;
 import org.lazywizard.lazylib.VectorUtils;
 import org.lwjgl.util.vector.Vector2f;
 
-final class BallisticPierceListener implements DamageDealtModifier, DroneSpawner {
+final class BallisticPierceListener extends ShipCombatListener implements DamageDealtModifier, DroneSpawner {
 
     static final String CHANCE_KEY = "exiledSector_ballisticPierceChance";
     static final String PIERCED_KEY = "exiledSector_ballisticPierced";
 
-    private final ShipAPI ownerShip;
     private final PierceDrones drones;
 
     BallisticPierceListener(ShipAPI ownerShip) {
@@ -24,7 +23,7 @@ final class BallisticPierceListener implements DamageDealtModifier, DroneSpawner
     }
 
     BallisticPierceListener(ShipAPI ownerShip, PierceDrones drones) {
-        this.ownerShip = ownerShip;
+        super(ownerShip);
         this.drones = drones;
     }
 
@@ -43,7 +42,7 @@ final class BallisticPierceListener implements DamageDealtModifier, DroneSpawner
                 || !ownerShip.isAlive() || !CombatQueries.isHostile(ownerShip, hitShip)) {
             return;
         }
-        float chancePercent = ownerShip.getMutableStats().getDynamic().getValue(CHANCE_KEY, 0f);
+        float chancePercent = magnitude(CHANCE_KEY);
         if (chancePercent <= 0f || Math.random() >= chancePercent / 100.0 || !WeaponDroneFactory.supportsProjectile(weapon)) {
             return;
         }

@@ -19,7 +19,7 @@ import org.magiclib.util.MagicFakeBeam;
 import java.util.Comparator;
 import java.util.List;
 
-final class BeamSplitListener implements DamageDealtModifier, DroneSpawner {
+final class BeamSplitListener extends ShipCombatListener implements DamageDealtModifier, DroneSpawner {
 
     static final String TARGETS_KEY = "exiledSector_beamSplitTargets";
 
@@ -30,7 +30,6 @@ final class BeamSplitListener implements DamageDealtModifier, DroneSpawner {
 
     private static boolean applyingSimulatedHit;
 
-    private final ShipAPI ownerShip;
     private final SplitBeamDrones drones;
     private boolean processingSplit;
 
@@ -47,7 +46,7 @@ final class BeamSplitListener implements DamageDealtModifier, DroneSpawner {
     }
 
     BeamSplitListener(ShipAPI ownerShip) {
-        this.ownerShip = ownerShip;
+        super(ownerShip);
         this.drones = new SplitBeamDrones(ownerShip);
     }
 
@@ -56,7 +55,7 @@ final class BeamSplitListener implements DamageDealtModifier, DroneSpawner {
         if (processingSplit || !(param instanceof BeamAPI beam) || !(target instanceof ShipAPI primaryTarget)) {
             return null;
         }
-        int splitCount = Math.round(ownerShip.getMutableStats().getDynamic().getValue(TARGETS_KEY, 0f));
+        int splitCount = Math.round(magnitude(TARGETS_KEY));
         WeaponAPI weapon = beam.getWeapon();
         List<ShipAPI> splitTargets = splitCount <= 0 ? List.of()
                 : findNearbyEnemies(primaryTarget, point, weapon.getRange() * SPLIT_RADIUS_MULT_OF_BEAM_RANGE, splitCount);
@@ -99,7 +98,7 @@ final class BeamSplitListener implements DamageDealtModifier, DroneSpawner {
 
     private List<ShipAPI> findNearbyEnemies(ShipAPI primaryTarget, Vector2f point, float radius, int count) {
         List<ShipAPI> candidates = CombatQueries.shipsNear(point, radius, other -> other != ownerShip && other != primaryTarget
-                && other.isAlive() && !other.isHulk() && other.getCollisionClass() != CollisionClass.NONE
+                && CombatQueries.isAliveNotHulk(other) && other.getCollisionClass() != CollisionClass.NONE
                 && CombatQueries.isHostile(ownerShip, other) && CombatQueries.withinRadius(other.getLocation(), point, radius));
         candidates.sort(Comparator.comparingDouble(other -> Vector2f.sub(other.getLocation(), point, null).lengthSquared()));
         return candidates.size() > count ? candidates.subList(0, count) : candidates;
@@ -126,7 +125,7 @@ final class BeamSplitListener implements DamageDealtModifier, DroneSpawner {
         }
         if (!hitDamage.isForceHardFlux()) {
             ShieldSkillEffect.convertToHardFlux(flux, flux.getCurrFlux() - fluxBefore,
-                    ownerShip.getMutableStats().getDynamic().getValue(ShieldSkillEffect.BeamHardFluxListener.HARD_FLUX_PERCENT_KEY, 0f));
+                    magnitude(ShieldSkillEffect.BeamHardFluxListener.HARD_FLUX_PERCENT_KEY));
         }
 
         float impactSize = sourceBeam.getWidth() * 2f;

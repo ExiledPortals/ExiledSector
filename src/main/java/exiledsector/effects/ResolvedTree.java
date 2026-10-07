@@ -5,10 +5,10 @@ import com.fs.starfarer.api.combat.HullModEffect;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.skills.AllocatedNode;
-import exiledsector.skills.AllocatedSkillEffects;
 import exiledsector.skills.DamageTakenCaps;
-import exiledsector.skills.NpcBonusScaling;
+import exiledsector.skills.EffectTotals;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
 
@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -56,53 +55,44 @@ public final class ResolvedTree {
         this.bonusScale = bonusScale;
         this.shipDataRevision = shipData.revision();
         this.allocatedNodes = List.copyOf(AllocatedNode.of(shipData));
-        NpcBonusScaling scaling = NpcBonusScaling.of(bonusScale, shipData, allocatedNodes, hullSize);
+        EffectTotals effectTotals = EffectTotals.of(shipData, allocatedNodes, hullSize, bonusScale);
         List<Entry> resolvedEntries = new ArrayList<>();
         List<TemporaryNode> resolvedTemporaryNodes = new ArrayList<>();
-        Map<SkillEffect, Float> multiplierTotals = new LinkedHashMap<>();
-        for (AllocatedNode node : allocatedNodes) {
-            String vanillaHullModId = node.effectiveType().getVanillaHullModId();
-            if (vanillaHullModId != null) {
-                addVanillaEntry(vanillaHullModId, resolvedEntries);
-            } else if (node.effectiveType().getTemporaryAfterDeploymentSeconds() != null) {
-                addTemporaryNode(shipData, node, hullSize, scaling, resolvedEntries, resolvedTemporaryNodes);
+        for (EffectTotals.NodeEffects nodeEffects : effectTotals.nodeEffects()) {
+            SkillType type = nodeEffects.node().effectiveType();
+            if (type.getVanillaHullModId() != null) {
+                addVanillaEntry(type.getVanillaHullModId(), resolvedEntries);
+            } else if (type.getTemporaryAfterDeploymentSeconds() != null) {
+                addTemporaryNode(nodeEffects, resolvedEntries, resolvedTemporaryNodes);
             } else {
-                addEffects(shipData, node, hullSize, scaling, resolvedEntries, multiplierTotals);
+                addEffects(nodeEffects, resolvedEntries);
             }
         }
-        multiplierTotals.forEach((effect, multiplierTotal) ->
-                resolvedEntries.add(new EffectEntry(effect, MULTIPLIER_MOD_ID_PREFIX + effect.name(), SkillEffect.addedMultiplier(multiplierTotal))));
+        effectTotals.pooledMultipliers().forEach((effect, addedMultiplier) ->
+                resolvedEntries.add(new EffectEntry(effect, MULTIPLIER_MOD_ID_PREFIX + effect.name(), addedMultiplier)));
         Set<EffectEntry> temporaryEntries = Collections.newSetFromMap(new IdentityHashMap<>());
         resolvedTemporaryNodes.forEach(temporaryNode -> temporaryEntries.addAll(temporaryNode.effects()));
-        DamageTakenCaps.CAPS.forEach(reductionCap -> capReduction(reductionCap, resolvedEntries, temporaryEntries));
+        effectTotals.reachedCaps().forEach(reductionCap -> replaceWithCap(reductionCap, resolvedEntries, temporaryEntries));
         this.entries = List.copyOf(resolvedEntries);
         this.temporaryNodes = List.copyOf(resolvedTemporaryNodes);
         this.phantomHullModIds = phantomHullModIdsOf(allocatedNodes);
     }
 
-    private static void capReduction(DamageTakenCaps.Cap reductionCap, List<Entry> resolvedEntries, Set<EffectEntry> temporaryEntries) {
-        float percentTotal = 0f;
-        float multiplierProduct = 1f;
-        int firstContributorIndex = -1;
-        for (int i = 0; i < resolvedEntries.size(); i++) {
-            if (resolvedEntries.get(i) instanceof EffectEntry effectEntry && !temporaryEntries.contains(effectEntry)
-                    && reductionCap.contributingEffects().contains(effectEntry.effect())) {
-                if (effectEntry.effect().isMultiplicative()) {
-                    multiplierProduct *= 1f + effectEntry.magnitude() / 100f;
-                } else {
-                    percentTotal += effectEntry.magnitude();
-                }
-                firstContributorIndex = firstContributorIndex < 0 ? i : firstContributorIndex;
-            }
+    private static void replaceWithCap(DamageTakenCaps.Cap reductionCap, List<Entry> resolvedEntries, Set<EffectEntry> temporaryEntries) {
+        int firstContributorIndex = 0;
+        while (firstContributorIndex < resolvedEntries.size()
+                && !isCapContributor(resolvedEntries.get(firstContributorIndex), reductionCap, temporaryEntries)) {
+            firstContributorIndex++;
         }
-        if (firstContributorIndex < 0 || !DamageTakenCaps.exceedsCap(percentTotal, multiplierProduct)) {
-            return;
-        }
-        resolvedEntries.removeIf(entry -> entry instanceof EffectEntry effectEntry && !temporaryEntries.contains(effectEntry)
-                && reductionCap.contributingEffects().contains(effectEntry.effect()));
+        resolvedEntries.removeIf(entry -> isCapContributor(entry, reductionCap, temporaryEntries));
         SkillEffect cappedEffect = reductionCap.cappedEffect();
         resolvedEntries.add(Math.min(firstContributorIndex, resolvedEntries.size()),
                 new EffectEntry(cappedEffect, REDUCTION_CAP_MOD_ID_PREFIX + cappedEffect.name(), -DamageTakenCaps.MAX_REDUCTION_PERCENT));
+    }
+
+    private static boolean isCapContributor(Entry entry, DamageTakenCaps.Cap reductionCap, Set<EffectEntry> temporaryEntries) {
+        return entry instanceof EffectEntry effectEntry && !temporaryEntries.contains(effectEntry)
+                && reductionCap.contributingEffects().contains(effectEntry.effect());
     }
 
     private static void addVanillaEntry(String vanillaHullModId, List<Entry> resolvedEntries) {
@@ -113,31 +103,26 @@ public final class ResolvedTree {
         }
     }
 
-    private static void addTemporaryNode(ShipSkillData shipData, AllocatedNode node, HullSize hullSize, NpcBonusScaling scaling,
-                                         List<Entry> resolvedEntries,
+    private static void addTemporaryNode(EffectTotals.NodeEffects nodeEffects, List<Entry> resolvedEntries,
                                          List<TemporaryNode> resolvedTemporaryNodes) {
-        EffectModIds modIds = new EffectModIds(node);
-        List<EffectEntry> nodeEffects = new ArrayList<>();
-        for (SkillTypeEffect effect : AllocatedSkillEffects.appliedEffects(shipData, node, hullSize)) {
-            EffectEntry effectEntry = new EffectEntry(effect.effect(), modIds.next(effect.effect()),
-                    scaling.scaled(node, effect.effect(), effect.magnitude()));
-            nodeEffects.add(effectEntry);
+        EffectModIds modIds = new EffectModIds(nodeEffects.node());
+        List<EffectEntry> temporaryEffects = new ArrayList<>();
+        for (SkillTypeEffect effect : nodeEffects.effects()) {
+            EffectEntry effectEntry = new EffectEntry(effect.effect(), modIds.next(effect.effect()), effect.magnitude());
+            temporaryEffects.add(effectEntry);
             resolvedEntries.add(effectEntry);
         }
-        if (!nodeEffects.isEmpty()) {
-            resolvedTemporaryNodes.add(new TemporaryNode(node.effectiveType().getTemporaryAfterDeploymentSeconds(), List.copyOf(nodeEffects)));
+        if (!temporaryEffects.isEmpty()) {
+            resolvedTemporaryNodes.add(new TemporaryNode(nodeEffects.node().effectiveType().getTemporaryAfterDeploymentSeconds(),
+                    List.copyOf(temporaryEffects)));
         }
     }
 
-    private static void addEffects(ShipSkillData shipData, AllocatedNode node, HullSize hullSize, NpcBonusScaling scaling,
-                                   List<Entry> resolvedEntries, Map<SkillEffect, Float> multiplierTotals) {
-        EffectModIds modIds = new EffectModIds(node);
-        for (SkillTypeEffect effect : AllocatedSkillEffects.appliedEffects(shipData, node, hullSize)) {
-            float magnitude = scaling.scaled(node, effect.effect(), effect.magnitude());
-            if (effect.effect().isMultiplicative()) {
-                multiplierTotals.merge(effect.effect(), magnitude, Float::sum);
-            } else {
-                resolvedEntries.add(new EffectEntry(effect.effect(), modIds.next(effect.effect()), magnitude));
+    private static void addEffects(EffectTotals.NodeEffects nodeEffects, List<Entry> resolvedEntries) {
+        EffectModIds modIds = new EffectModIds(nodeEffects.node());
+        for (SkillTypeEffect effect : nodeEffects.effects()) {
+            if (!effect.effect().isMultiplicative()) {
+                resolvedEntries.add(new EffectEntry(effect.effect(), modIds.next(effect.effect()), effect.magnitude()));
             }
         }
     }

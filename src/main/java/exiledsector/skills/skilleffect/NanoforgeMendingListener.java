@@ -3,24 +3,23 @@ package exiledsector.skills.skilleffect;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 
-final class NanoforgeMendingListener implements AdvanceableListener {
+final class NanoforgeMendingListener extends ShipCombatListener implements AdvanceableListener {
 
     static final String REGEN_PERCENT_KEY = "exiledSector_nanoforgeMendingRegenPercent";
     static final float UNDAMAGED_SECONDS = 5f;
     static final float MAX_TOTAL_REGEN_PERCENT_OF_HULL = 100f;
 
-    private final ShipAPI ownerShip;
     private float lastHitpoints = -1f;
     private float secondsSinceHullDamage;
     private float remainingRegen = -1f;
 
     NanoforgeMendingListener(ShipAPI ownerShip) {
-        this.ownerShip = ownerShip;
+        super(ownerShip);
     }
 
     @Override
     public void advance(float amount) {
-        if (amount <= 0f || !ownerShip.isAlive() || ownerShip.isHulk()) {
+        if (amount <= 0f || !ownerIsAliveNotHulk()) {
             return;
         }
         if (remainingRegen < 0f) {
@@ -40,7 +39,7 @@ final class NanoforgeMendingListener implements AdvanceableListener {
 
     private float mend(float hitpoints, float amount) {
         float maxHitpoints = ownerShip.getMaxHitpoints();
-        float regenPercent = ownerShip.getMutableStats().getDynamic().getValue(REGEN_PERCENT_KEY, 0f);
+        float regenPercent = magnitude(REGEN_PERCENT_KEY);
         if (hitpoints >= maxHitpoints || regenPercent <= 0f) {
             return hitpoints;
         }

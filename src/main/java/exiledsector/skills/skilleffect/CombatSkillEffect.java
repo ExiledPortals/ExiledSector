@@ -8,7 +8,6 @@ import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.HullDamageAboutToBeTakenListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -145,7 +144,7 @@ public enum CombatSkillEffect implements BackedSkillEffect {
         return backing;
     }
 
-    private static final class DeathExplosionListener implements HullDamageAboutToBeTakenListener {
+    private static final class DeathExplosionListener extends ShipCombatListener implements HullDamageAboutToBeTakenListener {
 
         private static final String FUEL_DAMAGE_PERCENT_KEY = "exiledSector_explodeOnDeathFuelDamagePercent";
 
@@ -154,11 +153,10 @@ public enum CombatSkillEffect implements BackedSkillEffect {
         private static final Color BLAST_COLOR = new Color(255, 200, 120, 40);
         private static final Color CORE_COLOR = new Color(255, 255, 255, 60);
 
-        private final ShipAPI ownerShip;
         private boolean exploded;
 
         private DeathExplosionListener(ShipAPI ownerShip) {
-            this.ownerShip = ownerShip;
+            super(ownerShip);
         }
 
         // java:S3516: returning true would cancel the hull damage; this listener only reacts to the killing blow and never cancels it
@@ -199,28 +197,26 @@ public enum CombatSkillEffect implements BackedSkillEffect {
             if (member == null) {
                 return 0f;
             }
-            float fuelDamagePercent = ownerShip.getMutableStats().getDynamic().getValue(FUEL_DAMAGE_PERCENT_KEY, 0f);
-            return member.getFuelCapacity() * fuelDamagePercent / 100f;
+            return member.getFuelCapacity() * magnitude(FUEL_DAMAGE_PERCENT_KEY) / 100f;
         }
     }
 
-    private static final class CollisionDeathListener implements AdvanceableListener {
+    private static final class CollisionDeathListener extends ShipCombatListener implements AdvanceableListener {
 
         private static final float COLLISION_CHECK_GRACE_PERIOD = 1.5f;
         private static final float BROAD_PHASE_MARGIN = 1.1f;
         private static final float LETHAL_DAMAGE = 999999f;
 
-        private final ShipAPI ownerShip;
         private boolean triggered;
         private float aliveTime;
 
         private CollisionDeathListener(ShipAPI ownerShip) {
-            this.ownerShip = ownerShip;
+            super(ownerShip);
         }
 
         @Override
         public void advance(float amount) {
-            if (triggered || !ownerShip.isAlive() || ownerShip.isHulk()) {
+            if (triggered || !ownerIsAliveNotHulk()) {
                 return;
             }
             aliveTime += amount;
@@ -297,12 +293,17 @@ public enum CombatSkillEffect implements BackedSkillEffect {
         }
     }
 
-    private static final class EscortListener implements AdvanceableListener {
+    private static final class EscortListener extends ShipCombatListener implements AdvanceableListener {
 
         private static final String MANEUVER_BONUS_KEY = "exiledSector_escortManeuverBonusPercent";
         private static final String SPEED_BONUS_KEY = "exiledSector_escortSpeedBonusPercent";
         private static final String WEAPON_RANGE_BONUS_KEY = "exiledSector_escortWeaponRangeBonusPercent";
         private static final String PROXIMITY_RANGE_KEY = "exiledSector_escortProximityRange";
+        private static final ScaledBonus ESCORT_BONUS = new ScaledBonus(
+                ScaledBonus.percent(Maneuverability.target(), MANEUVER_BONUS_KEY),
+                ScaledBonus.percent(StatTarget.liveStat(MutableShipStatsAPI::getMaxSpeed), SPEED_BONUS_KEY),
+                ScaledBonus.percent(StatTarget.all(StatTarget.liveBonus(MutableShipStatsAPI::getBallisticWeaponRangeBonus),
+                        StatTarget.liveBonus(MutableShipStatsAPI::getEnergyWeaponRangeBonus)), WEAPON_RANGE_BONUS_KEY));
 
         private static final float PROXIMITY_FADE_DISTANCE = 500f;
         private static final float SHIELD_RADIUS_OVERLAP_MULT = 0.75f;
@@ -312,19 +313,18 @@ public enum CombatSkillEffect implements BackedSkillEffect {
         private static final float MAG_SNAP = 0.001f;
         private static final String ESCORT_BONUS_MOD_ID = "exiledSector_escortBonus";
 
-        private final ShipAPI ownerShip;
         private final IntervalUtil retargetInterval = new IntervalUtil(0.9f, 1.1f);
         private float targetMag;
         private float appliedMag;
         private float easeRate;
 
         private EscortListener(ShipAPI ownerShip) {
-            this.ownerShip = ownerShip;
+            super(ownerShip);
         }
 
         @Override
         public void advance(float amount) {
-            if (!ownerShip.isAlive() || ownerShip.isHulk()) {
+            if (!ownerIsAliveNotHulk()) {
                 return;
             }
             retargetInterval.advance(amount);
@@ -335,7 +335,7 @@ public enum CombatSkillEffect implements BackedSkillEffect {
             }
             if (retargeted || appliedMag != targetMag) {
                 appliedMag = approach(appliedMag, targetMag, easeRate * amount);
-                applyBonuses(appliedMag);
+                ESCORT_BONUS.apply(ownerShip.getMutableStats(), ESCORT_BONUS_MOD_ID, appliedMag);
             }
         }
 
@@ -347,7 +347,7 @@ public enum CombatSkillEffect implements BackedSkillEffect {
         }
 
         private float proximityMagnitude() {
-            float range = ownerShip.getMutableStats().getDynamic().getValue(PROXIMITY_RANGE_KEY, 0f);
+            float range = magnitude(PROXIMITY_RANGE_KEY);
             float searchRadius = range + PROXIMITY_FADE_DISTANCE + ownerShip.getCollisionRadius() + SEARCH_MARGIN;
             float best = 0f;
             for (ShipAPI escorted : CombatQueries.shipsNear(ownerShip.getLocation(), searchRadius, this::isLargerFriendly)) {
@@ -357,7 +357,7 @@ public enum CombatSkillEffect implements BackedSkillEffect {
         }
 
         private boolean isLargerFriendly(ShipAPI candidate) {
-            return candidate != ownerShip && candidate.getOwner() == ownerShip.getOwner() && candidate.isAlive() && !candidate.isHulk()
+            return candidate != ownerShip && candidate.getOwner() == ownerShip.getOwner() && CombatQueries.isAliveNotHulk(candidate)
                     && candidate.getHullSize().ordinal() > ownerShip.getHullSize().ordinal();
         }
 
@@ -380,30 +380,6 @@ public enum CombatSkillEffect implements BackedSkillEffect {
                 mag *= DESTROYER_ESCORTING_CAPITAL_MULT;
             }
             return mag;
-        }
-
-        private void applyBonuses(float mag) {
-            MutableShipStatsAPI stats = ownerShip.getMutableStats();
-            StatBonus[] rangeStats = {stats.getBallisticWeaponRangeBonus(), stats.getEnergyWeaponRangeBonus()};
-
-            if (mag <= 0f) {
-                Maneuverability.unmodify(stats, ESCORT_BONUS_MOD_ID);
-                stats.getMaxSpeed().unmodify(ESCORT_BONUS_MOD_ID);
-                for (StatBonus stat : rangeStats) {
-                    stat.unmodify(ESCORT_BONUS_MOD_ID);
-                }
-                return;
-            }
-
-            float maneuverPercent = stats.getDynamic().getValue(MANEUVER_BONUS_KEY, 0f) * mag;
-            Maneuverability.modifyPercent(stats, ESCORT_BONUS_MOD_ID, maneuverPercent);
-            stats.getMaxSpeed().modifyPercent(ESCORT_BONUS_MOD_ID,
-                    stats.getDynamic().getValue(SPEED_BONUS_KEY, 0f) * mag);
-
-            float rangePercent = stats.getDynamic().getValue(WEAPON_RANGE_BONUS_KEY, 0f) * mag;
-            for (StatBonus stat : rangeStats) {
-                stat.modifyPercent(ESCORT_BONUS_MOD_ID, rangePercent);
-            }
         }
     }
 }

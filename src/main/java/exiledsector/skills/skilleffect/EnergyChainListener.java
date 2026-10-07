@@ -11,12 +11,11 @@ import org.lwjgl.util.vector.Vector2f;
 
 import java.util.List;
 
-final class EnergyChainListener implements DamageDealtModifier, DroneSpawner {
+final class EnergyChainListener extends ShipCombatListener implements DamageDealtModifier, DroneSpawner {
 
     static final String CHANCE_KEY = "exiledSector_energyChainChance";
     static final String FALLOFF_KEY = "exiledSector_energyChainFalloff";
 
-    private final ShipAPI ownerShip;
     private final RefractionDrones drones;
 
     EnergyChainListener(ShipAPI ownerShip) {
@@ -24,7 +23,7 @@ final class EnergyChainListener implements DamageDealtModifier, DroneSpawner {
     }
 
     EnergyChainListener(ShipAPI ownerShip, RefractionDrones drones) {
-        this.ownerShip = ownerShip;
+        super(ownerShip);
         this.drones = drones;
     }
 
@@ -55,13 +54,13 @@ final class EnergyChainListener implements DamageDealtModifier, DroneSpawner {
     }
 
     private void tryChain(WeaponAPI weapon, ShipAPI hitShip, Vector2f point, ChainLink link) {
-        float chancePercent = ownerShip.getMutableStats().getDynamic().getValue(CHANCE_KEY, 0f);
+        float chancePercent = magnitude(CHANCE_KEY);
         boolean chains = ownerShip.isAlive() && link.chainCount() < MaxChainCountConfig.get() && chancePercent > 0f
                 && Math.random() < chancePercent / 100.0;
         if (!chains) {
             return;
         }
-        ChainLink next = link.next(hitShip, ownerShip.getMutableStats().getDynamic().getValue(FALLOFF_KEY, 0f));
+        ChainLink next = link.next(hitShip, magnitude(FALLOFF_KEY));
         if (next.dealtMult() <= 0f || !WeaponDroneFactory.supportsProjectile(weapon)) {
             return;
         }

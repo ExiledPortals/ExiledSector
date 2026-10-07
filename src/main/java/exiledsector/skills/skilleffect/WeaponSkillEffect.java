@@ -15,6 +15,11 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
         }
 
         @Override
+        public boolean isMultiplicative() {
+            return true;
+        }
+
+        @Override
         public boolean supportsTemporaryGating() {
             return WeaponStatFamily.DAMAGE.target(WeaponScope.ALL).supportsTemporaryGating();
         }

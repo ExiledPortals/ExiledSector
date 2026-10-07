@@ -8,15 +8,20 @@ import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import java.util.List;
 import java.util.Random;
 
-final class LiveMunitionsListener implements AdvanceableListener {
+import static exiledsector.skills.skilleffect.ScaledBonus.percent;
+import static exiledsector.skills.skilleffect.StatTarget.liveBonus;
+import static exiledsector.skills.skilleffect.StatTarget.liveStat;
+
+final class LiveMunitionsListener extends ShipCombatListener implements AdvanceableListener {
 
     static final String CREW_DEATH_CHANCE_PERCENT_PER_STACK_KEY = "exiledSector_heartlessCrewDeathChancePerStack";
     static final String MISSILE_DAMAGE_PERCENT_PER_STACK_KEY = "exiledSector_heartlessMissileDamagePercentPerStack";
     static final String MISSILE_SPEED_PERCENT_PER_STACK_KEY = "exiledSector_heartlessMissileSpeedPercentPerStack";
     private static final String MOD_ID_PREFIX = "exiledSector_liveMunitions_";
+    private static final ScaledBonus MISSILE_BONUS = new ScaledBonus(
+            percent(liveStat(MutableShipStatsAPI::getMissileWeaponDamageMult), MISSILE_DAMAGE_PERCENT_PER_STACK_KEY),
+            percent(liveBonus(MutableShipStatsAPI::getMissileMaxSpeedBonus), MISSILE_SPEED_PERCENT_PER_STACK_KEY));
 
-    private final ShipAPI ownerShip;
-    private final String modId;
     private final Random random;
     private List<WeaponAPI> missileWeapons;
     private int[] lastAmmo;
@@ -30,14 +35,13 @@ final class LiveMunitionsListener implements AdvanceableListener {
     }
 
     LiveMunitionsListener(ShipAPI ownerShip, Random random) {
-        this.ownerShip = ownerShip;
-        this.modId = MOD_ID_PREFIX + ownerShip.getId();
+        super(ownerShip, MOD_ID_PREFIX);
         this.random = random;
     }
 
     @Override
     public void advance(float amount) {
-        if (!ownerShip.isAlive() || ownerShip.isHulk()) {
+        if (!ownerIsAliveNotHulk()) {
             return;
         }
         if (heartlessStacks == null) {
@@ -113,17 +117,6 @@ final class LiveMunitionsListener implements AdvanceableListener {
             return;
         }
         appliedStacks = effectiveStacks;
-        MutableShipStatsAPI stats = ownerShip.getMutableStats();
-        if (effectiveStacks <= 0) {
-            stats.getMissileWeaponDamageMult().unmodify(modId);
-            stats.getMissileMaxSpeedBonus().unmodify(modId);
-            return;
-        }
-        stats.getMissileWeaponDamageMult().modifyPercent(modId, magnitude(MISSILE_DAMAGE_PERCENT_PER_STACK_KEY) * effectiveStacks);
-        stats.getMissileMaxSpeedBonus().modifyPercent(modId, magnitude(MISSILE_SPEED_PERCENT_PER_STACK_KEY) * effectiveStacks);
-    }
-
-    private float magnitude(String key) {
-        return ownerShip.getMutableStats().getDynamic().getValue(key, 0f);
+        MISSILE_BONUS.apply(ownerShip.getMutableStats(), modId, effectiveStacks);
     }
 }

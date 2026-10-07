@@ -3,6 +3,7 @@ package exiledsector.skills;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,7 +31,8 @@ public final class DamageTakenCaps {
         return damageTakenFactor < 1f - MAX_REDUCTION_PERCENT / 100f;
     }
 
-    public static void capTotals(Map<SkillEffect, Float> totals) {
+    static List<Cap> reachedBy(Map<SkillEffect, Float> totals) {
+        List<Cap> reachedCaps = new ArrayList<>();
         for (Cap cap : CAPS) {
             float percentTotal = 0f;
             float multiplierProduct = 1f;
@@ -42,15 +44,15 @@ public final class DamageTakenCaps {
                 }
                 contributes = true;
                 if (effect.isMultiplicative()) {
-                    multiplierProduct *= 1f + SkillEffect.addedMultiplier(total) / 100f;
+                    multiplierProduct *= 1f + total / 100f;
                 } else {
                     percentTotal += total;
                 }
             }
             if (contributes && exceedsCap(percentTotal, multiplierProduct)) {
-                cap.contributingEffects().forEach(totals::remove);
-                totals.put(cap.cappedEffect(), -MAX_REDUCTION_PERCENT);
+                reachedCaps.add(cap);
             }
         }
+        return reachedCaps;
     }
 }

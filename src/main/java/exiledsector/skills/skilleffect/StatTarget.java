@@ -14,6 +14,8 @@ sealed interface StatTarget {
 
     void apply(MutableShipStatsAPI stats, String modId, StatMode mode, float magnitude);
 
+    void remove(MutableShipStatsAPI stats, String modId);
+
     default void applyAfterShipCreation(ShipAPI ship) {
     }
 
@@ -64,6 +66,11 @@ sealed interface StatTarget {
         }
 
         @Override
+        public void remove(MutableShipStatsAPI stats, String modId) {
+            stat.apply(stats).unmodify(modId);
+        }
+
+        @Override
         public boolean supportsTemporaryGating() {
             return liveInCombat;
         }
@@ -73,6 +80,11 @@ sealed interface StatTarget {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, StatMode mode, float magnitude) {
             mode.apply(bonus.apply(stats), modId, magnitude);
+        }
+
+        @Override
+        public void remove(MutableShipStatsAPI stats, String modId) {
+            bonus.apply(stats).unmodify(modId);
         }
 
         @Override
@@ -86,6 +98,13 @@ sealed interface StatTarget {
         public void apply(MutableShipStatsAPI stats, String modId, StatMode mode, float magnitude) {
             for (StatTarget part : parts) {
                 part.apply(stats, modId, mode, magnitude);
+            }
+        }
+
+        @Override
+        public void remove(MutableShipStatsAPI stats, String modId) {
+            for (StatTarget part : parts) {
+                part.remove(stats, modId);
             }
         }
 
@@ -111,6 +130,11 @@ sealed interface StatTarget {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, StatMode mode, float magnitude) {
             target.apply(stats, modId, mode, magnitude * factor);
+        }
+
+        @Override
+        public void remove(MutableShipStatsAPI stats, String modId) {
+            target.remove(stats, modId);
         }
 
         @Override
@@ -140,6 +164,12 @@ sealed interface StatTarget {
         }
 
         @Override
+        public void remove(MutableShipStatsAPI stats, String modId) {
+            plus.remove(stats, modId);
+            offset.remove(stats, modId + OFFSET_SUFFIX);
+        }
+
+        @Override
         public boolean supportsTemporaryGating() {
             return plus.supportsTemporaryGating() && offset.supportsTemporaryGating();
         }
@@ -157,6 +187,11 @@ sealed interface StatTarget {
         }
 
         @Override
+        public void remove(MutableShipStatsAPI stats, String modId) {
+            stat.apply(stats).unmodify(modId);
+        }
+
+        @Override
         public boolean supports(StatMode mode) {
             return mode == StatMode.PERCENT;
         }
@@ -166,6 +201,11 @@ sealed interface StatTarget {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, StatMode mode, float magnitude) {
             bonus.apply(stats).modifyFlat(modId, magnitude / 100f);
+        }
+
+        @Override
+        public void remove(MutableShipStatsAPI stats, String modId) {
+            bonus.apply(stats).unmodify(modId);
         }
 
         @Override
@@ -183,6 +223,11 @@ sealed interface StatTarget {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, StatMode mode, float magnitude) {
             mode.apply(stats.getDynamic().getMod(key()), modId, magnitude);
+        }
+
+        @Override
+        public void remove(MutableShipStatsAPI stats, String modId) {
+            stats.getDynamic().getMod(key()).unmodify(modId);
         }
 
         @Override

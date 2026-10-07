@@ -4,33 +4,32 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.util.IntervalUtil;
 
-final class CrewStealListener implements AdvanceableListener {
+final class CrewStealListener extends ShipCombatListener implements AdvanceableListener {
 
     static final String RANGE_KEY = "exiledSector_crewStealRange";
     static final String SKELETON_CREW_PERCENT_KEY = "exiledSector_crewStealSkeletonCrewPercent";
     private static final float CHECK_SECONDS = 0.25f;
 
-    private final ShipAPI ownerShip;
     private final IntervalUtil checkInterval = new IntervalUtil(CHECK_SECONDS, CHECK_SECONDS);
     private final NearbyWrecks wrecks;
     private FleetCrewLedger crewLedger;
 
     CrewStealListener(ShipAPI ownerShip) {
-        this.ownerShip = ownerShip;
+        super(ownerShip);
         this.wrecks = new NearbyWrecks(ownerShip, other -> CombatQueries.isHostile(ownerShip, other) && isCrewedHull(other));
     }
 
     @Override
     public void advance(float amount) {
-        if (!stealsForTheFleet() || !ownerShip.isAlive() || ownerShip.isHulk()) {
+        if (!stealsForTheFleet() || !ownerIsAliveNotHulk()) {
             return;
         }
         checkInterval.advance(amount);
         if (!checkInterval.intervalElapsed()) {
             return;
         }
-        float range = ownerShip.getMutableStats().getDynamic().getValue(RANGE_KEY, 0f);
-        float percent = ownerShip.getMutableStats().getDynamic().getValue(SKELETON_CREW_PERCENT_KEY, 0f);
+        float range = magnitude(RANGE_KEY);
+        float percent = magnitude(SKELETON_CREW_PERCENT_KEY);
         if (range <= 0f || percent <= 0f) {
             return;
         }

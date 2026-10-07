@@ -10,17 +10,15 @@ import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import org.lwjgl.util.vector.Vector2f;
 
-final class DisintegrationListener implements DamageDealtModifier {
+final class DisintegrationListener extends ShipCombatListener implements DamageDealtModifier {
 
     static final String ARMOR_DAMAGE_PERCENT_KEY = "exiledSector_disintegrationArmorDamagePercent";
     private static final int KERNEL_RADIUS = 2;
     private static final float INNER_CELL_SHARE = 1f / 15f;
     private static final float OUTER_CELL_SHARE = 1f / 30f;
 
-    private final ShipAPI ownerShip;
-
     DisintegrationListener(ShipAPI ownerShip) {
-        this.ownerShip = ownerShip;
+        super(ownerShip);
     }
 
     // java:S3516: the engine reads a null return as "leave the damage unchanged"; armour is stripped as a side effect instead
@@ -30,7 +28,7 @@ final class DisintegrationListener implements DamageDealtModifier {
         if (shieldHit || !(target instanceof ShipAPI targetShip) || !isEnergyWeaponHit(param)) {
             return null;
         }
-        float percent = ownerShip.getMutableStats().getDynamic().getValue(ARMOR_DAMAGE_PERCENT_KEY, 0f);
+        float percent = magnitude(ARMOR_DAMAGE_PERCENT_KEY);
         float hitDamage = damage.isDps() ? damage.getDamage() * damage.getDpsDuration() : damage.getDamage();
         float armorDamage = hitDamage * percent / 100f
                 * targetShip.getMutableStats().getArmorDamageTakenMult().getModifiedValue();

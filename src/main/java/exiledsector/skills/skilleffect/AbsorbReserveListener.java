@@ -7,7 +7,7 @@ import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.combat.listeners.DamageListener;
 
-final class AbsorbReserveListener implements DamageListener, AdvanceableListener {
+final class AbsorbReserveListener extends ShipCombatListener implements DamageListener, AdvanceableListener {
 
     static final String RATE_OF_FIRE_PERCENT_KEY = "exiledSector_absorbRateOfFirePercent";
     static final float FULL_RESERVE = 500f;
@@ -15,14 +15,11 @@ final class AbsorbReserveListener implements DamageListener, AdvanceableListener
     static final float DRAIN_PER_SECOND = 100f;
     private static final String MOD_ID_PREFIX = "exiledSector_absorbReserve_";
 
-    private final ShipAPI ownerShip;
-    private final String modId;
     private float reserve;
     private int appliedPercent;
 
     AbsorbReserveListener(ShipAPI ownerShip) {
-        this.ownerShip = ownerShip;
-        this.modId = MOD_ID_PREFIX + ownerShip.getId();
+        super(ownerShip, MOD_ID_PREFIX);
     }
 
     @Override
@@ -34,12 +31,12 @@ final class AbsorbReserveListener implements DamageListener, AdvanceableListener
 
     @Override
     public void advance(float amount) {
-        if (!ownerShip.isAlive() || ownerShip.isHulk()) {
+        if (!ownerIsAliveNotHulk()) {
             reserve = 0f;
         } else if (reserve > 0f) {
             reserve = Math.max(0f, reserve - DRAIN_PER_SECOND * amount);
         }
-        float maxPercent = ownerShip.getMutableStats().getDynamic().getValue(RATE_OF_FIRE_PERCENT_KEY, 0f);
+        float maxPercent = magnitude(RATE_OF_FIRE_PERCENT_KEY);
         int percent = Math.round(maxPercent * Math.min(reserve, FULL_RESERVE) / FULL_RESERVE);
         if (percent != appliedPercent) {
             apply(percent);

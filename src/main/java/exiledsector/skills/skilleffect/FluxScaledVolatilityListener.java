@@ -14,7 +14,7 @@ import exiledsector.i18n.Translation;
 import java.awt.Color;
 import java.util.Locale;
 
-final class FluxScaledVolatilityListener implements AdvanceableListener {
+final class FluxScaledVolatilityListener extends ShipCombatListener implements AdvanceableListener {
 
     static final String TOP_SPEED_KEY = "exiledSector_fluxScaledTopSpeed";
     static final String RATE_OF_FIRE_KEY = "exiledSector_fluxScaledRateOfFire";
@@ -30,8 +30,6 @@ final class FluxScaledVolatilityListener implements AdvanceableListener {
     private static final Color AFTERIMAGE_COLOR = new Color(100, 42, 201, 80);
     private static final Color ENGINE_COLOR = new Color(100, 42, 201, 255);
 
-    private final ShipAPI ownerShip;
-    private final String modId;
     private final IntervalUtil afterimageTimer = new IntervalUtil(AFTERIMAGE_INTERVAL, AFTERIMAGE_INTERVAL);
     private float appliedRatio = Float.NaN;
     private Float penaltyScale;
@@ -40,8 +38,7 @@ final class FluxScaledVolatilityListener implements AdvanceableListener {
     private String statusText;
 
     FluxScaledVolatilityListener(ShipAPI ownerShip) {
-        this.ownerShip = ownerShip;
-        this.modId = MOD_ID_PREFIX + ownerShip.getId();
+        super(ownerShip, MOD_ID_PREFIX);
     }
 
     static float ratio(FluxTrackerAPI flux) {
@@ -52,7 +49,7 @@ final class FluxScaledVolatilityListener implements AdvanceableListener {
 
     @Override
     public void advance(float amount) {
-        if (!ownerShip.isAlive() || ownerShip.isHulk()) {
+        if (!ownerIsAliveNotHulk()) {
             return;
         }
         CombatEngineAPI engine = Global.getCombatEngine();
@@ -117,9 +114,5 @@ final class FluxScaledVolatilityListener implements AdvanceableListener {
 
     private static String signed(float value) {
         return String.format(Locale.ROOT, "%+d", Math.round(value));
-    }
-
-    private float magnitude(String key) {
-        return ownerShip.getMutableStats().getDynamic().getValue(key, 0f);
     }
 }

@@ -44,6 +44,11 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
         }
 
         @Override
+        public boolean isMultiplicative() {
+            return true;
+        }
+
+        @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
             stats.getArmorDamageTakenMult().modifyMult(modId, SkillEffectSupport.compoundMultPerDMod(stats, magnitude));
         }

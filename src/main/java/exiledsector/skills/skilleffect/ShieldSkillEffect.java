@@ -220,13 +220,12 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
         flux.setHardFlux(Math.min(flux.getCurrFlux(), flux.getHardFlux() + converted));
     }
 
-    private static final class SharedShieldDamageListener implements DamageTakenModifier, DamageListener {
+    private static final class SharedShieldDamageListener extends ShipCombatListener implements DamageTakenModifier, DamageListener {
 
         private static final String SHARED_PERCENT_KEY = "exiledSector_shieldDamageSharedPercent";
         private static final String SHARE_MOD_ID = "exiledSector_shieldDamageShared";
         private static final float MAX_SHARED_PERCENT = 90f;
 
-        private final ShipAPI ownerShip;
         private List<ShipAPI> cachedAllies = List.of();
         private float alliesFoundAt = -1f;
         private boolean sharePending;
@@ -234,7 +233,7 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
         private float pendingShare;
 
         private SharedShieldDamageListener(ShipAPI ownerShip) {
-            this.ownerShip = ownerShip;
+            super(ownerShip);
         }
 
         @Override
@@ -242,7 +241,7 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
             sharePending = false;
             if (!shieldHit) return null;
 
-            float share = Math.min(ownerShip.getMutableStats().getDynamic().getValue(SHARED_PERCENT_KEY, 0f), MAX_SHARED_PERCENT) / 100f;
+            float share = Math.min(magnitude(SHARED_PERCENT_KEY), MAX_SHARED_PERCENT) / 100f;
             if (share <= 0f || nearbyAllies().isEmpty()) return null;
 
             damage.getModifier().modifyMult(SHARE_MOD_ID, 1f - share);
@@ -276,7 +275,7 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
         }
 
         private boolean sharesShieldDamageWith(ShipAPI other) {
-            return other != ownerShip && other.getOwner() == ownerShip.getOwner() && other.isAlive() && !other.isHulk()
+            return other != ownerShip && other.getOwner() == ownerShip.getOwner() && CombatQueries.isAliveNotHulk(other)
                     && !other.isFighter()
                     && CombatQueries.withinRadius(other.getLocation(), ownerShip.getLocation(), SHARED_SHIELD_DAMAGE_RANGE)
                     && !other.getFluxTracker().isOverloadedOrVenting();
