@@ -159,18 +159,7 @@ public final class SocketableDrops {
     }
 
     static SocketCurrency pickKernel(Random random) {
-        float totalWeight = 0f;
-        for (SocketCurrency currency : SocketCurrency.values()) {
-            totalWeight += currency.dropWeight();
-        }
-        float roll = random.nextFloat() * totalWeight;
-        for (SocketCurrency currency : SocketCurrency.values()) {
-            roll -= currency.dropWeight();
-            if (roll < 0f) {
-                return currency;
-            }
-        }
-        return SocketCurrency.values()[SocketCurrency.values().length - 1];
+        return WeightedPick.pick(List.of(SocketCurrency.values()), SocketCurrency::dropWeight, random);
     }
 
     public static SocketableDefinition pickBasic(Random random) {
@@ -183,24 +172,12 @@ public final class SocketableDrops {
 
     private static SocketableDefinition pick(Random random, Predicate<SocketableDefinition> filter) {
         List<SocketableDefinition> candidates = new ArrayList<>();
-        float totalWeight = 0f;
         for (SocketableDefinition definition : SocketableDefinitions.all()) {
             if (filter.test(definition) && definition.rarity() > 0f && SAFE_ID.matcher(definition.id()).matches()) {
                 candidates.add(definition);
-                totalWeight += definition.rarity();
             }
         }
-        if (candidates.isEmpty()) {
-            return null;
-        }
-        float roll = random.nextFloat() * totalWeight;
-        for (SocketableDefinition definition : candidates) {
-            roll -= definition.rarity();
-            if (roll < 0f) {
-                return definition;
-            }
-        }
-        return candidates.get(candidates.size() - 1);
+        return WeightedPick.pick(candidates, SocketableDefinition::rarity, random);
     }
 
     public static void clear() {

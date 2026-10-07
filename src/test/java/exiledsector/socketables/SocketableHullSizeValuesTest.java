@@ -28,13 +28,13 @@ class SocketableHullSizeValuesTest {
         SocketableDefinitions.register(new JSONArray().put(row("scaled", "subroutine", SCALED_POOL + "; SHIELD_ARC_FLAT:-1/-2.5/3/4")));
 
         SocketableDefinition definition = SocketableDefinitions.get("scaled");
-        SocketableDefinition.PoolEntry armor = definition.rollRange("ARMOR_FLAT");
+        PoolEntry armor = definition.poolEntry("ARMOR_FLAT");
         assertEquals(2f, armor.weight());
         assertEquals(List.of(5f, 10f, 15f, 20f), armor.hullValues());
         assertEquals(armor.min(), armor.max());
-        assertEquals(List.of(-1f, -2.5f, 3f, 4f), definition.rollRange("SHIELD_ARC_FLAT").hullValues());
-        assertEquals(1f, definition.rollRange("SHIELD_ARC_FLAT").weight());
-        assertFalse(definition.rollRange("HULL_MULT").scalesWithHullSize());
+        assertEquals(List.of(-1f, -2.5f, 3f, 4f), definition.poolEntry("SHIELD_ARC_FLAT").hullValues());
+        assertEquals(1f, definition.poolEntry("SHIELD_ARC_FLAT").weight());
+        assertFalse(definition.poolEntry("HULL_MULT").scalesWithHullSize());
     }
 
     @Test
@@ -100,6 +100,7 @@ class SocketableHullSizeValuesTest {
         assertEquals("5/10/15/20%", RolledEffect.joinSharingAffixes(List.of("5%", "10%", "15%", "20%")));
         assertEquals("+5/10/15/20", RolledEffect.joinSharingAffixes(List.of("+5", "+10", "+15", "+20")));
         assertEquals("0.5x/1x/2/3", RolledEffect.joinSharingAffixes(List.of("0.5x", "1x", "2", "3")));
+        assertEquals("max/max", RolledEffect.joinSharingAffixes(List.of("max", "max")));
     }
 
     private static List<Float> magnitudes(List<SkillTypeEffect> effects) {

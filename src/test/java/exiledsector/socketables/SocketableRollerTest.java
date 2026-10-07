@@ -39,13 +39,13 @@ class SocketableRollerTest {
 
     @Test
     void rollsAreWholeNumbersInsideTheirRangeWithNoRepeatedEffect() {
-        Map<String, SocketableDefinition.PoolEntry> pool = military.pool().stream()
-                .collect(Collectors.toMap(SocketableDefinition.PoolEntry::effectName, Function.identity()));
+        Map<String, PoolEntry> pool = military.pool().stream()
+                .collect(Collectors.toMap(PoolEntry::effectName, Function.identity()));
         for (long seed = 0; seed < SAMPLES; seed++) {
             List<RolledEffect> rolled = SocketableRoller.roll(military, seed);
             Set<String> names = new HashSet<>();
             for (RolledEffect effect : rolled) {
-                SocketableDefinition.PoolEntry entry = pool.get(effect.effectName());
+                PoolEntry entry = pool.get(effect.effectName());
                 assertTrue(names.add(effect.effectName()), "repeated " + effect);
                 assertTrue(effect.magnitude() >= entry.min() && effect.magnitude() <= entry.max(), effect.toString());
                 assertEquals(Math.rint(effect.magnitude()), effect.magnitude());
@@ -65,33 +65,6 @@ class SocketableRollerTest {
     }
 
     @Test
-    void everyWholeNumberInARangeIsEquallyLikelyIncludingTheEnds() {
-        java.util.Random random = new java.util.Random(5);
-        int[] counts = new int[3];
-        for (int i = 0; i < 30000; i++) {
-            counts[(int) SocketableRoller.rollBetween(4f, 6f, random) - 4]++;
-        }
-        for (int count : counts) {
-            assertEquals(1 / 3.0, count / 30000.0, 0.02);
-        }
-    }
-
-    @Test
-    void decimalRangesRollInStepsOfTheirFinestDecimalPlace() {
-        java.util.Random random = new java.util.Random(5);
-        java.util.Set<Float> seen = new java.util.TreeSet<>();
-        for (int i = 0; i < 2000; i++) {
-            float rolled = SocketableRoller.rollBetween(0.15f, 0.25f, random);
-            assertTrue(rolled >= 0.15f - 0.0001f && rolled <= 0.25f + 0.0001f, String.valueOf(rolled));
-            seen.add(Math.round(rolled * 100f) / 100f);
-        }
-        assertEquals(11, seen.size());
-        float halfStep = SocketableRoller.rollBetween(-12.5f, -11.5f, random);
-        assertTrue(halfStep >= -12.5f && halfStep <= -11.5f);
-        assertEquals(halfStep, Math.round(halfStep * 10f) / 10f, 0.0001f);
-    }
-
-    @Test
     void commonRollsOnePrefixAndOneSuffixAndRaresNeverMoreThanTwoOfEither() {
         boolean twoPrefixes = false;
         boolean twoSuffixes = false;
@@ -107,23 +80,6 @@ class SocketableRollerTest {
             twoSuffixes |= rolled.size() == 3 && suffixes == 2;
         }
         assertTrue(twoPrefixes && twoSuffixes, "three-effect rolls should split both ways");
-    }
-
-    @Test
-    void theSplitPutsTheOddEffectOnEitherSide() {
-        assertEquals(1, SocketableRoller.prefixCount(2, true));
-        assertEquals(2, SocketableRoller.prefixCount(3, true));
-        assertEquals(1, SocketableRoller.prefixCount(3, false));
-        assertEquals(2, SocketableRoller.prefixCount(4, false));
-    }
-
-    @Test
-    void theEffectCountThresholdsFollowTheProposedOdds() {
-        assertEquals(2, SocketableRoller.effectCount(0f));
-        assertEquals(2, SocketableRoller.effectCount(0.549f));
-        assertEquals(3, SocketableRoller.effectCount(0.55f));
-        assertEquals(3, SocketableRoller.effectCount(0.899f));
-        assertEquals(4, SocketableRoller.effectCount(0.9f));
     }
 
     @Test

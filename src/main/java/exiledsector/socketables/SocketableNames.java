@@ -93,7 +93,7 @@ public final class SocketableNames {
         if (definition == null) {
             return null;
         }
-        return switch (SocketableRarity.of(definition, effects.size())) {
+        return switch (AffixLayout.rarityFor(definition, effects.size())) {
             case UNIQUE -> FrozenName.NONE;
             case COMMON -> new FrozenName(firstInRole(definition, effects, true), firstInRole(definition, effects, false), null, null);
             case RARE -> rareWords(definition.id(), seed);
@@ -101,7 +101,7 @@ public final class SocketableNames {
     }
 
     static SocketableName render(SocketableDefinition definition, SocketableKind kind, List<RolledEffect> effects, FrozenName frozen) {
-        SocketableRarity rarity = SocketableRarity.of(definition, effects.size());
+        SocketableRarity rarity = AffixLayout.rarityFor(definition, effects.size());
         if (definition == null) {
             return new SocketableName(Translation.text("socketable.unknown"), null, rarity);
         }

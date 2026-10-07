@@ -3,17 +3,14 @@ package exiledsector.socketables;
 import com.fs.starfarer.api.campaign.CargoAPI;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import java.util.function.Predicate;
 
 public final class SocketableCrafting {
 
     static final int DEFAULT_COMMON_SYNTHESIS_PARTS = 10;
-    static final int MAX_EFFECTS = 4;
-    static final int MAX_PER_SIDE = 2;
+    static final int MAX_RECALIBRATION_ATTEMPTS = 64;
 
     private SocketableCrafting() {
     }
@@ -64,7 +61,7 @@ public final class SocketableCrafting {
             return false;
         }
         return switch (currency) {
-            case AUGMENTATION -> !augmentChoices(socketable, definition).isEmpty();
+            case AUGMENTATION -> !AffixLayout.openSides(definition, socketable.effects()).isEmpty();
             case RECALIBRATION -> canRecalibrate(socketable, definition);
             case TRANSPOSITION -> canTranspose(definition, allowedUniques);
         };
@@ -88,16 +85,16 @@ public final class SocketableCrafting {
 
     static RolledEffect augment(Socketable socketable, Random random) {
         SocketableDefinition definition = socketable.definition();
-        List<List<SocketableDefinition.PoolEntry>> openSides = definition == null ? List.of() : augmentChoices(socketable, definition);
+        List<List<PoolEntry>> openSides = definition == null ? List.of() : AffixLayout.openSides(definition, socketable.effects());
         if (definition == null || openSides.isEmpty()) {
             return null;
         }
-        List<SocketableDefinition.PoolEntry> chosenSide = openSides.get(random.nextInt(openSides.size()));
-        SocketableDefinition.PoolEntry poolEntry = chosenSide.get(SocketableRoller.pick(chosenSide, random.nextFloat()));
-        RolledEffect addedEffect = new RolledEffect(poolEntry.effectName(), SocketableRoller.rollBetween(poolEntry.min(), poolEntry.max(), random));
+        List<PoolEntry> chosenSide = openSides.get(random.nextInt(openSides.size()));
+        PoolEntry poolEntry = WeightedPick.pick(chosenSide, PoolEntry::weight, random);
+        RolledEffect addedEffect = new RolledEffect(poolEntry.effectName(), poolEntry.roll(random));
         SocketableRarity rarityBefore = socketable.rarity();
         List<RolledEffect> updatedEffects = new ArrayList<>(socketable.effects());
-        updatedEffects.add(definition.isPrefix(addedEffect.effectName()) ? prefixCount(socketable, definition) : updatedEffects.size(), addedEffect);
+        updatedEffects.add(AffixLayout.insertIndex(definition, updatedEffects, addedEffect.effectName()), addedEffect);
         socketable.replaceEffects(updatedEffects);
         if (socketable.rarity() != rarityBefore) {
             socketable.refreezeName();
@@ -105,47 +102,10 @@ public final class SocketableCrafting {
         return addedEffect;
     }
 
-    private static int prefixCount(Socketable socketable, SocketableDefinition definition) {
-        int prefixTotal = 0;
-        for (RolledEffect effect : socketable.effects()) {
-            prefixTotal += definition.isPrefix(effect.effectName()) ? 1 : 0;
-        }
-        return prefixTotal;
-    }
-
-    private static List<List<SocketableDefinition.PoolEntry>> augmentChoices(Socketable socketable, SocketableDefinition definition) {
-        if (definition.unique() || socketable.effects().size() >= MAX_EFFECTS) {
-            return List.of();
-        }
-        Set<String> presentEffects = new HashSet<>();
-        int takenPrefixes = 0;
-        int takenSuffixes = 0;
-        for (RolledEffect effect : socketable.effects()) {
-            presentEffects.add(effect.effectName());
-            takenPrefixes += definition.isPrefix(effect.effectName()) ? 1 : 0;
-            takenSuffixes += definition.isSuffix(effect.effectName()) ? 1 : 0;
-        }
-        List<List<SocketableDefinition.PoolEntry>> sides = new ArrayList<>();
-        addSide(sides, definition.prefixes(), takenPrefixes, presentEffects);
-        addSide(sides, definition.suffixes(), takenSuffixes, presentEffects);
-        return sides;
-    }
-
-    private static void addSide(List<List<SocketableDefinition.PoolEntry>> sides, List<SocketableDefinition.PoolEntry> pool, int taken,
-                                Set<String> presentEffects) {
-        if (taken >= MAX_PER_SIDE) {
-            return;
-        }
-        List<SocketableDefinition.PoolEntry> openEntries = pool.stream().filter(entry -> !presentEffects.contains(entry.effectName())).toList();
-        if (!openEntries.isEmpty()) {
-            sides.add(openEntries);
-        }
-    }
-
     private static boolean canRecalibrate(Socketable socketable, SocketableDefinition definition) {
         for (RolledEffect effect : socketable.effects()) {
-            SocketableDefinition.PoolEntry rollRange = definition.rollRange(effect.effectName());
-            if (rollRange != null && Math.ceil(rollRange.min()) < Math.floor(rollRange.max())) {
+            PoolEntry poolEntry = definition.poolEntry(effect.effectName());
+            if (poolEntry != null && poolEntry.canVary()) {
                 return true;
             }
         }
@@ -155,16 +115,25 @@ public final class SocketableCrafting {
     static Socketable recalibrate(Socketable socketable, Random random) {
         SocketableDefinition definition = socketable.definition();
         if (definition == null) {
-            return socketable;
+            return null;
         }
-        List<RolledEffect> rerolled = new ArrayList<>(socketable.effects().size());
-        for (RolledEffect effect : socketable.effects()) {
-            SocketableDefinition.PoolEntry rollRange = definition.rollRange(effect.effectName());
-            rerolled.add(rollRange == null ? effect
-                    : new RolledEffect(effect.effectName(), SocketableRoller.rollBetween(rollRange.min(), rollRange.max(), random)));
+        for (int attempt = 0; attempt < MAX_RECALIBRATION_ATTEMPTS; attempt++) {
+            List<RolledEffect> rerolled = reroll(socketable.effects(), definition, random);
+            if (!rerolled.equals(socketable.effects())) {
+                socketable.replaceEffects(rerolled);
+                return socketable;
+            }
         }
-        socketable.replaceEffects(rerolled);
-        return socketable;
+        return null;
+    }
+
+    private static List<RolledEffect> reroll(List<RolledEffect> effects, SocketableDefinition definition, Random random) {
+        List<RolledEffect> rerolled = new ArrayList<>(effects.size());
+        for (RolledEffect effect : effects) {
+            PoolEntry poolEntry = definition.poolEntry(effect.effectName());
+            rerolled.add(poolEntry == null ? effect : new RolledEffect(effect.effectName(), poolEntry.roll(random)));
+        }
+        return rerolled;
     }
 
     private static boolean canTranspose(SocketableDefinition currentDefinition, Predicate<SocketableDefinition> allowedUniques) {

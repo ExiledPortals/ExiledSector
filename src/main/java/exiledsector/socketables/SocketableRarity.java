@@ -8,8 +8,6 @@ public enum SocketableRarity {
     RARE(new Color(255, 225, 90), 2),
     UNIQUE(new Color(255, 140, 40), 10);
 
-    static final int COMMON_MAX_EFFECTS = 2;
-
     private final Color color;
     private final int disassemblyParts;
 
@@ -24,12 +22,5 @@ public enum SocketableRarity {
 
     public int disassemblyParts() {
         return disassemblyParts;
-    }
-
-    static SocketableRarity of(SocketableDefinition definition, int effectCount) {
-        if (definition != null && definition.unique()) {
-            return UNIQUE;
-        }
-        return effectCount <= COMMON_MAX_EFFECTS ? COMMON : RARE;
     }
 }

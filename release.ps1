@@ -73,6 +73,7 @@ if ($outsideModFolder) {
 }
 
 Save-ReleasedSkillNodes -ProjectRoot $projectRoot
+Save-ReleasedSocketables -ProjectRoot $projectRoot -Version $version
 
 $sizeMb = [math]::Round((Get-Item $zipPath).Length / 1MB, 1)
 Write-Host "Built $zipPath ($sizeMb MB, version $version)"

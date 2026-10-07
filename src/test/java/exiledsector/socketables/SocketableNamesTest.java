@@ -154,7 +154,7 @@ class SocketableNamesTest {
                 continue;
             }
             assertTrue(words.has(definition.id()), definition.id() + " has no rare name words");
-            for (SocketableDefinition.PoolEntry entry : definition.pool()) {
+            for (PoolEntry entry : definition.pool()) {
                 assertTrue(SocketableNames.hasAffix(entry.effectName()), entry.effectName() + " has no affix row");
                 assertFalse(name(definition.id(), 1L, List.of(new RolledEffect(entry.effectName(), 1f),
                         new RolledEffect(entry.effectName(), 1f))).title().contains("  "));

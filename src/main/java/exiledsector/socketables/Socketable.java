@@ -92,7 +92,7 @@ public abstract class Socketable {
     }
 
     public SocketableRarity rarity() {
-        return SocketableRarity.of(definition(), effects.size());
+        return AffixLayout.rarityFor(definition(), effects.size());
     }
 
     public String iconPath() {
@@ -132,8 +132,8 @@ public abstract class Socketable {
         for (RolledEffect effect : effects) {
             SkillEffect resolvedEffect = effect.effect();
             if (resolvedEffect != null) {
-                SocketableDefinition.PoolEntry rollRange = definition == null ? null : definition.rollRange(effect.effectName());
-                float magnitude = rollRange == null ? effect.magnitude() : rollRange.magnitudeFor(effect.magnitude(), hullSize);
+                PoolEntry poolEntry = definition == null ? null : definition.poolEntry(effect.effectName());
+                float magnitude = poolEntry == null ? effect.magnitude() : poolEntry.valueFor(effect.magnitude(), hullSize);
                 appliedEffects.add(new SkillTypeEffect(resolvedEffect, magnitude));
             }
         }
@@ -152,15 +152,15 @@ public abstract class Socketable {
         SocketableDefinition definition = definition();
         List<StyledText> lines = new ArrayList<>();
         for (RolledEffect effect : effects) {
-            SocketableDefinition.PoolEntry rollRange = definition == null ? null : definition.rollRange(effect.effectName());
+            PoolEntry poolEntry = definition == null ? null : definition.poolEntry(effect.effectName());
             StyledText description;
-            if (rollRange == null) {
+            if (poolEntry == null) {
                 description = effect.description(null);
-            } else if (rollRange.scalesWithHullSize() && !rollRange.hasHullValueFor(hullSize)) {
-                description = effect.hullValuesDescription(rollRange.hullValues());
+            } else if (poolEntry.listsEveryHullValueFor(hullSize)) {
+                description = effect.hullValuesDescription(poolEntry.hullValues());
             } else {
-                RolledEffect shownEffect = new RolledEffect(effect.effectName(), rollRange.magnitudeFor(effect.magnitude(), hullSize));
-                description = shownEffect.description(withRollRanges ? rollRange.rangeFor(hullSize) : null);
+                RolledEffect shownEffect = new RolledEffect(effect.effectName(), poolEntry.valueFor(effect.magnitude(), hullSize));
+                description = shownEffect.description(withRollRanges ? poolEntry : null);
             }
             if (description != null) {
                 lines.add(description);

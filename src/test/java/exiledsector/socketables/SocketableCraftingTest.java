@@ -76,7 +76,7 @@ class SocketableCraftingTest {
         assertTrue(definition.isPrefix(socketable.effects().get(1).effectName()), "prefixes stay ahead of suffixes");
         assertTrue(definition.isSuffix(socketable.effects().get(2).effectName()), "suffixes follow the prefixes");
         for (RolledEffect effect : socketable.effects()) {
-            SocketableDefinition.PoolEntry range = definition.rollRange(effect.effectName());
+            PoolEntry range = definition.poolEntry(effect.effectName());
             assertTrue(effect.magnitude() >= range.min() && effect.magnitude() <= range.max(), effect.effectName());
         }
         assertFalse(SocketableCrafting.canUse(SocketCurrency.AUGMENTATION, socketable, definitionAllowed -> true));
@@ -113,10 +113,41 @@ class SocketableCraftingTest {
             SocketableCrafting.recalibrate(socketable, new Random(seed));
             assertEquals(before, socketable.effects().stream().map(RolledEffect::effectName).toList());
             for (RolledEffect effect : socketable.effects()) {
-                SocketableDefinition.PoolEntry range = socketable.definition().rollRange(effect.effectName());
+                PoolEntry range = socketable.definition().poolEntry(effect.effectName());
                 assertTrue(effect.magnitude() >= range.min() && effect.magnitude() <= range.max());
             }
         }
+    }
+
+    @Test
+    void everyRecalibrationChangesAValueSoTheKernelIsNeverWasted() throws Exception {
+        SocketableDefinitions.register(new JSONArray().put(SocketableFixtures.row("narrow", "subroutine", "HULL_MULT:4:5", "ARMOR_PERCENT:1:1")));
+        Socketable socketable = store.add(new SocketableItemData("narrow", 1L,
+                List.of(new RolledEffect("HULL_MULT", 4f), new RolledEffect("ARMOR_PERCENT", 1f)), null));
+
+        for (long seed = 0; seed < 50; seed++) {
+            List<RolledEffect> before = List.copyOf(socketable.effects());
+            assertSame(socketable, SocketableCrafting.recalibrate(socketable, new Random(seed)));
+            assertNotEquals(before, socketable.effects());
+            assertEquals(1f, socketable.effects().get(1).magnitude());
+        }
+    }
+
+    @Test
+    void decimalRangesThatStayBelowOneCanBeRecalibrated() throws Exception {
+        SocketableDefinitions.register(new JSONArray()
+                .put(SocketableFixtures.row("decimal", "subroutine", "HULL_MULT:0.15:0.25", "ARMOR_PERCENT:0.01:0.03"))
+                .put(SocketableFixtures.row("fixed", "subroutine", "HULL_MULT:1:1", "ARMOR_PERCENT:2.5:2.5")));
+        Socketable decimal = store.add(new SocketableItemData("decimal", 1L,
+                List.of(new RolledEffect("HULL_MULT", 0.2f), new RolledEffect("ARMOR_PERCENT", 0.02f)), null));
+        Socketable fixed = store.add(new SocketableItemData("fixed", 1L,
+                List.of(new RolledEffect("HULL_MULT", 1f), new RolledEffect("ARMOR_PERCENT", 2.5f)), null));
+
+        assertTrue(SocketableCrafting.canUse(SocketCurrency.RECALIBRATION, decimal, definition -> true));
+        assertFalse(SocketableCrafting.canUse(SocketCurrency.RECALIBRATION, fixed, definition -> true));
+        owns(SocketCurrency.RECALIBRATION.commodityId(), 1f);
+        assertNull(SocketableCrafting.use(SocketCurrency.RECALIBRATION, fixed, cargo, store, new Random(1L), definition -> true));
+        verify(cargo, never()).removeCommodity(anyString(), anyFloat());
     }
 
     @Test

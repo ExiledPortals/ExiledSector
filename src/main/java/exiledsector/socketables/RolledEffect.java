@@ -52,19 +52,17 @@ public final class RolledEffect {
         return description(null);
     }
 
-    public StyledText description(SocketableDefinition.PoolEntry rollRange) {
+    public StyledText description(PoolEntry rollRange) {
         SkillEffect effect = effect();
         if (effect == null) {
             return null;
         }
         StyledText effectText = display(effect, magnitude);
-        if (rollRange == null || rollRange.min() == rollRange.max() || effectText.spans().isEmpty()) {
+        if (rollRange == null || !rollRange.canVary() || effectText.spans().isEmpty()) {
             return effectText;
         }
-        float lowBound = Math.abs(rollRange.min()) <= Math.abs(rollRange.max()) ? rollRange.min() : rollRange.max();
-        float highBound = lowBound == rollRange.min() ? rollRange.max() : rollRange.min();
-        String lowText = valueText(effect, lowBound);
-        String highText = valueText(effect, highBound);
+        String lowText = valueText(effect, rollRange.boundNearestZero());
+        String highText = valueText(effect, rollRange.boundFarthestFromZero());
         if (lowText == null || highText == null) {
             return effectText;
         }
@@ -100,6 +98,10 @@ public final class RolledEffect {
     static String joinSharingAffixes(List<String> valueTexts) {
         String sharedPrefix = sharedNonNumericEdge(valueTexts, true);
         String sharedSuffix = sharedNonNumericEdge(valueTexts, false);
+        if (sharedPrefix.length() + sharedSuffix.length() > valueTexts.stream().mapToInt(String::length).min().orElse(0)) {
+            sharedPrefix = "";
+            sharedSuffix = "";
+        }
         StringBuilder joined = new StringBuilder(sharedPrefix);
         for (int i = 0; i < valueTexts.size(); i++) {
             String valueText = valueTexts.get(i);

@@ -106,3 +106,39 @@ function Save-ReleasedSkillNodes {
         Write-Host "Recorded $($nodes.Count) released skill node ids in $ledgerFile; commit it with the release."
     }
 }
+
+function Save-ReleasedSocketables {
+    param([string]$ProjectRoot, [string]$Version)
+
+    $ledgerFile = Join-Path $ProjectRoot "src\test\resources\released_socketables.csv"
+    $header = "definition,effect,firstRelease,retiredAfter"
+    $rows = @{}
+    if (Test-Path $ledgerFile) {
+        foreach ($row in (Import-Csv $ledgerFile -Encoding UTF8)) {
+            $rows["$($row.definition),$($row.effect)"] = "$($row.firstRelease),$($row.retiredAfter)"
+        }
+    }
+    $added = 0
+    foreach ($definition in (Import-Csv (Join-Path $ProjectRoot "data\config\exiledSector\socketables.csv") -Encoding UTF8)) {
+        $definitionId = "$($definition.id)".Trim()
+        if (-not $definitionId -or $definitionId.StartsWith("#")) {
+            continue
+        }
+        foreach ($pool in @($definition.prefixes, $definition.suffixes)) {
+            foreach ($entry in "$pool".Split(";")) {
+                $effect = $entry.Split(":")[0].Trim()
+                if ($effect -and -not $rows.ContainsKey("$definitionId,$effect")) {
+                    $rows["$definitionId,$effect"] = "$Version,"
+                    $added++
+                }
+            }
+        }
+    }
+    if ($added -gt 0) {
+        [string[]]$pairs = @($rows.Keys)
+        [Array]::Sort($pairs, [StringComparer]::Ordinal)
+        $lines = @($header) + ($pairs | ForEach-Object { "$_,$($rows[$_])" })
+        [System.IO.File]::WriteAllLines($ledgerFile, [string[]]$lines, (New-Object System.Text.UTF8Encoding($false)))
+        Write-Host "Recorded $added newly released socketable pool effects in $ledgerFile; commit it with the release."
+    }
+}

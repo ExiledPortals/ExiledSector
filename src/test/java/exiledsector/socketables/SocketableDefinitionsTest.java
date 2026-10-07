@@ -37,8 +37,8 @@ class SocketableDefinitionsTest {
         assertEquals(SocketableKind.SUBROUTINE, definition.kind());
         assertEquals(20f, definition.rarity());
         assertEquals(List.of("FLUX_CAPACITY_MULT", "FLUX_DISSIPATION_MULT", "BEAM_WEAPON_DAMAGE_PERCENT"),
-                definition.prefixes().stream().map(SocketableDefinition.PoolEntry::effectName).toList());
-        assertEquals(new SocketableDefinition.PoolEntry("SHIELD_DAMAGE_TAKEN_MULT", -15f, -10f, 1f), definition.suffixes().get(0));
+                definition.prefixes().stream().map(PoolEntry::effectName).toList());
+        assertEquals(new PoolEntry("SHIELD_DAMAGE_TAKEN_MULT", -15f, -10f, 1f), definition.suffixes().get(0));
         assertEquals(6, definition.pool().size());
         assertTrue(definition.isPrefix("FLUX_CAPACITY_MULT") && definition.isSuffix("HULL_MULT"));
         assertFalse(definition.isPrefix("HULL_MULT") || definition.isSuffix("FLUX_CAPACITY_MULT"));
@@ -48,7 +48,7 @@ class SocketableDefinitionsTest {
     void reversedRangesAndExplicitWeightsAreAccepted() throws Exception {
         SocketableDefinitions.register(new JSONArray().put(row("x", "team", "HULL_MULT:6:4:2.5")));
 
-        assertEquals(new SocketableDefinition.PoolEntry("HULL_MULT", 4f, 6f, 2.5f), SocketableDefinitions.get("x").pool().get(0));
+        assertEquals(new PoolEntry("HULL_MULT", 4f, 6f, 2.5f), SocketableDefinitions.get("x").pool().get(0));
     }
 
     @Test
@@ -72,7 +72,7 @@ class SocketableDefinitionsTest {
     void anUnknownEffectIsDroppedFromThePoolWithoutLosingTheDefinition() throws Exception {
         SocketableDefinitions.register(new JSONArray().put(row("x", "team", "NOT_AN_EFFECT:1:2; HULL_MULT:4:6")));
 
-        assertEquals(List.of(new SocketableDefinition.PoolEntry("HULL_MULT", 4f, 6f, 1f)), SocketableDefinitions.get("x").pool());
+        assertEquals(List.of(new PoolEntry("HULL_MULT", 4f, 6f, 1f)), SocketableDefinitions.get("x").pool());
     }
 
     @Test
