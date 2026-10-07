@@ -20,6 +20,7 @@ public final class SocketableCell extends BaseCustomUIPanelPlugin {
     private static final float GLOW_WIDTH = 14f;
     private static final float GLOW_ALPHA = 0.6f;
     private static final float DIMMED_ICON_ALPHA = 0.35f;
+    private static final float MARKED_FILL_ALPHA = 0.25f;
     private static final SpriteCache ICONS = new SpriteCache(SocketableCell.class);
 
     public interface Listener {
@@ -39,6 +40,10 @@ public final class SocketableCell extends BaseCustomUIPanelPlugin {
         }
 
         default boolean selected() {
+            return false;
+        }
+
+        default boolean marked() {
             return false;
         }
 
@@ -80,6 +85,12 @@ public final class SocketableCell extends BaseCustomUIPanelPlugin {
         GLDraw.fillQuad(x, y, width, height, BACKGROUND, alphaMult);
         if (look.rarityGlow()) {
             GLDraw.innerGlow(x, y, width, height, GLOW_WIDTH, rarity, GLOW_ALPHA * alphaMult);
+        }
+        if (listener.marked()) {
+            Color warning = Misc.getNegativeHighlightColor();
+            GLDraw.fillQuad(x, y, width, height, warning, MARKED_FILL_ALPHA * alphaMult);
+            GLDraw.strokeQuad(x, y, width, height, warning, SELECTED_BORDER_WIDTH, alphaMult);
+            return;
         }
         boolean selected = listener.selected();
         GLDraw.strokeQuad(x, y, width, height, selected ? Misc.getBrightPlayerColor() : rarity, selected ? SELECTED_BORDER_WIDTH : BORDER_WIDTH,

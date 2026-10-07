@@ -32,8 +32,10 @@ import org.lwjgl.input.Keyboard;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.function.Function;
 
 public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
@@ -70,7 +72,7 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     private static final float SEARCH_DELAY_SECONDS = 0.25f;
     private static final SocketableCell.Look CELL_LOOK = new SocketableCell.Look(9f, true, 1f);
 
-    private enum Control {CLOSE, DISASSEMBLE_SHOWN, CONFIRM_DISASSEMBLE, CANCEL_DISASSEMBLE}
+    private enum Control {CLOSE, DISASSEMBLY_MODE, CONFIRM_DISASSEMBLE, CANCEL_DISASSEMBLE}
 
     private record StatusChip(SocketStorageFilter.Status status) {
     }
@@ -117,6 +119,8 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     private Socketable selected;
     private boolean targetingSocket;
     private List<Socketable> pendingDisassembly = List.of();
+    private boolean disassemblyMode;
+    private final Set<Socketable> marked = new LinkedHashSet<>();
     private final List<Runnable> queued = new ArrayList<>();
     private int movedFromCargo;
     private String disassembledNotice;
@@ -183,6 +187,9 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
 
     public void setSelected(Socketable socketable) {
         selected = socketable;
+        if (socketable != null) {
+            leaveDisassemblyMode();
+        }
         queued.add(() -> rebuildFooter(SocketStorageQuery.apply(rows, filter)));
     }
 
@@ -191,6 +198,9 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
             return;
         }
         targetingSocket = targeting;
+        if (targeting) {
+            leaveDisassemblyMode();
+        }
         queued.add(() -> rebuildFooter(SocketStorageQuery.apply(rows, filter)));
     }
 
@@ -201,16 +211,29 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
                 closeConfirm();
             }
             reloadRows();
+            marked.removeIf(socketable -> SocketCustody.isInstalled(socketable) || !SocketableStore.get().owned().contains(socketable));
             rebuildGrid();
         });
     }
 
     public boolean escape() {
-        if (confirm == null) {
-            return false;
+        if (confirm != null) {
+            queued.add(this::closeConfirm);
+            return true;
         }
-        queued.add(this::closeConfirm);
-        return true;
+        if (disassemblyMode) {
+            queued.add(() -> {
+                leaveDisassemblyMode();
+                rebuildGrid();
+            });
+            return true;
+        }
+        return false;
+    }
+
+    private void leaveDisassemblyMode() {
+        disassemblyMode = false;
+        marked.clear();
     }
 
     @Override
@@ -301,6 +324,9 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
                     listener.selected(null);
                 }
                 disassemble(targets);
+                if (disassemblyMode) {
+                    leaveDisassemblyMode();
+                }
                 closeConfirm();
                 reloadRows();
                 buildHeader();
@@ -312,8 +338,8 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         }
         if (id == Control.CLOSE) {
             close();
-        } else if (id == Control.DISASSEMBLE_SHOWN) {
-            openConfirm(freeShown(SocketStorageQuery.apply(rows, filter)));
+        } else if (id == Control.DISASSEMBLY_MODE) {
+            disassemblyModePressed();
         } else if (id instanceof StatusChip chip) {
             filter.setStatus(chip.status());
             rebuildControls();
@@ -323,14 +349,39 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         }
     }
 
-    private void cellClicked(SocketStorageRow row) {
-        if (confirm == null && !row.installed()) {
-            queued.add(() -> listener.selected(row.socketable() == selected ? null : row.socketable()));
+    private void disassemblyModePressed() {
+        if (!disassemblyMode) {
+            disassemblyMode = true;
+            if (selected != null) {
+                listener.selected(null);
+            }
+            rebuildFooter(SocketStorageQuery.apply(rows, filter));
+        } else if (marked.isEmpty()) {
+            leaveDisassemblyMode();
+            rebuildFooter(SocketStorageQuery.apply(rows, filter));
+        } else {
+            openConfirm(List.copyOf(marked));
         }
     }
 
+    private void cellClicked(SocketStorageRow row) {
+        if (confirm != null || row.installed()) {
+            return;
+        }
+        if (disassemblyMode) {
+            queued.add(() -> {
+                if (!marked.remove(row.socketable())) {
+                    marked.add(row.socketable());
+                }
+                rebuildFooter(SocketStorageQuery.apply(rows, filter));
+            });
+            return;
+        }
+        queued.add(() -> listener.selected(row.socketable() == selected ? null : row.socketable()));
+    }
+
     private void cellRightClicked(SocketStorageRow row) {
-        if (confirm == null && !row.installed()) {
+        if (confirm == null && !disassemblyMode && !row.installed()) {
             queued.add(() -> openConfirm(List.of(row.socketable())));
         }
     }
@@ -480,10 +531,6 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         rebuildFooter(matching);
     }
 
-    private static List<Socketable> freeShown(List<SocketStorageRow> matching) {
-        return matching.stream().filter(row -> !row.installed()).map(SocketStorageRow::socketable).toList();
-    }
-
     private void rebuildFooter(List<SocketStorageRow> matching) {
         int shown = matching.size();
         if (notice != null) {
@@ -493,7 +540,12 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
             root.removeComponent(summary);
         }
         TooltipMakerAPI noticeElement = root.createUIElement(innerWidth(), NOTICE_HEIGHT, false);
-        if (selected != null) {
+        if (disassemblyMode) {
+            int parts = marked.stream().mapToInt(socketable -> socketable.rarity().disassemblyParts()).sum();
+            String hint = marked.isEmpty() ? Translation.text("ui.socketStorage.disassemblyHint")
+                    : Translation.msg("ui.socketStorage.disassemblyMarked").arg("count", marked.size()).arg("parts", parts).text();
+            noticeElement.addPara("%s", 0f, Misc.getNegativeHighlightColor(), Misc.getNegativeHighlightColor(), hint);
+        } else if (selected != null) {
             noticeElement.addPara("%s", 0f, Misc.getPositiveHighlightColor(), Misc.getPositiveHighlightColor(),
                     Translation.msg("ui.socketStorage.placingHint").arg("name", selected.name()).text());
         } else if (targetingSocket) {
@@ -513,12 +565,13 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         summaryElement.addPara("%s", 0f, Misc.getGrayColor(), Misc.getGrayColor(), Translation.msg("ui.socketStorage.summary")
                 .arg("shown", shown).arg("stored", rows.size()).arg("installed", installed).text())
                 .getPosition().inTL(0f, PARTS_TEXT_TOP);
-        int free = freeShown(matching).size();
-        String batchLabel = Translation.msg("ui.socketStorage.disassembleShown").arg("count", free).text();
-        float batchWidth = Global.getSettings().computeStringWidth(batchLabel, Fonts.ORBITRON_20AA) + BUTTON_TEXT_PADDING;
-        ButtonAPI batch = summaryElement.addButton(batchLabel, Control.DISASSEMBLE_SHOWN, batchWidth, FOOTER_HEIGHT, 0f);
-        batch.getPosition().inTR(0f, 0f);
-        batch.setEnabled(free > 0);
+        String modeKey = !disassemblyMode ? "ui.socketStorage.disassemblyMode"
+                : marked.isEmpty() ? "ui.socketStorage.exitDisassemblyMode" : "ui.socketStorage.confirmDisassembly";
+        String modeLabel = Translation.text(modeKey);
+        float modeWidth = Global.getSettings().computeStringWidth(modeLabel, Fonts.ORBITRON_20AA) + BUTTON_TEXT_PADDING;
+        ButtonAPI mode = summaryElement.addButton(modeLabel, Control.DISASSEMBLY_MODE, modeWidth, FOOTER_HEIGHT, 0f);
+        mode.getPosition().inTR(0f, 0f);
+        mode.setEnabled(disassemblyMode || rows.stream().anyMatch(row -> !row.installed()));
         root.addUIElement(summaryElement).inTL(PAD, height - PAD - FOOTER_HEIGHT);
         summary = summaryElement;
     }
@@ -618,6 +671,11 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         if (row.installed()) {
             return List.of(Translation.msg("ui.socketStorage.cell.installed").arg("ship", row.installedIn()).styled());
         }
+        if (disassemblyMode) {
+            int parts = row.socketable().rarity().disassemblyParts();
+            String key = marked.contains(row.socketable()) ? "ui.socketStorage.cell.unmark" : "ui.socketStorage.cell.mark";
+            return List.of(Translation.msg(key).count(parts).arg("count", parts).styled());
+        }
         String install = targetingSocket ? "ui.socketStorage.cell.freeTarget" : "ui.socketStorage.cell.free";
         return List.of(Translation.styled(install), Translation.msg("ui.socketStorage.cell.disassemble").count(row.socketable().rarity().disassemblyParts())
                 .arg("count", row.socketable().rarity().disassemblyParts()).styled());
@@ -650,6 +708,11 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
             @Override
             public boolean selected() {
                 return row.socketable() == selected;
+            }
+
+            @Override
+            public boolean marked() {
+                return marked.contains(row.socketable());
             }
 
             @Override
