@@ -15,6 +15,7 @@ public final class SkillTreeSounds {
     static final String WORMHOLE_JUMP = "ui_slipsurge_off";
     static final String PANEL_OPEN = "ui_select_command_ui_icon";
     static final String SOCKET = "ui_industry_install_any_item";
+    static final String CRAFT = "ui_cargo_machinery_drop";
     static final long NODE_SOUND_GAP_NANOS = 100_000_000L;
 
     private static long lastNodeSound = Long.MIN_VALUE;
@@ -52,6 +53,10 @@ public final class SkillTreeSounds {
 
     public static void socketed() {
         play(SOCKET);
+    }
+
+    public static void crafted() {
+        play(CRAFT);
     }
 
     static void resetForTests() {

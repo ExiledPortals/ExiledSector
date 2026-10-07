@@ -48,6 +48,10 @@ final class SocketPlacement {
         return panel != null || placing != null;
     }
 
+    boolean isWorkbenchOpen() {
+        return panel != null && panel.isWorkbenchOpen();
+    }
+
     boolean panelContains(float x, float y) {
         return panel != null && panel.contains(x, y);
     }

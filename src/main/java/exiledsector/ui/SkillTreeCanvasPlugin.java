@@ -26,14 +26,18 @@ import exiledsector.ui.decoration.SkillTreeStaticImageRenderer;
 import exiledsector.ui.node.NodeSearch;
 import exiledsector.ui.node.SkillTreeNodeRenderer;
 import exiledsector.ui.util.BorderedPanel;
+import exiledsector.ui.util.GLDraw;
 import lunalib.lunaRefit.BaseRefitButton;
 import org.lwjgl.input.Keyboard;
 
+import java.awt.Color;
 import java.util.List;
 
 public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     private static final float SHIP_CARD_FRAME_OUTSET = 8f;
+    private static final float WORKBENCH_DIM_SECONDS = 0.25f;
+    private static final float WORKBENCH_DIM_ALPHA = 0.45f;
 
     private final String readoutTooltipTitle = Translation.text("ui.readout.title");
     private final String readoutTooltipBody;
@@ -68,6 +72,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private boolean pendingClickShiftDown;
     private SkillType pendingDropdownOption;
     private boolean swallowEscapeUp;
+    private float workbenchDim;
+    private boolean reopenStatsAfterWorkbench;
 
     public SkillTreeCanvasPlugin(FleetMemberAPI member, ShipVariantAPI variant, float shipCardHeight, BaseRefitButton refitButton,
                                  CustomPanelAPI host) {
@@ -123,13 +129,30 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         placement.layoutButton(position, shipCardFrame(), isStorageButtonShown());
         placement.advance(templateUi.isModalOpen() || hyperspace.isActive() || nodeRenderer.isStartingRootInputLocked());
         ShipOpBudget budget = nodeRenderer.budget();
-        boolean pointerLive = mouseKnown && !isModalOpen();
+        boolean pointerLive = mouseKnown && !isModalOpen() && !placement.isWorkbenchOpen();
         hideShipCardBehindModals();
         statPanel.refresh(budget, nodeRenderer.statsRevision());
         hyperspace.reopenStatsWhenBack();
+        hideStatsForWorkbench();
         statPanel.advance(amount);
         ordnancePointsBar.advance(amount, position, budget.used, budget.total, mouseX, mouseY, pointerLive);
         levelBar.advance(amount, position, mouseX, mouseY, pointerLive);
+        float dimStep = amount / WORKBENCH_DIM_SECONDS;
+        workbenchDim = Math.max(0f, Math.min(1f, workbenchDim + (placement.isWorkbenchOpen() ? dimStep : -dimStep)));
+    }
+
+    private void hideStatsForWorkbench() {
+        if (placement.isWorkbenchOpen()) {
+            if (statPanel.isOpen()) {
+                reopenStatsAfterWorkbench = true;
+                statPanel.close();
+            }
+        } else if (reopenStatsAfterWorkbench) {
+            reopenStatsAfterWorkbench = false;
+            if (!hyperspace.isActive()) {
+                statPanel.open(false);
+            }
+        }
     }
 
     private void enterHyperspace() {
@@ -165,10 +188,28 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             handleStartingRootEvent(event);
         } else if (templateUi.isModalOpen()) {
             handleModalEvent(event);
+        } else if (placement.isWorkbenchOpen()) {
+            handleWorkbenchEvent(event);
         } else if (hyperspace.isActive()) {
             handleHyperspaceEvent(event);
         } else {
             handleTreeEvent(event);
+        }
+    }
+
+    private void handleWorkbenchEvent(InputEventAPI event) {
+        if (event.isMouseMoveEvent()) {
+            mouseX = event.getX();
+            mouseY = event.getY();
+            mouseKnown = true;
+        } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
+            placement.escape();
+            consume(event);
+        } else if (event.isLMBDownEvent() && placement.isButtonClickable(event.getX(), event.getY())) {
+            placement.toggle(position, shipCardFrame());
+            consume(event);
+        } else if ((event.isMouseDownEvent() || event.isMouseScrollEvent()) && position.containsEvent(event)) {
+            consume(event);
         }
     }
 
@@ -413,11 +454,15 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         ringBeltRenderer.render(viewport, backgroundAlpha * treeAlpha);
         staticImageRenderer.render(viewport, backgroundAlpha, hyperspace.anchorIds(), treeAlpha);
         boolean pointerOverTree = mouseKnown && !isOverOverlay(mouseX, mouseY);
-        boolean treeHovered = !inHyperspace && pointerOverTree && !isModalOpen();
+        boolean treeHovered = !inHyperspace && pointerOverTree && !isModalOpen() && !placement.isWorkbenchOpen();
         if (treeAlpha > 0f) {
             nodeRenderer.render(viewport, alphaMult * treeAlpha, mouseX, mouseY, treeHovered);
         }
         starRenderer.renderGlow(viewport, backgroundAlpha);
+        if (workbenchDim > 0f) {
+            GLDraw.fillQuad(position.getX(), position.getY(), position.getWidth(), position.getHeight(), Color.BLACK,
+                    WORKBENCH_DIM_ALPHA * workbenchDim * alphaMult);
+        }
         if (inHyperspace) {
             hyperspace.render(viewport, alphaMult, pointerOverTree, mouseX, mouseY);
         }
@@ -433,7 +478,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     private void renderChrome(float alphaMult, float treeAlpha) {
         float chromeAlpha = hyperspace.chromeAlpha();
-        statPanel.render(position, mouseX, mouseY, alphaMult, chromeAlpha);
+        statPanel.render(position, mouseX, mouseY, alphaMult, chromeAlpha * (1f - workbenchDim));
         ordnancePointsBar.render(position, alphaMult, null);
         levelBar.render(position, alphaMult);
         if (!nodeRenderer.isStartingRootInputLocked() && treeAlpha > 0f) {
@@ -447,6 +492,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void renderChromeTooltips(float alphaMult, boolean inHyperspace) {
+        if (placement.isWorkbenchOpen()) {
+            return;
+        }
         if (ordnancePointsBar.isHovered(position, mouseX, mouseY) || levelBar.isHovered(position, mouseX, mouseY)) {
             readoutTooltipRenderer.render(readoutTooltipTitle, readoutTooltipBody, mouseX, mouseY, alphaMult);
         }

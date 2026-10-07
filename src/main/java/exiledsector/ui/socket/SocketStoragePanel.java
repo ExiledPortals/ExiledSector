@@ -24,6 +24,7 @@ import exiledsector.socketables.SocketableDisassembly;
 import exiledsector.socketables.SocketableRarity;
 import exiledsector.socketables.SocketableStore;
 import exiledsector.ui.SkillTreePanelStyle;
+import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.util.BorderedPanel;
 import exiledsector.ui.util.FramedPanelPlugin;
 import exiledsector.ui.util.HoloTransition;
@@ -65,6 +66,7 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     private static final int COLUMNS = 6;
     private static final float WIDTH = PAD * 2f + SCROLLBAR_ROOM + COLUMNS * CELL_SIZE + (COLUMNS - 1) * GAP;
     private static final float CONFIRM_HEIGHT = 130f;
+    private static final float WORKBENCH_GAP = 12f;
     private static final float BATCH_CONFIRM_HEIGHT = 170f;
     private static final float BUTTON_TEXT_PADDING = 30f;
     private static final float PARTS_ICON_SIZE = 24f;
@@ -72,7 +74,7 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     private static final float SEARCH_DELAY_SECONDS = 0.25f;
     private static final SocketableCell.Look CELL_LOOK = new SocketableCell.Look(9f, true, 1f);
 
-    private enum Control {CLOSE, DISASSEMBLY_MODE, CONFIRM_DISASSEMBLE, CANCEL_DISASSEMBLE}
+    private enum Control {CLOSE, WORKBENCH, DISASSEMBLY_MODE, CONFIRM_DISASSEMBLE, CANCEL_DISASSEMBLE}
 
     private record StatusChip(SocketStorageFilter.Status status) {
     }
@@ -100,6 +102,10 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
 
     private Function<Socketable, String> installedIn;
     private CustomPanelAPI root;
+    private SocketWorkbenchPanel workbench;
+    private SocketWorkbenchPanel fadingWorkbench;
+    private float left;
+    private float top;
     private PositionAPI position;
     private float width;
     private float height;
@@ -138,6 +144,8 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         SocketStoragePanel panel = new SocketStoragePanel(host, installedIn, listener);
         panel.width = WIDTH;
         panel.height = height;
+        panel.left = left;
+        panel.top = top;
         panel.root = Global.getSettings().createCustom(WIDTH, height, panel);
         host.addComponent(panel.root).inTL(left, top);
         panel.movedFromCargo = absorbPlayerCargo();
@@ -158,6 +166,9 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         }
         closing = true;
         hideHoverTooltip();
+        if (workbench != null) {
+            workbench.close();
+        }
         transition.close();
         applyContentOpacity(transition.contentAlpha());
         listener.closed();
@@ -213,6 +224,9 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
             reloadRows();
             marked.removeIf(socketable -> SocketCustody.isInstalled(socketable) || !SocketableStore.get().owned().contains(socketable));
             rebuildGrid();
+            if (workbench != null) {
+                workbench.refresh();
+            }
         });
     }
 
@@ -226,6 +240,10 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
                 leaveDisassemblyMode();
                 rebuildGrid();
             });
+            return true;
+        }
+        if (workbench != null) {
+            queued.add(workbench::close);
             return true;
         }
         return false;
@@ -324,6 +342,9 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
                     listener.selected(null);
                 }
                 disassemble(targets);
+                if (workbench != null) {
+                    workbench.refresh();
+                }
                 if (disassemblyMode) {
                     leaveDisassemblyMode();
                 }
@@ -338,6 +359,8 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         }
         if (id == Control.CLOSE) {
             close();
+        } else if (id == Control.WORKBENCH) {
+            toggleWorkbench();
         } else if (id == Control.DISASSEMBLY_MODE) {
             disassemblyModePressed();
         } else if (id instanceof StatusChip chip) {
@@ -377,7 +400,49 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
             });
             return;
         }
+        if (workbench != null) {
+            workbench.load(row.socketable());
+            return;
+        }
         queued.add(() -> listener.selected(row.socketable() == selected ? null : row.socketable()));
+    }
+
+    public boolean isWorkbenchOpen() {
+        return workbench != null || (fadingWorkbench != null && fadingWorkbench.isVisible());
+    }
+
+    private void toggleWorkbench() {
+        if (workbench != null) {
+            workbench.close();
+            return;
+        }
+        if (selected != null) {
+            listener.selected(null);
+        }
+        SkillTreeSounds.panelOpened();
+        workbench = SocketWorkbenchPanel.open(host, left + width + WORKBENCH_GAP, top, height, new SocketWorkbenchPanel.Listener() {
+            @Override
+            public void changed(Socketable loaded) {
+                List<Socketable> owned = SocketableStore.get().owned();
+                if (pendingDisassembly.stream().anyMatch(socketable -> !owned.contains(socketable))) {
+                    closeConfirm();
+                } else if (confirm != null) {
+                    List<Socketable> pending = pendingDisassembly;
+                    closeConfirm();
+                    openConfirm(pending);
+                }
+                marked.removeIf(socketable -> !owned.contains(socketable));
+                reloadRows();
+                buildHeader();
+                rebuildGrid();
+            }
+
+            @Override
+            public void closed() {
+                fadingWorkbench = workbench;
+                workbench = null;
+            }
+        });
     }
 
     private void cellRightClicked(SocketStorageRow row) {
@@ -406,19 +471,21 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         element.addPara("%s", 0f, Misc.getBasePlayerColor(), Misc.getBasePlayerColor(), Translation.text("ui.socketStorage.title"));
         ButtonAPI close = element.addButton(Translation.text("ui.socketStorage.close"), Control.CLOSE, CLOSE_BUTTON_WIDTH, CHIP_HEIGHT, 0f);
         close.getPosition().inTR(0f, 0f);
-        addPartsCount(element);
+        String modifyLabel = Translation.text("ui.socketStorage.workbench");
+        float modifyWidth = Global.getSettings().computeStringWidth(modifyLabel, Fonts.ORBITRON_20AA) + BUTTON_TEXT_PADDING;
+        element.addButton(modifyLabel, Control.WORKBENCH, modifyWidth, CHIP_HEIGHT, 0f).getPosition().inTR(CLOSE_BUTTON_WIDTH + GAP, 0f);
+        addPartsCount(element, CLOSE_BUTTON_WIDTH + GAP + modifyWidth + GAP * 2f);
         root.addUIElement(element).inTL(PAD, PAD);
         header = element;
     }
 
-    private static void addPartsCount(TooltipMakerAPI element) {
+    private static void addPartsCount(TooltipMakerAPI element, float countRight) {
         CommoditySpecAPI parts = Global.getSettings().getCommoditySpec(SocketableDisassembly.PARTS_COMMODITY_ID);
         if (parts == null) {
             return;
         }
         String count = String.valueOf(partsInCargo());
         float countWidth = Global.getSettings().computeStringWidth(count, Fonts.ORBITRON_12) + LINE_PAD;
-        float countRight = CLOSE_BUTTON_WIDTH + GAP * 2f;
         element.setParaFont(Fonts.ORBITRON_12);
         LabelAPI label = element.addPara("%s", 0f, Misc.getTextColor(), Misc.getTextColor(), count);
         label.autoSizeToWidth(countWidth).inTR(countRight, PARTS_TEXT_TOP);
@@ -676,7 +743,8 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
             String key = marked.contains(row.socketable()) ? "ui.socketStorage.cell.unmark" : "ui.socketStorage.cell.mark";
             return List.of(Translation.msg(key).count(parts).arg("count", parts).styled());
         }
-        String install = targetingSocket ? "ui.socketStorage.cell.freeTarget" : "ui.socketStorage.cell.free";
+        String install = workbench != null ? "ui.socketStorage.cell.workbench"
+                : targetingSocket ? "ui.socketStorage.cell.freeTarget" : "ui.socketStorage.cell.free";
         return List.of(Translation.styled(install), Translation.msg("ui.socketStorage.cell.disassemble").count(row.socketable().rarity().disassemblyParts())
                 .arg("count", row.socketable().rarity().disassemblyParts()).styled());
     }
@@ -707,7 +775,7 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
 
             @Override
             public boolean selected() {
-                return row.socketable() == selected;
+                return row.socketable() == selected || (workbench != null && row.socketable() == workbench.loaded());
             }
 
             @Override

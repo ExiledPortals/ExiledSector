@@ -68,6 +68,9 @@ The zh_CN catalogue was drafted by Claude and still needs review by a native spe
 | Subroutine / officer / team / AI core | 子程序 / 军官 / 团队 / AI核心 | What a Modular Hull Socket holds |
 | Military-grade / Industrial-grade / Consumer-grade | 军用级 / 工业级 / 民用级 | Socketable grades |
 | Socketable Parts / disassemble | 插槽组件 / 拆解 | Cargo item from disassembling a socketable |
+| Socket Modification / workbench | 插槽改造 / 改造台 | The panel for synthesising and modifying socketables |
+| Augmentation / Recalibration / Transposition Kernel | 增幅内核 / 重校内核 / 转置内核 | Socketable currencies |
+| Synthesise | 合成 | Making socketables or currencies from Socketable Parts |
 | Escort | 护航 | |
 | Refraction / refract | 折射 | Refracting Projectiles' shots, matching its name 折射弹体 |
 | Volume (a region on the hyperspace view) | 星域 | "Sindrian volume" is 辛达强权星域 |
