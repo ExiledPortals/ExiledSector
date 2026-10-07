@@ -19,6 +19,7 @@ import exiledsector.skills.progression.ShipLevelSystem;
 import exiledsector.skills.progression.ShipOpBudget;
 import exiledsector.skills.progression.SkillNodeOpCost;
 import exiledsector.socketables.SocketCustody;
+import exiledsector.ui.decoration.SkillTreeFleetRenderer;
 import exiledsector.ui.decoration.SkillTreeRingBeltRenderer;
 import exiledsector.ui.decoration.SkillTreeStarRenderer;
 import exiledsector.ui.decoration.SkillTreeStarfieldRenderer;
@@ -45,6 +46,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final SkillTreeStarfieldRenderer starfieldRenderer;
     private final SkillTreeStaticImageRenderer staticImageRenderer;
     private final SkillTreeRingBeltRenderer ringBeltRenderer;
+    private final SkillTreeFleetRenderer fleetRenderer;
     private final SkillTreeStarRenderer starRenderer;
     private final SkillTreeNodeRenderer nodeRenderer;
     private final SkillTreeStatPanel statPanel;
@@ -87,6 +89,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.starfieldRenderer = new SkillTreeStarfieldRenderer(panelStyle);
         this.staticImageRenderer = new SkillTreeStaticImageRenderer();
         this.ringBeltRenderer = new SkillTreeRingBeltRenderer();
+        this.fleetRenderer = SkillTreeFleetRenderer.forPlayerFleet();
         this.starRenderer = new SkillTreeStarRenderer();
         this.nodeRenderer = new SkillTreeNodeRenderer(member, variant, panelStyle, refitButton, nodeSearch);
         this.searchBar = new SkillTreeSearchBar(nodeSearch);
@@ -120,6 +123,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         starfieldRenderer.advance(amount);
         staticImageRenderer.advance(amount);
         ringBeltRenderer.advance(amount);
+        fleetRenderer.advance(amount);
         starRenderer.advance(amount);
         boolean followingStartingRoot = nodeRenderer.isStartingRootMoving();
         camera.beginStartingRootFollow(nodeRenderer);
@@ -453,6 +457,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         starRenderer.renderAurora(viewport, backgroundAlpha);
         ringBeltRenderer.render(viewport, backgroundAlpha * treeAlpha);
         staticImageRenderer.render(viewport, backgroundAlpha, hyperspaceMode.anchorIds(), treeAlpha);
+        fleetRenderer.render(viewport, backgroundAlpha * treeAlpha);
         boolean pointerOverTree = mouseKnown && !isOverOverlay(mouseX, mouseY);
         boolean treeHovered = !inHyperspace && pointerOverTree && !isModalOpen() && !socketPlacement.isWorkbenchOpen();
         if (treeAlpha > 0f) {

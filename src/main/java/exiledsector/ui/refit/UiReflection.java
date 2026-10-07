@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-final class UiReflection {
+public final class UiReflection {
 
     private static final Object NONE = new Object();
     private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
@@ -17,6 +17,7 @@ final class UiReflection {
     private static final MethodHandle GET_DECLARED_FIELDS = virtual(Class.class, "getDeclaredFields", FIELD.arrayType());
     private static final MethodHandle METHOD_NAME = virtual(METHOD, "getName", String.class);
     private static final MethodHandle METHOD_PARAMETER_COUNT = virtual(METHOD, "getParameterCount", int.class);
+    private static final MethodHandle METHOD_RETURN_TYPE = virtual(METHOD, "getReturnType", Class.class);
     private static final MethodHandle METHOD_INVOKE = virtual(METHOD, "invoke", Object.class, Object.class, Object[].class);
     private static final MethodHandle FIELD_TYPE = virtual(FIELD, "getType", Class.class);
     private static final MethodHandle METHOD_TRY_SET_ACCESSIBLE = virtual(METHOD, "trySetAccessible", boolean.class);
@@ -27,12 +28,21 @@ final class UiReflection {
     private static final Object[] NO_ARGS = new Object[0];
     private static final Map<Class<?>, Map<String, Object[]>> METHODS = new HashMap<>();
     private static final Map<Class<?>, Map<Class<?>, Object>> FIELDS = new HashMap<>();
+    private static final Map<Class<?>, Map<Class<?>, Object[]>> METHODS_BY_RETURN_TYPE = new HashMap<>();
 
     private UiReflection() {
     }
 
-    static Object call(Object target, String name) throws Throwable {
+    public static Object call(Object target, String name) throws Throwable {
         return call(target, name, NO_ARGS);
+    }
+
+    public static <T> T callReturning(Object target, Class<T> returnType, Object... args) throws Throwable {
+        if (target == null) return null;
+        Object method = methodReturning(target.getClass(), returnType, args.length);
+        if (method == NONE) return null;
+        Object value = METHOD_INVOKE.invoke(method, target, args);
+        return returnType.isInstance(value) ? returnType.cast(value) : null;
     }
 
     static Object call(Object target, String name, Object... args) throws Throwable {
@@ -77,6 +87,27 @@ final class UiReflection {
         Object found = NONE;
         for (Object candidate : (Object[]) GET_METHODS.invoke(type)) {
             if (name.equals(METHOD_NAME.invoke(candidate)) && parameterCount == (int) METHOD_PARAMETER_COUNT.invoke(candidate)) {
+                METHOD_TRY_SET_ACCESSIBLE.invoke(candidate);
+                found = candidate;
+                break;
+            }
+        }
+        byParameterCount[parameterCount] = found;
+        return found;
+    }
+
+    private static Object methodReturning(Class<?> type, Class<?> returnType, int parameterCount) throws Throwable {
+        if (parameterCount > MAX_PARAMETER_COUNT) {
+            throw new IllegalArgumentException("Only methods with up to " + MAX_PARAMETER_COUNT + " parameters are supported");
+        }
+        Object[] byParameterCount = METHODS_BY_RETURN_TYPE.computeIfAbsent(type, key -> new HashMap<>())
+                .computeIfAbsent(returnType, key -> new Object[MAX_PARAMETER_COUNT + 1]);
+        Object cached = byParameterCount[parameterCount];
+        if (cached != null) return cached;
+        Object found = NONE;
+        for (Object candidate : (Object[]) GET_METHODS.invoke(type)) {
+            if (parameterCount == (int) METHOD_PARAMETER_COUNT.invoke(candidate)
+                    && returnType.isAssignableFrom((Class<?>) METHOD_RETURN_TYPE.invoke(candidate))) {
                 METHOD_TRY_SET_ACCESSIBLE.invoke(candidate);
                 found = candidate;
                 break;
