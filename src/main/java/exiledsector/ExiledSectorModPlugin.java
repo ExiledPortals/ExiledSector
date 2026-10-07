@@ -10,6 +10,7 @@ import com.thoughtworks.xstream.XStream;
 import exiledsector.compat.CompatChecks;
 import exiledsector.effects.CombatXpListener;
 import exiledsector.effects.FleetCrewLedgerListener;
+import exiledsector.effects.NpcBonusScale;
 import exiledsector.effects.NpcFleetDialogListener;
 import exiledsector.effects.NpcFleetInflationListener;
 import exiledsector.effects.NpcFleetSweepScript;
@@ -183,6 +184,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         SkillTree.applyDisabledRegions(AreaToggles.disabledRegions());
         SkillDataResolver.clearCache();
         ResolvedTree.clearCache();
+        NpcBonusScale.invalidate();
         NpcSocketables.clearCache();
         SocketableStore.get().freezeNames();
         OpSpentSlotManager.releaseUnless(ShipSkillDataManager::hasProgress);

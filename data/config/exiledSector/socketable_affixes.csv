@@ -85,3 +85,7 @@ INTERCEPTOR_ROLE_DAMAGE_PERCENT,Intercepting,Interdiction
 KINETIC_DAMAGE_TAKEN_PERCENT,Deflecting,Deflection
 HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT,Blast-proof,Blastproofing
 FRAGMENTATION_DAMAGE_TAKEN_PERCENT,Shatterproof,Splinter Guard
+ARMOR_FLAT,Laminated,Lamination
+HULL_FLAT,Braced,Bracing
+FLUX_CAPACITY_FLAT,Buffered,Buffering
+FLUX_DISSIPATION_FLAT,Ducted,Ducting

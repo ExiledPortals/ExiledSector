@@ -45,6 +45,7 @@ public class CombatXpListener extends BaseCampaignEventListener {
         SkillTreeInstaller.raiseToLevelFloor(playerFleet);
         Map<FleetMemberAPI, Integer> levelsBefore = levelsOf(playerFleet);
         float catchUpMultiplier = ShipLevelSystem.awardXpToFleet(playerFleet, xp);
+        NpcBonusScale.invalidate();
         I18n.forGameText(() -> report(new CombatXpReport(xp, defeatedDp, lost, difficultyMultiplier, catchUpMultiplier,
                 levelUps(levelsBefore))));
     }
