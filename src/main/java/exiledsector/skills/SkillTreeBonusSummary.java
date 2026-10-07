@@ -23,11 +23,17 @@ public final class SkillTreeBonusSummary {
     }
 
     public static Summary of(ShipSkillData data, HullSize hullSize) {
+        return of(data, hullSize, 1f);
+    }
+
+    public static Summary of(ShipSkillData data, HullSize hullSize, float bonusScale) {
         SkillType root = null;
         int nodeCount = 0;
         List<SkillType> notables = new ArrayList<>();
         Map<Group, Map<SkillEffect, Float>> totalsByGroup = new LinkedHashMap<>();
-        for (AllocatedNode allocated : AllocatedNode.of(data)) {
+        List<AllocatedNode> allocatedNodes = AllocatedNode.of(data);
+        NpcBonusScaling scaling = NpcBonusScaling.of(bonusScale, data, allocatedNodes, hullSize);
+        for (AllocatedNode allocated : allocatedNodes) {
             SkillType type = allocated.effectiveType();
             SkillTier tier = allocated.node().getType().getTier();
             if (tier == SkillTier.ROOT && root == null) {
@@ -42,7 +48,7 @@ public final class SkillTreeBonusSummary {
                     key -> new LinkedHashMap<>());
             for (SkillTypeEffect typeEffect : AllocatedSkillEffects.appliedEffects(data, allocated, hullSize)) {
                 SkillEffect effect = typeEffect.effect();
-                groupTotals.merge(effect, typeEffect.magnitude(), Float::sum);
+                groupTotals.merge(effect, scaling.scaled(allocated, effect, typeEffect.magnitude()), Float::sum);
             }
         }
         return new Summary(root, data.getLevel(), nodeCount, notables, describe(totalsByGroup));

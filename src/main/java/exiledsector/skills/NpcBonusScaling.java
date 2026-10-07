@@ -1,10 +1,6 @@
-package exiledsector.effects;
+package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledsector.skills.AllocatedNode;
-import exiledsector.skills.AllocatedSkillEffects;
-import exiledsector.skills.ShipSkillData;
-import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.StatMode;
 
@@ -13,12 +9,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-final class NpcBonusScaling {
+public final class NpcBonusScaling {
 
     static final Set<String> UNSCALED_NODE_TAGS = Set.of("logistics", "fleet_support", "campaign_only");
-    static final Set<String> UNSCALED_EFFECTS = Set.of("BURN_LEVEL_FLAT", "SYSTEM_CHARGES_FLAT");
-    static final NpcBonusScaling NONE = new NpcBonusScaling(1f, Map.of());
+    static final Set<String> CAMPAIGN_EFFECTS = Set.of("BURN_LEVEL_FLAT", "FUEL_CAPACITY_PERCENT", "FUEL_CAPACITY_FLAT",
+            "CARGO_CAPACITY_PERCENT", "CARGO_CAPACITY_FLAT", "CREW_CAPACITY_PERCENT", "CREW_CAPACITY_FLAT", "SENSOR_PROFILE_PERCENT",
+            "SENSOR_PROFILE_MULT", "SENSOR_STRENGTH_PERCENT", "SENSOR_STRENGTH_FLAT", "CR_RECOVERY_RATE_PERCENT", "REPAIR_RATE_PER_DAY_PERCENT",
+            "MIN_CREW_MULT", "MIN_CREW_PERCENT", "MIN_CREW_FLAT", "SUPPLIES_PER_MONTH_MULT", "FUEL_USE_MULT", "CREW_LOSS_PERCENT",
+            "CREW_LOSS_MULT", "GROUND_SUPPORT_FLAT", "CORONA_RESISTANCE_MULT");
+    static final Set<String> COUNT_EFFECTS = Set.of("SYSTEM_CHARGES_FLAT");
+    static final Set<String> DRAWBACK_PARAMETER_EFFECTS = Set.of("WEAPON_RANGE_THRESHOLD_FLAT", "CONVERTED_HANGAR_REFIT_TIME_MULT",
+            "CONVERTED_HANGAR_REPLACEMENT_RATE_MULT", "CONVERTED_HANGAR_RELAUNCH_TIME_FLAT", "CONVERTED_HANGAR_MIN_CREW_FLAT");
+    public static final Set<String> UNSCALED_EFFECTS = Stream.of(CAMPAIGN_EFFECTS, COUNT_EFFECTS, DRAWBACK_PARAMETER_EFFECTS)
+            .flatMap(Set::stream).collect(Collectors.toUnmodifiableSet());
+    public static final NpcBonusScaling NONE = new NpcBonusScaling(1f, Map.of());
 
     private final float bonusScale;
     private final Map<SkillEffect, Float> factors;
@@ -28,7 +35,7 @@ final class NpcBonusScaling {
         this.factors = factors;
     }
 
-    static NpcBonusScaling of(float bonusScale, ShipSkillData shipData, List<AllocatedNode> allocatedNodes, HullSize hullSize) {
+    public static NpcBonusScaling of(float bonusScale, ShipSkillData shipData, List<AllocatedNode> allocatedNodes, HullSize hullSize) {
         if (Float.compare(bonusScale, 1f) == 0) {
             return NONE;
         }
@@ -48,8 +55,9 @@ final class NpcBonusScaling {
         return new NpcBonusScaling(bonusScale, Collections.unmodifiableMap(effectFactors));
     }
 
-    float scaled(AllocatedNode node, SkillEffect effect, float magnitude) {
-        if (Float.compare(bonusScale, 1f) == 0 || !isScalableBonus(effect, magnitude) || !scalesNode(node)) {
+    public float scaled(AllocatedNode node, SkillEffect effect, float magnitude) {
+        if (Float.compare(bonusScale, 1f) == 0 || node.effectiveType().getVanillaHullModId() != null
+                || !isScalableBonus(effect, magnitude) || !scalesNode(node)) {
             return magnitude;
         }
         return magnitude * factors.getOrDefault(effect, 1f);
@@ -66,7 +74,7 @@ final class NpcBonusScaling {
         return Collections.disjoint(node.node().effectiveTags(node.effectiveType()), UNSCALED_NODE_TAGS);
     }
 
-    static float factor(StatMode mode, float bonusTotal, float bonusScale) {
+    public static float factor(StatMode mode, float bonusTotal, float bonusScale) {
         if (bonusTotal >= 0f || mode == StatMode.FLAT) {
             return bonusScale;
         }

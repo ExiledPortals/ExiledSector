@@ -185,7 +185,7 @@ After that it's down to taste. A captain picks notables and keystones that suit 
 
 Other mods can map their own factions to a volume in `data/config/exiledSector/npc_faction_volumes.csv`.
 
-NPC trees also grow with your fleet. Once you reach level 15, each NPC ship's node bonuses are added up and multiplied, from 1x while your combat ships average level 15 up to 3x when they average level 50. Word gets around. Only the bonuses grow: drawbacks stay as written, reductions such as damage taken creep toward their limit without passing it, and the 80% cap on damage taken still holds. Logistics and fleet support nodes don't scale.
+NPC trees also grow with your fleet. Once you reach level 15, each NPC ship's node bonuses are added up and multiplied, from 1x while your combat ships average level 15 up to 3x when they average level 50. Word gets around. Only the bonuses grow: drawbacks stay as written, reductions such as damage taken creep toward their limit without passing it, and the 80% cap on damage taken still holds. Logistics, fleet support and campaign stats such as sensors, cargo and burn level don't scale.
 
 If you recover a ship that has a tree, it keeps its tree, and the tree becomes a normal player tree. Reinforced Bulkheads' near-guaranteed recovery is switched off on NPC ships, so levelled enemies aren't free loot.
 

@@ -96,4 +96,12 @@ class ShipTreeSummaryRendererTest {
         verify(info).addPara(eq("%s"), anyFloat(), (Color) any(), (Color) any(), eq("    - " + DefenseSkillEffect.HULL_PERCENT.description(10f).plain()));
         verify(label).setHighlightColors(SkillTreePanelStyle.POSITIVE_STAT_COLOR);
     }
+
+    @Test
+    void scaledNpcTreesShowTheMultiplierAndTheScaledBonuses() {
+        ShipTreeSummaryRenderer.render(info, member, new ShipTreeLookup.ShipTree(data, List.of(), 2.5f), 5f);
+
+        verify(info).addPara(eq("%s"), eq(5f), (Color) any(), eq("Level 1  |  Low Tech start  |  1 node  |  2.5x bonuses"));
+        verify(info).addPara(eq("%s"), anyFloat(), (Color) any(), (Color) any(), eq("    - " + DefenseSkillEffect.HULL_PERCENT.description(25f).plain()));
+    }
 }

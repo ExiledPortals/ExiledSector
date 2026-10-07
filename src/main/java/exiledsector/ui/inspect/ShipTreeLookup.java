@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.effects.NpcBonusScale;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
@@ -13,7 +14,11 @@ import java.util.List;
 
 public final class ShipTreeLookup {
 
-    public record ShipTree(ShipSkillData skillData, List<String> buildThemes) {
+    public record ShipTree(ShipSkillData skillData, List<String> buildThemes, float bonusScale) {
+
+        public ShipTree(ShipSkillData skillData, List<String> buildThemes) {
+            this(skillData, buildThemes, 1f);
+        }
     }
 
     private ShipTreeLookup() {
@@ -47,7 +52,7 @@ public final class ShipTreeLookup {
 
     private static ShipTree npcTree(FleetMemberAPI member, ShipVariantAPI variant) {
         ShipSkillData skillData = SkillDataResolver.resolve(member, variant);
-        return new ShipTree(skillData, NpcBuildLabel.mainThemes(skillData));
+        return new ShipTree(skillData, NpcBuildLabel.mainThemes(skillData), NpcBonusScale.current());
     }
 
     private static boolean isInPlayerFleet(FleetMemberAPI member) {

@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.NpcBonusScaling;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -117,6 +118,18 @@ class NpcBonusScalingTest {
         assertEquals(10f, magnitude(resolvedTree, DefenseSkillEffect.HULL_PERCENT), TOLERANCE);
         assertEquals(1f, magnitude(resolvedTree, LogisticsSkillEffect.BURN_LEVEL_FLAT), TOLERANCE);
         assertEquals(20f, magnitude(resolvedTree, CombatSkillEffect.DISINTEGRATION_ARMOR_DAMAGE_PERCENT), TOLERANCE);
+    }
+
+    @Test
+    void campaignStatsAndDrawbackParametersAreNotScaledEvenOnUntaggedNodes() {
+        SkillEffect sensorStrength = SkillEffect.byName("SENSOR_STRENGTH_FLAT");
+        SkillEffect rangeThreshold = SkillEffect.byName("WEAPON_RANGE_THRESHOLD_FLAT");
+        ShipSkillData shipData = shipWith(List.of(), new SkillTypeEffect(sensorStrength, 50f), new SkillTypeEffect(rangeThreshold, 450f));
+
+        ResolvedTree resolvedTree = ResolvedTree.of(shipData, HullSize.CRUISER, 3f);
+
+        assertEquals(50f, magnitude(resolvedTree, sensorStrength), TOLERANCE);
+        assertEquals(450f, magnitude(resolvedTree, rangeThreshold), TOLERANCE);
     }
 
     @Test

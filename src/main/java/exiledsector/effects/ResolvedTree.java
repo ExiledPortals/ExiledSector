@@ -7,6 +7,7 @@ import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.AllocatedSkillEffects;
 import exiledsector.skills.DamageTakenCaps;
+import exiledsector.skills.NpcBonusScaling;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.SkillEffect;

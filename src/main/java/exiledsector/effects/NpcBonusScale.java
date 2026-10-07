@@ -4,9 +4,11 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.ExiledSectorModPlugin;
 import exiledsector.ModSettings;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
+import lunalib.lunaSettings.LunaSettingsListener;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -37,6 +39,16 @@ public final class NpcBonusScale {
                     ModSettings.intOr(LOW_SHIP_LEVEL_FIELD_ID, DEFAULT_LOW_SHIP_LEVEL),
                     ModSettings.intOr(HIGH_SHIP_LEVEL_FIELD_ID, DEFAULT_HIGH_SHIP_LEVEL),
                     ModSettings.floatOr(MAX_MULTIPLIER_FIELD_ID, DEFAULT_MAX_MULTIPLIER));
+        }
+    }
+
+    public static final class SettingsListener implements LunaSettingsListener {
+
+        @Override
+        public void settingsChanged(String modId) {
+            if (ExiledSectorModPlugin.MOD_ID.equals(modId)) {
+                invalidate();
+            }
         }
     }
 

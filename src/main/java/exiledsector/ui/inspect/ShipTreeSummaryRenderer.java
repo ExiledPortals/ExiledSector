@@ -38,7 +38,7 @@ public final class ShipTreeSummaryRenderer {
 
     private static void renderSummary(TooltipMakerAPI info, ShipTreeLookup.ShipTree shipTree, HullSize hullSize, float pad,
                                       int maxBonusLines) {
-        Summary bonusSummary = SkillTreeBonusSummary.of(shipTree.skillData(), hullSize);
+        Summary bonusSummary = SkillTreeBonusSummary.of(shipTree.skillData(), hullSize, shipTree.bonusScale());
 
         List<String> headerParts = new ArrayList<>();
         headerParts.add(Translation.msg("summary.level").arg("level", bonusSummary.level()).text());
@@ -49,6 +49,9 @@ public final class ShipTreeSummaryRenderer {
             headerParts.add(Translation.msg("summary.start").arg("root", bonusSummary.root().getDisplayName()).text());
         }
         headerParts.add(Translation.msg("summary.nodes").count(bonusSummary.nodeCount()).text());
+        if (shipTree.bonusScale() > 1f) {
+            headerParts.add(Translation.msg("summary.bonusScale").arg("scale", shipTree.bonusScale()).text());
+        }
         info.addPara("%s", pad, Misc.getHighlightColor(), String.join(Translation.text("summary.separator"), headerParts));
 
         if (bonusSummary.notables().isEmpty()) {
