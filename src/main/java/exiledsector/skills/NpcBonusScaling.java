@@ -36,6 +36,11 @@ public final class NpcBonusScaling {
     }
 
     public static NpcBonusScaling of(float bonusScale, ShipSkillData shipData, List<AllocatedNode> allocatedNodes, HullSize hullSize) {
+        return of(bonusScale, shipData, allocatedNodes, hullSize, List.of());
+    }
+
+    public static NpcBonusScaling of(float bonusScale, ShipSkillData shipData, List<AllocatedNode> allocatedNodes, HullSize hullSize,
+                                     List<FrameworkSlots.Slot> frameworkSlots) {
         if (Float.compare(bonusScale, 1f) == 0) {
             return NONE;
         }
@@ -44,20 +49,34 @@ public final class NpcBonusScaling {
             if (node.effectiveType().getVanillaHullModId() != null || !scalesNode(node)) {
                 continue;
             }
-            for (SkillTypeEffect effect : AllocatedSkillEffects.appliedEffects(shipData, node, hullSize)) {
-                if (isScalableBonus(effect.effect(), effect.magnitude())) {
-                    bonusTotals.merge(effect.effect(), effect.magnitude(), Float::sum);
-                }
-            }
+            addScalableBonuses(bonusTotals, AllocatedSkillEffects.appliedEffects(shipData, node, hullSize));
+        }
+        for (FrameworkSlots.Slot slot : frameworkSlots) {
+            addScalableBonuses(bonusTotals, FrameworkSlots.appliedEffects(shipData, slot, hullSize));
         }
         Map<SkillEffect, Float> effectFactors = new HashMap<>();
         bonusTotals.forEach((effect, bonusTotal) -> effectFactors.put(effect, factor(effect.statMode(), bonusTotal, bonusScale)));
         return new NpcBonusScaling(bonusScale, Collections.unmodifiableMap(effectFactors));
     }
 
+    private static void addScalableBonuses(Map<SkillEffect, Float> bonusTotals, List<SkillTypeEffect> effects) {
+        for (SkillTypeEffect effect : effects) {
+            if (isScalableBonus(effect.effect(), effect.magnitude())) {
+                bonusTotals.merge(effect.effect(), effect.magnitude(), Float::sum);
+            }
+        }
+    }
+
     public float scaled(AllocatedNode node, SkillEffect effect, float magnitude) {
         if (Float.compare(bonusScale, 1f) == 0 || node.effectiveType().getVanillaHullModId() != null
                 || !isScalableBonus(effect, magnitude) || !scalesNode(node)) {
+            return magnitude;
+        }
+        return magnitude * factors.getOrDefault(effect, 1f);
+    }
+
+    public float scaledFrameworkItem(SkillEffect effect, float magnitude) {
+        if (Float.compare(bonusScale, 1f) == 0 || !isScalableBonus(effect, magnitude)) {
             return magnitude;
         }
         return magnitude * factors.getOrDefault(effect, 1f);

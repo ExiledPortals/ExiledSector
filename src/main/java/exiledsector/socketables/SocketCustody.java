@@ -27,8 +27,21 @@ import java.util.function.Function;
 public final class SocketCustody {
 
     static final String LOST_KEY = "exiledSector_socketShipsLostInCombat";
+    static final int NO_FRAMEWORK_SLOT = -1;
 
-    public record Installation(String shipId, String nodeId) {
+    public record Installation(String shipId, String nodeId, int frameworkSlot) {
+
+        public Installation(String shipId, String nodeId) {
+            this(shipId, nodeId, NO_FRAMEWORK_SLOT);
+        }
+
+        public static Installation inFramework(String shipId, int frameworkSlot) {
+            return new Installation(shipId, null, frameworkSlot);
+        }
+
+        public boolean isFrameworkSlot() {
+            return frameworkSlot != NO_FRAMEWORK_SLOT;
+        }
     }
 
     private SocketCustody() {
@@ -36,8 +49,11 @@ public final class SocketCustody {
 
     public static Map<String, Installation> installations(Map<String, ShipSkillData> shipDataById) {
         Map<String, Installation> installations = new HashMap<>();
-        shipDataById.forEach((shipId, shipData) -> shipData.getSocketedItems().forEach((nodeId, socketableId) ->
-                installations.put(socketableId, new Installation(shipId, nodeId))));
+        shipDataById.forEach((shipId, shipData) -> {
+            shipData.getSocketedItems().forEach((nodeId, socketableId) -> installations.put(socketableId, new Installation(shipId, nodeId)));
+            shipData.getFrameworkSocketedItems().forEach((slotIndex, socketableId) ->
+                    installations.put(socketableId, Installation.inFramework(shipId, slotIndex)));
+        });
         return installations;
     }
 
@@ -46,7 +62,7 @@ public final class SocketCustody {
         Set<String> lostForGood = new HashSet<>(lostInCombat);
         lostForGood.retainAll(shipDataById.keySet());
         shipDataById.forEach((shipId, shipData) -> {
-            if (ownedShipIds.contains(shipId) || shipData.getSocketedItems().isEmpty()) {
+            if (ownedShipIds.contains(shipId) || !holdsSocketItems(shipData)) {
                 return;
             }
             boolean destroyed = lostInCombat.contains(shipId);
@@ -57,9 +73,23 @@ public final class SocketCustody {
                     store.remove(socketable);
                 }
             }
+            for (Integer slotIndex : Set.copyOf(shipData.getFrameworkSocketedItems().keySet())) {
+                Socketable socketable = store.find(shipData.unsocketFrameworkItem(slotIndex));
+                if (destroyed && socketable != null) {
+                    store.remove(socketable);
+                }
+            }
+            HullFramework framework = store.findFramework(shipData.removeFramework());
+            if (destroyed && framework != null) {
+                store.removeFramework(framework);
+            }
         });
-        lostInCombat.removeIf(shipId -> !shipDataById.containsKey(shipId) || shipDataById.get(shipId).getSocketedItems().isEmpty());
+        lostInCombat.removeIf(shipId -> !shipDataById.containsKey(shipId) || !holdsSocketItems(shipDataById.get(shipId)));
         return lostForGood;
+    }
+
+    static boolean holdsSocketItems(ShipSkillData shipData) {
+        return !shipData.getSocketedItems().isEmpty() || shipData.getInstalledFrameworkId() != null;
     }
 
     public static Map<String, FleetMemberAPI> reconcile() {
@@ -97,11 +127,34 @@ public final class SocketCustody {
     static boolean isInstalled(Map<String, ShipSkillData> shipDataById, Socketable socketable) {
         String socketableId = socketable.id();
         for (ShipSkillData shipData : shipDataById.values()) {
-            if (shipData.getSocketedItems().containsValue(socketableId)) {
+            if (shipData.getSocketedItems().containsValue(socketableId) || shipData.getFrameworkSocketedItems().containsValue(socketableId)) {
                 return true;
             }
         }
         return false;
+    }
+
+    public static String frameworkShipId(HullFramework framework) {
+        return frameworkShipId(ShipSkillDataManager.all(), framework);
+    }
+
+    static String frameworkShipId(Map<String, ShipSkillData> shipDataById, HullFramework framework) {
+        String frameworkId = framework.id();
+        for (Map.Entry<String, ShipSkillData> shipEntry : shipDataById.entrySet()) {
+            if (frameworkId.equals(shipEntry.getValue().getInstalledFrameworkId())) {
+                return shipEntry.getKey();
+            }
+        }
+        return null;
+    }
+
+    public static void markHostsChanged(Socketable socketable) {
+        String socketableId = socketable.id();
+        for (ShipSkillData shipData : ShipSkillDataManager.all().values()) {
+            if (shipData.getSocketedItems().containsValue(socketableId) || shipData.getFrameworkSocketedItems().containsValue(socketableId)) {
+                shipData.markChanged();
+            }
+        }
     }
 
     public static boolean unsocketIfMisfit(Socketable socketable) {
@@ -114,6 +167,14 @@ public final class SocketCustody {
             for (Map.Entry<String, String> socketedEntry : List.copyOf(shipData.getSocketedItems().entrySet())) {
                 if (socketedEntry.getValue().equals(socketableId) && socketable.kind() != SocketType.SUBROUTINE) {
                     shipData.unsocketItem(socketedEntry.getKey());
+                    return true;
+                }
+            }
+            for (Map.Entry<Integer, String> slotEntry : List.copyOf(shipData.getFrameworkSocketedItems().entrySet())) {
+                HullFramework framework = SocketableStore.lookupFramework(shipData.getInstalledFrameworkId());
+                if (slotEntry.getValue().equals(socketableId)
+                        && (framework == null || !socketable.canSocketInto(framework.socketType(slotEntry.getKey())))) {
+                    shipData.unsocketFrameworkItem(slotEntry.getKey());
                     return true;
                 }
             }

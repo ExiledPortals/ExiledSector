@@ -15,9 +15,11 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
+import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.npc.NpcTreeTag;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.ShipLevelSystem;
+import exiledsector.socketables.HullFrameworkData;
 import exiledsector.socketables.NpcSocketables;
 import exiledsector.socketables.Socketable;
 import exiledsector.socketables.SocketableDisassembly;
@@ -30,11 +32,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.function.Supplier;
 
 public class SocketableLootListener extends BaseCampaignEventListener implements ShipRecoveryListener {
 
     private static final class Pending {
         private final Map<String, List<SocketableItemData>> itemsByMemberId = new LinkedHashMap<>();
+        private final Map<String, HullFrameworkData> frameworkByMemberId = new LinkedHashMap<>();
         private boolean playerWon;
         private float partsEarned;
 
@@ -79,9 +83,14 @@ public class SocketableLootListener extends BaseCampaignEventListener implements
         }
         for (FleetMemberAPI member : lostMembers) {
             String npcTreeTag = member == null ? null : NpcTreeTag.find(member.getVariant());
-            List<SocketableItemData> carriedItems = npcTreeTag == null ? List.of() : NpcSocketables.carriedBy(NpcTreeTag.decode(npcTreeTag));
+            ShipSkillData npcTree = npcTreeTag == null ? null : NpcTreeTag.decode(npcTreeTag);
+            List<SocketableItemData> carriedItems = NpcSocketables.carriedBy(npcTree);
             if (!carriedItems.isEmpty()) {
                 pendingLoot.itemsByMemberId.put(member.getId(), carriedItems);
+            }
+            HullFrameworkData carriedFramework = NpcSocketables.frameworkCarriedBy(npcTree);
+            if (carriedFramework != null) {
+                pendingLoot.frameworkByMemberId.put(member.getId(), carriedFramework);
             }
         }
     }
@@ -92,7 +101,10 @@ public class SocketableLootListener extends BaseCampaignEventListener implements
             return;
         }
         for (FleetMemberAPI recoveredShip : recoveredShips) {
-            pendingByBattle.values().forEach(pendingLoot -> pendingLoot.itemsByMemberId.remove(recoveredShip.getId()));
+            pendingByBattle.values().forEach(pendingLoot -> {
+                pendingLoot.itemsByMemberId.remove(recoveredShip.getId());
+                pendingLoot.frameworkByMemberId.remove(recoveredShip.getId());
+            });
         }
         ShipTreeSync.fleetChanged(Global.getSector() == null ? null : Global.getSector().getPlayerFleet());
     }
@@ -102,6 +114,7 @@ public class SocketableLootListener extends BaseCampaignEventListener implements
         Pending pendingLoot = encounterPlugin == null ? null : pendingByBattle.remove(encounterPlugin.getBattle());
         if (pendingLoot != null && loot != null) {
             pendingLoot.items().forEach(item -> loot.addSpecial(item.toSpecialItem(), 1f));
+            pendingLoot.frameworkByMemberId.values().forEach(framework -> loot.addSpecial(framework.toSpecialItem(), 1f));
             int wholeParts = SocketableDrops.wholeParts(pendingLoot.partsEarned, partsRandom);
             if (wholeParts > 0) {
                 loot.addCommodity(SocketableDisassembly.PARTS_COMMODITY_ID, wholeParts);
@@ -120,10 +133,13 @@ public class SocketableLootListener extends BaseCampaignEventListener implements
         for (SocketableItemData item : pendingLoot.items()) {
             playerFleet.getCargo().addSpecial(item.toSpecialItem(), 1f);
             Socketable previewSocketable = item.preview();
-            if (previewSocketable != null && Global.getSector().getCampaignUI() != null) {
-                String salvageMessage = I18n.forGameText(() -> Translation.msg("socketable.salvaged").arg("name", previewSocketable.name()).text());
-                Global.getSector().getCampaignUI().addMessage(salvageMessage, Misc.getPositiveHighlightColor());
+            if (previewSocketable != null) {
+                announceSalvaged(previewSocketable::name);
             }
+        }
+        for (HullFrameworkData framework : pendingLoot.frameworkByMemberId.values()) {
+            playerFleet.getCargo().addSpecial(framework.toSpecialItem(), 1f);
+            announceSalvaged(() -> framework.preview().name());
         }
         int wholeParts = SocketableDrops.wholeParts(pendingLoot.partsEarned, partsRandom);
         if (wholeParts > 0) {
@@ -134,6 +150,13 @@ public class SocketableLootListener extends BaseCampaignEventListener implements
                         Translation.msg("socketable.techMining.material").arg("count", wholeParts).arg("name", partsSpec.getName()).text()).text());
                 Global.getSector().getCampaignUI().addMessage(salvageMessage, Misc.getPositiveHighlightColor());
             }
+        }
+    }
+
+    private static void announceSalvaged(Supplier<String> itemName) {
+        if (Global.getSector().getCampaignUI() != null) {
+            String salvageMessage = I18n.forGameText(() -> Translation.msg("socketable.salvaged").arg("name", itemName.get()).text());
+            Global.getSector().getCampaignUI().addMessage(salvageMessage, Misc.getPositiveHighlightColor());
         }
     }
 

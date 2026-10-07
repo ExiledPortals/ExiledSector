@@ -26,6 +26,8 @@ public class ShipSkillData {
     private Map<String, String> chargedItemIds;
     private Map<String, Float> chargedItemQuantities;
     private Set<String> dormantNodeIds;
+    private String installedFrameworkId;
+    private Map<String, String> frameworkSocketedItems;
 
     private Set<String> freeNodeIds() {
         if (freeNodeIds == null) freeNodeIds = new LinkedHashSet<>();
@@ -63,6 +65,69 @@ public class ShipSkillData {
     public String unsocketItem(String nodeId) {
         revision++;
         return socketedItems == null ? null : socketedItems.remove(nodeId);
+    }
+
+    public String getInstalledFrameworkId() {
+        return installedFrameworkId;
+    }
+
+    public void installFramework(String frameworkId) {
+        revision++;
+        installedFrameworkId = frameworkId;
+        frameworkSocketedItems = null;
+    }
+
+    public String removeFramework() {
+        revision++;
+        String removedFrameworkId = installedFrameworkId;
+        installedFrameworkId = null;
+        frameworkSocketedItems = null;
+        return removedFrameworkId;
+    }
+
+    public Map<Integer, String> getFrameworkSocketedItems() {
+        if (frameworkSocketedItems == null || frameworkSocketedItems.isEmpty()) {
+            return Map.of();
+        }
+        Map<Integer, String> itemsBySlot = new LinkedHashMap<>();
+        frameworkSocketedItems.forEach((slotKey, socketableId) -> {
+            Integer slotIndex = slotIndex(slotKey);
+            if (slotIndex != null) {
+                itemsBySlot.put(slotIndex, socketableId);
+            }
+        });
+        return Collections.unmodifiableMap(itemsBySlot);
+    }
+
+    public String getFrameworkSocketedItem(int slotIndex) {
+        return frameworkSocketedItems == null ? null : frameworkSocketedItems.get(Integer.toString(slotIndex));
+    }
+
+    public boolean socketFrameworkItem(int slotIndex, String socketableId) {
+        revision++;
+        if (installedFrameworkId == null || slotIndex < 0) {
+            return false;
+        }
+        if (frameworkSocketedItems == null) frameworkSocketedItems = new LinkedHashMap<>();
+        frameworkSocketedItems.put(Integer.toString(slotIndex), socketableId);
+        return true;
+    }
+
+    public String unsocketFrameworkItem(int slotIndex) {
+        revision++;
+        return frameworkSocketedItems == null ? null : frameworkSocketedItems.remove(Integer.toString(slotIndex));
+    }
+
+    private static Integer slotIndex(String slotKey) {
+        try {
+            return Integer.valueOf(slotKey);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    public void markChanged() {
+        revision++;
     }
 
     public boolean isAllocated(String nodeId) {
@@ -192,7 +257,8 @@ public class ShipSkillData {
     }
 
     public boolean isBlank() {
-        return allocatedNodeIds.isEmpty() && getDormantNodeIds().isEmpty() && level == 0 && xp == 0f && bankedFreeAllocations == 0;
+        return allocatedNodeIds.isEmpty() && getDormantNodeIds().isEmpty() && level == 0 && xp == 0f && bankedFreeAllocations == 0
+                && installedFrameworkId == null;
     }
 
     public Set<String> getDormantNodeIds() {

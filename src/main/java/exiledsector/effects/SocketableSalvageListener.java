@@ -1,5 +1,6 @@
 package exiledsector.effects;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
@@ -10,6 +11,7 @@ import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.socketables.SocketableDrops;
 import exiledsector.socketables.SocketableItemData;
+import exiledsector.socketables.SocketableUnlock;
 
 import java.util.Random;
 
@@ -35,6 +37,11 @@ public class SocketableSalvageListener implements ShowLootListener {
             loot.addSpecial(item.toSpecialItem(), 1f);
         }
         SocketableDrops.rollMaterials(siteId, random).forEach(loot::addCommodity);
+        if (SocketableUnlock.frameworksOpen(Global.getSector())) {
+            SocketableDrops.FrameworkLoot frameworkLoot = SocketableDrops.rollFrameworkLoot(siteId, random, 1f);
+            frameworkLoot.items().forEach(item -> loot.addSpecial(item.toSpecialItem(), 1f));
+            frameworkLoot.frameworks().forEach(framework -> loot.addSpecial(framework.toSpecialItem(), 1f));
+        }
     }
 
     static String siteId(SectorEntityToken salvageEntity) {

@@ -7,6 +7,7 @@ import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.DamageTakenCaps;
 import exiledsector.skills.EffectTotals;
+import exiledsector.skills.FrameworkSlots;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
@@ -27,6 +28,7 @@ public final class ResolvedTree {
     static final String MOD_ID_PREFIX = "exiledSector_skill_";
     static final String MULTIPLIER_MOD_ID_PREFIX = "exiledSector_skillMult_";
     static final String REDUCTION_CAP_MOD_ID_PREFIX = "exiledSector_skillCapped_";
+    static final String FRAMEWORK_MOD_ID_PREFIX = "exiledSector_framework_";
 
     private static final Map<ShipSkillData, ResolvedTree> CACHE = new WeakHashMap<>();
 
@@ -45,17 +47,19 @@ public final class ResolvedTree {
     private final HullSize hullSize;
     private final float bonusScale;
     private final int shipDataRevision;
+    private final List<FrameworkSlots.Slot> frameworkSlots;
     private final List<AllocatedNode> allocatedNodes;
     private final List<Entry> entries;
     private final List<TemporaryNode> temporaryNodes;
     private final Set<String> phantomHullModIds;
 
-    private ResolvedTree(ShipSkillData shipData, HullSize hullSize, float bonusScale) {
+    private ResolvedTree(ShipSkillData shipData, HullSize hullSize, float bonusScale, List<FrameworkSlots.Slot> frameworkSlots) {
         this.hullSize = hullSize;
         this.bonusScale = bonusScale;
         this.shipDataRevision = shipData.revision();
+        this.frameworkSlots = frameworkSlots;
         this.allocatedNodes = List.copyOf(AllocatedNode.of(shipData));
-        EffectTotals effectTotals = EffectTotals.of(shipData, allocatedNodes, hullSize, bonusScale);
+        EffectTotals effectTotals = EffectTotals.of(shipData, allocatedNodes, hullSize, bonusScale, frameworkSlots);
         List<Entry> resolvedEntries = new ArrayList<>();
         List<TemporaryNode> resolvedTemporaryNodes = new ArrayList<>();
         for (EffectTotals.NodeEffects nodeEffects : effectTotals.nodeEffects()) {
@@ -68,6 +72,7 @@ public final class ResolvedTree {
                 addEffects(nodeEffects, resolvedEntries);
             }
         }
+        effectTotals.slotEffects().forEach(slotEffects -> addSlotEffects(slotEffects, resolvedEntries));
         effectTotals.pooledMultipliers().forEach((effect, addedMultiplier) ->
                 resolvedEntries.add(new EffectEntry(effect, MULTIPLIER_MOD_ID_PREFIX + effect.name(), addedMultiplier)));
         Set<EffectEntry> temporaryEntries = Collections.newSetFromMap(new IdentityHashMap<>());
@@ -127,13 +132,26 @@ public final class ResolvedTree {
         }
     }
 
+    private static void addSlotEffects(EffectTotals.SlotEffects slotEffects, List<Entry> resolvedEntries) {
+        EffectModIds modIds = new EffectModIds(FRAMEWORK_MOD_ID_PREFIX + slotEffects.slot().index() + "_");
+        for (SkillTypeEffect effect : slotEffects.effects()) {
+            if (!effect.effect().isMultiplicative()) {
+                resolvedEntries.add(new EffectEntry(effect.effect(), modIds.next(effect.effect()), effect.magnitude()));
+            }
+        }
+    }
+
     private static final class EffectModIds {
 
         private final String nodePrefix;
         private final Map<SkillEffect, Integer> uses = new HashMap<>();
 
         EffectModIds(AllocatedNode node) {
-            this.nodePrefix = MOD_ID_PREFIX + node.node().getId() + "_";
+            this(MOD_ID_PREFIX + node.node().getId() + "_");
+        }
+
+        EffectModIds(String nodePrefix) {
+            this.nodePrefix = nodePrefix;
         }
 
         String next(SkillEffect effect) {
@@ -147,15 +165,19 @@ public final class ResolvedTree {
     }
 
     static ResolvedTree of(ShipSkillData shipData, HullSize hullSize, float bonusScale) {
+        return of(shipData, hullSize, bonusScale, List.of());
+    }
+
+    static ResolvedTree of(ShipSkillData shipData, HullSize hullSize, float bonusScale, List<FrameworkSlots.Slot> frameworkSlots) {
         if (shipData == null) {
             return null;
         }
         ResolvedTree cachedTree = CACHE.get(shipData);
         if (cachedTree != null && cachedTree.shipDataRevision == shipData.revision() && cachedTree.hullSize == hullSize
-                && Float.compare(cachedTree.bonusScale, bonusScale) == 0) {
+                && Float.compare(cachedTree.bonusScale, bonusScale) == 0 && cachedTree.frameworkSlots.equals(frameworkSlots)) {
             return cachedTree;
         }
-        ResolvedTree resolvedTree = new ResolvedTree(shipData, hullSize, bonusScale);
+        ResolvedTree resolvedTree = new ResolvedTree(shipData, hullSize, bonusScale, frameworkSlots);
         CACHE.put(shipData, resolvedTree);
         return resolvedTree;
     }

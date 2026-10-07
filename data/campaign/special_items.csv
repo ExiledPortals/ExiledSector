@@ -1,2 +1,3 @@
 name,id,tags,tech/manufacturer,rarity,base price,stack size,cargo space,baseRaidDanger,icon,sound id,sound id drop,plugin,plugin params,desc,order
 Modular Hull Socket Item,exiledSector_socketable,hide_in_codex,,0,15000,1,1,,graphics/fx/empty.png,ui_chip_pickup,ui_modspec_drop,exiledsector.socketables.SocketableItemPlugin,,Something that can be installed in a Modular Hull Socket on a ship's skill tree.,900
+Hull Framework Item,exiledSector_hull_framework,hide_in_codex,,0,25000,1,1,,graphics/fx/empty.png,ui_cargo_machinery,ui_cargo_machinery_drop,exiledsector.socketables.HullFrameworkItemPlugin,,Structural framework that adds typed sockets to a ship of one hull size.,901

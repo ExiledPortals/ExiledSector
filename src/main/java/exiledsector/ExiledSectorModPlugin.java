@@ -28,6 +28,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.persistence.OpSpentSlotManager;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
+import exiledsector.skills.FrameworkSlots;
 import exiledsector.skills.NodeReplacements;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
@@ -184,6 +185,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         SkillTree.applyDisabledRegions(AreaToggles.disabledRegions());
         SkillDataResolver.clearCache();
         ResolvedTree.clearCache();
+        FrameworkSlots.clearCache();
         NpcBonusScale.invalidate();
         NpcSocketables.clearCache();
         SocketableStore.get().freezeNames();

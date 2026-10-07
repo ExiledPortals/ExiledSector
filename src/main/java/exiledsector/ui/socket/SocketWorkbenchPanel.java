@@ -285,6 +285,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         loadedSocketable = result;
         noticeText = Translation.msg("ui.workbench.notice.used." + currency.name().toLowerCase(Locale.ROOT))
                 .arg("before", nameBefore).arg("name", result.name()).text();
+        SocketCustody.markHostsChanged(result);
         if (currency == SocketCurrency.TRANSPOSITION && SocketCustody.unsocketIfMisfit(result)) {
             noticeText += " " + Translation.msg("ui.workbench.notice.movedToStorage").arg("name", result.name())
                     .arg("type", result.kind().displayName()).text();

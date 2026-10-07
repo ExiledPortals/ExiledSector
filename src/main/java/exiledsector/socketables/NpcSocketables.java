@@ -1,6 +1,9 @@
 package exiledsector.socketables;
 
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.skills.FrameworkSlots;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.tags.ShipProfile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +11,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public final class NpcSocketables {
 
@@ -17,6 +21,7 @@ public final class NpcSocketables {
     static final int SECOND_ROLL_PLAYER_LEVEL = 15;
     static final float SECOND_CHANCE = 0.05f;
     static final float UNIQUE_SHARE = 0.02f;
+    static final float FRAMEWORK_CHANCE = 0.5f;
     private static final Map<String, Socketable> PREVIEWS = new ConcurrentHashMap<>();
 
     private NpcSocketables() {
@@ -73,6 +78,38 @@ public final class NpcSocketables {
         return SocketableDrops.pickBasic(random);
     }
 
+    public static void rollFramework(ShipSkillData shipData, HullSize hullSize, Supplier<ShipProfile> currentFit, int playerLevel,
+                                     Random random) {
+        if (!SocketableUnlock.frameworksOpen(playerLevel) || random.nextFloat() >= FRAMEWORK_CHANCE) {
+            return;
+        }
+        ShipProfile fit = currentFit.get();
+        List<SocketType> fittingTypes = new ArrayList<>();
+        for (SocketType socketType : SocketType.frameworkTypes()) {
+            if (FrameworkSlots.unmetRequirement(socketType, fit) == null) {
+                fittingTypes.add(socketType);
+            }
+        }
+        HullFrameworkData framework = HullFrameworkRoller.roll(hullSize, fittingTypes, random);
+        if (framework == null) {
+            return;
+        }
+        shipData.installFramework(framework.npcId());
+        List<SocketType> socketTypes = framework.socketTypes();
+        for (int slotIndex = 0; slotIndex < socketTypes.size(); slotIndex++) {
+            if (random.nextFloat() < firstChance(playerLevel)) {
+                SocketableDefinition definition = SocketableDrops.pickFrameworkBasic(socketTypes.get(slotIndex), random);
+                if (definition != null) {
+                    shipData.socketFrameworkItem(slotIndex, id(SocketableItemData.rolled(definition, random.nextLong())));
+                }
+            }
+        }
+    }
+
+    public static HullFrameworkData frameworkCarriedBy(ShipSkillData shipData) {
+        return shipData == null ? null : HullFrameworkData.ofNpcId(shipData.getInstalledFrameworkId());
+    }
+
     public static List<Socketable> uniquesCarriedBy(ShipSkillData shipData) {
         List<Socketable> carriedUniques = new ArrayList<>();
         for (String socketableId : shipData == null ? List.<String>of() : shipData.getSocketedItems().values()) {
@@ -92,7 +129,9 @@ public final class NpcSocketables {
         if (shipData == null) {
             return carriedItems;
         }
-        for (String socketableId : shipData.getSocketedItems().values()) {
+        List<String> carriedIds = new ArrayList<>(shipData.getSocketedItems().values());
+        carriedIds.addAll(shipData.getFrameworkSocketedItems().values());
+        for (String socketableId : carriedIds) {
             SocketableItemData itemData = item(socketableId);
             if (itemData != null) {
                 carriedItems.add(itemData);
@@ -113,15 +152,34 @@ public final class NpcSocketables {
                 shipData.socketItem(socketedEntry.getKey(), ownedSocketable.id());
             }
         }
+        HullFrameworkData frameworkData = frameworkCarriedBy(shipData);
+        if (frameworkData == null) {
+            return;
+        }
+        Map<Integer, String> frameworkItems = shipData.getFrameworkSocketedItems();
+        HullFramework ownedFramework = SocketableStore.get().addFramework(frameworkData);
+        shipData.installFramework(ownedFramework.id());
+        frameworkItems.forEach((slotIndex, socketableId) -> {
+            SocketableItemData itemData = item(socketableId);
+            Socketable ownedSocketable = itemData == null ? null : SocketableStore.get().add(itemData);
+            if (ownedSocketable != null) {
+                shipData.socketFrameworkItem(slotIndex, ownedSocketable.id());
+            }
+        });
     }
 
     public static void storeForPlayer(ShipSkillData shipData) {
         for (SocketableItemData itemData : carriedBy(shipData)) {
             SocketableStore.get().add(itemData);
         }
+        HullFrameworkData frameworkData = frameworkCarriedBy(shipData);
+        if (frameworkData != null) {
+            SocketableStore.get().addFramework(frameworkData);
+        }
     }
 
     public static void clearCache() {
         PREVIEWS.clear();
+        SocketableStore.clearNpcFrameworkPreviews();
     }
 }

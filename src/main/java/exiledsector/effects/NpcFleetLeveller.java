@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.skills.AllocatedNode;
+import exiledsector.skills.FrameworkFit;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.npc.NpcBuildRequest;
@@ -93,6 +94,10 @@ public final class NpcFleetLeveller {
             if (definition != null) {
                 treeBuild.shipData().socketItem(socketNodeId, NpcSocketables.id(SocketableItemData.rolled(definition, socketableRandom.nextLong())));
             }
+        }
+        if (socketableRandom != null) {
+            NpcSocketables.rollFramework(treeBuild.shipData(), member.getHullSpec().getHullSize(),
+                    () -> FrameworkFit.profile(member.getHullSpec(), member.getVariant(), treeBuild.shipData()), playerLevel, socketableRandom);
         }
         return NpcTreeTag.encode(treeBuild.shipData());
     }

@@ -16,6 +16,7 @@ public enum SocketableUnlock {
     DEFEATED_ZIGGURAT("defeated_ziggurat", sector -> sector.getMemoryWithoutUpdate().getBoolean("$defeatedZiggurat"));
 
     public static final int UNIQUE_MIN_PLAYER_LEVEL = 15;
+    public static final int FRAMEWORK_MIN_PLAYER_LEVEL = 15;
     private static final String LATCH_PREFIX = "$exiledSector_socketUnlock_";
 
     private final String id;
@@ -37,6 +38,15 @@ public enum SocketableUnlock {
             }
         }
         return null;
+    }
+
+    public static boolean frameworksOpen(SectorAPI sector) {
+        MutableCharacterStatsAPI playerStats = sector == null ? null : sector.getPlayerStats();
+        return playerStats != null && frameworksOpen(playerStats.getLevel());
+    }
+
+    public static boolean frameworksOpen(int playerLevel) {
+        return playerLevel >= FRAMEWORK_MIN_PLAYER_LEVEL;
     }
 
     public static boolean canDrop(SocketableDefinition definition, SectorAPI sector) {

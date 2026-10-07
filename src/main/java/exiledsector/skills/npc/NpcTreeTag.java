@@ -7,9 +7,11 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
+import exiledsector.socketables.HullFrameworkData;
 import exiledsector.socketables.NpcSocketables;
 import exiledsector.socketables.SocketType;
 import exiledsector.socketables.SocketableItemData;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +26,12 @@ public final class NpcTreeTag {
     private static final int CHARGED_NODE_COST = 1;
     static final String GENERATED = "generated";
     static final String SOCKETS_MARKER = "sockets:";
+    static final String FRAMEWORK_MARKER = "framework:";
+    static final String FRAMEWORK_SOCKETS_MARKER = "frameworkSockets:";
+    private static final int MIN_FIELDS = 3;
+    private static final int MAX_FIELDS = 6;
     private static final String[] NO_FIELDS = new String[0];
+    private static final Logger LOG = Logger.getLogger(NpcTreeTag.class);
 
     private NpcTreeTag() {
     }
@@ -42,7 +49,24 @@ public final class NpcTreeTag {
                 socketEntries.add(nodeId + OPTION_SEPARATOR + socketableId);
             }
         });
-        return socketEntries.isEmpty() ? tag : tag + FIELD_SEPARATOR + SOCKETS_MARKER + String.join(NODE_SEPARATOR, socketEntries);
+        StringBuilder encodedTag = new StringBuilder(tag);
+        if (!socketEntries.isEmpty()) {
+            encodedTag.append(FIELD_SEPARATOR).append(SOCKETS_MARKER).append(String.join(NODE_SEPARATOR, socketEntries));
+        }
+        String frameworkId = shipData.getInstalledFrameworkId();
+        if (HullFrameworkData.isNpcId(frameworkId)) {
+            encodedTag.append(FIELD_SEPARATOR).append(FRAMEWORK_MARKER).append(frameworkId);
+            List<String> frameworkSocketEntries = new ArrayList<>();
+            shipData.getFrameworkSocketedItems().forEach((slotIndex, socketableId) -> {
+                if (NpcSocketables.isNpcId(socketableId)) {
+                    frameworkSocketEntries.add(slotIndex + OPTION_SEPARATOR + socketableId);
+                }
+            });
+            if (!frameworkSocketEntries.isEmpty()) {
+                encodedTag.append(FIELD_SEPARATOR).append(FRAMEWORK_SOCKETS_MARKER).append(String.join(NODE_SEPARATOR, frameworkSocketEntries));
+            }
+        }
+        return encodedTag.toString();
     }
 
     public static String find(ShipVariantAPI variant) {
@@ -83,10 +107,37 @@ public final class NpcTreeTag {
         for (int i = 1; i < nodeEntries.length; i++) {
             restore(shipData, nodeEntries[i]);
         }
-        if (tagFields.length == 4 && tagFields[3].startsWith(SOCKETS_MARKER)) {
-            restoreSockets(shipData, tagFields[3].substring(SOCKETS_MARKER.length()));
+        for (int fieldIndex = MIN_FIELDS; fieldIndex < tagFields.length; fieldIndex++) {
+            restoreField(shipData, tagFields[fieldIndex]);
         }
         return shipData;
+    }
+
+    private static void restoreField(ShipSkillData shipData, String tagField) {
+        if (tagField.startsWith(SOCKETS_MARKER)) {
+            restoreSockets(shipData, tagField.substring(SOCKETS_MARKER.length()));
+        } else if (tagField.startsWith(FRAMEWORK_MARKER)) {
+            String frameworkId = tagField.substring(FRAMEWORK_MARKER.length());
+            if (HullFrameworkData.ofNpcId(frameworkId) != null) {
+                shipData.installFramework(frameworkId);
+            }
+        } else if (tagField.startsWith(FRAMEWORK_SOCKETS_MARKER) && shipData.getInstalledFrameworkId() != null) {
+            restoreFrameworkSockets(shipData, tagField.substring(FRAMEWORK_SOCKETS_MARKER.length()));
+        }
+    }
+
+    private static void restoreFrameworkSockets(ShipSkillData shipData, String socketEntries) {
+        for (String entry : socketEntries.split(NODE_SEPARATOR)) {
+            int separator = entry.indexOf(OPTION_SEPARATOR);
+            String socketableId = separator <= 0 ? null : entry.substring(separator + 1);
+            if (socketableId != null && NpcSocketables.item(socketableId) != null) {
+                try {
+                    shipData.socketFrameworkItem(Integer.parseInt(entry.substring(0, separator)), socketableId);
+                } catch (NumberFormatException e) {
+                    LOG.warn("Skipping an NPC framework socket entry with a bad slot: " + entry);
+                }
+            }
+        }
     }
 
     private static void restoreSockets(ShipSkillData shipData, String socketEntries) {
@@ -133,7 +184,7 @@ public final class NpcTreeTag {
             return NO_FIELDS;
         }
         String[] tagFields = tag.substring(prefixLength).split("\\" + FIELD_SEPARATOR, -1);
-        return (tagFields.length == 3 || tagFields.length == 4) && !tagFields[0].isEmpty() ? tagFields : NO_FIELDS;
+        return tagFields.length >= MIN_FIELDS && tagFields.length <= MAX_FIELDS && !tagFields[0].isEmpty() ? tagFields : NO_FIELDS;
     }
 
     private static int prefixLength(String tag) {

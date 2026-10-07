@@ -166,6 +166,57 @@ public final class SocketableDrops {
         return pick(random, definition -> definition.kind() == SocketType.SUBROUTINE && !definition.unique());
     }
 
+    public record FrameworkLoot(List<SocketableItemData> items, List<HullFrameworkData> frameworks) {
+
+        public static final FrameworkLoot NONE = new FrameworkLoot(List.of(), List.of());
+
+        public boolean isEmpty() {
+            return items.isEmpty() && frameworks.isEmpty();
+        }
+    }
+
+    public static FrameworkLoot rollFrameworkLoot(String siteId, Random random, float chanceMult) {
+        Rule rule = siteId == null ? null : RULES.get().get(siteId);
+        if (rule == null || rule.chances().isEmpty() || rule.otherMod() && !SalvageSiteCompat.dropsEnabled()) {
+            return FrameworkLoot.NONE;
+        }
+        List<SocketableItemData> droppedItems = new ArrayList<>();
+        for (float chance : rule.chances()) {
+            if (random.nextFloat() >= chance * chanceMult) {
+                break;
+            }
+            SocketableDefinition basicDefinition = pickFrameworkBasic(random);
+            if (basicDefinition != null) {
+                droppedItems.add(SocketableItemData.rolled(basicDefinition, random.nextLong()));
+            }
+        }
+        List<HullFrameworkData> droppedFrameworks = new ArrayList<>();
+        if (random.nextFloat() < rule.chances().get(0) * chanceMult) {
+            HullFrameworkData framework = HullFrameworkRoller.roll(HullFrameworkRoller.rollHullSize(random), random);
+            if (framework != null) {
+                droppedFrameworks.add(framework);
+            }
+        }
+        return new FrameworkLoot(List.copyOf(droppedItems), List.copyOf(droppedFrameworks));
+    }
+
+    public static SocketableDefinition pickFrameworkBasic(Random random) {
+        List<SocketType> typesWithBasics = new ArrayList<>();
+        for (SocketType socketType : SocketType.frameworkTypes()) {
+            if (SocketableDefinitions.all().stream().anyMatch(definition -> isDroppableBasic(definition, socketType))) {
+                typesWithBasics.add(socketType);
+            }
+        }
+        return typesWithBasics.isEmpty() ? null : pickFrameworkBasic(typesWithBasics.get(random.nextInt(typesWithBasics.size())), random);
+    }
+
+    public static SocketableDefinition pickFrameworkBasic(SocketType socketType, Random random) {
+        return pick(random, definition -> definition.kind() == socketType && !definition.unique());
+    }
+
+    private static boolean isDroppableBasic(SocketableDefinition definition, SocketType socketType) {
+        return definition.kind() == socketType && !definition.unique() && definition.rarity() > 0f && SAFE_ID.matcher(definition.id()).matches();
+    }
 
     public static SocketableDefinition pickUnique(Random random, Predicate<SocketableDefinition> allowedUniques) {
         return pick(random, definition -> definition.unique() && allowedUniques.test(definition));

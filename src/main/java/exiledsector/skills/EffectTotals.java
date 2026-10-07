@@ -14,6 +14,9 @@ public final class EffectTotals {
     public record NodeEffects(AllocatedNode node, List<SkillTypeEffect> effects) {
     }
 
+    public record SlotEffects(FrameworkSlots.Slot slot, List<SkillTypeEffect> effects) {
+    }
+
     public record Group(Float temporarySeconds, Map<SkillEffect, Float> totals) {
     }
 
@@ -23,20 +26,27 @@ public final class EffectTotals {
     private static final Duration PERMANENT = new Duration(null);
 
     private final List<NodeEffects> nodeEffects;
+    private final List<SlotEffects> slotEffects;
     private final Map<SkillEffect, Float> pooledMultipliers;
     private final List<DamageTakenCaps.Cap> reachedCaps;
     private final List<Group> groups;
 
-    private EffectTotals(List<NodeEffects> nodeEffects, Map<SkillEffect, Float> pooledMultipliers,
+    private EffectTotals(List<NodeEffects> nodeEffects, List<SlotEffects> slotEffects, Map<SkillEffect, Float> pooledMultipliers,
                          List<DamageTakenCaps.Cap> reachedCaps, List<Group> groups) {
         this.nodeEffects = nodeEffects;
+        this.slotEffects = slotEffects;
         this.pooledMultipliers = pooledMultipliers;
         this.reachedCaps = reachedCaps;
         this.groups = groups;
     }
 
     public static EffectTotals of(ShipSkillData shipData, List<AllocatedNode> allocatedNodes, HullSize hullSize, float bonusScale) {
-        NpcBonusScaling scaling = NpcBonusScaling.of(bonusScale, shipData, allocatedNodes, hullSize);
+        return of(shipData, allocatedNodes, hullSize, bonusScale, List.of());
+    }
+
+    public static EffectTotals of(ShipSkillData shipData, List<AllocatedNode> allocatedNodes, HullSize hullSize, float bonusScale,
+                                  List<FrameworkSlots.Slot> frameworkSlots) {
+        NpcBonusScaling scaling = NpcBonusScaling.of(bonusScale, shipData, allocatedNodes, hullSize, frameworkSlots);
         List<NodeEffects> resolvedNodeEffects = new ArrayList<>();
         Map<Duration, Map<SkillEffect, Float>> totalsByDuration = new LinkedHashMap<>();
         for (AllocatedNode node : allocatedNodes) {
@@ -47,6 +57,18 @@ public final class EffectTotals {
             for (SkillTypeEffect effect : scaledEffects) {
                 boolean compounds = !PERMANENT.equals(duration) && effect.effect().isMultiplicative();
                 durationTotals.merge(effect.effect(), effect.magnitude(), compounds ? EffectTotals::compounded : Float::sum);
+            }
+        }
+        List<SlotEffects> resolvedSlotEffects = new ArrayList<>();
+        for (FrameworkSlots.Slot slot : frameworkSlots) {
+            List<SkillTypeEffect> scaledEffects = new ArrayList<>();
+            for (SkillTypeEffect effect : FrameworkSlots.appliedEffects(shipData, slot, hullSize)) {
+                scaledEffects.add(new SkillTypeEffect(effect.effect(), scaling.scaledFrameworkItem(effect.effect(), effect.magnitude())));
+            }
+            if (!scaledEffects.isEmpty()) {
+                resolvedSlotEffects.add(new SlotEffects(slot, Collections.unmodifiableList(scaledEffects)));
+                Map<SkillEffect, Float> permanentSums = totalsByDuration.computeIfAbsent(PERMANENT, key -> new LinkedHashMap<>());
+                scaledEffects.forEach(effect -> permanentSums.merge(effect.effect(), effect.magnitude(), Float::sum));
             }
         }
         Map<SkillEffect, Float> permanentTotals = permanentTotals(totalsByDuration.getOrDefault(PERMANENT, Map.of()));
@@ -61,7 +83,7 @@ public final class EffectTotals {
         totalsByDuration.forEach((duration, durationTotals) -> groups.add(PERMANENT.equals(duration)
                 ? new Group(null, Collections.unmodifiableMap(cappedTotals(permanentTotals, reachedCaps)))
                 : new Group(duration.temporarySeconds(), Collections.unmodifiableMap(durationTotals))));
-        return new EffectTotals(List.copyOf(resolvedNodeEffects), Collections.unmodifiableMap(pooledMultipliers),
+        return new EffectTotals(List.copyOf(resolvedNodeEffects), List.copyOf(resolvedSlotEffects), Collections.unmodifiableMap(pooledMultipliers),
                 List.copyOf(reachedCaps), List.copyOf(groups));
     }
 
@@ -98,6 +120,10 @@ public final class EffectTotals {
 
     public List<NodeEffects> nodeEffects() {
         return nodeEffects;
+    }
+
+    public List<SlotEffects> slotEffects() {
+        return slotEffects;
     }
 
     public Map<SkillEffect, Float> pooledMultipliers() {

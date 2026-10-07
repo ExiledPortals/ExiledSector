@@ -13,10 +13,13 @@ import com.fs.starfarer.api.impl.campaign.ids.Industries;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
+import exiledsector.socketables.HullFrameworkData;
 import exiledsector.socketables.Socketable;
 import exiledsector.socketables.SocketableDrops;
 import exiledsector.socketables.SocketableItemData;
+import exiledsector.socketables.SocketableUnlock;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -50,8 +53,12 @@ public class TechMiningSocketableListener implements EconomyTickListener {
             float chanceMult = minedMonths == 0 ? 1f : (float) Math.pow(decay, minedMonths - 1);
             List<SocketableItemData> foundItems = SocketableDrops.roll(dropSite, random, chanceMult);
             Map<String, Integer> foundMaterials = SocketableDrops.rollMaterials(dropSite, random, chanceMult);
+            SocketableDrops.FrameworkLoot frameworkLoot = SocketableUnlock.frameworksOpen(sector)
+                    ? SocketableDrops.rollFrameworkLoot(dropSite, random, chanceMult) : SocketableDrops.FrameworkLoot.NONE;
             marketMemory.set(MONTHS_KEY, minedMonths + 1);
-            deliver(market, foundItems, foundMaterials);
+            List<SocketableItemData> allFoundItems = new ArrayList<>(foundItems);
+            allFoundItems.addAll(frameworkLoot.items());
+            deliver(market, allFoundItems, foundMaterials, frameworkLoot.frameworks());
         }
     }
 
@@ -69,8 +76,9 @@ public class TechMiningSocketableListener implements EconomyTickListener {
         return 0;
     }
 
-    private static void deliver(MarketAPI minedMarket, List<SocketableItemData> foundItems, Map<String, Integer> foundMaterials) {
-        if (foundItems.isEmpty() && foundMaterials.isEmpty()) {
+    private static void deliver(MarketAPI minedMarket, List<SocketableItemData> foundItems, Map<String, Integer> foundMaterials,
+                                List<HullFrameworkData> foundFrameworks) {
+        if (foundItems.isEmpty() && foundMaterials.isEmpty() && foundFrameworks.isEmpty()) {
             return;
         }
         MarketAPI storageMarket = Global.getSector().getPlayerFaction().getProduction().getGatheringPoint();
@@ -89,6 +97,10 @@ public class TechMiningSocketableListener implements EconomyTickListener {
             if (preview != null) {
                 announce(minedMarket, storageMarket, preview::name);
             }
+        }
+        for (HullFrameworkData framework : foundFrameworks) {
+            storageCargo.addSpecial(framework.toSpecialItem(), 1f);
+            announce(minedMarket, storageMarket, () -> framework.preview().name());
         }
         for (Map.Entry<String, Integer> material : foundMaterials.entrySet()) {
             storageCargo.addCommodity(material.getKey(), material.getValue());

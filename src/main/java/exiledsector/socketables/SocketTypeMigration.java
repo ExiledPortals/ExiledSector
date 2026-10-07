@@ -39,6 +39,15 @@ public final class SocketTypeMigration {
                     returnedItems.add(socketable);
                 }
             }
+            HullFramework framework = store.findFramework(shipData.getInstalledFrameworkId());
+            for (Map.Entry<Integer, String> slotEntry : List.copyOf(shipData.getFrameworkSocketedItems().entrySet())) {
+                Socketable socketable = store.find(slotEntry.getValue());
+                if (framework != null && socketable != null && socketable.kind() != null
+                        && !socketable.canSocketInto(framework.socketType(slotEntry.getKey()))) {
+                    shipData.unsocketFrameworkItem(slotEntry.getKey());
+                    returnedItems.add(socketable);
+                }
+            }
         }
         return returnedItems;
     }
