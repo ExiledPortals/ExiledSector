@@ -8,7 +8,6 @@ import com.fs.starfarer.api.campaign.FleetEncounterContextPlugin.DataForEncounte
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.SectorAPI;
-import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.fleet.CrewCompositionAPI;
 import com.fs.starfarer.api.impl.campaign.FleetEncounterContext;
 import exiledsector.skills.skilleffect.FleetCrewLedger;
@@ -27,7 +26,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class FleetCrewLedgerListenerTest {
+class FleetCrewLedgerSettlementTest {
 
     private MockedStatic<Global> globalMock;
     private SectorAPI sector;
@@ -50,9 +49,9 @@ class FleetCrewLedgerListenerTest {
 
     @Test
     void aNetGainJoinsTheFleetOnlyUpToItsFreeCrewSpace() {
-        FleetCrewLedgerListener.Outcome outcome = FleetCrewLedgerListener.apply(new CrewChange(10, 2), cargo, 3);
+        FleetCrewLedgerSettlement.Outcome outcome = FleetCrewLedgerSettlement.apply(new CrewChange(10, 2), cargo, 3);
 
-        assertEquals(new FleetCrewLedgerListener.Outcome(3, 5, 0), outcome);
+        assertEquals(new FleetCrewLedgerSettlement.Outcome(3, 5, 0), outcome);
         verify(cargo).addCrew(3);
         verify(cargo, never()).removeCrew(anyInt());
     }
@@ -61,18 +60,18 @@ class FleetCrewLedgerListenerTest {
     void aNetLossIsTakenFromTheFleetButNeverBelowZero() {
         when(cargo.getCrew()).thenReturn(2);
 
-        FleetCrewLedgerListener.Outcome outcome = FleetCrewLedgerListener.apply(new CrewChange(1, 5), cargo, 10);
+        FleetCrewLedgerSettlement.Outcome outcome = FleetCrewLedgerSettlement.apply(new CrewChange(1, 5), cargo, 10);
 
-        assertEquals(new FleetCrewLedgerListener.Outcome(0, 0, 2), outcome);
+        assertEquals(new FleetCrewLedgerSettlement.Outcome(0, 0, 2), outcome);
         verify(cargo).removeCrew(2);
         verify(cargo, never()).addCrew(anyInt());
     }
 
     @Test
     void stolenCrewThatLiveMunitionsSpentNeedsNoRoom() {
-        FleetCrewLedgerListener.Outcome outcome = FleetCrewLedgerListener.apply(new CrewChange(4, 4), cargo, 0);
+        FleetCrewLedgerSettlement.Outcome outcome = FleetCrewLedgerSettlement.apply(new CrewChange(4, 4), cargo, 0);
 
-        assertEquals(new FleetCrewLedgerListener.Outcome(0, 0, 0), outcome);
+        assertEquals(new FleetCrewLedgerSettlement.Outcome(0, 0, 0), outcome);
         verify(cargo, never()).addCrew(anyInt());
         verify(cargo, never()).removeCrew(anyInt());
     }
@@ -100,21 +99,21 @@ class FleetCrewLedgerListenerTest {
     void crewTheGameWillStillRecoverAfterAWinIsReservedOutOfTheFreeSpace() {
         CampaignFleetAPI playerFleet = encounterWithRecoverableCrew(true, 60);
 
-        assertEquals(60, FleetCrewLedgerListener.crewStillToBeRecovered(playerFleet));
+        assertEquals(60, FleetCrewLedgerSettlement.crewStillToBeRecovered(playerFleet));
     }
 
     @Test
     void nothingIsReservedAfterALossOrOutsideAnEncounter() {
         CampaignFleetAPI lost = encounterWithRecoverableCrew(false, 60);
-        assertEquals(0, FleetCrewLedgerListener.crewStillToBeRecovered(lost));
+        assertEquals(0, FleetCrewLedgerSettlement.crewStillToBeRecovered(lost));
 
         when(sector.getCampaignUI().getCurrentInteractionDialog()).thenReturn(null);
-        assertEquals(0, FleetCrewLedgerListener.crewStillToBeRecovered(lost));
+        assertEquals(0, FleetCrewLedgerSettlement.crewStillToBeRecovered(lost));
     }
 
     @Test
     void aBattleWithoutStealingOrSacrificesSchedulesNothing() {
-        new FleetCrewLedgerListener().reportPlayerEngagement(mock(EngagementResultAPI.class));
+        FleetCrewLedgerSettlement.schedule();
 
         verify(sector, never()).addTransientScript(any());
     }

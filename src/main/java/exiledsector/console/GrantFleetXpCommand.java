@@ -2,7 +2,7 @@ package exiledsector.console;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import exiledsector.effects.SkillTreeInstaller;
+import exiledsector.effects.ShipTreeSync;
 import exiledsector.skills.progression.ShipLevelSystem;
 import org.lazywizard.console.BaseCommand;
 import org.lazywizard.console.CommonStrings;
@@ -37,8 +37,9 @@ public class GrantFleetXpCommand implements BaseCommand {
         }
 
         int shipCount = playerFleet.getFleetData().getMembersListCopy().size();
-        SkillTreeInstaller.adoptNpcTrees(playerFleet);
+        ShipTreeSync.fleetChanged(playerFleet);
         ShipLevelSystem.awardXpToFleet(playerFleet, xp);
+        ShipTreeSync.levelsChanged(playerFleet, playerFleet.getFleetData().getMembersListCopy());
 
         Console.showMessage("Granted " + (int) xp + " XP to " + shipCount
                 + (shipCount == 1 ? " ship" : " ships") + " in the fleet.");

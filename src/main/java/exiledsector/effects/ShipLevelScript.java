@@ -2,7 +2,7 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.EveryFrameScript;
 
-// TODO: delete once saves that still contain this script no longer need to load - XP is awarded by CombatXpListener
+// TODO: delete once saves that still contain this script no longer need to load - XP is awarded by CombatXpAward
 public class ShipLevelScript implements EveryFrameScript {
 
     // kept so saves that serialized this field still deserialize

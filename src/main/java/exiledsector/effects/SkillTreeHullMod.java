@@ -53,17 +53,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
             }
         }
         if (isOpCostPass(stats)) return;
-        boolean isNpcTree = SkillDataResolver.isNpcTree(stats.getVariant());
-        if (!isNpcTree) {
-            SkillDataResolver.syncShipTag(stats.getFleetMember(), stats.getVariant());
-            OpReserveHullMods.sync(stats.getFleetMember(), stats.getVariant());
-        }
-        PhantomInstallSync.sync(resolvedTree.phantomHullModIds(), stats.getVariant());
-        if (isNpcTree) {
-            HullModConflictResolver.removeHullModsThatTriedToStripAPhantom(resolvedTree.allocated(), stats.getVariant(), false);
-        } else {
-            HullModConflictResolver.removeConflicts(resolvedTree.allocated(), stats.getVariant());
-        }
+        ShipTreeSync.syncVariant(stats.getFleetMember(), stats.getVariant(), resolvedTree);
     }
 
     @Override
@@ -159,6 +149,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
     public void onFleetSync(CampaignFleetAPI fleet) {
         if (fleet != null && fleet.isPlayerFleet()) {
             FleetWideEffects.markPhaseFieldStale();
+            ShipTreeSync.requestPlayerFleetSync();
         }
         FleetWideEffects.applyAlwaysCountingSensorStrength(fleet);
     }

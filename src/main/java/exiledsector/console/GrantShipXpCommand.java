@@ -3,7 +3,7 @@ package exiledsector.console;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledsector.effects.SkillTreeInstaller;
+import exiledsector.effects.ShipTreeSync;
 import exiledsector.skills.progression.ShipLevelSystem;
 import org.lazywizard.console.BaseCommand;
 import org.lazywizard.console.CommonStrings;
@@ -58,8 +58,9 @@ public class GrantShipXpCommand implements BaseCommand {
         }
 
         FleetMemberAPI matchedMember = matchingMembers.get(0);
-        SkillTreeInstaller.adoptNpcTrees(playerFleet);
+        ShipTreeSync.fleetChanged(playerFleet);
         ShipLevelSystem.awardXpToMember(matchedMember, xp);
+        ShipTreeSync.levelsChanged(playerFleet, List.of(matchedMember));
         Console.showMessage("Granted " + (int) xp + " XP to " + describe(matchedMember) + ".");
         return CommandResult.SUCCESS;
     }

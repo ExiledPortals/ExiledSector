@@ -52,26 +52,24 @@ public class SocketableLootListener extends BaseCampaignEventListener implements
         super(false);
     }
 
-    @Override
-    public void reportPlayerEngagement(EngagementResultAPI engagementResult) {
-        if (engagementResult == null || engagementResult.getBattle() == null) {
+    void holdLoot(PlayerEngagement engagement) {
+        EngagementResultAPI engagementResult = engagement.result();
+        if (engagementResult.getBattle() == null) {
             return;
         }
         Pending pendingLoot = pendingByBattle.computeIfAbsent(engagementResult.getBattle(), key -> new Pending());
-        pendingLoot.playerWon = engagementResult.didPlayerWin();
+        pendingLoot.playerWon = engagement.playerWon();
         for (EngagementResultForFleetAPI fleetResult : new EngagementResultForFleetAPI[]{engagementResult.getWinnerResult(), engagementResult.getLoserResult()}) {
             if (fleetResult != null && !fleetResult.isPlayer()) {
                 hold(pendingLoot, fleetResult.getDestroyed());
                 hold(pendingLoot, fleetResult.getDisabled());
             }
         }
-        if (pendingLoot.playerWon) {
-            float defeatedDp = CombatXpListener.enemyDeploymentPointsDefeated(engagementResult);
-            if (defeatedDp > 0f) {
-                float difficultyMultiplier = ShipLevelSystem.difficultyMultiplier(BattleDifficulty.current(), ShipLevelConfig.xpDifficultyStrength(),
-                        ShipLevelConfig.xpDifficultyMaxMultiplier());
-                pendingLoot.partsEarned += defeatedDp * SocketableDrops.battlePartsPerDeploymentPoint() * difficultyMultiplier;
-            }
+        float defeatedDp = engagement.enemyDeploymentPointsDefeated();
+        if (pendingLoot.playerWon && defeatedDp > 0f) {
+            float difficultyMultiplier = ShipLevelSystem.difficultyMultiplier(engagement.difficulty(), ShipLevelConfig.xpDifficultyStrength(),
+                    ShipLevelConfig.xpDifficultyMaxMultiplier());
+            pendingLoot.partsEarned += defeatedDp * SocketableDrops.battlePartsPerDeploymentPoint() * difficultyMultiplier;
         }
     }
 
@@ -96,10 +94,7 @@ public class SocketableLootListener extends BaseCampaignEventListener implements
         for (FleetMemberAPI recoveredShip : recoveredShips) {
             pendingByBattle.values().forEach(pendingLoot -> pendingLoot.itemsByMemberId.remove(recoveredShip.getId()));
         }
-        CampaignFleetAPI playerFleet = Global.getSector() == null ? null : Global.getSector().getPlayerFleet();
-        if (playerFleet != null) {
-            SkillTreeInstaller.adoptNpcTrees(playerFleet);
-        }
+        ShipTreeSync.fleetChanged(Global.getSector() == null ? null : Global.getSector().getPlayerFleet());
     }
 
     @Override

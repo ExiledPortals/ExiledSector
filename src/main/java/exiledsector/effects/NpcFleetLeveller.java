@@ -114,7 +114,7 @@ public final class NpcFleetLeveller {
         if (currentVariant.hasHullMod(SkillTreeHullMod.ID) && treeTag.equals(NpcTreeTag.find(currentVariant))) {
             return;
         }
-        ShipVariantAPI ownedVariant = SkillTreeInstaller.ownedVariant(member);
+        ShipVariantAPI ownedVariant = ShipTreeSync.ownedVariant(member);
         NpcTreeTag.removeAll(ownedVariant);
         ownedVariant.addTag(treeTag);
         stripConflictingHullMods(ownedVariant, SkillDataResolver.resolve(member, ownedVariant));

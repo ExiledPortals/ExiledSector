@@ -10,6 +10,7 @@ import exiledsector.i18n.Translation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public final class FleetWideEffects {
 
@@ -33,14 +34,14 @@ public final class FleetWideEffects {
         return sector == null ? null : sector.getPlayerFleet();
     }
 
-    public static void recomputeSalvageBonus() {
+    public static void recomputeSalvageBonus(Set<String> departingMemberIds) {
         CampaignFleetAPI playerFleet = playerFleet();
         if (playerFleet == null) {
             return;
         }
         float totalPercent = 0f;
         for (FleetMemberAPI member : playerFleet.getFleetData().getMembersListCopy()) {
-            if (member.isMothballed()) {
+            if (member.isMothballed() || departingMemberIds.contains(member.getId())) {
                 continue;
             }
             totalPercent += member.getStats().getDynamic().getValue(POST_BATTLE_SALVAGE_CONTRIBUTION_KEY, 0f);

@@ -2,13 +2,11 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.BaseCampaignEventListener;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.FleetEncounterContextPlugin.DataForEncounterSide;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.TextPanelAPI;
-import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.fleet.CrewCompositionAPI;
 import com.fs.starfarer.api.impl.campaign.FleetEncounterContext;
 import com.fs.starfarer.api.util.Misc;
@@ -20,14 +18,12 @@ import exiledsector.ui.VanillaText;
 
 import java.awt.Color;
 
-public class FleetCrewLedgerListener extends BaseCampaignEventListener {
+public final class FleetCrewLedgerSettlement {
 
-    public FleetCrewLedgerListener() {
-        super(false);
+    private FleetCrewLedgerSettlement() {
     }
 
-    @Override
-    public void reportPlayerEngagement(EngagementResultAPI result) {
+    static void schedule() {
         CrewChange change = FleetCrewLedger.drain();
         if (change.stolen() <= 0 && change.sacrificed() <= 0) {
             return;

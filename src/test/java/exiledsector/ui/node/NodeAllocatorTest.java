@@ -37,7 +37,6 @@ import org.apache.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -93,7 +92,6 @@ class NodeAllocatorTest {
 
     private MockedStatic<LunaSettings> lunaSettingsMock;
     private MockedStatic<Global> globalMock;
-    private MockedConstruction<SkillTreeHullMod> hullModConstruction;
     private SettingsAPI settings;
     private CargoAPI cargo;
     private FleetMemberAPI member;
@@ -121,7 +119,6 @@ class NodeAllocatorTest {
         settings = mock(SettingsAPI.class);
         globalMock.when(Global::getSector).thenReturn(sector);
         globalMock.when(Global::getSettings).thenReturn(settings);
-        hullModConstruction = Mockito.mockConstruction(SkillTreeHullMod.class);
 
         SkillTree.clearNodes();
         SkillTree.clearTypes();
@@ -149,7 +146,6 @@ class NodeAllocatorTest {
 
     @AfterEach
     void tearDown() {
-        hullModConstruction.close();
         globalMock.close();
         lunaSettingsMock.close();
         SkillTree.clearNodes();
@@ -331,7 +327,6 @@ class NodeAllocatorTest {
         verify(cargo).removeCommodity("alpha_core", 1f);
         assertTrue(allocator.toggle(coreSlot));
         verify(cargo).addCommodity("alpha_core", 1f);
-        assertEquals(2, hullModConstruction.constructed().size());
         verify(member, times(2)).updateStats();
     }
 
@@ -355,7 +350,7 @@ class NodeAllocatorTest {
         assertFalse(allocatorStartingAt(root).toggle(unreachable));
 
         verifyNoInteractions(cargo);
-        assertTrue(hullModConstruction.constructed().isEmpty());
+        verify(member, never()).updateStats();
     }
 
     @Test
@@ -448,7 +443,7 @@ class NodeAllocatorTest {
         assertTrue(data().isAllocated("choice_1"));
         assertEquals(hangarOption, choice.resolveEffectiveType(data()));
         assertEquals(SkillNodeOpCost.perNode(HullSize.CRUISER), data().getSpentOp(SkillNodeOpCost.perNode(HullSize.CRUISER)));
-        assertEquals(1, hullModConstruction.constructed().size());
+        verify(member).updateStats();
         fitWingsWithBays(2, 2f);
         assertNotNull(allocator.blockDeallocationReason(choice));
     }

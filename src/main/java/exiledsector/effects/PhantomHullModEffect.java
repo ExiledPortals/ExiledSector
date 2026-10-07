@@ -61,11 +61,8 @@ public final class PhantomHullModEffect extends BaseHullMod {
 
     @Override
     public void applyEffectsBeforeShipCreation(HullSize hullSize, MutableShipStatsAPI stats, String id) {
-        ShipVariantAPI variant = stats.getVariant();
-        if (!isPhantom(variant)) {
+        if (!isPhantom(stats.getVariant())) {
             originalEffect.applyEffectsBeforeShipCreation(hullSize, stats, id);
-        } else if (!SkillTreeHullMod.isOpCostPass(stats) && !variant.getPermaMods().contains(hullModId)) {
-            variant.addPermaMod(hullModId);
         }
     }
 

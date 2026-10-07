@@ -6,7 +6,7 @@ import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledsector.effects.SkillTreeInstaller;
+import exiledsector.effects.ShipTreeSync;
 import exiledsector.skills.progression.ShipLevelSystem;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +32,7 @@ class GrantShipXpCommandTest {
     private MockedStatic<Global> globalMock;
     private MockedStatic<Console> consoleMock;
     private MockedStatic<ShipLevelSystem> levelSystemMock;
-    private MockedStatic<SkillTreeInstaller> installerMock;
+    private MockedStatic<ShipTreeSync> treeSyncMock;
     private SectorAPI sector;
     private FleetDataAPI fleetData;
     private FleetMemberAPI ravenous;
@@ -44,7 +44,7 @@ class GrantShipXpCommandTest {
         globalMock = Mockito.mockStatic(Global.class);
         consoleMock = Mockito.mockStatic(Console.class);
         levelSystemMock = Mockito.mockStatic(ShipLevelSystem.class);
-        installerMock = Mockito.mockStatic(SkillTreeInstaller.class);
+        treeSyncMock = Mockito.mockStatic(ShipTreeSync.class);
         sector = mock(SectorAPI.class);
         CampaignFleetAPI fleet = mock(CampaignFleetAPI.class);
         fleetData = mock(FleetDataAPI.class);
@@ -59,7 +59,7 @@ class GrantShipXpCommandTest {
 
     @AfterEach
     void tearDown() {
-        installerMock.close();
+        treeSyncMock.close();
         levelSystemMock.close();
         consoleMock.close();
         globalMock.close();

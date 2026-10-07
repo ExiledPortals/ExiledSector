@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.effects.ShipTreeSync;
 import exiledsector.skills.progression.ShipLevelSystem;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +14,7 @@ import org.lazywizard.console.BaseCommand.CommandContext;
 import org.lazywizard.console.BaseCommand.CommandResult;
 import org.lazywizard.console.CommonStrings;
 import org.lazywizard.console.Console;
+import org.mockito.InOrder;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -30,6 +32,7 @@ class GrantFleetXpCommandTest {
     private MockedStatic<Global> globalMock;
     private MockedStatic<Console> consoleMock;
     private MockedStatic<ShipLevelSystem> levelSystemMock;
+    private MockedStatic<ShipTreeSync> treeSyncMock;
     private SectorAPI sector;
     private CampaignFleetAPI fleet;
     private FleetDataAPI fleetData;
@@ -39,6 +42,7 @@ class GrantFleetXpCommandTest {
         globalMock = Mockito.mockStatic(Global.class);
         consoleMock = Mockito.mockStatic(Console.class);
         levelSystemMock = Mockito.mockStatic(ShipLevelSystem.class);
+        treeSyncMock = Mockito.mockStatic(ShipTreeSync.class);
         sector = mock(SectorAPI.class);
         fleet = mock(CampaignFleetAPI.class);
         fleetData = mock(FleetDataAPI.class);
@@ -51,6 +55,7 @@ class GrantFleetXpCommandTest {
     @AfterEach
     void tearDown() {
         levelSystemMock.close();
+        treeSyncMock.close();
         consoleMock.close();
         globalMock.close();
     }
@@ -65,6 +70,16 @@ class GrantFleetXpCommandTest {
 
         levelSystemMock.verify(() -> ShipLevelSystem.awardXpToFleet(fleet, 250f));
         consoleMock.verify(() -> Console.showMessage("Granted 250 XP to 2 ships in the fleet."));
+    }
+
+    @Test
+    void syncsTheFleetsTreesBeforeAwardingAndMarksTheShipsForAStatRebuildAfter() {
+        assertEquals(CommandResult.SUCCESS, run("250", CommandContext.CAMPAIGN_MAP));
+
+        InOrder order = Mockito.inOrder(ShipTreeSync.class, ShipLevelSystem.class);
+        order.verify(treeSyncMock, () -> ShipTreeSync.fleetChanged(fleet));
+        order.verify(levelSystemMock, () -> ShipLevelSystem.awardXpToFleet(fleet, 250f));
+        order.verify(treeSyncMock, () -> ShipTreeSync.levelsChanged(any(), any()));
     }
 
     @Test

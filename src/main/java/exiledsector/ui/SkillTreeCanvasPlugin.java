@@ -8,9 +8,8 @@ import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
-import exiledsector.effects.OpReserveHullMods;
 import exiledsector.effects.OpReserveParity;
-import exiledsector.effects.SkillTreeInstaller;
+import exiledsector.effects.ShipTreeSync;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillType;
@@ -77,11 +76,10 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     public SkillTreeCanvasPlugin(FleetMemberAPI member, ShipVariantAPI variant, float shipCardHeight, BaseRefitButton refitButton,
                                  CustomPanelAPI hostPanel) {
-        if (SkillTreeInstaller.ensureInstalled(member, variant) && refitButton != null) {
+        OpReserveParity.warnIfOutOfSync(member, variant, "before the skill tree re-synced it");
+        if (ShipTreeSync.memberChanged(member, variant) && refitButton != null) {
             refitButton.refreshVariant();
         }
-        OpReserveParity.warnIfOutOfSync(member, variant, "before the skill tree re-synced it");
-        OpReserveHullMods.sync(member, variant);
         SocketCustody.reconcile();
         SkillTreePanelStyle panelStyle = new SkillTreePanelStyle();
         this.starfieldRenderer = new SkillTreeStarfieldRenderer(panelStyle);

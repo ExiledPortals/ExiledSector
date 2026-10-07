@@ -1,46 +1,43 @@
 package exiledsector.effects;
 
 import com.fs.starfarer.api.combat.ShipVariantAPI;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.InstalledHullMods;
-import exiledsector.skills.ShipSkillData;
-import exiledsector.skills.SkillDataResolver;
 
 import java.util.ArrayList;
 import java.util.Set;
 
-public final class PhantomInstallSync {
+final class PhantomInstallSync {
 
     private PhantomInstallSync() {
     }
 
-    public static void sync(FleetMemberAPI member, ShipVariantAPI variant) {
-        ShipSkillData shipData = SkillDataResolver.resolve(member, variant);
-        if (shipData == null) return;
+    static boolean sync(Set<String> wantedHullModIds, ShipVariantAPI variant) {
+        if (variant == null) return false;
 
-        sync(ResolvedTree.phantomHullModIdsOf(AllocatedNode.of(shipData)), variant);
+        boolean changed = installWanted(wantedHullModIds, variant);
+        changed |= removeUnwanted(wantedHullModIds, variant);
+        return changed;
     }
 
-    static void sync(Set<String> wantedHullModIds, ShipVariantAPI variant) {
-        if (variant == null) return;
-
-        installWanted(wantedHullModIds, variant);
-        removeUnwanted(wantedHullModIds, variant);
-    }
-
-    private static void installWanted(Set<String> wantedHullModIds, ShipVariantAPI variant) {
+    private static boolean installWanted(Set<String> wantedHullModIds, ShipVariantAPI variant) {
+        boolean changed = false;
         for (String hullModId : wantedHullModIds) {
             if (!variant.hasHullMod(hullModId)) {
                 variant.addPermaMod(hullModId);
                 if (!InstalledHullMods.isInstalledBySkillTree(variant, hullModId)) {
                     variant.addTag(InstalledHullMods.tag(hullModId));
                 }
+                changed = true;
+            } else if (InstalledHullMods.isInstalledBySkillTree(variant, hullModId) && !variant.getPermaMods().contains(hullModId)) {
+                variant.addPermaMod(hullModId);
+                changed = true;
             }
         }
+        return changed;
     }
 
-    private static void removeUnwanted(Set<String> wantedHullModIds, ShipVariantAPI variant) {
+    private static boolean removeUnwanted(Set<String> wantedHullModIds, ShipVariantAPI variant) {
+        boolean changed = false;
         for (String tag : new ArrayList<>(variant.getTags())) {
             String hullModId = installedHullModId(tag);
             if (hullModId != null && !wantedHullModIds.contains(hullModId)) {
@@ -48,20 +45,10 @@ public final class PhantomInstallSync {
                     variant.removePermaMod(hullModId);
                 }
                 variant.removeTag(tag);
+                changed = true;
             }
         }
-    }
-
-    public static boolean restoreInstalledPermaMods(ShipVariantAPI variant) {
-        boolean restored = false;
-        for (String tag : variant.getTags()) {
-            String hullModId = installedHullModId(tag);
-            if (hullModId != null && variant.hasHullMod(hullModId) && !variant.getPermaMods().contains(hullModId)) {
-                variant.addPermaMod(hullModId);
-                restored = true;
-            }
-        }
-        return restored;
+        return changed;
     }
 
     private static String installedHullModId(String tag) {

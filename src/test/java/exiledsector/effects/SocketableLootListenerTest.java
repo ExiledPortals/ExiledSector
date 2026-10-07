@@ -114,7 +114,7 @@ class SocketableLootListenerTest {
     @Test
     void aDestroyedOrDisabledEnemyShipsItemDropsIntoThatBattlesLoot() {
         BattleAPI battle = mock(BattleAPI.class);
-        listener.reportPlayerEngagement(engagement(battle, List.of(flagship("wrecked")), List.of(flagship("crippled"))));
+        listener.holdLoot(PlayerEngagement.of(engagement(battle, List.of(flagship("wrecked")), List.of(flagship("crippled"))), 1f));
         CargoAPI loot = mock(CargoAPI.class);
 
         listener.reportEncounterLootGenerated(context(battle), loot);
@@ -126,7 +126,7 @@ class SocketableLootListenerTest {
     void aRecoveredShipKeepsItsItemOutOfTheLoot() {
         BattleAPI battle = mock(BattleAPI.class);
         FleetMemberAPI crippled = flagship("crippled");
-        listener.reportPlayerEngagement(engagement(battle, List.of(), List.of(crippled)));
+        listener.holdLoot(PlayerEngagement.of(engagement(battle, List.of(), List.of(crippled)), 1f));
         listener.reportShipsRecovered(List.of(crippled), null);
         CargoAPI loot = mock(CargoAPI.class);
 
@@ -138,7 +138,7 @@ class SocketableLootListenerTest {
     @Test
     void aWonBattleWithNoLootScreenPutsTheItemStraightIntoTheCargo() {
         BattleAPI battle = mock(BattleAPI.class);
-        listener.reportPlayerEngagement(engagement(battle, List.of(flagship("wrecked")), List.of()));
+        listener.holdLoot(PlayerEngagement.of(engagement(battle, List.of(flagship("wrecked")), List.of()), 1f));
 
         listener.reportBattleFinished(null, battle);
 
@@ -150,7 +150,7 @@ class SocketableLootListenerTest {
         BattleAPI battle = mock(BattleAPI.class);
         EngagementResultAPI result = engagement(battle, List.of(flagship("wrecked")), List.of());
         when(result.didPlayerWin()).thenReturn(false);
-        listener.reportPlayerEngagement(result);
+        listener.holdLoot(PlayerEngagement.of(result, 1f));
 
         listener.reportBattleFinished(null, battle);
 
@@ -160,7 +160,7 @@ class SocketableLootListenerTest {
     @Test
     void leavingABattleWithoutLootForgetsItsItemsSoRejoiningCannotDropThem() {
         BattleAPI battle = mock(BattleAPI.class);
-        listener.reportPlayerEngagement(engagement(battle, List.of(flagship("wrecked")), List.of()));
+        listener.holdLoot(PlayerEngagement.of(engagement(battle, List.of(flagship("wrecked")), List.of()), 1f));
         when(battle.isPlayerInvolved()).thenReturn(false);
 
         listener.reportShownInteractionDialog(null);
@@ -175,7 +175,7 @@ class SocketableLootListenerTest {
     @Test
     void lootedItemsAreNotDeliveredAgainWhenTheBattleFinishes() {
         BattleAPI battle = mock(BattleAPI.class);
-        listener.reportPlayerEngagement(engagement(battle, List.of(flagship("wrecked")), List.of()));
+        listener.holdLoot(PlayerEngagement.of(engagement(battle, List.of(flagship("wrecked")), List.of()), 1f));
         CargoAPI loot = mock(CargoAPI.class);
 
         listener.reportEncounterLootGenerated(context(battle), loot);
@@ -188,7 +188,7 @@ class SocketableLootListenerTest {
     @Test
     void anotherBattlesLootNeverPicksUpThisBattlesItems() {
         BattleAPI battle = mock(BattleAPI.class);
-        listener.reportPlayerEngagement(engagement(battle, List.of(flagship("wrecked")), List.of()));
+        listener.holdLoot(PlayerEngagement.of(engagement(battle, List.of(flagship("wrecked")), List.of()), 1f));
         CargoAPI otherLoot = mock(CargoAPI.class);
 
         listener.reportEncounterLootGenerated(context(mock(BattleAPI.class)), otherLoot);
@@ -212,7 +212,7 @@ class SocketableLootListenerTest {
         try (MockedStatic<LunaSettings> luna = Mockito.mockStatic(LunaSettings.class)) {
             luna.when(() -> LunaSettings.getFloat(Mockito.anyString(), Mockito.anyString())).thenReturn(null);
             BattleAPI battle = mock(BattleAPI.class);
-            listener.reportPlayerEngagement(engagement(battle, List.of(warship("a", 120f)), List.of(warship("b", 80f))));
+            listener.holdLoot(PlayerEngagement.of(engagement(battle, List.of(warship("a", 120f)), List.of(warship("b", 80f))), 1f));
             CargoAPI loot = mock(CargoAPI.class);
 
             listener.reportEncounterLootGenerated(context(battle), loot);
@@ -228,7 +228,7 @@ class SocketableLootListenerTest {
             BattleAPI battle = mock(BattleAPI.class);
             EngagementResultAPI result = engagement(battle, List.of(warship("a", 200f)), List.of());
             when(result.didPlayerWin()).thenReturn(false);
-            listener.reportPlayerEngagement(result);
+            listener.holdLoot(PlayerEngagement.of(result, 1f));
             CargoAPI loot = mock(CargoAPI.class);
 
             listener.reportEncounterLootGenerated(context(battle), loot);

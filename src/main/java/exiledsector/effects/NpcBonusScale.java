@@ -81,7 +81,7 @@ public final class NpcBonusScale {
         if (playerFleet == null || playerFleet.getFleetData() == null) {
             return 1f;
         }
-        float averageLevel = averageCombatShipLevel(playerFleet.getFleetData().getMembersListCopy(), SkillTreeInstaller.currentLevelFloor());
+        float averageLevel = averageCombatShipLevel(playerFleet.getFleetData().getMembersListCopy(), ShipTreeSync.currentLevelFloor());
         return multiplier(sector.getPlayerStats().getLevel(), averageLevel, config);
     }
 

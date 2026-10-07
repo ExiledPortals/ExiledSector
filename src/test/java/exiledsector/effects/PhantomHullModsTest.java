@@ -204,7 +204,7 @@ class PhantomHullModsTest {
         createdEffect.advanceInCombat(ship, 0.1f);
 
         assertTrue(RecordingHullModEffect.CALLS.isEmpty());
-        verify(variant).addPermaMod(HULL_MOD);
+        verify(variant, never()).addPermaMod(HULL_MOD);
         assertTrue(createdEffect.isApplicableToShip(ship));
         assertFalse(createdEffect.shouldAddDescriptionToTooltip(HullSize.CRUISER, ship, false));
         assertFalse(createdEffect.canBeAddedOrRemovedNow(ship, null, CoreUITradeMode.OPEN));

@@ -20,6 +20,7 @@ import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
 import exiledsector.ExiledSectorModPlugin;
 import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.PhantomHullModStatus;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
@@ -446,7 +447,7 @@ class SkillTreeHullModTest {
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         when(variant.getTags()).thenReturn(List.of());
 
-        PhantomInstallSync.sync(memberWithId("ship-a"), variant);
+        syncPhantoms(memberWithId("ship-a"), variant);
 
         verify(variant).addPermaMod("militarized_subsystems");
         verify(variant).addTag("exiledSector_installed_militarized_subsystems");
@@ -484,11 +485,11 @@ class SkillTreeHullModTest {
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         when(variant.getTags()).thenReturn(List.of());
 
-        PhantomInstallSync.sync(memberWithId("ship-a"), variant);
+        syncPhantoms(memberWithId("ship-a"), variant);
         verify(variant, never()).addPermaMod("safetyoverrides");
 
         makeSafetyOverridesAPhantom();
-        PhantomInstallSync.sync(memberWithId("ship-a"), variant);
+        syncPhantoms(memberWithId("ship-a"), variant);
 
         verify(variant).addPermaMod("safetyoverrides");
         verify(variant).addTag("exiledSector_installed_safetyoverrides");
@@ -555,43 +556,38 @@ class SkillTreeHullModTest {
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         when(variant.getTags()).thenReturn(List.of("exiledSector_installed_militarized_subsystems", "some_other_tag"));
 
-        PhantomInstallSync.sync(memberWithId("ship-a"), variant);
+        syncPhantoms(memberWithId("ship-a"), variant);
 
         verify(variant).removePermaMod("militarized_subsystems");
         verify(variant).removeTag("exiledSector_installed_militarized_subsystems");
         verify(variant, never()).removeTag("some_other_tag");
     }
 
-    @Test
-    void syncLeavesAnInstalledHullModTheBuildInDialogMadeNormalAloneSoItCanStillBeBuiltIn() {
-        ShipSkillDataManager.get("ship-a").allocate(registerMilitarizedNode(), 1);
+    private static boolean syncPhantoms(FleetMemberAPI member, ShipVariantAPI variant) {
+        List<AllocatedNode> allocatedNodes = AllocatedNode.of(SkillDataResolver.resolve(member, variant));
+        return PhantomInstallSync.sync(ResolvedTree.phantomHullModIdsOf(allocatedNodes), variant);
+    }
+
+    private static ShipVariantAPI variantWithTreeInstalledMilitarizedSubsystems(boolean permanent) {
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         when(variant.hasHullMod("militarized_subsystems")).thenReturn(true);
         when(variant.hasTag("exiledSector_installed_militarized_subsystems")).thenReturn(true);
-        when(variant.getPermaMods()).thenReturn(new LinkedHashSet<>());
-        when(variant.getTags()).thenReturn(List.of("exiledSector_installed_militarized_subsystems"));
-
-        PhantomInstallSync.sync(memberWithId("ship-a"), variant);
-
-        verify(variant, never()).addPermaMod(anyString());
-        verify(variant, never()).addTag(anyString());
+        when(variant.getPermaMods()).thenReturn(new LinkedHashSet<>(permanent ? List.of("militarized_subsystems") : List.of()));
+        when(variant.getTags()).thenReturn(List.of("exiledSector_installed_militarized_subsystems", "some_other_tag"));
+        return variant;
     }
 
     @Test
-    void restoringInstalledHullModsMakesOnlyTheTreesOwnNormalCopiesPermanentAgain() {
-        ShipVariantAPI demoted = mock(ShipVariantAPI.class);
-        when(demoted.getTags()).thenReturn(List.of("exiledSector_installed_militarized_subsystems", "some_other_tag"));
-        when(demoted.hasHullMod("militarized_subsystems")).thenReturn(true);
-        when(demoted.getPermaMods()).thenReturn(new LinkedHashSet<>());
-        ShipVariantAPI intact = mock(ShipVariantAPI.class);
-        when(intact.getTags()).thenReturn(List.of("exiledSector_installed_militarized_subsystems"));
-        when(intact.hasHullMod("militarized_subsystems")).thenReturn(true);
-        when(intact.getPermaMods()).thenReturn(new LinkedHashSet<>(List.of("militarized_subsystems")));
+    void syncMakesOnlyTheTreesOwnCopiesThatTheBuildInDialogMadeNormalPermanentAgain() {
+        ShipSkillDataManager.get("ship-a").allocate(registerMilitarizedNode(), 1);
+        ShipVariantAPI demoted = variantWithTreeInstalledMilitarizedSubsystems(false);
+        ShipVariantAPI intact = variantWithTreeInstalledMilitarizedSubsystems(true);
 
-        assertTrue(PhantomInstallSync.restoreInstalledPermaMods(demoted));
-        assertFalse(PhantomInstallSync.restoreInstalledPermaMods(intact));
+        assertTrue(syncPhantoms(memberWithId("ship-a"), demoted));
+        assertFalse(syncPhantoms(memberWithId("ship-a"), intact));
 
         verify(demoted).addPermaMod("militarized_subsystems");
+        verify(demoted, never()).addTag(anyString());
         verify(intact, never()).addPermaMod(anyString());
     }
 
@@ -603,7 +599,7 @@ class SkillTreeHullModTest {
         when(variant.getPermaMods()).thenReturn(new LinkedHashSet<>());
         when(variant.getTags()).thenReturn(List.of());
 
-        PhantomInstallSync.sync(memberWithId("ship-a"), variant);
+        syncPhantoms(memberWithId("ship-a"), variant);
 
         verify(variant, never()).addPermaMod(anyString());
         verify(variant, never()).addTag(anyString());
@@ -616,7 +612,7 @@ class SkillTreeHullModTest {
         when(variant.getTags()).thenReturn(List.of("exiledSector_installed_militarized_subsystems"));
         when(variant.getSMods()).thenReturn(new LinkedHashSet<>(List.of("militarized_subsystems")));
 
-        PhantomInstallSync.sync(memberWithId("ship-a"), variant);
+        syncPhantoms(memberWithId("ship-a"), variant);
 
         verify(variant, never()).removePermaMod(anyString());
         verify(variant).removeTag("exiledSector_installed_militarized_subsystems");

@@ -6,10 +6,10 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
-import exiledsector.effects.CombatXpListener;
 import exiledsector.effects.NpcFleetDialogListener;
 import exiledsector.effects.NpcFleetInflationListener;
 import exiledsector.effects.NpcFleetSweepScript;
+import exiledsector.effects.PlayerEngagementPipeline;
 import exiledsector.effects.SkillTreeInstaller;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
@@ -18,6 +18,7 @@ import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.npc.NpcFactionVolumes;
+import exiledsector.socketables.SocketLossListener;
 import exiledsector.socketables.SocketableDefinitions;
 import exiledsector.socketables.SocketableKind;
 import exiledsector.socketables.SocketableNames;
@@ -280,10 +281,11 @@ class ExiledSectorModPluginTest {
     }
 
     @Test
-    void onGameLoadRegistersTheCombatXpListenerAsTransient() {
+    void onGameLoadRegistersOnePlayerEngagementPipelineAsTransient() {
         new ExiledSectorModPlugin().onGameLoad(true);
 
-        verify(sector).addTransientListener(any(CombatXpListener.class));
+        verify(sector).addTransientListener(any(PlayerEngagementPipeline.class));
+        verify(sector, never()).addTransientListener(any(SocketLossListener.class));
     }
 
     @Test

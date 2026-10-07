@@ -12,11 +12,8 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.compat.SecondInCommandCompat;
 import exiledsector.effects.FighterBayOverflow;
 import exiledsector.i18n.I18n;
-import exiledsector.effects.OpReserveHullMods;
 import exiledsector.effects.OpReserveParity;
-import exiledsector.effects.PhantomInstallSync;
-import exiledsector.effects.SkillTreeHullMod;
-import exiledsector.effects.SkillTreeInstaller;
+import exiledsector.effects.ShipTreeSync;
 import exiledsector.i18n.Translation;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedNode;
@@ -24,7 +21,6 @@ import exiledsector.skills.HullModNames;
 import exiledsector.skills.InstalledHullMods;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.RespecPlan;
-import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillItemCost;
@@ -231,12 +227,8 @@ final class NodeAllocator {
 
     private void refreshShipStats() {
         statsRevision++;
-        SkillTreeInstaller.ensureInstalled(fleetMember, shipVariant);
+        ShipTreeSync.memberChanged(fleetMember, shipVariant);
         FleetWideEffects.markPhaseFieldStale();
-        new SkillTreeHullMod().applyEffectsBeforeShipCreation(fleetMember.getHullSpec().getHullSize(), fleetMember.getStats(), SkillTreeHullMod.ID);
-        SkillDataResolver.syncShipTag(fleetMember, shipVariant);
-        OpReserveHullMods.sync(fleetMember, shipVariant);
-        PhantomInstallSync.sync(fleetMember, shipVariant);
         fleetMember.setStatUpdateNeeded(true);
         fleetMember.updateStats();
         returnUnhousedWings();
@@ -292,7 +284,7 @@ final class NodeAllocator {
     private void refreshVariantHullMods() {
         fleetMember.setStatUpdateNeeded(true);
         fleetMember.updateStats();
-        OpReserveHullMods.sync(fleetMember, shipVariant);
+        ShipTreeSync.syncVariant(fleetMember, shipVariant);
     }
 
     private boolean hasHullMod(String hullModId) {

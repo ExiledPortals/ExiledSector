@@ -51,7 +51,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class CombatXpListenerTest {
+class CombatXpAwardTest {
 
     private MockedStatic<Global> globalMock;
     private MockedStatic<LunaSettings> lunaSettingsMock;
@@ -106,11 +106,33 @@ class CombatXpListenerTest {
         SkillTree.clearNodes();
     }
 
+    private static void syncTreesThenAwardXp(EngagementResultAPI result) {
+        new PlayerEngagementPipeline(Map.of(
+                PlayerEngagementPipeline.Stage.SYNC_TREES, engagement -> ShipTreeSync.afterPlayerEngagement(Global.getSector().getPlayerFleet()),
+                PlayerEngagementPipeline.Stage.AWARD_XP, CombatXpAward::award)).reportPlayerEngagement(result);
+    }
+
+    @Test
+    void levelledShipsAreMarkedForAStatRebuildSoTheirReserveFollowsTheNewFreeNodes() {
+        lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", ShipLevelConfig.XP_BASE_FIELD_ID)).thenReturn(30);
+        FleetMemberAPI levelling = member("ship-a");
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(levelling));
+
+        syncTreesThenAwardXp(engagement(true, 40f));
+
+        verify(levelling).setStatUpdateNeeded(true);
+        verify(fleetData).setSyncNeeded();
+    }
+
     private static FleetMemberAPI member(String id) {
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         ShipHullSpecAPI hullSpec = mock(ShipHullSpecAPI.class);
         when(member.getId()).thenReturn(id);
         when(member.getShipName()).thenReturn("ISS " + id);
+        ShipVariantAPI installedVariant = mock(ShipVariantAPI.class);
+        when(installedVariant.getSource()).thenReturn(VariantSource.REFIT);
+        when(installedVariant.hasHullMod(SkillTreeHullMod.ID)).thenReturn(true);
+        when(member.getVariant()).thenReturn(installedVariant);
         when(member.getHullSpec()).thenReturn(hullSpec);
         when(hullSpec.getHullSize()).thenReturn(HullSize.FRIGATE);
         when(hullSpec.getHullNameWithDashClass()).thenReturn("Wolf-class");
@@ -137,7 +159,7 @@ class CombatXpListenerTest {
         List<FleetMemberAPI> members = List.of(member("ship-a"), member("ship-b"));
         when(fleetData.getMembersListCopy()).thenReturn(members);
 
-        new CombatXpListener().reportPlayerEngagement(engagement(true, 40f));
+        syncTreesThenAwardXp(engagement(true, 40f));
 
         assertEquals(40f, ShipSkillDataManager.get("ship-a").getXp());
         assertEquals(40f, ShipSkillDataManager.get("ship-b").getXp());
@@ -153,7 +175,7 @@ class CombatXpListenerTest {
         List<FleetMemberAPI> disabledShips = List.of(disabled);
         when(result.getLoserResult().getDisabled()).thenReturn(disabledShips);
 
-        new CombatXpListener().reportPlayerEngagement(result);
+        syncTreesThenAwardXp(result);
 
         assertEquals(55f, ShipSkillDataManager.get("ship-a").getXp());
     }
@@ -163,7 +185,7 @@ class CombatXpListenerTest {
         List<FleetMemberAPI> members = List.of(member("ship-a"));
         when(fleetData.getMembersListCopy()).thenReturn(members);
 
-        new CombatXpListener().reportPlayerEngagement(engagement(false, 40f));
+        syncTreesThenAwardXp(engagement(false, 40f));
 
         assertEquals(40f * ShipLevelConfig.DEFAULT_XP_LOSS_MULTIPLIER, ShipSkillDataManager.get("ship-a").getXp());
         verify(textPanel).addPara(eq("%s"), (Color) any(), (Color) any(), contains("reduced because the battle was lost"));
@@ -185,7 +207,7 @@ class CombatXpListenerTest {
         doAnswer(invocation -> tags.remove((String) invocation.getArgument(0))).when(variant).removeTag(anyString());
         when(fleetData.getMembersListCopy()).thenReturn(List.of(captured));
 
-        new CombatXpListener().reportPlayerEngagement(engagement(true, 40f));
+        syncTreesThenAwardXp(engagement(true, 40f));
 
         ShipSkillData data = ShipSkillDataManager.get("captured");
         assertEquals(List.of("root_1", "a_1"), List.copyOf(data.getAllocatedNodeIds()));
@@ -201,7 +223,7 @@ class CombatXpListenerTest {
         EngagementResultAPI autoresolvedPursuit = engagement(true, 40f);
         when(autoresolvedPursuit.getLastCombatDamageData()).thenReturn(null);
 
-        new CombatXpListener().reportPlayerEngagement(autoresolvedPursuit);
+        syncTreesThenAwardXp(autoresolvedPursuit);
 
         assertEquals(40f, ShipSkillDataManager.get("ship-a").getXp());
         verify(textPanel).addPara(eq("%s"), (Color) any(), (Color) any(), contains("40"));
@@ -215,7 +237,7 @@ class CombatXpListenerTest {
         LabelAPI label = mock(LabelAPI.class);
         when(textPanel.addPara(anyString(), (Color) any(), (Color) any(), any(String[].class))).thenReturn(label);
 
-        new CombatXpListener().reportPlayerEngagement(engagement(true, 40f));
+        syncTreesThenAwardXp(engagement(true, 40f));
 
         ShipSkillData data = ShipSkillDataManager.get("ship-a");
         assertTrue(data.getLevel() >= 1);
@@ -251,7 +273,7 @@ class CombatXpListenerTest {
         oneShipFleetThatWontLevelUp();
         encounterWithDifficulty(encounterContext(2f, true));
 
-        new CombatXpListener().reportPlayerEngagement(engagement(true, 40f));
+        syncTreesThenAwardXp(engagement(true, 40f));
 
         assertEquals(80f, ShipSkillDataManager.get("ship-a").getXp());
         verify(textPanel).addPara(eq("%s"), (Color) any(), (Color) any(),
@@ -263,7 +285,7 @@ class CombatXpListenerTest {
         oneShipFleetThatWontLevelUp();
         encounterWithDifficulty(encounterContext(3f, true));
 
-        new CombatXpListener().reportPlayerEngagement(engagement(false, 40f));
+        syncTreesThenAwardXp(engagement(false, 40f));
 
         assertEquals(40f * ShipLevelConfig.DEFAULT_XP_LOSS_MULTIPLIER * 3f, ShipSkillDataManager.get("ship-a").getXp());
         verify(textPanel).addPara(eq("%s"), (Color) any(), (Color) any(), contains("Includes +200%"));
@@ -274,7 +296,7 @@ class CombatXpListenerTest {
         oneShipFleetThatWontLevelUp();
         encounterWithDifficulty(encounterContext(1.234f, true));
 
-        new CombatXpListener().reportPlayerEngagement(engagement(true, 40f));
+        syncTreesThenAwardXp(engagement(true, 40f));
 
         assertEquals(40f * 1.234f, ShipSkillDataManager.get("ship-a").getXp(), 1e-4f);
         verify(textPanel).addPara(eq("%s"), (Color) any(), (Color) any(), contains("Includes +23%"));
@@ -285,7 +307,7 @@ class CombatXpListenerTest {
         oneShipFleetThatWontLevelUp();
         encounterWithDifficulty(encounterContext(4f, true));
 
-        new CombatXpListener().reportPlayerEngagement(engagement(true, 0f));
+        syncTreesThenAwardXp(engagement(true, 0f));
 
         assertEquals(0f, ShipSkillDataManager.get("ship-a").getXp());
         verify(textPanel, never()).addPara(eq("%s"), (Color) any(), (Color) any(), contains("battle difficulty"));
@@ -296,7 +318,7 @@ class CombatXpListenerTest {
         oneShipFleetThatWontLevelUp();
         encounterWithDifficulty(encounterContext(0.4f, true));
 
-        new CombatXpListener().reportPlayerEngagement(engagement(true, 40f));
+        syncTreesThenAwardXp(engagement(true, 40f));
 
         assertEquals(40f, ShipSkillDataManager.get("ship-a").getXp());
         verify(textPanel, never()).addPara(eq("%s"), (Color) any(), (Color) any(), contains("battle difficulty"));
@@ -307,9 +329,9 @@ class CombatXpListenerTest {
         oneShipFleetThatWontLevelUp();
 
         encounterWithDifficulty(encounterContext(4f, false));
-        new CombatXpListener().reportPlayerEngagement(engagement(true, 40f));
+        syncTreesThenAwardXp(engagement(true, 40f));
         encounterWithDifficulty(new Object());
-        new CombatXpListener().reportPlayerEngagement(engagement(true, 40f));
+        syncTreesThenAwardXp(engagement(true, 40f));
 
         assertEquals(80f, ShipSkillDataManager.get("ship-a").getXp());
         verify(textPanel, never()).addPara(eq("%s"), (Color) any(), (Color) any(), contains("battle difficulty"));
@@ -321,7 +343,7 @@ class CombatXpListenerTest {
         lunaSettingsMock.when(() -> LunaSettings.getFloat("exiledSector", ShipLevelConfig.XP_DIFFICULTY_MAX_MULTIPLIER_FIELD_ID)).thenReturn(cap);
         encounterWithDifficulty(encounterContext(difficulty, true));
 
-        new CombatXpListener().reportPlayerEngagement(engagement(true, 40f));
+        syncTreesThenAwardXp(engagement(true, 40f));
 
         return ShipSkillDataManager.get("ship-a").getXp();
     }

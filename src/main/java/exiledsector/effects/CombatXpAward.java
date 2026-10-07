@@ -1,12 +1,9 @@
 package exiledsector.effects;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.BaseCampaignEventListener;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.EngagementResultForFleetAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.TextPanelAPI;
-import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
@@ -22,48 +19,30 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CombatXpListener extends BaseCampaignEventListener {
+public final class CombatXpAward {
 
-    public CombatXpListener() {
-        super(false);
+    private CombatXpAward() {
     }
 
-    @Override
-    public void reportPlayerEngagement(EngagementResultAPI engagementResult) {
+    static void award(PlayerEngagement engagement) {
         CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
-        if (engagementResult == null || playerFleet == null) {
+        if (playerFleet == null) {
             return;
         }
-        float defeatedDp = enemyDeploymentPointsDefeated(engagementResult);
-        boolean lost = !engagementResult.didPlayerWin();
+        float defeatedDp = engagement.enemyDeploymentPointsDefeated();
+        boolean lost = !engagement.playerWon();
         float lossMultiplier = lost ? ShipLevelConfig.xpLossMultiplier() : 1f;
-        float difficultyMultiplier = ShipLevelSystem.difficultyMultiplier(BattleDifficulty.current(),
+        float difficultyMultiplier = ShipLevelSystem.difficultyMultiplier(engagement.difficulty(),
                 ShipLevelConfig.xpDifficultyStrength(), ShipLevelConfig.xpDifficultyMaxMultiplier());
         float xp = defeatedDp * ShipLevelConfig.xpPerDeploymentPoint() * lossMultiplier * difficultyMultiplier;
 
-        SkillTreeInstaller.adoptNpcTrees(playerFleet);
-        SkillTreeInstaller.raiseToLevelFloor(playerFleet);
         Map<FleetMemberAPI, Integer> levelsBefore = levelsOf(playerFleet);
         float catchUpMultiplier = ShipLevelSystem.awardXpToFleet(playerFleet, xp);
+        List<FleetMemberAPI> levelledMembers = levelledMembers(levelsBefore);
+        ShipTreeSync.levelsChanged(playerFleet, levelledMembers);
         NpcBonusScale.invalidate();
         I18n.forGameText(() -> report(new CombatXpReport(xp, defeatedDp, lost, difficultyMultiplier, catchUpMultiplier,
-                levelUps(levelsBefore))));
-    }
-
-    static float enemyDeploymentPointsDefeated(EngagementResultAPI engagementResult) {
-        EngagementResultForFleetAPI enemyResult = engagementResult.didPlayerWin() ? engagementResult.getLoserResult() : engagementResult.getWinnerResult();
-        if (enemyResult == null) {
-            return 0f;
-        }
-        return deploymentPointsOf(enemyResult.getDestroyed()) + deploymentPointsOf(enemyResult.getDisabled());
-    }
-
-    private static float deploymentPointsOf(List<FleetMemberAPI> members) {
-        float totalDp = 0f;
-        for (FleetMemberAPI member : members) {
-            totalDp += member.getDeploymentPointsCost();
-        }
-        return totalDp;
+                levelUpLines(levelledMembers))));
     }
 
     private static Map<FleetMemberAPI, Integer> levelsOf(CampaignFleetAPI fleet) {
@@ -74,15 +53,22 @@ public class CombatXpListener extends BaseCampaignEventListener {
         return levels;
     }
 
-    private static List<String> levelUps(Map<FleetMemberAPI, Integer> levelsBefore) {
-        List<String> levelUpLines = new ArrayList<>();
-        for (Map.Entry<FleetMemberAPI, Integer> entry : levelsBefore.entrySet()) {
-            FleetMemberAPI levelledMember = entry.getKey();
-            int newLevel = ShipSkillDataManager.get(levelledMember.getId()).getLevel();
-            if (newLevel > entry.getValue()) {
-                levelUpLines.add(Translation.msg("combat.xp.levelUp").arg("ship", levelledMember.getShipName())
-                        .arg("hull", levelledMember.getHullSpec().getHullNameWithDashClass()).arg("level", newLevel).text());
+    private static List<FleetMemberAPI> levelledMembers(Map<FleetMemberAPI, Integer> levelsBefore) {
+        List<FleetMemberAPI> levelledMembers = new ArrayList<>();
+        levelsBefore.forEach((member, levelBefore) -> {
+            if (ShipSkillDataManager.get(member.getId()).getLevel() > levelBefore) {
+                levelledMembers.add(member);
             }
+        });
+        return levelledMembers;
+    }
+
+    private static List<String> levelUpLines(List<FleetMemberAPI> levelledMembers) {
+        List<String> levelUpLines = new ArrayList<>();
+        for (FleetMemberAPI levelledMember : levelledMembers) {
+            int newLevel = ShipSkillDataManager.get(levelledMember.getId()).getLevel();
+            levelUpLines.add(Translation.msg("combat.xp.levelUp").arg("ship", levelledMember.getShipName())
+                    .arg("hull", levelledMember.getHullSpec().getHullNameWithDashClass()).arg("level", newLevel).text());
         }
         return levelUpLines;
     }
