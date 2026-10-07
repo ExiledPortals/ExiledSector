@@ -24,6 +24,7 @@ import exiledsector.socketables.SocketableDefinitions;
 import exiledsector.socketables.SocketableDisassembly;
 import exiledsector.socketables.SocketableKind;
 import exiledsector.socketables.SocketableName;
+import exiledsector.socketables.SocketableRarity;
 import exiledsector.socketables.SocketableStore;
 import exiledsector.socketables.SocketableUnlock;
 import exiledsector.ui.SkillTreePanelStyle;
@@ -345,6 +346,10 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
             return;
         }
         if (!SocketableCrafting.canUse(currency, loadedSocketable, allowedUniques())) {
+            if (currency == SocketCurrency.TRANSPOSITION && loadedSocketable.rarity() == SocketableRarity.UNIQUE) {
+                showNotice(Translation.text("ui.workbench.notice.noOtherUnique"));
+                return;
+            }
             showNotice(Translation.msg("ui.workbench.notice.cannotUse").arg("name", commodityName(currency.commodityId()))
                     .arg("target", loadedSocketable.name()).text());
             return;
@@ -375,7 +380,7 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
     }
 
     private static Predicate<SocketableDefinition> allowedUniques() {
-        return definition -> SocketableUnlock.canDrop(definition, Global.getSector());
+        return definition -> SocketableUnlock.unlockConditionMet(definition, Global.getSector());
     }
 
     private static CargoAPI cargo() {

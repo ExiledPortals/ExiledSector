@@ -485,6 +485,7 @@
     "ui.workbench.notice.notEnoughParts": "{name}需要{cost}个插槽组件，你拥有{parts}个。",
     "ui.workbench.notice.loadFirst": "请先从插槽仓库载入一件插槽物品。",
     "ui.workbench.notice.cannotUse": "{name}无法改造{target}。",
+    "ui.workbench.notice.noOtherUnique": "目前还没有其他已解锁的独特插槽物品可供转置。",
     "ui.workbench.notice.noneOwned": "你没有{name}。右键点击它即可合成一个。",
     "ui.workbench.notice.synthesiseHint": "右键点击即可合成{name}。",
     "ui.workbench.empty": "点击插槽仓库中的插槽物品即可将其载入改造台。载入期间它仍留在仓库中。",

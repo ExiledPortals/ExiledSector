@@ -50,10 +50,14 @@ public enum SocketableUnlock {
         if (playerStats == null || playerStats.getLevel() < UNIQUE_MIN_PLAYER_LEVEL) {
             return false;
         }
+        return unlockConditionMet(definition, sector);
+    }
+
+    public static boolean unlockConditionMet(SocketableDefinition definition, SectorAPI sector) {
         if (definition.unlock().isEmpty()) {
             return true;
         }
-        SocketableUnlock unlock = byId(definition.unlock());
+        SocketableUnlock unlock = sector == null ? null : byId(definition.unlock());
         return unlock != null && unlock.isMet(sector);
     }
 

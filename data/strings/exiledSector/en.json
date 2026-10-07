@@ -361,6 +361,7 @@
     "ui.workbench.notice.notEnoughParts": "{name} needs {cost} Socketable Parts. You have {parts}.",
     "ui.workbench.notice.loadFirst": "Load a socketable from Socket Storage first.",
     "ui.workbench.notice.cannotUse": "{name} can't modify {target}.",
+    "ui.workbench.notice.noOtherUnique": "There is no other unlocked unique socketable to transpose this into yet.",
     "ui.workbench.notice.noneOwned": "You have no {name}. Right-click it to synthesise one.",
     "ui.workbench.notice.synthesiseHint": "Right-click to synthesise a {name}.",
     "ui.workbench.empty": "Click a socketable in Socket Storage to load it onto the workbench. It stays in storage while it is loaded.",

@@ -93,6 +93,15 @@ class SocketableUnlockTest {
     }
 
     @Test
+    void theStoryUnlockCheckIgnoresThePlayerLevelGate() {
+        when(player.getLevel()).thenReturn(1);
+
+        assertTrue(SocketableUnlock.unlockConditionMet(SocketableDefinitions.get("open_unique"), sector));
+        assertFalse(SocketableUnlock.unlockConditionMet(SocketableDefinitions.get("mystery"), sector));
+        assertFalse(canDrop("open_unique"));
+    }
+
+    @Test
     void withNoSectorNoUniqueCanDrop() {
         assertFalse(SocketableUnlock.canDrop(SocketableDefinitions.get("open_unique"), null));
     }
