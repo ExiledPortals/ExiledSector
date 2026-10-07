@@ -26,20 +26,20 @@ final class HullModTooltipTables {
     private HullModTooltipTables() {
     }
 
-    static List<TooltipTable> forType(SkillType type, ShipHullSpecAPI hull) {
+    static List<TooltipTable> forType(SkillType type, ShipHullSpecAPI hullSpec) {
         String hullModId = type == null ? null : type.getVanillaHullModId();
         if (BALLISTIC_RANGEFINDER.equals(hullModId)) {
-            return rangefinderTables(largestBallisticSlot(hull));
+            return rangefinderTables(largestBallisticSlot(hullSpec));
         }
         if (MISSILE_AUTOLOADER.equals(hullModId)) {
-            return List.of(autoloaderTable(hull));
+            return List.of(autoloaderTable(hullSpec));
         }
         return List.of();
     }
 
-    static List<TooltipTable> rangefinderTables(WeaponSize largest) {
-        boolean smallOrMediumLargest = largest == WeaponSize.SMALL || largest == WeaponSize.MEDIUM;
-        boolean largeLargest = largest == WeaponSize.LARGE;
+    static List<TooltipTable> rangefinderTables(WeaponSize largestSlotSize) {
+        boolean smallOrMediumLargest = largestSlotSize == WeaponSize.SMALL || largestSlotSize == WeaponSize.MEDIUM;
+        boolean largeLargest = largestSlotSize == WeaponSize.LARGE;
         String largestSlot = Translation.text("ui.tables.largestSlot");
         String rangeCap = Translation.text("ui.tables.rangeCap");
         String smallOrMedium = Translation.text("ui.tables.smallOrMedium");
@@ -64,9 +64,9 @@ final class HullModTooltipTables {
         return List.of(ballistic, hybrid);
     }
 
-    static TooltipTable autoloaderTable(ShipHullSpecAPI hull) {
-        HullSize hullSize = hull.getHullSize();
-        ReloadCapacityData current = capacityFor(hullSize, smallMissileSlotCount(hull));
+    static TooltipTable autoloaderTable(ShipHullSpecAPI hullSpec) {
+        HullSize hullSize = hullSpec.getHullSize();
+        ReloadCapacityData currentCapacity = capacityFor(hullSize, smallMissileSlotCount(hullSpec));
         List<ReloadCapacityData> sizeRows = new ArrayList<>();
         for (ReloadCapacityData data : MissileAutoloader.CAPACITY_DATA) {
             if (data.size == hullSize) {
@@ -77,26 +77,26 @@ final class HullModTooltipTables {
 
         List<Row> rows = new ArrayList<>();
         for (ReloadCapacityData data : sizeRows) {
-            rows.add(Row.of(data == current, hullSizeName(data.size), data.getWeaponsString(), String.valueOf(data.capacity)));
+            rows.add(Row.of(data == currentCapacity, hullSizeName(data.size), data.getWeaponsString(), String.valueOf(data.capacity)));
         }
         String reloadCapacity = Translation.text("ui.tables.reloadCapacity");
         return new TooltipTable(reloadCapacity, List.of(Translation.text("ui.tables.shipSize"), Translation.text("ui.tables.smallMissiles"), reloadCapacity), rows);
     }
 
-    static WeaponSize largestBallisticSlot(ShipHullSpecAPI hull) {
-        WeaponSize largest = null;
-        for (WeaponSlotAPI slot : hull.getAllWeaponSlotsCopy()) {
+    static WeaponSize largestBallisticSlot(ShipHullSpecAPI hullSpec) {
+        WeaponSize largestSlotSize = null;
+        for (WeaponSlotAPI slot : hullSpec.getAllWeaponSlotsCopy()) {
             boolean ballistic = !slot.isDecorative() && slot.getWeaponType() == WeaponType.BALLISTIC;
-            if (ballistic && (largest == null || largest.ordinal() < slot.getSlotSize().ordinal())) {
-                largest = slot.getSlotSize();
+            if (ballistic && (largestSlotSize == null || largestSlotSize.ordinal() < slot.getSlotSize().ordinal())) {
+                largestSlotSize = slot.getSlotSize();
             }
         }
-        return largest;
+        return largestSlotSize;
     }
 
-    private static int smallMissileSlotCount(ShipHullSpecAPI hull) {
+    private static int smallMissileSlotCount(ShipHullSpecAPI hullSpec) {
         int count = 0;
-        for (WeaponSlotAPI slot : hull.getAllWeaponSlotsCopy()) {
+        for (WeaponSlotAPI slot : hullSpec.getAllWeaponSlotsCopy()) {
             if (slot.getSlotSize() == WeaponSize.SMALL && slot.getWeaponType() == WeaponType.MISSILE) {
                 count++;
             }

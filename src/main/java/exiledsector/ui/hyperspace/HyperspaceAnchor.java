@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public record HyperspaceAnchor(String id, String region, float x, float y, float radius, boolean star) {
+public record HyperspaceAnchor(String id, String region, float x, float y, float radius, boolean isStar) {
 
     private static final float NEBULA_CORE_FRACTION = 0.25f;
 
@@ -36,7 +36,7 @@ public record HyperspaceAnchor(String id, String region, float x, float y, float
     public static float mapStarRadius(List<HyperspaceAnchor> anchors, float scale) {
         float largest = 0f;
         for (HyperspaceAnchor anchor : anchors) {
-            if (anchor.star) {
+            if (anchor.isStar) {
                 largest = Math.max(largest, anchor.radius);
             }
         }
@@ -44,10 +44,10 @@ public record HyperspaceAnchor(String id, String region, float x, float y, float
     }
 
     public float displayRadius(float mapStarRadius, float mapAmount) {
-        return star ? radius + (mapStarRadius - radius) * mapAmount : radius;
+        return isStar ? radius + (mapStarRadius - radius) * mapAmount : radius;
     }
 
-    private static HyperspaceAnchor of(SkillTreeObject object, String region, float radius, boolean star) {
-        return new HyperspaceAnchor(object.getId(), region, object.getX(), object.getY(), radius, star);
+    private static HyperspaceAnchor of(SkillTreeObject object, String region, float radius, boolean isStar) {
+        return new HyperspaceAnchor(object.getId(), region, object.getX(), object.getY(), radius, isStar);
     }
 }

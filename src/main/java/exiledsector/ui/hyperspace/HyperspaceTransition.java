@@ -13,73 +13,73 @@ public final class HyperspaceTransition {
     private boolean pivoted;
     private float pivotX;
     private float pivotY;
-    private float progress;
-    private int direction;
+    private float transitionProgress;
+    private int travelDirection;
 
     public boolean isActive() {
-        return progress > 0f || direction != 0;
+        return transitionProgress > 0f || travelDirection != 0;
     }
 
     public boolean isOnMap() {
-        return progress >= 1f && direction == 0;
+        return transitionProgress >= 1f && travelDirection == 0;
     }
 
-    public void enter(HyperspaceCamera from, HyperspaceCamera map) {
-        treeCamera = from;
-        mapCamera = map;
+    public void enter(HyperspaceCamera fromTreeCamera, HyperspaceCamera targetMapCamera) {
+        treeCamera = fromTreeCamera;
+        mapCamera = targetMapCamera;
         pivoted = false;
-        direction = 1;
+        travelDirection = 1;
     }
 
-    public void leaveTo(HyperspaceCamera current, HyperspaceCamera destination) {
-        mapCamera = current;
-        treeCamera = destination;
+    public void leaveTo(HyperspaceCamera currentMapCamera, HyperspaceCamera destinationTreeCamera) {
+        mapCamera = currentMapCamera;
+        treeCamera = destinationTreeCamera;
         pivoted = false;
-        direction = -1;
+        travelDirection = -1;
     }
 
-    public void zoomInAbout(HyperspaceCamera current, float worldX, float worldY, float treeZoom) {
-        mapCamera = current;
-        treeCamera = current.zoomedAbout(worldX, worldY, treeZoom);
+    public void zoomInAbout(HyperspaceCamera currentMapCamera, float worldX, float worldY, float treeZoom) {
+        mapCamera = currentMapCamera;
+        treeCamera = currentMapCamera.zoomedAbout(worldX, worldY, treeZoom);
         pivoted = true;
         pivotX = worldX;
         pivotY = worldY;
-        direction = -1;
+        travelDirection = -1;
     }
 
     public void advance(float amount) {
-        if (direction == 0) {
+        if (travelDirection == 0) {
             return;
         }
-        progress = Math.max(0f, Math.min(1f, progress + direction * amount / DURATION_SECONDS));
-        if (progress == 0f || progress == 1f) {
-            direction = 0;
+        transitionProgress = Math.max(0f, Math.min(1f, transitionProgress + travelDirection * amount / DURATION_SECONDS));
+        if (transitionProgress == 0f || transitionProgress == 1f) {
+            travelDirection = 0;
         }
     }
 
     public HyperspaceCamera camera() {
-        HyperspaceCamera blended = HyperspaceCamera.between(treeCamera, mapCamera, eased(progress));
+        HyperspaceCamera blended = HyperspaceCamera.between(treeCamera, mapCamera, eased(transitionProgress));
         return pivoted ? mapCamera.zoomedAbout(pivotX, pivotY, blended.zoom()) : blended;
     }
 
     public float mapAmount() {
-        return eased(progress);
+        return eased(transitionProgress);
     }
 
     public float treeAlpha() {
-        return 1f - smoothstep(0f, TREE_FADE_END, progress);
+        return 1f - smoothstep(0f, TREE_FADE_END, transitionProgress);
     }
 
     public boolean isLeaving() {
-        return direction < 0;
+        return travelDirection < 0;
     }
 
     public float chromeAlpha() {
-        return 1f - smoothstep(CHROME_FADE_START, CHROME_FADE_END, progress);
+        return 1f - smoothstep(CHROME_FADE_START, CHROME_FADE_END, transitionProgress);
     }
 
     public float labelAlpha() {
-        return smoothstep(LABEL_FADE_START, 1f, progress);
+        return smoothstep(LABEL_FADE_START, 1f, transitionProgress);
     }
 
     private static float eased(float t) {

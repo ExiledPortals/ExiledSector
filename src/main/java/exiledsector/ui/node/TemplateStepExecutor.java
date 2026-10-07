@@ -15,21 +15,21 @@ import java.util.function.Supplier;
 final class TemplateStepExecutor {
 
     private final NodeAllocator allocator;
-    private final Supplier<NodeAllocator.Snapshot> snapshot;
+    private final Supplier<NodeAllocator.Snapshot> snapshotSupplier;
     private final Consumer<SkillNode> onAllocated;
     private NodeAllocator.Snapshot pointsLeftSnapshot;
-    private boolean pointsLeft;
+    private boolean cachedPointsLeft;
 
-    TemplateStepExecutor(NodeAllocator allocator, Supplier<NodeAllocator.Snapshot> snapshot, Consumer<SkillNode> onAllocated) {
+    TemplateStepExecutor(NodeAllocator allocator, Supplier<NodeAllocator.Snapshot> snapshotSupplier, Consumer<SkillNode> onAllocated) {
         this.allocator = allocator;
-        this.snapshot = snapshot;
+        this.snapshotSupplier = snapshotSupplier;
         this.onAllocated = onAllocated;
     }
 
     StepVerdict attempt(TemplateStep step) {
-        NodeAllocator.Snapshot current = snapshot.get();
-        StepVerdict verdict = TemplateStepRules.verdict(step, current.data(), current.satisfiedRootId(),
-                current::canAllocate, allocator::blockAllocationReason);
+        NodeAllocator.Snapshot currentSnapshot = snapshotSupplier.get();
+        StepVerdict verdict = TemplateStepRules.verdict(step, currentSnapshot.skillData(), currentSnapshot.satisfiedRootId(),
+                currentSnapshot::canAllocate, allocator::blockAllocationReason);
         if (verdict != StepVerdict.ALLOCATE) {
             logSkip(step, verdict);
             return verdict;
@@ -46,15 +46,15 @@ final class TemplateStepExecutor {
     }
 
     boolean hasPointsLeft() {
-        NodeAllocator.Snapshot current = snapshot.get();
-        if (current != pointsLeftSnapshot) {
-            pointsLeftSnapshot = current;
-            ShipSkillData data = current.data();
-            pointsLeft = TemplateBudget.hasPointsLeft(data.getAllocatedNodeIds().size(), current.maxAllocatedNodes(),
-                    data.getBankedFreeAllocations(), data.getSpentOp(current.opCostPerNode()), current.opCostPerNode(),
-                    current.totalOpBudget());
+        NodeAllocator.Snapshot currentSnapshot = snapshotSupplier.get();
+        if (currentSnapshot != pointsLeftSnapshot) {
+            pointsLeftSnapshot = currentSnapshot;
+            ShipSkillData skillData = currentSnapshot.skillData();
+            cachedPointsLeft = TemplateBudget.hasPointsLeft(skillData.getAllocatedNodeIds().size(), currentSnapshot.maxAllocatedNodes(),
+                    skillData.getBankedFreeAllocations(), skillData.getSpentOp(currentSnapshot.opCostPerNode()), currentSnapshot.opCostPerNode(),
+                    currentSnapshot.totalOpBudget());
         }
-        return pointsLeft;
+        return cachedPointsLeft;
     }
 
     private static void logSkip(TemplateStep step, StepVerdict verdict) {

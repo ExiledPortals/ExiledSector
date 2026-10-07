@@ -27,15 +27,15 @@ public class SkillTreeRingBeltRenderer {
         if (ringBelts.isEmpty()) return;
 
         for (RingBelt belt : ringBelts) {
-            String path = belt.getRingArtPath();
-            SpriteAPI sprite = path == null || path.isEmpty() ? null : spriteCache.texture(path);
-            if (sprite == null) continue;
+            String ringArtPath = belt.getRingArtPath();
+            SpriteAPI ringSprite = ringArtPath == null || ringArtPath.isEmpty() ? null : spriteCache.texture(ringArtPath);
+            if (ringSprite == null) continue;
 
             float screenX = viewport.screenX(belt.getX());
             float screenY = viewport.screenY(belt.getY());
             float rotationDeg = belt.getRotation() + belt.getRotationSpeed() * elapsedSeconds;
             RadialBand band = new RadialBand(new Vector2f(screenX, screenY), belt.getInnerRadius() * zoom, belt.getOuterRadius() * zoom);
-            RingBeltRenderer.render(sprite, band, Color.WHITE, alphaMult, rotationDeg, viewport);
+            RingBeltRenderer.render(ringSprite, band, Color.WHITE, alphaMult, rotationDeg, viewport);
         }
     }
 }

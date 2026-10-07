@@ -16,7 +16,7 @@ public final class NodeSearch {
     private final Map<String, Boolean> matchesByNodeId = new HashMap<>();
     private String query = "";
     private String needle = "";
-    private NodeAllocator.Snapshot matchedTree;
+    private NodeAllocator.Snapshot matchedSnapshot;
     private boolean socketFocus;
 
     public String getQuery() {
@@ -42,27 +42,27 @@ public final class NodeSearch {
         return isActive() ? DIM_ALPHA : 1f;
     }
 
-    boolean matches(SkillNode node, NodeAllocator.Snapshot tree) {
-        if (!isActive() || tree.isHidden(node)) {
+    boolean matches(SkillNode node, NodeAllocator.Snapshot allocation) {
+        if (!isActive() || allocation.isHidden(node)) {
             return false;
         }
         if (socketFocus) {
-            return node.getType().getTier() == SkillTier.SOCKET && tree.data().isAllocated(node.getId());
+            return node.getType().getTier() == SkillTier.SOCKET && allocation.skillData().isAllocated(node.getId());
         }
-        if (tree != matchedTree) {
+        if (allocation != matchedSnapshot) {
             matchesByNodeId.clear();
-            matchedTree = tree;
+            matchedSnapshot = allocation;
         }
         Boolean matched = matchesByNodeId.get(node.getId());
         if (matched == null) {
-            matched = nameMatches(node, tree);
+            matched = nameMatches(node, allocation);
             matchesByNodeId.put(node.getId(), matched);
         }
         return matched;
     }
 
-    private boolean nameMatches(SkillNode node, NodeAllocator.Snapshot tree) {
-        if (nameContains(node.resolveEffectiveType(tree.data()), needle)) {
+    private boolean nameMatches(SkillNode node, NodeAllocator.Snapshot allocation) {
+        if (nameContains(node.resolveEffectiveType(allocation.skillData()), needle)) {
             return true;
         }
         for (String optionId : node.getType().getOptionalOptionIds()) {
@@ -73,12 +73,12 @@ public final class NodeSearch {
         return false;
     }
 
-    float nodeAlpha(SkillNode node, NodeAllocator.Snapshot tree) {
-        return !isActive() || matches(node, tree) ? 1f : DIM_ALPHA;
+    float nodeAlpha(SkillNode node, NodeAllocator.Snapshot allocation) {
+        return !isActive() || matches(node, allocation) ? 1f : DIM_ALPHA;
     }
 
-    float connectorAlpha(SkillNode a, SkillNode b, NodeAllocator.Snapshot tree) {
-        return !isActive() || (matches(a, tree) && matches(b, tree)) ? 1f : DIM_ALPHA;
+    float connectorAlpha(SkillNode a, SkillNode b, NodeAllocator.Snapshot allocation) {
+        return !isActive() || (matches(a, allocation) && matches(b, allocation)) ? 1f : DIM_ALPHA;
     }
 
     private static boolean nameContains(SkillType type, String needle) {

@@ -33,12 +33,12 @@ class ConnectorFillsTest {
 
         advance(0.25f * ConnectorFills.FILL_SECONDS);
         ConnectorFills.FillRange fromOld = fills.filledRange("old", "new");
-        assertEquals(0f, fromOld.start(), EPSILON);
-        assertEquals(0.25f, fromOld.end(), EPSILON);
+        assertEquals(0f, fromOld.startFraction(), EPSILON);
+        assertEquals(0.25f, fromOld.endFraction(), EPSILON);
 
         ConnectorFills.FillRange fromNew = fills.filledRange("new", "old");
-        assertEquals(0.75f, fromNew.start(), EPSILON);
-        assertEquals(1f, fromNew.end(), EPSILON);
+        assertEquals(0.75f, fromNew.startFraction(), EPSILON);
+        assertEquals(1f, fromNew.endFraction(), EPSILON);
     }
 
     @Test

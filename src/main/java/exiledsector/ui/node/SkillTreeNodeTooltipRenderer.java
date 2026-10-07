@@ -35,11 +35,11 @@ final class SkillTreeNodeTooltipRenderer {
 
     private static final float TOOLTIP_MAX_TEXT_HEIGHT = 800f;
 
-    private record Body(SkillTreePanelStyle.TooltipText text, boolean expandable) {
+    private record Body(SkillTreePanelStyle.TooltipText bodyText, boolean expandable) {
     }
 
-    private final FleetMemberAPI member;
-    private final SkillTreePanelStyle style;
+    private final FleetMemberAPI fleetMember;
+    private final SkillTreePanelStyle panelStyle;
     private final CachedText<String, SkillTreePanelStyle.TooltipText> tooltipTitles = new CachedText<>();
     private final CachedText<String, Body> tooltipBodies = new CachedText<>();
     private final CachedText<String, SkillTreePanelStyle.TooltipText> typeTooltipTitles = new CachedText<>();
@@ -48,24 +48,24 @@ final class SkillTreeNodeTooltipRenderer {
     private final CachedText<String, SkillTreePanelStyle.TooltipText> flavours = new CachedText<>();
     private final Map<String, List<SkillTreeTooltipTable>> tablesByType = new HashMap<>();
 
-    SkillTreeNodeTooltipRenderer(FleetMemberAPI member, SkillTreePanelStyle style) {
-        this.member = member;
-        this.style = style;
+    SkillTreeNodeTooltipRenderer(FleetMemberAPI fleetMember, SkillTreePanelStyle panelStyle) {
+        this.fleetMember = fleetMember;
+        this.panelStyle = panelStyle;
     }
 
-    void renderTooltip(SkillNode node, NodeAllocator.Snapshot tree, float mouseX, float mouseY, float alphaMult) {
+    void renderTooltip(SkillNode node, NodeAllocator.Snapshot allocation, float mouseX, float mouseY, float alphaMult) {
         LazyFont font = SkillTreePanelStyle.font();
         if (font == null) return;
 
-        ShipSkillData data = tree.data();
-        SkillType effectiveType = node.resolveEffectiveType(data);
-        boolean hidden = tree.isHidden(node);
+        ShipSkillData skillData = allocation.skillData();
+        SkillType effectiveType = node.resolveEffectiveType(skillData);
+        boolean hidden = allocation.isHidden(node);
         boolean showOptionalHint = effectiveType == node.getType() && effectiveType.isOptional()
                 && effectiveType.getDescriptionOverride() == null;
         boolean expanded = TooltipExpansion.isExpanded();
-        boolean socket = node.getType().getTier() == SkillTier.SOCKET && data.isAllocated(node.getId());
-        Socketable socketed = socket ? SocketableStore.lookup(data.getSocketedItem(node.getId())) : null;
-        List<Object> signature = List.of(effectiveType.getId(), hidden, showOptionalHint, expanded, socket,
+        boolean allocatedSocket = node.getType().getTier() == SkillTier.SOCKET && skillData.isAllocated(node.getId());
+        Socketable socketed = allocatedSocket ? SocketableStore.lookup(skillData.getSocketedItem(node.getId())) : null;
+        List<Object> signature = List.of(effectiveType.getId(), hidden, showOptionalHint, expanded, allocatedSocket,
                 socketed == null ? "" : socketed.id());
 
         SkillTreePanelStyle.TooltipText title = tooltipTitles.get(node.getId(), signature,
@@ -73,11 +73,11 @@ final class SkillTreeNodeTooltipRenderer {
                         ? buildTooltipText(font, socketed.name(), TOOLTIP_TITLE_FONT_SIZE, socketed.rarity().color())
                         : buildTooltipText(font, titleText(effectiveType, hidden), TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR));
         Body body = tooltipBodies.get(node.getId(), signature,
-                id -> buildBody(font, describe(effectiveType, hidden, showOptionalHint, socket, socketed, expanded), expanded));
+                id -> buildBody(font, describe(effectiveType, hidden, showOptionalHint, allocatedSocket, socketed, expanded), expanded));
 
         List<SkillTreeTooltipTable> tables = showOptionalHint || hidden ? List.of() : tablesFor(font, effectiveType);
         SkillTreePanelStyle.TooltipText flavour = hidden || socketed != null ? null : flavourFor(font, effectiveType);
-        style.drawTitleBodyTooltip(title, flavour, body.text(), tables, footer(font, body, expanded), mouseX, mouseY, alphaMult);
+        panelStyle.drawTitleBodyTooltip(title, flavour, body.bodyText(), tables, footer(font, body, expanded), mouseX, mouseY, alphaMult);
     }
 
     void renderTooltipForType(SkillType type, float mouseX, float mouseY, float alphaMult) {
@@ -88,9 +88,9 @@ final class SkillTreeNodeTooltipRenderer {
         SkillTreePanelStyle.TooltipText title = typeTooltipTitles.get(type.getId(), type.getId(),
                 id -> buildTooltipText(font, type.getDisplayName(), TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR));
         Body body = typeTooltipBodies.get(type.getId(), List.of(type.getId(), expanded),
-                id -> buildBody(font, SkillNode.describeType(type, member.getHullSpec().getHullSize()), expanded));
+                id -> buildBody(font, SkillNode.describeType(type, fleetMember.getHullSpec().getHullSize()), expanded));
 
-        style.drawTitleBodyTooltip(title, flavourFor(font, type), body.text(), tablesFor(font, type), footer(font, body, expanded), mouseX, mouseY, alphaMult);
+        panelStyle.drawTitleBodyTooltip(title, flavourFor(font, type), body.bodyText(), tablesFor(font, type), footer(font, body, expanded), mouseX, mouseY, alphaMult);
     }
 
     private Body buildBody(LazyFont font, NodeDescription description, boolean expanded) {
@@ -103,7 +103,7 @@ final class SkillTreeNodeTooltipRenderer {
             return null;
         }
         return footers.get(expanded, expanded,
-                shown -> buildBodyText(font, List.of(plainLine(shown ? "ui.tooltip.collapseHint" : "ui.tooltip.expandHint"))));
+                footerExpanded -> buildBodyText(font, List.of(plainLine(footerExpanded ? "ui.tooltip.collapseHint" : "ui.tooltip.expandHint"))));
     }
 
     private SkillTreePanelStyle.TooltipText flavourFor(LazyFont font, SkillType type) {
@@ -120,7 +120,7 @@ final class SkillTreeNodeTooltipRenderer {
             return cached;
         }
         List<SkillTreeTooltipTable> measured = new ArrayList<>();
-        for (TooltipTable table : HullModTooltipTables.forType(type, member.getHullSpec())) {
+        for (TooltipTable table : HullModTooltipTables.forType(type, fleetMember.getHullSpec())) {
             measured.add(SkillTreeTooltipTable.measure(font, table));
         }
         tablesByType.put(type.getId(), measured);
@@ -131,7 +131,7 @@ final class SkillTreeNodeTooltipRenderer {
         return hidden ? Translation.text("ui.node.lockedTitle") : effectiveType.getDisplayName();
     }
 
-    private NodeDescription describe(SkillType effectiveType, boolean hidden, boolean showOptionalHint, boolean socket,
+    private NodeDescription describe(SkillType effectiveType, boolean hidden, boolean showOptionalHint, boolean allocatedSocket,
                                      Socketable socketed, boolean expanded) {
         if (hidden) {
             return new NodeDescription(List.of(plainLine("ui.node.lockedBody"), plainLine("ui.node.lockedHint")), List.of());
@@ -145,11 +145,11 @@ final class SkillTreeNodeTooltipRenderer {
         if (showOptionalHint) {
             effects.add(plainLine("ui.node.optionalHint"));
         } else {
-            NodeDescription description = SkillNode.describeType(effectiveType, member.getHullSpec().getHullSize());
+            NodeDescription description = SkillNode.describeType(effectiveType, fleetMember.getHullSpec().getHullSize());
             effects.addAll(description.effects());
             details.addAll(description.details());
         }
-        if (socket) {
+        if (allocatedSocket) {
             effects.add(plainLine("ui.node.socket.installHint"));
         }
         return new NodeDescription(effects, details);
@@ -160,7 +160,7 @@ final class SkillTreeNodeTooltipRenderer {
     }
 
     private SkillTreePanelStyle.TooltipText buildBodyText(LazyFont font, List<DescriptionLine> lines) {
-        return style.buildHighlightedWrappedText(font, lines, TOOLTIP_BODY_FONT_SIZE, NODE_TOOLTIP_MAX_TEXT_WIDTH,
+        return panelStyle.buildHighlightedWrappedText(font, lines, TOOLTIP_BODY_FONT_SIZE, NODE_TOOLTIP_MAX_TEXT_WIDTH,
                 TOOLTIP_MAX_TEXT_HEIGHT, TOOLTIP_BODY_COLOR);
     }
 

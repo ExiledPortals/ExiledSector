@@ -41,28 +41,28 @@ final class SkillTreeSocketRenderer {
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeSocketRenderer.class);
     private final SpriteCache frameCache = new SpriteCache(SkillTreeSocketRenderer.class);
     private final Set<String> insetPieces = new HashSet<>();
-    private final SocketArcs arcs = new SocketArcs(new Random());
+    private final SocketArcs socketArcs = new SocketArcs(new Random());
     private Color tintedAccent;
     private Color allocatedTint;
 
     void advance(float amount) {
-        arcs.advance(amount);
+        socketArcs.advance(amount);
     }
 
-    static float visibleEdgeDistance(float size, float towardX, float towardY) {
-        float half = size / 2f;
-        float corner = size * CORNER_RATIO;
-        return SkillTreeNodeGeometry.octagonEdgeDistance(half - corner * EDGE_MARGIN_RATIO, 2f * half - corner * BEVEL_RATIO,
+    static float visibleEdgeDistance(float frameSize, float towardX, float towardY) {
+        float halfSize = frameSize / 2f;
+        float corner = frameSize * CORNER_RATIO;
+        return SkillTreeNodeGeometry.octagonEdgeDistance(halfSize - corner * EDGE_MARGIN_RATIO, 2f * halfSize - corner * BEVEL_RATIO,
                 towardX, towardY);
     }
 
-    void drawFrame(float cx, float cy, float size, boolean allocated, Color accent, float alphaMult) {
+    void drawFrame(float cx, float cy, float frameSize, boolean allocated, Color accent, float alphaMult) {
         Color tint = allocated ? allocatedTint(accent) : UNALLOCATED_TINT;
         float alpha = allocated ? alphaMult : alphaMult * UNALLOCATED_ALPHA;
-        float half = size / 2f;
-        float corner = size * CORNER_RATIO;
-        float inner = size - 2f * corner;
-        float edgeOffset = half - corner / 2f;
+        float halfSize = frameSize / 2f;
+        float corner = frameSize * CORNER_RATIO;
+        float inner = frameSize - 2f * corner;
+        float edgeOffset = halfSize - corner / 2f;
 
         drawPiece(CENTER, cx, cy, inner, inner, tint, alpha);
         drawPiece(TOP, cx, cy + edgeOffset, inner, corner, tint, alpha);
@@ -75,49 +75,49 @@ final class SkillTreeSocketRenderer {
         drawPiece(BOTTOM_RIGHT, cx + edgeOffset, cy - edgeOffset, corner, corner, tint, alpha);
     }
 
-    void drawContent(float cx, float cy, float size, String contentIconPath, Color iconTint, float alphaMult) {
+    void drawContent(float cx, float cy, float frameSize, String contentIconPath, Color iconTint, float alphaMult) {
         if (contentIconPath != null && !contentIconPath.isEmpty()) {
-            float contentSize = size * CONTENT_RATIO;
+            float contentSize = frameSize * CONTENT_RATIO;
             SpriteDraw.drawAtCenter(spriteCache, contentIconPath, cx, cy, contentSize, contentSize, iconTint, alphaMult);
         }
     }
 
-    void drawArcs(String nodeId, float cx, float cy, float size, Color accent, float alphaMult) {
+    void drawArcs(String nodeId, float cx, float cy, float frameSize, Color accent, float alphaMult) {
         SpriteAPI fringe = spriteCache.texture(ARC_FRINGE_TEXTURE);
         SpriteAPI core = spriteCache.texture(ARC_CORE_TEXTURE);
         if (fringe == null || core == null) return;
-        float half = size / 2f;
+        float halfSize = frameSize / 2f;
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-        for (SocketArcs.Arc arc : arcs.arcs(nodeId)) {
+        for (SocketArcs.Arc arc : socketArcs.arcs(nodeId)) {
             float alpha = arc.alpha() * alphaMult;
             Misc.setColor(accent, alpha);
-            drawArcStrip(fringe, arc, cx, cy, half, size * ARC_FRINGE_WIDTH_RATIO);
+            drawArcStrip(fringe, arc, cx, cy, halfSize, frameSize * ARC_FRINGE_WIDTH_RATIO);
             Misc.setColor(ARC_CORE_COLOR, alpha);
-            drawArcStrip(core, arc, cx, cy, half, size * ARC_CORE_WIDTH_RATIO);
+            drawArcStrip(core, arc, cx, cy, halfSize, frameSize * ARC_CORE_WIDTH_RATIO);
         }
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
     }
 
-    private static void drawArcStrip(SpriteAPI texture, SocketArcs.Arc arc, float cx, float cy, float half, float width) {
+    private static void drawArcStrip(SpriteAPI texture, SocketArcs.Arc arc, float cx, float cy, float halfSize, float stripWidth) {
         texture.bindTexture();
         int last = arc.pointCount() - 1;
         float texWidth = texture.getTextureWidth();
         float texHeight = texture.getTextureHeight();
-        float halfWidth = width / 2f;
+        float halfWidth = stripWidth / 2f;
         GL11.glBegin(GL11.GL_QUAD_STRIP);
         for (int i = 0; i <= last; i++) {
             int before = Math.max(0, i - 1);
             int after = Math.min(last, i + 1);
-            float tangentX = (arc.x(after) - arc.x(before)) * half;
-            float tangentY = (arc.y(after) - arc.y(before)) * half;
+            float tangentX = (arc.x(after) - arc.x(before)) * halfSize;
+            float tangentY = (arc.y(after) - arc.y(before)) * halfSize;
             float length = (float) Math.hypot(tangentX, tangentY);
             float normalX = length == 0f ? 0f : -tangentY / length * halfWidth;
             float normalY = length == 0f ? 0f : tangentX / length * halfWidth;
-            float x = cx + arc.x(i) * half;
-            float y = cy + arc.y(i) * half;
+            float x = cx + arc.x(i) * halfSize;
+            float y = cy + arc.y(i) * halfSize;
             float u = texWidth * i / last;
             GL11.glTexCoord2f(u, 0f);
             GL11.glVertex2f(x + normalX, y + normalY);
@@ -135,14 +135,14 @@ final class SkillTreeSocketRenderer {
         return allocatedTint;
     }
 
-    private void drawPiece(String path, float cx, float cy, float width, float height, Color tint, float alphaMult) {
-        if (width <= 0f || height <= 0f) return;
+    private void drawPiece(String path, float cx, float cy, float pieceWidth, float pieceHeight, Color tint, float alphaMult) {
+        if (pieceWidth <= 0f || pieceHeight <= 0f) return;
         SpriteAPI sprite = frameCache.sprite(path);
         if (sprite == null) return;
         if (insetPieces.add(path)) {
             insetByHalfATexel(sprite);
         }
-        SpriteDraw.drawAtCenter(frameCache, path, cx, cy, width, height, tint, alphaMult);
+        SpriteDraw.drawAtCenter(frameCache, path, cx, cy, pieceWidth, pieceHeight, tint, alphaMult);
     }
 
     private static void insetByHalfATexel(SpriteAPI sprite) {

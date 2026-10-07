@@ -62,15 +62,15 @@ final class ConnectorFills {
         return fill.fromId.equals(startId) ? new FillRange(0f, fraction) : new FillRange(1f - fraction, 1f);
     }
 
-    record FillRange(float start, float end) {
+    record FillRange(float startFraction, float endFraction) {
         static final FillRange FULL = new FillRange(0f, 1f);
 
         boolean isFull() {
-            return start <= 0f && end >= 1f;
+            return startFraction <= 0f && endFraction >= 1f;
         }
 
         boolean contains(float from, float to) {
-            return from >= start && to <= end;
+            return from >= startFraction && to <= endFraction;
         }
     }
 

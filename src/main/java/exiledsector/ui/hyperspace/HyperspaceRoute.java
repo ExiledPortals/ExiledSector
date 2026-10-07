@@ -17,15 +17,15 @@ public record HyperspaceRoute(HyperspaceAnchor from, HyperspaceAnchor to) {
             anchorByRegion.putIfAbsent(anchor.region(), anchor);
         }
         List<HyperspaceRoute> routes = new ArrayList<>();
-        Set<String> seen = new HashSet<>();
+        Set<String> seenRouteKeys = new HashSet<>();
         for (SkillTreeTopology.WormholePair pair : pairs) {
             HyperspaceAnchor from = anchorByRegion.get(pair.first().getRegion());
             HyperspaceAnchor to = anchorByRegion.get(pair.second().getRegion());
             if (from == null || to == null || from.equals(to)) {
                 continue;
             }
-            String key = from.id().compareTo(to.id()) < 0 ? from.id() + "|" + to.id() : to.id() + "|" + from.id();
-            if (seen.add(key)) {
+            String routeKey = from.id().compareTo(to.id()) < 0 ? from.id() + "|" + to.id() : to.id() + "|" + from.id();
+            if (seenRouteKeys.add(routeKey)) {
                 routes.add(new HyperspaceRoute(from, to));
             }
         }

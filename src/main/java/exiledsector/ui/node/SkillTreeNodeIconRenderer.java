@@ -20,19 +20,19 @@ final class SkillTreeNodeIconRenderer {
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeNodeIconRenderer.class);
     private final Map<String, List<SkillType>> optionTypesByTypeId = new HashMap<>();
 
-    void drawIcon(String spritePath, float cx, float cy, float size, float alphaMult, Color tint) {
-        SpriteDraw.drawAtCenter(spriteCache, spritePath, cx, cy, size, size, tint, alphaMult);
+    void drawIcon(String spritePath, float cx, float cy, float iconSize, float alphaMult, Color tint) {
+        SpriteDraw.drawAtCenter(spriteCache, spritePath, cx, cy, iconSize, iconSize, tint, alphaMult);
     }
 
-    void drawSplitIcon(SkillType optionalType, float cx, float cy, float size, float alphaMult, Color tint) {
+    void drawSplitIcon(SkillType optionalType, float cx, float cy, float iconSize, float alphaMult, Color tint) {
         List<SkillType> options = optionTypesOf(optionalType);
         if (options.isEmpty()) return;
         if (options.size() == 1) {
-            drawIcon(options.get(0).getIconPath(), cx, cy, size, alphaMult, tint);
+            drawIcon(options.get(0).getIconPath(), cx, cy, iconSize, alphaMult, tint);
             return;
         }
 
-        float radius = size / 2f;
+        float radius = iconSize / 2f;
         float sweep = 360f / options.size();
 
         GL11.glEnable(GL11.GL_STENCIL_TEST);
@@ -43,7 +43,7 @@ final class SkillTreeNodeIconRenderer {
             maskPieWedge(cx, cy, radius, startAngle, endAngle, 1);
             GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF);
             GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
-            drawIcon(options.get(i).getIconPath(), cx, cy, size, alphaMult, tint);
+            drawIcon(options.get(i).getIconPath(), cx, cy, iconSize, alphaMult, tint);
             maskPieWedge(cx, cy, radius, startAngle, endAngle, 0);
         }
         GL11.glDisable(GL11.GL_STENCIL_TEST);

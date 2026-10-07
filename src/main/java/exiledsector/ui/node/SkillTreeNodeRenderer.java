@@ -42,7 +42,7 @@ public final class SkillTreeNodeRenderer {
     private static final Color UNALLOCATED_TINT = new Color(90, 90, 90);
 
     private final BaseRefitButton refitButton;
-    private final SkillTreePanelStyle style;
+    private final SkillTreePanelStyle panelStyle;
     private StartingRootChoice rootChoice;
     private final NodeAllocator allocator;
 
@@ -54,51 +54,51 @@ public final class SkillTreeNodeRenderer {
     private final SkillTreeNodeConnectorRenderer connectorRenderer;
     private final SkillTreeNodeTooltipRenderer tooltipRenderer;
     private final SkillTreeNodeDropdownRenderer dropdownRenderer;
-    private final NodeSearch search;
+    private final NodeSearch nodeSearch;
     private final WormholeOpenness wormholeOpenness = new WormholeOpenness();
     private final ConnectorFills connectorFills = new ConnectorFills();
     private final Consumer<String> startPulse;
 
     private final TemplateStepExecutor stepExecutor;
     private final Function<TemplateStep, StepVerdict> attemptStep;
-    private final BooleanSupplier pointsLeft;
+    private final BooleanSupplier pointsLeftCheck;
 
     private SkillType lastChosenOptionalOption;
     private String targetedSocketId;
     private final ReusableText startingRootPrompt = new ReusableText(SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE,
             SkillTreePanelStyle.TOOLTIP_TITLE_COLOR, LazyFont.TextAnchor.BOTTOM_CENTER).set(Translation.text("ui.node.startingRootPrompt"));
-    private NodeAllocator.Snapshot snapshot;
+    private NodeAllocator.Snapshot allocationSnapshot;
     private SkillTreeTemplate template;
     private Set<String> templateNodeIds = Set.of();
-    private AutoAllocateRun autoRun;
+    private AutoAllocateRun autoAllocateRun;
     private AutoAllocateRun.Summary lastRunSummary;
     private RespecRun respecRun;
 
-    public SkillTreeNodeRenderer(FleetMemberAPI member, ShipVariantAPI variant, SkillTreePanelStyle style, BaseRefitButton refitButton,
-                                 NodeSearch search) {
+    public SkillTreeNodeRenderer(FleetMemberAPI member, ShipVariantAPI variant, SkillTreePanelStyle panelStyle, BaseRefitButton refitButton,
+                                 NodeSearch nodeSearch) {
         this.refitButton = refitButton;
-        this.search = search;
-        this.style = style;
+        this.nodeSearch = nodeSearch;
+        this.panelStyle = panelStyle;
         this.rootChoice = initialRootChoice(ShipSkillDataManager.get(member.getId()));
         this.allocator = new NodeAllocator(member, variant, () -> rootChoice.rootForAllocation());
         SkillNode chosenRoot = rootChoice.chosen();
-        style.setAccentIconPath(chosenRoot != null ? chosenRoot.getType().getIconPath() : null);
+        panelStyle.setAccentIconPath(chosenRoot != null ? chosenRoot.getType().getIconPath() : null);
 
-        this.ringRenderer = new SkillTreeNodeRingRenderer(style, wormholeOpenness);
+        this.ringRenderer = new SkillTreeNodeRingRenderer(panelStyle, wormholeOpenness);
         this.startPulse = ringRenderer::startPulse;
         this.iconRenderer = new SkillTreeNodeIconRenderer();
         this.ghostRenderer = new SkillTreeNodeGhostRenderer();
         this.wormholeGhostFlights = new SkillTreeWormholeGhostFlights(new Random());
-        this.connectorRenderer = new SkillTreeNodeConnectorRenderer(style, search, wormholeOpenness);
-        this.tooltipRenderer = new SkillTreeNodeTooltipRenderer(member, style);
-        this.dropdownRenderer = new SkillTreeNodeDropdownRenderer(style);
+        this.connectorRenderer = new SkillTreeNodeConnectorRenderer(panelStyle, nodeSearch, wormholeOpenness);
+        this.tooltipRenderer = new SkillTreeNodeTooltipRenderer(member, panelStyle);
+        this.dropdownRenderer = new SkillTreeNodeDropdownRenderer(panelStyle);
         this.stepExecutor = new TemplateStepExecutor(allocator, this::snapshot, node -> afterAllocationChange(node, true));
         this.attemptStep = stepExecutor::attempt;
-        this.pointsLeft = stepExecutor::hasPointsLeft;
+        this.pointsLeftCheck = stepExecutor::hasPointsLeft;
     }
 
-    private static StartingRootChoice initialRootChoice(ShipSkillData data) {
-        String startingRootId = data.resolveStartingRootId();
+    private static StartingRootChoice initialRootChoice(ShipSkillData skillData) {
+        String startingRootId = skillData.resolveStartingRootId();
         SkillNode startingRoot = startingRootId == null ? null : SkillTree.get(startingRootId);
         if (startingRoot != null) {
             return StartingRootChoice.alreadyChosen(startingRoot);
@@ -112,9 +112,9 @@ public final class SkillTreeNodeRenderer {
         }
         dropdownRenderer.close();
         setTemplate(null);
-        search.setQuery("");
+        nodeSearch.setQuery("");
         rootChoice = StartingRootChoice.returning(SkillTree.topology().roots(), root);
-        style.setAccentIconPath(null);
+        panelStyle.setAccentIconPath(null);
         afterAllocationChange(root, false);
     }
 
@@ -159,7 +159,7 @@ public final class SkillTreeNodeRenderer {
             return;
         }
         rootChoice.choose(root);
-        style.setAccentIconPath(root.getType().getIconPath());
+        panelStyle.setAccentIconPath(root.getType().getIconPath());
         afterAllocationChange(root, true);
     }
 
@@ -172,21 +172,21 @@ public final class SkillTreeNodeRenderer {
         connectorFills.advance(amount, startPulse);
         ghostRenderer.advance(amount);
         socketRenderer.advance(amount);
-        ShipSkillData data = snapshot().data();
-        wormholeGhostFlights.advance(amount, data);
-        wormholeOpenness.advance(amount, data);
+        ShipSkillData skillData = snapshot().skillData();
+        wormholeGhostFlights.advance(amount, skillData);
+        wormholeOpenness.advance(amount, skillData);
         advanceAutoAllocate(amount);
         advanceRespec(amount);
     }
 
     private void advanceAutoAllocate(float amount) {
-        if (autoRun == null || rootChoice.isInputLocked()) {
+        if (autoAllocateRun == null || rootChoice.isInputLocked()) {
             return;
         }
-        autoRun.advance(amount, attemptStep, pointsLeft);
-        if (autoRun.isFinished()) {
-            lastRunSummary = autoRun.summary();
-            autoRun = null;
+        autoAllocateRun.advance(amount, attemptStep, pointsLeftCheck);
+        if (autoAllocateRun.isFinished()) {
+            lastRunSummary = autoAllocateRun.summary();
+            autoAllocateRun = null;
         }
     }
 
@@ -201,15 +201,15 @@ public final class SkillTreeNodeRenderer {
     }
 
     public boolean startRespec(SkillNode node) {
-        if (isStartingRootInputLocked() || autoRun != null || respecRun != null) {
+        if (isStartingRootInputLocked() || autoAllocateRun != null || respecRun != null) {
             return false;
         }
-        List<SkillNode> plan = allocator.respecPlan(node);
-        if (plan.isEmpty() || plan.stream().anyMatch(allocator::hasDeallocationCondition)) {
+        List<SkillNode> respecPlan = allocator.respecPlan(node);
+        if (respecPlan.isEmpty() || respecPlan.stream().anyMatch(allocator::hasDeallocationCondition)) {
             return false;
         }
         dropdownRenderer.close();
-        respecRun = new RespecRun(plan);
+        respecRun = new RespecRun(respecPlan);
         return true;
     }
 
@@ -265,31 +265,31 @@ public final class SkillTreeNodeRenderer {
     }
 
     public boolean startAutoAllocate() {
-        if (template == null || autoRun != null || respecRun != null || rootChoice.isInputLocked()) {
+        if (template == null || autoAllocateRun != null || respecRun != null || rootChoice.isInputLocked()) {
             return false;
         }
         dropdownRenderer.close();
-        ShipSkillData data = snapshot().data();
-        int pending = 0;
+        ShipSkillData skillData = snapshot().skillData();
+        int pendingStepCount = 0;
         for (TemplateStep step : template.steps()) {
-            if (SkillTree.get(step.nodeId()) != null && !data.isAllocated(step.nodeId())) {
-                pending++;
+            if (SkillTree.get(step.nodeId()) != null && !skillData.isAllocated(step.nodeId())) {
+                pendingStepCount++;
             }
         }
-        autoRun = new AutoAllocateRun(template.steps(), pending);
+        autoAllocateRun = new AutoAllocateRun(template.steps(), pendingStepCount);
         lastRunSummary = null;
         return true;
     }
 
     public boolean isAutoAllocating() {
-        return autoRun != null;
+        return autoAllocateRun != null;
     }
 
     public void cancelAutoAllocate() {
-        if (autoRun != null) {
-            autoRun.cancel();
-            lastRunSummary = autoRun.summary();
-            autoRun = null;
+        if (autoAllocateRun != null) {
+            autoAllocateRun.cancel();
+            lastRunSummary = autoAllocateRun.summary();
+            autoAllocateRun = null;
         }
     }
 
@@ -304,27 +304,27 @@ public final class SkillTreeNodeRenderer {
     }
 
     public int allocatedNodeCount() {
-        return snapshot().data().getAllocatedNodeIds().size();
+        return snapshot().skillData().getAllocatedNodeIds().size();
     }
 
     public List<TemplateStep> captureTemplateSteps() {
         SkillNode root = getStartingRoot();
-        return TemplateCapture.capture(snapshot().data(), root == null ? null : root.getId(), SkillTree.getAllNodes());
+        return TemplateCapture.capture(snapshot().skillData(), root == null ? null : root.getId(), SkillTree.getAllNodes());
     }
 
     private NodeAllocator.Snapshot snapshot() {
-        if (snapshot == null) {
-            snapshot = allocator.snapshot();
+        if (allocationSnapshot == null) {
+            allocationSnapshot = allocator.snapshot();
         }
-        return snapshot;
+        return allocationSnapshot;
     }
 
     public ShipOpBudget budget() {
-        return snapshot().budget();
+        return snapshot().opBudget();
     }
 
     public int statsRevision() {
-        return snapshot().revision();
+        return snapshot().statsRevision();
     }
 
     public void render(TreeViewport viewport, float alphaMult, float mouseX, float mouseY, boolean mouseKnown) {
@@ -336,7 +336,7 @@ public final class SkillTreeNodeRenderer {
         }
 
         connectorRenderer.draw(viewport, allocation, templateNodeIds, connectorFills, treeAlphaMult);
-        wormholeGhostFlights.draw(viewport, treeAlphaMult * search.backgroundAlpha());
+        wormholeGhostFlights.draw(viewport, treeAlphaMult * nodeSearch.backgroundAlpha());
 
         for (SkillNode node : SkillTree.topology().roots()) {
             renderRootNode(node, viewport, alphaMult, allocation);
@@ -354,7 +354,7 @@ public final class SkillTreeNodeRenderer {
     }
 
     private void renderNode(SkillNode node, TreeViewport viewport, float alphaMult, NodeAllocator.Snapshot allocation) {
-        ShipSkillData data = allocation.data();
+        ShipSkillData skillData = allocation.skillData();
         SkillTier tier = node.getType().getTier();
         float zoom = viewport.zoom();
         float nodeX = viewport.screenX(node.getOffsetX());
@@ -365,26 +365,26 @@ public final class SkillTreeNodeRenderer {
         }
 
         if (allocation.isHidden(node)) {
-            ghostRenderer.draw(nodeX, nodeY, footprintSize, alphaMult * search.backgroundAlpha(), node.getId());
+            ghostRenderer.draw(nodeX, nodeY, footprintSize, alphaMult * nodeSearch.backgroundAlpha(), node.getId());
             return;
         }
 
-        boolean allocated = data.isAllocated(node.getId());
+        boolean allocated = skillData.isAllocated(node.getId());
         boolean breathing = !allocated && allocation.canAllocate(node);
-        SkillType effectiveType = node.resolveEffectiveType(data);
+        SkillType effectiveType = node.resolveEffectiveType(skillData);
         float iconSize = footprintSize * ICON_INSET_RATIO;
 
-        float nodeAlpha = alphaMult * search.nodeAlpha(node, allocation);
+        float nodeAlpha = alphaMult * nodeSearch.nodeAlpha(node, allocation);
         if (tier == SkillTier.SOCKET) {
-            socketRenderer.drawFrame(nodeX, nodeY, footprintSize, allocated, style.getAccentColor(), nodeAlpha);
-            socketRenderer.drawContent(nodeX, nodeY, footprintSize, socketedIcon(data, node), iconTint(node, allocation, allocated),
+            socketRenderer.drawFrame(nodeX, nodeY, footprintSize, allocated, panelStyle.getAccentColor(), nodeAlpha);
+            socketRenderer.drawContent(nodeX, nodeY, footprintSize, socketedIcon(skillData, node), iconTint(node, allocation, allocated),
                     nodeAlpha);
         }
         ringRenderer.draw(nodeX, nodeY, footprintSize, nodeAlpha, SkillTreeNodeRingRenderer.RingState.of(allocated, breathing), zoom, node);
 
         if (tier == SkillTier.SOCKET) {
             if (allocated) {
-                socketRenderer.drawArcs(node.getId(), nodeX, nodeY, footprintSize, style.getAccentColor(), nodeAlpha);
+                socketRenderer.drawArcs(node.getId(), nodeX, nodeY, footprintSize, panelStyle.getAccentColor(), nodeAlpha);
             }
         } else if (tier != SkillTier.WORMHOLE) {
             Color tint = iconTint(node, allocation, allocated);
@@ -397,7 +397,7 @@ public final class SkillTreeNodeRenderer {
     }
 
     private void renderRootNode(SkillNode node, TreeViewport viewport, float alphaMult, NodeAllocator.Snapshot allocation) {
-        ShipSkillData data = allocation.data();
+        ShipSkillData skillData = allocation.skillData();
         float zoom = viewport.zoom();
         float nodeX = viewport.screenX(rootChoice.offsetX(node));
         float nodeY = viewport.screenY(rootChoice.offsetY(node));
@@ -406,35 +406,35 @@ public final class SkillTreeNodeRenderer {
             return;
         }
         boolean choosing = isChoosingStartingRoot();
-        boolean allocated = data.isAllocated(node.getId());
+        boolean allocated = skillData.isAllocated(node.getId());
         boolean breathing = choosing || (!allocated && allocation.canAllocate(node));
-        float nodeAlpha = alphaMult * search.nodeAlpha(node, allocation);
+        float nodeAlpha = alphaMult * nodeSearch.nodeAlpha(node, allocation);
         ringRenderer.draw(nodeX, nodeY, footprintSize, nodeAlpha, SkillTreeNodeRingRenderer.RingState.of(allocated, breathing), zoom, node);
 
         Color tint = choosing ? ALLOCATED_TINT : iconTint(node, allocation, allocated);
         iconRenderer.drawIcon(node.getType().getIconPath(), nodeX, nodeY, footprintSize, nodeAlpha, tint);
     }
 
-    private Color iconTint(SkillNode node, NodeAllocator.Snapshot tree, boolean allocated) {
-        return allocated || search.matches(node, tree) ? ALLOCATED_TINT : UNALLOCATED_TINT;
+    private Color iconTint(SkillNode node, NodeAllocator.Snapshot allocation, boolean allocated) {
+        return allocated || nodeSearch.matches(node, allocation) ? ALLOCATED_TINT : UNALLOCATED_TINT;
     }
 
     public void renderHoverTooltip(TreeViewport viewport, float mouseX, float mouseY, float alphaMult) {
         if (dropdownRenderer.isOpen()) {
-            SkillType hovered = dropdownRenderer.findOptionAt(viewport, mouseX, mouseY);
-            if (hovered != null) {
-                tooltipRenderer.renderTooltipForType(hovered, mouseX, mouseY, alphaMult);
+            SkillType hoveredOption = dropdownRenderer.findOptionAt(viewport, mouseX, mouseY);
+            if (hoveredOption != null) {
+                tooltipRenderer.renderTooltipForType(hoveredOption, mouseX, mouseY, alphaMult);
             }
             return;
         }
 
-        SkillNode hovered = findNodeAt(viewport, mouseX, mouseY);
-        if (hovered != null) {
-            tooltipRenderer.renderTooltip(hovered, snapshot(), mouseX, mouseY, alphaMult);
+        SkillNode hoveredNode = findNodeAt(viewport, mouseX, mouseY);
+        if (hoveredNode != null) {
+            tooltipRenderer.renderTooltip(hoveredNode, snapshot(), mouseX, mouseY, alphaMult);
         }
     }
 
-    public SkillNode findNodeAt(TreeViewport viewport, float x, float y) {
+    public SkillNode findNodeAt(TreeViewport viewport, float screenX, float screenY) {
         if (isStartingRootMoving()) {
             return null;
         }
@@ -446,7 +446,7 @@ public final class SkillTreeNodeRenderer {
             float nodeX = viewport.screenX(rootChoice.offsetX(node));
             float nodeY = viewport.screenY(rootChoice.offsetY(node));
             float halfSize = NODE_SIZE * viewport.zoom() * node.getType().getTier().getSizeMultiplier() / 2f;
-            if (Math.abs(x - nodeX) <= halfSize && Math.abs(y - nodeY) <= halfSize) {
+            if (Math.abs(screenX - nodeX) <= halfSize && Math.abs(screenY - nodeY) <= halfSize) {
                 return node;
             }
         }
@@ -459,8 +459,8 @@ public final class SkillTreeNodeRenderer {
         String pairedId = node.getPairedNodeId();
         SkillNode paired = pairedId == null ? null : SkillTree.get(pairedId);
         if (paired == null) return null;
-        NodeAllocator.Snapshot tree = snapshot();
-        if (tree.isHidden(node) || tree.isHidden(paired)) return null;
+        NodeAllocator.Snapshot allocation = snapshot();
+        if (allocation.isHidden(node) || allocation.isHidden(paired)) return null;
         return paired;
     }
 
@@ -469,7 +469,7 @@ public final class SkillTreeNodeRenderer {
     }
 
     public void toggleAllocation(SkillNode node, boolean ctrlDown) {
-        if (isStartingRootInputLocked() || autoRun != null || respecRun != null) {
+        if (isStartingRootInputLocked() || autoAllocateRun != null || respecRun != null) {
             return;
         }
         if (allocator.canUnchooseStartingRoot(node)) {
@@ -493,8 +493,8 @@ public final class SkillTreeNodeRenderer {
         }
     }
 
-    private static String socketedIcon(ShipSkillData data, SkillNode node) {
-        Socketable socketed = SocketableStore.lookup(data.getSocketedItem(node.getId()));
+    private static String socketedIcon(ShipSkillData skillData, SkillNode node) {
+        Socketable socketed = SocketableStore.lookup(skillData.getSocketedItem(node.getId()));
         return socketed == null ? null : socketed.iconPath();
     }
 
@@ -519,16 +519,16 @@ public final class SkillTreeNodeRenderer {
     }
 
     private boolean isSocketEditLocked() {
-        return isStartingRootInputLocked() || autoRun != null || respecRun != null;
+        return isStartingRootInputLocked() || autoAllocateRun != null || respecRun != null;
     }
 
     private void toggleOptionalAllocation(SkillNode node, boolean ctrlDown) {
         if (!allocator.canAllocate(node)) {
             return;
         }
-        SkillType repeated = ctrlDown ? repeatableOptionFor(node) : null;
-        if (repeated != null) {
-            allocateOptionalNode(node, repeated);
+        SkillType repeatedOption = ctrlDown ? repeatableOptionFor(node) : null;
+        if (repeatedOption != null) {
+            allocateOptionalNode(node, repeatedOption);
         } else {
             dropdownRenderer.open(node);
         }
@@ -588,7 +588,7 @@ public final class SkillTreeNodeRenderer {
     }
 
     private void refreshAfterAllocation() {
-        snapshot = null;
+        allocationSnapshot = null;
         if (refitButton != null) {
             refitButton.refreshVariant();
         }
@@ -614,10 +614,10 @@ public final class SkillTreeNodeRenderer {
     }
 
     private boolean startFillsInto(SkillNode node) {
-        NodeAllocator.Snapshot tree = snapshot();
+        NodeAllocator.Snapshot allocation = snapshot();
         boolean started = false;
         for (SkillNode neighbour : SkillTree.topology().drawnNeighbours(node.getId())) {
-            if (tree.data().isSatisfied(neighbour.getId(), tree.satisfiedRootId())) {
+            if (allocation.skillData().isSatisfied(neighbour.getId(), allocation.satisfiedRootId())) {
                 connectorFills.start(neighbour.getId(), node.getId());
                 started = true;
             }

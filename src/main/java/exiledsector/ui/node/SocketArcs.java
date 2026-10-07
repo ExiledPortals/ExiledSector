@@ -26,24 +26,24 @@ final class SocketArcs {
     private static final int EDGES = 4;
 
     private final Random random;
-    private final Map<String, NodeArcs> byNode = new HashMap<>();
-    private final Set<String> drawn = new HashSet<>();
+    private final Map<String, NodeArcs> arcsByNodeId = new HashMap<>();
+    private final Set<String> drawnNodeIds = new HashSet<>();
 
     SocketArcs(Random random) {
         this.random = random;
     }
 
     void advance(float amount) {
-        byNode.keySet().retainAll(drawn);
-        drawn.clear();
-        for (NodeArcs node : byNode.values()) {
-            node.advance(amount);
+        arcsByNodeId.keySet().retainAll(drawnNodeIds);
+        drawnNodeIds.clear();
+        for (NodeArcs nodeArcs : arcsByNodeId.values()) {
+            nodeArcs.advance(amount);
         }
     }
 
     List<Arc> arcs(String nodeId) {
-        drawn.add(nodeId);
-        return byNode.computeIfAbsent(nodeId, id -> new NodeArcs()).arcs;
+        drawnNodeIds.add(nodeId);
+        return arcsByNodeId.computeIfAbsent(nodeId, id -> new NodeArcs()).arcs;
     }
 
     static float perimeterX(float position) {
@@ -82,25 +82,25 @@ final class SocketArcs {
     private final class NodeArcs {
 
         private final List<Arc> arcs = new ArrayList<>(MAX_ARCS);
-        private float untilSpawn = between(0f, MAX_SPAWN_GAP);
+        private float secondsUntilSpawn = between(0f, MAX_SPAWN_GAP);
 
         void advance(float amount) {
-            Iterator<Arc> it = arcs.iterator();
-            while (it.hasNext()) {
-                Arc arc = it.next();
+            Iterator<Arc> arcIterator = arcs.iterator();
+            while (arcIterator.hasNext()) {
+                Arc arc = arcIterator.next();
                 arc.age += amount;
                 if (arc.age >= arc.life) {
-                    it.remove();
+                    arcIterator.remove();
                     continue;
                 }
-                arc.reshapeIn -= amount;
-                if (arc.reshapeIn <= 0f) {
+                arc.secondsUntilReshape -= amount;
+                if (arc.secondsUntilReshape <= 0f) {
                     arc.reshape();
                 }
             }
-            untilSpawn -= amount;
-            if (untilSpawn <= 0f) {
-                untilSpawn = between(MIN_SPAWN_GAP, MAX_SPAWN_GAP);
+            secondsUntilSpawn -= amount;
+            if (secondsUntilSpawn <= 0f) {
+                secondsUntilSpawn = between(MIN_SPAWN_GAP, MAX_SPAWN_GAP);
                 if (arcs.size() < MAX_ARCS) {
                     arcs.add(new Arc(between(0f, EDGES), between(MIN_SPAN, MAX_SPAN), between(MIN_LIFE, MAX_LIFE)));
                 }
@@ -110,51 +110,51 @@ final class SocketArcs {
 
     final class Arc {
 
-        private final float start;
+        private final float startPosition;
         private final float span;
         private final float life;
-        private final float[] xs;
-        private final float[] ys;
+        private final float[] pointXs;
+        private final float[] pointYs;
         private float age;
-        private float reshapeIn;
+        private float secondsUntilReshape;
         private float flicker;
 
-        private Arc(float start, float span, float life) {
-            this.start = start;
+        private Arc(float startPosition, float span, float life) {
+            this.startPosition = startPosition;
             this.span = span;
             this.life = life;
             int points = Math.max(3, Math.round(span * POINTS_PER_EDGE)) + 1;
-            this.xs = new float[points];
-            this.ys = new float[points];
+            this.pointXs = new float[points];
+            this.pointYs = new float[points];
             reshape();
         }
 
         private void reshape() {
-            reshapeIn = RESHAPE_INTERVAL;
+            secondsUntilReshape = RESHAPE_INTERVAL;
             flicker = between(MIN_FLICKER, 1f);
-            int last = xs.length - 1;
+            int last = pointXs.length - 1;
             float scale = 1f - BORDER_INSET;
             for (int i = 0; i <= last; i++) {
-                float position = start + span * i / last;
+                float position = startPosition + span * i / last;
                 float x = perimeterX(position) * scale;
                 float y = perimeterY(position) * scale;
                 float offset = i == 0 || i == last ? 0f : between(-JITTER, JITTER);
                 int edge = (int) wrap(position);
-                xs[i] = x + offset * (edge == 1 ? -1f : edge == 3 ? 1f : 0f);
-                ys[i] = y + offset * (edge == 0 ? 1f : edge == 2 ? -1f : 0f);
+                pointXs[i] = x + offset * (edge == 1 ? -1f : edge == 3 ? 1f : 0f);
+                pointYs[i] = y + offset * (edge == 0 ? 1f : edge == 2 ? -1f : 0f);
             }
         }
 
         int pointCount() {
-            return xs.length;
+            return pointXs.length;
         }
 
         float x(int index) {
-            return xs[index];
+            return pointXs[index];
         }
 
         float y(int index) {
-            return ys[index];
+            return pointYs[index];
         }
 
         float alpha() {

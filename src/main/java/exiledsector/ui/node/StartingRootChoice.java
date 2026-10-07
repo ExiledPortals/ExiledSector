@@ -22,13 +22,13 @@ final class StartingRootChoice {
 
     private final Map<String, Vector2f> clusterOffsets;
     private Phase phase;
-    private SkillNode chosen;
+    private SkillNode chosenRoot;
     private float flightElapsed;
 
-    private StartingRootChoice(Map<String, Vector2f> clusterOffsets, Phase phase, SkillNode chosen) {
+    private StartingRootChoice(Map<String, Vector2f> clusterOffsets, Phase phase, SkillNode chosenRoot) {
         this.clusterOffsets = clusterOffsets;
         this.phase = phase;
-        this.chosen = chosen;
+        this.chosenRoot = chosenRoot;
     }
 
     static StartingRootChoice alreadyChosen(SkillNode root) {
@@ -64,7 +64,7 @@ final class StartingRootChoice {
     }
 
     SkillNode chosen() {
-        return chosen;
+        return chosenRoot;
     }
 
     boolean isInputLocked() {
@@ -75,15 +75,15 @@ final class StartingRootChoice {
         if (phase != Phase.CHOOSING || !clusterOffsets.containsKey(root.getId())) {
             return;
         }
-        chosen = root;
+        chosenRoot = root;
         phase = Phase.FLYING;
         flightElapsed = 0f;
     }
 
-    static StartingRootChoice returning(List<SkillNode> roots, SkillNode chosen) {
+    static StartingRootChoice returning(List<SkillNode> roots, SkillNode chosenRoot) {
         StartingRootChoice choice = pending(roots);
-        if (choice.phase == Phase.CHOOSING && choice.clusterOffsets.containsKey(chosen.getId())) {
-            choice.chosen = chosen;
+        if (choice.phase == Phase.CHOOSING && choice.clusterOffsets.containsKey(chosenRoot.getId())) {
+            choice.chosenRoot = chosenRoot;
             choice.phase = Phase.RETURNING;
         }
         return choice;
@@ -94,7 +94,7 @@ final class StartingRootChoice {
     }
 
     SkillNode rootForAllocation() {
-        return phase == Phase.FLYING || phase == Phase.CHOSEN ? chosen : null;
+        return phase == Phase.FLYING || phase == Phase.CHOSEN ? chosenRoot : null;
     }
 
     void advance(float amount) {
@@ -109,27 +109,27 @@ final class StartingRootChoice {
             phase = Phase.CHOSEN;
         } else {
             phase = Phase.CHOOSING;
-            chosen = null;
+            chosenRoot = null;
             flightElapsed = 0f;
         }
     }
 
     float offsetX(SkillNode node) {
-        Vector2f cluster = clusterOffsets.get(node.getId());
-        return cluster == null ? node.getOffsetX() : lerp(cluster.x, node.getOffsetX(), progress());
+        Vector2f clusterOffset = clusterOffsets.get(node.getId());
+        return clusterOffset == null ? node.getOffsetX() : lerp(clusterOffset.x, node.getOffsetX(), progress());
     }
 
     float offsetY(SkillNode node) {
-        Vector2f cluster = clusterOffsets.get(node.getId());
-        return cluster == null ? node.getOffsetY() : lerp(cluster.y, node.getOffsetY(), progress());
+        Vector2f clusterOffset = clusterOffsets.get(node.getId());
+        return clusterOffset == null ? node.getOffsetY() : lerp(clusterOffset.y, node.getOffsetY(), progress());
     }
 
     float cameraTargetX() {
-        return headingOut() && chosen != null ? offsetX(chosen) : 0f;
+        return headingOut() && chosenRoot != null ? offsetX(chosenRoot) : 0f;
     }
 
     float cameraTargetY() {
-        return headingOut() && chosen != null ? offsetY(chosen) : 0f;
+        return headingOut() && chosenRoot != null ? offsetY(chosenRoot) : 0f;
     }
 
     float cameraProgress() {
@@ -145,11 +145,11 @@ final class StartingRootChoice {
     }
 
     float promptOffsetY() {
-        float top = 0f;
+        float topOffsetY = 0f;
         for (Vector2f offset : clusterOffsets.values()) {
-            top = Math.min(top, offset.y);
+            topOffsetY = Math.min(topOffsetY, offset.y);
         }
-        return top - ROOT_FOOTPRINT / 2f - PROMPT_GAP;
+        return topOffsetY - ROOT_FOOTPRINT / 2f - PROMPT_GAP;
     }
 
     private float progress() {

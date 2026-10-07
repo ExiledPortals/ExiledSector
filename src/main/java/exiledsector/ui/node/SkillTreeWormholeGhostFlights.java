@@ -30,10 +30,10 @@ final class SkillTreeWormholeGhostFlights {
         this.random = random;
     }
 
-    void advance(float amount, ShipSkillData data) {
+    void advance(float amount, ShipSkillData skillData) {
         flights.removeIf(flight -> flight.advance(amount));
         for (SkillTreeTopology.WormholePair pair : SkillTree.topology().wormholePairs()) {
-            if (data.isAllocated(pair.first().getId()) && data.isAllocated(pair.second().getId())) {
+            if (skillData.isAllocated(pair.first().getId()) && skillData.isAllocated(pair.second().getId())) {
                 scheduleFlights(pair, amount);
             }
         }
@@ -44,17 +44,17 @@ final class SkillTreeWormholeGhostFlights {
     }
 
     private void scheduleFlights(SkillTreeTopology.WormholePair pair, float amount) {
-        String key = pair.first().getId();
-        float[] remaining = secondsUntilNextFlight.get(key);
-        if (remaining == null) {
-            remaining = new float[]{random.nextFloat() * MAX_SECONDS_BETWEEN_FLIGHTS};
-            secondsUntilNextFlight.put(key, remaining);
+        String pairKey = pair.first().getId();
+        float[] remainingSeconds = secondsUntilNextFlight.get(pairKey);
+        if (remainingSeconds == null) {
+            remainingSeconds = new float[]{random.nextFloat() * MAX_SECONDS_BETWEEN_FLIGHTS};
+            secondsUntilNextFlight.put(pairKey, remainingSeconds);
         }
-        remaining[0] -= amount;
-        if (remaining[0] <= 0f) {
+        remainingSeconds[0] -= amount;
+        if (remainingSeconds[0] <= 0f) {
             boolean forwards = random.nextBoolean();
             flights.add(forwards ? launch(pair.first(), pair.second()) : launch(pair.second(), pair.first()));
-            remaining[0] = MIN_SECONDS_BETWEEN_FLIGHTS
+            remainingSeconds[0] = MIN_SECONDS_BETWEEN_FLIGHTS
                     + random.nextFloat() * (MAX_SECONDS_BETWEEN_FLIGHTS - MIN_SECONDS_BETWEEN_FLIGHTS);
         }
     }
@@ -72,9 +72,9 @@ final class SkillTreeWormholeGhostFlights {
         if (sprite == null) {
             return;
         }
-        float size = SkillTreeNodeGeometry.NODE_SIZE * GHOST_SIZE_RATIO * viewport.zoom();
+        float ghostSize = SkillTreeNodeGeometry.NODE_SIZE * GHOST_SIZE_RATIO * viewport.zoom();
         for (GhostFlight flight : flights) {
-            flight.draw(sprite, GhostFlight.color(), size, viewport, alphaMult);
+            flight.draw(sprite, GhostFlight.color(), ghostSize, viewport, alphaMult);
         }
     }
 }

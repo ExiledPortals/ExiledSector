@@ -10,24 +10,24 @@ final class RespecRun {
 
     private final List<SkillNode> steps;
     private final float stepSeconds;
-    private float budget;
-    private int index;
+    private float accumulatedSeconds;
+    private int nextStepIndex;
     private boolean stopped;
 
     RespecRun(List<SkillNode> steps) {
         this.steps = List.copyOf(steps);
         this.stepSeconds = AutoAllocateRun.stepSecondsFor(this.steps.size());
-        this.budget = stepSeconds;
+        this.accumulatedSeconds = stepSeconds;
     }
 
     void advance(float amount, Predicate<SkillNode> removeStep) {
         if (isFinished()) {
             return;
         }
-        budget += amount;
-        while (!isFinished() && budget >= stepSeconds) {
-            budget -= stepSeconds;
-            if (!removeStep.test(steps.get(index++))) {
+        accumulatedSeconds += amount;
+        while (!isFinished() && accumulatedSeconds >= stepSeconds) {
+            accumulatedSeconds -= stepSeconds;
+            if (!removeStep.test(steps.get(nextStepIndex++))) {
                 stopped = true;
             }
         }
@@ -38,7 +38,7 @@ final class RespecRun {
     }
 
     boolean isFinished() {
-        return stopped || index >= steps.size();
+        return stopped || nextStepIndex >= steps.size();
     }
 
     float stepSeconds() {

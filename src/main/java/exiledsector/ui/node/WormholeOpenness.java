@@ -11,23 +11,23 @@ final class WormholeOpenness {
 
     static final float OPEN_SECONDS = 1f;
 
-    private final Map<String, Float> openness = new HashMap<>();
+    private final Map<String, Float> opennessByNodeId = new HashMap<>();
 
-    void advance(float amount, ShipSkillData data) {
+    void advance(float amount, ShipSkillData skillData) {
         float step = amount / OPEN_SECONDS;
         for (SkillNode node : SkillTree.topology().wormholes()) {
-            float target = data.isAllocated(node.getId()) ? 1f : 0f;
-            Float current = openness.get(node.getId());
-            if (current != null && current == target) {
+            float targetOpenness = skillData.isAllocated(node.getId()) ? 1f : 0f;
+            Float currentOpenness = opennessByNodeId.get(node.getId());
+            if (currentOpenness != null && currentOpenness == targetOpenness) {
                 continue;
             }
-            float next = current == null ? target
-                    : current < target ? Math.min(target, current + step) : Math.max(target, current - step);
-            openness.put(node.getId(), next);
+            float nextOpenness = currentOpenness == null ? targetOpenness
+                    : currentOpenness < targetOpenness ? Math.min(targetOpenness, currentOpenness + step) : Math.max(targetOpenness, currentOpenness - step);
+            opennessByNodeId.put(node.getId(), nextOpenness);
         }
     }
 
     float of(String nodeId) {
-        return openness.getOrDefault(nodeId, 0f);
+        return opennessByNodeId.getOrDefault(nodeId, 0f);
     }
 }

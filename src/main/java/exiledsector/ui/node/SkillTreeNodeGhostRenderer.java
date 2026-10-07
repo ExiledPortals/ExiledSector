@@ -35,16 +35,16 @@ final class SkillTreeNodeGhostRenderer {
         if (sprite == null) return;
 
         List<GhostInstance> ghosts = ghostsByNode.computeIfAbsent(nodeId, id -> generateGhosts(id));
-        Color color = GhostFlight.color();
-        float size = footprintSize * GHOST_SIZE_RATIO;
+        Color ghostColor = GhostFlight.color();
+        float ghostSize = footprintSize * GHOST_SIZE_RATIO;
 
         for (GhostInstance ghost : ghosts) {
             float blinkT = (float) (0.5 + 0.5 * Math.sin(2 * Math.PI * (elapsedSeconds / ghost.blinkPeriod + ghost.blinkPhase)));
             float alpha = (GHOST_MIN_ALPHA + (GHOST_MAX_ALPHA - GHOST_MIN_ALPHA) * blinkT) * alphaMult;
 
-            sprite.setSize(size, size);
+            sprite.setSize(ghostSize, ghostSize);
             sprite.setAngle(ghost.rotationDeg);
-            sprite.setColor(color);
+            sprite.setColor(ghostColor);
             sprite.setAlphaMult(alpha);
             sprite.renderAtCenter(cx + ghost.offsetXFraction * footprintSize, cy + ghost.offsetYFraction * footprintSize);
         }

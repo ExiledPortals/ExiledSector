@@ -6,7 +6,7 @@ public record HyperspaceCamera(float x, float y, float zoom) {
 
     public static final float ANCHOR_REACH = 1.7f;
 
-    public static HyperspaceCamera fit(List<HyperspaceAnchor> anchors, float mapStarRadius, float width, float height,
+    public static HyperspaceCamera fit(List<HyperspaceAnchor> anchors, float mapStarRadius, float viewWidth, float viewHeight,
                                        float margin, float labelSpace) {
         if (anchors.isEmpty()) {
             return new HyperspaceCamera(0f, 0f, 1f);
@@ -22,8 +22,8 @@ public record HyperspaceCamera(float x, float y, float zoom) {
             minY = Math.min(minY, anchor.y() - reach);
             maxY = Math.max(maxY, anchor.y() + reach);
         }
-        float usableWidth = Math.max(1f, width - margin * 2f);
-        float usableHeight = Math.max(1f, height - margin * 2f - labelSpace);
+        float usableWidth = Math.max(1f, viewWidth - margin * 2f);
+        float usableHeight = Math.max(1f, viewHeight - margin * 2f - labelSpace);
         float zoom = Math.min(usableWidth / Math.max(1f, maxX - minX), usableHeight / Math.max(1f, maxY - minY));
         float centreX = (minX + maxX) / 2f;
         float centreY = (minY - labelSpace / zoom + maxY) / 2f;

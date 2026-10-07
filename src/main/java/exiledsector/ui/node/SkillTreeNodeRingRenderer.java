@@ -117,7 +117,7 @@ final class SkillTreeNodeRingRenderer {
     private static final Function<String, List<RingInstance>> WORMHOLE_RINGS =
             id -> generateRingInstances(id, WORMHOLE_RING_COUNT, WORMHOLE_RING_RADIUS_DECAY);
 
-    private final SkillTreePanelStyle style;
+    private final SkillTreePanelStyle panelStyle;
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeNodeRingRenderer.class);
     private final Map<String, Float> pulseElapsed = new HashMap<>();
     private final Map<String, List<RingInstance>> ringStacks = new HashMap<>();
@@ -126,26 +126,26 @@ final class SkillTreeNodeRingRenderer {
     private final Map<String, Color> wormholeColors = new HashMap<>();
     private final Map<String, Color> ringBeltColors = new HashMap<>();
     private float breathingPhase = 0f;
-    private float elapsedSeconds = 0f;
+    private float animationElapsedSeconds = 0f;
 
-    SkillTreeNodeRingRenderer(SkillTreePanelStyle style, WormholeOpenness wormholeOpenness) {
-        this.style = style;
+    SkillTreeNodeRingRenderer(SkillTreePanelStyle panelStyle, WormholeOpenness wormholeOpenness) {
+        this.panelStyle = panelStyle;
         this.wormholeOpenness = wormholeOpenness;
     }
 
     void advance(float amount) {
         breathingPhase = (breathingPhase + amount) % BREATHING_PERIOD_SECONDS;
-        elapsedSeconds += amount;
+        animationElapsedSeconds += amount;
 
         if (!pulseElapsed.isEmpty()) {
-            Iterator<Map.Entry<String, Float>> it = pulseElapsed.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<String, Float> entry = it.next();
-                float elapsed = entry.getValue() + amount;
-                if (elapsed >= PULSE_DURATION) {
-                    it.remove();
+            Iterator<Map.Entry<String, Float>> pulseEntries = pulseElapsed.entrySet().iterator();
+            while (pulseEntries.hasNext()) {
+                Map.Entry<String, Float> pulseEntry = pulseEntries.next();
+                float pulseSeconds = pulseEntry.getValue() + amount;
+                if (pulseSeconds >= PULSE_DURATION) {
+                    pulseEntries.remove();
                 } else {
-                    entry.setValue(elapsed);
+                    pulseEntry.setValue(pulseSeconds);
                 }
             }
         }
@@ -160,18 +160,18 @@ final class SkillTreeNodeRingRenderer {
     }
 
     float reach(float footprintSize, SkillNode node) {
-        float reach = footprintSize * REACH_FOOTPRINT_RATIO;
+        float reachRadius = footprintSize * REACH_FOOTPRINT_RATIO;
         if (node.getType().getTier() == SkillTier.KEYSTONE) {
-            reach = Math.max(reach, beltOuterRadius(footprintSize, resolveRingBeltWidth(node)) * KEYSTONE_BELT_REACH_MARGIN);
+            reachRadius = Math.max(reachRadius, beltOuterRadius(footprintSize, resolveRingBeltWidth(node)) * KEYSTONE_BELT_REACH_MARGIN);
         }
-        return reach;
+        return reachRadius;
     }
 
-    void draw(float cx, float cy, float footprintSize, float alphaMult, RingState state, float zoom, SkillNode node) {
-        boolean allocated = state.allocated;
+    void draw(float cx, float cy, float footprintSize, float alphaMult, RingState ringState, float zoom, SkillNode node) {
+        boolean allocated = ringState.allocated;
         SkillTier tier = node.getType().getTier();
         String nodeId = node.getId();
-        float half = footprintSize / 2f;
+        float halfSize = footprintSize / 2f;
         float scale = tier.getSizeMultiplier();
 
         GL11.glEnable(GL11.GL_BLEND);
@@ -201,10 +201,10 @@ final class SkillTreeNodeRingRenderer {
 
         if (tier != SkillTier.WORMHOLE && tier != SkillTier.SOCKET) {
             drawNodeDonut(cx, cy, ringRadius, scale, zoom, allocated, alphaMult);
-            if (state.breathing) {
+            if (ringState.breathing) {
                 drawBreathingOutline(cx, cy, ringRadius, scale, zoom, alphaMult);
             }
-            drawPulseOutline(cx, cy, half, nodeId, zoom, alphaMult);
+            drawPulseOutline(cx, cy, halfSize, nodeId, zoom, alphaMult);
         }
 
         GL11.glDisable(GL11.GL_BLEND);
@@ -216,27 +216,27 @@ final class SkillTreeNodeRingRenderer {
         GL11.glLineWidth(NODE_CONNECTOR_GLOW_LINE_THICKNESS * scale * zoom);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
         for (int pass = 0; pass < BREATHING_BRIGHTNESS_PASSES; pass++) {
-            drawRingOutline(cx, cy, ringRadius, style.getAccentColor(), breathingAlpha);
+            drawRingOutline(cx, cy, ringRadius, panelStyle.getAccentColor(), breathingAlpha);
         }
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
     }
 
-    private void drawPulseOutline(float cx, float cy, float half, String nodeId, float zoom, float alphaMult) {
+    private void drawPulseOutline(float cx, float cy, float halfSize, String nodeId, float zoom, float alphaMult) {
         Float pulseSeconds = pulseElapsed.get(nodeId);
         if (pulseSeconds == null) return;
 
         GL11.glLineWidth(RING_LINE_THICKNESS * zoom);
         float progress = pulseSeconds / PULSE_DURATION;
         float radiusFraction = PULSE_START_RADIUS_FRACTION + (PULSE_END_RADIUS_FRACTION - PULSE_START_RADIUS_FRACTION) * progress;
-        drawRingOutline(cx, cy, half * radiusFraction, style.getAccentColor(), (1f - progress) * alphaMult);
+        drawRingOutline(cx, cy, halfSize * radiusFraction, panelStyle.getAccentColor(), (1f - progress) * alphaMult);
     }
 
     private void drawNodeDonut(float cx, float cy, float radius, float scale, float zoom, boolean allocated, float alphaMult) {
         if (allocated) {
             GL11.glLineWidth(NODE_CONNECTOR_GLOW_HALO_THICKNESS * scale * zoom);
-            drawRingOutline(cx, cy, radius, style.getAccentColor(), alphaMult * NODE_CONNECTOR_GLOW_HALO_ALPHA);
+            drawRingOutline(cx, cy, radius, panelStyle.getAccentColor(), alphaMult * NODE_CONNECTOR_GLOW_HALO_ALPHA);
             GL11.glLineWidth(NODE_CONNECTOR_GLOW_LINE_THICKNESS * scale * zoom);
-            drawRingOutline(cx, cy, radius, style.getAccentColor(), alphaMult);
+            drawRingOutline(cx, cy, radius, panelStyle.getAccentColor(), alphaMult);
             return;
         }
 
@@ -253,22 +253,22 @@ final class SkillTreeNodeRingRenderer {
     }
 
     private void drawRingStackPass(float cx, float cy, float outerRadius, List<RingInstance> instances,
-                                    Color color, float scaleRatio, float stackAlpha) {
-        float alpha = RING_INSTANCE_BASE_ALPHA * stackAlpha;
+                                    Color ringColor, float scaleRatio, float stackAlpha) {
+        float instanceAlpha = RING_INSTANCE_BASE_ALPHA * stackAlpha;
 
         for (RingInstance instance : instances) {
-            String path = RING_STACK_TEXTURES[instance.textureIndex];
+            String texturePath = RING_STACK_TEXTURES[instance.textureIndex];
 
-            float radius = outerRadius * scaleRatio * instance.radiusFraction;
-            float jitterMag = radius * RING_INSTANCE_JITTER_RATIO;
+            float instanceRadius = outerRadius * scaleRatio * instance.radiusFraction;
+            float jitterMag = instanceRadius * RING_INSTANCE_JITTER_RATIO;
 
-            float angle = instance.baseAngleDeg + elapsedSeconds * instance.rotationSpeedDeg;
-            float wanderRad = instance.jitterPhase + elapsedSeconds * instance.jitterSpeed;
+            float angle = instance.baseAngleDeg + animationElapsedSeconds * instance.rotationSpeedDeg;
+            float wanderRad = instance.jitterPhase + animationElapsedSeconds * instance.jitterSpeed;
             float jx = (float) Math.cos(wanderRad) * jitterMag;
             float jy = (float) Math.sin(wanderRad) * jitterMag;
-            float size = radius * 2f * instance.sizeJitter;
+            float spriteSize = instanceRadius * 2f * instance.sizeJitter;
 
-            SpriteDraw.drawAdditiveAtCenter(spriteCache, path, cx + jx, cy + jy, size, size, color, alpha, angle);
+            SpriteDraw.drawAdditiveAtCenter(spriteCache, texturePath, cx + jx, cy + jy, spriteSize, spriteSize, ringColor, instanceAlpha, angle);
         }
     }
 
@@ -292,68 +292,68 @@ final class SkillTreeNodeRingRenderer {
         if (sprite == null) return;
         AuroraBeltRenderer.render(sprite,
                 new RadialBand(new Vector2f(cx, cy), beltInnerRadius(footprintSize), beltOuterRadius(footprintSize, widthRatio)),
-                tint, stateAlpha * alphaMult, elapsedSeconds, SmoothZoom.MAX_ZOOM / zoom);
+                tint, stateAlpha * alphaMult, animationElapsedSeconds, SmoothZoom.MAX_ZOOM / zoom);
     }
 
-    private void drawWormhole(float cx, float cy, float footprintSize, float alphaMult, String nodeId, Color color) {
+    private void drawWormhole(float cx, float cy, float footprintSize, float alphaMult, String nodeId, Color wormholeColor) {
         float rawOpenness = wormholeOpenness.of(nodeId);
         float openness = rawOpenness * rawOpenness;
         float visualScale = WORMHOLE_MIN_SCALE + (1f - WORMHOLE_MIN_SCALE) * openness;
         float baseRadius = footprintSize / 2f * visualScale;
 
-        drawWormholeCorona(cx, cy, baseRadius, color, alphaMult);
+        drawWormholeCorona(cx, cy, baseRadius, wormholeColor, alphaMult);
 
         if (openness < 1f) {
-            drawWormholeBands(cx, cy, baseRadius, color, (1f - openness) * WORMHOLE_BAND_ALPHA * alphaMult);
+            drawWormholeBands(cx, cy, baseRadius, wormholeColor, (1f - openness) * WORMHOLE_BAND_ALPHA * alphaMult);
         }
 
         if (openness > 0f) {
             drawRingStackPass(cx, cy, baseRadius * 2f * WORMHOLE_RING_OUTER_RADIUS_RATIO,
                     ringStacks.computeIfAbsent(nodeId, WORMHOLE_RINGS),
-                    color, 1f, openness * alphaMult);
+                    wormholeColor, 1f, openness * alphaMult);
         }
 
         if (openness < 1f) {
-            drawWormholeGlow(cx, cy, baseRadius, color, alphaMult, openness);
+            drawWormholeGlow(cx, cy, baseRadius, wormholeColor, alphaMult, openness);
         }
     }
 
-    private void drawWormholeCorona(float cx, float cy, float baseRadius, Color color, float alphaMult) {
+    private void drawWormholeCorona(float cx, float cy, float baseRadius, Color wormholeColor, float alphaMult) {
         float size = baseRadius * 2f * WORMHOLE_CORONA_SIZE_RATIO;
         float orbit = baseRadius * WORMHOLE_CORONA_ORBIT_RATIO;
 
         for (int i = 0; i < WORMHOLE_CORONA_COUNT; i++) {
             float baseAngle = 360f * i / WORMHOLE_CORONA_COUNT;
-            float angle = baseAngle + elapsedSeconds * WORMHOLE_CORONA_ROTATION_SPEED_DEG;
+            float angle = baseAngle + animationElapsedSeconds * WORMHOLE_CORONA_ROTATION_SPEED_DEG;
             float rad = (float) Math.toRadians(angle);
-            float pulse = 1f + (float) Math.sin(Math.toRadians(elapsedSeconds * WORMHOLE_CORONA_PULSE_SPEED_DEG + baseAngle)) * WORMHOLE_CORONA_PULSE_SIZE_RATIO;
+            float pulse = 1f + (float) Math.sin(Math.toRadians(animationElapsedSeconds * WORMHOLE_CORONA_PULSE_SPEED_DEG + baseAngle)) * WORMHOLE_CORONA_PULSE_SIZE_RATIO;
 
             SpriteDraw.drawAdditiveAtCenter(spriteCache, WORMHOLE_CORONA_TEXTURE_PATH,
                     cx + (float) Math.cos(rad) * orbit, cy + (float) Math.sin(rad) * orbit,
-                    size * pulse, size * pulse, color, alphaMult, angle);
+                    size * pulse, size * pulse, wormholeColor, alphaMult, angle);
         }
     }
 
-    private void drawWormholeBands(float cx, float cy, float baseRadius, Color color, float alphaMult) {
+    private void drawWormholeBands(float cx, float cy, float baseRadius, Color wormholeColor, float alphaMult) {
         SpriteAPI texture = spriteCache.texture(WORMHOLE_BAND_TEXTURE_PATH);
         if (texture == null) return;
         float innerRadius = baseRadius * WORMHOLE_BAND_INNER_RADIUS_RATIO;
         float outerRadius = innerRadius + baseRadius * WORMHOLE_BAND_THICKNESS_RATIO;
-        float rotationA = (elapsedSeconds * WORMHOLE_BAND_ROTATION_SPEED_DEG) % 360f;
-        float rotationB = (-elapsedSeconds * WORMHOLE_BAND_ROTATION_SPEED_DEG) % 360f;
+        float rotationA = (animationElapsedSeconds * WORMHOLE_BAND_ROTATION_SPEED_DEG) % 360f;
+        float rotationB = (-animationElapsedSeconds * WORMHOLE_BAND_ROTATION_SPEED_DEG) % 360f;
 
         RadialBand band = new RadialBand(new Vector2f(cx, cy), innerRadius, outerRadius);
-        WormholeBandRenderer.render(texture, band, 0, rotationA, color, alphaMult, elapsedSeconds);
-        WormholeBandRenderer.render(texture, band, 1, rotationB, color, alphaMult, elapsedSeconds);
+        WormholeBandRenderer.render(texture, band, 0, rotationA, wormholeColor, alphaMult, animationElapsedSeconds);
+        WormholeBandRenderer.render(texture, band, 1, rotationB, wormholeColor, alphaMult, animationElapsedSeconds);
     }
 
-    private void drawWormholeGlow(float cx, float cy, float baseRadius, Color color, float alphaMult, float openness) {
+    private void drawWormholeGlow(float cx, float cy, float baseRadius, Color wormholeColor, float alphaMult, float openness) {
         float size = baseRadius * 2f * WORMHOLE_GLOW_SIZE_RATIO;
         float closedness = 1f - openness;
         float alpha = WORMHOLE_GLOW_ALPHA * closedness * closedness * closedness * alphaMult;
 
-        SpriteDraw.drawAdditiveAtCenter(spriteCache, WORMHOLE_GLOW_TEXTURE_PATH, cx, cy, size, size, color, alpha);
-        SpriteDraw.drawAdditiveAtCenter(spriteCache, WORMHOLE_GLOW_TEXTURE_PATH, cx, cy, size, size, color, alpha);
+        SpriteDraw.drawAdditiveAtCenter(spriteCache, WORMHOLE_GLOW_TEXTURE_PATH, cx, cy, size, size, wormholeColor, alpha);
+        SpriteDraw.drawAdditiveAtCenter(spriteCache, WORMHOLE_GLOW_TEXTURE_PATH, cx, cy, size, size, wormholeColor, alpha);
     }
 
     private Color resolveWormholeColor(SkillNode node) {

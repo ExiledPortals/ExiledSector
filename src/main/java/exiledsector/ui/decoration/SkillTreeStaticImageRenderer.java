@@ -24,21 +24,21 @@ public class SkillTreeStaticImageRenderer {
         if (images.isEmpty()) return;
 
         for (StaticImage image : images) {
-            String path = image.getImagePath();
-            if (path == null || path.isEmpty()) continue;
-            float alpha = keptIds.contains(image.getId()) ? alphaMult : alphaMult * othersAlphaMult;
-            if (alpha <= 0f) continue;
+            String imagePath = image.getImagePath();
+            if (imagePath == null || imagePath.isEmpty()) continue;
+            float imageAlpha = keptIds.contains(image.getId()) ? alphaMult : alphaMult * othersAlphaMult;
+            if (imageAlpha <= 0f) continue;
 
             float screenX = viewport.screenX(image.getX());
             float screenY = viewport.screenY(image.getY());
-            float width = image.getWidth() * zoom;
-            float height = image.getHeight() * zoom;
-            if (!viewport.isVisible(screenX, screenY, (float) Math.hypot(width, height) / 2f)) {
+            float imageWidth = image.getWidth() * zoom;
+            float imageHeight = image.getHeight() * zoom;
+            if (!viewport.isVisible(screenX, screenY, (float) Math.hypot(imageWidth, imageHeight) / 2f)) {
                 continue;
             }
             float angleDeg = -(image.getRotation() + image.getRotationSpeed() * elapsedSeconds);
-            SpriteDraw.drawAtCenter(spriteCache, path, screenX, screenY,
-                    width, height, null, alpha, angleDeg);
+            SpriteDraw.drawAtCenter(spriteCache, imagePath, screenX, screenY,
+                    imageWidth, imageHeight, null, imageAlpha, angleDeg);
         }
     }
 }

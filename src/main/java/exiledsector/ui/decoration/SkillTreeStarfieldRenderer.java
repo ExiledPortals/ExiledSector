@@ -49,57 +49,57 @@ public class SkillTreeStarfieldRenderer {
         float baseX;
         float baseY;
         int spriteIndex;
-        float size;
+        float spriteSize;
         float baseAlpha;
         float twinkleSpeed;
         float twinklePhase;
         boolean useAccentColor;
     }
 
-    private final SkillTreePanelStyle style;
+    private final SkillTreePanelStyle panelStyle;
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeStarfieldRenderer.class);
     private final Random random = new Random();
 
     private boolean initialized = false;
     private float fieldWidth;
     private float fieldHeight;
-    private List<Star>[] layers;
-    private float elapsedTime = 0f;
+    private List<Star>[] starLayers;
+    private float twinkleElapsedSeconds = 0f;
 
-    public SkillTreeStarfieldRenderer(SkillTreePanelStyle style) {
-        this.style = style;
+    public SkillTreeStarfieldRenderer(SkillTreePanelStyle panelStyle) {
+        this.panelStyle = panelStyle;
     }
 
     public void advance(float amount) {
-        elapsedTime += amount;
+        twinkleElapsedSeconds += amount;
     }
 
-    public void render(PositionAPI position, float panX, float panY, float alphaMult) {
-        if (position == null) return;
+    public void render(PositionAPI panelPosition, float panX, float panY, float alphaMult) {
+        if (panelPosition == null) return;
 
         if (!initialized) {
-            initStars(position.getWidth(), position.getHeight());
+            initStars(panelPosition.getWidth(), panelPosition.getHeight());
         }
 
-        float panelCenterX = position.getX() + position.getWidth() / 2f;
-        float panelCenterY = position.getY() + position.getHeight() / 2f;
-        Color accentColor = style.getAccentColor();
+        float panelCenterX = panelPosition.getX() + panelPosition.getWidth() / 2f;
+        float panelCenterY = panelPosition.getY() + panelPosition.getHeight() / 2f;
+        Color accentColor = panelStyle.getAccentColor();
 
         for (int i = 0; i < LAYER_SPECS.length; i++) {
-            LayerSpec spec = LAYER_SPECS[i];
-            float offsetX = panX * spec.parallaxFactor;
-            float offsetY = panY * spec.parallaxFactor;
+            LayerSpec layerSpec = LAYER_SPECS[i];
+            float offsetX = panX * layerSpec.parallaxFactor;
+            float offsetY = panY * layerSpec.parallaxFactor;
 
-            for (Star star : layers[i]) {
+            for (Star star : starLayers[i]) {
                 float wrappedX = wrap(star.baseX + offsetX, fieldWidth);
                 float wrappedY = wrap(star.baseY + offsetY, fieldHeight);
                 float screenX = panelCenterX + wrappedX - fieldWidth / 2f;
                 float screenY = panelCenterY + wrappedY - fieldHeight / 2f;
 
-                float twinkle = 0.6f + 0.4f * (float) Math.sin(elapsedTime * star.twinkleSpeed + star.twinklePhase);
+                float twinkle = 0.6f + 0.4f * (float) Math.sin(twinkleElapsedSeconds * star.twinkleSpeed + star.twinklePhase);
 
                 SpriteDraw.drawAtCenter(spriteCache, STAR_SPRITE_PATHS[star.spriteIndex], screenX, screenY,
-                        star.size, star.size, star.useAccentColor ? accentColor : STANDARD_STAR_COLOR,
+                        star.spriteSize, star.spriteSize, star.useAccentColor ? accentColor : STANDARD_STAR_COLOR,
                         alphaMult * star.baseAlpha * twinkle);
             }
         }
@@ -112,24 +112,24 @@ public class SkillTreeStarfieldRenderer {
         fieldHeight = panelHeight * 1.2f;
         float areaScale = (fieldWidth * fieldHeight) / (REFERENCE_WIDTH * REFERENCE_HEIGHT);
 
-        layers = new List[LAYER_SPECS.length];
+        starLayers = new List[LAYER_SPECS.length];
         for (int i = 0; i < LAYER_SPECS.length; i++) {
-            LayerSpec spec = LAYER_SPECS[i];
-            int count = Math.max(4, Math.round(spec.baseCount * areaScale));
-            List<Star> stars = new ArrayList<>(count);
-            for (int j = 0; j < count; j++) {
+            LayerSpec layerSpec = LAYER_SPECS[i];
+            int starCount = Math.max(4, Math.round(layerSpec.baseCount * areaScale));
+            List<Star> stars = new ArrayList<>(starCount);
+            for (int j = 0; j < starCount; j++) {
                 Star star = new Star();
                 star.baseX = random.nextFloat() * fieldWidth;
                 star.baseY = random.nextFloat() * fieldHeight;
                 star.spriteIndex = random.nextInt(STAR_SPRITE_PATHS.length);
-                star.size = spec.baseSize * (0.75f + random.nextFloat() * 0.5f);
-                star.baseAlpha = spec.baseAlpha * (0.8f + random.nextFloat() * 0.2f);
+                star.spriteSize = layerSpec.baseSize * (0.75f + random.nextFloat() * 0.5f);
+                star.baseAlpha = layerSpec.baseAlpha * (0.8f + random.nextFloat() * 0.2f);
                 star.twinkleSpeed = 0.5f + random.nextFloat();
                 star.twinklePhase = random.nextFloat() * (float) (Math.PI * 2);
                 star.useAccentColor = random.nextBoolean();
                 stars.add(star);
             }
-            layers[i] = stars;
+            starLayers[i] = stars;
         }
         initialized = true;
     }

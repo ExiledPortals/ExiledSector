@@ -47,8 +47,8 @@ final class NodeAllocator {
 
     private static final String BEST_OF_THE_BEST_SKILL_ID = "best_of_the_best";
 
-    record Snapshot(ShipSkillData data, String satisfiedRootId, ShipOpBudget budget, int totalOpBudget, int opCostPerNode,
-                    int maxAllocatedNodes, int revision, Set<String> hiddenNodeIds, Set<String> allocatableNodeIds) {
+    record Snapshot(ShipSkillData skillData, String satisfiedRootId, ShipOpBudget opBudget, int totalOpBudget, int opCostPerNode,
+                    int maxAllocatedNodes, int statsRevision, Set<String> hiddenNodeIds, Set<String> allocatableNodeIds) {
 
         int opCostFor(SkillNode node) {
             return NodeAllocator.opCostFor(node, satisfiedRootId, opCostPerNode);
@@ -63,63 +63,63 @@ final class NodeAllocator {
         }
     }
 
-    private final FleetMemberAPI member;
-    private final ShipVariantAPI variant;
-    private final Supplier<SkillNode> startingRoot;
-    private int revision;
+    private final FleetMemberAPI fleetMember;
+    private final ShipVariantAPI shipVariant;
+    private final Supplier<SkillNode> startingRootSupplier;
+    private int statsRevision;
 
-    NodeAllocator(FleetMemberAPI member, ShipVariantAPI variant, Supplier<SkillNode> startingRoot) {
-        this.member = member;
-        this.variant = variant;
-        this.startingRoot = startingRoot;
+    NodeAllocator(FleetMemberAPI fleetMember, ShipVariantAPI shipVariant, Supplier<SkillNode> startingRootSupplier) {
+        this.fleetMember = fleetMember;
+        this.shipVariant = shipVariant;
+        this.startingRootSupplier = startingRootSupplier;
     }
 
     ShipSkillData data() {
-        return ShipSkillDataManager.get(member.getId());
+        return ShipSkillDataManager.get(fleetMember.getId());
     }
 
     String satisfiedRootId() {
-        SkillNode root = startingRoot.get();
+        SkillNode root = startingRootSupplier.get();
         return root == null ? null : root.getId();
     }
 
     private boolean isStartingRoot(SkillNode node) {
-        SkillNode root = startingRoot.get();
+        SkillNode root = startingRootSupplier.get();
         return root != null && node.getId().equals(root.getId());
     }
 
     Snapshot snapshot() {
-        ShipSkillData data = data();
-        ShipOpBudget budget = ShipOpBudget.of(member, variant);
-        int opCostPerNode = SkillNodeOpCost.perNode(member.getHullSpec());
+        ShipSkillData skillData = data();
+        ShipOpBudget opBudget = ShipOpBudget.of(fleetMember, shipVariant);
+        int opCostPerNode = SkillNodeOpCost.perNode(fleetMember.getHullSpec());
         String rootId = satisfiedRootId();
-        int reservedOp = OpReserveParity.reservedOp(variant);
-        OpReserveParity.warnIfOutOfSync(member, variant, data.getSpentOp(opCostPerNode), reservedOp, "while allocating nodes");
-        int totalOpBudget = budget.total - budget.used + reservedOp;
+        int reservedOp = OpReserveParity.reservedOp(shipVariant);
+        OpReserveParity.warnIfOutOfSync(fleetMember, shipVariant, skillData.getSpentOp(opCostPerNode), reservedOp, "while allocating nodes");
+        int totalOpBudget = opBudget.total - opBudget.used + reservedOp;
         int maxAllocatedNodes = ShipLevelConfig.maxAllocatedNodes();
-        return new Snapshot(data, rootId, budget, totalOpBudget, opCostPerNode, maxAllocatedNodes, revision,
-                hiddenNodeIds(data), allocatableNodeIds(data, rootId, totalOpBudget, opCostPerNode, maxAllocatedNodes));
+        return new Snapshot(skillData, rootId, opBudget, totalOpBudget, opCostPerNode, maxAllocatedNodes, statsRevision,
+                hiddenNodeIds(skillData), allocatableNodeIds(skillData, rootId, totalOpBudget, opCostPerNode, maxAllocatedNodes));
     }
 
     private static int opCostFor(SkillNode node, String rootId, int opCostPerNode) {
         return node.getId().equals(rootId) ? 0 : opCostPerNode;
     }
 
-    private static Set<String> allocatableNodeIds(ShipSkillData data, String rootId, int totalOpBudget, int opCostPerNode,
+    private static Set<String> allocatableNodeIds(ShipSkillData skillData, String rootId, int totalOpBudget, int opCostPerNode,
                                                   int maxAllocatedNodes) {
         Set<String> allocatable = new HashSet<>();
         for (SkillNode node : SkillTree.getAllNodes().values()) {
-            if (data.canAllocate(node, rootId, totalOpBudget, opCostFor(node, rootId, opCostPerNode), maxAllocatedNodes)) {
+            if (skillData.canAllocate(node, rootId, totalOpBudget, opCostFor(node, rootId, opCostPerNode), maxAllocatedNodes)) {
                 allocatable.add(node.getId());
             }
         }
         return allocatable;
     }
 
-    private static Set<String> hiddenNodeIds(ShipSkillData data) {
+    private static Set<String> hiddenNodeIds(ShipSkillData skillData) {
         Set<String> hidden = new HashSet<>();
         for (SkillNode node : SkillTree.getAllNodes().values()) {
-            if (SkillTypeUnlockStatus.isHidden(node.getType(), data)) {
+            if (SkillTypeUnlockStatus.isHidden(node.getType(), skillData)) {
                 hidden.add(node.getId());
             }
         }
@@ -137,11 +137,11 @@ final class NodeAllocator {
 
     boolean toggle(SkillNode node) {
         Snapshot snapshot = snapshot();
-        ShipSkillData data = snapshot.data();
-        boolean wasAllocated = data.isAllocated(node.getId());
-        data.toggle(node, SkillTree.topology(), snapshot.satisfiedRootId(), snapshot.totalOpBudget(),
+        ShipSkillData skillData = snapshot.skillData();
+        boolean wasAllocated = skillData.isAllocated(node.getId());
+        skillData.toggle(node, SkillTree.topology(), snapshot.satisfiedRootId(), snapshot.totalOpBudget(),
                 snapshot.opCostFor(node), snapshot.maxAllocatedNodes());
-        boolean isAllocatedNow = data.isAllocated(node.getId());
+        boolean isAllocatedNow = skillData.isAllocated(node.getId());
         if (isAllocatedNow == wasAllocated) {
             return false;
         }
@@ -192,12 +192,12 @@ final class NodeAllocator {
     }
 
     String blockAllocationReason(SkillNode node, SkillType option) {
-        ShipSkillData data = data();
+        ShipSkillData skillData = data();
         if (!AllocatedNode.planned(node, option).exclusiveHullModIds().isEmpty()) {
             refreshVariantHullMods();
         }
-        NodeEligibility.Block block = NodeEligibility.check(node, option, NodeEligibility.Context.of(data,
-                ShipFacts.of(member.getHullSpec(), this::hasHullMod), type -> SkillTypeUnlockStatus.isLocked(type, data)));
+        NodeEligibility.Block block = NodeEligibility.check(node, option, NodeEligibility.Context.of(skillData,
+                ShipFacts.of(fleetMember.getHullSpec(), this::hasHullMod), type -> SkillTypeUnlockStatus.isLocked(type, skillData)));
         if (block != null) {
             return describe(block);
         }
@@ -210,7 +210,7 @@ final class NodeAllocator {
 
     boolean hasDeallocationCondition(SkillNode node) {
         SkillType type = node.resolveEffectiveType(data());
-        for (SkillTypeEffect effect : type.effectsFor(member.getHullSpec().getHullSize())) {
+        for (SkillTypeEffect effect : type.effectsFor(fleetMember.getHullSpec().getHullSize())) {
             if (effect.effect().hasDeallocationCondition()) {
                 return true;
             }
@@ -220,8 +220,8 @@ final class NodeAllocator {
 
     String blockDeallocationReason(SkillNode node) {
         SkillType type = node.resolveEffectiveType(data());
-        for (SkillTypeEffect effect : type.effectsFor(member.getHullSpec().getHullSize())) {
-            String blockReason = effect.effect().blockDeallocationReason(member, effect.magnitude());
+        for (SkillTypeEffect effect : type.effectsFor(fleetMember.getHullSpec().getHullSize())) {
+            String blockReason = effect.effect().blockDeallocationReason(fleetMember, effect.magnitude());
             if (blockReason != null) {
                 return blockReason;
             }
@@ -230,35 +230,35 @@ final class NodeAllocator {
     }
 
     private void refreshShipStats() {
-        revision++;
-        SkillTreeInstaller.ensureInstalled(member, variant);
+        statsRevision++;
+        SkillTreeInstaller.ensureInstalled(fleetMember, shipVariant);
         FleetWideEffects.markPhaseFieldStale();
-        new SkillTreeHullMod().applyEffectsBeforeShipCreation(member.getHullSpec().getHullSize(), member.getStats(), SkillTreeHullMod.ID);
-        SkillDataResolver.syncShipTag(member, variant);
-        OpReserveHullMods.sync(member, variant);
-        PhantomInstallSync.sync(member, variant);
-        member.setStatUpdateNeeded(true);
-        member.updateStats();
+        new SkillTreeHullMod().applyEffectsBeforeShipCreation(fleetMember.getHullSpec().getHullSize(), fleetMember.getStats(), SkillTreeHullMod.ID);
+        SkillDataResolver.syncShipTag(fleetMember, shipVariant);
+        OpReserveHullMods.sync(fleetMember, shipVariant);
+        PhantomInstallSync.sync(fleetMember, shipVariant);
+        fleetMember.setStatUpdateNeeded(true);
+        fleetMember.updateStats();
         returnUnhousedWings();
     }
 
     private void returnUnhousedWings() {
         CampaignFleetAPI playerFleet = Global.getSector() == null ? null : Global.getSector().getPlayerFleet();
-        List<String> returned = FighterBayOverflow.returnUnhousedWings(member, variant, playerFleet == null ? null : playerFleet.getCargo());
-        if (returned.isEmpty()) {
+        List<String> returnedWingIds = FighterBayOverflow.returnUnhousedWings(fleetMember, shipVariant, playerFleet == null ? null : playerFleet.getCargo());
+        if (returnedWingIds.isEmpty()) {
             return;
         }
-        member.setStatUpdateNeeded(true);
-        member.updateStats();
-        CampaignUIAPI ui = Global.getSector().getCampaignUI();
-        if (ui == null) {
+        fleetMember.setStatUpdateNeeded(true);
+        fleetMember.updateStats();
+        CampaignUIAPI campaignUi = Global.getSector().getCampaignUI();
+        if (campaignUi == null) {
             return;
         }
-        for (String wingId : returned) {
+        for (String wingId : returnedWingIds) {
             FighterWingSpecAPI wing = Global.getSettings().getFighterWingSpec(wingId);
             String name = wing == null ? wingId : wing.getWingName();
             String message = I18n.forGameText(() -> Translation.msg("fighterBay.returned").arg("wing", name).text());
-            ui.addMessage(message.replace("%", "%%"), Misc.getTextColor());
+            campaignUi.addMessage(message.replace("%", "%%"), Misc.getTextColor());
         }
     }
 
@@ -290,13 +290,13 @@ final class NodeAllocator {
     }
 
     private void refreshVariantHullMods() {
-        member.setStatUpdateNeeded(true);
-        member.updateStats();
-        OpReserveHullMods.sync(member, variant);
+        fleetMember.setStatUpdateNeeded(true);
+        fleetMember.updateStats();
+        OpReserveHullMods.sync(fleetMember, shipVariant);
     }
 
     private boolean hasHullMod(String hullModId) {
-        return InstalledHullMods.hasHullModOfItsOwn(variant, hullModId) || SecondInCommandCompat.hasDeactivatedSMod(variant, hullModId);
+        return InstalledHullMods.hasHullModOfItsOwn(shipVariant, hullModId) || SecondInCommandCompat.hasDeactivatedSMod(shipVariant, hullModId);
     }
 
     private static String bestOfTheBestName() {
@@ -310,7 +310,7 @@ final class NodeAllocator {
             case INVALID_OPTION -> Translation.text("node.block.invalidOption");
             case WRONG_HULL_SIZE -> Translation.text("node.block.wrongHullSize");
             case UNMET_HULL_REQUIREMENT, UNMET_SHIP_REQUIREMENT -> Translation.text("node.requires." + block.detail());
-            case HULL_MOD_CONFLICT -> variant.hasHullMod(block.detail())
+            case HULL_MOD_CONFLICT -> shipVariant.hasHullMod(block.detail())
                     ? Translation.msg("node.block.hullModInstalled").arg("hullmod", HullModNames.displayName(block.detail())).text()
                     : Translation.msg("node.block.deactivatedSMod").arg("hullmod", HullModNames.displayName(block.detail()))
                             .arg("skill", bestOfTheBestName()).text();

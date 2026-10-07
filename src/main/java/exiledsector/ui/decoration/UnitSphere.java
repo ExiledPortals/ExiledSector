@@ -9,7 +9,7 @@ final class UnitSphere {
     private static final int DETAIL = 32;
 
     private final Sphere sphere;
-    private GLListManager.GLListToken list;
+    private GLListManager.GLListToken displayList;
 
     UnitSphere() {
         this(texturedSphere());
@@ -28,8 +28,8 @@ final class UnitSphere {
     void draw(float radius) {
         GL11.glPushMatrix();
         GL11.glScalef(radius, radius, radius);
-        if (!GLListManager.callList(list)) {
-            list = compileAndDraw();
+        if (!GLListManager.callList(displayList)) {
+            displayList = compileAndDraw();
         }
         GL11.glPopMatrix();
     }
