@@ -8,10 +8,12 @@ import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.AllocatedSkillEffects;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -23,8 +25,20 @@ public final class ResolvedTree {
 
     static final String MOD_ID_PREFIX = "exiledSector_skill_";
     static final String MULTIPLIER_MOD_ID_PREFIX = "exiledSector_skillMult_";
+    static final String REDUCTION_CAP_MOD_ID_PREFIX = "exiledSector_skillCapped_";
+    static final float MAX_DAMAGE_TAKEN_REDUCTION_PERCENT = 80f;
 
     private static final Map<ShipSkillData, ResolvedTree> CACHE = new WeakHashMap<>();
+    private static final List<ReductionCap> REDUCTION_CAPS = List.of(
+            new ReductionCap(DefenseSkillEffect.EMP_DAMAGE_TAKEN_MULT,
+                    Set.of(DefenseSkillEffect.EMP_DAMAGE_TAKEN_PERCENT, DefenseSkillEffect.EMP_DAMAGE_TAKEN_MULT)),
+            new ReductionCap(DefenseSkillEffect.ENERGY_DAMAGE_TAKEN_PERCENT, Set.of(DefenseSkillEffect.ENERGY_DAMAGE_TAKEN_PERCENT)),
+            new ReductionCap(DefenseSkillEffect.KINETIC_DAMAGE_TAKEN_PERCENT, Set.of(DefenseSkillEffect.KINETIC_DAMAGE_TAKEN_PERCENT)),
+            new ReductionCap(DefenseSkillEffect.HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT, Set.of(DefenseSkillEffect.HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT)),
+            new ReductionCap(DefenseSkillEffect.FRAGMENTATION_DAMAGE_TAKEN_PERCENT, Set.of(DefenseSkillEffect.FRAGMENTATION_DAMAGE_TAKEN_PERCENT)));
+
+    private record ReductionCap(SkillEffect cappedEffect, Set<SkillEffect> contributingEffects) {
+    }
 
     sealed interface Entry permits VanillaEntry, EffectEntry {
     }
@@ -64,9 +78,39 @@ public final class ResolvedTree {
         }
         multiplierTotals.forEach((effect, multiplierTotal) ->
                 resolvedEntries.add(new EffectEntry(effect, MULTIPLIER_MOD_ID_PREFIX + effect.name(), SkillEffect.addedMultiplier(multiplierTotal))));
+        Set<EffectEntry> temporaryEntries = Collections.newSetFromMap(new IdentityHashMap<>());
+        resolvedTemporaryNodes.forEach(temporaryNode -> temporaryEntries.addAll(temporaryNode.effects()));
+        REDUCTION_CAPS.forEach(reductionCap -> capReduction(reductionCap, resolvedEntries, temporaryEntries));
         this.entries = List.copyOf(resolvedEntries);
         this.temporaryNodes = List.copyOf(resolvedTemporaryNodes);
         this.phantomHullModIds = phantomHullModIdsOf(allocatedNodes);
+    }
+
+    private static void capReduction(ReductionCap reductionCap, List<Entry> resolvedEntries, Set<EffectEntry> temporaryEntries) {
+        float percentTotal = 0f;
+        float multiplierProduct = 1f;
+        int firstContributorIndex = -1;
+        for (int i = 0; i < resolvedEntries.size(); i++) {
+            if (resolvedEntries.get(i) instanceof EffectEntry effectEntry && !temporaryEntries.contains(effectEntry)
+                    && reductionCap.contributingEffects().contains(effectEntry.effect())) {
+                if (effectEntry.effect().isMultiplicative()) {
+                    multiplierProduct *= 1f + effectEntry.magnitude() / 100f;
+                } else {
+                    percentTotal += effectEntry.magnitude();
+                }
+                firstContributorIndex = firstContributorIndex < 0 ? i : firstContributorIndex;
+            }
+        }
+        float damageTakenFactor = Math.max(0f, 1f + percentTotal / 100f) * multiplierProduct;
+        float lowestFactor = 1f - MAX_DAMAGE_TAKEN_REDUCTION_PERCENT / 100f;
+        if (firstContributorIndex < 0 || damageTakenFactor >= lowestFactor) {
+            return;
+        }
+        resolvedEntries.removeIf(entry -> entry instanceof EffectEntry effectEntry && !temporaryEntries.contains(effectEntry)
+                && reductionCap.contributingEffects().contains(effectEntry.effect()));
+        SkillEffect cappedEffect = reductionCap.cappedEffect();
+        resolvedEntries.add(Math.min(firstContributorIndex, resolvedEntries.size()),
+                new EffectEntry(cappedEffect, REDUCTION_CAP_MOD_ID_PREFIX + cappedEffect.name(), -MAX_DAMAGE_TAKEN_REDUCTION_PERCENT));
     }
 
     private static void addVanillaEntry(String vanillaHullModId, List<Entry> resolvedEntries) {

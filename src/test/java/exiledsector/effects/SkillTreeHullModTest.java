@@ -1566,4 +1566,62 @@ class SkillTreeHullModTest {
         verify(listenerEffect).applyAfterShipCreation(ship, "exiledSector_skill_listener_1", 50f);
         assertTrue(persistentData.isEmpty());
     }
+
+    private record DamageTakenStats(MutableStat emp, MutableStat energy, MutableStat energyOnShields) {
+    }
+
+    private DamageTakenStats damageTakenAfterAllocating(SkillTypeEffect... nodeEffects) {
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+        for (int i = 0; i < nodeEffects.length; i++) {
+            SkillType type = new SkillType.Builder("damage_taken_" + i, "Damage Taken", "a.png", SkillTier.SMALL)
+                    .effects(List.of(nodeEffects[i])).build();
+            SkillNode node = new SkillNode("damage_taken_node_" + i, type, List.of(), 0f, 0f);
+            SkillTree.register(node);
+            ShipSkillDataManager.get("ship-a").allocate(node, 1);
+        }
+        DamageTakenStats damageTaken = new DamageTakenStats(mock(MutableStat.class), mock(MutableStat.class), mock(MutableStat.class));
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        when(stats.getFleetMember()).thenReturn(member);
+        when(stats.getEmpDamageTakenMult()).thenReturn(damageTaken.emp());
+        when(stats.getEnergyDamageTakenMult()).thenReturn(damageTaken.energy());
+        when(stats.getEnergyShieldDamageTakenMult()).thenReturn(damageTaken.energyOnShields());
+
+        new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
+        return damageTaken;
+    }
+
+    @Test
+    void empDamageTakenReductionsUnderTheCapApplyAsUsual() {
+        DamageTakenStats damageTaken = damageTakenAfterAllocating(new SkillTypeEffect(DefenseSkillEffect.EMP_DAMAGE_TAKEN_MULT, -30f),
+                new SkillTypeEffect(DefenseSkillEffect.EMP_DAMAGE_TAKEN_PERCENT, -10f));
+
+        verify(damageTaken.emp()).modifyMult("exiledSector_skillMult_EMP_DAMAGE_TAKEN_MULT", 0.7f);
+        verify(damageTaken.emp()).modifyPercent("exiledSector_skill_damage_taken_node_1", -10f);
+        verify(damageTaken.emp(), never()).modifyMult(eq("exiledSector_skillCapped_EMP_DAMAGE_TAKEN_MULT"), anyFloat());
+    }
+
+    @Test
+    void empDamageTakenReductionsFromMultipliersAndPercentagesTogetherStopAtEightyPercent() {
+        DamageTakenStats damageTaken = damageTakenAfterAllocating(new SkillTypeEffect(DefenseSkillEffect.EMP_DAMAGE_TAKEN_MULT, -30f),
+                new SkillTypeEffect(DefenseSkillEffect.EMP_DAMAGE_TAKEN_MULT, -40f),
+                new SkillTypeEffect(DefenseSkillEffect.EMP_DAMAGE_TAKEN_PERCENT, -15f),
+                new SkillTypeEffect(DefenseSkillEffect.EMP_DAMAGE_TAKEN_PERCENT, -15f),
+                new SkillTypeEffect(DefenseSkillEffect.EMP_DAMAGE_TAKEN_PERCENT, -15f));
+
+        verify(damageTaken.emp()).modifyMult(eq("exiledSector_skillCapped_EMP_DAMAGE_TAKEN_MULT"), org.mockito.AdditionalMatchers.eq(0.2f, 0.0001f));
+        verify(damageTaken.emp(), never()).modifyMult(eq("exiledSector_skillMult_EMP_DAMAGE_TAKEN_MULT"), anyFloat());
+        verify(damageTaken.emp(), never()).modifyPercent(anyString(), anyFloat());
+    }
+
+    @Test
+    void energyDamageTakenReductionsStopAtEightyPercentOnHullAndShields() {
+        SkillTypeEffect[] reductions = new SkillTypeEffect[16];
+        java.util.Arrays.fill(reductions, new SkillTypeEffect(DefenseSkillEffect.ENERGY_DAMAGE_TAKEN_PERCENT, -6f));
+        DamageTakenStats damageTaken = damageTakenAfterAllocating(reductions);
+
+        verify(damageTaken.energy()).modifyPercent("exiledSector_skillCapped_ENERGY_DAMAGE_TAKEN_PERCENT", -80f);
+        verify(damageTaken.energyOnShields()).modifyPercent("exiledSector_skillCapped_ENERGY_DAMAGE_TAKEN_PERCENT", -80f);
+        verify(damageTaken.energy(), never()).modifyPercent(eq("exiledSector_skill_damage_taken_node_0"), anyFloat());
+    }
 }

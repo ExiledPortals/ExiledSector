@@ -140,7 +140,16 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
     EMP_DAMAGE_TAKEN_MULT(MULT, liveStat(MutableShipStatsAPI::getEmpDamageTakenMult), "stat.empDamageTaken", true),
     ENERGY_DAMAGE_TAKEN_PERCENT(PERCENT, all(liveStat(MutableShipStatsAPI::getEnergyDamageTakenMult),
             liveStat(MutableShipStatsAPI::getEnergyShieldDamageTakenMult)),
-            "stat.energyDamageTakenIncludingHitsOnShieldsArmorAndHull", true);
+            "stat.energyDamageTakenIncludingHitsOnShieldsArmorAndHull", true),
+    KINETIC_DAMAGE_TAKEN_PERCENT(PERCENT, all(liveStat(MutableShipStatsAPI::getKineticDamageTakenMult),
+            liveStat(MutableShipStatsAPI::getKineticShieldDamageTakenMult)),
+            "stat.kineticDamageTakenIncludingHitsOnShieldsArmorAndHull", true),
+    HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT(PERCENT, all(liveStat(MutableShipStatsAPI::getHighExplosiveDamageTakenMult),
+            liveStat(MutableShipStatsAPI::getHighExplosiveShieldDamageTakenMult)),
+            "stat.highExplosiveDamageTakenIncludingHitsOnShieldsArmorAndHull", true),
+    FRAGMENTATION_DAMAGE_TAKEN_PERCENT(PERCENT, all(liveStat(MutableShipStatsAPI::getFragmentationDamageTakenMult),
+            liveStat(MutableShipStatsAPI::getFragmentationShieldDamageTakenMult)),
+            "stat.fragmentationDamageTakenIncludingHitsOnShieldsArmorAndHull", true);
 
     private final EffectBacking backing;
 

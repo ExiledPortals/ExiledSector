@@ -478,6 +478,24 @@ effect|DAMAGE_TO_CAPITAL_PERCENT|12.5	0	<good>12.5%</good> increased damage to c
 effect|DAMAGE_TO_CAPITAL_PERCENT|100.0	0	<good>100%</good> increased damage to capital ships and stations.
 effect|DAMAGE_TO_CAPITAL_PERCENT|-10.0	0	<bad>10%</bad> reduced damage to capital ships and stations.
 effect|DAMAGE_TO_CAPITAL_PERCENT|-12.5	0	<bad>12.5%</bad> reduced damage to capital ships and stations.
+effect|DAMAGE_TO_CRUISER_PERCENT|1.0	0	<good>1%</good> increased damage to cruisers.
+effect|DAMAGE_TO_CRUISER_PERCENT|10.0	0	<good>10%</good> increased damage to cruisers.
+effect|DAMAGE_TO_CRUISER_PERCENT|12.5	0	<good>12.5%</good> increased damage to cruisers.
+effect|DAMAGE_TO_CRUISER_PERCENT|100.0	0	<good>100%</good> increased damage to cruisers.
+effect|DAMAGE_TO_CRUISER_PERCENT|-10.0	0	<bad>10%</bad> reduced damage to cruisers.
+effect|DAMAGE_TO_CRUISER_PERCENT|-12.5	0	<bad>12.5%</bad> reduced damage to cruisers.
+effect|DAMAGE_TO_DESTROYER_PERCENT|1.0	0	<good>1%</good> increased damage to destroyers.
+effect|DAMAGE_TO_DESTROYER_PERCENT|10.0	0	<good>10%</good> increased damage to destroyers.
+effect|DAMAGE_TO_DESTROYER_PERCENT|12.5	0	<good>12.5%</good> increased damage to destroyers.
+effect|DAMAGE_TO_DESTROYER_PERCENT|100.0	0	<good>100%</good> increased damage to destroyers.
+effect|DAMAGE_TO_DESTROYER_PERCENT|-10.0	0	<bad>10%</bad> reduced damage to destroyers.
+effect|DAMAGE_TO_DESTROYER_PERCENT|-12.5	0	<bad>12.5%</bad> reduced damage to destroyers.
+effect|DAMAGE_TO_FRIGATE_PERCENT|1.0	0	<good>1%</good> increased damage to frigates.
+effect|DAMAGE_TO_FRIGATE_PERCENT|10.0	0	<good>10%</good> increased damage to frigates.
+effect|DAMAGE_TO_FRIGATE_PERCENT|12.5	0	<good>12.5%</good> increased damage to frigates.
+effect|DAMAGE_TO_FRIGATE_PERCENT|100.0	0	<good>100%</good> increased damage to frigates.
+effect|DAMAGE_TO_FRIGATE_PERCENT|-10.0	0	<bad>10%</bad> reduced damage to frigates.
+effect|DAMAGE_TO_FRIGATE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced damage to frigates.
 effect|DEATH_ON_COLLISION|1.0	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Fighters, wrecks and asteroids don't count.
 effect|DEATH_ON_COLLISION|10.0	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Fighters, wrecks and asteroids don't count.
 effect|DEATH_ON_COLLISION|12.5	0	Touching another ship's hull, however slightly, is instantly fatal to this ship. Fighters, wrecks and asteroids don't count.
@@ -886,6 +904,12 @@ effect|FLUX_SCALED_TOP_SPEED_FLAT|12.5	0	Top speed changes with flux, from <good
 effect|FLUX_SCALED_TOP_SPEED_FLAT|100.0	0	Top speed changes with flux, from <good>+100</good> su/s at no flux to <bad>-100</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>100%</good>.
 effect|FLUX_SCALED_TOP_SPEED_FLAT|-10.0	0	Top speed changes with flux, from <good>+-10</good> su/s at no flux to <bad>--10</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>-10%</good>.
 effect|FLUX_SCALED_TOP_SPEED_FLAT|-12.5	0	Top speed changes with flux, from <good>+-12.5</good> su/s at no flux to <bad>--12.5</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>-12.5%</good>.
+effect|FRAGMENTATION_DAMAGE_TAKEN_PERCENT|1.0	1	<good>1%</good> increased fragmentation damage taken, including hits on shields, armor, and hull.
+effect|FRAGMENTATION_DAMAGE_TAKEN_PERCENT|10.0	1	<good>10%</good> increased fragmentation damage taken, including hits on shields, armor, and hull.
+effect|FRAGMENTATION_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased fragmentation damage taken, including hits on shields, armor, and hull.
+effect|FRAGMENTATION_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased fragmentation damage taken, including hits on shields, armor, and hull.
+effect|FRAGMENTATION_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced fragmentation damage taken, including hits on shields, armor, and hull.
+effect|FRAGMENTATION_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced fragmentation damage taken, including hits on shields, armor, and hull.
 effect|FUEL_CAPACITY_FLAT|1.0	0	Increases fuel capacity by <good>1</good>.
 effect|FUEL_CAPACITY_FLAT|10.0	0	Increases fuel capacity by <good>10</good>.
 effect|FUEL_CAPACITY_FLAT|12.5	0	Increases fuel capacity by <good>12.5</good>.
@@ -970,6 +994,12 @@ effect|HEARTLESS_RADIATION_EMP_FLAT|12.5	0	Each new Heartless stack sets off a r
 effect|HEARTLESS_RADIATION_EMP_FLAT|100.0	0	Each new Heartless stack sets off a radiation surge that deals <bad>100</bad> EMP damage to a random weapon and to a random engine on this ship.
 effect|HEARTLESS_RADIATION_EMP_FLAT|-10.0	0	Each new Heartless stack sets off a radiation surge that deals <bad>-10</bad> EMP damage to a random weapon and to a random engine on this ship.
 effect|HEARTLESS_RADIATION_EMP_FLAT|-12.5	0	Each new Heartless stack sets off a radiation surge that deals <bad>-12.5</bad> EMP damage to a random weapon and to a random engine on this ship.
+effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|1.0	1	<good>1%</good> increased high-explosive damage taken, including hits on shields, armor, and hull.
+effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|10.0	1	<good>10%</good> increased high-explosive damage taken, including hits on shields, armor, and hull.
+effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased high-explosive damage taken, including hits on shields, armor, and hull.
+effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased high-explosive damage taken, including hits on shields, armor, and hull.
+effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced high-explosive damage taken, including hits on shields, armor, and hull.
+effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced high-explosive damage taken, including hits on shields, armor, and hull.
 effect|HULL_FLAT|1.0	0	Increases hull points by <good>1</good>.
 effect|HULL_FLAT|10.0	0	Increases hull points by <good>10</good>.
 effect|HULL_FLAT|12.5	0	Increases hull points by <good>12.5</good>.
@@ -1018,6 +1048,12 @@ effect|INTERCEPTOR_ROLE_TOP_SPEED_PERCENT|12.5	0	<good>12.5%</good> increased to
 effect|INTERCEPTOR_ROLE_TOP_SPEED_PERCENT|100.0	0	<good>100%</good> increased top speed of Interceptors launched from this ship.
 effect|INTERCEPTOR_ROLE_TOP_SPEED_PERCENT|-10.0	0	<bad>10%</bad> reduced top speed of Interceptors launched from this ship.
 effect|INTERCEPTOR_ROLE_TOP_SPEED_PERCENT|-12.5	0	<bad>12.5%</bad> reduced top speed of Interceptors launched from this ship.
+effect|KINETIC_DAMAGE_TAKEN_PERCENT|1.0	1	<good>1%</good> increased kinetic damage taken, including hits on shields, armor, and hull.
+effect|KINETIC_DAMAGE_TAKEN_PERCENT|10.0	1	<good>10%</good> increased kinetic damage taken, including hits on shields, armor, and hull.
+effect|KINETIC_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased kinetic damage taken, including hits on shields, armor, and hull.
+effect|KINETIC_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased kinetic damage taken, including hits on shields, armor, and hull.
+effect|KINETIC_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced kinetic damage taken, including hits on shields, armor, and hull.
+effect|KINETIC_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced kinetic damage taken, including hits on shields, armor, and hull.
 effect|MANEUVERABILITY_PERCENT|1.0	0	<good>1%</good> increased maneuverability.
 effect|MANEUVERABILITY_PERCENT|10.0	0	<good>10%</good> increased maneuverability.
 effect|MANEUVERABILITY_PERCENT|12.5	0	<good>12.5%</good> increased maneuverability.
