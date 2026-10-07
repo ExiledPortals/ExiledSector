@@ -79,7 +79,7 @@ class ShipTreeLookupTest {
 
         assertNotNull(tree);
         assertEquals(List.of("ballistic"), tree.buildThemes());
-        assertEquals(List.of("root_1", "a_1"), List.copyOf(tree.data().getAllocatedNodeIds()));
+        assertEquals(List.of("root_1", "a_1"), List.copyOf(tree.skillData().getAllocatedNodeIds()));
         assertTrue(persistentData.isEmpty());
     }
 
@@ -99,7 +99,7 @@ class ShipTreeLookupTest {
 
         assertNotNull(tree);
         assertTrue(tree.buildThemes().isEmpty());
-        assertEquals(1, tree.data().getLevel());
+        assertEquals(1, tree.skillData().getLevel());
     }
 
     @Test

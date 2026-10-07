@@ -20,33 +20,33 @@ final class NpcBuildLabel {
     }
 
     static String name(List<String> themes) {
-        List<String> names = new ArrayList<>();
+        List<String> themeNames = new ArrayList<>();
         for (String theme : themes) {
-            names.add(Translation.text("theme." + theme));
+            themeNames.add(Translation.text("theme." + theme));
         }
-        return String.join(" / ", names);
+        return String.join(" / ", themeNames);
     }
 
-    static List<String> mainThemes(ShipSkillData data) {
-        if (data == null) {
+    static List<String> mainThemes(ShipSkillData skillData) {
+        if (skillData == null) {
             return List.of();
         }
-        Map<String, Integer> counts = new HashMap<>();
-        for (String nodeId : data.getAllocatedNodeIds()) {
+        Map<String, Integer> themeCounts = new HashMap<>();
+        for (String nodeId : skillData.getAllocatedNodeIds()) {
             SkillNode node = SkillTree.get(nodeId);
             if (node == null || node.getType().isOptional() || node.getType().getTier() == SkillTier.ROOT) {
                 continue;
             }
             for (String tag : node.getType().getTags()) {
                 if (SkillTags.THEME.contains(tag)) {
-                    counts.merge(tag, 1, Integer::sum);
+                    themeCounts.merge(tag, 1, Integer::sum);
                 }
             }
         }
-        List<String> ranked = new ArrayList<>(counts.keySet());
-        ranked.sort((a, b) -> counts.get(a).equals(counts.get(b))
+        List<String> rankedThemes = new ArrayList<>(themeCounts.keySet());
+        rankedThemes.sort((a, b) -> themeCounts.get(a).equals(themeCounts.get(b))
                 ? Integer.compare(SkillTags.THEME.indexOf(a), SkillTags.THEME.indexOf(b))
-                : Integer.compare(counts.get(b), counts.get(a)));
-        return List.copyOf(ranked.subList(0, Math.min(THEMES_SHOWN, ranked.size())));
+                : Integer.compare(themeCounts.get(b), themeCounts.get(a)));
+        return List.copyOf(rankedThemes.subList(0, Math.min(THEMES_SHOWN, rankedThemes.size())));
     }
 }

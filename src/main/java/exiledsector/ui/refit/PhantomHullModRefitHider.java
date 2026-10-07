@@ -28,7 +28,7 @@ public class PhantomHullModRefitHider implements CharacterStatsRefreshListener {
     static final int MAX_VISIBLE_ROWS = 10;
 
     private static boolean failed;
-    private static HideOnce pending;
+    private static HideOnce pendingHide;
 
     @Override
     public void reportAboutToRefreshCharacterStatEffects() {
@@ -45,14 +45,14 @@ public class PhantomHullModRefitHider implements CharacterStatsRefreshListener {
     public static void requestRefresh() {
         if (failed || Global.getCurrentState() != GameState.CAMPAIGN) return;
         SectorAPI sector = Global.getSector();
-        if (sector == null || pending != null && !pending.done && sector.hasTransientScript(HideOnce.class)) return;
-        pending = new HideOnce();
-        sector.addTransientScript(pending);
+        if (sector == null || pendingHide != null && !pendingHide.done && sector.hasTransientScript(HideOnce.class)) return;
+        pendingHide = new HideOnce();
+        sector.addTransientScript(pendingHide);
     }
 
     static void resetForTests() {
         failed = false;
-        pending = null;
+        pendingHide = null;
         SkillTreeChipClickTarget.resetForTests();
         SkillTreeModsButton.resetForTests();
     }
@@ -69,12 +69,12 @@ public class PhantomHullModRefitHider implements CharacterStatsRefreshListener {
 
     private static Object coreUI(CampaignUIAPI campaignUI) throws Throwable {
         InteractionDialogAPI dialog = campaignUI.getCurrentInteractionDialog();
-        Object core = call(dialog, "getCoreUI");
-        return core != null ? core : call(campaignUI, "getCore");
+        Object dialogCore = call(dialog, "getCoreUI");
+        return dialogCore != null ? dialogCore : call(campaignUI, "getCore");
     }
 
-    static void hidePhantomRows(Object core) throws Throwable {
-        Object refitPanel = call(call(core, "getCurrentTab"), "getRefitPanel");
+    static void hidePhantomRows(Object coreUi) throws Throwable {
+        Object refitPanel = call(call(coreUi, "getCurrentTab"), "getRefitPanel");
         Object modDisplay = call(refitPanel, "getModDisplay");
         if (modDisplay == null || !(call(call(refitPanel, "getShipDisplay"), "getCurrentVariant") instanceof ShipVariantAPI variant)) {
             return;
@@ -83,7 +83,7 @@ public class PhantomHullModRefitHider implements CharacterStatsRefreshListener {
         hidePhantomRows(refitMods, variant);
         attachChipClick(refitMods);
         SkillTreeModsButton.attach(refitMods);
-        for (Object dialog : UiReflection.children(core)) {
+        for (Object dialog : UiReflection.children(coreUi)) {
             for (Object child : UiReflection.children(dialog)) {
                 if (child != modDisplay && child.getClass() == modDisplay.getClass()) {
                     hidePhantomRows(call(child, "getMods"), variant);
@@ -93,11 +93,11 @@ public class PhantomHullModRefitHider implements CharacterStatsRefreshListener {
     }
 
     private static void hidePhantomRows(Object modWidget, ShipVariantAPI variant) throws Throwable {
-        Object list = UiReflection.childWithMethod(modWidget, "collapseEmptySlots", 0);
-        if (!(call(list, "getItems") instanceof List<?> rows)) return;
+        Object modList = UiReflection.childWithMethod(modWidget, "collapseEmptySlots", 0);
+        if (!(call(modList, "getItems") instanceof List<?> modRows)) return;
 
         List<Object> phantomRows = new ArrayList<>();
-        for (Object row : rows) {
+        for (Object row : modRows) {
             HullModSpecAPI spec = UiReflection.fieldOfType(row, HullModSpecAPI.class);
             if (spec != null && PhantomHullModStatus.isActive(spec.getId()) && InstalledHullMods.isInstalledBySkillTree(variant, spec.getId())) {
                 phantomRows.add(row);
@@ -105,31 +105,31 @@ public class PhantomHullModRefitHider implements CharacterStatsRefreshListener {
         }
         if (phantomRows.isEmpty()) return;
         for (Object row : phantomRows) {
-            call(list, "removeItem", row);
+            call(modList, "removeItem", row);
         }
-        call(list, "collapseEmptySlots");
-        resize(modWidget, list, rows.size());
+        call(modList, "collapseEmptySlots");
+        resize(modWidget, modList, modRows.size());
     }
 
     private static void attachChipClick(Object modWidget) throws Throwable {
-        Object list = UiReflection.childWithMethod(modWidget, "collapseEmptySlots", 0);
+        Object modList = UiReflection.childWithMethod(modWidget, "collapseEmptySlots", 0);
         Object chipRow = null;
-        if (call(list, "getItems") instanceof List<?> rows) {
-            for (Object row : rows) {
+        if (call(modList, "getItems") instanceof List<?> modRows) {
+            for (Object row : modRows) {
                 HullModSpecAPI spec = UiReflection.fieldOfType(row, HullModSpecAPI.class);
                 if (spec != null && SkillTreeHullMod.ID.equals(spec.getId())) {
                     chipRow = row;
                 }
             }
         }
-        SkillTreeChipClickTarget.attach(modWidget, list, chipRow);
+        SkillTreeChipClickTarget.attach(modWidget, modList, chipRow);
     }
 
-    private static void resize(Object modWidget, Object list, int rowCount) throws Throwable {
-        if (!(list instanceof UIComponentAPI component)) return;
-        float rowHeight = ((Number) call(list, "getItemHeight")).floatValue() + ((Number) call(list, "getItemPad")).floatValue();
-        PositionAPI position = component.getPosition();
-        position.setSize(position.getWidth(), rowHeight * Math.min(MAX_VISIBLE_ROWS, rowCount));
+    private static void resize(Object modWidget, Object modList, int rowCount) throws Throwable {
+        if (!(modList instanceof UIComponentAPI listComponent)) return;
+        float rowHeight = ((Number) call(modList, "getItemHeight")).floatValue() + ((Number) call(modList, "getItemPad")).floatValue();
+        PositionAPI listPosition = listComponent.getPosition();
+        listPosition.setSize(listPosition.getWidth(), rowHeight * Math.min(MAX_VISIBLE_ROWS, rowCount));
         call(modWidget, "pack");
     }
 

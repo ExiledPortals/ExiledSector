@@ -19,7 +19,7 @@ public final class HoloTransition {
     private static final float SCANLINE_ALPHA = 0.08f;
     private static final Color FILL_COLOR = Color.BLACK;
 
-    private float progress;
+    private float openProgress;
     private boolean opening;
 
     public void open() {
@@ -32,28 +32,28 @@ public final class HoloTransition {
 
     public void openInstantly() {
         opening = true;
-        progress = 1f;
+        openProgress = 1f;
     }
 
     public void advance(float amount) {
         float step = amount / (opening ? OPEN_SECONDS : CLOSE_SECONDS);
-        progress = clamp(progress + (opening ? step : -step));
+        openProgress = clamp(openProgress + (opening ? step : -step));
     }
 
     public boolean isVisible() {
-        return opening || progress > 0f;
+        return opening || openProgress > 0f;
     }
 
     public boolean isAnimating() {
-        return opening ? progress < 1f : progress > 0f;
+        return opening ? openProgress < 1f : openProgress > 0f;
     }
 
     public boolean isFullyClosed() {
-        return !opening && progress <= 0f;
+        return !opening && openProgress <= 0f;
     }
 
     public float progress() {
-        return progress;
+        return openProgress;
     }
 
     public float contentAlpha() {
@@ -61,12 +61,12 @@ public final class HoloTransition {
     }
 
     public float backdropAlpha() {
-        return easeOut(progress);
+        return easeOut(openProgress);
     }
 
     public void drawProjection(float x, float y, float width, float height, Color accent, float alphaMult) {
         float alpha = (1f - contentAlpha()) * alphaMult;
-        if (alpha <= 0f || progress <= 0f) {
+        if (alpha <= 0f || openProgress <= 0f) {
             return;
         }
         float currentWidth = width * easeOut(phase(0f, LINE_PHASE_END));
@@ -89,11 +89,11 @@ public final class HoloTransition {
         if (reveal >= 1f) {
             return false;
         }
-        float scale = Global.getSettings().getScreenScaleMult();
-        float visible = height * reveal;
+        float screenScale = Global.getSettings().getScreenScaleMult();
+        float visibleHeight = height * reveal;
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GL11.glScissor((int) Math.floor(x * scale), (int) Math.floor((y + height - visible) * scale),
-                (int) Math.ceil(width * scale), (int) Math.ceil(visible * scale));
+        GL11.glScissor((int) Math.floor(x * screenScale), (int) Math.floor((y + height - visibleHeight) * screenScale),
+                (int) Math.ceil(width * screenScale), (int) Math.ceil(visibleHeight * screenScale));
         return true;
     }
 
@@ -111,7 +111,7 @@ public final class HoloTransition {
     }
 
     private float phase(float start, float end) {
-        return clamp((progress - start) / (end - start));
+        return clamp((openProgress - start) / (end - start));
     }
 
     private static float easeOut(float t) {

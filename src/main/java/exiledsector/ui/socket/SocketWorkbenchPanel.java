@@ -96,50 +96,51 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
 
     private enum Control {CLOSE}
 
-    private final CustomPanelAPI host;
-    private final Listener listener;
-    private final BorderedPanel frame = new BorderedPanel(SocketWorkbenchPanel.class);
-    private final HoloTransition transition = new HoloTransition();
-    private final SocketWorkbenchFlair flair = new SocketWorkbenchFlair();
-    private final List<Runnable> queued = new ArrayList<>();
-    private final Random random = new Random();
-    private CustomPanelAPI root;
-    private PositionAPI position;
+    private final CustomPanelAPI hostPanel;
+    private final Listener workbenchListener;
+    private final BorderedPanel panelFrame = new BorderedPanel(SocketWorkbenchPanel.class);
+    private final HoloTransition holoTransition = new HoloTransition();
+    private final SocketWorkbenchFlair socketFlair = new SocketWorkbenchFlair();
+    private final List<Runnable> queuedActions = new ArrayList<>();
+    private final Random craftingRandom = new Random();
+    private CustomPanelAPI panelRoot;
+    private PositionAPI panelPosition;
     private float panelWidth;
-    private float height;
-    private float socketArea;
+    private float panelHeight;
+    private float socketAreaHeight;
     private boolean closing;
-    private UIComponentAPI header;
-    private UIComponentAPI recipes;
-    private UIComponentAPI details;
-    private UIComponentAPI notice;
-    private CustomPanelAPI tooltip;
-    private Recipe tooltipFor;
-    private Socketable loaded;
+    private UIComponentAPI headerElement;
+    private UIComponentAPI recipesElement;
+    private UIComponentAPI detailsElement;
+    private UIComponentAPI noticeElement;
+    private CustomPanelAPI tooltipPanel;
+    private Recipe tooltipRecipe;
+    private Socketable loadedSocketable;
     private String noticeText;
 
-    private SocketWorkbenchPanel(CustomPanelAPI host, Listener listener) {
-        this.host = host;
-        this.listener = listener;
+    private SocketWorkbenchPanel(CustomPanelAPI hostPanel, Listener workbenchListener) {
+        this.hostPanel = hostPanel;
+        this.workbenchListener = workbenchListener;
     }
 
-    public static SocketWorkbenchPanel open(CustomPanelAPI host, float left, float top, float height, Listener listener) {
-        SocketWorkbenchPanel panel = new SocketWorkbenchPanel(host, listener);
-        panel.panelWidth = WIDTH;
-        panel.height = height;
-        panel.socketArea = socketAreaFor(height);
-        panel.root = Global.getSettings().createCustom(WIDTH, height, panel);
-        host.addComponent(panel.root).inTL(left, top);
-        I18n.forGameText(panel::build);
-        panel.transition.open();
-        panel.applyContentOpacity(0f);
-        return panel;
+    public static SocketWorkbenchPanel open(CustomPanelAPI hostPanel, float panelLeft, float panelTop, float panelHeight,
+                                            Listener workbenchListener) {
+        SocketWorkbenchPanel workbenchPanel = new SocketWorkbenchPanel(hostPanel, workbenchListener);
+        workbenchPanel.panelWidth = WIDTH;
+        workbenchPanel.panelHeight = panelHeight;
+        workbenchPanel.socketAreaHeight = socketAreaFor(panelHeight);
+        workbenchPanel.panelRoot = Global.getSettings().createCustom(WIDTH, panelHeight, workbenchPanel);
+        hostPanel.addComponent(workbenchPanel.panelRoot).inTL(panelLeft, panelTop);
+        I18n.forGameText(workbenchPanel::build);
+        workbenchPanel.holoTransition.open();
+        workbenchPanel.applyContentOpacity(0f);
+        return workbenchPanel;
     }
 
-    private static float socketAreaFor(float height) {
-        float free = height - socketAreaTop() - bottomReserve();
-        float preferred = Math.min(MAX_SOCKET_AREA, height * SOCKET_AREA_SHARE);
-        return Math.max(MIN_SOCKET_AREA, Math.min(preferred, free - MIN_DETAILS_HEIGHT));
+    private static float socketAreaFor(float panelHeight) {
+        float freeHeight = panelHeight - socketAreaTop() - bottomReserve();
+        float preferredHeight = Math.min(MAX_SOCKET_AREA, panelHeight * SOCKET_AREA_SHARE);
+        return Math.max(MIN_SOCKET_AREA, Math.min(preferredHeight, freeHeight - MIN_DETAILS_HEIGHT));
     }
 
     private static float tilesTop() {
@@ -147,8 +148,8 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
     }
 
     private static float tilesHeight() {
-        int rows = (Recipe.values().length + TILE_COLUMNS - 1) / TILE_COLUMNS;
-        return rows * TILE_SIZE + (rows - 1) * TILE_GAP;
+        int tileRows = (Recipe.values().length + TILE_COLUMNS - 1) / TILE_COLUMNS;
+        return tileRows * TILE_SIZE + (tileRows - 1) * TILE_GAP;
     }
 
     private static float socketAreaTop() {
@@ -160,25 +161,25 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
     }
 
     public Socketable loaded() {
-        return loaded;
+        return loadedSocketable;
     }
 
     public void load(Socketable socketable) {
-        queued.add(() -> {
-            if (socketable == loaded) {
+        queuedActions.add(() -> {
+            if (socketable == loadedSocketable) {
                 return;
             }
-            loaded = socketable;
+            loadedSocketable = socketable;
             noticeText = null;
-            flair.restartLoad();
+            socketFlair.restartLoad();
             rebuildContent();
         });
     }
 
     public void refresh() {
-        queued.add(() -> {
-            if (loaded != null && !SocketableStore.get().owned().contains(loaded)) {
-                loaded = null;
+        queuedActions.add(() -> {
+            if (loadedSocketable != null && !SocketableStore.get().owned().contains(loadedSocketable)) {
+                loadedSocketable = null;
             }
             buildHeader();
             rebuildContent();
@@ -186,53 +187,54 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
     }
 
     public void close() {
-        if (root == null || closing) {
+        if (panelRoot == null || closing) {
             return;
         }
         closing = true;
         hideTooltip();
-        transition.close();
-        applyContentOpacity(transition.contentAlpha());
-        listener.closed();
+        holoTransition.close();
+        applyContentOpacity(holoTransition.contentAlpha());
+        workbenchListener.closed();
     }
 
     public boolean isVisible() {
-        return root != null;
+        return panelRoot != null;
     }
 
     public boolean contains(float x, float y) {
-        return root != null && !closing && Rects.contains(position, x, y);
+        return panelRoot != null && !closing && Rects.contains(panelPosition, x, y);
     }
 
     @Override
-    public void positionChanged(PositionAPI position) {
-        this.position = position;
+    public void positionChanged(PositionAPI panelPosition) {
+        this.panelPosition = panelPosition;
     }
 
     @Override
     public void renderBelow(float alphaMult) {
-        if (position == null) {
+        if (panelPosition == null) {
             return;
         }
-        transition.drawProjection(position.getX(), position.getY(), position.getWidth(), position.getHeight(),
+        holoTransition.drawProjection(panelPosition.getX(), panelPosition.getY(), panelPosition.getWidth(), panelPosition.getHeight(),
                 SkillTreePanelStyle.GLOW_COLOR, alphaMult);
-        float content = transition.contentAlpha();
-        if (content > 0f) {
-            frame.draw(position.getX(), position.getY(), position.getWidth(), position.getHeight(), content * alphaMult);
+        float contentAlpha = holoTransition.contentAlpha();
+        if (contentAlpha > 0f) {
+            panelFrame.draw(panelPosition.getX(), panelPosition.getY(), panelPosition.getWidth(), panelPosition.getHeight(),
+                    contentAlpha * alphaMult);
         }
     }
 
     @Override
     public void render(float alphaMult) {
-        if (position == null) {
+        if (panelPosition == null) {
             return;
         }
-        float content = transition.contentAlpha() * alphaMult;
-        float cx = position.getX() + panelWidth / 2f;
-        float cy = position.getY() + height - socketAreaTop() - socketArea / 2f;
-        Color subject = loaded == null ? null : loaded.rarity().color();
-        flair.render(cx, cy, socketArea * SOCKET_RING_SHARE, SkillTreePanelStyle.GLOW_COLOR, subject,
-                loaded == null ? null : loaded.iconPath(), content);
+        float contentAlpha = holoTransition.contentAlpha() * alphaMult;
+        float cx = panelPosition.getX() + panelWidth / 2f;
+        float cy = panelPosition.getY() + panelHeight - socketAreaTop() - socketAreaHeight / 2f;
+        Color subjectColor = loadedSocketable == null ? null : loadedSocketable.rarity().color();
+        socketFlair.render(cx, cy, socketAreaHeight * SOCKET_RING_SHARE, SkillTreePanelStyle.GLOW_COLOR, subjectColor,
+                loadedSocketable == null ? null : loadedSocketable.iconPath(), contentAlpha);
     }
 
     @Override
@@ -250,23 +252,23 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
 
     @Override
     public void advance(float amount) {
-        if (transition.isAnimating()) {
-            transition.advance(amount);
-            applyContentOpacity(transition.contentAlpha());
+        if (holoTransition.isAnimating()) {
+            holoTransition.advance(amount);
+            applyContentOpacity(holoTransition.contentAlpha());
         }
-        flair.advance(amount, loaded != null);
+        socketFlair.advance(amount, loadedSocketable != null);
         if (closing) {
-            if (transition.isFullyClosed() && root != null) {
-                host.removeComponent(root);
-                root = null;
+            if (holoTransition.isFullyClosed() && panelRoot != null) {
+                hostPanel.removeComponent(panelRoot);
+                panelRoot = null;
             }
             return;
         }
-        if (!queued.isEmpty()) {
-            List<Runnable> actions = List.copyOf(queued);
-            queued.clear();
+        if (!queuedActions.isEmpty()) {
+            List<Runnable> actions = List.copyOf(queuedActions);
+            queuedActions.clear();
             for (Runnable action : actions) {
-                if (root != null) {
+                if (panelRoot != null) {
                     I18n.forGameText(action);
                 }
             }
@@ -275,7 +277,7 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
 
     @Override
     public void buttonPressed(Object id) {
-        queued.add(() -> handleButton(id));
+        queuedActions.add(() -> handleButton(id));
     }
 
     private void handleButton(Object id) {
@@ -303,19 +305,19 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
         if (cargo == null) {
             return false;
         }
-        int parts = SocketableCrafting.parts(cargo);
-        if (parts < recipe.partsCost()) {
-            showNotice(Translation.msg("ui.workbench.notice.notEnoughParts").arg("cost", recipe.partsCost()).arg("parts", parts)
+        int ownedParts = SocketableCrafting.parts(cargo);
+        if (ownedParts < recipe.partsCost()) {
+            showNotice(Translation.msg("ui.workbench.notice.notEnoughParts").arg("cost", recipe.partsCost()).arg("parts", ownedParts)
                     .arg("name", recipeName(recipe)).text());
             return false;
         }
         if (recipe.currency == null) {
-            Socketable created = SocketableCrafting.synthesiseCommon(cargo, SocketableStore.get(), random);
+            Socketable created = SocketableCrafting.synthesiseCommon(cargo, SocketableStore.get(), craftingRandom);
             if (created == null) {
                 return false;
             }
-            loaded = created;
-            flair.restartLoad();
+            loadedSocketable = created;
+            socketFlair.restartLoad();
             noticeText = Translation.msg("ui.workbench.notice.synthesisedCommon").arg("name", created.name()).text();
         } else {
             if (!SocketableCrafting.synthesise(recipe.currency, cargo)) {
@@ -324,7 +326,7 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
             noticeText = Translation.msg("ui.workbench.notice.synthesisedCurrency").arg("name", recipeName(recipe)).text();
         }
         SkillTreeSounds.crafted();
-        flair.flash(SkillTreePanelStyle.GLOW_COLOR);
+        socketFlair.flash(SkillTreePanelStyle.GLOW_COLOR);
         afterChange();
         return true;
     }
@@ -338,38 +340,38 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
             showNotice(Translation.msg("ui.workbench.notice.noneOwned").arg("name", commodityName(currency.commodityId())).text());
             return;
         }
-        if (loaded == null) {
+        if (loadedSocketable == null) {
             showNotice(Translation.text("ui.workbench.notice.loadFirst"));
             return;
         }
-        if (!SocketableCrafting.canUse(currency, loaded, allowedUniques())) {
+        if (!SocketableCrafting.canUse(currency, loadedSocketable, allowedUniques())) {
             showNotice(Translation.msg("ui.workbench.notice.cannotUse").arg("name", commodityName(currency.commodityId()))
-                    .arg("target", loaded.name()).text());
+                    .arg("target", loadedSocketable.name()).text());
             return;
         }
-        String before = loaded.name();
-        Socketable result = SocketableCrafting.use(currency, loaded, cargo, SocketableStore.get(), random, allowedUniques());
+        String nameBefore = loadedSocketable.name();
+        Socketable result = SocketableCrafting.use(currency, loadedSocketable, cargo, SocketableStore.get(), craftingRandom, allowedUniques());
         if (result == null) {
             return;
         }
-        loaded = result;
+        loadedSocketable = result;
         noticeText = Translation.msg("ui.workbench.notice.used." + currency.name().toLowerCase(Locale.ROOT))
-                .arg("before", before).arg("name", result.name()).text();
+                .arg("before", nameBefore).arg("name", result.name()).text();
         SkillTreeSounds.socketed();
-        flair.flash(result.rarity().color());
+        socketFlair.flash(result.rarity().color());
         afterChange();
     }
 
     private void showNotice(String text) {
         noticeText = text;
         rebuildNotice();
-        applyContentOpacity(transition.contentAlpha());
+        applyContentOpacity(holoTransition.contentAlpha());
     }
 
     private void afterChange() {
         buildHeader();
         rebuildContent();
-        listener.changed(loaded);
+        workbenchListener.changed(loadedSocketable);
     }
 
     private static Predicate<SocketableDefinition> allowedUniques() {
@@ -383,10 +385,10 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
 
     private void applyContentOpacity(float opacity) {
         float chromeOpacity = opacity >= 1f && !closing ? 1f : 0f;
-        if (header != null) {
-            header.setOpacity(chromeOpacity);
+        if (headerElement != null) {
+            headerElement.setOpacity(chromeOpacity);
         }
-        for (UIComponentAPI component : new UIComponentAPI[]{recipes, details, notice}) {
+        for (UIComponentAPI component : new UIComponentAPI[]{recipesElement, detailsElement, noticeElement}) {
             if (component != null) {
                 component.setOpacity(opacity);
             }
@@ -399,31 +401,31 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
     }
 
     private void buildHeader() {
-        if (header != null) {
-            root.removeComponent(header);
+        if (headerElement != null) {
+            panelRoot.removeComponent(headerElement);
         }
-        TooltipMakerAPI element = root.createUIElement(innerWidth(), HEADER_HEIGHT, false);
+        TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), HEADER_HEIGHT, false);
         element.setParaFont(Fonts.ORBITRON_20AABOLD);
         element.addPara("%s", 0f, Misc.getBasePlayerColor(), Misc.getBasePlayerColor(), Translation.text("ui.workbench.title"));
         element.addButton(Translation.text("ui.workbench.close"), Control.CLOSE, CLOSE_BUTTON_WIDTH, BUTTON_HEIGHT, 0f)
                 .getPosition().inTR(0f, 0f);
         addPartsCount(element);
-        root.addUIElement(element).inTL(PAD, PAD);
-        header = element;
+        panelRoot.addUIElement(element).inTL(PAD, PAD);
+        headerElement = element;
     }
 
     private static void addPartsCount(TooltipMakerAPI element) {
-        CommoditySpecAPI parts = Global.getSettings().getCommoditySpec(SocketableDisassembly.PARTS_COMMODITY_ID);
-        if (parts == null) {
+        CommoditySpecAPI partsSpec = Global.getSettings().getCommoditySpec(SocketableDisassembly.PARTS_COMMODITY_ID);
+        if (partsSpec == null) {
             return;
         }
-        String count = String.valueOf(SocketableCrafting.parts(cargo()));
-        float countWidth = Global.getSettings().computeStringWidth(count, Fonts.ORBITRON_12) + LINE_PAD;
+        String countText = String.valueOf(SocketableCrafting.parts(cargo()));
+        float countWidth = Global.getSettings().computeStringWidth(countText, Fonts.ORBITRON_12) + LINE_PAD;
         float countRight = CLOSE_BUTTON_WIDTH + GAP * 2f;
         element.setParaFont(Fonts.ORBITRON_12);
-        LabelAPI label = element.addPara("%s", 0f, Misc.getTextColor(), Misc.getTextColor(), count);
-        label.autoSizeToWidth(countWidth).inTR(countRight, COUNT_TEXT_TOP);
-        element.addImage(parts.getIconName(), ICON_SIZE, ICON_SIZE, 0f);
+        LabelAPI countLabel = element.addPara("%s", 0f, Misc.getTextColor(), Misc.getTextColor(), countText);
+        countLabel.autoSizeToWidth(countWidth).inTR(countRight, COUNT_TEXT_TOP);
+        element.addImage(partsSpec.getIconName(), ICON_SIZE, ICON_SIZE, 0f);
         element.getPrev().getPosition().inTR(countRight + countWidth + LINE_PAD, 0f);
     }
 
@@ -431,39 +433,39 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
         rebuildTiles();
         rebuildDetails();
         rebuildNotice();
-        applyContentOpacity(transition.contentAlpha());
+        applyContentOpacity(holoTransition.contentAlpha());
     }
 
     private void rebuildTiles() {
         hideTooltip();
-        if (recipes != null) {
-            root.removeComponent(recipes);
+        if (recipesElement != null) {
+            panelRoot.removeComponent(recipesElement);
         }
-        TooltipMakerAPI element = root.createUIElement(innerWidth(), tilesHeight(), false);
+        TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), tilesHeight(), false);
         CargoAPI cargo = cargo();
-        Recipe[] all = Recipe.values();
+        Recipe[] allRecipes = Recipe.values();
         float cellWidth = innerWidth() / TILE_COLUMNS;
-        for (int i = 0; i < all.length; i++) {
-            float left = (i % TILE_COLUMNS) * cellWidth;
-            float top = (i / TILE_COLUMNS) * (TILE_SIZE + TILE_GAP);
-            addTile(element, all[i], left, top, cargo);
+        for (int i = 0; i < allRecipes.length; i++) {
+            float tileLeft = (i % TILE_COLUMNS) * cellWidth;
+            float tileTop = (i / TILE_COLUMNS) * (TILE_SIZE + TILE_GAP);
+            addTile(element, allRecipes[i], tileLeft, tileTop, cargo);
         }
-        root.addUIElement(element).inTL(PAD, tilesTop());
-        recipes = element;
+        panelRoot.addUIElement(element).inTL(PAD, tilesTop());
+        recipesElement = element;
     }
 
-    private void addTile(TooltipMakerAPI element, Recipe recipe, float left, float top, CargoAPI cargo) {
-        CustomPanelAPI tile = Global.getSettings().createCustom(TILE_SIZE, TILE_SIZE, new WorkbenchTile(recipeIcons(recipe),
+    private void addTile(TooltipMakerAPI element, Recipe recipe, float tileLeft, float tileTop, CargoAPI cargo) {
+        CustomPanelAPI tilePanel = Global.getSettings().createCustom(TILE_SIZE, TILE_SIZE, new WorkbenchTile(recipeIcons(recipe),
                 new WorkbenchTile.Listener() {
                     @Override
-                    public void hovered(PositionAPI anchor) {
-                        queued.add(() -> showTooltip(recipe, anchor));
+                    public void hovered(PositionAPI tilePosition) {
+                        queuedActions.add(() -> showTooltip(recipe, tilePosition));
                     }
 
                     @Override
                     public void left() {
-                        queued.add(() -> {
-                            if (tooltipFor == recipe) {
+                        queuedActions.add(() -> {
+                            if (tooltipRecipe == recipe) {
                                 hideTooltip();
                             }
                         });
@@ -471,23 +473,24 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
 
                     @Override
                     public void clicked() {
-                        queued.add(() -> tileClicked(recipe));
+                        queuedActions.add(() -> tileClicked(recipe));
                     }
 
                     @Override
                     public void rightClicked() {
-                        queued.add(() -> tileRightClicked(recipe));
+                        queuedActions.add(() -> tileRightClicked(recipe));
                     }
                 }));
-        element.addCustom(tile, 0f).getPosition().inTL(left, top);
+        element.addCustom(tilePanel, 0f).getPosition().inTL(tileLeft, tileTop);
         if (recipe.currency == null) {
             return;
         }
-        int count = SocketableCrafting.count(cargo, recipe.currency.commodityId());
-        Color color = count > 0 ? Misc.getBrightPlayerColor() : Misc.getGrayColor();
+        int ownedCount = SocketableCrafting.count(cargo, recipe.currency.commodityId());
+        Color countColor = ownedCount > 0 ? Misc.getBrightPlayerColor() : Misc.getGrayColor();
         element.setParaFont(Fonts.ORBITRON_20AABOLD);
-        LabelAPI label = element.addPara("%s", 0f, color, color, String.valueOf(count));
-        label.autoSizeToWidth(COUNT_WIDTH).inTL(left + TILE_SIZE + COUNT_LEFT, top + (TILE_SIZE - label.getPosition().getHeight()) / 2f);
+        LabelAPI countLabel = element.addPara("%s", 0f, countColor, countColor, String.valueOf(ownedCount));
+        countLabel.autoSizeToWidth(COUNT_WIDTH).inTL(tileLeft + TILE_SIZE + COUNT_LEFT,
+                tileTop + (TILE_SIZE - countLabel.getPosition().getHeight()) / 2f);
     }
 
     private void showTooltip(Recipe recipe, PositionAPI anchor) {
@@ -495,8 +498,9 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
         if (closing) {
             return;
         }
-        CustomPanelAPI panel = Global.getSettings().createCustom(TOOLTIP_WIDTH, TILE_SIZE, new FramedPanelPlugin(SocketWorkbenchPanel.class));
-        TooltipMakerAPI element = panel.createUIElement(TOOLTIP_WIDTH - PAD * 2f, 0f, false);
+        CustomPanelAPI newTooltipPanel = Global.getSettings().createCustom(TOOLTIP_WIDTH, TILE_SIZE,
+                new FramedPanelPlugin(SocketWorkbenchPanel.class));
+        TooltipMakerAPI element = newTooltipPanel.createUIElement(TOOLTIP_WIDTH - PAD * 2f, 0f, false);
         element.setParaFont(Fonts.ORBITRON_20AA);
         element.addPara("%s", 0f, Misc.getBrightPlayerColor(), Misc.getBrightPlayerColor(), recipeName(recipe));
         element.setParaFontDefault();
@@ -508,40 +512,40 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
         float contentHeight = element.getHeightSoFar();
         element.getPosition().setSize(TOOLTIP_WIDTH - PAD * 2f, contentHeight);
         float tooltipHeight = contentHeight + PAD * 2f;
-        panel.getPosition().setSize(TOOLTIP_WIDTH, tooltipHeight);
-        panel.addUIElement(element).inTL(PAD, PAD);
-        PositionAPI hostPosition = host.getPosition();
-        float left = Math.max(0f, Math.min(anchor.getX() - hostPosition.getX(), hostPosition.getWidth() - TOOLTIP_WIDTH));
-        float top = hostPosition.getY() + hostPosition.getHeight() - anchor.getY() + GAP;
-        host.addComponent(panel).inTL(left, Math.max(0f, Math.min(top, hostPosition.getHeight() - tooltipHeight)));
-        tooltip = panel;
-        tooltipFor = recipe;
+        newTooltipPanel.getPosition().setSize(TOOLTIP_WIDTH, tooltipHeight);
+        newTooltipPanel.addUIElement(element).inTL(PAD, PAD);
+        PositionAPI hostPosition = hostPanel.getPosition();
+        float tooltipLeft = Math.max(0f, Math.min(anchor.getX() - hostPosition.getX(), hostPosition.getWidth() - TOOLTIP_WIDTH));
+        float tooltipTop = hostPosition.getY() + hostPosition.getHeight() - anchor.getY() + GAP;
+        hostPanel.addComponent(newTooltipPanel).inTL(tooltipLeft, Math.max(0f, Math.min(tooltipTop, hostPosition.getHeight() - tooltipHeight)));
+        tooltipPanel = newTooltipPanel;
+        tooltipRecipe = recipe;
     }
 
     private List<String> tooltipHints(Recipe recipe) {
-        String synthesise = Translation.msg("ui.workbench.tile.synthesise").arg("cost", recipe.partsCost()).text();
+        String synthesiseHint = Translation.msg("ui.workbench.tile.synthesise").arg("cost", recipe.partsCost()).text();
         if (recipe.currency == null) {
-            return List.of(synthesise);
+            return List.of(synthesiseHint);
         }
         List<String> hints = new ArrayList<>();
-        int count = SocketableCrafting.count(cargo(), recipe.currency.commodityId());
-        hints.add(Translation.msg("ui.workbench.tile.inStorage").arg("count", count).text());
-        if (count == 0) {
+        int ownedCount = SocketableCrafting.count(cargo(), recipe.currency.commodityId());
+        hints.add(Translation.msg("ui.workbench.tile.inStorage").arg("count", ownedCount).text());
+        if (ownedCount == 0) {
             hints.add(Translation.text("ui.workbench.tile.noneOwned"));
-        } else if (loaded != null && SocketableCrafting.canUse(recipe.currency, loaded, allowedUniques())) {
-            hints.add(Translation.msg("ui.workbench.tile.use").arg("target", loaded.name()).text());
+        } else if (loadedSocketable != null && SocketableCrafting.canUse(recipe.currency, loadedSocketable, allowedUniques())) {
+            hints.add(Translation.msg("ui.workbench.tile.use").arg("target", loadedSocketable.name()).text());
         } else {
             hints.add(Translation.text("ui.workbench.tile.noTarget"));
         }
-        hints.add(synthesise);
+        hints.add(synthesiseHint);
         return hints;
     }
 
     private void hideTooltip() {
-        if (tooltip != null) {
-            host.removeComponent(tooltip);
-            tooltip = null;
-            tooltipFor = null;
+        if (tooltipPanel != null) {
+            hostPanel.removeComponent(tooltipPanel);
+            tooltipPanel = null;
+            tooltipRecipe = null;
         }
     }
 
@@ -566,42 +570,42 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
     }
 
     private void rebuildDetails() {
-        if (details != null) {
-            root.removeComponent(details);
+        if (detailsElement != null) {
+            panelRoot.removeComponent(detailsElement);
         }
-        float top = socketAreaTop() + socketArea + GAP;
-        float detailsHeight = Math.max(BUTTON_HEIGHT, height - top - bottomReserve());
-        TooltipMakerAPI element = root.createUIElement(innerWidth(), detailsHeight, true);
-        if (loaded == null) {
+        float detailsTop = socketAreaTop() + socketAreaHeight + GAP;
+        float detailsHeight = Math.max(BUTTON_HEIGHT, panelHeight - detailsTop - bottomReserve());
+        TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), detailsHeight, true);
+        if (loadedSocketable == null) {
             element.addPara("%s", 0f, Misc.getGrayColor(), Misc.getGrayColor(), Translation.text("ui.workbench.empty"));
         } else {
-            SocketableName name = loaded.displayName();
+            SocketableName displayName = loadedSocketable.displayName();
             element.setParaFont(Fonts.ORBITRON_20AA);
-            element.addPara("%s", 0f, name.rarity().color(), name.rarity().color(), name.title());
+            element.addPara("%s", 0f, displayName.rarity().color(), displayName.rarity().color(), displayName.title());
             element.setParaFontDefault();
-            if (name.baseName() != null) {
-                element.addPara("%s", LINE_PAD, Misc.getGrayColor(), Misc.getGrayColor(), name.baseName());
+            if (displayName.baseName() != null) {
+                element.addPara("%s", LINE_PAD, Misc.getGrayColor(), Misc.getGrayColor(), displayName.baseName());
             }
-            float pad = GAP * 2f;
-            for (StyledText line : loaded.effectLines(true)) {
-                VanillaText.addPara(element, line, pad, Misc.getTextColor());
-                pad = LINE_PAD;
+            float paraPad = GAP * 2f;
+            for (StyledText line : loadedSocketable.effectLines(true)) {
+                VanillaText.addPara(element, line, paraPad, Misc.getTextColor());
+                paraPad = LINE_PAD;
             }
         }
-        root.addUIElement(element).inTL(PAD, top);
-        details = element.getExternalScroller() != null ? element.getExternalScroller() : element;
+        panelRoot.addUIElement(element).inTL(PAD, detailsTop);
+        detailsElement = element.getExternalScroller() != null ? element.getExternalScroller() : element;
     }
 
     private void rebuildNotice() {
-        if (notice != null) {
-            root.removeComponent(notice);
+        if (noticeElement != null) {
+            panelRoot.removeComponent(noticeElement);
         }
-        TooltipMakerAPI element = root.createUIElement(innerWidth(), NOTICE_HEIGHT, false);
+        TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), NOTICE_HEIGHT, false);
         if (noticeText != null) {
             element.addPara("%s", 0f, Misc.getPositiveHighlightColor(), Misc.getPositiveHighlightColor(), noticeText);
         }
-        root.addUIElement(element).inTL(PAD, height - PAD - NOTICE_HEIGHT);
-        notice = element;
+        panelRoot.addUIElement(element).inTL(PAD, panelHeight - PAD - NOTICE_HEIGHT);
+        noticeElement = element;
     }
 
     private float innerWidth() {

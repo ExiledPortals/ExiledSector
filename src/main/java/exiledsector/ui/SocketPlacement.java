@@ -25,55 +25,55 @@ final class SocketPlacement {
     private static final float PANEL_TOP = 100f;
     private static final float PANEL_GAP = 12f;
 
-    private final CustomPanelAPI host;
+    private final CustomPanelAPI hostPanel;
     private final SkillTreeNodeRenderer nodeRenderer;
-    private final NodeSearch search;
+    private final NodeSearch nodeSearch;
     private final SkillTreeSearchBar searchBar;
-    private final SkillTreeUiButton button = new SkillTreeUiButton("");
-    private SocketStoragePanel panel;
-    private Socketable placing;
+    private final SkillTreeUiButton storageButton = new SkillTreeUiButton("");
+    private SocketStoragePanel storagePanel;
+    private Socketable placingSocketable;
     private SkillNode targetSocket;
     private int storageRevision;
     private Map<String, FleetMemberAPI> ownedShips = Map.of();
 
-    SocketPlacement(CustomPanelAPI host, SkillTreeNodeRenderer nodeRenderer, NodeSearch search, SkillTreeSearchBar searchBar) {
-        this.host = host;
+    SocketPlacement(CustomPanelAPI hostPanel, SkillTreeNodeRenderer nodeRenderer, NodeSearch nodeSearch, SkillTreeSearchBar searchBar) {
+        this.hostPanel = hostPanel;
         this.nodeRenderer = nodeRenderer;
-        this.search = search;
+        this.nodeSearch = nodeSearch;
         this.searchBar = searchBar;
         refreshButtonLabel();
     }
 
     boolean isEngaged() {
-        return panel != null || placing != null;
+        return storagePanel != null || placingSocketable != null;
     }
 
     boolean isWorkbenchOpen() {
-        return panel != null && panel.isWorkbenchOpen();
+        return storagePanel != null && storagePanel.isWorkbenchOpen();
     }
 
     boolean panelContains(float x, float y) {
-        return panel != null && panel.contains(x, y);
+        return storagePanel != null && storagePanel.contains(x, y);
     }
 
     boolean buttonContains(float x, float y) {
-        return button.contains(x, y);
+        return storageButton.contains(x, y);
     }
 
     boolean isButtonClickable(float x, float y) {
-        return button.isClickable(x, y);
+        return storageButton.isClickable(x, y);
     }
 
     void escape() {
-        if (panel != null && panel.escape()) {
+        if (storagePanel != null && storagePanel.escape()) {
             return;
         }
-        if (placing != null) {
+        if (placingSocketable != null) {
             stopPlacing();
-        } else if (targetSocket != null && panel != null) {
+        } else if (targetSocket != null && storagePanel != null) {
             clearTargetSocket();
-        } else if (panel != null) {
-            panel.close();
+        } else if (storagePanel != null) {
+            storagePanel.close();
         }
     }
 
@@ -88,11 +88,11 @@ final class SocketPlacement {
     }
 
     void advance(boolean mustClose) {
-        if (panel == null) {
+        if (storagePanel == null) {
             return;
         }
         if (mustClose) {
-            panel.close();
+            storagePanel.close();
         } else if (nodeRenderer.statsRevision() != storageRevision) {
             refresh();
             if (targetSocket != null && !nodeRenderer.isAllocatedSocket(targetSocket)) {
@@ -101,50 +101,51 @@ final class SocketPlacement {
         }
     }
 
-    void layoutButton(PositionAPI position, ScreenRect shipCard, boolean shown) {
-        if (!shown) {
-            button.hide();
+    void layoutButton(PositionAPI canvasPosition, ScreenRect shipCard, boolean buttonShown) {
+        if (!buttonShown) {
+            storageButton.hide();
             return;
         }
-        float width = Math.max(BUTTON_MIN_WIDTH, button.preferredWidth());
-        button.place(shipCard.left() + shipCard.width() + BUTTON_MARGIN, position.getY() + BUTTON_MARGIN, width, BUTTON_HEIGHT);
+        float buttonWidth = Math.max(BUTTON_MIN_WIDTH, storageButton.preferredWidth());
+        storageButton.place(shipCard.left() + shipCard.width() + BUTTON_MARGIN, canvasPosition.getY() + BUTTON_MARGIN, buttonWidth,
+                BUTTON_HEIGHT);
     }
 
     void renderButton(float mouseX, float mouseY, float alphaMult) {
-        button.render(mouseX, mouseY, alphaMult);
+        storageButton.render(mouseX, mouseY, alphaMult);
     }
 
-    void toggle(PositionAPI position, ScreenRect shipCard) {
-        if (panel != null) {
-            panel.close();
+    void toggle(PositionAPI canvasPosition, ScreenRect shipCard) {
+        if (storagePanel != null) {
+            storagePanel.close();
         } else {
-            open(position, shipCard);
+            open(canvasPosition, shipCard);
         }
     }
 
     boolean placeInto(SkillNode node) {
-        if (placing == null) {
+        if (placingSocketable == null) {
             return false;
         }
-        if (nodeRenderer.installInSocket(node, placing)) {
+        if (nodeRenderer.installInSocket(node, placingSocketable)) {
             stopPlacing();
             refresh();
         }
         return true;
     }
 
-    boolean handleSocketClick(SkillNode node, boolean ctrlDown, PositionAPI position, ScreenRect shipCard) {
+    boolean handleSocketClick(SkillNode node, boolean ctrlDown, PositionAPI canvasPosition, ScreenRect shipCard) {
         if (ctrlDown && node.getType().getTier() == SkillTier.SOCKET) {
             if (!nodeRenderer.isAllocated(node)) {
                 nodeRenderer.toggleAllocation(node, false);
             }
             if (nodeRenderer.isAllocated(node)) {
                 setTargetSocket(node);
-                open(position, shipCard);
+                open(canvasPosition, shipCard);
             }
             return true;
         }
-        if (targetSocket != null && panel != null && nodeRenderer.isAllocatedSocket(node)) {
+        if (targetSocket != null && storagePanel != null && nodeRenderer.isAllocatedSocket(node)) {
             setTargetSocket(node);
             return true;
         }
@@ -153,19 +154,19 @@ final class SocketPlacement {
 
     void refresh() {
         refreshButtonLabel();
-        if (panel != null) {
+        if (storagePanel != null) {
             storageRevision = nodeRenderer.statsRevision();
-            panel.refresh(SocketCustody.shipNames(ownedShips));
+            storagePanel.refresh(SocketCustody.shipNames(ownedShips));
         }
     }
 
     private void refreshButtonLabel() {
-        int stored = Global.getSector() == null ? 0 : SocketableStore.get().owned().size();
-        button.setLabel(Translation.msg("ui.socketStorage.button").arg("count", stored).text());
+        int storedCount = Global.getSector() == null ? 0 : SocketableStore.get().owned().size();
+        storageButton.setLabel(Translation.msg("ui.socketStorage.button").arg("count", storedCount).text());
     }
 
-    private void open(PositionAPI position, ScreenRect shipCard) {
-        if (panel != null) {
+    private void open(PositionAPI canvasPosition, ScreenRect shipCard) {
+        if (storagePanel != null) {
             return;
         }
         SkillTreeSounds.panelOpened();
@@ -173,8 +174,8 @@ final class SocketPlacement {
         searchBar.unfocus();
         ownedShips = SocketCustody.reconcile();
         storageRevision = nodeRenderer.statsRevision();
-        float bottom = shipCard.bottom() + shipCard.height() - position.getY() + PANEL_GAP;
-        panel = SocketStoragePanel.open(host, PANEL_MARGIN, PANEL_TOP, position.getHeight() - PANEL_TOP - bottom,
+        float reservedBottom = shipCard.bottom() + shipCard.height() - canvasPosition.getY() + PANEL_GAP;
+        storagePanel = SocketStoragePanel.open(hostPanel, PANEL_MARGIN, PANEL_TOP, canvasPosition.getHeight() - PANEL_TOP - reservedBottom,
                 SocketCustody.shipNames(ownedShips), new SocketStoragePanel.Listener() {
                     @Override
                     public void selected(Socketable socketable) {
@@ -187,28 +188,28 @@ final class SocketPlacement {
 
                     @Override
                     public void closed() {
-                        panel = null;
+                        storagePanel = null;
                         stopPlacing();
                         clearTargetSocket();
                         refreshButtonLabel();
                     }
                 });
-        panel.setTargetingSocket(targetSocket != null);
+        storagePanel.setTargetingSocket(targetSocket != null);
     }
 
     private void startPlacing(Socketable socketable) {
-        placing = socketable;
-        search.setSocketFocus(true);
-        if (panel != null) {
-            panel.setSelected(socketable);
+        placingSocketable = socketable;
+        nodeSearch.setSocketFocus(true);
+        if (storagePanel != null) {
+            storagePanel.setSelected(socketable);
         }
     }
 
     private void stopPlacing() {
-        placing = null;
-        search.setSocketFocus(false);
-        if (panel != null) {
-            panel.setSelected(null);
+        placingSocketable = null;
+        nodeSearch.setSocketFocus(false);
+        if (storagePanel != null) {
+            storagePanel.setSelected(null);
         }
     }
 
@@ -216,16 +217,16 @@ final class SocketPlacement {
         stopPlacing();
         targetSocket = socket;
         nodeRenderer.setTargetedSocket(socket);
-        if (panel != null) {
-            panel.setTargetingSocket(socket != null);
+        if (storagePanel != null) {
+            storagePanel.setTargetingSocket(socket != null);
         }
     }
 
     private void clearTargetSocket() {
         targetSocket = null;
         nodeRenderer.setTargetedSocket(null);
-        if (panel != null) {
-            panel.setTargetingSocket(false);
+        if (storagePanel != null) {
+            storagePanel.setTargetingSocket(false);
         }
     }
 

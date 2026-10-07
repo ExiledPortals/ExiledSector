@@ -23,22 +23,23 @@ public class SkillTreeCodexEntry extends CodexEntryV2 implements CustomUIPanelPl
     private static final float BOX_HORIZONTAL_PAD = 30f;
     private static final float PAD = 10f;
 
-    private final ShipTreeLookup.ShipTree tree;
+    private final ShipTreeLookup.ShipTree shipTree;
 
-    public SkillTreeCodexEntry(String id, FleetMemberAPI member, ShipTreeLookup.ShipTree tree) {
+    public SkillTreeCodexEntry(String id, FleetMemberAPI member, ShipTreeLookup.ShipTree shipTree) {
         super(id, Translation.gameText("codex.title"), null, member);
-        this.tree = tree;
+        this.shipTree = shipTree;
     }
 
-    ShipTreeLookup.ShipTree tree() {
-        return tree;
+    ShipTreeLookup.ShipTree shipTree() {
+        return shipTree;
     }
 
     @Override
     public void createTitleForList(TooltipMakerAPI info, float width, ListMode mode) {
         I18n.forGameText(() -> {
             VanillaText.addPara(info, Translation.styled("codex.title"), 0f, Misc.getBasePlayerColor());
-            VanillaText.addPara(info, Translation.msg("summary.level").arg("level", tree.data().getLevel()).styled(), 0f, Misc.getGrayColor());
+            VanillaText.addPara(info, Translation.msg("summary.level").arg("level", shipTree.skillData().getLevel()).styled(), 0f,
+                    Misc.getGrayColor());
         });
     }
 
@@ -54,20 +55,20 @@ public class SkillTreeCodexEntry extends CodexEntryV2 implements CustomUIPanelPl
 
     @Override
     public void createCustomDetail(CustomPanelAPI panel, UIPanelAPI relatedEntries, CodexDialogAPI codex) {
-        float width = panel.getPosition().getWidth();
-        float textWidth = width - RELATED_ENTRIES_WIDTH - PAD - BOX_HORIZONTAL_PAD + PAD;
-        TooltipMakerAPI text = panel.createUIElement(textWidth, 0f, false);
-        ShipTreeSummaryRenderer.render(text, (FleetMemberAPI) getParam(), tree, 0f);
-        panel.updateUIElementSizeAndMakeItProcessInput(text);
+        float panelWidth = panel.getPosition().getWidth();
+        float textWidth = panelWidth - RELATED_ENTRIES_WIDTH - PAD - BOX_HORIZONTAL_PAD + PAD;
+        TooltipMakerAPI textElement = panel.createUIElement(textWidth, 0f, false);
+        ShipTreeSummaryRenderer.render(textElement, (FleetMemberAPI) getParam(), shipTree, 0f);
+        panel.updateUIElementSizeAndMakeItProcessInput(textElement);
 
-        UIPanelAPI box = panel.wrapTooltipWithBox(text);
-        panel.addComponent(box).inTL(0f, 0f);
-        float height = box.getPosition().getHeight();
+        UIPanelAPI textBox = panel.wrapTooltipWithBox(textElement);
+        panel.addComponent(textBox).inTL(0f, 0f);
+        float panelHeight = textBox.getPosition().getHeight();
         if (relatedEntries != null) {
             panel.addComponent(relatedEntries).inTR(0f, 0f);
-            height = Math.max(height, relatedEntries.getPosition().getHeight());
+            panelHeight = Math.max(panelHeight, relatedEntries.getPosition().getHeight());
         }
-        panel.getPosition().setSize(width, height);
+        panel.getPosition().setSize(panelWidth, panelHeight);
     }
 
     @Override

@@ -15,51 +15,51 @@ final class ModalFrame {
         void render(ScreenRect box, float alphaMult);
     }
 
-    private final BorderedPanel panel;
-    private final HoloTransition transition = new HoloTransition();
+    private final BorderedPanel borderedPanel;
+    private final HoloTransition holoTransition = new HoloTransition();
 
     ModalFrame(Class<?> owner) {
-        this.panel = new BorderedPanel(owner);
+        this.borderedPanel = new BorderedPanel(owner);
     }
 
     void open() {
-        transition.open();
+        holoTransition.open();
     }
 
     void close() {
-        transition.close();
+        holoTransition.close();
     }
 
     void advance(float amount) {
-        transition.advance(amount);
+        holoTransition.advance(amount);
     }
 
     boolean isVisible() {
-        return transition.isVisible();
+        return holoTransition.isVisible();
     }
 
-    ScreenRect render(PositionAPI position, float width, float height, Color accent, float alphaMult, Content content) {
-        if (!transition.isVisible()) {
+    ScreenRect render(PositionAPI hostPosition, float boxWidth, float boxHeight, Color accent, float alphaMult, Content content) {
+        if (!holoTransition.isVisible()) {
             return null;
         }
-        GLDraw.fillQuad(position.getX(), position.getY(), position.getWidth(), position.getHeight(), Color.BLACK,
-                BACKDROP_ALPHA * transition.backdropAlpha() * alphaMult);
-        ScreenRect box = new ScreenRect(position.getX() + (position.getWidth() - width) / 2f,
-                position.getY() + (position.getHeight() - height) / 2f, width, height);
-        transition.drawProjection(box.left(), box.bottom(), width, height, accent, alphaMult);
-        if (transition.contentAlpha() <= 0f) {
+        GLDraw.fillQuad(hostPosition.getX(), hostPosition.getY(), hostPosition.getWidth(), hostPosition.getHeight(), Color.BLACK,
+                BACKDROP_ALPHA * holoTransition.backdropAlpha() * alphaMult);
+        ScreenRect box = new ScreenRect(hostPosition.getX() + (hostPosition.getWidth() - boxWidth) / 2f,
+                hostPosition.getY() + (hostPosition.getHeight() - boxHeight) / 2f, boxWidth, boxHeight);
+        holoTransition.drawProjection(box.left(), box.bottom(), boxWidth, boxHeight, accent, alphaMult);
+        if (holoTransition.contentAlpha() <= 0f) {
             return box;
         }
-        boolean clipped = transition.beginReveal(box.left(), box.bottom(), width, height);
+        boolean clipped = holoTransition.beginReveal(box.left(), box.bottom(), boxWidth, boxHeight);
         try {
-            panel.draw(box.left(), box.bottom(), width, height, alphaMult);
+            borderedPanel.draw(box.left(), box.bottom(), boxWidth, boxHeight, alphaMult);
             content.render(box, alphaMult);
         } finally {
             if (clipped) {
                 HoloTransition.endReveal();
             }
         }
-        transition.drawRevealLine(box.left(), box.bottom(), width, height, accent, alphaMult);
+        holoTransition.drawRevealLine(box.left(), box.bottom(), boxWidth, boxHeight, accent, alphaMult);
         return box;
     }
 }

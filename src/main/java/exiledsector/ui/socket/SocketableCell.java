@@ -25,7 +25,7 @@ public final class SocketableCell extends BaseCustomUIPanelPlugin {
 
     public interface Listener {
 
-        default void hovered(PositionAPI cell) {
+        default void hovered(PositionAPI cellPosition) {
         }
 
         default void left() {
@@ -57,59 +57,59 @@ public final class SocketableCell extends BaseCustomUIPanelPlugin {
 
     private final Socketable socketable;
     private final Look look;
-    private final Listener listener;
-    private PositionAPI position;
+    private final Listener cellListener;
+    private PositionAPI cellPosition;
     private boolean hovered;
 
-    public SocketableCell(Socketable socketable, Look look, Listener listener) {
+    public SocketableCell(Socketable socketable, Look look, Listener cellListener) {
         this.socketable = socketable;
         this.look = look;
-        this.listener = listener;
+        this.cellListener = cellListener;
     }
 
     @Override
-    public void positionChanged(PositionAPI position) {
-        this.position = position;
+    public void positionChanged(PositionAPI cellPosition) {
+        this.cellPosition = cellPosition;
     }
 
     @Override
     public void renderBelow(float alphaMult) {
-        if (position == null) {
+        if (cellPosition == null) {
             return;
         }
-        float x = position.getX();
-        float y = position.getY();
-        float width = position.getWidth();
-        float height = position.getHeight();
-        Color rarity = socketable.rarity().color();
+        float x = cellPosition.getX();
+        float y = cellPosition.getY();
+        float width = cellPosition.getWidth();
+        float height = cellPosition.getHeight();
+        Color rarityColor = socketable.rarity().color();
         GLDraw.fillQuad(x, y, width, height, BACKGROUND, alphaMult);
         if (look.rarityGlow()) {
-            GLDraw.innerGlow(x, y, width, height, GLOW_WIDTH, rarity, GLOW_ALPHA * alphaMult);
+            GLDraw.innerGlow(x, y, width, height, GLOW_WIDTH, rarityColor, GLOW_ALPHA * alphaMult);
         }
-        if (listener.marked()) {
-            Color warning = Misc.getNegativeHighlightColor();
-            GLDraw.fillQuad(x, y, width, height, warning, MARKED_FILL_ALPHA * alphaMult);
-            GLDraw.strokeQuad(x, y, width, height, warning, SELECTED_BORDER_WIDTH, alphaMult);
+        if (cellListener.marked()) {
+            Color warningColor = Misc.getNegativeHighlightColor();
+            GLDraw.fillQuad(x, y, width, height, warningColor, MARKED_FILL_ALPHA * alphaMult);
+            GLDraw.strokeQuad(x, y, width, height, warningColor, SELECTED_BORDER_WIDTH, alphaMult);
             return;
         }
-        boolean selected = listener.selected();
-        GLDraw.strokeQuad(x, y, width, height, selected ? Misc.getBrightPlayerColor() : rarity, selected ? SELECTED_BORDER_WIDTH : BORDER_WIDTH,
-                (hovered || selected ? 1f : look.idleBorderAlpha()) * alphaMult);
+        boolean selected = cellListener.selected();
+        GLDraw.strokeQuad(x, y, width, height, selected ? Misc.getBrightPlayerColor() : rarityColor,
+                selected ? SELECTED_BORDER_WIDTH : BORDER_WIDTH, (hovered || selected ? 1f : look.idleBorderAlpha()) * alphaMult);
     }
 
     @Override
     public void render(float alphaMult) {
-        if (position == null) {
+        if (cellPosition == null) {
             return;
         }
-        float size = position.getWidth() - look.iconInset() * 2f;
-        SpriteDraw.drawAtCenter(ICONS, socketable.iconPath(), position.getCenterX(), position.getCenterY(), size, size, Color.WHITE,
-                (listener.dimmed() ? DIMMED_ICON_ALPHA : 1f) * alphaMult);
+        float iconSize = cellPosition.getWidth() - look.iconInset() * 2f;
+        SpriteDraw.drawAtCenter(ICONS, socketable.iconPath(), cellPosition.getCenterX(), cellPosition.getCenterY(), iconSize, iconSize,
+                Color.WHITE, (cellListener.dimmed() ? DIMMED_ICON_ALPHA : 1f) * alphaMult);
     }
 
     @Override
     public void processInput(List<InputEventAPI> events) {
-        if (position == null) {
+        if (cellPosition == null) {
             return;
         }
         for (InputEventAPI event : events) {
@@ -119,19 +119,19 @@ public final class SocketableCell extends BaseCustomUIPanelPlugin {
             if (event.isConsumed()) {
                 continue;
             }
-            boolean inside = position.containsEvent(event);
+            boolean inside = cellPosition.containsEvent(event);
             if (event.isMouseMoveEvent()) {
                 if (inside != hovered) {
                     hovered = inside;
                     if (inside) {
-                        listener.hovered(position);
+                        cellListener.hovered(cellPosition);
                     } else {
-                        listener.left();
+                        cellListener.left();
                     }
                 }
-            } else if (inside && event.isLMBDownEvent() && listener.clicked()) {
+            } else if (inside && event.isLMBDownEvent() && cellListener.clicked()) {
                 event.consume();
-            } else if (inside && event.isRMBDownEvent() && listener.rightClicked()) {
+            } else if (inside && event.isRMBDownEvent() && cellListener.rightClicked()) {
                 event.consume();
             }
         }

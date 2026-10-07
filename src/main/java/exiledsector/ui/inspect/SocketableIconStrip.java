@@ -23,51 +23,51 @@ final class SocketableIconStrip extends BaseCustomUIPanelPlugin {
     record Entry(Socketable socketable, List<StyledText> footer) {
     }
 
-    private final SocketableHoverTooltip tooltip;
-    private final List<Runnable> queued = new ArrayList<>();
+    private final SocketableHoverTooltip hoverTooltip;
+    private final List<Runnable> queuedActions = new ArrayList<>();
 
     private SocketableIconStrip(CustomPanelAPI tooltipHost) {
-        this.tooltip = new SocketableHoverTooltip(tooltipHost);
+        this.hoverTooltip = new SocketableHoverTooltip(tooltipHost);
     }
 
-    static CustomPanelAPI create(CustomPanelAPI tooltipHost, float width, List<Entry> entries) {
+    static CustomPanelAPI create(CustomPanelAPI tooltipHost, float stripWidth, List<Entry> entries) {
         SocketableIconStrip strip = new SocketableIconStrip(tooltipHost);
-        CustomPanelAPI panel = Global.getSettings().createCustom(width, CELL_SIZE, strip);
+        CustomPanelAPI stripPanel = Global.getSettings().createCustom(stripWidth, CELL_SIZE, strip);
         for (int i = 0; i < entries.size(); i++) {
-            CustomPanelAPI cell = Global.getSettings().createCustom(CELL_SIZE, CELL_SIZE, strip.cellFor(entries.get(i)));
-            panel.addComponent(cell).inTL(i * (CELL_SIZE + GAP), 0f);
+            CustomPanelAPI cellPanel = Global.getSettings().createCustom(CELL_SIZE, CELL_SIZE, strip.cellFor(entries.get(i)));
+            stripPanel.addComponent(cellPanel).inTL(i * (CELL_SIZE + GAP), 0f);
         }
-        return panel;
+        return stripPanel;
     }
 
     @Override
     public void processInput(List<InputEventAPI> events) {
         for (InputEventAPI event : events) {
             if (event.isMouseScrollEvent()) {
-                queued.add(tooltip::hide);
+                queuedActions.add(hoverTooltip::hide);
             }
         }
     }
 
     @Override
     public void advance(float amount) {
-        tooltip.refreshIfExpansionChanged();
-        if (queued.isEmpty()) {
+        hoverTooltip.refreshIfExpansionChanged();
+        if (queuedActions.isEmpty()) {
             return;
         }
-        List<Runnable> actions = List.copyOf(queued);
-        queued.clear();
+        List<Runnable> actions = List.copyOf(queuedActions);
+        queuedActions.clear();
         actions.forEach(I18n::forGameText);
     }
 
-    private void hovered(Entry entry, PositionAPI cell) {
-        queued.add(() -> tooltip.show(entry, entry.socketable(), entry::footer, cell));
+    private void hovered(Entry entry, PositionAPI cellPosition) {
+        queuedActions.add(() -> hoverTooltip.show(entry, entry.socketable(), entry::footer, cellPosition));
     }
 
     private void left(Entry entry) {
-        queued.add(() -> {
-            if (tooltip.isShowing(entry)) {
-                tooltip.hide();
+        queuedActions.add(() -> {
+            if (hoverTooltip.isShowing(entry)) {
+                hoverTooltip.hide();
             }
         });
     }
@@ -75,8 +75,8 @@ final class SocketableIconStrip extends BaseCustomUIPanelPlugin {
     private SocketableCell cellFor(Entry entry) {
         return new SocketableCell(entry.socketable(), CELL_LOOK, new SocketableCell.Listener() {
             @Override
-            public void hovered(PositionAPI cell) {
-                SocketableIconStrip.this.hovered(entry, cell);
+            public void hovered(PositionAPI cellPosition) {
+                SocketableIconStrip.this.hovered(entry, cellPosition);
             }
 
             @Override

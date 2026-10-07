@@ -18,35 +18,36 @@ public final class TexturePreloader {
     }
 
     public static void preloadAll(String modId) {
-        JSONArray rows;
+        JSONArray textureRows;
         try {
-            rows = Global.getSettings().loadCSV(LIST_PATH, modId);
+            textureRows = Global.getSettings().loadCSV(LIST_PATH, modId);
         } catch (Exception e) {
             LOG.warn("No texture preload list at " + LIST_PATH + "; textures will load the first time they are drawn", e);
             return;
         }
-        if (rows == null) {
+        if (textureRows == null) {
             return;
         }
-        long start = System.nanoTime();
-        int loaded = preload(rows, path -> Global.getSettings().loadTexture(path));
-        LOG.info("Preloaded " + loaded + " of " + rows.length() + " textures in " + (System.nanoTime() - start) / 1_000_000L + " ms");
+        long startNanos = System.nanoTime();
+        int loadedCount = preload(textureRows, path -> Global.getSettings().loadTexture(path));
+        LOG.info("Preloaded " + loadedCount + " of " + textureRows.length() + " textures in " + (System.nanoTime() - startNanos) / 1_000_000L
+                + " ms");
     }
 
-    static int preload(JSONArray rows, TextureLoader loader) {
-        int loaded = 0;
-        for (int i = 0; i < rows.length(); i++) {
-            String path = rows.optJSONObject(i) == null ? "" : rows.optJSONObject(i).optString("path", "").trim();
+    static int preload(JSONArray textureRows, TextureLoader loader) {
+        int loadedCount = 0;
+        for (int i = 0; i < textureRows.length(); i++) {
+            String path = textureRows.optJSONObject(i) == null ? "" : textureRows.optJSONObject(i).optString("path", "").trim();
             if (path.isEmpty()) {
                 continue;
             }
             try {
                 loader.load(path);
-                loaded++;
+                loadedCount++;
             } catch (Exception e) {
                 LOG.warn("Failed to preload texture " + path, e);
             }
         }
-        return loaded;
+        return loadedCount;
     }
 }

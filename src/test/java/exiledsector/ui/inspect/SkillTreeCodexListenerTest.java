@@ -89,7 +89,7 @@ class SkillTreeCodexListenerTest {
         new SkillTreeCodexListener().reportAboutToOpenCodex();
 
         SkillTreeCodexEntry added = (SkillTreeCodexEntry) skillTreeEntries().get(0);
-        assertEquals(List.of("ballistic"), added.tree().buildThemes());
+        assertEquals(List.of("ballistic"), added.shipTree().buildThemes());
     }
 
     @Test

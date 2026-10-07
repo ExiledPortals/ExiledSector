@@ -27,30 +27,30 @@ final class SkillTreeModsButton extends BaseCustomUIPanelPlugin {
 
     private static boolean failed;
 
-    private ButtonAPI button;
-    private boolean shown = true;
+    private ButtonAPI skillTreeButton;
+    private boolean buttonShown = true;
 
     static void attach(Object modWidget) {
         if (failed || !(modWidget instanceof UIPanelAPI widget)) return;
         try {
-            CustomPanelAPI attached = attached(widget);
-            boolean wanted = RefitButtonConfig.buttonUnderHullMods();
-            if (attached != null) {
-                if (attached.getPlugin() instanceof SkillTreeModsButton plugin) plugin.show(attached, wanted);
+            CustomPanelAPI attachedContainer = attached(widget);
+            boolean buttonWanted = RefitButtonConfig.buttonUnderHullMods();
+            if (attachedContainer != null) {
+                if (attachedContainer.getPlugin() instanceof SkillTreeModsButton plugin) plugin.show(attachedContainer, buttonWanted);
                 return;
             }
-            if (!wanted || !(call(widget, "getPerm") instanceof ButtonAPI buildIn)) return;
+            if (!buttonWanted || !(call(widget, "getPerm") instanceof ButtonAPI buildIn)) return;
             PositionAPI buildInPosition = buildIn.getPosition();
-            float width = buildInPosition.getWidth();
-            float height = buildInPosition.getHeight();
+            float buttonWidth = buildInPosition.getWidth();
+            float buttonHeight = buildInPosition.getHeight();
             SkillTreeModsButton plugin = new SkillTreeModsButton();
-            CustomPanelAPI container = Global.getSettings().createCustom(width, height, plugin);
-            TooltipMakerAPI element = container.createUIElement(width, height, false);
+            CustomPanelAPI container = Global.getSettings().createCustom(buttonWidth, buttonHeight, plugin);
+            TooltipMakerAPI element = container.createUIElement(buttonWidth, buttonHeight, false);
             element.setButtonFontOrbitron20();
-            ButtonAPI button = element.addButton(Translation.gameText("ui.refitButton"), BUTTON_ID,
-                    Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(), Alignment.MID, CutStyle.BOTTOM, width, height, 0f);
-            button.setShortcut(HOTKEY, true);
-            plugin.button = button;
+            ButtonAPI skillTreeButton = element.addButton(Translation.gameText("ui.refitButton"), BUTTON_ID,
+                    Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(), Alignment.MID, CutStyle.BOTTOM, buttonWidth, buttonHeight, 0f);
+            skillTreeButton.setShortcut(HOTKEY, true);
+            plugin.skillTreeButton = skillTreeButton;
             container.addUIElement(element);
             widget.addComponent(container).belowMid(buildIn, GAP_BELOW_BUILD_IN).setXAlignOffset(X_ALIGN_OFFSET);
         } catch (Throwable e) {
@@ -59,10 +59,10 @@ final class SkillTreeModsButton extends BaseCustomUIPanelPlugin {
     }
 
     private void show(CustomPanelAPI container, boolean visible) {
-        if (visible == shown) return;
-        shown = visible;
+        if (visible == buttonShown) return;
+        buttonShown = visible;
         container.setOpacity(visible ? 1f : 0f);
-        if (button != null) button.setEnabled(visible);
+        if (skillTreeButton != null) skillTreeButton.setEnabled(visible);
     }
 
     static void resetForTests() {
@@ -85,7 +85,7 @@ final class SkillTreeModsButton extends BaseCustomUIPanelPlugin {
 
     @Override
     public void buttonPressed(Object buttonId) {
-        if (!shown || !BUTTON_ID.equals(buttonId)) return;
+        if (!buttonShown || !BUTTON_ID.equals(buttonId)) return;
         try {
             SkillTreeRefitButton.openPanel(null);
         } catch (RuntimeException | LinkageError e) {

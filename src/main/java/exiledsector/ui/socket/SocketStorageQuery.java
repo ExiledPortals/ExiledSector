@@ -15,7 +15,7 @@ final class SocketStorageQuery {
                 .filter(row -> matchesStatus(row, filter.status))
                 .filter(row -> filter.rarities.isEmpty() || filter.rarities.contains(row.rarity()))
                 .filter(row -> matchesWords(row, words))
-                .sorted(Comparator.comparingInt(SocketStorageRow::order).reversed())
+                .sorted(Comparator.comparingInt(SocketStorageRow::storeOrder).reversed())
                 .toList();
     }
 

@@ -13,7 +13,7 @@ final class WorkbenchTile extends BaseCustomUIPanelPlugin {
 
     interface Listener {
 
-        void hovered(PositionAPI tile);
+        void hovered(PositionAPI tilePosition);
 
         void left();
 
@@ -28,36 +28,36 @@ final class WorkbenchTile extends BaseCustomUIPanelPlugin {
     private static final float IDLE_BORDER_ALPHA = 0.35f;
     private static final float HOVER_GLOW_ALPHA = 0.45f;
 
-    private final CyclingIcon icon;
-    private final Listener listener;
-    private PositionAPI position;
+    private final CyclingIcon cyclingIcon;
+    private final Listener tileListener;
+    private PositionAPI tilePosition;
     private boolean hovered;
 
-    WorkbenchTile(List<String> iconPaths, Listener listener) {
-        this.icon = new CyclingIcon(iconPaths);
-        this.listener = listener;
+    WorkbenchTile(List<String> iconPaths, Listener tileListener) {
+        this.cyclingIcon = new CyclingIcon(iconPaths);
+        this.tileListener = tileListener;
     }
 
     @Override
-    public void positionChanged(PositionAPI position) {
-        this.position = position;
-        icon.positionChanged(position);
+    public void positionChanged(PositionAPI tilePosition) {
+        this.tilePosition = tilePosition;
+        cyclingIcon.positionChanged(tilePosition);
     }
 
     @Override
     public void advance(float amount) {
-        icon.advance(amount);
+        cyclingIcon.advance(amount);
     }
 
     @Override
     public void renderBelow(float alphaMult) {
-        if (position == null) {
+        if (tilePosition == null) {
             return;
         }
-        float x = position.getX();
-        float y = position.getY();
-        float width = position.getWidth();
-        float height = position.getHeight();
+        float x = tilePosition.getX();
+        float y = tilePosition.getY();
+        float width = tilePosition.getWidth();
+        float height = tilePosition.getHeight();
         Color accent = SkillTreePanelStyle.GLOW_COLOR;
         GLDraw.fillQuad(x, y, width, height, BACKGROUND, alphaMult);
         if (hovered) {
@@ -68,32 +68,32 @@ final class WorkbenchTile extends BaseCustomUIPanelPlugin {
 
     @Override
     public void render(float alphaMult) {
-        icon.render(alphaMult);
+        cyclingIcon.render(alphaMult);
     }
 
     @Override
     public void processInput(List<InputEventAPI> events) {
-        if (position == null) {
+        if (tilePosition == null) {
             return;
         }
         for (InputEventAPI event : events) {
             if (event.isConsumed()) {
                 continue;
             }
-            boolean inside = position.containsEvent(event);
+            boolean inside = tilePosition.containsEvent(event);
             if (event.isMouseMoveEvent() && inside != hovered) {
                 hovered = inside;
                 if (inside) {
-                    listener.hovered(position);
+                    tileListener.hovered(tilePosition);
                 } else {
-                    listener.left();
+                    tileListener.left();
                 }
             } else if (inside && event.isLMBDownEvent()) {
                 event.consume();
-                listener.clicked();
+                tileListener.clicked();
             } else if (inside && event.isRMBDownEvent()) {
                 event.consume();
-                listener.rightClicked();
+                tileListener.rightClicked();
             }
         }
     }

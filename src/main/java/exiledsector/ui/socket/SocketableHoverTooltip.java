@@ -18,56 +18,57 @@ public final class SocketableHoverTooltip {
     private static final float PAD = 10f;
     private static final float GAP = 6f;
 
-    private final CustomPanelAPI host;
-    private CustomPanelAPI shown;
-    private Object shownFor;
+    private final CustomPanelAPI hostPanel;
+    private CustomPanelAPI shownPanel;
+    private Object shownKey;
     private Socketable shownSocketable;
     private Supplier<List<StyledText>> shownFooter;
     private PositionAPI shownAnchor;
     private boolean shownExpanded;
 
-    public SocketableHoverTooltip(CustomPanelAPI host) {
-        this.host = host;
+    public SocketableHoverTooltip(CustomPanelAPI hostPanel) {
+        this.hostPanel = hostPanel;
     }
 
     public boolean isShowing(Object key) {
-        return shown != null && shownFor == key;
+        return shownPanel != null && shownKey == key;
     }
 
     public void show(Object key, Socketable socketable, Supplier<List<StyledText>> footer, PositionAPI anchor) {
         hide();
         boolean expanded = TooltipExpansion.isExpandedOrHeld();
-        float width = SocketableTooltip.WIDTH;
-        CustomPanelAPI panel = Global.getSettings().createCustom(width, anchor.getHeight(), new FramedPanelPlugin(SocketableHoverTooltip.class));
-        TooltipMakerAPI element = panel.createUIElement(width - PAD * 2f, 0f, false);
+        float tooltipWidth = SocketableTooltip.WIDTH;
+        CustomPanelAPI tooltipPanel = Global.getSettings().createCustom(tooltipWidth, anchor.getHeight(),
+                new FramedPanelPlugin(SocketableHoverTooltip.class));
+        TooltipMakerAPI element = tooltipPanel.createUIElement(tooltipWidth - PAD * 2f, 0f, false);
         SocketableTooltip.write(element, socketable, footer, expanded);
         float contentHeight = element.getHeightSoFar();
-        element.getPosition().setSize(width - PAD * 2f, contentHeight);
-        float height = contentHeight + PAD * 2f;
-        panel.getPosition().setSize(width, height);
-        panel.addUIElement(element).inTL(PAD, PAD);
-        PositionAPI hostPosition = host.getPosition();
+        element.getPosition().setSize(tooltipWidth - PAD * 2f, contentHeight);
+        float tooltipHeight = contentHeight + PAD * 2f;
+        tooltipPanel.getPosition().setSize(tooltipWidth, tooltipHeight);
+        tooltipPanel.addUIElement(element).inTL(PAD, PAD);
+        PositionAPI hostPosition = hostPanel.getPosition();
         float hostWidth = hostPosition.getWidth();
         float hostHeight = hostPosition.getHeight();
         float anchorLeft = anchor.getX() - hostPosition.getX();
         float anchorTop = hostPosition.getY() + hostHeight - (anchor.getY() + anchor.getHeight());
-        float left;
-        float top;
-        if (anchorLeft + anchor.getWidth() + GAP + width <= hostWidth) {
-            left = anchorLeft + anchor.getWidth() + GAP;
-            top = anchorTop;
-        } else if (anchorLeft - GAP - width >= 0f) {
-            left = anchorLeft - GAP - width;
-            top = anchorTop;
+        float tooltipLeft;
+        float tooltipTop;
+        if (anchorLeft + anchor.getWidth() + GAP + tooltipWidth <= hostWidth) {
+            tooltipLeft = anchorLeft + anchor.getWidth() + GAP;
+            tooltipTop = anchorTop;
+        } else if (anchorLeft - GAP - tooltipWidth >= 0f) {
+            tooltipLeft = anchorLeft - GAP - tooltipWidth;
+            tooltipTop = anchorTop;
         } else {
-            left = Math.max(0f, Math.min(anchorLeft, hostWidth - width));
-            float below = anchorTop + anchor.getHeight() + GAP;
-            top = below + height <= hostHeight ? below : anchorTop - GAP - height;
+            tooltipLeft = Math.max(0f, Math.min(anchorLeft, hostWidth - tooltipWidth));
+            float belowTop = anchorTop + anchor.getHeight() + GAP;
+            tooltipTop = belowTop + tooltipHeight <= hostHeight ? belowTop : anchorTop - GAP - tooltipHeight;
         }
-        top = Math.max(0f, Math.min(top, hostHeight - height));
-        host.addComponent(panel).inTL(left, top);
-        shown = panel;
-        shownFor = key;
+        tooltipTop = Math.max(0f, Math.min(tooltipTop, hostHeight - tooltipHeight));
+        hostPanel.addComponent(tooltipPanel).inTL(tooltipLeft, tooltipTop);
+        shownPanel = tooltipPanel;
+        shownKey = key;
         shownSocketable = socketable;
         shownFooter = footer;
         shownAnchor = anchor;
@@ -75,17 +76,17 @@ public final class SocketableHoverTooltip {
     }
 
     public void refreshIfExpansionChanged() {
-        if (shown != null && shownExpanded != TooltipExpansion.isExpandedOrHeld()) {
-            show(shownFor, shownSocketable, shownFooter, shownAnchor);
+        if (shownPanel != null && shownExpanded != TooltipExpansion.isExpandedOrHeld()) {
+            show(shownKey, shownSocketable, shownFooter, shownAnchor);
         }
     }
 
     public void hide() {
-        if (shown != null) {
-            host.removeComponent(shown);
+        if (shownPanel != null) {
+            hostPanel.removeComponent(shownPanel);
         }
-        shown = null;
-        shownFor = null;
+        shownPanel = null;
+        shownKey = null;
         shownSocketable = null;
         shownFooter = null;
         shownAnchor = null;

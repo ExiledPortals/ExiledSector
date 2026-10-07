@@ -15,26 +15,26 @@ public class NpcFleetInspectPlugin implements InteractionDialogPlugin {
 
     private static final String CLOSE = "exiledSector_inspectLeave";
 
-    private final CampaignFleetAPI fleet;
+    private final CampaignFleetAPI inspectedFleet;
     private final Map<String, MemoryAPI> memoryMap = new HashMap<>();
-    private InteractionDialogAPI dialog;
+    private InteractionDialogAPI interactionDialog;
 
-    public NpcFleetInspectPlugin(CampaignFleetAPI fleet) {
-        this.fleet = fleet;
+    public NpcFleetInspectPlugin(CampaignFleetAPI inspectedFleet) {
+        this.inspectedFleet = inspectedFleet;
     }
 
     @Override
-    public void init(InteractionDialogAPI dialog) {
-        this.dialog = dialog;
-        dialog.getOptionPanel().addOption(Translation.gameText("inspect.close"), CLOSE);
-        dialog.showCustomVisualDialog(NpcFleetInspectDialog.width(), NpcFleetInspectDialog.HEIGHT,
-                new NpcFleetInspectDialog(List.of(fleet), dialog::dismiss));
+    public void init(InteractionDialogAPI interactionDialog) {
+        this.interactionDialog = interactionDialog;
+        interactionDialog.getOptionPanel().addOption(Translation.gameText("inspect.close"), CLOSE);
+        interactionDialog.showCustomVisualDialog(NpcFleetInspectDialog.width(), NpcFleetInspectDialog.HEIGHT,
+                new NpcFleetInspectDialog(List.of(inspectedFleet), interactionDialog::dismiss));
     }
 
     @Override
     public void optionSelected(String optionText, Object optionData) {
         if (CLOSE.equals(optionData)) {
-            dialog.dismiss();
+            interactionDialog.dismiss();
         }
     }
 

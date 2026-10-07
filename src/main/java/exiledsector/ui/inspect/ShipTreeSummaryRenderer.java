@@ -28,61 +28,61 @@ public final class ShipTreeSummaryRenderer {
     private ShipTreeSummaryRenderer() {
     }
 
-    public static void render(TooltipMakerAPI info, FleetMemberAPI member, ShipTreeLookup.ShipTree tree, float pad) {
-        render(info, tree, member.getHullSpec().getHullSize(), pad, Integer.MAX_VALUE);
+    public static void render(TooltipMakerAPI info, FleetMemberAPI member, ShipTreeLookup.ShipTree shipTree, float pad) {
+        render(info, shipTree, member.getHullSpec().getHullSize(), pad, Integer.MAX_VALUE);
     }
 
-    public static void render(TooltipMakerAPI info, ShipTreeLookup.ShipTree tree, HullSize hullSize, float pad, int maxBonusLines) {
-        I18n.forGameText(() -> renderSummary(info, tree, hullSize, pad, maxBonusLines));
+    public static void render(TooltipMakerAPI info, ShipTreeLookup.ShipTree shipTree, HullSize hullSize, float pad, int maxBonusLines) {
+        I18n.forGameText(() -> renderSummary(info, shipTree, hullSize, pad, maxBonusLines));
     }
 
-    private static void renderSummary(TooltipMakerAPI info, ShipTreeLookup.ShipTree tree, HullSize hullSize, float pad,
+    private static void renderSummary(TooltipMakerAPI info, ShipTreeLookup.ShipTree shipTree, HullSize hullSize, float pad,
                                       int maxBonusLines) {
-        Summary summary = SkillTreeBonusSummary.of(tree.data(), hullSize);
+        Summary bonusSummary = SkillTreeBonusSummary.of(shipTree.skillData(), hullSize);
 
-        List<String> parts = new ArrayList<>();
-        parts.add(Translation.msg("summary.level").arg("level", summary.level()).text());
-        if (!tree.buildThemes().isEmpty()) {
-            parts.add(Translation.msg("summary.build").arg("layout", NpcBuildLabel.name(tree.buildThemes())).text());
+        List<String> headerParts = new ArrayList<>();
+        headerParts.add(Translation.msg("summary.level").arg("level", bonusSummary.level()).text());
+        if (!shipTree.buildThemes().isEmpty()) {
+            headerParts.add(Translation.msg("summary.build").arg("layout", NpcBuildLabel.name(shipTree.buildThemes())).text());
         }
-        if (summary.root() != null) {
-            parts.add(Translation.msg("summary.start").arg("root", summary.root().getDisplayName()).text());
+        if (bonusSummary.root() != null) {
+            headerParts.add(Translation.msg("summary.start").arg("root", bonusSummary.root().getDisplayName()).text());
         }
-        parts.add(Translation.msg("summary.nodes").count(summary.nodeCount()).text());
-        info.addPara("%s", pad, Misc.getHighlightColor(), String.join(Translation.text("summary.separator"), parts));
+        headerParts.add(Translation.msg("summary.nodes").count(bonusSummary.nodeCount()).text());
+        info.addPara("%s", pad, Misc.getHighlightColor(), String.join(Translation.text("summary.separator"), headerParts));
 
-        if (summary.notables().isEmpty()) {
+        if (bonusSummary.notables().isEmpty()) {
             VanillaText.addPara(info, Translation.styled("summary.noNotables"), LINE_PAD, Misc.getGrayColor());
         } else {
-            List<StyledText> names = new ArrayList<>();
-            for (SkillType notable : summary.notables()) {
-                names.add(StyledText.styled(notable.getDisplayName(), Style.HIGHLIGHT));
+            List<StyledText> notableNames = new ArrayList<>();
+            for (SkillType notable : bonusSummary.notables()) {
+                notableNames.add(StyledText.styled(notable.getDisplayName(), Style.HIGHLIGHT));
             }
-            VanillaText.addPara(info, Translation.msg("summary.notables").arg("names", Translation.list(names)).styled(), LINE_PAD,
+            VanillaText.addPara(info, Translation.msg("summary.notables").arg("names", Translation.list(notableNames)).styled(), LINE_PAD,
                     Misc.getTextColor());
         }
 
-        List<StyledText> socketed = new ArrayList<>();
-        for (String socketableId : tree.data().getSocketedItems().values()) {
+        List<StyledText> socketedNames = new ArrayList<>();
+        for (String socketableId : shipTree.skillData().getSocketedItems().values()) {
             Socketable socketable = SocketableStore.lookup(socketableId);
             if (socketable != null) {
-                socketed.add(StyledText.styled(socketable.name(), Style.HIGHLIGHT));
+                socketedNames.add(StyledText.styled(socketable.name(), Style.HIGHLIGHT));
             }
         }
-        if (!socketed.isEmpty()) {
-            VanillaText.addPara(info, Translation.msg("summary.sockets").arg("names", Translation.list(socketed)).styled(), LINE_PAD,
+        if (!socketedNames.isEmpty()) {
+            VanillaText.addPara(info, Translation.msg("summary.sockets").arg("names", Translation.list(socketedNames)).styled(), LINE_PAD,
                     Misc.getTextColor());
         }
 
-        if (!summary.bonuses().isEmpty()) {
+        if (!bonusSummary.bonuses().isEmpty()) {
             VanillaText.addPara(info, Translation.styled("summary.bonuses"), SECTION_PAD, Misc.getTextColor());
-            List<DescriptionLine> bonuses = summary.bonuses();
-            int shown = Math.min(bonuses.size(), maxBonusLines);
-            for (DescriptionLine line : bonuses.subList(0, shown)) {
+            List<DescriptionLine> bonuses = bonusSummary.bonuses();
+            int shownBonusCount = Math.min(bonuses.size(), maxBonusLines);
+            for (DescriptionLine line : bonuses.subList(0, shownBonusCount)) {
                 VanillaText.addPara(info, StyledText.of(BULLET).append(line.display()), LINE_PAD, Misc.getTextColor());
             }
-            if (shown < bonuses.size()) {
-                VanillaText.addPara(info, Translation.msg("summary.more").count(bonuses.size() - shown).styled(), LINE_PAD,
+            if (shownBonusCount < bonuses.size()) {
+                VanillaText.addPara(info, Translation.msg("summary.more").count(bonuses.size() - shownBonusCount).styled(), LINE_PAD,
                         Misc.getGrayColor());
             }
         }

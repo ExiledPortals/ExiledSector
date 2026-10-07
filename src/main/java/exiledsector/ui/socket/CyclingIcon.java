@@ -14,42 +14,42 @@ final class CyclingIcon extends BaseCustomUIPanelPlugin {
     private static final float FADE_SECONDS = 0.6f;
     private static final SpriteCache ICONS = new SpriteCache(CyclingIcon.class);
 
-    private final List<String> paths;
-    private PositionAPI position;
-    private float time;
+    private final List<String> iconPaths;
+    private PositionAPI iconPosition;
+    private float cycleSeconds;
 
-    CyclingIcon(List<String> paths) {
-        this.paths = List.copyOf(paths);
+    CyclingIcon(List<String> iconPaths) {
+        this.iconPaths = List.copyOf(iconPaths);
     }
 
     @Override
-    public void positionChanged(PositionAPI position) {
-        this.position = position;
+    public void positionChanged(PositionAPI iconPosition) {
+        this.iconPosition = iconPosition;
     }
 
     @Override
     public void advance(float amount) {
-        time = (time + amount) % (paths.size() * (HOLD_SECONDS + FADE_SECONDS));
+        cycleSeconds = (cycleSeconds + amount) % (iconPaths.size() * (HOLD_SECONDS + FADE_SECONDS));
     }
 
     @Override
     public void render(float alphaMult) {
-        if (position == null || paths.isEmpty()) {
+        if (iconPosition == null || iconPaths.isEmpty()) {
             return;
         }
         float step = HOLD_SECONDS + FADE_SECONDS;
-        int current = (int) (time / step) % paths.size();
-        float into = time - current * step;
-        float fade = into <= HOLD_SECONDS ? 0f : (into - HOLD_SECONDS) / FADE_SECONDS;
+        int currentIndex = (int) (cycleSeconds / step) % iconPaths.size();
+        float secondsIntoStep = cycleSeconds - currentIndex * step;
+        float fade = secondsIntoStep <= HOLD_SECONDS ? 0f : (secondsIntoStep - HOLD_SECONDS) / FADE_SECONDS;
         float eased = fade * fade * (3f - 2f * fade);
-        draw(paths.get(current), (1f - eased) * alphaMult);
+        draw(iconPaths.get(currentIndex), (1f - eased) * alphaMult);
         if (eased > 0f) {
-            draw(paths.get((current + 1) % paths.size()), eased * alphaMult);
+            draw(iconPaths.get((currentIndex + 1) % iconPaths.size()), eased * alphaMult);
         }
     }
 
     private void draw(String path, float alpha) {
-        SpriteDraw.drawAtCenter(ICONS, path, position.getCenterX(), position.getCenterY(), position.getWidth(), position.getHeight(),
-                Color.WHITE, alpha);
+        SpriteDraw.drawAtCenter(ICONS, path, iconPosition.getCenterX(), iconPosition.getCenterY(), iconPosition.getWidth(),
+                iconPosition.getHeight(), Color.WHITE, alpha);
     }
 }

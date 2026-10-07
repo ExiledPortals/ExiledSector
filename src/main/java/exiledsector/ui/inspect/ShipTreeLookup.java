@@ -13,7 +13,7 @@ import java.util.List;
 
 public final class ShipTreeLookup {
 
-    public record ShipTree(ShipSkillData data, List<String> buildThemes) {
+    public record ShipTree(ShipSkillData skillData, List<String> buildThemes) {
     }
 
     private ShipTreeLookup() {
@@ -29,16 +29,16 @@ public final class ShipTreeLookup {
         if (!isInPlayerFleet(member)) {
             return null;
         }
-        ShipSkillData data = ShipSkillDataManager.get(member.getId());
-        return data.isBlank() ? null : new ShipTree(data, List.of());
+        ShipSkillData skillData = ShipSkillDataManager.get(member.getId());
+        return skillData.isBlank() ? null : new ShipTree(skillData, List.of());
     }
 
     public static ShipTree forShip(FleetMemberAPI member, ShipVariantAPI variant) {
         if (NpcTreeTag.find(variant) != null) {
             return npcTree(member, variant);
         }
-        ShipSkillData data = member == null ? null : ShipSkillDataManager.find(member.getId());
-        return data == null || data.isBlank() ? null : new ShipTree(data, List.of());
+        ShipSkillData skillData = member == null ? null : ShipSkillDataManager.find(member.getId());
+        return skillData == null || skillData.isBlank() ? null : new ShipTree(skillData, List.of());
     }
 
     public static boolean isLevelledNpc(FleetMemberAPI member) {
@@ -46,8 +46,8 @@ public final class ShipTreeLookup {
     }
 
     private static ShipTree npcTree(FleetMemberAPI member, ShipVariantAPI variant) {
-        ShipSkillData data = SkillDataResolver.resolve(member, variant);
-        return new ShipTree(data, NpcBuildLabel.mainThemes(data));
+        ShipSkillData skillData = SkillDataResolver.resolve(member, variant);
+        return new ShipTree(skillData, NpcBuildLabel.mainThemes(skillData));
     }
 
     private static boolean isInPlayerFleet(FleetMemberAPI member) {

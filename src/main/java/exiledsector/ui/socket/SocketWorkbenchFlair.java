@@ -27,63 +27,63 @@ final class SocketWorkbenchFlair {
     private static final Color SOCKET_FILL = new Color(0, 0, 0, 170);
     private static final SpriteCache ICONS = new SpriteCache(SocketWorkbenchFlair.class);
 
-    private float time;
-    private float load;
-    private float flash;
+    private float elapsedSeconds;
+    private float loadProgress;
+    private float flashProgress;
     private Color flashColor = Color.WHITE;
 
     void advance(float amount, boolean loaded) {
-        time += amount;
+        elapsedSeconds += amount;
         float step = amount / LOAD_SECONDS;
-        load = Math.max(0f, Math.min(1f, load + (loaded ? step : -step)));
-        flash = Math.max(0f, flash - amount / FLASH_SECONDS);
+        loadProgress = Math.max(0f, Math.min(1f, loadProgress + (loaded ? step : -step)));
+        flashProgress = Math.max(0f, flashProgress - amount / FLASH_SECONDS);
     }
 
     void restartLoad() {
-        load = 0f;
+        loadProgress = 0f;
     }
 
     void flash(Color color) {
-        flash = 1f;
+        flashProgress = 1f;
         flashColor = color;
     }
 
-    void render(float cx, float cy, float radius, Color accent, Color subject, String iconPath, float alpha) {
+    void render(float cx, float cy, float radius, Color accent, Color subjectColor, String iconPath, float alpha) {
         if (alpha <= 0f) {
             return;
         }
-        float eased = 1f - (1f - load) * (1f - load);
-        float pulse = 0.5f + 0.5f * (float) Math.sin(time * 2.2f);
+        float easedLoad = 1f - (1f - loadProgress) * (1f - loadProgress);
+        float pulse = 0.5f + 0.5f * (float) Math.sin(elapsedSeconds * 2.2f);
         float half = radius * 0.42f;
-        Color core = subject == null ? accent : subject;
+        Color coreColor = subjectColor == null ? accent : subjectColor;
 
         drawGrid(cx, cy, radius, accent, alpha);
         additive();
-        radialGlow(cx, cy, half * 0.8f, radius * 1.05f, core, (0.12f + 0.18f * eased) * (0.7f + 0.3f * pulse) * alpha);
+        radialGlow(cx, cy, half * 0.8f, radius * 1.05f, coreColor, (0.12f + 0.18f * easedLoad) * (0.7f + 0.3f * pulse) * alpha);
         circle(cx, cy, radius, accent, 1f, 0.25f * alpha);
-        arcSegments(cx, cy, radius - 5f, 12, 0.62f, time * OUTER_RING_SPEED, 3f, accent, 0.55f * alpha);
-        ticks(cx, cy, radius * 0.8f, time * TICK_RING_SPEED, accent, 0.45f * alpha);
-        arcSegments(cx, cy, radius * 0.66f, 3, 0.2f, time * SCANNER_SPEED, 2f, core, (0.35f + 0.5f * eased) * alpha);
-        arms(cx, cy, half, radius * 0.62f, accent, core, eased, alpha);
+        arcSegments(cx, cy, radius - 5f, 12, 0.62f, elapsedSeconds * OUTER_RING_SPEED, 3f, accent, 0.55f * alpha);
+        ticks(cx, cy, radius * 0.8f, elapsedSeconds * TICK_RING_SPEED, accent, 0.45f * alpha);
+        arcSegments(cx, cy, radius * 0.66f, 3, 0.2f, elapsedSeconds * SCANNER_SPEED, 2f, coreColor, (0.35f + 0.5f * easedLoad) * alpha);
+        arms(cx, cy, half, radius * 0.62f, accent, coreColor, easedLoad, alpha);
         normalBlend();
 
         GLDraw.fillQuad(cx - half, cy - half, half * 2f, half * 2f, SOCKET_FILL, alpha);
-        GLDraw.innerGlow(cx - half, cy - half, half * 2f, half * 2f, half * 0.5f, core, (0.15f + 0.35f * eased * pulse) * alpha);
-        GLDraw.strokeQuad(cx - half, cy - half, half * 2f, half * 2f, core, 1.5f, (0.5f + 0.4f * eased) * alpha);
+        GLDraw.innerGlow(cx - half, cy - half, half * 2f, half * 2f, half * 0.5f, coreColor, (0.15f + 0.35f * easedLoad * pulse) * alpha);
+        GLDraw.strokeQuad(cx - half, cy - half, half * 2f, half * 2f, coreColor, 1.5f, (0.5f + 0.4f * easedLoad) * alpha);
         if (iconPath != null) {
             float size = half * 2f * (1f - ICON_INSET * 2f);
-            SpriteDraw.drawAtCenter(ICONS, iconPath, cx, cy, size, size, Color.WHITE, eased * alpha);
+            SpriteDraw.drawAtCenter(ICONS, iconPath, cx, cy, size, size, Color.WHITE, easedLoad * alpha);
         }
         additive();
-        brackets(cx, cy, half + 6f + (1f - eased) * BRACKET_TRAVEL, half * 0.35f, accent, (0.6f + 0.4f * eased) * alpha);
+        brackets(cx, cy, half + 6f + (1f - easedLoad) * BRACKET_TRAVEL, half * 0.35f, accent, (0.6f + 0.4f * easedLoad) * alpha);
         if (iconPath != null) {
-            scanLine(cx, cy, half, core, eased * alpha);
+            scanLine(cx, cy, half, coreColor, easedLoad * alpha);
         }
-        if (flash > 0f) {
-            float spread = 1f - flash;
-            circle(cx, cy, half + (radius + 4f - half) * spread, flashColor, 3f, flash * alpha);
-            circle(cx, cy, half + (radius - half) * spread * 0.6f, flashColor, 1.5f, flash * 0.6f * alpha);
-            GLDraw.fillQuad(cx - half, cy - half, half * 2f, half * 2f, flashColor, flash * flash * 0.5f * alpha);
+        if (flashProgress > 0f) {
+            float spread = 1f - flashProgress;
+            circle(cx, cy, half + (radius + 4f - half) * spread, flashColor, 3f, flashProgress * alpha);
+            circle(cx, cy, half + (radius - half) * spread * 0.6f, flashColor, 1.5f, flashProgress * 0.6f * alpha);
+            GLDraw.fillQuad(cx - half, cy - half, half * 2f, half * 2f, flashColor, flashProgress * flashProgress * 0.5f * alpha);
             additive();
         }
         normalBlend();
@@ -104,7 +104,7 @@ final class SocketWorkbenchFlair {
         GL11.glEnd();
     }
 
-    private void arms(float cx, float cy, float half, float reach, Color accent, Color core, float eased, float alpha) {
+    private void arms(float cx, float cy, float half, float reach, Color accent, Color coreColor, float easedLoad, float alpha) {
         float inner = half * 1.45f;
         for (int i = 0; i < 4; i++) {
             float angle = TWO_PI * (i / 4f + 0.125f);
@@ -116,16 +116,16 @@ final class SocketWorkbenchFlair {
             GL11.glVertex2f(cx + dx * inner, cy + dy * inner);
             GL11.glVertex2f(cx + dx * reach, cy + dy * reach);
             GL11.glEnd();
-            float travel = (time * PULSE_SPEED + i * 0.25f) % 1f;
+            float travel = (elapsedSeconds * PULSE_SPEED + i * 0.25f) % 1f;
             float distance = reach - (reach - inner) * travel;
-            dot(cx + dx * distance, cy + dy * distance, 2.5f, core, (0.3f + 0.7f * eased) * (1f - travel * 0.5f) * alpha);
+            dot(cx + dx * distance, cy + dy * distance, 2.5f, coreColor, (0.3f + 0.7f * easedLoad) * (1f - travel * 0.5f) * alpha);
             dot(cx + dx * reach, cy + dy * reach, 3f, accent, 0.8f * alpha);
         }
         GL11.glLineWidth(1f);
     }
 
-    private void scanLine(float cx, float cy, float half, Color core, float alpha) {
-        float travel = (time * SCAN_SPEED) % 1f;
+    private void scanLine(float cx, float cy, float half, Color coreColor, float alpha) {
+        float travel = (elapsedSeconds * SCAN_SPEED) % 1f;
         float y = cy + half - travel * half * 2f;
         for (int i = 0; i < 4; i++) {
             float lineY = y + i * 2f;
@@ -133,7 +133,7 @@ final class SocketWorkbenchFlair {
                 break;
             }
             GL11.glLineWidth(i == 0 ? 2f : 1f);
-            Misc.setColor(core, (i == 0 ? 0.9f : 0.35f / i) * alpha);
+            Misc.setColor(coreColor, (i == 0 ? 0.9f : 0.35f / i) * alpha);
             GL11.glBegin(GL11.GL_LINES);
             GL11.glVertex2f(cx - half, lineY);
             GL11.glVertex2f(cx + half, lineY);

@@ -9,27 +9,27 @@ import exiledsector.socketables.SocketableRarity;
 import java.util.Locale;
 import java.util.function.Function;
 
-public record SocketStorageRow(Socketable socketable, int order, String name, SocketableRarity rarity, String searchText,
-                               String installedIn) {
+public record SocketStorageRow(Socketable socketable, int storeOrder, String name, SocketableRarity rarity, String searchText,
+                               String installedShipName) {
 
-    static SocketStorageRow of(Socketable socketable, int order, Function<Socketable, String> installedIn) {
+    static SocketStorageRow of(Socketable socketable, int storeOrder, Function<Socketable, String> installedShipLookup) {
         SocketableDefinition definition = socketable.definition();
-        SocketableName name = socketable.displayName();
-        StringBuilder search = new StringBuilder(name.title());
-        if (name.baseName() != null) {
-            search.append('\n').append(name.baseName());
+        SocketableName displayName = socketable.displayName();
+        StringBuilder searchBuilder = new StringBuilder(displayName.title());
+        if (displayName.baseName() != null) {
+            searchBuilder.append('\n').append(displayName.baseName());
         }
         if (definition != null) {
-            search.append('\n').append(socketable.kind().displayName());
+            searchBuilder.append('\n').append(socketable.kind().displayName());
         }
         for (StyledText line : socketable.tooltipLines()) {
-            search.append('\n').append(line.plain());
+            searchBuilder.append('\n').append(line.plain());
         }
-        return new SocketStorageRow(socketable, order, name.title(), name.rarity(), search.toString().toLowerCase(Locale.ROOT),
-                installedIn.apply(socketable));
+        return new SocketStorageRow(socketable, storeOrder, displayName.title(), displayName.rarity(),
+                searchBuilder.toString().toLowerCase(Locale.ROOT), installedShipLookup.apply(socketable));
     }
 
     boolean installed() {
-        return installedIn != null;
+        return installedShipName != null;
     }
 }

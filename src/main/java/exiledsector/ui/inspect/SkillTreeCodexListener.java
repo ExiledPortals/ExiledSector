@@ -16,7 +16,7 @@ import java.util.Set;
 
 public class SkillTreeCodexListener implements CodexEventListener {
 
-    private final List<CodexEntryPlugin> added = new ArrayList<>();
+    private final List<CodexEntryPlugin> addedEntries = new ArrayList<>();
 
     @Override
     public void reportAboutToOpenCodex() {
@@ -36,22 +36,22 @@ public class SkillTreeCodexListener implements CodexEventListener {
 
     @Override
     public void reportClosedCodex() {
-        for (CodexEntryPlugin entry : added) {
+        for (CodexEntryPlugin entry : addedEntries) {
             CodexDataV2.unlinkAndRemoveTempEntry(entry);
         }
-        added.clear();
+        addedEntries.clear();
     }
 
     private void attach(CodexEntryPlugin memberEntry, FleetMemberAPI member) {
-        ShipTreeLookup.ShipTree tree = I18n.forGameText(() -> ShipTreeLookup.find(member));
-        if (tree == null) {
+        ShipTreeLookup.ShipTree shipTree = I18n.forGameText(() -> ShipTreeLookup.find(member));
+        if (shipTree == null) {
             return;
         }
-        SkillTreeCodexEntry treeEntry = new SkillTreeCodexEntry(SkillTreeCodexEntry.ID_PREFIX + memberEntry.getId(), member, tree);
+        SkillTreeCodexEntry treeEntry = new SkillTreeCodexEntry(SkillTreeCodexEntry.ID_PREFIX + memberEntry.getId(), member, shipTree);
         CodexDataV2.ENTRIES.put(treeEntry.getId(), treeEntry);
         memberEntry.addRelatedEntry(treeEntry);
         treeEntry.addRelatedEntry(memberEntry);
-        added.add(treeEntry);
+        addedEntries.add(treeEntry);
     }
 
     private static void unlinkPhantomHullMods(CodexEntryPlugin memberEntry, FleetMemberAPI member) {
