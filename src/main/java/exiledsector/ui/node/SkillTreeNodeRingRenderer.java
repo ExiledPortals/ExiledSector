@@ -43,6 +43,8 @@ final class SkillTreeNodeRingRenderer {
     private static final int RING_SEGMENTS = 32;
     private static final UnitCircle RING_CIRCLE = UnitCircle.of(RING_SEGMENTS);
     private static final float RING_LINE_THICKNESS = 1.5f;
+    private static final float[] CIRCLE_OUTLINE_RADII = outlineRadii(false);
+    private static final float[] SOCKET_OUTLINE_RADII = outlineRadii(true);
 
     private static final String[] RING_STACK_TEXTURES = {
             "graphics/fx/wormhole_ring_bright2.png",
@@ -199,36 +201,49 @@ final class SkillTreeNodeRingRenderer {
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        if (tier != SkillTier.WORMHOLE && tier != SkillTier.SOCKET) {
+        if (tier == SkillTier.SOCKET) {
+            if (ringState.breathing) {
+                drawBreathingOutline(cx, cy, halfSize, scale, zoom, alphaMult, SOCKET_OUTLINE_RADII);
+            }
+            drawPulseOutline(cx, cy, halfSize, nodeId, zoom, alphaMult, SOCKET_OUTLINE_RADII);
+        } else if (tier != SkillTier.WORMHOLE) {
             drawNodeDonut(cx, cy, ringRadius, scale, zoom, allocated, alphaMult);
             if (ringState.breathing) {
-                drawBreathingOutline(cx, cy, ringRadius, scale, zoom, alphaMult);
+                drawBreathingOutline(cx, cy, ringRadius, scale, zoom, alphaMult, CIRCLE_OUTLINE_RADII);
             }
-            drawPulseOutline(cx, cy, halfSize, nodeId, zoom, alphaMult);
+            drawPulseOutline(cx, cy, halfSize, nodeId, zoom, alphaMult, CIRCLE_OUTLINE_RADII);
         }
 
         GL11.glDisable(GL11.GL_BLEND);
     }
 
-    private void drawBreathingOutline(float cx, float cy, float ringRadius, float scale, float zoom, float alphaMult) {
+    private static float[] outlineRadii(boolean socketFrame) {
+        float[] radii = new float[RING_SEGMENTS];
+        for (int i = 0; i < RING_SEGMENTS; i++) {
+            radii[i] = socketFrame ? SkillTreeSocketRenderer.visibleEdgeDistance(2f, RING_CIRCLE.cos(i), RING_CIRCLE.sin(i)) : 1f;
+        }
+        return radii;
+    }
+
+    private void drawBreathingOutline(float cx, float cy, float ringRadius, float scale, float zoom, float alphaMult, float[] outlineRadii) {
         float breathingT = (float) (0.5 + 0.5 * Math.sin(2 * Math.PI * breathingPhase / BREATHING_PERIOD_SECONDS));
         float breathingAlpha = (BREATHING_MIN_ALPHA + (BREATHING_MAX_ALPHA - BREATHING_MIN_ALPHA) * breathingT) * alphaMult;
         GL11.glLineWidth(NODE_CONNECTOR_GLOW_LINE_THICKNESS * scale * zoom);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
         for (int pass = 0; pass < BREATHING_BRIGHTNESS_PASSES; pass++) {
-            drawRingOutline(cx, cy, ringRadius, panelStyle.getAccentColor(), breathingAlpha);
+            drawOutline(cx, cy, ringRadius, outlineRadii, panelStyle.getAccentColor(), breathingAlpha);
         }
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
     }
 
-    private void drawPulseOutline(float cx, float cy, float halfSize, String nodeId, float zoom, float alphaMult) {
+    private void drawPulseOutline(float cx, float cy, float halfSize, String nodeId, float zoom, float alphaMult, float[] outlineRadii) {
         Float pulseSeconds = pulseElapsed.get(nodeId);
         if (pulseSeconds == null) return;
 
         GL11.glLineWidth(RING_LINE_THICKNESS * zoom);
         float progress = pulseSeconds / PULSE_DURATION;
         float radiusFraction = PULSE_START_RADIUS_FRACTION + (PULSE_END_RADIUS_FRACTION - PULSE_START_RADIUS_FRACTION) * progress;
-        drawRingOutline(cx, cy, halfSize * radiusFraction, panelStyle.getAccentColor(), (1f - progress) * alphaMult);
+        drawOutline(cx, cy, halfSize * radiusFraction, outlineRadii, panelStyle.getAccentColor(), (1f - progress) * alphaMult);
     }
 
     private void drawNodeDonut(float cx, float cy, float radius, float scale, float zoom, boolean allocated, float alphaMult) {
@@ -436,10 +451,15 @@ final class SkillTreeNodeRingRenderer {
     }
 
     private void drawRingOutline(float cx, float cy, float radius, Color color, float alpha) {
+        drawOutline(cx, cy, radius, CIRCLE_OUTLINE_RADII, color, alpha);
+    }
+
+    private static void drawOutline(float cx, float cy, float radius, float[] outlineRadii, Color color, float alpha) {
         Misc.setColor(color, alpha);
         GL11.glBegin(GL11.GL_LINE_LOOP);
         for (int i = 0; i < RING_SEGMENTS; i++) {
-            GL11.glVertex2f(cx + RING_CIRCLE.cos(i) * radius, cy + RING_CIRCLE.sin(i) * radius);
+            float vertexRadius = radius * outlineRadii[i];
+            GL11.glVertex2f(cx + RING_CIRCLE.cos(i) * vertexRadius, cy + RING_CIRCLE.sin(i) * vertexRadius);
         }
         GL11.glEnd();
     }
