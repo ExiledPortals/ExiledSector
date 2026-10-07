@@ -577,8 +577,9 @@
   .imageBrowserPreview img { max-width: 100%; max-height: 100%; }
   .imageBrowserPath { font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); word-break: break-all; }
   .socketableLayout { display: flex; gap: 14px; align-items: flex-start; }
+  .socketableListColumn { width: 230px; flex-shrink: 0; display: flex; flex-direction: column; gap: 6px; }
   .socketableList {
-    width: 230px; flex-shrink: 0; max-height: 62vh; overflow-y: auto; display: flex; flex-direction: column; gap: 4px;
+    max-height: 62vh; overflow-y: auto; display: flex; flex-direction: column; gap: 4px;
     padding: 4px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 6px;
   }
   .socketableListItem { display: flex; align-items: center; gap: 8px; padding: 4px; border: 2px solid transparent; border-radius: 4px; cursor: pointer; }
@@ -3893,7 +3894,7 @@ function openDataModal(options){
 }
 
 function openSocketableEditorModal(){
-  var table = parseCsvTable(''), defs = [], selectedIndex = -1;
+  var table = parseCsvTable(''), defs = [], selectedIndex = -1, kindFilter = '';
   var modal = openDataModal({ title: 'Socketable Editor', noun: 'socketable', modalClass: 'socketableEditorModal', loadingText: 'Loading socketables...', load: load, save: save });
   var markDirty = modal.markDirty;
 
@@ -3914,12 +3915,19 @@ function openSocketableEditorModal(){
     modal.render(
       '<div class="hint">Edits data/config/exiledSector/socketables.csv. Names and descriptions are English; add zh text under socketable.&lt;id&gt;.name / .description in zh_CN.json.</div>' +
       '<div class="socketableLayout">' +
-        '<div class="socketableList" id="sockList"></div>' +
+        '<div class="socketableListColumn">' +
+          '<select id="sockKindFilter" title="Show only socketables of one socket type"></select>' +
+          '<div class="socketableList" id="sockList"></div>' +
+        '</div>' +
         '<div class="socketableDetail" id="sockDetail"></div>' +
       '</div>',
       '<button class="smallBtn" id="sockNew">+ New socketable</button>');
+    document.getElementById('sockKindFilter').addEventListener('change', function(event){
+      kindFilter = event.target.value;
+      renderList();
+    });
     document.getElementById('sockNew').addEventListener('click', function(){
-      defs.push({ id: uniqueSocketableId('new_socketable'), kind: SOCKETABLE_KINDS[0] || 'subroutine', name: 'New Socketable', icon: '',
+      defs.push({ id: uniqueSocketableId('new_socketable'), kind: kindFilter || SOCKETABLE_KINDS[0] || 'subroutine', name: 'New Socketable', icon: '',
         rarity: '10', unique: '', unlock: '', description: '', prefixes: [{ effect: EFFECT_NAMES_SORTED[0], min: '1', max: '2', weight: '' }],
         suffixes: [{ effect: EFFECT_NAMES_SORTED[1], min: '1', max: '2', weight: '' }], cells: [] });
       selectedIndex = defs.length - 1;
@@ -3937,16 +3945,32 @@ function openSocketableEditorModal(){
     return id;
   }
 
+  function renderKindFilter(){
+    var filterSelect = document.getElementById('sockKindFilter');
+    var kinds = SOCKETABLE_KINDS.slice();
+    defs.forEach(function(def){ if (kinds.indexOf(def.kind) === -1) kinds.push(def.kind); });
+    if (kindFilter && kinds.indexOf(kindFilter) === -1) kindFilter = '';
+    function countOf(kind){ return defs.filter(function(def){ return def.kind === kind; }).length; }
+    filterSelect.innerHTML = '<option value="">All socket types (' + defs.length + ')</option>' + kinds.map(function(kind){
+      return '<option value="' + escapeHtml(kind) + '"' + (kind === kindFilter ? ' selected' : '') + '>' + escapeHtml(kind) + ' (' + countOf(kind) + ')</option>';
+    }).join('');
+  }
+
   function renderList(){
+    renderKindFilter();
     var list = document.getElementById('sockList');
-    list.innerHTML = defs.map(function(def, i){
+    var shown = defs.map(function(def, i){ return { def: def, index: i }; }).filter(function(entry){
+      return !kindFilter || entry.def.kind === kindFilter;
+    });
+    list.innerHTML = shown.map(function(entry){
+      var def = entry.def, i = entry.index;
       return '<div class="socketableListItem' + (i === selectedIndex ? ' selected' : '') + '" data-sock-index="' + i + '">' +
         '<img src="' + escapeHtml(def.icon || 'graphics/icons/cargo/chip1.png') + '" alt="">' +
         '<div><div class="socketableName">' + escapeHtml(def.name || def.id) + '</div>' +
         '<div class="socketableMeta">' + escapeHtml(def.kind) + ' - ' + def.prefixes.length + ' prefixes, ' + def.suffixes.length +
           ' suffixes</div></div>' +
       '</div>';
-    }).join('') || '<div class="hint">No socketables yet.</div>';
+    }).join('') || '<div class="hint">' + (kindFilter && defs.length ? 'No socketables of this type.' : 'No socketables yet.') + '</div>';
     list.querySelectorAll('[data-sock-index]').forEach(function(el){
       el.addEventListener('click', function(){
         selectedIndex = parseInt(el.dataset.sockIndex, 10);
