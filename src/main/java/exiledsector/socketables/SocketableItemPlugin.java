@@ -15,18 +15,18 @@ public class SocketableItemPlugin extends BaseSpecialItemPlugin {
 
     private static final SpriteCache SPRITES = new SpriteCache(SocketableItemPlugin.class);
 
-    private Socketable preview;
+    private Socketable previewSocketable;
 
     @Override
     public void init(CargoStackAPI stack) {
         super.init(stack);
-        SocketableItemData item = stack == null ? null : SocketableItemData.of(stack.getSpecialDataIfSpecial());
-        preview = item == null ? null : item.preview();
+        SocketableItemData itemData = stack == null ? null : SocketableItemData.of(stack.getSpecialDataIfSpecial());
+        previewSocketable = itemData == null ? null : itemData.preview();
     }
 
     @Override
     public String getName() {
-        return I18n.forGameText(() -> preview == null ? Translation.text("socketable.unknown") : preview.name());
+        return I18n.forGameText(() -> previewSocketable == null ? Translation.text("socketable.unknown") : previewSocketable.name());
     }
 
     @Override
@@ -41,13 +41,13 @@ public class SocketableItemPlugin extends BaseSpecialItemPlugin {
 
     @Override
     public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, CargoTransferHandlerAPI transferHandler, Object stackSource) {
-        SocketableTooltip.write(tooltip, preview, () -> List.of(Translation.styled("socketable.tooltip.storage")), expanded);
+        SocketableTooltip.write(tooltip, previewSocketable, () -> List.of(Translation.styled("socketable.tooltip.storage")), expanded);
         addCostLabel(tooltip, SocketableTooltip.PAD, transferHandler, stackSource);
     }
 
     @Override
     public void render(float x, float y, float w, float h, float alphaMult, float glowMult, SpecialItemRendererAPI renderer) {
-        SpriteAPI sprite = SPRITES.sprite(preview == null ? SocketableDefinition.FALLBACK_ICON : preview.iconPath());
+        SpriteAPI sprite = SPRITES.sprite(previewSocketable == null ? SocketableDefinition.FALLBACK_ICON : previewSocketable.iconPath());
         if (sprite == null) {
             return;
         }

@@ -135,7 +135,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         hyperspaceMode.reopenStatsWhenBack();
         hideStatsForWorkbench();
         statPanel.advance(amount);
-        ordnancePointsBar.advance(amount, canvasPosition, budget.used, budget.total, mouseX, mouseY, pointerLive);
+        ordnancePointsBar.advance(amount, canvasPosition, budget.usedOp, budget.totalOp, mouseX, mouseY, pointerLive);
         levelBar.advance(amount, canvasPosition, mouseX, mouseY, pointerLive);
         float dimStep = amount / WORKBENCH_DIM_SECONDS;
         workbenchDimProgress = Math.max(0f, Math.min(1f, workbenchDimProgress + (socketPlacement.isWorkbenchOpen() ? dimStep : -dimStep)));

@@ -43,15 +43,15 @@ public class TechMiningSocketableListener implements EconomyTickListener {
             if (techMining == null || !techMining.isFunctional()) {
                 continue;
             }
-            MemoryAPI memory = market.getMemoryWithoutUpdate();
-            int months = monthsMined(memory, techMining, decay);
-            Random random = new Random((sector.getSeedString() + "|" + market.getId() + "|" + months).hashCode());
-            String site = months == 0 ? SocketableDrops.TECH_MINING_FIRST_FIND : SocketableDrops.TECH_MINING_MONTHLY;
-            float chanceMult = months == 0 ? 1f : (float) Math.pow(decay, months - 1);
-            List<SocketableItemData> items = SocketableDrops.roll(site, random, chanceMult);
-            Map<String, Integer> materials = SocketableDrops.rollMaterials(site, random, chanceMult);
-            memory.set(MONTHS_KEY, months + 1);
-            deliver(market, items, materials);
+            MemoryAPI marketMemory = market.getMemoryWithoutUpdate();
+            int minedMonths = monthsMined(marketMemory, techMining, decay);
+            Random random = new Random((sector.getSeedString() + "|" + market.getId() + "|" + minedMonths).hashCode());
+            String dropSite = minedMonths == 0 ? SocketableDrops.TECH_MINING_FIRST_FIND : SocketableDrops.TECH_MINING_MONTHLY;
+            float chanceMult = minedMonths == 0 ? 1f : (float) Math.pow(decay, minedMonths - 1);
+            List<SocketableItemData> foundItems = SocketableDrops.roll(dropSite, random, chanceMult);
+            Map<String, Integer> foundMaterials = SocketableDrops.rollMaterials(dropSite, random, chanceMult);
+            marketMemory.set(MONTHS_KEY, minedMonths + 1);
+            deliver(market, foundItems, foundMaterials);
         }
     }
 
@@ -59,56 +59,56 @@ public class TechMiningSocketableListener implements EconomyTickListener {
         if (memory.contains(MONTHS_KEY)) {
             return memory.getInt(MONTHS_KEY);
         }
-        if (techMining instanceof TechMining vanilla && decay > 0f && decay < 1f) {
-            float mult = vanilla.getTechMiningMult();
-            if (mult > 0f && mult < 1f) {
-                int vanillaFinds = Math.round((float) (Math.log(mult) / Math.log(decay)));
+        if (techMining instanceof TechMining vanillaTechMining && decay > 0f && decay < 1f) {
+            float vanillaMult = vanillaTechMining.getTechMiningMult();
+            if (vanillaMult > 0f && vanillaMult < 1f) {
+                int vanillaFinds = Math.round((float) (Math.log(vanillaMult) / Math.log(decay)));
                 return Math.max(0, vanillaFinds - 1);
             }
         }
         return 0;
     }
 
-    private static void deliver(MarketAPI source, List<SocketableItemData> items, Map<String, Integer> materials) {
-        if (items.isEmpty() && materials.isEmpty()) {
+    private static void deliver(MarketAPI minedMarket, List<SocketableItemData> foundItems, Map<String, Integer> foundMaterials) {
+        if (foundItems.isEmpty() && foundMaterials.isEmpty()) {
             return;
         }
-        MarketAPI destination = Global.getSector().getPlayerFaction().getProduction().getGatheringPoint();
-        CargoAPI storage = destination == null ? null : Misc.getStorageCargo(destination);
-        if (storage == null) {
-            destination = source;
-            storage = Misc.getStorageCargo(source);
+        MarketAPI storageMarket = Global.getSector().getPlayerFaction().getProduction().getGatheringPoint();
+        CargoAPI storageCargo = storageMarket == null ? null : Misc.getStorageCargo(storageMarket);
+        if (storageCargo == null) {
+            storageMarket = minedMarket;
+            storageCargo = Misc.getStorageCargo(minedMarket);
         }
-        if (storage == null) {
-            destination = null;
-            storage = Global.getSector().getPlayerFleet().getCargo();
+        if (storageCargo == null) {
+            storageMarket = null;
+            storageCargo = Global.getSector().getPlayerFleet().getCargo();
         }
-        for (SocketableItemData item : items) {
-            storage.addSpecial(item.toSpecialItem(), 1f);
+        for (SocketableItemData item : foundItems) {
+            storageCargo.addSpecial(item.toSpecialItem(), 1f);
             Socketable preview = item.preview();
             if (preview != null) {
-                announce(source, destination, preview::name);
+                announce(minedMarket, storageMarket, preview::name);
             }
         }
-        for (Map.Entry<String, Integer> material : materials.entrySet()) {
-            storage.addCommodity(material.getKey(), material.getValue());
-            CommoditySpecAPI spec = Global.getSettings().getCommoditySpec(material.getKey());
-            String commodityName = spec == null ? material.getKey() : spec.getName();
-            announce(source, destination, () -> Translation.msg("socketable.techMining.material").arg("count", material.getValue())
+        for (Map.Entry<String, Integer> material : foundMaterials.entrySet()) {
+            storageCargo.addCommodity(material.getKey(), material.getValue());
+            CommoditySpecAPI commoditySpec = Global.getSettings().getCommoditySpec(material.getKey());
+            String commodityName = commoditySpec == null ? material.getKey() : commoditySpec.getName();
+            announce(minedMarket, storageMarket, () -> Translation.msg("socketable.techMining.material").arg("count", material.getValue())
                     .arg("name", commodityName).text());
         }
     }
 
-    private static void announce(MarketAPI source, MarketAPI storedAt, Supplier<String> name) {
+    private static void announce(MarketAPI minedMarket, MarketAPI storedAt, Supplier<String> itemName) {
         if (Global.getSector().getCampaignUI() == null) {
             return;
         }
-        String message = I18n.forGameText(() -> {
-            String where = storedAt == null ? Translation.text("socketable.techMining.cargo")
+        String foundMessage = I18n.forGameText(() -> {
+            String storageText = storedAt == null ? Translation.text("socketable.techMining.cargo")
                     : Translation.msg("socketable.techMining.storage").arg("market", storedAt.getName()).text();
-            return Translation.msg("socketable.techMining.found").arg("colony", source.getName()).arg("name", name.get())
-                    .arg("destination", where).text();
+            return Translation.msg("socketable.techMining.found").arg("colony", minedMarket.getName()).arg("name", itemName.get())
+                    .arg("destination", storageText).text();
         });
-        Global.getSector().getCampaignUI().addMessage(message, Misc.getPositiveHighlightColor());
+        Global.getSector().getCampaignUI().addMessage(foundMessage, Misc.getPositiveHighlightColor());
     }
 }

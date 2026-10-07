@@ -37,15 +37,15 @@ public final class NpcLevelTable {
     }
 
     public static NodeRange range(int playerLevel) {
-        int level = clampLevel(playerLevel);
-        int first = setting(minNodesFieldId(level), defaultMinNodes(level));
-        int second = setting(maxNodesFieldId(level), defaultMaxNodes(level));
-        return new NodeRange(Math.min(first, second), Math.max(first, second));
+        int clampedLevel = clampLevel(playerLevel);
+        int configuredMin = setting(minNodesFieldId(clampedLevel), defaultMinNodes(clampedLevel));
+        int configuredMax = setting(maxNodesFieldId(clampedLevel), defaultMaxNodes(clampedLevel));
+        return new NodeRange(Math.min(configuredMin, configuredMax), Math.max(configuredMin, configuredMax));
     }
 
     public static int roll(int playerLevel, Random random) {
-        NodeRange range = range(playerLevel);
-        return range.min() + random.nextInt(range.max() - range.min() + 1);
+        NodeRange nodeRange = range(playerLevel);
+        return nodeRange.min() + random.nextInt(nodeRange.max() - nodeRange.min() + 1);
     }
 
     private static int clampLevel(int playerLevel) {
@@ -53,7 +53,7 @@ public final class NpcLevelTable {
     }
 
     private static int setting(String fieldId, int defaultValue) {
-        int nodes = ModSettings.intOr(fieldId, defaultValue);
-        return Math.max(MIN_NODES, Math.min(MAX_NODES, nodes));
+        int nodeCount = ModSettings.intOr(fieldId, defaultValue);
+        return Math.max(MIN_NODES, Math.min(MAX_NODES, nodeCount));
     }
 }

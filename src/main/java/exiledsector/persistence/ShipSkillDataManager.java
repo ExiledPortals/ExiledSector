@@ -42,8 +42,8 @@ public class ShipSkillDataManager {
     }
 
     public static boolean hasProgress(String shipId) {
-        ShipSkillData data = find(shipId);
-        return data != null && !data.isBlank();
+        ShipSkillData shipData = find(shipId);
+        return shipData != null && !shipData.isBlank();
     }
 
     public static void remove(String shipId) {
@@ -54,38 +54,38 @@ public class ShipSkillDataManager {
         getStore().values().removeIf(ShipSkillData::isBlank);
     }
 
-    public static void replaceRemovedNodes(Map<String, SkillNode> tree, Map<String, String> replacements) {
+    public static void replaceRemovedNodes(Map<String, SkillNode> nodesById, Map<String, String> replacements) {
         replacements.forEach((oldId, newId) -> {
-            if (!tree.containsKey(oldId) && tree.containsKey(newId)) {
-                getStore().values().forEach(data -> data.replaceNode(oldId, newId));
+            if (!nodesById.containsKey(oldId) && nodesById.containsKey(newId)) {
+                getStore().values().forEach(shipData -> shipData.replaceNode(oldId, newId));
             }
         });
     }
 
-    public static void forgetUnknownNodes(Map<String, SkillNode> tree, Map<String, SkillType> types,
-                                          Function<String, SkillNode> declaredNodes, Predicate<String> owned, Consumer<SkillItemCost> refund) {
+    public static void forgetUnknownNodes(Map<String, SkillNode> nodesById, Map<String, SkillType> typesById,
+                                          Function<String, SkillNode> declaredNodes, Predicate<String> isOwnedShip, Consumer<SkillItemCost> refund) {
         Logger logger = Logger.getLogger(ShipSkillDataManager.class);
         for (Map.Entry<String, ShipSkillData> entry : getStore().entrySet()) {
-            ShipSkillData data = entry.getValue();
-            List<String> forgotten = data.forgetUnknownNodes(tree, types);
-            for (String nodeId : forgotten) {
+            ShipSkillData shipData = entry.getValue();
+            List<String> forgottenNodeIds = shipData.forgetUnknownNodes(nodesById, typesById);
+            for (String nodeId : forgottenNodeIds) {
                 SkillItemCost itemCost = chargedItemCost(declaredNodes.apply(nodeId));
-                if (itemCost != null && owned.test(entry.getKey())) {
+                if (itemCost != null && isOwnedShip.test(entry.getKey())) {
                     refund.accept(itemCost);
                 }
             }
-            if (data.hasLostStartingRoot(tree)) {
-                List<String> released = data.resetAllocations();
-                for (String nodeId : released) {
-                    SkillNode node = tree.get(nodeId);
-                    if (node != null && node.getType().getItemCost() != null && owned.test(entry.getKey())) {
+            if (shipData.hasLostStartingRoot(nodesById)) {
+                List<String> releasedNodeIds = shipData.resetAllocations();
+                for (String nodeId : releasedNodeIds) {
+                    SkillNode node = nodesById.get(nodeId);
+                    if (node != null && node.getType().getItemCost() != null && isOwnedShip.test(entry.getKey())) {
                         refund.accept(node.getType().getItemCost());
                     }
                 }
                 logger.info("[ExiledSector] Reset the skill tree of ship " + entry.getKey()
-                        + " because its starting root is no longer in the tree; released " + released + ", removed " + forgotten);
-            } else if (!forgotten.isEmpty()) {
-                logger.info("[ExiledSector] Removed nodes that are no longer in the skill tree or whose chosen option is gone from ship " + entry.getKey() + ": " + forgotten);
+                        + " because its starting root is no longer in the tree; released " + releasedNodeIds + ", removed " + forgottenNodeIds);
+            } else if (!forgottenNodeIds.isEmpty()) {
+                logger.info("[ExiledSector] Removed nodes that are no longer in the skill tree or whose chosen option is gone from ship " + entry.getKey() + ": " + forgottenNodeIds);
             }
         }
     }
@@ -94,7 +94,7 @@ public class ShipSkillDataManager {
         return node == null ? null : node.getType().getItemCost();
     }
 
-    public static void put(String shipId, ShipSkillData data) {
-        getStore().put(shipId, data);
+    public static void put(String shipId, ShipSkillData shipData) {
+        getStore().put(shipId, shipData);
     }
 }

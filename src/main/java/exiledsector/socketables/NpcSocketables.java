@@ -26,24 +26,24 @@ public final class NpcSocketables {
         return SocketableCodec.npc(definitionId, seed);
     }
 
-    public static String id(SocketableItemData item) {
-        return SocketableCodec.npc(item);
+    public static String id(SocketableItemData itemData) {
+        return SocketableCodec.npc(itemData);
     }
 
-    public static boolean isNpcId(String id) {
-        return SocketableCodec.isNpc(id);
+    public static boolean isNpcId(String socketableId) {
+        return SocketableCodec.isNpc(socketableId);
     }
 
-    public static SocketableItemData item(String id) {
-        return isNpcId(id) ? SocketableCodec.decode(id) : null;
+    public static SocketableItemData item(String socketableId) {
+        return isNpcId(socketableId) ? SocketableCodec.decode(socketableId) : null;
     }
 
-    static Socketable resolve(String id) {
-        SocketableItemData item = item(id);
-        if (item == null || item.definition() == null) {
+    static Socketable resolve(String socketableId) {
+        SocketableItemData itemData = item(socketableId);
+        if (itemData == null || itemData.definition() == null) {
             return null;
         }
-        return PREVIEWS.computeIfAbsent(id, item::create);
+        return PREVIEWS.computeIfAbsent(socketableId, itemData::create);
     }
 
     public static float firstChance(int playerLevel) {
@@ -55,68 +55,68 @@ public final class NpcSocketables {
     }
 
     public static int rollCount(int playerLevel, Random random) {
-        int count = random.nextFloat() < firstChance(playerLevel) ? 1 : 0;
+        int socketableCount = random.nextFloat() < firstChance(playerLevel) ? 1 : 0;
         if (random.nextFloat() < secondChance(playerLevel)) {
-            count++;
+            socketableCount++;
         }
-        return count;
+        return socketableCount;
     }
 
     public static SocketableDefinition pickDefinition(Random random, Predicate<SocketableDefinition> uniqueAllowed) {
         if (random.nextFloat() < UNIQUE_SHARE) {
-            SocketableDefinition unique = SocketableDrops.pickUnique(random, uniqueAllowed);
-            if (unique != null) {
-                return unique;
+            SocketableDefinition uniqueDefinition = SocketableDrops.pickUnique(random, uniqueAllowed);
+            if (uniqueDefinition != null) {
+                return uniqueDefinition;
             }
         }
         return SocketableDrops.pickBasic(random);
     }
 
-    public static List<Socketable> uniquesCarriedBy(ShipSkillData data) {
-        List<Socketable> uniques = new ArrayList<>();
-        for (String id : data == null ? List.<String>of() : data.getSocketedItems().values()) {
-            SocketableItemData item = item(id);
-            if (item != null && item.definition() != null && item.definition().unique()) {
-                Socketable socketable = resolve(id);
+    public static List<Socketable> uniquesCarriedBy(ShipSkillData shipData) {
+        List<Socketable> carriedUniques = new ArrayList<>();
+        for (String socketableId : shipData == null ? List.<String>of() : shipData.getSocketedItems().values()) {
+            SocketableItemData itemData = item(socketableId);
+            if (itemData != null && itemData.definition() != null && itemData.definition().unique()) {
+                Socketable socketable = resolve(socketableId);
                 if (socketable != null) {
-                    uniques.add(socketable);
+                    carriedUniques.add(socketable);
                 }
             }
         }
-        return uniques;
+        return carriedUniques;
     }
 
-    public static List<SocketableItemData> carriedBy(ShipSkillData data) {
-        List<SocketableItemData> items = new ArrayList<>();
-        if (data == null) {
-            return items;
+    public static List<SocketableItemData> carriedBy(ShipSkillData shipData) {
+        List<SocketableItemData> carriedItems = new ArrayList<>();
+        if (shipData == null) {
+            return carriedItems;
         }
-        for (String id : data.getSocketedItems().values()) {
-            SocketableItemData item = item(id);
-            if (item != null) {
-                items.add(item);
+        for (String socketableId : shipData.getSocketedItems().values()) {
+            SocketableItemData itemData = item(socketableId);
+            if (itemData != null) {
+                carriedItems.add(itemData);
             }
         }
-        return items;
+        return carriedItems;
     }
 
-    public static void claimForPlayer(ShipSkillData data) {
-        for (Map.Entry<String, String> socketed : new ArrayList<>(data.getSocketedItems().entrySet())) {
-            SocketableItemData item = item(socketed.getValue());
-            if (item == null) {
+    public static void claimForPlayer(ShipSkillData shipData) {
+        for (Map.Entry<String, String> socketedEntry : new ArrayList<>(shipData.getSocketedItems().entrySet())) {
+            SocketableItemData itemData = item(socketedEntry.getValue());
+            if (itemData == null) {
                 continue;
             }
-            data.unsocketItem(socketed.getKey());
-            Socketable owned = SocketableStore.get().add(item);
-            if (owned != null) {
-                data.socketItem(socketed.getKey(), owned.id());
+            shipData.unsocketItem(socketedEntry.getKey());
+            Socketable ownedSocketable = SocketableStore.get().add(itemData);
+            if (ownedSocketable != null) {
+                shipData.socketItem(socketedEntry.getKey(), ownedSocketable.id());
             }
         }
     }
 
-    public static void storeForPlayer(ShipSkillData data) {
-        for (SocketableItemData item : carriedBy(data)) {
-            SocketableStore.get().add(item);
+    public static void storeForPlayer(ShipSkillData shipData) {
+        for (SocketableItemData itemData : carriedBy(shipData)) {
+            SocketableStore.get().add(itemData);
         }
     }
 

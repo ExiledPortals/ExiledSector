@@ -22,8 +22,8 @@ public final class LostSectorCompat {
 
     public static boolean isModEnabled() {
         SettingsAPI settings = Global.getSettings();
-        ModManagerAPI mods = settings == null ? null : settings.getModManager();
-        return mods != null && MOD_IDS.stream().anyMatch(mods::isModEnabled);
+        ModManagerAPI modManager = settings == null ? null : settings.getModManager();
+        return modManager != null && MOD_IDS.stream().anyMatch(modManager::isModEnabled);
     }
 
     public static boolean hasAugmentedSystems(ShipVariantAPI variant) {

@@ -32,11 +32,11 @@ public final class CompatChecks {
 
     public static void logAtStartup() {
         SettingsAPI settings = Global.getSettings();
-        ModManagerAPI mods = settings == null ? null : settings.getModManager();
-        if (mods == null) return;
+        ModManagerAPI modManager = settings == null ? null : settings.getModManager();
+        if (modManager == null) return;
 
         for (CompatTarget target : targets()) {
-            for (Finding finding : check(target, modId -> mods.isModEnabled(modId) ? versionOf(mods, modId) : null)) {
+            for (Finding finding : check(target, modId -> modManager.isModEnabled(modId) ? versionOf(modManager, modId) : null)) {
                 if (finding.level() == Level.WARN) {
                     LOG.warn(finding.message());
                 } else {
@@ -47,26 +47,26 @@ public final class CompatChecks {
     }
 
     static List<Finding> check(CompatTarget target, Function<String, String> installedVersion) {
-        String version = null;
+        String installedModVersion = null;
         for (String modId : target.modIds()) {
-            version = installedVersion.apply(modId);
-            if (version != null) break;
+            installedModVersion = installedVersion.apply(modId);
+            if (installedModVersion != null) break;
         }
-        if (version == null) {
-            return List.of(new Finding(Level.INFO, PREFIX + target.name() + " isn't installed, so its compatibility code stays idle."));
+        if (installedModVersion == null) {
+            return List.of(new Finding(Level.INFO, PREFIX + target.displayName() + " isn't installed, so its compatibility code stays idle."));
         }
         List<Finding> findings = new ArrayList<>();
-        if (!target.testedVersions().contains(version)) {
-            findings.add(new Finding(Level.WARN, PREFIX + target.name() + " " + version + " is installed, but Exiled Sector's "
+        if (!target.testedVersions().contains(installedModVersion)) {
+            findings.add(new Finding(Level.WARN, PREFIX + target.displayName() + " " + installedModVersion + " is installed, but Exiled Sector's "
                     + "compatibility was last checked against " + String.join(" and ", target.testedVersions())
-                    + ". If " + target.name() + " features stop working with Exiled Sector, start here."));
+                    + ". If " + target.displayName() + " features stop working with Exiled Sector, start here."));
         }
-        for (String missing : missingFeatures(target)) {
-            findings.add(new Finding(Level.WARN, PREFIX + target.name() + " " + version + " no longer provides " + missing
+        for (String missingFeature : missingFeatures(target)) {
+            findings.add(new Finding(Level.WARN, PREFIX + target.displayName() + " " + installedModVersion + " no longer provides " + missingFeature
                     + ", so the compatibility that relies on it won't work."));
         }
         if (findings.isEmpty()) {
-            findings.add(new Finding(Level.INFO, PREFIX + target.name() + " " + version + " matches the version Exiled Sector "
+            findings.add(new Finding(Level.INFO, PREFIX + target.displayName() + " " + installedModVersion + " matches the version Exiled Sector "
                     + "was tested against, and everything Exiled Sector uses from it is present."));
         }
         return findings;
@@ -82,9 +82,9 @@ public final class CompatChecks {
         }
     }
 
-    private static String versionOf(ModManagerAPI mods, String modId) {
-        ModSpecAPI spec = mods.getModSpec(modId);
-        String version = spec == null ? null : spec.getVersion();
-        return version == null || version.isBlank() ? UNKNOWN_VERSION : version;
+    private static String versionOf(ModManagerAPI modManager, String modId) {
+        ModSpecAPI modSpec = modManager.getModSpec(modId);
+        String modVersion = modSpec == null ? null : modSpec.getVersion();
+        return modVersion == null || modVersion.isBlank() ? UNKNOWN_VERSION : modVersion;
     }
 }

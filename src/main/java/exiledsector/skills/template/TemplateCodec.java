@@ -17,63 +17,63 @@ public final class TemplateCodec {
     }
 
     public static String encode(SkillTreeTemplate template) {
-        JSONArray steps = new JSONArray();
+        JSONArray encodedSteps = new JSONArray();
         for (TemplateStep step : template.steps()) {
-            steps.put(step.optionTypeId() == null ? step.nodeId() : step.nodeId() + OPTION_SEPARATOR + step.optionTypeId());
+            encodedSteps.put(step.optionTypeId() == null ? step.nodeId() : step.nodeId() + OPTION_SEPARATOR + step.optionTypeId());
         }
         try {
-            JSONObject json = new JSONObject();
-            json.put("v", VERSION);
-            json.put("id", template.id());
-            json.put("name", template.name());
-            json.put("root", template.rootNodeId());
+            JSONObject templateJson = new JSONObject();
+            templateJson.put("v", VERSION);
+            templateJson.put("id", template.id());
+            templateJson.put("name", template.name());
+            templateJson.put("root", template.rootNodeId());
             if (template.hullSize() != null) {
-                json.put("hull", template.hullSize().name());
+                templateJson.put("hull", template.hullSize().name());
             }
-            json.put("steps", steps);
-            return json.toString();
+            templateJson.put("steps", encodedSteps);
+            return templateJson.toString();
         } catch (JSONException e) {
             throw new IllegalArgumentException("Template " + template.id() + " could not be encoded", e);
         }
     }
 
-    public static SkillTreeTemplate decode(String text) {
-        if (text == null) {
+    public static SkillTreeTemplate decode(String encodedTemplate) {
+        if (encodedTemplate == null) {
             return null;
         }
-        JSONObject json;
+        JSONObject templateJson;
         try {
-            json = new JSONObject(text);
+            templateJson = new JSONObject(encodedTemplate);
         } catch (JSONException e) {
             return null;
         }
-        String id = json.optString("id", null);
-        String name = json.optString("name", null);
-        String root = json.optString("root", null);
-        if (isBlank(id) || isBlank(name) || isBlank(root)) {
+        String templateId = templateJson.optString("id", null);
+        String templateName = templateJson.optString("name", null);
+        String rootNodeId = templateJson.optString("root", null);
+        if (isBlank(templateId) || isBlank(templateName) || isBlank(rootNodeId)) {
             return null;
         }
-        return new SkillTreeTemplate(id, name, root, parseHullSize(json.optString("hull", null)), parseSteps(json.optJSONArray("steps")));
+        return new SkillTreeTemplate(templateId, templateName, rootNodeId, parseHullSize(templateJson.optString("hull", null)), parseSteps(templateJson.optJSONArray("steps")));
     }
 
-    private static HullSize parseHullSize(String name) {
-        if (name == null) {
+    private static HullSize parseHullSize(String hullSizeName) {
+        if (hullSizeName == null) {
             return null;
         }
         try {
-            return HullSize.valueOf(name);
+            return HullSize.valueOf(hullSizeName);
         } catch (IllegalArgumentException e) {
             return null;
         }
     }
 
-    private static List<TemplateStep> parseSteps(JSONArray array) {
+    private static List<TemplateStep> parseSteps(JSONArray stepsArray) {
         List<TemplateStep> steps = new ArrayList<>();
-        if (array == null) {
+        if (stepsArray == null) {
             return steps;
         }
-        for (int i = 0; i < array.length(); i++) {
-            String entry = array.optString(i, "").trim();
+        for (int i = 0; i < stepsArray.length(); i++) {
+            String entry = stepsArray.optString(i, "").trim();
             if (entry.isEmpty()) {
                 continue;
             }
@@ -81,8 +81,8 @@ public final class TemplateCodec {
             if (separator < 0) {
                 steps.add(new TemplateStep(entry, null));
             } else if (separator > 0) {
-                String option = entry.substring(separator + 1);
-                steps.add(new TemplateStep(entry.substring(0, separator), option.isEmpty() ? null : option));
+                String optionTypeId = entry.substring(separator + 1);
+                steps.add(new TemplateStep(entry.substring(0, separator), optionTypeId.isEmpty() ? null : optionTypeId));
             }
         }
         return steps;

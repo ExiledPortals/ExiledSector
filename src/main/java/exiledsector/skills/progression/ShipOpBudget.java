@@ -7,19 +7,19 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 
 public final class ShipOpBudget {
 
-    public final int total;
-    public final int used;
+    public final int totalOp;
+    public final int usedOp;
 
-    private ShipOpBudget(int total, int used) {
-        this.total = total;
-        this.used = used;
+    private ShipOpBudget(int totalOp, int usedOp) {
+        this.totalOp = totalOp;
+        this.usedOp = usedOp;
     }
 
     public static ShipOpBudget of(FleetMemberAPI member, ShipVariantAPI variant) {
         MutableCharacterStatsAPI commanderStats = commanderStats(member);
-        int total = member.getHullSpec().getOrdnancePoints(commanderStats);
-        int used = variant.computeOPCost(commanderStats);
-        return new ShipOpBudget(total, used);
+        int totalOp = member.getHullSpec().getOrdnancePoints(commanderStats);
+        int usedOp = variant.computeOPCost(commanderStats);
+        return new ShipOpBudget(totalOp, usedOp);
     }
 
     private static MutableCharacterStatsAPI commanderStats(FleetMemberAPI member) {

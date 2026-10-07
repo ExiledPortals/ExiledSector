@@ -104,9 +104,9 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         boolean gameRendersCjk = LanguageSetting.gameRendersCjk(jvmLocale);
         I18n.load(LanguageSetting.resolve(LanguageSetting.AUTO, jvmLocale, gameRendersCjk));
         ExiledSectorSettings.registerLanguage();
-        Languages chosen = LanguageSetting.resolve(LanguageSetting.selected(), jvmLocale, gameRendersCjk);
-        if (!chosen.equals(I18n.languages())) {
-            I18n.load(chosen);
+        Languages chosenLanguages = LanguageSetting.resolve(LanguageSetting.selected(), jvmLocale, gameRendersCjk);
+        if (!chosenLanguages.equals(I18n.languages())) {
+            I18n.load(chosenLanguages);
         }
     }
 
@@ -121,9 +121,9 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
     }
 
     private static void localiseCommodity(String commodityId) {
-        CommoditySpecAPI spec = Global.getSettings().getCommoditySpec(commodityId);
-        if (spec != null) {
-            spec.setName(Translation.data("commodity." + commodityId + ".name", spec.getName()));
+        CommoditySpecAPI commoditySpec = Global.getSettings().getCommoditySpec(commodityId);
+        if (commoditySpec != null) {
+            commoditySpec.setName(Translation.data("commodity." + commodityId + ".name", commoditySpec.getName()));
         }
         Description description = Global.getSettings().getDescription(commodityId, Description.Type.RESOURCE);
         if (description != null) {
@@ -132,12 +132,12 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
     }
 
     private static void localise(String hullModId) {
-        HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
-        if (spec == null) {
+        HullModSpecAPI hullModSpec = Global.getSettings().getHullModSpec(hullModId);
+        if (hullModSpec == null) {
             return;
         }
-        spec.setDisplayName(Translation.data("hullmod." + hullModId + ".name", spec.getDisplayName()));
-        spec.setDescriptionFormat(Translation.data("hullmod." + hullModId + ".description", spec.getDescriptionFormat()));
+        hullModSpec.setDisplayName(Translation.data("hullmod." + hullModId + ".name", hullModSpec.getDisplayName()));
+        hullModSpec.setDescriptionFormat(Translation.data("hullmod." + hullModId + ".description", hullModSpec.getDescriptionFormat()));
     }
 
     private static void forgetUnknownNodes() {
@@ -152,14 +152,14 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
 
     private static final class OwnedShips implements Predicate<String> {
 
-        private Set<String> ids;
+        private Set<String> ownedShipIds;
 
         @Override
         public boolean test(String shipId) {
-            if (ids == null) {
-                ids = SocketCustody.ownedShipIds();
+            if (ownedShipIds == null) {
+                ownedShipIds = SocketCustody.ownedShipIds();
             }
-            return ids.contains(shipId);
+            return ownedShipIds.contains(shipId);
         }
     }
 
@@ -171,9 +171,9 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
     }
 
     @Override
-    public void configureXStream(XStream x) {
-        SocketableSaveAliases.register(x);
-        x.alias(SHIP_SKILL_DATA_ALIAS, ShipSkillData.class);
+    public void configureXStream(XStream xStream) {
+        SocketableSaveAliases.register(xStream);
+        xStream.alias(SHIP_SKILL_DATA_ALIAS, ShipSkillData.class);
     }
 
     @Override

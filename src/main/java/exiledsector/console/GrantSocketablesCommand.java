@@ -63,16 +63,16 @@ public class GrantSocketablesCommand implements BaseCommand {
             return CommandResult.ERROR;
         }
 
-        int types = 0;
+        int grantedDefinitionCount = 0;
         for (SocketableDefinition definition : SocketableDefinitions.all()) {
             for (int i = 0; i < copies; i++) {
                 playerFleet.getCargo().addSpecial(SocketableItemData.rolled(definition, random.nextLong()).toSpecialItem(), 1f);
             }
-            types++;
+            grantedDefinitionCount++;
         }
 
-        Console.showMessage("Added " + copies + (copies == 1 ? " copy" : " copies") + " of each of " + types
-                + (types == 1 ? " socketable" : " socketables") + " to your cargo.");
+        Console.showMessage("Added " + copies + (copies == 1 ? " copy" : " copies") + " of each of " + grantedDefinitionCount
+                + (grantedDefinitionCount == 1 ? " socketable" : " socketables") + " to your cargo.");
         return CommandResult.SUCCESS;
     }
 }

@@ -19,7 +19,7 @@ public final class ModCsv {
 
     @FunctionalInterface
     public interface RowHandler {
-        void accept(int index, JSONObject row) throws JSONException;
+        void accept(int rowIndex, JSONObject row) throws JSONException;
     }
 
     private ModCsv() {

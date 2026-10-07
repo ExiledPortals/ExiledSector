@@ -49,8 +49,8 @@ class ShipOpBudgetTest {
 
         ShipOpBudget budget = ShipOpBudget.of(member, variant);
 
-        assertEquals(110, budget.total);
-        assertEquals(74, budget.used);
+        assertEquals(110, budget.totalOp);
+        assertEquals(74, budget.usedOp);
     }
 
     @Test
@@ -58,14 +58,14 @@ class ShipOpBudgetTest {
         PersonAPI commander = personWith(commanderStats);
         when(member.getFleetCommander()).thenReturn(commander);
 
-        assertEquals(110, ShipOpBudget.of(member, variant).total);
+        assertEquals(110, ShipOpBudget.of(member, variant).totalOp);
     }
 
     @Test
     void aShipOutsideAnyFleetFallsBackToItsCaptain() {
         when(member.getHullSpec().getOrdnancePoints(captainStats)).thenReturn(105);
 
-        assertEquals(105, ShipOpBudget.of(member, variant).total);
+        assertEquals(105, ShipOpBudget.of(member, variant).totalOp);
     }
 
     @Test
@@ -74,7 +74,7 @@ class ShipOpBudgetTest {
 
         ShipOpBudget budget = ShipOpBudget.of(member, variant);
 
-        assertEquals(100, budget.total);
-        assertEquals(80, budget.used);
+        assertEquals(100, budget.totalOp);
+        assertEquals(80, budget.usedOp);
     }
 }

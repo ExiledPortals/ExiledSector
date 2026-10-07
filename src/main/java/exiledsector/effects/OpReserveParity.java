@@ -23,21 +23,21 @@ public final class OpReserveParity {
     }
 
     public static int reservedOp(ShipVariantAPI variant) {
-        int reserved = 0;
+        int reservedOpTotal = 0;
         for (String hullModId : reserveHullMods(variant)) {
-            HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
-            if (spec != null) {
-                reserved += spec.getCostFor(variant.getHullSize());
+            HullModSpecAPI reserveSpec = Global.getSettings().getHullModSpec(hullModId);
+            if (reserveSpec != null) {
+                reservedOpTotal += reserveSpec.getCostFor(variant.getHullSize());
             }
         }
-        return reserved;
+        return reservedOpTotal;
     }
 
     public static void warnIfOutOfSync(FleetMemberAPI member, ShipVariantAPI variant, String moment) {
         if (member == null || variant == null || SkillDataResolver.isNpcTree(variant)) return;
 
-        ShipSkillData data = ShipSkillDataManager.find(member.getId());
-        int spentOp = data == null ? 0 : data.getSpentOp(SkillNodeOpCost.perNode(member.getHullSpec()));
+        ShipSkillData shipData = ShipSkillDataManager.find(member.getId());
+        int spentOp = shipData == null ? 0 : shipData.getSpentOp(SkillNodeOpCost.perNode(member.getHullSpec()));
         warnIfOutOfSync(member, variant, spentOp, reservedOp(variant), moment);
     }
 
@@ -51,12 +51,12 @@ public final class OpReserveParity {
     }
 
     private static List<String> reserveHullMods(ShipVariantAPI variant) {
-        List<String> reserves = new ArrayList<>();
+        List<String> reserveIds = new ArrayList<>();
         for (String hullModId : variant.getHullMods()) {
             if (hullModId.startsWith(OpReserveHullMods.ID_PREFIX)) {
-                reserves.add(hullModId);
+                reserveIds.add(hullModId);
             }
         }
-        return reserves;
+        return reserveIds;
     }
 }

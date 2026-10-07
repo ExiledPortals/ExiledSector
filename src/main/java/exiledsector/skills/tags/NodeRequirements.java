@@ -24,20 +24,20 @@ public final class NodeRequirements {
         return firstUnmet(tags, profile) == null;
     }
 
-    public static String firstUnmetHullRequirement(Collection<String> tags, ShipFacts ship) {
+    public static String firstUnmetHullRequirement(Collection<String> tags, ShipFacts shipFacts) {
         for (String tag : tags) {
-            if (SkillTags.isHullRequirement(tag) && !isHullRequirementMet(tag, ship)) {
+            if (SkillTags.isHullRequirement(tag) && !isHullRequirementMet(tag, shipFacts)) {
                 return tag;
             }
         }
         return null;
     }
 
-    private static boolean isHullRequirementMet(String requirement, ShipFacts ship) {
+    private static boolean isHullRequirementMet(String requirement, ShipFacts shipFacts) {
         return switch (requirement) {
-            case "req_civilian_hull" -> ship.hasHullMod().test(HullMods.CIVGRADE);
-            case "req_non_phase_hull" -> !ship.phaseHull();
-            case "req_system_charges" -> ship.limitedSystemCharges();
+            case "req_civilian_hull" -> shipFacts.hasHullMod().test(HullMods.CIVGRADE);
+            case "req_non_phase_hull" -> !shipFacts.phaseHull();
+            case "req_system_charges" -> shipFacts.limitedSystemCharges();
             default -> false;
         };
     }

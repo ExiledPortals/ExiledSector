@@ -11,7 +11,7 @@ public class SalvageBonusListener extends BaseCampaignEventListener {
     }
 
     @Override
-    public void reportPlayerEngagement(EngagementResultAPI result) {
+    public void reportPlayerEngagement(EngagementResultAPI engagementResult) {
         FleetWideEffects.recomputeSalvageBonus();
     }
 }

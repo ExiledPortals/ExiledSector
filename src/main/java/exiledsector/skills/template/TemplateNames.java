@@ -14,21 +14,21 @@ public final class TemplateNames {
     private TemplateNames() {
     }
 
-    public static String normalise(String raw) {
-        return raw == null ? "" : raw.strip();
+    public static String normalise(String rawName) {
+        return rawName == null ? "" : rawName.strip();
     }
 
-    public static Problem validate(String raw, String rootNodeId, Collection<SkillTreeTemplate> existing) {
-        String name = normalise(raw);
-        if (name.isEmpty()) {
+    public static Problem validate(String rawName, String rootNodeId, Collection<SkillTreeTemplate> existing) {
+        String normalisedName = normalise(rawName);
+        if (normalisedName.isEmpty()) {
             return Problem.EMPTY;
         }
-        if (name.codePointCount(0, name.length()) > MAX_LENGTH) {
+        if (normalisedName.codePointCount(0, normalisedName.length()) > MAX_LENGTH) {
             return Problem.TOO_LONG;
         }
-        String folded = name.toLowerCase(Locale.ROOT);
+        String foldedName = normalisedName.toLowerCase(Locale.ROOT);
         for (SkillTreeTemplate template : existing) {
-            if (template.rootNodeId().equals(rootNodeId) && template.name().toLowerCase(Locale.ROOT).equals(folded)) {
+            if (template.rootNodeId().equals(rootNodeId) && template.name().toLowerCase(Locale.ROOT).equals(foldedName)) {
                 return Problem.DUPLICATE;
             }
         }

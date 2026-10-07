@@ -14,28 +14,28 @@ public final class SkillTypeUnlockStatus {
     private SkillTypeUnlockStatus() {
     }
 
-    public static boolean isLocked(SkillType type, ShipSkillData data) {
-        List<UnlockCondition> conditions = type.getUnlockConditions();
+    public static boolean isLocked(SkillType skillType, ShipSkillData shipData) {
+        List<UnlockCondition> conditions = skillType.getUnlockConditions();
         if (conditions.isEmpty()) return false;
 
         for (UnlockCondition condition : conditions) {
-            if (isSatisfied(condition, data)) return false;
+            if (isSatisfied(condition, shipData)) return false;
         }
         return true;
     }
 
-    public static boolean isHidden(SkillType type, ShipSkillData data) {
-        return isLocked(type, data) && !HiddenNodeDisplayConfig.showHiddenNodesByDefault();
+    public static boolean isHidden(SkillType skillType, ShipSkillData shipData) {
+        return isLocked(skillType, shipData) && !HiddenNodeDisplayConfig.showHiddenNodesByDefault();
     }
 
-    private static boolean isSatisfied(UnlockCondition condition, ShipSkillData data) {
+    private static boolean isSatisfied(UnlockCondition condition, ShipSkillData shipData) {
         if (UnlockConditionOverrides.isDisabled(condition.getType())) return true;
 
         try {
             return switch (condition.getType()) {
                 case BLUEPRINT -> isBlueprintKnown(condition);
                 case CHARACTER_STAT -> hasCharacterStat(condition);
-                case MIN_SHIP_LEVEL -> hasMinShipLevel(condition, data);
+                case MIN_SHIP_LEVEL -> hasMinShipLevel(condition, shipData);
                 case MEMORY_FLAG -> hasMemoryFlag(condition);
                 default -> false;
             };
@@ -46,11 +46,11 @@ public final class SkillTypeUnlockStatus {
     }
 
     private static boolean isBlueprintKnown(UnlockCondition condition) {
-        String id = condition.getKey();
-        if (id == null) return false;
+        String hullModId = condition.getKey();
+        if (hullModId == null) return false;
 
         CharacterDataAPI playerCharacter = Global.getSector().getCharacterData();
-        return playerCharacter != null && playerCharacter.knowsHullMod(id);
+        return playerCharacter != null && playerCharacter.knowsHullMod(hullModId);
     }
 
     private static boolean hasCharacterStat(UnlockCondition condition) {
@@ -59,17 +59,17 @@ public final class SkillTypeUnlockStatus {
 
         CharacterDataAPI playerCharacter = Global.getSector().getCharacterData();
         if (playerCharacter == null) return false;
-        PersonAPI person = playerCharacter.getPerson();
-        return person != null && person.getStats().getDynamic().getMod(statId).getFlatBonus() > 0f;
+        PersonAPI playerPerson = playerCharacter.getPerson();
+        return playerPerson != null && playerPerson.getStats().getDynamic().getMod(statId).getFlatBonus() > 0f;
     }
 
-    private static boolean hasMinShipLevel(UnlockCondition condition, ShipSkillData data) {
-        return data != null && data.getLevel() >= condition.getMinLevel();
+    private static boolean hasMinShipLevel(UnlockCondition condition, ShipSkillData shipData) {
+        return shipData != null && shipData.getLevel() >= condition.getMinLevel();
     }
 
     private static boolean hasMemoryFlag(UnlockCondition condition) {
-        String key = condition.getKey();
-        if (key == null) return false;
-        return Global.getSector().getMemoryWithoutUpdate().getBoolean(key);
+        String flagKey = condition.getKey();
+        if (flagKey == null) return false;
+        return Global.getSector().getMemoryWithoutUpdate().getBoolean(flagKey);
     }
 }

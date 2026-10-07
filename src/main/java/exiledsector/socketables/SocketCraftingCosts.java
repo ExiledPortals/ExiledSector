@@ -26,23 +26,23 @@ public final class SocketCraftingCosts {
     public static void register(JSONArray rows) throws JSONException {
         Map<String, Integer> loaded = new HashMap<>();
         ModCsv.forEach(rows, (index, row) -> {
-            String item = ModCsv.text(row, "item");
-            String cost = ModCsv.text(row, "partsCost");
-            if (item.isEmpty() || cost.isEmpty()) {
+            String itemId = ModCsv.text(row, "item");
+            String costText = ModCsv.text(row, "partsCost");
+            if (itemId.isEmpty() || costText.isEmpty()) {
                 return;
             }
             try {
-                loaded.put(item, Math.max(0, Integer.parseInt(cost)));
+                loaded.put(itemId, Math.max(0, Integer.parseInt(costText)));
             } catch (NumberFormatException e) {
-                LOG.error("Skipping the crafting cost for " + item + ": " + e.getMessage());
+                LOG.error("Skipping the crafting cost for " + itemId + ": " + e.getMessage());
             }
         });
         COSTS.set(Map.copyOf(loaded));
     }
 
-    public static int cost(String item, int fallback) {
-        Integer cost = COSTS.get().get(item);
-        return cost == null ? fallback : cost;
+    public static int cost(String itemId, int fallback) {
+        Integer configuredCost = COSTS.get().get(itemId);
+        return configuredCost == null ? fallback : configuredCost;
     }
 
     public static void clear() {

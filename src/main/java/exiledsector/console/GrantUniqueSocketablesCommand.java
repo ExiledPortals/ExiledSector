@@ -39,19 +39,19 @@ public class GrantUniqueSocketablesCommand implements BaseCommand {
             return CommandResult.ERROR;
         }
 
-        int uniques = 0;
+        int grantedUniqueCount = 0;
         for (SocketableDefinition definition : SocketableDefinitions.all()) {
             if (definition.unique()) {
                 playerFleet.getCargo().addSpecial(SocketableItemData.rolled(definition, random.nextLong()).toSpecialItem(), 1f);
-                uniques++;
+                grantedUniqueCount++;
             }
         }
-        if (uniques == 0) {
+        if (grantedUniqueCount == 0) {
             Console.showMessage("No unique socketables are defined.");
             return CommandResult.ERROR;
         }
 
-        Console.showMessage("Added one copy of each of " + uniques + (uniques == 1 ? " unique socketable" : " unique socketables")
+        Console.showMessage("Added one copy of each of " + grantedUniqueCount + (grantedUniqueCount == 1 ? " unique socketable" : " unique socketables")
                 + " to your cargo.");
         return CommandResult.SUCCESS;
     }

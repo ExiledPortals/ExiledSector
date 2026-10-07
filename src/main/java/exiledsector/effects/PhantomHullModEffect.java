@@ -25,7 +25,7 @@ import java.awt.Color;
 
 public final class PhantomHullModEffect extends BaseHullMod {
 
-    private HullModEffect original = new BaseHullMod();
+    private HullModEffect originalEffect = new BaseHullMod();
     private boolean wrapsOriginal;
     private String hullModId;
     private String installedTag;
@@ -35,12 +35,12 @@ public final class PhantomHullModEffect extends BaseHullMod {
         super.init(spec);
         hullModId = spec.getId();
         installedTag = InstalledHullMods.tag(hullModId);
-        HullModEffect created = PhantomHullMods.createOriginal(hullModId);
-        if (created != null) {
-            original = created;
+        HullModEffect createdOriginal = PhantomHullMods.createOriginal(hullModId);
+        if (createdOriginal != null) {
+            originalEffect = createdOriginal;
             wrapsOriginal = true;
         }
-        original.init(spec);
+        originalEffect.init(spec);
     }
 
     boolean wrapsOriginal() {
@@ -48,7 +48,7 @@ public final class PhantomHullModEffect extends BaseHullMod {
     }
 
     HullModEffect original() {
-        return original;
+        return originalEffect;
     }
 
     private boolean isPhantom(ShipVariantAPI variant) {
@@ -63,7 +63,7 @@ public final class PhantomHullModEffect extends BaseHullMod {
     public void applyEffectsBeforeShipCreation(HullSize hullSize, MutableShipStatsAPI stats, String id) {
         ShipVariantAPI variant = stats.getVariant();
         if (!isPhantom(variant)) {
-            original.applyEffectsBeforeShipCreation(hullSize, stats, id);
+            originalEffect.applyEffectsBeforeShipCreation(hullSize, stats, id);
         } else if (!SkillTreeHullMod.isOpCostPass(stats) && !variant.getPermaMods().contains(hullModId)) {
             variant.addPermaMod(hullModId);
         }
@@ -72,51 +72,51 @@ public final class PhantomHullModEffect extends BaseHullMod {
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship, String id) {
         if (!isPhantom(ship)) {
-            original.applyEffectsAfterShipCreation(ship, id);
+            originalEffect.applyEffectsAfterShipCreation(ship, id);
         }
     }
 
     @Override
     public void applyEffectsToFighterSpawnedByShip(ShipAPI fighter, ShipAPI ship, String id) {
         if (!isPhantom(ship)) {
-            original.applyEffectsToFighterSpawnedByShip(fighter, ship, id);
+            originalEffect.applyEffectsToFighterSpawnedByShip(fighter, ship, id);
         }
     }
 
     @Override
     public void applyEffectsAfterShipAddedToCombatEngine(ShipAPI ship, String id) {
         if (!isPhantom(ship)) {
-            original.applyEffectsAfterShipAddedToCombatEngine(ship, id);
+            originalEffect.applyEffectsAfterShipAddedToCombatEngine(ship, id);
         }
     }
 
     @Override
     public void advanceInCampaign(FleetMemberAPI member, float amount) {
         if (member == null || !isPhantom(member.getVariant())) {
-            original.advanceInCampaign(member, amount);
+            originalEffect.advanceInCampaign(member, amount);
         }
     }
 
     @Override
     public void advanceInCombat(ShipAPI ship, float amount) {
         if (!isPhantom(ship)) {
-            original.advanceInCombat(ship, amount);
+            originalEffect.advanceInCombat(ship, amount);
         }
     }
 
     @Override
     public boolean isApplicableToShip(ShipAPI ship) {
-        return isPhantom(ship) || original.isApplicableToShip(ship);
+        return isPhantom(ship) || originalEffect.isApplicableToShip(ship);
     }
 
     @Override
     public String getUnapplicableReason(ShipAPI ship) {
-        return isPhantom(ship) ? null : original.getUnapplicableReason(ship);
+        return isPhantom(ship) ? null : originalEffect.getUnapplicableReason(ship);
     }
 
     @Override
     public boolean canBeAddedOrRemovedNow(ShipAPI ship, MarketAPI marketOrNull, CoreUITradeMode mode) {
-        return !isPhantom(ship) && original.canBeAddedOrRemovedNow(ship, marketOrNull, mode);
+        return !isPhantom(ship) && originalEffect.canBeAddedOrRemovedNow(ship, marketOrNull, mode);
     }
 
     @Override
@@ -124,40 +124,40 @@ public final class PhantomHullModEffect extends BaseHullMod {
         if (isPhantom(ship)) {
             return I18n.forGameText(() -> Translation.text("hullmod.phantom.locked"));
         }
-        return original.getCanNotBeInstalledNowReason(ship, marketOrNull, mode);
+        return originalEffect.getCanNotBeInstalledNowReason(ship, marketOrNull, mode);
     }
 
     @Override
     public boolean shouldAddDescriptionToTooltip(HullSize hullSize, ShipAPI ship, boolean isForModSpec) {
-        return !isPhantom(ship) && original.shouldAddDescriptionToTooltip(hullSize, ship, isForModSpec);
+        return !isPhantom(ship) && originalEffect.shouldAddDescriptionToTooltip(hullSize, ship, isForModSpec);
     }
 
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, HullSize hullSize, ShipAPI ship, float width, boolean isForModSpec) {
         if (!isPhantom(ship)) {
-            original.addPostDescriptionSection(tooltip, hullSize, ship, width, isForModSpec);
+            originalEffect.addPostDescriptionSection(tooltip, hullSize, ship, width, isForModSpec);
             return;
         }
         String nodeName = PhantomHullMods.providingNodeName(ship, hullModId);
-        Color highlight = Global.getSettings().getColor("hColor");
+        Color highlightColor = Global.getSettings().getColor("hColor");
         I18n.forGameText(() -> {
-            StyledText text = nodeName == null
+            StyledText phantomText = nodeName == null
                     ? Translation.styled("hullmod.phantom.generic")
                     : Translation.msg("hullmod.phantom.providedBy").arg("node", nodeName).styled();
-            VanillaText.addPara(tooltip, text, 10, Misc.getTextColor(), style -> highlight);
+            VanillaText.addPara(tooltip, phantomText, 10, Misc.getTextColor(), style -> highlightColor);
         });
     }
 
     @Override
     public boolean hasSModEffectSection(HullSize hullSize, ShipAPI ship, boolean isForModSpec) {
-        return !isPhantom(ship) && original.hasSModEffectSection(hullSize, ship, isForModSpec);
+        return !isPhantom(ship) && originalEffect.hasSModEffectSection(hullSize, ship, isForModSpec);
     }
 
     @Override
     public void addSModSection(TooltipMakerAPI tooltip, HullSize hullSize, ShipAPI ship, float width, boolean isForModSpec,
                                boolean isForBuildInList) {
         if (!isPhantom(ship)) {
-            original.addSModSection(tooltip, hullSize, ship, width, isForModSpec, isForBuildInList);
+            originalEffect.addSModSection(tooltip, hullSize, ship, width, isForModSpec, isForBuildInList);
         }
     }
 
@@ -165,7 +165,7 @@ public final class PhantomHullModEffect extends BaseHullMod {
     public void addSModEffectSection(TooltipMakerAPI tooltip, HullSize hullSize, ShipAPI ship, float width, boolean isForModSpec,
                                      boolean isForBuildInList) {
         if (!isPhantom(ship)) {
-            original.addSModEffectSection(tooltip, hullSize, ship, width, isForModSpec, isForBuildInList);
+            originalEffect.addSModEffectSection(tooltip, hullSize, ship, width, isForModSpec, isForBuildInList);
         }
     }
 
@@ -173,78 +173,78 @@ public final class PhantomHullModEffect extends BaseHullMod {
     public void addRequiredItemSection(TooltipMakerAPI tooltip, FleetMemberAPI member, ShipVariantAPI currentVariant,
                                        MarketAPI dockedAt, float width, boolean isForModSpec) {
         if (!isPhantom(currentVariant)) {
-            original.addRequiredItemSection(tooltip, member, currentVariant, dockedAt, width, isForModSpec);
+            originalEffect.addRequiredItemSection(tooltip, member, currentVariant, dockedAt, width, isForModSpec);
         }
     }
 
     @Override
     public String getDescriptionParam(int index, HullSize hullSize) {
-        return original.getDescriptionParam(index, hullSize);
+        return originalEffect.getDescriptionParam(index, hullSize);
     }
 
     @Override
     public String getDescriptionParam(int index, HullSize hullSize, ShipAPI ship) {
-        return original.getDescriptionParam(index, hullSize, ship);
+        return originalEffect.getDescriptionParam(index, hullSize, ship);
     }
 
     @Override
     public String getSModDescriptionParam(int index, HullSize hullSize) {
-        return original.getSModDescriptionParam(index, hullSize);
+        return originalEffect.getSModDescriptionParam(index, hullSize);
     }
 
     @Override
     public String getSModDescriptionParam(int index, HullSize hullSize, ShipAPI ship) {
-        return original.getSModDescriptionParam(index, hullSize, ship);
+        return originalEffect.getSModDescriptionParam(index, hullSize, ship);
     }
 
     @Override
     public boolean affectsOPCosts() {
-        return original.affectsOPCosts();
+        return originalEffect.affectsOPCosts();
     }
 
     @Override
     public Color getBorderColor() {
-        return original.getBorderColor();
+        return originalEffect.getBorderColor();
     }
 
     @Override
     public Color getNameColor() {
-        return original.getNameColor();
+        return originalEffect.getNameColor();
     }
 
     @Override
     public int getDisplaySortOrder() {
-        return original.getDisplaySortOrder();
+        return originalEffect.getDisplaySortOrder();
     }
 
     @Override
     public int getDisplayCategoryIndex() {
         PhantomHullModRefitHider.requestRefresh();
-        return original.getDisplayCategoryIndex();
+        return originalEffect.getDisplayCategoryIndex();
     }
 
     @Override
     public boolean hasSModEffect() {
-        return original.hasSModEffect();
+        return originalEffect.hasSModEffect();
     }
 
     @Override
     public float getTooltipWidth() {
-        return original.getTooltipWidth();
+        return originalEffect.getTooltipWidth();
     }
 
     @Override
     public boolean isSModEffectAPenalty() {
-        return original.isSModEffectAPenalty();
+        return originalEffect.isSModEffectAPenalty();
     }
 
     @Override
     public boolean showInRefitScreenModPickerFor(ShipAPI ship) {
-        return original.showInRefitScreenModPickerFor(ship);
+        return originalEffect.showInRefitScreenModPickerFor(ship);
     }
 
     @Override
     public CargoStackAPI getRequiredItem() {
-        return original.getRequiredItem();
+        return originalEffect.getRequiredItem();
     }
 }

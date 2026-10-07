@@ -29,13 +29,13 @@ public class CombatXpListener extends BaseCampaignEventListener {
     }
 
     @Override
-    public void reportPlayerEngagement(EngagementResultAPI result) {
+    public void reportPlayerEngagement(EngagementResultAPI engagementResult) {
         CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
-        if (result == null || playerFleet == null) {
+        if (engagementResult == null || playerFleet == null) {
             return;
         }
-        float defeatedDp = enemyDeploymentPointsDefeated(result);
-        boolean lost = !result.didPlayerWin();
+        float defeatedDp = enemyDeploymentPointsDefeated(engagementResult);
+        boolean lost = !engagementResult.didPlayerWin();
         float lossMultiplier = lost ? ShipLevelConfig.xpLossMultiplier() : 1f;
         float difficultyMultiplier = ShipLevelSystem.difficultyMultiplier(BattleDifficulty.current(),
                 ShipLevelConfig.xpDifficultyStrength(), ShipLevelConfig.xpDifficultyMaxMultiplier());
@@ -49,20 +49,20 @@ public class CombatXpListener extends BaseCampaignEventListener {
                 levelUps(levelsBefore))));
     }
 
-    static float enemyDeploymentPointsDefeated(EngagementResultAPI result) {
-        EngagementResultForFleetAPI enemy = result.didPlayerWin() ? result.getLoserResult() : result.getWinnerResult();
-        if (enemy == null) {
+    static float enemyDeploymentPointsDefeated(EngagementResultAPI engagementResult) {
+        EngagementResultForFleetAPI enemyResult = engagementResult.didPlayerWin() ? engagementResult.getLoserResult() : engagementResult.getWinnerResult();
+        if (enemyResult == null) {
             return 0f;
         }
-        return deploymentPointsOf(enemy.getDestroyed()) + deploymentPointsOf(enemy.getDisabled());
+        return deploymentPointsOf(enemyResult.getDestroyed()) + deploymentPointsOf(enemyResult.getDisabled());
     }
 
     private static float deploymentPointsOf(List<FleetMemberAPI> members) {
-        float total = 0f;
+        float totalDp = 0f;
         for (FleetMemberAPI member : members) {
-            total += member.getDeploymentPointsCost();
+            totalDp += member.getDeploymentPointsCost();
         }
-        return total;
+        return totalDp;
     }
 
     private static Map<FleetMemberAPI, Integer> levelsOf(CampaignFleetAPI fleet) {
@@ -74,16 +74,16 @@ public class CombatXpListener extends BaseCampaignEventListener {
     }
 
     private static List<String> levelUps(Map<FleetMemberAPI, Integer> levelsBefore) {
-        List<String> lines = new ArrayList<>();
+        List<String> levelUpLines = new ArrayList<>();
         for (Map.Entry<FleetMemberAPI, Integer> entry : levelsBefore.entrySet()) {
-            FleetMemberAPI member = entry.getKey();
-            int level = ShipSkillDataManager.get(member.getId()).getLevel();
-            if (level > entry.getValue()) {
-                lines.add(Translation.msg("combat.xp.levelUp").arg("ship", member.getShipName())
-                        .arg("hull", member.getHullSpec().getHullNameWithDashClass()).arg("level", level).text());
+            FleetMemberAPI levelledMember = entry.getKey();
+            int newLevel = ShipSkillDataManager.get(levelledMember.getId()).getLevel();
+            if (newLevel > entry.getValue()) {
+                levelUpLines.add(Translation.msg("combat.xp.levelUp").arg("ship", levelledMember.getShipName())
+                        .arg("hull", levelledMember.getHullSpec().getHullNameWithDashClass()).arg("level", newLevel).text());
             }
         }
-        return lines;
+        return levelUpLines;
     }
 
     private static void report(CombatXpReport report) {

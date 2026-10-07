@@ -6,20 +6,20 @@ import exiledsector.skills.tags.ShipProfile;
 import java.util.function.Predicate;
 
 public record NpcBuildRequest(ShipProfile profile, String designType, String factionRegion, NpcHullMods hullMods,
-                              NpcFreedOp freedOp, int nodeCount, int socketables, Predicate<SkillType> locked) {
+                              NpcFreedOp freedOp, int nodeCount, int socketableCount, Predicate<SkillType> lockedTypes) {
 
     private static final Predicate<SkillType> NOTHING_LOCKED = type -> false;
 
     public NpcBuildRequest {
         hullMods = hullMods == null ? NpcHullMods.NONE : hullMods;
         freedOp = freedOp == null ? NpcFreedOp.NONE : freedOp;
-        socketables = Math.max(0, socketables);
-        locked = locked == null ? NOTHING_LOCKED : locked;
+        socketableCount = Math.max(0, socketableCount);
+        lockedTypes = lockedTypes == null ? NOTHING_LOCKED : lockedTypes;
     }
 
     public NpcBuildRequest(ShipProfile profile, String designType, String factionRegion, NpcHullMods hullMods, NpcFreedOp freedOp,
-                           int nodeCount, int socketables) {
-        this(profile, designType, factionRegion, hullMods, freedOp, nodeCount, socketables, null);
+                           int nodeCount, int socketableCount) {
+        this(profile, designType, factionRegion, hullMods, freedOp, nodeCount, socketableCount, null);
     }
 
     public NpcBuildRequest(ShipProfile profile, String designType, String factionRegion, NpcHullMods hullMods, NpcFreedOp freedOp,

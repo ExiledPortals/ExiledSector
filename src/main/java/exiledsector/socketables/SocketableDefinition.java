@@ -19,8 +19,8 @@ public record SocketableDefinition(String id, SocketableKind kind, String name, 
     }
 
     static SocketableDefinition parse(JSONObject row) {
-        String id = row.optString("id", "").trim();
-        if (id.isEmpty()) {
+        String definitionId = row.optString("id", "").trim();
+        if (definitionId.isEmpty()) {
             throw new IllegalArgumentException("a row has no id");
         }
         String icon = row.optString("icon", "").trim();
@@ -39,28 +39,28 @@ public record SocketableDefinition(String id, SocketableKind kind, String name, 
             }
         }
         boolean unique = "true".equalsIgnoreCase(row.optString("unique", "").trim());
-        return new SocketableDefinition(id, SocketableKind.byId(row.optString("kind", "").trim()),
-                nameOrId(row.optString("name", "").trim(), id), icon.isEmpty() ? FALLBACK_ICON : icon, rarity, unique,
+        return new SocketableDefinition(definitionId, SocketableKind.byId(row.optString("kind", "").trim()),
+                nameOrId(row.optString("name", "").trim(), definitionId), icon.isEmpty() ? FALLBACK_ICON : icon, rarity, unique,
                 row.optString("description", "").trim(), prefixes, suffixes,
                 row.optString("unlock", "").trim());
     }
 
     public List<PoolEntry> pool() {
-        List<PoolEntry> pool = new ArrayList<>(prefixes);
-        pool.addAll(suffixes);
-        return pool;
+        List<PoolEntry> combinedPool = new ArrayList<>(prefixes);
+        combinedPool.addAll(suffixes);
+        return combinedPool;
     }
 
     public PoolEntry rollRange(String effectName) {
-        PoolEntry range = null;
+        PoolEntry combinedRange = null;
         for (PoolEntry entry : pool()) {
             if (!entry.effectName().equals(effectName)) {
                 continue;
             }
-            range = range == null ? entry : new PoolEntry(effectName, Math.min(range.min(), entry.min()),
-                    Math.max(range.max(), entry.max()), range.weight());
+            combinedRange = combinedRange == null ? entry : new PoolEntry(effectName, Math.min(combinedRange.min(), entry.min()),
+                    Math.max(combinedRange.max(), entry.max()), combinedRange.weight());
         }
-        return range;
+        return combinedRange;
     }
 
     public boolean isPrefix(String effectName) {
@@ -75,38 +75,38 @@ public record SocketableDefinition(String id, SocketableKind kind, String name, 
         return name.isEmpty() ? id : name;
     }
 
-    private static List<PoolEntry> parsePool(String text) {
+    private static List<PoolEntry> parsePool(String poolText) {
         List<PoolEntry> pool = new ArrayList<>();
-        for (String entry : text.split(ENTRY_SEPARATOR)) {
+        for (String entry : poolText.split(ENTRY_SEPARATOR)) {
             String trimmed = entry.trim();
             if (trimmed.isEmpty()) {
                 continue;
             }
-            String[] fields = trimmed.split(FIELD_SEPARATOR);
-            if (fields.length < 3 || fields.length > 4) {
+            String[] entryFields = trimmed.split(FIELD_SEPARATOR);
+            if (entryFields.length < 3 || entryFields.length > 4) {
                 throw new IllegalArgumentException("entry \"" + trimmed + "\" is not EFFECT:min:max or EFFECT:min:max:weight");
             }
-            String effectName = fields[0].trim();
+            String effectName = entryFields[0].trim();
             SkillEffect.byName(effectName);
             if (pool.stream().anyMatch(existing -> existing.effectName().equals(effectName))) {
                 throw new IllegalArgumentException("" + effectName + " is listed more than once");
             }
-            float first = parseNumber(fields[1], trimmed);
-            float second = parseNumber(fields[2], trimmed);
-            float weight = fields.length == 4 ? parseNumber(fields[3], trimmed) : 1f;
+            float firstBound = parseNumber(entryFields[1], trimmed);
+            float secondBound = parseNumber(entryFields[2], trimmed);
+            float weight = entryFields.length == 4 ? parseNumber(entryFields[3], trimmed) : 1f;
             if (!(weight > 0f)) {
                 throw new IllegalArgumentException("entry \"" + trimmed + "\" needs a weight above zero");
             }
-            pool.add(new PoolEntry(effectName, Math.min(first, second), Math.max(first, second), weight));
+            pool.add(new PoolEntry(effectName, Math.min(firstBound, secondBound), Math.max(firstBound, secondBound), weight));
         }
         return List.copyOf(pool);
     }
 
-    private static float parseNumber(String text, String entry) {
+    private static float parseNumber(String numberText, String entry) {
         try {
-            return Float.parseFloat(text.trim());
+            return Float.parseFloat(numberText.trim());
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("entry \"" + entry + "\" has a value that is not a number: " + text.trim());
+            throw new IllegalArgumentException("entry \"" + entry + "\" has a value that is not a number: " + numberText.trim());
         }
     }
 

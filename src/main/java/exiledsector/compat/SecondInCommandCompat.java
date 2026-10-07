@@ -28,9 +28,9 @@ public final class SecondInCommandCompat {
     private static final String SC_UTILS_CLASS = "second_in_command.SCUtils";
     private static final String SC_DATA_CLASS = "second_in_command.SCData";
 
-    private static MethodHandle getFleetData;
-    private static MethodHandle isSkillActive;
-    private static boolean unavailable;
+    private static MethodHandle getFleetDataHandle;
+    private static MethodHandle isSkillActiveHandle;
+    private static boolean lookupUnavailable;
 
     private SecondInCommandCompat() {
     }
@@ -43,28 +43,28 @@ public final class SecondInCommandCompat {
     // java:S1181: MethodHandle.invoke declares Throwable, and any failure inside Second-in-Command must disable the checks rather than crash the game
     @SuppressWarnings("java:S1181")
     public static boolean isSkillActive(FleetMemberAPI member, String skillId) {
-        if (member == null || unavailable || !isModEnabled()) {
+        if (member == null || lookupUnavailable || !isModEnabled()) {
             return false;
         }
-        CampaignFleetAPI fleet = fleetFor(member);
-        if (fleet == null) {
+        CampaignFleetAPI commandingFleet = fleetFor(member);
+        if (commandingFleet == null) {
             return false;
         }
         try {
             resolveMethods();
-            Object data = getFleetData.invoke(fleet);
-            return data != null && (boolean) isSkillActive.invoke(data, skillId);
+            Object scData = getFleetDataHandle.invoke(commandingFleet);
+            return scData != null && (boolean) isSkillActiveHandle.invoke(scData, skillId);
         } catch (Throwable e) {
-            unavailable = true;
+            lookupUnavailable = true;
             Logger.getLogger(SecondInCommandCompat.class).error("Second-in-Command skill lookup failed; disabling compatibility checks", e);
             return false;
         }
     }
 
     static void clearCachedLookups() {
-        getFleetData = null;
-        isSkillActive = null;
-        unavailable = false;
+        getFleetDataHandle = null;
+        isSkillActiveHandle = null;
+        lookupUnavailable = false;
     }
 
     public static boolean hasDeactivatedSMod(ShipVariantAPI variant, String hullModId) {
@@ -82,28 +82,28 @@ public final class SecondInCommandCompat {
     }
 
     private static void resolveMethods() throws ReflectiveOperationException {
-        if (getFleetData != null) {
+        if (getFleetDataHandle != null) {
             return;
         }
         ClassLoader loader = Global.getSettings().getScriptClassLoader();
-        Class<?> utils = Class.forName(SC_UTILS_CLASS, true, loader);
-        Class<?> data = Class.forName(SC_DATA_CLASS, true, loader);
+        Class<?> scUtilsClass = Class.forName(SC_UTILS_CLASS, true, loader);
+        Class<?> scDataClass = Class.forName(SC_DATA_CLASS, true, loader);
         MethodHandles.Lookup lookup = MethodHandles.publicLookup();
-        isSkillActive = lookup.findVirtual(data, "isSkillActive", MethodType.methodType(boolean.class, String.class));
-        getFleetData = lookup.findStatic(utils, "getFleetData", MethodType.methodType(data, CampaignFleetAPI.class));
+        isSkillActiveHandle = lookup.findVirtual(scDataClass, "isSkillActive", MethodType.methodType(boolean.class, String.class));
+        getFleetDataHandle = lookup.findStatic(scUtilsClass, "getFleetData", MethodType.methodType(scDataClass, CampaignFleetAPI.class));
     }
 
     private static CampaignFleetAPI fleetFor(FleetMemberAPI member) {
         FleetDataAPI fleetData = member.getFleetData();
-        CampaignFleetAPI fleet = fleetData == null ? null : fleetData.getFleet();
-        if (fleet == null) {
+        CampaignFleetAPI memberFleet = fleetData == null ? null : fleetData.getFleet();
+        if (memberFleet == null) {
             return null;
         }
         SectorAPI sector = Global.getSector();
         CampaignFleetAPI playerFleet = sector == null ? null : sector.getPlayerFleet();
-        boolean joinedAllyFleet = playerFleet != null && fleet != playerFleet
+        boolean joinedAllyFleet = playerFleet != null && memberFleet != playerFleet
                 && playerFleet.getFleetData() != null
                 && playerFleet.getFleetData().getMembersListCopy().contains(member);
-        return joinedAllyFleet ? playerFleet : fleet;
+        return joinedAllyFleet ? playerFleet : memberFleet;
     }
 }

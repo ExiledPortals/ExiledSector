@@ -103,7 +103,7 @@ class NpcGenerationDataTest {
                 if (charged != expected) {
                     problems.add(label + ": allocated " + charged + ", expected " + expected + " after stripping " + build.strippedHullModIds());
                 }
-                for (AllocatedNode node : AllocatedNode.of(build.data())) {
+                for (AllocatedNode node : AllocatedNode.of(build.shipData())) {
                     for (String hullModId : node.exclusiveHullModIds()) {
                         if (removable.contains(hullModId) && !build.strippedHullModIds().contains(hullModId)) {
                             problems.add(label + ": " + node.node().getId() + " clashes with kept hullmod " + hullModId);
@@ -117,7 +117,7 @@ class NpcGenerationDataTest {
     }
 
     private static void check(String label, NpcTreeBuild build, Archetype archetype, String faction, List<String> problems) {
-        ShipSkillData data = build.data();
+        ShipSkillData data = build.shipData();
         boolean tasted = false;
         for (String nodeId : data.getAllocatedNodeIds()) {
             SkillNode node = SkillTree.get(nodeId);

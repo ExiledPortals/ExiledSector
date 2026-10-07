@@ -20,28 +20,28 @@ public class SocketableSalvageListener implements ShowLootListener {
 
     @Override
     public void reportAboutToShowLootToPlayer(CargoAPI loot, InteractionDialogAPI dialog) {
-        SectorEntityToken target = dialog == null ? null : dialog.getInteractionTarget();
-        if (loot == null || target == null || target instanceof CampaignFleetAPI) {
+        SectorEntityToken salvageEntity = dialog == null ? null : dialog.getInteractionTarget();
+        if (loot == null || salvageEntity == null || salvageEntity instanceof CampaignFleetAPI) {
             return;
         }
-        String site = siteId(target);
-        MemoryAPI memory = target.getMemoryWithoutUpdate();
-        if (!SocketableDrops.hasRule(site) || memory == null || memory.getBoolean(ROLLED_KEY)) {
+        String siteId = siteId(salvageEntity);
+        MemoryAPI entityMemory = salvageEntity.getMemoryWithoutUpdate();
+        if (!SocketableDrops.hasRule(siteId) || entityMemory == null || entityMemory.getBoolean(ROLLED_KEY)) {
             return;
         }
-        memory.set(ROLLED_KEY, true);
-        Random random = new Random(Misc.getSalvageSeed(target) ^ SEED_SALT);
-        for (SocketableItemData item : SocketableDrops.roll(site, random)) {
+        entityMemory.set(ROLLED_KEY, true);
+        Random random = new Random(Misc.getSalvageSeed(salvageEntity) ^ SEED_SALT);
+        for (SocketableItemData item : SocketableDrops.roll(siteId, random)) {
             loot.addSpecial(item.toSpecialItem(), 1f);
         }
-        SocketableDrops.rollMaterials(site, random).forEach(loot::addCommodity);
+        SocketableDrops.rollMaterials(siteId, random).forEach(loot::addCommodity);
     }
 
-    static String siteId(SectorEntityToken target) {
-        MemoryAPI memory = target.getMemoryWithoutUpdate();
-        if (memory != null && memory.contains(MemFlags.SALVAGE_SPEC_ID_OVERRIDE)) {
-            return memory.getString(MemFlags.SALVAGE_SPEC_ID_OVERRIDE);
+    static String siteId(SectorEntityToken salvageEntity) {
+        MemoryAPI entityMemory = salvageEntity.getMemoryWithoutUpdate();
+        if (entityMemory != null && entityMemory.contains(MemFlags.SALVAGE_SPEC_ID_OVERRIDE)) {
+            return entityMemory.getString(MemFlags.SALVAGE_SPEC_ID_OVERRIDE);
         }
-        return target.getCustomEntityType();
+        return salvageEntity.getCustomEntityType();
     }
 }

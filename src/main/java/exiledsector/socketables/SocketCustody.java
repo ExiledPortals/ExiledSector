@@ -33,31 +33,31 @@ public final class SocketCustody {
     private SocketCustody() {
     }
 
-    public static Map<String, Installation> installations(Map<String, ShipSkillData> ships) {
+    public static Map<String, Installation> installations(Map<String, ShipSkillData> shipDataById) {
         Map<String, Installation> installations = new HashMap<>();
-        ships.forEach((shipId, data) -> data.getSocketedItems().forEach((nodeId, socketableId) ->
+        shipDataById.forEach((shipId, shipData) -> shipData.getSocketedItems().forEach((nodeId, socketableId) ->
                 installations.put(socketableId, new Installation(shipId, nodeId))));
         return installations;
     }
 
-    static Set<String> reconcile(Map<String, ShipSkillData> ships, Set<String> ownedShipIds, Set<String> lostInCombat, SocketableStore store) {
+    static Set<String> reconcile(Map<String, ShipSkillData> shipDataById, Set<String> ownedShipIds, Set<String> lostInCombat, SocketableStore store) {
         lostInCombat.removeIf(ownedShipIds::contains);
         Set<String> lostForGood = new HashSet<>(lostInCombat);
-        lostForGood.retainAll(ships.keySet());
-        ships.forEach((shipId, data) -> {
-            if (ownedShipIds.contains(shipId) || data.getSocketedItems().isEmpty()) {
+        lostForGood.retainAll(shipDataById.keySet());
+        shipDataById.forEach((shipId, shipData) -> {
+            if (ownedShipIds.contains(shipId) || shipData.getSocketedItems().isEmpty()) {
                 return;
             }
             boolean destroyed = lostInCombat.contains(shipId);
-            for (String nodeId : Set.copyOf(data.getSocketedItems().keySet())) {
-                String socketableId = data.unsocketItem(nodeId);
+            for (String nodeId : Set.copyOf(shipData.getSocketedItems().keySet())) {
+                String socketableId = shipData.unsocketItem(nodeId);
                 Socketable socketable = store.find(socketableId);
                 if (destroyed && socketable != null) {
                     store.remove(socketable);
                 }
             }
         });
-        lostInCombat.removeIf(shipId -> !ships.containsKey(shipId) || ships.get(shipId).getSocketedItems().isEmpty());
+        lostInCombat.removeIf(shipId -> !shipDataById.containsKey(shipId) || shipDataById.get(shipId).getSocketedItems().isEmpty());
         return lostForGood;
     }
 
@@ -66,12 +66,12 @@ public final class SocketCustody {
         if (sector == null || sector.getPlayerFleet() == null) {
             return Map.of();
         }
-        Map<String, FleetMemberAPI> owned = ownedShips();
-        Set<String> lostForGood = reconcile(ShipSkillDataManager.all(), owned.keySet(), lostInCombat(), SocketableStore.get());
+        Map<String, FleetMemberAPI> ownedShipsById = ownedShips();
+        Set<String> lostForGood = reconcile(ShipSkillDataManager.all(), ownedShipsById.keySet(), lostInCombat(), SocketableStore.get());
         if (!lostForGood.isEmpty()) {
             forget(lostForGood);
         }
-        return owned;
+        return ownedShipsById;
     }
 
     private static void forget(Set<String> lostShipIds) {
@@ -93,10 +93,10 @@ public final class SocketCustody {
         return isInstalled(ShipSkillDataManager.all(), socketable);
     }
 
-    static boolean isInstalled(Map<String, ShipSkillData> ships, Socketable socketable) {
+    static boolean isInstalled(Map<String, ShipSkillData> shipDataById, Socketable socketable) {
         String socketableId = socketable.id();
-        for (ShipSkillData data : ships.values()) {
-            if (data.getSocketedItems().containsValue(socketableId)) {
+        for (ShipSkillData shipData : shipDataById.values()) {
+            if (shipData.getSocketedItems().containsValue(socketableId)) {
                 return true;
             }
         }
@@ -104,24 +104,24 @@ public final class SocketCustody {
     }
 
     public static void recordLostInCombat(Collection<FleetMemberAPI> members) {
-        Set<String> lost = lostInCombat();
-        members.forEach(member -> lost.add(member.getId()));
+        Set<String> lostShipIds = lostInCombat();
+        members.forEach(member -> lostShipIds.add(member.getId()));
     }
 
     public static void recordRecovered(Collection<FleetMemberAPI> members) {
-        Set<String> lost = lostInCombat();
-        members.forEach(member -> lost.remove(member.getId()));
+        Set<String> lostShipIds = lostInCombat();
+        members.forEach(member -> lostShipIds.remove(member.getId()));
     }
 
-    public static Function<Socketable, String> shipNames(Map<String, FleetMemberAPI> owned) {
+    public static Function<Socketable, String> shipNames(Map<String, FleetMemberAPI> ownedShipsById) {
         Map<String, Installation> installations = installations(ShipSkillDataManager.all());
         return socketable -> {
             Installation installation = installations.get(socketable.id());
             if (installation == null) {
                 return null;
             }
-            FleetMemberAPI member = owned.get(installation.shipId());
-            return member == null ? installation.shipId() : member.getShipName();
+            FleetMemberAPI ownerMember = ownedShipsById.get(installation.shipId());
+            return ownerMember == null ? installation.shipId() : ownerMember.getShipName();
         };
     }
 
@@ -132,35 +132,35 @@ public final class SocketCustody {
     }
 
     private static Map<String, FleetMemberAPI> ownedShips() {
-        Map<String, FleetMemberAPI> owned = new LinkedHashMap<>();
+        Map<String, FleetMemberAPI> ownedShipsById = new LinkedHashMap<>();
         CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
         if (playerFleet != null) {
-            playerFleet.getFleetData().getMembersListCopy().forEach(member -> owned.put(member.getId(), member));
+            playerFleet.getFleetData().getMembersListCopy().forEach(member -> ownedShipsById.put(member.getId(), member));
         }
-        Set<MarketAPI> markets = new HashSet<>();
+        Set<MarketAPI> visitedMarkets = new HashSet<>();
         for (LocationAPI location : Global.getSector().getAllLocations()) {
-            for (CampaignFleetAPI other : location.getFleets()) {
-                if (other.getFaction() != null && other.getFaction().isPlayerFaction()) {
-                    other.getFleetData().getMembersListCopy().forEach(member -> owned.put(member.getId(), member));
+            for (CampaignFleetAPI locationFleet : location.getFleets()) {
+                if (locationFleet.getFaction() != null && locationFleet.getFaction().isPlayerFaction()) {
+                    locationFleet.getFleetData().getMembersListCopy().forEach(member -> ownedShipsById.put(member.getId(), member));
                 }
             }
             for (SectorEntityToken entity : location.getAllEntities()) {
                 MarketAPI market = entity.getMarket();
-                if (market != null && markets.add(market)) {
-                    addStoredShips(market, owned);
+                if (market != null && visitedMarkets.add(market)) {
+                    addStoredShips(market, ownedShipsById);
                 }
             }
         }
-        return owned;
+        return ownedShipsById;
     }
 
-    private static void addStoredShips(MarketAPI market, Map<String, FleetMemberAPI> owned) {
+    private static void addStoredShips(MarketAPI market, Map<String, FleetMemberAPI> ownedShipsById) {
         for (SubmarketAPI submarket : market.getSubmarketsCopy()) {
-            boolean storage = Submarkets.SUBMARKET_STORAGE.equals(submarket.getSpecId())
+            boolean isStorage = Submarkets.SUBMARKET_STORAGE.equals(submarket.getSpecId())
                     || (submarket.getPlugin() != null && submarket.getPlugin().isFreeTransfer());
-            CargoAPI cargo = storage ? submarket.getCargoNullOk() : null;
-            if (cargo != null && cargo.getMothballedShips() != null) {
-                cargo.getMothballedShips().getMembersListCopy().forEach(member -> owned.put(member.getId(), member));
+            CargoAPI storageCargo = isStorage ? submarket.getCargoNullOk() : null;
+            if (storageCargo != null && storageCargo.getMothballedShips() != null) {
+                storageCargo.getMothballedShips().getMembersListCopy().forEach(member -> ownedShipsById.put(member.getId(), member));
             }
         }
     }

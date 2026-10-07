@@ -23,11 +23,11 @@ public class SkillConflictWarningHullMod extends BaseHullMod {
         if (removal == null) return;
 
         String removedName = HullModNames.displayName(removal.removedHullModId);
-        Color highlight = Global.getSettings().getColor("hColor");
+        Color highlightColor = Global.getSettings().getColor("hColor");
         I18n.forGameText(() -> {
             tooltip.addSectionHeading(Translation.text("hullmod.conflict.title"), Alignment.MID, 15);
             VanillaText.addPara(tooltip, Translation.msg("hullmod.conflict.text").arg("removed", removedName)
-                    .arg("cause", removal.causeSkillDisplayName).styled(), 10, Misc.getTextColor(), style -> highlight);
+                    .arg("cause", removal.causeSkillDisplayName).styled(), 10, Misc.getTextColor(), style -> highlightColor);
         });
     }
 }

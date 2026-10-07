@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-public record CompatTarget(String name, List<String> modIds, List<String> testedVersions, Supplier<List<String>> missingFeatures) {
+public record CompatTarget(String displayName, List<String> modIds, List<String> testedVersions, Supplier<List<String>> missingFeatures) {
 
     static List<String> missingHullMods(List<String> hullModIds) {
         SettingsAPI settings = Global.getSettings();

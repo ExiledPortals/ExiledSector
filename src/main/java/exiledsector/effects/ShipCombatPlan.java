@@ -31,8 +31,8 @@ final class ShipCombatPlan {
         for (HullModEffect vanillaEffect : vanillaEffects) {
             vanillaEffect.advanceInCombat(ship, amount);
         }
-        for (ResolvedTree.EffectEntry update : combatUpdates) {
-            update.effect().advanceInCombat(ship, update.modId(), update.magnitude(), amount);
+        for (ResolvedTree.EffectEntry combatUpdate : combatUpdates) {
+            combatUpdate.effect().advanceInCombat(ship, combatUpdate.modId(), combatUpdate.magnitude(), amount);
         }
         if (!temporaryNodes.isEmpty()) {
             expireTemporaryNodes(ship);
@@ -43,12 +43,12 @@ final class ShipCombatPlan {
         float deployedSeconds = ship.getFullTimeDeployed();
         Iterator<TemporaryNode> iterator = temporaryNodes.iterator();
         while (iterator.hasNext()) {
-            TemporaryNode node = iterator.next();
-            if (deployedSeconds < node.durationSeconds()) {
+            TemporaryNode temporaryNode = iterator.next();
+            if (deployedSeconds < temporaryNode.durationSeconds()) {
                 continue;
             }
-            for (ResolvedTree.EffectEntry effect : node.effects()) {
-                effect.effect().apply(ship.getMutableStats(), effect.modId(), 0f);
+            for (ResolvedTree.EffectEntry effectEntry : temporaryNode.effects()) {
+                effectEntry.effect().apply(ship.getMutableStats(), effectEntry.modId(), 0f);
             }
             iterator.remove();
         }

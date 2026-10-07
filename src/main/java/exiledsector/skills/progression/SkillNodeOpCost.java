@@ -21,8 +21,8 @@ public final class SkillNodeOpCost {
     private SkillNodeOpCost() {
     }
 
-    public static int perNode(ShipHullSpecAPI hull) {
-        return perNode(hull != null ? hull.getHullSize() : null);
+    public static int perNode(ShipHullSpecAPI hullSpec) {
+        return perNode(hullSpec != null ? hullSpec.getHullSize() : null);
     }
 
     public static int perNode(HullSize hullSize) {

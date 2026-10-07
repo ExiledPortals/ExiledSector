@@ -39,30 +39,30 @@ public final class NpcFleetLeveller {
     private NpcFleetLeveller() {
     }
 
-    public static void ensure(CampaignFleetAPI fleet) {
-        if (!isLevellable(fleet) || !NpcTreeConfig.isEnabled()) {
+    public static void ensure(CampaignFleetAPI npcFleet) {
+        if (!isLevellable(npcFleet) || !NpcTreeConfig.isEnabled()) {
             return;
         }
-        Map<String, String> records = NpcTreeRecords.of(fleet.getMemoryWithoutUpdate());
+        Map<String, String> recordsByMemberId = NpcTreeRecords.of(npcFleet.getMemoryWithoutUpdate());
         String seedPrefix = null;
         int playerLevel = 0;
-        String factionRegion = fleet.getFaction() == null ? null : NpcFactionVolumes.regionFor(fleet.getFaction().getId());
-        for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
-            String record = records.get(member.getId());
-            if (record == null) {
+        String factionRegion = npcFleet.getFaction() == null ? null : NpcFactionVolumes.regionFor(npcFleet.getFaction().getId());
+        for (FleetMemberAPI member : npcFleet.getFleetData().getMembersListCopy()) {
+            String memberRecord = recordsByMemberId.get(member.getId());
+            if (memberRecord == null) {
                 if (seedPrefix == null) {
                     playerLevel = Global.getSector().getPlayerStats().getLevel();
-                    seedPrefix = Global.getSector().getSeedString() + "|" + fleet.getId() + "|";
+                    seedPrefix = Global.getSector().getSeedString() + "|" + npcFleet.getId() + "|";
                 }
-                Random socketableRandom = member.isFlagship() && carriesSocketables(fleet)
+                Random socketableRandom = member.isFlagship() && carriesSocketables(npcFleet)
                         ? new Random((seedPrefix + member.getId() + SOCKETABLE_SEED_SUFFIX).hashCode()) : null;
-                record = decide(member, playerLevel, factionRegion, new Random((seedPrefix + member.getId()).hashCode()), socketableRandom,
+                memberRecord = decide(member, playerLevel, factionRegion, new Random((seedPrefix + member.getId()).hashCode()), socketableRandom,
                         definition -> SocketableUnlock.canDrop(definition, Global.getSector()));
-                records.put(member.getId(), record);
-                NpcUniqueAlerts.markIfCarrying(fleet, record);
+                recordsByMemberId.put(member.getId(), memberRecord);
+                NpcUniqueAlerts.markIfCarrying(npcFleet, memberRecord);
             }
-            if (NpcTreeRecords.isLevelled(record)) {
-                apply(member, record);
+            if (NpcTreeRecords.isLevelled(memberRecord)) {
+                apply(member, memberRecord);
             }
         }
     }
@@ -81,20 +81,20 @@ public final class NpcFleetLeveller {
         if (!NpcShipSelector.isCandidate(member) || !NpcShipSelector.isChosen(member, random)) {
             return NpcTreeRecords.NOT_LEVELLED;
         }
-        ShipProfile profile = ShipProfile.of(member);
+        ShipProfile shipProfile = ShipProfile.of(member);
         int nodeCount = Math.min(NpcLevelTable.roll(playerLevel, random), ShipLevelConfig.maxAllocatedNodesBesidesRoot());
         NpcHullMods hullMods = NpcHullMods.of(member.getVariant());
         String designType = designType(member.getHullSpec());
-        int socketables = socketableRandom == null ? 0 : NpcSocketables.rollCount(playerLevel, socketableRandom);
-        NpcTreeBuild build = NpcSkillTreeBuilder.generate(new NpcBuildRequest(profile, designType, factionRegion, hullMods,
-                NpcFreedOp.of(member, hullMods), nodeCount, socketables, type -> SkillTypeUnlockStatus.isLocked(type, null)), random);
-        for (String socket : build.claimedSockets()) {
+        int socketableCount = socketableRandom == null ? 0 : NpcSocketables.rollCount(playerLevel, socketableRandom);
+        NpcTreeBuild treeBuild = NpcSkillTreeBuilder.generate(new NpcBuildRequest(shipProfile, designType, factionRegion, hullMods,
+                NpcFreedOp.of(member, hullMods), nodeCount, socketableCount, type -> SkillTypeUnlockStatus.isLocked(type, null)), random);
+        for (String socketNodeId : treeBuild.claimedSockets()) {
             SocketableDefinition definition = NpcSocketables.pickDefinition(socketableRandom, uniqueAllowed);
             if (definition != null) {
-                build.data().socketItem(socket, NpcSocketables.id(SocketableItemData.rolled(definition, socketableRandom.nextLong())));
+                treeBuild.shipData().socketItem(socketNodeId, NpcSocketables.id(SocketableItemData.rolled(definition, socketableRandom.nextLong())));
             }
         }
-        return NpcTreeTag.encode(build.data());
+        return NpcTreeTag.encode(treeBuild.shipData());
     }
 
     static String designType(ShipHullSpecAPI hullSpec) {
@@ -109,26 +109,26 @@ public final class NpcFleetLeveller {
         return designType;
     }
 
-    static void apply(FleetMemberAPI member, String tag) {
-        ShipVariantAPI current = member.getVariant();
-        if (current.hasHullMod(SkillTreeHullMod.ID) && tag.equals(NpcTreeTag.find(current))) {
+    static void apply(FleetMemberAPI member, String treeTag) {
+        ShipVariantAPI currentVariant = member.getVariant();
+        if (currentVariant.hasHullMod(SkillTreeHullMod.ID) && treeTag.equals(NpcTreeTag.find(currentVariant))) {
             return;
         }
-        ShipVariantAPI variant = SkillTreeInstaller.ownedVariant(member);
-        NpcTreeTag.removeAll(variant);
-        variant.addTag(tag);
-        stripConflictingHullMods(variant, SkillDataResolver.resolve(member, variant));
-        if (!variant.hasHullMod(SkillTreeHullMod.ID)) {
-            variant.addMod(SkillTreeHullMod.ID);
+        ShipVariantAPI ownedVariant = SkillTreeInstaller.ownedVariant(member);
+        NpcTreeTag.removeAll(ownedVariant);
+        ownedVariant.addTag(treeTag);
+        stripConflictingHullMods(ownedVariant, SkillDataResolver.resolve(member, ownedVariant));
+        if (!ownedVariant.hasHullMod(SkillTreeHullMod.ID)) {
+            ownedVariant.addMod(SkillTreeHullMod.ID);
         }
         member.setStatUpdateNeeded(true);
     }
 
-    private static void stripConflictingHullMods(ShipVariantAPI variant, ShipSkillData data) {
-        Set<String> removable = NpcHullMods.of(variant).removable();
-        for (AllocatedNode allocated : AllocatedNode.of(data)) {
+    private static void stripConflictingHullMods(ShipVariantAPI variant, ShipSkillData shipData) {
+        Set<String> removableHullModIds = NpcHullMods.of(variant).removable();
+        for (AllocatedNode allocated : AllocatedNode.of(shipData)) {
             for (String hullModId : allocated.exclusiveHullModIds()) {
-                if (removable.contains(hullModId)) {
+                if (removableHullModIds.contains(hullModId)) {
                     variant.removeMod(hullModId);
                 }
             }

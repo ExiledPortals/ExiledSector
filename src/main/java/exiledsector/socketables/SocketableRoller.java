@@ -15,11 +15,11 @@ public final class SocketableRoller {
     public static List<RolledEffect> roll(SocketableDefinition definition, long seed) {
         Random random = new Random(scramble(seed));
         if (definition.unique()) {
-            List<RolledEffect> rolled = new ArrayList<>(definition.pool().size());
+            List<RolledEffect> rolledEffects = new ArrayList<>(definition.pool().size());
             for (SocketableDefinition.PoolEntry entry : definition.pool()) {
-                rolled.add(new RolledEffect(entry.effectName(), wholeNumberBetween(entry.min(), entry.max(), random)));
+                rolledEffects.add(new RolledEffect(entry.effectName(), wholeNumberBetween(entry.min(), entry.max(), random)));
             }
-            return rolled;
+            return rolledEffects;
         }
         return rollAffixes(definition, effectCount(random.nextFloat()), random);
     }
@@ -30,36 +30,36 @@ public final class SocketableRoller {
 
     private static List<RolledEffect> rollAffixes(SocketableDefinition definition, int rolledEffectCount, Random random) {
         int prefixCount = prefixCount(rolledEffectCount, random.nextBoolean());
-        List<RolledEffect> rolled = new ArrayList<>(rolledEffectCount);
-        draw(definition.prefixes(), prefixCount, random, rolled);
-        draw(definition.suffixes(), rolledEffectCount - prefixCount, random, rolled);
-        return rolled;
+        List<RolledEffect> rolledEffects = new ArrayList<>(rolledEffectCount);
+        draw(definition.prefixes(), prefixCount, random, rolledEffects);
+        draw(definition.suffixes(), rolledEffectCount - prefixCount, random, rolledEffects);
+        return rolledEffects;
     }
 
     static int prefixCount(int effectCount, boolean morePrefixes) {
-        int even = effectCount / 2;
+        int evenShare = effectCount / 2;
         if (effectCount % 2 == 0 || !morePrefixes) {
-            return even;
+            return evenShare;
         }
-        return even + 1;
+        return evenShare + 1;
     }
 
-    private static void draw(List<SocketableDefinition.PoolEntry> pool, int drawCount, Random random, List<RolledEffect> rolled) {
-        List<SocketableDefinition.PoolEntry> remaining = new ArrayList<>(pool);
-        for (int left = Math.min(drawCount, pool.size()); left > 0; left--) {
-            int index = pick(remaining, random.nextFloat());
-            SocketableDefinition.PoolEntry entry = remaining.remove(index);
-            rolled.add(new RolledEffect(entry.effectName(), wholeNumberBetween(entry.min(), entry.max(), random)));
+    private static void draw(List<SocketableDefinition.PoolEntry> pool, int drawCount, Random random, List<RolledEffect> rolledEffects) {
+        List<SocketableDefinition.PoolEntry> remainingPool = new ArrayList<>(pool);
+        for (int drawsLeft = Math.min(drawCount, pool.size()); drawsLeft > 0; drawsLeft--) {
+            int pickedIndex = pick(remainingPool, random.nextFloat());
+            SocketableDefinition.PoolEntry entry = remainingPool.remove(pickedIndex);
+            rolledEffects.add(new RolledEffect(entry.effectName(), wholeNumberBetween(entry.min(), entry.max(), random)));
         }
     }
 
     static float wholeNumberBetween(float min, float max, Random random) {
-        int low = (int) Math.ceil(min);
-        int high = (int) Math.floor(max);
-        if (high < low) {
+        int lowestWhole = (int) Math.ceil(min);
+        int highestWhole = (int) Math.floor(max);
+        if (highestWhole < lowestWhole) {
             return Math.round(min);
         }
-        return (float) low + random.nextInt(high - low + 1);
+        return (float) lowestWhole + random.nextInt(highestWhole - lowestWhole + 1);
     }
 
     static long scramble(long seed) {

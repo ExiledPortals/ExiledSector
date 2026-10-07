@@ -14,62 +14,62 @@ public final class TemplateCapture {
     private TemplateCapture() {
     }
 
-    public static List<TemplateStep> capture(ShipSkillData data, String startingRootId, Map<String, SkillNode> tree) {
-        List<String> remaining = new ArrayList<>();
-        for (String nodeId : data.getAllocatedNodeIds()) {
-            if (!nodeId.equals(startingRootId) && tree.containsKey(nodeId)) {
-                remaining.add(nodeId);
+    public static List<TemplateStep> capture(ShipSkillData shipData, String startingRootId, Map<String, SkillNode> nodesById) {
+        List<String> unplacedNodeIds = new ArrayList<>();
+        for (String nodeId : shipData.getAllocatedNodeIds()) {
+            if (!nodeId.equals(startingRootId) && nodesById.containsKey(nodeId)) {
+                unplacedNodeIds.add(nodeId);
             }
         }
-        Set<String> placed = new HashSet<>();
+        Set<String> placedNodeIds = new HashSet<>();
         if (startingRootId != null) {
-            placed.add(startingRootId);
+            placedNodeIds.add(startingRootId);
         }
         List<TemplateStep> steps = new ArrayList<>();
-        while (!remaining.isEmpty()) {
-            SkillNode next = firstPlaceable(remaining, placed, tree);
-            if (next == null) {
+        while (!unplacedNodeIds.isEmpty()) {
+            SkillNode nextNode = firstPlaceable(unplacedNodeIds, placedNodeIds, nodesById);
+            if (nextNode == null) {
                 break;
             }
-            remaining.remove(next.getId());
-            place(next, data, placed, steps);
-            String partnerId = next.getPairedNodeId();
-            if (partnerId != null && remaining.remove(partnerId)) {
-                place(tree.get(partnerId), data, placed, steps);
+            unplacedNodeIds.remove(nextNode.getId());
+            place(nextNode, shipData, placedNodeIds, steps);
+            String partnerId = nextNode.getPairedNodeId();
+            if (partnerId != null && unplacedNodeIds.remove(partnerId)) {
+                place(nodesById.get(partnerId), shipData, placedNodeIds, steps);
             }
         }
-        for (String nodeId : remaining) {
-            place(tree.get(nodeId), data, placed, steps);
+        for (String nodeId : unplacedNodeIds) {
+            place(nodesById.get(nodeId), shipData, placedNodeIds, steps);
         }
         return steps;
     }
 
-    private static SkillNode firstPlaceable(List<String> remaining, Set<String> placed, Map<String, SkillNode> tree) {
-        for (String nodeId : remaining) {
-            SkillNode node = tree.get(nodeId);
-            if (isPlaceable(node, placed)) {
+    private static SkillNode firstPlaceable(List<String> unplacedNodeIds, Set<String> placedNodeIds, Map<String, SkillNode> nodesById) {
+        for (String nodeId : unplacedNodeIds) {
+            SkillNode node = nodesById.get(nodeId);
+            if (isPlaceable(node, placedNodeIds)) {
                 return node;
             }
         }
         return null;
     }
 
-    private static boolean isPlaceable(SkillNode node, Set<String> placed) {
-        List<String> connected = node.getConnectedNodeIds();
-        if (connected.isEmpty()) {
+    private static boolean isPlaceable(SkillNode node, Set<String> placedNodeIds) {
+        List<String> connectedIds = node.getConnectedNodeIds();
+        if (connectedIds.isEmpty()) {
             return true;
         }
-        for (String connectedId : connected) {
-            if (placed.contains(connectedId)) {
+        for (String connectedId : connectedIds) {
+            if (placedNodeIds.contains(connectedId)) {
                 return true;
             }
         }
         return false;
     }
 
-    private static void place(SkillNode node, ShipSkillData data, Set<String> placed, List<TemplateStep> steps) {
-        placed.add(node.getId());
-        String option = node.getType().isOptional() ? data.getOptionalSelection(node.getId()) : null;
-        steps.add(new TemplateStep(node.getId(), option));
+    private static void place(SkillNode node, ShipSkillData shipData, Set<String> placedNodeIds, List<TemplateStep> steps) {
+        placedNodeIds.add(node.getId());
+        String optionTypeId = node.getType().isOptional() ? shipData.getOptionalSelection(node.getId()) : null;
+        steps.add(new TemplateStep(node.getId(), optionTypeId));
     }
 }

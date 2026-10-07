@@ -14,21 +14,21 @@ public record SkillTreeTemplate(String id, String name, String rootNodeId, HullS
     }
 
     public Set<String> nodeIds() {
-        Set<String> ids = new LinkedHashSet<>();
-        ids.add(rootNodeId);
+        Set<String> templateNodeIds = new LinkedHashSet<>();
+        templateNodeIds.add(rootNodeId);
         for (TemplateStep step : steps) {
-            ids.add(step.nodeId());
+            templateNodeIds.add(step.nodeId());
         }
-        return Set.copyOf(ids);
+        return Set.copyOf(templateNodeIds);
     }
 
     public int knownStepCount() {
-        int known = 0;
+        int knownCount = 0;
         for (TemplateStep step : steps) {
             if (SkillTree.get(step.nodeId()) != null) {
-                known++;
+                knownCount++;
             }
         }
-        return known;
+        return knownCount;
     }
 }

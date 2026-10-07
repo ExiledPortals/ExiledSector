@@ -18,14 +18,14 @@ public final class SalvageSiteCompat {
     public static final boolean DEFAULT_DROPS = true;
     static final String FOLDER = "data/config/exiledSector/compat/salvage/";
 
-    public record Source(String name, String modId, List<String> testedVersions) {
+    public record Source(String modName, String modId, List<String> testedVersions) {
 
         public String file() {
             return FOLDER + modId + ".csv";
         }
 
         public CompatTarget target() {
-            return new CompatTarget(name + " salvage sites", List.of(modId), testedVersions, () -> missingSites(this));
+            return new CompatTarget(modName + " salvage sites", List.of(modId), testedVersions, () -> missingSites(this));
         }
     }
 
@@ -53,11 +53,11 @@ public final class SalvageSiteCompat {
 
     public static List<Source> enabledSources() {
         SettingsAPI settings = Global.getSettings();
-        ModManagerAPI mods = settings == null ? null : settings.getModManager();
-        if (mods == null) {
+        ModManagerAPI modManager = settings == null ? null : settings.getModManager();
+        if (modManager == null) {
             return List.of();
         }
-        return SOURCES.stream().filter(source -> mods.isModEnabled(source.modId())).toList();
+        return SOURCES.stream().filter(source -> modManager.isModEnabled(source.modId())).toList();
     }
 
     public static JSONArray rows(Source source) throws IOException, JSONException {

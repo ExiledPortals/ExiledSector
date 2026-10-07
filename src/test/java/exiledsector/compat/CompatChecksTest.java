@@ -94,9 +94,9 @@ class CompatChecksTest {
     void everyCompatTargetNamesItsModAndTheVersionsItWasTestedAgainst() {
         List<String> names = new ArrayList<>();
         for (CompatTarget target : CompatChecks.targets()) {
-            names.add(target.name());
-            assertFalse(target.modIds().isEmpty(), target.name());
-            assertFalse(target.testedVersions().isEmpty(), target.name());
+            names.add(target.displayName());
+            assertFalse(target.modIds().isEmpty(), target.displayName());
+            assertFalse(target.testedVersions().isEmpty(), target.displayName());
         }
         assertEquals(List.of("Lost Sector", "Second-in-Command", "MagicLib"), names.subList(0, 3));
         assertEquals(3 + SalvageSiteCompat.SOURCES.size(), names.size());

@@ -33,26 +33,26 @@ final class SocketableCodec {
         return encoded != null && encoded.startsWith(NPC_PREFIX);
     }
 
-    static String cargo(SocketableItemData item, FrozenName name) {
+    static String cargo(SocketableItemData item, FrozenName frozenName) {
         if (item.effects() == null) {
             return seeded(item, CARGO_SEED_SEPARATOR);
         }
         try {
-            JSONObject json = new JSONObject().put(DEFINITION_KEY, item.definitionId()).put(SEED_KEY, item.seed())
+            JSONObject cargoJson = new JSONObject().put(DEFINITION_KEY, item.definitionId()).put(SEED_KEY, item.seed())
                     .put(EFFECTS_KEY, effects(item.effects()));
-            if (name != null) {
-                json.put(NAMED_KEY, true);
-                putText(json, PREFIX_KEY, name.prefixEffect());
-                putText(json, SUFFIX_KEY, name.suffixEffect());
-                putText(json, RARE_FIRST_KEY, name.rareFirst());
-                putText(json, RARE_SECOND_KEY, name.rareSecond());
-                putText(json, RARE_BRAND_KEY, name.rareBrand());
-                putText(json, RARE_MODEL_KEY, name.rareModel());
-                if (name.isProduct()) {
-                    json.put(PRODUCT_KEY, true);
+            if (frozenName != null) {
+                cargoJson.put(NAMED_KEY, true);
+                putText(cargoJson, PREFIX_KEY, frozenName.prefixEffect());
+                putText(cargoJson, SUFFIX_KEY, frozenName.suffixEffect());
+                putText(cargoJson, RARE_FIRST_KEY, frozenName.rareFirst());
+                putText(cargoJson, RARE_SECOND_KEY, frozenName.rareSecond());
+                putText(cargoJson, RARE_BRAND_KEY, frozenName.rareBrand());
+                putText(cargoJson, RARE_MODEL_KEY, frozenName.rareModel());
+                if (frozenName.isProduct()) {
+                    cargoJson.put(PRODUCT_KEY, true);
                 }
             }
-            return json.toString();
+            return cargoJson.toString();
         } catch (JSONException e) {
             return seeded(item, CARGO_SEED_SEPARATOR);
         }
@@ -63,8 +63,8 @@ final class SocketableCodec {
     }
 
     static String npc(SocketableItemData item) {
-        String id = npc(item.definitionId(), item.seed());
-        return item.effects() == null ? id : id + NPC_SEPARATOR + effects(item.effects());
+        String npcId = npc(item.definitionId(), item.seed());
+        return item.effects() == null ? npcId : npcId + NPC_SEPARATOR + effects(item.effects());
     }
 
     static SocketableItemData decode(String encoded) {
@@ -120,12 +120,12 @@ final class SocketableCodec {
     }
 
     private static SocketableItemData decodeSeeded(String encoded, String separator) {
-        int at = encoded.lastIndexOf(separator);
-        if (at <= 0) {
+        int separatorAt = encoded.lastIndexOf(separator);
+        if (separatorAt <= 0) {
             return null;
         }
         try {
-            return new SocketableItemData(encoded.substring(0, at), Long.parseLong(encoded.substring(at + 1)));
+            return new SocketableItemData(encoded.substring(0, separatorAt), Long.parseLong(encoded.substring(separatorAt + 1)));
         } catch (NumberFormatException e) {
             return null;
         }
@@ -134,11 +134,11 @@ final class SocketableCodec {
     private static SocketableItemData decodeNpc(String body) {
         int separator = body.lastIndexOf(NPC_SEPARATOR);
         if (separator > 0) {
-            String last = body.substring(separator + 1);
-            if (last.isEmpty() || last.contains(MAGNITUDE_SEPARATOR)) {
-                SocketableItemData seeded = decodeNpc(body.substring(0, separator));
-                List<RolledEffect> effects = decodeEffects(last);
-                return seeded == null || effects == null ? null : new SocketableItemData(seeded.definitionId(), seeded.seed(), effects, null);
+            String lastSegment = body.substring(separator + 1);
+            if (lastSegment.isEmpty() || lastSegment.contains(MAGNITUDE_SEPARATOR)) {
+                SocketableItemData seededItem = decodeNpc(body.substring(0, separator));
+                List<RolledEffect> effects = decodeEffects(lastSegment);
+                return seededItem == null || effects == null ? null : new SocketableItemData(seededItem.definitionId(), seededItem.seed(), effects, null);
             }
         }
         return decodeSeeded(body, NPC_SEPARATOR);
@@ -146,14 +146,14 @@ final class SocketableCodec {
 
     private static SocketableItemData decodeFrozen(String encoded) {
         try {
-            JSONObject json = new JSONObject(encoded);
-            String definitionId = json.optString(DEFINITION_KEY, "");
-            if (definitionId.isEmpty() || !json.has(SEED_KEY)) {
+            JSONObject frozenJson = new JSONObject(encoded);
+            String definitionId = frozenJson.optString(DEFINITION_KEY, "");
+            if (definitionId.isEmpty() || !frozenJson.has(SEED_KEY)) {
                 return null;
             }
-            List<RolledEffect> effects = json.has(EFFECTS_KEY) ? decodeEffects(json.getString(EFFECTS_KEY)) : null;
-            FrozenName name = effects == null || !json.optBoolean(NAMED_KEY, false) ? null : frozenName(json);
-            return new SocketableItemData(definitionId, json.getLong(SEED_KEY), effects, name);
+            List<RolledEffect> effects = frozenJson.has(EFFECTS_KEY) ? decodeEffects(frozenJson.getString(EFFECTS_KEY)) : null;
+            FrozenName decodedName = effects == null || !frozenJson.optBoolean(NAMED_KEY, false) ? null : frozenName(frozenJson);
+            return new SocketableItemData(definitionId, frozenJson.getLong(SEED_KEY), effects, decodedName);
         } catch (JSONException e) {
             return null;
         }

@@ -26,46 +26,46 @@ public final class NpcUniqueAlerts {
     private NpcUniqueAlerts() {
     }
 
-    static void markIfCarrying(CampaignFleetAPI fleet, String record) {
-        if (!uniquesIn(record).isEmpty()) {
+    static void markIfCarrying(CampaignFleetAPI fleet, String treeRecord) {
+        if (!uniquesIn(treeRecord).isEmpty()) {
             fleet.getMemoryWithoutUpdate().set(CARRIER_KEY, true);
         }
     }
 
-    static void alertIfSensed(CampaignFleetAPI fleet) {
-        MemoryAPI memory = fleet.getMemoryWithoutUpdate();
-        if (memory == null || !memory.getBoolean(CARRIER_KEY) || memory.getBoolean(ALERTED_KEY)) {
+    static void alertIfSensed(CampaignFleetAPI sensedFleet) {
+        MemoryAPI fleetMemory = sensedFleet.getMemoryWithoutUpdate();
+        if (fleetMemory == null || !fleetMemory.getBoolean(CARRIER_KEY) || fleetMemory.getBoolean(ALERTED_KEY)) {
             return;
         }
-        VisibilityLevel visibility = fleet.getVisibilityLevelToPlayerFleet();
+        VisibilityLevel visibility = sensedFleet.getVisibilityLevelToPlayerFleet();
         if (visibility == null || visibility == VisibilityLevel.NONE) {
             return;
         }
-        List<Socketable> carried = new ArrayList<>();
-        for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
-            carried.addAll(uniquesIn(NpcTreeRecords.of(memory).get(member.getId())));
+        List<Socketable> carriedUniques = new ArrayList<>();
+        for (FleetMemberAPI member : sensedFleet.getFleetData().getMembersListCopy()) {
+            carriedUniques.addAll(uniquesIn(NpcTreeRecords.of(fleetMemory).get(member.getId())));
         }
-        memory.set(ALERTED_KEY, true);
-        CampaignUIAPI ui = Global.getSector().getCampaignUI();
-        if (carried.isEmpty() || ui == null) {
+        fleetMemory.set(ALERTED_KEY, true);
+        CampaignUIAPI campaignUi = Global.getSector().getCampaignUI();
+        if (carriedUniques.isEmpty() || campaignUi == null) {
             return;
         }
         boolean identified = visibility == VisibilityLevel.COMPOSITION_AND_FACTION_DETAILS;
         I18n.forGameText(() -> {
-            String uniques = String.join(", ", carried.stream().map(Socketable::name).toList());
-            String fleetName = identified ? fleet.getNameWithFactionKeepCase() : "";
+            String uniqueNames = String.join(", ", carriedUniques.stream().map(Socketable::name).toList());
+            String fleetName = identified ? sensedFleet.getNameWithFactionKeepCase() : "";
             String fleetText = identified
                     ? Translation.msg("socketable.npcUnique.identifiedFleet").arg("fleet", fleetName).text()
                     : Translation.text("socketable.npcUnique.unidentifiedFleet");
-            String message = Translation.msg("socketable.npcUnique.sensed").arg("name", uniques).arg("fleet", fleetText).text();
-            ui.addMessage(message.replace("%", "%%"), Misc.getTextColor(), uniques, identified ? fleetName : fleetText, SocketableRarity.UNIQUE.color(), Misc.getHighlightColor());
+            String alertMessage = Translation.msg("socketable.npcUnique.sensed").arg("name", uniqueNames).arg("fleet", fleetText).text();
+            campaignUi.addMessage(alertMessage.replace("%", "%%"), Misc.getTextColor(), uniqueNames, identified ? fleetName : fleetText, SocketableRarity.UNIQUE.color(), Misc.getHighlightColor());
         });
     }
 
-    private static List<Socketable> uniquesIn(String record) {
-        if (record == null || !NpcTreeRecords.isLevelled(record) || !record.contains(NpcSocketables.ID_PREFIX)) {
+    private static List<Socketable> uniquesIn(String treeRecord) {
+        if (treeRecord == null || !NpcTreeRecords.isLevelled(treeRecord) || !treeRecord.contains(NpcSocketables.ID_PREFIX)) {
             return List.of();
         }
-        return NpcSocketables.uniquesCarriedBy(NpcTreeTag.decode(record));
+        return NpcSocketables.uniquesCarriedBy(NpcTreeTag.decode(treeRecord));
     }
 }

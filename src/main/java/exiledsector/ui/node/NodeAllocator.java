@@ -95,7 +95,7 @@ final class NodeAllocator {
         String rootId = satisfiedRootId();
         int reservedOp = OpReserveParity.reservedOp(shipVariant);
         OpReserveParity.warnIfOutOfSync(fleetMember, shipVariant, skillData.getSpentOp(opCostPerNode), reservedOp, "while allocating nodes");
-        int totalOpBudget = opBudget.total - opBudget.used + reservedOp;
+        int totalOpBudget = opBudget.totalOp - opBudget.usedOp + reservedOp;
         int maxAllocatedNodes = ShipLevelConfig.maxAllocatedNodes();
         return new Snapshot(skillData, rootId, opBudget, totalOpBudget, opCostPerNode, maxAllocatedNodes, statsRevision,
                 hiddenNodeIds(skillData), allocatableNodeIds(skillData, rootId, totalOpBudget, opCostPerNode, maxAllocatedNodes));

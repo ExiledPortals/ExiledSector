@@ -35,49 +35,49 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
 
     @Override
     public void applyEffectsBeforeShipCreation(HullSize hullSize, MutableShipStatsAPI stats, String id) {
-        ShipSkillData data = SkillDataResolver.resolve(stats.getFleetMember(), stats.getVariant());
-        if (data == null) return;
+        ShipSkillData shipData = SkillDataResolver.resolve(stats.getFleetMember(), stats.getVariant());
+        if (shipData == null) return;
 
-        ResolvedTree tree = ResolvedTree.of(data, hullSize);
-        for (ResolvedTree.Entry entry : tree.entries()) {
-            if (entry instanceof ResolvedTree.VanillaEntry vanilla) {
-                vanilla.effect().applyEffectsBeforeShipCreation(hullSize, stats, vanilla.hullModId());
-            } else if (entry instanceof ResolvedTree.EffectEntry effect && !effect.effect().appliesAfterOtherEffects()) {
-                effect.effect().apply(stats, effect.modId(), effect.magnitude());
+        ResolvedTree resolvedTree = ResolvedTree.of(shipData, hullSize);
+        for (ResolvedTree.Entry entry : resolvedTree.entries()) {
+            if (entry instanceof ResolvedTree.VanillaEntry vanillaEntry) {
+                vanillaEntry.effect().applyEffectsBeforeShipCreation(hullSize, stats, vanillaEntry.hullModId());
+            } else if (entry instanceof ResolvedTree.EffectEntry effectEntry && !effectEntry.effect().appliesAfterOtherEffects()) {
+                effectEntry.effect().apply(stats, effectEntry.modId(), effectEntry.magnitude());
             }
         }
-        for (ResolvedTree.Entry entry : tree.entries()) {
-            if (entry instanceof ResolvedTree.EffectEntry effect && effect.effect().appliesAfterOtherEffects()) {
-                effect.effect().apply(stats, effect.modId(), effect.magnitude());
+        for (ResolvedTree.Entry entry : resolvedTree.entries()) {
+            if (entry instanceof ResolvedTree.EffectEntry effectEntry && effectEntry.effect().appliesAfterOtherEffects()) {
+                effectEntry.effect().apply(stats, effectEntry.modId(), effectEntry.magnitude());
             }
         }
         if (isOpCostPass(stats)) return;
-        boolean npcTree = SkillDataResolver.isNpcTree(stats.getVariant());
-        if (!npcTree) {
+        boolean isNpcTree = SkillDataResolver.isNpcTree(stats.getVariant());
+        if (!isNpcTree) {
             SkillDataResolver.syncShipTag(stats.getFleetMember(), stats.getVariant());
             OpReserveHullMods.sync(stats.getFleetMember(), stats.getVariant());
         }
-        PhantomInstallSync.sync(tree.phantomHullModIds(), stats.getVariant());
-        if (npcTree) {
-            HullModConflictResolver.removeHullModsThatTriedToStripAPhantom(tree.allocated(), stats.getVariant(), false);
+        PhantomInstallSync.sync(resolvedTree.phantomHullModIds(), stats.getVariant());
+        if (isNpcTree) {
+            HullModConflictResolver.removeHullModsThatTriedToStripAPhantom(resolvedTree.allocated(), stats.getVariant(), false);
         } else {
-            HullModConflictResolver.removeConflicts(tree.allocated(), stats.getVariant());
+            HullModConflictResolver.removeConflicts(resolvedTree.allocated(), stats.getVariant());
         }
     }
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship, String id) {
-        ResolvedTree tree = treeFor(ship);
-        if (tree == null) return;
+        ResolvedTree resolvedTree = treeFor(ship);
+        if (resolvedTree == null) return;
 
-        for (ResolvedTree.Entry entry : tree.entries()) {
-            if (entry instanceof ResolvedTree.VanillaEntry vanilla) {
-                vanilla.effect().applyEffectsAfterShipCreation(ship, vanilla.hullModId());
-            } else if (entry instanceof ResolvedTree.EffectEntry effect) {
-                effect.effect().applyAfterShipCreation(ship, effect.modId(), effect.magnitude());
+        for (ResolvedTree.Entry entry : resolvedTree.entries()) {
+            if (entry instanceof ResolvedTree.VanillaEntry vanillaEntry) {
+                vanillaEntry.effect().applyEffectsAfterShipCreation(ship, vanillaEntry.hullModId());
+            } else if (entry instanceof ResolvedTree.EffectEntry effectEntry) {
+                effectEntry.effect().applyAfterShipCreation(ship, effectEntry.modId(), effectEntry.magnitude());
             }
         }
-        HullModConflictResolver.removeHullModsThatTriedToStripAPhantom(tree.allocated(), ship.getVariant(),
+        HullModConflictResolver.removeHullModsThatTriedToStripAPhantom(resolvedTree.allocated(), ship.getVariant(),
                 !SkillDataResolver.isNpcTree(ship.getVariant()));
     }
 
@@ -95,13 +95,13 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         if (ship == null || isForModSpec) return;
 
         FleetMemberAPI member = ship.getFleetMember() != null ? ship.getFleetMember() : ship.getMutableStats().getFleetMember();
-        ShipTreeLookup.ShipTree tree = ShipTreeLookup.forShip(member, ship.getVariant());
-        if (tree == null) {
+        ShipTreeLookup.ShipTree shipTree = ShipTreeLookup.forShip(member, ship.getVariant());
+        if (shipTree == null) {
             I18n.forGameText(() -> VanillaText.addPara(tooltip, Translation.styled("hullmod.exiledSector_core.noTree"), TOOLTIP_PAD,
                     Misc.getGrayColor()));
             return;
         }
-        ShipTreeSummaryRenderer.render(tooltip, tree, hullSize, TOOLTIP_PAD, MAX_TOOLTIP_BONUS_LINES);
+        ShipTreeSummaryRenderer.render(tooltip, shipTree, hullSize, TOOLTIP_PAD, MAX_TOOLTIP_BONUS_LINES);
     }
 
     @Override
@@ -132,14 +132,14 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
 
     @Override
     public void applyEffectsToFighterSpawnedByShip(ShipAPI fighter, ShipAPI ship, String id) {
-        ResolvedTree tree = treeFor(ship);
-        if (tree == null) return;
+        ResolvedTree resolvedTree = treeFor(ship);
+        if (resolvedTree == null) return;
 
-        for (ResolvedTree.Entry entry : tree.entries()) {
-            if (entry instanceof ResolvedTree.VanillaEntry vanilla) {
-                vanilla.effect().applyEffectsToFighterSpawnedByShip(fighter, ship, vanilla.hullModId());
-            } else if (entry instanceof ResolvedTree.EffectEntry effect) {
-                effect.effect().applyToFighterSpawnedByShip(fighter, ship, effect.modId(), effect.magnitude());
+        for (ResolvedTree.Entry entry : resolvedTree.entries()) {
+            if (entry instanceof ResolvedTree.VanillaEntry vanillaEntry) {
+                vanillaEntry.effect().applyEffectsToFighterSpawnedByShip(fighter, ship, vanillaEntry.hullModId());
+            } else if (entry instanceof ResolvedTree.EffectEntry effectEntry) {
+                effectEntry.effect().applyToFighterSpawnedByShip(fighter, ship, effectEntry.modId(), effectEntry.magnitude());
             }
         }
     }
@@ -175,33 +175,33 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
 
     private ShipCombatPlan combatPlanFor(ShipAPI ship) {
         Map<String, Object> customData = ship.getCustomData();
-        if (customData != null && customData.get(COMBAT_PLAN_KEY) instanceof ShipCombatPlan plan) {
-            return plan;
+        if (customData != null && customData.get(COMBAT_PLAN_KEY) instanceof ShipCombatPlan combatPlan) {
+            return combatPlan;
         }
-        ShipCombatPlan plan = buildCombatPlan(treeFor(ship));
-        ship.setCustomData(COMBAT_PLAN_KEY, plan);
-        return plan;
+        ShipCombatPlan combatPlan = buildCombatPlan(treeFor(ship));
+        ship.setCustomData(COMBAT_PLAN_KEY, combatPlan);
+        return combatPlan;
     }
 
-    private static ShipCombatPlan buildCombatPlan(ResolvedTree tree) {
-        ShipCombatPlan plan = new ShipCombatPlan();
-        if (tree == null) return plan;
+    private static ShipCombatPlan buildCombatPlan(ResolvedTree resolvedTree) {
+        ShipCombatPlan combatPlan = new ShipCombatPlan();
+        if (resolvedTree == null) return combatPlan;
 
-        for (ResolvedTree.Entry entry : tree.entries()) {
-            if (entry instanceof ResolvedTree.VanillaEntry vanilla) {
-                plan.addVanillaEffect(vanilla.effect());
-            } else if (entry instanceof ResolvedTree.EffectEntry effect && effect.effect().advancesInCombat()) {
-                plan.addCombatUpdate(effect);
+        for (ResolvedTree.Entry entry : resolvedTree.entries()) {
+            if (entry instanceof ResolvedTree.VanillaEntry vanillaEntry) {
+                combatPlan.addVanillaEffect(vanillaEntry.effect());
+            } else if (entry instanceof ResolvedTree.EffectEntry effectEntry && effectEntry.effect().advancesInCombat()) {
+                combatPlan.addCombatUpdate(effectEntry);
             }
         }
-        for (ResolvedTree.TemporaryNode node : tree.temporaryNodes()) {
-            plan.addTemporaryNode(node.durationSeconds(), node.effects());
+        for (ResolvedTree.TemporaryNode temporaryNode : resolvedTree.temporaryNodes()) {
+            combatPlan.addTemporaryNode(temporaryNode.durationSeconds(), temporaryNode.effects());
         }
-        return plan;
+        return combatPlan;
     }
 
     private static ResolvedTree treeFor(ShipAPI ship) {
-        ShipSkillData data = SkillDataResolver.resolve(ship.getMutableStats().getFleetMember(), ship.getVariant());
-        return ResolvedTree.of(data, ship.getHullSize());
+        ShipSkillData shipData = SkillDataResolver.resolve(ship.getMutableStats().getFleetMember(), ship.getVariant());
+        return ResolvedTree.of(shipData, ship.getHullSize());
     }
 }

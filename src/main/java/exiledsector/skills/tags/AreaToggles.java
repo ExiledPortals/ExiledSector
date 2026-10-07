@@ -23,11 +23,11 @@ public final class AreaToggles {
     }
 
     static Set<String> disabledRegions(String lostSectorSetting, boolean lostSectorInstalled) {
-        boolean shown = switch (lostSectorSetting == null ? AUTO : lostSectorSetting) {
+        boolean regionsShown = switch (lostSectorSetting == null ? AUTO : lostSectorSetting) {
             case ON -> true;
             case OFF -> false;
             default -> lostSectorInstalled;
         };
-        return shown ? Set.of() : LOST_SECTOR_REGIONS;
+        return regionsShown ? Set.of() : LOST_SECTOR_REGIONS;
     }
 }

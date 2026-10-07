@@ -29,12 +29,12 @@ public final class SkillTreeTemplateStore {
     }
 
     public static List<SkillTreeTemplate> all() {
-        Map<String, String> stored = storedTemplates(false);
-        if (stored == null) {
+        Map<String, String> encodedTemplatesById = storedTemplates(false);
+        if (encodedTemplatesById == null) {
             return List.of();
         }
         List<SkillTreeTemplate> templates = new ArrayList<>();
-        for (Map.Entry<String, String> entry : stored.entrySet()) {
+        for (Map.Entry<String, String> entry : encodedTemplatesById.entrySet()) {
             SkillTreeTemplate template = TemplateCodec.decode(entry.getValue());
             if (template != null) {
                 templates.add(template);
@@ -45,29 +45,29 @@ public final class SkillTreeTemplateStore {
         return templates;
     }
 
-    public static SkillTreeTemplate find(String id) {
-        Map<String, String> stored = storedTemplates(false);
-        return stored == null || id == null ? null : TemplateCodec.decode(stored.get(id));
+    public static SkillTreeTemplate find(String templateId) {
+        Map<String, String> encodedTemplatesById = storedTemplates(false);
+        return encodedTemplatesById == null || templateId == null ? null : TemplateCodec.decode(encodedTemplatesById.get(templateId));
     }
 
-    public static SkillTreeTemplate save(String name, String rootNodeId, HullSize hullSize, List<TemplateStep> steps) {
-        return save(name, rootNodeId, hullSize, steps, () -> UUID.randomUUID().toString());
+    public static SkillTreeTemplate save(String templateName, String rootNodeId, HullSize hullSize, List<TemplateStep> steps) {
+        return save(templateName, rootNodeId, hullSize, steps, () -> UUID.randomUUID().toString());
     }
 
-    static SkillTreeTemplate save(String name, String rootNodeId, HullSize hullSize, List<TemplateStep> steps, Supplier<String> ids) {
-        SkillTreeTemplate template = new SkillTreeTemplate(ids.get(), TemplateNames.normalise(name), rootNodeId, hullSize, steps);
+    static SkillTreeTemplate save(String templateName, String rootNodeId, HullSize hullSize, List<TemplateStep> steps, Supplier<String> templateIdSupplier) {
+        SkillTreeTemplate template = new SkillTreeTemplate(templateIdSupplier.get(), TemplateNames.normalise(templateName), rootNodeId, hullSize, steps);
         storedTemplates(true).put(template.id(), TemplateCodec.encode(template));
         return template;
     }
 
-    public static boolean delete(String id) {
-        Map<String, String> stored = storedTemplates(false);
-        if (stored == null || stored.remove(id) == null) {
+    public static boolean delete(String templateId) {
+        Map<String, String> encodedTemplatesById = storedTemplates(false);
+        if (encodedTemplatesById == null || encodedTemplatesById.remove(templateId) == null) {
             return false;
         }
         Map<String, String> assignments = storedAssignments(false);
         if (assignments != null) {
-            assignments.values().removeIf(id::equals);
+            assignments.values().removeIf(templateId::equals);
         }
         return true;
     }
@@ -97,34 +97,34 @@ public final class SkillTreeTemplateStore {
         if (assignments == null) {
             return;
         }
-        Map<String, String> stored = storedTemplates(false);
-        assignments.entrySet().removeIf(entry -> stored == null || !stored.containsKey(entry.getValue())
+        Map<String, String> encodedTemplatesById = storedTemplates(false);
+        assignments.entrySet().removeIf(entry -> encodedTemplatesById == null || !encodedTemplatesById.containsKey(entry.getValue())
                 || !shipStillNeeded.test(entry.getKey()));
     }
 
-    private static void reportMalformed(String id) {
-        if (REPORTED_MALFORMED.add(id)) {
-            Logger.getLogger(SkillTreeTemplateStore.class).warn("[ExiledSector] Skill tree template " + id + " could not be read and is ignored.");
+    private static void reportMalformed(String templateId) {
+        if (REPORTED_MALFORMED.add(templateId)) {
+            Logger.getLogger(SkillTreeTemplateStore.class).warn("[ExiledSector] Skill tree template " + templateId + " could not be read and is ignored.");
         }
     }
 
     // persistentData is a raw Object map; this key is only ever written as Map<String, String>
     @SuppressWarnings("unchecked")
-    private static Map<String, String> storedTemplates(boolean create) {
+    private static Map<String, String> storedTemplates(boolean createIfMissing) {
         Map<String, Object> persistentData = Global.getSector().getPersistentData();
-        if (create) {
+        if (createIfMissing) {
             return (Map<String, String>) persistentData.computeIfAbsent(TEMPLATES_KEY, key -> new LinkedHashMap<String, String>());
         }
-        return persistentData.get(TEMPLATES_KEY) instanceof Map<?, ?> map ? (Map<String, String>) map : null;
+        return persistentData.get(TEMPLATES_KEY) instanceof Map<?, ?> storedMap ? (Map<String, String>) storedMap : null;
     }
 
     // persistentData is a raw Object map; this key is only ever written as Map<String, String>
     @SuppressWarnings("unchecked")
-    private static Map<String, String> storedAssignments(boolean create) {
+    private static Map<String, String> storedAssignments(boolean createIfMissing) {
         Map<String, Object> persistentData = Global.getSector().getPersistentData();
-        if (create) {
+        if (createIfMissing) {
             return (Map<String, String>) persistentData.computeIfAbsent(ASSIGNMENTS_KEY, key -> new HashMap<String, String>());
         }
-        return persistentData.get(ASSIGNMENTS_KEY) instanceof Map<?, ?> map ? (Map<String, String>) map : null;
+        return persistentData.get(ASSIGNMENTS_KEY) instanceof Map<?, ?> storedMap ? (Map<String, String>) storedMap : null;
     }
 }

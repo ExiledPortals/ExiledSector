@@ -58,9 +58,9 @@ public abstract class Socketable {
 
     private FrozenName frozenName(SocketableDefinition definition) {
         if (definition != null && (frozenName == null || frozenName.isAssembledText())) {
-            FrozenName fresh = SocketableNames.freeze(definition, seed, effects);
-            if (fresh != null || frozenName == null) {
-                frozenName = fresh;
+            FrozenName freshName = SocketableNames.freeze(definition, seed, effects);
+            if (freshName != null || frozenName == null) {
+                frozenName = freshName;
             }
         }
         return frozenName;
@@ -70,15 +70,15 @@ public abstract class Socketable {
         frozenName(definition());
     }
 
-    void freezeName(FrozenName name) {
-        if (name != null) {
-            frozenName = name;
+    void freezeName(FrozenName presetName) {
+        if (presetName != null) {
+            frozenName = presetName;
         }
     }
 
-    void replaceEffects(List<RolledEffect> replacement) {
+    void replaceEffects(List<RolledEffect> replacementEffects) {
         effects.clear();
-        effects.addAll(replacement);
+        effects.addAll(replacementEffects);
     }
 
     void refreezeName() {
@@ -122,14 +122,14 @@ public abstract class Socketable {
     }
 
     public List<SkillTypeEffect> skillEffects() {
-        List<SkillTypeEffect> applied = new ArrayList<>(effects.size());
+        List<SkillTypeEffect> appliedEffects = new ArrayList<>(effects.size());
         for (RolledEffect effect : effects) {
-            SkillEffect resolved = effect.effect();
-            if (resolved != null) {
-                applied.add(new SkillTypeEffect(resolved, effect.magnitude()));
+            SkillEffect resolvedEffect = effect.effect();
+            if (resolvedEffect != null) {
+                appliedEffects.add(new SkillTypeEffect(resolvedEffect, effect.magnitude()));
             }
         }
-        return applied;
+        return appliedEffects;
     }
 
     public List<StyledText> effectLines() {

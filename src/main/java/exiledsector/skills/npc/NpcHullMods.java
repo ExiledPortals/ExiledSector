@@ -41,13 +41,13 @@ public record NpcHullMods(Set<String> removable, Set<String> permanent) {
         return installed;
     }
 
-    private static void addAll(Set<String> target, Collection<String> source) {
-        if (source != null) {
-            target.addAll(source);
+    private static void addAll(Set<String> hullModIds, Collection<String> addedHullModIds) {
+        if (addedHullModIds != null) {
+            hullModIds.addAll(addedHullModIds);
         }
     }
 
-    private static Set<String> sortedCopy(Set<String> source) {
-        return source == null ? Set.of() : Collections.unmodifiableSet(new TreeSet<>(source));
+    private static Set<String> sortedCopy(Set<String> hullModIds) {
+        return hullModIds == null ? Set.of() : Collections.unmodifiableSet(new TreeSet<>(hullModIds));
     }
 }

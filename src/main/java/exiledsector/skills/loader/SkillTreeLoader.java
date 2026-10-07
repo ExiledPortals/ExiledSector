@@ -40,27 +40,27 @@ public final class SkillTreeLoader {
     }
 
     public static ParsedTree loadAll(Map<String, SkillType> skillTypes) {
-        JSONObject root = loadRoot();
-        if (root == null) {
+        JSONObject treeJson = loadRoot();
+        if (treeJson == null) {
             return new ParsedTree(new ArrayList<>(), 0, new LinkedHashMap<>(), new HashSet<>(),
                     new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         }
-        JSONArray declaredNodes = root.optJSONArray("nodes");
+        JSONArray declaredNodes = treeJson.optJSONArray("nodes");
         return new ParsedTree(
-                safeParse("nodes", () -> parseNodes(root, skillTypes), new ArrayList<>()),
+                safeParse("nodes", () -> parseNodes(treeJson, skillTypes), new ArrayList<>()),
                 declaredNodes == null ? 0 : declaredNodes.length(),
-                safeParse("connector curves", () -> parseConnectorCurves(root), new LinkedHashMap<>()),
-                safeParse("hidden connectors", () -> parseHiddenConnectors(root), new HashSet<>()),
-                safeParse("static images", () -> parseStaticImages(root), new ArrayList<>()),
-                safeParse("ring belts", () -> parseRingBelts(root), new ArrayList<>()),
-                safeParse("stars", () -> parseStars(root), new ArrayList<>()));
+                safeParse("connector curves", () -> parseConnectorCurves(treeJson), new LinkedHashMap<>()),
+                safeParse("hidden connectors", () -> parseHiddenConnectors(treeJson), new HashSet<>()),
+                safeParse("static images", () -> parseStaticImages(treeJson), new ArrayList<>()),
+                safeParse("ring belts", () -> parseRingBelts(treeJson), new ArrayList<>()),
+                safeParse("stars", () -> parseStars(treeJson), new ArrayList<>()));
     }
 
-    private static <T> T safeParse(String context, JsonParser<T> parser, T fallback) {
+    private static <T> T safeParse(String sectionName, JsonParser<T> parser, T fallback) {
         try {
             return parser.parse();
         } catch (JSONException e) {
-            Logger.getLogger(SkillTreeLoader.class).error("Failed to parse " + context + " from " + DATA_PATH, e);
+            Logger.getLogger(SkillTreeLoader.class).error("Failed to parse " + sectionName + " from " + DATA_PATH, e);
             return fallback;
         }
     }
@@ -90,9 +90,9 @@ public final class SkillTreeLoader {
         }
     }
 
-    public static List<RingBelt> parseRingBelts(JSONObject root) throws JSONException {
+    public static List<RingBelt> parseRingBelts(JSONObject treeJson) throws JSONException {
         List<RingBelt> ringBelts = new ArrayList<>();
-        JSONArray beltArray = root.optJSONArray("ringBelts");
+        JSONArray beltArray = treeJson.optJSONArray("ringBelts");
         if (beltArray == null) return ringBelts;
         for (int i = 0; i < beltArray.length(); i++) {
             JSONObject beltJson = beltArray.getJSONObject(i);
@@ -108,9 +108,9 @@ public final class SkillTreeLoader {
         return ringBelts;
     }
 
-    public static List<StaticImage> parseStaticImages(JSONObject root) throws JSONException {
+    public static List<StaticImage> parseStaticImages(JSONObject treeJson) throws JSONException {
         List<StaticImage> images = new ArrayList<>();
-        JSONArray imageArray = root.optJSONArray("staticImages");
+        JSONArray imageArray = treeJson.optJSONArray("staticImages");
         if (imageArray == null) return images;
         for (int i = 0; i < imageArray.length(); i++) {
             JSONObject imageJson = imageArray.getJSONObject(i);
@@ -126,9 +126,9 @@ public final class SkillTreeLoader {
         return images;
     }
 
-    public static List<Star> parseStars(JSONObject root) throws JSONException {
+    public static List<Star> parseStars(JSONObject treeJson) throws JSONException {
         List<Star> stars = new ArrayList<>();
-        JSONArray starArray = root.optJSONArray("stars");
+        JSONArray starArray = treeJson.optJSONArray("stars");
         if (starArray == null) return stars;
         for (int i = 0; i < starArray.length(); i++) {
             JSONObject starJson = starArray.getJSONObject(i);
@@ -144,24 +144,24 @@ public final class SkillTreeLoader {
         return stars;
     }
 
-    public static Map<String, ConnectorCurve> parseConnectorCurves(JSONObject root) throws JSONException {
+    public static Map<String, ConnectorCurve> parseConnectorCurves(JSONObject treeJson) throws JSONException {
         Map<String, ConnectorCurve> curves = new LinkedHashMap<>();
-        JSONArray curveArray = root.optJSONArray("connectorCurves");
+        JSONArray curveArray = treeJson.optJSONArray("connectorCurves");
         if (curveArray == null) return curves;
         for (int i = 0; i < curveArray.length(); i++) {
             JSONObject curveJson = curveArray.getJSONObject(i);
-            String a = curveJson.getString("a");
-            String b = curveJson.getString("b");
+            String firstNodeId = curveJson.getString("a");
+            String secondNodeId = curveJson.getString("b");
             float controlX = (float) curveJson.getDouble("controlX");
             float controlY = (float) curveJson.getDouble("controlY");
-            curves.put(SkillTree.curveKey(a, b), new ConnectorCurve(controlX, controlY));
+            curves.put(SkillTree.curveKey(firstNodeId, secondNodeId), new ConnectorCurve(controlX, controlY));
         }
         return curves;
     }
 
-    public static Set<String> parseHiddenConnectors(JSONObject root) throws JSONException {
+    public static Set<String> parseHiddenConnectors(JSONObject treeJson) throws JSONException {
         Set<String> hiddenKeys = new HashSet<>();
-        JSONArray hiddenArray = root.optJSONArray("hiddenConnectors");
+        JSONArray hiddenArray = treeJson.optJSONArray("hiddenConnectors");
         if (hiddenArray == null) return hiddenKeys;
         for (int i = 0; i < hiddenArray.length(); i++) {
             JSONObject hiddenJson = hiddenArray.getJSONObject(i);
@@ -170,9 +170,9 @@ public final class SkillTreeLoader {
         return hiddenKeys;
     }
 
-    public static List<SkillNode> parseNodes(JSONObject root, Map<String, SkillType> skillTypes) throws JSONException {
+    public static List<SkillNode> parseNodes(JSONObject treeJson, Map<String, SkillType> skillTypes) throws JSONException {
         List<SkillNode> nodes = new ArrayList<>();
-        JSONArray nodeArray = root.getJSONArray("nodes");
+        JSONArray nodeArray = treeJson.getJSONArray("nodes");
         for (int i = 0; i < nodeArray.length(); i++) {
             try {
                 nodes.add(parseNode(nodeArray.getJSONObject(i), skillTypes));
@@ -184,28 +184,28 @@ public final class SkillTreeLoader {
         return nodes;
     }
 
-    private static SkillNode parseNode(JSONObject json, Map<String, SkillType> skillTypes) throws JSONException {
-        List<String> connectedTo = SkillTypeLoader.parseStringArray(json.optJSONArray("connectedTo"));
-        List<String> tags = SkillTypeLoader.parseStringArray(json.optJSONArray("tags"));
+    private static SkillNode parseNode(JSONObject nodeJson, Map<String, SkillType> skillTypes) throws JSONException {
+        List<String> connectedTo = SkillTypeLoader.parseStringArray(nodeJson.optJSONArray("connectedTo"));
+        List<String> tags = SkillTypeLoader.parseStringArray(nodeJson.optJSONArray("tags"));
 
-        String typeId = json.getString("type");
-        SkillType type = skillTypes.get(typeId);
-        if (type == null) {
+        String typeId = nodeJson.getString("type");
+        SkillType skillType = skillTypes.get(typeId);
+        if (skillType == null) {
             throw new JSONException("Unknown skill type \"" + typeId + "\"");
         }
 
         return new SkillNode(
-                json.getString("id"),
-                type,
+                nodeJson.getString("id"),
+                skillType,
                 connectedTo,
-                (float) json.optDouble("x", 0),
-                (float) json.optDouble("y", 0),
+                (float) nodeJson.optDouble("x", 0),
+                (float) nodeJson.optDouble("y", 0),
                 new SkillNodeDecoration(
-                        json.optString("ringBeltPath", null),
-                        json.optString("ringBeltColor", null),
-                        json.has("ringBeltWidth") ? (float) json.getDouble("ringBeltWidth") : null,
-                        json.optString("wormholeColor", null),
-                        json.optString("pairedWith", null)),
+                        nodeJson.optString("ringBeltPath", null),
+                        nodeJson.optString("ringBeltColor", null),
+                        nodeJson.has("ringBeltWidth") ? (float) nodeJson.getDouble("ringBeltWidth") : null,
+                        nodeJson.optString("wormholeColor", null),
+                        nodeJson.optString("pairedWith", null)),
                 tags);
     }
 }

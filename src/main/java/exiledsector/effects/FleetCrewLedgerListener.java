@@ -78,9 +78,9 @@ public class FleetCrewLedgerListener extends BaseCampaignEventListener {
                 || !context.didPlayerWinMostRecentBattleOfEncounter()) {
             return 0;
         }
-        DataForEncounterSide data = context.getDataFor(playerFleet);
-        CrewCompositionAPI recoverable = data == null ? null : data.getRecoverableCrewLosses();
-        return recoverable == null ? 0 : recoverable.getCrewInt();
+        DataForEncounterSide playerSideData = context.getDataFor(playerFleet);
+        CrewCompositionAPI recoverableCrew = playerSideData == null ? null : playerSideData.getRecoverableCrewLosses();
+        return recoverableCrew == null ? 0 : recoverableCrew.getCrewInt();
     }
 
     private static void line(TextPanelAPI textPanel, String messageKey, int count, Color color) {

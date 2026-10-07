@@ -51,11 +51,11 @@ public final class SocketableStore {
         return add(SocketableItemData.rolled(definition, seed));
     }
 
-    public Socketable add(SocketableItemData item) {
-        if (item.definition() == null) {
+    public Socketable add(SocketableItemData itemData) {
+        if (itemData.definition() == null) {
             return null;
         }
-        Socketable socketable = item.create(ID_PREFIX + nextId++);
+        Socketable socketable = itemData.create(ID_PREFIX + nextId++);
         if (socketable == null) {
             return null;
         }
@@ -71,14 +71,14 @@ public final class SocketableStore {
         owned.forEach(Socketable::freezeName);
     }
 
-    boolean replace(Socketable current, Socketable replacement) {
-        int index = owned.indexOf(current);
-        if (index < 0) {
+    boolean replace(Socketable replacedSocketable, Socketable replacement) {
+        int ownedIndex = owned.indexOf(replacedSocketable);
+        if (ownedIndex < 0) {
             return false;
         }
-        owned.set(index, replacement);
+        owned.set(ownedIndex, replacement);
         if (byId != null) {
-            byId.remove(current.id());
+            byId.remove(replacedSocketable.id());
             byId.put(replacement.id(), replacement);
         }
         return true;
@@ -93,30 +93,30 @@ public final class SocketableStore {
     }
 
     public int absorbFrom(CargoAPI cargo) {
-        int moved = 0;
+        int movedCount = 0;
         for (CargoStackAPI stack : cargo.getStacksCopy()) {
-            moved += absorbStack(cargo, stack);
+            movedCount += absorbStack(cargo, stack);
         }
-        return moved;
+        return movedCount;
     }
 
     private int absorbStack(CargoAPI cargo, CargoStackAPI stack) {
-        SocketableItemData item = SocketableItemData.of(stack.getSpecialDataIfSpecial());
-        if (item == null) {
+        SocketableItemData itemData = SocketableItemData.of(stack.getSpecialDataIfSpecial());
+        if (itemData == null) {
             return 0;
         }
-        if (item.definition() == null) {
-            LOG.warn("Leaving a socketable in cargo: its definition \"" + item.definitionId() + "\" is not loaded");
+        if (itemData.definition() == null) {
+            LOG.warn("Leaving a socketable in cargo: its definition \"" + itemData.definitionId() + "\" is not loaded");
             return 0;
         }
-        int count = Math.round(stack.getSize());
-        if (count < 1) {
+        int stackCount = Math.round(stack.getSize());
+        if (stackCount < 1) {
             return 0;
         }
-        for (int i = 0; i < count; i++) {
-            add(item);
+        for (int i = 0; i < stackCount; i++) {
+            add(itemData);
         }
         cargo.removeStack(stack);
-        return count;
+        return stackCount;
     }
 }

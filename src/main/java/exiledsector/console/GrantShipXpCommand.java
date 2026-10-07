@@ -33,55 +33,55 @@ public class GrantShipXpCommand implements BaseCommand {
             Console.showMessage("No player fleet found.");
             return CommandResult.ERROR;
         }
-        List<FleetMemberAPI> members = playerFleet.getFleetData().getMembersListCopy();
+        List<FleetMemberAPI> fleetMembers = playerFleet.getFleetData().getMembersListCopy();
 
         float xp = DEFAULT_XP;
-        List<FleetMemberAPI> matches = matching(members, query);
+        List<FleetMemberAPI> matchingMembers = matching(fleetMembers, query);
         int lastSpace = query.lastIndexOf(' ');
-        Float amount = lastSpace > 0 ? parseAmount(query.substring(lastSpace + 1)) : null;
-        if (matches.isEmpty() && amount != null) {
-            xp = amount;
+        Float trailingXpAmount = lastSpace > 0 ? parseAmount(query.substring(lastSpace + 1)) : null;
+        if (matchingMembers.isEmpty() && trailingXpAmount != null) {
+            xp = trailingXpAmount;
             query = query.substring(0, lastSpace).trim();
-            matches = matching(members, query);
+            matchingMembers = matching(fleetMembers, query);
         }
 
-        if (matches.isEmpty()) {
+        if (matchingMembers.isEmpty()) {
             Console.showMessage("No ship in your fleet matches \"" + query + "\".");
             return CommandResult.ERROR;
         }
-        if (matches.size() > 1) {
-            List<String> names = new ArrayList<>();
-            matches.forEach(member -> names.add(describe(member)));
-            Console.showMessage("Several ships match \"" + query + "\": " + String.join(", ", names)
+        if (matchingMembers.size() > 1) {
+            List<String> shipDescriptions = new ArrayList<>();
+            matchingMembers.forEach(member -> shipDescriptions.add(describe(member)));
+            Console.showMessage("Several ships match \"" + query + "\": " + String.join(", ", shipDescriptions)
                     + ". Use more of the ship's name.");
             return CommandResult.ERROR;
         }
 
-        FleetMemberAPI member = matches.get(0);
+        FleetMemberAPI matchedMember = matchingMembers.get(0);
         SkillTreeInstaller.adoptNpcTrees(playerFleet);
-        ShipLevelSystem.awardXpToMember(member, xp);
-        Console.showMessage("Granted " + (int) xp + " XP to " + describe(member) + ".");
+        ShipLevelSystem.awardXpToMember(matchedMember, xp);
+        Console.showMessage("Granted " + (int) xp + " XP to " + describe(matchedMember) + ".");
         return CommandResult.SUCCESS;
     }
 
     private static List<FleetMemberAPI> matching(List<FleetMemberAPI> members, String query) {
-        String wanted = query.toLowerCase(Locale.ROOT);
-        List<FleetMemberAPI> exact = new ArrayList<>();
-        List<FleetMemberAPI> partial = new ArrayList<>();
+        String wantedName = query.toLowerCase(Locale.ROOT);
+        List<FleetMemberAPI> exactMatches = new ArrayList<>();
+        List<FleetMemberAPI> partialMatches = new ArrayList<>();
         for (FleetMemberAPI member : members) {
-            String name = member.getShipName() == null ? "" : member.getShipName().toLowerCase(Locale.ROOT);
-            if (name.equals(wanted) || member.getId().equalsIgnoreCase(query)) {
-                exact.add(member);
-            } else if (name.contains(wanted)) {
-                partial.add(member);
+            String shipName = member.getShipName() == null ? "" : member.getShipName().toLowerCase(Locale.ROOT);
+            if (shipName.equals(wantedName) || member.getId().equalsIgnoreCase(query)) {
+                exactMatches.add(member);
+            } else if (shipName.contains(wantedName)) {
+                partialMatches.add(member);
             }
         }
-        return exact.isEmpty() ? partial : exact;
+        return exactMatches.isEmpty() ? partialMatches : exactMatches;
     }
 
-    private static Float parseAmount(String text) {
+    private static Float parseAmount(String amountText) {
         try {
-            return Float.parseFloat(text);
+            return Float.parseFloat(amountText);
         } catch (NumberFormatException e) {
             return null;
         }

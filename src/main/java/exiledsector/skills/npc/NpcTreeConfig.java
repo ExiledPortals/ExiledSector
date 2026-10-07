@@ -30,8 +30,8 @@ public final class NpcTreeConfig {
     }
 
     public static float otherShipChance() {
-        int percent = ModSettings.intOr(OTHER_SHIP_CHANCE_FIELD_ID, DEFAULT_OTHER_SHIP_CHANCE_PERCENT);
-        return Math.max(0, Math.min(100, percent)) / 100f;
+        int chancePercent = ModSettings.intOr(OTHER_SHIP_CHANCE_FIELD_ID, DEFAULT_OTHER_SHIP_CHANCE_PERCENT);
+        return Math.max(0, Math.min(100, chancePercent)) / 100f;
     }
 
     private static boolean bool(String fieldId, boolean defaultValue) {

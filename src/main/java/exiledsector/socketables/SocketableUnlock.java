@@ -46,8 +46,8 @@ public enum SocketableUnlock {
         if (sector == null) {
             return false;
         }
-        MutableCharacterStatsAPI player = sector.getPlayerStats();
-        if (player == null || player.getLevel() < UNIQUE_MIN_PLAYER_LEVEL) {
+        MutableCharacterStatsAPI playerStats = sector.getPlayerStats();
+        if (playerStats == null || playerStats.getLevel() < UNIQUE_MIN_PLAYER_LEVEL) {
             return false;
         }
         if (definition.unlock().isEmpty()) {
@@ -58,15 +58,15 @@ public enum SocketableUnlock {
     }
 
     boolean isMet(SectorAPI sector) {
-        MemoryAPI memory = sector.getMemoryWithoutUpdate();
-        String latch = LATCH_PREFIX + id;
-        if (memory.getBoolean(latch)) {
+        MemoryAPI sectorMemory = sector.getMemoryWithoutUpdate();
+        String latchKey = LATCH_PREFIX + id;
+        if (sectorMemory.getBoolean(latchKey)) {
             return true;
         }
         if (!condition.test(sector)) {
             return false;
         }
-        memory.set(latch, true);
+        sectorMemory.set(latchKey, true);
         return true;
     }
 

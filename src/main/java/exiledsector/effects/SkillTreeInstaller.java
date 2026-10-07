@@ -80,8 +80,8 @@ public class SkillTreeInstaller implements EveryFrameScript {
 
     static boolean raiseToLevelFloor(FleetMemberAPI member, int levelFloor) {
         if (levelFloor <= 0) return false;
-        ShipSkillData data = ShipSkillDataManager.get(member.getId());
-        if (!ShipLevelSystem.raiseToLevel(data, levelFloor, SkillTree.getAllNodes().values())) return false;
+        ShipSkillData shipData = ShipSkillDataManager.get(member.getId());
+        if (!ShipLevelSystem.raiseToLevel(shipData, levelFloor, SkillTree.getAllNodes().values())) return false;
         member.setStatUpdateNeeded(true);
         return true;
     }
@@ -153,10 +153,10 @@ public class SkillTreeInstaller implements EveryFrameScript {
     }
 
     static boolean adoptNpcTree(FleetMemberAPI member) {
-        String tag = NpcTreeTag.find(member.getVariant());
-        if (tag == null) return false;
+        String npcTreeTag = NpcTreeTag.find(member.getVariant());
+        if (npcTreeTag == null) return false;
 
-        ShipSkillData npcTree = NpcTreeTag.decode(tag);
+        ShipSkillData npcTree = NpcTreeTag.decode(npcTreeTag);
         if (npcTree != null && ShipSkillDataManager.get(member.getId()).isBlank()) {
             npcTree.clearNpcBuild();
             NpcSocketables.claimForPlayer(npcTree);
@@ -178,13 +178,13 @@ public class SkillTreeInstaller implements EveryFrameScript {
     }
 
     static ShipVariantAPI ownedVariant(FleetMemberAPI member) {
-        ShipVariantAPI variant = member.getVariant();
-        if (variant.getSource() == VariantSource.REFIT) {
-            return variant;
+        ShipVariantAPI currentVariant = member.getVariant();
+        if (currentVariant.getSource() == VariantSource.REFIT) {
+            return currentVariant;
         }
-        ShipVariantAPI copy = variant.clone();
-        copy.setSource(VariantSource.REFIT);
-        member.setVariant(copy, false, true);
-        return copy;
+        ShipVariantAPI refitCopy = currentVariant.clone();
+        refitCopy.setSource(VariantSource.REFIT);
+        member.setVariant(refitCopy, false, true);
+        return refitCopy;
     }
 }

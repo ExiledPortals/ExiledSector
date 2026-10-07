@@ -39,93 +39,93 @@ public final class ResolvedTree {
     }
 
     private final HullSize hullSize;
-    private final int revision;
-    private final List<AllocatedNode> allocated;
+    private final int shipDataRevision;
+    private final List<AllocatedNode> allocatedNodes;
     private final List<Entry> entries;
     private final List<TemporaryNode> temporaryNodes;
     private final Set<String> phantomHullModIds;
 
-    private ResolvedTree(ShipSkillData data, HullSize hullSize) {
+    private ResolvedTree(ShipSkillData shipData, HullSize hullSize) {
         this.hullSize = hullSize;
-        this.revision = data.revision();
-        this.allocated = List.copyOf(AllocatedNode.of(data));
-        List<Entry> resolved = new ArrayList<>();
-        List<TemporaryNode> temporary = new ArrayList<>();
-        Map<SkillEffect, Float> multipliers = new LinkedHashMap<>();
-        for (AllocatedNode node : allocated) {
+        this.shipDataRevision = shipData.revision();
+        this.allocatedNodes = List.copyOf(AllocatedNode.of(shipData));
+        List<Entry> resolvedEntries = new ArrayList<>();
+        List<TemporaryNode> resolvedTemporaryNodes = new ArrayList<>();
+        Map<SkillEffect, Float> multiplierTotals = new LinkedHashMap<>();
+        for (AllocatedNode node : allocatedNodes) {
             String vanillaHullModId = node.effectiveType().getVanillaHullModId();
             if (vanillaHullModId != null) {
-                addVanillaEntry(vanillaHullModId, resolved);
+                addVanillaEntry(vanillaHullModId, resolvedEntries);
             } else if (node.effectiveType().getTemporaryAfterDeploymentSeconds() != null) {
-                addTemporaryNode(data, node, hullSize, resolved, temporary);
+                addTemporaryNode(shipData, node, hullSize, resolvedEntries, resolvedTemporaryNodes);
             } else {
-                addEffects(data, node, hullSize, resolved, multipliers);
+                addEffects(shipData, node, hullSize, resolvedEntries, multiplierTotals);
             }
         }
-        multipliers.forEach((effect, total) ->
-                resolved.add(new EffectEntry(effect, MULTIPLIER_MOD_ID_PREFIX + effect.name(), SkillEffect.addedMultiplier(total))));
-        this.entries = List.copyOf(resolved);
-        this.temporaryNodes = List.copyOf(temporary);
-        this.phantomHullModIds = phantomHullModIdsOf(allocated);
+        multiplierTotals.forEach((effect, multiplierTotal) ->
+                resolvedEntries.add(new EffectEntry(effect, MULTIPLIER_MOD_ID_PREFIX + effect.name(), SkillEffect.addedMultiplier(multiplierTotal))));
+        this.entries = List.copyOf(resolvedEntries);
+        this.temporaryNodes = List.copyOf(resolvedTemporaryNodes);
+        this.phantomHullModIds = phantomHullModIdsOf(allocatedNodes);
     }
 
-    private static void addVanillaEntry(String vanillaHullModId, List<Entry> resolved) {
-        HullModSpecAPI spec = Global.getSettings().getHullModSpec(vanillaHullModId);
-        HullModEffect vanillaEffect = spec == null ? null : PhantomHullMods.vanillaEffect(spec.getEffect());
+    private static void addVanillaEntry(String vanillaHullModId, List<Entry> resolvedEntries) {
+        HullModSpecAPI hullModSpec = Global.getSettings().getHullModSpec(vanillaHullModId);
+        HullModEffect vanillaEffect = hullModSpec == null ? null : PhantomHullMods.vanillaEffect(hullModSpec.getEffect());
         if (vanillaEffect != null) {
-            resolved.add(new VanillaEntry(vanillaEffect, vanillaHullModId));
+            resolvedEntries.add(new VanillaEntry(vanillaEffect, vanillaHullModId));
         }
     }
 
-    private static void addTemporaryNode(ShipSkillData data, AllocatedNode node, HullSize hullSize, List<Entry> resolved,
-                                         List<TemporaryNode> temporary) {
+    private static void addTemporaryNode(ShipSkillData shipData, AllocatedNode node, HullSize hullSize, List<Entry> resolvedEntries,
+                                         List<TemporaryNode> resolvedTemporaryNodes) {
         String modId = MOD_ID_PREFIX + node.node().getId();
         List<EffectEntry> nodeEffects = new ArrayList<>();
-        for (SkillTypeEffect effect : AllocatedSkillEffects.appliedEffects(data, node, hullSize)) {
-            EffectEntry entry = new EffectEntry(effect.effect(), modId, effect.magnitude());
-            nodeEffects.add(entry);
-            resolved.add(entry);
+        for (SkillTypeEffect effect : AllocatedSkillEffects.appliedEffects(shipData, node, hullSize)) {
+            EffectEntry effectEntry = new EffectEntry(effect.effect(), modId, effect.magnitude());
+            nodeEffects.add(effectEntry);
+            resolvedEntries.add(effectEntry);
         }
         if (!nodeEffects.isEmpty()) {
-            temporary.add(new TemporaryNode(node.effectiveType().getTemporaryAfterDeploymentSeconds(), List.copyOf(nodeEffects)));
+            resolvedTemporaryNodes.add(new TemporaryNode(node.effectiveType().getTemporaryAfterDeploymentSeconds(), List.copyOf(nodeEffects)));
         }
     }
 
-    private static void addEffects(ShipSkillData data, AllocatedNode node, HullSize hullSize, List<Entry> resolved,
-                                   Map<SkillEffect, Float> multipliers) {
+    private static void addEffects(ShipSkillData shipData, AllocatedNode node, HullSize hullSize, List<Entry> resolvedEntries,
+                                   Map<SkillEffect, Float> multiplierTotals) {
         String modId = MOD_ID_PREFIX + node.node().getId();
-        for (SkillTypeEffect effect : AllocatedSkillEffects.appliedEffects(data, node, hullSize)) {
+        for (SkillTypeEffect effect : AllocatedSkillEffects.appliedEffects(shipData, node, hullSize)) {
             if (effect.effect().isMultiplicative()) {
-                multipliers.merge(effect.effect(), effect.magnitude(), Float::sum);
+                multiplierTotals.merge(effect.effect(), effect.magnitude(), Float::sum);
             } else {
-                resolved.add(new EffectEntry(effect.effect(), modId, effect.magnitude()));
+                resolvedEntries.add(new EffectEntry(effect.effect(), modId, effect.magnitude()));
             }
         }
     }
 
-    static ResolvedTree of(ShipSkillData data, HullSize hullSize) {
-        if (data == null) {
+    static ResolvedTree of(ShipSkillData shipData, HullSize hullSize) {
+        if (shipData == null) {
             return null;
         }
-        ResolvedTree cached = CACHE.get(data);
-        if (cached != null && cached.revision == data.revision() && cached.hullSize == hullSize) {
-            return cached;
+        ResolvedTree cachedTree = CACHE.get(shipData);
+        if (cachedTree != null && cachedTree.shipDataRevision == shipData.revision() && cachedTree.hullSize == hullSize) {
+            return cachedTree;
         }
-        ResolvedTree tree = new ResolvedTree(data, hullSize);
-        CACHE.put(data, tree);
-        return tree;
+        ResolvedTree resolvedTree = new ResolvedTree(shipData, hullSize);
+        CACHE.put(shipData, resolvedTree);
+        return resolvedTree;
     }
 
     static Set<String> phantomHullModIdsOf(List<AllocatedNode> allocatedNodes) {
-        Set<String> ids = new LinkedHashSet<>();
+        Set<String> phantomIds = new LinkedHashSet<>();
         for (AllocatedNode node : allocatedNodes) {
             for (String phantomHullModId : node.effectiveType().getPhantomHullModIds()) {
                 if (PhantomHullMods.isActive(phantomHullModId)) {
-                    ids.add(phantomHullModId);
+                    phantomIds.add(phantomHullModId);
                 }
             }
         }
-        return Collections.unmodifiableSet(ids);
+        return Collections.unmodifiableSet(phantomIds);
     }
 
     public static void clearCache() {
@@ -133,7 +133,7 @@ public final class ResolvedTree {
     }
 
     List<AllocatedNode> allocated() {
-        return allocated;
+        return allocatedNodes;
     }
 
     List<Entry> entries() {

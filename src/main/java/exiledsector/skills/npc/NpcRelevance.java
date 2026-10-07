@@ -30,50 +30,50 @@ final class NpcRelevance {
     private static final Map<HullSize, Float> HEAVY_ARMOUR = Map.of(
             HullSize.FRIGATE, 250f, HullSize.DESTROYER, 600f, HullSize.CRUISER, 1000f, HullSize.CAPITAL_SHIP, 1400f);
 
-    private final Map<String, Float> weights;
+    private final Map<String, Float> weightsByTag;
 
-    private NpcRelevance(Map<String, Float> weights) {
-        this.weights = weights;
+    private NpcRelevance(Map<String, Float> weightsByTag) {
+        this.weightsByTag = weightsByTag;
     }
 
     static NpcRelevance of(ShipProfile profile, Collection<String> permanentHullMods) {
-        Map<String, Float> weights = new HashMap<>(BASE);
-        Set<WeaponKind> kinds = profile.weaponKinds();
-        focus(weights, "ballistic", kinds.contains(WeaponKind.BALLISTIC));
-        focus(weights, "energy", kinds.contains(WeaponKind.ENERGY));
-        focus(weights, "beam", kinds.contains(WeaponKind.BEAM));
-        focus(weights, "missile", kinds.contains(WeaponKind.MISSILE));
-        focus(weights, "fighter", profile.fighterBays() > 0);
-        focus(weights, "phase", profile.phaseHull() || profile.shieldType() == ShieldType.PHASE);
+        Map<String, Float> weightsByTag = new HashMap<>(BASE);
+        Set<WeaponKind> weaponKinds = profile.weaponKinds();
+        focus(weightsByTag, "ballistic", weaponKinds.contains(WeaponKind.BALLISTIC));
+        focus(weightsByTag, "energy", weaponKinds.contains(WeaponKind.ENERGY));
+        focus(weightsByTag, "beam", weaponKinds.contains(WeaponKind.BEAM));
+        focus(weightsByTag, "missile", weaponKinds.contains(WeaponKind.MISSILE));
+        focus(weightsByTag, "fighter", profile.fighterBays() > 0);
+        focus(weightsByTag, "phase", profile.phaseHull() || profile.shieldType() == ShieldType.PHASE);
         boolean shielded = profile.shieldType() == ShieldType.FRONT || profile.shieldType() == ShieldType.OMNI;
-        focus(weights, "shield", shielded);
+        focus(weightsByTag, "shield", shielded);
         if (shielded) {
-            weights.merge("flux", 1f, Float::sum);
+            weightsByTag.merge("flux", 1f, Float::sum);
         }
         if (profile.baseArmor() >= HEAVY_ARMOUR.getOrDefault(profile.hullSize(), Float.MAX_VALUE)) {
-            focus(weights, "armour", true);
-            weights.merge("hull", 0.7f, Float::sum);
+            focus(weightsByTag, "armour", true);
+            weightsByTag.merge("hull", 0.7f, Float::sum);
         }
-        for (SkillType type : SkillTree.getAllTypes().values()) {
-            if (ownsAny(type, permanentHullMods)) {
-                for (String tag : type.getTags()) {
+        for (SkillType skillType : SkillTree.getAllTypes().values()) {
+            if (ownsAny(skillType, permanentHullMods)) {
+                for (String tag : skillType.getTags()) {
                     if (SkillTags.THEME.contains(tag)) {
-                        weights.merge(tag, PERMANENT_HULLMOD_BONUS, Float::sum);
+                        weightsByTag.merge(tag, PERMANENT_HULLMOD_BONUS, Float::sum);
                     }
                 }
             }
         }
-        return new NpcRelevance(Map.copyOf(weights));
+        return new NpcRelevance(Map.copyOf(weightsByTag));
     }
 
-    private static void focus(Map<String, Float> weights, String tag, boolean focused) {
+    private static void focus(Map<String, Float> weightsByTag, String tag, boolean focused) {
         if (focused) {
-            weights.put(tag, FOCUS);
+            weightsByTag.put(tag, FOCUS);
         }
     }
 
-    private static boolean ownsAny(SkillType type, Collection<String> hullModIds) {
-        for (String hullModId : type.getOwnHullModIds()) {
+    private static boolean ownsAny(SkillType skillType, Collection<String> hullModIds) {
+        for (String hullModId : skillType.getOwnHullModIds()) {
             if (hullModIds.contains(hullModId)) {
                 return true;
             }
@@ -82,15 +82,15 @@ final class NpcRelevance {
     }
 
     float of(Collection<String> tags) {
-        float total = 0f;
+        float totalWeight = 0f;
         boolean themed = false;
         for (String tag : tags) {
-            Float weight = weights.get(tag);
+            Float weight = weightsByTag.get(tag);
             if (weight != null) {
-                total += weight;
+                totalWeight += weight;
                 themed = true;
             }
         }
-        return themed ? total : UNTHEMED;
+        return themed ? totalWeight : UNTHEMED;
     }
 }

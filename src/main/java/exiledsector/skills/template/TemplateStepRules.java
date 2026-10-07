@@ -14,36 +14,36 @@ public final class TemplateStepRules {
     private TemplateStepRules() {
     }
 
-    public static StepVerdict verdict(TemplateStep step, ShipSkillData data, String rootId,
+    public static StepVerdict verdict(TemplateStep step, ShipSkillData shipData, String rootId,
                                       Predicate<SkillNode> canAllocate, BiFunction<SkillNode, SkillType, String> blockReason) {
         SkillNode node = SkillTree.get(step.nodeId());
         if (node == null) {
             return StepVerdict.UNKNOWN_NODE;
         }
-        if (node.getId().equals(rootId) || data.isAllocated(node.getId())) {
+        if (node.getId().equals(rootId) || shipData.isAllocated(node.getId())) {
             return StepVerdict.ALREADY_ALLOCATED;
         }
-        SkillType type = node.getType();
-        if (type.getItemCost() != null) {
+        SkillType nodeType = node.getType();
+        if (nodeType.getItemCost() != null) {
             return StepVerdict.ITEM_COST;
         }
-        SkillType option = null;
-        if (type.isOptional()) {
-            option = optionFor(step, type);
-            if (option == null) {
+        SkillType optionType = null;
+        if (nodeType.isOptional()) {
+            optionType = optionFor(step, nodeType);
+            if (optionType == null) {
                 return StepVerdict.NO_OPTION;
             }
-            if (option.getItemCost() != null) {
+            if (optionType.getItemCost() != null) {
                 return StepVerdict.ITEM_COST;
             }
         }
         if (!canAllocate.test(node)) {
             return StepVerdict.NOT_ALLOCATABLE;
         }
-        return blockReason.apply(node, option) == null ? StepVerdict.ALLOCATE : StepVerdict.BLOCKED;
+        return blockReason.apply(node, optionType) == null ? StepVerdict.ALLOCATE : StepVerdict.BLOCKED;
     }
 
-    public static SkillType optionFor(TemplateStep step, SkillType type) {
-        return NodeEligibility.validOption(type, step.optionTypeId());
+    public static SkillType optionFor(TemplateStep step, SkillType nodeType) {
+        return NodeEligibility.validOption(nodeType, step.optionTypeId());
     }
 }

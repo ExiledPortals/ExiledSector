@@ -20,13 +20,13 @@ public final class TemplateFilter {
     private TemplateFilter() {
     }
 
-    public static Set<HullSize> defaultFilter(HullSize current) {
-        return isFilterable(current) ? EnumSet.of(current) : EnumSet.copyOf(FILTERABLE);
+    public static Set<HullSize> defaultFilter(HullSize currentHullSize) {
+        return isFilterable(currentHullSize) ? EnumSet.of(currentHullSize) : EnumSet.copyOf(FILTERABLE);
     }
 
-    public static List<SkillTreeTemplate> matching(Collection<SkillTreeTemplate> all, String rootNodeId, Set<HullSize> hullSizes) {
+    public static List<SkillTreeTemplate> matching(Collection<SkillTreeTemplate> templates, String rootNodeId, Set<HullSize> hullSizes) {
         List<SkillTreeTemplate> matches = new ArrayList<>();
-        for (SkillTreeTemplate template : all) {
+        for (SkillTreeTemplate template : templates) {
             if (template.rootNodeId().equals(rootNodeId) && shownFor(template.hullSize(), hullSizes)) {
                 matches.add(template);
             }

@@ -16,17 +16,17 @@ public final class WormholePairValidator {
     }
 
     public static List<String> findIssues(Iterable<SkillNode> nodes) {
-        Map<String, SkillNode> byId = new HashMap<>();
+        Map<String, SkillNode> nodesById = new HashMap<>();
         for (SkillNode node : nodes) {
-            byId.put(node.getId(), node);
+            nodesById.put(node.getId(), node);
         }
 
         List<String> issues = new ArrayList<>();
-        for (SkillNode node : byId.values()) {
+        for (SkillNode node : nodesById.values()) {
             if (node.getType().getTier() != SkillTier.WORMHOLE) {
                 continue;
             }
-            String issue = validateWormholeNode(node, byId);
+            String issue = validateWormholeNode(node, nodesById);
             if (issue != null) {
                 issues.add(issue);
             }
@@ -34,7 +34,7 @@ public final class WormholePairValidator {
         return issues;
     }
 
-    private static String validateWormholeNode(SkillNode node, Map<String, SkillNode> byId) {
+    private static String validateWormholeNode(SkillNode node, Map<String, SkillNode> nodesById) {
         String pairedId = node.getPairedNodeId();
         if (pairedId == null) {
             return WORMHOLE_NODE_PREFIX + node.getId() + "\" has no pairedWith id set.";
@@ -43,16 +43,16 @@ public final class WormholePairValidator {
             return WORMHOLE_NODE_PREFIX + node.getId() + "\" is paired with itself.";
         }
 
-        SkillNode paired = byId.get(pairedId);
-        if (paired == null) {
+        SkillNode pairedNode = nodesById.get(pairedId);
+        if (pairedNode == null) {
             return WORMHOLE_NODE_PREFIX + node.getId() + PAIRED_WITH + pairedId + "\", which does not exist.";
         }
-        if (paired.getType().getTier() != SkillTier.WORMHOLE) {
+        if (pairedNode.getType().getTier() != SkillTier.WORMHOLE) {
             return WORMHOLE_NODE_PREFIX + node.getId() + PAIRED_WITH + pairedId + "\", which is not a wormhole-tier node.";
         }
-        if (!node.getId().equals(paired.getPairedNodeId())) {
+        if (!node.getId().equals(pairedNode.getPairedNodeId())) {
             return WORMHOLE_NODE_PREFIX + node.getId() + PAIRED_WITH + pairedId
-                    + "\", but that node's pairedWith is \"" + paired.getPairedNodeId() + "\" instead.";
+                    + "\", but that node's pairedWith is \"" + pairedNode.getPairedNodeId() + "\" instead.";
         }
         return null;
     }

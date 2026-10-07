@@ -44,45 +44,45 @@ public record ShipProfile(HullSize hullSize, ShieldAPI.ShieldType shieldType, in
     }
 
     private static Set<WeaponKind> fittedWeaponKinds(ShipVariantAPI variant) {
-        Set<WeaponKind> kinds = EnumSet.noneOf(WeaponKind.class);
+        Set<WeaponKind> fittedKinds = EnumSet.noneOf(WeaponKind.class);
         if (variant == null) {
-            return kinds;
+            return fittedKinds;
         }
         for (String slotId : variant.getFittedWeaponSlots()) {
-            WeaponSpecAPI spec = variant.getWeaponSpec(slotId);
-            if (spec != null) {
-                addKinds(kinds, spec);
+            WeaponSpecAPI weaponSpec = variant.getWeaponSpec(slotId);
+            if (weaponSpec != null) {
+                addKinds(fittedKinds, weaponSpec);
             }
         }
-        return kinds;
+        return fittedKinds;
     }
 
-    private static void addKinds(Set<WeaponKind> kinds, WeaponSpecAPI spec) {
-        WeaponType type = spec.getType();
-        if (type != WeaponType.BALLISTIC && type != WeaponType.MISSILE && type != WeaponType.ENERGY) {
+    private static void addKinds(Set<WeaponKind> fittedKinds, WeaponSpecAPI weaponSpec) {
+        WeaponType weaponType = weaponSpec.getType();
+        if (weaponType != WeaponType.BALLISTIC && weaponType != WeaponType.MISSILE && weaponType != WeaponType.ENERGY) {
             return;
         }
-        boolean beam = spec.isBeam();
-        if (type == WeaponType.BALLISTIC) {
-            kinds.add(WeaponKind.BALLISTIC);
-        } else if (type == WeaponType.MISSILE) {
-            kinds.add(WeaponKind.MISSILE);
+        boolean isBeam = weaponSpec.isBeam();
+        if (weaponType == WeaponType.BALLISTIC) {
+            fittedKinds.add(WeaponKind.BALLISTIC);
+        } else if (weaponType == WeaponType.MISSILE) {
+            fittedKinds.add(WeaponKind.MISSILE);
         } else {
-            kinds.add(WeaponKind.ENERGY);
-            if (!beam) {
-                kinds.add(WeaponKind.NON_BEAM_ENERGY);
+            fittedKinds.add(WeaponKind.ENERGY);
+            if (!isBeam) {
+                fittedKinds.add(WeaponKind.NON_BEAM_ENERGY);
             }
         }
-        if (beam) {
-            kinds.add(WeaponKind.BEAM);
-            if (!isPointDefense(spec)) {
-                kinds.add(WeaponKind.OFFENSIVE_BEAM);
+        if (isBeam) {
+            fittedKinds.add(WeaponKind.BEAM);
+            if (!isPointDefense(weaponSpec)) {
+                fittedKinds.add(WeaponKind.OFFENSIVE_BEAM);
             }
         }
     }
 
-    private static boolean isPointDefense(WeaponSpecAPI spec) {
-        Set<AIHints> hints = spec.getAIHints();
-        return hints != null && (hints.contains(AIHints.PD) || hints.contains(AIHints.PD_ONLY));
+    private static boolean isPointDefense(WeaponSpecAPI weaponSpec) {
+        Set<AIHints> aiHints = weaponSpec.getAIHints();
+        return aiHints != null && (aiHints.contains(AIHints.PD) || aiHints.contains(AIHints.PD_ONLY));
     }
 }

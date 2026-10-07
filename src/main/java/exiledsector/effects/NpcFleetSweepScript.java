@@ -32,27 +32,27 @@ public class NpcFleetSweepScript implements EveryFrameScript {
         sweepAround(Global.getSector().getPlayerFleet(), SWEEP_RANGE);
     }
 
-    static void sweepAround(CampaignFleetAPI playerFleet, float range) {
+    static void sweepAround(CampaignFleetAPI playerFleet, float sweepRange) {
         if (playerFleet == null) return;
         LocationAPI location = playerFleet.getContainingLocation();
         if (location == null) return;
 
         Vector2f origin = playerFleet.getLocation();
-        for (CampaignFleetAPI fleet : location.getFleets()) {
-            if (fleet == playerFleet) {
+        for (CampaignFleetAPI nearbyFleet : location.getFleets()) {
+            if (nearbyFleet == playerFleet) {
                 continue;
             }
-            if (isWithin(origin, fleet.getLocation(), range)) {
-                NpcFleetLeveller.ensure(fleet);
+            if (isWithin(origin, nearbyFleet.getLocation(), sweepRange)) {
+                NpcFleetLeveller.ensure(nearbyFleet);
             }
-            NpcUniqueAlerts.alertIfSensed(fleet);
+            NpcUniqueAlerts.alertIfSensed(nearbyFleet);
         }
     }
 
-    private static boolean isWithin(Vector2f origin, Vector2f target, float range) {
-        if (origin == null || target == null) return false;
-        float dx = target.x - origin.x;
-        float dy = target.y - origin.y;
+    private static boolean isWithin(Vector2f origin, Vector2f fleetLocation, float range) {
+        if (origin == null || fleetLocation == null) return false;
+        float dx = fleetLocation.x - origin.x;
+        float dy = fleetLocation.y - origin.y;
         return dx * dx + dy * dy <= range * range;
     }
 }

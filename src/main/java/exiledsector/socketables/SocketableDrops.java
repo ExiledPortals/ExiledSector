@@ -55,115 +55,115 @@ public final class SocketableDrops {
     }
 
     public static void registerOtherMod(JSONArray rows) throws JSONException {
-        Map<String, Rule> merged = new HashMap<>(parse(rows, true));
-        merged.putAll(RULES.get());
-        RULES.set(Map.copyOf(merged));
+        Map<String, Rule> mergedRules = new HashMap<>(parse(rows, true));
+        mergedRules.putAll(RULES.get());
+        RULES.set(Map.copyOf(mergedRules));
     }
 
     private static Map<String, Rule> parse(JSONArray rows, boolean otherMod) throws JSONException {
         Map<String, Rule> loaded = new HashMap<>();
         ModCsv.forEach(rows, (index, row) -> {
-            String site = ModCsv.text(row, "site");
-            if (site.isEmpty()) {
+            String siteId = ModCsv.text(row, "site");
+            if (siteId.isEmpty()) {
                 return;
             }
             try {
                 List<Float> chances = new ArrayList<>();
-                for (String chance : row.optString("chances", "").split(";")) {
-                    if (!chance.isBlank()) {
-                        chances.add(Float.parseFloat(chance.trim()));
+                for (String chanceText : row.optString("chances", "").split(";")) {
+                    if (!chanceText.isBlank()) {
+                        chances.add(Float.parseFloat(chanceText.trim()));
                     }
                 }
-                String unique = ModCsv.text(row, "uniqueChance");
-                loaded.put(site, new Rule(List.copyOf(chances), unique.isEmpty() ? 0f : Float.parseFloat(unique), otherMod));
+                String uniqueChanceText = ModCsv.text(row, "uniqueChance");
+                loaded.put(siteId, new Rule(List.copyOf(chances), uniqueChanceText.isEmpty() ? 0f : Float.parseFloat(uniqueChanceText), otherMod));
             } catch (NumberFormatException e) {
-                LOG.error("Skipping the salvage drop row for site " + site + ": " + e.getMessage());
+                LOG.error("Skipping the salvage drop row for site " + siteId + ": " + e.getMessage());
             }
         });
         return loaded;
     }
 
-    public static boolean hasRule(String site) {
-        Rule rule = site == null ? null : RULES.get().get(site);
+    public static boolean hasRule(String siteId) {
+        Rule rule = siteId == null ? null : RULES.get().get(siteId);
         return rule != null && (!rule.otherMod() || SalvageSiteCompat.dropsEnabled());
     }
 
-    public static List<SocketableItemData> roll(String site, Random random) {
-        return roll(site, random, 1f);
+    public static List<SocketableItemData> roll(String siteId, Random random) {
+        return roll(siteId, random, 1f);
     }
 
-    public static List<SocketableItemData> roll(String site, Random random, float chanceMult) {
-        return roll(site, random, chanceMult, definition -> SocketableUnlock.canDrop(definition, Global.getSector()));
+    public static List<SocketableItemData> roll(String siteId, Random random, float chanceMult) {
+        return roll(siteId, random, chanceMult, definition -> SocketableUnlock.canDrop(definition, Global.getSector()));
     }
 
-    public static List<SocketableItemData> roll(String site, Random random, float chanceMult,
+    public static List<SocketableItemData> roll(String siteId, Random random, float chanceMult,
                                                 Predicate<SocketableDefinition> uniqueAllowed) {
-        List<SocketableItemData> items = new ArrayList<>();
-        Rule rule = site == null ? null : RULES.get().get(site);
+        List<SocketableItemData> droppedItems = new ArrayList<>();
+        Rule rule = siteId == null ? null : RULES.get().get(siteId);
         if (rule == null || rule.otherMod() && !SalvageSiteCompat.dropsEnabled()) {
-            return items;
+            return droppedItems;
         }
         for (float chance : rule.chances()) {
             if (random.nextFloat() >= chance * chanceMult) {
                 break;
             }
-            SocketableDefinition basic = pickBasic(random);
-            if (basic != null) {
-                items.add(SocketableItemData.rolled(basic, random.nextLong()));
+            SocketableDefinition basicDefinition = pickBasic(random);
+            if (basicDefinition != null) {
+                droppedItems.add(SocketableItemData.rolled(basicDefinition, random.nextLong()));
             }
         }
         if (random.nextFloat() < rule.uniqueChance() * chanceMult) {
-            SocketableDefinition unique = pickUnique(random, uniqueAllowed);
-            if (unique != null) {
-                items.add(SocketableItemData.rolled(unique, random.nextLong()));
+            SocketableDefinition uniqueDefinition = pickUnique(random, uniqueAllowed);
+            if (uniqueDefinition != null) {
+                droppedItems.add(SocketableItemData.rolled(uniqueDefinition, random.nextLong()));
             }
         }
-        return items;
+        return droppedItems;
     }
 
-    public static Map<String, Integer> rollMaterials(String site, Random random) {
-        return rollMaterials(site, random, 1f);
+    public static Map<String, Integer> rollMaterials(String siteId, Random random) {
+        return rollMaterials(siteId, random, 1f);
     }
 
-    public static Map<String, Integer> rollMaterials(String site, Random random, float chanceMult) {
-        Map<String, Integer> materials = new LinkedHashMap<>();
-        Rule rule = site == null ? null : RULES.get().get(site);
+    public static Map<String, Integer> rollMaterials(String siteId, Random random, float chanceMult) {
+        Map<String, Integer> droppedMaterials = new LinkedHashMap<>();
+        Rule rule = siteId == null ? null : RULES.get().get(siteId);
         if (rule == null || rule.chances().isEmpty() || rule.otherMod() && !SalvageSiteCompat.dropsEnabled()) {
-            return materials;
+            return droppedMaterials;
         }
-        int parts = 0;
+        int partsFound = 0;
         for (float chance : rule.chances()) {
             if (random.nextFloat() < chance * chanceMult) {
-                parts += MIN_PARTS_PER_FIND + random.nextInt(MAX_PARTS_PER_FIND - MIN_PARTS_PER_FIND + 1);
+                partsFound += MIN_PARTS_PER_FIND + random.nextInt(MAX_PARTS_PER_FIND - MIN_PARTS_PER_FIND + 1);
             }
         }
-        if (parts > 0) {
-            materials.put(SocketableDisassembly.PARTS_COMMODITY_ID, parts);
+        if (partsFound > 0) {
+            droppedMaterials.put(SocketableDisassembly.PARTS_COMMODITY_ID, partsFound);
         }
         if (random.nextFloat() < rule.chances().get(0) * KERNEL_CHANCE_SHARE * chanceMult) {
-            materials.put(pickKernel(random).commodityId(), 1);
+            droppedMaterials.put(pickKernel(random).commodityId(), 1);
         }
-        return materials;
+        return droppedMaterials;
     }
 
     public static float battlePartsPerDeploymentPoint() {
         return Math.max(0f, ModSettings.floatOr(BATTLE_PARTS_FIELD_ID, DEFAULT_BATTLE_PARTS_PER_DP));
     }
 
-    public static int wholeParts(float exact, Random random) {
-        if (!(exact > 0f)) {
+    public static int wholeParts(float exactParts, Random random) {
+        if (!(exactParts > 0f)) {
             return 0;
         }
-        int whole = (int) exact;
-        return whole + (random.nextFloat() < exact - whole ? 1 : 0);
+        int wholePartCount = (int) exactParts;
+        return wholePartCount + (random.nextFloat() < exactParts - wholePartCount ? 1 : 0);
     }
 
     static SocketCurrency pickKernel(Random random) {
-        float total = 0f;
+        float totalWeight = 0f;
         for (SocketCurrency currency : SocketCurrency.values()) {
-            total += currency.dropWeight();
+            totalWeight += currency.dropWeight();
         }
-        float roll = random.nextFloat() * total;
+        float roll = random.nextFloat() * totalWeight;
         for (SocketCurrency currency : SocketCurrency.values()) {
             roll -= currency.dropWeight();
             if (roll < 0f) {
@@ -177,23 +177,23 @@ public final class SocketableDrops {
         return pick(random, definition -> definition.kind() == SocketableKind.SUBROUTINE && !definition.unique());
     }
 
-    public static SocketableDefinition pickUnique(Random random, Predicate<SocketableDefinition> allowed) {
-        return pick(random, definition -> definition.unique() && allowed.test(definition));
+    public static SocketableDefinition pickUnique(Random random, Predicate<SocketableDefinition> allowedUniques) {
+        return pick(random, definition -> definition.unique() && allowedUniques.test(definition));
     }
 
     private static SocketableDefinition pick(Random random, Predicate<SocketableDefinition> filter) {
         List<SocketableDefinition> candidates = new ArrayList<>();
-        float total = 0f;
+        float totalWeight = 0f;
         for (SocketableDefinition definition : SocketableDefinitions.all()) {
             if (filter.test(definition) && definition.rarity() > 0f && SAFE_ID.matcher(definition.id()).matches()) {
                 candidates.add(definition);
-                total += definition.rarity();
+                totalWeight += definition.rarity();
             }
         }
         if (candidates.isEmpty()) {
             return null;
         }
-        float roll = random.nextFloat() * total;
+        float roll = random.nextFloat() * totalWeight;
         for (SocketableDefinition definition : candidates) {
             roll -= definition.rarity();
             if (roll < 0f) {

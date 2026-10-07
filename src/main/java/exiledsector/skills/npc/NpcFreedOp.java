@@ -30,20 +30,20 @@ public record NpcFreedOp(int opCostPerNode, Map<String, Integer> hullModOpCosts,
     public static NpcFreedOp of(FleetMemberAPI member, NpcHullMods hullMods) {
         HullSize hullSize = member.getHullSpec() == null ? null : member.getHullSpec().getHullSize();
         SettingsAPI settings = Global.getSettings();
-        MutableStat bays = member.getStats() == null ? null : member.getStats().getNumFighterBays();
-        Map<String, Integer> costs = new HashMap<>();
+        MutableStat fighterBayStat = member.getStats() == null ? null : member.getStats().getNumFighterBays();
+        Map<String, Integer> opCostsByHullMod = new HashMap<>();
         Map<String, Integer> fighterBays = new HashMap<>();
         for (String hullModId : hullMods.removable()) {
-            HullModSpecAPI spec = settings == null || hullSize == null ? null : settings.getHullModSpec(hullModId);
-            if (spec != null) {
-                costs.put(hullModId, spec.getCostFor(hullSize));
+            HullModSpecAPI hullModSpec = settings == null || hullSize == null ? null : settings.getHullModSpec(hullModId);
+            if (hullModSpec != null) {
+                opCostsByHullMod.put(hullModId, hullModSpec.getCostFor(hullSize));
             }
-            MutableStat.StatMod added = bays == null ? null : bays.getFlatStatMod(hullModId);
-            if (added != null && added.getValue() > 0f) {
-                fighterBays.put(hullModId, Math.round(added.getValue()));
+            MutableStat.StatMod addedBays = fighterBayStat == null ? null : fighterBayStat.getFlatStatMod(hullModId);
+            if (addedBays != null && addedBays.getValue() > 0f) {
+                fighterBays.put(hullModId, Math.round(addedBays.getValue()));
             }
         }
-        return new NpcFreedOp(SkillNodeOpCost.perNode(member.getHullSpec()), costs, fighterBays,
+        return new NpcFreedOp(SkillNodeOpCost.perNode(member.getHullSpec()), opCostsByHullMod, fighterBays,
                 ShipLevelConfig.maxAllocatedNodesBesidesRoot());
     }
 }

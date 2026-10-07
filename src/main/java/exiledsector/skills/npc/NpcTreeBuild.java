@@ -4,7 +4,7 @@ import exiledsector.skills.ShipSkillData;
 
 import java.util.List;
 
-public record NpcTreeBuild(ShipSkillData data, List<NpcBuildStep> steps, List<String> strippedHullModIds, List<String> claimedSockets) {
+public record NpcTreeBuild(ShipSkillData shipData, List<NpcBuildStep> steps, List<String> strippedHullModIds, List<String> claimedSockets) {
 
     public NpcTreeBuild {
         steps = List.copyOf(steps);
@@ -12,7 +12,7 @@ public record NpcTreeBuild(ShipSkillData data, List<NpcBuildStep> steps, List<St
         claimedSockets = claimedSockets == null ? List.of() : List.copyOf(claimedSockets);
     }
 
-    public NpcTreeBuild(ShipSkillData data, List<NpcBuildStep> steps, List<String> strippedHullModIds) {
-        this(data, steps, strippedHullModIds, List.of());
+    public NpcTreeBuild(ShipSkillData shipData, List<NpcBuildStep> steps, List<String> strippedHullModIds) {
+        this(shipData, steps, strippedHullModIds, List.of());
     }
 }

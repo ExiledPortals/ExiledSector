@@ -17,60 +17,60 @@ public final class TreeRegionFilter {
     }
 
     public static Set<String> disabledNodeIds(Collection<SkillNode> nodes, Set<String> disabledRegions) {
-        Set<String> disabled = new HashSet<>();
+        Set<String> disabledNodeIds = new HashSet<>();
         if (disabledRegions.isEmpty()) {
-            return disabled;
+            return disabledNodeIds;
         }
         for (SkillNode node : nodes) {
             if (isDisabled(node, disabledRegions)) {
-                disabled.add(node.getId());
+                disabledNodeIds.add(node.getId());
             }
         }
         for (SkillNode node : nodes) {
-            if (node.getPairedNodeId() != null && disabled.contains(node.getPairedNodeId())) {
-                disabled.add(node.getId());
+            if (node.getPairedNodeId() != null && disabledNodeIds.contains(node.getPairedNodeId())) {
+                disabledNodeIds.add(node.getId());
             }
         }
-        return disabled;
+        return disabledNodeIds;
     }
 
-    public static SkillTreeLoader.ParsedTree apply(SkillTreeLoader.ParsedTree tree, Set<String> disabledRegions) {
+    public static SkillTreeLoader.ParsedTree apply(SkillTreeLoader.ParsedTree parsedTree, Set<String> disabledRegions) {
         if (disabledRegions.isEmpty()) {
-            return tree;
+            return parsedTree;
         }
-        Set<String> removed = disabledNodeIds(tree.nodes, disabledRegions);
-        List<SkillNode> nodes = tree.nodes.stream()
-                .filter(node -> !removed.contains(node.getId()))
-                .map(node -> node.withoutConnectionsTo(removed))
+        Set<String> removedNodeIds = disabledNodeIds(parsedTree.nodes, disabledRegions);
+        List<SkillNode> keptNodes = parsedTree.nodes.stream()
+                .filter(node -> !removedNodeIds.contains(node.getId()))
+                .map(node -> node.withoutConnectionsTo(removedNodeIds))
                 .toList();
-        Map<String, ConnectorCurve> curves = new LinkedHashMap<>();
-        tree.connectorCurves.forEach((key, curve) -> {
-            if (keepsConnector(key, removed)) {
-                curves.put(key, curve);
+        Map<String, ConnectorCurve> keptCurves = new LinkedHashMap<>();
+        parsedTree.connectorCurves.forEach((connectorKey, curve) -> {
+            if (keepsConnector(connectorKey, removedNodeIds)) {
+                keptCurves.put(connectorKey, curve);
             }
         });
-        Set<String> hiddenConnectors = new HashSet<>();
-        for (String key : tree.hiddenConnectors) {
-            if (keepsConnector(key, removed)) {
-                hiddenConnectors.add(key);
+        Set<String> keptHiddenConnectors = new HashSet<>();
+        for (String connectorKey : parsedTree.hiddenConnectors) {
+            if (keepsConnector(connectorKey, removedNodeIds)) {
+                keptHiddenConnectors.add(connectorKey);
             }
         }
-        return new SkillTreeLoader.ParsedTree(nodes, tree.declaredNodeCount, curves, hiddenConnectors,
-                visible(tree.staticImages, disabledRegions), visible(tree.ringBelts, disabledRegions),
-                visible(tree.stars, disabledRegions));
+        return new SkillTreeLoader.ParsedTree(keptNodes, parsedTree.declaredNodeCount, keptCurves, keptHiddenConnectors,
+                visible(parsedTree.staticImages, disabledRegions), visible(parsedTree.ringBelts, disabledRegions),
+                visible(parsedTree.stars, disabledRegions));
     }
 
-    private static boolean isDisabled(SkillTreeObject object, Set<String> disabledRegions) {
-        String region = object.getRegion();
+    private static boolean isDisabled(SkillTreeObject treeObject, Set<String> disabledRegions) {
+        String region = treeObject.getRegion();
         return region != null && disabledRegions.contains(region);
     }
 
-    private static boolean keepsConnector(String key, Set<String> removed) {
-        int separator = key.indexOf('|');
-        return separator < 0 || !removed.contains(key.substring(0, separator)) && !removed.contains(key.substring(separator + 1));
+    private static boolean keepsConnector(String connectorKey, Set<String> removedNodeIds) {
+        int separator = connectorKey.indexOf('|');
+        return separator < 0 || !removedNodeIds.contains(connectorKey.substring(0, separator)) && !removedNodeIds.contains(connectorKey.substring(separator + 1));
     }
 
     private static <T extends SkillTreeObject> List<T> visible(List<T> objects, Set<String> disabledRegions) {
-        return objects.stream().filter(object -> !isDisabled(object, disabledRegions)).toList();
+        return objects.stream().filter(treeObject -> !isDisabled(treeObject, disabledRegions)).toList();
     }
 }

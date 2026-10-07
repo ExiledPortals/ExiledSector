@@ -74,7 +74,7 @@ class SocketableFreezingTest {
         registerGadget();
         SocketableItemData item = new SocketableItemData("gadget", 42L, RARE, SocketableNames.freeze(SocketableDefinitions.get("gadget"), 42L, RARE));
 
-        assertEquals(FrozenName.product("Sunny", null, "Pal", null), item.name());
+        assertEquals(FrozenName.product("Sunny", null, "Pal", null), item.frozenName());
         assertEquals(item, SocketableItemData.of(item.toSpecialItem()));
         assertEquals("Sunny Pal", item.preview().name());
     }
@@ -105,7 +105,7 @@ class SocketableFreezingTest {
         SocketableItemData legacy = SocketableItemData.parse("sub|7");
 
         assertNotNull(dropped.effects());
-        assertNotNull(dropped.name());
+        assertNotNull(dropped.frozenName());
         assertEquals(new SocketableItemData("sub", 7L), legacy);
         assertNull(legacy.effects());
         assertEquals(dropped.effects(), legacy.preview().effects());
@@ -173,7 +173,7 @@ class SocketableFreezingTest {
 
         registerWords("Askonia", "Corvus");
 
-        assertNull(dropped.name());
+        assertNull(dropped.frozenName());
         assertNotEquals("Military-grade Domain Subroutine", owned.name());
         assertEquals(frozen(RARE).preview().name(), owned.name());
     }

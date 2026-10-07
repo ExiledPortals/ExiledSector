@@ -37,23 +37,23 @@ public final class RolledEffect {
         return description(null);
     }
 
-    public StyledText description(SocketableDefinition.PoolEntry range) {
+    public StyledText description(SocketableDefinition.PoolEntry rollRange) {
         SkillEffect effect = effect();
         if (effect == null) {
             return null;
         }
-        StyledText text = display(effect, magnitude);
-        if (range == null || range.min() == range.max() || text.spans().isEmpty()) {
-            return text;
+        StyledText effectText = display(effect, magnitude);
+        if (rollRange == null || rollRange.min() == rollRange.max() || effectText.spans().isEmpty()) {
+            return effectText;
         }
-        float low = Math.abs(range.min()) <= Math.abs(range.max()) ? range.min() : range.max();
-        float high = low == range.min() ? range.max() : range.min();
-        String lowText = valueText(effect, low);
-        String highText = valueText(effect, high);
+        float lowBound = Math.abs(rollRange.min()) <= Math.abs(rollRange.max()) ? rollRange.min() : rollRange.max();
+        float highBound = lowBound == rollRange.min() ? rollRange.max() : rollRange.min();
+        String lowText = valueText(effect, lowBound);
+        String highText = valueText(effect, highBound);
         if (lowText == null || highText == null) {
-            return text;
+            return effectText;
         }
-        return text.insert(text.spans().get(0).end(), Translation.msg("socketable.rollRange").arg("low", lowText).arg("high", highText).text());
+        return effectText.insert(effectText.spans().get(0).end(), Translation.msg("socketable.rollRange").arg("low", lowText).arg("high", highText).text());
     }
 
     private static StyledText display(SkillEffect effect, float magnitude) {
@@ -61,17 +61,17 @@ public final class RolledEffect {
     }
 
     private static String valueText(SkillEffect effect, float magnitude) {
-        StyledText text = effect.description(magnitude);
-        if (text.spans().isEmpty()) {
+        StyledText descriptionText = effect.description(magnitude);
+        if (descriptionText.spans().isEmpty()) {
             return null;
         }
-        StyledText.Span value = text.spans().get(0);
-        return text.plain().substring(value.start(), value.end());
+        StyledText.Span valueSpan = descriptionText.spans().get(0);
+        return descriptionText.plain().substring(valueSpan.start(), valueSpan.end());
     }
 
     @Override
     public boolean equals(Object other) {
-        return other instanceof RolledEffect rolled && rolled.magnitude == magnitude && rolled.effectName.equals(effectName);
+        return other instanceof RolledEffect otherEffect && otherEffect.magnitude == magnitude && otherEffect.effectName.equals(effectName);
     }
 
     @Override

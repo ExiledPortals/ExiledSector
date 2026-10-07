@@ -16,22 +16,22 @@ public class SocketLossListener extends BaseCampaignEventListener implements Shi
     }
 
     @Override
-    public void reportPlayerEngagement(EngagementResultAPI result) {
-        if (result == null) {
+    public void reportPlayerEngagement(EngagementResultAPI engagementResult) {
+        if (engagementResult == null) {
             return;
         }
-        EngagementResultForFleetAPI player = result.didPlayerWin() ? result.getWinnerResult() : result.getLoserResult();
-        if (player == null) {
+        EngagementResultForFleetAPI playerResult = engagementResult.didPlayerWin() ? engagementResult.getWinnerResult() : engagementResult.getLoserResult();
+        if (playerResult == null) {
             return;
         }
-        SocketCustody.recordLostInCombat(player.getDestroyed());
-        SocketCustody.recordLostInCombat(player.getDisabled());
+        SocketCustody.recordLostInCombat(playerResult.getDestroyed());
+        SocketCustody.recordLostInCombat(playerResult.getDisabled());
     }
 
     @Override
-    public void reportShipsRecovered(List<FleetMemberAPI> ships, InteractionDialogAPI dialog) {
-        if (ships != null) {
-            SocketCustody.recordRecovered(ships);
+    public void reportShipsRecovered(List<FleetMemberAPI> recoveredShips, InteractionDialogAPI dialog) {
+        if (recoveredShips != null) {
+            SocketCustody.recordRecovered(recoveredShips);
         }
     }
 }

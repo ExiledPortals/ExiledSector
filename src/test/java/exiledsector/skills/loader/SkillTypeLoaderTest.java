@@ -487,8 +487,8 @@ class SkillTypeLoaderTest {
 
             SkillTypeLoader.LoadedTypes loaded = SkillTypeLoader.loadAll();
 
-            assertTrue(loaded.types().isEmpty());
-            assertEquals(0, loaded.declaredCount());
+            assertTrue(loaded.typesById().isEmpty());
+            assertEquals(0, loaded.declaredTypeCount());
         }
     }
 

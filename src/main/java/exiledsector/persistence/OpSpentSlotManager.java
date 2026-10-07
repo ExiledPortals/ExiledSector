@@ -21,19 +21,19 @@ public final class OpSpentSlotManager {
     }
 
     public static int slotFor(String shipId) {
-        Map<String, Integer> slots = getSlots(Global.getSector().getPersistentData());
-        Integer slot = slots.get(shipId);
-        if (slot != null && slot < SLOT_COUNT) {
-            return slot;
+        Map<String, Integer> slotsByShipId = getSlots(Global.getSector().getPersistentData());
+        Integer assignedSlot = slotsByShipId.get(shipId);
+        if (assignedSlot != null && assignedSlot < SLOT_COUNT) {
+            return assignedSlot;
         }
 
-        int free = lowestFreeSlot(slots);
-        if (free >= SLOT_COUNT) {
+        int freeSlot = lowestFreeSlot(slotsByShipId);
+        if (freeSlot >= SLOT_COUNT) {
             reportExhaustion(shipId);
             return SLOT_COUNT;
         }
-        slots.put(shipId, free);
-        return free;
+        slotsByShipId.put(shipId, freeSlot);
+        return freeSlot;
     }
 
     public static Integer existingSlot(String shipId) {
@@ -56,14 +56,14 @@ public final class OpSpentSlotManager {
         return (Map<String, Integer>) persistentData.computeIfAbsent(SLOTS_KEY, key -> new HashMap<String, Integer>());
     }
 
-    private static int lowestFreeSlot(Map<String, Integer> slots) {
-        BitSet taken = new BitSet(SLOT_COUNT);
-        for (Integer slot : slots.values()) {
-            if (slot != null && slot >= 0 && slot < SLOT_COUNT) {
-                taken.set(slot);
+    private static int lowestFreeSlot(Map<String, Integer> slotsByShipId) {
+        BitSet takenSlots = new BitSet(SLOT_COUNT);
+        for (Integer assignedSlot : slotsByShipId.values()) {
+            if (assignedSlot != null && assignedSlot >= 0 && assignedSlot < SLOT_COUNT) {
+                takenSlots.set(assignedSlot);
             }
         }
-        return taken.nextClearBit(0);
+        return takenSlots.nextClearBit(0);
     }
 
     private static void reportExhaustion(String shipId) {

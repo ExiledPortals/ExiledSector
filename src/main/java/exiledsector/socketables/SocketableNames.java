@@ -34,7 +34,7 @@ public final class SocketableNames {
 
     enum Style {CODENAME, PRODUCT}
 
-    record NameWords(Style style, List<String> first, List<String> second, List<String> models) {
+    record NameWords(Style style, List<String> firstWords, List<String> secondWords, List<String> models) {
     }
 
     record Affix(String prefix, String suffix) {
@@ -52,14 +52,14 @@ public final class SocketableNames {
         ModCsv.load("effect", AFFIXES_PATH, LOG, SocketableNames::registerAffixes);
     }
 
-    public static void registerWords(JSONObject root) throws JSONException {
+    public static void registerWords(JSONObject namesJson) throws JSONException {
         Map<String, NameWords> loaded = new HashMap<>();
-        Iterator<?> definitionIds = root.keys();
+        Iterator<?> definitionIds = namesJson.keys();
         while (definitionIds.hasNext()) {
             String definitionId = String.valueOf(definitionIds.next());
-            JSONObject words = root.getJSONObject(definitionId);
-            loaded.put(definitionId, new NameWords(style(definitionId, words.optString("style", "codename")), strings(words.optJSONArray("first")),
-                    strings(words.optJSONArray("second")), strings(words.optJSONArray("models"))));
+            JSONObject wordsJson = namesJson.getJSONObject(definitionId);
+            loaded.put(definitionId, new NameWords(style(definitionId, wordsJson.optString("style", "codename")), strings(wordsJson.optJSONArray("first")),
+                    strings(wordsJson.optJSONArray("second")), strings(wordsJson.optJSONArray("models"))));
         }
         WORDS.set(Map.copyOf(loaded));
     }
@@ -67,9 +67,9 @@ public final class SocketableNames {
     public static void registerAffixes(JSONArray rows) throws JSONException {
         Map<String, Affix> loaded = new HashMap<>();
         ModCsv.forEach(rows, (index, row) -> {
-            String effect = ModCsv.text(row, "effect");
-            if (!effect.isEmpty()) {
-                loaded.put(effect, new Affix(ModCsv.text(row, "prefix"), ModCsv.text(row, "suffix")));
+            String effectName = ModCsv.text(row, "effect");
+            if (!effectName.isEmpty()) {
+                loaded.put(effectName, new Affix(ModCsv.text(row, "prefix"), ModCsv.text(row, "suffix")));
             }
         });
         AFFIXES.set(Map.copyOf(loaded));
@@ -104,14 +104,14 @@ public final class SocketableNames {
         if (definition == null) {
             return new SocketableName(Translation.text("socketable.unknown"), null, rarity);
         }
-        FrozenName parts = frozen == null ? FrozenName.NONE : frozen;
+        FrozenName nameParts = frozen == null ? FrozenName.NONE : frozen;
         return switch (rarity) {
             case UNIQUE -> new SocketableName(definition.displayName(), null, rarity);
             case COMMON -> new SocketableName(commonName(definition, kind, frozen), definition.displayName(), rarity);
             case RARE -> {
-                String rare = rareName(parts);
-                yield rare == null ? new SocketableName(definition.displayName(), null, rarity)
-                        : new SocketableName(rare, definition.displayName(), rarity);
+                String rareText = rareName(nameParts);
+                yield rareText == null ? new SocketableName(definition.displayName(), null, rarity)
+                        : new SocketableName(rareText, definition.displayName(), rarity);
             }
         };
     }
@@ -124,115 +124,115 @@ public final class SocketableNames {
         if (prefix == null && suffix == null) {
             return definition.displayName();
         }
-        String form = prefix == null ? "suffix" : suffix == null ? "prefix" : "both";
-        Message message = Translation.msg("socketable.commonName." + form)
+        String affixForm = prefix == null ? "suffix" : suffix == null ? "prefix" : "both";
+        Message nameMessage = Translation.msg("socketable.commonName." + affixForm)
                 .arg("noun", Translation.text("socketable.noun." + kind.id()));
         if (prefix != null) {
-            message.arg("prefix", prefix);
+            nameMessage.arg("prefix", prefix);
         }
         if (suffix != null) {
-            message.arg("suffix", suffix);
+            nameMessage.arg("suffix", suffix);
         }
-        String name = message.text().trim().replaceAll("\\s+", " ");
-        return name.isEmpty() ? name : name.substring(0, 1).toUpperCase(Locale.ROOT) + name.substring(1);
+        String commonText = nameMessage.text().trim().replaceAll("\\s+", " ");
+        return commonText.isEmpty() ? commonText : commonText.substring(0, 1).toUpperCase(Locale.ROOT) + commonText.substring(1);
     }
 
-    private static String firstInRole(SocketableDefinition definition, List<RolledEffect> effects, boolean prefix) {
+    private static String firstInRole(SocketableDefinition definition, List<RolledEffect> effects, boolean asPrefix) {
         for (RolledEffect effect : effects) {
             String effectName = effect.effectName();
-            if (prefix ? definition.isPrefix(effectName) : definition.isSuffix(effectName)) {
+            if (asPrefix ? definition.isPrefix(effectName) : definition.isSuffix(effectName)) {
                 return effectName;
             }
         }
         return null;
     }
 
-    private static String affix(String effectName, boolean prefix) {
-        Affix affix = AFFIXES.get().get(effectName);
-        String english = affix == null ? "" : prefix ? affix.prefix() : affix.suffix();
-        if (english.isEmpty()) {
+    private static String affix(String effectName, boolean asPrefix) {
+        Affix effectAffix = AFFIXES.get().get(effectName);
+        String englishAffix = effectAffix == null ? "" : asPrefix ? effectAffix.prefix() : effectAffix.suffix();
+        if (englishAffix.isEmpty()) {
             return null;
         }
-        return Translation.data("socketable.affix." + effectName + (prefix ? ".prefix" : ".suffix"), english);
+        return Translation.data("socketable.affix." + effectName + (asPrefix ? ".prefix" : ".suffix"), englishAffix);
     }
 
     private static FrozenName rareWords(String definitionId, long seed) {
-        NameWords words = WORDS.get().get(definitionId);
-        if (words == null || words.first().isEmpty() || words.second().isEmpty()) {
+        NameWords nameWords = WORDS.get().get(definitionId);
+        if (nameWords == null || nameWords.firstWords().isEmpty() || nameWords.secondWords().isEmpty()) {
             return null;
         }
         Random random = new Random(SocketableRoller.scramble(seed ^ NAME_SALT));
-        String first = pick(words.first(), random);
-        String second = pick(words.second(), random);
-        return switch (words.style()) {
-            case CODENAME -> new FrozenName(null, null, first, second);
-            case PRODUCT -> productName(words, first, second, random);
+        String firstWord = pick(nameWords.firstWords(), random);
+        String secondWord = pick(nameWords.secondWords(), random);
+        return switch (nameWords.style()) {
+            case CODENAME -> new FrozenName(null, null, firstWord, secondWord);
+            case PRODUCT -> productName(nameWords, firstWord, secondWord, random);
         };
     }
 
-    private static String rareName(FrozenName parts) {
-        if (parts.rareFirst() == null) {
+    private static String rareName(FrozenName nameParts) {
+        if (nameParts.rareFirst() == null) {
             return null;
         }
-        if (parts.isAssembledText()) {
-            return parts.rareFirst();
+        if (nameParts.isAssembledText()) {
+            return nameParts.rareFirst();
         }
-        String first = word(parts.rareFirst());
-        String second = word(parts.rareSecond());
-        if (!parts.isProduct()) {
-            return Translation.msg("socketable.rareName.codename").arg("first", first).arg("second", second).text();
+        String firstWord = word(nameParts.rareFirst());
+        String secondWord = word(nameParts.rareSecond());
+        if (!nameParts.isProduct()) {
+            return Translation.msg("socketable.rareName.codename").arg("first", firstWord).arg("second", secondWord).text();
         }
-        String brand = parts.rareBrand() == null ? first : first + word(parts.rareBrand());
-        Message message = Translation.msg(parts.rareModel() == null ? "socketable.rareName.product" : "socketable.rareName.productModel")
-                .arg("brand", brand).arg("second", second);
-        if (parts.rareModel() != null) {
-            message.arg("model", word(parts.rareModel()));
+        String brand = nameParts.rareBrand() == null ? firstWord : firstWord + word(nameParts.rareBrand());
+        Message nameMessage = Translation.msg(nameParts.rareModel() == null ? "socketable.rareName.product" : "socketable.rareName.productModel")
+                .arg("brand", brand).arg("second", secondWord);
+        if (nameParts.rareModel() != null) {
+            nameMessage.arg("model", word(nameParts.rareModel()));
         }
-        return message.text();
+        return nameMessage.text();
     }
 
     private static String word(String word) {
         return Translation.data("socketable.nameWord." + word, word);
     }
 
-    private static FrozenName productName(NameWords words, String first, String second, Random random) {
+    private static FrozenName productName(NameWords nameWords, String firstWord, String secondWord, Random random) {
         String brand = null;
-        if (words.first().size() > 1 && random.nextFloat() < COMPOUND_CHANCE) {
-            String other = pick(words.first(), random);
-            while (other.equals(first)) {
-                other = pick(words.first(), random);
+        if (nameWords.firstWords().size() > 1 && random.nextFloat() < COMPOUND_CHANCE) {
+            String otherFirstWord = pick(nameWords.firstWords(), random);
+            while (otherFirstWord.equals(firstWord)) {
+                otherFirstWord = pick(nameWords.firstWords(), random);
             }
-            brand = other;
+            brand = otherFirstWord;
         }
         String model = null;
-        if (!words.models().isEmpty() && random.nextFloat() < MODEL_CHANCE) {
-            String picked = pick(words.models(), random);
-            if (!picked.equals(second)) {
-                model = picked;
+        if (!nameWords.models().isEmpty() && random.nextFloat() < MODEL_CHANCE) {
+            String pickedModel = pick(nameWords.models(), random);
+            if (!pickedModel.equals(secondWord)) {
+                model = pickedModel;
             }
         }
-        return FrozenName.product(first, brand, second, model);
+        return FrozenName.product(firstWord, brand, secondWord, model);
     }
 
     private static String pick(List<String> words, Random random) {
         return words.get(random.nextInt(words.size()));
     }
 
-    private static Style style(String definitionId, String name) {
+    private static Style style(String definitionId, String styleName) {
         try {
-            return Style.valueOf(name.trim().toUpperCase(Locale.ROOT));
+            return Style.valueOf(styleName.trim().toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException e) {
-            LOG.warn("Unknown name style \"" + name + "\" for " + definitionId + " in " + NAMES_PATH + " - using codename");
+            LOG.warn("Unknown name style \"" + styleName + "\" for " + definitionId + " in " + NAMES_PATH + " - using codename");
             return Style.CODENAME;
         }
     }
 
-    private static List<String> strings(JSONArray array) throws JSONException {
+    private static List<String> strings(JSONArray wordsArray) throws JSONException {
         List<String> values = new ArrayList<>();
-        for (int i = 0; array != null && i < array.length(); i++) {
-            String value = array.getString(i).trim();
-            if (!value.isEmpty()) {
-                values.add(value);
+        for (int i = 0; wordsArray != null && i < wordsArray.length(); i++) {
+            String word = wordsArray.getString(i).trim();
+            if (!word.isEmpty()) {
+                values.add(word);
             }
         }
         return List.copyOf(values);

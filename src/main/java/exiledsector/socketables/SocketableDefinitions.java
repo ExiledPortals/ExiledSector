@@ -38,8 +38,8 @@ public final class SocketableDefinitions {
         BY_ID.set(Collections.unmodifiableMap(loaded));
     }
 
-    public static SocketableDefinition get(String id) {
-        return id == null ? null : BY_ID.get().get(id);
+    public static SocketableDefinition get(String definitionId) {
+        return definitionId == null ? null : BY_ID.get().get(definitionId);
     }
 
     public static Collection<SocketableDefinition> all() {

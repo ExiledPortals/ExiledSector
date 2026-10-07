@@ -325,7 +325,7 @@ final class SkillTreeStatPanel {
         addComparedStat(logistics, Translation.text("ui.stats.burnLevel"), stats.getMaxBurnLevel().getModifiedValue(), stats.getMaxBurnLevel().getBaseValue());
         addComparedStatLowerIsBetter(logistics, Translation.text("ui.stats.sensorProfile"), stats.getSensorProfile().getModifiedValue(), stats.getSensorProfile().getBaseValue());
         addComparedStat(logistics, Translation.text("ui.stats.sensorStrength"), stats.getSensorStrength().getModifiedValue(), stats.getSensorStrength().getBaseValue());
-        logistics.add(new StatLine(Translation.text("ui.stats.ordnancePoints"), budget.used + "/" + budget.total));
+        logistics.add(new StatLine(Translation.text("ui.stats.ordnancePoints"), budget.usedOp + "/" + budget.totalOp));
         ShipSkillData skillData = ShipSkillDataManager.get(member.getId());
         logistics.add(new StatLine(Translation.text("ui.stats.level"), Translation.msg("ui.stats.levelValue").arg("level", skillData.getLevel())
                 .arg("xp", Math.round(skillData.getXp())).text()));

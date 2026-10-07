@@ -13,20 +13,20 @@ public final class FighterBayOverflow {
     }
 
     public static List<String> returnUnhousedWings(FleetMemberAPI member, ShipVariantAPI variant, CargoAPI cargo) {
-        List<String> returned = new ArrayList<>();
+        List<String> returnedWingIds = new ArrayList<>();
         if (member == null || variant == null || cargo == null || member.getStats() == null) {
-            return returned;
+            return returnedWingIds;
         }
-        int bays = Math.max(0, Math.round(member.getStats().getNumFighterBays().getModifiedValue()));
-        for (int bay = variant.getWings().size() - 1; bay >= bays; bay--) {
-            String wingId = variant.getWingId(bay);
-            if (wingId == null || wingId.isEmpty() || variant.getHullSpec().isBuiltInWing(bay)) {
+        int bayCount = Math.max(0, Math.round(member.getStats().getNumFighterBays().getModifiedValue()));
+        for (int bayIndex = variant.getWings().size() - 1; bayIndex >= bayCount; bayIndex--) {
+            String wingId = variant.getWingId(bayIndex);
+            if (wingId == null || wingId.isEmpty() || variant.getHullSpec().isBuiltInWing(bayIndex)) {
                 continue;
             }
-            variant.setWingId(bay, null);
+            variant.setWingId(bayIndex, null);
             cargo.addFighters(wingId, 1);
-            returned.add(wingId);
+            returnedWingIds.add(wingId);
         }
-        return returned;
+        return returnedWingIds;
     }
 }

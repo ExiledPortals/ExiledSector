@@ -28,32 +28,32 @@ public final class SocketableTooltip {
             if (socketable == null) {
                 tooltip.addTitle(Translation.text("socketable.unknown"));
             } else {
-                SocketableName name = socketable.displayName();
-                tooltip.addTitle(name.title(), name.rarity().color());
-                if (name.baseName() != null) {
-                    tooltip.addPara("%s", 0f, Misc.getGrayColor(), Misc.getGrayColor(), name.baseName());
+                SocketableName socketableName = socketable.displayName();
+                tooltip.addTitle(socketableName.title(), socketableName.rarity().color());
+                if (socketableName.baseName() != null) {
+                    tooltip.addPara("%s", 0f, Misc.getGrayColor(), Misc.getGrayColor(), socketableName.baseName());
                 }
                 addLines(tooltip, socketable.headerLines(), Misc.getGrayColor());
-                List<StyledText> effects = socketable.effectLines(showRollRanges);
-                if (!effects.isEmpty()) {
+                List<StyledText> effectLines = socketable.effectLines(showRollRanges);
+                if (!effectLines.isEmpty()) {
                     tooltip.addSectionHeading(Translation.text("socketable.tooltip.primaryData"), Alignment.MID, PAD);
-                    addLines(tooltip, effects, Misc.getTextColor());
+                    addLines(tooltip, effectLines, Misc.getTextColor());
                 }
             }
-            float pad = PAD;
+            float linePad = PAD;
             for (StyledText line : footer.get()) {
-                VanillaText.addPara(tooltip, line, pad, Misc.getGrayColor());
-                pad = LINE_PAD;
+                VanillaText.addPara(tooltip, line, linePad, Misc.getGrayColor());
+                linePad = LINE_PAD;
             }
             tooltip.setParaFontDefault();
         });
     }
 
     private static void addLines(TooltipMakerAPI tooltip, List<StyledText> lines, Color color) {
-        float pad = PAD;
+        float linePad = PAD;
         for (StyledText line : lines) {
-            VanillaText.addPara(tooltip, line, pad, color);
-            pad = LINE_PAD;
+            VanillaText.addPara(tooltip, line, linePad, color);
+            linePad = LINE_PAD;
         }
     }
 }

@@ -31,13 +31,13 @@ public final class HullModConflictResolver {
 
         boolean conflictFound = removeHullModsThatTriedToStripAPhantom(allocatedNodes, variant, true);
         for (AllocatedNode allocated : allocatedNodes) {
-            SkillType type = allocated.effectiveType();
+            SkillType allocatedType = allocated.effectiveType();
             for (String hullModId : allocated.exclusiveHullModIds()) {
                 if (isRemovableConflict(variant, hullModId)) {
                     MagicIncompatibleHullmods.removeHullmodWithWarning(variant, hullModId, SkillConflictWarningHullMod.ID);
                     variant.removeMod(MagicLibCompat.WARNING_HULLMOD_ID);
                     variant.addMod(SkillConflictWarningHullMod.ID);
-                    SkillConflictWarnings.recordRemoval(variant, hullModId, I18n.forGameText(type::getDisplayName));
+                    SkillConflictWarnings.recordRemoval(variant, hullModId, I18n.forGameText(allocatedType::getDisplayName));
                     conflictFound = true;
                 }
             }
@@ -54,14 +54,14 @@ public final class HullModConflictResolver {
     static boolean removeHullModsThatTriedToStripAPhantom(List<AllocatedNode> allocatedNodes, ShipVariantAPI variant, boolean warn) {
         if (variant == null || !variant.hasHullMod(MagicLibCompat.WARNING_HULLMOD_ID)) return false;
 
-        List<String> attempt = MagicIncompatibleHullmods.getReason(variant);
-        if (attempt == null || attempt.size() < 2) return false;
-        String phantomId = attempt.get(0);
-        SkillType provider = phantomProvider(allocatedNodes, phantomId);
-        if (provider == null || !InstalledHullMods.isInstalledBySkillTree(variant, phantomId)) return false;
+        List<String> stripAttempt = MagicIncompatibleHullmods.getReason(variant);
+        if (stripAttempt == null || stripAttempt.size() < 2) return false;
+        String phantomId = stripAttempt.get(0);
+        SkillType phantomProviderType = phantomProvider(allocatedNodes, phantomId);
+        if (phantomProviderType == null || !InstalledHullMods.isInstalledBySkillTree(variant, phantomId)) return false;
 
         variant.removeMod(MagicLibCompat.WARNING_HULLMOD_ID);
-        String causeId = attempt.get(1);
+        String causeId = stripAttempt.get(1);
         if (causeId == null || Global.getSettings().getHullModSpec(causeId) == null || !isRemovableConflict(variant, causeId)
                 || variant.getPermaMods().contains(causeId)) {
             return false;
@@ -69,7 +69,7 @@ public final class HullModConflictResolver {
         variant.removeMod(causeId);
         if (warn) {
             variant.addMod(SkillConflictWarningHullMod.ID);
-            SkillConflictWarnings.recordRemoval(variant, causeId, I18n.forGameText(provider::getDisplayName));
+            SkillConflictWarnings.recordRemoval(variant, causeId, I18n.forGameText(phantomProviderType::getDisplayName));
         }
         return true;
     }

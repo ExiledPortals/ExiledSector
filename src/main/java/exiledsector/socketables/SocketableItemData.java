@@ -4,7 +4,7 @@ import com.fs.starfarer.api.campaign.SpecialItemData;
 
 import java.util.List;
 
-public record SocketableItemData(String definitionId, long seed, List<RolledEffect> effects, FrozenName name) {
+public record SocketableItemData(String definitionId, long seed, List<RolledEffect> effects, FrozenName frozenName) {
 
     public static final String ITEM_ID = "exiledSector_socketable";
 
@@ -30,11 +30,11 @@ public record SocketableItemData(String definitionId, long seed, List<RolledEffe
     }
 
     public SpecialItemData toSpecialItem() {
-        FrozenName frozen = name;
-        if (effects != null && frozen == null) {
-            frozen = SocketableNames.freeze(definition(), seed, effects);
+        FrozenName resolvedName = frozenName;
+        if (effects != null && resolvedName == null) {
+            resolvedName = SocketableNames.freeze(definition(), seed, effects);
         }
-        return new SpecialItemData(ITEM_ID, SocketableCodec.cargo(this, frozen));
+        return new SpecialItemData(ITEM_ID, SocketableCodec.cargo(this, resolvedName));
     }
 
     public SocketableDefinition definition() {
@@ -46,13 +46,13 @@ public record SocketableItemData(String definitionId, long seed, List<RolledEffe
     }
 
     Socketable create(String instanceId) {
-        SocketableDefinition definition = definition();
-        if (definition == null) {
+        SocketableDefinition itemDefinition = definition();
+        if (itemDefinition == null) {
             return null;
         }
-        Socketable socketable = definition.kind().create(instanceId, definitionId, seed,
-                effects != null ? effects : SocketableRoller.roll(definition, seed));
-        socketable.freezeName(name);
+        Socketable socketable = itemDefinition.kind().create(instanceId, definitionId, seed,
+                effects != null ? effects : SocketableRoller.roll(itemDefinition, seed));
+        socketable.freezeName(frozenName);
         return socketable;
     }
 }

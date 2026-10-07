@@ -27,20 +27,20 @@ public final class NpcTreeTag {
     private NpcTreeTag() {
     }
 
-    public static String encode(ShipSkillData data) {
-        List<String> nodes = new ArrayList<>();
-        for (String nodeId : data.getAllocatedNodeIds()) {
-            String option = data.getOptionalSelection(nodeId);
-            nodes.add(option == null ? nodeId : nodeId + OPTION_SEPARATOR + option);
+    public static String encode(ShipSkillData shipData) {
+        List<String> nodeEntries = new ArrayList<>();
+        for (String nodeId : shipData.getAllocatedNodeIds()) {
+            String optionId = shipData.getOptionalSelection(nodeId);
+            nodeEntries.add(optionId == null ? nodeId : nodeId + OPTION_SEPARATOR + optionId);
         }
-        String tag = PREFIX + GENERATED + FIELD_SEPARATOR + data.getLevel() + FIELD_SEPARATOR + String.join(NODE_SEPARATOR, nodes);
-        List<String> sockets = new ArrayList<>();
-        data.getSocketedItems().forEach((nodeId, socketableId) -> {
+        String tag = PREFIX + GENERATED + FIELD_SEPARATOR + shipData.getLevel() + FIELD_SEPARATOR + String.join(NODE_SEPARATOR, nodeEntries);
+        List<String> socketEntries = new ArrayList<>();
+        shipData.getSocketedItems().forEach((nodeId, socketableId) -> {
             if (NpcSocketables.isNpcId(socketableId)) {
-                sockets.add(nodeId + OPTION_SEPARATOR + socketableId);
+                socketEntries.add(nodeId + OPTION_SEPARATOR + socketableId);
             }
         });
-        return sockets.isEmpty() ? tag : tag + FIELD_SEPARATOR + SOCKETS_MARKER + String.join(NODE_SEPARATOR, sockets);
+        return socketEntries.isEmpty() ? tag : tag + FIELD_SEPARATOR + SOCKETS_MARKER + String.join(NODE_SEPARATOR, socketEntries);
     }
 
     public static String find(ShipVariantAPI variant) {
@@ -62,33 +62,33 @@ public final class NpcTreeTag {
     }
 
     public static ShipSkillData decode(String tag) {
-        String[] fields = fields(tag);
-        if (fields.length == 0) {
+        String[] tagFields = fields(tag);
+        if (tagFields.length == 0) {
             return null;
         }
-        int level;
+        int shipLevel;
         try {
-            level = Integer.parseInt(fields[1]);
+            shipLevel = Integer.parseInt(tagFields[1]);
         } catch (NumberFormatException e) {
             return null;
         }
-        String[] entries = fields[2].isEmpty() ? new String[0] : fields[2].split(NODE_SEPARATOR, -1);
-        SkillNode root = entries.length == 0 ? null : SkillTree.get(entries[0]);
-        ShipSkillData data = NpcSkillTreeBuilder.rootedTree(root, level);
-        if (data == null) {
+        String[] nodeEntries = tagFields[2].isEmpty() ? new String[0] : tagFields[2].split(NODE_SEPARATOR, -1);
+        SkillNode rootNode = nodeEntries.length == 0 ? null : SkillTree.get(nodeEntries[0]);
+        ShipSkillData shipData = NpcSkillTreeBuilder.rootedTree(rootNode, shipLevel);
+        if (shipData == null) {
             return NpcSkillTreeBuilder.emptyTree();
         }
-        for (int i = 1; i < entries.length; i++) {
-            restore(data, entries[i]);
+        for (int i = 1; i < nodeEntries.length; i++) {
+            restore(shipData, nodeEntries[i]);
         }
-        if (fields.length == 4 && fields[3].startsWith(SOCKETS_MARKER)) {
-            restoreSockets(data, fields[3].substring(SOCKETS_MARKER.length()));
+        if (tagFields.length == 4 && tagFields[3].startsWith(SOCKETS_MARKER)) {
+            restoreSockets(shipData, tagFields[3].substring(SOCKETS_MARKER.length()));
         }
-        return data;
+        return shipData;
     }
 
-    private static void restoreSockets(ShipSkillData data, String sockets) {
-        for (String entry : sockets.split(NODE_SEPARATOR)) {
+    private static void restoreSockets(ShipSkillData shipData, String socketEntries) {
+        for (String entry : socketEntries.split(NODE_SEPARATOR)) {
             int separator = entry.indexOf(OPTION_SEPARATOR);
             if (separator <= 0) {
                 continue;
@@ -97,28 +97,28 @@ public final class NpcTreeTag {
             String socketableId = entry.substring(separator + 1);
             SkillNode node = SkillTree.get(nodeId);
             if (node != null && node.getType().getTier() == SkillTier.SOCKET && NpcSocketables.item(socketableId) != null) {
-                data.socketItem(nodeId, socketableId);
+                shipData.socketItem(nodeId, socketableId);
             }
         }
     }
 
-    private static void restore(ShipSkillData data, String entry) {
+    private static void restore(ShipSkillData shipData, String entry) {
         int optionAt = entry.indexOf(OPTION_SEPARATOR);
         String nodeId = NodeReplacements.resolve(optionAt < 0 ? entry : entry.substring(0, optionAt));
         SkillNode node = SkillTree.get(nodeId);
-        if (node == null || data.isAllocated(nodeId)) {
+        if (node == null || shipData.isAllocated(nodeId)) {
             return;
         }
         if (optionAt < 0 || !node.getType().isOptional()) {
             if (!node.getType().isOptional()) {
-                data.allocate(node, CHARGED_NODE_COST);
+                shipData.allocate(node, CHARGED_NODE_COST);
             }
             return;
         }
         String optionId = entry.substring(optionAt + 1);
-        SkillType option = SkillTree.getType(optionId);
-        if (option != null && node.getType().getOptionalOptionIds().contains(optionId)) {
-            data.selectOption(node, option, CHARGED_NODE_COST);
+        SkillType optionType = SkillTree.getType(optionId);
+        if (optionType != null && node.getType().getOptionalOptionIds().contains(optionId)) {
+            shipData.selectOption(node, optionType, CHARGED_NODE_COST);
         }
     }
 
@@ -127,8 +127,8 @@ public final class NpcTreeTag {
         if (prefixLength == 0) {
             return NO_FIELDS;
         }
-        String[] fields = tag.substring(prefixLength).split("\\" + FIELD_SEPARATOR, -1);
-        return (fields.length == 3 || fields.length == 4) && !fields[0].isEmpty() ? fields : NO_FIELDS;
+        String[] tagFields = tag.substring(prefixLength).split("\\" + FIELD_SEPARATOR, -1);
+        return (tagFields.length == 3 || tagFields.length == 4) && !tagFields[0].isEmpty() ? tagFields : NO_FIELDS;
     }
 
     private static int prefixLength(String tag) {

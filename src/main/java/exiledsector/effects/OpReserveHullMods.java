@@ -23,12 +23,12 @@ public final class OpReserveHullMods {
     public static void sync(FleetMemberAPI member, ShipVariantAPI variant) {
         if (member == null || variant == null || SkillDataResolver.isNpcTree(variant)) return;
 
-        ShipSkillData data = ShipSkillDataManager.find(member.getId());
-        int opSpent = data == null ? 0 : data.getSpentOp(SkillNodeOpCost.perNode(member.getHullSpec()));
+        ShipSkillData shipData = ShipSkillDataManager.find(member.getId());
+        int opSpent = shipData == null ? 0 : shipData.getSpentOp(SkillNodeOpCost.perNode(member.getHullSpec()));
         if (opSpent <= 0) {
-            Integer slot = OpSpentSlotManager.existingSlot(member.getId());
-            if (slot != null) {
-                String reserveId = ID_PREFIX + slot;
+            Integer reserveSlot = OpSpentSlotManager.existingSlot(member.getId());
+            if (reserveSlot != null) {
+                String reserveId = ID_PREFIX + reserveSlot;
                 setReserveCost(reserveId, 0);
                 variant.removeMod(reserveId);
             }
@@ -48,17 +48,17 @@ public final class OpReserveHullMods {
     }
 
     private static void removeReservesOfReleasedSlots(ShipVariantAPI variant) {
-        List<String> stale = null;
+        List<String> staleReserveIds = null;
         for (String hullModId : variant.getHullMods()) {
             if (hullModId.startsWith(ID_PREFIX) && isReleasedSlot(hullModId)) {
-                if (stale == null) {
-                    stale = new ArrayList<>();
+                if (staleReserveIds == null) {
+                    staleReserveIds = new ArrayList<>();
                 }
-                stale.add(hullModId);
+                staleReserveIds.add(hullModId);
             }
         }
-        if (stale != null) {
-            stale.forEach(variant::removeMod);
+        if (staleReserveIds != null) {
+            staleReserveIds.forEach(variant::removeMod);
         }
     }
 
@@ -75,14 +75,14 @@ public final class OpReserveHullMods {
         return setReserveCost(hullModId, opSpent) ? hullModId : null;
     }
 
-    private static boolean setReserveCost(String hullModId, int cost) {
-        HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
-        if (spec == null) return false;
+    private static boolean setReserveCost(String hullModId, int opCost) {
+        HullModSpecAPI reserveSpec = Global.getSettings().getHullModSpec(hullModId);
+        if (reserveSpec == null) return false;
 
-        spec.setFrigateCost(cost);
-        spec.setDestroyerCost(cost);
-        spec.setCruiserCost(cost);
-        spec.setCapitalCost(cost);
+        reserveSpec.setFrigateCost(opCost);
+        reserveSpec.setDestroyerCost(opCost);
+        reserveSpec.setCruiserCost(opCost);
+        reserveSpec.setCapitalCost(opCost);
         return true;
     }
 }

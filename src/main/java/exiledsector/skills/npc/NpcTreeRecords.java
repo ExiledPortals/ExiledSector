@@ -16,16 +16,16 @@ public final class NpcTreeRecords {
     // fleet memory is a raw Object store; this key is only ever written as a HashMap<String, String>
     @SuppressWarnings("unchecked")
     public static Map<String, String> of(MemoryAPI memory) {
-        Object stored = memory.get(MEMORY_KEY);
-        if (stored instanceof Map<?, ?>) {
-            return (Map<String, String>) stored;
+        Object storedRecords = memory.get(MEMORY_KEY);
+        if (storedRecords instanceof Map<?, ?>) {
+            return (Map<String, String>) storedRecords;
         }
-        Map<String, String> records = new HashMap<>();
-        memory.set(MEMORY_KEY, records);
-        return records;
+        Map<String, String> recordsByMemberId = new HashMap<>();
+        memory.set(MEMORY_KEY, recordsByMemberId);
+        return recordsByMemberId;
     }
 
-    public static boolean isLevelled(String value) {
-        return value != null && value.startsWith(NpcTreeTag.PREFIX);
+    public static boolean isLevelled(String treeRecord) {
+        return treeRecord != null && treeRecord.startsWith(NpcTreeTag.PREFIX);
     }
 }

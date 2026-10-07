@@ -104,7 +104,7 @@ class NpcSkillTreeBuilderTest {
     }
 
     private static List<String> allocated(NpcTreeBuild build) {
-        return List.copyOf(build.data().getAllocatedNodeIds());
+        return List.copyOf(build.shipData().getAllocatedNodeIds());
     }
 
     private static NpcTreeBuild generateWithSocketables(int nodeCount, int socketables) {
@@ -219,9 +219,9 @@ class NpcSkillTreeBuilderTest {
 
         NpcTreeBuild build = generate(7);
 
-        assertEquals(8, build.data().getAllocatedNodeIds().size());
-        assertEquals(7, build.data().getLevel());
-        assertEquals(0, build.data().getSpentOp(1));
+        assertEquals(8, build.shipData().getAllocatedNodeIds().size());
+        assertEquals(7, build.shipData().getLevel());
+        assertEquals(0, build.shipData().getSpentOp(1));
     }
 
     @Test
@@ -229,7 +229,7 @@ class NpcSkillTreeBuilderTest {
         root();
         chain("n", 80, ROOT);
 
-        assertEquals(NpcSkillTreeBuilder.MAX_NODE_COUNT + 1, generate(500).data().getAllocatedNodeIds().size());
+        assertEquals(NpcSkillTreeBuilder.MAX_NODE_COUNT + 1, generate(500).shipData().getAllocatedNodeIds().size());
     }
 
     @Test
@@ -243,7 +243,7 @@ class NpcSkillTreeBuilderTest {
 
         assertEquals(List.of("heavyarmor"), build.strippedHullModIds());
         assertEquals(List.of(ROOT, "armor_node", "n1", "n2", "n3"), allocated(build));
-        assertEquals(6, build.data().getSpentOp(2));
+        assertEquals(6, build.shipData().getSpentOp(2));
         assertTrue(build.steps().get(0).outcome().startsWith(NpcBuildStep.CONVERTED_HULLMOD));
     }
 
@@ -258,8 +258,8 @@ class NpcSkillTreeBuilderTest {
 
         assertTrue(build.strippedHullModIds().isEmpty());
         assertTrue(build.steps().stream().anyMatch(step -> step.outcome().equals(NpcBuildStep.HULLMOD_KEPT + "heavyarmor")));
-        assertEquals(3, build.data().getAllocatedNodeIds().size());
-        assertEquals(0, build.data().getSpentOp(2));
+        assertEquals(3, build.shipData().getAllocatedNodeIds().size());
+        assertEquals(0, build.shipData().getSpentOp(2));
     }
 
     @Test
@@ -288,8 +288,8 @@ class NpcSkillTreeBuilderTest {
 
         NpcTreeBuild build = generate(1);
 
-        assertEquals(2, build.data().getAllocatedNodeIds().size());
-        assertFalse(build.data().isAllocated("notable"));
+        assertEquals(2, build.shipData().getAllocatedNodeIds().size());
+        assertFalse(build.shipData().isAllocated("notable"));
     }
 
     @Test
@@ -299,10 +299,10 @@ class NpcSkillTreeBuilderTest {
         notable("notable", "other_root");
 
         NpcTreeBuild build = generate(2);
-        ShipSkillData decoded = NpcTreeTag.decode(NpcTreeTag.encode(build.data()));
+        ShipSkillData decoded = NpcTreeTag.decode(NpcTreeTag.encode(build.shipData()));
 
         assertEquals(List.of(ROOT, "other_root", "notable"), allocated(build));
-        assertEquals(ROOT, build.data().resolveStartingRootId());
+        assertEquals(ROOT, build.shipData().resolveStartingRootId());
         assertEquals(allocated(build), List.copyOf(decoded.getAllocatedNodeIds()));
         assertEquals(ROOT, decoded.resolveStartingRootId());
     }
@@ -328,8 +328,8 @@ class NpcSkillTreeBuilderTest {
         NpcTreeBuild unlocked = NpcSkillTreeBuilder.generate(new NpcBuildRequest(BALLISTIC_FRIGATE, null, "hegemony", NpcHullMods.NONE,
                 NpcFreedOp.NONE, 3, 0, type -> false), new Random(1L));
 
-        assertFalse(locked.data().isAllocated("gate_core") || locked.data().isAllocated("gate_far") || locked.data().isAllocated("pride"));
-        assertTrue(unlocked.data().isAllocated("gate_far") && unlocked.data().isAllocated("pride"));
+        assertFalse(locked.shipData().isAllocated("gate_core") || locked.shipData().isAllocated("gate_far") || locked.shipData().isAllocated("pride"));
+        assertTrue(unlocked.shipData().isAllocated("gate_far") && unlocked.shipData().isAllocated("pride"));
     }
 
     @Test
@@ -342,8 +342,8 @@ class NpcSkillTreeBuilderTest {
 
         NpcTreeBuild build = generate(3, "hegemony", NpcHullMods.NONE, NpcFreedOp.NONE, 1L);
 
-        assertTrue(build.data().isAllocated("pride"));
-        assertTrue(build.data().isAllocated("gate_far"));
+        assertTrue(build.shipData().isAllocated("pride"));
+        assertTrue(build.shipData().isAllocated("gate_far"));
         assertTrue(build.steps().stream().anyMatch(step -> step.outcome().equals(NpcBuildStep.FACTION_GOAL)));
     }
 
@@ -357,8 +357,8 @@ class NpcSkillTreeBuilderTest {
 
         NpcTreeBuild build = generate(1, "hegemony", NpcHullMods.NONE, NpcFreedOp.NONE, 1L);
 
-        assertFalse(build.data().isAllocated("pride"));
-        assertTrue(build.data().isAllocated("core_notable"));
+        assertFalse(build.shipData().isAllocated("pride"));
+        assertTrue(build.shipData().isAllocated("core_notable"));
     }
 
     @Test
@@ -377,12 +377,12 @@ class NpcSkillTreeBuilderTest {
         NpcTreeBuild hegemony = generate(30, "hegemony", NpcHullMods.NONE, NpcFreedOp.NONE, 1L);
         NpcTreeBuild independent = generate(30, null, NpcHullMods.NONE, NpcFreedOp.NONE, 1L);
 
-        assertTrue(hegemony.data().isAllocated("heg_notable"));
+        assertTrue(hegemony.shipData().isAllocated("heg_notable"));
         for (String forbidden : List.of("tt_core", "tt_notable", "short_a", "beyond_shortcut", "lost_a", "enigma_notable")) {
-            assertFalse(hegemony.data().isAllocated(forbidden), forbidden);
+            assertFalse(hegemony.shipData().isAllocated(forbidden), forbidden);
         }
         for (String forbidden : List.of("heg_core", "heg_notable", "tt_core", "short_a")) {
-            assertFalse(independent.data().isAllocated(forbidden), forbidden);
+            assertFalse(independent.shipData().isAllocated(forbidden), forbidden);
         }
     }
 
@@ -395,8 +395,8 @@ class NpcSkillTreeBuilderTest {
 
         NpcTreeBuild build = generate(10);
 
-        assertFalse(build.data().isAllocated("missile_notable"));
-        assertTrue(build.data().isAllocated("first") ^ build.data().isAllocated("second"));
+        assertFalse(build.shipData().isAllocated("missile_notable"));
+        assertTrue(build.shipData().isAllocated("first") ^ build.shipData().isAllocated("second"));
     }
 
     @Test
@@ -408,7 +408,7 @@ class NpcSkillTreeBuilderTest {
                 .optionalOptionIds(List.of("missile_option", "hull_option")).build()), ROOT);
 
         for (long seed = 1; seed <= 10; seed++) {
-            ShipSkillData data = generate(1, null, NpcHullMods.NONE, NpcFreedOp.NONE, seed).data();
+            ShipSkillData data = generate(1, null, NpcHullMods.NONE, NpcFreedOp.NONE, seed).shipData();
 
             assertEquals("hull_option", data.getOptionalSelection("optional"));
         }
@@ -445,7 +445,7 @@ class NpcSkillTreeBuilderTest {
         node("raise", registerType(builder("raise_type", SkillTier.SMALL).tags(List.of("req_shields")).build()), "shunt");
 
         for (long seed = 1; seed <= 30; seed++) {
-            ShipSkillData data = generate(4, null, NpcHullMods.NONE, NpcFreedOp.NONE, seed).data();
+            ShipSkillData data = generate(4, null, NpcHullMods.NONE, NpcFreedOp.NONE, seed).shipData();
 
             assertFalse(data.isAllocated("shunt") && (data.isAllocated("emitter") || data.isAllocated("raise")), "seed " + seed);
         }
@@ -463,9 +463,9 @@ class NpcSkillTreeBuilderTest {
                 new NpcFreedOp(2, Map.of("converted_hangar", 10), Map.of("converted_hangar", 1), 60), 1L);
         NpcTreeBuild unknown = generate(hangarShip, null, 1, null, hullMods, new NpcFreedOp(2, Map.of("converted_hangar", 10), 60), 1L);
 
-        assertTrue(counted.data().isAllocated("hangar"));
+        assertTrue(counted.shipData().isAllocated("hangar"));
         assertEquals(List.of("converted_hangar"), counted.strippedHullModIds());
-        assertFalse(unknown.data().isAllocated("hangar"));
+        assertFalse(unknown.shipData().isAllocated("hangar"));
     }
 
     @Test
@@ -476,7 +476,7 @@ class NpcSkillTreeBuilderTest {
 
         NpcTreeBuild build = generate(2, "sindrian_dictat", NpcHullMods.NONE, NpcFreedOp.NONE, 1L);
 
-        assertTrue(build.data().isAllocated("lions_gaze"));
+        assertTrue(build.shipData().isAllocated("lions_gaze"));
         assertTrue(build.steps().stream().anyMatch(step -> step.outcome().equals(NpcBuildStep.FACTION_GOAL)));
     }
 }

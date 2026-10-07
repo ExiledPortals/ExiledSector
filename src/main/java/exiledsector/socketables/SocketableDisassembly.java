@@ -17,12 +17,12 @@ public final class SocketableDisassembly {
         return disassemble(socketable, cargo, SocketableStore.get(), ShipSkillDataManager.all());
     }
 
-    static int disassemble(Socketable socketable, CargoAPI cargo, SocketableStore store, Map<String, ShipSkillData> ships) {
-        if (socketable == null || cargo == null || SocketCustody.isInstalled(ships, socketable) || !store.remove(socketable)) {
+    static int disassemble(Socketable socketable, CargoAPI cargo, SocketableStore store, Map<String, ShipSkillData> shipDataById) {
+        if (socketable == null || cargo == null || SocketCustody.isInstalled(shipDataById, socketable) || !store.remove(socketable)) {
             return 0;
         }
-        int parts = socketable.rarity().disassemblyParts();
-        cargo.addCommodity(PARTS_COMMODITY_ID, parts);
-        return parts;
+        int partsGained = socketable.rarity().disassemblyParts();
+        cargo.addCommodity(PARTS_COMMODITY_ID, partsGained);
+        return partsGained;
     }
 }

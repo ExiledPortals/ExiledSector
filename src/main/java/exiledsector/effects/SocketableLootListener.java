@@ -34,67 +34,67 @@ import java.util.Random;
 public class SocketableLootListener extends BaseCampaignEventListener implements ShipRecoveryListener {
 
     private static final class Pending {
-        private final Map<String, List<SocketableItemData>> byMember = new LinkedHashMap<>();
+        private final Map<String, List<SocketableItemData>> itemsByMemberId = new LinkedHashMap<>();
         private boolean playerWon;
-        private float parts;
+        private float partsEarned;
 
         List<SocketableItemData> items() {
-            List<SocketableItemData> items = new ArrayList<>();
-            byMember.values().forEach(items::addAll);
-            return items;
+            List<SocketableItemData> allItems = new ArrayList<>();
+            itemsByMemberId.values().forEach(allItems::addAll);
+            return allItems;
         }
     }
 
     private final Map<BattleAPI, Pending> pendingByBattle = new IdentityHashMap<>();
-    private final Random random = new Random();
+    private final Random partsRandom = new Random();
 
     public SocketableLootListener() {
         super(false);
     }
 
     @Override
-    public void reportPlayerEngagement(EngagementResultAPI result) {
-        if (result == null || result.getBattle() == null) {
+    public void reportPlayerEngagement(EngagementResultAPI engagementResult) {
+        if (engagementResult == null || engagementResult.getBattle() == null) {
             return;
         }
-        Pending pending = pendingByBattle.computeIfAbsent(result.getBattle(), key -> new Pending());
-        pending.playerWon = result.didPlayerWin();
-        for (EngagementResultForFleetAPI side : new EngagementResultForFleetAPI[]{result.getWinnerResult(), result.getLoserResult()}) {
-            if (side != null && !side.isPlayer()) {
-                hold(pending, side.getDestroyed());
-                hold(pending, side.getDisabled());
+        Pending pendingLoot = pendingByBattle.computeIfAbsent(engagementResult.getBattle(), key -> new Pending());
+        pendingLoot.playerWon = engagementResult.didPlayerWin();
+        for (EngagementResultForFleetAPI fleetResult : new EngagementResultForFleetAPI[]{engagementResult.getWinnerResult(), engagementResult.getLoserResult()}) {
+            if (fleetResult != null && !fleetResult.isPlayer()) {
+                hold(pendingLoot, fleetResult.getDestroyed());
+                hold(pendingLoot, fleetResult.getDisabled());
             }
         }
-        if (pending.playerWon) {
-            float defeatedDp = CombatXpListener.enemyDeploymentPointsDefeated(result);
+        if (pendingLoot.playerWon) {
+            float defeatedDp = CombatXpListener.enemyDeploymentPointsDefeated(engagementResult);
             if (defeatedDp > 0f) {
-                float difficulty = ShipLevelSystem.difficultyMultiplier(BattleDifficulty.current(), ShipLevelConfig.xpDifficultyStrength(),
+                float difficultyMultiplier = ShipLevelSystem.difficultyMultiplier(BattleDifficulty.current(), ShipLevelConfig.xpDifficultyStrength(),
                         ShipLevelConfig.xpDifficultyMaxMultiplier());
-                pending.parts += defeatedDp * SocketableDrops.battlePartsPerDeploymentPoint() * difficulty;
+                pendingLoot.partsEarned += defeatedDp * SocketableDrops.battlePartsPerDeploymentPoint() * difficultyMultiplier;
             }
         }
     }
 
-    private static void hold(Pending pending, List<FleetMemberAPI> members) {
-        if (members == null) {
+    private static void hold(Pending pendingLoot, List<FleetMemberAPI> lostMembers) {
+        if (lostMembers == null) {
             return;
         }
-        for (FleetMemberAPI member : members) {
-            String tag = member == null ? null : NpcTreeTag.find(member.getVariant());
-            List<SocketableItemData> items = tag == null ? List.of() : NpcSocketables.carriedBy(NpcTreeTag.decode(tag));
-            if (!items.isEmpty()) {
-                pending.byMember.put(member.getId(), items);
+        for (FleetMemberAPI member : lostMembers) {
+            String npcTreeTag = member == null ? null : NpcTreeTag.find(member.getVariant());
+            List<SocketableItemData> carriedItems = npcTreeTag == null ? List.of() : NpcSocketables.carriedBy(NpcTreeTag.decode(npcTreeTag));
+            if (!carriedItems.isEmpty()) {
+                pendingLoot.itemsByMemberId.put(member.getId(), carriedItems);
             }
         }
     }
 
     @Override
-    public void reportShipsRecovered(List<FleetMemberAPI> ships, InteractionDialogAPI dialog) {
-        if (ships == null) {
+    public void reportShipsRecovered(List<FleetMemberAPI> recoveredShips, InteractionDialogAPI dialog) {
+        if (recoveredShips == null) {
             return;
         }
-        for (FleetMemberAPI ship : ships) {
-            pendingByBattle.values().forEach(pending -> pending.byMember.remove(ship.getId()));
+        for (FleetMemberAPI recoveredShip : recoveredShips) {
+            pendingByBattle.values().forEach(pendingLoot -> pendingLoot.itemsByMemberId.remove(recoveredShip.getId()));
         }
         CampaignFleetAPI playerFleet = Global.getSector() == null ? null : Global.getSector().getPlayerFleet();
         if (playerFleet != null) {
@@ -103,13 +103,13 @@ public class SocketableLootListener extends BaseCampaignEventListener implements
     }
 
     @Override
-    public void reportEncounterLootGenerated(FleetEncounterContextPlugin plugin, CargoAPI loot) {
-        Pending pending = plugin == null ? null : pendingByBattle.remove(plugin.getBattle());
-        if (pending != null && loot != null) {
-            pending.items().forEach(item -> loot.addSpecial(item.toSpecialItem(), 1f));
-            int parts = SocketableDrops.wholeParts(pending.parts, random);
-            if (parts > 0) {
-                loot.addCommodity(SocketableDisassembly.PARTS_COMMODITY_ID, parts);
+    public void reportEncounterLootGenerated(FleetEncounterContextPlugin encounterPlugin, CargoAPI loot) {
+        Pending pendingLoot = encounterPlugin == null ? null : pendingByBattle.remove(encounterPlugin.getBattle());
+        if (pendingLoot != null && loot != null) {
+            pendingLoot.items().forEach(item -> loot.addSpecial(item.toSpecialItem(), 1f));
+            int wholeParts = SocketableDrops.wholeParts(pendingLoot.partsEarned, partsRandom);
+            if (wholeParts > 0) {
+                loot.addCommodity(SocketableDisassembly.PARTS_COMMODITY_ID, wholeParts);
             }
         }
         pendingByBattle.keySet().removeIf(BattleAPI::isDone);
@@ -117,27 +117,27 @@ public class SocketableLootListener extends BaseCampaignEventListener implements
 
     @Override
     public void reportBattleFinished(CampaignFleetAPI primaryWinner, BattleAPI battle) {
-        Pending pending = pendingByBattle.remove(battle);
+        Pending pendingLoot = pendingByBattle.remove(battle);
         CampaignFleetAPI playerFleet = Global.getSector() == null ? null : Global.getSector().getPlayerFleet();
-        if (pending == null || !pending.playerWon || playerFleet == null) {
+        if (pendingLoot == null || !pendingLoot.playerWon || playerFleet == null) {
             return;
         }
-        for (SocketableItemData item : pending.items()) {
+        for (SocketableItemData item : pendingLoot.items()) {
             playerFleet.getCargo().addSpecial(item.toSpecialItem(), 1f);
-            Socketable preview = item.preview();
-            if (preview != null && Global.getSector().getCampaignUI() != null) {
-                String message = I18n.forGameText(() -> Translation.msg("socketable.salvaged").arg("name", preview.name()).text());
-                Global.getSector().getCampaignUI().addMessage(message, Misc.getPositiveHighlightColor());
+            Socketable previewSocketable = item.preview();
+            if (previewSocketable != null && Global.getSector().getCampaignUI() != null) {
+                String salvageMessage = I18n.forGameText(() -> Translation.msg("socketable.salvaged").arg("name", previewSocketable.name()).text());
+                Global.getSector().getCampaignUI().addMessage(salvageMessage, Misc.getPositiveHighlightColor());
             }
         }
-        int parts = SocketableDrops.wholeParts(pending.parts, random);
-        if (parts > 0) {
-            playerFleet.getCargo().addCommodity(SocketableDisassembly.PARTS_COMMODITY_ID, parts);
-            CommoditySpecAPI spec = Global.getSettings().getCommoditySpec(SocketableDisassembly.PARTS_COMMODITY_ID);
-            if (spec != null && Global.getSector().getCampaignUI() != null) {
-                String message = I18n.forGameText(() -> Translation.msg("socketable.salvaged").arg("name",
-                        Translation.msg("socketable.techMining.material").arg("count", parts).arg("name", spec.getName()).text()).text());
-                Global.getSector().getCampaignUI().addMessage(message, Misc.getPositiveHighlightColor());
+        int wholeParts = SocketableDrops.wholeParts(pendingLoot.partsEarned, partsRandom);
+        if (wholeParts > 0) {
+            playerFleet.getCargo().addCommodity(SocketableDisassembly.PARTS_COMMODITY_ID, wholeParts);
+            CommoditySpecAPI partsSpec = Global.getSettings().getCommoditySpec(SocketableDisassembly.PARTS_COMMODITY_ID);
+            if (partsSpec != null && Global.getSector().getCampaignUI() != null) {
+                String salvageMessage = I18n.forGameText(() -> Translation.msg("socketable.salvaged").arg("name",
+                        Translation.msg("socketable.techMining.material").arg("count", wholeParts).arg("name", partsSpec.getName()).text()).text());
+                Global.getSector().getCampaignUI().addMessage(salvageMessage, Misc.getPositiveHighlightColor());
             }
         }
     }

@@ -12,11 +12,11 @@ final class BattleDifficulty {
     }
 
     static float current() {
-        CampaignUIAPI ui = Global.getSector() == null ? null : Global.getSector().getCampaignUI();
-        InteractionDialogAPI dialog = ui == null ? null : ui.getCurrentInteractionDialog();
-        InteractionDialogPlugin plugin = dialog == null ? null : dialog.getPlugin();
-        if (plugin != null && plugin.getContext() instanceof FleetEncounterContext context && context.isComputedDifficulty()) {
-            return context.getDifficulty();
+        CampaignUIAPI campaignUi = Global.getSector() == null ? null : Global.getSector().getCampaignUI();
+        InteractionDialogAPI dialog = campaignUi == null ? null : campaignUi.getCurrentInteractionDialog();
+        InteractionDialogPlugin dialogPlugin = dialog == null ? null : dialog.getPlugin();
+        if (dialogPlugin != null && dialogPlugin.getContext() instanceof FleetEncounterContext encounterContext && encounterContext.isComputedDifficulty()) {
+            return encounterContext.getDifficulty();
         }
         return 1f;
     }

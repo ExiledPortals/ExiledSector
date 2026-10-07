@@ -29,8 +29,8 @@ public final class FrozenName {
         this.product = product;
     }
 
-    static FrozenName product(String first, String brand, String second, String model) {
-        return new FrozenName(null, null, first, second, brand, model, true);
+    static FrozenName product(String firstWord, String brandWord, String secondWord, String modelWord) {
+        return new FrozenName(null, null, firstWord, secondWord, brandWord, modelWord, true);
     }
 
     String prefixEffect() {
@@ -67,10 +67,10 @@ public final class FrozenName {
 
     @Override
     public boolean equals(Object other) {
-        return other instanceof FrozenName name && Objects.equals(prefixEffect, name.prefixEffect)
-                && Objects.equals(suffixEffect, name.suffixEffect) && Objects.equals(rareFirst, name.rareFirst)
-                && Objects.equals(rareSecond, name.rareSecond) && Objects.equals(rareBrand, name.rareBrand)
-                && Objects.equals(rareModel, name.rareModel) && product == name.product;
+        return other instanceof FrozenName otherName && Objects.equals(prefixEffect, otherName.prefixEffect)
+                && Objects.equals(suffixEffect, otherName.suffixEffect) && Objects.equals(rareFirst, otherName.rareFirst)
+                && Objects.equals(rareSecond, otherName.rareSecond) && Objects.equals(rareBrand, otherName.rareBrand)
+                && Objects.equals(rareModel, otherName.rareModel) && product == otherName.product;
     }
 
     @Override
