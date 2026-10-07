@@ -1,0 +1,5 @@
+item,partsCost
+common_subroutine,10
+exiledSector_augmentation_kernel,10
+exiledSector_recalibration_kernel,20
+exiledSector_transposition_kernel,100

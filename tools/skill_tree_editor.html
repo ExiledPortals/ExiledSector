@@ -665,6 +665,7 @@
         <button class="smallBtn" id="socketableEditorBtn">Socketable Editor...</button>
         <button class="smallBtn" id="socketableNamesBtn">Socketable Names...</button>
         <button class="smallBtn" id="socketableDropsBtn">Socketable Drops...</button>
+        <button class="smallBtn" id="socketableCraftingBtn">Socketable Crafting...</button>
       </div>
     </div>
   </div>
@@ -4121,6 +4122,140 @@ function formatPercent(value){
   return value === null || value === undefined || isNaN(value) ? '' : String(Number(value.toFixed(2)));
 }
 
+var SOCKET_CRAFTING_ITEMS = [
+  { id: 'exiledSector_socketable_parts', label: 'Socketable Parts', commodity: true, cost: false },
+  { id: 'common_subroutine', label: 'New common subroutine', commodity: false, cost: true },
+  { id: 'exiledSector_augmentation_kernel', label: 'Augmentation Kernel', commodity: true, cost: true },
+  { id: 'exiledSector_recalibration_kernel', label: 'Recalibration Kernel', commodity: true, cost: true },
+  { id: 'exiledSector_transposition_kernel', label: 'Transposition Kernel', commodity: true, cost: true }
+];
+
+function parseCraftingCsv(text){
+  var rows = parseCsv(text);
+  var header = (rows.shift() || []).map(function(h){ return h.trim(); });
+  var itemAt = header.indexOf('item'), costAt = header.indexOf('partsCost');
+  var costs = {}, order = [];
+  rows.forEach(function(cells){
+    var item = (cells[itemAt] || '').trim();
+    if (!item) return;
+    costs[item] = (cells[costAt] || '').trim();
+    order.push(item);
+  });
+  return { costs: costs, order: order };
+}
+
+function serializeCraftingCsv(crafting){
+  var order = crafting.order.slice();
+  SOCKET_CRAFTING_ITEMS.forEach(function(item){
+    if (item.cost && order.indexOf(item.id) === -1) order.push(item.id);
+  });
+  return ['item,partsCost'].concat(order.map(function(item){
+    return [item, crafting.costs[item] === undefined ? '' : crafting.costs[item]].map(csvField).join(',');
+  })).join('\n') + '\n';
+}
+
+function serializeCommoditiesCsv(table){
+  return [table.header].concat(table.rows).map(function(cells){ return cells.map(csvField).join(','); }).join('\n') + '\n';
+}
+
+function openSocketableCraftingModal(){
+  var crafting = { costs: {}, order: [] }, commodities = { header: [], rows: [] };
+  var modal = openDataModal({ title: 'Socketable Crafting Items', noun: 'crafting', loadingText: 'Loading crafting items...', load: load, save: save });
+  var markDirty = modal.markDirty;
+
+  function load(){
+    fetch('/data/socketable-crafting').then(function(r){ if (!r.ok) throw new Error('crafting ' + r.status); return r.json(); }).then(function(data){
+      crafting = parseCraftingCsv(data.crafting);
+      var rows = parseCsv(data.commodities);
+      commodities = { header: rows.shift() || [], rows: rows };
+      modal.dirty = false;
+      render();
+    }).catch(function(){
+      modal.loadFailed('socketable_crafting.csv and commodities.csv');
+    });
+  }
+
+  function commodityRow(id){
+    var idAt = commodities.header.indexOf('id');
+    return commodities.rows.find(function(cells){ return (cells[idAt] || '').trim() === id; });
+  }
+
+  function iconOf(id){
+    var row = commodityRow(id);
+    return row ? (row[commodities.header.indexOf('icon')] || '').trim() : '';
+  }
+
+  function setIcon(id, path){
+    var row = commodityRow(id);
+    if (row) row[commodities.header.indexOf('icon')] = path;
+  }
+
+  function render(){
+    var body = SOCKET_CRAFTING_ITEMS.map(function(item){
+      var html = '<div class="fieldRow" style="align-items:flex-end;margin-bottom:10px">';
+      if (item.commodity) {
+        var icon = iconOf(item.id);
+        html += '<img class="socketableIconPreview" data-craft-preview="' + item.id + '" src="' + escapeHtml(icon || 'graphics/icons/cargo/chip1.png') + '" alt="">' +
+          '<div class="field" style="flex:2"><label>' + escapeHtml(item.label) + ' - image</label><div class="fieldRow">' +
+          '<input data-craft-icon="' + item.id + '" value="' + escapeHtml(icon) + '" style="flex:1">' +
+          '<button class="smallBtn" type="button" data-craft-pick="' + item.id + '">Select Image</button></div></div>';
+      } else {
+        html += '<div class="field" style="flex:2"><label>' + escapeHtml(item.label) + '</label>' +
+          '<div class="hint">Cycles through the icons of every non-unique subroutine in socketables.csv.</div></div>';
+      }
+      if (item.cost) {
+        html += '<div class="field" style="flex:1"><label>Parts to synthesise</label>' +
+          '<input type="number" min="0" step="1" data-craft-cost="' + item.id + '" value="' + escapeHtml(crafting.costs[item.id] || '') + '"></div>';
+      } else {
+        html += '<div class="field" style="flex:1"><label>Parts to synthesise</label><div class="hint">Not synthesised - comes from disassembly and loot.</div></div>';
+      }
+      return html + '</div>';
+    }).join('');
+    var root = modal.render('<div class="hint">Edits data/config/exiledSector/socketable_crafting.csv (costs) and the icon column of ' +
+      'data/campaign/commodities.csv (images). Images picked from graphics/unused/ move to graphics/icons/cargo/.</div><hr class="sep">' + body);
+    root.querySelectorAll('[data-craft-icon]').forEach(function(el){
+      el.addEventListener('input', function(){
+        setIcon(el.dataset.craftIcon, el.value.trim());
+        root.querySelector('[data-craft-preview="' + el.dataset.craftIcon + '"]').src = el.value.trim() || 'graphics/icons/cargo/chip1.png';
+        markDirty();
+      });
+    });
+    root.querySelectorAll('[data-craft-cost]').forEach(function(el){
+      el.addEventListener('input', function(){
+        crafting.costs[el.dataset.craftCost] = el.value.trim();
+        markDirty();
+      });
+    });
+    root.querySelectorAll('[data-craft-pick]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        openImagePickerModal(function(path){
+          setIcon(btn.dataset.craftPick, moveIconIfNeeded(path, 'graphics/icons/cargo/'));
+          markDirty();
+          render();
+        }, function(){ render(); });
+      });
+    });
+  }
+
+  function validate(){
+    var issues = [];
+    SOCKET_CRAFTING_ITEMS.forEach(function(item){
+      if (item.commodity && !commodityRow(item.id)) issues.push(item.label + ': no row in commodities.csv');
+      if (item.commodity && !iconOf(item.id)) issues.push(item.label + ': needs an image');
+      if (item.cost && !/^\d+$/.test(String(crafting.costs[item.id] || ''))) issues.push(item.label + ': the cost must be a whole number of parts');
+    });
+    return issues;
+  }
+
+  function save(){
+    modal.save(validate(), '/save-socketable-crafting',
+      { crafting: serializeCraftingCsv(crafting), commodities: serializeCommoditiesCsv(commodities) },
+      'Saved socketable_crafting.csv and commodities.csv');
+  }
+
+  load();
+}
+
 function openSocketableDropsModal(){
   var rows = [], filterText = '', file = 'socketable_salvage.csv', files = [file];
   var modal = openDataModal({ title: 'Socketable Drops', noun: 'drop', loadingText: 'Loading drops...', load: load, save: save });
@@ -4706,6 +4841,7 @@ document.getElementById('imageEditorBtn').addEventListener('click', function(){ 
 document.getElementById('socketableEditorBtn').addEventListener('click', function(){ openSocketableEditorModal(); });
 document.getElementById('socketableNamesBtn').addEventListener('click', function(){ openSocketableNamesModal(); });
 document.getElementById('socketableDropsBtn').addEventListener('click', function(){ openSocketableDropsModal(); });
+document.getElementById('socketableCraftingBtn').addEventListener('click', function(){ openSocketableCraftingModal(); });
 
 document.getElementById('labelsToggle').addEventListener('change', function(ev){ state.showLabels = ev.target.checked; render(); });
 document.getElementById('searchBox').addEventListener('input', function(ev){ state.search = ev.target.value; render(); });

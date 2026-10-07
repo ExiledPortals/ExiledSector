@@ -21,7 +21,14 @@ public final class SocketableRoller {
             }
             return rolled;
         }
-        int count = effectCount(random.nextFloat());
+        return rollAffixes(definition, effectCount(random.nextFloat()), random);
+    }
+
+    static List<RolledEffect> rollCommon(SocketableDefinition definition, long seed) {
+        return rollAffixes(definition, SocketableRarity.COMMON_MAX_EFFECTS, new Random(scramble(seed)));
+    }
+
+    private static List<RolledEffect> rollAffixes(SocketableDefinition definition, int count, Random random) {
         int prefixCount = prefixCount(count, random.nextBoolean());
         List<RolledEffect> rolled = new ArrayList<>(count);
         draw(definition.prefixes(), prefixCount, random, rolled);
@@ -69,7 +76,7 @@ public final class SocketableRoller {
         return roll < TWO_EFFECTS_CHANCE + THREE_EFFECTS_CHANCE ? 3 : 4;
     }
 
-    private static int pick(List<SocketableDefinition.PoolEntry> entries, float roll) {
+    static int pick(List<SocketableDefinition.PoolEntry> entries, float roll) {
         float total = 0f;
         for (SocketableDefinition.PoolEntry entry : entries) {
             total += entry.weight();

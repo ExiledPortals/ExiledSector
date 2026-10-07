@@ -76,6 +76,16 @@ public abstract class Socketable {
         }
     }
 
+    void replaceEffects(List<RolledEffect> replacement) {
+        effects.clear();
+        effects.addAll(replacement);
+    }
+
+    void refreezeName() {
+        SocketableDefinition definition = definition();
+        frozenName = definition == null ? null : SocketableNames.freeze(definition, seed, effects);
+    }
+
     public String name() {
         return displayName().title();
     }

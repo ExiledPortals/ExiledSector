@@ -35,9 +35,10 @@ class EditorRoundTripTest {
     private static final String SOCKETABLE_NAMES = "exiledsector/socketables/SocketableNames.java";
     private static final String SOCKETABLE_DROPS = "exiledsector/socketables/SocketableDrops.java";
     private static final String SALVAGE_COMPAT = "exiledsector/compat/SalvageSiteCompat.java";
+    private static final String SOCKETABLE_CRAFTING = "exiledsector/socketables/SocketCraftingCosts.java";
 
     private static final List<String> LOADERS = List.of(TYPE_LOADER, TREE_LOADER, SOCKETABLE_DEFINITIONS, SOCKETABLE_DEFINITION,
-            SOCKETABLE_NAMES, SOCKETABLE_DROPS, SALVAGE_COMPAT);
+            SOCKETABLE_NAMES, SOCKETABLE_DROPS, SALVAGE_COMPAT, SOCKETABLE_CRAFTING);
 
     private static final List<String> EDITED_DATA_PATHS = List.of("data/skilltrees/skill_types.json", "data/skilltrees/ship_skill_tree.json",
             "data/config/exiledSector/socketable", "compat/salvage/");
@@ -72,7 +73,8 @@ class EditorRoundTripTest {
             new Pin("socketable_names.json word fields", SOCKETABLE_NAMES, List.of("registerWords"),
                     List.of("serializeRareNames", "openSocketableNamesModal"), true),
             new Pin("socketable_salvage.csv columns", SOCKETABLE_DROPS, List.of("load", "parse"), List.of("serializeSalvageCsv"), true),
-            new Pin("compat/salvage/*.csv columns", SALVAGE_COMPAT, List.of("rows", "missingSites"), List.of("serializeSalvageCsv"), true));
+            new Pin("compat/salvage/*.csv columns", SALVAGE_COMPAT, List.of("rows", "missingSites"), List.of("serializeSalvageCsv"), true),
+            new Pin("socketable_crafting.csv columns", SOCKETABLE_CRAFTING, List.of("load", "register"), List.of("serializeCraftingCsv"), true));
 
     private static final Pattern JAVA_KEY_READ = Pattern.compile("(?:\\.\\s*(?:opt|get|has|isNull)[A-Za-z]*\\s*\\(\\s*"
             + "|\\bModCsv\\.text\\s*\\([^,()\"]*,\\s*|\\bModCsv\\.(?:load|rows)\\s*\\(\\s*)\"([^\"\\\\]*)\"");

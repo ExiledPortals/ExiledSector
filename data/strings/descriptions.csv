@@ -1,2 +1,5 @@
 id,type,text1,text2,text3,text4,text5,notes
 exiledSector_socketable_parts,RESOURCE,"Components recovered by disassembling socketables you no longer need.",,,,,
+exiledSector_augmentation_kernel,RESOURCE,"Adds one more rolled effect to a domain subroutine, up to four. A common subroutine that gains its third effect becomes rare.",,,,,
+exiledSector_recalibration_kernel,RESOURCE,"Rerolls the values of every effect on a socketable within its usual range.",,,,,
+exiledSector_transposition_kernel,RESOURCE,"Rewrites a unique socketable into a different unique socketable.",,,,,

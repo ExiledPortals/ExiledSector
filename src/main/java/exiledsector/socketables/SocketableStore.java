@@ -68,6 +68,19 @@ public final class SocketableStore {
         owned.forEach(Socketable::freezeName);
     }
 
+    boolean replace(Socketable current, Socketable replacement) {
+        int index = owned.indexOf(current);
+        if (index < 0) {
+            return false;
+        }
+        owned.set(index, replacement);
+        if (byId != null) {
+            byId.remove(current.id());
+            byId.put(replacement.id(), replacement);
+        }
+        return true;
+    }
+
     public boolean remove(Socketable socketable) {
         boolean removed = owned.remove(socketable);
         if (removed && byId != null) {

@@ -12,6 +12,8 @@ $socketableAffixesPath = Join-Path $projectRoot "data\config\exiledSector\socket
 $socketableNamesPath = Join-Path $projectRoot "data\config\exiledSector\socketable_names.json"
 $socketableSalvagePath = Join-Path $projectRoot "data\config\exiledSector\socketable_salvage.csv"
 $socketableSalvageCompatDir = Join-Path $projectRoot "data\config\exiledSector\compat\salvage"
+$socketableCraftingPath = Join-Path $projectRoot "data\config\exiledSector\socketable_crafting.csv"
+$commoditiesPath = Join-Path $projectRoot "data\campaign\commodities.csv"
 
 function Resolve-SalvagePath($file) {
     if (-not $file -or $file -eq "socketable_salvage.csv") { return $socketableSalvagePath }
@@ -247,6 +249,32 @@ $routes = @{
         }
         Write-TextFileAtomic $socketableAffixesPath $affixes
         Write-TextFileAtomic $socketableNamesPath $names
+        Write-JsonResponse $response 200 @{ ok = $true; message = "Saved." }
+    }
+
+    "GET /data/socketable-crafting" = {
+        param($request, $response)
+        Write-JsonResponse $response 200 @{
+            crafting = [System.IO.File]::ReadAllText($socketableCraftingPath, [System.Text.Encoding]::UTF8)
+            commodities = [System.IO.File]::ReadAllText($commoditiesPath, [System.Text.Encoding]::UTF8)
+        }
+    }
+
+    "POST /save-socketable-crafting" = {
+        param($request, $response)
+        $body = Read-JsonBody $request
+        $crafting = [string]$body.crafting
+        $commodities = [string]$body.commodities
+        if (-not $crafting.StartsWith("item,")) {
+            Write-JsonResponse $response 400 @{ ok = $false; message = "Nothing was written - the crafting CSV must start with the item column." }
+            return
+        }
+        if (-not $commodities.StartsWith("name,id,")) {
+            Write-JsonResponse $response 400 @{ ok = $false; message = "Nothing was written - commodities.csv must start with the name and id columns." }
+            return
+        }
+        Write-TextFileAtomic $socketableCraftingPath $crafting
+        Write-TextFileAtomic $commoditiesPath $commodities
         Write-JsonResponse $response 200 @{ ok = $true; message = "Saved." }
     }
 

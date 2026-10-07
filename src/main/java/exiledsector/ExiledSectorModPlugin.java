@@ -39,6 +39,8 @@ import exiledsector.skills.npc.NpcFactionVolumes;
 import exiledsector.skills.skilleffect.CsvIdList;
 import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.skills.tags.AreaToggles;
+import exiledsector.socketables.SocketCraftingCosts;
+import exiledsector.socketables.SocketCurrency;
 import exiledsector.socketables.SocketableDefinitions;
 import exiledsector.socketables.SocketableDisassembly;
 import exiledsector.socketables.SocketableNames;
@@ -81,6 +83,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         CsvIdList.loadAll();
         NpcFactionVolumes.load();
         SocketableDefinitions.load();
+        SocketCraftingCosts.load();
         SocketableNames.load();
         NodeReplacements.load();
         SocketableDrops.load();
@@ -111,6 +114,9 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         I18n.forGameText(() -> {
             LOCALISED_HULLMODS.forEach(ExiledSectorModPlugin::localise);
             localiseCommodity(SocketableDisassembly.PARTS_COMMODITY_ID);
+            for (SocketCurrency currency : SocketCurrency.values()) {
+                localiseCommodity(currency.commodityId());
+            }
         });
     }
 

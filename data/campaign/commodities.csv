@@ -1,2 +1,5 @@
 name,id,demand class,base price,export value,price variability,utility,origin,tags,stack size,cargo space,icon,sound id,sound id drop,order,economyTier,econUnitOrigUnused,econUnit,baseRaidDanger,eU * base value,iconWidthMult,plugin,desc
 Socketable Parts,exiledSector_socketable_parts,exiledSector_socketable_parts,500,,0,1,,"nonecon, no_loss_from_combat",1000,1,graphics/icons/cargo/socketable_parts.png,ui_cargo_machinery,ui_cargo_machinery_drop,46,,,,,,1,,
+Augmentation Kernel,exiledSector_augmentation_kernel,exiledSector_augmentation_kernel,4000,,0,1,,"nonecon, no_loss_from_combat",1000,1,graphics/icons/cargo/augmentation_kernel.png,ui_cargo_machinery,ui_cargo_machinery_drop,47,,,,,,1,,
+Recalibration Kernel,exiledSector_recalibration_kernel,exiledSector_recalibration_kernel,8000,,0,1,,"nonecon, no_loss_from_combat",1000,1,graphics/icons/cargo/recalibration_kernel.png,ui_cargo_machinery,ui_cargo_machinery_drop,48,,,,,,1,,
+Transposition Kernel,exiledSector_transposition_kernel,exiledSector_transposition_kernel,40000,,0,1,,"nonecon, no_loss_from_combat",1000,1,graphics/icons/cargo/transposition_kernel.png,ui_cargo_machinery,ui_cargo_machinery_drop,49,,,,,,1,,
