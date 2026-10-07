@@ -25,14 +25,29 @@ public enum CombatSkillEffect implements BackedSkillEffect {
 
     BEAM_WEAPON_SPLIT_TARGETS_FLAT(BeamSplitListener.TARGETS_KEY, BeamSplitListener.class, BeamSplitListener::new) {
         @Override
+        public boolean reshapesDealtDamage() {
+            return true;
+        }
+
+        @Override
         public StyledText description(float magnitude) {
             return EffectText.msg(this).count(Math.round(magnitude)).arg("value", magnitude).styled();
         }
     },
     EXPLODE_ON_DEATH(DeathExplosionListener.FUEL_DAMAGE_PERCENT_KEY, DeathExplosionListener.class, DeathExplosionListener::new),
     DEATH_ON_COLLISION(CollisionDeathListener.class, CollisionDeathListener::new),
-    NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT(EnergyChainListener.CHANCE_KEY, EnergyChainListener.class, EnergyChainListener::new),
-    NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT(EnergyChainListener.FALLOFF_KEY, EnergyChainListener.class, EnergyChainListener::new),
+    NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT(EnergyChainListener.CHANCE_KEY, EnergyChainListener.class, EnergyChainListener::new) {
+        @Override
+        public boolean reshapesDealtDamage() {
+            return true;
+        }
+    },
+    NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT(EnergyChainListener.FALLOFF_KEY, EnergyChainListener.class, EnergyChainListener::new) {
+        @Override
+        public boolean reshapesDealtDamage() {
+            return true;
+        }
+    },
     BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT(BallisticPierceListener.CHANCE_KEY, BallisticPierceListener.class, BallisticPierceListener::new),
     ESCORT_MANEUVER_BONUS_PERCENT(EscortListener.MANEUVER_BONUS_KEY, EscortListener.class, EscortListener::new),
     ESCORT_SPEED_BONUS_PERCENT(EscortListener.SPEED_BONUS_KEY, EscortListener.class, EscortListener::new),

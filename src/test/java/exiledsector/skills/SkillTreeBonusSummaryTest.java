@@ -96,6 +96,33 @@ class SkillTreeBonusSummaryTest {
     }
 
     @Test
+    void damageTakenReductionsPastTheCapAreSummarisedAtTheCap() {
+        allocate("emp_1", small("emp_percent", new SkillTypeEffect(DefenseSkillEffect.EMP_DAMAGE_TAKEN_PERCENT, -50f)));
+        allocate("emp_2", small("emp_mult", new SkillTypeEffect(DefenseSkillEffect.EMP_DAMAGE_TAKEN_MULT, -70f)));
+        SkillType energy = small("energy", new SkillTypeEffect(DefenseSkillEffect.ENERGY_DAMAGE_TAKEN_PERCENT, -50f));
+        allocate("energy_1", energy);
+        allocate("energy_2", energy);
+
+        List<String> texts = texts(SkillTreeBonusSummary.of(data, HullSize.CRUISER));
+
+        assertTrue(texts.contains(DefenseSkillEffect.EMP_DAMAGE_TAKEN_MULT.description(-DamageTakenCaps.MAX_REDUCTION_PERCENT).plain()), texts.toString());
+        assertTrue(texts.contains(DefenseSkillEffect.ENERGY_DAMAGE_TAKEN_PERCENT.description(-DamageTakenCaps.MAX_REDUCTION_PERCENT).plain()),
+                texts.toString());
+        assertEquals(3, texts.size(), texts.toString());
+    }
+
+    @Test
+    void damageTakenReductionsUnderTheCapAreSummarisedAsUsual() {
+        allocate("emp_1", small("emp_percent", new SkillTypeEffect(DefenseSkillEffect.EMP_DAMAGE_TAKEN_PERCENT, -20f)));
+        allocate("emp_2", small("emp_mult", new SkillTypeEffect(DefenseSkillEffect.EMP_DAMAGE_TAKEN_MULT, -20f)));
+
+        List<String> texts = texts(SkillTreeBonusSummary.of(data, HullSize.CRUISER));
+
+        assertTrue(texts.contains(DefenseSkillEffect.EMP_DAMAGE_TAKEN_PERCENT.description(-20f).plain()), texts.toString());
+        assertTrue(texts.contains(DefenseSkillEffect.EMP_DAMAGE_TAKEN_MULT.description(-20f).plain()), texts.toString());
+    }
+
+    @Test
     void hullSizeEffectsUseTheShipsHullSize() {
         allocate("armor_1", new SkillType.Builder("armor", "Armor", "a.png", SkillTier.SMALL)
                 .hullSizeEffects(List.of(new HullSizeSkillEffect(DefenseSkillEffect.ARMOR_FLAT, 30f, 50f, 100f, 125f))).build());

@@ -37,6 +37,9 @@ class SkillTreeLoaderTest {
                     .build(),
             "bare", new SkillType.Builder("bare", "Bare", "graphics/icons/skills/combat.png", SkillTier.SMALL)
                     .effects(List.of())
+                    .build(),
+            "gate", new SkillType.Builder("gate", "Gate", "graphics/icons/skills/combat.png", SkillTier.WORMHOLE)
+                    .effects(List.of())
                     .build()
     );
 
@@ -69,7 +72,16 @@ class SkillTreeLoaderTest {
         assertEquals("#8c78ff", node.getRingBeltColor());
         assertEquals(1.4f, node.getRingBeltWidth());
         assertEquals("#ff5ad1", node.getWormholeColor());
-        assertEquals("capacitors_2", node.getPairedNodeId());
+        assertNull(node.getPairedNodeId());
+    }
+
+    @Test
+    void keepsPairedWithOnAWormholeTierNode() throws Exception {
+        JSONObject root = new JSONObject("{ \"nodes\": [ { \"id\": \"gate_1\", \"type\": \"gate\", \"pairedWith\": \"gate_2\" } ] }");
+
+        List<SkillNode> nodes = SkillTreeLoader.parseNodes(root, SKILL_TYPES);
+
+        assertEquals("gate_2", nodes.get(0).getPairedNodeId());
     }
 
     @Test

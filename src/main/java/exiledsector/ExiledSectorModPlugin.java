@@ -37,6 +37,7 @@ import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.npc.NpcFactionVolumes;
 import exiledsector.skills.skilleffect.CsvIdList;
+import exiledsector.skills.skilleffect.EffectAliases;
 import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.skills.tags.AreaToggles;
 import exiledsector.socketables.SocketCraftingCosts;
@@ -77,6 +78,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         localiseHullModText();
         SkillTreeRefitButton.addButton();
         ExiledSectorSettings.register();
+        EffectAliases.load();
         SkillTree.load();
         SkillTree.applyDisabledRegions(AreaToggles.disabledRegions());
         PhantomHullMods.install(phantomHullModIds());

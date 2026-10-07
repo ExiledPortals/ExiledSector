@@ -14,10 +14,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class WormholePairValidatorTest {
 
     private static SkillNode wormholeNode(String id, String pairedNodeId) {
+        return wormholeNode(id, pairedNodeId, pairedNodeId == null ? List.of() : List.of(pairedNodeId));
+    }
+
+    private static SkillNode wormholeNode(String id, String pairedNodeId, List<String> connectedNodeIds) {
         SkillType type = new SkillType.Builder(id + "_type", id, "a.png", SkillTier.WORMHOLE)
                 .effects(List.of())
                 .build();
-        return new SkillNode(id, type, List.of(), 0f, 0f, new SkillNodeDecoration(null, null, null, null, pairedNodeId));
+        return new SkillNode(id, type, connectedNodeIds, 0f, 0f, new SkillNodeDecoration(null, null, null, null, pairedNodeId));
     }
 
     private static SkillNode plainNode(String id) {
@@ -95,5 +99,17 @@ class WormholePairValidatorTest {
         assertEquals(1, issues.size());
         assertTrue(issues.get(0).contains("wormhole_a"));
         assertTrue(issues.get(0).contains("wormhole_b"));
+    }
+
+    @Test
+    void flagsAWormholeThatDoesNotListItsPartnerInConnectedTo() {
+        SkillNode a = wormholeNode("wormhole_a", "wormhole_b", List.of());
+        SkillNode b = wormholeNode("wormhole_b", "wormhole_a");
+
+        List<String> issues = WormholePairValidator.findIssues(List.of(a, b));
+
+        assertEquals(1, issues.size());
+        assertTrue(issues.get(0).contains("wormhole_a"));
+        assertTrue(issues.get(0).contains("connectedTo"));
     }
 }

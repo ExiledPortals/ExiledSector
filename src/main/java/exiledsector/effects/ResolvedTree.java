@@ -6,13 +6,14 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.AllocatedSkillEffects;
+import exiledsector.skills.DamageTakenCaps;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillTypeEffect;
-import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -26,19 +27,8 @@ public final class ResolvedTree {
     static final String MOD_ID_PREFIX = "exiledSector_skill_";
     static final String MULTIPLIER_MOD_ID_PREFIX = "exiledSector_skillMult_";
     static final String REDUCTION_CAP_MOD_ID_PREFIX = "exiledSector_skillCapped_";
-    static final float MAX_DAMAGE_TAKEN_REDUCTION_PERCENT = 80f;
 
     private static final Map<ShipSkillData, ResolvedTree> CACHE = new WeakHashMap<>();
-    private static final List<ReductionCap> REDUCTION_CAPS = List.of(
-            new ReductionCap(DefenseSkillEffect.EMP_DAMAGE_TAKEN_MULT,
-                    Set.of(DefenseSkillEffect.EMP_DAMAGE_TAKEN_PERCENT, DefenseSkillEffect.EMP_DAMAGE_TAKEN_MULT)),
-            new ReductionCap(DefenseSkillEffect.ENERGY_DAMAGE_TAKEN_PERCENT, Set.of(DefenseSkillEffect.ENERGY_DAMAGE_TAKEN_PERCENT)),
-            new ReductionCap(DefenseSkillEffect.KINETIC_DAMAGE_TAKEN_PERCENT, Set.of(DefenseSkillEffect.KINETIC_DAMAGE_TAKEN_PERCENT)),
-            new ReductionCap(DefenseSkillEffect.HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT, Set.of(DefenseSkillEffect.HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT)),
-            new ReductionCap(DefenseSkillEffect.FRAGMENTATION_DAMAGE_TAKEN_PERCENT, Set.of(DefenseSkillEffect.FRAGMENTATION_DAMAGE_TAKEN_PERCENT)));
-
-    private record ReductionCap(SkillEffect cappedEffect, Set<SkillEffect> contributingEffects) {
-    }
 
     sealed interface Entry permits VanillaEntry, EffectEntry {
     }
@@ -80,13 +70,13 @@ public final class ResolvedTree {
                 resolvedEntries.add(new EffectEntry(effect, MULTIPLIER_MOD_ID_PREFIX + effect.name(), SkillEffect.addedMultiplier(multiplierTotal))));
         Set<EffectEntry> temporaryEntries = Collections.newSetFromMap(new IdentityHashMap<>());
         resolvedTemporaryNodes.forEach(temporaryNode -> temporaryEntries.addAll(temporaryNode.effects()));
-        REDUCTION_CAPS.forEach(reductionCap -> capReduction(reductionCap, resolvedEntries, temporaryEntries));
+        DamageTakenCaps.CAPS.forEach(reductionCap -> capReduction(reductionCap, resolvedEntries, temporaryEntries));
         this.entries = List.copyOf(resolvedEntries);
         this.temporaryNodes = List.copyOf(resolvedTemporaryNodes);
         this.phantomHullModIds = phantomHullModIdsOf(allocatedNodes);
     }
 
-    private static void capReduction(ReductionCap reductionCap, List<Entry> resolvedEntries, Set<EffectEntry> temporaryEntries) {
+    private static void capReduction(DamageTakenCaps.Cap reductionCap, List<Entry> resolvedEntries, Set<EffectEntry> temporaryEntries) {
         float percentTotal = 0f;
         float multiplierProduct = 1f;
         int firstContributorIndex = -1;
@@ -101,16 +91,14 @@ public final class ResolvedTree {
                 firstContributorIndex = firstContributorIndex < 0 ? i : firstContributorIndex;
             }
         }
-        float damageTakenFactor = Math.max(0f, 1f + percentTotal / 100f) * multiplierProduct;
-        float lowestFactor = 1f - MAX_DAMAGE_TAKEN_REDUCTION_PERCENT / 100f;
-        if (firstContributorIndex < 0 || damageTakenFactor >= lowestFactor) {
+        if (firstContributorIndex < 0 || !DamageTakenCaps.exceedsCap(percentTotal, multiplierProduct)) {
             return;
         }
         resolvedEntries.removeIf(entry -> entry instanceof EffectEntry effectEntry && !temporaryEntries.contains(effectEntry)
                 && reductionCap.contributingEffects().contains(effectEntry.effect()));
         SkillEffect cappedEffect = reductionCap.cappedEffect();
         resolvedEntries.add(Math.min(firstContributorIndex, resolvedEntries.size()),
-                new EffectEntry(cappedEffect, REDUCTION_CAP_MOD_ID_PREFIX + cappedEffect.name(), -MAX_DAMAGE_TAKEN_REDUCTION_PERCENT));
+                new EffectEntry(cappedEffect, REDUCTION_CAP_MOD_ID_PREFIX + cappedEffect.name(), -DamageTakenCaps.MAX_REDUCTION_PERCENT));
     }
 
     private static void addVanillaEntry(String vanillaHullModId, List<Entry> resolvedEntries) {
@@ -123,10 +111,10 @@ public final class ResolvedTree {
 
     private static void addTemporaryNode(ShipSkillData shipData, AllocatedNode node, HullSize hullSize, List<Entry> resolvedEntries,
                                          List<TemporaryNode> resolvedTemporaryNodes) {
-        String modId = MOD_ID_PREFIX + node.node().getId();
+        EffectModIds modIds = new EffectModIds(node);
         List<EffectEntry> nodeEffects = new ArrayList<>();
         for (SkillTypeEffect effect : AllocatedSkillEffects.appliedEffects(shipData, node, hullSize)) {
-            EffectEntry effectEntry = new EffectEntry(effect.effect(), modId, effect.magnitude());
+            EffectEntry effectEntry = new EffectEntry(effect.effect(), modIds.next(effect.effect()), effect.magnitude());
             nodeEffects.add(effectEntry);
             resolvedEntries.add(effectEntry);
         }
@@ -137,13 +125,28 @@ public final class ResolvedTree {
 
     private static void addEffects(ShipSkillData shipData, AllocatedNode node, HullSize hullSize, List<Entry> resolvedEntries,
                                    Map<SkillEffect, Float> multiplierTotals) {
-        String modId = MOD_ID_PREFIX + node.node().getId();
+        EffectModIds modIds = new EffectModIds(node);
         for (SkillTypeEffect effect : AllocatedSkillEffects.appliedEffects(shipData, node, hullSize)) {
             if (effect.effect().isMultiplicative()) {
                 multiplierTotals.merge(effect.effect(), effect.magnitude(), Float::sum);
             } else {
-                resolvedEntries.add(new EffectEntry(effect.effect(), modId, effect.magnitude()));
+                resolvedEntries.add(new EffectEntry(effect.effect(), modIds.next(effect.effect()), effect.magnitude()));
             }
+        }
+    }
+
+    private static final class EffectModIds {
+
+        private final String nodePrefix;
+        private final Map<SkillEffect, Integer> uses = new HashMap<>();
+
+        EffectModIds(AllocatedNode node) {
+            this.nodePrefix = MOD_ID_PREFIX + node.node().getId() + "_";
+        }
+
+        String next(SkillEffect effect) {
+            int use = uses.merge(effect, 1, Integer::sum);
+            return use == 1 ? nodePrefix + effect.name() : nodePrefix + effect.name() + "_" + use;
         }
     }
 

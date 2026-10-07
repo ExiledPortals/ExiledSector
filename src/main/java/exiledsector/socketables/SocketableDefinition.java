@@ -4,6 +4,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.skilleffect.SkillEffect;
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ public record SocketableDefinition(String id, SocketableKind kind, String name, 
                                    String description, List<PoolEntry> prefixes, List<PoolEntry> suffixes, String unlock) {
 
     public static final String FALLBACK_ICON = "graphics/icons/cargo/chip1.png";
+    private static final Logger LOG = Logger.getLogger(SocketableDefinition.class);
     private static final String ENTRY_SEPARATOR = ";";
     private static final String FIELD_SEPARATOR = ":";
     private static final String HULL_VALUE_SEPARATOR = "/";
@@ -123,8 +125,10 @@ public record SocketableDefinition(String id, SocketableKind kind, String name, 
                 throw new IllegalArgumentException("entry \"" + trimmed + "\" is not EFFECT:min:max, EFFECT:min:max:weight, "
                         + "EFFECT:frigate/destroyer/cruiser/capital or EFFECT:frigate/destroyer/cruiser/capital:weight");
             }
-            String effectName = entryFields[0].trim();
-            SkillEffect.byName(effectName);
+            String effectName = currentEffectName(entryFields[0].trim());
+            if (effectName == null) {
+                continue;
+            }
             if (pool.stream().anyMatch(existing -> existing.effectName().equals(effectName))) {
                 throw new IllegalArgumentException("" + effectName + " is listed more than once");
             }
@@ -142,6 +146,15 @@ public record SocketableDefinition(String id, SocketableKind kind, String name, 
             }
         }
         return List.copyOf(pool);
+    }
+
+    private static String currentEffectName(String listedName) {
+        try {
+            return SkillEffect.byName(listedName).name();
+        } catch (IllegalArgumentException e) {
+            LOG.warn("Skipping pool entry " + listedName + ": it is not a skill effect");
+            return null;
+        }
     }
 
     private static List<Float> parseHullValues(String hullValuesText, String entry) {

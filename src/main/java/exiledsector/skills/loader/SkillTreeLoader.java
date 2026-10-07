@@ -2,6 +2,7 @@ package exiledsector.skills.loader;
 
 import com.fs.starfarer.api.Global;
 import exiledsector.skills.SkillNode;
+import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.layout.ConnectorCurve;
@@ -194,6 +195,12 @@ public final class SkillTreeLoader {
             throw new JSONException("Unknown skill type \"" + typeId + "\"");
         }
 
+        String pairedWith = nodeJson.optString("pairedWith", null);
+        if (pairedWith != null && skillType.getTier() != SkillTier.WORMHOLE) {
+            Logger.getLogger(SkillTreeLoader.class).error("Ignoring pairedWith on skill node \"" + nodeJson.getString("id")
+                    + "\" in " + DATA_PATH + ": only wormhole-tier nodes can be paired");
+            pairedWith = null;
+        }
         return new SkillNode(
                 nodeJson.getString("id"),
                 skillType,
@@ -205,7 +212,7 @@ public final class SkillTreeLoader {
                         nodeJson.optString("ringBeltColor", null),
                         nodeJson.has("ringBeltWidth") ? (float) nodeJson.getDouble("ringBeltWidth") : null,
                         nodeJson.optString("wormholeColor", null),
-                        nodeJson.optString("pairedWith", null)),
+                        pairedWith),
                 tags);
     }
 }

@@ -133,16 +133,16 @@ public final class NpcSkillTreeBuilder {
     private record PathStep(SkillNode node, SkillType option, boolean wormholeExit) {
     }
 
-    private record Search(TreeSearch treeSearch, List<String> reached) {
+    private record Search(TreeSearch treeSearch, List<String> reached, Set<String> fitInstalled, Map<String, SkillType> options) {
 
-        static Search of(TreeSearch treeSearch) {
+        static Search of(TreeSearch treeSearch, Set<String> fitInstalled, Map<String, SkillType> options) {
             List<String> reached = new ArrayList<>();
             for (String nodeId : treeSearch.reached()) {
                 if (!treeSearch.isSeed(nodeId) && !treeSearch.isJump(nodeId)) {
                     reached.add(nodeId);
                 }
             }
-            return new Search(treeSearch, List.copyOf(reached));
+            return new Search(treeSearch, List.copyOf(reached), fitInstalled, options);
         }
 
         boolean reaches(String nodeId) {
@@ -341,7 +341,7 @@ public final class NpcSkillTreeBuilder {
                     candidates.add(nodeId);
                 }
             }
-            String goalNodeId = weightedPick(candidates, id -> nodeRelevance(id) * tierWeight(id), random);
+            String goalNodeId = weightedPick(candidates, id -> nodeRelevance(search, id) * tierWeight(id), random);
             if (goalNodeId != null && !allocatePath(search, goalNodeId, NpcBuildStep.FACTION_GOAL, NpcBuildStep.PATH_TO_GOAL)) {
                 rejectedNodeIds.add(goalNodeId);
             }
@@ -395,7 +395,7 @@ public final class NpcSkillTreeBuilder {
             }
             int coveredCost = 0;
             while (coveredCost < remaining() && !goalPool.isEmpty()) {
-                String goalNodeId = weightedPick(goalPool, id -> nodeRelevance(id) * tierWeight(id), random);
+                String goalNodeId = weightedPick(goalPool, id -> nodeRelevance(search, id) * tierWeight(id), random);
                 goalPool.remove(goalNodeId);
                 chosenGoals.add(goalNodeId);
                 coveredCost += search.cost(goalNodeId);
@@ -418,7 +418,7 @@ public final class NpcSkillTreeBuilder {
                     candidates.add(nodeId);
                 }
             }
-            String pickedNodeId = weightedPick(candidates, this::nodeRelevance, random);
+            String pickedNodeId = weightedPick(candidates, id -> nodeRelevance(search, id), random);
             if (pickedNodeId == null) {
                 return false;
             }
@@ -436,15 +436,17 @@ public final class NpcSkillTreeBuilder {
             return topology.node(nodeId).getType().getTier() == SkillTier.KEYSTONE ? KEYSTONE_WEIGHT : NOTABLE_WEIGHT;
         }
 
-        private double nodeRelevance(String nodeId) {
+        private double nodeRelevance(Search search, String nodeId) {
             SkillNode node = topology.node(nodeId);
-            return relevance.of(node.effectiveTags(chosenOptions.get(nodeId)));
+            return relevance.of(node.effectiveTags(search.options().get(nodeId)));
         }
 
         private Search search(Set<String> fitInstalled) {
             State fitState = state(fitInstalled);
-            return Search.of(TreeSearch.from(topology, new TreeSet<>(shipData.getAllocatedNodeIds()), candidate -> traversable(candidate, fitState),
-                    candidate -> candidate.getType().getTier() == SkillTier.WORMHOLE ? candidate.getPairedNodeId() : null));
+            Map<String, SkillType> searchOptions = new HashMap<>();
+            return Search.of(TreeSearch.from(topology, new TreeSet<>(shipData.getAllocatedNodeIds()),
+                    candidate -> traversable(candidate, fitState, searchOptions),
+                    candidate -> candidate.getType().getTier() == SkillTier.WORMHOLE ? candidate.getPairedNodeId() : null), fitInstalled, searchOptions);
         }
 
         private State state(Set<String> fitInstalled) {
@@ -466,17 +468,21 @@ public final class NpcSkillTreeBuilder {
             return new State(allocatedNodes, shieldType, ShipFacts.of(fittedProfile, fitInstalled::contains), fittedProfile, shieldInvested);
         }
 
-        private boolean traversable(SkillNode node, State fitState) {
+        private boolean traversable(SkillNode node, State fitState, Map<String, SkillType> searchOptions) {
             if (shipData.isAllocated(node.getId()) || !regionAllowed(node.getRegion())) {
                 return false;
             }
             if (node.getType().getTier() == SkillTier.WORMHOLE && !wormholeAllowed(node)) {
                 return false;
             }
-            SkillType chosenOption = option(node, fitState);
+            SkillType chosenOption = option(node, fitState, searchOptions);
             if (node.getType().isOptional() && chosenOption == null) {
                 return false;
             }
+            return stillLegal(node, chosenOption, fitState);
+        }
+
+        private boolean stillLegal(SkillNode node, SkillType chosenOption, State fitState) {
             if (fitState.shieldInvested() && removesShield(AllocatedNode.planned(node, chosenOption).effectiveType())) {
                 return false;
             }
@@ -512,13 +518,18 @@ public final class NpcSkillTreeBuilder {
                     || factionRegion.equals(entryRegion) && SkillTags.CORE_REGION.equals(exitRegion);
         }
 
-        private SkillType option(SkillNode node, State fitState) {
+        private SkillType option(SkillNode node, State fitState, Map<String, SkillType> searchOptions) {
             if (!node.getType().isOptional()) {
                 return null;
             }
-            SkillType cachedOption = chosenOptions.get(node.getId());
-            if (cachedOption != null && usable(node, cachedOption, fitState)) {
-                return cachedOption;
+            SkillType searchOption = searchOptions.get(node.getId());
+            if (searchOption != null) {
+                return searchOption;
+            }
+            SkillType preferredOption = chosenOptions.get(node.getId());
+            if (preferredOption != null && usable(node, preferredOption, fitState)) {
+                searchOptions.put(node.getId(), preferredOption);
+                return preferredOption;
             }
             List<SkillType> options = new ArrayList<>();
             for (String optionId : node.getType().getOptionalOptionIds()) {
@@ -530,6 +541,7 @@ public final class NpcSkillTreeBuilder {
             }
             SkillType pickedOption = weightedPick(options, optionType -> relevance.of(optionType.getTags()), random);
             if (pickedOption != null) {
+                searchOptions.put(node.getId(), pickedOption);
                 chosenOptions.put(node.getId(), pickedOption);
             }
             return pickedOption;
@@ -550,7 +562,7 @@ public final class NpcSkillTreeBuilder {
             String pathNodeId = targetId;
             while (pathNodeId != null && !shipData.isAllocated(pathNodeId)) {
                 SkillNode node = topology.node(pathNodeId);
-                pathSteps.add(new PathStep(node, chosenOptions.get(pathNodeId), search.isExit(pathNodeId)));
+                pathSteps.add(new PathStep(node, search.options().get(pathNodeId), search.isExit(pathNodeId)));
                 pathNodeId = search.parent(pathNodeId);
             }
             Collections.reverse(pathSteps);
@@ -562,6 +574,8 @@ public final class NpcSkillTreeBuilder {
             if (hasInternalConflict(pathSteps)) {
                 return false;
             }
+            int stepsBefore = steps.size();
+            List<SkillNode> placedNodes = new ArrayList<>();
             for (int i = 0; i < pathSteps.size(); i++) {
                 PathStep step = pathSteps.get(i);
                 String outcome = i == pathSteps.size() - 1 ? goalOutcome : pathOutcome;
@@ -569,6 +583,11 @@ public final class NpcSkillTreeBuilder {
                     steps.add(new NpcBuildStep(step.node().getId(), NpcBuildStep.WORMHOLE_EXIT));
                     continue;
                 }
+                if (!placedNodes.isEmpty() && !stillLegal(step.node(), step.option(), state(search.fitInstalled()))) {
+                    undoPath(placedNodes, stepsBefore);
+                    return false;
+                }
+                placedNodes.add(step.node());
                 if (step.option() != null) {
                     shipData.selectOption(step.node(), step.option(), freedOp.opCostPerNode());
                 } else {
@@ -578,6 +597,14 @@ public final class NpcSkillTreeBuilder {
                 steps.add(new NpcBuildStep(step.node().getId(), nodesSpent > freeNodeCount ? outcome + NpcBuildStep.FREED_OP_SUFFIX : outcome));
             }
             return true;
+        }
+
+        private void undoPath(List<SkillNode> placedNodes, int stepsBefore) {
+            for (int i = placedNodes.size() - 1; i >= 0; i--) {
+                shipData.deallocate(placedNodes.get(i));
+                nodesSpent--;
+            }
+            steps.subList(stepsBefore, steps.size()).clear();
         }
 
         private static boolean hasInternalConflict(List<PathStep> pathSteps) {

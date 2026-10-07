@@ -91,6 +91,7 @@ public final class HoloTransition {
         }
         float screenScale = Global.getSettings().getScreenScaleMult();
         float visibleHeight = height * reveal;
+        GL11.glPushAttrib(GL11.GL_SCISSOR_BIT);
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         GL11.glScissor((int) Math.floor(x * screenScale), (int) Math.floor((y + height - visibleHeight) * screenScale),
                 (int) Math.ceil(width * screenScale), (int) Math.ceil(visibleHeight * screenScale));
@@ -98,7 +99,7 @@ public final class HoloTransition {
     }
 
     public static void endReveal() {
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        GL11.glPopAttrib();
     }
 
     public void drawRevealLine(float x, float y, float width, float height, Color accent, float alphaMult) {

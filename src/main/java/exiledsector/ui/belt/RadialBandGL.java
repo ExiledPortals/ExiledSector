@@ -24,10 +24,24 @@ final class RadialBandGL {
 
     static void end() {
         GL11.glPopMatrix();
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glDisable(GL11.GL_BLEND);
     }
 
     static int computeSegments(float circumference, float pixelsPerSegment, float minSegments) {
-        return (int) Math.max(minSegments, Math.round(circumference / pixelsPerSegment));
+        return quantised((int) Math.max(minSegments, Math.round(circumference / pixelsPerSegment)));
+    }
+
+    static int quantised(int segments) {
+        if (segments <= 1) {
+            return 1;
+        }
+        int powerOfTwo = Integer.highestOneBit(segments);
+        if (segments == powerOfTwo) {
+            return segments;
+        }
+        int midStep = powerOfTwo + powerOfTwo / 2;
+        return segments <= midStep ? midStep : powerOfTwo * 2;
     }
 
     record StripSpec(float innerRadius, float outerRadius, float innerTexX, float outerTexX, float texPerSegment, RingWave radialWave,

@@ -45,7 +45,7 @@ Open the refit screen and click the skill tree button on any of your ships. Ther
 <img src="graphics/description/socket_storage.png" alt="Socket Storage">
 <img src="graphics/description/crafting.gif" alt="Socket modification">
 
-- Common socketables are Domain Subroutines in three grades, each rolling one prefix and one suffix.
+- Common socketables are Domain Subroutines in four grades, each rolling one prefix and one suffix.
 - Rare ones roll three or four mods and get a name of their own.
 
 <img src="graphics/description/common_socketable.png" alt="A common socketable">
@@ -82,16 +82,25 @@ These mods have dedicated compatibility. The version listed is the one I last te
 | Mod | Tested version | What Exiled Sector does with it |
 |---|---|---|
 | [Second-in-Command](https://fractalsoftworks.com/forum/index.php?topic=30407.0) | 2.0.0 | Its skills see the hull mods your nodes stand in for, and Reconfiguration waives the Converted Hangar penalties. |
-| Lost Sector | 0.6.2d | The Kesteven and Frozen Heart areas of the tree appear, and Augmented Systems hulls get the same bonuses from those nodes as from the hull mods. |
+| Lost Sector | 0.6.2d, 1.0.b | The Kesteven and Frozen Heart areas of the tree appear, and Augmented Systems hulls get the same bonuses from those nodes as from the hull mods. |
 | [MagicLib](https://fractalsoftworks.com/forum/index.php?topic=25868.0) | 1.5.6 | Required. A hull mod that tries to strip one of your nodes' hull mods through MagicLib is removed instead. |
 | Random Assortment of Things | 3.3.1 | Modular Hull Socket items can drop from its abyssal structures, abyssal drones and relic sites. |
+| Industrial Evolution | 4.1.b | Modular Hull Socket items can drop from its orbital laboratories and arsenal stations. |
+| Knights of Ludd | 1.4.0 | Modular Hull Socket items can drop from its research stations and caches. |
+| Secrets of the Frontier | 0.15.1 | Modular Hull Socket items can drop from its A Promise station and Hypnos laboratory. |
+| Arthr's Ships n Shit | 0.100-dev | Modular Hull Socket items can drop from its Exodyne research stations. |
+| What We Left Behind | 4.5.3 | Modular Hull Socket items can drop from its research stations, Omega derelicts and corrupted caches. |
+| Ship Mastery System | 2.0.8 | Modular Hull Socket items can drop from its concealed stations, nucleus stations and concealed probes. |
+| Unthemed Weapons Collection | 0.7.4 | Modular Hull Socket items can drop from its weapon caches. |
+| DIY Planets | 1.0.30 | Modular Hull Socket items can drop from its Genesis terraforming stations. |
 
-Some weapons from other mods misbehave (often hilariously) when their beams are split or their shots are chained. These are listed in:
+Some weapons from other mods misbehave (often hilariously) when their beams are split, their shots are chained or their shells pierce. These are listed in:
 
 - `data/config/exiledSector/split_beam_effect_blocklist.csv`
 - `data/config/exiledSector/energy_chain_blocklist.csv`
+- `data/config/exiledSector/ballistic_pierce_blocklist.csv`
 
-Both files are merged across mods, so other mods can opt their own weapons out (or you can opt them back in, at your own risk).
+All three files are merged across mods, so other mods can opt their own weapons out (or you can opt them back in, at your own risk).
 
 ## FAQ
 
@@ -136,15 +145,15 @@ modified *= mult;
 
 | Tooltip wording | Kind | How it stacks |
 |---|---|---|
-| "**Increases** / **Decreases** flux capacity by 10%" | Percent | All percent bonuses on a stat are **added together** first, including those from vanilla hullmods and skills. |
+| "10% **increased** / **reduced** flux capacity" | Percent | All percent bonuses on a stat are **added together** first, including those from vanilla hullmods and skills. |
 | "**Increases** flux capacity by 600" | Flat | Added after percent bonuses, so percent bonuses don't scale it. This is different to Path of Exile. |
 | "10% **more** / **less** flux capacity" | Multiplier | Applied last, to the total. The tree's multipliers are **added together** first (10% more + 10% more = 20% more; 15% more + 30% less = 15% less), and never go past 100% less. They still multiply with multipliers from vanilla hullmods and skills. |
 
 For example, with a base of 1000 flux capacity:
 
-- Two "Increases flux capacity by 10%" nodes give 1000 × (1 + 0.10 + 0.10) = **1200**.
+- Two "10% increased flux capacity" nodes give 1000 × (1 + 0.10 + 0.10) = **1200**.
 - Two "10% more flux capacity" nodes give 1000 × (1 + 0.10 + 0.10) = **1200**, applied after everything else.
-- "Increases by 15%", "Increases by 600", a +10% hullmod and "20% more" together give (1000 + 250 + 600) × 1.2 = **2220**.
+- "15% increased", "Increases by 600", a +10% hullmod and "20% more" together give (1000 + 250 + 600) × 1.2 = **2220**.
 
 Numbers are green when they help your ship and orange when they hurt it.
 

@@ -36,7 +36,9 @@ weapon's range of the impact point. The beam's damage is then shared evenly
 between the original target and the split targets, so with one extra target each receives half. The
 original target's reduction is applied as a damage modifier, which also scales the EMP of that hit. The
 beam's own special effects, such as those of the Graviton Beam or Tachyon Lance, are not reduced; only the
-damage is shared.
+damage is shared. The split runs before every other damage-dealt effect on the ship, so effects that read a hit's
+damage, such as Disintegration's armour stripping, see the shared amount whatever order the nodes were
+allocated in. Energy chaining is ordered the same way.
 
 Normally each split target is fired on by a real beam. The mod creates an invisible, invulnerable drone
 that carries a copy of the firing weapon and places it just outside the original target's shield (or its
@@ -235,6 +237,15 @@ volume can be crossed. Its far end comes free, as for players.
 
 `NpcRelevance` weights theme tags: matching weapon kinds, fighter bays, shields, phase cloaks and heavy armour
 lift their themes, and so do the themes of nodes that own the ship's built-in hull mods.
+
+## Renamed skill effects
+
+Socketables freeze their rolled effects by name, so renaming a skill effect would otherwise orphan every
+item already rolled with it. `data/config/exiledSector/effect_aliases.csv` (columns `alias,effect`) maps an
+old name to its current one, and every lookup of an effect by name falls back to it. A row is skipped if
+its target is not a skill effect, or if the alias is still an effect of its own. The file is merged across
+mods like the other CSVs. A socketable pool entry naming an effect that is neither current nor aliased is
+skipped with a warning; the rest of the definition still loads.
 
 ## Reflection
 

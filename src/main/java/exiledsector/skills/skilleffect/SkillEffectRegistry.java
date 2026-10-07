@@ -15,6 +15,10 @@ final class SkillEffectRegistry {
     static SkillEffect byName(String name) {
         SkillEffect effect = BY_NAME.get(name);
         if (effect == null) {
+            String currentName = EffectAliases.currentName(name);
+            effect = currentName == null ? null : BY_NAME.get(currentName);
+        }
+        if (effect == null) {
             throw new IllegalArgumentException("Unknown SkillEffect: " + name);
         }
         return effect;
@@ -51,6 +55,10 @@ final class SkillEffectRegistry {
         if (existing != null) {
             throw new IllegalStateException("Duplicate SkillEffect name: " + effect.name());
         }
+    }
+
+    static boolean contains(String name) {
+        return BY_NAME.containsKey(name);
     }
 
     static Set<String> names() {

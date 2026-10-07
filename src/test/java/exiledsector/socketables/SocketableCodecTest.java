@@ -159,4 +159,17 @@ class SocketableCodecTest {
         assertNull(SocketableCodec.decodeEffects("A:"));
         assertNull(SocketableCodec.decodeEffects(null));
     }
+
+    @Test
+    void aSavedItemWithARenamedEffectDecodesToTheCurrentName() throws Exception {
+        exiledsector.skills.skilleffect.EffectAliases.register(new org.json.JSONArray()
+                .put(new org.json.JSONObject().put("alias", "OLD_HULL_MULT").put("effect", "HULL_MULT")));
+        try {
+            SocketableItemData decoded = SocketableCodec.decode(COMMON_CARGO.replace("HULL_MULT", "OLD_HULL_MULT"));
+
+            assertEquals(COMMON_ITEM, decoded);
+        } finally {
+            exiledsector.skills.skilleffect.EffectAliases.clear();
+        }
+    }
 }

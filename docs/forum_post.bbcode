@@ -32,7 +32,7 @@ Open the refit screen and click the skill tree button on any of your ships. Ther
 [li]Parts and kernels also turn up wherever socketables do. Winning a battle pays out parts too, scaled by the enemy deployment points you destroy or disable and by the battle difficulty bonus. Nothing says "salvage rights" like a smoking hull.[/li][/list]
 [spoiler][img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/socket_storage.png[/img]
 [img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/crafting.gif[/img][/spoiler]
-[list][li]Common socketables are Domain Subroutines in three grades, each rolling one prefix and one suffix.[/li]
+[list][li]Common socketables are Domain Subroutines in four grades, each rolling one prefix and one suffix.[/li]
 [li]Rare ones roll three or four mods and get a name of their own.[/li][/list]
 [spoiler][img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/common_socketable.png[/img]
 [img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/rare_socketable.png[/img][/spoiler]
@@ -68,17 +68,26 @@ These mods have dedicated compatibility. The version listed is the one I last te
 [table]
 [tr][td][b]Mod[/b][/td][td][b]Tested version[/b][/td][td][b]What Exiled Sector does with it[/b][/td][/tr]
 [tr][td][url=https://fractalsoftworks.com/forum/index.php?topic=30407.0]Second-in-Command[/url][/td][td]2.0.0[/td][td]Its skills see the hull mods your nodes stand in for, and Reconfiguration waives the Converted Hangar penalties.[/td][/tr]
-[tr][td]Lost Sector[/td][td]0.6.2d[/td][td]The Kesteven and Frozen Heart areas of the tree appear, and Augmented Systems hulls get the same bonuses from those nodes as from the hull mods.[/td][/tr]
+[tr][td]Lost Sector[/td][td]0.6.2d, 1.0.b[/td][td]The Kesteven and Frozen Heart areas of the tree appear, and Augmented Systems hulls get the same bonuses from those nodes as from the hull mods.[/td][/tr]
 [tr][td][url=https://fractalsoftworks.com/forum/index.php?topic=25868.0]MagicLib[/url][/td][td]1.5.6[/td][td]Required. A hull mod that tries to strip one of your nodes' hull mods through MagicLib is removed instead.[/td][/tr]
 [tr][td]Random Assortment of Things[/td][td]3.3.1[/td][td]Modular Hull Socket items can drop from its abyssal structures, abyssal drones and relic sites.[/td][/tr]
+[tr][td]Industrial Evolution[/td][td]4.1.b[/td][td]Modular Hull Socket items can drop from its orbital laboratories and arsenal stations.[/td][/tr]
+[tr][td]Knights of Ludd[/td][td]1.4.0[/td][td]Modular Hull Socket items can drop from its research stations and caches.[/td][/tr]
+[tr][td]Secrets of the Frontier[/td][td]0.15.1[/td][td]Modular Hull Socket items can drop from its A Promise station and Hypnos laboratory.[/td][/tr]
+[tr][td]Arthr's Ships n Shit[/td][td]0.100-dev[/td][td]Modular Hull Socket items can drop from its Exodyne research stations.[/td][/tr]
+[tr][td]What We Left Behind[/td][td]4.5.3[/td][td]Modular Hull Socket items can drop from its research stations, Omega derelicts and corrupted caches.[/td][/tr]
+[tr][td]Ship Mastery System[/td][td]2.0.8[/td][td]Modular Hull Socket items can drop from its concealed stations, nucleus stations and concealed probes.[/td][/tr]
+[tr][td]Unthemed Weapons Collection[/td][td]0.7.4[/td][td]Modular Hull Socket items can drop from its weapon caches.[/td][/tr]
+[tr][td]DIY Planets[/td][td]1.0.30[/td][td]Modular Hull Socket items can drop from its Genesis terraforming stations.[/td][/tr]
 [/table]
 
-Some weapons from other mods misbehave (often hilariously) when their beams are split or their shots are chained. These are listed in:
+Some weapons from other mods misbehave (often hilariously) when their beams are split, their shots are chained or their shells pierce. These are listed in:
 [list]
 [li][tt]data/config/exiledSector/split_beam_effect_blocklist.csv[/tt][/li]
 [li][tt]data/config/exiledSector/energy_chain_blocklist.csv[/tt][/li]
+[li][tt]data/config/exiledSector/ballistic_pierce_blocklist.csv[/tt][/li]
 [/list]
-Both files are merged across mods, so other mods can opt their own weapons out (or you can opt them back in, at your own risk).
+All three files are merged across mods, so other mods can opt their own weapons out (or you can opt them back in, at your own risk).
 [/spoiler]
 
 [size=14pt][b]FAQ[/b][/size]
@@ -118,16 +127,16 @@ modified *= mult;[/code]
 
 [table]
 [tr][td][b]Tooltip wording[/b][/td][td][b]Kind[/b][/td][td][b]How it stacks[/b][/td][/tr]
-[tr][td]"[b]Increases[/b] / [b]Decreases[/b] flux capacity by 10%"[/td][td]Percent[/td][td]All percent bonuses on a stat are [b]added together[/b] first, including those from vanilla hullmods and skills.[/td][/tr]
+[tr][td]"10% [b]increased[/b] / [b]reduced[/b] flux capacity"[/td][td]Percent[/td][td]All percent bonuses on a stat are [b]added together[/b] first, including those from vanilla hullmods and skills.[/td][/tr]
 [tr][td]"[b]Increases[/b] flux capacity by 600"[/td][td]Flat[/td][td]Added after percent bonuses, so percent bonuses don't scale it. This is different to Path of Exile.[/td][/tr]
 [tr][td]"10% [b]more[/b] / [b]less[/b] flux capacity"[/td][td]Multiplier[/td][td]Applied last, to the total. The tree's multipliers are [b]added together[/b] first (10% more + 10% more = 20% more; 15% more + 30% less = 15% less), and never go past 100% less. They still multiply with multipliers from vanilla hullmods and skills.[/td][/tr]
 [/table]
 
 For example, with a base of 1000 flux capacity:
 [list]
-[li]Two "Increases flux capacity by 10%" nodes give 1000 × (1 + 0.10 + 0.10) = [b]1200[/b].[/li]
+[li]Two "10% increased flux capacity" nodes give 1000 × (1 + 0.10 + 0.10) = [b]1200[/b].[/li]
 [li]Two "10% more flux capacity" nodes give 1000 × (1 + 0.10 + 0.10) = [b]1200[/b], applied after everything else.[/li]
-[li]"Increases by 15%", "Increases by 600", a +10% hullmod and "20% more" together give (1000 + 250 + 600) × 1.2 = [b]2220[/b].[/li]
+[li]"15% increased", "Increases by 600", a +10% hullmod and "20% more" together give (1000 + 250 + 600) × 1.2 = [b]2220[/b].[/li]
 [/list]
 
 Numbers are [color=#98FB00]green[/color] when they help your ship and [color=#FC6300]orange[/color] when they hurt it.

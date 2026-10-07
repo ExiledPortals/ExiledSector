@@ -33,6 +33,10 @@ public interface SkillEffect {
         return false;
     }
 
+    default boolean reshapesDealtDamage() {
+        return false;
+    }
+
     default void advanceInCombat(ShipAPI ship, String modId, float magnitude) {
     }
 

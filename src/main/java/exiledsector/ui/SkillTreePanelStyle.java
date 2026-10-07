@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class SkillTreePanelStyle {
 
@@ -63,6 +64,8 @@ public final class SkillTreePanelStyle {
     private static LazyFont cachedFont;
     private static boolean fontLoadFailed;
     private static Boolean cachedFakeBold;
+
+    private static final Map<String, Color> ACCENT_COLORS_BY_ICON = new ConcurrentHashMap<>();
 
     private String accentIconPath;
     private Color accentColor;
@@ -186,6 +189,10 @@ public final class SkillTreePanelStyle {
 
     private static Color computeDominantColor(String path) {
         if (path == null || path.isEmpty()) return DEFAULT_ACCENT_COLOR;
+        return ACCENT_COLORS_BY_ICON.computeIfAbsent(path, SkillTreePanelStyle::readDominantColor);
+    }
+
+    private static Color readDominantColor(String path) {
         return FallbackSupport.getOrFallback(() -> computeDominantColorOrThrow(path), DEFAULT_ACCENT_COLOR,
                 Logger.getLogger(SkillTreePanelStyle.class), "Failed to read " + path + " for accent colour");
     }

@@ -121,6 +121,20 @@ class SocketableNamesTest {
     }
 
     @Test
+    void aProductWordListOfOneRepeatedWordStillNamesTheItem() throws Exception {
+        SocketableNames.registerWords(new JSONObject()
+                .put("domain_subroutine_consumer", new JSONObject().put("style", "product")
+                        .put("first", new JSONArray().put("Sunny").put("Sunny").put(" Sunny "))
+                        .put("second", new JSONArray().put("Pal"))));
+
+        org.junit.jupiter.api.Assertions.assertTimeoutPreemptively(java.time.Duration.ofSeconds(5), () -> {
+            for (long seed = 0; seed < 200; seed++) {
+                assertEquals("Sunny Pal", name("domain_subroutine_consumer", seed, List.of(HULL, ARMOR, DISSIPATION)).title());
+            }
+        });
+    }
+
+    @Test
     void uniquesKeepTheirHandWrittenNameAndRollEveryEffectInOrder() {
         SocketableDefinition relic = SocketableDefinitions.get("relic");
         List<RolledEffect> effects = SocketableRoller.roll(relic, 3L);

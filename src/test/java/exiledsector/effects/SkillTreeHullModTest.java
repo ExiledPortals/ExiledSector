@@ -115,7 +115,7 @@ class SkillTreeHullModTest {
 
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
 
-        verify(hullStatBonus).modifyPercent("exiledSector_skill_hull_1", 10f);
+        verify(hullStatBonus).modifyPercent("exiledSector_skill_hull_1_HULL_PERCENT", 10f);
     }
 
     private com.fs.starfarer.api.combat.StatBonus hullBonusAfterAllocating(float... hullMultMagnitudes) {
@@ -142,7 +142,7 @@ class SkillTreeHullModTest {
         com.fs.starfarer.api.combat.StatBonus hullBonus = hullBonusAfterAllocating(2f, 2f, 5f);
 
         verify(hullBonus).modifyMult("exiledSector_skillMult_HULL_MULT", 1.09f);
-        verify(hullBonus, never()).modifyMult(eq("exiledSector_skill_hull_mult_node_0"), anyFloat());
+        verify(hullBonus, never()).modifyMult(org.mockito.ArgumentMatchers.startsWith("exiledSector_skill_"), anyFloat());
     }
 
     @Test
@@ -190,7 +190,7 @@ class SkillTreeHullModTest {
 
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
 
-        verify(hullStatBonus).modifyPercent("exiledSector_skill_slot_1", 10f);
+        verify(hullStatBonus).modifyPercent("exiledSector_skill_slot_1_HULL_PERCENT", 10f);
     }
 
     @Test
@@ -217,8 +217,31 @@ class SkillTreeHullModTest {
 
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
 
-        verify(armorBonus).modifyPercent("exiledSector_skill_heavyarmor_1", 15f);
-        verify(hullBonus).modifyPercent("exiledSector_skill_heavyarmor_1", 5f);
+        verify(armorBonus).modifyPercent("exiledSector_skill_heavyarmor_1_ARMOR_PERCENT", 15f);
+        verify(hullBonus).modifyPercent("exiledSector_skill_heavyarmor_1_HULL_PERCENT", 5f);
+    }
+
+    @Test
+    void theSameEffectTwiceOnOneNodeStacksInsteadOfOverwritingItself() {
+        SkillType doubled = new SkillType.Builder("doubled", "Doubled", "a.png", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f), new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 5f)))
+                .build();
+        SkillNode doubledNode = new SkillNode("doubled_1", doubled, List.of(), 0f, 0f);
+        SkillTree.register(doubledNode);
+
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+        ShipSkillDataManager.get("ship-a").allocate(doubledNode, 1);
+
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        when(stats.getFleetMember()).thenReturn(member);
+        com.fs.starfarer.api.combat.StatBonus hullBonus = mock(com.fs.starfarer.api.combat.StatBonus.class);
+        when(stats.getHullBonus()).thenReturn(hullBonus);
+
+        new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
+
+        verify(hullBonus).modifyPercent("exiledSector_skill_doubled_1_HULL_PERCENT", 10f);
+        verify(hullBonus).modifyPercent("exiledSector_skill_doubled_1_HULL_PERCENT_2", 5f);
     }
 
     @Test
@@ -970,6 +993,7 @@ class SkillTreeHullModTest {
     @Test
     void fighterSpawnCallsApplyToFighterSpawnedByShipOnNonPassthroughEffects() {
         exiledsector.skills.skilleffect.SkillEffect fighterEffect = mock(exiledsector.skills.skilleffect.SkillEffect.class);
+        when(fighterEffect.name()).thenReturn("TEST_EFFECT");
         SkillType fighterType = new SkillType.Builder("fighter_weapon_damage", "Fighter Weapon Damage", "graphics/hullmods/fighter_uplink2.png", SkillTier.SMALL)
                 .effects(List.of(new SkillTypeEffect(fighterEffect, 15f)))
                 .vanillaHullModId(null)
@@ -989,7 +1013,7 @@ class SkillTreeHullModTest {
 
         new SkillTreeHullMod().applyEffectsToFighterSpawnedByShip(fighter, ship, "exiledSector_core");
 
-        verify(fighterEffect).applyToFighterSpawnedByShip(fighter, ship, "exiledSector_skill_fighter_weapon_damage_1", 15f);
+        verify(fighterEffect).applyToFighterSpawnedByShip(fighter, ship, "exiledSector_skill_fighter_weapon_damage_1_TEST_EFFECT", 15f);
     }
 
     @Test
@@ -1008,6 +1032,7 @@ class SkillTreeHullModTest {
     @Test
     void afterShipCreationCallsApplyAfterShipCreationOnNonPassthroughEffects() {
         exiledsector.skills.skilleffect.SkillEffect listenerEffect = mock(exiledsector.skills.skilleffect.SkillEffect.class);
+        when(listenerEffect.name()).thenReturn("TEST_EFFECT");
         SkillType listenerType = new SkillType.Builder("high_scatter_amp", "High Scatter Amplifier", "graphics/hullmods/high_scatter_amp.png", SkillTier.NOTABLE)
                 .effects(List.of(new SkillTypeEffect(listenerEffect, 50f)))
                 .vanillaHullModId(null)
@@ -1026,7 +1051,34 @@ class SkillTreeHullModTest {
 
         new SkillTreeHullMod().applyEffectsAfterShipCreation(ship, "exiledSector_core");
 
-        verify(listenerEffect).applyAfterShipCreation(ship, "exiledSector_skill_high_scatter_amp_1", 50f);
+        verify(listenerEffect).applyAfterShipCreation(ship, "exiledSector_skill_high_scatter_amp_1_TEST_EFFECT", 50f);
+    }
+
+    @Test
+    void damageReshapingEffectsAreAppliedBeforeEveryOtherEffectWhateverTheAllocationOrder() {
+        exiledsector.skills.skilleffect.SkillEffect reader = mock(exiledsector.skills.skilleffect.SkillEffect.class);
+        when(reader.name()).thenReturn("READER");
+        exiledsector.skills.skilleffect.SkillEffect reshaper = mock(exiledsector.skills.skilleffect.SkillEffect.class);
+        when(reshaper.name()).thenReturn("RESHAPER");
+        when(reshaper.reshapesDealtDamage()).thenReturn(true);
+        SkillNode readerNode = new SkillNode("reader_1", new SkillType.Builder("reader", "Reader", "a.png", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(reader, 1f))).build(), List.of(), 0f, 0f);
+        SkillNode reshaperNode = new SkillNode("reshaper_1", new SkillType.Builder("reshaper", "Reshaper", "a.png", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(reshaper, 1f))).build(), List.of(), 0f, 0f);
+        SkillTree.register(readerNode);
+        SkillTree.register(reshaperNode);
+
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+        ShipSkillDataManager.get("ship-a").allocate(readerNode, 1);
+        ShipSkillDataManager.get("ship-a").allocate(reshaperNode, 1);
+        ShipAPI ship = mockShip(member, mock(MutableShipStatsAPI.class));
+
+        new SkillTreeHullMod().applyEffectsAfterShipCreation(ship, "exiledSector_core");
+
+        org.mockito.InOrder order = org.mockito.Mockito.inOrder(reshaper, reader);
+        order.verify(reshaper).applyAfterShipCreation(ship, "exiledSector_skill_reshaper_1_RESHAPER", 1f);
+        order.verify(reader).applyAfterShipCreation(ship, "exiledSector_skill_reader_1_READER", 1f);
     }
 
     @Test
@@ -1101,8 +1153,8 @@ class SkillTreeHullModTest {
         hullMod.advanceInCombat(ship, 0.1f);
         hullMod.advanceInCombat(ship, 0.1f);
 
-        verify(hull, times(1)).modifyPercent("exiledSector_skill_surge_1", 0f);
-        verify(hull, never()).modifyPercent("exiledSector_skill_surge_1", 10f);
+        verify(hull, times(1)).modifyPercent("exiledSector_skill_surge_1_HULL_PERCENT", 0f);
+        verify(hull, never()).modifyPercent("exiledSector_skill_surge_1_HULL_PERCENT", 10f);
     }
 
     @Test
@@ -1147,7 +1199,7 @@ class SkillTreeHullModTest {
 
         new SkillTreeHullMod().advanceInCombat(ship, 0.1f);
 
-        verify(dissipation).modifyPercent("exiledSector_skill_fluxbreakers_1", 25f);
+        verify(dissipation).modifyPercent("exiledSector_skill_fluxbreakers_1_FLUX_DISSIPATION_WHILE_VENTING_PERCENT", 25f);
         verify(dissipation, never()).unmodify(anyString());
     }
 
@@ -1176,7 +1228,7 @@ class SkillTreeHullModTest {
 
         new SkillTreeHullMod().advanceInCombat(ship, 0.1f);
 
-        verify(dissipation).modifyPercent("exiledSector_skill_fluxbreakers_1", 0f);
+        verify(dissipation).modifyPercent("exiledSector_skill_fluxbreakers_1_FLUX_DISSIPATION_WHILE_VENTING_PERCENT", 0f);
     }
 
     @Test
@@ -1321,7 +1373,7 @@ class SkillTreeHullModTest {
 
         new SkillTreeHullMod().advanceInCombat(ship, 0.1f);
 
-        verify(commandPointRate).modifyFlat("exiledSector_skill_operations_center_1", 2.5f);
+        verify(commandPointRate).modifyFlat("exiledSector_skill_operations_center_1_COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP", 2.5f);
         verify(commandPointRate, never()).unmodify(anyString());
     }
 
@@ -1357,7 +1409,7 @@ class SkillTreeHullModTest {
 
         new SkillTreeHullMod().advanceInCombat(ship, 0.1f);
 
-        verify(commandPointRate).modifyFlat("exiledSector_skill_operations_center_1", 0f);
+        verify(commandPointRate).modifyFlat("exiledSector_skill_operations_center_1_COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP", 0f);
     }
 
     private static MutableShipStatsAPI statsWithHullAndRecovery(String memberId, StatBonus hull, StatBonus recovery) {
@@ -1393,10 +1445,10 @@ class SkillTreeHullModTest {
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.CRUISER,
                 statsWithHullAndRecovery("player-ship", playerHull, playerRecovery), SkillTreeHullMod.ID);
 
-        verify(npcHull).modifyPercent("exiledSector_skill_reinforcedhull_1", 40f);
+        verify(npcHull).modifyPercent("exiledSector_skill_reinforcedhull_1_HULL_PERCENT", 40f);
         verify(npcRecovery, never()).modifyFlat(anyString(), anyFloat());
-        verify(playerHull).modifyPercent("exiledSector_skill_reinforcedhull_1", 40f);
-        verify(playerRecovery).modifyFlat("exiledSector_skill_reinforcedhull_1", 1000f);
+        verify(playerHull).modifyPercent("exiledSector_skill_reinforcedhull_1_HULL_PERCENT", 40f);
+        verify(playerRecovery).modifyFlat("exiledSector_skill_reinforcedhull_1_SHIP_RECOVERY_CHANCE_BONUS", 1000f);
     }
 
     private static SkillNode registerNpcRoot() {
@@ -1459,7 +1511,7 @@ class SkillTreeHullModTest {
 
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, SkillTreeHullMod.ID);
 
-        verify(hullBonus).modifyPercent("exiledSector_skill_hull_1", 10f);
+        verify(hullBonus).modifyPercent("exiledSector_skill_hull_1_HULL_PERCENT", 10f);
         assertTrue(persistentData.isEmpty());
     }
 
@@ -1524,7 +1576,7 @@ class SkillTreeHullModTest {
 
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, opCostStats, SkillTreeHullMod.ID);
 
-        verify(burnLevel).modifyFlat("exiledSector_skill_militarized_subsystems_1", 1f);
+        verify(burnLevel).modifyFlat("exiledSector_skill_militarized_subsystems_1_BURN_LEVEL_FLAT", 1f);
         verify(variant, never()).addPermaMod(anyString());
         verify(variant, never()).addTag(anyString());
         verify(variant, never()).addMod(anyString());
@@ -1551,6 +1603,7 @@ class SkillTreeHullModTest {
     void combatHooksReadTheNpcTreeFromTheShipsVariant() {
         registerNpcRoot();
         exiledsector.skills.skilleffect.SkillEffect listenerEffect = mock(exiledsector.skills.skilleffect.SkillEffect.class);
+        when(listenerEffect.name()).thenReturn("TEST_EFFECT");
         when(listenerEffect.appliesToNpcShips()).thenReturn(true);
         SkillType listenerType = new SkillType.Builder("listener", "Listener", "a.png", SkillTier.NOTABLE)
                 .effects(List.of(new SkillTypeEffect(listenerEffect, 50f)))
@@ -1563,7 +1616,7 @@ class SkillTreeHullModTest {
 
         new SkillTreeHullMod().applyEffectsAfterShipCreation(ship, SkillTreeHullMod.ID);
 
-        verify(listenerEffect).applyAfterShipCreation(ship, "exiledSector_skill_listener_1", 50f);
+        verify(listenerEffect).applyAfterShipCreation(ship, "exiledSector_skill_listener_1_TEST_EFFECT", 50f);
         assertTrue(persistentData.isEmpty());
     }
 
@@ -1597,7 +1650,7 @@ class SkillTreeHullModTest {
                 new SkillTypeEffect(DefenseSkillEffect.EMP_DAMAGE_TAKEN_PERCENT, -10f));
 
         verify(damageTaken.emp()).modifyMult("exiledSector_skillMult_EMP_DAMAGE_TAKEN_MULT", 0.7f);
-        verify(damageTaken.emp()).modifyPercent("exiledSector_skill_damage_taken_node_1", -10f);
+        verify(damageTaken.emp()).modifyPercent("exiledSector_skill_damage_taken_node_1_EMP_DAMAGE_TAKEN_PERCENT", -10f);
         verify(damageTaken.emp(), never()).modifyMult(eq("exiledSector_skillCapped_EMP_DAMAGE_TAKEN_MULT"), anyFloat());
     }
 
@@ -1622,6 +1675,6 @@ class SkillTreeHullModTest {
 
         verify(damageTaken.energy()).modifyPercent("exiledSector_skillCapped_ENERGY_DAMAGE_TAKEN_PERCENT", -80f);
         verify(damageTaken.energyOnShields()).modifyPercent("exiledSector_skillCapped_ENERGY_DAMAGE_TAKEN_PERCENT", -80f);
-        verify(damageTaken.energy(), never()).modifyPercent(eq("exiledSector_skill_damage_taken_node_0"), anyFloat());
+        verify(damageTaken.energy(), never()).modifyPercent(org.mockito.ArgumentMatchers.startsWith("exiledSector_skill_"), anyFloat());
     }
 }

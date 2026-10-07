@@ -17,8 +17,19 @@ public final class RolledEffect {
     private final float magnitude;
 
     public RolledEffect(String effectName, float magnitude) {
-        this.effectName = effectName;
+        this.effectName = currentName(effectName);
         this.magnitude = magnitude;
+    }
+
+    static String currentName(String effectName) {
+        if (effectName == null) {
+            return null;
+        }
+        try {
+            return SkillEffect.byName(effectName).name();
+        } catch (IllegalArgumentException e) {
+            return effectName;
+        }
     }
 
     public String effectName() {

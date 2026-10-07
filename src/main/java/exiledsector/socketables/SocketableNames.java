@@ -10,13 +10,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static exiledsector.ExiledSectorModPlugin.MOD_ID;
@@ -228,7 +229,7 @@ public final class SocketableNames {
     }
 
     private static List<String> strings(JSONArray wordsArray) throws JSONException {
-        List<String> values = new ArrayList<>();
+        Set<String> values = new LinkedHashSet<>();
         for (int i = 0; wordsArray != null && i < wordsArray.length(); i++) {
             String word = wordsArray.getString(i).trim();
             if (!word.isEmpty()) {

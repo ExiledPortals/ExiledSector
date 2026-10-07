@@ -51,6 +51,9 @@ public final class SkillTreeBonusSummary {
     private static List<DescriptionLine> describe(Map<Group, Map<SkillEffect, Float>> totalsByGroup) {
         List<DescriptionLine> lines = new ArrayList<>();
         for (Map.Entry<Group, Map<SkillEffect, Float>> groupEntry : totalsByGroup.entrySet()) {
+            if (groupEntry.getKey().temporarySeconds() == null) {
+                DamageTakenCaps.capTotals(groupEntry.getValue());
+            }
             List<SkillTypeEffect> effects = new ArrayList<>();
             groupEntry.getValue().forEach((effect, total) -> {
                 if (!effect.isMultiplicative()) {

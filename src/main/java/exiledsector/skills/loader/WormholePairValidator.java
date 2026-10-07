@@ -54,6 +54,9 @@ public final class WormholePairValidator {
             return WORMHOLE_NODE_PREFIX + node.getId() + PAIRED_WITH + pairedId
                     + "\", but that node's pairedWith is \"" + pairedNode.getPairedNodeId() + "\" instead.";
         }
+        if (!node.getConnectedNodeIds().contains(pairedId)) {
+            return WORMHOLE_NODE_PREFIX + node.getId() + PAIRED_WITH + pairedId + "\", but does not list it in connectedTo.";
+        }
         return null;
     }
 }

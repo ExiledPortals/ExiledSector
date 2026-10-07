@@ -54,5 +54,6 @@ public final class LineBatch {
             GL11.glVertex2f(positions[i * 2], positions[i * 2 + 1]);
         }
         GL11.glEnd();
+        GL11.glLineWidth(1f);
     }
 }

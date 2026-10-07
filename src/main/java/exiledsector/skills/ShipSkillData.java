@@ -388,7 +388,13 @@ public class ShipSkillData {
             }
         }
         return new HashSet<>(TreeSearch.from(topology, seeds,
-                child -> !excludedNodeIds.contains(child.getId()) && isAllocated(child.getId())).reached());
+                child -> !excludedNodeIds.contains(child.getId()) && isAllocated(child.getId()),
+                child -> allocatedWormholePartner(child, excludedNodeIds)).reached());
+    }
+
+    private String allocatedWormholePartner(SkillNode node, Set<String> excludedNodeIds) {
+        String partnerId = node.getType().getTier() == SkillTier.WORMHOLE ? node.getPairedNodeId() : null;
+        return partnerId != null && !excludedNodeIds.contains(partnerId) && isAllocated(partnerId) ? partnerId : null;
     }
 
     public void toggle(SkillNode node, Collection<SkillNode> allNodes, String satisfiedRootId, int totalOp, int opCost, int maxAllocatedNodes) {

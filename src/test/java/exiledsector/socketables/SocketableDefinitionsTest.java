@@ -27,6 +27,7 @@ class SocketableDefinitionsTest {
     @AfterEach
     void tearDown() {
         SocketableDefinitions.clear();
+        exiledsector.skills.skilleffect.EffectAliases.clear();
     }
 
     @Test
@@ -65,6 +66,23 @@ class SocketableDefinitionsTest {
         assertNotNull(SocketableDefinitions.get(MILITARY));
         assertEquals(1, SocketableDefinitions.all().size());
         assertNull(SocketableDefinitions.get("unknown_kind"));
+    }
+
+    @Test
+    void anUnknownEffectIsDroppedFromThePoolWithoutLosingTheDefinition() throws Exception {
+        SocketableDefinitions.register(new JSONArray().put(row("x", "team", "NOT_AN_EFFECT:1:2; HULL_MULT:4:6")));
+
+        assertEquals(List.of(new SocketableDefinition.PoolEntry("HULL_MULT", 4f, 6f, 1f)), SocketableDefinitions.get("x").pool());
+    }
+
+    @Test
+    void aRenamedEffectInAPoolResolvesToItsCurrentName() throws Exception {
+        exiledsector.skills.skilleffect.EffectAliases.register(new JSONArray()
+                .put(new org.json.JSONObject().put("alias", "OLD_HULL_MULT").put("effect", "HULL_MULT")));
+
+        SocketableDefinitions.register(new JSONArray().put(row("x", "team", "OLD_HULL_MULT:4:6")));
+
+        assertEquals("HULL_MULT", SocketableDefinitions.get("x").pool().get(0).effectName());
     }
 
     @Test

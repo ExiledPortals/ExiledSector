@@ -20,8 +20,8 @@ public final class FrozenName {
 
     private FrozenName(String prefixEffect, String suffixEffect, String rareFirst, String rareSecond, String rareBrand, String rareModel,
                        boolean product) {
-        this.prefixEffect = prefixEffect;
-        this.suffixEffect = suffixEffect;
+        this.prefixEffect = RolledEffect.currentName(prefixEffect);
+        this.suffixEffect = RolledEffect.currentName(suffixEffect);
         this.rareFirst = rareFirst;
         this.rareSecond = rareSecond;
         this.rareBrand = rareBrand;
