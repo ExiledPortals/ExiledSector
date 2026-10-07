@@ -150,6 +150,22 @@ class SkillTreeInstallerTest {
     }
 
     @Test
+    void aModThatKeepsUndoingOurHullModOrderIsAnsweredAtMostOnceASecond() {
+        FleetMemberAPI contested = ShipTreeSyncTest.mockMember("contested", true);
+        when(contested.getVariant().getHullMods()).thenReturn(List.of(SkillTreeHullMod.ID, "other_mods_hullmod"));
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(contested));
+        SkillTreeInstaller installer = new SkillTreeInstaller();
+        installer.advance(0.01f);
+
+        ShipTreeSync.requestPlayerFleetSync();
+        installer.advance(0.5f);
+        verify(fleetData, times(1)).getMembersListCopy();
+
+        installer.advance(0.5f);
+        verify(fleetData, times(2)).getMembersListCopy();
+    }
+
+    @Test
     void doesNothingWhenThereIsNoPlayerFleet() {
         when(sector.getPlayerFleet()).thenReturn(null);
 

@@ -7,7 +7,11 @@ import exiledsector.skills.skilleffect.FleetWideEffects;
 
 public class SkillTreeInstaller implements EveryFrameScript {
 
+    static final float MIN_SECONDS_AFTER_A_CHANGING_PASS = 1f;
+
     private boolean syncedSinceLoad;
+    private boolean passPending;
+    private float secondsSinceChangingPass = MIN_SECONDS_AFTER_A_CHANGING_PASS;
 
     @Override
     public boolean isDone() {
@@ -21,17 +25,22 @@ public class SkillTreeInstaller implements EveryFrameScript {
 
     @Override
     public void advance(float amount) {
-        if (ShipTreeSync.takePlayerFleetSyncRequest() || !syncedSinceLoad) {
+        secondsSinceChangingPass += amount;
+        passPending |= ShipTreeSync.takePlayerFleetSyncRequest();
+        if (!syncedSinceLoad || passPending && secondsSinceChangingPass >= MIN_SECONDS_AFTER_A_CHANGING_PASS) {
             syncPlayerFleet();
         }
         FleetWideEffects.recomputeExtendedPhaseFieldIfStale();
     }
 
     private void syncPlayerFleet() {
+        passPending = false;
         CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
         if (playerFleet == null) return;
 
-        if (!ShipTreeSync.fleetChanged(playerFleet) && !syncedSinceLoad) {
+        if (ShipTreeSync.fleetChanged(playerFleet)) {
+            secondsSinceChangingPass = 0f;
+        } else if (!syncedSinceLoad) {
             playerFleet.getFleetData().setSyncNeeded();
         }
         syncedSinceLoad = true;
