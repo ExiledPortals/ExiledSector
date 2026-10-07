@@ -56,6 +56,9 @@ public final class SocketableStore {
             return null;
         }
         Socketable socketable = item.create(ID_PREFIX + nextId++);
+        if (socketable == null) {
+            return null;
+        }
         socketable.freezeName();
         owned.add(socketable);
         if (byId != null) {

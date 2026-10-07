@@ -146,6 +146,8 @@ public enum CombatSkillEffect implements BackedSkillEffect {
             this.ship = ship;
         }
 
+        // java:S3516: returning true would cancel the hull damage; this listener only reacts to the killing blow and never cancels it
+        @SuppressWarnings("java:S3516")
         @Override
         public boolean notifyAboutToTakeHullDamage(Object param, ShipAPI ship, Vector2f point, float damageAmount) {
             if (exploded || damageAmount < ship.getHitpoints()) {

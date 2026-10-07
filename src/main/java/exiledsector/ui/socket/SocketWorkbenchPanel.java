@@ -105,7 +105,7 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
     private final Random random = new Random();
     private CustomPanelAPI root;
     private PositionAPI position;
-    private float width;
+    private float panelWidth;
     private float height;
     private float socketArea;
     private boolean closing;
@@ -125,7 +125,7 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
 
     public static SocketWorkbenchPanel open(CustomPanelAPI host, float left, float top, float height, Listener listener) {
         SocketWorkbenchPanel panel = new SocketWorkbenchPanel(host, listener);
-        panel.width = WIDTH;
+        panel.panelWidth = WIDTH;
         panel.height = height;
         panel.socketArea = socketAreaFor(height);
         panel.root = Global.getSettings().createCustom(WIDTH, height, panel);
@@ -228,7 +228,7 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
             return;
         }
         float content = transition.contentAlpha() * alphaMult;
-        float cx = position.getX() + width / 2f;
+        float cx = position.getX() + panelWidth / 2f;
         float cy = position.getY() + height - socketAreaTop() - socketArea / 2f;
         Color subject = loaded == null ? null : loaded.rarity().color();
         flair.render(cx, cy, socketArea * SOCKET_RING_SHARE, SkillTreePanelStyle.GLOW_COLOR, subject,
@@ -605,7 +605,7 @@ public final class SocketWorkbenchPanel extends BaseCustomUIPanelPlugin {
     }
 
     private float innerWidth() {
-        return width - PAD * 2f;
+        return panelWidth - PAD * 2f;
     }
 
 }

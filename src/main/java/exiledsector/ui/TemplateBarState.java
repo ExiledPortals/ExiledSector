@@ -6,11 +6,11 @@ record TemplateBarState(boolean visible, boolean saveEnabled, boolean loadEnable
     static final TemplateBarState HIDDEN = new TemplateBarState(false, false, false, false,
             "ui.template.hint.save", "ui.template.hint.auto");
 
-    private static final TemplateBarState[] VISIBLE = new TemplateBarState[32];
+    private static final TemplateBarState[] VISIBLE_STATES = new TemplateBarState[32];
 
     static {
-        for (int i = 0; i < VISIBLE.length; i++) {
-            VISIBLE[i] = visible((i & 1) != 0, (i & 2) != 0, (i & 4) != 0, (i & 8) != 0, (i & 16) != 0);
+        for (int i = 0; i < VISIBLE_STATES.length; i++) {
+            VISIBLE_STATES[i] = visible((i & 1) != 0, (i & 2) != 0, (i & 4) != 0, (i & 8) != 0, (i & 16) != 0);
         }
     }
 
@@ -23,7 +23,7 @@ record TemplateBarState(boolean visible, boolean saveEnabled, boolean loadEnable
         if (!rootChosen) {
             return HIDDEN;
         }
-        return VISIBLE[(allocatedCount > 1 ? 1 : 0) | (hasTemplate ? 2 : 0) | (running ? 4 : 0) | (pointsLeft ? 8 : 0)
+        return VISIBLE_STATES[(allocatedCount > 1 ? 1 : 0) | (hasTemplate ? 2 : 0) | (running ? 4 : 0) | (pointsLeft ? 8 : 0)
                 | (loadBlocked ? 16 : 0)];
     }
 

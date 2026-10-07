@@ -31,7 +31,7 @@ public final class SocketableCrafting {
     }
 
     public static boolean synthesise(SocketCurrency currency, CargoAPI cargo) {
-        if (parts(cargo) < currency.partsCost()) {
+        if (cargo == null || parts(cargo) < currency.partsCost()) {
             return false;
         }
         cargo.removeCommodity(SocketableDisassembly.PARTS_COMMODITY_ID, currency.partsCost());
@@ -41,7 +41,7 @@ public final class SocketableCrafting {
 
     public static Socketable synthesiseCommon(CargoAPI cargo, SocketableStore store, Random random) {
         int cost = commonSynthesisParts();
-        if (parts(cargo) < cost) {
+        if (cargo == null || parts(cargo) < cost) {
             return null;
         }
         SocketableDefinition definition = SocketableDrops.pickBasic(random);
@@ -59,13 +59,14 @@ public final class SocketableCrafting {
     }
 
     public static boolean canUse(SocketCurrency currency, Socketable socketable, Predicate<SocketableDefinition> allowedUniques) {
-        if (socketable == null || socketable.definition() == null) {
+        SocketableDefinition definition = socketable == null ? null : socketable.definition();
+        if (definition == null) {
             return false;
         }
         return switch (currency) {
-            case AUGMENTATION -> !augmentChoices(socketable).isEmpty();
-            case RECALIBRATION -> canRecalibrate(socketable);
-            case TRANSPOSITION -> canTranspose(socketable, allowedUniques);
+            case AUGMENTATION -> !augmentChoices(socketable, definition).isEmpty();
+            case RECALIBRATION -> canRecalibrate(socketable, definition);
+            case TRANSPOSITION -> canTranspose(definition, allowedUniques);
         };
     }
 
@@ -86,8 +87,9 @@ public final class SocketableCrafting {
     }
 
     static RolledEffect augment(Socketable socketable, Random random) {
-        List<List<SocketableDefinition.PoolEntry>> sides = augmentChoices(socketable);
-        if (sides.isEmpty()) {
+        SocketableDefinition definition = socketable.definition();
+        List<List<SocketableDefinition.PoolEntry>> sides = definition == null ? List.of() : augmentChoices(socketable, definition);
+        if (definition == null || sides.isEmpty()) {
             return null;
         }
         List<SocketableDefinition.PoolEntry> side = sides.get(random.nextInt(sides.size()));
@@ -95,7 +97,7 @@ public final class SocketableCrafting {
         RolledEffect added = new RolledEffect(entry.effectName(), SocketableRoller.wholeNumberBetween(entry.min(), entry.max(), random));
         SocketableRarity before = socketable.rarity();
         List<RolledEffect> updated = new ArrayList<>(socketable.effects());
-        updated.add(socketable.definition().isPrefix(added.effectName()) ? prefixCount(socketable) : updated.size(), added);
+        updated.add(definition.isPrefix(added.effectName()) ? prefixCount(socketable, definition) : updated.size(), added);
         socketable.replaceEffects(updated);
         if (socketable.rarity() != before) {
             socketable.refreezeName();
@@ -103,8 +105,7 @@ public final class SocketableCrafting {
         return added;
     }
 
-    private static int prefixCount(Socketable socketable) {
-        SocketableDefinition definition = socketable.definition();
+    private static int prefixCount(Socketable socketable, SocketableDefinition definition) {
         int count = 0;
         for (RolledEffect effect : socketable.effects()) {
             count += definition.isPrefix(effect.effectName()) ? 1 : 0;
@@ -112,9 +113,8 @@ public final class SocketableCrafting {
         return count;
     }
 
-    private static List<List<SocketableDefinition.PoolEntry>> augmentChoices(Socketable socketable) {
-        SocketableDefinition definition = socketable.definition();
-        if (definition == null || definition.unique() || socketable.effects().size() >= MAX_EFFECTS) {
+    private static List<List<SocketableDefinition.PoolEntry>> augmentChoices(Socketable socketable, SocketableDefinition definition) {
+        if (definition.unique() || socketable.effects().size() >= MAX_EFFECTS) {
             return List.of();
         }
         Set<String> present = new HashSet<>();
@@ -142,8 +142,7 @@ public final class SocketableCrafting {
         }
     }
 
-    private static boolean canRecalibrate(Socketable socketable) {
-        SocketableDefinition definition = socketable.definition();
+    private static boolean canRecalibrate(Socketable socketable, SocketableDefinition definition) {
         for (RolledEffect effect : socketable.effects()) {
             SocketableDefinition.PoolEntry range = definition.rollRange(effect.effectName());
             if (range != null && Math.ceil(range.min()) < Math.floor(range.max())) {
@@ -155,6 +154,9 @@ public final class SocketableCrafting {
 
     static Socketable recalibrate(Socketable socketable, Random random) {
         SocketableDefinition definition = socketable.definition();
+        if (definition == null) {
+            return socketable;
+        }
         List<RolledEffect> rerolled = new ArrayList<>(socketable.effects().size());
         for (RolledEffect effect : socketable.effects()) {
             SocketableDefinition.PoolEntry range = definition.rollRange(effect.effectName());
@@ -165,8 +167,7 @@ public final class SocketableCrafting {
         return socketable;
     }
 
-    private static boolean canTranspose(Socketable socketable, Predicate<SocketableDefinition> allowedUniques) {
-        SocketableDefinition current = socketable.definition();
+    private static boolean canTranspose(SocketableDefinition current, Predicate<SocketableDefinition> allowedUniques) {
         if (!current.unique()) {
             return false;
         }
@@ -180,6 +181,9 @@ public final class SocketableCrafting {
 
     static Socketable transpose(SocketableStore store, Socketable socketable, Random random, Predicate<SocketableDefinition> allowedUniques) {
         SocketableDefinition current = socketable.definition();
+        if (current == null) {
+            return null;
+        }
         SocketableDefinition next = SocketableDrops.pickUnique(random, definition -> otherUnique(definition, current, allowedUniques));
         if (next == null) {
             return null;

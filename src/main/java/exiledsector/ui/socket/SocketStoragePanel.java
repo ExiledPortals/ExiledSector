@@ -107,7 +107,7 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     private float left;
     private float top;
     private PositionAPI position;
-    private float width;
+    private float panelWidth;
     private float height;
     private float gridTop;
     private UIComponentAPI header;
@@ -142,7 +142,7 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     public static SocketStoragePanel open(CustomPanelAPI host, float left, float top, float height,
                                           Function<Socketable, String> installedIn, Listener listener) {
         SocketStoragePanel panel = new SocketStoragePanel(host, installedIn, listener);
-        panel.width = WIDTH;
+        panel.panelWidth = WIDTH;
         panel.height = height;
         panel.left = left;
         panel.top = top;
@@ -420,7 +420,7 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
             listener.selected(null);
         }
         SkillTreeSounds.panelOpened();
-        workbench = SocketWorkbenchPanel.open(host, left + width + WORKBENCH_GAP, top, height, new SocketWorkbenchPanel.Listener() {
+        workbench = SocketWorkbenchPanel.open(host, left + panelWidth + WORKBENCH_GAP, top, height, new SocketWorkbenchPanel.Listener() {
             @Override
             public void changed(Socketable loaded) {
                 List<Socketable> owned = SocketableStore.get().owned();
@@ -452,7 +452,7 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     }
 
     private float innerWidth() {
-        return width - PAD * 2f;
+        return panelWidth - PAD * 2f;
     }
 
     private void build() {
@@ -650,7 +650,7 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         pendingDisassembly = List.copyOf(targets);
         boolean single = targets.size() == 1;
         float confirmHeight = single ? CONFIRM_HEIGHT : BATCH_CONFIRM_HEIGHT;
-        confirmBlocker = Global.getSettings().createCustom(width, height, new Blocker());
+        confirmBlocker = Global.getSettings().createCustom(panelWidth, height, new Blocker());
         root.addComponent(confirmBlocker).inTL(0f, 0f);
         float confirmWidth = innerWidth();
         confirm = Global.getSettings().createCustom(confirmWidth, confirmHeight,

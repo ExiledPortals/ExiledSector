@@ -23,6 +23,8 @@ final class DisintegrationListener implements DamageDealtModifier {
         this.ship = ship;
     }
 
+    // java:S3516: the engine reads a null return as "leave the damage unchanged"; armour is stripped as a side effect instead
+    @SuppressWarnings("java:S3516")
     @Override
     public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
         if (shieldHit || !(target instanceof ShipAPI targetShip) || !isEnergyWeaponHit(param)) {

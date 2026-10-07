@@ -107,7 +107,7 @@ public final class SocketableNames {
         FrozenName parts = frozen == null ? FrozenName.NONE : frozen;
         return switch (rarity) {
             case UNIQUE -> new SocketableName(definition.displayName(), null, rarity);
-            case COMMON -> new SocketableName(commonName(definition, kind, parts), definition.displayName(), rarity);
+            case COMMON -> new SocketableName(commonName(definition, kind, frozen), definition.displayName(), rarity);
             case RARE -> {
                 String rare = rareName(parts);
                 yield rare == null ? new SocketableName(definition.displayName(), null, rarity)
@@ -116,9 +116,11 @@ public final class SocketableNames {
         };
     }
 
-    private static String commonName(SocketableDefinition definition, SocketableKind kind, FrozenName parts) {
-        String prefix = parts.prefixEffect() == null ? null : affix(parts.prefixEffect(), true);
-        String suffix = parts.suffixEffect() == null ? null : affix(parts.suffixEffect(), false);
+    private static String commonName(SocketableDefinition definition, SocketableKind kind, FrozenName frozen) {
+        String prefixEffect = frozen == null ? null : frozen.prefixEffect();
+        String suffixEffect = frozen == null ? null : frozen.suffixEffect();
+        String prefix = prefixEffect == null ? null : affix(prefixEffect, true);
+        String suffix = suffixEffect == null ? null : affix(suffixEffect, false);
         if (prefix == null && suffix == null) {
             return definition.displayName();
         }
