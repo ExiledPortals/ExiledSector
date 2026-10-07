@@ -41,6 +41,10 @@ public final class SmoothZoom {
         zoomTarget = zoom;
     }
 
+    void aimAt(float zoom) {
+        zoomTarget = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom));
+    }
+
     void advance(float amount) {
         if (currentZoom == zoomTarget) {
             return;

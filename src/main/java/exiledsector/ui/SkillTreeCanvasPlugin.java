@@ -89,7 +89,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.starfieldRenderer = new SkillTreeStarfieldRenderer(panelStyle);
         this.staticImageRenderer = new SkillTreeStaticImageRenderer();
         this.ringBeltRenderer = new SkillTreeRingBeltRenderer();
-        this.fleetRenderer = SkillTreeFleetRenderer.forPlayerFleet();
+        this.fleetRenderer = SkillTreeFleetRenderer.forPlayerFleet(member == null ? null : member.getId());
         this.starRenderer = new SkillTreeStarRenderer();
         this.nodeRenderer = new SkillTreeNodeRenderer(member, variant, panelStyle, refitButton, nodeSearch);
         this.searchBar = new SkillTreeSearchBar(nodeSearch);
@@ -123,7 +123,13 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         starfieldRenderer.advance(amount);
         staticImageRenderer.advance(amount);
         ringBeltRenderer.advance(amount);
+        if (camera.isFollowing() && hyperspaceMode.isActive()) {
+            stopFollowingFleet();
+        }
         fleetRenderer.advance(amount);
+        if (camera.isFollowing()) {
+            camera.follow(fleetRenderer.focusX(), fleetRenderer.focusY(), amount);
+        }
         starRenderer.advance(amount);
         boolean followingStartingRoot = nodeRenderer.isStartingRootMoving();
         camera.beginStartingRootFollow(nodeRenderer);
@@ -131,7 +137,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         camera.applyStartingRootFollow(nodeRenderer, followingStartingRoot);
         templateUi.advance(amount, canvasPosition, hyperspaceMode.isActive());
         socketPlacement.layoutButton(canvasPosition, shipCardFrame(), isStorageButtonShown());
-        socketPlacement.advance(templateUi.isModalOpen() || hyperspaceMode.isActive() || nodeRenderer.isStartingRootInputLocked());
+        socketPlacement.advance(templateUi.isModalOpen() || hyperspaceMode.isActive() || nodeRenderer.isStartingRootInputLocked()
+                || camera.isFollowing());
         ShipOpBudget budget = nodeRenderer.budget();
         boolean pointerLive = mouseKnown && !isModalOpen() && !socketPlacement.isWorkbenchOpen();
         hideShipCardBehindModals();
@@ -238,6 +245,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             nodeRenderer.cancelRespec();
         } else if (socketPlacement.isEngaged() && event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
             socketPlacement.escape();
+        } else if (camera.isFollowing() && event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
+            stopFollowingFleet();
         } else {
             return false;
         }
@@ -312,7 +321,31 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private boolean isStorageButtonShown() {
-        return !nodeRenderer.isStartingRootInputLocked() && (!hyperspaceMode.isActive() || hyperspaceMode.chromeAlpha() > 0f);
+        return !nodeRenderer.isStartingRootInputLocked() && !camera.isFollowing()
+                && (!hyperspaceMode.isActive() || hyperspaceMode.chromeAlpha() > 0f);
+    }
+
+    void shipCardClicked() {
+        boolean busy = templateUi.isModalOpen() || nodeRenderer.isStartingRootInputLocked() || hyperspaceMode.isActive()
+                || socketPlacement.isWorkbenchOpen();
+        if (fleetRenderer.hasShips() && !busy) {
+            toggleFollowingFleet();
+        }
+    }
+
+    private void toggleFollowingFleet() {
+        if (camera.isFollowing()) {
+            stopFollowingFleet();
+        } else {
+            camera.startFollowing();
+            fleetRenderer.setSoloActive(true);
+            searchBar.unfocus();
+        }
+    }
+
+    private void stopFollowingFleet() {
+        camera.stopFollowing();
+        fleetRenderer.setSoloActive(false);
     }
 
     private void handleStartingRootEvent(InputEventAPI event) {
@@ -338,12 +371,12 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             event.consume();
             return;
         }
-        if (socketPlacement.isButtonClickable(event.getX(), event.getY())) {
+        if (!camera.isFollowing() && socketPlacement.isButtonClickable(event.getX(), event.getY())) {
             socketPlacement.toggle(canvasPosition, shipCardFrame());
             event.consume();
             return;
         }
-        if (templateUi.handleLmbDown(event.getX(), event.getY())) {
+        if (!camera.isFollowing() && templateUi.handleLmbDown(event.getX(), event.getY())) {
             event.consume();
             return;
         }
@@ -369,7 +402,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                 pendingClickNode = clicked;
                 pendingClickCtrlDown = event.isCtrlDown();
                 pendingClickShiftDown = event.isShiftDown();
-            } else {
+            } else if (!camera.isFollowing()) {
                 camera.startDrag();
             }
         }
@@ -411,6 +444,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             return;
         }
         if (jumpTarget != null) {
+            stopFollowingFleet();
             camera.panTo(jumpTarget.getOffsetX(), jumpTarget.getOffsetY());
             nodeRenderer.launchWormholeGhosts(node, jumpTarget);
             SkillTreeSounds.wormholeJumped();
@@ -489,7 +523,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         if (!nodeRenderer.isStartingRootInputLocked() && treeAlpha > 0f) {
             searchBar.render(canvasPosition, alphaMult * treeAlpha);
         }
-        if (chromeAlpha > 0f) {
+        if (chromeAlpha > 0f && !camera.isFollowing()) {
             templateUi.renderBar(canvasPosition, mouseX, mouseY, alphaMult * chromeAlpha);
         }
         socketPlacement.renderButton(mouseX, mouseY, alphaMult * chromeAlpha);
@@ -503,11 +537,12 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         if (ordnancePointsBar.isHovered(canvasPosition, mouseX, mouseY) || levelBar.isHovered(canvasPosition, mouseX, mouseY)) {
             readoutTooltipRenderer.render(readoutTooltipTitle, readoutTooltipBody, mouseX, mouseY, alphaMult);
         }
-        if (!inHyperspace && socketPlacement.buttonContains(mouseX, mouseY)) {
+        boolean chromeButtonsShown = !inHyperspace && !camera.isFollowing();
+        if (chromeButtonsShown && socketPlacement.buttonContains(mouseX, mouseY)) {
             readoutTooltipRenderer.render(Translation.text("ui.socketStorage.title"), Translation.text("ui.socketStorage.hint"),
                     mouseX, mouseY, alphaMult);
         }
-        if (!inHyperspace) {
+        if (chromeButtonsShown) {
             templateUi.renderBarTooltip(mouseX, mouseY, alphaMult);
         }
     }

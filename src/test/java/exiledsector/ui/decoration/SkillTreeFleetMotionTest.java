@@ -1,6 +1,7 @@
 package exiledsector.ui.decoration;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.skills.layout.RingBelt;
 import exiledsector.skills.layout.Rotation;
@@ -121,15 +122,32 @@ class SkillTreeFleetMotionTest {
             FleetMemberAPI member = mock(FleetMemberAPI.class);
             when(member.isFighterWing()).thenReturn(i == 3);
             when(member.getId()).thenReturn("ship-" + i);
+            when(member.getHullSpec()).thenReturn(mock(ShipHullSpecAPI.class));
             members.add(member);
         }
 
-        List<String> shownIds = SkillTreeFleetRenderer.shownMembers(members).stream().map(FleetMemberAPI::getId).toList();
+        List<String> shownIds = SkillTreeFleetRenderer.shownMembers(members, "ship-0").stream().map(FleetMemberAPI::getId).toList();
 
         assertEquals(20, shownIds.size());
         assertEquals(List.of("ship-0", "ship-1", "ship-2", "ship-4", "ship-5", "ship-6", "ship-7", "ship-8"), shownIds.subList(0, 8));
         assertEquals("ship-18", shownIds.get(8));
         assertEquals("ship-29", shownIds.get(19));
         assertFalse(shownIds.contains("ship-3"));
+    }
+
+    @Test
+    void theShipWhoseTreeIsOpenIsAlwaysAmongTheShownShips() {
+        List<FleetMemberAPI> members = new ArrayList<>();
+        for (int i = 0; i < 30; i++) {
+            FleetMemberAPI member = mock(FleetMemberAPI.class);
+            when(member.getId()).thenReturn("ship-" + i);
+            when(member.getHullSpec()).thenReturn(mock(ShipHullSpecAPI.class));
+            members.add(member);
+        }
+
+        List<String> shownIds = SkillTreeFleetRenderer.shownMembers(members, "ship-12").stream().map(FleetMemberAPI::getId).toList();
+
+        assertEquals(20, shownIds.size());
+        assertTrue(shownIds.contains("ship-12"));
     }
 }

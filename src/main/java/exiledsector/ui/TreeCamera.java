@@ -6,6 +6,8 @@ import exiledsector.ui.node.SkillTreeNodeRenderer;
 
 final class TreeCamera {
 
+    static final float FOLLOW_SETTLE_SECONDS = 1.2f;
+
     private final SmoothZoom smoothZoom = new SmoothZoom(1f);
     private float panX;
     private float panY;
@@ -15,6 +17,40 @@ final class TreeCamera {
     private boolean dragging;
     private CameraPanAnimation panAnimation;
     private StartingRootCameraFollow startingRootFollow;
+    private boolean followingTarget;
+    private float followStartX;
+    private float followStartY;
+    private float followSeconds;
+
+    void startFollowing() {
+        followingTarget = true;
+        followStartX = -panX / currentZoom;
+        followStartY = panY / currentZoom;
+        followSeconds = 0f;
+        dragging = false;
+        panAnimation = null;
+        zoomPivotX = 0f;
+        zoomPivotY = 0f;
+        smoothZoom.aimAt(SmoothZoom.MAX_ZOOM);
+    }
+
+    void stopFollowing() {
+        followingTarget = false;
+    }
+
+    boolean isFollowing() {
+        return followingTarget;
+    }
+
+    void follow(float treeX, float treeY, float amount) {
+        if (!followingTarget) {
+            return;
+        }
+        followSeconds += amount;
+        float progress = Math.min(1f, followSeconds / FOLLOW_SETTLE_SECONDS);
+        float eased = progress * progress * (3f - 2f * progress);
+        centreOn(followStartX + (treeX - followStartX) * eased, followStartY + (treeY - followStartY) * eased);
+    }
 
     void advanceZoom(float amount) {
         smoothZoom.advance(amount);
