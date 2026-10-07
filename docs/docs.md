@@ -247,6 +247,16 @@ its target is not a skill effect, or if the alias is still an effect of its own.
 mods like the other CSVs. A socketable pool entry naming an effect that is neither current nor aliased is
 skipped with a warning; the rest of the definition still loads.
 
+## Framework icons
+
+The hull framework icons in `graphics/icons/frameworks/` are generated from vanilla hull sprites by
+`tools/FrameworkIcons.java`, which traces each sprite into a schematic on a holo panel tinted with the
+socketable rarity colours, with one to four pips for the hull size. Run it from the repository root with
+`java tools/FrameworkIcons.java --overwrite`. `--frigate`, `--destroyer`, `--cruiser` and `--capital` pick
+other sprites (relative to `--ships`, which defaults to the dev install's `graphics/ships`, or absolute), and
+`--preview <file>` writes a sheet of all twelve icons. The rarity colours are copied from `SocketableRarity`,
+so change both together.
+
 ## Reflection
 
 Starsector's script class loader won't load a mod class whose source names `java.lang.reflect` (it also
