@@ -118,6 +118,21 @@ class WeaponAndMiscEffectsTest {
     }
 
     @Test
+    void burnDamageAlsoReachesTheFleetMembersStatsAfterTheTreesOwnBurnBonuses() {
+        MutableStat burn = new MutableStat(9f);
+        burn.modifyFlat("other", 2f);
+        MutableStat ballistic = new MutableStat(1f);
+        when(stats.getMaxBurnLevel()).thenReturn(burn);
+        when(stats.getBallisticWeaponDamageMult()).thenReturn(ballistic);
+
+        WeaponSkillEffect.BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_MULT.apply(stats, "mod_id", 5f);
+
+        assertEquals(1.1f, ballistic.getModifiedValue(), EPSILON);
+        assertTrue(WeaponSkillEffect.BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_MULT.appliesAfterOtherEffects());
+        assertTrue(WeaponSkillEffect.ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT.appliesAfterOtherEffects());
+    }
+
+    @Test
     void aBurnLevelBelowTheHullsDefaultNeverReducesBallisticDamage() {
         assertEquals(1f, ballisticDamageWithBurnLevel(9f, -3f).getModifiedValue(), EPSILON);
     }
@@ -137,6 +152,18 @@ class WeaponAndMiscEffectsTest {
         assertEquals(60f, energyRange.getFlatBonus(), EPSILON);
         assertEquals(0f, beamRange.getFlatBonus(), EPSILON);
         assertEquals(0f, ballisticRange.getFlatBonus(), EPSILON);
+    }
+
+    @Test
+    void sensorRangeAlsoReachesTheFleetMembersStatsSoWeaponTooltipsShowIt() {
+        StatBonus energyRange = new StatBonus();
+        when(stats.getSensorStrength()).thenReturn(new MutableStat(120f));
+        when(stats.getEnergyWeaponRangeBonus()).thenReturn(energyRange);
+
+        WeaponSkillEffect.ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT.apply(stats, "mod_id", 0.5f);
+        WeaponSkillEffect.ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT.applyAfterShipCreation(ship, "mod_id", 0.5f);
+
+        assertEquals(60f, energyRange.getFlatBonus(), EPSILON);
     }
 
     @Test

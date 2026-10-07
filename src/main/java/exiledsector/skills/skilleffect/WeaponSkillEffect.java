@@ -27,6 +27,12 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
     BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            applyBurnDamage(stats, modId, magnitude);
+        }
+
+        @Override
+        public boolean appliesAfterOtherEffects() {
+            return true;
         }
 
         @Override
@@ -36,22 +42,23 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
 
         @Override
         public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
-            MutableShipStatsAPI stats = ship.getMutableStats();
-            MutableStat burnLevel = stats.getMaxBurnLevel();
-            float burnOverDefault = Math.max(0f, burnLevel.getModifiedValue() - burnLevel.getBaseValue());
-            WeaponStatFamily.DAMAGE.target(WeaponScope.BALLISTIC).apply(stats, modId, StatMode.MULT, burnOverDefault * magnitude);
+            applyBurnDamage(ship.getMutableStats(), modId, magnitude);
         }
     },
     ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            applySensorRange(stats, modId, magnitude);
+        }
+
+        @Override
+        public boolean appliesAfterOtherEffects() {
+            return true;
         }
 
         @Override
         public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
-            MutableShipStatsAPI stats = ship.getMutableStats();
-            float rangeBonus = stats.getSensorStrength().getModifiedValue() * magnitude;
-            WeaponStatFamily.RANGE.target(WeaponScope.ENERGY).apply(stats, modId, StatMode.FLAT, rangeBonus);
+            applySensorRange(ship.getMutableStats(), modId, magnitude);
         }
     },
     MISSILE_RELOAD_PERCENT_PER_MINUTE {
@@ -87,6 +94,17 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
     };
 
     private static final String LARGE_BALLISTIC_OP_COST_KEY = "large_ballistic_mod";
+
+    private static void applyBurnDamage(MutableShipStatsAPI stats, String modId, float magnitude) {
+        MutableStat burnLevel = stats.getMaxBurnLevel();
+        float burnOverDefault = Math.max(0f, burnLevel.getModifiedValue() - burnLevel.getBaseValue());
+        WeaponStatFamily.DAMAGE.target(WeaponScope.BALLISTIC).apply(stats, modId, StatMode.MULT, burnOverDefault * magnitude);
+    }
+
+    private static void applySensorRange(MutableShipStatsAPI stats, String modId, float magnitude) {
+        float rangeBonus = stats.getSensorStrength().getModifiedValue() * magnitude;
+        WeaponStatFamily.RANGE.target(WeaponScope.ENERGY).apply(stats, modId, StatMode.FLAT, rangeBonus);
+    }
 
     @Override
     public EffectBacking backing() {
