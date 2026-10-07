@@ -484,7 +484,9 @@ public final class SkillTreeNodeRenderer {
         if (allocation.skillData().isAllocated(node.getId())) {
             removeOrSwitchOption(node, allocation);
         } else if (!allocation.canAllocate(node)) {
-            SkillTreeSounds.refused();
+            if (!allocation.isHidden(node)) {
+                SkillTreeSounds.refused();
+            }
         } else if (node.getType().isOptional()) {
             chooseOption(node, ctrlDown);
         } else if (allocator.allocate(node, null, allocation)) {

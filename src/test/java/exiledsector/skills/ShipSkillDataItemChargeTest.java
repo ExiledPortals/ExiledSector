@@ -103,6 +103,19 @@ class ShipSkillDataItemChargeTest {
     }
 
     @Test
+    void aLegacySavesChargeFollowsANodeReplacedOnLoad() {
+        node("lobster_v2", SkillTier.SMALL, null);
+        ShipSkillData written = new ShipSkillData();
+        written.chooseStartingRoot(root);
+        written.allocate(lobster, 3);
+        ShipSkillData loaded = roundTripWithoutTheLedger(written);
+
+        assertTrue(loaded.replaceNode("lobster", "lobster_v2"));
+
+        assertEquals(LOBSTERS, loaded.itemCharge("lobster_v2"));
+    }
+
+    @Test
     void anNpcBuildFromBeforeTheLedgerWasNeverCharged() {
         ShipSkillData written = new ShipSkillData();
         written.markNpcBuild();

@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -67,10 +68,10 @@ public class ShipSkillDataManager {
         for (Map.Entry<String, ShipSkillData> entry : getStore().entrySet()) {
             ShipSkillData shipData = entry.getValue();
             List<String> forgottenNodeIds = shipData.forgetUnknownNodes(nodesById, typesById);
-            refundCharges(shipData, forgottenNodeIds, isOwnedShip.test(entry.getKey()), refund);
+            refundCharges(shipData, forgottenNodeIds, () -> isOwnedShip.test(entry.getKey()), refund);
             if (shipData.hasLostStartingRoot(nodesById)) {
                 List<String> releasedNodeIds = shipData.resetAllocations();
-                refundCharges(shipData, releasedNodeIds, isOwnedShip.test(entry.getKey()), refund);
+                refundCharges(shipData, releasedNodeIds, () -> isOwnedShip.test(entry.getKey()), refund);
                 logger.info("[ExiledSector] Reset the skill tree of ship " + entry.getKey()
                         + " because its starting root is no longer in the tree; released " + releasedNodeIds + ", removed " + forgottenNodeIds);
             } else if (!forgottenNodeIds.isEmpty()) {
@@ -79,10 +80,11 @@ public class ShipSkillDataManager {
         }
     }
 
-    private static void refundCharges(ShipSkillData shipData, List<String> releasedNodeIds, boolean ownedShip, Consumer<SkillItemCost> refund) {
+    private static void refundCharges(ShipSkillData shipData, List<String> releasedNodeIds, BooleanSupplier ownedShip,
+                                      Consumer<SkillItemCost> refund) {
         for (String nodeId : releasedNodeIds) {
             SkillItemCost charged = shipData.takeItemCharge(nodeId);
-            if (charged != null && ownedShip) {
+            if (charged != null && ownedShip.getAsBoolean()) {
                 refund.accept(charged);
             }
         }

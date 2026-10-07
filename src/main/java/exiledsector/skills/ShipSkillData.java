@@ -252,6 +252,7 @@ public class ShipSkillData {
         if (!allocatedNodeIds.contains(oldId) || allocatedNodeIds.contains(newId)) {
             return false;
         }
+        ensureItemChargeLedger();
         List<String> order = new ArrayList<>(allocatedNodeIds);
         allocatedNodeIds.clear();
         order.forEach(id -> allocatedNodeIds.add(id.equals(oldId) ? newId : id));
