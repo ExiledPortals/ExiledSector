@@ -13,6 +13,9 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <libs.dir>${project.basedir}/libs</libs.dir>
+        <sonar.organization>exiledportals</sonar.organization>
+        <sonar.projectKey>ExiledPortals_ExiledSector</sonar.projectKey>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <dependencies>
