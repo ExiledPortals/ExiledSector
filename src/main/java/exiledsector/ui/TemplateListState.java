@@ -12,41 +12,41 @@ import java.util.Set;
 final class TemplateListState {
 
     private final String rootNodeId;
-    private final Set<HullSize> hullSizes;
-    private Collection<SkillTreeTemplate> templates;
-    private List<SkillTreeTemplate> shown;
-    private boolean anyForRoot;
+    private final Set<HullSize> selectedHullSizes;
+    private Collection<SkillTreeTemplate> allTemplates;
+    private List<SkillTreeTemplate> shownTemplates;
+    private boolean anyTemplateForRoot;
     private int scrollOffset;
 
     TemplateListState(Collection<SkillTreeTemplate> templates, String rootNodeId, HullSize currentHullSize) {
         this.rootNodeId = rootNodeId;
-        this.hullSizes = TemplateFilter.defaultFilter(currentHullSize);
+        this.selectedHullSizes = TemplateFilter.defaultFilter(currentHullSize);
         setTemplates(templates);
     }
 
     void setTemplates(Collection<SkillTreeTemplate> templates) {
-        this.templates = templates;
-        this.anyForRoot = !TemplateFilter.matching(templates, rootNodeId, EnumSet.copyOf(TemplateFilter.FILTERABLE)).isEmpty();
+        this.allTemplates = templates;
+        this.anyTemplateForRoot = !TemplateFilter.matching(templates, rootNodeId, EnumSet.copyOf(TemplateFilter.FILTERABLE)).isEmpty();
         refilter();
     }
 
     void toggle(HullSize hullSize) {
-        if (!hullSizes.remove(hullSize)) {
-            hullSizes.add(hullSize);
+        if (!selectedHullSizes.remove(hullSize)) {
+            selectedHullSizes.add(hullSize);
         }
         refilter();
     }
 
     boolean isSelected(HullSize hullSize) {
-        return hullSizes.contains(hullSize);
+        return selectedHullSizes.contains(hullSize);
     }
 
     boolean hasAnyForRoot() {
-        return anyForRoot;
+        return anyTemplateForRoot;
     }
 
     List<SkillTreeTemplate> shown() {
-        return shown;
+        return shownTemplates;
     }
 
     int scrollOffset() {
@@ -59,15 +59,15 @@ final class TemplateListState {
 
     List<SkillTreeTemplate> window(int visibleRows) {
         scrollOffset = clamp(scrollOffset, visibleRows);
-        return shown.subList(scrollOffset, Math.min(shown.size(), scrollOffset + Math.max(0, visibleRows)));
+        return shownTemplates.subList(scrollOffset, Math.min(shownTemplates.size(), scrollOffset + Math.max(0, visibleRows)));
     }
 
     private void refilter() {
-        shown = TemplateFilter.matching(templates, rootNodeId, hullSizes);
+        shownTemplates = TemplateFilter.matching(allTemplates, rootNodeId, selectedHullSizes);
     }
 
     private int clamp(int offset, int visibleRows) {
-        int max = Math.max(0, shown.size() - Math.max(0, visibleRows));
+        int max = Math.max(0, shownTemplates.size() - Math.max(0, visibleRows));
         return Math.max(0, Math.min(offset, max));
     }
 }

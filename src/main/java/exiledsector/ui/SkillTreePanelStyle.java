@@ -60,9 +60,9 @@ public final class SkillTreePanelStyle {
     private static final float TOOLTIP_FLAVOUR_GAP = 8f;
 
     static final String DEFAULT_FONT_PATH = "graphics/fonts/orbitron20aabold.fnt";
-    private static LazyFont font;
+    private static LazyFont cachedFont;
     private static boolean fontLoadFailed;
-    private static Boolean fakeBold;
+    private static Boolean cachedFakeBold;
 
     private String accentIconPath;
     private Color accentColor;
@@ -77,18 +77,18 @@ public final class SkillTreePanelStyle {
     }
 
     private static boolean fakeBold() {
-        if (fakeBold == null) {
-            fakeBold = !Translation.has("meta.fakeBold") || !"false".equals(Translation.text("meta.fakeBold"));
+        if (cachedFakeBold == null) {
+            cachedFakeBold = !Translation.has("meta.fakeBold") || !"false".equals(Translation.text("meta.fakeBold"));
         }
-        return fakeBold;
+        return cachedFakeBold;
     }
 
     public static LazyFont font() {
-        if (font == null && !fontLoadFailed) {
-            font = loadFontOrDefault(Translation.has("meta.font") ? Translation.text("meta.font") : DEFAULT_FONT_PATH);
-            fontLoadFailed = font == null;
+        if (cachedFont == null && !fontLoadFailed) {
+            cachedFont = loadFontOrDefault(Translation.has("meta.font") ? Translation.text("meta.font") : DEFAULT_FONT_PATH);
+            fontLoadFailed = cachedFont == null;
         }
-        return font;
+        return cachedFont;
     }
 
     static LazyFont loadFontOrDefault(String path) {
@@ -191,8 +191,8 @@ public final class SkillTreePanelStyle {
     }
 
     private static Color computeDominantColorOrThrow(String path) throws IOException {
-        try (InputStream in = Global.getSettings().openStream(path)) {
-            BufferedImage image = ImageIO.read(in);
+        try (InputStream imageStream = Global.getSettings().openStream(path)) {
+            BufferedImage image = ImageIO.read(imageStream);
             if (image == null) return DEFAULT_ACCENT_COLOR;
 
             Map<Integer, Integer> bucketCounts = new HashMap<>();
@@ -324,16 +324,16 @@ public final class SkillTreePanelStyle {
     private static TooltipText buildMeasuredText(LazyFont font, String text, float fontSize, Color color,
                                                    LazyFont.TextAlignment alignment, LazyFont.TextAnchor anchor) {
         String[] lines = text.split("\n", -1);
-        float width = 0f;
+        float textWidth = 0f;
         for (String line : lines) {
-            width = Math.max(width, font.calcWidth(line, fontSize));
+            textWidth = Math.max(textWidth, font.calcWidth(line, fontSize));
         }
-        float height = lines.length * fontSize * FONT_LINE_HEIGHT_FACTOR;
+        float textHeight = lines.length * fontSize * FONT_LINE_HEIGHT_FACTOR;
 
         LazyFont.DrawableString drawable = font.createText(text, color, fontSize);
         drawable.setAlignment(alignment);
         drawable.setAnchor(anchor);
-        return new TooltipText(drawable, width, height);
+        return new TooltipText(drawable, textWidth, textHeight);
     }
 
     public static LazyFont.DrawableString buildSimpleText(LazyFont font, String text, float fontSize, Color color) {

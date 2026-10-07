@@ -43,19 +43,19 @@ public class SkillTreeRefitButton extends BaseRefitButton {
         button.onClick(member, variant, event, market);
 
         UIPanelAPI corePanel = adder.getCorePanel();
-        float width = button.getPanelWidth(member, variant);
-        float height = button.getPanelHeight(member, variant);
-        RefitPanelBackgroundPlugin background = new RefitPanelBackgroundPlugin(corePanel, true);
-        CustomPanelAPI panel = Global.getSettings().createCustom(width, height, background);
-        adder.setActivePanel(panel);
+        float panelWidth = button.getPanelWidth(member, variant);
+        float panelHeight = button.getPanelHeight(member, variant);
+        RefitPanelBackgroundPlugin backgroundPlugin = new RefitPanelBackgroundPlugin(corePanel, true);
+        CustomPanelAPI skillTreePanel = Global.getSettings().createCustom(panelWidth, panelHeight, backgroundPlugin);
+        adder.setActivePanel(skillTreePanel);
         adder.setActivePanelButton(button);
-        panel.getPosition().inTL(Global.getSettings().getScreenWidth() / 2f - width / 2f, Global.getSettings().getScreenHeight() / 2f - height / 2f);
-        background.setPanel(panel);
-        corePanel.addComponent(panel);
+        skillTreePanel.getPosition().inTL(Global.getSettings().getScreenWidth() / 2f - panelWidth / 2f, Global.getSettings().getScreenHeight() / 2f - panelHeight / 2f);
+        backgroundPlugin.setPanel(skillTreePanel);
+        corePanel.addComponent(skillTreePanel);
         try {
-            button.initPanel(panel, member, variant, market);
+            button.initPanel(skillTreePanel, member, variant, market);
         } catch (RuntimeException | LinkageError e) {
-            corePanel.removeComponent(panel);
+            corePanel.removeComponent(skillTreePanel);
             adder.setActivePanel(null);
             adder.setActivePanelButton(null);
             throw e;
@@ -111,16 +111,16 @@ public class SkillTreeRefitButton extends BaseRefitButton {
         shipCard.addShipList(1, 1, SHIP_CARD_ICON_SIZE, new Color(0, 0, 0, 0), Collections.singletonList(member), 0f);
         float shipCardHeight = shipCard.getPrev().getPosition().getHeight();
 
-        TooltipMakerAPI element = backgroundPanel.createUIElement(panelWidth, panelHeight, false);
-        backgroundPanel.addUIElement(element);
-        element.getPosition().inTL(0f, 0f);
+        TooltipMakerAPI canvasElement = backgroundPanel.createUIElement(panelWidth, panelHeight, false);
+        backgroundPanel.addUIElement(canvasElement);
+        canvasElement.getPosition().inTL(0f, 0f);
 
-        SkillTreeCanvasPlugin plugin = new SkillTreeCanvasPlugin(member, variant, shipCardHeight, this, backgroundPanel);
-        CustomPanelAPI canvas = Global.getSettings().createCustom(panelWidth, panelHeight, plugin);
-        element.addCustom(canvas, 0f).getPosition().inTL(0f, 0f);
+        SkillTreeCanvasPlugin canvasPlugin = new SkillTreeCanvasPlugin(member, variant, shipCardHeight, this, backgroundPanel);
+        CustomPanelAPI canvasPanel = Global.getSettings().createCustom(panelWidth, panelHeight, canvasPlugin);
+        canvasElement.addCustom(canvasPanel, 0f).getPosition().inTL(0f, 0f);
 
         backgroundPanel.addUIElement(shipCard);
         shipCard.getPosition().inBL(SHIP_CARD_MARGIN, SHIP_CARD_MARGIN);
-        plugin.setShipCard(shipCard);
+        canvasPlugin.setShipCard(shipCard);
     }
 }

@@ -18,7 +18,7 @@ public final class SkillTreeSounds {
     static final String CRAFT = "ui_cargo_machinery_drop";
     static final long NODE_SOUND_GAP_NANOS = 100_000_000L;
 
-    private static long lastNodeSound = Long.MIN_VALUE;
+    private static long lastNodeSoundNanos = Long.MIN_VALUE;
 
     private SkillTreeSounds() {
     }
@@ -60,15 +60,15 @@ public final class SkillTreeSounds {
     }
 
     static void resetForTests() {
-        lastNodeSound = Long.MIN_VALUE;
+        lastNodeSoundNanos = Long.MIN_VALUE;
     }
 
     private static void playNodeSound(String soundId) {
         long now = System.nanoTime();
-        if (lastNodeSound != Long.MIN_VALUE && now - lastNodeSound < NODE_SOUND_GAP_NANOS) {
+        if (lastNodeSoundNanos != Long.MIN_VALUE && now - lastNodeSoundNanos < NODE_SOUND_GAP_NANOS) {
             return;
         }
-        lastNodeSound = now;
+        lastNodeSoundNanos = now;
         play(soundId);
     }
 

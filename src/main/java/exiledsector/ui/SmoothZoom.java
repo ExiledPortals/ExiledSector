@@ -8,24 +8,24 @@ public final class SmoothZoom {
     static final float RESPONSE_PER_SECOND = 12f;
     private static final float SNAP_LOG_DISTANCE = 0.0005f;
 
-    private float current;
-    private float target;
+    private float currentZoom;
+    private float zoomTarget;
 
     SmoothZoom(float zoom) {
-        current = zoom;
-        target = zoom;
+        currentZoom = zoom;
+        zoomTarget = zoom;
     }
 
     float current() {
-        return current;
+        return currentZoom;
     }
 
     float target() {
-        return target;
+        return zoomTarget;
     }
 
     void scroll(boolean in) {
-        target = in ? Math.min(MAX_ZOOM, target * STEP) : Math.max(MIN_ZOOM, target / STEP);
+        zoomTarget = in ? Math.min(MAX_ZOOM, zoomTarget * STEP) : Math.max(MIN_ZOOM, zoomTarget / STEP);
     }
 
     static float panAbout(float pan, float pivot, float zoomRatio) {
@@ -33,19 +33,19 @@ public final class SmoothZoom {
     }
 
     boolean isSettledAtMinimum() {
-        return current == MIN_ZOOM && target == MIN_ZOOM;
+        return currentZoom == MIN_ZOOM && zoomTarget == MIN_ZOOM;
     }
 
     void jumpTo(float zoom) {
-        current = zoom;
-        target = zoom;
+        currentZoom = zoom;
+        zoomTarget = zoom;
     }
 
     void advance(float amount) {
-        if (current == target) {
+        if (currentZoom == zoomTarget) {
             return;
         }
-        float remaining = (float) (Math.log(current / target) * Math.exp(-RESPONSE_PER_SECOND * amount));
-        current = Math.abs(remaining) < SNAP_LOG_DISTANCE ? target : target * (float) Math.exp(remaining);
+        float remaining = (float) (Math.log(currentZoom / zoomTarget) * Math.exp(-RESPONSE_PER_SECOND * amount));
+        currentZoom = Math.abs(remaining) < SNAP_LOG_DISTANCE ? zoomTarget : zoomTarget * (float) Math.exp(remaining);
     }
 }

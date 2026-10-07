@@ -63,8 +63,8 @@ final class SkillTreeReadoutBar {
     private Color overflowColor;
 
     private boolean initialized = false;
-    private int spent;
-    private int total;
+    private int targetSpent;
+    private int targetTotal;
     private float displayedSpent;
     private float displayedTotal;
     private int labelledSpent = -1;
@@ -76,18 +76,18 @@ final class SkillTreeReadoutBar {
         this.row = row;
     }
 
-    void advance(float amount, PositionAPI position, int spent, int total, float mouseX, float mouseY, boolean mouseKnown) {
-        this.spent = spent;
-        this.total = total;
-        boolean hovered = mouseKnown && isHovered(position, mouseX, mouseY);
+    void advance(float amount, PositionAPI canvasPosition, int targetSpent, int targetTotal, float mouseX, float mouseY, boolean mouseKnown) {
+        this.targetSpent = targetSpent;
+        this.targetTotal = targetTotal;
+        boolean hovered = mouseKnown && isHovered(canvasPosition, mouseX, mouseY);
         if (!initialized) {
-            displayedSpent = spent;
-            displayedTotal = total;
+            displayedSpent = targetSpent;
+            displayedTotal = targetTotal;
             initialized = true;
         }
         float ease = Math.min(1f, amount * PROGRESS_EASE_SPEED);
-        displayedSpent += (spent - displayedSpent) * ease;
-        displayedTotal += (total - displayedTotal) * ease;
+        displayedSpent += (targetSpent - displayedSpent) * ease;
+        displayedTotal += (targetTotal - displayedTotal) * ease;
 
         if (hovered) {
             hoverFader.fadeIn();
@@ -97,52 +97,52 @@ final class SkillTreeReadoutBar {
         hoverFader.advance(amount);
     }
 
-    boolean isHovered(PositionAPI position, float x, float y) {
-        if (position == null) return false;
-        return Rects.contains(left(position), bottom(position), BAR_WIDTH, BAR_HEIGHT, x, y);
+    boolean isHovered(PositionAPI canvasPosition, float x, float y) {
+        if (canvasPosition == null) return false;
+        return Rects.contains(left(canvasPosition), bottom(canvasPosition), BAR_WIDTH, BAR_HEIGHT, x, y);
     }
 
-    private static float left(PositionAPI position) {
-        return position.getX() + SkillTreeRefitButton.SHIP_CARD_MARGIN;
+    private static float left(PositionAPI canvasPosition) {
+        return canvasPosition.getX() + SkillTreeRefitButton.SHIP_CARD_MARGIN;
     }
 
-    private float bottom(PositionAPI position) {
-        float top = position.getY() + position.getHeight() - SkillTreeRefitButton.SHIP_CARD_MARGIN;
-        return top - BAR_HEIGHT - row * (BAR_HEIGHT + ROW_GAP);
+    private float bottom(PositionAPI canvasPosition) {
+        float barTop = canvasPosition.getY() + canvasPosition.getHeight() - SkillTreeRefitButton.SHIP_CARD_MARGIN;
+        return barTop - BAR_HEIGHT - row * (BAR_HEIGHT + ROW_GAP);
     }
 
-    void render(PositionAPI position, float alphaMult, String labelOverride) {
+    void render(PositionAPI canvasPosition, float alphaMult, String labelOverride) {
         LazyFont font = SkillTreePanelStyle.font();
         if (font == null) return;
-        float left = left(position);
-        float bottom = bottom(position);
+        float barLeft = left(canvasPosition);
+        float barBottom = bottom(canvasPosition);
         if (!initialized) {
-            displayedSpent = spent;
-            displayedTotal = total;
+            displayedSpent = targetSpent;
+            displayedTotal = targetTotal;
         }
 
-        Color fill = getFillColor();
-        Color overflow = getOverflowColor();
+        Color standardFill = getFillColor();
+        Color overflowFill = getOverflowColor();
         float glowBoost = hoverFader.getBrightness();
 
         boolean overCapacity = displayedSpent > displayedTotal;
-        float fraction = displayedTotal > 0f ? Math.min(1f, displayedSpent / displayedTotal) : 0f;
-        float fillWidth = overCapacity ? BAR_WIDTH : BAR_WIDTH * fraction;
-        Color barColor = overCapacity ? overflow : fill;
+        float fillFraction = displayedTotal > 0f ? Math.min(1f, displayedSpent / displayedTotal) : 0f;
+        float fillWidth = overCapacity ? BAR_WIDTH : BAR_WIDTH * fillFraction;
+        Color barColor = overCapacity ? overflowFill : standardFill;
 
-        GLDraw.fillQuad(left, bottom, BAR_WIDTH, BAR_HEIGHT, Color.BLACK, alphaMult);
+        GLDraw.fillQuad(barLeft, barBottom, BAR_WIDTH, BAR_HEIGHT, Color.BLACK, alphaMult);
 
         if (fillWidth > 0f) {
-            GLDraw.fillQuad(left, bottom, fillWidth, BAR_HEIGHT, barColor, alphaMult * (0.85f + 0.15f * glowBoost));
-            drawInnerGlow(left, bottom, fillWidth, barColor, alphaMult, glowBoost);
-            drawLeadingEdgeGlow(left + fillWidth, bottom, barColor, alphaMult, glowBoost);
+            GLDraw.fillQuad(barLeft, barBottom, fillWidth, BAR_HEIGHT, barColor, alphaMult * (0.85f + 0.15f * glowBoost));
+            drawInnerGlow(barLeft, barBottom, fillWidth, barColor, alphaMult, glowBoost);
+            drawLeadingEdgeGlow(barLeft + fillWidth, barBottom, barColor, alphaMult, glowBoost);
         }
 
-        drawEdgeBevel(left, bottom, barColor, alphaMult, glowBoost);
-        drawCornerAccents(left, bottom, barColor, alphaMult);
+        drawEdgeBevel(barLeft, barBottom, barColor, alphaMult, glowBoost);
+        drawCornerAccents(barLeft, barBottom, barColor, alphaMult);
 
-        String label = labelOverride != null ? labelOverride : spentOfTotalLabel();
-        drawLabel(font, label, left, bottom, alphaMult);
+        String shownLabel = labelOverride != null ? labelOverride : spentOfTotalLabel();
+        drawLabel(font, shownLabel, barLeft, barBottom, alphaMult);
     }
 
     private String spentOfTotalLabel() {
@@ -156,20 +156,20 @@ final class SkillTreeReadoutBar {
         return spentOfTotalLabel;
     }
 
-    private void drawLeadingEdgeGlow(float edgeX, float bottom, Color color, float alphaMult, float glowBoost) {
-        SpriteDraw.drawAdditiveAtCenter(spriteCache, GLOW_LINE_TEXTURE, edgeX, bottom + BAR_HEIGHT / 2f,
+    private void drawLeadingEdgeGlow(float edgeX, float barBottom, Color color, float alphaMult, float glowBoost) {
+        SpriteDraw.drawAdditiveAtCenter(spriteCache, GLOW_LINE_TEXTURE, edgeX, barBottom + BAR_HEIGHT / 2f,
                 LEADING_EDGE_GLOW_WIDTH, BAR_HEIGHT, color, alphaMult * (0.35f + 0.65f * glowBoost));
     }
 
-    private void drawInnerGlow(float left, float bottom, float width, Color color, float alphaMult, float glowBoost) {
-        if (width <= 0f || BAR_HEIGHT <= 1f) return;
+    private void drawInnerGlow(float barLeft, float barBottom, float fillWidth, Color color, float alphaMult, float glowBoost) {
+        if (fillWidth <= 0f || BAR_HEIGHT <= 1f) return;
 
-        float top = bottom + BAR_HEIGHT;
-        float mid = bottom + BAR_HEIGHT / 2f;
+        float barTop = barBottom + BAR_HEIGHT;
+        float barMid = barBottom + BAR_HEIGHT / 2f;
 
         float whiteBlend = INNER_GLOW_WASH_WHITE_BLEND_BASE + INNER_GLOW_WASH_WHITE_BLEND_HOVER_BOOST * glowBoost;
         Color washColor = Misc.interpolateColor(color, Color.WHITE, whiteBlend);
-        GLDraw.fillQuad(left, bottom, width, BAR_HEIGHT, washColor, alphaMult * INNER_GLOW_WASH_ALPHA_MULT);
+        GLDraw.fillQuad(barLeft, barBottom, fillWidth, BAR_HEIGHT, washColor, alphaMult * INNER_GLOW_WASH_ALPHA_MULT);
 
         float peakAlpha = alphaMult * (INNER_GLOW_PEAK_ALPHA_MULT + INNER_GLOW_PEAK_HOVER_BOOST * glowBoost);
 
@@ -179,35 +179,35 @@ final class SkillTreeReadoutBar {
 
         GL11.glBegin(GL11.GL_QUADS);
         glColorAlpha(color, 0f);
-        GL11.glVertex2f(left, bottom);
-        GL11.glVertex2f(left + width, bottom);
+        GL11.glVertex2f(barLeft, barBottom);
+        GL11.glVertex2f(barLeft + fillWidth, barBottom);
         glColorAlpha(color, peakAlpha);
-        GL11.glVertex2f(left + width, mid);
-        GL11.glVertex2f(left, mid);
+        GL11.glVertex2f(barLeft + fillWidth, barMid);
+        GL11.glVertex2f(barLeft, barMid);
         GL11.glEnd();
 
         GL11.glBegin(GL11.GL_QUADS);
         glColorAlpha(color, peakAlpha);
-        GL11.glVertex2f(left, mid);
-        GL11.glVertex2f(left + width, mid);
+        GL11.glVertex2f(barLeft, barMid);
+        GL11.glVertex2f(barLeft + fillWidth, barMid);
         glColorAlpha(color, 0f);
-        GL11.glVertex2f(left + width, top);
-        GL11.glVertex2f(left, top);
+        GL11.glVertex2f(barLeft + fillWidth, barTop);
+        GL11.glVertex2f(barLeft, barTop);
         GL11.glEnd();
 
         GL11.glDisable(GL11.GL_BLEND);
     }
 
-    private void drawEdgeBevel(float left, float bottom, Color color, float alphaMult, float glowBoost) {
-        float top = bottom + BAR_HEIGHT;
-        float right = left + BAR_WIDTH;
+    private void drawEdgeBevel(float barLeft, float barBottom, Color color, float alphaMult, float glowBoost) {
+        float barTop = barBottom + BAR_HEIGHT;
+        float barRight = barLeft + BAR_WIDTH;
         Color highlight = Misc.interpolateColor(color, Color.WHITE, EDGE_BEVEL_HOVER_WHITE_BLEND * glowBoost);
         bevelShadowLines.clear();
-        bevelShadowLines.add(left, bottom, left, top, color, 0.5f * alphaMult);
-        bevelShadowLines.add(right, bottom, right, top, color, 0.5f * alphaMult);
+        bevelShadowLines.add(barLeft, barBottom, barLeft, barTop, color, 0.5f * alphaMult);
+        bevelShadowLines.add(barRight, barBottom, barRight, barTop, color, 0.5f * alphaMult);
         bevelHighlightLines.clear();
-        bevelHighlightLines.add(left + 1f, bottom, left + 1f, top, highlight, alphaMult);
-        bevelHighlightLines.add(right + 1f, bottom, right + 1f, top, highlight, alphaMult);
+        bevelHighlightLines.add(barLeft + 1f, barBottom, barLeft + 1f, barTop, highlight, alphaMult);
+        bevelHighlightLines.add(barRight + 1f, barBottom, barRight + 1f, barTop, highlight, alphaMult);
 
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
@@ -218,16 +218,16 @@ final class SkillTreeReadoutBar {
         GL11.glDisable(GL11.GL_BLEND);
     }
 
-    private void drawCornerAccents(float left, float bottom, Color color, float alphaMult) {
-        float right = left + BAR_WIDTH;
-        float top = bottom + BAR_HEIGHT;
+    private void drawCornerAccents(float barLeft, float barBottom, Color color, float alphaMult) {
+        float barRight = barLeft + BAR_WIDTH;
+        float barTop = barBottom + BAR_HEIGHT;
         int opaque = color.getRGB() | 0xFF000000;
         int clear = color.getRGB() & 0x00FFFFFF;
         cornerAccentLines.clear();
-        cornerAccentLines.add(left + 1f, bottom, opaque, left + CORNER_ACCENT_LENGTH, bottom, clear, alphaMult);
-        cornerAccentLines.add(left + 1f, top, opaque, left + CORNER_ACCENT_LENGTH, top, clear, alphaMult);
-        cornerAccentLines.add(right - 1f, bottom, opaque, right - CORNER_ACCENT_LENGTH, bottom, clear, alphaMult);
-        cornerAccentLines.add(right - 1f, top, opaque, right - CORNER_ACCENT_LENGTH, top, clear, alphaMult);
+        cornerAccentLines.add(barLeft + 1f, barBottom, opaque, barLeft + CORNER_ACCENT_LENGTH, barBottom, clear, alphaMult);
+        cornerAccentLines.add(barLeft + 1f, barTop, opaque, barLeft + CORNER_ACCENT_LENGTH, barTop, clear, alphaMult);
+        cornerAccentLines.add(barRight - 1f, barBottom, opaque, barRight - CORNER_ACCENT_LENGTH, barBottom, clear, alphaMult);
+        cornerAccentLines.add(barRight - 1f, barTop, opaque, barRight - CORNER_ACCENT_LENGTH, barTop, clear, alphaMult);
 
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
@@ -241,11 +241,11 @@ final class SkillTreeReadoutBar {
                 (byte) (int) (255f * Math.max(0f, Math.min(1f, alpha))));
     }
 
-    private void drawLabel(LazyFont font, String label, float left, float bottom, float alphaMult) {
+    private void drawLabel(LazyFont font, String label, float barLeft, float barBottom, float alphaMult) {
         float textWidth = font.calcWidth(label, FONT_SIZE);
         float textHeight = FONT_SIZE * SkillTreePanelStyle.FONT_LINE_HEIGHT_FACTOR;
-        float textX = left + (BAR_WIDTH - textWidth) / 2f;
-        float textY = bottom + (BAR_HEIGHT + textHeight) / 2f;
+        float textX = barLeft + (BAR_WIDTH - textWidth) / 2f;
+        float textY = barBottom + (BAR_HEIGHT + textHeight) / 2f;
 
         labelShadowText.set(label).setAlpha(alphaMult).draw(textX + TEXT_SHADOW_OFFSET_X, textY + TEXT_SHADOW_OFFSET_Y);
         labelText.set(label).setAlpha(alphaMult).draw(textX, textY);

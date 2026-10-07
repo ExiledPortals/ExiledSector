@@ -22,8 +22,8 @@ final class HyperspaceLabels {
     private static final Color TEXT_COLOR = SkillTreePanelStyle.TOOLTIP_TITLE_COLOR;
     private static final Color HOVER_COLOR = SkillTreePanelStyle.GLOW_COLOR;
 
-    private final BorderedPanel panel = new BorderedPanel(HyperspaceLabels.class);
-    private final Map<String, ReusableText> texts = new HashMap<>();
+    private final BorderedPanel labelPanel = new BorderedPanel(HyperspaceLabels.class);
+    private final Map<String, ReusableText> regionTexts = new HashMap<>();
     private int textAlpha = -1;
     private Color textColor = TEXT_COLOR;
     private Color hoverColor = HOVER_COLOR;
@@ -40,11 +40,11 @@ final class HyperspaceLabels {
             hoverColor = withAlpha(HOVER_COLOR, alpha);
         }
         for (HyperspaceAnchor anchor : anchors) {
-            ReusableText text = text(anchor);
-            ScreenRect box = box(viewport, anchor, mapStarRadius, mapAmount, text.width());
-            panel.draw(box.left(), box.bottom(), box.width(), box.height(), alphaMult);
-            text.setColor(anchor.equals(hovered) ? hoverColor : textColor);
-            text.draw(box.left() + PADDING_X, box.bottom() + box.height() - PADDING_Y);
+            ReusableText labelText = text(anchor);
+            ScreenRect labelBox = box(viewport, anchor, mapStarRadius, mapAmount, labelText.width());
+            labelPanel.draw(labelBox.left(), labelBox.bottom(), labelBox.width(), labelBox.height(), alphaMult);
+            labelText.setColor(anchor.equals(hovered) ? hoverColor : textColor);
+            labelText.draw(labelBox.left() + PADDING_X, labelBox.bottom() + labelBox.height() - PADDING_Y);
         }
     }
 
@@ -69,14 +69,14 @@ final class HyperspaceLabels {
     }
 
     private ReusableText text(HyperspaceAnchor anchor) {
-        return texts.computeIfAbsent(anchor.region(),
+        return regionTexts.computeIfAbsent(anchor.region(),
                 region -> new ReusableText(FONT_SIZE, TEXT_COLOR).set(Translation.text("hyperspace.region." + region)));
     }
 
     private static ScreenRect box(TreeViewport viewport, HyperspaceAnchor anchor, float mapStarRadius, float mapAmount, float textWidth) {
-        float width = textWidth + PADDING_X * 2f;
-        float height = FONT_SIZE + PADDING_Y * 2f;
+        float labelWidth = textWidth + PADDING_X * 2f;
+        float labelHeight = FONT_SIZE + PADDING_Y * 2f;
         float anchorTop = viewport.screenY(anchor.y()) + anchor.displayRadius(mapStarRadius, mapAmount) * HyperspaceCamera.ANCHOR_REACH * viewport.zoom();
-        return new ScreenRect(viewport.screenX(anchor.x()) - width / 2f, anchorTop + GAP, width, height);
+        return new ScreenRect(viewport.screenX(anchor.x()) - labelWidth / 2f, anchorTop + GAP, labelWidth, labelHeight);
     }
 }

@@ -8,7 +8,7 @@ final class CameraPanAnimation {
     private final float startY;
     private final float targetX;
     private final float targetY;
-    private float elapsed;
+    private float panAnimationElapsed;
 
     CameraPanAnimation(float startX, float startY, float targetX, float targetY) {
         this.startX = startX;
@@ -18,11 +18,11 @@ final class CameraPanAnimation {
     }
 
     void advance(float amount) {
-        elapsed = Math.min(DURATION_SECONDS, elapsed + amount);
+        panAnimationElapsed = Math.min(DURATION_SECONDS, panAnimationElapsed + amount);
     }
 
     boolean isFinished() {
-        return elapsed >= DURATION_SECONDS;
+        return panAnimationElapsed >= DURATION_SECONDS;
     }
 
     float x() {
@@ -34,7 +34,7 @@ final class CameraPanAnimation {
     }
 
     private float eased() {
-        float t = elapsed / DURATION_SECONDS;
+        float t = panAnimationElapsed / DURATION_SECONDS;
         return t * t * (3f - 2f * t);
     }
 }

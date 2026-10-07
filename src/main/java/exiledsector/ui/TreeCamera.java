@@ -9,36 +9,36 @@ final class TreeCamera {
     private final SmoothZoom smoothZoom = new SmoothZoom(1f);
     private float panX;
     private float panY;
-    private float zoom = 1f;
+    private float currentZoom = 1f;
     private float zoomPivotX;
     private float zoomPivotY;
     private boolean dragging;
-    private CameraPanAnimation pan;
+    private CameraPanAnimation panAnimation;
     private StartingRootCameraFollow startingRootFollow;
 
     void advanceZoom(float amount) {
         smoothZoom.advance(amount);
-        float zoomRatio = smoothZoom.current() / zoom;
-        zoom = smoothZoom.current();
+        float zoomRatio = smoothZoom.current() / currentZoom;
+        currentZoom = smoothZoom.current();
         panX = SmoothZoom.panAbout(panX, zoomPivotX, zoomRatio);
         panY = SmoothZoom.panAbout(panY, zoomPivotY, zoomRatio);
     }
 
     void advancePan(float amount) {
-        if (pan == null) {
+        if (panAnimation == null) {
             return;
         }
-        pan.advance(amount);
-        centreOn(pan.x(), pan.y());
-        if (pan.isFinished()) {
-            pan = null;
+        panAnimation.advance(amount);
+        centreOn(panAnimation.x(), panAnimation.y());
+        if (panAnimation.isFinished()) {
+            panAnimation = null;
         }
     }
 
     void beginStartingRootFollow(SkillTreeNodeRenderer nodeRenderer) {
         if (nodeRenderer.isStartingRootMoving() && startingRootFollow == null) {
-            startingRootFollow = new StartingRootCameraFollow(-panX / zoom, panY / zoom,
-                    nodeRenderer.startingRootCameraTargetX(), nodeRenderer.startingRootCameraTargetY(), zoom,
+            startingRootFollow = new StartingRootCameraFollow(-panX / currentZoom, panY / currentZoom,
+                    nodeRenderer.startingRootCameraTargetX(), nodeRenderer.startingRootCameraTargetY(), currentZoom,
                     nodeRenderer.isStartingRootFlyingOut() ? SmoothZoom.MIN_ZOOM : StartingRootCameraFollow.CHOOSING_ZOOM);
         }
     }
@@ -47,42 +47,42 @@ final class TreeCamera {
         if (!wasMoving) {
             return;
         }
-        float progress = nodeRenderer.startingRootCameraProgress();
-        zoom = startingRootFollow.zoom(progress);
-        smoothZoom.jumpTo(zoom);
-        centreOn(startingRootFollow.x(nodeRenderer.startingRootCameraTargetX(), progress),
-                startingRootFollow.y(nodeRenderer.startingRootCameraTargetY(), progress));
+        float followProgress = nodeRenderer.startingRootCameraProgress();
+        currentZoom = startingRootFollow.zoom(followProgress);
+        smoothZoom.jumpTo(currentZoom);
+        centreOn(startingRootFollow.x(nodeRenderer.startingRootCameraTargetX(), followProgress),
+                startingRootFollow.y(nodeRenderer.startingRootCameraTargetY(), followProgress));
         if (!nodeRenderer.isStartingRootMoving()) {
             startingRootFollow = null;
         }
     }
 
     void centreOn(float treeX, float treeY) {
-        panX = -treeX * zoom;
-        panY = treeY * zoom;
+        panX = -treeX * currentZoom;
+        panY = treeY * currentZoom;
     }
 
-    void jumpTo(HyperspaceCamera camera) {
-        zoom = camera.zoom();
-        smoothZoom.jumpTo(zoom);
-        centreOn(camera.x(), camera.y());
+    void jumpTo(HyperspaceCamera hyperspaceCamera) {
+        currentZoom = hyperspaceCamera.zoom();
+        smoothZoom.jumpTo(currentZoom);
+        centreOn(hyperspaceCamera.x(), hyperspaceCamera.y());
     }
 
     HyperspaceCamera current() {
-        return new HyperspaceCamera(-panX / zoom, panY / zoom, zoom);
+        return new HyperspaceCamera(-panX / currentZoom, panY / currentZoom, currentZoom);
     }
 
     void panTo(float treeX, float treeY) {
-        pan = new CameraPanAnimation(-panX / zoom, panY / zoom, treeX, treeY);
+        panAnimation = new CameraPanAnimation(-panX / currentZoom, panY / currentZoom, treeX, treeY);
     }
 
     boolean isPanning() {
-        return pan != null;
+        return panAnimation != null;
     }
 
     void startDrag() {
         dragging = true;
-        pan = null;
+        panAnimation = null;
     }
 
     void stopDrag() {
@@ -91,7 +91,7 @@ final class TreeCamera {
 
     void stopMoving() {
         dragging = false;
-        pan = null;
+        panAnimation = null;
     }
 
     boolean isDragging() {
@@ -118,7 +118,7 @@ final class TreeCamera {
     }
 
     float zoom() {
-        return zoom;
+        return currentZoom;
     }
 
     float panX() {
@@ -129,9 +129,9 @@ final class TreeCamera {
         return panY;
     }
 
-    TreeViewport viewport(PositionAPI position) {
-        return new TreeViewport(position.getX() + position.getWidth() / 2f + panX,
-                position.getY() + position.getHeight() / 2f + panY, zoom,
-                position.getX(), position.getY(), position.getX() + position.getWidth(), position.getY() + position.getHeight());
+    TreeViewport viewport(PositionAPI canvasPosition) {
+        return new TreeViewport(canvasPosition.getX() + canvasPosition.getWidth() / 2f + panX,
+                canvasPosition.getY() + canvasPosition.getHeight() / 2f + panY, currentZoom,
+                canvasPosition.getX(), canvasPosition.getY(), canvasPosition.getX() + canvasPosition.getWidth(), canvasPosition.getY() + canvasPosition.getHeight());
     }
 }

@@ -23,54 +23,54 @@ final class SkillTreeTemplateNameDialog {
     private static final float BUTTON_HEIGHT = 36f;
     private static final Color PROBLEM_COLOR = SkillTreePanelStyle.NEGATIVE_STAT_COLOR;
 
-    private final ModalFrame frame = new ModalFrame(SkillTreeTemplateNameDialog.class);
+    private final ModalFrame modalFrame = new ModalFrame(SkillTreeTemplateNameDialog.class);
     private final BorderedPanel fieldPanel = new BorderedPanel(SkillTreeTemplateNameDialog.class);
-    private final SkillTreeTextField field = new SkillTreeTextField(TemplateNames.MAX_LENGTH,
+    private final SkillTreeTextField nameField = new SkillTreeTextField(TemplateNames.MAX_LENGTH,
             SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
-    private final SkillTreeUiButton save = new SkillTreeUiButton(Translation.text("ui.template.dialog.save"));
-    private final SkillTreeUiButton cancel = new SkillTreeUiButton(Translation.text("ui.template.dialog.cancel"));
-    private final ReusableText title = new ReusableText(SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR)
+    private final SkillTreeUiButton saveButton = new SkillTreeUiButton(Translation.text("ui.template.dialog.save"));
+    private final SkillTreeUiButton cancelButton = new SkillTreeUiButton(Translation.text("ui.template.dialog.cancel"));
+    private final ReusableText titleLine = new ReusableText(SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR)
             .set(Translation.text("ui.template.dialog.title"));
-    private final ReusableText summary = new ReusableText(SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
+    private final ReusableText summaryLine = new ReusableText(SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
     private final ReusableText problemLine = new ReusableText(SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE, PROBLEM_COLOR)
             .set(Translation.text("ui.template.dialog.duplicate"));
 
-    private boolean open;
+    private boolean dialogOpen;
     private String rootNodeId;
-    private Collection<SkillTreeTemplate> existing = List.of();
-    private TemplateNames.Problem problem = TemplateNames.Problem.EMPTY;
+    private Collection<SkillTreeTemplate> existingTemplates = List.of();
+    private TemplateNames.Problem nameProblem = TemplateNames.Problem.EMPTY;
 
-    void open(String rootNodeId, int nodeCount, Collection<SkillTreeTemplate> existing) {
+    void open(String rootNodeId, int nodeCount, Collection<SkillTreeTemplate> existingTemplates) {
         this.rootNodeId = rootNodeId;
-        this.existing = existing;
-        this.open = true;
-        frame.open();
-        field.setText("");
-        field.focus(true);
+        this.existingTemplates = existingTemplates;
+        this.dialogOpen = true;
+        modalFrame.open();
+        nameField.setText("");
+        nameField.focus(true);
         revalidate();
-        summary.set(Translation.msg("ui.template.dialog.summary").count(nodeCount).text());
+        summaryLine.set(Translation.msg("ui.template.dialog.summary").count(nodeCount).text());
     }
 
     void close() {
-        open = false;
-        frame.close();
-        field.focus(false);
+        dialogOpen = false;
+        modalFrame.close();
+        nameField.focus(false);
     }
 
     boolean isOpen() {
-        return open;
+        return dialogOpen;
     }
 
     String name() {
-        return TemplateNames.normalise(field.text());
+        return TemplateNames.normalise(nameField.text());
     }
 
     boolean canSave() {
-        return problem == TemplateNames.Problem.NONE;
+        return nameProblem == TemplateNames.Problem.NONE;
     }
 
     SkillTreeTextField.KeyResult handleKey(InputEventAPI event) {
-        SkillTreeTextField.KeyResult result = field.handleKey(event);
+        SkillTreeTextField.KeyResult result = nameField.handleKey(event);
         if (result == SkillTreeTextField.KeyResult.EDITED) {
             revalidate();
         }
@@ -78,50 +78,50 @@ final class SkillTreeTemplateNameDialog {
     }
 
     TemplateAction actionAt(float x, float y) {
-        if (save.isClickable(x, y)) {
+        if (saveButton.isClickable(x, y)) {
             return TemplateAction.of(TemplateAction.Kind.DIALOG_SAVE);
         }
-        if (cancel.isClickable(x, y)) {
+        if (cancelButton.isClickable(x, y)) {
             return TemplateAction.of(TemplateAction.Kind.DIALOG_CANCEL);
         }
         return TemplateAction.NONE;
     }
 
     void advance(float amount) {
-        frame.advance(amount);
-        if (open) {
-            field.advance(amount);
+        modalFrame.advance(amount);
+        if (dialogOpen) {
+            nameField.advance(amount);
         }
     }
 
-    void render(PositionAPI position, float mouseX, float mouseY, float alphaMult) {
-        frame.render(position, WIDTH, HEIGHT, SkillTreePanelStyle.GLOW_COLOR, alphaMult,
-                (box, frameAlpha) -> renderContent(box.left(), box.bottom(), mouseX, mouseY, frameAlpha));
+    void render(PositionAPI canvasPosition, float mouseX, float mouseY, float alphaMult) {
+        modalFrame.render(canvasPosition, WIDTH, HEIGHT, SkillTreePanelStyle.GLOW_COLOR, alphaMult,
+                (frameBox, frameAlpha) -> renderContent(frameBox.left(), frameBox.bottom(), mouseX, mouseY, frameAlpha));
     }
 
-    private void renderContent(float left, float bottom, float mouseX, float mouseY, float alphaMult) {
+    private void renderContent(float dialogLeft, float dialogBottom, float mouseX, float mouseY, float alphaMult) {
 
-        float top = bottom + HEIGHT - PADDING;
-        title.draw(left + PADDING, top);
-        top -= SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE + 8f;
-        summary.draw(left + PADDING, top);
-        top -= SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE + 12f;
-        float fieldBottom = top - FIELD_HEIGHT;
-        fieldPanel.draw(left + PADDING, fieldBottom, WIDTH - PADDING * 2f, FIELD_HEIGHT, alphaMult);
-        field.render(left + PADDING + FIELD_TEXT_PADDING, fieldBottom, WIDTH - (PADDING + FIELD_TEXT_PADDING) * 2f, FIELD_HEIGHT, "", alphaMult);
-        if (problem == TemplateNames.Problem.DUPLICATE) {
-            problemLine.draw(left + PADDING, fieldBottom - 6f);
+        float cursorTop = dialogBottom + HEIGHT - PADDING;
+        titleLine.draw(dialogLeft + PADDING, cursorTop);
+        cursorTop -= SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE + 8f;
+        summaryLine.draw(dialogLeft + PADDING, cursorTop);
+        cursorTop -= SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE + 12f;
+        float fieldBottom = cursorTop - FIELD_HEIGHT;
+        fieldPanel.draw(dialogLeft + PADDING, fieldBottom, WIDTH - PADDING * 2f, FIELD_HEIGHT, alphaMult);
+        nameField.render(dialogLeft + PADDING + FIELD_TEXT_PADDING, fieldBottom, WIDTH - (PADDING + FIELD_TEXT_PADDING) * 2f, FIELD_HEIGHT, "", alphaMult);
+        if (nameProblem == TemplateNames.Problem.DUPLICATE) {
+            problemLine.draw(dialogLeft + PADDING, fieldBottom - 6f);
         }
 
-        float buttonBottom = bottom + PADDING;
-        cancel.place(left + WIDTH - PADDING - BUTTON_WIDTH, buttonBottom, BUTTON_WIDTH, BUTTON_HEIGHT);
-        save.place(left + WIDTH - PADDING - BUTTON_WIDTH * 2f - 8f, buttonBottom, BUTTON_WIDTH, BUTTON_HEIGHT);
-        save.setEnabled(canSave());
-        save.render(mouseX, mouseY, alphaMult);
-        cancel.render(mouseX, mouseY, alphaMult);
+        float buttonBottom = dialogBottom + PADDING;
+        cancelButton.place(dialogLeft + WIDTH - PADDING - BUTTON_WIDTH, buttonBottom, BUTTON_WIDTH, BUTTON_HEIGHT);
+        saveButton.place(dialogLeft + WIDTH - PADDING - BUTTON_WIDTH * 2f - 8f, buttonBottom, BUTTON_WIDTH, BUTTON_HEIGHT);
+        saveButton.setEnabled(canSave());
+        saveButton.render(mouseX, mouseY, alphaMult);
+        cancelButton.render(mouseX, mouseY, alphaMult);
     }
 
     private void revalidate() {
-        problem = TemplateNames.validate(field.text(), rootNodeId, existing);
+        nameProblem = TemplateNames.validate(nameField.text(), rootNodeId, existingTemplates);
     }
 }

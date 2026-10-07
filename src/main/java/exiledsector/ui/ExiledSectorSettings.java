@@ -143,40 +143,40 @@ public final class ExiledSectorSettings {
     }
 
     private static void registerNpcScaling() {
-        String tab = npcScalingTab();
-        SettingsCreator.addHeader(MOD_ID, "exiledSector_npcTreesHeader", Translation.text("settings.npc.header"), tab);
-        SettingsCreator.addText(MOD_ID, "exiledSector_npcTreesAbout", Translation.text("settings.npc.about"), tab);
+        String npcTab = npcScalingTab();
+        SettingsCreator.addHeader(MOD_ID, "exiledSector_npcTreesHeader", Translation.text("settings.npc.header"), npcTab);
+        SettingsCreator.addText(MOD_ID, "exiledSector_npcTreesAbout", Translation.text("settings.npc.about"), npcTab);
         SettingsCreator.addBoolean(MOD_ID, NpcTreeConfig.ENABLED_FIELD_ID,
                 Translation.text("settings.npc.enabled.name"), Translation.text("settings.npc.enabled.tooltip"),
-                NpcTreeConfig.DEFAULT_ENABLED, tab);
+                NpcTreeConfig.DEFAULT_ENABLED, npcTab);
         SettingsCreator.addBoolean(MOD_ID, NpcTreeConfig.OFFICERED_SHIPS_FIELD_ID,
                 Translation.text("settings.npc.officeredShips.name"), Translation.text("settings.npc.officeredShips.tooltip"),
-                NpcTreeConfig.DEFAULT_OFFICERED_SHIPS, tab);
+                NpcTreeConfig.DEFAULT_OFFICERED_SHIPS, npcTab);
         SettingsCreator.addBoolean(MOD_ID, NpcTreeConfig.FLAGSHIP_FIELD_ID,
                 Translation.text("settings.npc.flagship.name"), Translation.text("settings.npc.flagship.tooltip"),
-                NpcTreeConfig.DEFAULT_FLAGSHIP, tab);
+                NpcTreeConfig.DEFAULT_FLAGSHIP, npcTab);
         SettingsCreator.addInt(MOD_ID, NpcTreeConfig.OTHER_SHIP_CHANCE_FIELD_ID,
                 Translation.text("settings.npc.otherShipChance.name"), Translation.text("settings.npc.otherShipChance.tooltip"),
-                NpcTreeConfig.DEFAULT_OTHER_SHIP_CHANCE_PERCENT, 0, 100, tab);
+                NpcTreeConfig.DEFAULT_OTHER_SHIP_CHANCE_PERCENT, 0, 100, npcTab);
         SettingsCreator.addKeybind(MOD_ID, NpcInspectConfig.KEYBIND_FIELD_ID,
                 Translation.text("settings.npc.inspectKey.name"), Translation.text("settings.npc.inspectKey.tooltip"),
-                NpcInspectConfig.DEFAULT_KEY, tab);
+                NpcInspectConfig.DEFAULT_KEY, npcTab);
 
-        SettingsCreator.addHeader(MOD_ID, "exiledSector_npcNodesHeader", Translation.text("settings.npcNodes.header"), tab);
-        SettingsCreator.addText(MOD_ID, "exiledSector_npcNodesAbout", Translation.text("settings.npcNodes.about"), tab);
-        for (int level = NpcLevelTable.MIN_PLAYER_LEVEL; level <= NpcLevelTable.MAX_PLAYER_LEVEL; level++) {
-            boolean andAbove = level == NpcLevelTable.MAX_PLAYER_LEVEL;
-            SettingsCreator.addHeader(MOD_ID, "exiledSector_npcLevel" + level + "Header",
+        SettingsCreator.addHeader(MOD_ID, "exiledSector_npcNodesHeader", Translation.text("settings.npcNodes.header"), npcTab);
+        SettingsCreator.addText(MOD_ID, "exiledSector_npcNodesAbout", Translation.text("settings.npcNodes.about"), npcTab);
+        for (int playerLevel = NpcLevelTable.MIN_PLAYER_LEVEL; playerLevel <= NpcLevelTable.MAX_PLAYER_LEVEL; playerLevel++) {
+            boolean andAbove = playerLevel == NpcLevelTable.MAX_PLAYER_LEVEL;
+            SettingsCreator.addHeader(MOD_ID, "exiledSector_npcLevel" + playerLevel + "Header",
                     Translation.msg(andAbove ? "settings.npcNodes.levelHeaderAndAbove" : "settings.npcNodes.levelHeader")
-                            .arg("level", level).text(), tab);
-            SettingsCreator.addInt(MOD_ID, NpcLevelTable.minNodesFieldId(level), Translation.text("settings.npcNodes.min.name"),
+                            .arg("level", playerLevel).text(), npcTab);
+            SettingsCreator.addInt(MOD_ID, NpcLevelTable.minNodesFieldId(playerLevel), Translation.text("settings.npcNodes.min.name"),
                     Translation.msg(andAbove ? "settings.npcNodes.min.tooltipAndAbove" : "settings.npcNodes.min.tooltip")
-                            .arg("level", level).text(),
-                    NpcLevelTable.defaultMinNodes(level), NpcLevelTable.MIN_NODES, NpcLevelTable.MAX_NODES, tab);
-            SettingsCreator.addInt(MOD_ID, NpcLevelTable.maxNodesFieldId(level), Translation.text("settings.npcNodes.max.name"),
+                            .arg("level", playerLevel).text(),
+                    NpcLevelTable.defaultMinNodes(playerLevel), NpcLevelTable.MIN_NODES, NpcLevelTable.MAX_NODES, npcTab);
+            SettingsCreator.addInt(MOD_ID, NpcLevelTable.maxNodesFieldId(playerLevel), Translation.text("settings.npcNodes.max.name"),
                     Translation.msg(andAbove ? "settings.npcNodes.max.tooltipAndAbove" : "settings.npcNodes.max.tooltip")
-                            .arg("level", level).text(),
-                    NpcLevelTable.defaultMaxNodes(level), NpcLevelTable.MIN_NODES, NpcLevelTable.MAX_NODES, tab);
+                            .arg("level", playerLevel).text(),
+                    NpcLevelTable.defaultMaxNodes(playerLevel), NpcLevelTable.MIN_NODES, NpcLevelTable.MAX_NODES, npcTab);
         }
     }
 }

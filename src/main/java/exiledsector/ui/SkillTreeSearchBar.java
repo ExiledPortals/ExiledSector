@@ -18,37 +18,37 @@ final class SkillTreeSearchBar {
     private static final float TEXT_PADDING = 22f;
     private static final float TEXT_WIDTH = WIDTH - TEXT_PADDING * 2f;
 
-    private final NodeSearch search;
-    private final BorderedPanel panel = new BorderedPanel(SkillTreeSearchBar.class);
-    private final SkillTreeTextField field = new SkillTreeTextField(MAX_QUERY_LENGTH,
+    private final NodeSearch nodeSearch;
+    private final BorderedPanel borderPanel = new BorderedPanel(SkillTreeSearchBar.class);
+    private final SkillTreeTextField queryField = new SkillTreeTextField(MAX_QUERY_LENGTH,
             SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
-    private final String placeholder = Translation.text("ui.search.placeholder");
+    private final String placeholderText = Translation.text("ui.search.placeholder");
 
-    SkillTreeSearchBar(NodeSearch search) {
-        this.search = search;
+    SkillTreeSearchBar(NodeSearch nodeSearch) {
+        this.nodeSearch = nodeSearch;
     }
 
-    boolean handleClick(PositionAPI position, float x, float y) {
-        boolean hit = contains(position, x, y);
-        field.focus(hit);
+    boolean handleClick(PositionAPI canvasPosition, float x, float y) {
+        boolean hit = contains(canvasPosition, x, y);
+        queryField.focus(hit);
         return hit;
     }
 
     void unfocus() {
-        field.focus(false);
+        queryField.focus(false);
     }
 
     boolean handleKey(InputEventAPI event) {
-        field.setText(search.getQuery());
-        SkillTreeTextField.KeyResult result = field.handleKey(event);
+        queryField.setText(nodeSearch.getQuery());
+        SkillTreeTextField.KeyResult result = queryField.handleKey(event);
         switch (result) {
-            case EDITED -> search.setQuery(field.text());
+            case EDITED -> nodeSearch.setQuery(queryField.text());
             case CANCEL -> {
-                field.setText("");
-                search.setQuery("");
-                field.focus(false);
+                queryField.setText("");
+                nodeSearch.setQuery("");
+                queryField.focus(false);
             }
-            case SUBMIT -> field.focus(false);
+            case SUBMIT -> queryField.focus(false);
             default -> {
             }
         }
@@ -56,15 +56,15 @@ final class SkillTreeSearchBar {
     }
 
     void advance(float amount) {
-        field.advance(amount);
+        queryField.advance(amount);
     }
 
-    void render(PositionAPI position, float alphaMult) {
-        float x = left(position);
-        float y = bottom(position);
-        panel.draw(x, y, WIDTH, HEIGHT, alphaMult);
-        field.setText(search.getQuery());
-        field.render(x + TEXT_PADDING, y, TEXT_WIDTH, HEIGHT, placeholder, alphaMult);
+    void render(PositionAPI canvasPosition, float alphaMult) {
+        float barLeft = left(canvasPosition);
+        float barBottom = bottom(canvasPosition);
+        borderPanel.draw(barLeft, barBottom, WIDTH, HEIGHT, alphaMult);
+        queryField.setText(nodeSearch.getQuery());
+        queryField.render(barLeft + TEXT_PADDING, barBottom, TEXT_WIDTH, HEIGHT, placeholderText, alphaMult);
     }
 
     static String fitEnd(String value, ToDoubleFunction<String> widthOf) {
@@ -75,15 +75,15 @@ final class SkillTreeSearchBar {
         return SkillTreeTextField.fitStart(value, TEXT_WIDTH, widthOf);
     }
 
-    static boolean contains(PositionAPI position, float x, float y) {
-        return Rects.contains(left(position), bottom(position), WIDTH, HEIGHT, x, y);
+    static boolean contains(PositionAPI canvasPosition, float x, float y) {
+        return Rects.contains(left(canvasPosition), bottom(canvasPosition), WIDTH, HEIGHT, x, y);
     }
 
-    private static float left(PositionAPI position) {
-        return position.getX() + (position.getWidth() - WIDTH) / 2f;
+    private static float left(PositionAPI canvasPosition) {
+        return canvasPosition.getX() + (canvasPosition.getWidth() - WIDTH) / 2f;
     }
 
-    private static float bottom(PositionAPI position) {
-        return position.getY() + position.getHeight() - TOP_MARGIN - HEIGHT;
+    private static float bottom(PositionAPI canvasPosition) {
+        return canvasPosition.getY() + canvasPosition.getHeight() - TOP_MARGIN - HEIGHT;
     }
 }

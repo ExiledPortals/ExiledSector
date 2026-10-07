@@ -38,69 +38,69 @@ final class SkillTreeTemplateListOverlay {
     private static final Color META_COLOR = new Color(170, 170, 170);
     private static final Color CONFIRM_COLOR = SkillTreePanelStyle.NEGATIVE_STAT_COLOR;
 
-    private final ModalFrame frame = new ModalFrame(SkillTreeTemplateListOverlay.class);
-    private final SkillTreePanelStyle style;
-    private final Map<HullSize, SkillTreeUiButton> chips = new EnumMap<>(HullSize.class);
-    private final SkillTreeUiButton clear = new SkillTreeUiButton(Translation.text("ui.template.list.clear"));
-    private final SkillTreeUiButton close = new SkillTreeUiButton(Translation.text("ui.template.list.close"));
-    private final List<RowSlot> slots = new ArrayList<>();
+    private final ModalFrame modalFrame = new ModalFrame(SkillTreeTemplateListOverlay.class);
+    private final SkillTreePanelStyle panelStyle;
+    private final Map<HullSize, SkillTreeUiButton> hullSizeChips = new EnumMap<>(HullSize.class);
+    private final SkillTreeUiButton clearButton = new SkillTreeUiButton(Translation.text("ui.template.list.clear"));
+    private final SkillTreeUiButton closeButton = new SkillTreeUiButton(Translation.text("ui.template.list.close"));
+    private final List<RowSlot> rowSlots = new ArrayList<>();
     private final DeleteConfirmation deleteConfirmation = new DeleteConfirmation();
     private final String deleteText = Translation.text("ui.template.list.delete");
     private final String confirmText = Translation.text("ui.template.list.confirmDelete");
     private final String emptyRootText = Translation.text("ui.template.list.empty");
     private final String noMatchText = Translation.text("ui.template.list.noMatch");
-    private final ReusableText title = new ReusableText(SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE,
+    private final ReusableText titleLine = new ReusableText(SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE,
             SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
     private final ReusableText emptyLine = new ReusableText(FONT_SIZE, META_COLOR);
 
-    private boolean open;
-    private TemplateListState state;
-    private String assignedId;
-    private ScreenRect box = ScreenRect.NONE;
+    private boolean overlayOpen;
+    private TemplateListState templateListState;
+    private String assignedTemplateId;
+    private ScreenRect overlayBox = ScreenRect.NONE;
     private ScreenRect listArea = ScreenRect.NONE;
     private int visibleRows;
 
-    SkillTreeTemplateListOverlay(SkillTreePanelStyle style) {
-        this.style = style;
+    SkillTreeTemplateListOverlay(SkillTreePanelStyle panelStyle) {
+        this.panelStyle = panelStyle;
         for (HullSize hullSize : TemplateFilter.FILTERABLE) {
-            chips.put(hullSize, new SkillTreeUiButton(Translation.text("hullSize." + hullSize.name())));
+            hullSizeChips.put(hullSize, new SkillTreeUiButton(Translation.text("hullSize." + hullSize.name())));
         }
     }
 
-    void open(String rootNodeId, String rootName, HullSize currentHullSize, Collection<SkillTreeTemplate> templates, String assignedId) {
-        this.state = new TemplateListState(templates, rootNodeId, currentHullSize);
-        this.assignedId = assignedId;
-        this.open = true;
-        frame.open();
+    void open(String rootNodeId, String rootName, HullSize currentHullSize, Collection<SkillTreeTemplate> templates, String assignedTemplateId) {
+        this.templateListState = new TemplateListState(templates, rootNodeId, currentHullSize);
+        this.assignedTemplateId = assignedTemplateId;
+        this.overlayOpen = true;
+        modalFrame.open();
         deleteConfirmation.disarm();
-        for (RowSlot slot : slots) {
+        for (RowSlot slot : rowSlots) {
             slot.unbind();
         }
-        title.set(Translation.msg("ui.template.list.title").arg("root", rootName).text());
+        titleLine.set(Translation.msg("ui.template.list.title").arg("root", rootName).text());
     }
 
-    void setTemplates(Collection<SkillTreeTemplate> templates, String assignedId) {
-        this.assignedId = assignedId;
-        state.setTemplates(templates);
-        for (RowSlot slot : slots) {
+    void setTemplates(Collection<SkillTreeTemplate> templates, String assignedTemplateId) {
+        this.assignedTemplateId = assignedTemplateId;
+        templateListState.setTemplates(templates);
+        for (RowSlot slot : rowSlots) {
             slot.unbind();
         }
     }
 
     void close() {
-        open = false;
-        frame.close();
-        box = ScreenRect.NONE;
+        overlayOpen = false;
+        modalFrame.close();
+        overlayBox = ScreenRect.NONE;
         listArea = ScreenRect.NONE;
         deleteConfirmation.disarm();
     }
 
     boolean isOpen() {
-        return open;
+        return overlayOpen;
     }
 
     void toggle(HullSize hullSize) {
-        state.toggle(hullSize);
+        templateListState.toggle(hullSize);
         deleteConfirmation.disarm();
     }
 
@@ -110,160 +110,160 @@ final class SkillTreeTemplateListOverlay {
 
     void scroll(int rows, float x, float y) {
         if (listArea.contains(x, y)) {
-            state.scroll(rows, visibleRows);
+            templateListState.scroll(rows, visibleRows);
         }
     }
 
     void advance(float amount) {
-        frame.advance(amount);
+        modalFrame.advance(amount);
         deleteConfirmation.advance(amount);
     }
 
     TemplateAction actionAt(float x, float y) {
-        if (!box.contains(x, y)) {
+        if (!overlayBox.contains(x, y)) {
             return TemplateAction.of(TemplateAction.Kind.CLOSE);
         }
-        for (Map.Entry<HullSize, SkillTreeUiButton> chip : chips.entrySet()) {
+        for (Map.Entry<HullSize, SkillTreeUiButton> chip : hullSizeChips.entrySet()) {
             if (chip.getValue().isClickable(x, y)) {
                 return TemplateAction.forHullSize(chip.getKey());
             }
         }
-        for (RowSlot slot : slots) {
+        for (RowSlot slot : rowSlots) {
             if (slot.template == null) {
                 continue;
             }
-            if (slot.delete.isClickable(x, y)) {
+            if (slot.deleteButton.isClickable(x, y)) {
                 return TemplateAction.forTemplate(TemplateAction.Kind.DELETE, slot.template.id());
             }
-            if (slot.bounds.contains(x, y)) {
+            if (slot.rowBounds.contains(x, y)) {
                 return TemplateAction.forTemplate(TemplateAction.Kind.SELECT, slot.template.id());
             }
         }
-        if (clear.isClickable(x, y)) {
+        if (clearButton.isClickable(x, y)) {
             return TemplateAction.of(TemplateAction.Kind.CLEAR);
         }
-        if (close.isClickable(x, y)) {
+        if (closeButton.isClickable(x, y)) {
             return TemplateAction.of(TemplateAction.Kind.CLOSE);
         }
         return TemplateAction.NONE;
     }
 
-    void render(PositionAPI position, float mouseX, float mouseY, float alphaMult) {
-        float width = Math.min(MAX_WIDTH, position.getWidth() - SIDE_CLEARANCE * 2f);
-        float height = Math.min(MAX_HEIGHT, position.getHeight() - VERTICAL_CLEARANCE * 2f);
-        ScreenRect drawn = frame.render(position, width, height, style.getAccentColor(), alphaMult,
+    void render(PositionAPI canvasPosition, float mouseX, float mouseY, float alphaMult) {
+        float overlayWidth = Math.min(MAX_WIDTH, canvasPosition.getWidth() - SIDE_CLEARANCE * 2f);
+        float overlayHeight = Math.min(MAX_HEIGHT, canvasPosition.getHeight() - VERTICAL_CLEARANCE * 2f);
+        ScreenRect drawnBox = modalFrame.render(canvasPosition, overlayWidth, overlayHeight, panelStyle.getAccentColor(), alphaMult,
                 (frameBox, frameAlpha) -> renderContent(frameBox.left(), frameBox.bottom(), frameBox.width(), frameBox.height(),
                         mouseX, mouseY, frameAlpha));
-        if (open && drawn != null) {
-            box = drawn;
+        if (overlayOpen && drawnBox != null) {
+            overlayBox = drawnBox;
         }
     }
 
-    private void renderContent(float left, float bottom, float width, float height, float mouseX, float mouseY, float alphaMult) {
+    private void renderContent(float overlayLeft, float overlayBottom, float overlayWidth, float overlayHeight, float mouseX, float mouseY, float alphaMult) {
         LazyFont font = SkillTreePanelStyle.font();
 
-        float top = bottom + height - PADDING;
-        title.draw(left + PADDING, top);
-        top -= SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE + 12f;
-        float chipBottom = top - CHIP_HEIGHT;
-        float chipLeft = left + PADDING;
-        for (Map.Entry<HullSize, SkillTreeUiButton> chip : chips.entrySet()) {
+        float cursorTop = overlayBottom + overlayHeight - PADDING;
+        titleLine.draw(overlayLeft + PADDING, cursorTop);
+        cursorTop -= SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE + 12f;
+        float chipBottom = cursorTop - CHIP_HEIGHT;
+        float chipLeft = overlayLeft + PADDING;
+        for (Map.Entry<HullSize, SkillTreeUiButton> chip : hullSizeChips.entrySet()) {
             SkillTreeUiButton button = chip.getValue();
             float chipWidth = button.preferredWidth();
             button.place(chipLeft, chipBottom, chipWidth, CHIP_HEIGHT);
-            button.setSelected(state.isSelected(chip.getKey()));
-            button.setTextColor(state.isSelected(chip.getKey()) ? null : META_COLOR);
+            button.setSelected(templateListState.isSelected(chip.getKey()));
+            button.setTextColor(templateListState.isSelected(chip.getKey()) ? null : META_COLOR);
             button.render(mouseX, mouseY, alphaMult);
             chipLeft += chipWidth + CHIP_GAP;
         }
 
-        float footerBottom = bottom + PADDING;
-        clear.place(left + PADDING, footerBottom, FOOTER_BUTTON_WIDTH, FOOTER_HEIGHT);
-        clear.setEnabled(assignedId != null);
-        close.place(left + width - PADDING - FOOTER_BUTTON_WIDTH, footerBottom, FOOTER_BUTTON_WIDTH, FOOTER_HEIGHT);
-        clear.render(mouseX, mouseY, alphaMult);
-        close.render(mouseX, mouseY, alphaMult);
+        float footerBottom = overlayBottom + PADDING;
+        clearButton.place(overlayLeft + PADDING, footerBottom, FOOTER_BUTTON_WIDTH, FOOTER_HEIGHT);
+        clearButton.setEnabled(assignedTemplateId != null);
+        closeButton.place(overlayLeft + overlayWidth - PADDING - FOOTER_BUTTON_WIDTH, footerBottom, FOOTER_BUTTON_WIDTH, FOOTER_HEIGHT);
+        clearButton.render(mouseX, mouseY, alphaMult);
+        closeButton.render(mouseX, mouseY, alphaMult);
 
         float listTop = chipBottom - 12f;
         float listBottom = footerBottom + FOOTER_HEIGHT + 12f;
-        listArea = new ScreenRect(left + PADDING, listBottom, width - PADDING * 2f, Math.max(0f, listTop - listBottom));
+        listArea = new ScreenRect(overlayLeft + PADDING, listBottom, overlayWidth - PADDING * 2f, Math.max(0f, listTop - listBottom));
         visibleRows = Math.max(0, (int) ((listTop - listBottom + ROW_GAP) / (ROW_HEIGHT + ROW_GAP)));
         renderRows(font, mouseX, mouseY, alphaMult, listTop);
     }
 
     private void renderRows(LazyFont font, float mouseX, float mouseY, float alphaMult, float listTop) {
-        List<SkillTreeTemplate> window = state.window(visibleRows);
-        while (slots.size() < window.size()) {
-            slots.add(new RowSlot());
+        List<SkillTreeTemplate> visibleTemplates = templateListState.window(visibleRows);
+        while (rowSlots.size() < visibleTemplates.size()) {
+            rowSlots.add(new RowSlot());
         }
-        for (int i = 0; i < slots.size(); i++) {
-            RowSlot slot = slots.get(i);
-            if (i >= window.size() || font == null) {
+        for (int i = 0; i < rowSlots.size(); i++) {
+            RowSlot slot = rowSlots.get(i);
+            if (i >= visibleTemplates.size() || font == null) {
                 slot.unbind();
                 continue;
             }
             float rowBottom = listTop - (i + 1) * ROW_HEIGHT - i * ROW_GAP;
-            slot.bind(font, window.get(i), listArea.width() - DELETE_WIDTH - 24f);
+            slot.bind(font, visibleTemplates.get(i), listArea.width() - DELETE_WIDTH - 24f);
             slot.render(listArea.left(), rowBottom, listArea.width(), mouseX, mouseY, alphaMult);
         }
-        if (window.isEmpty()) {
-            emptyLine.set(state.hasAnyForRoot() ? noMatchText : emptyRootText).draw(listArea.left(), listTop - 8f);
+        if (visibleTemplates.isEmpty()) {
+            emptyLine.set(templateListState.hasAnyForRoot() ? noMatchText : emptyRootText).draw(listArea.left(), listTop - 8f);
         }
     }
 
     private final class RowSlot {
 
-        private final SkillTreeUiButton delete = new SkillTreeUiButton(deleteText);
+        private final SkillTreeUiButton deleteButton = new SkillTreeUiButton(deleteText);
         private SkillTreeTemplate template;
         private boolean boundArmed;
         private boolean boundAssigned;
-        private final ReusableText name = new ReusableText(FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
-        private final ReusableText meta = new ReusableText(FONT_SIZE, META_COLOR);
-        private ScreenRect bounds = ScreenRect.NONE;
+        private final ReusableText nameLine = new ReusableText(FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
+        private final ReusableText metaLine = new ReusableText(FONT_SIZE, META_COLOR);
+        private ScreenRect rowBounds = ScreenRect.NONE;
 
-        void bind(LazyFont font, SkillTreeTemplate value, float textWidth) {
-            boolean armed = deleteConfirmation.isArmed(value.id());
-            boolean assigned = value.id().equals(assignedId);
-            if (value.equals(template) && armed == boundArmed && assigned == boundAssigned) {
+        void bind(LazyFont font, SkillTreeTemplate rowTemplate, float textWidth) {
+            boolean armed = deleteConfirmation.isArmed(rowTemplate.id());
+            boolean assigned = rowTemplate.id().equals(assignedTemplateId);
+            if (rowTemplate.equals(template) && armed == boundArmed && assigned == boundAssigned) {
                 return;
             }
-            template = value;
+            template = rowTemplate;
             boundArmed = armed;
             boundAssigned = assigned;
-            meta.set(metaText(value, assigned)).setColor(assigned ? SkillTreePanelStyle.POSITIVE_STAT_COLOR : META_COLOR);
-            float nameWidth = textWidth - meta.width() - META_GAP;
-            String fittedName = SkillTreeTextField.fitStart(value.name(), nameWidth, text -> font.calcWidth(text, FONT_SIZE));
-            name.set(fittedName);
-            delete.setLabel(armed ? confirmText : deleteText);
-            delete.setTextColor(armed ? CONFIRM_COLOR : null);
+            metaLine.set(metaText(rowTemplate, assigned)).setColor(assigned ? SkillTreePanelStyle.POSITIVE_STAT_COLOR : META_COLOR);
+            float nameWidth = textWidth - metaLine.width() - META_GAP;
+            String fittedName = SkillTreeTextField.fitStart(rowTemplate.name(), nameWidth, text -> font.calcWidth(text, FONT_SIZE));
+            nameLine.set(fittedName);
+            deleteButton.setLabel(armed ? confirmText : deleteText);
+            deleteButton.setTextColor(armed ? CONFIRM_COLOR : null);
         }
 
         void unbind() {
             template = null;
-            bounds = ScreenRect.NONE;
-            delete.hide();
+            rowBounds = ScreenRect.NONE;
+            deleteButton.hide();
         }
 
-        void render(float left, float bottom, float width, float mouseX, float mouseY, float alphaMult) {
-            bounds = new ScreenRect(left, bottom, width - DELETE_WIDTH - 8f, ROW_HEIGHT);
-            float fill = bounds.contains(mouseX, mouseY) ? ROW_HOVER_ALPHA : ROW_FILL_ALPHA;
-            GLDraw.fillQuad(left, bottom, width, ROW_HEIGHT, SkillTreePanelStyle.GLOW_COLOR, fill * alphaMult);
+        void render(float rowLeft, float rowBottom, float rowWidth, float mouseX, float mouseY, float alphaMult) {
+            rowBounds = new ScreenRect(rowLeft, rowBottom, rowWidth - DELETE_WIDTH - 8f, ROW_HEIGHT);
+            float fillAlpha = rowBounds.contains(mouseX, mouseY) ? ROW_HOVER_ALPHA : ROW_FILL_ALPHA;
+            GLDraw.fillQuad(rowLeft, rowBottom, rowWidth, ROW_HEIGHT, SkillTreePanelStyle.GLOW_COLOR, fillAlpha * alphaMult);
             if (boundAssigned) {
-                GLDraw.strokeQuad(left, bottom, width, ROW_HEIGHT, style.getAccentColor(), 1.5f, alphaMult);
+                GLDraw.strokeQuad(rowLeft, rowBottom, rowWidth, ROW_HEIGHT, panelStyle.getAccentColor(), 1.5f, alphaMult);
             }
-            float textY = bottom + ROW_HEIGHT / 2f + FONT_SIZE / 2f;
-            name.draw(left + 12f, textY);
-            meta.draw(left + width - DELETE_WIDTH - 12f - meta.width(), textY);
-            delete.place(left + width - DELETE_WIDTH, bottom + 4f, DELETE_WIDTH, ROW_HEIGHT - 8f);
-            delete.render(mouseX, mouseY, alphaMult);
+            float textY = rowBottom + ROW_HEIGHT / 2f + FONT_SIZE / 2f;
+            nameLine.draw(rowLeft + 12f, textY);
+            metaLine.draw(rowLeft + rowWidth - DELETE_WIDTH - 12f - metaLine.width(), textY);
+            deleteButton.place(rowLeft + rowWidth - DELETE_WIDTH, rowBottom + 4f, DELETE_WIDTH, ROW_HEIGHT - 8f);
+            deleteButton.render(mouseX, mouseY, alphaMult);
         }
 
-        private String metaText(SkillTreeTemplate value, boolean assigned) {
+        private String metaText(SkillTreeTemplate rowTemplate, boolean assigned) {
             List<StyledText> parts = new ArrayList<>();
-            if (TemplateFilter.isFilterable(value.hullSize())) {
-                parts.add(Translation.styled("hullSize." + value.hullSize().name()));
+            if (TemplateFilter.isFilterable(rowTemplate.hullSize())) {
+                parts.add(Translation.styled("hullSize." + rowTemplate.hullSize().name()));
             }
-            parts.add(Translation.msg("ui.template.list.nodes").count(value.knownStepCount()).styled());
+            parts.add(Translation.msg("ui.template.list.nodes").count(rowTemplate.knownStepCount()).styled());
             if (assigned) {
                 parts.add(Translation.styled("ui.template.list.inUse"));
             }

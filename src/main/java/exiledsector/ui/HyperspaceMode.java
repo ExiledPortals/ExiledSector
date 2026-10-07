@@ -19,43 +19,43 @@ final class HyperspaceMode {
     private static final float RETURN_ZOOM = 0.35f;
     private static final float STAR_SCALE = 1.5f;
 
-    private final TreeCamera camera;
+    private final TreeCamera treeCamera;
     private final SkillTreeStatPanel statPanel;
-    private final HyperspaceTransition transition = new HyperspaceTransition();
-    private final HyperspaceLabels labels = new HyperspaceLabels();
-    private final HyperspaceGhostFlights ghosts = new HyperspaceGhostFlights(new Random());
+    private final HyperspaceTransition hyperspaceTransition = new HyperspaceTransition();
+    private final HyperspaceLabels anchorLabels = new HyperspaceLabels();
+    private final HyperspaceGhostFlights ghostFlights = new HyperspaceGhostFlights(new Random());
     private List<HyperspaceAnchor> anchors = List.of();
     private Set<String> anchorIds = Set.of();
-    private float starRadius;
+    private float mapStarRadius;
     private boolean reopenStats;
 
-    HyperspaceMode(TreeCamera camera, SkillTreeStatPanel statPanel) {
-        this.camera = camera;
+    HyperspaceMode(TreeCamera treeCamera, SkillTreeStatPanel statPanel) {
+        this.treeCamera = treeCamera;
         this.statPanel = statPanel;
     }
 
     boolean isActive() {
-        return transition.isActive();
+        return hyperspaceTransition.isActive();
     }
 
     boolean isOnMap() {
-        return transition.isOnMap();
+        return hyperspaceTransition.isOnMap();
     }
 
     float treeAlpha() {
-        return transition.isActive() ? transition.treeAlpha() : 1f;
+        return hyperspaceTransition.isActive() ? hyperspaceTransition.treeAlpha() : 1f;
     }
 
     float chromeAlpha() {
-        return transition.isActive() ? transition.chromeAlpha() : 1f;
+        return hyperspaceTransition.isActive() ? hyperspaceTransition.chromeAlpha() : 1f;
     }
 
     float mapAmount() {
-        return transition.isActive() ? transition.mapAmount() : 0f;
+        return hyperspaceTransition.isActive() ? hyperspaceTransition.mapAmount() : 0f;
     }
 
     float starRadius() {
-        return starRadius;
+        return mapStarRadius;
     }
 
     Set<String> anchorIds() {
@@ -63,23 +63,23 @@ final class HyperspaceMode {
     }
 
     void advance(float amount) {
-        if (transition.isActive() && !transition.isOnMap()) {
-            transition.advance(amount);
-            camera.jumpTo(transition.camera());
+        if (hyperspaceTransition.isActive() && !hyperspaceTransition.isOnMap()) {
+            hyperspaceTransition.advance(amount);
+            treeCamera.jumpTo(hyperspaceTransition.camera());
         }
-        if (transition.isActive()) {
-            ghosts.advance(amount);
+        if (hyperspaceTransition.isActive()) {
+            ghostFlights.advance(amount);
         }
     }
 
     void reopenStatsWhenBack() {
-        if (reopenStats && (!transition.isActive() || (transition.isLeaving() && transition.chromeAlpha() >= 1f))) {
+        if (reopenStats && (!hyperspaceTransition.isActive() || (hyperspaceTransition.isLeaving() && hyperspaceTransition.chromeAlpha() >= 1f))) {
             reopenStats = false;
             statPanel.open(false);
         }
     }
 
-    boolean enter(PositionAPI position) {
+    boolean enter(PositionAPI canvasPosition) {
         anchors = HyperspaceAnchor.collect(SkillTree.getStars(), SkillTree.getStaticImages());
         if (anchors.isEmpty()) {
             return false;
@@ -89,44 +89,44 @@ final class HyperspaceMode {
             ids.add(anchor.id());
         }
         anchorIds = ids;
-        ghosts.setRoutes(HyperspaceRoute.between(anchors, SkillTree.topology().wormholePairs()));
-        camera.stopMoving();
-        starRadius = HyperspaceAnchor.mapStarRadius(anchors, STAR_SCALE);
-        HyperspaceCamera fit = HyperspaceCamera.fit(anchors, starRadius, position.getWidth(), position.getHeight(), MARGIN,
+        ghostFlights.setRoutes(HyperspaceRoute.between(anchors, SkillTree.topology().wormholePairs()));
+        treeCamera.stopMoving();
+        mapStarRadius = HyperspaceAnchor.mapStarRadius(anchors, STAR_SCALE);
+        HyperspaceCamera fittedCamera = HyperspaceCamera.fit(anchors, mapStarRadius, canvasPosition.getWidth(), canvasPosition.getHeight(), MARGIN,
                 HyperspaceLabels.LABEL_SPACE);
-        HyperspaceCamera map = new HyperspaceCamera(fit.x(), fit.y(), Math.min(fit.zoom(), camera.zoom()));
-        transition.enter(camera.current(), map);
+        HyperspaceCamera mapCamera = new HyperspaceCamera(fittedCamera.x(), fittedCamera.y(), Math.min(fittedCamera.zoom(), treeCamera.zoom()));
+        hyperspaceTransition.enter(treeCamera.current(), mapCamera);
         SkillTreeSounds.hyperspaceOut();
         reopenStats = reopenStats || statPanel.isOpen();
         statPanel.close();
         return true;
     }
 
-    void handleEvent(InputEventAPI event, PositionAPI position, boolean overOverlay) {
-        boolean inside = position.containsEvent(event);
+    void handleEvent(InputEventAPI event, PositionAPI canvasPosition, boolean overOverlay) {
+        boolean inside = canvasPosition.containsEvent(event);
         if (event.isLMBDownEvent() && inside && overOverlay) {
             event.consume();
         } else if (event.isLMBDownEvent() && inside) {
-            if (transition.isOnMap()) {
-                HyperspaceAnchor clicked = labels.anchorAt(camera.viewport(position), anchors, starRadius, 1f, event.getX(), event.getY());
+            if (hyperspaceTransition.isOnMap()) {
+                HyperspaceAnchor clicked = anchorLabels.anchorAt(treeCamera.viewport(canvasPosition), anchors, mapStarRadius, 1f, event.getX(), event.getY());
                 if (clicked != null) {
-                    transition.leaveTo(camera.current(), new HyperspaceCamera(clicked.x(), clicked.y(), RETURN_ZOOM));
+                    hyperspaceTransition.leaveTo(treeCamera.current(), new HyperspaceCamera(clicked.x(), clicked.y(), RETURN_ZOOM));
                     SkillTreeSounds.hyperspaceIn();
                 } else {
-                    camera.startDrag();
+                    treeCamera.startDrag();
                 }
             }
             event.consume();
-        } else if (event.isLMBUpEvent() && camera.isDragging()) {
-            camera.stopDrag();
+        } else if (event.isLMBUpEvent() && treeCamera.isDragging()) {
+            treeCamera.stopDrag();
             event.consume();
         } else if (event.isMouseScrollEvent() && inside) {
-            if (transition.isOnMap() && event.getEventValue() > 0) {
-                camera.stopDrag();
-                TreeViewport viewport = camera.viewport(position);
-                float worldX = (event.getX() - viewport.centerX()) / camera.zoom();
-                float worldY = (viewport.centerY() - event.getY()) / camera.zoom();
-                transition.zoomInAbout(camera.current(), worldX, worldY, SmoothZoom.MIN_ZOOM);
+            if (hyperspaceTransition.isOnMap() && event.getEventValue() > 0) {
+                treeCamera.stopDrag();
+                TreeViewport viewport = treeCamera.viewport(canvasPosition);
+                float worldX = (event.getX() - viewport.centerX()) / treeCamera.zoom();
+                float worldY = (viewport.centerY() - event.getY()) / treeCamera.zoom();
+                hyperspaceTransition.zoomInAbout(treeCamera.current(), worldX, worldY, SmoothZoom.MIN_ZOOM);
                 SkillTreeSounds.hyperspaceIn();
             }
             event.consume();
@@ -134,9 +134,9 @@ final class HyperspaceMode {
     }
 
     void render(TreeViewport viewport, float alphaMult, boolean hoverable, float mouseX, float mouseY) {
-        HyperspaceAnchor hovered = transition.isOnMap() && hoverable
-                ? labels.anchorAt(viewport, anchors, starRadius, transition.mapAmount(), mouseX, mouseY) : null;
-        ghosts.draw(viewport, alphaMult * transition.labelAlpha());
-        labels.render(viewport, anchors, starRadius, transition.mapAmount(), hovered, alphaMult * transition.labelAlpha());
+        HyperspaceAnchor hovered = hyperspaceTransition.isOnMap() && hoverable
+                ? anchorLabels.anchorAt(viewport, anchors, mapStarRadius, hyperspaceTransition.mapAmount(), mouseX, mouseY) : null;
+        ghostFlights.draw(viewport, alphaMult * hyperspaceTransition.labelAlpha());
+        anchorLabels.render(viewport, anchors, mapStarRadius, hyperspaceTransition.mapAmount(), hovered, alphaMult * hyperspaceTransition.labelAlpha());
     }
 }

@@ -21,9 +21,9 @@ final class SkillTreeTextField {
     private final int maxLength;
     private final float fontSize;
     private final Color textColor;
-    private final ReusableText display;
+    private final ReusableText displayLine;
 
-    private String text = "";
+    private String enteredText = "";
     private boolean focused;
     private float caretSeconds;
     private String fittedText;
@@ -37,15 +37,15 @@ final class SkillTreeTextField {
         this.maxLength = maxLength;
         this.fontSize = fontSize;
         this.textColor = textColor;
-        this.display = new ReusableText(fontSize, textColor);
+        this.displayLine = new ReusableText(fontSize, textColor);
     }
 
     String text() {
-        return text;
+        return enteredText;
     }
 
     void setText(String value) {
-        text = value == null ? "" : value;
+        enteredText = value == null ? "" : value;
     }
 
     void focus(boolean value) {
@@ -63,10 +63,10 @@ final class SkillTreeTextField {
         caretSeconds = 0f;
         int keyCode = event.getEventValue();
         if (keyCode == Keyboard.KEY_BACK) {
-            if (text.isEmpty()) {
+            if (enteredText.isEmpty()) {
                 return KeyResult.CONSUMED;
             }
-            text = withoutLastCodePoint(text);
+            enteredText = withoutLastCodePoint(enteredText);
             return KeyResult.EDITED;
         }
         if (keyCode == Keyboard.KEY_ESCAPE) {
@@ -76,8 +76,8 @@ final class SkillTreeTextField {
             return KeyResult.SUBMIT;
         }
         char character = event.getEventChar();
-        if (!Character.isISOControl(character) && text.length() < maxLength) {
-            text = text + character;
+        if (!Character.isISOControl(character) && enteredText.length() < maxLength) {
+            enteredText = enteredText + character;
             return KeyResult.EDITED;
         }
         return KeyResult.CONSUMED;
@@ -92,14 +92,14 @@ final class SkillTreeTextField {
         if (font == null) {
             return;
         }
-        display.set(displayText(font, width, placeholder));
-        display.setColor(text.isEmpty() && !focused ? PLACEHOLDER_COLOR : textColor);
-        display.setAlpha(alphaMult);
-        display.draw(x, bottom + height / 2f + fontSize / 2f);
+        displayLine.set(displayText(font, width, placeholder));
+        displayLine.setColor(enteredText.isEmpty() && !focused ? PLACEHOLDER_COLOR : textColor);
+        displayLine.setAlpha(alphaMult);
+        displayLine.draw(x, bottom + height / 2f + fontSize / 2f);
     }
 
     private String displayText(LazyFont font, float width, String placeholder) {
-        boolean stale = !text.equals(fittedText) || focused != fittedFocused || width != fittedWidth
+        boolean stale = !enteredText.equals(fittedText) || focused != fittedFocused || width != fittedWidth
                 || !placeholder.equals(fittedPlaceholder);
         if (stale) {
             refit(width, placeholder, value -> font.calcWidth(value, fontSize));
@@ -109,16 +109,16 @@ final class SkillTreeTextField {
     }
 
     private void refit(float width, String placeholder, ToDoubleFunction<String> widthOf) {
-        fittedText = text;
+        fittedText = enteredText;
         fittedFocused = focused;
         fittedWidth = width;
         fittedPlaceholder = placeholder;
         if (!focused) {
-            fittedWithoutCaret = text.isEmpty() ? fitStart(placeholder, width, widthOf) : fitEnd(text, width, widthOf);
+            fittedWithoutCaret = enteredText.isEmpty() ? fitStart(placeholder, width, widthOf) : fitEnd(enteredText, width, widthOf);
             fittedWithCaret = fittedWithoutCaret;
             return;
         }
-        fittedWithCaret = fitEnd(text + CARET, width, widthOf);
+        fittedWithCaret = fitEnd(enteredText + CARET, width, widthOf);
         fittedWithoutCaret = fittedWithCaret.endsWith(CARET)
                 ? fittedWithCaret.substring(0, fittedWithCaret.length() - CARET.length()) : fittedWithCaret;
     }

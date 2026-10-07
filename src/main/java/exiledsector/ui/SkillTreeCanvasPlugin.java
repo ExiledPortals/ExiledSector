@@ -51,19 +51,19 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final SkillTreeReadoutBar ordnancePointsBar = new SkillTreeReadoutBar(SkillTreeCanvasPlugin.class, 0);
     private final SkillTreeLevelBar levelBar;
     private final SkillTreeInfoTooltipRenderer readoutTooltipRenderer;
-    private final NodeSearch search = new NodeSearch();
+    private final NodeSearch nodeSearch = new NodeSearch();
     private final SkillTreeSearchBar searchBar;
     private final SkillTreeTemplateController templateUi;
     private final BorderedPanel shipCardPanel = new BorderedPanel(SkillTreeCanvasPlugin.class);
     private final TreeCamera camera = new TreeCamera();
-    private final HyperspaceMode hyperspace;
-    private final SocketPlacement placement;
-    private final OverlayHitTest overlay;
+    private final HyperspaceMode hyperspaceMode;
+    private final SocketPlacement socketPlacement;
+    private final OverlayHitTest overlayHitTest;
     private final float shipCardHeight;
     private UIComponentAPI shipCard;
     private boolean shipCardHidden;
 
-    private PositionAPI position;
+    private PositionAPI canvasPosition;
     private float mouseX = 0f;
     private float mouseY = 0f;
     private boolean mouseKnown = false;
@@ -72,33 +72,33 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private boolean pendingClickShiftDown;
     private SkillType pendingDropdownOption;
     private boolean swallowEscapeUp;
-    private float workbenchDim;
+    private float workbenchDimProgress;
     private boolean reopenStatsAfterWorkbench;
 
     public SkillTreeCanvasPlugin(FleetMemberAPI member, ShipVariantAPI variant, float shipCardHeight, BaseRefitButton refitButton,
-                                 CustomPanelAPI host) {
+                                 CustomPanelAPI hostPanel) {
         if (SkillTreeInstaller.ensureInstalled(member, variant) && refitButton != null) {
             refitButton.refreshVariant();
         }
         OpReserveParity.warnIfOutOfSync(member, variant, "before the skill tree re-synced it");
         OpReserveHullMods.sync(member, variant);
         SocketCustody.reconcile();
-        SkillTreePanelStyle style = new SkillTreePanelStyle();
-        this.starfieldRenderer = new SkillTreeStarfieldRenderer(style);
+        SkillTreePanelStyle panelStyle = new SkillTreePanelStyle();
+        this.starfieldRenderer = new SkillTreeStarfieldRenderer(panelStyle);
         this.staticImageRenderer = new SkillTreeStaticImageRenderer();
         this.ringBeltRenderer = new SkillTreeRingBeltRenderer();
         this.starRenderer = new SkillTreeStarRenderer();
-        this.nodeRenderer = new SkillTreeNodeRenderer(member, variant, style, refitButton, search);
-        this.searchBar = new SkillTreeSearchBar(search);
-        this.templateUi = new SkillTreeTemplateController(member, nodeRenderer, style);
+        this.nodeRenderer = new SkillTreeNodeRenderer(member, variant, panelStyle, refitButton, nodeSearch);
+        this.searchBar = new SkillTreeSearchBar(nodeSearch);
+        this.templateUi = new SkillTreeTemplateController(member, nodeRenderer, panelStyle);
         this.statPanel = new SkillTreeStatPanel(member);
         this.levelBar = new SkillTreeLevelBar(member, 1);
-        this.readoutTooltipRenderer = new SkillTreeInfoTooltipRenderer(style);
+        this.readoutTooltipRenderer = new SkillTreeInfoTooltipRenderer(panelStyle);
         this.readoutTooltipBody = buildReadoutTooltipBody(member);
         this.shipCardHeight = shipCardHeight;
-        this.hyperspace = new HyperspaceMode(camera, statPanel);
-        this.placement = new SocketPlacement(host, nodeRenderer, search, searchBar);
-        this.overlay = new OverlayHitTest(statPanel, ordnancePointsBar, levelBar, templateUi, placement, nodeRenderer, hyperspace);
+        this.hyperspaceMode = new HyperspaceMode(camera, statPanel);
+        this.socketPlacement = new SocketPlacement(hostPanel, nodeRenderer, nodeSearch, searchBar);
+        this.overlayHitTest = new OverlayHitTest(statPanel, ordnancePointsBar, levelBar, templateUi, socketPlacement, nodeRenderer, hyperspaceMode);
 
         SkillNode startingRoot = nodeRenderer.getStartingRoot();
         if (startingRoot != null) {
@@ -107,14 +107,14 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     @Override
-    public void positionChanged(PositionAPI position) {
-        this.position = position;
+    public void positionChanged(PositionAPI canvasPosition) {
+        this.canvasPosition = canvasPosition;
     }
 
     @Override
     public void advance(float amount) {
         camera.advanceZoom(amount);
-        hyperspace.advance(amount);
+        hyperspaceMode.advance(amount);
         camera.advancePan(amount);
         searchBar.advance(amount);
         starfieldRenderer.advance(amount);
@@ -125,38 +125,38 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         camera.beginStartingRootFollow(nodeRenderer);
         nodeRenderer.advance(amount);
         camera.applyStartingRootFollow(nodeRenderer, followingStartingRoot);
-        templateUi.advance(amount, position, hyperspace.isActive());
-        placement.layoutButton(position, shipCardFrame(), isStorageButtonShown());
-        placement.advance(templateUi.isModalOpen() || hyperspace.isActive() || nodeRenderer.isStartingRootInputLocked());
+        templateUi.advance(amount, canvasPosition, hyperspaceMode.isActive());
+        socketPlacement.layoutButton(canvasPosition, shipCardFrame(), isStorageButtonShown());
+        socketPlacement.advance(templateUi.isModalOpen() || hyperspaceMode.isActive() || nodeRenderer.isStartingRootInputLocked());
         ShipOpBudget budget = nodeRenderer.budget();
-        boolean pointerLive = mouseKnown && !isModalOpen() && !placement.isWorkbenchOpen();
+        boolean pointerLive = mouseKnown && !isModalOpen() && !socketPlacement.isWorkbenchOpen();
         hideShipCardBehindModals();
         statPanel.refresh(budget, nodeRenderer.statsRevision());
-        hyperspace.reopenStatsWhenBack();
+        hyperspaceMode.reopenStatsWhenBack();
         hideStatsForWorkbench();
         statPanel.advance(amount);
-        ordnancePointsBar.advance(amount, position, budget.used, budget.total, mouseX, mouseY, pointerLive);
-        levelBar.advance(amount, position, mouseX, mouseY, pointerLive);
+        ordnancePointsBar.advance(amount, canvasPosition, budget.used, budget.total, mouseX, mouseY, pointerLive);
+        levelBar.advance(amount, canvasPosition, mouseX, mouseY, pointerLive);
         float dimStep = amount / WORKBENCH_DIM_SECONDS;
-        workbenchDim = Math.max(0f, Math.min(1f, workbenchDim + (placement.isWorkbenchOpen() ? dimStep : -dimStep)));
+        workbenchDimProgress = Math.max(0f, Math.min(1f, workbenchDimProgress + (socketPlacement.isWorkbenchOpen() ? dimStep : -dimStep)));
     }
 
     private void hideStatsForWorkbench() {
-        if (placement.isWorkbenchOpen()) {
+        if (socketPlacement.isWorkbenchOpen()) {
             if (statPanel.isOpen()) {
                 reopenStatsAfterWorkbench = true;
                 statPanel.close();
             }
         } else if (reopenStatsAfterWorkbench) {
             reopenStatsAfterWorkbench = false;
-            if (!hyperspace.isActive()) {
+            if (!hyperspaceMode.isActive()) {
                 statPanel.open(false);
             }
         }
     }
 
     private void enterHyperspace() {
-        if (!hyperspace.enter(position)) {
+        if (!hyperspaceMode.enter(canvasPosition)) {
             return;
         }
         pendingClickNode = null;
@@ -167,7 +167,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     @Override
     public void processInput(List<InputEventAPI> events) {
-        if (position == null) return;
+        if (canvasPosition == null) return;
 
         for (InputEventAPI event : events) {
             if (!event.isConsumed()) {
@@ -178,7 +178,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     private void handleEvent(InputEventAPI event) {
         boolean escapeUp = event.isKeyUpEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE;
-        if (escapeUp && (swallowEscapeUp || placement.isEngaged())) {
+        if (escapeUp && (swallowEscapeUp || socketPlacement.isEngaged())) {
             swallowEscapeUp = false;
             event.consume();
         } else if (!templateUi.isModalOpen() && TooltipExpansion.isToggle(event)) {
@@ -188,9 +188,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             handleStartingRootEvent(event);
         } else if (templateUi.isModalOpen()) {
             handleModalEvent(event);
-        } else if (placement.isWorkbenchOpen()) {
+        } else if (socketPlacement.isWorkbenchOpen()) {
             handleWorkbenchEvent(event);
-        } else if (hyperspace.isActive()) {
+        } else if (hyperspaceMode.isActive()) {
             handleHyperspaceEvent(event);
         } else {
             handleTreeEvent(event);
@@ -203,12 +203,12 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             mouseY = event.getY();
             mouseKnown = true;
         } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
-            placement.escape();
+            socketPlacement.escape();
             consume(event);
-        } else if (event.isLMBDownEvent() && placement.isButtonClickable(event.getX(), event.getY())) {
-            placement.toggle(position, shipCardFrame());
+        } else if (event.isLMBDownEvent() && socketPlacement.isButtonClickable(event.getX(), event.getY())) {
+            socketPlacement.toggle(canvasPosition, shipCardFrame());
             consume(event);
-        } else if ((event.isMouseDownEvent() || event.isMouseScrollEvent()) && position.containsEvent(event)) {
+        } else if ((event.isMouseDownEvent() || event.isMouseScrollEvent()) && canvasPosition.containsEvent(event)) {
             consume(event);
         }
     }
@@ -217,7 +217,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         if (event.isMouseMoveEvent()) {
             handleMouseMove(event);
         } else {
-            hyperspace.handleEvent(event, position, event.isLMBDownEvent() && isOverOverlay(event.getX(), event.getY()));
+            hyperspaceMode.handleEvent(event, canvasPosition, event.isLMBDownEvent() && isOverOverlay(event.getX(), event.getY()));
         }
     }
 
@@ -232,8 +232,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             nodeRenderer.cancelAutoAllocate();
         } else if (nodeRenderer.isRespeccing() && interruptsAutoAllocate(event)) {
             nodeRenderer.cancelRespec();
-        } else if (placement.isEngaged() && event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
-            placement.escape();
+        } else if (socketPlacement.isEngaged() && event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
+            socketPlacement.escape();
         } else {
             return false;
         }
@@ -242,15 +242,15 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void handlePointerOrKey(InputEventAPI event) {
-        if (event.isRMBDownEvent() && position.containsEvent(event) && emptySocketAt(event.getX(), event.getY())) {
+        if (event.isRMBDownEvent() && canvasPosition.containsEvent(event) && emptySocketAt(event.getX(), event.getY())) {
             event.consume();
-        } else if (event.isLMBDownEvent() && position.containsEvent(event)) {
+        } else if (event.isLMBDownEvent() && canvasPosition.containsEvent(event)) {
             handleLmbDown(event);
         } else if (event.isLMBUpEvent()) {
             handleLmbUp(event);
         } else if (event.isMouseMoveEvent()) {
             handleMouseMove(event);
-        } else if (event.isMouseScrollEvent() && position.containsEvent(event)) {
+        } else if (event.isMouseScrollEvent() && canvasPosition.containsEvent(event)) {
             handleMouseScroll(event);
         } else if (event.isKeyboardEvent() && searchBar.handleKey(event)) {
             consume(event);
@@ -265,7 +265,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private boolean interruptsAutoAllocate(InputEventAPI event) {
-        return (event.isLMBDownEvent() && position.containsEvent(event))
+        return (event.isLMBDownEvent() && canvasPosition.containsEvent(event))
                 || (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE);
     }
 
@@ -287,7 +287,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private boolean emptySocketAt(float x, float y) {
-        return !isOverOverlay(x, y) && placement.emptySocket(nodeRenderer.findNodeAt(viewport(), x, y));
+        return !isOverOverlay(x, y) && socketPlacement.emptySocket(nodeRenderer.findNodeAt(viewport(), x, y));
     }
 
     void setShipCard(UIComponentAPI component) {
@@ -308,13 +308,13 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private boolean isStorageButtonShown() {
-        return !nodeRenderer.isStartingRootInputLocked() && (!hyperspace.isActive() || hyperspace.chromeAlpha() > 0f);
+        return !nodeRenderer.isStartingRootInputLocked() && (!hyperspaceMode.isActive() || hyperspaceMode.chromeAlpha() > 0f);
     }
 
     private void handleStartingRootEvent(InputEventAPI event) {
         if (event.isMouseMoveEvent()) {
             handleMouseMove(event);
-        } else if (event.isLMBDownEvent() && position.containsEvent(event)) {
+        } else if (event.isLMBDownEvent() && canvasPosition.containsEvent(event)) {
             pendingClickNode = isOverOverlay(event.getX(), event.getY())
                     ? null : nodeRenderer.findNodeAt(viewport(), event.getX(), event.getY());
             pendingClickCtrlDown = false;
@@ -324,18 +324,18 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             nodeRenderer.chooseStartingRoot(pendingClickNode);
             pendingClickNode = null;
             event.consume();
-        } else if (event.isMouseScrollEvent() && position.containsEvent(event)) {
+        } else if (event.isMouseScrollEvent() && canvasPosition.containsEvent(event)) {
             event.consume();
         }
     }
 
     private void handleLmbDown(InputEventAPI event) {
-        if (searchBar.handleClick(position, event.getX(), event.getY())) {
+        if (searchBar.handleClick(canvasPosition, event.getX(), event.getY())) {
             event.consume();
             return;
         }
-        if (placement.isButtonClickable(event.getX(), event.getY())) {
-            placement.toggle(position, shipCardFrame());
+        if (socketPlacement.isButtonClickable(event.getX(), event.getY())) {
+            socketPlacement.toggle(canvasPosition, shipCardFrame());
             event.consume();
             return;
         }
@@ -396,14 +396,14 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     private void clickNode(SkillNode node, boolean ctrlDown, boolean shiftDown) {
         SkillNode jumpTarget = nodeRenderer.wormholeJumpTarget(node, ctrlDown);
-        if (placement.placeInto(node)) {
+        if (socketPlacement.placeInto(node)) {
             return;
         }
         if (ctrlDown && shiftDown && nodeRenderer.isAllocated(node)) {
             nodeRenderer.startRespec(node);
             return;
         }
-        if (placement.handleSocketClick(node, ctrlDown, position, shipCardFrame())) {
+        if (socketPlacement.handleSocketClick(node, ctrlDown, canvasPosition, shipCardFrame())) {
             return;
         }
         if (jumpTarget != null) {
@@ -425,46 +425,46 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void handleMouseScroll(InputEventAPI event) {
-        boolean in = event.getEventValue() > 0;
-        if (!in && camera.isSettledAtMinimum() && !camera.isPanning()
+        boolean scrollingIn = event.getEventValue() > 0;
+        if (!scrollingIn && camera.isSettledAtMinimum() && !camera.isPanning()
                 && !nodeRenderer.isAutoAllocating() && !nodeRenderer.isRespeccing()) {
             enterHyperspace();
         } else {
-            camera.scroll(in, in ? event.getX() - (position.getX() + position.getWidth() / 2f) : 0f,
-                    in ? event.getY() - (position.getY() + position.getHeight() / 2f) : 0f);
+            camera.scroll(scrollingIn, scrollingIn ? event.getX() - (canvasPosition.getX() + canvasPosition.getWidth() / 2f) : 0f,
+                    scrollingIn ? event.getY() - (canvasPosition.getY() + canvasPosition.getHeight() / 2f) : 0f);
         }
         event.consume();
     }
 
     @Override
     public void render(float alphaMult) {
-        if (position == null) return;
+        if (canvasPosition == null) return;
 
         TreeViewport viewport = viewport();
 
-        boolean inHyperspace = hyperspace.isActive();
-        float treeAlpha = hyperspace.treeAlpha();
-        float searchDim = search.backgroundAlpha() + (1f - search.backgroundAlpha()) * (1f - treeAlpha);
+        boolean inHyperspace = hyperspaceMode.isActive();
+        float treeAlpha = hyperspaceMode.treeAlpha();
+        float searchDim = nodeSearch.backgroundAlpha() + (1f - nodeSearch.backgroundAlpha()) * (1f - treeAlpha);
         float backgroundAlpha = alphaMult * searchDim * nodeRenderer.treeAlpha();
-        starRenderer.setMapRadius(hyperspace.starRadius(), hyperspace.mapAmount());
-        starfieldRenderer.render(position, camera.panX(), camera.panY(), backgroundAlpha);
+        starRenderer.setMapRadius(hyperspaceMode.starRadius(), hyperspaceMode.mapAmount());
+        starfieldRenderer.render(canvasPosition, camera.panX(), camera.panY(), backgroundAlpha);
         starRenderer.renderDisc(viewport, backgroundAlpha);
         starRenderer.renderAtmosphere(viewport, backgroundAlpha);
         starRenderer.renderAurora(viewport, backgroundAlpha);
         ringBeltRenderer.render(viewport, backgroundAlpha * treeAlpha);
-        staticImageRenderer.render(viewport, backgroundAlpha, hyperspace.anchorIds(), treeAlpha);
+        staticImageRenderer.render(viewport, backgroundAlpha, hyperspaceMode.anchorIds(), treeAlpha);
         boolean pointerOverTree = mouseKnown && !isOverOverlay(mouseX, mouseY);
-        boolean treeHovered = !inHyperspace && pointerOverTree && !isModalOpen() && !placement.isWorkbenchOpen();
+        boolean treeHovered = !inHyperspace && pointerOverTree && !isModalOpen() && !socketPlacement.isWorkbenchOpen();
         if (treeAlpha > 0f) {
             nodeRenderer.render(viewport, alphaMult * treeAlpha, mouseX, mouseY, treeHovered);
         }
         starRenderer.renderGlow(viewport, backgroundAlpha);
-        if (workbenchDim > 0f) {
-            GLDraw.fillQuad(position.getX(), position.getY(), position.getWidth(), position.getHeight(), Color.BLACK,
-                    WORKBENCH_DIM_ALPHA * workbenchDim * alphaMult);
+        if (workbenchDimProgress > 0f) {
+            GLDraw.fillQuad(canvasPosition.getX(), canvasPosition.getY(), canvasPosition.getWidth(), canvasPosition.getHeight(), Color.BLACK,
+                    WORKBENCH_DIM_ALPHA * workbenchDimProgress * alphaMult);
         }
         if (inHyperspace) {
-            hyperspace.render(viewport, alphaMult, pointerOverTree, mouseX, mouseY);
+            hyperspaceMode.render(viewport, alphaMult, pointerOverTree, mouseX, mouseY);
         }
         renderChrome(alphaMult, treeAlpha);
         if (!camera.isDragging() && mouseKnown && !isModalOpen()) {
@@ -473,32 +473,32 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             }
             renderChromeTooltips(alphaMult, inHyperspace);
         }
-        templateUi.renderModals(position, mouseX, mouseY, alphaMult);
+        templateUi.renderModals(canvasPosition, mouseX, mouseY, alphaMult);
     }
 
     private void renderChrome(float alphaMult, float treeAlpha) {
-        float chromeAlpha = hyperspace.chromeAlpha();
-        statPanel.render(position, mouseX, mouseY, alphaMult, chromeAlpha * (1f - workbenchDim));
-        ordnancePointsBar.render(position, alphaMult, null);
-        levelBar.render(position, alphaMult);
+        float chromeAlpha = hyperspaceMode.chromeAlpha();
+        statPanel.render(canvasPosition, mouseX, mouseY, alphaMult, chromeAlpha * (1f - workbenchDimProgress));
+        ordnancePointsBar.render(canvasPosition, alphaMult, null);
+        levelBar.render(canvasPosition, alphaMult);
         if (!nodeRenderer.isStartingRootInputLocked() && treeAlpha > 0f) {
-            searchBar.render(position, alphaMult * treeAlpha);
+            searchBar.render(canvasPosition, alphaMult * treeAlpha);
         }
         if (chromeAlpha > 0f) {
-            templateUi.renderBar(position, mouseX, mouseY, alphaMult * chromeAlpha);
+            templateUi.renderBar(canvasPosition, mouseX, mouseY, alphaMult * chromeAlpha);
         }
-        placement.renderButton(mouseX, mouseY, alphaMult * chromeAlpha);
+        socketPlacement.renderButton(mouseX, mouseY, alphaMult * chromeAlpha);
         drawShipCardFrame(alphaMult);
     }
 
     private void renderChromeTooltips(float alphaMult, boolean inHyperspace) {
-        if (placement.isWorkbenchOpen()) {
+        if (socketPlacement.isWorkbenchOpen()) {
             return;
         }
-        if (ordnancePointsBar.isHovered(position, mouseX, mouseY) || levelBar.isHovered(position, mouseX, mouseY)) {
+        if (ordnancePointsBar.isHovered(canvasPosition, mouseX, mouseY) || levelBar.isHovered(canvasPosition, mouseX, mouseY)) {
             readoutTooltipRenderer.render(readoutTooltipTitle, readoutTooltipBody, mouseX, mouseY, alphaMult);
         }
-        if (!inHyperspace && placement.buttonContains(mouseX, mouseY)) {
+        if (!inHyperspace && socketPlacement.buttonContains(mouseX, mouseY)) {
             readoutTooltipRenderer.render(Translation.text("ui.socketStorage.title"), Translation.text("ui.socketStorage.hint"),
                     mouseX, mouseY, alphaMult);
         }
@@ -531,17 +531,17 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private ScreenRect shipCardFrame() {
-        return new ScreenRect(position.getX() + SkillTreeRefitButton.SHIP_CARD_MARGIN - SHIP_CARD_FRAME_OUTSET,
-                position.getY() + SkillTreeRefitButton.SHIP_CARD_MARGIN - SHIP_CARD_FRAME_OUTSET,
+        return new ScreenRect(canvasPosition.getX() + SkillTreeRefitButton.SHIP_CARD_MARGIN - SHIP_CARD_FRAME_OUTSET,
+                canvasPosition.getY() + SkillTreeRefitButton.SHIP_CARD_MARGIN - SHIP_CARD_FRAME_OUTSET,
                 SkillTreeRefitButton.SHIP_CARD_ICON_SIZE + SHIP_CARD_FRAME_OUTSET * 2f,
                 shipCardHeight + SHIP_CARD_FRAME_OUTSET * 2f);
     }
 
     private boolean isOverOverlay(float x, float y) {
-        return overlay.contains(position, shipCardFrame(), x, y);
+        return overlayHitTest.contains(canvasPosition, shipCardFrame(), x, y);
     }
 
     private TreeViewport viewport() {
-        return camera.viewport(position);
+        return camera.viewport(canvasPosition);
     }
 }

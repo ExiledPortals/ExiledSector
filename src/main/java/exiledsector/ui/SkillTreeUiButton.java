@@ -18,30 +18,30 @@ final class SkillTreeUiButton {
     private static final float FADE_SECONDS = 0.2f;
     private static final float MAX_FADE_STEP_SECONDS = 0.1f;
 
-    private final BorderedPanel panel = new BorderedPanel(SkillTreeUiButton.class);
-    private final ReusableText text = new ReusableText(FONT_SIZE, TEXT_COLOR);
+    private final BorderedPanel borderPanel = new BorderedPanel(SkillTreeUiButton.class);
+    private final ReusableText labelText = new ReusableText(FONT_SIZE, TEXT_COLOR);
     private Color textColor = TEXT_COLOR;
-    private ScreenRect bounds = ScreenRect.NONE;
-    private boolean enabled = true;
-    private boolean selected;
-    private boolean shown;
-    private float fade;
+    private ScreenRect buttonBounds = ScreenRect.NONE;
+    private boolean buttonEnabled = true;
+    private boolean buttonSelected;
+    private boolean buttonShown;
+    private float fadeAlpha;
     private long lastFadeNanos;
 
     SkillTreeUiButton(String label) {
-        text.set(label);
+        labelText.set(label);
     }
 
     void setLabel(String value) {
-        text.set(value);
+        labelText.set(value);
     }
 
     void setEnabled(boolean value) {
-        enabled = value;
+        buttonEnabled = value;
     }
 
     void setSelected(boolean value) {
-        selected = value;
+        buttonSelected = value;
     }
 
     void setTextColor(Color value) {
@@ -49,54 +49,54 @@ final class SkillTreeUiButton {
     }
 
     float preferredWidth() {
-        return text.width() + PADDING_X * 2f;
+        return labelText.width() + PADDING_X * 2f;
     }
 
     void place(float left, float bottom, float width, float height) {
-        bounds = new ScreenRect(left, bottom, width, height);
-        shown = true;
+        buttonBounds = new ScreenRect(left, bottom, width, height);
+        buttonShown = true;
     }
 
     void hide() {
-        shown = false;
-        if (fade <= 0f) {
-            bounds = ScreenRect.NONE;
+        buttonShown = false;
+        if (fadeAlpha <= 0f) {
+            buttonBounds = ScreenRect.NONE;
         }
     }
 
     boolean contains(float x, float y) {
-        return shown && bounds.contains(x, y);
+        return buttonShown && buttonBounds.contains(x, y);
     }
 
     boolean isClickable(float x, float y) {
-        return enabled && shown && bounds.contains(x, y);
+        return buttonEnabled && buttonShown && buttonBounds.contains(x, y);
     }
 
     void render(float mouseX, float mouseY, float alphaMult) {
-        if (bounds == ScreenRect.NONE) {
+        if (buttonBounds == ScreenRect.NONE) {
             return;
         }
         advanceFade();
-        if (!shown && fade <= 0f) {
-            bounds = ScreenRect.NONE;
+        if (!buttonShown && fadeAlpha <= 0f) {
+            buttonBounds = ScreenRect.NONE;
             return;
         }
-        alphaMult *= fade;
-        panel.draw(bounds.left(), bounds.bottom(), bounds.width(), bounds.height(), alphaMult);
+        alphaMult *= fadeAlpha;
+        borderPanel.draw(buttonBounds.left(), buttonBounds.bottom(), buttonBounds.width(), buttonBounds.height(), alphaMult);
         float fillAlpha = 0f;
-        if (enabled && bounds.contains(mouseX, mouseY)) {
+        if (buttonEnabled && buttonBounds.contains(mouseX, mouseY)) {
             fillAlpha = HOVER_ALPHA;
-        } else if (selected) {
+        } else if (buttonSelected) {
             fillAlpha = SELECTED_ALPHA;
         }
         if (fillAlpha > 0f) {
-            GLDraw.fillQuad(bounds.left() + HOVER_INSET, bounds.bottom() + HOVER_INSET, bounds.width() - HOVER_INSET * 2f,
-                    bounds.height() - HOVER_INSET * 2f, SkillTreePanelStyle.GLOW_COLOR, fillAlpha * alphaMult);
+            GLDraw.fillQuad(buttonBounds.left() + HOVER_INSET, buttonBounds.bottom() + HOVER_INSET, buttonBounds.width() - HOVER_INSET * 2f,
+                    buttonBounds.height() - HOVER_INSET * 2f, SkillTreePanelStyle.GLOW_COLOR, fillAlpha * alphaMult);
         }
-        text.setColor(enabled ? textColor : DISABLED_COLOR);
-        text.setAlpha(alphaMult);
-        text.draw(bounds.left() + (bounds.width() - text.width()) / 2f,
-                bounds.bottom() + bounds.height() / 2f + FONT_SIZE / 2f);
+        labelText.setColor(buttonEnabled ? textColor : DISABLED_COLOR);
+        labelText.setAlpha(alphaMult);
+        labelText.draw(buttonBounds.left() + (buttonBounds.width() - labelText.width()) / 2f,
+                buttonBounds.bottom() + buttonBounds.height() / 2f + FONT_SIZE / 2f);
     }
 
     private void advanceFade() {
@@ -104,6 +104,6 @@ final class SkillTreeUiButton {
         float seconds = lastFadeNanos == 0L ? 0f : Math.min(MAX_FADE_STEP_SECONDS, (now - lastFadeNanos) / 1_000_000_000f);
         lastFadeNanos = now;
         float step = seconds / FADE_SECONDS;
-        fade = shown ? Math.min(1f, fade + step) : Math.max(0f, fade - step);
+        fadeAlpha = buttonShown ? Math.min(1f, fadeAlpha + step) : Math.max(0f, fadeAlpha - step);
     }
 }

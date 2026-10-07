@@ -59,26 +59,26 @@ public final class VanillaText {
 
     public static Prepared prepare(StyledText text, Function<Style, Color> palette) {
         String plain = text.plain();
-        StringBuilder out = new StringBuilder(plain.length() + text.spans().size() * 2);
+        StringBuilder preparedText = new StringBuilder(plain.length() + text.spans().size() * 2);
         List<String> highlights = new ArrayList<>();
         List<Color> colors = new ArrayList<>();
         int cursor = 0;
         for (StyledText.Span span : text.spans()) {
-            out.append(plain, cursor, span.start());
-            if (!out.isEmpty() && !isHighlightBoundary(out.charAt(out.length() - 1))) {
-                out.append(' ');
+            preparedText.append(plain, cursor, span.start());
+            if (!preparedText.isEmpty() && !isHighlightBoundary(preparedText.charAt(preparedText.length() - 1))) {
+                preparedText.append(' ');
             }
             String highlighted = plain.substring(span.start(), span.end());
-            out.append(highlighted);
+            preparedText.append(highlighted);
             highlights.add(highlighted);
             colors.add(palette.apply(span.style()));
             cursor = span.end();
             if (cursor < plain.length() && !isHighlightBoundary(plain.charAt(cursor))) {
-                out.append(' ');
+                preparedText.append(' ');
             }
         }
-        out.append(plain.substring(cursor));
-        return new Prepared(out.toString(), highlights.toArray(new String[0]), colors.toArray(new Color[0]));
+        preparedText.append(plain.substring(cursor));
+        return new Prepared(preparedText.toString(), highlights.toArray(new String[0]), colors.toArray(new Color[0]));
     }
 
     static boolean isHighlightBoundary(char c) {

@@ -18,21 +18,21 @@ final class SkillTreeTemplateController {
 
     private final FleetMemberAPI member;
     private final SkillTreeNodeRenderer nodeRenderer;
-    private final SkillTreeTemplateBar bar;
+    private final SkillTreeTemplateBar templateBar;
     private final SkillTreeTemplateNameDialog nameDialog = new SkillTreeTemplateNameDialog();
     private final SkillTreeTemplateListOverlay listOverlay;
 
-    private TemplateBarState state = TemplateBarState.HIDDEN;
+    private TemplateBarState barState = TemplateBarState.HIDDEN;
     private TemplateAction pendingAction;
 
     SkillTreeTemplateController(FleetMemberAPI member, SkillTreeNodeRenderer nodeRenderer, SkillTreePanelStyle style) {
         this.member = member;
         this.nodeRenderer = nodeRenderer;
-        this.bar = new SkillTreeTemplateBar(style);
+        this.templateBar = new SkillTreeTemplateBar(style);
         this.listOverlay = new SkillTreeTemplateListOverlay(style);
-        SkillNode root = nodeRenderer.getStartingRoot();
-        if (root != null) {
-            nodeRenderer.setTemplate(SkillTreeTemplateStore.assignedTo(member.getId(), root.getId()));
+        SkillNode startingRoot = nodeRenderer.getStartingRoot();
+        if (startingRoot != null) {
+            nodeRenderer.setTemplate(SkillTreeTemplateStore.assignedTo(member.getId(), startingRoot.getId()));
         }
     }
 
@@ -41,25 +41,25 @@ final class SkillTreeTemplateController {
     }
 
     boolean barContains(float x, float y) {
-        return bar.contains(x, y);
+        return templateBar.contains(x, y);
     }
 
-    void advance(float amount, PositionAPI position, boolean onHyperspaceMap) {
+    void advance(float amount, PositionAPI canvasPosition, boolean onHyperspaceMap) {
         SkillTreeTemplate template = nodeRenderer.template();
         boolean running = nodeRenderer.isAutoAllocating();
         boolean pointsLeft = template != null && nodeRenderer.hasPointsLeft();
-        state = TemplateBarState.of(nodeRenderer.getStartingRoot() != null, nodeRenderer.allocatedNodeCount(),
+        barState = TemplateBarState.of(nodeRenderer.getStartingRoot() != null, nodeRenderer.allocatedNodeCount(),
                 template != null, running, pointsLeft, onHyperspaceMap);
-        bar.update(state, template == null ? null : template.name());
+        templateBar.update(barState, template == null ? null : template.name());
         AutoAllocateRun.Summary summary = nodeRenderer.takeLastRunSummary();
         if (summary != null) {
-            bar.showResult(resultText(summary));
+            templateBar.showResult(resultText(summary));
         }
-        bar.advance(amount);
+        templateBar.advance(amount);
         nameDialog.advance(amount);
         listOverlay.advance(amount);
-        if (position != null) {
-            bar.layout(position);
+        if (canvasPosition != null) {
+            templateBar.layout(canvasPosition);
         }
     }
 
@@ -68,7 +68,7 @@ final class SkillTreeTemplateController {
             pendingAction = modalActionAt(x, y);
             return true;
         }
-        TemplateAction action = bar.actionAt(x, y);
+        TemplateAction action = templateBar.actionAt(x, y);
         if (action == null) {
             return false;
         }
@@ -82,7 +82,7 @@ final class SkillTreeTemplateController {
         }
         TemplateAction pressed = pendingAction;
         pendingAction = null;
-        TemplateAction released = isModalOpen() ? modalActionAt(x, y) : bar.actionAt(x, y);
+        TemplateAction released = isModalOpen() ? modalActionAt(x, y) : templateBar.actionAt(x, y);
         if (pressed.equals(released)) {
             perform(pressed);
         }
@@ -115,20 +115,20 @@ final class SkillTreeTemplateController {
         return isModalOpen();
     }
 
-    void renderBar(PositionAPI position, float mouseX, float mouseY, float alphaMult) {
+    void renderBar(PositionAPI canvasPosition, float mouseX, float mouseY, float alphaMult) {
         boolean modal = isModalOpen();
-        bar.render(position, modal ? OFF_SCREEN : mouseX, modal ? OFF_SCREEN : mouseY, alphaMult);
+        templateBar.render(canvasPosition, modal ? OFF_SCREEN : mouseX, modal ? OFF_SCREEN : mouseY, alphaMult);
     }
 
     void renderBarTooltip(float mouseX, float mouseY, float alphaMult) {
         if (!isModalOpen()) {
-            bar.renderTooltip(mouseX, mouseY, alphaMult);
+            templateBar.renderTooltip(mouseX, mouseY, alphaMult);
         }
     }
 
-    void renderModals(PositionAPI position, float mouseX, float mouseY, float alphaMult) {
-        nameDialog.render(position, mouseX, mouseY, alphaMult);
-        listOverlay.render(position, mouseX, mouseY, alphaMult);
+    void renderModals(PositionAPI canvasPosition, float mouseX, float mouseY, float alphaMult) {
+        nameDialog.render(canvasPosition, mouseX, mouseY, alphaMult);
+        listOverlay.render(canvasPosition, mouseX, mouseY, alphaMult);
     }
 
     private TemplateAction modalActionAt(float x, float y) {
@@ -136,16 +136,16 @@ final class SkillTreeTemplateController {
     }
 
     private void perform(TemplateAction action) {
-        SkillNode root = nodeRenderer.getStartingRoot();
+        SkillNode startingRoot = nodeRenderer.getStartingRoot();
         switch (action.kind()) {
-            case OPEN_SAVE -> openSaveDialog(root);
-            case OPEN_LOAD -> openList(root);
+            case OPEN_SAVE -> openSaveDialog(startingRoot);
+            case OPEN_LOAD -> openList(startingRoot);
             case AUTO_ALLOCATE -> {
-                if (state.autoEnabled()) {
+                if (barState.autoEnabled()) {
                     nodeRenderer.startAutoAllocate();
                 }
             }
-            case DIALOG_SAVE -> saveTemplate(root);
+            case DIALOG_SAVE -> saveTemplate(startingRoot);
             case DIALOG_CANCEL -> nameDialog.close();
             case SELECT -> selectTemplate(action.templateId());
             case DELETE -> deleteTemplate(action.templateId());
@@ -161,31 +161,31 @@ final class SkillTreeTemplateController {
         }
     }
 
-    private void openSaveDialog(SkillNode root) {
-        if (root == null || !state.saveEnabled()) {
+    private void openSaveDialog(SkillNode startingRoot) {
+        if (startingRoot == null || !barState.saveEnabled()) {
             return;
         }
         nodeRenderer.closeDropdown();
-        nameDialog.open(root.getId(), nodeRenderer.allocatedNodeCount() - 1, SkillTreeTemplateStore.all());
+        nameDialog.open(startingRoot.getId(), nodeRenderer.allocatedNodeCount() - 1, SkillTreeTemplateStore.all());
     }
 
-    private void openList(SkillNode root) {
-        if (root == null || !state.loadEnabled()) {
+    private void openList(SkillNode startingRoot) {
+        if (startingRoot == null || !barState.loadEnabled()) {
             return;
         }
         nodeRenderer.closeDropdown();
         SkillTreeSounds.panelOpened();
-        listOverlay.open(root.getId(), root.getType().getDisplayName(), hullSize(), SkillTreeTemplateStore.all(), assignedTemplateId());
+        listOverlay.open(startingRoot.getId(), startingRoot.getType().getDisplayName(), hullSize(), SkillTreeTemplateStore.all(), assignedTemplateId());
     }
 
-    private void saveTemplate(SkillNode root) {
-        if (root == null || !nameDialog.canSave()) {
+    private void saveTemplate(SkillNode startingRoot) {
+        if (startingRoot == null || !nameDialog.canSave()) {
             return;
         }
         String name = nameDialog.name();
-        SkillTreeTemplateStore.save(name, root.getId(), hullSize(), nodeRenderer.captureTemplateSteps());
+        SkillTreeTemplateStore.save(name, startingRoot.getId(), hullSize(), nodeRenderer.captureTemplateSteps());
         nameDialog.close();
-        bar.showResult(Translation.msg("ui.template.result.saved").arg("name", name).text());
+        templateBar.showResult(Translation.msg("ui.template.result.saved").arg("name", name).text());
     }
 
     private void selectTemplate(String templateId) {
