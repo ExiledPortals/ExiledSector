@@ -1,5 +1,6 @@
 package exiledsector.socketables;
 
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.i18n.StyledText;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -122,11 +123,18 @@ public abstract class Socketable {
     }
 
     public List<SkillTypeEffect> skillEffects() {
+        return skillEffects(null);
+    }
+
+    public List<SkillTypeEffect> skillEffects(HullSize hullSize) {
+        SocketableDefinition definition = definition();
         List<SkillTypeEffect> appliedEffects = new ArrayList<>(effects.size());
         for (RolledEffect effect : effects) {
             SkillEffect resolvedEffect = effect.effect();
             if (resolvedEffect != null) {
-                appliedEffects.add(new SkillTypeEffect(resolvedEffect, effect.magnitude()));
+                SocketableDefinition.PoolEntry rollRange = definition == null ? null : definition.rollRange(effect.effectName());
+                float magnitude = rollRange == null ? effect.magnitude() : rollRange.magnitudeFor(effect.magnitude(), hullSize);
+                appliedEffects.add(new SkillTypeEffect(resolvedEffect, magnitude));
             }
         }
         return appliedEffects;
@@ -137,10 +145,23 @@ public abstract class Socketable {
     }
 
     public List<StyledText> effectLines(boolean withRollRanges) {
-        SocketableDefinition definition = withRollRanges ? definition() : null;
+        return effectLines(withRollRanges, null);
+    }
+
+    public List<StyledText> effectLines(boolean withRollRanges, HullSize hullSize) {
+        SocketableDefinition definition = definition();
         List<StyledText> lines = new ArrayList<>();
         for (RolledEffect effect : effects) {
-            StyledText description = effect.description(definition == null ? null : definition.rollRange(effect.effectName()));
+            SocketableDefinition.PoolEntry rollRange = definition == null ? null : definition.rollRange(effect.effectName());
+            StyledText description;
+            if (rollRange == null) {
+                description = effect.description(null);
+            } else if (rollRange.scalesWithHullSize() && !rollRange.hasHullValueFor(hullSize)) {
+                description = effect.hullValuesDescription(rollRange.hullValues());
+            } else {
+                RolledEffect shownEffect = new RolledEffect(effect.effectName(), rollRange.magnitudeFor(effect.magnitude(), hullSize));
+                description = shownEffect.description(withRollRanges ? rollRange.rangeFor(hullSize) : null);
+            }
             if (description != null) {
                 lines.add(description);
             }

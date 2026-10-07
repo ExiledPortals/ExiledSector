@@ -36,7 +36,7 @@ public final class AllocatedSkillEffects {
         List<SkillTypeEffect> applied = appliedEffects(data, allocated.effectiveType(), hullSize);
         Socketable socketed = SocketableStore.lookup(data.getSocketedItem(allocated.node().getId()));
         if (socketed != null && socketed.canSocketInto(allocated.node())) {
-            for (SkillTypeEffect effect : socketed.skillEffects()) {
+            for (SkillTypeEffect effect : socketed.skillEffects(hullSize)) {
                 if (!data.isNpcBuild() || effect.effect().appliesToNpcShips()) {
                     applied.add(effect);
                 }

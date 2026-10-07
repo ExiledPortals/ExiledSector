@@ -554,6 +554,7 @@
     max-height: 80vh; overflow-y: auto;
   }
   .modal.wide { width: min(900px, 95vw); }
+  .modal.wide.socketableEditorModal { width: min(1800px, 98vw); }
   .modal h3 { margin: 0; font-size: 14px; }
   .modalBtns { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
   .imageBrowserLayout { display: flex; gap: 14px; align-items: flex-start; }
@@ -3451,6 +3452,7 @@ var SOCKETABLE_AFFIX_GROUPS = [
 ];
 function isSocketableAffixColumn(column){ return column === 'prefixes' || column === 'suffixes'; }
 var SOCKETABLE_KINDS = ['subroutine', 'officer', 'team', 'ai_core'];
+var SOCKETABLE_HULL_SIZE_LABELS = ['Frigate', 'Destroyer', 'Cruiser', 'Capital'];
 var SOCKETABLE_UNLOCKS = [['', 'None'], ['found_onslaught_mk1', 'Found the Onslaught Mk.I in the Abyss'], ['found_gate_hauler', 'Found the Gate Hauler'], ['found_planetkiller', 'Recovered the first Planetkiller'], ['defeated_ziggurat', 'Defeated the Ziggurat at Alpha Site']];
 
 function parseCsv(text){
@@ -3479,6 +3481,11 @@ function csvField(value){
 function parseSocketablePool(text){
   return String(text || '').split(';').map(function(entry){ return entry.trim(); }).filter(Boolean).map(function(entry){
     var parts = entry.split(':');
+    if ((parts[1] || '').indexOf('/') !== -1) {
+      var hullValues = parts[1].split('/').map(function(value){ return parseFloat(value) || 0; });
+      return { effect: (parts[0] || '').trim(), min: hullValues[0], max: hullValues[0], hullValues: hullValues,
+        weight: parts.length > 2 ? (parseFloat(parts[2]) || 0) : 1 };
+    }
     return { effect: (parts[0] || '').trim(), min: parseFloat(parts[1]) || 0, max: parseFloat(parts[2]) || 0,
       weight: parts.length > 3 ? (parseFloat(parts[3]) || 0) : 1 };
   });
@@ -3486,7 +3493,8 @@ function parseSocketablePool(text){
 
 function formatSocketablePool(pool){
   return pool.map(function(e){
-    return e.effect + ':' + e.min + ':' + e.max + (e.weight === 1 ? '' : ':' + e.weight);
+    var values = e.hullValues ? e.hullValues.join('/') : e.min + ':' + e.max;
+    return e.effect + ':' + values + (e.weight === 1 ? '' : ':' + e.weight);
   }).join('; ');
 }
 
@@ -3538,6 +3546,7 @@ function validateSocketables(defs){
       poolEffects[e.effect] = true;
       if (EFFECT_NAMES.indexOf(e.effect) === -1) issues.push(label + ': unknown effect ' + e.effect);
       if (!(e.weight > 0)) issues.push(label + ': ' + e.effect + ' needs a weight above zero');
+      if (e.hullValues && e.hullValues.length !== SOCKETABLE_HULL_SIZE_LABELS.length) issues.push(label + ': ' + e.effect + ' needs exactly four hull size values');
     });
   });
   return issues;
@@ -3575,7 +3584,7 @@ function openDataModal(options){
 
   modal.render = function(contentHtml, extraButtonsHtml){
     root.innerHTML =
-      '<div class="modalOverlay"><div class="modal wide">' +
+      '<div class="modalOverlay"><div class="modal wide' + (options.modalClass ? ' ' + options.modalClass : '') + '">' +
       '<h3>' + options.title + '</h3>' +
       contentHtml +
       '<div class="modalBtns">' +
@@ -3626,7 +3635,7 @@ function openDataModal(options){
 
 function openSocketableEditorModal(){
   var defs = [], extraColumns = [], selectedIndex = -1;
-  var modal = openDataModal({ title: 'Socketable Editor', noun: 'socketable', loadingText: 'Loading socketables...', load: load, save: save });
+  var modal = openDataModal({ title: 'Socketable Editor', noun: 'socketable', modalClass: 'socketableEditorModal', loadingText: 'Loading socketables...', load: load, save: save });
   var markDirty = modal.markDirty;
 
   function load(){
@@ -3701,8 +3710,15 @@ function openSocketableEditorModal(){
         return '<div class="fieldRow" style="align-items:flex-end">' +
           '<div class="field" style="flex:3"><label>Effect ' + (i + 1) + '</label>' + effectFilterHtml(selectId) +
             '<select id="' + selectId + '" data-pool-field="effect"' + at + '>' + socketableEffectOptionsHtml(e.effect) + '</select></div>' +
-          '<div class="field" style="flex:1"><label>Min</label><input type="number" step="0.5" value="' + e.min + '" data-pool-field="min"' + at + '></div>' +
-          '<div class="field" style="flex:1"><label>Max</label><input type="number" step="0.5" value="' + e.max + '" data-pool-field="max"' + at + '></div>' +
+          '<div class="field" style="flex:0 0 auto"><label title="Fixed values per hull size (frigate/destroyer/cruiser/capital) instead of a rolled range">Per hull size</label>' +
+            '<input type="checkbox" data-pool-hull-toggle' + at + (e.hullValues ? ' checked' : '') + '></div>' +
+          (e.hullValues
+            ? SOCKETABLE_HULL_SIZE_LABELS.map(function(label, hullIndex){
+                return '<div class="field" style="flex:1"><label>' + label + '</label><input type="number" step="any" value="' + e.hullValues[hullIndex] +
+                  '" data-pool-hull-index="' + hullIndex + '"' + at + '></div>';
+              }).join('')
+            : '<div class="field" style="flex:2"><label>Min</label><input type="number" step="any" value="' + e.min + '" data-pool-field="min"' + at + '></div>' +
+              '<div class="field" style="flex:2"><label>Max</label><input type="number" step="any" value="' + e.max + '" data-pool-field="max"' + at + '></div>') +
           '<div class="field" style="flex:1"><label title="How often this effect is picked compared with the others in this group">Rarity weight ' +
             '<span class="hint" data-pool-share="' + i + '" data-pool-group="' + group + '"></span></label>' +
             '<input type="number" step="0.5" min="0" value="' + e.weight + '" data-pool-field="weight"' + at + '></div>' +
@@ -3775,6 +3791,29 @@ function openSocketableEditorModal(){
       };
       el.addEventListener('input', update);
       el.addEventListener('change', update);
+    });
+    detail.querySelectorAll('[data-pool-hull-index]').forEach(function(el){
+      var update = function(){
+        var entry = def[el.dataset.poolGroup][parseInt(el.dataset.poolIndex, 10)];
+        entry.hullValues[parseInt(el.dataset.poolHullIndex, 10)] = parseFloat(el.value) || 0;
+        entry.min = entry.max = entry.hullValues[0];
+        markDirty();
+      };
+      el.addEventListener('input', update);
+      el.addEventListener('change', update);
+    });
+    detail.querySelectorAll('[data-pool-hull-toggle]').forEach(function(el){
+      el.addEventListener('change', function(){
+        var entry = def[el.dataset.poolGroup][parseInt(el.dataset.poolIndex, 10)];
+        if (el.checked) {
+          entry.hullValues = SOCKETABLE_HULL_SIZE_LABELS.map(function(){ return entry.min; });
+        } else {
+          entry.min = entry.max = entry.hullValues[0];
+          delete entry.hullValues;
+        }
+        markDirty();
+        renderDetail();
+      });
     });
     function updatePoolShares(){
       detail.querySelectorAll('[data-pool-share]').forEach(function(span){

@@ -137,7 +137,7 @@ final class SkillTreeNodeTooltipRenderer {
             return new NodeDescription(List.of(plainLine("ui.node.lockedBody"), plainLine("ui.node.lockedHint")), List.of());
         }
         if (socketed != null) {
-            List<DescriptionLine> lines = socketed.effectLines(expanded).stream().map(line -> new DescriptionLine(line, false)).toList();
+            List<DescriptionLine> lines = socketed.effectLines(expanded, fleetMember.getHullSpec().getHullSize()).stream().map(line -> new DescriptionLine(line, false)).toList();
             return new NodeDescription(lines, List.of());
         }
         List<DescriptionLine> effects = new ArrayList<>();
