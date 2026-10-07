@@ -20,7 +20,7 @@ import exiledsector.skills.SkillTree;
 import exiledsector.skills.npc.NpcFactionVolumes;
 import exiledsector.socketables.SocketLossListener;
 import exiledsector.socketables.SocketableDefinitions;
-import exiledsector.socketables.SocketableKind;
+import exiledsector.socketables.SocketType;
 import exiledsector.socketables.SocketableNames;
 import exiledsector.ui.SkillTreeRefitButton;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
@@ -303,7 +303,7 @@ class ExiledSectorModPluginTest {
     void onApplicationLoadLoadsTheSocketableDefinitionsMergedAcrossMods() throws Exception {
         new ExiledSectorModPlugin().onApplicationLoad();
 
-        assertEquals(SocketableKind.SUBROUTINE, SocketableDefinitions.get("chip").kind());
+        assertEquals(SocketType.SUBROUTINE, SocketableDefinitions.get("chip").kind());
     }
 
     @Test

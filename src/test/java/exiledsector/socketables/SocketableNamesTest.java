@@ -42,7 +42,7 @@ class SocketableNamesTest {
                         .put("name", "Industrial-grade Domain Subroutine"))
                 .put(SocketableFixtures.row("domain_subroutine_consumer", "subroutine", "HULL_MULT:4:6")
                         .put("name", "Consumer-grade Domain Subroutine"))
-                .put(SocketableFixtures.row("relic", "ai_core", "HULL_MULT:4:6; ARMOR_PERCENT:6:9; FLUX_CAPACITY_MULT:4:6")
+                .put(SocketableFixtures.row("relic", "reactor", "HULL_MULT:4:6; ARMOR_PERCENT:6:9; FLUX_CAPACITY_MULT:4:6")
                         .put("name", "Omega Shard").put("unique", "TRUE")));
     }
 

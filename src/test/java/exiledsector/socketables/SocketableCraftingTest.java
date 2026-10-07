@@ -37,8 +37,8 @@ class SocketableCraftingTest {
         SocketableDefinitions.register(new JSONArray()
                 .put(SocketableFixtures.row(SocketableFixtures.MILITARY, "subroutine", SocketableFixtures.MILITARY_PREFIXES,
                         SocketableFixtures.MILITARY_SUFFIXES))
-                .put(SocketableFixtures.row("relic_a", "ai_core", "HULL_MULT:4:6; ARMOR_PERCENT:6:9").put("unique", "TRUE"))
-                .put(SocketableFixtures.row("relic_b", "team", "FLUX_CAPACITY_MULT:4:6").put("unique", "TRUE")));
+                .put(SocketableFixtures.row("relic_a", "reactor", "HULL_MULT:4:6; ARMOR_PERCENT:6:9").put("unique", "TRUE"))
+                .put(SocketableFixtures.row("relic_b", "crew_quarters", "FLUX_CAPACITY_MULT:4:6").put("unique", "TRUE")));
         SocketableNames.registerWords(new JSONObject().put(SocketableFixtures.MILITARY, new JSONObject().put("style", "codename")
                 .put("first", new JSONArray(List.of("Thule"))).put("second", new JSONArray(List.of("Doctrine")))));
     }
@@ -159,7 +159,7 @@ class SocketableCraftingTest {
 
         assertNotNull(replacement);
         assertEquals("relic_b", replacement.definitionId());
-        assertEquals(SocketableKind.TEAM, replacement.kind());
+        assertEquals(SocketType.CREW_QUARTERS, replacement.kind());
         assertEquals(unique.id(), replacement.id());
         assertEquals(List.of(first, replacement), store.owned());
         assertSame(replacement, store.find(unique.id()));

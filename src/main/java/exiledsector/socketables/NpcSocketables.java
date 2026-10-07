@@ -64,7 +64,8 @@ public final class NpcSocketables {
 
     public static SocketableDefinition pickDefinition(Random random, Predicate<SocketableDefinition> uniqueAllowed) {
         if (random.nextFloat() < UNIQUE_SHARE) {
-            SocketableDefinition uniqueDefinition = SocketableDrops.pickUnique(random, uniqueAllowed);
+            SocketableDefinition uniqueDefinition = SocketableDrops.pickUnique(random,
+                    definition -> definition.kind() == SocketType.SUBROUTINE && uniqueAllowed.test(definition));
             if (uniqueDefinition != null) {
                 return uniqueDefinition;
             }

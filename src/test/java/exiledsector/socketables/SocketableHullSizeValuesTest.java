@@ -53,7 +53,7 @@ class SocketableHullSizeValuesTest {
     @Test
     void eachHullSizeGetsItsOwnValueWhateverWasStored() throws Exception {
         SocketableDefinitions.register(new JSONArray().put(row("scaled", "subroutine", SCALED_POOL)));
-        Socketable socketable = SocketableKind.SUBROUTINE.create("socketable_1", "scaled", 1L,
+        Socketable socketable = new Socketable("socketable_1", "scaled", 1L,
                 List.of(new RolledEffect("ARMOR_FLAT", 3f), new RolledEffect("HULL_MULT", 5f)));
 
         assertEquals(List.of(5f, 5f), magnitudes(socketable.skillEffects(HullSize.FRIGATE)));
@@ -73,7 +73,7 @@ class SocketableHullSizeValuesTest {
     @Test
     void theGenericTooltipListsEveryHullSizeValueLikeVanilla() throws Exception {
         SocketableDefinitions.register(new JSONArray().put(row("scaled", "subroutine", SCALED_POOL)));
-        Socketable socketable = SocketableKind.SUBROUTINE.create("socketable_2", "scaled", 1L,
+        Socketable socketable = new Socketable("socketable_2", "scaled", 1L,
                 List.of(new RolledEffect("ARMOR_FLAT", 5f), new RolledEffect("HULL_MULT", 5f)));
 
         List<StyledText> lines = socketable.effectLines(true);
@@ -87,7 +87,7 @@ class SocketableHullSizeValuesTest {
     @Test
     void onAShipTheTooltipShowsOnlyThatHullSizesValueWithNoRange() throws Exception {
         SocketableDefinitions.register(new JSONArray().put(row("scaled", "subroutine", SCALED_POOL)));
-        Socketable socketable = SocketableKind.SUBROUTINE.create("socketable_3", "scaled", 1L, List.of(new RolledEffect("ARMOR_FLAT", 5f)));
+        Socketable socketable = new Socketable("socketable_3", "scaled", 1L, List.of(new RolledEffect("ARMOR_FLAT", 5f)));
 
         String expanded = socketable.effectLines(true, HullSize.CAPITAL_SHIP).get(0).plain();
 

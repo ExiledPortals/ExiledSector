@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.List;
 
 import static exiledsector.socketables.SocketableFixtures.MILITARY;
@@ -16,7 +17,6 @@ import static exiledsector.socketables.SocketableFixtures.MILITARY_SUFFIXES;
 import static exiledsector.socketables.SocketableFixtures.row;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -34,7 +34,7 @@ class SocketableDefinitionsTest {
     void aRowBecomesADefinitionWithItsPrefixesAndSuffixesInOrderAndRangesLowToHigh() throws Exception {
         SocketableDefinition definition = SocketableFixtures.registerMilitary();
 
-        assertEquals(SocketableKind.SUBROUTINE, definition.kind());
+        assertEquals(SocketType.SUBROUTINE, definition.kind());
         assertEquals(20f, definition.rarity());
         assertEquals(List.of("FLUX_CAPACITY_MULT", "FLUX_DISSIPATION_MULT", "BEAM_WEAPON_DAMAGE_PERCENT"),
                 definition.prefixes().stream().map(PoolEntry::effectName).toList());
@@ -46,7 +46,7 @@ class SocketableDefinitionsTest {
 
     @Test
     void reversedRangesAndExplicitWeightsAreAccepted() throws Exception {
-        SocketableDefinitions.register(new JSONArray().put(row("x", "team", "HULL_MULT:6:4:2.5")));
+        SocketableDefinitions.register(new JSONArray().put(row("x", "crew_quarters", "HULL_MULT:6:4:2.5")));
 
         assertEquals(new PoolEntry("HULL_MULT", 4f, 6f, 2.5f), SocketableDefinitions.get("x").pool().get(0));
     }
@@ -70,7 +70,7 @@ class SocketableDefinitionsTest {
 
     @Test
     void anUnknownEffectIsDroppedFromThePoolWithoutLosingTheDefinition() throws Exception {
-        SocketableDefinitions.register(new JSONArray().put(row("x", "team", "NOT_AN_EFFECT:1:2; HULL_MULT:4:6")));
+        SocketableDefinitions.register(new JSONArray().put(row("x", "crew_quarters", "NOT_AN_EFFECT:1:2; HULL_MULT:4:6")));
 
         assertEquals(List.of(new PoolEntry("HULL_MULT", 4f, 6f, 1f)), SocketableDefinitions.get("x").pool());
     }
@@ -80,28 +80,44 @@ class SocketableDefinitionsTest {
         exiledsector.skills.skilleffect.EffectAliases.register(new JSONArray()
                 .put(new org.json.JSONObject().put("alias", "OLD_HULL_MULT").put("effect", "HULL_MULT")));
 
-        SocketableDefinitions.register(new JSONArray().put(row("x", "team", "OLD_HULL_MULT:4:6")));
+        SocketableDefinitions.register(new JSONArray().put(row("x", "crew_quarters", "OLD_HULL_MULT:4:6")));
 
         assertEquals("HULL_MULT", SocketableDefinitions.get("x").pool().get(0).effectName());
     }
 
     @Test
     void aBlankNameFallsBackToTheId() throws Exception {
-        SocketableDefinitions.register(new JSONArray().put(row("nameless", "team", "HULL_MULT:4:6").put("name", "")));
+        SocketableDefinitions.register(new JSONArray().put(row("nameless", "crew_quarters", "HULL_MULT:4:6").put("name", "")));
 
         assertEquals("nameless", SocketableDefinitions.get("nameless").name());
     }
 
     @Test
-    void everyKindIdMapsToItsOwnClass() {
-        assertInstanceOf(Subroutine.class, SocketableKind.byId("subroutine").create("a", "d", 1L, List.of()));
-        assertInstanceOf(Officer.class, SocketableKind.byId("officer").create("a", "d", 1L, List.of()));
-        assertInstanceOf(Team.class, SocketableKind.byId("team").create("a", "d", 1L, List.of()));
-        assertInstanceOf(AiCore.class, SocketableKind.byId("ai_core").create("a", "d", 1L, List.of()));
-        for (SocketableKind kind : SocketableKind.values()) {
-            assertEquals(kind, kind.create("a", "d", 1L, List.of()).kind());
+    void socketTypeIdsRoundTripAndLegacyKindsAreRejected() {
+        for (SocketType type : SocketType.values()) {
+            assertEquals(type, SocketType.byId(type.id()));
         }
-        assertThrows(IllegalArgumentException.class, () -> SocketableKind.byId("drone"));
+        for (String legacyKind : List.of("officer", "team", "ai_core", "drone")) {
+            assertThrows(IllegalArgumentException.class, () -> SocketType.byId(legacyKind));
+            assertNull(SocketType.byIdOrNull(legacyKind));
+        }
+        assertEquals(List.of(SocketType.SUBROUTINE), Arrays.stream(SocketType.values()).filter(type -> !type.isFramework()).toList());
+        assertEquals(8, SocketType.frameworkTypes().size());
+    }
+
+    @Test
+    void aSocketablesKindFollowsItsDefinition() throws Exception {
+        SocketableDefinitions.register(new JSONArray().put(row("bridge_item", "bridge", "HULL_MULT:4:6")));
+
+        assertEquals(SocketType.BRIDGE, new Socketable("a", "bridge_item", 1L, List.of()).kind());
+        assertNull(new Socketable("b", "not_loaded", 1L, List.of()).kind());
+    }
+
+    @Test
+    void aRowWithALegacyKindIsSkipped() throws Exception {
+        SocketableDefinitions.register(new JSONArray().put(row("old_team", "crew_quarters", "HULL_MULT:4:6").put("kind", "team")));
+
+        assertNull(SocketableDefinitions.get("old_team"));
     }
 
     @Test
@@ -116,7 +132,7 @@ class SocketableDefinitionsTest {
         for (String variant : List.of("military", "industrial", "consumer")) {
             SocketableDefinition definition = SocketableDefinitions.get("domain_subroutine_" + variant);
             assertNotNull(definition, variant);
-            assertEquals(SocketableKind.SUBROUTINE, definition.kind());
+            assertEquals(SocketType.SUBROUTINE, definition.kind());
             assertTrue(definition.prefixes().size() >= 2 && definition.suffixes().size() >= 2,
                     variant + " needs two prefixes and two suffixes for a four-effect roll");
         }

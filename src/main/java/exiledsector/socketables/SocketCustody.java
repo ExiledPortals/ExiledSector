@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -98,6 +99,23 @@ public final class SocketCustody {
         for (ShipSkillData shipData : shipDataById.values()) {
             if (shipData.getSocketedItems().containsValue(socketableId)) {
                 return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean unsocketIfMisfit(Socketable socketable) {
+        return unsocketIfMisfit(ShipSkillDataManager.all(), socketable);
+    }
+
+    static boolean unsocketIfMisfit(Map<String, ShipSkillData> shipDataById, Socketable socketable) {
+        String socketableId = socketable.id();
+        for (ShipSkillData shipData : shipDataById.values()) {
+            for (Map.Entry<String, String> socketedEntry : List.copyOf(shipData.getSocketedItems().entrySet())) {
+                if (socketedEntry.getValue().equals(socketableId) && socketable.kind() != SocketType.SUBROUTINE) {
+                    shipData.unsocketItem(socketedEntry.getKey());
+                    return true;
+                }
             }
         }
         return false;

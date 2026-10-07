@@ -52,11 +52,11 @@ class SocketableUnlockTest {
         when(sector.getPlayerStats()).thenReturn(player);
         SocketableDefinitions.register(new JSONArray()
                 .put(SocketableFixtures.row("basic", "subroutine", "HULL_MULT:4:6"))
-                .put(SocketableFixtures.row("open_unique", "team", "HULL_MULT:4:6").put("unique", "true"))
+                .put(SocketableFixtures.row("open_unique", "crew_quarters", "HULL_MULT:4:6").put("unique", "true"))
                 .put(SocketableFixtures.row("vambrace", "subroutine", "HULL_MULT:4:6").put("unique", "true").put("unlock", "found_onslaught_mk1"))
                 .put(SocketableFixtures.row("coil", "subroutine", "HULL_MULT:4:6").put("unique", "true").put("unlock", "found_gate_hauler"))
                 .put(SocketableFixtures.row("circuit", "subroutine", "HULL_MULT:4:6").put("unique", "true").put("unlock", "found_planetkiller"))
-                .put(SocketableFixtures.row("survivor", "officer", "HULL_MULT:4:6").put("unique", "true").put("unlock", "defeated_ziggurat"))
+                .put(SocketableFixtures.row("survivor", "bridge", "HULL_MULT:4:6").put("unique", "true").put("unlock", "defeated_ziggurat"))
                 .put(SocketableFixtures.row("mystery", "subroutine", "HULL_MULT:4:6").put("unique", "true").put("unlock", "found_something_else")));
     }
 

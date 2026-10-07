@@ -82,7 +82,7 @@ class SocketableFreezingTest {
     @Test
     void anAssembledProductNameFromAnOlderSaveIsRefrozenFromItsSeed() throws Exception {
         registerGadget();
-        Socketable owned = SocketableKind.SUBROUTINE.create("socketable_1", "gadget", 42L, RARE);
+        Socketable owned = new Socketable("socketable_1", "gadget", 42L, RARE);
         owned.freezeName(new FrozenName(null, null, "Sunny Pal", null));
 
         assertEquals("Sunny Pal", owned.name());
@@ -132,13 +132,13 @@ class SocketableFreezingTest {
 
     @Test
     void anOwnedSocketableFromAnOlderSaveFreezesItsNameOnceAndKeepsIt() throws Exception {
-        Socketable owned = SocketableKind.SUBROUTINE.create("socketable_1", "sub", 42L, RARE);
+        Socketable owned = new Socketable("socketable_1", "sub", 42L, RARE);
         String before = owned.name();
 
         rebalance();
 
         assertEquals(before, owned.name());
-        assertNotEquals(before, SocketableKind.SUBROUTINE.create("socketable_2", "sub", 42L, RARE).name());
+        assertNotEquals(before, new Socketable("socketable_2", "sub", 42L, RARE).name());
     }
 
     @Test
@@ -167,7 +167,7 @@ class SocketableFreezingTest {
     @Test
     void missingNameWordsAreNotFrozenSoTheNameAppearsOnceTheWordsLoad() throws Exception {
         SocketableNames.registerWords(new JSONObject());
-        Socketable owned = SocketableKind.SUBROUTINE.create("socketable_1", "sub", 42L, RARE);
+        Socketable owned = new Socketable("socketable_1", "sub", 42L, RARE);
         SocketableItemData dropped = SocketableItemData.of(frozen(RARE).toSpecialItem());
         assertEquals("Military-grade Domain Subroutine", owned.name());
 

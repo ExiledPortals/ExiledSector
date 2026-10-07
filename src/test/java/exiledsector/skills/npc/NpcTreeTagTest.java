@@ -8,6 +8,9 @@ import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.socketables.NpcSocketables;
 import exiledsector.socketables.RolledEffect;
+import exiledsector.socketables.SocketableDefinitions;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -92,6 +95,20 @@ class NpcTreeTagTest {
 
         assertEquals("exiledSector_npcTree|generated|2|root,a,socket_1|sockets:socket_1=npc:domain_subroutine_military/-42", tag);
         assertEquals("npc:domain_subroutine_military/-42", decoded.getSocketedItem("socket_1"));
+    }
+
+    @Test
+    void aSavedTreeSocketHoldingAFrameworkItemIsDroppedOnRestore() throws Exception {
+        withSocket();
+        SocketableDefinitions.register(new JSONArray().put(new JSONObject().put("id", "gunners").put("kind", "weapon_mount")
+                .put("name", "Gunners").put("prefixes", "HULL_MULT:4:6")));
+        try {
+            ShipSkillData decoded = NpcTreeTag.decode("exiledSector_npcTree|generated|2|root,a,socket_1|sockets:socket_1=npc:gunners/5");
+
+            assertNull(decoded.getSocketedItem("socket_1"));
+        } finally {
+            SocketableDefinitions.clear();
+        }
     }
 
     @Test

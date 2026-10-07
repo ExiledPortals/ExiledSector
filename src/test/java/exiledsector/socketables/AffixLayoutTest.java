@@ -51,7 +51,7 @@ class AffixLayoutTest {
         assertEquals(SocketableRarity.RARE, AffixLayout.rarityFor(military, 3));
         assertEquals(SocketableRarity.RARE, AffixLayout.rarityFor(military, 4));
         assertEquals(SocketableRarity.COMMON, AffixLayout.rarityFor(null, 2));
-        SocketableDefinitions.register(new JSONArray().put(SocketableFixtures.row("relic", "ai_core", "HULL_MULT:4:6").put("unique", "TRUE")));
+        SocketableDefinitions.register(new JSONArray().put(SocketableFixtures.row("relic", "reactor", "HULL_MULT:4:6").put("unique", "TRUE")));
         assertEquals(SocketableRarity.UNIQUE, AffixLayout.rarityFor(SocketableDefinitions.get("relic"), 1));
     }
 
@@ -113,7 +113,7 @@ class AffixLayoutTest {
     @Test
     void augmentingAnItemWithARetiredSuffixNeverAddsAThirdSuffix() {
         for (long seed = 0; seed < 200; seed++) {
-            Socketable socketable = SocketableKind.SUBROUTINE.create("socketable_" + seed, SocketableFixtures.MILITARY, seed,
+            Socketable socketable = new Socketable("socketable_" + seed, SocketableFixtures.MILITARY, seed,
                     List.of(PREFIX_CAPACITY, SUFFIX_SHIELDS, RETIRED));
 
             SocketableCrafting.augment(socketable, new Random(seed));

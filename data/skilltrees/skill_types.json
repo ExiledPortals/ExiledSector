@@ -3213,10 +3213,10 @@
 		},
 		{
 			"id": "modular_hull_socket",
-			"name": "Modular Hull Socket",
+			"name": "Subroutine Socket",
 			"icon": "",
 			"tier": "SOCKET",
-			"description": "An empty compartment in this ship stripped back to bare frame and power conduits. You could store artifacts, specialist teams or important staff here to improve the workings of your ship."
+			"description": "A stripped-out compartment wired straight into the ship's computer core. It holds a single subroutine and runs it alongside the ship's own control software."
 		},
 		{
 			"id": "pd_damage_to_missiles",

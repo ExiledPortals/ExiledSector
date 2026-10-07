@@ -158,7 +158,7 @@ public final class SocketableCrafting {
             return null;
         }
         long seed = random.nextLong();
-        Socketable replacement = nextDefinition.kind().create(socketable.id(), nextDefinition.id(), seed, SocketableRoller.roll(nextDefinition, seed));
+        Socketable replacement = new Socketable(socketable.id(), nextDefinition.id(), seed, SocketableRoller.roll(nextDefinition, seed));
         replacement.freezeName();
         return store.replace(socketable, replacement) ? replacement : null;
     }

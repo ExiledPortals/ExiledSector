@@ -51,6 +51,7 @@ import exiledsector.socketables.SocketCustody;
 import exiledsector.socketables.SocketLossListener;
 import exiledsector.socketables.SocketableSaveAliases;
 import exiledsector.socketables.SocketableStore;
+import exiledsector.socketables.SocketTypeMigration;
 import exiledsector.ui.ExiledSectorSettings;
 import exiledsector.ui.SkillTreeRefitButton;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
@@ -207,6 +208,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         Global.getSector().addTransientListener(PlayerEngagementPipeline.create(socketLossListener, socketableLootListener));
         Global.getSector().getListenerManager().addListener(new SocketableSalvageListener(), true);
         Global.getSector().getListenerManager().addListener(new TechMiningSocketableListener(), true);
+        SocketTypeMigration.run();
         SocketCustody.reconcile();
     }
 }

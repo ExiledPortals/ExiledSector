@@ -50,7 +50,7 @@ public record SocketableItemData(String definitionId, long seed, List<RolledEffe
         if (itemDefinition == null) {
             return null;
         }
-        Socketable socketable = itemDefinition.kind().create(instanceId, definitionId, seed,
+        Socketable socketable = new Socketable(instanceId, definitionId, seed,
                 effects != null ? effects : SocketableRoller.roll(itemDefinition, seed));
         socketable.freezeName(frozenName);
         return socketable;

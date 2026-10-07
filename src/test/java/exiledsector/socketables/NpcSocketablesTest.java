@@ -50,7 +50,8 @@ class NpcSocketablesTest {
         SocketableDefinitions.register(new JSONArray()
                 .put(row(MILITARY, "subroutine", MILITARY_PREFIXES, MILITARY_SUFFIXES))
                 .put(row("relic", "subroutine", MILITARY_PREFIXES, MILITARY_SUFFIXES).put("unique", "true"))
-                .put(row("core", "ai_core", MILITARY_PREFIXES, MILITARY_SUFFIXES))
+                .put(row("gunners", "weapon_mount", MILITARY_PREFIXES, MILITARY_SUFFIXES).put("unique", "true"))
+                .put(row("core", "reactor", MILITARY_PREFIXES, MILITARY_SUFFIXES))
                 .put(row("unweighted", "subroutine", MILITARY_PREFIXES, MILITARY_SUFFIXES).put("rarity", "0")));
     }
 
@@ -111,6 +112,14 @@ class NpcSocketablesTest {
         }
 
         assertEquals(Set.of(MILITARY), drawn);
+    }
+
+    @Test
+    void fleetTreeSocketsNeverDrawAFrameworkUnique() {
+        Random random = new Random(11L);
+        for (int i = 0; i < 20000; i++) {
+            assertEquals(SocketType.SUBROUTINE, NpcSocketables.pickDefinition(random, definition -> true).kind());
+        }
     }
 
     @Test

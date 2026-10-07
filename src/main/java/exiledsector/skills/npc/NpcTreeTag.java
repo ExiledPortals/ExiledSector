@@ -8,6 +8,8 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.socketables.NpcSocketables;
+import exiledsector.socketables.SocketType;
+import exiledsector.socketables.SocketableItemData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,7 +98,10 @@ public final class NpcTreeTag {
             String nodeId = NodeReplacements.resolve(entry.substring(0, separator));
             String socketableId = entry.substring(separator + 1);
             SkillNode node = SkillTree.get(nodeId);
-            if (node != null && node.getType().getTier() == SkillTier.SOCKET && NpcSocketables.item(socketableId) != null) {
+            SocketableItemData itemData = NpcSocketables.item(socketableId);
+            boolean fitsTreeSocket = itemData != null
+                    && (itemData.definition() == null || itemData.definition().kind() == SocketType.SUBROUTINE);
+            if (node != null && node.getType().getTier() == SkillTier.SOCKET && fitsTreeSocket) {
                 shipData.socketItem(nodeId, socketableId);
             }
         }

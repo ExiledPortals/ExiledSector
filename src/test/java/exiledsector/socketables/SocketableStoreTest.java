@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -69,7 +68,7 @@ class SocketableStoreTest {
         Socketable first = store.add(military, 7L);
         Socketable second = store.add(military, 7L);
 
-        assertInstanceOf(Subroutine.class, first);
+        assertEquals(SocketType.SUBROUTINE, first.kind());
         assertNotEquals(first.id(), second.id());
         assertEquals(SocketableRoller.roll(military, 7L), first.effects());
         assertEquals(List.of(first, second), store.owned());

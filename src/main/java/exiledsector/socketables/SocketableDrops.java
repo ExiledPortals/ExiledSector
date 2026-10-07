@@ -163,8 +163,9 @@ public final class SocketableDrops {
     }
 
     public static SocketableDefinition pickBasic(Random random) {
-        return pick(random, definition -> definition.kind() == SocketableKind.SUBROUTINE && !definition.unique());
+        return pick(random, definition -> definition.kind() == SocketType.SUBROUTINE && !definition.unique());
     }
+
 
     public static SocketableDefinition pickUnique(Random random, Predicate<SocketableDefinition> allowedUniques) {
         return pick(random, definition -> definition.unique() && allowedUniques.test(definition));

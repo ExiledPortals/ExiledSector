@@ -9,7 +9,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public record SocketableDefinition(String id, SocketableKind kind, String name, String icon, float rarity, boolean unique,
+public record SocketableDefinition(String id, SocketType kind, String name, String icon, float rarity, boolean unique,
                                    String description, List<PoolEntry> prefixes, List<PoolEntry> suffixes, String unlock) {
 
     public static final String FALLBACK_ICON = "graphics/icons/cargo/chip1.png";
@@ -37,7 +37,7 @@ public record SocketableDefinition(String id, SocketableKind kind, String name, 
             }
         }
         boolean unique = "true".equalsIgnoreCase(row.optString("unique", "").trim());
-        return new SocketableDefinition(definitionId, SocketableKind.byId(row.optString("kind", "").trim()),
+        return new SocketableDefinition(definitionId, SocketType.byId(row.optString("kind", "").trim()),
                 nameOrId(row.optString("name", "").trim(), definitionId), icon.isEmpty() ? FALLBACK_ICON : icon, rarity, unique,
                 row.optString("description", "").trim(), prefixes, suffixes,
                 row.optString("unlock", "").trim());

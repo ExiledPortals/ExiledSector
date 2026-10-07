@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class Socketable {
+public class Socketable {
 
     private final String id;
     private final String definitionId;
@@ -19,14 +19,17 @@ public abstract class Socketable {
     private final List<RolledEffect> effects;
     private FrozenName frozenName;
 
-    protected Socketable(String id, String definitionId, long seed, List<RolledEffect> effects) {
+    Socketable(String id, String definitionId, long seed, List<RolledEffect> effects) {
         this.id = id;
         this.definitionId = definitionId;
         this.seed = seed;
         this.effects = new ArrayList<>(effects);
     }
 
-    public abstract SocketableKind kind();
+    public SocketType kind() {
+        SocketableDefinition definition = definition();
+        return definition == null ? null : definition.kind();
+    }
 
     public String id() {
         return id;
@@ -119,7 +122,11 @@ public abstract class Socketable {
     }
 
     public boolean canSocketInto(SkillNode socket) {
-        return socket != null && socket.getType().getTier() == SkillTier.SOCKET;
+        return socket != null && socket.getType().getTier() == SkillTier.SOCKET && kind() == SocketType.SUBROUTINE;
+    }
+
+    public boolean canSocketInto(SocketType frameworkSocket) {
+        return frameworkSocket != null && frameworkSocket.isFramework() && kind() == frameworkSocket;
     }
 
     public List<SkillTypeEffect> skillEffects() {

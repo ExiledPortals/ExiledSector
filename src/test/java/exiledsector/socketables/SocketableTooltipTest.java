@@ -18,7 +18,7 @@ class SocketableTooltipTest {
     @Test
     void theTooltipListsEachRolledEffectWithoutAKindLine() throws Exception {
         SocketableFixtures.registerMilitary();
-        Socketable socketable = SocketableKind.SUBROUTINE.create("socketable_1", SocketableFixtures.MILITARY, 1L,
+        Socketable socketable = new Socketable("socketable_1", SocketableFixtures.MILITARY, 1L,
                 List.of(new RolledEffect("BEAM_WEAPON_DAMAGE_PERCENT", 12f), new RolledEffect("REMOVED_EFFECT", 3f)));
 
         List<String> lines = socketable.tooltipLines().stream().map(StyledText::plain).toList();
@@ -30,7 +30,7 @@ class SocketableTooltipTest {
     @Test
     void expandedEffectLinesShowTheRollRangeInBracketsAfterTheValue() throws Exception {
         SocketableFixtures.registerMilitary();
-        Socketable socketable = SocketableKind.SUBROUTINE.create("socketable_4", SocketableFixtures.MILITARY, 1L,
+        Socketable socketable = new Socketable("socketable_4", SocketableFixtures.MILITARY, 1L,
                 List.of(new RolledEffect("BEAM_WEAPON_DAMAGE_PERCENT", 12f), new RolledEffect("SHIELD_DAMAGE_TAKEN_MULT", -12f),
                         new RolledEffect("REMOVED_EFFECT", 3f)));
 
@@ -46,7 +46,7 @@ class SocketableTooltipTest {
     @Test
     void anEffectNoLongerInItsPoolOrWithAFixedValueShowsNoRange() throws Exception {
         SocketableDefinitions.register(new org.json.JSONArray().put(SocketableFixtures.row("fixed", "subroutine", "HULL_MULT:5:5")));
-        Socketable socketable = SocketableKind.SUBROUTINE.create("socketable_5", "fixed", 1L,
+        Socketable socketable = new Socketable("socketable_5", "fixed", 1L,
                 List.of(new RolledEffect("HULL_MULT", 5f), new RolledEffect("ARMOR_PERCENT", 7f)));
 
         assertEquals(List.of("5% more hull points.", "7% increased armor."),
@@ -66,7 +66,7 @@ class SocketableTooltipTest {
     void theDescriptionIsTheOnlyLineAboveTheEffects() throws Exception {
         SocketableDefinitions.register(new org.json.JSONArray().put(SocketableFixtures.row("described", "subroutine", "HULL_MULT:4:6")
                 .put("description", "Pulled from a Domain-era warship.")));
-        Socketable socketable = SocketableKind.SUBROUTINE.create("socketable_3", "described", 1L, List.of());
+        Socketable socketable = new Socketable("socketable_3", "described", 1L, List.of());
 
         List<String> lines = socketable.tooltipLines().stream().map(StyledText::plain).toList();
 
@@ -75,7 +75,7 @@ class SocketableTooltipTest {
 
     @Test
     void anItemWhoseDefinitionIsGoneKeepsItsEffectsButShowsAsUnrecognised() {
-        Socketable socketable = SocketableKind.TEAM.create("socketable_2", "removed_mod_item", 1L,
+        Socketable socketable = new Socketable("socketable_2", "removed_mod_item", 1L,
                 List.of(new RolledEffect("BEAM_WEAPON_DAMAGE_PERCENT", 12f)));
 
         assertEquals("Unrecognised hull socket module", socketable.name());

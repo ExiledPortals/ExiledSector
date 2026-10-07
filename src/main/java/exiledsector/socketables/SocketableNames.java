@@ -85,7 +85,7 @@ public final class SocketableNames {
         return AFFIXES.get().containsKey(effectName);
     }
 
-    static SocketableName nameFor(SocketableDefinition definition, SocketableKind kind, long seed, List<RolledEffect> effects) {
+    static SocketableName nameFor(SocketableDefinition definition, SocketType kind, long seed, List<RolledEffect> effects) {
         return render(definition, kind, effects, freeze(definition, seed, effects));
     }
 
@@ -100,7 +100,7 @@ public final class SocketableNames {
         };
     }
 
-    static SocketableName render(SocketableDefinition definition, SocketableKind kind, List<RolledEffect> effects, FrozenName frozen) {
+    static SocketableName render(SocketableDefinition definition, SocketType kind, List<RolledEffect> effects, FrozenName frozen) {
         SocketableRarity rarity = AffixLayout.rarityFor(definition, effects.size());
         if (definition == null) {
             return new SocketableName(Translation.text("socketable.unknown"), null, rarity);
@@ -117,7 +117,7 @@ public final class SocketableNames {
         };
     }
 
-    private static String commonName(SocketableDefinition definition, SocketableKind kind, FrozenName frozen) {
+    private static String commonName(SocketableDefinition definition, SocketType kind, FrozenName frozen) {
         String prefixEffect = frozen == null ? null : frozen.prefixEffect();
         String suffixEffect = frozen == null ? null : frozen.suffixEffect();
         String prefix = prefixEffect == null ? null : affix(prefixEffect, true);
@@ -127,7 +127,7 @@ public final class SocketableNames {
         }
         String affixForm = prefix == null ? "suffix" : suffix == null ? "prefix" : "both";
         Message nameMessage = Translation.msg("socketable.commonName." + affixForm)
-                .arg("noun", Translation.text("socketable.noun." + kind.id()));
+                .arg("noun", kind.noun());
         if (prefix != null) {
             nameMessage.arg("prefix", prefix);
         }

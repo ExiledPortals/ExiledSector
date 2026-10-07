@@ -13,11 +13,12 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.socketables.SocketCurrency;
+import exiledsector.socketables.SocketCustody;
 import exiledsector.socketables.Socketable;
 import exiledsector.socketables.SocketableCrafting;
 import exiledsector.socketables.SocketableDefinition;
 import exiledsector.socketables.SocketableDefinitions;
-import exiledsector.socketables.SocketableKind;
+import exiledsector.socketables.SocketType;
 import exiledsector.socketables.SocketableName;
 import exiledsector.socketables.SocketableRarity;
 import exiledsector.socketables.SocketableStore;
@@ -284,6 +285,10 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         loadedSocketable = result;
         noticeText = Translation.msg("ui.workbench.notice.used." + currency.name().toLowerCase(Locale.ROOT))
                 .arg("before", nameBefore).arg("name", result.name()).text();
+        if (currency == SocketCurrency.TRANSPOSITION && SocketCustody.unsocketIfMisfit(result)) {
+            noticeText += " " + Translation.msg("ui.workbench.notice.movedToStorage").arg("name", result.name())
+                    .arg("type", result.kind().displayName()).text();
+        }
         SkillTreeSounds.socketed();
         socketFlair.flash(result.rarity().color());
         afterChange();
@@ -439,7 +444,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     private static List<String> recipeIcons(Recipe recipe) {
         if (recipe.currency == null) {
             List<String> icons = SocketableDefinitions.all().stream()
-                    .filter(definition -> definition.kind() == SocketableKind.SUBROUTINE && !definition.unique())
+                    .filter(definition -> definition.kind() == SocketType.SUBROUTINE && !definition.unique())
                     .map(SocketableDefinition::icon).distinct().toList();
             return icons.isEmpty() ? List.of(FALLBACK_SUBROUTINE_ICON) : icons;
         }

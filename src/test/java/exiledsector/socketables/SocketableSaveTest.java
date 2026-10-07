@@ -6,11 +6,9 @@ import com.thoughtworks.xstream.security.AnyTypePermission;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SocketableSaveTest {
@@ -37,10 +35,10 @@ class SocketableSaveTest {
         String xml = xstream().toXML(store);
         SocketableStore loaded = (SocketableStore) xstream().fromXML(xml);
 
-        assertTrue(xml.contains("<exiledSector.SocketableStore>") && xml.contains("<exiledSector.Subroutine>") && xml.contains("<exiledSector.RolledEffect>"), xml);
+        assertTrue(xml.contains("<exiledSector.SocketableStore>") && xml.contains("<exiledSector.Socketable>") && xml.contains("<exiledSector.RolledEffect>"), xml);
         assertFalse(xml.contains("exiledsector.socketables"), xml);
         Socketable restored = loaded.owned().get(0);
-        assertInstanceOf(Subroutine.class, restored);
+        assertEquals(SocketType.SUBROUTINE, restored.kind());
         assertEquals(saved.id(), restored.id());
         assertEquals(saved.effects(), restored.effects());
         assertEquals(99L, restored.seed());
@@ -63,10 +61,22 @@ class SocketableSaveTest {
     }
 
     @Test
-    void everyConcreteKindHasASaveAlias() {
-        for (SocketableKind kind : SocketableKind.values()) {
-            Class<?> type = kind.create("a", "d", 1L, List.of()).getClass();
-            assertTrue(SocketableSaveAliases.ALIASES.containsValue(type), type.getName());
+    void socketablesFromBeforeSocketTypesLoadUnderTheirLegacyNames() throws Exception {
+        SocketableFixtures.registerMilitary();
+        SocketableStore store = new SocketableStore();
+        Socketable saved = store.add(SocketableDefinitions.get(SocketableFixtures.MILITARY), 3L);
+        String currentXml = xstream().toXML(store);
+
+        for (String legacyAlias : SocketableSaveAliases.LEGACY_SOCKETABLE_ALIASES) {
+            String legacyXml = currentXml.replace("exiledSector.Socketable>", legacyAlias + ">");
+            SocketableStore loaded = (SocketableStore) xstream().fromXML(legacyXml);
+
+            assertTrue(legacyXml.contains("<" + legacyAlias + ">"), legacyXml);
+            Socketable restored = loaded.owned().get(0);
+            assertEquals(Socketable.class, restored.getClass());
+            assertEquals(saved.effects(), restored.effects());
+            assertEquals(SocketType.SUBROUTINE, restored.kind());
+            assertTrue(xstream().toXML(loaded).contains("<exiledSector.Socketable>"));
         }
     }
 
