@@ -9,17 +9,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SkillTagsVocabularyTest {
-
-    private static final Pattern STRING_LITERAL = Pattern.compile("'([^'\\\\]*)'|\"([^\"\\\\]*)\"");
 
     private static JSONArray loadArray(String path, String key) throws Exception {
         return new JSONObject(Files.readString(Path.of(path), StandardCharsets.UTF_8)).getJSONArray(key);
@@ -60,42 +53,6 @@ class SkillTagsVocabularyTest {
         collectUnknownTags(nodes(), "node", problems);
 
         assertTrue(problems.isEmpty(), String.join("\n", problems));
-    }
-
-    private static Set<String> editorStringArray(String name) throws Exception {
-        String html = Files.readString(Path.of("tools/skill_tree_editor.html"), StandardCharsets.UTF_8);
-        Matcher declaration = Pattern.compile("var\\s+" + name + "\\s*=\\s*\\[(.*?)]\\s*;", Pattern.DOTALL).matcher(html);
-        assertTrue(declaration.find(), "var " + name + " = [...]; not found in the editor");
-        String body = declaration.group(1);
-        assertFalse(declaration.find(), "The editor declares var " + name + " more than once");
-
-        Set<String> values = new TreeSet<>();
-        Matcher literal = STRING_LITERAL.matcher(body);
-        while (literal.find()) {
-            values.add(literal.group(1) != null ? literal.group(1) : literal.group(2));
-        }
-        String leftover = STRING_LITERAL.matcher(body).replaceAll("");
-        assertTrue(leftover.matches("[\\s,]*"), name + " must hold only string literals, found: " + leftover.trim());
-        return values;
-    }
-
-    private static void assertEditorListMatches(String name, List<String> expected) throws Exception {
-        Set<String> editorTags = editorStringArray(name);
-        Set<String> missing = new TreeSet<>(expected);
-        missing.removeAll(editorTags);
-        Set<String> stale = new TreeSet<>(editorTags);
-        stale.removeAll(expected);
-        assertTrue(missing.isEmpty() && stale.isEmpty(), "Editor " + name + " out of sync. Missing: " + missing + " Stale: " + stale);
-    }
-
-    @Test
-    void theEditorTagListMatchesTheVocabulary() throws Exception {
-        assertEditorListMatches("ALL_TAGS", SkillTags.ALL);
-    }
-
-    @Test
-    void theEditorRegionListMatchesTheRegionVocabulary() throws Exception {
-        assertEditorListMatches("REGION_TAGS", SkillTags.REGION);
     }
 
     @Test

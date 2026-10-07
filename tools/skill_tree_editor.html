@@ -711,7 +711,7 @@
 
 <div class="toast" id="toast"></div>
 <div class="serverError" id="serverError" role="alert" hidden>
-  <div style="flex:1">Could not load skill_types.json and ship_skill_tree.json from the local server. Run <code>tools\skill_tree_server.ps1</code> and open this editor from <code>http://localhost:8791/</code>. <span id="serverErrorDetail"></span></div>
+  <div style="flex:1">Could not load the editor data (skill_types.json, ship_skill_tree.json and tools/editor_vocabulary.json) from the local server, so saving is disabled. If the server is not running, run <code>tools\skill_tree_server.ps1</code> and open this editor from <code>http://localhost:8791/</code>. <span id="serverErrorDetail"></span></div>
   <button class="smallBtn" id="serverErrorRetry">Retry</button>
 </div>
 <div id="modalRoot"></div>
@@ -1092,8 +1092,12 @@ function anchorsFromTree(treeJson){
 }
 
 function applyTreeFiles(typesJson, treeJson){
-  state.types = typesJson.skillTypes || typesJson;
-  state.nodes = treeJson.nodes || treeJson;
+  var types = typesJson && Array.isArray(typesJson.skillTypes) ? typesJson.skillTypes : null;
+  var nodes = treeJson && Array.isArray(treeJson.nodes) ? treeJson.nodes : null;
+  if (!types || !types.length) throw new Error('skill_types.json has no skill types');
+  if (!nodes || !nodes.length) throw new Error('ship_skill_tree.json has no nodes');
+  state.types = types;
+  state.nodes = nodes;
   state.curves = treeJson.connectorCurves || [];
   state.hiddenConnectors = treeJson.hiddenConnectors || [];
   state.anchors = anchorsFromTree(treeJson);
@@ -1102,14 +1106,76 @@ function applyTreeFiles(typesJson, treeJson){
   pruneConnectorEntries();
 }
 
-function fetchTreeFiles(){
-  return Promise.all([
-    fetch('/data/types').then(function(r){ if (!r.ok) throw new Error('skill_types.json ' + r.status); return r.json(); }),
-    fetch('/data/tree').then(function(r){ if (!r.ok) throw new Error('ship_skill_tree.json ' + r.status); return r.json(); })
-  ]).then(function(results){
-    applyTreeFiles(results[0], results[1]);
-    hideServerError();
+var SERVER_HINT = 'run tools\\skill_tree_server.ps1';
+
+function postJson(url, payload){
+  return fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Skill-Tree-Editor': '1' },
+    body: JSON.stringify(payload)
+  }).then(function(r){
+    return r.json().catch(function(){ return {}; }).then(function(data){
+      return { ok: r.ok && !!data.ok, status: r.status, data: data, message: data.message || (r.ok ? '' : 'HTTP ' + r.status) };
+    });
+  }, function(){
+    return { ok: false, status: 0, data: {}, message: 'Could not reach local server - ' + SERVER_HINT };
   });
+}
+
+function fetchDataFiles(names){
+  return fetch('/data/files?names=' + encodeURIComponent(names.join(','))).then(function(r){
+    return r.json().catch(function(){ return {}; }).then(function(data){
+      if (!r.ok || !data.ok || !data.files) throw new Error(data.message || 'data files ' + r.status);
+      return data.files;
+    });
+  });
+}
+
+function saveDataFiles(contents, baseHashes){
+  var files = {};
+  Object.keys(contents).forEach(function(name){
+    files[name] = { content: contents[name], baseHash: baseHashes[name] === undefined ? null : baseHashes[name] };
+  });
+  return postJson('/save/files', { files: files }).then(function(result){
+    if (result.ok) {
+      var hashes = result.data.hashes || {};
+      Object.keys(hashes).forEach(function(name){ baseHashes[name] = hashes[name]; });
+    }
+    return result;
+  });
+}
+
+function staleFileQuestion(result, discarded){
+  return result.message + '\n\nAnother tool or agent changed the file after this editor loaded it, so saving would overwrite that work. ' +
+    'Reload from disk now? This discards ' + discarded + '.';
+}
+
+var treeHashes = {};
+var treeLoaded = false;
+var vocabularyLoaded = false;
+
+function parseTreeFile(file, fileName){
+  try {
+    return JSON.parse(file.content);
+  } catch(e) {
+    throw new Error(fileName + ' is not valid JSON: ' + e.message);
+  }
+}
+
+function fetchTreeFiles(){
+  return fetchDataFiles(['types', 'tree']).then(function(files){
+    applyTreeFiles(parseTreeFile(files.types, 'skill_types.json'), parseTreeFile(files.tree, 'ship_skill_tree.json'));
+    treeHashes = { types: files.types.hash, tree: files.tree.hash };
+    treeLoaded = true;
+    updateSaveAvailability();
+  });
+}
+
+function updateSaveAvailability(){
+  var ready = treeLoaded && vocabularyLoaded;
+  var button = document.getElementById('saveToProjectBtn');
+  button.disabled = !ready;
+  button.title = ready ? '' : 'Disabled until the tree files and the editor vocabulary have loaded from the local server';
 }
 
 function showServerError(error){
@@ -1122,30 +1188,73 @@ function hideServerError(){
   document.getElementById('serverError').hidden = true;
 }
 
+var DRAFT_KEY = 'skillTreeEditor.v2';
+var LEGACY_DRAFT_KEY = 'skillTreeEditor.v1';
+var draftRevision = 0;
+
+function treeDraftData(){
+  return { types: state.types, nodes: state.nodes, curves: state.curves, hiddenConnectors: state.hiddenConnectors, anchors: state.anchors, images: state.images, stars: state.stars };
+}
+function applyDraftData(data){
+  state.types = data.types;
+  state.nodes = data.nodes;
+  state.curves = data.curves || [];
+  state.hiddenConnectors = data.hiddenConnectors || [];
+  state.anchors = data.anchors || [];
+  state.images = data.images || [];
+  state.stars = data.stars || [];
+  pruneConnectorEntries();
+}
 function saveLocal(){
+  if (!treeLoaded) return;
+  draftRevision++;
   try {
-    localStorage.setItem('skillTreeEditor.v1', JSON.stringify({ types: state.types, nodes: state.nodes, curves: state.curves, hiddenConnectors: state.hiddenConnectors, anchors: state.anchors, images: state.images, stars: state.stars }));
+    localStorage.setItem(DRAFT_KEY, JSON.stringify({ basedOn: { types: treeHashes.types, tree: treeHashes.tree }, savedAt: Date.now(), data: treeDraftData() }));
   } catch(e){}
 }
-function loadLocal(){
+function clearDraft(){
   try {
-    var raw = localStorage.getItem('skillTreeEditor.v1');
-    if (!raw) return false;
-    var parsed = JSON.parse(raw);
-    if (!parsed || !parsed.types || !parsed.nodes) return false;
-    state.types = parsed.types;
-    state.nodes = parsed.nodes;
-    state.curves = parsed.curves || [];
-    state.hiddenConnectors = parsed.hiddenConnectors || [];
-    state.anchors = parsed.anchors || [];
-    state.images = parsed.images || [];
-    state.stars = parsed.stars || [];
-    pruneConnectorEntries();
-    return true;
-  } catch(e){ return false; }
+    localStorage.removeItem(DRAFT_KEY);
+    localStorage.removeItem(LEGACY_DRAFT_KEY);
+  } catch(e){}
 }
-
-var loadedLocalDraft = loadLocal();
+function readDraft(){
+  try {
+    var raw = localStorage.getItem(DRAFT_KEY);
+    var draft = raw ? JSON.parse(raw) : null;
+    if (draft && draft.data && draft.data.types && draft.data.nodes) return draft;
+    var legacyRaw = localStorage.getItem(LEGACY_DRAFT_KEY);
+    var legacy = legacyRaw ? JSON.parse(legacyRaw) : null;
+    if (legacy && legacy.types && legacy.nodes) return { basedOn: null, savedAt: null, data: legacy };
+  } catch(e){}
+  return null;
+}
+function offerDraftRestore(){
+  var draft = readDraft();
+  if (!draft) return;
+  var diskData = treeDraftData();
+  var diskTexts = exportTexts();
+  applyDraftData(draft.data);
+  var draftTexts = exportTexts();
+  if (draftTexts.types === diskTexts.types && draftTexts.tree === diskTexts.tree) {
+    applyDraftData(diskData);
+    clearDraft();
+    return;
+  }
+  var age = draft.savedAt ? ' from ' + new Date(draft.savedAt).toLocaleString() : '';
+  var sameBase = !!draft.basedOn && draft.basedOn.types === treeHashes.types && draft.basedOn.tree === treeHashes.tree;
+  var restore = sameBase
+    ? confirm('This browser has unsaved skill tree changes' + age + '. Restore them?\n\nCancel discards them and keeps the files on disk.')
+    : !confirm('This browser has unsaved skill tree changes' + age + ', but skill_types.json or ship_skill_tree.json changed on disk since ' +
+        '(or the draft is too old to tell). Restoring the draft and saving would overwrite the newer files.\n\n' +
+        'OK discards the browser draft and keeps the files on disk. Cancel restores the draft over them.');
+  if (restore) {
+    saveLocal();
+  } else {
+    applyDraftData(diskData);
+    clearDraft();
+  }
+}
 
 var svg = document.getElementById('stage');
 var canvasWrap = document.getElementById('canvasWrap');
@@ -1228,12 +1337,21 @@ function validate(){
     if (!paired) { issues.push('Wormhole node "' + n.id + '" is paired with "' + n.pairedWith + '", which does not exist'); return; }
     if (tierOf(typeById(paired.type)) !== 'WORMHOLE') { issues.push('Wormhole node "' + n.id + '" is paired with "' + n.pairedWith + '", which is not a wormhole-tier node'); return; }
     if (paired.pairedWith !== n.id) { issues.push('Wormhole node "' + n.id + '" is paired with "' + n.pairedWith + '", but that node is paired with "' + (paired.pairedWith || 'nothing') + '" instead'); }
+    if (isUnshippedImagePath(n.ringBeltPath)) issues.push('Node "' + n.id + '" ring belt art ' + n.ringBeltPath + ' is in a folder that is not deployed');
+  });
+  state.types.forEach(function(t){
+    if (isUnshippedImagePath(t.icon)) issues.push('Type "' + t.id + '" icon ' + t.icon + ' is in a folder that is not deployed');
+    if (!vocabularyLoaded) return;
+    (t.effects || []).concat(t.hullSizeEffects || []).forEach(function(e){
+      if (!EFFECT_INFO[e.effect]) issues.push('Type "' + t.id + '" uses unknown effect "' + e.effect + '"');
+    });
   });
   return issues.concat(validateTags());
 }
 
 function validateTags(){
   var issues = [];
+  if (!vocabularyLoaded) return issues;
   state.nodes.forEach(function(n){
     var nodeTags = n.tags || [];
     var regionCount = nodeTags.filter(isRegionTag).length;
@@ -2218,36 +2336,16 @@ function refreshInspector(){
     return '<option value="' + o.id + '"' + (o.id === n.pairedWith ? ' selected' : '') + '>' + o.id + '</option>';
   }).join('');
 
-  var statsHtml = '';
-  if (t) {
-    var statRows = renderEffectRows('insp', t.effects || [], '<div class="hint">No effects yet.</div>');
-    if (!t.effects) t.effects = [];
-    if (!t.hullSizeEffects) t.hullSizeEffects = [];
-    statsHtml =
-      '<div class="field"><label>Flavour text (optional, grey line under the title, shared by type "' + t.id + '")</label>' +
-        '<textarea id="inspFlavour" rows="2" style="width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12.5px;padding:7px 9px;resize:vertical;">' + escapeHtml(t.flavour||'') + '</textarea>' +
-      '</div>' +
-      '<div class="field"><label>Description override (optional, shared by type "' + t.id + '")</label>' +
-        '<textarea id="inspDescription" rows="3" style="width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12.5px;padding:7px 9px;resize:vertical;">' + escapeHtml(t.description||'') + '</textarea>' +
-      '</div>' +
-      '<div class="field"><label>Stats granted by type "' + t.id + '"</label>' + statRows + '</div>' +
-      '<div class="btnRow"><button class="smallBtn" id="addStatRowBtn">+ Add effect</button></div>' +
-      '<div class="field"><label>Hull-size-dependent stats</label>' + renderHullSizeEffectRows('insp', t.hullSizeEffects) + '</div>' +
-      '<div class="btnRow"><button class="smallBtn" id="addHsStatRowBtn">+ Add hull-size effect</button></div>' +
-      '<div class="field"><label>Item cost</label><div class="fieldRow">' +
-        '<input id="inspItemCostId" placeholder="commodity id, e.g. lobster" value="' + ((t.itemCost && t.itemCost.itemId) || '') + '" style="flex:2">' +
-        '<input id="inspItemCostQuantity" type="number" placeholder="quantity" value="' + ((t.itemCost && t.itemCost.quantity) || '') + '" style="flex:1">' +
-      '</div></div>' +
-      '<div class="field"><label>Temporary after deployment (seconds)</label><input id="inspTemporaryAfterDeploymentSeconds" type="number" min="0" placeholder="leave blank for always-on" value="' + (t.temporaryAfterDeploymentSeconds || '') + '"></div>' +
-      '<hr class="sep">';
-  }
+  var sharedNote = t ? ' - shared by every "' + escapeHtml(t.id) + '" node' : '';
+  if (t) ensureTypeLists(t);
+  var statsHtml = t ? typeFormHtml('insp', t, TYPE_FORM_INSPECTOR_SECTIONS, { note: sharedNote }) + '<hr class="sep">' : '';
 
   body.innerHTML =
-    '<h2>' + (t ? t.name : n.type) + '</h2>' +
+    '<h2>' + escapeHtml(t ? t.name : n.type) + '</h2>' +
     '<span class="tierPill" style="color:var(' + colorVarFor(tier) + ');border-color:var(' + colorVarFor(tier) + ')">' + tier + '</span>' +
-    (t ? '<div class="field"><label>Type tags (shared by every "' + t.id + '" node)</label>' + renderTagChips('insp', t.tags || [], TYPE_TAG_GROUPS) + '</div>' : '') +
+    (t ? typeFormHtml('insp', t, ['tags'], { note: sharedNote }) : '') +
     '<div class="field"><label>Node tags (this node only)</label>' + renderTagChips('insp-node', n.tags || [], NODE_TAG_GROUPS) + '</div>' +
-    '<div class="field"><label>Node id</label><input value="' + n.id + '" data-field="id"></div>' +
+    '<div class="field"><label>Node id</label><input value="' + escapeHtml(n.id) + '" data-field="id"></div>' +
     '<div class="field"><label>Type</label><select data-field="type">' + typeOptions + '</select></div>' +
     '<div class="fieldRow">' +
       '<div class="field"><label>X</label><input type="number" value="' + n.x + '" data-field="x"></div>' +
@@ -2255,7 +2353,7 @@ function refreshInspector(){
     '</div>' +
     (tier === 'KEYSTONE' ?
       '<div class="field"><label>Ring belt art (optional)</label><div class="fieldRow">' +
-        '<input value="' + (n.ringBeltPath || '') + '" placeholder="' + AURORA_RING_BELT_PATH + '" data-field="ringBeltPath" style="flex:1">' +
+        '<input value="' + escapeHtml(n.ringBeltPath || '') + '" placeholder="' + AURORA_RING_BELT_PATH + '" data-field="ringBeltPath" style="flex:1">' +
         '<button class="smallBtn" type="button" id="selectRingBeltBtn">Select Image</button>' +
       '</div></div>' +
       (isAuroraBelt(n) ?
@@ -2294,7 +2392,7 @@ function refreshInspector(){
       } else if (field === 'type') {
         n.type = inp.value;
       } else if (field === 'x' || field === 'y') {
-        n[field] = parseInt(inp.value, 10) || 0;
+        n[field] = parseFloat(inp.value) || 0;
       } else if (field === 'ringBeltPath') {
         var val = inp.value.trim();
         if (val) n.ringBeltPath = val; else delete n.ringBeltPath;
@@ -2372,93 +2470,12 @@ function refreshInspector(){
     });
   });
   if (t) {
-    var inspFlavourInput = document.getElementById('inspFlavour');
-    if (inspFlavourInput) {
-      inspFlavourInput.addEventListener('change', function(){
-        t.flavour = inspFlavourInput.value;
-        saveLocal(); refreshInspector();
-      });
-    }
-    var inspDescInput = document.getElementById('inspDescription');
-    if (inspDescInput) {
-      inspDescInput.addEventListener('change', function(){
-        t.description = inspDescInput.value;
-        saveLocal(); refreshInspector();
-      });
-    }
-    body.querySelectorAll('[data-insp-toggle-tag]').forEach(function(chip){
-      chip.addEventListener('click', function(){
-        if (!t.tags) t.tags = [];
-        var tag = chip.dataset.inspToggleTag;
-        var idx = t.tags.indexOf(tag);
-        if (idx === -1) t.tags.push(tag); else t.tags.splice(idx, 1);
-        saveLocal(); render(); refreshInspector();
-      });
-    });
-    body.querySelectorAll('[id^="inspEffect"], [id^="inspMag"]').forEach(function(el){
-      el.addEventListener('change', function(){
-        syncEffectRowsFromInputs('insp', t.effects);
+    wireTypeForm(body, 'insp', t, {
+      edited: function(structural){
         saveLocal();
-      });
-    });
-    wireEffectFilters(body);
-    body.querySelectorAll('[data-insp-remove-effect-row]').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        syncEffectRowsFromInputs('insp', t.effects);
-        t.effects.splice(parseInt(btn.dataset.inspRemoveEffectRow, 10), 1);
-        saveLocal(); refreshInspector();
-      });
-    });
-    wireMoveRowButtons(body, 'insp-move-effect-row', function(){ syncEffectRowsFromInputs('insp', t.effects); },
-      function(){ return t.effects; }, function(){ saveLocal(); refreshInspector(); });
-    wireMoveRowButtons(body, 'insp-move-hs-row', function(){ syncHullSizeEffectsFromInputs('insp', t.hullSizeEffects); },
-      function(){ return t.hullSizeEffects; }, function(){ saveLocal(); refreshInspector(); });
-    var addStatBtn = document.getElementById('addStatRowBtn');
-    if (addStatBtn) {
-      addStatBtn.addEventListener('click', function(){
-        syncEffectRowsFromInputs('insp', t.effects);
-        t.effects.push({ effect: EFFECT_NAMES[0], magnitude: 10 });
-        saveLocal(); refreshInspector();
-      });
-    }
-    body.querySelectorAll('[id^="inspHsEffect"], [id^="inspHsFrigate"], [id^="inspHsDestroyer"], [id^="inspHsCruiser"], [id^="inspHsCapital"]').forEach(function(el){
-      el.addEventListener('change', function(){
-        syncHullSizeEffectsFromInputs('insp', t.hullSizeEffects);
-        saveLocal();
-      });
-    });
-    body.querySelectorAll('[data-insp-remove-hs-row]').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        syncHullSizeEffectsFromInputs('insp', t.hullSizeEffects);
-        t.hullSizeEffects.splice(parseInt(btn.dataset.inspRemoveHsRow, 10), 1);
-        saveLocal(); refreshInspector();
-      });
-    });
-    var addHsStatBtn = document.getElementById('addHsStatRowBtn');
-    if (addHsStatBtn) {
-      addHsStatBtn.addEventListener('click', function(){
-        syncHullSizeEffectsFromInputs('insp', t.hullSizeEffects);
-        t.hullSizeEffects.push({ effect: EFFECT_NAMES[0], frigate: 0, destroyer: 0, cruiser: 0, capitalShip: 0 });
-        saveLocal(); refreshInspector();
-      });
-    }
-    var inspItemCostId = document.getElementById('inspItemCostId');
-    var inspItemCostQuantity = document.getElementById('inspItemCostQuantity');
-    var syncInspItemCost = function(){
-      var itemId = inspItemCostId.value.trim();
-      var quantity = parseFloat(inspItemCostQuantity.value) || 0;
-      if (itemId) t.itemCost = { itemId: itemId, quantity: quantity };
-      else delete t.itemCost;
-      saveLocal();
-    };
-    inspItemCostId.addEventListener('change', function(){ syncInspItemCost(); refreshInspector(); });
-    inspItemCostQuantity.addEventListener('change', function(){ syncInspItemCost(); refreshInspector(); });
-    var inspTemporaryAfterDeploymentSeconds = document.getElementById('inspTemporaryAfterDeploymentSeconds');
-    inspTemporaryAfterDeploymentSeconds.addEventListener('change', function(){
-      var seconds = parseFloat(inspTemporaryAfterDeploymentSeconds.value);
-      if (!isNaN(seconds) && seconds > 0) t.temporaryAfterDeploymentSeconds = seconds;
-      else delete t.temporaryAfterDeploymentSeconds;
-      saveLocal(); refreshInspector();
+        if (structural) { render(); refreshInspector(); }
+      },
+      redraw: function(){}
     });
   }
   document.getElementById('deleteNodeBtn').addEventListener('click', deleteSelectedNodes);
@@ -2478,8 +2495,8 @@ function refreshInspector(){
   var selectImageBtn = document.getElementById('selectImageBtn');
   if (selectImageBtn) {
     selectImageBtn.addEventListener('click', function(){
-      openImagePickerModal(function(path){
-        t.icon = moveIconIfNeeded(path);
+      pickProjectImage('graphics/icons/', function(path){
+        t.icon = path;
         saveLocal();
         render();
         refreshInspector();
@@ -2581,7 +2598,7 @@ function refreshAnchorInspector(body){
         state.nodes.forEach(function(n){ if (n.orbitAnchorId === oldId) n.orbitAnchorId = newId; });
         state.selectedAnchorIds = [newId];
       } else if (field === 'x' || field === 'y') {
-        a[field] = parseInt(inp.value, 10) || 0;
+        a[field] = parseFloat(inp.value) || 0;
       } else if (field === 'radius') {
         a.radius = Math.max(10, parseInt(inp.value, 10) || 10);
       } else if (field === 'shape') {
@@ -2667,7 +2684,7 @@ function refreshImageInspector(body){
         img.id = newId;
         state.selectedImageIds = [newId];
       } else if (field === 'x' || field === 'y') {
-        img[field] = parseInt(inp.value, 10) || 0;
+        img[field] = parseFloat(inp.value) || 0;
       } else if (field === 'width' || field === 'height') {
         img[field] = Math.max(20, parseInt(inp.value, 10) || 20);
       } else if (field === 'rotation') {
@@ -2736,7 +2753,7 @@ function refreshStarInspector(body){
         s.id = newId;
         state.selectedStarIds = [newId];
       } else if (field === 'x' || field === 'y') {
-        s[field] = parseInt(inp.value, 10) || 0;
+        s[field] = parseFloat(inp.value) || 0;
       } else if (field === 'radius') {
         s.radius = Math.max(20, parseInt(inp.value, 10) || 20);
       } else if (field === 'starType') {
@@ -2812,42 +2829,34 @@ function addNodeTypeOptionsHtml(sizeFilter){
     return '<option value="'+t.id+'">'+t.name+' ('+t.id+')</option>';
   }).join('') || '<option value="" disabled selected>No types of this size</option>';
 }
+var TIER_LABELS = { SMALL: 'Small', NOTABLE: 'Notable', KEYSTONE: 'Keystone', WORMHOLE: 'Wormhole', SOCKET: 'Modular Hull Socket', ROOT: 'Root' };
 function openAddNodeModal(x, y){
-  var html =
-    '<div class="modalOverlay"><div class="modal">' +
-    '<h3>Add node at (' + x + ', ' + y + ')</h3>' +
-    '<div class="field"><label>Size</label><select id="mAddSizeFilter">' +
-      '<option value="ALL">All sizes</option>' +
-      '<option value="SMALL">Small</option>' +
-      '<option value="NOTABLE">Notable</option>' +
-      '<option value="KEYSTONE">Keystone</option>' +
-      '<option value="WORMHOLE">Wormhole</option>' +
-      '<option value="SOCKET">Modular Hull Socket</option>' +
-      '<option value="ROOT">Root</option>' +
-    '</select></div>' +
-    '<div class="field"><label>Type</label><select id="mAddType">' + addNodeTypeOptionsHtml('ALL') + '</select></div>' +
-    '<div class="modalBtns">' +
+  var root = openModal({
+    title: 'Add node at (' + x + ', ' + y + ')',
+    bodyHtml:
+      '<div class="field"><label>Size</label><select id="mAddSizeFilter"><option value="ALL">All sizes</option>' +
+        TIERS.map(function(tier){ return '<option value="' + tier + '">' + (TIER_LABELS[tier] || tier) + '</option>'; }).join('') +
+      '</select></div>' +
+      '<div class="field"><label>Type</label><select id="mAddType">' + addNodeTypeOptionsHtml('ALL') + '</select></div>',
+    buttonsHtml:
       '<button class="smallBtn" id="mAddNewType">Define new type instead</button>' +
       '<button class="smallBtn" id="mCancel">Cancel</button>' +
-      '<button class="smallBtn primary" id="mConfirm">Add node</button>' +
-    '</div>' +
-    '</div></div>';
-  var root = document.getElementById('modalRoot');
-  root.innerHTML = html;
-  document.getElementById('mCancel').addEventListener('click', function(){ root.innerHTML=''; });
+      '<button class="smallBtn primary" id="mConfirm">Add node</button>'
+  });
+  document.getElementById('mCancel').addEventListener('click', closeModal);
   document.getElementById('mAddSizeFilter').addEventListener('change', function(){
     document.getElementById('mAddType').innerHTML = addNodeTypeOptionsHtml(this.value);
   });
   document.getElementById('mAddNewType').addEventListener('click', function(){
-    root.innerHTML = '';
+    closeModal();
     openTypeModal(null, function(newType){
       addNodeOfType(newType.id, x, y);
     });
   });
   document.getElementById('mConfirm').addEventListener('click', function(){
-    var typeId = document.getElementById('mAddType').value;
+    var typeId = root.querySelector('#mAddType').value;
     if (!typeId) { showToast('Pick a type first'); return; }
-    root.innerHTML = '';
+    closeModal();
     addNodeOfType(typeId, x, y);
   });
 }
@@ -2869,52 +2878,50 @@ function addNodeOfType(typeId, x, y){
   selectNode(node.id);
 }
 
-var EFFECT_NAMES = ['HULL_PERCENT','ZERO_FLUX_SPEED_FLAT','PHASE_TOP_SPEED_PERCENT','DAMAGE_TO_CAPITAL_PERCENT','DAMAGE_TO_FRIGATE_PERCENT','DAMAGE_TO_DESTROYER_PERCENT','DAMAGE_TO_CRUISER_PERCENT','WEAPON_MALFUNCTION_PERCENT','HULL_FLAT','HULL_MULT','ARMOR_PERCENT','ARMOR_FLAT','ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD','ARMOR_FLAT_FOR_LOW_BASE_ARMOR','FLUX_CAPACITY_PERCENT','FLUX_CAPACITY_FLAT','FLUX_CAPACITY_MULT','FLUX_DISSIPATION_PERCENT','FLUX_DISSIPATION_FLAT','BALLISTIC_WEAPON_DAMAGE_PERCENT','MISSILE_WEAPON_DAMAGE_PERCENT',
-  'NON_BEAM_ENERGY_WEAPON_DAMAGE_PERCENT','BEAM_WEAPON_DAMAGE_PERCENT','ENERGY_WEAPON_DAMAGE_PERCENT','WEAPON_DAMAGE_PERCENT','WEAPON_DAMAGE_MULT_PER_DMOD','MANEUVERABILITY_PERCENT','FUEL_CAPACITY_PERCENT','FUEL_CAPACITY_FLAT',
-  'CARGO_CAPACITY_PERCENT','CARGO_CAPACITY_FLAT','CREW_CAPACITY_PERCENT','CREW_CAPACITY_FLAT','BURN_LEVEL_FLAT','SENSOR_PROFILE_PERCENT','SENSOR_STRENGTH_PERCENT','SENSOR_STRENGTH_FLAT','SENSOR_STRENGTH_ALWAYS_COUNTS','COMBAT_VISION','ELECTRONIC_WARFARE','NAV_RATING','BALLISTIC_WEAPON_RANGE_PERCENT',
-  'ENERGY_WEAPON_RANGE_PERCENT','NON_BEAM_ENERGY_WEAPON_RANGE_FLAT','BEAM_WEAPON_RANGE_PERCENT','BALLISTIC_WEAPON_AMMO_PERCENT','ENERGY_WEAPON_AMMO_PERCENT','MISSILE_WEAPON_AMMO_PERCENT','BALLISTIC_WEAPON_AMMO_REGEN_PERCENT','ENERGY_WEAPON_AMMO_REGEN_PERCENT','BALLISTIC_WEAPON_FIRE_RATE_PERCENT','ENERGY_WEAPON_FIRE_RATE_PERCENT','MISSILE_WEAPON_FIRE_RATE_PERCENT','WEAPON_TURN_RATE_PERCENT',
-  'SHIELD_ARC_PERCENT','SHIELD_UPKEEP_PERCENT','SHIELD_ABSORPTION_PERCENT','SHIELD_TURN_RATE_PERCENT','SHIELD_RAISE_RATE_PERCENT','SHIELD_DAMAGE_SHARED_PERCENT','WEAPON_DURABILITY_PERCENT',
-  'ENGINE_DURABILITY_PERCENT','TOP_SPEED_PERCENT','PEAK_CR_DURATION_PERCENT','WEAPON_RANGE_FALLOFF_PERCENT','REPAIR_TIME_PERCENT',
-  'CR_RECOVERY_RATE_PERCENT','REPAIR_RATE_PER_DAY_PERCENT','MIN_CREW_MULT','MIN_CREW_PERCENT','SUPPLIES_PER_MONTH_MULT','FUEL_USE_MULT',
-  'PHASE_CLOAK_ACTIVATION_COST_MULT','PHASE_CLOAK_FLUX_THRESHOLD_PERCENT','PHASE_ANCHOR_EMERGENCY_DIVE','REMOVE_CIVILIAN_HULL_PENALTY',
-  'CREW_LOSS_PERCENT','ENERGY_DAMAGE_TAKEN_PERCENT','KINETIC_DAMAGE_TAKEN_PERCENT','HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT','FRAGMENTATION_DAMAGE_TAKEN_PERCENT','EMP_DAMAGE_TAKEN_PERCENT','FLUX_DISSIPATION_WHILE_VENTING_PERCENT',
-  'COMBAT_BOOST_WHILE_PHASED','COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP',
-  'SURVEY_COST_REDUCTION_HEAVY_MACHINERY','SURVEY_COST_REDUCTION_SUPPLIES','GROUND_SUPPORT_FLAT','GROUND_SUPPORT_PER_MAX_CREW_PERCENT','OBJECTIVE_CAPTURE_RATE_MULT','OBJECTIVE_CAPTURE_RANGE_FLAT',
-  'MIN_CREW_FLAT','FIGHTER_REFIT_TIME_MULT','FIGHTER_REPLACEMENT_RATE_MULT','FIGHTER_RELAUNCH_TIME_FLAT','FIGHTER_BAYS_FLAT','CONVERTED_HANGAR_FIGHTER_BAYS_FLAT',
-  'PD_IGNORES_DECOY_FLARES','PD_BEST_TARGET_LEADING','PD_DAMAGE_TO_MISSILES_PERCENT','PD_RECLASSIFY_SMALL_WEAPONS',
-  'ACCELERATION_FLAT','DECELERATION_FLAT','TOP_SPEED_FLAT',
-  'BEAM_WEAPON_HARD_FLUX_PERCENT','BEAM_WEAPON_RANGE_FLAT','BEAM_WEAPON_RANGE_MULT','BEAM_WEAPON_TURN_RATE_PERCENT','WEAPON_RANGE_THRESHOLD_FLAT','WEAPON_RECOIL_PERCENT',
-  'MISSILE_WEAPON_FLIGHT_ACCELERATION_PERCENT','MISSILE_WEAPON_GUIDANCE_FLAT','MISSILE_WEAPON_RANGE_PERCENT','MISSILE_WEAPON_PROJECTILE_SPEED_PERCENT','MISSILE_WEAPON_FLIGHT_TURN_ACCELERATION_PERCENT','MISSILE_WEAPON_FLIGHT_TURN_RATE_PERCENT',
-  'CONVERT_SHIELD_TO_OMNI','CONVERT_SHIELD_TO_FRONT','CREATE_FRONT_SHIELD_IF_NONE','REMOVE_SHIELD',
-  'CONVERTED_HANGAR_REFIT_TIME_MULT','CONVERTED_HANGAR_REPLACEMENT_RATE_MULT','CONVERTED_HANGAR_RELAUNCH_TIME_FLAT','CONVERTED_HANGAR_MIN_CREW_FLAT','SHIELD_PIERCE_CHANCE_PERCENT','SHIELD_ARC_MULT','TOP_SPEED_MULT',
-  'CARGO_CAPACITY_PER_FIGHTER_BAY','MIN_CREW_PER_FIGHTER_BAY','MIN_CREW_PERCENT_PER_FIGHTER_BAY','REMOVE_ALL_FIGHTER_BAYS',
-  'FIGHTER_CREW_LOSS_PERCENT','FIGHTER_REPLACEMENT_DECAY_PERCENT','FIGHTER_REPLACEMENT_RECOVERY_PERCENT','FIGHTER_TOP_SPEED_PERCENT','FIGHTER_WEAPON_DAMAGE_PERCENT',
-  'CR_LOSS_PER_SECOND_PERCENT','MISSILE_WEAPON_ECCM_CHANCE_PERCENT','ELECTRONIC_WARFARE_PENALTY_PERCENT','VENT_RATE_PERCENT','ZERO_FLUX_ALWAYS_ON',
-  'BALLISTIC_WEAPON_RANGE_MULT','ENERGY_WEAPON_RANGE_MULT','WEAPON_TURN_RATE_MULT','WEAPON_RANGE_FALLOFF_MULT','BEAM_WEAPON_TURN_RATE_MULT',
-  'WEAPON_RECOIL_MULT','MISSILE_WEAPON_RANGE_MULT','SHIELD_DAMAGE_TAKEN_MULT','REPAIR_TIME_MULT','EMP_DAMAGE_TAKEN_MULT','SENSOR_PROFILE_MULT',
-  'CR_LOSS_PER_SECOND_MULT','CREW_LOSS_MULT','DMOD_EFFECT_MULT','SHIELD_PIERCE_CHANCE_MULT','SHIELD_UPKEEP_MULT','ELECTRONIC_WARFARE_PENALTY_MULT',
-  'PEAK_CR_DURATION_MULT','FLUX_DISSIPATION_MULT','VENT_RATE_MULT','FIGHTER_CREW_LOSS_MULT','FIGHTER_REFIT_TIME_PERCENT',
-  'BREAK_PROBABILITY_PERCENT','SHIELD_ARC_FLAT','SHIP_RECOVERY_CHANCE_BONUS',
-  'FIGHTER_ARMOR_PERCENT','FIGHTER_SHIELD_DAMAGE_TAKEN_PERCENT','FIGHTER_RATE_OF_FIRE_PERCENT','FIGHTER_ENGAGEMENT_RANGE_PERCENT','FIGHTER_WEAPON_RANGE_FLAT','FIGHTER_PD_DAMAGE_BONUS_PERCENT',
-  'FIGHTER_ROLE_DAMAGE_PERCENT','FIGHTER_ROLE_TOP_SPEED_PERCENT','FIGHTER_ROLE_ARMOR_PERCENT','FIGHTER_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT','FIGHTER_ROLE_RATE_OF_FIRE_PERCENT',
-  'INTERCEPTOR_ROLE_DAMAGE_PERCENT','INTERCEPTOR_ROLE_TOP_SPEED_PERCENT','INTERCEPTOR_ROLE_ARMOR_PERCENT','INTERCEPTOR_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT','INTERCEPTOR_ROLE_RATE_OF_FIRE_PERCENT',
-  'BOMBER_ROLE_DAMAGE_PERCENT','BOMBER_ROLE_TOP_SPEED_PERCENT','BOMBER_ROLE_ARMOR_PERCENT','BOMBER_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT','BOMBER_ROLE_RATE_OF_FIRE_PERCENT',
-  'SUPPORT_ROLE_DAMAGE_PERCENT','SUPPORT_ROLE_TOP_SPEED_PERCENT','SUPPORT_ROLE_ARMOR_PERCENT','SUPPORT_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT','SUPPORT_ROLE_RATE_OF_FIRE_PERCENT',
-  'EXPLODE_ON_DEATH','DEATH_ON_COLLISION','BEAM_WEAPON_SPLIT_TARGETS_FLAT',
-  'NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT','NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT','BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT',
-  'BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_MULT','ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT',
-  'ESCORT_MANEUVER_BONUS_PERCENT','ESCORT_SPEED_BONUS_PERCENT','ESCORT_WEAPON_RANGE_BONUS_PERCENT','ESCORT_PROXIMITY_RANGE_FLAT',
-  'CORONA_RESISTANCE_MULT','BALLISTIC_WEAPON_LARGE_OP_COST_FLAT','MISSILE_RELOAD_PERCENT_PER_MINUTE','BALLISTIC_WEAPON_PROJECTILE_SPEED_PERCENT','POST_BATTLE_SALVAGE_PERCENT','PHASE_FIELD_CONTRIBUTION_PERCENT',
-  'NANOFORGE_HULL_REGEN_PERCENT','DISINTEGRATION_ARMOR_DAMAGE_PERCENT','WEAPON_AUTOFIRE_ACCURACY_PERCENT','TERRIFYING_PRESENCE_ACCURACY_PENALTY_PERCENT',
-  'NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT','MEDIUM_ENERGY_SLOT_WEAPON_RANGE_FLAT','SHIELD_ABSORB_RATE_OF_FIRE_PERCENT',
-  'HEARTLESS_ON_NEARBY_DESTRUCTION_RANGE_FLAT','HEARTLESS_MAX_STACKS_FLAT','HEARTLESS_ARMOR_RESTORE_PERCENT','HEARTLESS_ARMOR_PERCENT_PER_STACK','HEARTLESS_MOBILITY_PENALTY_PERCENT_PER_STACK','HEARTLESS_RADIATION_EMP_FLAT','HEARTLESS_CREW_DEATH_CHANCE_PERCENT_PER_STACK','HEARTLESS_MISSILE_DAMAGE_PERCENT_PER_STACK','HEARTLESS_MISSILE_SPEED_PERCENT_PER_STACK','CREW_STEAL_RANGE_FLAT','CREW_STEAL_SKELETON_CREW_PERCENT','FLUX_SCALED_TOP_SPEED_FLAT','FLUX_SCALED_RATE_OF_FIRE_PERCENT','FLUX_CAPACITOR_EFFECTIVENESS_PERCENT','FIGHTER_ENGAGEMENT_RANGE_MULT','SYSTEM_CHARGES_FLAT','AUGMENTED_FLUX_SCALED_PENALTY_REDUCTION_PERCENT','AUGMENTED_INERTIAL_PROJECTILE_SPEED_PERCENT','AUGMENTED_SYSTEM_REGEN_PERCENT',
-  'MAX_COMBAT_READINESS_PERCENT',
-  'BALLISTIC_WEAPON_AMMO_FLAT','BALLISTIC_WEAPON_AMMO_MULT','BALLISTIC_WEAPON_AMMO_REGEN_MULT','BALLISTIC_WEAPON_DAMAGE_FLAT','BALLISTIC_WEAPON_DAMAGE_MULT','BALLISTIC_WEAPON_FIRE_RATE_MULT','BALLISTIC_WEAPON_FLUX_COST_MULT','BALLISTIC_WEAPON_FLUX_COST_PERCENT','BALLISTIC_WEAPON_PROJECTILE_SPEED_MULT','BALLISTIC_WEAPON_RANGE_FLAT','BEAM_WEAPON_AMMO_FLAT','BEAM_WEAPON_AMMO_MULT','BEAM_WEAPON_AMMO_PERCENT','BEAM_WEAPON_AMMO_REGEN_MULT','BEAM_WEAPON_AMMO_REGEN_PERCENT','BEAM_WEAPON_DAMAGE_FLAT','BEAM_WEAPON_DAMAGE_MULT','BEAM_WEAPON_FLUX_COST_MULT','BEAM_WEAPON_FLUX_COST_PERCENT','BEAM_WEAPON_PROJECTILE_SPEED_MULT','BEAM_WEAPON_PROJECTILE_SPEED_PERCENT','ENERGY_WEAPON_AMMO_FLAT','ENERGY_WEAPON_AMMO_MULT','ENERGY_WEAPON_AMMO_REGEN_MULT','ENERGY_WEAPON_DAMAGE_FLAT','ENERGY_WEAPON_DAMAGE_MULT','ENERGY_WEAPON_FIRE_RATE_MULT','ENERGY_WEAPON_FLUX_COST_MULT','ENERGY_WEAPON_FLUX_COST_PERCENT','ENERGY_WEAPON_PROJECTILE_SPEED_MULT','ENERGY_WEAPON_PROJECTILE_SPEED_PERCENT','ENERGY_WEAPON_RANGE_FLAT','MISSILE_WEAPON_AMMO_FLAT','MISSILE_WEAPON_AMMO_MULT','MISSILE_WEAPON_AMMO_REGEN_MULT','MISSILE_WEAPON_AMMO_REGEN_PERCENT','MISSILE_WEAPON_DAMAGE_FLAT','MISSILE_WEAPON_DAMAGE_MULT','MISSILE_WEAPON_FIRE_RATE_MULT','MISSILE_WEAPON_FLIGHT_ACCELERATION_MULT','MISSILE_WEAPON_FLIGHT_TURN_ACCELERATION_MULT','MISSILE_WEAPON_FLIGHT_TURN_RATE_MULT','MISSILE_WEAPON_FLUX_COST_MULT','MISSILE_WEAPON_FLUX_COST_PERCENT','MISSILE_WEAPON_HEALTH_MULT','MISSILE_WEAPON_HEALTH_PERCENT','MISSILE_WEAPON_PROJECTILE_SPEED_MULT','MISSILE_WEAPON_RANGE_FLAT','NON_BEAM_ENERGY_WEAPON_AMMO_FLAT','NON_BEAM_ENERGY_WEAPON_AMMO_MULT','NON_BEAM_ENERGY_WEAPON_AMMO_PERCENT','NON_BEAM_ENERGY_WEAPON_AMMO_REGEN_MULT','NON_BEAM_ENERGY_WEAPON_AMMO_REGEN_PERCENT','NON_BEAM_ENERGY_WEAPON_DAMAGE_FLAT','NON_BEAM_ENERGY_WEAPON_DAMAGE_MULT','NON_BEAM_ENERGY_WEAPON_FLUX_COST_MULT','NON_BEAM_ENERGY_WEAPON_PROJECTILE_SPEED_MULT','NON_BEAM_ENERGY_WEAPON_PROJECTILE_SPEED_PERCENT','NON_BEAM_ENERGY_WEAPON_RANGE_MULT','NON_BEAM_ENERGY_WEAPON_RANGE_PERCENT','WEAPON_AMMO_FLAT','WEAPON_AMMO_MULT','WEAPON_AMMO_PERCENT','WEAPON_AMMO_REGEN_MULT','WEAPON_AMMO_REGEN_PERCENT','WEAPON_DAMAGE_FLAT','WEAPON_DAMAGE_MULT','WEAPON_DURABILITY_MULT','WEAPON_FIRE_RATE_MULT','WEAPON_FIRE_RATE_PERCENT','WEAPON_FLUX_COST_MULT','WEAPON_FLUX_COST_PERCENT','WEAPON_PROJECTILE_SPEED_MULT','WEAPON_PROJECTILE_SPEED_PERCENT','WEAPON_RANGE_FLAT','WEAPON_RANGE_MULT','WEAPON_RANGE_PERCENT'];
+var EFFECT_NAMES_SORTED = [];
+var EFFECT_INFO = {};
+var ALL_TAGS = [];
+var REGION_TAGS = [];
+var REQUIREMENT_TAGS = [];
+var TIERS = [];
+var UNLOCK_CONDITION_TYPES = [];
+var BLUEPRINT_CATEGORIES = [];
+var SOCKETABLE_KINDS = [];
+var SOCKETABLE_UNLOCK_IDS = [];
 
-var EFFECT_NAMES_SORTED = EFFECT_NAMES.slice().sort();
-function sortedEffectOptionsHtml(selected){
-  return EFFECT_NAMES_SORTED.map(function(name){
-    return '<option value="'+name+'"'+(name===selected?' selected':'')+'>'+name+'</option>';
+function applyVocabulary(vocabulary){
+  EFFECT_NAMES_SORTED = vocabulary.effects.map(function(e){ return e.name; }).sort();
+  EFFECT_INFO = {};
+  vocabulary.effects.forEach(function(e){ EFFECT_INFO[e.name] = e; });
+  REGION_TAGS = vocabulary.tags.region.slice();
+  REQUIREMENT_TAGS = vocabulary.tags.requirement.slice();
+  ALL_TAGS = vocabulary.tags.theme.concat(REGION_TAGS, REQUIREMENT_TAGS);
+  TIERS = vocabulary.tiers.slice();
+  UNLOCK_CONDITION_TYPES = vocabulary.unlockConditionTypes.slice();
+  BLUEPRINT_CATEGORIES = vocabulary.blueprintCategories.slice();
+  SOCKETABLE_KINDS = vocabulary.socketableKinds.slice();
+  SOCKETABLE_UNLOCK_IDS = vocabulary.socketableUnlocks.slice();
+  vocabularyLoaded = true;
+  updateSaveAvailability();
+}
+
+function loadVocabulary(){
+  return fetch('/data/vocabulary').then(function(r){
+    if (!r.ok) throw new Error('editor_vocabulary.json ' + r.status);
+    return r.json();
+  }).then(applyVocabulary);
+}
+
+function defaultEffectName(){
+  return EFFECT_INFO.HULL_PERCENT ? 'HULL_PERCENT' : EFFECT_NAMES_SORTED[0];
+}
+function effectOptionsHtml(selected){
+  var names = selected && !EFFECT_INFO[selected] ? [selected].concat(EFFECT_NAMES_SORTED) : EFFECT_NAMES_SORTED;
+  return names.map(function(name){
+    var info = EFFECT_INFO[name];
+    var title = info ? (info.statMode || 'special') + (info.lowerIsBetter ? ', lower is better' : '') : 'not a known effect';
+    return '<option value="' + escapeHtml(name) + '" title="' + title + '"' + (name === selected ? ' selected' : '') + '>' +
+      escapeHtml(name) + (info ? '' : ' (unknown)') + '</option>';
   }).join('');
 }
 function effectFilterHtml(selectId){
@@ -2933,13 +2940,6 @@ function wireEffectFilters(root){
   });
 }
 
-var ALL_TAGS = ['flux','shield','armour','hull','speed','logistics','missile','fighter','energy','ballistic','phase','beam','range','ammo','dmgtypekinetic','dmgtypehighexplosive','dmgtypefragmentation','dmgtypeenergy',
-  'weapons','point_defense','combat_readiness','repair','fleet_support','d_mods',
-  'core','luddic','tritachyon','hegemony','sindrian_dictat','pirate','REDACTED','persean_league','enigma','kesteven',
-  'req_shields','req_no_shields','req_phase','req_fighter_bays','req_no_fighter_bays','req_ballistic','req_missile','req_energy','req_beam','req_offensive_beam','req_non_beam_energy',
-  'req_flagship','req_civilian_hull','req_non_phase_hull','req_system_charges','campaign_only','player_only'];
-
-var REGION_TAGS = ['core','luddic','tritachyon','hegemony','sindrian_dictat','pirate','REDACTED','persean_league','enigma','kesteven'];
 var TAG_GROUPS = [
   { key: 'theme', label: 'Theme' },
   { key: 'region', label: 'Region' },
@@ -2951,7 +2951,7 @@ var NODE_TAG_GROUPS = ['region', 'requirement'];
 function isRegionTag(tag){ return REGION_TAGS.indexOf(tag) !== -1; }
 function tagGroupOf(tag){
   if (isRegionTag(tag)) return 'region';
-  if (tag.indexOf('req_') === 0 || tag === 'campaign_only' || tag === 'player_only') return 'requirement';
+  if (REQUIREMENT_TAGS.indexOf(tag) !== -1) return 'requirement';
   return 'theme';
 }
 
@@ -2999,16 +2999,16 @@ function wireRegionTagChips(root, idPrefix, obj){
   });
 }
 
-function renderOptionalOptionsSelect(selectedIds, selfId){
+function renderOptionalOptionsSelect(prefix, selectedIds, selfId){
   var candidates = state.types.filter(function(ty){ return ty.id !== selfId; });
   if (!candidates.length) {
-    return '<select id="tOptionalOptions" multiple size="6" disabled><option disabled>No other types exist yet</option></select>';
+    return '<select id="' + prefix + 'OptionalOptions" multiple size="6" disabled><option disabled>No other types exist yet</option></select>';
   }
   var opts = candidates.map(function(ty){
     var sel = selectedIds.indexOf(ty.id) !== -1 ? ' selected' : '';
-    return '<option value="' + ty.id + '"' + sel + '>' + (ty.name || ty.id) + '</option>';
+    return '<option value="' + escapeHtml(ty.id) + '"' + sel + '>' + escapeHtml(ty.name || ty.id) + '</option>';
   }).join('');
-  return '<select id="tOptionalOptions" multiple size="6">' + opts + '</select>';
+  return '<select id="' + prefix + 'OptionalOptions" multiple size="6">' + opts + '</select>';
 }
 
 function renderOptionEditRows(optionIds){
@@ -3016,8 +3016,8 @@ function renderOptionEditRows(optionIds){
   return optionIds.map(function(optId){
     var optType = typeById(optId);
     var label = optType ? (optType.name || optType.id) + ' (' + optType.id + ')' : optId + ' (missing!)';
-    return '<div class="prereqItem"><span>' + label + '</span>' +
-      (optType ? '<button class="smallBtn" data-edit-option-type="' + optId + '">Edit</button>' : '') +
+    return '<div class="prereqItem"><span>' + escapeHtml(label) + '</span>' +
+      (optType ? '<button class="smallBtn" type="button" data-edit-option-type="' + escapeHtml(optId) + '">Edit</button>' : '') +
     '</div>';
   }).join('');
 }
@@ -3045,7 +3045,7 @@ function wireMoveRowButtons(root, attr, beforeMove, list, afterMove){
 
 function renderEffectRows(idPrefix, effectsDraft, emptyHintHtml){
   var rows = effectsDraft.map(function(e, i){
-    var options = sortedEffectOptionsHtml(e.effect);
+    var options = effectOptionsHtml(e.effect);
     var selectId = idPrefix + 'Effect' + i;
     return '<div class="fieldRow" style="align-items:flex-end">' +
       '<div class="field" style="flex:2"><label>Effect ' + (i+1) + '</label>' + effectFilterHtml(selectId) + '<select id="' + selectId + '">' + options + '</select></div>' +
@@ -3067,34 +3067,34 @@ function syncEffectRowsFromInputs(idPrefix, effectsDraft){
   });
 }
 
-var UNLOCK_CONDITION_TYPES = [
-  { value: 'blueprint', label: 'Blueprint known' },
-  { value: 'characterStat', label: 'Character stat flag' },
-  { value: 'minShipLevel', label: 'Min ship level' },
-  { value: 'memoryFlag', label: 'Game state (memory flag)' }
-];
-var BLUEPRINT_CATEGORIES = ['hullmod'];
+var UNLOCK_CONDITION_LABELS = {
+  blueprint: 'Blueprint known',
+  characterStat: 'Character stat flag',
+  minShipLevel: 'Min ship level',
+  memoryFlag: 'Game state (memory flag)'
+};
 
 function renderUnlockConditionRows(idPrefix, conditionsDraft){
   var rows = conditionsDraft.map(function(c, i){
-    var typeOptions = UNLOCK_CONDITION_TYPES.map(function(t){
-      return '<option value="' + t.value + '"' + (t.value === c.type ? ' selected' : '') + '>' + t.label + '</option>';
+    var types = UNLOCK_CONDITION_TYPES.indexOf(c.type) === -1 && c.type ? [c.type].concat(UNLOCK_CONDITION_TYPES) : UNLOCK_CONDITION_TYPES;
+    var typeOptions = types.map(function(type){
+      return '<option value="' + escapeHtml(type) + '"' + (type === c.type ? ' selected' : '') + '>' + escapeHtml(UNLOCK_CONDITION_LABELS[type] || type) + '</option>';
     }).join('');
 
     var paramsHtml;
     if (c.type === 'characterStat') {
-      paramsHtml = '<div class="field" style="flex:2"><label>Stat id</label><input id="' + idPrefix + 'UnlockStatId' + i + '" value="' + (c.statId||'') + '" placeholder="has_neural_link"></div>';
+      paramsHtml = '<div class="field" style="flex:2"><label>Stat id</label><input id="' + idPrefix + 'UnlockStatId' + i + '" value="' + escapeHtml(c.statId||'') + '" placeholder="has_neural_link"></div>';
     } else if (c.type === 'minShipLevel') {
-      paramsHtml = '<div class="field" style="flex:2"><label>Min level</label><input id="' + idPrefix + 'UnlockLevel' + i + '" type="number" min="1" value="' + (c.level||1) + '"></div>';
+      paramsHtml = '<div class="field" style="flex:2"><label>Min level</label><input id="' + idPrefix + 'UnlockLevel' + i + '" type="number" min="1" value="' + escapeHtml(c.level||1) + '"></div>';
     } else if (c.type === 'memoryFlag') {
-      paramsHtml = '<div class="field" style="flex:2"><label>Memory key</label><input id="' + idPrefix + 'UnlockKey' + i + '" value="' + (c.key||'') + '" placeholder="$playerCanUseGates"></div>';
+      paramsHtml = '<div class="field" style="flex:2"><label>Memory key</label><input id="' + idPrefix + 'UnlockKey' + i + '" value="' + escapeHtml(c.key||'') + '" placeholder="$playerCanUseGates"></div>';
     } else {
       var categoryOptions = BLUEPRINT_CATEGORIES.map(function(cat){
-        return '<option value="' + cat + '"' + (cat === (c.category||'hullmod') ? ' selected' : '') + '>' + cat + '</option>';
+        return '<option value="' + escapeHtml(cat) + '"' + (cat === (c.category||'hullmod') ? ' selected' : '') + '>' + escapeHtml(cat) + '</option>';
       }).join('');
       paramsHtml =
         '<div class="field" style="flex:1"><label>Category</label><select id="' + idPrefix + 'UnlockCategory' + i + '">' + categoryOptions + '</select></div>' +
-        '<div class="field" style="flex:1"><label>Id</label><input id="' + idPrefix + 'UnlockId' + i + '" value="' + (c.id||'') + '"></div>';
+        '<div class="field" style="flex:1"><label>Id</label><input id="' + idPrefix + 'UnlockId' + i + '" value="' + escapeHtml(c.id||'') + '"></div>';
     }
 
     return '<div class="fieldRow" style="align-items:flex-end">' +
@@ -3148,7 +3148,7 @@ function serializeUnlockConditions(conditionsDraft){
 
 function renderHullSizeEffectRows(idPrefix, hullSizeEffectsDraft){
   var rows = hullSizeEffectsDraft.map(function(e, i){
-    var options = sortedEffectOptionsHtml(e.effect);
+    var options = effectOptionsHtml(e.effect);
     var selectId = idPrefix + 'HsEffect' + i;
     return '<div class="fieldRow" style="align-items:flex-end;flex-wrap:wrap">' +
       '<div class="field" style="flex:2 1 160px"><label>Effect ' + (i+1) + '</label>' + effectFilterHtml(selectId) + '<select id="' + selectId + '">' + options + '</select></div>' +
@@ -3172,6 +3172,185 @@ function syncHullSizeEffectsFromInputs(idPrefix, hullSizeEffectsDraft){
     e.destroyer = parseFloat(document.getElementById(idPrefix + 'HsDestroyer' + i).value) || 0;
     e.cruiser = parseFloat(document.getElementById(idPrefix + 'HsCruiser' + i).value) || 0;
     e.capitalShip = parseFloat(document.getElementById(idPrefix + 'HsCapital' + i).value) || 0;
+  });
+}
+
+var TYPE_FORM_INSPECTOR_SECTIONS = ['texts', 'effects', 'hullSizeEffects', 'itemCost', 'temporary'];
+var TYPE_FORM_DIALOG_SECTIONS = ['identity', 'tags', 'effects', 'hullSizeEffects', 'vanillaHullMod', 'unlockConditions', 'exclusivity',
+  'itemCost', 'temporary', 'requiredHullSizes', 'optionalOptions', 'texts', 'todo'];
+var TEXTAREA_STYLE = 'width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);' +
+  'font-family:var(--font-mono);font-size:12.5px;padding:7px 9px;resize:vertical;';
+var HULL_SIZE_OPTIONS = [['FRIGATE', 'Frigate'], ['DESTROYER', 'Destroyer'], ['CRUISER', 'Cruiser'], ['CAPITAL_SHIP', 'Capital']];
+
+function ensureTypeLists(draft){
+  ['effects', 'hullSizeEffects', 'unlockConditions', 'tags'].forEach(function(key){ if (!draft[key]) draft[key] = []; });
+}
+function idListText(ids){ return (ids || []).join(', '); }
+function idListFromText(text){ return text.split(',').map(function(s){ return s.trim(); }).filter(function(s){ return s; }); }
+
+function typeFormHtml(prefix, draft, sections, options){
+  var note = (options && options.note) || '';
+  var idEditable = !!(options && options.idEditable);
+  var html = {
+    identity: function(){
+      var tierOptions = TIERS.map(function(tier){ return '<option value="' + tier + '"' + (tier === tierOf(draft) ? ' selected' : '') + '>' + tier + '</option>'; }).join('');
+      return '<div class="field"><label>Id</label><input id="' + prefix + 'Id" value="' + escapeHtml(draft.id || '') + '"' + (idEditable ? '' : ' disabled') + '></div>' +
+        '<div class="field"><label>Display name</label><input id="' + prefix + 'Name" value="' + escapeHtml(draft.name || '') + '"></div>' +
+        '<div class="field"><label>Icon path</label><div class="fieldRow"><input id="' + prefix + 'Icon" value="' + escapeHtml(draft.icon || '') + '" style="flex:1">' +
+          '<button class="smallBtn" type="button" id="' + prefix + 'SelectIcon">Select Image</button></div></div>' +
+        '<div class="field"><label>Tier</label><select id="' + prefix + 'Tier">' + tierOptions + '</select></div>';
+    },
+    tags: function(){
+      return '<div class="field"><label>Type tags (region tags go on nodes)' + note + '</label>' + renderTagChips(prefix, draft.tags || [], TYPE_TAG_GROUPS) + '</div>';
+    },
+    effects: function(){
+      return '<div class="field"><label>Effects' + note + '</label>' + renderEffectRows(prefix, draft.effects) + '</div>' +
+        '<div class="btnRow"><button class="smallBtn" type="button" id="' + prefix + 'AddEffect">+ Add effect</button></div>';
+    },
+    hullSizeEffects: function(){
+      return '<div class="field"><label>Hull-size effects' + note + '</label>' + renderHullSizeEffectRows(prefix, draft.hullSizeEffects) + '</div>' +
+        '<div class="btnRow"><button class="smallBtn" type="button" id="' + prefix + 'AddHsEffect">+ Add hull-size effect</button></div>';
+    },
+    vanillaHullMod: function(){
+      return '<div class="field"><label>vanillaHullMod id</label><input id="' + prefix + 'Vanilla" value="' + escapeHtml(draft.vanillaHullMod || '') + '"></div>';
+    },
+    unlockConditions: function(){
+      return '<div class="field"><label>Unlock conditions</label>' + renderUnlockConditionRows(prefix, draft.unlockConditions) + '</div>' +
+        '<div class="btnRow"><button class="smallBtn" type="button" id="' + prefix + 'AddUnlock">+ Add condition</button></div>';
+    },
+    exclusivity: function(){
+      return '<div class="field"><label>Exclusive with hullmod ids (comma-separated)</label><input id="' + prefix + 'ExclusiveHullMods" value="' + escapeHtml(idListText(draft.exclusiveHullMods)) + '"></div>' +
+        '<div class="field"><label>Counts as hullmod ids, effect suppressed (comma-separated)</label><input id="' + prefix + 'PhantomHullMods" value="' + escapeHtml(idListText(draft.phantomHullMods)) + '"></div>' +
+        '<div class="field"><label>Exclusive with skill type ids (comma-separated)</label><input id="' + prefix + 'ExclusiveSkillTypes" value="' + escapeHtml(idListText(draft.exclusiveSkillTypes)) + '"></div>';
+    },
+    itemCost: function(){
+      var itemCost = draft.itemCost || {};
+      return '<div class="field"><label>Item cost' + note + '</label><div class="fieldRow">' +
+        '<input id="' + prefix + 'ItemCostId" placeholder="commodity id, e.g. lobster" value="' + escapeHtml(itemCost.itemId || '') + '" style="flex:2">' +
+        '<input id="' + prefix + 'ItemCostQuantity" type="number" placeholder="quantity" value="' + escapeHtml(itemCost.quantity || '') + '" style="flex:1">' +
+      '</div></div>';
+    },
+    temporary: function(){
+      return '<div class="field"><label>Temporary after deployment (seconds)</label><input id="' + prefix + 'Temporary" type="number" min="0" placeholder="leave blank for always-on" value="' +
+        escapeHtml(draft.temporaryAfterDeploymentSeconds || '') + '"></div>';
+    },
+    requiredHullSizes: function(){
+      var selected = draft.requiredHullSizes || [];
+      return '<div class="field"><label>Required hull sizes (none = any)</label><div class="fieldRow">' + HULL_SIZE_OPTIONS.map(function(size){
+        return '<label><input type="checkbox" class="' + prefix + 'RequiredHullSize" value="' + size[0] + '"' + (selected.indexOf(size[0]) >= 0 ? ' checked' : '') + '> ' + size[1] + '</label>';
+      }).join('') + '</div></div>';
+    },
+    optionalOptions: function(){
+      return '<div class="field"><label>Optional slot options</label>' + renderOptionalOptionsSelect(prefix, draft.optionalOptions || [], draft.id) + '</div>' +
+        '<div class="field"><label>Edit each option&#39;s type</label><div class="prereqList">' + renderOptionEditRows(draft.optionalOptions || []) + '</div></div>';
+    },
+    texts: function(){
+      return '<div class="field"><label>Flavour text (optional, grey line under the title)' + note + '</label><textarea id="' + prefix + 'Flavour" rows="2" style="' + TEXTAREA_STYLE + '">' + escapeHtml(draft.flavour || '') + '</textarea></div>' +
+        '<div class="field"><label>Description override (optional)' + note + '</label><textarea id="' + prefix + 'Description" rows="3" style="' + TEXTAREA_STYLE + '">' + escapeHtml(draft.description || '') + '</textarea></div>';
+    },
+    todo: function(){
+      return '<div class="field"><label>Todo (optional)</label><input id="' + prefix + 'Todo" value="' + escapeHtml(draft.todo || '') + '"></div>';
+    }
+  };
+  return '<div data-type-form="' + prefix + '">' + sections.map(function(section){ return html[section](); }).join('') + '</div>';
+}
+
+function readTypeFields(prefix, draft){
+  var field = function(suffix){ return document.getElementById(prefix + suffix); };
+  if (field('Id') && !field('Id').disabled) draft.id = field('Id').value.trim();
+  if (field('Name')) draft.name = field('Name').value.trim();
+  if (field('Icon')) draft.icon = field('Icon').value.trim();
+  if (field('Tier')) draft.tier = field('Tier').value;
+  if (field('Vanilla')) draft.vanillaHullMod = field('Vanilla').value.trim();
+  if (field('ExclusiveHullMods')) draft.exclusiveHullMods = idListFromText(field('ExclusiveHullMods').value);
+  if (field('PhantomHullMods')) draft.phantomHullMods = idListFromText(field('PhantomHullMods').value);
+  if (field('ExclusiveSkillTypes')) draft.exclusiveSkillTypes = idListFromText(field('ExclusiveSkillTypes').value);
+  if (field('OptionalOptions') && !field('OptionalOptions').disabled) {
+    draft.optionalOptions = Array.from(field('OptionalOptions').selectedOptions).map(function(o){ return o.value; }).filter(function(v){ return v; });
+  }
+  if (field('Flavour')) draft.flavour = field('Flavour').value.trim();
+  if (field('Description')) draft.description = field('Description').value.trim();
+  if (field('Todo')) draft.todo = field('Todo').value.trim();
+  if (field('ItemCostId')) {
+    var itemId = field('ItemCostId').value.trim();
+    if (itemId) draft.itemCost = { itemId: itemId, quantity: parseFloat(field('ItemCostQuantity').value) || 0 };
+    else delete draft.itemCost;
+  }
+  if (field('Temporary')) {
+    var seconds = parseFloat(field('Temporary').value);
+    if (!isNaN(seconds) && seconds > 0) draft.temporaryAfterDeploymentSeconds = seconds;
+    else delete draft.temporaryAfterDeploymentSeconds;
+  }
+  var hullSizeBoxes = document.querySelectorAll('.' + prefix + 'RequiredHullSize');
+  if (hullSizeBoxes.length) {
+    draft.requiredHullSizes = Array.from(hullSizeBoxes).filter(function(box){ return box.checked; }).map(function(box){ return box.value; });
+  }
+  syncEffectRowsFromInputs(prefix, draft.effects || []);
+  syncHullSizeEffectsFromInputs(prefix, draft.hullSizeEffects || []);
+  syncUnlockConditionRowsFromInputs(prefix, draft.unlockConditions || []);
+}
+
+function pickProjectImage(folder, onPicked, onClosed){
+  openImagePickerModal(function(path){
+    moveIconIfNeeded(path, folder).then(function(finalPath){
+      if (finalPath) onPicked(finalPath);
+      else if (onClosed) onClosed();
+    });
+  }, onClosed);
+}
+
+function wireTypeForm(root, prefix, draft, hooks){
+  var read = function(){ readTypeFields(prefix, draft); };
+  var editStructure = function(change){
+    return function(){
+      read();
+      change.apply(this, arguments);
+      hooks.edited(true);
+    };
+  };
+  var onAttr = function(attr, eventName, handler){
+    root.querySelectorAll('[data-' + prefix + '-' + attr + ']').forEach(function(el){
+      el.addEventListener(eventName, function(){ handler(el.getAttribute('data-' + prefix + '-' + attr)); });
+    });
+  };
+  var onId = function(suffix, handler){
+    var el = document.getElementById(prefix + suffix);
+    if (el) el.addEventListener('click', handler);
+  };
+  root.querySelectorAll('[data-type-form="' + prefix + '"]').forEach(function(form){
+    form.querySelectorAll('input, select, textarea').forEach(function(el){
+      if (el.classList.contains('effectFilterInput') || el.hasAttribute('data-' + prefix + '-unlock-type-changed') || el.id === prefix + 'OptionalOptions') return;
+      el.addEventListener('change', function(){ read(); hooks.edited(false); });
+    });
+  });
+  wireEffectFilters(root);
+  onAttr('toggle-tag', 'click', editStructure(function(tag){
+    var index = draft.tags.indexOf(tag);
+    if (index === -1) draft.tags.push(tag); else draft.tags.splice(index, 1);
+  }));
+  onAttr('remove-effect-row', 'click', editStructure(function(index){ draft.effects.splice(parseInt(index, 10), 1); }));
+  onAttr('remove-hs-row', 'click', editStructure(function(index){ draft.hullSizeEffects.splice(parseInt(index, 10), 1); }));
+  onAttr('remove-unlock-row', 'click', editStructure(function(index){ draft.unlockConditions.splice(parseInt(index, 10), 1); }));
+  onAttr('unlock-type-changed', 'change', editStructure(function(){}));
+  wireMoveRowButtons(root, prefix + '-move-effect-row', read, function(){ return draft.effects; }, function(){ hooks.edited(true); });
+  wireMoveRowButtons(root, prefix + '-move-hs-row', read, function(){ return draft.hullSizeEffects; }, function(){ hooks.edited(true); });
+  onId('AddEffect', editStructure(function(){ draft.effects.push({ effect: defaultEffectName(), magnitude: 10 }); }));
+  onId('AddHsEffect', editStructure(function(){ draft.hullSizeEffects.push({ effect: defaultEffectName(), frigate: 0, destroyer: 0, cruiser: 0, capitalShip: 0 }); }));
+  onId('AddUnlock', editStructure(function(){ draft.unlockConditions.push({ type: 'blueprint', category: 'hullmod', id: '', statId: '', level: 1, key: '' }); }));
+  var optionalSelect = document.getElementById(prefix + 'OptionalOptions');
+  if (optionalSelect) optionalSelect.addEventListener('change', editStructure(function(){}));
+  onId('SelectIcon', function(){
+    read();
+    pickProjectImage('graphics/icons/', function(path){
+      draft.icon = path;
+      hooks.edited(true);
+    }, hooks.redraw);
+  });
+  root.querySelectorAll('[data-edit-option-type]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      read();
+      if (hooks.editOptionType) hooks.editOptionType(btn.getAttribute('data-edit-option-type'));
+    });
   });
 }
 
@@ -3209,51 +3388,66 @@ function buildFolderOptionsHtml(paths, selectedFolder){
   return html;
 }
 
-function postImageOp(url, payload, onSuccess){
-  fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-Skill-Tree-Editor': '1' },
-    body: JSON.stringify(payload)
-  }).then(function(r){
-    return r.json().then(function(data){ return { httpOk: r.ok, data: data }; });
-  }).then(function(result){
-    if (!result.httpOk || !result.data.ok) {
-      showToast('Could not complete: ' + (result.data && result.data.message ? result.data.message : 'unknown error'));
-      return;
-    }
-    onSuccess(result.data);
-  }).catch(function(){
-    showToast('Could not reach local server - run tools\\skill_tree_server.ps1');
-  });
+function openModal(options){
+  var root = document.getElementById('modalRoot');
+  root.innerHTML =
+    '<div class="modalOverlay"><div class="modal' + (options.wide ? ' wide' : '') + (options.modalClass ? ' ' + options.modalClass : '') + '"' +
+      (options.modalStyle ? ' style="' + options.modalStyle + '"' : '') + '>' +
+    (options.title ? '<h3>' + escapeHtml(options.title) + '</h3>' : '') +
+    (options.bodyHtml || '') +
+    (options.buttonsHtml ? '<div class="modalBtns">' + options.buttonsHtml + '</div>' : '') +
+    '</div></div>';
+  return root;
+}
+
+function closeModal(){
+  document.getElementById('modalRoot').innerHTML = '';
+}
+
+function isUnshippedImagePath(path){
+  return /^graphics\/(unused|description)\//.test(path || '');
 }
 
 function moveIconIfNeeded(newPath, folder){
-  if (newPath && newPath.indexOf('graphics/unused/') === 0) {
-    var finalPath = (folder || 'graphics/icons/') + newPath.split('/').pop();
-    postImageOp('/move-image', { from: newPath, to: finalPath }, function(){
-      fetchAllProjectImages();
-    });
-    return finalPath;
-  }
-  return newPath;
+  if (!newPath || newPath.indexOf('graphics/unused/') !== 0) return Promise.resolve(newPath);
+  var finalPath = (folder || 'graphics/icons/') + newPath.split('/').pop();
+  return postJson('/move-image', { from: newPath, to: finalPath }).then(function(result){
+    if (!result.ok) {
+      showToast('Image not changed - could not move it out of graphics/unused: ' + result.message);
+      return null;
+    }
+    fetchAllProjectImages();
+    return result.data.path || finalPath;
+  });
+}
+
+function postImageCopy(url, payload, onCreated){
+  postJson(url, payload).then(function(result){
+    if (result.ok) { onCreated(result.data); return; }
+    if (result.status === 409 && result.data.exists) {
+      if (confirm(result.message + ' Overwrite it? Anything that already uses that image will show the new copy.')) {
+        payload.overwrite = true;
+        postImageCopy(url, payload, onCreated);
+      }
+      return;
+    }
+    showToast('Could not complete: ' + result.message);
+  });
 }
 
 function openTypePickerModal(currentTypeId, onPick){
-  var root = document.getElementById('modalRoot');
-
-  function buildShell(){
-    root.innerHTML =
-      '<div class="modalOverlay"><div class="modal wide">' +
-      '<h3>Change node type</h3>' +
+  var root = openModal({
+    title: 'Change node type',
+    wide: true,
+    bodyHtml:
       '<div class="field"><input id="typePickerFilter" placeholder="Filter by name, id, or tag..."></div>' +
       '<div class="typePickerList" id="typePickerList"></div>' +
-      '<div class="hint" id="typePickerCount"></div>' +
-      '<div class="modalBtns"><button class="smallBtn" id="typePickerCancel">Cancel</button></div>' +
-      '</div></div>';
-    document.getElementById('typePickerCancel').addEventListener('click', function(){ root.innerHTML = ''; });
-    document.getElementById('typePickerFilter').addEventListener('input', updateList);
-    updateList();
-  }
+      '<div class="hint" id="typePickerCount"></div>',
+    buttonsHtml: '<button class="smallBtn" id="typePickerCancel">Cancel</button>'
+  });
+  document.getElementById('typePickerCancel').addEventListener('click', closeModal);
+  document.getElementById('typePickerFilter').addEventListener('input', updateList);
+  updateList();
 
   function updateList(){
     var q = (document.getElementById('typePickerFilter').value || '').toLowerCase();
@@ -3265,13 +3459,13 @@ function openTypePickerModal(currentTypeId, onPick){
     var list = document.getElementById('typePickerList');
     list.innerHTML = filtered.map(function(t){
       var tier = tierOf(t);
-      var iconHtml = t.icon ? '<img class="typePickerIcon" src="' + t.icon + '" alt="' + t.name + '" loading="lazy">' : '<div class="typePickerIcon"></div>';
+      var iconHtml = t.icon ? '<img class="typePickerIcon" src="' + escapeHtml(t.icon) + '" alt="' + escapeHtml(t.name) + '" loading="lazy">' : '<div class="typePickerIcon"></div>';
       var cls = 'typePickerRow selectableRow' + (t.id === currentTypeId ? ' selected' : '');
-      return '<div class="' + cls + '" data-type-id="' + t.id + '">' +
+      return '<div class="' + cls + '" data-type-id="' + escapeHtml(t.id) + '">' +
         iconHtml +
         '<div class="typePickerInfo">' +
-          '<div class="typePickerName">' + t.name + '</div>' +
-          '<div class="typePickerMeta">' + t.id + ' - ' + tier + '</div>' +
+          '<div class="typePickerName">' + escapeHtml(t.name) + '</div>' +
+          '<div class="typePickerMeta">' + escapeHtml(t.id) + ' - ' + tier + '</div>' +
         '</div>' +
       '</div>';
     }).join('') || '<div class="hint">No types match.</div>';
@@ -3283,33 +3477,30 @@ function openTypePickerModal(currentTypeId, onPick){
       });
     });
   }
-
-  buildShell();
 }
 
 function openImagePickerModal(onPick, onCancel){
-  var root = document.getElementById('modalRoot');
-
   function buildShell(){
-    root.innerHTML =
-      '<div class="modalOverlay"><div class="modal wide">' +
-      '<h3>Select an image</h3>' +
-      '<div class="fieldRow">' +
-        '<div class="field"><label>Folder</label><select id="imgPickerFolder"></select></div>' +
-        '<div class="field"><label>Filter by path</label><input id="imgPickerFilter" placeholder="Filter by path..."></div>' +
-      '</div>' +
-      '<div class="imageBrowserGrid" id="imgPickerGrid"></div>' +
-      '<div class="hint" id="imgPickerCount"></div>' +
-      '<div class="modalBtns"><button class="smallBtn" id="imgPickerCancel">Cancel</button></div>' +
-      '</div></div>';
-    document.getElementById('imgPickerCancel').addEventListener('click', function(){ root.innerHTML = ''; if (onCancel) onCancel(); });
-    document.getElementById('imgPickerFilter').addEventListener('input', updateGrid);
-    document.getElementById('imgPickerFolder').addEventListener('change', updateGrid);
+    var root = openModal({
+      title: 'Select an image',
+      wide: true,
+      bodyHtml:
+        '<div class="fieldRow">' +
+          '<div class="field"><label>Folder</label><select id="imgPickerFolder"></select></div>' +
+          '<div class="field"><label>Filter by path</label><input id="imgPickerFilter" placeholder="Filter by path..."></div>' +
+        '</div>' +
+        '<div class="imageBrowserGrid" id="imgPickerGrid"></div>' +
+        '<div class="hint" id="imgPickerCount"></div>',
+      buttonsHtml: '<button class="smallBtn" id="imgPickerCancel">Cancel</button>'
+    });
+    document.getElementById('imgPickerCancel').addEventListener('click', function(){ closeModal(); if (onCancel) onCancel(); });
+    document.getElementById('imgPickerFilter').addEventListener('input', function(){ updateGrid(root); });
+    document.getElementById('imgPickerFolder').addEventListener('change', function(){ updateGrid(root); });
     document.getElementById('imgPickerFolder').innerHTML = buildFolderOptionsHtml(state.allProjectImages, '');
-    updateGrid();
+    updateGrid(root);
   }
 
-  function updateGrid(){
+  function updateGrid(root){
     var q = (document.getElementById('imgPickerFilter').value || '').toLowerCase();
     var folder = document.getElementById('imgPickerFolder').value;
     var filtered = state.allProjectImages.filter(function(p){
@@ -3332,25 +3523,25 @@ function openImagePickerModal(onPick, onCancel){
 }
 
 function openImageEditorModal(){
-  var root = document.getElementById('modalRoot');
   var selectedPath = null;
 
   function buildShell(){
-    root.innerHTML =
-      '<div class="modalOverlay"><div class="modal wide">' +
-      '<h3>Image Editor</h3>' +
-      '<div class="fieldRow">' +
-        '<div class="field"><label>Folder</label><select id="imgEditFolder"></select></div>' +
-        '<div class="field"><label>Filter by path</label><input id="imgEditFilter" placeholder="Filter by path..."></div>' +
-      '</div>' +
-      '<div class="imageBrowserLayout">' +
-        '<div class="imageBrowserGrid" id="imgEditGrid"></div>' +
-        '<div class="imageBrowserDetail" id="imgEditDetail"></div>' +
-      '</div>' +
-      '<div class="hint" id="imgEditCount"></div>' +
-      '<div class="modalBtns"><button class="smallBtn" id="imgEditClose">Close</button></div>' +
-      '</div></div>';
-    document.getElementById('imgEditClose').addEventListener('click', function(){ root.innerHTML = ''; });
+    openModal({
+      title: 'Image Editor',
+      wide: true,
+      bodyHtml:
+        '<div class="fieldRow">' +
+          '<div class="field"><label>Folder</label><select id="imgEditFolder"></select></div>' +
+          '<div class="field"><label>Filter by path</label><input id="imgEditFilter" placeholder="Filter by path..."></div>' +
+        '</div>' +
+        '<div class="imageBrowserLayout">' +
+          '<div class="imageBrowserGrid" id="imgEditGrid"></div>' +
+          '<div class="imageBrowserDetail" id="imgEditDetail"></div>' +
+        '</div>' +
+        '<div class="hint" id="imgEditCount"></div>',
+      buttonsHtml: '<button class="smallBtn" id="imgEditClose">Close</button>'
+    });
+    document.getElementById('imgEditClose').addEventListener('click', closeModal);
     document.getElementById('imgEditFilter').addEventListener('input', updateGrid);
     document.getElementById('imgEditFolder').addEventListener('change', updateGrid);
     refreshFolderOptions();
@@ -3383,6 +3574,12 @@ function openImageEditorModal(){
     });
   }
 
+  function showCreated(data){
+    showToast('Saved ' + data.path);
+    selectedPath = data.path;
+    fetchAllProjectImages(function(){ refreshFolderOptions(); updateGrid(); updateDetail(); });
+  }
+
   function updateDetail(){
     var detail = document.getElementById('imgEditDetail');
     if (!selectedPath) {
@@ -3390,8 +3587,8 @@ function openImageEditorModal(){
       return;
     }
     detail.innerHTML =
-      '<div class="imageBrowserPreview"><img id="imgEditPreview" src="' + selectedPath + '" alt="' + selectedPath + '"></div>' +
-      '<div class="imageBrowserPath">' + selectedPath + '</div>' +
+      '<div class="imageBrowserPreview"><img id="imgEditPreview" src="' + escapeHtml(selectedPath) + '" alt="' + escapeHtml(selectedPath) + '"></div>' +
+      '<div class="imageBrowserPath">' + escapeHtml(selectedPath) + '</div>' +
       '<div class="field"><label>Hue shift (degrees)</label><input type="number" id="imgEditHue" value="240" step="1"></div>' +
       '<div class="field"><label>New file suffix</label><input id="imgEditSuffix" value="shifted" placeholder="e.g. shifted"></div>' +
       '<div class="btnRow">' +
@@ -3414,26 +3611,19 @@ function openImageEditorModal(){
       var suffix = document.getElementById('imgEditSuffix').value.trim();
       var hueShift = parseFloat(document.getElementById('imgEditHue').value) || 0;
       if (!suffix) { showToast('Suffix is required'); return; }
-      postImageOp('/colorshift', { path: selectedPath, hueShift: hueShift, suffix: suffix }, function(data){
-        showToast('Saved ' + data.path);
-        selectedPath = data.path;
-        fetchAllProjectImages(function(){ refreshFolderOptions(); updateGrid(); updateDetail(); });
-      });
+      postImageCopy('/colorshift', { path: selectedPath, hueShift: hueShift, suffix: suffix }, showCreated);
     });
 
     document.getElementById('imgEditCircular').addEventListener('click', function(){
       var suffix = document.getElementById('imgEditSuffix').value.trim();
       if (!suffix) { showToast('Suffix is required'); return; }
-      postImageOp('/make-circular', { path: selectedPath, suffix: suffix }, function(data){
-        showToast('Saved ' + data.path);
-        selectedPath = data.path;
-        fetchAllProjectImages(function(){ refreshFolderOptions(); updateGrid(); updateDetail(); });
-      });
+      postImageCopy('/make-circular', { path: selectedPath, suffix: suffix }, showCreated);
     });
 
     document.getElementById('imgEditDelete').addEventListener('click', function(){
       if (!confirm('Delete "' + selectedPath + '" from disk? This cannot be undone.')) return;
-      postImageOp('/delete-image', { path: selectedPath }, function(){
+      postJson('/delete-image', { path: selectedPath }).then(function(result){
+        if (!result.ok) { showToast('Could not delete: ' + result.message); return; }
         showToast('Deleted ' + selectedPath);
         selectedPath = null;
         fetchAllProjectImages(function(){ refreshFolderOptions(); updateGrid(); updateDetail(); });
@@ -3451,9 +3641,13 @@ var SOCKETABLE_AFFIX_GROUPS = [
   { key: 'suffixes', label: 'Suffixes', hint: 'a common item rolls 1, a rare 1-2' }
 ];
 function isSocketableAffixColumn(column){ return column === 'prefixes' || column === 'suffixes'; }
-var SOCKETABLE_KINDS = ['subroutine', 'officer', 'team', 'ai_core'];
 var SOCKETABLE_HULL_SIZE_LABELS = ['Frigate', 'Destroyer', 'Cruiser', 'Capital'];
-var SOCKETABLE_UNLOCKS = [['', 'None'], ['found_onslaught_mk1', 'Found the Onslaught Mk.I in the Abyss'], ['found_gate_hauler', 'Found the Gate Hauler'], ['found_planetkiller', 'Recovered the first Planetkiller'], ['defeated_ziggurat', 'Defeated the Ziggurat at Alpha Site']];
+var SOCKETABLE_UNLOCK_LABELS = {
+  found_onslaught_mk1: 'Found the Onslaught Mk.I in the Abyss',
+  found_gate_hauler: 'Found the Gate Hauler',
+  found_planetkiller: 'Recovered the first Planetkiller',
+  defeated_ziggurat: 'Defeated the Ziggurat at Alpha Site'
+};
 
 function parseCsv(text){
   var rows = [], row = [], field = '', inQuotes = false;
@@ -3478,56 +3672,118 @@ function csvField(value){
   return /[",\r\n]/.test(text) || text !== text.trim() ? '"' + text.replace(/"/g, '""') + '"' : text;
 }
 
+function parseCsvTable(text){
+  var rows = parseCsv(text);
+  var header = (rows.shift() || []).map(function(h){ return h.trim(); });
+  return { header: header, rows: rows, lineEnding: /\r\n/.test(String(text)) ? '\r\n' : '\n' };
+}
+function csvCell(table, cells, column){
+  var index = table.header.indexOf(column);
+  return index < 0 || cells[index] === undefined ? '' : cells[index];
+}
+function setCsvCell(table, cells, column, value){
+  var index = table.header.indexOf(column);
+  if (index < 0) {
+    table.header.push(column);
+    index = table.header.length - 1;
+  }
+  while (cells.length <= index) cells.push('');
+  cells[index] = value === undefined || value === null ? '' : String(value);
+}
+function emptyCsvTable(table){
+  return { header: table.header.slice(), rows: [], lineEnding: table.lineEnding };
+}
+function dropCsvColumn(table, column){
+  var index = table.header.indexOf(column);
+  if (index < 0) return;
+  table.header.splice(index, 1);
+  table.rows.forEach(function(cells){ if (cells.length > index) cells.splice(index, 1); });
+}
+function serializeCsvTable(table){
+  var width = table.header.length;
+  return [table.header].concat(table.rows).map(function(cells){
+    var padded = cells.slice();
+    while (padded.length < width) padded.push('');
+    return padded.map(csvField).join(',');
+  }).join(table.lineEnding) + table.lineEnding;
+}
+
+function isNumberText(text){
+  return /^\s*[-+]?(\d+\.?\d*|\.\d+)([eE][-+]?\d+)?\s*$/.test(String(text));
+}
+function shiftDecimalText(text, places){
+  var match = /^\s*(-?)(\d*)(?:\.(\d*))?\s*$/.exec(String(text));
+  if (!match || match[2] + (match[3] || '') === '') {
+    var number = parseFloat(text);
+    return isNaN(number) ? String(text).trim() : String(number * Math.pow(10, places));
+  }
+  var digits = match[2] + (match[3] || '');
+  var point = match[2].length + places;
+  while (point < 0) { digits = '0' + digits; point++; }
+  while (digits.length < point) digits += '0';
+  var whole = digits.substring(0, point).replace(/^0+(?=\d)/, '') || '0';
+  var fraction = digits.substring(point).replace(/0+$/, '');
+  return (match[1] && /[1-9]/.test(digits) ? '-' : '') + whole + (fraction ? '.' + fraction : '');
+}
+function fractionToPercentText(fraction){
+  return fraction === '' ? '' : shiftDecimalText(fraction, 2);
+}
+function percentToFractionText(percent){
+  return String(percent).trim() === '' ? '' : shiftDecimalText(percent, -2);
+}
+
 function parseSocketablePool(text){
   return String(text || '').split(';').map(function(entry){ return entry.trim(); }).filter(Boolean).map(function(entry){
-    var parts = entry.split(':');
+    var parts = entry.split(':').map(function(part){ return part.trim(); });
     if ((parts[1] || '').indexOf('/') !== -1) {
-      var hullValues = parts[1].split('/').map(function(value){ return parseFloat(value) || 0; });
-      return { effect: (parts[0] || '').trim(), min: hullValues[0], max: hullValues[0], hullValues: hullValues,
-        weight: parts.length > 2 ? (parseFloat(parts[2]) || 0) : 1 };
+      return { effect: parts[0] || '', hullValues: parts[1].split('/').map(function(value){ return value.trim(); }),
+        weight: parts.length > 2 ? parts[2] : '' };
     }
-    return { effect: (parts[0] || '').trim(), min: parseFloat(parts[1]) || 0, max: parseFloat(parts[2]) || 0,
-      weight: parts.length > 3 ? (parseFloat(parts[3]) || 0) : 1 };
+    return { effect: parts[0] || '', min: parts[1] || '', max: parts[2] || '', weight: parts.length > 3 ? parts[3] : '' };
   });
 }
 
 function formatSocketablePool(pool){
   return pool.map(function(e){
     var values = e.hullValues ? e.hullValues.join('/') : e.min + ':' + e.max;
-    return e.effect + ':' + values + (e.weight === 1 ? '' : ':' + e.weight);
+    return e.effect + ':' + values + (e.weight === '' || e.weight === undefined ? '' : ':' + e.weight);
   }).join('; ');
 }
 
-function parseSocketablesCsv(text){
-  var rows = parseCsv(text);
-  var header = (rows.shift() || []).map(function(h){ return h.trim(); });
-  var defs = rows.map(function(cells){
-    var def = { extra: {} };
-    header.forEach(function(column, i){
-      var value = cells[i] === undefined ? '' : cells[i];
-      if (isSocketableAffixColumn(column)) def[column] = parseSocketablePool(value);
-      else if (column === 'pool') def.prefixes = (def.prefixes || []).concat(parseSocketablePool(value));
-      else if (SOCKETABLE_COLUMNS.indexOf(column) !== -1) def[column] = value.trim();
-      else def.extra[column] = value;
-    });
-    SOCKETABLE_COLUMNS.forEach(function(column){ if (def[column] === undefined) def[column] = isSocketableAffixColumn(column) ? [] : ''; });
-    return def;
-  });
-  var extraColumns = header.filter(function(column){ return SOCKETABLE_COLUMNS.indexOf(column) === -1 && column !== 'pool'; });
-  return { defs: defs, extraColumns: extraColumns };
+function poolWeight(entry){
+  return entry.weight === '' || entry.weight === undefined ? 1 : parseFloat(entry.weight);
 }
 
-function serializeSocketablesCsv(defs, extraColumns){
-  var header = SOCKETABLE_COLUMNS.concat(extraColumns);
-  var lines = [header.join(',')];
-  defs.forEach(function(def){
-    lines.push(header.map(function(column){
-      if (isSocketableAffixColumn(column)) return csvField(formatSocketablePool(def[column]));
-      if (SOCKETABLE_COLUMNS.indexOf(column) !== -1) return csvField(def[column]);
-      return csvField(def.extra[column]);
-    }).join(','));
+function isTrueText(text){
+  return String(text || '').trim().toLowerCase() === 'true';
+}
+
+function parseSocketablesCsv(text){
+  var table = parseCsvTable(text);
+  var defs = table.rows.map(function(cells){
+    var def = { cells: cells };
+    SOCKETABLE_COLUMNS.forEach(function(column){
+      var value = csvCell(table, cells, column);
+      def[column] = isSocketableAffixColumn(column) ? parseSocketablePool(value) : value.trim();
+    });
+    def.prefixes = def.prefixes.concat(parseSocketablePool(csvCell(table, cells, 'pool')));
+    def.loadedId = def.id;
+    return def;
   });
-  return lines.join('\n') + '\n';
+  return { table: table, defs: defs };
+}
+
+function serializeSocketablesCsv(table, defs){
+  var out = emptyCsvTable(table);
+  defs.forEach(function(def){
+    var cells = (def.cells || []).slice();
+    SOCKETABLE_COLUMNS.forEach(function(column){
+      setCsvCell(out, cells, column, isSocketableAffixColumn(column) ? formatSocketablePool(def[column]) : def[column]);
+    });
+    out.rows.push(cells);
+  });
+  dropCsvColumn(out, 'pool');
+  return serializeCsvTable(out);
 }
 
 function validateSocketables(defs){
@@ -3538,30 +3794,31 @@ function validateSocketables(defs){
     if (seen[def.id]) issues.push(label + ': id is used more than once');
     seen[def.id] = true;
     if (SOCKETABLE_KINDS.indexOf(def.kind) === -1) issues.push(label + ': kind must be one of ' + SOCKETABLE_KINDS.join(', '));
+    if (isUnshippedImagePath(def.icon)) issues.push(label + ': icon ' + def.icon + ' is in a folder that is not deployed');
     if (!def.prefixes.length && !def.suffixes.length) issues.push(label + ': it has no prefixes or suffixes');
     if (!(parseFloat(def.rarity) >= 0)) issues.push(label + ': rarity must be zero or more');
+    if (def.unlock && SOCKETABLE_UNLOCK_IDS.indexOf(def.unlock) === -1) issues.push(label + ': unknown drop condition ' + def.unlock);
     var poolEffects = {};
     def.prefixes.concat(def.suffixes).forEach(function(e){
       if (poolEffects[e.effect]) issues.push(label + ': ' + e.effect + ' is listed more than once across its prefixes and suffixes');
       poolEffects[e.effect] = true;
-      if (EFFECT_NAMES.indexOf(e.effect) === -1) issues.push(label + ': unknown effect ' + e.effect);
-      if (!(e.weight > 0)) issues.push(label + ': ' + e.effect + ' needs a weight above zero');
-      if (e.hullValues && e.hullValues.length !== SOCKETABLE_HULL_SIZE_LABELS.length) issues.push(label + ': ' + e.effect + ' needs exactly four hull size values');
+      if (!EFFECT_INFO[e.effect]) issues.push(label + ': unknown effect ' + e.effect);
+      if (!(poolWeight(e) > 0)) issues.push(label + ': ' + e.effect + ' needs a weight above zero');
+      if (e.hullValues) {
+        if (e.hullValues.length !== SOCKETABLE_HULL_SIZE_LABELS.length) issues.push(label + ': ' + e.effect + ' needs exactly four hull size values');
+        if (!e.hullValues.every(isNumberText)) issues.push(label + ': ' + e.effect + ' has a hull size value that is not a number');
+      } else if (!isNumberText(e.min) || !isNumberText(e.max)) {
+        issues.push(label + ': ' + e.effect + ' needs a number for both min and max');
+      } else if (parseFloat(e.min) > parseFloat(e.max)) {
+        issues.push(label + ': ' + e.effect + ' has a min above its max');
+      }
     });
   });
   return issues;
 }
 
-function socketableEffectOptionsHtml(selected){
-  var names = EFFECT_NAMES_SORTED.indexOf(selected) === -1 && selected ? [selected].concat(EFFECT_NAMES_SORTED) : EFFECT_NAMES_SORTED;
-  return names.map(function(name){
-    return '<option value="' + name + '"' + (name === selected ? ' selected' : '') + '>' + name + '</option>';
-  }).join('');
-}
-
 function openDataModal(options){
-  var root = document.getElementById('modalRoot');
-  var modal = { dirty: false };
+  var modal = { dirty: false, baseHashes: {} };
 
   function setStatus(text){
     var status = document.getElementById('dataModalStatus');
@@ -3579,22 +3836,22 @@ function openDataModal(options){
 
   modal.close = function(){
     if (!modal.confirmDiscard('Discard unsaved ' + options.noun + ' changes?')) return;
-    root.innerHTML = '';
+    closeModal();
   };
 
   modal.render = function(contentHtml, extraButtonsHtml){
-    root.innerHTML =
-      '<div class="modalOverlay"><div class="modal wide' + (options.modalClass ? ' ' + options.modalClass : '') + '">' +
-      '<h3>' + options.title + '</h3>' +
-      contentHtml +
-      '<div class="modalBtns">' +
+    var root = openModal({
+      title: options.title,
+      wide: true,
+      modalClass: options.modalClass,
+      bodyHtml: contentHtml,
+      buttonsHtml:
         '<span class="hint" id="dataModalStatus" style="margin-right:auto">' + (modal.dirty ? 'Unsaved changes' : '') + '</span>' +
         (extraButtonsHtml || '') +
         '<button class="smallBtn" id="dataModalReload">Reload from disk</button>' +
         '<button class="smallBtn primary" id="dataModalSave">Save to project</button>' +
-        '<button class="smallBtn" id="dataModalClose">Close</button>' +
-      '</div>' +
-      '</div></div>';
+        '<button class="smallBtn" id="dataModalClose">Close</button>'
+    });
     document.getElementById('dataModalClose').addEventListener('click', modal.close);
     document.getElementById('dataModalReload').addEventListener('click', function(){
       if (!modal.confirmDiscard('Discard unsaved ' + options.noun + ' changes and reload from disk?')) return;
@@ -3604,50 +3861,52 @@ function openDataModal(options){
     return root;
   };
 
-  modal.loadFailed = function(what){
-    showToast('Could not load ' + what + ' - run tools\\skill_tree_server.ps1');
-  };
-
-  modal.save = function(issues, url, payload, savedMessage){
-    if (issues.length) { alert('Not saved:\n' + issues.join('\n')); return; }
-    fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Skill-Tree-Editor': '1' },
-      body: JSON.stringify(payload)
-    }).then(function(r){
-      return r.json().then(function(data){ return { httpOk: r.ok, data: data }; });
-    }).then(function(result){
-      if (!result.httpOk || !result.data.ok) {
-        showToast('Could not save: ' + (result.data && result.data.message ? result.data.message : 'unknown error'));
-        return;
-      }
-      modal.dirty = false;
-      setStatus('Saved');
-      showToast(savedMessage);
-    }).catch(function(){
-      showToast('Could not reach local server - run tools\\skill_tree_server.ps1');
+  modal.fetchFiles = function(names){
+    return fetchDataFiles(names).then(function(files){
+      names.forEach(function(name){ modal.baseHashes[name] = files[name].hash; });
+      return files;
     });
   };
 
-  root.innerHTML = '<div class="modalOverlay"><div class="modal"><div class="hint">' + options.loadingText + '</div></div></div>';
+  modal.loadFailed = function(what, error){
+    showToast('Could not load ' + what + (error && error.message ? ' (' + error.message + ')' : '') + ' - ' + SERVER_HINT);
+  };
+
+  modal.save = function(issues, contents, savedMessage, onSaved){
+    if (issues.length) { alert('Not saved:\n' + issues.join('\n')); return; }
+    saveDataFiles(contents, modal.baseHashes).then(function(result){
+      if (result.ok) {
+        modal.dirty = false;
+        setStatus('Saved');
+        showToast(savedMessage);
+        if (onSaved) onSaved();
+      } else if (result.status === 409) {
+        if (confirm(staleFileQuestion(result, 'your unsaved changes in this window'))) options.load();
+      } else {
+        showToast('Could not save: ' + result.message);
+      }
+    });
+  };
+
+  openModal({ bodyHtml: '<div class="hint">' + options.loadingText + '</div>' });
   return modal;
 }
 
 function openSocketableEditorModal(){
-  var defs = [], extraColumns = [], selectedIndex = -1;
+  var table = parseCsvTable(''), defs = [], selectedIndex = -1;
   var modal = openDataModal({ title: 'Socketable Editor', noun: 'socketable', modalClass: 'socketableEditorModal', loadingText: 'Loading socketables...', load: load, save: save });
   var markDirty = modal.markDirty;
 
   function load(){
-    fetch('/data/socketables').then(function(r){ if (!r.ok) throw new Error('socketables ' + r.status); return r.text(); }).then(function(text){
-      var parsed = parseSocketablesCsv(text);
+    modal.fetchFiles(['socketables']).then(function(files){
+      var parsed = parseSocketablesCsv(files.socketables.content);
+      table = parsed.table;
       defs = parsed.defs;
-      extraColumns = parsed.extraColumns;
       selectedIndex = defs.length ? 0 : -1;
       modal.dirty = false;
       render();
-    }).catch(function(){
-      modal.loadFailed('socketables.csv');
+    }).catch(function(error){
+      modal.loadFailed('socketables.csv', error);
     });
   }
 
@@ -3660,9 +3919,9 @@ function openSocketableEditorModal(){
       '</div>',
       '<button class="smallBtn" id="sockNew">+ New socketable</button>');
     document.getElementById('sockNew').addEventListener('click', function(){
-      defs.push({ id: uniqueSocketableId('new_socketable'), kind: 'subroutine', name: 'New Socketable', icon: '',
-        rarity: '10', unique: '', unlock: '', description: '', prefixes: [{ effect: EFFECT_NAMES_SORTED[0], min: 1, max: 2, weight: 1 }],
-        suffixes: [{ effect: EFFECT_NAMES_SORTED[1], min: 1, max: 2, weight: 1 }], extra: {} });
+      defs.push({ id: uniqueSocketableId('new_socketable'), kind: SOCKETABLE_KINDS[0] || 'subroutine', name: 'New Socketable', icon: '',
+        rarity: '10', unique: '', unlock: '', description: '', prefixes: [{ effect: EFFECT_NAMES_SORTED[0], min: '1', max: '2', weight: '' }],
+        suffixes: [{ effect: EFFECT_NAMES_SORTED[1], min: '1', max: '2', weight: '' }], cells: [] });
       selectedIndex = defs.length - 1;
       markDirty();
       renderList();
@@ -3701,27 +3960,34 @@ function openSocketableEditorModal(){
     var detail = document.getElementById('sockDetail');
     var def = defs[selectedIndex];
     if (!def) { detail.innerHTML = '<div class="hint">Select a socketable, or add a new one.</div>'; return; }
-    var kindOptions = SOCKETABLE_KINDS.map(function(k){ return '<option value="' + k + '"' + (k === def.kind ? ' selected' : '') + '>' + k + '</option>'; }).join('');
+    var kinds = SOCKETABLE_KINDS.indexOf(def.kind) === -1 ? [def.kind].concat(SOCKETABLE_KINDS) : SOCKETABLE_KINDS;
+    var kindOptions = kinds.map(function(k){ return '<option value="' + escapeHtml(k) + '"' + (k === def.kind ? ' selected' : '') + '>' + escapeHtml(k) + '</option>'; }).join('');
+    var unlockIds = [''].concat(SOCKETABLE_UNLOCK_IDS);
+    if (unlockIds.indexOf(def.unlock) === -1) unlockIds.push(def.unlock);
+    var unique = isTrueText(def.unique);
     function affixRowsHtml(group){
       var list = def[group];
       return list.map(function(e, i){
         var selectId = 'sockEffect-' + group + '-' + i;
         var at = ' data-pool-group="' + group + '" data-pool-index="' + i + '"';
+        var hullInputs = e.hullValues ? e.hullValues.concat([]) : [];
+        while (e.hullValues && hullInputs.length < SOCKETABLE_HULL_SIZE_LABELS.length) hullInputs.push('');
         return '<div class="fieldRow" style="align-items:flex-end">' +
           '<div class="field" style="flex:3"><label>Effect ' + (i + 1) + '</label>' + effectFilterHtml(selectId) +
-            '<select id="' + selectId + '" data-pool-field="effect"' + at + '>' + socketableEffectOptionsHtml(e.effect) + '</select></div>' +
+            '<select id="' + selectId + '" data-pool-field="effect"' + at + '>' + effectOptionsHtml(e.effect) + '</select></div>' +
           '<div class="field" style="flex:0 0 auto"><label title="Fixed values per hull size (frigate/destroyer/cruiser/capital) instead of a rolled range">Per hull size</label>' +
             '<input type="checkbox" data-pool-hull-toggle' + at + (e.hullValues ? ' checked' : '') + '></div>' +
           (e.hullValues
-            ? SOCKETABLE_HULL_SIZE_LABELS.map(function(label, hullIndex){
-                return '<div class="field" style="flex:1"><label>' + label + '</label><input type="number" step="any" value="' + e.hullValues[hullIndex] +
+            ? hullInputs.map(function(value, hullIndex){
+                var hullLabel = SOCKETABLE_HULL_SIZE_LABELS[hullIndex] || 'Extra (clear to remove)';
+                return '<div class="field" style="flex:1"><label>' + hullLabel + '</label><input type="number" step="any" value="' + escapeHtml(value) +
                   '" data-pool-hull-index="' + hullIndex + '"' + at + '></div>';
               }).join('')
-            : '<div class="field" style="flex:2"><label>Min</label><input type="number" step="any" value="' + e.min + '" data-pool-field="min"' + at + '></div>' +
-              '<div class="field" style="flex:2"><label>Max</label><input type="number" step="any" value="' + e.max + '" data-pool-field="max"' + at + '></div>') +
+            : '<div class="field" style="flex:2"><label>Min</label><input type="number" step="any" value="' + escapeHtml(e.min) + '" data-pool-field="min"' + at + '></div>' +
+              '<div class="field" style="flex:2"><label>Max</label><input type="number" step="any" value="' + escapeHtml(e.max) + '" data-pool-field="max"' + at + '></div>') +
           '<div class="field" style="flex:1"><label title="How often this effect is picked compared with the others in this group">Rarity weight ' +
             '<span class="hint" data-pool-share="' + i + '" data-pool-group="' + group + '"></span></label>' +
-            '<input type="number" step="0.5" min="0" value="' + e.weight + '" data-pool-field="weight"' + at + '></div>' +
+            '<input type="number" step="0.5" min="0" value="' + escapeHtml(e.weight) + '" placeholder="1" data-pool-field="weight"' + at + '></div>' +
           moveRowButtonsHtml('sock-move-' + group, i, list.length) +
           '<button class="smallBtn danger" type="button" data-sock-remove-row="' + i + '" data-pool-group="' + group + '">X</button>' +
         '</div>';
@@ -3740,27 +4006,29 @@ function openSocketableEditorModal(){
           '<button class="smallBtn" type="button" id="sockSelectIcon">Select Image</button></div></div>' +
       '</div>' +
       '<div class="fieldRow">' +
-        '<div class="field" style="flex:2"><label>Id</label><input data-sock-field="id" value="' + escapeHtml(def.id) + '"></div>' +
+        '<div class="field" style="flex:2"><label>Id' + (def.loadedId ? ' (saved games store it - renaming orphans owned items)' : '') + '</label>' +
+          '<input data-sock-id value="' + escapeHtml(def.id) + '"></div>' +
         '<div class="field" style="flex:1"><label>Kind</label><select data-sock-field="kind">' + kindOptions + '</select></div>' +
       '</div>' +
       '<div class="field"><label>Name</label><input data-sock-field="name" value="' + escapeHtml(def.name) + '"></div>' +
       '<div class="fieldRow">' +
         '<div class="field" style="flex:1"><label>Rarity (loot weight)</label><input type="number" min="0" step="1" data-sock-field="rarity" value="' + escapeHtml(def.rarity) + '"></div>' +
       '</div>' +
-      '<label class="legendRow" style="cursor:pointer"><input type="checkbox" id="sockUnique"' + (def.unique === 'true' ? ' checked' : '') +
+      '<label class="legendRow" style="cursor:pointer"><input type="checkbox" id="sockUnique"' + (unique ? ' checked' : '') +
         '> Unique - shown with the name above in orange, and rolls every prefix and suffix</label>' +
-      (def.unique === 'true'
+      (unique
         ? '<div class="field"><label>Drop condition (uniques never drop before player level 15)</label><select data-sock-field="unlock">' +
-            SOCKETABLE_UNLOCKS.map(function(option){
-              return '<option value="' + escapeHtml(option[0]) + '"' + (def.unlock === option[0] ? ' selected' : '') + '>' + escapeHtml(option[1]) + '</option>';
+            unlockIds.map(function(unlockId){
+              var label = unlockId ? (SOCKETABLE_UNLOCK_LABELS[unlockId] || unlockId) : 'None';
+              return '<option value="' + escapeHtml(unlockId) + '"' + (def.unlock === unlockId ? ' selected' : '') + '>' + escapeHtml(label) + '</option>';
             }).join('') +
           '</select></div>'
         : '') +
-      '<div class="field"><label>Tooltip description (optional)</label><textarea data-sock-field="description" rows="3" style="width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12.5px;padding:7px 9px;resize:vertical;">' + escapeHtml(def.description) + '</textarea></div>' +
+      '<div class="field"><label>Tooltip description (optional)</label><textarea data-sock-field="description" rows="3" style="' + TEXTAREA_STYLE + '">' + escapeHtml(def.description) + '</textarea></div>' +
       '<hr class="sep">' +
       '<div class="hint">Items roll 2 effects (common: 1 prefix + 1 suffix) 55% of the time, 3 (rare: 2+1 or 1+2) 35% and 4 (rare: 2+2) 10%, ' +
-        'never repeating an effect. A higher rarity weight makes an effect come up more often within its group; values are whole numbers ' +
-        'between min and max.</div>' +
+        'never repeating an effect. A higher rarity weight makes an effect come up more often within its group; a blank weight counts as 1. ' +
+        'Rolled values land between min and max with up to 3 decimals.</div>' +
       affixGroupsHtml +
       '<hr class="sep">' +
       '<div class="btnRow">' +
@@ -3777,15 +4045,30 @@ function openSocketableEditorModal(){
       el.addEventListener('input', update);
       el.addEventListener('change', function(){ update(); renderList(); });
     });
+    var idInput = detail.querySelector('[data-sock-id]');
+    idInput.addEventListener('change', function(){
+      var newId = idInput.value.trim();
+      if (newId === def.id) return;
+      if (def.loadedId && def.id === def.loadedId && !confirm('Rename "' + def.loadedId + '" to "' + newId + '"?\n\n' +
+          'Saved games store this id on every item players own, so once it has shipped those items turn into unknown socketables. ' +
+          'Its rare-name words in socketable_names.json and its socketable.' + def.loadedId + '.* keys in zh_CN.json keep the old id and must be renamed by hand.')) {
+        idInput.value = def.id;
+        return;
+      }
+      def.id = newId;
+      markDirty();
+      renderList();
+    });
     document.getElementById('sockUnique').addEventListener('change', function(e){
       def.unique = e.target.checked ? 'true' : '';
+      if (!e.target.checked) def.unlock = '';
       markDirty();
       renderDetail();
     });
     detail.querySelectorAll('[data-pool-field]').forEach(function(el){
       var update = function(){
         var entry = def[el.dataset.poolGroup][parseInt(el.dataset.poolIndex, 10)];
-        entry[el.dataset.poolField] = el.dataset.poolField === 'effect' ? el.value : (parseFloat(el.value) || 0);
+        entry[el.dataset.poolField] = el.dataset.poolField === 'effect' ? el.value : el.value.trim();
         markDirty();
         updatePoolShares();
       };
@@ -3795,8 +4078,8 @@ function openSocketableEditorModal(){
     detail.querySelectorAll('[data-pool-hull-index]').forEach(function(el){
       var update = function(){
         var entry = def[el.dataset.poolGroup][parseInt(el.dataset.poolIndex, 10)];
-        entry.hullValues[parseInt(el.dataset.poolHullIndex, 10)] = parseFloat(el.value) || 0;
-        entry.min = entry.max = entry.hullValues[0];
+        entry.hullValues[parseInt(el.dataset.poolHullIndex, 10)] = el.value.trim();
+        while (entry.hullValues.length > SOCKETABLE_HULL_SIZE_LABELS.length && entry.hullValues[entry.hullValues.length - 1] === '') entry.hullValues.pop();
         markDirty();
       };
       el.addEventListener('input', update);
@@ -3806,10 +4089,14 @@ function openSocketableEditorModal(){
       el.addEventListener('change', function(){
         var entry = def[el.dataset.poolGroup][parseInt(el.dataset.poolIndex, 10)];
         if (el.checked) {
-          entry.hullValues = SOCKETABLE_HULL_SIZE_LABELS.map(function(){ return entry.min; });
+          entry.rangeBeforeHullValues = { min: entry.min, max: entry.max };
+          entry.hullValues = SOCKETABLE_HULL_SIZE_LABELS.map(function(){ return entry.min || '0'; });
         } else {
-          entry.min = entry.max = entry.hullValues[0];
+          var range = entry.rangeBeforeHullValues || { min: entry.hullValues[0], max: entry.hullValues[0] };
+          entry.min = range.min;
+          entry.max = range.max;
           delete entry.hullValues;
+          delete entry.rangeBeforeHullValues;
         }
         markDirty();
         renderDetail();
@@ -3818,8 +4105,8 @@ function openSocketableEditorModal(){
     function updatePoolShares(){
       detail.querySelectorAll('[data-pool-share]').forEach(function(span){
         var list = def[span.dataset.poolGroup];
-        var total = list.reduce(function(sum, e){ return sum + Math.max(0, e.weight); }, 0);
-        var weight = Math.max(0, list[parseInt(span.dataset.poolShare, 10)].weight);
+        var total = list.reduce(function(sum, e){ return sum + Math.max(0, poolWeight(e) || 0); }, 0);
+        var weight = Math.max(0, poolWeight(list[parseInt(span.dataset.poolShare, 10)]) || 0);
         span.textContent = total > 0 ? '(' + Math.round(weight / total * 100) + '% of first picks)' : '';
       });
     }
@@ -3839,22 +4126,23 @@ function openSocketableEditorModal(){
     });
     detail.querySelectorAll('[data-sock-add-row]').forEach(function(btn){
       btn.addEventListener('click', function(){
-        def[btn.dataset.sockAddRow].push({ effect: EFFECT_NAMES_SORTED[0], min: 1, max: 2, weight: 1 });
+        def[btn.dataset.sockAddRow].push({ effect: EFFECT_NAMES_SORTED[0], min: '1', max: '2', weight: '' });
         markDirty();
         renderList();
         renderDetail();
       });
     });
     document.getElementById('sockSelectIcon').addEventListener('click', function(){
-      openImagePickerModal(function(path){
-        def.icon = moveIconIfNeeded(path, 'graphics/icons/socketables/');
+      pickProjectImage('graphics/icons/socketables/', function(path){
+        def.icon = path;
         markDirty();
         render();
-      }, function(){ render(); });
+      }, render);
     });
     document.getElementById('sockDuplicate').addEventListener('click', function(){
       var copy = deepCopy(def);
       copy.id = uniqueSocketableId(def.id + '_copy');
+      delete copy.loadedId;
       defs.splice(selectedIndex + 1, 0, copy);
       selectedIndex++;
       markDirty();
@@ -3872,7 +4160,10 @@ function openSocketableEditorModal(){
   }
 
   function save(){
-    modal.save(validateSocketables(defs), '/save-socketables', { csv: serializeSocketablesCsv(defs, extraColumns) }, 'Saved socketables.csv');
+    modal.save(validateSocketables(defs), { socketables: serializeSocketablesCsv(table, defs) }, 'Saved socketables.csv', function(){
+      defs.forEach(function(def){ def.loadedId = def.id; });
+      renderDetail();
+    });
   }
 
   load();
@@ -3884,19 +4175,25 @@ var RARE_NAME_STYLES = [
 ];
 
 function parseAffixesCsv(text){
-  var rows = parseCsv(text);
-  var header = (rows.shift() || []).map(function(h){ return h.trim(); });
-  var at = function(name){ return header.indexOf(name); };
-  return rows.map(function(cells){
-    var cell = function(name){ var i = at(name); return i < 0 || cells[i] === undefined ? '' : cells[i].trim(); };
-    return { effect: cell('effect'), prefix: cell('prefix'), suffix: cell('suffix') };
-  });
+  var table = parseCsvTable(text);
+  return {
+    table: table,
+    rows: table.rows.map(function(cells){
+      return { cells: cells, effect: csvCell(table, cells, 'effect').trim(), prefix: csvCell(table, cells, 'prefix').trim(), suffix: csvCell(table, cells, 'suffix').trim() };
+    })
+  };
 }
 
-function serializeAffixesCsv(rows){
-  return ['effect,prefix,suffix'].concat(rows.map(function(row){
-    return [row.effect, row.prefix, row.suffix].map(csvField).join(',');
-  })).join('\n') + '\n';
+function serializeAffixesCsv(table, rows){
+  var out = emptyCsvTable(table);
+  rows.forEach(function(row){
+    var cells = (row.cells || []).slice();
+    setCsvCell(out, cells, 'effect', row.effect);
+    setCsvCell(out, cells, 'prefix', row.prefix);
+    setCsvCell(out, cells, 'suffix', row.suffix);
+    out.rows.push(cells);
+  });
+  return serializeCsvTable(out);
 }
 
 function wordList(text){
@@ -3917,25 +4214,24 @@ function serializeRareNames(names){
 }
 
 function openSocketableNamesModal(){
-  var affixes = [], names = {}, usedEffects = {}, tab = 'affixes', filterText = '';
+  var affixTable = parseCsvTable(''), affixes = [], names = {}, usedEffects = {}, tab = 'affixes', filterText = '';
   var modal = openDataModal({ title: 'Socketable Names', noun: 'name', loadingText: 'Loading names...', load: load, save: save });
   var markDirty = modal.markDirty;
 
   function load(){
-    Promise.all([
-      fetch('/data/socketable-names').then(function(r){ if (!r.ok) throw new Error('names ' + r.status); return r.json(); }),
-      fetch('/data/socketables').then(function(r){ return r.ok ? r.text() : ''; })
-    ]).then(function(results){
-      affixes = parseAffixesCsv(results[0].affixes);
-      names = JSON.parse(results[0].names);
+    modal.fetchFiles(['socketable-affixes', 'socketable-names', 'socketables']).then(function(files){
+      var parsedAffixes = parseAffixesCsv(files['socketable-affixes'].content);
+      affixTable = parsedAffixes.table;
+      affixes = parsedAffixes.rows;
+      names = JSON.parse(files['socketable-names'].content);
       usedEffects = {};
-      parseSocketablesCsv(results[1]).defs.forEach(function(def){
+      parseSocketablesCsv(files.socketables.content).defs.forEach(function(def){
         def.prefixes.concat(def.suffixes).forEach(function(e){ (usedEffects[e.effect] = usedEffects[e.effect] || []).push(def.id); });
       });
       modal.dirty = false;
       render();
-    }).catch(function(){
-      modal.loadFailed('socketable names');
+    }).catch(function(error){
+      modal.loadFailed('socketable names', error);
     });
   }
 
@@ -3966,10 +4262,10 @@ function openSocketableNamesModal(){
       var haystack = (row.effect + ' ' + row.prefix + ' ' + row.suffix).toLowerCase();
       if (needle && haystack.indexOf(needle) === -1) return '';
       var users = usedEffects[row.effect];
-      var usage = users ? 'Used by ' + users.join(', ') : 'Not used by any socketable';
+      var usage = users ? 'Used by ' + users.join(', ') : 'Not in any current pool - items already released may still carry it';
       return '<div class="fieldRow" style="align-items:flex-end">' +
         '<div class="field" style="flex:3"><label title="' + escapeHtml(usage) + '">' + escapeHtml(row.effect) +
-          (users ? '' : ' <span class="hint">(unused)</span>') + '</label>' +
+          (users ? '' : ' <span class="hint">(not in any current pool)</span>') + '</label>' +
           '<div class="hint">' + escapeHtml(row.prefix || '...') + ' subroutine of ' + escapeHtml(row.suffix || '...') + '</div></div>' +
         '<div class="field" style="flex:2"><label>Prefix</label><input data-affix-index="' + i + '" data-affix-field="prefix" value="' + escapeHtml(row.prefix) + '"></div>' +
         '<div class="field" style="flex:2"><label>Suffix (after "of")</label><input data-affix-index="' + i + '" data-affix-field="suffix" value="' + escapeHtml(row.suffix) + '"></div>' +
@@ -4013,6 +4309,9 @@ function openSocketableNamesModal(){
     });
     body.querySelectorAll('[data-affix-remove]').forEach(function(btn){
       btn.addEventListener('click', function(){
+        var row = affixes[parseInt(btn.dataset.affixRemove, 10)];
+        if (!usedEffects[row.effect] && !confirm('Remove the names for ' + row.effect + '? No current pool uses it, but items players already own may still carry it, ' +
+            'and their frozen names would lose these words.')) return;
         affixes.splice(parseInt(btn.dataset.affixRemove, 10), 1);
         markDirty();
         renderAffixes();
@@ -4021,7 +4320,7 @@ function openSocketableNamesModal(){
     document.getElementById('affixAdd').addEventListener('click', function(){
       var effect = document.getElementById('affixAddSelect').value;
       if (!effect) return;
-      affixes.push({ effect: effect, prefix: '', suffix: '' });
+      affixes.push({ cells: [], effect: effect, prefix: '', suffix: '' });
       filterText = effect;
       markDirty();
       renderAffixes();
@@ -4045,8 +4344,6 @@ function openSocketableNamesModal(){
 
   function renderRareNames(){
     var body = document.getElementById('namesBody');
-    var textareaStyle = 'width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);' +
-      'font-family:var(--font-mono);font-size:12.5px;padding:7px 9px;resize:vertical;';
     var namesHtml = Object.keys(names).map(function(socketableId){
       var words = names[socketableId];
       var styleOptions = RARE_NAME_STYLES.map(function(s){
@@ -4054,7 +4351,7 @@ function openSocketableNamesModal(){
       }).join('');
       var listField = function(key, label){
         return '<div class="field" style="flex:1"><label>' + label + ' <span class="hint">(' + (words[key] || []).length + ')</span></label>' +
-          '<textarea rows="6" data-rare-id="' + escapeHtml(socketableId) + '" data-rare-list="' + key + '" style="' + textareaStyle + '">' +
+          '<textarea rows="6" data-rare-id="' + escapeHtml(socketableId) + '" data-rare-list="' + key + '" style="' + TEXTAREA_STYLE + '">' +
           escapeHtml((words[key] || []).join('\n')) + '</textarea></div>';
       };
       return '<div class="field"><label style="font-size:13px">' + escapeHtml(socketableId) + '</label>' +
@@ -4125,7 +4422,7 @@ function openSocketableNamesModal(){
   }
 
   function save(){
-    modal.save(validate(), '/save-socketable-names', { affixes: serializeAffixesCsv(affixes), names: serializeRareNames(names) },
+    modal.save(validate(), { 'socketable-affixes': serializeAffixesCsv(affixTable, affixes), 'socketable-names': serializeRareNames(names) },
       'Saved socketable_affixes.csv and socketable_names.json');
   }
 
@@ -4135,26 +4432,34 @@ function openSocketableNamesModal(){
 var SOCKETABLE_DROP_SLOTS = 5;
 
 function parseSalvageCsv(text){
-  var rows = parseCsv(text);
-  var header = (rows.shift() || []).map(function(h){ return h.trim(); });
-  var at = function(name){ return header.indexOf(name); };
-  return rows.map(function(cells){
-    var cell = function(name){ var i = at(name); return i < 0 || cells[i] === undefined ? '' : cells[i].trim(); };
-    var chances = cell('chances').split(';').map(function(c){ return c.trim(); }).filter(Boolean).map(function(c){ return parseFloat(c) * 100; });
-    var unique = parseFloat(cell('uniqueChance'));
-    return { site: cell('site'), chances: chances, unique: isNaN(unique) ? 0 : unique * 100 };
-  }).filter(function(row){ return row.site; });
+  var table = parseCsvTable(text);
+  return {
+    table: table,
+    rows: table.rows.map(function(cells){
+      var site = csvCell(table, cells, 'site').trim();
+      return {
+        cells: cells,
+        passthrough: !site || site.charAt(0) === '#',
+        site: site,
+        chances: csvCell(table, cells, 'chances').split(';').map(function(c){ return c.trim(); }).filter(Boolean),
+        unique: csvCell(table, cells, 'uniqueChance').trim()
+      };
+    })
+  };
 }
 
-function percentToFraction(percent){
-  return String(Number((percent / 100).toFixed(4)));
-}
-
-function serializeSalvageCsv(rows){
-  return ['site,chances,uniqueChance'].concat(rows.map(function(row){
-    var chances = row.chances.filter(function(c){ return c !== null && !isNaN(c); }).map(percentToFraction).join(';');
-    return [row.site, chances, percentToFraction(row.unique || 0)].map(csvField).join(',');
-  })).join('\n') + '\n';
+function serializeSalvageCsv(table, rows){
+  var out = emptyCsvTable(table);
+  rows.forEach(function(row){
+    var cells = (row.cells || []).slice();
+    if (!row.passthrough) {
+      setCsvCell(out, cells, 'site', row.site);
+      setCsvCell(out, cells, 'chances', row.chances.join(';'));
+      setCsvCell(out, cells, 'uniqueChance', row.unique);
+    }
+    out.rows.push(cells);
+  });
+  return serializeCsvTable(out);
 }
 
 function formatPercent(value){
@@ -4170,63 +4475,59 @@ var SOCKET_CRAFTING_ITEMS = [
 ];
 
 function parseCraftingCsv(text){
-  var rows = parseCsv(text);
-  var header = (rows.shift() || []).map(function(h){ return h.trim(); });
-  var itemAt = header.indexOf('item'), costAt = header.indexOf('partsCost');
-  var costs = {}, order = [];
-  rows.forEach(function(cells){
-    var item = (cells[itemAt] || '').trim();
-    if (!item) return;
-    costs[item] = (cells[costAt] || '').trim();
-    order.push(item);
+  var table = parseCsvTable(text);
+  var rows = table.rows.map(function(cells){
+    return { cells: cells, item: csvCell(table, cells, 'item').trim(), partsCost: csvCell(table, cells, 'partsCost').trim() };
   });
-  return { costs: costs, order: order };
+  SOCKET_CRAFTING_ITEMS.forEach(function(item){
+    if (item.cost && !rows.some(function(row){ return row.item === item.id; })) rows.push({ cells: [], item: item.id, partsCost: '' });
+  });
+  return { table: table, rows: rows };
 }
 
 function serializeCraftingCsv(crafting){
-  var order = crafting.order.slice();
-  SOCKET_CRAFTING_ITEMS.forEach(function(item){
-    if (item.cost && order.indexOf(item.id) === -1) order.push(item.id);
+  var out = emptyCsvTable(crafting.table);
+  crafting.rows.forEach(function(row){
+    var cells = (row.cells || []).slice();
+    setCsvCell(out, cells, 'item', row.item);
+    setCsvCell(out, cells, 'partsCost', row.partsCost);
+    out.rows.push(cells);
   });
-  return ['item,partsCost'].concat(order.map(function(item){
-    return [item, crafting.costs[item] === undefined ? '' : crafting.costs[item]].map(csvField).join(',');
-  })).join('\n') + '\n';
-}
-
-function serializeCommoditiesCsv(table){
-  return [table.header].concat(table.rows).map(function(cells){ return cells.map(csvField).join(','); }).join('\n') + '\n';
+  return serializeCsvTable(out);
 }
 
 function openSocketableCraftingModal(){
-  var crafting = { costs: {}, order: [] }, commodities = { header: [], rows: [] };
+  var crafting = { table: parseCsvTable(''), rows: [] }, commodities = parseCsvTable('');
   var modal = openDataModal({ title: 'Socketable Crafting Items', noun: 'crafting', loadingText: 'Loading crafting items...', load: load, save: save });
   var markDirty = modal.markDirty;
 
   function load(){
-    fetch('/data/socketable-crafting').then(function(r){ if (!r.ok) throw new Error('crafting ' + r.status); return r.json(); }).then(function(data){
-      crafting = parseCraftingCsv(data.crafting);
-      var rows = parseCsv(data.commodities);
-      commodities = { header: rows.shift() || [], rows: rows };
+    modal.fetchFiles(['socketable-crafting', 'commodities']).then(function(files){
+      crafting = parseCraftingCsv(files['socketable-crafting'].content);
+      commodities = parseCsvTable(files.commodities.content);
       modal.dirty = false;
       render();
-    }).catch(function(){
-      modal.loadFailed('socketable_crafting.csv and commodities.csv');
+    }).catch(function(error){
+      modal.loadFailed('socketable_crafting.csv and commodities.csv', error);
     });
   }
 
+  function costRow(id){
+    return crafting.rows.find(function(row){ return row.item === id; });
+  }
+
   function commodityRow(id){
-    var idAt = commodities.header.indexOf('id');
-    return commodities.rows.find(function(cells){ return (cells[idAt] || '').trim() === id; });
+    return commodities.rows.find(function(cells){ return csvCell(commodities, cells, 'id').trim() === id; });
   }
 
   function iconOf(id){
     var row = commodityRow(id);
-    return row ? (row[commodities.header.indexOf('icon')] || '').trim() : '';
+    return row ? csvCell(commodities, row, 'icon').trim() : '';
   }
 
   function setIcon(id, path){
     var row = commodityRow(id);
-    if (row) row[commodities.header.indexOf('icon')] = path;
+    if (row) setCsvCell(commodities, row, 'icon', path);
   }
 
   function render(){
@@ -4244,7 +4545,7 @@ function openSocketableCraftingModal(){
       }
       if (item.cost) {
         html += '<div class="field" style="flex:1"><label>Parts to synthesise</label>' +
-          '<input type="number" min="0" step="1" data-craft-cost="' + item.id + '" value="' + escapeHtml(crafting.costs[item.id] || '') + '"></div>';
+          '<input type="number" min="0" step="1" data-craft-cost="' + item.id + '" value="' + escapeHtml(costRow(item.id).partsCost) + '"></div>';
       } else {
         html += '<div class="field" style="flex:1"><label>Parts to synthesise</label><div class="hint">Not synthesised - comes from disassembly and loot.</div></div>';
       }
@@ -4261,17 +4562,17 @@ function openSocketableCraftingModal(){
     });
     root.querySelectorAll('[data-craft-cost]').forEach(function(el){
       el.addEventListener('input', function(){
-        crafting.costs[el.dataset.craftCost] = el.value.trim();
+        costRow(el.dataset.craftCost).partsCost = el.value.trim();
         markDirty();
       });
     });
     root.querySelectorAll('[data-craft-pick]').forEach(function(btn){
       btn.addEventListener('click', function(){
-        openImagePickerModal(function(path){
-          setIcon(btn.dataset.craftPick, moveIconIfNeeded(path, 'graphics/icons/cargo/'));
+        pickProjectImage('graphics/icons/cargo/', function(path){
+          setIcon(btn.dataset.craftPick, path);
           markDirty();
           render();
-        }, function(){ render(); });
+        }, render);
       });
     });
   }
@@ -4281,14 +4582,14 @@ function openSocketableCraftingModal(){
     SOCKET_CRAFTING_ITEMS.forEach(function(item){
       if (item.commodity && !commodityRow(item.id)) issues.push(item.label + ': no row in commodities.csv');
       if (item.commodity && !iconOf(item.id)) issues.push(item.label + ': needs an image');
-      if (item.cost && !/^\d+$/.test(String(crafting.costs[item.id] || ''))) issues.push(item.label + ': the cost must be a whole number of parts');
+      if (item.commodity && isUnshippedImagePath(iconOf(item.id))) issues.push(item.label + ': its image is in a folder that is not deployed');
+      if (item.cost && !/^\d+$/.test(costRow(item.id).partsCost)) issues.push(item.label + ': the cost must be a whole number of parts');
     });
     return issues;
   }
 
   function save(){
-    modal.save(validate(), '/save-socketable-crafting',
-      { crafting: serializeCraftingCsv(crafting), commodities: serializeCommoditiesCsv(commodities) },
+    modal.save(validate(), { 'socketable-crafting': serializeCraftingCsv(crafting), commodities: serializeCsvTable(commodities) },
       'Saved socketable_crafting.csv and commodities.csv');
   }
 
@@ -4296,28 +4597,38 @@ function openSocketableCraftingModal(){
 }
 
 function openSocketableDropsModal(){
-  var rows = [], filterText = '', file = 'socketable_salvage.csv', files = [file];
+  var table = parseCsvTable(''), rows = [], filterText = '', file = 'socketable_salvage.csv', files = [file];
   var modal = openDataModal({ title: 'Socketable Drops', noun: 'drop', loadingText: 'Loading drops...', load: load, save: save });
   var markDirty = modal.markDirty;
+
+  function resourceName(){
+    return 'salvage:' + file;
+  }
 
   function load(){
     fetch('/list-socketable-salvage').then(function(r){ return r.ok ? r.json() : [file]; }).catch(function(){ return [file]; }).then(function(list){
       files = list && list.length ? list : [file];
-      return fetch('/data/socketable-salvage?file=' + encodeURIComponent(file));
-    }).then(function(r){ if (!r.ok) throw new Error('salvage ' + r.status); return r.text(); }).then(function(text){
-      rows = parseSalvageCsv(text);
+      return modal.fetchFiles([resourceName()]);
+    }).then(function(loaded){
+      var parsed = parseSalvageCsv(loaded[resourceName()].content);
+      table = parsed.table;
+      rows = parsed.rows;
       modal.dirty = false;
       render();
-    }).catch(function(){
-      modal.loadFailed(file);
+    }).catch(function(error){
+      modal.loadFailed(file, error);
     });
+  }
+
+  function chancePercent(fraction){
+    return fraction === '' || fraction === undefined ? NaN : parseFloat(fraction) * 100;
   }
 
   function atLeast(row, count){
     var chance = 1;
     for (var i = 0; i < count; i++) {
-      var c = row.chances[i];
-      if (c === null || c === undefined || isNaN(c)) return 0;
+      var c = chancePercent(row.chances[i]);
+      if (isNaN(c)) return 0;
       chance *= c / 100;
     }
     return chance * 100;
@@ -4343,14 +4654,14 @@ function openSocketableDropsModal(){
     }
     head += '<th style="' + cellStyle + '" title="Separate roll for a unique socketable">Unique %</th><th style="' + cellStyle + 'text-align:left">At least</th><th></th></tr>';
     var body = rows.map(function(row, i){
-      if (needle && row.site.toLowerCase().indexOf(needle) === -1) return '';
+      if (row.passthrough || (needle && row.site.toLowerCase().indexOf(needle) === -1)) return '';
       var html = '<tr><td style="' + cellStyle + '"><input data-drop-index="' + i + '" data-drop-field="site" value="' + escapeHtml(row.site) + '" style="width:230px"></td>';
       for (var n = 0; n < SOCKETABLE_DROP_SLOTS; n++) {
         html += '<td style="' + cellStyle + '"><input type="number" min="0" max="100" step="1" data-drop-index="' + i + '" data-drop-slot="' + n + '" value="' +
-          formatPercent(row.chances[n]) + '" style="' + inputStyle + '"></td>';
+          escapeHtml(fractionToPercentText(row.chances[n] || '')) + '" style="' + inputStyle + '"></td>';
       }
       html += '<td style="' + cellStyle + '"><input type="number" min="0" max="100" step="0.1" data-drop-index="' + i + '" data-drop-field="unique" value="' +
-        formatPercent(row.unique) + '" style="' + inputStyle + '"></td>' +
+        escapeHtml(fractionToPercentText(row.unique)) + '" style="' + inputStyle + '"></td>' +
         '<td style="' + cellStyle + '" class="hint" data-drop-summary="' + i + '">' + escapeHtml(summary(row)) + '</td>' +
         '<td style="' + cellStyle + '"><button class="smallBtn danger" type="button" data-drop-remove="' + i + '">X</button></td></tr>';
       return html;
@@ -4383,14 +4694,12 @@ function openSocketableDropsModal(){
         if (el.dataset.dropField === 'site') {
           row.site = el.value.trim();
         } else if (el.dataset.dropField === 'unique') {
-          row.unique = el.value === '' ? 0 : parseFloat(el.value);
+          row.unique = percentToFractionText(el.value);
         } else {
           var slot = parseInt(el.dataset.dropSlot, 10);
-          while (row.chances.length < slot) row.chances.push(null);
-          row.chances[slot] = el.value === '' ? null : parseFloat(el.value);
-          while (row.chances.length && (row.chances[row.chances.length - 1] === null || isNaN(row.chances[row.chances.length - 1]))) {
-            row.chances.pop();
-          }
+          while (row.chances.length < slot) row.chances.push('');
+          row.chances[slot] = percentToFractionText(el.value);
+          while (row.chances.length && row.chances[row.chances.length - 1] === '') row.chances.pop();
         }
         markDirty();
         var summaryCell = root.querySelector('[data-drop-summary="' + el.dataset.dropIndex + '"]');
@@ -4408,7 +4717,7 @@ function openSocketableDropsModal(){
       var site = (prompt('Site id (custom entity type or salvage spec id):') || '').trim();
       if (!site) return;
       if (rows.some(function(row){ return row.site === site; })) { showToast('That site is already listed'); return; }
-      rows.push({ site: site, chances: [10], unique: 0 });
+      rows.push({ cells: [], passthrough: false, site: site, chances: ['0.1'], unique: '0' });
       filterText = site;
       markDirty();
       render();
@@ -4424,21 +4733,26 @@ function openSocketableDropsModal(){
   function validate(){
     var issues = [], seen = {};
     rows.forEach(function(row, i){
+      if (row.passthrough) return;
       var label = row.site || ('row ' + (i + 1));
       if (!/^[A-Za-z0-9_.-]+$/.test(row.site)) issues.push(label + ': site ids may only use letters, digits, _ . and -');
       if (seen[row.site]) issues.push(label + ': listed more than once');
       seen[row.site] = true;
       row.chances.forEach(function(c, n){
-        if (c === null || isNaN(c)) issues.push(label + ': item ' + (n + 1) + ' is blank but a later item is set');
-        else if (c < 0 || c > 100) issues.push(label + ': item ' + (n + 1) + ' must be between 0 and 100');
+        var percent = chancePercent(c);
+        if (c === '') issues.push(label + ': item ' + (n + 1) + ' is blank but a later item is set');
+        else if (!isNumberText(c) || percent < 0 || percent > 100) issues.push(label + ': item ' + (n + 1) + ' must be between 0 and 100');
       });
-      if (isNaN(row.unique) || row.unique < 0 || row.unique > 100) issues.push(label + ': unique must be between 0 and 100');
+      var uniquePercent = chancePercent(row.unique);
+      if (row.unique !== '' && (!isNumberText(row.unique) || uniquePercent < 0 || uniquePercent > 100)) issues.push(label + ': unique must be between 0 and 100');
     });
     return issues;
   }
 
   function save(){
-    modal.save(validate(), '/save-socketable-salvage', { file: file, csv: serializeSalvageCsv(rows) }, 'Saved ' + file);
+    var contents = {};
+    contents[resourceName()] = serializeSalvageCsv(table, rows);
+    modal.save(validate(), contents, 'Saved ' + file);
   }
 
   load();
@@ -4446,203 +4760,46 @@ function openSocketableDropsModal(){
 
 function openTypeModal(existingType, onSave, onClose){
   var isNew = !existingType;
-  var t = existingType ? deepCopy(existingType) : { id: '', name: '', icon: '', tier: 'NOTABLE', vanillaHullMod: '', flavour: '', description: '', todo: '', tags: [], optionalOptions: [], exclusiveHullMods: [], exclusiveSkillTypes: [], unlockConditions: [] };
-  var effectsDraft = deepCopy(t.effects || []);
-  var hullSizeEffectsDraft = deepCopy(t.hullSizeEffects || []);
-  var unlockConditionsDraft = deepCopy(t.unlockConditions || []);
-  var tagsDraft = deepCopy(t.tags || []);
-  var itemCostDraft = deepCopy(t.itemCost || { itemId: '', quantity: 0 });
-  var root = document.getElementById('modalRoot');
-
-  function syncDraftFromInputs(){
-    if (!document.getElementById('tId')) return;
-    if (isNew) t.id = document.getElementById('tId').value.trim();
-    t.name = document.getElementById('tName').value;
-    t.icon = document.getElementById('tIcon').value;
-    t.tier = document.getElementById('tTier').value;
-    t.vanillaHullMod = document.getElementById('tVanilla').value;
-    t.exclusiveHullMods = document.getElementById('tExclusiveHullMods').value.split(',').map(function(s){ return s.trim(); }).filter(function(s){ return s; });
-    t.phantomHullMods = document.getElementById('tPhantomHullMods').value.split(',').map(function(s){ return s.trim(); }).filter(function(s){ return s; });
-    t.exclusiveSkillTypes = document.getElementById('tExclusiveSkillTypes').value.split(',').map(function(s){ return s.trim(); }).filter(function(s){ return s; });
-    var optSelect = document.getElementById('tOptionalOptions');
-    if (optSelect) {
-      t.optionalOptions = Array.from(optSelect.selectedOptions).map(function(o){ return o.value; }).filter(function(v){ return v; });
-    }
-    t.flavour = document.getElementById('tFlavour').value;
-    t.description = document.getElementById('tDescription').value;
-    t.todo = document.getElementById('tTodo').value;
-    itemCostDraft.itemId = document.getElementById('tItemCostId').value.trim();
-    itemCostDraft.quantity = parseFloat(document.getElementById('tItemCostQuantity').value) || 0;
-    var temporarySeconds = parseFloat(document.getElementById('tTemporaryAfterDeploymentSeconds').value);
-    t.temporaryAfterDeploymentSeconds = (!isNaN(temporarySeconds) && temporarySeconds > 0) ? temporarySeconds : null;
-    t.requiredHullSizes = Array.from(document.querySelectorAll('.tRequiredHullSize')).filter(function(box){ return box.checked; }).map(function(box){ return box.value; });
-    syncEffectRowsFromInputs('t', effectsDraft);
-    syncHullSizeEffectsFromInputs('t', hullSizeEffectsDraft);
-    syncUnlockConditionRowsFromInputs('t', unlockConditionsDraft);
-  }
+  var draft = existingType ? deepCopy(existingType) : { id: '', name: '', icon: '', tier: 'NOTABLE' };
+  ensureTypeLists(draft);
 
   function renderModal(){
-    var tierOptions = ['SMALL','NOTABLE','KEYSTONE','WORMHOLE','ROOT','SOCKET'].map(function(tr){ return '<option value="'+tr+'"'+(tr===tierOf(t)?' selected':'')+'>'+tr+'</option>'; }).join('');
-    var effectRows = renderEffectRows('t', effectsDraft, '<div class="hint">No effects yet.</div>');
-
-    root.innerHTML =
-      '<div class="modalOverlay"><div class="modal">' +
-      '<h3>' + (isNew ? 'New skill type' : 'Edit type "' + t.id + '"') + '</h3>' +
-      '<div class="field"><label>Id</label><input id="tId" value="' + (t.id||'') + '" ' + (isNew?'':'disabled') + '></div>' +
-      '<div class="field"><label>Display name</label><input id="tName" value="' + (t.name||'') + '"></div>' +
-      '<div class="field"><label>Icon path</label><div class="fieldRow"><input id="tIcon" value="' + (t.icon||'') + '" style="flex:1"><button class="smallBtn" type="button" id="tSelectImageBtn">Select Image</button></div></div>' +
-      '<div class="field"><label>Tier</label><select id="tTier">' + tierOptions + '</select></div>' +
-      '<div class="field"><label>Type tags (region tags go on nodes)</label>' + renderTagChips('modal', tagsDraft, TYPE_TAG_GROUPS) + '</div>' +
-      '<hr class="sep">' +
-      '<div class="field"><label>Effects</label>' + effectRows + '</div>' +
-      '<div class="btnRow"><button class="smallBtn" type="button" id="addEffectRowBtn">+ Add effect</button></div>' +
-      '<hr class="sep">' +
-      '<div class="field"><label>Hull-size effects</label>' + renderHullSizeEffectRows('t', hullSizeEffectsDraft) + '</div>' +
-      '<div class="btnRow"><button class="smallBtn" type="button" id="addHsEffectRowBtn">+ Add hull-size effect</button></div>' +
-      '<hr class="sep">' +
-      '<div class="field"><label>vanillaHullMod id</label><input id="tVanilla" value="' + (t.vanillaHullMod||'') + '"></div>' +
-      '<hr class="sep">' +
-      '<div class="field"><label>Unlock conditions</label>' + renderUnlockConditionRows('t', unlockConditionsDraft) + '</div>' +
-      '<div class="btnRow"><button class="smallBtn" type="button" id="addUnlockConditionRowBtn">+ Add condition</button></div>' +
-      '<div class="field"><label>Exclusive with hullmod ids (comma-separated)</label><input id="tExclusiveHullMods" value="' + ((t.exclusiveHullMods||[]).join(', ')) + '"></div>' +
-      '<div class="field"><label>Counts as hullmod ids, effect suppressed (comma-separated)</label><input id="tPhantomHullMods" value="' + ((t.phantomHullMods||[]).join(', ')) + '"></div>' +
-      '<div class="field"><label>Exclusive with skill type ids (comma-separated)</label><input id="tExclusiveSkillTypes" value="' + ((t.exclusiveSkillTypes||[]).join(', ')) + '"></div>' +
-      '<hr class="sep">' +
-      '<div class="field"><label>Item cost</label><div class="fieldRow"><input id="tItemCostId" placeholder="commodity id, e.g. lobster" value="' + (itemCostDraft.itemId||'') + '" style="flex:2"><input id="tItemCostQuantity" type="number" placeholder="quantity" value="' + (itemCostDraft.quantity||0) + '" style="flex:1"></div></div>' +
-      '<hr class="sep">' +
-      '<div class="field"><label>Temporary after deployment (seconds)</label><input id="tTemporaryAfterDeploymentSeconds" type="number" min="0" placeholder="leave blank for always-on" value="' + (t.temporaryAfterDeploymentSeconds || '') + '"></div>' +
-      '<div class="field"><label>Required hull sizes (none = any)</label><div class="fieldRow">' + renderRequiredHullSizeChecks(t.requiredHullSizes || []) + '</div></div>' +
-      '<hr class="sep">' +
-      '<div class="field"><label>Optional slot options</label>' + renderOptionalOptionsSelect(t.optionalOptions||[], t.id) + '</div>' +
-      '<div class="field"><label>Edit each option\u0027s type</label><div class="prereqList">' + renderOptionEditRows(t.optionalOptions||[]) + '</div></div>' +
-      '<div class="field"><label>Flavour text (optional, grey line under the title)</label><textarea id="tFlavour" rows="2" style="width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12.5px;padding:7px 9px;resize:vertical;">' + escapeHtml(t.flavour||'') + '</textarea></div>' +
-      '<div class="field"><label>Description override (optional)</label><textarea id="tDescription" rows="4" style="width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12.5px;padding:7px 9px;resize:vertical;">' + escapeHtml(t.description||'') + '</textarea></div>' +
-      '<div class="field"><label>Todo (optional)</label><input id="tTodo" value="' + escapeHtml(t.todo||'') + '"></div>' +
-      '<div class="modalBtns">' +
+    var root = openModal({
+      title: isNew ? 'New skill type' : 'Edit type "' + draft.id + '"',
+      bodyHtml: typeFormHtml('t', draft, TYPE_FORM_DIALOG_SECTIONS, { idEditable: isNew }),
+      buttonsHtml:
         '<button class="smallBtn" id="mCancel2">Cancel</button>' +
-        '<button class="smallBtn primary" id="mSave2">Save type</button>' +
-      '</div>' +
-      '</div></div>';
-
-    document.getElementById('mCancel2').addEventListener('click', function(){ root.innerHTML=''; if (onClose) onClose(); });
-    wireEffectFilters(root);
-    document.getElementById('addEffectRowBtn').addEventListener('click', function(){
-      syncDraftFromInputs();
-      effectsDraft.push({ effect: EFFECT_NAMES[0], magnitude: 10 });
-      renderModal();
+        '<button class="smallBtn primary" id="mSave2">Save type</button>'
     });
-    root.querySelectorAll('[data-t-remove-effect-row]').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        syncDraftFromInputs();
-        effectsDraft.splice(parseInt(btn.dataset.tRemoveEffectRow, 10), 1);
-        renderModal();
-      });
-    });
-    wireMoveRowButtons(root, 't-move-effect-row', syncDraftFromInputs, function(){ return effectsDraft; }, renderModal);
-    wireMoveRowButtons(root, 't-move-hs-row', syncDraftFromInputs, function(){ return hullSizeEffectsDraft; }, renderModal);
-    document.getElementById('addHsEffectRowBtn').addEventListener('click', function(){
-      syncDraftFromInputs();
-      hullSizeEffectsDraft.push({ effect: EFFECT_NAMES[0], frigate: 0, destroyer: 0, cruiser: 0, capitalShip: 0 });
-      renderModal();
-    });
-    root.querySelectorAll('[data-t-remove-hs-row]').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        syncDraftFromInputs();
-        hullSizeEffectsDraft.splice(parseInt(btn.dataset.tRemoveHsRow, 10), 1);
-        renderModal();
-      });
-    });
-    document.getElementById('addUnlockConditionRowBtn').addEventListener('click', function(){
-      syncDraftFromInputs();
-      unlockConditionsDraft.push({ type: 'blueprint', category: 'hullmod', id: '', statId: '', level: 1, key: '' });
-      renderModal();
-    });
-    root.querySelectorAll('[data-t-remove-unlock-row]').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        syncDraftFromInputs();
-        unlockConditionsDraft.splice(parseInt(btn.dataset.tRemoveUnlockRow, 10), 1);
-        renderModal();
-      });
-    });
-    root.querySelectorAll('[data-t-unlock-type-changed]').forEach(function(sel){
-      sel.addEventListener('change', function(){
-        syncDraftFromInputs();
-        renderModal();
-      });
-    });
-    root.querySelectorAll('[data-modal-toggle-tag]').forEach(function(chip){
-      chip.addEventListener('click', function(){
-        syncDraftFromInputs();
-        var tag = chip.dataset.modalToggleTag;
-        var idx = tagsDraft.indexOf(tag);
-        if (idx === -1) tagsDraft.push(tag); else tagsDraft.splice(idx, 1);
-        renderModal();
-      });
-    });
-    document.getElementById('tOptionalOptions').addEventListener('change', function(){
-      syncDraftFromInputs();
-      renderModal();
-    });
-    root.querySelectorAll('[data-edit-option-type]').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        openChildTypeEditor(btn.dataset.editOptionType);
-      });
-    });
-    document.getElementById('tSelectImageBtn').addEventListener('click', function(){
-      syncDraftFromInputs();
-      openImagePickerModal(function(path){
-        t.icon = path;
-        renderModal();
-      }, function(){
-        renderModal();
-      });
-    });
-    document.getElementById('mSave2').addEventListener('click', function(){
-      syncDraftFromInputs();
-      var id = isNew ? t.id.trim() : t.id;
-      if (!id) { showToast('Id is required'); return; }
-      if (isNew && typeById(id)) { showToast('A type with that id already exists'); return; }
-      var updated = {
-        id: id,
-        name: (t.name||'').trim() || id,
-        icon: (t.icon||'').trim(),
-        tier: t.tier,
-        effects: effectsDraft,
-        hullSizeEffects: hullSizeEffectsDraft,
-        vanillaHullMod: (t.vanillaHullMod||'').trim(),
-        itemCost: itemCostDraft.itemId ? { itemId: itemCostDraft.itemId, quantity: itemCostDraft.quantity || 0 } : null,
-        temporaryAfterDeploymentSeconds: t.temporaryAfterDeploymentSeconds || null,
-        requiredHullSizes: t.requiredHullSizes || [],
-        unlockConditions: unlockConditionsDraft,
-        exclusiveHullMods: t.exclusiveHullMods || [],
-        phantomHullMods: t.phantomHullMods || [],
-        exclusiveSkillTypes: t.exclusiveSkillTypes || [],
-        optionalOptions: t.optionalOptions || [],
-        flavour: (t.flavour||'').trim(),
-        description: (t.description||'').trim(),
-        todo: (t.todo||'').trim(),
-        tags: tagsDraft
-      };
-      updated.icon = moveIconIfNeeded(updated.icon);
-      if (isNew) state.types.push(updated);
-      else {
-        var idx = state.types.findIndex(function(x){ return x.id === t.id; });
-        state.types[idx] = updated;
+    wireTypeForm(root, 't', draft, {
+      edited: function(structural){ if (structural) renderModal(); },
+      redraw: renderModal,
+      editOptionType: function(childId){
+        var childType = typeById(childId);
+        if (!childType) { showToast('Type not found'); return; }
+        openTypeModal(childType, null, renderModal);
       }
-      root.innerHTML = '';
+    });
+    document.getElementById('mCancel2').addEventListener('click', function(){ closeModal(); if (onClose) onClose(); });
+    document.getElementById('mSave2').addEventListener('click', function(){
+      readTypeFields('t', draft);
+      if (!draft.id) { showToast('Id is required'); return; }
+      if (isNew && typeById(draft.id)) { showToast('A type with that id already exists'); return; }
+      if (!draft.name) draft.name = draft.id;
+      var saved = deepCopy(draft);
+      if (isNew) {
+        state.types.push(saved);
+      } else {
+        var index = state.types.findIndex(function(x){ return x.id === existingType.id; });
+        state.types[index] = saved;
+      }
+      closeModal();
       saveLocal();
       render();
       if (state.selectedIds.length > 0) refreshInspector();
-      if (onSave) onSave(updated);
+      if (onSave) onSave(saved);
       if (onClose) onClose();
     });
-  }
-
-  function openChildTypeEditor(childId){
-    syncDraftFromInputs();
-    var childType = typeById(childId);
-    if (!childType) { showToast('Type not found'); return; }
-    openTypeModal(childType, null, function(){ renderModal(); });
   }
 
   renderModal();
@@ -4657,11 +4814,6 @@ function showToast(msg){
   toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 1800);
 }
 
-function renderRequiredHullSizeChecks(selected){
-  return [['FRIGATE', 'Frigate'], ['DESTROYER', 'Destroyer'], ['CRUISER', 'Cruiser'], ['CAPITAL_SHIP', 'Capital']].map(function(size){
-    return '<label><input type="checkbox" class="tRequiredHullSize" value="' + size[0] + '"' + (selected.indexOf(size[0]) >= 0 ? ' checked' : '') + '> ' + size[1] + '</label>';
-  }).join('');
-}
 function serializeType(t){
   var out = { id: t.id, name: t.name, icon: t.icon };
   if (tierOf(t) !== 'SMALL') out.tier = tierOf(t);
@@ -4760,10 +4912,16 @@ function buildTreeExportObject(){
   return out;
 }
 var currentExportTab = 'tree';
+function serializeTreeFile(){
+  return JSON.stringify(buildTreeExportObject(), null, '\t');
+}
+function exportTexts(){
+  return { types: serializeSkillTypesFile(), tree: serializeTreeFile() };
+}
 function refreshExport(){
   var text;
   if (currentExportTab === 'tree') {
-    text = JSON.stringify(buildTreeExportObject(), null, '\t');
+    text = serializeTreeFile();
     document.getElementById('exportHint').textContent = 'Paste over data/skilltrees/ship_skill_tree.json';
   } else {
     text = serializeSkillTypesFile();
@@ -4780,33 +4938,29 @@ document.querySelectorAll('.exportTab').forEach(function(tab){
   });
 });
 document.getElementById('refreshExportBtn').addEventListener('click', refreshExport);
-function saveToProject(reason){
-  var tagIssues = validateTags();
-  if (tagIssues.length && !confirm(tagIssues.length + ' tag issue' + (tagIssues.length > 1 ? 's' : '') + ' will fail the build:\n' +
-      tagIssues.slice(0, 8).join('\n') + (tagIssues.length > 8 ? '\n...' : '') +
-      '\n\nIf this browser loaded an old copy of the tree, cancel and use "Reload from disk" instead. Save anyway?')) {
-    return Promise.resolve(null);
+function saveToProject(){
+  if (!treeLoaded || !vocabularyLoaded) {
+    showToast('Not saved - the tree files or the editor vocabulary did not load. Fix the error, then use Reload from disk');
+    return;
   }
-  var treeText = JSON.stringify(buildTreeExportObject(), null, '\t');
-  var typesText = serializeSkillTypesFile();
-  return fetch('/save', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-Skill-Tree-Editor': '1' },
-    body: JSON.stringify({ types: typesText, tree: treeText })
-  }).then(function(res){
-    return res.json().then(function(data){ return { status: res.status, data: data }; });
-  }).then(function(result){
-    if (result.status === 200 && result.data.ok) {
-      showToast(reason || 'Saved to project files');
+  var issues = validate();
+  if (issues.length && !confirm(issues.length + ' issue' + (issues.length > 1 ? 's' : '') + ' will fail the build or break the tree in game:\n' +
+      issues.slice(0, 8).join('\n') + (issues.length > 8 ? '\n...' : '') + '\n\nSave anyway?')) {
+    return;
+  }
+  var revision = draftRevision;
+  saveDataFiles(exportTexts(), treeHashes).then(function(result){
+    if (result.ok) {
+      if (draftRevision === revision) clearDraft(); else saveLocal();
+      showToast('Saved to project files');
+    } else if (result.status === 409) {
+      if (confirm(staleFileQuestion(result, 'your unsaved skill tree changes - press Cancel and use Copy first if you want to keep them'))) reloadTreeFromDisk();
     } else {
-      showToast('Save failed: ' + (result.data && result.data.message ? result.data.message : 'unknown error'));
+      showToast('Save failed: ' + result.message);
     }
-    return result;
-  }).catch(function(){
-    showToast('Could not reach local server - run tools\\skill_tree_server.ps1, or use Copy instead');
   });
 }
-document.getElementById('saveToProjectBtn').addEventListener('click', function(){ saveToProject(); });
+document.getElementById('saveToProjectBtn').addEventListener('click', saveToProject);
 
 document.getElementById('copyBtn').addEventListener('click', function(){
   var ta = document.getElementById('exportText');
@@ -4818,16 +4972,16 @@ document.getElementById('copyBtn').addEventListener('click', function(){
 });
 
 document.getElementById('importBtn').addEventListener('click', function(){
-  var html =
-    '<div class="modalOverlay"><div class="modal" style="width:min(560px,92vw)">' +
-    '<h3>Import JSON</h3>' +
-    '<div class="field"><label>skill_types.json contents</label><textarea id="impTypes" style="height:100px;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:11px;padding:8px;"></textarea></div>' +
-    '<div class="field"><label>ship_skill_tree.json contents</label><textarea id="impNodes" style="height:100px;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:11px;padding:8px;"></textarea></div>' +
-    '<div class="modalBtns"><button class="smallBtn" id="mCancel3">Cancel</button><button class="smallBtn primary" id="mLoad3">Load</button></div>' +
-    '</div></div>';
-  var root = document.getElementById('modalRoot');
-  root.innerHTML = html;
-  document.getElementById('mCancel3').addEventListener('click', function(){ root.innerHTML=''; });
+  var textareaStyle = 'height:100px;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:11px;padding:8px;';
+  openModal({
+    title: 'Import JSON',
+    modalStyle: 'width:min(560px,92vw)',
+    bodyHtml:
+      '<div class="field"><label>skill_types.json contents</label><textarea id="impTypes" style="' + textareaStyle + '"></textarea></div>' +
+      '<div class="field"><label>ship_skill_tree.json contents</label><textarea id="impNodes" style="' + textareaStyle + '"></textarea></div>',
+    buttonsHtml: '<button class="smallBtn" id="mCancel3">Cancel</button><button class="smallBtn primary" id="mLoad3">Load</button>'
+  });
+  document.getElementById('mCancel3').addEventListener('click', closeModal);
   document.getElementById('mLoad3').addEventListener('click', function(){
     var typesRaw = document.getElementById('impTypes').value.trim();
     var nodesRaw = document.getElementById('impNodes').value.trim();
@@ -4835,7 +4989,7 @@ document.getElementById('importBtn').addEventListener('click', function(){
       if (typesRaw) { var pt = JSON.parse(typesRaw); state.types = pt.skillTypes || pt; }
       if (nodesRaw) { var pn = JSON.parse(nodesRaw); state.nodes = pn.nodes || pn; state.curves = pn.connectorCurves || []; state.hiddenConnectors = pn.hiddenConnectors || []; state.anchors = anchorsFromTree(pn); state.images = normalizeImages(pn.staticImages); state.stars = normalizeStars(pn.stars); }
       pruneConnectorEntries();
-      root.innerHTML = '';
+      closeModal();
       state.selectedIds = [];
       saveLocal();
       render();
@@ -4848,18 +5002,21 @@ document.getElementById('importBtn').addEventListener('click', function(){
   });
 });
 
-document.getElementById('resetBtn').addEventListener('click', function(){
-  if (!confirm('Discard all changes in this browser and reload skill_types.json / ship_skill_tree.json from disk?')) return;
+function reloadTreeFromDisk(){
   fetchTreeFiles().then(function(){
-    try { localStorage.removeItem('skillTreeEditor.v1'); } catch(e){}
+    clearDraft();
+    hideServerError();
     clearAllSelection();
     render();
     refreshInspector();
     fitToScreen();
+    refreshExport();
     showToast('Reloaded from disk');
-  }).catch(function(){
-    showToast('Could not reach local server - run tools\\skill_tree_server.ps1 to reload from disk');
-  });
+  }).catch(showServerError);
+}
+document.getElementById('resetBtn').addEventListener('click', function(){
+  if (!confirm('Discard all changes in this browser and reload skill_types.json / ship_skill_tree.json from disk?')) return;
+  reloadTreeFromDisk();
 });
 
 document.getElementById('zoomIn').addEventListener('click', function(){ state.view.zoom = Math.min(3, state.view.zoom * 1.2); render(); });
@@ -5005,7 +5162,10 @@ render();
 refreshExport();
 
 function loadInitialTree(){
-  fetchTreeFiles().then(function(){
+  var loadsTree = !treeLoaded;
+  Promise.all([vocabularyLoaded ? null : loadVocabulary(), loadsTree ? fetchTreeFiles() : null]).then(function(){
+    hideServerError();
+    if (loadsTree) offerDraftRestore();
     clearAllSelection();
     render();
     refreshInspector();
@@ -5014,6 +5174,7 @@ function loadInitialTree(){
   }).catch(showServerError);
 }
 document.getElementById('serverErrorRetry').addEventListener('click', loadInitialTree);
-if (!loadedLocalDraft) loadInitialTree();
+updateSaveAvailability();
+loadInitialTree();
 })();
 </script>

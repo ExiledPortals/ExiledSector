@@ -51,8 +51,6 @@ class EditorRoundTripTest {
                     List.of("serializeSkillTypesFile"), false),
             new Pin("skill_types.json skill type", TYPE_LOADER, List.of("parseSkillType", "parseTemporaryAfterDeploymentSeconds", "entryLabel"),
                     List.of("serializeType"), false),
-            new Pin("skill_types.json skill type rebuilt by the type editor dialog", TYPE_LOADER,
-                    List.of("parseSkillType", "parseTemporaryAfterDeploymentSeconds"), List.of("openTypeModal#updated"), false),
             new Pin("skill_types.json itemCost", TYPE_LOADER, List.of("parseItemCost"), List.of("serializeType"), false),
             new Pin("skill_types.json effects and hullSizeEffects", TYPE_LOADER, List.of("parseEffects", "parseHullSizeEffects"),
                     List.of("serializeType"), false),

@@ -69,7 +69,18 @@ function Copy-ModFiles {
     Get-ChildItem (Join-Path $ProjectRoot "graphics") |
         Where-Object { $excludedGraphics -notcontains $_.Name } |
         ForEach-Object { Copy-Item -Path $_.FullName -Destination $graphics.FullName -Recurse -Force }
+    Get-ChildItem -LiteralPath $Destination -Recurse -File -Force -Filter ".*.tmp" | ForEach-Object { $_.Delete() }
     Write-TexturePreloadList -ProjectRoot $ProjectRoot -Destination $Destination -ExcludedFolders ($excludedGraphics + "fonts")
+}
+
+function Sync-FolderMirror {
+    param([string]$Source, [string]$Destination)
+
+    & robocopy $Source $Destination /MIR /NJH /NJS /NP /NFL /NDL | Out-Null
+    if ($LASTEXITCODE -ge 8) {
+        throw "robocopy failed to mirror $Source into $Destination (exit code $LASTEXITCODE)."
+    }
+    $global:LASTEXITCODE = 0
 }
 
 function Write-TexturePreloadList {

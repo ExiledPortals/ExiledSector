@@ -17,8 +17,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -349,23 +347,5 @@ class WeaponScopeHierarchyTest {
             String name = matcher.group(1);
             assertTrue(SkillEffectRegistry.names().contains(name), "Unknown effect in skill_types.json: " + name);
         }
-    }
-
-    @Test
-    void theEditorEffectListMatchesTheRegistry() throws IOException {
-        String html = Files.readString(Path.of("tools/skill_tree_editor.html"), StandardCharsets.UTF_8);
-        Matcher list = Pattern.compile("var EFFECT_NAMES = \\[(.*?)];", Pattern.DOTALL).matcher(html);
-        assertTrue(list.find(), "EFFECT_NAMES not found in the editor");
-        Set<String> editorNames = new TreeSet<>();
-        Matcher name = Pattern.compile("'([A-Z0-9_]+)'").matcher(list.group(1));
-        while (name.find()) {
-            editorNames.add(name.group(1));
-        }
-        Set<String> expected = new TreeSet<>(SkillEffectRegistry.names());
-        Set<String> missing = new TreeSet<>(expected);
-        missing.removeAll(editorNames);
-        Set<String> stale = new TreeSet<>(editorNames);
-        stale.removeAll(expected);
-        assertTrue(missing.isEmpty() && stale.isEmpty(), "Editor EFFECT_NAMES out of sync. Missing: " + missing + " Stale: " + stale);
     }
 }

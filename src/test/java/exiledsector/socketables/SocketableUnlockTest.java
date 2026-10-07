@@ -17,14 +17,9 @@ import org.junit.jupiter.api.Test;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -168,7 +163,7 @@ class SocketableUnlockTest {
     }
 
     @Test
-    void everyShippedConditionIsKnownAndTheEditorOffersExactlyThem() throws Exception {
+    void everyShippedConditionIsKnown() throws Exception {
         String csv = Files.readString(RealSkillData.projectRoot().resolve(SocketableDefinitions.DATA_PATH), StandardCharsets.UTF_8);
         JSONArray rows = CDL.toJSONArray(csv.replace("\r\n", "\n"));
         Map<String, String> unlocks = new HashMap<>();
@@ -182,17 +177,5 @@ class SocketableUnlockTest {
         }
         assertEquals(Map.of("unique_vambrace_plating", "found_onslaught_mk1", "unique_gate_hauler_coil", "found_gate_hauler",
                 "unique_planetkiller_circuit", "found_planetkiller", "unique_alpha_site_survivor", "defeated_ziggurat"), unlocks);
-
-        String editor = Files.readString(RealSkillData.projectRoot().resolve("tools/skill_tree_editor.html"), StandardCharsets.UTF_8);
-        Matcher list = Pattern.compile("var SOCKETABLE_UNLOCKS = (.*);").matcher(editor);
-        assertTrue(list.find());
-        Set<String> offered = new HashSet<>();
-        Matcher option = Pattern.compile("\\['([a-z0-9_]*)',").matcher(list.group(1));
-        while (option.find()) {
-            offered.add(option.group(1));
-        }
-        Set<String> expected = new HashSet<>(Set.of(""));
-        Arrays.stream(SocketableUnlock.values()).forEach(unlock -> expected.add(unlock.id()));
-        assertEquals(expected, offered);
     }
 }
