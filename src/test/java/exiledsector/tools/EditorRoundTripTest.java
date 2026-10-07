@@ -69,7 +69,7 @@ class EditorRoundTripTest {
             new Pin("socketables.csv columns", SOCKETABLE_DEFINITION, List.of("parse"), List.of("var SOCKETABLE_COLUMNS"), true),
             new Pin("socketable_affixes.csv columns", SOCKETABLE_NAMES, List.of("load", "registerAffixes"),
                     List.of("serializeAffixesCsv"), true),
-            new Pin("socketable_names.json grade fields", SOCKETABLE_NAMES, List.of("registerWords"),
+            new Pin("socketable_names.json word fields", SOCKETABLE_NAMES, List.of("registerWords"),
                     List.of("serializeRareNames", "openSocketableNamesModal"), true),
             new Pin("socketable_salvage.csv columns", SOCKETABLE_DROPS, List.of("load", "parse"), List.of("serializeSalvageCsv"), true),
             new Pin("compat/salvage/*.csv columns", SALVAGE_COMPAT, List.of("rows", "missingSites"), List.of("serializeSalvageCsv"), true));

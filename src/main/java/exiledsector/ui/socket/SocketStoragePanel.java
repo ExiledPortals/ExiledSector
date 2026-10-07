@@ -17,7 +17,6 @@ import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.socketables.SocketCustody;
 import exiledsector.socketables.Socketable;
-import exiledsector.socketables.SocketableDefinition;
 import exiledsector.socketables.SocketableRarity;
 import exiledsector.socketables.SocketableStore;
 import exiledsector.ui.SkillTreePanelStyle;
@@ -50,7 +49,7 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     private static final float CHIP_HEIGHT = 24f;
     private static final float CHIP_TEXT_PADDING = 28f;
     private static final float CHIP_DARK_SCALE = 0.3f;
-    private static final int CONTROL_ROWS = 3;
+    private static final int CONTROL_ROWS = 2;
     private static final float LABEL_WIDTH = 70f;
     private static final float CLOSE_BUTTON_WIDTH = 70f;
     private static final float NOTICE_HEIGHT = 56f;
@@ -69,9 +68,6 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     }
 
     private record RarityChip(SocketableRarity rarity) {
-    }
-
-    private record GradeChip(String grade) {
     }
 
     private record ChipColors(Color base, Color dark, Color bright) {
@@ -315,9 +311,6 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         } else if (id instanceof RarityChip chip) {
             filter.toggleRarity(chip.rarity());
             rebuildControls();
-        } else if (id instanceof GradeChip chip) {
-            filter.toggleGrade(chip.grade());
-            rebuildControls();
         }
     }
 
@@ -390,11 +383,6 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
             String label = Translation.text("ui.socketStorage.rarity." + rarity.name().toLowerCase(Locale.ROOT));
             x += addChip(element, label, new RarityChip(rarity), ChipColors.of(rarity.color()), filter.rarities.contains(rarity), x, 1)
                     + GAP;
-        }
-        x = 0f;
-        for (String grade : SocketStorageFilter.ALL_GRADES) {
-            x += addChip(element, SocketableDefinition.gradeName(grade), new GradeChip(grade), ChipColors.player(),
-                    filter.grades.contains(grade), x, 2) + GAP;
         }
         float top = PAD + HEADER_HEIGHT + GAP + FIELD_HEIGHT + GAP;
         root.addUIElement(element).inTL(PAD, top);

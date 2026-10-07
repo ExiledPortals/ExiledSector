@@ -3443,15 +3443,13 @@ function openImageEditorModal(){
   else fetchAllProjectImages(buildShell);
 }
 
-var SOCKETABLE_COLUMNS = ['id', 'kind', 'name', 'icon', 'grade', 'alignment', 'rarity', 'unique', 'description', 'prefixes', 'suffixes', 'unlock'];
+var SOCKETABLE_COLUMNS = ['id', 'kind', 'name', 'icon', 'rarity', 'unique', 'description', 'prefixes', 'suffixes', 'unlock'];
 var SOCKETABLE_AFFIX_GROUPS = [
-  { key: 'prefixes', label: 'Prefixes', hint: 'a magic item rolls 1, a rare 1-2' },
-  { key: 'suffixes', label: 'Suffixes', hint: 'a magic item rolls 1, a rare 1-2' }
+  { key: 'prefixes', label: 'Prefixes', hint: 'a common item rolls 1, a rare 1-2' },
+  { key: 'suffixes', label: 'Suffixes', hint: 'a common item rolls 1, a rare 1-2' }
 ];
 function isSocketableAffixColumn(column){ return column === 'prefixes' || column === 'suffixes'; }
 var SOCKETABLE_KINDS = ['subroutine', 'officer', 'team', 'ai_core'];
-var SOCKETABLE_GRADES = ['military', 'industrial', 'consumer'];
-var SOCKETABLE_ALIGNMENTS = ['high_tech', 'midline', 'low_tech'];
 var SOCKETABLE_UNLOCKS = [['', 'None'], ['found_onslaught_mk1', 'Found the Onslaught Mk.I in the Abyss'], ['found_gate_hauler', 'Found the Gate Hauler'], ['found_planetkiller', 'Recovered the first Planetkiller'], ['defeated_ziggurat', 'Defeated the Ziggurat at Alpha Site']];
 
 function parseCsv(text){
@@ -3549,10 +3547,6 @@ function socketableEffectOptionsHtml(selected){
   return names.map(function(name){
     return '<option value="' + name + '"' + (name === selected ? ' selected' : '') + '>' + name + '</option>';
   }).join('');
-}
-
-function datalistHtml(id, values){
-  return '<datalist id="' + id + '">' + values.map(function(v){ return '<option value="' + v + '">'; }).join('') + '</datalist>';
 }
 
 function openDataModal(options){
@@ -3656,7 +3650,7 @@ function openSocketableEditorModal(){
       '</div>',
       '<button class="smallBtn" id="sockNew">+ New socketable</button>');
     document.getElementById('sockNew').addEventListener('click', function(){
-      defs.push({ id: uniqueSocketableId('new_socketable'), kind: 'subroutine', name: 'New Socketable', icon: '', grade: '', alignment: '',
+      defs.push({ id: uniqueSocketableId('new_socketable'), kind: 'subroutine', name: 'New Socketable', icon: '',
         rarity: '10', unique: '', unlock: '', description: '', prefixes: [{ effect: EFFECT_NAMES_SORTED[0], min: 1, max: 2, weight: 1 }],
         suffixes: [{ effect: EFFECT_NAMES_SORTED[1], min: 1, max: 2, weight: 1 }], extra: {} });
       selectedIndex = defs.length - 1;
@@ -3734,11 +3728,8 @@ function openSocketableEditorModal(){
       '</div>' +
       '<div class="field"><label>Name</label><input data-sock-field="name" value="' + escapeHtml(def.name) + '"></div>' +
       '<div class="fieldRow">' +
-        '<div class="field" style="flex:1"><label>Grade</label><input data-sock-field="grade" list="sockGrades" value="' + escapeHtml(def.grade) + '"></div>' +
-        '<div class="field" style="flex:1"><label>Alignment</label><input data-sock-field="alignment" list="sockAlignments" value="' + escapeHtml(def.alignment) + '"></div>' +
         '<div class="field" style="flex:1"><label>Rarity (loot weight)</label><input type="number" min="0" step="1" data-sock-field="rarity" value="' + escapeHtml(def.rarity) + '"></div>' +
       '</div>' +
-      datalistHtml('sockGrades', SOCKETABLE_GRADES) + datalistHtml('sockAlignments', SOCKETABLE_ALIGNMENTS) +
       '<label class="legendRow" style="cursor:pointer"><input type="checkbox" id="sockUnique"' + (def.unique === 'true' ? ' checked' : '') +
         '> Unique - shown with the name above in orange, and rolls every prefix and suffix</label>' +
       (def.unique === 'true'
@@ -3750,7 +3741,7 @@ function openSocketableEditorModal(){
         : '') +
       '<div class="field"><label>Tooltip description (optional)</label><textarea data-sock-field="description" rows="3" style="width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12.5px;padding:7px 9px;resize:vertical;">' + escapeHtml(def.description) + '</textarea></div>' +
       '<hr class="sep">' +
-      '<div class="hint">Items roll 2 effects (magic: 1 prefix + 1 suffix) 55% of the time, 3 (rare: 2+1 or 1+2) 35% and 4 (rare: 2+2) 10%, ' +
+      '<div class="hint">Items roll 2 effects (common: 1 prefix + 1 suffix) 55% of the time, 3 (rare: 2+1 or 1+2) 35% and 4 (rare: 2+2) 10%, ' +
         'never repeating an effect. A higher rarity weight makes an effect come up more often within its group; values are whole numbers ' +
         'between min and max.</div>' +
       affixGroupsHtml +
@@ -3873,11 +3864,11 @@ function wordList(text){
 }
 
 function serializeRareNames(names){
-  var grades = Object.keys(names);
-  return '{\n' + grades.map(function(grade){
-    var words = names[grade];
+  var socketableIds = Object.keys(names);
+  return '{\n' + socketableIds.map(function(socketableId){
+    var words = names[socketableId];
     var keys = Object.keys(words);
-    return '\t' + JSON.stringify(grade) + ': {\n' + keys.map(function(key){
+    return '\t' + JSON.stringify(socketableId) + ': {\n' + keys.map(function(key){
       return '\t\t' + JSON.stringify(key) + ': ' + (Array.isArray(words[key])
         ? '[' + words[key].map(function(w){ return JSON.stringify(w); }).join(', ') + ']'
         : JSON.stringify(words[key]));
@@ -3939,7 +3930,7 @@ function openSocketableNamesModal(){
       return '<div class="fieldRow" style="align-items:flex-end">' +
         '<div class="field" style="flex:3"><label title="' + escapeHtml(usage) + '">' + escapeHtml(row.effect) +
           (users ? '' : ' <span class="hint">(unused)</span>') + '</label>' +
-          '<div class="hint">' + escapeHtml(row.prefix || '...') + ' military-grade subroutine of ' + escapeHtml(row.suffix || '...') + '</div></div>' +
+          '<div class="hint">' + escapeHtml(row.prefix || '...') + ' subroutine of ' + escapeHtml(row.suffix || '...') + '</div></div>' +
         '<div class="field" style="flex:2"><label>Prefix</label><input data-affix-index="' + i + '" data-affix-field="prefix" value="' + escapeHtml(row.prefix) + '"></div>' +
         '<div class="field" style="flex:2"><label>Suffix (after "of")</label><input data-affix-index="' + i + '" data-affix-field="suffix" value="' + escapeHtml(row.suffix) + '"></div>' +
         '<button class="smallBtn danger" type="button" data-affix-remove="' + i + '">X</button>' +
@@ -3951,7 +3942,7 @@ function openSocketableNamesModal(){
       return '<option value="' + name + '">' + name + (usedEffects[name] ? ' (used, needs names)' : '') + '</option>';
     }).join('');
     body.innerHTML =
-      '<div class="hint">Edits data/config/exiledSector/socketable_affixes.csv. A magic item is named "&lt;prefix&gt; &lt;grade&gt; &lt;noun&gt; of &lt;suffix&gt;" ' +
+      '<div class="hint">Edits data/config/exiledSector/socketable_affixes.csv. A common item is named "&lt;prefix&gt; &lt;noun&gt; of &lt;suffix&gt;" ' +
         'from its first prefix and first suffix effect. Every effect a socketable can roll needs a row. Chinese words go under ' +
         'socketable.affix.&lt;EFFECT&gt;.prefix / .suffix in zh_CN.json.</div>' +
       (missing.length ? '<div class="hint" style="color:var(--danger)">Used by socketables but missing names: ' + escapeHtml(missing.join(', ')) + '</div>' : '') +
@@ -3977,7 +3968,7 @@ function openSocketableNamesModal(){
         row[el.dataset.affixField] = el.value;
         markDirty();
         el.closest('.fieldRow').querySelector('.hint').textContent =
-          (row.prefix || '...') + ' military-grade subroutine of ' + (row.suffix || '...');
+          (row.prefix || '...') + ' subroutine of ' + (row.suffix || '...');
       });
     });
     body.querySelectorAll('[data-affix-remove]').forEach(function(btn){
@@ -4016,44 +4007,44 @@ function openSocketableNamesModal(){
     var body = document.getElementById('namesBody');
     var textareaStyle = 'width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;color:var(--text);' +
       'font-family:var(--font-mono);font-size:12.5px;padding:7px 9px;resize:vertical;';
-    var gradesHtml = Object.keys(names).map(function(grade){
-      var words = names[grade];
+    var namesHtml = Object.keys(names).map(function(socketableId){
+      var words = names[socketableId];
       var styleOptions = RARE_NAME_STYLES.map(function(s){
         return '<option value="' + s.id + '"' + (s.id === (words.style || 'codename') ? ' selected' : '') + '>' + s.label + '</option>';
       }).join('');
       var listField = function(key, label){
         return '<div class="field" style="flex:1"><label>' + label + ' <span class="hint">(' + (words[key] || []).length + ')</span></label>' +
-          '<textarea rows="6" data-rare-grade="' + escapeHtml(grade) + '" data-rare-list="' + key + '" style="' + textareaStyle + '">' +
+          '<textarea rows="6" data-rare-id="' + escapeHtml(socketableId) + '" data-rare-list="' + key + '" style="' + textareaStyle + '">' +
           escapeHtml((words[key] || []).join('\n')) + '</textarea></div>';
       };
-      return '<div class="field"><label style="font-size:13px">' + escapeHtml(grade) + '</label>' +
+      return '<div class="field"><label style="font-size:13px">' + escapeHtml(socketableId) + '</label>' +
         '<div class="fieldRow" style="align-items:flex-end">' +
-          '<div class="field" style="flex:1"><label>Style</label><select data-rare-grade="' + escapeHtml(grade) + '" data-rare-style>' + styleOptions + '</select></div>' +
-          '<button class="smallBtn danger" type="button" data-rare-remove="' + escapeHtml(grade) + '">Remove grade</button>' +
+          '<div class="field" style="flex:1"><label>Style</label><select data-rare-id="' + escapeHtml(socketableId) + '" data-rare-style>' + styleOptions + '</select></div>' +
+          '<button class="smallBtn danger" type="button" data-rare-remove="' + escapeHtml(socketableId) + '">Remove</button>' +
         '</div>' +
         '<div class="fieldRow">' + listField('first', 'First words') + listField('second', 'Second words') +
           ((words.style === 'product') ? listField('models', 'Models') : '') + '</div>' +
-        '<div class="hint" data-rare-samples="' + escapeHtml(grade) + '">e.g. ' + escapeHtml(sampleNames(words).join(', ')) + '</div>' +
+        '<div class="hint" data-rare-samples="' + escapeHtml(socketableId) + '">e.g. ' + escapeHtml(sampleNames(words).join(', ')) + '</div>' +
       '</div>';
     }).join('<hr class="sep">');
     body.innerHTML =
-      '<div class="hint">Edits data/config/exiledSector/socketable_names.json. Rare items (3-4 effects) take a name built from their grade\'s words, ' +
-        'shown above the item\'s base name. One word per line. The grade must match the grade column in socketables.csv.</div>' +
-      '<hr class="sep">' + (gradesHtml || '<div class="hint">No grades yet.</div>') +
-      '<hr class="sep"><div class="btnRow"><button class="smallBtn" type="button" id="rareAddGrade">+ Add grade</button></div>';
+      '<div class="hint">Edits data/config/exiledSector/socketable_names.json. Rare items (3-4 effects) take a name built from their socketableId\'s words, ' +
+        'shown above the item\'s base name. One word per line. Each entry must match an id in socketables.csv.</div>' +
+      '<hr class="sep">' + (namesHtml || '<div class="hint">No socketables have words yet.</div>') +
+      '<hr class="sep"><div class="btnRow"><button class="smallBtn" type="button" id="rareAddSocketable">+ Add socketable</button></div>';
 
     body.querySelectorAll('[data-rare-list]').forEach(function(el){
       el.addEventListener('input', function(){
-        var words = names[el.dataset.rareGrade];
+        var words = names[el.dataset.rareId];
         words[el.dataset.rareList] = wordList(el.value);
         markDirty();
         el.previousElementSibling.querySelector('.hint').textContent = '(' + words[el.dataset.rareList].length + ')';
-        body.querySelector('[data-rare-samples="' + el.dataset.rareGrade + '"]').textContent = 'e.g. ' + sampleNames(words).join(', ');
+        body.querySelector('[data-rare-samples="' + el.dataset.rareId + '"]').textContent = 'e.g. ' + sampleNames(words).join(', ');
       });
     });
     body.querySelectorAll('[data-rare-style]').forEach(function(el){
       el.addEventListener('change', function(){
-        names[el.dataset.rareGrade].style = el.value;
+        names[el.dataset.rareId].style = el.value;
         markDirty();
         renderRareNames();
       });
@@ -4066,11 +4057,11 @@ function openSocketableNamesModal(){
         renderRareNames();
       });
     });
-    document.getElementById('rareAddGrade').addEventListener('click', function(){
-      var grade = (prompt('Grade id (as in the grade column of socketables.csv):') || '').trim();
-      if (!grade) return;
-      if (names[grade]) { showToast('That grade already has words'); return; }
-      names[grade] = { style: 'codename', first: [], second: [] };
+    document.getElementById('rareAddSocketable').addEventListener('click', function(){
+      var socketableId = (prompt('Socketable id (as in the id column of socketables.csv):') || '').trim();
+      if (!socketableId) return;
+      if (names[socketableId]) { showToast('That socketable already has words'); return; }
+      names[socketableId] = { style: 'codename', first: [], second: [] };
       markDirty();
       renderRareNames();
     });
@@ -4086,9 +4077,9 @@ function openSocketableNamesModal(){
       if (usedEffects[row.effect] && (!row.prefix.trim() || !row.suffix.trim())) issues.push(label + ': used by socketables, so it needs both a prefix and a suffix');
     });
     missingEffects().forEach(function(effect){ issues.push(effect + ': used by ' + usedEffects[effect].join(', ') + ' but has no names'); });
-    Object.keys(names).forEach(function(grade){
-      var words = names[grade];
-      if (!(words.first || []).length || !(words.second || []).length) issues.push(grade + ': needs at least one first word and one second word');
+    Object.keys(names).forEach(function(socketableId){
+      var words = names[socketableId];
+      if (!(words.first || []).length || !(words.second || []).length) issues.push(socketableId + ': needs at least one first word and one second word');
     });
     return issues;
   }

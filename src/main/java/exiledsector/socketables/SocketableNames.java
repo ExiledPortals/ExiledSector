@@ -29,12 +29,12 @@ public final class SocketableNames {
     static final float MODEL_CHANCE = 0.4f;
     private static final long NAME_SALT = 0x6E616D6573L;
     private static final Logger LOG = Logger.getLogger(SocketableNames.class);
-    private static final AtomicReference<Map<String, GradeWords>> WORDS = new AtomicReference<>(Map.of());
+    private static final AtomicReference<Map<String, NameWords>> WORDS = new AtomicReference<>(Map.of());
     private static final AtomicReference<Map<String, Affix>> AFFIXES = new AtomicReference<>(Map.of());
 
     enum Style {CODENAME, PRODUCT}
 
-    record GradeWords(Style style, List<String> first, List<String> second, List<String> models) {
+    record NameWords(Style style, List<String> first, List<String> second, List<String> models) {
     }
 
     record Affix(String prefix, String suffix) {
@@ -53,12 +53,12 @@ public final class SocketableNames {
     }
 
     public static void registerWords(JSONObject root) throws JSONException {
-        Map<String, GradeWords> loaded = new HashMap<>();
-        Iterator<?> grades = root.keys();
-        while (grades.hasNext()) {
-            String grade = String.valueOf(grades.next());
-            JSONObject words = root.getJSONObject(grade);
-            loaded.put(grade, new GradeWords(style(grade, words.optString("style", "codename")), strings(words.optJSONArray("first")),
+        Map<String, NameWords> loaded = new HashMap<>();
+        Iterator<?> definitionIds = root.keys();
+        while (definitionIds.hasNext()) {
+            String definitionId = String.valueOf(definitionIds.next());
+            JSONObject words = root.getJSONObject(definitionId);
+            loaded.put(definitionId, new NameWords(style(definitionId, words.optString("style", "codename")), strings(words.optJSONArray("first")),
                     strings(words.optJSONArray("second")), strings(words.optJSONArray("models"))));
         }
         WORDS.set(Map.copyOf(loaded));
@@ -95,7 +95,7 @@ public final class SocketableNames {
         return switch (SocketableRarity.of(definition, effects.size())) {
             case UNIQUE -> FrozenName.NONE;
             case COMMON -> new FrozenName(firstInRole(definition, effects, true), firstInRole(definition, effects, false), null, null);
-            case RARE -> rareWords(definition.grade(), seed);
+            case RARE -> rareWords(definition.id(), seed);
         };
     }
 
@@ -124,8 +124,6 @@ public final class SocketableNames {
         }
         String form = prefix == null ? "suffix" : suffix == null ? "prefix" : "both";
         Message message = Translation.msg("socketable.commonName." + form)
-                .arg("grade", definition.gradeName())
-                .arg("gradeInline", definition.gradeName().toLowerCase(Locale.ROOT))
                 .arg("noun", Translation.text("socketable.noun." + kind.id()));
         if (prefix != null) {
             message.arg("prefix", prefix);
@@ -133,7 +131,8 @@ public final class SocketableNames {
         if (suffix != null) {
             message.arg("suffix", suffix);
         }
-        return message.text().trim().replaceAll("\\s+", " ");
+        String name = message.text().trim().replaceAll("\\s+", " ");
+        return name.isEmpty() ? name : name.substring(0, 1).toUpperCase(Locale.ROOT) + name.substring(1);
     }
 
     private static String firstInRole(SocketableDefinition definition, List<RolledEffect> effects, boolean prefix) {
@@ -155,8 +154,8 @@ public final class SocketableNames {
         return Translation.data("socketable.affix." + effectName + (prefix ? ".prefix" : ".suffix"), english);
     }
 
-    private static FrozenName rareWords(String grade, long seed) {
-        GradeWords words = WORDS.get().get(grade);
+    private static FrozenName rareWords(String definitionId, long seed) {
+        NameWords words = WORDS.get().get(definitionId);
         if (words == null || words.first().isEmpty() || words.second().isEmpty()) {
             return null;
         }
@@ -194,7 +193,7 @@ public final class SocketableNames {
         return Translation.data("socketable.nameWord." + word, word);
     }
 
-    private static FrozenName productName(GradeWords words, String first, String second, Random random) {
+    private static FrozenName productName(NameWords words, String first, String second, Random random) {
         String brand = null;
         if (words.first().size() > 1 && random.nextFloat() < COMPOUND_CHANCE) {
             String other = pick(words.first(), random);
@@ -217,11 +216,11 @@ public final class SocketableNames {
         return words.get(random.nextInt(words.size()));
     }
 
-    private static Style style(String grade, String name) {
+    private static Style style(String definitionId, String name) {
         try {
             return Style.valueOf(name.trim().toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException e) {
-            LOG.warn("Unknown name style \"" + name + "\" for grade " + grade + " in " + NAMES_PATH + " - using codename");
+            LOG.warn("Unknown name style \"" + name + "\" for " + definitionId + " in " + NAMES_PATH + " - using codename");
             return Style.CODENAME;
         }
     }

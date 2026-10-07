@@ -9,7 +9,7 @@ import exiledsector.socketables.SocketableRarity;
 import java.util.Locale;
 import java.util.function.Function;
 
-public record SocketStorageRow(Socketable socketable, int order, String name, SocketableRarity rarity, String grade, String searchText,
+public record SocketStorageRow(Socketable socketable, int order, String name, SocketableRarity rarity, String searchText,
                                String installedIn) {
 
     static SocketStorageRow of(Socketable socketable, int order, Function<Socketable, String> installedIn) {
@@ -20,15 +20,13 @@ public record SocketStorageRow(Socketable socketable, int order, String name, So
             search.append('\n').append(name.baseName());
         }
         if (definition != null) {
-            search.append('\n').append(socketable.kind().displayName())
-                    .append('\n').append(definition.gradeName())
-                    .append('\n').append(definition.alignmentName());
+            search.append('\n').append(socketable.kind().displayName());
         }
         for (StyledText line : socketable.tooltipLines()) {
             search.append('\n').append(line.plain());
         }
-        return new SocketStorageRow(socketable, order, name.title(), name.rarity(), definition == null ? "" : definition.grade(),
-                search.toString().toLowerCase(Locale.ROOT), installedIn.apply(socketable));
+        return new SocketStorageRow(socketable, order, name.title(), name.rarity(), search.toString().toLowerCase(Locale.ROOT),
+                installedIn.apply(socketable));
     }
 
     boolean installed() {

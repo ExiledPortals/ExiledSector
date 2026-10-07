@@ -1,15 +1,15 @@
 {
-	"military": {
+	"domain_subroutine_military": {
 		"style": "codename",
 		"first": ["Askonia", "Corvus", "Galatia", "Hybrasil", "Magec", "Duzahk", "Thule", "Aztlan", "Samarra", "Zagan", "Valhalla", "Mayasura", "Eos", "Canaan"],
 		"second": ["Battlegroup", "Doctrine", "Protocol", "Directive", "Picket", "Cordon", "Vanguard", "Sentinel", "Mandate", "Interdict", "Tribunal", "Overwatch"]
 	},
-	"industrial": {
+	"domain_subroutine_industrial": {
 		"style": "codename",
 		"first": ["Ilmari", "Hephaestus", "Basalt", "Tungsten", "Anvil", "Gantry", "Crucible", "Foundry", "Mantle", "Bulwark", "Keel", "Rivet"],
 		"second": ["Governor", "Regulator", "Manifold", "Coupling", "Loom", "Spindle", "Ballast", "Harness", "Gauge", "Relay"]
 	},
-	"consumer": {
+	"domain_subroutine_consumer": {
 		"style": "product",
 		"first": ["Sunny", "Happy", "Comfort", "Easy", "Safe", "Family", "Bright", "Cozy", "Smart", "Trusty", "Daily", "Home"],
 		"second": ["Pal", "Helper", "Buddy", "Assist", "Companion", "Navigator", "Guardian", "Friend", "Pilot", "Plus"],

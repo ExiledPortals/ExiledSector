@@ -36,11 +36,11 @@ class SocketableNamesTest {
         SocketableNames.registerAffixes(CDL.toJSONArray(Files.readString(root.resolve(AFFIXES), StandardCharsets.UTF_8)
                 .replace("\r\n", "\n")));
         SocketableDefinitions.register(new JSONArray()
-                .put(SocketableFixtures.row("military", "subroutine", SocketableFixtures.MILITARY_PREFIXES,
-                        SocketableFixtures.MILITARY_SUFFIXES).put("grade", "military"))
-                .put(SocketableFixtures.row("industrial", "subroutine", "HULL_MULT:4:6").put("grade", "industrial")
+                .put(SocketableFixtures.row("domain_subroutine_military", "subroutine", SocketableFixtures.MILITARY_PREFIXES,
+                        SocketableFixtures.MILITARY_SUFFIXES))
+                .put(SocketableFixtures.row("domain_subroutine_industrial", "subroutine", "HULL_MULT:4:6")
                         .put("name", "Industrial-grade Domain Subroutine"))
-                .put(SocketableFixtures.row("consumer", "subroutine", "HULL_MULT:4:6").put("grade", "consumer")
+                .put(SocketableFixtures.row("domain_subroutine_consumer", "subroutine", "HULL_MULT:4:6")
                         .put("name", "Consumer-grade Domain Subroutine"))
                 .put(SocketableFixtures.row("relic", "ai_core", "HULL_MULT:4:6; ARMOR_PERCENT:6:9; FLUX_CAPACITY_MULT:4:6")
                         .put("name", "Omega Shard").put("unique", "TRUE")));
@@ -59,16 +59,16 @@ class SocketableNamesTest {
 
     @Test
     void twoEffectsMakeACommonItemNamedAfterThemWithItsTypeUnderneath() {
-        SocketableName name = name("military", 1L, List.of(DISSIPATION, SHIELDING));
+        SocketableName name = name("domain_subroutine_military", 1L, List.of(DISSIPATION, SHIELDING));
 
         assertEquals(SocketableRarity.COMMON, name.rarity());
-        assertEquals("Vent-efficient military-grade subroutine of Shielding", name.title());
+        assertEquals("Vent-efficient subroutine of Shielding", name.title());
         assertEquals("Military-grade Domain Subroutine", name.baseName());
     }
 
     @Test
     void theCommonNameFollowsEachEffectsRoleNotItsOrder() {
-        assertEquals("Vent-efficient military-grade subroutine of Shielding", name("military", 1L, List.of(SHIELDING, DISSIPATION)).title());
+        assertEquals("Vent-efficient subroutine of Shielding", name("domain_subroutine_military", 1L, List.of(SHIELDING, DISSIPATION)).title());
     }
 
     @Test
@@ -77,30 +77,30 @@ class SocketableNamesTest {
                 .put(new JSONObject().put("effect", "FLUX_DISSIPATION_MULT").put("prefix", "Dissipation").put("suffix", ""))
                 .put(new JSONObject().put("effect", "HULL_MULT").put("prefix", "").put("suffix", "Fortitude")));
 
-        assertEquals("Dissipation military-grade subroutine", name("military", 1L, List.of(DISSIPATION, ARMOR)).title());
-        assertEquals("Military-grade subroutine of Fortitude",
-                name("military", 1L, List.of(new RolledEffect("REMOVED_EFFECT", 1f), HULL)).title());
+        assertEquals("Dissipation subroutine", name("domain_subroutine_military", 1L, List.of(DISSIPATION, ARMOR)).title());
+        assertEquals("Subroutine of Fortitude",
+                name("domain_subroutine_military", 1L, List.of(new RolledEffect("REMOVED_EFFECT", 1f), HULL)).title());
     }
 
     @Test
-    void threeOrFourEffectsMakeARareCodenameOverTheGrade() {
+    void threeOrFourEffectsMakeARareCodenameOverTheBaseName() {
         Set<String> names = new HashSet<>();
         for (long seed = 0; seed < 200; seed++) {
-            SocketableName name = name("military", seed, List.of(DISSIPATION, SHIELDING, HULL));
+            SocketableName name = name("domain_subroutine_military", seed, List.of(DISSIPATION, SHIELDING, HULL));
             assertEquals(SocketableRarity.RARE, name.rarity());
             assertEquals("Military-grade Domain Subroutine", name.baseName());
             assertTrue(name.title().matches("[A-Z][a-z]+ [A-Z][a-z]+"), name.title());
             names.add(name.title());
         }
-        assertEquals(name("military", 7L, List.of(DISSIPATION, SHIELDING, HULL)),
-                name("military", 7L, List.of(DISSIPATION, SHIELDING, HULL, ARMOR)));
+        assertEquals(name("domain_subroutine_military", 7L, List.of(DISSIPATION, SHIELDING, HULL)),
+                name("domain_subroutine_military", 7L, List.of(DISSIPATION, SHIELDING, HULL, ARMOR)));
         assertTrue(names.size() > 50, "names should vary: " + names.size());
     }
 
     @Test
     void industrialRaresAreTwoWordNamesWithNoRevisionNumber() {
         for (long seed = 0; seed < 200; seed++) {
-            String title = name("industrial", seed, List.of(HULL, ARMOR, DISSIPATION)).title();
+            String title = name("domain_subroutine_industrial", seed, List.of(HULL, ARMOR, DISSIPATION)).title();
             assertTrue(title.matches("[A-Z][a-z]+ [A-Z][a-z]+"), title);
         }
     }
@@ -110,7 +110,7 @@ class SocketableNamesTest {
         boolean compound = false;
         boolean model = false;
         for (long seed = 0; seed < 400; seed++) {
-            String title = name("consumer", seed, List.of(HULL, ARMOR, DISSIPATION)).title();
+            String title = name("domain_subroutine_consumer", seed, List.of(HULL, ARMOR, DISSIPATION)).title();
             String[] words = title.split(" ");
             assertTrue(words.length == 2 || words.length == 3, title);
             assertNotEquals(words[words.length - 1], words[words.length - 2], title);
@@ -131,7 +131,7 @@ class SocketableNamesTest {
     }
 
     @Test
-    void everyShippedPoolEffectHasBothAffixesAndEveryShippedGradeHasWords() throws Exception {
+    void everyShippedPoolEffectHasBothAffixesAndEveryCommonSocketableHasRareNameWords() throws Exception {
         String csv = Files.readString(RealSkillData.projectRoot().resolve(SocketableDefinitions.DATA_PATH), StandardCharsets.UTF_8);
         SocketableDefinitions.register(CDL.toJSONArray(csv.replace("\r\n", "\n")));
         JSONObject words = new JSONObject(Files.readString(RealSkillData.projectRoot().resolve(NAMES), StandardCharsets.UTF_8));
@@ -139,7 +139,7 @@ class SocketableNamesTest {
             if (definition.unique()) {
                 continue;
             }
-            assertTrue(words.has(definition.grade()), definition.grade() + " has no rare name words");
+            assertTrue(words.has(definition.id()), definition.id() + " has no rare name words");
             for (SocketableDefinition.PoolEntry entry : definition.pool()) {
                 assertTrue(SocketableNames.hasAffix(entry.effectName()), entry.effectName() + " has no affix row");
                 assertFalse(name(definition.id(), 1L, List.of(new RolledEffect(entry.effectName(), 1f),

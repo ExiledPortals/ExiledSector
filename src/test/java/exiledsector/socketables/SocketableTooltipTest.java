@@ -16,7 +16,7 @@ class SocketableTooltipTest {
     }
 
     @Test
-    void theTooltipListsEachRolledEffectWithoutAKindGradeAndAlignmentLine() throws Exception {
+    void theTooltipListsEachRolledEffectWithoutAKindLine() throws Exception {
         SocketableFixtures.registerMilitary();
         Socketable socketable = SocketableKind.SUBROUTINE.create("socketable_1", SocketableFixtures.MILITARY, 1L,
                 List.of(new RolledEffect("BEAM_WEAPON_DAMAGE_PERCENT", 12f), new RolledEffect("REMOVED_EFFECT", 3f)));

@@ -34,8 +34,6 @@ class SocketableDefinitionsTest {
         SocketableDefinition definition = SocketableFixtures.registerMilitary();
 
         assertEquals(SocketableKind.SUBROUTINE, definition.kind());
-        assertEquals("military", definition.grade());
-        assertEquals("high_tech", definition.alignment());
         assertEquals(20f, definition.rarity());
         assertEquals(List.of("FLUX_CAPACITY_MULT", "FLUX_DISSIPATION_MULT", "BEAM_WEAPON_DAMAGE_PERCENT"),
                 definition.prefixes().stream().map(SocketableDefinition.PoolEntry::effectName).toList());
@@ -97,12 +95,12 @@ class SocketableDefinitionsTest {
         SocketableDefinitions.register(rows);
 
         assertEquals(rows.length(), SocketableDefinitions.all().size());
-        for (String grade : List.of("military", "industrial", "consumer")) {
-            SocketableDefinition definition = SocketableDefinitions.get("domain_subroutine_" + grade);
-            assertNotNull(definition, grade);
+        for (String variant : List.of("military", "industrial", "consumer")) {
+            SocketableDefinition definition = SocketableDefinitions.get("domain_subroutine_" + variant);
+            assertNotNull(definition, variant);
             assertEquals(SocketableKind.SUBROUTINE, definition.kind());
             assertTrue(definition.prefixes().size() >= 2 && definition.suffixes().size() >= 2,
-                    grade + " needs two prefixes and two suffixes for a four-effect roll");
+                    variant + " needs two prefixes and two suffixes for a four-effect roll");
         }
         for (SocketableDefinition definition : SocketableDefinitions.all()) {
             String icon = definition.icon();

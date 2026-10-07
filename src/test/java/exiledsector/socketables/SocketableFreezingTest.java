@@ -43,12 +43,12 @@ class SocketableFreezingTest {
     }
 
     private static void registerSubroutine(String prefixes, String suffixes) throws Exception {
-        SocketableDefinitions.register(new JSONArray().put(row("sub", "subroutine", prefixes, suffixes).put("grade", "military")
+        SocketableDefinitions.register(new JSONArray().put(row("sub", "subroutine", prefixes, suffixes)
                 .put("name", "Military-grade Domain Subroutine")));
     }
 
     private static void registerWords(String... first) throws Exception {
-        SocketableNames.registerWords(new JSONObject().put("military", new JSONObject().put("style", "codename")
+        SocketableNames.registerWords(new JSONObject().put("sub", new JSONObject().put("style", "codename")
                 .put("first", new JSONArray(List.of(first))).put("second", new JSONArray(List.of("Doctrine")))));
     }
 
@@ -63,9 +63,9 @@ class SocketableFreezingTest {
     }
 
     private static void registerGadget() throws Exception {
-        SocketableDefinitions.register(new JSONArray().put(row("gadget", "subroutine", BEFORE_PREFIXES, BEFORE_SUFFIXES).put("grade", "consumer")
+        SocketableDefinitions.register(new JSONArray().put(row("gadget", "subroutine", BEFORE_PREFIXES, BEFORE_SUFFIXES)
                 .put("name", "Consumer-grade Domain Subroutine")));
-        SocketableNames.registerWords(new JSONObject().put("consumer", new JSONObject().put("style", "product")
+        SocketableNames.registerWords(new JSONObject().put("gadget", new JSONObject().put("style", "product")
                 .put("first", new JSONArray(List.of("Sunny"))).put("second", new JSONArray(List.of("Pal")))));
     }
 
@@ -123,7 +123,7 @@ class SocketableFreezingTest {
         Socketable claimedCommon = store.add(SocketableItemData.of(common.toSpecialItem()));
         Socketable claimedRare = store.add(SocketableItemData.of(rare.toSpecialItem()));
 
-        assertEquals("Plated military-grade subroutine of Fortitude", commonName);
+        assertEquals("Plated subroutine of Fortitude", commonName);
         assertEquals(COMMON, claimedCommon.effects());
         assertEquals(commonName, claimedCommon.name());
         assertEquals(RARE, claimedRare.effects());

@@ -23,8 +23,6 @@ final class SocketableFixtures {
                 .put("kind", kind)
                 .put("name", "Military-grade Domain Subroutine")
                 .put("icon", "graphics/icons/cargo/chip1.png")
-                .put("grade", "military")
-                .put("alignment", "high_tech")
                 .put("rarity", "20")
                 .put("prefixes", prefixes)
                 .put("suffixes", suffixes);
