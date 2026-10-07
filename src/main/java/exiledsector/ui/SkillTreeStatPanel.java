@@ -132,8 +132,9 @@ final class SkillTreeStatPanel {
         return layout != null && Rects.contains(layout.x, layout.topY - layout.fullHeight, layout.width, layout.fullHeight, x, y);
     }
 
-    void render(PositionAPI canvasPosition, float mouseX, float mouseY, float alphaMult, float toggleAlpha) {
+    void render(PositionAPI canvasPosition, float mouseX, float mouseY, float alphaMult, float toggleAlpha, boolean toggleLive) {
         drawnLayout = null;
+        toggleButton.setEnabled(toggleLive);
         placeToggle(canvasPosition, toggleAlpha);
         LazyFont font = SkillTreePanelStyle.font();
         if (font == null) return;

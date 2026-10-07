@@ -2,7 +2,7 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.ui.hyperspace.HyperspaceCamera;
-import exiledsector.ui.node.SkillTreeNodeRenderer;
+import exiledsector.ui.node.TreeAllocationSession;
 
 final class TreeCamera {
 
@@ -35,24 +35,24 @@ final class TreeCamera {
         }
     }
 
-    void beginStartingRootFollow(SkillTreeNodeRenderer nodeRenderer) {
-        if (nodeRenderer.isStartingRootMoving() && startingRootFollow == null) {
+    void beginStartingRootFollow(TreeAllocationSession treeSession) {
+        if (treeSession.isStartingRootMoving() && startingRootFollow == null) {
             startingRootFollow = new StartingRootCameraFollow(-panX / currentZoom, panY / currentZoom,
-                    nodeRenderer.startingRootCameraTargetX(), nodeRenderer.startingRootCameraTargetY(), currentZoom,
-                    nodeRenderer.isStartingRootFlyingOut() ? SmoothZoom.MIN_ZOOM : StartingRootCameraFollow.CHOOSING_ZOOM);
+                    treeSession.startingRootCameraTargetX(), treeSession.startingRootCameraTargetY(), currentZoom,
+                    treeSession.isStartingRootFlyingOut() ? SmoothZoom.MIN_ZOOM : StartingRootCameraFollow.CHOOSING_ZOOM);
         }
     }
 
-    void applyStartingRootFollow(SkillTreeNodeRenderer nodeRenderer, boolean wasMoving) {
+    void applyStartingRootFollow(TreeAllocationSession treeSession, boolean wasMoving) {
         if (!wasMoving) {
             return;
         }
-        float followProgress = nodeRenderer.startingRootCameraProgress();
+        float followProgress = treeSession.startingRootCameraProgress();
         currentZoom = startingRootFollow.zoom(followProgress);
         smoothZoom.jumpTo(currentZoom);
-        centreOn(startingRootFollow.x(nodeRenderer.startingRootCameraTargetX(), followProgress),
-                startingRootFollow.y(nodeRenderer.startingRootCameraTargetY(), followProgress));
-        if (!nodeRenderer.isStartingRootMoving()) {
+        centreOn(startingRootFollow.x(treeSession.startingRootCameraTargetX(), followProgress),
+                startingRootFollow.y(treeSession.startingRootCameraTargetY(), followProgress));
+        if (!treeSession.isStartingRootMoving()) {
             startingRootFollow = null;
         }
     }

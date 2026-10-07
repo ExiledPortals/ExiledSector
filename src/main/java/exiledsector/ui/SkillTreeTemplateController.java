@@ -9,31 +9,29 @@ import exiledsector.persistence.SkillTreeTemplateStore;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.template.AutoAllocateRun;
 import exiledsector.skills.template.SkillTreeTemplate;
-import exiledsector.ui.node.SkillTreeNodeRenderer;
+import exiledsector.ui.node.TreeAllocationSession;
 import org.lwjgl.input.Keyboard;
+
+import java.util.Objects;
 
 final class SkillTreeTemplateController {
 
-    private static final float OFF_SCREEN = -Float.MAX_VALUE;
-
     private final FleetMemberAPI member;
-    private final SkillTreeNodeRenderer nodeRenderer;
+    private final TreeAllocationSession treeSession;
     private final SkillTreeTemplateBar templateBar;
     private final SkillTreeTemplateNameDialog nameDialog = new SkillTreeTemplateNameDialog();
     private final SkillTreeTemplateListOverlay listOverlay;
 
     private TemplateBarState barState = TemplateBarState.HIDDEN;
     private TemplateAction pendingAction;
+    private String templateRootId;
 
-    SkillTreeTemplateController(FleetMemberAPI member, SkillTreeNodeRenderer nodeRenderer, SkillTreePanelStyle style) {
+    SkillTreeTemplateController(FleetMemberAPI member, TreeAllocationSession treeSession, SkillTreePanelStyle style) {
         this.member = member;
-        this.nodeRenderer = nodeRenderer;
+        this.treeSession = treeSession;
         this.templateBar = new SkillTreeTemplateBar(style);
         this.listOverlay = new SkillTreeTemplateListOverlay(style);
-        SkillNode startingRoot = nodeRenderer.getStartingRoot();
-        if (startingRoot != null) {
-            nodeRenderer.setTemplate(SkillTreeTemplateStore.assignedTo(member.getId(), startingRoot.getId()));
-        }
+        loadAssignedTemplateOnRootChange();
     }
 
     boolean isModalOpen() {
@@ -44,14 +42,27 @@ final class SkillTreeTemplateController {
         return templateBar.contains(x, y);
     }
 
-    void advance(float amount, PositionAPI canvasPosition, boolean onHyperspaceMap) {
-        SkillTreeTemplate template = nodeRenderer.template();
-        boolean running = nodeRenderer.isAutoAllocating();
-        boolean pointsLeft = template != null && nodeRenderer.hasPointsLeft();
-        barState = TemplateBarState.of(nodeRenderer.getStartingRoot() != null, nodeRenderer.allocatedNodeCount(),
-                template != null, running, pointsLeft, onHyperspaceMap);
+    private void loadAssignedTemplateOnRootChange() {
+        SkillNode startingRoot = treeSession.getStartingRoot();
+        String startingRootId = startingRoot == null ? null : startingRoot.getId();
+        if (Objects.equals(startingRootId, templateRootId)) {
+            return;
+        }
+        templateRootId = startingRootId;
+        if (startingRootId != null) {
+            treeSession.setTemplate(SkillTreeTemplateStore.assignedTo(member.getId(), startingRootId));
+        }
+    }
+
+    void advance(float amount, PositionAPI canvasPosition, boolean barLive) {
+        loadAssignedTemplateOnRootChange();
+        SkillTreeTemplate template = treeSession.template();
+        boolean running = treeSession.isAutoAllocating();
+        boolean pointsLeft = template != null && treeSession.hasPointsLeft();
+        barState = TemplateBarState.of(templateRootId != null, treeSession.allocatedNodeCount(),
+                template != null, running, pointsLeft, !barLive);
         templateBar.update(barState, template == null ? null : template.name());
-        AutoAllocateRun.Summary summary = nodeRenderer.takeLastRunSummary();
+        AutoAllocateRun.Summary summary = treeSession.takeLastRunSummary();
         if (summary != null) {
             templateBar.showResult(resultText(summary));
         }
@@ -60,6 +71,12 @@ final class SkillTreeTemplateController {
         listOverlay.advance(amount);
         if (canvasPosition != null) {
             templateBar.layout(canvasPosition);
+        }
+    }
+
+    void forgetBarPress() {
+        if (!isModalOpen()) {
+            pendingAction = null;
         }
     }
 
@@ -116,14 +133,11 @@ final class SkillTreeTemplateController {
     }
 
     void renderBar(PositionAPI canvasPosition, float mouseX, float mouseY, float alphaMult) {
-        boolean modal = isModalOpen();
-        templateBar.render(canvasPosition, modal ? OFF_SCREEN : mouseX, modal ? OFF_SCREEN : mouseY, alphaMult);
+        templateBar.render(canvasPosition, mouseX, mouseY, alphaMult);
     }
 
     void renderBarTooltip(float mouseX, float mouseY, float alphaMult) {
-        if (!isModalOpen()) {
-            templateBar.renderTooltip(mouseX, mouseY, alphaMult);
-        }
+        templateBar.renderTooltip(mouseX, mouseY, alphaMult);
     }
 
     void renderModals(PositionAPI canvasPosition, float mouseX, float mouseY, float alphaMult) {
@@ -139,13 +153,13 @@ final class SkillTreeTemplateController {
     }
 
     private void perform(TemplateAction action) {
-        SkillNode startingRoot = nodeRenderer.getStartingRoot();
+        SkillNode startingRoot = treeSession.getStartingRoot();
         switch (action.kind()) {
             case OPEN_SAVE -> openSaveDialog(startingRoot);
             case OPEN_LOAD -> openList(startingRoot);
             case AUTO_ALLOCATE -> {
                 if (barState.autoEnabled()) {
-                    nodeRenderer.startAutoAllocate();
+                    treeSession.startAutoAllocate();
                 }
             }
             case DIALOG_SAVE -> saveTemplate(startingRoot);
@@ -155,7 +169,7 @@ final class SkillTreeTemplateController {
             case TOGGLE_HULL -> listOverlay.toggle(action.hullSize());
             case CLEAR -> {
                 SkillTreeTemplateStore.clearAssignment(member.getId());
-                nodeRenderer.setTemplate(null);
+                treeSession.setTemplate(null);
                 listOverlay.close();
             }
             case CLOSE -> listOverlay.close();
@@ -168,16 +182,16 @@ final class SkillTreeTemplateController {
         if (startingRoot == null || !barState.saveEnabled()) {
             return;
         }
-        nodeRenderer.closeDropdown();
+        treeSession.closeDropdown();
         SkillTreeSounds.panelOpened();
-        nameDialog.open(startingRoot.getId(), nodeRenderer.allocatedNodeCount() - 1, SkillTreeTemplateStore.all());
+        nameDialog.open(startingRoot.getId(), treeSession.allocatedNodeCount() - 1, SkillTreeTemplateStore.all());
     }
 
     private void openList(SkillNode startingRoot) {
         if (startingRoot == null || !barState.loadEnabled()) {
             return;
         }
-        nodeRenderer.closeDropdown();
+        treeSession.closeDropdown();
         SkillTreeSounds.panelOpened();
         listOverlay.open(startingRoot.getId(), startingRoot.getType().getDisplayName(), hullSize(), SkillTreeTemplateStore.all(), assignedTemplateId());
     }
@@ -187,7 +201,7 @@ final class SkillTreeTemplateController {
             return;
         }
         String name = nameDialog.name();
-        SkillTreeTemplateStore.save(name, startingRoot.getId(), hullSize(), nodeRenderer.captureTemplateSteps());
+        SkillTreeTemplateStore.save(name, startingRoot.getId(), hullSize(), treeSession.captureTemplateSteps());
         nameDialog.close();
         templateBar.showResult(Translation.msg("ui.template.result.saved").arg("name", name).text());
     }
@@ -198,7 +212,7 @@ final class SkillTreeTemplateController {
             return;
         }
         SkillTreeTemplateStore.assign(member.getId(), templateId);
-        nodeRenderer.setTemplate(template);
+        treeSession.setTemplate(template);
         listOverlay.close();
     }
 
@@ -208,13 +222,13 @@ final class SkillTreeTemplateController {
         }
         SkillTreeTemplateStore.delete(templateId);
         if (templateId.equals(assignedTemplateId())) {
-            nodeRenderer.setTemplate(null);
+            treeSession.setTemplate(null);
         }
         listOverlay.setTemplates(SkillTreeTemplateStore.all(), assignedTemplateId());
     }
 
     private String assignedTemplateId() {
-        SkillTreeTemplate template = nodeRenderer.template();
+        SkillTreeTemplate template = treeSession.template();
         return template == null ? null : template.id();
     }
 

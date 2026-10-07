@@ -82,14 +82,17 @@ class TemplateUiStateTest {
     }
 
     @Test
-    void onTheHyperspaceMapOnlyLoadIsGreyedOut() {
-        TemplateBarState onMap = TemplateBarState.of(true, 4, true, false, true, true);
-        TemplateBarState onTree = TemplateBarState.of(true, 4, true, false, true, false);
+    void anInertBarGreysOutEveryButtonButKeepsItsHints() {
+        TemplateBarState inert = TemplateBarState.of(true, 4, true, false, true, true);
+        TemplateBarState live = TemplateBarState.of(true, 4, true, false, true, false);
 
-        assertFalse(onMap.loadEnabled());
-        assertTrue(onTree.loadEnabled());
-        assertEquals(onTree.saveEnabled(), onMap.saveEnabled());
-        assertEquals(onTree.autoEnabled(), onMap.autoEnabled());
+        assertTrue(live.saveEnabled() && live.loadEnabled() && live.autoEnabled());
+        assertTrue(inert.visible());
+        assertFalse(inert.saveEnabled());
+        assertFalse(inert.loadEnabled());
+        assertFalse(inert.autoEnabled());
+        assertEquals(live.saveHintKey(), inert.saveHintKey());
+        assertEquals(live.autoHintKey(), inert.autoHintKey());
     }
 
     @Test

@@ -29,35 +29,24 @@ final class SkillTreeNodeDropdownRenderer {
     private static final float DROPDOWN_TOP_OFFSET = 24f;
     private static final float DROPDOWN_HOVER_ALPHA = 0.35f;
     private static final float REFUSED_OPTION_ALPHA = 0.4f;
+    private static final float ROW_HEIGHT = DROPDOWN_FONT_SIZE * FONT_LINE_HEIGHT_FACTOR + DROPDOWN_ROW_PADDING * 2f;
 
     private final SkillTreePanelStyle panelStyle;
     private final Map<String, TextLabel> dropdownRowText = new HashMap<>();
-    private SkillNode openNode;
+    private final List<DropdownRow> rows = new ArrayList<>();
+    private SkillNode rowsNode;
+    private float rowsWidth;
+    private float rowsNodeX = Float.NaN;
+    private float rowsNodeY = Float.NaN;
 
     SkillTreeNodeDropdownRenderer(SkillTreePanelStyle panelStyle) {
         this.panelStyle = panelStyle;
     }
 
-    boolean isOpen() {
-        return openNode != null;
-    }
-
-    void open(SkillNode node) {
-        openNode = node;
-    }
-
-    SkillNode getOpenNode() {
-        return openNode;
-    }
-
-    void close() {
-        openNode = null;
-    }
-
-    SkillType findOptionAt(TreeViewport viewport, float screenX, float screenY) {
-        LazyFont font = SkillTreePanelStyle.font();
-        if (font == null) return null;
-        for (DropdownRow row : computeRows(viewport, font)) {
+    SkillType findOptionAt(SkillNode openNode, TreeViewport viewport, float screenX, float screenY) {
+        List<DropdownRow> openRows = rowsFor(openNode, viewport);
+        for (int i = 0; i < openRows.size(); i++) {
+            DropdownRow row = openRows.get(i);
             if (row.contains(screenX, screenY)) {
                 return row.option;
             }
@@ -65,69 +54,66 @@ final class SkillTreeNodeDropdownRenderer {
         return null;
     }
 
-    void render(TreeViewport viewport, float mouseX, float mouseY, boolean mouseKnown, float alphaMult, Predicate<SkillType> optionUsable) {
+    void render(SkillNode openNode, TreeViewport viewport, float mouseX, float mouseY, boolean hovered, float alphaMult,
+                Predicate<SkillType> optionUsable) {
         if (openNode == null) return;
-        LazyFont font = SkillTreePanelStyle.font();
-        if (font == null) return;
+        List<DropdownRow> openRows = rowsFor(openNode, viewport);
+        if (openRows.isEmpty()) return;
 
-        List<DropdownRow> rows = computeRows(viewport, font);
-        if (rows.isEmpty()) return;
+        DropdownRow topRow = openRows.get(0);
+        DropdownRow bottomRow = openRows.get(openRows.size() - 1);
+        panelStyle.drawTooltipBackground(topRow.rowX, bottomRow.rowY, rowsWidth, topRow.rowY + ROW_HEIGHT - bottomRow.rowY, alphaMult,
+                panelStyle.getAccentColor());
 
-        float minX = Float.MAX_VALUE;
-        float minY = Float.MAX_VALUE;
-        float maxX = -Float.MAX_VALUE;
-        float maxY = -Float.MAX_VALUE;
-        for (DropdownRow row : rows) {
-            minX = Math.min(minX, row.rowX);
-            minY = Math.min(minY, row.rowY);
-            maxX = Math.max(maxX, row.rowX + row.rowWidth);
-            maxY = Math.max(maxY, row.rowY + row.rowHeight);
-        }
-        panelStyle.drawTooltipBackground(minX, minY, maxX - minX, maxY - minY, alphaMult, panelStyle.getAccentColor());
-
-        for (DropdownRow row : rows) {
-            if (mouseKnown && row.contains(mouseX, mouseY)) {
-                drawDropdownRowHighlight(row, alphaMult);
+        for (int i = 0; i < openRows.size(); i++) {
+            DropdownRow row = openRows.get(i);
+            if (hovered && row.contains(mouseX, mouseY)) {
+                GLDraw.fillQuad(row.rowX, row.rowY, rowsWidth, ROW_HEIGHT, GLOW_COLOR, DROPDOWN_HOVER_ALPHA * alphaMult);
             }
-            float textY = row.rowY + row.rowHeight / 2f + (DROPDOWN_FONT_SIZE * FONT_LINE_HEIGHT_FACTOR) / 2f;
+            float textY = row.rowY + ROW_HEIGHT / 2f + (DROPDOWN_FONT_SIZE * FONT_LINE_HEIGHT_FACTOR) / 2f;
             float rowAlpha = optionUsable.test(row.option) ? alphaMult : alphaMult * REFUSED_OPTION_ALPHA;
             dropdownRowText(row.option).setAlpha(rowAlpha).draw(row.rowX + DROPDOWN_ROW_PADDING, textY);
         }
     }
 
-    private List<DropdownRow> computeRows(TreeViewport viewport, LazyFont font) {
-        List<DropdownRow> rows = new ArrayList<>();
-        if (openNode == null) return rows;
-
-        List<SkillType> options = new ArrayList<>();
-        for (String optionId : openNode.getType().getOptionalOptionIds()) {
-            SkillType option = SkillTree.getType(optionId);
-            if (option != null) options.add(option);
+    private List<DropdownRow> rowsFor(SkillNode openNode, TreeViewport viewport) {
+        if (openNode != rowsNode && !rebuildRows(openNode)) {
+            return rows;
         }
-        if (options.isEmpty()) return rows;
-
         float nodeX = viewport.screenX(openNode.getOffsetX());
         float nodeY = viewport.screenY(openNode.getOffsetY());
-
-        float dropdownWidth = 0f;
-        for (SkillType option : options) {
-            dropdownWidth = Math.max(dropdownWidth, font.calcWidth(option.getDisplayName(), DROPDOWN_FONT_SIZE));
-        }
-        dropdownWidth += DROPDOWN_ROW_PADDING * 2f;
-
-        float rowHeight = DROPDOWN_FONT_SIZE * FONT_LINE_HEIGHT_FACTOR + DROPDOWN_ROW_PADDING * 2f;
-        float dropdownX = nodeX - dropdownWidth / 2f;
-        float topY = nodeY - DROPDOWN_TOP_OFFSET;
-
-        for (int i = 0; i < options.size(); i++) {
-            float rowTop = topY - i * (rowHeight + DROPDOWN_ROW_GAP);
-            rows.add(new DropdownRow(options.get(i), dropdownX, rowTop - rowHeight, dropdownWidth, rowHeight));
+        if (nodeX != rowsNodeX || nodeY != rowsNodeY) {
+            rowsNodeX = nodeX;
+            rowsNodeY = nodeY;
+            float dropdownX = nodeX - rowsWidth / 2f;
+            float topY = nodeY - DROPDOWN_TOP_OFFSET;
+            for (int i = 0; i < rows.size(); i++) {
+                DropdownRow row = rows.get(i);
+                row.rowX = dropdownX;
+                row.rowY = topY - i * (ROW_HEIGHT + DROPDOWN_ROW_GAP) - ROW_HEIGHT;
+            }
         }
         return rows;
     }
 
-    private void drawDropdownRowHighlight(DropdownRow row, float alphaMult) {
-        GLDraw.fillQuad(row.rowX, row.rowY, row.rowWidth, row.rowHeight, GLOW_COLOR, DROPDOWN_HOVER_ALPHA * alphaMult);
+    private boolean rebuildRows(SkillNode openNode) {
+        rows.clear();
+        rowsNode = null;
+        rowsNodeX = Float.NaN;
+        rowsNodeY = Float.NaN;
+        LazyFont font = SkillTreePanelStyle.font();
+        if (font == null) return false;
+        rowsNode = openNode;
+        float widestOption = 0f;
+        for (String optionId : openNode.getType().getOptionalOptionIds()) {
+            SkillType option = SkillTree.getType(optionId);
+            if (option != null) {
+                rows.add(new DropdownRow(option));
+                widestOption = Math.max(widestOption, font.calcWidth(option.getDisplayName(), DROPDOWN_FONT_SIZE));
+            }
+        }
+        rowsWidth = widestOption + DROPDOWN_ROW_PADDING * 2f;
+        return true;
     }
 
     private TextLabel dropdownRowText(SkillType option) {
@@ -135,23 +121,17 @@ final class SkillTreeNodeDropdownRenderer {
                 id -> new TextLabel(DROPDOWN_FONT_SIZE, TOOLTIP_BODY_COLOR).set(option.getDisplayName()));
     }
 
-    private static final class DropdownRow {
+    private final class DropdownRow {
         final SkillType option;
-        final float rowX;
-        final float rowY;
-        final float rowWidth;
-        final float rowHeight;
+        float rowX;
+        float rowY;
 
-        DropdownRow(SkillType option, float rowX, float rowY, float rowWidth, float rowHeight) {
+        DropdownRow(SkillType option) {
             this.option = option;
-            this.rowX = rowX;
-            this.rowY = rowY;
-            this.rowWidth = rowWidth;
-            this.rowHeight = rowHeight;
         }
 
         boolean contains(float px, float py) {
-            return Rects.contains(rowX, rowY, rowWidth, rowHeight, px, py);
+            return Rects.contains(rowX, rowY, rowsWidth, ROW_HEIGHT, px, py);
         }
     }
 }

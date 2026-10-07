@@ -11,7 +11,7 @@ import exiledsector.socketables.SocketCustody;
 import exiledsector.socketables.Socketable;
 import exiledsector.socketables.SocketableStore;
 import exiledsector.ui.node.NodeSearch;
-import exiledsector.ui.node.SkillTreeNodeRenderer;
+import exiledsector.ui.node.TreeAllocationSession;
 import exiledsector.ui.socket.SocketStoragePanel;
 
 import java.util.Map;
@@ -26,7 +26,7 @@ final class SocketPlacement {
     private static final float PANEL_GAP = 12f;
 
     private final CustomPanelAPI hostPanel;
-    private final SkillTreeNodeRenderer nodeRenderer;
+    private final TreeAllocationSession treeSession;
     private final NodeSearch nodeSearch;
     private final SkillTreeSearchBar searchBar;
     private final SkillTreeUiButton storageButton = new SkillTreeUiButton("");
@@ -36,9 +36,9 @@ final class SocketPlacement {
     private int storageRevision;
     private Map<String, FleetMemberAPI> ownedShips = Map.of();
 
-    SocketPlacement(CustomPanelAPI hostPanel, SkillTreeNodeRenderer nodeRenderer, NodeSearch nodeSearch, SkillTreeSearchBar searchBar) {
+    SocketPlacement(CustomPanelAPI hostPanel, TreeAllocationSession treeSession, NodeSearch nodeSearch, SkillTreeSearchBar searchBar) {
         this.hostPanel = hostPanel;
-        this.nodeRenderer = nodeRenderer;
+        this.treeSession = treeSession;
         this.nodeSearch = nodeSearch;
         this.searchBar = searchBar;
         refreshButtonLabel();
@@ -81,7 +81,7 @@ final class SocketPlacement {
         if (node == null || node.getType().getTier() != SkillTier.SOCKET) {
             return false;
         }
-        if (nodeRenderer.emptySocket(node)) {
+        if (treeSession.emptySocket(node)) {
             refresh();
         }
         return true;
@@ -93,9 +93,9 @@ final class SocketPlacement {
         }
         if (mustClose) {
             storagePanel.close();
-        } else if (nodeRenderer.statsRevision() != storageRevision) {
+        } else if (treeSession.statsRevision() != storageRevision) {
             refresh();
-            if (targetSocket != null && !nodeRenderer.isAllocatedSocket(targetSocket)) {
+            if (targetSocket != null && !treeSession.isAllocatedSocket(targetSocket)) {
                 clearTargetSocket();
             }
         }
@@ -111,7 +111,8 @@ final class SocketPlacement {
                 BUTTON_HEIGHT);
     }
 
-    void renderButton(float mouseX, float mouseY, float alphaMult) {
+    void renderButton(float mouseX, float mouseY, float alphaMult, boolean live) {
+        storageButton.setEnabled(live);
         storageButton.render(mouseX, mouseY, alphaMult);
     }
 
@@ -127,7 +128,7 @@ final class SocketPlacement {
         if (placingSocketable == null) {
             return false;
         }
-        if (nodeRenderer.installInSocket(node, placingSocketable)) {
+        if (treeSession.installInSocket(node, placingSocketable)) {
             stopPlacing();
             refresh();
         }
@@ -136,16 +137,16 @@ final class SocketPlacement {
 
     boolean handleSocketClick(SkillNode node, boolean ctrlDown, PositionAPI canvasPosition, ScreenRect shipCard) {
         if (ctrlDown && node.getType().getTier() == SkillTier.SOCKET) {
-            if (!nodeRenderer.isAllocated(node)) {
-                nodeRenderer.toggleAllocation(node, false);
+            if (!treeSession.isAllocated(node)) {
+                treeSession.clickNode(node, false);
             }
-            if (nodeRenderer.isAllocated(node)) {
+            if (treeSession.isAllocated(node)) {
                 setTargetSocket(node);
                 open(canvasPosition, shipCard);
             }
             return true;
         }
-        if (targetSocket != null && storagePanel != null && nodeRenderer.isAllocatedSocket(node)) {
+        if (targetSocket != null && storagePanel != null && treeSession.isAllocatedSocket(node)) {
             setTargetSocket(node);
             return true;
         }
@@ -155,7 +156,7 @@ final class SocketPlacement {
     void refresh() {
         refreshButtonLabel();
         if (storagePanel != null) {
-            storageRevision = nodeRenderer.statsRevision();
+            storageRevision = treeSession.statsRevision();
             storagePanel.refresh(SocketCustody.shipNames(ownedShips));
         }
     }
@@ -170,10 +171,10 @@ final class SocketPlacement {
             return;
         }
         SkillTreeSounds.panelOpened();
-        nodeRenderer.closeDropdown();
+        treeSession.closeDropdown();
         searchBar.unfocus();
         ownedShips = SocketCustody.reconcile();
-        storageRevision = nodeRenderer.statsRevision();
+        storageRevision = treeSession.statsRevision();
         float reservedBottom = shipCard.bottom() + shipCard.height() - canvasPosition.getY() + PANEL_GAP;
         storagePanel = SocketStoragePanel.open(hostPanel, PANEL_MARGIN, PANEL_TOP, canvasPosition.getHeight() - PANEL_TOP - reservedBottom,
                 SocketCustody.shipNames(ownedShips), new SocketStoragePanel.Listener() {
@@ -221,7 +222,7 @@ final class SocketPlacement {
     private void setTargetSocket(SkillNode socket) {
         stopPlacing();
         targetSocket = socket;
-        nodeRenderer.setTargetedSocket(socket);
+        treeSession.setTargetedSocket(socket);
         if (storagePanel != null) {
             storagePanel.setTargetingSocket(socket != null);
         }
@@ -229,7 +230,7 @@ final class SocketPlacement {
 
     private void clearTargetSocket() {
         targetSocket = null;
-        nodeRenderer.setTargetedSocket(null);
+        treeSession.setTargetedSocket(null);
         if (storagePanel != null) {
             storagePanel.setTargetingSocket(false);
         }
@@ -239,11 +240,11 @@ final class SocketPlacement {
         if (targetSocket == null) {
             return false;
         }
-        if (!nodeRenderer.isAllocatedSocket(targetSocket)) {
+        if (!treeSession.isAllocatedSocket(targetSocket)) {
             clearTargetSocket();
             return false;
         }
-        if (nodeRenderer.installInSocket(targetSocket, socketable)) {
+        if (treeSession.installInSocket(targetSocket, socketable)) {
             refresh();
         }
         return true;
