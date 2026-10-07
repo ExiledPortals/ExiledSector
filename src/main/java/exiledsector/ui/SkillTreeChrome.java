@@ -53,7 +53,8 @@ final class SkillTreeChrome {
 
     void advance(float amount, PositionAPI canvasPosition, CanvasMode mode, float chromeAlpha, ShipOpBudget budget, float mouseX,
                  float mouseY, boolean mouseKnown) {
-        boolean storageButtonShown = mode != CanvasMode.ROOT_CHOICE && (mode != CanvasMode.HYPERSPACE || chromeAlpha > 0f);
+        boolean storageButtonShown = mode != CanvasMode.ROOT_CHOICE && mode != CanvasMode.FLEET_FOLLOW
+                && (mode != CanvasMode.HYPERSPACE || chromeAlpha > 0f);
         socketPlacement.layoutButton(canvasPosition, shipCardFrame(canvasPosition), storageButtonShown);
         if (!mode.enables(CanvasMode.Chrome.SEARCH)) {
             searchBar.unfocus();
@@ -114,7 +115,7 @@ final class SkillTreeChrome {
         if (mode != CanvasMode.ROOT_CHOICE && treeAlpha > 0f) {
             searchBar.render(canvasPosition, alphaMult * treeAlpha);
         }
-        if (chromeAlpha > 0f) {
+        if (chromeAlpha > 0f && mode != CanvasMode.FLEET_FOLLOW) {
             templateUi.renderBar(canvasPosition, mouseX, mouseY, alphaMult * chromeAlpha);
         }
         socketPlacement.renderButton(mouseX, mouseY, alphaMult * chromeAlpha, mode.enables(CanvasMode.Chrome.STORAGE_BUTTON));

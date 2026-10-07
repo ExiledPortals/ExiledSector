@@ -12,6 +12,7 @@ import exiledsector.effects.ShipTreeSync;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillType;
 import exiledsector.socketables.SocketCustody;
+import exiledsector.ui.decoration.SkillTreeFleetRenderer;
 import exiledsector.ui.decoration.SkillTreeRingBeltRenderer;
 import exiledsector.ui.decoration.SkillTreeStarRenderer;
 import exiledsector.ui.decoration.SkillTreeStarfieldRenderer;
@@ -34,6 +35,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final SkillTreeStarfieldRenderer starfieldRenderer;
     private final SkillTreeStaticImageRenderer staticImageRenderer = new SkillTreeStaticImageRenderer();
     private final SkillTreeRingBeltRenderer ringBeltRenderer = new SkillTreeRingBeltRenderer();
+    private final SkillTreeFleetRenderer fleetRenderer;
     private final SkillTreeStarRenderer starRenderer = new SkillTreeStarRenderer();
     private final TreeAllocationSession treeSession;
     private final SkillTreeNodeDrawer nodeDrawer;
@@ -64,6 +66,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         SocketCustody.reconcile();
         SkillTreePanelStyle panelStyle = new SkillTreePanelStyle();
         this.starfieldRenderer = new SkillTreeStarfieldRenderer(panelStyle);
+        this.fleetRenderer = SkillTreeFleetRenderer.forPlayerFleet(member == null ? null : member.getId());
         this.treeSession = new TreeAllocationSession(member, variant, refitButton, nodeSearch);
         this.nodeDrawer = SkillTreeNodeDrawer.attachedTo(treeSession, member, panelStyle, nodeSearch);
         this.templateUi = new SkillTreeTemplateController(member, treeSession, panelStyle);
@@ -89,7 +92,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     private CanvasMode mode() {
         return CanvasMode.resolve(treeSession.isStartingRootInputLocked(), templateUi.isModalOpen(), socketPlacement.isWorkbenchOpen(),
-                hyperspaceMode.isActive(), treeSession.isAutoAllocating() || treeSession.isRespeccing());
+                hyperspaceMode.isActive(), camera.isFollowing(), treeSession.isAutoAllocating() || treeSession.isRespeccing());
     }
 
     @Override
@@ -103,6 +106,13 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         starfieldRenderer.advance(amount);
         staticImageRenderer.advance(amount);
         ringBeltRenderer.advance(amount);
+        if (camera.isFollowing() && hyperspaceMode.isActive()) {
+            stopFollowingFleet();
+        }
+        fleetRenderer.advance(amount);
+        if (camera.isFollowing()) {
+            camera.follow(fleetRenderer.focusX(), fleetRenderer.focusY(), amount);
+        }
         starRenderer.advance(amount);
         boolean followingStartingRoot = treeSession.isStartingRootMoving();
         camera.beginStartingRootFollow(treeSession);
@@ -175,6 +185,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                 case WORKBENCH -> handleWorkbenchEvent(event, mode);
                 case HYPERSPACE -> hyperspaceMode.handleEvent(event, canvasPosition,
                         event.isLMBDownEvent() && chrome.contains(canvasPosition, mode, event.getX(), event.getY()));
+                case FLEET_FOLLOW -> handleFleetFollowEvent(event, mode);
                 case ALLOCATION_RUN -> handleAllocationRunEvent(event, mode);
                 case TREE -> handleTreeEvent(event, mode);
             }
@@ -237,6 +248,40 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         }
     }
 
+    private void handleFleetFollowEvent(InputEventAPI event, CanvasMode mode) {
+        if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
+            stopFollowingFleet();
+            consume(event);
+        } else if (treeSession.isAutoAllocating() || treeSession.isRespeccing()) {
+            handleAllocationRunEvent(event, mode);
+        } else {
+            handleTreeEvent(event, mode);
+        }
+    }
+
+    void shipCardClicked() {
+        if (fleetRenderer.hasShips() && mode().letsShipCardFollowFleet()) {
+            toggleFollowingFleet();
+        }
+    }
+
+    private void toggleFollowingFleet() {
+        if (camera.isFollowing()) {
+            stopFollowingFleet();
+        } else {
+            gesture.clear();
+            camera.stopDrag();
+            camera.startFollowing();
+            fleetRenderer.setSoloActive(true);
+            searchBar.unfocus();
+        }
+    }
+
+    private void stopFollowingFleet() {
+        camera.stopFollowing();
+        fleetRenderer.setSoloActive(false);
+    }
+
     private void handleAllocationRunEvent(InputEventAPI event, CanvasMode mode) {
         boolean interrupts = (event.isLMBDownEvent() && canvasPosition.containsEvent(event))
                 || (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE);
@@ -292,7 +337,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             } else {
                 treeSession.closeDropdown();
             }
-        } else if (!pressTarget(mode, nodeDrawer.findNodeAt(viewport(), x, y), event, true)) {
+        } else if (!pressTarget(mode, nodeDrawer.findNodeAt(viewport(), x, y), event, mode.pansOnDrag()) && mode.pansOnDrag()) {
             gesture.pressPan(mode, x, y);
             camera.startDrag();
         }
@@ -345,6 +390,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             return;
         }
         if (jumpTarget != null) {
+            stopFollowingFleet();
             camera.panTo(jumpTarget.getOffsetX(), jumpTarget.getOffsetY());
             nodeDrawer.launchWormholeGhosts(node, jumpTarget);
             SkillTreeSounds.wormholeJumped();
@@ -389,6 +435,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         starRenderer.renderAurora(viewport, backgroundAlpha);
         ringBeltRenderer.render(viewport, backgroundAlpha * treeAlpha);
         staticImageRenderer.render(viewport, backgroundAlpha, hyperspaceMode.anchorIds(), treeAlpha);
+        fleetRenderer.render(viewport, backgroundAlpha * treeAlpha);
         boolean pointerOverTree = mouseKnown && !chrome.contains(canvasPosition, mode, mouseX, mouseY);
         boolean treeHovered = pointerOverTree && mode.hoversTree();
         if (treeAlpha > 0f) {

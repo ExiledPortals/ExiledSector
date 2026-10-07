@@ -1,12 +1,12 @@
 package exiledsector.ui;
 
 enum CanvasMode {
-    ROOT_CHOICE, MODAL, WORKBENCH, HYPERSPACE, ALLOCATION_RUN, TREE;
+    ROOT_CHOICE, MODAL, WORKBENCH, HYPERSPACE, FLEET_FOLLOW, ALLOCATION_RUN, TREE;
 
     enum Chrome { STATS_TOGGLE, READOUTS, SEARCH, TEMPLATE_BAR, STORAGE_BUTTON }
 
     static CanvasMode resolve(boolean rootChoiceLocked, boolean modalBlocking, boolean workbenchOpen, boolean hyperspaceActive,
-                              boolean allocationRunning) {
+                              boolean followingFleet, boolean allocationRunning) {
         if (rootChoiceLocked) {
             return ROOT_CHOICE;
         }
@@ -19,6 +19,9 @@ enum CanvasMode {
         if (hyperspaceActive) {
             return HYPERSPACE;
         }
+        if (followingFleet) {
+            return FLEET_FOLLOW;
+        }
         return allocationRunning ? ALLOCATION_RUN : TREE;
     }
 
@@ -26,7 +29,8 @@ enum CanvasMode {
         return switch (chrome) {
             case READOUTS -> true;
             case SEARCH -> this != HYPERSPACE && this != ROOT_CHOICE;
-            case STATS_TOGGLE, TEMPLATE_BAR, STORAGE_BUTTON -> this != HYPERSPACE;
+            case STATS_TOGGLE -> this != HYPERSPACE;
+            case TEMPLATE_BAR, STORAGE_BUTTON -> this != HYPERSPACE && this != FLEET_FOLLOW;
         };
     }
 
@@ -35,6 +39,7 @@ enum CanvasMode {
             case TREE, ALLOCATION_RUN -> true;
             case ROOT_CHOICE -> chrome == Chrome.STATS_TOGGLE || chrome == Chrome.READOUTS;
             case HYPERSPACE -> chrome == Chrome.READOUTS;
+            case FLEET_FOLLOW -> chrome == Chrome.STATS_TOGGLE || chrome == Chrome.READOUTS || chrome == Chrome.SEARCH;
             case WORKBENCH -> chrome == Chrome.STORAGE_BUTTON;
             case MODAL -> false;
         };
@@ -45,14 +50,22 @@ enum CanvasMode {
     }
 
     boolean hoversTree() {
-        return this == TREE || this == ALLOCATION_RUN || this == ROOT_CHOICE;
+        return this == TREE || this == ALLOCATION_RUN || this == ROOT_CHOICE || this == FLEET_FOLLOW;
     }
 
     boolean closesStorage() {
-        return this == ROOT_CHOICE || this == MODAL || this == HYPERSPACE;
+        return this == ROOT_CHOICE || this == MODAL || this == HYPERSPACE || this == FLEET_FOLLOW;
     }
 
     boolean entersHyperspaceOnScrollOut() {
-        return this == TREE;
+        return this == TREE || this == FLEET_FOLLOW;
+    }
+
+    boolean pansOnDrag() {
+        return this != FLEET_FOLLOW;
+    }
+
+    boolean letsShipCardFollowFleet() {
+        return this == TREE || this == ALLOCATION_RUN || this == FLEET_FOLLOW;
     }
 }
