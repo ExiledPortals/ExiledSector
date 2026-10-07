@@ -551,7 +551,7 @@
     "settings.areas.header": "Optional Areas",
     "settings.areas.about": "Some areas of the skill tree are built around other mods. Switching an area off hides its nodes, stars and wormholes, removes those nodes from every ship and refunds them: their OP and banked allocations go back to the ship and any item costs go back to your cargo. Turning the area back on does not restore removed nodes. Changes take effect the next time you load a save.",
     "settings.areas.lostSector.name": "Lost Sector area (Kesteven and Frozen Heart)",
-    "settings.areas.lostSector.tooltip": "Auto shows the area only when Lost Sector is installed. On always shows it and Off always hides it.",
+    "settings.areas.lostSector.tooltip": "Auto shows the area only when Lost Sector is installed. On always shows it and Off always hides it. Nodes a ship had in a hidden area are kept but do nothing and take no OP or node slots until the area is shown again, when they return if they still connect to the ship's tree.",
     "settings.energyChain.header": "Refracting Projectiles",
     "settings.energyChain.maxChainCount.name": "Max Refractions",
     "settings.energyChain.maxChainCount.tooltip": "Safety limit on how many times a single shot can refract in a row, independent of chance rolls succeeding. Not intended as a balance knob.",

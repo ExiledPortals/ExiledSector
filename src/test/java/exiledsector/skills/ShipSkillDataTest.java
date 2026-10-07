@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -1120,6 +1121,115 @@ class ShipSkillDataTest {
         assertEquals(3, data.getSpentOp(3));
         assertFalse(data.hasLostStartingRoot(tree));
         assertEquals(List.of(), data.forgetUnknownNodes(tree, Map.of()));
+    }
+
+    @Test
+    void nodesInAHiddenAreaAreKeptDormantAndTakeNoOrdnancePointsOrSlots() {
+        SkillNode root = rootNode("root", List.of());
+        SkillNode bridge = node("bridge", List.of("root"));
+        SkillNode hidden = node("hidden", List.of("bridge"));
+        ShipSkillData data = new ShipSkillData();
+        data.chooseStartingRoot(root);
+        data.allocate(bridge, 3);
+        data.allocate(hidden, 3);
+        Map<String, SkillNode> declared = Map.of("root", root, "bridge", bridge, "hidden", hidden);
+        Map<String, SkillNode> shown = Map.of("root", root, "bridge", bridge);
+
+        assertEquals(List.of(), data.forgetUnknownNodes(shown, declared, Map.of()));
+
+        assertEquals(List.of("root", "bridge"), List.copyOf(data.getAllocatedNodeIds()));
+        assertEquals(Set.of("hidden"), data.getDormantNodeIds());
+        assertEquals(3, data.getSpentOp(3));
+        assertEquals(List.of(), data.wakeDormantNodes(shown, 10));
+        assertEquals(Set.of("hidden"), data.getDormantNodeIds());
+
+        assertEquals(List.of(), data.wakeDormantNodes(declared, 10));
+        assertTrue(data.isAllocated("hidden"));
+        assertTrue(data.getDormantNodeIds().isEmpty());
+        assertEquals(6, data.getSpentOp(3));
+    }
+
+    @Test
+    void dormantNodesThatNoLongerConnectOrFitAreReleasedWithTheirFreeCredits() {
+        SkillNode root = rootNode("root", List.of());
+        SkillNode bridge = node("bridge", List.of("root"));
+        SkillNode first = node("first", List.of("bridge"));
+        SkillNode second = node("second", List.of("first"));
+        SkillNode filler = node("filler", List.of("root"));
+        Map<String, SkillNode> declared = Map.of("root", root, "bridge", bridge, "first", first, "second", second, "filler", filler);
+
+        ShipSkillData stranded = new ShipSkillData();
+        stranded.chooseStartingRoot(root);
+        stranded.allocate(bridge, 3);
+        stranded.addFreeAllocationCredit();
+        stranded.allocate(first, 3);
+        stranded.forgetUnknownNodes(Map.of("root", root, "bridge", bridge), declared, Map.of());
+        stranded.deallocate(bridge);
+        assertEquals(List.of("first"), stranded.wakeDormantNodes(declared, 10));
+        assertFalse(stranded.isAllocated("first"));
+        assertEquals(1, stranded.getBankedFreeAllocations());
+
+        ShipSkillData capped = new ShipSkillData();
+        capped.chooseStartingRoot(root);
+        capped.allocate(bridge, 3);
+        capped.allocate(first, 3);
+        capped.allocate(second, 3);
+        capped.forgetUnknownNodes(Map.of("root", root, "bridge", bridge, "filler", filler), declared, Map.of());
+        capped.allocate(filler, 3);
+        assertEquals(List.of("second"), capped.wakeDormantNodes(declared, 4));
+        assertEquals(List.of("root", "bridge", "filler", "first"), List.copyOf(capped.getAllocatedNodeIds()));
+    }
+
+    @Test
+    void aDormantWormholePartnerReturnsWithItsAllocatedEndEvenAtTheNodeCap() {
+        SkillNode root = rootNode("root", List.of());
+        SkillNode entrance = wormholeNode("entrance", List.of("root"), "exit");
+        SkillNode exit = wormholeNode("exit", List.of("entrance"), "entrance");
+        ShipSkillData data = new ShipSkillData();
+        data.chooseStartingRoot(root);
+        data.allocate(entrance, 3);
+        assertTrue(data.isAllocated("exit"));
+        Map<String, SkillNode> declared = Map.of("root", root, "entrance", entrance, "exit", exit);
+        data.forgetUnknownNodes(Map.of("root", root, "entrance", entrance), declared, Map.of());
+
+        assertEquals(List.of(), data.wakeDormantNodes(declared, 2));
+        assertTrue(data.isAllocated("exit"));
+    }
+
+    @Test
+    void resettingOrRemovingTheTreeAlsoReleasesDormantNodes() {
+        SkillNode root = rootNode("root", List.of());
+        SkillNode hidden = node("hidden", List.of("root"));
+        ShipSkillData data = new ShipSkillData();
+        data.chooseStartingRoot(root);
+        data.addFreeAllocationCredit();
+        data.allocate(hidden, 3);
+        data.forgetUnknownNodes(Map.of("root", root), Map.of("root", root, "hidden", hidden), Map.of());
+
+        assertFalse(data.isBlank());
+        assertEquals(List.of("root", "hidden"), data.resetAllocations());
+        assertTrue(data.getDormantNodeIds().isEmpty());
+        assertEquals(1, data.getBankedFreeAllocations());
+
+        ShipSkillData removed = new ShipSkillData();
+        removed.chooseStartingRoot(root);
+        removed.allocate(hidden, 3);
+        removed.forgetUnknownNodes(Map.of("root", root), Map.of("root", root, "hidden", hidden), Map.of());
+        assertEquals(List.of("hidden"), removed.forgetUnknownNodes(Map.of("root", root), Map.of("root", root), Map.of()));
+        assertTrue(removed.getDormantNodeIds().isEmpty());
+    }
+
+    @Test
+    void aReplacedNodeIsRenamedWhileDormant() {
+        SkillNode root = rootNode("root", List.of());
+        SkillNode hidden = node("hidden", List.of("root"));
+        ShipSkillData data = new ShipSkillData();
+        data.chooseStartingRoot(root);
+        data.allocate(hidden, 3);
+        data.forgetUnknownNodes(Map.of("root", root), Map.of("root", root, "hidden", hidden), Map.of());
+
+        assertTrue(data.replaceNode("hidden", "renamed"));
+        assertEquals(Set.of("renamed"), data.getDormantNodeIds());
     }
 
     @Test

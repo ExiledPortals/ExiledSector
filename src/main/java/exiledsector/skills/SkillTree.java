@@ -30,6 +30,7 @@ public class SkillTree {
     private static final Map<String, SkillNode> NODES_VIEW = Collections.unmodifiableMap(NODES);
     private static final Map<String, SkillType> TYPES_VIEW = Collections.unmodifiableMap(TYPES);
     private static final Map<String, SkillNode> DECLARED_NODES = new LinkedHashMap<>();
+    private static final Map<String, SkillNode> DECLARED_NODES_VIEW = Collections.unmodifiableMap(DECLARED_NODES);
     private static SkillTreeLoader.ParsedTree declaredTree;
     private static Set<String> disabledRegions = Set.of();
     private static boolean loadedCompletely;
@@ -96,6 +97,10 @@ public class SkillTree {
     public static SkillNode getDeclared(String nodeId) {
         SkillNode node = DECLARED_NODES.get(nodeId);
         return node != null ? node : NODES.get(nodeId);
+    }
+
+    public static Map<String, SkillNode> getDeclaredNodes() {
+        return DECLARED_NODES.isEmpty() ? NODES_VIEW : DECLARED_NODES_VIEW;
     }
 
     public static void clearNodes() {

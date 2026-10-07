@@ -161,7 +161,7 @@ class ShipSkillDataManagerTest {
         List<SkillItemCost> refunds = new ArrayList<>();
         Map<String, SkillNode> tree = Map.of("root", root, "lobster", lobster);
 
-        ShipSkillDataManager.forgetUnknownNodes(tree, Map.of(), shipId -> true, refunds::add);
+        ShipSkillDataManager.forgetUnknownNodes(tree, tree, Map.of(), Integer.MAX_VALUE, shipId -> true, refunds::add);
 
         assertEquals(List.of("root", "lobster"), List.copyOf(healthy.getAllocatedNodeIds()));
         assertTrue(rootless.getAllocatedNodeIds().isEmpty());
@@ -182,7 +182,7 @@ class ShipSkillDataManagerTest {
         ship.allocate(freebie, 3);
         List<SkillItemCost> refunds = new ArrayList<>();
 
-        ShipSkillDataManager.forgetUnknownNodes(Map.of("root", root), Map.of(), shipId -> true, refunds::add);
+        ShipSkillDataManager.forgetUnknownNodes(Map.of("root", root), Map.of("root", root), Map.of(), Integer.MAX_VALUE, shipId -> true, refunds::add);
 
         assertEquals(List.of("root"), List.copyOf(ship.getAllocatedNodeIds()));
         assertEquals(List.of(new SkillItemCost("lobster", 50f)), refunds);
@@ -208,7 +208,7 @@ class ShipSkillDataManagerTest {
         destroyed.recordItemCharge("lobster", lobster.getType().getItemCost());
         List<SkillItemCost> refunds = new ArrayList<>();
 
-        ShipSkillDataManager.forgetUnknownNodes(Map.of("root", root), Map.of(), "owned"::equals, refunds::add);
+        ShipSkillDataManager.forgetUnknownNodes(Map.of("root", root), Map.of("root", root), Map.of(), Integer.MAX_VALUE, "owned"::equals, refunds::add);
 
         assertEquals(List.of("root"), List.copyOf(sold.getAllocatedNodeIds()));
         assertTrue(destroyed.getAllocatedNodeIds().isEmpty());
@@ -224,7 +224,7 @@ class ShipSkillDataManagerTest {
         adopted.allocate(lobster, 3);
         List<SkillItemCost> refunds = new ArrayList<>();
 
-        ShipSkillDataManager.forgetUnknownNodes(Map.of("root", root), Map.of(), shipId -> true, refunds::add);
+        ShipSkillDataManager.forgetUnknownNodes(Map.of("root", root), Map.of("root", root), Map.of(), Integer.MAX_VALUE, shipId -> true, refunds::add);
 
         assertEquals(List.of("root"), List.copyOf(adopted.getAllocatedNodeIds()));
         assertTrue(refunds.isEmpty());

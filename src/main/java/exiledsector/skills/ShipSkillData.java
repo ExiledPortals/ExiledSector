@@ -25,10 +25,16 @@ public class ShipSkillData {
     private Map<String, String> socketedItems;
     private Map<String, String> chargedItemIds;
     private Map<String, Float> chargedItemQuantities;
+    private Set<String> dormantNodeIds;
 
     private Set<String> freeNodeIds() {
         if (freeNodeIds == null) freeNodeIds = new LinkedHashSet<>();
         return freeNodeIds;
+    }
+
+    private Set<String> dormantNodeIds() {
+        if (dormantNodeIds == null) dormantNodeIds = new LinkedHashSet<>();
+        return dormantNodeIds;
     }
 
     private Set<String> pairedFreeNodeIds() {
@@ -186,7 +192,11 @@ public class ShipSkillData {
     }
 
     public boolean isBlank() {
-        return allocatedNodeIds.isEmpty() && level == 0 && xp == 0f && bankedFreeAllocations == 0;
+        return allocatedNodeIds.isEmpty() && getDormantNodeIds().isEmpty() && level == 0 && xp == 0f && bankedFreeAllocations == 0;
+    }
+
+    public Set<String> getDormantNodeIds() {
+        return dormantNodeIds == null ? Set.of() : Collections.unmodifiableSet(dormantNodeIds);
     }
 
     public void addXp(float amount) {
@@ -249,13 +259,15 @@ public class ShipSkillData {
 
     public boolean replaceNode(String oldId, String newId) {
         revision++;
-        if (!allocatedNodeIds.contains(oldId) || allocatedNodeIds.contains(newId)) {
+        boolean dormant = getDormantNodeIds().contains(oldId);
+        if ((!dormant && !allocatedNodeIds.contains(oldId)) || allocatedNodeIds.contains(newId) || getDormantNodeIds().contains(newId)) {
             return false;
         }
         ensureItemChargeLedger();
-        List<String> order = new ArrayList<>(allocatedNodeIds);
-        allocatedNodeIds.clear();
-        order.forEach(id -> allocatedNodeIds.add(id.equals(oldId) ? newId : id));
+        Set<String> holdingNodeIds = dormant ? dormantNodeIds : allocatedNodeIds;
+        List<String> order = new ArrayList<>(holdingNodeIds);
+        holdingNodeIds.clear();
+        order.forEach(id -> holdingNodeIds.add(id.equals(oldId) ? newId : id));
         if (freeNodeIds().remove(oldId)) {
             freeNodeIds().add(newId);
         }
@@ -274,12 +286,28 @@ public class ShipSkillData {
     }
 
     public List<String> forgetUnknownNodes(Map<String, SkillNode> tree, Map<String, SkillType> types) {
+        return forgetUnknownNodes(tree, tree, types);
+    }
+
+    public List<String> forgetUnknownNodes(Map<String, SkillNode> tree, Map<String, SkillNode> declaredTree, Map<String, SkillType> types) {
         revision++;
         ensureItemChargeLedger();
         List<String> forgotten = new ArrayList<>();
+        for (String nodeId : List.copyOf(getDormantNodeIds())) {
+            SkillNode declaredNode = declaredTree.get(nodeId);
+            if (declaredNode == null || hasInvalidOption(declaredNode, types)) {
+                dormantNodeIds.remove(nodeId);
+                release(nodeId);
+                forgotten.add(nodeId);
+            }
+        }
         for (String nodeId : List.copyOf(allocatedNodeIds)) {
             SkillNode node = tree.get(nodeId);
-            if (node == null || hasInvalidOption(node, types)) {
+            SkillNode declaredNode = declaredTree.get(nodeId);
+            if (node == null && declaredNode != null && !hasInvalidOption(declaredNode, types)) {
+                allocatedNodeIds.remove(nodeId);
+                dormantNodeIds().add(nodeId);
+            } else if (node == null || hasInvalidOption(node, types)) {
                 allocatedNodeIds.remove(nodeId);
                 release(nodeId);
                 forgotten.add(nodeId);
@@ -303,6 +331,51 @@ public class ShipSkillData {
         return selectedId == null || !node.getType().getOptionalOptionIds().contains(selectedId) || !types.containsKey(selectedId);
     }
 
+    public List<String> wakeDormantNodes(Map<String, SkillNode> tree, int maxAllocatedNodes) {
+        if (getDormantNodeIds().isEmpty()) {
+            return List.of();
+        }
+        revision++;
+        ensureItemChargeLedger();
+        String satisfiedRootId = resolveStartingRootId(tree.values());
+        boolean wokeAny = true;
+        while (wokeAny) {
+            wokeAny = false;
+            for (String nodeId : List.copyOf(dormantNodeIds)) {
+                SkillNode node = tree.get(nodeId);
+                if (node != null && isReconnected(node, satisfiedRootId) && fitsAfterWaking(node, maxAllocatedNodes)) {
+                    dormantNodeIds.remove(nodeId);
+                    allocatedNodeIds.add(nodeId);
+                    wokeAny = true;
+                }
+            }
+        }
+        List<String> released = new ArrayList<>();
+        for (String nodeId : List.copyOf(dormantNodeIds)) {
+            if (tree.containsKey(nodeId)) {
+                dormantNodeIds.remove(nodeId);
+                release(nodeId);
+                released.add(nodeId);
+            }
+        }
+        return released;
+    }
+
+    private boolean isReconnected(SkillNode node, String satisfiedRootId) {
+        for (String connectedId : node.getConnectedNodeIds()) {
+            if (isSatisfied(connectedId, satisfiedRootId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean fitsAfterWaking(SkillNode node, int maxAllocatedNodes) {
+        String pairedId = node.getPairedNodeId();
+        boolean partnerOfAllocatedWormhole = pairedId != null && pairedFreeNodeIds().contains(node.getId()) && allocatedNodeIds.contains(pairedId);
+        return partnerOfAllocatedWormhole || allocatedNodeIds.size() < maxAllocatedNodes;
+    }
+
     public boolean hasLostStartingRoot(Map<String, SkillNode> tree) {
         if (startingRootId == null) {
             return !allocatedNodeIds.isEmpty() && firstAllocatedRootId(SkillTreeTopology.rootIdsOf(tree.values())) == null;
@@ -314,9 +387,13 @@ public class ShipSkillData {
     public List<String> resetAllocations() {
         revision++;
         ensureItemChargeLedger();
-        List<String> released = List.copyOf(allocatedNodeIds);
+        List<String> released = new ArrayList<>(allocatedNodeIds);
+        released.addAll(getDormantNodeIds());
         released.forEach(this::release);
         allocatedNodeIds.clear();
+        if (dormantNodeIds != null) {
+            dormantNodeIds.clear();
+        }
         freeNodeIds().clear();
         pairedFreeNodeIds().clear();
         if (optionalSelections != null) {

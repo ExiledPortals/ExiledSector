@@ -62,13 +62,20 @@ public class ShipSkillDataManager {
         });
     }
 
-    public static void forgetUnknownNodes(Map<String, SkillNode> nodesById, Map<String, SkillType> typesById,
-                                          Predicate<String> isOwnedShip, Consumer<SkillItemCost> refund) {
+    public static void forgetUnknownNodes(Map<String, SkillNode> nodesById, Map<String, SkillNode> declaredNodesById,
+                                          Map<String, SkillType> typesById, int maxAllocatedNodes, Predicate<String> isOwnedShip,
+                                          Consumer<SkillItemCost> refund) {
         Logger logger = Logger.getLogger(ShipSkillDataManager.class);
         for (Map.Entry<String, ShipSkillData> entry : getStore().entrySet()) {
             ShipSkillData shipData = entry.getValue();
-            List<String> forgottenNodeIds = shipData.forgetUnknownNodes(nodesById, typesById);
+            List<String> forgottenNodeIds = shipData.forgetUnknownNodes(nodesById, declaredNodesById, typesById);
             refundCharges(shipData, forgottenNodeIds, () -> isOwnedShip.test(entry.getKey()), refund);
+            List<String> strandedNodeIds = shipData.wakeDormantNodes(nodesById, maxAllocatedNodes);
+            refundCharges(shipData, strandedNodeIds, () -> isOwnedShip.test(entry.getKey()), refund);
+            if (!strandedNodeIds.isEmpty()) {
+                logger.info("[ExiledSector] Released hidden-area nodes of ship " + entry.getKey()
+                        + " that no longer connect to its tree or no longer fit under the node cap: " + strandedNodeIds);
+            }
             if (shipData.hasLostStartingRoot(nodesById)) {
                 List<String> releasedNodeIds = shipData.resetAllocations();
                 refundCharges(shipData, releasedNodeIds, () -> isOwnedShip.test(entry.getKey()), refund);

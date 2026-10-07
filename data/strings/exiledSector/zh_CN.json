@@ -789,7 +789,7 @@
     "settings.areas.header": "可选区域",
     "settings.areas.about": "技能树的部分区域是围绕其他模组设计的。关闭某个区域会隐藏其节点、恒星和虫洞，并从所有舰船上移除这些节点并予以返还：装配点和储存的分配次数返还给舰船，物品消耗返还到你的货舱。重新开启该区域不会恢复已移除的节点。更改会在下次读取存档时生效。",
     "settings.areas.lostSector.name": "Lost Sector 区域（凯斯特文与冰封之心）",
-    "settings.areas.lostSector.tooltip": "Auto 只在安装了 Lost Sector 时显示该区域；On 始终显示，Off 始终隐藏。",
+    "settings.areas.lostSector.tooltip": "Auto 只在安装了 Lost Sector 时显示该区域；On 始终显示，Off 始终隐藏。舰船在隐藏区域中已分配的节点会被保留，但在该区域重新显示前不生效，也不占用装配点或节点名额；重新显示后，仍与舰船技能树相连的节点会恢复。",
     "settings.energyChain.header": "折射弹体",
     "settings.energyChain.maxChainCount.name": "最大折射次数",
     "settings.energyChain.maxChainCount.tooltip": "单发弹体可连续折射的次数上限，与几率判定是否成功无关。这是一项安全限制，并非平衡性参数。",

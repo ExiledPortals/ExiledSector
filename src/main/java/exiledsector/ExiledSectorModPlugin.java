@@ -35,6 +35,7 @@ import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.npc.NpcFactionVolumes;
+import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.skilleffect.CsvIdList;
 import exiledsector.skills.skilleffect.EffectAliases;
 import exiledsector.skills.skilleffect.FleetWideEffects;
@@ -146,9 +147,9 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
             Global.getLogger(ExiledSectorModPlugin.class).warn(LOG_TAG + ": the skill tree did not load completely, so saved allocations were left as they are.");
             return;
         }
-        ShipSkillDataManager.replaceRemovedNodes(SkillTree.getAllNodes(), NodeReplacements.all());
-        ShipSkillDataManager.forgetUnknownNodes(SkillTree.getAllNodes(), SkillTree.getAllTypes(),
-                new OwnedShips(), ExiledSectorModPlugin::refund);
+        ShipSkillDataManager.replaceRemovedNodes(SkillTree.getDeclaredNodes(), NodeReplacements.all());
+        ShipSkillDataManager.forgetUnknownNodes(SkillTree.getAllNodes(), SkillTree.getDeclaredNodes(), SkillTree.getAllTypes(),
+                ShipLevelConfig.maxAllocatedNodes(), new OwnedShips(), ExiledSectorModPlugin::refund);
     }
 
     private static final class OwnedShips implements Predicate<String> {
