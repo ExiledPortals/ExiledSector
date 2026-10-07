@@ -242,4 +242,18 @@ class SocketableDropsTest {
         assertTrue(SocketableDrops.rollMaterials("nowhere", new Random(1L)).isEmpty());
         assertTrue(SocketableDrops.rollMaterials(null, new Random(1L)).isEmpty());
     }
+
+    @Test
+    void fractionalBattlePartsRoundUpAsAChance() {
+        Random random = new Random(5L);
+        double total = 0;
+        for (int i = 0; i < TRIALS; i++) {
+            int parts = SocketableDrops.wholeParts(2.25f, random);
+            assertTrue(parts == 2 || parts == 3);
+            total += parts;
+        }
+        assertEquals(2.25, total / TRIALS, 0.02);
+        assertEquals(0, SocketableDrops.wholeParts(0f, random));
+        assertEquals(0, SocketableDrops.wholeParts(Float.NaN, random));
+    }
 }

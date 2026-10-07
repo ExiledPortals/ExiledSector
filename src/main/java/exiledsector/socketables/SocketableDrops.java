@@ -2,6 +2,7 @@ package exiledsector.socketables;
 
 import com.fs.starfarer.api.Global;
 import exiledsector.ModCsv;
+import exiledsector.ModSettings;
 import exiledsector.compat.SalvageSiteCompat;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -26,6 +27,8 @@ public final class SocketableDrops {
     static final int MIN_PARTS_PER_FIND = 1;
     static final int MAX_PARTS_PER_FIND = 3;
     static final float KERNEL_CHANCE_SHARE = 0.35f;
+    public static final String BATTLE_PARTS_FIELD_ID = "exiledSector_socketPartsPerDeploymentPoint";
+    public static final float DEFAULT_BATTLE_PARTS_PER_DP = 0.05f;
     private static final Pattern SAFE_ID = Pattern.compile("[A-Za-z0-9_.-]+");
     private static final Logger LOG = Logger.getLogger(SocketableDrops.class);
     private static final AtomicReference<Map<String, Rule>> RULES = new AtomicReference<>(Map.of());
@@ -141,6 +144,18 @@ public final class SocketableDrops {
             materials.put(pickKernel(random).commodityId(), 1);
         }
         return materials;
+    }
+
+    public static float battlePartsPerDeploymentPoint() {
+        return Math.max(0f, ModSettings.floatOr(BATTLE_PARTS_FIELD_ID, DEFAULT_BATTLE_PARTS_PER_DP));
+    }
+
+    public static int wholeParts(float exact, Random random) {
+        if (!(exact > 0f)) {
+            return 0;
+        }
+        int whole = (int) exact;
+        return whole + (random.nextFloat() < exact - whole ? 1 : 0);
     }
 
     static SocketCurrency pickKernel(Random random) {

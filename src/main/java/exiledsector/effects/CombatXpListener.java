@@ -49,7 +49,7 @@ public class CombatXpListener extends BaseCampaignEventListener {
                 levelUps(levelsBefore))));
     }
 
-    private static float enemyDeploymentPointsDefeated(EngagementResultAPI result) {
+    static float enemyDeploymentPointsDefeated(EngagementResultAPI result) {
         EngagementResultForFleetAPI enemy = result.didPlayerWin() ? result.getLoserResult() : result.getWinnerResult();
         if (enemy == null) {
             return 0f;

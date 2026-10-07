@@ -21,6 +21,8 @@ import exiledsector.socketables.SocketableItemData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import exiledsector.socketables.SocketableDisassembly;
+import lunalib.lunaSettings.LunaSettings;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -195,5 +197,43 @@ class SocketableLootListenerTest {
 
         verify(otherLoot, never()).addSpecial(any(), anyFloat());
         assertEquals(1, lootData(loot, 1).size());
+    }
+
+    private static FleetMemberAPI warship(String id, float deploymentPoints) {
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn(id);
+        when(member.getVariant()).thenReturn(mock(ShipVariantAPI.class));
+        when(member.getDeploymentPointsCost()).thenReturn(deploymentPoints);
+        return member;
+    }
+
+    @Test
+    void wonBattlesAddPartsForTheEnemyDeploymentPointsDefeated() {
+        try (MockedStatic<LunaSettings> luna = Mockito.mockStatic(LunaSettings.class)) {
+            luna.when(() -> LunaSettings.getFloat(Mockito.anyString(), Mockito.anyString())).thenReturn(null);
+            BattleAPI battle = mock(BattleAPI.class);
+            listener.reportPlayerEngagement(engagement(battle, List.of(warship("a", 120f)), List.of(warship("b", 80f))));
+            CargoAPI loot = mock(CargoAPI.class);
+
+            listener.reportEncounterLootGenerated(context(battle), loot);
+
+            verify(loot).addCommodity(SocketableDisassembly.PARTS_COMMODITY_ID, 10);
+        }
+    }
+
+    @Test
+    void lostBattlesAddNoParts() {
+        try (MockedStatic<LunaSettings> luna = Mockito.mockStatic(LunaSettings.class)) {
+            luna.when(() -> LunaSettings.getFloat(Mockito.anyString(), Mockito.anyString())).thenReturn(null);
+            BattleAPI battle = mock(BattleAPI.class);
+            EngagementResultAPI result = engagement(battle, List.of(warship("a", 200f)), List.of());
+            when(result.didPlayerWin()).thenReturn(false);
+            listener.reportPlayerEngagement(result);
+            CargoAPI loot = mock(CargoAPI.class);
+
+            listener.reportEncounterLootGenerated(context(battle), loot);
+
+            verify(loot, never()).addCommodity(Mockito.anyString(), anyFloat());
+        }
     }
 }

@@ -665,6 +665,8 @@
     "settings.socketStorage.header": "插槽仓库",
     "settings.socketStorage.otherModDrops.name": "其他模组地点掉落",
     "settings.socketStorage.otherModDrops.tooltip": "允许模块化船体插槽物品从其他受支持模组添加的打捞地点掉落，例如Random Assortment of Things的深渊地点或Industrial Evolution的空间站。原版地点始终可以掉落。",
+    "settings.socketStorage.battleParts.name": "每点敌方部署点获得的插槽组件",
+    "settings.socketStorage.battleParts.tooltip": "战斗胜利后，每摧毁或瘫痪1点敌方部署点，战利品中增加的插槽组件数量。与舰船经验使用相同的战斗难度加成。设为0.05时，击败200点部署点在难度加成前获得10个组件。0则关闭。",
     "settings.opCost.header": "技能节点装配点消耗",
     "settings.opCost.about": "每个已分配的技能节点按船体尺寸消耗的装配点。",
     "settings.opCost.frigate": "护卫舰每节点装配点",

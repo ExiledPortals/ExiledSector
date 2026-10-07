@@ -1,6 +1,7 @@
 package exiledsector.ui;
 
 import exiledsector.compat.SalvageSiteCompat;
+import exiledsector.socketables.SocketableDrops;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.LanguageSetting;
 import exiledsector.i18n.Translation;
@@ -59,6 +60,9 @@ public final class ExiledSectorSettings {
         SettingsCreator.addBoolean(MOD_ID, SalvageSiteCompat.DROPS_FIELD_ID,
                 Translation.text("settings.socketStorage.otherModDrops.name"), Translation.text("settings.socketStorage.otherModDrops.tooltip"),
                 SalvageSiteCompat.DEFAULT_DROPS, MAIN_TAB);
+        SettingsCreator.addDouble(MOD_ID, SocketableDrops.BATTLE_PARTS_FIELD_ID,
+                Translation.text("settings.socketStorage.battleParts.name"), Translation.text("settings.socketStorage.battleParts.tooltip"),
+                SocketableDrops.DEFAULT_BATTLE_PARTS_PER_DP, 0.0, 2.0, MAIN_TAB);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_opCostHeader", Translation.text("settings.opCost.header"), MAIN_TAB);
         SettingsCreator.addText(MOD_ID, "exiledSector_opCostAbout", Translation.text("settings.opCost.about"), MAIN_TAB);
