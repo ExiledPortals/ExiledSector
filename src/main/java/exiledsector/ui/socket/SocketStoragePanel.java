@@ -17,6 +17,7 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.socketables.SocketCustody;
+import exiledsector.socketables.SocketType;
 import exiledsector.socketables.Socketable;
 import exiledsector.socketables.SocketableDisassembly;
 import exiledsector.socketables.SocketableRarity;
@@ -109,9 +110,12 @@ public final class SocketStoragePanel extends HoloPanel {
     private int movedFromCargo;
     private String disassembledNotice;
     private final SocketableHoverTooltip hoverTooltip;
+    private final SocketType kindFilter;
 
-    private SocketStoragePanel(CustomPanelAPI hostPanel, Function<Socketable, String> installedShipLookup, Listener storageListener) {
+    private SocketStoragePanel(CustomPanelAPI hostPanel, Function<Socketable, String> installedShipLookup, Listener storageListener,
+                               SocketType kindFilter) {
         super(hostPanel, SocketStoragePanel.class);
+        this.kindFilter = kindFilter;
         this.hoverTooltip = new SocketableHoverTooltip(hostPanel);
         this.installedShipLookup = installedShipLookup;
         this.storageListener = storageListener;
@@ -119,7 +123,12 @@ public final class SocketStoragePanel extends HoloPanel {
 
     public static SocketStoragePanel open(CustomPanelAPI hostPanel, float panelLeft, float panelTop, float panelHeight,
                                           Function<Socketable, String> installedShipLookup, Listener storageListener) {
-        SocketStoragePanel storagePanel = new SocketStoragePanel(hostPanel, installedShipLookup, storageListener);
+        return open(hostPanel, panelLeft, panelTop, panelHeight, installedShipLookup, storageListener, null);
+    }
+
+    public static SocketStoragePanel open(CustomPanelAPI hostPanel, float panelLeft, float panelTop, float panelHeight,
+                                          Function<Socketable, String> installedShipLookup, Listener storageListener, SocketType kindFilter) {
+        SocketStoragePanel storagePanel = new SocketStoragePanel(hostPanel, installedShipLookup, storageListener, kindFilter);
         storagePanel.movedFromCargo = absorbPlayerCargo();
         storagePanel.attach(panelLeft, panelTop, WIDTH, panelHeight);
         return storagePanel;
@@ -407,7 +416,9 @@ public final class SocketStoragePanel extends HoloPanel {
         List<Socketable> owned = SocketableStore.get().owned();
         List<SocketStorageRow> built = new ArrayList<>(owned.size());
         for (int i = 0; i < owned.size(); i++) {
-            built.add(SocketStorageRow.of(owned.get(i), i, installedShipLookup));
+            if (kindFilter == null || owned.get(i).kind() == kindFilter) {
+                built.add(SocketStorageRow.of(owned.get(i), i, installedShipLookup));
+            }
         }
         storageRows = built;
     }
@@ -453,8 +464,13 @@ public final class SocketStoragePanel extends HoloPanel {
         float gridHeight = Math.max(CELL_SIZE, panelHeight - PAD - FOOTER_HEIGHT - GAP - gridTop);
         TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), gridHeight, true);
         if (matching.isEmpty()) {
-            String key = storageRows.isEmpty() ? "ui.socketStorage.empty" : "ui.socketStorage.noMatches";
-            element.addPara("%s", 0f, Misc.getGrayColor(), Misc.getGrayColor(), Translation.text(key));
+            String emptyText;
+            if (storageRows.isEmpty() && kindFilter != null) {
+                emptyText = Translation.msg("ui.socketStorage.emptyType").arg("type", kindFilter.displayName()).text();
+            } else {
+                emptyText = Translation.text(storageRows.isEmpty() ? "ui.socketStorage.empty" : "ui.socketStorage.noMatches");
+            }
+            element.addPara("%s", 0f, Misc.getGrayColor(), Misc.getGrayColor(), emptyText);
         }
         for (int start = 0; start < matching.size(); start += COLUMNS) {
             CustomPanelAPI rowPanel = Global.getSettings().createCustom(innerWidth() - SCROLLBAR_ROOM, CELL_SIZE, null);
@@ -489,8 +505,9 @@ public final class SocketStoragePanel extends HoloPanel {
             newNotice.addPara("%s", 0f, Misc.getPositiveHighlightColor(), Misc.getPositiveHighlightColor(),
                     Translation.msg("ui.socketStorage.placingHint").arg("name", selectedSocketable.name()).text());
         } else if (targetingSocket) {
-            newNotice.addPara("%s", 0f, Misc.getPositiveHighlightColor(), Misc.getPositiveHighlightColor(),
-                    Translation.text("ui.socketStorage.targetHint"));
+            String targetHint = kindFilter == null ? Translation.text("ui.socketStorage.targetHint")
+                    : Translation.msg("ui.socketStorage.frameworkTargetHint").arg("type", kindFilter.displayName()).text();
+            newNotice.addPara("%s", 0f, Misc.getPositiveHighlightColor(), Misc.getPositiveHighlightColor(), targetHint);
         } else if (disassembledNotice != null) {
             newNotice.addPara("%s", 0f, Misc.getPositiveHighlightColor(), Misc.getPositiveHighlightColor(), disassembledNotice);
         } else if (movedFromCargo > 0) {

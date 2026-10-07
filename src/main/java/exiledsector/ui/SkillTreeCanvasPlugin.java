@@ -46,6 +46,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final TreeCamera camera = new TreeCamera();
     private final HyperspaceMode hyperspaceMode;
     private final SocketPlacement socketPlacement;
+    private final FrameworkInspection frameworkInspection;
     private final SkillTreeChrome chrome;
     private final PointerGesture gesture = new PointerGesture();
 
@@ -55,7 +56,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private boolean mouseKnown = false;
     private boolean swallowEscapeUp;
     private float workbenchDimProgress;
-    private boolean reopenStatsAfterWorkbench;
+    private boolean reopenStatsAfterSidePanel;
 
     public SkillTreeCanvasPlugin(FleetMemberAPI member, ShipVariantAPI variant, float shipCardHeight, BaseRefitButton refitButton,
                                  CustomPanelAPI hostPanel) {
@@ -73,6 +74,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.statPanel = new SkillTreeStatPanel(member);
         this.hyperspaceMode = new HyperspaceMode(camera, statPanel);
         this.socketPlacement = new SocketPlacement(hostPanel, treeSession, nodeSearch, searchBar);
+        this.frameworkInspection = new FrameworkInspection(hostPanel, treeSession, socketPlacement);
         this.chrome = new SkillTreeChrome(member, panelStyle, statPanel, searchBar, templateUi, socketPlacement, shipCardHeight);
 
         SkillNode startingRoot = treeSession.getStartingRoot();
@@ -113,6 +115,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         if (camera.isFollowing()) {
             camera.follow(fleetRenderer.focusX(), fleetRenderer.focusY(), amount);
         }
+        frameworkInspection.advance(amount, canvasPosition, camera, fleetRenderer, mouseX, mouseY);
         starRenderer.advance(amount);
         boolean followingStartingRoot = treeSession.isStartingRootMoving();
         camera.beginStartingRootFollow(treeSession);
@@ -122,24 +125,31 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         CanvasMode mode = mode();
         dropStaleGesture(mode);
         templateUi.advance(amount, canvasPosition, mode.enables(CanvasMode.Chrome.TEMPLATE_BAR));
-        socketPlacement.advance(mode.closesStorage());
+        socketPlacement.advance(mustCloseStorage(mode));
         statPanel.refresh(treeSession.budget(), treeSession.statsRevision());
         hyperspaceMode.reopenStatsWhenBack();
-        hideStatsForWorkbench();
+        hideStatsForSidePanels();
         statPanel.advance(amount);
         chrome.advance(amount, canvasPosition, mode, hyperspaceMode.chromeAlpha(), treeSession.budget(), mouseX, mouseY, mouseKnown);
         float dimStep = amount / WORKBENCH_DIM_SECONDS;
         workbenchDimProgress = Math.max(0f, Math.min(1f, workbenchDimProgress + (socketPlacement.isWorkbenchOpen() ? dimStep : -dimStep)));
     }
 
-    private void hideStatsForWorkbench() {
-        if (socketPlacement.isWorkbenchOpen()) {
+    private boolean mustCloseStorage(CanvasMode mode) {
+        if (socketPlacement.isFrameworkTargeted()) {
+            return !camera.isFollowing() || !frameworkInspection.isInspecting();
+        }
+        return mode.closesStorage();
+    }
+
+    private void hideStatsForSidePanels() {
+        if (socketPlacement.isWorkbenchOpen() || frameworkInspection.isPickerOpen()) {
             if (statPanel.isOpen()) {
-                reopenStatsAfterWorkbench = true;
+                reopenStatsAfterSidePanel = true;
                 statPanel.close();
             }
-        } else if (reopenStatsAfterWorkbench) {
-            reopenStatsAfterWorkbench = false;
+        } else if (reopenStatsAfterSidePanel) {
+            reopenStatsAfterSidePanel = false;
             if (!hyperspaceMode.isActive()) {
                 statPanel.open(false);
             }
@@ -250,12 +260,40 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     private void handleFleetFollowEvent(InputEventAPI event, CanvasMode mode) {
         if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
-            stopFollowingFleet();
+            if (socketPlacement.isEngaged()) {
+                socketPlacement.escape();
+            } else if (!frameworkInspection.escape()) {
+                stopFollowingFleet();
+            }
             consume(event);
         } else if (treeSession.isAutoAllocating() || treeSession.isRespeccing()) {
             handleAllocationRunEvent(event, mode);
+        } else if (frameworkInspection.isInspecting()) {
+            handleInspectionEvent(event, mode);
         } else {
             handleTreeEvent(event, mode);
+        }
+    }
+
+    private void handleInspectionEvent(InputEventAPI event, CanvasMode mode) {
+        float x = event.getX();
+        float y = event.getY();
+        if (event.isLMBDownEvent() && canvasPosition.containsEvent(event)) {
+            if (!chrome.press(canvasPosition, mode, x, y)) {
+                frameworkInspection.pressLeft(x, y, canvasPosition, chrome.shipCardFrame(canvasPosition));
+            }
+            event.consume();
+        } else if (event.isRMBDownEvent() && canvasPosition.containsEvent(event)) {
+            frameworkInspection.pressRight(x, y);
+            event.consume();
+        } else if (event.isLMBUpEvent()) {
+            if (chrome.release(x, y)) {
+                event.consume();
+            }
+        } else if (event.isMouseScrollEvent() && canvasPosition.containsEvent(event)) {
+            event.consume();
+        } else if (event.isKeyboardEvent() && searchBar.handleKey(event)) {
+            consume(event);
         }
     }
 
@@ -278,8 +316,10 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void stopFollowingFleet() {
+        camera.stopInspecting();
         camera.stopFollowing();
         fleetRenderer.setSoloActive(false);
+        frameworkInspection.stop();
     }
 
     private void handleAllocationRunEvent(InputEventAPI event, CanvasMode mode) {
@@ -428,20 +468,24 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         float treeAlpha = hyperspaceMode.treeAlpha();
         float searchDim = nodeSearch.backgroundAlpha() + (1f - nodeSearch.backgroundAlpha()) * (1f - treeAlpha);
         float backgroundAlpha = alphaMult * searchDim * treeSession.treeAlpha();
+        float inspectFade = 1f - frameworkInspection.inspectLevel();
+        float sceneryAlpha = backgroundAlpha * inspectFade;
         starRenderer.setMapRadius(hyperspaceMode.starRadius(), hyperspaceMode.mapAmount());
         starfieldRenderer.render(canvasPosition, camera.panX(), camera.panY(), backgroundAlpha);
-        starRenderer.renderDisc(viewport, backgroundAlpha);
-        starRenderer.renderAtmosphere(viewport, backgroundAlpha);
-        starRenderer.renderAurora(viewport, backgroundAlpha);
-        ringBeltRenderer.render(viewport, backgroundAlpha * treeAlpha);
-        staticImageRenderer.render(viewport, backgroundAlpha, hyperspaceMode.anchorIds(), treeAlpha);
-        fleetRenderer.render(viewport, backgroundAlpha * treeAlpha);
+        starRenderer.renderDisc(viewport, sceneryAlpha);
+        starRenderer.renderAtmosphere(viewport, sceneryAlpha);
+        starRenderer.renderAurora(viewport, sceneryAlpha);
+        ringBeltRenderer.render(viewport, sceneryAlpha * treeAlpha);
+        staticImageRenderer.render(viewport, sceneryAlpha, hyperspaceMode.anchorIds(), treeAlpha);
+        frameworkInspection.renderBackdrop(canvasPosition, alphaMult);
         boolean pointerOverTree = mouseKnown && !chrome.contains(canvasPosition, mode, mouseX, mouseY);
-        boolean treeHovered = pointerOverTree && mode.hoversTree();
-        if (treeAlpha > 0f) {
-            nodeDrawer.render(viewport, alphaMult * treeAlpha, mouseX, mouseY, treeHovered);
+        boolean treeHovered = pointerOverTree && mode.hoversTree() && !frameworkInspection.isInspecting();
+        if (treeAlpha * inspectFade > 0f) {
+            nodeDrawer.render(viewport, alphaMult * treeAlpha * inspectFade, mouseX, mouseY, treeHovered);
         }
-        starRenderer.renderGlow(viewport, backgroundAlpha);
+        fleetRenderer.render(viewport, backgroundAlpha * treeAlpha);
+        starRenderer.renderGlow(viewport, sceneryAlpha);
+        frameworkInspection.render(canvasPosition, viewport, fleetRenderer, alphaMult, mouseX, mouseY);
         if (workbenchDimProgress > 0f) {
             GLDraw.fillQuad(canvasPosition.getX(), canvasPosition.getY(), canvasPosition.getWidth(), canvasPosition.getHeight(), Color.BLACK,
                     WORKBENCH_DIM_ALPHA * workbenchDimProgress * alphaMult);

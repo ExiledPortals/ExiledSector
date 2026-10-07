@@ -1,9 +1,11 @@
 package exiledsector.ui.node;
 
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocationGate;
+import exiledsector.skills.FrameworkSlots;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -15,6 +17,8 @@ import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.StepVerdict;
 import exiledsector.skills.template.TemplateCapture;
 import exiledsector.skills.template.TemplateStep;
+import exiledsector.socketables.HullFramework;
+import exiledsector.socketables.HullFrameworks;
 import exiledsector.socketables.SocketCustody;
 import exiledsector.socketables.Socketable;
 import exiledsector.ui.SkillTreeSounds;
@@ -436,6 +440,56 @@ public final class TreeAllocationSession {
 
     public boolean emptySocket(SkillNode node) {
         if (isBusy() || !allocator.unsocketItem(node)) {
+            return false;
+        }
+        refreshAfterAllocation();
+        return true;
+    }
+
+    public HullFramework installedFramework() {
+        return FrameworkSlots.installedFramework(allocator.data());
+    }
+
+    public List<FrameworkSlots.Slot> frameworkSlots() {
+        return allocator.frameworkSlots();
+    }
+
+    public HullSize hullSize() {
+        return allocator.hullSize();
+    }
+
+    public HullFrameworks.InstallBlock frameworkInstallBlock(HullFramework framework) {
+        return allocator.frameworkInstallBlock(framework);
+    }
+
+    public boolean installFramework(HullFramework framework) {
+        if (isBusy() || !allocator.installFramework(framework)) {
+            return false;
+        }
+        refreshAfterAllocation();
+        SkillTreeSounds.socketed();
+        return true;
+    }
+
+    public boolean removeFramework() {
+        if (isBusy() || !allocator.removeFramework()) {
+            return false;
+        }
+        refreshAfterAllocation();
+        return true;
+    }
+
+    public boolean socketFrameworkItem(int slotIndex, Socketable socketable) {
+        if (isBusy() || !allocator.socketFrameworkItem(slotIndex, socketable)) {
+            return false;
+        }
+        refreshAfterAllocation();
+        SkillTreeSounds.socketed();
+        return true;
+    }
+
+    public boolean unsocketFrameworkItem(int slotIndex) {
+        if (isBusy() || !allocator.unsocketFrameworkItem(slotIndex)) {
             return false;
         }
         refreshAfterAllocation();

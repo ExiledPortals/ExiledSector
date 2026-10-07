@@ -11,6 +11,7 @@ import exiledsector.ui.TooltipExpansion;
 import exiledsector.ui.util.FramedPanelPlugin;
 
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 public final class SocketableHoverTooltip {
@@ -21,8 +22,8 @@ public final class SocketableHoverTooltip {
     private final CustomPanelAPI hostPanel;
     private CustomPanelAPI shownPanel;
     private Object shownKey;
-    private Socketable shownSocketable;
-    private Supplier<List<StyledText>> shownFooter;
+    private float shownWidth;
+    private BiConsumer<TooltipMakerAPI, Boolean> shownWriter;
     private PositionAPI shownAnchor;
     private boolean shownExpanded;
 
@@ -35,13 +36,16 @@ public final class SocketableHoverTooltip {
     }
 
     public void show(Object key, Socketable socketable, Supplier<List<StyledText>> footer, PositionAPI anchor) {
+        show(key, SocketableTooltip.WIDTH, (element, expanded) -> SocketableTooltip.write(element, socketable, footer, expanded), anchor);
+    }
+
+    public void show(Object key, float tooltipWidth, BiConsumer<TooltipMakerAPI, Boolean> writer, PositionAPI anchor) {
         hide();
         boolean expanded = TooltipExpansion.isExpandedOrHeld();
-        float tooltipWidth = SocketableTooltip.WIDTH;
         CustomPanelAPI tooltipPanel = Global.getSettings().createCustom(tooltipWidth, anchor.getHeight(),
                 new FramedPanelPlugin(SocketableHoverTooltip.class));
         TooltipMakerAPI element = tooltipPanel.createUIElement(tooltipWidth - PAD * 2f, 0f, false);
-        SocketableTooltip.write(element, socketable, footer, expanded);
+        writer.accept(element, expanded);
         float contentHeight = element.getHeightSoFar();
         element.getPosition().setSize(tooltipWidth - PAD * 2f, contentHeight);
         float tooltipHeight = contentHeight + PAD * 2f;
@@ -69,15 +73,15 @@ public final class SocketableHoverTooltip {
         hostPanel.addComponent(tooltipPanel).inTL(tooltipLeft, tooltipTop);
         shownPanel = tooltipPanel;
         shownKey = key;
-        shownSocketable = socketable;
-        shownFooter = footer;
+        shownWidth = tooltipWidth;
+        shownWriter = writer;
         shownAnchor = anchor;
         shownExpanded = expanded;
     }
 
     public void refreshIfExpansionChanged() {
         if (shownPanel != null && shownExpanded != TooltipExpansion.isExpandedOrHeld()) {
-            show(shownKey, shownSocketable, shownFooter, shownAnchor);
+            show(shownKey, shownWidth, shownWriter, shownAnchor);
         }
     }
 
@@ -87,8 +91,7 @@ public final class SocketableHoverTooltip {
         }
         shownPanel = null;
         shownKey = null;
-        shownSocketable = null;
-        shownFooter = null;
+        shownWriter = null;
         shownAnchor = null;
     }
 }

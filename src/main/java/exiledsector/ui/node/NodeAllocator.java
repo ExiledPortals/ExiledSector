@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.characters.SkillSpecAPI;
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.FighterWingSpecAPI;
@@ -17,6 +18,8 @@ import exiledsector.effects.ShipTreeSync;
 import exiledsector.i18n.Translation;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocationGate;
+import exiledsector.skills.FrameworkFit;
+import exiledsector.skills.FrameworkSlots;
 import exiledsector.skills.HullModNames;
 import exiledsector.skills.InstalledHullMods;
 import exiledsector.skills.NodeEligibility;
@@ -32,6 +35,11 @@ import exiledsector.skills.progression.ShipOpBudget;
 import exiledsector.skills.progression.SkillNodeOpCost;
 import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
+import exiledsector.skills.tags.ShipProfile;
+import exiledsector.socketables.HullFramework;
+import exiledsector.socketables.HullFrameworks;
+import exiledsector.socketables.SocketCustody;
+import exiledsector.socketables.Socketable;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -261,6 +269,52 @@ final class NodeAllocator {
         }
         refreshShipStats();
         return true;
+    }
+
+    boolean installFramework(HullFramework framework) {
+        if (!HullFrameworks.install(data(), framework, ShipSkillDataManager.all())) {
+            return false;
+        }
+        refreshShipStats();
+        return true;
+    }
+
+    boolean removeFramework() {
+        if (HullFrameworks.remove(data()) == null) {
+            return false;
+        }
+        refreshShipStats();
+        return true;
+    }
+
+    boolean socketFrameworkItem(int slotIndex, Socketable socketable) {
+        if (!HullFrameworks.socket(data(), slotIndex, socketable, ShipSkillDataManager.all())) {
+            return false;
+        }
+        refreshShipStats();
+        return true;
+    }
+
+    boolean unsocketFrameworkItem(int slotIndex) {
+        if (data().unsocketFrameworkItem(slotIndex) == null) {
+            return false;
+        }
+        refreshShipStats();
+        return true;
+    }
+
+    List<FrameworkSlots.Slot> frameworkSlots() {
+        return FrameworkSlots.forVariant(data(), shipVariant);
+    }
+
+    HullFrameworks.InstallBlock frameworkInstallBlock(HullFramework framework) {
+        ShipProfile currentFit = FrameworkFit.profile(fleetMember.getHullSpec(), shipVariant, data());
+        return HullFrameworks.installBlock(framework, fleetMember.getHullSpec().getHullSize(), currentFit,
+                SocketCustody.frameworkShipId(framework), fleetMember.getId());
+    }
+
+    HullSize hullSize() {
+        return fleetMember.getHullSpec().getHullSize();
     }
 
     boolean chooseStartingRoot(SkillNode root) {

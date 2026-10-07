@@ -3,6 +3,7 @@ package exiledsector.ui;
 public final class SmoothZoom {
 
     public static final float MAX_ZOOM = 2.5f;
+    public static final float INSPECT_MAX_ZOOM = 40f;
     static final float MIN_ZOOM = 0.2f;
     static final float STEP = 1.1f;
     static final float RESPONSE_PER_SECOND = 12f;
@@ -43,6 +44,10 @@ public final class SmoothZoom {
 
     void aimAt(float zoom) {
         zoomTarget = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom));
+    }
+
+    void aimBeyondMax(float zoom) {
+        zoomTarget = Math.max(MAX_ZOOM, Math.min(INSPECT_MAX_ZOOM, zoom));
     }
 
     void advance(float amount) {

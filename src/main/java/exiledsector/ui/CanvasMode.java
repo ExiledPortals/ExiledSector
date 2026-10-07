@@ -30,7 +30,8 @@ enum CanvasMode {
             case READOUTS -> true;
             case SEARCH -> this != HYPERSPACE && this != ROOT_CHOICE;
             case STATS_TOGGLE -> this != HYPERSPACE;
-            case TEMPLATE_BAR, STORAGE_BUTTON -> this != HYPERSPACE && this != FLEET_FOLLOW;
+            case TEMPLATE_BAR -> this != HYPERSPACE && this != FLEET_FOLLOW;
+            case STORAGE_BUTTON -> this != HYPERSPACE;
         };
     }
 
@@ -39,7 +40,7 @@ enum CanvasMode {
             case TREE, ALLOCATION_RUN -> true;
             case ROOT_CHOICE -> chrome == Chrome.STATS_TOGGLE || chrome == Chrome.READOUTS;
             case HYPERSPACE -> chrome == Chrome.READOUTS;
-            case FLEET_FOLLOW -> chrome == Chrome.STATS_TOGGLE || chrome == Chrome.READOUTS || chrome == Chrome.SEARCH;
+            case FLEET_FOLLOW -> chrome != Chrome.TEMPLATE_BAR;
             case WORKBENCH -> chrome == Chrome.STORAGE_BUTTON;
             case MODAL -> false;
         };
@@ -54,7 +55,7 @@ enum CanvasMode {
     }
 
     boolean closesStorage() {
-        return this == ROOT_CHOICE || this == MODAL || this == HYPERSPACE || this == FLEET_FOLLOW;
+        return this == ROOT_CHOICE || this == MODAL || this == HYPERSPACE;
     }
 
     boolean entersHyperspaceOnScrollOut() {

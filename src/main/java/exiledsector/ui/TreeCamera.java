@@ -38,6 +38,20 @@ final class TreeCamera {
         followingTarget = false;
     }
 
+    void inspect(float zoom) {
+        smoothZoom.aimBeyondMax(zoom);
+    }
+
+    void stopInspecting() {
+        if (smoothZoom.target() > SmoothZoom.MAX_ZOOM) {
+            smoothZoom.aimAt(SmoothZoom.MAX_ZOOM);
+        }
+    }
+
+    boolean isFollowSettled() {
+        return followingTarget && followSeconds >= FOLLOW_SETTLE_SECONDS;
+    }
+
     boolean isFollowing() {
         return followingTarget;
     }

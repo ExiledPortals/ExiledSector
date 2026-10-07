@@ -82,7 +82,7 @@ class CanvasModeTest {
 
     @Test
     void storageClosesWhenTheTreeIsUnreachable() {
-        assertEquals(EnumSet.of(CanvasMode.ROOT_CHOICE, CanvasMode.MODAL, CanvasMode.HYPERSPACE, CanvasMode.FLEET_FOLLOW),
+        assertEquals(EnumSet.of(CanvasMode.ROOT_CHOICE, CanvasMode.MODAL, CanvasMode.HYPERSPACE),
                 matching(CanvasMode::closesStorage));
     }
 
@@ -92,11 +92,12 @@ class CanvasModeTest {
     }
 
     @Test
-    void followingTheFleetHidesTheTemplateBarAndStorageAndStopsDragPanning() {
-        assertEquals(EnumSet.of(CanvasMode.Chrome.STATS_TOGGLE, CanvasMode.Chrome.READOUTS, CanvasMode.Chrome.SEARCH),
+    void followingTheFleetHidesTheTemplateBarButKeepsStorageAndStopsDragPanning() {
+        assertEquals(EnumSet.of(CanvasMode.Chrome.STATS_TOGGLE, CanvasMode.Chrome.READOUTS, CanvasMode.Chrome.SEARCH,
+                        CanvasMode.Chrome.STORAGE_BUTTON),
                 enabledIn(CanvasMode.FLEET_FOLLOW));
         assertFalse(CanvasMode.FLEET_FOLLOW.shows(CanvasMode.Chrome.TEMPLATE_BAR));
-        assertFalse(CanvasMode.FLEET_FOLLOW.shows(CanvasMode.Chrome.STORAGE_BUTTON));
+        assertTrue(CanvasMode.FLEET_FOLLOW.shows(CanvasMode.Chrome.STORAGE_BUTTON));
         assertTrue(CanvasMode.FLEET_FOLLOW.hoversTree());
         assertEquals(EnumSet.of(CanvasMode.FLEET_FOLLOW), matching(mode -> !mode.pansOnDrag()));
     }

@@ -8,6 +8,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.socketables.SocketCustody;
+import exiledsector.socketables.SocketType;
 import exiledsector.socketables.Socketable;
 import exiledsector.socketables.SocketableStore;
 import exiledsector.ui.node.NodeSearch;
@@ -24,6 +25,7 @@ final class SocketPlacement {
     private static final float PANEL_MARGIN = 16f;
     private static final float PANEL_TOP = 100f;
     private static final float PANEL_GAP = 12f;
+    private static final int NO_FRAMEWORK_SLOT = -1;
 
     private final CustomPanelAPI hostPanel;
     private final TreeAllocationSession treeSession;
@@ -33,6 +35,7 @@ final class SocketPlacement {
     private SocketStoragePanel storagePanel;
     private Socketable placingSocketable;
     private SkillNode targetSocket;
+    private int targetFrameworkSlot = NO_FRAMEWORK_SLOT;
     private int storageRevision;
     private Map<String, FleetMemberAPI> ownedShips = Map.of();
 
@@ -64,8 +67,37 @@ final class SocketPlacement {
         return storageButton.isClickable(x, y);
     }
 
+    boolean isFrameworkTargeted() {
+        return targetFrameworkSlot != NO_FRAMEWORK_SLOT;
+    }
+
+    int targetFrameworkSlot() {
+        return targetFrameworkSlot;
+    }
+
+    void openForFrameworkSlot(int slotIndex, SocketType socketType, PositionAPI canvasPosition, ScreenRect shipCard) {
+        if (storagePanel != null) {
+            storagePanel.close();
+        }
+        stopPlacing();
+        clearTargetSocket();
+        targetFrameworkSlot = slotIndex;
+        open(canvasPosition, shipCard, socketType);
+        storagePanel.setTargetingSocket(true);
+    }
+
+    void close() {
+        if (storagePanel != null) {
+            storagePanel.close();
+        }
+    }
+
     void escape() {
         if (storagePanel != null && storagePanel.escape()) {
+            return;
+        }
+        if (targetFrameworkSlot != NO_FRAMEWORK_SLOT && storagePanel != null) {
+            storagePanel.close();
             return;
         }
         if (placingSocketable != null) {
@@ -167,6 +199,10 @@ final class SocketPlacement {
     }
 
     private void open(PositionAPI canvasPosition, ScreenRect shipCard) {
+        open(canvasPosition, shipCard, null);
+    }
+
+    private void open(PositionAPI canvasPosition, ScreenRect shipCard, SocketType kindFilter) {
         if (storagePanel != null) {
             return;
         }
@@ -192,6 +228,7 @@ final class SocketPlacement {
                         storagePanel = null;
                         stopPlacing();
                         clearTargetSocket();
+                        targetFrameworkSlot = NO_FRAMEWORK_SLOT;
                         refreshButtonLabel();
                     }
 
@@ -199,7 +236,7 @@ final class SocketPlacement {
                     public void pressedInside() {
                         searchBar.unfocus();
                     }
-                });
+                }, kindFilter);
         storagePanel.setTargetingSocket(targetSocket != null);
     }
 
@@ -237,6 +274,12 @@ final class SocketPlacement {
     }
 
     private boolean installInTargetSocket(Socketable socketable) {
+        if (targetFrameworkSlot != NO_FRAMEWORK_SLOT) {
+            if (treeSession.socketFrameworkItem(targetFrameworkSlot, socketable)) {
+                refresh();
+            }
+            return true;
+        }
         if (targetSocket == null) {
             return false;
         }
