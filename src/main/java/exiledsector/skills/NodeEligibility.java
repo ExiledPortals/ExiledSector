@@ -8,26 +8,51 @@ import exiledsector.skills.tags.ShipProfile;
 
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.function.ToDoubleFunction;
 
 public final class NodeEligibility {
 
     public enum Kind {
         LOCKED, INVALID_OPTION, WRONG_HULL_SIZE, UNMET_HULL_REQUIREMENT, UNMET_SHIP_REQUIREMENT, HULL_MOD_CONFLICT, TYPE_CONFLICT,
-        EFFECT_BLOCK
+        EFFECT_BLOCK, ITEM_COST
     }
 
     public enum OptionProblem {
         UNEXPECTED, MISSING, INVALID
     }
 
-    public record Block(Kind kind, String detail, SkillType conflictingType) {
+    public record Block(Kind kind, String detail, SkillType conflictingType, SkillItemCost itemCost) {
+
+        public Block(Kind kind, String detail, SkillType conflictingType) {
+            this(kind, detail, conflictingType, null);
+        }
     }
 
     public record Context(List<AllocatedNode> allocated, ShieldType shieldType, ShipFacts shipFacts, Predicate<SkillType> locked,
-                          ShipProfile profile) {
+                          ShipProfile profile, ToDoubleFunction<String> heldItems) {
+
+        public Context(List<AllocatedNode> allocated, ShieldType shieldType, ShipFacts shipFacts, Predicate<SkillType> locked,
+                       ShipProfile profile) {
+            this(allocated, shieldType, shipFacts, locked, profile, null);
+        }
 
         public static Context of(ShipSkillData data, ShipFacts shipFacts, Predicate<SkillType> locked) {
-            return new Context(AllocatedNode.of(data), currentShieldType(data, shipFacts.hullSize(), shipFacts.hullShieldType()), shipFacts, locked, null);
+            return of(data, shipFacts, locked, null);
+        }
+
+        public static Context of(ShipSkillData data, ShipFacts shipFacts, Predicate<SkillType> locked, ToDoubleFunction<String> heldItems) {
+            return new Context(AllocatedNode.of(data), currentShieldType(data, shipFacts.hullSize(), shipFacts.hullShieldType()), shipFacts, locked,
+                    null, heldItems);
+        }
+
+        public Context excluding(String nodeId, ShipSkillData data) {
+            List<AllocatedNode> remaining = allocated.stream().filter(existing -> !existing.node().getId().equals(nodeId)).toList();
+            ShieldType remainingShieldType = ShieldSkillEffect.resolveDisplayShieldType(shipFacts.hullShieldType(),
+                    AllocatedSkillEffects.forNodes(data, remaining, shipFacts.hullSize()));
+            SkillItemCost refund = data.itemCharge(nodeId);
+            ToDoubleFunction<String> heldAfterRefund = refund == null || heldItems == null ? heldItems
+                    : itemId -> heldItems.applyAsDouble(itemId) + (itemId.equals(refund.itemId()) ? refund.quantity() : 0f);
+            return new Context(remaining, remainingShieldType, shipFacts, locked, profile, heldAfterRefund);
         }
     }
 
@@ -36,7 +61,7 @@ public final class NodeEligibility {
 
     public static Block check(SkillNode node, SkillType option, Context context) {
         AllocatedNode candidate = AllocatedNode.planned(node, option);
-        if (context.locked() != null && context.locked().test(candidate.effectiveType())) {
+        if (context.locked() != null && (context.locked().test(node.getType()) || context.locked().test(candidate.effectiveType()))) {
             return new Block(Kind.LOCKED, null, null);
         }
         OptionProblem optionProblem = option == null ? null : optionProblem(node.getType(), option.getId());
@@ -74,7 +99,19 @@ public final class NodeEligibility {
                 return new Block(Kind.EFFECT_BLOCK, reason, null);
             }
         }
-        return null;
+        return itemCostBlock(itemCost(node, option), context.heldItems());
+    }
+
+    public static SkillItemCost itemCost(SkillNode node, SkillType option) {
+        SkillItemCost optionCost = option == null ? null : option.getItemCost();
+        return optionCost != null ? optionCost : node.getType().getItemCost();
+    }
+
+    private static Block itemCostBlock(SkillItemCost itemCost, ToDoubleFunction<String> heldItems) {
+        if (itemCost == null || heldItems != null && heldItems.applyAsDouble(itemCost.itemId()) >= itemCost.quantity()) {
+            return null;
+        }
+        return new Block(Kind.ITEM_COST, itemCost.itemId(), null, itemCost);
     }
 
     public static OptionProblem optionProblem(SkillType type, String optionTypeId) {

@@ -1,5 +1,6 @@
 package exiledsector.ui.node;
 
+import exiledsector.skills.AllocationGate;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
@@ -28,16 +29,14 @@ final class TemplateStepExecutor {
 
     StepVerdict attempt(TemplateStep step) {
         NodeAllocator.Snapshot currentSnapshot = snapshotSupplier.get();
-        StepVerdict verdict = TemplateStepRules.verdict(step, currentSnapshot.skillData(), currentSnapshot.satisfiedRootId(),
-                currentSnapshot::canAllocate, allocator::blockAllocationReason);
+        AllocationGate gate = currentSnapshot.gate();
+        StepVerdict verdict = TemplateStepRules.verdict(step, currentSnapshot.skillData(), currentSnapshot.satisfiedRootId(), gate::allocation);
         if (verdict != StepVerdict.ALLOCATE) {
             logSkip(step, verdict);
             return verdict;
         }
         SkillNode node = SkillTree.get(step.nodeId());
-        if (node.getType().isOptional()) {
-            allocator.allocateOption(node, TemplateStepRules.optionFor(step, node.getType()));
-        } else if (!allocator.toggle(node)) {
+        if (!allocator.allocate(node, TemplateStepRules.optionFor(step, node.getType()), currentSnapshot)) {
             logSkip(step, StepVerdict.NOT_ALLOCATABLE);
             return StepVerdict.NOT_ALLOCATABLE;
         }
@@ -51,7 +50,7 @@ final class TemplateStepExecutor {
             pointsLeftSnapshot = currentSnapshot;
             ShipSkillData skillData = currentSnapshot.skillData();
             cachedPointsLeft = TemplateBudget.hasPointsLeft(skillData.getAllocatedNodeIds().size(), currentSnapshot.maxAllocatedNodes(),
-                    skillData.getBankedFreeAllocations(), skillData.getSpentOp(currentSnapshot.opCostPerNode()), currentSnapshot.opCostPerNode(),
+                    skillData.getBankedFreeAllocations(), currentSnapshot.gate().spentOp(), currentSnapshot.opCostPerNode(),
                     currentSnapshot.totalOpBudget());
         }
         return cachedPointsLeft;

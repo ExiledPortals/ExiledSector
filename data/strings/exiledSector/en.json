@@ -276,6 +276,8 @@
     "node.block.typeAllocated": "Already have {node} allocated.",
     "node.block.invalidOption": "That option isn't available on this node.",
     "node.block.locked": "Unidentified - explore the sector to discover this node.",
+    "node.block.nodeCap": "This ship already has the maximum of {maxNodes} allocated nodes.",
+    "node.block.outOfOp": "Not enough ordnance points: needs {cost} OP, {free} OP free.",
     "node.temporary": "These effects only last for the first {seconds} seconds after the ship is deployed.",
     "ui.node.socket.installHint": "Pick an item in Socket Storage, then click this socket to install it.",
     "socketable.unknown": "Unrecognised hull socket module",

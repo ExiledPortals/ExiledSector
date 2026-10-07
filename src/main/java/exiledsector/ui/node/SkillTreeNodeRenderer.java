@@ -4,6 +4,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.i18n.Translation;
 import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.AllocationGate;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -32,6 +33,7 @@ import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static exiledsector.ui.node.SkillTreeNodeGeometry.ICON_INSET_RATIO;
 import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_SIZE;
@@ -62,6 +64,7 @@ public final class SkillTreeNodeRenderer {
     private final TemplateStepExecutor stepExecutor;
     private final Function<TemplateStep, StepVerdict> attemptStep;
     private final BooleanSupplier pointsLeftCheck;
+    private final Predicate<SkillType> dropdownOptionUsable = this::isDropdownOptionUsable;
 
     private SkillType lastChosenOptionalOption;
     private String targetedSocketId;
@@ -205,7 +208,7 @@ public final class SkillTreeNodeRenderer {
             return false;
         }
         List<SkillNode> respecPlan = allocator.respecPlan(node);
-        if (respecPlan.isEmpty() || respecPlan.stream().anyMatch(allocator::hasDeallocationCondition)) {
+        if (respecPlan.isEmpty()) {
             return false;
         }
         dropdownRenderer.close();
@@ -247,7 +250,7 @@ public final class SkillTreeNodeRenderer {
         if (!allocator.data().isAllocated(node.getId())) {
             return true;
         }
-        if (!allocator.canDeallocate(node) || !allocator.toggle(node)) {
+        if (!allocator.deallocate(node, snapshot())) {
             return false;
         }
         afterAllocationChange(node, false);
@@ -313,7 +316,7 @@ public final class SkillTreeNodeRenderer {
     }
 
     private NodeAllocator.Snapshot snapshot() {
-        if (allocationSnapshot == null) {
+        if (allocationSnapshot == null || !allocationSnapshot.isCurrent(allocator.data())) {
             allocationSnapshot = allocator.snapshot();
         }
         return allocationSnapshot;
@@ -346,7 +349,7 @@ public final class SkillTreeNodeRenderer {
             renderStartingRootPrompt(viewport.centerX(), viewport.screenY(rootChoice.promptOffsetY()), alphaMult);
         }
 
-        dropdownRenderer.render(viewport, mouseX, mouseY, mouseKnown, alphaMult);
+        dropdownRenderer.render(viewport, mouseX, mouseY, mouseKnown, alphaMult, dropdownOptionUsable);
     }
 
     private void renderStartingRootPrompt(float x, float y, float alphaMult) {
@@ -423,7 +426,8 @@ public final class SkillTreeNodeRenderer {
         if (dropdownRenderer.isOpen()) {
             SkillType hoveredOption = dropdownRenderer.findOptionAt(viewport, mouseX, mouseY);
             if (hoveredOption != null) {
-                tooltipRenderer.renderTooltipForType(hoveredOption, mouseX, mouseY, alphaMult);
+                String refusalReason = snapshot().optionRefusalReason(dropdownRenderer.getOpenNode(), hoveredOption);
+                tooltipRenderer.renderTooltipForType(hoveredOption, refusalReason, mouseX, mouseY, alphaMult);
             }
             return;
         }
@@ -476,20 +480,25 @@ public final class SkillTreeNodeRenderer {
             unchooseStartingRoot(node);
             return;
         }
-        boolean wasAllocated = allocator.data().isAllocated(node.getId());
-        boolean isOptional = node.getType().isOptional();
-
-        if (!wasAllocated && isOptional) {
-            toggleOptionalAllocation(node, ctrlDown);
-            return;
+        NodeAllocator.Snapshot allocation = snapshot();
+        if (allocation.skillData().isAllocated(node.getId())) {
+            removeOrSwitchOption(node, allocation);
+        } else if (!allocation.canAllocate(node)) {
+            SkillTreeSounds.refused();
+        } else if (node.getType().isOptional()) {
+            chooseOption(node, ctrlDown);
+        } else if (allocator.allocate(node, null, allocation)) {
+            afterAllocationChange(node, true);
         }
+    }
 
-        if (!canToggle(node, wasAllocated, isOptional)) {
-            return;
-        }
-
-        if (allocator.toggle(node)) {
-            afterAllocationChange(node, !wasAllocated);
+    private void removeOrSwitchOption(SkillNode node, NodeAllocator.Snapshot allocation) {
+        if (allocator.deallocate(node, allocation)) {
+            afterAllocationChange(node, false);
+        } else if (node.getType().isOptional()) {
+            dropdownRenderer.open(node);
+        } else {
+            SkillTreeSounds.refused();
         }
     }
 
@@ -522,28 +531,13 @@ public final class SkillTreeNodeRenderer {
         return isStartingRootInputLocked() || autoAllocateRun != null || respecRun != null;
     }
 
-    private void toggleOptionalAllocation(SkillNode node, boolean ctrlDown) {
-        if (!allocator.canAllocate(node)) {
-            return;
-        }
+    private void chooseOption(SkillNode node, boolean ctrlDown) {
         SkillType repeatedOption = ctrlDown ? repeatableOptionFor(node) : null;
         if (repeatedOption != null) {
             allocateOptionalNode(node, repeatedOption);
         } else {
             dropdownRenderer.open(node);
         }
-    }
-
-    private boolean canToggle(SkillNode node, boolean wasAllocated, boolean isOptional) {
-        if (!wasAllocated) {
-            return allocator.blockAllocationReason(node, null) == null;
-        }
-
-        boolean canDeallocate = allocator.canDeallocate(node);
-        if (!canDeallocate && isOptional) {
-            dropdownRenderer.open(node);
-        }
-        return canDeallocate;
     }
 
     public boolean isDropdownOpen() {
@@ -561,22 +555,43 @@ public final class SkillTreeNodeRenderer {
     public void commitDropdownSelection(SkillType chosenOption) {
         SkillNode node = dropdownRenderer.getOpenNode();
         dropdownRenderer.close();
-        if (node == null) return;
-        if (allocator.blockAllocationReason(node, chosenOption) != null) return;
-
-        allocateOptionalNode(node, chosenOption);
+        if (node != null) {
+            allocateOptionalNode(node, chosenOption);
+        }
     }
 
     private SkillType repeatableOptionFor(SkillNode node) {
-        if (lastChosenOptionalOption == null) return null;
-        if (!node.getType().getOptionalOptionIds().contains(lastChosenOptionalOption.getId())) return null;
-        if (allocator.blockAllocationReason(node, lastChosenOptionalOption) != null) return null;
-        return lastChosenOptionalOption;
+        if (lastChosenOptionalOption == null || !node.getType().getOptionalOptionIds().contains(lastChosenOptionalOption.getId())) {
+            return null;
+        }
+        return snapshot().gate().allocation(node, lastChosenOptionalOption).allowed() ? lastChosenOptionalOption : null;
+    }
+
+    private boolean isDropdownOptionUsable(SkillType option) {
+        SkillNode node = dropdownRenderer.getOpenNode();
+        if (node == null) {
+            return false;
+        }
+        AllocationGate.Verdict verdict = optionVerdict(node, option, snapshot());
+        return verdict.allowed() || verdict.refusal() == AllocationGate.Refusal.SAME_OPTION;
+    }
+
+    private static AllocationGate.Verdict optionVerdict(SkillNode node, SkillType option, NodeAllocator.Snapshot allocation) {
+        return allocation.skillData().isAllocated(node.getId())
+                ? allocation.gate().optionSwitch(node, option) : allocation.gate().allocation(node, option);
     }
 
     private void allocateOptionalNode(SkillNode node, SkillType chosenOption) {
-        boolean wasAllocated = allocator.data().isAllocated(node.getId());
-        allocator.allocateOption(node, chosenOption);
+        NodeAllocator.Snapshot allocation = snapshot();
+        boolean wasAllocated = allocation.skillData().isAllocated(node.getId());
+        if (optionVerdict(node, chosenOption, allocation).refusal() == AllocationGate.Refusal.SAME_OPTION) {
+            return;
+        }
+        boolean changed = wasAllocated ? allocator.switchOption(node, chosenOption, allocation) : allocator.allocate(node, chosenOption, allocation);
+        if (!changed) {
+            SkillTreeSounds.refused();
+            return;
+        }
         lastChosenOptionalOption = chosenOption;
         if (wasAllocated) {
             refreshAfterAllocation();

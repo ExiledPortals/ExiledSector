@@ -612,20 +612,6 @@ class SkillEffectTest {
     }
 
     @Test
-    void fighterBayEffectsNeverBlockDeallocationBecauseTheWingGoesBackToCargo() {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-
-        assertNull(FighterSkillEffect.FIGHTER_BAYS_FLAT.blockDeallocationReason(member, 1f));
-        assertNull(FighterSkillEffect.CONVERTED_HANGAR_FIGHTER_BAYS_FLAT.blockDeallocationReason(member, 1f));
-        assertFalse(FighterSkillEffect.FIGHTER_BAYS_FLAT.hasDeallocationCondition());
-    }
-
-    @Test
-    void mostEffectsNeverBlockDeallocation() {
-        assertNull(DefenseSkillEffect.HULL_PERCENT.blockDeallocationReason(mock(FleetMemberAPI.class), 10f));
-    }
-
-    @Test
     void fighterWeaponDamageDoesNotTouchTheCarrierStatsDirectly() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
 
@@ -726,7 +712,6 @@ class SkillEffectTest {
         FighterSkillEffect.CONVERTED_HANGAR_FIGHTER_BAYS_FLAT.apply(stats, "mod_id", 1f);
 
         assertEquals(2f, numFighterBays.getModifiedValue(), 1e-4f);
-        assertFalse(FighterSkillEffect.CONVERTED_HANGAR_FIGHTER_BAYS_FLAT.hasDeallocationCondition());
     }
 
     @Test

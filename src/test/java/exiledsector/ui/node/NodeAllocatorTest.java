@@ -7,8 +7,6 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
-import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
@@ -19,16 +17,15 @@ import com.fs.starfarer.api.loading.VariantSource;
 import exiledsector.effects.OpReserveParity;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.AllocationGate;
+import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.progression.SkillNodeOpCost;
-import exiledsector.skills.skilleffect.SkillEffect;
-import exiledsector.i18n.StyledText;
 import exiledsector.skills.template.StepVerdict;
 import exiledsector.skills.template.TemplateStep;
 import exiledsector.skills.unlock.UnlockCondition;
@@ -41,7 +38,6 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,11 +46,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.contains;
+import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -63,32 +61,6 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 class NodeAllocatorTest {
-
-    private static final SkillEffect GUARDED = new SkillEffect() {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-        }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return StyledText.of("guarded");
-        }
-
-        @Override
-        public String blockDeallocationReason(FleetMemberAPI member, float magnitude) {
-            return member.getVariant().getFittedWings().size() > 1 ? "blocked" : null;
-        }
-
-        @Override
-        public boolean hasDeallocationCondition() {
-            return true;
-        }
-
-        @Override
-        public String name() {
-            return "GUARDED";
-        }
-    };
 
     private MockedStatic<LunaSettings> lunaSettingsMock;
     private MockedStatic<Global> globalMock;
@@ -157,7 +129,7 @@ class NodeAllocatorTest {
     }
 
     private static String blockReason(NodeAllocator allocator, SkillType type) {
-        return allocator.blockAllocationReason(new SkillNode("unplaced_" + type.getId(), type, List.of(), 0f, 0f), null);
+        return allocator.snapshot().allocationRefusalReason(new SkillNode("unplaced_" + type.getId(), type, List.of(), 0f, 0f), null);
     }
 
     private static SkillNode register(String id, SkillType type, String... connectedTo) {
@@ -240,7 +212,7 @@ class NodeAllocatorTest {
     void theStartingRootCanNeverBeDeallocated() {
         data().chooseStartingRoot(root);
 
-        assertFalse(allocatorStartingAt(root).canDeallocate(root));
+        assertEquals(AllocationGate.Refusal.STARTING_ROOT, allocatorStartingAt(root).snapshot().gate().deallocation(root).refusal());
     }
 
     @Test
@@ -303,7 +275,7 @@ class NodeAllocatorTest {
         SkillNode slot = register("slot_1", type("slot", "Slot", SkillTier.SMALL).exclusiveHullModIds(List.of("heavyarmor"))
                 .optionalOptionIds(List.of("plain")).build(), "root_1");
 
-        assertEquals("Ship already has Heavy Armor installed.", allocatorStartingAt(root).blockAllocationReason(slot, plain));
+        assertEquals("Ship already has Heavy Armor installed.", allocatorStartingAt(root).snapshot().allocationRefusalReason(slot, plain));
     }
 
     @Test
@@ -313,21 +285,152 @@ class NodeAllocatorTest {
         when(settings.getCommoditySpec("alpha_core")).thenReturn(spec);
         NodeAllocator allocator = allocatorStartingAt(root);
 
-        assertEquals("Requires 1 Alpha Core (have 0).", allocator.blockAllocationReason(coreSlot, null));
+        assertEquals("Requires 1 Alpha Core (have 0).", allocator.snapshot().allocationRefusalReason(coreSlot, null));
+        assertFalse(allocator.snapshot().canAllocate(coreSlot));
         when(cargo.getCommodityQuantity("alpha_core")).thenReturn(1f);
-        assertNull(allocator.blockAllocationReason(coreSlot, null));
+        assertNull(allocator.snapshot().allocationRefusalReason(coreSlot, null));
+        assertTrue(allocator.snapshot().canAllocate(coreSlot));
     }
 
     @Test
-    void togglingANodeOnTakesItsItemAndTogglingItOffRefundsItRefreshingTheShipEachTime() {
+    void allocatingANodeTakesItsItemAndRemovingItRefundsItRefreshingTheShipEachTime() {
+        data().chooseStartingRoot(root);
+        when(cargo.getCommodityQuantity("alpha_core")).thenReturn(1f);
+        NodeAllocator allocator = allocatorStartingAt(root);
+        allocator.snapshot();
+        clearInvocations(member);
+
+        assertTrue(allocator.allocate(coreSlot, null, allocator.snapshot()));
+        verify(cargo).removeCommodity("alpha_core", 1f);
+        assertTrue(allocator.deallocate(coreSlot, allocator.snapshot()));
+        verify(cargo).addCommodity("alpha_core", 1f);
+        verify(member, times(2)).updateStats();
+        assertNull(data().itemCharge("core_1"));
+    }
+
+    @Test
+    void removingAnItemNodeThatWasNeverChargedRefundsNothing() {
+        data().chooseStartingRoot(root);
+        data().allocate(coreSlot, 0);
+        NodeAllocator allocator = allocatorStartingAt(root);
+
+        assertTrue(allocator.deallocate(coreSlot, allocator.snapshot()));
+
+        verify(cargo, never()).addCommodity(anyString(), anyFloat());
+    }
+
+    private SkillNode optionalNodeWithPricedOptions() {
+        SkillTree.registerType(type("scanner", "Scanner", SkillTier.SMALL).itemCost(new SkillItemCost("alpha_core", 1f)).build());
+        SkillTree.registerType(type("sensor", "Sensor", SkillTier.SMALL).itemCost(new SkillItemCost("beta_core", 2f)).build());
+        return register("picker_1", type("picker", "Picker", SkillTier.SMALL).optionalOptionIds(List.of("scanner", "sensor")).build(), "root_1");
+    }
+
+    @Test
+    void anOptionsItemCostIsChargedWhenChosenAndRefundedWhenTheNodeIsRemoved() {
+        SkillNode picker = optionalNodeWithPricedOptions();
+        data().chooseStartingRoot(root);
+        when(cargo.getCommodityQuantity("alpha_core")).thenReturn(1f);
+        NodeAllocator allocator = allocatorStartingAt(root);
+
+        assertTrue(allocator.allocate(picker, SkillTree.getType("scanner"), allocator.snapshot()));
+        verify(cargo).removeCommodity("alpha_core", 1f);
+        assertEquals(new SkillItemCost("alpha_core", 1f), data().itemCharge("picker_1"));
+
+        assertTrue(allocator.deallocate(picker, allocator.snapshot()));
+        verify(cargo).addCommodity("alpha_core", 1f);
+    }
+
+    @Test
+    void anOptionWhoseItemIsNotInCargoCannotBeChosen() {
+        SkillNode picker = optionalNodeWithPricedOptions();
+        data().chooseStartingRoot(root);
+        when(cargo.getCommodityQuantity("alpha_core")).thenReturn(1f);
+        CommoditySpecAPI spec = mock(CommoditySpecAPI.class);
+        when(spec.getName()).thenReturn("Beta Core");
+        when(settings.getCommoditySpec("beta_core")).thenReturn(spec);
+        NodeAllocator allocator = allocatorStartingAt(root);
+        NodeAllocator.Snapshot snapshot = allocator.snapshot();
+
+        assertTrue(snapshot.canAllocate(picker));
+        assertEquals("Requires 2 Beta Core (have 0).", snapshot.optionRefusalReason(picker, SkillTree.getType("sensor")));
+        assertFalse(allocator.allocate(picker, SkillTree.getType("sensor"), snapshot));
+        assertFalse(data().isAllocated("picker_1"));
+    }
+
+    @Test
+    void switchingOptionsRefundsTheOldOptionsItemAndChargesTheNewOne() {
+        SkillNode picker = optionalNodeWithPricedOptions();
+        data().chooseStartingRoot(root);
+        when(cargo.getCommodityQuantity("alpha_core")).thenReturn(1f);
+        when(cargo.getCommodityQuantity("beta_core")).thenReturn(2f);
+        NodeAllocator allocator = allocatorStartingAt(root);
+        assertTrue(allocator.allocate(picker, SkillTree.getType("scanner"), allocator.snapshot()));
+
+        assertTrue(allocator.switchOption(picker, SkillTree.getType("sensor"), allocator.snapshot()));
+
+        verify(cargo).addCommodity("alpha_core", 1f);
+        verify(cargo).removeCommodity("beta_core", 2f);
+        assertEquals(new SkillItemCost("beta_core", 2f), data().itemCharge("picker_1"));
+        assertEquals(SkillTree.getType("sensor"), picker.resolveEffectiveType(data()));
+    }
+
+    @Test
+    void switchingBetweenTwoMutuallyExclusiveOptionsDoesNotConflictWithTheOptionBeingReplaced() {
+        SkillTree.registerType(type("front_mode", "Front Mode", SkillTier.SMALL).exclusiveSkillTypeIds(List.of("omni_mode")).build());
+        SkillTree.registerType(type("omni_mode", "Omni Mode", SkillTier.SMALL).exclusiveSkillTypeIds(List.of("front_mode")).build());
+        SkillNode mode = register("mode_1", type("mode", "Mode", SkillTier.SMALL).optionalOptionIds(List.of("front_mode", "omni_mode")).build(),
+                "root_1");
+        data().chooseStartingRoot(root);
+        data().selectOption(mode, SkillTree.getType("front_mode"), 0);
+        NodeAllocator allocator = allocatorStartingAt(root);
+
+        AllocationGate gate = allocator.snapshot().gate();
+        assertTrue(gate.optionSwitch(mode, SkillTree.getType("omni_mode")).allowed());
+        assertEquals(AllocationGate.Refusal.SAME_OPTION, gate.optionSwitch(mode, SkillTree.getType("front_mode")).refusal());
+    }
+
+    @Test
+    void anOptionalContainerBehindAnUnmetUnlockConditionIsLockedWhicheverOptionIsChosen() {
+        SkillTree.registerType(type("open_option", "Open Option", SkillTier.SMALL).build());
+        SkillNode sealed = register("sealed_1", type("sealed", "Sealed", SkillTier.SMALL).optionalOptionIds(List.of("open_option"))
+                .unlockConditions(List.of(UnlockCondition.minShipLevel(5))).build(), "root_1");
+        data().chooseStartingRoot(root);
+
+        AllocationGate.Verdict verdict = allocatorStartingAt(root).snapshot().gate().allocation(sealed, SkillTree.getType("open_option"));
+
+        assertEquals(NodeEligibility.Kind.LOCKED, verdict.block().kind());
+    }
+
+    @Test
+    void aNeighbourThatTheEligibilityRulesRefuseDoesNotCountAsAllocatable() {
+        SkillNode frigateOnly = register("frigate_only_1", type("frigate_only", "Frigate Only", SkillTier.SMALL)
+                .requiredHullSizes(List.of(HullSize.FRIGATE)).build(), "root_1");
         data().chooseStartingRoot(root);
         NodeAllocator allocator = allocatorStartingAt(root);
 
-        assertTrue(allocator.toggle(coreSlot));
-        verify(cargo).removeCommodity("alpha_core", 1f);
-        assertTrue(allocator.toggle(coreSlot));
-        verify(cargo).addCommodity("alpha_core", 1f);
-        verify(member, times(2)).updateStats();
+        assertFalse(allocator.snapshot().canAllocate(frigateOnly));
+        assertEquals("This node can't be allocated on this hull size.", allocator.snapshot().refusalReason(frigateOnly));
+        assertFalse(allocator.allocate(frigateOnly, null, allocator.snapshot()));
+    }
+
+    @Test
+    void runningOutOfOpIsExplainedButAnUnconnectedNodeIsNot() {
+        data().chooseStartingRoot(root);
+        when(variant.computeOPCost(any())).thenReturn(100);
+
+        String outOfOp = allocatorStartingAt(root).snapshot().refusalReason(frontShield);
+
+        assertEquals("Not enough ordnance points: needs " + SkillNodeOpCost.perNode(HullSize.CRUISER) + " OP, 0 OP free.", outOfOp);
+        assertNull(allocatorStartingAt(root).snapshot().refusalReason(unreachable));
+    }
+
+    @Test
+    void theSnapshotHandsOutOneMemoisedVerdictPerNode() {
+        data().chooseStartingRoot(root);
+        AllocationGate gate = allocatorStartingAt(root).snapshot().gate();
+
+        assertSame(gate.allocation(frontShield), gate.allocation(frontShield));
+        assertSame(gate.deallocation(root), gate.deallocation(root));
     }
 
     @Test
@@ -337,17 +440,20 @@ class NodeAllocatorTest {
         NodeAllocator allocator = allocatorStartingAt(root);
         assertTrue(allocator.chooseStartingRoot(root));
 
-        assertTrue(allocator.toggle(frontShield));
+        assertTrue(allocator.allocate(frontShield, null, allocator.snapshot()));
 
         verify(reserve).setCruiserCost(SkillNodeOpCost.perNode(HullSize.CRUISER));
         verify(variant).addMod("exiledSector_opSpent_0");
     }
 
     @Test
-    void aToggleThatChangesNothingTakesNoItemAndDoesNotRefreshTheShip() {
+    void aRefusedAllocationTakesNoItemAndDoesNotRefreshTheShip() {
         data().chooseStartingRoot(root);
+        NodeAllocator allocator = allocatorStartingAt(root);
+        allocator.snapshot();
+        clearInvocations(member);
 
-        assertFalse(allocatorStartingAt(root).toggle(unreachable));
+        assertFalse(allocator.allocate(unreachable, null, allocator.snapshot()));
 
         verifyNoInteractions(cargo);
         verify(member, never()).updateStats();
@@ -359,7 +465,8 @@ class NodeAllocatorTest {
                 .unlockConditions(List.of(UnlockCondition.minShipLevel(5))).build(), "root_1");
         NodeAllocator allocator = allocatorStartingAt(root);
 
-        assertEquals("Unidentified - explore the sector to discover this node.", allocator.blockAllocationReason(secret, null));
+        assertEquals("Unidentified - explore the sector to discover this node.", allocator.snapshot().allocationRefusalReason(secret, null));
+        assertNull(allocator.snapshot().refusalReason(secret));
         assertTrue(allocator.snapshot().isHidden(secret));
         assertFalse(allocator.snapshot().isHidden(frontShield));
     }
@@ -389,70 +496,52 @@ class NodeAllocatorTest {
         assertNull(blockReason(allocatorStartingAt(root), civilianOnly));
     }
 
-    private void fitWingsWithBays(int fittedWings, float bays) {
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        when(stats.getNumFighterBays()).thenReturn(new MutableStat(bays));
-        when(member.getStats()).thenReturn(stats);
-        when(member.getVariant()).thenReturn(variant);
-        when(variant.getFittedWings()).thenReturn(Collections.nCopies(fittedWings, "wing"));
-    }
-
     @Test
-    void anEffectsOwnDeallocationRuleKeepsTheNodeAllocatedUntilItIsSafeToRemove() {
-        SkillNode hangar = register("hangar_1", type("hangar", "Hangar", SkillTier.NOTABLE)
-                .effects(List.of(new SkillTypeEffect(GUARDED, 1f))).build(), "root_1");
+    void aRespecPlanListsEveryDependentBeforeTheNodeItself() {
+        SkillNode hangar = register("hangar_1", type("hangar", "Hangar", SkillTier.NOTABLE).build(), "root_1");
         data().chooseStartingRoot(root);
         data().allocate(hangar, 0);
-        NodeAllocator allocator = allocatorStartingAt(root);
 
-        fitWingsWithBays(2, 2f);
-        assertNotNull(allocator.blockDeallocationReason(hangar));
-        assertFalse(allocator.canDeallocate(hangar));
-
-        fitWingsWithBays(1, 2f);
-        assertNull(allocator.blockDeallocationReason(hangar));
-        assertTrue(allocator.canDeallocate(hangar));
-    }
-
-    @Test
-    void aRespecSkipsNodesWithADeallocationConditionEvenWhenItIsCurrentlyMet() {
-        SkillNode hangar = register("hangar_1", type("hangar", "Hangar", SkillTier.NOTABLE)
-                .effects(List.of(new SkillTypeEffect(GUARDED, 1f))).build(), "root_1");
-        data().chooseStartingRoot(root);
-        data().allocate(hangar, 0);
-        NodeAllocator allocator = allocatorStartingAt(root);
-        fitWingsWithBays(0, 2f);
-
-        assertTrue(allocator.hasDeallocationCondition(hangar));
-        assertFalse(allocator.hasDeallocationCondition(root));
-        assertEquals(List.of(hangar, root), allocator.respecPlan(root));
+        assertEquals(List.of(hangar, root), allocatorStartingAt(root).respecPlan(root));
     }
 
     @Test
     void allocatingAnOptionChargesTheNodeRecordsTheChoiceAndRefreshesTheShip() {
-        SkillType hangarOption = type("hangar_option", "Hangar Option", SkillTier.NOTABLE)
-                .effects(List.of(new SkillTypeEffect(GUARDED, 1f))).build();
+        SkillType hangarOption = type("hangar_option", "Hangar Option", SkillTier.NOTABLE).build();
         SkillTree.registerType(hangarOption);
         SkillNode choice = register("choice_1", type("choice", "Choice", SkillTier.NOTABLE)
                 .optionalOptionIds(List.of("hangar_option")).build(), "root_1");
         data().chooseStartingRoot(root);
         NodeAllocator allocator = allocatorStartingAt(root);
+        allocator.snapshot();
+        clearInvocations(member);
 
-        allocator.allocateOption(choice, hangarOption);
+        assertTrue(allocator.allocate(choice, hangarOption, allocator.snapshot()));
 
         assertTrue(data().isAllocated("choice_1"));
         assertEquals(hangarOption, choice.resolveEffectiveType(data()));
         assertEquals(SkillNodeOpCost.perNode(HullSize.CRUISER), data().getSpentOp(SkillNodeOpCost.perNode(HullSize.CRUISER)));
         verify(member).updateStats();
-        fitWingsWithBays(2, 2f);
-        assertNotNull(allocator.blockDeallocationReason(choice));
+    }
+
+    @Test
+    void anOptionalNodeCannotBeAllocatedWithoutAnOption() {
+        SkillTree.registerType(type("only_option", "Only Option", SkillTier.SMALL).build());
+        SkillNode choice = register("choice_1", type("choice", "Choice", SkillTier.SMALL).optionalOptionIds(List.of("only_option")).build(),
+                "root_1");
+        data().chooseStartingRoot(root);
+        NodeAllocator allocator = allocatorStartingAt(root);
+
+        assertTrue(allocator.snapshot().canAllocate(choice));
+        assertFalse(allocator.allocate(choice, null, allocator.snapshot()));
     }
 
     @Test
     void allocatingOnAShipThatHasNotHadItsHullModInstalledYetInstallsItOnTheShipAndTheRefitCopy() {
         data().chooseStartingRoot(root);
 
-        assertTrue(allocatorStartingAt(root).toggle(frontShield));
+        NodeAllocator allocator = allocatorStartingAt(root);
+        assertTrue(allocator.allocate(frontShield, null, allocator.snapshot()));
 
         verify(shipVariant).addPermaMod(SkillTreeHullMod.ID);
         verify(variant).addPermaMod(SkillTreeHullMod.ID);

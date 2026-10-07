@@ -147,7 +147,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
             return;
         }
         ShipSkillDataManager.replaceRemovedNodes(SkillTree.getAllNodes(), NodeReplacements.all());
-        ShipSkillDataManager.forgetUnknownNodes(SkillTree.getAllNodes(), SkillTree.getAllTypes(), SkillTree::getDeclared,
+        ShipSkillDataManager.forgetUnknownNodes(SkillTree.getAllNodes(), SkillTree.getAllTypes(),
                 new OwnedShips(), ExiledSectorModPlugin::refund);
     }
 

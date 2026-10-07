@@ -3,7 +3,6 @@ package exiledsector.skills.skilleffect;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.i18n.StyledText;
 import exiledsector.skills.ShipFacts;
 
@@ -48,14 +47,6 @@ public interface SkillEffect {
     }
 
     default void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
-    }
-
-    default String blockDeallocationReason(FleetMemberAPI member, float magnitude) {
-        return null;
-    }
-
-    default boolean hasDeallocationCondition() {
-        return false;
     }
 
     default String blockAllocationReason(ShipFacts ship, ShieldAPI.ShieldType currentShieldType) {

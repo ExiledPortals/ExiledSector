@@ -151,15 +151,17 @@ class ShipSkillDataManagerTest {
         ShipSkillData healthy = ShipSkillDataManager.get("healthy");
         healthy.chooseStartingRoot(root);
         healthy.allocate(lobster, 3);
+        healthy.recordItemCharge("lobster", lobster.getType().getItemCost());
         healthy.allocate(node("removed"), 3);
         ShipSkillData rootless = ShipSkillDataManager.get("rootless");
         rootless.chooseStartingRoot(removedRoot);
         rootless.allocate(lobster, 3);
+        rootless.recordItemCharge("lobster", lobster.getType().getItemCost());
         rootless.incrementLevel();
         List<SkillItemCost> refunds = new ArrayList<>();
         Map<String, SkillNode> tree = Map.of("root", root, "lobster", lobster);
 
-        ShipSkillDataManager.forgetUnknownNodes(tree, Map.of(), tree::get, shipId -> true, refunds::add);
+        ShipSkillDataManager.forgetUnknownNodes(tree, Map.of(), shipId -> true, refunds::add);
 
         assertEquals(List.of("root", "lobster"), List.copyOf(healthy.getAllocatedNodeIds()));
         assertTrue(rootless.getAllocatedNodeIds().isEmpty());
@@ -175,12 +177,12 @@ class ShipSkillDataManagerTest {
         ShipSkillData ship = ShipSkillDataManager.get("ship");
         ship.chooseStartingRoot(root);
         ship.allocate(lobster, 3);
+        ship.recordItemCharge("lobster", lobster.getType().getItemCost());
         ship.addFreeAllocationCredit();
         ship.allocate(freebie, 3);
         List<SkillItemCost> refunds = new ArrayList<>();
-        Map<String, SkillNode> declared = Map.of("root", root, "lobster", lobster, "freebie", freebie);
 
-        ShipSkillDataManager.forgetUnknownNodes(Map.of("root", root), Map.of(), declared::get, shipId -> true, refunds::add);
+        ShipSkillDataManager.forgetUnknownNodes(Map.of("root", root), Map.of(), shipId -> true, refunds::add);
 
         assertEquals(List.of("root"), List.copyOf(ship.getAllocatedNodeIds()));
         assertEquals(List.of(new SkillItemCost("lobster", 50f)), refunds);
@@ -195,19 +197,36 @@ class ShipSkillDataManagerTest {
         ShipSkillData owned = ShipSkillDataManager.get("owned");
         owned.chooseStartingRoot(root);
         owned.allocate(lobster, 3);
+        owned.recordItemCharge("lobster", lobster.getType().getItemCost());
         ShipSkillData sold = ShipSkillDataManager.get("sold");
         sold.chooseStartingRoot(root);
         sold.allocate(lobster, 3);
+        sold.recordItemCharge("lobster", lobster.getType().getItemCost());
         ShipSkillData destroyed = ShipSkillDataManager.get("destroyed");
         destroyed.chooseStartingRoot(removedRoot);
         destroyed.allocate(lobster, 3);
+        destroyed.recordItemCharge("lobster", lobster.getType().getItemCost());
         List<SkillItemCost> refunds = new ArrayList<>();
-        Map<String, SkillNode> declared = Map.of("root", root, "lobster", lobster);
 
-        ShipSkillDataManager.forgetUnknownNodes(Map.of("root", root), Map.of(), declared::get, "owned"::equals, refunds::add);
+        ShipSkillDataManager.forgetUnknownNodes(Map.of("root", root), Map.of(), "owned"::equals, refunds::add);
 
         assertEquals(List.of("root"), List.copyOf(sold.getAllocatedNodeIds()));
         assertTrue(destroyed.getAllocatedNodeIds().isEmpty());
         assertEquals(List.of(new SkillItemCost("lobster", 50f)), refunds);
+    }
+
+    @Test
+    void anItemCostNodeThatWasNeverChargedRefundsNothingWhenItIsRemoved() {
+        SkillNode root = typedNode("root", SkillTier.ROOT, null);
+        SkillNode lobster = typedNode("lobster", SkillTier.SMALL, new SkillItemCost("lobster", 50f));
+        ShipSkillData adopted = ShipSkillDataManager.get("adopted");
+        adopted.chooseStartingRoot(root);
+        adopted.allocate(lobster, 3);
+        List<SkillItemCost> refunds = new ArrayList<>();
+
+        ShipSkillDataManager.forgetUnknownNodes(Map.of("root", root), Map.of(), shipId -> true, refunds::add);
+
+        assertEquals(List.of("root"), List.copyOf(adopted.getAllocatedNodeIds()));
+        assertTrue(refunds.isEmpty());
     }
 }

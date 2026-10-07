@@ -2,6 +2,8 @@ package exiledsector.ui.node;
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.i18n.Style;
+import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.NodeDescription;
@@ -63,8 +65,9 @@ final class SkillTreeNodeTooltipRenderer {
         boolean expanded = TooltipExpansion.isExpanded();
         boolean allocatedSocket = node.getType().getTier() == SkillTier.SOCKET && skillData.isAllocated(node.getId());
         Socketable socketed = allocatedSocket ? SocketableStore.lookup(skillData.getSocketedItem(node.getId())) : null;
+        String refusalReason = allocation.refusalReason(node);
         List<Object> signature = List.of(effectiveType.getId(), hidden, showOptionalHint, expanded, allocatedSocket,
-                socketed == null ? "" : socketed.id());
+                socketed == null ? "" : socketed.id(), refusalReason == null ? "" : refusalReason);
 
         TextLabel title = tooltipTitles.computeIfAbsent(node.getId(), id -> titleLabel()).refresh(signature, label -> {
             if (socketed != null) {
@@ -74,22 +77,22 @@ final class SkillTreeNodeTooltipRenderer {
             }
         });
         TextLabel body = body(tooltipBodies, node.getId(), signature,
-                () -> describe(effectiveType, hidden, showOptionalHint, allocatedSocket, socketed, expanded), expanded);
+                () -> describe(effectiveType, hidden, showOptionalHint, allocatedSocket, socketed, expanded), expanded, refusalReason);
 
         List<SkillTreeTooltipTable> tables = showOptionalHint || hidden ? List.of() : tablesFor(font, effectiveType);
         TextLabel flavour = hidden || socketed != null ? null : flavourFor(effectiveType);
         panelStyle.drawTitleBodyTooltip(title, flavour, body, tables, footer(body, expanded), mouseX, mouseY, alphaMult);
     }
 
-    void renderTooltipForType(SkillType type, float mouseX, float mouseY, float alphaMult) {
+    void renderTooltipForType(SkillType type, String refusalReason, float mouseX, float mouseY, float alphaMult) {
         LazyFont font = SkillTreePanelStyle.font();
         if (font == null) return;
 
         boolean expanded = TooltipExpansion.isExpanded();
         TextLabel title = typeTooltipTitles.computeIfAbsent(type.getId(), id -> titleLabel()).refresh(type.getId(),
                 label -> label.setWrapped(type.getDisplayName(), NODE_TOOLTIP_MAX_TEXT_WIDTH, TOOLTIP_MAX_TEXT_HEIGHT));
-        TextLabel body = body(typeTooltipBodies, type.getId(), List.of(type.getId(), expanded),
-                () -> SkillNode.describeType(type, fleetMember.getHullSpec().getHullSize()), expanded);
+        TextLabel body = body(typeTooltipBodies, type.getId(), List.of(type.getId(), expanded, refusalReason == null ? "" : refusalReason),
+                () -> SkillNode.describeType(type, fleetMember.getHullSpec().getHullSize()), expanded, refusalReason);
 
         panelStyle.drawTitleBodyTooltip(title, flavourFor(type), body, tablesFor(font, type), footer(body, expanded), mouseX, mouseY, alphaMult);
     }
@@ -98,11 +101,16 @@ final class SkillTreeNodeTooltipRenderer {
         return new TextLabel(TOOLTIP_TITLE_FONT_SIZE, TOOLTIP_TITLE_COLOR);
     }
 
-    private TextLabel body(Map<String, TextLabel> bodies, String key, Object signature, Supplier<NodeDescription> description, boolean expanded) {
+    private TextLabel body(Map<String, TextLabel> bodies, String key, Object signature, Supplier<NodeDescription> description, boolean expanded,
+                           String refusalReason) {
         TextLabel bodyLabel = bodies.computeIfAbsent(key, id -> new TextLabel(TOOLTIP_BODY_FONT_SIZE, TOOLTIP_BODY_COLOR));
         bodyLabel.refresh(signature, label -> {
             NodeDescription described = description.get();
-            writeBodyText(label, expanded ? described.all() : described.effects());
+            List<DescriptionLine> lines = new ArrayList<>(expanded ? described.all() : described.effects());
+            if (refusalReason != null) {
+                lines.add(new DescriptionLine(StyledText.styled(refusalReason, Style.BAD), false));
+            }
+            writeBodyText(label, lines);
             expandableBodies.put(label, !described.details().isEmpty());
         });
         return bodyLabel;

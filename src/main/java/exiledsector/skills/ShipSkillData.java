@@ -23,6 +23,8 @@ public class ShipSkillData {
     private boolean npcBuild;
     private transient int revision;
     private Map<String, String> socketedItems;
+    private Map<String, String> chargedItemIds;
+    private Map<String, Float> chargedItemQuantities;
 
     private Set<String> freeNodeIds() {
         if (freeNodeIds == null) freeNodeIds = new LinkedHashSet<>();
@@ -69,6 +71,7 @@ public class ShipSkillData {
     public void selectOption(SkillNode node, SkillType chosenOption, int opCost) {
         revision++;
         if (!isAllocated(node.getId())) {
+            discardItemCharge(node.getId());
             charge(node.getId(), opCost);
         }
         allocatedNodeIds.add(node.getId());
@@ -118,6 +121,7 @@ public class ShipSkillData {
         if (!canUnchooseStartingRoot()) {
             return false;
         }
+        ensureItemChargeLedger();
         allocatedNodeIds.remove(startingRootId);
         release(startingRootId);
         startingRootId = null;
@@ -219,11 +223,13 @@ public class ShipSkillData {
 
     public void allocate(SkillNode node, int opCost) {
         revision++;
+        discardItemCharge(node.getId());
         allocatedNodeIds.add(node.getId());
         charge(node.getId(), opCost);
 
         String pairedId = node.getPairedNodeId();
         if (pairedId != null && !isAllocated(pairedId)) {
+            discardItemCharge(pairedId);
             allocatedNodeIds.add(pairedId);
             pairedFreeNodeIds().add(pairedId);
         }
@@ -231,6 +237,7 @@ public class ShipSkillData {
 
     public void deallocate(SkillNode node) {
         revision++;
+        ensureItemChargeLedger();
         allocatedNodeIds.remove(node.getId());
         release(node.getId());
 
@@ -254,6 +261,10 @@ public class ShipSkillData {
         if (pairedFreeNodeIds().remove(oldId)) {
             pairedFreeNodeIds().add(newId);
         }
+        SkillItemCost movedCharge = takeItemCharge(oldId);
+        if (movedCharge != null) {
+            recordItemCharge(newId, movedCharge);
+        }
         if (optionalSelections != null) {
             optionalSelections.remove(oldId);
         }
@@ -263,6 +274,7 @@ public class ShipSkillData {
 
     public List<String> forgetUnknownNodes(Map<String, SkillNode> tree, Map<String, SkillType> types) {
         revision++;
+        ensureItemChargeLedger();
         List<String> forgotten = new ArrayList<>();
         for (String nodeId : List.copyOf(allocatedNodeIds)) {
             SkillNode node = tree.get(nodeId);
@@ -300,6 +312,7 @@ public class ShipSkillData {
 
     public List<String> resetAllocations() {
         revision++;
+        ensureItemChargeLedger();
         List<String> released = List.copyOf(allocatedNodeIds);
         released.forEach(this::release);
         allocatedNodeIds.clear();
@@ -329,29 +342,6 @@ public class ShipSkillData {
         } else {
             pairedFreeNodeIds().remove(nodeId);
         }
-    }
-
-    public boolean canAllocate(SkillNode node, String satisfiedRootId, int totalOp, int opCost, int maxAllocatedNodes) {
-        int slotsNeeded = 1;
-        String pairedId = node.getPairedNodeId();
-        if (pairedId != null && !isAllocated(pairedId)) {
-            slotsNeeded = 2;
-        }
-        if (allocatedNodeIds.size() + slotsNeeded > maxAllocatedNodes) {
-            return false;
-        }
-        if (opCost > 0 && bankedFreeAllocations <= 0 && getSpentOp(opCost) + opCost > totalOp) {
-            return false;
-        }
-        if (node.getConnectedNodeIds().isEmpty()) {
-            return true;
-        }
-        for (String connectedId : node.getConnectedNodeIds()) {
-            if (isSatisfied(connectedId, satisfiedRootId)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public boolean canDeallocate(SkillNode node, Collection<SkillNode> allNodes, String satisfiedRootId) {
@@ -397,17 +387,50 @@ public class ShipSkillData {
         return partnerId != null && !excludedNodeIds.contains(partnerId) && isAllocated(partnerId) ? partnerId : null;
     }
 
-    public void toggle(SkillNode node, Collection<SkillNode> allNodes, String satisfiedRootId, int totalOp, int opCost, int maxAllocatedNodes) {
-        toggle(node, SkillTreeTopology.of(allNodes), satisfiedRootId, totalOp, opCost, maxAllocatedNodes);
+    public SkillItemCost itemCharge(String nodeId) {
+        String itemId = chargedItemIds().get(nodeId);
+        return itemId == null ? null : new SkillItemCost(itemId, chargedItemQuantities.getOrDefault(nodeId, 0f));
     }
 
-    public void toggle(SkillNode node, SkillTreeTopology topology, String satisfiedRootId, int totalOp, int opCost, int maxAllocatedNodes) {
-        if (isAllocated(node.getId())) {
-            if (canDeallocate(node, topology, satisfiedRootId)) {
-                deallocate(node);
+    public void recordItemCharge(String nodeId, SkillItemCost itemCost) {
+        chargedItemIds().put(nodeId, itemCost.itemId());
+        chargedItemQuantities.put(nodeId, itemCost.quantity());
+    }
+
+    public SkillItemCost takeItemCharge(String nodeId) {
+        SkillItemCost charged = itemCharge(nodeId);
+        if (charged != null) {
+            discardItemCharge(nodeId);
+        }
+        return charged;
+    }
+
+    private void discardItemCharge(String nodeId) {
+        chargedItemIds().remove(nodeId);
+        chargedItemQuantities.remove(nodeId);
+    }
+
+    private Map<String, String> chargedItemIds() {
+        ensureItemChargeLedger();
+        return chargedItemIds;
+    }
+
+    private void ensureItemChargeLedger() {
+        if (chargedItemIds != null && chargedItemQuantities != null) {
+            return;
+        }
+        chargedItemIds = new LinkedHashMap<>();
+        chargedItemQuantities = new LinkedHashMap<>();
+        if (npcBuild) {
+            return;
+        }
+        for (String nodeId : allocatedNodeIds) {
+            SkillNode node = SkillTree.getDeclared(nodeId);
+            SkillItemCost legacyCharge = node == null ? null : node.getType().getItemCost();
+            if (legacyCharge != null) {
+                chargedItemIds.put(nodeId, legacyCharge.itemId());
+                chargedItemQuantities.put(nodeId, legacyCharge.quantity());
             }
-        } else if (canAllocate(node, satisfiedRootId, totalOp, opCost, maxAllocatedNodes)) {
-            allocate(node, opCost);
         }
     }
 }

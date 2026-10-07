@@ -10,6 +10,7 @@ public final class SkillTreeSounds {
     static final String ALLOCATE_MEDIUM = "technology3";
     static final String ALLOCATE_LARGE = "technology5";
     static final String DEALLOCATE = "ui_char_decrease_skill";
+    static final String REFUSED = "ui_char_can_not_increase_skill_or_aptitude";
     static final String HYPERSPACE_OUT = "ui_sustained_burn_on";
     static final String HYPERSPACE_IN = "ui_sustained_burn_off";
     static final String WORMHOLE_JUMP = "ui_slipsurge_off";
@@ -33,6 +34,10 @@ public final class SkillTreeSounds {
 
     public static void deallocated() {
         playNodeSound(DEALLOCATE);
+    }
+
+    public static void refused() {
+        playNodeSound(REFUSED);
     }
 
     public static void hyperspaceOut() {

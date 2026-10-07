@@ -270,6 +270,8 @@
     "node.block.typeAllocated": "已分配{node}。",
     "node.block.invalidOption": "该节点没有这个选项。",
     "node.block.locked": "未识别：探索星区以发现此节点。",
+    "node.block.nodeCap": "本舰已分配节点数达到上限{maxNodes}个。",
+    "node.block.outOfOp": "装配点不足：需要{cost}点，剩余{free}点。",
     "node.temporary": "这些效果仅在舰船部署后的前{seconds}秒内生效。",
     "ui.node.socket.installHint": "在插槽仓库中选择一件物品，然后点击此插槽进行安装。",
     "socketable.unknown": "无法识别的船体插槽模块",

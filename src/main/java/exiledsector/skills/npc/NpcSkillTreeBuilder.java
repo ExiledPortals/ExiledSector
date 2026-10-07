@@ -2,6 +2,7 @@ package exiledsector.skills.npc;
 
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import exiledsector.skills.AllocatedNode;
+import exiledsector.skills.AllocationGate;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.ShipSkillData;
@@ -126,8 +127,7 @@ public final class NpcSkillTreeBuilder {
         return items.get(items.size() - 1);
     }
 
-    private record State(List<AllocatedNode> allocated, ShieldType shieldType, ShipFacts facts, ShipProfile profile,
-                         boolean shieldInvested) {
+    private record State(AllocationGate gate, boolean shieldInvested) {
     }
 
     private record PathStep(SkillNode node, SkillType option, boolean wormholeExit) {
@@ -465,7 +465,10 @@ public final class NpcSkillTreeBuilder {
                 List<String> tags = node.effectiveType().getTags();
                 shieldInvested |= tags.contains(SHIELD_THEME) || tags.contains(SHIELD_REQUIREMENT);
             }
-            return new State(allocatedNodes, shieldType, ShipFacts.of(fittedProfile, fitInstalled::contains), fittedProfile, shieldInvested);
+            NodeEligibility.Context eligibility = new NodeEligibility.Context(allocatedNodes, shieldType, ShipFacts.of(fittedProfile, fitInstalled::contains),
+                    lockedWormhole, fittedProfile);
+            AllocationGate.Budget budget = new AllocationGate.Budget(Integer.MAX_VALUE, freedOp.opCostPerNode(), maxNodes + 1);
+            return new State(new AllocationGate(shipData, topology, shipData.resolveStartingRootId(), budget, eligibility), shieldInvested);
         }
 
         private boolean traversable(SkillNode node, State fitState, Map<String, SkillType> searchOptions) {
@@ -490,8 +493,11 @@ public final class NpcSkillTreeBuilder {
         }
 
         private boolean usable(SkillNode node, SkillType chosenOption, State fitState) {
-            return NodeEligibility.check(node, chosenOption, new NodeEligibility.Context(fitState.allocated(), fitState.shieldType(), fitState.facts(),
-                    lockedWormhole, fitState.profile())) == null;
+            return fitState.gate().eligibility(node, chosenOption).allowed();
+        }
+
+        private boolean placeable(PathStep step, State fitState) {
+            return stillLegal(step.node(), step.option(), fitState) && fitState.gate().allocation(step.node(), step.option()).allowed();
         }
 
         private boolean removesShield(SkillType skillType) {
@@ -583,7 +589,7 @@ public final class NpcSkillTreeBuilder {
                     steps.add(new NpcBuildStep(step.node().getId(), NpcBuildStep.WORMHOLE_EXIT));
                     continue;
                 }
-                if (!placedNodes.isEmpty() && !stillLegal(step.node(), step.option(), state(search.fitInstalled()))) {
+                if (!placedNodes.isEmpty() && !placeable(step, state(search.fitInstalled()))) {
                     undoPath(placedNodes, stepsBefore);
                     return false;
                 }

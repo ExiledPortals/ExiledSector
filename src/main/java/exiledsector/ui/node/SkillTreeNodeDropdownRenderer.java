@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import static exiledsector.ui.SkillTreePanelStyle.FONT_LINE_HEIGHT_FACTOR;
 import static exiledsector.ui.SkillTreePanelStyle.GLOW_COLOR;
@@ -27,6 +28,7 @@ final class SkillTreeNodeDropdownRenderer {
     private static final float DROPDOWN_ROW_GAP = 2f;
     private static final float DROPDOWN_TOP_OFFSET = 24f;
     private static final float DROPDOWN_HOVER_ALPHA = 0.35f;
+    private static final float REFUSED_OPTION_ALPHA = 0.4f;
 
     private final SkillTreePanelStyle panelStyle;
     private final Map<String, TextLabel> dropdownRowText = new HashMap<>();
@@ -63,7 +65,7 @@ final class SkillTreeNodeDropdownRenderer {
         return null;
     }
 
-    void render(TreeViewport viewport, float mouseX, float mouseY, boolean mouseKnown, float alphaMult) {
+    void render(TreeViewport viewport, float mouseX, float mouseY, boolean mouseKnown, float alphaMult, Predicate<SkillType> optionUsable) {
         if (openNode == null) return;
         LazyFont font = SkillTreePanelStyle.font();
         if (font == null) return;
@@ -88,7 +90,8 @@ final class SkillTreeNodeDropdownRenderer {
                 drawDropdownRowHighlight(row, alphaMult);
             }
             float textY = row.rowY + row.rowHeight / 2f + (DROPDOWN_FONT_SIZE * FONT_LINE_HEIGHT_FACTOR) / 2f;
-            dropdownRowText(row.option).setAlpha(alphaMult).draw(row.rowX + DROPDOWN_ROW_PADDING, textY);
+            float rowAlpha = optionUsable.test(row.option) ? alphaMult : alphaMult * REFUSED_OPTION_ALPHA;
+            dropdownRowText(row.option).setAlpha(rowAlpha).draw(row.rowX + DROPDOWN_ROW_PADDING, textY);
         }
     }
 

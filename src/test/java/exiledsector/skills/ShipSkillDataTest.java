@@ -1,11 +1,14 @@
 package exiledsector.skills;
 
+import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.layout.SkillNodeDecoration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +32,30 @@ class ShipSkillDataTest {
     void tearDown() {
         SkillTree.clearTypes();
         SkillTree.clearNodes();
+    }
+
+    private static AllocationGate gate(ShipSkillData data, Collection<SkillNode> allNodes, String rootId, int totalOp, int opCost,
+                                       int maxAllocatedNodes) {
+        NodeEligibility.Context eligibility = NodeEligibility.Context.of(data,
+                new ShipFacts(HullSize.CRUISER, ShieldType.FRONT, false, 0f, hullModId -> false), null);
+        return new AllocationGate(data, SkillTreeTopology.of(allNodes), rootId, new AllocationGate.Budget(totalOp, opCost, maxAllocatedNodes),
+                eligibility);
+    }
+
+    private static boolean canAllocate(ShipSkillData data, SkillNode node, String rootId, int totalOp, int opCost, int maxAllocatedNodes) {
+        return gate(data, List.of(node), rootId, totalOp, opCost, maxAllocatedNodes).allocation(node).allowed();
+    }
+
+    private static void toggle(ShipSkillData data, SkillNode node, Collection<SkillNode> allNodes, String rootId, int totalOp, int opCost,
+                               int maxAllocatedNodes) {
+        AllocationGate gate = gate(data, allNodes, rootId, totalOp, opCost, maxAllocatedNodes);
+        if (data.isAllocated(node.getId())) {
+            if (gate.deallocation(node).allowed()) {
+                data.deallocate(node);
+            }
+        } else if (gate.allocation(node).allowed()) {
+            data.allocate(node, gate.opCostFor(node));
+        }
     }
 
     private static SkillNode node(String id, List<String> prerequisiteIds) {
@@ -128,14 +155,14 @@ class ShipSkillDataTest {
     void canAllocateIsTrueWhenThereAreNoPrerequisites() {
         ShipSkillData data = new ShipSkillData();
 
-        assertTrue(data.canAllocate(node("root", List.of()), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP));
+        assertTrue(canAllocate(data, node("root", List.of()), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP));
     }
 
     @Test
     void canAllocateIsFalseWhenAPrerequisiteIsNotAllocated() {
         ShipSkillData data = new ShipSkillData();
 
-        assertFalse(data.canAllocate(node("child", List.of("parent")), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP));
+        assertFalse(canAllocate(data, node("child", List.of("parent")), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP));
     }
 
     @Test
@@ -144,14 +171,14 @@ class ShipSkillDataTest {
         SkillNode parent = node("parent", List.of());
         data.allocate(parent, 1);
 
-        assertTrue(data.canAllocate(node("child", List.of("parent")), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP));
+        assertTrue(canAllocate(data, node("child", List.of("parent")), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP));
     }
 
     @Test
     void canAllocateIsFalseWithMultiplePrerequisitesWhenNoneAreAllocated() {
         ShipSkillData data = new ShipSkillData();
 
-        assertFalse(data.canAllocate(node("child", List.of("b", "c")), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP));
+        assertFalse(canAllocate(data, node("child", List.of("b", "c")), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP));
     }
 
     @Test
@@ -160,7 +187,7 @@ class ShipSkillDataTest {
         SkillNode b = node("b", List.of());
         data.allocate(b, 1);
 
-        assertTrue(data.canAllocate(node("a", List.of("b", "c")), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP));
+        assertTrue(canAllocate(data, node("a", List.of("b", "c")), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP));
     }
 
     @Test
@@ -171,7 +198,7 @@ class ShipSkillDataTest {
         data.allocate(b, 1);
         data.allocate(c, 1);
 
-        assertTrue(data.canAllocate(node("a", List.of("b", "c")), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP));
+        assertTrue(canAllocate(data, node("a", List.of("b", "c")), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP));
     }
 
     @Test
@@ -180,7 +207,7 @@ class ShipSkillDataTest {
         SkillNode a = node("a", List.of());
         data.allocate(a, 1);
 
-        assertTrue(data.canAllocate(node("b", List.of()), null, 2, 1, AMPLE_NODE_CAP));
+        assertTrue(canAllocate(data, node("b", List.of()), null, 2, 1, AMPLE_NODE_CAP));
     }
 
     @Test
@@ -189,7 +216,7 @@ class ShipSkillDataTest {
         SkillNode a = node("a", List.of());
         data.allocate(a, 1);
 
-        assertFalse(data.canAllocate(node("b", List.of()), null, 1, 1, AMPLE_NODE_CAP));
+        assertFalse(canAllocate(data, node("b", List.of()), null, 1, 1, AMPLE_NODE_CAP));
     }
 
     @Test
@@ -198,7 +225,7 @@ class ShipSkillDataTest {
         SkillNode a = node("a", List.of());
         data.allocate(a, 1);
 
-        assertTrue(data.canAllocate(rootNode("root_low_tech_1", List.of()), null, 1, 0, AMPLE_NODE_CAP));
+        assertTrue(canAllocate(data, rootNode("root_low_tech_1", List.of()), null, 1, 0, AMPLE_NODE_CAP));
     }
 
     @Test
@@ -251,7 +278,7 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode root = node("root", List.of());
 
-        data.toggle(root, List.of(root), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP);
+        toggle(data, root, List.of(root), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP);
 
         assertTrue(data.isAllocated("root"));
     }
@@ -262,7 +289,7 @@ class ShipSkillDataTest {
         SkillNode parent = node("parent", List.of());
         SkillNode child = node("child", List.of("parent"));
 
-        data.toggle(child, List.of(parent, child), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP);
+        toggle(data, child, List.of(parent, child), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP);
 
         assertFalse(data.isAllocated("child"));
     }
@@ -274,7 +301,7 @@ class ShipSkillDataTest {
         SkillNode b = node("b", List.of());
         data.allocate(a, 1);
 
-        data.toggle(b, List.of(a, b), null, 1, 1, AMPLE_NODE_CAP);
+        toggle(data, b, List.of(a, b), null, 1, 1, AMPLE_NODE_CAP);
 
         assertFalse(data.isAllocated("b"));
     }
@@ -285,7 +312,7 @@ class ShipSkillDataTest {
         SkillNode root = node("root", List.of());
         data.allocate(root, 1);
 
-        data.toggle(root, List.of(root), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP);
+        toggle(data, root, List.of(root), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP);
 
         assertFalse(data.isAllocated("root"));
     }
@@ -298,7 +325,7 @@ class ShipSkillDataTest {
         data.allocate(parent, 1);
         data.allocate(child, 1);
 
-        data.toggle(parent, List.of(parent, child), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP);
+        toggle(data, parent, List.of(parent, child), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP);
 
         assertTrue(data.isAllocated("parent"));
     }
@@ -330,7 +357,7 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode child = node("hull_1", List.of("root_low_tech_1"));
 
-        assertTrue(data.canAllocate(child, "root_low_tech_1", AMPLE_BUDGET, 1, AMPLE_NODE_CAP));
+        assertTrue(canAllocate(data, child, "root_low_tech_1", AMPLE_BUDGET, 1, AMPLE_NODE_CAP));
     }
 
     @Test
@@ -338,7 +365,7 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode child = node("hull_1", List.of("root_midline_1"));
 
-        assertFalse(data.canAllocate(child, "root_low_tech_1", AMPLE_BUDGET, 1, AMPLE_NODE_CAP));
+        assertFalse(canAllocate(data, child, "root_low_tech_1", AMPLE_BUDGET, 1, AMPLE_NODE_CAP));
     }
 
     @Test
@@ -503,7 +530,7 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         String satisfiedRootId = "root_high_tech_1";
         for (SkillNode n : List.of(n10, n7, n5, n25, n9, n13, n14, rootLowTech, n11, n12, n8, n6, n3)) {
-            assertTrue(data.canAllocate(n, satisfiedRootId, AMPLE_BUDGET, 1, AMPLE_NODE_CAP), "expected to be able to allocate " + n.getId());
+            assertTrue(canAllocate(data, n, satisfiedRootId, AMPLE_BUDGET, 1, AMPLE_NODE_CAP), "expected to be able to allocate " + n.getId());
             data.allocate(n, 1);
         }
 
@@ -622,7 +649,7 @@ class ShipSkillDataTest {
         SkillTree.registerType(chosenOption);
         data.selectOption(slot, chosenOption, 1);
 
-        data.toggle(slot, List.of(slot), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP);
+        toggle(data, slot, List.of(slot), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP);
 
         assertFalse(data.isAllocated("slot_1"));
         assertNull(data.getOptionalSelection("slot_1"));
@@ -808,7 +835,7 @@ class ShipSkillDataTest {
         SkillNode a = node("a", List.of());
         data.allocate(a, 1);
 
-        assertFalse(data.canAllocate(node("b", List.of()), null, AMPLE_BUDGET, 1, 1));
+        assertFalse(canAllocate(data, node("b", List.of()), null, AMPLE_BUDGET, 1, 1));
     }
 
     @Test
@@ -817,7 +844,7 @@ class ShipSkillDataTest {
         SkillNode a = node("a", List.of());
         data.allocate(a, 1);
 
-        assertTrue(data.canAllocate(node("b", List.of()), null, AMPLE_BUDGET, 1, 2));
+        assertTrue(canAllocate(data, node("b", List.of()), null, AMPLE_BUDGET, 1, 2));
     }
 
     @Test
@@ -906,8 +933,8 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode a = wormholeNode("wormhole_a", List.of(), "wormhole_b");
 
-        assertFalse(data.canAllocate(a, null, AMPLE_BUDGET, 1, 1));
-        assertTrue(data.canAllocate(a, null, AMPLE_BUDGET, 1, 2));
+        assertFalse(canAllocate(data, a, null, AMPLE_BUDGET, 1, 1));
+        assertTrue(canAllocate(data, a, null, AMPLE_BUDGET, 1, 2));
     }
 
     @Test
@@ -916,8 +943,8 @@ class ShipSkillDataTest {
         SkillNode a = wormholeNode("wormhole_a", List.of(), "wormhole_b");
         data.getAllocatedNodeIds().add("wormhole_b");
 
-        assertFalse(data.canAllocate(a, null, AMPLE_BUDGET, 1, 1));
-        assertTrue(data.canAllocate(a, null, AMPLE_BUDGET, 1, 2));
+        assertFalse(canAllocate(data, a, null, AMPLE_BUDGET, 1, 1));
+        assertTrue(canAllocate(data, a, null, AMPLE_BUDGET, 1, 2));
     }
 
     @Test
