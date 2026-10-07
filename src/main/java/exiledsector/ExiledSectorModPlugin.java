@@ -3,6 +3,8 @@ package exiledsector;
 import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
+import com.fs.starfarer.api.loading.Description;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.thoughtworks.xstream.XStream;
 import exiledsector.compat.CompatChecks;
@@ -38,6 +40,7 @@ import exiledsector.skills.skilleffect.CsvIdList;
 import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.skills.tags.AreaToggles;
 import exiledsector.socketables.SocketableDefinitions;
+import exiledsector.socketables.SocketableDisassembly;
 import exiledsector.socketables.SocketableNames;
 import exiledsector.socketables.NpcSocketables;
 import exiledsector.socketables.SocketableDrops;
@@ -105,7 +108,21 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
     }
 
     private static void localiseHullModText() {
-        I18n.forGameText(() -> LOCALISED_HULLMODS.forEach(ExiledSectorModPlugin::localise));
+        I18n.forGameText(() -> {
+            LOCALISED_HULLMODS.forEach(ExiledSectorModPlugin::localise);
+            localiseCommodity(SocketableDisassembly.PARTS_COMMODITY_ID);
+        });
+    }
+
+    private static void localiseCommodity(String commodityId) {
+        CommoditySpecAPI spec = Global.getSettings().getCommoditySpec(commodityId);
+        if (spec != null) {
+            spec.setName(Translation.data("commodity." + commodityId + ".name", spec.getName()));
+        }
+        Description description = Global.getSettings().getDescription(commodityId, Description.Type.RESOURCE);
+        if (description != null) {
+            description.setText1(Translation.data("commodity." + commodityId + ".description", description.getText1()));
+        }
     }
 
     private static void localise(String hullModId) {

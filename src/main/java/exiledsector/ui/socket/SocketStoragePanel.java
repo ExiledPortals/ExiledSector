@@ -3,10 +3,13 @@ package exiledsector.ui.socket;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.CargoAPI;
+import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.Fonts;
+import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TextFieldAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -17,6 +20,7 @@ import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.socketables.SocketCustody;
 import exiledsector.socketables.Socketable;
+import exiledsector.socketables.SocketableDisassembly;
 import exiledsector.socketables.SocketableRarity;
 import exiledsector.socketables.SocketableStore;
 import exiledsector.ui.SkillTreePanelStyle;
@@ -53,16 +57,20 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     private static final float LABEL_WIDTH = 70f;
     private static final float CLOSE_BUTTON_WIDTH = 70f;
     private static final float NOTICE_HEIGHT = 56f;
-    private static final float FOOTER_HEIGHT = 20f;
+    private static final float FOOTER_HEIGHT = 24f;
     private static final float SCROLLBAR_ROOM = 14f;
     private static final float CELL_SIZE = 96f;
     private static final int COLUMNS = 6;
     private static final float WIDTH = PAD * 2f + SCROLLBAR_ROOM + COLUMNS * CELL_SIZE + (COLUMNS - 1) * GAP;
     private static final float CONFIRM_HEIGHT = 130f;
+    private static final float BATCH_CONFIRM_HEIGHT = 170f;
+    private static final float BUTTON_TEXT_PADDING = 30f;
+    private static final float PARTS_ICON_SIZE = 24f;
+    private static final float PARTS_TEXT_TOP = 5f;
     private static final float SEARCH_DELAY_SECONDS = 0.25f;
     private static final SocketableCell.Look CELL_LOOK = new SocketableCell.Look(9f, true, 1f);
 
-    private enum Control {CLOSE, CONFIRM_DESTROY, CANCEL_DESTROY}
+    private enum Control {CLOSE, DISASSEMBLE_SHOWN, CONFIRM_DISASSEMBLE, CANCEL_DISASSEMBLE}
 
     private record StatusChip(SocketStorageFilter.Status status) {
     }
@@ -108,9 +116,10 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     private List<SocketStorageRow> rows = List.of();
     private Socketable selected;
     private boolean targetingSocket;
-    private Socketable pendingDestroy;
+    private List<Socketable> pendingDisassembly = List.of();
     private final List<Runnable> queued = new ArrayList<>();
     private int movedFromCargo;
+    private String disassembledNotice;
     private final SocketableHoverTooltip hoverTooltip;
 
     private SocketStoragePanel(CustomPanelAPI host, Function<Socketable, String> installedIn, Listener listener) {
@@ -174,7 +183,7 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
 
     public void setSelected(Socketable socketable) {
         selected = socketable;
-        queued.add(() -> rebuildFooter(SocketStorageQuery.apply(rows, filter).size()));
+        queued.add(() -> rebuildFooter(SocketStorageQuery.apply(rows, filter)));
     }
 
     public void setTargetingSocket(boolean targeting) {
@@ -182,13 +191,13 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
             return;
         }
         targetingSocket = targeting;
-        queued.add(() -> rebuildFooter(SocketStorageQuery.apply(rows, filter).size()));
+        queued.add(() -> rebuildFooter(SocketStorageQuery.apply(rows, filter)));
     }
 
     public void refresh(Function<Socketable, String> installedIn) {
         this.installedIn = installedIn;
         queued.add(() -> {
-            if (pendingDestroy != null && SocketCustody.isInstalled(pendingDestroy)) {
+            if (pendingDisassembly.stream().anyMatch(SocketCustody::isInstalled)) {
                 closeConfirm();
             }
             reloadRows();
@@ -286,25 +295,25 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
 
     private void handleButton(Object id) {
         if (confirm != null) {
-            if (id == Control.CONFIRM_DESTROY) {
-                if (SocketCustody.isInstalled(pendingDestroy)) {
-                    closeConfirm();
-                    return;
-                }
-                if (pendingDestroy == selected) {
+            if (id == Control.CONFIRM_DISASSEMBLE) {
+                List<Socketable> targets = pendingDisassembly.stream().filter(socketable -> !SocketCustody.isInstalled(socketable)).toList();
+                if (selected != null && targets.contains(selected)) {
                     listener.selected(null);
                 }
-                SocketableStore.get().remove(pendingDestroy);
+                disassemble(targets);
                 closeConfirm();
                 reloadRows();
+                buildHeader();
                 rebuildControls();
-            } else if (id == Control.CANCEL_DESTROY) {
+            } else if (id == Control.CANCEL_DISASSEMBLE) {
                 closeConfirm();
             }
             return;
         }
         if (id == Control.CLOSE) {
             close();
+        } else if (id == Control.DISASSEMBLE_SHOWN) {
+            openConfirm(freeShown(SocketStorageQuery.apply(rows, filter)));
         } else if (id instanceof StatusChip chip) {
             filter.setStatus(chip.status());
             rebuildControls();
@@ -322,7 +331,7 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
 
     private void cellRightClicked(SocketStorageRow row) {
         if (confirm == null && !row.installed()) {
-            queued.add(() -> openConfirm(row.socketable()));
+            queued.add(() -> openConfirm(List.of(row.socketable())));
         }
     }
 
@@ -338,13 +347,59 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
     }
 
     private void buildHeader() {
+        if (header != null) {
+            root.removeComponent(header);
+        }
         TooltipMakerAPI element = root.createUIElement(innerWidth(), HEADER_HEIGHT, false);
         element.setParaFont(Fonts.ORBITRON_20AABOLD);
         element.addPara("%s", 0f, Misc.getBasePlayerColor(), Misc.getBasePlayerColor(), Translation.text("ui.socketStorage.title"));
         ButtonAPI close = element.addButton(Translation.text("ui.socketStorage.close"), Control.CLOSE, CLOSE_BUTTON_WIDTH, CHIP_HEIGHT, 0f);
         close.getPosition().inTR(0f, 0f);
+        addPartsCount(element);
         root.addUIElement(element).inTL(PAD, PAD);
         header = element;
+    }
+
+    private static void addPartsCount(TooltipMakerAPI element) {
+        CommoditySpecAPI parts = Global.getSettings().getCommoditySpec(SocketableDisassembly.PARTS_COMMODITY_ID);
+        if (parts == null) {
+            return;
+        }
+        String count = String.valueOf(partsInCargo());
+        float countWidth = Global.getSettings().computeStringWidth(count, Fonts.ORBITRON_12) + LINE_PAD;
+        float countRight = CLOSE_BUTTON_WIDTH + GAP * 2f;
+        element.setParaFont(Fonts.ORBITRON_12);
+        LabelAPI label = element.addPara("%s", 0f, Misc.getTextColor(), Misc.getTextColor(), count);
+        label.autoSizeToWidth(countWidth).inTR(countRight, PARTS_TEXT_TOP);
+        element.addImage(parts.getIconName(), PARTS_ICON_SIZE, PARTS_ICON_SIZE, 0f);
+        element.getPrev().getPosition().inTR(countRight + countWidth + LINE_PAD, 0f);
+        element.addTooltipToPrevious(new PartsTooltip(parts.getName()), TooltipMakerAPI.TooltipLocation.BELOW);
+    }
+
+    private static int partsInCargo() {
+        CampaignFleetAPI fleet = Global.getSector() == null ? null : Global.getSector().getPlayerFleet();
+        return fleet == null ? 0 : Math.round(fleet.getCargo().getCommodityQuantity(SocketableDisassembly.PARTS_COMMODITY_ID));
+    }
+
+    private record PartsTooltip(String name) implements TooltipMakerAPI.TooltipCreator {
+
+        private static final float WIDTH = 300f;
+
+        @Override
+        public boolean isTooltipExpandable(Object tooltipParam) {
+            return false;
+        }
+
+        @Override
+        public float getTooltipWidth(Object tooltipParam) {
+            return WIDTH;
+        }
+
+        @Override
+        public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, Object tooltipParam) {
+            tooltip.addPara("%s", 0f, Misc.getTextColor(), Misc.getTextColor(),
+                    Translation.msg("ui.socketStorage.parts.tooltip").arg("name", name).text());
+        }
     }
 
     private void buildSearch() {
@@ -422,10 +477,15 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         }
         root.addUIElement(element).inTL(PAD, gridTop);
         grid = element;
-        rebuildFooter(matching.size());
+        rebuildFooter(matching);
     }
 
-    private void rebuildFooter(int shown) {
+    private static List<Socketable> freeShown(List<SocketStorageRow> matching) {
+        return matching.stream().filter(row -> !row.installed()).map(SocketStorageRow::socketable).toList();
+    }
+
+    private void rebuildFooter(List<SocketStorageRow> matching) {
+        int shown = matching.size();
         if (notice != null) {
             root.removeComponent(notice);
         }
@@ -439,6 +499,8 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         } else if (targetingSocket) {
             noticeElement.addPara("%s", 0f, Misc.getPositiveHighlightColor(), Misc.getPositiveHighlightColor(),
                     Translation.text("ui.socketStorage.targetHint"));
+        } else if (disassembledNotice != null) {
+            noticeElement.addPara("%s", 0f, Misc.getPositiveHighlightColor(), Misc.getPositiveHighlightColor(), disassembledNotice);
         } else if (movedFromCargo > 0) {
             noticeElement.addPara("%s", 0f, Misc.getPositiveHighlightColor(), Misc.getPositiveHighlightColor(),
                     Translation.msg("ui.socketStorage.moved").count(movedFromCargo).arg("count", movedFromCargo).text());
@@ -449,29 +511,96 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         TooltipMakerAPI summaryElement = root.createUIElement(innerWidth(), FOOTER_HEIGHT, false);
         int installed = (int) rows.stream().filter(SocketStorageRow::installed).count();
         summaryElement.addPara("%s", 0f, Misc.getGrayColor(), Misc.getGrayColor(), Translation.msg("ui.socketStorage.summary")
-                .arg("shown", shown).arg("stored", rows.size()).arg("installed", installed).text());
+                .arg("shown", shown).arg("stored", rows.size()).arg("installed", installed).text())
+                .getPosition().inTL(0f, PARTS_TEXT_TOP);
+        int free = freeShown(matching).size();
+        String batchLabel = Translation.msg("ui.socketStorage.disassembleShown").arg("count", free).text();
+        float batchWidth = Global.getSettings().computeStringWidth(batchLabel, Fonts.ORBITRON_20AA) + BUTTON_TEXT_PADDING;
+        ButtonAPI batch = summaryElement.addButton(batchLabel, Control.DISASSEMBLE_SHOWN, batchWidth, FOOTER_HEIGHT, 0f);
+        batch.getPosition().inTR(0f, 0f);
+        batch.setEnabled(free > 0);
         root.addUIElement(summaryElement).inTL(PAD, height - PAD - FOOTER_HEIGHT);
         summary = summaryElement;
     }
 
-    private void openConfirm(Socketable socketable) {
-        pendingDestroy = socketable;
+    private void openConfirm(List<Socketable> targets) {
+        if (targets.isEmpty()) {
+            return;
+        }
+        pendingDisassembly = List.copyOf(targets);
+        boolean single = targets.size() == 1;
+        float confirmHeight = single ? CONFIRM_HEIGHT : BATCH_CONFIRM_HEIGHT;
         confirmBlocker = Global.getSettings().createCustom(width, height, new Blocker());
         root.addComponent(confirmBlocker).inTL(0f, 0f);
         float confirmWidth = innerWidth();
-        confirm = Global.getSettings().createCustom(confirmWidth, CONFIRM_HEIGHT,
+        confirm = Global.getSettings().createCustom(confirmWidth, confirmHeight,
                 new FramedPanelPlugin(SocketStoragePanel.class, this::buttonPressed));
-        TooltipMakerAPI element = confirm.createUIElement(confirmWidth - PAD * 2f, CONFIRM_HEIGHT - PAD * 2f, false);
-        element.addPara("%s", 0f, socketable.rarity().color(), socketable.rarity().color(),
-                Translation.msg("ui.socketStorage.confirm.title").arg("name", socketable.name()).text());
-        element.addPara("%s", LINE_PAD * 2f, Misc.getTextColor(), Misc.getTextColor(), Translation.text("ui.socketStorage.confirm.body"));
+        TooltipMakerAPI element = confirm.createUIElement(confirmWidth - PAD * 2f, confirmHeight - PAD * 2f, false);
+        int parts = targets.stream().mapToInt(socketable -> socketable.rarity().disassemblyParts()).sum();
+        if (single) {
+            Socketable socketable = targets.get(0);
+            element.addPara("%s", 0f, socketable.rarity().color(), socketable.rarity().color(),
+                    Translation.msg("ui.socketStorage.confirm.title").arg("name", socketable.name()).text());
+            element.addPara("%s", LINE_PAD * 2f, Misc.getTextColor(), Misc.getTextColor(), partsText("ui.socketStorage.confirm.body", parts));
+        } else {
+            element.addPara("%s", 0f, Misc.getBasePlayerColor(), Misc.getBasePlayerColor(),
+                    Translation.msg("ui.socketStorage.confirm.batchTitle").arg("count", targets.size()).text());
+            addRarityBreakdown(element, targets);
+            element.addPara("%s", LINE_PAD * 2f, Misc.getTextColor(), Misc.getTextColor(),
+                    Translation.msg("ui.socketStorage.confirm.batchBody").arg("count", parts).text());
+            if (targets.stream().anyMatch(socketable -> socketable.rarity() == SocketableRarity.UNIQUE)) {
+                element.addPara("%s", LINE_PAD * 2f, Misc.getNegativeHighlightColor(), Misc.getNegativeHighlightColor(),
+                        Translation.text("ui.socketStorage.confirm.includesUnique"));
+            }
+        }
         float buttonWidth = (confirmWidth - PAD * 2f - GAP) / 2f;
-        element.addButton(Translation.text("ui.socketStorage.confirm.destroy"), Control.CONFIRM_DESTROY, buttonWidth, FIELD_HEIGHT, 0f)
+        element.addButton(Translation.text("ui.socketStorage.confirm.disassemble"), Control.CONFIRM_DISASSEMBLE, buttonWidth, FIELD_HEIGHT, 0f)
                 .getPosition().inBR(0f, 0f);
-        element.addButton(Translation.text("ui.socketStorage.confirm.cancel"), Control.CANCEL_DESTROY, buttonWidth, FIELD_HEIGHT, 0f)
+        element.addButton(Translation.text("ui.socketStorage.confirm.cancel"), Control.CANCEL_DISASSEMBLE, buttonWidth, FIELD_HEIGHT, 0f)
                 .getPosition().inBL(0f, 0f);
         confirm.addUIElement(element).inTL(PAD, PAD);
-        root.addComponent(confirm).inTL(PAD, (height - CONFIRM_HEIGHT) / 2f);
+        root.addComponent(confirm).inTL(PAD, (height - confirmHeight) / 2f);
+    }
+
+    private static void addRarityBreakdown(TooltipMakerAPI element, List<Socketable> targets) {
+        List<String> counts = new ArrayList<>();
+        List<Color> colors = new ArrayList<>();
+        for (SocketableRarity rarity : SocketableRarity.values()) {
+            long count = targets.stream().filter(socketable -> socketable.rarity() == rarity).count();
+            if (count > 0) {
+                counts.add(Translation.msg("ui.socketStorage.confirm.rarityCount").arg("count", count)
+                        .arg("rarity", Translation.text("ui.socketStorage.rarity." + rarity.name().toLowerCase(Locale.ROOT))).text());
+                colors.add(rarity.color());
+            }
+        }
+        String format = String.join(Translation.text("ui.socketStorage.confirm.raritySeparator"), counts.stream().map(text -> "%s").toList());
+        element.addPara(format, LINE_PAD * 2f, colors.toArray(new Color[0]), counts.toArray(new String[0]));
+    }
+
+    private void disassemble(List<Socketable> targets) {
+        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
+        CargoAPI cargo = playerFleet == null ? null : playerFleet.getCargo();
+        int parts = 0;
+        int disassembled = 0;
+        Socketable last = null;
+        for (Socketable socketable : targets) {
+            int gained = SocketableDisassembly.disassemble(socketable, cargo);
+            if (gained > 0) {
+                parts += gained;
+                disassembled++;
+                last = socketable;
+            }
+        }
+        if (disassembled == 1) {
+            disassembledNotice = Translation.msg("ui.socketStorage.disassembled").count(parts)
+                    .arg("name", last.name()).arg("count", parts).text();
+        } else if (disassembled > 1) {
+            disassembledNotice = Translation.msg("ui.socketStorage.disassembledMany").arg("count", disassembled).arg("parts", parts).text();
+        }
+    }
+
+    private static String partsText(String key, int parts) {
+        return Translation.msg(key).count(parts).arg("count", parts).text();
     }
 
     private void closeConfirm() {
@@ -482,7 +611,7 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
         root.removeComponent(confirmBlocker);
         confirm = null;
         confirmBlocker = null;
-        pendingDestroy = null;
+        pendingDisassembly = List.of();
     }
 
     private List<StyledText> cellFooter(SocketStorageRow row) {
@@ -490,7 +619,8 @@ public final class SocketStoragePanel extends BaseCustomUIPanelPlugin {
             return List.of(Translation.msg("ui.socketStorage.cell.installed").arg("ship", row.installedIn()).styled());
         }
         String install = targetingSocket ? "ui.socketStorage.cell.freeTarget" : "ui.socketStorage.cell.free";
-        return List.of(Translation.styled(install), Translation.styled("ui.socketStorage.cell.destroy"));
+        return List.of(Translation.styled(install), Translation.msg("ui.socketStorage.cell.disassemble").count(row.socketable().rarity().disassemblyParts())
+                .arg("count", row.socketable().rarity().disassemblyParts()).styled());
     }
 
     private SocketableCell cellFor(SocketStorageRow row) {

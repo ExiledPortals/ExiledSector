@@ -38,7 +38,7 @@ Open the refit screen and click the skill tree button on any of your ships. Ther
 <img src="graphics/description/at_any_cost.png" alt="At Any Cost">
 
 - Some nodes are Modular Hull Sockets: empty sections of the ship that you allocate like any other node and then fill with a socketable. Socketables turn up at salvage sites, through Tech Mining and aboard NPC flagships.
-- Ctrl+click a socket to open Socket Storage, which holds every socketable you own. Filter by rarity, search by name, and pick what goes in.
+- Ctrl+click a socket to open Socket Storage, which holds every socketable you own. Filter by rarity, search by name, and pick what goes in. Right-click one you don't want to disassemble it into Socketable Parts: 1 for a common, 2 for a rare and 10 for a unique. Disassemble shown breaks down everything your filters show at once, skipping installed items.
 
 <img src="graphics/description/socket_storage.png" alt="Socket Storage">
 
