@@ -8,6 +8,8 @@ public final class SocketableRoller {
 
     static final float TWO_EFFECTS_CHANCE = 0.55f;
     static final float THREE_EFFECTS_CHANCE = 0.35f;
+    static final int MAX_DECIMAL_PLACES = 3;
+    private static final float STEP_TOLERANCE = 0.001f;
 
     private SocketableRoller() {
     }
@@ -17,7 +19,7 @@ public final class SocketableRoller {
         if (definition.unique()) {
             List<RolledEffect> rolledEffects = new ArrayList<>(definition.pool().size());
             for (SocketableDefinition.PoolEntry entry : definition.pool()) {
-                rolledEffects.add(new RolledEffect(entry.effectName(), wholeNumberBetween(entry.min(), entry.max(), random)));
+                rolledEffects.add(new RolledEffect(entry.effectName(), rollBetween(entry.min(), entry.max(), random)));
             }
             return rolledEffects;
         }
@@ -49,17 +51,28 @@ public final class SocketableRoller {
         for (int drawsLeft = Math.min(drawCount, pool.size()); drawsLeft > 0; drawsLeft--) {
             int pickedIndex = pick(remainingPool, random.nextFloat());
             SocketableDefinition.PoolEntry entry = remainingPool.remove(pickedIndex);
-            rolledEffects.add(new RolledEffect(entry.effectName(), wholeNumberBetween(entry.min(), entry.max(), random)));
+            rolledEffects.add(new RolledEffect(entry.effectName(), rollBetween(entry.min(), entry.max(), random)));
         }
     }
 
-    static float wholeNumberBetween(float min, float max, Random random) {
-        int lowestWhole = (int) Math.ceil(min);
-        int highestWhole = (int) Math.floor(max);
-        if (highestWhole < lowestWhole) {
-            return Math.round(min);
+    static float rollBetween(float min, float max, Random random) {
+        float stepsPerUnit = (float) Math.pow(10, Math.max(decimalPlaces(min), decimalPlaces(max)));
+        int lowestStep = (int) Math.ceil(min * stepsPerUnit - STEP_TOLERANCE);
+        int highestStep = (int) Math.floor(max * stepsPerUnit + STEP_TOLERANCE);
+        if (highestStep < lowestStep) {
+            return Math.round(min * stepsPerUnit) / stepsPerUnit;
         }
-        return (float) lowestWhole + random.nextInt(highestWhole - lowestWhole + 1);
+        return (lowestStep + random.nextInt(highestStep - lowestStep + 1)) / stepsPerUnit;
+    }
+
+    static int decimalPlaces(float bound) {
+        for (int places = 0; places < MAX_DECIMAL_PLACES; places++) {
+            float scaled = bound * (float) Math.pow(10, places);
+            if (Math.abs(scaled - Math.round(scaled)) < STEP_TOLERANCE) {
+                return places;
+            }
+        }
+        return MAX_DECIMAL_PLACES;
     }
 
     static long scramble(long seed) {

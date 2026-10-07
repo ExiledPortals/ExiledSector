@@ -94,7 +94,7 @@ public final class SocketableCrafting {
         }
         List<SocketableDefinition.PoolEntry> chosenSide = openSides.get(random.nextInt(openSides.size()));
         SocketableDefinition.PoolEntry poolEntry = chosenSide.get(SocketableRoller.pick(chosenSide, random.nextFloat()));
-        RolledEffect addedEffect = new RolledEffect(poolEntry.effectName(), SocketableRoller.wholeNumberBetween(poolEntry.min(), poolEntry.max(), random));
+        RolledEffect addedEffect = new RolledEffect(poolEntry.effectName(), SocketableRoller.rollBetween(poolEntry.min(), poolEntry.max(), random));
         SocketableRarity rarityBefore = socketable.rarity();
         List<RolledEffect> updatedEffects = new ArrayList<>(socketable.effects());
         updatedEffects.add(definition.isPrefix(addedEffect.effectName()) ? prefixCount(socketable, definition) : updatedEffects.size(), addedEffect);
@@ -161,7 +161,7 @@ public final class SocketableCrafting {
         for (RolledEffect effect : socketable.effects()) {
             SocketableDefinition.PoolEntry rollRange = definition.rollRange(effect.effectName());
             rerolled.add(rollRange == null ? effect
-                    : new RolledEffect(effect.effectName(), SocketableRoller.wholeNumberBetween(rollRange.min(), rollRange.max(), random)));
+                    : new RolledEffect(effect.effectName(), SocketableRoller.rollBetween(rollRange.min(), rollRange.max(), random)));
         }
         socketable.replaceEffects(rerolled);
         return socketable;

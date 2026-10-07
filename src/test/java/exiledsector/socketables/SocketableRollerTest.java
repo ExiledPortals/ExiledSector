@@ -69,13 +69,26 @@ class SocketableRollerTest {
         java.util.Random random = new java.util.Random(5);
         int[] counts = new int[3];
         for (int i = 0; i < 30000; i++) {
-            counts[(int) SocketableRoller.wholeNumberBetween(4f, 6f, random) - 4]++;
+            counts[(int) SocketableRoller.rollBetween(4f, 6f, random) - 4]++;
         }
         for (int count : counts) {
             assertEquals(1 / 3.0, count / 30000.0, 0.02);
         }
-        assertEquals(-12f, SocketableRoller.wholeNumberBetween(-12.5f, -11.5f, random));
-        assertEquals(2f, SocketableRoller.wholeNumberBetween(1.6f, 1.9f, random));
+    }
+
+    @Test
+    void decimalRangesRollInStepsOfTheirFinestDecimalPlace() {
+        java.util.Random random = new java.util.Random(5);
+        java.util.Set<Float> seen = new java.util.TreeSet<>();
+        for (int i = 0; i < 2000; i++) {
+            float rolled = SocketableRoller.rollBetween(0.15f, 0.25f, random);
+            assertTrue(rolled >= 0.15f - 0.0001f && rolled <= 0.25f + 0.0001f, String.valueOf(rolled));
+            seen.add(Math.round(rolled * 100f) / 100f);
+        }
+        assertEquals(11, seen.size());
+        float halfStep = SocketableRoller.rollBetween(-12.5f, -11.5f, random);
+        assertTrue(halfStep >= -12.5f && halfStep <= -11.5f);
+        assertEquals(halfStep, Math.round(halfStep * 10f) / 10f, 0.0001f);
     }
 
     @Test
