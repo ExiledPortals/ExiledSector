@@ -2012,10 +2012,10 @@ type|ammo_capacity|CRUISER|0	0	<good>20%</good> increased ballistic weapon ammo 
 type|ammo_capacity|CRUISER|1	0	<good>20%</good> increased energy weapon ammo capacity.
 type|ammo_capacity|CAPITAL_SHIP|0	0	<good>20%</good> increased ballistic weapon ammo capacity.
 type|ammo_capacity|CAPITAL_SHIP|1	0	<good>20%</good> increased energy weapon ammo capacity.
-type|armor|FRIGATE|0	0	Increases armor by <good>20</good>.
-type|armor|DESTROYER|0	0	Increases armor by <good>40</good>.
-type|armor|CRUISER|0	0	Increases armor by <good>80</good>.
-type|armor|CAPITAL_SHIP|0	0	Increases armor by <good>100</good>.
+type|armor|FRIGATE|0	0	Increases armor by <good>15</good>.
+type|armor|DESTROYER|0	0	Increases armor by <good>30</good>.
+type|armor|CRUISER|0	0	Increases armor by <good>50</good>.
+type|armor|CAPITAL_SHIP|0	0	Increases armor by <good>75</good>.
 type|armoredweapons|null|0	0	<good>10%</good> increased armor.
 type|armoredweapons|null|1	0	<good>80%</good> increased weapon durability.
 type|armoredweapons|null|2	0	<bad>25%</bad> less weapon turn rate.
@@ -2666,22 +2666,22 @@ type-detail|heavy_ballistics_integration|CRUISER|0	0	Mutually exclusive with <hu
 type|heavy_ballistics_integration|CAPITAL_SHIP|0	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 type-detail|heavy_ballistics_integration|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Heavy Ballistics Integration</hullmod>
 type|heavyarmor|null|0	0	<bad>20%</bad> reduced maneuverability.
-type|heavyarmor|null|1	0	<good>40%</good> increased armor.
+type|heavyarmor|null|1	0	<good>30%</good> increased armor.
 type-detail|heavyarmor|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Heavy Armor</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Critical Point Protection</node>
 type|heavyarmor|FRIGATE|0	0	<bad>20%</bad> reduced maneuverability.
-type|heavyarmor|FRIGATE|1	0	<good>40%</good> increased armor.
+type|heavyarmor|FRIGATE|1	0	<good>30%</good> increased armor.
 type|heavyarmor|FRIGATE|2	0	Increases hull points by <good>100</good>.
 type-detail|heavyarmor|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Heavy Armor</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Critical Point Protection</node>
 type|heavyarmor|DESTROYER|0	0	<bad>20%</bad> reduced maneuverability.
-type|heavyarmor|DESTROYER|1	0	<good>40%</good> increased armor.
+type|heavyarmor|DESTROYER|1	0	<good>30%</good> increased armor.
 type|heavyarmor|DESTROYER|2	0	Increases hull points by <good>200</good>.
 type-detail|heavyarmor|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Heavy Armor</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Critical Point Protection</node>
 type|heavyarmor|CRUISER|0	0	<bad>20%</bad> reduced maneuverability.
-type|heavyarmor|CRUISER|1	0	<good>40%</good> increased armor.
+type|heavyarmor|CRUISER|1	0	<good>30%</good> increased armor.
 type|heavyarmor|CRUISER|2	0	Increases hull points by <good>300</good>.
 type-detail|heavyarmor|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Heavy Armor</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Critical Point Protection</node>
 type|heavyarmor|CAPITAL_SHIP|0	0	<bad>20%</bad> reduced maneuverability.
-type|heavyarmor|CAPITAL_SHIP|1	0	<good>40%</good> increased armor.
+type|heavyarmor|CAPITAL_SHIP|1	0	<good>30%</good> increased armor.
 type|heavyarmor|CAPITAL_SHIP|2	0	Increases hull points by <good>400</good>.
 type-detail|heavyarmor|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Heavy Armor</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Critical Point Protection</node>
 type|high_scatter_amp|null|0	0	Causes 50% of beam weapon damage dealt to shields to be hard flux.
@@ -3620,8 +3620,8 @@ summary|option0|FRIGATE|8	0	Enemy ships destroyed within 1500 su of this ship ha
 summary|option0|FRIGATE|9	0	Takes <good>10%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, win or lose, the rest join your fleet if there is room.
 summary|option0|FRIGATE|10	0	<good>110%</good> increased ballistic weapon ammo capacity.
 summary|option0|FRIGATE|11	0	<good>110%</good> increased energy weapon ammo capacity.
-summary|option0|FRIGATE|12	0	Increases armor by <good>140</good>.
-summary|option0|FRIGATE|13	0	<good>55%</good> increased armor.
+summary|option0|FRIGATE|12	0	Increases armor by <good>105</good>.
+summary|option0|FRIGATE|13	0	<good>45%</good> increased armor.
 summary|option0|FRIGATE|14	0	<good>130%</good> increased weapon durability.
 summary|option0|FRIGATE|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option0|FRIGATE|16	1	<bad>25%</bad> less weapon recoil.
@@ -3793,8 +3793,8 @@ summary|option0|DESTROYER|8	0	Enemy ships destroyed within 1500 su of this ship 
 summary|option0|DESTROYER|9	0	Takes <good>10%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, win or lose, the rest join your fleet if there is room.
 summary|option0|DESTROYER|10	0	<good>110%</good> increased ballistic weapon ammo capacity.
 summary|option0|DESTROYER|11	0	<good>110%</good> increased energy weapon ammo capacity.
-summary|option0|DESTROYER|12	0	Increases armor by <good>280</good>.
-summary|option0|DESTROYER|13	0	<good>55%</good> increased armor.
+summary|option0|DESTROYER|12	0	Increases armor by <good>210</good>.
+summary|option0|DESTROYER|13	0	<good>45%</good> increased armor.
 summary|option0|DESTROYER|14	0	<good>130%</good> increased weapon durability.
 summary|option0|DESTROYER|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option0|DESTROYER|16	1	<bad>25%</bad> less weapon recoil.
@@ -3966,8 +3966,8 @@ summary|option0|CRUISER|8	0	Enemy ships destroyed within 1500 su of this ship ha
 summary|option0|CRUISER|9	0	Takes <good>10%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, win or lose, the rest join your fleet if there is room.
 summary|option0|CRUISER|10	0	<good>110%</good> increased ballistic weapon ammo capacity.
 summary|option0|CRUISER|11	0	<good>110%</good> increased energy weapon ammo capacity.
-summary|option0|CRUISER|12	0	Increases armor by <good>560</good>.
-summary|option0|CRUISER|13	0	<good>55%</good> increased armor.
+summary|option0|CRUISER|12	0	Increases armor by <good>350</good>.
+summary|option0|CRUISER|13	0	<good>45%</good> increased armor.
 summary|option0|CRUISER|14	0	<good>130%</good> increased weapon durability.
 summary|option0|CRUISER|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option0|CRUISER|16	1	<bad>25%</bad> less weapon recoil.
@@ -4139,8 +4139,8 @@ summary|option0|CAPITAL_SHIP|8	0	Enemy ships destroyed within 1500 su of this sh
 summary|option0|CAPITAL_SHIP|9	0	Takes <good>10%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, win or lose, the rest join your fleet if there is room.
 summary|option0|CAPITAL_SHIP|10	0	<good>110%</good> increased ballistic weapon ammo capacity.
 summary|option0|CAPITAL_SHIP|11	0	<good>110%</good> increased energy weapon ammo capacity.
-summary|option0|CAPITAL_SHIP|12	0	Increases armor by <good>700</good>.
-summary|option0|CAPITAL_SHIP|13	0	<good>55%</good> increased armor.
+summary|option0|CAPITAL_SHIP|12	0	Increases armor by <good>525</good>.
+summary|option0|CAPITAL_SHIP|13	0	<good>45%</good> increased armor.
 summary|option0|CAPITAL_SHIP|14	0	<good>130%</good> increased weapon durability.
 summary|option0|CAPITAL_SHIP|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option0|CAPITAL_SHIP|16	1	<bad>25%</bad> less weapon recoil.
@@ -4312,8 +4312,8 @@ summary|option1|FRIGATE|8	0	Enemy ships destroyed within 1500 su of this ship ha
 summary|option1|FRIGATE|9	0	Takes <good>10%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, win or lose, the rest join your fleet if there is room.
 summary|option1|FRIGATE|10	0	<good>110%</good> increased ballistic weapon ammo capacity.
 summary|option1|FRIGATE|11	0	<good>110%</good> increased energy weapon ammo capacity.
-summary|option1|FRIGATE|12	0	Increases armor by <good>140</good>.
-summary|option1|FRIGATE|13	0	<good>55%</good> increased armor.
+summary|option1|FRIGATE|12	0	Increases armor by <good>105</good>.
+summary|option1|FRIGATE|13	0	<good>45%</good> increased armor.
 summary|option1|FRIGATE|14	0	<good>130%</good> increased weapon durability.
 summary|option1|FRIGATE|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option1|FRIGATE|16	1	<bad>25%</bad> less weapon recoil.
@@ -4485,8 +4485,8 @@ summary|option1|DESTROYER|8	0	Enemy ships destroyed within 1500 su of this ship 
 summary|option1|DESTROYER|9	0	Takes <good>10%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, win or lose, the rest join your fleet if there is room.
 summary|option1|DESTROYER|10	0	<good>110%</good> increased ballistic weapon ammo capacity.
 summary|option1|DESTROYER|11	0	<good>110%</good> increased energy weapon ammo capacity.
-summary|option1|DESTROYER|12	0	Increases armor by <good>280</good>.
-summary|option1|DESTROYER|13	0	<good>55%</good> increased armor.
+summary|option1|DESTROYER|12	0	Increases armor by <good>210</good>.
+summary|option1|DESTROYER|13	0	<good>45%</good> increased armor.
 summary|option1|DESTROYER|14	0	<good>130%</good> increased weapon durability.
 summary|option1|DESTROYER|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option1|DESTROYER|16	1	<bad>25%</bad> less weapon recoil.
@@ -4658,8 +4658,8 @@ summary|option1|CRUISER|8	0	Enemy ships destroyed within 1500 su of this ship ha
 summary|option1|CRUISER|9	0	Takes <good>10%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, win or lose, the rest join your fleet if there is room.
 summary|option1|CRUISER|10	0	<good>110%</good> increased ballistic weapon ammo capacity.
 summary|option1|CRUISER|11	0	<good>110%</good> increased energy weapon ammo capacity.
-summary|option1|CRUISER|12	0	Increases armor by <good>560</good>.
-summary|option1|CRUISER|13	0	<good>55%</good> increased armor.
+summary|option1|CRUISER|12	0	Increases armor by <good>350</good>.
+summary|option1|CRUISER|13	0	<good>45%</good> increased armor.
 summary|option1|CRUISER|14	0	<good>130%</good> increased weapon durability.
 summary|option1|CRUISER|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option1|CRUISER|16	1	<bad>25%</bad> less weapon recoil.
@@ -4831,8 +4831,8 @@ summary|option1|CAPITAL_SHIP|8	0	Enemy ships destroyed within 1500 su of this sh
 summary|option1|CAPITAL_SHIP|9	0	Takes <good>10%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, win or lose, the rest join your fleet if there is room.
 summary|option1|CAPITAL_SHIP|10	0	<good>110%</good> increased ballistic weapon ammo capacity.
 summary|option1|CAPITAL_SHIP|11	0	<good>110%</good> increased energy weapon ammo capacity.
-summary|option1|CAPITAL_SHIP|12	0	Increases armor by <good>700</good>.
-summary|option1|CAPITAL_SHIP|13	0	<good>55%</good> increased armor.
+summary|option1|CAPITAL_SHIP|12	0	Increases armor by <good>525</good>.
+summary|option1|CAPITAL_SHIP|13	0	<good>45%</good> increased armor.
 summary|option1|CAPITAL_SHIP|14	0	<good>130%</good> increased weapon durability.
 summary|option1|CAPITAL_SHIP|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option1|CAPITAL_SHIP|16	1	<bad>25%</bad> less weapon recoil.
@@ -5004,8 +5004,8 @@ summary|option2|FRIGATE|8	0	Enemy ships destroyed within 1500 su of this ship ha
 summary|option2|FRIGATE|9	0	Takes <good>10%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, win or lose, the rest join your fleet if there is room.
 summary|option2|FRIGATE|10	0	<good>110%</good> increased ballistic weapon ammo capacity.
 summary|option2|FRIGATE|11	0	<good>110%</good> increased energy weapon ammo capacity.
-summary|option2|FRIGATE|12	0	Increases armor by <good>140</good>.
-summary|option2|FRIGATE|13	0	<good>55%</good> increased armor.
+summary|option2|FRIGATE|12	0	Increases armor by <good>105</good>.
+summary|option2|FRIGATE|13	0	<good>45%</good> increased armor.
 summary|option2|FRIGATE|14	0	<good>130%</good> increased weapon durability.
 summary|option2|FRIGATE|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option2|FRIGATE|16	1	<bad>25%</bad> less weapon recoil.
@@ -5178,8 +5178,8 @@ summary|option2|DESTROYER|8	0	Enemy ships destroyed within 1500 su of this ship 
 summary|option2|DESTROYER|9	0	Takes <good>10%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, win or lose, the rest join your fleet if there is room.
 summary|option2|DESTROYER|10	0	<good>110%</good> increased ballistic weapon ammo capacity.
 summary|option2|DESTROYER|11	0	<good>110%</good> increased energy weapon ammo capacity.
-summary|option2|DESTROYER|12	0	Increases armor by <good>280</good>.
-summary|option2|DESTROYER|13	0	<good>55%</good> increased armor.
+summary|option2|DESTROYER|12	0	Increases armor by <good>210</good>.
+summary|option2|DESTROYER|13	0	<good>45%</good> increased armor.
 summary|option2|DESTROYER|14	0	<good>130%</good> increased weapon durability.
 summary|option2|DESTROYER|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option2|DESTROYER|16	1	<bad>25%</bad> less weapon recoil.
@@ -5352,8 +5352,8 @@ summary|option2|CRUISER|8	0	Enemy ships destroyed within 1500 su of this ship ha
 summary|option2|CRUISER|9	0	Takes <good>10%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, win or lose, the rest join your fleet if there is room.
 summary|option2|CRUISER|10	0	<good>110%</good> increased ballistic weapon ammo capacity.
 summary|option2|CRUISER|11	0	<good>110%</good> increased energy weapon ammo capacity.
-summary|option2|CRUISER|12	0	Increases armor by <good>560</good>.
-summary|option2|CRUISER|13	0	<good>55%</good> increased armor.
+summary|option2|CRUISER|12	0	Increases armor by <good>350</good>.
+summary|option2|CRUISER|13	0	<good>45%</good> increased armor.
 summary|option2|CRUISER|14	0	<good>130%</good> increased weapon durability.
 summary|option2|CRUISER|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option2|CRUISER|16	1	<bad>25%</bad> less weapon recoil.
@@ -5526,8 +5526,8 @@ summary|option2|CAPITAL_SHIP|8	0	Enemy ships destroyed within 1500 su of this sh
 summary|option2|CAPITAL_SHIP|9	0	Takes <good>10%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, win or lose, the rest join your fleet if there is room.
 summary|option2|CAPITAL_SHIP|10	0	<good>110%</good> increased ballistic weapon ammo capacity.
 summary|option2|CAPITAL_SHIP|11	0	<good>110%</good> increased energy weapon ammo capacity.
-summary|option2|CAPITAL_SHIP|12	0	Increases armor by <good>700</good>.
-summary|option2|CAPITAL_SHIP|13	0	<good>55%</good> increased armor.
+summary|option2|CAPITAL_SHIP|12	0	Increases armor by <good>525</good>.
+summary|option2|CAPITAL_SHIP|13	0	<good>45%</good> increased armor.
 summary|option2|CAPITAL_SHIP|14	0	<good>130%</good> increased weapon durability.
 summary|option2|CAPITAL_SHIP|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option2|CAPITAL_SHIP|16	1	<bad>25%</bad> less weapon recoil.

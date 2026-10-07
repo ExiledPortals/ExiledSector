@@ -57,10 +57,10 @@
 			"hullSizeEffects": [
 				{
 					"effect": "ARMOR_FLAT",
-					"frigate": 20,
-					"destroyer": 40,
-					"cruiser": 80,
-					"capitalShip": 100
+					"frigate": 15,
+					"destroyer": 30,
+					"cruiser": 50,
+					"capitalShip": 75
 				}
 			],
 			"tags": [
@@ -1474,7 +1474,7 @@
 				},
 				{
 					"effect": "ARMOR_PERCENT",
-					"magnitude": 40
+					"magnitude": 30
 				}
 			],
 			"hullSizeEffects": [
