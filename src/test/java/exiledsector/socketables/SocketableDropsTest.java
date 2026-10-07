@@ -196,4 +196,50 @@ class SocketableDropsTest {
         }
         return count;
     }
+
+    private static List<Map<String, Integer>> materials(String site, float mult) {
+        Random random = new Random(13L);
+        List<Map<String, Integer>> rolls = new java.util.ArrayList<>();
+        for (int i = 0; i < TRIALS; i++) {
+            rolls.add(SocketableDrops.rollMaterials(site, random, mult));
+        }
+        return rolls;
+    }
+
+    private static double materialShare(List<Map<String, Integer>> rolls, java.util.function.Predicate<Map<String, Integer>> test) {
+        return rolls.stream().filter(test).count() / (double) rolls.size();
+    }
+
+    private static boolean hasKernel(Map<String, Integer> roll) {
+        return java.util.Arrays.stream(SocketCurrency.values()).anyMatch(currency -> roll.containsKey(currency.commodityId()));
+    }
+
+    @Test
+    void partsDropAlongsideSocketablesWithEachSlotAddingOneToThree() {
+        List<Map<String, Integer>> station = materials("station", 1f);
+        double average = station.stream().mapToInt(roll -> roll.getOrDefault(SocketableDisassembly.PARTS_COMMODITY_ID, 0)).average().orElse(0);
+
+        assertEquals(1.0, materialShare(station, roll -> roll.containsKey(SocketableDisassembly.PARTS_COMMODITY_ID)), 0.0);
+        assertEquals((1 + 0.6 + 0.3) * 2, average, 0.1);
+        assertTrue(station.stream().allMatch(roll -> roll.getOrDefault(SocketableDisassembly.PARTS_COMMODITY_ID, 0) <= 9));
+        assertEquals(0.5, materialShare(materials("probe", 1f), roll -> roll.containsKey(SocketableDisassembly.PARTS_COMMODITY_ID)), 0.02);
+        assertEquals(0.25, materialShare(materials("probe", 0.5f), roll -> roll.containsKey(SocketableDisassembly.PARTS_COMMODITY_ID)), 0.02);
+    }
+
+    @Test
+    void kernelsDropAtAShareOfTheFirstChanceWeightedTowardsTheCheapOnes() {
+        List<Map<String, Integer>> station = materials("station", 1f);
+        List<Map<String, Integer>> kernels = station.stream().filter(SocketableDropsTest::hasKernel).toList();
+
+        assertEquals(SocketableDrops.KERNEL_CHANCE_SHARE, kernels.size() / (double) TRIALS, 0.02);
+        assertEquals(0.5 * SocketableDrops.KERNEL_CHANCE_SHARE, materialShare(materials("probe", 1f), SocketableDropsTest::hasKernel), 0.02);
+        assertEquals(0.6, materialShare(kernels, roll -> roll.containsKey(SocketCurrency.AUGMENTATION.commodityId())), 0.03);
+        assertEquals(0.1, materialShare(kernels, roll -> roll.containsKey(SocketCurrency.TRANSPOSITION.commodityId())), 0.02);
+    }
+
+    @Test
+    void sitesWithoutARuleDropNoMaterials() {
+        assertTrue(SocketableDrops.rollMaterials("nowhere", new Random(1L)).isEmpty());
+        assertTrue(SocketableDrops.rollMaterials(null, new Random(1L)).isEmpty());
+    }
 }

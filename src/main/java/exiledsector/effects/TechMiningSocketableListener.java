@@ -3,6 +3,7 @@ package exiledsector.effects;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.listeners.EconomyTickListener;
@@ -17,7 +18,9 @@ import exiledsector.socketables.SocketableDrops;
 import exiledsector.socketables.SocketableItemData;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.function.Supplier;
 
 public class TechMiningSocketableListener implements EconomyTickListener {
 
@@ -43,11 +46,12 @@ public class TechMiningSocketableListener implements EconomyTickListener {
             MemoryAPI memory = market.getMemoryWithoutUpdate();
             int months = monthsMined(memory, techMining, decay);
             Random random = new Random((sector.getSeedString() + "|" + market.getId() + "|" + months).hashCode());
-            List<SocketableItemData> items = months == 0
-                    ? SocketableDrops.roll(SocketableDrops.TECH_MINING_FIRST_FIND, random)
-                    : SocketableDrops.roll(SocketableDrops.TECH_MINING_MONTHLY, random, (float) Math.pow(decay, months - 1));
+            String site = months == 0 ? SocketableDrops.TECH_MINING_FIRST_FIND : SocketableDrops.TECH_MINING_MONTHLY;
+            float chanceMult = months == 0 ? 1f : (float) Math.pow(decay, months - 1);
+            List<SocketableItemData> items = SocketableDrops.roll(site, random, chanceMult);
+            Map<String, Integer> materials = SocketableDrops.rollMaterials(site, random, chanceMult);
             memory.set(MONTHS_KEY, months + 1);
-            deliver(market, items);
+            deliver(market, items, materials);
         }
     }
 
@@ -65,8 +69,8 @@ public class TechMiningSocketableListener implements EconomyTickListener {
         return 0;
     }
 
-    private static void deliver(MarketAPI source, List<SocketableItemData> items) {
-        if (items.isEmpty()) {
+    private static void deliver(MarketAPI source, List<SocketableItemData> items, Map<String, Integer> materials) {
+        if (items.isEmpty() && materials.isEmpty()) {
             return;
         }
         MarketAPI destination = Global.getSector().getPlayerFaction().getProduction().getGatheringPoint();
@@ -82,16 +86,29 @@ public class TechMiningSocketableListener implements EconomyTickListener {
         for (SocketableItemData item : items) {
             storage.addSpecial(item.toSpecialItem(), 1f);
             Socketable preview = item.preview();
-            if (preview != null && Global.getSector().getCampaignUI() != null) {
-                MarketAPI storedAt = destination;
-                String message = I18n.forGameText(() -> {
-                    String where = storedAt == null ? Translation.text("socketable.techMining.cargo")
-                            : Translation.msg("socketable.techMining.storage").arg("market", storedAt.getName()).text();
-                    return Translation.msg("socketable.techMining.found").arg("colony", source.getName()).arg("name", preview.name())
-                            .arg("destination", where).text();
-                });
-                Global.getSector().getCampaignUI().addMessage(message, Misc.getPositiveHighlightColor());
+            if (preview != null) {
+                announce(source, destination, preview::name);
             }
         }
+        for (Map.Entry<String, Integer> material : materials.entrySet()) {
+            storage.addCommodity(material.getKey(), material.getValue());
+            CommoditySpecAPI spec = Global.getSettings().getCommoditySpec(material.getKey());
+            String commodityName = spec == null ? material.getKey() : spec.getName();
+            announce(source, destination, () -> Translation.msg("socketable.techMining.material").arg("count", material.getValue())
+                    .arg("name", commodityName).text());
+        }
+    }
+
+    private static void announce(MarketAPI source, MarketAPI storedAt, Supplier<String> name) {
+        if (Global.getSector().getCampaignUI() == null) {
+            return;
+        }
+        String message = I18n.forGameText(() -> {
+            String where = storedAt == null ? Translation.text("socketable.techMining.cargo")
+                    : Translation.msg("socketable.techMining.storage").arg("market", storedAt.getName()).text();
+            return Translation.msg("socketable.techMining.found").arg("colony", source.getName()).arg("name", name.get())
+                    .arg("destination", where).text();
+        });
+        Global.getSector().getCampaignUI().addMessage(message, Misc.getPositiveHighlightColor());
     }
 }

@@ -10,6 +10,7 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -22,6 +23,9 @@ public final class SocketableDrops {
     static final String DATA_PATH = "data/config/exiledSector/socketable_salvage.csv";
     public static final String TECH_MINING_FIRST_FIND = "techmining_first_find";
     public static final String TECH_MINING_MONTHLY = "techmining_monthly";
+    static final int MIN_PARTS_PER_FIND = 1;
+    static final int MAX_PARTS_PER_FIND = 3;
+    static final float KERNEL_CHANCE_SHARE = 0.35f;
     private static final Pattern SAFE_ID = Pattern.compile("[A-Za-z0-9_.-]+");
     private static final Logger LOG = Logger.getLogger(SocketableDrops.class);
     private static final AtomicReference<Map<String, Rule>> RULES = new AtomicReference<>(Map.of());
@@ -112,6 +116,46 @@ public final class SocketableDrops {
             }
         }
         return items;
+    }
+
+    public static Map<String, Integer> rollMaterials(String site, Random random) {
+        return rollMaterials(site, random, 1f);
+    }
+
+    public static Map<String, Integer> rollMaterials(String site, Random random, float chanceMult) {
+        Map<String, Integer> materials = new LinkedHashMap<>();
+        Rule rule = site == null ? null : RULES.get().get(site);
+        if (rule == null || rule.chances().isEmpty() || rule.otherMod() && !SalvageSiteCompat.dropsEnabled()) {
+            return materials;
+        }
+        int parts = 0;
+        for (float chance : rule.chances()) {
+            if (random.nextFloat() < chance * chanceMult) {
+                parts += MIN_PARTS_PER_FIND + random.nextInt(MAX_PARTS_PER_FIND - MIN_PARTS_PER_FIND + 1);
+            }
+        }
+        if (parts > 0) {
+            materials.put(SocketableDisassembly.PARTS_COMMODITY_ID, parts);
+        }
+        if (random.nextFloat() < rule.chances().get(0) * KERNEL_CHANCE_SHARE * chanceMult) {
+            materials.put(pickKernel(random).commodityId(), 1);
+        }
+        return materials;
+    }
+
+    static SocketCurrency pickKernel(Random random) {
+        float total = 0f;
+        for (SocketCurrency currency : SocketCurrency.values()) {
+            total += currency.dropWeight();
+        }
+        float roll = random.nextFloat() * total;
+        for (SocketCurrency currency : SocketCurrency.values()) {
+            roll -= currency.dropWeight();
+            if (roll < 0f) {
+                return currency;
+            }
+        }
+        return SocketCurrency.values()[SocketCurrency.values().length - 1];
     }
 
     public static SocketableDefinition pickBasic(Random random) {

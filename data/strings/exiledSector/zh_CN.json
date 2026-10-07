@@ -425,6 +425,7 @@
     "socketable.npcUnique.unidentifiedFleet": "一支身份不明的舰队",
     "socketable.npcUnique.identifiedFleet": "{fleet}",
     "socketable.techMining.found": "{colony}的技术采掘发现了{name}，已送至{destination}。",
+    "socketable.techMining.material": "{count}个{name}",
     "socketable.techMining.storage": "{market}的仓库",
     "socketable.techMining.cargo": "你的舰队货舱",
     "ui.socketStorage.button": "插槽仓库（{count}）",

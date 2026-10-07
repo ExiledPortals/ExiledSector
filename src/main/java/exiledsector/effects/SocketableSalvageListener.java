@@ -34,6 +34,7 @@ public class SocketableSalvageListener implements ShowLootListener {
         for (SocketableItemData item : SocketableDrops.roll(site, random)) {
             loot.addSpecial(item.toSpecialItem(), 1f);
         }
+        SocketableDrops.rollMaterials(site, random).forEach(loot::addCommodity);
     }
 
     static String siteId(SectorEntityToken target) {
