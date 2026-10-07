@@ -26,7 +26,7 @@ public final class SkillTreeBonusSummary {
         SkillType root = null;
         int nodeCount = 0;
         List<SkillType> notables = new ArrayList<>();
-        Map<Group, Map<SkillEffect, Float>> totals = new LinkedHashMap<>();
+        Map<Group, Map<SkillEffect, Float>> totalsByGroup = new LinkedHashMap<>();
         for (AllocatedNode allocated : AllocatedNode.of(data)) {
             SkillType type = allocated.effectiveType();
             SkillTier tier = allocated.node().getType().getTier();
@@ -38,21 +38,21 @@ public final class SkillTreeBonusSummary {
             if (tier == SkillTier.NOTABLE || tier == SkillTier.KEYSTONE) {
                 notables.add(type);
             }
-            Map<SkillEffect, Float> group = totals.computeIfAbsent(new Group(type.getTemporaryAfterDeploymentSeconds()),
+            Map<SkillEffect, Float> groupTotals = totalsByGroup.computeIfAbsent(new Group(type.getTemporaryAfterDeploymentSeconds()),
                     key -> new LinkedHashMap<>());
             for (SkillTypeEffect typeEffect : AllocatedSkillEffects.appliedEffects(data, allocated, hullSize)) {
                 SkillEffect effect = typeEffect.effect();
-                group.merge(effect, typeEffect.magnitude(), Float::sum);
+                groupTotals.merge(effect, typeEffect.magnitude(), Float::sum);
             }
         }
-        return new Summary(root, data.getLevel(), nodeCount, notables, describe(totals));
+        return new Summary(root, data.getLevel(), nodeCount, notables, describe(totalsByGroup));
     }
 
-    private static List<DescriptionLine> describe(Map<Group, Map<SkillEffect, Float>> totals) {
+    private static List<DescriptionLine> describe(Map<Group, Map<SkillEffect, Float>> totalsByGroup) {
         List<DescriptionLine> lines = new ArrayList<>();
-        for (Map.Entry<Group, Map<SkillEffect, Float>> group : totals.entrySet()) {
+        for (Map.Entry<Group, Map<SkillEffect, Float>> groupEntry : totalsByGroup.entrySet()) {
             List<SkillTypeEffect> effects = new ArrayList<>();
-            group.getValue().forEach((effect, total) -> {
+            groupEntry.getValue().forEach((effect, total) -> {
                 if (!effect.isMultiplicative()) {
                     effects.add(new SkillTypeEffect(effect, rounded(total)));
                 } else if (rounded(total) != 0f) {
@@ -62,7 +62,7 @@ public final class SkillTreeBonusSummary {
             for (SkillTypeEffect effect : WeaponEffectTooltipAggregator.collapse(effects)) {
                 StyledText text = effect.effect().description(effect.magnitude());
                 if (text != null) {
-                    lines.add(new DescriptionLine(withDuration(text, group.getKey().temporarySeconds()),
+                    lines.add(new DescriptionLine(withDuration(text, groupEntry.getKey().temporarySeconds()),
                             effect.effect().lowerIsBetter()));
                 }
             }

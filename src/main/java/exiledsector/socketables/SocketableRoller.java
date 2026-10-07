@@ -28,11 +28,11 @@ public final class SocketableRoller {
         return rollAffixes(definition, SocketableRarity.COMMON_MAX_EFFECTS, new Random(scramble(seed)));
     }
 
-    private static List<RolledEffect> rollAffixes(SocketableDefinition definition, int count, Random random) {
-        int prefixCount = prefixCount(count, random.nextBoolean());
-        List<RolledEffect> rolled = new ArrayList<>(count);
+    private static List<RolledEffect> rollAffixes(SocketableDefinition definition, int rolledEffectCount, Random random) {
+        int prefixCount = prefixCount(rolledEffectCount, random.nextBoolean());
+        List<RolledEffect> rolled = new ArrayList<>(rolledEffectCount);
         draw(definition.prefixes(), prefixCount, random, rolled);
-        draw(definition.suffixes(), count - prefixCount, random, rolled);
+        draw(definition.suffixes(), rolledEffectCount - prefixCount, random, rolled);
         return rolled;
     }
 
@@ -44,9 +44,9 @@ public final class SocketableRoller {
         return even + 1;
     }
 
-    private static void draw(List<SocketableDefinition.PoolEntry> pool, int count, Random random, List<RolledEffect> rolled) {
+    private static void draw(List<SocketableDefinition.PoolEntry> pool, int drawCount, Random random, List<RolledEffect> rolled) {
         List<SocketableDefinition.PoolEntry> remaining = new ArrayList<>(pool);
-        for (int left = Math.min(count, pool.size()); left > 0; left--) {
+        for (int left = Math.min(drawCount, pool.size()); left > 0; left--) {
             int index = pick(remaining, random.nextFloat());
             SocketableDefinition.PoolEntry entry = remaining.remove(index);
             rolled.add(new RolledEffect(entry.effectName(), wholeNumberBetween(entry.min(), entry.max(), random)));
@@ -77,14 +77,14 @@ public final class SocketableRoller {
     }
 
     static int pick(List<SocketableDefinition.PoolEntry> entries, float roll) {
-        float total = 0f;
+        float weightTotal = 0f;
         for (SocketableDefinition.PoolEntry entry : entries) {
-            total += entry.weight();
+            weightTotal += entry.weight();
         }
-        float target = roll * total;
+        float remainingWeight = roll * weightTotal;
         for (int i = 0; i < entries.size(); i++) {
-            target -= entries.get(i).weight();
-            if (target < 0f) {
+            remainingWeight -= entries.get(i).weight();
+            if (remainingWeight < 0f) {
                 return i;
             }
         }

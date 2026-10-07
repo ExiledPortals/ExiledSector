@@ -139,18 +139,18 @@ public enum CombatSkillEffect implements BackedSkillEffect {
         private static final Color BLAST_COLOR = new Color(255, 200, 120, 40);
         private static final Color CORE_COLOR = new Color(255, 255, 255, 60);
 
-        private final ShipAPI ship;
+        private final ShipAPI ownerShip;
         private boolean exploded;
 
-        private DeathExplosionListener(ShipAPI ship) {
-            this.ship = ship;
+        private DeathExplosionListener(ShipAPI ownerShip) {
+            this.ownerShip = ownerShip;
         }
 
         // java:S3516: returning true would cancel the hull damage; this listener only reacts to the killing blow and never cancels it
         @SuppressWarnings("java:S3516")
         @Override
-        public boolean notifyAboutToTakeHullDamage(Object param, ShipAPI ship, Vector2f point, float damageAmount) {
-            if (exploded || damageAmount < ship.getHitpoints()) {
+        public boolean notifyAboutToTakeHullDamage(Object param, ShipAPI damagedShip, Vector2f point, float damageAmount) {
+            if (exploded || damageAmount < damagedShip.getHitpoints()) {
                 return false;
             }
             exploded = true;
@@ -160,11 +160,11 @@ public enum CombatSkillEffect implements BackedSkillEffect {
 
         private void detonate() {
             CombatEngineAPI engine = Global.getCombatEngine();
-            Vector2f loc = ship.getLocation();
-            float radius = Math.max(MIN_RADIUS, ship.getCollisionRadius() * RADIUS_MULT);
+            Vector2f loc = ownerShip.getLocation();
+            float radius = Math.max(MIN_RADIUS, ownerShip.getCollisionRadius() * RADIUS_MULT);
             float damage = fuelDamage();
 
-            List<ShipAPI> nearby = CombatQueries.shipsMatching(other -> other != ship && !other.isHulk() && !other.isShuttlePod()
+            List<ShipAPI> nearby = CombatQueries.shipsMatching(other -> other != ownerShip && !other.isHulk() && !other.isShuttlePod()
                     && CombatQueries.withinRadius(other.getLocation(), loc, radius));
             for (ShipAPI other : nearby) {
                 float distance = Vector2f.sub(other.getLocation(), loc, null).length();
@@ -172,7 +172,7 @@ public enum CombatSkillEffect implements BackedSkillEffect {
                 if (dealt <= 0f) {
                     continue;
                 }
-                engine.applyDamage(other, other.getLocation(), dealt, DamageType.HIGH_EXPLOSIVE, 0f, true, false, ship);
+                engine.applyDamage(other, other.getLocation(), dealt, DamageType.HIGH_EXPLOSIVE, 0f, true, false, ownerShip);
             }
 
             engine.spawnExplosion(loc, new Vector2f(), BLAST_COLOR, radius, 1.2f);
@@ -180,11 +180,11 @@ public enum CombatSkillEffect implements BackedSkillEffect {
         }
 
         private float fuelDamage() {
-            FleetMemberAPI member = ship.getMutableStats().getFleetMember();
+            FleetMemberAPI member = ownerShip.getMutableStats().getFleetMember();
             if (member == null) {
                 return 0f;
             }
-            float fuelDamagePercent = ship.getMutableStats().getDynamic().getValue(FUEL_DAMAGE_PERCENT_KEY, 0f);
+            float fuelDamagePercent = ownerShip.getMutableStats().getDynamic().getValue(FUEL_DAMAGE_PERCENT_KEY, 0f);
             return member.getFuelCapacity() * fuelDamagePercent / 100f;
         }
     }
@@ -195,52 +195,52 @@ public enum CombatSkillEffect implements BackedSkillEffect {
         private static final float BROAD_PHASE_MARGIN = 1.1f;
         private static final float LETHAL_DAMAGE = 999999f;
 
-        private final ShipAPI ship;
+        private final ShipAPI ownerShip;
         private boolean triggered;
         private float aliveTime;
 
-        private CollisionDeathListener(ShipAPI ship) {
-            this.ship = ship;
+        private CollisionDeathListener(ShipAPI ownerShip) {
+            this.ownerShip = ownerShip;
         }
 
         @Override
         public void advance(float amount) {
-            if (triggered || !ship.isAlive() || ship.isHulk()) {
+            if (triggered || !ownerShip.isAlive() || ownerShip.isHulk()) {
                 return;
             }
             aliveTime += amount;
-            if (aliveTime < COLLISION_CHECK_GRACE_PERIOD || ship.getCollisionClass() == CollisionClass.NONE) {
+            if (aliveTime < COLLISION_CHECK_GRACE_PERIOD || ownerShip.getCollisionClass() == CollisionClass.NONE) {
                 return;
             }
             if (isHullTouchingAnotherShip()) {
                 triggered = true;
-                Global.getCombatEngine().applyDamage(ship, ship.getLocation(), LETHAL_DAMAGE,
-                        DamageType.HIGH_EXPLOSIVE, 0f, true, false, ship);
+                Global.getCombatEngine().applyDamage(ownerShip, ownerShip.getLocation(), LETHAL_DAMAGE,
+                        DamageType.HIGH_EXPLOSIVE, 0f, true, false, ownerShip);
             }
         }
 
         private boolean isHullTouchingAnotherShip() {
-            Vector2f loc = ship.getLocation();
-            float queryRadius = ship.getCollisionRadius() * BROAD_PHASE_MARGIN;
+            Vector2f loc = ownerShip.getLocation();
+            float queryRadius = ownerShip.getCollisionRadius() * BROAD_PHASE_MARGIN;
             CombatEngineAPI engine = Global.getCombatEngine();
             return CombatQueries.anyNear(engine.getShipGrid(), loc, queryRadius,
                     candidate -> candidate instanceof ShipAPI other && isCollidableShip(other) && isTouching(other));
         }
 
         private boolean isCollidableShip(ShipAPI other) {
-            return other != ship && !other.isFighter() && !other.isHulk() && !other.isShuttlePod()
+            return other != ownerShip && !other.isFighter() && !other.isHulk() && !other.isShuttlePod()
                     && other.getCollisionClass() != CollisionClass.NONE
                     && !isSameStation(other);
         }
 
         private boolean isSameStation(ShipAPI other) {
-            ShipAPI parent = ship.getParentStation();
+            ShipAPI parent = ownerShip.getParentStation();
             ShipAPI otherParent = other.getParentStation();
-            return otherParent == ship || parent == other || (parent != null && parent == otherParent);
+            return otherParent == ownerShip || parent == other || (parent != null && parent == otherParent);
         }
 
         private boolean isTouching(CombatEntityAPI other) {
-            return isBroadPhaseNear(ship.getLocation(), ship.getCollisionRadius(), other) && hullsOverlap(ship, other);
+            return isBroadPhaseNear(ownerShip.getLocation(), ownerShip.getCollisionRadius(), other) && hullsOverlap(ownerShip, other);
         }
 
         private boolean isBroadPhaseNear(Vector2f loc, float myRadius, CombatEntityAPI other) {
@@ -297,23 +297,23 @@ public enum CombatSkillEffect implements BackedSkillEffect {
         private static final float MAG_SNAP = 0.001f;
         private static final String ESCORT_BONUS_MOD_ID = "exiledSector_escortBonus";
 
-        private final ShipAPI ship;
-        private final IntervalUtil interval = new IntervalUtil(0.9f, 1.1f);
+        private final ShipAPI ownerShip;
+        private final IntervalUtil retargetInterval = new IntervalUtil(0.9f, 1.1f);
         private float targetMag;
         private float appliedMag;
         private float easeRate;
 
-        private EscortListener(ShipAPI ship) {
-            this.ship = ship;
+        private EscortListener(ShipAPI ownerShip) {
+            this.ownerShip = ownerShip;
         }
 
         @Override
         public void advance(float amount) {
-            if (!ship.isAlive() || ship.isHulk()) {
+            if (!ownerShip.isAlive() || ownerShip.isHulk()) {
                 return;
             }
-            interval.advance(amount);
-            boolean retargeted = interval.intervalElapsed();
+            retargetInterval.advance(amount);
+            boolean retargeted = retargetInterval.intervalElapsed();
             if (retargeted) {
                 targetMag = proximityMagnitude();
                 easeRate = Math.abs(targetMag - appliedMag) / EASE_SECONDS;
@@ -332,24 +332,24 @@ public enum CombatSkillEffect implements BackedSkillEffect {
         }
 
         private float proximityMagnitude() {
-            float range = ship.getMutableStats().getDynamic().getValue(PROXIMITY_RANGE_KEY, 0f);
-            float searchRadius = range + PROXIMITY_FADE_DISTANCE + ship.getCollisionRadius() + SEARCH_MARGIN;
+            float range = ownerShip.getMutableStats().getDynamic().getValue(PROXIMITY_RANGE_KEY, 0f);
+            float searchRadius = range + PROXIMITY_FADE_DISTANCE + ownerShip.getCollisionRadius() + SEARCH_MARGIN;
             float best = 0f;
-            for (ShipAPI escorted : CombatQueries.shipsNear(ship.getLocation(), searchRadius, this::isLargerFriendly)) {
+            for (ShipAPI escorted : CombatQueries.shipsNear(ownerShip.getLocation(), searchRadius, this::isLargerFriendly)) {
                 best = Math.max(best, magnitudeFor(escorted, range));
             }
             return best;
         }
 
         private boolean isLargerFriendly(ShipAPI candidate) {
-            return candidate != ship && candidate.getOwner() == ship.getOwner() && candidate.isAlive() && !candidate.isHulk()
-                    && candidate.getHullSize().ordinal() > ship.getHullSize().ordinal();
+            return candidate != ownerShip && candidate.getOwner() == ownerShip.getOwner() && candidate.isAlive() && !candidate.isHulk()
+                    && candidate.getHullSize().ordinal() > ownerShip.getHullSize().ordinal();
         }
 
         private float magnitudeFor(ShipAPI escorted, float range) {
-            float radiusOverlap = (ship.getShieldRadiusEvenIfNoShield() + escorted.getShieldRadiusEvenIfNoShield())
+            float radiusOverlap = (ownerShip.getShieldRadiusEvenIfNoShield() + escorted.getShieldRadiusEvenIfNoShield())
                     * SHIELD_RADIUS_OVERLAP_MULT;
-            float distance = Vector2f.sub(ship.getShieldCenterEvenIfNoShield(),
+            float distance = Vector2f.sub(ownerShip.getShieldCenterEvenIfNoShield(),
                     escorted.getShieldCenterEvenIfNoShield(), null).length() - radiusOverlap;
 
             float mag;
@@ -361,14 +361,14 @@ public enum CombatSkillEffect implements BackedSkillEffect {
                 mag = 0f;
             }
 
-            if (ship.isDestroyer() && escorted.isCapital()) {
+            if (ownerShip.isDestroyer() && escorted.isCapital()) {
                 mag *= DESTROYER_ESCORTING_CAPITAL_MULT;
             }
             return mag;
         }
 
         private void applyBonuses(float mag) {
-            MutableShipStatsAPI stats = ship.getMutableStats();
+            MutableShipStatsAPI stats = ownerShip.getMutableStats();
             StatBonus[] rangeStats = {stats.getBallisticWeaponRangeBonus(), stats.getEnergyWeaponRangeBonus()};
 
             if (mag <= 0f) {

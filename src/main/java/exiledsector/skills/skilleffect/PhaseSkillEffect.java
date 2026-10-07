@@ -86,23 +86,23 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
 
         private static final String DIVE_FLAG_KEY = "phaseAnchor_canDive";
 
-        private final ShipAPI ship;
+        private final ShipAPI ownerShip;
         private final String modId;
         private final FaderUtil diveFader = new FaderUtil(1f, 1f);
         private boolean diving;
         private float diveProgress;
 
-        private PhaseAnchorDiveListener(ShipAPI ship, String modId) {
-            this.ship = ship;
+        private PhaseAnchorDiveListener(ShipAPI ownerShip, String modId) {
+            this.ownerShip = ownerShip;
             this.modId = modId;
         }
 
         @Override
-        public boolean notifyAboutToTakeHullDamage(Object param, ShipAPI ship, Vector2f point, float damageAmount) {
+        public boolean notifyAboutToTakeHullDamage(Object param, ShipAPI damagedShip, Vector2f point, float damageAmount) {
             if (diving) {
                 return true;
             }
-            if (damageAmount < ship.getHitpoints() || ship.getPhaseCloak() == null) {
+            if (damageAmount < damagedShip.getHitpoints() || damagedShip.getPhaseCloak() == null) {
                 return false;
             }
 
@@ -111,15 +111,15 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
                 return false;
             }
 
-            FleetMemberAPI member = ship.getFleetMember();
+            FleetMemberAPI member = damagedShip.getFleetMember();
             float deployCost = member != null ? member.getDeployCost() : 0f;
-            float crPenaltyMult = ship.getMutableStats().getDynamic().getValue(PHASE_ANCHOR_CR_PENALTY_KEY, 0f) / 100f;
+            float crPenaltyMult = damagedShip.getMutableStats().getDynamic().getValue(PHASE_ANCHOR_CR_PENALTY_KEY, 0f) / 100f;
             float crCost = crPenaltyMult * deployCost;
-            if (ship.getCurrentCR() < crCost) {
+            if (damagedShip.getCurrentCR() < crCost) {
                 return false;
             }
 
-            ship.setHitpoints(1f);
+            damagedShip.setHitpoints(1f);
             if (member != null) {
                 member.getRepairTracker().applyCREvent(-crCost, Translation.gameText("modifier.emergencyPhaseDive"));
             }
@@ -133,7 +133,7 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
             if (!diving) {
                 return;
             }
-            ShipSystemAPI phaseCloak = ship.getPhaseCloak();
+            ShipSystemAPI phaseCloak = ownerShip.getPhaseCloak();
             if (phaseCloak == null) {
                 return;
             }
@@ -141,41 +141,41 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
             Color effectColor = Misc.setAlpha(phaseCloak.getSpecAPI().getEffectColor2(), 255);
             effectColor = Misc.interpolateColor(effectColor, Color.white, 0.5f);
 
-            if (diveProgress == 0f && ship.getFluxTracker().showFloaty()) {
-                float timeMult = ship.getMutableStats().getTimeMult().getModifiedValue();
-                Global.getCombatEngine().addFloatingTextAlways(ship.getLocation(), Translation.gameText("combat.emergencyDive"),
-                        NeuralLinkScript.getFloatySize(ship), effectColor, ship,
+            if (diveProgress == 0f && ownerShip.getFluxTracker().showFloaty()) {
+                float timeMult = ownerShip.getMutableStats().getTimeMult().getModifiedValue();
+                Global.getCombatEngine().addFloatingTextAlways(ownerShip.getLocation(), Translation.gameText("combat.emergencyDive"),
+                        NeuralLinkScript.getFloatySize(ownerShip), effectColor, ownerShip,
                         16f * timeMult, 3.2f / timeMult, 1f / timeMult, 0f, 0f, 1f);
             }
 
             diveFader.advance(amount);
-            ship.setRetreating(true, false);
-            ship.blockCommandForOneFrame(ShipCommand.USE_SYSTEM);
+            ownerShip.setRetreating(true, false);
+            ownerShip.blockCommandForOneFrame(ShipCommand.USE_SYSTEM);
 
             // multiplying (not dividing) by chargeUpDur matches vanilla's own phase-anchor dive timing exactly
             diveProgress += amount * phaseCloak.getChargeUpDur();
-            float extraAlphaMult = ship.getExtraAlphaMult();
+            float extraAlphaMult = ownerShip.getExtraAlphaMult();
             phaseCloak.forceState(ShipSystemAPI.SystemState.IN, Math.min(1f, Math.max(extraAlphaMult, diveProgress)));
 
-            ship.getMutableStats().getHullDamageTakenMult().modifyMult(modId, 0f);
+            ownerShip.getMutableStats().getHullDamageTakenMult().modifyMult(modId, 0f);
 
             if (diveProgress < 1f) {
                 return;
             }
 
             if (diveFader.isIdle()) {
-                Global.getSoundPlayer().playSound("phase_anchor_vanish", 1f, 1f, ship.getLocation(), ship.getVelocity());
+                Global.getSoundPlayer().playSound("phase_anchor_vanish", 1f, 1f, ownerShip.getLocation(), ownerShip.getVelocity());
             }
             diveFader.fadeOut();
             diveFader.advance(amount);
             float brightness = diveFader.getBrightness();
-            ship.setExtraAlphaMult2(brightness);
+            ownerShip.setExtraAlphaMult2(brightness);
 
-            float jitterAmount = ship.getCollisionRadius() * 5f;
-            ship.setJitter(this, effectColor, brightness, 20, jitterAmount * (1f - brightness));
+            float jitterAmount = ownerShip.getCollisionRadius() * 5f;
+            ownerShip.setJitter(this, effectColor, brightness, 20, jitterAmount * (1f - brightness));
 
             if (diveFader.isFadedOut()) {
-                ship.getLocation().set(0f, -1000000f);
+                ownerShip.getLocation().set(0f, -1000000f);
             }
         }
     }

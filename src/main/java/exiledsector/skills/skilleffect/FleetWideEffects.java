@@ -34,18 +34,18 @@ public final class FleetWideEffects {
     }
 
     public static void recomputeSalvageBonus() {
-        CampaignFleetAPI fleet = playerFleet();
-        if (fleet == null) {
+        CampaignFleetAPI playerFleet = playerFleet();
+        if (playerFleet == null) {
             return;
         }
         float totalPercent = 0f;
-        for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
+        for (FleetMemberAPI member : playerFleet.getFleetData().getMembersListCopy()) {
             if (member.isMothballed()) {
                 continue;
             }
             totalPercent += member.getStats().getDynamic().getValue(POST_BATTLE_SALVAGE_CONTRIBUTION_KEY, 0f);
         }
-        fleet.getStats().getDynamic().getStat(Stats.BATTLE_SALVAGE_MULT_FLEET)
+        playerFleet.getStats().getDynamic().getStat(Stats.BATTLE_SALVAGE_MULT_FLEET)
                 .modifyFlat(POST_BATTLE_SALVAGE_FLEET_MOD_ID, totalPercent / 100f);
     }
 
@@ -106,29 +106,29 @@ public final class FleetWideEffects {
     }
 
     public static void recomputeExtendedPhaseFieldIfStale() {
-        CampaignFleetAPI fleet = playerFleet();
-        if (fleet == null) {
+        CampaignFleetAPI playerFleet = playerFleet();
+        if (playerFleet == null) {
             return;
         }
-        boolean transponderOn = fleet.isTransponderOn();
-        boolean vanillaFieldReapplied = fleet.getStats().getDetectedRangeMod().getMultBonus(PhaseField.MOD_KEY) != null;
+        boolean transponderOn = playerFleet.isTransponderOn();
+        boolean vanillaFieldReapplied = playerFleet.getStats().getDetectedRangeMod().getMultBonus(PhaseField.MOD_KEY) != null;
         if (!phaseFieldStale && !vanillaFieldReapplied && Boolean.valueOf(transponderOn).equals(lastTransponderOn)) {
             return;
         }
         phaseFieldStale = false;
         lastTransponderOn = transponderOn;
-        recomputeExtendedPhaseField(fleet);
+        recomputeExtendedPhaseField(playerFleet);
     }
 
-    private static void recomputeExtendedPhaseField(CampaignFleetAPI fleet) {
-        fleet.getStats().getDetectedRangeMod().unmodifyMult(PhaseField.MOD_KEY);
+    private static void recomputeExtendedPhaseField(CampaignFleetAPI playerFleet) {
+        playerFleet.getStats().getDetectedRangeMod().unmodifyMult(PhaseField.MOD_KEY);
 
-        if (fleet.isTransponderOn()) {
-            fleet.getStats().getDetectedRangeMod().unmodifyMult(EXTENDED_PHASE_FIELD_MOD_ID);
+        if (playerFleet.isTransponderOn()) {
+            playerFleet.getStats().getDetectedRangeMod().unmodifyMult(EXTENDED_PHASE_FIELD_MOD_ID);
             return;
         }
 
-        List<FleetMemberAPI> members = fleet.getFleetData().getMembersListCopy();
+        List<FleetMemberAPI> members = playerFleet.getFleetData().getMembersListCopy();
         float[] profiles = new float[members.size()];
         List<Float> phaseSensorValues = new ArrayList<>();
         for (int i = 0; i < members.size(); i++) {
@@ -141,7 +141,7 @@ public final class FleetWideEffects {
         }
 
         if (phaseSensorValues.isEmpty()) {
-            fleet.getStats().getDetectedRangeMod().unmodifyMult(EXTENDED_PHASE_FIELD_MOD_ID);
+            playerFleet.getStats().getDetectedRangeMod().unmodifyMult(EXTENDED_PHASE_FIELD_MOD_ID);
             return;
         }
 
@@ -156,7 +156,7 @@ public final class FleetWideEffects {
         float total = Math.max(totalProfile + totalPhaseSensors, 1f);
         float mult = Math.max(PhaseField.MIN_FIELD_MULT, Math.min(1f, totalProfile / total));
 
-        fleet.getStats().getDetectedRangeMod()
+        playerFleet.getStats().getDetectedRangeMod()
                 .modifyMult(EXTENDED_PHASE_FIELD_MOD_ID, mult, Translation.gameText("modifier.phaseSensorNetworks"));
     }
 

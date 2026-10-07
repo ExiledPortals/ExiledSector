@@ -15,31 +15,31 @@ final class AbsorbReserveListener implements DamageListener, AdvanceableListener
     static final float DRAIN_PER_SECOND = 100f;
     private static final String MOD_ID_PREFIX = "exiledSector_absorbReserve_";
 
-    private final ShipAPI ship;
+    private final ShipAPI ownerShip;
     private final String modId;
     private float reserve;
     private int appliedPercent;
 
-    AbsorbReserveListener(ShipAPI ship) {
-        this.ship = ship;
-        this.modId = MOD_ID_PREFIX + ship.getId();
+    AbsorbReserveListener(ShipAPI ownerShip) {
+        this.ownerShip = ownerShip;
+        this.modId = MOD_ID_PREFIX + ownerShip.getId();
     }
 
     @Override
     public void reportDamageApplied(Object source, CombatEntityAPI target, ApplyDamageResultAPI result) {
-        if (target == ship && result.getDamageToShields() > 0f) {
+        if (target == ownerShip && result.getDamageToShields() > 0f) {
             reserve = Math.min(MAX_RESERVE, reserve + result.getDamageToShields());
         }
     }
 
     @Override
     public void advance(float amount) {
-        if (!ship.isAlive() || ship.isHulk()) {
+        if (!ownerShip.isAlive() || ownerShip.isHulk()) {
             reserve = 0f;
         } else if (reserve > 0f) {
             reserve = Math.max(0f, reserve - DRAIN_PER_SECOND * amount);
         }
-        float maxPercent = ship.getMutableStats().getDynamic().getValue(RATE_OF_FIRE_PERCENT_KEY, 0f);
+        float maxPercent = ownerShip.getMutableStats().getDynamic().getValue(RATE_OF_FIRE_PERCENT_KEY, 0f);
         int percent = Math.round(maxPercent * Math.min(reserve, FULL_RESERVE) / FULL_RESERVE);
         if (percent != appliedPercent) {
             apply(percent);
@@ -48,7 +48,7 @@ final class AbsorbReserveListener implements DamageListener, AdvanceableListener
 
     private void apply(int percent) {
         appliedPercent = percent;
-        MutableShipStatsAPI stats = ship.getMutableStats();
+        MutableShipStatsAPI stats = ownerShip.getMutableStats();
         if (percent <= 0) {
             stats.getBallisticRoFMult().unmodify(modId);
             stats.getEnergyRoFMult().unmodify(modId);

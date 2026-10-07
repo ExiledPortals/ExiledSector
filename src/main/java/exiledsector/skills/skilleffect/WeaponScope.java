@@ -15,20 +15,20 @@ public enum WeaponScope {
     NON_BEAM_ENERGY(ENERGY, "NON_BEAM_ENERGY_"),
     BEAM(ENERGY, "BEAM_");
 
-    private final WeaponScope parent;
+    private final WeaponScope parentScope;
     private final String namePrefix;
 
-    WeaponScope(WeaponScope parent, String namePrefix) {
-        this.parent = parent;
+    WeaponScope(WeaponScope parentScope, String namePrefix) {
+        this.parentScope = parentScope;
         this.namePrefix = namePrefix;
     }
 
     public WeaponScope parent() {
-        return parent;
+        return parentScope;
     }
 
     public List<WeaponScope> children() {
-        return Arrays.stream(values()).filter(scope -> scope.parent == this).toList();
+        return Arrays.stream(values()).filter(scope -> scope.parentScope == this).toList();
     }
 
     String namePrefix() {

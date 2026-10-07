@@ -23,11 +23,11 @@ public final class NodeEligibility {
     public record Block(Kind kind, String detail, SkillType conflictingType) {
     }
 
-    public record Context(List<AllocatedNode> allocated, ShieldType shieldType, ShipFacts ship, Predicate<SkillType> locked,
+    public record Context(List<AllocatedNode> allocated, ShieldType shieldType, ShipFacts shipFacts, Predicate<SkillType> locked,
                           ShipProfile profile) {
 
-        public static Context of(ShipSkillData data, ShipFacts ship, Predicate<SkillType> locked) {
-            return new Context(AllocatedNode.of(data), currentShieldType(data, ship.hullSize(), ship.hullShieldType()), ship, locked, null);
+        public static Context of(ShipSkillData data, ShipFacts shipFacts, Predicate<SkillType> locked) {
+            return new Context(AllocatedNode.of(data), currentShieldType(data, shipFacts.hullSize(), shipFacts.hullShieldType()), shipFacts, locked, null);
         }
     }
 
@@ -43,12 +43,12 @@ public final class NodeEligibility {
         if (optionProblem != null) {
             return new Block(Kind.INVALID_OPTION, optionProblem.name(), null);
         }
-        ShipFacts ship = context.ship();
-        HullSize hullSize = ship.hullSize();
+        ShipFacts shipFacts = context.shipFacts();
+        HullSize hullSize = shipFacts.hullSize();
         if (!node.getType().allowsHullSize(hullSize) || !candidate.effectiveType().allowsHullSize(hullSize)) {
             return new Block(Kind.WRONG_HULL_SIZE, null, null);
         }
-        String unmetRequirement = NodeRequirements.firstUnmetHullRequirement(node.effectiveTags(option), ship);
+        String unmetRequirement = NodeRequirements.firstUnmetHullRequirement(node.effectiveTags(option), shipFacts);
         if (unmetRequirement != null) {
             return new Block(Kind.UNMET_HULL_REQUIREMENT, unmetRequirement, null);
         }
@@ -59,7 +59,7 @@ public final class NodeEligibility {
             }
         }
         for (String hullModId : candidate.exclusiveHullModIds()) {
-            if (ship.hasHullMod().test(hullModId)) {
+            if (shipFacts.hasHullMod().test(hullModId)) {
                 return new Block(Kind.HULL_MOD_CONFLICT, hullModId, null);
             }
         }
@@ -69,7 +69,7 @@ public final class NodeEligibility {
             }
         }
         for (SkillTypeEffect effect : candidate.effectiveType().effectsFor(hullSize)) {
-            String reason = effect.effect().blockAllocationReason(ship, context.shieldType());
+            String reason = effect.effect().blockAllocationReason(shipFacts, context.shieldType());
             if (reason != null) {
                 return new Block(Kind.EFFECT_BLOCK, reason, null);
             }

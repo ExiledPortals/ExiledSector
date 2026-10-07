@@ -4,8 +4,8 @@ import java.util.List;
 
 public class StaticImage extends SkillTreeObject {
 
-    private final float width;
-    private final float height;
+    private final float imageWidth;
+    private final float imageHeight;
     private final String imagePath;
     private final Rotation rotation;
 
@@ -14,18 +14,18 @@ public class StaticImage extends SkillTreeObject {
 
     public StaticImage(String id, float x, float y, Shape shape, List<String> tags) {
         super(id, x, y, tags);
-        this.width = shape.width();
-        this.height = shape.height();
+        this.imageWidth = shape.width();
+        this.imageHeight = shape.height();
         this.imagePath = shape.imagePath();
         this.rotation = shape.rotation();
     }
 
     public float getWidth() {
-        return width;
+        return imageWidth;
     }
 
     public float getHeight() {
-        return height;
+        return imageHeight;
     }
 
     public String getImagePath() {

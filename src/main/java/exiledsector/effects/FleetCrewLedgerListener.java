@@ -56,18 +56,18 @@ public class FleetCrewLedgerListener extends BaseCampaignEventListener {
 
     private static void report(CrewChange change, Outcome outcome) {
         InteractionDialogAPI dialog = Global.getSector().getCampaignUI().getCurrentInteractionDialog();
-        TextPanelAPI text = dialog == null ? null : dialog.getTextPanel();
-        if (text == null) {
+        TextPanelAPI textPanel = dialog == null ? null : dialog.getTextPanel();
+        if (textPanel == null) {
             return;
         }
         Color good = Misc.getPositiveHighlightColor();
         Color bad = Misc.getNegativeHighlightColor();
-        line(text, "combat.crewLedger.stolen", change.stolen(), good);
-        line(text, "combat.liveMunitions.crewLost", change.stolen() > 0 ? change.sacrificed() : outcome.lost(), bad);
-        line(text, "combat.crewLedger.joined", outcome.joined(), good);
-        line(text, "combat.crewLedger.noRoom", outcome.noRoom(), Misc.getHighlightColor());
+        line(textPanel, "combat.crewLedger.stolen", change.stolen(), good);
+        line(textPanel, "combat.liveMunitions.crewLost", change.stolen() > 0 ? change.sacrificed() : outcome.lost(), bad);
+        line(textPanel, "combat.crewLedger.joined", outcome.joined(), good);
+        line(textPanel, "combat.crewLedger.noRoom", outcome.noRoom(), Misc.getHighlightColor());
         if (change.stolen() > 0) {
-            line(text, "combat.crewLedger.netLoss", outcome.lost(), bad);
+            line(textPanel, "combat.crewLedger.netLoss", outcome.lost(), bad);
         }
     }
 
@@ -83,24 +83,24 @@ public class FleetCrewLedgerListener extends BaseCampaignEventListener {
         return recoverable == null ? 0 : recoverable.getCrewInt();
     }
 
-    private static void line(TextPanelAPI text, String key, int count, Color color) {
+    private static void line(TextPanelAPI textPanel, String messageKey, int count, Color color) {
         if (count > 0) {
-            VanillaText.addPara(text, Translation.msg(key).count(count).arg("count", count).styled(), color);
+            VanillaText.addPara(textPanel, Translation.msg(messageKey).count(count).arg("count", count).styled(), color);
         }
     }
 
     private static final class ApplyAfterEngagement implements EveryFrameScript {
 
-        private final CrewChange change;
-        private boolean done;
+        private final CrewChange crewChange;
+        private boolean applied;
 
-        private ApplyAfterEngagement(CrewChange change) {
-            this.change = change;
+        private ApplyAfterEngagement(CrewChange crewChange) {
+            this.crewChange = crewChange;
         }
 
         @Override
         public boolean isDone() {
-            return done;
+            return applied;
         }
 
         @Override
@@ -110,18 +110,18 @@ public class FleetCrewLedgerListener extends BaseCampaignEventListener {
 
         @Override
         public void advance(float amount) {
-            if (done) {
+            if (applied) {
                 return;
             }
-            done = true;
+            applied = true;
             CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
             if (playerFleet == null) {
                 return;
             }
             CargoAPI cargo = playerFleet.getCargo();
             int freeCrewSpace = Math.max(0, cargo.getFreeCrewSpace() - crewStillToBeRecovered(playerFleet));
-            Outcome outcome = apply(change, cargo, freeCrewSpace);
-            I18n.forGameText(() -> report(change, outcome));
+            Outcome outcome = apply(crewChange, cargo, freeCrewSpace);
+            I18n.forGameText(() -> report(crewChange, outcome));
         }
     }
 }

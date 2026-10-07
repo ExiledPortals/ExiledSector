@@ -12,25 +12,25 @@ final class NearbyWrecks {
 
     private static final float SEARCH_MARGIN = 500f;
 
-    private final ShipAPI ship;
-    private final Predicate<ShipAPI> counts;
+    private final ShipAPI ownerShip;
+    private final Predicate<ShipAPI> wreckFilter;
     private Set<ShipAPI> aliveNearby = new HashSet<>();
 
-    NearbyWrecks(ShipAPI ship, Predicate<ShipAPI> counts) {
-        this.ship = ship;
-        this.counts = counts;
+    NearbyWrecks(ShipAPI ownerShip, Predicate<ShipAPI> wreckFilter) {
+        this.ownerShip = ownerShip;
+        this.wreckFilter = wreckFilter;
     }
 
     List<ShipAPI> newWithin(float range) {
         List<ShipAPI> wrecks = new ArrayList<>();
         Set<ShipAPI> stillAlive = new HashSet<>();
-        for (ShipAPI other : CombatQueries.shipsNear(ship.getLocation(), range + SEARCH_MARGIN, other -> other != ship)) {
+        for (ShipAPI other : CombatQueries.shipsNear(ownerShip.getLocation(), range + SEARCH_MARGIN, other -> other != ownerShip)) {
             if (other.isAlive() && !other.isHulk()) {
-                if (counts.test(other)) {
+                if (wreckFilter.test(other)) {
                     stillAlive.add(other);
                 }
             } else if (isWreck(other) && aliveNearby.contains(other)
-                    && CombatQueries.withinRadius(other.getLocation(), ship.getLocation(), range)) {
+                    && CombatQueries.withinRadius(other.getLocation(), ownerShip.getLocation(), range)) {
                 wrecks.add(other);
             }
         }

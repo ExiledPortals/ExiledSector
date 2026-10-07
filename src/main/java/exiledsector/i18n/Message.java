@@ -5,12 +5,12 @@ import java.util.Map;
 
 public final class Message {
 
-    private final String key;
+    private final String messageKey;
     private final Map<String, StyledText> args = new HashMap<>();
-    private Integer count;
+    private Integer pluralCount;
 
-    Message(String key) {
-        this.key = key;
+    Message(String messageKey) {
+        this.messageKey = messageKey;
     }
 
     public Message arg(String name, String literal) {
@@ -32,7 +32,7 @@ public final class Message {
     }
 
     public Message count(int count) {
-        this.count = count;
+        this.pluralCount = count;
         return arg("count", count);
     }
 
@@ -46,14 +46,14 @@ public final class Message {
     }
 
     private String resolvedKey(Catalogue catalogue) {
-        if (count == null) {
-            return key;
+        if (pluralCount == null) {
+            return messageKey;
         }
-        String categoryKey = key + "." + Plurals.category(catalogue.locale(), count);
+        String categoryKey = messageKey + "." + Plurals.category(catalogue.locale(), pluralCount);
         if (catalogue.has(categoryKey)) {
             return categoryKey;
         }
-        String otherKey = key + "." + Plurals.OTHER;
-        return catalogue.has(otherKey) ? otherKey : key;
+        String otherKey = messageKey + "." + Plurals.OTHER;
+        return catalogue.has(otherKey) ? otherKey : messageKey;
     }
 }

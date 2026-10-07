@@ -16,15 +16,15 @@ final class BallisticPierceListener implements DamageDealtModifier, DroneSpawner
     static final String CHANCE_KEY = "exiledSector_ballisticPierceChance";
     static final String PIERCED_KEY = "exiledSector_ballisticPierced";
 
-    private final ShipAPI ship;
+    private final ShipAPI ownerShip;
     private final PierceDrones drones;
 
-    BallisticPierceListener(ShipAPI ship) {
-        this(ship, new PierceDrones(ship));
+    BallisticPierceListener(ShipAPI ownerShip) {
+        this(ownerShip, new PierceDrones(ownerShip));
     }
 
-    BallisticPierceListener(ShipAPI ship, PierceDrones drones) {
-        this.ship = ship;
+    BallisticPierceListener(ShipAPI ownerShip, PierceDrones drones) {
+        this.ownerShip = ownerShip;
         this.drones = drones;
     }
 
@@ -40,10 +40,10 @@ final class BallisticPierceListener implements DamageDealtModifier, DroneSpawner
         WeaponAPI weapon = projectile.getWeapon();
         if (!canPierce(weapon) || isPierced(projectile) || projectile.getAI() instanceof ProximityFuseAIAPI
                 || hitShip.isFighter() || !hitShip.isAlive()
-                || !ship.isAlive() || !CombatQueries.isHostile(ship, hitShip)) {
+                || !ownerShip.isAlive() || !CombatQueries.isHostile(ownerShip, hitShip)) {
             return;
         }
-        float chancePercent = ship.getMutableStats().getDynamic().getValue(CHANCE_KEY, 0f);
+        float chancePercent = ownerShip.getMutableStats().getDynamic().getValue(CHANCE_KEY, 0f);
         if (chancePercent <= 0f || Math.random() >= chancePercent / 100.0 || !WeaponDroneFactory.supportsProjectile(weapon)) {
             return;
         }

@@ -30,7 +30,7 @@ final class FluxScaledVolatilityListener implements AdvanceableListener {
     private static final Color AFTERIMAGE_COLOR = new Color(100, 42, 201, 80);
     private static final Color ENGINE_COLOR = new Color(100, 42, 201, 255);
 
-    private final ShipAPI ship;
+    private final ShipAPI ownerShip;
     private final String modId;
     private final IntervalUtil afterimageTimer = new IntervalUtil(AFTERIMAGE_INTERVAL, AFTERIMAGE_INTERVAL);
     private float appliedRatio = Float.NaN;
@@ -39,9 +39,9 @@ final class FluxScaledVolatilityListener implements AdvanceableListener {
     private String statusTitle;
     private String statusText;
 
-    FluxScaledVolatilityListener(ShipAPI ship) {
-        this.ship = ship;
-        this.modId = MOD_ID_PREFIX + ship.getId();
+    FluxScaledVolatilityListener(ShipAPI ownerShip) {
+        this.ownerShip = ownerShip;
+        this.modId = MOD_ID_PREFIX + ownerShip.getId();
     }
 
     static float ratio(FluxTrackerAPI flux) {
@@ -52,21 +52,21 @@ final class FluxScaledVolatilityListener implements AdvanceableListener {
 
     @Override
     public void advance(float amount) {
-        if (!ship.isAlive() || ship.isHulk()) {
+        if (!ownerShip.isAlive() || ownerShip.isHulk()) {
             return;
         }
         CombatEngineAPI engine = Global.getCombatEngine();
         if (engine == null || engine.isPaused()) {
             return;
         }
-        float ratio = ratio(ship.getFluxTracker());
+        float ratio = ratio(ownerShip.getFluxTracker());
         float scale = ratio < 0f ? penaltyScale() : 1f;
         float topSpeed = magnitude(TOP_SPEED_KEY) * scale;
         float rateOfFire = magnitude(RATE_OF_FIRE_KEY) * scale;
         if (ratio != appliedRatio) {
             applyRatio(ratio, topSpeed, rateOfFire);
         }
-        if (ship == engine.getPlayerShip()) {
+        if (ownerShip == engine.getPlayerShip()) {
             showStatus(engine, ratio, topSpeed, rateOfFire);
         }
         if (ratio > 0f) {
@@ -79,7 +79,7 @@ final class FluxScaledVolatilityListener implements AdvanceableListener {
         statusText = null;
         afterimageColor = new Color(AFTERIMAGE_COLOR.getRed(), AFTERIMAGE_COLOR.getGreen(), AFTERIMAGE_COLOR.getBlue(),
                 Math.round(AFTERIMAGE_COLOR.getAlpha() * Math.max(ratio, 0f)));
-        MutableShipStatsAPI stats = ship.getMutableStats();
+        MutableShipStatsAPI stats = ownerShip.getMutableStats();
         float agility = Math.max(topSpeed * ratio, 0f);
         stats.getMaxSpeed().modifyFlat(modId, topSpeed * ratio);
         stats.getAcceleration().modifyPercent(modId, agility);
@@ -101,15 +101,15 @@ final class FluxScaledVolatilityListener implements AdvanceableListener {
     private void showLowFluxEffects(CombatEngineAPI engine, float ratio) {
         afterimageTimer.advance(engine.getElapsedInLastFrame());
         if (afterimageTimer.intervalElapsed()) {
-            ship.addAfterimage(afterimageColor, 0f, 0f, ship.getVelocity().x * AFTERIMAGE_DRIFT,
-                    ship.getVelocity().y * AFTERIMAGE_DRIFT, 0f, 0f, 0f, AFTERIMAGE_DURATION, true, true, false);
+            ownerShip.addAfterimage(afterimageColor, 0f, 0f, ownerShip.getVelocity().x * AFTERIMAGE_DRIFT,
+                    ownerShip.getVelocity().y * AFTERIMAGE_DRIFT, 0f, 0f, 0f, AFTERIMAGE_DURATION, true, true, false);
         }
-        ship.getEngineController().fadeToOtherColor(this, ENGINE_COLOR, null, 1f, ENGINE_TINT_STRENGTH * ratio);
+        ownerShip.getEngineController().fadeToOtherColor(this, ENGINE_COLOR, null, 1f, ENGINE_TINT_STRENGTH * ratio);
     }
 
     private float penaltyScale() {
         if (penaltyScale == null) {
-            float reduction = LostSectorCompat.hasAugmentedSystems(ship.getVariant()) ? magnitude(AUGMENTED_PENALTY_REDUCTION_KEY) : 0f;
+            float reduction = LostSectorCompat.hasAugmentedSystems(ownerShip.getVariant()) ? magnitude(AUGMENTED_PENALTY_REDUCTION_KEY) : 0f;
             penaltyScale = Math.max(0f, 1f - reduction / 100f);
         }
         return penaltyScale;
@@ -120,6 +120,6 @@ final class FluxScaledVolatilityListener implements AdvanceableListener {
     }
 
     private float magnitude(String key) {
-        return ship.getMutableStats().getDynamic().getValue(key, 0f);
+        return ownerShip.getMutableStats().getDynamic().getValue(key, 0f);
     }
 }

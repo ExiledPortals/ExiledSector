@@ -16,16 +16,16 @@ public final class FleetCrewLedger {
     private static int pendingSacrificed;
 
     private final boolean recorded;
-    private final boolean unlimited;
+    private final boolean unlimitedCrew;
     private final Map<Object, Float> creditedWrecks = new HashMap<>();
-    private int remaining;
-    private float stolen;
-    private int sacrificed;
+    private int remainingCrew;
+    private float crewStolen;
+    private int crewSacrificed;
 
-    FleetCrewLedger(int remaining, boolean recorded, boolean unlimited) {
-        this.remaining = remaining;
+    FleetCrewLedger(int remainingCrew, boolean recorded, boolean unlimitedCrew) {
+        this.remainingCrew = remainingCrew;
         this.recorded = recorded;
-        this.unlimited = unlimited;
+        this.unlimitedCrew = unlimitedCrew;
     }
 
     public record CrewChange(int stolen, int sacrificed) {
@@ -61,19 +61,19 @@ public final class FleetCrewLedger {
     }
 
     boolean hasCrew() {
-        return unlimited || remaining > 0;
+        return unlimitedCrew || remainingCrew > 0;
     }
 
     void sacrifice() {
         if (!hasCrew()) {
             return;
         }
-        if (!unlimited) {
-            remaining--;
+        if (!unlimitedCrew) {
+            remainingCrew--;
         }
-        sacrificed++;
+        crewSacrificed++;
         if (recorded) {
-            publishSacrificed(sacrificed);
+            publishSacrificed(crewSacrificed);
         }
     }
 
@@ -84,11 +84,11 @@ public final class FleetCrewLedger {
             return;
         }
         creditedWrecks.put(wreck, crew);
-        int wholeBefore = roundUp(stolen);
-        stolen += crew - already;
-        remaining += roundUp(stolen) - wholeBefore;
+        int wholeBefore = roundUp(crewStolen);
+        crewStolen += crew - already;
+        remainingCrew += roundUp(crewStolen) - wholeBefore;
         if (recorded) {
-            publishStolen(stolen);
+            publishStolen(crewStolen);
         }
     }
 

@@ -91,23 +91,23 @@ public class CombatXpListener extends BaseCampaignEventListener {
         if (dialog == null || dialog.getTextPanel() == null) {
             return;
         }
-        TextPanelAPI text = dialog.getTextPanel();
-        text.setFontSmallInsignia();
-        VanillaText.addPara(text, Translation.styled("combat.xp.header"), Misc.getBasePlayerColor());
-        text.setFontInsignia();
+        TextPanelAPI textPanel = dialog.getTextPanel();
+        textPanel.setFontSmallInsignia();
+        VanillaText.addPara(textPanel, Translation.styled("combat.xp.header"), Misc.getBasePlayerColor());
+        textPanel.setFontInsignia();
         String earnedKey = report.lost() ? "combat.xp.earnedAfterLoss" : "combat.xp.earned";
-        VanillaText.addPara(text, Translation.msg(earnedKey).arg("xp", report.xpText()).arg("dp", report.dpText()).styled(),
+        VanillaText.addPara(textPanel, Translation.msg(earnedKey).arg("xp", report.xpText()).arg("dp", report.dpText()).styled(),
                 Misc.getTextColor());
         if (report.hasDifficultyBonus()) {
-            VanillaText.addPara(text, Translation.msg("combat.xp.difficultyBonus").arg("percent", report.difficultyBonusText()).styled(),
+            VanillaText.addPara(textPanel, Translation.msg("combat.xp.difficultyBonus").arg("percent", report.difficultyBonusText()).styled(),
                     Misc.getTextColor());
         }
         if (report.hasCatchUpBonus()) {
-            VanillaText.addPara(text, Translation.msg("combat.xp.catchUpBonus").arg("multiplier", report.catchUpText()).styled(),
+            VanillaText.addPara(textPanel, Translation.msg("combat.xp.catchUpBonus").arg("multiplier", report.catchUpText()).styled(),
                     Misc.getTextColor());
         }
         for (String levelUp : report.levelUps()) {
-            VanillaText.addPara(text, StyledText.of(levelUp), Misc.getPositiveHighlightColor());
+            VanillaText.addPara(textPanel, StyledText.of(levelUp), Misc.getPositiveHighlightColor());
         }
     }
 

@@ -16,15 +16,15 @@ final class EnergyChainListener implements DamageDealtModifier, DroneSpawner {
     static final String CHANCE_KEY = "exiledSector_energyChainChance";
     static final String FALLOFF_KEY = "exiledSector_energyChainFalloff";
 
-    private final ShipAPI ship;
+    private final ShipAPI ownerShip;
     private final RefractionDrones drones;
 
-    EnergyChainListener(ShipAPI ship) {
-        this(ship, new RefractionDrones(ship));
+    EnergyChainListener(ShipAPI ownerShip) {
+        this(ownerShip, new RefractionDrones(ownerShip));
     }
 
-    EnergyChainListener(ShipAPI ship, RefractionDrones drones) {
-        this.ship = ship;
+    EnergyChainListener(ShipAPI ownerShip, RefractionDrones drones) {
+        this.ownerShip = ownerShip;
         this.drones = drones;
     }
 
@@ -40,11 +40,11 @@ final class EnergyChainListener implements DamageDealtModifier, DroneSpawner {
         if (!(target instanceof ShipAPI hitShip) || !canChainFrom(projectile.getWeapon())) {
             return;
         }
-        ChainLink link = ChainLink.of(projectile, ship);
+        ChainLink link = ChainLink.of(projectile, ownerShip);
         if (link.dealtMult() < 1f) {
             ChainHitDamageRestorer.reduceForThisHit(damage, link.dealtMult(), hitShip);
         }
-        if (shieldHit && CombatQueries.isHostile(ship, hitShip)) {
+        if (shieldHit && CombatQueries.isHostile(ownerShip, hitShip)) {
             tryChain(projectile.getWeapon(), hitShip, point, link);
         }
     }
@@ -55,13 +55,13 @@ final class EnergyChainListener implements DamageDealtModifier, DroneSpawner {
     }
 
     private void tryChain(WeaponAPI weapon, ShipAPI hitShip, Vector2f point, ChainLink link) {
-        float chancePercent = ship.getMutableStats().getDynamic().getValue(CHANCE_KEY, 0f);
-        boolean chains = ship.isAlive() && link.count() < MaxChainCountConfig.get() && chancePercent > 0f
+        float chancePercent = ownerShip.getMutableStats().getDynamic().getValue(CHANCE_KEY, 0f);
+        boolean chains = ownerShip.isAlive() && link.chainCount() < MaxChainCountConfig.get() && chancePercent > 0f
                 && Math.random() < chancePercent / 100.0;
         if (!chains) {
             return;
         }
-        ChainLink next = link.next(hitShip, ship.getMutableStats().getDynamic().getValue(FALLOFF_KEY, 0f));
+        ChainLink next = link.next(hitShip, ownerShip.getMutableStats().getDynamic().getValue(FALLOFF_KEY, 0f));
         if (next.dealtMult() <= 0f || !WeaponDroneFactory.supportsProjectile(weapon)) {
             return;
         }
@@ -76,7 +76,7 @@ final class EnergyChainListener implements DamageDealtModifier, DroneSpawner {
         float nearestDistanceSq = Float.MAX_VALUE;
         for (ShipAPI candidate : CombatQueries.shipsNear(point, range, other -> !excluded.contains(other) && other.isAlive()
                 && !other.isHulk() && other.getCollisionClass() != CollisionClass.NONE
-                && CombatQueries.isHostile(ship, other) && CombatQueries.withinRadius(other.getLocation(), point, range))) {
+                && CombatQueries.isHostile(ownerShip, other) && CombatQueries.withinRadius(other.getLocation(), point, range))) {
             float distanceSq = Vector2f.sub(candidate.getLocation(), point, null).lengthSquared();
             if (distanceSq < nearestDistanceSq) {
                 nearestDistanceSq = distanceSq;

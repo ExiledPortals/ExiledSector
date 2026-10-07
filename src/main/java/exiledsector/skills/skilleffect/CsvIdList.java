@@ -22,17 +22,17 @@ public final class CsvIdList {
     public static final CsvIdList DRONE_MARKER_HULLMODS =
             register("data/config/exiledSector/drone_marker_hullmods.csv", "hullmod");
 
-    private final String path;
+    private final String csvPath;
     private final String idColumn;
     private final AtomicReference<Set<String>> ids = new AtomicReference<>(Set.of());
 
-    private CsvIdList(String path, String idColumn) {
-        this.path = path;
+    private CsvIdList(String csvPath, String idColumn) {
+        this.csvPath = csvPath;
         this.idColumn = idColumn;
     }
 
-    private static CsvIdList register(String path, String idColumn) {
-        CsvIdList blocklist = new CsvIdList(path, idColumn);
+    private static CsvIdList register(String csvPath, String idColumn) {
+        CsvIdList blocklist = new CsvIdList(csvPath, idColumn);
         ALL.add(blocklist);
         return blocklist;
     }
@@ -44,7 +44,7 @@ public final class CsvIdList {
     }
 
     private void load() {
-        ModCsv.load(idColumn, path, Logger.getLogger(CsvIdList.class), rows -> {
+        ModCsv.load(idColumn, csvPath, Logger.getLogger(CsvIdList.class), rows -> {
             Set<String> loaded = new HashSet<>();
             ModCsv.forEach(rows, (index, row) -> {
                 String id = ModCsv.text(row, idColumn);

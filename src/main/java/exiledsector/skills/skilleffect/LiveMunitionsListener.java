@@ -15,44 +15,44 @@ final class LiveMunitionsListener implements AdvanceableListener {
     static final String MISSILE_SPEED_PERCENT_PER_STACK_KEY = "exiledSector_heartlessMissileSpeedPercentPerStack";
     private static final String MOD_ID_PREFIX = "exiledSector_liveMunitions_";
 
-    private final ShipAPI ship;
+    private final ShipAPI ownerShip;
     private final String modId;
     private final Random random;
     private List<WeaponAPI> missileWeapons;
     private int[] lastAmmo;
-    private float[] lastReload;
-    private HeartlessStacks stacks;
-    private FleetCrewLedger crew;
+    private float[] lastReloadProgress;
+    private HeartlessStacks heartlessStacks;
+    private FleetCrewLedger crewLedger;
     private int appliedStacks;
 
-    LiveMunitionsListener(ShipAPI ship) {
-        this(ship, new Random());
+    LiveMunitionsListener(ShipAPI ownerShip) {
+        this(ownerShip, new Random());
     }
 
-    LiveMunitionsListener(ShipAPI ship, Random random) {
-        this.ship = ship;
-        this.modId = MOD_ID_PREFIX + ship.getId();
+    LiveMunitionsListener(ShipAPI ownerShip, Random random) {
+        this.ownerShip = ownerShip;
+        this.modId = MOD_ID_PREFIX + ownerShip.getId();
         this.random = random;
     }
 
     @Override
     public void advance(float amount) {
-        if (!ship.isAlive() || ship.isHulk()) {
+        if (!ownerShip.isAlive() || ownerShip.isHulk()) {
             return;
         }
-        if (stacks == null) {
-            stacks = HeartlessStacks.of(ship);
-            missileWeapons = ship.getAllWeapons().stream()
+        if (heartlessStacks == null) {
+            heartlessStacks = HeartlessStacks.of(ownerShip);
+            missileWeapons = ownerShip.getAllWeapons().stream()
                     .filter(w -> w.getType() == WeaponAPI.WeaponType.MISSILE && w.usesAmmo()).toList();
             lastAmmo = new int[missileWeapons.size()];
-            lastReload = new float[missileWeapons.size()];
+            lastReloadProgress = new float[missileWeapons.size()];
             for (int i = 0; i < lastAmmo.length; i++) {
                 lastAmmo[i] = missileWeapons.get(i).getAmmo();
-                lastReload[i] = reloadProgress(missileWeapons.get(i));
+                lastReloadProgress[i] = reloadProgress(missileWeapons.get(i));
             }
         }
         int fired = missilesFiredSinceLastFrame();
-        int stackCount = stacks.stacks();
+        int stackCount = heartlessStacks.stacks();
         if (fired > 0 && stackCount > 0 && crewLeft()) {
             sacrificeCrew(fired, stackCount);
         }
@@ -66,14 +66,14 @@ final class LiveMunitionsListener implements AdvanceableListener {
             int ammo = weapon.getAmmo();
             float reload = reloadProgress(weapon);
             int expected = lastAmmo[i];
-            if (ammo > lastAmmo[i] && reload < lastReload[i]) {
+            if (ammo > lastAmmo[i] && reload < lastReloadProgress[i]) {
                 expected = Math.min(weapon.getMaxAmmo(), lastAmmo[i] + Math.round(weapon.getAmmoTracker().getReloadSize()));
             }
             if (ammo < expected) {
                 fired += expected - ammo;
             }
             lastAmmo[i] = ammo;
-            lastReload[i] = reload;
+            lastReloadProgress[i] = reload;
         }
         return fired;
     }
@@ -86,14 +86,14 @@ final class LiveMunitionsListener implements AdvanceableListener {
         if (!paysWithFleetCrew()) {
             return true;
         }
-        if (crew == null) {
-            crew = FleetCrewLedger.forCurrentCombat();
+        if (crewLedger == null) {
+            crewLedger = FleetCrewLedger.forCurrentCombat();
         }
-        return crew.hasCrew();
+        return crewLedger.hasCrew();
     }
 
     private boolean paysWithFleetCrew() {
-        return ship.getOwner() == 0 && !ship.isAlly();
+        return ownerShip.getOwner() == 0 && !ownerShip.isAlly();
     }
 
     private void sacrificeCrew(int fired, int stackCount) {
@@ -101,9 +101,9 @@ final class LiveMunitionsListener implements AdvanceableListener {
         if (chance <= 0f || !paysWithFleetCrew()) {
             return;
         }
-        for (int i = 0; i < fired && crew.hasCrew(); i++) {
+        for (int i = 0; i < fired && crewLedger.hasCrew(); i++) {
             if (random.nextFloat() < chance) {
-                crew.sacrifice();
+                crewLedger.sacrifice();
             }
         }
     }
@@ -113,7 +113,7 @@ final class LiveMunitionsListener implements AdvanceableListener {
             return;
         }
         appliedStacks = effectiveStacks;
-        MutableShipStatsAPI stats = ship.getMutableStats();
+        MutableShipStatsAPI stats = ownerShip.getMutableStats();
         if (effectiveStacks <= 0) {
             stats.getMissileWeaponDamageMult().unmodify(modId);
             stats.getMissileMaxSpeedBonus().unmodify(modId);
@@ -124,6 +124,6 @@ final class LiveMunitionsListener implements AdvanceableListener {
     }
 
     private float magnitude(String key) {
-        return ship.getMutableStats().getDynamic().getValue(key, 0f);
+        return ownerShip.getMutableStats().getDynamic().getValue(key, 0f);
     }
 }

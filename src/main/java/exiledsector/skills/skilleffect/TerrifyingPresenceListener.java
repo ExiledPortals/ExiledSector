@@ -14,25 +14,25 @@ final class TerrifyingPresenceListener implements AdvanceableListener {
     private static final float UPDATE_SECONDS = 0.25f;
     private static final String MOD_ID_PREFIX = "exiledSector_terrifyingPresence_";
 
-    private final ShipAPI ship;
+    private final ShipAPI ownerShip;
     private final String modId;
-    private final IntervalUtil interval = new IntervalUtil(UPDATE_SECONDS, UPDATE_SECONDS);
-    private Set<ShipAPI> affected = new HashSet<>();
+    private final IntervalUtil updateInterval = new IntervalUtil(UPDATE_SECONDS, UPDATE_SECONDS);
+    private Set<ShipAPI> affectedEnemies = new HashSet<>();
 
-    TerrifyingPresenceListener(ShipAPI ship) {
-        this.ship = ship;
-        this.modId = MOD_ID_PREFIX + ship.getId();
+    TerrifyingPresenceListener(ShipAPI ownerShip) {
+        this.ownerShip = ownerShip;
+        this.modId = MOD_ID_PREFIX + ownerShip.getId();
     }
 
     @Override
     public void advance(float amount) {
-        interval.advance(amount);
-        if (!interval.intervalElapsed()) {
+        updateInterval.advance(amount);
+        if (!updateInterval.intervalElapsed()) {
             return;
         }
-        float penalty = isPresent() ? ship.getMutableStats().getDynamic().getValue(ACCURACY_PENALTY_PERCENT_KEY, 0f) / 100f : 0f;
+        float penalty = isPresent() ? ownerShip.getMutableStats().getDynamic().getValue(ACCURACY_PENALTY_PERCENT_KEY, 0f) / 100f : 0f;
         Set<ShipAPI> inRange = penalty > 0f ? new HashSet<>(CombatQueries.shipsMatching(this::isTerrified)) : new HashSet<>();
-        for (ShipAPI previous : affected) {
+        for (ShipAPI previous : affectedEnemies) {
             if (!inRange.contains(previous)) {
                 previous.getMutableStats().getAutofireAimAccuracy().unmodify(modId);
             }
@@ -40,15 +40,15 @@ final class TerrifyingPresenceListener implements AdvanceableListener {
         for (ShipAPI enemy : inRange) {
             enemy.getMutableStats().getAutofireAimAccuracy().modifyFlat(modId, -penalty);
         }
-        affected = inRange;
+        affectedEnemies = inRange;
     }
 
     private boolean isPresent() {
-        return ship.isAlive() && !ship.isHulk() && !ship.isRetreating();
+        return ownerShip.isAlive() && !ownerShip.isHulk() && !ownerShip.isRetreating();
     }
 
     private boolean isTerrified(ShipAPI other) {
-        return other.isAlive() && !other.isHulk() && CombatQueries.isHostile(ship, other)
-                && CombatQueries.withinRadius(other.getLocation(), ship.getLocation(), RANGE);
+        return other.isAlive() && !other.isHulk() && CombatQueries.isHostile(ownerShip, other)
+                && CombatQueries.withinRadius(other.getLocation(), ownerShip.getLocation(), RANGE);
     }
 }

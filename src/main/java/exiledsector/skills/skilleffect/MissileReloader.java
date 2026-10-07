@@ -14,12 +14,12 @@ final class MissileReloader {
 
     private final WeaponAPI[] launchers;
     private final float[] baseAmmo;
-    private final float[] progress;
+    private final float[] reloadProgress;
 
     private MissileReloader(List<WeaponAPI> launchers) {
         this.launchers = launchers.toArray(new WeaponAPI[0]);
         this.baseAmmo = new float[this.launchers.length];
-        this.progress = new float[this.launchers.length];
+        this.reloadProgress = new float[this.launchers.length];
         for (int i = 0; i < this.launchers.length; i++) {
             baseAmmo[i] = this.launchers[i].getSpec().getMaxAmmo();
         }
@@ -66,13 +66,13 @@ final class MissileReloader {
             int maxAmmo = launcher.getMaxAmmo();
             int ammo = launcher.getAmmo();
             if (ammo >= maxAmmo) {
-                progress[i] = 0f;
+                reloadProgress[i] = 0f;
                 continue;
             }
-            progress[i] += fractionOfBaseAmmo * baseAmmo[i];
-            if (progress[i] >= 1f) {
-                int rounds = (int) progress[i];
-                progress[i] -= rounds;
+            reloadProgress[i] += fractionOfBaseAmmo * baseAmmo[i];
+            if (reloadProgress[i] >= 1f) {
+                int rounds = (int) reloadProgress[i];
+                reloadProgress[i] -= rounds;
                 launcher.setAmmo(Math.min(maxAmmo, ammo + rounds));
             }
         }

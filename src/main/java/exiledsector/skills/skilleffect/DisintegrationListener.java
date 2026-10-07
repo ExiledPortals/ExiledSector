@@ -17,10 +17,10 @@ final class DisintegrationListener implements DamageDealtModifier {
     private static final float INNER_CELL_SHARE = 1f / 15f;
     private static final float OUTER_CELL_SHARE = 1f / 30f;
 
-    private final ShipAPI ship;
+    private final ShipAPI ownerShip;
 
-    DisintegrationListener(ShipAPI ship) {
-        this.ship = ship;
+    DisintegrationListener(ShipAPI ownerShip) {
+        this.ownerShip = ownerShip;
     }
 
     // java:S3516: the engine reads a null return as "leave the damage unchanged"; armour is stripped as a side effect instead
@@ -30,7 +30,7 @@ final class DisintegrationListener implements DamageDealtModifier {
         if (shieldHit || !(target instanceof ShipAPI targetShip) || !isEnergyWeaponHit(param)) {
             return null;
         }
-        float percent = ship.getMutableStats().getDynamic().getValue(ARMOR_DAMAGE_PERCENT_KEY, 0f);
+        float percent = ownerShip.getMutableStats().getDynamic().getValue(ARMOR_DAMAGE_PERCENT_KEY, 0f);
         float hitDamage = damage.isDps() ? damage.getDamage() * damage.getDpsDuration() : damage.getDamage();
         float armorDamage = hitDamage * percent / 100f
                 * targetShip.getMutableStats().getArmorDamageTakenMult().getModifiedValue();

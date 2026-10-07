@@ -94,9 +94,9 @@ public final class SocketCustody {
     }
 
     static boolean isInstalled(Map<String, ShipSkillData> ships, Socketable socketable) {
-        String id = socketable.id();
+        String socketableId = socketable.id();
         for (ShipSkillData data : ships.values()) {
-            if (data.getSocketedItems().containsValue(id)) {
+            if (data.getSocketedItems().containsValue(socketableId)) {
                 return true;
             }
         }
@@ -133,9 +133,9 @@ public final class SocketCustody {
 
     private static Map<String, FleetMemberAPI> ownedShips() {
         Map<String, FleetMemberAPI> owned = new LinkedHashMap<>();
-        CampaignFleetAPI fleet = Global.getSector().getPlayerFleet();
-        if (fleet != null) {
-            fleet.getFleetData().getMembersListCopy().forEach(member -> owned.put(member.getId(), member));
+        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
+        if (playerFleet != null) {
+            playerFleet.getFleetData().getMembersListCopy().forEach(member -> owned.put(member.getId(), member));
         }
         Set<MarketAPI> markets = new HashSet<>();
         for (LocationAPI location : Global.getSector().getAllLocations()) {

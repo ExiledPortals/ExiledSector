@@ -121,44 +121,44 @@ public final class Template {
     }
 
     public StyledText render(Map<String, StyledText> args) {
-        StringBuilder text = new StringBuilder();
+        StringBuilder plainText = new StringBuilder();
         List<StyledText.Span> spans = new ArrayList<>();
         Style openStyle = null;
         int openStart = 0;
         int depth = 0;
         for (Part part : parts) {
             if (part instanceof Literal literal) {
-                text.append(literal.text());
+                plainText.append(literal.text());
             } else if (part instanceof Placeholder placeholder) {
-                StyledText value = args.get(placeholder.name());
-                if (value == null) {
-                    text.append('{').append(placeholder.name()).append('}');
+                StyledText argValue = args.get(placeholder.name());
+                if (argValue == null) {
+                    plainText.append('{').append(placeholder.name()).append('}');
                     continue;
                 }
                 if (depth == 0) {
-                    int offset = text.length();
-                    for (StyledText.Span span : value.spans()) {
+                    int offset = plainText.length();
+                    for (StyledText.Span span : argValue.spans()) {
                         spans.add(new StyledText.Span(span.start() + offset, span.end() + offset, span.style()));
                     }
                 }
-                text.append(value.plain());
+                plainText.append(argValue.plain());
             } else if (part instanceof Open open) {
                 if (depth == 0) {
                     openStyle = open.style();
-                    openStart = text.length();
+                    openStart = plainText.length();
                 }
                 depth++;
             } else if (depth > 0) {
                 depth--;
                 if (depth == 0) {
-                    addSpan(spans, openStart, text.length(), openStyle);
+                    addSpan(spans, openStart, plainText.length(), openStyle);
                 }
             }
         }
         if (depth > 0) {
-            addSpan(spans, openStart, text.length(), openStyle);
+            addSpan(spans, openStart, plainText.length(), openStyle);
         }
-        return new StyledText(text.toString(), spans);
+        return new StyledText(plainText.toString(), spans);
     }
 
     private static void addSpan(List<StyledText.Span> spans, int start, int end, Style style) {

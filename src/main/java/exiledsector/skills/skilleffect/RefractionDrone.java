@@ -25,9 +25,9 @@ final class RefractionDrone extends SingleShotDrone {
     private static final float MIN_STREAK_GAP = 1f;
 
     private final Vector2f aimPoint = new Vector2f();
-    private EnergyChainListener chain;
-    private ChainLink link;
-    private ShipAPI target;
+    private EnergyChainListener chainListener;
+    private ChainLink chainLink;
+    private ShipAPI chainTarget;
 
     RefractionDrone(ShipAPI drone, RefractionDrones pool) {
         super(drone, pool, RANGE_MATCH_MOD_ID);
@@ -35,9 +35,9 @@ final class RefractionDrone extends SingleShotDrone {
 
     void launch(EnergyChainListener newChain, ShipAPI hitShip, Vector2f impactPoint, ShipAPI newTarget, ChainLink newLink, float sourceRange) {
         prepare(sourceRange);
-        chain = newChain;
-        link = newLink;
-        target = newTarget;
+        chainListener = newChain;
+        chainLink = newLink;
+        chainTarget = newTarget;
         Vector2f exit = Refraction.origin(hitShip, impactPoint, newTarget.getLocation());
         Vector2f direction = VectorUtils.getDirectionalVector(exit, newTarget.getLocation());
         origin().set(exit.x + direction.x * CLEARANCE, exit.y + direction.y * CLEARANCE);
@@ -57,23 +57,23 @@ final class RefractionDrone extends SingleShotDrone {
 
     @Override
     void tag(DamagingProjectileAPI projectile) {
-        link.tag(projectile);
+        chainLink.tag(projectile);
     }
 
     @Override
     void shotHit(DamagingProjectileAPI projectile, CombatEntityAPI hitTarget, DamageAPI damage, Vector2f point, boolean shieldHit) {
-        if (!isTagged(projectile) && link != null) {
+        if (!isTagged(projectile) && chainLink != null) {
             handBack(projectile);
         }
-        chain.handleHit(projectile, hitTarget, damage, point, shieldHit);
+        chainListener.handleHit(projectile, hitTarget, damage, point, shieldHit);
     }
 
     @Override
     void aim() {
         Vector2f origin = origin();
-        Vector2f lead = AIUtils.getBestInterceptPoint(origin, weapon().getProjectileSpeed(), target.getLocation(), target.getVelocity());
-        aimPoint.set(lead != null ? lead : target.getLocation());
-        aimAlong(VectorUtils.getAngle(origin, aimPoint), target, aimPoint.x, aimPoint.y);
+        Vector2f lead = AIUtils.getBestInterceptPoint(origin, weapon().getProjectileSpeed(), chainTarget.getLocation(), chainTarget.getVelocity());
+        aimPoint.set(lead != null ? lead : chainTarget.getLocation());
+        aimAlong(VectorUtils.getAngle(origin, aimPoint), chainTarget, aimPoint.x, aimPoint.y);
     }
 
     private void drawStreak(Vector2f impactPoint) {

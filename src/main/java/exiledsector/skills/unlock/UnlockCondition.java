@@ -3,15 +3,15 @@ package exiledsector.skills.unlock;
 
 public final class UnlockCondition {
 
-    private final UnlockConditionType type;
+    private final UnlockConditionType unlockType;
     private final BlueprintCategory blueprintCategory;
-    private final String key;
+    private final String conditionKey;
     private final int minLevel;
 
-    private UnlockCondition(UnlockConditionType type, BlueprintCategory blueprintCategory, String key, int minLevel) {
-        this.type = type;
+    private UnlockCondition(UnlockConditionType unlockType, BlueprintCategory blueprintCategory, String conditionKey, int minLevel) {
+        this.unlockType = unlockType;
         this.blueprintCategory = blueprintCategory;
-        this.key = key;
+        this.conditionKey = conditionKey;
         this.minLevel = minLevel;
     }
 
@@ -27,12 +27,12 @@ public final class UnlockCondition {
         return new UnlockCondition(UnlockConditionType.MIN_SHIP_LEVEL, null, null, level);
     }
 
-    public static UnlockCondition memoryFlag(String key) {
-        return new UnlockCondition(UnlockConditionType.MEMORY_FLAG, null, key, 0);
+    public static UnlockCondition memoryFlag(String conditionKey) {
+        return new UnlockCondition(UnlockConditionType.MEMORY_FLAG, null, conditionKey, 0);
     }
 
     public UnlockConditionType getType() {
-        return type;
+        return unlockType;
     }
 
     public BlueprintCategory getBlueprintCategory() {
@@ -40,7 +40,7 @@ public final class UnlockCondition {
     }
 
     public String getKey() {
-        return key;
+        return conditionKey;
     }
 
     public int getMinLevel() {
@@ -49,7 +49,7 @@ public final class UnlockCondition {
 
     @Override
     public String toString() {
-        return "UnlockCondition{type=" + type + ", blueprintCategory=" + blueprintCategory
-                + ", key=" + key + ", minLevel=" + minLevel + "}";
+        return "UnlockCondition{type=" + unlockType + ", blueprintCategory=" + blueprintCategory
+                + ", key=" + conditionKey + ", minLevel=" + minLevel + "}";
     }
 }

@@ -19,20 +19,20 @@ public final class AutoAllocateRun {
     }
 
     private final float stepSeconds;
-    private List<TemplateStep> pass;
-    private List<TemplateStep> deferred = new ArrayList<>();
+    private List<TemplateStep> passSteps;
+    private List<TemplateStep> deferredSteps = new ArrayList<>();
     private boolean retrying;
     private boolean progressed;
-    private float budget;
-    private int index;
-    private int allocated;
-    private int skipped;
+    private float timeBudgetSeconds;
+    private int passStepIndex;
+    private int allocatedCount;
+    private int skippedCount;
     private Status status = Status.RUNNING;
 
     public AutoAllocateRun(List<TemplateStep> steps, int pendingCount) {
-        this.pass = List.copyOf(steps);
+        this.passSteps = List.copyOf(steps);
         this.stepSeconds = stepSecondsFor(pendingCount);
-        this.budget = stepSeconds;
+        this.timeBudgetSeconds = stepSeconds;
     }
 
     public static float stepSecondsFor(int pendingCount) {
@@ -43,17 +43,17 @@ public final class AutoAllocateRun {
         if (status != Status.RUNNING) {
             return;
         }
-        budget += amount;
+        timeBudgetSeconds += amount;
         int blockedChecks = 0;
         while (status == Status.RUNNING) {
             if (!pointsLeft.getAsBoolean()) {
                 status = Status.OUT_OF_POINTS;
-            } else if (index >= pass.size()) {
+            } else if (passStepIndex >= passSteps.size()) {
                 endPass();
-            } else if (budget < stepSeconds || blockedChecks >= MAX_BLOCKED_CHECKS_PER_FRAME) {
+            } else if (timeBudgetSeconds < stepSeconds || blockedChecks >= MAX_BLOCKED_CHECKS_PER_FRAME) {
                 return;
             } else {
-                TemplateStep step = pass.get(index++);
+                TemplateStep step = passSteps.get(passStepIndex++);
                 if (tally(step, attempt.apply(step))) {
                     blockedChecks++;
                 }
@@ -63,25 +63,25 @@ public final class AutoAllocateRun {
 
     private boolean tally(TemplateStep step, StepVerdict verdict) {
         if (verdict == StepVerdict.ALLOCATE) {
-            allocated++;
+            allocatedCount++;
             progressed = true;
-            budget -= stepSeconds;
+            timeBudgetSeconds -= stepSeconds;
         } else if (verdict == StepVerdict.NOT_ALLOCATABLE) {
-            deferred.add(step);
+            deferredSteps.add(step);
         } else if (verdict != StepVerdict.ALREADY_ALLOCATED) {
-            skipped++;
+            skippedCount++;
         }
         return verdict == StepVerdict.BLOCKED;
     }
 
     private void endPass() {
-        if (!progressed || deferred.isEmpty()) {
+        if (!progressed || deferredSteps.isEmpty()) {
             status = Status.PATH_END;
             return;
         }
-        pass = deferred;
-        deferred = new ArrayList<>();
-        index = 0;
+        passSteps = deferredSteps;
+        deferredSteps = new ArrayList<>();
+        passStepIndex = 0;
         retrying = true;
         progressed = false;
     }
@@ -97,8 +97,8 @@ public final class AutoAllocateRun {
     }
 
     public Summary summary() {
-        int notRetried = retrying ? pass.size() - index : 0;
-        return new Summary(status, allocated, skipped + deferred.size() + notRetried);
+        int notRetried = retrying ? passSteps.size() - passStepIndex : 0;
+        return new Summary(status, allocatedCount, skippedCount + deferredSteps.size() + notRetried);
     }
 
     float stepSeconds() {

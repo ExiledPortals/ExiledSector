@@ -11,22 +11,22 @@ final class InertialSuperchargerListener implements AdvanceableListener {
     static final String AUGMENTED_PROJECTILE_SPEED_KEY = "exiledSector_inertialAugmentedProjectileSpeed";
     private static final String MOD_ID_PREFIX = "exiledSector_inertialSupercharger_";
 
-    private final ShipAPI ship;
+    private final ShipAPI ownerShip;
     private final String modId;
     private int appliedPercent;
     private Float projectileSpeedShare;
 
-    InertialSuperchargerListener(ShipAPI ship) {
-        this.ship = ship;
-        this.modId = MOD_ID_PREFIX + ship.getId();
+    InertialSuperchargerListener(ShipAPI ownerShip) {
+        this.ownerShip = ownerShip;
+        this.modId = MOD_ID_PREFIX + ownerShip.getId();
     }
 
     @Override
     public void advance(float amount) {
         int percent = 0;
-        if (ship.isAlive() && !ship.isHulk()) {
-            float perSpeed = ship.getMutableStats().getDynamic().getValue(DAMAGE_PERCENT_PER_SPEED_KEY, 0f);
-            percent = (int) (ship.getVelocity().length() * perSpeed);
+        if (ownerShip.isAlive() && !ownerShip.isHulk()) {
+            float perSpeed = ownerShip.getMutableStats().getDynamic().getValue(DAMAGE_PERCENT_PER_SPEED_KEY, 0f);
+            percent = (int) (ownerShip.getVelocity().length() * perSpeed);
         }
         if (percent != appliedPercent) {
             apply(percent);
@@ -35,7 +35,7 @@ final class InertialSuperchargerListener implements AdvanceableListener {
 
     private void apply(int percent) {
         appliedPercent = percent;
-        MutableShipStatsAPI stats = ship.getMutableStats();
+        MutableShipStatsAPI stats = ownerShip.getMutableStats();
         if (percent <= 0) {
             stats.getBallisticWeaponDamageMult().unmodify(modId);
             stats.getEnergyWeaponDamageMult().unmodify(modId);
@@ -56,8 +56,8 @@ final class InertialSuperchargerListener implements AdvanceableListener {
 
     private float projectileSpeedShare() {
         if (projectileSpeedShare == null) {
-            projectileSpeedShare = LostSectorCompat.hasAugmentedSystems(ship.getVariant())
-                    ? ship.getMutableStats().getDynamic().getValue(AUGMENTED_PROJECTILE_SPEED_KEY, 0f) : 0f;
+            projectileSpeedShare = LostSectorCompat.hasAugmentedSystems(ownerShip.getVariant())
+                    ? ownerShip.getMutableStats().getDynamic().getValue(AUGMENTED_PROJECTILE_SPEED_KEY, 0f) : 0f;
         }
         return projectileSpeedShare;
     }

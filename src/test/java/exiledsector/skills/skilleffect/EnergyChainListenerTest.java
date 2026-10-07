@@ -109,7 +109,7 @@ class EnergyChainListenerTest {
         when(projectile.getCustomData()).thenReturn(data);
         if (tag != null) {
             data.put(ChainLink.HIT_LIST_KEY, tag.hitSoFar());
-            data.put(ChainLink.COUNT_KEY, tag.count());
+            data.put(ChainLink.COUNT_KEY, tag.chainCount());
             data.put(ChainLink.DEALT_MULT_KEY, tag.dealtMult());
         }
         return projectile;
@@ -145,7 +145,7 @@ class EnergyChainListenerTest {
         listener.modifyDamageDealt(shot(weapon, null), hit, damage(100f), new Vector2f(), true);
 
         ChainLink link = launchedLink(weapon, hit, near);
-        assertEquals(1, link.count());
+        assertEquals(1, link.chainCount());
         assertEquals(0.8f, link.dealtMult(), 0.0001f);
         assertEquals(List.of(ship, hit), link.hitSoFar());
     }
@@ -164,7 +164,7 @@ class EnergyChainListenerTest {
 
         verify(damage).setDamage(80f);
         ChainLink link = launchedLink(weapon, current, farther);
-        assertEquals(2, link.count());
+        assertEquals(2, link.chainCount());
         assertEquals(0.64f, link.dealtMult(), 0.0001f);
         assertEquals(List.of(ship, firstTarget, current), link.hitSoFar());
     }
@@ -202,7 +202,7 @@ class EnergyChainListenerTest {
         listener.modifyDamageDealt(shot(weapon, new ChainLink(List.of(ship), MaxChainCountConfig.DEFAULT - 1, 1f)), current,
                 damage(100f), new Vector2f(100f, 0f), true);
 
-        assertEquals(MaxChainCountConfig.DEFAULT, launchedLink(weapon, current, next).count());
+        assertEquals(MaxChainCountConfig.DEFAULT, launchedLink(weapon, current, next).chainCount());
     }
 
     @Test

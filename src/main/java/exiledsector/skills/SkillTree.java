@@ -30,7 +30,7 @@ public class SkillTree {
     private static final Map<String, SkillNode> NODES_VIEW = Collections.unmodifiableMap(NODES);
     private static final Map<String, SkillType> TYPES_VIEW = Collections.unmodifiableMap(TYPES);
     private static final Map<String, SkillNode> DECLARED_NODES = new LinkedHashMap<>();
-    private static SkillTreeLoader.ParsedTree declared;
+    private static SkillTreeLoader.ParsedTree declaredTree;
     private static Set<String> disabledRegions = Set.of();
     private static boolean loadedCompletely;
     private static SkillTreeTopology topology;
@@ -45,11 +45,11 @@ public class SkillTree {
         Map<String, SkillType> types = loadedTypes.types();
         TYPES.putAll(types);
 
-        declared = SkillTreeLoader.loadAll(types);
-        for (SkillNode node : declared.nodes) {
+        declaredTree = SkillTreeLoader.loadAll(types);
+        for (SkillNode node : declaredTree.nodes) {
             DECLARED_NODES.put(node.getId(), node);
         }
-        loadedCompletely = declared.declaredNodeCount > 0 && DECLARED_NODES.size() == declared.declaredNodeCount
+        loadedCompletely = declaredTree.declaredNodeCount > 0 && DECLARED_NODES.size() == declaredTree.declaredNodeCount
                 && TYPES.size() == loadedTypes.declaredCount();
         for (String issue : WormholePairValidator.findIssues(DECLARED_NODES.values())) {
             Logger.getLogger(SkillTree.class).error(issue);
@@ -63,19 +63,19 @@ public class SkillTree {
     }
 
     private static void activate() {
-        if (declared == null) return;
+        if (declaredTree == null) return;
 
-        SkillTreeLoader.ParsedTree active = TreeRegionFilter.apply(declared, disabledRegions);
+        SkillTreeLoader.ParsedTree activeTree = TreeRegionFilter.apply(declaredTree, disabledRegions);
         clearLayout();
         NODES.clear();
-        for (SkillNode node : active.nodes) {
+        for (SkillNode node : activeTree.nodes) {
             register(node);
         }
-        CURVES.putAll(active.connectorCurves);
-        HIDDEN_CONNECTOR_KEYS.addAll(active.hiddenConnectors);
-        STATIC_IMAGES.addAll(active.staticImages);
-        RING_BELTS.addAll(active.ringBelts);
-        STARS.addAll(active.stars);
+        CURVES.putAll(activeTree.connectorCurves);
+        HIDDEN_CONNECTOR_KEYS.addAll(activeTree.hiddenConnectors);
+        STATIC_IMAGES.addAll(activeTree.staticImages);
+        RING_BELTS.addAll(activeTree.ringBelts);
+        STARS.addAll(activeTree.stars);
         topology = SkillTreeTopology.of(NODES.values());
     }
 
@@ -101,7 +101,7 @@ public class SkillTree {
     public static void clearNodes() {
         NODES.clear();
         DECLARED_NODES.clear();
-        declared = null;
+        declaredTree = null;
         topology = null;
     }
 

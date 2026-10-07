@@ -19,23 +19,23 @@ public final class Catalogue {
 
     private final String locale;
     private final boolean pseudo;
-    private final Map<String, String> entries;
+    private final Map<String, String> stringsByKey;
     private final Map<String, Template> templates = new ConcurrentHashMap<>();
     private final Set<String> reportedMissing = ConcurrentHashMap.newKeySet();
 
-    public Catalogue(String locale, Map<String, String> entries) {
-        this(locale, entries, false);
+    public Catalogue(String locale, Map<String, String> stringsByKey) {
+        this(locale, stringsByKey, false);
     }
 
-    Catalogue(String locale, Map<String, String> entries, boolean pseudo) {
+    Catalogue(String locale, Map<String, String> stringsByKey, boolean pseudo) {
         this.locale = locale;
         this.pseudo = pseudo;
-        this.entries = Collections.unmodifiableMap(new LinkedHashMap<>(entries));
+        this.stringsByKey = Collections.unmodifiableMap(new LinkedHashMap<>(stringsByKey));
     }
 
     public static Catalogue compose(String locale, Function<String, Map<String, String>> files) {
         if (PseudoLocale.LOCALE.equals(locale)) {
-            return new Catalogue(locale, PseudoLocale.apply(compose(LocaleChain.ENGLISH, files).entries), true);
+            return new Catalogue(locale, PseudoLocale.apply(compose(LocaleChain.ENGLISH, files).stringsByKey), true);
         }
         List<Map<String, String>> layers = new ArrayList<>();
         for (String candidate : LocaleChain.highestPriorityFirst(locale)) {
@@ -62,15 +62,15 @@ public final class Catalogue {
     }
 
     public boolean has(String key) {
-        return entries.containsKey(key);
+        return stringsByKey.containsKey(key);
     }
 
     public String raw(String key) {
-        return entries.get(key);
+        return stringsByKey.get(key);
     }
 
     public int size() {
-        return entries.size();
+        return stringsByKey.size();
     }
 
     Template template(String key) {
@@ -78,7 +78,7 @@ public final class Catalogue {
     }
 
     private Template parseOrMissing(String key) {
-        String raw = entries.get(key);
+        String raw = stringsByKey.get(key);
         if (raw == null) {
             if (reportedMissing.add(key)) {
                 LOG.warn("Missing Exiled Sector string for locale " + locale + ": " + key);

@@ -23,7 +23,7 @@ public final class I18n {
     private static final Catalogue ENGLISH_FALLBACK = new Catalogue(LocaleChain.ENGLISH, Map.of());
     private static final AtomicReference<Installed> INSTALLED = new AtomicReference<>(new Installed(ENGLISH_FALLBACK, ENGLISH_FALLBACK));
 
-    private record Installed(Catalogue ui, Catalogue game) {
+    private record Installed(Catalogue uiCatalogue, Catalogue gameCatalogue) {
     }
 
     private I18n() {
@@ -31,7 +31,7 @@ public final class I18n {
 
     public static Catalogue catalogue() {
         Installed installed = INSTALLED.get();
-        return Boolean.TRUE.equals(GAME_TEXT.get()) ? installed.game() : installed.ui();
+        return Boolean.TRUE.equals(GAME_TEXT.get()) ? installed.gameCatalogue() : installed.uiCatalogue();
     }
 
     public static String locale() {
@@ -40,7 +40,7 @@ public final class I18n {
 
     public static Languages languages() {
         Installed installed = INSTALLED.get();
-        return new Languages(installed.ui().locale(), installed.game().locale());
+        return new Languages(installed.uiCatalogue().locale(), installed.gameCatalogue().locale());
     }
 
     public static void install(Catalogue catalogue) {

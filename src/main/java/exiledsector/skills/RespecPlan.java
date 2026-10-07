@@ -25,10 +25,10 @@ public final class RespecPlan {
             removed.add(pairedId);
         }
         Set<String> dependents = dependents(data, topology, startingRootId, selected, removed);
-        Map<String, Integer> distance = distancesAwayFrom(removed, dependents, topology);
+        Map<String, Integer> distanceById = distancesAwayFrom(removed, dependents, topology);
 
         List<String> ordered = new ArrayList<>(dependents);
-        ordered.sort(Comparator.comparingInt((String id) -> distance.getOrDefault(id, Integer.MAX_VALUE)).reversed()
+        ordered.sort(Comparator.comparingInt((String id) -> distanceById.getOrDefault(id, Integer.MAX_VALUE)).reversed()
                 .thenComparing(Comparator.naturalOrder()));
         List<SkillNode> plan = new ArrayList<>();
         Set<String> covered = new HashSet<>();
@@ -61,17 +61,17 @@ public final class RespecPlan {
 
     private static Map<String, Integer> distancesAwayFrom(Set<String> removed, Set<String> dependents, SkillTreeTopology topology) {
         TreeSearch search = TreeSearch.from(topology, removed, child -> dependents.contains(child.getId()));
-        Map<String, Integer> distance = new HashMap<>();
-        search.reached().forEach(id -> distance.put(id, search.distance(id)));
+        Map<String, Integer> distanceById = new HashMap<>();
+        search.reached().forEach(id -> distanceById.put(id, search.distance(id)));
         for (String id : dependents) {
             SkillNode node = topology.node(id);
             String partner = node == null ? null : node.getPairedNodeId();
             if (partner != null && dependents.contains(partner)) {
-                int nearer = Math.min(distance.getOrDefault(id, Integer.MAX_VALUE), distance.getOrDefault(partner, Integer.MAX_VALUE));
-                distance.put(id, nearer);
-                distance.put(partner, nearer);
+                int nearer = Math.min(distanceById.getOrDefault(id, Integer.MAX_VALUE), distanceById.getOrDefault(partner, Integer.MAX_VALUE));
+                distanceById.put(id, nearer);
+                distanceById.put(partner, nearer);
             }
         }
-        return distance;
+        return distanceById;
     }
 }

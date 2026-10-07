@@ -26,52 +26,52 @@ final class HeartlessStacks {
     private static final Color ARC_FRINGE = new Color(120, 200, 255, 200);
     private static final String MOD_ID_PREFIX = "exiledSector_heartless_";
 
-    private final ShipAPI ship;
+    private final ShipAPI ownerShip;
     private final String modId;
     private final Random random;
-    private int stacks;
+    private int stackCount;
 
-    HeartlessStacks(ShipAPI ship) {
-        this(ship, new Random());
+    HeartlessStacks(ShipAPI ownerShip) {
+        this(ownerShip, new Random());
     }
 
-    HeartlessStacks(ShipAPI ship, Random random) {
-        this.ship = ship;
-        this.modId = MOD_ID_PREFIX + ship.getId();
+    HeartlessStacks(ShipAPI ownerShip, Random random) {
+        this.ownerShip = ownerShip;
+        this.modId = MOD_ID_PREFIX + ownerShip.getId();
         this.random = random;
     }
 
-    static HeartlessStacks of(ShipAPI ship) {
-        List<HeartlessStacks> existing = ship.getListeners(HeartlessStacks.class);
+    static HeartlessStacks of(ShipAPI ownerShip) {
+        List<HeartlessStacks> existing = ownerShip.getListeners(HeartlessStacks.class);
         if (existing != null && !existing.isEmpty()) {
             return existing.get(0);
         }
-        HeartlessStacks created = new HeartlessStacks(ship);
-        ship.addListener(created);
+        HeartlessStacks created = new HeartlessStacks(ownerShip);
+        ownerShip.addListener(created);
         return created;
     }
 
     int stacks() {
-        return stacks;
+        return stackCount;
     }
 
     void gain() {
-        if (stacks >= maxStacks() || !ship.isAlive() || ship.isHulk()) {
+        if (stackCount >= maxStacks() || !ownerShip.isAlive() || ownerShip.isHulk()) {
             return;
         }
-        stacks++;
-        MutableShipStatsAPI stats = ship.getMutableStats();
+        stackCount++;
+        MutableShipStatsAPI stats = ownerShip.getMutableStats();
         float armorPercentPerStack = magnitude(ARMOR_PERCENT_PER_STACK_KEY);
         float restorePercent = magnitude(ARMOR_RESTORE_PERCENT_KEY);
         if (armorPercentPerStack > 0f || restorePercent > 0f) {
             addArmorToEveryCell(armorPercentPerStack);
             restoreArmor(restorePercent, armorPercentPerStack);
-            ship.syncWithArmorGridState();
+            ownerShip.syncWithArmorGridState();
         }
         float mobilityPenalty = magnitude(MOBILITY_PENALTY_PERCENT_PER_STACK_KEY);
         if (mobilityPenalty > 0f) {
-            stats.getMaxSpeed().modifyPercent(modId, -mobilityPenalty * stacks);
-            Maneuverability.modifyPercent(stats, modId, -mobilityPenalty * stacks);
+            stats.getMaxSpeed().modifyPercent(modId, -mobilityPenalty * stackCount);
+            Maneuverability.modifyPercent(stats, modId, -mobilityPenalty * stackCount);
         }
         radiationBurst(magnitude(RADIATION_EMP_KEY));
     }
@@ -81,14 +81,14 @@ final class HeartlessStacks {
     }
 
     private float magnitude(String key) {
-        return ship.getMutableStats().getDynamic().getValue(key, 0f);
+        return ownerShip.getMutableStats().getDynamic().getValue(key, 0f);
     }
 
     private void addArmorToEveryCell(float percent) {
         if (percent <= 0f) {
             return;
         }
-        ArmorGridAPI grid = ship.getArmorGrid();
+        ArmorGridAPI grid = ownerShip.getArmorGrid();
         float added = grid.getMaxArmorInCell() * percent / 100f;
         float[][] cells = grid.getGrid();
         for (int x = 0; x < cells.length; x++) {
@@ -102,9 +102,9 @@ final class HeartlessStacks {
         if (percent <= 0f) {
             return;
         }
-        ArmorGridAPI grid = ship.getArmorGrid();
+        ArmorGridAPI grid = ownerShip.getArmorGrid();
         float max = grid.getMaxArmorInCell();
-        float ceiling = max * (1f + Math.max(0f, percentPerStack) * stacks / 100f);
+        float ceiling = max * (1f + Math.max(0f, percentPerStack) * stackCount / 100f);
         float restored = max * percent / 100f;
         float[][] cells = grid.getGrid();
         for (int x = 0; x < cells.length; x++) {
@@ -120,12 +120,12 @@ final class HeartlessStacks {
         if (emp <= 0f || engine == null) {
             return;
         }
-        WeaponAPI weapon = pick(ship.getAllWeapons().stream()
+        WeaponAPI weapon = pick(ownerShip.getAllWeapons().stream()
                 .filter(w -> !w.isDecorative() && !w.isDisabled() && !w.isPermanentlyDisabled()).toList());
         if (weapon != null) {
             irradiate(engine, weapon.getLocation(), emp);
         }
-        ShipEngineAPI shipEngine = pick(ship.getEngineController().getShipEngines().stream()
+        ShipEngineAPI shipEngine = pick(ownerShip.getEngineController().getShipEngines().stream()
                 .filter(e -> !e.isSystemActivated() && !e.isDisabled() && !e.isPermanentlyDisabled()).toList());
         if (shipEngine != null) {
             irradiate(engine, shipEngine.getLocation(), emp);
@@ -138,7 +138,7 @@ final class HeartlessStacks {
 
     private void irradiate(CombatEngineAPI engine, Vector2f point, float emp) {
         Vector2f target = new Vector2f(point);
-        engine.applyDamage(ship, target, 0f, DamageType.ENERGY, emp, true, false, ship);
-        engine.spawnEmpArcVisual(new Vector2f(ship.getLocation()), ship, target, ship, ARC_THICKNESS, ARC_FRINGE, Color.WHITE);
+        engine.applyDamage(ownerShip, target, 0f, DamageType.ENERGY, emp, true, false, ownerShip);
+        engine.spawnEmpArcVisual(new Vector2f(ownerShip.getLocation()), ownerShip, target, ownerShip, ARC_THICKNESS, ARC_FRINGE, Color.WHITE);
     }
 }

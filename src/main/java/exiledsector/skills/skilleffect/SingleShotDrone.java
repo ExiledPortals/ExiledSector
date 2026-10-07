@@ -21,9 +21,9 @@ abstract class SingleShotDrone implements DamageDealtModifier, AdvanceableListen
 
     private static final float RANGE_TOLERANCE = 1f;
 
-    private final ShipAPI drone;
-    private final WeaponAPI weapon;
-    private final SingleShotDrones<?> pool;
+    private final ShipAPI droneShip;
+    private final WeaponAPI droneWeapon;
+    private final SingleShotDrones<?> dronePool;
     private final String weaponId;
     private final String rangeMatchModId;
     private final Vector2f origin = new Vector2f();
@@ -35,11 +35,11 @@ abstract class SingleShotDrone implements DamageDealtModifier, AdvanceableListen
     private float firedSeconds;
     private float idleSeconds;
 
-    protected SingleShotDrone(ShipAPI drone, SingleShotDrones<?> pool, String rangeMatchModId) {
-        this.drone = drone;
-        this.weapon = drone.getAllWeapons().get(0);
-        this.pool = pool;
-        this.weaponId = weapon.getSpec().getWeaponId();
+    protected SingleShotDrone(ShipAPI droneShip, SingleShotDrones<?> dronePool, String rangeMatchModId) {
+        this.droneShip = droneShip;
+        this.droneWeapon = droneShip.getAllWeapons().get(0);
+        this.dronePool = dronePool;
+        this.weaponId = droneWeapon.getSpec().getWeaponId();
         this.rangeMatchModId = rangeMatchModId;
     }
 
@@ -66,11 +66,11 @@ abstract class SingleShotDrone implements DamageDealtModifier, AdvanceableListen
     }
 
     boolean isInPlay() {
-        return !removed && Global.getCombatEngine().isEntityInPlay(drone);
+        return !removed && Global.getCombatEngine().isEntityInPlay(droneShip);
     }
 
     WeaponAPI weapon() {
-        return weapon;
+        return droneWeapon;
     }
 
     Vector2f origin() {
@@ -83,7 +83,7 @@ abstract class SingleShotDrone implements DamageDealtModifier, AdvanceableListen
             return;
         }
         if (!markersMirrored) {
-            WeaponDroneFactory.mirrorMarkerHullMods(pool.firingShip(), drone);
+            WeaponDroneFactory.mirrorMarkerHullMods(dronePool.firingShip(), droneShip);
             markersMirrored = true;
         }
         advanceState(amount);
@@ -91,7 +91,7 @@ abstract class SingleShotDrone implements DamageDealtModifier, AdvanceableListen
 
     @Override
     public String modifyDamageDealt(Object param, CombatEntityAPI hitTarget, DamageAPI damage, Vector2f point, boolean shieldHit) {
-        if (param instanceof DamagingProjectileAPI projectile && projectile.getWeapon() == weapon) {
+        if (param instanceof DamagingProjectileAPI projectile && projectile.getWeapon() == droneWeapon) {
             shotHit(projectile, hitTarget, damage, point, shieldHit);
         }
         return null;
@@ -100,14 +100,14 @@ abstract class SingleShotDrone implements DamageDealtModifier, AdvanceableListen
     void remove() {
         removed = true;
         firing = false;
-        Global.getCombatEngine().removeEntity(drone);
-        pool.forget(this);
+        Global.getCombatEngine().removeEntity(droneShip);
+        dronePool.forget(this);
     }
 
     void prepare(float sourceRange) {
-        WeaponDroneStats.mirror(pool.firingShip().getMutableStats(), drone.getMutableStats());
+        WeaponDroneStats.mirror(dronePool.firingShip().getMutableStats(), droneShip.getMutableStats());
         matchRange(sourceRange);
-        if (weapon.getChargeLevel() > 0f) {
+        if (droneWeapon.getChargeLevel() > 0f) {
             rearm();
         }
         idleSeconds = 0f;
@@ -119,7 +119,7 @@ abstract class SingleShotDrone implements DamageDealtModifier, AdvanceableListen
         firingSeconds = 0f;
         firedSeconds = 0f;
         aim();
-        weapon.setForceFireOneFrame(true);
+        droneWeapon.setForceFireOneFrame(true);
     }
 
     void advanceState(float amount) {
@@ -135,29 +135,29 @@ abstract class SingleShotDrone implements DamageDealtModifier, AdvanceableListen
 
     void handBack(DamagingProjectileAPI projectile) {
         tag(projectile);
-        projectile.setSource(pool.firingShip());
+        projectile.setSource(dronePool.firingShip());
         shotSeen = true;
     }
 
     void park() {
-        drone.getLocation().set(origin);
-        drone.getVelocity().set(0f, 0f);
+        droneShip.getLocation().set(origin);
+        droneShip.getVelocity().set(0f, 0f);
     }
 
     void aimAlong(float facing, ShipAPI shipTarget, float mouseX, float mouseY) {
         park();
-        drone.setFacing(facing);
-        drone.setShipTarget(shipTarget);
-        Vector2f mouseTarget = drone.getMouseTarget();
+        droneShip.setFacing(facing);
+        droneShip.setShipTarget(shipTarget);
+        Vector2f mouseTarget = droneShip.getMouseTarget();
         if (mouseTarget != null) {
             mouseTarget.set(mouseX, mouseY);
         }
-        weapon.setFacing(facing);
+        droneWeapon.setFacing(facing);
     }
 
     private void advanceFiring(float amount) {
         firingSeconds += amount;
-        boolean fired = weapon.getChargeLevel() > 0f || weapon.getCooldownRemaining() > 0f;
+        boolean fired = droneWeapon.getChargeLevel() > 0f || droneWeapon.getCooldownRemaining() > 0f;
         tagShots();
         if (fired) {
             firedSeconds += amount;
@@ -168,40 +168,40 @@ abstract class SingleShotDrone implements DamageDealtModifier, AdvanceableListen
             rearm();
         } else if (!fired) {
             aim();
-            weapon.setForceFireOneFrame(true);
+            droneWeapon.setForceFireOneFrame(true);
         }
     }
 
     private void tagShots() {
         for (DamagingProjectileAPI projectile : Global.getCombatEngine().getProjectiles()) {
-            if (projectile.getWeapon() == weapon && !isTagged(projectile)) {
+            if (projectile.getWeapon() == droneWeapon && !isTagged(projectile)) {
                 handBack(projectile);
             }
         }
     }
 
     private void rearm() {
-        if (weapon.isInBurst()) {
-            weapon.stopFiring();
+        if (droneWeapon.isInBurst()) {
+            droneWeapon.stopFiring();
         }
-        if (weapon.getCooldown() > 0f) {
-            weapon.setRemainingCooldownTo(0f);
+        if (droneWeapon.getCooldown() > 0f) {
+            droneWeapon.setRemainingCooldownTo(0f);
         }
-        if (weapon.usesAmmo()) {
-            weapon.resetAmmo();
+        if (droneWeapon.usesAmmo()) {
+            droneWeapon.resetAmmo();
         }
     }
 
     private void matchRange(float sourceRange) {
-        StatBonus rangeBonus = rangeBonus(drone.getMutableStats());
+        StatBonus rangeBonus = rangeBonus(droneShip.getMutableStats());
         rangeBonus.unmodify(rangeMatchModId);
-        float current = weapon.getRange();
+        float current = droneWeapon.getRange();
         float missing = sourceRange - current;
         if (missing <= RANGE_TOLERANCE) {
             return;
         }
         rangeBonus.modifyFlat(rangeMatchModId, missing);
-        float gained = weapon.getRange() - current;
+        float gained = droneWeapon.getRange() - current;
         if (gained > 0f) {
             rangeBonus.modifyFlat(rangeMatchModId, missing * missing / gained);
         }

@@ -10,40 +10,40 @@ final class CrewStealListener implements AdvanceableListener {
     static final String SKELETON_CREW_PERCENT_KEY = "exiledSector_crewStealSkeletonCrewPercent";
     private static final float CHECK_SECONDS = 0.25f;
 
-    private final ShipAPI ship;
-    private final IntervalUtil interval = new IntervalUtil(CHECK_SECONDS, CHECK_SECONDS);
+    private final ShipAPI ownerShip;
+    private final IntervalUtil checkInterval = new IntervalUtil(CHECK_SECONDS, CHECK_SECONDS);
     private final NearbyWrecks wrecks;
-    private FleetCrewLedger ledger;
+    private FleetCrewLedger crewLedger;
 
-    CrewStealListener(ShipAPI ship) {
-        this.ship = ship;
-        this.wrecks = new NearbyWrecks(ship, other -> CombatQueries.isHostile(ship, other) && isCrewedHull(other));
+    CrewStealListener(ShipAPI ownerShip) {
+        this.ownerShip = ownerShip;
+        this.wrecks = new NearbyWrecks(ownerShip, other -> CombatQueries.isHostile(ownerShip, other) && isCrewedHull(other));
     }
 
     @Override
     public void advance(float amount) {
-        if (!stealsForTheFleet() || !ship.isAlive() || ship.isHulk()) {
+        if (!stealsForTheFleet() || !ownerShip.isAlive() || ownerShip.isHulk()) {
             return;
         }
-        interval.advance(amount);
-        if (!interval.intervalElapsed()) {
+        checkInterval.advance(amount);
+        if (!checkInterval.intervalElapsed()) {
             return;
         }
-        float range = ship.getMutableStats().getDynamic().getValue(RANGE_KEY, 0f);
-        float percent = ship.getMutableStats().getDynamic().getValue(SKELETON_CREW_PERCENT_KEY, 0f);
+        float range = ownerShip.getMutableStats().getDynamic().getValue(RANGE_KEY, 0f);
+        float percent = ownerShip.getMutableStats().getDynamic().getValue(SKELETON_CREW_PERCENT_KEY, 0f);
         if (range <= 0f || percent <= 0f) {
             return;
         }
         for (ShipAPI wreck : wrecks.newWithin(range)) {
-            if (ledger == null) {
-                ledger = FleetCrewLedger.forCurrentCombat();
+            if (crewLedger == null) {
+                crewLedger = FleetCrewLedger.forCurrentCombat();
             }
-            ledger.credit(wreck, skeletonCrew(wreck) * percent / 100f);
+            crewLedger.credit(wreck, skeletonCrew(wreck) * percent / 100f);
         }
     }
 
     private boolean stealsForTheFleet() {
-        return ship.getOwner() == 0 && !ship.isAlly();
+        return ownerShip.getOwner() == 0 && !ownerShip.isAlly();
     }
 
     private static boolean isCrewedHull(ShipAPI other) {

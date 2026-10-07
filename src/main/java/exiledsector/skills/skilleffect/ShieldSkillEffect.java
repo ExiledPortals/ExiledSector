@@ -196,20 +196,20 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
 
     private static final class BeamHardFluxConverter implements DamageListener {
 
-        private final ShipAPI ship;
+        private final ShipAPI shieldedShip;
 
-        private BeamHardFluxConverter(ShipAPI ship) {
-            this.ship = ship;
+        private BeamHardFluxConverter(ShipAPI shieldedShip) {
+            this.shieldedShip = shieldedShip;
         }
 
         @Override
         public void reportDamageApplied(Object source, CombatEntityAPI target, ApplyDamageResultAPI result) {
             float shieldFlux = result.getDamageToShields();
             if (shieldFlux <= 0f || BeamSplitListener.isApplyingSimulatedHit()
-                    || !(ship.getParamAboutToApplyDamage() instanceof BeamAPI beam) || beam.getSource() == null
+                    || !(shieldedShip.getParamAboutToApplyDamage() instanceof BeamAPI beam) || beam.getSource() == null
                     || beam.getDamage().isForceHardFlux()) return;
 
-            convertToHardFlux(ship.getFluxTracker(), shieldFlux,
+            convertToHardFlux(shieldedShip.getFluxTracker(), shieldFlux,
                     beam.getSource().getMutableStats().getDynamic().getValue(BeamHardFluxListener.HARD_FLUX_PERCENT_KEY, 0f));
         }
     }
@@ -226,15 +226,15 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
         private static final String SHARE_MOD_ID = "exiledSector_shieldDamageShared";
         private static final float MAX_SHARED_PERCENT = 90f;
 
-        private final ShipAPI ship;
-        private List<ShipAPI> allies = List.of();
+        private final ShipAPI ownerShip;
+        private List<ShipAPI> cachedAllies = List.of();
         private float alliesFoundAt = -1f;
         private boolean sharePending;
         private Object pendingSource;
         private float pendingShare;
 
-        private SharedShieldDamageListener(ShipAPI ship) {
-            this.ship = ship;
+        private SharedShieldDamageListener(ShipAPI ownerShip) {
+            this.ownerShip = ownerShip;
         }
 
         @Override
@@ -242,7 +242,7 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
             sharePending = false;
             if (!shieldHit) return null;
 
-            float share = Math.min(ship.getMutableStats().getDynamic().getValue(SHARED_PERCENT_KEY, 0f), MAX_SHARED_PERCENT) / 100f;
+            float share = Math.min(ownerShip.getMutableStats().getDynamic().getValue(SHARED_PERCENT_KEY, 0f), MAX_SHARED_PERCENT) / 100f;
             if (share <= 0f || nearbyAllies().isEmpty()) return null;
 
             damage.getModifier().modifyMult(SHARE_MOD_ID, 1f - share);
@@ -254,14 +254,14 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
 
         @Override
         public void reportDamageApplied(Object source, CombatEntityAPI target, ApplyDamageResultAPI result) {
-            if (!sharePending || ship.getParamAboutToApplyDamage() != pendingSource) return;
+            if (!sharePending || ownerShip.getParamAboutToApplyDamage() != pendingSource) return;
             sharePending = false;
 
             float moved = result.getDamageToShields() * pendingShare / (1f - pendingShare);
             if (moved <= 0f) return;
 
-            float perAlly = moved / allies.size();
-            for (ShipAPI ally : allies) {
+            float perAlly = moved / cachedAllies.size();
+            for (ShipAPI ally : cachedAllies) {
                 ally.getFluxTracker().increaseFlux(perAlly, true);
             }
         }
@@ -270,15 +270,15 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
             float now = Global.getCombatEngine().getTotalElapsedTime(false);
             if (now != alliesFoundAt) {
                 alliesFoundAt = now;
-                allies = CombatQueries.shipsNear(ship.getLocation(), SHARED_SHIELD_DAMAGE_RANGE, this::sharesShieldDamageWith);
+                cachedAllies = CombatQueries.shipsNear(ownerShip.getLocation(), SHARED_SHIELD_DAMAGE_RANGE, this::sharesShieldDamageWith);
             }
-            return allies;
+            return cachedAllies;
         }
 
         private boolean sharesShieldDamageWith(ShipAPI other) {
-            return other != ship && other.getOwner() == ship.getOwner() && other.isAlive() && !other.isHulk()
+            return other != ownerShip && other.getOwner() == ownerShip.getOwner() && other.isAlive() && !other.isHulk()
                     && !other.isFighter()
-                    && CombatQueries.withinRadius(other.getLocation(), ship.getLocation(), SHARED_SHIELD_DAMAGE_RANGE)
+                    && CombatQueries.withinRadius(other.getLocation(), ownerShip.getLocation(), SHARED_SHIELD_DAMAGE_RANGE)
                     && !other.getFluxTracker().isOverloadedOrVenting();
         }
     }

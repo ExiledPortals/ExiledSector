@@ -45,7 +45,7 @@ final class SplitBeamDrones {
     private SplitDrone start(SplitKey key, WeaponAPI weapon) {
         ShareListener shareListener = new ShareListener();
         SplitDrone split = new SplitDrone(key, WeaponDroneFactory.create(firingShip, weapon, shareListener), shareListener);
-        split.drone.addListener(split);
+        split.droneShip.addListener(split);
         return split;
     }
 
@@ -54,8 +54,8 @@ final class SplitBeamDrones {
 
     private final class SplitDrone implements AdvanceableListener {
 
-        private final SplitKey key;
-        private final ShipAPI drone;
+        private final SplitKey splitKey;
+        private final ShipAPI droneShip;
         private final WeaponAPI droneWeapon;
         private final ShipAPI splitTarget;
         private final ShareListener shareListener;
@@ -67,22 +67,22 @@ final class SplitBeamDrones {
         private boolean removed;
         private boolean markersMirrored;
 
-        private SplitDrone(SplitKey key, ShipAPI drone, ShareListener shareListener) {
-            this.key = key;
-            this.drone = drone;
-            this.droneWeapon = drone.getAllWeapons().get(0);
-            this.splitTarget = key.splitTarget();
+        private SplitDrone(SplitKey splitKey, ShipAPI droneShip, ShareListener shareListener) {
+            this.splitKey = splitKey;
+            this.droneShip = droneShip;
+            this.droneWeapon = droneShip.getAllWeapons().get(0);
+            this.splitTarget = splitKey.splitTarget();
             this.shareListener = shareListener;
         }
 
         private boolean isInPlay() {
-            return !removed && Global.getCombatEngine().isEntityInPlay(drone);
+            return !removed && Global.getCombatEngine().isEntityInPlay(droneShip);
         }
 
         private void retarget(Vector2f newImpactPoint, Vector2f newOrigin, float share) {
             impactPoint.set(newImpactPoint);
             origin.set(newOrigin);
-            shareListener.share = share;
+            shareListener.damageShare = share;
             secondsSinceRefresh = 0f;
         }
 
@@ -92,7 +92,7 @@ final class SplitBeamDrones {
                 return;
             }
             if (!markersMirrored) {
-                WeaponDroneFactory.mirrorMarkerHullMods(firingShip, drone);
+                WeaponDroneFactory.mirrorMarkerHullMods(firingShip, droneShip);
                 markersMirrored = true;
             }
             boolean firingShipGone = !firingShip.isAlive();
@@ -107,12 +107,12 @@ final class SplitBeamDrones {
             }
             secondsSinceMirror += amount;
             if (!firingShipGone && secondsSinceMirror >= STAT_MIRROR_INTERVAL_SECONDS) {
-                WeaponDroneStats.mirror(firingShip.getMutableStats(), drone.getMutableStats());
+                WeaponDroneStats.mirror(firingShip.getMutableStats(), droneShip.getMutableStats());
                 secondsSinceMirror = 0f;
             }
             float angle = VectorUtils.getAngle(origin, splitTarget.getLocation());
-            drone.getLocation().set(origin);
-            drone.setFacing(angle);
+            droneShip.getLocation().set(origin);
+            droneShip.setFacing(angle);
             droneWeapon.setForceFireOneFrame(firing);
             droneWeapon.setFacing(angle);
             droneWeapon.updateBeamFromPoints();
@@ -121,8 +121,8 @@ final class SplitBeamDrones {
 
         private void remove() {
             removed = true;
-            Global.getCombatEngine().removeEntity(drone);
-            drones.remove(key, this);
+            Global.getCombatEngine().removeEntity(droneShip);
+            drones.remove(splitKey, this);
         }
 
         private void drawRefractionConnector(float amount, float angle) {
@@ -146,14 +146,14 @@ final class SplitBeamDrones {
 
     static final class ShareListener implements DamageDealtModifier {
 
-        private float share = 1f;
+        private float damageShare = 1f;
 
         @Override
         public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
             if (!(param instanceof BeamAPI)) {
                 return null;
             }
-            damage.getModifier().modifyMult(SHARE_MOD_ID, share);
+            damage.getModifier().modifyMult(SHARE_MOD_ID, damageShare);
             return SHARE_MOD_ID;
         }
     }
