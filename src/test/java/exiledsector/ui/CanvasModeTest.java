@@ -92,11 +92,11 @@ class CanvasModeTest {
     }
 
     @Test
-    void followingTheFleetHidesTheTemplateBarButKeepsStorageAndStopsDragPanning() {
-        assertEquals(EnumSet.of(CanvasMode.Chrome.STATS_TOGGLE, CanvasMode.Chrome.READOUTS, CanvasMode.Chrome.SEARCH,
-                        CanvasMode.Chrome.STORAGE_BUTTON),
+    void followingTheFleetHidesTheTemplateBarAndSearchButKeepsStorageAndStopsDragPanning() {
+        assertEquals(EnumSet.of(CanvasMode.Chrome.STATS_TOGGLE, CanvasMode.Chrome.READOUTS, CanvasMode.Chrome.STORAGE_BUTTON),
                 enabledIn(CanvasMode.FLEET_FOLLOW));
         assertFalse(CanvasMode.FLEET_FOLLOW.shows(CanvasMode.Chrome.TEMPLATE_BAR));
+        assertFalse(CanvasMode.FLEET_FOLLOW.shows(CanvasMode.Chrome.SEARCH));
         assertTrue(CanvasMode.FLEET_FOLLOW.shows(CanvasMode.Chrome.STORAGE_BUTTON));
         assertTrue(CanvasMode.FLEET_FOLLOW.hoversTree());
         assertEquals(EnumSet.of(CanvasMode.FLEET_FOLLOW), matching(mode -> !mode.pansOnDrag()));

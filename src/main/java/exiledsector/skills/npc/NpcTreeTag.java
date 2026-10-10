@@ -7,7 +7,6 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledsector.socketables.HullFrameworkData;
 import exiledsector.socketables.NpcSocketables;
 import exiledsector.socketables.SocketType;
 import exiledsector.socketables.SocketableItemData;
@@ -26,7 +25,8 @@ public final class NpcTreeTag {
     private static final int CHARGED_NODE_COST = 1;
     static final String GENERATED = "generated";
     static final String SOCKETS_MARKER = "sockets:";
-    static final String FRAMEWORK_MARKER = "framework:";
+    static final String FRAMEWORK_TYPES_MARKER = "frameworkTypes:";
+    private static final String TYPE_SEPARATOR = "+";
     static final String FRAMEWORK_SOCKETS_MARKER = "frameworkSockets:";
     private static final int MIN_FIELDS = 3;
     private static final int MAX_FIELDS = 6;
@@ -53,13 +53,13 @@ public final class NpcTreeTag {
         if (!socketEntries.isEmpty()) {
             encodedTag.append(FIELD_SEPARATOR).append(SOCKETS_MARKER).append(String.join(NODE_SEPARATOR, socketEntries));
         }
-        String frameworkId = shipData.getInstalledFrameworkId();
-        if (HullFrameworkData.isNpcId(frameworkId)) {
-            encodedTag.append(FIELD_SEPARATOR).append(FRAMEWORK_MARKER).append(frameworkId);
+        if (!shipData.getUnlockedSocketTypeIds().isEmpty()) {
+            encodedTag.append(FIELD_SEPARATOR).append(FRAMEWORK_TYPES_MARKER)
+                    .append(String.join(TYPE_SEPARATOR, shipData.getUnlockedSocketTypeIds()));
             List<String> frameworkSocketEntries = new ArrayList<>();
-            shipData.getFrameworkSocketedItems().forEach((slotIndex, socketableId) -> {
+            shipData.getFrameworkSocketedItems().forEach((socketTypeId, socketableId) -> {
                 if (NpcSocketables.isNpcId(socketableId)) {
-                    frameworkSocketEntries.add(slotIndex + OPTION_SEPARATOR + socketableId);
+                    frameworkSocketEntries.add(socketTypeId + OPTION_SEPARATOR + socketableId);
                 }
             });
             if (!frameworkSocketEntries.isEmpty()) {
@@ -116,12 +116,14 @@ public final class NpcTreeTag {
     private static void restoreField(ShipSkillData shipData, String tagField) {
         if (tagField.startsWith(SOCKETS_MARKER)) {
             restoreSockets(shipData, tagField.substring(SOCKETS_MARKER.length()));
-        } else if (tagField.startsWith(FRAMEWORK_MARKER)) {
-            String frameworkId = tagField.substring(FRAMEWORK_MARKER.length());
-            if (HullFrameworkData.ofNpcId(frameworkId) != null) {
-                shipData.installFramework(frameworkId);
+        } else if (tagField.startsWith(FRAMEWORK_TYPES_MARKER)) {
+            for (String socketTypeId : tagField.substring(FRAMEWORK_TYPES_MARKER.length()).split("\\" + TYPE_SEPARATOR)) {
+                SocketType socketType = SocketType.byIdOrNull(socketTypeId);
+                if (socketType != null && socketType.isFramework()) {
+                    shipData.grantUnlockedSocketType(socketTypeId);
+                }
             }
-        } else if (tagField.startsWith(FRAMEWORK_SOCKETS_MARKER) && shipData.getInstalledFrameworkId() != null) {
+        } else if (tagField.startsWith(FRAMEWORK_SOCKETS_MARKER)) {
             restoreFrameworkSockets(shipData, tagField.substring(FRAMEWORK_SOCKETS_MARKER.length()));
         }
     }
@@ -130,12 +132,9 @@ public final class NpcTreeTag {
         for (String entry : socketEntries.split(NODE_SEPARATOR)) {
             int separator = entry.indexOf(OPTION_SEPARATOR);
             String socketableId = separator <= 0 ? null : entry.substring(separator + 1);
-            if (socketableId != null && NpcSocketables.item(socketableId) != null) {
-                try {
-                    shipData.socketFrameworkItem(Integer.parseInt(entry.substring(0, separator)), socketableId);
-                } catch (NumberFormatException e) {
-                    LOG.warn("Skipping an NPC framework socket entry with a bad slot: " + entry);
-                }
+            if (socketableId != null && NpcSocketables.item(socketableId) != null
+                    && !shipData.socketFrameworkItem(entry.substring(0, separator), socketableId)) {
+                LOG.warn("Skipping an NPC framework socket entry for a socket type the ship has not unlocked: " + entry);
             }
         }
     }

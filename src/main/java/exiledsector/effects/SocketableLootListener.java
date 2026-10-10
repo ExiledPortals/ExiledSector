@@ -19,7 +19,7 @@ import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.npc.NpcTreeTag;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.ShipLevelSystem;
-import exiledsector.socketables.HullFrameworkData;
+import exiledsector.socketables.HullUpgradeData;
 import exiledsector.socketables.NpcSocketables;
 import exiledsector.socketables.Socketable;
 import exiledsector.socketables.SocketableDisassembly;
@@ -38,7 +38,7 @@ public class SocketableLootListener extends BaseCampaignEventListener implements
 
     private static final class Pending {
         private final Map<String, List<SocketableItemData>> itemsByMemberId = new LinkedHashMap<>();
-        private final Map<String, HullFrameworkData> frameworkByMemberId = new LinkedHashMap<>();
+        private final Map<String, HullUpgradeData> upgradeByMemberId = new LinkedHashMap<>();
         private boolean playerWon;
         private float partsEarned;
 
@@ -50,10 +50,15 @@ public class SocketableLootListener extends BaseCampaignEventListener implements
     }
 
     private final Map<BattleAPI, Pending> pendingByBattle = new IdentityHashMap<>();
-    private final Random partsRandom = new Random();
+    private final Random lootRandom;
 
     public SocketableLootListener() {
+        this(new Random());
+    }
+
+    SocketableLootListener(Random lootRandom) {
         super(false);
+        this.lootRandom = lootRandom;
     }
 
     void holdLoot(PlayerEngagement engagement) {
@@ -65,8 +70,8 @@ public class SocketableLootListener extends BaseCampaignEventListener implements
         pendingLoot.playerWon = engagement.playerWon();
         for (EngagementResultForFleetAPI fleetResult : new EngagementResultForFleetAPI[]{engagementResult.getWinnerResult(), engagementResult.getLoserResult()}) {
             if (fleetResult != null && !fleetResult.isPlayer()) {
-                hold(pendingLoot, fleetResult.getDestroyed());
-                hold(pendingLoot, fleetResult.getDisabled());
+                hold(pendingLoot, fleetResult.getDestroyed(), lootRandom);
+                hold(pendingLoot, fleetResult.getDisabled(), lootRandom);
             }
         }
         float defeatedDp = engagement.enemyDeploymentPointsDefeated();
@@ -77,7 +82,7 @@ public class SocketableLootListener extends BaseCampaignEventListener implements
         }
     }
 
-    private static void hold(Pending pendingLoot, List<FleetMemberAPI> lostMembers) {
+    private static void hold(Pending pendingLoot, List<FleetMemberAPI> lostMembers, Random random) {
         if (lostMembers == null) {
             return;
         }
@@ -88,9 +93,10 @@ public class SocketableLootListener extends BaseCampaignEventListener implements
             if (!carriedItems.isEmpty()) {
                 pendingLoot.itemsByMemberId.put(member.getId(), carriedItems);
             }
-            HullFrameworkData carriedFramework = NpcSocketables.frameworkCarriedBy(npcTree);
-            if (carriedFramework != null) {
-                pendingLoot.frameworkByMemberId.put(member.getId(), carriedFramework);
+            HullUpgradeData droppedUpgrade = NpcSocketables.rollUpgradeDrop(npcTree, member.getHullSpec() == null ? null : member.getHullSpec().getHullSize(),
+                    random);
+            if (droppedUpgrade != null) {
+                pendingLoot.upgradeByMemberId.put(member.getId(), droppedUpgrade);
             }
         }
     }
@@ -103,7 +109,7 @@ public class SocketableLootListener extends BaseCampaignEventListener implements
         for (FleetMemberAPI recoveredShip : recoveredShips) {
             pendingByBattle.values().forEach(pendingLoot -> {
                 pendingLoot.itemsByMemberId.remove(recoveredShip.getId());
-                pendingLoot.frameworkByMemberId.remove(recoveredShip.getId());
+                pendingLoot.upgradeByMemberId.remove(recoveredShip.getId());
             });
         }
         ShipTreeSync.fleetChanged(Global.getSector() == null ? null : Global.getSector().getPlayerFleet());
@@ -114,8 +120,8 @@ public class SocketableLootListener extends BaseCampaignEventListener implements
         Pending pendingLoot = encounterPlugin == null ? null : pendingByBattle.remove(encounterPlugin.getBattle());
         if (pendingLoot != null && loot != null) {
             pendingLoot.items().forEach(item -> loot.addSpecial(item.toSpecialItem(), 1f));
-            pendingLoot.frameworkByMemberId.values().forEach(framework -> loot.addSpecial(framework.toSpecialItem(), 1f));
-            int wholeParts = SocketableDrops.wholeParts(pendingLoot.partsEarned, partsRandom);
+            pendingLoot.upgradeByMemberId.values().forEach(upgrade -> loot.addSpecial(upgrade.toSpecialItem(), 1f));
+            int wholeParts = SocketableDrops.wholeParts(pendingLoot.partsEarned, lootRandom);
             if (wholeParts > 0) {
                 loot.addCommodity(SocketableDisassembly.PARTS_COMMODITY_ID, wholeParts);
             }
@@ -137,11 +143,11 @@ public class SocketableLootListener extends BaseCampaignEventListener implements
                 announceSalvaged(previewSocketable::name);
             }
         }
-        for (HullFrameworkData framework : pendingLoot.frameworkByMemberId.values()) {
-            playerFleet.getCargo().addSpecial(framework.toSpecialItem(), 1f);
-            announceSalvaged(() -> framework.preview().name());
+        for (HullUpgradeData upgrade : pendingLoot.upgradeByMemberId.values()) {
+            playerFleet.getCargo().addSpecial(upgrade.toSpecialItem(), 1f);
+            announceSalvaged(upgrade::name);
         }
-        int wholeParts = SocketableDrops.wholeParts(pendingLoot.partsEarned, partsRandom);
+        int wholeParts = SocketableDrops.wholeParts(pendingLoot.partsEarned, lootRandom);
         if (wholeParts > 0) {
             playerFleet.getCargo().addCommodity(SocketableDisassembly.PARTS_COMMODITY_ID, wholeParts);
             CommoditySpecAPI partsSpec = Global.getSettings().getCommoditySpec(SocketableDisassembly.PARTS_COMMODITY_ID);

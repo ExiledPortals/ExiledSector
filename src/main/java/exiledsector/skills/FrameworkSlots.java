@@ -4,7 +4,6 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import exiledsector.skills.tags.NodeRequirements;
 import exiledsector.skills.tags.ShipProfile;
-import exiledsector.socketables.HullFramework;
 import exiledsector.socketables.SocketType;
 import exiledsector.socketables.Socketable;
 import exiledsector.socketables.SocketableStore;
@@ -21,7 +20,7 @@ import java.util.function.Supplier;
 
 public final class FrameworkSlots {
 
-    public record Slot(int index, SocketType type, Socketable item, String unmetRequirement) {
+    public record Slot(SocketType type, Socketable item, String unmetRequirement) {
 
         public boolean active() {
             return unmetRequirement == null;
@@ -40,20 +39,15 @@ public final class FrameworkSlots {
     private FrameworkSlots() {
     }
 
-    public static HullFramework installedFramework(ShipSkillData shipData) {
-        return shipData == null ? null : SocketableStore.lookupFramework(shipData.getInstalledFrameworkId());
-    }
-
     public static List<Slot> of(ShipSkillData shipData, Supplier<ShipProfile> currentFit) {
-        HullFramework framework = installedFramework(shipData);
-        if (framework == null) {
+        if (shipData == null || shipData.getUnlockedSocketTypeIds().isEmpty()) {
             return List.of();
         }
-        List<Slot> slots = new ArrayList<>(framework.slotCount());
+        List<Slot> slots = new ArrayList<>();
         ShipProfile resolvedFit = null;
-        for (int slotIndex = 0; slotIndex < framework.slotCount(); slotIndex++) {
-            SocketType socketType = framework.socketType(slotIndex);
-            if (socketType == null) {
+        for (String socketTypeId : shipData.getUnlockedSocketTypeIds()) {
+            SocketType socketType = SocketType.byIdOrNull(socketTypeId);
+            if (socketType == null || !socketType.isFramework()) {
                 continue;
             }
             String unmetRequirement = null;
@@ -63,13 +57,13 @@ public final class FrameworkSlots {
                 }
                 unmetRequirement = unmetRequirement(socketType, resolvedFit);
             }
-            slots.add(new Slot(slotIndex, socketType, SocketableStore.lookup(shipData.getFrameworkSocketedItem(slotIndex)), unmetRequirement));
+            slots.add(new Slot(socketType, SocketableStore.lookup(shipData.getFrameworkSocketedItem(socketTypeId)), unmetRequirement));
         }
         return Collections.unmodifiableList(slots);
     }
 
     public static List<Slot> forVariant(ShipSkillData shipData, ShipVariantAPI variant) {
-        if (shipData == null || shipData.getInstalledFrameworkId() == null) {
+        if (shipData == null || shipData.getUnlockedSocketTypeIds().isEmpty()) {
             return List.of();
         }
         String hullId = variant == null || variant.getHullSpec() == null ? null : variant.getHullSpec().getHullId();

@@ -133,7 +133,7 @@ public final class ResolvedTree {
     }
 
     private static void addSlotEffects(EffectTotals.SlotEffects slotEffects, List<Entry> resolvedEntries) {
-        EffectModIds modIds = new EffectModIds(FRAMEWORK_MOD_ID_PREFIX + slotEffects.slot().index() + "_");
+        EffectModIds modIds = new EffectModIds(FRAMEWORK_MOD_ID_PREFIX + slotEffects.slot().type().id() + "_");
         for (SkillTypeEffect effect : slotEffects.effects()) {
             if (!effect.effect().isMultiplicative()) {
                 resolvedEntries.add(new EffectEntry(effect.effect(), modIds.next(effect.effect()), effect.magnitude()));

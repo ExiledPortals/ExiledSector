@@ -7,6 +7,7 @@ import exiledsector.ui.node.TreeAllocationSession;
 final class TreeCamera {
 
     static final float FOLLOW_SETTLE_SECONDS = 1.2f;
+    static final float FOLLOW_OFFSET_RESPONSE_PER_SECOND = 6f;
 
     private final SmoothZoom smoothZoom = new SmoothZoom(1f);
     private float panX;
@@ -21,6 +22,8 @@ final class TreeCamera {
     private float followStartX;
     private float followStartY;
     private float followSeconds;
+    private float followOffsetX;
+    private float followOffsetTargetX;
 
     void startFollowing() {
         followingTarget = true;
@@ -36,6 +39,12 @@ final class TreeCamera {
 
     void stopFollowing() {
         followingTarget = false;
+        followOffsetX = 0f;
+        followOffsetTargetX = 0f;
+    }
+
+    void setFollowOffset(float screenOffsetX) {
+        followOffsetTargetX = screenOffsetX;
     }
 
     void inspect(float zoom) {
@@ -64,6 +73,8 @@ final class TreeCamera {
         float progress = Math.min(1f, followSeconds / FOLLOW_SETTLE_SECONDS);
         float eased = progress * progress * (3f - 2f * progress);
         centreOn(followStartX + (treeX - followStartX) * eased, followStartY + (treeY - followStartY) * eased);
+        followOffsetX += (followOffsetTargetX - followOffsetX) * Math.min(1f, amount * FOLLOW_OFFSET_RESPONSE_PER_SECOND);
+        panX += followOffsetX;
     }
 
     void advanceZoom(float amount) {

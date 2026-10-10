@@ -10,6 +10,8 @@ import com.fs.starfarer.api.campaign.FleetEncounterContextPlugin;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.skills.SkillNode;
@@ -17,7 +19,7 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.npc.RealSkillData;
-import exiledsector.socketables.HullFrameworkData;
+import exiledsector.socketables.HullUpgradeData;
 import exiledsector.socketables.SocketableItemData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,6 +31,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.List;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -41,7 +44,7 @@ import static org.mockito.Mockito.when;
 class SocketableLootListenerTest {
 
     private static final String TAG = "exiledSector_npcTree|generated|1|root,socket_1|sockets:socket_1=npc:domain_subroutine_military/12";
-    private static final String FRAMEWORK_TAG = TAG + "|framework:npcfw:CRUISER/COMMON/bridge+reactor/5|frameworkSockets:0=npc:bridge_basic/3";
+    private static final String FRAMEWORK_TAG = TAG + "|frameworkTypes:bridge+reactor|frameworkSockets:bridge=npc:bridge_basic/3";
 
     private MockedStatic<Global> globalMock;
     private CargoAPI playerCargo;
@@ -128,31 +131,49 @@ class SocketableLootListenerTest {
         assertEquals(List.of("domain_subroutine_military|12", "domain_subroutine_military|12"), lootData(loot, 2));
     }
 
+    private static FleetMemberAPI cruiserFlagship(String id) {
+        FleetMemberAPI member = flagship(id, FRAMEWORK_TAG);
+        ShipHullSpecAPI hullSpec = mock(ShipHullSpecAPI.class);
+        when(hullSpec.getHullSize()).thenReturn(HullSize.CRUISER);
+        when(member.getHullSpec()).thenReturn(hullSpec);
+        return member;
+    }
+
+    private static Random alwaysLucky() {
+        return new Random() {
+            @Override
+            public float nextFloat() {
+                return 0f;
+            }
+        };
+    }
+
     @Test
-    void aDestroyedFlagshipDropsItsFrameworkAndTheItemsInItsSockets() {
+    void aDestroyedFlagshipDropsTheItemsInItsSocketsAndSometimesAHullUpgrade() {
+        SocketableLootListener luckyListener = new SocketableLootListener(alwaysLucky());
         BattleAPI battle = mock(BattleAPI.class);
-        FleetMemberAPI wrecked = flagship("wrecked", FRAMEWORK_TAG);
-        listener.holdLoot(PlayerEngagement.of(engagement(battle, List.of(wrecked), List.of()), 1f));
+        luckyListener.holdLoot(PlayerEngagement.of(engagement(battle, List.of(cruiserFlagship("wrecked")), List.of()), 1f));
         CargoAPI loot = mock(CargoAPI.class);
 
-        listener.reportEncounterLootGenerated(context(battle), loot);
+        luckyListener.reportEncounterLootGenerated(context(battle), loot);
 
         ArgumentCaptor<SpecialItemData> items = ArgumentCaptor.forClass(SpecialItemData.class);
         verify(loot, Mockito.times(3)).addSpecial(items.capture(), Mockito.eq(1f));
         assertEquals(List.of(SocketableItemData.ITEM_ID + ":domain_subroutine_military|12", SocketableItemData.ITEM_ID + ":bridge_basic|3",
-                        HullFrameworkData.ITEM_ID + ":CRUISER/COMMON/bridge+reactor/5"),
+                        HullUpgradeData.ITEM_ID + ":CRUISER"),
                 items.getAllValues().stream().map(item -> item.getId() + ":" + item.getData()).toList());
     }
 
     @Test
     void aRecoveredFlagshipKeepsItsFrameworkOutOfTheLoot() {
+        SocketableLootListener luckyListener = new SocketableLootListener(alwaysLucky());
         BattleAPI battle = mock(BattleAPI.class);
-        FleetMemberAPI crippled = flagship("crippled", FRAMEWORK_TAG);
-        listener.holdLoot(PlayerEngagement.of(engagement(battle, List.of(), List.of(crippled)), 1f));
-        listener.reportShipsRecovered(List.of(crippled), null);
+        FleetMemberAPI crippled = cruiserFlagship("crippled");
+        luckyListener.holdLoot(PlayerEngagement.of(engagement(battle, List.of(), List.of(crippled)), 1f));
+        luckyListener.reportShipsRecovered(List.of(crippled), null);
         CargoAPI loot = mock(CargoAPI.class);
 
-        listener.reportEncounterLootGenerated(context(battle), loot);
+        luckyListener.reportEncounterLootGenerated(context(battle), loot);
 
         verify(loot, never()).addSpecial(any(), anyFloat());
     }

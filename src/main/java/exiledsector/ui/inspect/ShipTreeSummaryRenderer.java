@@ -13,7 +13,6 @@ import exiledsector.skills.FrameworkSlots;
 import exiledsector.skills.SkillTreeBonusSummary;
 import exiledsector.skills.SkillTreeBonusSummary.Summary;
 import exiledsector.skills.SkillType;
-import exiledsector.socketables.HullFramework;
 import exiledsector.socketables.Socketable;
 import exiledsector.socketables.SocketableStore;
 import exiledsector.ui.VanillaText;
@@ -95,16 +94,17 @@ public final class ShipTreeSummaryRenderer {
     }
 
     private static void renderFramework(TooltipMakerAPI info, ShipTreeLookup.ShipTree shipTree) {
-        HullFramework framework = FrameworkSlots.installedFramework(shipTree.skillData());
-        if (framework == null) {
+        int frameworkPoints = shipTree.skillData().getFrameworkPoints();
+        if (frameworkPoints <= 0) {
             return;
         }
         List<StyledText> socketTexts = new ArrayList<>();
         for (FrameworkSlots.Slot slot : shipTree.frameworkSlots()) {
             socketTexts.add(frameworkSocketText(slot));
         }
-        VanillaText.addPara(info, Translation.msg("summary.framework").arg("framework", StyledText.styled(framework.name(), Style.HIGHLIGHT))
-                .arg("sockets", Translation.list(socketTexts)).styled(), LINE_PAD, Misc.getTextColor());
+        StyledText sockets = socketTexts.isEmpty() ? Translation.styled("summary.frameworkNone") : Translation.list(socketTexts);
+        VanillaText.addPara(info, Translation.msg("summary.framework").arg("used", shipTree.skillData().getUnlockedSocketTypeIds().size())
+                .arg("points", frameworkPoints).arg("sockets", sockets).styled(), LINE_PAD, Misc.getTextColor());
     }
 
     private static StyledText frameworkSocketText(FrameworkSlots.Slot slot) {

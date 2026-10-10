@@ -35,6 +35,7 @@ public final class SkillTreePanelStyle {
     public static final float NODE_TOOLTIP_MAX_TEXT_WIDTH = TOOLTIP_MAX_TEXT_WIDTH * 1.2f;
     public static final float FONT_LINE_HEIGHT_FACTOR = 1f;
     public static final Color TOOLTIP_BACKGROUND_COLOR = Color.BLACK;
+    public static final Color OP_TEXT_COLOR = new Color(0xFD, 0xD0, 0x00);
     public static final float TOOLTIP_BORDER_THICKNESS = 2f;
     public static final Color GLOW_COLOR = new Color(120, 200, 255);
     public static final Color POSITIVE_STAT_COLOR = new Color(0x98, 0xFB, 0x00);

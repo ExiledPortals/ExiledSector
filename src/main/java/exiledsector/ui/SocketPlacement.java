@@ -25,7 +25,6 @@ final class SocketPlacement {
     private static final float PANEL_MARGIN = 16f;
     private static final float PANEL_TOP = 100f;
     private static final float PANEL_GAP = 12f;
-    private static final int NO_FRAMEWORK_SLOT = -1;
 
     private final CustomPanelAPI hostPanel;
     private final TreeAllocationSession treeSession;
@@ -35,9 +34,10 @@ final class SocketPlacement {
     private SocketStoragePanel storagePanel;
     private Socketable placingSocketable;
     private SkillNode targetSocket;
-    private int targetFrameworkSlot = NO_FRAMEWORK_SLOT;
+    private SocketType targetFrameworkType;
     private int storageRevision;
     private Map<String, FleetMemberAPI> ownedShips = Map.of();
+    private ScreenRect lastShipCard = ScreenRect.NONE;
 
     SocketPlacement(CustomPanelAPI hostPanel, TreeAllocationSession treeSession, NodeSearch nodeSearch, SkillTreeSearchBar searchBar) {
         this.hostPanel = hostPanel;
@@ -45,6 +45,19 @@ final class SocketPlacement {
         this.nodeSearch = nodeSearch;
         this.searchBar = searchBar;
         refreshButtonLabel();
+    }
+
+    float sidePanelHeight(PositionAPI canvasPosition) {
+        return sidePanelHeight(canvasPosition, lastShipCard);
+    }
+
+    private static float sidePanelHeight(PositionAPI canvasPosition, ScreenRect shipCard) {
+        float reservedBottom = shipCard.bottom() + shipCard.height() - canvasPosition.getY() + PANEL_GAP;
+        return canvasPosition.getHeight() - PANEL_TOP - reservedBottom;
+    }
+
+    boolean isStorageOpen() {
+        return storagePanel != null;
     }
 
     boolean isEngaged() {
@@ -63,25 +76,29 @@ final class SocketPlacement {
         return storageButton.contains(x, y);
     }
 
+    ScreenRect storageButtonBounds() {
+        return storageButton.bounds();
+    }
+
     boolean isButtonClickable(float x, float y) {
         return storageButton.isClickable(x, y);
     }
 
     boolean isFrameworkTargeted() {
-        return targetFrameworkSlot != NO_FRAMEWORK_SLOT;
+        return targetFrameworkType != null;
     }
 
-    int targetFrameworkSlot() {
-        return targetFrameworkSlot;
+    SocketType targetFrameworkType() {
+        return targetFrameworkType;
     }
 
-    void openForFrameworkSlot(int slotIndex, SocketType socketType, PositionAPI canvasPosition, ScreenRect shipCard) {
+    void openForFrameworkSocket(SocketType socketType, PositionAPI canvasPosition, ScreenRect shipCard) {
         if (storagePanel != null) {
             storagePanel.close();
         }
         stopPlacing();
         clearTargetSocket();
-        targetFrameworkSlot = slotIndex;
+        targetFrameworkType = socketType;
         open(canvasPosition, shipCard, socketType);
         storagePanel.setTargetingSocket(true);
     }
@@ -96,7 +113,7 @@ final class SocketPlacement {
         if (storagePanel != null && storagePanel.escape()) {
             return;
         }
-        if (targetFrameworkSlot != NO_FRAMEWORK_SLOT && storagePanel != null) {
+        if (targetFrameworkType != null && storagePanel != null) {
             storagePanel.close();
             return;
         }
@@ -134,6 +151,7 @@ final class SocketPlacement {
     }
 
     void layoutButton(PositionAPI canvasPosition, ScreenRect shipCard, boolean buttonShown) {
+        lastShipCard = shipCard;
         if (!buttonShown) {
             storageButton.hide();
             return;
@@ -211,8 +229,7 @@ final class SocketPlacement {
         searchBar.unfocus();
         ownedShips = SocketCustody.reconcile();
         storageRevision = treeSession.statsRevision();
-        float reservedBottom = shipCard.bottom() + shipCard.height() - canvasPosition.getY() + PANEL_GAP;
-        storagePanel = SocketStoragePanel.open(hostPanel, PANEL_MARGIN, PANEL_TOP, canvasPosition.getHeight() - PANEL_TOP - reservedBottom,
+        storagePanel = SocketStoragePanel.open(hostPanel, PANEL_MARGIN, PANEL_TOP, sidePanelHeight(canvasPosition, shipCard),
                 SocketCustody.shipNames(ownedShips), new SocketStoragePanel.Listener() {
                     @Override
                     public void selected(Socketable socketable) {
@@ -228,7 +245,7 @@ final class SocketPlacement {
                         storagePanel = null;
                         stopPlacing();
                         clearTargetSocket();
-                        targetFrameworkSlot = NO_FRAMEWORK_SLOT;
+                        targetFrameworkType = null;
                         refreshButtonLabel();
                     }
 
@@ -274,8 +291,8 @@ final class SocketPlacement {
     }
 
     private boolean installInTargetSocket(Socketable socketable) {
-        if (targetFrameworkSlot != NO_FRAMEWORK_SLOT) {
-            if (treeSession.socketFrameworkItem(targetFrameworkSlot, socketable)) {
+        if (targetFrameworkType != null) {
+            if (treeSession.socketFrameworkItem(targetFrameworkType, socketable)) {
                 refresh();
             }
             return true;

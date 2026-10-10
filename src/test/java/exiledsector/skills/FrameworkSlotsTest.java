@@ -4,12 +4,9 @@ import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.skills.tags.ShipProfile;
-import exiledsector.socketables.HullFrameworkData;
 import exiledsector.socketables.NpcSocketables;
 import exiledsector.socketables.SocketType;
 import exiledsector.socketables.SocketableDefinitions;
-import exiledsector.socketables.SocketableRarity;
-import exiledsector.socketables.SocketableStore;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -22,7 +19,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FrameworkSlotsTest {
@@ -38,10 +34,10 @@ class FrameworkSlotsTest {
                 .put(definition("emitter", "shield_generator", "HULL_PERCENT:10:10"))
                 .put(definition("chip", "subroutine", "HULL_PERCENT:20:20")));
         shipData = new ShipSkillData();
-        shipData.installFramework(new HullFrameworkData(HullSize.CRUISER, SocketableRarity.COMMON,
-                List.of(SocketType.BRIDGE, SocketType.SHIELD_GENERATOR), 1L).npcId());
-        shipData.socketFrameworkItem(0, NpcSocketables.id("bridge_item", 1L));
-        shipData.socketFrameworkItem(1, NpcSocketables.id("emitter", 2L));
+        shipData.grantUnlockedSocketType("bridge");
+        shipData.grantUnlockedSocketType("shield_generator");
+        shipData.socketFrameworkItem("bridge", NpcSocketables.id("bridge_item", 1L));
+        shipData.socketFrameworkItem("shield_generator", NpcSocketables.id("emitter", 2L));
     }
 
     @AfterEach
@@ -92,8 +88,8 @@ class FrameworkSlotsTest {
             fitRequests.incrementAndGet();
             return fit(ShieldType.FRONT);
         });
-        shipData.installFramework(new HullFrameworkData(HullSize.CRUISER, SocketableRarity.COMMON,
-                List.of(SocketType.BRIDGE, SocketType.REACTOR), 1L).npcId());
+        shipData.lockSocketType("shield_generator");
+        shipData.grantUnlockedSocketType("reactor");
         FrameworkSlots.of(shipData, () -> {
             fitRequests.incrementAndGet();
             return fit(ShieldType.FRONT);
@@ -104,7 +100,7 @@ class FrameworkSlotsTest {
 
     @Test
     void anItemOfTheWrongTypeInASocketDoesNothing() {
-        shipData.socketFrameworkItem(0, NpcSocketables.id("chip", 3L));
+        shipData.socketFrameworkItem("bridge", NpcSocketables.id("chip", 3L));
 
         List<FrameworkSlots.Slot> slots = FrameworkSlots.of(shipData, () -> fit(ShieldType.FRONT));
 
@@ -121,11 +117,7 @@ class FrameworkSlotsTest {
     }
 
     @Test
-    void aShipWithoutAFrameworkHasNoSlots() {
-        shipData.removeFramework();
-
-        assertEquals(List.of(), FrameworkSlots.of(shipData, () -> fit(ShieldType.FRONT)));
-        assertNull(FrameworkSlots.installedFramework(shipData));
-        assertNull(SocketableStore.lookupFramework(null));
+    void aShipWithoutUnlockedSocketsHasNoSlots() {
+        assertEquals(List.of(), FrameworkSlots.of(new ShipSkillData(), () -> fit(ShieldType.FRONT)));
     }
 }

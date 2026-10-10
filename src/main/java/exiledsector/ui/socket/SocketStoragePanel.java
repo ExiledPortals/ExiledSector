@@ -1,10 +1,8 @@
 package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
-import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.Fonts;
@@ -24,7 +22,6 @@ import exiledsector.socketables.SocketableRarity;
 import exiledsector.socketables.SocketableStore;
 import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.util.FramedPanelPlugin;
-import org.lwjgl.input.Keyboard;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -56,7 +53,7 @@ public final class SocketStoragePanel extends HoloPanel {
     private static final float SCROLLBAR_ROOM = 14f;
     private static final float CELL_SIZE = 96f;
     private static final int COLUMNS = 6;
-    private static final float WIDTH = PAD * 2f + SCROLLBAR_ROOM + COLUMNS * CELL_SIZE + (COLUMNS - 1) * GAP;
+    public static final float WIDTH = PAD * 2f + SCROLLBAR_ROOM + COLUMNS * CELL_SIZE + (COLUMNS - 1) * GAP;
     private static final float CONFIRM_HEIGHT = 130f;
     private static final float WORKBENCH_GAP = 12f;
     private static final float BATCH_CONFIRM_HEIGHT = 170f;
@@ -540,7 +537,7 @@ public final class SocketStoragePanel extends HoloPanel {
         pendingDisassembly = List.copyOf(targets);
         boolean singleTarget = targets.size() == 1;
         float confirmHeight = singleTarget ? CONFIRM_HEIGHT : BATCH_CONFIRM_HEIGHT;
-        confirmBlocker = Global.getSettings().createCustom(panelWidth, panelHeight, new Blocker());
+        confirmBlocker = Global.getSettings().createCustom(panelWidth, panelHeight, new InputBlocker());
         panelRoot.addComponent(confirmBlocker).inTL(0f, 0f);
         float confirmWidth = innerWidth();
         confirmPanel = Global.getSettings().createCustom(confirmWidth, confirmHeight,
@@ -701,29 +698,5 @@ public final class SocketStoragePanel extends HoloPanel {
 
     private void hideHoverTooltip() {
         hoverTooltip.hide();
-    }
-
-
-
-    private static final class Blocker extends BaseCustomUIPanelPlugin {
-
-        private PositionAPI blockerPosition;
-
-        @Override
-        public void positionChanged(PositionAPI blockerPosition) {
-            this.blockerPosition = blockerPosition;
-        }
-
-        @Override
-        public void processInput(List<InputEventAPI> events) {
-            for (InputEventAPI event : events) {
-                boolean escape = event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE;
-                boolean press = (event.isMouseDownEvent() || event.isMouseScrollEvent()) && blockerPosition != null
-                        && blockerPosition.containsEvent(event);
-                if (!event.isConsumed() && (press || (event.isKeyboardEvent() && !escape))) {
-                    event.consume();
-                }
-            }
-        }
     }
 }

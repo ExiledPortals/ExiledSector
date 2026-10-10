@@ -49,7 +49,6 @@ class FrameworkDropsTest {
     void tearDown() {
         SocketableDrops.clear();
         SocketableDefinitions.clear();
-        SocketableStore.clearNpcFrameworkPreviews();
     }
 
     private static ShipProfile fit(ShieldType shieldType) {
@@ -71,7 +70,7 @@ class FrameworkDropsTest {
         for (int i = 0; i < TRIALS; i++) {
             SocketableDrops.FrameworkLoot loot = SocketableDrops.rollFrameworkLoot("station", random, 1f);
             itemCounts[loot.items().size()]++;
-            frameworkCount += loot.frameworks().size();
+            frameworkCount += loot.upgrades().size();
             for (SocketableItemData item : loot.items()) {
                 assertTrue(Set.of("bridge_basic", "emitter_basic").contains(item.definitionId()), item.definitionId());
             }
@@ -122,30 +121,7 @@ class FrameworkDropsTest {
             NpcSocketables.rollFramework(shipData, HullSize.CRUISER, () -> fit(ShieldType.FRONT), 14, random);
         }
 
-        assertNull(shipData.getInstalledFrameworkId());
-    }
-
-    @Test
-    void halfOfFlagshipsGetAFrameworkThatOnlyRollsTypesTheirFitAllows() {
-        Random random = new Random(3L);
-        int installed = 0;
-        Set<SocketType> seenTypes = EnumSet.noneOf(SocketType.class);
-        for (int i = 0; i < TRIALS; i++) {
-            ShipSkillData shipData = new ShipSkillData();
-            NpcSocketables.rollFramework(shipData, HullSize.CRUISER, () -> fit(ShieldType.NONE), 20, random);
-            HullFrameworkData framework = NpcSocketables.frameworkCarriedBy(shipData);
-            if (framework != null) {
-                installed++;
-                assertEquals(HullSize.CRUISER, framework.hullSize());
-                seenTypes.addAll(framework.socketTypes());
-            }
-        }
-
-        assertEquals(0.5, installed / (double) TRIALS, 0.02);
-        assertFalse(seenTypes.contains(SocketType.SHIELD_GENERATOR));
-        assertFalse(seenTypes.contains(SocketType.PHASE_COIL));
-        assertFalse(seenTypes.contains(SocketType.FLIGHT_DECK));
-        assertTrue(seenTypes.contains(SocketType.BRIDGE));
+        assertEquals(List.of(), shipData.getUnlockedSocketTypeIds());
     }
 
     @Test
@@ -156,15 +132,14 @@ class FrameworkDropsTest {
         for (int i = 0; i < TRIALS; i++) {
             ShipSkillData shipData = new ShipSkillData();
             NpcSocketables.rollFramework(shipData, HullSize.CRUISER, () -> fit(ShieldType.FRONT), 20, random);
-            HullFrameworkData framework = NpcSocketables.frameworkCarriedBy(shipData);
-            for (int slotIndex = 0; framework != null && slotIndex < framework.socketTypes().size(); slotIndex++) {
-                String socketableId = shipData.getFrameworkSocketedItem(slotIndex);
-                if (framework.socketTypes().get(slotIndex) == SocketType.BRIDGE) {
+            for (String socketTypeId : shipData.getUnlockedSocketTypeIds()) {
+                String socketableId = shipData.getFrameworkSocketedItem(socketTypeId);
+                if (SocketType.BRIDGE.id().equals(socketTypeId)) {
                     bridgeSockets++;
                     filledBridgeSockets += socketableId == null ? 0 : 1;
                 }
                 if (socketableId != null) {
-                    assertEquals(framework.socketTypes().get(slotIndex), NpcSocketables.item(socketableId).definition().kind());
+                    assertEquals(SocketType.byId(socketTypeId), NpcSocketables.item(socketableId).definition().kind());
                 }
             }
         }
@@ -173,43 +148,39 @@ class FrameworkDropsTest {
     }
 
     @Test
-    void aCapturedFlagshipKeepsItsFrameworkAndItemsAsPlayerOwnedOnes() {
+    void aCapturedFlagshipKeepsItsUnlockedSocketsAndItsItemsBecomePlayerOwned() {
         Map<String, Object> persistentData = new HashMap<>();
         SectorAPI sector = mock(SectorAPI.class);
         when(sector.getPersistentData()).thenReturn(persistentData);
         try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
             globalMock.when(Global::getSector).thenReturn(sector);
             ShipSkillData shipData = new ShipSkillData();
-            HullFrameworkData framework = new HullFrameworkData(HullSize.CRUISER, SocketableRarity.COMMON,
-                    List.of(SocketType.REACTOR, SocketType.BRIDGE), 6L);
-            shipData.installFramework(framework.npcId());
-            shipData.socketFrameworkItem(1, NpcSocketables.id("bridge_basic", 7L));
+            shipData.grantUnlockedSocketType("reactor");
+            shipData.grantUnlockedSocketType("bridge");
+            shipData.socketFrameworkItem("bridge", NpcSocketables.id("bridge_basic", 7L));
 
             NpcSocketables.claimForPlayer(shipData);
 
             SocketableStore store = SocketableStore.get();
-            assertEquals(1, store.frameworks().size());
-            assertEquals(store.frameworks().get(0).id(), shipData.getInstalledFrameworkId());
-            assertEquals(framework, store.frameworks().get(0).data());
-            assertEquals(Map.of(1, store.owned().get(0).id()), shipData.getFrameworkSocketedItems());
+            assertEquals(List.of("reactor", "bridge"), shipData.getUnlockedSocketTypeIds());
+            assertEquals(2, shipData.getFrameworkPoints());
+            assertEquals(Map.of("bridge", store.owned().get(0).id()), shipData.getFrameworkSocketedItems());
         }
     }
 
     @Test
-    void aFlagshipThatCannotBeClaimedHandsItsFrameworkAndItemsToStorage() {
+    void aFlagshipThatCannotBeClaimedHandsItsItemsToStorage() {
         Map<String, Object> persistentData = new HashMap<>();
         SectorAPI sector = mock(SectorAPI.class);
         when(sector.getPersistentData()).thenReturn(persistentData);
         try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
             globalMock.when(Global::getSector).thenReturn(sector);
             ShipSkillData shipData = new ShipSkillData();
-            shipData.installFramework(new HullFrameworkData(HullSize.CRUISER, SocketableRarity.COMMON,
-                    List.of(SocketType.REACTOR, SocketType.BRIDGE), 6L).npcId());
-            shipData.socketFrameworkItem(1, NpcSocketables.id("bridge_basic", 7L));
+            shipData.grantUnlockedSocketType("bridge");
+            shipData.socketFrameworkItem("bridge", NpcSocketables.id("bridge_basic", 7L));
 
             NpcSocketables.storeForPlayer(shipData);
 
-            assertEquals(1, SocketableStore.get().frameworks().size());
             assertEquals(List.of("bridge_basic"), SocketableStore.get().owned().stream().map(Socketable::definitionId).toList());
         }
     }
