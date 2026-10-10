@@ -40,7 +40,7 @@ public class SocketableSalvageListener implements ShowLootListener {
         if (SocketableUnlock.frameworksOpen(Global.getSector())) {
             SocketableDrops.FrameworkLoot frameworkLoot = SocketableDrops.rollFrameworkLoot(siteId, random, 1f);
             frameworkLoot.items().forEach(item -> loot.addSpecial(item.toSpecialItem(), 1f));
-            frameworkLoot.frameworks().forEach(framework -> loot.addSpecial(framework.toSpecialItem(), 1f));
+            frameworkLoot.upgrades().forEach(upgrade -> loot.addSpecial(upgrade.toSpecialItem(), 1f));
         }
     }
 

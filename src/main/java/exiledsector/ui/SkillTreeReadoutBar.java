@@ -25,7 +25,7 @@ final class SkillTreeReadoutBar {
     private static final String OVERFLOW_COLOR_KEY = "progressBarOverflowColor";
     private static final Color FALLBACK_FILL_COLOR = new Color(0, 121, 216);
     private static final Color FALLBACK_OVERFLOW_COLOR = new Color(220, 90, 70);
-    private static final Color TEXT_COLOR = new Color(0xFD, 0xD0, 0x00);
+    private static final Color TEXT_COLOR = SkillTreePanelStyle.OP_TEXT_COLOR;
     private static final Color TEXT_SHADOW_COLOR = new Color(0, 0, 0, 200);
     private static final float TEXT_SHADOW_OFFSET_X = 1f;
     private static final float TEXT_SHADOW_OFFSET_Y = -1f;

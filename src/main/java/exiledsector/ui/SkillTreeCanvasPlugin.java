@@ -143,7 +143,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void hideStatsForSidePanels() {
-        if (socketPlacement.isWorkbenchOpen() || frameworkInspection.isPickerOpen()) {
+        if (socketPlacement.isWorkbenchOpen() || frameworkInspection.isPanelOpen()) {
             if (statPanel.isOpen()) {
                 reopenStatsAfterSidePanel = true;
                 statPanel.close();
@@ -292,8 +292,6 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             }
         } else if (event.isMouseScrollEvent() && canvasPosition.containsEvent(event)) {
             event.consume();
-        } else if (event.isKeyboardEvent() && searchBar.handleKey(event)) {
-            consume(event);
         }
     }
 
@@ -478,14 +476,15 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         ringBeltRenderer.render(viewport, sceneryAlpha * treeAlpha);
         staticImageRenderer.render(viewport, sceneryAlpha, hyperspaceMode.anchorIds(), treeAlpha);
         frameworkInspection.renderBackdrop(canvasPosition, alphaMult);
-        boolean pointerOverTree = mouseKnown && !chrome.contains(canvasPosition, mode, mouseX, mouseY);
+        boolean pointerOverTree = mouseKnown && !chrome.contains(canvasPosition, mode, mouseX, mouseY)
+                && !frameworkInspection.buttonContains(mouseX, mouseY);
         boolean treeHovered = pointerOverTree && mode.hoversTree() && !frameworkInspection.isInspecting();
         if (treeAlpha * inspectFade > 0f) {
             nodeDrawer.render(viewport, alphaMult * treeAlpha * inspectFade, mouseX, mouseY, treeHovered);
         }
         fleetRenderer.render(viewport, backgroundAlpha * treeAlpha);
         starRenderer.renderGlow(viewport, sceneryAlpha);
-        frameworkInspection.render(canvasPosition, viewport, fleetRenderer, alphaMult, mouseX, mouseY);
+        frameworkInspection.render(canvasPosition, viewport, fleetRenderer, alphaMult);
         if (workbenchDimProgress > 0f) {
             GLDraw.fillQuad(canvasPosition.getX(), canvasPosition.getY(), canvasPosition.getWidth(), canvasPosition.getHeight(), Color.BLACK,
                     WORKBENCH_DIM_ALPHA * workbenchDimProgress * alphaMult);
@@ -494,6 +493,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             hyperspaceMode.render(viewport, alphaMult, pointerOverTree, mouseX, mouseY);
         }
         chrome.render(canvasPosition, mode, mouseX, mouseY, alphaMult, hyperspaceMode.chromeAlpha(), treeAlpha, workbenchDimProgress);
+        frameworkInspection.renderButton(mouseX, mouseY, alphaMult);
         if (!camera.isDragging() && mouseKnown) {
             if (treeHovered) {
                 nodeDrawer.renderHoverTooltip(viewport, mouseX, mouseY, alphaMult);

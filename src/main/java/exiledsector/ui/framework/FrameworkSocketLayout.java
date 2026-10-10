@@ -12,7 +12,7 @@ public final class FrameworkSocketLayout {
     }
 
     public static final float SOCKET_RADIUS = 88f;
-    static final float COLUMN_GAP = 110f;
+    public static final float COLUMN_GAP = 110f;
     static final float ELBOW_RUN = 50f;
     static final float ROW_SPACING = 270f;
     private static final float CENTRELINE_TOLERANCE = 1f;

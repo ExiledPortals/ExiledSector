@@ -166,12 +166,12 @@ public final class SocketableDrops {
         return pick(random, definition -> definition.kind() == SocketType.SUBROUTINE && !definition.unique());
     }
 
-    public record FrameworkLoot(List<SocketableItemData> items, List<HullFrameworkData> frameworks) {
+    public record FrameworkLoot(List<SocketableItemData> items, List<HullUpgradeData> upgrades) {
 
         public static final FrameworkLoot NONE = new FrameworkLoot(List.of(), List.of());
 
         public boolean isEmpty() {
-            return items.isEmpty() && frameworks.isEmpty();
+            return items.isEmpty() && upgrades.isEmpty();
         }
     }
 
@@ -190,14 +190,11 @@ public final class SocketableDrops {
                 droppedItems.add(SocketableItemData.rolled(basicDefinition, random.nextLong()));
             }
         }
-        List<HullFrameworkData> droppedFrameworks = new ArrayList<>();
+        List<HullUpgradeData> droppedUpgrades = new ArrayList<>();
         if (random.nextFloat() < rule.chances().get(0) * chanceMult) {
-            HullFrameworkData framework = HullFrameworkRoller.roll(HullFrameworkRoller.rollHullSize(random), random);
-            if (framework != null) {
-                droppedFrameworks.add(framework);
-            }
+            droppedUpgrades.add(new HullUpgradeData(HullFrameworkRoller.rollHullSize(random)));
         }
-        return new FrameworkLoot(List.copyOf(droppedItems), List.copyOf(droppedFrameworks));
+        return new FrameworkLoot(List.copyOf(droppedItems), List.copyOf(droppedUpgrades));
     }
 
     public static SocketableDefinition pickFrameworkBasic(Random random) {

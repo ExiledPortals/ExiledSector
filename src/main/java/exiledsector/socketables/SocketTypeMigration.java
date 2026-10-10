@@ -18,6 +18,7 @@ public final class SocketTypeMigration {
     }
 
     public static void run() {
+        SocketableStore.get().migrateLegacyFrameworks(ShipSkillDataManager.all());
         List<Socketable> returnedItems = returnMisfits(ShipSkillDataManager.all(), SocketableStore.get());
         CampaignUIAPI campaignUi = Global.getSector().getCampaignUI();
         if (returnedItems.isEmpty() || campaignUi == null) {
@@ -39,11 +40,10 @@ public final class SocketTypeMigration {
                     returnedItems.add(socketable);
                 }
             }
-            HullFramework framework = store.findFramework(shipData.getInstalledFrameworkId());
-            for (Map.Entry<Integer, String> slotEntry : List.copyOf(shipData.getFrameworkSocketedItems().entrySet())) {
+            for (Map.Entry<String, String> slotEntry : List.copyOf(shipData.getFrameworkSocketedItems().entrySet())) {
                 Socketable socketable = store.find(slotEntry.getValue());
-                if (framework != null && socketable != null && socketable.kind() != null
-                        && !socketable.canSocketInto(framework.socketType(slotEntry.getKey()))) {
+                if (socketable != null && socketable.kind() != null
+                        && !socketable.canSocketInto(SocketType.byIdOrNull(slotEntry.getKey()))) {
                     shipData.unsocketFrameworkItem(slotEntry.getKey());
                     returnedItems.add(socketable);
                 }

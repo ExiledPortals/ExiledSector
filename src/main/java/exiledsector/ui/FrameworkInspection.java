@@ -2,23 +2,24 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.FrameworkSlots;
-import exiledsector.socketables.HullFramework;
-import exiledsector.socketables.HullFrameworkTooltip;
-import exiledsector.socketables.HullFrameworks;
-import exiledsector.socketables.SocketCustody;
+import exiledsector.socketables.FrameworkSockets;
+import exiledsector.socketables.HullUpgradeTooltip;
+import exiledsector.socketables.SocketType;
 import exiledsector.socketables.SocketableStore;
 import exiledsector.ui.decoration.ShipAnchors;
 import exiledsector.ui.decoration.SkillTreeFleetRenderer;
 import exiledsector.ui.framework.FrameworkSocketFlair;
 import exiledsector.ui.framework.FrameworkSocketLayout;
 import exiledsector.ui.node.TreeAllocationSession;
-import exiledsector.ui.socket.FrameworkPickerPanel;
+import exiledsector.ui.socket.HullFrameworkPanel;
+import exiledsector.ui.socket.SocketStoragePanel;
 import exiledsector.ui.socket.SocketableHoverTooltip;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.TextLabel;
@@ -26,50 +27,47 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 final class FrameworkInspection {
 
-    private static final int MAX_SOCKETS = 4;
+    private static final int MAX_SOCKETS = FrameworkSockets.MAX_POINTS;
     private static final float INSPECT_SHIP_SHARE = 0.4f;
     private static final float INSPECT_FADE_SECONDS = 0.6f;
     private static final float HOVER_SECONDS = 0.15f;
     private static final float PANEL_MARGIN = 16f;
     private static final float PANEL_TOP = 100f;
-    private static final float PANEL_BOTTOM_ROOM = 24f;
     private static final float LABEL_GAP = 8f;
-    private static final float BUTTON_HEIGHT = 32f;
-    private static final float BUTTON_MIN_WIDTH = 190f;
-    private static final float HEADER_TOP_MARGIN = 24f;
     private static final float GRID_SPACING = 48f;
     private static final float GRID_ALPHA = 0.06f;
     private static final float LABEL_FONT_SIZE = SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE;
-    private static final float TITLE_FONT_SIZE = SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE;
     private static final Color GRID_COLOR = SkillTreePanelStyle.GLOW_COLOR;
+    private static final float BUTTON_GAP = 12f;
+    private static final float FREE_SPACE_MARGIN = 24f;
+    private static final float SOCKET_LABEL_ROOM = 70f;
+    private static final float MIN_SHIP_PIXELS = 120f;
+    private static final float BUTTON_MIN_WIDTH = 150f;
 
     private final CustomPanelAPI hostPanel;
     private final TreeAllocationSession treeSession;
     private final SocketPlacement socketPlacement;
-    private final SkillTreeUiButton removeButton = new SkillTreeUiButton("");
-    private final TextLabel titleLabel = new TextLabel(TITLE_FONT_SIZE, Color.WHITE);
+    private final SocketableHoverTooltip hoverTooltip;
+    private final SkillTreeUiButton upgradesButton = new SkillTreeUiButton("");
     private final TextLabel[] typeLabels = new TextLabel[MAX_SOCKETS];
     private final TextLabel[] stateLabels = new TextLabel[MAX_SOCKETS];
     private final float[] hoverLevels = new float[MAX_SOCKETS];
     private final float[] socketCentreX = new float[MAX_SOCKETS];
     private final float[] socketCentreY = new float[MAX_SOCKETS];
-    private FrameworkPickerPanel pickerPanel;
-    private boolean closingPickerForStorage;
-    private final SocketableHoverTooltip hoverTooltip;
+    private HullFrameworkPanel frameworkPanel;
+    private boolean panelDismissed;
     private CustomPanelAPI tooltipAnchor;
     private int tooltipSlot = -1;
-    private boolean pickerDismissed;
     private boolean active;
     private float inspectLevel;
     private float elapsedSeconds;
     private int shownRevision = Integer.MIN_VALUE;
-    private int shownFrameworkCount = -1;
-    private HullFramework framework;
+    private Map<HullSize, Integer> shownUpgradeCounts = Map.of();
     private List<FrameworkSlots.Slot> slots = List.of();
     private List<FrameworkSocketLayout.Placement> placements = List.of();
     private int renderedSockets;
@@ -83,15 +81,15 @@ final class FrameworkInspection {
             typeLabels[i] = new TextLabel(LABEL_FONT_SIZE, Color.WHITE);
             stateLabels[i] = new TextLabel(LABEL_FONT_SIZE, Misc.getGrayColor());
         }
-        removeButton.setLabel(Translation.text("framework.remove"));
+        upgradesButton.setLabel(Translation.text("framework.button"));
     }
 
-    boolean isPickerOpen() {
-        return pickerPanel != null;
+    boolean isPanelOpen() {
+        return frameworkPanel != null;
     }
 
     boolean isInspecting() {
-        return framework != null && inspectLevel > 0f;
+        return inspectLevel > 0f;
     }
 
     float inspectLevel() {
@@ -102,24 +100,21 @@ final class FrameworkInspection {
         elapsedSeconds += amount;
         active = camera.isFollowSettled();
         refreshIfChanged();
-        boolean inspecting = active && framework != null;
         float fadeStep = amount / INSPECT_FADE_SECONDS;
-        inspectLevel = Math.max(0f, Math.min(1f, inspectLevel + (inspecting ? fadeStep : -fadeStep)));
-        if (inspecting && fleetRenderer.soloLongestSide() > 0f) {
-            camera.inspect(canvasPosition.getHeight() * INSPECT_SHIP_SHARE / fleetRenderer.soloLongestSide());
+        inspectLevel = Math.max(0f, Math.min(1f, inspectLevel + (active ? fadeStep : -fadeStep)));
+        if (active && fleetRenderer.soloLongestSide() > 0f) {
+            fitShipToFreeSpace(canvasPosition, camera, fleetRenderer.soloLongestSide());
         } else if (camera.isFollowing()) {
             camera.stopInspecting();
         }
         if (!camera.isFollowing()) {
-            pickerDismissed = false;
+            panelDismissed = false;
         }
-        boolean wantsPicker = active && framework == null && !pickerDismissed && !socketPlacement.isEngaged();
-        if (wantsPicker && pickerPanel == null) {
-            openPicker(canvasPosition);
-        } else if (!wantsPicker && pickerPanel != null) {
-            closingPickerForStorage = true;
-            pickerPanel.close();
-            closingPickerForStorage = false;
+        boolean wantsPanel = active && !panelDismissed && !socketPlacement.isEngaged();
+        if (wantsPanel && frameworkPanel == null) {
+            openPanel(canvasPosition);
+        } else if (!wantsPanel && frameworkPanel != null) {
+            frameworkPanel.close();
         }
         float hoverStep = amount / HOVER_SECONDS;
         int hovered = socketAt(mouseX, mouseY);
@@ -127,54 +122,94 @@ final class FrameworkInspection {
             hoverLevels[i] = Math.max(0f, Math.min(1f, hoverLevels[i] + (i == hovered ? hoverStep : -hoverStep)));
         }
         updateTooltip(hovered);
-        placeRemoveButton(canvasPosition);
+        placeUpgradesButton();
+    }
+
+    private void fitShipToFreeSpace(PositionAPI canvasPosition, TreeCamera camera, float shipTreeLength) {
+        float panelRight = 0f;
+        if (socketPlacement.isStorageOpen()) {
+            panelRight = PANEL_MARGIN + SocketStoragePanel.WIDTH;
+        } else if (frameworkPanel != null) {
+            panelRight = PANEL_MARGIN + HullFrameworkPanel.WIDTH;
+        }
+        float freeLeft = panelRight + FREE_SPACE_MARGIN;
+        float freeRight = canvasPosition.getWidth() - FREE_SPACE_MARGIN;
+        float socketColumnRoom = slots.isEmpty() ? 0f
+                : FrameworkSocketLayout.COLUMN_GAP + FrameworkSocketLayout.SOCKET_RADIUS * 2f + SOCKET_LABEL_ROOM;
+        float shipPixelsForWidth = Math.max(MIN_SHIP_PIXELS, freeRight - freeLeft - socketColumnRoom * 2f);
+        float shipPixels = Math.min(canvasPosition.getHeight() * INSPECT_SHIP_SHARE, shipPixelsForWidth);
+        camera.inspect(shipPixels / shipTreeLength);
+        camera.setFollowOffset((freeLeft + freeRight) / 2f - canvasPosition.getWidth() / 2f);
+    }
+
+    private void placeUpgradesButton() {
+        ScreenRect storageButton = socketPlacement.storageButtonBounds();
+        if (!active || storageButton == ScreenRect.NONE) {
+            upgradesButton.hide();
+            return;
+        }
+        float buttonWidth = Math.max(BUTTON_MIN_WIDTH, upgradesButton.preferredWidth());
+        upgradesButton.place(storageButton.left() + storageButton.width() + BUTTON_GAP, storageButton.bottom(),
+                buttonWidth, storageButton.height());
+        upgradesButton.setSelected(frameworkPanel != null);
+    }
+
+    boolean buttonContains(float x, float y) {
+        return upgradesButton.contains(x, y);
+    }
+
+    private void toggleFrameworkPanel() {
+        if (frameworkPanel != null) {
+            frameworkPanel.close();
+            return;
+        }
+        panelDismissed = false;
+        socketPlacement.close();
     }
 
     void stop() {
         hideTooltip();
-        if (pickerPanel != null) {
-            pickerPanel.close();
+        upgradesButton.hide();
+        if (frameworkPanel != null) {
+            frameworkPanel.close();
         }
-        pickerDismissed = false;
+        panelDismissed = false;
         if (socketPlacement.isFrameworkTargeted()) {
             socketPlacement.close();
         }
     }
 
     boolean escape() {
-        if (pickerPanel != null) {
-            pickerPanel.close();
+        if (frameworkPanel != null) {
+            if (!frameworkPanel.escape()) {
+                frameworkPanel.close();
+            }
             return true;
         }
         return false;
     }
 
     boolean pressLeft(float x, float y, PositionAPI canvasPosition, ScreenRect shipCard) {
-        if (!isInspecting() || inspectLevel < 0.5f) {
-            return false;
-        }
-        if (removeButton.isClickable(x, y)) {
-            socketPlacement.close();
-            treeSession.removeFramework();
-            refreshIfChanged();
+        if (upgradesButton.isClickable(x, y)) {
+            toggleFrameworkPanel();
+            SkillTreeSounds.panelOpened();
             return true;
         }
-        int socketIndex = socketAt(x, y);
+        int socketIndex = inspectLevel < 0.5f ? -1 : socketAt(x, y);
         if (socketIndex < 0) {
             return false;
         }
-        FrameworkSlots.Slot slot = slots.get(socketIndex);
-        socketPlacement.openForFrameworkSlot(slot.index(), slot.type(), canvasPosition, shipCard);
+        socketPlacement.openForFrameworkSocket(slots.get(socketIndex).type(), canvasPosition, shipCard);
         SkillTreeSounds.panelOpened();
         return true;
     }
 
     boolean pressRight(float x, float y) {
-        int socketIndex = isInspecting() ? socketAt(x, y) : -1;
+        int socketIndex = socketAt(x, y);
         if (socketIndex < 0 || slots.get(socketIndex).item() == null) {
             return false;
         }
-        treeSession.unsocketFrameworkItem(slots.get(socketIndex).index());
+        treeSession.unsocketFrameworkItem(slots.get(socketIndex).type());
         socketPlacement.refresh();
         return true;
     }
@@ -199,7 +234,7 @@ final class FrameworkInspection {
         List<StyledText> footer = new ArrayList<>();
         if (!hoveredSlot.active()) {
             footer.add(Translation.msg("framework.socket.inactive")
-                    .arg("requirement", HullFrameworkTooltip.requirementText(hoveredSlot.unmetRequirement())).styled());
+                    .arg("requirement", HullUpgradeTooltip.requirementText(hoveredSlot.unmetRequirement())).styled());
         }
         footer.add(Translation.styled("framework.socket.removeHint"));
         hoverTooltip.show(hoveredSlot, hoveredSlot.item(), () -> footer, tooltipAnchor.getPosition());
@@ -216,37 +251,32 @@ final class FrameworkInspection {
 
     private void refreshIfChanged() {
         int revision = treeSession.statsRevision();
-        int frameworkCount = Global.getSector() == null ? 0 : SocketableStore.get().frameworks().size();
-        if (revision == shownRevision && frameworkCount == shownFrameworkCount) {
+        Map<HullSize, Integer> upgradeCounts = Global.getSector() == null ? Map.of() : SocketableStore.get().upgradeCounts();
+        if (revision == shownRevision && upgradeCounts.equals(shownUpgradeCounts)) {
             return;
         }
         shownRevision = revision;
-        shownFrameworkCount = frameworkCount;
-        framework = treeSession.installedFramework();
-        slots = framework == null ? List.of() : treeSession.frameworkSlots();
+        shownUpgradeCounts = upgradeCounts;
+        slots = treeSession.frameworkSlots();
         if (slots.size() > MAX_SOCKETS) {
             slots = slots.subList(0, MAX_SOCKETS);
         }
         placements = List.of();
         refreshLabels();
         hideTooltip();
-        if (pickerPanel != null) {
-            pickerPanel.update(pickerEntries(), otherSizeCount());
+        if (frameworkPanel != null) {
+            frameworkPanel.update(panelView());
         }
     }
 
     private void refreshLabels() {
-        if (framework != null) {
-            titleLabel.set(framework.name());
-            titleLabel.setColor(framework.rarity().color());
-        }
         for (int i = 0; i < slots.size(); i++) {
             FrameworkSlots.Slot slot = slots.get(i);
             typeLabels[i].set(slot.type().displayName());
             typeLabels[i].setColor(FrameworkSocketFlair.colorOf(slot.type()));
             if (!slot.active()) {
                 stateLabels[i].set(Translation.msg("framework.socket.inactive")
-                        .arg("requirement", HullFrameworkTooltip.requirementText(slot.unmetRequirement())).text());
+                        .arg("requirement", HullUpgradeTooltip.requirementText(slot.unmetRequirement())).text());
                 stateLabels[i].setColor(FrameworkSocketFlair.inactiveColor());
             } else if (slot.item() == null) {
                 stateLabels[i].set(Translation.text("framework.socket.empty"));
@@ -258,83 +288,74 @@ final class FrameworkInspection {
         }
     }
 
-    private void openPicker(PositionAPI canvasPosition) {
+    private void openPanel(PositionAPI canvasPosition) {
         CampaignFleetAPI playerFleet = Global.getSector() == null ? null : Global.getSector().getPlayerFleet();
         if (playerFleet != null) {
             SocketableStore.get().absorbFrom(playerFleet.getCargo());
+            shownUpgradeCounts = SocketableStore.get().upgradeCounts();
         }
-        float panelLeft = PANEL_MARGIN;
-        float panelHeight = canvasPosition.getHeight() - PANEL_TOP - PANEL_BOTTOM_ROOM;
-        pickerPanel = FrameworkPickerPanel.open(hostPanel, panelLeft, PANEL_TOP, panelHeight, treeSession.hullSize(), pickerEntries(),
-                otherSizeCount(), new FrameworkPickerPanel.Listener() {
-                    @Override
-                    public void chosen(HullFramework chosenFramework) {
-                        if (treeSession.installFramework(chosenFramework)) {
-                            refreshIfChanged();
-                        }
-                    }
+        float panelHeight = socketPlacement.sidePanelHeight(canvasPosition);
+        frameworkPanel = HullFrameworkPanel.open(hostPanel, PANEL_MARGIN, PANEL_TOP, panelHeight, panelView(), new HullFrameworkPanel.Listener() {
+            @Override
+            public void installUpgrade() {
+                treeSession.installUpgrade();
+                refreshIfChanged();
+            }
 
-                    @Override
-                    public void closed() {
-                        pickerPanel = null;
-                        if (framework == null && !closingPickerForStorage) {
-                            pickerDismissed = true;
-                        }
-                    }
-                });
+            @Override
+            public void toggleSocket(SocketType socketType) {
+                if (treeSession.isSocketTypeUnlocked(socketType)) {
+                    treeSession.lockSocket(socketType);
+                } else {
+                    treeSession.unlockSocket(socketType);
+                }
+                refreshIfChanged();
+            }
+
+            @Override
+            public void closed() {
+                frameworkPanel = null;
+                panelDismissed = true;
+            }
+        });
         SkillTreeSounds.panelOpened();
     }
 
-    private List<FrameworkPickerPanel.Entry> pickerEntries() {
-        List<FrameworkPickerPanel.Entry> entries = new ArrayList<>();
-        if (Global.getSector() == null) {
-            return entries;
+    private HullFrameworkPanel.View panelView() {
+        HullSize hullSize = treeSession.hullSize();
+        int upgradesInStorage = shownUpgradeCounts.getOrDefault(hullSize, 0);
+        FrameworkSockets.UpgradeBlock upgradeBlock = null;
+        if (treeSession.frameworkPoints() >= FrameworkSockets.MAX_POINTS) {
+            upgradeBlock = FrameworkSockets.UpgradeBlock.AT_MAX_POINTS;
+        } else if (upgradesInStorage <= 0) {
+            upgradeBlock = FrameworkSockets.UpgradeBlock.NONE_IN_STORAGE;
         }
-        for (HullFramework ownedFramework : SocketableStore.get().frameworks()) {
-            if (ownedFramework.hullSize() != treeSession.hullSize() || SocketCustody.frameworkShipId(ownedFramework) != null) {
-                continue;
+        List<HullFrameworkPanel.SocketEntry> socketEntries = new ArrayList<>();
+        for (SocketType socketType : SocketType.frameworkTypes()) {
+            socketEntries.add(socketEntry(socketType));
+        }
+        return new HullFrameworkPanel.View(hullSize, treeSession.frameworkPoints(), treeSession.unspentFrameworkPoints(), upgradesInStorage,
+                upgradeBlock, List.copyOf(socketEntries));
+    }
+
+    private HullFrameworkPanel.SocketEntry socketEntry(SocketType socketType) {
+        if (treeSession.isSocketTypeUnlocked(socketType)) {
+            String itemIcon = null;
+            for (FrameworkSlots.Slot slot : slots) {
+                if (slot.type() == socketType && slot.item() != null) {
+                    itemIcon = slot.item().iconPath();
+                }
             }
-            entries.add(new FrameworkPickerPanel.Entry(ownedFramework, blockReason(treeSession.frameworkInstallBlock(ownedFramework))));
+            return new HullFrameworkPanel.SocketEntry(socketType, HullFrameworkPanel.SocketState.UNLOCKED, null, itemIcon);
         }
-        entries.sort(Comparator.comparing((FrameworkPickerPanel.Entry entry) -> entry.blockReason() != null)
-                .thenComparing(entry -> -entry.framework().rarity().ordinal())
-                .thenComparing(entry -> -entry.framework().slotCount()));
-        return entries;
-    }
-
-    private int otherSizeCount() {
-        if (Global.getSector() == null) {
-            return 0;
+        String unmetRequirement = treeSession.unmetRequirement(socketType);
+        if (unmetRequirement != null) {
+            return new HullFrameworkPanel.SocketEntry(socketType, HullFrameworkPanel.SocketState.RESTRICTED,
+                    HullUpgradeTooltip.requirementText(unmetRequirement), null);
         }
-        int count = 0;
-        for (HullFramework ownedFramework : SocketableStore.get().frameworks()) {
-            if (ownedFramework.hullSize() != treeSession.hullSize() && SocketCustody.frameworkShipId(ownedFramework) == null) {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    private static String blockReason(HullFrameworks.InstallBlock block) {
-        if (block == null) {
-            return null;
-        }
-        return switch (block.reason()) {
-            case UNMET_REQUIREMENT -> Translation.msg("framework.block.requirement").arg("type", block.socketType().displayName())
-                    .arg("requirement", HullFrameworkTooltip.requirementText(block.requirementTag())).text();
-            case WRONG_HULL_SIZE, INSTALLED_ELSEWHERE -> Translation.text("framework.block.unavailable");
-        };
-    }
-
-    private void placeRemoveButton(PositionAPI canvasPosition) {
-        if (framework == null || inspectLevel < 0.5f) {
-            removeButton.hide();
-            return;
-        }
-        float buttonWidth = Math.max(BUTTON_MIN_WIDTH, removeButton.preferredWidth());
-        float canvasTop = canvasPosition.getY() + canvasPosition.getHeight();
-        float buttonBottom = canvasTop - HEADER_TOP_MARGIN - TITLE_FONT_SIZE - LABEL_GAP - BUTTON_HEIGHT;
-        removeButton.place(canvasPosition.getX() + (canvasPosition.getWidth() - buttonWidth) / 2f, buttonBottom, buttonWidth, BUTTON_HEIGHT);
+        HullFrameworkPanel.SocketState state = treeSession.unspentFrameworkPoints() > 0 ? HullFrameworkPanel.SocketState.AVAILABLE
+                : HullFrameworkPanel.SocketState.NO_POINTS;
+        return new HullFrameworkPanel.SocketEntry(socketType, state, null, null);
     }
 
     private int socketAt(float x, float y) {
@@ -372,13 +393,18 @@ final class FrameworkInspection {
         GL11.glEnd();
     }
 
-    void render(PositionAPI canvasPosition, TreeViewport viewport, SkillTreeFleetRenderer fleetRenderer, float alphaMult, float mouseX,
-                float mouseY) {
+    void renderButton(float mouseX, float mouseY, float alphaMult) {
+        upgradesButton.render(mouseX, mouseY, alphaMult);
+    }
+
+    void render(PositionAPI canvasPosition, TreeViewport viewport, SkillTreeFleetRenderer fleetRenderer, float alphaMult) {
         renderedSockets = 0;
-        if (framework == null || inspectLevel <= 0f) {
+        if (inspectLevel <= 0f) {
             return;
         }
-        SkillTreeFleetRenderer.InspectedShip ship = fleetRenderer.inspectedShip(viewport);
+        float eased = inspectLevel * inspectLevel * (3f - 2f * inspectLevel);
+        float alpha = alphaMult * eased;
+        SkillTreeFleetRenderer.InspectedShip ship = slots.isEmpty() ? null : fleetRenderer.inspectedShip(viewport);
         if (ship == null) {
             return;
         }
@@ -387,8 +413,6 @@ final class FrameworkInspection {
             slots.forEach(slot -> anchors.add(ship.anchors().forSocket(slot.type())));
             placements = FrameworkSocketLayout.place(anchors);
         }
-        float eased = inspectLevel * inspectLevel * (3f - 2f * inspectLevel);
-        float alpha = alphaMult * eased;
         for (int i = 0; i < slots.size(); i++) {
             FrameworkSlots.Slot slot = slots.get(i);
             FrameworkSocketLayout.Placement placement = placements.get(i);
@@ -405,7 +429,7 @@ final class FrameworkInspection {
         float radius = FrameworkSocketLayout.SOCKET_RADIUS;
         for (int i = 0; i < renderedSockets; i++) {
             FrameworkSlots.Slot slot = slots.get(i);
-            boolean selected = socketPlacement.isFrameworkTargeted() && socketPlacement.targetFrameworkSlot() == slot.index();
+            boolean selected = socketPlacement.isFrameworkTargeted() && socketPlacement.targetFrameworkType() == slot.type();
             FrameworkSocketFlair.SocketLook look = new FrameworkSocketFlair.SocketLook(hoverLevels[i], selected, slot.active(),
                     slot.item() == null ? null : slot.item().iconPath());
             FrameworkSocketFlair.render(socketCentreX[i], socketCentreY[i], radius, FrameworkSocketFlair.colorOf(slot.type()), look,
@@ -413,9 +437,6 @@ final class FrameworkInspection {
             drawCentred(typeLabels[i], socketCentreX[i], socketCentreY[i] + radius + LABEL_GAP + LABEL_FONT_SIZE, alpha);
             drawCentred(stateLabels[i], socketCentreX[i], socketCentreY[i] - radius - LABEL_GAP, alpha);
         }
-        float canvasTop = canvasPosition.getY() + canvasPosition.getHeight();
-        drawCentred(titleLabel, canvasPosition.getX() + canvasPosition.getWidth() / 2f, canvasTop - HEADER_TOP_MARGIN, alpha);
-        removeButton.render(mouseX, mouseY, alphaMult);
     }
 
     private static void drawCentred(TextLabel label, float centreX, float top, float alpha) {

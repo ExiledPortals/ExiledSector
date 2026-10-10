@@ -13,7 +13,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Industries;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
-import exiledsector.socketables.HullFrameworkData;
+import exiledsector.socketables.HullUpgradeData;
 import exiledsector.socketables.Socketable;
 import exiledsector.socketables.SocketableDrops;
 import exiledsector.socketables.SocketableItemData;
@@ -58,7 +58,7 @@ public class TechMiningSocketableListener implements EconomyTickListener {
             marketMemory.set(MONTHS_KEY, minedMonths + 1);
             List<SocketableItemData> allFoundItems = new ArrayList<>(foundItems);
             allFoundItems.addAll(frameworkLoot.items());
-            deliver(market, allFoundItems, foundMaterials, frameworkLoot.frameworks());
+            deliver(market, allFoundItems, foundMaterials, frameworkLoot.upgrades());
         }
     }
 
@@ -77,8 +77,8 @@ public class TechMiningSocketableListener implements EconomyTickListener {
     }
 
     private static void deliver(MarketAPI minedMarket, List<SocketableItemData> foundItems, Map<String, Integer> foundMaterials,
-                                List<HullFrameworkData> foundFrameworks) {
-        if (foundItems.isEmpty() && foundMaterials.isEmpty() && foundFrameworks.isEmpty()) {
+                                List<HullUpgradeData> foundUpgrades) {
+        if (foundItems.isEmpty() && foundMaterials.isEmpty() && foundUpgrades.isEmpty()) {
             return;
         }
         MarketAPI storageMarket = Global.getSector().getPlayerFaction().getProduction().getGatheringPoint();
@@ -98,9 +98,9 @@ public class TechMiningSocketableListener implements EconomyTickListener {
                 announce(minedMarket, storageMarket, preview::name);
             }
         }
-        for (HullFrameworkData framework : foundFrameworks) {
-            storageCargo.addSpecial(framework.toSpecialItem(), 1f);
-            announce(minedMarket, storageMarket, () -> framework.preview().name());
+        for (HullUpgradeData upgrade : foundUpgrades) {
+            storageCargo.addSpecial(upgrade.toSpecialItem(), 1f);
+            announce(minedMarket, storageMarket, upgrade::name);
         }
         for (Map.Entry<String, Integer> material : foundMaterials.entrySet()) {
             storageCargo.addCommodity(material.getKey(), material.getValue());

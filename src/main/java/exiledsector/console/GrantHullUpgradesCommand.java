@@ -3,30 +3,16 @@ package exiledsector.console;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledsector.socketables.HullFrameworkData;
-import exiledsector.socketables.HullFrameworkRoller;
+import exiledsector.socketables.HullUpgradeData;
 import org.lazywizard.console.BaseCommand;
 import org.lazywizard.console.CommonStrings;
 import org.lazywizard.console.Console;
 
-import java.util.List;
-import java.util.Random;
 
-public class GrantFrameworksCommand implements BaseCommand {
+public class GrantHullUpgradesCommand implements BaseCommand {
 
     static final int DEFAULT_COPIES = 3;
     static final int MAX_COPIES = 50;
-    private static final List<HullSize> HULL_SIZES = List.of(HullSize.FRIGATE, HullSize.DESTROYER, HullSize.CRUISER, HullSize.CAPITAL_SHIP);
-
-    private final Random random;
-
-    public GrantFrameworksCommand() {
-        this(new Random());
-    }
-
-    GrantFrameworksCommand(Random random) {
-        this.random = random;
-    }
 
     @Override
     public CommandResult runCommand(String args, CommandContext context) {
@@ -49,13 +35,12 @@ public class GrantFrameworksCommand implements BaseCommand {
             Console.showMessage("No player fleet found.");
             return CommandResult.ERROR;
         }
-        for (HullSize hullSize : HULL_SIZES) {
+        for (HullSize hullSize : HullUpgradeData.HULL_SIZES) {
             for (int i = 0; i < copies; i++) {
-                HullFrameworkData framework = HullFrameworkRoller.roll(hullSize, random);
-                playerFleet.getCargo().addSpecial(framework.toSpecialItem(), 1f);
+                playerFleet.getCargo().addSpecial(new HullUpgradeData(hullSize).toSpecialItem(), 1f);
             }
         }
-        Console.showMessage("Added " + copies + (copies == 1 ? " hull framework" : " hull frameworks") + " for each hull size to your cargo.");
+        Console.showMessage("Added " + copies + (copies == 1 ? " Hull Upgrade" : " Hull Upgrades") + " for each hull size to your cargo.");
         return CommandResult.SUCCESS;
     }
 }

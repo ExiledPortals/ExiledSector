@@ -15,12 +15,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-record FleetHullVisuals(float centerX, float centerY, List<EngineFlame> flames) {
+record FleetHullVisuals(float centerX, float centerY, List<EngineFlame> flames, List<ShipAnchors.Anchor> outline) {
 
     record EngineFlame(float forwardOffset, float leftOffset, float angleDeg, float width, float length, Color color) {
     }
 
-    static final FleetHullVisuals NONE = new FleetHullVisuals(Float.NaN, Float.NaN, List.of());
+    static final FleetHullVisuals NONE = new FleetHullVisuals(Float.NaN, Float.NaN, List.of(), List.of());
 
     private static final Logger LOG = Logger.getLogger(FleetHullVisuals.class);
     private static final String HULL_FILE_FOLDER = "data/hulls/";
@@ -39,23 +39,38 @@ record FleetHullVisuals(float centerX, float centerY, List<EngineFlame> flames) 
     }
 
     private static FleetHullVisuals read(ShipHullSpecAPI hullSpec) {
-        float[] center = spriteCenter(hullSpec);
-        return new FleetHullVisuals(center[0], center[1], flames(hullSpec));
+        JSONObject hullFile = hullFile(hullSpec);
+        JSONArray center = hullFile == null ? null : hullFile.optJSONArray("center");
+        float centerX = Float.NaN;
+        float centerY = Float.NaN;
+        if (center != null && center.length() == 2) {
+            centerX = (float) center.optDouble(0, Float.NaN);
+            centerY = (float) center.optDouble(1, Float.NaN);
+        }
+        return new FleetHullVisuals(centerX, centerY, flames(hullSpec), outline(hullFile));
     }
 
-    private static float[] spriteCenter(ShipHullSpecAPI hullSpec) {
+    private static JSONObject hullFile(ShipHullSpecAPI hullSpec) {
         for (String hullId : new String[]{hullSpec.getHullId(), hullSpec.getBaseHullId()}) {
             try {
-                JSONObject hullFile = Global.getSettings().loadJSON(HULL_FILE_FOLDER + hullId + HULL_FILE_SUFFIX);
-                JSONArray center = hullFile.optJSONArray("center");
-                if (center != null && center.length() == 2) {
-                    return new float[]{(float) center.getDouble(0), (float) center.getDouble(1)};
-                }
+                return Global.getSettings().loadJSON(HULL_FILE_FOLDER + hullId + HULL_FILE_SUFFIX);
             } catch (Exception e) {
                 LOG.debug("No hull file at " + HULL_FILE_FOLDER + hullId + HULL_FILE_SUFFIX + ": " + e.getMessage());
             }
         }
-        return new float[]{Float.NaN, Float.NaN};
+        return null;
+    }
+
+    private static List<ShipAnchors.Anchor> outline(JSONObject hullFile) {
+        JSONArray bounds = hullFile == null ? null : hullFile.optJSONArray("bounds");
+        if (bounds == null || bounds.length() < 6) {
+            return List.of();
+        }
+        List<ShipAnchors.Anchor> outline = new ArrayList<>(bounds.length() / 2);
+        for (int i = 0; i + 1 < bounds.length(); i += 2) {
+            outline.add(new ShipAnchors.Anchor((float) bounds.optDouble(i, 0.0), (float) bounds.optDouble(i + 1, 0.0)));
+        }
+        return List.copyOf(outline);
     }
 
     private static List<EngineFlame> flames(ShipHullSpecAPI hullSpec) {

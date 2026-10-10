@@ -13,6 +13,7 @@ public enum SocketType {
     CREW_QUARTERS("crew_quarters", null, true),
     ENGINE_ROOM("engine_room", null, true),
     REACTOR("reactor", null, true),
+    ARMOR_PLATING("armor_plating", null, true),
     WEAPON_MOUNT("weapon_mount", null, true),
     SHIELD_GENERATOR("shield_generator", "req_shields", true),
     PHASE_COIL("phase_coil", "req_phase", true),

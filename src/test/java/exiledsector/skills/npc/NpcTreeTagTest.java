@@ -1,18 +1,14 @@
 package exiledsector.skills.npc;
 
-import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledsector.socketables.HullFrameworkData;
 import exiledsector.socketables.NpcSocketables;
 import exiledsector.socketables.RolledEffect;
-import exiledsector.socketables.SocketType;
 import exiledsector.socketables.SocketableDefinitions;
-import exiledsector.socketables.SocketableRarity;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -103,22 +99,23 @@ class NpcTreeTagTest {
     }
 
     @Test
-    void aFlagshipFrameworkAndItsSocketedItemsSurviveTheTagAlongsideTreeSockets() {
+    void aFlagshipsUnlockedSocketsAndTheirItemsSurviveTheTagAlongsideTreeSockets() {
         ShipSkillData data = withSocket();
         data.socketItem("socket_1", NpcSocketables.id("domain_subroutine_military", -42L));
-        String frameworkId = new HullFrameworkData(HullSize.CRUISER, SocketableRarity.RARE,
-                List.of(SocketType.BRIDGE, SocketType.REACTOR, SocketType.FLIGHT_DECK), 9L).npcId();
-        data.installFramework(frameworkId);
-        data.socketFrameworkItem(2, NpcSocketables.id("deck_basic", 3L));
+        data.grantUnlockedSocketType("bridge");
+        data.grantUnlockedSocketType("reactor");
+        data.grantUnlockedSocketType("flight_deck");
+        data.socketFrameworkItem("flight_deck", NpcSocketables.id("deck_basic", 3L));
 
         String tag = NpcTreeTag.encode(data);
         ShipSkillData decoded = NpcTreeTag.decode(tag);
 
         assertEquals("exiledSector_npcTree|generated|2|root,a,socket_1|sockets:socket_1=npc:domain_subroutine_military/-42"
-                + "|framework:npcfw:CRUISER/RARE/bridge+reactor+flight_deck/9|frameworkSockets:2=npc:deck_basic/3", tag);
+                + "|frameworkTypes:bridge+reactor+flight_deck|frameworkSockets:flight_deck=npc:deck_basic/3", tag);
         assertEquals("npc:domain_subroutine_military/-42", decoded.getSocketedItem("socket_1"));
-        assertEquals(frameworkId, decoded.getInstalledFrameworkId());
-        assertEquals(Map.of(2, "npc:deck_basic/3"), decoded.getFrameworkSocketedItems());
+        assertEquals(List.of("bridge", "reactor", "flight_deck"), decoded.getUnlockedSocketTypeIds());
+        assertEquals(3, decoded.getFrameworkPoints());
+        assertEquals(Map.of("flight_deck", "npc:deck_basic/3"), decoded.getFrameworkSocketedItems());
     }
 
     @Test
@@ -136,12 +133,15 @@ class NpcTreeTagTest {
     }
 
     @Test
-    void aFrameworkWithoutItemsOrABrokenFrameworkFieldIsHandled() {
+    void socketsWithoutItemsRoundTripAndTagsFromEarlierFrameworkBuildsAreIgnored() {
         ShipSkillData data = withSocket();
-        data.installFramework(new HullFrameworkData(HullSize.FRIGATE, SocketableRarity.COMMON, List.of(SocketType.BRIDGE), 1L).npcId());
+        data.grantUnlockedSocketType("bridge");
 
-        assertEquals("npcfw:FRIGATE/COMMON/bridge/1", NpcTreeTag.decode(NpcTreeTag.encode(data)).getInstalledFrameworkId());
-        assertNull(NpcTreeTag.decode("exiledSector_npcTree|generated|2|root,a|framework:npcfw:junk|frameworkSockets:0=npc:x/1").getInstalledFrameworkId());
+        assertEquals(List.of("bridge"), NpcTreeTag.decode(NpcTreeTag.encode(data)).getUnlockedSocketTypeIds());
+        ShipSkillData legacy = NpcTreeTag.decode("exiledSector_npcTree|generated|2|root,a|framework:npcfw:CRUISER/RARE/bridge/1"
+                + "|frameworkSockets:0=npc:x/1");
+        assertEquals(List.of(), legacy.getUnlockedSocketTypeIds());
+        assertEquals(Map.of(), legacy.getFrameworkSocketedItems());
     }
 
     @Test

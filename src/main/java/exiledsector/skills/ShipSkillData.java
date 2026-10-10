@@ -28,6 +28,9 @@ public class ShipSkillData {
     private Set<String> dormantNodeIds;
     private String installedFrameworkId;
     private Map<String, String> frameworkSocketedItems;
+    private int frameworkPoints;
+    private List<String> unlockedSocketTypes;
+    private Map<String, String> frameworkItemsBySocketType;
 
     private Set<String> freeNodeIds() {
         if (freeNodeIds == null) freeNodeIds = new LinkedHashSet<>();
@@ -67,63 +70,92 @@ public class ShipSkillData {
         return socketedItems == null ? null : socketedItems.remove(nodeId);
     }
 
-    public String getInstalledFrameworkId() {
-        return installedFrameworkId;
+    public int getFrameworkPoints() {
+        return frameworkPoints;
     }
 
-    public void installFramework(String frameworkId) {
+    public int getUnspentFrameworkPoints() {
+        return Math.max(0, frameworkPoints - getUnlockedSocketTypeIds().size());
+    }
+
+    public boolean addFrameworkPoint(int maxPoints) {
         revision++;
-        installedFrameworkId = frameworkId;
-        frameworkSocketedItems = null;
-    }
-
-    public String removeFramework() {
-        revision++;
-        String removedFrameworkId = installedFrameworkId;
-        installedFrameworkId = null;
-        frameworkSocketedItems = null;
-        return removedFrameworkId;
-    }
-
-    public Map<Integer, String> getFrameworkSocketedItems() {
-        if (frameworkSocketedItems == null || frameworkSocketedItems.isEmpty()) {
-            return Map.of();
-        }
-        Map<Integer, String> itemsBySlot = new LinkedHashMap<>();
-        frameworkSocketedItems.forEach((slotKey, socketableId) -> {
-            Integer slotIndex = slotIndex(slotKey);
-            if (slotIndex != null) {
-                itemsBySlot.put(slotIndex, socketableId);
-            }
-        });
-        return Collections.unmodifiableMap(itemsBySlot);
-    }
-
-    public String getFrameworkSocketedItem(int slotIndex) {
-        return frameworkSocketedItems == null ? null : frameworkSocketedItems.get(Integer.toString(slotIndex));
-    }
-
-    public boolean socketFrameworkItem(int slotIndex, String socketableId) {
-        revision++;
-        if (installedFrameworkId == null || slotIndex < 0) {
+        if (frameworkPoints >= maxPoints) {
             return false;
         }
-        if (frameworkSocketedItems == null) frameworkSocketedItems = new LinkedHashMap<>();
-        frameworkSocketedItems.put(Integer.toString(slotIndex), socketableId);
+        frameworkPoints++;
         return true;
     }
 
-    public String unsocketFrameworkItem(int slotIndex) {
-        revision++;
-        return frameworkSocketedItems == null ? null : frameworkSocketedItems.remove(Integer.toString(slotIndex));
+    public List<String> getUnlockedSocketTypeIds() {
+        return unlockedSocketTypes == null ? List.of() : Collections.unmodifiableList(unlockedSocketTypes);
     }
 
-    private static Integer slotIndex(String slotKey) {
-        try {
-            return Integer.valueOf(slotKey);
-        } catch (NumberFormatException e) {
+    public boolean isSocketTypeUnlocked(String socketTypeId) {
+        return unlockedSocketTypes != null && unlockedSocketTypes.contains(socketTypeId);
+    }
+
+    public boolean unlockSocketType(String socketTypeId) {
+        revision++;
+        if (socketTypeId == null || isSocketTypeUnlocked(socketTypeId) || getUnspentFrameworkPoints() <= 0) {
+            return false;
+        }
+        if (unlockedSocketTypes == null) unlockedSocketTypes = new ArrayList<>();
+        unlockedSocketTypes.add(socketTypeId);
+        return true;
+    }
+
+    public void grantUnlockedSocketType(String socketTypeId) {
+        revision++;
+        if (socketTypeId == null || isSocketTypeUnlocked(socketTypeId)) {
+            return;
+        }
+        frameworkPoints++;
+        if (unlockedSocketTypes == null) unlockedSocketTypes = new ArrayList<>();
+        unlockedSocketTypes.add(socketTypeId);
+    }
+
+    public String lockSocketType(String socketTypeId) {
+        revision++;
+        if (unlockedSocketTypes == null || !unlockedSocketTypes.remove(socketTypeId)) {
             return null;
         }
+        return frameworkItemsBySocketType == null ? null : frameworkItemsBySocketType.remove(socketTypeId);
+    }
+
+    public Map<String, String> getFrameworkSocketedItems() {
+        return frameworkItemsBySocketType == null ? Map.of() : Collections.unmodifiableMap(frameworkItemsBySocketType);
+    }
+
+    public String getFrameworkSocketedItem(String socketTypeId) {
+        return frameworkItemsBySocketType == null ? null : frameworkItemsBySocketType.get(socketTypeId);
+    }
+
+    public boolean socketFrameworkItem(String socketTypeId, String socketableId) {
+        revision++;
+        if (!isSocketTypeUnlocked(socketTypeId)) {
+            return false;
+        }
+        if (frameworkItemsBySocketType == null) frameworkItemsBySocketType = new LinkedHashMap<>();
+        frameworkItemsBySocketType.put(socketTypeId, socketableId);
+        return true;
+    }
+
+    public String unsocketFrameworkItem(String socketTypeId) {
+        revision++;
+        return frameworkItemsBySocketType == null ? null : frameworkItemsBySocketType.remove(socketTypeId);
+    }
+
+    public String takeLegacyFrameworkId() {
+        String legacyFrameworkId = installedFrameworkId;
+        installedFrameworkId = null;
+        return legacyFrameworkId;
+    }
+
+    public Map<String, String> takeLegacyFrameworkItems() {
+        Map<String, String> legacyItems = frameworkSocketedItems == null ? Map.of() : Map.copyOf(frameworkSocketedItems);
+        frameworkSocketedItems = null;
+        return legacyItems;
     }
 
     public void markChanged() {
@@ -258,7 +290,7 @@ public class ShipSkillData {
 
     public boolean isBlank() {
         return allocatedNodeIds.isEmpty() && getDormantNodeIds().isEmpty() && level == 0 && xp == 0f && bankedFreeAllocations == 0
-                && installedFrameworkId == null;
+                && installedFrameworkId == null && frameworkPoints == 0;
     }
 
     public Set<String> getDormantNodeIds() {

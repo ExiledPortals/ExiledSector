@@ -53,8 +53,7 @@ final class SkillTreeChrome {
 
     void advance(float amount, PositionAPI canvasPosition, CanvasMode mode, float chromeAlpha, ShipOpBudget budget, float mouseX,
                  float mouseY, boolean mouseKnown) {
-        boolean storageButtonShown = mode != CanvasMode.ROOT_CHOICE && mode != CanvasMode.FLEET_FOLLOW
-                && (mode != CanvasMode.HYPERSPACE || chromeAlpha > 0f);
+        boolean storageButtonShown = mode != CanvasMode.ROOT_CHOICE && (mode != CanvasMode.HYPERSPACE || chromeAlpha > 0f);
         socketPlacement.layoutButton(canvasPosition, shipCardFrame(canvasPosition), storageButtonShown);
         if (!mode.enables(CanvasMode.Chrome.SEARCH)) {
             searchBar.unfocus();

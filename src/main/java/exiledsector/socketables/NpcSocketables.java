@@ -22,6 +22,7 @@ public final class NpcSocketables {
     static final float SECOND_CHANCE = 0.05f;
     static final float UNIQUE_SHARE = 0.02f;
     static final float FRAMEWORK_CHANCE = 0.5f;
+    static final float UPGRADE_DROP_CHANCE = 0.1f;
     private static final Map<String, Socketable> PREVIEWS = new ConcurrentHashMap<>();
 
     private NpcSocketables() {
@@ -90,24 +91,24 @@ public final class NpcSocketables {
                 fittingTypes.add(socketType);
             }
         }
-        HullFrameworkData framework = HullFrameworkRoller.roll(hullSize, fittingTypes, random);
-        if (framework == null) {
-            return;
-        }
-        shipData.installFramework(framework.npcId());
-        List<SocketType> socketTypes = framework.socketTypes();
-        for (int slotIndex = 0; slotIndex < socketTypes.size(); slotIndex++) {
+        List<SocketType> socketTypes = HullFrameworkRoller.rollTypes(HullFrameworkRoller.rollSocketCount(random), fittingTypes, new Random(random.nextLong()));
+        for (SocketType socketType : socketTypes) {
+            shipData.grantUnlockedSocketType(socketType.id());
             if (random.nextFloat() < firstChance(playerLevel)) {
-                SocketableDefinition definition = SocketableDrops.pickFrameworkBasic(socketTypes.get(slotIndex), random);
+                SocketableDefinition definition = SocketableDrops.pickFrameworkBasic(socketType, random);
                 if (definition != null) {
-                    shipData.socketFrameworkItem(slotIndex, id(SocketableItemData.rolled(definition, random.nextLong())));
+                    shipData.socketFrameworkItem(socketType.id(), id(SocketableItemData.rolled(definition, random.nextLong())));
                 }
             }
         }
     }
 
-    public static HullFrameworkData frameworkCarriedBy(ShipSkillData shipData) {
-        return shipData == null ? null : HullFrameworkData.ofNpcId(shipData.getInstalledFrameworkId());
+    public static boolean carriesFramework(ShipSkillData shipData) {
+        return shipData != null && !shipData.getUnlockedSocketTypeIds().isEmpty();
+    }
+
+    public static HullUpgradeData rollUpgradeDrop(ShipSkillData shipData, HullSize hullSize, Random random) {
+        return carriesFramework(shipData) && hullSize != null && random.nextFloat() < UPGRADE_DROP_CHANCE ? new HullUpgradeData(hullSize) : null;
     }
 
     public static List<Socketable> uniquesCarriedBy(ShipSkillData shipData) {
@@ -152,18 +153,16 @@ public final class NpcSocketables {
                 shipData.socketItem(socketedEntry.getKey(), ownedSocketable.id());
             }
         }
-        HullFrameworkData frameworkData = frameworkCarriedBy(shipData);
-        if (frameworkData == null) {
-            return;
-        }
-        Map<Integer, String> frameworkItems = shipData.getFrameworkSocketedItems();
-        HullFramework ownedFramework = SocketableStore.get().addFramework(frameworkData);
-        shipData.installFramework(ownedFramework.id());
-        frameworkItems.forEach((slotIndex, socketableId) -> {
+        Map<String, String> frameworkItems = Map.copyOf(shipData.getFrameworkSocketedItems());
+        frameworkItems.forEach((socketTypeId, socketableId) -> {
             SocketableItemData itemData = item(socketableId);
-            Socketable ownedSocketable = itemData == null ? null : SocketableStore.get().add(itemData);
+            if (itemData == null) {
+                return;
+            }
+            shipData.unsocketFrameworkItem(socketTypeId);
+            Socketable ownedSocketable = SocketableStore.get().add(itemData);
             if (ownedSocketable != null) {
-                shipData.socketFrameworkItem(slotIndex, ownedSocketable.id());
+                shipData.socketFrameworkItem(socketTypeId, ownedSocketable.id());
             }
         });
     }
@@ -172,14 +171,9 @@ public final class NpcSocketables {
         for (SocketableItemData itemData : carriedBy(shipData)) {
             SocketableStore.get().add(itemData);
         }
-        HullFrameworkData frameworkData = frameworkCarriedBy(shipData);
-        if (frameworkData != null) {
-            SocketableStore.get().addFramework(frameworkData);
-        }
     }
 
     public static void clearCache() {
         PREVIEWS.clear();
-        SocketableStore.clearNpcFrameworkPreviews();
     }
 }

@@ -11,22 +11,21 @@ import exiledsector.ui.util.SpriteCache;
 
 import java.util.List;
 
-public class HullFrameworkItemPlugin extends BaseSpecialItemPlugin {
+public class HullUpgradeItemPlugin extends BaseSpecialItemPlugin {
 
-    private static final SpriteCache SPRITES = new SpriteCache(HullFrameworkItemPlugin.class);
+    private static final SpriteCache SPRITES = new SpriteCache(HullUpgradeItemPlugin.class);
 
-    private HullFramework previewFramework;
+    private HullUpgradeData upgrade;
 
     @Override
     public void init(CargoStackAPI stack) {
         super.init(stack);
-        HullFrameworkData frameworkData = stack == null ? null : HullFrameworkData.of(stack.getSpecialDataIfSpecial());
-        previewFramework = frameworkData == null ? null : frameworkData.preview();
+        upgrade = stack == null ? null : HullUpgradeData.of(stack.getSpecialDataIfSpecial());
     }
 
     @Override
     public String getName() {
-        return I18n.forGameText(() -> previewFramework == null ? Translation.text("socketable.unknown") : previewFramework.name());
+        return I18n.forGameText(() -> upgrade == null ? Translation.text("socketable.unknown") : upgrade.name());
     }
 
     @Override
@@ -36,13 +35,13 @@ public class HullFrameworkItemPlugin extends BaseSpecialItemPlugin {
 
     @Override
     public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, CargoTransferHandlerAPI transferHandler, Object stackSource) {
-        HullFrameworkTooltip.write(tooltip, previewFramework, () -> List.of(Translation.styled("framework.tooltip.storage")));
+        HullUpgradeTooltip.write(tooltip, upgrade, () -> List.of(Translation.styled("upgrade.tooltip.storage")));
         addCostLabel(tooltip, SocketableTooltip.PAD, transferHandler, stackSource);
     }
 
     @Override
     public void render(float x, float y, float w, float h, float alphaMult, float glowMult, SpecialItemRendererAPI renderer) {
-        SpriteAPI sprite = SPRITES.sprite(previewFramework == null ? HullFrameworkData.ICON : previewFramework.iconPath());
+        SpriteAPI sprite = upgrade == null ? null : SPRITES.sprite(upgrade.iconPath());
         if (sprite == null) {
             return;
         }

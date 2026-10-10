@@ -36,10 +36,10 @@ import exiledsector.skills.progression.SkillNodeOpCost;
 import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.skills.tags.ShipProfile;
-import exiledsector.socketables.HullFramework;
-import exiledsector.socketables.HullFrameworks;
-import exiledsector.socketables.SocketCustody;
+import exiledsector.socketables.FrameworkSockets;
+import exiledsector.socketables.SocketType;
 import exiledsector.socketables.Socketable;
+import exiledsector.socketables.SocketableStore;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -271,32 +271,40 @@ final class NodeAllocator {
         return true;
     }
 
-    boolean installFramework(HullFramework framework) {
-        if (!HullFrameworks.install(data(), framework, ShipSkillDataManager.all())) {
+    boolean installUpgrade() {
+        if (!FrameworkSockets.installUpgrade(data(), hullSize(), SocketableStore.get())) {
             return false;
         }
         refreshShipStats();
         return true;
     }
 
-    boolean removeFramework() {
-        if (HullFrameworks.remove(data()) == null) {
+    boolean unlockSocket(SocketType socketType) {
+        if (!FrameworkSockets.unlock(data(), socketType, currentFit())) {
             return false;
         }
         refreshShipStats();
         return true;
     }
 
-    boolean socketFrameworkItem(int slotIndex, Socketable socketable) {
-        if (!HullFrameworks.socket(data(), slotIndex, socketable, ShipSkillDataManager.all())) {
+    boolean lockSocket(SocketType socketType) {
+        if (!FrameworkSockets.lock(data(), socketType)) {
             return false;
         }
         refreshShipStats();
         return true;
     }
 
-    boolean unsocketFrameworkItem(int slotIndex) {
-        if (data().unsocketFrameworkItem(slotIndex) == null) {
+    boolean socketFrameworkItem(SocketType socketType, Socketable socketable) {
+        if (!FrameworkSockets.socket(data(), socketType, socketable, ShipSkillDataManager.all())) {
+            return false;
+        }
+        refreshShipStats();
+        return true;
+    }
+
+    boolean unsocketFrameworkItem(SocketType socketType) {
+        if (data().unsocketFrameworkItem(socketType.id()) == null) {
             return false;
         }
         refreshShipStats();
@@ -307,10 +315,16 @@ final class NodeAllocator {
         return FrameworkSlots.forVariant(data(), shipVariant);
     }
 
-    HullFrameworks.InstallBlock frameworkInstallBlock(HullFramework framework) {
-        ShipProfile currentFit = FrameworkFit.profile(fleetMember.getHullSpec(), shipVariant, data());
-        return HullFrameworks.installBlock(framework, fleetMember.getHullSpec().getHullSize(), currentFit,
-                SocketCustody.frameworkShipId(framework), fleetMember.getId());
+    FrameworkSockets.UnlockBlock unlockBlock(SocketType socketType) {
+        return FrameworkSockets.unlockBlock(data(), socketType, currentFit());
+    }
+
+    String unmetRequirement(SocketType socketType) {
+        return FrameworkSlots.unmetRequirement(socketType, currentFit());
+    }
+
+    private ShipProfile currentFit() {
+        return FrameworkFit.profile(fleetMember.getHullSpec(), shipVariant, data());
     }
 
     HullSize hullSize() {

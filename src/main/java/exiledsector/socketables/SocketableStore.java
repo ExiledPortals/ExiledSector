@@ -3,28 +3,27 @@ package exiledsector.socketables;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CargoStackAPI;
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.skills.ShipSkillData;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public final class SocketableStore {
 
     static final String DATA_KEY = "exiledSector_socketables";
     private static final String ID_PREFIX = "socketable_";
-    private static final String FRAMEWORK_ID_PREFIX = "framework_";
     private static final Logger LOG = Logger.getLogger(SocketableStore.class);
-    private static final Map<String, HullFramework> NPC_FRAMEWORK_PREVIEWS = new ConcurrentHashMap<>();
-    private static final int MAX_NPC_FRAMEWORK_PREVIEWS = 1024;
 
     private final List<Socketable> owned = new ArrayList<>();
     private long nextId = 1;
     private List<HullFramework> frameworks;
-    private long lastFrameworkId;
+    private Map<String, Integer> hullUpgrades;
     // XStream skips transient fields, so this lookup index is rebuilt after loading instead of being written into saves
     @SuppressWarnings("java:S2065")
     private transient Map<String, Socketable> byId;
@@ -98,35 +97,75 @@ public final class SocketableStore {
         return removed;
     }
 
-    public static HullFramework lookupFramework(String frameworkId) {
-        if (HullFrameworkData.isNpcId(frameworkId)) {
-            HullFramework cachedPreview = NPC_FRAMEWORK_PREVIEWS.get(frameworkId);
-            if (cachedPreview != null) {
-                return cachedPreview;
+    public int upgradeCount(HullSize hullSize) {
+        return hullUpgrades == null || hullSize == null ? 0 : hullUpgrades.getOrDefault(hullSize.name(), 0);
+    }
+
+    public Map<HullSize, Integer> upgradeCounts() {
+        Map<HullSize, Integer> counts = new LinkedHashMap<>();
+        for (HullSize hullSize : HullUpgradeData.HULL_SIZES) {
+            int count = upgradeCount(hullSize);
+            if (count > 0) {
+                counts.put(hullSize, count);
             }
-            HullFrameworkData frameworkData = HullFrameworkData.ofNpcId(frameworkId);
-            if (frameworkData == null) {
-                return null;
-            }
-            if (NPC_FRAMEWORK_PREVIEWS.size() >= MAX_NPC_FRAMEWORK_PREVIEWS) {
-                NPC_FRAMEWORK_PREVIEWS.clear();
-            }
-            HullFramework preview = frameworkData.preview();
-            NPC_FRAMEWORK_PREVIEWS.put(frameworkId, preview);
-            return preview;
         }
-        return frameworkId == null || Global.getSector() == null ? null : get().findFramework(frameworkId);
+        return counts;
     }
 
-    public static void clearNpcFrameworkPreviews() {
-        NPC_FRAMEWORK_PREVIEWS.clear();
+    public void addUpgrades(HullSize hullSize, int count) {
+        if (hullSize == null || count <= 0) {
+            return;
+        }
+        if (hullUpgrades == null) {
+            hullUpgrades = new LinkedHashMap<>();
+        }
+        hullUpgrades.merge(hullSize.name(), count, Integer::sum);
     }
 
-    public List<HullFramework> frameworks() {
-        return frameworks == null ? List.of() : Collections.unmodifiableList(frameworks);
+    public boolean takeUpgrade(HullSize hullSize) {
+        int count = upgradeCount(hullSize);
+        if (count <= 0) {
+            return false;
+        }
+        if (count == 1) {
+            hullUpgrades.remove(hullSize.name());
+        } else {
+            hullUpgrades.put(hullSize.name(), count - 1);
+        }
+        return true;
     }
 
-    public HullFramework findFramework(String frameworkId) {
+    public boolean migrateLegacyFrameworks(Map<String, ShipSkillData> shipDataById) {
+        boolean changed = false;
+        for (ShipSkillData shipData : shipDataById.values()) {
+            String legacyFrameworkId = shipData.takeLegacyFrameworkId();
+            Map<String, String> legacyItems = shipData.takeLegacyFrameworkItems();
+            HullFramework legacyFramework = findLegacyFramework(legacyFrameworkId);
+            if (legacyFramework == null) {
+                changed |= legacyFrameworkId != null;
+                continue;
+            }
+            List<String> socketTypeIds = legacyFramework.socketTypeIds();
+            for (int slotIndex = 0; slotIndex < Math.min(socketTypeIds.size(), FrameworkSockets.MAX_POINTS); slotIndex++) {
+                String socketTypeId = socketTypeIds.get(slotIndex);
+                shipData.grantUnlockedSocketType(socketTypeId);
+                String socketableId = legacyItems.get(Integer.toString(slotIndex));
+                if (socketableId != null) {
+                    shipData.socketFrameworkItem(socketTypeId, socketableId);
+                }
+            }
+            frameworks.remove(legacyFramework);
+            changed = true;
+        }
+        if (frameworks != null) {
+            frameworks.forEach(legacyFramework -> addUpgrades(legacyFramework.hullSize(), 1));
+            changed |= !frameworks.isEmpty();
+            frameworks = null;
+        }
+        return changed;
+    }
+
+    private HullFramework findLegacyFramework(String frameworkId) {
         if (frameworks == null || frameworkId == null) {
             return null;
         }
@@ -138,20 +177,11 @@ public final class SocketableStore {
         return null;
     }
 
-    public HullFramework addFramework(HullFrameworkData frameworkData) {
-        if (frameworkData == null) {
-            return null;
-        }
+    void addLegacyFramework(HullFramework framework) {
         if (frameworks == null) {
             frameworks = new ArrayList<>();
         }
-        HullFramework framework = new HullFramework(FRAMEWORK_ID_PREFIX + ++lastFrameworkId, frameworkData);
         frameworks.add(framework);
-        return framework;
-    }
-
-    public boolean removeFramework(HullFramework framework) {
-        return frameworks != null && frameworks.remove(framework);
     }
 
     public int absorbFrom(CargoAPI cargo) {
@@ -163,9 +193,9 @@ public final class SocketableStore {
     }
 
     private int absorbStack(CargoAPI cargo, CargoStackAPI stack) {
-        HullFrameworkData frameworkData = HullFrameworkData.of(stack.getSpecialDataIfSpecial());
-        if (frameworkData != null) {
-            return absorbFrameworkStack(cargo, stack, frameworkData);
+        HullUpgradeData upgrade = HullUpgradeData.of(stack.getSpecialDataIfSpecial());
+        if (upgrade != null) {
+            return absorbUpgradeStack(cargo, stack, upgrade);
         }
         SocketableItemData itemData = SocketableItemData.of(stack.getSpecialDataIfSpecial());
         if (itemData == null) {
@@ -186,14 +216,12 @@ public final class SocketableStore {
         return stackCount;
     }
 
-    private int absorbFrameworkStack(CargoAPI cargo, CargoStackAPI stack, HullFrameworkData frameworkData) {
+    private int absorbUpgradeStack(CargoAPI cargo, CargoStackAPI stack, HullUpgradeData upgrade) {
         int stackCount = Math.round(stack.getSize());
         if (stackCount < 1) {
             return 0;
         }
-        for (int i = 0; i < stackCount; i++) {
-            addFramework(frameworkData);
-        }
+        addUpgrades(upgrade.hullSize(), stackCount);
         cargo.removeStack(stack);
         return stackCount;
     }

@@ -28,7 +28,7 @@ enum CanvasMode {
     boolean shows(Chrome chrome) {
         return switch (chrome) {
             case READOUTS -> true;
-            case SEARCH -> this != HYPERSPACE && this != ROOT_CHOICE;
+            case SEARCH -> this != HYPERSPACE && this != ROOT_CHOICE && this != FLEET_FOLLOW;
             case STATS_TOGGLE -> this != HYPERSPACE;
             case TEMPLATE_BAR -> this != HYPERSPACE && this != FLEET_FOLLOW;
             case STORAGE_BUTTON -> this != HYPERSPACE;
@@ -40,7 +40,7 @@ enum CanvasMode {
             case TREE, ALLOCATION_RUN -> true;
             case ROOT_CHOICE -> chrome == Chrome.STATS_TOGGLE || chrome == Chrome.READOUTS;
             case HYPERSPACE -> chrome == Chrome.READOUTS;
-            case FLEET_FOLLOW -> chrome != Chrome.TEMPLATE_BAR;
+            case FLEET_FOLLOW -> chrome != Chrome.TEMPLATE_BAR && chrome != Chrome.SEARCH;
             case WORKBENCH -> chrome == Chrome.STORAGE_BUTTON;
             case MODAL -> false;
         };

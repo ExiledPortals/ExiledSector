@@ -17,9 +17,9 @@ import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.StepVerdict;
 import exiledsector.skills.template.TemplateCapture;
 import exiledsector.skills.template.TemplateStep;
-import exiledsector.socketables.HullFramework;
-import exiledsector.socketables.HullFrameworks;
+import exiledsector.socketables.FrameworkSockets;
 import exiledsector.socketables.SocketCustody;
+import exiledsector.socketables.SocketType;
 import exiledsector.socketables.Socketable;
 import exiledsector.ui.SkillTreeSounds;
 import lunalib.lunaRefit.BaseRefitButton;
@@ -446,24 +446,36 @@ public final class TreeAllocationSession {
         return true;
     }
 
-    public HullFramework installedFramework() {
-        return FrameworkSlots.installedFramework(allocator.data());
-    }
-
     public List<FrameworkSlots.Slot> frameworkSlots() {
         return allocator.frameworkSlots();
+    }
+
+    public int frameworkPoints() {
+        return allocator.data().getFrameworkPoints();
+    }
+
+    public int unspentFrameworkPoints() {
+        return allocator.data().getUnspentFrameworkPoints();
+    }
+
+    public boolean isSocketTypeUnlocked(SocketType socketType) {
+        return allocator.data().isSocketTypeUnlocked(socketType.id());
     }
 
     public HullSize hullSize() {
         return allocator.hullSize();
     }
 
-    public HullFrameworks.InstallBlock frameworkInstallBlock(HullFramework framework) {
-        return allocator.frameworkInstallBlock(framework);
+    public FrameworkSockets.UnlockBlock unlockBlock(SocketType socketType) {
+        return allocator.unlockBlock(socketType);
     }
 
-    public boolean installFramework(HullFramework framework) {
-        if (isBusy() || !allocator.installFramework(framework)) {
+    public String unmetRequirement(SocketType socketType) {
+        return allocator.unmetRequirement(socketType);
+    }
+
+    public boolean installUpgrade() {
+        if (isBusy() || !allocator.installUpgrade()) {
             return false;
         }
         refreshAfterAllocation();
@@ -471,16 +483,8 @@ public final class TreeAllocationSession {
         return true;
     }
 
-    public boolean removeFramework() {
-        if (isBusy() || !allocator.removeFramework()) {
-            return false;
-        }
-        refreshAfterAllocation();
-        return true;
-    }
-
-    public boolean socketFrameworkItem(int slotIndex, Socketable socketable) {
-        if (isBusy() || !allocator.socketFrameworkItem(slotIndex, socketable)) {
+    public boolean unlockSocket(SocketType socketType) {
+        if (isBusy() || !allocator.unlockSocket(socketType)) {
             return false;
         }
         refreshAfterAllocation();
@@ -488,8 +492,25 @@ public final class TreeAllocationSession {
         return true;
     }
 
-    public boolean unsocketFrameworkItem(int slotIndex) {
-        if (isBusy() || !allocator.unsocketFrameworkItem(slotIndex)) {
+    public boolean lockSocket(SocketType socketType) {
+        if (isBusy() || !allocator.lockSocket(socketType)) {
+            return false;
+        }
+        refreshAfterAllocation();
+        return true;
+    }
+
+    public boolean socketFrameworkItem(SocketType socketType, Socketable socketable) {
+        if (isBusy() || !allocator.socketFrameworkItem(socketType, socketable)) {
+            return false;
+        }
+        refreshAfterAllocation();
+        SkillTreeSounds.socketed();
+        return true;
+    }
+
+    public boolean unsocketFrameworkItem(SocketType socketType) {
+        if (isBusy() || !allocator.unsocketFrameworkItem(socketType)) {
             return false;
         }
         refreshAfterAllocation();

@@ -64,6 +64,10 @@ final class SkillTreeUiButton {
         }
     }
 
+    ScreenRect bounds() {
+        return buttonShown ? buttonBounds : ScreenRect.NONE;
+    }
+
     boolean contains(float x, float y) {
         return buttonShown && buttonBounds.contains(x, y);
     }
