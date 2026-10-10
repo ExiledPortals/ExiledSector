@@ -3,6 +3,7 @@ package exiledsector.ui;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SoundPlayerAPI;
 import exiledsector.skills.SkillTier;
+import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,7 @@ import static org.mockito.Mockito.verify;
 class SkillTreeSoundsTest {
 
     private MockedStatic<Global> globalMock;
+    private MockedStatic<LunaSettings> lunaSettingsMock;
     private SoundPlayerAPI player;
 
     @BeforeEach
@@ -27,11 +29,14 @@ class SkillTreeSoundsTest {
         player = mock(SoundPlayerAPI.class);
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSoundPlayer).thenReturn(player);
+        lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean(anyString(), anyString())).thenReturn(null);
     }
 
     @AfterEach
     void tearDown() {
         globalMock.close();
+        lunaSettingsMock.close();
         SkillTreeSounds.resetForTests();
     }
 
@@ -79,6 +84,20 @@ class SkillTreeSoundsTest {
         globalMock.when(Global::getSoundPlayer).thenReturn(null);
 
         SkillTreeSounds.socketed();
+
+        verify(player, never()).playUISound(anyString(), eq(1f), eq(1f));
+    }
+
+    @Test
+    void turningSkillTreeSoundsOffInLunaLibSilencesEverySound() {
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", SkillTreeSounds.ENABLED_FIELD_ID)).thenReturn(false);
+
+        SkillTreeSounds.allocated(SkillTier.KEYSTONE);
+        SkillTreeSounds.refused();
+        SkillTreeSounds.hyperspaceOut();
+        SkillTreeSounds.socketed();
+        SkillTreeSounds.crafted();
+        SkillTreeSounds.play("ui_button_pressed");
 
         verify(player, never()).playUISound(anyString(), eq(1f), eq(1f));
     }

@@ -39,7 +39,7 @@ public class SkillTreeRefitButton extends BaseRefitButton {
         if (member == null || variant == null || !button.isClickable(member, variant, market) || !button.hasPanel(member, variant, market)) {
             return false;
         }
-        Global.getSoundPlayer().playUISound(CLICK_SOUND, 1f, 1f);
+        SkillTreeSounds.play(CLICK_SOUND);
         button.onClick(member, variant, event, market);
 
         UIPanelAPI corePanel = adder.getCorePanel();

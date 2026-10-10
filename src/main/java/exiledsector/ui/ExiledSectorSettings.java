@@ -62,6 +62,11 @@ public final class ExiledSectorSettings {
                 Translation.text("settings.refit.buttonUnderHullMods.name"), Translation.text("settings.refit.buttonUnderHullMods.tooltip"),
                 RefitButtonConfig.DEFAULT, MAIN_TAB);
 
+        SettingsCreator.addHeader(MOD_ID, "exiledSector_soundsHeader", Translation.text("settings.sounds.header"), MAIN_TAB);
+        SettingsCreator.addBoolean(MOD_ID, SkillTreeSounds.ENABLED_FIELD_ID,
+                Translation.text("settings.sounds.enabled.name"), Translation.text("settings.sounds.enabled.tooltip"),
+                SkillTreeSounds.DEFAULT_ENABLED, MAIN_TAB);
+
         SettingsCreator.addHeader(MOD_ID, "exiledSector_socketStorageHeader", Translation.text("settings.socketStorage.header"), MAIN_TAB);
         SettingsCreator.addBoolean(MOD_ID, SalvageSiteCompat.DROPS_FIELD_ID,
                 Translation.text("settings.socketStorage.otherModDrops.name"), Translation.text("settings.socketStorage.otherModDrops.tooltip"),

@@ -221,6 +221,43 @@ class RefractionDroneTest {
     }
 
     @Test
+    void aSalvoKeepsOnlyThePelletClosestToTheAimAndRemovesTheRest() {
+        launchBehindTheHitShip();
+        DamagingProjectileAPI wide = projectileFrom(weapon);
+        DamagingProjectileAPI centre = projectileFrom(weapon);
+        DamagingProjectileAPI otherWide = projectileFrom(weapon);
+        when(wide.getFacing()).thenReturn(168f);
+        when(centre.getFacing()).thenReturn(-178f);
+        when(otherWide.getFacing()).thenReturn(195f);
+        projectiles.addAll(List.of(wide, centre, otherWide));
+        when(weapon.getChargeLevel()).thenReturn(1f);
+
+        drone.advance(FRAME);
+
+        assertTrue(ChainLink.isTagged(centre));
+        verify(centre).setSource(firingShip);
+        verify(engine, never()).removeEntity(centre);
+        verify(engine).removeEntity(wide);
+        verify(engine).removeEntity(otherWide);
+        assertTrue(drone.isReady());
+    }
+
+    @Test
+    void pelletsLeftAfterAShotHitBeforeItWasFoundAreRemoved() {
+        launchBehindTheHitShip();
+        when(weapon.getChargeLevel()).thenReturn(1f);
+        DamagingProjectileAPI hitFirst = projectileFrom(weapon);
+        drone.modifyDamageDealt(hitFirst, mock(ShipAPI.class), mock(DamageAPI.class), new Vector2f(), true);
+        DamagingProjectileAPI leftover = projectileFrom(weapon);
+        projectiles.add(leftover);
+
+        drone.advance(FRAME);
+
+        verify(engine).removeEntity(leftover);
+        assertFalse(ChainLink.isTagged(leftover));
+    }
+
+    @Test
     void aStrayShotSeenBeforeTheWeaponFiresDoesNotEndTheLaunch() {
         launchBehindTheHitShip();
         projectiles.add(projectileFrom(weapon));
