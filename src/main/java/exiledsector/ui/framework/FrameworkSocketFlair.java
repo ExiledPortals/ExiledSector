@@ -36,6 +36,7 @@ public final class FrameworkSocketFlair {
         TYPE_COLORS.put(SocketType.CREW_QUARTERS, new Color(120, 220, 170));
         TYPE_COLORS.put(SocketType.ENGINE_ROOM, new Color(255, 150, 60));
         TYPE_COLORS.put(SocketType.REACTOR, new Color(190, 255, 110));
+        TYPE_COLORS.put(SocketType.ARMOR_PLATING, new Color(205, 175, 140));
         TYPE_COLORS.put(SocketType.WEAPON_MOUNT, new Color(255, 95, 85));
         TYPE_COLORS.put(SocketType.SHIELD_GENERATOR, new Color(90, 170, 255));
         TYPE_COLORS.put(SocketType.PHASE_COIL, new Color(200, 120, 255));

@@ -323,6 +323,6 @@
   "tiers": ["SMALL", "NOTABLE", "KEYSTONE", "WORMHOLE", "ROOT", "SOCKET"],
   "unlockConditionTypes": ["blueprint", "characterStat", "minShipLevel", "memoryFlag"],
   "blueprintCategories": ["hullmod"],
-  "socketableKinds": ["subroutine", "bridge", "crew_quarters", "engine_room", "reactor", "weapon_mount", "shield_generator", "phase_coil", "flight_deck"],
+  "socketableKinds": ["subroutine", "bridge", "crew_quarters", "engine_room", "reactor", "armor_plating", "weapon_mount", "shield_generator", "phase_coil", "flight_deck"],
   "socketableUnlocks": ["found_onslaught_mk1", "found_gate_hauler", "found_planetkiller", "defeated_ziggurat"]
 }

@@ -19,5 +19,51 @@
 		"style": "codename",
 		"first": ["Talon", "Broadsword", "Longbow", "Warthog", "Wasp", "Dagger", "Trident", "Piranha", "Thunder", "Gladius", "Khopesh", "Sarissa", "Spark", "Claw"],
 		"second": ["Roster", "Rotation", "Muster", "Turnaround", "Requisition", "Dispatch", "Manifest", "Tasking", "Readiness", "Allocation", "Ledger", "Scramble"]
+	},
+	"framework_armor_plating_plate": {
+		"style": "codename",
+		"first": ["Carapace", "Ironclad", "Granite", "Bulwark", "Rampart", "Anvil"],
+		"second": ["Plate", "Belt", "Shell", "Hide", "Bulkhead", "Skin"]
+	},
+	"framework_bridge_officer": {
+		"style": "codename",
+		"first": ["Admiral", "Commodore", "Captain", "Helm", "Flag", "Bearing"],
+		"second": ["Watch", "Command", "Orders", "Conn", "Station", "Mandate"]
+	},
+	"framework_crew_quarters_specialists": {
+		"style": "codename",
+		"first": ["Bunk", "Galley", "Mess", "Hammock", "Billet", "Muster"],
+		"second": ["Hands", "Gang", "Detail", "Company", "Shift", "Roster"]
+	},
+	"framework_engine_room_drive": {
+		"style": "product",
+		"first": ["Thrust", "Ion", "Burn", "Vector", "Plasma", "Drift"],
+		"second": ["Drive", "Torch", "Nozzle", "Thruster", "Booster", "Engine"],
+		"models": ["Mk.II", "Mk.III", "Pro", "Max", "Sport"]
+	},
+	"framework_flight_deck_crew": {
+		"style": "codename",
+		"first": ["Hawk", "Kestrel", "Harrier", "Falcon", "Swift", "Talon"],
+		"second": ["Deck", "Catapult", "Cradle", "Roost", "Hangar", "Launch"]
+	},
+	"framework_phase_coil_array": {
+		"style": "codename",
+		"first": ["Ghost", "Shade", "Wraith", "Phantom", "Umbra", "Echo"],
+		"second": ["Coil", "Winding", "Spool", "Fold", "Lattice", "Drift"]
+	},
+	"framework_reactor_regulator": {
+		"style": "codename",
+		"first": ["Fusion", "Tokamak", "Helios", "Corona", "Ember", "Pyre"],
+		"second": ["Core", "Pile", "Furnace", "Heart", "Dynamo", "Lattice"]
+	},
+	"framework_shield_generator_emitter": {
+		"style": "codename",
+		"first": ["Aegis", "Bastion", "Halo", "Ward", "Prism", "Veil"],
+		"second": ["Emitter", "Projector", "Lens", "Field", "Screen", "Dome"]
+	},
+	"framework_weapon_mount_fire_control": {
+		"style": "codename",
+		"first": ["Salvo", "Volley", "Breach", "Rampart", "Sabre", "Gunner"],
+		"second": ["Battery", "Turret", "Mount", "Array", "Director", "Loader"]
 	}
 }

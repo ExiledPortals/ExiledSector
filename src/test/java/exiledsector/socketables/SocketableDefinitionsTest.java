@@ -102,7 +102,7 @@ class SocketableDefinitionsTest {
             assertNull(SocketType.byIdOrNull(legacyKind));
         }
         assertEquals(List.of(SocketType.SUBROUTINE), Arrays.stream(SocketType.values()).filter(type -> !type.isFramework()).toList());
-        assertEquals(8, SocketType.frameworkTypes().size());
+        assertEquals(9, SocketType.frameworkTypes().size());
     }
 
     @Test

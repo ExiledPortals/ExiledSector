@@ -14,7 +14,7 @@ Companion to `hull_frameworks_brief.md`. No code has been written yet.
 | Converted Hangar Deck Crew | Flight Deck |
 | Ko Combine Shipbreakers | Crew Quarters (missing from the brief's table) |
 | Galatia Hyperspace Physics Group | Engine Room (missing from the brief's table) |
-| Subroutine uniques that move | Gate Hauler Drive Coil to Engine Room, Synchrotron Cell to Reactor, Nanoforge Seed to Weapon Mount. Vambrace Plating, Fullerene Spool and Planetkiller Circuit stay subroutines |
+| Subroutine uniques that move | Gate Hauler Drive Coil to Engine Room, Synchrotron Cell to Reactor, Nanoforge Seed to Weapon Mount, Fullerene Spool Integration and Vambrace Plating to Armor Plating (a socket type added for them), Planetkiller Resonance Circuit to Weapon Mount. No subroutine uniques remain |
 | AI cores | Delete the AI core kind. A socketable's kind becomes its socket type; each converted unique's kind changes to the socket type it belongs to |
 | Transposition | Crosses socket types. If the result no longer fits the socket it was in, it returns to storage |
 | Framework sources | Salvage sites, Tech Mining, battle drops. No crafting |
@@ -49,7 +49,7 @@ Defaults I chose without asking, each easy to change:
 
 ### Socket types replace kinds
 
-`SocketableKind` becomes `SocketType`. It is safe to rename because no save stores the enum: the kind came from the class. It has nine values:
+`SocketableKind` becomes `SocketType`. It is safe to rename because no save stores the enum: the kind came from the class. It has ten values:
 
 | Id | Framework socket | Requirement tag |
 |---|---|---|
@@ -58,6 +58,7 @@ Defaults I chose without asking, each easy to change:
 | `crew_quarters` | yes | - |
 | `engine_room` | yes | - |
 | `reactor` | yes | - |
+| `armor_plating` | yes | - |
 | `weapon_mount` | yes | - |
 | `shield_generator` | yes | `req_shields` |
 | `phase_coil` | yes | `req_phase` |
@@ -164,13 +165,16 @@ Framework socket effects are never inputs to the fit, which avoids circularity.
 | Galatia Hyperspace Physics Group (`unique_hyperspace_physics_group`) | team | engine_room |
 | Gate Hauler Drive Coil (`unique_gate_hauler_coil`) | subroutine | engine_room |
 | Synchrotron Cell (`unique_synchrotron_cell`) | subroutine | reactor |
+| Fullerene Spool Integration (`unique_fullerene_spool`) | subroutine | armor_plating |
+| Vambrace Plating (`unique_vambrace_plating`) | subroutine | armor_plating |
+| Planetkiller Resonance Circuit (`unique_planetkiller_circuit`) | subroutine | weapon_mount |
 | Coatl Bastion Gunnery Team (`unique_coatl_gunnery_team`) | team | weapon_mount |
 | Gryphon Missile Crew (`unique_gryphon_missile_crew`) | team | weapon_mount |
 | Deserter Gunners (`unique_deserter_gunners`) | team | weapon_mount |
 | Nanoforge Seed (`unique_nanoforge_seed`) | subroutine | weapon_mount |
 | Converted Hangar Deck Crew (`unique_converted_hangar_crew`) | team | flight_deck |
 
-After the move, subroutine uniques are Vambrace Plating, Fullerene Spool Integration and Planetkiller Resonance Circuit. Shield Generator and Phase Coil have no uniques yet.
+After the move, no subroutine uniques remain. Shield Generator and Phase Coil have no uniques yet.
 
 Save migration (`SocketTypeMigration`, run from `onGameLoad`, latched by a persistent-data key):
 
@@ -225,7 +229,7 @@ Every framework drop and every framework-socketable drop needs player level 15 o
 Each stage builds, passes the full suite and is reviewable on its own. Stages 1 to 6 should ship in one release: after stage 1 the converted uniques have no socket until stage 5 lands.
 
 1. **Socket types and the Socketable model.**
-   - **Model:** `SocketableKind` becomes `SocketType` (9 values, no AI core). `Socketable` becomes concrete, with kind from the definition. Delete the four subclasses and map the legacy aliases.
+   - **Model:** `SocketableKind` becomes `SocketType` (10 values, no AI core). `Socketable` becomes concrete, with kind from the definition. Delete the four subclasses and map the legacy aliases.
    - **CSV:** the 19 kind changes from the conversion table. They belong here because `officer` and `team` stop existing.
    - **Rules:** CSV parsing rejects legacy kinds. Tree sockets accept subroutines only. Transposition crosses types and returns misfitting installed items to storage. Until stage 2, an old save's tree-socketed misfits do nothing, because `canSocketInto` already filters them.
    - **Strings, vocabulary, editor:** strings become `socket.type.*`. Regenerate the editor vocabulary; the editor dropdown follows automatically.
