@@ -294,7 +294,7 @@ skipped with a warning; the rest of the definition still loads.
 
 ## Framework icons
 
-The hull framework icons in `graphics/icons/frameworks/` are generated from vanilla hull sprites by
+The Hull Upgrade icons in `graphics/icons/frameworks/` are generated from vanilla hull sprites by
 `tools/FrameworkIcons.java`, which traces each sprite into a schematic on a holo panel tinted with the
 socketable rarity colours, with one to four pips for the hull size. Run it from the repository root with
 `java tools/FrameworkIcons.java --overwrite`. `--frigate`, `--destroyer`, `--cruiser` and `--capital` pick

@@ -192,7 +192,7 @@ public final class SocketableDrops {
         }
         List<HullUpgradeData> droppedUpgrades = new ArrayList<>();
         if (random.nextFloat() < rule.chances().get(0) * chanceMult) {
-            droppedUpgrades.add(new HullUpgradeData(HullFrameworkRoller.rollHullSize(random)));
+            droppedUpgrades.add(new HullUpgradeData(HullUpgradeRoller.rollHullSize(random)));
         }
         return new FrameworkLoot(List.copyOf(droppedItems), List.copyOf(droppedUpgrades));
     }

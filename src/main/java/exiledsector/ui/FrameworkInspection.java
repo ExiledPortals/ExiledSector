@@ -18,7 +18,7 @@ import exiledsector.ui.decoration.SkillTreeFleetRenderer;
 import exiledsector.ui.framework.FrameworkSocketFlair;
 import exiledsector.ui.framework.FrameworkSocketLayout;
 import exiledsector.ui.node.TreeAllocationSession;
-import exiledsector.ui.socket.HullFrameworkPanel;
+import exiledsector.ui.socket.HullUpgradePanel;
 import exiledsector.ui.socket.SocketStoragePanel;
 import exiledsector.ui.socket.SocketableHoverTooltip;
 import exiledsector.ui.util.GLDraw;
@@ -59,7 +59,7 @@ final class FrameworkInspection {
     private final float[] hoverLevels = new float[MAX_SOCKETS];
     private final float[] socketCentreX = new float[MAX_SOCKETS];
     private final float[] socketCentreY = new float[MAX_SOCKETS];
-    private HullFrameworkPanel frameworkPanel;
+    private HullUpgradePanel frameworkPanel;
     private boolean panelDismissed;
     private CustomPanelAPI tooltipAnchor;
     private int tooltipSlot = -1;
@@ -130,7 +130,7 @@ final class FrameworkInspection {
         if (socketPlacement.isStorageOpen()) {
             panelRight = PANEL_MARGIN + SocketStoragePanel.WIDTH;
         } else if (frameworkPanel != null) {
-            panelRight = PANEL_MARGIN + HullFrameworkPanel.WIDTH;
+            panelRight = PANEL_MARGIN + HullUpgradePanel.WIDTH;
         }
         float freeLeft = panelRight + FREE_SPACE_MARGIN;
         float freeRight = canvasPosition.getWidth() - FREE_SPACE_MARGIN;
@@ -295,7 +295,7 @@ final class FrameworkInspection {
             shownUpgradeCounts = SocketableStore.get().upgradeCounts();
         }
         float panelHeight = socketPlacement.sidePanelHeight(canvasPosition);
-        frameworkPanel = HullFrameworkPanel.open(hostPanel, PANEL_MARGIN, PANEL_TOP, panelHeight, panelView(), new HullFrameworkPanel.Listener() {
+        frameworkPanel = HullUpgradePanel.open(hostPanel, PANEL_MARGIN, PANEL_TOP, panelHeight, panelView(), new HullUpgradePanel.Listener() {
             @Override
             public void installUpgrade() {
                 treeSession.installUpgrade();
@@ -321,7 +321,7 @@ final class FrameworkInspection {
         SkillTreeSounds.panelOpened();
     }
 
-    private HullFrameworkPanel.View panelView() {
+    private HullUpgradePanel.View panelView() {
         HullSize hullSize = treeSession.hullSize();
         int upgradesInStorage = shownUpgradeCounts.getOrDefault(hullSize, 0);
         FrameworkSockets.UpgradeBlock upgradeBlock = null;
@@ -330,15 +330,15 @@ final class FrameworkInspection {
         } else if (upgradesInStorage <= 0) {
             upgradeBlock = FrameworkSockets.UpgradeBlock.NONE_IN_STORAGE;
         }
-        List<HullFrameworkPanel.SocketEntry> socketEntries = new ArrayList<>();
+        List<HullUpgradePanel.SocketEntry> socketEntries = new ArrayList<>();
         for (SocketType socketType : SocketType.frameworkTypes()) {
             socketEntries.add(socketEntry(socketType));
         }
-        return new HullFrameworkPanel.View(hullSize, treeSession.frameworkPoints(), treeSession.unspentFrameworkPoints(), upgradesInStorage,
+        return new HullUpgradePanel.View(hullSize, treeSession.frameworkPoints(), treeSession.unspentFrameworkPoints(), upgradesInStorage,
                 upgradeBlock, List.copyOf(socketEntries));
     }
 
-    private HullFrameworkPanel.SocketEntry socketEntry(SocketType socketType) {
+    private HullUpgradePanel.SocketEntry socketEntry(SocketType socketType) {
         if (treeSession.isSocketTypeUnlocked(socketType)) {
             String itemIcon = null;
             for (FrameworkSlots.Slot slot : slots) {
@@ -346,16 +346,16 @@ final class FrameworkInspection {
                     itemIcon = slot.item().iconPath();
                 }
             }
-            return new HullFrameworkPanel.SocketEntry(socketType, HullFrameworkPanel.SocketState.UNLOCKED, null, itemIcon);
+            return new HullUpgradePanel.SocketEntry(socketType, HullUpgradePanel.SocketState.UNLOCKED, null, itemIcon);
         }
         String unmetRequirement = treeSession.unmetRequirement(socketType);
         if (unmetRequirement != null) {
-            return new HullFrameworkPanel.SocketEntry(socketType, HullFrameworkPanel.SocketState.RESTRICTED,
+            return new HullUpgradePanel.SocketEntry(socketType, HullUpgradePanel.SocketState.RESTRICTED,
                     HullUpgradeTooltip.requirementText(unmetRequirement), null);
         }
-        HullFrameworkPanel.SocketState state = treeSession.unspentFrameworkPoints() > 0 ? HullFrameworkPanel.SocketState.AVAILABLE
-                : HullFrameworkPanel.SocketState.NO_POINTS;
-        return new HullFrameworkPanel.SocketEntry(socketType, state, null, null);
+        HullUpgradePanel.SocketState state = treeSession.unspentFrameworkPoints() > 0 ? HullUpgradePanel.SocketState.AVAILABLE
+                : HullUpgradePanel.SocketState.NO_POINTS;
+        return new HullUpgradePanel.SocketEntry(socketType, state, null, null);
     }
 
     private int socketAt(float x, float y) {

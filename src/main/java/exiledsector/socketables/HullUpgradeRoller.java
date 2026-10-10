@@ -7,12 +7,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public final class HullFrameworkRoller {
+public final class HullUpgradeRoller {
 
     static final float TWO_SOCKET_SHARE = 0.7f;
     static final float THREE_SOCKET_SHARE = 0.2f;
 
-    private HullFrameworkRoller() {
+    private HullUpgradeRoller() {
     }
 
     public static int rollSocketCount(Random random) {
