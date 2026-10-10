@@ -10,7 +10,11 @@ import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
+import org.lazywizard.lazylib.MathUtils;
 import org.lwjgl.util.vector.Vector2f;
+
+import java.util.ArrayList;
+import java.util.List;
 
 abstract class SingleShotDrone implements DamageDealtModifier, AdvanceableListener {
 
@@ -29,11 +33,13 @@ abstract class SingleShotDrone implements DamageDealtModifier, AdvanceableListen
     private final Vector2f origin = new Vector2f();
     private boolean firing;
     private boolean shotSeen;
+    private boolean shotKept;
     private boolean removed;
     private boolean markersMirrored;
     private float firingSeconds;
     private float firedSeconds;
     private float idleSeconds;
+    private float aimFacing;
 
     protected SingleShotDrone(ShipAPI droneShip, SingleShotDrones<?> dronePool, String rangeMatchModId) {
         this.droneShip = droneShip;
@@ -116,6 +122,7 @@ abstract class SingleShotDrone implements DamageDealtModifier, AdvanceableListen
     void fire() {
         firing = true;
         shotSeen = false;
+        shotKept = false;
         firingSeconds = 0f;
         firedSeconds = 0f;
         aim();
@@ -137,6 +144,9 @@ abstract class SingleShotDrone implements DamageDealtModifier, AdvanceableListen
         tag(projectile);
         projectile.setSource(dronePool.firingShip());
         shotSeen = true;
+        if (firing && hasFired()) {
+            shotKept = true;
+        }
     }
 
     void park() {
@@ -146,6 +156,7 @@ abstract class SingleShotDrone implements DamageDealtModifier, AdvanceableListen
 
     void aimAlong(float facing, ShipAPI shipTarget, float mouseX, float mouseY) {
         park();
+        aimFacing = facing;
         droneShip.setFacing(facing);
         droneShip.setShipTarget(shipTarget);
         Vector2f mouseTarget = droneShip.getMouseTarget();
@@ -157,8 +168,8 @@ abstract class SingleShotDrone implements DamageDealtModifier, AdvanceableListen
 
     private void advanceFiring(float amount) {
         firingSeconds += amount;
-        boolean fired = droneWeapon.getChargeLevel() > 0f || droneWeapon.getCooldownRemaining() > 0f;
-        tagShots();
+        boolean fired = hasFired();
+        tagShots(fired);
         if (fired) {
             firedSeconds += amount;
         }
@@ -172,12 +183,49 @@ abstract class SingleShotDrone implements DamageDealtModifier, AdvanceableListen
         }
     }
 
-    private void tagShots() {
+    private boolean hasFired() {
+        return droneWeapon.getChargeLevel() > 0f || droneWeapon.getCooldownRemaining() > 0f;
+    }
+
+    private void tagShots(boolean fired) {
+        List<DamagingProjectileAPI> freshShots = null;
         for (DamagingProjectileAPI projectile : Global.getCombatEngine().getProjectiles()) {
             if (projectile.getWeapon() == droneWeapon && !isTagged(projectile)) {
-                handBack(projectile);
+                if (freshShots == null) {
+                    freshShots = new ArrayList<>();
+                }
+                freshShots.add(projectile);
             }
         }
+        if (freshShots == null) {
+            return;
+        }
+        if (!fired) {
+            freshShots.forEach(this::handBack);
+            return;
+        }
+        DamagingProjectileAPI keptShot = shotKept ? null : closestToAim(freshShots);
+        for (DamagingProjectileAPI projectile : freshShots) {
+            if (projectile == keptShot) {
+                handBack(projectile);
+            } else {
+                Global.getCombatEngine().removeEntity(projectile);
+            }
+        }
+        shotKept = true;
+    }
+
+    private DamagingProjectileAPI closestToAim(List<DamagingProjectileAPI> shots) {
+        DamagingProjectileAPI closest = null;
+        float closestTurn = Float.MAX_VALUE;
+        for (DamagingProjectileAPI shot : shots) {
+            float turn = Math.abs(MathUtils.getShortestRotation(aimFacing, shot.getFacing()));
+            if (turn < closestTurn) {
+                closestTurn = turn;
+                closest = shot;
+            }
+        }
+        return closest;
     }
 
     private void rearm() {
