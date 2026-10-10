@@ -16,6 +16,10 @@ public final class ShipAnchors {
     }
 
     static final Anchor CENTRE = new Anchor(0f, 0f);
+    static final float ARMOR_RAY_FORWARD = 0.35f;
+    static final float ARMOR_EDGE_INSET = 0.85f;
+    static final int PULL_IN_STEPS = 10;
+    private static final float PARALLEL_TOLERANCE = 1e-6f;
 
     private final Map<SocketType, Anchor> anchorsByType;
 
@@ -37,12 +41,25 @@ public final class ShipAnchors {
         anchors.put(SocketType.BRIDGE, new Anchor(frontExtent * 0.45f, 0f));
         anchors.put(SocketType.CREW_QUARTERS, new Anchor(frontExtent * 0.1f, halfBeam * 0.4f));
         anchors.put(SocketType.REACTOR, new Anchor(-rearExtent * 0.25f, 0f));
+        anchors.put(SocketType.ARMOR_PLATING, new Anchor(frontExtent * 0.3f, halfBeam * 0.85f));
         anchors.put(SocketType.PHASE_COIL, new Anchor(-rearExtent * 0.05f, -halfBeam * 0.35f));
         anchors.put(SocketType.ENGINE_ROOM, engineAnchor(visuals, rearExtent));
         anchors.put(SocketType.WEAPON_MOUNT, weaponAnchor(weaponSlots, frontExtent));
         anchors.put(SocketType.FLIGHT_DECK, launchBayAnchor(weaponSlots, halfBeam));
         anchors.put(SocketType.SHIELD_GENERATOR, shieldAnchor(hullSpec, frontExtent, halfBeam));
+        List<Anchor> outline = visuals.outline();
+        if (outline.size() >= 3) {
+            anchors.put(SocketType.ARMOR_PLATING, armorAnchor(outline, anchors.get(SocketType.ARMOR_PLATING)));
+            if (contains(outline, CENTRE)) {
+                anchors.replaceAll((socketType, anchor) -> socketType == SocketType.ARMOR_PLATING ? anchor : pullInside(outline, anchor));
+            }
+        }
         return new ShipAnchors(anchors);
+    }
+
+    static Anchor armorAnchor(List<Anchor> outline, Anchor fallback) {
+        Anchor armorEdge = rayExit(outline, ARMOR_RAY_FORWARD, 1f);
+        return armorEdge == null ? fallback : scaled(armorEdge, ARMOR_EDGE_INSET);
     }
 
     private static Anchor engineAnchor(FleetHullVisuals visuals, float rearExtent) {
@@ -95,6 +112,53 @@ public final class ShipAnchors {
             return new Anchor(shieldSpec.getCenterX(), shieldSpec.getCenterY());
         }
         return new Anchor(frontExtent * 0.15f, -halfBeam * 0.2f);
+    }
+
+    static boolean contains(List<Anchor> outline, Anchor point) {
+        boolean inside = false;
+        for (int i = 0, j = outline.size() - 1; i < outline.size(); j = i++) {
+            Anchor current = outline.get(i);
+            Anchor previous = outline.get(j);
+            boolean straddles = (current.left() > point.left()) != (previous.left() > point.left());
+            if (straddles && point.forward() < (previous.forward() - current.forward()) * (point.left() - current.left())
+                    / (previous.left() - current.left()) + current.forward()) {
+                inside = !inside;
+            }
+        }
+        return inside;
+    }
+
+    static Anchor rayExit(List<Anchor> outline, float directionForward, float directionLeft) {
+        float furthest = -1f;
+        for (int i = 0, j = outline.size() - 1; i < outline.size(); j = i++) {
+            Anchor start = outline.get(j);
+            float edgeForward = outline.get(i).forward() - start.forward();
+            float edgeLeft = outline.get(i).left() - start.left();
+            float denominator = directionForward * edgeLeft - directionLeft * edgeForward;
+            if (Math.abs(denominator) < PARALLEL_TOLERANCE) {
+                continue;
+            }
+            float rayDistance = (start.forward() * edgeLeft - start.left() * edgeForward) / denominator;
+            float edgeShare = (start.forward() * directionLeft - start.left() * directionForward) / denominator;
+            if (rayDistance > 0f && edgeShare >= 0f && edgeShare <= 1f) {
+                furthest = Math.max(furthest, rayDistance);
+            }
+        }
+        return furthest > 0f ? new Anchor(directionForward * furthest, directionLeft * furthest) : null;
+    }
+
+    static Anchor pullInside(List<Anchor> outline, Anchor anchor) {
+        for (int step = 0; step < PULL_IN_STEPS; step++) {
+            Anchor candidate = scaled(anchor, 1f - step / (float) PULL_IN_STEPS);
+            if (contains(outline, candidate)) {
+                return candidate;
+            }
+        }
+        return CENTRE;
+    }
+
+    private static Anchor scaled(Anchor anchor, float share) {
+        return new Anchor(anchor.forward() * share, anchor.left() * share);
     }
 
     private static Anchor anchorAt(Vector2f location) {
