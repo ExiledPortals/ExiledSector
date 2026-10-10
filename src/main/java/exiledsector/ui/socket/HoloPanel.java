@@ -15,6 +15,7 @@ import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
+import exiledsector.socketables.SocketMaterials;
 import exiledsector.socketables.SocketableCrafting;
 import exiledsector.socketables.SocketableDisassembly;
 import exiledsector.ui.SkillTreePanelStyle;
@@ -212,12 +213,16 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
         return fleet == null ? null : fleet.getCargo();
     }
 
+    static SocketMaterials playerMaterials() {
+        return SocketMaterials.forPlayer(playerCargo());
+    }
+
     private static void addPartsCount(TooltipMakerAPI element, float countRight) {
         CommoditySpecAPI partsSpec = Global.getSettings().getCommoditySpec(SocketableDisassembly.PARTS_COMMODITY_ID);
         if (partsSpec == null) {
             return;
         }
-        String countText = String.valueOf(SocketableCrafting.parts(playerCargo()));
+        String countText = String.valueOf(SocketableCrafting.parts(playerMaterials()));
         float countWidth = Global.getSettings().computeStringWidth(countText, Fonts.ORBITRON_12) + LINE_PAD;
         element.setParaFont(Fonts.ORBITRON_12);
         LabelAPI countLabel = element.addPara("%s", 0f, Misc.getTextColor(), Misc.getTextColor(), countText);

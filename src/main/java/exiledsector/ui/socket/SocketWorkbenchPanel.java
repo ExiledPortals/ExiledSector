@@ -1,7 +1,6 @@
 package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.Fonts;
@@ -14,6 +13,7 @@ import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.socketables.SocketCurrency;
 import exiledsector.socketables.SocketCustody;
+import exiledsector.socketables.SocketMaterials;
 import exiledsector.socketables.Socketable;
 import exiledsector.socketables.SocketableCrafting;
 import exiledsector.socketables.SocketableDefinition;
@@ -225,18 +225,15 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     }
 
     private boolean synthesise(Recipe recipe) {
-        CargoAPI cargo = playerCargo();
-        if (cargo == null) {
-            return false;
-        }
-        int ownedParts = SocketableCrafting.parts(cargo);
+        SocketMaterials materials = playerMaterials();
+        int ownedParts = SocketableCrafting.parts(materials);
         if (ownedParts < recipe.partsCost()) {
             showNotice(Translation.msg("ui.workbench.notice.notEnoughParts").arg("cost", recipe.partsCost()).arg("parts", ownedParts)
                     .arg("name", recipeName(recipe)).text());
             return false;
         }
         if (recipe.currency == null) {
-            Socketable created = SocketableCrafting.synthesiseCommon(cargo, SocketableStore.get(), craftingRandom);
+            Socketable created = SocketableCrafting.synthesiseCommon(materials, SocketableStore.get(), craftingRandom);
             if (created == null) {
                 return false;
             }
@@ -244,7 +241,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             socketFlair.restartLoad();
             noticeText = Translation.msg("ui.workbench.notice.synthesisedCommon").arg("name", created.name()).text();
         } else {
-            if (!SocketableCrafting.synthesise(recipe.currency, cargo)) {
+            if (!SocketableCrafting.synthesise(recipe.currency, materials)) {
                 return false;
             }
             noticeText = Translation.msg("ui.workbench.notice.synthesisedCurrency").arg("name", recipeName(recipe)).text();
@@ -256,11 +253,8 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     }
 
     private void use(SocketCurrency currency) {
-        CargoAPI cargo = playerCargo();
-        if (cargo == null) {
-            return;
-        }
-        if (SocketableCrafting.count(cargo, currency.commodityId()) < 1) {
+        SocketMaterials materials = playerMaterials();
+        if (materials.count(currency.commodityId()) < 1) {
             showNotice(Translation.msg("ui.workbench.notice.noneOwned").arg("name", commodityName(currency.commodityId())).text());
             return;
         }
@@ -278,7 +272,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             return;
         }
         String nameBefore = loadedSocketable.name();
-        Socketable result = SocketableCrafting.use(currency, loadedSocketable, cargo, SocketableStore.get(), craftingRandom, allowedUniques());
+        Socketable result = SocketableCrafting.use(currency, loadedSocketable, materials, SocketableStore.get(), craftingRandom, allowedUniques());
         if (result == null) {
             return;
         }
@@ -335,19 +329,19 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             panelRoot.removeComponent(recipesElement);
         }
         TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), tilesHeight(), false);
-        CargoAPI cargo = playerCargo();
+        SocketMaterials materials = playerMaterials();
         Recipe[] allRecipes = Recipe.values();
         float cellWidth = innerWidth() / TILE_COLUMNS;
         for (int i = 0; i < allRecipes.length; i++) {
             float tileLeft = (i % TILE_COLUMNS) * cellWidth;
             float tileTop = (i / TILE_COLUMNS) * (TILE_SIZE + TILE_GAP);
-            addTile(element, allRecipes[i], tileLeft, tileTop, cargo);
+            addTile(element, allRecipes[i], tileLeft, tileTop, materials);
         }
         panelRoot.addUIElement(element).inTL(PAD, tilesTop());
         recipesElement = element;
     }
 
-    private void addTile(TooltipMakerAPI element, Recipe recipe, float tileLeft, float tileTop, CargoAPI cargo) {
+    private void addTile(TooltipMakerAPI element, Recipe recipe, float tileLeft, float tileTop, SocketMaterials materials) {
         CustomPanelAPI tilePanel = Global.getSettings().createCustom(TILE_SIZE, TILE_SIZE, new WorkbenchTile(recipeIcons(recipe),
                 new WorkbenchTile.Listener() {
                     @Override
@@ -378,7 +372,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         if (recipe.currency == null) {
             return;
         }
-        int ownedCount = SocketableCrafting.count(cargo, recipe.currency.commodityId());
+        int ownedCount = materials.count(recipe.currency.commodityId());
         Color countColor = ownedCount > 0 ? Misc.getBrightPlayerColor() : Misc.getGrayColor();
         element.setParaFont(Fonts.ORBITRON_20AABOLD);
         LabelAPI countLabel = element.addPara("%s", 0f, countColor, countColor, String.valueOf(ownedCount));
@@ -421,7 +415,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             return List.of(synthesiseHint);
         }
         List<String> hints = new ArrayList<>();
-        int ownedCount = SocketableCrafting.count(playerCargo(), recipe.currency.commodityId());
+        int ownedCount = playerMaterials().count(recipe.currency.commodityId());
         hints.add(Translation.msg("ui.workbench.tile.inStorage").arg("count", ownedCount).text());
         if (ownedCount == 0) {
             hints.add(Translation.text("ui.workbench.tile.noneOwned"));

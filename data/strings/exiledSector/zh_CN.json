@@ -634,6 +634,9 @@
     "ui.socketStorage.rarity.rare": "稀有",
     "ui.socketStorage.rarity.unique": "独特",
     "ui.socketStorage.moved.other": "已将{count}件物品从货舱移入仓库。",
+    "ui.socketStorage.materialsStored.other": "已将{count}个插槽组件和内核从货舱移入仓库。",
+    "ui.socketStorage.materialsReturned.other": "已将仓库中的{count}个插槽组件和内核退回货舱。",
+    "ui.socketStorage.noticeSeparator": "",
     "ui.socketStorage.empty": "仓库中还没有物品。你找到的子程序和框架物品会出现在这里。",
     "ui.socketStorage.noMatches": "没有符合筛选条件的物品。",
     "ui.socketStorage.placingHint": "点击技能树上已分配的子程序插槽来安装{name}。按Esc取消。",
@@ -866,6 +869,8 @@
     "settings.socketStorage.otherModDrops.tooltip": "允许插槽物品从其他受支持模组添加的打捞地点掉落，例如Random Assortment of Things的深渊地点或Industrial Evolution的空间站。原版地点始终可以掉落。",
     "settings.socketStorage.battleParts.name": "每点敌方部署点获得的插槽组件",
     "settings.socketStorage.battleParts.tooltip": "战斗胜利后，每摧毁或瘫痪1点敌方部署点，战利品中增加的插槽组件数量。与舰船经验使用相同的战斗难度加成。设为0.05时，击败200点部署点在难度加成前获得10个组件。0则关闭。",
+    "settings.socketStorage.storeMaterials.name": "å°ç»ä»¶ååæ ¸å­å¥ææ§½ä»åº",
+    "settings.socketStorage.storeMaterials.tooltip": "å¼å¯åï¼æå¼ææ§½ä»åºæ¶ä¼å°è´§è±ä¸­çææææ§½ç»ä»¶ååæ ¸ç§»å¥ææ§½ä»åºï¼ä¸åå ç¨è´§è±ç©ºé´ï¼å¨å·¥ä½å°å¶ä½ææè§£è·å¾çç»ä»¶ååæ ¸ä¹ä¼ç´æ¥å­å¥å¶ä¸­ãå·¥ä½å°å¯ä½¿ç¨ä¸¤å¤çåºå­ãå³é­åï¼ä¸æ¬¡æå¼ææ§½ä»åºæ¶ä¼å°å¶éåè´§è±ã",
     "settings.opCost.header": "技能节点装配点消耗",
     "settings.opCost.about": "每个已分配的技能节点按船体尺寸消耗的装配点。",
     "settings.opCost.frigate": "护卫舰每节点装配点",

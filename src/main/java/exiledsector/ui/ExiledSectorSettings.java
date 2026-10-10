@@ -2,6 +2,7 @@ package exiledsector.ui;
 
 import exiledsector.compat.SalvageSiteCompat;
 import exiledsector.effects.NpcBonusScale;
+import exiledsector.socketables.SocketMaterials;
 import exiledsector.socketables.SocketableDrops;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.LanguageSetting;
@@ -68,6 +69,9 @@ public final class ExiledSectorSettings {
         SettingsCreator.addDouble(MOD_ID, SocketableDrops.BATTLE_PARTS_FIELD_ID,
                 Translation.text("settings.socketStorage.battleParts.name"), Translation.text("settings.socketStorage.battleParts.tooltip"),
                 SocketableDrops.DEFAULT_BATTLE_PARTS_PER_DP, 0.0, 2.0, MAIN_TAB);
+        SettingsCreator.addBoolean(MOD_ID, SocketMaterials.STORE_FIELD_ID,
+                Translation.text("settings.socketStorage.storeMaterials.name"), Translation.text("settings.socketStorage.storeMaterials.tooltip"),
+                SocketMaterials.DEFAULT_STORE, MAIN_TAB);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_opCostHeader", Translation.text("settings.opCost.header"), MAIN_TAB);
         SettingsCreator.addText(MOD_ID, "exiledSector_opCostAbout", Translation.text("settings.opCost.about"), MAIN_TAB);

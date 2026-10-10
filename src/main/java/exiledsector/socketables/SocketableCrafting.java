@@ -1,7 +1,5 @@
 package exiledsector.socketables;
 
-import com.fs.starfarer.api.campaign.CargoAPI;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -19,26 +17,21 @@ public final class SocketableCrafting {
         return SocketCraftingCosts.cost(SocketCraftingCosts.COMMON_SUBROUTINE, DEFAULT_COMMON_SYNTHESIS_PARTS);
     }
 
-    public static int count(CargoAPI cargo, String commodityId) {
-        return cargo == null ? 0 : Math.round(cargo.getCommodityQuantity(commodityId));
+    public static int parts(SocketMaterials materials) {
+        return materials.count(SocketableDisassembly.PARTS_COMMODITY_ID);
     }
 
-    public static int parts(CargoAPI cargo) {
-        return count(cargo, SocketableDisassembly.PARTS_COMMODITY_ID);
-    }
-
-    public static boolean synthesise(SocketCurrency currency, CargoAPI cargo) {
-        if (cargo == null || parts(cargo) < currency.partsCost()) {
+    public static boolean synthesise(SocketCurrency currency, SocketMaterials materials) {
+        if (!materials.take(SocketableDisassembly.PARTS_COMMODITY_ID, currency.partsCost())) {
             return false;
         }
-        cargo.removeCommodity(SocketableDisassembly.PARTS_COMMODITY_ID, currency.partsCost());
-        cargo.addCommodity(currency.commodityId(), 1);
+        materials.add(currency.commodityId(), 1);
         return true;
     }
 
-    public static Socketable synthesiseCommon(CargoAPI cargo, SocketableStore store, Random random) {
+    public static Socketable synthesiseCommon(SocketMaterials materials, SocketableStore store, Random random) {
         int partsCost = commonSynthesisParts();
-        if (cargo == null || parts(cargo) < partsCost) {
+        if (parts(materials) < partsCost) {
             return null;
         }
         SocketableDefinition definition = SocketableDrops.pickBasic(random);
@@ -50,7 +43,7 @@ public final class SocketableCrafting {
         Socketable created = store.add(new SocketableItemData(definition.id(), seed, effects,
                 SocketableNames.freeze(definition, seed, effects)));
         if (created != null) {
-            cargo.removeCommodity(SocketableDisassembly.PARTS_COMMODITY_ID, partsCost);
+            materials.take(SocketableDisassembly.PARTS_COMMODITY_ID, partsCost);
         }
         return created;
     }
@@ -67,9 +60,9 @@ public final class SocketableCrafting {
         };
     }
 
-    public static Socketable use(SocketCurrency currency, Socketable socketable, CargoAPI cargo, SocketableStore store, Random random,
+    public static Socketable use(SocketCurrency currency, Socketable socketable, SocketMaterials materials, SocketableStore store, Random random,
                                  Predicate<SocketableDefinition> allowedUniques) {
-        if (count(cargo, currency.commodityId()) < 1 || !canUse(currency, socketable, allowedUniques)) {
+        if (materials.count(currency.commodityId()) < 1 || !canUse(currency, socketable, allowedUniques)) {
             return null;
         }
         Socketable craftedSocketable = switch (currency) {
@@ -78,7 +71,7 @@ public final class SocketableCrafting {
             case TRANSPOSITION -> transpose(store, socketable, random, allowedUniques);
         };
         if (craftedSocketable != null) {
-            cargo.removeCommodity(currency.commodityId(), 1);
+            materials.take(currency.commodityId(), 1);
         }
         return craftedSocketable;
     }

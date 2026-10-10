@@ -53,7 +53,7 @@ class SocketableDisassemblyTest {
         Socketable socketable = store.add(SocketableDefinitions.get(SocketableFixtures.MILITARY), 7L);
         int expected = socketable.rarity().disassemblyParts();
 
-        assertEquals(expected, SocketableDisassembly.disassemble(socketable, cargo, store, ships));
+        assertEquals(expected, SocketableDisassembly.disassemble(socketable, SocketMaterials.cargoOnly(cargo), store, ships));
 
         assertNull(store.find(socketable.id()));
         verify(cargo).addCommodity(SocketableDisassembly.PARTS_COMMODITY_ID, expected);
@@ -70,7 +70,7 @@ class SocketableDisassemblyTest {
         data.socketItem("socket", socketable.id());
         ships.put("ship-a", data);
 
-        assertEquals(0, SocketableDisassembly.disassemble(socketable, cargo, store, ships));
+        assertEquals(0, SocketableDisassembly.disassemble(socketable, SocketMaterials.cargoOnly(cargo), store, ships));
 
         assertNotNull(store.find(socketable.id()));
         verify(cargo, never()).addCommodity(anyString(), anyFloat());
@@ -79,8 +79,8 @@ class SocketableDisassemblyTest {
     @Test
     void anItemNoLongerInStorageIsNotPaidOutTwice() {
         Socketable socketable = store.add(SocketableDefinitions.get(SocketableFixtures.MILITARY), 7L);
-        SocketableDisassembly.disassemble(socketable, cargo, store, ships);
+        SocketableDisassembly.disassemble(socketable, SocketMaterials.cargoOnly(cargo), store, ships);
 
-        assertEquals(0, SocketableDisassembly.disassemble(socketable, cargo, store, ships));
+        assertEquals(0, SocketableDisassembly.disassemble(socketable, SocketMaterials.cargoOnly(cargo), store, ships));
     }
 }

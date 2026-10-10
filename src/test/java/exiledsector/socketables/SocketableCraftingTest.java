@@ -146,7 +146,7 @@ class SocketableCraftingTest {
         assertTrue(SocketableCrafting.canUse(SocketCurrency.RECALIBRATION, decimal, definition -> true));
         assertFalse(SocketableCrafting.canUse(SocketCurrency.RECALIBRATION, fixed, definition -> true));
         owns(SocketCurrency.RECALIBRATION.commodityId(), 1f);
-        assertNull(SocketableCrafting.use(SocketCurrency.RECALIBRATION, fixed, cargo, store, new Random(1L), definition -> true));
+        assertNull(SocketableCrafting.use(SocketCurrency.RECALIBRATION, fixed, SocketMaterials.cargoOnly(cargo), store, new Random(1L), definition -> true));
         verify(cargo, never()).removeCommodity(anyString(), anyFloat());
     }
 
@@ -177,7 +177,7 @@ class SocketableCraftingTest {
     void synthesisingACommonSpendsPartsAndStoresAOnePrefixOneSuffixSubroutine() {
         owns(PARTS, 12f);
 
-        Socketable created = SocketableCrafting.synthesiseCommon(cargo, store, new Random(4L));
+        Socketable created = SocketableCrafting.synthesiseCommon(SocketMaterials.cargoOnly(cargo), store, new Random(4L));
 
         assertNotNull(created);
         assertEquals(SocketableRarity.COMMON, created.rarity());
@@ -192,8 +192,8 @@ class SocketableCraftingTest {
     void synthesisNeedsEnoughParts() {
         owns(PARTS, 2f);
 
-        assertNull(SocketableCrafting.synthesiseCommon(cargo, store, new Random(4L)));
-        assertFalse(SocketableCrafting.synthesise(SocketCurrency.AUGMENTATION, cargo));
+        assertNull(SocketableCrafting.synthesiseCommon(SocketMaterials.cargoOnly(cargo), store, new Random(4L)));
+        assertFalse(SocketableCrafting.synthesise(SocketCurrency.AUGMENTATION, SocketMaterials.cargoOnly(cargo)));
         assertTrue(store.owned().isEmpty());
         verify(cargo, never()).removeCommodity(anyString(), anyFloat());
         verify(cargo, never()).addCommodity(anyString(), anyFloat());
@@ -203,7 +203,7 @@ class SocketableCraftingTest {
     void synthesisingACurrencyTradesItsPartsCostForOneCurrency() {
         owns(PARTS, 10f);
 
-        assertTrue(SocketableCrafting.synthesise(SocketCurrency.AUGMENTATION, cargo));
+        assertTrue(SocketableCrafting.synthesise(SocketCurrency.AUGMENTATION, SocketMaterials.cargoOnly(cargo)));
 
         verify(cargo).removeCommodity(PARTS, SocketCurrency.AUGMENTATION.partsCost());
         verify(cargo).addCommodity(SocketCurrency.AUGMENTATION.commodityId(), 1);
@@ -214,16 +214,16 @@ class SocketableCraftingTest {
         Socketable socketable = common();
         String recalibration = SocketCurrency.RECALIBRATION.commodityId();
         owns(recalibration, 0f);
-        assertNull(SocketableCrafting.use(SocketCurrency.RECALIBRATION, socketable, cargo, store, new Random(1L), definition -> true));
+        assertNull(SocketableCrafting.use(SocketCurrency.RECALIBRATION, socketable, SocketMaterials.cargoOnly(cargo), store, new Random(1L), definition -> true));
         verify(cargo, never()).removeCommodity(anyString(), anyFloat());
 
         owns(recalibration, 2f);
-        assertSame(socketable, SocketableCrafting.use(SocketCurrency.RECALIBRATION, socketable, cargo, store, new Random(1L),
+        assertSame(socketable, SocketableCrafting.use(SocketCurrency.RECALIBRATION, socketable, SocketMaterials.cargoOnly(cargo), store, new Random(1L),
                 definition -> true));
         verify(cargo).removeCommodity(recalibration, 1);
 
         owns(SocketCurrency.TRANSPOSITION.commodityId(), 1f);
-        assertNull(SocketableCrafting.use(SocketCurrency.TRANSPOSITION, socketable, cargo, store, new Random(1L), definition -> true));
+        assertNull(SocketableCrafting.use(SocketCurrency.TRANSPOSITION, socketable, SocketMaterials.cargoOnly(cargo), store, new Random(1L), definition -> true));
         assertNotEquals(0, socketable.effects().size());
     }
 

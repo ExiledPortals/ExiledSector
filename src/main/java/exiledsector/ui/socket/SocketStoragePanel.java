@@ -2,7 +2,6 @@ package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.ButtonAPI;
@@ -17,6 +16,7 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.socketables.SocketCustody;
+import exiledsector.socketables.SocketMaterials;
 import exiledsector.socketables.SocketType;
 import exiledsector.socketables.Socketable;
 import exiledsector.socketables.SocketableDisassembly;
@@ -108,6 +108,7 @@ public final class SocketStoragePanel extends HoloPanel {
     private boolean disassemblyMode;
     private final Set<Socketable> markedForDisassembly = new LinkedHashSet<>();
     private int movedFromCargo;
+    private String materialsNotice;
     private String disassembledNotice;
     private final SocketableHoverTooltip hoverTooltip;
     private final SocketType kindFilter;
@@ -130,6 +131,7 @@ public final class SocketStoragePanel extends HoloPanel {
                                           Function<Socketable, String> installedShipLookup, Listener storageListener, SocketType kindFilter) {
         SocketStoragePanel storagePanel = new SocketStoragePanel(hostPanel, installedShipLookup, storageListener, kindFilter);
         storagePanel.movedFromCargo = absorbPlayerCargo();
+        storagePanel.materialsNotice = settleMaterials();
         storagePanel.attach(panelLeft, panelTop, WIDTH, panelHeight);
         return storagePanel;
     }
@@ -137,6 +139,25 @@ public final class SocketStoragePanel extends HoloPanel {
     private static int absorbPlayerCargo() {
         CargoAPI cargo = playerCargo();
         return cargo == null ? 0 : SocketableStore.get().absorbFrom(cargo);
+    }
+
+    private String cargoNotice() {
+        String movedText = movedFromCargo > 0
+                ? Translation.msg("ui.socketStorage.moved").count(movedFromCargo).arg("count", movedFromCargo).text() : null;
+        if (movedText == null || materialsNotice == null) {
+            return movedText == null ? materialsNotice : movedText;
+        }
+        return movedText + Translation.text("ui.socketStorage.noticeSeparator") + materialsNotice;
+    }
+
+    private static String settleMaterials() {
+        SocketMaterials materials = playerMaterials();
+        int movedCount = materials.settle();
+        if (movedCount <= 0) {
+            return null;
+        }
+        String key = materials.isStoring() ? "ui.socketStorage.materialsStored" : "ui.socketStorage.materialsReturned";
+        return Translation.msg(key).count(movedCount).arg("count", movedCount).text();
     }
 
     @Override
@@ -510,9 +531,8 @@ public final class SocketStoragePanel extends HoloPanel {
             newNotice.addPara("%s", 0f, Misc.getPositiveHighlightColor(), Misc.getPositiveHighlightColor(), targetHint);
         } else if (disassembledNotice != null) {
             newNotice.addPara("%s", 0f, Misc.getPositiveHighlightColor(), Misc.getPositiveHighlightColor(), disassembledNotice);
-        } else if (movedFromCargo > 0) {
-            newNotice.addPara("%s", 0f, Misc.getPositiveHighlightColor(), Misc.getPositiveHighlightColor(),
-                    Translation.msg("ui.socketStorage.moved").count(movedFromCargo).arg("count", movedFromCargo).text());
+        } else if (movedFromCargo > 0 || materialsNotice != null) {
+            newNotice.addPara("%s", 0f, Misc.getPositiveHighlightColor(), Misc.getPositiveHighlightColor(), cargoNotice());
         }
         panelRoot.addUIElement(newNotice).inTL(PAD, gridTop - NOTICE_HEIGHT);
         noticeElement = newNotice;
@@ -590,13 +610,12 @@ public final class SocketStoragePanel extends HoloPanel {
     }
 
     private void disassemble(List<Socketable> targets) {
-        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
-        CargoAPI cargo = playerFleet == null ? null : playerFleet.getCargo();
+        SocketMaterials materials = playerMaterials();
         int totalParts = 0;
         int disassembledCount = 0;
         Socketable lastDisassembled = null;
         for (Socketable socketable : targets) {
-            int gainedParts = SocketableDisassembly.disassemble(socketable, cargo);
+            int gainedParts = SocketableDisassembly.disassemble(socketable, materials);
             if (gainedParts > 0) {
                 totalParts += gainedParts;
                 disassembledCount++;

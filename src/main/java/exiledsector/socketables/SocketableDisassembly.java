@@ -1,6 +1,5 @@
 package exiledsector.socketables;
 
-import com.fs.starfarer.api.campaign.CargoAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 
@@ -13,16 +12,16 @@ public final class SocketableDisassembly {
     private SocketableDisassembly() {
     }
 
-    public static int disassemble(Socketable socketable, CargoAPI cargo) {
-        return disassemble(socketable, cargo, SocketableStore.get(), ShipSkillDataManager.all());
+    public static int disassemble(Socketable socketable, SocketMaterials materials) {
+        return disassemble(socketable, materials, SocketableStore.get(), ShipSkillDataManager.all());
     }
 
-    static int disassemble(Socketable socketable, CargoAPI cargo, SocketableStore store, Map<String, ShipSkillData> shipDataById) {
-        if (socketable == null || cargo == null || SocketCustody.isInstalled(shipDataById, socketable) || !store.remove(socketable)) {
+    static int disassemble(Socketable socketable, SocketMaterials materials, SocketableStore store, Map<String, ShipSkillData> shipDataById) {
+        if (socketable == null || SocketCustody.isInstalled(shipDataById, socketable) || !store.remove(socketable)) {
             return 0;
         }
         int partsGained = socketable.rarity().disassemblyParts();
-        cargo.addCommodity(PARTS_COMMODITY_ID, partsGained);
+        materials.add(PARTS_COMMODITY_ID, partsGained);
         return partsGained;
     }
 }
