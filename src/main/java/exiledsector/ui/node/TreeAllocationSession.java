@@ -104,6 +104,10 @@ public final class TreeAllocationSession {
     }
 
     public void advance(float amount) {
+        if (allocator.applyPendingPhantomConflicts()) {
+            refreshAfterAllocation();
+            SkillTreeSounds.refused();
+        }
         rootChoice.advance(amount);
         advanceAutoAllocate(amount);
         advanceRespec(amount);

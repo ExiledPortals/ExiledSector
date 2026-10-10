@@ -523,7 +523,14 @@
 				"Cheat_Maya7s",
 				"quantum_damper7s",
 				"singularity_hullmod7s",
-				"cheat_tempestas7s"
+				"cheat_tempestas7s",
+				"csp_cetanframe",
+				"gr_GhostDesign",
+				"gr_NunkiCR",
+				"necro_scavenger7s",
+				"ashesofohm_domainmachinerymod",
+				"rat_exogrid_overload",
+				"ugh_antiterminalbreakers"
 			],
 			"phantomHullMods": [
 				"safetyoverrides"

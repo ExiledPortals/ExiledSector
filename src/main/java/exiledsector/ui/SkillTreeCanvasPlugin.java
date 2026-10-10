@@ -8,6 +8,7 @@ import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import exiledsector.effects.OpReserveParity;
+import exiledsector.effects.PhantomConflictWatch;
 import exiledsector.effects.ShipTreeSync;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillType;
@@ -61,6 +62,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     public SkillTreeCanvasPlugin(FleetMemberAPI member, ShipVariantAPI variant, float shipCardHeight, BaseRefitButton refitButton,
                                  CustomPanelAPI hostPanel) {
         OpReserveParity.warnIfOutOfSync(member, variant, "before the skill tree re-synced it");
+        if (member != null) {
+            PhantomConflictWatch.applyPendingReverts(member.getId());
+        }
         if (ShipTreeSync.memberChanged(member, variant) && refitButton != null) {
             refitButton.refreshVariant();
         }

@@ -206,6 +206,51 @@ Phantoms are hidden from the refit screen's installed hull mod list and from the
 entries. Hull mods with fleet-wide effects (High Resolution Sensors, Phase Field) can't be wrapped and
 so are never phantoms. Phantoms for another mod's hull mods only activate when that mod is installed.
 
+## Phantom hull mod conflicts
+
+Because a phantom is the real hull mod, other mods' rules about that hull mod apply to it. Three layers
+keep a node and a hull mod that can't coexist from both ending up on a ship. First, a node's
+`exclusiveHullMods` list names known conflicts: the node is refused while the ship has one, and if one
+turns up later while the node is allocated, `HullModConflictResolver` removes it with the skill conflict
+warning. Second, most conflicting hull mods refuse themselves in `isApplicableToShip` when they see the
+other hull mod, and they see the phantom, so the refit screen greys them out with their own reason.
+Third, a hull mod that strips the phantom through MagicLib's `MagicIncompatibleHullmods` leaves a
+`[removed, cause]` record; the resolver reads it, removes the cause instead and puts the phantom back.
+
+That still misses hull mods that can't be removed, mostly hidden hull mods built into one mod's hulls
+(Cetan Frame, Necro Scavenger and others), and hull mods that strip with a plain `removeMod`. MagicLib
+keeps no list of incompatibilities to read ahead of time; each mod calls it from its own hull mod code
+while the ship is built. So these conflicts are learned the first time they happen.
+`PhantomConflictWatch.inspect` runs at the end of both stats passes in `SkillTreeHullMod`, which is kept
+last, so every other hull mod has already run. A phantom that still carries its tag but is missing from
+the variant was stripped. The cause is MagicLib's record when there is one; otherwise it is found by
+elimination over the remaining hull mods, skipping vanilla ones (effect class in
+`com.fs.starfarer.api.impl.hullmods`), the tree's own and anything the tree placed. A removable cause is
+left to the resolver. A single fixed cause (built in, permanent or an S-mod) is learned as that hull mod.
+Several fixed suspects are learned as the whole hull, keyed by base hull id. If a removable modded hull
+mod could be the culprit, nothing is learned, so one wrong guess can't block a node everywhere.
+
+`LearnedPhantomConflicts` keeps what was learned in `exiledSector_learnedHullModConflicts.json` in
+Starsector's shared common folder, so a conflict found once applies to every save. It is read once at
+startup, when entries for hull mods or hulls that are no longer loaded are dropped, and written only
+when something new is learned. From then on `ShipTreeSync` stops placing that phantom on ships with the
+conflict, which ends the tug-of-war at once, and `NodeEligibility` refuses the node there with
+`LEARNED_CONFLICT`, naming the hull mod or the hull's built-in systems.
+
+On a player ship the node that placed the phantom is also removed, together with every node that
+depended on it (`RespecPlan`), and refunded the same way a respec would refund it, with a campaign
+message naming the cause. The removal is queued rather than done inside the hull mod callback, and
+applied by the open tree panel, when the panel next opens, or by `SkillTreeInstaller` once the game is
+unpaused. The ship is removed even in the unclear case where nothing is learned. NPC ships help teach
+the table but are never changed. None of this polls: detection only reads the variant during stats
+passes the game already runs, the tree check is one lookup per node per snapshot, and the queue costs a
+single flag read per frame.
+
+A conflict built into a hull that only strips after the ship is created is found when the refit
+preview rebuilds after the node is allocated, so the first allocation on such a hull is refunded at
+once and the node is refused there afterwards. A learned entry stays until its hull mod or hull is no
+longer loaded, even if a later version of that mod drops the conflict.
+
 ## Generated NPC trees
 
 NPC trees are generated per ship by `NpcSkillTreeBuilder.generate`, seeded from the sector seed, fleet id

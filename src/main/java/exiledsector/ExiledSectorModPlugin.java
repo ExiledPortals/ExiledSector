@@ -29,6 +29,7 @@ import exiledsector.persistence.OpSpentSlotManager;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
 import exiledsector.skills.FrameworkSlots;
+import exiledsector.skills.LearnedPhantomConflicts;
 import exiledsector.skills.NodeReplacements;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
@@ -84,6 +85,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         SkillTree.load();
         SkillTree.applyDisabledRegions(AreaToggles.disabledRegions());
         PhantomHullMods.install(phantomHullModIds());
+        LearnedPhantomConflicts.load();
         CsvIdList.loadAll();
         NpcFactionVolumes.load();
         SocketableDefinitions.load();

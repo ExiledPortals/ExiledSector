@@ -30,6 +30,9 @@ public class SkillTreeInstaller implements EveryFrameScript {
         if (!syncedSinceLoad || passPending && secondsSinceChangingPass >= MIN_SECONDS_AFTER_A_CHANGING_PASS) {
             syncPlayerFleet();
         }
+        if (PhantomConflictWatch.hasPendingReverts()) {
+            PhantomConflictWatch.applyPendingReverts();
+        }
         FleetWideEffects.recomputeExtendedPhaseFieldIfStale();
     }
 

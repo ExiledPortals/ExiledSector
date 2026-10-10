@@ -14,6 +14,7 @@ import exiledsector.compat.SecondInCommandCompat;
 import exiledsector.effects.FighterBayOverflow;
 import exiledsector.i18n.I18n;
 import exiledsector.effects.OpReserveParity;
+import exiledsector.effects.PhantomConflictWatch;
 import exiledsector.effects.ShipTreeSync;
 import exiledsector.i18n.Translation;
 import exiledsector.persistence.ShipSkillDataManager;
@@ -355,6 +356,14 @@ final class NodeAllocator {
         return RespecPlan.of(data(), SkillTree.topology(), satisfiedRootId(), node);
     }
 
+    boolean applyPendingPhantomConflicts() {
+        if (!PhantomConflictWatch.hasPendingReverts() || !PhantomConflictWatch.applyPendingReverts(fleetMember.getId())) {
+            return false;
+        }
+        refreshShipStats();
+        return true;
+    }
+
     private void refreshShipStats() {
         statsRevision++;
         ShipTreeSync.memberChanged(fleetMember, shipVariant);
@@ -453,6 +462,8 @@ final class NodeAllocator {
                     ? Translation.msg("node.block.hullModInstalled").arg("hullmod", HullModNames.displayName(block.detail())).text()
                     : Translation.msg("node.block.deactivatedSMod").arg("hullmod", HullModNames.displayName(block.detail()))
                             .arg("skill", bestOfTheBestName()).text();
+            case LEARNED_CONFLICT -> block.detail() == null ? Translation.text("node.block.learnedHullConflict")
+                    : Translation.msg("node.block.learnedConflict").arg("hullmod", HullModNames.displayName(block.detail())).text();
             case TYPE_CONFLICT -> Translation.msg("node.block.typeAllocated").arg("node", block.conflictingType().getDisplayName()).text();
             case EFFECT_BLOCK -> block.detail();
             case ITEM_COST -> Translation.msg("node.block.itemCost").arg("quantity", block.itemCost().formattedQuantity())

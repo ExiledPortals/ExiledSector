@@ -101,7 +101,8 @@ public final class ShipTreeSync {
             SkillDataResolver.syncShipTag(member, variant);
             OpReserveHullMods.sync(member, variant);
         }
-        boolean phantomsChanged = PhantomInstallSync.sync(phantomHullModIds, variant);
+        PhantomConflictWatch.inspect(member, variant, phantomHullModIds, !isNpcTree);
+        boolean phantomsChanged = PhantomInstallSync.sync(PhantomConflictWatch.withoutLearnedConflicts(phantomHullModIds, variant), variant);
         if (isNpcTree) {
             HullModConflictResolver.removeHullModsThatTriedToStripAPhantom(allocatedNodes, variant, false);
         } else {

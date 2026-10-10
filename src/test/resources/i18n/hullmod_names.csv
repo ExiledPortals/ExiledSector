@@ -9,6 +9,7 @@ advancedcore,Advanced Targeting Core
 advancedoptics,Advanced Optics
 advancedshieldemitter,Accelerated Shields
 armoredweapons,Armored Weapon Mounts
+ashesofohm_domainmachinerymod,Domain Machinery
 attackmode7s,Extra Propulsion Systems
 augmentedengines,Augmented Drive Field
 autorepair,Automated Repair Unit
@@ -20,6 +21,7 @@ chasemode7s,Prototype Core
 cheat_tempestas7s,Pristine Condition
 converted_fighterbay,Converted Fighter Bay
 converted_hangar,Converted Hangar
+csp_cetanframe,Cetan Frame
 dedicated_targeting_core,Dedicated Targeting Core
 defensemode7s,Robust Flux Reactor
 defensive_targeting_array,Defensive Targeting Array
@@ -36,6 +38,8 @@ fluxbreakers,Resistant Flux Conduits
 force_field7s,Repulse-Field
 frontemitter,Shield Conversion - Front
 frontshield,Makeshift Shield Generator
+gr_GhostDesign,Ultimate Design
+gr_NunkiCR,Invasive Timefield
 ground_support,Ground Support Package
 guerrilla_overhaul7s,Guerrilla Overhaul
 hardened_subsystems,Hardened Subsystems
@@ -50,6 +54,7 @@ militarized_subsystems,Militarized Subsystems
 missile_autoloader,Missile Autoloader
 missleracks,Expanded Missile Racks
 nav_relay,Nav Relay
+necro_scavenger7s,Necro Scavenger
 neural_interface,Neural Interface
 nskr_absorption,ABSORB System
 nskr_acoils,High-Energy Weapon Systems
@@ -63,6 +68,7 @@ phase_anchor,Phase Anchor
 phasefield,Phase Field
 pointdefenseai,Integrated Point Defense AI
 quantum_damper7s,Quantum Damper
+rat_exogrid_overload,Exogrid Overload
 recovery_shuttles,Recovery Shuttles
 reinforcedhull,Reinforced Bulkheads
 resonance7s,Illusia Resonance
@@ -79,4 +85,5 @@ tahlan_silberherz_minor,Silberherz Subcore
 targetingunit,Integrated Targeting Unit
 turretgyros,Advanced Turret Gyros
 uaf_special_edge_capacitor_retrofit,Edge Capacitors Retrofit
+ugh_antiterminalbreakers,Anti-Terminal Reactive Breakers
 unstable_injector,Unstable Injector

@@ -13,8 +13,8 @@ import java.util.function.ToDoubleFunction;
 public final class NodeEligibility {
 
     public enum Kind {
-        LOCKED, INVALID_OPTION, WRONG_HULL_SIZE, UNMET_HULL_REQUIREMENT, UNMET_SHIP_REQUIREMENT, HULL_MOD_CONFLICT, TYPE_CONFLICT,
-        EFFECT_BLOCK, ITEM_COST
+        LOCKED, INVALID_OPTION, WRONG_HULL_SIZE, UNMET_HULL_REQUIREMENT, UNMET_SHIP_REQUIREMENT, HULL_MOD_CONFLICT, LEARNED_CONFLICT,
+        TYPE_CONFLICT, EFFECT_BLOCK, ITEM_COST
     }
 
     public enum OptionProblem {
@@ -86,6 +86,13 @@ public final class NodeEligibility {
         for (String hullModId : candidate.exclusiveHullModIds()) {
             if (shipFacts.hasHullMod().test(hullModId)) {
                 return new Block(Kind.HULL_MOD_CONFLICT, hullModId, null);
+            }
+        }
+        for (String phantomHullModId : candidate.effectiveType().getPhantomHullModIds()) {
+            LearnedPhantomConflicts.Conflict conflict = LearnedPhantomConflicts.conflictFor(phantomHullModId, shipFacts.baseHullId(),
+                    shipFacts.hasHullMod());
+            if (conflict != null) {
+                return new Block(Kind.LEARNED_CONFLICT, conflict.hullModId(), null);
             }
         }
         for (AllocatedNode existing : context.allocated()) {
