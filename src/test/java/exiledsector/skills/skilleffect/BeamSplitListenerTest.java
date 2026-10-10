@@ -24,11 +24,14 @@ import org.mockito.Mockito;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyFloat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -140,5 +143,38 @@ class BeamSplitListenerTest {
         new BeamSplitListener(firing).modifyDamageDealt(beamFrom(simulatedWeapon()), primary, tick(true), new Vector2f(100f, 0f), true);
 
         verify(flux, never()).setHardFlux(anyFloat());
+    }
+
+    @Test
+    void fightersAreNeverChosenAsSplitTargets() {
+        ShipAPI firing = shipAt(0f, 0);
+        when(firing.getMutableStats().getDynamic().getValue(BeamSplitListener.TARGETS_KEY, 0f)).thenReturn(1f);
+        ShipAPI primary = shipAt(100f, 1);
+        ShipAPI fighter = shipAt(120f, 1);
+        when(fighter.isFighter()).thenReturn(true);
+        ShipAPI splitTarget = shipAt(300f, 1);
+        ships.addAll(List.of(firing, primary, fighter, splitTarget));
+        splitTargetFlux(splitTarget, 100f, 150f, new boolean[1]);
+
+        new BeamSplitListener(firing).modifyDamageDealt(beamFrom(simulatedWeapon()), primary, tick(false), new Vector2f(100f, 0f), true);
+
+        verify(engine).applyDamage(any(), eq(splitTarget), any(), anyFloat(), any(), anyFloat(), anyBoolean(), anyBoolean(), any(), anyBoolean());
+        verify(engine, never()).applyDamage(any(), eq(fighter), any(), anyFloat(), any(), anyFloat(), anyBoolean(), anyBoolean(), any(), anyBoolean());
+    }
+
+    @Test
+    void aBeamWithOnlyFightersNearbyDoesNotSplit() {
+        ShipAPI firing = shipAt(0f, 0);
+        when(firing.getMutableStats().getDynamic().getValue(BeamSplitListener.TARGETS_KEY, 0f)).thenReturn(1f);
+        ShipAPI primary = shipAt(100f, 1);
+        ShipAPI fighter = shipAt(120f, 1);
+        when(fighter.isFighter()).thenReturn(true);
+        ships.addAll(List.of(firing, primary, fighter));
+        DamageAPI damage = tick(false);
+
+        assertNull(new BeamSplitListener(firing).modifyDamageDealt(beamFrom(simulatedWeapon()), primary, damage, new Vector2f(100f, 0f), true));
+
+        assertEquals(1f, damage.getModifier().getModifiedValue());
+        verify(engine, never()).applyDamage(any(), any(), any(), anyFloat(), any(), anyFloat(), anyBoolean(), anyBoolean(), any(), anyBoolean());
     }
 }

@@ -262,12 +262,12 @@ effect|BEAM_WEAPON_RANGE_PERCENT|12.5	0	<good>12.5%</good> increased beam weapon
 effect|BEAM_WEAPON_RANGE_PERCENT|100.0	0	<good>100%</good> increased beam weapon range.
 effect|BEAM_WEAPON_RANGE_PERCENT|-10.0	0	<bad>10%</bad> reduced beam weapon range.
 effect|BEAM_WEAPON_RANGE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced beam weapon range.
-effect|BEAM_WEAPON_SPLIT_TARGETS_FLAT|1.0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
-effect|BEAM_WEAPON_SPLIT_TARGETS_FLAT|10.0	0	Beam weapon hits split their damage evenly across the target and up to 10 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
-effect|BEAM_WEAPON_SPLIT_TARGETS_FLAT|12.5	0	Beam weapon hits split their damage evenly across the target and up to 12.5 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
-effect|BEAM_WEAPON_SPLIT_TARGETS_FLAT|100.0	0	Beam weapon hits split their damage evenly across the target and up to 100 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
-effect|BEAM_WEAPON_SPLIT_TARGETS_FLAT|-10.0	0	Beam weapon hits split their damage evenly across the target and up to -10 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
-effect|BEAM_WEAPON_SPLIT_TARGETS_FLAT|-12.5	0	Beam weapon hits split their damage evenly across the target and up to -12.5 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+effect|BEAM_WEAPON_SPLIT_TARGETS_FLAT|1.0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+effect|BEAM_WEAPON_SPLIT_TARGETS_FLAT|10.0	0	Beam weapon hits split their damage evenly across the target and up to 10 additional nearby enemy ships. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+effect|BEAM_WEAPON_SPLIT_TARGETS_FLAT|12.5	0	Beam weapon hits split their damage evenly across the target and up to 12.5 additional nearby enemy ships. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+effect|BEAM_WEAPON_SPLIT_TARGETS_FLAT|100.0	0	Beam weapon hits split their damage evenly across the target and up to 100 additional nearby enemy ships. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+effect|BEAM_WEAPON_SPLIT_TARGETS_FLAT|-10.0	0	Beam weapon hits split their damage evenly across the target and up to -10 additional nearby enemy ships. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+effect|BEAM_WEAPON_SPLIT_TARGETS_FLAT|-12.5	0	Beam weapon hits split their damage evenly across the target and up to -12.5 additional nearby enemy ships. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 effect|BEAM_WEAPON_TURN_RATE_MULT|1.0	0	<good>1%</good> more beam weapon turn rate.
 effect|BEAM_WEAPON_TURN_RATE_MULT|10.0	0	<good>10%</good> more beam weapon turn rate.
 effect|BEAM_WEAPON_TURN_RATE_MULT|12.5	0	<good>12.5%</good> more beam weapon turn rate.
@@ -2128,16 +2128,16 @@ type|beam_damage|FRIGATE|0	0	<good>5%</good> increased beam weapon damage.
 type|beam_damage|DESTROYER|0	0	<good>5%</good> increased beam weapon damage.
 type|beam_damage|CRUISER|0	0	<good>5%</good> increased beam weapon damage.
 type|beam_damage|CAPITAL_SHIP|0	0	<good>5%</good> increased beam weapon damage.
-type|beam_split|null|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
-type|beam_split|FRIGATE|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
-type|beam_split|DESTROYER|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
-type|beam_split|CRUISER|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
-type|beam_split|CAPITAL_SHIP|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
-type|beam_split_reduced_damage|null|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
-type|beam_split_reduced_damage|FRIGATE|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
-type|beam_split_reduced_damage|DESTROYER|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
-type|beam_split_reduced_damage|CRUISER|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
-type|beam_split_reduced_damage|CAPITAL_SHIP|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+type|beam_split|null|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+type|beam_split|FRIGATE|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+type|beam_split|DESTROYER|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+type|beam_split|CRUISER|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+type|beam_split|CAPITAL_SHIP|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+type|beam_split_reduced_damage|null|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+type|beam_split_reduced_damage|FRIGATE|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+type|beam_split_reduced_damage|DESTROYER|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+type|beam_split_reduced_damage|CRUISER|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+type|beam_split_reduced_damage|CAPITAL_SHIP|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 type|blast_doors|null|0	0	<good>20%</good> increased hull points.
 type|blast_doors|null|1	1	<bad>60%</bad> less crew casualties.
 type-detail|blast_doors|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Blast Doors</hullmod>
@@ -3636,7 +3636,7 @@ summary|option0|FRIGATE|24	0	<good>21%</good> increased ballistic weapon damage.
 summary|option0|FRIGATE|25	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
 summary|option0|FRIGATE|26	0	<good>60%</good> increased ballistic weapon projectile speed.
 summary|option0|FRIGATE|27	0	<good>25%</good> increased beam weapon damage.
-summary|option0|FRIGATE|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+summary|option0|FRIGATE|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemy ships. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 summary|option0|FRIGATE|29	0	<good>70%</good> increased hull points.
 summary|option0|FRIGATE|30	1	<bad>60%</bad> less crew casualties.
 summary|option0|FRIGATE|31	0	Increases cargo capacity by <good>35</good>.
@@ -3809,7 +3809,7 @@ summary|option0|DESTROYER|24	0	<good>21%</good> increased ballistic weapon damag
 summary|option0|DESTROYER|25	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
 summary|option0|DESTROYER|26	0	<good>60%</good> increased ballistic weapon projectile speed.
 summary|option0|DESTROYER|27	0	<good>25%</good> increased beam weapon damage.
-summary|option0|DESTROYER|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+summary|option0|DESTROYER|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemy ships. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 summary|option0|DESTROYER|29	0	<good>70%</good> increased hull points.
 summary|option0|DESTROYER|30	1	<bad>60%</bad> less crew casualties.
 summary|option0|DESTROYER|31	0	Increases cargo capacity by <good>65</good>.
@@ -3982,7 +3982,7 @@ summary|option0|CRUISER|24	0	<good>21%</good> increased ballistic weapon damage.
 summary|option0|CRUISER|25	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
 summary|option0|CRUISER|26	0	<good>60%</good> increased ballistic weapon projectile speed.
 summary|option0|CRUISER|27	0	<good>25%</good> increased beam weapon damage.
-summary|option0|CRUISER|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+summary|option0|CRUISER|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemy ships. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 summary|option0|CRUISER|29	0	<good>70%</good> increased hull points.
 summary|option0|CRUISER|30	1	<bad>60%</bad> less crew casualties.
 summary|option0|CRUISER|31	0	Increases cargo capacity by <good>110</good>.
@@ -4155,7 +4155,7 @@ summary|option0|CAPITAL_SHIP|24	0	<good>21%</good> increased ballistic weapon da
 summary|option0|CAPITAL_SHIP|25	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
 summary|option0|CAPITAL_SHIP|26	0	<good>60%</good> increased ballistic weapon projectile speed.
 summary|option0|CAPITAL_SHIP|27	0	<good>25%</good> increased beam weapon damage.
-summary|option0|CAPITAL_SHIP|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+summary|option0|CAPITAL_SHIP|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemy ships. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 summary|option0|CAPITAL_SHIP|29	0	<good>70%</good> increased hull points.
 summary|option0|CAPITAL_SHIP|30	1	<bad>60%</bad> less crew casualties.
 summary|option0|CAPITAL_SHIP|31	0	Increases cargo capacity by <good>225</good>.
@@ -4328,7 +4328,7 @@ summary|option1|FRIGATE|24	0	<good>21%</good> increased ballistic weapon damage.
 summary|option1|FRIGATE|25	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
 summary|option1|FRIGATE|26	0	<good>60%</good> increased ballistic weapon projectile speed.
 summary|option1|FRIGATE|27	0	<good>25%</good> increased beam weapon damage.
-summary|option1|FRIGATE|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+summary|option1|FRIGATE|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemy ships. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 summary|option1|FRIGATE|29	0	<good>70%</good> increased hull points.
 summary|option1|FRIGATE|30	1	<bad>60%</bad> less crew casualties.
 summary|option1|FRIGATE|31	0	Increases cargo capacity by <good>35</good>.
@@ -4501,7 +4501,7 @@ summary|option1|DESTROYER|24	0	<good>21%</good> increased ballistic weapon damag
 summary|option1|DESTROYER|25	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
 summary|option1|DESTROYER|26	0	<good>60%</good> increased ballistic weapon projectile speed.
 summary|option1|DESTROYER|27	0	<good>25%</good> increased beam weapon damage.
-summary|option1|DESTROYER|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+summary|option1|DESTROYER|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemy ships. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 summary|option1|DESTROYER|29	0	<good>70%</good> increased hull points.
 summary|option1|DESTROYER|30	1	<bad>60%</bad> less crew casualties.
 summary|option1|DESTROYER|31	0	Increases cargo capacity by <good>65</good>.
@@ -4674,7 +4674,7 @@ summary|option1|CRUISER|24	0	<good>21%</good> increased ballistic weapon damage.
 summary|option1|CRUISER|25	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
 summary|option1|CRUISER|26	0	<good>60%</good> increased ballistic weapon projectile speed.
 summary|option1|CRUISER|27	0	<good>25%</good> increased beam weapon damage.
-summary|option1|CRUISER|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+summary|option1|CRUISER|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemy ships. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 summary|option1|CRUISER|29	0	<good>70%</good> increased hull points.
 summary|option1|CRUISER|30	1	<bad>60%</bad> less crew casualties.
 summary|option1|CRUISER|31	0	Increases cargo capacity by <good>110</good>.
@@ -4847,7 +4847,7 @@ summary|option1|CAPITAL_SHIP|24	0	<good>21%</good> increased ballistic weapon da
 summary|option1|CAPITAL_SHIP|25	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
 summary|option1|CAPITAL_SHIP|26	0	<good>60%</good> increased ballistic weapon projectile speed.
 summary|option1|CAPITAL_SHIP|27	0	<good>25%</good> increased beam weapon damage.
-summary|option1|CAPITAL_SHIP|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+summary|option1|CAPITAL_SHIP|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemy ships. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 summary|option1|CAPITAL_SHIP|29	0	<good>70%</good> increased hull points.
 summary|option1|CAPITAL_SHIP|30	1	<bad>60%</bad> less crew casualties.
 summary|option1|CAPITAL_SHIP|31	0	Increases cargo capacity by <good>225</good>.
@@ -5020,7 +5020,7 @@ summary|option2|FRIGATE|24	0	<good>21%</good> increased ballistic weapon damage.
 summary|option2|FRIGATE|25	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
 summary|option2|FRIGATE|26	0	<good>60%</good> increased ballistic weapon projectile speed.
 summary|option2|FRIGATE|27	0	<good>25%</good> increased beam weapon damage.
-summary|option2|FRIGATE|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+summary|option2|FRIGATE|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemy ships. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 summary|option2|FRIGATE|29	0	<good>70%</good> increased hull points.
 summary|option2|FRIGATE|30	1	<bad>60%</bad> less crew casualties.
 summary|option2|FRIGATE|31	0	Increases cargo capacity by <good>35</good>.
@@ -5194,7 +5194,7 @@ summary|option2|DESTROYER|24	0	<good>21%</good> increased ballistic weapon damag
 summary|option2|DESTROYER|25	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
 summary|option2|DESTROYER|26	0	<good>60%</good> increased ballistic weapon projectile speed.
 summary|option2|DESTROYER|27	0	<good>25%</good> increased beam weapon damage.
-summary|option2|DESTROYER|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+summary|option2|DESTROYER|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemy ships. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 summary|option2|DESTROYER|29	0	<good>70%</good> increased hull points.
 summary|option2|DESTROYER|30	1	<bad>60%</bad> less crew casualties.
 summary|option2|DESTROYER|31	0	Increases cargo capacity by <good>65</good>.
@@ -5368,7 +5368,7 @@ summary|option2|CRUISER|24	0	<good>21%</good> increased ballistic weapon damage.
 summary|option2|CRUISER|25	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
 summary|option2|CRUISER|26	0	<good>60%</good> increased ballistic weapon projectile speed.
 summary|option2|CRUISER|27	0	<good>25%</good> increased beam weapon damage.
-summary|option2|CRUISER|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+summary|option2|CRUISER|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemy ships. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 summary|option2|CRUISER|29	0	<good>70%</good> increased hull points.
 summary|option2|CRUISER|30	1	<bad>60%</bad> less crew casualties.
 summary|option2|CRUISER|31	0	Increases cargo capacity by <good>110</good>.
@@ -5542,7 +5542,7 @@ summary|option2|CAPITAL_SHIP|24	0	<good>21%</good> increased ballistic weapon da
 summary|option2|CAPITAL_SHIP|25	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
 summary|option2|CAPITAL_SHIP|26	0	<good>60%</good> increased ballistic weapon projectile speed.
 summary|option2|CAPITAL_SHIP|27	0	<good>25%</good> increased beam weapon damage.
-summary|option2|CAPITAL_SHIP|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemies. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+summary|option2|CAPITAL_SHIP|28	0	Beam weapon hits split their damage evenly across the target and up to 4 additional nearby enemy ships. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 summary|option2|CAPITAL_SHIP|29	0	<good>70%</good> increased hull points.
 summary|option2|CAPITAL_SHIP|30	1	<bad>60%</bad> less crew casualties.
 summary|option2|CAPITAL_SHIP|31	0	Increases cargo capacity by <good>225</good>.

@@ -164,7 +164,7 @@
     "stat.fluxRateOfFireAndAmmoRegenWhilePhased": "相位状态下的幅能耗散、武器射速和弹药恢复速度",
     "effect.PHASE_ANCHOR_EMERGENCY_DIVE": "在即将被摧毁或瘫痪时，本舰可以改为紧急潜入相位空间并撤离战斗，同时承受相当于其部署消耗{value}%的额外战备值惩罚。本舰必须有足够的战备值来承担这一消耗。每场战斗中，无论属于哪一方，只有一艘舰船能进行这种潜入。",
 
-    "effect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.other": "光束武器命中时，伤害会平均分摊给目标及附近最多{value}个额外敌人。目标获取范围为该光束武器射程的一半。分裂出的光束同样带有该武器的特殊光束效果。",
+    "effect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.other": "光束武器命中时，伤害会平均分摊给目标及附近最多{value}艘额外敌舰，不会选择战机。目标获取范围为该光束武器射程的一半。分裂出的光束同样带有该武器的特殊光束效果。",
     "effect.EXPLODE_ON_DEATH": "本舰被摧毁时会剧烈爆炸，对附近舰船造成最高相当于其最大燃料容量{value}%的高爆伤害，伤害随距离衰减。",
     "effect.NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT": "命中敌方护盾的非光束能量武器有{value}%的几率发生折射：同一武器会从该护盾处向武器射程内最近的另一艘敌舰射出同样的弹体。折射出的弹体命中敌方护盾时，有相同的几率再次折射。",
     "effect.NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT": "每次折射造成的伤害比上一发降低<bad>{value}%</bad>。",

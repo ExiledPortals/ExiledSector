@@ -31,7 +31,7 @@ Lion's Gaze is the beam-splitting keystone (`beam_split`, using `BEAM_WEAPON_SPL
 
 Any beam hit on an enemy ship starts a split, whether it lands on shield or hull. The split looks for up
 to N additional targets, where N is the total magnitude, choosing the nearest other hostile ships that are
-alive, can be hit (phased ships and other effects' drones are skipped) and are within half the beam
+alive, aren't fighters, can be hit (phased ships and other effects' drones are skipped) and are within half the beam
 weapon's range of the impact point. The beam's damage is then shared evenly
 between the original target and the split targets, so with one extra target each receives half. The
 original target's reduction is applied as a damage modifier, which also scales the EMP of that hit. The

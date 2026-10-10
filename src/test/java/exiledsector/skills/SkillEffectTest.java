@@ -1266,11 +1266,11 @@ class SkillEffectTest {
 
     @Test
     void beamSplitTargetsFlatDescribesTheSplitCount() {
-        assertEquals("Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy. "
+        assertEquals("Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. "
                         + "The target acquisition range is half the beam weapon's range. "
                         + "Split beams also carry the weapon's special beam effects.",
                 CombatSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.description(1f).plain());
-        assertEquals("Beam weapon hits split their damage evenly across the target and up to 3 additional nearby enemies. "
+        assertEquals("Beam weapon hits split their damage evenly across the target and up to 3 additional nearby enemy ships. Fighters are never chosen. "
                         + "The target acquisition range is half the beam weapon's range. "
                         + "Split beams also carry the weapon's special beam effects.",
                 CombatSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.description(3f).plain());
