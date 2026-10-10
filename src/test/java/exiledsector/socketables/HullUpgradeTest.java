@@ -82,11 +82,11 @@ class HullUpgradeTest {
     }
 
     @Test
-    void upgradeCargoDataRoundTripsAndReadsTheOldFrameworkFormat() {
+    void upgradeCargoDataRoundTrips() {
         HullUpgradeData upgrade = new HullUpgradeData(HullSize.CAPITAL_SHIP);
 
         assertEquals(upgrade, HullUpgradeData.of(upgrade.toSpecialItem()));
-        assertEquals(new HullUpgradeData(HullSize.CRUISER), HullUpgradeData.parse("CRUISER/RARE/bridge+reactor/5"));
+        assertEquals(new HullUpgradeData(HullSize.CRUISER), HullUpgradeData.parse("CRUISER"));
         assertNull(HullUpgradeData.parse("FIGHTER"));
         assertNull(HullUpgradeData.parse(""));
         assertEquals("graphics/icons/frameworks/framework_capital_unique.png", upgrade.iconPath());
@@ -193,33 +193,6 @@ class HullUpgradeTest {
         assertEquals(3, loaded.upgradeCount(HullSize.DESTROYER));
         assertTrue(loaded.takeUpgrade(HullSize.DESTROYER));
         assertEquals(Map.of(HullSize.DESTROYER, 2), loaded.upgradeCounts());
-    }
-
-    @Test
-    void frameworksFromEarlierBuildsBecomeUnlockedSocketsOrUpgrades() throws Exception {
-        String savedStore = "<exiledSector.SocketableStore><owned/><nextId>1</nextId><frameworks>"
-                + "<exiledSector.HullFramework><id>framework_1</id><hullSize>CRUISER</hullSize><rarity>RARE</rarity>"
-                + "<socketTypeIds><string>bridge</string><string>reactor</string><string>engine_room</string></socketTypeIds><seed>4</seed>"
-                + "</exiledSector.HullFramework>"
-                + "<exiledSector.HullFramework><id>framework_2</id><hullSize>FRIGATE</hullSize><rarity>COMMON</rarity>"
-                + "<socketTypeIds><string>bridge</string></socketTypeIds><seed>5</seed></exiledSector.HullFramework>"
-                + "</frameworks><lastFrameworkId>2</lastFrameworkId></exiledSector.SocketableStore>";
-        XStream gameLike = xstream();
-        gameLike.ignoreUnknownElements();
-        SocketableStore oldStore = (SocketableStore) gameLike.fromXML(savedStore);
-        String savedShip = "<exiledsector.skills.ShipSkillData><installedFrameworkId>framework_1</installedFrameworkId>"
-                + "<frameworkSocketedItems><entry><string>1</string><string>socketable_9</string></entry></frameworkSocketedItems>"
-                + "</exiledsector.skills.ShipSkillData>";
-        gameLike.allowTypes(new Class[]{ShipSkillData.class});
-        ShipSkillData oldShip = (ShipSkillData) gameLike.fromXML(savedShip);
-
-        assertTrue(oldStore.migrateLegacyFrameworks(Map.of("ship", oldShip)));
-
-        assertEquals(List.of("bridge", "reactor", "engine_room"), oldShip.getUnlockedSocketTypeIds());
-        assertEquals(3, oldShip.getFrameworkPoints());
-        assertEquals(Map.of("reactor", "socketable_9"), oldShip.getFrameworkSocketedItems());
-        assertEquals(Map.of(HullSize.FRIGATE, 1), oldStore.upgradeCounts());
-        assertFalse(oldStore.migrateLegacyFrameworks(Map.of("ship", oldShip)));
     }
 
     @Test

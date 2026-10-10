@@ -26,8 +26,6 @@ public class ShipSkillData {
     private Map<String, String> chargedItemIds;
     private Map<String, Float> chargedItemQuantities;
     private Set<String> dormantNodeIds;
-    private String installedFrameworkId;
-    private Map<String, String> frameworkSocketedItems;
     private int frameworkPoints;
     private List<String> unlockedSocketTypes;
     private Map<String, String> frameworkItemsBySocketType;
@@ -144,18 +142,6 @@ public class ShipSkillData {
     public String unsocketFrameworkItem(String socketTypeId) {
         revision++;
         return frameworkItemsBySocketType == null ? null : frameworkItemsBySocketType.remove(socketTypeId);
-    }
-
-    public String takeLegacyFrameworkId() {
-        String legacyFrameworkId = installedFrameworkId;
-        installedFrameworkId = null;
-        return legacyFrameworkId;
-    }
-
-    public Map<String, String> takeLegacyFrameworkItems() {
-        Map<String, String> legacyItems = frameworkSocketedItems == null ? Map.of() : Map.copyOf(frameworkSocketedItems);
-        frameworkSocketedItems = null;
-        return legacyItems;
     }
 
     public void markChanged() {
@@ -289,8 +275,7 @@ public class ShipSkillData {
     }
 
     public boolean isBlank() {
-        return allocatedNodeIds.isEmpty() && getDormantNodeIds().isEmpty() && level == 0 && xp == 0f && bankedFreeAllocations == 0
-                && installedFrameworkId == null && frameworkPoints == 0;
+        return allocatedNodeIds.isEmpty() && getDormantNodeIds().isEmpty() && level == 0 && xp == 0f && bankedFreeAllocations == 0 && frameworkPoints == 0;
     }
 
     public Set<String> getDormantNodeIds() {

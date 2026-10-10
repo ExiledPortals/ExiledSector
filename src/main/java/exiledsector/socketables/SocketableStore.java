@@ -4,7 +4,6 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledsector.skills.ShipSkillData;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -22,7 +21,6 @@ public final class SocketableStore {
 
     private final List<Socketable> owned = new ArrayList<>();
     private long nextId = 1;
-    private List<HullFramework> frameworks;
     private Map<String, Integer> hullUpgrades;
     // XStream skips transient fields, so this lookup index is rebuilt after loading instead of being written into saves
     @SuppressWarnings("java:S2065")
@@ -133,55 +131,6 @@ public final class SocketableStore {
             hullUpgrades.put(hullSize.name(), count - 1);
         }
         return true;
-    }
-
-    public boolean migrateLegacyFrameworks(Map<String, ShipSkillData> shipDataById) {
-        boolean changed = false;
-        for (ShipSkillData shipData : shipDataById.values()) {
-            String legacyFrameworkId = shipData.takeLegacyFrameworkId();
-            Map<String, String> legacyItems = shipData.takeLegacyFrameworkItems();
-            HullFramework legacyFramework = findLegacyFramework(legacyFrameworkId);
-            if (legacyFramework == null) {
-                changed |= legacyFrameworkId != null;
-                continue;
-            }
-            List<String> socketTypeIds = legacyFramework.socketTypeIds();
-            for (int slotIndex = 0; slotIndex < Math.min(socketTypeIds.size(), FrameworkSockets.MAX_POINTS); slotIndex++) {
-                String socketTypeId = socketTypeIds.get(slotIndex);
-                shipData.grantUnlockedSocketType(socketTypeId);
-                String socketableId = legacyItems.get(Integer.toString(slotIndex));
-                if (socketableId != null) {
-                    shipData.socketFrameworkItem(socketTypeId, socketableId);
-                }
-            }
-            frameworks.remove(legacyFramework);
-            changed = true;
-        }
-        if (frameworks != null) {
-            frameworks.forEach(legacyFramework -> addUpgrades(legacyFramework.hullSize(), 1));
-            changed |= !frameworks.isEmpty();
-            frameworks = null;
-        }
-        return changed;
-    }
-
-    private HullFramework findLegacyFramework(String frameworkId) {
-        if (frameworks == null || frameworkId == null) {
-            return null;
-        }
-        for (HullFramework framework : frameworks) {
-            if (frameworkId.equals(framework.id())) {
-                return framework;
-            }
-        }
-        return null;
-    }
-
-    void addLegacyFramework(HullFramework framework) {
-        if (frameworks == null) {
-            frameworks = new ArrayList<>();
-        }
-        frameworks.add(framework);
     }
 
     public int absorbFrom(CargoAPI cargo) {
