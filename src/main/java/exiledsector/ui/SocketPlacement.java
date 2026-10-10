@@ -217,7 +217,7 @@ final class SocketPlacement {
     }
 
     private void open(PositionAPI canvasPosition, ScreenRect shipCard) {
-        open(canvasPosition, shipCard, null);
+        open(canvasPosition, shipCard, targetSocket != null ? SocketType.SUBROUTINE : null);
     }
 
     private void open(PositionAPI canvasPosition, ScreenRect shipCard, SocketType kindFilter) {
@@ -279,6 +279,7 @@ final class SocketPlacement {
         treeSession.setTargetedSocket(socket);
         if (storagePanel != null) {
             storagePanel.setTargetingSocket(socket != null);
+            storagePanel.restrictTo(socket != null ? SocketType.SUBROUTINE : null);
         }
     }
 
@@ -287,6 +288,9 @@ final class SocketPlacement {
         treeSession.setTargetedSocket(null);
         if (storagePanel != null) {
             storagePanel.setTargetingSocket(false);
+            if (targetFrameworkType == null) {
+                storagePanel.restrictTo(null);
+            }
         }
     }
 
