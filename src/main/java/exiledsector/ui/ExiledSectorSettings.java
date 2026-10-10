@@ -4,6 +4,7 @@ import exiledsector.compat.SalvageSiteCompat;
 import exiledsector.effects.NpcBonusScale;
 import exiledsector.socketables.SocketMaterials;
 import exiledsector.socketables.SocketableDrops;
+import exiledsector.socketables.SocketableRoller;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.LanguageSetting;
 import exiledsector.i18n.Translation;
@@ -51,6 +52,10 @@ public final class ExiledSectorSettings {
         if (!LunaSettings.hasSettingsListenerOfClass(NpcBonusScale.SettingsListener.class)) {
             LunaSettings.addSettingsListener(new NpcBonusScale.SettingsListener());
         }
+        if (!LunaSettings.hasSettingsListenerOfClass(SocketableRoller.SettingsListener.class)) {
+            LunaSettings.addSettingsListener(new SocketableRoller.SettingsListener());
+        }
+        SocketableRoller.reloadSettings();
     }
 
     private static void registerGeneral() {
@@ -77,6 +82,9 @@ public final class ExiledSectorSettings {
         SettingsCreator.addBoolean(MOD_ID, SocketMaterials.STORE_FIELD_ID,
                 Translation.text("settings.socketStorage.storeMaterials.name"), Translation.text("settings.socketStorage.storeMaterials.tooltip"),
                 SocketMaterials.DEFAULT_STORE, MAIN_TAB);
+        SettingsCreator.addBoolean(MOD_ID, SocketableRoller.AVERAGE_ROLLS_FIELD_ID,
+                Translation.text("settings.socketStorage.averageRolls.name"), Translation.text("settings.socketStorage.averageRolls.tooltip"),
+                SocketableRoller.DEFAULT_AVERAGE_ROLLS, MAIN_TAB);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_opCostHeader", Translation.text("settings.opCost.header"), MAIN_TAB);
         SettingsCreator.addText(MOD_ID, "exiledSector_opCostAbout", Translation.text("settings.opCost.about"), MAIN_TAB);

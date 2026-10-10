@@ -28,10 +28,12 @@ import static org.mockito.ArgumentMatchers.eq;
 class ExiledSectorSettingsTest {
 
     private MockedStatic<LunaSettings.SettingsCreator> settingsCreatorMock;
+    private MockedStatic<LunaSettings> lunaSettingsMock;
     private final List<String> registeredTexts = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
+        lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
         settingsCreatorMock = Mockito.mockStatic(LunaSettings.SettingsCreator.class, invocation -> {
             for (Object argument : invocation.getArguments()) {
                 if (argument instanceof String text) {
@@ -47,6 +49,7 @@ class ExiledSectorSettingsTest {
     @AfterEach
     void tearDown() {
         settingsCreatorMock.close();
+        lunaSettingsMock.close();
     }
 
     @Test
