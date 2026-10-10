@@ -43,8 +43,8 @@ class SocketableDisassemblyTest {
 
     @Test
     void partsScaleWithRarity() {
-        assertEquals(1, SocketableRarity.COMMON.disassemblyParts());
-        assertEquals(2, SocketableRarity.RARE.disassemblyParts());
+        assertEquals(3, SocketableRarity.COMMON.disassemblyParts());
+        assertEquals(5, SocketableRarity.RARE.disassemblyParts());
         assertEquals(10, SocketableRarity.UNIQUE.disassemblyParts());
     }
 

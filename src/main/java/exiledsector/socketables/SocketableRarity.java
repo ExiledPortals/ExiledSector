@@ -4,8 +4,8 @@ import java.awt.Color;
 
 public enum SocketableRarity {
 
-    COMMON(new Color(120, 150, 255), 1),
-    RARE(new Color(255, 225, 90), 2),
+    COMMON(new Color(120, 150, 255), 3),
+    RARE(new Color(255, 225, 90), 5),
     UNIQUE(new Color(255, 140, 40), 10);
 
     private final Color color;
