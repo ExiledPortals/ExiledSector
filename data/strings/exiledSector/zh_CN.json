@@ -1042,6 +1042,8 @@
     "settings.socketStorage.battleParts.tooltip": "战斗胜利后，每摧毁或瘫痪1点敌方部署点，战利品中增加的插槽组件数量。与舰船经验使用相同的战斗难度加成。设为0.05时，击败200点部署点在难度加成前获得10个组件。0则关闭。",
     "settings.socketStorage.storeMaterials.name": "将组件和内核存入插槽仓库",
     "settings.socketStorage.storeMaterials.tooltip": "开启后，打开插槽仓库时会将货舱中的所有插槽组件和内核移入插槽仓库，不再占用货舱空间；在工作台制作或拆解获得的组件和内核也会直接存入其中。工作台可使用两处的库存。关闭后，下次打开插槽仓库时会将其退回货舱。",
+    "settings.socketStorage.averageRolls.name": "效果取平均值",
+    "settings.socketStorage.averageRolls.tooltip": "每个新插槽物品的每条效果都取其范围的中间值，而不是随机值。数值四舍五入为整数（少数小数范围按其自身精度取整）。获得哪些效果仍然随机。适用于掉落、NPC舰队、转置和普通合成。增幅和重校仍随机取值，已拥有的插槽物品保留原有数值。",
     "settings.opCost.header": "技能节点装配点消耗",
     "settings.opCost.about": "每个已分配的技能节点按船体尺寸消耗的装配点。",
     "settings.opCost.frigate": "护卫舰每节点装配点",

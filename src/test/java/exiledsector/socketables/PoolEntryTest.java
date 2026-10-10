@@ -76,6 +76,23 @@ class PoolEntryTest {
     }
 
     @Test
+    void theAverageIsTheMiddleOfTheRangeRoundedAwayFromZeroToAWholeNumber() {
+        assertEquals(5f, range(2f, 8f).average());
+        assertEquals(5f, range(3f, 6f).average());
+        assertEquals(-5f, range(-6f, -3f).average());
+        assertEquals(0f, range(-2f, 2f).average());
+        assertEquals(7f, range(7f, 7f).average());
+    }
+
+    @Test
+    void decimalRangesAverageToTheirOwnPrecision() {
+        assertEquals(0.18f, range(0.13f, 0.22f).average(), 1e-6f);
+        assertEquals(0.02f, range(0.01f, 0.03f).average(), 1e-6f);
+        assertEquals(1.8f, range(1.5f, 2f).average(), 1e-6f);
+        assertEquals(5f, PoolEntry.parse("ARMOR_FLAT:5/10/15/20").average());
+    }
+
+    @Test
     void hullSizeEntriesAreFourFixedValuesThatNeverVary() {
         PoolEntry armor = PoolEntry.parse("ARMOR_FLAT:5/10/15/20:2");
 

@@ -579,6 +579,8 @@
     "settings.socketStorage.battleParts.tooltip": "Socketable Parts added to the loot after a won battle, for each deployment point of enemy ships destroyed or disabled. Multiplied by the same battle difficulty bonus as ship XP. At 0.05, beating 200 deployment points gives 10 parts before the difficulty bonus. 0 turns battle parts off.",
     "settings.socketStorage.storeMaterials.name": "Keep Parts and Kernels in Socket Storage",
     "settings.socketStorage.storeMaterials.tooltip": "When on, opening Socket Storage moves every Socketable Part and kernel out of your cargo into Socket Storage, where they take no cargo space, and parts and kernels made at the workbench or by disassembly go straight there. The workbench uses them from either place. Turning this off returns them to your cargo the next time Socket Storage opens.",
+    "settings.socketStorage.averageRolls.name": "Average Modifier Rolls",
+    "settings.socketStorage.averageRolls.tooltip": "Every new socketable rolls each modifier at the middle of its range instead of a random value, rounded to a whole number (or to the range's own precision for the few decimal ranges). Which modifiers it gets is still random. Covers drops, NPC fleets, Transposition and common synthesis. Augmentation and Recalibration still roll randomly, and socketables you already own keep their values.",
     "settings.opCost.header": "Skill Node Ordnance Point Cost",
     "settings.opCost.about": "How many ordnance points each allocated skill node costs, by hull size.",
     "settings.opCost.frigate": "Frigate OP per Node",

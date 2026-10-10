@@ -59,6 +59,15 @@ public record PoolEntry(String effectName, float min, float max, float weight, L
         return (steps.lowest() + random.nextInt(steps.highest() - steps.lowest() + 1)) / steps.perUnit();
     }
 
+    public float average() {
+        RollSteps steps = steps();
+        if (steps.highest() < steps.lowest()) {
+            return Math.round(min * steps.perUnit()) / steps.perUnit();
+        }
+        double middleStep = (steps.lowest() + (double) steps.highest()) / 2.0;
+        return (float) (Math.signum(middleStep) * Math.round(Math.abs(middleStep)) / steps.perUnit());
+    }
+
     public int stepCount() {
         RollSteps steps = steps();
         return Math.max(1, steps.highest() - steps.lowest() + 1);

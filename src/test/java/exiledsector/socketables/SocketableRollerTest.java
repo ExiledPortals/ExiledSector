@@ -32,6 +32,24 @@ class SocketableRollerTest {
     }
 
     @Test
+    void averageRollsKeepTheSameModifiersButSetEachToTheMiddleOfItsRange() {
+        Map<String, PoolEntry> pool = military.pool().stream()
+                .collect(Collectors.toMap(PoolEntry::effectName, Function.identity()));
+        for (long seed = 0; seed < 200; seed++) {
+            List<RolledEffect> random = SocketableRoller.roll(military, seed, false);
+            List<RolledEffect> averaged = SocketableRoller.roll(military, seed, true);
+            assertEquals(random.stream().map(RolledEffect::effectName).toList(), averaged.stream().map(RolledEffect::effectName).toList());
+            for (RolledEffect effect : averaged) {
+                assertEquals(pool.get(effect.effectName()).average(), effect.magnitude());
+            }
+            List<RolledEffect> common = SocketableRoller.rollCommon(military, seed, true);
+            for (RolledEffect effect : common) {
+                assertEquals(pool.get(effect.effectName()).average(), effect.magnitude());
+            }
+        }
+    }
+
+    @Test
     void theSameSeedAlwaysRollsTheSameEffects() {
         assertEquals(SocketableRoller.roll(military, 42L), SocketableRoller.roll(military, 42L));
         assertNotEquals(SocketableRoller.roll(military, 42L), SocketableRoller.roll(military, 43L));
