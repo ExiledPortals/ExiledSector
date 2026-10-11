@@ -37,8 +37,8 @@ Open the refit screen and click the skill tree button on any of your ships. Ther
 <img src="graphics/description/Ludds_Light.png" alt="Ludd's Light">
 <img src="graphics/description/at_any_cost.png" alt="At Any Cost">
 
-- Some nodes are Modular Hull Sockets: perfectly good empty rooms that your engineers swear were always part of the design. Allocate one like any other node, then shove a socketable into it. Socketables turn up at salvage sites, in Tech Mining finds, and aboard NPC flagships whose captains will not be needing them after you're done.
-- Ctrl+click a socket to open Socket Storage, a hoard of every socketable you own, lovingly organised by people who will never be allowed to use any of them. Filter by rarity, search by name, and pick what goes in. Right-click one you don't want to disassemble it into Socketable Parts: 1 for a common, 2 for a rare and 10 for a unique, because priceless relics and talented people are, it turns out, mostly screws.
+- Some nodes are Subroutine Sockets: perfectly good empty rooms that your engineers swear were always part of the design. Allocate one like any other node, then shove a subroutine into it. Socketables turn up at salvage sites, in Tech Mining finds, and aboard NPC flagships whose captains will not be needing them after you're done.
+- Ctrl+click a socket to open Socket Storage, a hoard of every socketable you own, lovingly organised by people who will never be allowed to use any of them. Filter by rarity or socket type, search by name, and pick what goes in. Right-click one you don't want to disassemble it into Socketable Parts: 3 for a common, 5 for a rare and 10 for a unique, because priceless relics and talented people are, it turns out, mostly screws.
 - Socket Storage's Modify button opens the Socket Modification workbench beside it, and the skill tree is locked while it's open so nobody gets distracted mid-surgery. Spend Socketable Parts there to synthesise a new common subroutine or kernels which allow specific kinds of modification. Click an item in storage to load it onto the workbench, left-click a kernel to use it, and right-click a kernel or the new subroutine to synthesise one. 
 - Parts and kernels also turn up wherever socketables do. Winning a battle pays out parts too, scaled by the enemy deployment points you destroy or disable and by the battle difficulty bonus. Nothing says "salvage rights" like a smoking hull. If your hold is groaning, a LunaLib setting (off by default) has Socket Storage swallow every part and kernel in your cargo whenever you open it, where they weigh nothing and the workbench can still reach them.
 
@@ -46,7 +46,7 @@ Open the refit screen and click the skill tree button on any of your ships. Ther
 <img src="graphics/description/crafting.gif" alt="Socket modification">
 
 - Common socketables are Domain Subroutines in four grades, each rolling one prefix and one suffix.
-- Rare ones roll three or four mods and get a name of their own.
+- Rare ones roll three or four mods and get a name of their own. If you'd rather not gamble, a LunaLib setting (off by default) rolls every new socketable's mods at the middle of their range.
 
 <img src="graphics/description/common_socketable.png" alt="A common socketable">
 <img src="graphics/description/rare_socketable.png" alt="A rare socketable">
@@ -55,6 +55,9 @@ Open the refit screen and click the skill tree button on any of your ships. Ther
 
 <img src="graphics/description/unique_socketable.png" alt="A unique socketable">
 <img src="graphics/description/socketed_unique.png" alt="A unique in its socket">
+
+- From level 15 your ships can take Hull Upgrades as well, one kind per hull size, found in the same places as socketables. Click the ship card in the skill tree to zoom in on the ship, install an upgrade from the Hull Upgrades panel, and spend the point it gives you to unlock a socket bolted onto the hull: Bridge, Crew Quarters, Engine Room, Reactor, Armor Plating, Weapon Mount, Shield Generator, Phase Coil or Flight Deck. The last three need shields, a phase cloak or fighter bays to plug into. A ship holds up to four points, and locking a socket again hands its point back, because the yard keeps receipts.
+- Each of those sockets has socketables of its own, and the officers, crews and relics that used to squeeze into Subroutine Sockets now live in the socket that suits them. Half of the NPC flagships you meet past level 15 have sockets unlocked too, and now and then one of them leaves a spare Hull Upgrade in the wreckage.
 
 ## Requirements
 
@@ -75,7 +78,7 @@ Optional:
 
 It should be safe to add to an existing save.
 
-Nodes that copy a vanilla hull mod also place the real hull mod on the ship as a phantom: it costs no OP and does nothing itself, but other mods that check for that hull mod see it. That should make most mods work with the tree's nodes without needing dedicated support.
+Nodes that copy a vanilla hull mod also place the real hull mod on the ship as a phantom: it costs no OP and does nothing itself, but other mods that check for that hull mod see it. That should make most mods work with the tree's nodes without needing dedicated support. If another mod's hull mod strips one of those phantoms, the tree remembers the clash and refuses that node on such ships, refunding it on yours.
 
 These mods have dedicated compatibility. The version listed is the one I last tested against. Newer versions usually work; if one doesn't, `starsector.log` says so at startup and lists anything Exiled Sector can no longer find.
 
