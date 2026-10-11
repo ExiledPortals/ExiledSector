@@ -89,7 +89,7 @@ public final class NodeEligibility {
             }
         }
         for (String phantomHullModId : candidate.effectiveType().getPhantomHullModIds()) {
-            LearnedPhantomConflicts.Conflict conflict = LearnedPhantomConflicts.conflictFor(phantomHullModId, shipFacts.baseHullId(),
+            LearnedPhantomConflicts.Conflict conflict = LearnedPhantomConflicts.conflictFor(phantomHullModId, shipFacts.hullId(),
                     shipFacts.hasHullMod());
             if (conflict != null) {
                 return new Block(Kind.LEARNED_CONFLICT, conflict.hullModId(), null);

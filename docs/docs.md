@@ -214,42 +214,54 @@ keep a node and a hull mod that can't coexist from both ending up on a ship. Fir
 turns up later while the node is allocated, `HullModConflictResolver` removes it with the skill conflict
 warning. Second, most conflicting hull mods refuse themselves in `isApplicableToShip` when they see the
 other hull mod, and they see the phantom, so the refit screen greys them out with their own reason.
-Third, a hull mod that strips the phantom through MagicLib's `MagicIncompatibleHullmods` leaves a
-`[removed, cause]` record; the resolver reads it, removes the cause instead and puts the phantom back.
+Third, a hull mod that tries to remove the phantom through MagicLib's `MagicIncompatibleHullmods` leaves
+a `[removed, cause]` record; the resolver reads it, removes the cause instead and keeps the phantom.
 
 That still misses hull mods that can't be removed, mostly hidden hull mods built into one mod's hulls
-(Cetan Frame, Necro Scavenger and others), and hull mods that strip with a plain `removeMod`. MagicLib
-keeps no list of incompatibilities to read ahead of time; each mod calls it from its own hull mod code
-while the ship is built. So these conflicts are learned the first time they happen.
-`PhantomConflictWatch.inspect` runs at the end of both stats passes in `SkillTreeHullMod`, which is kept
-last, so every other hull mod has already run. A phantom that still carries its tag but is missing from
-the variant was stripped. The cause is MagicLib's record when there is one; otherwise it is found by
-elimination over the remaining hull mods, skipping vanilla ones (effect class in
-`com.fs.starfarer.api.impl.hullmods`), the tree's own and anything the tree placed. A removable cause is
-left to the resolver. A single fixed cause (built in, permanent or an S-mod) is learned as that hull mod.
-Several fixed suspects are learned as the whole hull, keyed by base hull id. If a removable modded hull
-mod could be the culprit, nothing is learned, so one wrong guess can't block a node everywhere.
+(Cetan Frame, Necro Scavenger and others). MagicLib keeps no list of incompatibilities to read ahead of
+time; each mod calls it from its own hull mod code while the ship is built. So these conflicts are
+learned the first time they show up. `PhantomConflictWatch.inspect` runs in both stats passes of
+`SkillTreeHullMod`, which is kept last, so every other hull mod has already run, and in the after
+creation pass it runs before the resolver clears MagicLib's warning. It learns from two signals.
+
+The first is a removal attempt. The engine's `removeMod` ignores permanent hull mods and MagicLib only
+calls `removeMod`, so these mods never actually take the phantom off, and the ship would keep a hull mod
+its hull forbids. When MagicLib's warning hull mod is on the ship and its record names one of the node's
+phantoms and a cause that is on the ship and can't be removed (built in, permanent or an S-mod), that
+hull mod is learned. The record is only read while the warning is present, because asking MagicLib about
+a ship it has no record for clears its records for every ship. A record with no named cause teaches
+nothing.
+
+The second is a real strip. A few mods take hull mods off the list directly (Emergent Threats'
+Amorphous Alloy calls `getHullMods().remove`), so a phantom can go missing while its tag stays. That is
+learned for the exact hull id (the skin, not the base hull) without guessing a culprit, because whoever
+does it, the node can't work on that hull.
 
 `LearnedPhantomConflicts` keeps what was learned in `exiledSector_learnedHullModConflicts.json` in
 Starsector's shared common folder, so a conflict found once applies to every save. It is read once at
-startup, when entries for hull mods or hulls that are no longer loaded are dropped, and written only
-when something new is learned. From then on `ShipTreeSync` stops placing that phantom on ships with the
-conflict, which ends the tug-of-war at once, and `NodeEligibility` refuses the node there with
-`LEARNED_CONFLICT`, naming the hull mod or the hull's built-in systems.
+startup and written only when something new is learned; entries for mods that aren't loaded are kept
+and simply never match. From then on `ShipTreeSync` stops placing that phantom on ships with the
+conflict, and `NodeEligibility` refuses the node there with `LEARNED_CONFLICT`, naming the hull mod or
+the hull's built-in systems. The NPC tree builder sees learned conflicts the same way.
 
 On a player ship the node that placed the phantom is also removed, together with every node that
 depended on it (`RespecPlan`), and refunded the same way a respec would refund it, with a campaign
-message naming the cause. The removal is queued rather than done inside the hull mod callback, and
-applied by the open tree panel, when the panel next opens, or by `SkillTreeInstaller` once the game is
-unpaused. The ship is removed even in the unclear case where nothing is learned. NPC ships help teach
-the table but are never changed. None of this polls: detection only reads the variant during stats
-passes the game already runs, the tree check is one lookup per node per snapshot, and the queue costs a
-single flag read per frame.
+message naming the cause. The removal is queued rather than done inside the hull mod callback, both
+when a conflict is learned and whenever `ShipTreeSync` finds a learned conflict holding back one of the
+ship's phantoms, so a removal lost to a reload is queued again on the next sync. The queue is cleared
+on every game load and applied by the open tree panel, when the panel next opens, or by
+`SkillTreeInstaller` once the game is unpaused. Each removal is checked again when it is applied: the
+ship must still be in the player fleet and still have the conflict, so a sold ship is never refunded and
+removing the conflicting hull mod in time cancels it. NPC ships help teach the table but are never
+changed. None of this polls: detection only reads the variant during stats passes the game already
+runs, the tree check is one lookup per node per snapshot and is skipped entirely while nothing has been
+learned, and the queue costs a single flag read per frame.
 
-A conflict built into a hull that only strips after the ship is created is found when the refit
-preview rebuilds after the node is allocated, so the first allocation on such a hull is refunded at
-once and the node is refused there afterwards. A learned entry stays until its hull mod or hull is no
-longer loaded, even if a later version of that mod drops the conflict.
+A conflict that only shows up after the ship is created is found when the refit preview rebuilds after
+the node is allocated, so the first allocation on such a hull is refunded at once and the node is
+refused there afterwards. Nodes whose conflicting mod names no cause, like Necro Scavenger, rely on the
+`exclusiveHullMods` list instead. A learned entry is never removed, even if a later version of that mod
+drops the conflict.
 
 ## Generated NPC trees
 

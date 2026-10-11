@@ -76,9 +76,9 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
             }
         }
         boolean playerTree = !SkillDataResolver.isNpcTree(ship.getVariant());
-        HullModConflictResolver.removeHullModsThatTriedToStripAPhantom(resolvedTree.allocated(), ship.getVariant(), playerTree);
         FleetMemberAPI member = ship.getFleetMember() != null ? ship.getFleetMember() : ship.getMutableStats().getFleetMember();
         PhantomConflictWatch.inspect(member, ship.getVariant(), resolvedTree.phantomHullModIds(), playerTree);
+        HullModConflictResolver.removeHullModsThatTriedToStripAPhantom(resolvedTree.allocated(), ship.getVariant(), playerTree);
     }
 
     @Override

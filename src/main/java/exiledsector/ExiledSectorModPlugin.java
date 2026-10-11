@@ -12,6 +12,7 @@ import exiledsector.effects.NpcBonusScale;
 import exiledsector.effects.NpcFleetDialogListener;
 import exiledsector.effects.NpcFleetInflationListener;
 import exiledsector.effects.NpcFleetSweepScript;
+import exiledsector.effects.PhantomConflictWatch;
 import exiledsector.effects.PhantomHullMods;
 import exiledsector.effects.PlayerEngagementPipeline;
 import exiledsector.effects.ResolvedTree;
@@ -187,6 +188,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         SkillTree.applyDisabledRegions(AreaToggles.disabledRegions());
         SkillDataResolver.clearCache();
         ResolvedTree.clearCache();
+        PhantomConflictWatch.clearPendingReverts();
         FrameworkSlots.clearCache();
         NpcBonusScale.invalidate();
         NpcSocketables.clearCache();

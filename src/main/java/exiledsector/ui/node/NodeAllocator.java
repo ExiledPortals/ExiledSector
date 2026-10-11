@@ -376,22 +376,7 @@ final class NodeAllocator {
 
     private void returnUnhousedWings() {
         CampaignFleetAPI playerFleet = Global.getSector() == null ? null : Global.getSector().getPlayerFleet();
-        List<String> returnedWingIds = FighterBayOverflow.returnUnhousedWings(fleetMember, shipVariant, playerFleet == null ? null : playerFleet.getCargo());
-        if (returnedWingIds.isEmpty()) {
-            return;
-        }
-        fleetMember.setStatUpdateNeeded(true);
-        fleetMember.updateStats();
-        CampaignUIAPI campaignUi = Global.getSector().getCampaignUI();
-        if (campaignUi == null) {
-            return;
-        }
-        for (String wingId : returnedWingIds) {
-            FighterWingSpecAPI wing = Global.getSettings().getFighterWingSpec(wingId);
-            String name = wing == null ? wingId : wing.getWingName();
-            String message = I18n.forGameText(() -> Translation.msg("fighterBay.returned").arg("wing", name).text());
-            campaignUi.addMessage(message.replace("%", "%%"), Misc.getTextColor());
-        }
+        FighterBayOverflow.returnUnhousedWingsAndAnnounce(fleetMember, shipVariant, playerFleet == null ? null : playerFleet.getCargo());
     }
 
     private static CargoAPI playerCargo() {

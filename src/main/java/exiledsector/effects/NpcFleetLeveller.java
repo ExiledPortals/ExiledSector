@@ -88,7 +88,8 @@ public final class NpcFleetLeveller {
         String designType = designType(member.getHullSpec());
         int socketableCount = socketableRandom == null ? 0 : NpcSocketables.rollCount(playerLevel, socketableRandom);
         NpcTreeBuild treeBuild = NpcSkillTreeBuilder.generate(new NpcBuildRequest(shipProfile, designType, factionRegion, hullMods,
-                NpcFreedOp.of(member, hullMods), nodeCount, socketableCount, type -> SkillTypeUnlockStatus.isLocked(type, null)), random);
+                NpcFreedOp.of(member, hullMods), nodeCount, socketableCount, type -> SkillTypeUnlockStatus.isLocked(type, null),
+                member.getHullSpec().getHullId()), random);
         for (String socketNodeId : treeBuild.claimedSockets()) {
             SocketableDefinition definition = NpcSocketables.pickDefinition(socketableRandom, uniqueAllowed);
             if (definition != null) {

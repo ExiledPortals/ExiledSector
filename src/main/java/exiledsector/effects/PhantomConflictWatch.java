@@ -7,8 +7,8 @@ import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.compat.MagicLibCompat;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Message;
 import exiledsector.i18n.Translation;
@@ -33,90 +33,82 @@ import java.util.Set;
 
 public final class PhantomConflictWatch {
 
-    static final String VANILLA_HULL_MOD_PACKAGE = "com.fs.starfarer.api.impl.hullmods.";
-    private static final String OWN_HULL_MOD_PREFIX = "exiledSector_";
     private static final Map<String, Revert> PENDING_REVERTS = new LinkedHashMap<>();
     private static volatile boolean revertsPending;
 
-    record Revert(String memberId, String phantomHullModId, String causeHullModId, boolean wholeHull) {
+    record Revert(String memberId, String phantomHullModId) {
+
+        String key() {
+            return memberId + "|" + phantomHullModId;
+        }
     }
 
     private PhantomConflictWatch() {
     }
 
     static Set<String> withoutLearnedConflicts(Set<String> phantomHullModIds, ShipVariantAPI variant) {
-        if (phantomHullModIds.isEmpty() || variant == null) {
+        if (phantomHullModIds.isEmpty() || variant == null || LearnedPhantomConflicts.isEmpty()) {
             return phantomHullModIds;
         }
-        ShipHullSpecAPI hullSpec = variant.getHullSpec();
-        String baseHullId = hullSpec == null ? null : hullSpec.getBaseHullId();
         Set<String> placeable = new LinkedHashSet<>();
         for (String phantomHullModId : phantomHullModIds) {
-            if (LearnedPhantomConflicts.conflictFor(phantomHullModId, baseHullId,
-                    hullModId -> InstalledHullMods.hasHullModOfItsOwn(variant, hullModId)) == null) {
+            if (conflictOn(variant, phantomHullModId) == null) {
                 placeable.add(phantomHullModId);
             }
         }
         return placeable.size() == phantomHullModIds.size() ? phantomHullModIds : placeable;
     }
 
+    private static LearnedPhantomConflicts.Conflict conflictOn(ShipVariantAPI variant, String phantomHullModId) {
+        ShipHullSpecAPI hullSpec = variant.getHullSpec();
+        return LearnedPhantomConflicts.conflictFor(phantomHullModId, hullSpec == null ? null : hullSpec.getHullId(),
+                hullModId -> InstalledHullMods.hasHullModOfItsOwn(variant, hullModId));
+    }
+
+    static void queueRevertsForBlocked(FleetMemberAPI member, Set<String> wantedPhantomHullModIds, Set<String> placeable,
+                                       boolean playerTree) {
+        if (!playerTree || member == null || placeable.size() == wantedPhantomHullModIds.size()) {
+            return;
+        }
+        for (String phantomHullModId : wantedPhantomHullModIds) {
+            if (!placeable.contains(phantomHullModId)) {
+                queueRevert(new Revert(member.getId(), phantomHullModId));
+            }
+        }
+    }
+
     static void inspect(FleetMemberAPI member, ShipVariantAPI variant, Set<String> wantedPhantomHullModIds, boolean playerTree) {
         if (variant == null || wantedPhantomHullModIds.isEmpty()) {
             return;
         }
+        learnFromRemovalAttempt(member, variant, wantedPhantomHullModIds, playerTree);
+        ShipHullSpecAPI hullSpec = variant.getHullSpec();
         for (String phantomHullModId : wantedPhantomHullModIds) {
-            if (InstalledHullMods.isInstalledBySkillTree(variant, phantomHullModId) && !variant.hasHullMod(phantomHullModId)) {
-                handleStrip(member, variant, phantomHullModId, playerTree);
+            if (hullSpec != null && InstalledHullMods.isInstalledBySkillTree(variant, phantomHullModId)
+                    && !variant.hasHullMod(phantomHullModId)) {
+                LearnedPhantomConflicts.learnHull(phantomHullModId, hullSpec.getHullId());
+                queueIfPlayer(member, phantomHullModId, playerTree);
             }
         }
     }
 
-    private static void handleStrip(FleetMemberAPI member, ShipVariantAPI variant, String phantomHullModId, boolean playerTree) {
-        String namedCause = magicLibCause(variant, phantomHullModId);
-        if (namedCause != null && (!variant.hasHullMod(namedCause) || isRemovable(variant, namedCause))) {
+    private static void learnFromRemovalAttempt(FleetMemberAPI member, ShipVariantAPI variant, Set<String> wantedPhantomHullModIds,
+                                                boolean playerTree) {
+        if (!variant.hasHullMod(MagicLibCompat.WARNING_HULLMOD_ID)) {
             return;
         }
-        List<String> suspects = namedCause != null ? List.of(namedCause) : suspects(variant, phantomHullModId);
-        boolean allFixed = !suspects.isEmpty() && suspects.stream().noneMatch(suspect -> isRemovable(variant, suspect));
-        String causeHullModId = null;
-        boolean wholeHull = false;
-        if (allFixed && suspects.size() == 1) {
-            causeHullModId = suspects.get(0);
-            LearnedPhantomConflicts.learnHullMod(phantomHullModId, causeHullModId);
-        } else if (allFixed && variant.getHullSpec() != null) {
-            wholeHull = true;
-            LearnedPhantomConflicts.learnHull(phantomHullModId, variant.getHullSpec().getBaseHullId());
-        }
-        if (playerTree && member != null) {
-            queueRevert(new Revert(member.getId(), phantomHullModId, causeHullModId, wholeHull));
-        }
-    }
-
-    private static String magicLibCause(ShipVariantAPI variant, String phantomHullModId) {
         List<String> reason = MagicIncompatibleHullmods.getReason(variant);
-        if (reason == null || reason.size() < 2 || !phantomHullModId.equals(reason.get(0))) {
-            return null;
+        if (reason == null || reason.size() < 2) {
+            return;
         }
-        String cause = reason.get(1);
-        return cause == null || cause.isBlank() || Global.getSettings().getHullModSpec(cause) == null ? null : cause;
-    }
-
-    static List<String> suspects(ShipVariantAPI variant, String phantomHullModId) {
-        List<String> suspects = new ArrayList<>();
-        for (String hullModId : variant.getHullMods()) {
-            if (hullModId.equals(phantomHullModId) || hullModId.startsWith(OWN_HULL_MOD_PREFIX)
-                    || InstalledHullMods.isInstalledBySkillTree(variant, hullModId) || isVanilla(hullModId)) {
-                continue;
-            }
-            suspects.add(hullModId);
+        String phantomHullModId = reason.get(0);
+        String causeHullModId = reason.get(1);
+        if (!wantedPhantomHullModIds.contains(phantomHullModId) || causeHullModId == null || causeHullModId.isBlank()
+                || !InstalledHullMods.hasHullModOfItsOwn(variant, causeHullModId) || isRemovable(variant, causeHullModId)) {
+            return;
         }
-        return suspects;
-    }
-
-    private static boolean isVanilla(String hullModId) {
-        HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
-        String effectClass = spec == null ? null : spec.getEffectClass();
-        return effectClass == null || effectClass.startsWith(VANILLA_HULL_MOD_PACKAGE);
+        LearnedPhantomConflicts.learnHullMod(phantomHullModId, causeHullModId);
+        queueIfPlayer(member, phantomHullModId, playerTree);
     }
 
     static boolean isRemovable(ShipVariantAPI variant, String hullModId) {
@@ -124,8 +116,14 @@ public final class PhantomConflictWatch {
         return !builtIn && !variant.getPermaMods().contains(hullModId) && !variant.getSMods().contains(hullModId);
     }
 
+    private static void queueIfPlayer(FleetMemberAPI member, String phantomHullModId, boolean playerTree) {
+        if (playerTree && member != null) {
+            queueRevert(new Revert(member.getId(), phantomHullModId));
+        }
+    }
+
     private static synchronized void queueRevert(Revert revert) {
-        PENDING_REVERTS.putIfAbsent(revert.memberId() + "|" + revert.phantomHullModId(), revert);
+        PENDING_REVERTS.putIfAbsent(revert.key(), revert);
         revertsPending = true;
     }
 
@@ -146,7 +144,7 @@ public final class PhantomConflictWatch {
             if (onlyMemberId != null && !onlyMemberId.equals(revert.memberId())) {
                 continue;
             }
-            PENDING_REVERTS.remove(revert.memberId() + "|" + revert.phantomHullModId());
+            PENDING_REVERTS.remove(revert.key());
             reverted |= apply(revert);
         }
         revertsPending = !PENDING_REVERTS.isEmpty();
@@ -154,7 +152,15 @@ public final class PhantomConflictWatch {
     }
 
     private static boolean apply(Revert revert) {
-        ShipSkillData data = ShipSkillDataManager.get(revert.memberId());
+        FleetMemberAPI member = playerFleetMember(revert.memberId());
+        ShipSkillData data = ShipSkillDataManager.find(revert.memberId());
+        if (member == null || data == null || member.getVariant() == null) {
+            return false;
+        }
+        LearnedPhantomConflicts.Conflict conflict = conflictOn(member.getVariant(), revert.phantomHullModId());
+        if (conflict == null) {
+            return false;
+        }
         List<SkillNode> providers = new ArrayList<>();
         for (AllocatedNode allocated : AllocatedNode.of(data)) {
             if (allocated.effectiveType().getPhantomHullModIds().contains(revert.phantomHullModId())) {
@@ -179,12 +185,11 @@ public final class PhantomConflictWatch {
                 }
             }
         }
-        FleetMemberAPI member = playerFleetMember(revert.memberId());
-        if (member != null) {
-            ShipTreeSync.memberChanged(member, member.getVariant());
-            member.setStatUpdateNeeded(true);
-        }
-        announce(member, providers.get(0), revert);
+        ShipTreeSync.memberChanged(member, member.getVariant());
+        member.setStatUpdateNeeded(true);
+        member.updateStats();
+        FighterBayOverflow.returnUnhousedWingsAndAnnounce(member, member.getVariant(), cargo);
+        announce(member, providers.get(0), conflict);
         return true;
     }
 
@@ -212,27 +217,20 @@ public final class PhantomConflictWatch {
         return null;
     }
 
-    private static void announce(FleetMemberAPI member, SkillNode removedNode, Revert revert) {
-        CampaignUIAPI campaignUi = Global.getSector() == null ? null : Global.getSector().getCampaignUI();
+    private static void announce(FleetMemberAPI member, SkillNode removedNode, LearnedPhantomConflicts.Conflict conflict) {
+        CampaignUIAPI campaignUi = Global.getSector().getCampaignUI();
         if (campaignUi == null) {
             return;
         }
         String message = I18n.forGameText(() -> {
-            String shipName = member == null ? "" : member.getShipName();
-            Message text;
-            if (revert.causeHullModId() != null) {
-                text = Translation.msg("phantomConflict.removed").arg("hullmod", HullModNames.displayName(revert.causeHullModId()));
-            } else if (revert.wholeHull()) {
-                text = Translation.msg("phantomConflict.removedByHull");
-            } else {
-                text = Translation.msg("phantomConflict.removedByUnknown");
-            }
-            return text.arg("ship", shipName).arg("node", removedNode.getType().getDisplayName()).text();
+            Message text = conflict.isWholeHull() ? Translation.msg("phantomConflict.removedByHull")
+                    : Translation.msg("phantomConflict.removed").arg("hullmod", HullModNames.displayName(conflict.hullModId()));
+            return text.arg("ship", member.getShipName()).arg("node", removedNode.getType().getDisplayName()).text();
         });
         campaignUi.addMessage(message.replace("%", "%%"), Misc.getNegativeHighlightColor());
     }
 
-    static synchronized void clearPendingReverts() {
+    public static synchronized void clearPendingReverts() {
         PENDING_REVERTS.clear();
         revertsPending = false;
     }

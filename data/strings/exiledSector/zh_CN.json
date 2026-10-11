@@ -323,7 +323,6 @@
     "node.block.learnedHullConflict": "该船体的内置系统无法与此节点共存。",
     "phantomConflict.removed": "{ship}：{node}及依赖它的节点已被移除并退还，因为它无法与{hullmod}共存。",
     "phantomConflict.removedByHull": "{ship}：{node}及依赖它的节点已被移除并退还，因为该船体的内置系统无法与其共存。",
-    "phantomConflict.removedByUnknown": "{ship}：{node}及依赖它的节点已被移除并退还，因为舰船上的另一个船插会将其移除。",
     "node.temporary": "这些效果仅在舰船部署后的前{seconds}秒内生效。",
     "ui.node.socket.installHint": "在插槽仓库中选择一件物品，然后点击此插槽进行安装。",
     "socketable.unknown": "无法识别的船体插槽模块",

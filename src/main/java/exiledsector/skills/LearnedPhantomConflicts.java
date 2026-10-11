@@ -58,10 +58,7 @@ public final class LearnedPhantomConflicts {
                 String phantomId = String.valueOf(phantomIds.next());
                 JSONArray keys = root.getJSONArray(phantomId);
                 for (int i = 0; i < keys.length(); i++) {
-                    String key = keys.getString(i);
-                    if (stillExists(key)) {
-                        CONFLICT_KEYS_BY_PHANTOM.computeIfAbsent(phantomId, id -> new LinkedHashSet<>()).add(key);
-                    }
+                    CONFLICT_KEYS_BY_PHANTOM.computeIfAbsent(phantomId, id -> new LinkedHashSet<>()).add(keys.getString(i));
                 }
             }
         } catch (JSONException e) {
@@ -70,12 +67,16 @@ public final class LearnedPhantomConflicts {
         }
     }
 
-    public static synchronized Conflict conflictFor(String phantomHullModId, String baseHullId, Predicate<String> hasHullMod) {
+    public static synchronized boolean isEmpty() {
+        return CONFLICT_KEYS_BY_PHANTOM.isEmpty();
+    }
+
+    public static synchronized Conflict conflictFor(String phantomHullModId, String hullId, Predicate<String> hasHullMod) {
         Set<String> keys = CONFLICT_KEYS_BY_PHANTOM.get(phantomHullModId);
         if (keys == null) {
             return null;
         }
-        if (baseHullId != null && keys.contains(HULL_PREFIX + baseHullId)) {
+        if (hullId != null && keys.contains(HULL_PREFIX + hullId)) {
             return new Conflict(null);
         }
         for (String key : keys) {
@@ -90,8 +91,8 @@ public final class LearnedPhantomConflicts {
         return learn(phantomHullModId, HULL_MOD_PREFIX + conflictingHullModId);
     }
 
-    public static boolean learnHull(String phantomHullModId, String baseHullId) {
-        return learn(phantomHullModId, HULL_PREFIX + baseHullId);
+    public static boolean learnHull(String phantomHullModId, String hullId) {
+        return learn(phantomHullModId, HULL_PREFIX + hullId);
     }
 
     private static synchronized boolean learn(String phantomHullModId, String key) {
@@ -114,20 +115,6 @@ public final class LearnedPhantomConflicts {
         } catch (IOException | JSONException e) {
             LOG.warn("[ExiledSector] Could not save learned hull mod conflicts to " + COMMON_FILE, e);
         }
-    }
-
-    private static boolean stillExists(String key) {
-        if (key.startsWith(HULL_MOD_PREFIX)) {
-            return Global.getSettings().getHullModSpec(key.substring(HULL_MOD_PREFIX.length())) != null;
-        }
-        if (key.startsWith(HULL_PREFIX)) {
-            try {
-                return Global.getSettings().getHullSpec(key.substring(HULL_PREFIX.length())) != null;
-            } catch (RuntimeException unknownHull) {
-                return false;
-            }
-        }
-        return false;
     }
 
     static synchronized void useStorage(Storage replacement) {

@@ -8,7 +8,7 @@ import exiledsector.skills.tags.ShipProfile;
 import java.util.function.Predicate;
 
 public record ShipFacts(HullSize hullSize, ShieldType hullShieldType, boolean phaseHull, float baseArmor,
-                        boolean limitedSystemCharges, Predicate<String> hasHullMod, boolean onlyBuiltInWings, String baseHullId) {
+                        boolean limitedSystemCharges, Predicate<String> hasHullMod, boolean onlyBuiltInWings, String hullId) {
 
     public ShipFacts(HullSize hullSize, ShieldType hullShieldType, boolean phaseHull, float baseArmor,
                      boolean limitedSystemCharges, Predicate<String> hasHullMod, boolean onlyBuiltInWings) {
@@ -27,12 +27,16 @@ public record ShipFacts(HullSize hullSize, ShieldType hullShieldType, boolean ph
 
     public static ShipFacts of(ShipHullSpecAPI hullSpec, Predicate<String> hasHullMod) {
         return new ShipFacts(hullSpec.getHullSize(), hullSpec.getShieldType(), hullSpec.isPhase(), hullSpec.getArmorRating(),
-                ShipSystemCharges.limited(hullSpec), hasHullMod, onlyBuiltInWings(hullSpec), hullSpec.getBaseHullId());
+                ShipSystemCharges.limited(hullSpec), hasHullMod, onlyBuiltInWings(hullSpec), hullSpec.getHullId());
     }
 
     public static ShipFacts of(ShipProfile profile, Predicate<String> hasHullMod) {
+        return of(profile, hasHullMod, null);
+    }
+
+    public static ShipFacts of(ShipProfile profile, Predicate<String> hasHullMod, String hullId) {
         return new ShipFacts(profile.hullSize(), profile.shieldType(), profile.phaseHull(),
-                profile.baseArmor(), profile.limitedSystemCharges(), hasHullMod, profile.onlyBuiltInWings());
+                profile.baseArmor(), profile.limitedSystemCharges(), hasHullMod, profile.onlyBuiltInWings(), hullId);
     }
 
     public static boolean onlyBuiltInWings(ShipHullSpecAPI hullSpec) {

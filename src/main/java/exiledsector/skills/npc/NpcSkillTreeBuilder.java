@@ -184,9 +184,11 @@ public final class NpcSkillTreeBuilder {
         private final Predicate<SkillType> lockedWormhole;
         private int nodeBudget;
         private int nodesSpent;
+        private final String hullId;
 
         Generation(NpcBuildRequest request, ShipSkillData shipData, int targetNodeCount, Random random) {
             this.shipData = shipData;
+            this.hullId = request.hullId();
             this.profile = request.profile();
             this.factionRegion = request.factionRegion() != null && SkillTags.FACTION_VOLUMES.contains(request.factionRegion())
                     ? request.factionRegion() : null;
@@ -465,7 +467,8 @@ public final class NpcSkillTreeBuilder {
                 List<String> tags = node.effectiveType().getTags();
                 shieldInvested |= tags.contains(SHIELD_THEME) || tags.contains(SHIELD_REQUIREMENT);
             }
-            NodeEligibility.Context eligibility = new NodeEligibility.Context(allocatedNodes, shieldType, ShipFacts.of(fittedProfile, fitInstalled::contains),
+            ShipFacts fittedFacts = ShipFacts.of(fittedProfile, fitInstalled::contains, hullId);
+            NodeEligibility.Context eligibility = new NodeEligibility.Context(allocatedNodes, shieldType, fittedFacts,
                     lockedWormhole, fittedProfile);
             AllocationGate.Budget budget = new AllocationGate.Budget(Integer.MAX_VALUE, freedOp.opCostPerNode(), maxNodes + 1);
             return new State(new AllocationGate(shipData, topology, shipData.resolveStartingRootId(), budget, eligibility), shieldInvested);

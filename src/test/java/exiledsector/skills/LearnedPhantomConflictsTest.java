@@ -83,15 +83,14 @@ class LearnedPhantomConflictsTest {
     }
 
     @Test
-    void entriesForHullModsOrHullsNoLongerLoadedAreDroppedOnLoad() {
+    void entriesForModsThatAreNotLoadedAreKeptForWhenTheyComeBack() {
         LearnedPhantomConflicts.learnHullMod("safetyoverrides", "removed_mod");
-        LearnedPhantomConflicts.learnHull("safetyoverrides", "removed_hull");
         when(settings.getHullModSpec("removed_mod")).thenReturn(null);
-        when(settings.getHullSpec("removed_hull")).thenThrow(new RuntimeException("not found"));
 
         LearnedPhantomConflicts.load();
 
-        assertNull(LearnedPhantomConflicts.conflictFor("safetyoverrides", "removed_hull", Set.of("removed_mod")::contains));
+        assertEquals("removed_mod", LearnedPhantomConflicts.conflictFor("safetyoverrides", "x", Set.of("removed_mod")::contains).hullModId());
+        assertTrue(stored[0].contains("mod:removed_mod"));
     }
 
     @Test
