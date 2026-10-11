@@ -18,7 +18,6 @@ public final class SocketTypeMigration {
     }
 
     public static void run() {
-        SocketableStore.get().migrateLegacyFrameworks(ShipSkillDataManager.all());
         List<Socketable> returnedItems = returnMisfits(ShipSkillDataManager.all(), SocketableStore.get());
         CampaignUIAPI campaignUi = Global.getSector().getCampaignUI();
         if (returnedItems.isEmpty() || campaignUi == null) {

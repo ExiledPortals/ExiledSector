@@ -91,7 +91,7 @@ public final class NpcSocketables {
                 fittingTypes.add(socketType);
             }
         }
-        List<SocketType> socketTypes = HullFrameworkRoller.rollTypes(HullFrameworkRoller.rollSocketCount(random), fittingTypes, new Random(random.nextLong()));
+        List<SocketType> socketTypes = HullUpgradeRoller.rollTypes(HullUpgradeRoller.rollSocketCount(random), fittingTypes, new Random(random.nextLong()));
         for (SocketType socketType : socketTypes) {
             shipData.grantUnlockedSocketType(socketType.id());
             if (random.nextFloat() < firstChance(playerLevel)) {

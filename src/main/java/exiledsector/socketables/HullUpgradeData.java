@@ -9,16 +9,15 @@ import java.util.Locale;
 
 public record HullUpgradeData(HullSize hullSize) {
 
-    public static final String ITEM_ID = "exiledSector_hull_framework";
+    public static final String ITEM_ID = "exiledSector_hull_upgrade";
     public static final List<HullSize> HULL_SIZES = List.of(HullSize.FRIGATE, HullSize.DESTROYER, HullSize.CRUISER, HullSize.CAPITAL_SHIP);
     private static final String ICON_FOLDER = "graphics/icons/frameworks/framework_";
-    private static final String LEGACY_FIELD_SEPARATOR = "/";
 
     public static HullUpgradeData parse(String encoded) {
         if (encoded == null || encoded.isBlank()) {
             return null;
         }
-        String sizeName = encoded.split(LEGACY_FIELD_SEPARATOR, -1)[0].trim();
+        String sizeName = encoded.trim();
         for (HullSize hullSize : HULL_SIZES) {
             if (hullSize.name().equals(sizeName)) {
                 return new HullUpgradeData(hullSize);

@@ -26,7 +26,7 @@ import exiledsector.ui.util.FramedPanelPlugin;
 import java.awt.Color;
 import java.util.List;
 
-public final class HullFrameworkPanel extends HoloPanel {
+public final class HullUpgradePanel extends HoloPanel {
 
     public interface Listener {
 
@@ -74,16 +74,16 @@ public final class HullFrameworkPanel extends HoloPanel {
     private CustomPanelAPI confirmPanel;
     private CustomPanelAPI confirmBlocker;
 
-    private HullFrameworkPanel(CustomPanelAPI hostPanel, View view, Listener panelListener) {
-        super(hostPanel, HullFrameworkPanel.class);
+    private HullUpgradePanel(CustomPanelAPI hostPanel, View view, Listener panelListener) {
+        super(hostPanel, HullUpgradePanel.class);
         this.view = view;
         this.panelListener = panelListener;
         this.hoverTooltip = new SocketableHoverTooltip(hostPanel);
     }
 
-    public static HullFrameworkPanel open(CustomPanelAPI hostPanel, float panelLeft, float panelTop, float panelHeight, View view,
+    public static HullUpgradePanel open(CustomPanelAPI hostPanel, float panelLeft, float panelTop, float panelHeight, View view,
                                           Listener panelListener) {
-        HullFrameworkPanel panel = new HullFrameworkPanel(hostPanel, view, panelListener);
+        HullUpgradePanel panel = new HullUpgradePanel(hostPanel, view, panelListener);
         panel.attach(panelLeft, panelTop, WIDTH, panelHeight);
         return panel;
     }
@@ -162,7 +162,7 @@ public final class HullFrameworkPanel extends HoloPanel {
         panelRoot.addComponent(confirmBlocker).inTL(0f, 0f);
         float confirmWidth = panelWidth - PAD * 2f;
         confirmPanel = Global.getSettings().createCustom(confirmWidth, CONFIRM_HEIGHT,
-                new FramedPanelPlugin(HullFrameworkPanel.class, this::buttonPressed));
+                new FramedPanelPlugin(HullUpgradePanel.class, this::buttonPressed));
         TooltipMakerAPI element = confirmPanel.createUIElement(confirmWidth - PAD * 2f, CONFIRM_HEIGHT - PAD * 2f, false);
         Color uniqueColor = SocketableRarity.UNIQUE.color();
         element.addPara("%s", 0f, uniqueColor, uniqueColor, Translation.msg("framework.confirm.title").arg("name", upgrade.name()).text());

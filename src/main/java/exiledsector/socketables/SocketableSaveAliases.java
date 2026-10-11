@@ -13,7 +13,6 @@ public final class SocketableSaveAliases {
             "exiledSector.SocketableStore", SocketableStore.class,
             "exiledSector.RolledEffect", RolledEffect.class,
             "exiledSector.FrozenName", FrozenName.class,
-            "exiledSector.HullFramework", HullFramework.class,
             "exiledSector.Socketable", Socketable.class);
 
     private SocketableSaveAliases() {
