@@ -467,7 +467,8 @@ public final class NpcSkillTreeBuilder {
                 List<String> tags = node.effectiveType().getTags();
                 shieldInvested |= tags.contains(SHIELD_THEME) || tags.contains(SHIELD_REQUIREMENT);
             }
-            ShipFacts fittedFacts = ShipFacts.of(fittedProfile, fitInstalled::contains, hullId);
+            ShipFacts fittedFacts = ShipFacts.of(fittedProfile, fitInstalled::contains, hullId,
+                    hullModId -> fitInstalled.contains(hullModId) && hullMods.permanent().contains(hullModId));
             NodeEligibility.Context eligibility = new NodeEligibility.Context(allocatedNodes, shieldType, fittedFacts,
                     lockedWormhole, fittedProfile);
             AllocationGate.Budget budget = new AllocationGate.Budget(Integer.MAX_VALUE, freedOp.opCostPerNode(), maxNodes + 1);

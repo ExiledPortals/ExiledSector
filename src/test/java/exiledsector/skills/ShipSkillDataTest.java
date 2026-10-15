@@ -1140,10 +1140,10 @@ class ShipSkillDataTest {
         assertEquals(List.of("root", "bridge"), List.copyOf(data.getAllocatedNodeIds()));
         assertEquals(Set.of("hidden"), data.getDormantNodeIds());
         assertEquals(3, data.getSpentOp(3));
-        assertEquals(List.of(), data.wakeDormantNodes(shown, 10));
+        assertEquals(List.of(), data.wakeDormantNodes(shown, 10, dormantNode -> true));
         assertEquals(Set.of("hidden"), data.getDormantNodeIds());
 
-        assertEquals(List.of(), data.wakeDormantNodes(declared, 10));
+        assertEquals(List.of(), data.wakeDormantNodes(declared, 10, dormantNode -> true));
         assertTrue(data.isAllocated("hidden"));
         assertTrue(data.getDormantNodeIds().isEmpty());
         assertEquals(6, data.getSpentOp(3));
@@ -1165,7 +1165,7 @@ class ShipSkillDataTest {
         stranded.allocate(first, 3);
         stranded.forgetUnknownNodes(Map.of("root", root, "bridge", bridge), declared, Map.of());
         stranded.deallocate(bridge);
-        assertEquals(List.of("first"), stranded.wakeDormantNodes(declared, 10));
+        assertEquals(List.of("first"), stranded.wakeDormantNodes(declared, 10, dormantNode -> true));
         assertFalse(stranded.isAllocated("first"));
         assertEquals(1, stranded.getBankedFreeAllocations());
 
@@ -1176,12 +1176,12 @@ class ShipSkillDataTest {
         capped.allocate(second, 3);
         capped.forgetUnknownNodes(Map.of("root", root, "bridge", bridge, "filler", filler), declared, Map.of());
         capped.allocate(filler, 3);
-        assertEquals(List.of("second"), capped.wakeDormantNodes(declared, 4));
+        assertEquals(List.of("second"), capped.wakeDormantNodes(declared, 4, dormantNode -> true));
         assertEquals(List.of("root", "bridge", "filler", "first"), List.copyOf(capped.getAllocatedNodeIds()));
     }
 
     @Test
-    void aDormantWormholePartnerReturnsWithItsAllocatedEndEvenAtTheNodeCap() {
+    void aDormantWormholePartnerReturnsWhileItsSlotIsStillFree() {
         SkillNode root = rootNode("root", List.of());
         SkillNode entrance = wormholeNode("entrance", List.of("root"), "exit");
         SkillNode exit = wormholeNode("exit", List.of("entrance"), "entrance");
@@ -1192,8 +1192,64 @@ class ShipSkillDataTest {
         Map<String, SkillNode> declared = Map.of("root", root, "entrance", entrance, "exit", exit);
         data.forgetUnknownNodes(Map.of("root", root, "entrance", entrance), declared, Map.of());
 
-        assertEquals(List.of(), data.wakeDormantNodes(declared, 2));
+        assertEquals(List.of(), data.wakeDormantNodes(declared, 3, dormantNode -> true));
         assertTrue(data.isAllocated("exit"));
+        assertEquals(3, data.getSpentOp(3));
+    }
+
+    @Test
+    void aWormholePairWhoseFreeEndCannotReturnIsReleasedWholeInsteadOfGoingOverTheCap() {
+        SkillNode root = rootNode("root", List.of());
+        SkillNode entrance = wormholeNode("entrance", List.of("root"), "exit");
+        SkillNode exit = wormholeNode("exit", List.of("entrance"), "entrance");
+        SkillNode filler = node("filler", List.of("root"));
+        ShipSkillData data = new ShipSkillData();
+        data.chooseStartingRoot(root);
+        data.allocate(entrance, 3);
+        Map<String, SkillNode> declared = Map.of("root", root, "entrance", entrance, "exit", exit, "filler", filler);
+        data.forgetUnknownNodes(Map.of("root", root, "entrance", entrance, "filler", filler), declared, Map.of());
+        data.allocate(filler, 3);
+
+        assertEquals(List.of("exit", "entrance"), data.wakeDormantNodes(declared, 3, dormantNode -> true));
+        assertEquals(List.of("root", "filler"), List.copyOf(data.getAllocatedNodeIds()));
+        assertEquals(3, data.getSpentOp(3));
+    }
+
+    @Test
+    void aDormantNodeTheWakeCheckRefusesIsReleasedAndItsFreeCreditReturned() {
+        SkillNode root = rootNode("root", List.of());
+        SkillNode bridge = node("bridge", List.of("root"));
+        SkillNode refused = node("refused", List.of("bridge"));
+        ShipSkillData data = new ShipSkillData();
+        data.chooseStartingRoot(root);
+        data.allocate(bridge, 3);
+        data.addFreeAllocationCredit();
+        data.allocate(refused, 3);
+        Map<String, SkillNode> declared = Map.of("root", root, "bridge", bridge, "refused", refused);
+        data.forgetUnknownNodes(Map.of("root", root, "bridge", bridge), declared, Map.of());
+
+        assertEquals(List.of("refused"), data.wakeDormantNodes(declared, 10, dormantNode -> false));
+        assertFalse(data.isAllocated("refused"));
+        assertEquals(1, data.getBankedFreeAllocations());
+    }
+
+    @Test
+    void aPaidDormantNodeWakesOnABankedFreeAllocationWhenThereIsOne() {
+        SkillNode root = rootNode("root", List.of());
+        SkillNode bridge = node("bridge", List.of("root"));
+        SkillNode hidden = node("hidden", List.of("bridge"));
+        ShipSkillData data = new ShipSkillData();
+        data.chooseStartingRoot(root);
+        data.allocate(bridge, 3);
+        data.allocate(hidden, 3);
+        Map<String, SkillNode> declared = Map.of("root", root, "bridge", bridge, "hidden", hidden);
+        data.forgetUnknownNodes(Map.of("root", root, "bridge", bridge), declared, Map.of());
+        data.addFreeAllocationCredit();
+
+        assertEquals(List.of(), data.wakeDormantNodes(declared, 10, dormantNode -> true));
+        assertTrue(data.isFreeNode("hidden"));
+        assertEquals(0, data.getBankedFreeAllocations());
+        assertEquals(3, data.getSpentOp(3));
     }
 
     @Test

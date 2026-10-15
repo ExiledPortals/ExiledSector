@@ -30,6 +30,7 @@ public class SkillTreeFleetRenderer {
     static final float MAX_TRAVEL_SPEED = 400f;
     static final float MIN_SHIP_PIXELS = 1.5f;
     static final float SOLO_FADE_SECONDS = 0.4f;
+    private static final Random FLIGHT_RANDOM = new Random();
     private static final String FLAME_PATH = "graphics/fx/particleline32ln.png";
     private static final String GLOW_PATH = "graphics/fx/hit_glow.png";
     private static final float FLAME_LEAD = 3f;
@@ -87,14 +88,13 @@ public class SkillTreeFleetRenderer {
         if (playerFleet == null || playerFleet.getFleetData() == null) {
             return new SkillTreeFleetRenderer(List.of(), null, 0f);
         }
-        Random random = new Random();
         CoreVolume coreVolume = CoreVolume.of(SkillTree.getStars(), SkillTree.getRingBelts());
         float travelSpeed = Math.max(MIN_TRAVEL_SPEED, Math.min(MAX_TRAVEL_SPEED,
                 Misc.getSpeedForBurnLevel(playerFleet.getFleetData().getMinBurnLevel())));
-        FleetFlight flight = new FleetFlight(coreVolume, travelSpeed, random);
+        FleetFlight flight = new FleetFlight(coreVolume, travelSpeed, FLIGHT_RANDOM);
         float fleetRadius = playerFleet.getRadius() > 0f ? playerFleet.getRadius() : DEFAULT_FLEET_RADIUS;
         SkillTreeFleetRenderer renderer = build(shownMembers(playerFleet.getFleetData().getMembersListCopy(), viewedMemberId),
-                fleetRadius, flight, random);
+                fleetRadius, flight, FLIGHT_RANDOM);
         renderer.soloShip = renderer.ships.stream().filter(ship -> ship.memberId().equals(viewedMemberId)).findFirst().orElse(null);
         return renderer;
     }

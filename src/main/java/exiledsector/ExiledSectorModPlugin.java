@@ -38,7 +38,6 @@ import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.npc.NpcFactionVolumes;
-import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.skilleffect.CsvIdList;
 import exiledsector.skills.skilleffect.EffectAliases;
 import exiledsector.skills.skilleffect.FleetCrewLedger;
@@ -155,7 +154,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         }
         ShipSkillDataManager.replaceRemovedNodes(SkillTree.getDeclaredNodes(), NodeReplacements.all());
         ShipSkillDataManager.forgetUnknownNodes(SkillTree.getAllNodes(), SkillTree.getDeclaredNodes(), SkillTree.getAllTypes(),
-                ShipLevelConfig.maxAllocatedNodes(), new OwnedShips(), ExiledSectorModPlugin::refund);
+                new OwnedShips(), ExiledSectorModPlugin::refund);
     }
 
     private static final class OwnedShips implements Predicate<String> {

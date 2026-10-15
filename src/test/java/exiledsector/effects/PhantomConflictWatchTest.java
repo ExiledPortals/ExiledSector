@@ -184,6 +184,17 @@ class PhantomConflictWatchTest {
         assertEquals(Set.of(SAFETY_OVERRIDES), PhantomConflictWatch.withoutLearnedConflicts(Set.of(SAFETY_OVERRIDES), wolf));
     }
 
+    @Test
+    void aLearnedHullModFittedAsAnOrdinaryRemovableModDoesNotBeatTheNode() {
+        LearnedPhantomConflicts.learnHullMod(SAFETY_OVERRIDES, "csp_cetanframe");
+        ShipVariantAPI fittedByHand = variant("wolf", List.of("csp_cetanframe"), Set.of());
+        ShipVariantAPI sModded = variant("wolf", List.of("csp_cetanframe"), Set.of());
+        when(sModded.getSMods()).thenReturn(new LinkedHashSet<>(List.of("csp_cetanframe")));
+
+        assertEquals(Set.of(SAFETY_OVERRIDES), PhantomConflictWatch.withoutLearnedConflicts(Set.of(SAFETY_OVERRIDES), fittedByHand));
+        assertEquals(Set.of(), PhantomConflictWatch.withoutLearnedConflicts(Set.of(SAFETY_OVERRIDES), sModded));
+    }
+
     private ShipSkillData treeWithOverrides(String memberId) {
         SkillType rootType = new SkillType.Builder("root", "Root", "a.png", SkillTier.ROOT).effects(List.of()).build();
         SkillType overridesType = new SkillType.Builder("safety_overrides", "Safety Overrides", "a.png", SkillTier.NOTABLE).effects(List.of())
