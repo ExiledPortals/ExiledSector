@@ -62,7 +62,7 @@ public final class PhantomConflictWatch {
     private static LearnedPhantomConflicts.Conflict conflictOn(ShipVariantAPI variant, String phantomHullModId) {
         ShipHullSpecAPI hullSpec = variant.getHullSpec();
         return LearnedPhantomConflicts.conflictFor(phantomHullModId, hullSpec == null ? null : hullSpec.getHullId(),
-                hullModId -> InstalledHullMods.hasHullModOfItsOwn(variant, hullModId));
+                hullModId -> InstalledHullMods.hasFixedHullModOfItsOwn(variant, hullModId));
     }
 
     static void queueRevertsForBlocked(FleetMemberAPI member, Set<String> wantedPhantomHullModIds, Set<String> placeable,
@@ -104,16 +104,11 @@ public final class PhantomConflictWatch {
         String phantomHullModId = reason.get(0);
         String causeHullModId = reason.get(1);
         if (!wantedPhantomHullModIds.contains(phantomHullModId) || causeHullModId == null || causeHullModId.isBlank()
-                || !InstalledHullMods.hasHullModOfItsOwn(variant, causeHullModId) || isRemovable(variant, causeHullModId)) {
+                || !InstalledHullMods.hasFixedHullModOfItsOwn(variant, causeHullModId)) {
             return;
         }
         LearnedPhantomConflicts.learnHullMod(phantomHullModId, causeHullModId);
         queueIfPlayer(member, phantomHullModId, playerTree);
-    }
-
-    static boolean isRemovable(ShipVariantAPI variant, String hullModId) {
-        boolean builtIn = variant.getHullSpec() != null && variant.getHullSpec().isBuiltInMod(hullModId);
-        return !builtIn && !variant.getPermaMods().contains(hullModId) && !variant.getSMods().contains(hullModId);
     }
 
     private static void queueIfPlayer(FleetMemberAPI member, String phantomHullModId, boolean playerTree) {

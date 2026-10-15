@@ -241,8 +241,10 @@ does it, the node can't work on that hull.
 Starsector's shared common folder, so a conflict found once applies to every save. It is read once at
 startup and written only when something new is learned; entries for mods that aren't loaded are kept
 and simply never match. From then on `ShipTreeSync` stops placing that phantom on ships with the
-conflict, and `NodeEligibility` refuses the node there with `LEARNED_CONFLICT`, naming the hull mod or
-the hull's built-in systems. The NPC tree builder sees learned conflicts the same way.
+conflict (a learned hull mod only counts where it can't be removed; an ordinary removable copy on
+another hull is left to the resolver, which removes it with the warning), and `NodeEligibility`
+refuses the node there with `LEARNED_CONFLICT`, naming the hull mod or the hull's built-in systems.
+The NPC tree builder sees learned conflicts the same way.
 
 On a player ship the node that placed the phantom is also removed, together with every node that
 depended on it (`RespecPlan`), and refunded the same way a respec would refund it, with a campaign

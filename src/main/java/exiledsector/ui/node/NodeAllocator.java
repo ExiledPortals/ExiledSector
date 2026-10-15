@@ -10,11 +10,11 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.FighterWingSpecAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledsector.compat.SecondInCommandCompat;
 import exiledsector.effects.FighterBayOverflow;
 import exiledsector.i18n.I18n;
 import exiledsector.effects.OpReserveParity;
 import exiledsector.effects.PhantomConflictWatch;
+import exiledsector.effects.PlayerShipFacts;
 import exiledsector.effects.ShipTreeSync;
 import exiledsector.i18n.Translation;
 import exiledsector.persistence.ShipSkillDataManager;
@@ -22,10 +22,8 @@ import exiledsector.skills.AllocationGate;
 import exiledsector.skills.FrameworkFit;
 import exiledsector.skills.FrameworkSlots;
 import exiledsector.skills.HullModNames;
-import exiledsector.skills.InstalledHullMods;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.RespecPlan;
-import exiledsector.skills.ShipFacts;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillNode;
@@ -189,7 +187,7 @@ final class NodeAllocator {
         OpReserveParity.warnIfOutOfSync(fleetMember, shipVariant, skillData.getSpentOp(opCostPerNode), reservedOp, "while allocating nodes");
         int totalOpBudget = opBudget.totalOp - opBudget.usedOp + reservedOp;
         AllocationGate.Budget budget = new AllocationGate.Budget(totalOpBudget, opCostPerNode, ShipLevelConfig.maxAllocatedNodes());
-        NodeEligibility.Context eligibility = NodeEligibility.Context.of(skillData, ShipFacts.of(fleetMember.getHullSpec(), this::hasHullMod),
+        NodeEligibility.Context eligibility = NodeEligibility.Context.of(skillData, PlayerShipFacts.of(fleetMember, shipVariant),
                 type -> SkillTypeUnlockStatus.isLocked(type, skillData), NodeAllocator::heldInCargo);
         AllocationGate gate = new AllocationGate(skillData, SkillTree.topology(), satisfiedRootId(), budget, eligibility);
         return new Snapshot(skillData, opBudget, statsRevision, hiddenNodeIds(skillData), gate, this::describe);
@@ -417,10 +415,6 @@ final class NodeAllocator {
         fleetMember.setStatUpdateNeeded(true);
         fleetMember.updateStats();
         ShipTreeSync.syncVariant(fleetMember, shipVariant);
-    }
-
-    private boolean hasHullMod(String hullModId) {
-        return InstalledHullMods.hasHullModOfItsOwn(shipVariant, hullModId) || SecondInCommandCompat.hasDeactivatedSMod(shipVariant, hullModId);
     }
 
     private static String bestOfTheBestName() {
