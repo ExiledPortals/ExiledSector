@@ -854,8 +854,8 @@
 			"connectedTo": [
 				"small_logistics_optional_9"
 			],
-			"x": 555,
-			"y": -173,
+			"x": 565,
+			"y": -108,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#ffca80",
 			"tags": [
@@ -973,7 +973,8 @@
 				"small_flux_optional_16",
 				"small_flux_optional_14",
 				"small_flux_optional_35",
-				"safety_overrides_1"
+				"safety_overrides_1",
+				"lowtech_wormhole_2"
 			],
 			"x": 0,
 			"y": 3750,
@@ -1728,7 +1729,6 @@
 				"small_flux_optional_6",
 				"small_flux_optional_4",
 				"tritach_1",
-				"hightech_wormhole_1",
 				"hightech_wormhole_2"
 			],
 			"x": 0,
@@ -1810,8 +1810,7 @@
 				"small_flux_optional_10",
 				"small_flux_optional_12",
 				"small_flux_optional_30",
-				"peak_cr_duration_2",
-				"lowtech_wormhole_2"
+				"peak_cr_duration_2"
 			],
 			"x": 3566,
 			"y": 1159,
@@ -1908,8 +1907,7 @@
 			"connectedTo": [
 				"small_flux_optional_19",
 				"small_flux_optional_17",
-				"small_flux_optional_38",
-				"wormhole_6"
+				"small_flux_optional_38"
 			],
 			"x": -3034,
 			"y": 2204,
@@ -2423,7 +2421,8 @@
 				"small_flux_optional_41",
 				"small_flux_optional_43",
 				"ballistic_and_energy_weapon_range_2",
-				"shield_damage_taken_multi_2"
+				"shield_damage_taken_multi_2",
+				"wormhole_6"
 			],
 			"x": -2339,
 			"y": -1798,
@@ -2936,10 +2935,10 @@
 			"type": "wormhole",
 			"connectedTo": [
 				"midline_wormhole_1",
-				"small_flux_optional_2"
+				"modular_hull_socket_2"
 			],
-			"x": -237,
-			"y": -3424,
+			"x": 2742,
+			"y": -1929,
 			"pairedWith": "midline_wormhole_1",
 			"tags": [
 				"core"
@@ -2952,8 +2951,8 @@
 				"hightech_wormhole_1",
 				"small_flux_optional_19"
 			],
-			"x": -3323,
-			"y": 829,
+			"x": -3219,
+			"y": 1614,
 			"pairedWith": "hightech_wormhole_1",
 			"tags": [
 				"core"
@@ -2966,8 +2965,8 @@
 				"lowtech_wormhole_2",
 				"small_flux_optional_2"
 			],
-			"x": 256,
-			"y": -3412,
+			"x": 305,
+			"y": -3456,
 			"wormholeColor": "#5f64ec",
 			"pairedWith": "lowtech_wormhole_2",
 			"tags": [
@@ -2979,10 +2978,10 @@
 			"type": "wormhole",
 			"connectedTo": [
 				"hightech_wormhole_2",
-				"small_flux_optional_11"
+				"modular_hull_socket_1"
 			],
-			"x": 3358,
-			"y": 872,
+			"x": 256,
+			"y": 3521,
 			"wormholeColor": "#5f64ec",
 			"pairedWith": "hightech_wormhole_2",
 			"tags": [
@@ -2996,8 +2995,8 @@
 				"wormhole_6",
 				"small_flux_optional_12"
 			],
-			"x": 2715,
-			"y": 2218,
+			"x": 3230,
+			"y": 1625,
 			"wormholeColor": "#cd7f4c",
 			"pairedWith": "wormhole_6",
 			"tags": [
@@ -3009,10 +3008,10 @@
 			"type": "wormhole",
 			"connectedTo": [
 				"lowtech_wormhole_1",
-				"small_flux_optional_18"
+				"small_flux_optional_42"
 			],
-			"x": -2671,
-			"y": 2205,
+			"x": -2325,
+			"y": -1434,
 			"wormholeColor": "#cd7f4c",
 			"pairedWith": "lowtech_wormhole_1",
 			"tags": [
@@ -5610,7 +5609,8 @@
 			"connectedTo": [
 				"small_flux_optional_9",
 				"small_flux_optional_7",
-				"REDACTED_1"
+				"REDACTED_1",
+				"hightech_wormhole_1"
 			],
 			"x": 3052,
 			"y": -2180,
