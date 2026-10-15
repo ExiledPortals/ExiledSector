@@ -104,6 +104,7 @@ public final class SocketStoragePanel extends HoloPanel {
     private float searchDelay;
     private List<SocketStorageRow> storageRows = List.of();
     private Socketable selectedSocketable;
+    private String placingHint;
     private boolean targetingSocket;
     private List<Socketable> pendingDisassembly = List.of();
     private boolean disassemblyMode;
@@ -197,7 +198,12 @@ public final class SocketStoragePanel extends HoloPanel {
     }
 
     public void setSelected(Socketable socketable) {
+        setSelected(socketable, null);
+    }
+
+    public void setSelected(Socketable socketable, String hint) {
         selectedSocketable = socketable;
+        placingHint = hint;
         if (socketable != null) {
             leaveDisassemblyMode();
         }
@@ -587,7 +593,7 @@ public final class SocketStoragePanel extends HoloPanel {
             newNotice.addPara("%s", 0f, Misc.getNegativeHighlightColor(), Misc.getNegativeHighlightColor(), hint);
         } else if (selectedSocketable != null) {
             newNotice.addPara("%s", 0f, Misc.getPositiveHighlightColor(), Misc.getPositiveHighlightColor(),
-                    Translation.msg("ui.socketStorage.placingHint").arg("name", selectedSocketable.name()).text());
+                    placingHint != null ? placingHint : Translation.msg("ui.socketStorage.placingHint").arg("name", selectedSocketable.name()).text());
         } else if (targetingSocket) {
             String targetHint = kindFilter == null ? Translation.text("ui.socketStorage.targetHint")
                     : Translation.msg("ui.socketStorage.frameworkTargetHint").arg("type", kindFilter.displayName()).text();
@@ -711,17 +717,30 @@ public final class SocketStoragePanel extends HoloPanel {
 
     private List<StyledText> cellFooter(SocketStorageRow row) {
         if (row.installed()) {
-            return List.of(Translation.msg("ui.socketStorage.cell.installed").arg("ship", row.installedShipName()).styled());
+            String installedKey = isSubroutine(row) ? "ui.socketStorage.cell.installed" : "ui.socketStorage.cell.installedFramework";
+            return List.of(Translation.msg(installedKey).arg("ship", row.installedShipName()).styled());
         }
         if (disassemblyMode) {
             int partCount = row.socketable().rarity().disassemblyParts();
             String key = markedForDisassembly.contains(row.socketable()) ? "ui.socketStorage.cell.unmark" : "ui.socketStorage.cell.mark";
             return List.of(Translation.msg(key).count(partCount).arg("count", partCount).styled());
         }
-        String installKey = workbenchPanel != null ? "ui.socketStorage.cell.workbench"
-                : targetingSocket ? "ui.socketStorage.cell.freeTarget" : "ui.socketStorage.cell.free";
-        return List.of(Translation.styled(installKey), Translation.msg("ui.socketStorage.cell.disassemble")
+        StyledText installHint;
+        if (workbenchPanel != null) {
+            installHint = Translation.styled("ui.socketStorage.cell.workbench");
+        } else if (targetingSocket) {
+            installHint = Translation.styled("ui.socketStorage.cell.freeTarget");
+        } else if (isSubroutine(row)) {
+            installHint = Translation.styled("ui.socketStorage.cell.free");
+        } else {
+            installHint = Translation.msg("ui.socketStorage.cell.freeFramework").arg("type", row.socketable().kind().displayName()).styled();
+        }
+        return List.of(installHint, Translation.msg("ui.socketStorage.cell.disassemble")
                 .count(row.socketable().rarity().disassemblyParts()).arg("count", row.socketable().rarity().disassemblyParts()).styled());
+    }
+
+    private static boolean isSubroutine(SocketStorageRow row) {
+        return row.socketable().kind() == null || row.socketable().kind() == SocketType.SUBROUTINE;
     }
 
     private SocketableCell cellFor(SocketStorageRow row) {

@@ -35,6 +35,7 @@ final class SocketPlacement {
     private Socketable placingSocketable;
     private SkillNode targetSocket;
     private SocketType targetFrameworkType;
+    private boolean inspectingShip;
     private int storageRevision;
     private Map<String, FleetMemberAPI> ownedShips = Map.of();
     private ScreenRect lastShipCard = ScreenRect.NONE;
@@ -181,6 +182,8 @@ final class SocketPlacement {
         if (treeSession.installInSocket(node, placingSocketable)) {
             stopPlacing();
             refresh();
+        } else {
+            SkillTreeSounds.refused();
         }
         return true;
     }
@@ -208,6 +211,9 @@ final class SocketPlacement {
         if (storagePanel != null) {
             storageRevision = treeSession.statsRevision();
             storagePanel.refresh(SocketCustody.shipNames(ownedShips));
+            if (placingSocketable != null) {
+                storagePanel.setSelected(placingSocketable, placingHint(placingSocketable));
+            }
         }
     }
 
@@ -259,10 +265,57 @@ final class SocketPlacement {
 
     private void startPlacing(Socketable socketable) {
         placingSocketable = socketable;
-        nodeSearch.setSocketFocus(true);
+        nodeSearch.setSocketFocus(true, isSubroutine(socketable));
         if (storagePanel != null) {
-            storagePanel.setSelected(socketable);
+            storagePanel.setSelected(socketable, placingHint(socketable));
         }
+    }
+
+    Socketable placingSocketable() {
+        return placingSocketable;
+    }
+
+    void setInspectingShip(boolean inspecting) {
+        if (inspecting == inspectingShip) {
+            return;
+        }
+        inspectingShip = inspecting;
+        if (placingSocketable != null && storagePanel != null) {
+            storagePanel.setSelected(placingSocketable, placingHint(placingSocketable));
+        }
+    }
+
+    boolean placeIntoFrameworkSocket(SocketType socketType) {
+        if (placingSocketable == null) {
+            return false;
+        }
+        if (placingSocketable.kind() == socketType && treeSession.socketFrameworkItem(socketType, placingSocketable)) {
+            stopPlacing();
+            refresh();
+        } else {
+            SkillTreeSounds.refused();
+        }
+        return true;
+    }
+
+    private String placingHint(Socketable socketable) {
+        String name = socketable.name();
+        if (isSubroutine(socketable)) {
+            return Translation.msg(inspectingShip ? "ui.socketStorage.placingHintShipView" : "ui.socketStorage.placingHint")
+                    .arg("name", name).text();
+        }
+        SocketType socketType = socketable.kind();
+        String key;
+        if (!treeSession.isSocketTypeUnlocked(socketType)) {
+            key = "ui.socketStorage.placingHintFrameworkLocked";
+        } else {
+            key = inspectingShip ? "ui.socketStorage.placingHintFramework" : "ui.socketStorage.placingHintFrameworkZoom";
+        }
+        return Translation.msg(key).arg("name", name).arg("type", socketType.displayName()).text();
+    }
+
+    private static boolean isSubroutine(Socketable socketable) {
+        return socketable.kind() == null || socketable.kind() == SocketType.SUBROUTINE;
     }
 
     private void stopPlacing() {

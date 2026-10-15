@@ -1,58 +1,58 @@
 hullmod_name,hullmod_id,vanilla_tier,hullmod_op_frigate,hullmod_op_destroyer,hullmod_op_cruiser,hullmod_op_capital,node_type,node_tier,node_ids,node_region,match,nodes_from_low_tech,nodes_from_midline,nodes_from_high_tech,tree_op_from_low_tech_frigate,tree_op_from_low_tech_destroyer,tree_op_from_low_tech_cruiser,tree_op_from_low_tech_capital,tree_op_from_midline_frigate,tree_op_from_midline_destroyer,tree_op_from_midline_cruiser,tree_op_from_midline_capital,tree_op_from_high_tech_frigate,tree_op_from_high_tech_destroyer,tree_op_from_high_tech_cruiser,tree_op_from_high_tech_capital
-Accelerated Shields,advancedshieldemitter,0,3,6,9,15,advancedshieldemitter,notable,advancedshieldemitter_1,core,phantom hull mod,11,12,7,11,22,33,44,12,24,36,48,7,14,21,28
-Additional Berthing,additional_berthing,0,5,10,15,25,additional_berthing,notable,additional_berthing_1,core,phantom hull mod,8,5,8,8,16,24,32,5,10,15,20,8,16,24,32
-Advanced Turret Gyros,turretgyros,0,2,4,6,10,turretgyros,notable,turretgyros_1,core,phantom hull mod,10,5,10,10,20,30,40,5,10,15,20,10,20,30,40
-Armored Weapon Mounts,armoredweapons,0,3,6,9,15,armoredweapons,notable,armoredweapons_1,core,phantom hull mod,7,8,12,7,14,21,28,8,16,24,32,12,24,36,48
-Auxiliary Fuel Tanks,auxiliary_fuel_tanks,0,5,10,15,25,auxiliary_fuel_tanks,notable,auxiliary_fuel_tanks_1,core,phantom hull mod,5,8,8,5,10,15,20,8,16,24,32,8,16,24,32
-Blast Doors,blast_doors,0,4,8,12,20,blast_doors,notable,blast_doors_1,core,phantom hull mod,5,10,10,5,10,15,20,10,20,30,40,10,20,30,40
-Converted Fighter Bay,converted_fighterbay,0,2,4,6,10,converted_fighterbay,keystone,converted_fighterbay_1,core,phantom hull mod,4,5,5,4,8,12,16,5,10,15,20,5,10,15,20
-Dedicated Targeting Core,dedicated_targeting_core,0,0,0,15,25,dedicated_targeting_core,notable,dedicated_targeting_core_1,core,phantom hull mod,5,10,10,5,10,15,20,10,20,30,40,10,20,30,40
-Efficiency Overhaul,efficiency_overhaul,0,3,6,9,15,efficiency_overhaul,keystone,efficiency_overhaul_1,core,phantom hull mod,5,4,5,5,10,15,20,4,8,12,16,5,10,15,20
-Expanded Cargo Holds,expanded_cargo_holds,0,5,10,15,25,expanded_cargo_holds,notable,expanded_cargo_holds_1,core,phantom hull mod,5,8,8,5,10,15,20,8,16,24,32,8,16,24,32
+Accelerated Shields,advancedshieldemitter,0,3,6,9,15,advancedshieldemitter,notable,advancedshieldemitter_1,core,phantom hull mod,11,12,7,11,22,33,55,12,24,36,60,7,14,21,35
+Additional Berthing,additional_berthing,0,5,10,15,25,additional_berthing,notable,additional_berthing_1,core,phantom hull mod,10,5,10,10,20,30,50,5,10,15,25,10,20,30,50
+Advanced Turret Gyros,turretgyros,0,2,4,6,10,turretgyros,notable,turretgyros_1,core,phantom hull mod,10,5,10,10,20,30,50,5,10,15,25,10,20,30,50
+Armored Weapon Mounts,armoredweapons,0,3,6,9,15,armoredweapons,notable,armoredweapons_1,core,phantom hull mod,7,8,11,7,14,21,35,8,16,24,40,11,22,33,55
+Auxiliary Fuel Tanks,auxiliary_fuel_tanks,0,5,10,15,25,auxiliary_fuel_tanks,notable,auxiliary_fuel_tanks_1,core,phantom hull mod,6,11,11,6,12,18,30,11,22,33,55,11,22,33,55
+Blast Doors,blast_doors,0,4,8,12,20,blast_doors,notable,blast_doors_1,core,phantom hull mod,5,10,10,5,10,15,25,10,20,30,50,10,20,30,50
+Converted Fighter Bay,converted_fighterbay,0,2,4,6,10,converted_fighterbay,keystone,converted_fighterbay_1,core,phantom hull mod,3,8,3,3,6,9,15,8,16,24,40,3,6,9,15
+Dedicated Targeting Core,dedicated_targeting_core,0,0,0,15,25,dedicated_targeting_core,notable,dedicated_targeting_core_1,core,phantom hull mod,5,10,10,5,10,15,25,10,20,30,50,10,20,30,50
+Efficiency Overhaul,efficiency_overhaul,0,3,6,9,15,efficiency_overhaul,keystone,efficiency_overhaul_1,core,phantom hull mod,8,3,3,8,16,24,40,3,6,9,15,3,6,9,15
+Expanded Cargo Holds,expanded_cargo_holds,0,5,10,15,25,expanded_cargo_holds,notable,expanded_cargo_holds_1,core,phantom hull mod,8,9,10,8,16,24,40,9,18,27,45,10,20,30,50
 Flux Coil Adjunct,fluxcoil,0,4,8,12,20,,,,,,,,,,,,,,,,,,,,
 Flux Distributor,fluxdistributor,0,4,8,12,20,,,,,,,,,,,,,,,,,,,,
-Hardened Subsystems,hardened_subsystems,0,5,10,15,25,hardened_subsystems,notable,hardened_subsystems_1,core,phantom hull mod,5,8,8,5,10,15,20,8,16,24,32,8,16,24,32
-Heavy Armor,heavyarmor,0,8,15,20,40,heavyarmor,notable,heavyarmor_1,core,phantom hull mod,10,6,9,10,20,30,40,6,12,18,24,9,18,27,36
-Insulated Engine Assembly,insulatedengine,0,3,6,9,15,insulatedengine,notable,insulatedengine_1,core,phantom hull mod,8,5,8,8,16,24,32,5,10,15,20,8,16,24,32
-Makeshift Shield Generator,frontshield,0,5,10,15,25,frontshield,keystone,frontshield_1,core,phantom hull mod,5,10,7,5,10,15,20,10,20,30,40,7,14,21,28
-Militarized Subsystems,militarized_subsystems,0,4,8,12,20,militarized_subsystems,notable,militarized_subsystems_1,core,phantom hull mod,8,3,6,8,16,24,32,3,6,9,12,6,12,18,24
-Reinforced Bulkheads,reinforcedhull,0,5,10,15,30,reinforcedhull,notable,reinforcedhull_1,core,phantom hull mod,4,9,9,4,8,12,16,9,18,27,36,9,18,27,36
-Safety Overrides,safetyoverrides,0,15,30,45,70,safety_overrides,keystone,safety_overrides_1,core,phantom hull mod,6,6,11,6,12,18,24,6,12,18,24,11,22,33,44
-Unstable Injector,unstable_injector,0,5,10,15,25,unstable_injector,keystone,unstable_injector_1,core,phantom hull mod,2,7,7,2,4,6,8,7,14,21,28,7,14,21,28
+Hardened Subsystems,hardened_subsystems,0,5,10,15,25,hardened_subsystems,notable,hardened_subsystems_1,core,phantom hull mod,5,10,10,5,10,15,25,10,20,30,50,10,20,30,50
+Heavy Armor,heavyarmor,0,8,15,20,40,heavyarmor,notable,heavyarmor_1,core,phantom hull mod,11,6,11,11,22,33,55,6,12,18,30,11,22,33,55
+Insulated Engine Assembly,insulatedengine,0,3,6,9,15,insulatedengine,notable,insulatedengine_1,core,phantom hull mod,9,8,10,9,18,27,45,8,16,24,40,10,20,30,50
+Makeshift Shield Generator,frontshield,0,5,10,15,25,frontshield,keystone,frontshield_1,core,phantom hull mod,5,9,7,5,10,15,25,9,18,27,45,7,14,21,35
+Militarized Subsystems,militarized_subsystems,0,4,8,12,20,militarized_subsystems,notable,militarized_subsystems_1,core,phantom hull mod,9,6,11,9,18,27,45,6,12,18,30,11,22,33,55
+Reinforced Bulkheads,reinforcedhull,0,5,10,15,30,reinforcedhull,notable,reinforcedhull_1,core,phantom hull mod,4,9,9,4,8,12,20,9,18,27,45,9,18,27,45
+Safety Overrides,safetyoverrides,0,15,30,45,70,safety_overrides,keystone,safety_overrides_1,core,phantom hull mod,6,6,7,6,12,18,30,6,12,18,30,7,14,21,35
+Unstable Injector,unstable_injector,0,5,10,15,25,unstable_injector,keystone,unstable_injector_1,core,phantom hull mod,2,7,7,2,4,6,10,7,14,21,35,7,14,21,35
 Assault Package,assault_package,1,3,6,9,15,,,,,,,,,,,,,,,,,,,,
-Augmented Drive Field,augmentedengines,1,8,16,24,40,augmentedengines,notable,augmentedengines_1 augmentedengines_2,core,phantom hull mod,3,8,3,3,6,9,12,8,16,24,32,3,6,9,12
-Auxiliary Thrusters,auxiliarythrusters,1,4,8,12,20,auxiliarythrusters,notable,auxiliarythrusters_1,core,phantom hull mod,6,11,10,6,12,18,24,11,22,33,44,10,20,30,40
-Converted Hangar,converted_hangar,1,0,10,10,10,converted_hangar,keystone,converted_hangar_1,core,phantom hull mod,4,4,9,4,8,12,16,4,8,12,16,9,18,27,36
-Escort Package,escort_package,1,0,7,15,0,escort_package,keystone,escort_package_1,core,exclusion list,4,4,9,4,8,12,16,4,8,12,16,9,18,27,36
-Expanded Deck Crew,expanded_deck_crew,1,5,10,15,25,expanded_deck_crew,notable,expanded_deck_crew_1,core,phantom hull mod,11,6,10,11,22,33,44,6,12,18,24,10,20,30,40
-Expanded Magazines,magazines,1,3,5,7,10,magazines,notable,magazines_1,core,phantom hull mod,7,6,11,7,14,21,28,6,12,18,24,11,22,33,44
-Expanded Missile Racks,missleracks,1,8,12,20,30,missleracks,notable,missleracks_1,core,phantom hull mod,7,7,12,7,14,21,28,7,14,21,28,12,24,36,48
-Extended Shields,extendedshieldemitter,1,4,8,12,20,extendedshieldemitter,notable,extendedshieldemitter_1,core,phantom hull mod,9,9,4,9,18,27,36,9,18,27,36,4,8,12,16
-Missile Autoloader,missile_autoloader,1,8,12,20,30,missile_autoloader,keystone,missile_autoloader_1,core,vanilla hull mod,5,9,8,5,10,15,20,9,18,27,36,8,16,24,32
-Operations Center,operations_center,1,30,30,30,30,operations_center,keystone,operations_center_1,core,phantom hull mod,4,5,5,4,8,12,16,5,10,15,20,5,10,15,20
-Recovery Shuttles,recovery_shuttles,1,3,6,9,15,recovery_shuttles,notable,recovery_shuttles_1,core,phantom hull mod,7,12,9,7,14,21,28,12,24,36,48,9,18,27,36
-Shield Shunt,shield_shunt,1,3,5,7,10,shield_shunt,notable,shield_shunt_1,core,phantom hull mod,7,8,12,7,14,21,28,8,16,24,32,12,24,36,48
-Stabilized Shields,stabilizedshieldemitter,1,3,6,9,15,stabilizedshieldemitter,notable,stabilizedshieldemitter_1,core,phantom hull mod,12,7,9,12,24,36,48,7,14,21,28,9,18,27,36
-Surveying Equipment,surveying_equipment,1,5,10,15,25,surveying_equipment,notable,surveying_equipment_1,core,phantom hull mod,8,8,5,8,16,24,32,8,16,24,32,5,10,15,20
-Adaptive Phase Coils,adaptive_coils,2,5,10,15,25,adaptive_coils,notable,adaptive_coils_1,core,phantom hull mod,12,9,7,12,24,36,48,9,18,27,36,7,14,21,28
-Advanced Optics,advancedoptics,2,5,10,15,25,advancedoptics,notable,advancedoptics_1,core,phantom hull mod,12,7,11,12,24,36,48,7,14,21,28,11,22,33,44
-Automated Repair Unit,autorepair,2,3,6,9,15,autorepair,notable,autorepair_1,core,phantom hull mod,12,7,9,12,24,36,48,7,14,21,28,9,18,27,36
-Ballistic Rangefinder,ballistic_rangefinder,2,5,10,15,25,ballistic_rangefinder,keystone,ballistic_rangefinder_1,core,vanilla hull mod,6,9,11,6,12,18,24,9,18,27,36,11,22,33,44
-Defensive Targeting Array,defensive_targeting_array,2,2,4,6,10,defensive_targeting_array,keystone,defensive_targeting_array_1,core,vanilla hull mod,6,5,10,6,12,18,24,5,10,15,20,10,20,30,40
-ECCM Package,eccm,2,5,8,15,20,eccm,notable,eccm_1,core,phantom hull mod,10,7,11,10,20,30,40,7,14,21,28,11,22,33,44
-ECM Package,ecm,2,6,12,18,24,ecm,notable,ecm_1,core,phantom hull mod,8,13,8,8,16,24,32,13,26,39,52,8,16,24,32
-High Resolution Sensors,hiressensors,2,4,6,9,15,hiressensors,notable,hiressensors_1,core,exclusion list,8,6,3,8,16,24,32,6,12,18,24,3,6,9,12
-Nav Relay,nav_relay,2,10,15,20,25,nav_relay,notable,nav_relay_1,core,phantom hull mod,10,5,10,10,20,30,40,5,10,15,20,10,20,30,40
-Resistant Flux Conduits,fluxbreakers,2,3,6,9,15,fluxbreakers,notable,fluxbreakers_1,core,phantom hull mod,10,13,8,10,20,30,40,13,26,39,52,8,16,24,32
-Shield Conversion - Front,frontemitter,2,3,5,8,12,frontemitter,notable,frontemitter_1,core,phantom hull mod,9,12,7,9,18,27,36,12,24,36,48,7,14,21,28
-Solar Shielding,solar_shielding,2,3,6,9,15,solar_shielding,notable,solar_shielding_1,core,type id,5,4,5,5,10,15,20,4,8,12,16,5,10,15,20
-Hardened Shields,hardenedshieldemitter,3,5,10,15,25,hardenedshieldemitter,notable,hardenedshieldemitter_1,core,phantom hull mod,13,8,8,13,26,39,52,8,16,24,32,8,16,24,32
-High Scatter Amplifier,high_scatter_amp,3,4,8,12,20,high_scatter_amp,notable,high_scatter_amp_1,core,phantom hull mod,12,7,11,12,24,36,48,7,14,21,28,11,22,33,44
-Integrated Point Defense AI,pointdefenseai,3,3,6,9,15,pointdefenseai,notable,pointdefenseai_1,core,phantom hull mod,8,13,8,8,16,24,32,13,26,39,52,8,16,24,32
-Integrated Targeting Unit,targetingunit,3,4,8,15,25,targetingunit,notable,targetingunit_1,core,phantom hull mod,13,8,8,13,26,39,52,8,16,24,32,8,16,24,32
-Neural Interface,neural_interface,3,3,6,9,15,neural_interface,keystone,neural_interface_1,core,vanilla hull mod,8,9,4,8,16,24,32,9,18,27,36,4,8,12,16
-Phase Anchor,phase_anchor,3,10,20,30,50,phase_anchor,keystone,phase_anchor_1,core,phantom hull mod,8,8,5,8,16,24,32,8,16,24,32,5,10,15,20
-Shield Conversion - Omni,adaptiveshields,3,3,5,8,12,adaptiveshields,keystone,adaptiveshields_1,core,phantom hull mod,10,7,5,10,20,30,40,7,14,21,28,5,10,15,20
+Augmented Drive Field,augmentedengines,1,8,16,24,40,augmentedengines,notable,augmentedengines_1 augmentedengines_2,core,phantom hull mod,7,10,7,7,14,21,35,10,20,30,50,7,14,21,35
+Auxiliary Thrusters,auxiliarythrusters,1,4,8,12,20,auxiliarythrusters,notable,auxiliarythrusters_1,core,phantom hull mod,6,11,10,6,12,18,30,11,22,33,55,10,20,30,50
+Converted Hangar,converted_hangar,1,0,10,10,10,converted_hangar,keystone,converted_hangar_1,core,phantom hull mod,4,4,9,4,8,12,20,4,8,12,20,9,18,27,45
+Escort Package,escort_package,1,0,7,15,0,escort_package,keystone,escort_package_1,core,exclusion list,4,4,9,4,8,12,20,4,8,12,20,9,18,27,45
+Expanded Deck Crew,expanded_deck_crew,1,5,10,15,25,expanded_deck_crew,notable,expanded_deck_crew_1,core,phantom hull mod,11,6,10,11,22,33,55,6,12,18,30,10,20,30,50
+Expanded Magazines,magazines,1,3,5,7,10,magazines,notable,magazines_1,core,phantom hull mod,7,6,10,7,14,21,35,6,12,18,30,10,20,30,50
+Expanded Missile Racks,missleracks,1,8,12,20,30,missleracks,notable,missleracks_1,core,phantom hull mod,7,7,10,7,14,21,35,7,14,21,35,10,20,30,50
+Extended Shields,extendedshieldemitter,1,4,8,12,20,extendedshieldemitter,notable,extendedshieldemitter_1,core,phantom hull mod,9,9,4,9,18,27,45,9,18,27,45,4,8,12,20
+Missile Autoloader,missile_autoloader,1,8,12,20,30,missile_autoloader,keystone,missile_autoloader_1,core,vanilla hull mod,5,9,9,5,10,15,25,9,18,27,45,9,18,27,45
+Operations Center,operations_center,1,30,30,30,30,operations_center,keystone,operations_center_1,core,phantom hull mod,3,3,8,3,6,9,15,3,6,9,15,8,16,24,40
+Recovery Shuttles,recovery_shuttles,1,3,6,9,15,recovery_shuttles,notable,recovery_shuttles_1,core,phantom hull mod,7,11,9,7,14,21,35,11,22,33,55,9,18,27,45
+Shield Shunt,shield_shunt,1,3,5,7,10,shield_shunt,notable,shield_shunt_1,core,phantom hull mod,7,8,11,7,14,21,35,8,16,24,40,11,22,33,55
+Stabilized Shields,stabilizedshieldemitter,1,3,6,9,15,stabilizedshieldemitter,notable,stabilizedshieldemitter_1,core,phantom hull mod,11,7,9,11,22,33,55,7,14,21,35,9,18,27,45
+Surveying Equipment,surveying_equipment,1,5,10,15,25,surveying_equipment,notable,surveying_equipment_1,core,phantom hull mod,10,10,5,10,20,30,50,10,20,30,50,5,10,15,25
+Adaptive Phase Coils,adaptive_coils,2,5,10,15,25,adaptive_coils,notable,adaptive_coils_1,core,phantom hull mod,11,9,7,11,22,33,55,9,18,27,45,7,14,21,35
+Advanced Optics,advancedoptics,2,5,10,15,25,advancedoptics,notable,advancedoptics_1,core,phantom hull mod,12,7,11,12,24,36,60,7,14,21,35,11,22,33,55
+Automated Repair Unit,autorepair,2,3,6,9,15,autorepair,notable,autorepair_1,core,phantom hull mod,11,7,9,11,22,33,55,7,14,21,35,9,18,27,45
+Ballistic Rangefinder,ballistic_rangefinder,2,5,10,15,25,ballistic_rangefinder,keystone,ballistic_rangefinder_1,core,vanilla hull mod,6,9,11,6,12,18,30,9,18,27,45,11,22,33,55
+Defensive Targeting Array,defensive_targeting_array,2,2,4,6,10,defensive_targeting_array,keystone,defensive_targeting_array_1,core,vanilla hull mod,6,5,9,6,12,18,30,5,10,15,25,9,18,27,45
+ECCM Package,eccm,2,5,8,15,20,eccm,notable,eccm_1,core,phantom hull mod,10,7,11,10,20,30,50,7,14,21,35,11,22,33,55
+ECM Package,ecm,2,6,12,18,24,ecm,notable,ecm_1,core,phantom hull mod,8,12,8,8,16,24,40,12,24,36,60,8,16,24,40
+High Resolution Sensors,hiressensors,2,4,6,9,15,hiressensors,notable,hiressensors_1,core,exclusion list,11,11,6,11,22,33,55,11,22,33,55,6,12,18,30
+Nav Relay,nav_relay,2,10,15,20,25,nav_relay,notable,nav_relay_1,core,phantom hull mod,10,5,10,10,20,30,50,5,10,15,25,10,20,30,50
+Resistant Flux Conduits,fluxbreakers,2,3,6,9,15,fluxbreakers,notable,fluxbreakers_1,core,phantom hull mod,10,12,8,10,20,30,50,12,24,36,60,8,16,24,40
+Shield Conversion - Front,frontemitter,2,3,5,8,12,frontemitter,notable,frontemitter_1,core,phantom hull mod,9,11,7,9,18,27,45,11,22,33,55,7,14,21,35
+Solar Shielding,solar_shielding,2,3,6,9,15,solar_shielding,notable,solar_shielding_1,core,type id,4,9,8,4,8,12,20,9,18,27,45,8,16,24,40
+Hardened Shields,hardenedshieldemitter,3,5,10,15,25,hardenedshieldemitter,notable,hardenedshieldemitter_1,core,phantom hull mod,12,8,8,12,24,36,60,8,16,24,40,8,16,24,40
+High Scatter Amplifier,high_scatter_amp,3,4,8,12,20,high_scatter_amp,notable,high_scatter_amp_1,core,phantom hull mod,12,7,11,12,24,36,60,7,14,21,35,11,22,33,55
+Integrated Point Defense AI,pointdefenseai,3,3,6,9,15,pointdefenseai,notable,pointdefenseai_1,core,phantom hull mod,8,12,8,8,16,24,40,12,24,36,60,8,16,24,40
+Integrated Targeting Unit,targetingunit,3,4,8,15,25,targetingunit,notable,targetingunit_1,core,phantom hull mod,12,8,8,12,24,36,60,8,16,24,40,8,16,24,40
+Neural Interface,neural_interface,3,3,6,9,15,neural_interface,keystone,neural_interface_1,core,vanilla hull mod,8,9,4,8,16,24,40,9,18,27,45,4,8,12,20
+Phase Anchor,phase_anchor,3,10,20,30,50,phase_anchor,keystone,phase_anchor_1,core,phantom hull mod,9,9,5,9,18,27,45,9,18,27,45,5,10,15,25
+Shield Conversion - Omni,adaptiveshields,3,3,5,8,12,adaptiveshields,keystone,adaptiveshields_1,core,phantom hull mod,9,7,5,9,18,27,45,7,14,21,35,5,10,15,25
 Fragment Coordinator,fragment_coordinator,,3,6,9,15,,,,,,,,,,,,,,,,,,,,
 Fragment Swarm,fragment_swarm,,6,12,18,30,,,,,,,,,,,,,,,,,,,,
 Ground Support Package,ground_support,,0,0,0,0,ground_support,notable,ground_support_1,pirate,phantom hull mod,,,,,,,,,,,,,,,

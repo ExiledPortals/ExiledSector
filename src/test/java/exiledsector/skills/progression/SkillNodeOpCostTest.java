@@ -38,7 +38,7 @@ class SkillNodeOpCostTest {
         assertEquals(1, SkillNodeOpCost.perNode(HullSize.FRIGATE));
         assertEquals(2, SkillNodeOpCost.perNode(HullSize.DESTROYER));
         assertEquals(3, SkillNodeOpCost.perNode(HullSize.CRUISER));
-        assertEquals(4, SkillNodeOpCost.perNode(HullSize.CAPITAL_SHIP));
+        assertEquals(5, SkillNodeOpCost.perNode(HullSize.CAPITAL_SHIP));
         assertEquals(4, SkillNodeOpCost.perNode(HullSize.FIGHTER));
         assertEquals(4, SkillNodeOpCost.perNode((HullSize) null));
     }
