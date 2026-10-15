@@ -4250,6 +4250,7 @@ function openSocketableNamesModal(){
       names = JSON.parse(files['socketable-names'].content);
       usedEffects = {};
       parseSocketablesCsv(files.socketables.content).defs.forEach(function(def){
+        if (isTrueText(def.unique)) return;
         def.prefixes.concat(def.suffixes).forEach(function(e){ (usedEffects[e.effect] = usedEffects[e.effect] || []).push(def.id); });
       });
       modal.dirty = false;
@@ -4286,10 +4287,10 @@ function openSocketableNamesModal(){
       var haystack = (row.effect + ' ' + row.prefix + ' ' + row.suffix).toLowerCase();
       if (needle && haystack.indexOf(needle) === -1) return '';
       var users = usedEffects[row.effect];
-      var usage = users ? 'Used by ' + users.join(', ') : 'Not in any current pool - items already released may still carry it';
+      var usage = users ? 'Used by ' + users.join(', ') : 'Not in any non-unique pool - items already released may still carry it';
       return '<div class="fieldRow" style="align-items:flex-end">' +
         '<div class="field" style="flex:3"><label title="' + escapeHtml(usage) + '">' + escapeHtml(row.effect) +
-          (users ? '' : ' <span class="hint">(not in any current pool)</span>') + '</label>' +
+          (users ? '' : ' <span class="hint">(not in any non-unique pool)</span>') + '</label>' +
           '<div class="hint">' + escapeHtml(row.prefix || '...') + ' subroutine of ' + escapeHtml(row.suffix || '...') + '</div></div>' +
         '<div class="field" style="flex:2"><label>Prefix</label><input data-affix-index="' + i + '" data-affix-field="prefix" value="' + escapeHtml(row.prefix) + '"></div>' +
         '<div class="field" style="flex:2"><label>Suffix (after "of")</label><input data-affix-index="' + i + '" data-affix-field="suffix" value="' + escapeHtml(row.suffix) + '"></div>' +
@@ -4303,7 +4304,7 @@ function openSocketableNamesModal(){
     }).join('');
     body.innerHTML =
       '<div class="hint">Edits data/config/exiledSector/socketable_affixes.csv. A common item is named "&lt;prefix&gt; &lt;noun&gt; of &lt;suffix&gt;" ' +
-        'from its first prefix and first suffix effect. Every effect a socketable can roll needs a row. Chinese words go under ' +
+        'from its first prefix and first suffix effect. Every effect a non-unique socketable can roll needs a row; uniques keep their own names. Chinese words go under ' +
         'socketable.affix.&lt;EFFECT&gt;.prefix / .suffix in zh_CN.json.</div>' +
       (missing.length ? '<div class="hint" style="color:var(--danger)">Used by socketables but missing names: ' + escapeHtml(missing.join(', ')) + '</div>' : '') +
       '<div class="fieldRow" style="align-items:flex-end">' +
