@@ -8,6 +8,8 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
+import exiledsector.ui.util.FallbackSupport;
+import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.MathUtils;
 import org.lazywizard.lazylib.VectorUtils;
 import org.lwjgl.util.vector.Vector2f;
@@ -19,6 +21,7 @@ import java.util.Map;
 
 final class SplitBeamDrones {
 
+    private static final Logger LOG = Logger.getLogger(SplitBeamDrones.class);
     private static final float SPLIT_TIMEOUT_SECONDS = 0.3f;
     private static final float MIN_FIRING_SECONDS = 1f;
     private static final float CONNECTOR_OVERLAP = 20f;
@@ -37,6 +40,9 @@ final class SplitBeamDrones {
         SplitDrone split = drones.get(key);
         if (split == null || !split.isInPlay()) {
             split = start(key, weapon);
+            if (split == null) {
+                return;
+            }
             drones.put(key, split);
         }
         split.retarget(impactPoint, Refraction.origin(primaryTarget, impactPoint, splitTarget.getLocation()), share);
@@ -44,7 +50,14 @@ final class SplitBeamDrones {
 
     private SplitDrone start(SplitKey key, WeaponAPI weapon) {
         ShareListener shareListener = new ShareListener();
-        SplitDrone split = new SplitDrone(key, WeaponDroneFactory.create(firingShip, weapon, shareListener), shareListener);
+        ShipAPI droneShip = FallbackSupport.getOrFallback(() -> WeaponDroneFactory.create(firingShip, weapon, shareListener), null, LOG,
+                "Beam splitting could not build a drone for weapon " + weapon.getId()
+                        + "; that weapon splits without a drone for the rest of the session");
+        if (droneShip == null) {
+            WeaponDroneFactory.markBeamUnsupported(weapon);
+            return null;
+        }
+        SplitDrone split = new SplitDrone(key, droneShip, shareListener);
         split.droneShip.addListener(split);
         return split;
     }
