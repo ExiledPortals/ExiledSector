@@ -12,6 +12,7 @@ import exiledsector.skills.FrameworkSlots;
 import exiledsector.socketables.FrameworkSockets;
 import exiledsector.socketables.HullUpgradeTooltip;
 import exiledsector.socketables.SocketType;
+import exiledsector.socketables.Socketable;
 import exiledsector.socketables.SocketableStore;
 import exiledsector.ui.decoration.ShipAnchors;
 import exiledsector.ui.decoration.SkillTreeFleetRenderer;
@@ -47,6 +48,7 @@ final class FrameworkInspection {
     private static final float SOCKET_LABEL_ROOM = 70f;
     private static final float MIN_SHIP_PIXELS = 120f;
     private static final float BUTTON_MIN_WIDTH = 150f;
+    private static final float OTHER_SOCKET_DIM = 0.3f;
 
     private final CustomPanelAPI hostPanel;
     private final TreeAllocationSession treeSession;
@@ -100,6 +102,7 @@ final class FrameworkInspection {
     void advance(float amount, PositionAPI canvasPosition, TreeCamera camera, SkillTreeFleetRenderer fleetRenderer, float mouseX, float mouseY) {
         elapsedSeconds += amount;
         active = camera.isFollowSettled();
+        socketPlacement.setInspectingShip(active);
         refreshIfChanged();
         float fadeStep = amount / INSPECT_FADE_SECONDS;
         inspectLevel = Math.max(0f, Math.min(1f, inspectLevel + (active ? fadeStep : -fadeStep)));
@@ -199,6 +202,9 @@ final class FrameworkInspection {
         int socketIndex = inspectLevel < 0.5f ? -1 : socketAt(x, y);
         if (socketIndex < 0) {
             return false;
+        }
+        if (socketPlacement.placeIntoFrameworkSocket(slots.get(socketIndex).type())) {
+            return true;
         }
         socketPlacement.openForFrameworkSocket(slots.get(socketIndex).type(), canvasPosition, shipCard);
         SkillTreeSounds.panelOpened();
@@ -425,20 +431,29 @@ final class FrameworkInspection {
             ShipAnchors.Anchor anchor = ship.anchors().forSocket(slot.type());
             Color accent = slot.active() ? FrameworkSocketFlair.colorOf(slot.type()) : FrameworkSocketFlair.inactiveColor();
             FrameworkSocketFlair.leader(FrameworkSocketLayout.edgeX(placement, socketX), socketY, FrameworkSocketLayout.elbowX(placement, socketX),
-                    ship.anchorScreenX(anchor), ship.anchorScreenY(anchor), accent, elapsedSeconds + i * 0.37f, alpha * 0.9f);
+                    ship.anchorScreenX(anchor), ship.anchorScreenY(anchor), accent, elapsedSeconds + i * 0.37f,
+                    alpha * 0.9f * placingDim(slot.type()));
         }
         renderedSockets = slots.size();
         float radius = FrameworkSocketLayout.SOCKET_RADIUS;
+        Socketable placing = socketPlacement.placingSocketable();
         for (int i = 0; i < renderedSockets; i++) {
             FrameworkSlots.Slot slot = slots.get(i);
-            boolean selected = socketPlacement.isFrameworkTargeted() && socketPlacement.targetFrameworkType() == slot.type();
+            boolean selected = placing != null ? placing.kind() == slot.type()
+                    : socketPlacement.isFrameworkTargeted() && socketPlacement.targetFrameworkType() == slot.type();
             FrameworkSocketFlair.SocketLook look = new FrameworkSocketFlair.SocketLook(hoverLevels[i], selected, slot.active(),
                     slot.item() == null ? null : slot.item().iconPath());
+            float socketAlpha = alpha * placingDim(slot.type());
             FrameworkSocketFlair.render(socketCentreX[i], socketCentreY[i], radius, FrameworkSocketFlair.colorOf(slot.type()), look,
-                    elapsedSeconds + i * 0.53f, alpha);
-            drawCentred(typeLabels[i], socketCentreX[i], socketCentreY[i] + radius + LABEL_GAP + LABEL_FONT_SIZE, alpha);
-            drawCentred(stateLabels[i], socketCentreX[i], socketCentreY[i] - radius - LABEL_GAP, alpha);
+                    elapsedSeconds + i * 0.53f, socketAlpha);
+            drawCentred(typeLabels[i], socketCentreX[i], socketCentreY[i] + radius + LABEL_GAP + LABEL_FONT_SIZE, socketAlpha);
+            drawCentred(stateLabels[i], socketCentreX[i], socketCentreY[i] - radius - LABEL_GAP, socketAlpha);
         }
+    }
+
+    private float placingDim(SocketType socketType) {
+        Socketable placing = socketPlacement.placingSocketable();
+        return placing == null || placing.kind() == socketType ? 1f : OTHER_SOCKET_DIM;
     }
 
     private static void drawCentred(TextLabel label, float centreX, float top, float alpha) {

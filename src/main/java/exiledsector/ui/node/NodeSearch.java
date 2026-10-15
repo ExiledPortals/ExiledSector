@@ -18,6 +18,7 @@ public final class NodeSearch {
     private String needle = "";
     private NodeAllocator.Snapshot matchedSnapshot;
     private boolean socketFocus;
+    private boolean treeSocketFocus;
 
     public String getQuery() {
         return query;
@@ -34,7 +35,12 @@ public final class NodeSearch {
     }
 
     public void setSocketFocus(boolean focus) {
+        setSocketFocus(focus, focus);
+    }
+
+    public void setSocketFocus(boolean focus, boolean treeSockets) {
         socketFocus = focus;
+        treeSocketFocus = focus && treeSockets;
         matchesByNodeId.clear();
     }
 
@@ -47,7 +53,7 @@ public final class NodeSearch {
             return false;
         }
         if (socketFocus) {
-            return node.getType().getTier() == SkillTier.SOCKET && allocation.skillData().isAllocated(node.getId());
+            return treeSocketFocus && node.getType().getTier() == SkillTier.SOCKET && allocation.skillData().isAllocated(node.getId());
         }
         if (allocation != matchedSnapshot) {
             matchesByNodeId.clear();
