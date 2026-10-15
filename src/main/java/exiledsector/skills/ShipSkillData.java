@@ -414,7 +414,20 @@ public class ShipSkillData {
         return selectedId == null || !node.getType().getOptionalOptionIds().contains(selectedId) || !types.containsKey(selectedId);
     }
 
-    public List<String> wakeDormantNodes(Map<String, SkillNode> tree, int maxAllocatedNodes) {
+    public interface WakeCheck {
+        boolean allows(SkillNode dormantNode);
+    }
+
+    public boolean hasReturningDormantNodes(Map<String, SkillNode> tree) {
+        for (String nodeId : getDormantNodeIds()) {
+            if (tree.containsKey(nodeId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public List<String> wakeDormantNodes(Map<String, SkillNode> tree, int maxAllocatedNodes, WakeCheck wakeCheck) {
         if (getDormantNodeIds().isEmpty()) {
             return List.of();
         }
@@ -426,19 +439,35 @@ public class ShipSkillData {
             wokeAny = false;
             for (String nodeId : List.copyOf(dormantNodeIds)) {
                 SkillNode node = tree.get(nodeId);
-                if (node != null && isReconnected(node, satisfiedRootId) && fitsAfterWaking(node, maxAllocatedNodes)) {
+                if (node != null && isReconnected(node, satisfiedRootId) && allocatedNodeIds.size() < maxAllocatedNodes
+                        && wakeCheck.allows(node)) {
                     dormantNodeIds.remove(nodeId);
                     allocatedNodeIds.add(nodeId);
+                    if (!isFreeNode(nodeId) && !nodeId.equals(satisfiedRootId)) {
+                        charge(nodeId, 1);
+                    }
                     wokeAny = true;
                 }
             }
         }
         List<String> released = new ArrayList<>();
+        SkillTreeTopology topology = null;
         for (String nodeId : List.copyOf(dormantNodeIds)) {
-            if (tree.containsKey(nodeId)) {
-                dormantNodeIds.remove(nodeId);
-                release(nodeId);
-                released.add(nodeId);
+            SkillNode node = tree.get(nodeId);
+            if (node == null) {
+                continue;
+            }
+            boolean freePartnerOfAllocatedEnd = pairedFreeNodeIds().contains(nodeId) && allocatedNodeIds.contains(node.getPairedNodeId());
+            dormantNodeIds.remove(nodeId);
+            release(nodeId);
+            released.add(nodeId);
+            SkillNode allocatedEnd = freePartnerOfAllocatedEnd ? tree.get(node.getPairedNodeId()) : null;
+            if (allocatedEnd != null) {
+                topology = topology != null ? topology : SkillTreeTopology.of(tree.values());
+                if (canDeallocate(allocatedEnd, topology, satisfiedRootId)) {
+                    deallocate(allocatedEnd);
+                    released.add(allocatedEnd.getId());
+                }
             }
         }
         return released;
@@ -451,12 +480,6 @@ public class ShipSkillData {
             }
         }
         return false;
-    }
-
-    private boolean fitsAfterWaking(SkillNode node, int maxAllocatedNodes) {
-        String pairedId = node.getPairedNodeId();
-        boolean partnerOfAllocatedWormhole = pairedId != null && pairedFreeNodeIds().contains(node.getId()) && allocatedNodeIds.contains(pairedId);
-        return partnerOfAllocatedWormhole || allocatedNodeIds.size() < maxAllocatedNodes;
     }
 
     public boolean hasLostStartingRoot(Map<String, SkillNode> tree) {
