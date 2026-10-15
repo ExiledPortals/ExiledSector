@@ -69,7 +69,7 @@ public final class SocketMaterials {
         }
         int fromStore = Math.min(stored(commodityId), quantity);
         setStored(commodityId, stored(commodityId) - fromStore);
-        if (quantity > fromStore) {
+        if (quantity > fromStore && cargo != null) {
             cargo.removeCommodity(commodityId, quantity - fromStore);
         }
         return true;
