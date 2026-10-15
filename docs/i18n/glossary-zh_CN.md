@@ -10,7 +10,7 @@ The zh_CN catalogue was drafted by Claude and still needs review by a native spe
 | Hard flux / soft flux | 硬幅能 / 软幅能 | |
 | Flux capacity | 幅能容量 | |
 | Flux dissipation | 幅能耗散 | |
-| Flux capacitors / flux vents | 电容 / 耗散器 | Refit-screen terms, as in "Caps, Vents or Hull" |
+| Flux capacitors / flux vents | 电容 / 耗散器 | Refit-screen terms, as in "Caps, Vents, Hull or Logistics" |
 | Active venting | 主动排散 | "venting speed" is 主动排散速度 |
 | Overloaded | 过载 | |
 | Ordnance points (OP) | 装配点 | |

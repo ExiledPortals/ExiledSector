@@ -2566,42 +2566,21 @@
 			]
 		},
 		{
-			"id": "increased_fuel",
-			"name": "Increased Fuel Capacity",
-			"icon": "graphics/icons/increased_fuel.png",
-			"effects": [
-				{
-					"effect": "FUEL_CAPACITY_PERCENT",
-					"magnitude": 2
-				}
-			],
-			"tags": [
-				"logistics"
-			]
-		},
-		{
-			"id": "increased_cargo",
-			"name": "Increased Cargo Capacity",
+			"id": "fuel_crew_cargo",
+			"name": "Fuel, Crew and Cargo",
 			"icon": "graphics/icons/increased_cargo.png",
 			"effects": [
 				{
-					"effect": "CARGO_CAPACITY_PERCENT",
-					"magnitude": 2
-				}
-			],
-			"tags": [
-				"logistics",
-				"campaign_only"
-			]
-		},
-		{
-			"id": "increased_crew",
-			"name": "Increased Crew Capacity",
-			"icon": "graphics/icons/increased_crew.png",
-			"effects": [
+					"effect": "FUEL_CAPACITY_PERCENT",
+					"magnitude": 1
+				},
 				{
 					"effect": "CREW_CAPACITY_PERCENT",
-					"magnitude": 2
+					"magnitude": 1
+				},
+				{
+					"effect": "CARGO_CAPACITY_PERCENT",
+					"magnitude": 1
 				}
 			],
 			"tags": [
@@ -2642,26 +2621,14 @@
 			]
 		},
 		{
-			"id": "small_logistics_optional",
-			"name": "Fuel, Crew or Cargo",
-			"icon": "graphics/icons/small_logistics_optional.png",
-			"optionalOptions": [
-				"increased_fuel",
-				"increased_cargo",
-				"increased_crew"
-			],
-			"tags": [
-				"logistics"
-			]
-		},
-		{
 			"id": "small_flux_optional",
-			"name": "Caps, Vents or Hull",
+			"name": "Caps, Vents, Hull or Logistics",
 			"icon": "graphics/icons/small_flux_optional.png",
 			"optionalOptions": [
 				"flux_capacity",
 				"flux_dissipation",
-				"hull"
+				"hull",
+				"fuel_crew_cargo"
 			],
 			"tags": [
 				"flux",

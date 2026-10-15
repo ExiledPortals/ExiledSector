@@ -711,8 +711,8 @@
 			"id": "augmentedengines_1",
 			"type": "augmentedengines",
 			"connectedTo": [
-				"small_logistics_optional_24",
-				"small_logistics_optional_23"
+				"small_flux_optional_95",
+				"small_flux_optional_94"
 			],
 			"x": 623,
 			"y": -1178,
@@ -740,7 +740,7 @@
 			"id": "efficiency_overhaul_1",
 			"type": "efficiency_overhaul",
 			"connectedTo": [
-				"small_logistics_optional_4"
+				"small_flux_optional_77"
 			],
 			"x": -566,
 			"y": -119,
@@ -797,8 +797,8 @@
 			"id": "militarized_subsystems_1",
 			"type": "militarized_subsystems",
 			"connectedTo": [
-				"small_logistics_optional_15",
-				"small_logistics_optional_16"
+				"small_flux_optional_87",
+				"small_flux_optional_88"
 			],
 			"x": -1133,
 			"y": 99,
@@ -812,7 +812,7 @@
 			"id": "solar_shielding_1",
 			"type": "solar_shielding",
 			"connectedTo": [
-				"small_logistics_optional_4"
+				"small_flux_optional_77"
 			],
 			"x": -246,
 			"y": 552,
@@ -852,7 +852,7 @@
 			"id": "converted_fighterbay_1",
 			"type": "converted_fighterbay",
 			"connectedTo": [
-				"small_logistics_optional_9"
+				"small_flux_optional_81"
 			],
 			"x": 565,
 			"y": -108,
@@ -894,7 +894,7 @@
 			"id": "operations_center_1",
 			"type": "operations_center",
 			"connectedTo": [
-				"small_logistics_optional_9"
+				"small_flux_optional_81"
 			],
 			"x": 242,
 			"y": 540,
@@ -953,9 +953,9 @@
 			"id": "root_low_tech_1",
 			"type": "root_low_tech",
 			"connectedTo": [
-				"small_logistics_optional_11",
-				"small_logistics_optional_31",
-				"small_logistics_optional_14",
+				"small_flux_optional_83",
+				"small_flux_optional_100",
+				"small_flux_optional_86",
 				"small_flux_optional_34"
 			],
 			"x": 1517,
@@ -988,9 +988,9 @@
 			"id": "root_midline_1",
 			"type": "root_midline",
 			"connectedTo": [
-				"small_logistics_optional_21",
-				"small_logistics_optional_27",
-				"small_logistics_optional_1",
+				"small_flux_optional_92",
+				"small_flux_optional_97",
+				"small_flux_optional_74",
 				"small_flux_optional_45"
 			],
 			"x": -1511,
@@ -1005,10 +1005,10 @@
 			"id": "root_high_tech_1",
 			"type": "root_high_tech",
 			"connectedTo": [
-				"small_logistics_optional_3",
-				"small_logistics_optional_17",
+				"small_flux_optional_76",
+				"small_flux_optional_89",
 				"small_flux_optional_1",
-				"small_logistics_optional_10"
+				"small_flux_optional_82"
 			],
 			"x": 0,
 			"y": -1745,
@@ -1034,12 +1034,12 @@
 			]
 		},
 		{
-			"id": "small_logistics_optional_3",
+			"id": "small_flux_optional_76",
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"root_high_tech_1",
-				"small_logistics_optional_6",
-				"small_logistics_optional_24"
+				"small_flux_optional_79",
+				"small_flux_optional_95"
 			],
 			"x": 708,
 			"y": -1595,
@@ -1050,11 +1050,11 @@
 			]
 		},
 		{
-			"id": "small_logistics_optional_6",
+			"id": "small_flux_optional_79",
 			"type": "small_flux_optional",
 			"connectedTo": [
-				"small_logistics_optional_3",
-				"small_logistics_optional_12"
+				"small_flux_optional_76",
+				"small_flux_optional_84"
 			],
 			"x": 1294,
 			"y": -1171,
@@ -1065,11 +1065,11 @@
 			]
 		},
 		{
-			"id": "small_logistics_optional_12",
+			"id": "small_flux_optional_84",
 			"type": "small_flux_optional",
 			"connectedTo": [
-				"small_logistics_optional_11",
-				"small_logistics_optional_6"
+				"small_flux_optional_83",
+				"small_flux_optional_79"
 			],
 			"x": 1658,
 			"y": -546,
@@ -1080,12 +1080,12 @@
 			]
 		},
 		{
-			"id": "small_logistics_optional_11",
+			"id": "small_flux_optional_83",
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"root_low_tech_1",
-				"small_logistics_optional_26",
-				"small_logistics_optional_12"
+				"small_flux_optional_96",
+				"small_flux_optional_84"
 			],
 			"x": 1736,
 			"y": 174,
@@ -1096,12 +1096,12 @@
 			]
 		},
 		{
-			"id": "small_logistics_optional_17",
+			"id": "small_flux_optional_89",
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"root_high_tech_1",
 				"increased_sensor_strength_1",
-				"small_logistics_optional_18"
+				"small_flux_optional_90"
 			],
 			"x": -710,
 			"y": -1594,
@@ -1112,11 +1112,11 @@
 			]
 		},
 		{
-			"id": "small_logistics_optional_18",
+			"id": "small_flux_optional_90",
 			"type": "small_flux_optional",
 			"connectedTo": [
-				"small_logistics_optional_20",
-				"small_logistics_optional_17"
+				"small_flux_optional_91",
+				"small_flux_optional_89"
 			],
 			"x": -1297,
 			"y": -1167,
@@ -1127,11 +1127,11 @@
 			]
 		},
 		{
-			"id": "small_logistics_optional_20",
+			"id": "small_flux_optional_91",
 			"type": "small_flux_optional",
 			"connectedTo": [
-				"small_logistics_optional_21",
-				"small_logistics_optional_18"
+				"small_flux_optional_92",
+				"small_flux_optional_90"
 			],
 			"x": -1660,
 			"y": -538,
@@ -1142,12 +1142,12 @@
 			]
 		},
 		{
-			"id": "small_logistics_optional_21",
+			"id": "small_flux_optional_92",
 			"type": "small_flux_optional",
 			"connectedTo": [
-				"small_logistics_optional_20",
+				"small_flux_optional_91",
 				"root_midline_1",
-				"small_logistics_optional_16"
+				"small_flux_optional_88"
 			],
 			"x": -1735,
 			"y": 184,
@@ -1158,11 +1158,11 @@
 			]
 		},
 		{
-			"id": "small_logistics_optional_27",
+			"id": "small_flux_optional_97",
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"root_midline_1",
-				"small_logistics_optional_28"
+				"small_flux_optional_98"
 			],
 			"x": -1023,
 			"y": 1414,
@@ -1173,11 +1173,11 @@
 			]
 		},
 		{
-			"id": "small_logistics_optional_28",
+			"id": "small_flux_optional_98",
 			"type": "small_flux_optional",
 			"connectedTo": [
-				"small_logistics_optional_27",
-				"small_logistics_optional_30",
+				"small_flux_optional_97",
+				"small_flux_optional_99",
 				"small_flux_optional_3"
 			],
 			"x": -358,
@@ -1189,11 +1189,11 @@
 			]
 		},
 		{
-			"id": "small_logistics_optional_30",
+			"id": "small_flux_optional_99",
 			"type": "small_flux_optional",
 			"connectedTo": [
-				"small_logistics_optional_31",
-				"small_logistics_optional_28",
+				"small_flux_optional_100",
+				"small_flux_optional_98",
 				"small_flux_optional_3"
 			],
 			"x": 370,
@@ -1205,10 +1205,10 @@
 			]
 		},
 		{
-			"id": "small_logistics_optional_31",
+			"id": "small_flux_optional_100",
 			"type": "small_flux_optional",
 			"connectedTo": [
-				"small_logistics_optional_30",
+				"small_flux_optional_99",
 				"root_low_tech_1"
 			],
 			"x": 1033,
@@ -1297,12 +1297,12 @@
 			]
 		},
 		{
-			"id": "small_logistics_optional_1",
-			"type": "small_logistics_optional",
+			"id": "small_flux_optional_74",
+			"type": "small_flux_optional",
 			"connectedTo": [
 				"root_midline_1",
-				"small_logistics_optional_2",
-				"small_logistics_optional_15"
+				"small_flux_optional_75",
+				"small_flux_optional_87"
 			],
 			"x": -1087,
 			"y": 632,
@@ -1311,11 +1311,11 @@
 			]
 		},
 		{
-			"id": "small_logistics_optional_2",
-			"type": "small_logistics_optional",
+			"id": "small_flux_optional_75",
+			"type": "small_flux_optional",
 			"connectedTo": [
-				"small_logistics_optional_1",
-				"small_logistics_optional_4",
+				"small_flux_optional_74",
+				"small_flux_optional_77",
 				"crew_capacity_flat_1",
 				"engine_durability_2"
 			],
@@ -1326,14 +1326,14 @@
 			]
 		},
 		{
-			"id": "small_logistics_optional_4",
-			"type": "small_logistics_optional",
+			"id": "small_flux_optional_77",
+			"type": "small_flux_optional",
 			"connectedTo": [
-				"small_logistics_optional_2",
+				"small_flux_optional_75",
 				"efficiency_overhaul_1",
 				"solar_shielding_1",
-				"small_logistics_optional_9",
-				"small_logistics_optional_5"
+				"small_flux_optional_81",
+				"small_flux_optional_78"
 			],
 			"x": -246,
 			"y": 135,
@@ -1344,13 +1344,13 @@
 			]
 		},
 		{
-			"id": "small_logistics_optional_5",
-			"type": "small_logistics_optional",
+			"id": "small_flux_optional_78",
+			"type": "small_flux_optional",
 			"connectedTo": [
-				"small_logistics_optional_7",
+				"small_flux_optional_80",
 				"reduced_monthly_supplies_1",
-				"small_logistics_optional_9",
-				"small_logistics_optional_4"
+				"small_flux_optional_81",
+				"small_flux_optional_77"
 			],
 			"x": 0,
 			"y": -280,
@@ -1361,11 +1361,11 @@
 			]
 		},
 		{
-			"id": "small_logistics_optional_7",
-			"type": "small_logistics_optional",
+			"id": "small_flux_optional_80",
+			"type": "small_flux_optional",
 			"connectedTo": [
-				"small_logistics_optional_5",
-				"small_logistics_optional_10",
+				"small_flux_optional_78",
+				"small_flux_optional_82",
 				"survey_generic_cost_reduction_1"
 			],
 			"x": 0,
@@ -1375,14 +1375,14 @@
 			]
 		},
 		{
-			"id": "small_logistics_optional_9",
-			"type": "small_logistics_optional",
+			"id": "small_flux_optional_81",
+			"type": "small_flux_optional",
 			"connectedTo": [
-				"small_logistics_optional_13",
-				"small_logistics_optional_5",
+				"small_flux_optional_85",
+				"small_flux_optional_78",
 				"operations_center_1",
 				"converted_fighterbay_1",
-				"small_logistics_optional_4"
+				"small_flux_optional_77"
 			],
 			"x": 240,
 			"y": 145,
@@ -1393,13 +1393,13 @@
 			]
 		},
 		{
-			"id": "small_logistics_optional_10",
-			"type": "small_logistics_optional",
+			"id": "small_flux_optional_82",
+			"type": "small_flux_optional",
 			"connectedTo": [
-				"small_logistics_optional_7",
+				"small_flux_optional_80",
 				"root_high_tech_1",
 				"increased_sensor_strength_2",
-				"small_logistics_optional_23"
+				"small_flux_optional_94"
 			],
 			"x": 0,
 			"y": -1257,
@@ -1408,11 +1408,11 @@
 			]
 		},
 		{
-			"id": "small_logistics_optional_13",
-			"type": "small_logistics_optional",
+			"id": "small_flux_optional_85",
+			"type": "small_flux_optional",
 			"connectedTo": [
-				"small_logistics_optional_9",
-				"small_logistics_optional_14",
+				"small_flux_optional_81",
+				"small_flux_optional_86",
 				"cargo_capacity_flat_2",
 				"fuel_flat_2"
 			],
@@ -1423,12 +1423,12 @@
 			]
 		},
 		{
-			"id": "small_logistics_optional_14",
-			"type": "small_logistics_optional",
+			"id": "small_flux_optional_86",
+			"type": "small_flux_optional",
 			"connectedTo": [
-				"small_logistics_optional_13",
+				"small_flux_optional_85",
 				"root_low_tech_1",
-				"small_logistics_optional_22"
+				"small_flux_optional_93"
 			],
 			"x": 1090,
 			"y": 626,
@@ -1440,7 +1440,7 @@
 			"id": "survey_generic_cost_reduction_1",
 			"type": "survey_generic_cost_reduction",
 			"connectedTo": [
-				"small_logistics_optional_7",
+				"small_flux_optional_80",
 				"survey_generic_cost_reduction_2"
 			],
 			"x": 273,
@@ -1470,7 +1470,7 @@
 			"id": "increased_sensor_strength_1",
 			"type": "increased_sensor_strength",
 			"connectedTo": [
-				"small_logistics_optional_17",
+				"small_flux_optional_89",
 				"hiressensors_1"
 			],
 			"x": -498,
@@ -1485,7 +1485,7 @@
 			"id": "increased_sensor_strength_2",
 			"type": "increased_sensor_strength",
 			"connectedTo": [
-				"small_logistics_optional_10",
+				"small_flux_optional_82",
 				"hiressensors_1"
 			],
 			"x": -324,
@@ -1497,10 +1497,10 @@
 			]
 		},
 		{
-			"id": "small_logistics_optional_23",
-			"type": "small_logistics_optional",
+			"id": "small_flux_optional_94",
+			"type": "small_flux_optional",
 			"connectedTo": [
-				"small_logistics_optional_10",
+				"small_flux_optional_82",
 				"augmentedengines_1"
 			],
 			"x": 320,
@@ -1512,11 +1512,11 @@
 			]
 		},
 		{
-			"id": "small_logistics_optional_24",
+			"id": "small_flux_optional_95",
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"augmentedengines_1",
-				"small_logistics_optional_3"
+				"small_flux_optional_76"
 			],
 			"x": 557,
 			"y": -1453,
@@ -1531,7 +1531,7 @@
 			"type": "crew_capacity_flat",
 			"connectedTo": [
 				"crew_capacity_flat_2",
-				"small_logistics_optional_2"
+				"small_flux_optional_75"
 			],
 			"x": -1205,
 			"y": -255,
@@ -1557,10 +1557,10 @@
 			]
 		},
 		{
-			"id": "small_logistics_optional_15",
-			"type": "small_logistics_optional",
+			"id": "small_flux_optional_87",
+			"type": "small_flux_optional",
 			"connectedTo": [
-				"small_logistics_optional_1",
+				"small_flux_optional_74",
 				"militarized_subsystems_1"
 			],
 			"x": -1205,
@@ -1572,10 +1572,10 @@
 			]
 		},
 		{
-			"id": "small_logistics_optional_16",
+			"id": "small_flux_optional_88",
 			"type": "small_flux_optional",
 			"connectedTo": [
-				"small_logistics_optional_21",
+				"small_flux_optional_92",
 				"militarized_subsystems_1"
 			],
 			"x": -1423,
@@ -1606,7 +1606,7 @@
 			"type": "engine_durability",
 			"connectedTo": [
 				"engine_durability_1",
-				"small_logistics_optional_2"
+				"small_flux_optional_75"
 			],
 			"x": -669,
 			"y": 1020,
@@ -1636,7 +1636,7 @@
 			"type": "cargo_capacity_flat",
 			"connectedTo": [
 				"cargo_capacity_flat_1",
-				"small_logistics_optional_13"
+				"small_flux_optional_85"
 			],
 			"x": 1019,
 			"y": -102,
@@ -1650,8 +1650,8 @@
 			"id": "augmentedengines_2",
 			"type": "augmentedengines",
 			"connectedTo": [
-				"small_logistics_optional_26",
-				"small_logistics_optional_22"
+				"small_flux_optional_96",
+				"small_flux_optional_93"
 			],
 			"x": 1220,
 			"y": 91,
@@ -1662,11 +1662,11 @@
 			]
 		},
 		{
-			"id": "small_logistics_optional_22",
-			"type": "small_logistics_optional",
+			"id": "small_flux_optional_93",
+			"type": "small_flux_optional",
 			"connectedTo": [
 				"augmentedengines_2",
-				"small_logistics_optional_14"
+				"small_flux_optional_86"
 			],
 			"x": 1222,
 			"y": 408,
@@ -1677,11 +1677,11 @@
 			]
 		},
 		{
-			"id": "small_logistics_optional_26",
+			"id": "small_flux_optional_96",
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"augmentedengines_2",
-				"small_logistics_optional_11"
+				"small_flux_optional_83"
 			],
 			"x": 1461,
 			"y": 289,
@@ -1710,7 +1710,7 @@
 			"id": "fuel_flat_2",
 			"type": "fuel_flat",
 			"connectedTo": [
-				"small_logistics_optional_13",
+				"small_flux_optional_85",
 				"fuel_flat_1"
 			],
 			"x": 666,
@@ -2920,8 +2920,8 @@
 			"connectedTo": [
 				"small_flux_optional_35",
 				"escort_package_1",
-				"small_logistics_optional_30",
-				"small_logistics_optional_28",
+				"small_flux_optional_99",
+				"small_flux_optional_98",
 				"converted_hangar_1"
 			],
 			"x": 0,
@@ -3202,7 +3202,7 @@
 			"type": "reduced_monthly_supplies",
 			"connectedTo": [
 				"reduced_monthly_supplies_2",
-				"small_logistics_optional_5"
+				"small_flux_optional_78"
 			],
 			"x": -462,
 			"y": -666,
@@ -5840,60 +5840,60 @@
 	"connectorCurves": [
 		{
 			"a": "root_high_tech_1",
-			"b": "small_logistics_optional_3",
+			"b": "small_flux_optional_76",
 			"controlX": 362,
 			"controlY": -1707
 		},
 		{
-			"a": "small_logistics_optional_3",
-			"b": "small_logistics_optional_6",
+			"a": "small_flux_optional_76",
+			"b": "small_flux_optional_79",
 			"controlX": 1023,
 			"controlY": -1414
 		},
 		{
-			"a": "small_logistics_optional_11",
+			"a": "small_flux_optional_83",
 			"b": "root_low_tech_1",
 			"controlX": 1663,
 			"controlY": 530
 		},
 		{
 			"a": "root_high_tech_1",
-			"b": "small_logistics_optional_17",
+			"b": "small_flux_optional_89",
 			"controlX": -363,
 			"controlY": -1707
 		},
 		{
-			"a": "small_logistics_optional_20",
-			"b": "small_logistics_optional_21",
+			"a": "small_flux_optional_91",
+			"b": "small_flux_optional_92",
 			"controlX": -1736,
 			"controlY": -181
 		},
 		{
-			"a": "small_logistics_optional_21",
+			"a": "small_flux_optional_92",
 			"b": "root_midline_1",
 			"controlX": -1659,
 			"controlY": 540
 		},
 		{
 			"a": "root_midline_1",
-			"b": "small_logistics_optional_27",
+			"b": "small_flux_optional_97",
 			"controlX": -1295,
 			"controlY": 1169
 		},
 		{
-			"a": "small_logistics_optional_27",
-			"b": "small_logistics_optional_28",
+			"a": "small_flux_optional_97",
+			"b": "small_flux_optional_98",
 			"controlX": -706,
 			"controlY": 1596
 		},
 		{
-			"a": "small_logistics_optional_30",
-			"b": "small_logistics_optional_31",
+			"a": "small_flux_optional_99",
+			"b": "small_flux_optional_100",
 			"controlX": 717,
 			"controlY": 1591
 		},
 		{
-			"a": "small_logistics_optional_31",
+			"a": "small_flux_optional_100",
 			"b": "root_low_tech_1",
 			"controlX": 1304,
 			"controlY": 1160
@@ -5906,13 +5906,13 @@
 		},
 		{
 			"a": "augmentedengines_1",
-			"b": "small_logistics_optional_24",
+			"b": "small_flux_optional_95",
 			"controlX": 660,
 			"controlY": -1332
 		},
 		{
 			"a": "augmentedengines_1",
-			"b": "small_logistics_optional_23",
+			"b": "small_flux_optional_94",
 			"controlX": 445,
 			"controlY": -1124
 		},
@@ -5930,13 +5930,13 @@
 		},
 		{
 			"a": "militarized_subsystems_1",
-			"b": "small_logistics_optional_15",
+			"b": "small_flux_optional_87",
 			"controlX": -1080,
 			"controlY": 270
 		},
 		{
 			"a": "militarized_subsystems_1",
-			"b": "small_logistics_optional_16",
+			"b": "small_flux_optional_88",
 			"controlX": -1320,
 			"controlY": 70
 		},
@@ -5954,13 +5954,13 @@
 		},
 		{
 			"a": "augmentedengines_2",
-			"b": "small_logistics_optional_26",
+			"b": "small_flux_optional_96",
 			"controlX": 1402,
 			"controlY": 114
 		},
 		{
 			"a": "augmentedengines_2",
-			"b": "small_logistics_optional_22",
+			"b": "small_flux_optional_93",
 			"controlX": 1118,
 			"controlY": 250
 		},
@@ -5983,8 +5983,8 @@
 			"controlY": 1142
 		},
 		{
-			"a": "small_logistics_optional_11",
-			"b": "small_logistics_optional_12",
+			"a": "small_flux_optional_83",
+			"b": "small_flux_optional_84",
 			"controlX": 1735,
 			"controlY": -190
 		},
@@ -6463,8 +6463,8 @@
 			"controlY": -1510
 		},
 		{
-			"a": "small_logistics_optional_5",
-			"b": "small_logistics_optional_9",
+			"a": "small_flux_optional_78",
+			"b": "small_flux_optional_81",
 			"controlX": 228,
 			"controlY": -125
 		},
@@ -6517,26 +6517,26 @@
 			"controlY": 1905
 		},
 		{
-			"a": "small_logistics_optional_18",
-			"b": "small_logistics_optional_20",
+			"a": "small_flux_optional_90",
+			"b": "small_flux_optional_91",
 			"controlX": -1512,
 			"controlY": -872
 		},
 		{
-			"a": "small_logistics_optional_12",
-			"b": "small_logistics_optional_6",
+			"a": "small_flux_optional_84",
+			"b": "small_flux_optional_79",
 			"controlX": 1508,
 			"controlY": -877
 		},
 		{
-			"a": "small_logistics_optional_28",
-			"b": "small_logistics_optional_30",
+			"a": "small_flux_optional_98",
+			"b": "small_flux_optional_99",
 			"controlX": 6,
 			"controlY": 1745
 		},
 		{
-			"a": "small_logistics_optional_17",
-			"b": "small_logistics_optional_18",
+			"a": "small_flux_optional_89",
+			"b": "small_flux_optional_90",
 			"controlX": -1026,
 			"controlY": -1411
 		},
@@ -7333,8 +7333,8 @@
 			"controlY": -396
 		},
 		{
-			"a": "small_logistics_optional_4",
-			"b": "small_logistics_optional_9",
+			"a": "small_flux_optional_77",
+			"b": "small_flux_optional_81",
 			"controlX": -8,
 			"controlY": 259
 		},
@@ -7495,8 +7495,8 @@
 			"controlY": 2286
 		},
 		{
-			"a": "small_logistics_optional_4",
-			"b": "small_logistics_optional_5",
+			"a": "small_flux_optional_77",
+			"b": "small_flux_optional_78",
 			"controlX": -221,
 			"controlY": -138
 		},
