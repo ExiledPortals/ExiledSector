@@ -21,12 +21,15 @@ import com.fs.starfarer.api.loading.ProjectileSpecAPI;
 import com.fs.starfarer.api.loading.ProjectileWeaponSpecAPI;
 import com.fs.starfarer.api.loading.WeaponGroupSpec;
 import com.fs.starfarer.api.loading.WeaponGroupType;
+import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 final class WeaponDroneFactory {
 
@@ -36,6 +39,8 @@ final class WeaponDroneFactory {
 
     private static final String INVULNERABLE_MOD_ID = "exiledSector_splitBeamDrone";
     private static final float MOTHERSHIP_FLAG_DURATION = 100000f;
+    private static final Logger LOG = Logger.getLogger(WeaponDroneFactory.class);
+    private static final Set<String> SKILLS_UNSAFE_ON_DRONES = ConcurrentHashMap.newKeySet();
     private static final Map<String, Boolean> BEAM_SUPPORT_BY_WEAPON_ID = new ConcurrentHashMap<>();
     private static final Map<String, Boolean> PROJECTILE_SUPPORT_BY_WEAPON_ID = new ConcurrentHashMap<>();
     private static final Map<WeaponSize, String> SLOT_IDS = Map.of(
@@ -64,6 +69,10 @@ final class WeaponDroneFactory {
 
     static void markProjectileUnsupported(WeaponAPI weapon) {
         PROJECTILE_SUPPORT_BY_WEAPON_ID.put(weapon.getSpec().getWeaponId(), false);
+    }
+
+    static void markBeamUnsupported(WeaponAPI weapon) {
+        BEAM_SUPPORT_BY_WEAPON_ID.put(weapon.getSpec().getWeaponId(), false);
     }
 
     private static boolean isBlocklistedBeam(BeamWeaponSpecAPI spec) {
@@ -128,11 +137,41 @@ final class WeaponDroneFactory {
         drone.setCollisionClass(CollisionClass.NONE);
         drone.giveCommand(ShipCommand.SELECT_GROUP, null, 0);
         drone.getMutableStats().getHullDamageTakenMult().modifyMult(INVULNERABLE_MOD_ID, 0f);
-        drone.setCaptain(officerCopy(firingShip.getCaptain()));
+        assignCaptain(drone, firingShip.getCaptain());
         WeaponDroneStats.mirror(firingShip.getMutableStats(), drone.getMutableStats());
     }
 
+    static void assignCaptain(ShipAPI drone, PersonAPI captain) {
+        if (trySetCaptain(drone, officerCopy(captain, skillId -> !SKILLS_UNSAFE_ON_DRONES.contains(skillId))) || captain == null) {
+            return;
+        }
+        for (MutableCharacterStatsAPI.SkillLevelAPI skill : captain.getStats().getSkillsCopy()) {
+            String skillId = skill.getSkill().getId();
+            if (!SKILLS_UNSAFE_ON_DRONES.contains(skillId) && !trySetCaptain(drone, officerCopy(captain, skillId::equals))) {
+                SKILLS_UNSAFE_ON_DRONES.add(skillId);
+                LOG.warn("[ExiledSector] Captain skill " + skillId + " fails on weapon drones, which have no fleet member; "
+                        + "drones copying the captain leave it out for the rest of the session");
+            }
+        }
+        if (!trySetCaptain(drone, officerCopy(captain, skillId -> !SKILLS_UNSAFE_ON_DRONES.contains(skillId)))) {
+            trySetCaptain(drone, officerCopy(captain, skillId -> false));
+        }
+    }
+
+    private static boolean trySetCaptain(ShipAPI drone, PersonAPI officer) {
+        try {
+            drone.setCaptain(officer);
+            return true;
+        } catch (RuntimeException e) {
+            return false;
+        }
+    }
+
     static PersonAPI officerCopy(PersonAPI captain) {
+        return officerCopy(captain, skillId -> true);
+    }
+
+    static PersonAPI officerCopy(PersonAPI captain, Predicate<String> keepsSkill) {
         PersonAPI copy = Global.getFactory().createPerson();
         if (captain == null) {
             return copy;
@@ -143,7 +182,9 @@ final class WeaponDroneFactory {
         copy.setAICoreId(captain.getAICoreId());
         copy.getStats().setLevel(captain.getStats().getLevel());
         for (MutableCharacterStatsAPI.SkillLevelAPI skill : captain.getStats().getSkillsCopy()) {
-            copy.getStats().setSkillLevel(skill.getSkill().getId(), skill.getLevel());
+            if (keepsSkill.test(skill.getSkill().getId())) {
+                copy.getStats().setSkillLevel(skill.getSkill().getId(), skill.getLevel());
+            }
         }
         return copy;
     }

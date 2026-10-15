@@ -27,7 +27,12 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -455,6 +460,52 @@ class SplitBeamDronesTest {
         verify(copy).setPersonality("aggressive");
         verify(copy.getStats()).setLevel(5);
         verify(copy.getStats()).setSkillLevel("energy_weapon_mastery", 2f);
+    }
+
+    @Test
+    void aCaptainSkillThatFailsOnADroneIsLeftOutAndTheOtherSkillsKept() {
+        PersonAPI captain = mock(PersonAPI.class, Answers.RETURNS_DEEP_STUBS);
+        when(captain.getPersonalityAPI()).thenReturn(mock(PersonalityAPI.class));
+        List<MutableCharacterStatsAPI.SkillLevelAPI> skills = new ArrayList<>();
+        for (String skillId : List.of("gunnery_implants", "drone_test_fulldive_officer")) {
+            MutableCharacterStatsAPI.SkillLevelAPI skill = mock(MutableCharacterStatsAPI.SkillLevelAPI.class);
+            SkillSpecAPI skillSpec = mock(SkillSpecAPI.class);
+            when(skillSpec.getId()).thenReturn(skillId);
+            when(skill.getSkill()).thenReturn(skillSpec);
+            when(skill.getLevel()).thenReturn(1f);
+            skills.add(skill);
+        }
+        when(captain.getStats().getSkillsCopy()).thenReturn(skills);
+        Map<PersonAPI, Set<String>> skillsByCopy = new HashMap<>();
+        FactoryAPI factory = mock(FactoryAPI.class);
+        when(factory.createPerson()).thenAnswer(invocation -> {
+            PersonAPI copy = mock(PersonAPI.class, Answers.RETURNS_DEEP_STUBS);
+            Set<String> copiedSkills = new HashSet<>();
+            skillsByCopy.put(copy, copiedSkills);
+            MutableCharacterStatsAPI copyStats = copy.getStats();
+            Mockito.doAnswer(set -> copiedSkills.add(set.getArgument(0))).when(copyStats).setSkillLevel(Mockito.anyString(), Mockito.anyFloat());
+            return copy;
+        });
+        ShipAPI drone = mock(ShipAPI.class);
+        List<PersonAPI> captainsSet = new ArrayList<>();
+        Mockito.doAnswer(set -> {
+            PersonAPI officer = set.getArgument(0);
+            if (skillsByCopy.get(officer).contains("drone_test_fulldive_officer")) {
+                throw new NullPointerException("member is null");
+            }
+            captainsSet.add(officer);
+            return null;
+        }).when(drone).setCaptain(Mockito.any());
+
+        try (MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
+            global.when(Global::getFactory).thenReturn(factory);
+
+            WeaponDroneFactory.assignCaptain(drone, captain);
+            WeaponDroneFactory.assignCaptain(drone, captain);
+        }
+
+        assertEquals(Set.of("gunnery_implants"), skillsByCopy.get(captainsSet.get(captainsSet.size() - 1)));
+        assertEquals(Set.of("gunnery_implants"), skillsByCopy.get(captainsSet.get(captainsSet.size() - 2)));
     }
 
     @Test
