@@ -67,7 +67,7 @@
     "summary.frameworkSocket.filled": "{type}（{item}）",
     "summary.frameworkSocket.inactive": "{type}（未生效）",
     "upgrade.name": "{size}船体升级",
-    "upgrade.tooltip.body": "在船体升级面板中将其安装到{size}上：打开舰船技能树，点击舰船卡片放大到舰船。安装后它会被消耗，并为舰船提供一点船体升级点数，最多{max}点。花费点数即可解锁舰船周围的插槽类型。",
+    "upgrade.tooltip.body": "在船体升级面板中将其安装到{size}上：打开舰船技能树，点击舰船卡片放大到舰船，然后点击此船体升级进行安装。安装船体升级会将其永久消耗。",
     "upgrade.tooltip.storage": "打开插槽仓库或船体升级面板会把它从货舱移入仓库。",
     "framework.socketNeeds": "{type}（需要{requirement}）",
     "framework.panel.title": "船体升级",

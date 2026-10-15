@@ -27,8 +27,7 @@ public final class HullUpgradeTooltip {
             } else {
                 tooltip.addTitle(upgrade.name(), SocketableRarity.UNIQUE.color());
                 VanillaText.addPara(tooltip, Translation.msg("upgrade.tooltip.body")
-                        .arg("size", Translation.text("hullSize." + upgrade.hullSize().name()))
-                        .arg("max", FrameworkSockets.MAX_POINTS).styled(), PAD, Misc.getTextColor());
+                        .arg("size", Translation.text("hullSize." + upgrade.hullSize().name())).styled(), PAD, Misc.getTextColor());
             }
             float linePad = PAD;
             for (StyledText line : footer.get()) {

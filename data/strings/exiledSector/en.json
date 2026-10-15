@@ -70,7 +70,7 @@
     "summary.frameworkSocket.filled": "{type} ({item})",
     "summary.frameworkSocket.inactive": "{type} (inactive)",
     "upgrade.name": "{size} Hull Upgrade",
-    "upgrade.tooltip.body": "Install this on a {size} from the Hull Upgrades panel: open the ship's skill tree and click the ship card to zoom in on the ship. It is used up and grants the ship one Hull Upgrade point, up to {max}. Spend points to unlock socket types around the ship.",
+    "upgrade.tooltip.body": "Install this on a {size} from the Hull Upgrades panel: open the ship's skill tree and click the ship card to zoom in on the ship, then click this Hull Upgrade to install it. Installing a hull upgrade will consume it permanently.",
     "upgrade.tooltip.storage": "Opening Socket Storage or the Hull Upgrades panel moves this from your cargo into storage.",
     "framework.socketNeeds": "{type} (needs {requirement})",
     "framework.panel.title": "Hull Upgrades",
