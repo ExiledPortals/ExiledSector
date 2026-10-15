@@ -21,7 +21,7 @@ Open the refit screen and click the skill tree button on any of your ships. Ther
 
 <img src="graphics/description/teaser_choice.gif" alt="Choice node">
 
-- Nodes start out costing OP: 1 for frigates, 2 for destroyers, 3 for cruisers and 4 for capitals. Ships also earn XP in combat and level up, and every level lets you take a node for free. Veteran ships get their ordnance points back. The crew gets nothing, as is tradition.
+- Nodes start out costing OP: 1 for frigates, 2 for destroyers, 3 for cruisers and 5 for capitals. Ships also earn XP in combat and level up, and every level lets you take a node for free. Veteran ships get their ordnance points back. The crew gets nothing, as is tradition.
 - Some nodes are hidden until you unlock them.
 
 <img src="graphics/description/Unidentified_node.png" alt="Hidden node">
@@ -114,7 +114,7 @@ Open a ship's refit screen and click the **Skill Tree** button under the hull mo
 
 The first time you open a ship's tree you choose where it starts: Low Tech, Midline or High Tech. The starting node is free. Whenever it is the only node allocated, you can click it again to choose a different start. The other two can still be reached later like any other node.
 
-Every node costs the ship's unused ordnance points: 1 for frigates, 2 for destroyers, 3 for cruisers and 4 for capitals. A node can only be allocated next to one you already have. Node tooltips show only what a node does. Press **F1** while hovering one to also see its restrictions, such as the hull mods and nodes it is mutually exclusive with.
+Every node costs the ship's unused ordnance points: 1 for frigates, 2 for destroyers, 3 for cruisers and 5 for capitals. A node can only be allocated next to one you already have. Node tooltips show only what a node does. Press **F1** while hovering one to also see its restrictions, such as the hull mods and nodes it is mutually exclusive with.
 
 After every engagement, each ship in your fleet gains XP equal to the deployment points of the enemy ships destroyed or disabled, whether it deployed or not. Harder fights pay more: the same battle difficulty bonus vanilla shows before combat ("Additional XP due to overall battle difficulty") multiplies it, up to 6×. Easier fights never reduce it. You get half as much if you lose.
 
