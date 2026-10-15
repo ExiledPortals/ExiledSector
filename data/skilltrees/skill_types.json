@@ -297,7 +297,7 @@
 					"magnitude": 30
 				},
 				{
-					"effect": "MISSILE_WEAPON_FLIGHT_TURN_RATE_PERCENT",
+					"effect": "MISSILE_WEAPON_FLIGHT_MANEUVERABILITY_PERCENT",
 					"magnitude": -30
 				}
 			],
@@ -2571,15 +2571,15 @@
 			"icon": "graphics/icons/increased_cargo.png",
 			"effects": [
 				{
-					"effect": "FUEL_CAPACITY_PERCENT",
+					"effect": "FUEL_CAPACITY_MULT",
 					"magnitude": 1
 				},
 				{
-					"effect": "CREW_CAPACITY_PERCENT",
+					"effect": "CREW_CAPACITY_MULT",
 					"magnitude": 1
 				},
 				{
-					"effect": "CARGO_CAPACITY_PERCENT",
+					"effect": "CARGO_CAPACITY_MULT",
 					"magnitude": 1
 				}
 			],

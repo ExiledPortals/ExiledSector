@@ -295,6 +295,7 @@
     "weapon.stat.FLIGHT_ACCELERATION": "导弹加速度",
     "weapon.stat.FLIGHT_TURN_RATE": "导弹转向速度",
     "weapon.stat.FLIGHT_TURN_ACCELERATION": "导弹转向加速度",
+    "weapon.stat.FLIGHT_MANEUVERABILITY": "导弹机动性",
     "weapon.stat.GUIDANCE": "导弹制导",
     "weapon.stat.ECCM_CHANCE": "导弹抵抗敌方ECM与照明弹的几率",
     "weapon.stat.HEALTH": "导弹耐久",

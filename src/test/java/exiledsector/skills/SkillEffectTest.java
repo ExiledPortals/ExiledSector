@@ -34,8 +34,12 @@ import exiledsector.skills.skilleffect.LogisticsSkillEffect;
 import exiledsector.skills.skilleffect.MiscSkillEffect;
 import exiledsector.skills.skilleffect.MovementSkillEffect;
 import exiledsector.skills.skilleffect.PhaseSkillEffect;
+import exiledsector.skills.skilleffect.ScopedWeaponEffect;
 import exiledsector.skills.skilleffect.ShieldSkillEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.skills.skilleffect.StatMode;
+import exiledsector.skills.skilleffect.WeaponScope;
+import exiledsector.skills.skilleffect.WeaponStatFamily;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 import org.magiclib.plugins.MagicFakeBeamPlugin;
@@ -272,6 +276,42 @@ class SkillEffectTest {
         LogisticsSkillEffect.CREW_CAPACITY_PERCENT.apply(stats, "mod_id", 20f);
 
         verify(maxCrewMod).modifyPercent("mod_id", 20f);
+    }
+
+    @Test
+    void capacityMultsMultiplyFuelCargoAndCrew() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        StatBonus fuelMod = mock(StatBonus.class);
+        StatBonus cargoMod = mock(StatBonus.class);
+        StatBonus maxCrewMod = mock(StatBonus.class);
+        when(stats.getFuelMod()).thenReturn(fuelMod);
+        when(stats.getCargoMod()).thenReturn(cargoMod);
+        when(stats.getMaxCrewMod()).thenReturn(maxCrewMod);
+
+        LogisticsSkillEffect.FUEL_CAPACITY_MULT.apply(stats, "mod_id", 1f);
+        LogisticsSkillEffect.CARGO_CAPACITY_MULT.apply(stats, "mod_id", 1f);
+        LogisticsSkillEffect.CREW_CAPACITY_MULT.apply(stats, "mod_id", 1f);
+
+        verify(fuelMod).modifyMult("mod_id", 1.01f);
+        verify(cargoMod).modifyMult("mod_id", 1.01f);
+        verify(maxCrewMod).modifyMult("mod_id", 1.01f);
+    }
+
+    @Test
+    void missileManeuverabilityModifiesAccelerationTurnRateAndTurnAcceleration() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        StatBonus acceleration = mock(StatBonus.class);
+        StatBonus maxTurnRate = mock(StatBonus.class);
+        StatBonus turnAcceleration = mock(StatBonus.class);
+        when(stats.getMissileAccelerationBonus()).thenReturn(acceleration);
+        when(stats.getMissileMaxTurnRateBonus()).thenReturn(maxTurnRate);
+        when(stats.getMissileTurnAccelerationBonus()).thenReturn(turnAcceleration);
+
+        ScopedWeaponEffect.find(WeaponStatFamily.FLIGHT_MANEUVERABILITY, WeaponScope.MISSILE, StatMode.PERCENT).apply(stats, "mod_id", -30f);
+
+        verify(acceleration).modifyPercent("mod_id", -30f);
+        verify(maxTurnRate).modifyPercent("mod_id", -30f);
+        verify(turnAcceleration).modifyPercent("mod_id", -30f);
     }
 
     @Test

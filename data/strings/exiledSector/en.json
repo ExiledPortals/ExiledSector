@@ -301,6 +301,7 @@
     "weapon.stat.FLIGHT_ACCELERATION": "missile acceleration",
     "weapon.stat.FLIGHT_TURN_RATE": "missile turn rate",
     "weapon.stat.FLIGHT_TURN_ACCELERATION": "missile turn acceleration",
+    "weapon.stat.FLIGHT_MANEUVERABILITY": "missile maneuverability",
     "weapon.stat.GUIDANCE": "missile guidance",
     "weapon.stat.ECCM_CHANCE": "chance for missiles to resist enemy ECM and flares",
     "weapon.stat.HEALTH": "missile hitpoints",
