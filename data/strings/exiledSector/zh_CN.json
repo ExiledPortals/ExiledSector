@@ -1180,7 +1180,6 @@
     "codex.socketables.belowTenth": "不到0.1",
     "codex.socketables.range": "{low}至{high}",
     "codex.socketables.rangeGrouped": "（{low}至{high}）",
-    "codex.socketables.averageRolls": "已开启效果取平均值，因此新的插槽物品取每个范围的中间值，而不是随机值。",
     "socketable.tooltip.codexHint": "按F2在百科中查看此物品可能出现的所有效果。",
     "modifier.shipSkillTree": "舰船技能树",
     "modifier.phaseSensorNetworks": "舰队中的相位舰和相位传感器网络",

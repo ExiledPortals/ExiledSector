@@ -717,7 +717,6 @@
     "codex.socketables.belowTenth": "under 0.1",
     "codex.socketables.range": "{low} to {high}",
     "codex.socketables.rangeGrouped": "({low} to {high})",
-    "codex.socketables.averageRolls": "Average Modifier Rolls is turned on, so new socketables take the middle of each range instead of a random value.",
     "socketable.tooltip.codexHint": "Press F2 to see every modifier this can roll in the Codex.",
     "modifier.shipSkillTree": "Ship skill tree",
     "modifier.phaseSensorNetworks": "Phase ships and phase sensor networks in fleet",

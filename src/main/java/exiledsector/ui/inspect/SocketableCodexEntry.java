@@ -18,7 +18,6 @@ import exiledsector.socketables.PoolEntry;
 import exiledsector.socketables.RolledEffect;
 import exiledsector.socketables.SocketableDefinition;
 import exiledsector.socketables.SocketableRarity;
-import exiledsector.socketables.SocketableRoller;
 import exiledsector.socketables.SocketableRollOdds;
 import exiledsector.ui.VanillaText;
 
@@ -106,9 +105,6 @@ public class SocketableCodexEntry extends CodexEntryV2 implements CustomUIPanelP
             writeUnique(info);
         } else {
             writeAffixes(info);
-        }
-        if (SocketableRoller.averageRolls()) {
-            VanillaText.addPara(info, Translation.styled("codex.socketables.averageRolls"), PAD, Misc.getGrayColor());
         }
     }
 
