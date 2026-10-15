@@ -55,9 +55,41 @@ public final class SkillTreeTemplateStore {
     }
 
     static SkillTreeTemplate save(String templateName, String rootNodeId, HullSize hullSize, List<TemplateStep> steps, Supplier<String> templateIdSupplier) {
-        SkillTreeTemplate template = new SkillTreeTemplate(templateIdSupplier.get(), TemplateNames.normalise(templateName), rootNodeId, hullSize, steps);
+        return store(new SkillTreeTemplate(templateIdSupplier.get(), TemplateNames.normalise(templateName), rootNodeId, hullSize, steps));
+    }
+
+    public static SkillTreeTemplate replaceSteps(String templateId, List<TemplateStep> steps) {
+        SkillTreeTemplate template = find(templateId);
+        return template == null ? null : store(new SkillTreeTemplate(template.id(), template.name(), template.rootNodeId(), template.hullSize(), steps));
+    }
+
+    public static SkillTreeTemplate rename(String templateId, String templateName) {
+        SkillTreeTemplate template = find(templateId);
+        return template == null ? null
+                : store(new SkillTreeTemplate(template.id(), TemplateNames.normalise(templateName), template.rootNodeId(), template.hullSize(), template.steps()));
+    }
+
+    private static SkillTreeTemplate store(SkillTreeTemplate template) {
         storedTemplates(true).put(template.id(), TemplateCodec.encode(template));
         return template;
+    }
+
+    public static int assignmentCount(String templateId) {
+        return assignedShipIds(templateId).size();
+    }
+
+    public static List<String> assignedShipIds(String templateId) {
+        Map<String, String> assignments = storedAssignments(false);
+        if (assignments == null || templateId == null) {
+            return List.of();
+        }
+        List<String> shipIds = new ArrayList<>();
+        for (Map.Entry<String, String> assignment : assignments.entrySet()) {
+            if (templateId.equals(assignment.getValue())) {
+                shipIds.add(assignment.getKey());
+            }
+        }
+        return shipIds;
     }
 
     public static boolean delete(String templateId) {

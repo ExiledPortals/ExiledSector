@@ -215,7 +215,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     private boolean escape(CanvasMode mode) {
         EscapeAction action = EscapeAction.resolve(mode, treeSession.isAutoAllocating() || treeSession.isRespeccing(),
-                socketPlacement.isEngaged(), treeSession.isDropdownOpen(), frameworkInspection.isPanelOpen());
+                socketPlacement.isEngaged(), treeSession.isDropdownOpen(), frameworkInspection.isPanelOpen(),
+                templateUi.isPlanning() && !searchBar.isFocused());
         switch (action) {
             case NONE -> {
                 return false;
@@ -228,6 +229,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             case CLOSE_DROPDOWN -> treeSession.closeDropdown();
             case CLOSE_FRAMEWORK_PANEL -> frameworkInspection.escape();
             case STOP_FOLLOWING -> stopFollowingFleet();
+            case EXIT_TEMPLATE_MODE -> templateUi.exitTemplateMode();
         }
         return true;
     }

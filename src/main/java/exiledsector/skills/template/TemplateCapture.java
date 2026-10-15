@@ -4,10 +4,12 @@ import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.UnaryOperator;
 
 public final class TemplateCapture {
 
@@ -15,8 +17,13 @@ public final class TemplateCapture {
     }
 
     public static List<TemplateStep> capture(ShipSkillData shipData, String startingRootId, Map<String, SkillNode> nodesById) {
+        return capture(shipData.getAllocatedNodeIds(), shipData::getOptionalSelection, startingRootId, nodesById);
+    }
+
+    public static List<TemplateStep> capture(Collection<String> orderedNodeIds, UnaryOperator<String> optionOf, String startingRootId,
+                                             Map<String, SkillNode> nodesById) {
         List<String> unplacedNodeIds = new ArrayList<>();
-        for (String nodeId : shipData.getAllocatedNodeIds()) {
+        for (String nodeId : orderedNodeIds) {
             if (!nodeId.equals(startingRootId) && nodesById.containsKey(nodeId)) {
                 unplacedNodeIds.add(nodeId);
             }
@@ -32,14 +39,14 @@ public final class TemplateCapture {
                 break;
             }
             unplacedNodeIds.remove(nextNode.getId());
-            place(nextNode, shipData, placedNodeIds, steps);
+            place(nextNode, optionOf, placedNodeIds, steps);
             String partnerId = nextNode.getPairedNodeId();
             if (partnerId != null && unplacedNodeIds.remove(partnerId)) {
-                place(nodesById.get(partnerId), shipData, placedNodeIds, steps);
+                place(nodesById.get(partnerId), optionOf, placedNodeIds, steps);
             }
         }
         for (String nodeId : unplacedNodeIds) {
-            place(nodesById.get(nodeId), shipData, placedNodeIds, steps);
+            place(nodesById.get(nodeId), optionOf, placedNodeIds, steps);
         }
         return steps;
     }
@@ -67,9 +74,9 @@ public final class TemplateCapture {
         return false;
     }
 
-    private static void place(SkillNode node, ShipSkillData shipData, Set<String> placedNodeIds, List<TemplateStep> steps) {
+    private static void place(SkillNode node, UnaryOperator<String> optionOf, Set<String> placedNodeIds, List<TemplateStep> steps) {
         placedNodeIds.add(node.getId());
-        String optionTypeId = node.getType().isOptional() ? shipData.getOptionalSelection(node.getId()) : null;
+        String optionTypeId = node.getType().isOptional() ? optionOf.apply(node.getId()) : null;
         steps.add(new TemplateStep(node.getId(), optionTypeId));
     }
 }

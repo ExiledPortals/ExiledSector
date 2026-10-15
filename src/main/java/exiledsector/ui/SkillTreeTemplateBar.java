@@ -7,6 +7,7 @@ import exiledsector.ui.util.TextLabel;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 final class SkillTreeTemplateBar {
 
@@ -20,18 +21,21 @@ final class SkillTreeTemplateBar {
     private static final float RESULT_SECONDS = 4f;
     private static final Color RESULT_COLOR = SkillTreePanelStyle.TOOLTIP_BODY_COLOR;
 
+    private final SkillTreeUiButton templateModeButton = new SkillTreeUiButton(Translation.text("ui.template.button.mode"));
     private final SkillTreeUiButton saveButton = new SkillTreeUiButton(Translation.text("ui.template.button.save"));
     private final SkillTreeUiButton loadButton = new SkillTreeUiButton(Translation.text("ui.template.button.load"));
-    private final SkillTreeUiButton autoAllocateButton = new SkillTreeUiButton(Translation.text("ui.template.button.autoAllocate"));
+    private final SkillTreeUiButton autoAllocateButton = new SkillTreeUiButton(Translation.text("ui.template.button.autoOff"));
     private final SkillTreeInfoTooltipRenderer tooltipRenderer;
     private final Map<String, String> translatedTexts = new HashMap<>();
     private final TextLabel templateLine = new TextLabel(FONT_SIZE, SkillTreePanelStyle.POSITIVE_STAT_COLOR);
     private final TextLabel resultLine = new TextLabel(FONT_SIZE, RESULT_COLOR);
 
     private TemplateBarState barState = TemplateBarState.HIDDEN;
-    private String templateName;
+    private String statusText;
     private String resultText;
     private float resultSeconds;
+    private String laidOutSaveLabelKey;
+    private boolean laidOutAutoOn;
     private boolean laidOutVisible;
     private float laidOutBottom = Float.NaN;
     private float laidOutRight = Float.NaN;
@@ -40,14 +44,17 @@ final class SkillTreeTemplateBar {
         this.tooltipRenderer = new SkillTreeInfoTooltipRenderer(style);
     }
 
-    void update(TemplateBarState newState, String newTemplateName) {
+    void update(TemplateBarState newState, String newStatusText) {
         barState = newState;
+        templateModeButton.setEnabled(newState.templateModeEnabled());
+        templateModeButton.setSelected(newState.planning());
         saveButton.setEnabled(newState.saveEnabled());
         loadButton.setEnabled(newState.loadEnabled());
         autoAllocateButton.setEnabled(newState.autoEnabled());
-        if (newTemplateName == null ? templateName != null : !newTemplateName.equals(templateName)) {
-            templateName = newTemplateName;
-            setLine(true, newTemplateName == null ? null : Translation.msg("ui.template.current").arg("name", newTemplateName).text());
+        autoAllocateButton.setSelected(newState.autoOn());
+        if (!Objects.equals(newStatusText, statusText)) {
+            statusText = newStatusText;
+            setLine(true, newStatusText);
         }
     }
 
@@ -67,12 +74,16 @@ final class SkillTreeTemplateBar {
     }
 
     boolean contains(float x, float y) {
-        return barState.visible() && (saveButton.contains(x, y) || loadButton.contains(x, y) || autoAllocateButton.contains(x, y));
+        return barState.visible() && (templateModeButton.contains(x, y) || saveButton.contains(x, y) || loadButton.contains(x, y)
+                || autoAllocateButton.contains(x, y));
     }
 
     TemplateAction actionAt(float x, float y) {
         if (!barState.visible()) {
             return null;
+        }
+        if (templateModeButton.isClickable(x, y)) {
+            return TemplateAction.of(TemplateAction.Kind.TOGGLE_TEMPLATE_MODE);
         }
         if (saveButton.isClickable(x, y)) {
             return TemplateAction.of(TemplateAction.Kind.OPEN_SAVE);
@@ -81,7 +92,7 @@ final class SkillTreeTemplateBar {
             return TemplateAction.of(TemplateAction.Kind.OPEN_LOAD);
         }
         if (autoAllocateButton.isClickable(x, y)) {
-            return TemplateAction.of(TemplateAction.Kind.AUTO_ALLOCATE);
+            return TemplateAction.of(TemplateAction.Kind.TOGGLE_AUTO_ALLOCATE);
         }
         return contains(x, y) ? TemplateAction.NONE : null;
     }
@@ -89,21 +100,28 @@ final class SkillTreeTemplateBar {
     void layout(PositionAPI canvasPosition) {
         float rowBottom = canvasPosition.getY() + MARGIN;
         float rowRight = canvasPosition.getX() + canvasPosition.getWidth() - MARGIN;
-        if (barState.visible() == laidOutVisible && rowBottom == laidOutBottom && rowRight == laidOutRight) {
+        if (barState.visible() == laidOutVisible && rowBottom == laidOutBottom && rowRight == laidOutRight
+                && barState.saveLabelKey().equals(laidOutSaveLabelKey) && barState.autoOn() == laidOutAutoOn) {
             return;
         }
         laidOutVisible = barState.visible();
         laidOutBottom = rowBottom;
         laidOutRight = rowRight;
+        laidOutSaveLabelKey = barState.saveLabelKey();
+        laidOutAutoOn = barState.autoOn();
         if (!laidOutVisible) {
+            templateModeButton.hide();
             saveButton.hide();
             loadButton.hide();
             autoAllocateButton.hide();
             return;
         }
+        saveButton.setLabel(text(laidOutSaveLabelKey));
+        autoAllocateButton.setLabel(text(laidOutAutoOn ? "ui.template.button.autoOn" : "ui.template.button.autoOff"));
         rowRight = placeLeftOf(autoAllocateButton, rowRight, rowBottom);
         rowRight = placeLeftOf(loadButton, rowRight, rowBottom);
-        placeLeftOf(saveButton, rowRight, rowBottom);
+        rowRight = placeLeftOf(saveButton, rowRight, rowBottom);
+        placeLeftOf(templateModeButton, rowRight, rowBottom);
     }
 
     private static float placeLeftOf(SkillTreeUiButton button, float right, float bottom) {
@@ -113,6 +131,7 @@ final class SkillTreeTemplateBar {
     }
 
     void render(PositionAPI canvasPosition, float mouseX, float mouseY, float alphaMult) {
+        templateModeButton.render(mouseX, mouseY, alphaMult);
         saveButton.render(mouseX, mouseY, alphaMult);
         loadButton.render(mouseX, mouseY, alphaMult);
         autoAllocateButton.render(mouseX, mouseY, alphaMult);
@@ -126,7 +145,7 @@ final class SkillTreeTemplateBar {
         if (resultText != null && resultLine.draw(statusRight - resultLine.width(), statusTop)) {
             statusTop += STATUS_LINE_HEIGHT;
         }
-        if (templateName != null) {
+        if (statusText != null) {
             templateLine.draw(statusRight - templateLine.width(), statusTop);
         }
     }
@@ -135,12 +154,16 @@ final class SkillTreeTemplateBar {
         if (!barState.visible()) {
             return;
         }
-        if (saveButton.contains(mouseX, mouseY)) {
-            tooltipRenderer.render(text("ui.template.button.save"), text(barState.saveHintKey()), mouseX, mouseY, alphaMult);
+        if (templateModeButton.contains(mouseX, mouseY)) {
+            tooltipRenderer.render(text("ui.template.button.mode"), text(barState.planning() ? "ui.template.hint.modeOn" : "ui.template.hint.mode"),
+                    mouseX, mouseY, alphaMult);
+        } else if (saveButton.contains(mouseX, mouseY)) {
+            tooltipRenderer.render(text(barState.saveLabelKey()), text(barState.saveHintKey()), mouseX, mouseY, alphaMult);
         } else if (loadButton.contains(mouseX, mouseY)) {
             tooltipRenderer.render(text("ui.template.button.load"), text("ui.template.hint.load"), mouseX, mouseY, alphaMult);
         } else if (autoAllocateButton.contains(mouseX, mouseY)) {
-            tooltipRenderer.render(text("ui.template.button.autoAllocate"), text(barState.autoHintKey()), mouseX, mouseY, alphaMult);
+            tooltipRenderer.render(text(barState.autoOn() ? "ui.template.button.autoOn" : "ui.template.button.autoOff"),
+                    text(barState.autoHintKey()), mouseX, mouseY, alphaMult);
         }
     }
 
@@ -148,9 +171,9 @@ final class SkillTreeTemplateBar {
         return translatedTexts.computeIfAbsent(key, Translation::text);
     }
 
-    private void setLine(boolean templateNameLine, String text) {
+    private void setLine(boolean statusLine, String text) {
         if (text != null) {
-            (templateNameLine ? templateLine : resultLine).set(text);
+            (statusLine ? templateLine : resultLine).set(text);
         }
     }
 }

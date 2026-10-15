@@ -30,8 +30,7 @@ final class SkillTreeTemplateNameDialog {
             SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
     private final SkillTreeUiButton saveButton = new SkillTreeUiButton(Translation.text("ui.template.dialog.save"));
     private final SkillTreeUiButton cancelButton = new SkillTreeUiButton(Translation.text("ui.template.dialog.cancel"));
-    private final TextLabel titleLine = new TextLabel(SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR)
-            .set(Translation.text("ui.template.dialog.title"));
+    private final TextLabel titleLine = new TextLabel(SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
     private final TextLabel summaryLine = new TextLabel(SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
     private final TextLabel problemLine = new TextLabel(SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE, PROBLEM_COLOR)
             .set(Translation.text("ui.template.dialog.duplicate"));
@@ -40,17 +39,30 @@ final class SkillTreeTemplateNameDialog {
     private String rootNodeId;
     private Collection<SkillTreeTemplate> existingTemplates = List.of();
     private TemplateNames.Problem nameProblem = TemplateNames.Problem.EMPTY;
+    private String renamedTemplateId;
 
     void open(String rootNodeId, int nodeCount, Collection<SkillTreeTemplate> existingTemplates) {
+        open(rootNodeId, nodeCount, existingTemplates, null);
+    }
+
+    void openRename(SkillTreeTemplate renamedTemplate, Collection<SkillTreeTemplate> existingTemplates) {
+        open(renamedTemplate.rootNodeId(), 0, existingTemplates, renamedTemplate);
+    }
+
+    private void open(String rootNodeId, int nodeCount, Collection<SkillTreeTemplate> existingTemplates, SkillTreeTemplate renamedTemplate) {
         this.rootNodeId = rootNodeId;
         this.existingTemplates = existingTemplates;
+        this.renamedTemplateId = renamedTemplate == null ? null : renamedTemplate.id();
         this.dialogOpen = true;
         modalFrame.open();
         hideButtons();
-        nameField.setText("");
+        titleLine.set(Translation.text(renamedTemplate == null ? "ui.template.dialog.title" : "ui.template.dialog.renameTitle"));
+        nameField.setText(renamedTemplate == null ? "" : renamedTemplate.name());
         nameField.focus(true);
         revalidate();
-        summaryLine.set(Translation.msg("ui.template.dialog.summary").count(nodeCount).text());
+        summaryLine.set(renamedTemplate == null ? Translation.msg("ui.template.dialog.summary").count(nodeCount).text()
+                : Translation.text("ui.template.dialog.renameSummary"));
+        saveButton.setLabel(Translation.text(renamedTemplate == null ? "ui.template.dialog.save" : "ui.template.dialog.rename"));
     }
 
     void close() {
@@ -58,6 +70,10 @@ final class SkillTreeTemplateNameDialog {
         modalFrame.close();
         hideButtons();
         nameField.focus(false);
+    }
+
+    String renamedTemplateId() {
+        return renamedTemplateId;
     }
 
     boolean isOpen() {
@@ -138,6 +154,6 @@ final class SkillTreeTemplateNameDialog {
     }
 
     private void revalidate() {
-        nameProblem = TemplateNames.validate(nameField.text(), rootNodeId, existingTemplates);
+        nameProblem = TemplateNames.validate(nameField.text(), rootNodeId, existingTemplates, renamedTemplateId);
     }
 }

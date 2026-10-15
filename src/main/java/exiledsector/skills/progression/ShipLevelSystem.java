@@ -99,7 +99,9 @@ public final class ShipLevelSystem {
 
     private static void levelUp(ShipSkillData shipData, Collection<SkillNode> allNodes) {
         shipData.incrementLevel();
-        if (!shipData.convertMostRecentAllocationToFree(allNodes)) {
+        if (shipData.isAutoAllocatingTemplate()) {
+            shipData.bankLevelUpForTemplate();
+        } else if (!shipData.convertMostRecentAllocationToFree(allNodes)) {
             shipData.addFreeAllocationCredit();
         }
     }

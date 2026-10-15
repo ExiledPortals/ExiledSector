@@ -5,7 +5,8 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 record TemplateAction(Kind kind, String templateId, HullSize hullSize) {
 
     enum Kind {
-        OPEN_SAVE, OPEN_LOAD, AUTO_ALLOCATE, DIALOG_SAVE, DIALOG_CANCEL, SELECT, DELETE, TOGGLE_HULL, CLEAR, CLOSE, NONE
+        TOGGLE_TEMPLATE_MODE, OPEN_SAVE, OPEN_LOAD, TOGGLE_AUTO_ALLOCATE, DIALOG_SAVE, DIALOG_CANCEL, SELECT, DELETE, TOGGLE_HULL, CLEAR, CLOSE,
+        NONE
     }
 
     static final TemplateAction NONE = new TemplateAction(Kind.NONE, null, null);

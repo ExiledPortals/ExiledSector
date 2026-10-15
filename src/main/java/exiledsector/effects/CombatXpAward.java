@@ -7,6 +7,7 @@ import com.fs.starfarer.api.campaign.TextPanelAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
+import exiledsector.i18n.Message;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.persistence.ShipSkillDataManager;
@@ -39,10 +40,10 @@ public final class CombatXpAward {
         Map<FleetMemberAPI, Integer> levelsBefore = levelsOf(playerFleet);
         float catchUpMultiplier = ShipLevelSystem.awardXpToFleet(playerFleet, xp);
         List<FleetMemberAPI> levelledMembers = levelledMembers(levelsBefore);
-        ShipTreeSync.levelsChanged(playerFleet, levelledMembers);
+        Map<FleetMemberAPI, Integer> autoAllocatedCounts = ShipTreeSync.levelsChanged(playerFleet, levelledMembers);
         NpcBonusScale.invalidate();
         I18n.forGameText(() -> report(new CombatXpReport(xp, defeatedDp, lost, difficultyMultiplier, catchUpMultiplier,
-                levelUpLines(levelledMembers))));
+                levelUpLines(levelledMembers, autoAllocatedCounts))));
     }
 
     private static Map<FleetMemberAPI, Integer> levelsOf(CampaignFleetAPI fleet) {
@@ -63,11 +64,14 @@ public final class CombatXpAward {
         return levelledMembers;
     }
 
-    private static List<String> levelUpLines(List<FleetMemberAPI> levelledMembers) {
+    private static List<String> levelUpLines(List<FleetMemberAPI> levelledMembers, Map<FleetMemberAPI, Integer> autoAllocatedCounts) {
         List<String> levelUpLines = new ArrayList<>();
         for (FleetMemberAPI levelledMember : levelledMembers) {
             int newLevel = ShipSkillDataManager.get(levelledMember.getId()).getLevel();
-            levelUpLines.add(Translation.msg("combat.xp.levelUp").arg("ship", levelledMember.getShipName())
+            Integer autoAllocatedCount = autoAllocatedCounts.get(levelledMember);
+            Message line = autoAllocatedCount == null ? Translation.msg("combat.xp.levelUp")
+                    : Translation.msg("combat.xp.levelUpAutoAllocated").count(autoAllocatedCount);
+            levelUpLines.add(line.arg("ship", levelledMember.getShipName())
                     .arg("hull", levelledMember.getHullSpec().getHullNameWithDashClass()).arg("level", newLevel).text());
         }
         return levelUpLines;

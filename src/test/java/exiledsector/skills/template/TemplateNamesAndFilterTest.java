@@ -68,4 +68,22 @@ class TemplateNamesAndFilterTest {
         assertTrue(TemplateBudget.hasPointsLeft(5, 60, 0, 99, 0, 30));
         assertFalse(TemplateBudget.hasPointsLeft(60, 60, 4, 0, 3, 99));
     }
+
+    @Test
+    void renamingATemplateMayKeepItsOwnNameButNotTakeAnother() {
+        assertEquals(TemplateNames.Problem.NONE, TemplateNames.validate("brawler", "root_low_tech_1", EXISTING, "1"));
+        assertEquals(TemplateNames.Problem.DUPLICATE, TemplateNames.validate("Kite", "root_low_tech_1", EXISTING, "1"));
+    }
+
+    @Test
+    void defaultNamesGetANumberWhenTakenAndStayWithinTheLimit() {
+        assertEquals("Line", TemplateNames.unique(" Line ", "root_low_tech_1", EXISTING));
+        assertEquals("Brawler 2", TemplateNames.unique("Brawler", "root_low_tech_1", EXISTING));
+        List<SkillTreeTemplate> withSecond = List.of(template("5", "Brawler", "r", null), template("6", "Brawler 2", "r", null));
+        assertEquals("Brawler 3", TemplateNames.unique("Brawler", "r", withSecond));
+        String longName = "x".repeat(TemplateNames.MAX_LENGTH + 5);
+        List<SkillTreeTemplate> withLong = List.of(template("7", "x".repeat(TemplateNames.MAX_LENGTH), "r", null));
+        String unique = TemplateNames.unique(longName, "r", withLong);
+        assertEquals("x".repeat(TemplateNames.MAX_LENGTH - 2) + " 2", unique);
+    }
 }

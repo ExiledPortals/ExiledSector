@@ -5,13 +5,18 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.i18n.Translation;
+import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
+import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.template.AutoAllocateRun;
 import exiledsector.skills.template.SkillTreeTemplate;
+import exiledsector.skills.template.TemplateNames;
+import exiledsector.skills.template.TemplateStep;
 import exiledsector.ui.node.TreeAllocationSession;
 import org.lwjgl.input.Keyboard;
 
+import java.util.List;
 import java.util.Objects;
 
 final class SkillTreeTemplateController {
@@ -25,12 +30,16 @@ final class SkillTreeTemplateController {
     private TemplateBarState barState = TemplateBarState.HIDDEN;
     private TemplateAction pendingAction;
     private String templateRootId;
+    private SkillTreeTemplate statusTemplate;
+    private boolean statusPlanning;
+    private String statusText;
 
     SkillTreeTemplateController(FleetMemberAPI member, TreeAllocationSession treeSession, SkillTreePanelStyle style) {
         this.member = member;
         this.treeSession = treeSession;
         this.templateBar = new SkillTreeTemplateBar(style);
         this.listOverlay = new SkillTreeTemplateListOverlay(style);
+        treeSession.onPlanChange(this::savePlan);
         loadAssignedTemplateOnRootChange();
     }
 
@@ -40,6 +49,17 @@ final class SkillTreeTemplateController {
 
     boolean barContains(float x, float y) {
         return templateBar.contains(x, y);
+    }
+
+    boolean isPlanning() {
+        return treeSession.isPlanning();
+    }
+
+    void exitTemplateMode() {
+        if (treeSession.isPlanning()) {
+            treeSession.stopPlanning();
+            SkillTreeSounds.panelOpened();
+        }
     }
 
     private void loadAssignedTemplateOnRootChange() {
@@ -57,11 +77,10 @@ final class SkillTreeTemplateController {
     void advance(float amount, PositionAPI canvasPosition, boolean barLive) {
         loadAssignedTemplateOnRootChange();
         SkillTreeTemplate template = treeSession.template();
-        boolean running = treeSession.isAutoAllocating();
-        boolean pointsLeft = template != null && treeSession.hasPointsLeft();
-        barState = TemplateBarState.of(templateRootId != null, treeSession.allocatedNodeCount(),
-                template != null, running, pointsLeft, !barLive);
-        templateBar.update(barState, template == null ? null : template.name());
+        boolean planning = treeSession.isPlanning();
+        barState = TemplateBarState.of(templateRootId != null, treeSession.allocatedNodeCount(), template != null,
+                treeSession.isAutoAllocating(), !barLive, planning, treeSession.isAutoAllocateOn());
+        templateBar.update(barState, statusText(template, planning));
         AutoAllocateRun.Summary summary = treeSession.takeLastRunSummary();
         if (summary != null) {
             templateBar.showResult(resultText(summary));
@@ -72,6 +91,25 @@ final class SkillTreeTemplateController {
         if (canvasPosition != null) {
             templateBar.layout(canvasPosition);
         }
+    }
+
+    private String statusText(SkillTreeTemplate template, boolean planning) {
+        if (template == statusTemplate && planning == statusPlanning) {
+            return statusText;
+        }
+        statusTemplate = template;
+        statusPlanning = planning;
+        if (!planning) {
+            statusText = template == null ? null : Translation.msg("ui.template.current").arg("name", template.name()).text();
+        } else if (template == null) {
+            statusText = Translation.text("ui.template.planningNew");
+        } else {
+            int otherShipCount = SkillTreeTemplateStore.assignmentCount(template.id()) - 1;
+            statusText = otherShipCount > 0
+                    ? Translation.msg("ui.template.planningShared").count(otherShipCount).arg("name", template.name()).text()
+                    : Translation.msg("ui.template.planning").arg("name", template.name()).text();
+        }
+        return statusText;
     }
 
     void forgetBarPress() {
@@ -155,20 +193,18 @@ final class SkillTreeTemplateController {
     private void perform(TemplateAction action) {
         SkillNode startingRoot = treeSession.getStartingRoot();
         switch (action.kind()) {
+            case TOGGLE_TEMPLATE_MODE -> toggleTemplateMode();
             case OPEN_SAVE -> openSaveDialog(startingRoot);
             case OPEN_LOAD -> openList(startingRoot);
-            case AUTO_ALLOCATE -> {
-                if (barState.autoEnabled()) {
-                    treeSession.startAutoAllocate();
-                }
-            }
-            case DIALOG_SAVE -> saveTemplate(startingRoot);
+            case TOGGLE_AUTO_ALLOCATE -> toggleAutoAllocate();
+            case DIALOG_SAVE -> saveFromDialog(startingRoot);
             case DIALOG_CANCEL -> nameDialog.close();
             case SELECT -> selectTemplate(action.templateId());
             case DELETE -> deleteTemplate(action.templateId());
             case TOGGLE_HULL -> listOverlay.toggle(action.hullSize());
             case CLEAR -> {
                 SkillTreeTemplateStore.clearAssignment(member.getId());
+                treeSession.setAutoAllocate(false);
                 treeSession.setTemplate(null);
                 listOverlay.close();
             }
@@ -178,13 +214,37 @@ final class SkillTreeTemplateController {
         }
     }
 
+    private void toggleTemplateMode() {
+        if (treeSession.isPlanning()) {
+            exitTemplateMode();
+        } else if (barState.templateModeEnabled() && treeSession.startPlanning()) {
+            SkillTreeSounds.panelOpened();
+        }
+    }
+
+    private void toggleAutoAllocate() {
+        if (!barState.autoEnabled()) {
+            return;
+        }
+        boolean autoAllocate = !treeSession.isAutoAllocateOn();
+        treeSession.setAutoAllocate(autoAllocate);
+        if (autoAllocate && treeSession.template() != null && treeSession.hasPointsLeft()) {
+            treeSession.startAutoAllocate();
+        }
+    }
+
     private void openSaveDialog(SkillNode startingRoot) {
         if (startingRoot == null || !barState.saveEnabled()) {
             return;
         }
         treeSession.closeDropdown();
         SkillTreeSounds.panelOpened();
-        nameDialog.open(startingRoot.getId(), treeSession.allocatedNodeCount() - 1, SkillTreeTemplateStore.all());
+        SkillTreeTemplate template = treeSession.template();
+        if (treeSession.isPlanning() && template != null) {
+            nameDialog.openRename(template, SkillTreeTemplateStore.all());
+        } else {
+            nameDialog.open(startingRoot.getId(), treeSession.allocatedNodeCount() - 1, SkillTreeTemplateStore.all());
+        }
     }
 
     private void openList(SkillNode startingRoot) {
@@ -196,14 +256,38 @@ final class SkillTreeTemplateController {
         listOverlay.open(startingRoot.getId(), startingRoot.getType().getDisplayName(), hullSize(), SkillTreeTemplateStore.all(), assignedTemplateId());
     }
 
-    private void saveTemplate(SkillNode startingRoot) {
+    private void saveFromDialog(SkillNode startingRoot) {
         if (startingRoot == null || !nameDialog.canSave()) {
             return;
         }
         String name = nameDialog.name();
-        SkillTreeTemplateStore.save(name, startingRoot.getId(), hullSize(), treeSession.captureTemplateSteps());
+        String renamedTemplateId = nameDialog.renamedTemplateId();
         nameDialog.close();
+        if (renamedTemplateId != null) {
+            SkillTreeTemplate renamed = SkillTreeTemplateStore.rename(renamedTemplateId, name);
+            if (renamed != null && renamedTemplateId.equals(assignedTemplateId())) {
+                treeSession.planSaved(renamed);
+            }
+            return;
+        }
+        SkillTreeTemplateStore.save(name, startingRoot.getId(), hullSize(), treeSession.captureTemplateSteps());
         templateBar.showResult(Translation.msg("ui.template.result.saved").arg("name", name).text());
+    }
+
+    private void savePlan() {
+        SkillNode startingRoot = treeSession.getStartingRoot();
+        if (startingRoot == null) {
+            return;
+        }
+        List<TemplateStep> steps = treeSession.capturePlanSteps();
+        SkillTreeTemplate saved = SkillTreeTemplateStore.replaceSteps(treeSession.plannedTemplateId(), steps);
+        if (saved == null) {
+            String defaultName = Translation.msg("ui.template.defaultName").arg("hull", hullName()).text();
+            saved = SkillTreeTemplateStore.save(TemplateNames.unique(defaultName, startingRoot.getId(), SkillTreeTemplateStore.all()),
+                    startingRoot.getId(), hullSize(), steps);
+        }
+        SkillTreeTemplateStore.assign(member.getId(), saved.id());
+        treeSession.planSaved(saved);
     }
 
     private void selectTemplate(String templateId) {
@@ -220,8 +304,15 @@ final class SkillTreeTemplateController {
         if (!listOverlay.confirmDelete(templateId)) {
             return;
         }
+        for (String shipId : SkillTreeTemplateStore.assignedShipIds(templateId)) {
+            ShipSkillData shipData = ShipSkillDataManager.find(shipId);
+            if (shipData != null) {
+                shipData.setAutoAllocateTemplate(false);
+            }
+        }
         SkillTreeTemplateStore.delete(templateId);
         if (templateId.equals(assignedTemplateId())) {
+            treeSession.setAutoAllocate(false);
             treeSession.setTemplate(null);
         }
         listOverlay.setTemplates(SkillTreeTemplateStore.all(), assignedTemplateId());
@@ -234,6 +325,10 @@ final class SkillTreeTemplateController {
 
     private HullSize hullSize() {
         return member.getHullSpec() == null ? null : member.getHullSpec().getHullSize();
+    }
+
+    private String hullName() {
+        return member.getHullSpec() == null ? "" : member.getHullSpec().getHullName();
     }
 
     private static String resultText(AutoAllocateRun.Summary summary) {

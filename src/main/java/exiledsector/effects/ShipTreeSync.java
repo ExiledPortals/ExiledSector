@@ -19,7 +19,9 @@ import exiledsector.skills.progression.ShipLevelSystem;
 import exiledsector.socketables.NpcSocketables;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public final class ShipTreeSync {
@@ -59,19 +61,27 @@ public final class ShipTreeSync {
         raiseToLevelFloor(playerFleet);
     }
 
-    public static void levelsChanged(CampaignFleetAPI fleet, Collection<FleetMemberAPI> levelledMembers) {
-        if (levelledMembers.isEmpty()) return;
+    public static Map<FleetMemberAPI, Integer> levelsChanged(CampaignFleetAPI fleet, Collection<FleetMemberAPI> levelledMembers) {
+        if (levelledMembers.isEmpty()) return Map.of();
 
-        levelledMembers.forEach(member -> member.setStatUpdateNeeded(true));
+        Map<FleetMemberAPI, Integer> autoAllocatedCounts = new LinkedHashMap<>();
+        for (FleetMemberAPI member : levelledMembers) {
+            int autoAllocatedCount = TemplateLevelUp.spendFreeAllocations(member);
+            if (autoAllocatedCount > 0) {
+                autoAllocatedCounts.put(member, autoAllocatedCount);
+            }
+            member.setStatUpdateNeeded(true);
+        }
         if (fleet != null && fleet.getFleetData() != null) {
             fleet.getFleetData().setSyncNeeded();
         }
+        return autoAllocatedCounts;
     }
 
     public static boolean memberChanged(FleetMemberAPI member, ShipVariantAPI editedVariant) {
         boolean changed = installTree(member);
-        changed |= raiseToLevelFloor(member, currentLevelFloor());
         ShipVariantAPI variantBeingEdited = editedVariant != null ? editedVariant : member.getVariant();
+        changed |= raiseToLevelFloor(member, currentLevelFloor(), variantBeingEdited);
         if (variantBeingEdited != member.getVariant()) {
             changed |= installTree(variantBeingEdited);
         }
@@ -132,9 +142,14 @@ public final class ShipTreeSync {
     }
 
     static boolean raiseToLevelFloor(FleetMemberAPI member, int levelFloor) {
+        return raiseToLevelFloor(member, levelFloor, member.getVariant());
+    }
+
+    private static boolean raiseToLevelFloor(FleetMemberAPI member, int levelFloor, ShipVariantAPI variant) {
         if (levelFloor <= 0) return false;
         ShipSkillData shipData = ShipSkillDataManager.get(member.getId());
         if (!ShipLevelSystem.raiseToLevel(shipData, levelFloor, SkillTree.getAllNodes().values())) return false;
+        TemplateLevelUp.spendFreeAllocations(member, variant);
         member.setStatUpdateNeeded(true);
         return true;
     }

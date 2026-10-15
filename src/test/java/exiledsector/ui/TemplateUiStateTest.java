@@ -15,14 +15,14 @@ class TemplateUiStateTest {
 
     @Test
     void theBarIsHiddenUntilAStartingRootIsChosen() {
-        assertFalse(TemplateBarState.of(false, 5, true, false, true).visible());
-        assertTrue(TemplateBarState.of(true, 1, false, false, true).visible());
+        assertFalse(TemplateBarState.of(false, 5, true, false, false, false, false).visible());
+        assertTrue(TemplateBarState.of(true, 1, false, false, false, false, false).visible());
     }
 
     @Test
     void saveNeedsANodeBeyondTheRootAndExplainsWhyWhenDisabled() {
-        TemplateBarState rootOnly = TemplateBarState.of(true, 1, false, false, true);
-        TemplateBarState withNodes = TemplateBarState.of(true, 4, false, false, true);
+        TemplateBarState rootOnly = TemplateBarState.of(true, 1, false, false, false, false, false);
+        TemplateBarState withNodes = TemplateBarState.of(true, 4, false, false, false, false, false);
 
         assertFalse(rootOnly.saveEnabled());
         assertEquals("ui.template.hint.saveEmpty", rootOnly.saveHintKey());
@@ -31,15 +31,41 @@ class TemplateUiStateTest {
     }
 
     @Test
-    void autoAllocateNeedsATemplateAndPointsAndNothingWorksWhileItRuns() {
-        assertEquals("ui.template.hint.autoNoTemplate", TemplateBarState.of(true, 4, false, false, true).autoHintKey());
-        assertEquals("ui.template.hint.autoNoPoints", TemplateBarState.of(true, 4, true, false, false).autoHintKey());
-        assertTrue(TemplateBarState.of(true, 4, true, false, true).autoEnabled());
+    void theAutoAllocateToggleNeedsATemplateToTurnOnButCanAlwaysBeTurnedOff() {
+        TemplateBarState noTemplate = TemplateBarState.of(true, 4, false, false, false, false, false);
+        assertFalse(noTemplate.autoEnabled());
+        assertEquals("ui.template.hint.autoNoTemplate", noTemplate.autoHintKey());
+        assertTrue(TemplateBarState.of(true, 4, false, false, false, false, true).autoEnabled());
 
-        TemplateBarState running = TemplateBarState.of(true, 4, true, true, true);
+        TemplateBarState off = TemplateBarState.of(true, 4, true, false, false, false, false);
+        TemplateBarState on = TemplateBarState.of(true, 4, true, false, false, false, true);
+        assertTrue(off.autoEnabled());
+        assertEquals("ui.template.hint.autoOff", off.autoHintKey());
+        assertTrue(on.autoOn());
+        assertEquals("ui.template.hint.autoOn", on.autoHintKey());
+
+        TemplateBarState running = TemplateBarState.of(true, 4, true, true, false, false, true);
         assertFalse(running.autoEnabled());
         assertFalse(running.saveEnabled());
         assertFalse(running.loadEnabled());
+        assertFalse(running.templateModeEnabled());
+    }
+
+    @Test
+    void templateModeTurnsSaveIntoRenameAndLocksTheToggle() {
+        TemplateBarState newPlan = TemplateBarState.of(true, 4, false, false, false, true, false);
+        TemplateBarState editing = TemplateBarState.of(true, 4, true, false, false, true, true);
+
+        assertTrue(newPlan.planning());
+        assertTrue(newPlan.templateModeEnabled());
+        assertEquals("ui.template.button.rename", newPlan.saveLabelKey());
+        assertFalse(newPlan.saveEnabled());
+        assertEquals("ui.template.hint.renameEmpty", newPlan.saveHintKey());
+        assertTrue(editing.saveEnabled());
+        assertEquals("ui.template.hint.rename", editing.saveHintKey());
+        assertTrue(editing.loadEnabled());
+        assertFalse(editing.autoEnabled());
+        assertEquals("ui.template.hint.autoPlanning", editing.autoHintKey());
     }
 
     @Test
@@ -83,14 +109,15 @@ class TemplateUiStateTest {
 
     @Test
     void anInertBarGreysOutEveryButtonButKeepsItsHints() {
-        TemplateBarState inert = TemplateBarState.of(true, 4, true, false, true, true);
-        TemplateBarState live = TemplateBarState.of(true, 4, true, false, true, false);
+        TemplateBarState inert = TemplateBarState.of(true, 4, true, false, true, false, false);
+        TemplateBarState live = TemplateBarState.of(true, 4, true, false, false, false, false);
 
         assertTrue(live.saveEnabled() && live.loadEnabled() && live.autoEnabled());
         assertTrue(inert.visible());
         assertFalse(inert.saveEnabled());
         assertFalse(inert.loadEnabled());
         assertFalse(inert.autoEnabled());
+        assertFalse(inert.templateModeEnabled());
         assertEquals(live.saveHintKey(), inert.saveHintKey());
         assertEquals(live.autoHintKey(), inert.autoHintKey());
     }

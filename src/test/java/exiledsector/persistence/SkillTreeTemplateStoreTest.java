@@ -129,4 +129,31 @@ class SkillTreeTemplateStoreTest {
         assertTrue(SkillTreeTemplateStore.all().isEmpty());
         assertNull(SkillTreeTemplateStore.find("broken"));
     }
+
+    @Test
+    void editingATemplateInPlaceKeepsItsNameAndRenamingKeepsItsSteps() {
+        save("Brawler", "root_low_tech_1");
+        List<TemplateStep> newSteps = List.of(new TemplateStep("armor_1", null));
+
+        SkillTreeTemplate edited = SkillTreeTemplateStore.replaceSteps("t1", newSteps);
+        SkillTreeTemplate renamed = SkillTreeTemplateStore.rename("t1", "  Kite ");
+
+        assertEquals("Brawler", edited.name());
+        assertEquals(newSteps, SkillTreeTemplateStore.find("t1").steps());
+        assertEquals("Kite", renamed.name());
+        assertEquals("Kite", SkillTreeTemplateStore.find("t1").name());
+        assertNull(SkillTreeTemplateStore.replaceSteps("missing", newSteps));
+        assertNull(SkillTreeTemplateStore.replaceSteps(null, newSteps));
+    }
+
+    @Test
+    void assignmentCountCountsEveryShipUsingATemplate() {
+        save("Brawler", "root_low_tech_1");
+        assertEquals(0, SkillTreeTemplateStore.assignmentCount("t1"));
+        SkillTreeTemplateStore.assign("ship-a", "t1");
+        SkillTreeTemplateStore.assign("ship-b", "t1");
+
+        assertEquals(2, SkillTreeTemplateStore.assignmentCount("t1"));
+        assertEquals(0, SkillTreeTemplateStore.assignmentCount(null));
+    }
 }

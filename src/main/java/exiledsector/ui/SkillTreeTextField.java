@@ -53,6 +53,10 @@ final class SkillTreeTextField {
         caretSeconds = 0f;
     }
 
+    boolean isFocused() {
+        return focused;
+    }
+
     KeyResult handleKey(InputEventAPI event) {
         if (!focused) {
             return KeyResult.IGNORED;

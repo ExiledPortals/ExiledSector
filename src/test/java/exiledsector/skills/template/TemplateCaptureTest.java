@@ -178,4 +178,15 @@ class TemplateCaptureTest {
         seen.remove(rootId);
         return new ArrayList<>(seen);
     }
+
+    @Test
+    void aGivenOrderIsKeptWhereverEachNodeIsAlreadyReachable() {
+        node("a", "root");
+        node("b", "a");
+        node("c", "root");
+
+        List<TemplateStep> steps = TemplateCapture.capture(List.of("c", "b", "a"), nodeId -> null, "root", SkillTree.getAllNodes());
+
+        assertEquals(List.of("c", "a", "b"), steps.stream().map(TemplateStep::nodeId).toList());
+    }
 }

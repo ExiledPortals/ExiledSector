@@ -38,6 +38,10 @@ final class SkillTreeSearchBar {
         queryField.focus(false);
     }
 
+    boolean isFocused() {
+        return queryField.isFocused();
+    }
+
     boolean handleKey(InputEventAPI event) {
         queryField.setText(nodeSearch.getQuery());
         SkillTreeTextField.KeyResult result = queryField.handleKey(event);

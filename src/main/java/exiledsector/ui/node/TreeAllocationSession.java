@@ -40,6 +40,7 @@ public final class TreeAllocationSession {
     private final BooleanSupplier pointsLeftCheck;
     private final Predicate<SkillNode> respecStep = this::removeForRespec;
     private final Predicate<SkillType> dropdownOptionUsable = this::isDropdownOptionUsable;
+    private final TemplatePlanner planner;
 
     private TreeFeedback feedback = TreeFeedback.NONE;
     private StartingRootChoice rootChoice;
@@ -52,6 +53,8 @@ public final class TreeAllocationSession {
     private AutoAllocateRun autoAllocateRun;
     private AutoAllocateRun.Summary lastRunSummary;
     private RespecRun respecRun;
+    private Runnable planChangeListener = () -> {
+    };
 
     public TreeAllocationSession(FleetMemberAPI member, ShipVariantAPI variant, BaseRefitButton refitButton, NodeSearch nodeSearch) {
         this.refitButton = refitButton;
@@ -61,6 +64,7 @@ public final class TreeAllocationSession {
         this.stepExecutor = new TemplateStepExecutor(allocator, this::snapshot, node -> afterAllocationChange(node, true));
         this.attemptStep = stepExecutor::attempt;
         this.pointsLeftCheck = stepExecutor::hasPointsLeft;
+        this.planner = new TemplatePlanner(allocator, this::snapshot);
     }
 
     private static StartingRootChoice initialRootChoice(ShipSkillData skillData) {
@@ -87,8 +91,20 @@ public final class TreeAllocationSession {
         return allocationSnapshot;
     }
 
+    NodeAllocator.Snapshot viewSnapshot() {
+        return planner.isActive() ? planner.snapshot() : snapshot();
+    }
+
     Set<String> templateNodeIds() {
-        return templateNodeIds;
+        return planner.isActive() ? planner.nodeIds() : templateNodeIds;
+    }
+
+    Set<String> plannedOnlyNodeIds() {
+        return planner.plannedOnlyNodeIds();
+    }
+
+    boolean isPlannedOnly(SkillNode node) {
+        return planner.isPlannedOnly(node);
     }
 
     SkillNode dropdownNode() {
@@ -163,6 +179,7 @@ public final class TreeAllocationSession {
             return;
         }
         dropdownNode = null;
+        stopPlanning();
         setTemplate(null);
         nodeSearch.setQuery("");
         rootChoice = StartingRootChoice.returning(SkillTree.topology().roots(), root);
@@ -200,6 +217,10 @@ public final class TreeAllocationSession {
     }
 
     public void clickNode(SkillNode node, boolean ctrlDown) {
+        if (planner.isActive() && !isStartingRootInputLocked()) {
+            clickPlannedNode(node, ctrlDown);
+            return;
+        }
         if (isBusy()) {
             return;
         }
@@ -273,19 +294,19 @@ public final class TreeAllocationSession {
         if (lastChosenOptionalOption == null || !node.getType().getOptionalOptionIds().contains(lastChosenOptionalOption.getId())) {
             return null;
         }
-        return snapshot().gate().allocation(node, lastChosenOptionalOption).allowed() ? lastChosenOptionalOption : null;
+        return viewSnapshot().gate().allocation(node, lastChosenOptionalOption).allowed() ? lastChosenOptionalOption : null;
     }
 
     private boolean isDropdownOptionUsable(SkillType option) {
         if (dropdownNode == null) {
             return false;
         }
-        AllocationGate.Verdict verdict = optionVerdict(dropdownNode, option, snapshot());
+        AllocationGate.Verdict verdict = optionVerdict(dropdownNode, option, viewSnapshot());
         return verdict.allowed() || verdict.refusal() == AllocationGate.Refusal.SAME_OPTION;
     }
 
     String dropdownOptionRefusalReason(SkillType option) {
-        return dropdownNode == null ? null : snapshot().optionRefusalReason(dropdownNode, option);
+        return dropdownNode == null ? null : viewSnapshot().optionRefusalReason(dropdownNode, option);
     }
 
     private static AllocationGate.Verdict optionVerdict(SkillNode node, SkillType option, NodeAllocator.Snapshot allocation) {
@@ -294,6 +315,10 @@ public final class TreeAllocationSession {
     }
 
     private void allocateOptionalNode(SkillNode node, SkillType chosenOption) {
+        if (planner.isActive()) {
+            planOptionalNode(node, chosenOption);
+            return;
+        }
         NodeAllocator.Snapshot allocation = snapshot();
         boolean wasAllocated = allocation.skillData().isAllocated(node.getId());
         if (optionVerdict(node, chosenOption, allocation).refusal() == AllocationGate.Refusal.SAME_OPTION) {
@@ -315,7 +340,7 @@ public final class TreeAllocationSession {
     }
 
     public boolean startRespec(SkillNode node) {
-        if (isBusy()) {
+        if (isBusy() || planner.isActive()) {
             return false;
         }
         List<SkillNode> respecPlan = allocator.respecPlan(node);
@@ -367,6 +392,97 @@ public final class TreeAllocationSession {
         cancelAutoAllocate();
         this.template = newTemplate;
         this.templateNodeIds = newTemplate == null ? Set.of() : newTemplate.nodeIds();
+        if (planner.isActive()) {
+            dropdownNode = null;
+            planner.start(newTemplate);
+        }
+    }
+
+    public void onPlanChange(Runnable listener) {
+        planChangeListener = listener;
+    }
+
+    public boolean startPlanning() {
+        if (planner.isActive() || isBusy() || getStartingRoot() == null) {
+            return false;
+        }
+        dropdownNode = null;
+        planner.start(template);
+        return true;
+    }
+
+    public void stopPlanning() {
+        if (planner.isActive()) {
+            dropdownNode = null;
+            planner.stop();
+        }
+    }
+
+    public boolean isPlanning() {
+        return planner.isActive();
+    }
+
+    public String plannedTemplateId() {
+        return planner.editedTemplateId();
+    }
+
+    public List<TemplateStep> capturePlanSteps() {
+        SkillNode root = getStartingRoot();
+        return planner.captureSteps(root == null ? null : root.getId());
+    }
+
+    public void planSaved(SkillTreeTemplate savedTemplate) {
+        this.template = savedTemplate;
+        this.templateNodeIds = savedTemplate == null ? Set.of() : savedTemplate.nodeIds();
+        planner.templateSaved(savedTemplate);
+    }
+
+    private void clickPlannedNode(SkillNode node, boolean ctrlDown) {
+        if (allocator.data().isAllocated(node.getId())) {
+            SkillTreeSounds.refused();
+            return;
+        }
+        NodeAllocator.Snapshot plan = planner.snapshot();
+        if (plan.skillData().isAllocated(node.getId())) {
+            if (planner.remove(node)) {
+                planChanged(node, false);
+            } else if (node.getType().isOptional()) {
+                dropdownNode = node;
+            } else {
+                SkillTreeSounds.refused();
+            }
+        } else if (!plan.canAllocate(node)) {
+            if (!plan.isHidden(node)) {
+                SkillTreeSounds.refused();
+            }
+        } else if (node.getType().isOptional()) {
+            chooseOption(node, ctrlDown);
+        } else if (planner.add(node, null)) {
+            planChanged(node, true);
+        }
+    }
+
+    private void planOptionalNode(SkillNode node, SkillType chosenOption) {
+        boolean wasPlanned = planner.isPlannedOnly(node);
+        if (wasPlanned && chosenOption.getId().equals(planner.snapshot().skillData().getOptionalSelection(node.getId()))) {
+            return;
+        }
+        if (!(wasPlanned ? planner.switchOption(node, chosenOption) : planner.add(node, chosenOption))) {
+            SkillTreeSounds.refused();
+            return;
+        }
+        lastChosenOptionalOption = chosenOption;
+        planChanged(node, true);
+    }
+
+    private void planChanged(SkillNode node, boolean plannedNow) {
+        if (plannedNow) {
+            SkillTreeSounds.allocated(node.getType().getTier());
+            feedback.pulse(node);
+        } else {
+            SkillTreeSounds.deallocated();
+        }
+        planChangeListener.run();
     }
 
     public SkillTreeTemplate template() {
@@ -374,7 +490,7 @@ public final class TreeAllocationSession {
     }
 
     public boolean startAutoAllocate() {
-        if (template == null || isBusy()) {
+        if (template == null || isBusy() || planner.isActive()) {
             return false;
         }
         dropdownNode = null;
@@ -388,6 +504,17 @@ public final class TreeAllocationSession {
         autoAllocateRun = new AutoAllocateRun(template.steps(), pendingStepCount);
         lastRunSummary = null;
         return true;
+    }
+
+    public boolean isAutoAllocateOn() {
+        return snapshot().skillData().isAutoAllocatingTemplate();
+    }
+
+    public void setAutoAllocate(boolean autoAllocate) {
+        allocator.data().setAutoAllocateTemplate(autoAllocate);
+        if (!autoAllocate) {
+            cancelAutoAllocate();
+        }
     }
 
     public boolean isAutoAllocating() {

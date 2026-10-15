@@ -193,6 +193,15 @@ final class NodeAllocator {
         return new Snapshot(skillData, opBudget, statsRevision, hiddenNodeIds(skillData), gate, this::describe);
     }
 
+    Snapshot planningSnapshot(ShipSkillData planData, Snapshot liveSnapshot) {
+        ShipSkillData liveData = liveSnapshot.skillData();
+        AllocationGate.Budget budget = new AllocationGate.Budget(Integer.MAX_VALUE, 0, ShipLevelConfig.maxAllocatedNodes());
+        NodeEligibility.Context eligibility = NodeEligibility.Context.of(planData, PlayerShipFacts.of(fleetMember, shipVariant),
+                type -> SkillTypeUnlockStatus.isLocked(type, liveData), itemId -> Double.MAX_VALUE);
+        AllocationGate gate = new AllocationGate(planData, SkillTree.topology(), satisfiedRootId(), budget, eligibility);
+        return new Snapshot(planData, liveSnapshot.opBudget(), liveSnapshot.statsRevision(), liveSnapshot.hiddenNodeIds, gate, this::describe);
+    }
+
     private static Set<String> hiddenNodeIds(ShipSkillData skillData) {
         Set<String> hidden = new HashSet<>();
         for (SkillNode node : SkillTree.getAllNodes().values()) {

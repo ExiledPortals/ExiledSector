@@ -86,7 +86,7 @@ public final class SkillTreeNodeDrawer {
         socketRenderer.advance(amount);
         ShipSkillData skillData = session.snapshot().skillData();
         wormholeGhostFlights.advance(amount, skillData);
-        wormholeOpenness.advance(amount, skillData);
+        wormholeOpenness.advance(amount, session.viewSnapshot().skillData());
     }
 
     public void launchWormholeGhosts(SkillNode from, SkillNode to) {
@@ -94,7 +94,7 @@ public final class SkillTreeNodeDrawer {
     }
 
     public void render(TreeViewport viewport, float alphaMult, float mouseX, float mouseY, boolean hovered) {
-        NodeAllocator.Snapshot allocation = session.snapshot();
+        NodeAllocator.Snapshot allocation = session.viewSnapshot();
         StartingRootChoice rootChoice = session.rootChoice();
         float treeAlphaMult = alphaMult * rootChoice.treeAlpha();
 
@@ -102,7 +102,7 @@ public final class SkillTreeNodeDrawer {
             renderNode(node, viewport, treeAlphaMult, allocation);
         }
 
-        connectorRenderer.draw(viewport, allocation, session.templateNodeIds(), connectorFills, treeAlphaMult);
+        connectorRenderer.draw(viewport, allocation, session.templateNodeIds(), session.plannedOnlyNodeIds(), connectorFills, treeAlphaMult);
         wormholeGhostFlights.draw(viewport, treeAlphaMult * nodeSearch.backgroundAlpha());
 
         boolean choosing = rootChoice.phase() == StartingRootChoice.Phase.CHOOSING;
@@ -134,20 +134,21 @@ public final class SkillTreeNodeDrawer {
         }
 
         boolean allocated = skillData.isAllocated(node.getId());
+        boolean live = allocated && !session.isPlannedOnly(node);
         boolean breathing = !allocated && allocation.canAllocate(node);
         SkillType effectiveType = node.resolveEffectiveType(skillData);
         float iconSize = footprintSize * ICON_INSET_RATIO;
 
         float nodeAlpha = alphaMult * nodeSearch.nodeAlpha(node, allocation);
         if (tier == SkillTier.SOCKET) {
-            socketRenderer.drawFrame(nodeX, nodeY, footprintSize, allocated, panelStyle.getAccentColor(), nodeAlpha);
+            socketRenderer.drawFrame(nodeX, nodeY, footprintSize, live, panelStyle.getAccentColor(), nodeAlpha);
             socketRenderer.drawContent(nodeX, nodeY, footprintSize, socketedIcon(skillData, node), iconTint(node, allocation, allocated),
                     nodeAlpha);
         }
-        ringRenderer.draw(nodeX, nodeY, footprintSize, nodeAlpha, SkillTreeNodeRingRenderer.RingState.of(allocated, breathing), zoom, node);
+        ringRenderer.draw(nodeX, nodeY, footprintSize, nodeAlpha, SkillTreeNodeRingRenderer.RingState.of(live, breathing), zoom, node);
 
         if (tier == SkillTier.SOCKET) {
-            if (allocated) {
+            if (live) {
                 socketRenderer.drawArcs(node.getId(), nodeX, nodeY, footprintSize, panelStyle.getAccentColor(), nodeAlpha);
             }
         } else if (tier != SkillTier.WORMHOLE) {
@@ -200,7 +201,7 @@ public final class SkillTreeNodeDrawer {
 
         SkillNode hoveredNode = findNodeAt(viewport, mouseX, mouseY);
         if (hoveredNode != null) {
-            tooltipRenderer.renderTooltip(hoveredNode, session.snapshot(), mouseX, mouseY, alphaMult);
+            tooltipRenderer.renderTooltip(hoveredNode, session.viewSnapshot(), mouseX, mouseY, alphaMult);
         }
     }
 

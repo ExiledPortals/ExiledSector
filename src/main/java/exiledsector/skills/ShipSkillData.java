@@ -29,6 +29,8 @@ public class ShipSkillData {
     private int frameworkPoints;
     private List<String> unlockedSocketTypes;
     private Map<String, String> frameworkItemsBySocketType;
+    private boolean autoAllocateTemplate;
+    private transient int pendingTemplateCredits;
 
     private Set<String> freeNodeIds() {
         if (freeNodeIds == null) freeNodeIds = new LinkedHashSet<>();
@@ -264,6 +266,50 @@ public class ShipSkillData {
 
     public boolean isFreeNode(String nodeId) {
         return freeNodeIds().contains(nodeId) || pairedFreeNodeIds().contains(nodeId);
+    }
+
+    public boolean isAutoAllocatingTemplate() {
+        return autoAllocateTemplate;
+    }
+
+    public void setAutoAllocateTemplate(boolean autoAllocate) {
+        autoAllocateTemplate = autoAllocate;
+    }
+
+    public void bankLevelUpForTemplate() {
+        bankedFreeAllocations++;
+        pendingTemplateCredits++;
+    }
+
+    public int takePendingTemplateCredits() {
+        int pending = pendingTemplateCredits;
+        pendingTemplateCredits = 0;
+        return pending;
+    }
+
+    public void refundBankedCreditAsOp(Collection<SkillNode> allNodes) {
+        if (bankedFreeAllocations <= 0) {
+            return;
+        }
+        bankedFreeAllocations--;
+        if (!convertMostRecentAllocationToFree(allNodes)) {
+            bankedFreeAllocations++;
+        }
+    }
+
+    public ShipSkillData planningCopy() {
+        ShipSkillData copy = new ShipSkillData();
+        copy.startingRootId = resolveStartingRootId();
+        copy.allocatedNodeIds.addAll(allocatedNodeIds);
+        if (optionalSelections != null) {
+            copy.optionalSelections.putAll(optionalSelections);
+        }
+        copy.mirrorSocketedItems(this);
+        return copy;
+    }
+
+    public void mirrorSocketedItems(ShipSkillData source) {
+        socketedItems = source.socketedItems == null ? null : new LinkedHashMap<>(source.socketedItems);
     }
 
     public boolean isNpcBuild() {

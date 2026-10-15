@@ -574,6 +574,27 @@ class ShipSkillDataTest {
     }
 
     @Test
+    void aPlanningCopyStartsFromTheAllocationsButChangesNeverReachTheShip() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode root = rootNode("root", List.of());
+        SkillNode slot = node("slot_1", List.of("root"));
+        data.chooseStartingRoot(root);
+        data.addFreeAllocationCredit();
+        data.selectOption(slot, new SkillType.Builder("hull", "Hull", "a.png", SkillTier.SMALL).effects(List.of()).build(), 1);
+        data.addFreeAllocationCredit();
+
+        ShipSkillData plan = data.planningCopy();
+        plan.allocate(node("armor_1", List.of("slot_1")), 0);
+
+        assertEquals("root", plan.resolveStartingRootId());
+        assertEquals("hull", plan.getOptionalSelection("slot_1"));
+        assertEquals(Set.of("root", "slot_1", "armor_1"), plan.getAllocatedNodeIds());
+        assertEquals(0, plan.getBankedFreeAllocations());
+        assertFalse(data.isAllocated("armor_1"));
+        assertEquals(1, data.getBankedFreeAllocations());
+    }
+
+    @Test
     void selectOptionAllocatesTheSlotNodeAndSpendsTheGivenOpCost() {
         ShipSkillData data = new ShipSkillData();
         SkillNode slot = node("slot_1", List.of());
