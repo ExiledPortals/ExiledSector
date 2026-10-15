@@ -59,6 +59,7 @@ import exiledsector.ui.ExiledSectorSettings;
 import exiledsector.ui.SkillTreeRefitButton;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
 import exiledsector.ui.inspect.SkillTreeCodexListener;
+import exiledsector.ui.inspect.SocketableCodex;
 import exiledsector.ui.refit.PhantomHullModRefitHider;
 import exiledsector.ui.util.TexturePreloader;
 
@@ -175,6 +176,11 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         if (playerFleet != null) {
             playerFleet.getCargo().addCommodity(itemCost.itemId(), itemCost.quantity());
         }
+    }
+
+    @Override
+    public void onAboutToLinkCodexEntries() {
+        SocketableCodex.addEntries();
     }
 
     @Override

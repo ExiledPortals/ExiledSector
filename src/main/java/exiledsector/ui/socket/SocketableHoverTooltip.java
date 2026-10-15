@@ -7,11 +7,15 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
 import exiledsector.socketables.Socketable;
 import exiledsector.socketables.SocketableTooltip;
 import exiledsector.ui.TooltipExpansion;
+import exiledsector.ui.inspect.SocketableCodex;
 import exiledsector.ui.util.FramedPanelPlugin;
+import org.lwjgl.input.Keyboard;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
@@ -28,6 +32,7 @@ public final class SocketableHoverTooltip {
     private BiConsumer<TooltipMakerAPI, Boolean> shownWriter;
     private PositionAPI shownAnchor;
     private boolean shownExpanded;
+    private String shownCodexDefinitionId;
 
     public SocketableHoverTooltip(CustomPanelAPI hostPanel) {
         this.hostPanel = hostPanel;
@@ -42,15 +47,32 @@ public final class SocketableHoverTooltip {
     }
 
     public void show(Object key, Socketable socketable, HullSize hullSize, Supplier<List<StyledText>> footer, PositionAPI anchor) {
-        show(key, SocketableTooltip.WIDTH, (element, expanded) -> SocketableTooltip.write(element, socketable, hullSize, footer, expanded),
-                anchor);
+        String definitionId = socketable == null ? null : socketable.definitionId();
+        boolean codexLinked = SocketableCodex.existingEntryId(definitionId) != null && !Global.getSettings().isShowingCodex();
+        String codexDefinitionId = codexLinked ? definitionId : null;
+        Supplier<List<StyledText>> shownFooter = codexDefinitionId == null ? footer : () -> withCodexHint(footer.get());
+        show(key, SocketableTooltip.WIDTH, (element, expanded) -> SocketableTooltip.write(element, socketable, hullSize, shownFooter, expanded),
+                anchor, codexDefinitionId);
+    }
+
+    private static List<StyledText> withCodexHint(List<StyledText> footerLines) {
+        List<StyledText> lines = new ArrayList<>(footerLines);
+        lines.add(Translation.styled("socketable.tooltip.codexHint"));
+        return lines;
     }
 
     public void show(Object key, float tooltipWidth, BiConsumer<TooltipMakerAPI, Boolean> writer, PositionAPI anchor) {
+        show(key, tooltipWidth, writer, anchor, null);
+    }
+
+    private void show(Object key, float tooltipWidth, BiConsumer<TooltipMakerAPI, Boolean> writer, PositionAPI anchor, String codexDefinitionId) {
         hide();
         boolean expanded = TooltipExpansion.isExpandedOrHeld();
-        CustomPanelAPI tooltipPanel = Global.getSettings().createCustom(tooltipWidth, anchor.getHeight(),
-                new FramedPanelPlugin(SocketableHoverTooltip.class));
+        FramedPanelPlugin panelPlugin = new FramedPanelPlugin(SocketableHoverTooltip.class);
+        if (codexDefinitionId != null) {
+            panelPlugin.onKeyDown(Keyboard.KEY_F2, () -> SocketableCodex.open(codexDefinitionId));
+        }
+        CustomPanelAPI tooltipPanel = Global.getSettings().createCustom(tooltipWidth, anchor.getHeight(), panelPlugin);
         TooltipMakerAPI element = tooltipPanel.createUIElement(tooltipWidth - PAD * 2f, 0f, false);
         I18n.forGameText(() -> writer.accept(element, expanded));
         float contentHeight = element.getHeightSoFar();
@@ -84,11 +106,12 @@ public final class SocketableHoverTooltip {
         shownWriter = writer;
         shownAnchor = anchor;
         shownExpanded = expanded;
+        shownCodexDefinitionId = codexDefinitionId;
     }
 
     public void refreshIfExpansionChanged() {
         if (shownPanel != null && shownExpanded != TooltipExpansion.isExpandedOrHeld()) {
-            show(shownKey, shownWidth, shownWriter, shownAnchor);
+            show(shownKey, shownWidth, shownWriter, shownAnchor, shownCodexDefinitionId);
         }
     }
 
@@ -100,5 +123,6 @@ public final class SocketableHoverTooltip {
         shownKey = null;
         shownWriter = null;
         shownAnchor = null;
+        shownCodexDefinitionId = null;
     }
 }

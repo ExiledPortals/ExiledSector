@@ -45,11 +45,11 @@ final class LowBaseArmorBonus {
     }
 
     static String most(HullSize hullSize, float magnitude) {
-        return NumberText.format(SCALES.get(hullSize).bonusWithNoArmor() * magnitude);
+        return NumberText.format(Math.round(SCALES.get(hullSize).bonusWithNoArmor() * magnitude));
     }
 
     static String least(HullSize hullSize, float magnitude) {
-        return NumberText.format(SCALES.get(hullSize).bonusAtCutoff() * magnitude);
+        return NumberText.format(Math.round(SCALES.get(hullSize).bonusAtCutoff() * magnitude));
     }
 
     static String cutoff(HullSize hullSize) {
@@ -71,7 +71,7 @@ final class LowBaseArmorBonus {
     private static String byHullSize(ToDoubleFunction<Scale> value) {
         List<String> values = new ArrayList<>();
         for (Scale scale : SCALES.values()) {
-            values.add(NumberText.format((float) value.applyAsDouble(scale)));
+            values.add(NumberText.format(Math.round(value.applyAsDouble(scale))));
         }
         return String.join("/", values);
     }

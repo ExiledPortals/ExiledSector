@@ -17,6 +17,7 @@ import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeTooltipTable;
 import exiledsector.ui.TooltipExpansion;
 import exiledsector.ui.TooltipTable;
+import exiledsector.ui.inspect.SocketableCodex;
 import exiledsector.ui.util.TextLabel;
 import org.lazywizard.lazylib.ui.LazyFont;
 
@@ -156,7 +157,13 @@ final class SkillTreeNodeTooltipRenderer {
             return new NodeDescription(List.of(plainLine("ui.node.lockedBody"), plainLine("ui.node.lockedHint")), List.of());
         }
         if (socketed != null) {
-            List<DescriptionLine> lines = socketed.effectLines(expanded, fleetMember.getHullSpec().getHullSize()).stream().map(line -> new DescriptionLine(line, false)).toList();
+            List<DescriptionLine> lines = new ArrayList<>();
+            for (StyledText effectLine : socketed.effectLines(expanded, fleetMember.getHullSpec().getHullSize())) {
+                lines.add(new DescriptionLine(effectLine, false));
+            }
+            if (SocketableCodex.existingEntryId(socketed.definitionId()) != null) {
+                lines.add(plainLine("socketable.tooltip.codexHint"));
+            }
             return new NodeDescription(lines, List.of());
         }
         List<DescriptionLine> effects = new ArrayList<>();

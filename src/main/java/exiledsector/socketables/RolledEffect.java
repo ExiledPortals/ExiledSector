@@ -83,16 +83,88 @@ public final class RolledEffect {
             }
             valueTexts.add(valueText);
         }
-        StyledText.Span valueSpan = firstValueText.spans().get(0);
-        String joinedValues = joinSharingAffixes(valueTexts);
-        int lengthChange = joinedValues.length() - (valueSpan.end() - valueSpan.start());
-        List<StyledText.Span> spans = new ArrayList<>(firstValueText.spans().size());
-        spans.add(new StyledText.Span(valueSpan.start(), valueSpan.end() + lengthChange, valueSpan.style()));
-        for (StyledText.Span laterSpan : firstValueText.spans().subList(1, firstValueText.spans().size())) {
-            spans.add(new StyledText.Span(laterSpan.start() + lengthChange, laterSpan.end() + lengthChange, laterSpan.style()));
+        return replaceValue(firstValueText, joinSharingAffixes(valueTexts));
+    }
+
+    public StyledText rangeDescription(PoolEntry rollRange) {
+        SkillEffect effect = effect();
+        if (effect == null) {
+            return null;
         }
-        String plain = firstValueText.plain();
-        return new StyledText(plain.substring(0, valueSpan.start()) + joinedValues + plain.substring(valueSpan.end()), spans);
+        if (rollRange.scalesWithHullSize()) {
+            return hullValuesDescription(rollRange.hullValues());
+        }
+        StyledText strongestText = display(effect, rollRange.boundFarthestFromZero());
+        if (!rollRange.canVary() || strongestText.spans().isEmpty()) {
+            return strongestText;
+        }
+        List<String> rangeValues = rangeValues(display(effect, rollRange.boundNearestZero()), strongestText);
+        return rangeValues == null ? strongestText : replaceSpans(strongestText, rangeValues);
+    }
+
+    private static List<String> rangeValues(StyledText weakestText, StyledText strongestText) {
+        List<StyledText.Span> weakestSpans = weakestText.spans();
+        List<StyledText.Span> strongestSpans = strongestText.spans();
+        if (weakestSpans.size() != strongestSpans.size()) {
+            return null;
+        }
+        List<String> weakestValues = new ArrayList<>(weakestSpans.size());
+        List<String> strongestValues = new ArrayList<>(strongestSpans.size());
+        int varyingCount = 0;
+        for (int index = 0; index < strongestSpans.size(); index++) {
+            String weakestValue = spanText(weakestText, weakestSpans.get(index));
+            String strongestValue = spanText(strongestText, strongestSpans.get(index));
+            weakestValues.add(weakestValue);
+            strongestValues.add(strongestValue);
+            varyingCount += weakestValue.equals(strongestValue) ? 0 : 1;
+        }
+        if (varyingCount == 0) {
+            return null;
+        }
+        String rangeKey = varyingCount > 1 ? "codex.socketables.rangeGrouped" : "codex.socketables.range";
+        List<String> rangeValues = new ArrayList<>(strongestValues.size());
+        for (int index = 0; index < strongestValues.size(); index++) {
+            String weakestValue = weakestValues.get(index);
+            String strongestValue = strongestValues.get(index);
+            if (weakestValue.equals(strongestValue)) {
+                rangeValues.add(strongestValue);
+                continue;
+            }
+            String sharedSuffix = sharedNonNumericEdge(List.of(weakestValue, strongestValue), false);
+            String weakestWithoutSuffix = weakestValue.substring(0, weakestValue.length() - sharedSuffix.length());
+            rangeValues.add(Translation.msg(rangeKey).arg("low", weakestWithoutSuffix).arg("high", strongestValue).text());
+        }
+        return rangeValues;
+    }
+
+    private static String spanText(StyledText text, StyledText.Span span) {
+        return text.plain().substring(span.start(), span.end());
+    }
+
+    private static StyledText replaceValue(StyledText effectText, String replacementValue) {
+        List<String> values = new ArrayList<>(effectText.spans().size());
+        values.add(replacementValue);
+        for (StyledText.Span laterSpan : effectText.spans().subList(1, effectText.spans().size())) {
+            values.add(spanText(effectText, laterSpan));
+        }
+        return replaceSpans(effectText, values);
+    }
+
+    private static StyledText replaceSpans(StyledText effectText, List<String> spanValues) {
+        String plain = effectText.plain();
+        StringBuilder rebuilt = new StringBuilder(plain.length() + 32);
+        List<StyledText.Span> spans = new ArrayList<>(effectText.spans().size());
+        int cursor = 0;
+        for (int index = 0; index < effectText.spans().size(); index++) {
+            StyledText.Span span = effectText.spans().get(index);
+            rebuilt.append(plain, cursor, span.start());
+            int rebuiltStart = rebuilt.length();
+            rebuilt.append(spanValues.get(index));
+            spans.add(new StyledText.Span(rebuiltStart, rebuilt.length(), span.style()));
+            cursor = span.end();
+        }
+        rebuilt.append(plain.substring(cursor));
+        return new StyledText(rebuilt.toString(), spans);
     }
 
     static String joinSharingAffixes(List<String> valueTexts) {

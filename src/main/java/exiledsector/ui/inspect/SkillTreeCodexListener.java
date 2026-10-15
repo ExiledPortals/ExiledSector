@@ -6,8 +6,11 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.codex.CodexDataV2;
 import com.fs.starfarer.api.impl.codex.CodexEntryPlugin;
 import exiledsector.i18n.I18n;
+import exiledsector.skills.FrameworkSlots;
 import exiledsector.skills.InstalledHullMods;
 import exiledsector.skills.PhantomHullModStatus;
+import exiledsector.socketables.Socketable;
+import exiledsector.socketables.SocketableStore;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -51,7 +54,29 @@ public class SkillTreeCodexListener implements CodexEventListener {
         CodexDataV2.ENTRIES.put(treeEntry.getId(), treeEntry);
         memberEntry.addRelatedEntry(treeEntry);
         treeEntry.addRelatedEntry(memberEntry);
+        linkInstalledSocketables(treeEntry, shipTree);
         addedEntries.add(treeEntry);
+    }
+
+    private static void linkInstalledSocketables(SkillTreeCodexEntry treeEntry, ShipTreeLookup.ShipTree shipTree) {
+        List<Socketable> installed = new ArrayList<>();
+        for (String socketableId : shipTree.skillData().getSocketedItems().values()) {
+            Socketable socketable = SocketableStore.lookup(socketableId);
+            if (socketable != null) {
+                installed.add(socketable);
+            }
+        }
+        for (FrameworkSlots.Slot slot : shipTree.frameworkSlots()) {
+            if (slot.item() != null) {
+                installed.add(slot.item());
+            }
+        }
+        for (Socketable socketable : installed) {
+            CodexEntryPlugin socketableEntry = CodexDataV2.getEntry(SocketableCodex.entryId(socketable.definitionId()));
+            if (socketableEntry != null) {
+                treeEntry.addRelatedEntry(socketableEntry);
+            }
+        }
     }
 
     private static void unlinkPhantomHullMods(CodexEntryPlugin memberEntry, FleetMemberAPI member) {

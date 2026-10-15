@@ -21,6 +21,7 @@ import exiledsector.socketables.FrameworkSockets;
 import exiledsector.socketables.SocketCustody;
 import exiledsector.socketables.SocketType;
 import exiledsector.socketables.Socketable;
+import exiledsector.socketables.SocketableStore;
 import exiledsector.ui.SkillTreeSounds;
 import lunalib.lunaRefit.BaseRefitButton;
 
@@ -189,6 +190,10 @@ public final class TreeAllocationSession {
 
     public boolean isAllocated(SkillNode node) {
         return allocator.data().isAllocated(node.getId());
+    }
+
+    public Socketable socketedItem(SkillNode node) {
+        return node == null ? null : SocketableStore.lookup(allocator.data().getSocketedItem(node.getId()));
     }
 
     public boolean isAllocatedSocket(SkillNode node) {

@@ -6,10 +6,13 @@ import com.fs.starfarer.api.campaign.impl.items.BaseSpecialItemPlugin;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.i18n.I18n;
+import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.ui.inspect.SocketableCodex;
 import exiledsector.ui.util.SpriteCache;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public class SocketableItemPlugin extends BaseSpecialItemPlugin {
 
@@ -41,7 +44,15 @@ public class SocketableItemPlugin extends BaseSpecialItemPlugin {
 
     @Override
     public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, CargoTransferHandlerAPI transferHandler, Object stackSource) {
-        SocketableTooltip.write(tooltip, previewSocketable, () -> List.of(Translation.styled("socketable.tooltip.storage")), expanded);
+        String codexEntryId = previewSocketable == null ? null : SocketableCodex.existingEntryId(previewSocketable.definitionId());
+        if (codexEntryId != null) {
+            tooltip.setCodexEntryId(codexEntryId);
+        }
+        boolean codexLinked = codexEntryId != null;
+        Supplier<List<StyledText>> footer = () -> codexLinked
+                ? List.of(Translation.styled("socketable.tooltip.storage"), Translation.styled("socketable.tooltip.codexHint"))
+                : List.of(Translation.styled("socketable.tooltip.storage"));
+        SocketableTooltip.write(tooltip, previewSocketable, footer, expanded);
         addCostLabel(tooltip, SocketableTooltip.PAD, transferHandler, stackSource);
     }
 

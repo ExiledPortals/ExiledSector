@@ -13,11 +13,13 @@ import exiledsector.effects.ShipTreeSync;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillType;
 import exiledsector.socketables.SocketCustody;
+import exiledsector.socketables.Socketable;
 import exiledsector.ui.decoration.SkillTreeFleetRenderer;
 import exiledsector.ui.decoration.SkillTreeRingBeltRenderer;
 import exiledsector.ui.decoration.SkillTreeStarRenderer;
 import exiledsector.ui.decoration.SkillTreeStarfieldRenderer;
 import exiledsector.ui.decoration.SkillTreeStaticImageRenderer;
+import exiledsector.ui.inspect.SocketableCodex;
 import exiledsector.ui.node.NodeSearch;
 import exiledsector.ui.node.SkillTreeNodeDrawer;
 import exiledsector.ui.node.TreeAllocationSession;
@@ -196,6 +198,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             event.consume();
         } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE && escape(mode)) {
             consume(event);
+        } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_F2 && openHoveredSocketableCodex(mode)) {
+            event.consume();
         } else if (mode != CanvasMode.MODAL && TooltipExpansion.isToggle(event)) {
             TooltipExpansion.toggle();
             event.consume();
@@ -211,6 +215,15 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                 case TREE -> handleTreeEvent(event, mode);
             }
         }
+    }
+
+    private boolean openHoveredSocketableCodex(CanvasMode mode) {
+        if (!mouseKnown || !mode.hoversTree() || frameworkInspection.isInspecting() || treeSession.isDropdownOpen() || socketPlacement.isEngaged()
+                || chrome.contains(canvasPosition, mode, mouseX, mouseY)) {
+            return false;
+        }
+        Socketable socketed = treeSession.socketedItem(nodeDrawer.findNodeAt(viewport(), mouseX, mouseY));
+        return socketed != null && SocketableCodex.open(socketed.definitionId());
     }
 
     private boolean escape(CanvasMode mode) {

@@ -163,7 +163,11 @@ public final class SocketableDrops {
     }
 
     public static SocketableDefinition pickBasic(Random random) {
-        return pick(random, definition -> definition.kind() == SocketType.SUBROUTINE && !definition.unique());
+        return pick(random, SocketableDrops::canBeSynthesised);
+    }
+
+    public static boolean canBeSynthesised(SocketableDefinition definition) {
+        return definition.kind() == SocketType.SUBROUTINE && !definition.unique() && definition.rarity() > 0f && SAFE_ID.matcher(definition.id()).matches();
     }
 
     public record FrameworkLoot(List<SocketableItemData> items, List<HullUpgradeData> upgrades) {
