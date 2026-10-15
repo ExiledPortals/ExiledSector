@@ -27,6 +27,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -182,6 +183,22 @@ class HullUpgradeTest {
         assertTrue(SocketCustody.unsocketIfMisfit(ships, transposed));
         assertNull(shipData.getFrameworkSocketedItem("bridge"));
         assertNotNull(store.find(officer.id()));
+    }
+
+    @Test
+    void theUpgradeRevisionMovesOnlyWhenTheCountsChange() {
+        int startRevision = store.upgradeRevision();
+
+        store.addUpgrades(HullSize.FRIGATE, 0);
+        assertFalse(store.takeUpgrade(HullSize.FRIGATE));
+        assertEquals(startRevision, store.upgradeRevision());
+
+        store.addUpgrades(HullSize.FRIGATE, 2);
+        int afterAdding = store.upgradeRevision();
+        assertNotEquals(startRevision, afterAdding);
+
+        assertTrue(store.takeUpgrade(HullSize.FRIGATE));
+        assertNotEquals(afterAdding, store.upgradeRevision());
     }
 
     @Test

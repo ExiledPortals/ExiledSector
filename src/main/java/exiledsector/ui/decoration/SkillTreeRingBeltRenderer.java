@@ -15,6 +15,7 @@ import java.util.List;
 public class SkillTreeRingBeltRenderer {
 
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeRingBeltRenderer.class);
+    private RadialBand[] bandByBelt = new RadialBand[0];
     private float elapsedSeconds = 0f;
 
     public void advance(float amount) {
@@ -27,16 +28,30 @@ public class SkillTreeRingBeltRenderer {
         List<RingBelt> ringBelts = SkillTree.getRingBelts();
         if (ringBelts.isEmpty()) return;
 
-        for (RingBelt belt : ringBelts) {
+        if (bandByBelt.length != ringBelts.size()) {
+            bandByBelt = new RadialBand[ringBelts.size()];
+        }
+        for (int beltIndex = 0; beltIndex < ringBelts.size(); beltIndex++) {
+            RingBelt belt = ringBelts.get(beltIndex);
             String ringArtPath = belt.getRingArtPath();
             SpriteAPI ringSprite = ringArtPath == null || ringArtPath.isEmpty() ? null : spriteCache.texture(ringArtPath);
             if (ringSprite == null) continue;
 
-            float screenX = viewport.screenX(belt.getX());
-            float screenY = viewport.screenY(belt.getY());
             float rotationDeg = belt.getRotation() + belt.getRotationSpeed() * elapsedSeconds;
-            RadialBand band = new RadialBand(new Vector2f(screenX, screenY), belt.getInnerRadius() * zoom, belt.getOuterRadius() * zoom);
+            RadialBand band = screenBand(beltIndex, viewport.screenX(belt.getX()), viewport.screenY(belt.getY()),
+                    belt.getInnerRadius() * zoom, belt.getOuterRadius() * zoom);
             RingBeltRenderer.render(ringSprite, band, Color.WHITE, alphaMult, rotationDeg, viewport);
         }
+    }
+
+    private RadialBand screenBand(int beltIndex, float screenX, float screenY, float innerRadius, float outerRadius) {
+        RadialBand cached = bandByBelt[beltIndex];
+        boolean unchanged = cached != null && cached.center().x == screenX && cached.center().y == screenY
+                && cached.innerRadius() == innerRadius && cached.outerRadius() == outerRadius;
+        if (!unchanged) {
+            cached = new RadialBand(new Vector2f(screenX, screenY), innerRadius, outerRadius);
+            bandByBelt[beltIndex] = cached;
+        }
+        return cached;
     }
 }

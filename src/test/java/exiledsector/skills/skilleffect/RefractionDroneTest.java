@@ -1,6 +1,7 @@
 package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.combat.CollisionGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamagingProjectileAPI;
@@ -30,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -46,6 +48,7 @@ class RefractionDroneTest {
     private MockedStatic<WeaponDroneStats> stats;
     private MockedStatic<MagicFakeBeamPlugin> fakeBeams;
     private CombatEngineAPI engine;
+    private CollisionGridAPI objectGrid;
     private final List<DamagingProjectileAPI> projectiles = new ArrayList<>();
     private final Vector2f droneLocation = new Vector2f();
     private final StatBonus rangeBonus = new StatBonus();
@@ -61,7 +64,9 @@ class RefractionDroneTest {
     void setUp() {
         fakeBeams = Mockito.mockStatic(MagicFakeBeamPlugin.class);
         engine = mock(CombatEngineAPI.class);
-        when(engine.getProjectiles()).thenReturn(projectiles);
+        objectGrid = mock(CollisionGridAPI.class);
+        when(engine.getAllObjectGrid()).thenReturn(objectGrid);
+        when(objectGrid.getCheckIterator(any(), anyFloat(), anyFloat())).thenAnswer(invocation -> new ArrayList<Object>(projectiles).iterator());
         global = Mockito.mockStatic(Global.class);
         global.when(Global::getCombatEngine).thenReturn(engine);
         stats = Mockito.mockStatic(WeaponDroneStats.class);

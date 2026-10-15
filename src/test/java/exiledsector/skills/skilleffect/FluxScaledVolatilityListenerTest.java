@@ -98,7 +98,9 @@ class FluxScaledVolatilityListenerTest {
         when(flux.getFluxLevel()).thenReturn(0f);
         FluxScaledVolatilityListener listener = new FluxScaledVolatilityListener(ship);
 
-        listener.advance(0.016f);
+        for (int frame = 0; frame < 4; frame++) {
+            listener.advance(0.016f);
+        }
 
         verify(stats.getMaxSpeed()).modifyFlat(MOD_ID, 50f);
         verify(stats.getAcceleration()).modifyPercent(MOD_ID, 50f);
@@ -106,9 +108,24 @@ class FluxScaledVolatilityListenerTest {
         verify(stats.getBallisticRoFMult()).modifyPercent(MOD_ID, 40f);
         verify(stats.getEnergyRoFMult()).modifyPercent(MOD_ID, 40f);
         verify(stats.getMissileRoFMult()).modifyPercent(MOD_ID, 40f);
-        verify(ship.getEngineController()).fadeToOtherColor(eq(listener), any(Color.class), eq(null), eq(1f), eq(0.5f));
+        verify(ship.getEngineController(), times(4)).fadeToOtherColor(eq(listener), any(Color.class), eq(null), eq(1f), eq(0.5f));
         verify(ship).addAfterimage(any(Color.class), anyFloat(), anyFloat(), eq(-80f), eq(-0f), anyFloat(), anyFloat(),
                 anyFloat(), anyFloat(), anyBoolean(), anyBoolean(), anyBoolean());
+    }
+
+    @Test
+    void afterimagesAreSpacedOutInsteadOfAddedEveryFrame() {
+        when(flux.getFluxLevel()).thenReturn(0f);
+        FluxScaledVolatilityListener listener = new FluxScaledVolatilityListener(ship);
+        int frames = 60;
+        int framesPerAfterimage = (int) Math.ceil(FluxScaledVolatilityListener.AFTERIMAGE_INTERVAL / 0.016f);
+
+        for (int frame = 0; frame < frames; frame++) {
+            listener.advance(0.016f);
+        }
+
+        verify(ship, times(frames / framesPerAfterimage)).addAfterimage(any(Color.class), anyFloat(), anyFloat(), anyFloat(), anyFloat(),
+                anyFloat(), anyFloat(), anyFloat(), anyFloat(), anyBoolean(), anyBoolean(), anyBoolean());
     }
 
     @Test

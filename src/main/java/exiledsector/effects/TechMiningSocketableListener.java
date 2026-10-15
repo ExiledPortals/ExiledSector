@@ -18,6 +18,7 @@ import exiledsector.socketables.Socketable;
 import exiledsector.socketables.SocketableDrops;
 import exiledsector.socketables.SocketableItemData;
 import exiledsector.socketables.SocketableUnlock;
+import exiledsector.ui.CampaignMessages;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,7 +113,7 @@ public class TechMiningSocketableListener implements EconomyTickListener {
     }
 
     private static void announce(MarketAPI minedMarket, MarketAPI storedAt, Supplier<String> itemName) {
-        if (Global.getSector().getCampaignUI() == null) {
+        if (!CampaignMessages.available()) {
             return;
         }
         String foundMessage = I18n.forGameText(() -> {
@@ -121,6 +122,6 @@ public class TechMiningSocketableListener implements EconomyTickListener {
             return Translation.msg("socketable.techMining.found").arg("colony", minedMarket.getName()).arg("name", itemName.get())
                     .arg("destination", storageText).text();
         });
-        Global.getSector().getCampaignUI().addMessage(foundMessage, Misc.getPositiveHighlightColor());
+        CampaignMessages.plain(foundMessage, Misc.getPositiveHighlightColor());
     }
 }

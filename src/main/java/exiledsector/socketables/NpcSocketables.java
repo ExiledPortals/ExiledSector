@@ -130,9 +130,7 @@ public final class NpcSocketables {
         if (shipData == null) {
             return carriedItems;
         }
-        List<String> carriedIds = new ArrayList<>(shipData.getSocketedItems().values());
-        carriedIds.addAll(shipData.getFrameworkSocketedItems().values());
-        for (String socketableId : carriedIds) {
+        for (String socketableId : shipData.getInstalledSocketableIds()) {
             SocketableItemData itemData = item(socketableId);
             if (itemData != null) {
                 carriedItems.add(itemData);

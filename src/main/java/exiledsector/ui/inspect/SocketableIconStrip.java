@@ -2,6 +2,7 @@ package exiledsector.ui.inspect;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
@@ -20,7 +21,7 @@ final class SocketableIconStrip extends BaseCustomUIPanelPlugin {
     private static final float GAP = 8f;
     private static final SocketableCell.Look CELL_LOOK = new SocketableCell.Look(6f, false, 0.55f);
 
-    record Entry(Socketable socketable, List<StyledText> footer) {
+    record Entry(Socketable socketable, HullSize hullSize, List<StyledText> footer) {
     }
 
     private final SocketableHoverTooltip hoverTooltip;
@@ -61,7 +62,7 @@ final class SocketableIconStrip extends BaseCustomUIPanelPlugin {
     }
 
     private void hovered(Entry entry, PositionAPI cellPosition) {
-        queuedActions.add(() -> hoverTooltip.show(entry, entry.socketable(), entry::footer, cellPosition));
+        queuedActions.add(() -> hoverTooltip.show(entry, entry.socketable(), entry.hullSize(), entry::footer, cellPosition));
     }
 
     private void left(Entry entry) {

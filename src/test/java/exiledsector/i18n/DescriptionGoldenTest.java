@@ -121,14 +121,14 @@ class DescriptionGoldenTest {
             SkillEffect effect = SkillEffect.byName(name);
             for (float magnitude : SAMPLE_MAGNITUDES) {
                 String key = name + "|" + magnitude;
-                addLine(lines, "effect|" + key, effect.description(magnitude), effect.lowerIsBetter());
+                addLine(lines, "effect|" + key, effect.description(magnitude), effect.invertsDescriptionColours());
                 addLine(lines, "warning|" + key, effect.deallocationWarning(magnitude), false);
             }
         }
         secondInCommandEnabled = false;
         for (CompatSkillEffect effect : CompatSkillEffect.values()) {
             for (float magnitude : SAMPLE_MAGNITUDES) {
-                addLine(lines, "effect-noSiC|" + effect.name() + "|" + magnitude, effect.description(magnitude), effect.lowerIsBetter());
+                addLine(lines, "effect-noSiC|" + effect.name() + "|" + magnitude, effect.description(magnitude), effect.invertsDescriptionColours());
             }
         }
         secondInCommandEnabled = true;

@@ -134,7 +134,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         hyperspaceMode.reopenStatsWhenBack();
         hideStatsForSidePanels();
         statPanel.advance(amount);
-        chrome.advance(amount, canvasPosition, mode, hyperspaceMode.chromeAlpha(), treeSession.budget(), mouseX, mouseY, mouseKnown);
+        chrome.advanceVisibility(amount, mode, hyperspaceMode.chromeAlpha(), hyperspaceMode.treeAlpha(), sidePanelOpen());
+        chrome.advance(amount, canvasPosition, mode, treeSession.budget(), mouseX, mouseY, mouseKnown);
         float dimStep = amount / WORKBENCH_DIM_SECONDS;
         workbenchDimProgress = Math.max(0f, Math.min(1f, workbenchDimProgress + (socketPlacement.isWorkbenchOpen() ? dimStep : -dimStep)));
     }
@@ -146,8 +147,12 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         return mode.closesStorage();
     }
 
+    private boolean sidePanelOpen() {
+        return socketPlacement.isWorkbenchOpen() || frameworkInspection.isPanelOpen();
+    }
+
     private void hideStatsForSidePanels() {
-        if (socketPlacement.isWorkbenchOpen() || frameworkInspection.isPanelOpen()) {
+        if (sidePanelOpen()) {
             if (statPanel.isOpen()) {
                 reopenStatsAfterSidePanel = true;
                 statPanel.close();
@@ -189,6 +194,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         } else if (escapeUp && (swallowEscapeUp || socketPlacement.isEngaged())) {
             swallowEscapeUp = false;
             event.consume();
+        } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE && escape(mode)) {
+            consume(event);
         } else if (mode != CanvasMode.MODAL && TooltipExpansion.isToggle(event)) {
             TooltipExpansion.toggle();
             event.consume();
@@ -204,6 +211,25 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                 case TREE -> handleTreeEvent(event, mode);
             }
         }
+    }
+
+    private boolean escape(CanvasMode mode) {
+        EscapeAction action = EscapeAction.resolve(mode, treeSession.isAutoAllocating() || treeSession.isRespeccing(),
+                socketPlacement.isEngaged(), treeSession.isDropdownOpen(), frameworkInspection.isPanelOpen());
+        switch (action) {
+            case NONE -> {
+                return false;
+            }
+            case SOCKET_PLACEMENT -> socketPlacement.escape();
+            case CANCEL_ALLOCATION -> {
+                treeSession.cancelAutoAllocate();
+                treeSession.cancelRespec();
+            }
+            case CLOSE_DROPDOWN -> treeSession.closeDropdown();
+            case CLOSE_FRAMEWORK_PANEL -> frameworkInspection.escape();
+            case STOP_FOLLOWING -> stopFollowingFleet();
+        }
+        return true;
     }
 
     private void handleMouseMove(InputEventAPI event) {
@@ -251,10 +277,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void handleWorkbenchEvent(InputEventAPI event, CanvasMode mode) {
-        if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
-            socketPlacement.escape();
-            consume(event);
-        } else if ((event.isMouseDownEvent() || event.isMouseScrollEvent()) && canvasPosition.containsEvent(event)) {
+        if ((event.isMouseDownEvent() || event.isMouseScrollEvent()) && canvasPosition.containsEvent(event)) {
             if (event.isLMBDownEvent()) {
                 chrome.press(canvasPosition, mode, event.getX(), event.getY());
             }
@@ -263,14 +286,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void handleFleetFollowEvent(InputEventAPI event, CanvasMode mode) {
-        if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
-            if (socketPlacement.isEngaged()) {
-                socketPlacement.escape();
-            } else if (!frameworkInspection.escape()) {
-                stopFollowingFleet();
-            }
-            consume(event);
-        } else if (treeSession.isAutoAllocating() || treeSession.isRespeccing()) {
+        if (treeSession.isAutoAllocating() || treeSession.isRespeccing()) {
             handleAllocationRunEvent(event, mode);
         } else if (frameworkInspection.isInspecting()) {
             handleInspectionEvent(event, mode);
@@ -325,9 +341,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void handleAllocationRunEvent(InputEventAPI event, CanvasMode mode) {
-        boolean interrupts = (event.isLMBDownEvent() && canvasPosition.containsEvent(event))
-                || (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE);
-        if (interrupts) {
+        if (event.isLMBDownEvent() && canvasPosition.containsEvent(event)) {
             treeSession.cancelAutoAllocate();
             treeSession.cancelRespec();
             consume(event);
@@ -337,10 +351,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void handleTreeEvent(InputEventAPI event, CanvasMode mode) {
-        if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE && socketPlacement.isEngaged()) {
-            socketPlacement.escape();
-            consume(event);
-        } else if (event.isRMBDownEvent() && canvasPosition.containsEvent(event) && emptySocketAt(mode, event.getX(), event.getY())) {
+        if (event.isRMBDownEvent() && canvasPosition.containsEvent(event) && emptySocketAt(mode, event.getX(), event.getY())) {
             event.consume();
         } else if (event.isLMBDownEvent() && canvasPosition.containsEvent(event)) {
             handleTreePress(event, mode);
@@ -496,7 +507,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         if (hyperspaceMode.isActive()) {
             hyperspaceMode.render(viewport, alphaMult, pointerOverTree, mouseX, mouseY);
         }
-        chrome.render(canvasPosition, mode, mouseX, mouseY, alphaMult, hyperspaceMode.chromeAlpha(), treeAlpha, workbenchDimProgress);
+        chrome.render(canvasPosition, mode, mouseX, mouseY, alphaMult, workbenchDimProgress);
         frameworkInspection.renderButton(mouseX, mouseY, alphaMult);
         if (!camera.isDragging() && mouseKnown) {
             if (treeHovered) {

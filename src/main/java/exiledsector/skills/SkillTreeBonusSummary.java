@@ -58,7 +58,7 @@ public final class SkillTreeBonusSummary {
             for (SkillTypeEffect effect : WeaponEffectTooltipAggregator.collapse(effects)) {
                 StyledText text = effect.effect().description(effect.magnitude());
                 if (text != null) {
-                    lines.add(new DescriptionLine(withDuration(text, group.temporarySeconds()), effect.effect().lowerIsBetter()));
+                    lines.add(new DescriptionLine(withDuration(text, group.temporarySeconds()), effect.effect().invertsDescriptionColours()));
                 }
             }
         }

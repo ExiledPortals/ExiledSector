@@ -1,6 +1,7 @@
 package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.combat.CollisionGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -41,6 +43,7 @@ class PierceDroneTest {
     private MockedStatic<Global> global;
     private MockedStatic<WeaponDroneStats> stats;
     private CombatEngineAPI engine;
+    private CollisionGridAPI objectGrid;
     private final List<DamagingProjectileAPI> projectiles = new ArrayList<>();
     private final Vector2f droneLocation = new Vector2f();
     private ShipAPI droneShip;
@@ -53,7 +56,9 @@ class PierceDroneTest {
     @BeforeEach
     void setUp() {
         engine = mock(CombatEngineAPI.class);
-        when(engine.getProjectiles()).thenReturn(projectiles);
+        objectGrid = mock(CollisionGridAPI.class);
+        when(engine.getAllObjectGrid()).thenReturn(objectGrid);
+        when(objectGrid.getCheckIterator(any(), anyFloat(), anyFloat())).thenAnswer(invocation -> new ArrayList<Object>(projectiles).iterator());
         global = Mockito.mockStatic(Global.class);
         global.when(Global::getCombatEngine).thenReturn(engine);
         stats = Mockito.mockStatic(WeaponDroneStats.class);
@@ -153,6 +158,23 @@ class PierceDroneTest {
         assertFalse(BallisticPierceListener.isPierced(other));
         assertTrue(drone.isReady());
         verify(weapon).setRemainingCooldownTo(0f);
+    }
+
+    @Test
+    void itLooksForItsShotsOnlyAroundItsFiringPointAndHandsBackAShotSpanningTwoGridCellsOnce() {
+        launchThroughTheHitShip();
+        drone.advance(0.25f);
+        DamagingProjectileAPI own = projectileFrom(weapon);
+        projectiles.addAll(List.of(own, own));
+        when(weapon.getChargeLevel()).thenReturn(1f);
+
+        drone.advance(FRAME);
+
+        float searchWidth = 2f * (SingleShotDrone.SHOT_SEARCH_MARGIN + 1000f * FRAME * SingleShotDrone.SHOT_SEARCH_FRAMES);
+        verify(objectGrid).getCheckIterator(Mockito.eq(new Vector2f(110f, 0f)), Mockito.eq(searchWidth), Mockito.eq(searchWidth));
+        verify(engine, never()).getProjectiles();
+        verify(own).setSource(firingShip);
+        verify(engine, never()).removeEntity(own);
     }
 
     @Test

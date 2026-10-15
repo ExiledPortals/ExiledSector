@@ -66,11 +66,9 @@ public final class RingBeltRenderer {
         if (nearest > outerRadius) {
             return HIDDEN;
         }
-        float[] cornerXs = {clip.left(), clip.right(), clip.right(), clip.left()};
-        float[] cornerYs = {clip.bottom(), clip.bottom(), clip.top(), clip.top()};
         double farthest = 0;
         for (int i = 0; i < 4; i++) {
-            farthest = Math.max(farthest, Math.hypot(cornerXs[i] - cx, cornerYs[i] - cy));
+            farthest = Math.max(farthest, Math.hypot(cornerX(clip, i) - cx, cornerY(clip, i) - cy));
         }
         if (farthest < innerRadius) {
             return HIDDEN;
@@ -83,7 +81,7 @@ public final class RingBeltRenderer {
         double lowest = Double.POSITIVE_INFINITY;
         double highest = Double.NEGATIVE_INFINITY;
         for (int i = 0; i < 4; i++) {
-            double delta = Math.IEEEremainder(Math.atan2(cornerYs[i] - cy, cornerXs[i] - cx) - reference, FULL_TURN);
+            double delta = Math.IEEEremainder(Math.atan2(cornerY(clip, i) - cy, cornerX(clip, i) - cx) - reference, FULL_TURN);
             lowest = Math.min(lowest, delta);
             highest = Math.max(highest, delta);
         }
@@ -96,5 +94,13 @@ public final class RingBeltRenderer {
         }
         int shift = Math.floorDiv(first, segments) * segments;
         return new int[]{first - shift, last - shift};
+    }
+
+    private static float cornerX(TreeViewport clip, int cornerIndex) {
+        return cornerIndex == 0 || cornerIndex == 3 ? clip.left() : clip.right();
+    }
+
+    private static float cornerY(TreeViewport clip, int cornerIndex) {
+        return cornerIndex < 2 ? clip.bottom() : clip.top();
     }
 }

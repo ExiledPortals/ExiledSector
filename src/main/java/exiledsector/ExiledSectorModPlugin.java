@@ -41,6 +41,7 @@ import exiledsector.skills.npc.NpcFactionVolumes;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.skilleffect.CsvIdList;
 import exiledsector.skills.skilleffect.EffectAliases;
+import exiledsector.skills.skilleffect.FleetCrewLedger;
 import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.skills.tags.AreaToggles;
 import exiledsector.socketables.SocketCraftingCosts;
@@ -189,6 +190,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         SkillDataResolver.clearCache();
         ResolvedTree.clearCache();
         PhantomConflictWatch.clearPendingReverts();
+        FleetCrewLedger.discardPending();
         FrameworkSlots.clearCache();
         NpcBonusScale.invalidate();
         NpcSocketables.clearCache();

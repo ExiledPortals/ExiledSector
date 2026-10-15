@@ -315,7 +315,7 @@ class ShieldFluxListenersTest {
     }
 
     @Test
-    void sharedFateLooksForAlliesOncePerFrame() {
+    void sharedFateLooksForAlliesOnlyEveryQuarterSecondWhileUnderSustainedFire() {
         ShipAPI defender = ship(SHARED_PERCENT_KEY, 20f);
         ships.addAll(List.of(defender, shipAt(300f, 0)));
         DamageTakenModifier listener = attachedListener(ShieldSkillEffect.SHIELD_DAMAGE_SHARED_PERCENT, defender, DamageTakenModifier.class);
@@ -324,7 +324,31 @@ class ShieldFluxListenersTest {
         listener.modifyDamageTaken(new Object(), defender, damageWithModifier(new MutableStat(1f)), new Vector2f(), true);
         when(engine.getTotalElapsedTime(false)).thenReturn(5.1f);
         listener.modifyDamageTaken(new Object(), defender, damageWithModifier(new MutableStat(1f)), new Vector2f(), true);
+        verify(shipGrid, times(1)).getCheckIterator(any(), anyFloat(), anyFloat());
 
+        when(engine.getTotalElapsedTime(false)).thenReturn(5.3f);
+        listener.modifyDamageTaken(new Object(), defender, damageWithModifier(new MutableStat(1f)), new Vector2f(), true);
         verify(shipGrid, times(2)).getCheckIterator(any(), anyFloat(), anyFloat());
+    }
+
+    @Test
+    void sharedFateStillSkipsAnAllyThatStartedVentingSinceTheLastSearch() {
+        ShipAPI defender = ship(SHARED_PERCENT_KEY, 20f);
+        ShipAPI ally = shipAt(300f, 0);
+        ShipAPI soonVenting = shipAt(-300f, 0);
+        ships.addAll(List.of(defender, ally, soonVenting));
+        DamageTakenModifier listener = attachedListener(ShieldSkillEffect.SHIELD_DAMAGE_SHARED_PERCENT, defender, DamageTakenModifier.class);
+        listener.modifyDamageTaken(new Object(), defender, damageWithModifier(new MutableStat(1f)), new Vector2f(), true);
+
+        when(soonVenting.getFluxTracker().isOverloadedOrVenting()).thenReturn(true);
+        when(engine.getTotalElapsedTime(false)).thenReturn(5.1f);
+        Object projectile = new Object();
+        when(defender.getParamAboutToApplyDamage()).thenReturn(projectile);
+        listener.modifyDamageTaken(projectile, defender, damageWithModifier(new MutableStat(1f)), new Vector2f(), true);
+        ((DamageListener) listener).reportDamageApplied(projectile, defender, shieldFlux(80f));
+
+        verify(shipGrid, times(1)).getCheckIterator(any(), anyFloat(), anyFloat());
+        verify(ally.getFluxTracker()).increaseFlux(20f, true);
+        verify(soonVenting.getFluxTracker(), never()).increaseFlux(anyFloat(), anyBoolean());
     }
 }

@@ -133,7 +133,7 @@ public final class RolledEffect {
     }
 
     private static StyledText display(SkillEffect effect, float magnitude) {
-        return new DescriptionLine(effect.description(magnitude), effect.lowerIsBetter()).display();
+        return new DescriptionLine(effect.description(magnitude), effect.invertsDescriptionColours()).display();
     }
 
     private static String valueText(SkillEffect effect, float magnitude) {

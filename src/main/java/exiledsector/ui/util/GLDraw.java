@@ -28,11 +28,28 @@ public final class GLDraw {
         try (GlScope scope = GlScope.flat().lineWidth(1f)) {
             Misc.setColor(color, alphaMult);
             GL11.glBegin(GL11.GL_LINES);
-            for (float lineY = y + spacing; lineY < y + height; lineY += spacing) {
-                GL11.glVertex2f(x, lineY);
-                GL11.glVertex2f(x + width, lineY);
+            horizontalLineVertices(x, y, width, height, spacing);
+            GL11.glEnd();
+        }
+    }
+
+    public static void grid(float x, float y, float width, float height, float spacing, Color color, float alphaMult) {
+        try (GlScope scope = GlScope.flat().lineWidth(1f)) {
+            Misc.setColor(color, alphaMult);
+            GL11.glBegin(GL11.GL_LINES);
+            horizontalLineVertices(x, y, width, height, spacing);
+            for (float lineX = x + spacing; lineX < x + width; lineX += spacing) {
+                GL11.glVertex2f(lineX, y);
+                GL11.glVertex2f(lineX, y + height);
             }
             GL11.glEnd();
+        }
+    }
+
+    private static void horizontalLineVertices(float x, float y, float width, float height, float spacing) {
+        for (float lineY = y + spacing; lineY < y + height; lineY += spacing) {
+            GL11.glVertex2f(x, lineY);
+            GL11.glVertex2f(x + width, lineY);
         }
     }
 

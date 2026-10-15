@@ -125,6 +125,12 @@ public class ShipSkillData {
         return frameworkItemsBySocketType == null ? Map.of() : Collections.unmodifiableMap(frameworkItemsBySocketType);
     }
 
+    public List<String> getInstalledSocketableIds() {
+        List<String> installedIds = new ArrayList<>(getSocketedItems().values());
+        installedIds.addAll(getFrameworkSocketedItems().values());
+        return installedIds;
+    }
+
     public String getFrameworkSocketedItem(String socketTypeId) {
         return frameworkItemsBySocketType == null ? null : frameworkItemsBySocketType.get(socketTypeId);
     }

@@ -1,11 +1,11 @@
 package exiledsector.socketables;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.ui.CampaignMessages;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,13 +19,12 @@ public final class SocketTypeMigration {
 
     public static void run() {
         List<Socketable> returnedItems = returnMisfits(ShipSkillDataManager.all(), SocketableStore.get());
-        CampaignUIAPI campaignUi = Global.getSector().getCampaignUI();
-        if (returnedItems.isEmpty() || campaignUi == null) {
+        if (returnedItems.isEmpty() || !CampaignMessages.available()) {
             return;
         }
-        String itemNames = returnedItems.stream().map(Socketable::name).collect(Collectors.joining(", "));
-        campaignUi.addMessage(Translation.msg("socketable.migration.returned").arg("names", itemNames).text().replace("%", "%%"),
-                Misc.getTextColor());
+        String message = I18n.forGameText(() -> Translation.msg("socketable.migration.returned")
+                .arg("names", returnedItems.stream().map(Socketable::name).collect(Collectors.joining(", "))).text());
+        CampaignMessages.plain(message, Misc.getTextColor());
     }
 
     static List<Socketable> returnMisfits(Map<String, ShipSkillData> shipDataById, SocketableStore store) {

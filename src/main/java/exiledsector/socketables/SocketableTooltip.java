@@ -1,5 +1,6 @@
 package exiledsector.socketables;
 
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -22,6 +23,11 @@ public final class SocketableTooltip {
     }
 
     public static void write(TooltipMakerAPI tooltip, Socketable socketable, Supplier<List<StyledText>> footer, boolean showRollRanges) {
+        write(tooltip, socketable, null, footer, showRollRanges);
+    }
+
+    public static void write(TooltipMakerAPI tooltip, Socketable socketable, HullSize hullSize, Supplier<List<StyledText>> footer,
+                             boolean showRollRanges) {
         I18n.forGameText(() -> {
             tooltip.setTitleOrbitronVeryLarge();
             tooltip.setParaInsigniaVeryLarge();
@@ -34,7 +40,7 @@ public final class SocketableTooltip {
                     tooltip.addPara("%s", 0f, Misc.getGrayColor(), Misc.getGrayColor(), socketableName.baseName());
                 }
                 addLines(tooltip, socketable.headerLines(), Misc.getGrayColor());
-                List<StyledText> effectLines = socketable.effectLines(showRollRanges);
+                List<StyledText> effectLines = socketable.effectLines(showRollRanges, hullSize);
                 if (!effectLines.isEmpty()) {
                     tooltip.addSectionHeading(Translation.text("socketable.tooltip.primaryData"), Alignment.MID, PAD);
                     addLines(tooltip, effectLines, Misc.getTextColor());

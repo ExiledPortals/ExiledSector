@@ -318,8 +318,8 @@ public final class HullUpgradePanel extends HoloPanel {
     }
 
     private void showUpgradeTooltip(HullUpgradeData upgrade, PositionAPI tilePosition) {
-        List<StyledText> footer = List.of(StyledText.of(upgradeStateText()));
-        hoverTooltip.show(upgrade, TOOLTIP_WIDTH, (tooltip, expanded) -> HullUpgradeTooltip.write(tooltip, upgrade, () -> footer), tilePosition);
+        hoverTooltip.show(upgrade, TOOLTIP_WIDTH, (tooltip, expanded) -> HullUpgradeTooltip.write(tooltip, upgrade,
+                () -> List.of(StyledText.of(upgradeStateText()))), tilePosition);
     }
 
     private void showSocketTooltip(SocketEntry entry, PositionAPI tilePosition) {

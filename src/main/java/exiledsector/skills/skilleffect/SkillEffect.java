@@ -28,6 +28,10 @@ public interface SkillEffect {
         return false;
     }
 
+    default boolean invertsDescriptionColours() {
+        return lowerIsBetter();
+    }
+
     default boolean appliesAfterOtherEffects() {
         return false;
     }

@@ -25,6 +25,9 @@ public final class SocketableStore {
     // XStream skips transient fields, so this lookup index is rebuilt after loading instead of being written into saves
     @SuppressWarnings("java:S2065")
     private transient Map<String, Socketable> byId;
+    // java:S2065: XStream skips transient fields, so this change counter restarts after loading instead of being written into saves
+    @SuppressWarnings("java:S2065")
+    private transient int upgradeRevision;
 
     public static SocketableStore get() {
         Map<String, Object> persistentData = Global.getSector().getPersistentData();
@@ -99,6 +102,10 @@ public final class SocketableStore {
         return hullUpgrades == null || hullSize == null ? 0 : hullUpgrades.getOrDefault(hullSize.name(), 0);
     }
 
+    public int upgradeRevision() {
+        return upgradeRevision;
+    }
+
     public Map<HullSize, Integer> upgradeCounts() {
         Map<HullSize, Integer> counts = new LinkedHashMap<>();
         for (HullSize hullSize : HullUpgradeData.HULL_SIZES) {
@@ -118,6 +125,7 @@ public final class SocketableStore {
             hullUpgrades = new LinkedHashMap<>();
         }
         hullUpgrades.merge(hullSize.name(), count, Integer::sum);
+        upgradeRevision++;
     }
 
     public boolean takeUpgrade(HullSize hullSize) {
@@ -130,6 +138,7 @@ public final class SocketableStore {
         } else {
             hullUpgrades.put(hullSize.name(), count - 1);
         }
+        upgradeRevision++;
         return true;
     }
 

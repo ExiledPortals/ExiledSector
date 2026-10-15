@@ -23,7 +23,6 @@ import exiledsector.ui.socket.SocketStoragePanel;
 import exiledsector.ui.socket.SocketableHoverTooltip;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.TextLabel;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -67,6 +66,8 @@ final class FrameworkInspection {
     private float inspectLevel;
     private float elapsedSeconds;
     private int shownRevision = Integer.MIN_VALUE;
+    private SocketableStore upgradeStore;
+    private int shownUpgradeRevision = Integer.MIN_VALUE;
     private Map<HullSize, Integer> shownUpgradeCounts = Map.of();
     private List<FrameworkSlots.Slot> slots = List.of();
     private List<FrameworkSocketLayout.Placement> placements = List.of();
@@ -231,13 +232,17 @@ final class FrameworkInspection {
         hostPanel.addComponent(tooltipAnchor).inTL(socketCentreX[hovered] - radius - hostPosition.getX(),
                 hostPosition.getY() + hostPosition.getHeight() - socketCentreY[hovered] - radius);
         tooltipSlot = hovered;
+        hoverTooltip.show(hoveredSlot, hoveredSlot.item(), treeSession.hullSize(), () -> tooltipFooter(hoveredSlot), tooltipAnchor.getPosition());
+    }
+
+    private static List<StyledText> tooltipFooter(FrameworkSlots.Slot slot) {
         List<StyledText> footer = new ArrayList<>();
-        if (!hoveredSlot.active()) {
+        if (!slot.active()) {
             footer.add(Translation.msg("framework.socket.inactive")
-                    .arg("requirement", HullUpgradeTooltip.requirementText(hoveredSlot.unmetRequirement())).styled());
+                    .arg("requirement", HullUpgradeTooltip.requirementText(slot.unmetRequirement())).styled());
         }
         footer.add(Translation.styled("framework.socket.removeHint"));
-        hoverTooltip.show(hoveredSlot, hoveredSlot.item(), () -> footer, tooltipAnchor.getPosition());
+        return footer;
     }
 
     private void hideTooltip() {
@@ -251,12 +256,14 @@ final class FrameworkInspection {
 
     private void refreshIfChanged() {
         int revision = treeSession.statsRevision();
-        Map<HullSize, Integer> upgradeCounts = Global.getSector() == null ? Map.of() : SocketableStore.get().upgradeCounts();
-        if (revision == shownRevision && upgradeCounts.equals(shownUpgradeCounts)) {
+        SocketableStore store = upgradeStore();
+        int upgradeRevision = store == null ? 0 : store.upgradeRevision();
+        if (revision == shownRevision && upgradeRevision == shownUpgradeRevision) {
             return;
         }
         shownRevision = revision;
-        shownUpgradeCounts = upgradeCounts;
+        shownUpgradeRevision = upgradeRevision;
+        shownUpgradeCounts = store == null ? Map.of() : store.upgradeCounts();
         slots = treeSession.frameworkSlots();
         if (slots.size() > MAX_SOCKETS) {
             slots = slots.subList(0, MAX_SOCKETS);
@@ -267,6 +274,13 @@ final class FrameworkInspection {
         if (frameworkPanel != null) {
             frameworkPanel.update(panelView());
         }
+    }
+
+    private SocketableStore upgradeStore() {
+        if (upgradeStore == null && Global.getSector() != null) {
+            upgradeStore = SocketableStore.get();
+        }
+        return upgradeStore;
     }
 
     private void refreshLabels() {
@@ -290,9 +304,11 @@ final class FrameworkInspection {
 
     private void openPanel(PositionAPI canvasPosition) {
         CampaignFleetAPI playerFleet = Global.getSector() == null ? null : Global.getSector().getPlayerFleet();
-        if (playerFleet != null) {
-            SocketableStore.get().absorbFrom(playerFleet.getCargo());
-            shownUpgradeCounts = SocketableStore.get().upgradeCounts();
+        SocketableStore store = upgradeStore();
+        if (playerFleet != null && store != null) {
+            store.absorbFrom(playerFleet.getCargo());
+            shownUpgradeRevision = store.upgradeRevision();
+            shownUpgradeCounts = store.upgradeCounts();
         }
         float panelHeight = socketPlacement.sidePanelHeight(canvasPosition);
         frameworkPanel = HullUpgradePanel.open(hostPanel, PANEL_MARGIN, PANEL_TOP, panelHeight, panelView(), new HullUpgradePanel.Listener() {
@@ -375,22 +391,8 @@ final class FrameworkInspection {
         if (inspectLevel <= 0f) {
             return;
         }
-        float gridAlpha = GRID_ALPHA * inspectLevel * alphaMult;
-        float left = canvasPosition.getX();
-        float bottom = canvasPosition.getY();
-        float width = canvasPosition.getWidth();
-        float height = canvasPosition.getHeight();
-        GLDraw.horizontalLines(left, bottom, width, height, GRID_SPACING, GRID_COLOR, gridAlpha);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        Misc.setColor(GRID_COLOR, gridAlpha);
-        GL11.glBegin(GL11.GL_LINES);
-        for (float x = left + GRID_SPACING; x < left + width; x += GRID_SPACING) {
-            GL11.glVertex2f(x, bottom);
-            GL11.glVertex2f(x, bottom + height);
-        }
-        GL11.glEnd();
+        GLDraw.grid(canvasPosition.getX(), canvasPosition.getY(), canvasPosition.getWidth(), canvasPosition.getHeight(), GRID_SPACING,
+                GRID_COLOR, GRID_ALPHA * inspectLevel * alphaMult);
     }
 
     void renderButton(float mouseX, float mouseY, float alphaMult) {

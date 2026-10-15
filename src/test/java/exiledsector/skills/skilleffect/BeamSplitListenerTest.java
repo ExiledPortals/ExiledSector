@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.BeamAPI;
 import com.fs.starfarer.api.combat.CollisionGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
+import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.FluxTrackerAPI;
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 import org.magiclib.plugins.MagicFakeBeamPlugin;
 import org.magiclib.util.MagicFakeBeam;
+import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -176,5 +178,42 @@ class BeamSplitListenerTest {
 
         assertEquals(1f, damage.getModifier().getModifiedValue());
         verify(engine, never()).applyDamage(any(), any(), any(), anyFloat(), any(), anyFloat(), anyBoolean(), anyBoolean(), any(), anyBoolean());
+    }
+
+    @Test
+    void theNearestEnemyIsSplitToOnceEvenWhenTheGridListsItInSeveralCells() {
+        ShipAPI firing = shipAt(0f, 0);
+        when(firing.getMutableStats().getDynamic().getValue(BeamSplitListener.TARGETS_KEY, 0f)).thenReturn(1f);
+        ShipAPI primary = shipAt(100f, 1);
+        ShipAPI farTarget = shipAt(450f, 1);
+        ShipAPI nearTarget = shipAt(200f, 1);
+        ships.addAll(List.of(firing, primary, farTarget, nearTarget, nearTarget));
+        splitTargetFlux(nearTarget, 100f, 150f, new boolean[1]);
+        DamageAPI damage = tick(false);
+
+        new BeamSplitListener(firing).modifyDamageDealt(beamFrom(simulatedWeapon()), primary, damage, new Vector2f(100f, 0f), true);
+
+        verify(engine).applyDamage(any(), eq(nearTarget), any(), anyFloat(), any(), anyFloat(), anyBoolean(), anyBoolean(), any(), anyBoolean());
+        verify(engine, never()).applyDamage(any(), eq(farTarget), any(), anyFloat(), any(), anyFloat(), anyBoolean(), anyBoolean(), any(), anyBoolean());
+        assertEquals(0.5f, damage.getModifier().getModifiedValue(), 1e-6f);
+    }
+
+    @Test
+    void aBeamHitThatNoLongerSplitsStopsThatWeaponsDronesFromAddingDamageOnTopOfTheFullPrimaryHit() {
+        ShipAPI firing = shipAt(0f, 0);
+        when(firing.getMutableStats().getDynamic().getValue(BeamSplitListener.TARGETS_KEY, 0f)).thenReturn(1f);
+        ShipAPI primary = shipAt(100f, 1);
+        ships.addAll(List.of(firing, primary));
+        WeaponAPI weapon = simulatedWeapon();
+        DamageAPI damage = tick(false);
+
+        try (MockedConstruction<SplitBeamDrones> constructed = Mockito.mockConstruction(SplitBeamDrones.class)) {
+            BeamSplitListener listener = new BeamSplitListener(firing);
+            assertNull(listener.modifyDamageDealt(beamFrom(weapon), primary, damage, new Vector2f(100f, 0f), true));
+            assertNull(listener.modifyDamageDealt(beamFrom(weapon), mock(CombatEntityAPI.class), damage, new Vector2f(100f, 0f), true));
+
+            verify(constructed.constructed().get(0), Mockito.times(2)).claim(any(BeamAPI.class), eq(List.of()));
+        }
+        assertEquals(1f, damage.getModifier().getModifiedValue(), 1e-6f);
     }
 }

@@ -48,8 +48,7 @@ public final class FleetCrewLedger {
         int crew = playerFleet == null ? 0 : (int) playerFleet.getCargo().getCrew();
         FleetCrewLedger ledger = new FleetCrewLedger(crew, recorded, playerFleet == null);
         if (recorded) {
-            pendingStolen = 0f;
-            pendingSacrificed = 0;
+            discardPending();
         }
         engine.getCustomData().put(LEDGER_KEY, ledger);
         return ledger;
@@ -106,8 +105,12 @@ public final class FleetCrewLedger {
 
     public static CrewChange drain() {
         CrewChange change = new CrewChange(roundUp(pendingStolen), pendingSacrificed);
+        discardPending();
+        return change;
+    }
+
+    public static void discardPending() {
         pendingStolen = 0f;
         pendingSacrificed = 0;
-        return change;
     }
 }

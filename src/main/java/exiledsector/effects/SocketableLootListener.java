@@ -25,6 +25,7 @@ import exiledsector.socketables.Socketable;
 import exiledsector.socketables.SocketableDisassembly;
 import exiledsector.socketables.SocketableDrops;
 import exiledsector.socketables.SocketableItemData;
+import exiledsector.ui.CampaignMessages;
 
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
@@ -151,18 +152,18 @@ public class SocketableLootListener extends BaseCampaignEventListener implements
         if (wholeParts > 0) {
             playerFleet.getCargo().addCommodity(SocketableDisassembly.PARTS_COMMODITY_ID, wholeParts);
             CommoditySpecAPI partsSpec = Global.getSettings().getCommoditySpec(SocketableDisassembly.PARTS_COMMODITY_ID);
-            if (partsSpec != null && Global.getSector().getCampaignUI() != null) {
+            if (partsSpec != null && CampaignMessages.available()) {
                 String salvageMessage = I18n.forGameText(() -> Translation.msg("socketable.salvaged").arg("name",
                         Translation.msg("socketable.techMining.material").arg("count", wholeParts).arg("name", partsSpec.getName()).text()).text());
-                Global.getSector().getCampaignUI().addMessage(salvageMessage, Misc.getPositiveHighlightColor());
+                CampaignMessages.plain(salvageMessage, Misc.getPositiveHighlightColor());
             }
         }
     }
 
     private static void announceSalvaged(Supplier<String> itemName) {
-        if (Global.getSector().getCampaignUI() != null) {
+        if (CampaignMessages.available()) {
             String salvageMessage = I18n.forGameText(() -> Translation.msg("socketable.salvaged").arg("name", itemName.get()).text());
-            Global.getSector().getCampaignUI().addMessage(salvageMessage, Misc.getPositiveHighlightColor());
+            CampaignMessages.plain(salvageMessage, Misc.getPositiveHighlightColor());
         }
     }
 

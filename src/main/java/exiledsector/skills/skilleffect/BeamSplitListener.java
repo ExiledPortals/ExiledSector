@@ -16,7 +16,6 @@ import org.lwjgl.util.vector.Vector2f;
 import org.magiclib.plugins.MagicFakeBeamPlugin;
 import org.magiclib.util.MagicFakeBeam;
 
-import java.util.Comparator;
 import java.util.List;
 
 final class BeamSplitListener extends ShipCombatListener implements DamageDealtModifier, DroneSpawner {
@@ -52,19 +51,25 @@ final class BeamSplitListener extends ShipCombatListener implements DamageDealtM
 
     @Override
     public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
-        if (processingSplit || !(param instanceof BeamAPI beam) || !(target instanceof ShipAPI primaryTarget)) {
+        if (processingSplit || !(param instanceof BeamAPI beam)) {
+            return null;
+        }
+        WeaponAPI weapon = beam.getWeapon();
+        if (!(target instanceof ShipAPI primaryTarget)) {
+            drones.claim(beam, List.of());
             return null;
         }
         int splitCount = Math.round(magnitude(TARGETS_KEY));
-        WeaponAPI weapon = beam.getWeapon();
         List<ShipAPI> splitTargets = splitCount <= 0 ? List.of()
                 : findNearbyEnemies(primaryTarget, point, weapon.getRange() * SPLIT_RADIUS_MULT_OF_BEAM_RANGE, splitCount);
         if (splitTargets.isEmpty()) {
+            drones.claim(beam, splitTargets);
             return null;
         }
 
         float share = 1f / (1 + splitTargets.size());
         if (WeaponDroneFactory.supportsBeam(weapon)) {
+            drones.claim(beam, splitTargets);
             for (ShipAPI splitTarget : splitTargets) {
                 drones.refresh(weapon, primaryTarget, splitTarget, point, share);
             }
@@ -100,8 +105,7 @@ final class BeamSplitListener extends ShipCombatListener implements DamageDealtM
         List<ShipAPI> candidates = CombatQueries.shipsNear(point, radius, other -> other != ownerShip && other != primaryTarget
                 && !other.isFighter() && CombatQueries.isAliveNotHulk(other) && other.getCollisionClass() != CollisionClass.NONE
                 && CombatQueries.isHostile(ownerShip, other) && CombatQueries.withinRadius(other.getLocation(), point, radius));
-        candidates.sort(Comparator.comparingDouble(other -> Vector2f.sub(other.getLocation(), point, null).lengthSquared()));
-        return candidates.size() > count ? candidates.subList(0, count) : candidates;
+        return CombatQueries.nearestFirst(candidates, point, count);
     }
 
     private void spawnSimulatedBeam(CombatEngineAPI engine, Vector2f from, ShipAPI splitTarget,

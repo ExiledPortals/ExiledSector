@@ -31,8 +31,12 @@ enum CanvasMode {
             case SEARCH -> this != HYPERSPACE && this != ROOT_CHOICE && this != FLEET_FOLLOW;
             case STATS_TOGGLE -> this != HYPERSPACE;
             case TEMPLATE_BAR -> this != HYPERSPACE && this != FLEET_FOLLOW;
-            case STORAGE_BUTTON -> this != HYPERSPACE;
+            case STORAGE_BUTTON -> this != HYPERSPACE && this != ROOT_CHOICE;
         };
+    }
+
+    boolean hidesChromeThroughTransition() {
+        return this == HYPERSPACE;
     }
 
     boolean enables(Chrome chrome) {

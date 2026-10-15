@@ -63,6 +63,17 @@ class CanvasModeTest {
     }
 
     @Test
+    void theStorageButtonIsHiddenWhileChoosingARoot() {
+        assertFalse(CanvasMode.ROOT_CHOICE.shows(CanvasMode.Chrome.STORAGE_BUTTON));
+        assertTrue(CanvasMode.TREE.shows(CanvasMode.Chrome.STORAGE_BUTTON));
+    }
+
+    @Test
+    void onlyHyperspaceHidesChromeThroughItsOwnTransition() {
+        assertEquals(EnumSet.of(CanvasMode.HYPERSPACE), matching(CanvasMode::hidesChromeThroughTransition));
+    }
+
+    @Test
     void onlyTreeLikeModesHoverNodes() {
         assertTrue(CanvasMode.TREE.hoversTree());
         assertTrue(CanvasMode.ALLOCATION_RUN.hoversTree());

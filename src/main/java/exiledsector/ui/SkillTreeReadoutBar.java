@@ -13,7 +13,6 @@ import exiledsector.ui.util.SpriteDraw;
 import exiledsector.ui.util.Rects;
 import exiledsector.ui.util.TextLabel;
 import org.apache.log4j.Logger;
-import org.lazywizard.lazylib.ui.LazyFont;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
@@ -113,8 +112,7 @@ final class SkillTreeReadoutBar {
     }
 
     void render(PositionAPI canvasPosition, float alphaMult, String labelOverride) {
-        LazyFont font = SkillTreePanelStyle.font();
-        if (font == null) return;
+        if (SkillTreePanelStyle.font() == null) return;
         float barLeft = left(canvasPosition);
         float barBottom = bottom(canvasPosition);
         if (!initialized) {
@@ -143,7 +141,7 @@ final class SkillTreeReadoutBar {
         drawCornerAccents(barLeft, barBottom, barColor, alphaMult);
 
         String shownLabel = labelOverride != null ? labelOverride : spentOfTotalLabel();
-        drawLabel(font, shownLabel, barLeft, barBottom, alphaMult);
+        drawLabel(shownLabel, barLeft, barBottom, alphaMult);
     }
 
     private String spentOfTotalLabel() {
@@ -204,7 +202,7 @@ final class SkillTreeReadoutBar {
         bevelShadowLines.add(barRight, barBottom, barRight, barTop, color, 0.5f * alphaMult);
         bevelHighlightLines.clear();
         bevelHighlightLines.add(barLeft + 1f, barBottom, barLeft + 1f, barTop, highlight, alphaMult);
-        bevelHighlightLines.add(barRight + 1f, barBottom, barRight + 1f, barTop, highlight, alphaMult);
+        bevelHighlightLines.add(barRight - 1f, barBottom, barRight - 1f, barTop, highlight, alphaMult);
 
         try (GlScope scope = GlScope.flat()) {
             bevelShadowLines.flush();
@@ -234,14 +232,14 @@ final class SkillTreeReadoutBar {
                 (byte) (int) (255f * Math.max(0f, Math.min(1f, alpha))));
     }
 
-    private void drawLabel(LazyFont font, String label, float barLeft, float barBottom, float alphaMult) {
-        float textWidth = font.calcWidth(label, FONT_SIZE);
+    private void drawLabel(String label, float barLeft, float barBottom, float alphaMult) {
+        float textWidth = labelText.set(label).width();
         float textHeight = FONT_SIZE * SkillTreePanelStyle.FONT_LINE_HEIGHT_FACTOR;
         float textX = barLeft + (BAR_WIDTH - textWidth) / 2f;
         float textY = barBottom + (BAR_HEIGHT + textHeight) / 2f;
 
         labelShadowText.set(label).setAlpha(alphaMult).draw(textX + TEXT_SHADOW_OFFSET_X, textY + TEXT_SHADOW_OFFSET_Y);
-        labelText.set(label).setAlpha(alphaMult).draw(textX, textY);
+        labelText.setAlpha(alphaMult).draw(textX, textY);
     }
 
     private Color getFillColor() {

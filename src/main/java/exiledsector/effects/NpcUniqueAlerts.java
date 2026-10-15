@@ -1,8 +1,6 @@
 package exiledsector.effects;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken.VisibilityLevel;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -14,6 +12,7 @@ import exiledsector.skills.npc.NpcTreeTag;
 import exiledsector.socketables.NpcSocketables;
 import exiledsector.socketables.Socketable;
 import exiledsector.socketables.SocketableRarity;
+import exiledsector.ui.CampaignMessages;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,8 +45,7 @@ public final class NpcUniqueAlerts {
             carriedUniques.addAll(uniquesIn(NpcTreeRecords.of(fleetMemory).get(member.getId())));
         }
         fleetMemory.set(ALERTED_KEY, true);
-        CampaignUIAPI campaignUi = Global.getSector().getCampaignUI();
-        if (carriedUniques.isEmpty() || campaignUi == null) {
+        if (carriedUniques.isEmpty() || !CampaignMessages.available()) {
             return;
         }
         boolean identified = visibility == VisibilityLevel.COMPOSITION_AND_FACTION_DETAILS;
@@ -58,7 +56,8 @@ public final class NpcUniqueAlerts {
                     ? Translation.msg("socketable.npcUnique.identifiedFleet").arg("fleet", fleetName).text()
                     : Translation.text("socketable.npcUnique.unidentifiedFleet");
             String alertMessage = Translation.msg("socketable.npcUnique.sensed").arg("name", uniqueNames).arg("fleet", fleetText).text();
-            campaignUi.addMessage(alertMessage.replace("%", "%%"), Misc.getTextColor(), uniqueNames, identified ? fleetName : fleetText, SocketableRarity.UNIQUE.color(), Misc.getHighlightColor());
+            CampaignMessages.highlighted(alertMessage, Misc.getTextColor(), uniqueNames, identified ? fleetName : fleetText,
+                    SocketableRarity.UNIQUE.color(), Misc.getHighlightColor());
         });
     }
 

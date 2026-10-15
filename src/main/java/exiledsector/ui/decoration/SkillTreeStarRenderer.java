@@ -45,9 +45,7 @@ public class SkillTreeStarRenderer {
 
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeStarRenderer.class);
     private final UnitSphere unitSphere = new UnitSphere();
-    private final Map<String, Float> rotationAngleById = new HashMap<>();
-    private final Map<String, AuroraRenderer> auroraRendererById = new HashMap<>();
-    private final Map<String, AuroraDelegate> auroraDelegateById = new HashMap<>();
+    private final Map<String, StarAnimation> animationById = new HashMap<>();
     private Map<String, PlanetSpecAPI> specsByType;
     private SpriteAPI atmosphereTexture;
     private SpriteAPI auroraTexture;
@@ -69,9 +67,9 @@ public class SkillTreeStarRenderer {
         for (Star star : SkillTree.getStars()) {
             PlanetSpecAPI spec = resolveSpec(star.getStarType());
             if (spec == null) continue;
-            float rotationAngle = normalizeAngle(rotationAngleById.getOrDefault(star.getId(), 0f) + spec.getRotation() * amount);
-            rotationAngleById.put(star.getId(), rotationAngle);
-            getOrCreateAurora(star).advance(amount);
+            StarAnimation animation = animationOf(star);
+            animation.rotationAngle = normalizeAngle(animation.rotationAngle + spec.getRotation() * amount);
+            animation.auroraRenderer.advance(amount);
         }
     }
 
@@ -99,7 +97,8 @@ public class SkillTreeStarRenderer {
         if (!viewport.isVisible(screenX, screenY, discRadius + 0.5f * zoom)) {
             return;
         }
-        float rotationAngle = rotationAngleById.getOrDefault(star.getId(), 0f);
+        StarAnimation animation = animationById.get(star.getId());
+        float rotationAngle = animation == null ? 0f : animation.rotationAngle;
         Color discColor = resolveColor(star, spec.getPlanetColor());
 
         try (GlScope scope = GlScope.save(GlScope.DRAW_ATTRIBS | GL11.GL_POLYGON_BIT).enable(GL11.GL_TEXTURE_2D).normalBlend()
@@ -211,19 +210,19 @@ public class SkillTreeStarRenderer {
         }
         Color coronaColor = resolveColor(star, spec.getCoronaColor());
 
-        AuroraRenderer auroraRenderer = getOrCreateAurora(star);
-        AuroraDelegate auroraDelegate = auroraDelegateById.get(star.getId());
+        StarAnimation animation = animationOf(star);
+        AuroraDelegate auroraDelegate = animation.auroraDelegate;
         auroraDelegate.centerLoc.set(0f, 0f);
         auroraDelegate.innerRadius = detailRadius * AURORA_INNER_RADIUS_MULT;
         auroraDelegate.outerRadius = detailRadius * AURORA_OUTER_RADIUS_MULT;
-        auroraDelegate.bandColor = Misc.setAlpha(coronaColor, AURORA_ALPHA);
+        auroraDelegate.useCoronaColor(coronaColor);
         auroraDelegate.bandTexture = texture;
 
         try (GlScope scope = GlScope.save(GlScope.DRAW_ATTRIBS)) {
             GL11.glPushMatrix();
             GL11.glTranslatef(screenX, screenY, 0f);
             GL11.glScalef(screenScale, screenScale, 1f);
-            auroraRenderer.render(alphaMult);
+            animation.auroraRenderer.render(alphaMult);
             GL11.glPopMatrix();
         }
     }
@@ -234,15 +233,8 @@ public class SkillTreeStarRenderer {
         return inner + thickness * (1f + AURORA_SHORTEN_MULT) + AURORA_VERTEX_WOBBLE;
     }
 
-    private AuroraRenderer getOrCreateAurora(Star star) {
-        AuroraRenderer auroraRenderer = auroraRendererById.get(star.getId());
-        if (auroraRenderer == null) {
-            AuroraDelegate auroraDelegate = new AuroraDelegate();
-            auroraRenderer = new AuroraRenderer(auroraDelegate);
-            auroraDelegateById.put(star.getId(), auroraDelegate);
-            auroraRendererById.put(star.getId(), auroraRenderer);
-        }
-        return auroraRenderer;
+    private StarAnimation animationOf(Star star) {
+        return animationById.computeIfAbsent(star.getId(), id -> new StarAnimation());
     }
 
     public void renderGlow(TreeViewport viewport, float alphaMult) {
@@ -292,12 +284,26 @@ public class SkillTreeStarRenderer {
         return angle < 0f ? angle + 360f : angle;
     }
 
+    private static final class StarAnimation {
+        private final AuroraDelegate auroraDelegate = new AuroraDelegate();
+        private final AuroraRenderer auroraRenderer = new AuroraRenderer(auroraDelegate);
+        private float rotationAngle;
+    }
+
     private static final class AuroraDelegate implements AuroraRenderer.AuroraRendererDelegate {
         private final Vector2f centerLoc = new Vector2f();
         private float innerRadius;
         private float outerRadius;
+        private Color coronaColor;
         private Color bandColor = Color.WHITE;
         private SpriteAPI bandTexture;
+
+        private void useCoronaColor(Color color) {
+            if (color != coronaColor) {
+                coronaColor = color;
+                bandColor = Misc.setAlpha(color, AURORA_ALPHA);
+            }
+        }
 
         @Override
         public float getAuroraInnerRadius() {

@@ -28,7 +28,9 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -94,6 +96,19 @@ class NpcBonusScalingTest {
                 .values().stream().reduce(0f, Float::sum);
 
         assertEquals(-100f * (1f - (float) Math.pow(0.6f, 3)), scaledTotal, TOLERANCE);
+    }
+
+    @Test
+    void shorterRepairTimeIsScaledAsABonusWhileLongerRepairTimeStaysAsWritten() {
+        ShipSkillData shipData = shipWith(List.of(),
+                new SkillTypeEffect(DefenseSkillEffect.REPAIR_TIME_MULT, -25f),
+                new SkillTypeEffect(DefenseSkillEffect.REPAIR_TIME_MULT, 15f));
+
+        float scaledReduction = -100f * (1f - (float) Math.pow(0.75f, 3));
+
+        assertEquals(scaledReduction + 15f, magnitude(ResolvedTree.of(shipData, HullSize.CRUISER, 3f), DefenseSkillEffect.REPAIR_TIME_MULT), TOLERANCE);
+        assertTrue(DefenseSkillEffect.REPAIR_TIME_MULT.lowerIsBetter());
+        assertFalse(DefenseSkillEffect.REPAIR_TIME_MULT.invertsDescriptionColours());
     }
 
     @Test

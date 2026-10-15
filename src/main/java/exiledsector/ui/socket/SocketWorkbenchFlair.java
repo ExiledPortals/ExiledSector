@@ -96,17 +96,7 @@ final class SocketWorkbenchFlair {
 
     private void drawGrid(float cx, float cy, float radius, Color accent, float alpha) {
         float extent = radius * 1.05f;
-        GLDraw.horizontalLines(cx - extent, cy - extent, extent * 2f, extent * 2f, GRID_SPACING, accent, GRID_ALPHA * alpha);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        Misc.setColor(accent, GRID_ALPHA * alpha);
-        GL11.glBegin(GL11.GL_LINES);
-        for (float x = cx - extent + GRID_SPACING; x < cx + extent; x += GRID_SPACING) {
-            GL11.glVertex2f(x, cy - extent);
-            GL11.glVertex2f(x, cy + extent);
-        }
-        GL11.glEnd();
+        GLDraw.grid(cx - extent, cy - extent, extent * 2f, extent * 2f, GRID_SPACING, accent, GRID_ALPHA * alpha);
     }
 
     private void arms(float cx, float cy, float half, float reach, Color accent, Color coreColor, float easedLoad, float alpha) {

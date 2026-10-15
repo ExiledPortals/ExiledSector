@@ -23,11 +23,11 @@ final class FluxScaledVolatilityListener extends ShipCombatListener implements A
     private static final String STATUS_KEY = "exiledSector_fluxScaledStatus";
     private static final String STATUS_ICON = "graphics/icons/hullsys/high_energy_focus.png";
     private static final float RATIO_STEP = 0.02f;
-    private static final float AFTERIMAGE_INTERVAL = 0.01f;
+    static final float AFTERIMAGE_INTERVAL = 0.05f;
     private static final float AFTERIMAGE_DRIFT = -0.8f;
-    private static final float AFTERIMAGE_DURATION = 0.3f;
+    private static final float AFTERIMAGE_DURATION = 0.35f;
     private static final float ENGINE_TINT_STRENGTH = 0.5f;
-    private static final Color AFTERIMAGE_COLOR = new Color(100, 42, 201, 80);
+    private static final Color AFTERIMAGE_COLOR = new Color(100, 42, 201, 160);
     private static final Color ENGINE_COLOR = new Color(100, 42, 201, 255);
 
     private final IntervalUtil afterimageTimer = new IntervalUtil(AFTERIMAGE_INTERVAL, AFTERIMAGE_INTERVAL);

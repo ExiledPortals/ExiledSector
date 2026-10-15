@@ -18,6 +18,7 @@ import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.npc.NpcFactionVolumes;
+import exiledsector.skills.skilleffect.FleetCrewLedger;
 import exiledsector.socketables.SocketLossListener;
 import exiledsector.socketables.SocketableDefinitions;
 import exiledsector.socketables.SocketType;
@@ -208,6 +209,17 @@ class ExiledSectorModPluginTest {
         new ExiledSectorModPlugin().onGameLoad(false);
 
         assertTrue(data.isAllocated("removed_by_update"));
+    }
+
+    @Test
+    void onGameLoadDiscardsCrewLeftPendingByABattleThatWasNeverSettled() throws Exception {
+        loadTree(NODES);
+
+        try (MockedStatic<FleetCrewLedger> crewLedger = Mockito.mockStatic(FleetCrewLedger.class)) {
+            new ExiledSectorModPlugin().onGameLoad(false);
+
+            crewLedger.verify(FleetCrewLedger::discardPending);
+        }
     }
 
     @Test

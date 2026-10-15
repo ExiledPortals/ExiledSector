@@ -19,6 +19,7 @@ import org.lwjgl.util.vector.Vector2f;
 
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -225,9 +226,13 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
         private static final String SHARED_PERCENT_KEY = "exiledSector_shieldDamageSharedPercent";
         private static final String SHARE_MOD_ID = "exiledSector_shieldDamageShared";
         private static final float MAX_SHARED_PERCENT = 90f;
+        private static final float ALLY_SEARCH_INTERVAL_SECONDS = 0.25f;
+        private static final float ALLY_SEARCH_MARGIN = 200f;
 
-        private List<ShipAPI> cachedAllies = List.of();
-        private float alliesFoundAt = -1f;
+        private List<ShipAPI> candidateAllies = List.of();
+        private final List<ShipAPI> eligibleAllies = new ArrayList<>();
+        private float candidatesFoundAt = Float.NEGATIVE_INFINITY;
+        private float eligibleCheckedAt = Float.NEGATIVE_INFINITY;
         private boolean sharePending;
         private Object pendingSource;
         private float pendingShare;
@@ -257,28 +262,42 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
             sharePending = false;
 
             float moved = result.getDamageToShields() * pendingShare / (1f - pendingShare);
-            if (moved <= 0f) return;
+            if (moved <= 0f || eligibleAllies.isEmpty()) return;
 
-            float perAlly = moved / cachedAllies.size();
-            for (ShipAPI ally : cachedAllies) {
+            float perAlly = moved / eligibleAllies.size();
+            for (ShipAPI ally : eligibleAllies) {
                 ally.getFluxTracker().increaseFlux(perAlly, true);
             }
         }
 
         private List<ShipAPI> nearbyAllies() {
             float now = Global.getCombatEngine().getTotalElapsedTime(false);
-            if (now != alliesFoundAt) {
-                alliesFoundAt = now;
-                cachedAllies = CombatQueries.shipsNear(ownerShip.getLocation(), SHARED_SHIELD_DAMAGE_RANGE, this::sharesShieldDamageWith);
+            if (now == eligibleCheckedAt) {
+                return eligibleAllies;
             }
-            return cachedAllies;
+            eligibleCheckedAt = now;
+            if (now < candidatesFoundAt || now - candidatesFoundAt >= ALLY_SEARCH_INTERVAL_SECONDS) {
+                candidatesFoundAt = now;
+                candidateAllies = CombatQueries.shipsNear(ownerShip.getLocation(), SHARED_SHIELD_DAMAGE_RANGE + ALLY_SEARCH_MARGIN,
+                        this::isAlliedWarship);
+            }
+            eligibleAllies.clear();
+            for (ShipAPI ally : candidateAllies) {
+                if (canTakeSharedDamageNow(ally)) {
+                    eligibleAllies.add(ally);
+                }
+            }
+            return eligibleAllies;
         }
 
-        private boolean sharesShieldDamageWith(ShipAPI other) {
-            return other != ownerShip && other.getOwner() == ownerShip.getOwner() && CombatQueries.isAliveNotHulk(other)
-                    && !other.isFighter()
-                    && CombatQueries.withinRadius(other.getLocation(), ownerShip.getLocation(), SHARED_SHIELD_DAMAGE_RANGE)
-                    && !other.getFluxTracker().isOverloadedOrVenting();
+        private boolean isAlliedWarship(ShipAPI other) {
+            return other != ownerShip && other.getOwner() == ownerShip.getOwner() && !other.isFighter();
+        }
+
+        private boolean canTakeSharedDamageNow(ShipAPI ally) {
+            return CombatQueries.isAliveNotHulk(ally)
+                    && CombatQueries.withinRadius(ally.getLocation(), ownerShip.getLocation(), SHARED_SHIELD_DAMAGE_RANGE)
+                    && !ally.getFluxTracker().isOverloadedOrVenting();
         }
     }
 

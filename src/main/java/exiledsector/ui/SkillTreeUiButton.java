@@ -53,7 +53,11 @@ final class SkillTreeUiButton {
     }
 
     void place(float left, float bottom, float width, float height) {
-        buttonBounds = new ScreenRect(left, bottom, width, height);
+        boolean moved = buttonBounds == ScreenRect.NONE || buttonBounds.left() != left || buttonBounds.bottom() != bottom
+                || buttonBounds.width() != width || buttonBounds.height() != height;
+        if (moved) {
+            buttonBounds = new ScreenRect(left, bottom, width, height);
+        }
         buttonShown = true;
     }
 

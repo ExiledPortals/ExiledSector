@@ -141,6 +141,112 @@ class SplitBeamDronesTest {
         }
     }
 
+    private static float shareDealtBy(DamageDealtModifier shareListener) {
+        DamageAPI beamHit = mock(DamageAPI.class);
+        MutableStat modifier = new MutableStat(1f);
+        when(beamHit.getModifier()).thenReturn(modifier);
+        shareListener.modifyDamageDealt(mock(BeamAPI.class), mock(CombatEntityAPI.class), beamHit, new Vector2f(), true);
+        return modifier.getModifiedValue();
+    }
+
+    private static List<DamageDealtModifier> shareListenersCreatedFor(MockedStatic<WeaponDroneFactory> factory, ShipAPI firingShip,
+                                                                      WeaponAPI primaryWeapon) {
+        ArgumentCaptor<DamageDealtModifier> shareListeners = ArgumentCaptor.forClass(DamageDealtModifier.class);
+        factory.verify(() -> WeaponDroneFactory.create(Mockito.eq(firingShip), Mockito.eq(primaryWeapon), shareListeners.capture()),
+                Mockito.atLeastOnce());
+        return shareListeners.getAllValues();
+    }
+
+    @Test
+    void aDroneKeptFiringOnlyForItsMinimumWindowDealsNoDamageOnceTheSplitStopsRefreshing() {
+        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+        ShipAPI firingShip = liveFiringShip(1f);
+        WeaponAPI droneWeapon = mock(WeaponAPI.class);
+        ShipAPI drone = droneWith(droneWeapon);
+        WeaponAPI primaryWeapon = mock(WeaponAPI.class);
+
+        try (MockedStatic<WeaponDroneFactory> factory = Mockito.mockStatic(WeaponDroneFactory.class);
+             MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
+            factory.when(() -> WeaponDroneFactory.create(Mockito.eq(firingShip), Mockito.eq(primaryWeapon), any())).thenReturn(drone);
+            global.when(Global::getCombatEngine).thenReturn(engine);
+            new SplitBeamDrones(firingShip).refresh(primaryWeapon, shieldedShipAtOrigin(100f), liveTarget(new Vector2f(500f, 0f)),
+                    new Vector2f(100f, 0f), 0.5f);
+            DamageDealtModifier shareListener = shareListenersCreatedFor(factory, firingShip, primaryWeapon).get(0);
+            AdvanceableListener split = selfTickingListenerOn(drone);
+
+            split.advance(0.2f);
+            assertEquals(0.5f, shareDealtBy(shareListener), 1e-6f);
+
+            split.advance(0.2f);
+            verify(droneWeapon, Mockito.times(2)).setForceFireOneFrame(true);
+            assertEquals(0f, shareDealtBy(shareListener), 1e-6f);
+        }
+    }
+
+    @Test
+    void aHitThatNoLongerSplitsToATargetStopsThatDronesDamageAtOnceWhileTheOthersKeepTheirShare() {
+        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+        ShipAPI firingShip = liveFiringShip(1f);
+        ShipAPI firstDrone = droneWith(mock(WeaponAPI.class));
+        ShipAPI secondDrone = droneWith(mock(WeaponAPI.class));
+        WeaponAPI primaryWeapon = mock(WeaponAPI.class);
+        ShipAPI keptTarget = liveTarget(new Vector2f(500f, 0f));
+        ShipAPI droppedTarget = liveTarget(new Vector2f(-500f, 0f));
+
+        try (MockedStatic<WeaponDroneFactory> factory = Mockito.mockStatic(WeaponDroneFactory.class);
+             MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
+            factory.when(() -> WeaponDroneFactory.create(Mockito.eq(firingShip), Mockito.eq(primaryWeapon), any()))
+                    .thenReturn(firstDrone, secondDrone);
+            global.when(Global::getCombatEngine).thenReturn(engine);
+            SplitBeamDrones drones = new SplitBeamDrones(firingShip);
+            drones.refresh(primaryWeapon, shieldedShipAtOrigin(100f), keptTarget, new Vector2f(100f, 0f), 1f / 3f);
+            drones.refresh(primaryWeapon, shieldedShipAtOrigin(100f), droppedTarget, new Vector2f(100f, 0f), 1f / 3f);
+            List<DamageDealtModifier> shareListeners = shareListenersCreatedFor(factory, firingShip, primaryWeapon);
+
+            drones.claim(beamOf(mock(WeaponAPI.class)), List.of());
+            assertEquals(1f / 3f, shareDealtBy(shareListeners.get(1)), 1e-6f);
+
+            drones.claim(beamOf(primaryWeapon), List.of(keptTarget));
+
+            assertEquals(1f / 3f, shareDealtBy(shareListeners.get(0)), 1e-6f);
+            assertEquals(0f, shareDealtBy(shareListeners.get(1)), 1e-6f);
+        }
+    }
+
+    @Test
+    void anotherBeamOfTheSameWeaponMissingDoesNotStopADroneAFreshBeamStillSplitsTo() {
+        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+        ShipAPI firingShip = liveFiringShip(1f);
+        ShipAPI drone = droneWith(mock(WeaponAPI.class));
+        WeaponAPI paladin = mock(WeaponAPI.class);
+        ShipAPI splitTarget = liveTarget(new Vector2f(500f, 0f));
+        BeamAPI firstRay = beamOf(paladin);
+        BeamAPI secondRay = beamOf(paladin);
+
+        try (MockedStatic<WeaponDroneFactory> factory = Mockito.mockStatic(WeaponDroneFactory.class);
+             MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
+            factory.when(() -> WeaponDroneFactory.create(Mockito.eq(firingShip), Mockito.eq(paladin), any())).thenReturn(drone);
+            global.when(Global::getCombatEngine).thenReturn(engine);
+            SplitBeamDrones drones = new SplitBeamDrones(firingShip);
+            drones.claim(firstRay, List.of(splitTarget));
+            drones.refresh(paladin, shieldedShipAtOrigin(100f), splitTarget, new Vector2f(100f, 0f), 0.5f);
+            DamageDealtModifier shareListener = shareListenersCreatedFor(factory, firingShip, paladin).get(0);
+
+            drones.claim(secondRay, List.of());
+            assertEquals(0.5f, shareDealtBy(shareListener), 1e-6f);
+
+            when(engine.getTotalElapsedTime(false)).thenReturn(1f);
+            drones.claim(secondRay, List.of());
+            assertEquals(0f, shareDealtBy(shareListener), 1e-6f);
+        }
+    }
+
+    private static BeamAPI beamOf(WeaponAPI weapon) {
+        BeamAPI beam = mock(BeamAPI.class);
+        when(beam.getWeapon()).thenReturn(weapon);
+        return beam;
+    }
+
     private interface SplitScenario {
         void run(SplitBeamDrones drones, CombatEngineAPI engine);
     }

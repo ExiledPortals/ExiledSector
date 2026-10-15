@@ -2,7 +2,6 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
@@ -22,6 +21,7 @@ import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
+import exiledsector.ui.CampaignMessages;
 import org.magiclib.util.MagicIncompatibleHullmods;
 
 import java.util.ArrayList;
@@ -218,8 +218,7 @@ public final class PhantomConflictWatch {
     }
 
     private static void announce(FleetMemberAPI member, SkillNode removedNode, LearnedPhantomConflicts.Conflict conflict) {
-        CampaignUIAPI campaignUi = Global.getSector().getCampaignUI();
-        if (campaignUi == null) {
+        if (!CampaignMessages.available()) {
             return;
         }
         String message = I18n.forGameText(() -> {
@@ -227,7 +226,7 @@ public final class PhantomConflictWatch {
                     : Translation.msg("phantomConflict.removed").arg("hullmod", HullModNames.displayName(conflict.hullModId()));
             return text.arg("ship", member.getShipName()).arg("node", removedNode.getType().getDisplayName()).text();
         });
-        campaignUi.addMessage(message.replace("%", "%%"), Misc.getNegativeHighlightColor());
+        CampaignMessages.plain(message, Misc.getNegativeHighlightColor());
     }
 
     public static synchronized void clearPendingReverts() {

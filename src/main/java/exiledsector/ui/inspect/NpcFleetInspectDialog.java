@@ -127,10 +127,10 @@ public class NpcFleetInspectDialog implements CustomVisualDialogDelegate {
         for (ShipEntry shipEntry : shipEntries) {
             List<StyledText> footer = List.of(Translation.msg("inspect.socketable.installedIn").arg("ship", shipTitle(shipEntry.member())).styled(),
                     Translation.styled("inspect.socketable.drops"));
-            for (String socketableId : shipEntry.shipTree().skillData().getSocketedItems().values()) {
+            for (String socketableId : shipEntry.shipTree().skillData().getInstalledSocketableIds()) {
                 Socketable socketable = SocketableStore.lookup(socketableId);
                 if (socketable != null) {
-                    stripEntries.add(new SocketableIconStrip.Entry(socketable, footer));
+                    stripEntries.add(new SocketableIconStrip.Entry(socketable, shipEntry.member().getHullSpec().getHullSize(), footer));
                 }
             }
         }

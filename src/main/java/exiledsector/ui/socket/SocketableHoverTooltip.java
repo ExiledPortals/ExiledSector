@@ -1,9 +1,11 @@
 package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.socketables.Socketable;
 import exiledsector.socketables.SocketableTooltip;
@@ -36,7 +38,12 @@ public final class SocketableHoverTooltip {
     }
 
     public void show(Object key, Socketable socketable, Supplier<List<StyledText>> footer, PositionAPI anchor) {
-        show(key, SocketableTooltip.WIDTH, (element, expanded) -> SocketableTooltip.write(element, socketable, footer, expanded), anchor);
+        show(key, socketable, null, footer, anchor);
+    }
+
+    public void show(Object key, Socketable socketable, HullSize hullSize, Supplier<List<StyledText>> footer, PositionAPI anchor) {
+        show(key, SocketableTooltip.WIDTH, (element, expanded) -> SocketableTooltip.write(element, socketable, hullSize, footer, expanded),
+                anchor);
     }
 
     public void show(Object key, float tooltipWidth, BiConsumer<TooltipMakerAPI, Boolean> writer, PositionAPI anchor) {
@@ -45,7 +52,7 @@ public final class SocketableHoverTooltip {
         CustomPanelAPI tooltipPanel = Global.getSettings().createCustom(tooltipWidth, anchor.getHeight(),
                 new FramedPanelPlugin(SocketableHoverTooltip.class));
         TooltipMakerAPI element = tooltipPanel.createUIElement(tooltipWidth - PAD * 2f, 0f, false);
-        writer.accept(element, expanded);
+        I18n.forGameText(() -> writer.accept(element, expanded));
         float contentHeight = element.getHeightSoFar();
         element.getPosition().setSize(tooltipWidth - PAD * 2f, contentHeight);
         float tooltipHeight = contentHeight + PAD * 2f;

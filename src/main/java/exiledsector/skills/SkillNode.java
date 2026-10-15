@@ -66,7 +66,7 @@ public class SkillNode extends SkillTreeObject {
         addLine(effects, type.getDescriptionText(), false);
         List<SkillTypeEffect> described = hullSize == null ? type.getEffects() : type.effectsFor(hullSize);
         for (SkillTypeEffect effect : WeaponEffectTooltipAggregator.collapse(described)) {
-            addLine(effects, effect.effect().description(effect.magnitude(), hullSize), effect.effect().lowerIsBetter());
+            addLine(effects, effect.effect().description(effect.magnitude(), hullSize), effect.effect().invertsDescriptionColours());
         }
         addLine(effects, describeTemporaryDuration(type), false);
 

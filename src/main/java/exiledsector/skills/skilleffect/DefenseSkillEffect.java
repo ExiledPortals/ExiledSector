@@ -132,7 +132,7 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
             liveStat(MutableShipStatsAPI::getCombatEngineRepairTimeMult)),
             "stat.weaponAndEngineRepairTime", true) {
         @Override
-        public boolean lowerIsBetter() {
+        public boolean invertsDescriptionColours() {
             return false;
         }
 

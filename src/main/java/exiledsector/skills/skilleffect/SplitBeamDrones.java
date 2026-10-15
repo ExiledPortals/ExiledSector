@@ -2,6 +2,7 @@ package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.BeamAPI;
+import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -15,6 +16,7 @@ import org.magiclib.plugins.MagicFakeBeamPlugin;
 
 import java.awt.Color;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 final class SplitBeamDrones {
@@ -27,6 +29,7 @@ final class SplitBeamDrones {
 
     private final ShipAPI firingShip;
     private final Map<SplitKey, SplitDrone> drones = new HashMap<>();
+    private final Map<BeamAPI, BeamClaim> claimsByBeam = new HashMap<>();
 
     SplitBeamDrones(ShipAPI firingShip) {
         this.firingShip = firingShip;
@@ -42,6 +45,32 @@ final class SplitBeamDrones {
         split.retarget(impactPoint, Refraction.origin(primaryTarget, impactPoint, splitTarget.getLocation()), share);
     }
 
+    void claim(BeamAPI beam, List<ShipAPI> splitTargets) {
+        CombatEngineAPI engine = Global.getCombatEngine();
+        if (engine == null || splitTargets.isEmpty() && drones.isEmpty()) {
+            claimsByBeam.remove(beam);
+            return;
+        }
+        float now = engine.getTotalElapsedTime(false);
+        WeaponAPI weapon = beam.getWeapon();
+        claimsByBeam.put(beam, new BeamClaim(weapon, List.copyOf(splitTargets), now));
+        claimsByBeam.values().removeIf(claim -> now - claim.claimedAt() > SPLIT_TIMEOUT_SECONDS);
+        for (SplitDrone split : drones.values()) {
+            if (split.splitKey.weapon() == weapon && !isClaimed(weapon, split.splitTarget)) {
+                split.stopSharing();
+            }
+        }
+    }
+
+    private boolean isClaimed(WeaponAPI weapon, ShipAPI splitTarget) {
+        for (BeamClaim claim : claimsByBeam.values()) {
+            if (claim.weapon() == weapon && claim.splitTargets().contains(splitTarget)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private SplitDrone start(SplitKey key, WeaponAPI weapon) {
         ShareListener shareListener = new ShareListener();
         SplitDrone split = new SplitDrone(key, WeaponDroneFactory.create(firingShip, weapon, shareListener), shareListener);
@@ -50,6 +79,9 @@ final class SplitBeamDrones {
     }
 
     private record SplitKey(WeaponAPI weapon, ShipAPI splitTarget) {
+    }
+
+    private record BeamClaim(WeaponAPI weapon, List<ShipAPI> splitTargets, float claimedAt) {
     }
 
     private final class SplitDrone implements AdvanceableListener {
@@ -86,6 +118,11 @@ final class SplitBeamDrones {
             secondsSinceRefresh = 0f;
         }
 
+        private void stopSharing() {
+            secondsSinceRefresh = Float.POSITIVE_INFINITY;
+            shareListener.damageShare = 0f;
+        }
+
         @Override
         public void advance(float amount) {
             if (removed) {
@@ -99,7 +136,11 @@ final class SplitBeamDrones {
             float firingShipAmount = firingShipGone ? amount : amount * firingShip.getMutableStats().getTimeMult().getModifiedValue();
             secondsSinceRefresh += firingShipAmount;
             secondsSinceStart += firingShipAmount;
-            boolean withinSplitWindow = secondsSinceStart <= MIN_FIRING_SECONDS || secondsSinceRefresh <= SPLIT_TIMEOUT_SECONDS;
+            boolean sharing = secondsSinceRefresh <= SPLIT_TIMEOUT_SECONDS;
+            if (!sharing) {
+                shareListener.damageShare = 0f;
+            }
+            boolean withinSplitWindow = secondsSinceStart <= MIN_FIRING_SECONDS || sharing;
             boolean firing = !firingShipGone && withinSplitWindow && splitTarget.isAlive();
             if (!firing && !droneWeapon.isFiring()) {
                 remove();

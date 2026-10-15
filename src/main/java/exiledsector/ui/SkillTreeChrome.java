@@ -27,7 +27,9 @@ final class SkillTreeChrome {
     private final String storageTooltipTitle = Translation.text("ui.socketStorage.title");
     private final String storageTooltipHint = Translation.text("ui.socketStorage.hint");
     private final BorderedPanel shipCardPanel = new BorderedPanel(SkillTreeChrome.class);
+    private final ChromeVisibility visibility = new ChromeVisibility();
     private final float shipCardHeight;
+    private boolean statsHiddenBySidePanel;
     private ScreenRect shipCardFrame = ScreenRect.NONE;
     private float shipCardFrameCanvasX = Float.NaN;
     private float shipCardFrameCanvasY = Float.NaN;
@@ -51,9 +53,14 @@ final class SkillTreeChrome {
         shipCardHidden = false;
     }
 
-    void advance(float amount, PositionAPI canvasPosition, CanvasMode mode, float chromeAlpha, ShipOpBudget budget, float mouseX,
-                 float mouseY, boolean mouseKnown) {
-        boolean storageButtonShown = mode != CanvasMode.ROOT_CHOICE && (mode != CanvasMode.HYPERSPACE || chromeAlpha > 0f);
+    void advanceVisibility(float amount, CanvasMode mode, float chromeAlpha, float treeAlpha, boolean sidePanelOpen) {
+        visibility.advance(amount, mode, chromeAlpha, treeAlpha);
+        statsHiddenBySidePanel = sidePanelOpen;
+    }
+
+    void advance(float amount, PositionAPI canvasPosition, CanvasMode mode, ShipOpBudget budget, float mouseX, float mouseY,
+                 boolean mouseKnown) {
+        boolean storageButtonShown = visibility.alpha(CanvasMode.Chrome.STORAGE_BUTTON) > 0f;
         socketPlacement.layoutButton(canvasPosition, shipCardFrame(canvasPosition), storageButtonShown);
         if (!mode.enables(CanvasMode.Chrome.SEARCH)) {
             searchBar.unfocus();
@@ -94,7 +101,7 @@ final class SkillTreeChrome {
         if (mode.enables(CanvasMode.Chrome.TEMPLATE_BAR) && templateUi.handleLmbDown(x, y)) {
             return true;
         }
-        if (mode.enables(CanvasMode.Chrome.STATS_TOGGLE) && statPanel.isToggleHit(x, y)) {
+        if (statsToggleLive(mode) && statPanel.isToggleHit(x, y)) {
             statPanel.toggle();
             return true;
         }
@@ -105,19 +112,26 @@ final class SkillTreeChrome {
         return templateUi.handleLmbUp(x, y);
     }
 
-    void render(PositionAPI canvasPosition, CanvasMode mode, float mouseX, float mouseY, float alphaMult, float chromeAlpha, float treeAlpha,
-                float workbenchDim) {
-        statPanel.render(canvasPosition, mouseX, mouseY, alphaMult, chromeAlpha * (1f - workbenchDim),
-                mode.enables(CanvasMode.Chrome.STATS_TOGGLE));
-        ordnancePointsBar.render(canvasPosition, alphaMult, null);
-        levelBar.render(canvasPosition, alphaMult);
-        if (mode != CanvasMode.ROOT_CHOICE && treeAlpha > 0f) {
-            searchBar.render(canvasPosition, alphaMult * treeAlpha);
+    private boolean statsToggleLive(CanvasMode mode) {
+        return mode.enables(CanvasMode.Chrome.STATS_TOGGLE) && !statsHiddenBySidePanel;
+    }
+
+    void render(PositionAPI canvasPosition, CanvasMode mode, float mouseX, float mouseY, float alphaMult, float workbenchDim) {
+        statPanel.render(canvasPosition, mouseX, mouseY, alphaMult, visibility.alpha(CanvasMode.Chrome.STATS_TOGGLE) * (1f - workbenchDim),
+                statsToggleLive(mode));
+        float readoutAlpha = alphaMult * visibility.alpha(CanvasMode.Chrome.READOUTS);
+        ordnancePointsBar.render(canvasPosition, readoutAlpha, null);
+        levelBar.render(canvasPosition, readoutAlpha);
+        float searchAlpha = visibility.alpha(CanvasMode.Chrome.SEARCH);
+        if (searchAlpha > 0f) {
+            searchBar.render(canvasPosition, alphaMult * searchAlpha);
         }
-        if (chromeAlpha > 0f && mode != CanvasMode.FLEET_FOLLOW) {
-            templateUi.renderBar(canvasPosition, mouseX, mouseY, alphaMult * chromeAlpha);
+        float templateBarAlpha = visibility.alpha(CanvasMode.Chrome.TEMPLATE_BAR);
+        if (templateBarAlpha > 0f) {
+            templateUi.renderBar(canvasPosition, mouseX, mouseY, alphaMult * templateBarAlpha);
         }
-        socketPlacement.renderButton(mouseX, mouseY, alphaMult * chromeAlpha, mode.enables(CanvasMode.Chrome.STORAGE_BUTTON));
+        socketPlacement.renderButton(mouseX, mouseY, alphaMult * visibility.alpha(CanvasMode.Chrome.STORAGE_BUTTON),
+                mode.enables(CanvasMode.Chrome.STORAGE_BUTTON));
         ScreenRect frame = shipCardFrame(canvasPosition);
         shipCardPanel.draw(frame.left(), frame.bottom(), frame.width(), frame.height(), alphaMult);
     }

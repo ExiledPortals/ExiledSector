@@ -1,6 +1,7 @@
 package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamagingProjectileAPI;
@@ -14,6 +15,7 @@ import org.lazywizard.lazylib.MathUtils;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 abstract class SingleShotDrone implements DamageDealtModifier, AdvanceableListener {
@@ -22,6 +24,9 @@ abstract class SingleShotDrone implements DamageDealtModifier, AdvanceableListen
     static final float SHOT_SEARCH_SECONDS = 0.25f;
     static final float IDLE_REMOVE_SECONDS = 3f;
     static final float CLEARANCE = 10f;
+
+    static final float SHOT_SEARCH_MARGIN = 150f;
+    static final float SHOT_SEARCH_FRAMES = 3f;
 
     private static final float RANGE_TOLERANCE = 1f;
 
@@ -169,7 +174,7 @@ abstract class SingleShotDrone implements DamageDealtModifier, AdvanceableListen
     private void advanceFiring(float amount) {
         firingSeconds += amount;
         boolean fired = hasFired();
-        tagShots(fired);
+        tagShots(fired, amount);
         if (fired) {
             firedSeconds += amount;
         }
@@ -187,14 +192,20 @@ abstract class SingleShotDrone implements DamageDealtModifier, AdvanceableListen
         return droneWeapon.getChargeLevel() > 0f || droneWeapon.getCooldownRemaining() > 0f;
     }
 
-    private void tagShots(boolean fired) {
+    private void tagShots(boolean fired, float amount) {
+        CombatEngineAPI engine = Global.getCombatEngine();
+        float frameSeconds = Math.max(amount, engine.getElapsedInLastFrame());
+        float searchRadius = SHOT_SEARCH_MARGIN + droneWeapon.getProjectileSpeed() * frameSeconds * SHOT_SEARCH_FRAMES;
         List<DamagingProjectileAPI> freshShots = null;
-        for (DamagingProjectileAPI projectile : Global.getCombatEngine().getProjectiles()) {
-            if (projectile.getWeapon() == droneWeapon && !isTagged(projectile)) {
+        Iterator<Object> nearby = CombatQueries.objectsNear(engine.getAllObjectGrid(), origin, searchRadius);
+        while (nearby.hasNext()) {
+            if (nearby.next() instanceof DamagingProjectileAPI projectile && projectile.getWeapon() == droneWeapon && !isTagged(projectile)) {
                 if (freshShots == null) {
                     freshShots = new ArrayList<>();
                 }
-                freshShots.add(projectile);
+                if (!freshShots.contains(projectile)) {
+                    freshShots.add(projectile);
+                }
             }
         }
         if (freshShots == null) {

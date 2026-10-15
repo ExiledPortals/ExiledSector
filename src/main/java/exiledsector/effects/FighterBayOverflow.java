@@ -1,7 +1,6 @@
 package exiledsector.effects;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -9,6 +8,7 @@ import com.fs.starfarer.api.loading.FighterWingSpecAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
+import exiledsector.ui.CampaignMessages;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,15 +43,13 @@ public final class FighterBayOverflow {
         }
         member.setStatUpdateNeeded(true);
         member.updateStats();
-        CampaignUIAPI campaignUi = Global.getSector() == null ? null : Global.getSector().getCampaignUI();
-        if (campaignUi == null) {
+        if (!CampaignMessages.available()) {
             return;
         }
         for (String wingId : returnedWingIds) {
             FighterWingSpecAPI wing = Global.getSettings().getFighterWingSpec(wingId);
             String name = wing == null ? wingId : wing.getWingName();
-            String message = I18n.forGameText(() -> Translation.msg("fighterBay.returned").arg("wing", name).text());
-            campaignUi.addMessage(message.replace("%", "%%"), Misc.getTextColor());
+            CampaignMessages.plain(I18n.forGameText(() -> Translation.msg("fighterBay.returned").arg("wing", name).text()), Misc.getTextColor());
         }
     }
 }

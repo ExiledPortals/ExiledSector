@@ -225,6 +225,17 @@ class CrewStealTest {
     }
 
     @Test
+    void crewFromABattleQuitWithoutSettlingIsDiscardedInsteadOfReachingTheNextSave() {
+        FleetCrewLedger ledger = FleetCrewLedger.forCurrentCombat();
+        ledger.credit(new Object(), 4f);
+        ledger.sacrifice();
+
+        FleetCrewLedger.discardPending();
+
+        assertEquals(new FleetCrewLedger.CrewChange(0, 0), FleetCrewLedger.drain());
+    }
+
+    @Test
     void roundingUpIgnoresFloatingPointNoise() {
         assertEquals(0, FleetCrewLedger.roundUp(0f));
         assertEquals(1, FleetCrewLedger.roundUp(0.2f));
