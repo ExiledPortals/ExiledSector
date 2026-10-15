@@ -205,6 +205,14 @@ public final class ShipTreeSync {
         return true;
     }
 
+    static void dropNpcTree(FleetMemberAPI member) {
+        if (NpcTreeTag.find(member.getVariant()) == null) {
+            return;
+        }
+        clearNpcTree(ownedVariant(member));
+        member.setStatUpdateNeeded(true);
+    }
+
     private static void clearNpcTree(ShipVariantAPI variant) {
         NpcTreeTag.removeAll(variant);
         if (variant.hasHullMod(SkillTreeHullMod.ID) && !variant.getPermaMods().contains(SkillTreeHullMod.ID)) {

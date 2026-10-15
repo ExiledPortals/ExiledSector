@@ -22,6 +22,8 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.loading.VariantSource;
 import exiledsector.ExiledSectorModPlugin;
+import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -67,6 +69,7 @@ class NpcFleetLevellerTest {
     private MutableCharacterStatsAPI playerStats;
     private CampaignFleetAPI playerFleet;
     private LocationAPI location;
+    private final Map<String, Object> persistentData = new HashMap<>();
 
     @BeforeEach
     void setUp() {
@@ -88,6 +91,7 @@ class NpcFleetLevellerTest {
         when(sector.getPlayerStats()).thenReturn(playerStats);
         when(sector.getSeedString()).thenReturn("SEED-1");
         when(sector.getPlayerFleet()).thenReturn(playerFleet);
+        when(sector.getPersistentData()).thenReturn(persistentData);
         lunaSettingsMock = Mockito.mockStatic(LunaSettings.class, invocation -> null);
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSector).thenReturn(sector);
@@ -327,6 +331,44 @@ class NpcFleetLevellerTest {
 
         assertEquals(1, tags.size());
         assertTrue(tags.get(0).startsWith(NpcTreeTag.PREFIX));
+    }
+
+    @Test
+    void yourShipsDetachedIntoATaskGroupKeepTheirOwnTreeAndHullMods() {
+        Set<String> hullMods = new LinkedHashSet<>(List.of("heavyarmor", SkillTreeHullMod.ID));
+        ShipVariantAPI yourVariant = statefulVariant(hullMods, new ArrayList<>());
+        when(yourVariant.getPermaMods()).thenReturn(new LinkedHashSet<>(List.of(SkillTreeHullMod.ID)));
+        FleetMemberAPI yourShip = member("yours", yourVariant, true);
+        ShipSkillData progress = new ShipSkillData();
+        progress.addXp(10f);
+        ShipSkillDataManager.put("levelled", progress);
+        FleetMemberAPI yourLevelledShip = member("levelled", statefulVariant(new LinkedHashSet<>(List.of("heavyarmor")), new ArrayList<>()), true);
+        CampaignFleetAPI taskGroup = fleetOf(yourShip, yourLevelledShip);
+        when(taskGroup.getFaction().isPlayerFaction()).thenReturn(true);
+
+        NpcFleetLeveller.ensure(taskGroup);
+
+        assertNull(NpcTreeTag.find(yourShip.getVariant()));
+        assertNull(NpcTreeTag.find(yourLevelledShip.getVariant()));
+        assertTrue(hullMods.contains("heavyarmor"));
+        assertTrue(yourLevelledShip.getVariant().hasHullMod("heavyarmor"));
+        assertTrue(records(taskGroup).isEmpty());
+    }
+
+    @Test
+    void anNpcTreeAlreadyGivenToOneOfYourShipsIsClearedAndForgotten() {
+        List<String> tags = new ArrayList<>();
+        ShipVariantAPI yourVariant = statefulVariant(new LinkedHashSet<>(), tags);
+        FleetMemberAPI yourShip = member("yours", yourVariant, true);
+        CampaignFleetAPI taskGroup = fleetOf(yourShip);
+        NpcFleetLeveller.ensure(taskGroup);
+        assertNotNull(NpcTreeTag.find(yourVariant));
+        when(yourVariant.getPermaMods()).thenReturn(new LinkedHashSet<>(List.of(SkillTreeHullMod.ID)));
+
+        NpcFleetLeveller.ensure(taskGroup);
+
+        assertNull(NpcTreeTag.find(yourVariant));
+        assertFalse(records(taskGroup).containsKey("yours"));
     }
 
     @Test

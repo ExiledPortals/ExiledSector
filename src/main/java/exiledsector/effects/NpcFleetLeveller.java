@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.FrameworkFit;
 import exiledsector.skills.ShipSkillData;
@@ -49,6 +50,11 @@ public final class NpcFleetLeveller {
         int playerLevel = 0;
         String factionRegion = npcFleet.getFaction() == null ? null : NpcFactionVolumes.regionFor(npcFleet.getFaction().getId());
         for (FleetMemberAPI member : npcFleet.getFleetData().getMembersListCopy()) {
+            if (isPlayerShip(member)) {
+                recordsByMemberId.remove(member.getId());
+                ShipTreeSync.dropNpcTree(member);
+                continue;
+            }
             String memberRecord = recordsByMemberId.get(member.getId());
             if (memberRecord == null) {
                 if (seedPrefix == null) {
@@ -71,6 +77,10 @@ public final class NpcFleetLeveller {
     static boolean isLevellable(CampaignFleetAPI fleet) {
         return fleet != null && !fleet.isPlayerFleet() && !fleet.isStationMode()
                 && fleet.getContainingLocation() != null && fleet.getFleetData() != null;
+    }
+
+    static boolean isPlayerShip(FleetMemberAPI member) {
+        return member.getVariant().getPermaMods().contains(SkillTreeHullMod.ID) || ShipSkillDataManager.hasProgress(member.getId());
     }
 
     static boolean carriesSocketables(CampaignFleetAPI fleet) {
