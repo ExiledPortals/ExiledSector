@@ -74,6 +74,7 @@ final class SplitBeamDrones {
     private SplitDrone start(SplitKey key, WeaponAPI weapon) {
         ShareListener shareListener = new ShareListener();
         SplitDrone split = new SplitDrone(key, WeaponDroneFactory.create(firingShip, weapon, shareListener), shareListener);
+        WeaponDroneStats.mirrorTimeMult(firingShip.getMutableStats(), split.droneShip.getMutableStats());
         split.droneShip.addListener(split);
         return split;
     }
@@ -133,9 +134,11 @@ final class SplitBeamDrones {
                 markersMirrored = true;
             }
             boolean firingShipGone = !firingShip.isAlive();
-            float firingShipAmount = firingShipGone ? amount : amount * firingShip.getMutableStats().getTimeMult().getModifiedValue();
-            secondsSinceRefresh += firingShipAmount;
-            secondsSinceStart += firingShipAmount;
+            if (!firingShipGone) {
+                WeaponDroneStats.mirrorTimeMult(firingShip.getMutableStats(), droneShip.getMutableStats());
+            }
+            secondsSinceRefresh += amount;
+            secondsSinceStart += amount;
             boolean sharing = secondsSinceRefresh <= SPLIT_TIMEOUT_SECONDS;
             if (!sharing) {
                 shareListener.damageShare = 0f;

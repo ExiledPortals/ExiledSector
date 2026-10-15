@@ -59,6 +59,18 @@ final class WeaponDroneStats {
         }
     }
 
+    static void mirrorTimeMult(MutableShipStatsAPI source, MutableShipStatsAPI drone) {
+        MutableStat sourceTimeMult = source.getTimeMult();
+        MutableStat droneTimeMult = drone.getTimeMult();
+        if (sourceTimeMult.getModifiedValue() == droneTimeMult.getModifiedValue()) {
+            return;
+        }
+        droneTimeMult.getFlatMods().clear();
+        droneTimeMult.getPercentMods().clear();
+        droneTimeMult.getMultMods().clear();
+        droneTimeMult.applyMods(sourceTimeMult);
+    }
+
     private static void copyBonus(StatBonus source, StatBonus target) {
         target.getFlatBonuses().clear();
         target.getPercentBonuses().clear();

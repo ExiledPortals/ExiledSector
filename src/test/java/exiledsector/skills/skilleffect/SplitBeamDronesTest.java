@@ -333,7 +333,30 @@ class SplitBeamDronesTest {
     }
 
     @Test
-    void theSplitWindowRunsOnTheFiringShipsClockSoTimeDilationDoesNotCutItShort() {
+    void theDroneRunsAtTheFiringShipsTimeRateAndFollowsItsChanges() {
+        ShipAPI firingShip = liveFiringShip(1f);
+        MutableStat firingTimeMult = new MutableStat(1f);
+        firingTimeMult.modifyMult("temporal_shell", 3f);
+        when(firingShip.getMutableStats().getTimeMult()).thenReturn(firingTimeMult);
+        WeaponAPI droneWeapon = mock(WeaponAPI.class);
+        ShipAPI drone = droneWith(droneWeapon);
+        MutableStat droneTimeMult = new MutableStat(1f);
+        when(drone.getMutableStats().getTimeMult()).thenReturn(droneTimeMult);
+        WeaponAPI primaryWeapon = mock(WeaponAPI.class);
+
+        withDrones(firingShip, primaryWeapon, (drones, engine) -> {
+            split(drones, primaryWeapon, liveTarget(new Vector2f(500f, 0f)));
+            assertEquals(3f, droneTimeMult.getModifiedValue(), 1e-6f);
+
+            firingTimeMult.unmodify("temporal_shell");
+            selfTickingListenerOn(drone).advance(0.05f);
+
+            assertEquals(1f, droneTimeMult.getModifiedValue(), 1e-6f);
+        }, drone);
+    }
+
+    @Test
+    void theSplitWindowCountsTheDronesOwnTimeBecauseTheEngineAlreadyRunsItOnTheFiringShipsClock() {
         ShipAPI firingShip = liveFiringShip(0.5f);
         WeaponAPI droneWeapon = mock(WeaponAPI.class);
         ShipAPI drone = droneWith(droneWeapon);
@@ -342,7 +365,7 @@ class SplitBeamDronesTest {
         withDrones(firingShip, primaryWeapon, (drones, engine) -> {
             split(drones, primaryWeapon, liveTarget(new Vector2f(500f, 0f)));
 
-            selfTickingListenerOn(drone).advance(1.5f);
+            selfTickingListenerOn(drone).advance(0.75f);
 
             verify(engine, never()).removeEntity(drone);
             verify(droneWeapon).setForceFireOneFrame(true);
