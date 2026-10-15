@@ -1,5 +1,6 @@
 package exiledsector.ui.inspect;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.listeners.CodexEventListener;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -23,6 +24,7 @@ public class SkillTreeCodexListener implements CodexEventListener {
 
     @Override
     public void reportAboutToOpenCodex() {
+        SocketableCodex.refreshUnlocks(Global.getSector());
         try {
             for (CodexEntryPlugin entry : new ArrayList<>(CodexDataV2.ENTRIES.values())) {
                 if (entry.getParam() instanceof FleetMemberAPI member) {
@@ -73,7 +75,7 @@ public class SkillTreeCodexListener implements CodexEventListener {
         }
         for (Socketable socketable : installed) {
             CodexEntryPlugin socketableEntry = CodexDataV2.getEntry(SocketableCodex.entryId(socketable.definitionId()));
-            if (socketableEntry != null) {
+            if (socketableEntry != null && socketableEntry.isVisible()) {
                 treeEntry.addRelatedEntry(socketableEntry);
             }
         }

@@ -2,7 +2,9 @@ package exiledsector.ui.inspect;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ModSpecAPI;
+import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.impl.codex.CodexDataV2;
+import com.fs.starfarer.api.impl.codex.CodexEntryPlugin;
 import com.fs.starfarer.api.impl.codex.CodexEntryV2;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -11,11 +13,13 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.socketables.SocketableDefinition;
 import exiledsector.socketables.SocketableDefinitions;
+import exiledsector.socketables.SocketableUnlock;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,7 +29,40 @@ public final class SocketableCodex {
     public static final String CATEGORY_ID = "exiledSector_socketables";
     static final String ENTRY_PREFIX = "exiledSector_socketable_";
 
+    private static volatile UnlockState unlockState = UnlockState.NONE;
+
+    private record UnlockState(SectorAPI sector, Set<String> unlockedUniqueIds) {
+        static final UnlockState NONE = new UnlockState(null, Set.of());
+    }
+
     private SocketableCodex() {
+    }
+
+    public static void refreshUnlocks(SectorAPI sector) {
+        Set<String> unlockedUniqueIds = new HashSet<>();
+        try {
+            for (SocketableDefinition definition : SocketableDefinitions.all()) {
+                if (isUnlockGated(definition) && SocketableUnlock.unlockConditionMet(definition, sector)) {
+                    unlockedUniqueIds.add(definition.id());
+                }
+            }
+        } catch (RuntimeException e) {
+            Logger.getLogger(SocketableCodex.class).warn("Could not check which unique socketables are unlocked", e);
+        }
+        unlockState = new UnlockState(sector, Set.copyOf(unlockedUniqueIds));
+    }
+
+    static boolean isRevealed(SocketableDefinition definition) {
+        if (!isUnlockGated(definition)) {
+            return true;
+        }
+        UnlockState currentState = unlockState;
+        return currentState.sector() != null && currentState.sector() == Global.getSector()
+                && currentState.unlockedUniqueIds().contains(definition.id());
+    }
+
+    private static boolean isUnlockGated(SocketableDefinition definition) {
+        return definition.unique() && !definition.unlock().isEmpty();
     }
 
     public static String entryId(String definitionId) {
@@ -34,7 +71,14 @@ public final class SocketableCodex {
 
     public static String existingEntryId(String definitionId) {
         String entryId = entryId(definitionId);
-        return entryId != null && CodexDataV2.ENTRIES != null && CodexDataV2.getEntry(entryId) != null ? entryId : null;
+        CodexEntryPlugin entry = entryId == null || CodexDataV2.ENTRIES == null ? null : CodexDataV2.getEntry(entryId);
+        if (entry == null) {
+            return null;
+        }
+        SocketableDefinition definition = SocketableDefinitions.get(definitionId);
+        boolean unlocked = definition == null || !isUnlockGated(definition)
+                || SocketableUnlock.unlockConditionMet(definition, Global.getSector());
+        return unlocked ? entryId : null;
     }
 
     public static boolean open(String definitionId) {

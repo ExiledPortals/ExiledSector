@@ -12,13 +12,11 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
-import exiledsector.i18n.Message;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.socketables.PoolEntry;
 import exiledsector.socketables.RolledEffect;
 import exiledsector.socketables.SocketableDefinition;
-import exiledsector.socketables.SocketableDrops;
 import exiledsector.socketables.SocketableRarity;
 import exiledsector.socketables.SocketableRoller;
 import exiledsector.socketables.SocketableRollOdds;
@@ -53,6 +51,11 @@ public class SocketableCodexEntry extends CodexEntryV2 implements CustomUIPanelP
     private String subtitle() {
         String socketName = definition.kind().displayName();
         return definition.unique() ? Translation.msg("codex.socketables.uniqueSubtitle").arg("socket", socketName).text() : socketName;
+    }
+
+    @Override
+    public boolean isVisible() {
+        return SocketableCodex.isRevealed(definition);
     }
 
     @Override
@@ -104,16 +107,13 @@ public class SocketableCodexEntry extends CodexEntryV2 implements CustomUIPanelP
         } else {
             writeAffixes(info);
         }
-        if (definition.pool().stream().anyMatch(PoolEntry::scalesWithHullSize)) {
-            VanillaText.addPara(info, Translation.styled("codex.socketables.hullValues"), PAD, Misc.getGrayColor());
+        if (SocketableRoller.averageRolls()) {
+            VanillaText.addPara(info, Translation.styled("codex.socketables.averageRolls"), PAD, Misc.getGrayColor());
         }
-        String rollsKey = SocketableRoller.averageRolls() ? "codex.socketables.averageRolls" : "codex.socketables.randomRolls";
-        VanillaText.addPara(info, Translation.styled(rollsKey), PAD, Misc.getGrayColor());
     }
 
     private void writeUnique(TooltipMakerAPI info) {
         info.addSectionHeading(Translation.text("codex.socketables.effects"), Alignment.MID, PAD);
-        VanillaText.addPara(info, Translation.styled("codex.socketables.uniqueRolls"), PAD, Misc.getTextColor());
         float linePad = PAD;
         for (PoolEntry entry : definition.pool()) {
             StyledText effectText = effectText(entry);
@@ -125,24 +125,12 @@ public class SocketableCodexEntry extends CodexEntryV2 implements CustomUIPanelP
     }
 
     private void writeAffixes(TooltipMakerAPI info) {
-        boolean synthesisable = SocketableDrops.canBeSynthesised(definition);
-        info.addSectionHeading(Translation.text("codex.socketables.effectCount"), Alignment.MID, PAD);
-        Message countMessage = Translation.msg("codex.socketables.effectCounts");
-        for (int effectCount : SocketableRollOdds.EFFECT_COUNTS) {
-            countMessage.arg("chance" + effectCount, percentText(SocketableRollOdds.effectCountChance(effectCount)));
-        }
-        VanillaText.addPara(info, countMessage.styled(), PAD, Misc.getTextColor());
-        if (synthesisable) {
-            VanillaText.addPara(info, Translation.styled("codex.socketables.synthesisedCount"), LINE_PAD, Misc.getTextColor());
-        }
-        Map<String, Double> foundChances = SocketableRollOdds.foundChances(definition);
-        Map<String, Double> synthesisedChances = synthesisable ? SocketableRollOdds.synthesisedChances(definition) : Map.of();
-        writePool(info, "codex.socketables.prefixes", definition.prefixes(), foundChances, synthesisedChances);
-        writePool(info, "codex.socketables.suffixes", definition.suffixes(), foundChances, synthesisedChances);
+        Map<String, Double> weightShares = SocketableRollOdds.weightShares(definition);
+        writePool(info, "codex.socketables.prefixes", definition.prefixes(), weightShares);
+        writePool(info, "codex.socketables.suffixes", definition.suffixes(), weightShares);
     }
 
-    private static void writePool(TooltipMakerAPI info, String headingKey, List<PoolEntry> pool, Map<String, Double> foundChances,
-                                  Map<String, Double> synthesisedChances) {
+    private static void writePool(TooltipMakerAPI info, String headingKey, List<PoolEntry> pool, Map<String, Double> weightShares) {
         if (pool.isEmpty()) {
             return;
         }
@@ -153,13 +141,9 @@ public class SocketableCodexEntry extends CodexEntryV2 implements CustomUIPanelP
             if (effectText == null) {
                 continue;
             }
-            String foundChance = percentText(foundChances.getOrDefault(entry.effectName(), 0.0));
-            Double synthesisedChance = synthesisedChances.get(entry.effectName());
-            Message line = synthesisedChance == null
-                    ? Translation.msg("codex.socketables.effectChance").arg("chance", foundChance)
-                    : Translation.msg("codex.socketables.effectChanceSynthesised").arg("chance", foundChance)
-                            .arg("synthesised", percentText(synthesisedChance));
-            VanillaText.addPara(info, line.arg("effect", effectText).styled(), linePad, Misc.getTextColor());
+            String chance = percentText(weightShares.getOrDefault(entry.effectName(), 0.0));
+            VanillaText.addPara(info, Translation.msg("codex.socketables.effectChance").arg("chance", chance).arg("effect", effectText).styled(),
+                    linePad, Misc.getTextColor());
             linePad = LINE_PAD;
         }
     }
