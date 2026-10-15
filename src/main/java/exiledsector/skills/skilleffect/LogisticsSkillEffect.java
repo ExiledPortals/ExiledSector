@@ -19,8 +19,10 @@ import static exiledsector.skills.skilleffect.StatTarget.stat;
 public enum LogisticsSkillEffect implements BackedSkillEffect {
 
     FUEL_CAPACITY_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getFuelMod), "stat.fuelCapacity", false),
+    FUEL_CAPACITY_MULT(MULT, bonus(MutableShipStatsAPI::getFuelMod), "stat.fuelCapacity", false),
     FUEL_CAPACITY_FLAT(FLAT, bonus(MutableShipStatsAPI::getFuelMod), "stat.fuelCapacity", false),
     CARGO_CAPACITY_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getCargoMod), "stat.cargoCapacity", false),
+    CARGO_CAPACITY_MULT(MULT, bonus(MutableShipStatsAPI::getCargoMod), "stat.cargoCapacity", false),
     CARGO_CAPACITY_FLAT(FLAT, bonus(MutableShipStatsAPI::getCargoMod), "stat.cargoCapacity", false),
     CARGO_CAPACITY_PER_FIGHTER_BAY {
         @Override
@@ -35,6 +37,7 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
         }
     },
     CREW_CAPACITY_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getMaxCrewMod), "stat.crewCapacity", false),
+    CREW_CAPACITY_MULT(MULT, bonus(MutableShipStatsAPI::getMaxCrewMod), "stat.crewCapacity", false),
     CREW_CAPACITY_FLAT(FLAT, bonus(MutableShipStatsAPI::getMaxCrewMod), "stat.crewCapacity", false),
     BURN_LEVEL_FLAT(FLAT, stat(MutableShipStatsAPI::getMaxBurnLevel), "stat.maxBurnLevel", false),
     SENSOR_PROFILE_PERCENT(PERCENT, stat(MutableShipStatsAPI::getSensorProfile), "stat.sensorProfile", true),
