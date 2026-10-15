@@ -7,8 +7,8 @@
 				"flux_capacity_3",
 				"small_flux_optional_1"
 			],
-			"x": -440,
-			"y": -2211,
+			"x": -559,
+			"y": -2645,
 			"orbitAnchorId": "anchor_8",
 			"orbitAngle": 0,
 			"tags": [
@@ -22,8 +22,8 @@
 				"flux_dissipation_2",
 				"small_flux_optional_4"
 			],
-			"x": -486,
-			"y": -3209,
+			"x": -601,
+			"y": -3798,
 			"orbitAnchorId": "anchor_9",
 			"orbitAngle": 0,
 			"tags": [
@@ -37,8 +37,8 @@
 				"missleracks_1",
 				"missile_damage_2"
 			],
-			"x": 483,
-			"y": 3387,
+			"x": 570,
+			"y": 3981,
 			"orbitAnchorId": "anchor_3",
 			"orbitAngle": 90,
 			"tags": [
@@ -52,8 +52,8 @@
 				"beam_damage_5",
 				"beam_damage_3"
 			],
-			"x": -3507,
-			"y": -290,
+			"x": -4102,
+			"y": -364,
 			"orbitAnchorId": "anchor_58",
 			"orbitAngle": 180,
 			"tags": [
@@ -67,8 +67,8 @@
 				"magazines_1",
 				"non_beam_energy_damage_2"
 			],
-			"x": -913,
-			"y": 2176,
+			"x": -1101,
+			"y": 2746,
 			"orbitAnchorId": "anchor_57",
 			"orbitAngle": -147.97741800099922,
 			"tags": [
@@ -82,8 +82,8 @@
 				"blast_doors_1",
 				"hull_multi_1"
 			],
-			"x": 1637,
-			"y": 1933,
+			"x": 2043,
+			"y": 2375,
 			"orbitAnchorId": "anchor_7",
 			"orbitAngle": 90,
 			"tags": [
@@ -96,8 +96,8 @@
 			"connectedTo": [
 				"flux_capacity_3"
 			],
-			"x": -740,
-			"y": -2211,
+			"x": -859,
+			"y": -2645,
 			"orbitAnchorId": "anchor_8",
 			"orbitAngle": 180,
 			"tags": [
@@ -110,8 +110,8 @@
 			"connectedTo": [
 				"modular_hull_socket_1"
 			],
-			"x": -351,
-			"y": 3357,
+			"x": -309,
+			"y": 4121,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#f73b3b",
 			"tags": [
@@ -125,10 +125,10 @@
 				"armor_3",
 				"hull_multi_3"
 			],
-			"x": -2880,
-			"y": 1641,
+			"x": -3727,
+			"y": 828,
 			"orbitAnchorId": "anchor_5",
-			"orbitAngle": 45.000000000000064,
+			"orbitAngle": -44.99999999999995,
 			"tags": [
 				"core"
 			]
@@ -139,8 +139,8 @@
 			"connectedTo": [
 				"weapon_durability_1"
 			],
-			"x": 962,
-			"y": 2088,
+			"x": 1177,
+			"y": 2648,
 			"orbitAnchorId": "anchor_18",
 			"orbitAngle": -29.999999999999996,
 			"tags": [
@@ -154,8 +154,8 @@
 				"hull_multi_6",
 				"hull_multi_4"
 			],
-			"x": 2338,
-			"y": 329,
+			"x": 2779,
+			"y": 417,
 			"orbitAnchorId": "anchor_6",
 			"orbitAngle": -51.30000000000007,
 			"tags": [
@@ -169,8 +169,8 @@
 				"armor_1",
 				"hull_multi_2"
 			],
-			"x": 1489,
-			"y": 1785,
+			"x": 1895,
+			"y": 2227,
 			"orbitAnchorId": "anchor_7",
 			"orbitAngle": 180,
 			"tags": [
@@ -185,8 +185,8 @@
 				"armor_1",
 				"small_flux_optional_31"
 			],
-			"x": 1785,
-			"y": 1785,
+			"x": 2191,
+			"y": 2227,
 			"orbitAnchorId": "anchor_7",
 			"orbitAngle": 0,
 			"tags": [
@@ -200,8 +200,8 @@
 				"increased_vent_rate_1",
 				"emp_damage_taken_multi_1"
 			],
-			"x": 1629,
-			"y": -3251,
+			"x": 1919,
+			"y": -3776,
 			"tags": [
 				"core"
 			]
@@ -213,8 +213,8 @@
 				"repair_time_3",
 				"repair_time_2"
 			],
-			"x": -2113,
-			"y": -868,
+			"x": -2673,
+			"y": -1083,
 			"orbitAnchorId": "anchor_28",
 			"orbitAngle": 0,
 			"tags": [
@@ -229,8 +229,8 @@
 				"repair_time_2",
 				"small_flux_optional_41"
 			],
-			"x": -2413,
-			"y": -868,
+			"x": -2973,
+			"y": -1083,
 			"orbitAnchorId": "anchor_28",
 			"orbitAngle": 180,
 			"tags": [
@@ -244,8 +244,8 @@
 				"autorepair_1",
 				"repair_time_1"
 			],
-			"x": -2263,
-			"y": -1018,
+			"x": -2823,
+			"y": -1233,
 			"orbitAnchorId": "anchor_28",
 			"orbitAngle": 270,
 			"tags": [
@@ -256,13 +256,12 @@
 			"id": "hardened_subsystems_1",
 			"type": "hardened_subsystems",
 			"connectedTo": [
-				"peak_cr_duration_2",
 				"peak_cr_duration_1"
 			],
-			"x": 2853,
-			"y": 1461,
+			"x": 3421,
+			"y": 2017,
 			"orbitAnchorId": "anchor_27",
-			"orbitAngle": -151.05124835654445,
+			"orbitAngle": 0,
 			"tags": [
 				"core"
 			]
@@ -273,8 +272,8 @@
 			"connectedTo": [
 				"weapon_turn_rate_2"
 			],
-			"x": -1621,
-			"y": 1949,
+			"x": -2016,
+			"y": 2401,
 			"orbitAnchorId": "anchor_30",
 			"orbitAngle": 90,
 			"tags": [
@@ -288,8 +287,8 @@
 				"small_flux_optional_38",
 				"weapon_turn_rate_2"
 			],
-			"x": -1621,
-			"y": 1649,
+			"x": -2016,
+			"y": 2101,
 			"orbitAnchorId": "anchor_30",
 			"orbitAngle": 270,
 			"tags": [
@@ -303,8 +302,8 @@
 				"turretgyros_1",
 				"weapon_turn_rate_1"
 			],
-			"x": -1471,
-			"y": 1799,
+			"x": -1866,
+			"y": 2251,
 			"orbitAnchorId": "anchor_30",
 			"orbitAngle": 0,
 			"tags": [
@@ -318,8 +317,8 @@
 				"ballistic_damage_3",
 				"ballistic_projectile_speed_3"
 			],
-			"x": 2038,
-			"y": 2817,
+			"x": 2402,
+			"y": 3294,
 			"orbitAnchorId": "anchor_4",
 			"orbitAngle": 87.29999999999994,
 			"ringBeltPath": "graphics/planets/aurorae.png",
@@ -335,8 +334,8 @@
 				"ballistic_damage_4",
 				"non_beam_energy_damage_1"
 			],
-			"x": -712,
-			"y": 2091,
+			"x": -900,
+			"y": 2661,
 			"orbitAnchorId": "anchor_57",
 			"orbitAngle": -77.74631840379944,
 			"tags": [
@@ -349,8 +348,8 @@
 			"connectedTo": [
 				"pd_damage_to_missiles_1"
 			],
-			"x": 2110,
-			"y": -1241,
+			"x": 2610,
+			"y": -1573,
 			"orbitAnchorId": "anchor_21",
 			"orbitAngle": 29.99999999999998,
 			"tags": [
@@ -363,8 +362,8 @@
 			"connectedTo": [
 				"missile_damage_1"
 			],
-			"x": 633,
-			"y": 3237,
+			"x": 720,
+			"y": 3831,
 			"orbitAnchorId": "anchor_3",
 			"orbitAngle": 0,
 			"tags": [
@@ -377,8 +376,8 @@
 			"connectedTo": [
 				"small_flux_optional_10"
 			],
-			"x": 3398,
-			"y": 6,
+			"x": 3998,
+			"y": 7,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#33ff36",
 			"tags": [
@@ -391,8 +390,8 @@
 			"connectedTo": [
 				"small_flux_optional_25"
 			],
-			"x": 950,
-			"y": -2502,
+			"x": 1163,
+			"y": -3063,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#ec6fe8",
 			"tags": [
@@ -405,8 +404,8 @@
 			"connectedTo": [
 				"missile_damage_4"
 			],
-			"x": -1693,
-			"y": 2824,
+			"x": -2025,
+			"y": 3324,
 			"orbitAnchorId": "anchor_20",
 			"orbitAngle": 0,
 			"tags": [
@@ -419,8 +418,8 @@
 			"connectedTo": [
 				"beam_damage_5"
 			],
-			"x": -3189,
-			"y": -614,
+			"x": -3784,
+			"y": -688,
 			"tags": [
 				"core"
 			]
@@ -447,8 +446,8 @@
 			"connectedTo": [
 				"beam_damage_5"
 			],
-			"x": -3494,
-			"y": -619,
+			"x": -4089,
+			"y": -693,
 			"tags": [
 				"core"
 			]
@@ -459,8 +458,8 @@
 			"connectedTo": [
 				"ballistic_and_energy_weapon_range_3"
 			],
-			"x": 3459,
-			"y": 521,
+			"x": 4046,
+			"y": 645,
 			"tags": [
 				"core"
 			]
@@ -471,8 +470,8 @@
 			"connectedTo": [
 				"ballistic_and_energy_weapon_range_1"
 			],
-			"x": -1583,
-			"y": -1302,
+			"x": -2051,
+			"y": -1677,
 			"tags": [
 				"core"
 			]
@@ -483,8 +482,8 @@
 			"connectedTo": [
 				"ecm_resistance_2"
 			],
-			"x": 2519,
-			"y": -2230,
+			"x": 2985,
+			"y": -2607,
 			"orbitAnchorId": "anchor_15",
 			"orbitAngle": -135.79999999999998,
 			"tags": [
@@ -497,8 +496,8 @@
 			"connectedTo": [
 				"small_flux_optional_36"
 			],
-			"x": -1012,
-			"y": 3210,
+			"x": -1192,
+			"y": 3782,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#99ffb3",
 			"tags": [
@@ -512,8 +511,8 @@
 				"shield_raise_rate_1",
 				"shield_turn_rate_1"
 			],
-			"x": 950,
-			"y": -3362,
+			"x": 1120,
+			"y": -3937,
 			"orbitAnchorId": "anchor_2",
 			"orbitAngle": 270,
 			"tags": [
@@ -526,8 +525,8 @@
 			"connectedTo": [
 				"shield_arc_2"
 			],
-			"x": 753,
-			"y": -2215,
+			"x": 874,
+			"y": -2648,
 			"orbitAnchorId": "anchor_1",
 			"orbitAngle": 0,
 			"tags": [
@@ -540,8 +539,8 @@
 			"connectedTo": [
 				"shield_damage_taken_multi_1"
 			],
-			"x": -2887,
-			"y": -1979,
+			"x": -3369,
+			"y": -2336,
 			"orbitAnchorId": "anchor_13",
 			"orbitAngle": 180,
 			"tags": [
@@ -554,8 +553,8 @@
 			"connectedTo": [
 				"shield_upkeep_multi_1"
 			],
-			"x": -3180,
-			"y": -1524,
+			"x": -3718,
+			"y": -1789,
 			"orbitAnchorId": "anchor_14",
 			"orbitAngle": -145.35332004392947,
 			"tags": [
@@ -568,8 +567,8 @@
 			"connectedTo": [
 				"armor_4"
 			],
-			"x": 1333,
-			"y": 3210,
+			"x": 1573,
+			"y": 3760,
 			"orbitAnchorId": "anchor_10",
 			"orbitAngle": 90,
 			"tags": [
@@ -583,8 +582,8 @@
 			"connectedTo": [
 				"small_flux_optional_28"
 			],
-			"x": 3347,
-			"y": -590,
+			"x": 3938,
+			"y": -694,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#3e1cfd",
 			"tags": [
@@ -597,8 +596,8 @@
 			"connectedTo": [
 				"shield_arc_3"
 			],
-			"x": 1284,
-			"y": -1873,
+			"x": 1655,
+			"y": -2345,
 			"orbitAnchorId": "anchor_11",
 			"orbitAngle": 180,
 			"tags": [
@@ -613,8 +612,8 @@
 				"shield_arc_mult_2",
 				"small_flux_optional_43"
 			],
-			"x": -1347,
-			"y": -1961,
+			"x": -1682,
+			"y": -2458,
 			"orbitAnchorId": "anchor_12",
 			"orbitAngle": -131.89999999999995,
 			"ringBeltPath": "graphics/planets/aurorae.png",
@@ -630,8 +629,8 @@
 				"maneuverability_percent_1",
 				"acceleration_percent_1"
 			],
-			"x": 2073,
-			"y": -394,
+			"x": 2664,
+			"y": -499,
 			"orbitAnchorId": "anchor_22",
 			"orbitAngle": 180,
 			"tags": [
@@ -644,8 +643,8 @@
 			"connectedTo": [
 				"small_flux_optional_34"
 			],
-			"x": 2365,
-			"y": 1264,
+			"x": 2762,
+			"y": 1476,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"tags": [
 				"core"
@@ -657,8 +656,8 @@
 			"connectedTo": [
 				"top_speed_1"
 			],
-			"x": -2500,
-			"y": 1173,
+			"x": -3030,
+			"y": 1454,
 			"orbitAnchorId": "anchor_16",
 			"orbitAngle": -145.60000000000002,
 			"tags": [
@@ -671,8 +670,8 @@
 			"connectedTo": [
 				"phase_cloak_flux_threshold_2"
 			],
-			"x": -1389,
-			"y": -2899,
+			"x": -1667,
+			"y": -3431,
 			"orbitAnchorId": "anchor_17",
 			"orbitAngle": 0,
 			"tags": [
@@ -685,8 +684,8 @@
 			"connectedTo": [
 				"small_flux_optional_24"
 			],
-			"x": -1159,
-			"y": -3182,
+			"x": -1364,
+			"y": -3746,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#ab10fe",
 			"tags": [
@@ -699,10 +698,10 @@
 			"connectedTo": [
 				"crew_capacity_flat_2"
 			],
-			"x": -1205,
-			"y": -595,
+			"x": -2260,
+			"y": -398,
 			"orbitAnchorId": "additional_berthing_anchor",
-			"orbitAngle": 270,
+			"orbitAngle": -170,
 			"tags": [
 				"core"
 			]
@@ -711,13 +710,12 @@
 			"id": "augmentedengines_1",
 			"type": "augmentedengines",
 			"connectedTo": [
-				"small_flux_optional_95",
 				"small_flux_optional_94"
 			],
-			"x": 623,
-			"y": -1178,
+			"x": 785,
+			"y": -2157,
 			"orbitAnchorId": "augmented_drive_field_anchor_1",
-			"orbitAngle": 40.7964882464631,
+			"orbitAngle": -70,
 			"tags": [
 				"core"
 			]
@@ -728,10 +726,10 @@
 			"connectedTo": [
 				"fuel_flat_1"
 			],
-			"x": 320,
-			"y": 1025,
+			"x": 1475,
+			"y": 1758,
 			"orbitAnchorId": "flat_fuel_anchor",
-			"orbitAngle": 180,
+			"orbitAngle": 50,
 			"tags": [
 				"core"
 			]
@@ -740,10 +738,10 @@
 			"id": "efficiency_overhaul_1",
 			"type": "efficiency_overhaul",
 			"connectedTo": [
-				"small_flux_optional_77"
+				"small_flux_optional_103"
 			],
-			"x": -566,
-			"y": -119,
+			"x": -1771,
+			"y": -1022,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#d2bcdc",
 			"tags": [
@@ -756,10 +754,10 @@
 			"connectedTo": [
 				"cargo_capacity_flat_1"
 			],
-			"x": 1019,
-			"y": -442,
+			"x": 2260,
+			"y": -398,
 			"orbitAnchorId": "flat_cargo_anchor",
-			"orbitAngle": 270,
+			"orbitAngle": -10,
 			"tags": [
 				"core"
 			]
@@ -768,13 +766,12 @@
 			"id": "hiressensors_1",
 			"type": "hiressensors",
 			"connectedTo": [
-				"increased_sensor_strength_1",
 				"increased_sensor_strength_2"
 			],
-			"x": -647,
-			"y": -1174,
+			"x": -785,
+			"y": -2157,
 			"orbitAnchorId": "high_res_sensors_anchor",
-			"orbitAngle": 148.95450917313687,
+			"orbitAngle": -110,
 			"tags": [
 				"core"
 			]
@@ -785,10 +782,10 @@
 			"connectedTo": [
 				"engine_durability_1"
 			],
-			"x": -323,
-			"y": 1020,
+			"x": -785,
+			"y": 2157,
 			"orbitAnchorId": "insulated_engine_assembly_anchor",
-			"orbitAngle": 0,
+			"orbitAngle": 110,
 			"tags": [
 				"core"
 			]
@@ -797,13 +794,12 @@
 			"id": "militarized_subsystems_1",
 			"type": "militarized_subsystems",
 			"connectedTo": [
-				"small_flux_optional_87",
-				"small_flux_optional_88"
+				"small_flux_optional_87"
 			],
-			"x": -1133,
-			"y": 99,
+			"x": -2260,
+			"y": 398,
 			"orbitAnchorId": "militarized_subsystems_anchor",
-			"orbitAngle": -48.126779727329755,
+			"orbitAngle": 170,
 			"tags": [
 				"core"
 			]
@@ -812,10 +808,10 @@
 			"id": "solar_shielding_1",
 			"type": "solar_shielding",
 			"connectedTo": [
-				"small_flux_optional_77"
+				"small_flux_optional_99"
 			],
-			"x": -246,
-			"y": 552,
+			"x": 699,
+			"y": 1922,
 			"tags": [
 				"core"
 			]
@@ -826,10 +822,10 @@
 			"connectedTo": [
 				"survey_generic_cost_reduction_2"
 			],
-			"x": 573,
-			"y": -767,
+			"x": 1475,
+			"y": -1758,
 			"orbitAnchorId": "anchor_47",
-			"orbitAngle": 0,
+			"orbitAngle": -50,
 			"tags": [
 				"core"
 			]
@@ -841,7 +837,7 @@
 				"small_flux_optional_3"
 			],
 			"x": 1,
-			"y": 1911,
+			"y": 2361,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#80ffd4",
 			"tags": [
@@ -852,10 +848,10 @@
 			"id": "converted_fighterbay_1",
 			"type": "converted_fighterbay",
 			"connectedTo": [
-				"small_flux_optional_81"
+				"small_flux_optional_101"
 			],
-			"x": 565,
-			"y": -108,
+			"x": 1771,
+			"y": -1022,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#ffca80",
 			"tags": [
@@ -868,8 +864,8 @@
 			"connectedTo": [
 				"fighter_replacement_1"
 			],
-			"x": -2243,
-			"y": -12,
+			"x": -2843,
+			"y": -28,
 			"orbitAnchorId": "anchor_23",
 			"orbitAngle": 0,
 			"tags": [
@@ -882,8 +878,8 @@
 			"connectedTo": [
 				"fighter_weapon_damage_2"
 			],
-			"x": 3199,
-			"y": -1404,
+			"x": 3741,
+			"y": -1662,
 			"orbitAnchorId": "anchor_26",
 			"orbitAngle": 0,
 			"tags": [
@@ -894,10 +890,10 @@
 			"id": "operations_center_1",
 			"type": "operations_center",
 			"connectedTo": [
-				"small_flux_optional_81"
+				"small_flux_optional_102"
 			],
-			"x": 242,
-			"y": 540,
+			"x": 0,
+			"y": 2045,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#7d67fe",
 			"tags": [
@@ -910,8 +906,8 @@
 			"connectedTo": [
 				"small_flux_optional_3"
 			],
-			"x": 397,
-			"y": 2522,
+			"x": 467,
+			"y": 2967,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#5274ff",
 			"tags": [
@@ -926,8 +922,8 @@
 				"high_scatter_amp_1",
 				"advancedoptics_1"
 			],
-			"x": -3357,
-			"y": -440,
+			"x": -3952,
+			"y": -514,
 			"orbitAnchorId": "anchor_58",
 			"orbitAngle": 270,
 			"tags": [
@@ -941,8 +937,8 @@
 				"small_flux_optional_37",
 				"non_beam_energy_damage_1"
 			],
-			"x": -903,
-			"y": 2393,
+			"x": -1091,
+			"y": 2963,
 			"orbitAnchorId": "anchor_57",
 			"orbitAngle": 142.5252930230804,
 			"tags": [
@@ -953,10 +949,9 @@
 			"id": "root_low_tech_1",
 			"type": "root_low_tech",
 			"connectedTo": [
+				"small_flux_optional_34",
 				"small_flux_optional_83",
-				"small_flux_optional_100",
-				"small_flux_optional_86",
-				"small_flux_optional_34"
+				"small_flux_optional_100"
 			],
 			"x": 1517,
 			"y": 863,
@@ -977,7 +972,7 @@
 				"lowtech_wormhole_2"
 			],
 			"x": 0,
-			"y": 3750,
+			"y": 4350,
 			"orbitAnchorId": "outer_ring",
 			"orbitAngle": 90,
 			"tags": [
@@ -988,10 +983,9 @@
 			"id": "root_midline_1",
 			"type": "root_midline",
 			"connectedTo": [
-				"small_flux_optional_92",
+				"small_flux_optional_45",
 				"small_flux_optional_97",
-				"small_flux_optional_74",
-				"small_flux_optional_45"
+				"small_flux_optional_92"
 			],
 			"x": -1511,
 			"y": 874,
@@ -1005,10 +999,9 @@
 			"id": "root_high_tech_1",
 			"type": "root_high_tech",
 			"connectedTo": [
-				"small_flux_optional_76",
-				"small_flux_optional_89",
 				"small_flux_optional_1",
-				"small_flux_optional_82"
+				"small_flux_optional_89",
+				"small_flux_optional_76"
 			],
 			"x": 0,
 			"y": -1745,
@@ -1025,8 +1018,8 @@
 				"small_flux_optional_28",
 				"fighter_weapon_damage_2"
 			],
-			"x": 2899,
-			"y": -1404,
+			"x": 3441,
+			"y": -1662,
 			"orbitAnchorId": "anchor_26",
 			"orbitAngle": 180,
 			"tags": [
@@ -1041,10 +1034,10 @@
 				"small_flux_optional_79",
 				"small_flux_optional_95"
 			],
-			"x": 708,
-			"y": -1595,
+			"x": 597,
+			"y": -1640,
 			"orbitAnchorId": "inner_ring",
-			"orbitAngle": -66.0729698867759,
+			"orbitAngle": -70,
 			"tags": [
 				"core"
 			]
@@ -1054,12 +1047,13 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_76",
-				"small_flux_optional_84"
+				"small_flux_optional_101",
+				"survey_generic_cost_reduction_1"
 			],
-			"x": 1294,
-			"y": -1171,
+			"x": 1122,
+			"y": -1337,
 			"orbitAnchorId": "inner_ring",
-			"orbitAngle": -42.1459397735517,
+			"orbitAngle": -50,
 			"tags": [
 				"core"
 			]
@@ -1068,13 +1062,14 @@
 			"id": "small_flux_optional_84",
 			"type": "small_flux_optional",
 			"connectedTo": [
+				"small_flux_optional_101",
 				"small_flux_optional_83",
-				"small_flux_optional_79"
+				"cargo_capacity_flat_2"
 			],
-			"x": 1658,
-			"y": -546,
+			"x": 1718,
+			"y": -303,
 			"orbitAnchorId": "inner_ring",
-			"orbitAngle": -18.2189096603275,
+			"orbitAngle": -10,
 			"tags": [
 				"core"
 			]
@@ -1083,14 +1078,14 @@
 			"id": "small_flux_optional_83",
 			"type": "small_flux_optional",
 			"connectedTo": [
+				"small_flux_optional_84",
 				"root_low_tech_1",
-				"small_flux_optional_96",
-				"small_flux_optional_84"
+				"small_flux_optional_96"
 			],
-			"x": 1736,
-			"y": 174,
+			"x": 1718,
+			"y": 303,
 			"orbitAnchorId": "inner_ring",
-			"orbitAngle": 5.70812045289659,
+			"orbitAngle": 10,
 			"tags": [
 				"core"
 			]
@@ -1099,14 +1094,14 @@
 			"id": "small_flux_optional_89",
 			"type": "small_flux_optional",
 			"connectedTo": [
+				"small_flux_optional_90",
 				"root_high_tech_1",
-				"increased_sensor_strength_1",
-				"small_flux_optional_90"
+				"increased_sensor_strength_1"
 			],
-			"x": -710,
-			"y": -1594,
+			"x": -597,
+			"y": -1640,
 			"orbitAnchorId": "inner_ring",
-			"orbitAngle": -114.009065654495,
+			"orbitAngle": -110,
 			"tags": [
 				"core"
 			]
@@ -1115,13 +1110,14 @@
 			"id": "small_flux_optional_90",
 			"type": "small_flux_optional",
 			"connectedTo": [
-				"small_flux_optional_91",
-				"small_flux_optional_89"
+				"small_flux_optional_103",
+				"small_flux_optional_89",
+				"reduced_monthly_supplies_1"
 			],
-			"x": -1297,
-			"y": -1167,
+			"x": -1122,
+			"y": -1337,
 			"orbitAnchorId": "inner_ring",
-			"orbitAngle": -138.01813130899,
+			"orbitAngle": -130,
 			"tags": [
 				"core"
 			]
@@ -1130,13 +1126,14 @@
 			"id": "small_flux_optional_91",
 			"type": "small_flux_optional",
 			"connectedTo": [
+				"small_flux_optional_103",
 				"small_flux_optional_92",
-				"small_flux_optional_90"
+				"crew_capacity_flat_1"
 			],
-			"x": -1660,
-			"y": -538,
+			"x": -1718,
+			"y": -303,
 			"orbitAnchorId": "inner_ring",
-			"orbitAngle": -162.027196963484,
+			"orbitAngle": -170,
 			"tags": [
 				"core"
 			]
@@ -1145,14 +1142,14 @@
 			"id": "small_flux_optional_92",
 			"type": "small_flux_optional",
 			"connectedTo": [
-				"small_flux_optional_91",
 				"root_midline_1",
+				"small_flux_optional_91",
 				"small_flux_optional_88"
 			],
-			"x": -1735,
-			"y": 184,
+			"x": -1718,
+			"y": 303,
 			"orbitAnchorId": "inner_ring",
-			"orbitAngle": 173.963737382021,
+			"orbitAngle": 170,
 			"tags": [
 				"core"
 			]
@@ -1161,13 +1158,13 @@
 			"id": "small_flux_optional_97",
 			"type": "small_flux_optional",
 			"connectedTo": [
-				"root_midline_1",
-				"small_flux_optional_98"
+				"small_flux_optional_98",
+				"root_midline_1"
 			],
-			"x": -1023,
-			"y": 1414,
+			"x": -1122,
+			"y": 1337,
 			"orbitAnchorId": "inner_ring",
-			"orbitAngle": 125.890767495245,
+			"orbitAngle": 130,
 			"tags": [
 				"core"
 			]
@@ -1176,14 +1173,15 @@
 			"id": "small_flux_optional_98",
 			"type": "small_flux_optional",
 			"connectedTo": [
+				"small_flux_optional_102",
 				"small_flux_optional_97",
-				"small_flux_optional_99",
-				"small_flux_optional_3"
+				"small_flux_optional_3",
+				"engine_durability_2"
 			],
-			"x": -358,
-			"y": 1708,
+			"x": -597,
+			"y": 1640,
 			"orbitAnchorId": "inner_ring",
-			"orbitAngle": 101.826863262964,
+			"orbitAngle": 110,
 			"tags": [
 				"core"
 			]
@@ -1193,13 +1191,14 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_100",
-				"small_flux_optional_98",
-				"small_flux_optional_3"
+				"small_flux_optional_102",
+				"small_flux_optional_3",
+				"solar_shielding_1"
 			],
-			"x": 370,
-			"y": 1705,
+			"x": 597,
+			"y": 1640,
 			"orbitAnchorId": "inner_ring",
-			"orbitAngle": 77.7629590306829,
+			"orbitAngle": 70,
 			"tags": [
 				"core"
 			]
@@ -1208,13 +1207,14 @@
 			"id": "small_flux_optional_100",
 			"type": "small_flux_optional",
 			"connectedTo": [
+				"root_low_tech_1",
 				"small_flux_optional_99",
-				"root_low_tech_1"
+				"fuel_flat_2"
 			],
-			"x": 1033,
-			"y": 1406,
+			"x": 1122,
+			"y": 1337,
 			"orbitAnchorId": "inner_ring",
-			"orbitAngle": 53.6990547984018,
+			"orbitAngle": 50,
 			"tags": [
 				"core"
 			]
@@ -1229,7 +1229,7 @@
 				"flux_capacity_1"
 			],
 			"x": 0,
-			"y": -2230,
+			"y": -2680,
 			"tags": [
 				"core"
 			]
@@ -1245,7 +1245,7 @@
 				"flux_dissipation_1"
 			],
 			"x": 0,
-			"y": -2950,
+			"y": -3550,
 			"orbitAnchorId": "middle_ring",
 			"orbitAngle": 270,
 			"tags": [
@@ -1259,8 +1259,8 @@
 				"packed_capacitors_1",
 				"flux_capacity_1"
 			],
-			"x": -590,
-			"y": -2061,
+			"x": -709,
+			"y": -2495,
 			"orbitAnchorId": "anchor_8",
 			"orbitAngle": 90,
 			"tags": [
@@ -1273,8 +1273,8 @@
 			"connectedTo": [
 				"flux_dissipation_2"
 			],
-			"x": -786,
-			"y": -3209,
+			"x": -901,
+			"y": -3798,
 			"orbitAnchorId": "anchor_9",
 			"orbitAngle": 180,
 			"tags": [
@@ -1288,150 +1288,10 @@
 				"efficient_vents_1",
 				"flux_dissipation_1"
 			],
-			"x": -636,
-			"y": -3359,
+			"x": -751,
+			"y": -3948,
 			"orbitAnchorId": "anchor_9",
 			"orbitAngle": 270,
-			"tags": [
-				"core"
-			]
-		},
-		{
-			"id": "small_flux_optional_74",
-			"type": "small_flux_optional",
-			"connectedTo": [
-				"root_midline_1",
-				"small_flux_optional_75",
-				"small_flux_optional_87"
-			],
-			"x": -1087,
-			"y": 632,
-			"tags": [
-				"core"
-			]
-		},
-		{
-			"id": "small_flux_optional_75",
-			"type": "small_flux_optional",
-			"connectedTo": [
-				"small_flux_optional_74",
-				"small_flux_optional_77",
-				"crew_capacity_flat_1",
-				"engine_durability_2"
-			],
-			"x": -665,
-			"y": 385,
-			"tags": [
-				"core"
-			]
-		},
-		{
-			"id": "small_flux_optional_77",
-			"type": "small_flux_optional",
-			"connectedTo": [
-				"small_flux_optional_75",
-				"efficiency_overhaul_1",
-				"solar_shielding_1",
-				"small_flux_optional_81",
-				"small_flux_optional_78"
-			],
-			"x": -246,
-			"y": 135,
-			"orbitAnchorId": "core_star_ring_anchor",
-			"orbitAngle": 151.2705134545586,
-			"tags": [
-				"core"
-			]
-		},
-		{
-			"id": "small_flux_optional_78",
-			"type": "small_flux_optional",
-			"connectedTo": [
-				"small_flux_optional_80",
-				"reduced_monthly_supplies_1",
-				"small_flux_optional_81",
-				"small_flux_optional_77"
-			],
-			"x": 0,
-			"y": -280,
-			"orbitAnchorId": "core_star_ring_anchor",
-			"orbitAngle": 270,
-			"tags": [
-				"core"
-			]
-		},
-		{
-			"id": "small_flux_optional_80",
-			"type": "small_flux_optional",
-			"connectedTo": [
-				"small_flux_optional_78",
-				"small_flux_optional_82",
-				"survey_generic_cost_reduction_1"
-			],
-			"x": 0,
-			"y": -768,
-			"tags": [
-				"core"
-			]
-		},
-		{
-			"id": "small_flux_optional_81",
-			"type": "small_flux_optional",
-			"connectedTo": [
-				"small_flux_optional_85",
-				"small_flux_optional_78",
-				"operations_center_1",
-				"converted_fighterbay_1",
-				"small_flux_optional_77"
-			],
-			"x": 240,
-			"y": 145,
-			"orbitAnchorId": "core_star_ring_anchor",
-			"orbitAngle": 31.08306620176788,
-			"tags": [
-				"core"
-			]
-		},
-		{
-			"id": "small_flux_optional_82",
-			"type": "small_flux_optional",
-			"connectedTo": [
-				"small_flux_optional_80",
-				"root_high_tech_1",
-				"increased_sensor_strength_2",
-				"small_flux_optional_94"
-			],
-			"x": 0,
-			"y": -1257,
-			"tags": [
-				"core"
-			]
-		},
-		{
-			"id": "small_flux_optional_85",
-			"type": "small_flux_optional",
-			"connectedTo": [
-				"small_flux_optional_81",
-				"small_flux_optional_86",
-				"cargo_capacity_flat_2",
-				"fuel_flat_2"
-			],
-			"x": 667,
-			"y": 382,
-			"tags": [
-				"core"
-			]
-		},
-		{
-			"id": "small_flux_optional_86",
-			"type": "small_flux_optional",
-			"connectedTo": [
-				"small_flux_optional_85",
-				"root_low_tech_1",
-				"small_flux_optional_93"
-			],
-			"x": 1090,
-			"y": 626,
 			"tags": [
 				"core"
 			]
@@ -1440,13 +1300,13 @@
 			"id": "survey_generic_cost_reduction_1",
 			"type": "survey_generic_cost_reduction",
 			"connectedTo": [
-				"small_flux_optional_80",
+				"small_flux_optional_79",
 				"survey_generic_cost_reduction_2"
 			],
-			"x": 273,
-			"y": -767,
+			"x": 1283,
+			"y": -1528,
 			"orbitAnchorId": "anchor_47",
-			"orbitAngle": 180,
+			"orbitAngle": 130,
 			"tags": [
 				"core"
 			]
@@ -1455,13 +1315,13 @@
 			"id": "survey_generic_cost_reduction_2",
 			"type": "survey_generic_cost_reduction",
 			"connectedTo": [
-				"surveying_equipment_1",
-				"survey_generic_cost_reduction_1"
+				"survey_generic_cost_reduction_1",
+				"surveying_equipment_1"
 			],
-			"x": 423,
-			"y": -617,
+			"x": 1264,
+			"y": -1739,
 			"orbitAnchorId": "anchor_47",
-			"orbitAngle": 90,
+			"orbitAngle": -140,
 			"tags": [
 				"core"
 			]
@@ -1471,12 +1331,12 @@
 			"type": "increased_sensor_strength",
 			"connectedTo": [
 				"small_flux_optional_89",
-				"hiressensors_1"
+				"increased_sensor_strength_2"
 			],
-			"x": -498,
-			"y": -1438,
+			"x": -683,
+			"y": -1875,
 			"orbitAnchorId": "high_res_sensors_anchor",
-			"orbitAngle": 270,
+			"orbitAngle": 70,
 			"tags": [
 				"core"
 			]
@@ -1485,13 +1345,13 @@
 			"id": "increased_sensor_strength_2",
 			"type": "increased_sensor_strength",
 			"connectedTo": [
-				"small_flux_optional_82",
+				"increased_sensor_strength_1",
 				"hiressensors_1"
 			],
-			"x": -324,
-			"y": -1264,
+			"x": -593,
+			"y": -2067,
 			"orbitAnchorId": "high_res_sensors_anchor",
-			"orbitAngle": 0,
+			"orbitAngle": -20,
 			"tags": [
 				"core"
 			]
@@ -1500,13 +1360,13 @@
 			"id": "small_flux_optional_94",
 			"type": "small_flux_optional",
 			"connectedTo": [
-				"small_flux_optional_82",
+				"small_flux_optional_95",
 				"augmentedengines_1"
 			],
-			"x": 320,
-			"y": -1262,
+			"x": 593,
+			"y": -2067,
 			"orbitAnchorId": "augmented_drive_field_anchor_1",
-			"orbitAngle": 170.16310695606623,
+			"orbitAngle": -160,
 			"tags": [
 				"core"
 			]
@@ -1515,13 +1375,13 @@
 			"id": "small_flux_optional_95",
 			"type": "small_flux_optional",
 			"connectedTo": [
-				"augmentedengines_1",
-				"small_flux_optional_76"
+				"small_flux_optional_76",
+				"small_flux_optional_94"
 			],
-			"x": 557,
-			"y": -1453,
+			"x": 683,
+			"y": -1875,
 			"orbitAnchorId": "augmented_drive_field_anchor_1",
-			"orbitAngle": -67.70058265189768,
+			"orbitAngle": 110,
 			"tags": [
 				"core"
 			]
@@ -1530,13 +1390,13 @@
 			"id": "crew_capacity_flat_1",
 			"type": "crew_capacity_flat",
 			"connectedTo": [
-				"crew_capacity_flat_2",
-				"small_flux_optional_75"
+				"small_flux_optional_91",
+				"crew_capacity_flat_2"
 			],
-			"x": -1205,
-			"y": -255,
+			"x": -1964,
+			"y": -346,
 			"orbitAnchorId": "additional_berthing_anchor",
-			"orbitAngle": 90,
+			"orbitAngle": 10,
 			"tags": [
 				"core"
 			]
@@ -1548,10 +1408,10 @@
 				"crew_capacity_flat_1",
 				"additional_berthing_1"
 			],
-			"x": -1035,
-			"y": -425,
+			"x": -2138,
+			"y": -224,
 			"orbitAnchorId": "additional_berthing_anchor",
-			"orbitAngle": 0,
+			"orbitAngle": 100,
 			"tags": [
 				"core"
 			]
@@ -1560,13 +1420,13 @@
 			"id": "small_flux_optional_87",
 			"type": "small_flux_optional",
 			"connectedTo": [
-				"small_flux_optional_74",
+				"small_flux_optional_88",
 				"militarized_subsystems_1"
 			],
-			"x": -1205,
-			"y": 397,
+			"x": -2138,
+			"y": 224,
 			"orbitAnchorId": "militarized_subsystems_anchor",
-			"orbitAngle": 75.49776323473914,
+			"orbitAngle": -100,
 			"tags": [
 				"core"
 			]
@@ -1576,12 +1436,12 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_92",
-				"militarized_subsystems_1"
+				"small_flux_optional_87"
 			],
-			"x": -1423,
-			"y": 229,
+			"x": -1964,
+			"y": 346,
 			"orbitAnchorId": "militarized_subsystems_anchor",
-			"orbitAngle": 180,
+			"orbitAngle": -10,
 			"tags": [
 				"core"
 			]
@@ -1593,10 +1453,10 @@
 				"engine_durability_2",
 				"insulatedengine_1"
 			],
-			"x": -496,
-			"y": 1193,
+			"x": -593,
+			"y": 2067,
 			"orbitAnchorId": "insulated_engine_assembly_anchor",
-			"orbitAngle": 90,
+			"orbitAngle": 20,
 			"tags": [
 				"core"
 			]
@@ -1605,13 +1465,13 @@
 			"id": "engine_durability_2",
 			"type": "engine_durability",
 			"connectedTo": [
-				"engine_durability_1",
-				"small_flux_optional_75"
+				"small_flux_optional_98",
+				"engine_durability_1"
 			],
-			"x": -669,
-			"y": 1020,
+			"x": -683,
+			"y": 1875,
 			"orbitAnchorId": "insulated_engine_assembly_anchor",
-			"orbitAngle": 180,
+			"orbitAngle": -70,
 			"tags": [
 				"core"
 			]
@@ -1623,10 +1483,10 @@
 				"cargo_capacity_flat_2",
 				"expanded_cargo_holds_1"
 			],
-			"x": 849,
-			"y": -272,
+			"x": 2138,
+			"y": -224,
 			"orbitAnchorId": "flat_cargo_anchor",
-			"orbitAngle": 180,
+			"orbitAngle": 80,
 			"tags": [
 				"core"
 			]
@@ -1635,13 +1495,13 @@
 			"id": "cargo_capacity_flat_2",
 			"type": "cargo_capacity_flat",
 			"connectedTo": [
-				"cargo_capacity_flat_1",
-				"small_flux_optional_85"
+				"small_flux_optional_84",
+				"cargo_capacity_flat_1"
 			],
-			"x": 1019,
-			"y": -102,
+			"x": 1964,
+			"y": -346,
 			"orbitAnchorId": "flat_cargo_anchor",
-			"orbitAngle": 90,
+			"orbitAngle": 170,
 			"tags": [
 				"core"
 			]
@@ -1650,13 +1510,12 @@
 			"id": "augmentedengines_2",
 			"type": "augmentedengines",
 			"connectedTo": [
-				"small_flux_optional_96",
 				"small_flux_optional_93"
 			],
-			"x": 1220,
-			"y": 91,
+			"x": 2260,
+			"y": 398,
 			"orbitAnchorId": "augmented_drive_field_anchor_2",
-			"orbitAngle": -114.41709759097895,
+			"orbitAngle": 10,
 			"tags": [
 				"core"
 			]
@@ -1665,13 +1524,13 @@
 			"id": "small_flux_optional_93",
 			"type": "small_flux_optional",
 			"connectedTo": [
-				"augmentedengines_2",
-				"small_flux_optional_86"
+				"small_flux_optional_96",
+				"augmentedengines_2"
 			],
-			"x": 1222,
-			"y": 408,
+			"x": 2138,
+			"y": 224,
 			"orbitAnchorId": "augmented_drive_field_anchor_2",
-			"orbitAngle": 113.81728991685331,
+			"orbitAngle": -80,
 			"tags": [
 				"core"
 			]
@@ -1680,13 +1539,13 @@
 			"id": "small_flux_optional_96",
 			"type": "small_flux_optional",
 			"connectedTo": [
-				"augmentedengines_2",
-				"small_flux_optional_83"
+				"small_flux_optional_83",
+				"small_flux_optional_93"
 			],
-			"x": 1461,
-			"y": 289,
+			"x": 1964,
+			"y": 346,
 			"orbitAnchorId": "augmented_drive_field_anchor_2",
-			"orbitAngle": 13.12793600001239,
+			"orbitAngle": -170,
 			"tags": [
 				"core"
 			]
@@ -1695,13 +1554,13 @@
 			"id": "fuel_flat_1",
 			"type": "fuel_flat",
 			"connectedTo": [
-				"auxiliary_fuel_tanks_1",
-				"fuel_flat_2"
+				"fuel_flat_2",
+				"auxiliary_fuel_tanks_1"
 			],
-			"x": 493,
-			"y": 1198,
+			"x": 1264,
+			"y": 1739,
 			"orbitAnchorId": "flat_fuel_anchor",
-			"orbitAngle": 90,
+			"orbitAngle": 140,
 			"tags": [
 				"core"
 			]
@@ -1710,13 +1569,13 @@
 			"id": "fuel_flat_2",
 			"type": "fuel_flat",
 			"connectedTo": [
-				"small_flux_optional_85",
+				"small_flux_optional_100",
 				"fuel_flat_1"
 			],
-			"x": 666,
-			"y": 1025,
+			"x": 1283,
+			"y": 1528,
 			"orbitAnchorId": "flat_fuel_anchor",
-			"orbitAngle": 0,
+			"orbitAngle": -130,
 			"tags": [
 				"core"
 			]
@@ -1732,7 +1591,7 @@
 				"hightech_wormhole_2"
 			],
 			"x": 0,
-			"y": -3750,
+			"y": -4350,
 			"orbitAnchorId": "outer_ring",
 			"orbitAngle": 270,
 			"tags": [
@@ -1746,8 +1605,8 @@
 				"small_flux_optional_2",
 				"small_flux_optional_7"
 			],
-			"x": 1159,
-			"y": -3566,
+			"x": 1344,
+			"y": -4137,
 			"orbitAnchorId": "outer_ring",
 			"orbitAngle": 288,
 			"tags": [
@@ -1762,8 +1621,8 @@
 				"small_flux_optional_26",
 				"modular_hull_socket_2"
 			],
-			"x": 2204,
-			"y": -3034,
+			"x": 2557,
+			"y": -3519,
 			"orbitAnchorId": "outer_ring",
 			"orbitAngle": 306,
 			"tags": [
@@ -1778,8 +1637,8 @@
 				"small_flux_optional_28",
 				"modular_hull_socket_2"
 			],
-			"x": 3566,
-			"y": -1159,
+			"x": 4137,
+			"y": -1344,
 			"orbitAnchorId": "outer_ring",
 			"orbitAngle": 342,
 			"tags": [
@@ -1795,7 +1654,7 @@
 				"pirate_wormhole_1",
 				"missile_autoloader_1"
 			],
-			"x": 3750,
+			"x": 4350,
 			"y": 0,
 			"orbitAnchorId": "outer_ring",
 			"orbitAngle": 0,
@@ -1810,10 +1669,10 @@
 				"small_flux_optional_10",
 				"small_flux_optional_12",
 				"small_flux_optional_30",
-				"peak_cr_duration_2"
+				"lowtech_wormhole_1"
 			],
-			"x": 3566,
-			"y": 1159,
+			"x": 4137,
+			"y": 1344,
 			"orbitAnchorId": "outer_ring",
 			"orbitAngle": 18,
 			"tags": [
@@ -1827,11 +1686,10 @@
 				"small_flux_optional_11",
 				"small_flux_optional_13",
 				"small_flux_optional_31",
-				"peak_cr_duration_1",
 				"lowtech_wormhole_1"
 			],
-			"x": 3034,
-			"y": 2204,
+			"x": 3519,
+			"y": 2557,
 			"orbitAnchorId": "outer_ring",
 			"orbitAngle": 36,
 			"tags": [
@@ -1846,8 +1704,8 @@
 				"small_flux_optional_14",
 				"luddic_1"
 			],
-			"x": 2204,
-			"y": 3034,
+			"x": 2557,
+			"y": 3519,
 			"orbitAnchorId": "outer_ring",
 			"orbitAngle": 54,
 			"tags": [
@@ -1861,8 +1719,8 @@
 				"small_flux_optional_13",
 				"modular_hull_socket_1"
 			],
-			"x": 1159,
-			"y": 3566,
+			"x": 1344,
+			"y": 4137,
 			"orbitAnchorId": "outer_ring",
 			"orbitAngle": 72,
 			"tags": [
@@ -1876,8 +1734,8 @@
 				"small_flux_optional_17",
 				"modular_hull_socket_1"
 			],
-			"x": -1159,
-			"y": 3566,
+			"x": -1344,
+			"y": 4137,
 			"orbitAnchorId": "outer_ring",
 			"orbitAngle": 108,
 			"tags": [
@@ -1893,8 +1751,8 @@
 				"missile_damage_3",
 				"hegemony_1"
 			],
-			"x": -2204,
-			"y": 3034,
+			"x": -2557,
+			"y": 3519,
 			"orbitAnchorId": "outer_ring",
 			"orbitAngle": 126,
 			"tags": [
@@ -1907,10 +1765,11 @@
 			"connectedTo": [
 				"small_flux_optional_19",
 				"small_flux_optional_17",
-				"small_flux_optional_38"
+				"small_flux_optional_38",
+				"midline_wormhole_1"
 			],
-			"x": -3034,
-			"y": 2204,
+			"x": -3519,
+			"y": 2557,
 			"orbitAnchorId": "outer_ring",
 			"orbitAngle": 144,
 			"tags": [
@@ -1928,8 +1787,8 @@
 				"armor_2",
 				"midline_wormhole_1"
 			],
-			"x": -3565,
-			"y": 1163,
+			"x": -4135,
+			"y": 1350,
 			"orbitAnchorId": "outer_ring",
 			"orbitAngle": 161.92583406566868,
 			"tags": [
@@ -1944,7 +1803,7 @@
 				"small_flux_optional_19",
 				"combat_vision_2"
 			],
-			"x": -3750,
+			"x": -4350,
 			"y": 0,
 			"orbitAnchorId": "outer_ring",
 			"orbitAngle": 180,
@@ -1960,8 +1819,8 @@
 				"small_flux_optional_41",
 				"modular_hull_socket_4"
 			],
-			"x": -3566,
-			"y": -1159,
+			"x": -4137,
+			"y": -1344,
 			"orbitAnchorId": "outer_ring",
 			"orbitAngle": 198,
 			"tags": [
@@ -1976,8 +1835,8 @@
 				"small_flux_optional_43",
 				"modular_hull_socket_4"
 			],
-			"x": -2204,
-			"y": -3034,
+			"x": -2557,
+			"y": -3519,
 			"orbitAnchorId": "outer_ring",
 			"orbitAngle": 234,
 			"tags": [
@@ -1992,8 +1851,8 @@
 				"small_flux_optional_2",
 				"phase_anchor_1"
 			],
-			"x": -1159,
-			"y": -3566,
+			"x": -1344,
+			"y": -4137,
 			"orbitAnchorId": "outer_ring",
 			"orbitAngle": 252,
 			"tags": [
@@ -2007,8 +1866,8 @@
 				"shield_arc_2",
 				"small_flux_optional_1"
 			],
-			"x": 453,
-			"y": -2215,
+			"x": 574,
+			"y": -2648,
 			"orbitAnchorId": "anchor_1",
 			"orbitAngle": 180,
 			"tags": [
@@ -2022,8 +1881,8 @@
 				"extendedshieldemitter_1",
 				"shield_arc_1"
 			],
-			"x": 603,
-			"y": -2065,
+			"x": 724,
+			"y": -2498,
 			"orbitAnchorId": "anchor_1",
 			"orbitAngle": 90,
 			"tags": [
@@ -2037,8 +1896,8 @@
 				"shield_raise_rate_2",
 				"advancedshieldemitter_1"
 			],
-			"x": 1084,
-			"y": -3280,
+			"x": 1254,
+			"y": -3855,
 			"orbitAnchorId": "anchor_2",
 			"orbitAngle": -26.847754748827075,
 			"tags": [
@@ -2052,8 +1911,8 @@
 				"shield_raise_rate_1",
 				"shield_turn_raise_rate_optional_1"
 			],
-			"x": 1079,
-			"y": -3135,
+			"x": 1249,
+			"y": -3710,
 			"orbitAnchorId": "anchor_2",
 			"orbitAngle": 31.00891551494835,
 			"tags": [
@@ -2067,8 +1926,8 @@
 				"shield_turn_rate_2",
 				"advancedshieldemitter_1"
 			],
-			"x": 817,
-			"y": -3281,
+			"x": 987,
+			"y": -3856,
 			"orbitAnchorId": "anchor_2",
 			"orbitAngle": -152.49474818746805,
 			"tags": [
@@ -2082,8 +1941,8 @@
 				"shield_turn_rate_1",
 				"shield_turn_raise_rate_optional_1"
 			],
-			"x": 821,
-			"y": -3136,
+			"x": 991,
+			"y": -3711,
 			"orbitAnchorId": "anchor_2",
 			"orbitAngle": 149.4392314359338,
 			"tags": [
@@ -2099,8 +1958,8 @@
 				"shield_turn_raise_rate_optional_1",
 				"neural_interface_1"
 			],
-			"x": 950,
-			"y": -2793,
+			"x": 1144,
+			"y": -3361,
 			"orbitAnchorId": "middle_ring",
 			"orbitAngle": -71.20637415394094,
 			"tags": [
@@ -2117,8 +1976,8 @@
 				"shield_arc_4",
 				"vent_rate_and_emp_damage_1"
 			],
-			"x": 1716,
-			"y": -2399,
+			"x": 2065,
+			"y": -2887,
 			"orbitAnchorId": "middle_ring",
 			"orbitAngle": -54.424524636547936,
 			"tags": [
@@ -2134,8 +1993,8 @@
 				"pd_damage_to_missiles_2",
 				"ecm_resistance_1"
 			],
-			"x": 2362,
-			"y": -1768,
+			"x": 2842,
+			"y": -2127,
 			"orbitAnchorId": "middle_ring",
 			"orbitAngle": -36.814715154458035,
 			"tags": [
@@ -2152,8 +2011,8 @@
 				"frontshield_1",
 				"fighter_weapon_damage_1"
 			],
-			"x": 2813,
-			"y": -888,
+			"x": 3385,
+			"y": -1068,
 			"orbitAnchorId": "middle_ring",
 			"orbitAngle": -17.516318386821496,
 			"tags": [
@@ -2168,7 +2027,7 @@
 				"small_flux_optional_30",
 				"turn_acceleration_percent_1"
 			],
-			"x": 2950,
+			"x": 3550,
 			"y": 0,
 			"orbitAnchorId": "middle_ring",
 			"orbitAngle": 0,
@@ -2186,8 +2045,8 @@
 				"small_flux_optional_34",
 				"ballistic_and_energy_weapon_range_4"
 			],
-			"x": 2763,
-			"y": 1033,
+			"x": 3325,
+			"y": 1243,
 			"orbitAnchorId": "middle_ring",
 			"orbitAngle": 20.498433669203546,
 			"tags": [
@@ -2202,10 +2061,11 @@
 				"small_flux_optional_32",
 				"small_flux_optional_34",
 				"small_flux_optional_12",
-				"hull_multi_1"
+				"hull_multi_1",
+				"peak_cr_duration_2"
 			],
-			"x": 2378,
-			"y": 1746,
+			"x": 2861,
+			"y": 2101,
 			"orbitAnchorId": "middle_ring",
 			"orbitAngle": 36.28859705121191,
 			"tags": [
@@ -2220,8 +2080,8 @@
 				"small_flux_optional_33",
 				"ballistic_damage_2"
 			],
-			"x": 1710,
-			"y": 2404,
+			"x": 2058,
+			"y": 2893,
 			"orbitAnchorId": "middle_ring",
 			"orbitAngle": 54.566604388471426,
 			"tags": [
@@ -2237,8 +2097,8 @@
 				"weapon_durability_2",
 				"armor_5"
 			],
-			"x": 934,
-			"y": 2798,
+			"x": 1124,
+			"y": 3367,
 			"orbitAnchorId": "middle_ring",
 			"orbitAngle": 71.54353853067963,
 			"tags": [
@@ -2255,8 +2115,8 @@
 				"unstable_injector_1",
 				"hull_multi_5"
 			],
-			"x": 1896,
-			"y": 1059,
+			"x": 2289,
+			"y": 1278,
 			"tags": [
 				"core"
 			]
@@ -2269,8 +2129,8 @@
 				"shield_raise_rate_2",
 				"shield_turn_rate_2"
 			],
-			"x": 950,
-			"y": -3062,
+			"x": 1120,
+			"y": -3637,
 			"orbitAnchorId": "anchor_2",
 			"orbitAngle": 90,
 			"tags": [
@@ -2284,8 +2144,8 @@
 				"missile_damage_1",
 				"small_flux_optional_35"
 			],
-			"x": 333,
-			"y": 3237,
+			"x": 420,
+			"y": 3831,
 			"orbitAnchorId": "anchor_3",
 			"orbitAngle": 180,
 			"tags": [
@@ -2304,7 +2164,7 @@
 				"modular_hull_socket_1"
 			],
 			"x": 0,
-			"y": 2950,
+			"y": 3550,
 			"orbitAnchorId": "middle_ring",
 			"orbitAngle": 90,
 			"tags": [
@@ -2319,8 +2179,8 @@
 				"small_flux_optional_37",
 				"defensive_targeting_array_1"
 			],
-			"x": -998,
-			"y": 2776,
+			"x": -1202,
+			"y": 3340,
 			"orbitAnchorId": "middle_ring",
 			"orbitAngle": 109.78279052151326,
 			"tags": [
@@ -2335,8 +2195,8 @@
 				"small_flux_optional_38",
 				"non_beam_energy_damage_2"
 			],
-			"x": -1732,
-			"y": 2388,
+			"x": -2085,
+			"y": 2873,
 			"orbitAnchorId": "middle_ring",
 			"orbitAngle": 125.9645395299932,
 			"tags": [
@@ -2354,8 +2214,8 @@
 				"weapon_turn_rate_1",
 				"top_speed_2"
 			],
-			"x": -2393,
-			"y": 1725,
+			"x": -2880,
+			"y": 2075,
 			"orbitAnchorId": "middle_ring",
 			"orbitAngle": 144.22546982549335,
 			"tags": [
@@ -2371,8 +2231,8 @@
 				"small_flux_optional_19",
 				"small_flux_optional_45"
 			],
-			"x": -2784,
-			"y": 975,
+			"x": -3350,
+			"y": 1173,
 			"orbitAnchorId": "middle_ring",
 			"orbitAngle": 160.69804080154648,
 			"tags": [
@@ -2388,7 +2248,7 @@
 				"fighter_replacement_2",
 				"beam_damage_3"
 			],
-			"x": -2950,
+			"x": -3550,
 			"y": 0,
 			"orbitAnchorId": "middle_ring",
 			"orbitAngle": 180,
@@ -2406,8 +2266,8 @@
 				"shield_upkeep_multi_2",
 				"repair_time_1"
 			],
-			"x": -2780,
-			"y": -987,
+			"x": -3345,
+			"y": -1188,
 			"orbitAnchorId": "middle_ring",
 			"orbitAngle": -160.44959850532618,
 			"tags": [
@@ -2424,8 +2284,8 @@
 				"shield_damage_taken_multi_2",
 				"wormhole_6"
 			],
-			"x": -2339,
-			"y": -1798,
+			"x": -2815,
+			"y": -2163,
 			"orbitAnchorId": "middle_ring",
 			"orbitAngle": -142.4581548219421,
 			"tags": [
@@ -2442,8 +2302,8 @@
 				"adaptiveshields_1",
 				"phase_cloak_flux_threshold_1"
 			],
-			"x": -1696,
-			"y": -2414,
+			"x": -2041,
+			"y": -2904,
 			"orbitAnchorId": "middle_ring",
 			"orbitAngle": -125.09869626131825,
 			"tags": [
@@ -2457,8 +2317,8 @@
 				"small_flux_optional_43",
 				"small_flux_optional_4"
 			],
-			"x": -1005,
-			"y": -2773,
+			"x": -1210,
+			"y": -3337,
 			"orbitAnchorId": "middle_ring",
 			"orbitAngle": -109.92800850755677,
 			"tags": [
@@ -2473,8 +2333,8 @@
 				"small_flux_optional_39",
 				"root_midline_1"
 			],
-			"x": -1938,
-			"y": 1061,
+			"x": -2333,
+			"y": 1277,
 			"tags": [
 				"core"
 			]
@@ -2487,10 +2347,10 @@
 				"hull_multi_3",
 				"small_flux_optional_19"
 			],
-			"x": -3092,
-			"y": 1429,
+			"x": -3939,
+			"y": 1040,
 			"orbitAnchorId": "anchor_5",
-			"orbitAngle": -135,
+			"orbitAngle": 135.00000000000009,
 			"tags": [
 				"core"
 			]
@@ -2502,10 +2362,10 @@
 				"armor_2",
 				"heavyarmor_1"
 			],
-			"x": -3092,
-			"y": 1641,
+			"x": -3727,
+			"y": 1040,
 			"orbitAnchorId": "anchor_5",
-			"orbitAngle": 135.00000000000003,
+			"orbitAngle": 44.99999999999995,
 			"tags": [
 				"core"
 			]
@@ -2518,8 +2378,8 @@
 				"ballistic_projectile_speed_3",
 				"small_flux_optional_32"
 			],
-			"x": 2024,
-			"y": 2517,
+			"x": 2388,
+			"y": 2994,
 			"orbitAnchorId": "anchor_4",
 			"orbitAngle": -92.70000000000005,
 			"tags": [
@@ -2533,8 +2393,8 @@
 				"ballistic_damage_2",
 				"ballistic_rangefinder_1"
 			],
-			"x": 2181,
-			"y": 2660,
+			"x": 2545,
+			"y": 3137,
 			"orbitAnchorId": "anchor_4",
 			"orbitAngle": -2.700000000000048,
 			"tags": [
@@ -2548,8 +2408,8 @@
 				"ballistic_and_energy_weapon_range_2",
 				"targetingunit_1"
 			],
-			"x": -1771,
-			"y": -1419,
+			"x": -2239,
+			"y": -1794,
 			"tags": [
 				"core"
 			]
@@ -2561,8 +2421,8 @@
 				"ballistic_and_energy_weapon_range_1",
 				"small_flux_optional_42"
 			],
-			"x": -1954,
-			"y": -1529,
+			"x": -2422,
+			"y": -1904,
 			"tags": [
 				"core"
 			]
@@ -2574,8 +2434,8 @@
 				"ballistic_and_energy_weapon_range_4",
 				"dedicated_targeting_core_1"
 			],
-			"x": 3234,
-			"y": 684,
+			"x": 3821,
+			"y": 808,
 			"tags": [
 				"core"
 			]
@@ -2587,8 +2447,8 @@
 				"ballistic_and_energy_weapon_range_3",
 				"small_flux_optional_30"
 			],
-			"x": 3014,
-			"y": 843,
+			"x": 3601,
+			"y": 967,
 			"tags": [
 				"core"
 			]
@@ -2600,8 +2460,8 @@
 				"shield_shunt_1",
 				"armor_5"
 			],
-			"x": 1463,
-			"y": 2985,
+			"x": 1703,
+			"y": 3535,
 			"orbitAnchorId": "anchor_10",
 			"orbitAngle": -29.999999999999996,
 			"tags": [
@@ -2615,8 +2475,8 @@
 				"armor_4",
 				"small_flux_optional_33"
 			],
-			"x": 1203,
-			"y": 2985,
+			"x": 1443,
+			"y": 3535,
 			"orbitAnchorId": "anchor_10",
 			"orbitAngle": -150.00000000000003,
 			"tags": [
@@ -2630,8 +2490,8 @@
 				"shield_arc_4",
 				"frontemitter_1"
 			],
-			"x": 1434,
-			"y": -1723,
+			"x": 1805,
+			"y": -2195,
 			"orbitAnchorId": "anchor_11",
 			"orbitAngle": 90,
 			"tags": [
@@ -2645,8 +2505,8 @@
 				"shield_arc_3",
 				"small_flux_optional_26"
 			],
-			"x": 1584,
-			"y": -1873,
+			"x": 1955,
+			"y": -2345,
 			"orbitAnchorId": "anchor_11",
 			"orbitAngle": 0,
 			"tags": [
@@ -2660,8 +2520,8 @@
 				"adaptiveshields_1",
 				"shield_arc_mult_2"
 			],
-			"x": -1294,
-			"y": -1706,
+			"x": -1629,
+			"y": -2203,
 			"orbitAnchorId": "anchor_12",
 			"orbitAngle": 108.1,
 			"tags": [
@@ -2675,8 +2535,8 @@
 				"adaptiveshields_1",
 				"shield_arc_mult_1"
 			],
-			"x": -1100,
-			"y": -1880,
+			"x": -1435,
+			"y": -2377,
 			"orbitAnchorId": "anchor_12",
 			"orbitAngle": -11.899999999999963,
 			"tags": [
@@ -2690,8 +2550,8 @@
 				"shield_damage_taken_multi_2",
 				"hardenedshieldemitter_1"
 			],
-			"x": -2737,
-			"y": -2129,
+			"x": -3219,
+			"y": -2486,
 			"orbitAnchorId": "anchor_13",
 			"orbitAngle": 270,
 			"tags": [
@@ -2705,8 +2565,8 @@
 				"shield_damage_taken_multi_1",
 				"small_flux_optional_42"
 			],
-			"x": -2587,
-			"y": -1979,
+			"x": -3069,
+			"y": -2336,
 			"orbitAnchorId": "anchor_13",
 			"orbitAngle": 0,
 			"tags": [
@@ -2720,8 +2580,8 @@
 				"shield_upkeep_multi_2",
 				"stabilizedshieldemitter_1"
 			],
-			"x": -2985,
-			"y": -1571,
+			"x": -3523,
+			"y": -1836,
 			"orbitAnchorId": "anchor_14",
 			"orbitAngle": -61.40093162313036,
 			"tags": [
@@ -2735,8 +2595,8 @@
 				"shield_upkeep_multi_1",
 				"small_flux_optional_41"
 			],
-			"x": -2920,
-			"y": -1378,
+			"x": -3458,
+			"y": -1643,
 			"orbitAnchorId": "anchor_14",
 			"orbitAngle": 24.10552103151405,
 			"tags": [
@@ -2750,8 +2610,8 @@
 				"top_speed_2",
 				"nav_relay_1"
 			],
-			"x": -2241,
-			"y": 1193,
+			"x": -2771,
+			"y": 1474,
 			"orbitAnchorId": "anchor_16",
 			"orbitAngle": -25.60000000000001,
 			"tags": [
@@ -2765,8 +2625,8 @@
 				"top_speed_1",
 				"small_flux_optional_38"
 			],
-			"x": -2388,
-			"y": 1408,
+			"x": -2918,
+			"y": 1689,
 			"orbitAnchorId": "anchor_16",
 			"orbitAngle": 94.40000000000003,
 			"tags": [
@@ -2780,8 +2640,8 @@
 				"phase_cloak_flux_threshold_2",
 				"small_flux_optional_43"
 			],
-			"x": -1689,
-			"y": -2899,
+			"x": -1967,
+			"y": -3431,
 			"orbitAnchorId": "anchor_17",
 			"orbitAngle": 180,
 			"tags": [
@@ -2795,8 +2655,8 @@
 				"phase_cloak_flux_threshold_1",
 				"adaptive_coils_1"
 			],
-			"x": -1539,
-			"y": -3049,
+			"x": -1817,
+			"y": -3581,
 			"orbitAnchorId": "anchor_17",
 			"orbitAngle": 270,
 			"tags": [
@@ -2810,8 +2670,8 @@
 				"fluxbreakers_1",
 				"emp_damage_taken_multi_2"
 			],
-			"x": 1496,
-			"y": -3084,
+			"x": 1786,
+			"y": -3609,
 			"tags": [
 				"core"
 			]
@@ -2823,8 +2683,8 @@
 				"fluxbreakers_1",
 				"increased_vent_rate_2"
 			],
-			"x": 1776,
-			"y": -3090,
+			"x": 2066,
+			"y": -3615,
 			"tags": [
 				"core"
 			]
@@ -2836,8 +2696,8 @@
 				"vent_rate_and_emp_damage_1",
 				"emp_damage_taken_multi_1"
 			],
-			"x": 1496,
-			"y": -2852,
+			"x": 1786,
+			"y": -3377,
 			"tags": [
 				"core"
 			]
@@ -2850,8 +2710,8 @@
 				"emp_damage_taken_multi_2",
 				"small_flux_optional_26"
 			],
-			"x": 1646,
-			"y": -2671,
+			"x": 1936,
+			"y": -3196,
 			"tags": [
 				"core"
 			]
@@ -2863,8 +2723,8 @@
 				"vent_rate_and_emp_damage_1",
 				"increased_vent_rate_1"
 			],
-			"x": 1776,
-			"y": -2853,
+			"x": 2066,
+			"y": -3378,
 			"tags": [
 				"core"
 			]
@@ -2876,8 +2736,8 @@
 				"beam_damage_1",
 				"small_flux_optional_40"
 			],
-			"x": -3357,
-			"y": -140,
+			"x": -3952,
+			"y": -214,
 			"orbitAnchorId": "anchor_58",
 			"orbitAngle": 90,
 			"tags": [
@@ -2891,8 +2751,8 @@
 				"weapon_durability_2",
 				"armoredweapons_1"
 			],
-			"x": 702,
-			"y": 2088,
+			"x": 917,
+			"y": 2648,
 			"orbitAnchorId": "anchor_18",
 			"orbitAngle": -150.00000000000003,
 			"tags": [
@@ -2906,8 +2766,8 @@
 				"weapon_durability_1",
 				"small_flux_optional_33"
 			],
-			"x": 832,
-			"y": 2313,
+			"x": 1047,
+			"y": 2873,
 			"orbitAnchorId": "anchor_18",
 			"orbitAngle": 90,
 			"tags": [
@@ -2920,12 +2780,12 @@
 			"connectedTo": [
 				"small_flux_optional_35",
 				"escort_package_1",
+				"converted_hangar_1",
 				"small_flux_optional_99",
-				"small_flux_optional_98",
-				"converted_hangar_1"
+				"small_flux_optional_98"
 			],
 			"x": 0,
-			"y": 2214,
+			"y": 2664,
 			"tags": [
 				"core"
 			]
@@ -2937,8 +2797,8 @@
 				"midline_wormhole_1",
 				"modular_hull_socket_2"
 			],
-			"x": 2742,
-			"y": -1929,
+			"x": 3233,
+			"y": -2274,
 			"pairedWith": "midline_wormhole_1",
 			"tags": [
 				"core"
@@ -2949,10 +2809,11 @@
 			"type": "wormhole",
 			"connectedTo": [
 				"hightech_wormhole_1",
-				"small_flux_optional_19"
+				"small_flux_optional_19",
+				"small_flux_optional_18"
 			],
-			"x": -3219,
-			"y": 1614,
+			"x": -3523,
+			"y": 1807,
 			"pairedWith": "hightech_wormhole_1",
 			"tags": [
 				"core"
@@ -2965,8 +2826,8 @@
 				"lowtech_wormhole_2",
 				"small_flux_optional_2"
 			],
-			"x": 305,
-			"y": -3456,
+			"x": 358,
+			"y": -4054,
 			"wormholeColor": "#5f64ec",
 			"pairedWith": "lowtech_wormhole_2",
 			"tags": [
@@ -2980,8 +2841,8 @@
 				"hightech_wormhole_2",
 				"modular_hull_socket_1"
 			],
-			"x": 256,
-			"y": 3521,
+			"x": 300,
+			"y": 4119,
 			"wormholeColor": "#5f64ec",
 			"pairedWith": "hightech_wormhole_2",
 			"tags": [
@@ -2993,10 +2854,11 @@
 			"type": "wormhole",
 			"connectedTo": [
 				"wormhole_6",
-				"small_flux_optional_12"
+				"small_flux_optional_12",
+				"small_flux_optional_11"
 			],
-			"x": 3230,
-			"y": 1625,
+			"x": 3550,
+			"y": 1794,
 			"wormholeColor": "#cd7f4c",
 			"pairedWith": "wormhole_6",
 			"tags": [
@@ -3010,8 +2872,8 @@
 				"lowtech_wormhole_1",
 				"small_flux_optional_42"
 			],
-			"x": -2325,
-			"y": -1434,
+			"x": -2836,
+			"y": -1749,
 			"wormholeColor": "#cd7f4c",
 			"pairedWith": "lowtech_wormhole_1",
 			"tags": [
@@ -3025,8 +2887,8 @@
 				"ballistic_damage_5",
 				"magazines_1"
 			],
-			"x": -565,
-			"y": 2246,
+			"x": -753,
+			"y": 2816,
 			"orbitAnchorId": "anchor_57",
 			"orbitAngle": -9.452073371602191,
 			"tags": [
@@ -3040,8 +2902,8 @@
 				"ballistic_damage_4",
 				"small_flux_optional_35"
 			],
-			"x": -644,
-			"y": 2433,
+			"x": -832,
+			"y": 3003,
 			"orbitAnchorId": "anchor_57",
 			"orbitAngle": 55.225593271153066,
 			"tags": [
@@ -3055,8 +2917,8 @@
 				"missile_damage_4",
 				"small_flux_optional_17"
 			],
-			"x": -1993,
-			"y": 2824,
+			"x": -2325,
+			"y": 3324,
 			"orbitAnchorId": "anchor_20",
 			"orbitAngle": 180,
 			"tags": [
@@ -3070,8 +2932,8 @@
 				"missile_damage_3",
 				"eccm_1"
 			],
-			"x": -1843,
-			"y": 2674,
+			"x": -2175,
+			"y": 3174,
 			"orbitAnchorId": "anchor_20",
 			"orbitAngle": 270,
 			"tags": [
@@ -3085,8 +2947,8 @@
 				"pd_damage_to_missiles_2",
 				"pointdefenseai_1"
 			],
-			"x": 1850,
-			"y": -1241,
+			"x": 2350,
+			"y": -1573,
 			"orbitAnchorId": "anchor_21",
 			"orbitAngle": 150.00000000000003,
 			"tags": [
@@ -3100,8 +2962,8 @@
 				"pd_damage_to_missiles_1",
 				"small_flux_optional_27"
 			],
-			"x": 1980,
-			"y": -1466,
+			"x": 2480,
+			"y": -1798,
 			"orbitAnchorId": "anchor_21",
 			"orbitAngle": 270,
 			"tags": [
@@ -3115,8 +2977,8 @@
 				"turn_acceleration_percent_1",
 				"auxiliarythrusters_1"
 			],
-			"x": 2223,
-			"y": -544,
+			"x": 2814,
+			"y": -649,
 			"orbitAnchorId": "anchor_22",
 			"orbitAngle": 270,
 			"tags": [
@@ -3130,8 +2992,8 @@
 				"turn_acceleration_percent_1",
 				"auxiliarythrusters_1"
 			],
-			"x": 2223,
-			"y": -244,
+			"x": 2814,
+			"y": -349,
 			"orbitAnchorId": "anchor_22",
 			"orbitAngle": 90,
 			"tags": [
@@ -3146,8 +3008,8 @@
 				"small_flux_optional_29",
 				"acceleration_percent_1"
 			],
-			"x": 2373,
-			"y": -394,
+			"x": 2964,
+			"y": -499,
 			"orbitAnchorId": "anchor_22",
 			"orbitAngle": 0,
 			"tags": [
@@ -3174,8 +3036,8 @@
 				"fighter_replacement_2",
 				"expanded_deck_crew_1"
 			],
-			"x": -2393,
-			"y": -162,
+			"x": -2993,
+			"y": -178,
 			"orbitAnchorId": "anchor_23",
 			"orbitAngle": 270,
 			"tags": [
@@ -3189,8 +3051,8 @@
 				"fighter_replacement_1",
 				"small_flux_optional_40"
 			],
-			"x": -2543,
-			"y": -12,
+			"x": -3143,
+			"y": -28,
 			"orbitAnchorId": "anchor_23",
 			"orbitAngle": 180,
 			"tags": [
@@ -3201,13 +3063,13 @@
 			"id": "reduced_monthly_supplies_1",
 			"type": "reduced_monthly_supplies",
 			"connectedTo": [
-				"reduced_monthly_supplies_2",
-				"small_flux_optional_78"
+				"small_flux_optional_90",
+				"reduced_monthly_supplies_2"
 			],
-			"x": -462,
-			"y": -666,
+			"x": -1283,
+			"y": -1528,
 			"orbitAnchorId": "anchor_24",
-			"orbitAngle": 0,
+			"orbitAngle": 50,
 			"tags": [
 				"core"
 			]
@@ -3218,10 +3080,10 @@
 			"connectedTo": [
 				"reduced_monthly_supplies_2"
 			],
-			"x": -762,
-			"y": -666,
+			"x": -1475,
+			"y": -1758,
 			"orbitAnchorId": "anchor_24",
-			"orbitAngle": 180,
+			"orbitAngle": -130,
 			"tags": [
 				"core"
 			]
@@ -3233,10 +3095,10 @@
 				"reduced_monthly_supplies_1",
 				"rationing_1"
 			],
-			"x": -612,
-			"y": -816,
+			"x": -1264,
+			"y": -1739,
 			"orbitAnchorId": "anchor_24",
-			"orbitAngle": 270,
+			"orbitAngle": -40,
 			"tags": [
 				"core"
 			]
@@ -3248,8 +3110,8 @@
 				"combat_vision_2",
 				"optimised_lenses_1"
 			],
-			"x": -3356,
-			"y": 453,
+			"x": -3953,
+			"y": 516,
 			"orbitAnchorId": "anchor_25",
 			"orbitAngle": 90,
 			"tags": [
@@ -3262,8 +3124,8 @@
 			"connectedTo": [
 				"combat_vision_1"
 			],
-			"x": -3206,
-			"y": 303,
+			"x": -3803,
+			"y": 366,
 			"orbitAnchorId": "anchor_25",
 			"orbitAngle": 0,
 			"tags": [
@@ -3277,8 +3139,8 @@
 				"combat_vision_1",
 				"small_flux_optional_20"
 			],
-			"x": -3506,
-			"y": 303,
+			"x": -4103,
+			"y": 366,
 			"orbitAnchorId": "anchor_25",
 			"orbitAngle": 180,
 			"tags": [
@@ -3292,8 +3154,8 @@
 				"recovery_shuttles_1",
 				"fighter_weapon_damage_1"
 			],
-			"x": 3049,
-			"y": -1554,
+			"x": 3591,
+			"y": -1812,
 			"orbitAnchorId": "anchor_26",
 			"orbitAngle": 270,
 			"tags": [
@@ -3307,8 +3169,8 @@
 				"hull_multi_1",
 				"blast_doors_1"
 			],
-			"x": 1637,
-			"y": 1637,
+			"x": 2043,
+			"y": 2079,
 			"orbitAnchorId": "anchor_7",
 			"orbitAngle": 270,
 			"tags": [
@@ -3322,10 +3184,10 @@
 				"armor_2",
 				"heavyarmor_1"
 			],
-			"x": -2880,
-			"y": 1429,
+			"x": -3939,
+			"y": 828,
 			"orbitAnchorId": "anchor_5",
-			"orbitAngle": -45.000000000000064,
+			"orbitAngle": -135.00000000000009,
 			"tags": [
 				"core"
 			]
@@ -3337,8 +3199,8 @@
 				"hull_multi_5",
 				"reinforcedhull_1"
 			],
-			"x": 2361,
-			"y": 540,
+			"x": 2802,
+			"y": 628,
 			"orbitAnchorId": "anchor_6",
 			"orbitAngle": 38.699999999999996,
 			"tags": [
@@ -3353,8 +3215,8 @@
 				"hull_multi_6",
 				"small_flux_optional_34"
 			],
-			"x": 2150,
-			"y": 563,
+			"x": 2591,
+			"y": 651,
 			"orbitAnchorId": "anchor_6",
 			"orbitAngle": 128.69999999999993,
 			"tags": [
@@ -3368,8 +3230,8 @@
 				"hull_multi_5",
 				"reinforcedhull_1"
 			],
-			"x": 2127,
-			"y": 352,
+			"x": 2568,
+			"y": 440,
 			"orbitAnchorId": "anchor_6",
 			"orbitAngle": -141.3,
 			"tags": [
@@ -3384,7 +3246,7 @@
 				"small_flux_optional_2"
 			],
 			"x": 0,
-			"y": -4450,
+			"y": -5050,
 			"orbitAnchorId": "wormhole_anchor",
 			"orbitAngle": 270,
 			"pairedWith": "tritach_2",
@@ -3508,8 +3370,8 @@
 				"REDACTED_2",
 				"modular_hull_socket_2"
 			],
-			"x": 3606,
-			"y": -2607,
+			"x": 4092,
+			"y": -2959,
 			"orbitAnchorId": "wormhole_anchor",
 			"orbitAngle": -35.86842290241297,
 			"pairedWith": "REDACTED_2",
@@ -3604,8 +3466,8 @@
 				"dictat_wormhole_2",
 				"modular_hull_socket_4"
 			],
-			"x": -3547,
-			"y": -2688,
+			"x": -4025,
+			"y": -3050,
 			"orbitAnchorId": "wormhole_anchor",
 			"orbitAngle": -142.8476655621318,
 			"pairedWith": "dictat_wormhole_2",
@@ -3777,8 +3639,8 @@
 				"luddic_2",
 				"small_flux_optional_13"
 			],
-			"x": 2519,
-			"y": 3669,
+			"x": 2858,
+			"y": 4163,
 			"orbitAnchorId": "wormhole_anchor",
 			"orbitAngle": 55.53061572690851,
 			"pairedWith": "luddic_2",
@@ -3931,8 +3793,8 @@
 				"small_flux_optional_17",
 				"hegemony_2"
 			],
-			"x": -2486,
-			"y": 3691,
+			"x": -2821,
+			"y": 4189,
 			"orbitAnchorId": "wormhole_anchor",
 			"orbitAngle": 123.95503606696852,
 			"pairedWith": "hegemony_2",
@@ -4071,8 +3933,8 @@
 				"pirate_wormhole_2",
 				"small_flux_optional_10"
 			],
-			"x": 4375,
-			"y": 206,
+			"x": 4974,
+			"y": 234,
 			"pairedWith": "pirate_wormhole_2",
 			"tags": [
 				"core"
@@ -4098,8 +3960,8 @@
 				"league_wormhole_2",
 				"small_flux_optional_19"
 			],
-			"x": -4251,
-			"y": 1316,
+			"x": -4824,
+			"y": 1493,
 			"orbitAnchorId": "wormhole_anchor",
 			"orbitAngle": 162.8041643784659,
 			"pairedWith": "league_wormhole_2",
@@ -4631,8 +4493,8 @@
 				"ballistic_damage_2",
 				"ballistic_rangefinder_1"
 			],
-			"x": 1881,
-			"y": 2674,
+			"x": 2245,
+			"y": 3151,
 			"orbitAnchorId": "anchor_4",
 			"orbitAngle": 177.29999999999995,
 			"tags": [
@@ -4752,12 +4614,12 @@
 			"type": "peak_cr_duration",
 			"connectedTo": [
 				"hardened_subsystems_1",
-				"small_flux_optional_12"
+				"peak_cr_duration_2"
 			],
-			"x": 2942,
-			"y": 1678,
+			"x": 3271,
+			"y": 2167,
 			"orbitAnchorId": "anchor_27",
-			"orbitAngle": 106.4093679081892,
+			"orbitAngle": 90,
 			"tags": [
 				"core"
 			]
@@ -4766,13 +4628,13 @@
 			"id": "peak_cr_duration_2",
 			"type": "peak_cr_duration",
 			"connectedTo": [
-				"hardened_subsystems_1",
-				"small_flux_optional_11"
+				"peak_cr_duration_1",
+				"small_flux_optional_31"
 			],
-			"x": 3059,
-			"y": 1404,
+			"x": 3121,
+			"y": 2017,
 			"orbitAnchorId": "anchor_27",
-			"orbitAngle": -60.081293524739934,
+			"orbitAngle": 180,
 			"tags": [
 				"core"
 			]
@@ -5503,8 +5365,8 @@
 				"small_flux_optional_27",
 				"ecm_resistance_2"
 			],
-			"x": 2590,
-			"y": -1980,
+			"x": 3056,
+			"y": -2357,
 			"orbitAnchorId": "anchor_15",
 			"orbitAngle": 104.19999999999996,
 			"tags": [
@@ -5518,8 +5380,8 @@
 				"ecm_resistance_1",
 				"ecm_1"
 			],
-			"x": 2771,
-			"y": -2166,
+			"x": 3237,
+			"y": -2543,
 			"orbitAnchorId": "anchor_15",
 			"orbitAngle": -15.800000000000018,
 			"tags": [
@@ -5533,8 +5395,8 @@
 				"autorepair_1",
 				"repair_time_1"
 			],
-			"x": -2263,
-			"y": -718,
+			"x": -2823,
+			"y": -933,
 			"orbitAnchorId": "anchor_28",
 			"orbitAngle": 90,
 			"tags": [
@@ -5612,8 +5474,8 @@
 				"REDACTED_1",
 				"hightech_wormhole_1"
 			],
-			"x": 3052,
-			"y": -2180,
+			"x": 3540,
+			"y": -2528,
 			"orbitAnchorId": "outer_ring",
 			"orbitAngle": -35.53724270453185,
 			"tags": [
@@ -5628,8 +5490,8 @@
 				"dictat_wormhole_1",
 				"small_flux_optional_21"
 			],
-			"x": -3034,
-			"y": -2204,
+			"x": -3519,
+			"y": -2557,
 			"orbitAnchorId": "outer_ring",
 			"orbitAngle": -144.00407941780617,
 			"tags": [
@@ -5835,69 +5697,57 @@
 			"tags": [
 				"enigma"
 			]
+		},
+		{
+			"id": "small_flux_optional_101",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_79",
+				"small_flux_optional_84",
+				"converted_fighterbay_1"
+			],
+			"x": 1511,
+			"y": -872,
+			"orbitAnchorId": "inner_ring",
+			"orbitAngle": -30,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "small_flux_optional_102",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_99",
+				"small_flux_optional_98",
+				"operations_center_1"
+			],
+			"x": 0,
+			"y": 1745,
+			"orbitAnchorId": "inner_ring",
+			"orbitAngle": 90,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "small_flux_optional_103",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_91",
+				"small_flux_optional_90",
+				"efficiency_overhaul_1"
+			],
+			"x": -1511,
+			"y": -872,
+			"orbitAnchorId": "inner_ring",
+			"orbitAngle": -150,
+			"tags": [
+				"core"
+			]
 		}
 	],
 	"connectorCurves": [
-		{
-			"a": "root_high_tech_1",
-			"b": "small_flux_optional_76",
-			"controlX": 362,
-			"controlY": -1707
-		},
-		{
-			"a": "small_flux_optional_76",
-			"b": "small_flux_optional_79",
-			"controlX": 1023,
-			"controlY": -1414
-		},
-		{
-			"a": "small_flux_optional_83",
-			"b": "root_low_tech_1",
-			"controlX": 1663,
-			"controlY": 530
-		},
-		{
-			"a": "root_high_tech_1",
-			"b": "small_flux_optional_89",
-			"controlX": -363,
-			"controlY": -1707
-		},
-		{
-			"a": "small_flux_optional_91",
-			"b": "small_flux_optional_92",
-			"controlX": -1736,
-			"controlY": -181
-		},
-		{
-			"a": "small_flux_optional_92",
-			"b": "root_midline_1",
-			"controlX": -1659,
-			"controlY": 540
-		},
-		{
-			"a": "root_midline_1",
-			"b": "small_flux_optional_97",
-			"controlX": -1295,
-			"controlY": 1169
-		},
-		{
-			"a": "small_flux_optional_97",
-			"b": "small_flux_optional_98",
-			"controlX": -706,
-			"controlY": 1596
-		},
-		{
-			"a": "small_flux_optional_99",
-			"b": "small_flux_optional_100",
-			"controlX": 717,
-			"controlY": 1591
-		},
-		{
-			"a": "small_flux_optional_100",
-			"b": "root_low_tech_1",
-			"controlX": 1304,
-			"controlY": 1160
-		},
 		{
 			"a": "root_high_tech_1",
 			"b": "small_flux_optional_1",
@@ -5905,664 +5755,532 @@
 			"controlY": -1745
 		},
 		{
-			"a": "augmentedengines_1",
-			"b": "small_flux_optional_95",
-			"controlX": 660,
-			"controlY": -1332
-		},
-		{
-			"a": "augmentedengines_1",
-			"b": "small_flux_optional_94",
-			"controlX": 445,
-			"controlY": -1124
-		},
-		{
-			"a": "crew_capacity_flat_1",
-			"b": "crew_capacity_flat_2",
-			"controlX": -1085,
-			"controlY": -305
-		},
-		{
-			"a": "additional_berthing_1",
-			"b": "crew_capacity_flat_2",
-			"controlX": -1085,
-			"controlY": -545
-		},
-		{
-			"a": "militarized_subsystems_1",
-			"b": "small_flux_optional_87",
-			"controlX": -1080,
-			"controlY": 270
-		},
-		{
-			"a": "militarized_subsystems_1",
-			"b": "small_flux_optional_88",
-			"controlX": -1320,
-			"controlY": 70
-		},
-		{
-			"a": "cargo_capacity_flat_1",
-			"b": "expanded_cargo_holds_1",
-			"controlX": 899,
-			"controlY": -392
-		},
-		{
-			"a": "cargo_capacity_flat_1",
-			"b": "cargo_capacity_flat_2",
-			"controlX": 899,
-			"controlY": -152
-		},
-		{
-			"a": "augmentedengines_2",
-			"b": "small_flux_optional_96",
-			"controlX": 1402,
-			"controlY": 114
-		},
-		{
-			"a": "augmentedengines_2",
-			"b": "small_flux_optional_93",
-			"controlX": 1118,
-			"controlY": 250
-		},
-		{
-			"a": "auxiliary_fuel_tanks_1",
-			"b": "fuel_flat_1",
-			"controlX": 371,
-			"controlY": 1147
-		},
-		{
-			"a": "engine_durability_1",
-			"b": "engine_durability_2",
-			"controlX": -618,
-			"controlY": 1142
-		},
-		{
-			"a": "engine_durability_1",
-			"b": "insulatedengine_1",
-			"controlX": -374,
-			"controlY": 1142
-		},
-		{
-			"a": "small_flux_optional_83",
-			"b": "small_flux_optional_84",
-			"controlX": 1735,
-			"controlY": -190
-		},
-		{
 			"a": "extendedshieldemitter_1",
 			"b": "shield_arc_2",
-			"controlX": 709,
-			"controlY": -2109
+			"controlX": 830,
+			"controlY": -2542
 		},
 		{
 			"a": "small_flux_optional_2",
 			"b": "small_flux_optional_24",
-			"controlX": -587,
-			"controlY": -3704
+			"controlX": -681,
+			"controlY": -4297
 		},
 		{
 			"a": "small_flux_optional_2",
 			"b": "small_flux_optional_6",
-			"controlX": 587,
-			"controlY": -3704
+			"controlX": 681,
+			"controlY": -4297
 		},
 		{
 			"a": "small_flux_optional_6",
 			"b": "small_flux_optional_7",
-			"controlX": 1702,
-			"controlY": -3341
+			"controlX": 1974,
+			"controlY": -3876
 		},
 		{
 			"a": "small_flux_optional_10",
 			"b": "small_flux_optional_9",
-			"controlX": 3704,
-			"controlY": -587
+			"controlX": 4297,
+			"controlY": -681
 		},
 		{
 			"a": "small_flux_optional_10",
 			"b": "small_flux_optional_11",
-			"controlX": 3704,
-			"controlY": 587
+			"controlX": 4297,
+			"controlY": 681
 		},
 		{
 			"a": "small_flux_optional_11",
 			"b": "small_flux_optional_12",
-			"controlX": 3341,
-			"controlY": 1702
+			"controlX": 3876,
+			"controlY": 1974
 		},
 		{
 			"a": "small_flux_optional_12",
 			"b": "small_flux_optional_13",
-			"controlX": 2652,
-			"controlY": 2652
+			"controlX": 3076,
+			"controlY": 3076
 		},
 		{
 			"a": "small_flux_optional_13",
 			"b": "small_flux_optional_14",
-			"controlX": 1702,
-			"controlY": 3341
+			"controlX": 1974,
+			"controlY": 3876
 		},
 		{
 			"a": "small_flux_optional_16",
 			"b": "small_flux_optional_17",
-			"controlX": -1702,
-			"controlY": 3341
+			"controlX": -1974,
+			"controlY": 3876
 		},
 		{
 			"a": "small_flux_optional_20",
 			"b": "small_flux_optional_21",
-			"controlX": -3704,
-			"controlY": -587
+			"controlX": -4297,
+			"controlY": -681
 		},
 		{
 			"a": "small_flux_optional_23",
 			"b": "small_flux_optional_24",
-			"controlX": -1702,
-			"controlY": -3341
+			"controlX": -1974,
+			"controlY": -3876
 		},
 		{
 			"a": "small_flux_optional_19",
 			"b": "small_flux_optional_20",
-			"controlX": -3703,
-			"controlY": 589
+			"controlX": -4295,
+			"controlY": 684
 		},
 		{
 			"a": "small_flux_optional_18",
 			"b": "small_flux_optional_19",
-			"controlX": -3340,
-			"controlY": 1705
+			"controlX": -3874,
+			"controlY": 1978
 		},
 		{
 			"a": "small_flux_optional_17",
 			"b": "small_flux_optional_18",
-			"controlX": -2652,
-			"controlY": 2652
+			"controlX": -3076,
+			"controlY": 3076
 		},
 		{
 			"a": "shield_arc_1",
 			"b": "shield_arc_2",
-			"controlX": 497,
-			"controlY": -2109
+			"controlX": 618,
+			"controlY": -2542
 		},
 		{
 			"a": "shield_raise_rate_1",
 			"b": "shield_raise_rate_2",
-			"controlX": 1100,
-			"controlY": -3207
+			"controlX": 1270,
+			"controlY": -3782
 		},
 		{
 			"a": "shield_turn_rate_1",
 			"b": "shield_turn_rate_2",
-			"controlX": 800,
-			"controlY": -3208
+			"controlX": 970,
+			"controlY": -3783
 		},
 		{
 			"a": "small_flux_optional_25",
 			"b": "small_flux_optional_4",
-			"controlX": 482,
-			"controlY": -2910
+			"controlX": 580,
+			"controlY": -3502
 		},
 		{
 			"a": "small_flux_optional_25",
 			"b": "small_flux_optional_26",
-			"controlX": 1348,
-			"controlY": -2624
+			"controlX": 1623,
+			"controlY": -3158
 		},
 		{
 			"a": "small_flux_optional_26",
 			"b": "small_flux_optional_27",
-			"controlX": 2063,
-			"controlY": -2108
+			"controlX": 2482,
+			"controlY": -2536
 		},
 		{
 			"a": "small_flux_optional_27",
 			"b": "small_flux_optional_28",
-			"controlX": 2625,
-			"controlY": -1347
+			"controlX": 3159,
+			"controlY": -1620
 		},
 		{
 			"a": "small_flux_optional_28",
 			"b": "small_flux_optional_29",
-			"controlX": 2916,
-			"controlY": -449
+			"controlX": 3509,
+			"controlY": -540
 		},
 		{
 			"a": "small_flux_optional_29",
 			"b": "small_flux_optional_30",
-			"controlX": 2903,
-			"controlY": 525
+			"controlX": 3493,
+			"controlY": 632
 		},
 		{
 			"a": "small_flux_optional_30",
 			"b": "small_flux_optional_31",
-			"controlX": 2595,
-			"controlY": 1403
+			"controlX": 3122,
+			"controlY": 1688
 		},
 		{
 			"a": "small_flux_optional_31",
 			"b": "small_flux_optional_32",
-			"controlX": 2070,
-			"controlY": 2101
+			"controlX": 2491,
+			"controlY": 2528
 		},
 		{
 			"a": "small_flux_optional_32",
 			"b": "small_flux_optional_33",
-			"controlX": 1337,
-			"controlY": 2630
+			"controlX": 1609,
+			"controlY": 3165
 		},
 		{
 			"a": "missile_damage_1",
 			"b": "missleracks_1",
-			"controlX": 589,
-			"controlY": 3343
+			"controlX": 676,
+			"controlY": 3937
 		},
 		{
 			"a": "missile_damage_1",
 			"b": "missile_damage_2",
-			"controlX": 377,
-			"controlY": 3343
+			"controlX": 464,
+			"controlY": 3937
 		},
 		{
 			"a": "small_flux_optional_33",
 			"b": "small_flux_optional_35",
-			"controlX": 473,
-			"controlY": 2912
+			"controlX": 569,
+			"controlY": 3504
 		},
 		{
 			"a": "small_flux_optional_35",
 			"b": "small_flux_optional_36",
-			"controlX": -507,
-			"controlY": 2906
+			"controlX": -611,
+			"controlY": 3497
 		},
 		{
 			"a": "small_flux_optional_36",
 			"b": "small_flux_optional_37",
-			"controlX": -1379,
-			"controlY": 2608
+			"controlX": -1660,
+			"controlY": 3138
 		},
 		{
 			"a": "small_flux_optional_37",
 			"b": "small_flux_optional_38",
-			"controlX": -2089,
-			"controlY": 2083
+			"controlX": -2514,
+			"controlY": 2506
 		},
 		{
 			"a": "small_flux_optional_38",
 			"b": "small_flux_optional_39",
-			"controlX": -2616,
-			"controlY": 1364
+			"controlX": -3148,
+			"controlY": 1641
 		},
 		{
 			"a": "small_flux_optional_39",
 			"b": "small_flux_optional_40",
-			"controlX": -2908,
-			"controlY": 495
+			"controlX": -3499,
+			"controlY": 596
 		},
 		{
 			"a": "small_flux_optional_40",
 			"b": "small_flux_optional_41",
-			"controlX": -2907,
-			"controlY": -501
+			"controlX": -3498,
+			"controlY": -603
 		},
 		{
 			"a": "small_flux_optional_41",
 			"b": "small_flux_optional_42",
-			"controlX": -2591,
-			"controlY": -1410
+			"controlX": -3118,
+			"controlY": -1697
 		},
 		{
 			"a": "small_flux_optional_42",
 			"b": "small_flux_optional_43",
-			"controlX": -2041,
-			"controlY": -2130
+			"controlX": -2456,
+			"controlY": -2562
 		},
 		{
 			"a": "small_flux_optional_43",
 			"b": "small_flux_optional_44",
-			"controlX": -1363,
-			"controlY": -2616
+			"controlX": -1641,
+			"controlY": -3148
 		},
 		{
 			"a": "small_flux_optional_4",
 			"b": "small_flux_optional_44",
-			"controlX": -510,
-			"controlY": -2906
+			"controlX": -614,
+			"controlY": -3497
 		},
 		{
 			"a": "armor_2",
 			"b": "armor_3",
-			"controlX": -3092,
-			"controlY": 1535
+			"controlX": -3833,
+			"controlY": 1040
 		},
 		{
 			"a": "armor_3",
 			"b": "heavyarmor_1",
-			"controlX": -2986,
-			"controlY": 1641
+			"controlX": -3727,
+			"controlY": 934
 		},
 		{
 			"a": "ballistic_damage_2",
 			"b": "ballistic_damage_3",
-			"controlX": 2102,
-			"controlY": 2589
+			"controlX": 2466,
+			"controlY": 3066
 		},
 		{
 			"a": "ballistic_damage_3",
 			"b": "ballistic_rangefinder_1",
-			"controlX": 2109,
-			"controlY": 2738
+			"controlX": 2473,
+			"controlY": 3215
 		},
 		{
 			"a": "flux_capacity_1",
 			"b": "flux_capacity_3",
-			"controlX": -484,
-			"controlY": -2105
+			"controlX": -603,
+			"controlY": -2539
 		},
 		{
 			"a": "flux_capacity_3",
 			"b": "packed_capacitors_1",
-			"controlX": -696,
-			"controlY": -2104
+			"controlX": -815,
+			"controlY": -2538
 		},
 		{
 			"a": "flux_dissipation_1",
 			"b": "flux_dissipation_2",
-			"controlX": -530,
-			"controlY": -3315
+			"controlX": -645,
+			"controlY": -3904
 		},
 		{
 			"a": "efficient_vents_1",
 			"b": "flux_dissipation_2",
-			"controlX": -742,
-			"controlY": -3315
+			"controlX": -857,
+			"controlY": -3904
 		},
 		{
 			"a": "shield_raise_rate_2",
 			"b": "shield_turn_raise_rate_optional_1",
-			"controlX": 1024,
-			"controlY": -3081
+			"controlX": 1194,
+			"controlY": -3656
 		},
 		{
 			"a": "advancedshieldemitter_1",
 			"b": "shield_raise_rate_1",
-			"controlX": 1029,
-			"controlY": -3340
+			"controlX": 1199,
+			"controlY": -3915
 		},
 		{
 			"a": "advancedshieldemitter_1",
 			"b": "shield_turn_rate_1",
-			"controlX": 872,
-			"controlY": -3340
+			"controlX": 1042,
+			"controlY": -3915
 		},
 		{
 			"a": "shield_arc_3",
 			"b": "shield_arc_4",
-			"controlX": 1540,
-			"controlY": -1767
+			"controlX": 1911,
+			"controlY": -2239
 		},
 		{
 			"a": "frontemitter_1",
 			"b": "shield_arc_3",
-			"controlX": 1328,
-			"controlY": -1767
+			"controlX": 1699,
+			"controlY": -2239
 		},
 		{
 			"a": "adaptiveshields_1",
 			"b": "shield_arc_mult_1",
-			"controlX": -1320,
-			"controlY": -1834
+			"controlX": -1655,
+			"controlY": -2331
 		},
 		{
 			"a": "adaptiveshields_1",
 			"b": "shield_arc_mult_2",
-			"controlX": -1224,
-			"controlY": -1920
+			"controlX": -1559,
+			"controlY": -2417
 		},
 		{
 			"a": "shield_damage_taken_multi_1",
 			"b": "shield_damage_taken_multi_2",
-			"controlX": -2631,
-			"controlY": -2085
+			"controlX": -3113,
+			"controlY": -2442
 		},
 		{
 			"a": "hardenedshieldemitter_1",
 			"b": "shield_damage_taken_multi_1",
-			"controlX": -2843,
-			"controlY": -2085
+			"controlX": -3325,
+			"controlY": -2442
 		},
 		{
 			"a": "shield_upkeep_multi_1",
 			"b": "shield_upkeep_multi_2",
-			"controlX": -2915,
-			"controlY": -1487
+			"controlX": -3453,
+			"controlY": -1752
 		},
 		{
 			"a": "shield_upkeep_multi_1",
 			"b": "stabilizedshieldemitter_1",
-			"controlX": -3092,
-			"controlY": -1585
+			"controlX": -3630,
+			"controlY": -1850
 		},
 		{
 			"a": "phase_cloak_flux_threshold_1",
 			"b": "phase_cloak_flux_threshold_2",
-			"controlX": -1645,
-			"controlY": -3005
+			"controlX": -1923,
+			"controlY": -3537
 		},
 		{
 			"a": "adaptive_coils_1",
 			"b": "phase_cloak_flux_threshold_2",
-			"controlX": -1433,
-			"controlY": -3005
+			"controlX": -1711,
+			"controlY": -3537
 		},
 		{
 			"a": "shield_turn_raise_rate_optional_1",
 			"b": "shield_turn_rate_2",
-			"controlX": 876,
-			"controlY": -3082
+			"controlX": 1046,
+			"controlY": -3657
 		},
 		{
 			"a": "weapon_durability_1",
 			"b": "weapon_durability_2",
-			"controlX": 767,
-			"controlY": 2201
+			"controlX": 982,
+			"controlY": 2761
 		},
 		{
 			"a": "armoredweapons_1",
 			"b": "weapon_durability_1",
-			"controlX": 832,
-			"controlY": 2088
+			"controlX": 1047,
+			"controlY": 2648
 		},
 		{
 			"a": "missile_damage_3",
 			"b": "missile_damage_4",
-			"controlX": -1949,
-			"controlY": 2718
+			"controlX": -2281,
+			"controlY": 3218
 		},
 		{
 			"a": "eccm_1",
 			"b": "missile_damage_4",
-			"controlX": -1737,
-			"controlY": 2718
+			"controlX": -2069,
+			"controlY": 3218
 		},
 		{
 			"a": "pd_damage_to_missiles_1",
 			"b": "pd_damage_to_missiles_2",
-			"controlX": 1915,
-			"controlY": -1353
+			"controlX": 2415,
+			"controlY": -1685
 		},
 		{
 			"a": "pd_damage_to_missiles_1",
 			"b": "pointdefenseai_1",
-			"controlX": 1980,
-			"controlY": -1241
+			"controlX": 2480,
+			"controlY": -1573
 		},
 		{
 			"a": "maneuverability_percent_1",
 			"b": "turn_acceleration_percent_1",
-			"controlX": 2329,
-			"controlY": -500
+			"controlX": 2920,
+			"controlY": -605
 		},
 		{
 			"a": "auxiliarythrusters_1",
 			"b": "maneuverability_percent_1",
-			"controlX": 2117,
-			"controlY": -500
+			"controlX": 2708,
+			"controlY": -605
 		},
 		{
 			"a": "acceleration_percent_1",
 			"b": "turn_acceleration_percent_1",
-			"controlX": 2329,
-			"controlY": -288
+			"controlX": 2920,
+			"controlY": -393
 		},
 		{
 			"a": "acceleration_percent_1",
 			"b": "auxiliarythrusters_1",
-			"controlX": 2117,
-			"controlY": -288
+			"controlX": 2708,
+			"controlY": -393
 		},
 		{
 			"a": "fighter_replacement_1",
 			"b": "fighter_replacement_2",
-			"controlX": -2499,
-			"controlY": -118
+			"controlX": -3099,
+			"controlY": -134
 		},
 		{
 			"a": "expanded_deck_crew_1",
 			"b": "fighter_replacement_1",
-			"controlX": -2287,
-			"controlY": -118
-		},
-		{
-			"a": "reduced_monthly_supplies_1",
-			"b": "reduced_monthly_supplies_2",
-			"controlX": -506,
-			"controlY": -772
-		},
-		{
-			"a": "rationing_1",
-			"b": "reduced_monthly_supplies_2",
-			"controlX": -718,
-			"controlY": -772
+			"controlX": -2887,
+			"controlY": -134
 		},
 		{
 			"a": "combat_vision_1",
 			"b": "combat_vision_2",
-			"controlX": -3462,
-			"controlY": 409
+			"controlX": -4059,
+			"controlY": 472
 		},
 		{
 			"a": "combat_vision_1",
 			"b": "optimised_lenses_1",
-			"controlX": -3250,
-			"controlY": 409
+			"controlX": -3847,
+			"controlY": 472
 		},
 		{
 			"a": "fighter_weapon_damage_2",
 			"b": "recovery_shuttles_1",
-			"controlX": 3155,
-			"controlY": -1510
-		},
-		{
-			"a": "small_flux_optional_78",
-			"b": "small_flux_optional_81",
-			"controlX": 228,
-			"controlY": -125
+			"controlX": 3697,
+			"controlY": -1768
 		},
 		{
 			"a": "armor_1",
 			"b": "blast_doors_1",
-			"controlX": 1562,
-			"controlY": 1860
+			"controlX": 1968,
+			"controlY": 2302
 		},
 		{
 			"a": "shield_arc_mult_1",
 			"b": "shield_arc_mult_2",
-			"controlX": -1197,
-			"controlY": -1793
+			"controlX": -1532,
+			"controlY": -2290
 		},
 		{
 			"a": "hull_multi_1",
 			"b": "hull_multi_2",
-			"controlX": 1712,
-			"controlY": 1710
+			"controlX": 2118,
+			"controlY": 2152
 		},
 		{
 			"a": "armor_1",
 			"b": "hull_multi_1",
-			"controlX": 1712,
-			"controlY": 1860
+			"controlX": 2118,
+			"controlY": 2302
 		},
 		{
 			"a": "blast_doors_1",
 			"b": "hull_multi_2",
-			"controlX": 1562,
-			"controlY": 1710
+			"controlX": 1968,
+			"controlY": 2152
 		},
 		{
 			"a": "armor_2",
 			"b": "hull_multi_3",
-			"controlX": -2986,
-			"controlY": 1429
-		},
-		{
-			"a": "heavyarmor_1",
-			"b": "hull_multi_3",
-			"controlX": -2880,
-			"controlY": 1535
+			"controlX": -3939,
+			"controlY": 934
 		},
 		{
 			"a": "turretgyros_1",
 			"b": "weapon_turn_rate_2",
-			"controlX": -1515,
-			"controlY": 1905
-		},
-		{
-			"a": "small_flux_optional_90",
-			"b": "small_flux_optional_91",
-			"controlX": -1512,
-			"controlY": -872
-		},
-		{
-			"a": "small_flux_optional_84",
-			"b": "small_flux_optional_79",
-			"controlX": 1508,
-			"controlY": -877
-		},
-		{
-			"a": "small_flux_optional_98",
-			"b": "small_flux_optional_99",
-			"controlX": 6,
-			"controlY": 1745
-		},
-		{
-			"a": "small_flux_optional_89",
-			"b": "small_flux_optional_90",
-			"controlX": -1026,
-			"controlY": -1411
+			"controlX": -1910,
+			"controlY": 2357
 		},
 		{
 			"a": "hull_multi_4",
 			"b": "hull_multi_5",
-			"controlX": 2256,
-			"controlY": 551
+			"controlX": 2697,
+			"controlY": 639
 		},
 		{
 			"a": "hull_multi_5",
 			"b": "hull_multi_6",
-			"controlX": 2139,
-			"controlY": 458
+			"controlX": 2580,
+			"controlY": 546
 		},
 		{
 			"a": "hull_multi_6",
 			"b": "reinforcedhull_1",
-			"controlX": 2232,
-			"controlY": 341
+			"controlX": 2673,
+			"controlY": 429
 		},
 		{
 			"a": "hull_multi_4",
 			"b": "reinforcedhull_1",
-			"controlX": 2349,
-			"controlY": 434
+			"controlX": 2790,
+			"controlY": 522
 		},
 		{
 			"a": "REDACTED_2",
@@ -6739,18 +6457,6 @@
 			"controlY": 11579
 		},
 		{
-			"a": "hiressensors_1",
-			"b": "increased_sensor_strength_1",
-			"controlX": -649,
-			"controlY": -1350
-		},
-		{
-			"a": "hiressensors_1",
-			"b": "increased_sensor_strength_2",
-			"controlX": -451,
-			"controlY": -1096
-		},
-		{
 			"a": "attuned_sensors_1",
 			"b": "increased_sensor_strength_3",
 			"controlX": -12551,
@@ -6817,22 +6523,16 @@
 			"controlY": -8784
 		},
 		{
-			"a": "survey_generic_cost_reduction_2",
-			"b": "surveying_equipment_1",
-			"controlX": 529,
-			"controlY": -661
-		},
-		{
 			"a": "ballistic_damage_2",
 			"b": "ballistic_projectile_speed_3",
-			"controlX": 1953,
-			"controlY": 2596
+			"controlX": 2317,
+			"controlY": 3073
 		},
 		{
 			"a": "ballistic_projectile_speed_3",
 			"b": "ballistic_rangefinder_1",
-			"controlX": 1960,
-			"controlY": 2745
+			"controlX": 2324,
+			"controlY": 3222
 		},
 		{
 			"a": "shared_damage_taken",
@@ -7001,18 +6701,6 @@
 			"b": "tactical_superiority_1",
 			"controlX": 108,
 			"controlY": -13799
-		},
-		{
-			"a": "survey_generic_cost_reduction_1",
-			"b": "survey_generic_cost_reduction_2",
-			"controlX": 317,
-			"controlY": -661
-		},
-		{
-			"a": "fuel_flat_1",
-			"b": "fuel_flat_2",
-			"controlX": 615,
-			"controlY": 1147
 		},
 		{
 			"a": "armor_6",
@@ -7209,32 +6897,32 @@
 		{
 			"a": "fighter_weapon_damage_1",
 			"b": "fighter_weapon_damage_2",
-			"controlX": 2943,
-			"controlY": -1510
+			"controlX": 3485,
+			"controlY": -1768
 		},
 		{
 			"a": "ecm_resistance_1",
 			"b": "ecm_resistance_2",
-			"controlX": 2681,
-			"controlY": -2073
+			"controlX": 3147,
+			"controlY": -2450
 		},
 		{
 			"a": "ecm_1",
 			"b": "ecm_resistance_2",
-			"controlX": 2645,
-			"controlY": -2198
+			"controlX": 3111,
+			"controlY": -2575
 		},
 		{
 			"a": "autorepair_1",
 			"b": "repair_time_3",
-			"controlX": -2157,
-			"controlY": -762
+			"controlX": -2717,
+			"controlY": -977
 		},
 		{
 			"a": "repair_time_1",
 			"b": "repair_time_3",
-			"controlX": -2369,
-			"controlY": -762
+			"controlX": -2929,
+			"controlY": -977
 		},
 		{
 			"a": "weapon_durability_3",
@@ -7261,88 +6949,70 @@
 			"controlY": -16079
 		},
 		{
-			"a": "hardened_subsystems_1",
-			"b": "peak_cr_duration_2",
-			"controlX": 2944,
-			"controlY": 1390
-		},
-		{
-			"a": "hardened_subsystems_1",
-			"b": "peak_cr_duration_1",
-			"controlX": 2845,
-			"controlY": 1591
-		},
-		{
 			"a": "autorepair_1",
 			"b": "repair_time_2",
-			"controlX": -2157,
-			"controlY": -974
+			"controlX": -2717,
+			"controlY": -1189
 		},
 		{
 			"a": "ballistic_damage_4",
 			"b": "ballistic_damage_5",
-			"controlX": -577,
-			"controlY": 2351
+			"controlX": -765,
+			"controlY": 2921
 		},
 		{
 			"a": "magazines_1",
 			"b": "non_beam_energy_damage_1",
-			"controlX": -826,
-			"controlY": 2102
+			"controlX": -1014,
+			"controlY": 2672
 		},
 		{
 			"a": "ballistic_damage_4",
 			"b": "magazines_1",
-			"controlX": -614,
-			"controlY": 2146
+			"controlX": -802,
+			"controlY": 2716
 		},
 		{
 			"a": "repair_time_1",
 			"b": "repair_time_2",
-			"controlX": -2369,
-			"controlY": -974
+			"controlX": -2929,
+			"controlY": -1189
 		},
 		{
 			"a": "top_speed_1",
 			"b": "top_speed_2",
-			"controlX": -2314,
-			"controlY": 1300
+			"controlX": -2844,
+			"controlY": 1581
 		},
 		{
 			"a": "armor_4",
 			"b": "shield_shunt_1",
-			"controlX": 1398,
-			"controlY": 3098
+			"controlX": 1638,
+			"controlY": 3648
 		},
 		{
 			"a": "armor_4",
 			"b": "armor_5",
-			"controlX": 1333,
-			"controlY": 2985
+			"controlX": 1573,
+			"controlY": 3535
 		},
 		{
 			"a": "beam_damage_1",
 			"b": "beam_damage_3",
-			"controlX": -3463,
-			"controlY": -184
+			"controlX": -4058,
+			"controlY": -258
 		},
 		{
 			"a": "beam_damage_1",
 			"b": "beam_damage_5",
-			"controlX": -3463,
-			"controlY": -396
-		},
-		{
-			"a": "small_flux_optional_77",
-			"b": "small_flux_optional_81",
-			"controlX": -8,
-			"controlY": 259
+			"controlX": -4058,
+			"controlY": -470
 		},
 		{
 			"a": "nav_relay_1",
 			"b": "top_speed_1",
-			"controlX": -2370,
-			"controlY": 1183
+			"controlX": -2900,
+			"controlY": 1464
 		},
 		{
 			"a": "modular_hull_socket_6",
@@ -7449,56 +7119,50 @@
 		{
 			"a": "modular_hull_socket_2",
 			"b": "small_flux_optional_9",
-			"controlX": 3348,
-			"controlY": -1689
+			"controlX": 3884,
+			"controlY": -1959
 		},
 		{
 			"a": "modular_hull_socket_2",
 			"b": "small_flux_optional_7",
-			"controlX": 2662,
-			"controlY": -2641
+			"controlX": 3088,
+			"controlY": -3063
 		},
 		{
 			"a": "modular_hull_socket_4",
 			"b": "small_flux_optional_21",
-			"controlX": -3341,
-			"controlY": -1702
+			"controlX": -3876,
+			"controlY": -1974
 		},
 		{
 			"a": "modular_hull_socket_4",
 			"b": "small_flux_optional_23",
-			"controlX": -2652,
-			"controlY": -2652
+			"controlX": -3076,
+			"controlY": -3076
 		},
 		{
 			"a": "modular_hull_socket_1",
 			"b": "small_flux_optional_16",
-			"controlX": -587,
-			"controlY": 3704
+			"controlX": -681,
+			"controlY": 4297
 		},
 		{
 			"a": "modular_hull_socket_1",
 			"b": "small_flux_optional_14",
-			"controlX": 587,
-			"controlY": 3704
+			"controlX": 681,
+			"controlY": 4297
 		},
 		{
 			"a": "weapon_turn_rate_1",
 			"b": "weapon_turn_rate_2",
-			"controlX": -1515,
-			"controlY": 1693
+			"controlX": -1910,
+			"controlY": 2145
 		},
 		{
 			"a": "non_beam_energy_damage_1",
 			"b": "non_beam_energy_damage_2",
-			"controlX": -942,
-			"controlY": 2286
-		},
-		{
-			"a": "small_flux_optional_77",
-			"b": "small_flux_optional_78",
-			"controlX": -221,
-			"controlY": -138
+			"controlX": -1130,
+			"controlY": 2856
 		},
 		{
 			"a": "crew_capacity_flat_6",
@@ -7535,6 +7199,252 @@
 			"b": "missile_damage_8",
 			"controlX": 9380,
 			"controlY": -16078
+		},
+		{
+			"a": "reduced_monthly_supplies_1",
+			"b": "reduced_monthly_supplies_2",
+			"controlX": -1230,
+			"controlY": -1630
+		},
+		{
+			"a": "rationing_1",
+			"b": "reduced_monthly_supplies_2",
+			"controlX": -1366,
+			"controlY": -1792
+		},
+		{
+			"a": "increased_sensor_strength_1",
+			"b": "increased_sensor_strength_2",
+			"controlX": -598,
+			"controlY": -1953
+		},
+		{
+			"a": "hiressensors_1",
+			"b": "increased_sensor_strength_2",
+			"controlX": -671,
+			"controlY": -2152
+		},
+		{
+			"a": "small_flux_optional_94",
+			"b": "small_flux_optional_95",
+			"controlX": 598,
+			"controlY": -1953
+		},
+		{
+			"a": "augmentedengines_1",
+			"b": "small_flux_optional_94",
+			"controlX": 671,
+			"controlY": -2152
+		},
+		{
+			"a": "survey_generic_cost_reduction_1",
+			"b": "survey_generic_cost_reduction_2",
+			"controlX": 1230,
+			"controlY": -1630
+		},
+		{
+			"a": "survey_generic_cost_reduction_2",
+			"b": "surveying_equipment_1",
+			"controlX": 1366,
+			"controlY": -1792
+		},
+		{
+			"a": "cargo_capacity_flat_1",
+			"b": "cargo_capacity_flat_2",
+			"controlX": 2026,
+			"controlY": -249
+		},
+		{
+			"a": "cargo_capacity_flat_1",
+			"b": "expanded_cargo_holds_1",
+			"controlX": 2235,
+			"controlY": -286
+		},
+		{
+			"a": "small_flux_optional_93",
+			"b": "small_flux_optional_96",
+			"controlX": 2026,
+			"controlY": 249
+		},
+		{
+			"a": "augmentedengines_2",
+			"b": "small_flux_optional_93",
+			"controlX": 2235,
+			"controlY": 286
+		},
+		{
+			"a": "fuel_flat_1",
+			"b": "fuel_flat_2",
+			"controlX": 1230,
+			"controlY": 1630
+		},
+		{
+			"a": "auxiliary_fuel_tanks_1",
+			"b": "fuel_flat_1",
+			"controlX": 1366,
+			"controlY": 1792
+		},
+		{
+			"a": "engine_durability_1",
+			"b": "engine_durability_2",
+			"controlX": -598,
+			"controlY": 1953
+		},
+		{
+			"a": "engine_durability_1",
+			"b": "insulatedengine_1",
+			"controlX": -671,
+			"controlY": 2152
+		},
+		{
+			"a": "small_flux_optional_87",
+			"b": "small_flux_optional_88",
+			"controlX": -2026,
+			"controlY": 249
+		},
+		{
+			"a": "militarized_subsystems_1",
+			"b": "small_flux_optional_87",
+			"controlX": -2235,
+			"controlY": 286
+		},
+		{
+			"a": "crew_capacity_flat_1",
+			"b": "crew_capacity_flat_2",
+			"controlX": -2026,
+			"controlY": -249
+		},
+		{
+			"a": "additional_berthing_1",
+			"b": "crew_capacity_flat_2",
+			"controlX": -2235,
+			"controlY": -286
+		},
+		{
+			"a": "small_flux_optional_103",
+			"b": "small_flux_optional_91",
+			"controlX": -1640,
+			"controlY": -597
+		},
+		{
+			"a": "small_flux_optional_103",
+			"b": "small_flux_optional_90",
+			"controlX": -1337,
+			"controlY": -1122
+		},
+		{
+			"a": "small_flux_optional_89",
+			"b": "small_flux_optional_90",
+			"controlX": -872,
+			"controlY": -1511
+		},
+		{
+			"a": "root_high_tech_1",
+			"b": "small_flux_optional_89",
+			"controlX": -303,
+			"controlY": -1718
+		},
+		{
+			"a": "root_high_tech_1",
+			"b": "small_flux_optional_76",
+			"controlX": 303,
+			"controlY": -1718
+		},
+		{
+			"a": "small_flux_optional_76",
+			"b": "small_flux_optional_79",
+			"controlX": 873,
+			"controlY": -1511
+		},
+		{
+			"a": "small_flux_optional_101",
+			"b": "small_flux_optional_79",
+			"controlX": 1337,
+			"controlY": -1122
+		},
+		{
+			"a": "small_flux_optional_101",
+			"b": "small_flux_optional_84",
+			"controlX": 1640,
+			"controlY": -597
+		},
+		{
+			"a": "small_flux_optional_83",
+			"b": "small_flux_optional_84",
+			"controlX": 1745,
+			"controlY": 0
+		},
+		{
+			"a": "root_low_tech_1",
+			"b": "small_flux_optional_83",
+			"controlX": 1642,
+			"controlY": 592
+		},
+		{
+			"a": "root_low_tech_1",
+			"b": "small_flux_optional_100",
+			"controlX": 1340,
+			"controlY": 1117
+		},
+		{
+			"a": "small_flux_optional_100",
+			"b": "small_flux_optional_99",
+			"controlX": 873,
+			"controlY": 1511
+		},
+		{
+			"a": "small_flux_optional_102",
+			"b": "small_flux_optional_99",
+			"controlX": 303,
+			"controlY": 1718
+		},
+		{
+			"a": "small_flux_optional_102",
+			"b": "small_flux_optional_98",
+			"controlX": -303,
+			"controlY": 1718
+		},
+		{
+			"a": "small_flux_optional_97",
+			"b": "small_flux_optional_98",
+			"controlX": -872,
+			"controlY": 1511
+		},
+		{
+			"a": "root_midline_1",
+			"b": "small_flux_optional_97",
+			"controlX": -1336,
+			"controlY": 1122
+		},
+		{
+			"a": "root_midline_1",
+			"b": "small_flux_optional_92",
+			"controlX": -1640,
+			"controlY": 597
+		},
+		{
+			"a": "small_flux_optional_91",
+			"b": "small_flux_optional_92",
+			"controlX": -1745,
+			"controlY": 0
+		},
+		{
+			"a": "heavyarmor_1",
+			"b": "hull_multi_3",
+			"controlX": -3833,
+			"controlY": 828
+		},
+		{
+			"a": "hardened_subsystems_1",
+			"b": "peak_cr_duration_1",
+			"controlX": 3377,
+			"controlY": 2123
+		},
+		{
+			"a": "peak_cr_duration_1",
+			"b": "peak_cr_duration_2",
+			"controlX": 3165,
+			"controlY": 2123
 		}
 	],
 	"hiddenConnectors": [
@@ -7590,9 +7500,9 @@
 	"orbitAnchors": [
 		{
 			"id": "augmented_drive_field_anchor_1",
-			"x": 491,
-			"y": -1292,
-			"radius": 174
+			"x": 734,
+			"y": -2016,
+			"radius": 150
 		},
 		{
 			"id": "inner_ring",
@@ -7602,179 +7512,179 @@
 		},
 		{
 			"id": "high_res_sensors_anchor",
-			"x": -498,
-			"y": -1264,
-			"radius": 174
+			"x": -734,
+			"y": -2016,
+			"radius": 150
 		},
 		{
 			"id": "additional_berthing_anchor",
-			"x": -1205,
-			"y": -425,
-			"radius": 170
+			"x": -2112,
+			"y": -372,
+			"radius": 150
 		},
 		{
 			"id": "militarized_subsystems_anchor",
-			"x": -1249,
-			"y": 229,
-			"radius": 174
+			"x": -2112,
+			"y": 372,
+			"radius": 150
 		},
 		{
 			"id": "insulated_engine_assembly_anchor",
-			"x": -496,
-			"y": 1020,
-			"radius": 173
+			"x": -734,
+			"y": 2016,
+			"radius": 150
 		},
 		{
 			"id": "flat_cargo_anchor",
-			"x": 1019,
-			"y": -272,
-			"radius": 170
+			"x": 2112,
+			"y": -372,
+			"radius": 150
 		},
 		{
 			"id": "augmented_drive_field_anchor_2",
-			"x": 1292,
-			"y": 249,
-			"radius": 174
+			"x": 2112,
+			"y": 372,
+			"radius": 150
 		},
 		{
 			"id": "flat_fuel_anchor",
-			"x": 493,
-			"y": 1025,
-			"radius": 173
+			"x": 1379,
+			"y": 1643,
+			"radius": 150
 		},
 		{
 			"id": "outer_ring",
 			"x": 0,
 			"y": 0,
-			"radius": 3750
+			"radius": 4350
 		},
 		{
 			"id": "anchor_1",
-			"x": 603,
-			"y": -2215,
+			"x": 724,
+			"y": -2648,
 			"radius": 150
 		},
 		{
 			"id": "anchor_2",
-			"x": 950,
-			"y": -3212,
+			"x": 1120,
+			"y": -3787,
 			"radius": 150
 		},
 		{
 			"id": "middle_ring",
 			"x": 0,
 			"y": 0,
-			"radius": 2950
+			"radius": 3550
 		},
 		{
 			"id": "anchor_3",
-			"x": 483,
-			"y": 3237,
+			"x": 570,
+			"y": 3831,
 			"radius": 150
 		},
 		{
 			"id": "anchor_5",
-			"x": -2986,
-			"y": 1535,
+			"x": -3833,
+			"y": 934,
 			"radius": 150,
 			"shape": "square"
 		},
 		{
 			"id": "anchor_7",
-			"x": 1637,
-			"y": 1785,
+			"x": 2043,
+			"y": 2227,
 			"radius": 150,
 			"shape": "square",
 			"rotation": 314.3
 		},
 		{
 			"id": "anchor_4",
-			"x": 2031,
-			"y": 2667,
+			"x": 2395,
+			"y": 3144,
 			"radius": 150,
 			"shape": "square",
 			"rotation": 42.3
 		},
 		{
 			"id": "anchor_6",
-			"x": 2244,
-			"y": 446,
+			"x": 2685,
+			"y": 534,
 			"radius": 150,
 			"shape": "square",
 			"rotation": 353.7
 		},
 		{
 			"id": "anchor_8",
-			"x": -590,
-			"y": -2211,
+			"x": -709,
+			"y": -2645,
 			"radius": 150
 		},
 		{
 			"id": "anchor_9",
-			"x": -636,
-			"y": -3209,
+			"x": -751,
+			"y": -3798,
 			"radius": 150
 		},
 		{
 			"id": "anchor_10",
-			"x": 1333,
-			"y": 3060,
+			"x": 1573,
+			"y": 3610,
 			"radius": 150,
 			"shape": "triangle",
 			"rotation": 180
 		},
 		{
 			"id": "anchor_11",
-			"x": 1434,
-			"y": -1873,
+			"x": 1805,
+			"y": -2345,
 			"radius": 150
 		},
 		{
 			"id": "anchor_12",
-			"x": -1247,
-			"y": -1849,
+			"x": -1582,
+			"y": -2346,
 			"radius": 150,
 			"shape": "triangle",
 			"rotation": 198.1
 		},
 		{
 			"id": "anchor_13",
-			"x": -2737,
-			"y": -1979,
+			"x": -3219,
+			"y": -2336,
 			"radius": 150
 		},
 		{
 			"id": "anchor_14",
-			"x": -3057,
-			"y": -1439,
+			"x": -3595,
+			"y": -1704,
 			"radius": 150
 		},
 		{
 			"id": "anchor_15",
-			"x": 2627,
-			"y": -2125,
+			"x": 3093,
+			"y": -2502,
 			"radius": 150,
 			"shape": "triangle",
 			"rotation": 74.2
 		},
 		{
 			"id": "anchor_16",
-			"x": -2376,
-			"y": 1258,
+			"x": -2906,
+			"y": 1539,
 			"radius": 150,
 			"shape": "triangle",
 			"rotation": 64.4
 		},
 		{
 			"id": "anchor_17",
-			"x": -1539,
-			"y": -2899,
+			"x": -1817,
+			"y": -3431,
 			"radius": 150
 		},
 		{
 			"id": "anchor_18",
-			"x": 832,
-			"y": 2163,
+			"x": 1047,
+			"y": 2723,
 			"radius": 150,
 			"shape": "triangle",
 			"rotation": 180
@@ -7783,7 +7693,7 @@
 			"id": "middle_ringbelt",
 			"x": 0,
 			"y": 0,
-			"radius": 3025,
+			"radius": 3625,
 			"shape": "asteroidBelt",
 			"beltBandWidth": 350,
 			"beltStyle": "dust",
@@ -7796,7 +7706,7 @@
 			"id": "outer_ringbelt",
 			"x": 0,
 			"y": 0,
-			"radius": 3825,
+			"radius": 4425,
 			"shape": "asteroidBelt",
 			"beltBandWidth": 450,
 			"beltStyle": "dust",
@@ -7807,45 +7717,45 @@
 		},
 		{
 			"id": "anchor_20",
-			"x": -1843,
-			"y": 2824,
+			"x": -2175,
+			"y": 3324,
 			"radius": 150
 		},
 		{
 			"id": "anchor_21",
-			"x": 1980,
-			"y": -1316,
+			"x": 2480,
+			"y": -1648,
 			"radius": 150,
 			"shape": "triangle"
 		},
 		{
 			"id": "anchor_22",
-			"x": 2223,
-			"y": -394,
+			"x": 2814,
+			"y": -499,
 			"radius": 150
 		},
 		{
 			"id": "anchor_23",
-			"x": -2393,
-			"y": -12,
+			"x": -2993,
+			"y": -28,
 			"radius": 150
 		},
 		{
 			"id": "anchor_24",
-			"x": -612,
-			"y": -666,
+			"x": -1379,
+			"y": -1643,
 			"radius": 150
 		},
 		{
 			"id": "anchor_25",
-			"x": -3356,
-			"y": 303,
+			"x": -3953,
+			"y": 366,
 			"radius": 150
 		},
 		{
 			"id": "anchor_26",
-			"x": 3049,
-			"y": -1404,
+			"x": 3591,
+			"y": -1662,
 			"radius": 150
 		},
 		{
@@ -7856,14 +7766,14 @@
 		},
 		{
 			"id": "anchor_28",
-			"x": -2263,
-			"y": -868,
+			"x": -2823,
+			"y": -1083,
 			"radius": 150
 		},
 		{
 			"id": "anchor_30",
-			"x": -1621,
-			"y": 1799,
+			"x": -2016,
+			"y": 2251,
 			"radius": 150
 		},
 		{
@@ -8018,8 +7928,8 @@
 		},
 		{
 			"id": "anchor_47",
-			"x": 423,
-			"y": -767,
+			"x": 1379,
+			"y": -1643,
 			"radius": 150
 		},
 		{
@@ -8092,7 +8002,7 @@
 			"id": "wormhole_anchor",
 			"x": 0,
 			"y": 0,
-			"radius": 4450
+			"radius": 5050
 		},
 		{
 			"id": "anchor_55",
@@ -8108,20 +8018,20 @@
 		},
 		{
 			"id": "anchor_27",
-			"x": 2984,
-			"y": 1534,
+			"x": 3271,
+			"y": 2017,
 			"radius": 150
 		},
 		{
 			"id": "anchor_57",
-			"x": -752,
-			"y": 2277,
+			"x": -940,
+			"y": 2847,
 			"radius": 190
 		},
 		{
 			"id": "anchor_58",
-			"x": -3357,
-			"y": -290,
+			"x": -3952,
+			"y": -364,
 			"radius": 150
 		}
 	],
@@ -8130,8 +8040,8 @@
 			"id": "middle_ringbelt",
 			"x": 0,
 			"y": 0,
-			"innerRadius": 2850,
-			"outerRadius": 3200,
+			"innerRadius": 3450,
+			"outerRadius": 3800,
 			"ringArtPath": "graphics/planets/ring_band_dust.png",
 			"rotationSpeed": 0.6,
 			"tags": [
@@ -8142,8 +8052,8 @@
 			"id": "outer_ringbelt",
 			"x": 0,
 			"y": 0,
-			"innerRadius": 3600,
-			"outerRadius": 4050,
+			"innerRadius": 4200,
+			"outerRadius": 4650,
 			"ringArtPath": "graphics/planets/ring_band_dust.png",
 			"rotationSpeed": -0.8,
 			"tags": [
