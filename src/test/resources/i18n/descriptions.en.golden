@@ -2353,11 +2353,16 @@ type|ballistic_damage|FRIGATE|0	0	<good>3%</good> increased ballistic weapon dam
 type|ballistic_damage|DESTROYER|0	0	<good>3%</good> increased ballistic weapon damage.
 type|ballistic_damage|CRUISER|0	0	<good>3%</good> increased ballistic weapon damage.
 type|ballistic_damage|CAPITAL_SHIP|0	0	<good>3%</good> increased ballistic weapon damage.
-type|ballistic_momentum|null|0	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
-type|ballistic_momentum|FRIGATE|0	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
-type|ballistic_momentum|DESTROYER|0	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
-type|ballistic_momentum|CRUISER|0	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
-type|ballistic_momentum|CAPITAL_SHIP|0	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
+type|ballistic_momentum|null|0	0	Sailing alongside Hegemony battle lines teaches the crew the Navy's habit of arriving at speed and firing before the enemy has settled, guns thumping out what the Navy calls its heartbeat. The harder this ship is pushed past its usual burn, the harder its ballistic weapons hit.
+type|ballistic_momentum|null|1	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
+type|ballistic_momentum|FRIGATE|0	0	Sailing alongside Hegemony battle lines teaches the crew the Navy's habit of arriving at speed and firing before the enemy has settled, guns thumping out what the Navy calls its heartbeat. The harder this ship is pushed past its usual burn, the harder its ballistic weapons hit.
+type|ballistic_momentum|FRIGATE|1	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
+type|ballistic_momentum|DESTROYER|0	0	Sailing alongside Hegemony battle lines teaches the crew the Navy's habit of arriving at speed and firing before the enemy has settled, guns thumping out what the Navy calls its heartbeat. The harder this ship is pushed past its usual burn, the harder its ballistic weapons hit.
+type|ballistic_momentum|DESTROYER|1	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
+type|ballistic_momentum|CRUISER|0	0	Sailing alongside Hegemony battle lines teaches the crew the Navy's habit of arriving at speed and firing before the enemy has settled, guns thumping out what the Navy calls its heartbeat. The harder this ship is pushed past its usual burn, the harder its ballistic weapons hit.
+type|ballistic_momentum|CRUISER|1	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
+type|ballistic_momentum|CAPITAL_SHIP|0	0	Sailing alongside Hegemony battle lines teaches the crew the Navy's habit of arriving at speed and firing before the enemy has settled, guns thumping out what the Navy calls its heartbeat. The harder this ship is pushed past its usual burn, the harder its ballistic weapons hit.
+type|ballistic_momentum|CAPITAL_SHIP|1	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
 type|ballistic_projectile_speed|null|0	0	<good>10%</good> increased ballistic weapon projectile speed.
 type|ballistic_projectile_speed|FRIGATE|0	0	<good>10%</good> increased ballistic weapon projectile speed.
 type|ballistic_projectile_speed|DESTROYER|0	0	<good>10%</good> increased ballistic weapon projectile speed.
@@ -3064,15 +3069,20 @@ type-detail|gravitational_drag|CRUISER|0	0	Mutually exclusive with <hullmod>hull
 type|gravitational_drag|CAPITAL_SHIP|0	0	A gravitational disturbance around the hull drags at the timeflow of nearby enemies, strongest from inside phase space.
 type|gravitational_drag|CAPITAL_SHIP|1	0	Enemy ships within 1500 su lose up to <good>5%</good> timeflow, more the closer they are, or <good>10%</good> while this ship is phased. Gravitational drag from every source, including Nightcross's own Gravitational Drag hull mod, is capped at 25% per ship.
 type-detail|gravitational_drag|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Gravitational Drag</hullmod>
-type|ground_support|null|0	0	Increases the effective strength of planetary raids by <good>25%</good> of this ship's maximum crew capacity (after modifiers), up to the total number of marines in the fleet.
+type|ground_support|null|0	0	Raiding colonies alongside pirate crews teaches the crew to turn spare berths and cargo lifts into a drop platform for the marines. The more crew this ship can carry, the more weight it adds to planetary raids.
+type|ground_support|null|1	0	Increases the effective strength of planetary raids by <good>25%</good> of this ship's maximum crew capacity (after modifiers), up to the total number of marines in the fleet.
 type-detail|ground_support|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Ground Support</hullmod>\n• <hullmod>Ground Support Package</hullmod>
-type|ground_support|FRIGATE|0	0	Increases the effective strength of planetary raids by <good>25%</good> of this ship's maximum crew capacity (after modifiers), up to the total number of marines in the fleet.
+type|ground_support|FRIGATE|0	0	Raiding colonies alongside pirate crews teaches the crew to turn spare berths and cargo lifts into a drop platform for the marines. The more crew this ship can carry, the more weight it adds to planetary raids.
+type|ground_support|FRIGATE|1	0	Increases the effective strength of planetary raids by <good>25%</good> of this ship's maximum crew capacity (after modifiers), up to the total number of marines in the fleet.
 type-detail|ground_support|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Ground Support</hullmod>\n• <hullmod>Ground Support Package</hullmod>
-type|ground_support|DESTROYER|0	0	Increases the effective strength of planetary raids by <good>25%</good> of this ship's maximum crew capacity (after modifiers), up to the total number of marines in the fleet.
+type|ground_support|DESTROYER|0	0	Raiding colonies alongside pirate crews teaches the crew to turn spare berths and cargo lifts into a drop platform for the marines. The more crew this ship can carry, the more weight it adds to planetary raids.
+type|ground_support|DESTROYER|1	0	Increases the effective strength of planetary raids by <good>25%</good> of this ship's maximum crew capacity (after modifiers), up to the total number of marines in the fleet.
 type-detail|ground_support|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Ground Support</hullmod>\n• <hullmod>Ground Support Package</hullmod>
-type|ground_support|CRUISER|0	0	Increases the effective strength of planetary raids by <good>25%</good> of this ship's maximum crew capacity (after modifiers), up to the total number of marines in the fleet.
+type|ground_support|CRUISER|0	0	Raiding colonies alongside pirate crews teaches the crew to turn spare berths and cargo lifts into a drop platform for the marines. The more crew this ship can carry, the more weight it adds to planetary raids.
+type|ground_support|CRUISER|1	0	Increases the effective strength of planetary raids by <good>25%</good> of this ship's maximum crew capacity (after modifiers), up to the total number of marines in the fleet.
 type-detail|ground_support|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Ground Support</hullmod>\n• <hullmod>Ground Support Package</hullmod>
-type|ground_support|CAPITAL_SHIP|0	0	Increases the effective strength of planetary raids by <good>25%</good> of this ship's maximum crew capacity (after modifiers), up to the total number of marines in the fleet.
+type|ground_support|CAPITAL_SHIP|0	0	Raiding colonies alongside pirate crews teaches the crew to turn spare berths and cargo lifts into a drop platform for the marines. The more crew this ship can carry, the more weight it adds to planetary raids.
+type|ground_support|CAPITAL_SHIP|1	0	Increases the effective strength of planetary raids by <good>25%</good> of this ship's maximum crew capacity (after modifiers), up to the total number of marines in the fleet.
 type-detail|ground_support|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Ground Support</hullmod>\n• <hullmod>Ground Support Package</hullmod>
 type|hardened_subsystems|null|0	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
 type-detail|hardened_subsystems|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Hardened Subsystems</hullmod>
@@ -3114,15 +3124,20 @@ type|hardlight_infusion|CRUISER|2	0	The fighter mark raises damage taken by up t
 type|hardlight_infusion|CAPITAL_SHIP|0	0	Fighter hits paint the target with hardlight markers that guide the rest of the carrier's wings onto it.
 type|hardlight_infusion|CAPITAL_SHIP|1	0	Each hit by a fighter launched from this ship marks the enemy ship it hits, raising the damage that ship takes from this ship's fighters by <good>2%</good>. The mark clears 2 seconds after the last hit. Each second of beam contact counts as one hit.
 type|hardlight_infusion|CAPITAL_SHIP|2	0	The fighter mark raises damage taken by up to <good>30%</good>.
-type|heavy_ballistics_integration|null|0	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
+type|heavy_ballistics_integration|null|0	0	Stripping decommissioned Onslaughts at the Agreus shipbreaking yards showed the crew how the Navy seats its heaviest guns directly into the hull. Large ballistic weapons take up far less of this ship's ordnance budget.
+type|heavy_ballistics_integration|null|1	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 type-detail|heavy_ballistics_integration|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Heavy Ballistics Integration</hullmod>
-type|heavy_ballistics_integration|FRIGATE|0	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
+type|heavy_ballistics_integration|FRIGATE|0	0	Stripping decommissioned Onslaughts at the Agreus shipbreaking yards showed the crew how the Navy seats its heaviest guns directly into the hull. Large ballistic weapons take up far less of this ship's ordnance budget.
+type|heavy_ballistics_integration|FRIGATE|1	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 type-detail|heavy_ballistics_integration|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Heavy Ballistics Integration</hullmod>
-type|heavy_ballistics_integration|DESTROYER|0	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
+type|heavy_ballistics_integration|DESTROYER|0	0	Stripping decommissioned Onslaughts at the Agreus shipbreaking yards showed the crew how the Navy seats its heaviest guns directly into the hull. Large ballistic weapons take up far less of this ship's ordnance budget.
+type|heavy_ballistics_integration|DESTROYER|1	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 type-detail|heavy_ballistics_integration|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Heavy Ballistics Integration</hullmod>
-type|heavy_ballistics_integration|CRUISER|0	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
+type|heavy_ballistics_integration|CRUISER|0	0	Stripping decommissioned Onslaughts at the Agreus shipbreaking yards showed the crew how the Navy seats its heaviest guns directly into the hull. Large ballistic weapons take up far less of this ship's ordnance budget.
+type|heavy_ballistics_integration|CRUISER|1	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 type-detail|heavy_ballistics_integration|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Heavy Ballistics Integration</hullmod>
-type|heavy_ballistics_integration|CAPITAL_SHIP|0	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
+type|heavy_ballistics_integration|CAPITAL_SHIP|0	0	Stripping decommissioned Onslaughts at the Agreus shipbreaking yards showed the crew how the Navy seats its heaviest guns directly into the hull. Large ballistic weapons take up far less of this ship's ordnance budget.
+type|heavy_ballistics_integration|CAPITAL_SHIP|1	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 type-detail|heavy_ballistics_integration|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Heavy Ballistics Integration</hullmod>
 type|heavyarmor|null|0	0	<bad>20%</bad> reduced maneuverability.
 type|heavyarmor|null|1	0	<good>30%</good> increased armor.
@@ -3187,11 +3202,16 @@ type|hull|FRIGATE|0	0	<good>2%</good> more hull points.
 type|hull|DESTROYER|0	0	<good>2%</good> more hull points.
 type|hull|CRUISER|0	0	<good>2%</good> more hull points.
 type|hull|CAPITAL_SHIP|0	0	<good>2%</good> more hull points.
-type|hull_breacher|null|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-type|hull_breacher|FRIGATE|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-type|hull_breacher|DESTROYER|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-type|hull_breacher|CRUISER|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-type|hull_breacher|CAPITAL_SHIP|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
+type|hull_breacher|null|0	0	Former Hegemony Navy gunners in the crew remember the breacher loads the Navy keeps for boarding actions, shells hardened to punch through plating instead of bursting on it. Some ballistic hits tear clean through an enemy hull and carry on beyond it.
+type|hull_breacher|null|1	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
+type|hull_breacher|FRIGATE|0	0	Former Hegemony Navy gunners in the crew remember the breacher loads the Navy keeps for boarding actions, shells hardened to punch through plating instead of bursting on it. Some ballistic hits tear clean through an enemy hull and carry on beyond it.
+type|hull_breacher|FRIGATE|1	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
+type|hull_breacher|DESTROYER|0	0	Former Hegemony Navy gunners in the crew remember the breacher loads the Navy keeps for boarding actions, shells hardened to punch through plating instead of bursting on it. Some ballistic hits tear clean through an enemy hull and carry on beyond it.
+type|hull_breacher|DESTROYER|1	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
+type|hull_breacher|CRUISER|0	0	Former Hegemony Navy gunners in the crew remember the breacher loads the Navy keeps for boarding actions, shells hardened to punch through plating instead of bursting on it. Some ballistic hits tear clean through an enemy hull and carry on beyond it.
+type|hull_breacher|CRUISER|1	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
+type|hull_breacher|CAPITAL_SHIP|0	0	Former Hegemony Navy gunners in the crew remember the breacher loads the Navy keeps for boarding actions, shells hardened to punch through plating instead of bursting on it. Some ballistic hits tear clean through an enemy hull and carry on beyond it.
+type|hull_breacher|CAPITAL_SHIP|1	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
 type|hull_multi|null|0	0	<good>5%</good> more hull points.
 type|hull_multi|FRIGATE|0	0	<good>5%</good> more hull points.
 type|hull_multi|DESTROYER|0	0	<good>5%</good> more hull points.
@@ -3693,26 +3713,31 @@ type|rationing|CRUISER|0	1	<bad>10%</bad> less supply use for maintenance.
 type|rationing|CRUISER|1	1	<bad>10%</bad> less fuel consumption rate.
 type|rationing|CAPITAL_SHIP|0	1	<bad>10%</bad> less supply use for maintenance.
 type|rationing|CAPITAL_SHIP|1	1	<bad>10%</bad> less fuel consumption rate.
-type|reckless_assault|null|0	1	<good>50%</good> increased crew casualties.
-type|reckless_assault|null|1	0	<good>30%</good> increased weapon damage.
-type|reckless_assault|null|2	1	<good>10%</good> more damage taken by shields.
-type|reckless_assault|null|3	0	<bad>10%</bad> reduced armor.
-type|reckless_assault|FRIGATE|0	1	<good>50%</good> increased crew casualties.
-type|reckless_assault|FRIGATE|1	0	<good>30%</good> increased weapon damage.
-type|reckless_assault|FRIGATE|2	1	<good>10%</good> more damage taken by shields.
-type|reckless_assault|FRIGATE|3	0	<bad>10%</bad> reduced armor.
-type|reckless_assault|DESTROYER|0	1	<good>50%</good> increased crew casualties.
-type|reckless_assault|DESTROYER|1	0	<good>30%</good> increased weapon damage.
-type|reckless_assault|DESTROYER|2	1	<good>10%</good> more damage taken by shields.
-type|reckless_assault|DESTROYER|3	0	<bad>10%</bad> reduced armor.
-type|reckless_assault|CRUISER|0	1	<good>50%</good> increased crew casualties.
-type|reckless_assault|CRUISER|1	0	<good>30%</good> increased weapon damage.
-type|reckless_assault|CRUISER|2	1	<good>10%</good> more damage taken by shields.
-type|reckless_assault|CRUISER|3	0	<bad>10%</bad> reduced armor.
-type|reckless_assault|CAPITAL_SHIP|0	1	<good>50%</good> increased crew casualties.
-type|reckless_assault|CAPITAL_SHIP|1	0	<good>30%</good> increased weapon damage.
-type|reckless_assault|CAPITAL_SHIP|2	1	<good>10%</good> more damage taken by shields.
-type|reckless_assault|CAPITAL_SHIP|3	0	<bad>10%</bad> reduced armor.
+type|reckless_assault|null|0	0	Pirate captains who joined the crew drill the habits that make freebooters so dangerous up close: charge in, fire everything and count the casualties later. Weapons hit much harder, but the ship sheds armour, takes more damage on its shields and loses far more crew.
+type|reckless_assault|null|1	1	<good>50%</good> increased crew casualties.
+type|reckless_assault|null|2	0	<good>30%</good> increased weapon damage.
+type|reckless_assault|null|3	1	<good>10%</good> more damage taken by shields.
+type|reckless_assault|null|4	0	<bad>10%</bad> reduced armor.
+type|reckless_assault|FRIGATE|0	0	Pirate captains who joined the crew drill the habits that make freebooters so dangerous up close: charge in, fire everything and count the casualties later. Weapons hit much harder, but the ship sheds armour, takes more damage on its shields and loses far more crew.
+type|reckless_assault|FRIGATE|1	1	<good>50%</good> increased crew casualties.
+type|reckless_assault|FRIGATE|2	0	<good>30%</good> increased weapon damage.
+type|reckless_assault|FRIGATE|3	1	<good>10%</good> more damage taken by shields.
+type|reckless_assault|FRIGATE|4	0	<bad>10%</bad> reduced armor.
+type|reckless_assault|DESTROYER|0	0	Pirate captains who joined the crew drill the habits that make freebooters so dangerous up close: charge in, fire everything and count the casualties later. Weapons hit much harder, but the ship sheds armour, takes more damage on its shields and loses far more crew.
+type|reckless_assault|DESTROYER|1	1	<good>50%</good> increased crew casualties.
+type|reckless_assault|DESTROYER|2	0	<good>30%</good> increased weapon damage.
+type|reckless_assault|DESTROYER|3	1	<good>10%</good> more damage taken by shields.
+type|reckless_assault|DESTROYER|4	0	<bad>10%</bad> reduced armor.
+type|reckless_assault|CRUISER|0	0	Pirate captains who joined the crew drill the habits that make freebooters so dangerous up close: charge in, fire everything and count the casualties later. Weapons hit much harder, but the ship sheds armour, takes more damage on its shields and loses far more crew.
+type|reckless_assault|CRUISER|1	1	<good>50%</good> increased crew casualties.
+type|reckless_assault|CRUISER|2	0	<good>30%</good> increased weapon damage.
+type|reckless_assault|CRUISER|3	1	<good>10%</good> more damage taken by shields.
+type|reckless_assault|CRUISER|4	0	<bad>10%</bad> reduced armor.
+type|reckless_assault|CAPITAL_SHIP|0	0	Pirate captains who joined the crew drill the habits that make freebooters so dangerous up close: charge in, fire everything and count the casualties later. Weapons hit much harder, but the ship sheds armour, takes more damage on its shields and loses far more crew.
+type|reckless_assault|CAPITAL_SHIP|1	1	<good>50%</good> increased crew casualties.
+type|reckless_assault|CAPITAL_SHIP|2	0	<good>30%</good> increased weapon damage.
+type|reckless_assault|CAPITAL_SHIP|3	1	<good>10%</good> more damage taken by shields.
+type|reckless_assault|CAPITAL_SHIP|4	0	<bad>10%</bad> reduced armor.
 type|recovery_shuttles|null|0	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
 type-detail|recovery_shuttles|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Recovery Shuttles</hullmod>
 type|recovery_shuttles|FRIGATE|0	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
@@ -3758,11 +3783,16 @@ type|repair_time|FRIGATE|0	0	Reduces weapon and engine repair time by <good>15%<
 type|repair_time|DESTROYER|0	0	Reduces weapon and engine repair time by <good>15%</good>.
 type|repair_time|CRUISER|0	0	Reduces weapon and engine repair time by <good>15%</good>.
 type|repair_time|CAPITAL_SHIP|0	0	Reduces weapon and engine repair time by <good>15%</good>.
-type|restriction_breeds_creativity|null|0	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-type|restriction_breeds_creativity|FRIGATE|0	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-type|restriction_breeds_creativity|DESTROYER|0	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-type|restriction_breeds_creativity|CRUISER|0	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-type|restriction_breeds_creativity|CAPITAL_SHIP|0	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+type|restriction_breeds_creativity|null|0	0	Captured pirate hulls show the crew how freebooters keep a battered ship fighting, bracing broken frames and patched plates around the damage instead of hiding it. Each d-mod this ship carries makes its armour shrug off a little more damage.
+type|restriction_breeds_creativity|null|1	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+type|restriction_breeds_creativity|FRIGATE|0	0	Captured pirate hulls show the crew how freebooters keep a battered ship fighting, bracing broken frames and patched plates around the damage instead of hiding it. Each d-mod this ship carries makes its armour shrug off a little more damage.
+type|restriction_breeds_creativity|FRIGATE|1	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+type|restriction_breeds_creativity|DESTROYER|0	0	Captured pirate hulls show the crew how freebooters keep a battered ship fighting, bracing broken frames and patched plates around the damage instead of hiding it. Each d-mod this ship carries makes its armour shrug off a little more damage.
+type|restriction_breeds_creativity|DESTROYER|1	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+type|restriction_breeds_creativity|CRUISER|0	0	Captured pirate hulls show the crew how freebooters keep a battered ship fighting, bracing broken frames and patched plates around the damage instead of hiding it. Each d-mod this ship carries makes its armour shrug off a little more damage.
+type|restriction_breeds_creativity|CRUISER|1	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+type|restriction_breeds_creativity|CAPITAL_SHIP|0	0	Captured pirate hulls show the crew how freebooters keep a battered ship fighting, bracing broken frames and patched plates around the damage instead of hiding it. Each d-mod this ship carries makes its armour shrug off a little more damage.
+type|restriction_breeds_creativity|CAPITAL_SHIP|1	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 type|root_high_tech|null|0	0	<good>10%</good> increased flux dissipation.
 type|root_high_tech|FRIGATE|0	0	<good>10%</good> increased flux dissipation.
 type|root_high_tech|FRIGATE|1	0	Increases flux capacity by <good>50</good>.
@@ -4083,16 +4113,21 @@ type|top_speed_while_escorting|CRUISER|0	0	While within 700 su of a larger frien
 type-detail|top_speed_while_escorting|CRUISER|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser.
 type|top_speed_while_escorting|CAPITAL_SHIP|0	0	While within 700 su of a larger friendly ship, increases top speed by up to 5%, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 type-detail|top_speed_while_escorting|CAPITAL_SHIP|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser.
-type|torpedo_specialisation|null|0	0	<good>30%</good> increased missile weapon projectile speed.
-type|torpedo_specialisation|null|1	0	<bad>30%</bad> reduced missile maneuverability.
-type|torpedo_specialisation|FRIGATE|0	0	<good>30%</good> increased missile weapon projectile speed.
-type|torpedo_specialisation|FRIGATE|1	0	<bad>30%</bad> reduced missile maneuverability.
-type|torpedo_specialisation|DESTROYER|0	0	<good>30%</good> increased missile weapon projectile speed.
-type|torpedo_specialisation|DESTROYER|1	0	<bad>30%</bad> reduced missile maneuverability.
-type|torpedo_specialisation|CRUISER|0	0	<good>30%</good> increased missile weapon projectile speed.
-type|torpedo_specialisation|CRUISER|1	0	<bad>30%</bad> reduced missile maneuverability.
-type|torpedo_specialisation|CAPITAL_SHIP|0	0	<good>30%</good> increased missile weapon projectile speed.
-type|torpedo_specialisation|CAPITAL_SHIP|1	0	<bad>30%</bad> reduced missile maneuverability.
+type|torpedo_specialisation|null|0	0	XIV Battlegroup strike manuals, kept by the Hegemony since the Domain, teach that a torpedo should close fast and fly straight. Re-routing each missile's maneuvering thrusters into its rear thrusters sends this ship's missiles in quicker, though they can no longer turn as sharply.
+type|torpedo_specialisation|null|1	0	<good>30%</good> increased missile weapon projectile speed.
+type|torpedo_specialisation|null|2	0	<bad>30%</bad> reduced missile maneuverability.
+type|torpedo_specialisation|FRIGATE|0	0	XIV Battlegroup strike manuals, kept by the Hegemony since the Domain, teach that a torpedo should close fast and fly straight. Re-routing each missile's maneuvering thrusters into its rear thrusters sends this ship's missiles in quicker, though they can no longer turn as sharply.
+type|torpedo_specialisation|FRIGATE|1	0	<good>30%</good> increased missile weapon projectile speed.
+type|torpedo_specialisation|FRIGATE|2	0	<bad>30%</bad> reduced missile maneuverability.
+type|torpedo_specialisation|DESTROYER|0	0	XIV Battlegroup strike manuals, kept by the Hegemony since the Domain, teach that a torpedo should close fast and fly straight. Re-routing each missile's maneuvering thrusters into its rear thrusters sends this ship's missiles in quicker, though they can no longer turn as sharply.
+type|torpedo_specialisation|DESTROYER|1	0	<good>30%</good> increased missile weapon projectile speed.
+type|torpedo_specialisation|DESTROYER|2	0	<bad>30%</bad> reduced missile maneuverability.
+type|torpedo_specialisation|CRUISER|0	0	XIV Battlegroup strike manuals, kept by the Hegemony since the Domain, teach that a torpedo should close fast and fly straight. Re-routing each missile's maneuvering thrusters into its rear thrusters sends this ship's missiles in quicker, though they can no longer turn as sharply.
+type|torpedo_specialisation|CRUISER|1	0	<good>30%</good> increased missile weapon projectile speed.
+type|torpedo_specialisation|CRUISER|2	0	<bad>30%</bad> reduced missile maneuverability.
+type|torpedo_specialisation|CAPITAL_SHIP|0	0	XIV Battlegroup strike manuals, kept by the Hegemony since the Domain, teach that a torpedo should close fast and fly straight. Re-routing each missile's maneuvering thrusters into its rear thrusters sends this ship's missiles in quicker, though they can no longer turn as sharply.
+type|torpedo_specialisation|CAPITAL_SHIP|1	0	<good>30%</good> increased missile weapon projectile speed.
+type|torpedo_specialisation|CAPITAL_SHIP|2	0	<bad>30%</bad> reduced missile maneuverability.
 type|turretgyros|null|0	0	<good>40%</good> increased weapon turn rate.
 type-detail|turretgyros|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Advanced Turret Gyros</hullmod>
 type|turretgyros|FRIGATE|0	0	<good>40%</good> increased weapon turn rate.
@@ -4177,15 +4212,20 @@ type|warpfield|CAPITAL_SHIP|1	0	<good>15%</good> increased energy weapon damage.
 type|warpfield|CAPITAL_SHIP|2	0	<good>20%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|warpfield|CAPITAL_SHIP|3	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 type-detail|warpfield|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Warpfield</hullmod>
-type|waste_not|null|0	0	<good>10%</good> increased combat readiness recovery rate.
-type|waste_not|FRIGATE|0	0	<good>10%</good> increased combat readiness recovery rate.
-type|waste_not|FRIGATE|1	0	<good>3%</good> increased post-battle salvage recovered (fleet-wide).
-type|waste_not|DESTROYER|0	0	<good>10%</good> increased combat readiness recovery rate.
-type|waste_not|DESTROYER|1	0	<good>6%</good> increased post-battle salvage recovered (fleet-wide).
-type|waste_not|CRUISER|0	0	<good>10%</good> increased combat readiness recovery rate.
-type|waste_not|CRUISER|1	0	<good>10%</good> increased post-battle salvage recovered (fleet-wide).
-type|waste_not|CAPITAL_SHIP|0	0	<good>10%</good> increased combat readiness recovery rate.
-type|waste_not|CAPITAL_SHIP|1	0	<good>15%</good> increased post-battle salvage recovered (fleet-wide).
+type|waste_not|null|0	0	Freebooters who signed on at a pirate base taught the crew to strip every wreck to the frame and to patch the ship back to fighting trim from whatever a battle leaves behind. More salvage comes back after each fight, and the ship regains its combat readiness faster.
+type|waste_not|null|1	0	<good>10%</good> increased combat readiness recovery rate.
+type|waste_not|FRIGATE|0	0	Freebooters who signed on at a pirate base taught the crew to strip every wreck to the frame and to patch the ship back to fighting trim from whatever a battle leaves behind. More salvage comes back after each fight, and the ship regains its combat readiness faster.
+type|waste_not|FRIGATE|1	0	<good>10%</good> increased combat readiness recovery rate.
+type|waste_not|FRIGATE|2	0	<good>3%</good> increased post-battle salvage recovered (fleet-wide).
+type|waste_not|DESTROYER|0	0	Freebooters who signed on at a pirate base taught the crew to strip every wreck to the frame and to patch the ship back to fighting trim from whatever a battle leaves behind. More salvage comes back after each fight, and the ship regains its combat readiness faster.
+type|waste_not|DESTROYER|1	0	<good>10%</good> increased combat readiness recovery rate.
+type|waste_not|DESTROYER|2	0	<good>6%</good> increased post-battle salvage recovered (fleet-wide).
+type|waste_not|CRUISER|0	0	Freebooters who signed on at a pirate base taught the crew to strip every wreck to the frame and to patch the ship back to fighting trim from whatever a battle leaves behind. More salvage comes back after each fight, and the ship regains its combat readiness faster.
+type|waste_not|CRUISER|1	0	<good>10%</good> increased combat readiness recovery rate.
+type|waste_not|CRUISER|2	0	<good>10%</good> increased post-battle salvage recovered (fleet-wide).
+type|waste_not|CAPITAL_SHIP|0	0	Freebooters who signed on at a pirate base taught the crew to strip every wreck to the frame and to patch the ship back to fighting trim from whatever a battle leaves behind. More salvage comes back after each fight, and the ship regains its combat readiness faster.
+type|waste_not|CAPITAL_SHIP|1	0	<good>10%</good> increased combat readiness recovery rate.
+type|waste_not|CAPITAL_SHIP|2	0	<good>15%</good> increased post-battle salvage recovered (fleet-wide).
 type|weapon_durability|null|0	0	<good>5%</good> increased weapon durability.
 type|weapon_durability|FRIGATE|0	0	<good>5%</good> increased weapon durability.
 type|weapon_durability|DESTROYER|0	0	<good>5%</good> increased weapon durability.

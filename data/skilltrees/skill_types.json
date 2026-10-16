@@ -140,6 +140,7 @@
 			"phantomHullMods": [
 				"hbi"
 			],
+			"description": "Stripping decommissioned Onslaughts at the Agreus shipbreaking yards showed the crew how the Navy seats its heaviest guns directly into the hull. Large ballistic weapons take up far less of this ship's ordnance budget.",
 			"tags": [
 				"ballistic",
 				"req_ballistic"
@@ -162,6 +163,7 @@
 			"phantomHullMods": [
 				"ground_support"
 			],
+			"description": "Raiding colonies alongside pirate crews teaches the crew to turn spare berths and cargo lifts into a drop platform for the marines. The more crew this ship can carry, the more weight it adds to planetary raids.",
 			"tags": [
 				"logistics",
 				"campaign_only"
@@ -288,7 +290,7 @@
 		},
 		{
 			"id": "torpedo_specialisation",
-			"name": "Torpedo Specialisation",
+			"name": "XIV Torpedo Doctrine",
 			"icon": "graphics/icons/torpedo_specialisation.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -301,6 +303,7 @@
 					"magnitude": -30
 				}
 			],
+			"description": "XIV Battlegroup strike manuals, kept by the Hegemony since the Domain, teach that a torpedo should close fast and fly straight. Re-routing each missile's maneuvering thrusters into its rear thrusters sends this ship's missiles in quicker, though they can no longer turn as sharply.",
 			"tags": [
 				"missile",
 				"req_missile"
@@ -590,7 +593,7 @@
 		},
 		{
 			"id": "hull_breacher",
-			"name": "Hull Breacher Rounds",
+			"name": "Navy Breacher Rounds",
 			"icon": "graphics/icons/explosion3_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -599,6 +602,7 @@
 					"magnitude": 20
 				}
 			],
+			"description": "Former Hegemony Navy gunners in the crew remember the breacher loads the Navy keeps for boarding actions, shells hardened to punch through plating instead of bursting on it. Some ballistic hits tear clean through an enemy hull and carry on beyond it.",
 			"tags": [
 				"ballistic",
 				"req_ballistic"
@@ -606,7 +610,7 @@
 		},
 		{
 			"id": "ballistic_momentum",
-			"name": "Ballistic Momentum",
+			"name": "Navy Heartbeat",
 			"icon": "graphics/icons/ballistic_momentum.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -615,6 +619,7 @@
 					"magnitude": 3
 				}
 			],
+			"description": "Sailing alongside Hegemony battle lines teaches the crew the Navy's habit of arriving at speed and firing before the enemy has settled, guns thumping out what the Navy calls its heartbeat. The harder this ship is pushed past its usual burn, the harder its ballistic weapons hit.",
 			"tags": [
 				"ballistic",
 				"speed",
@@ -2816,6 +2821,7 @@
 					"magnitude": -2
 				}
 			],
+			"description": "Captured pirate hulls show the crew how freebooters keep a battered ship fighting, bracing broken frames and patched plates around the damage instead of hiding it. Each d-mod this ship carries makes its armour shrug off a little more damage.",
 			"tags": [
 				"d_mods",
 				"armour"
@@ -2887,6 +2893,7 @@
 					"capitalShip": 15
 				}
 			],
+			"description": "Freebooters who signed on at a pirate base taught the crew to strip every wreck to the frame and to patch the ship back to fighting trim from whatever a battle leaves behind. More salvage comes back after each fight, and the ship regains its combat readiness faster.",
 			"tags": [
 				"combat_readiness",
 				"player_only"
@@ -3458,7 +3465,7 @@
 		},
 		{
 			"id": "reckless_assault",
-			"name": "Reckless Assault",
+			"name": "Freebooter's Charge",
 			"icon": "graphics/icons/reckless_assault.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -3479,6 +3486,7 @@
 					"magnitude": -10
 				}
 			],
+			"description": "Pirate captains who joined the crew drill the habits that make freebooters so dangerous up close: charge in, fire everything and count the casualties later. Weapons hit much harder, but the ship sheds armour, takes more damage on its shields and loses far more crew.",
 			"tags": [
 				"weapons"
 			]
