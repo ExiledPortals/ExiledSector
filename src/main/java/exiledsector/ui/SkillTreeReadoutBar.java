@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.util.FaderUtil;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.i18n.Translation;
 import exiledsector.ui.util.FallbackSupport;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.GlScope;
@@ -51,6 +52,7 @@ final class SkillTreeReadoutBar {
 
     private final SpriteCache spriteCache;
     private final int row;
+    private final String labelKey;
     private final FaderUtil hoverFader = new FaderUtil(HOVER_FADE_IN, HOVER_FADE_OUT);
 
     private final TextLabel labelText = new TextLabel(FONT_SIZE, TEXT_COLOR);
@@ -72,8 +74,17 @@ final class SkillTreeReadoutBar {
     private String spentOfTotalLabel;
 
     SkillTreeReadoutBar(Class<?> owner, int row) {
+        this(owner, row, null);
+    }
+
+    SkillTreeReadoutBar(Class<?> owner, int row, String labelKey) {
         this.spriteCache = new SpriteCache(owner);
         this.row = row;
+        this.labelKey = labelKey;
+    }
+
+    static float stackHeight(int rowCount) {
+        return SkillTreeRefitButton.SHIP_CARD_MARGIN + rowCount * BAR_HEIGHT + Math.max(0, rowCount - 1) * ROW_GAP;
     }
 
     void advance(float amount, PositionAPI canvasPosition, int targetSpent, int targetTotal, float mouseX, float mouseY, boolean mouseKnown) {
@@ -150,7 +161,8 @@ final class SkillTreeReadoutBar {
         if (shownSpent != labelledSpent || shownTotal != labelledTotal) {
             labelledSpent = shownSpent;
             labelledTotal = shownTotal;
-            spentOfTotalLabel = shownSpent + " / " + shownTotal;
+            spentOfTotalLabel = labelKey == null ? shownSpent + " / " + shownTotal
+                    : Translation.msg(labelKey).arg("spent", shownSpent).arg("total", shownTotal).text();
         }
         return spentOfTotalLabel;
     }

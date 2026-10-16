@@ -23,7 +23,7 @@ final class SocketPlacement {
     private static final float BUTTON_HEIGHT = 40f;
     private static final float BUTTON_MIN_WIDTH = 150f;
     private static final float PANEL_MARGIN = 16f;
-    private static final float PANEL_TOP = 100f;
+    private static final float PANEL_TOP = SkillTreeChrome.sidePanelTop();
     private static final float PANEL_GAP = 12f;
 
     private final CustomPanelAPI hostPanel;

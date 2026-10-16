@@ -5,8 +5,8 @@ import exiledsector.i18n.LanguageSetting;
 import exiledsector.i18n.PseudoLeaks;
 import exiledsector.i18n.PseudoLocale;
 import exiledsector.i18n.RealCatalogue;
-import exiledsector.skills.npc.NpcLevelTable;
 import exiledsector.skills.npc.NpcTreeConfig;
+import exiledsector.skills.npc.NpcTreeSize;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.tags.AreaToggles;
 import exiledsector.ui.inspect.NpcInspectConfig;
@@ -53,18 +53,15 @@ class ExiledSectorSettingsTest {
     }
 
     @Test
-    void registersAMinAndMaxNodeFieldForEveryPlayerLevelOnTheNpcScalingTab() {
-        for (int level = NpcLevelTable.MIN_PLAYER_LEVEL; level <= NpcLevelTable.MAX_PLAYER_LEVEL; level++) {
-            int current = level;
-            settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addInt(eq("exiledSector"),
-                    eq(NpcLevelTable.minNodesFieldId(current)), anyString(), anyString(),
-                    eq(NpcLevelTable.defaultMinNodes(current)), eq(NpcLevelTable.MIN_NODES), eq(NpcLevelTable.MAX_NODES),
-                    eq(ExiledSectorSettings.npcScalingTab())));
-            settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addInt(eq("exiledSector"),
-                    eq(NpcLevelTable.maxNodesFieldId(current)), anyString(), anyString(),
-                    eq(NpcLevelTable.defaultMaxNodes(current)), eq(NpcLevelTable.MIN_NODES), eq(NpcLevelTable.MAX_NODES),
-                    eq(ExiledSectorSettings.npcScalingTab())));
-        }
+    void registersTheNpcTreeSizePercentagesOnTheNpcScalingTab() {
+        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addInt(eq("exiledSector"),
+                eq(NpcTreeSize.MIN_PERCENT_FIELD_ID), anyString(), anyString(),
+                eq(NpcTreeSize.DEFAULT_MIN_PERCENT), eq(NpcTreeSize.LOWEST_PERCENT), eq(NpcTreeSize.HIGHEST_PERCENT),
+                eq(ExiledSectorSettings.npcScalingTab())));
+        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addInt(eq("exiledSector"),
+                eq(NpcTreeSize.MAX_PERCENT_FIELD_ID), anyString(), anyString(),
+                eq(NpcTreeSize.DEFAULT_MAX_PERCENT), eq(NpcTreeSize.LOWEST_PERCENT), eq(NpcTreeSize.HIGHEST_PERCENT),
+                eq(ExiledSectorSettings.npcScalingTab())));
     }
 
     @Test

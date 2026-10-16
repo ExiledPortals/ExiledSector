@@ -17,6 +17,7 @@ import exiledsector.skills.npc.NpcTreeTag;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.ShipLevelSystem;
 import exiledsector.socketables.NpcSocketables;
+import org.apache.log4j.Logger;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -212,6 +213,11 @@ public final class ShipTreeSync {
         if (npcTree != null && ShipSkillDataManager.get(member.getId()).isBlank()) {
             npcTree.clearNpcBuild();
             NpcSocketables.claimForPlayer(npcTree);
+            List<String> trimmedNodeIds = npcTree.trimPaidNodes(SkillTree.getAllNodes(), SkillTree.topology());
+            if (!trimmedNodeIds.isEmpty()) {
+                Logger.getLogger(ShipTreeSync.class).info("[ExiledSector] Trimmed the OP-bought nodes " + trimmedNodeIds + " from captured ship "
+                        + member.getId() + ", leaving a tree as large as its level.");
+            }
             ShipSkillDataManager.put(member.getId(), npcTree);
         } else if (npcTree != null) {
             NpcSocketables.storeForPlayer(npcTree);

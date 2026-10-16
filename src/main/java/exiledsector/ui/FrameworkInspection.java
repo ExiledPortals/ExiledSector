@@ -37,7 +37,7 @@ final class FrameworkInspection {
     private static final float INSPECT_FADE_SECONDS = 0.6f;
     private static final float HOVER_SECONDS = 0.15f;
     private static final float PANEL_MARGIN = 16f;
-    private static final float PANEL_TOP = 100f;
+    private static final float PANEL_TOP = SkillTreeChrome.sidePanelTop();
     private static final float LABEL_GAP = 8f;
     private static final float GRID_SPACING = 48f;
     private static final float GRID_ALPHA = 0.06f;

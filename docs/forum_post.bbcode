@@ -149,15 +149,7 @@ Every fleet can have trees, in every faction, including your own faction's fleet
 
 Ships with officers and the flagship always get a tree. Each other ship has a 30% chance. Civilian and mothballed ships are left out. The roll is fixed per ship, so reloading a save won't reroll it.
 
-The number of nodes depends on your character level when the fleet is first spawned:
-
-[table]
-[tr][td][b]Your level[/b][/td][td][b]Nodes[/b][/td][/tr]
-[tr][td]1[/td][td]1–2[/td][/tr]
-[tr][td]5[/td][td]11–13[/td][/tr]
-[tr][td]10[/td][td]13–28[/td][/tr]
-[tr][td]15+[/td][td]16–42[/td][/tr]
-[/table]
+NPC trees mirror your own fleet. Every combat ship you own has a tree power: its level plus the paid nodes it has allocated. Each NPC ship picks one of your combat ships at random and gets 80 to 120% of that ship's tree power in nodes. Free nodes you leave unallocated still count, since the level does, so an empty tree won't make NPCs any easier. Swap your fleet for fresh ships and the fleets you meet after that are sized to the new one. If your combat ships have tree powers of 20 and 40, each NPC ship gets 16 to 24 or 32 to 48 nodes.
 
 Every NPC captain reads their ship's specs and makes a plan. The plan is usually sensible and occasionally baffling.
 
@@ -169,13 +161,13 @@ After that it's down to taste. A captain picks notables and keystones that suit 
 
 Other mods can map their own factions to a volume in data/config/exiledSector/npc_faction_volumes.csv.
 
-NPC trees also grow with your fleet. Once you reach level 15, each NPC ship's node bonuses are added up and multiplied, from 1x while your combat ships average level 15 up to 3x when they average level 50. Word gets around. Only the bonuses grow: drawbacks stay as written, reductions such as damage taken creep toward their limit without passing it, and the 80% cap on damage taken still holds. Logistics, fleet support and campaign stats such as sensors, cargo and burn level don't scale.
+NPC trees also hit harder as your fleet grows. Each NPC ship's node bonuses are added up and multiplied, from 1x while your combat ships average a tree power of 15 up to 3x when they average 60. Word gets around. Only the bonuses grow: drawbacks stay as written, reductions such as damage taken creep toward their limit without passing it, and the 80% cap on damage taken still holds. Logistics, fleet support and campaign stats such as sensors, cargo and burn level don't scale.
 
-If you recover a ship that has a tree, it keeps its tree, and the tree becomes a normal player tree. Reinforced Bulkheads' near-guaranteed recovery is switched off on NPC ships, so levelled enemies aren't free loot.
+If you recover a ship that has a tree, it keeps its tree, and the tree becomes a normal player tree. Any nodes the NPC bought with OP beyond the ship's level are dropped, and that OP goes back to the ship's fitting. Reinforced Bulkheads' near-guaranteed recovery is switched off on NPC ships, so levelled enemies aren't free loot.
 
 Press [b]X[/b] (rebindable) during a fleet encounter, or while hovering over a fleet on the map, to see which ships have trees along with their build, level, key nodes and combined bonuses. Pressing [b]F2[/b] on a ship's tooltip opens a Codex entry with the same summary. In the refit screen, every ship with a tree also shows an [b]Exiled Sector Skill Tree[/b] hull mod: hover it for the same summary of that ship's bonuses, or click its icon to open the skill tree.
 
-All of this, including the table of nodes per level, can be changed on the [b]NPC Scaling[/b] tab in LunaLib settings.
+All of this, including the tree size percentages, can be changed on the [b]NPC Scaling[/b] tab in LunaLib settings.
 [/spoiler]
 
 [b]How do I unlock hidden nodes?[/b]
