@@ -532,6 +532,12 @@ effect|DMOD_EFFECT_MULT|12.5	1	<good>12.5%</good> more negative effects from D-m
 effect|DMOD_EFFECT_MULT|100.0	1	<good>100%</good> more negative effects from D-mods.
 effect|DMOD_EFFECT_MULT|-10.0	1	<bad>10%</bad> less negative effects from D-mods.
 effect|DMOD_EFFECT_MULT|-12.5	1	<bad>12.5%</bad> less negative effects from D-mods.
+effect|DMOD_EFFECT_MULT_PER_DMOD|1.0	1	<good>1%</good> more negative effects from D-mods per D-mod, up to 5 D-mods.
+effect|DMOD_EFFECT_MULT_PER_DMOD|10.0	1	<good>10%</good> more negative effects from D-mods per D-mod, up to 5 D-mods.
+effect|DMOD_EFFECT_MULT_PER_DMOD|12.5	1	<good>12.5%</good> more negative effects from D-mods per D-mod, up to 5 D-mods.
+effect|DMOD_EFFECT_MULT_PER_DMOD|100.0	1	<good>100%</good> more negative effects from D-mods per D-mod, up to 5 D-mods.
+effect|DMOD_EFFECT_MULT_PER_DMOD|-10.0	1	<bad>10%</bad> less negative effects from D-mods per D-mod, up to 5 D-mods.
+effect|DMOD_EFFECT_MULT_PER_DMOD|-12.5	1	<bad>12.5%</bad> less negative effects from D-mods per D-mod, up to 5 D-mods.
 effect|ELECTRONIC_WARFARE|1.0	0	Increases ECM rating by <good>1</good>.
 effect|ELECTRONIC_WARFARE|10.0	0	Increases ECM rating by <good>10</good>.
 effect|ELECTRONIC_WARFARE|12.5	0	Increases ECM rating by <good>12.5</good>.
@@ -1720,6 +1726,12 @@ effect|TOP_SPEED_MULT|12.5	0	<good>12.5%</good> more top speed.
 effect|TOP_SPEED_MULT|100.0	0	<good>100%</good> more top speed.
 effect|TOP_SPEED_MULT|-10.0	0	<bad>10%</bad> less top speed.
 effect|TOP_SPEED_MULT|-12.5	0	<bad>12.5%</bad> less top speed.
+effect|TOP_SPEED_MULT_PER_DMOD|1.0	0	<good>1%</good> more top speed per D-mod, up to 5 D-mods.
+effect|TOP_SPEED_MULT_PER_DMOD|10.0	0	<good>10%</good> more top speed per D-mod, up to 5 D-mods.
+effect|TOP_SPEED_MULT_PER_DMOD|12.5	0	<good>12.5%</good> more top speed per D-mod, up to 5 D-mods.
+effect|TOP_SPEED_MULT_PER_DMOD|100.0	0	<good>100%</good> more top speed per D-mod, up to 5 D-mods.
+effect|TOP_SPEED_MULT_PER_DMOD|-10.0	0	<bad>10%</bad> less top speed per D-mod, up to 5 D-mods.
+effect|TOP_SPEED_MULT_PER_DMOD|-12.5	0	<bad>12.5%</bad> less top speed per D-mod, up to 5 D-mods.
 effect|TOP_SPEED_PERCENT|1.0	0	<good>1%</good> increased top speed.
 effect|TOP_SPEED_PERCENT|10.0	0	<good>10%</good> increased top speed.
 effect|TOP_SPEED_PERCENT|12.5	0	<good>12.5%</good> increased top speed.

@@ -40,6 +40,7 @@ class TemporaryGatingSupportTest {
             "SHIELD_DAMAGE_TAKEN_MULT",
             "ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD",
             "WEAPON_DAMAGE_MULT_PER_DMOD",
+            "TOP_SPEED_MULT_PER_DMOD",
             "FIGHTER_REFIT_TIME_MULT"
     })
     void effectsOnStatsTheGameKeepsReadingInCombatOptIn(String name) {

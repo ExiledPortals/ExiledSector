@@ -1,6 +1,7 @@
 package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import exiledsector.i18n.StyledText;
 
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
@@ -15,9 +16,34 @@ public enum MovementSkillEffect implements BackedSkillEffect {
     TOP_SPEED_MULT(MULT, liveStat(MutableShipStatsAPI::getMaxSpeed), StatNames.TOP_SPEED, false),
     ACCELERATION_FLAT(FLAT, liveStat(MutableShipStatsAPI::getAcceleration), "stat.acceleration", false),
     DECELERATION_FLAT(FLAT, liveStat(MutableShipStatsAPI::getDeceleration), "stat.deceleration", false),
-    ZERO_FLUX_SPEED_FLAT(FLAT, liveStat(MutableShipStatsAPI::getZeroFluxSpeedBoost), "stat.zeroFluxSpeedBoost", false);
+    ZERO_FLUX_SPEED_FLAT(FLAT, liveStat(MutableShipStatsAPI::getZeroFluxSpeedBoost), "stat.zeroFluxSpeedBoost", false),
+    TOP_SPEED_MULT_PER_DMOD {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getMaxSpeed().modifyMult(modId, SkillEffectSupport.compoundMultPerDMod(stats, magnitude));
+        }
+
+        @Override
+        public boolean isMultiplicative() {
+            return true;
+        }
+
+        @Override
+        public boolean supportsTemporaryGating() {
+            return true;
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return MULT.describeStat(magnitude, "stat.topSpeedPerDMod");
+        }
+    };
 
     private final EffectBacking backing;
+
+    MovementSkillEffect() {
+        this((EffectBacking) null);
+    }
 
     MovementSkillEffect(StatMode mode, StatTarget target, String statKey, boolean lowerIsBetter) {
         this(new SimpleStatEffect(mode, target, statKey, lowerIsBetter));

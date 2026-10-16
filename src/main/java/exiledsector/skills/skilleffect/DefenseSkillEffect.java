@@ -122,6 +122,28 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
             return StatMode.MULT.describeStat(magnitude, "stat.negativeEffectsFromDMods");
         }
     },
+    DMOD_EFFECT_MULT_PER_DMOD {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
+        public boolean isMultiplicative() {
+            return true;
+        }
+
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            float mult = SkillEffectSupport.compoundMultPerDMod(stats, magnitude);
+            SkillEffectSupport.applyDModEffectMult(stats, modId, (mult - 1f) * 100f);
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return StatMode.MULT.describeStat(magnitude, "stat.negativeEffectsFromDModsPerDMod");
+        }
+    },
     SHIELD_ABSORPTION_PERCENT(PERCENT, liveStat(MutableShipStatsAPI::getShieldAbsorptionMult), "stat.damageTakenByShields", true),
     SHIELD_DAMAGE_TAKEN_MULT(MULT, liveStat(MutableShipStatsAPI::getShieldDamageTakenMult), "stat.damageTakenByShields", true),
     ENGINE_DURABILITY_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getEngineHealthBonus), "stat.engineDurability", false),

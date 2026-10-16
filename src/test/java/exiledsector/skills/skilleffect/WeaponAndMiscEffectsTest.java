@@ -101,6 +101,29 @@ class WeaponAndMiscEffectsTest {
         assertEquals(1f, beam.getModifiedValue(), EPSILON);
     }
 
+    @Test
+    void perDModTopSpeedCompoundsAndStopsCountingAtFiveDMods() {
+        giveDMods(7);
+        MutableStat maxSpeed = new MutableStat(100f);
+        when(stats.getMaxSpeed()).thenReturn(maxSpeed);
+
+        MovementSkillEffect.TOP_SPEED_MULT_PER_DMOD.apply(stats, "mod_id", 2f);
+
+        assertEquals(100f * (float) Math.pow(1.02, 5), maxSpeed.getModifiedValue(), 0.001f);
+    }
+
+    @Test
+    void perDModReductionOfDModEffectsCompoundsWithEachDMod() {
+        giveDMods(2);
+        MutableStat dModEffect = new MutableStat(1f);
+        when(dynamic.getStat(Stats.DMOD_EFFECT_MULT)).thenReturn(dModEffect);
+
+        DefenseSkillEffect.DMOD_EFFECT_MULT_PER_DMOD.apply(stats, "mod_id", -10f);
+
+        assertEquals(0.81f, dModEffect.getModifiedValue(), EPSILON);
+        assertTrue(DefenseSkillEffect.DMOD_EFFECT_MULT_PER_DMOD.lowerIsBetter());
+    }
+
     private MutableStat ballisticDamageWithBurnLevel(float baseBurn, float burnChange) {
         MutableStat burn = new MutableStat(baseBurn);
         burn.modifyFlat("other", burnChange);
