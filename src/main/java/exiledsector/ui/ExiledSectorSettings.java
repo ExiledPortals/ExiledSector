@@ -59,8 +59,6 @@ public final class ExiledSectorSettings {
     }
 
     private static void registerGeneral() {
-        SettingsCreator.addText(MOD_ID, "exiledSector_about", Translation.text("settings.about"), MAIN_TAB);
-
         SettingsCreator.addHeader(MOD_ID, "exiledSector_refitHeader", Translation.text("settings.refit.header"), MAIN_TAB);
         SettingsCreator.addText(MOD_ID, "exiledSector_refitAbout", Translation.text("settings.refit.about"), MAIN_TAB);
         SettingsCreator.addBoolean(MOD_ID, RefitButtonConfig.FIELD_ID,
@@ -76,9 +74,9 @@ public final class ExiledSectorSettings {
         SettingsCreator.addBoolean(MOD_ID, SalvageSiteCompat.DROPS_FIELD_ID,
                 Translation.text("settings.socketStorage.otherModDrops.name"), Translation.text("settings.socketStorage.otherModDrops.tooltip"),
                 SalvageSiteCompat.DEFAULT_DROPS, MAIN_TAB);
-        SettingsCreator.addDouble(MOD_ID, SocketableDrops.BATTLE_PARTS_FIELD_ID,
+        SettingsCreator.addInt(MOD_ID, SocketableDrops.BATTLE_PARTS_FIELD_ID,
                 Translation.text("settings.socketStorage.battleParts.name"), Translation.text("settings.socketStorage.battleParts.tooltip"),
-                SocketableDrops.DEFAULT_BATTLE_PARTS_PER_DP, 0.0, 2.0, MAIN_TAB);
+                SocketableDrops.DEFAULT_BATTLE_PARTS_PER_100_DP, 0, SocketableDrops.MAX_BATTLE_PARTS_PER_100_DP, MAIN_TAB);
         SettingsCreator.addBoolean(MOD_ID, SocketMaterials.STORE_FIELD_ID,
                 Translation.text("settings.socketStorage.storeMaterials.name"), Translation.text("settings.socketStorage.storeMaterials.tooltip"),
                 SocketMaterials.DEFAULT_STORE, MAIN_TAB);
@@ -105,9 +103,9 @@ public final class ExiledSectorSettings {
                 Translation.text("settings.level.maxLevel"), "", ShipLevelConfig.DEFAULT_MAX_LEVEL, 1, 200, MAIN_TAB);
         SettingsCreator.addInt(MOD_ID, ShipLevelConfig.XP_BASE_FIELD_ID,
                 Translation.text("settings.level.xpBase"), "", ShipLevelConfig.DEFAULT_XP_BASE, 1, 10000, MAIN_TAB);
-        SettingsCreator.addDouble(MOD_ID, ShipLevelConfig.XP_GROWTH_FIELD_ID,
+        SettingsCreator.addInt(MOD_ID, ShipLevelConfig.XP_GROWTH_PERCENT_FIELD_ID,
                 Translation.text("settings.level.xpGrowth.name"), Translation.text("settings.level.xpGrowth.tooltip"),
-                ShipLevelConfig.DEFAULT_XP_GROWTH, 1.0, 3.0, MAIN_TAB);
+                ShipLevelConfig.DEFAULT_XP_GROWTH_PERCENT, 0, 200, MAIN_TAB);
         SettingsCreator.addInt(MOD_ID, ShipLevelConfig.XP_GROWTH_CUTOFF_LEVEL_FIELD_ID,
                 Translation.text("settings.level.xpGrowthCutoff.name"), Translation.text("settings.level.xpGrowthCutoff.tooltip"),
                 ShipLevelConfig.DEFAULT_XP_GROWTH_CUTOFF_LEVEL, 1, 200, MAIN_TAB);
@@ -126,9 +124,9 @@ public final class ExiledSectorSettings {
         SettingsCreator.addInt(MOD_ID, ShipLevelConfig.MAX_ALLOCATED_NODES_FIELD_ID,
                 Translation.text("settings.level.maxAllocatedNodes.name"), Translation.text("settings.level.maxAllocatedNodes.tooltip"),
                 ShipLevelConfig.DEFAULT_MAX_ALLOCATED_NODES, 1, 500, MAIN_TAB);
-        SettingsCreator.addDouble(MOD_ID, ShipLevelConfig.CATCH_UP_PER_LEVEL_FIELD_ID,
+        SettingsCreator.addInt(MOD_ID, ShipLevelConfig.CATCH_UP_PERCENT_PER_LEVEL_FIELD_ID,
                 Translation.text("settings.level.catchUpPerLevel.name"), Translation.text("settings.level.catchUpPerLevel.tooltip"),
-                ShipLevelConfig.DEFAULT_CATCH_UP_PER_LEVEL, 0.0, 1.0, MAIN_TAB);
+                ShipLevelConfig.DEFAULT_CATCH_UP_PERCENT_PER_LEVEL, 0, 100, MAIN_TAB);
         SettingsCreator.addDouble(MOD_ID, ShipLevelConfig.CATCH_UP_MAX_MULTIPLIER_FIELD_ID,
                 Translation.text("settings.level.catchUpMaxMultiplier.name"), Translation.text("settings.level.catchUpMaxMultiplier.tooltip"),
                 ShipLevelConfig.DEFAULT_CATCH_UP_MAX_MULTIPLIER, 1.0, 20.0, MAIN_TAB);

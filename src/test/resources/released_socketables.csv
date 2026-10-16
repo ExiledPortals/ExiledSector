@@ -1,7 +1,7 @@
 definition,effect,firstRelease,retiredAfter
 domain_subroutine_consumer,ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD,0.7.0,
 domain_subroutine_consumer,ARMOR_FLAT,0.7.2,
-domain_subroutine_consumer,ARMOR_FLAT_FOR_LOW_BASE_ARMOR,0.7.2,
+domain_subroutine_consumer,ARMOR_FLAT_FOR_LOW_BASE_ARMOR,0.7.2,0.8.0
 domain_subroutine_consumer,ARMOR_PERCENT,0.7.0,0.7.1
 domain_subroutine_consumer,BALLISTIC_WEAPON_AMMO_PERCENT,0.7.0,
 domain_subroutine_consumer,BALLISTIC_WEAPON_AMMO_REGEN_PERCENT,0.7.0,

@@ -53,7 +53,7 @@ public final class OpReserveParity {
     private static List<String> reserveHullMods(ShipVariantAPI variant) {
         List<String> reserveIds = new ArrayList<>();
         for (String hullModId : variant.getHullMods()) {
-            if (hullModId.startsWith(OpReserveHullMods.ID_PREFIX)) {
+            if (OpReserveHullMods.isReserveHullMod(hullModId)) {
                 reserveIds.add(hullModId);
             }
         }

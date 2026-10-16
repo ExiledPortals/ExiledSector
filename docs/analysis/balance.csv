@@ -1,14 +1,14 @@
 hullmod_name,hullmod_id,vanilla_tier,hullmod_op_frigate,hullmod_op_destroyer,hullmod_op_cruiser,hullmod_op_capital,node_type,node_tier,node_ids,node_region,match,nodes_from_low_tech,nodes_from_midline,nodes_from_high_tech,tree_op_from_low_tech_frigate,tree_op_from_low_tech_destroyer,tree_op_from_low_tech_cruiser,tree_op_from_low_tech_capital,tree_op_from_midline_frigate,tree_op_from_midline_destroyer,tree_op_from_midline_cruiser,tree_op_from_midline_capital,tree_op_from_high_tech_frigate,tree_op_from_high_tech_destroyer,tree_op_from_high_tech_cruiser,tree_op_from_high_tech_capital
 Accelerated Shields,advancedshieldemitter,0,3,6,9,15,advancedshieldemitter,notable,advancedshieldemitter_1,core,phantom hull mod,11,12,7,11,22,33,55,12,24,36,60,7,14,21,35
 Additional Berthing,additional_berthing,0,5,10,15,25,additional_berthing,notable,additional_berthing_1,core,phantom hull mod,10,5,10,10,20,30,50,5,10,15,25,10,20,30,50
-Advanced Turret Gyros,turretgyros,0,2,4,6,10,turretgyros,notable,turretgyros_1,core,phantom hull mod,10,5,10,10,20,30,50,5,10,15,25,10,20,30,50
+Advanced Turret Gyros,turretgyros,0,2,4,6,10,turretgyros,notable,turretgyros_1,core,phantom hull mod,9,4,9,9,18,27,45,4,8,12,20,9,18,27,45
 Armored Weapon Mounts,armoredweapons,0,3,6,9,15,armoredweapons,notable,armoredweapons_1,core,phantom hull mod,7,8,11,7,14,21,35,8,16,24,40,11,22,33,55
 Auxiliary Fuel Tanks,auxiliary_fuel_tanks,0,5,10,15,25,auxiliary_fuel_tanks,notable,auxiliary_fuel_tanks_1,core,phantom hull mod,6,11,11,6,12,18,30,11,22,33,55,11,22,33,55
 Blast Doors,blast_doors,0,4,8,12,20,blast_doors,notable,blast_doors_1,core,phantom hull mod,5,10,10,5,10,15,25,10,20,30,50,10,20,30,50
 Converted Fighter Bay,converted_fighterbay,0,2,4,6,10,converted_fighterbay,keystone,converted_fighterbay_1,core,phantom hull mod,3,8,3,3,6,9,15,8,16,24,40,3,6,9,15
 Dedicated Targeting Core,dedicated_targeting_core,0,0,0,15,25,dedicated_targeting_core,notable,dedicated_targeting_core_1,core,phantom hull mod,5,10,10,5,10,15,25,10,20,30,50,10,20,30,50
 Efficiency Overhaul,efficiency_overhaul,0,3,6,9,15,efficiency_overhaul,keystone,efficiency_overhaul_1,core,phantom hull mod,8,3,3,8,16,24,40,3,6,9,15,3,6,9,15
-Expanded Cargo Holds,expanded_cargo_holds,0,5,10,15,25,expanded_cargo_holds,notable,expanded_cargo_holds_1,core,phantom hull mod,8,9,10,8,16,24,40,9,18,27,45,10,20,30,50
+Expanded Cargo Holds,expanded_cargo_holds,0,5,10,15,25,expanded_cargo_holds,notable,expanded_cargo_holds_1,core,phantom hull mod,10,5,10,10,20,30,50,5,10,15,25,10,20,30,50
 Flux Coil Adjunct,fluxcoil,0,4,8,12,20,,,,,,,,,,,,,,,,,,,,
 Flux Distributor,fluxdistributor,0,4,8,12,20,,,,,,,,,,,,,,,,,,,,
 Hardened Subsystems,hardened_subsystems,0,5,10,15,25,hardened_subsystems,notable,hardened_subsystems_1,core,phantom hull mod,5,10,10,5,10,15,25,10,20,30,50,10,20,30,50
@@ -17,10 +17,10 @@ Insulated Engine Assembly,insulatedengine,0,3,6,9,15,insulatedengine,notable,ins
 Makeshift Shield Generator,frontshield,0,5,10,15,25,frontshield,keystone,frontshield_1,core,phantom hull mod,5,9,7,5,10,15,25,9,18,27,45,7,14,21,35
 Militarized Subsystems,militarized_subsystems,0,4,8,12,20,militarized_subsystems,notable,militarized_subsystems_1,core,phantom hull mod,9,6,11,9,18,27,45,6,12,18,30,11,22,33,55
 Reinforced Bulkheads,reinforcedhull,0,5,10,15,30,reinforcedhull,notable,reinforcedhull_1,core,phantom hull mod,4,9,9,4,8,12,20,9,18,27,45,9,18,27,45
-Safety Overrides,safetyoverrides,0,15,30,45,70,safety_overrides,keystone,safety_overrides_1,core,phantom hull mod,6,6,7,6,12,18,30,6,12,18,30,7,14,21,35
-Unstable Injector,unstable_injector,0,5,10,15,25,unstable_injector,keystone,unstable_injector_1,core,phantom hull mod,2,7,7,2,4,6,10,7,14,21,35,7,14,21,35
+Safety Overrides,safetyoverrides,0,15,30,45,70,safety_overrides,keystone,safety_overrides_1,core,phantom hull mod,8,5,9,8,16,24,40,5,10,15,25,9,18,27,45
+Unstable Injector,unstable_injector,0,5,10,15,25,unstable_injector,keystone,unstable_injector_1,core,phantom hull mod,4,9,9,4,8,12,20,9,18,27,45,9,18,27,45
 Assault Package,assault_package,1,3,6,9,15,,,,,,,,,,,,,,,,,,,,
-Augmented Drive Field,augmentedengines,1,8,16,24,40,augmentedengines,notable,augmentedengines_1 augmentedengines_2,core,phantom hull mod,7,10,7,7,14,21,35,10,20,30,50,7,14,21,35
+Augmented Drive Field,augmentedengines,1,8,16,24,40,augmentedengines,notable,augmentedengines_1 augmentedengines_2,core,phantom hull mod,8,9,7,8,16,24,40,9,18,27,45,7,14,21,35
 Auxiliary Thrusters,auxiliarythrusters,1,4,8,12,20,auxiliarythrusters,notable,auxiliarythrusters_1,core,phantom hull mod,6,11,10,6,12,18,30,11,22,33,55,10,20,30,50
 Converted Hangar,converted_hangar,1,0,10,10,10,converted_hangar,keystone,converted_hangar_1,core,phantom hull mod,4,4,9,4,8,12,20,4,8,12,20,9,18,27,45
 Escort Package,escort_package,1,0,7,15,0,escort_package,keystone,escort_package_1,core,exclusion list,4,4,9,4,8,12,20,4,8,12,20,9,18,27,45
@@ -39,13 +39,13 @@ Advanced Optics,advancedoptics,2,5,10,15,25,advancedoptics,notable,advancedoptic
 Automated Repair Unit,autorepair,2,3,6,9,15,autorepair,notable,autorepair_1,core,phantom hull mod,11,7,9,11,22,33,55,7,14,21,35,9,18,27,45
 Ballistic Rangefinder,ballistic_rangefinder,2,5,10,15,25,ballistic_rangefinder,keystone,ballistic_rangefinder_1,core,vanilla hull mod,6,9,11,6,12,18,30,9,18,27,45,11,22,33,55
 Defensive Targeting Array,defensive_targeting_array,2,2,4,6,10,defensive_targeting_array,keystone,defensive_targeting_array_1,core,vanilla hull mod,6,5,9,6,12,18,30,5,10,15,25,9,18,27,45
-ECCM Package,eccm,2,5,8,15,20,eccm,notable,eccm_1,core,phantom hull mod,10,7,11,10,20,30,50,7,14,21,35,11,22,33,55
+ECCM Package,eccm,2,5,8,15,20,eccm,notable,eccm_1,core,phantom hull mod,11,6,11,11,22,33,55,6,12,18,30,11,22,33,55
 ECM Package,ecm,2,6,12,18,24,ecm,notable,ecm_1,core,phantom hull mod,8,12,8,8,16,24,40,12,24,36,60,8,16,24,40
 High Resolution Sensors,hiressensors,2,4,6,9,15,hiressensors,notable,hiressensors_1,core,exclusion list,11,11,6,11,22,33,55,11,22,33,55,6,12,18,30
 Nav Relay,nav_relay,2,10,15,20,25,nav_relay,notable,nav_relay_1,core,phantom hull mod,10,5,10,10,20,30,50,5,10,15,25,10,20,30,50
-Resistant Flux Conduits,fluxbreakers,2,3,6,9,15,fluxbreakers,notable,fluxbreakers_1,core,phantom hull mod,10,12,8,10,20,30,50,12,24,36,60,8,16,24,40
+Resistant Flux Conduits,fluxbreakers,2,3,6,9,15,fluxbreakers,notable,fluxbreakers_1,core,phantom hull mod,11,11,7,11,22,33,55,11,22,33,55,7,14,21,35
 Shield Conversion - Front,frontemitter,2,3,5,8,12,frontemitter,notable,frontemitter_1,core,phantom hull mod,9,11,7,9,18,27,45,11,22,33,55,7,14,21,35
-Solar Shielding,solar_shielding,2,3,6,9,15,solar_shielding,notable,solar_shielding_1,core,type id,4,9,8,4,8,12,20,9,18,27,45,8,16,24,40
+Solar Shielding,solar_shielding,2,3,6,9,15,solar_shielding,notable,solar_shielding_1,core,type id,8,10,10,8,16,24,40,10,20,30,50,10,20,30,50
 Hardened Shields,hardenedshieldemitter,3,5,10,15,25,hardenedshieldemitter,notable,hardenedshieldemitter_1,core,phantom hull mod,12,8,8,12,24,36,60,8,16,24,40,8,16,24,40
 High Scatter Amplifier,high_scatter_amp,3,4,8,12,20,high_scatter_amp,notable,high_scatter_amp_1,core,phantom hull mod,12,7,11,12,24,36,60,7,14,21,35,11,22,33,55
 Integrated Point Defense AI,pointdefenseai,3,3,6,9,15,pointdefenseai,notable,pointdefenseai_1,core,phantom hull mod,8,12,8,8,16,24,40,12,24,36,60,8,16,24,40

@@ -10,7 +10,6 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
-import exiledsector.persistence.OpSpentSlotManager;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
 import exiledsector.skills.ShipSkillData;
@@ -103,7 +102,6 @@ public final class SocketCustody {
     private static void forget(Set<String> lostShipIds) {
         lostShipIds.forEach(ShipSkillDataManager::remove);
         lostShipIds.forEach(SkillTreeTemplateStore::clearAssignment);
-        OpSpentSlotManager.releaseUnless(shipId -> !lostShipIds.contains(shipId));
         Global.getLogger(SocketCustody.class).info("[ExiledSector] Forgot the skill trees of ships lost in combat: " + lostShipIds);
     }
 

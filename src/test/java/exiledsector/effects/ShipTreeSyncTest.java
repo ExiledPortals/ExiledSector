@@ -50,6 +50,7 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.inOrder;
@@ -492,14 +493,14 @@ class ShipTreeSyncTest {
     @Test
     void syncingAVariantPlacesTheShipTagTheReserveAndThePhantomsInOnePass() {
         ShipSkillDataManager.get("ship").allocate(registerMilitarizedNode(), 1);
-        when(settings.getHullModSpec("exiledSector_opSpent_0")).thenReturn(mock(HullModSpecAPI.class));
+        when(settings.getHullModSpec(startsWith("exiledSector_opReserve_"))).thenReturn(mock(HullModSpecAPI.class));
         FleetMemberAPI member = mockMember("ship", true);
         ShipVariantAPI variant = member.getVariant();
 
         assertTrue(ShipTreeSync.syncVariant(member, variant));
 
         verify(variant).addTag("exiledSector_ship_ship");
-        verify(variant).addMod("exiledSector_opSpent_0");
+        verify(variant).addMod(startsWith("exiledSector_opReserve_"));
         verify(variant).addPermaMod(MILITARIZED_SUBSYSTEMS);
         verify(variant).addTag("exiledSector_installed_" + MILITARIZED_SUBSYSTEMS);
     }

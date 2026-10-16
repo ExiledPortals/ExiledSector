@@ -159,21 +159,18 @@ class ExiledSectorModPluginTest {
     }
 
     @Test
-    void aShipResetBecauseItsRootWasRemovedKeepsItsReserveSlotUntilTheNextLoad() throws Exception {
+    void aShipResetBecauseItsRootWasRemovedIsForgottenOnTheNextLoad() throws Exception {
         loadTree(NODES);
         ShipSkillData data = ShipSkillDataManager.get("rootless");
         data.chooseStartingRoot(new SkillNode("removed_root", SkillTree.getType("root_type"), List.of(), 0f, 0f));
         data.allocate(SkillTree.get("armor"), 3);
-        persistentData.put("exiledSector_opSpentSlots", new HashMap<>(Map.of("rootless", 0)));
 
         new ExiledSectorModPlugin().onGameLoad(false);
 
         assertTrue(data.getAllocatedNodeIds().isEmpty());
-        assertEquals(Map.of("rootless", 0), persistentData.get("exiledSector_opSpentSlots"));
 
         new ExiledSectorModPlugin().onGameLoad(false);
 
-        assertEquals(Map.of(), persistentData.get("exiledSector_opSpentSlots"));
         assertNull(ShipSkillDataManager.find("rootless"));
     }
 
@@ -278,7 +275,7 @@ class ExiledSectorModPluginTest {
     }
 
     @Test
-    void onGameLoadReleasesReserveSlotsAndDropsBlankRecordsLeftByShipsWithNoProgress() {
+    void onGameLoadForgetsTheRetiredReserveSlotsAndDropsBlankRecordsLeftByShipsWithNoProgress() {
         ShipSkillDataManager.get("temporary-copy");
         ShipSkillDataManager.get("levelled").addXp(5f);
         persistentData.put("exiledSector_opSpentSlots", new HashMap<>(Map.of("temporary-copy", 0, "levelled", 1, "sold", 2)));
@@ -286,7 +283,7 @@ class ExiledSectorModPluginTest {
 
         new ExiledSectorModPlugin().onGameLoad(false);
 
-        assertEquals(Map.of("levelled", 1), persistentData.get("exiledSector_opSpentSlots"));
+        assertFalse(persistentData.containsKey("exiledSector_opSpentSlots"));
         assertNull(ShipSkillDataManager.find("temporary-copy"));
         assertNotNull(ShipSkillDataManager.find("levelled"));
         assertFalse(persistentData.containsKey("exiledSector_opSpentNextSlot"));

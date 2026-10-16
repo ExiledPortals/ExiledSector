@@ -562,12 +562,12 @@ effect|EMP_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased EMP damage t
 effect|EMP_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased EMP damage taken.
 effect|EMP_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced EMP damage taken.
 effect|EMP_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced EMP damage taken.
-effect|ENERGY_DAMAGE_TAKEN_PERCENT|1.0	1	<good>1%</good> increased energy damage taken, including hits on shields, armor, and hull.
-effect|ENERGY_DAMAGE_TAKEN_PERCENT|10.0	1	<good>10%</good> increased energy damage taken, including hits on shields, armor, and hull.
-effect|ENERGY_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased energy damage taken, including hits on shields, armor, and hull.
-effect|ENERGY_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased energy damage taken, including hits on shields, armor, and hull.
-effect|ENERGY_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced energy damage taken, including hits on shields, armor, and hull.
-effect|ENERGY_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced energy damage taken, including hits on shields, armor, and hull.
+effect|ENERGY_DAMAGE_TAKEN_PERCENT|1.0	1	<good>1%</good> increased energy damage taken.
+effect|ENERGY_DAMAGE_TAKEN_PERCENT|10.0	1	<good>10%</good> increased energy damage taken.
+effect|ENERGY_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased energy damage taken.
+effect|ENERGY_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased energy damage taken.
+effect|ENERGY_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced energy damage taken.
+effect|ENERGY_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced energy damage taken.
 effect|ENERGY_WEAPON_AMMO_FLAT|1.0	0	Increases energy weapon ammo capacity by <good>1</good>.
 effect|ENERGY_WEAPON_AMMO_FLAT|10.0	0	Increases energy weapon ammo capacity by <good>10</good>.
 effect|ENERGY_WEAPON_AMMO_FLAT|12.5	0	Increases energy weapon ammo capacity by <good>12.5</good>.
@@ -916,12 +916,12 @@ effect|FLUX_SCALED_TOP_SPEED_FLAT|12.5	0	Top speed changes with flux, from <good
 effect|FLUX_SCALED_TOP_SPEED_FLAT|100.0	0	Top speed changes with flux, from <good>+100</good> su/s at no flux to <bad>-100</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>100%</good>.
 effect|FLUX_SCALED_TOP_SPEED_FLAT|-10.0	0	Top speed changes with flux, from <good>+-10</good> su/s at no flux to <bad>--10</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>-10%</good>.
 effect|FLUX_SCALED_TOP_SPEED_FLAT|-12.5	0	Top speed changes with flux, from <good>+-12.5</good> su/s at no flux to <bad>--12.5</bad> su/s at full flux, with no change at half flux. Below half flux, acceleration and turn acceleration also rise by up to <good>-12.5%</good>.
-effect|FRAGMENTATION_DAMAGE_TAKEN_PERCENT|1.0	1	<good>1%</good> increased fragmentation damage taken, including hits on shields, armor, and hull.
-effect|FRAGMENTATION_DAMAGE_TAKEN_PERCENT|10.0	1	<good>10%</good> increased fragmentation damage taken, including hits on shields, armor, and hull.
-effect|FRAGMENTATION_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased fragmentation damage taken, including hits on shields, armor, and hull.
-effect|FRAGMENTATION_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased fragmentation damage taken, including hits on shields, armor, and hull.
-effect|FRAGMENTATION_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced fragmentation damage taken, including hits on shields, armor, and hull.
-effect|FRAGMENTATION_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced fragmentation damage taken, including hits on shields, armor, and hull.
+effect|FRAGMENTATION_DAMAGE_TAKEN_PERCENT|1.0	1	<good>1%</good> increased fragmentation damage taken.
+effect|FRAGMENTATION_DAMAGE_TAKEN_PERCENT|10.0	1	<good>10%</good> increased fragmentation damage taken.
+effect|FRAGMENTATION_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased fragmentation damage taken.
+effect|FRAGMENTATION_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased fragmentation damage taken.
+effect|FRAGMENTATION_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced fragmentation damage taken.
+effect|FRAGMENTATION_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced fragmentation damage taken.
 effect|FUEL_CAPACITY_FLAT|1.0	0	Increases fuel capacity by <good>1</good>.
 effect|FUEL_CAPACITY_FLAT|10.0	0	Increases fuel capacity by <good>10</good>.
 effect|FUEL_CAPACITY_FLAT|12.5	0	Increases fuel capacity by <good>12.5</good>.
@@ -1012,12 +1012,12 @@ effect|HEARTLESS_RADIATION_EMP_FLAT|12.5	0	Each new Heartless stack sets off a r
 effect|HEARTLESS_RADIATION_EMP_FLAT|100.0	0	Each new Heartless stack sets off a radiation surge that deals <bad>100</bad> EMP damage to a random weapon and to a random engine on this ship.
 effect|HEARTLESS_RADIATION_EMP_FLAT|-10.0	0	Each new Heartless stack sets off a radiation surge that deals <bad>-10</bad> EMP damage to a random weapon and to a random engine on this ship.
 effect|HEARTLESS_RADIATION_EMP_FLAT|-12.5	0	Each new Heartless stack sets off a radiation surge that deals <bad>-12.5</bad> EMP damage to a random weapon and to a random engine on this ship.
-effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|1.0	1	<good>1%</good> increased high-explosive damage taken, including hits on shields, armor, and hull.
-effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|10.0	1	<good>10%</good> increased high-explosive damage taken, including hits on shields, armor, and hull.
-effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased high-explosive damage taken, including hits on shields, armor, and hull.
-effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased high-explosive damage taken, including hits on shields, armor, and hull.
-effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced high-explosive damage taken, including hits on shields, armor, and hull.
-effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced high-explosive damage taken, including hits on shields, armor, and hull.
+effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|1.0	1	<good>1%</good> increased high-explosive damage taken.
+effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|10.0	1	<good>10%</good> increased high-explosive damage taken.
+effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased high-explosive damage taken.
+effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased high-explosive damage taken.
+effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced high-explosive damage taken.
+effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced high-explosive damage taken.
 effect|HULL_FLAT|1.0	0	Increases hull points by <good>1</good>.
 effect|HULL_FLAT|10.0	0	Increases hull points by <good>10</good>.
 effect|HULL_FLAT|12.5	0	Increases hull points by <good>12.5</good>.
@@ -1066,12 +1066,12 @@ effect|INTERCEPTOR_ROLE_TOP_SPEED_PERCENT|12.5	0	<good>12.5%</good> increased to
 effect|INTERCEPTOR_ROLE_TOP_SPEED_PERCENT|100.0	0	<good>100%</good> increased top speed of Interceptors launched from this ship.
 effect|INTERCEPTOR_ROLE_TOP_SPEED_PERCENT|-10.0	0	<bad>10%</bad> reduced top speed of Interceptors launched from this ship.
 effect|INTERCEPTOR_ROLE_TOP_SPEED_PERCENT|-12.5	0	<bad>12.5%</bad> reduced top speed of Interceptors launched from this ship.
-effect|KINETIC_DAMAGE_TAKEN_PERCENT|1.0	1	<good>1%</good> increased kinetic damage taken, including hits on shields, armor, and hull.
-effect|KINETIC_DAMAGE_TAKEN_PERCENT|10.0	1	<good>10%</good> increased kinetic damage taken, including hits on shields, armor, and hull.
-effect|KINETIC_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased kinetic damage taken, including hits on shields, armor, and hull.
-effect|KINETIC_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased kinetic damage taken, including hits on shields, armor, and hull.
-effect|KINETIC_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced kinetic damage taken, including hits on shields, armor, and hull.
-effect|KINETIC_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced kinetic damage taken, including hits on shields, armor, and hull.
+effect|KINETIC_DAMAGE_TAKEN_PERCENT|1.0	1	<good>1%</good> increased kinetic damage taken.
+effect|KINETIC_DAMAGE_TAKEN_PERCENT|10.0	1	<good>10%</good> increased kinetic damage taken.
+effect|KINETIC_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased kinetic damage taken.
+effect|KINETIC_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased kinetic damage taken.
+effect|KINETIC_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced kinetic damage taken.
+effect|KINETIC_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced kinetic damage taken.
 effect|MANEUVERABILITY_PERCENT|1.0	0	<good>1%</good> increased maneuverability.
 effect|MANEUVERABILITY_PERCENT|10.0	0	<good>10%</good> increased maneuverability.
 effect|MANEUVERABILITY_PERCENT|12.5	0	<good>12.5%</good> increased maneuverability.
@@ -2422,11 +2422,11 @@ type|efficient_vents|CRUISER|0	0	<good>15%</good> increased flux dissipation.
 type|efficient_vents|CRUISER|1	0	Increases flux dissipation by <good>50</good>.
 type|efficient_vents|CAPITAL_SHIP|0	0	<good>15%</good> increased flux dissipation.
 type|efficient_vents|CAPITAL_SHIP|1	0	Increases flux dissipation by <good>50</good>.
-type|emp_damage_taken_multi|null|0	1	<bad>15%</bad> less EMP damage taken.
-type|emp_damage_taken_multi|FRIGATE|0	1	<bad>15%</bad> less EMP damage taken.
-type|emp_damage_taken_multi|DESTROYER|0	1	<bad>15%</bad> less EMP damage taken.
-type|emp_damage_taken_multi|CRUISER|0	1	<bad>15%</bad> less EMP damage taken.
-type|emp_damage_taken_multi|CAPITAL_SHIP|0	1	<bad>15%</bad> less EMP damage taken.
+type|emp_damage_taken_multi|null|0	1	<bad>20%</bad> less EMP damage taken.
+type|emp_damage_taken_multi|FRIGATE|0	1	<bad>20%</bad> less EMP damage taken.
+type|emp_damage_taken_multi|DESTROYER|0	1	<bad>20%</bad> less EMP damage taken.
+type|emp_damage_taken_multi|CRUISER|0	1	<bad>20%</bad> less EMP damage taken.
+type|emp_damage_taken_multi|CAPITAL_SHIP|0	1	<bad>20%</bad> less EMP damage taken.
 type|energy_chain|null|0	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
 type|energy_chain|null|1	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 type|energy_chain|FRIGATE|0	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
@@ -2802,11 +2802,11 @@ type|increased_sensor_strength|FRIGATE|0	0	Increases this ship's sensor strength
 type|increased_sensor_strength|DESTROYER|0	0	Increases this ship's sensor strength by <good>12</good>.
 type|increased_sensor_strength|CRUISER|0	0	Increases this ship's sensor strength by <good>20</good>.
 type|increased_sensor_strength|CAPITAL_SHIP|0	0	Increases this ship's sensor strength by <good>30</good>.
-type|increased_vent_rate|null|0	0	<good>10%</good> increased venting speed.
-type|increased_vent_rate|FRIGATE|0	0	<good>10%</good> increased venting speed.
-type|increased_vent_rate|DESTROYER|0	0	<good>10%</good> increased venting speed.
-type|increased_vent_rate|CRUISER|0	0	<good>10%</good> increased venting speed.
-type|increased_vent_rate|CAPITAL_SHIP|0	0	<good>10%</good> increased venting speed.
+type|increased_vent_rate|null|0	0	<good>20%</good> increased venting speed.
+type|increased_vent_rate|FRIGATE|0	0	<good>20%</good> increased venting speed.
+type|increased_vent_rate|DESTROYER|0	0	<good>20%</good> increased venting speed.
+type|increased_vent_rate|CRUISER|0	0	<good>20%</good> increased venting speed.
+type|increased_vent_rate|CAPITAL_SHIP|0	0	<good>20%</good> increased venting speed.
 type|insulatedengine|null|0	0	<good>60%</good> increased engine durability.
 type|insulatedengine|null|1	0	<good>10%</good> increased hull points.
 type|insulatedengine|null|2	1	<bad>50%</bad> less sensor profile.
@@ -2827,11 +2827,11 @@ type|insulatedengine|CAPITAL_SHIP|0	0	<good>60%</good> increased engine durabili
 type|insulatedengine|CAPITAL_SHIP|1	0	<good>10%</good> increased hull points.
 type|insulatedengine|CAPITAL_SHIP|2	1	<bad>50%</bad> less sensor profile.
 type-detail|insulatedengine|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Insulated Engine Assembly</hullmod>
-type|less_energy_damage_taken|null|0	1	<bad>5%</bad> reduced energy damage taken, including hits on shields, armor, and hull.
-type|less_energy_damage_taken|FRIGATE|0	1	<bad>5%</bad> reduced energy damage taken, including hits on shields, armor, and hull.
-type|less_energy_damage_taken|DESTROYER|0	1	<bad>5%</bad> reduced energy damage taken, including hits on shields, armor, and hull.
-type|less_energy_damage_taken|CRUISER|0	1	<bad>5%</bad> reduced energy damage taken, including hits on shields, armor, and hull.
-type|less_energy_damage_taken|CAPITAL_SHIP|0	1	<bad>5%</bad> reduced energy damage taken, including hits on shields, armor, and hull.
+type|less_energy_damage_taken|null|0	1	<bad>5%</bad> reduced energy damage taken.
+type|less_energy_damage_taken|FRIGATE|0	1	<bad>5%</bad> reduced energy damage taken.
+type|less_energy_damage_taken|DESTROYER|0	1	<bad>5%</bad> reduced energy damage taken.
+type|less_energy_damage_taken|CRUISER|0	1	<bad>5%</bad> reduced energy damage taken.
+type|less_energy_damage_taken|CAPITAL_SHIP|0	1	<bad>5%</bad> reduced energy damage taken.
 type|live_munitions|null|0	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
 type|live_munitions|null|1	0	Each Heartless stack increases missile damage by <good>3%</good> while the fleet has crew left to give.
 type|live_munitions|null|2	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
@@ -3698,7 +3698,7 @@ summary|option0|FRIGATE|56	1	<bad>30%</bad> less fuel consumption rate.
 summary|option0|FRIGATE|57	0	<good>50%</good> increased repair rate per day.
 summary|option0|FRIGATE|58	0	<good>25%</good> increased flux dissipation.
 summary|option0|FRIGATE|59	0	Increases flux dissipation by <good>50</good>.
-summary|option0|FRIGATE|60	1	<bad>70%</bad> less EMP damage taken.
+summary|option0|FRIGATE|60	1	<bad>60%</bad> less EMP damage taken.
 summary|option0|FRIGATE|61	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
 summary|option0|FRIGATE|62	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 summary|option0|FRIGATE|63	1	<bad>10%</bad> reduced energy weapon flux cost.
@@ -3743,7 +3743,7 @@ summary|option0|FRIGATE|101	0	Gaining a Heartless stack restores <good>5%</good>
 summary|option0|FRIGATE|102	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
 summary|option0|FRIGATE|103	0	Each Heartless stack reduces top speed and maneuverability by <bad>3%</bad>.
 summary|option0|FRIGATE|104	1	<bad>50%</bad> less sensor profile.
-summary|option0|FRIGATE|105	1	<bad>10%</bad> reduced energy damage taken, including hits on shields, armor, and hull.
+summary|option0|FRIGATE|105	1	<bad>20%</bad> reduced energy damage taken.
 summary|option0|FRIGATE|106	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
 summary|option0|FRIGATE|107	0	Each Heartless stack increases missile damage by <good>3%</good> while the fleet has crew left to give.
 summary|option0|FRIGATE|108	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
@@ -3872,7 +3872,7 @@ summary|option0|DESTROYER|56	1	<bad>30%</bad> less fuel consumption rate.
 summary|option0|DESTROYER|57	0	<good>50%</good> increased repair rate per day.
 summary|option0|DESTROYER|58	0	<good>25%</good> increased flux dissipation.
 summary|option0|DESTROYER|59	0	Increases flux dissipation by <good>50</good>.
-summary|option0|DESTROYER|60	1	<bad>70%</bad> less EMP damage taken.
+summary|option0|DESTROYER|60	1	<bad>60%</bad> less EMP damage taken.
 summary|option0|DESTROYER|61	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
 summary|option0|DESTROYER|62	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 summary|option0|DESTROYER|63	1	<bad>10%</bad> reduced energy weapon flux cost.
@@ -3917,7 +3917,7 @@ summary|option0|DESTROYER|101	0	Gaining a Heartless stack restores <good>5%</goo
 summary|option0|DESTROYER|102	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
 summary|option0|DESTROYER|103	0	Each Heartless stack reduces top speed and maneuverability by <bad>3%</bad>.
 summary|option0|DESTROYER|104	1	<bad>50%</bad> less sensor profile.
-summary|option0|DESTROYER|105	1	<bad>10%</bad> reduced energy damage taken, including hits on shields, armor, and hull.
+summary|option0|DESTROYER|105	1	<bad>20%</bad> reduced energy damage taken.
 summary|option0|DESTROYER|106	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
 summary|option0|DESTROYER|107	0	Each Heartless stack increases missile damage by <good>3%</good> while the fleet has crew left to give.
 summary|option0|DESTROYER|108	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
@@ -4046,7 +4046,7 @@ summary|option0|CRUISER|56	1	<bad>30%</bad> less fuel consumption rate.
 summary|option0|CRUISER|57	0	<good>50%</good> increased repair rate per day.
 summary|option0|CRUISER|58	0	<good>25%</good> increased flux dissipation.
 summary|option0|CRUISER|59	0	Increases flux dissipation by <good>50</good>.
-summary|option0|CRUISER|60	1	<bad>70%</bad> less EMP damage taken.
+summary|option0|CRUISER|60	1	<bad>60%</bad> less EMP damage taken.
 summary|option0|CRUISER|61	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
 summary|option0|CRUISER|62	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 summary|option0|CRUISER|63	1	<bad>10%</bad> reduced energy weapon flux cost.
@@ -4091,7 +4091,7 @@ summary|option0|CRUISER|101	0	Gaining a Heartless stack restores <good>5%</good>
 summary|option0|CRUISER|102	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
 summary|option0|CRUISER|103	0	Each Heartless stack reduces top speed and maneuverability by <bad>3%</bad>.
 summary|option0|CRUISER|104	1	<bad>50%</bad> less sensor profile.
-summary|option0|CRUISER|105	1	<bad>10%</bad> reduced energy damage taken, including hits on shields, armor, and hull.
+summary|option0|CRUISER|105	1	<bad>20%</bad> reduced energy damage taken.
 summary|option0|CRUISER|106	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
 summary|option0|CRUISER|107	0	Each Heartless stack increases missile damage by <good>3%</good> while the fleet has crew left to give.
 summary|option0|CRUISER|108	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
@@ -4220,7 +4220,7 @@ summary|option0|CAPITAL_SHIP|56	1	<bad>30%</bad> less fuel consumption rate.
 summary|option0|CAPITAL_SHIP|57	0	<good>50%</good> increased repair rate per day.
 summary|option0|CAPITAL_SHIP|58	0	<good>25%</good> increased flux dissipation.
 summary|option0|CAPITAL_SHIP|59	0	Increases flux dissipation by <good>50</good>.
-summary|option0|CAPITAL_SHIP|60	1	<bad>70%</bad> less EMP damage taken.
+summary|option0|CAPITAL_SHIP|60	1	<bad>60%</bad> less EMP damage taken.
 summary|option0|CAPITAL_SHIP|61	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
 summary|option0|CAPITAL_SHIP|62	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 summary|option0|CAPITAL_SHIP|63	1	<bad>10%</bad> reduced energy weapon flux cost.
@@ -4265,7 +4265,7 @@ summary|option0|CAPITAL_SHIP|101	0	Gaining a Heartless stack restores <good>5%</
 summary|option0|CAPITAL_SHIP|102	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
 summary|option0|CAPITAL_SHIP|103	0	Each Heartless stack reduces top speed and maneuverability by <bad>3%</bad>.
 summary|option0|CAPITAL_SHIP|104	1	<bad>50%</bad> less sensor profile.
-summary|option0|CAPITAL_SHIP|105	1	<bad>10%</bad> reduced energy damage taken, including hits on shields, armor, and hull.
+summary|option0|CAPITAL_SHIP|105	1	<bad>20%</bad> reduced energy damage taken.
 summary|option0|CAPITAL_SHIP|106	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
 summary|option0|CAPITAL_SHIP|107	0	Each Heartless stack increases missile damage by <good>3%</good> while the fleet has crew left to give.
 summary|option0|CAPITAL_SHIP|108	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
@@ -4394,7 +4394,7 @@ summary|option1|FRIGATE|56	1	<bad>30%</bad> less fuel consumption rate.
 summary|option1|FRIGATE|57	0	<good>50%</good> increased repair rate per day.
 summary|option1|FRIGATE|58	0	<good>25%</good> increased flux dissipation.
 summary|option1|FRIGATE|59	0	Increases flux dissipation by <good>50</good>.
-summary|option1|FRIGATE|60	1	<bad>70%</bad> less EMP damage taken.
+summary|option1|FRIGATE|60	1	<bad>60%</bad> less EMP damage taken.
 summary|option1|FRIGATE|61	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
 summary|option1|FRIGATE|62	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 summary|option1|FRIGATE|63	1	<bad>10%</bad> reduced energy weapon flux cost.
@@ -4439,7 +4439,7 @@ summary|option1|FRIGATE|101	0	Gaining a Heartless stack restores <good>5%</good>
 summary|option1|FRIGATE|102	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
 summary|option1|FRIGATE|103	0	Each Heartless stack reduces top speed and maneuverability by <bad>3%</bad>.
 summary|option1|FRIGATE|104	1	<bad>50%</bad> less sensor profile.
-summary|option1|FRIGATE|105	1	<bad>10%</bad> reduced energy damage taken, including hits on shields, armor, and hull.
+summary|option1|FRIGATE|105	1	<bad>20%</bad> reduced energy damage taken.
 summary|option1|FRIGATE|106	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
 summary|option1|FRIGATE|107	0	Each Heartless stack increases missile damage by <good>3%</good> while the fleet has crew left to give.
 summary|option1|FRIGATE|108	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
@@ -4568,7 +4568,7 @@ summary|option1|DESTROYER|56	1	<bad>30%</bad> less fuel consumption rate.
 summary|option1|DESTROYER|57	0	<good>50%</good> increased repair rate per day.
 summary|option1|DESTROYER|58	0	<good>25%</good> increased flux dissipation.
 summary|option1|DESTROYER|59	0	Increases flux dissipation by <good>50</good>.
-summary|option1|DESTROYER|60	1	<bad>70%</bad> less EMP damage taken.
+summary|option1|DESTROYER|60	1	<bad>60%</bad> less EMP damage taken.
 summary|option1|DESTROYER|61	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
 summary|option1|DESTROYER|62	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 summary|option1|DESTROYER|63	1	<bad>10%</bad> reduced energy weapon flux cost.
@@ -4613,7 +4613,7 @@ summary|option1|DESTROYER|101	0	Gaining a Heartless stack restores <good>5%</goo
 summary|option1|DESTROYER|102	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
 summary|option1|DESTROYER|103	0	Each Heartless stack reduces top speed and maneuverability by <bad>3%</bad>.
 summary|option1|DESTROYER|104	1	<bad>50%</bad> less sensor profile.
-summary|option1|DESTROYER|105	1	<bad>10%</bad> reduced energy damage taken, including hits on shields, armor, and hull.
+summary|option1|DESTROYER|105	1	<bad>20%</bad> reduced energy damage taken.
 summary|option1|DESTROYER|106	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
 summary|option1|DESTROYER|107	0	Each Heartless stack increases missile damage by <good>3%</good> while the fleet has crew left to give.
 summary|option1|DESTROYER|108	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
@@ -4742,7 +4742,7 @@ summary|option1|CRUISER|56	1	<bad>30%</bad> less fuel consumption rate.
 summary|option1|CRUISER|57	0	<good>50%</good> increased repair rate per day.
 summary|option1|CRUISER|58	0	<good>25%</good> increased flux dissipation.
 summary|option1|CRUISER|59	0	Increases flux dissipation by <good>50</good>.
-summary|option1|CRUISER|60	1	<bad>70%</bad> less EMP damage taken.
+summary|option1|CRUISER|60	1	<bad>60%</bad> less EMP damage taken.
 summary|option1|CRUISER|61	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
 summary|option1|CRUISER|62	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 summary|option1|CRUISER|63	1	<bad>10%</bad> reduced energy weapon flux cost.
@@ -4787,7 +4787,7 @@ summary|option1|CRUISER|101	0	Gaining a Heartless stack restores <good>5%</good>
 summary|option1|CRUISER|102	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
 summary|option1|CRUISER|103	0	Each Heartless stack reduces top speed and maneuverability by <bad>3%</bad>.
 summary|option1|CRUISER|104	1	<bad>50%</bad> less sensor profile.
-summary|option1|CRUISER|105	1	<bad>10%</bad> reduced energy damage taken, including hits on shields, armor, and hull.
+summary|option1|CRUISER|105	1	<bad>20%</bad> reduced energy damage taken.
 summary|option1|CRUISER|106	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
 summary|option1|CRUISER|107	0	Each Heartless stack increases missile damage by <good>3%</good> while the fleet has crew left to give.
 summary|option1|CRUISER|108	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
@@ -4916,7 +4916,7 @@ summary|option1|CAPITAL_SHIP|56	1	<bad>30%</bad> less fuel consumption rate.
 summary|option1|CAPITAL_SHIP|57	0	<good>50%</good> increased repair rate per day.
 summary|option1|CAPITAL_SHIP|58	0	<good>25%</good> increased flux dissipation.
 summary|option1|CAPITAL_SHIP|59	0	Increases flux dissipation by <good>50</good>.
-summary|option1|CAPITAL_SHIP|60	1	<bad>70%</bad> less EMP damage taken.
+summary|option1|CAPITAL_SHIP|60	1	<bad>60%</bad> less EMP damage taken.
 summary|option1|CAPITAL_SHIP|61	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
 summary|option1|CAPITAL_SHIP|62	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 summary|option1|CAPITAL_SHIP|63	1	<bad>10%</bad> reduced energy weapon flux cost.
@@ -4961,7 +4961,7 @@ summary|option1|CAPITAL_SHIP|101	0	Gaining a Heartless stack restores <good>5%</
 summary|option1|CAPITAL_SHIP|102	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
 summary|option1|CAPITAL_SHIP|103	0	Each Heartless stack reduces top speed and maneuverability by <bad>3%</bad>.
 summary|option1|CAPITAL_SHIP|104	1	<bad>50%</bad> less sensor profile.
-summary|option1|CAPITAL_SHIP|105	1	<bad>10%</bad> reduced energy damage taken, including hits on shields, armor, and hull.
+summary|option1|CAPITAL_SHIP|105	1	<bad>20%</bad> reduced energy damage taken.
 summary|option1|CAPITAL_SHIP|106	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
 summary|option1|CAPITAL_SHIP|107	0	Each Heartless stack increases missile damage by <good>3%</good> while the fleet has crew left to give.
 summary|option1|CAPITAL_SHIP|108	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
@@ -5090,7 +5090,7 @@ summary|option2|FRIGATE|56	1	<bad>30%</bad> less fuel consumption rate.
 summary|option2|FRIGATE|57	0	<good>50%</good> increased repair rate per day.
 summary|option2|FRIGATE|58	0	<good>25%</good> increased flux dissipation.
 summary|option2|FRIGATE|59	0	Increases flux dissipation by <good>50</good>.
-summary|option2|FRIGATE|60	1	<bad>70%</bad> less EMP damage taken.
+summary|option2|FRIGATE|60	1	<bad>60%</bad> less EMP damage taken.
 summary|option2|FRIGATE|61	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
 summary|option2|FRIGATE|62	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 summary|option2|FRIGATE|63	1	<bad>10%</bad> reduced energy weapon flux cost.
@@ -5135,7 +5135,7 @@ summary|option2|FRIGATE|101	0	Gaining a Heartless stack restores <good>5%</good>
 summary|option2|FRIGATE|102	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
 summary|option2|FRIGATE|103	0	Each Heartless stack reduces top speed and maneuverability by <bad>3%</bad>.
 summary|option2|FRIGATE|104	1	<bad>50%</bad> less sensor profile.
-summary|option2|FRIGATE|105	1	<bad>10%</bad> reduced energy damage taken, including hits on shields, armor, and hull.
+summary|option2|FRIGATE|105	1	<bad>20%</bad> reduced energy damage taken.
 summary|option2|FRIGATE|106	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
 summary|option2|FRIGATE|107	0	Each Heartless stack increases missile damage by <good>3%</good> while the fleet has crew left to give.
 summary|option2|FRIGATE|108	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
@@ -5264,7 +5264,7 @@ summary|option2|DESTROYER|56	1	<bad>30%</bad> less fuel consumption rate.
 summary|option2|DESTROYER|57	0	<good>50%</good> increased repair rate per day.
 summary|option2|DESTROYER|58	0	<good>25%</good> increased flux dissipation.
 summary|option2|DESTROYER|59	0	Increases flux dissipation by <good>50</good>.
-summary|option2|DESTROYER|60	1	<bad>70%</bad> less EMP damage taken.
+summary|option2|DESTROYER|60	1	<bad>60%</bad> less EMP damage taken.
 summary|option2|DESTROYER|61	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
 summary|option2|DESTROYER|62	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 summary|option2|DESTROYER|63	1	<bad>10%</bad> reduced energy weapon flux cost.
@@ -5309,7 +5309,7 @@ summary|option2|DESTROYER|101	0	Gaining a Heartless stack restores <good>5%</goo
 summary|option2|DESTROYER|102	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
 summary|option2|DESTROYER|103	0	Each Heartless stack reduces top speed and maneuverability by <bad>3%</bad>.
 summary|option2|DESTROYER|104	1	<bad>50%</bad> less sensor profile.
-summary|option2|DESTROYER|105	1	<bad>10%</bad> reduced energy damage taken, including hits on shields, armor, and hull.
+summary|option2|DESTROYER|105	1	<bad>20%</bad> reduced energy damage taken.
 summary|option2|DESTROYER|106	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
 summary|option2|DESTROYER|107	0	Each Heartless stack increases missile damage by <good>3%</good> while the fleet has crew left to give.
 summary|option2|DESTROYER|108	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
@@ -5438,7 +5438,7 @@ summary|option2|CRUISER|56	1	<bad>30%</bad> less fuel consumption rate.
 summary|option2|CRUISER|57	0	<good>50%</good> increased repair rate per day.
 summary|option2|CRUISER|58	0	<good>25%</good> increased flux dissipation.
 summary|option2|CRUISER|59	0	Increases flux dissipation by <good>50</good>.
-summary|option2|CRUISER|60	1	<bad>70%</bad> less EMP damage taken.
+summary|option2|CRUISER|60	1	<bad>60%</bad> less EMP damage taken.
 summary|option2|CRUISER|61	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
 summary|option2|CRUISER|62	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 summary|option2|CRUISER|63	1	<bad>10%</bad> reduced energy weapon flux cost.
@@ -5483,7 +5483,7 @@ summary|option2|CRUISER|101	0	Gaining a Heartless stack restores <good>5%</good>
 summary|option2|CRUISER|102	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
 summary|option2|CRUISER|103	0	Each Heartless stack reduces top speed and maneuverability by <bad>3%</bad>.
 summary|option2|CRUISER|104	1	<bad>50%</bad> less sensor profile.
-summary|option2|CRUISER|105	1	<bad>10%</bad> reduced energy damage taken, including hits on shields, armor, and hull.
+summary|option2|CRUISER|105	1	<bad>20%</bad> reduced energy damage taken.
 summary|option2|CRUISER|106	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
 summary|option2|CRUISER|107	0	Each Heartless stack increases missile damage by <good>3%</good> while the fleet has crew left to give.
 summary|option2|CRUISER|108	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
@@ -5612,7 +5612,7 @@ summary|option2|CAPITAL_SHIP|56	1	<bad>30%</bad> less fuel consumption rate.
 summary|option2|CAPITAL_SHIP|57	0	<good>50%</good> increased repair rate per day.
 summary|option2|CAPITAL_SHIP|58	0	<good>25%</good> increased flux dissipation.
 summary|option2|CAPITAL_SHIP|59	0	Increases flux dissipation by <good>50</good>.
-summary|option2|CAPITAL_SHIP|60	1	<bad>70%</bad> less EMP damage taken.
+summary|option2|CAPITAL_SHIP|60	1	<bad>60%</bad> less EMP damage taken.
 summary|option2|CAPITAL_SHIP|61	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
 summary|option2|CAPITAL_SHIP|62	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 summary|option2|CAPITAL_SHIP|63	1	<bad>10%</bad> reduced energy weapon flux cost.
@@ -5657,7 +5657,7 @@ summary|option2|CAPITAL_SHIP|101	0	Gaining a Heartless stack restores <good>5%</
 summary|option2|CAPITAL_SHIP|102	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
 summary|option2|CAPITAL_SHIP|103	0	Each Heartless stack reduces top speed and maneuverability by <bad>3%</bad>.
 summary|option2|CAPITAL_SHIP|104	1	<bad>50%</bad> less sensor profile.
-summary|option2|CAPITAL_SHIP|105	1	<bad>10%</bad> reduced energy damage taken, including hits on shields, armor, and hull.
+summary|option2|CAPITAL_SHIP|105	1	<bad>20%</bad> reduced energy damage taken.
 summary|option2|CAPITAL_SHIP|106	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
 summary|option2|CAPITAL_SHIP|107	0	Each Heartless stack increases missile damage by <good>3%</good> while the fleet has crew left to give.
 summary|option2|CAPITAL_SHIP|108	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.

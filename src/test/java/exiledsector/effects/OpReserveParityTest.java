@@ -92,6 +92,16 @@ class OpReserveParityTest {
     }
 
     @Test
+    void reservedOpAddsUpEveryCoinOnTheVariant() {
+        reserveCosts("exiledSector_opReserve_100", 100);
+        reserveCosts("exiledSector_opReserve_30", 30);
+        reserveCosts("exiledSector_opReserve_7", 7);
+
+        assertEquals(137, OpReserveParity.reservedOp(cruiserWith("exiledSector_opReserve_100", "heavyarmor", "exiledSector_opReserve_30",
+                "exiledSector_opReserve_7")));
+    }
+
+    @Test
     void aReserveThatMatchesThePaidNodesIsNotReported() {
         ShipVariantAPI variant = cruiserWith("exiledSector_opSpent_0");
 

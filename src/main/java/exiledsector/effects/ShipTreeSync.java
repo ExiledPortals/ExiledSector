@@ -200,7 +200,7 @@ public final class ShipTreeSync {
     }
 
     private static boolean isPlacedByTheTree(ShipVariantAPI variant, String hullModId) {
-        return SkillConflictWarningHullMod.ID.equals(hullModId) || hullModId.startsWith(OpReserveHullMods.ID_PREFIX)
+        return SkillConflictWarningHullMod.ID.equals(hullModId) || OpReserveHullMods.isReserveHullMod(hullModId)
                 || InstalledHullMods.isInstalledBySkillTree(variant, hullModId);
     }
 

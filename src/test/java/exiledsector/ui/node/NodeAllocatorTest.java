@@ -157,8 +157,8 @@ class NodeAllocatorTest {
     private void reserveOnVariant(int cost) {
         HullModSpecAPI reserve = mock(HullModSpecAPI.class);
         when(reserve.getCostFor(any())).thenReturn(cost);
-        when(settings.getHullModSpec("exiledSector_opSpent_0")).thenReturn(reserve);
-        when(variant.getHullMods()).thenReturn(List.of("exiledSector_opSpent_0"));
+        when(settings.getHullModSpec("exiledSector_opReserve_3")).thenReturn(reserve);
+        when(variant.getHullMods()).thenReturn(List.of("exiledSector_opReserve_3"));
     }
 
     @Test
@@ -435,15 +435,14 @@ class NodeAllocatorTest {
 
     @Test
     void theFirstPaidNodeAfterChoosingTheRootReservesItsOpOnTheVariantBeingEdited() {
-        HullModSpecAPI reserve = mock(HullModSpecAPI.class);
-        when(settings.getHullModSpec("exiledSector_opSpent_0")).thenReturn(reserve);
+        String reserveId = "exiledSector_opReserve_" + SkillNodeOpCost.perNode(HullSize.CRUISER);
+        when(settings.getHullModSpec(reserveId)).thenReturn(mock(HullModSpecAPI.class));
         NodeAllocator allocator = allocatorStartingAt(root);
         assertTrue(allocator.chooseStartingRoot(root));
 
         assertTrue(allocator.allocate(frontShield, null, allocator.snapshot()));
 
-        verify(reserve).setCruiserCost(SkillNodeOpCost.perNode(HullSize.CRUISER));
-        verify(variant).addMod("exiledSector_opSpent_0");
+        verify(variant).addMod(reserveId);
     }
 
     @Test

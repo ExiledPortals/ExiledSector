@@ -3,86 +3,93 @@ package exiledsector.effects;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.loading.HullModSpecAPI;
-import exiledsector.persistence.OpSpentSlotManager;
+import exiledsector.persistence.RetiredReserveIds;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.progression.SkillNodeOpCost;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
 
 public final class OpReserveHullMods {
 
-    static final String ID_PREFIX = "exiledSector_opSpent_";
+    static final String ID_PREFIX = "exiledSector_opReserve_";
+    static final String LEGACY_ID_PREFIX = RetiredReserveIds.LEGACY_PREFIX;
+    static final int MAX_RESERVED_OP = 9999;
+    private static final int[] PLACE_VALUES = {1000, 100, 10, 1};
+    private static final String LEGACY_SLOTS_KEY = "exiledSector_opSpentSlots";
+    private static final String LEGACY_NEXT_SLOT_KEY = "exiledSector_opSpentNextSlot";
+
+    private static boolean capReported;
 
     private OpReserveHullMods() {
+    }
+
+    public static boolean isReserveHullMod(String hullModId) {
+        return hullModId.startsWith(ID_PREFIX) || hullModId.startsWith(LEGACY_ID_PREFIX);
+    }
+
+    static List<String> reserveHullModsFor(int opSpent) {
+        List<String> reserveIds = new ArrayList<>();
+        int remainingOp = Math.max(0, Math.min(opSpent, MAX_RESERVED_OP));
+        for (int placeValue : PLACE_VALUES) {
+            int digit = remainingOp / placeValue;
+            if (digit > 0) {
+                reserveIds.add(ID_PREFIX + digit * placeValue);
+            }
+            remainingOp %= placeValue;
+        }
+        return reserveIds;
     }
 
     public static void sync(FleetMemberAPI member, ShipVariantAPI variant) {
         if (member == null || variant == null || SkillDataResolver.isNpcTree(variant)) return;
 
         ShipSkillData shipData = ShipSkillDataManager.find(member.getId());
-        int opSpent = shipData == null ? 0 : shipData.getSpentOp(SkillNodeOpCost.perNode(member.getHullSpec()));
-        if (opSpent <= 0) {
-            Integer reserveSlot = OpSpentSlotManager.existingSlot(member.getId());
-            if (reserveSlot != null) {
-                String reserveId = ID_PREFIX + reserveSlot;
-                setReserveCost(reserveId, 0);
-                variant.removeMod(reserveId);
-            }
-            removeReservesOfReleasedSlots(variant);
+        if (shipData == null) {
+            removeMatching(variant, hullModId -> hullModId.startsWith(LEGACY_ID_PREFIX));
             return;
         }
-
-        String reserveId = reserveHullModFor(member.getId(), opSpent);
-        for (String hullModId : new ArrayList<>(variant.getHullMods())) {
-            if (hullModId.startsWith(ID_PREFIX) && !hullModId.equals(reserveId)) {
-                variant.removeMod(hullModId);
+        int opSpent = shipData.getSpentOp(SkillNodeOpCost.perNode(member.getHullSpec()));
+        reportIfCapped(member, opSpent);
+        List<String> wantedReserveIds = reserveHullModsFor(opSpent);
+        removeMatching(variant, hullModId -> isReserveHullMod(hullModId) && !wantedReserveIds.contains(hullModId));
+        for (String reserveId : wantedReserveIds) {
+            if (!variant.hasHullMod(reserveId) && Global.getSettings().getHullModSpec(reserveId) != null) {
+                variant.addMod(reserveId);
             }
-        }
-        if (reserveId != null && !variant.hasHullMod(reserveId)) {
-            variant.addMod(reserveId);
         }
     }
 
-    private static void removeReservesOfReleasedSlots(ShipVariantAPI variant) {
-        List<String> staleReserveIds = null;
+    public static void forgetLegacySlots(Map<String, Object> persistentData) {
+        persistentData.remove(LEGACY_SLOTS_KEY);
+        persistentData.remove(LEGACY_NEXT_SLOT_KEY);
+    }
+
+    private static void removeMatching(ShipVariantAPI variant, Predicate<String> filter) {
+        List<String> removedIds = null;
         for (String hullModId : variant.getHullMods()) {
-            if (hullModId.startsWith(ID_PREFIX) && isReleasedSlot(hullModId)) {
-                if (staleReserveIds == null) {
-                    staleReserveIds = new ArrayList<>();
+            if (filter.test(hullModId)) {
+                if (removedIds == null) {
+                    removedIds = new ArrayList<>();
                 }
-                staleReserveIds.add(hullModId);
+                removedIds.add(hullModId);
             }
         }
-        if (staleReserveIds != null) {
-            staleReserveIds.forEach(variant::removeMod);
+        if (removedIds != null) {
+            removedIds.forEach(variant::removeMod);
         }
     }
 
-    private static boolean isReleasedSlot(String reserveId) {
-        try {
-            return !OpSpentSlotManager.isAssigned(Integer.parseInt(reserveId.substring(ID_PREFIX.length())));
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
+    private static void reportIfCapped(FleetMemberAPI member, int opSpent) {
+        if (opSpent <= MAX_RESERVED_OP || capReported) return;
 
-    private static String reserveHullModFor(String shipId, int opSpent) {
-        String hullModId = ID_PREFIX + OpSpentSlotManager.slotFor(shipId);
-        return setReserveCost(hullModId, opSpent) ? hullModId : null;
-    }
-
-    private static boolean setReserveCost(String hullModId, int opCost) {
-        HullModSpecAPI reserveSpec = Global.getSettings().getHullModSpec(hullModId);
-        if (reserveSpec == null) return false;
-
-        reserveSpec.setFrigateCost(opCost);
-        reserveSpec.setDestroyerCost(opCost);
-        reserveSpec.setCruiserCost(opCost);
-        reserveSpec.setCapitalCost(opCost);
-        return true;
+        capReported = true;
+        Logger.getLogger(OpReserveHullMods.class).error("[ExiledSector] Ship " + member.getId() + " has spent " + opSpent
+                + " OP on paid nodes, more than the " + MAX_RESERVED_OP + " OP the reserve hull mods can hold.");
     }
 }
