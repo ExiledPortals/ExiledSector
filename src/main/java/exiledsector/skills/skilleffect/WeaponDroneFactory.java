@@ -190,6 +190,7 @@ final class WeaponDroneFactory {
     }
 
     static void shareDamageListeners(ShipAPI firingShip, ShipAPI drone) {
+        SeraphimListener.DealtDamageRouter.routeDroneDamage(firingShip, drone);
         for (DamageDealtModifier listener : firingShip.getListeners(DamageDealtModifier.class)) {
             if (listener instanceof DroneSpawner) {
                 continue;

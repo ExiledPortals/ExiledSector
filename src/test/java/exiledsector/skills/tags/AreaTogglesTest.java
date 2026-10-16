@@ -27,12 +27,12 @@ class AreaTogglesTest {
     }
 
     @Test
-    void autoShowsTheNightcrossAreaOnlyWhenNightcrossIsInstalled() {
-        assertEquals(Set.of(), AreaToggles.disabledNightcrossRegions(AreaToggles.AUTO, true));
-        assertEquals(Set.of("nightcross"), AreaToggles.disabledNightcrossRegions(AreaToggles.AUTO, false));
-        assertEquals(Set.of(), AreaToggles.disabledNightcrossRegions(AreaToggles.ON, false));
-        assertEquals(Set.of("nightcross"), AreaToggles.disabledNightcrossRegions(AreaToggles.OFF, true));
-        assertEquals(Set.of("nightcross"), AreaToggles.disabledNightcrossRegions(null, false));
+    void autoShowsTheRandomAssortmentAreasOnlyWhenRandomAssortmentIsInstalled() {
+        assertEquals(Set.of(), AreaToggles.disabledRandomAssortmentRegions(AreaToggles.AUTO, true));
+        assertEquals(Set.of("exotech", "abyss"), AreaToggles.disabledRandomAssortmentRegions(AreaToggles.AUTO, false));
+        assertEquals(Set.of(), AreaToggles.disabledRandomAssortmentRegions(AreaToggles.ON, false));
+        assertEquals(Set.of("exotech", "abyss"), AreaToggles.disabledRandomAssortmentRegions(AreaToggles.OFF, true));
+        assertEquals(Set.of("exotech", "abyss"), AreaToggles.disabledRandomAssortmentRegions(null, false));
     }
 
     @Test

@@ -93,9 +93,9 @@ class ExiledSectorSettingsTest {
     }
 
     @Test
-    void registersTheNightcrossAreaToggleDefaultingToAuto() {
+    void registersTheRandomAssortmentAreaToggleDefaultingToAuto() {
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addRadio(eq("exiledSector"),
-                eq(AreaToggles.NIGHTCROSS_FIELD_ID), anyString(), anyString(), eq(AreaToggles.AUTO),
+                eq(AreaToggles.RANDOM_ASSORTMENT_FIELD_ID), anyString(), anyString(), eq(AreaToggles.AUTO),
                 eq(String.join(",", AreaToggles.OPTIONS)), eq("")));
     }
 

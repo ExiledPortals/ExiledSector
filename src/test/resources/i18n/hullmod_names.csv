@@ -53,11 +53,9 @@ magazines,Expanded Magazines
 militarized_subsystems,Militarized Subsystems
 missile_autoloader,Missile Autoloader
 missleracks,Expanded Missile Racks
-na_gravitydrag,Gravitational Drag
 nav_relay,Nav Relay
 necro_scavenger7s,Necro Scavenger
 neural_interface,Neural Interface
-nightcrosstargeting,Dynamic Grid
 nskr_absorption,ABSORB System
 nskr_acoils,High-Energy Weapon Systems
 nskr_bigBats,High Capacitance Banks
@@ -70,7 +68,13 @@ phase_anchor,Phase Anchor
 phasefield,Phase Field
 pointdefenseai,Integrated Point Defense AI
 quantum_damper7s,Quantum Damper
+rat_abyssal_core,Abyssal Adaptability
+rat_abyssal_grid,Abyssal Grid
+rat_exogrid,Exogrid
 rat_exogrid_overload,Exogrid Overload
+rat_hypatia_hullmod,Warpfield
+rat_raphaels_grace,Raphaels Grace
+rat_seraphs_grace,Seraphs Grace
 recovery_shuttles,Recovery Shuttles
 reinforcedhull,Reinforced Bulkheads
 resonance7s,Illusia Resonance

@@ -98,7 +98,8 @@ class CompatChecksTest {
             assertFalse(target.modIds().isEmpty(), target.displayName());
             assertFalse(target.testedVersions().isEmpty(), target.displayName());
         }
-        assertEquals(List.of("Lost Sector", "Second-in-Command", "MagicLib", "Exotica Technologies", "Nightcross Armory area"), names.subList(0, 5));
+        assertEquals(List.of("Lost Sector", "Second-in-Command", "MagicLib", "Exotica Technologies",
+                "Random Assortment of Things areas"), names.subList(0, 5));
         assertEquals(5 + SalvageSiteCompat.SOURCES.size(), names.size());
         assertTrue(names.contains("Random Assortment of Things salvage sites"));
     }
@@ -109,6 +110,14 @@ class CompatChecksTest {
         when(settings.getHullModSpec("nskr_bigBats")).thenReturn(null);
 
         assertEquals(List.of("the hull mod nskr_bigBats"), LostSectorCompat.TARGET.missingFeatures().get());
+    }
+
+    @Test
+    void randomAssortmentReportsEachExotechHullModThatIsGone() {
+        when(settings.getHullModSpec(anyString())).thenReturn(mock(HullModSpecAPI.class));
+        when(settings.getHullModSpec("rat_hypatia_hullmod")).thenReturn(null);
+
+        assertEquals(List.of("the hull mod rat_hypatia_hullmod"), RandomAssortmentCompat.TARGET.missingFeatures().get());
     }
 
     @Test

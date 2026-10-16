@@ -1596,21 +1596,6 @@
 			]
 		},
 		{
-			"id": "energy_weapon_fire_rate",
-			"name": "Energy Weapon Fire Rate",
-			"icon": "graphics/icons/evasive_maneuvering_shifted_blue.png",
-			"effects": [
-				{
-					"effect": "ENERGY_WEAPON_FIRE_RATE_PERCENT",
-					"magnitude": 3
-				}
-			],
-			"tags": [
-				"energy",
-				"req_energy"
-			]
-		},
-		{
 			"id": "nskr_absorption",
 			"name": "ABSORB System",
 			"icon": "graphics/icons/frozen_heart_shifted.png",
@@ -2613,7 +2598,7 @@
 			"effects": [
 				{
 					"effect": "FIGHTER_WEAPON_DAMAGE_PERCENT",
-					"magnitude": 3
+					"magnitude": 5
 				}
 			],
 			"todo": "Placeholder magnitude (15%) pending real balance numbers.",
@@ -3507,98 +3492,277 @@
 			]
 		},
 		{
-			"id": "dynamic_grid",
-			"name": "Dynamic Grid",
-			"icon": "graphics/icons/na_dynamic_grid.png",
+			"id": "exogrid",
+			"name": "Exogrid",
+			"icon": "graphics/icons/rat_exogrid.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
-					"effect": "DYNAMIC_GRID_ENERGY_WEAPON_BONUS_PERCENT",
+					"effect": "TIMEFLOW_PERCENT",
+					"magnitude": 10
+				},
+				{
+					"effect": "SENSOR_PROFILE_PERCENT",
+					"magnitude": -25
+				},
+				{
+					"effect": "PHASE_HULL_SENSOR_PROFILE_PERCENT",
+					"magnitude": -25
+				},
+				{
+					"effect": "EMP_DAMAGE_TAKEN_PERCENT",
+					"magnitude": -25
+				},
+				{
+					"effect": "VENT_RATE_PERCENT",
+					"magnitude": -25
+				},
+				{
+					"effect": "FLUX_DISSIPATION_PER_FLUX_VENT_FLAT",
+					"magnitude": -5
+				}
+			],
+			"exclusiveHullMods": [
+				"rat_exogrid"
+			],
+			"description": "A lattice that fuses the flux grid with phase-coil components. The ship runs slightly ahead of normal time and is harder to detect, but the grid caps how fast it can vent and halves what each flux vent adds.",
+			"tags": [
+				"flux",
+				"speed"
+			]
+		},
+		{
+			"id": "coil_efficiency",
+			"name": "Coil Efficiency",
+			"icon": "graphics/icons/rat_coil_efficiency.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "PHASE_CLOAK_FLUX_THRESHOLD_PERCENT",
+					"magnitude": 20
+				},
+				{
+					"effect": "FLUX_DISSIPATION_WHILE_PHASED_PERCENT",
+					"magnitude": 25
+				}
+			],
+			"description": "Phase coils tuned to Exo-Tech tolerances keep their speed under heavier flux and shed flux faster while phased.",
+			"tags": [
+				"phase",
+				"flux",
+				"req_phase"
+			]
+		},
+		{
+			"id": "phased_recharging",
+			"name": "Phased Recharging",
+			"icon": "graphics/icons/magazines.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "AMMO_REGEN_WHILE_PHASED_PERCENT",
+					"magnitude": 100
+				}
+			],
+			"description": "Weapons draw on p-space while the ship is phased, recharging their ammunition twice as fast.",
+			"tags": [
+				"phase",
+				"ammo",
+				"req_phase"
+			]
+		},
+		{
+			"id": "warpfield",
+			"name": "Warpfield",
+			"icon": "graphics/icons/rat_warpfield.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "ENERGY_WEAPON_DAMAGE_PERCENT",
 					"magnitude": 15
 				},
 				{
-					"effect": "SHIELD_RAISE_RATE_PERCENT",
-					"magnitude": 25
+					"effect": "ENERGY_WEAPON_FIRE_RATE_PERCENT",
+					"magnitude": 20
+				},
+				{
+					"effect": "ENERGY_WEAPON_FLUX_COST_PERCENT",
+					"magnitude": -17
+				},
+				{
+					"effect": "ZERO_FLUX_BOOST_FLUX_LEVEL_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"exclusiveHullMods": [
+				"rat_hypatia_hullmod"
+			],
+			"description": "A localised warp field supercharges the ship's energy weapons without raising their flux per second, and keeps the zero-flux engine boost running at low flux.",
+			"tags": [
+				"energy",
+				"req_energy"
+			]
+		},
+		{
+			"id": "timeflow",
+			"name": "Timeflow",
+			"icon": "graphics/icons/rat_hyperspatial_reconfiguration.png",
+			"effects": [
+				{
+					"effect": "TIMEFLOW_PERCENT",
+					"magnitude": 2
+				}
+			],
+			"tags": [
+				"speed"
+			]
+		},
+		{
+			"id": "sensor_profile",
+			"name": "Sensor Profile",
+			"icon": "graphics/icons/rat_undetectable.png",
+			"effects": [
+				{
+					"effect": "SENSOR_PROFILE_PERCENT",
+					"magnitude": -15
+				}
+			],
+			"tags": [
+				"logistics"
+			]
+		},
+		{
+			"id": "seraphs_grace",
+			"name": "Seraph's Grace",
+			"icon": "graphics/icons/rat_seraphs_grace.png",
+			"tier": "KEYSTONE",
+			"effects": [
+				{
+					"effect": "SERAPHS_GRACE_MAX_STACKS_FLAT",
+					"magnitude": 20
+				},
+				{
+					"effect": "SERAPHS_GRACE_PERCENT_PER_STACK",
+					"magnitude": 1
+				},
+				{
+					"effect": "WEAPON_DURABILITY_PERCENT",
+					"magnitude": 20
+				},
+				{
+					"effect": "REPAIR_TIME_PERCENT",
+					"magnitude": -20
 				},
 				{
 					"effect": "SHIELD_DAMAGE_TAKEN_MULT",
-					"magnitude": 7.5
+					"magnitude": 20
+				}
+			],
+			"exclusiveHullMods": [
+				"rat_seraphs_grace",
+				"rat_raphaels_grace"
+			],
+			"description": "Seraph hulls feed on their own wounds. Every blow that lands on armor or hull drives the ship harder, but its shield emitters were never meant to carry the load.",
+			"tags": [
+				"armour",
+				"weapons"
+			]
+		},
+		{
+			"id": "abyssal_grid",
+			"name": "Abyssal Grid",
+			"icon": "graphics/icons/rat_abyssal_grid.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "ENERGY_WEAPON_FLUX_COST_PERCENT",
+					"magnitude": -10
+				},
+				{
+					"effect": "ENERGY_WEAPON_RANGE_FLAT",
+					"magnitude": 100
+				},
+				{
+					"effect": "EMP_DAMAGE_TAKEN_PERCENT",
+					"magnitude": -25
+				},
+				{
+					"effect": "CORONA_RESISTANCE_MULT",
+					"magnitude": -25
+				}
+			],
+			"exclusiveHullMods": [
+				"rat_abyssal_grid"
+			],
+			"description": "The power grid of the abyssal droneships, hardened against the storms of the deep and tuned for energy weapons.",
+			"tags": [
+				"energy",
+				"req_energy"
+			]
+		},
+		{
+			"id": "seraphim",
+			"name": "Seraphim",
+			"icon": "graphics/icons/rat_skill_seraph.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "SERAPHIM_HEAL_PERCENT",
+					"magnitude": 10
+				},
+				{
+					"effect": "SERAPHIM_HEAL_CAP_PERCENT",
+					"magnitude": 20
+				},
+				{
+					"effect": "SERAPHIM_DAMAGE_BONUS_PERCENT",
+					"magnitude": 30
 				}
 			],
 			"hullSizeEffects": [
 				{
-					"effect": "VENT_RATE_PERCENT",
-					"frigate": 12.5,
-					"destroyer": 10,
-					"cruiser": 7.5,
-					"capitalShip": 5
+					"effect": "SERAPHIM_FULL_BONUS_DAMAGE_FLAT",
+					"frigate": 75000,
+					"destroyer": 125000,
+					"cruiser": 175000,
+					"capitalShip": 225000
 				}
 			],
-			"exclusiveHullMods": [
-				"nightcrosstargeting"
-			],
-			"description": "Nightcross's signature power grid. The moment the shields come down, the power that fed them is routed to the energy weapons.",
+			"description": "The hunter instincts of a Seraph core. The ship mends itself on the damage it deals, and grows deadlier the longer the hunt goes on.",
 			"tags": [
-				"shield",
-				"energy",
-				"req_shields"
+				"weapons",
+				"repair"
 			]
 		},
 		{
-			"id": "ion_rounds",
-			"name": "Ion Rounds",
-			"icon": "graphics/icons/na_ion_rounds.png",
+			"id": "chronos_adaptability",
+			"name": "Chronos Adaptability",
+			"icon": "graphics/icons/rat_skill_time.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "ION_ARC_CHANCE_PERCENT",
-					"magnitude": 15
-				}
-			],
-			"description": "Keep pressure on an enemy shield until its hard flux climbs, and the arcs start getting through.",
-			"tags": [
-				"energy",
-				"req_non_beam_energy"
-			]
-		},
-		{
-			"id": "hardlight_rifle",
-			"name": "Hardlight Rifle",
-			"icon": "graphics/icons/na_hardlight_rifle.png",
-			"tier": "NOTABLE",
-			"effects": [
-				{
-					"effect": "FIGHTER_FOCUS_FIRE_DAMAGE_PERCENT_PER_HIT",
-					"magnitude": 2
+					"effect": "SYSTEM_COOLDOWN_PERCENT",
+					"magnitude": -20
 				},
 				{
-					"effect": "FIGHTER_FOCUS_FIRE_MAX_DAMAGE_PERCENT",
-					"magnitude": 30
-				}
-			],
-			"description": "Fighter hits paint the target with hardlight markers that guide the rest of the carrier's wings onto it.",
-			"tags": [
-				"fighter",
-				"req_fighter_bays"
-			]
-		},
-		{
-			"id": "gravitational_drag",
-			"name": "Gravitational Drag",
-			"icon": "graphics/icons/na_gravitational_drag.png",
-			"tier": "NOTABLE",
-			"effects": [
-				{
-					"effect": "GRAVITY_DRAG_TIMEFLOW_PERCENT",
-					"magnitude": 5
+					"effect": "SYSTEM_CHARGE_REGEN_PERCENT",
+					"magnitude": 20
 				}
 			],
 			"exclusiveHullMods": [
-				"na_gravitydrag"
+				"rat_abyssal_core"
 			],
-			"description": "A gravitational disturbance around the hull drags at the timeflow of nearby enemies, strongest from inside phase space.",
-			"tags": [
-				"speed"
+			"description": "Machinery attuned the way a Chronos core prefers, cycling the ship system faster than its makers intended."
+		},
+		{
+			"id": "system_cooldown",
+			"name": "Ship System Cooldown",
+			"icon": "graphics/icons/rat_supercharged.png",
+			"effects": [
+				{
+					"effect": "SYSTEM_COOLDOWN_PERCENT",
+					"magnitude": -5
+				}
 			]
 		}
 	]

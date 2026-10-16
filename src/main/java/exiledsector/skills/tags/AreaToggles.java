@@ -2,7 +2,7 @@ package exiledsector.skills.tags;
 
 import exiledsector.ModSettings;
 import exiledsector.compat.LostSectorCompat;
-import exiledsector.compat.NightcrossCompat;
+import exiledsector.compat.RandomAssortmentCompat;
 
 import java.util.HashSet;
 import java.util.List;
@@ -12,9 +12,9 @@ public final class AreaToggles {
 
     public static final String LOST_SECTOR_FIELD_ID = "exiledSector_lostSectorArea";
     public static final Set<String> LOST_SECTOR_REGIONS = Set.of("enigma", "kesteven");
-    public static final String NIGHTCROSS_FIELD_ID = "exiledSector_nightcrossArea";
-    public static final Set<String> NIGHTCROSS_REGIONS = Set.of("nightcross");
-    public static final List<Set<String>> TOGGLED_AREAS = List.of(LOST_SECTOR_REGIONS, NIGHTCROSS_REGIONS);
+    public static final String RANDOM_ASSORTMENT_FIELD_ID = "exiledSector_randomAssortmentArea";
+    public static final Set<String> RANDOM_ASSORTMENT_REGIONS = Set.of("exotech", "abyss");
+    public static final List<Set<String>> TOGGLED_AREAS = List.of(LOST_SECTOR_REGIONS, RANDOM_ASSORTMENT_REGIONS);
     public static final String AUTO = "Auto";
     public static final String ON = "On";
     public static final String OFF = "Off";
@@ -25,7 +25,8 @@ public final class AreaToggles {
 
     public static Set<String> disabledRegions() {
         Set<String> disabled = new HashSet<>(disabledRegions(ModSettings.stringOr(LOST_SECTOR_FIELD_ID, AUTO), LostSectorCompat.isModEnabled()));
-        disabled.addAll(disabledNightcrossRegions(ModSettings.stringOr(NIGHTCROSS_FIELD_ID, AUTO), NightcrossCompat.isModEnabled()));
+        disabled.addAll(disabledRandomAssortmentRegions(ModSettings.stringOr(RANDOM_ASSORTMENT_FIELD_ID, AUTO),
+                RandomAssortmentCompat.isModEnabled()));
         return Set.copyOf(disabled);
     }
 
@@ -33,8 +34,8 @@ public final class AreaToggles {
         return isShown(lostSectorSetting, lostSectorInstalled) ? Set.of() : LOST_SECTOR_REGIONS;
     }
 
-    static Set<String> disabledNightcrossRegions(String nightcrossSetting, boolean nightcrossInstalled) {
-        return isShown(nightcrossSetting, nightcrossInstalled) ? Set.of() : NIGHTCROSS_REGIONS;
+    static Set<String> disabledRandomAssortmentRegions(String randomAssortmentSetting, boolean randomAssortmentInstalled) {
+        return isShown(randomAssortmentSetting, randomAssortmentInstalled) ? Set.of() : RANDOM_ASSORTMENT_REGIONS;
     }
 
     private static boolean isShown(String areaSetting, boolean modInstalled) {

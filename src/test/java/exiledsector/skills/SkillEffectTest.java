@@ -326,6 +326,99 @@ class SkillEffectTest {
     }
 
     @Test
+    void phaseHullSensorProfileOnlyAppliesToPhaseHulls() {
+        MutableShipStatsAPI phaseStats = statsForHull(true);
+        MutableShipStatsAPI shieldedStats = statsForHull(false);
+
+        LogisticsSkillEffect.PHASE_HULL_SENSOR_PROFILE_PERCENT.apply(phaseStats, "mod_id", -25f);
+        LogisticsSkillEffect.PHASE_HULL_SENSOR_PROFILE_PERCENT.apply(shieldedStats, "mod_id", -25f);
+
+        verify(phaseStats.getSensorProfile()).modifyPercent("mod_id", -25f);
+        verify(shieldedStats.getSensorProfile(), never()).modifyPercent(anyString(), anyFloat());
+        assertTrue(LogisticsSkillEffect.PHASE_HULL_SENSOR_PROFILE_PERCENT.lowerIsBetter());
+        assertEquals("25% reduced sensor profile on phase hulls.",
+                LogisticsSkillEffect.PHASE_HULL_SENSOR_PROFILE_PERCENT.description(-25f).plain());
+    }
+
+    private static MutableShipStatsAPI statsForHull(boolean phase) {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        ShipHullSpecAPI hullSpec = mock(ShipHullSpecAPI.class);
+        when(stats.getVariant()).thenReturn(variant);
+        when(variant.getHullSpec()).thenReturn(hullSpec);
+        when(hullSpec.isPhase()).thenReturn(phase);
+        MutableStat sensorProfile = mock(MutableStat.class);
+        when(stats.getSensorProfile()).thenReturn(sensorProfile);
+        return stats;
+    }
+
+    @Test
+    void fluxDissipationPerFluxVentScalesWithTheVentCount() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(stats.getVariant()).thenReturn(variant);
+        when(variant.getNumFluxVents()).thenReturn(20);
+        MutableStat fluxDissipation = mock(MutableStat.class);
+        when(stats.getFluxDissipation()).thenReturn(fluxDissipation);
+
+        FluxSkillEffect.FLUX_DISSIPATION_PER_FLUX_VENT_FLAT.apply(stats, "mod_id", -5f);
+
+        verify(fluxDissipation).modifyFlat("mod_id_vents", -100f);
+        assertEquals("Decreases flux dissipation per flux vent by 5.",
+                FluxSkillEffect.FLUX_DISSIPATION_PER_FLUX_VENT_FLAT.description(-5f).plain());
+    }
+
+    @Test
+    void zeroFluxBoostFluxLevelRaisesTheMinimumFluxLevelAsAFraction() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        MutableStat zeroFluxLevel = mock(MutableStat.class);
+        when(stats.getZeroFluxMinimumFluxLevel()).thenReturn(zeroFluxLevel);
+
+        FluxSkillEffect.ZERO_FLUX_BOOST_FLUX_LEVEL_PERCENT.apply(stats, "mod_id", 10f);
+
+        verify(zeroFluxLevel).modifyFlat("mod_id", 0.1f);
+    }
+
+    @Test
+    void whilePhasedEffectsOnlyApplyWhileTheShipIsPhased() {
+        ShipAPI ship = mock(ShipAPI.class);
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        when(ship.getMutableStats()).thenReturn(stats);
+        MutableStat fluxDissipation = mock(MutableStat.class);
+        MutableStat ballisticRegen = mock(MutableStat.class);
+        MutableStat energyRegen = mock(MutableStat.class);
+        MutableStat missileRegen = mock(MutableStat.class);
+        when(stats.getFluxDissipation()).thenReturn(fluxDissipation);
+        when(stats.getBallisticAmmoRegenMult()).thenReturn(ballisticRegen);
+        when(stats.getEnergyAmmoRegenMult()).thenReturn(energyRegen);
+        when(stats.getMissileAmmoRegenMult()).thenReturn(missileRegen);
+
+        when(ship.isPhased()).thenReturn(true);
+        PhaseSkillEffect.FLUX_DISSIPATION_WHILE_PHASED_PERCENT.advanceInCombat(ship, "mod_id", 25f);
+        PhaseSkillEffect.AMMO_REGEN_WHILE_PHASED_PERCENT.advanceInCombat(ship, "mod_id", 100f);
+        verify(fluxDissipation).modifyPercent("mod_id", 25f);
+        verify(ballisticRegen).modifyPercent("mod_id", 100f);
+        verify(energyRegen).modifyPercent("mod_id", 100f);
+        verify(missileRegen).modifyPercent("mod_id", 100f);
+
+        when(ship.isPhased()).thenReturn(false);
+        PhaseSkillEffect.FLUX_DISSIPATION_WHILE_PHASED_PERCENT.advanceInCombat(ship, "mod_id", 25f);
+        verify(fluxDissipation).modifyPercent("mod_id", 0f);
+    }
+
+    @Test
+    void timeflowModifiesTheShipTimeMultStat() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        MutableStat timeMult = mock(MutableStat.class);
+        when(stats.getTimeMult()).thenReturn(timeMult);
+
+        MovementSkillEffect.TIMEFLOW_PERCENT.apply(stats, "mod_id", 10f);
+
+        verify(timeMult).modifyPercent("mod_id", 10f);
+        assertEquals("10% increased timeflow.", MovementSkillEffect.TIMEFLOW_PERCENT.description(10f).plain());
+    }
+
+    @Test
     void sensorStrengthModifiesTheSensorStrengthStat() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         MutableStat sensorStrength = mock(MutableStat.class);

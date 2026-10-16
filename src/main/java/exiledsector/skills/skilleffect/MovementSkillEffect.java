@@ -17,6 +17,7 @@ public enum MovementSkillEffect implements BackedSkillEffect {
     ACCELERATION_FLAT(FLAT, liveStat(MutableShipStatsAPI::getAcceleration), "stat.acceleration", false),
     DECELERATION_FLAT(FLAT, liveStat(MutableShipStatsAPI::getDeceleration), "stat.deceleration", false),
     ZERO_FLUX_SPEED_FLAT(FLAT, liveStat(MutableShipStatsAPI::getZeroFluxSpeedBoost), "stat.zeroFluxSpeedBoost", false),
+    TIMEFLOW_PERCENT(PERCENT, liveStat(MutableShipStatsAPI::getTimeMult), "stat.timeflow", false),
     TOP_SPEED_MULT_PER_DMOD {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
