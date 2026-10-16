@@ -3119,7 +3119,7 @@
 			"effects": [
 				{
 					"effect": "EMP_DAMAGE_TAKEN_MULT",
-					"magnitude": -15
+					"magnitude": -20
 				}
 			],
 			"tags": [
@@ -3133,7 +3133,7 @@
 			"effects": [
 				{
 					"effect": "VENT_RATE_PERCENT",
-					"magnitude": 10
+					"magnitude": 20
 				}
 			],
 			"tags": [
