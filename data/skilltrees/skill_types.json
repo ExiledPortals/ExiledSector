@@ -1509,7 +1509,7 @@
 		},
 		{
 			"id": "nskr_criticalArmor",
-			"name": "Critical Point Protection",
+			"name": "Critical Point Refit",
 			"icon": "graphics/icons/nskr_criticalArmor_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -1526,14 +1526,14 @@
 			"phantomHullMods": [
 				"nskr_criticalArmor"
 			],
-			"description": "The defenses of lightly armored ships can be significantly reinforced through targeted modifications to critical structural components.",
+			"description": "A prototype modspec from Kesteven R&D shows the crew how to reinforce a light hull's critical structural points. The thinner the hull's own armour, the more the refit adds.",
 			"tags": [
 				"armour"
 			]
 		},
 		{
 			"id": "nskr_inertial",
-			"name": "Inertial Supercharger",
+			"name": "Inertial Supercharging",
 			"icon": "graphics/icons/nskr_inertial.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -1549,7 +1549,7 @@
 			"phantomHullMods": [
 				"nskr_inertial"
 			],
-			"description": "The ship's projectile weapons are supercharged, hitting harder the faster the ship moves.",
+			"description": "A Kesteven R&D modspec lets the crew feed the ship's own momentum into its guns. The faster the ship moves, the harder its projectile weapons hit.",
 			"tags": [
 				"weapons",
 				"speed"
@@ -1612,7 +1612,7 @@
 		},
 		{
 			"id": "nskr_absorption",
-			"name": "ABSORB System",
+			"name": "ABSORB Reserve",
 			"icon": "graphics/icons/frozen_heart_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -1624,7 +1624,7 @@
 			"phantomHullMods": [
 				"nskr_absorption"
 			],
-			"description": "Extensive hull modifications enable this ship to absorb energy from incoming fire and redirect it to its weapon systems.",
+			"description": "Disassembling the ABSORB loop from a Kingstork taught the crew how to bank the energy their shields block instead of venting it. While that reserve holds charge, the ship's guns fire faster without drawing any extra flux.",
 			"tags": [
 				"shield",
 				"weapons",
@@ -1700,7 +1700,7 @@
 		},
 		{
 			"id": "nskr_volatile",
-			"name": "Volatile Flux Injector",
+			"name": "Volatile Flux Tuning",
 			"icon": "graphics/icons/nskr_volatile.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -1748,7 +1748,7 @@
 			"phantomHullMods": [
 				"nskr_volatile"
 			],
-			"description": "Modifications to the ship's flux network boost speed and rate of fire while flux is low, but reduce both once flux passes half capacity.",
+			"description": "A prototype flux injector from Kesteven R&D lets the crew trade staying power for tempo. The ship runs faster and fires quicker while its flux is low, then slows on both counts once flux climbs past half. The injector also enlarges the flux network, at the cost of shorter long-range fire and a tighter leash on fighters.",
 			"tags": [
 				"flux",
 				"speed",
