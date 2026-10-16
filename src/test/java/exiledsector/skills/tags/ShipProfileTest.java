@@ -8,6 +8,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.WeaponAPI.AIHints;
 import com.fs.starfarer.api.combat.WeaponAPI.WeaponType;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
 import org.junit.jupiter.api.Test;
 
@@ -71,6 +72,22 @@ class ShipProfileTest {
 
     private static Set<WeaponKind> kindsOf(ShipVariantAPI variant) {
         return ShipProfile.of(member(HullSize.CRUISER, ShieldType.FRONT, 0, variant, false)).weaponKinds();
+    }
+
+    @Test
+    void aFittedShieldShuntLeavesTheNpcShipWithoutShields() {
+        ShipVariantAPI variant = variant();
+        when(variant.hasHullMod(HullMods.SHIELD_SHUNT)).thenReturn(true);
+
+        assertEquals(ShieldType.NONE, ShipProfile.of(member(HullSize.CRUISER, ShieldType.OMNI, 0, variant, false)).shieldType());
+    }
+
+    @Test
+    void aFittedMakeshiftShieldGeneratorGivesAnUnshieldedNpcShipAFrontShield() {
+        ShipVariantAPI variant = variant();
+        when(variant.hasHullMod(HullMods.MAKESHIFT_GENERATOR)).thenReturn(true);
+
+        assertEquals(ShieldType.FRONT, ShipProfile.of(member(HullSize.DESTROYER, ShieldType.NONE, 0, variant, false)).shieldType());
     }
 
     @Test

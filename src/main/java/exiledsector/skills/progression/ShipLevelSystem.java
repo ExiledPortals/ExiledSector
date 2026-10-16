@@ -19,14 +19,14 @@ public final class ShipLevelSystem {
     public static float awardXpToFleet(CampaignFleetAPI awardedFleet, float xpAmount) {
         if (awardedFleet == null) return 1f;
         List<ShipSkillData> shipRecords = new ArrayList<>();
+        LevelCurve levelCurve = currentCurve();
         int topLevel = 0;
         for (FleetMemberAPI member : awardedFleet.getFleetData().getMembersListCopy()) {
             ShipSkillData shipData = ShipSkillDataManager.get(member.getId());
             shipRecords.add(shipData);
-            topLevel = Math.max(topLevel, shipData.getLevel());
+            topLevel = Math.max(topLevel, Math.min(shipData.getLevel(), levelCurve.maxLevel()));
         }
 
-        LevelCurve levelCurve = currentCurve();
         Collection<SkillNode> allNodes = SkillTree.getAllNodes().values();
         float catchUpPerLevel = ShipLevelConfig.catchUpPerLevel();
         float catchUpCap = ShipLevelConfig.catchUpMaxMultiplier();
