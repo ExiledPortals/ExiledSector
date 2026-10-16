@@ -22,6 +22,8 @@ import java.util.function.Supplier;
 
 public final class SocketableHoverTooltip {
 
+    public enum Placement {BESIDE, BELOW}
+
     private static final float PAD = 10f;
     private static final float GAP = 6f;
 
@@ -31,6 +33,8 @@ public final class SocketableHoverTooltip {
     private float shownWidth;
     private BiConsumer<TooltipMakerAPI, Boolean> shownWriter;
     private PositionAPI shownAnchor;
+    private Placement shownPlacement;
+    private float shownInnerPad;
     private boolean shownExpanded;
     private String shownCodexDefinitionId;
 
@@ -52,7 +56,7 @@ public final class SocketableHoverTooltip {
         String codexDefinitionId = codexLinked ? definitionId : null;
         Supplier<List<StyledText>> shownFooter = codexDefinitionId == null ? footer : () -> withCodexHint(footer.get());
         show(key, SocketableTooltip.WIDTH, (element, expanded) -> SocketableTooltip.write(element, socketable, hullSize, shownFooter, expanded),
-                anchor, codexDefinitionId);
+                anchor, Placement.BESIDE, PAD, codexDefinitionId);
     }
 
     private static List<StyledText> withCodexHint(List<StyledText> footerLines) {
@@ -62,10 +66,16 @@ public final class SocketableHoverTooltip {
     }
 
     public void show(Object key, float tooltipWidth, BiConsumer<TooltipMakerAPI, Boolean> writer, PositionAPI anchor) {
-        show(key, tooltipWidth, writer, anchor, null);
+        show(key, tooltipWidth, writer, anchor, Placement.BESIDE, PAD, null);
     }
 
-    private void show(Object key, float tooltipWidth, BiConsumer<TooltipMakerAPI, Boolean> writer, PositionAPI anchor, String codexDefinitionId) {
+    public void show(Object key, float tooltipWidth, BiConsumer<TooltipMakerAPI, Boolean> writer, PositionAPI anchor, Placement placement,
+                     float innerPad) {
+        show(key, tooltipWidth, writer, anchor, placement, innerPad, null);
+    }
+
+    private void show(Object key, float tooltipWidth, BiConsumer<TooltipMakerAPI, Boolean> writer, PositionAPI anchor, Placement placement,
+                      float innerPad, String codexDefinitionId) {
         hide();
         boolean expanded = TooltipExpansion.isExpandedOrHeld();
         FramedPanelPlugin panelPlugin = new FramedPanelPlugin(SocketableHoverTooltip.class);
@@ -73,13 +83,13 @@ public final class SocketableHoverTooltip {
             panelPlugin.onKeyDown(Keyboard.KEY_F2, () -> SocketableCodex.open(codexDefinitionId));
         }
         CustomPanelAPI tooltipPanel = Global.getSettings().createCustom(tooltipWidth, anchor.getHeight(), panelPlugin);
-        TooltipMakerAPI element = tooltipPanel.createUIElement(tooltipWidth - PAD * 2f, 0f, false);
+        TooltipMakerAPI element = tooltipPanel.createUIElement(tooltipWidth - innerPad * 2f, 0f, false);
         I18n.forGameText(() -> writer.accept(element, expanded));
         float contentHeight = element.getHeightSoFar();
-        element.getPosition().setSize(tooltipWidth - PAD * 2f, contentHeight);
-        float tooltipHeight = contentHeight + PAD * 2f;
+        element.getPosition().setSize(tooltipWidth - innerPad * 2f, contentHeight);
+        float tooltipHeight = contentHeight + innerPad * 2f;
         tooltipPanel.getPosition().setSize(tooltipWidth, tooltipHeight);
-        tooltipPanel.addUIElement(element).inTL(PAD, PAD);
+        tooltipPanel.addUIElement(element).inTL(innerPad, innerPad);
         PositionAPI hostPosition = hostPanel.getPosition();
         float hostWidth = hostPosition.getWidth();
         float hostHeight = hostPosition.getHeight();
@@ -87,7 +97,10 @@ public final class SocketableHoverTooltip {
         float anchorTop = hostPosition.getY() + hostHeight - (anchor.getY() + anchor.getHeight());
         float tooltipLeft;
         float tooltipTop;
-        if (anchorLeft + anchor.getWidth() + GAP + tooltipWidth <= hostWidth) {
+        if (placement == Placement.BELOW) {
+            tooltipLeft = Math.max(0f, Math.min(anchorLeft, hostWidth - tooltipWidth));
+            tooltipTop = anchorTop + anchor.getHeight() + GAP;
+        } else if (anchorLeft + anchor.getWidth() + GAP + tooltipWidth <= hostWidth) {
             tooltipLeft = anchorLeft + anchor.getWidth() + GAP;
             tooltipTop = anchorTop;
         } else if (anchorLeft - GAP - tooltipWidth >= 0f) {
@@ -105,13 +118,15 @@ public final class SocketableHoverTooltip {
         shownWidth = tooltipWidth;
         shownWriter = writer;
         shownAnchor = anchor;
+        shownPlacement = placement;
+        shownInnerPad = innerPad;
         shownExpanded = expanded;
         shownCodexDefinitionId = codexDefinitionId;
     }
 
     public void refreshIfExpansionChanged() {
         if (shownPanel != null && shownExpanded != TooltipExpansion.isExpandedOrHeld()) {
-            show(shownKey, shownWidth, shownWriter, shownAnchor, shownCodexDefinitionId);
+            show(shownKey, shownWidth, shownWriter, shownAnchor, shownPlacement, shownInnerPad, shownCodexDefinitionId);
         }
     }
 
@@ -123,6 +138,7 @@ public final class SocketableHoverTooltip {
         shownKey = null;
         shownWriter = null;
         shownAnchor = null;
+        shownPlacement = null;
         shownCodexDefinitionId = null;
     }
 }

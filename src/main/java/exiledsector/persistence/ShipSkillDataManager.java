@@ -83,11 +83,9 @@ public class ShipSkillDataManager {
 
     private static void refundCharges(ShipSkillData shipData, List<String> releasedNodeIds, BooleanSupplier ownedShip,
                                       Consumer<SkillItemCost> refund) {
-        for (String nodeId : releasedNodeIds) {
-            SkillItemCost charged = shipData.takeItemCharge(nodeId);
-            if (charged != null && ownedShip.getAsBoolean()) {
-                refund.accept(charged);
-            }
+        List<SkillItemCost> charges = shipData.takeItemCharges(releasedNodeIds);
+        if (!charges.isEmpty() && ownedShip.getAsBoolean()) {
+            charges.forEach(refund);
         }
     }
 

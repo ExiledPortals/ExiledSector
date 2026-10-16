@@ -30,15 +30,14 @@ final class IconTileCell extends BaseCustomUIPanelPlugin {
     private final String iconPath;
     private final Color accent;
     private final boolean blocked;
-    private final Hooks hooks;
+    private final TileInput tileInput;
     private PositionAPI cellPosition;
-    private boolean hovered;
 
     IconTileCell(String iconPath, Color accent, boolean blocked, Hooks hooks) {
         this.iconPath = iconPath;
         this.accent = accent;
         this.blocked = blocked;
-        this.hooks = hooks;
+        this.tileInput = TileInput.forHooks(hooks, blocked);
     }
 
     @Override
@@ -56,6 +55,7 @@ final class IconTileCell extends BaseCustomUIPanelPlugin {
         float width = cellPosition.getWidth();
         float height = cellPosition.getHeight();
         Color shownAccent = blocked ? BLOCKED_COLOR : accent;
+        boolean hovered = tileInput.isHovered();
         GLDraw.fillQuad(x, y, width, height, BACKGROUND, alphaMult);
         GLDraw.innerGlow(x, y, width, height, GLOW_WIDTH, shownAccent, GLOW_ALPHA * (hovered && !blocked ? 1.4f : 1f) * alphaMult);
         GLDraw.strokeQuad(x, y, width, height, shownAccent, hovered && !blocked ? HOVER_BORDER_WIDTH : BORDER_WIDTH,
@@ -74,10 +74,6 @@ final class IconTileCell extends BaseCustomUIPanelPlugin {
 
     @Override
     public void processInput(List<InputEventAPI> events) {
-        TileInput.process(events, cellPosition, blocked, hooks, this::setHovered, () -> hovered);
-    }
-
-    private void setHovered(boolean value) {
-        hovered = value;
+        tileInput.process(events, cellPosition);
     }
 }

@@ -84,7 +84,7 @@ final class SkillTreeReadoutBar {
     }
 
     static float stackHeight(int rowCount) {
-        return SkillTreeRefitButton.SHIP_CARD_MARGIN + rowCount * BAR_HEIGHT + Math.max(0, rowCount - 1) * ROW_GAP;
+        return ChromeMetrics.EDGE_MARGIN + rowCount * BAR_HEIGHT + Math.max(0, rowCount - 1) * ROW_GAP;
     }
 
     void advance(float amount, PositionAPI canvasPosition, int targetSpent, int targetTotal, float mouseX, float mouseY, boolean mouseKnown) {
@@ -114,11 +114,11 @@ final class SkillTreeReadoutBar {
     }
 
     private static float left(PositionAPI canvasPosition) {
-        return canvasPosition.getX() + SkillTreeRefitButton.SHIP_CARD_MARGIN;
+        return canvasPosition.getX() + ChromeMetrics.EDGE_MARGIN;
     }
 
     private float bottom(PositionAPI canvasPosition) {
-        float barTop = canvasPosition.getY() + canvasPosition.getHeight() - SkillTreeRefitButton.SHIP_CARD_MARGIN;
+        float barTop = canvasPosition.getY() + canvasPosition.getHeight() - ChromeMetrics.EDGE_MARGIN;
         return barTop - BAR_HEIGHT - row * (BAR_HEIGHT + ROW_GAP);
     }
 

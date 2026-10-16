@@ -1,6 +1,7 @@
 package exiledsector.compat;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.ModManagerAPI;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.skills.npc.RealSkillData;
@@ -102,6 +103,22 @@ class CompatChecksTest {
                 "Random Assortment of Things areas"), names.subList(0, 5));
         assertEquals(5 + SalvageSiteCompat.SOURCES.size(), names.size());
         assertTrue(names.contains("Random Assortment of Things salvage sites"));
+    }
+
+    @Test
+    void aTargetIsEnabledWhenAnyOfItsModIdsIsEnabled() {
+        ModManagerAPI modManager = mock(ModManagerAPI.class);
+        when(settings.getModManager()).thenReturn(modManager);
+
+        assertFalse(target(List.of()).isEnabled());
+        when(modManager.isModEnabled("example.next")).thenReturn(true);
+        assertTrue(target(List.of()).isEnabled());
+    }
+
+    @Test
+    void aTargetIsNotEnabledWithoutAModManager() {
+        assertFalse(target(List.of()).isEnabled());
+        assertFalse(SecondInCommandCompat.isModEnabled());
     }
 
     @Test

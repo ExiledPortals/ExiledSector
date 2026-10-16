@@ -13,6 +13,7 @@ import com.fs.starfarer.api.campaign.listeners.ShipRecoveryListener;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.PlayerFleet;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.ShipSkillData;
@@ -113,7 +114,7 @@ public class SocketableLootListener extends BaseCampaignEventListener implements
                 pendingLoot.upgradeByMemberId.remove(recoveredShip.getId());
             });
         }
-        ShipTreeSync.fleetChanged(Global.getSector() == null ? null : Global.getSector().getPlayerFleet());
+        ShipTreeSync.fleetChanged(PlayerFleet.orNull());
     }
 
     @Override
@@ -133,7 +134,7 @@ public class SocketableLootListener extends BaseCampaignEventListener implements
     @Override
     public void reportBattleFinished(CampaignFleetAPI primaryWinner, BattleAPI battle) {
         Pending pendingLoot = pendingByBattle.remove(battle);
-        CampaignFleetAPI playerFleet = Global.getSector() == null ? null : Global.getSector().getPlayerFleet();
+        CampaignFleetAPI playerFleet = PlayerFleet.orNull();
         if (pendingLoot == null || !pendingLoot.playerWon || playerFleet == null) {
             return;
         }

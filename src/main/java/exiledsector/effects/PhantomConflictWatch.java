@@ -1,12 +1,12 @@
 package exiledsector.effects;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.PlayerFleet;
 import exiledsector.compat.MagicLibCompat;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Message;
@@ -18,7 +18,6 @@ import exiledsector.skills.InstalledHullMods;
 import exiledsector.skills.LearnedPhantomConflicts;
 import exiledsector.skills.RespecPlan;
 import exiledsector.skills.ShipSkillData;
-import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.ui.CampaignMessages;
@@ -165,19 +164,13 @@ public final class PhantomConflictWatch {
         if (providers.isEmpty()) {
             return false;
         }
-        CargoAPI cargo = playerCargo();
+        CargoAPI cargo = PlayerFleet.cargoOrNull();
         for (SkillNode provider : providers) {
             if (!data.isAllocated(provider.getId())) {
                 continue;
             }
             for (SkillNode released : RespecPlan.of(data, SkillTree.topology(), data.resolveStartingRootId(), provider)) {
-                Set<String> allocatedBefore = new LinkedHashSet<>(data.getAllocatedNodeIds());
-                data.deallocate(released);
-                for (String releasedId : allocatedBefore) {
-                    if (!data.isAllocated(releasedId)) {
-                        refund(cargo, data.takeItemCharge(releasedId));
-                    }
-                }
+                data.deallocateReleasingCharges(released).forEach(charged -> charged.refundTo(cargo));
             }
         }
         ShipTreeSync.memberChanged(member, member.getVariant());
@@ -188,19 +181,8 @@ public final class PhantomConflictWatch {
         return true;
     }
 
-    private static void refund(CargoAPI cargo, SkillItemCost charged) {
-        if (cargo != null && charged != null) {
-            cargo.addCommodity(charged.itemId(), charged.quantity());
-        }
-    }
-
-    private static CargoAPI playerCargo() {
-        CampaignFleetAPI playerFleet = Global.getSector() == null ? null : Global.getSector().getPlayerFleet();
-        return playerFleet == null ? null : playerFleet.getCargo();
-    }
-
     private static FleetMemberAPI playerFleetMember(String memberId) {
-        CampaignFleetAPI playerFleet = Global.getSector() == null ? null : Global.getSector().getPlayerFleet();
+        CampaignFleetAPI playerFleet = PlayerFleet.orNull();
         if (playerFleet == null) {
             return null;
         }

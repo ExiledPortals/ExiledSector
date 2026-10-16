@@ -1,10 +1,8 @@
 package exiledsector.effects;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BaseCampaignEventListener;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
+import exiledsector.PlayerFleet;
 import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.socketables.SocketLossListener;
 
@@ -37,7 +35,7 @@ public final class PlayerEngagementPipeline extends BaseCampaignEventListener {
     public static PlayerEngagementPipeline create(SocketLossListener socketLossListener, SocketableLootListener socketableLootListener) {
         Map<Stage, Step> stepsByStage = new EnumMap<>(Stage.class);
         stepsByStage.put(Stage.RECORD_LOSSES, engagement -> socketLossListener.reportPlayerEngagement(engagement.result()));
-        stepsByStage.put(Stage.SYNC_TREES, engagement -> ShipTreeSync.afterPlayerEngagement(playerFleet()));
+        stepsByStage.put(Stage.SYNC_TREES, engagement -> ShipTreeSync.afterPlayerEngagement(PlayerFleet.orNull()));
         stepsByStage.put(Stage.AWARD_XP, CombatXpAward::award);
         stepsByStage.put(Stage.SETTLE_CREW, engagement -> FleetCrewLedgerSettlement.schedule());
         stepsByStage.put(Stage.HOLD_LOOT, socketableLootListener::holdLoot);
@@ -53,10 +51,5 @@ public final class PlayerEngagementPipeline extends BaseCampaignEventListener {
         for (Step step : stepsByStage.values()) {
             step.afterPlayerEngagement(engagement);
         }
-    }
-
-    private static CampaignFleetAPI playerFleet() {
-        SectorAPI sector = Global.getSector();
-        return sector == null ? null : sector.getPlayerFleet();
     }
 }

@@ -2,6 +2,7 @@ package exiledsector.ui.node;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import exiledsector.ui.util.SpriteCache;
+import exiledsector.ui.util.SpriteDraw;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -42,11 +43,8 @@ final class SkillTreeNodeGhostRenderer {
             float blinkT = (float) (0.5 + 0.5 * Math.sin(2 * Math.PI * (elapsedSeconds / ghost.blinkPeriod + ghost.blinkPhase)));
             float alpha = (GHOST_MIN_ALPHA + (GHOST_MAX_ALPHA - GHOST_MIN_ALPHA) * blinkT) * alphaMult;
 
-            sprite.setSize(ghostSize, ghostSize);
-            sprite.setAngle(ghost.rotationDeg);
-            sprite.setColor(ghostColor);
-            sprite.setAlphaMult(alpha);
-            sprite.renderAtCenter(cx + ghost.offsetXFraction * footprintSize, cy + ghost.offsetYFraction * footprintSize);
+            SpriteDraw.drawAtCenter(sprite, cx + ghost.offsetXFraction * footprintSize, cy + ghost.offsetYFraction * footprintSize,
+                    ghostSize, ghostSize, ghostColor, alpha, ghost.rotationDeg);
         }
     }
 

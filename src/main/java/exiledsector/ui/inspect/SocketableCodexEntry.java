@@ -1,15 +1,8 @@
 package exiledsector.ui.inspect;
 
 import com.fs.starfarer.api.ModSpecAPI;
-import com.fs.starfarer.api.campaign.CustomUIPanelPlugin;
-import com.fs.starfarer.api.impl.codex.CodexDialogAPI;
-import com.fs.starfarer.api.impl.codex.CodexEntryV2;
-import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.Alignment;
-import com.fs.starfarer.api.ui.CustomPanelAPI;
-import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import com.fs.starfarer.api.ui.UIPanelAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.NumberText;
@@ -25,11 +18,8 @@ import exiledsector.ui.VanillaText;
 import java.util.List;
 import java.util.Map;
 
-public class SocketableCodexEntry extends CodexEntryV2 implements CustomUIPanelPlugin {
+public class SocketableCodexEntry extends BoxedCodexEntry {
 
-    private static final float RELATED_ENTRIES_WIDTH = 290f;
-    private static final float BOX_HORIZONTAL_PAD = 30f;
-    private static final float PAD = 10f;
     private static final float LINE_PAD = 3f;
     private static final float ICON_SIZE = 64f;
     private static final float CHANCE_COLUMN_WIDTH = 60f;
@@ -45,8 +35,8 @@ public class SocketableCodexEntry extends CodexEntryV2 implements CustomUIPanelP
     @Override
     public void createTitleForList(TooltipMakerAPI info, float width, ListMode mode) {
         I18n.forGameText(() -> {
-            info.addPara("%s", 0f, Misc.getBasePlayerColor(), Misc.getBasePlayerColor(), definition.displayName());
-            info.addPara("%s", 0f, Misc.getGrayColor(), Misc.getGrayColor(), subtitle());
+            VanillaText.plainPara(info, definition.displayName(), 0f, Misc.getBasePlayerColor());
+            VanillaText.plainPara(info, subtitle(), 0f, Misc.getGrayColor());
         });
     }
 
@@ -66,34 +56,11 @@ public class SocketableCodexEntry extends CodexEntryV2 implements CustomUIPanelP
     }
 
     @Override
-    public boolean hasCustomDetailPanel() {
-        return true;
+    protected void writeDetail(TooltipMakerAPI info, float textWidth) {
+        I18n.forGameText(() -> writeDefinition(info, textWidth));
     }
 
-    @Override
-    public CustomUIPanelPlugin getCustomPanelPlugin() {
-        return this;
-    }
-
-    @Override
-    public void createCustomDetail(CustomPanelAPI panel, UIPanelAPI relatedEntries, CodexDialogAPI codex) {
-        float panelWidth = panel.getPosition().getWidth();
-        float textWidth = panelWidth - RELATED_ENTRIES_WIDTH - PAD - BOX_HORIZONTAL_PAD + PAD;
-        TooltipMakerAPI textElement = panel.createUIElement(textWidth, 0f, false);
-        I18n.forGameText(() -> writeDetail(textElement, textWidth));
-        panel.updateUIElementSizeAndMakeItProcessInput(textElement);
-
-        UIPanelAPI textBox = panel.wrapTooltipWithBox(textElement);
-        panel.addComponent(textBox).inTL(0f, 0f);
-        float panelHeight = textBox.getPosition().getHeight();
-        if (relatedEntries != null) {
-            panel.addComponent(relatedEntries).inTR(0f, 0f);
-            panelHeight = Math.max(panelHeight, relatedEntries.getPosition().getHeight());
-        }
-        panel.getPosition().setSize(panelWidth, panelHeight);
-    }
-
-    private void writeDetail(TooltipMakerAPI info, float textWidth) {
+    private void writeDefinition(TooltipMakerAPI info, float textWidth) {
         TooltipMakerAPI header = info.beginImageWithText(definition.icon(), ICON_SIZE);
         header.setTitleOrbitronLarge();
         header.addTitle(definition.displayName(), definition.unique() ? SocketableRarity.UNIQUE.color() : Misc.getBasePlayerColor());
@@ -174,33 +141,5 @@ public class SocketableCodexEntry extends CodexEntryV2 implements CustomUIPanelP
         double hundredths = Math.min(99.9, Math.max(0.01, Math.round(chance * 10000.0) / 100.0));
         double shown = hundredths < 1.0 ? hundredths : Math.round(hundredths * 10.0) / 10.0;
         return NumberText.format((float) shown);
-    }
-
-    @Override
-    public void destroyCustomDetail() {
-    }
-
-    @Override
-    public void positionChanged(PositionAPI position) {
-    }
-
-    @Override
-    public void renderBelow(float alphaMult) {
-    }
-
-    @Override
-    public void render(float alphaMult) {
-    }
-
-    @Override
-    public void advance(float amount) {
-    }
-
-    @Override
-    public void processInput(List<InputEventAPI> events) {
-    }
-
-    @Override
-    public void buttonPressed(Object buttonId) {
     }
 }

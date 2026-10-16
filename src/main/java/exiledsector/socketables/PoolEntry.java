@@ -1,6 +1,7 @@
 package exiledsector.socketables;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.skills.ShipHullSizes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +10,6 @@ import java.util.Random;
 public record PoolEntry(String effectName, float min, float max, float weight, List<Float> hullValues) {
 
     static final int MAX_DECIMAL_PLACES = 3;
-    static final List<HullSize> HULL_VALUE_ORDER = List.of(HullSize.FRIGATE, HullSize.DESTROYER, HullSize.CRUISER, HullSize.CAPITAL_SHIP);
     private static final float STEP_TOLERANCE = 0.001f;
     private static final String FIELD_SEPARATOR = ":";
     private static final String HULL_VALUE_SEPARATOR = "/";
@@ -82,7 +82,7 @@ public record PoolEntry(String effectName, float min, float max, float weight, L
     }
 
     public boolean hasHullValueFor(HullSize hullSize) {
-        return scalesWithHullSize() && hullSize != null && HULL_VALUE_ORDER.contains(hullSize);
+        return scalesWithHullSize() && ShipHullSizes.isShipSize(hullSize);
     }
 
     public boolean listsEveryHullValueFor(HullSize hullSize) {
@@ -90,7 +90,7 @@ public record PoolEntry(String effectName, float min, float max, float weight, L
     }
 
     public float valueFor(float rolledMagnitude, HullSize hullSize) {
-        return hasHullValueFor(hullSize) ? hullValues.get(HULL_VALUE_ORDER.indexOf(hullSize)) : rolledMagnitude;
+        return hasHullValueFor(hullSize) ? hullValues.get(ShipHullSizes.ORDER.indexOf(hullSize)) : rolledMagnitude;
     }
 
     public float boundNearestZero() {
@@ -123,7 +123,7 @@ public record PoolEntry(String effectName, float min, float max, float weight, L
 
     private static List<Float> parseHullValues(String hullValuesText, String entryText) {
         String[] valueTexts = hullValuesText.split(HULL_VALUE_SEPARATOR, -1);
-        if (valueTexts.length != HULL_VALUE_ORDER.size()) {
+        if (valueTexts.length != ShipHullSizes.ORDER.size()) {
             throw new IllegalArgumentException("entry \"" + entryText + "\" needs exactly four hull size values, frigate/destroyer/cruiser/capital");
         }
         List<Float> hullValues = new ArrayList<>(valueTexts.length);

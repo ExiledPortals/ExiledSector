@@ -13,8 +13,6 @@ final class SkillTreeSearchBar {
 
     static final int MAX_QUERY_LENGTH = 32;
     private static final float WIDTH = 360f;
-    private static final float HEIGHT = 40f;
-    private static final float TOP_MARGIN = 16f;
     private static final float TEXT_PADDING = 22f;
     private static final float TEXT_WIDTH = WIDTH - TEXT_PADDING * 2f;
 
@@ -66,9 +64,9 @@ final class SkillTreeSearchBar {
     void render(PositionAPI canvasPosition, float alphaMult) {
         float barLeft = left(canvasPosition);
         float barBottom = bottom(canvasPosition);
-        borderPanel.draw(barLeft, barBottom, WIDTH, HEIGHT, alphaMult);
+        borderPanel.draw(barLeft, barBottom, WIDTH, ChromeMetrics.CONTROL_HEIGHT, alphaMult);
         queryField.setText(nodeSearch.getQuery());
-        queryField.render(barLeft + TEXT_PADDING, barBottom, TEXT_WIDTH, HEIGHT, placeholderText, alphaMult);
+        queryField.render(barLeft + TEXT_PADDING, barBottom, TEXT_WIDTH, ChromeMetrics.CONTROL_HEIGHT, placeholderText, alphaMult);
     }
 
     static String fitEnd(String value, ToDoubleFunction<String> widthOf) {
@@ -80,7 +78,7 @@ final class SkillTreeSearchBar {
     }
 
     static boolean contains(PositionAPI canvasPosition, float x, float y) {
-        return Rects.contains(left(canvasPosition), bottom(canvasPosition), WIDTH, HEIGHT, x, y);
+        return Rects.contains(left(canvasPosition), bottom(canvasPosition), WIDTH, ChromeMetrics.CONTROL_HEIGHT, x, y);
     }
 
     private static float left(PositionAPI canvasPosition) {
@@ -88,6 +86,6 @@ final class SkillTreeSearchBar {
     }
 
     private static float bottom(PositionAPI canvasPosition) {
-        return canvasPosition.getY() + canvasPosition.getHeight() - TOP_MARGIN - HEIGHT;
+        return canvasPosition.getY() + canvasPosition.getHeight() - ChromeMetrics.EDGE_MARGIN - ChromeMetrics.CONTROL_HEIGHT;
     }
 }

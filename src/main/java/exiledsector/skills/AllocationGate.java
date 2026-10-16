@@ -111,14 +111,8 @@ public final class AllocationGate {
         if (verdicts.optionEligibilities == null) {
             verdicts.optionEligibilities = new HashMap<>();
         }
-        return verdicts.optionEligibilities.computeIfAbsent(optionKey(option), key -> Verdict.fromBlock(eligibilityBlock(node, option)));
-    }
-
-    private NodeEligibility.Block eligibilityBlock(SkillNode node, SkillType option) {
-        if (option == null && node.getType().isOptional()) {
-            return new NodeEligibility.Block(NodeEligibility.Kind.INVALID_OPTION, NodeEligibility.OptionProblem.MISSING.name(), null);
-        }
-        return NodeEligibility.check(node, option, eligibility);
+        return verdicts.optionEligibilities.computeIfAbsent(optionKey(option),
+                key -> Verdict.fromBlock(NodeEligibility.check(node, option, eligibility)));
     }
 
     public Verdict deallocation(SkillNode node) {

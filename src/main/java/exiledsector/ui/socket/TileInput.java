@@ -4,40 +4,81 @@ import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 
 import java.util.List;
-import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
 
 final class TileInput {
 
-    private TileInput() {
+    interface Handler {
+
+        void entered(PositionAPI tilePosition);
+
+        void left();
+
+        boolean clicked();
+
+        default boolean rightClicked() {
+            return false;
+        }
     }
 
-    static void process(List<InputEventAPI> events, PositionAPI tilePosition, boolean blocked, IconTileCell.Hooks hooks,
-                        Consumer<Boolean> setHovered, BooleanSupplier hovered) {
+    private final Handler tileHandler;
+    private final boolean scrollClearsHover;
+    private boolean hovered;
+
+    TileInput(Handler tileHandler, boolean scrollClearsHover) {
+        this.tileHandler = tileHandler;
+        this.scrollClearsHover = scrollClearsHover;
+    }
+
+    static TileInput forHooks(IconTileCell.Hooks hooks, boolean blocked) {
+        return new TileInput(new Handler() {
+            @Override
+            public void entered(PositionAPI tilePosition) {
+                hooks.onHover().accept(tilePosition);
+            }
+
+            @Override
+            public void left() {
+                hooks.onLeave().run();
+            }
+
+            @Override
+            public boolean clicked() {
+                if (!blocked) {
+                    hooks.onClick().run();
+                }
+                return true;
+            }
+        }, true);
+    }
+
+    boolean isHovered() {
+        return hovered;
+    }
+
+    void process(List<InputEventAPI> events, PositionAPI tilePosition) {
         if (tilePosition == null) {
             return;
         }
         for (InputEventAPI event : events) {
-            if (event.isMouseScrollEvent()) {
-                setHovered.accept(false);
+            if (scrollClearsHover && event.isMouseScrollEvent()) {
+                hovered = false;
             }
             if (event.isConsumed()) {
                 continue;
             }
             boolean inside = tilePosition.containsEvent(event);
             if (event.isMouseMoveEvent()) {
-                if (inside != hovered.getAsBoolean()) {
-                    setHovered.accept(inside);
+                if (inside != hovered) {
+                    hovered = inside;
                     if (inside) {
-                        hooks.onHover().accept(tilePosition);
+                        tileHandler.entered(tilePosition);
                     } else {
-                        hooks.onLeave().run();
+                        tileHandler.left();
                     }
                 }
-            } else if (inside && event.isLMBDownEvent()) {
-                if (!blocked) {
-                    hooks.onClick().run();
-                }
+            } else if (inside && event.isLMBDownEvent() && tileHandler.clicked()) {
+                event.consume();
+            } else if (inside && event.isRMBDownEvent() && tileHandler.rightClicked()) {
                 event.consume();
             }
         }

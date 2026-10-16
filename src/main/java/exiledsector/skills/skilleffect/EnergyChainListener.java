@@ -1,6 +1,5 @@
 package exiledsector.skills.skilleffect;
 
-import com.fs.starfarer.api.combat.CollisionClass;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamagingProjectileAPI;
@@ -71,17 +70,7 @@ final class EnergyChainListener extends ShipCombatListener implements DamageDeal
     }
 
     private ShipAPI findNearestChainTarget(Vector2f point, float range, List<ShipAPI> excluded) {
-        ShipAPI nearest = null;
-        float nearestDistanceSq = Float.MAX_VALUE;
-        for (ShipAPI candidate : CombatQueries.shipsNear(point, range, other -> !excluded.contains(other) && other.isAlive()
-                && !other.isHulk() && other.getCollisionClass() != CollisionClass.NONE
-                && CombatQueries.isHostile(ownerShip, other) && CombatQueries.withinRadius(other.getLocation(), point, range))) {
-            float distanceSq = Vector2f.sub(candidate.getLocation(), point, null).lengthSquared();
-            if (distanceSq < nearestDistanceSq) {
-                nearestDistanceSq = distanceSq;
-                nearest = candidate;
-            }
-        }
-        return nearest;
+        List<ShipAPI> candidates = CombatQueries.hostilesNear(ownerShip, point, range, other -> !excluded.contains(other));
+        return candidates.isEmpty() ? null : CombatQueries.nearestFirst(candidates, point, 1).get(0);
     }
 }

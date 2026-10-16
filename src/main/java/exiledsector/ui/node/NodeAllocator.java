@@ -1,17 +1,13 @@
 package exiledsector.ui.node;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.characters.SkillSpecAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.loading.FighterWingSpecAPI;
-import com.fs.starfarer.api.util.Misc;
+import exiledsector.PlayerFleet;
 import exiledsector.effects.FighterBayOverflow;
-import exiledsector.i18n.I18n;
 import exiledsector.effects.OpReserveParity;
 import exiledsector.effects.PhantomConflictWatch;
 import exiledsector.effects.PlayerShipFacts;
@@ -42,7 +38,6 @@ import exiledsector.socketables.SocketableStore;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -239,7 +234,10 @@ final class NodeAllocator {
         if (itemCost != null && heldInCargo(itemCost.itemId()) + refundOf(refund, itemCost.itemId()) < itemCost.quantity()) {
             return false;
         }
-        refundItems(skillData.takeItemCharge(node.getId()));
+        if (refund != null) {
+            skillData.takeItemCharge(node.getId());
+            refund.refundTo(PlayerFleet.cargoOrNull());
+        }
         skillData.selectOption(node, option, gate.opCostFor(node));
         chargeItems(skillData, node.getId(), itemCost);
         refreshShipStats();
@@ -250,14 +248,8 @@ final class NodeAllocator {
         if (!snapshot.gate().deallocation(node).allowed()) {
             return false;
         }
-        ShipSkillData skillData = snapshot.skillData();
-        Set<String> allocatedBefore = new LinkedHashSet<>(skillData.getAllocatedNodeIds());
-        skillData.deallocate(node);
-        for (String releasedId : allocatedBefore) {
-            if (!skillData.isAllocated(releasedId)) {
-                refundItems(skillData.takeItemCharge(releasedId));
-            }
-        }
+        CargoAPI cargo = PlayerFleet.cargoOrNull();
+        snapshot.skillData().deallocateReleasingCharges(node).forEach(charged -> charged.refundTo(cargo));
         refreshShipStats();
         return true;
     }
@@ -381,17 +373,11 @@ final class NodeAllocator {
     }
 
     private void returnUnhousedWings() {
-        CampaignFleetAPI playerFleet = Global.getSector() == null ? null : Global.getSector().getPlayerFleet();
-        FighterBayOverflow.returnUnhousedWingsAndAnnounce(fleetMember, shipVariant, playerFleet == null ? null : playerFleet.getCargo());
-    }
-
-    private static CargoAPI playerCargo() {
-        CampaignFleetAPI playerFleet = Global.getSector() == null ? null : Global.getSector().getPlayerFleet();
-        return playerFleet == null ? null : playerFleet.getCargo();
+        FighterBayOverflow.returnUnhousedWingsAndAnnounce(fleetMember, shipVariant, PlayerFleet.cargoOrNull());
     }
 
     private static double heldInCargo(String itemId) {
-        CargoAPI cargo = playerCargo();
+        CargoAPI cargo = PlayerFleet.cargoOrNull();
         return cargo == null ? 0f : cargo.getCommodityQuantity(itemId);
     }
 
@@ -400,19 +386,12 @@ final class NodeAllocator {
     }
 
     private static void chargeItems(ShipSkillData skillData, String nodeId, SkillItemCost itemCost) {
-        CargoAPI cargo = playerCargo();
+        CargoAPI cargo = PlayerFleet.cargoOrNull();
         if (itemCost == null || cargo == null) {
             return;
         }
         cargo.removeCommodity(itemCost.itemId(), itemCost.quantity());
         skillData.recordItemCharge(nodeId, itemCost);
-    }
-
-    private static void refundItems(SkillItemCost charged) {
-        CargoAPI cargo = playerCargo();
-        if (charged != null && cargo != null) {
-            cargo.addCommodity(charged.itemId(), charged.quantity());
-        }
     }
 
     private void refreshVariantHullModsOnce() {

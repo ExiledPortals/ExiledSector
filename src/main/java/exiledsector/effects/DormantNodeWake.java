@@ -1,15 +1,13 @@
 package exiledsector.effects;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.PlayerFleet;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.ShipSkillData;
-import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
@@ -64,13 +62,7 @@ final class DormantNodeWake {
     }
 
     private static void refund(ShipSkillData shipData, List<String> releasedNodeIds) {
-        CampaignFleetAPI playerFleet = Global.getSector() == null ? null : Global.getSector().getPlayerFleet();
-        CargoAPI cargo = playerFleet == null ? null : playerFleet.getCargo();
-        for (String nodeId : releasedNodeIds) {
-            SkillItemCost charged = shipData.takeItemCharge(nodeId);
-            if (cargo != null && charged != null) {
-                cargo.addCommodity(charged.itemId(), charged.quantity());
-            }
-        }
+        CargoAPI cargo = PlayerFleet.cargoOrNull();
+        shipData.takeItemCharges(releasedNodeIds).forEach(charged -> charged.refundTo(cargo));
     }
 }

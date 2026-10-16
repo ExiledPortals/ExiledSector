@@ -1,15 +1,16 @@
 package exiledsector.ui.decoration;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.PlayerFleet;
 import exiledsector.skills.SkillTree;
 import exiledsector.ui.TreeViewport;
+import exiledsector.ui.util.Fade;
 import exiledsector.ui.util.SpriteCache;
+import exiledsector.ui.util.SpriteDraw;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.TexturedQuadBatch;
 import org.lwjgl.opengl.GL11;
@@ -83,8 +84,7 @@ public class SkillTreeFleetRenderer {
     }
 
     public static SkillTreeFleetRenderer forPlayerFleet(String viewedMemberId) {
-        SectorAPI sector = Global.getSector();
-        CampaignFleetAPI playerFleet = sector == null ? null : sector.getPlayerFleet();
+        CampaignFleetAPI playerFleet = PlayerFleet.orNull();
         if (playerFleet == null || playerFleet.getFleetData() == null) {
             return new SkillTreeFleetRenderer(List.of(), null, 0f);
         }
@@ -181,7 +181,7 @@ public class SkillTreeFleetRenderer {
     public void advance(float amount) {
         if (ships.isEmpty()) return;
         float soloStep = amount / SOLO_FADE_SECONDS;
-        soloLevel = Math.max(0f, Math.min(1f, soloLevel + (soloActive && soloShip != null ? soloStep : -soloStep)));
+        soloLevel = Fade.step(soloLevel, soloActive && soloShip != null, soloStep);
         flight.advance(amount);
         for (FleetShip ship : ships) {
             ship.drift().advance(amount, flight.facingDeg());
@@ -215,17 +215,15 @@ public class SkillTreeFleetRenderer {
     }
 
     private void drawHull(FleetShip ship, float screenX, float screenY, float screenScale, float alpha) {
-        SpriteAPI sprite = spriteCache.sprite(ship.spritePath());
-        if (sprite == null) return;
-        sprite.setSize(ship.width() * screenScale, ship.height() * screenScale);
+        float hullWidth = ship.width() * screenScale;
+        float hullHeight = ship.height() * screenScale;
+        float angleDeg = ship.drift().facingDeg() - SPRITE_ANGLE_OFFSET;
         if (ship.visuals().hasCenter()) {
-            sprite.setCenter(ship.visuals().centerX() * screenScale, ship.visuals().centerY() * screenScale);
+            SpriteDraw.drawAtPivot(spriteCache, ship.spritePath(), screenX, screenY, hullWidth, hullHeight,
+                    ship.visuals().centerX() * screenScale, ship.visuals().centerY() * screenScale, Color.WHITE, alpha, angleDeg);
+        } else {
+            SpriteDraw.drawAtCenter(spriteCache, ship.spritePath(), screenX, screenY, hullWidth, hullHeight, Color.WHITE, alpha, angleDeg);
         }
-        sprite.setColor(Color.WHITE);
-        sprite.setAlphaMult(alpha);
-        sprite.setAngle(ship.drift().facingDeg() - SPRITE_ANGLE_OFFSET);
-        sprite.setNormalBlend();
-        sprite.renderAtCenter(screenX, screenY);
     }
 
     private void renderFlames(float zoom) {

@@ -1,7 +1,8 @@
 import type { Vocabulary } from '../../../api/vocabulary.ts';
-import { fetchDataFiles, fetchReservedNodeIds, saveDataFiles, SERVER_HINT, staleFileQuestion } from '../../../api/client.ts';
-import { confirmAction, notifyError, notifySuccess } from '../../../shared/dialogs.tsx';
+import { fetchDataFiles, fetchReservedNodeIds, saveDataFiles, SERVER_HINT } from '../../../api/client.ts';
+import { confirmAction, notifyError } from '../../../shared/dialogs.tsx';
 import { lineEndingOf } from '../../../shared/lineEndings.ts';
+import { handleSaveResult } from '../../../shared/saveResult.ts';
 import { pruneConnectorEntries } from '../model/connectors.ts';
 import { parseTreeDocument, serializeTreeFiles } from '../model/serialization.ts';
 import type { TreeDocument } from '../model/types.ts';
@@ -182,29 +183,23 @@ export async function saveTree(vocabulary: Vocabulary | undefined): Promise<void
   useTreeStore.setState({ saving: true });
   try {
     const result = await saveDataFiles({ types: texts.types, tree: texts.tree }, state.baseHashes);
-    if (result.ok) {
-      const unchanged = useTreeStore.getState().revision === revision;
-      useTreeStore.setState((current) => ({ baseHashes: { ...current.baseHashes, ...(result.data.hashes ?? {}) }, dirty: !unchanged }));
-      if (unchanged) {
-        clearDraft();
-      } else {
-        writeDraft();
-      }
-      notifySuccess('Saved skill_types.json and ship_skill_tree.json');
-    } else if (result.conflict) {
-      const reloadNow = await confirmAction({
-        title: 'Files changed on disk',
-        message: staleFileQuestion(result.message, 'your unsaved skill tree changes'),
-        confirmLabel: 'Reload from disk',
-        danger: true,
-      });
-      if (reloadNow) {
+    await handleSaveResult(result, {
+      discardedChanges: 'your unsaved skill tree changes',
+      onSaved: (hashes) => {
+        const unchanged = useTreeStore.getState().revision === revision;
+        useTreeStore.setState((current) => ({ baseHashes: { ...current.baseHashes, ...hashes }, dirty: !unchanged }));
+        if (unchanged) {
+          clearDraft();
+        } else {
+          writeDraft();
+        }
+      },
+      savedMessage: () => 'Saved skill_types.json and ship_skill_tree.json',
+      reloadFromDisk: async () => {
         clearDraft();
         await loadTree();
-      }
-    } else {
-      notifyError(`Save failed: ${result.message}`);
-    }
+      },
+    });
   } finally {
     useTreeStore.setState({ saving: false });
   }

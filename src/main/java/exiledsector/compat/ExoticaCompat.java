@@ -1,8 +1,6 @@
 package exiledsector.compat;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.ModManagerAPI;
-import com.fs.starfarer.api.SettingsAPI;
 
 import java.util.List;
 
@@ -18,9 +16,7 @@ public final class ExoticaCompat {
     }
 
     public static boolean isModEnabled() {
-        SettingsAPI settings = Global.getSettings();
-        ModManagerAPI modManager = settings == null ? null : settings.getModManager();
-        return modManager != null && modManager.isModEnabled(MOD_ID);
+        return TARGET.isEnabled();
     }
 
     static List<String> missingFeatures() {

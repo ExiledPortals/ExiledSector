@@ -106,7 +106,7 @@ public class SkillNode extends SkillTreeObject {
         }
         List<StyledText> names = new ArrayList<>();
         for (HullSize hullSize : hullSizes) {
-            names.add(StyledText.of(Translation.text("hullSize." + hullSize.name())));
+            names.add(StyledText.of(ShipHullSizes.displayName(hullSize)));
         }
         return Translation.msg("node.hullSizes").count(hullSizes.size()).arg("hullSizes", Translation.list(names)).styled();
     }
@@ -160,9 +160,7 @@ public class SkillNode extends SkillTreeObject {
 
     public SkillType resolveEffectiveType(ShipSkillData data) {
         if (!type.isOptional()) return type;
-        String selectedId = data.getOptionalSelection(getId());
-        if (selectedId == null || !type.getOptionalOptionIds().contains(selectedId)) return type;
-        SkillType chosen = SkillTree.getType(selectedId);
+        SkillType chosen = NodeEligibility.validOption(type, data.getOptionalSelection(getId()));
         return chosen != null ? chosen : type;
     }
 

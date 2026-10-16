@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import org.apache.log4j.Logger;
 
+import exiledsector.skills.ShipHullSizes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -108,7 +109,7 @@ public final class SocketableStore {
 
     public Map<HullSize, Integer> upgradeCounts() {
         Map<HullSize, Integer> counts = new LinkedHashMap<>();
-        for (HullSize hullSize : HullUpgradeData.HULL_SIZES) {
+        for (HullSize hullSize : ShipHullSizes.ORDER) {
             int count = upgradeCount(hullSize);
             if (count > 0) {
                 counts.put(hullSize, count);

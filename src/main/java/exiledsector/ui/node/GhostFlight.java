@@ -5,6 +5,7 @@ import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.FallbackSupport;
+import exiledsector.ui.util.SpriteDraw;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -76,11 +77,9 @@ public final class GhostFlight {
         for (int i = 0; i < GHOSTS_PER_FLIGHT; i++) {
             Vector2f wingOffset = formationOffset(i, heading, ghostSize / viewport.zoom());
             float flicker = (float) (0.5 + 0.5 * Math.sin(FLICKER_FREQUENCY * flightElapsed + animationPhase + i * 2.1));
-            sprite.setSize(ghostSize, ghostSize);
-            sprite.setAngle(screenAngle - 90f);
-            sprite.setColor(ghostColor);
-            sprite.setAlphaMult((MIN_ALPHA + (MAX_ALPHA - MIN_ALPHA) * flicker) * fade * alphaMult);
-            sprite.renderAtCenter(viewport.screenX(leaderPosition.x + wingOffset.x), viewport.screenY(leaderPosition.y + wingOffset.y));
+            float ghostAlpha = (MIN_ALPHA + (MAX_ALPHA - MIN_ALPHA) * flicker) * fade * alphaMult;
+            SpriteDraw.drawAtCenter(sprite, viewport.screenX(leaderPosition.x + wingOffset.x), viewport.screenY(leaderPosition.y + wingOffset.y),
+                    ghostSize, ghostSize, ghostColor, ghostAlpha, screenAngle - 90f);
         }
     }
 

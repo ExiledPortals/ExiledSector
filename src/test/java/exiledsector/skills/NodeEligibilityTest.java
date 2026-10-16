@@ -67,6 +67,35 @@ class NodeEligibilityTest {
     }
 
     @Test
+    void anOptionalNodeWithoutAChosenOptionIsBlockedForEveryCallerBeforeLocks() {
+        SkillType hull = registered(type("hull", SkillTier.SMALL).build());
+        SkillNode slot = optionalNode("slot", type("slot_type", SkillTier.SMALL), hull);
+
+        NodeEligibility.Block unlocked = check(slot, null, FRONT_SHIELDED_FRIGATE);
+        NodeEligibility.Block locked = NodeEligibility.check(slot, null, NodeEligibility.Context.of(data, FRONT_SHIELDED_FRIGATE, type -> true));
+
+        for (NodeEligibility.Block block : List.of(unlocked, locked)) {
+            assertEquals(NodeEligibility.Kind.INVALID_OPTION, block.kind());
+            assertEquals(NodeEligibility.OptionProblem.MISSING.name(), block.detail());
+        }
+        assertNull(check(slot, hull, FRONT_SHIELDED_FRIGATE));
+    }
+
+    @Test
+    void anOptionIsValidOnlyWhenListedByTheContainerAndKnownToTheTypeLookup() {
+        SkillType hull = registered(type("hull", SkillTier.SMALL).build());
+        SkillType unlisted = registered(type("unlisted", SkillTier.SMALL).build());
+        SkillType container = optionalNode("slot", type("slot_type", SkillTier.SMALL), hull).getType();
+
+        assertEquals(hull, NodeEligibility.validOption(container, "hull"));
+        assertNull(NodeEligibility.validOption(container, "unlisted"));
+        assertNull(NodeEligibility.validOption(unlisted, "hull"));
+        assertEquals(NodeEligibility.OptionProblem.INVALID, NodeEligibility.optionProblem(container, "hull", typeId -> null));
+        assertEquals(NodeEligibility.OptionProblem.UNEXPECTED, NodeEligibility.optionProblem(unlisted, "hull"));
+        assertEquals(NodeEligibility.OptionProblem.MISSING, NodeEligibility.optionProblem(container, null));
+    }
+
+    @Test
     void aContainersExclusiveHullModBlocksEveryOptionAndIsStrippedForThem() {
         SkillType hull = registered(type("hull", SkillTier.SMALL).build());
         SkillNode slot = optionalNode("slot", type("slot_type", SkillTier.SMALL).exclusiveHullModIds(List.of("heavyarmor")), hull);

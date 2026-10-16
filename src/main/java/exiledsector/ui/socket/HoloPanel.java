@@ -2,8 +2,6 @@ package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
@@ -13,17 +11,21 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.PlayerFleet;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.socketables.SocketMaterials;
 import exiledsector.socketables.SocketableCrafting;
 import exiledsector.socketables.SocketableDisassembly;
 import exiledsector.ui.SkillTreePanelStyle;
+import exiledsector.ui.VanillaText;
+import exiledsector.ui.util.FramedPanelPlugin;
 import exiledsector.ui.util.HoloFrame;
 import exiledsector.ui.util.Rects;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 abstract class HoloPanel extends BaseCustomUIPanelPlugin {
 
@@ -36,8 +38,11 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
     private static final float PARTS_ICON_SIZE = 24f;
     static final float PARTS_TEXT_TOP = 5f;
     private static final float PARTS_TOOLTIP_WIDTH = 300f;
+    private static final float CONFIRM_BUTTON_HEIGHT = 26f;
 
     protected final CustomPanelAPI hostPanel;
+    protected final SocketableHoverTooltip hoverTooltip;
+    private final Class<?> panelOwner;
     private final HoloFrame panelFrame;
     private final List<Runnable> queuedActions = new ArrayList<>();
     protected CustomPanelAPI panelRoot;
@@ -46,10 +51,14 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
     protected float panelTop;
     protected float panelWidth;
     protected float panelHeight;
+    private CustomPanelAPI confirmPanel;
+    private CustomPanelAPI confirmBlocker;
     private boolean closing;
 
     HoloPanel(CustomPanelAPI hostPanel, Class<?> owner) {
         this.hostPanel = hostPanel;
+        this.hoverTooltip = new SocketableHoverTooltip(hostPanel);
+        this.panelOwner = owner;
         this.panelFrame = new HoloFrame(owner, HoloFrame.Look.VANILLA_HOST);
     }
 
@@ -124,6 +133,10 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
                 component.setOpacity(contentOpacity);
             }
         }
+        if (confirmPanel != null) {
+            confirmPanel.setOpacity(contentOpacity);
+            confirmBlocker.setOpacity(contentOpacity);
+        }
     }
 
     final float contentAlpha() {
@@ -194,7 +207,7 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
     final TooltipMakerAPI startHeader(String titleKey, String closeKey, Object closeId) {
         TooltipMakerAPI element = panelRoot.createUIElement(panelWidth - PAD * 2f, HEADER_HEIGHT, false);
         element.setParaFont(Fonts.ORBITRON_20AABOLD);
-        element.addPara("%s", 0f, Misc.getBasePlayerColor(), Misc.getBasePlayerColor(), Translation.text(titleKey));
+        VanillaText.plainPara(element, Translation.text(titleKey), 0f, Misc.getBasePlayerColor());
         element.addButton(Translation.text(closeKey), closeId, CLOSE_BUTTON_WIDTH, HEADER_BUTTON_HEIGHT, 0f).getPosition().inTR(0f, 0f);
         return element;
     }
@@ -208,13 +221,49 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
         return element;
     }
 
-    static CargoAPI playerCargo() {
-        CampaignFleetAPI fleet = Global.getSector() == null ? null : Global.getSector().getPlayerFleet();
-        return fleet == null ? null : fleet.getCargo();
+    final boolean isConfirmOpen() {
+        return confirmPanel != null;
+    }
+
+    final void openConfirm(float confirmHeight, Consumer<TooltipMakerAPI> bodyWriter, String confirmKey, Object confirmId, String cancelKey,
+                           Object cancelId) {
+        if (confirmPanel != null) {
+            return;
+        }
+        hoverTooltip.hide();
+        confirmBlocker = Global.getSettings().createCustom(panelWidth, panelHeight, new InputBlocker());
+        panelRoot.addComponent(confirmBlocker).inTL(0f, 0f);
+        float confirmWidth = panelWidth - PAD * 2f;
+        confirmPanel = Global.getSettings().createCustom(confirmWidth, confirmHeight, new FramedPanelPlugin(panelOwner, this::buttonPressed));
+        TooltipMakerAPI element = confirmPanel.createUIElement(confirmWidth - PAD * 2f, confirmHeight - PAD * 2f, false);
+        bodyWriter.accept(element);
+        float buttonWidth = (confirmWidth - PAD * 2f - GAP) / 2f;
+        element.addButton(Translation.text(confirmKey), confirmId, buttonWidth, CONFIRM_BUTTON_HEIGHT, 0f).getPosition().inBR(0f, 0f);
+        element.addButton(Translation.text(cancelKey), cancelId, buttonWidth, CONFIRM_BUTTON_HEIGHT, 0f).getPosition().inBL(0f, 0f);
+        confirmPanel.addUIElement(element).inTL(PAD, PAD);
+        panelRoot.addComponent(confirmPanel).inTL(PAD, (panelHeight - confirmHeight) / 2f);
+        refreshOpacity();
+    }
+
+    final void closeConfirm() {
+        if (confirmPanel == null) {
+            return;
+        }
+        panelRoot.removeComponent(confirmPanel);
+        panelRoot.removeComponent(confirmBlocker);
+        confirmPanel = null;
+        confirmBlocker = null;
+    }
+
+    static UIComponentAPI placedComponent(TooltipMakerAPI element) {
+        if (element == null) {
+            return null;
+        }
+        return element.getExternalScroller() != null ? element.getExternalScroller() : element;
     }
 
     static SocketMaterials playerMaterials() {
-        return SocketMaterials.forPlayer(playerCargo());
+        return SocketMaterials.forPlayer(PlayerFleet.cargoOrNull());
     }
 
     private static void addPartsCount(TooltipMakerAPI element, float countRight) {
@@ -225,13 +274,13 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
         String countText = String.valueOf(SocketableCrafting.parts(playerMaterials()));
         float countWidth = Global.getSettings().computeStringWidth(countText, Fonts.ORBITRON_12) + LINE_PAD;
         element.setParaFont(Fonts.ORBITRON_12);
-        LabelAPI countLabel = element.addPara("%s", 0f, Misc.getTextColor(), Misc.getTextColor(), countText);
+        LabelAPI countLabel = VanillaText.plainPara(element, countText, 0f, Misc.getTextColor());
         countLabel.autoSizeToWidth(countWidth).inTR(countRight, PARTS_TEXT_TOP);
         element.addImage(partsSpec.getIconName(), PARTS_ICON_SIZE, PARTS_ICON_SIZE, 0f);
         element.getPrev().getPosition().inTR(countRight + countWidth + LINE_PAD, 0f);
         element.addTooltipToPrevious(new GameTextTooltip(PARTS_TOOLTIP_WIDTH,
-                tooltip -> tooltip.addPara("%s", 0f, Misc.getTextColor(), Misc.getTextColor(),
-                        Translation.msg("ui.socketStorage.parts.tooltip").arg("name", partsSpec.getName()).text())),
+                tooltip -> VanillaText.plainPara(tooltip, Translation.msg("ui.socketStorage.parts.tooltip").arg("name", partsSpec.getName()).text(),
+                        0f, Misc.getTextColor())),
                 TooltipMakerAPI.TooltipLocation.BELOW);
     }
 }

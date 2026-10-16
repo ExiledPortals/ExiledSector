@@ -1,12 +1,11 @@
 package exiledsector.compat;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.PlayerFleet;
 import org.apache.log4j.Logger;
 
 import java.lang.invoke.MethodHandle;
@@ -36,8 +35,7 @@ public final class SecondInCommandCompat {
     }
 
     public static boolean isModEnabled() {
-        SettingsAPI settings = Global.getSettings();
-        return settings != null && settings.getModManager().isModEnabled(MOD_ID);
+        return TARGET.isEnabled();
     }
 
     // java:S1181: MethodHandle.invoke declares Throwable, and any failure inside Second-in-Command must disable the checks rather than crash the game
@@ -99,8 +97,7 @@ public final class SecondInCommandCompat {
         if (memberFleet == null) {
             return null;
         }
-        SectorAPI sector = Global.getSector();
-        CampaignFleetAPI playerFleet = sector == null ? null : sector.getPlayerFleet();
+        CampaignFleetAPI playerFleet = PlayerFleet.orNull();
         boolean joinedAllyFleet = playerFleet != null && memberFleet != playerFleet
                 && playerFleet.getFleetData() != null
                 && playerFleet.getFleetData().getMembersListCopy().contains(member);

@@ -1,7 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import { buildVocabulary } from '../../../api/vocabulary.ts';
 import { fractionToPercentText, percentToFractionText } from '../../../shared/decimalText.ts';
-import { formatPool, parsePool, poolShares, togglePerHullSize, validateSocketables, type SocketableDefinition } from './definitions.ts';
+import {
+  formatPool,
+  markDefinitionsSaved,
+  parsePool,
+  poolShares,
+  togglePerHullSize,
+  validateSocketables,
+  type SocketableDefinition,
+  type SocketablesModel,
+} from './definitions.ts';
 import { dropSummary, setChance, validateDrops, type DropRow } from './drops.ts';
 import { missingEffects, validateNames, wordList } from './names.ts';
 
@@ -55,6 +64,24 @@ describe('socketable pools', () => {
     expect(entry.hullValues).toEqual(['4', '4', '4', '4']);
     togglePerHullSize(entry, false);
     expect(entry).toEqual({ effect: 'HULL_MULT', min: '4', max: '6', weight: '' });
+  });
+
+  it('marks the ids that were saved, not ids renamed or added after the save started', () => {
+    const table = { header: [], rows: [], lineEnding: '\n' as const };
+    const saved: SocketablesModel = {
+      table,
+      definitions: [definition({ id: 'renamed', loadedId: 'loaded' }), definition({ id: 'added_before_save' })],
+    };
+    const current: SocketablesModel = {
+      table,
+      definitions: [
+        definition({ id: 'renamed_again', loadedId: 'loaded' }),
+        definition({ id: 'added_before_save' }),
+        definition({ id: 'added_during_save' }),
+      ],
+    };
+    markDefinitionsSaved(current, saved);
+    expect(current.definitions.map((entry) => entry.loadedId)).toEqual(['renamed', 'added_before_save', undefined]);
   });
 
   it('reports every rule the game would reject', () => {

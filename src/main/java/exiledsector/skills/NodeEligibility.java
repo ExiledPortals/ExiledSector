@@ -7,6 +7,7 @@ import exiledsector.skills.tags.NodeRequirements;
 import exiledsector.skills.tags.ShipProfile;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.ToDoubleFunction;
 
@@ -60,11 +61,14 @@ public final class NodeEligibility {
     }
 
     public static Block check(SkillNode node, SkillType option, Context context) {
+        OptionProblem optionProblem = optionProblem(node.getType(), option == null ? null : option.getId());
+        if (optionProblem == OptionProblem.MISSING) {
+            return new Block(Kind.INVALID_OPTION, optionProblem.name(), null);
+        }
         AllocatedNode candidate = AllocatedNode.planned(node, option);
         if (context.locked() != null && (context.locked().test(node.getType()) || context.locked().test(candidate.effectiveType()))) {
             return new Block(Kind.LOCKED, null, null);
         }
-        OptionProblem optionProblem = option == null ? null : optionProblem(node.getType(), option.getId());
         if (optionProblem != null) {
             return new Block(Kind.INVALID_OPTION, optionProblem.name(), null);
         }
@@ -122,20 +126,28 @@ public final class NodeEligibility {
     }
 
     public static OptionProblem optionProblem(SkillType type, String optionTypeId) {
+        return optionProblem(type, optionTypeId, SkillTree::getType);
+    }
+
+    public static OptionProblem optionProblem(SkillType type, String optionTypeId, Function<String, SkillType> typeLookup) {
         if (!type.isOptional()) {
             return optionTypeId == null ? null : OptionProblem.UNEXPECTED;
         }
         if (optionTypeId == null) {
             return OptionProblem.MISSING;
         }
-        if (!type.getOptionalOptionIds().contains(optionTypeId) || SkillTree.getType(optionTypeId) == null) {
-            return OptionProblem.INVALID;
-        }
-        return null;
+        return validOption(type, optionTypeId, typeLookup) == null ? OptionProblem.INVALID : null;
     }
 
     public static SkillType validOption(SkillType type, String optionTypeId) {
-        return optionTypeId != null && optionProblem(type, optionTypeId) == null ? SkillTree.getType(optionTypeId) : null;
+        return validOption(type, optionTypeId, SkillTree::getType);
+    }
+
+    public static SkillType validOption(SkillType type, String optionTypeId, Function<String, SkillType> typeLookup) {
+        if (optionTypeId == null || !type.isOptional() || !type.getOptionalOptionIds().contains(optionTypeId)) {
+            return null;
+        }
+        return typeLookup.apply(optionTypeId);
     }
 
     public static ShieldType currentShieldType(ShipSkillData data, HullSize hullSize, ShieldType hullShieldType) {

@@ -9,6 +9,7 @@ import com.fs.starfarer.api.impl.hullmods.MissileAutoloader;
 import com.fs.starfarer.api.impl.hullmods.MissileAutoloader.ReloadCapacityData;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
 import exiledsector.i18n.Translation;
+import exiledsector.skills.ShipHullSizes;
 import exiledsector.skills.SkillType;
 import exiledsector.ui.TooltipTable;
 import exiledsector.ui.TooltipTable.Row;
@@ -77,7 +78,7 @@ final class HullModTooltipTables {
 
         List<Row> rows = new ArrayList<>();
         for (ReloadCapacityData data : sizeRows) {
-            rows.add(Row.of(data == currentCapacity, hullSizeName(data.size), data.getWeaponsString(), String.valueOf(data.capacity)));
+            rows.add(Row.of(data == currentCapacity, ShipHullSizes.displayName(data.size), data.getWeaponsString(), String.valueOf(data.capacity)));
         }
         String reloadCapacity = Translation.text("ui.tables.reloadCapacity");
         return new TooltipTable(reloadCapacity, List.of(Translation.text("ui.tables.shipSize"), Translation.text("ui.tables.smallMissiles"), reloadCapacity), rows);
@@ -112,10 +113,6 @@ final class HullModTooltipTables {
             }
         }
         return null;
-    }
-
-    private static String hullSizeName(HullSize size) {
-        return Translation.data("hullSize." + size.name(), size.name());
     }
 
     private static String bonus(float value) {

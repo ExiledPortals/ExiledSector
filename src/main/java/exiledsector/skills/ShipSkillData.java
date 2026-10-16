@@ -454,6 +454,13 @@ public class ShipSkillData {
         }
     }
 
+    public List<SkillItemCost> deallocateReleasingCharges(SkillNode node) {
+        Set<String> allocatedBefore = new LinkedHashSet<>(allocatedNodeIds);
+        deallocate(node);
+        allocatedBefore.removeAll(allocatedNodeIds);
+        return takeItemCharges(allocatedBefore);
+    }
+
     public boolean replaceNode(String oldId, String newId) {
         revision++;
         boolean dormant = getDormantNodeIds().contains(oldId);
@@ -470,6 +477,9 @@ public class ShipSkillData {
         }
         if (pairedFreeNodeIds().remove(oldId)) {
             pairedFreeNodeIds().add(newId);
+        }
+        if (oldId.equals(startingRootId)) {
+            startingRootId = newId;
         }
         SkillItemCost movedCharge = takeItemCharge(oldId);
         if (movedCharge != null) {
@@ -521,11 +531,7 @@ public class ShipSkillData {
     }
 
     private boolean hasInvalidOption(SkillNode node, Map<String, SkillType> types) {
-        if (!node.getType().isOptional()) {
-            return false;
-        }
-        String selectedId = getOptionalSelection(node.getId());
-        return selectedId == null || !node.getType().getOptionalOptionIds().contains(selectedId) || !types.containsKey(selectedId);
+        return node.getType().isOptional() && NodeEligibility.optionProblem(node.getType(), getOptionalSelection(node.getId()), types::get) != null;
     }
 
     public interface WakeCheck {
@@ -701,6 +707,17 @@ public class ShipSkillData {
             discardItemCharge(nodeId);
         }
         return charged;
+    }
+
+    public List<SkillItemCost> takeItemCharges(Collection<String> nodeIds) {
+        List<SkillItemCost> charges = new ArrayList<>();
+        for (String nodeId : nodeIds) {
+            SkillItemCost charged = takeItemCharge(nodeId);
+            if (charged != null) {
+                charges.add(charged);
+            }
+        }
+        return charges;
     }
 
     private void discardItemCharge(String nodeId) {

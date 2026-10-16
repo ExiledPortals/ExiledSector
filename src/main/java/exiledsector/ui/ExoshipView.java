@@ -8,6 +8,7 @@ import exiledsector.skills.SkillTree;
 import exiledsector.skills.tags.SkillTags;
 import exiledsector.ui.exoship.ExoshipRenderer;
 import exiledsector.ui.exoship.ExoshipVoyage;
+import exiledsector.ui.util.Fade;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -97,12 +98,8 @@ final class ExoshipView {
         }
         voyage.advance(amount);
         renderer.advance(amount, voyage, shipLength());
-        viewLevel = step(viewLevel, active, amount / VIEW_FADE_SECONDS);
-        dockedLevel = step(dockedLevel, docked, amount / DOCK_FADE_SECONDS);
-    }
-
-    private static float step(float level, boolean rising, float stepSize) {
-        return Math.max(0f, Math.min(1f, level + (rising ? stepSize : -stepSize)));
+        viewLevel = Fade.step(viewLevel, active, amount / VIEW_FADE_SECONDS);
+        dockedLevel = Fade.step(dockedLevel, docked, amount / DOCK_FADE_SECONDS);
     }
 
     float viewLevel() {

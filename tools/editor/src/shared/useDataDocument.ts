@@ -1,7 +1,8 @@
 import { produce, type Draft } from 'immer';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { fetchDataFiles, saveDataFiles, SERVER_HINT, staleFileQuestion, type DataFiles } from '../api/client.ts';
-import { confirmAction, notifyError, notifySuccess, showIssues } from './dialogs.tsx';
+import { fetchDataFiles, saveDataFiles, SERVER_HINT, type DataFiles } from '../api/client.ts';
+import { confirmAction, showIssues } from './dialogs.tsx';
+import { handleSaveResult } from './saveResult.ts';
 import { useReportUnsavedChanges } from './unsavedChanges.ts';
 
 export interface DataDocumentOptions<TModel> {
@@ -12,7 +13,7 @@ export interface DataDocumentOptions<TModel> {
   serialize: (model: TModel) => Record<string, string>;
   validate: (model: TModel) => string[];
   savedMessage: (model: TModel) => string;
-  afterSave?: (draft: Draft<TModel>) => void;
+  afterSave?: (draft: Draft<TModel>, saved: TModel) => void;
 }
 
 export type DataDocumentState<TModel> =
@@ -35,6 +36,8 @@ export function useDataDocument<TModel>(options: DataDocumentOptions<TModel>): D
   const [dirty, setDirty] = useState(false);
   const [saving, setSaving] = useState(false);
   const baseHashes = useRef<Record<string, string>>({});
+  const editRevision = useRef(0);
+  const loadGeneration = useRef(0);
   const optionsRef = useRef(options);
   optionsRef.current = options;
   const fileNamesKey = options.fileNames.join(',');
@@ -43,6 +46,7 @@ export function useDataDocument<TModel>(options: DataDocumentOptions<TModel>): D
 
   const load = useCallback(async () => {
     const { fileNames, parse } = optionsRef.current;
+    loadGeneration.current += 1;
     setState({ status: 'loading' });
     try {
       const files = await fetchDataFiles(fileNames);
@@ -60,6 +64,7 @@ export function useDataDocument<TModel>(options: DataDocumentOptions<TModel>): D
   }, [load, fileNamesKey]);
 
   const update = useCallback((recipe: (draft: Draft<TModel>) => void) => {
+    editRevision.current += 1;
     setState((current) => (current.status === 'ready' ? { status: 'ready', model: produce(current.model, recipe) } : current));
     setDirty(true);
   }, []);
@@ -81,34 +86,36 @@ export function useDataDocument<TModel>(options: DataDocumentOptions<TModel>): D
       return;
     }
     const { validate, serialize, savedMessage, afterSave, noun } = optionsRef.current;
-    const issues = validate(state.model);
+    const savedModel = state.model;
+    const issues = validate(savedModel);
     if (issues.length > 0) {
       showIssues('Not saved', issues);
       return;
     }
+    const savedRevision = editRevision.current;
+    const savedLoadGeneration = loadGeneration.current;
     setSaving(true);
     try {
-      const result = await saveDataFiles(serialize(state.model), baseHashes.current);
-      if (result.ok) {
-        baseHashes.current = { ...baseHashes.current, ...(result.data.hashes ?? {}) };
-        if (afterSave) {
-          setState((current) => (current.status === 'ready' ? { status: 'ready', model: produce(current.model, afterSave) } : current));
-        }
-        setDirty(false);
-        notifySuccess(savedMessage(state.model));
-      } else if (result.conflict) {
-        const reloadNow = await confirmAction({
-          title: 'Files changed on disk',
-          message: staleFileQuestion(result.message, `your unsaved ${noun} changes`),
-          confirmLabel: 'Reload from disk',
-          danger: true,
-        });
-        if (reloadNow) {
-          await load();
-        }
-      } else {
-        notifyError(`Could not save: ${result.message}`);
-      }
+      const result = await saveDataFiles(serialize(savedModel), baseHashes.current);
+      await handleSaveResult(result, {
+        discardedChanges: `your unsaved ${noun} changes`,
+        onSaved: (hashes) => {
+          if (loadGeneration.current !== savedLoadGeneration) {
+            return;
+          }
+          baseHashes.current = { ...baseHashes.current, ...hashes };
+          if (afterSave) {
+            setState((current) =>
+              current.status === 'ready' ? { status: 'ready', model: produce(current.model, (draft) => afterSave(draft, savedModel)) } : current,
+            );
+          }
+          if (editRevision.current === savedRevision) {
+            setDirty(false);
+          }
+        },
+        savedMessage: () => savedMessage(savedModel),
+        reloadFromDisk: load,
+      });
     } finally {
       setSaving(false);
     }

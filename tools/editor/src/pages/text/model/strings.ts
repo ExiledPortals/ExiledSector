@@ -72,9 +72,11 @@ export function serializeStrings(model: StringsModel): string {
   return lines.join(model.lineEnding);
 }
 
-export function markStringsSaved(model: StringsModel): void {
+export function markStringsSaved(model: StringsModel, saved: StringsModel): void {
+  model.lines = serializeStrings(saved).split(saved.lineEnding);
+  const savedValues = new Map(saved.entries.map((entry) => [entry.key, entry.value]));
   for (const entry of model.entries) {
-    entry.savedValue = entry.value;
+    entry.savedValue = savedValues.get(entry.key) ?? entry.savedValue;
   }
 }
 

@@ -321,7 +321,7 @@
     {"name": "WEAPON_FIRE_RATE_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},
     {"name": "WEAPON_FLUX_COST_MULT", "statMode": "MULT", "lowerIsBetter": true},
     {"name": "WEAPON_FLUX_COST_PERCENT", "statMode": "PERCENT", "lowerIsBetter": true},
-    {"name": "WEAPON_MALFUNCTION_PERCENT", "statMode": null, "lowerIsBetter": true},
+    {"name": "WEAPON_MALFUNCTION_PERCENT", "statMode": "PERCENT", "lowerIsBetter": true},
     {"name": "WEAPON_PROJECTILE_SPEED_MULT", "statMode": "MULT", "lowerIsBetter": false},
     {"name": "WEAPON_PROJECTILE_SPEED_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},
     {"name": "WEAPON_RANGE_FALLOFF_MULT", "statMode": "MULT", "lowerIsBetter": false},

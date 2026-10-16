@@ -1,6 +1,7 @@
 package exiledsector.skills.template;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.skills.ShipHullSizes;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,8 +12,6 @@ import java.util.Set;
 
 public final class TemplateFilter {
 
-    public static final List<HullSize> FILTERABLE = List.of(HullSize.FRIGATE, HullSize.DESTROYER, HullSize.CRUISER, HullSize.CAPITAL_SHIP);
-
     private static final Comparator<SkillTreeTemplate> BY_NAME = Comparator
             .comparing(SkillTreeTemplate::name, String.CASE_INSENSITIVE_ORDER)
             .thenComparing(SkillTreeTemplate::id);
@@ -21,7 +20,7 @@ public final class TemplateFilter {
     }
 
     public static Set<HullSize> defaultFilter(HullSize currentHullSize) {
-        return isFilterable(currentHullSize) ? EnumSet.of(currentHullSize) : EnumSet.copyOf(FILTERABLE);
+        return ShipHullSizes.isShipSize(currentHullSize) ? EnumSet.of(currentHullSize) : EnumSet.copyOf(ShipHullSizes.ORDER);
     }
 
     public static List<SkillTreeTemplate> matching(Collection<SkillTreeTemplate> templates, String rootNodeId, Set<HullSize> hullSizes) {
@@ -36,10 +35,6 @@ public final class TemplateFilter {
     }
 
     private static boolean shownFor(HullSize hullSize, Set<HullSize> hullSizes) {
-        return !isFilterable(hullSize) || hullSizes.contains(hullSize);
-    }
-
-    public static boolean isFilterable(HullSize hullSize) {
-        return hullSize != null && FILTERABLE.contains(hullSize);
+        return !ShipHullSizes.isShipSize(hullSize) || hullSizes.contains(hullSize);
     }
 }

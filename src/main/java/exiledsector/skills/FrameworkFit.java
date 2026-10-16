@@ -21,7 +21,8 @@ public final class FrameworkFit {
 
     public static ShipProfile profile(ShipHullSpecAPI hullSpec, ShipVariantAPI variant, ShipSkillData shipData) {
         HullSize hullSize = hullSpec.getHullSize();
-        List<SkillTypeEffect> treeEffects = treeEffects(shipData, hullSize);
+        List<SkillTypeEffect> treeEffects = shipData == null ? List.of()
+                : AllocatedSkillEffects.treeEffects(shipData, AllocatedNode.of(shipData), hullSize);
         List<SkillEffect> treeEffectsInOrder = new ArrayList<>(treeEffects.size());
         treeEffects.forEach(effect -> treeEffectsInOrder.add(effect.effect()));
         ShieldType shieldType = ShieldSkillEffect.resolveDisplayShieldType(fittedShieldType(hullSpec.getShieldType(), variant), treeEffectsInOrder);
@@ -54,18 +55,5 @@ public final class FrameworkFit {
             }
         }
         return Math.max(0, Math.round((baysRemoved ? 0f : hullBays) + addedBays));
-    }
-
-    private static List<SkillTypeEffect> treeEffects(ShipSkillData shipData, HullSize hullSize) {
-        List<SkillTypeEffect> effects = new ArrayList<>();
-        if (shipData == null) {
-            return effects;
-        }
-        for (AllocatedNode allocated : AllocatedNode.of(shipData)) {
-            if (allocated.effectiveType().getVanillaHullModId() == null) {
-                effects.addAll(AllocatedSkillEffects.appliedEffects(shipData, allocated, hullSize));
-            }
-        }
-        return effects;
     }
 }

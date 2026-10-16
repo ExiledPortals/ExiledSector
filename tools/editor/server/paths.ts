@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import path from 'node:path';
 
 export interface ProjectPaths {
@@ -29,6 +30,18 @@ export function resolveProjectPath(paths: ProjectPaths, relativePath: string | u
 
 export function resolveVanillaPath(paths: ProjectPaths, relativePath: string | undefined | null): string | null {
   return resolveInside(paths.vanillaCoreDir, relativePath);
+}
+
+function existingFile(fullPath: string | null): string | null {
+  return fullPath && fs.existsSync(fullPath) && fs.statSync(fullPath).isFile() ? fullPath : null;
+}
+
+export function existingProjectFile(paths: ProjectPaths, relativePath: string | undefined | null): string | null {
+  return existingFile(resolveProjectPath(paths, relativePath));
+}
+
+export function existingVanillaFile(paths: ProjectPaths, relativePath: string | undefined | null): string | null {
+  return existingFile(resolveVanillaPath(paths, relativePath));
 }
 
 export const DEFAULT_SALVAGE_FILE = 'socketable_salvage.csv';

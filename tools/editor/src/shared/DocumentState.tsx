@@ -9,25 +9,33 @@ interface DocumentStateProps<TModel> {
   children: (model: TModel) => ReactNode;
 }
 
+export function DocumentLoading() {
+  return (
+    <Center p="xl">
+      <Loader />
+    </Center>
+  );
+}
+
+export function DocumentLoadError({ message, onRetry }: { message: string; onRetry: () => void }) {
+  return (
+    <Stack p="md">
+      <Alert color="red" icon={<IconAlertTriangle />} title="Could not load">
+        {message}
+      </Alert>
+      <Button variant="default" w="fit-content" onClick={onRetry}>
+        Retry
+      </Button>
+    </Stack>
+  );
+}
+
 export function DocumentState<TModel>({ state, onRetry, children }: DocumentStateProps<TModel>) {
   if (state.status === 'loading') {
-    return (
-      <Center p="xl">
-        <Loader />
-      </Center>
-    );
+    return <DocumentLoading />;
   }
   if (state.status === 'error') {
-    return (
-      <Stack p="md">
-        <Alert color="red" icon={<IconAlertTriangle />} title="Could not load">
-          {state.message}
-        </Alert>
-        <Button variant="default" w="fit-content" onClick={onRetry}>
-          Retry
-        </Button>
-      </Stack>
-    );
+    return <DocumentLoadError message={state.message} onRetry={onRetry} />;
   }
   return <>{children(state.model)}</>;
 }

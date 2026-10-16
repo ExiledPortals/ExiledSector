@@ -2,6 +2,7 @@ package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.BoundsAPI;
+import com.fs.starfarer.api.combat.CollisionClass;
 import com.fs.starfarer.api.combat.CollisionGridAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -60,6 +61,11 @@ final class CombatQueries {
             }
         }
         return result;
+    }
+
+    static List<ShipAPI> hostilesNear(ShipAPI owner, Vector2f point, float radius, Predicate<ShipAPI> extraFilter) {
+        return shipsNear(point, radius, other -> extraFilter.test(other) && isAliveNotHulk(other)
+                && other.getCollisionClass() != CollisionClass.NONE && isHostile(owner, other) && withinRadius(other.getLocation(), point, radius));
     }
 
     static List<ShipAPI> nearestFirst(List<ShipAPI> ships, Vector2f point, int count) {

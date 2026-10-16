@@ -3,6 +3,7 @@ package exiledsector.console;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.skills.ShipHullSizes;
 import exiledsector.socketables.HullUpgradeData;
 import org.lazywizard.console.BaseCommand;
 import org.lazywizard.console.CommonStrings;
@@ -35,7 +36,7 @@ public class GrantHullUpgradesCommand implements BaseCommand {
             Console.showMessage("No player fleet found.");
             return CommandResult.ERROR;
         }
-        for (HullSize hullSize : HullUpgradeData.HULL_SIZES) {
+        for (HullSize hullSize : ShipHullSizes.ORDER) {
             for (int i = 0; i < copies; i++) {
                 playerFleet.getCargo().addSpecial(new HullUpgradeData(hullSize).toSpecialItem(), 1f);
             }

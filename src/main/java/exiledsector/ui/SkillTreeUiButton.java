@@ -1,6 +1,7 @@
 package exiledsector.ui;
 
 import exiledsector.ui.util.BorderedPanel;
+import exiledsector.ui.util.Fade;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.TextLabel;
 
@@ -82,11 +83,13 @@ final class SkillTreeUiButton {
 
     void render(float mouseX, float mouseY, float alphaMult) {
         if (buttonBounds == ScreenRect.NONE) {
+            lastFadeNanos = 0L;
             return;
         }
         advanceFade();
         if (!buttonShown && fadeAlpha <= 0f) {
             buttonBounds = ScreenRect.NONE;
+            lastFadeNanos = 0L;
             return;
         }
         alphaMult *= fadeAlpha;
@@ -112,6 +115,6 @@ final class SkillTreeUiButton {
         float seconds = lastFadeNanos == 0L ? 0f : Math.min(MAX_FADE_STEP_SECONDS, (now - lastFadeNanos) / 1_000_000_000f);
         lastFadeNanos = now;
         float step = seconds / FADE_SECONDS;
-        fadeAlpha = buttonShown ? Math.min(1f, fadeAlpha + step) : Math.max(0f, fadeAlpha - step);
+        fadeAlpha = Fade.step(fadeAlpha, buttonShown, step);
     }
 }

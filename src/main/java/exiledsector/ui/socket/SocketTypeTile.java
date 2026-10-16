@@ -23,9 +23,8 @@ final class SocketTypeTile extends BaseCustomUIPanelPlugin {
     private final SocketType socketType;
     private final SocketState state;
     private final String itemIconPath;
-    private final IconTileCell.Hooks hooks;
+    private final TileInput tileInput;
     private PositionAPI tilePosition;
-    private boolean hovered;
     private float hoverLevel;
     private float elapsedSeconds;
 
@@ -33,7 +32,7 @@ final class SocketTypeTile extends BaseCustomUIPanelPlugin {
         this.socketType = socketType;
         this.state = state;
         this.itemIconPath = itemIconPath;
-        this.hooks = hooks;
+        this.tileInput = TileInput.forHooks(hooks, !isClickable());
     }
 
     @Override
@@ -46,7 +45,7 @@ final class SocketTypeTile extends BaseCustomUIPanelPlugin {
         float step = Math.min(MAX_STEP_SECONDS, amount);
         elapsedSeconds += step;
         float hoverStep = step / HOVER_SECONDS;
-        hoverLevel = Math.max(0f, Math.min(1f, hoverLevel + (hovered && isClickable() ? hoverStep : -hoverStep)));
+        hoverLevel = Math.max(0f, Math.min(1f, hoverLevel + (tileInput.isHovered() && isClickable() ? hoverStep : -hoverStep)));
     }
 
     @Override
@@ -76,7 +75,7 @@ final class SocketTypeTile extends BaseCustomUIPanelPlugin {
 
     @Override
     public void processInput(List<InputEventAPI> events) {
-        TileInput.process(events, tilePosition, !isClickable(), hooks, value -> hovered = value, () -> hovered);
+        tileInput.process(events, tilePosition);
     }
 
     private boolean isClickable() {

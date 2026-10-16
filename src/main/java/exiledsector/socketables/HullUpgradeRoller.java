@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import exiledsector.skills.ShipHullSizes;
 
 public final class HullUpgradeRoller {
 
@@ -24,7 +25,7 @@ public final class HullUpgradeRoller {
     }
 
     public static HullSize rollHullSize(Random random) {
-        return HullUpgradeData.HULL_SIZES.get(random.nextInt(HullUpgradeData.HULL_SIZES.size()));
+        return ShipHullSizes.ORDER.get(random.nextInt(ShipHullSizes.ORDER.size()));
     }
 
     public static List<SocketType> rollTypes(int socketCount, List<SocketType> allowedTypes, Random random) {

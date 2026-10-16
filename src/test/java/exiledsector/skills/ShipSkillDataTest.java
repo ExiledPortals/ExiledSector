@@ -1310,6 +1310,24 @@ class ShipSkillDataTest {
     }
 
     @Test
+    void aReplacedStartingRootStaysTheStartingRootSoTheTreeIsNotReset() {
+        SkillNode oldRoot = rootNode("old_root", List.of());
+        SkillNode newRoot = rootNode("new_root", List.of());
+        SkillNode child = node("child", List.of("new_root"));
+        ShipSkillData data = new ShipSkillData();
+        data.chooseStartingRoot(oldRoot);
+        data.allocate(child, 3);
+
+        assertTrue(data.replaceNode("old_root", "new_root"));
+        Map<String, SkillNode> tree = Map.of("new_root", newRoot, "child", child);
+        assertTrue(data.forgetUnknownNodes(tree, Map.of()).isEmpty());
+
+        assertFalse(data.hasLostStartingRoot(tree));
+        assertEquals("new_root", data.resolveStartingRootId());
+        assertEquals(Set.of("new_root", "child"), data.getAllocatedNodeIds());
+    }
+
+    @Test
     void aShipWhoseStartingRootIsGoneOrNoLongerARootIsResetButKeepsItsProgress() {
         SkillNode root = rootNode("root", List.of());
         SkillNode child = node("child", List.of("root"));

@@ -13,6 +13,7 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.skills.ShipHullSizes;
 import exiledsector.socketables.FrameworkSockets;
 import exiledsector.socketables.HullUpgradeData;
 import exiledsector.socketables.HullUpgradeTooltip;
@@ -21,7 +22,6 @@ import exiledsector.socketables.SocketableRarity;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.VanillaText;
 import exiledsector.ui.framework.FrameworkSocketFlair;
-import exiledsector.ui.util.FramedPanelPlugin;
 
 import java.awt.Color;
 import java.util.List;
@@ -58,7 +58,6 @@ public final class HullUpgradePanel extends HoloPanel {
     private static final float TOOLTIP_WIDTH = 520f;
     private static final Color BLOCKED_TEXT_COLOR = new Color(130, 130, 130);
     private static final float CONFIRM_HEIGHT = 170f;
-    private static final float CONFIRM_BUTTON_HEIGHT = 26f;
     private static final float POINTS_LINE_HEIGHT = 30f;
 
     private enum Control {CLOSE, CONFIRM_INSTALL, CANCEL_INSTALL}
@@ -67,18 +66,14 @@ public final class HullUpgradePanel extends HoloPanel {
     }
 
     private final Listener panelListener;
-    private final SocketableHoverTooltip hoverTooltip;
     private View view;
     private UIComponentAPI headerElement;
     private TooltipMakerAPI listElement;
-    private CustomPanelAPI confirmPanel;
-    private CustomPanelAPI confirmBlocker;
 
     private HullUpgradePanel(CustomPanelAPI hostPanel, View view, Listener panelListener) {
         super(hostPanel, HullUpgradePanel.class);
         this.view = view;
         this.panelListener = panelListener;
-        this.hoverTooltip = new SocketableHoverTooltip(hostPanel);
     }
 
     public static HullUpgradePanel open(CustomPanelAPI hostPanel, float panelLeft, float panelTop, float panelHeight, View view,
@@ -109,9 +104,7 @@ public final class HullUpgradePanel extends HoloPanel {
 
     @Override
     protected UIComponentAPI[] contentComponents() {
-        return new UIComponentAPI[]{listElement == null ? null
-                : listElement.getExternalScroller() != null ? listElement.getExternalScroller() : listElement,
-                confirmPanel, confirmBlocker};
+        return new UIComponentAPI[]{placedComponent(listElement)};
     }
 
     @Override
@@ -145,60 +138,35 @@ public final class HullUpgradePanel extends HoloPanel {
     }
 
     public boolean escape() {
-        if (confirmPanel == null) {
+        if (!isConfirmOpen()) {
             return false;
         }
         queue(this::closeConfirm);
         return true;
     }
 
-    private void openConfirm() {
-        if (confirmPanel != null) {
-            return;
-        }
-        hoverTooltip.hide();
+    private void openInstallConfirm() {
         HullUpgradeData upgrade = new HullUpgradeData(view.hullSize());
-        confirmBlocker = Global.getSettings().createCustom(panelWidth, panelHeight, new InputBlocker());
-        panelRoot.addComponent(confirmBlocker).inTL(0f, 0f);
-        float confirmWidth = panelWidth - PAD * 2f;
-        confirmPanel = Global.getSettings().createCustom(confirmWidth, CONFIRM_HEIGHT,
-                new FramedPanelPlugin(HullUpgradePanel.class, this::buttonPressed));
-        TooltipMakerAPI element = confirmPanel.createUIElement(confirmWidth - PAD * 2f, CONFIRM_HEIGHT - PAD * 2f, false);
-        Color uniqueColor = SocketableRarity.UNIQUE.color();
-        element.addPara("%s", 0f, uniqueColor, uniqueColor, Translation.msg("framework.confirm.title").arg("name", upgrade.name()).text());
-        element.addPara("%s", LINE_PAD * 2f, Misc.getTextColor(), Misc.getTextColor(), Translation.msg("framework.confirm.body")
-                .arg("left", view.upgradesInStorage() - 1).arg("points", view.points() + 1).arg("max", FrameworkSockets.MAX_POINTS).text());
-        float buttonWidth = (confirmWidth - PAD * 2f - GAP) / 2f;
-        element.addButton(Translation.text("framework.confirm.install"), Control.CONFIRM_INSTALL, buttonWidth, CONFIRM_BUTTON_HEIGHT, 0f)
-                .getPosition().inBR(0f, 0f);
-        element.addButton(Translation.text("framework.confirm.cancel"), Control.CANCEL_INSTALL, buttonWidth, CONFIRM_BUTTON_HEIGHT, 0f)
-                .getPosition().inBL(0f, 0f);
-        confirmPanel.addUIElement(element).inTL(PAD, PAD);
-        panelRoot.addComponent(confirmPanel).inTL(PAD, (panelHeight - CONFIRM_HEIGHT) / 2f);
-        refreshOpacity();
-    }
-
-    private void closeConfirm() {
-        if (confirmPanel == null) {
-            return;
-        }
-        panelRoot.removeComponent(confirmPanel);
-        panelRoot.removeComponent(confirmBlocker);
-        confirmPanel = null;
-        confirmBlocker = null;
+        openConfirm(CONFIRM_HEIGHT, element -> {
+            Color uniqueColor = SocketableRarity.UNIQUE.color();
+            VanillaText.plainPara(element, Translation.msg("framework.confirm.title").arg("name", upgrade.name()).text(), 0f, uniqueColor);
+            VanillaText.plainPara(element, Translation.msg("framework.confirm.body")
+                    .arg("left", view.upgradesInStorage() - 1).arg("points", view.points() + 1).arg("max", FrameworkSockets.MAX_POINTS).text(),
+                    LINE_PAD * 2f, Misc.getTextColor());
+        }, "framework.confirm.install", Control.CONFIRM_INSTALL, "framework.confirm.cancel", Control.CANCEL_INSTALL);
     }
 
     private void rebuildList() {
         hoverTooltip.hide();
         closeConfirm();
         if (listElement != null) {
-            panelRoot.removeComponent(listElement.getExternalScroller() != null ? listElement.getExternalScroller() : listElement);
+            panelRoot.removeComponent(placedComponent(listElement));
         }
         float listWidth = panelWidth - PAD * 2f;
         float listTop = PAD + HEADER_HEIGHT + GAP;
         TooltipMakerAPI element = panelRoot.createUIElement(listWidth, panelHeight - listTop - PAD, true);
-        element.addPara("%s", 0f, Misc.getGrayColor(), Misc.getGrayColor(),
-                Translation.msg("framework.panel.hint").arg("max", FrameworkSockets.MAX_POINTS).text());
+        VanillaText.plainPara(element, Translation.msg("framework.panel.hint").arg("max", FrameworkSockets.MAX_POINTS).text(), 0f,
+                Misc.getGrayColor());
         float gridWidth = listWidth - SCROLLBAR_ROOM;
         float beforeHeading = element.getHeightSoFar();
         element.addSectionHeading(Translation.text("framework.panel.upgrades"), Alignment.MID, GAP * 3f);
@@ -246,7 +214,7 @@ public final class HullUpgradePanel extends HoloPanel {
         CustomPanelAPI rowPanel = Global.getSettings().createCustom(gridWidth, tileWidth + NAME_HEIGHT + STATE_HEIGHT, null);
         CustomPanelAPI cellPanel = Global.getSettings().createCustom(tileWidth, tileWidth + NAME_HEIGHT + STATE_HEIGHT, null);
         TooltipMakerAPI cellElement = cellPanel.createUIElement(tileWidth, tileWidth + NAME_HEIGHT + STATE_HEIGHT, false);
-        IconTileCell.Hooks hooks = new IconTileCell.Hooks(() -> queue(this::openConfirm),
+        IconTileCell.Hooks hooks = new IconTileCell.Hooks(() -> queue(this::openInstallConfirm),
                 tilePosition -> queue(() -> showUpgradeTooltip(upgrade, tilePosition)), () -> queue(() -> hideTooltipOf(upgrade)));
         cellElement.addCustom(Global.getSettings().createCustom(tileWidth, tileWidth,
                 new IconTileCell(upgrade.iconPath(), SocketableRarity.UNIQUE.color(), blocked, hooks)), 0f);
@@ -260,8 +228,7 @@ public final class HullUpgradePanel extends HoloPanel {
 
     private static void addPointsLine(TooltipMakerAPI element, String points, float width) {
         element.setParaFont(Fonts.ORBITRON_24AABOLD);
-        LabelAPI pointsLabel = element.addPara("%s", GAP * 3f, SkillTreePanelStyle.OP_TEXT_COLOR,
-                SkillTreePanelStyle.OP_TEXT_COLOR, points);
+        LabelAPI pointsLabel = VanillaText.plainPara(element, points, GAP * 3f, SkillTreePanelStyle.OP_TEXT_COLOR);
         pointsLabel.setAlignment(Alignment.MID);
         pointsLabel.getPosition().setSize(width, POINTS_LINE_HEIGHT);
         element.setParaFontDefault();
@@ -275,7 +242,7 @@ public final class HullUpgradePanel extends HoloPanel {
         return switch (block) {
             case AT_MAX_POINTS -> Translation.msg("framework.panel.upgradeAtMax").arg("max", FrameworkSockets.MAX_POINTS).text();
             case NONE_IN_STORAGE -> Translation.msg("framework.panel.upgradeNone")
-                    .arg("size", Translation.text("hullSize." + view.hullSize().name())).text();
+                    .arg("size", ShipHullSizes.displayName(view.hullSize())).text();
         };
     }
 
@@ -312,7 +279,7 @@ public final class HullUpgradePanel extends HoloPanel {
     }
 
     private static void addCentredLabel(TooltipMakerAPI element, String text, Color color, float width) {
-        LabelAPI label = element.addPara("%s", LINE_PAD, color, color, text);
+        LabelAPI label = VanillaText.plainPara(element, text, LINE_PAD, color);
         label.setAlignment(Alignment.MID);
         label.getPosition().setSize(width, NAME_HEIGHT - LINE_PAD);
     }
@@ -324,7 +291,7 @@ public final class HullUpgradePanel extends HoloPanel {
     }
 
     private void showUpgradeTooltip(HullUpgradeData upgrade, PositionAPI tilePosition) {
-        if (confirmPanel != null) {
+        if (isConfirmOpen()) {
             return;
         }
         hoverTooltip.show(upgrade, TOOLTIP_WIDTH, (tooltip, expanded) -> HullUpgradeTooltip.write(tooltip, upgrade,
@@ -332,7 +299,7 @@ public final class HullUpgradePanel extends HoloPanel {
     }
 
     private void showSocketTooltip(SocketEntry entry, PositionAPI tilePosition) {
-        if (confirmPanel != null) {
+        if (isConfirmOpen()) {
             return;
         }
         hoverTooltip.show(entry, TOOLTIP_WIDTH, (tooltip, expanded) -> I18n.forGameText(() -> {

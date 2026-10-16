@@ -23,7 +23,6 @@ public class SkillTreeRefitButton extends BaseRefitButton {
     private static final float SCREEN_FRACTION = 1f;
     private static final String CLICK_SOUND = "ui_button_pressed";
     static final float SHIP_CARD_ICON_SIZE = 128f;
-    static final float SHIP_CARD_MARGIN = 16f;
 
     public static void addButton() {
         LunaRefitManager.addRefitButton(new SkillTreeRefitButton());
@@ -120,11 +119,11 @@ public class SkillTreeRefitButton extends BaseRefitButton {
         canvasElement.addCustom(canvasPanel, 0f).getPosition().inTL(0f, 0f);
 
         backgroundPanel.addUIElement(shipCard);
-        shipCard.getPosition().inBL(SHIP_CARD_MARGIN, SHIP_CARD_MARGIN);
+        shipCard.getPosition().inBL(ChromeMetrics.EDGE_MARGIN, ChromeMetrics.EDGE_MARGIN);
         canvasPlugin.setShipCard(shipCard);
 
         CustomPanelAPI shipCardClickTarget = Global.getSettings().createCustom(SHIP_CARD_ICON_SIZE, shipCardHeight,
                 new ShipCardClickTarget(canvasPlugin::shipCardClicked));
-        backgroundPanel.addComponent(shipCardClickTarget).inBL(SHIP_CARD_MARGIN, SHIP_CARD_MARGIN);
+        backgroundPanel.addComponent(shipCardClickTarget).inBL(ChromeMetrics.EDGE_MARGIN, ChromeMetrics.EDGE_MARGIN);
     }
 }

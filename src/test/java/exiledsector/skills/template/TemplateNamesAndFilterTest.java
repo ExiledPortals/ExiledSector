@@ -3,6 +3,7 @@ package exiledsector.skills.template;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import org.junit.jupiter.api.Test;
 
+import exiledsector.skills.ShipHullSizes;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -47,8 +48,8 @@ class TemplateNamesAndFilterTest {
     @Test
     void theDefaultFilterIsTheShipsOwnHullSizeOrEverySizeForUnusualHulls() {
         assertEquals(EnumSet.of(HullSize.DESTROYER), TemplateFilter.defaultFilter(HullSize.DESTROYER));
-        assertEquals(EnumSet.copyOf(TemplateFilter.FILTERABLE), TemplateFilter.defaultFilter(HullSize.FIGHTER));
-        assertEquals(EnumSet.copyOf(TemplateFilter.FILTERABLE), TemplateFilter.defaultFilter(null));
+        assertEquals(EnumSet.copyOf(ShipHullSizes.ORDER), TemplateFilter.defaultFilter(HullSize.FIGHTER));
+        assertEquals(EnumSet.copyOf(ShipHullSizes.ORDER), TemplateFilter.defaultFilter(null));
     }
 
     @Test

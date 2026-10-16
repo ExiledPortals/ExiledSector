@@ -26,7 +26,6 @@ import exiledsector.socketables.SocketableUnlock;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.VanillaText;
-import exiledsector.ui.util.FramedPanelPlugin;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -93,8 +92,6 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     private UIComponentAPI recipesElement;
     private UIComponentAPI detailsElement;
     private UIComponentAPI noticeElement;
-    private CustomPanelAPI tooltipPanel;
-    private Recipe tooltipRecipe;
     private Socketable loadedSocketable;
     private String noticeText;
 
@@ -162,7 +159,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     @Override
     protected void onClose() {
-        hideTooltip();
+        hoverTooltip.hide();
         workbenchListener.closed();
     }
 
@@ -211,7 +208,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     }
 
     private void tileClicked(Recipe recipe) {
-        hideTooltip();
+        hoverTooltip.hide();
         if (recipe.currency == null) {
             showNotice(Translation.msg("ui.workbench.notice.synthesiseHint").arg("name", recipeName(recipe)).text());
         } else {
@@ -220,7 +217,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     }
 
     private void tileRightClicked(Recipe recipe) {
-        hideTooltip();
+        hoverTooltip.hide();
         synthesise(recipe);
     }
 
@@ -325,7 +322,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     }
 
     private void rebuildTiles() {
-        hideTooltip();
+        hoverTooltip.hide();
         if (recipesElement != null) {
             panelRoot.removeComponent(recipesElement);
         }
@@ -344,29 +341,31 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     private void addTile(TooltipMakerAPI element, Recipe recipe, float tileLeft, float tileTop, SocketMaterials materials) {
         CustomPanelAPI tilePanel = Global.getSettings().createCustom(TILE_SIZE, TILE_SIZE, new WorkbenchTile(recipeIcons(recipe),
-                new WorkbenchTile.Listener() {
+                new TileInput.Handler() {
                     @Override
-                    public void hovered(PositionAPI tilePosition) {
+                    public void entered(PositionAPI tilePosition) {
                         queue(() -> showTooltip(recipe, tilePosition));
                     }
 
                     @Override
                     public void left() {
                         queue(() -> {
-                            if (tooltipRecipe == recipe) {
-                                hideTooltip();
+                            if (hoverTooltip.isShowing(recipe)) {
+                                hoverTooltip.hide();
                             }
                         });
                     }
 
                     @Override
-                    public void clicked() {
+                    public boolean clicked() {
                         queue(() -> tileClicked(recipe));
+                        return true;
                     }
 
                     @Override
-                    public void rightClicked() {
+                    public boolean rightClicked() {
                         queue(() -> tileRightClicked(recipe));
+                        return true;
                     }
                 }));
         element.addCustom(tilePanel, 0f).getPosition().inTL(tileLeft, tileTop);
@@ -376,38 +375,28 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         int ownedCount = materials.count(recipe.currency.commodityId());
         Color countColor = ownedCount > 0 ? Misc.getBrightPlayerColor() : Misc.getGrayColor();
         element.setParaFont(Fonts.ORBITRON_20AABOLD);
-        LabelAPI countLabel = element.addPara("%s", 0f, countColor, countColor, String.valueOf(ownedCount));
+        LabelAPI countLabel = VanillaText.plainPara(element, String.valueOf(ownedCount), 0f, countColor);
         countLabel.autoSizeToWidth(COUNT_WIDTH).inTL(tileLeft + TILE_SIZE + COUNT_LEFT,
                 tileTop + (TILE_SIZE - countLabel.getPosition().getHeight()) / 2f);
     }
 
     private void showTooltip(Recipe recipe, PositionAPI anchor) {
-        hideTooltip();
         if (isClosing()) {
+            hoverTooltip.hide();
             return;
         }
-        CustomPanelAPI newTooltipPanel = Global.getSettings().createCustom(TOOLTIP_WIDTH, TILE_SIZE,
-                new FramedPanelPlugin(SocketWorkbenchPanel.class));
-        TooltipMakerAPI element = newTooltipPanel.createUIElement(TOOLTIP_WIDTH - PAD * 2f, 0f, false);
+        hoverTooltip.show(recipe, TOOLTIP_WIDTH, (element, expanded) -> writeTooltip(element, recipe), anchor,
+                SocketableHoverTooltip.Placement.BELOW, PAD);
+    }
+
+    private void writeTooltip(TooltipMakerAPI element, Recipe recipe) {
         element.setParaFont(Fonts.ORBITRON_20AA);
-        element.addPara("%s", 0f, Misc.getBrightPlayerColor(), Misc.getBrightPlayerColor(), recipeName(recipe));
+        VanillaText.plainPara(element, recipeName(recipe), 0f, Misc.getBrightPlayerColor());
         element.setParaFontDefault();
-        element.addPara("%s", GAP, Misc.getTextColor(), Misc.getTextColor(),
-                Translation.text("ui.workbench.recipe." + recipe.key() + ".description"));
+        VanillaText.plainPara(element, Translation.text("ui.workbench.recipe." + recipe.key() + ".description"), GAP, Misc.getTextColor());
         for (String line : tooltipHints(recipe)) {
-            element.addPara("%s", GAP, Misc.getGrayColor(), Misc.getGrayColor(), line);
+            VanillaText.plainPara(element, line, GAP, Misc.getGrayColor());
         }
-        float contentHeight = element.getHeightSoFar();
-        element.getPosition().setSize(TOOLTIP_WIDTH - PAD * 2f, contentHeight);
-        float tooltipHeight = contentHeight + PAD * 2f;
-        newTooltipPanel.getPosition().setSize(TOOLTIP_WIDTH, tooltipHeight);
-        newTooltipPanel.addUIElement(element).inTL(PAD, PAD);
-        PositionAPI hostPosition = hostPanel.getPosition();
-        float tooltipLeft = Math.max(0f, Math.min(anchor.getX() - hostPosition.getX(), hostPosition.getWidth() - TOOLTIP_WIDTH));
-        float tooltipTop = hostPosition.getY() + hostPosition.getHeight() - anchor.getY() + GAP;
-        hostPanel.addComponent(newTooltipPanel).inTL(tooltipLeft, Math.max(0f, Math.min(tooltipTop, hostPosition.getHeight() - tooltipHeight)));
-        tooltipPanel = newTooltipPanel;
-        tooltipRecipe = recipe;
     }
 
     private List<String> tooltipHints(Recipe recipe) {
@@ -427,14 +416,6 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         }
         hints.add(synthesiseHint);
         return hints;
-    }
-
-    private void hideTooltip() {
-        if (tooltipPanel != null) {
-            hostPanel.removeComponent(tooltipPanel);
-            tooltipPanel = null;
-            tooltipRecipe = null;
-        }
     }
 
     private static List<String> recipeIcons(Recipe recipe) {
@@ -465,14 +446,14 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         float detailsHeight = Math.max(BUTTON_HEIGHT, panelHeight - detailsTop - bottomReserve());
         TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), detailsHeight, true);
         if (loadedSocketable == null) {
-            element.addPara("%s", 0f, Misc.getGrayColor(), Misc.getGrayColor(), Translation.text("ui.workbench.empty"));
+            VanillaText.plainPara(element, Translation.text("ui.workbench.empty"), 0f, Misc.getGrayColor());
         } else {
             SocketableName displayName = loadedSocketable.displayName();
             element.setParaFont(Fonts.ORBITRON_20AA);
-            element.addPara("%s", 0f, displayName.rarity().color(), displayName.rarity().color(), displayName.title());
+            VanillaText.plainPara(element, displayName.title(), 0f, displayName.rarity().color());
             element.setParaFontDefault();
             if (displayName.baseName() != null) {
-                element.addPara("%s", LINE_PAD, Misc.getGrayColor(), Misc.getGrayColor(), displayName.baseName());
+                VanillaText.plainPara(element, displayName.baseName(), LINE_PAD, Misc.getGrayColor());
             }
             float paraPad = GAP * 2f;
             for (StyledText line : loadedSocketable.effectLines(true)) {
@@ -481,7 +462,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             }
         }
         panelRoot.addUIElement(element).inTL(PAD, detailsTop);
-        detailsElement = element.getExternalScroller() != null ? element.getExternalScroller() : element;
+        detailsElement = placedComponent(element);
     }
 
     private void rebuildNotice() {
@@ -490,7 +471,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         }
         TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), NOTICE_HEIGHT, false);
         if (noticeText != null) {
-            element.addPara("%s", 0f, Misc.getPositiveHighlightColor(), Misc.getPositiveHighlightColor(), noticeText);
+            VanillaText.plainPara(element, noticeText, 0f, Misc.getPositiveHighlightColor());
         }
         panelRoot.addUIElement(element).inTL(PAD, panelHeight - PAD - NOTICE_HEIGHT);
         noticeElement = element;

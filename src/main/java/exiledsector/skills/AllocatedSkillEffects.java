@@ -25,15 +25,26 @@ public final class AllocatedSkillEffects {
 
     public static List<SkillEffect> forNodes(ShipSkillData data, List<AllocatedNode> allocatedNodes, HullSize hullSize) {
         List<SkillEffect> effects = new ArrayList<>();
-        for (AllocatedNode allocated : allocatedNodes) {
-            SkillType type = allocated.effectiveType();
-            if (type.getVanillaHullModId() == null) {
-                for (SkillTypeEffect effect : appliedEffects(data, allocated, hullSize)) {
-                    effects.add(effect.effect());
-                }
-            }
+        for (SkillTypeEffect effect : treeEffects(data, allocatedNodes, hullSize)) {
+            effects.add(effect.effect());
         }
         return effects;
+    }
+
+    public static List<SkillTypeEffect> treeEffects(ShipSkillData data, List<AllocatedNode> allocatedNodes, HullSize hullSize) {
+        List<SkillTypeEffect> effects = new ArrayList<>();
+        for (AllocatedNode allocated : allocatedNodes) {
+            effects.addAll(treeEffects(data, allocated, hullSize));
+        }
+        return effects;
+    }
+
+    public static List<SkillTypeEffect> treeEffects(ShipSkillData data, AllocatedNode allocated, HullSize hullSize) {
+        return isVanillaPassthrough(allocated) ? List.of() : appliedEffects(data, allocated, hullSize);
+    }
+
+    public static boolean isVanillaPassthrough(AllocatedNode allocated) {
+        return allocated.effectiveType().getVanillaHullModId() != null;
     }
 
     public static List<SkillTypeEffect> appliedEffects(ShipSkillData data, AllocatedNode allocated, HullSize hullSize) {
@@ -41,7 +52,7 @@ public final class AllocatedSkillEffects {
         Socketable socketed = SocketableStore.lookup(data.getSocketedItem(allocated.node().getId()));
         if (socketed != null && socketed.canSocketInto(allocated.node())) {
             for (SkillTypeEffect effect : socketed.skillEffects(hullSize)) {
-                if (!data.isNpcBuild() || effect.effect().appliesToNpcShips()) {
+                if (appliesTo(data, effect.effect())) {
                     applied.add(effect);
                 }
             }
@@ -52,10 +63,14 @@ public final class AllocatedSkillEffects {
     public static List<SkillTypeEffect> appliedEffects(ShipSkillData data, SkillType type, HullSize hullSize) {
         List<SkillTypeEffect> applied = new ArrayList<>();
         for (SkillTypeEffect effect : type.effectsFor(hullSize)) {
-            if (!data.isNpcBuild() || effect.effect().appliesToNpcShips()) {
+            if (appliesTo(data, effect.effect())) {
                 applied.add(effect);
             }
         }
         return applied;
+    }
+
+    static boolean appliesTo(ShipSkillData data, SkillEffect effect) {
+        return !data.isNpcBuild() || effect.appliesToNpcShips();
     }
 }

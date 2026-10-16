@@ -2,10 +2,10 @@ package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.impl.hullmods.PhaseField;
+import exiledsector.PlayerFleet;
 import exiledsector.i18n.Translation;
 
 import java.util.ArrayList;
@@ -29,13 +29,8 @@ public final class FleetWideEffects {
     private FleetWideEffects() {
     }
 
-    private static CampaignFleetAPI playerFleet() {
-        SectorAPI sector = Global.getSector();
-        return sector == null ? null : sector.getPlayerFleet();
-    }
-
     public static void recomputeSalvageBonus(Set<String> departingMemberIds) {
-        CampaignFleetAPI playerFleet = playerFleet();
+        CampaignFleetAPI playerFleet = PlayerFleet.orNull();
         if (playerFleet == null) {
             return;
         }
@@ -107,7 +102,7 @@ public final class FleetWideEffects {
     }
 
     public static void recomputeExtendedPhaseFieldIfStale() {
-        CampaignFleetAPI playerFleet = playerFleet();
+        CampaignFleetAPI playerFleet = PlayerFleet.orNull();
         if (playerFleet == null) {
             return;
         }

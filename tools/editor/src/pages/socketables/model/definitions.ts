@@ -127,6 +127,17 @@ export function serializeSocketablesCsv(model: SocketablesModel): string {
   return serializeCsvTable(out);
 }
 
+export function markDefinitionsSaved(model: SocketablesModel, saved: SocketablesModel): void {
+  for (const definition of model.definitions) {
+    const savedDefinition = saved.definitions.find((candidate) =>
+      definition.loadedId ? candidate.loadedId === definition.loadedId : !candidate.loadedId && candidate.id === definition.id,
+    );
+    if (savedDefinition) {
+      definition.loadedId = savedDefinition.id;
+    }
+  }
+}
+
 export function uniqueSocketableId(definitions: SocketableDefinition[], base: string): string {
   let id = base;
   let suffix = 2;

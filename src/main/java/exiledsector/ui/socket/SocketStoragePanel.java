@@ -10,6 +10,7 @@ import com.fs.starfarer.api.ui.TextFieldAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.PlayerFleet;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
@@ -21,8 +22,8 @@ import exiledsector.socketables.SocketableDisassembly;
 import exiledsector.socketables.SocketableRarity;
 import exiledsector.socketables.SocketableStore;
 import exiledsector.ui.SkillTreeSounds;
+import exiledsector.ui.VanillaText;
 import exiledsector.ui.framework.FrameworkSocketFlair;
-import exiledsector.ui.util.FramedPanelPlugin;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -97,8 +98,6 @@ public final class SocketStoragePanel extends HoloPanel {
     private TooltipMakerAPI gridElement;
     private UIComponentAPI noticeElement;
     private UIComponentAPI summaryElement;
-    private CustomPanelAPI confirmPanel;
-    private CustomPanelAPI confirmBlocker;
     private TextFieldAPI searchField;
     private String typedQuery;
     private float searchDelay;
@@ -112,14 +111,12 @@ public final class SocketStoragePanel extends HoloPanel {
     private int movedFromCargo;
     private String materialsNotice;
     private String disassembledNotice;
-    private final SocketableHoverTooltip hoverTooltip;
     private SocketType kindFilter;
 
     private SocketStoragePanel(CustomPanelAPI hostPanel, Function<Socketable, String> installedShipLookup, Listener storageListener,
                                SocketType kindFilter) {
         super(hostPanel, SocketStoragePanel.class);
         this.kindFilter = kindFilter;
-        this.hoverTooltip = new SocketableHoverTooltip(hostPanel);
         this.installedShipLookup = installedShipLookup;
         this.storageListener = storageListener;
     }
@@ -139,7 +136,7 @@ public final class SocketStoragePanel extends HoloPanel {
     }
 
     private static int absorbPlayerCargo() {
-        CargoAPI cargo = playerCargo();
+        CargoAPI cargo = PlayerFleet.cargoOrNull();
         return cargo == null ? 0 : SocketableStore.get().absorbFrom(cargo);
     }
 
@@ -178,12 +175,7 @@ public final class SocketStoragePanel extends HoloPanel {
 
     @Override
     protected UIComponentAPI[] contentComponents() {
-        return new UIComponentAPI[]{controlsElement, gridElement == null ? null : gridComponent(), noticeElement, summaryElement, confirmPanel,
-                confirmBlocker};
-    }
-
-    private UIComponentAPI gridComponent() {
-        return gridElement.getExternalScroller() != null ? gridElement.getExternalScroller() : gridElement;
+        return new UIComponentAPI[]{controlsElement, placedComponent(gridElement), noticeElement, summaryElement};
     }
 
     public void restrictTo(SocketType socketType) {
@@ -225,7 +217,7 @@ public final class SocketStoragePanel extends HoloPanel {
         this.installedShipLookup = installedShipLookup;
         queue(() -> {
             if (pendingDisassembly.stream().anyMatch(SocketCustody::isInstalled)) {
-                closeConfirm();
+                closeDisassemblyConfirm();
             }
             reloadRows();
             markedForDisassembly.removeIf(socketable -> SocketCustody.isInstalled(socketable)
@@ -238,8 +230,8 @@ public final class SocketStoragePanel extends HoloPanel {
     }
 
     public boolean escape() {
-        if (confirmPanel != null) {
-            queue(this::closeConfirm);
+        if (isConfirmOpen()) {
+            queue(this::closeDisassemblyConfirm);
             return true;
         }
         if (disassemblyMode) {
@@ -274,7 +266,7 @@ public final class SocketStoragePanel extends HoloPanel {
     @Override
     protected void advanceOpen(float amount) {
         hoverTooltip.refreshIfExpansionChanged();
-        if (searchField == null || confirmPanel != null) {
+        if (searchField == null || isConfirmOpen()) {
             return;
         }
         String searchText = searchField.getText();
@@ -296,7 +288,7 @@ public final class SocketStoragePanel extends HoloPanel {
     }
 
     private void handleButton(Object id) {
-        if (confirmPanel != null) {
+        if (isConfirmOpen()) {
             if (id == Control.CONFIRM_DISASSEMBLE) {
                 List<Socketable> targets = pendingDisassembly.stream().filter(socketable -> !SocketCustody.isInstalled(socketable)).toList();
                 if (selectedSocketable != null && targets.contains(selectedSocketable)) {
@@ -309,12 +301,12 @@ public final class SocketStoragePanel extends HoloPanel {
                 if (disassemblyMode) {
                     leaveDisassemblyMode();
                 }
-                closeConfirm();
+                closeDisassemblyConfirm();
                 reloadRows();
                 buildHeader();
                 rebuildControls();
             } else if (id == Control.CANCEL_DISASSEMBLE) {
-                closeConfirm();
+                closeDisassemblyConfirm();
             }
             return;
         }
@@ -348,12 +340,12 @@ public final class SocketStoragePanel extends HoloPanel {
             leaveDisassemblyMode();
             rebuildFooter(SocketStorageQuery.apply(storageRows, storageFilter));
         } else {
-            openConfirm(List.copyOf(markedForDisassembly));
+            openDisassemblyConfirm(List.copyOf(markedForDisassembly));
         }
     }
 
     private void cellClicked(SocketStorageRow row) {
-        if (confirmPanel != null || row.installed()) {
+        if (isConfirmOpen() || row.installed()) {
             return;
         }
         if (disassemblyMode) {
@@ -391,11 +383,11 @@ public final class SocketStoragePanel extends HoloPanel {
                     public void changed(Socketable loaded) {
                         List<Socketable> owned = SocketableStore.get().owned();
                         if (pendingDisassembly.stream().anyMatch(socketable -> !owned.contains(socketable))) {
-                            closeConfirm();
-                        } else if (confirmPanel != null) {
+                            closeDisassemblyConfirm();
+                        } else if (isConfirmOpen()) {
                             List<Socketable> pendingTargets = pendingDisassembly;
-                            closeConfirm();
-                            openConfirm(pendingTargets);
+                            closeDisassemblyConfirm();
+                            openDisassemblyConfirm(pendingTargets);
                         }
                         markedForDisassembly.removeIf(socketable -> !owned.contains(socketable));
                         reloadRows();
@@ -417,8 +409,8 @@ public final class SocketStoragePanel extends HoloPanel {
     }
 
     private void cellRightClicked(SocketStorageRow row) {
-        if (confirmPanel == null && !disassemblyMode && !row.installed()) {
-            queue(() -> openConfirm(List.of(row.socketable())));
+        if (!isConfirmOpen() && !disassemblyMode && !row.installed()) {
+            queue(() -> openDisassemblyConfirm(List.of(row.socketable())));
         }
     }
 
@@ -445,7 +437,7 @@ public final class SocketStoragePanel extends HoloPanel {
 
     private void buildSearch() {
         TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), FIELD_HEIGHT, false);
-        element.addPara("%s", 0f, Misc.getGrayColor(), Misc.getGrayColor(), Translation.text("ui.socketStorage.search"))
+        VanillaText.plainPara(element, Translation.text("ui.socketStorage.search"), 0f, Misc.getGrayColor())
                 .getPosition().inTL(0f, LINE_PAD * 2f);
         searchField = element.addTextField(innerWidth() - LABEL_WIDTH, FIELD_HEIGHT, Fonts.DEFAULT_SMALL, 0f);
         searchField.getPosition().inTL(LABEL_WIDTH, 0f);
@@ -548,7 +540,7 @@ public final class SocketStoragePanel extends HoloPanel {
     private void rebuildGrid() {
         hideHoverTooltip();
         if (gridElement != null) {
-            panelRoot.removeComponent(gridElement.getExternalScroller() != null ? gridElement.getExternalScroller() : gridElement);
+            panelRoot.removeComponent(placedComponent(gridElement));
         }
         List<SocketStorageRow> matching = SocketStorageQuery.apply(storageRows, storageFilter);
         float gridHeight = Math.max(CELL_SIZE, panelHeight - PAD - FOOTER_HEIGHT - GAP - gridTop);
@@ -560,7 +552,7 @@ public final class SocketStoragePanel extends HoloPanel {
             } else {
                 emptyText = Translation.text(storageRows.isEmpty() && storageFilter.socketTypes.isEmpty() ? "ui.socketStorage.empty" : "ui.socketStorage.noMatches");
             }
-            element.addPara("%s", 0f, Misc.getGrayColor(), Misc.getGrayColor(), emptyText);
+            VanillaText.plainPara(element, emptyText, 0f, Misc.getGrayColor());
         }
         for (int start = 0; start < matching.size(); start += COLUMNS) {
             CustomPanelAPI rowPanel = Global.getSettings().createCustom(innerWidth() - SCROLLBAR_ROOM, CELL_SIZE, null);
@@ -590,26 +582,27 @@ public final class SocketStoragePanel extends HoloPanel {
             String hint = markedForDisassembly.isEmpty() ? Translation.text("ui.socketStorage.disassemblyHint")
                     : Translation.msg("ui.socketStorage.disassemblyMarked").arg("count", markedForDisassembly.size()).arg("parts", markedParts)
                     .text();
-            newNotice.addPara("%s", 0f, Misc.getNegativeHighlightColor(), Misc.getNegativeHighlightColor(), hint);
+            VanillaText.plainPara(newNotice, hint, 0f, Misc.getNegativeHighlightColor());
         } else if (selectedSocketable != null) {
-            newNotice.addPara("%s", 0f, Misc.getPositiveHighlightColor(), Misc.getPositiveHighlightColor(),
-                    placingHint != null ? placingHint : Translation.msg("ui.socketStorage.placingHint").arg("name", selectedSocketable.name()).text());
+            VanillaText.plainPara(newNotice,
+                    placingHint != null ? placingHint : Translation.msg("ui.socketStorage.placingHint").arg("name", selectedSocketable.name()).text(),
+                    0f, Misc.getPositiveHighlightColor());
         } else if (targetingSocket) {
             String targetHint = kindFilter == null ? Translation.text("ui.socketStorage.targetHint")
                     : Translation.msg("ui.socketStorage.frameworkTargetHint").arg("type", kindFilter.displayName()).text();
-            newNotice.addPara("%s", 0f, Misc.getPositiveHighlightColor(), Misc.getPositiveHighlightColor(), targetHint);
+            VanillaText.plainPara(newNotice, targetHint, 0f, Misc.getPositiveHighlightColor());
         } else if (disassembledNotice != null) {
-            newNotice.addPara("%s", 0f, Misc.getPositiveHighlightColor(), Misc.getPositiveHighlightColor(), disassembledNotice);
+            VanillaText.plainPara(newNotice, disassembledNotice, 0f, Misc.getPositiveHighlightColor());
         } else if (movedFromCargo > 0 || materialsNotice != null) {
-            newNotice.addPara("%s", 0f, Misc.getPositiveHighlightColor(), Misc.getPositiveHighlightColor(), cargoNotice());
+            VanillaText.plainPara(newNotice, cargoNotice(), 0f, Misc.getPositiveHighlightColor());
         }
         panelRoot.addUIElement(newNotice).inTL(PAD, gridTop - NOTICE_HEIGHT);
         noticeElement = newNotice;
 
         TooltipMakerAPI newSummary = panelRoot.createUIElement(innerWidth(), FOOTER_HEIGHT, false);
         int installedCount = (int) storageRows.stream().filter(SocketStorageRow::installed).count();
-        newSummary.addPara("%s", 0f, Misc.getGrayColor(), Misc.getGrayColor(), Translation.msg("ui.socketStorage.summary")
-                .arg("shown", shownCount).arg("stored", storageRows.size()).arg("installed", installedCount).text())
+        VanillaText.plainPara(newSummary, Translation.msg("ui.socketStorage.summary")
+                .arg("shown", shownCount).arg("stored", storageRows.size()).arg("installed", installedCount).text(), 0f, Misc.getGrayColor())
                 .getPosition().inTL(0f, PARTS_TEXT_TOP);
         String modeKey = !disassemblyMode ? "ui.socketStorage.disassemblyMode"
                 : markedForDisassembly.isEmpty() ? "ui.socketStorage.exitDisassemblyMode" : "ui.socketStorage.confirmDisassembly";
@@ -622,45 +615,33 @@ public final class SocketStoragePanel extends HoloPanel {
         summaryElement = newSummary;
     }
 
-    private void openConfirm(List<Socketable> targets) {
-        if (targets.isEmpty()) {
+    private void openDisassemblyConfirm(List<Socketable> targets) {
+        if (targets.isEmpty() || isConfirmOpen()) {
             return;
         }
-        hoverTooltip.hide();
         pendingDisassembly = List.copyOf(targets);
-        boolean singleTarget = targets.size() == 1;
-        float confirmHeight = singleTarget ? CONFIRM_HEIGHT : BATCH_CONFIRM_HEIGHT;
-        confirmBlocker = Global.getSettings().createCustom(panelWidth, panelHeight, new InputBlocker());
-        panelRoot.addComponent(confirmBlocker).inTL(0f, 0f);
-        float confirmWidth = innerWidth();
-        confirmPanel = Global.getSettings().createCustom(confirmWidth, confirmHeight,
-                new FramedPanelPlugin(SocketStoragePanel.class, this::buttonPressed));
-        TooltipMakerAPI element = confirmPanel.createUIElement(confirmWidth - PAD * 2f, confirmHeight - PAD * 2f, false);
+        openConfirm(targets.size() == 1 ? CONFIRM_HEIGHT : BATCH_CONFIRM_HEIGHT, element -> writeDisassemblyConfirm(element, targets),
+                "ui.socketStorage.confirm.disassemble", Control.CONFIRM_DISASSEMBLE, "ui.socketStorage.confirm.cancel", Control.CANCEL_DISASSEMBLE);
+    }
+
+    private void writeDisassemblyConfirm(TooltipMakerAPI element, List<Socketable> targets) {
         int totalParts = targets.stream().mapToInt(socketable -> socketable.rarity().disassemblyParts()).sum();
-        if (singleTarget) {
+        if (targets.size() == 1) {
             Socketable socketable = targets.get(0);
-            element.addPara("%s", 0f, socketable.rarity().color(), socketable.rarity().color(),
-                    Translation.msg("ui.socketStorage.confirm.title").arg("name", socketable.name()).text());
-            element.addPara("%s", LINE_PAD * 2f, Misc.getTextColor(), Misc.getTextColor(),
-                    partsText("ui.socketStorage.confirm.body", totalParts));
+            VanillaText.plainPara(element, Translation.msg("ui.socketStorage.confirm.title").arg("name", socketable.name()).text(), 0f,
+                    socketable.rarity().color());
+            VanillaText.plainPara(element, partsText("ui.socketStorage.confirm.body", totalParts), LINE_PAD * 2f, Misc.getTextColor());
         } else {
-            element.addPara("%s", 0f, Misc.getBasePlayerColor(), Misc.getBasePlayerColor(),
-                    Translation.msg("ui.socketStorage.confirm.batchTitle").arg("count", targets.size()).text());
+            VanillaText.plainPara(element, Translation.msg("ui.socketStorage.confirm.batchTitle").arg("count", targets.size()).text(), 0f,
+                    Misc.getBasePlayerColor());
             addRarityBreakdown(element, targets);
-            element.addPara("%s", LINE_PAD * 2f, Misc.getTextColor(), Misc.getTextColor(),
-                    Translation.msg("ui.socketStorage.confirm.batchBody").arg("count", totalParts).text());
+            VanillaText.plainPara(element, Translation.msg("ui.socketStorage.confirm.batchBody").arg("count", totalParts).text(), LINE_PAD * 2f,
+                    Misc.getTextColor());
             if (targets.stream().anyMatch(socketable -> socketable.rarity() == SocketableRarity.UNIQUE)) {
-                element.addPara("%s", LINE_PAD * 2f, Misc.getNegativeHighlightColor(), Misc.getNegativeHighlightColor(),
-                        Translation.text("ui.socketStorage.confirm.includesUnique"));
+                VanillaText.plainPara(element, Translation.text("ui.socketStorage.confirm.includesUnique"), LINE_PAD * 2f,
+                        Misc.getNegativeHighlightColor());
             }
         }
-        float buttonWidth = (confirmWidth - PAD * 2f - GAP) / 2f;
-        element.addButton(Translation.text("ui.socketStorage.confirm.disassemble"), Control.CONFIRM_DISASSEMBLE, buttonWidth, FIELD_HEIGHT, 0f)
-                .getPosition().inBR(0f, 0f);
-        element.addButton(Translation.text("ui.socketStorage.confirm.cancel"), Control.CANCEL_DISASSEMBLE, buttonWidth, FIELD_HEIGHT, 0f)
-                .getPosition().inBL(0f, 0f);
-        confirmPanel.addUIElement(element).inTL(PAD, PAD);
-        panelRoot.addComponent(confirmPanel).inTL(PAD, (panelHeight - confirmHeight) / 2f);
     }
 
     private static void addRarityBreakdown(TooltipMakerAPI element, List<Socketable> targets) {
@@ -705,14 +686,11 @@ public final class SocketStoragePanel extends HoloPanel {
         return Translation.msg(key).count(partCount).arg("count", partCount).text();
     }
 
-    private void closeConfirm() {
-        if (confirmPanel == null) {
+    private void closeDisassemblyConfirm() {
+        if (!isConfirmOpen()) {
             return;
         }
-        panelRoot.removeComponent(confirmPanel);
-        panelRoot.removeComponent(confirmBlocker);
-        confirmPanel = null;
-        confirmBlocker = null;
+        closeConfirm();
         pendingDisassembly = List.of();
     }
 
@@ -798,7 +776,7 @@ public final class SocketStoragePanel extends HoloPanel {
     }
 
     private void showHoverTooltip(SocketStorageRow row, PositionAPI cellPosition) {
-        if (confirmPanel != null) {
+        if (isConfirmOpen()) {
             return;
         }
         hoverTooltip.show(row, row.socketable(), () -> cellFooter(row), cellPosition);

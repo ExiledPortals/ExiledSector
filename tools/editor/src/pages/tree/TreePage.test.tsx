@@ -1,3 +1,5 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { notifications } from '@mantine/notifications';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -227,5 +229,47 @@ describe('tree page', () => {
     await act(async () => saveTree(vocabulary));
     expect(useTreeStore.getState().dirty).toBe(false);
     expect(JSON.parse(server.readProjectFile(TREE_FILE)).nodes[0].x).toBe(4321);
+  });
+
+  it('offers to reload when the tree files changed on disk since they loaded', async () => {
+    await renderLoadedTree();
+    const treePath = path.join(server.projectRoot, TREE_FILE);
+    const diskText = server.readProjectFile(TREE_FILE);
+    try {
+      fs.writeFileSync(treePath, `${diskText}\n`);
+      const document = useTreeStore.getState().document;
+      act(() => selectOnly('nodes', document.nodes[0].id));
+      commitField('X', '1234');
+      let saving: Promise<void> = Promise.resolve();
+      act(() => {
+        saving = saveTree(vocabulary);
+      });
+      const conflict = await screen.findByRole('dialog');
+      expect(within(conflict).getByText('Files changed on disk')).toBeTruthy();
+      fireEvent.click(within(conflict).getByRole('button', { name: 'Reload from disk' }));
+      await act(async () => saving);
+      await waitFor(() => expect(useTreeStore.getState().load.status).toBe('ready'));
+      expect(useTreeStore.getState().dirty).toBe(false);
+      expect(useTreeStore.getState().document.nodes[0].x).toBe(JSON.parse(diskText).nodes[0].x);
+      expect(server.readProjectFile(TREE_FILE)).toBe(`${diskText}\n`);
+    } finally {
+      fs.writeFileSync(treePath, diskText);
+    }
+  });
+
+  it('shows the load error with a retry that loads the tree once the server answers', async () => {
+    const serverFetch = globalThis.fetch;
+    vi.stubGlobal('fetch', async (input: RequestInfo | URL, init?: RequestInit) =>
+      String(input).startsWith('/api/files?') ? new Response(JSON.stringify({ message: 'disk unplugged' }), { status: 500 }) : serverFetch(input, init),
+    );
+    try {
+      renderWithProviders(<TreePage />);
+      expect(await screen.findByText(/Could not load the skill tree files \(disk unplugged\)/, undefined, { timeout: 15000 })).toBeTruthy();
+    } finally {
+      vi.stubGlobal('fetch', serverFetch);
+    }
+    fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
+    await waitFor(() => expect(useTreeStore.getState().load.status).toBe('ready'), { timeout: 15000 });
+    expect(screen.queryByText('Could not load')).toBeNull();
   });
 });

@@ -4,12 +4,12 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
+import exiledsector.PlayerFleet;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
 import exiledsector.skills.ShipSkillData;
@@ -87,8 +87,7 @@ public final class SocketCustody {
     }
 
     public static Map<String, FleetMemberAPI> reconcile() {
-        SectorAPI sector = Global.getSector();
-        if (sector == null || sector.getPlayerFleet() == null) {
+        if (PlayerFleet.orNull() == null) {
             return Map.of();
         }
         Map<String, FleetMemberAPI> ownedShipsById = ownedShips();
@@ -106,8 +105,7 @@ public final class SocketCustody {
     }
 
     public static Set<String> ownedShipIds() {
-        SectorAPI sector = Global.getSector();
-        if (sector == null || sector.getPlayerFleet() == null) {
+        if (PlayerFleet.orNull() == null) {
             return Set.of();
         }
         return ownedShips().keySet();

@@ -35,7 +35,6 @@ final class SkillTreeStatPanel {
 
     private static final float STAT_PANEL_FONT_SIZE = TOOLTIP_BODY_FONT_SIZE;
     private static final float STAT_PANEL_PADDING = 26f;
-    private static final float STAT_PANEL_MARGIN = 16f;
     private static final float STAT_PANEL_GROUP_GAP = 8f;
     private static final float STAT_PANEL_COLUMN_GAP = 20f;
     private static final float STAT_PANEL_HEADER_GAP = 10f;
@@ -48,8 +47,6 @@ final class SkillTreeStatPanel {
     private static final Color STAT_INCREASED_COLOR = SkillTreePanelStyle.POSITIVE_STAT_COLOR;
     private static final float STAT_COMPARISON_EPSILON = 0.001f;
 
-    private static final float TOGGLE_HEIGHT = 40f;
-    private static final float TOGGLE_MIN_WIDTH = 150f;
     private static final float TOGGLE_GAP = 8f;
 
     private final FleetMemberAPI member;
@@ -80,7 +77,7 @@ final class SkillTreeStatPanel {
         toggleButton.setLabel(showLabel);
         float showWidth = toggleButton.preferredWidth();
         toggleButton.setLabel(hideLabel);
-        toggleWidth = Math.max(TOGGLE_MIN_WIDTH, Math.max(showWidth, toggleButton.preferredWidth()));
+        toggleWidth = Math.max(ChromeMetrics.MIN_BUTTON_WIDTH, Math.max(showWidth, toggleButton.preferredWidth()));
     }
 
     void refresh(ShipOpBudget budget, int revision) {
@@ -156,10 +153,10 @@ final class SkillTreeStatPanel {
             placedToggleRight = Float.NaN;
             return;
         }
-        float toggleRight = canvasPosition.getX() + canvasPosition.getWidth() - STAT_PANEL_MARGIN;
-        float toggleTop = canvasPosition.getY() + canvasPosition.getHeight() - STAT_PANEL_MARGIN;
+        float toggleRight = canvasPosition.getX() + canvasPosition.getWidth() - ChromeMetrics.EDGE_MARGIN;
+        float toggleTop = canvasPosition.getY() + canvasPosition.getHeight() - ChromeMetrics.EDGE_MARGIN;
         if (toggleRight == placedToggleRight && toggleTop == placedToggleTop) return;
-        toggleButton.place(toggleRight - toggleWidth, toggleTop - TOGGLE_HEIGHT, toggleWidth, TOGGLE_HEIGHT);
+        toggleButton.place(toggleRight - toggleWidth, toggleTop - ChromeMetrics.CONTROL_HEIGHT, toggleWidth, ChromeMetrics.CONTROL_HEIGHT);
         placedToggleRight = toggleRight;
         placedToggleTop = toggleTop;
     }
@@ -207,8 +204,8 @@ final class SkillTreeStatPanel {
         }
         float fullHeight = STAT_PANEL_PADDING * 2f + contentHeight;
 
-        float topY = canvasPosition.getY() + canvasPosition.getHeight() - STAT_PANEL_MARGIN - TOGGLE_HEIGHT - TOGGLE_GAP;
-        float panelX = canvasPosition.getX() + canvasPosition.getWidth() - panelWidth - STAT_PANEL_MARGIN;
+        float topY = canvasPosition.getY() + canvasPosition.getHeight() - ChromeMetrics.EDGE_MARGIN - ChromeMetrics.CONTROL_HEIGHT - TOGGLE_GAP;
+        float panelX = canvasPosition.getX() + canvasPosition.getWidth() - panelWidth - ChromeMetrics.EDGE_MARGIN;
 
         List<GroupContent> groupContents = new ArrayList<>();
         float cursorY = topY - STAT_PANEL_PADDING;

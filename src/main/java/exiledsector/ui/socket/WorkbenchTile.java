@@ -11,17 +11,6 @@ import java.util.List;
 
 final class WorkbenchTile extends BaseCustomUIPanelPlugin {
 
-    interface Listener {
-
-        void hovered(PositionAPI tilePosition);
-
-        void left();
-
-        void clicked();
-
-        void rightClicked();
-    }
-
     private static final Color BACKGROUND = new Color(0, 0, 0, 200);
     private static final float BORDER_WIDTH = 1.5f;
     private static final float GLOW_WIDTH = 12f;
@@ -29,13 +18,12 @@ final class WorkbenchTile extends BaseCustomUIPanelPlugin {
     private static final float HOVER_GLOW_ALPHA = 0.45f;
 
     private final CyclingIcon cyclingIcon;
-    private final Listener tileListener;
+    private final TileInput tileInput;
     private PositionAPI tilePosition;
-    private boolean hovered;
 
-    WorkbenchTile(List<String> iconPaths, Listener tileListener) {
+    WorkbenchTile(List<String> iconPaths, TileInput.Handler tileHandler) {
         this.cyclingIcon = new CyclingIcon(iconPaths);
-        this.tileListener = tileListener;
+        this.tileInput = new TileInput(tileHandler, false);
     }
 
     @Override
@@ -59,6 +47,7 @@ final class WorkbenchTile extends BaseCustomUIPanelPlugin {
         float width = tilePosition.getWidth();
         float height = tilePosition.getHeight();
         Color accent = SkillTreePanelStyle.GLOW_COLOR;
+        boolean hovered = tileInput.isHovered();
         GLDraw.fillQuad(x, y, width, height, BACKGROUND, alphaMult);
         if (hovered) {
             GLDraw.innerGlow(x, y, width, height, GLOW_WIDTH, accent, HOVER_GLOW_ALPHA * alphaMult);
@@ -73,28 +62,6 @@ final class WorkbenchTile extends BaseCustomUIPanelPlugin {
 
     @Override
     public void processInput(List<InputEventAPI> events) {
-        if (tilePosition == null) {
-            return;
-        }
-        for (InputEventAPI event : events) {
-            if (event.isConsumed()) {
-                continue;
-            }
-            boolean inside = tilePosition.containsEvent(event);
-            if (event.isMouseMoveEvent() && inside != hovered) {
-                hovered = inside;
-                if (inside) {
-                    tileListener.hovered(tilePosition);
-                } else {
-                    tileListener.left();
-                }
-            } else if (inside && event.isLMBDownEvent()) {
-                event.consume();
-                tileListener.clicked();
-            } else if (inside && event.isRMBDownEvent()) {
-                event.consume();
-                tileListener.rightClicked();
-            }
-        }
+        tileInput.process(events, tilePosition);
     }
 }

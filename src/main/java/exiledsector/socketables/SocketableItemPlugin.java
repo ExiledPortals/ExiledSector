@@ -3,13 +3,13 @@ package exiledsector.socketables;
 import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.CargoTransferHandlerAPI;
 import com.fs.starfarer.api.campaign.impl.items.BaseSpecialItemPlugin;
-import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.ui.inspect.SocketableCodex;
 import exiledsector.ui.util.SpriteCache;
+import exiledsector.ui.util.SpriteDraw;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -58,13 +58,7 @@ public class SocketableItemPlugin extends BaseSpecialItemPlugin {
 
     @Override
     public void render(float x, float y, float w, float h, float alphaMult, float glowMult, SpecialItemRendererAPI renderer) {
-        SpriteAPI sprite = SPRITES.sprite(previewSocketable == null ? SocketableDefinition.FALLBACK_ICON : previewSocketable.iconPath());
-        if (sprite == null) {
-            return;
-        }
-        sprite.setSize(w, h);
-        sprite.setAlphaMult(alphaMult);
-        sprite.setNormalBlend();
-        sprite.renderAtCenter(x + w / 2f, y + h / 2f);
+        String iconPath = previewSocketable == null ? SocketableDefinition.FALLBACK_ICON : previewSocketable.iconPath();
+        SpriteDraw.drawAtCenter(SPRITES, iconPath, x + w / 2f, y + h / 2f, w, h, null, alphaMult);
     }
 }

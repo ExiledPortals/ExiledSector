@@ -2,7 +2,6 @@ package exiledsector;
 
 import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.loading.Description;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
@@ -36,7 +35,6 @@ import exiledsector.skills.LearnedPhantomConflicts;
 import exiledsector.skills.NodeReplacements;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
-import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.npc.NpcFactionVolumes;
@@ -158,7 +156,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         }
         ShipSkillDataManager.replaceRemovedNodes(SkillTree.getDeclaredNodes(), NodeReplacements.all());
         ShipSkillDataManager.forgetUnknownNodes(SkillTree.getAllNodes(), SkillTree.getDeclaredNodes(), SkillTree.getAllTypes(),
-                new OwnedShips(), ExiledSectorModPlugin::refund);
+                new OwnedShips(), charged -> charged.refundTo(PlayerFleet.cargoOrNull()));
     }
 
     private static final class OwnedShips implements Predicate<String> {
@@ -171,13 +169,6 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
                 ownedShipIds = SocketCustody.ownedShipIds();
             }
             return ownedShipIds.contains(shipId);
-        }
-    }
-
-    private static void refund(SkillItemCost itemCost) {
-        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
-        if (playerFleet != null) {
-            playerFleet.getCargo().addCommodity(itemCost.itemId(), itemCost.quantity());
         }
     }
 

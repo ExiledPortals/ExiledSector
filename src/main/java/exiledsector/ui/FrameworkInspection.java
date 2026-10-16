@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.PlayerFleet;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.FrameworkSlots;
@@ -22,6 +23,7 @@ import exiledsector.ui.node.TreeAllocationSession;
 import exiledsector.ui.socket.HullUpgradePanel;
 import exiledsector.ui.socket.SocketStoragePanel;
 import exiledsector.ui.socket.SocketableHoverTooltip;
+import exiledsector.ui.util.Fade;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.TextLabel;
 
@@ -36,7 +38,6 @@ final class FrameworkInspection {
     private static final float INSPECT_SHIP_SHARE = 0.4f;
     private static final float INSPECT_FADE_SECONDS = 0.6f;
     private static final float HOVER_SECONDS = 0.15f;
-    private static final float PANEL_MARGIN = 16f;
     private static final float PANEL_TOP = SkillTreeChrome.sidePanelTop();
     private static final float LABEL_GAP = 8f;
     private static final float GRID_SPACING = 48f;
@@ -47,7 +48,6 @@ final class FrameworkInspection {
     private static final float FREE_SPACE_MARGIN = 24f;
     private static final float SOCKET_LABEL_ROOM = 70f;
     private static final float MIN_SHIP_PIXELS = 120f;
-    private static final float BUTTON_MIN_WIDTH = 150f;
     private static final float OTHER_SOCKET_DIM = 0.3f;
 
     private final CustomPanelAPI hostPanel;
@@ -106,7 +106,7 @@ final class FrameworkInspection {
         socketPlacement.setInspectingShip(active);
         refreshIfChanged();
         float fadeStep = amount / INSPECT_FADE_SECONDS;
-        inspectLevel = Math.max(0f, Math.min(1f, inspectLevel + (active ? fadeStep : -fadeStep)));
+        inspectLevel = Fade.step(inspectLevel, active, fadeStep);
         if (active && fleetRenderer.soloLongestSide() > 0f) {
             fitShipToFreeSpace(canvasPosition, camera, fleetRenderer.soloLongestSide());
         } else if (fleetFocused && camera.isFollowing()) {
@@ -124,7 +124,7 @@ final class FrameworkInspection {
         float hoverStep = amount / HOVER_SECONDS;
         int hovered = socketAt(mouseX, mouseY);
         for (int i = 0; i < MAX_SOCKETS; i++) {
-            hoverLevels[i] = Math.max(0f, Math.min(1f, hoverLevels[i] + (i == hovered ? hoverStep : -hoverStep)));
+            hoverLevels[i] = Fade.step(hoverLevels[i], i == hovered, hoverStep);
         }
         updateTooltip(hovered);
         placeUpgradesButton();
@@ -133,9 +133,9 @@ final class FrameworkInspection {
     private void fitShipToFreeSpace(PositionAPI canvasPosition, TreeCamera camera, float shipTreeLength) {
         float panelRight = 0f;
         if (socketPlacement.isStorageOpen()) {
-            panelRight = PANEL_MARGIN + SocketStoragePanel.WIDTH;
+            panelRight = ChromeMetrics.EDGE_MARGIN + SocketStoragePanel.WIDTH;
         } else if (frameworkPanel != null) {
-            panelRight = PANEL_MARGIN + HullUpgradePanel.WIDTH;
+            panelRight = ChromeMetrics.EDGE_MARGIN + HullUpgradePanel.WIDTH;
         }
         float freeLeft = panelRight + FREE_SPACE_MARGIN;
         float freeRight = canvasPosition.getWidth() - FREE_SPACE_MARGIN;
@@ -153,7 +153,7 @@ final class FrameworkInspection {
             upgradesButton.hide();
             return;
         }
-        float buttonWidth = Math.max(BUTTON_MIN_WIDTH, upgradesButton.preferredWidth());
+        float buttonWidth = Math.max(ChromeMetrics.MIN_BUTTON_WIDTH, upgradesButton.preferredWidth());
         upgradesButton.place(storageButton.left() + storageButton.width() + BUTTON_GAP, storageButton.bottom(),
                 buttonWidth, storageButton.height());
         upgradesButton.setSelected(frameworkPanel != null);
@@ -317,7 +317,7 @@ final class FrameworkInspection {
     }
 
     private void openPanel(PositionAPI canvasPosition) {
-        CampaignFleetAPI playerFleet = Global.getSector() == null ? null : Global.getSector().getPlayerFleet();
+        CampaignFleetAPI playerFleet = PlayerFleet.orNull();
         SocketableStore store = upgradeStore();
         if (playerFleet != null && store != null) {
             store.absorbFrom(playerFleet.getCargo());
@@ -325,7 +325,7 @@ final class FrameworkInspection {
             shownUpgradeCounts = store.upgradeCounts();
         }
         float panelHeight = socketPlacement.sidePanelHeight(canvasPosition);
-        frameworkPanel = HullUpgradePanel.open(hostPanel, PANEL_MARGIN, PANEL_TOP, panelHeight, panelView(), new HullUpgradePanel.Listener() {
+        frameworkPanel = HullUpgradePanel.open(hostPanel, ChromeMetrics.EDGE_MARGIN, PANEL_TOP, panelHeight, panelView(), new HullUpgradePanel.Listener() {
             @Override
             public void installUpgrade() {
                 treeSession.installUpgrade();

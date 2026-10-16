@@ -2,7 +2,6 @@ package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.BeamAPI;
-import com.fs.starfarer.api.combat.CollisionClass;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
@@ -102,9 +101,8 @@ final class BeamSplitListener extends ShipCombatListener implements DamageDealtM
     }
 
     private List<ShipAPI> findNearbyEnemies(ShipAPI primaryTarget, Vector2f point, float radius, int count) {
-        List<ShipAPI> candidates = CombatQueries.shipsNear(point, radius, other -> other != ownerShip && other != primaryTarget
-                && !other.isFighter() && CombatQueries.isAliveNotHulk(other) && other.getCollisionClass() != CollisionClass.NONE
-                && CombatQueries.isHostile(ownerShip, other) && CombatQueries.withinRadius(other.getLocation(), point, radius));
+        List<ShipAPI> candidates = CombatQueries.hostilesNear(ownerShip, point, radius,
+                other -> other != ownerShip && other != primaryTarget && !other.isFighter());
         return CombatQueries.nearestFirst(candidates, point, count);
     }
 

@@ -2,17 +2,24 @@ import type { FastifyInstance, FastifyReply } from 'fastify';
 import fs from 'node:fs';
 import path from 'node:path';
 import { hueShiftImage, makeCircularImage } from '../imageOps.ts';
-import { resolveProjectPath, toProjectRelative, type ProjectPaths } from '../paths.ts';
+import { existingProjectFile, resolveProjectPath, toProjectRelative, type ProjectPaths } from '../paths.ts';
 
 const STATIC_IMAGES_DIR = 'graphics/backgrounds/static_images';
 const VANILLA_CARGO_ICONS_DIR = 'graphics/icons/cargo';
 const CIRCULAR_OUTPUT_DIR = 'graphics/unused/circular';
+const PROJECT_IMAGES_DIR = 'graphics/';
+const IMAGE_EXTENSION = '.png';
 
 interface CopyBody {
   path?: string;
   suffix?: string;
   hueShift?: unknown;
   overwrite?: boolean;
+}
+
+interface ImageCopyOperation {
+  destinationDir: (source: string) => string;
+  writeCopy: (source: string, destination: string, body: CopyBody) => void;
 }
 
 function listPngs(directory: string, recursive: boolean): string[] {
@@ -24,7 +31,7 @@ function listPngs(directory: string, recursive: boolean): string[] {
     const fullPath = path.join(directory, entry.name);
     if (entry.isDirectory() && recursive) {
       found.push(...listPngs(fullPath, true));
-    } else if (entry.isFile() && entry.name.toLowerCase().endsWith('.png')) {
+    } else if (entry.isFile() && entry.name.toLowerCase().endsWith(IMAGE_EXTENSION)) {
       found.push(fullPath);
     }
   }
@@ -35,9 +42,19 @@ function compareIgnoringCase(first: string, second: string): number {
   return first.localeCompare(second, undefined, { sensitivity: 'base' });
 }
 
-function sourceImage(paths: ProjectPaths, relativePath: string | undefined): string | null {
+function isProjectImage(paths: ProjectPaths, fullPath: string): boolean {
+  const relative = toProjectRelative(paths, fullPath);
+  return relative.startsWith(PROJECT_IMAGES_DIR) && relative.toLowerCase().endsWith(IMAGE_EXTENSION);
+}
+
+function existingProjectImage(paths: ProjectPaths, relativePath: string | undefined): string | null {
+  const fullPath = existingProjectFile(paths, relativePath);
+  return fullPath && isProjectImage(paths, fullPath) ? fullPath : null;
+}
+
+function projectImageDestination(paths: ProjectPaths, relativePath: string | undefined): string | null {
   const fullPath = resolveProjectPath(paths, relativePath);
-  return fullPath && fs.existsSync(fullPath) && fs.statSync(fullPath).isFile() ? fullPath : null;
+  return fullPath && isProjectImage(paths, fullPath) ? fullPath : null;
 }
 
 function validSuffix(suffix: string | undefined): string | null {
@@ -52,6 +69,27 @@ function refuseExisting(paths: ProjectPaths, destination: string, overwrite: boo
     return true;
   }
   return false;
+}
+
+function registerImageCopy(app: FastifyInstance, paths: ProjectPaths, url: string, operation: ImageCopyOperation): void {
+  app.post<{ Body: CopyBody }>(url, async (request, reply) => {
+    const source = existingProjectImage(paths, request.body?.path);
+    if (!source) {
+      return reply.code(400).send({ ok: false, message: 'Source image not found.' });
+    }
+    const suffix = validSuffix(request.body?.suffix);
+    if (!suffix) {
+      return reply.code(400).send({ ok: false, message: 'Suffix is required and cannot contain path separators.' });
+    }
+    const destinationDir = operation.destinationDir(source);
+    const destination = path.join(destinationDir, `${path.parse(source).name}_${suffix}${IMAGE_EXTENSION}`);
+    if (refuseExisting(paths, destination, request.body?.overwrite, reply)) {
+      return reply;
+    }
+    fs.mkdirSync(destinationDir, { recursive: true });
+    operation.writeCopy(source, destination, request.body ?? {});
+    return { ok: true, path: toProjectRelative(paths, destination) };
+  });
 }
 
 export function registerImageRoutes(app: FastifyInstance, paths: ProjectPaths): void {
@@ -72,48 +110,27 @@ export function registerImageRoutes(app: FastifyInstance, paths: ProjectPaths): 
     return [...projectImages, ...vanillaIcons];
   });
 
-  app.post<{ Body: CopyBody }>('/api/images/colorshift', async (request, reply) => {
-    const source = sourceImage(paths, request.body?.path);
-    if (!source) {
-      return reply.code(400).send({ ok: false, message: 'Source image not found.' });
-    }
-    const suffix = validSuffix(request.body?.suffix);
-    if (!suffix) {
-      return reply.code(400).send({ ok: false, message: 'Suffix is required and cannot contain path separators.' });
-    }
-    const destination = path.join(path.dirname(source), `${path.parse(source).name}_${suffix}.png`);
-    if (refuseExisting(paths, destination, request.body?.overwrite, reply)) {
-      return reply;
-    }
-    const hueShift = Number(request.body?.hueShift);
-    hueShiftImage(source, destination, Number.isFinite(hueShift) ? hueShift : 0);
-    return { ok: true, path: toProjectRelative(paths, destination) };
+  registerImageCopy(app, paths, '/api/images/colorshift', {
+    destinationDir: (source) => path.dirname(source),
+    writeCopy: (source, destination, body) => {
+      const hueShift = Number(body.hueShift);
+      hueShiftImage(source, destination, Number.isFinite(hueShift) ? hueShift : 0);
+    },
   });
 
-  app.post<{ Body: CopyBody }>('/api/images/circular', async (request, reply) => {
-    const source = sourceImage(paths, request.body?.path);
-    if (!source) {
-      return reply.code(400).send({ ok: false, message: 'Source image not found.' });
-    }
-    const suffix = validSuffix(request.body?.suffix);
-    if (!suffix) {
-      return reply.code(400).send({ ok: false, message: 'Suffix is required and cannot contain path separators.' });
-    }
-    const outputDir = path.join(paths.projectRoot, CIRCULAR_OUTPUT_DIR);
-    const destination = path.join(outputDir, `${path.parse(source).name}_${suffix}.png`);
-    if (refuseExisting(paths, destination, request.body?.overwrite, reply)) {
-      return reply;
-    }
-    fs.mkdirSync(outputDir, { recursive: true });
-    makeCircularImage(source, destination);
-    return { ok: true, path: toProjectRelative(paths, destination) };
+  registerImageCopy(app, paths, '/api/images/circular', {
+    destinationDir: () => path.join(paths.projectRoot, CIRCULAR_OUTPUT_DIR),
+    writeCopy: (source, destination) => makeCircularImage(source, destination),
   });
 
   app.post<{ Body: { from?: string; to?: string } }>('/api/images/move', async (request, reply) => {
-    const source = sourceImage(paths, request.body?.from);
-    const destination = resolveProjectPath(paths, request.body?.to);
-    if (!source || !destination) {
+    const source = existingProjectImage(paths, request.body?.from);
+    if (!source) {
       return reply.code(400).send({ ok: false, message: 'Source image not found.' });
+    }
+    const destination = projectImageDestination(paths, request.body?.to);
+    if (!destination) {
+      return reply.code(400).send({ ok: false, message: `Images can only be moved to a ${IMAGE_EXTENSION} path under ${PROJECT_IMAGES_DIR}.` });
     }
     if (fs.existsSync(destination)) {
       return reply.code(400).send({ ok: false, message: `${toProjectRelative(paths, destination)} already exists.` });
@@ -124,9 +141,8 @@ export function registerImageRoutes(app: FastifyInstance, paths: ProjectPaths): 
   });
 
   app.post<{ Body: { path?: string } }>('/api/images/delete', async (request, reply) => {
-    const target = sourceImage(paths, request.body?.path);
-    const relative = target ? toProjectRelative(paths, target) : '';
-    if (!target || !relative.startsWith('graphics/') || !relative.toLowerCase().endsWith('.png')) {
+    const target = existingProjectImage(paths, request.body?.path);
+    if (!target) {
       return reply.code(400).send({ ok: false, message: 'Image not found.' });
     }
     fs.rmSync(target);

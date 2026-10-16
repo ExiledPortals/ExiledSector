@@ -16,7 +16,6 @@ final class SkillTreeChrome {
 
     private static final float SHIP_CARD_FRAME_OUTSET = 8f;
     private static final int READOUT_ROWS = 3;
-    private static final float SIDE_PANEL_GAP = 16f;
 
     private final SkillTreeStatPanel statPanel;
     private final SkillTreeSearchBar searchBar;
@@ -169,8 +168,8 @@ final class SkillTreeChrome {
         if (canvasX != shipCardFrameCanvasX || canvasY != shipCardFrameCanvasY) {
             shipCardFrameCanvasX = canvasX;
             shipCardFrameCanvasY = canvasY;
-            shipCardFrame = new ScreenRect(canvasX + SkillTreeRefitButton.SHIP_CARD_MARGIN - SHIP_CARD_FRAME_OUTSET,
-                    canvasY + SkillTreeRefitButton.SHIP_CARD_MARGIN - SHIP_CARD_FRAME_OUTSET,
+            shipCardFrame = new ScreenRect(canvasX + ChromeMetrics.EDGE_MARGIN - SHIP_CARD_FRAME_OUTSET,
+                    canvasY + ChromeMetrics.EDGE_MARGIN - SHIP_CARD_FRAME_OUTSET,
                     SkillTreeRefitButton.SHIP_CARD_ICON_SIZE + SHIP_CARD_FRAME_OUTSET * 2f, shipCardHeight + SHIP_CARD_FRAME_OUTSET * 2f);
         }
         return shipCardFrame;
@@ -181,7 +180,7 @@ final class SkillTreeChrome {
     }
 
     static float sidePanelTop() {
-        return SkillTreeReadoutBar.stackHeight(READOUT_ROWS) + SIDE_PANEL_GAP;
+        return SkillTreeReadoutBar.stackHeight(READOUT_ROWS) + ChromeMetrics.EDGE_MARGIN;
     }
 
     private static String buildReadoutTooltipBody(FleetMemberAPI member) {

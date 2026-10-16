@@ -1,6 +1,7 @@
 package exiledsector.skills.npc;
 
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.NodeReplacements;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
@@ -170,9 +171,8 @@ public final class NpcTreeTag {
             }
             return;
         }
-        String optionId = entry.substring(optionAt + 1);
-        SkillType optionType = SkillTree.getType(optionId);
-        if (optionType != null && node.getType().getOptionalOptionIds().contains(optionId)) {
+        SkillType optionType = NodeEligibility.validOption(node.getType(), entry.substring(optionAt + 1));
+        if (optionType != null) {
             shipData.selectOption(node, optionType, CHARGED_NODE_COST);
         }
     }

@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.HullModEffect;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.skills.AllocatedNode;
+import exiledsector.skills.AllocatedSkillEffects;
 import exiledsector.skills.DamageTakenCaps;
 import exiledsector.skills.EffectTotals;
 import exiledsector.skills.FrameworkSlots;
@@ -64,7 +65,7 @@ public final class ResolvedTree {
         List<TemporaryNode> resolvedTemporaryNodes = new ArrayList<>();
         for (EffectTotals.NodeEffects nodeEffects : effectTotals.nodeEffects()) {
             SkillType type = nodeEffects.node().effectiveType();
-            if (type.getVanillaHullModId() != null) {
+            if (AllocatedSkillEffects.isVanillaPassthrough(nodeEffects.node())) {
                 addVanillaEntry(type.getVanillaHullModId(), resolvedEntries);
             } else if (type.getTemporaryAfterDeploymentSeconds() != null) {
                 addTemporaryNode(nodeEffects, resolvedEntries, resolvedTemporaryNodes);

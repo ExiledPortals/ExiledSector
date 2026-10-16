@@ -37,7 +37,7 @@ public final class SocketableTooltip {
                 SocketableName socketableName = socketable.displayName();
                 tooltip.addTitle(socketableName.title(), socketableName.rarity().color());
                 if (socketableName.baseName() != null) {
-                    tooltip.addPara("%s", 0f, Misc.getGrayColor(), Misc.getGrayColor(), socketableName.baseName());
+                    VanillaText.plainPara(tooltip, socketableName.baseName(), 0f, Misc.getGrayColor());
                 }
                 addLines(tooltip, socketable.headerLines(), Misc.getGrayColor());
                 List<StyledText> effectLines = socketable.effectLines(showRollRanges, hullSize);

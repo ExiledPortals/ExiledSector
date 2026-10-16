@@ -46,10 +46,9 @@ public final class NpcBonusScaling {
         }
         Map<SkillEffect, Float> bonusTotals = new HashMap<>();
         for (AllocatedNode node : allocatedNodes) {
-            if (node.effectiveType().getVanillaHullModId() != null || !scalesNode(node)) {
-                continue;
+            if (scalesNode(node)) {
+                addScalableBonuses(bonusTotals, AllocatedSkillEffects.treeEffects(shipData, node, hullSize));
             }
-            addScalableBonuses(bonusTotals, AllocatedSkillEffects.appliedEffects(shipData, node, hullSize));
         }
         for (FrameworkSlots.Slot slot : frameworkSlots) {
             addScalableBonuses(bonusTotals, FrameworkSlots.appliedEffects(shipData, slot, hullSize));
@@ -68,7 +67,7 @@ public final class NpcBonusScaling {
     }
 
     public float scaled(AllocatedNode node, SkillEffect effect, float magnitude) {
-        if (Float.compare(bonusScale, 1f) == 0 || node.effectiveType().getVanillaHullModId() != null
+        if (Float.compare(bonusScale, 1f) == 0 || AllocatedSkillEffects.isVanillaPassthrough(node)
                 || !isScalableBonus(effect, magnitude) || !scalesNode(node)) {
             return magnitude;
         }

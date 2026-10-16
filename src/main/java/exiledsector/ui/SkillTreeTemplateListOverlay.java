@@ -4,8 +4,8 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.skills.ShipHullSizes;
 import exiledsector.skills.template.SkillTreeTemplate;
-import exiledsector.skills.template.TemplateFilter;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.HoloFrame;
 import exiledsector.ui.util.TextLabel;
@@ -63,8 +63,8 @@ final class SkillTreeTemplateListOverlay {
 
     SkillTreeTemplateListOverlay(SkillTreePanelStyle panelStyle) {
         this.panelStyle = panelStyle;
-        for (HullSize hullSize : TemplateFilter.FILTERABLE) {
-            hullSizeChips.put(hullSize, new SkillTreeUiButton(Translation.text("hullSize." + hullSize.name())));
+        for (HullSize hullSize : ShipHullSizes.ORDER) {
+            hullSizeChips.put(hullSize, new SkillTreeUiButton(ShipHullSizes.displayName(hullSize)));
         }
     }
 
@@ -280,8 +280,8 @@ final class SkillTreeTemplateListOverlay {
 
         private String metaText(SkillTreeTemplate rowTemplate, boolean assigned) {
             List<StyledText> parts = new ArrayList<>();
-            if (TemplateFilter.isFilterable(rowTemplate.hullSize())) {
-                parts.add(Translation.styled("hullSize." + rowTemplate.hullSize().name()));
+            if (ShipHullSizes.isShipSize(rowTemplate.hullSize())) {
+                parts.add(ShipHullSizes.styledDisplayName(rowTemplate.hullSize()));
             }
             parts.add(Translation.msg("ui.template.list.nodes").count(rowTemplate.knownStepCount()).styled());
             if (assigned) {

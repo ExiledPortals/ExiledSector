@@ -1,8 +1,6 @@
 package exiledsector.compat;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.ModManagerAPI;
-import com.fs.starfarer.api.SettingsAPI;
 import exiledsector.ModCsv;
 import exiledsector.ModSettings;
 import org.json.JSONArray;
@@ -52,12 +50,7 @@ public final class SalvageSiteCompat {
     }
 
     public static List<Source> enabledSources() {
-        SettingsAPI settings = Global.getSettings();
-        ModManagerAPI modManager = settings == null ? null : settings.getModManager();
-        if (modManager == null) {
-            return List.of();
-        }
-        return SOURCES.stream().filter(source -> modManager.isModEnabled(source.modId())).toList();
+        return SOURCES.stream().filter(source -> source.target().isEnabled()).toList();
     }
 
     public static JSONArray rows(Source source) throws IOException, JSONException {

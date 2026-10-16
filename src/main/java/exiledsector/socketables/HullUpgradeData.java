@@ -3,27 +3,21 @@ package exiledsector.socketables;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.i18n.Translation;
+import exiledsector.skills.ShipHullSizes;
 
-import java.util.List;
 import java.util.Locale;
 
 public record HullUpgradeData(HullSize hullSize) {
 
     public static final String ITEM_ID = "exiledSector_hull_upgrade";
-    public static final List<HullSize> HULL_SIZES = List.of(HullSize.FRIGATE, HullSize.DESTROYER, HullSize.CRUISER, HullSize.CAPITAL_SHIP);
     private static final String ICON_FOLDER = "graphics/icons/frameworks/framework_";
 
     public static HullUpgradeData parse(String encoded) {
         if (encoded == null || encoded.isBlank()) {
             return null;
         }
-        String sizeName = encoded.trim();
-        for (HullSize hullSize : HULL_SIZES) {
-            if (hullSize.name().equals(sizeName)) {
-                return new HullUpgradeData(hullSize);
-            }
-        }
-        return null;
+        HullSize hullSize = ShipHullSizes.byName(encoded.trim());
+        return hullSize == null ? null : new HullUpgradeData(hullSize);
     }
 
     public static HullUpgradeData of(SpecialItemData special) {
@@ -44,6 +38,6 @@ public record HullUpgradeData(HullSize hullSize) {
     }
 
     public String name() {
-        return Translation.msg("upgrade.name").arg("size", Translation.text("hullSize." + hullSize.name())).text();
+        return Translation.msg("upgrade.name").arg("size", ShipHullSizes.displayName(hullSize)).text();
     }
 }

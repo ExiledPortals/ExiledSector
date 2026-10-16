@@ -74,6 +74,24 @@ class SpriteDrawTest {
     }
 
     @Test
+    void pivotDrawsSetTheCentreAfterTheSizeAndBeforeRendering() {
+        SpriteAPI sprite = mock(SpriteAPI.class);
+        when(settings.getSprite(PATH)).thenReturn(sprite);
+        SpriteCache cache = new SpriteCache(SpriteDrawTest.class);
+
+        SpriteDraw.drawAtPivot(cache, PATH, 1f, 2f, 30f, 40f, 12f, 18f, null, 0.5f, 90f);
+
+        InOrder order = inOrder(sprite);
+        order.verify(sprite).setSize(30f, 40f);
+        order.verify(sprite).setCenter(12f, 18f);
+        order.verify(sprite).setColor(Color.WHITE);
+        order.verify(sprite).setAlphaMult(0.5f);
+        order.verify(sprite).setAngle(90f);
+        order.verify(sprite).setNormalBlend();
+        order.verify(sprite).renderAtCenter(1f, 2f);
+    }
+
+    @Test
     void texturesAreKeptApartFromDrawnSpritesSoResizingOneNeverChangesTheOther() {
         SpriteAPI drawn = mock(SpriteAPI.class);
         SpriteAPI texture = mock(SpriteAPI.class);

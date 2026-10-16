@@ -1,8 +1,5 @@
 package exiledsector.compat;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.ModManagerAPI;
-import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 
 import java.util.List;
@@ -21,9 +18,7 @@ public final class LostSectorCompat {
     }
 
     public static boolean isModEnabled() {
-        SettingsAPI settings = Global.getSettings();
-        ModManagerAPI modManager = settings == null ? null : settings.getModManager();
-        return modManager != null && MOD_IDS.stream().anyMatch(modManager::isModEnabled);
+        return TARGET.isEnabled();
     }
 
     public static boolean hasAugmentedSystems(ShipVariantAPI variant) {

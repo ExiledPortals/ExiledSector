@@ -95,7 +95,7 @@ public final class FrameworkSlots {
         }
         List<SkillTypeEffect> applied = new ArrayList<>();
         for (SkillTypeEffect effect : slot.item().skillEffects(hullSize)) {
-            if (!shipData.isNpcBuild() || effect.effect().appliesToNpcShips()) {
+            if (AllocatedSkillEffects.appliesTo(shipData, effect.effect())) {
                 applied.add(effect);
             }
         }

@@ -25,6 +25,7 @@ import exiledsector.ui.inspect.SocketableCodex;
 import exiledsector.ui.node.NodeSearch;
 import exiledsector.ui.node.SkillTreeNodeDrawer;
 import exiledsector.ui.node.TreeAllocationSession;
+import exiledsector.ui.util.Fade;
 import exiledsector.ui.util.GLDraw;
 import lunalib.lunaRefit.BaseRefitButton;
 import org.lwjgl.input.Keyboard;
@@ -150,7 +151,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         chrome.advanceVisibility(amount, mode, hyperspaceMode.chromeAlpha(), hyperspaceMode.treeAlpha(), sidePanelOpen());
         chrome.advance(amount, canvasPosition, mode, treeSession.budget(), mouseX, mouseY, mouseKnown);
         float dimStep = amount / WORKBENCH_DIM_SECONDS;
-        workbenchDimProgress = Math.max(0f, Math.min(1f, workbenchDimProgress + (socketPlacement.isWorkbenchOpen() ? dimStep : -dimStep)));
+        workbenchDimProgress = Fade.step(workbenchDimProgress, socketPlacement.isWorkbenchOpen(), dimStep);
         rememberCamera(mode);
     }
 

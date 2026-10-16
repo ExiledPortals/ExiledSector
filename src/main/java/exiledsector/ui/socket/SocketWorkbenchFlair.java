@@ -1,12 +1,10 @@
 package exiledsector.ui.socket;
 
-import com.fs.starfarer.api.util.Misc;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.HoloShapes;
 import exiledsector.ui.util.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 
@@ -105,18 +103,12 @@ final class SocketWorkbenchFlair {
             float angle = HoloShapes.TWO_PI * (i / 4f + 0.125f);
             float dx = (float) Math.cos(angle);
             float dy = (float) Math.sin(angle);
-            GL11.glLineWidth(1.5f);
-            Misc.setColor(accent, 0.4f * alpha);
-            GL11.glBegin(GL11.GL_LINES);
-            GL11.glVertex2f(cx + dx * inner, cy + dy * inner);
-            GL11.glVertex2f(cx + dx * reach, cy + dy * reach);
-            GL11.glEnd();
+            HoloShapes.line(cx + dx * inner, cy + dy * inner, cx + dx * reach, cy + dy * reach, 1.5f, accent, 0.4f * alpha);
             float travel = (elapsedSeconds * PULSE_SPEED + i * 0.25f) % 1f;
             float distance = reach - (reach - inner) * travel;
             HoloShapes.diamond(cx + dx * distance, cy + dy * distance, 2.5f, coreColor, (0.3f + 0.7f * easedLoad) * (1f - travel * 0.5f) * alpha);
             HoloShapes.diamond(cx + dx * reach, cy + dy * reach, 3f, accent, 0.8f * alpha);
         }
-        GL11.glLineWidth(1f);
     }
 
     private void scanLine(float cx, float cy, float half, Color coreColor, float alpha) {
@@ -127,13 +119,7 @@ final class SocketWorkbenchFlair {
             if (lineY > cy + half) {
                 break;
             }
-            GL11.glLineWidth(i == 0 ? 2f : 1f);
-            Misc.setColor(coreColor, (i == 0 ? 0.9f : 0.35f / i) * alpha);
-            GL11.glBegin(GL11.GL_LINES);
-            GL11.glVertex2f(cx - half, lineY);
-            GL11.glVertex2f(cx + half, lineY);
-            GL11.glEnd();
+            HoloShapes.line(cx - half, lineY, cx + half, lineY, i == 0 ? 2f : 1f, coreColor, (i == 0 ? 0.9f : 0.35f / i) * alpha);
         }
-        GL11.glLineWidth(1f);
     }
 }

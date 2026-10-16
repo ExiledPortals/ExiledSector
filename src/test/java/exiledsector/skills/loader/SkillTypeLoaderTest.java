@@ -3,6 +3,7 @@ package exiledsector.skills.loader;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.skills.ShipHullSizes;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
@@ -227,7 +228,7 @@ class SkillTypeLoaderTest {
         SkillType hull = SkillTypeLoader.parseSkillTypes(root).get("hull");
 
         assertTrue(hull.getRequiredHullSizes().isEmpty());
-        for (HullSize hullSize : List.of(HullSize.FRIGATE, HullSize.DESTROYER, HullSize.CRUISER, HullSize.CAPITAL_SHIP)) {
+        for (HullSize hullSize : ShipHullSizes.ORDER) {
             assertTrue(hull.allowsHullSize(hullSize));
         }
     }

@@ -13,6 +13,7 @@ import { useDataDocument, type DataDocument } from '../../../shared/useDataDocum
 import {
   AFFIX_GROUPS,
   isTrueText,
+  markDefinitionsSaved,
   newSocketable,
   parseSocketablesCsv,
   poolShares,
@@ -36,11 +37,7 @@ export function DefinitionsTab({ vocabulary }: { vocabulary: Vocabulary }) {
     serialize: (model) => ({ socketables: serializeSocketablesCsv(model) }),
     validate: (model) => validateSocketables(model.definitions, vocabulary),
     savedMessage: () => 'Saved socketables.csv',
-    afterSave: (draft) => {
-      for (const definition of draft.definitions) {
-        definition.loadedId = definition.id;
-      }
-    },
+    afterSave: markDefinitionsSaved,
   });
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [kindFilter, setKindFilter] = useState('');

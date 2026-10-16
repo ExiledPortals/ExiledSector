@@ -19,10 +19,6 @@ import java.util.Map;
 
 final class SocketPlacement {
 
-    private static final float BUTTON_MARGIN = 16f;
-    private static final float BUTTON_HEIGHT = 40f;
-    private static final float BUTTON_MIN_WIDTH = 150f;
-    private static final float PANEL_MARGIN = 16f;
     private static final float PANEL_TOP = SkillTreeChrome.sidePanelTop();
     private static final float PANEL_GAP = 12f;
 
@@ -159,9 +155,9 @@ final class SocketPlacement {
             storageButton.hide();
             return;
         }
-        float buttonWidth = Math.max(BUTTON_MIN_WIDTH, storageButton.preferredWidth());
-        storageButton.place(shipCard.left() + shipCard.width() + BUTTON_MARGIN, canvasPosition.getY() + BUTTON_MARGIN, buttonWidth,
-                BUTTON_HEIGHT);
+        float buttonWidth = Math.max(ChromeMetrics.MIN_BUTTON_WIDTH, storageButton.preferredWidth());
+        storageButton.place(shipCard.left() + shipCard.width() + ChromeMetrics.EDGE_MARGIN, canvasPosition.getY() + ChromeMetrics.EDGE_MARGIN,
+                buttonWidth, ChromeMetrics.CONTROL_HEIGHT);
     }
 
     void renderButton(float mouseX, float mouseY, float alphaMult, boolean live) {
@@ -241,7 +237,7 @@ final class SocketPlacement {
         searchBar.unfocus();
         ownedShips = SocketCustody.reconcile();
         storageRevision = treeSession.statsRevision();
-        storagePanel = SocketStoragePanel.open(hostPanel, PANEL_MARGIN, PANEL_TOP, sidePanelHeight(canvasPosition, shipCard),
+        storagePanel = SocketStoragePanel.open(hostPanel, ChromeMetrics.EDGE_MARGIN, PANEL_TOP, sidePanelHeight(canvasPosition, shipCard),
                 SocketCustody.shipNames(ownedShips), new SocketStoragePanel.Listener() {
                     @Override
                     public void selected(Socketable socketable) {

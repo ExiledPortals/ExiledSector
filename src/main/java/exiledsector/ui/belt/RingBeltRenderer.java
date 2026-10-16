@@ -8,8 +8,7 @@ import org.lwjgl.opengl.GL11;
 import java.awt.Color;
 
 public final class RingBeltRenderer {
-    private static final float PIXELS_PER_SEGMENT = 5f;
-    private static final float MAX_TILE_COUNT = 60f;
+    private static final float TILE_DENSITY = 1f;
     private static final double FULL_TURN = 2 * Math.PI;
     private static final int[] HIDDEN = new int[0];
 
@@ -26,19 +25,16 @@ public final class RingBeltRenderer {
         }
         float innerRadius = band.innerRadius();
         float outerRadius = band.outerRadius();
-        float middleRadius = (innerRadius + outerRadius) / 2f;
-        float circumference = (float) (FULL_TURN * middleRadius);
-        int segments = Math.max(1, RadialBandGL.computeSegments(circumference, PIXELS_PER_SEGMENT, 0));
+        float circumference = RadialBandMaths.circumference(band);
+        int segments = RadialBandGL.computeSegments(circumference, RadialBandMaths.PIXELS_PER_SEGMENT, 0);
         int[] range = visibleVertexRange(band.center().x, band.center().y, innerRadius, outerRadius, rotationDeg, segments, clip);
         if (range.length == 0) {
             return;
         }
-        float thickness = outerRadius - innerRadius;
 
-        float imageWidth = texture.getWidth();
-        float imageHeight = texture.getHeight();
-        float aspectRatio = imageHeight / imageWidth;
-        float tileCount = Math.min(MAX_TILE_COUNT, Math.max(1f, Math.round(circumference / (thickness * aspectRatio))));
+        float aspectRatio = texture.getHeight() / texture.getWidth();
+        float tileCount = RadialBandMaths.wholeTileCount(circumference, RadialBandMaths.thickness(band), aspectRatio, TILE_DENSITY,
+                RadialBandMaths.MAX_TILE_COUNT);
         float texPerSegment = tileCount / segments;
 
         RadialBandGL.begin(texture, band.center().x, band.center().y, GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, color, alphaMult);

@@ -4,6 +4,7 @@ import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import exiledsector.skills.ShipFacts;
+import exiledsector.skills.ShipHullSizes;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -169,7 +170,7 @@ class NodeRequirementsTest {
     @Test
     void everyRequirementOtherThanCampaignAndPlayerOnlyCanBeBothMetAndUnmet() {
         List<ShipProfile> profiles = new ArrayList<>();
-        for (HullSize hullSize : List.of(HullSize.FRIGATE, HullSize.DESTROYER, HullSize.CRUISER, HullSize.CAPITAL_SHIP)) {
+        for (HullSize hullSize : ShipHullSizes.ORDER) {
             profiles.add(hull(hullSize));
         }
         for (ShieldType shieldType : ShieldType.values()) {

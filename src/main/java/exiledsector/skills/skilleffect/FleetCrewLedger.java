@@ -2,8 +2,8 @@ package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
+import exiledsector.PlayerFleet;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,7 +43,7 @@ public final class FleetCrewLedger {
         if (engine.getCustomData().get(LEDGER_KEY) instanceof FleetCrewLedger existing) {
             return existing;
         }
-        CampaignFleetAPI playerFleet = playerFleet();
+        CampaignFleetAPI playerFleet = PlayerFleet.orNull();
         boolean recorded = playerFleet != null && engine.isInCampaign() && !engine.isInCampaignSim() && !engine.isSimulation();
         int crew = playerFleet == null ? 0 : (int) playerFleet.getCargo().getCrew();
         FleetCrewLedger ledger = new FleetCrewLedger(crew, recorded, playerFleet == null);
@@ -52,11 +52,6 @@ public final class FleetCrewLedger {
         }
         engine.getCustomData().put(LEDGER_KEY, ledger);
         return ledger;
-    }
-
-    private static CampaignFleetAPI playerFleet() {
-        SectorAPI sector = Global.getSector();
-        return sector == null ? null : sector.getPlayerFleet();
     }
 
     boolean hasCrew() {

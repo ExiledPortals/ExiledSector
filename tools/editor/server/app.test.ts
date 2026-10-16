@@ -225,6 +225,20 @@ describe('images', () => {
     expect(readPixel(circularPath, 4, 4)).toEqual([255, 0, 0, 255]);
   });
 
+  it('only copies png images under graphics', async () => {
+    writePng('data/config/outside.png', 2, 2, [255, 0, 0, 255]);
+    writeProjectFile('graphics/icons/notes.txt', 'not an image');
+    for (const url of ['/api/images/colorshift', '/api/images/circular']) {
+      for (const source of ['data/config/outside.png', 'graphics/icons/notes.txt', 'graphics/../data/config/outside.png', '../outside.png']) {
+        const refused = await app.inject({ method: 'POST', url, headers: EDITOR_HEADERS, payload: { path: source, suffix: 'copy' } });
+        expect(refused.statusCode).toBe(400);
+        expect(refused.json().message).toBe('Source image not found.');
+      }
+    }
+    expect(fs.existsSync(path.join(projectRoot, 'data/config/outside_copy.png'))).toBe(false);
+    expect(fs.existsSync(path.join(projectRoot, 'graphics/unused/circular'))).toBe(false);
+  });
+
   it('moves images and only deletes pngs under graphics', async () => {
     writePng('graphics/unused/a.png', 1, 1, [0, 0, 0, 255]);
     writePng('graphics/icons/taken.png', 1, 1, [0, 0, 0, 255]);
@@ -237,6 +251,26 @@ describe('images', () => {
     const deleted = await app.inject({ method: 'POST', url: '/api/images/delete', headers: EDITOR_HEADERS, payload: { path: 'graphics/icons/a.png' } });
     expect(deleted.statusCode).toBe(200);
     expect(fs.existsSync(path.join(projectRoot, 'graphics/icons/a.png'))).toBe(false);
+  });
+
+  it('only moves png images under graphics to png paths under graphics', async () => {
+    writePng('graphics/icons/b.png', 1, 1, [0, 0, 0, 255]);
+    writePng('data/config/outside.png', 1, 1, [0, 0, 0, 255]);
+    const move = (from: string, to: string) => app.inject({ method: 'POST', url: '/api/images/move', headers: EDITOR_HEADERS, payload: { from, to } });
+
+    const fromOutside = await move('data/config/outside.png', 'graphics/icons/outside.png');
+    expect(fromOutside.statusCode).toBe(400);
+    expect(fromOutside.json().message).toBe('Source image not found.');
+    const notImage = await move('data/skilltrees/skill_types.json', 'graphics/icons/types.png');
+    expect(notImage.statusCode).toBe(400);
+    for (const destination of ['data/config/b.png', 'graphics/icons/b.json', 'graphics/../data/b.png', '../b.png']) {
+      const refused = await move('graphics/icons/b.png', destination);
+      expect(refused.statusCode).toBe(400);
+      expect(refused.json().message).toBe('Images can only be moved to a .png path under graphics/.');
+    }
+    expect(fs.existsSync(path.join(projectRoot, 'graphics/icons/b.png'))).toBe(true);
+    expect(fs.existsSync(path.join(projectRoot, 'data/config/outside.png'))).toBe(true);
+    expect(fs.existsSync(path.join(projectRoot, 'data/skilltrees/skill_types.json'))).toBe(true);
   });
 });
 

@@ -89,11 +89,8 @@ public final class EffectTotals {
 
     private static List<SkillTypeEffect> scaledEffects(ShipSkillData shipData, AllocatedNode node, HullSize hullSize,
                                                        NpcBonusScaling scaling) {
-        if (node.effectiveType().getVanillaHullModId() != null) {
-            return List.of();
-        }
         List<SkillTypeEffect> scaledEffects = new ArrayList<>();
-        for (SkillTypeEffect effect : AllocatedSkillEffects.appliedEffects(shipData, node, hullSize)) {
+        for (SkillTypeEffect effect : AllocatedSkillEffects.treeEffects(shipData, node, hullSize)) {
             scaledEffects.add(new SkillTypeEffect(effect.effect(), scaling.scaled(node, effect.effect(), effect.magnitude())));
         }
         return Collections.unmodifiableList(scaledEffects);

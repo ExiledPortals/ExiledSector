@@ -11,8 +11,6 @@ import java.util.Objects;
 
 final class SkillTreeTemplateBar {
 
-    private static final float MARGIN = 16f;
-    private static final float BUTTON_HEIGHT = 40f;
     private static final float GAP = 8f;
     private static final float MIN_BUTTON_WIDTH = 120f;
     private static final float STATUS_GAP = 8f;
@@ -98,8 +96,8 @@ final class SkillTreeTemplateBar {
     }
 
     void layout(PositionAPI canvasPosition) {
-        float rowBottom = canvasPosition.getY() + MARGIN;
-        float rowRight = canvasPosition.getX() + canvasPosition.getWidth() - MARGIN;
+        float rowBottom = canvasPosition.getY() + ChromeMetrics.EDGE_MARGIN;
+        float rowRight = canvasPosition.getX() + canvasPosition.getWidth() - ChromeMetrics.EDGE_MARGIN;
         if (barState.visible() == laidOutVisible && rowBottom == laidOutBottom && rowRight == laidOutRight
                 && barState.saveLabelKey().equals(laidOutSaveLabelKey) && barState.autoOn() == laidOutAutoOn) {
             return;
@@ -126,7 +124,7 @@ final class SkillTreeTemplateBar {
 
     private static float placeLeftOf(SkillTreeUiButton button, float right, float bottom) {
         float width = Math.max(MIN_BUTTON_WIDTH, button.preferredWidth());
-        button.place(right - width, bottom, width, BUTTON_HEIGHT);
+        button.place(right - width, bottom, width, ChromeMetrics.CONTROL_HEIGHT);
         return right - width - GAP;
     }
 
@@ -140,8 +138,8 @@ final class SkillTreeTemplateBar {
         }
         resultLine.setAlpha(alphaMult);
         templateLine.setAlpha(alphaMult);
-        float statusRight = canvasPosition.getX() + canvasPosition.getWidth() - MARGIN;
-        float statusTop = canvasPosition.getY() + MARGIN + BUTTON_HEIGHT + STATUS_GAP + STATUS_LINE_HEIGHT;
+        float statusRight = canvasPosition.getX() + canvasPosition.getWidth() - ChromeMetrics.EDGE_MARGIN;
+        float statusTop = canvasPosition.getY() + ChromeMetrics.EDGE_MARGIN + ChromeMetrics.CONTROL_HEIGHT + STATUS_GAP + STATUS_LINE_HEIGHT;
         if (resultText != null && resultLine.draw(statusRight - resultLine.width(), statusTop)) {
             statusTop += STATUS_LINE_HEIGHT;
         }

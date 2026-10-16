@@ -3,6 +3,7 @@ package exiledsector.skills.loader;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.HullSizeSkillEffect;
+import exiledsector.skills.ShipHullSizes;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillType;
@@ -27,7 +28,6 @@ import java.util.Set;
 public final class SkillTypeLoader {
 
     private static final String DATA_PATH = "data/skilltrees/skill_types.json";
-    private static final Set<HullSize> SHIP_HULL_SIZES = EnumSet.of(HullSize.FRIGATE, HullSize.DESTROYER, HullSize.CRUISER, HullSize.CAPITAL_SHIP);
 
     private SkillTypeLoader() {
     }
@@ -113,7 +113,7 @@ public final class SkillTypeLoader {
     private static Set<HullSize> parseRequiredHullSizes(String typeId, JSONArray hullSizesArray) throws JSONException {
         Set<HullSize> hullSizes = EnumSet.noneOf(HullSize.class);
         for (String hullSizeName : parseStringArray(hullSizesArray)) {
-            HullSize hullSize = SHIP_HULL_SIZES.stream().filter(size -> size.name().equals(hullSizeName)).findFirst().orElse(null);
+            HullSize hullSize = ShipHullSizes.byName(hullSizeName);
             if (hullSize == null) {
                 logTypeError(typeId, "lists unknown hull size \"" + hullSizeName + "\" in requiredHullSizes - ignoring it.");
             } else {

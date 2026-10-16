@@ -1,5 +1,7 @@
 package exiledsector.ui.decoration;
 
+import exiledsector.ui.util.Fade;
+
 import java.util.Random;
 
 final class FleetFlight {
@@ -56,7 +58,7 @@ final class FleetFlight {
         }
         boolean thrusting = idleSecondsLeft <= 0f && speed > MOVING_SPEED;
         float engineStep = amount / ENGINE_FADE_SECONDS;
-        engineLevel = Math.max(0f, Math.min(1f, engineLevel + (thrusting ? engineStep : -engineStep)));
+        engineLevel = Fade.step(engineLevel, thrusting, engineStep);
         if (idleSecondsLeft <= 0f && Math.hypot(waypointX - positionX, waypointY - positionY) < ARRIVAL_DISTANCE) {
             if (random.nextFloat() < IDLE_CHANCE) {
                 idleSecondsLeft = MIN_IDLE_SECONDS + random.nextFloat() * (MAX_IDLE_SECONDS - MIN_IDLE_SECONDS);

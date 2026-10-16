@@ -65,22 +65,8 @@ public enum MiscSkillEffect implements BackedSkillEffect {
     DAMAGE_TO_DESTROYER_PERCENT(PERCENT, stat(MutableShipStatsAPI::getDamageToDestroyers), "stat.damageToDestroyers", false),
     DAMAGE_TO_CRUISER_PERCENT(PERCENT, stat(MutableShipStatsAPI::getDamageToCruisers), "stat.damageToCruisers", false),
     DAMAGE_TO_CAPITAL_PERCENT(PERCENT, stat(MutableShipStatsAPI::getDamageToCapital), "stat.damageToCapitalShips", false),
-    WEAPON_MALFUNCTION_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getWeaponMalfunctionChance().modifyFlat(modId, magnitude / 100f);
-        }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return StatMode.PERCENT.describeStat(magnitude, "stat.weaponMalfunctionChance");
-        }
-
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-    },
+    WEAPON_MALFUNCTION_PERCENT(PERCENT, new StatTarget.PercentagePoints(MutableShipStatsAPI::getWeaponMalfunctionChance),
+            "stat.weaponMalfunctionChance", true),
     OBJECTIVE_CAPTURE_RATE_MULT {
         @Override
         public StatMode statMode() {

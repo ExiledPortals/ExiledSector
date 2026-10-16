@@ -1,8 +1,9 @@
-import { Alert, Button, Center, Divider, Group, Loader, Stack } from '@mantine/core';
+import { Alert, Divider, Group, Stack } from '@mantine/core';
 import { IconAlertTriangle } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useVocabulary } from '../../api/vocabulary.ts';
 import { SERVER_HINT } from '../../api/client.ts';
+import { DocumentLoadError, DocumentLoading } from '../../shared/DocumentState.tsx';
 import { TreeCanvas } from './canvas/TreeCanvas.tsx';
 import { openAddNode } from './dialogs/treeDialogs.tsx';
 import { GameTooltip } from './GameTooltip.tsx';
@@ -84,16 +85,7 @@ export function TreePage() {
 
   let body;
   if (load.status === 'error') {
-    body = (
-      <Stack p="md">
-        <Alert color="red" icon={<IconAlertTriangle />} title="Could not load">
-          {load.message}
-        </Alert>
-        <Button variant="default" w="fit-content" onClick={() => void loadTree()}>
-          Retry
-        </Button>
-      </Stack>
-    );
+    body = <DocumentLoadError message={load.message} onRetry={() => void loadTree()} />;
   } else if (load.status === 'ready') {
     body = (
       <Group align="stretch" gap={0} wrap="nowrap" style={{ flex: 1, minHeight: 0 }}>
@@ -102,11 +94,7 @@ export function TreePage() {
       </Group>
     );
   } else {
-    body = (
-      <Center p="xl">
-        <Loader />
-      </Center>
-    );
+    body = <DocumentLoading />;
   }
 
   return (

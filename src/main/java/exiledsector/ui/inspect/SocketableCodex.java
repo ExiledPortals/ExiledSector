@@ -14,6 +14,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.socketables.SocketableDefinition;
 import exiledsector.socketables.SocketableDefinitions;
 import exiledsector.socketables.SocketableUnlock;
+import exiledsector.ui.VanillaText;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -118,7 +119,7 @@ public final class SocketableCodex {
                 @Override
                 public void createTitleForList(TooltipMakerAPI info, float width, ListMode mode) {
                     info.setParaSmallInsignia();
-                    info.addPara("%s", 0f, Misc.getBasePlayerColor(), Misc.getBasePlayerColor(), getTitle());
+                    VanillaText.plainPara(info, getTitle(), 0f, Misc.getBasePlayerColor());
                 }
 
                 @Override

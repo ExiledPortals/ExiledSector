@@ -58,13 +58,34 @@ public final class SocketableCell extends BaseCustomUIPanelPlugin {
     private final Socketable socketable;
     private final Look look;
     private final Listener cellListener;
+    private final TileInput tileInput;
     private PositionAPI cellPosition;
-    private boolean hovered;
 
     public SocketableCell(Socketable socketable, Look look, Listener cellListener) {
         this.socketable = socketable;
         this.look = look;
         this.cellListener = cellListener;
+        this.tileInput = new TileInput(new TileInput.Handler() {
+            @Override
+            public void entered(PositionAPI enteredPosition) {
+                cellListener.hovered(enteredPosition);
+            }
+
+            @Override
+            public void left() {
+                cellListener.left();
+            }
+
+            @Override
+            public boolean clicked() {
+                return cellListener.clicked();
+            }
+
+            @Override
+            public boolean rightClicked() {
+                return cellListener.rightClicked();
+            }
+        }, true);
     }
 
     @Override
@@ -94,7 +115,7 @@ public final class SocketableCell extends BaseCustomUIPanelPlugin {
         }
         boolean selected = cellListener.selected();
         GLDraw.strokeQuad(x, y, width, height, selected ? Misc.getBrightPlayerColor() : rarityColor,
-                selected ? SELECTED_BORDER_WIDTH : BORDER_WIDTH, (hovered || selected ? 1f : look.idleBorderAlpha()) * alphaMult);
+                selected ? SELECTED_BORDER_WIDTH : BORDER_WIDTH, (tileInput.isHovered() || selected ? 1f : look.idleBorderAlpha()) * alphaMult);
     }
 
     @Override
@@ -109,31 +130,6 @@ public final class SocketableCell extends BaseCustomUIPanelPlugin {
 
     @Override
     public void processInput(List<InputEventAPI> events) {
-        if (cellPosition == null) {
-            return;
-        }
-        for (InputEventAPI event : events) {
-            if (event.isMouseScrollEvent()) {
-                hovered = false;
-            }
-            if (event.isConsumed()) {
-                continue;
-            }
-            boolean inside = cellPosition.containsEvent(event);
-            if (event.isMouseMoveEvent()) {
-                if (inside != hovered) {
-                    hovered = inside;
-                    if (inside) {
-                        cellListener.hovered(cellPosition);
-                    } else {
-                        cellListener.left();
-                    }
-                }
-            } else if (inside && event.isLMBDownEvent() && cellListener.clicked()) {
-                event.consume();
-            } else if (inside && event.isRMBDownEvent() && cellListener.rightClicked()) {
-                event.consume();
-            }
-        }
+        tileInput.process(events, cellPosition);
     }
 }

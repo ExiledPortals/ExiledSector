@@ -1,6 +1,7 @@
 package exiledsector.ui;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.skills.ShipHullSizes;
 import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.TemplateFilter;
 
@@ -26,7 +27,7 @@ final class TemplateListState {
 
     void setTemplates(Collection<SkillTreeTemplate> templates) {
         this.allTemplates = templates;
-        this.anyTemplateForRoot = !TemplateFilter.matching(templates, rootNodeId, EnumSet.copyOf(TemplateFilter.FILTERABLE)).isEmpty();
+        this.anyTemplateForRoot = !TemplateFilter.matching(templates, rootNodeId, EnumSet.copyOf(ShipHullSizes.ORDER)).isEmpty();
         refilter();
     }
 

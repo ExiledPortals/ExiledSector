@@ -5,6 +5,7 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.skills.ShipHullSizes;
 import exiledsector.ui.VanillaText;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public final class HullUpgradeTooltip {
             } else {
                 tooltip.addTitle(upgrade.name(), SocketableRarity.UNIQUE.color());
                 VanillaText.addPara(tooltip, Translation.msg("upgrade.tooltip.body")
-                        .arg("size", Translation.text("hullSize." + upgrade.hullSize().name())).styled(), PAD, Misc.getTextColor());
+                        .arg("size", ShipHullSizes.displayName(upgrade.hullSize())).styled(), PAD, Misc.getTextColor());
             }
             float linePad = PAD;
             for (StyledText line : footer.get()) {

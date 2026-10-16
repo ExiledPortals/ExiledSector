@@ -1,6 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import { readRepositoryFile } from '../../../test/testServer.ts';
-import { analyseTemplate, currentStrings, parseStrings, serializeStrings, stringIssues, validateStrings, type StringsModel } from './strings.ts';
+import {
+  analyseTemplate,
+  currentStrings,
+  editedEntries,
+  markStringsSaved,
+  parseStrings,
+  serializeStrings,
+  stringIssues,
+  validateStrings,
+  type StringsModel,
+} from './strings.ts';
 
 const SAMPLE = '{\r\n    "stat.armor": "armor",\r\n\r\n    "desc.flat.up": "Increases {stat} by <good>{value}</good>.",\r\n    "count.one": "{count} ship",\r\n    "count.other": "{count} ships in {system}"\r\n}\r\n';
 
@@ -28,6 +38,14 @@ describe('English strings file', () => {
     const model = edit(parseStrings(SAMPLE), 'stat.armor', 'armour "plating"');
     expect(serializeStrings(model)).toBe(SAMPLE.replace('"armor",', '"armour \\"plating\\"",'));
     expect(currentStrings(model)['stat.armor']).toBe('armour "plating"');
+  });
+
+  it('marks only the values that were saved and keeps them in later saves', () => {
+    const saved = edit(parseStrings(SAMPLE), 'stat.armor', 'plating');
+    const model = edit(saved, 'count.one', '{count} hull');
+    markStringsSaved(model, saved);
+    expect(editedEntries(model).map((entry) => entry.key)).toEqual(['count.one']);
+    expect(serializeStrings(model)).toBe(SAMPLE.replace('"armor"', '"plating"').replace('"{count} ship"', '"{count} hull"'));
   });
 
   it('refuses a layout it cannot edit line by line', () => {
