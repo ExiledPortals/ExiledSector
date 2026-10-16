@@ -198,6 +198,13 @@ describe('validation and tags', () => {
     expect(validateTree(makeDocument([node('a', 0, 0)]), vocabulary)).toEqual([]);
   });
 
+  it('flags a node that reuses an id retired in node_replacements.csv', () => {
+    const document = makeDocument([node('a', 0, 0), node('old_1', 10, 0)]);
+    expect(validateTree(document, vocabulary, new Set(['old_1']))).toEqual([
+      'Node id "old_1" was retired in node_replacements.csv; give the node a new id',
+    ]);
+  });
+
   it('replaces only the tags of one group and keeps the rest in order', () => {
     expect(replaceGroupTags(vocabulary, ['armor', 'north', 'req_civilian_hull'], 'region', ['south'])).toEqual(['armor', 'req_civilian_hull', 'south']);
     expect(replaceGroupTags(vocabulary, ['bogus', 'armor'], 'unknown', [])).toEqual(['armor']);

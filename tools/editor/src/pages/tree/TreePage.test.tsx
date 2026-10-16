@@ -6,14 +6,16 @@ import { renderWithProviders } from '../../test/renderWithProviders.tsx';
 import { readRepositoryFile, startTestServer, type TestServer } from '../../test/testServer.ts';
 import { openAddNode, openTypeEditor, openTypePicker } from './dialogs/treeDialogs.tsx';
 import { nodeById } from './model/types.ts';
-import { selectOnly, setMode } from './state/treeActions.ts';
+import { addNodeOfType, duplicateNode, selectOnly, setMode } from './state/treeActions.ts';
 import { saveTree } from './state/treePersistence.ts';
-import { EMPTY_SELECTION, setSelection, useTreeStore } from './state/treeStore.ts';
+import { EMPTY_SELECTION, isReservedNodeId, setSelection, useTreeStore } from './state/treeStore.ts';
 import { TreePage } from './TreePage.tsx';
 
 const TYPES_FILE = 'data/skilltrees/skill_types.json';
 const TREE_FILE = 'data/skilltrees/ship_skill_tree.json';
 const VOCABULARY_FILE = 'tools/editor_vocabulary.json';
+const REPLACEMENTS_FILE = 'data/config/exiledSector/node_replacements.csv';
+const RELEASED_NODES_FILE = 'src/test/resources/released_skill_nodes.json';
 const vocabulary = buildVocabulary(JSON.parse(readRepositoryFile(VOCABULARY_FILE)));
 
 let server: TestServer;
@@ -35,7 +37,7 @@ function commitField(label: string, value: string) {
 }
 
 beforeAll(() => {
-  server = startTestServer([TYPES_FILE, TREE_FILE, VOCABULARY_FILE]);
+  server = startTestServer([TYPES_FILE, TREE_FILE, VOCABULARY_FILE, REPLACEMENTS_FILE, RELEASED_NODES_FILE]);
 });
 
 beforeEach(() => {
@@ -55,6 +57,23 @@ describe('tree page', () => {
     expect(container.querySelectorAll('[data-curve-a]').length).toBeGreaterThan(0);
     expect(container.querySelectorAll('[data-anchor-id]').length).toBe(document.anchors.length);
     expect(useTreeStore.getState().dirty).toBe(false);
+  });
+
+  it('never gives a new or duplicated node an id that was retired or released', async () => {
+    await renderLoadedTree();
+    const state = useTreeStore.getState();
+    expect(state.replacedNodeIds.has('small_flux_optional_8')).toBe(true);
+    expect(state.releasedNodeIds.size).toBeGreaterThan(100);
+
+    act(() => addNodeOfType('small_flux_optional', 0, 0, vocabulary));
+    const addedId = useTreeStore.getState().selection.nodes[0];
+    act(() => duplicateNode(addedId));
+    const duplicatedId = useTreeStore.getState().selection.nodes[0];
+
+    for (const newId of [addedId, duplicatedId]) {
+      expect(newId.startsWith('small_flux_optional_')).toBe(true);
+      expect(isReservedNodeId(useTreeStore.getState(), newId)).toBe(false);
+    }
   });
 
   it('selects a node by clicking it and edits it through the inspector', async () => {

@@ -59,11 +59,14 @@ function validateTags(document: TreeDocument, vocabulary: Vocabulary, issues: st
   }
 }
 
-export function validateTree(document: TreeDocument, vocabulary: Vocabulary | null): string[] {
+export function validateTree(document: TreeDocument, vocabulary: Vocabulary | null, replacedNodeIds: ReadonlySet<string> = new Set()): string[] {
   const issues: string[] = [];
   const idCounts = new Map<string, number>();
   for (const node of document.nodes) {
     idCounts.set(node.id, (idCounts.get(node.id) ?? 0) + 1);
+    if (replacedNodeIds.has(node.id)) {
+      issues.push(`Node id "${node.id}" was retired in node_replacements.csv; give the node a new id`);
+    }
   }
   for (const [id, count] of idCounts) {
     if (count > 1) {

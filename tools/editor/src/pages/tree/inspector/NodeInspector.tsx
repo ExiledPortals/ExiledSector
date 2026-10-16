@@ -20,7 +20,7 @@ import {
   type TreeNode,
 } from '../model/types.ts';
 import { deleteSelection, duplicateNode } from '../state/treeActions.ts';
-import { editDocument, setSelection, useTreeStore } from '../state/treeStore.ts';
+import { editDocument, isReservedNodeId, setSelection, useTreeStore } from '../state/treeStore.ts';
 import { CommitColorInput } from './CommitColorInput.tsx';
 import { TagGroupsField } from './TagGroupsField.tsx';
 import { TypeForm, type TypeRecipe } from './TypeForm.tsx';
@@ -213,6 +213,10 @@ export function NodeInspector({ nodeId, vocabulary }: { nodeId: string; vocabula
     const newId = text.trim();
     if (!newId || nodeById(document, newId)) {
       notifyError('Id must be unique and non-empty');
+      return;
+    }
+    if (isReservedNodeId(useTreeStore.getState(), newId)) {
+      notifyError(`${newId} belonged to a released or retired node. Old saves may still point at it, so pick another id.`);
       return;
     }
     editNode(node.id, (draft, doc) => renameNode(doc, draft, newId));

@@ -14,7 +14,18 @@ import {
   type TreeDocument,
   type TreeNode,
 } from '../model/types.ts';
-import { editDocument, EMPTY_SELECTION, MAX_ZOOM, MIN_ZOOM, selectionCount, setSelection, useTreeStore, type EditorMode, type SelectionKind } from './treeStore.ts';
+import {
+  editDocument,
+  EMPTY_SELECTION,
+  isReservedNodeId,
+  MAX_ZOOM,
+  MIN_ZOOM,
+  selectionCount,
+  setSelection,
+  useTreeStore,
+  type EditorMode,
+  type SelectionKind,
+} from './treeStore.ts';
 
 export function setMode(mode: EditorMode): void {
   useTreeStore.setState({ mode });
@@ -37,8 +48,12 @@ export function toggleSelected(kind: SelectionKind, id: string): void {
   useTreeStore.setState({ selection: { ...selection, [kind]: next } });
 }
 
-export function uniqueNodeId(document: TreeDocument, typeId: string): string {
-  return uniqueId(typeId, (id) => Boolean(nodeById(document, id)));
+export function uniqueNodeId(document: TreeDocument, typeId: string, isReserved: (id: string) => boolean = () => false): string {
+  return uniqueId(typeId, (id) => Boolean(nodeById(document, id)) || isReserved(id));
+}
+
+function reservedInStore(id: string): boolean {
+  return isReservedNodeId(useTreeStore.getState(), id);
 }
 
 function nearestRegionTag(document: TreeDocument, vocabulary: Vocabulary, x: number, y: number): string | undefined {
@@ -61,7 +76,7 @@ function nearestRegionTag(document: TreeDocument, vocabulary: Vocabulary, x: num
 export function addNodeOfType(typeId: string, x: number, y: number, vocabulary: Vocabulary | undefined): void {
   const document = useTreeStore.getState().document;
   const region = vocabulary ? nearestRegionTag(document, vocabulary, x, y) : undefined;
-  const node: TreeNode = { id: uniqueNodeId(document, typeId), type: typeId, connectedTo: [], x, y, tags: region ? [region] : [] };
+  const node: TreeNode = { id: uniqueNodeId(document, typeId, reservedInStore), type: typeId, connectedTo: [], x, y, tags: region ? [region] : [] };
   editDocument((draft) => {
     draft.nodes.push(node);
   });
@@ -112,7 +127,7 @@ export function duplicateNode(nodeId: string): void {
     return;
   }
   const copy: TreeNode = structuredClone(original);
-  copy.id = uniqueNodeId(document, original.type);
+  copy.id = uniqueNodeId(document, original.type, reservedInStore);
   copy.x = original.x + 40;
   copy.y = original.y - 40;
   copy.connectedTo = [original.id];

@@ -1,5 +1,5 @@
 import type { Vocabulary } from '../../../api/vocabulary.ts';
-import { fetchDataFiles, saveDataFiles, SERVER_HINT, staleFileQuestion } from '../../../api/client.ts';
+import { fetchDataFiles, fetchReservedNodeIds, saveDataFiles, SERVER_HINT, staleFileQuestion } from '../../../api/client.ts';
 import { confirmAction, notifyError, notifySuccess } from '../../../shared/dialogs.tsx';
 import { lineEndingOf } from '../../../shared/lineEndings.ts';
 import { pruneConnectorEntries } from '../model/connectors.ts';
@@ -125,10 +125,12 @@ async function offerDraftRestore(diskDocument: TreeDocument): Promise<void> {
 export async function loadTree(): Promise<void> {
   useTreeStore.setState({ load: { status: 'loading' } });
   try {
-    const files = await fetchDataFiles(['types', 'tree']);
+    const [files, reservedIds] = await Promise.all([fetchDataFiles(['types', 'tree']), fetchReservedNodeIds()]);
     const document = parseTreeDocument(files.types.content, files.tree.content);
     useTreeStore.setState({
       document,
+      replacedNodeIds: new Set(reservedIds.replaced),
+      releasedNodeIds: new Set(reservedIds.released),
       baseHashes: { types: files.types.hash, tree: files.tree.hash },
       lineEndings: { types: lineEndingOf(files.types.content), tree: lineEndingOf(files.tree.content) },
       dirty: false,
@@ -162,7 +164,7 @@ export async function saveTree(vocabulary: Vocabulary | undefined): Promise<void
     notifyError('Not saved - the tree files or the editor vocabulary did not load. Fix the error, then reload from disk.');
     return;
   }
-  const issues = validateTree(state.document, vocabulary);
+  const issues = validateTree(state.document, vocabulary, state.replacedNodeIds);
   if (issues.length > 0) {
     const shown = issues.slice(0, 8).join('\n') + (issues.length > 8 ? '\n...' : '');
     const saveAnyway = await confirmAction({

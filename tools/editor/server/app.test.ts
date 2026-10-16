@@ -133,6 +133,28 @@ describe('data files', () => {
   });
 });
 
+describe('reserved node ids', () => {
+  it('lists retired ids from node_replacements.csv and released ids, read-only', async () => {
+    writeProjectFile('data/config/exiledSector/node_replacements.csv', 'old,new\r\nflux_8,socket_2\r\n\r\nflux_15,socket_1\r\n');
+    writeProjectFile('src/test/resources/released_skill_nodes.json', '{\n  "nodes": ["flux_1", "flux_2"],\n  "roots": []\n}\n');
+
+    const response = await app.inject({ method: 'GET', url: '/api/reserved-node-ids' });
+
+    expect(response.json()).toEqual({ ok: true, replaced: ['flux_8', 'flux_15'], released: ['flux_1', 'flux_2'] });
+    const save = await app.inject({
+      method: 'POST',
+      url: '/api/files',
+      headers: EDITOR_HEADERS,
+      payload: { files: { 'node-replacements': { content: 'old,new\r\n', baseHash: null } } },
+    });
+    expect(save.statusCode).toBe(400);
+  });
+
+  it('returns empty lists when the files are missing', async () => {
+    expect((await app.inject({ method: 'GET', url: '/api/reserved-node-ids' })).json()).toEqual({ ok: true, replaced: [], released: [] });
+  });
+});
+
 describe('images', () => {
   it('lists project and vanilla images and serves them without escaping the roots', async () => {
     writePng('graphics/icons/b.png', 2, 2, [1, 2, 3, 255]);

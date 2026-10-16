@@ -43,6 +43,8 @@ export interface TreeStoreState {
   search: string;
   activeDrag: ActiveDrag | null;
   fitRequested: boolean;
+  replacedNodeIds: ReadonlySet<string>;
+  releasedNodeIds: ReadonlySet<string>;
 }
 
 export const EMPTY_SELECTION: Selection = { nodes: [], anchors: [], images: [], stars: [] };
@@ -69,7 +71,13 @@ export const useTreeStore = create<TreeStoreState>(() => ({
   search: '',
   activeDrag: null,
   fitRequested: false,
+  replacedNodeIds: new Set<string>(),
+  releasedNodeIds: new Set<string>(),
 }));
+
+export function isReservedNodeId(state: Pick<TreeStoreState, 'replacedNodeIds' | 'releasedNodeIds'>, nodeId: string): boolean {
+  return state.replacedNodeIds.has(nodeId) || state.releasedNodeIds.has(nodeId);
+}
 
 registerUnloadCheck(() => useTreeStore.getState().dirty);
 

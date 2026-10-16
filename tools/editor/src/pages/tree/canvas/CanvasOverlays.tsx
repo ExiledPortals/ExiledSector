@@ -10,8 +10,12 @@ import classes from './TreeCanvas.module.css';
 
 function IssuesBadge() {
   const document = useTreeStore((state) => state.document);
+  const replacedNodeIds = useTreeStore((state) => state.replacedNodeIds);
   const vocabulary = useVocabulary();
-  const issues = useMemo(() => validateTree(document, vocabulary.data ?? null), [document, vocabulary.data]);
+  const issues = useMemo(
+    () => validateTree(document, vocabulary.data ?? null, replacedNodeIds),
+    [document, vocabulary.data, replacedNodeIds],
+  );
   if (issues.length === 0) {
     return null;
   }

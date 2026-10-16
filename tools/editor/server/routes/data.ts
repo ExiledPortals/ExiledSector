@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { readDataFile, resolveDataResource, saveDataFiles, type DataFile } from '../dataFiles.ts';
 import { DEFAULT_SALVAGE_FILE, salvageDir, type ProjectPaths } from '../paths.ts';
+import { reservedNodeIds } from '../reservedNodeIds.ts';
 
 interface SaveBody {
   files?: Record<string, { content?: unknown; baseHash?: unknown }>;
@@ -14,6 +15,8 @@ export function registerDataRoutes(app: FastifyInstance, paths: ProjectPaths): v
     reply.header('content-type', 'application/json; charset=utf-8');
     return fs.readFileSync(vocabularyPath, 'utf8');
   });
+
+  app.get('/api/reserved-node-ids', async () => ({ ok: true, ...reservedNodeIds(paths) }));
 
   app.get<{ Querystring: { names?: string } }>('/api/files', async (request, reply) => {
     const names = (request.query.names ?? '')

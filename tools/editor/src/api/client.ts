@@ -51,6 +51,19 @@ export async function fetchDataFiles(names: string[]): Promise<DataFiles> {
   return body.files;
 }
 
+export interface ReservedNodeIds {
+  replaced: string[];
+  released: string[];
+}
+
+export async function fetchReservedNodeIds(): Promise<ReservedNodeIds> {
+  const body = await getJson<{ ok: boolean; replaced?: string[]; released?: string[]; message?: string }>('/api/reserved-node-ids');
+  if (!body.ok) {
+    throw new Error(body.message ?? 'The retired node ids could not be loaded.');
+  }
+  return { replaced: body.replaced ?? [], released: body.released ?? [] };
+}
+
 export interface SaveResult extends PostResult<{ hashes?: Record<string, string>; changed?: string[]; conflict?: boolean }> {
   conflict: boolean;
 }
