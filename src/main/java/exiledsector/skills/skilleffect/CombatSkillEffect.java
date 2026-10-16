@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.HullDamageAboutToBeTakenListener;
@@ -13,6 +14,8 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
 import exiledsector.compat.LostSectorCompat;
 import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
+import exiledsector.skills.ShipFacts;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
@@ -118,6 +121,37 @@ public enum CombatSkillEffect implements BackedSkillEffect {
             LiveMunitionsListener.class, LiveMunitionsListener::new),
     HEARTLESS_MISSILE_SPEED_PERCENT_PER_STACK(LiveMunitionsListener.MISSILE_SPEED_PERCENT_PER_STACK_KEY,
             LiveMunitionsListener.class, LiveMunitionsListener::new),
+    DYNAMIC_GRID_ENERGY_WEAPON_BONUS_PERCENT(DynamicGridListener.ENERGY_BONUS_PERCENT_KEY, DynamicGridListener.class,
+            DynamicGridListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude)
+                    .arg("frigate", DynamicGridListener.shieldsDownSecondsFor(ShipAPI.HullSize.FRIGATE))
+                    .arg("destroyer", DynamicGridListener.shieldsDownSecondsFor(ShipAPI.HullSize.DESTROYER))
+                    .arg("cruiser", DynamicGridListener.shieldsDownSecondsFor(ShipAPI.HullSize.CRUISER))
+                    .arg("capital", DynamicGridListener.shieldsDownSecondsFor(ShipAPI.HullSize.CAPITAL_SHIP)).styled();
+        }
+
+        @Override
+        public String blockAllocationReason(ShipFacts ship, ShieldAPI.ShieldType currentShieldType) {
+            boolean hasShields = currentShieldType == ShieldAPI.ShieldType.FRONT || currentShieldType == ShieldAPI.ShieldType.OMNI;
+            return hasShields ? null : Translation.text("node.block.noShields");
+        }
+    },
+    ION_ARC_CHANCE_PERCENT(IonArcListener.CHANCE_AT_FULL_HARD_FLUX_KEY, IonArcListener.class, IonArcListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("damage", IonArcListener.ARC_DAMAGE_FRACTION * 100f)
+                    .arg("emp", IonArcListener.ARC_EMP_FRACTION * 100f).styled();
+        }
+    },
+    GRAVITY_DRAG_TIMEFLOW_PERCENT(GravityDragListener.TIMEFLOW_PERCENT_KEY, GravityDragListener.class, GravityDragListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("range", GravityDragField.RANGE)
+                    .arg("phased", magnitude * GravityDragListener.PHASED_MULT).arg("cap", GravityDragField.MAX_TOTAL_REDUCTION_PERCENT).styled();
+        }
+    },
     CREW_STEAL_RANGE_FLAT(CrewStealListener.RANGE_KEY, CrewStealListener.class, CrewStealListener::new),
     CREW_STEAL_SKELETON_CREW_PERCENT(CrewStealListener.SKELETON_CREW_PERCENT_KEY, CrewStealListener.class, CrewStealListener::new),
     FLUX_SCALED_TOP_SPEED_FLAT(FluxScaledVolatilityListener.TOP_SPEED_KEY,

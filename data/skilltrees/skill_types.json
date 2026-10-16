@@ -1596,6 +1596,21 @@
 			]
 		},
 		{
+			"id": "energy_weapon_fire_rate",
+			"name": "Energy Weapon Fire Rate",
+			"icon": "graphics/icons/evasive_maneuvering_shifted_blue.png",
+			"effects": [
+				{
+					"effect": "ENERGY_WEAPON_FIRE_RATE_PERCENT",
+					"magnitude": 3
+				}
+			],
+			"tags": [
+				"energy",
+				"req_energy"
+			]
+		},
+		{
 			"id": "nskr_absorption",
 			"name": "ABSORB System",
 			"icon": "graphics/icons/frozen_heart_shifted.png",
@@ -2598,7 +2613,7 @@
 			"effects": [
 				{
 					"effect": "FIGHTER_WEAPON_DAMAGE_PERCENT",
-					"magnitude": 5
+					"magnitude": 3
 				}
 			],
 			"todo": "Placeholder magnitude (15%) pending real balance numbers.",
@@ -3487,6 +3502,101 @@
 				"DESTROYER",
 				"CRUISER"
 			],
+			"tags": [
+				"speed"
+			]
+		},
+		{
+			"id": "dynamic_grid",
+			"name": "Dynamic Grid",
+			"icon": "graphics/icons/na_dynamic_grid.png",
+			"tier": "KEYSTONE",
+			"effects": [
+				{
+					"effect": "DYNAMIC_GRID_ENERGY_WEAPON_BONUS_PERCENT",
+					"magnitude": 15
+				},
+				{
+					"effect": "SHIELD_RAISE_RATE_PERCENT",
+					"magnitude": 25
+				},
+				{
+					"effect": "SHIELD_DAMAGE_TAKEN_MULT",
+					"magnitude": 7.5
+				}
+			],
+			"hullSizeEffects": [
+				{
+					"effect": "VENT_RATE_PERCENT",
+					"frigate": 12.5,
+					"destroyer": 10,
+					"cruiser": 7.5,
+					"capitalShip": 5
+				}
+			],
+			"exclusiveHullMods": [
+				"nightcrosstargeting"
+			],
+			"description": "Nightcross's signature power grid. The moment the shields come down, the power that fed them is routed to the energy weapons.",
+			"tags": [
+				"shield",
+				"energy",
+				"req_shields"
+			]
+		},
+		{
+			"id": "ion_rounds",
+			"name": "Ion Rounds",
+			"icon": "graphics/icons/na_ion_rounds.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "ION_ARC_CHANCE_PERCENT",
+					"magnitude": 15
+				}
+			],
+			"description": "Keep pressure on an enemy shield until its hard flux climbs, and the arcs start getting through.",
+			"tags": [
+				"energy",
+				"req_non_beam_energy"
+			]
+		},
+		{
+			"id": "hardlight_rifle",
+			"name": "Hardlight Rifle",
+			"icon": "graphics/icons/na_hardlight_rifle.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "FIGHTER_FOCUS_FIRE_DAMAGE_PERCENT_PER_HIT",
+					"magnitude": 2
+				},
+				{
+					"effect": "FIGHTER_FOCUS_FIRE_MAX_DAMAGE_PERCENT",
+					"magnitude": 30
+				}
+			],
+			"description": "Fighter hits paint the target with hardlight markers that guide the rest of the carrier's wings onto it.",
+			"tags": [
+				"fighter",
+				"req_fighter_bays"
+			]
+		},
+		{
+			"id": "gravitational_drag",
+			"name": "Gravitational Drag",
+			"icon": "graphics/icons/na_gravitational_drag.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "GRAVITY_DRAG_TIMEFLOW_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"exclusiveHullMods": [
+				"na_gravitydrag"
+			],
+			"description": "A gravitational disturbance around the hull drags at the timeflow of nearby enemies, strongest from inside phase space.",
 			"tags": [
 				"speed"
 			]

@@ -98,8 +98,8 @@ class CompatChecksTest {
             assertFalse(target.modIds().isEmpty(), target.displayName());
             assertFalse(target.testedVersions().isEmpty(), target.displayName());
         }
-        assertEquals(List.of("Lost Sector", "Second-in-Command", "MagicLib", "Exotica Technologies"), names.subList(0, 4));
-        assertEquals(4 + SalvageSiteCompat.SOURCES.size(), names.size());
+        assertEquals(List.of("Lost Sector", "Second-in-Command", "MagicLib", "Exotica Technologies", "Nightcross Armory area"), names.subList(0, 5));
+        assertEquals(5 + SalvageSiteCompat.SOURCES.size(), names.size());
         assertTrue(names.contains("Random Assortment of Things salvage sites"));
     }
 
