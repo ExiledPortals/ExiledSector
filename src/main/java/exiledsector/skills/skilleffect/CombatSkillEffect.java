@@ -1,7 +1,6 @@
 package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.combat.BoundsAPI;
 import com.fs.starfarer.api.combat.CollisionClass;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
@@ -35,6 +34,7 @@ public enum CombatSkillEffect implements BackedSkillEffect {
     },
     EXPLODE_ON_DEATH(DeathExplosionListener.FUEL_DAMAGE_PERCENT_KEY, DeathExplosionListener.class, DeathExplosionListener::new),
     DEATH_ON_COLLISION(CollisionDeathListener.class, CollisionDeathListener::new),
+    RAM_BIGGEST_ENEMY(RamPilotListener.class, RamPilotListener::new),
     NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT(EnergyChainListener.CHANCE_KEY, EnergyChainListener.class, EnergyChainListener::new) {
         @Override
         public boolean reshapesDealtDamage() {
@@ -251,45 +251,13 @@ public enum CombatSkillEffect implements BackedSkillEffect {
         }
 
         private boolean isTouching(CombatEntityAPI other) {
-            return isBroadPhaseNear(ownerShip.getLocation(), ownerShip.getCollisionRadius(), other) && hullsOverlap(ownerShip, other);
+            return isBroadPhaseNear(ownerShip.getLocation(), ownerShip.getCollisionRadius(), other)
+                    && CombatQueries.boundsOverlap(ownerShip, other);
         }
 
         private boolean isBroadPhaseNear(Vector2f loc, float myRadius, CombatEntityAPI other) {
             float triggerRadius = (myRadius + other.getCollisionRadius()) * BROAD_PHASE_MARGIN;
             return CombatQueries.withinRadius(other.getLocation(), loc, triggerRadius);
-        }
-
-        private boolean hullsOverlap(CombatEntityAPI a, CombatEntityAPI b) {
-            BoundsAPI boundsA = a.getExactBounds();
-            BoundsAPI boundsB = b.getExactBounds();
-            if (boundsA == null || boundsB == null) {
-                return false;
-            }
-            boundsA.update(a.getLocation(), a.getFacing());
-            boundsB.update(b.getLocation(), b.getFacing());
-
-            List<BoundsAPI.SegmentAPI> segmentsA = boundsA.getSegments();
-            List<BoundsAPI.SegmentAPI> segmentsB = boundsB.getSegments();
-            for (BoundsAPI.SegmentAPI segA : segmentsA) {
-                for (BoundsAPI.SegmentAPI segB : segmentsB) {
-                    if (segmentsIntersect(segA.getP1(), segA.getP2(), segB.getP1(), segB.getP2())) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        private boolean segmentsIntersect(Vector2f p1, Vector2f p2, Vector2f p3, Vector2f p4) {
-            float d1 = cross(p3, p4, p1);
-            float d2 = cross(p3, p4, p2);
-            float d3 = cross(p1, p2, p3);
-            float d4 = cross(p1, p2, p4);
-            return ((d1 > 0f) != (d2 > 0f)) && ((d3 > 0f) != (d4 > 0f));
-        }
-
-        private float cross(Vector2f a, Vector2f b, Vector2f c) {
-            return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
         }
     }
 

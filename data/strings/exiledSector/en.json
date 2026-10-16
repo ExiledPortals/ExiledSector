@@ -270,6 +270,7 @@
     "effect.CONVERT_SHIELD_TO_FRONT": "Converts this ship's shield to front-facing.",
     "effect.CONVERT_SHIELD_TO_OMNI": "Converts this ship's shield to omni-directional.",
     "effect.DEATH_ON_COLLISION": "Touching another ship's hull, however slightly, is instantly fatal to this ship. Fighters, wrecks and asteroids don't count.",
+    "effect.RAM_BIGGEST_ENEMY": "When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.",
     "stat.damageDealtByFightersLaunchedFromThisShipToOtherFightersAndMissiles": "damage dealt by fighters launched from this ship to other fighters and missiles",
     "stat.fighterRelaunchTimeAsAOfBaseRefitTime": "fighter relaunch time, as a % of base refit time",
     "stat.numberOfFighterBays": "number of fighter bays",

@@ -561,6 +561,10 @@
 				{
 					"effect": "DEATH_ON_COLLISION",
 					"magnitude": 0
+				},
+				{
+					"effect": "RAM_BIGGEST_ENEMY",
+					"magnitude": 0
 				}
 			]
 		},

@@ -248,6 +248,7 @@
     {"name": "PHASE_FIELD_CONTRIBUTION_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "PHASE_TOP_SPEED_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},
     {"name": "POST_BATTLE_SALVAGE_PERCENT", "statMode": null, "lowerIsBetter": false},
+    {"name": "RAM_BIGGEST_ENEMY", "statMode": null, "lowerIsBetter": false},
     {"name": "REMOVE_ALL_FIGHTER_BAYS", "statMode": null, "lowerIsBetter": false},
     {"name": "REMOVE_CIVILIAN_HULL_PENALTY", "statMode": null, "lowerIsBetter": false},
     {"name": "REMOVE_SHIELD", "statMode": null, "lowerIsBetter": false},

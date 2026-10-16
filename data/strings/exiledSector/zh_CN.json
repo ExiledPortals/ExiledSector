@@ -264,6 +264,7 @@
     "effect.CONVERT_SHIELD_TO_FRONT": "将本舰的护盾转换为前向护盾。",
     "effect.CONVERT_SHIELD_TO_OMNI": "将本舰的护盾转换为全向护盾。",
     "effect.DEATH_ON_COLLISION": "与其他舰船的船体发生任何接触，无论多么轻微，都会立即摧毁本舰。战机、残骸和小行星不计入。",
+    "effect.RAM_BIGGEST_ENEMY": "当本舰不由你亲自驾驶时，它会径直冲向最大的敌舰，一心要与之相撞。",
     "stat.damageDealtByFightersLaunchedFromThisShipToOtherFightersAndMissiles": "本舰发射的战机对其他战机和导弹造成的伤害",
     "stat.fighterRelaunchTimeAsAOfBaseRefitTime": "战机重新出击时间（以基础整备时间的百分比计）",
     "stat.numberOfFighterBays": "机库数量",
