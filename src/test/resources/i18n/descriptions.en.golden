@@ -2286,11 +2286,16 @@ type|armoredweapons|CAPITAL_SHIP|1	0	<good>80%</good> increased weapon durabilit
 type|armoredweapons|CAPITAL_SHIP|2	0	<bad>25%</bad> less weapon turn rate.
 type|armoredweapons|CAPITAL_SHIP|3	1	<bad>25%</bad> less weapon recoil.
 type-detail|armoredweapons|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Armored Weapon Mounts</hullmod>
-type|attuned_sensors|null|0	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
-type|attuned_sensors|FRIGATE|0	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
-type|attuned_sensors|DESTROYER|0	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
-type|attuned_sensors|CRUISER|0	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
-type|attuned_sensors|CAPITAL_SHIP|0	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
+type|attuned_sensors|null|0	0	Studying the sensor pickets the League posts along its Hegemony border shows the crew how to slave energy weapon targeting to the ship's own sensors. The stronger this ship's sensors, the further its energy weapons reach.
+type|attuned_sensors|null|1	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
+type|attuned_sensors|FRIGATE|0	0	Studying the sensor pickets the League posts along its Hegemony border shows the crew how to slave energy weapon targeting to the ship's own sensors. The stronger this ship's sensors, the further its energy weapons reach.
+type|attuned_sensors|FRIGATE|1	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
+type|attuned_sensors|DESTROYER|0	0	Studying the sensor pickets the League posts along its Hegemony border shows the crew how to slave energy weapon targeting to the ship's own sensors. The stronger this ship's sensors, the further its energy weapons reach.
+type|attuned_sensors|DESTROYER|1	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
+type|attuned_sensors|CRUISER|0	0	Studying the sensor pickets the League posts along its Hegemony border shows the crew how to slave energy weapon targeting to the ship's own sensors. The stronger this ship's sensors, the further its energy weapons reach.
+type|attuned_sensors|CRUISER|1	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
+type|attuned_sensors|CAPITAL_SHIP|0	0	Studying the sensor pickets the League posts along its Hegemony border shows the crew how to slave energy weapon targeting to the ship's own sensors. The stronger this ship's sensors, the further its energy weapons reach.
+type|attuned_sensors|CAPITAL_SHIP|1	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
 type|augmentedengines|null|0	0	Increases max burn level by <good>1</good>.
 type-detail|augmentedengines|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Augmented Drive Field</hullmod>
 type|augmentedengines|FRIGATE|0	0	Increases max burn level by <good>1</good>.
@@ -2388,11 +2393,16 @@ type|beam_damage|FRIGATE|0	0	<good>5%</good> increased beam weapon damage.
 type|beam_damage|DESTROYER|0	0	<good>5%</good> increased beam weapon damage.
 type|beam_damage|CRUISER|0	0	<good>5%</good> increased beam weapon damage.
 type|beam_damage|CAPITAL_SHIP|0	0	<good>5%</good> increased beam weapon damage.
-type|beam_split|null|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
-type|beam_split|FRIGATE|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
-type|beam_split|DESTROYER|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
-type|beam_split|CRUISER|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
-type|beam_split|CAPITAL_SHIP|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+type|beam_split|null|0	0	Diktat propaganda insists that the Lion's gaze falls on every citizen at once, and the engineer-technicians of the Lion's Guard took the slogan literally. Studying the Executors they refit teaches the crew to split this ship's beams across the target and the enemy ships around it.
+type|beam_split|null|1	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+type|beam_split|FRIGATE|0	0	Diktat propaganda insists that the Lion's gaze falls on every citizen at once, and the engineer-technicians of the Lion's Guard took the slogan literally. Studying the Executors they refit teaches the crew to split this ship's beams across the target and the enemy ships around it.
+type|beam_split|FRIGATE|1	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+type|beam_split|DESTROYER|0	0	Diktat propaganda insists that the Lion's gaze falls on every citizen at once, and the engineer-technicians of the Lion's Guard took the slogan literally. Studying the Executors they refit teaches the crew to split this ship's beams across the target and the enemy ships around it.
+type|beam_split|DESTROYER|1	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+type|beam_split|CRUISER|0	0	Diktat propaganda insists that the Lion's gaze falls on every citizen at once, and the engineer-technicians of the Lion's Guard took the slogan literally. Studying the Executors they refit teaches the crew to split this ship's beams across the target and the enemy ships around it.
+type|beam_split|CRUISER|1	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+type|beam_split|CAPITAL_SHIP|0	0	Diktat propaganda insists that the Lion's gaze falls on every citizen at once, and the engineer-technicians of the Lion's Guard took the slogan literally. Studying the Executors they refit teaches the crew to split this ship's beams across the target and the enemy ships around it.
+type|beam_split|CAPITAL_SHIP|1	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 type|beam_split_reduced_damage|null|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 type|beam_split_reduced_damage|FRIGATE|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 type|beam_split_reduced_damage|DESTROYER|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
@@ -2761,16 +2771,21 @@ type|emp_damage_taken_multi|FRIGATE|0	1	<bad>20%</bad> less EMP damage taken.
 type|emp_damage_taken_multi|DESTROYER|0	1	<bad>20%</bad> less EMP damage taken.
 type|emp_damage_taken_multi|CRUISER|0	1	<bad>20%</bad> less EMP damage taken.
 type|emp_damage_taken_multi|CAPITAL_SHIP|0	1	<bad>20%</bad> less EMP damage taken.
-type|energy_chain|null|0	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
-type|energy_chain|null|1	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
-type|energy_chain|FRIGATE|0	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
-type|energy_chain|FRIGATE|1	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
-type|energy_chain|DESTROYER|0	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
-type|energy_chain|DESTROYER|1	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
-type|energy_chain|CRUISER|0	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
-type|energy_chain|CRUISER|1	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
-type|energy_chain|CAPITAL_SHIP|0	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
-type|energy_chain|CAPITAL_SHIP|1	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
+type|energy_chain|null|0	0	Pulling apart the energy converters of wrecked Tri-Tachyon warships shows the crew how to tune this ship's energy bolts to glance off an enemy shield and carry on to another target. Some non-beam energy shots that hit a shield refract into the nearest other enemy, weakening with each jump.
+type|energy_chain|null|1	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+type|energy_chain|null|2	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
+type|energy_chain|FRIGATE|0	0	Pulling apart the energy converters of wrecked Tri-Tachyon warships shows the crew how to tune this ship's energy bolts to glance off an enemy shield and carry on to another target. Some non-beam energy shots that hit a shield refract into the nearest other enemy, weakening with each jump.
+type|energy_chain|FRIGATE|1	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+type|energy_chain|FRIGATE|2	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
+type|energy_chain|DESTROYER|0	0	Pulling apart the energy converters of wrecked Tri-Tachyon warships shows the crew how to tune this ship's energy bolts to glance off an enemy shield and carry on to another target. Some non-beam energy shots that hit a shield refract into the nearest other enemy, weakening with each jump.
+type|energy_chain|DESTROYER|1	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+type|energy_chain|DESTROYER|2	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
+type|energy_chain|CRUISER|0	0	Pulling apart the energy converters of wrecked Tri-Tachyon warships shows the crew how to tune this ship's energy bolts to glance off an enemy shield and carry on to another target. Some non-beam energy shots that hit a shield refract into the nearest other enemy, weakening with each jump.
+type|energy_chain|CRUISER|1	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+type|energy_chain|CRUISER|2	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
+type|energy_chain|CAPITAL_SHIP|0	0	Pulling apart the energy converters of wrecked Tri-Tachyon warships shows the crew how to tune this ship's energy bolts to glance off an enemy shield and carry on to another target. Some non-beam energy shots that hit a shield refract into the nearest other enemy, weakening with each jump.
+type|energy_chain|CAPITAL_SHIP|1	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
+type|energy_chain|CAPITAL_SHIP|2	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 type|energy_flux_cost|null|0	1	<bad>5%</bad> reduced energy weapon flux cost.
 type|energy_flux_cost|FRIGATE|0	1	<bad>5%</bad> reduced energy weapon flux cost.
 type|energy_flux_cost|DESTROYER|0	1	<bad>5%</bad> reduced energy weapon flux cost.
@@ -3197,16 +3212,21 @@ type-detail|hiressensors|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</h
 type|hiressensors|CAPITAL_SHIP|0	0	This ship's sensor strength always contributes to fleet-wide sensor strength.
 type|hiressensors|CAPITAL_SHIP|1	0	Increases this ship's sensor strength by <good>70</good>.
 type-detail|hiressensors|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>High Resolution Sensors</hullmod>
-type|hoarded_arms|null|0	0	<good>50%</good> increased energy weapon ammo regeneration rate.
-type|hoarded_arms|null|1	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
-type|hoarded_arms|FRIGATE|0	0	<good>50%</good> increased energy weapon ammo regeneration rate.
-type|hoarded_arms|FRIGATE|1	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
-type|hoarded_arms|DESTROYER|0	0	<good>50%</good> increased energy weapon ammo regeneration rate.
-type|hoarded_arms|DESTROYER|1	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
-type|hoarded_arms|CRUISER|0	0	<good>50%</good> increased energy weapon ammo regeneration rate.
-type|hoarded_arms|CRUISER|1	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
-type|hoarded_arms|CAPITAL_SHIP|0	0	<good>50%</good> increased energy weapon ammo regeneration rate.
-type|hoarded_arms|CAPITAL_SHIP|1	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
+type|hoarded_arms|null|0	0	League fleets drawn from a dozen squabbling polities still share one reload drill, so that any ship can rearm any other, and serving under a League commission drills it into the crew. Ballistic and energy weapons regain their ammunition faster.
+type|hoarded_arms|null|1	0	<good>50%</good> increased energy weapon ammo regeneration rate.
+type|hoarded_arms|null|2	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
+type|hoarded_arms|FRIGATE|0	0	League fleets drawn from a dozen squabbling polities still share one reload drill, so that any ship can rearm any other, and serving under a League commission drills it into the crew. Ballistic and energy weapons regain their ammunition faster.
+type|hoarded_arms|FRIGATE|1	0	<good>50%</good> increased energy weapon ammo regeneration rate.
+type|hoarded_arms|FRIGATE|2	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
+type|hoarded_arms|DESTROYER|0	0	League fleets drawn from a dozen squabbling polities still share one reload drill, so that any ship can rearm any other, and serving under a League commission drills it into the crew. Ballistic and energy weapons regain their ammunition faster.
+type|hoarded_arms|DESTROYER|1	0	<good>50%</good> increased energy weapon ammo regeneration rate.
+type|hoarded_arms|DESTROYER|2	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
+type|hoarded_arms|CRUISER|0	0	League fleets drawn from a dozen squabbling polities still share one reload drill, so that any ship can rearm any other, and serving under a League commission drills it into the crew. Ballistic and energy weapons regain their ammunition faster.
+type|hoarded_arms|CRUISER|1	0	<good>50%</good> increased energy weapon ammo regeneration rate.
+type|hoarded_arms|CRUISER|2	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
+type|hoarded_arms|CAPITAL_SHIP|0	0	League fleets drawn from a dozen squabbling polities still share one reload drill, so that any ship can rearm any other, and serving under a League commission drills it into the crew. Ballistic and energy weapons regain their ammunition faster.
+type|hoarded_arms|CAPITAL_SHIP|1	0	<good>50%</good> increased energy weapon ammo regeneration rate.
+type|hoarded_arms|CAPITAL_SHIP|2	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 type|hull|null|0	0	<good>2%</good> more hull points.
 type|hull|FRIGATE|0	0	<good>2%</good> more hull points.
 type|hull|DESTROYER|0	0	<good>2%</good> more hull points.
@@ -3638,11 +3658,16 @@ type|peak_cr_duration|FRIGATE|0	0	<good>25%</good> increased peak combat readine
 type|peak_cr_duration|DESTROYER|0	0	<good>25%</good> increased peak combat readiness duration.
 type|peak_cr_duration|CRUISER|0	0	<good>25%</good> increased peak combat readiness duration.
 type|peak_cr_duration|CAPITAL_SHIP|0	0	<good>25%</good> increased peak combat readiness duration.
-type|perseverence_through_faith|null|0	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
-type|perseverence_through_faith|FRIGATE|0	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
-type|perseverence_through_faith|DESTROYER|0	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
-type|perseverence_through_faith|CRUISER|0	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
-type|perseverence_through_faith|CAPITAL_SHIP|0	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
+type|perseverence_through_faith|null|0	0	Luddic faithful among the crew hold that a scarred ship, like a penitent, finds its strength in hardship, and they keep its battered guns fighting with prayer and patient hands. Each d-mod this ship carries makes its weapons hit a little harder.
+type|perseverence_through_faith|null|1	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
+type|perseverence_through_faith|FRIGATE|0	0	Luddic faithful among the crew hold that a scarred ship, like a penitent, finds its strength in hardship, and they keep its battered guns fighting with prayer and patient hands. Each d-mod this ship carries makes its weapons hit a little harder.
+type|perseverence_through_faith|FRIGATE|1	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
+type|perseverence_through_faith|DESTROYER|0	0	Luddic faithful among the crew hold that a scarred ship, like a penitent, finds its strength in hardship, and they keep its battered guns fighting with prayer and patient hands. Each d-mod this ship carries makes its weapons hit a little harder.
+type|perseverence_through_faith|DESTROYER|1	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
+type|perseverence_through_faith|CRUISER|0	0	Luddic faithful among the crew hold that a scarred ship, like a penitent, finds its strength in hardship, and they keep its battered guns fighting with prayer and patient hands. Each d-mod this ship carries makes its weapons hit a little harder.
+type|perseverence_through_faith|CRUISER|1	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
+type|perseverence_through_faith|CAPITAL_SHIP|0	0	Luddic faithful among the crew hold that a scarred ship, like a penitent, finds its strength in hardship, and they keep its battered guns fighting with prayer and patient hands. Each d-mod this ship carries makes its weapons hit a little harder.
+type|perseverence_through_faith|CAPITAL_SHIP|1	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
 type|phase_anchor|null|0	1	<bad>100%</bad> less phase cloak activation cost.
 type|phase_anchor|null|1	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 type|phase_anchor|null|2	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
@@ -3668,20 +3693,25 @@ type|phase_cloak_flux_threshold|FRIGATE|0	0	<good>5%</good> increased hard flux 
 type|phase_cloak_flux_threshold|DESTROYER|0	0	<good>5%</good> increased hard flux level at which phased speed reaches its minimum.
 type|phase_cloak_flux_threshold|CRUISER|0	0	<good>5%</good> increased hard flux level at which phased speed reaches its minimum.
 type|phase_cloak_flux_threshold|CAPITAL_SHIP|0	0	<good>5%</good> increased hard flux level at which phased speed reaches its minimum.
-type|phase_hull_upgrades|null|0	0	Even if this ship isn't a phase ship, 50% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-type|phase_hull_upgrades|null|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+type|phase_hull_upgrades|null|0	0	Leaked papers from Tri-Tachyon's Hybrid Physics Division, on phase work the corporation swears it abandoned under the Treaty of Thule, show the crew how to bleed this ship's sensor emissions into the masking field phase ships throw over a fleet. Its sensors help hide the fleet from long-range detection, and the hull shrugs off more of the strain of coronas and storms.
+type|phase_hull_upgrades|null|1	0	Even if this ship isn't a phase ship, 50% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+type|phase_hull_upgrades|null|2	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type-detail|phase_hull_upgrades|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Phase Field</hullmod>
-type|phase_hull_upgrades|FRIGATE|0	0	Even if this ship isn't a phase ship, 50% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-type|phase_hull_upgrades|FRIGATE|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+type|phase_hull_upgrades|FRIGATE|0	0	Leaked papers from Tri-Tachyon's Hybrid Physics Division, on phase work the corporation swears it abandoned under the Treaty of Thule, show the crew how to bleed this ship's sensor emissions into the masking field phase ships throw over a fleet. Its sensors help hide the fleet from long-range detection, and the hull shrugs off more of the strain of coronas and storms.
+type|phase_hull_upgrades|FRIGATE|1	0	Even if this ship isn't a phase ship, 50% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+type|phase_hull_upgrades|FRIGATE|2	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type-detail|phase_hull_upgrades|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Phase Field</hullmod>
-type|phase_hull_upgrades|DESTROYER|0	0	Even if this ship isn't a phase ship, 50% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-type|phase_hull_upgrades|DESTROYER|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+type|phase_hull_upgrades|DESTROYER|0	0	Leaked papers from Tri-Tachyon's Hybrid Physics Division, on phase work the corporation swears it abandoned under the Treaty of Thule, show the crew how to bleed this ship's sensor emissions into the masking field phase ships throw over a fleet. Its sensors help hide the fleet from long-range detection, and the hull shrugs off more of the strain of coronas and storms.
+type|phase_hull_upgrades|DESTROYER|1	0	Even if this ship isn't a phase ship, 50% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+type|phase_hull_upgrades|DESTROYER|2	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type-detail|phase_hull_upgrades|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Phase Field</hullmod>
-type|phase_hull_upgrades|CRUISER|0	0	Even if this ship isn't a phase ship, 50% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-type|phase_hull_upgrades|CRUISER|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+type|phase_hull_upgrades|CRUISER|0	0	Leaked papers from Tri-Tachyon's Hybrid Physics Division, on phase work the corporation swears it abandoned under the Treaty of Thule, show the crew how to bleed this ship's sensor emissions into the masking field phase ships throw over a fleet. Its sensors help hide the fleet from long-range detection, and the hull shrugs off more of the strain of coronas and storms.
+type|phase_hull_upgrades|CRUISER|1	0	Even if this ship isn't a phase ship, 50% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+type|phase_hull_upgrades|CRUISER|2	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type-detail|phase_hull_upgrades|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Phase Field</hullmod>
-type|phase_hull_upgrades|CAPITAL_SHIP|0	0	Even if this ship isn't a phase ship, 50% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
-type|phase_hull_upgrades|CAPITAL_SHIP|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+type|phase_hull_upgrades|CAPITAL_SHIP|0	0	Leaked papers from Tri-Tachyon's Hybrid Physics Division, on phase work the corporation swears it abandoned under the Treaty of Thule, show the crew how to bleed this ship's sensor emissions into the masking field phase ships throw over a fleet. Its sensors help hide the fleet from long-range detection, and the hull shrugs off more of the strain of coronas and storms.
+type|phase_hull_upgrades|CAPITAL_SHIP|1	0	Even if this ship isn't a phase ship, 50% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
+type|phase_hull_upgrades|CAPITAL_SHIP|2	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type-detail|phase_hull_upgrades|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Phase Field</hullmod>
 type|phased_recharging|null|0	0	An Exo-Tech armourer shows the crew how to route the ammunition feeders through the phase coils, so magazines refill twice as fast while the ship is phased.
 type|phased_recharging|null|1	0	<good>100%</good> increased ammo regeneration while phased.
@@ -3962,16 +3992,21 @@ type|shared_damage_taken|FRIGATE|0	0	Disperses 5% of shield damage taken to near
 type|shared_damage_taken|DESTROYER|0	0	Disperses 5% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 type|shared_damage_taken|CRUISER|0	0	Disperses 5% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 type|shared_damage_taken|CAPITAL_SHIP|0	0	Disperses 5% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-type|shared_fate|null|0	0	Disperses 20% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-type|shared_fate|null|1	0	<bad>20%</bad> reduced weapon damage.
-type|shared_fate|FRIGATE|0	0	Disperses 20% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-type|shared_fate|FRIGATE|1	0	<bad>20%</bad> reduced weapon damage.
-type|shared_fate|DESTROYER|0	0	Disperses 20% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-type|shared_fate|DESTROYER|1	0	<bad>20%</bad> reduced weapon damage.
-type|shared_fate|CRUISER|0	0	Disperses 20% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-type|shared_fate|CRUISER|1	0	<bad>20%</bad> reduced weapon damage.
-type|shared_fate|CAPITAL_SHIP|0	0	Disperses 20% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-type|shared_fate|CAPITAL_SHIP|1	0	<bad>20%</bad> reduced weapon damage.
+type|shared_fate|null|0	0	League battle lines drawn from rival polities learned to stand or fall together.
+type|shared_fate|null|1	0	Disperses 20% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+type|shared_fate|null|2	0	<bad>20%</bad> reduced weapon damage.
+type|shared_fate|FRIGATE|0	0	League battle lines drawn from rival polities learned to stand or fall together.
+type|shared_fate|FRIGATE|1	0	Disperses 20% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+type|shared_fate|FRIGATE|2	0	<bad>20%</bad> reduced weapon damage.
+type|shared_fate|DESTROYER|0	0	League battle lines drawn from rival polities learned to stand or fall together.
+type|shared_fate|DESTROYER|1	0	Disperses 20% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+type|shared_fate|DESTROYER|2	0	<bad>20%</bad> reduced weapon damage.
+type|shared_fate|CRUISER|0	0	League battle lines drawn from rival polities learned to stand or fall together.
+type|shared_fate|CRUISER|1	0	Disperses 20% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+type|shared_fate|CRUISER|2	0	<bad>20%</bad> reduced weapon damage.
+type|shared_fate|CAPITAL_SHIP|0	0	League battle lines drawn from rival polities learned to stand or fall together.
+type|shared_fate|CAPITAL_SHIP|1	0	Disperses 20% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+type|shared_fate|CAPITAL_SHIP|2	0	<bad>20%</bad> reduced weapon damage.
 type|shield_arc|null|0	0	Increases shield arc by <good>15</good>.
 type|shield_arc|FRIGATE|0	0	Increases shield arc by <good>15</good>.
 type|shield_arc|DESTROYER|0	0	Increases shield arc by <good>15</good>.
@@ -4017,16 +4052,21 @@ type|shield_upkeep_multi|FRIGATE|0	1	<bad>10%</bad> less shield flux upkeep.
 type|shield_upkeep_multi|DESTROYER|0	1	<bad>10%</bad> less shield flux upkeep.
 type|shield_upkeep_multi|CRUISER|0	1	<bad>10%</bad> less shield flux upkeep.
 type|shield_upkeep_multi|CAPITAL_SHIP|0	1	<bad>10%</bad> less shield flux upkeep.
-type|sindrian_shielding|null|0	1	<bad>10%</bad> less damage taken by shields.
-type|sindrian_shielding|null|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-type|sindrian_shielding|FRIGATE|0	1	<bad>10%</bad> less damage taken by shields.
-type|sindrian_shielding|FRIGATE|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-type|sindrian_shielding|DESTROYER|0	1	<bad>10%</bad> less damage taken by shields.
-type|sindrian_shielding|DESTROYER|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-type|sindrian_shielding|CRUISER|0	1	<bad>10%</bad> less damage taken by shields.
-type|sindrian_shielding|CRUISER|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-type|sindrian_shielding|CAPITAL_SHIP|0	1	<bad>10%</bad> less damage taken by shields.
-type|sindrian_shielding|CAPITAL_SHIP|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+type|sindrian_shielding|null|0	0	Sindria's day side is scoured by radiation, and array workers who fled the Askonia Crisis to sign on with this crew know how to harden an emitter against a star's fury. The ship's shields take less damage, and it suffers less in coronas and storms.
+type|sindrian_shielding|null|1	1	<bad>10%</bad> less damage taken by shields.
+type|sindrian_shielding|null|2	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+type|sindrian_shielding|FRIGATE|0	0	Sindria's day side is scoured by radiation, and array workers who fled the Askonia Crisis to sign on with this crew know how to harden an emitter against a star's fury. The ship's shields take less damage, and it suffers less in coronas and storms.
+type|sindrian_shielding|FRIGATE|1	1	<bad>10%</bad> less damage taken by shields.
+type|sindrian_shielding|FRIGATE|2	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+type|sindrian_shielding|DESTROYER|0	0	Sindria's day side is scoured by radiation, and array workers who fled the Askonia Crisis to sign on with this crew know how to harden an emitter against a star's fury. The ship's shields take less damage, and it suffers less in coronas and storms.
+type|sindrian_shielding|DESTROYER|1	1	<bad>10%</bad> less damage taken by shields.
+type|sindrian_shielding|DESTROYER|2	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+type|sindrian_shielding|CRUISER|0	0	Sindria's day side is scoured by radiation, and array workers who fled the Askonia Crisis to sign on with this crew know how to harden an emitter against a star's fury. The ship's shields take less damage, and it suffers less in coronas and storms.
+type|sindrian_shielding|CRUISER|1	1	<bad>10%</bad> less damage taken by shields.
+type|sindrian_shielding|CRUISER|2	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+type|sindrian_shielding|CAPITAL_SHIP|0	0	Sindria's day side is scoured by radiation, and array workers who fled the Askonia Crisis to sign on with this crew know how to harden an emitter against a star's fury. The ship's shields take less damage, and it suffers less in coronas and storms.
+type|sindrian_shielding|CAPITAL_SHIP|1	1	<bad>10%</bad> less damage taken by shields.
+type|sindrian_shielding|CAPITAL_SHIP|2	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type|solar_shielding|null|0	1	<bad>75%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type-detail|solar_shielding|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Solar Shielding</hullmod>
 type|solar_shielding|FRIGATE|0	1	<bad>75%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
@@ -4081,11 +4121,16 @@ type|system_cooldown|FRIGATE|0	1	<bad>5%</bad> reduced ship system cooldown.
 type|system_cooldown|DESTROYER|0	1	<bad>5%</bad> reduced ship system cooldown.
 type|system_cooldown|CRUISER|0	1	<bad>5%</bad> reduced ship system cooldown.
 type|system_cooldown|CAPITAL_SHIP|0	1	<bad>5%</bad> reduced ship system cooldown.
-type|tactical_superiority|null|0	0	Captures combat objectives <good>100%</good> faster.
-type|tactical_superiority|FRIGATE|0	0	Captures combat objectives <good>100%</good> faster.
-type|tactical_superiority|DESTROYER|0	0	Captures combat objectives <good>100%</good> faster.
-type|tactical_superiority|CRUISER|0	0	Captures combat objectives <good>100%</good> faster.
-type|tactical_superiority|CAPITAL_SHIP|0	0	Captures combat objectives <good>100%</good> faster.
+type|tactical_superiority|null|0	0	Every spacer carries a TriPad, and a crew that learns to use Tri-Tachyon's own hardwired backdoors can talk combat objectives into handing over control. This ship captures combat objectives much faster.
+type|tactical_superiority|null|1	0	Captures combat objectives <good>100%</good> faster.
+type|tactical_superiority|FRIGATE|0	0	Every spacer carries a TriPad, and a crew that learns to use Tri-Tachyon's own hardwired backdoors can talk combat objectives into handing over control. This ship captures combat objectives much faster.
+type|tactical_superiority|FRIGATE|1	0	Captures combat objectives <good>100%</good> faster.
+type|tactical_superiority|DESTROYER|0	0	Every spacer carries a TriPad, and a crew that learns to use Tri-Tachyon's own hardwired backdoors can talk combat objectives into handing over control. This ship captures combat objectives much faster.
+type|tactical_superiority|DESTROYER|1	0	Captures combat objectives <good>100%</good> faster.
+type|tactical_superiority|CRUISER|0	0	Every spacer carries a TriPad, and a crew that learns to use Tri-Tachyon's own hardwired backdoors can talk combat objectives into handing over control. This ship captures combat objectives much faster.
+type|tactical_superiority|CRUISER|1	0	Captures combat objectives <good>100%</good> faster.
+type|tactical_superiority|CAPITAL_SHIP|0	0	Every spacer carries a TriPad, and a crew that learns to use Tri-Tachyon's own hardwired backdoors can talk combat objectives into handing over control. This ship captures combat objectives much faster.
+type|tactical_superiority|CAPITAL_SHIP|1	0	Captures combat objectives <good>100%</good> faster.
 type-detail|targetingunit|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Dedicated Targeting Core</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Integrated Targeting Unit</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Dedicated Targeting Core</node>
 type|targetingunit|FRIGATE|0	0	<good>5%</good> increased ballistic weapon range.
 type|targetingunit|FRIGATE|1	0	<good>5%</good> increased energy weapon range.
@@ -4192,21 +4237,26 @@ type|vent_rate_and_emp_damage|CRUISER|0	0	<good>5%</good> increased venting spee
 type|vent_rate_and_emp_damage|CRUISER|1	1	<bad>10%</bad> less EMP damage taken.
 type|vent_rate_and_emp_damage|CAPITAL_SHIP|0	0	<good>5%</good> increased venting speed.
 type|vent_rate_and_emp_damage|CAPITAL_SHIP|1	1	<bad>10%</bad> less EMP damage taken.
-type|violence_of_action|null|0	0	<good>20%</good> increased maneuverability.
-type|violence_of_action|null|1	0	<good>25%</good> increased top speed.
-type|violence_of_action|null|2	0	These effects only last for the first 60 seconds after the ship is deployed.
-type|violence_of_action|FRIGATE|0	0	<good>20%</good> increased maneuverability.
-type|violence_of_action|FRIGATE|1	0	<good>25%</good> increased top speed.
-type|violence_of_action|FRIGATE|2	0	These effects only last for the first 60 seconds after the ship is deployed.
-type|violence_of_action|DESTROYER|0	0	<good>20%</good> increased maneuverability.
-type|violence_of_action|DESTROYER|1	0	<good>25%</good> increased top speed.
-type|violence_of_action|DESTROYER|2	0	These effects only last for the first 60 seconds after the ship is deployed.
-type|violence_of_action|CRUISER|0	0	<good>20%</good> increased maneuverability.
-type|violence_of_action|CRUISER|1	0	<good>25%</good> increased top speed.
-type|violence_of_action|CRUISER|2	0	These effects only last for the first 60 seconds after the ship is deployed.
-type|violence_of_action|CAPITAL_SHIP|0	0	<good>20%</good> increased maneuverability.
-type|violence_of_action|CAPITAL_SHIP|1	0	<good>25%</good> increased top speed.
-type|violence_of_action|CAPITAL_SHIP|2	0	These effects only last for the first 60 seconds after the ship is deployed.
+type|violence_of_action|null|0	0	The Knights of Ludd hold that a righteous ship meets its enemy at full burn, and drilling alongside them at Ceyx teaches the crew to trim the engines and controls for the charge. The ship flies faster and answers the helm more sharply.
+type|violence_of_action|null|1	0	<good>20%</good> increased maneuverability.
+type|violence_of_action|null|2	0	<good>25%</good> increased top speed.
+type|violence_of_action|null|3	0	These effects only last for the first 60 seconds after the ship is deployed.
+type|violence_of_action|FRIGATE|0	0	The Knights of Ludd hold that a righteous ship meets its enemy at full burn, and drilling alongside them at Ceyx teaches the crew to trim the engines and controls for the charge. The ship flies faster and answers the helm more sharply.
+type|violence_of_action|FRIGATE|1	0	<good>20%</good> increased maneuverability.
+type|violence_of_action|FRIGATE|2	0	<good>25%</good> increased top speed.
+type|violence_of_action|FRIGATE|3	0	These effects only last for the first 60 seconds after the ship is deployed.
+type|violence_of_action|DESTROYER|0	0	The Knights of Ludd hold that a righteous ship meets its enemy at full burn, and drilling alongside them at Ceyx teaches the crew to trim the engines and controls for the charge. The ship flies faster and answers the helm more sharply.
+type|violence_of_action|DESTROYER|1	0	<good>20%</good> increased maneuverability.
+type|violence_of_action|DESTROYER|2	0	<good>25%</good> increased top speed.
+type|violence_of_action|DESTROYER|3	0	These effects only last for the first 60 seconds after the ship is deployed.
+type|violence_of_action|CRUISER|0	0	The Knights of Ludd hold that a righteous ship meets its enemy at full burn, and drilling alongside them at Ceyx teaches the crew to trim the engines and controls for the charge. The ship flies faster and answers the helm more sharply.
+type|violence_of_action|CRUISER|1	0	<good>20%</good> increased maneuverability.
+type|violence_of_action|CRUISER|2	0	<good>25%</good> increased top speed.
+type|violence_of_action|CRUISER|3	0	These effects only last for the first 60 seconds after the ship is deployed.
+type|violence_of_action|CAPITAL_SHIP|0	0	The Knights of Ludd hold that a righteous ship meets its enemy at full burn, and drilling alongside them at Ceyx teaches the crew to trim the engines and controls for the charge. The ship flies faster and answers the helm more sharply.
+type|violence_of_action|CAPITAL_SHIP|1	0	<good>20%</good> increased maneuverability.
+type|violence_of_action|CAPITAL_SHIP|2	0	<good>25%</good> increased top speed.
+type|violence_of_action|CAPITAL_SHIP|3	0	These effects only last for the first 60 seconds after the ship is deployed.
 type|warpfield|null|0	0	Exo-Tech engineers walk the crew through scaling down the Hypatia's warp field to wrap the energy mounts. The weapons hit harder and cycle faster, and the zero-flux engine boost holds on at low flux.
 type|warpfield|null|1	0	<good>15%</good> increased energy weapon damage.
 type|warpfield|null|2	0	<good>20%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.

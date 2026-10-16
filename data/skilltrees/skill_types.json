@@ -171,7 +171,7 @@
 		},
 		{
 			"id": "tactical_superiority",
-			"name": "Tactical Superiority",
+			"name": "TriPad Backdoor",
 			"icon": "graphics/icons/tactical_superiority.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -180,6 +180,7 @@
 					"magnitude": 100
 				}
 			],
+			"description": "Every spacer carries a TriPad, and a crew that learns to use Tri-Tachyon's own hardwired backdoors can talk combat objectives into handing over control. This ship captures combat objectives much faster.",
 			"tags": [
 				"fleet_support"
 			]
@@ -424,6 +425,7 @@
 					"magnitude": 1
 				}
 			],
+			"description": "Diktat propaganda insists that the Lion's gaze falls on every citizen at once, and the engineer-technicians of the Lion's Guard took the slogan literally. Studying the Executors they refit teaches the crew to split this ship's beams across the target and the enemy ships around it.",
 			"tags": [
 				"energy",
 				"beam",
@@ -586,6 +588,7 @@
 					"magnitude": 20
 				}
 			],
+			"description": "Pulling apart the energy converters of wrecked Tri-Tachyon warships shows the crew how to tune this ship's energy bolts to glance off an enemy shield and carry on to another target. Some non-beam energy shots that hit a shield refract into the nearest other enemy, weakening with each jump.",
 			"tags": [
 				"energy",
 				"req_non_beam_energy"
@@ -628,7 +631,7 @@
 		},
 		{
 			"id": "attuned_sensors",
-			"name": "Attuned Sensors",
+			"name": "League Picket Targeting",
 			"icon": "graphics/icons/attuned_sensors.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -637,6 +640,7 @@
 					"magnitude": 1
 				}
 			],
+			"description": "Studying the sensor pickets the League posts along its Hegemony border shows the crew how to slave energy weapon targeting to the ship's own sensors. The stronger this ship's sensors, the further its energy weapons reach.",
 			"tags": [
 				"energy",
 				"range",
@@ -1182,7 +1186,7 @@
 		},
 		{
 			"id": "phase_hull_upgrades",
-			"name": "Phase Hull Upgrades",
+			"name": "Hybrid Physics Shrouding",
 			"icon": "graphics/icons/phase_sensor_upgrades.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -1198,6 +1202,7 @@
 			"exclusiveHullMods": [
 				"phasefield"
 			],
+			"description": "Leaked papers from Tri-Tachyon's Hybrid Physics Division, on phase work the corporation swears it abandoned under the Treaty of Thule, show the crew how to bleed this ship's sensor emissions into the masking field phase ships throw over a fleet. Its sensors help hide the fleet from long-range detection, and the hull shrugs off more of the strain of coronas and storms.",
 			"tags": [
 				"phase",
 				"req_phase",
@@ -1206,7 +1211,7 @@
 		},
 		{
 			"id": "hoarded_arms",
-			"name": "Co-ordinated Reload",
+			"name": "League Reload Drill",
 			"icon": "graphics/icons/hoarded_arms.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -1219,6 +1224,7 @@
 					"magnitude": 50
 				}
 			],
+			"description": "League fleets drawn from a dozen squabbling polities still share one reload drill, so that any ship can rearm any other, and serving under a League commission drills it into the crew. Ballistic and energy weapons regain their ammunition faster.",
 			"tags": [
 				"ballistic",
 				"energy",
@@ -2692,6 +2698,7 @@
 					"magnitude": -20
 				}
 			],
+			"description": "League battle lines drawn from rival polities learned to stand or fall together.",
 			"tags": [
 				"shield",
 				"req_shields"
@@ -2792,7 +2799,7 @@
 		},
 		{
 			"id": "violence_of_action",
-			"name": "Dramatic Entrance",
+			"name": "Knight's Charge",
 			"icon": "graphics/icons/violence_of_action.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -2806,6 +2813,7 @@
 				}
 			],
 			"temporaryAfterDeploymentSeconds": 60,
+			"description": "The Knights of Ludd hold that a righteous ship meets its enemy at full burn, and drilling alongside them at Ceyx teaches the crew to trim the engines and controls for the charge. The ship flies faster and answers the helm more sharply.",
 			"tags": [
 				"speed"
 			]
@@ -2829,7 +2837,7 @@
 		},
 		{
 			"id": "perseverence_through_faith",
-			"name": "Perseverence Through Faith",
+			"name": "Perseverance Through Faith",
 			"icon": "graphics/icons/perseverence_through_faith.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -2838,6 +2846,7 @@
 					"magnitude": 2
 				}
 			],
+			"description": "Luddic faithful among the crew hold that a scarred ship, like a penitent, finds its strength in hardship, and they keep its battered guns fighting with prayer and patient hands. Each d-mod this ship carries makes its weapons hit a little harder.",
 			"tags": [
 				"d_mods",
 				"weapons"
@@ -3397,6 +3406,7 @@
 					"magnitude": -25
 				}
 			],
+			"description": "Sindria's day side is scoured by radiation, and array workers who fled the Askonia Crisis to sign on with this crew know how to harden an emitter against a star's fury. The ship's shields take less damage, and it suffers less in coronas and storms.",
 			"tags": [
 				"shield",
 				"req_shields"
