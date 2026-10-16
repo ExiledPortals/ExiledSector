@@ -2,8 +2,9 @@ import { Portal } from '@mantine/core';
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { SERVER_HINT } from '../../api/client.ts';
 import { skillTypesFileObject } from './model/serialization.ts';
-import { nodeById } from './model/types.ts';
+import { HULL_SIZE_OPTIONS, nodeById } from './model/types.ts';
 import { useTreeStore } from './state/treeStore.ts';
+import { mergeDescriptions, type Described, type LabelledDescription, type TooltipContent, type TooltipGroup } from './tooltipContent.ts';
 import classes from './GameTooltip.module.css';
 
 const SHOW_DELAY_MS = 250;
@@ -11,16 +12,7 @@ const RETRY_DELAY_MS = 2000;
 const MARKUP_COLOURS: Record<string, string> = { good: '#98fb00', bad: '#fc6300', hl: '#ffc800', hullmod: '#ffa03c', node: '#5abeff' };
 const MARKUP_PATTERN = /<(\/?)(good|bad|hl|hullmod|node)>/g;
 
-interface Described {
-  pending?: boolean;
-  error?: string;
-  message?: string;
-  title?: string;
-  flavour?: string;
-  effects?: string[];
-  details?: string[];
-  expandHint?: string;
-}
+type TooltipState = { kind: 'note'; message: string } | { kind: 'content'; content: TooltipContent };
 
 function hashText(text: string): number {
   let hash = 5381;
@@ -59,8 +51,38 @@ function hoveredTypeId(target: EventTarget | null): string | null {
   return nodeById(useTreeStore.getState().document, element.dataset.nodeId ?? '')?.type ?? null;
 }
 
+async function fetchDescription(typesJson: string, typeId: string, hullSize: string): Promise<Described> {
+  try {
+    const response = await fetch('/api/describe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Skill-Tree-Editor': '1' },
+      body: `{"types":${typesJson},"typeId":${JSON.stringify(typeId)},"hullSize":${JSON.stringify(hullSize)}}`,
+    });
+    return (await response.json()) as Described;
+  } catch {
+    return { error: `In-game descriptions need the editor server - ${SERVER_HINT}.` };
+  }
+}
+
+function Groups({ groups }: { groups: TooltipGroup[] }) {
+  return (
+    <>
+      {groups.map((group, groupIndex) => (
+        <div key={group.label ?? `shared-${groupIndex}`} className={classes.group}>
+          {group.label ? <div className={classes.groupLabel}>{group.label}</div> : null}
+          {group.lines.map((line, index) => (
+            <div key={index} className={classes.line}>
+              {renderMarkup(line)}
+            </div>
+          ))}
+        </div>
+      ))}
+    </>
+  );
+}
+
 export function GameTooltip({ hullSize }: { hullSize: string }) {
-  const [described, setDescribed] = useState<Described | null>(null);
+  const [shown, setShown] = useState<TooltipState | null>(null);
   const [expanded, setExpanded] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
   const hover = useRef({ typeId: null as string | null, timer: 0, x: 0, y: 0, serial: 0 });
@@ -86,7 +108,12 @@ export function GameTooltip({ hullSize }: { hullSize: string }) {
     box.style.top = `${top}px`;
   };
 
-  useLayoutEffect(position, [described, expanded]);
+  const attachBox = (element: HTMLDivElement | null) => {
+    boxRef.current = element;
+    position();
+  };
+
+  useLayoutEffect(position, [shown, expanded]);
 
   useEffect(() => {
     const state = hover.current;
@@ -96,47 +123,41 @@ export function GameTooltip({ hullSize }: { hullSize: string }) {
       if (!typeId) {
         return;
       }
-      const typesJson = JSON.stringify(skillTypesFileObject(useTreeStore.getState().document.types));
-      const size = hullSizeRef.current || null;
-      const cacheKey = `${typeId}|${size}|${typesJson.length}|${hashText(typesJson)}`;
-      const cached = cache.current.get(cacheKey);
-      if (cached) {
-        setDescribed(cached);
-        return;
-      }
       state.serial++;
       const serial = state.serial;
-      let result: Described;
-      try {
-        const response = await fetch('/api/describe', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'X-Skill-Tree-Editor': '1' },
-          body: `{"types":${typesJson},"typeId":${JSON.stringify(typeId)},"hullSize":${JSON.stringify(size)}}`,
-        });
-        result = (await response.json()) as Described;
-      } catch {
-        result = { error: `In-game descriptions need the editor server - ${SERVER_HINT}.` };
+      const typesJson = JSON.stringify(skillTypesFileObject(useTreeStore.getState().document.types));
+      const typesKey = `${typesJson.length}|${hashText(typesJson)}`;
+      const sizes = hullSizeRef.current ? HULL_SIZE_OPTIONS.filter((option) => option.value === hullSizeRef.current) : HULL_SIZE_OPTIONS;
+      const entries: LabelledDescription[] = [];
+      for (const size of sizes) {
+        const cacheKey = `${typeId}|${size.value}|${typesKey}`;
+        const described = cache.current.get(cacheKey) ?? (await fetchDescription(typesJson, typeId, size.value));
+        if (serial !== state.serial || state.typeId !== typeId) {
+          return;
+        }
+        if (described.pending || described.error) {
+          setShown({ kind: 'note', message: described.message || described.error || 'Preparing in-game descriptions...' });
+          if (described.pending) {
+            state.timer = window.setTimeout(() => void request(), RETRY_DELAY_MS);
+          }
+          return;
+        }
+        cache.current.set(cacheKey, described);
+        entries.push({ label: size.label, described });
       }
-      if (serial !== state.serial || state.typeId !== typeId) {
-        return;
-      }
-      if (!result.pending && !result.error) {
-        cache.current.set(cacheKey, result);
-      }
-      setDescribed(result);
-      if (result.pending) {
-        state.timer = window.setTimeout(() => void request(), RETRY_DELAY_MS);
-      }
+      setShown({ kind: 'content', content: mergeDescriptions(entries) });
     };
 
     const hide = () => {
       window.clearTimeout(state.timer);
       state.typeId = null;
       state.serial++;
-      setDescribed(null);
+      setShown(null);
     };
 
     const onMouseOver = (event: MouseEvent) => {
+      state.x = event.clientX;
+      state.y = event.clientY;
       const typeId = hoveredTypeId(event.target);
       if (typeId === state.typeId) {
         return;
@@ -177,25 +198,21 @@ export function GameTooltip({ hullSize }: { hullSize: string }) {
     };
   }, []);
 
-  if (!described) {
+  if (!shown) {
     return null;
   }
-  const lines = [...(described.effects ?? []), ...(expanded ? (described.details ?? []) : [])];
   return (
     <Portal>
-      <div ref={boxRef} className={classes.tooltip}>
-        {described.pending || described.error ? (
-          <div className={classes.note}>{described.message || described.error || 'Preparing in-game descriptions...'}</div>
+      <div ref={attachBox} className={classes.tooltip}>
+        {shown.kind === 'note' ? (
+          <div className={classes.note}>{shown.message}</div>
         ) : (
           <>
-            <div className={classes.title}>{described.title}</div>
-            {described.flavour ? <div className={classes.flavour}>{described.flavour}</div> : null}
-            {lines.map((line, index) => (
-              <div key={index} className={classes.line}>
-                {renderMarkup(line)}
-              </div>
-            ))}
-            {(described.details ?? []).length > 0 && !expanded ? <div className={classes.note}>{described.expandHint}</div> : null}
+            <div className={classes.title}>{shown.content.title}</div>
+            {shown.content.flavour ? <div className={classes.flavour}>{shown.content.flavour}</div> : null}
+            <Groups groups={shown.content.effects} />
+            {expanded ? <Groups groups={shown.content.details} /> : null}
+            {shown.content.details.length > 0 && !expanded ? <div className={classes.note}>{shown.content.expandHint}</div> : null}
           </>
         )}
       </div>

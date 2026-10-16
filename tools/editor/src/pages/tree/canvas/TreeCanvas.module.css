@@ -171,13 +171,6 @@
   pointer-events: none;
 }
 
-.overlayTopLeft {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 5;
-}
-
 .overlayBottomLeft {
   position: absolute;
   left: 10px;
@@ -190,11 +183,4 @@
   right: 10px;
   bottom: 10px;
   z-index: 5;
-}
-
-.legendDot {
-  width: 11px;
-  height: 11px;
-  border-radius: 50%;
-  flex: none;
 }

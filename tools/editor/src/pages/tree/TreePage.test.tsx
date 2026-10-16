@@ -105,6 +105,14 @@ describe('tree page', () => {
     expect(useTreeStore.getState().selection.nodes).toEqual([]);
   });
 
+  it('shows the in-game tooltip next to a hovered node without needing the mouse to move', async () => {
+    const { container } = await renderLoadedTree();
+    fireEvent.mouseOver(nodeElements(container)[0], { clientX: 100, clientY: 50 });
+    const note = await screen.findByText('Preparing in-game descriptions...');
+    const box = note.parentElement as HTMLElement;
+    expect([box.style.left, box.style.top]).toEqual(['116px', '66px']);
+  });
+
   it('shows the anchor, image, star and multi-selection inspectors', async () => {
     await renderLoadedTree();
     const document = useTreeStore.getState().document;

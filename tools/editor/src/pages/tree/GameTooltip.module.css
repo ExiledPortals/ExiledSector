@@ -31,6 +31,18 @@
   margin-top: 4px;
 }
 
+.group + .group {
+  margin-top: 6px;
+}
+
+.groupLabel {
+  color: #8c8c8c;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
+}
+
 .note {
   color: #8c8c8c;
   font-size: 11px;

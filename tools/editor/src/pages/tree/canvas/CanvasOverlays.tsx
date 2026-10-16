@@ -1,30 +1,12 @@
-import { ActionIcon, Badge, Group, Paper, Stack, Text, Tooltip } from '@mantine/core';
+import { ActionIcon, Badge, Stack, Tooltip } from '@mantine/core';
 import { IconAlertTriangle, IconFocusCentered, IconMaximize, IconMinus, IconPlus } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useVocabulary } from '../../../api/vocabulary.ts';
 import { showIssues } from '../../../shared/dialogs.tsx';
-import { TIER_COLOR_VARIABLES, TIER_LABELS, type Tier } from '../model/types.ts';
 import { validateTree } from '../model/validation.ts';
 import { centerOnOrigin, fitToScreen, zoomBy } from '../state/treeActions.ts';
 import { useTreeStore } from '../state/treeStore.ts';
 import classes from './TreeCanvas.module.css';
-
-const LEGEND_TIERS: Tier[] = ['SMALL', 'NOTABLE', 'KEYSTONE', 'WORMHOLE', 'SOCKET', 'ROOT'];
-
-function Legend() {
-  return (
-    <Paper className={classes.overlayTopLeft} p={8} withBorder shadow="xs" opacity={0.92}>
-      <Stack gap={3}>
-        {LEGEND_TIERS.map((tier) => (
-          <Group key={tier} gap={6} wrap="nowrap">
-            <span className={classes.legendDot} style={{ background: TIER_COLOR_VARIABLES[tier], borderRadius: tier === 'SOCKET' ? 2 : undefined }} />
-            <Text size="xs">{tier === 'ROOT' ? 'Root (ship start)' : TIER_LABELS[tier]}</Text>
-          </Group>
-        ))}
-      </Stack>
-    </Paper>
-  );
-}
 
 function IssuesBadge() {
   const document = useTreeStore((state) => state.document);
@@ -78,7 +60,6 @@ function ZoomControls() {
 export function CanvasOverlays() {
   return (
     <>
-      <Legend />
       <IssuesBadge />
       <ZoomControls />
     </>
