@@ -127,8 +127,30 @@ export interface FileWrite {
   content: string;
 }
 
+interface ReplacedFile {
+  targetPath: string;
+  originalBytes: Buffer | null;
+}
+
+function restoreReplacedFiles(replaced: ReplacedFile[]): string[] {
+  const unrestored: string[] = [];
+  for (const file of [...replaced].reverse()) {
+    try {
+      if (file.originalBytes === null) {
+        fs.rmSync(file.targetPath, { force: true });
+      } else {
+        fs.writeFileSync(file.targetPath, file.originalBytes);
+      }
+    } catch {
+      unrestored.push(file.targetPath);
+    }
+  }
+  return unrestored;
+}
+
 export function writeTextFilesAtomic(writes: FileWrite[]): void {
   const staged: { tempPath: string; targetPath: string }[] = [];
+  const replaced: ReplacedFile[] = [];
   try {
     for (const write of writes) {
       const targetPath = path.resolve(write.filePath);
@@ -137,8 +159,16 @@ export function writeTextFilesAtomic(writes: FileWrite[]): void {
       fs.writeFileSync(tempPath, write.content, { encoding: 'utf8' });
     }
     for (const file of staged) {
+      const originalBytes = fs.existsSync(file.targetPath) ? fs.readFileSync(file.targetPath) : null;
       fs.renameSync(file.tempPath, file.targetPath);
+      replaced.push({ targetPath: file.targetPath, originalBytes });
     }
+  } catch (error) {
+    const unrestored = restoreReplacedFiles(replaced);
+    if (unrestored.length > 0) {
+      throw new Error(`${String(error)}; these files could not be put back: ${unrestored.join(', ')}`, { cause: error });
+    }
+    throw error;
   } finally {
     for (const file of staged) {
       if (fs.existsSync(file.tempPath)) {

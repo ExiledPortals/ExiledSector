@@ -190,6 +190,7 @@ public enum CombatSkillEffect implements BackedSkillEffect {
             super(ownerShip);
         }
 
+        // Intended: detonates once on the first lethal blow even if a Phase Anchor dive or similar then saves the ship.
         // java:S3516: returning true would cancel the hull damage; this listener only reacts to the killing blow and never cancels it
         @SuppressWarnings("java:S3516")
         @Override
@@ -208,6 +209,7 @@ public enum CombatSkillEffect implements BackedSkillEffect {
             float radius = Math.max(MIN_RADIUS, ownerShip.getCollisionRadius() * RADIUS_MULT);
             float damage = fuelDamage();
 
+            // Intended: the blast hits every nearby ship, friendlies included.
             List<ShipAPI> nearby = CombatQueries.shipsMatching(other -> other != ownerShip && !other.isHulk() && !other.isShuttlePod()
                     && CombatQueries.withinRadius(other.getLocation(), loc, radius));
             for (ShipAPI other : nearby) {

@@ -4,7 +4,6 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.compat.MagicLibCompat;
-import exiledsector.i18n.I18n;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.InstalledHullMods;
@@ -37,17 +36,23 @@ public final class HullModConflictResolver {
                     MagicIncompatibleHullmods.removeHullmodWithWarning(variant, hullModId, SkillConflictWarningHullMod.ID);
                     variant.removeMod(MagicLibCompat.WARNING_HULLMOD_ID);
                     variant.addMod(SkillConflictWarningHullMod.ID);
-                    SkillConflictWarnings.recordRemoval(variant, hullModId, I18n.forGameText(allocatedType::getDisplayName));
+                    SkillConflictWarnings.recordRemoval(variant, hullModId, allocatedType.getId());
                     conflictFound = true;
                 }
             }
         }
 
         if (!conflictFound) {
-            if (variant.hasHullMod(SkillConflictWarningHullMod.ID)) {
-                variant.removeMod(SkillConflictWarningHullMod.ID);
-            }
+            keepWarningOnlyWhileRecorded(variant);
+        }
+    }
+
+    private static void keepWarningOnlyWhileRecorded(ShipVariantAPI variant) {
+        boolean warningInstalled = variant.hasHullMod(SkillConflictWarningHullMod.ID);
+        if (!warningInstalled) {
             SkillConflictWarnings.clear(variant);
+        } else if (SkillConflictWarnings.get(variant) == null) {
+            variant.removeMod(SkillConflictWarningHullMod.ID);
         }
     }
 
@@ -62,21 +67,20 @@ public final class HullModConflictResolver {
 
         variant.removeMod(MagicLibCompat.WARNING_HULLMOD_ID);
         String causeId = stripAttempt.get(1);
-        if (causeId == null || Global.getSettings().getHullModSpec(causeId) == null || !isRemovableConflict(variant, causeId)
-                || variant.getPermaMods().contains(causeId)) {
+        if (causeId == null || Global.getSettings().getHullModSpec(causeId) == null || !isRemovableConflict(variant, causeId)) {
             return false;
         }
         variant.removeMod(causeId);
         if (warn) {
             variant.addMod(SkillConflictWarningHullMod.ID);
-            SkillConflictWarnings.recordRemoval(variant, causeId, I18n.forGameText(phantomProviderType::getDisplayName));
+            SkillConflictWarnings.recordRemoval(variant, causeId, phantomProviderType.getId());
         }
         return true;
     }
 
     private static boolean isRemovableConflict(ShipVariantAPI variant, String hullModId) {
-        boolean builtIn = variant.getHullSpec() != null && variant.getHullSpec().isBuiltInMod(hullModId);
-        return variant.hasHullMod(hullModId) && !builtIn && !InstalledHullMods.isInstalledBySkillTree(variant, hullModId);
+        return variant.hasHullMod(hullModId) && InstalledHullMods.isRemovable(variant, hullModId)
+                && !InstalledHullMods.isInstalledBySkillTree(variant, hullModId);
     }
 
     private static SkillType phantomProvider(List<AllocatedNode> allocatedNodes, String hullModId) {

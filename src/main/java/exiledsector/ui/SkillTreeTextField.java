@@ -61,7 +61,8 @@ final class SkillTreeTextField {
         if (!focused) {
             return KeyResult.IGNORED;
         }
-        if (!event.isKeyDownEvent()) {
+        boolean repeated = event.isRepeat();
+        if (!event.isKeyDownEvent() && !repeated) {
             return KeyResult.CONSUMED;
         }
         caretSeconds = 0f;
@@ -74,10 +75,10 @@ final class SkillTreeTextField {
             return KeyResult.EDITED;
         }
         if (keyCode == Keyboard.KEY_ESCAPE) {
-            return KeyResult.CANCEL;
+            return repeated ? KeyResult.CONSUMED : KeyResult.CANCEL;
         }
         if (keyCode == Keyboard.KEY_RETURN || keyCode == Keyboard.KEY_NUMPADENTER) {
-            return KeyResult.SUBMIT;
+            return repeated ? KeyResult.CONSUMED : KeyResult.SUBMIT;
         }
         char character = event.getEventChar();
         if (!Character.isISOControl(character) && enteredText.length() < maxLength) {

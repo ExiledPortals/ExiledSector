@@ -29,6 +29,12 @@ public final class FrozenName {
         this.product = product;
     }
 
+    private Object readResolve() {
+        boolean renamed = !Objects.equals(RolledEffect.currentName(prefixEffect), prefixEffect)
+                || !Objects.equals(RolledEffect.currentName(suffixEffect), suffixEffect);
+        return renamed ? new FrozenName(prefixEffect, suffixEffect, rareFirst, rareSecond, rareBrand, rareModel, product) : this;
+    }
+
     static FrozenName product(String firstWord, String brandWord, String secondWord, String modelWord) {
         return new FrozenName(null, null, firstWord, secondWord, brandWord, modelWord, true);
     }

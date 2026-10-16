@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.Seeds;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.FrameworkFit;
@@ -65,8 +66,8 @@ public final class NpcFleetLeveller {
                     seedPrefix = Global.getSector().getSeedString() + "|" + npcFleet.getId() + "|";
                 }
                 Random socketableRandom = member.isFlagship() && carriesSocketables(npcFleet)
-                        ? new Random((seedPrefix + member.getId() + SOCKETABLE_SEED_SUFFIX).hashCode()) : null;
-                memberRecord = decide(member, playerLevel, playerShipPowers, factionRegion, new Random((seedPrefix + member.getId()).hashCode()),
+                        ? Seeds.random(seedPrefix + member.getId() + SOCKETABLE_SEED_SUFFIX) : null;
+                memberRecord = decide(member, playerLevel, playerShipPowers, factionRegion, Seeds.random(seedPrefix + member.getId()),
                         socketableRandom, definition -> SocketableUnlock.canDrop(definition, Global.getSector()));
                 recordsByMemberId.put(member.getId(), memberRecord);
                 NpcUniqueAlerts.markIfCarrying(npcFleet, memberRecord);

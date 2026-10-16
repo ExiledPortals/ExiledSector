@@ -11,6 +11,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.econ.impl.TechMining;
 import com.fs.starfarer.api.impl.campaign.ids.Industries;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.Seeds;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.socketables.HullUpgradeData;
@@ -49,7 +50,7 @@ public class TechMiningSocketableListener implements EconomyTickListener {
             }
             MemoryAPI marketMemory = market.getMemoryWithoutUpdate();
             int minedMonths = monthsMined(marketMemory, techMining, decay);
-            Random random = new Random((sector.getSeedString() + "|" + market.getId() + "|" + minedMonths).hashCode());
+            Random random = Seeds.random(sector.getSeedString() + "|" + market.getId() + "|" + minedMonths);
             String dropSite = minedMonths == 0 ? SocketableDrops.TECH_MINING_FIRST_FIND : SocketableDrops.TECH_MINING_MONTHLY;
             float chanceMult = minedMonths == 0 ? 1f : (float) Math.pow(decay, minedMonths - 1);
             List<SocketableItemData> foundItems = SocketableDrops.roll(dropSite, random, chanceMult);

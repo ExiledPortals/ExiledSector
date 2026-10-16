@@ -17,6 +17,7 @@ import exiledsector.socketables.SocketableUnlock;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -31,8 +32,12 @@ public final class SocketableCodex {
 
     private static volatile UnlockState unlockState = UnlockState.NONE;
 
-    private record UnlockState(SectorAPI sector, Set<String> unlockedUniqueIds) {
-        static final UnlockState NONE = new UnlockState(null, Set.of());
+    private record UnlockState(WeakReference<SectorAPI> sectorReference, Set<String> unlockedUniqueIds) {
+        static final UnlockState NONE = new UnlockState(new WeakReference<>(null), Set.of());
+
+        boolean isFor(SectorAPI sector) {
+            return sector != null && sectorReference.get() == sector;
+        }
     }
 
     private SocketableCodex() {
@@ -49,7 +54,7 @@ public final class SocketableCodex {
         } catch (RuntimeException e) {
             Logger.getLogger(SocketableCodex.class).warn("Could not check which unique socketables are unlocked", e);
         }
-        unlockState = new UnlockState(sector, Set.copyOf(unlockedUniqueIds));
+        unlockState = new UnlockState(new WeakReference<>(sector), Set.copyOf(unlockedUniqueIds));
     }
 
     static boolean isRevealed(SocketableDefinition definition) {
@@ -57,8 +62,7 @@ public final class SocketableCodex {
             return true;
         }
         UnlockState currentState = unlockState;
-        return currentState.sector() != null && currentState.sector() == Global.getSector()
-                && currentState.unlockedUniqueIds().contains(definition.id());
+        return currentState.isFor(Global.getSector()) && currentState.unlockedUniqueIds().contains(definition.id());
     }
 
     private static boolean isUnlockGated(SocketableDefinition definition) {

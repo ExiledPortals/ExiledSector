@@ -2,6 +2,7 @@ package exiledsector.socketables;
 
 import exiledsector.ExiledSectorModPlugin;
 import exiledsector.ModSettings;
+import exiledsector.Seeds;
 import lunalib.lunaSettings.LunaSettingsListener;
 
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ public final class SocketableRoller {
     }
 
     static List<RolledEffect> roll(SocketableDefinition definition, long seed, boolean averageRolls) {
-        Random random = new Random(scramble(seed));
+        Random random = Seeds.random(seed);
         if (definition.unique()) {
             List<RolledEffect> rolledEffects = new ArrayList<>(definition.pool().size());
             for (PoolEntry entry : definition.pool()) {
@@ -57,7 +58,7 @@ public final class SocketableRoller {
     }
 
     static List<RolledEffect> rollCommon(SocketableDefinition definition, long seed, boolean averageRolls) {
-        return rollAffixes(definition, AffixLayout.COMMON_MAX_EFFECTS, new Random(scramble(seed)), averageRolls);
+        return rollAffixes(definition, AffixLayout.COMMON_MAX_EFFECTS, Seeds.random(seed), averageRolls);
     }
 
     private static List<RolledEffect> rollAffixes(SocketableDefinition definition, int rolledEffectCount, Random random, boolean averageRolls) {
@@ -79,12 +80,5 @@ public final class SocketableRoller {
     private static RolledEffect rollEffect(PoolEntry entry, Random random, boolean averageRolls) {
         float rolledMagnitude = entry.roll(random);
         return new RolledEffect(entry.effectName(), averageRolls ? entry.average() : rolledMagnitude);
-    }
-
-    static long scramble(long seed) {
-        long z = seed + 0x9E3779B97F4A7C15L;
-        z = (z ^ (z >>> 30)) * 0xBF58476D1CE4E5B9L;
-        z = (z ^ (z >>> 27)) * 0x94D049BB133111EBL;
-        return z ^ (z >>> 31);
     }
 }

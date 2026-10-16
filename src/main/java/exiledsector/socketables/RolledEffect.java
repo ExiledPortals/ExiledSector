@@ -32,6 +32,11 @@ public final class RolledEffect {
         }
     }
 
+    private Object readResolve() {
+        String current = currentName(effectName);
+        return Objects.equals(current, effectName) ? this : new RolledEffect(current, magnitude);
+    }
+
     public String effectName() {
         return effectName;
     }

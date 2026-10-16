@@ -2,35 +2,40 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 
-import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.ArrayList;
 
 final class SkillConflictWarnings {
 
-    private static final Map<ShipVariantAPI, Removal> REMOVALS = new WeakHashMap<>();
+    static final String TAG_PREFIX = "exiledSector_conflictRemoved|";
+    private static final String SEPARATOR = "|";
 
     private SkillConflictWarnings() {
     }
 
-    static void recordRemoval(ShipVariantAPI variant, String removedHullModId, String causeSkillDisplayName) {
-        REMOVALS.put(variant, new Removal(removedHullModId, causeSkillDisplayName));
+    static void recordRemoval(ShipVariantAPI variant, String removedHullModId, String causeTypeId) {
+        clear(variant);
+        variant.addTag(TAG_PREFIX + removedHullModId + SEPARATOR + causeTypeId);
     }
 
     static void clear(ShipVariantAPI variant) {
-        REMOVALS.remove(variant);
+        for (String tag : new ArrayList<>(variant.getTags())) {
+            if (tag.startsWith(TAG_PREFIX)) {
+                variant.removeTag(tag);
+            }
+        }
     }
 
     static Removal get(ShipVariantAPI variant) {
-        return REMOVALS.get(variant);
+        for (String tag : variant.getTags()) {
+            if (!tag.startsWith(TAG_PREFIX)) continue;
+            String[] parts = tag.substring(TAG_PREFIX.length()).split("\\" + SEPARATOR, 2);
+            if (parts.length == 2) {
+                return new Removal(parts[0], parts[1]);
+            }
+        }
+        return null;
     }
 
-    static final class Removal {
-        final String removedHullModId;
-        final String causeSkillDisplayName;
-
-        private Removal(String removedHullModId, String causeSkillDisplayName) {
-            this.removedHullModId = removedHullModId;
-            this.causeSkillDisplayName = causeSkillDisplayName;
-        }
+    record Removal(String removedHullModId, String causeTypeId) {
     }
 }

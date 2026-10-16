@@ -59,6 +59,27 @@ class SkillTreeTextFieldTest {
         assertEquals(SkillTreeTextField.KeyResult.CONSUMED, field.handleKey(keyDown(Keyboard.KEY_BACK, '\b')));
     }
 
+    private static InputEventAPI keyRepeat(int keyCode, char character) {
+        InputEventAPI event = mock(InputEventAPI.class);
+        when(event.isRepeat()).thenReturn(true);
+        when(event.getEventValue()).thenReturn(keyCode);
+        when(event.getEventChar()).thenReturn(character);
+        return event;
+    }
+
+    @Test
+    void heldKeysRepeatEditsButNeverRepeatSubmitOrCancel() {
+        SkillTreeTextField field = focusedField();
+        field.setText("abc");
+
+        assertEquals(SkillTreeTextField.KeyResult.EDITED, field.handleKey(keyRepeat(Keyboard.KEY_BACK, '\b')));
+        assertEquals(SkillTreeTextField.KeyResult.EDITED, field.handleKey(keyRepeat(Keyboard.KEY_BACK, '\b')));
+        assertEquals(SkillTreeTextField.KeyResult.EDITED, field.handleKey(keyRepeat(Keyboard.KEY_NONE, 'z')));
+        assertEquals(SkillTreeTextField.KeyResult.CONSUMED, field.handleKey(keyRepeat(Keyboard.KEY_RETURN, '\r')));
+        assertEquals(SkillTreeTextField.KeyResult.CONSUMED, field.handleKey(keyRepeat(Keyboard.KEY_ESCAPE, '\u001b')));
+        assertEquals("az", field.text());
+    }
+
     @Test
     void enterSubmitsAndEscapeCancelsWithoutChangingTheText() {
         SkillTreeTextField field = focusedField();

@@ -331,6 +331,7 @@ class SkillTreeHullModTest {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         when(stats.getFleetMember()).thenReturn(member);
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        RealVariantTags.attach(variant);
         when(stats.getVariant()).thenReturn(variant);
         when(variant.hasHullMod("adaptiveshields")).thenReturn(true);
         when(variant.getHullMods()).thenReturn(new LinkedHashSet<>(List.of("adaptiveshields")));
@@ -347,8 +348,7 @@ class SkillTreeHullModTest {
         verify(variant, never()).removeMod(SkillTreeHullMod.ID);
 
         SkillConflictWarnings.Removal removal = SkillConflictWarnings.get(variant);
-        assertEquals("adaptiveshields", removal.removedHullModId);
-        assertEquals("Shield Conversion - Front", removal.causeSkillDisplayName);
+        assertEquals(new SkillConflictWarnings.Removal("adaptiveshields", "frontemitter"), removal);
     }
 
     @Test
@@ -384,11 +384,39 @@ class SkillTreeHullModTest {
 
         verify(variant, never()).removeMod(SkillTreeHullMod.ID);
         verify(variant, never()).removeMod("armoredcladding");
-        verify(variant).removeMod("exiledSector_conflictWarning");
+        verify(variant, never()).addMod("exiledSector_conflictWarning");
     }
 
     @Test
-    void removeHullModsConflictingWithAllocatedSkillsRemovesTheWarningHullModOnceTheConflictIsGone() {
+    void aPermaModThatConflictsIsNeverReportedAsRemoved() {
+        SkillType hullType = new SkillType.Builder("hull", "Reinforced Hull", "graphics/hullmods/reinforced_bulkheads.png", SkillTier.SMALL)
+                .effects(List.of())
+                .hullSizeEffects(List.of())
+                .vanillaHullModId(null)
+                .descriptionOverride(null)
+                .todo(null)
+                .optionalOptionIds(List.of())
+                .exclusiveHullModIds(List.of("armoredcladding"))
+                .build();
+        SkillNode hullNode = new SkillNode("hull_1", hullType, List.of(), 0f, 0f);
+        SkillTree.register(hullNode);
+        ShipSkillDataManager.get("ship-a").allocate(hullNode, 1);
+
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        RealVariantTags.attach(variant);
+        when(variant.hasHullMod("armoredcladding")).thenReturn(true);
+        when(variant.getHullMods()).thenReturn(new LinkedHashSet<>(List.of("armoredcladding")));
+        when(variant.getPermaMods()).thenReturn(new LinkedHashSet<>(List.of("armoredcladding")));
+        when(variant.getSMods()).thenReturn(new LinkedHashSet<>());
+
+        HullModConflictResolver.removeConflicts(memberWithId("ship-a"), variant);
+
+        verify(variant, never()).addMod("exiledSector_conflictWarning");
+        assertNull(SkillConflictWarnings.get(variant));
+    }
+
+    @Test
+    void theWarningStaysAfterTheConflictIsResolvedUntilThePlayerRemovesIt() {
         SkillType frontType = new SkillType.Builder("frontemitter", "Shield Conversion - Front", "a.png", SkillTier.NOTABLE)
                 .effects(List.of())
                 .hullSizeEffects(List.of())
@@ -407,6 +435,7 @@ class SkillTreeHullModTest {
         data.allocate(frontNode, 1);
 
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        RealVariantTags.attach(variant);
         when(variant.hasHullMod("adaptiveshields")).thenReturn(true);
         when(variant.getHullMods()).thenReturn(new LinkedHashSet<>(List.of("adaptiveshields")));
         when(variant.getSMods()).thenReturn(new LinkedHashSet<>());
@@ -423,8 +452,25 @@ class SkillTreeHullModTest {
 
         HullModConflictResolver.removeConflicts(member, variant);
 
-        verify(variant).removeMod("exiledSector_conflictWarning");
+        verify(variant, never()).removeMod("exiledSector_conflictWarning");
+        assertEquals("adaptiveshields", SkillConflictWarnings.get(variant).removedHullModId());
+
+        when(variant.hasHullMod("exiledSector_conflictWarning")).thenReturn(false);
+
+        HullModConflictResolver.removeConflicts(member, variant);
+
         assertNull(SkillConflictWarnings.get(variant));
+    }
+
+    @Test
+    void aWarningWithNoRecordedRemovalIsTakenOff() {
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        RealVariantTags.attach(variant);
+        when(variant.hasHullMod("exiledSector_conflictWarning")).thenReturn(true);
+
+        HullModConflictResolver.removeConflicts(List.of(), variant);
+
+        verify(variant).removeMod("exiledSector_conflictWarning");
     }
 
     private static SkillNode registerMilitarizedNode() {
@@ -515,13 +561,14 @@ class SkillTreeHullModTest {
         makeSafetyOverridesAPhantom();
         when(Global.getSettings().getHullModSpec("nskr_volatile")).thenReturn(mock(HullModSpecAPI.class));
         ShipVariantAPI variant = variantWhereAModTriedToStripThePhantomFor("nskr_volatile");
+        RealVariantTags.attach(variant);
 
         HullModConflictResolver.removeConflicts(memberWithId("ship-a"), variant);
 
         verify(variant).removeMod("ML_incompatibleHullmodWarning");
         verify(variant).removeMod("nskr_volatile");
         verify(variant).addMod("exiledSector_conflictWarning");
-        assertEquals("nskr_volatile", SkillConflictWarnings.get(variant).removedHullModId);
+        assertEquals("nskr_volatile", SkillConflictWarnings.get(variant).removedHullModId());
     }
 
     @Test

@@ -2,6 +2,7 @@ package exiledsector.socketables;
 
 import com.fs.starfarer.api.Global;
 import exiledsector.ModCsv;
+import exiledsector.Seeds;
 import exiledsector.i18n.Message;
 import exiledsector.i18n.Translation;
 import org.apache.log4j.Logger;
@@ -162,7 +163,7 @@ public final class SocketableNames {
         if (nameWords == null || nameWords.firstWords().isEmpty() || nameWords.secondWords().isEmpty()) {
             return null;
         }
-        Random random = new Random(SocketableRoller.scramble(seed ^ NAME_SALT));
+        Random random = Seeds.random(seed ^ NAME_SALT);
         String firstWord = pick(nameWords.firstWords(), random);
         String secondWord = pick(nameWords.secondWords(), random);
         return switch (nameWords.style()) {

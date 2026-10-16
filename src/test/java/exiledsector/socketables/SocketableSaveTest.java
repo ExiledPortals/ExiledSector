@@ -3,6 +3,9 @@ package exiledsector.socketables;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.security.AnyTypePermission;
+import exiledsector.skills.skilleffect.EffectAliases;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -77,6 +80,24 @@ class SocketableSaveTest {
             assertEquals(saved.effects(), restored.effects());
             assertEquals(SocketType.SUBROUTINE, restored.kind());
             assertTrue(xstream().toXML(loaded).contains("<exiledSector.Socketable>"));
+        }
+    }
+
+    @Test
+    void savedEffectNamesFollowARenameThroughTheAliasList() throws Exception {
+        String rolledXml = xstream().toXML(new RolledEffect("HULL_MULT", 5f)).replace("HULL_MULT", "OLD_HULL_MULT");
+        String nameXml = xstream().toXML(new FrozenName("HULL_MULT", "HULL_MULT", null, null)).replace("HULL_MULT", "OLD_HULL_MULT");
+        EffectAliases.register(new JSONArray().put(new JSONObject().put("alias", "OLD_HULL_MULT").put("effect", "HULL_MULT")));
+        try {
+            RolledEffect loadedEffect = (RolledEffect) xstream().fromXML(rolledXml);
+            FrozenName loadedName = (FrozenName) xstream().fromXML(nameXml);
+
+            assertTrue(rolledXml.contains("OLD_HULL_MULT"), rolledXml);
+            assertEquals(new RolledEffect("HULL_MULT", 5f), loadedEffect);
+            assertEquals("HULL_MULT", loadedName.prefixEffect());
+            assertEquals("HULL_MULT", loadedName.suffixEffect());
+        } finally {
+            EffectAliases.clear();
         }
     }
 

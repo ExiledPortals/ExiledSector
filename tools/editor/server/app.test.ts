@@ -5,7 +5,7 @@ import { PNG } from 'pngjs';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { FastifyInstance } from 'fastify';
 import { createEditorServer } from './app.ts';
-import { hashBytes } from './dataFiles.ts';
+import { hashBytes, writeTextFilesAtomic } from './dataFiles.ts';
 import { DescribeService, describeRequestWithStrings } from './describe.ts';
 import type { ProjectPaths } from './paths.ts';
 
@@ -97,6 +97,23 @@ describe('data files', () => {
     expect(fs.readFileSync(path.join(projectRoot, 'data/skilltrees/ship_skill_tree.json'), 'utf8')).toBe(newTree);
     expect(response.json().hashes.types).toBe(hashBytes(typesBytes));
     expect(fs.readdirSync(path.join(projectRoot, 'data/skilltrees')).filter((name) => name.endsWith('.tmp'))).toEqual([]);
+  });
+
+  it('puts back the files it already replaced when a later file cannot be replaced', () => {
+    const firstPath = writeProjectFile('data/first.txt', 'first before');
+    const blockedPath = path.join(projectRoot, 'data/blocked');
+    fs.mkdirSync(path.join(blockedPath, 'inside'), { recursive: true });
+    const newPath = path.join(projectRoot, 'data/new.txt');
+
+    expect(() => writeTextFilesAtomic([
+      { filePath: firstPath, content: 'first after' },
+      { filePath: newPath, content: 'new after' },
+      { filePath: blockedPath, content: 'blocked after' },
+    ])).toThrow();
+
+    expect(fs.readFileSync(firstPath, 'utf8')).toBe('first before');
+    expect(fs.existsSync(newPath)).toBe(false);
+    expect(fs.readdirSync(path.join(projectRoot, 'data')).filter((name) => name.endsWith('.tmp'))).toEqual([]);
   });
 
   it('writes nothing when any file changed on disk or fails its check', async () => {
