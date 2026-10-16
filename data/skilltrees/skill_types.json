@@ -3507,7 +3507,7 @@
 		},
 		{
 			"id": "exogrid",
-			"name": "Exogrid",
+			"name": "Exo-Tech Grid Splice",
 			"icon": "graphics/icons/rat_exogrid.png",
 			"tier": "KEYSTONE",
 			"effects": [
@@ -3539,7 +3539,7 @@
 			"exclusiveHullMods": [
 				"rat_exogrid"
 			],
-			"description": "A lattice that fuses the flux grid with phase-coil components. The ship runs slightly ahead of normal time and is harder to detect, but the grid caps how fast it can vent and halves what each flux vent adds.",
+			"description": "Under Exo-Tech instruction, the crew splice phase-coil components into the ship's power lattice, fusing it with the flux grid the way Exo-Tech builds its own hulls. The ship runs slightly ahead of normal time, is harder to detect and shrugs off EMP, but the hybrid grid vents more slowly and gets less from each flux vent.",
 			"tags": [
 				"flux",
 				"speed"
@@ -3547,7 +3547,7 @@
 		},
 		{
 			"id": "coil_efficiency",
-			"name": "Coil Efficiency",
+			"name": "Exo-Tech Coil Tuning",
 			"icon": "graphics/icons/rat_coil_efficiency.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -3560,7 +3560,7 @@
 					"magnitude": 25
 				}
 			],
-			"description": "Phase coils tuned to Exo-Tech tolerances keep their speed under heavier flux and shed flux faster while phased.",
+			"description": "Exo-Tech technicians teach the crew to retune the phase coils to their own tolerances. Phased speed holds up under heavier flux, and the ship sheds flux faster while phased.",
 			"tags": [
 				"phase",
 				"flux",
@@ -3569,7 +3569,7 @@
 		},
 		{
 			"id": "phased_recharging",
-			"name": "Phased Recharging",
+			"name": "Phase-Fed Magazines",
 			"icon": "graphics/icons/magazines.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -3578,7 +3578,7 @@
 					"magnitude": 100
 				}
 			],
-			"description": "Weapons draw on p-space while the ship is phased, recharging their ammunition twice as fast.",
+			"description": "An Exo-Tech armourer shows the crew how to route the ammunition feeders through the phase coils, so magazines refill twice as fast while the ship is phased.",
 			"tags": [
 				"phase",
 				"ammo",
@@ -3587,7 +3587,7 @@
 		},
 		{
 			"id": "warpfield",
-			"name": "Warpfield",
+			"name": "Hypatia-Pattern Warpfield",
 			"icon": "graphics/icons/rat_warpfield.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -3611,7 +3611,7 @@
 			"exclusiveHullMods": [
 				"rat_hypatia_hullmod"
 			],
-			"description": "A localised warp field supercharges the ship's energy weapons without raising their flux per second, and keeps the zero-flux engine boost running at low flux.",
+			"description": "Exo-Tech engineers walk the crew through scaling down the Hypatia's warp field to wrap the energy mounts. The weapons hit harder and cycle faster without raising flux per second, and the zero-flux engine boost holds on at low flux.",
 			"tags": [
 				"energy",
 				"req_energy"
@@ -3647,7 +3647,7 @@
 		},
 		{
 			"id": "seraphs_grace",
-			"name": "Seraph's Grace",
+			"name": "Borrowed Grace",
 			"icon": "graphics/icons/rat_seraphs_grace.png",
 			"tier": "KEYSTONE",
 			"effects": [
@@ -3676,7 +3676,7 @@
 				"rat_seraphs_grace",
 				"rat_raphaels_grace"
 			],
-			"description": "Seraph hulls feed on their own wounds. Every blow that lands on armor or hull drives the ship harder, but its shield emitters were never meant to carry the load.",
+			"description": "Having taken apart enough Seraph hulls to see how they feed on their own wounds, the crew rewire the ship to do the same. Every blow to armor or hull pushes its engines, weapons and flux grid harder, but the shield emitters were never built for that load.",
 			"tags": [
 				"armour",
 				"weapons"
@@ -3684,7 +3684,7 @@
 		},
 		{
 			"id": "abyssal_grid",
-			"name": "Abyssal Grid",
+			"name": "Salvaged Abyssal Grid",
 			"icon": "graphics/icons/rat_abyssal_grid.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -3708,7 +3708,7 @@
 			"exclusiveHullMods": [
 				"rat_abyssal_grid"
 			],
-			"description": "The power grid of the abyssal droneships, hardened against the storms of the deep and tuned for energy weapons.",
+			"description": "Picking apart the power grids of abyssal drone wrecks, the crew work out how their couplings survive the storms of the deep and rebuild the ship's energy mounts to match. Energy weapons run cheaper and reach further, and the ship shrugs off EMP and corona storms.",
 			"tags": [
 				"energy",
 				"req_energy"
@@ -3716,7 +3716,7 @@
 		},
 		{
 			"id": "seraphim",
-			"name": "Seraphim",
+			"name": "Seraph Hunting Routines",
 			"icon": "graphics/icons/rat_skill_seraph.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -3742,7 +3742,7 @@
 					"capitalShip": 225000
 				}
 			],
-			"description": "The hunter instincts of a Seraph core. The ship mends itself on the damage it deals, and grows deadlier the longer the hunt goes on.",
+			"description": "Code pulled from a dissected Seraph core, pieced back together and patched into the damage-control software. The ship mends itself on the damage it deals, and grows deadlier the longer the hunt goes on.",
 			"tags": [
 				"weapons",
 				"repair"
@@ -3750,7 +3750,7 @@
 		},
 		{
 			"id": "chronos_adaptability",
-			"name": "Chronos Adaptability",
+			"name": "Chronos Rhythms",
 			"icon": "graphics/icons/rat_skill_time.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -3766,7 +3766,7 @@
 			"exclusiveHullMods": [
 				"rat_abyssal_core"
 			],
-			"description": "Machinery attuned the way a Chronos core prefers, cycling the ship system faster than its makers intended."
+			"description": "After long hours with a recovered Chronos core, the crew decode how it times its own systems and rewrite the ship system's control loop to match, cycling it faster than its makers ever intended."
 		},
 		{
 			"id": "system_cooldown",

@@ -1630,18 +1630,18 @@ effect|SERAPHIM_HEAL_PERCENT|12.5	0	Repairs hull equal to <good>12.5%</good> of 
 effect|SERAPHIM_HEAL_PERCENT|100.0	0	Repairs hull equal to <good>100%</good> of the armor and hull damage this ship deals to enemy ships.
 effect|SERAPHIM_HEAL_PERCENT|-10.0	0	Repairs hull equal to <good>-10%</good> of the armor and hull damage this ship deals to enemy ships.
 effect|SERAPHIM_HEAL_PERCENT|-12.5	0	Repairs hull equal to <good>-12.5%</good> of the armor and hull damage this ship deals to enemy ships.
-effect|SERAPHS_GRACE_MAX_STACKS_FLAT|1.0	0	Every 100 armor and hull damage this ship takes grants a stack of Seraph's Grace lasting 15 seconds, up to <good>1</good> stacks. Stack timers pause while the ship is phased.
-effect|SERAPHS_GRACE_MAX_STACKS_FLAT|10.0	0	Every 100 armor and hull damage this ship takes grants a stack of Seraph's Grace lasting 15 seconds, up to <good>10</good> stacks. Stack timers pause while the ship is phased.
-effect|SERAPHS_GRACE_MAX_STACKS_FLAT|12.5	0	Every 100 armor and hull damage this ship takes grants a stack of Seraph's Grace lasting 15 seconds, up to <good>12.5</good> stacks. Stack timers pause while the ship is phased.
-effect|SERAPHS_GRACE_MAX_STACKS_FLAT|100.0	0	Every 100 armor and hull damage this ship takes grants a stack of Seraph's Grace lasting 15 seconds, up to <good>100</good> stacks. Stack timers pause while the ship is phased.
-effect|SERAPHS_GRACE_MAX_STACKS_FLAT|-10.0	0	Every 100 armor and hull damage this ship takes grants a stack of Seraph's Grace lasting 15 seconds, up to <good>-10</good> stacks. Stack timers pause while the ship is phased.
-effect|SERAPHS_GRACE_MAX_STACKS_FLAT|-12.5	0	Every 100 armor and hull damage this ship takes grants a stack of Seraph's Grace lasting 15 seconds, up to <good>-12.5</good> stacks. Stack timers pause while the ship is phased.
-effect|SERAPHS_GRACE_PERCENT_PER_STACK|1.0	0	Each Seraph's Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
-effect|SERAPHS_GRACE_PERCENT_PER_STACK|10.0	0	Each Seraph's Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>10%</good>, and reduces weapon flux cost and damage taken by <good>10%</good>.
-effect|SERAPHS_GRACE_PERCENT_PER_STACK|12.5	0	Each Seraph's Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>12.5%</good>, and reduces weapon flux cost and damage taken by <good>12.5%</good>.
-effect|SERAPHS_GRACE_PERCENT_PER_STACK|100.0	0	Each Seraph's Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>100%</good>, and reduces weapon flux cost and damage taken by <good>100%</good>.
-effect|SERAPHS_GRACE_PERCENT_PER_STACK|-10.0	0	Each Seraph's Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>-10%</good>, and reduces weapon flux cost and damage taken by <good>-10%</good>.
-effect|SERAPHS_GRACE_PERCENT_PER_STACK|-12.5	0	Each Seraph's Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>-12.5%</good>, and reduces weapon flux cost and damage taken by <good>-12.5%</good>.
+effect|SERAPHS_GRACE_MAX_STACKS_FLAT|1.0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>1</good> stacks. Stack timers pause while the ship is phased.
+effect|SERAPHS_GRACE_MAX_STACKS_FLAT|10.0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>10</good> stacks. Stack timers pause while the ship is phased.
+effect|SERAPHS_GRACE_MAX_STACKS_FLAT|12.5	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>12.5</good> stacks. Stack timers pause while the ship is phased.
+effect|SERAPHS_GRACE_MAX_STACKS_FLAT|100.0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>100</good> stacks. Stack timers pause while the ship is phased.
+effect|SERAPHS_GRACE_MAX_STACKS_FLAT|-10.0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>-10</good> stacks. Stack timers pause while the ship is phased.
+effect|SERAPHS_GRACE_MAX_STACKS_FLAT|-12.5	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>-12.5</good> stacks. Stack timers pause while the ship is phased.
+effect|SERAPHS_GRACE_PERCENT_PER_STACK|1.0	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
+effect|SERAPHS_GRACE_PERCENT_PER_STACK|10.0	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>10%</good>, and reduces weapon flux cost and damage taken by <good>10%</good>.
+effect|SERAPHS_GRACE_PERCENT_PER_STACK|12.5	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>12.5%</good>, and reduces weapon flux cost and damage taken by <good>12.5%</good>.
+effect|SERAPHS_GRACE_PERCENT_PER_STACK|100.0	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>100%</good>, and reduces weapon flux cost and damage taken by <good>100%</good>.
+effect|SERAPHS_GRACE_PERCENT_PER_STACK|-10.0	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>-10%</good>, and reduces weapon flux cost and damage taken by <good>-10%</good>.
+effect|SERAPHS_GRACE_PERCENT_PER_STACK|-12.5	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>-12.5%</good>, and reduces weapon flux cost and damage taken by <good>-12.5%</good>.
 effect|SHIELD_ABSORB_RATE_OF_FIRE_PERCENT|1.0	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>1%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
 effect|SHIELD_ABSORB_RATE_OF_FIRE_PERCENT|10.0	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>10%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
 effect|SHIELD_ABSORB_RATE_OF_FIRE_PERCENT|12.5	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>12.5%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
@@ -2056,31 +2056,31 @@ effect-noSiC|CONVERTED_HANGAR_MIN_CREW_FLAT|12.5	1	Increases minimum crew requir
 effect-noSiC|CONVERTED_HANGAR_MIN_CREW_FLAT|100.0	1	Increases minimum crew required by <good>100</good>.
 effect-noSiC|CONVERTED_HANGAR_MIN_CREW_FLAT|-10.0	1	Decreases minimum crew required by <bad>10</bad>.
 effect-noSiC|CONVERTED_HANGAR_MIN_CREW_FLAT|-12.5	1	Decreases minimum crew required by <bad>12.5</bad>.
-type|abyssal_grid|null|0	0	The power grid of the abyssal droneships, hardened against the storms of the deep and tuned for energy weapons.
+type|abyssal_grid|null|0	0	Picking apart the power grids of abyssal drone wrecks, the crew work out how their couplings survive the storms of the deep and rebuild the ship's energy mounts to match. Energy weapons run cheaper and reach further, and the ship shrugs off EMP and corona storms.
 type|abyssal_grid|null|1	1	<bad>10%</bad> reduced energy weapon flux cost.
 type|abyssal_grid|null|2	0	Increases energy weapon range by <good>100</good>.
 type|abyssal_grid|null|3	1	<bad>25%</bad> reduced EMP damage taken.
 type|abyssal_grid|null|4	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type-detail|abyssal_grid|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Grid</hullmod>
-type|abyssal_grid|FRIGATE|0	0	The power grid of the abyssal droneships, hardened against the storms of the deep and tuned for energy weapons.
+type|abyssal_grid|FRIGATE|0	0	Picking apart the power grids of abyssal drone wrecks, the crew work out how their couplings survive the storms of the deep and rebuild the ship's energy mounts to match. Energy weapons run cheaper and reach further, and the ship shrugs off EMP and corona storms.
 type|abyssal_grid|FRIGATE|1	1	<bad>10%</bad> reduced energy weapon flux cost.
 type|abyssal_grid|FRIGATE|2	0	Increases energy weapon range by <good>100</good>.
 type|abyssal_grid|FRIGATE|3	1	<bad>25%</bad> reduced EMP damage taken.
 type|abyssal_grid|FRIGATE|4	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type-detail|abyssal_grid|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Grid</hullmod>
-type|abyssal_grid|DESTROYER|0	0	The power grid of the abyssal droneships, hardened against the storms of the deep and tuned for energy weapons.
+type|abyssal_grid|DESTROYER|0	0	Picking apart the power grids of abyssal drone wrecks, the crew work out how their couplings survive the storms of the deep and rebuild the ship's energy mounts to match. Energy weapons run cheaper and reach further, and the ship shrugs off EMP and corona storms.
 type|abyssal_grid|DESTROYER|1	1	<bad>10%</bad> reduced energy weapon flux cost.
 type|abyssal_grid|DESTROYER|2	0	Increases energy weapon range by <good>100</good>.
 type|abyssal_grid|DESTROYER|3	1	<bad>25%</bad> reduced EMP damage taken.
 type|abyssal_grid|DESTROYER|4	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type-detail|abyssal_grid|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Grid</hullmod>
-type|abyssal_grid|CRUISER|0	0	The power grid of the abyssal droneships, hardened against the storms of the deep and tuned for energy weapons.
+type|abyssal_grid|CRUISER|0	0	Picking apart the power grids of abyssal drone wrecks, the crew work out how their couplings survive the storms of the deep and rebuild the ship's energy mounts to match. Energy weapons run cheaper and reach further, and the ship shrugs off EMP and corona storms.
 type|abyssal_grid|CRUISER|1	1	<bad>10%</bad> reduced energy weapon flux cost.
 type|abyssal_grid|CRUISER|2	0	Increases energy weapon range by <good>100</good>.
 type|abyssal_grid|CRUISER|3	1	<bad>25%</bad> reduced EMP damage taken.
 type|abyssal_grid|CRUISER|4	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type-detail|abyssal_grid|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Grid</hullmod>
-type|abyssal_grid|CAPITAL_SHIP|0	0	The power grid of the abyssal droneships, hardened against the storms of the deep and tuned for energy weapons.
+type|abyssal_grid|CAPITAL_SHIP|0	0	Picking apart the power grids of abyssal drone wrecks, the crew work out how their couplings survive the storms of the deep and rebuild the ship's energy mounts to match. Energy weapons run cheaper and reach further, and the ship shrugs off EMP and corona storms.
 type|abyssal_grid|CAPITAL_SHIP|1	1	<bad>10%</bad> reduced energy weapon flux cost.
 type|abyssal_grid|CAPITAL_SHIP|2	0	Increases energy weapon range by <good>100</good>.
 type|abyssal_grid|CAPITAL_SHIP|3	1	<bad>25%</bad> reduced EMP damage taken.
@@ -2335,39 +2335,39 @@ type|cargo_capacity_flat|FRIGATE|0	0	Increases cargo capacity by <good>5</good>.
 type|cargo_capacity_flat|DESTROYER|0	0	Increases cargo capacity by <good>15</good>.
 type|cargo_capacity_flat|CRUISER|0	0	Increases cargo capacity by <good>25</good>.
 type|cargo_capacity_flat|CAPITAL_SHIP|0	0	Increases cargo capacity by <good>50</good>.
-type|chronos_adaptability|null|0	0	Machinery attuned the way a Chronos core prefers, cycling the ship system faster than its makers intended.
+type|chronos_adaptability|null|0	0	After long hours with a recovered Chronos core, the crew decode how it times its own systems and rewrite the ship system's control loop to match, cycling it faster than its makers ever intended.
 type|chronos_adaptability|null|1	1	<bad>20%</bad> reduced ship system cooldown.
 type|chronos_adaptability|null|2	0	<good>20%</good> increased ship system charge regeneration.
 type-detail|chronos_adaptability|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Adaptability</hullmod>
-type|chronos_adaptability|FRIGATE|0	0	Machinery attuned the way a Chronos core prefers, cycling the ship system faster than its makers intended.
+type|chronos_adaptability|FRIGATE|0	0	After long hours with a recovered Chronos core, the crew decode how it times its own systems and rewrite the ship system's control loop to match, cycling it faster than its makers ever intended.
 type|chronos_adaptability|FRIGATE|1	1	<bad>20%</bad> reduced ship system cooldown.
 type|chronos_adaptability|FRIGATE|2	0	<good>20%</good> increased ship system charge regeneration.
 type-detail|chronos_adaptability|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Adaptability</hullmod>
-type|chronos_adaptability|DESTROYER|0	0	Machinery attuned the way a Chronos core prefers, cycling the ship system faster than its makers intended.
+type|chronos_adaptability|DESTROYER|0	0	After long hours with a recovered Chronos core, the crew decode how it times its own systems and rewrite the ship system's control loop to match, cycling it faster than its makers ever intended.
 type|chronos_adaptability|DESTROYER|1	1	<bad>20%</bad> reduced ship system cooldown.
 type|chronos_adaptability|DESTROYER|2	0	<good>20%</good> increased ship system charge regeneration.
 type-detail|chronos_adaptability|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Adaptability</hullmod>
-type|chronos_adaptability|CRUISER|0	0	Machinery attuned the way a Chronos core prefers, cycling the ship system faster than its makers intended.
+type|chronos_adaptability|CRUISER|0	0	After long hours with a recovered Chronos core, the crew decode how it times its own systems and rewrite the ship system's control loop to match, cycling it faster than its makers ever intended.
 type|chronos_adaptability|CRUISER|1	1	<bad>20%</bad> reduced ship system cooldown.
 type|chronos_adaptability|CRUISER|2	0	<good>20%</good> increased ship system charge regeneration.
 type-detail|chronos_adaptability|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Adaptability</hullmod>
-type|chronos_adaptability|CAPITAL_SHIP|0	0	Machinery attuned the way a Chronos core prefers, cycling the ship system faster than its makers intended.
+type|chronos_adaptability|CAPITAL_SHIP|0	0	After long hours with a recovered Chronos core, the crew decode how it times its own systems and rewrite the ship system's control loop to match, cycling it faster than its makers ever intended.
 type|chronos_adaptability|CAPITAL_SHIP|1	1	<bad>20%</bad> reduced ship system cooldown.
 type|chronos_adaptability|CAPITAL_SHIP|2	0	<good>20%</good> increased ship system charge regeneration.
 type-detail|chronos_adaptability|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Adaptability</hullmod>
-type|coil_efficiency|null|0	0	Phase coils tuned to Exo-Tech tolerances keep their speed under heavier flux and shed flux faster while phased.
+type|coil_efficiency|null|0	0	Exo-Tech technicians teach the crew to retune the phase coils to their own tolerances. Phased speed holds up under heavier flux, and the ship sheds flux faster while phased.
 type|coil_efficiency|null|1	0	<good>20%</good> increased hard flux level at which phased speed reaches its minimum.
 type|coil_efficiency|null|2	0	<good>25%</good> increased flux dissipation while phased.
-type|coil_efficiency|FRIGATE|0	0	Phase coils tuned to Exo-Tech tolerances keep their speed under heavier flux and shed flux faster while phased.
+type|coil_efficiency|FRIGATE|0	0	Exo-Tech technicians teach the crew to retune the phase coils to their own tolerances. Phased speed holds up under heavier flux, and the ship sheds flux faster while phased.
 type|coil_efficiency|FRIGATE|1	0	<good>20%</good> increased hard flux level at which phased speed reaches its minimum.
 type|coil_efficiency|FRIGATE|2	0	<good>25%</good> increased flux dissipation while phased.
-type|coil_efficiency|DESTROYER|0	0	Phase coils tuned to Exo-Tech tolerances keep their speed under heavier flux and shed flux faster while phased.
+type|coil_efficiency|DESTROYER|0	0	Exo-Tech technicians teach the crew to retune the phase coils to their own tolerances. Phased speed holds up under heavier flux, and the ship sheds flux faster while phased.
 type|coil_efficiency|DESTROYER|1	0	<good>20%</good> increased hard flux level at which phased speed reaches its minimum.
 type|coil_efficiency|DESTROYER|2	0	<good>25%</good> increased flux dissipation while phased.
-type|coil_efficiency|CRUISER|0	0	Phase coils tuned to Exo-Tech tolerances keep their speed under heavier flux and shed flux faster while phased.
+type|coil_efficiency|CRUISER|0	0	Exo-Tech technicians teach the crew to retune the phase coils to their own tolerances. Phased speed holds up under heavier flux, and the ship sheds flux faster while phased.
 type|coil_efficiency|CRUISER|1	0	<good>20%</good> increased hard flux level at which phased speed reaches its minimum.
 type|coil_efficiency|CRUISER|2	0	<good>25%</good> increased flux dissipation while phased.
-type|coil_efficiency|CAPITAL_SHIP|0	0	Phase coils tuned to Exo-Tech tolerances keep their speed under heavier flux and shed flux faster while phased.
+type|coil_efficiency|CAPITAL_SHIP|0	0	Exo-Tech technicians teach the crew to retune the phase coils to their own tolerances. Phased speed holds up under heavier flux, and the ship sheds flux faster while phased.
 type|coil_efficiency|CAPITAL_SHIP|1	0	<good>20%</good> increased hard flux level at which phased speed reaches its minimum.
 type|coil_efficiency|CAPITAL_SHIP|2	0	<good>25%</good> increased flux dissipation while phased.
 type|combat_readiness|null|0	0	<good>2%</good> increased maximum combat readiness.
@@ -2660,7 +2660,7 @@ type|escort_package|CAPITAL_SHIP|1	0	While within 700 su of a larger friendly sh
 type|escort_package|CAPITAL_SHIP|2	0	While within 700 su of a larger friendly ship, increases ballistic and energy weapon range by up to 15%, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 type-detail|escort_package|CAPITAL_SHIP|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser.
 type-detail|escort_package|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Escort Package</hullmod>
-type|exogrid|null|0	0	A lattice that fuses the flux grid with phase-coil components. The ship runs slightly ahead of normal time and is harder to detect, but the grid caps how fast it can vent and halves what each flux vent adds.
+type|exogrid|null|0	0	Under Exo-Tech instruction, the crew splice phase-coil components into the ship's power lattice, fusing it with the flux grid the way Exo-Tech builds its own hulls. The ship runs slightly ahead of normal time, is harder to detect and shrugs off EMP, but the hybrid grid vents more slowly and gets less from each flux vent.
 type|exogrid|null|1	0	<good>10%</good> increased timeflow.
 type|exogrid|null|2	1	<bad>25%</bad> reduced sensor profile.
 type|exogrid|null|3	1	<bad>25%</bad> reduced sensor profile on phase hulls.
@@ -2668,7 +2668,7 @@ type|exogrid|null|4	1	<bad>25%</bad> reduced EMP damage taken.
 type|exogrid|null|5	0	<bad>25%</bad> reduced venting speed.
 type|exogrid|null|6	0	Decreases flux dissipation per flux vent by <bad>5</bad>.
 type-detail|exogrid|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Exogrid</hullmod>
-type|exogrid|FRIGATE|0	0	A lattice that fuses the flux grid with phase-coil components. The ship runs slightly ahead of normal time and is harder to detect, but the grid caps how fast it can vent and halves what each flux vent adds.
+type|exogrid|FRIGATE|0	0	Under Exo-Tech instruction, the crew splice phase-coil components into the ship's power lattice, fusing it with the flux grid the way Exo-Tech builds its own hulls. The ship runs slightly ahead of normal time, is harder to detect and shrugs off EMP, but the hybrid grid vents more slowly and gets less from each flux vent.
 type|exogrid|FRIGATE|1	0	<good>10%</good> increased timeflow.
 type|exogrid|FRIGATE|2	1	<bad>25%</bad> reduced sensor profile.
 type|exogrid|FRIGATE|3	1	<bad>25%</bad> reduced sensor profile on phase hulls.
@@ -2676,7 +2676,7 @@ type|exogrid|FRIGATE|4	1	<bad>25%</bad> reduced EMP damage taken.
 type|exogrid|FRIGATE|5	0	<bad>25%</bad> reduced venting speed.
 type|exogrid|FRIGATE|6	0	Decreases flux dissipation per flux vent by <bad>5</bad>.
 type-detail|exogrid|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Exogrid</hullmod>
-type|exogrid|DESTROYER|0	0	A lattice that fuses the flux grid with phase-coil components. The ship runs slightly ahead of normal time and is harder to detect, but the grid caps how fast it can vent and halves what each flux vent adds.
+type|exogrid|DESTROYER|0	0	Under Exo-Tech instruction, the crew splice phase-coil components into the ship's power lattice, fusing it with the flux grid the way Exo-Tech builds its own hulls. The ship runs slightly ahead of normal time, is harder to detect and shrugs off EMP, but the hybrid grid vents more slowly and gets less from each flux vent.
 type|exogrid|DESTROYER|1	0	<good>10%</good> increased timeflow.
 type|exogrid|DESTROYER|2	1	<bad>25%</bad> reduced sensor profile.
 type|exogrid|DESTROYER|3	1	<bad>25%</bad> reduced sensor profile on phase hulls.
@@ -2684,7 +2684,7 @@ type|exogrid|DESTROYER|4	1	<bad>25%</bad> reduced EMP damage taken.
 type|exogrid|DESTROYER|5	0	<bad>25%</bad> reduced venting speed.
 type|exogrid|DESTROYER|6	0	Decreases flux dissipation per flux vent by <bad>5</bad>.
 type-detail|exogrid|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Exogrid</hullmod>
-type|exogrid|CRUISER|0	0	A lattice that fuses the flux grid with phase-coil components. The ship runs slightly ahead of normal time and is harder to detect, but the grid caps how fast it can vent and halves what each flux vent adds.
+type|exogrid|CRUISER|0	0	Under Exo-Tech instruction, the crew splice phase-coil components into the ship's power lattice, fusing it with the flux grid the way Exo-Tech builds its own hulls. The ship runs slightly ahead of normal time, is harder to detect and shrugs off EMP, but the hybrid grid vents more slowly and gets less from each flux vent.
 type|exogrid|CRUISER|1	0	<good>10%</good> increased timeflow.
 type|exogrid|CRUISER|2	1	<bad>25%</bad> reduced sensor profile.
 type|exogrid|CRUISER|3	1	<bad>25%</bad> reduced sensor profile on phase hulls.
@@ -2692,7 +2692,7 @@ type|exogrid|CRUISER|4	1	<bad>25%</bad> reduced EMP damage taken.
 type|exogrid|CRUISER|5	0	<bad>25%</bad> reduced venting speed.
 type|exogrid|CRUISER|6	0	Decreases flux dissipation per flux vent by <bad>5</bad>.
 type-detail|exogrid|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Exogrid</hullmod>
-type|exogrid|CAPITAL_SHIP|0	0	A lattice that fuses the flux grid with phase-coil components. The ship runs slightly ahead of normal time and is harder to detect, but the grid caps how fast it can vent and halves what each flux vent adds.
+type|exogrid|CAPITAL_SHIP|0	0	Under Exo-Tech instruction, the crew splice phase-coil components into the ship's power lattice, fusing it with the flux grid the way Exo-Tech builds its own hulls. The ship runs slightly ahead of normal time, is harder to detect and shrugs off EMP, but the hybrid grid vents more slowly and gets less from each flux vent.
 type|exogrid|CAPITAL_SHIP|1	0	<good>10%</good> increased timeflow.
 type|exogrid|CAPITAL_SHIP|2	1	<bad>25%</bad> reduced sensor profile.
 type|exogrid|CAPITAL_SHIP|3	1	<bad>25%</bad> reduced sensor profile on phase hulls.
@@ -3447,15 +3447,15 @@ type-detail|phase_hull_upgrades|CRUISER|0	0	Mutually exclusive with <hullmod>hul
 type|phase_hull_upgrades|CAPITAL_SHIP|0	0	Even if this ship isn't a phase ship, 50% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
 type|phase_hull_upgrades|CAPITAL_SHIP|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type-detail|phase_hull_upgrades|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Phase Field</hullmod>
-type|phased_recharging|null|0	0	Weapons draw on p-space while the ship is phased, recharging their ammunition twice as fast.
+type|phased_recharging|null|0	0	An Exo-Tech armourer shows the crew how to route the ammunition feeders through the phase coils, so magazines refill twice as fast while the ship is phased.
 type|phased_recharging|null|1	0	<good>100%</good> increased ammo regeneration while phased.
-type|phased_recharging|FRIGATE|0	0	Weapons draw on p-space while the ship is phased, recharging their ammunition twice as fast.
+type|phased_recharging|FRIGATE|0	0	An Exo-Tech armourer shows the crew how to route the ammunition feeders through the phase coils, so magazines refill twice as fast while the ship is phased.
 type|phased_recharging|FRIGATE|1	0	<good>100%</good> increased ammo regeneration while phased.
-type|phased_recharging|DESTROYER|0	0	Weapons draw on p-space while the ship is phased, recharging their ammunition twice as fast.
+type|phased_recharging|DESTROYER|0	0	An Exo-Tech armourer shows the crew how to route the ammunition feeders through the phase coils, so magazines refill twice as fast while the ship is phased.
 type|phased_recharging|DESTROYER|1	0	<good>100%</good> increased ammo regeneration while phased.
-type|phased_recharging|CRUISER|0	0	Weapons draw on p-space while the ship is phased, recharging their ammunition twice as fast.
+type|phased_recharging|CRUISER|0	0	An Exo-Tech armourer shows the crew how to route the ammunition feeders through the phase coils, so magazines refill twice as fast while the ship is phased.
 type|phased_recharging|CRUISER|1	0	<good>100%</good> increased ammo regeneration while phased.
-type|phased_recharging|CAPITAL_SHIP|0	0	Weapons draw on p-space while the ship is phased, recharging their ammunition twice as fast.
+type|phased_recharging|CAPITAL_SHIP|0	0	An Exo-Tech armourer shows the crew how to route the ammunition feeders through the phase coils, so magazines refill twice as fast while the ship is phased.
 type|phased_recharging|CAPITAL_SHIP|1	0	<good>100%</good> increased ammo regeneration while phased.
 type|pointdefenseai|null|0	0	Point-defense weapons can identify and ignore decoy flares.
 type|pointdefenseai|null|1	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
@@ -3642,61 +3642,61 @@ type|sensor_profile|FRIGATE|0	1	<bad>10%</bad> reduced sensor profile.
 type|sensor_profile|DESTROYER|0	1	<bad>10%</bad> reduced sensor profile.
 type|sensor_profile|CRUISER|0	1	<bad>10%</bad> reduced sensor profile.
 type|sensor_profile|CAPITAL_SHIP|0	1	<bad>10%</bad> reduced sensor profile.
-type|seraphim|null|0	0	The hunter instincts of a Seraph core. The ship mends itself on the damage it deals, and grows deadlier the longer the hunt goes on.
+type|seraphim|null|0	0	Code pulled from a dissected Seraph core, pieced back together and patched into the damage-control software. The ship mends itself on the damage it deals, and grows deadlier the longer the hunt goes on.
 type|seraphim|null|1	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
 type|seraphim|null|2	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
 type|seraphim|null|3	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-type|seraphim|FRIGATE|0	0	The hunter instincts of a Seraph core. The ship mends itself on the damage it deals, and grows deadlier the longer the hunt goes on.
+type|seraphim|FRIGATE|0	0	Code pulled from a dissected Seraph core, pieced back together and patched into the damage-control software. The ship mends itself on the damage it deals, and grows deadlier the longer the hunt goes on.
 type|seraphim|FRIGATE|1	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
 type|seraphim|FRIGATE|2	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
 type|seraphim|FRIGATE|3	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 type|seraphim|FRIGATE|4	0	The full Seraphim damage bonus is reached after dealing 75000 armor and hull damage.
-type|seraphim|DESTROYER|0	0	The hunter instincts of a Seraph core. The ship mends itself on the damage it deals, and grows deadlier the longer the hunt goes on.
+type|seraphim|DESTROYER|0	0	Code pulled from a dissected Seraph core, pieced back together and patched into the damage-control software. The ship mends itself on the damage it deals, and grows deadlier the longer the hunt goes on.
 type|seraphim|DESTROYER|1	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
 type|seraphim|DESTROYER|2	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
 type|seraphim|DESTROYER|3	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 type|seraphim|DESTROYER|4	0	The full Seraphim damage bonus is reached after dealing 125000 armor and hull damage.
-type|seraphim|CRUISER|0	0	The hunter instincts of a Seraph core. The ship mends itself on the damage it deals, and grows deadlier the longer the hunt goes on.
+type|seraphim|CRUISER|0	0	Code pulled from a dissected Seraph core, pieced back together and patched into the damage-control software. The ship mends itself on the damage it deals, and grows deadlier the longer the hunt goes on.
 type|seraphim|CRUISER|1	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
 type|seraphim|CRUISER|2	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
 type|seraphim|CRUISER|3	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 type|seraphim|CRUISER|4	0	The full Seraphim damage bonus is reached after dealing 175000 armor and hull damage.
-type|seraphim|CAPITAL_SHIP|0	0	The hunter instincts of a Seraph core. The ship mends itself on the damage it deals, and grows deadlier the longer the hunt goes on.
+type|seraphim|CAPITAL_SHIP|0	0	Code pulled from a dissected Seraph core, pieced back together and patched into the damage-control software. The ship mends itself on the damage it deals, and grows deadlier the longer the hunt goes on.
 type|seraphim|CAPITAL_SHIP|1	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
 type|seraphim|CAPITAL_SHIP|2	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
 type|seraphim|CAPITAL_SHIP|3	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 type|seraphim|CAPITAL_SHIP|4	0	The full Seraphim damage bonus is reached after dealing 225000 armor and hull damage.
-type|seraphs_grace|null|0	0	Seraph hulls feed on their own wounds. Every blow that lands on armor or hull drives the ship harder, but its shield emitters were never meant to carry the load.
-type|seraphs_grace|null|1	0	Every 100 armor and hull damage this ship takes grants a stack of Seraph's Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-type|seraphs_grace|null|2	0	Each Seraph's Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
+type|seraphs_grace|null|0	0	Having taken apart enough Seraph hulls to see how they feed on their own wounds, the crew rewire the ship to do the same. Every blow to armor or hull pushes its engines, weapons and flux grid harder, but the shield emitters were never built for that load.
+type|seraphs_grace|null|1	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
+type|seraphs_grace|null|2	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
 type|seraphs_grace|null|3	0	<good>20%</good> increased weapon durability.
 type|seraphs_grace|null|4	1	<bad>20%</bad> reduced weapon and engine repair time.
 type|seraphs_grace|null|5	1	<good>20%</good> more damage taken by shields.
 type-detail|seraphs_grace|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Seraphs Grace</hullmod>\n• <hullmod>Raphaels Grace</hullmod>
-type|seraphs_grace|FRIGATE|0	0	Seraph hulls feed on their own wounds. Every blow that lands on armor or hull drives the ship harder, but its shield emitters were never meant to carry the load.
-type|seraphs_grace|FRIGATE|1	0	Every 100 armor and hull damage this ship takes grants a stack of Seraph's Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-type|seraphs_grace|FRIGATE|2	0	Each Seraph's Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
+type|seraphs_grace|FRIGATE|0	0	Having taken apart enough Seraph hulls to see how they feed on their own wounds, the crew rewire the ship to do the same. Every blow to armor or hull pushes its engines, weapons and flux grid harder, but the shield emitters were never built for that load.
+type|seraphs_grace|FRIGATE|1	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
+type|seraphs_grace|FRIGATE|2	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
 type|seraphs_grace|FRIGATE|3	0	<good>20%</good> increased weapon durability.
 type|seraphs_grace|FRIGATE|4	1	<bad>20%</bad> reduced weapon and engine repair time.
 type|seraphs_grace|FRIGATE|5	1	<good>20%</good> more damage taken by shields.
 type-detail|seraphs_grace|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Seraphs Grace</hullmod>\n• <hullmod>Raphaels Grace</hullmod>
-type|seraphs_grace|DESTROYER|0	0	Seraph hulls feed on their own wounds. Every blow that lands on armor or hull drives the ship harder, but its shield emitters were never meant to carry the load.
-type|seraphs_grace|DESTROYER|1	0	Every 100 armor and hull damage this ship takes grants a stack of Seraph's Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-type|seraphs_grace|DESTROYER|2	0	Each Seraph's Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
+type|seraphs_grace|DESTROYER|0	0	Having taken apart enough Seraph hulls to see how they feed on their own wounds, the crew rewire the ship to do the same. Every blow to armor or hull pushes its engines, weapons and flux grid harder, but the shield emitters were never built for that load.
+type|seraphs_grace|DESTROYER|1	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
+type|seraphs_grace|DESTROYER|2	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
 type|seraphs_grace|DESTROYER|3	0	<good>20%</good> increased weapon durability.
 type|seraphs_grace|DESTROYER|4	1	<bad>20%</bad> reduced weapon and engine repair time.
 type|seraphs_grace|DESTROYER|5	1	<good>20%</good> more damage taken by shields.
 type-detail|seraphs_grace|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Seraphs Grace</hullmod>\n• <hullmod>Raphaels Grace</hullmod>
-type|seraphs_grace|CRUISER|0	0	Seraph hulls feed on their own wounds. Every blow that lands on armor or hull drives the ship harder, but its shield emitters were never meant to carry the load.
-type|seraphs_grace|CRUISER|1	0	Every 100 armor and hull damage this ship takes grants a stack of Seraph's Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-type|seraphs_grace|CRUISER|2	0	Each Seraph's Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
+type|seraphs_grace|CRUISER|0	0	Having taken apart enough Seraph hulls to see how they feed on their own wounds, the crew rewire the ship to do the same. Every blow to armor or hull pushes its engines, weapons and flux grid harder, but the shield emitters were never built for that load.
+type|seraphs_grace|CRUISER|1	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
+type|seraphs_grace|CRUISER|2	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
 type|seraphs_grace|CRUISER|3	0	<good>20%</good> increased weapon durability.
 type|seraphs_grace|CRUISER|4	1	<bad>20%</bad> reduced weapon and engine repair time.
 type|seraphs_grace|CRUISER|5	1	<good>20%</good> more damage taken by shields.
 type-detail|seraphs_grace|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Seraphs Grace</hullmod>\n• <hullmod>Raphaels Grace</hullmod>
-type|seraphs_grace|CAPITAL_SHIP|0	0	Seraph hulls feed on their own wounds. Every blow that lands on armor or hull drives the ship harder, but its shield emitters were never meant to carry the load.
-type|seraphs_grace|CAPITAL_SHIP|1	0	Every 100 armor and hull damage this ship takes grants a stack of Seraph's Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-type|seraphs_grace|CAPITAL_SHIP|2	0	Each Seraph's Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
+type|seraphs_grace|CAPITAL_SHIP|0	0	Having taken apart enough Seraph hulls to see how they feed on their own wounds, the crew rewire the ship to do the same. Every blow to armor or hull pushes its engines, weapons and flux grid harder, but the shield emitters were never built for that load.
+type|seraphs_grace|CAPITAL_SHIP|1	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
+type|seraphs_grace|CAPITAL_SHIP|2	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
 type|seraphs_grace|CAPITAL_SHIP|3	0	<good>20%</good> increased weapon durability.
 type|seraphs_grace|CAPITAL_SHIP|4	1	<bad>20%</bad> reduced weapon and engine repair time.
 type|seraphs_grace|CAPITAL_SHIP|5	1	<good>20%</good> more damage taken by shields.
@@ -3946,31 +3946,31 @@ type|violence_of_action|CRUISER|2	0	These effects only last for the first 60 sec
 type|violence_of_action|CAPITAL_SHIP|0	0	<good>20%</good> increased maneuverability.
 type|violence_of_action|CAPITAL_SHIP|1	0	<good>25%</good> increased top speed.
 type|violence_of_action|CAPITAL_SHIP|2	0	These effects only last for the first 60 seconds after the ship is deployed.
-type|warpfield|null|0	0	A localised warp field supercharges the ship's energy weapons without raising their flux per second, and keeps the zero-flux engine boost running at low flux.
+type|warpfield|null|0	0	Exo-Tech engineers walk the crew through scaling down the Hypatia's warp field to wrap the energy mounts. The weapons hit harder and cycle faster without raising flux per second, and the zero-flux engine boost holds on at low flux.
 type|warpfield|null|1	0	<good>15%</good> increased energy weapon damage.
 type|warpfield|null|2	0	<good>20%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|warpfield|null|3	1	<bad>17%</bad> reduced energy weapon flux cost.
 type|warpfield|null|4	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 type-detail|warpfield|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Warpfield</hullmod>
-type|warpfield|FRIGATE|0	0	A localised warp field supercharges the ship's energy weapons without raising their flux per second, and keeps the zero-flux engine boost running at low flux.
+type|warpfield|FRIGATE|0	0	Exo-Tech engineers walk the crew through scaling down the Hypatia's warp field to wrap the energy mounts. The weapons hit harder and cycle faster without raising flux per second, and the zero-flux engine boost holds on at low flux.
 type|warpfield|FRIGATE|1	0	<good>15%</good> increased energy weapon damage.
 type|warpfield|FRIGATE|2	0	<good>20%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|warpfield|FRIGATE|3	1	<bad>17%</bad> reduced energy weapon flux cost.
 type|warpfield|FRIGATE|4	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 type-detail|warpfield|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Warpfield</hullmod>
-type|warpfield|DESTROYER|0	0	A localised warp field supercharges the ship's energy weapons without raising their flux per second, and keeps the zero-flux engine boost running at low flux.
+type|warpfield|DESTROYER|0	0	Exo-Tech engineers walk the crew through scaling down the Hypatia's warp field to wrap the energy mounts. The weapons hit harder and cycle faster without raising flux per second, and the zero-flux engine boost holds on at low flux.
 type|warpfield|DESTROYER|1	0	<good>15%</good> increased energy weapon damage.
 type|warpfield|DESTROYER|2	0	<good>20%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|warpfield|DESTROYER|3	1	<bad>17%</bad> reduced energy weapon flux cost.
 type|warpfield|DESTROYER|4	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 type-detail|warpfield|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Warpfield</hullmod>
-type|warpfield|CRUISER|0	0	A localised warp field supercharges the ship's energy weapons without raising their flux per second, and keeps the zero-flux engine boost running at low flux.
+type|warpfield|CRUISER|0	0	Exo-Tech engineers walk the crew through scaling down the Hypatia's warp field to wrap the energy mounts. The weapons hit harder and cycle faster without raising flux per second, and the zero-flux engine boost holds on at low flux.
 type|warpfield|CRUISER|1	0	<good>15%</good> increased energy weapon damage.
 type|warpfield|CRUISER|2	0	<good>20%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|warpfield|CRUISER|3	1	<bad>17%</bad> reduced energy weapon flux cost.
 type|warpfield|CRUISER|4	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 type-detail|warpfield|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Warpfield</hullmod>
-type|warpfield|CAPITAL_SHIP|0	0	A localised warp field supercharges the ship's energy weapons without raising their flux per second, and keeps the zero-flux engine boost running at low flux.
+type|warpfield|CAPITAL_SHIP|0	0	Exo-Tech engineers walk the crew through scaling down the Hypatia's warp field to wrap the energy mounts. The weapons hit harder and cycle faster without raising flux per second, and the zero-flux engine boost holds on at low flux.
 type|warpfield|CAPITAL_SHIP|1	0	<good>15%</good> increased energy weapon damage.
 type|warpfield|CAPITAL_SHIP|2	0	<good>20%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|warpfield|CAPITAL_SHIP|3	1	<bad>17%</bad> reduced energy weapon flux cost.
@@ -4171,8 +4171,8 @@ summary|option0|FRIGATE|167	0	Repairs hull equal to <good>10%</good> of the armo
 summary|option0|FRIGATE|168	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
 summary|option0|FRIGATE|169	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 summary|option0|FRIGATE|170	0	The full Seraphim damage bonus is reached after dealing 75000 armor and hull damage.
-summary|option0|FRIGATE|171	0	Every 100 armor and hull damage this ship takes grants a stack of Seraph's Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-summary|option0|FRIGATE|172	0	Each Seraph's Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
+summary|option0|FRIGATE|171	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
+summary|option0|FRIGATE|172	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
 summary|option0|FRIGATE|173	1	<bad>20%</bad> reduced weapon and engine repair time.
 summary|option0|FRIGATE|174	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 summary|option0|FRIGATE|175	0	Removes this ship's shield entirely.
@@ -4364,8 +4364,8 @@ summary|option0|DESTROYER|167	0	Repairs hull equal to <good>10%</good> of the ar
 summary|option0|DESTROYER|168	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
 summary|option0|DESTROYER|169	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 summary|option0|DESTROYER|170	0	The full Seraphim damage bonus is reached after dealing 125000 armor and hull damage.
-summary|option0|DESTROYER|171	0	Every 100 armor and hull damage this ship takes grants a stack of Seraph's Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-summary|option0|DESTROYER|172	0	Each Seraph's Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
+summary|option0|DESTROYER|171	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
+summary|option0|DESTROYER|172	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
 summary|option0|DESTROYER|173	1	<bad>20%</bad> reduced weapon and engine repair time.
 summary|option0|DESTROYER|174	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 summary|option0|DESTROYER|175	0	Removes this ship's shield entirely.
@@ -4557,8 +4557,8 @@ summary|option0|CRUISER|167	0	Repairs hull equal to <good>10%</good> of the armo
 summary|option0|CRUISER|168	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
 summary|option0|CRUISER|169	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 summary|option0|CRUISER|170	0	The full Seraphim damage bonus is reached after dealing 175000 armor and hull damage.
-summary|option0|CRUISER|171	0	Every 100 armor and hull damage this ship takes grants a stack of Seraph's Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-summary|option0|CRUISER|172	0	Each Seraph's Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
+summary|option0|CRUISER|171	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
+summary|option0|CRUISER|172	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
 summary|option0|CRUISER|173	1	<bad>20%</bad> reduced weapon and engine repair time.
 summary|option0|CRUISER|174	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 summary|option0|CRUISER|175	0	Removes this ship's shield entirely.
@@ -4750,8 +4750,8 @@ summary|option0|CAPITAL_SHIP|167	0	Repairs hull equal to <good>10%</good> of the
 summary|option0|CAPITAL_SHIP|168	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
 summary|option0|CAPITAL_SHIP|169	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 summary|option0|CAPITAL_SHIP|170	0	The full Seraphim damage bonus is reached after dealing 225000 armor and hull damage.
-summary|option0|CAPITAL_SHIP|171	0	Every 100 armor and hull damage this ship takes grants a stack of Seraph's Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-summary|option0|CAPITAL_SHIP|172	0	Each Seraph's Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
+summary|option0|CAPITAL_SHIP|171	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
+summary|option0|CAPITAL_SHIP|172	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
 summary|option0|CAPITAL_SHIP|173	1	<bad>20%</bad> reduced weapon and engine repair time.
 summary|option0|CAPITAL_SHIP|174	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 summary|option0|CAPITAL_SHIP|175	0	Removes this ship's shield entirely.
@@ -4943,8 +4943,8 @@ summary|option1|FRIGATE|167	0	Repairs hull equal to <good>10%</good> of the armo
 summary|option1|FRIGATE|168	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
 summary|option1|FRIGATE|169	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 summary|option1|FRIGATE|170	0	The full Seraphim damage bonus is reached after dealing 75000 armor and hull damage.
-summary|option1|FRIGATE|171	0	Every 100 armor and hull damage this ship takes grants a stack of Seraph's Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-summary|option1|FRIGATE|172	0	Each Seraph's Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
+summary|option1|FRIGATE|171	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
+summary|option1|FRIGATE|172	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
 summary|option1|FRIGATE|173	1	<bad>20%</bad> reduced weapon and engine repair time.
 summary|option1|FRIGATE|174	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 summary|option1|FRIGATE|175	0	Removes this ship's shield entirely.
@@ -5136,8 +5136,8 @@ summary|option1|DESTROYER|167	0	Repairs hull equal to <good>10%</good> of the ar
 summary|option1|DESTROYER|168	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
 summary|option1|DESTROYER|169	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 summary|option1|DESTROYER|170	0	The full Seraphim damage bonus is reached after dealing 125000 armor and hull damage.
-summary|option1|DESTROYER|171	0	Every 100 armor and hull damage this ship takes grants a stack of Seraph's Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-summary|option1|DESTROYER|172	0	Each Seraph's Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
+summary|option1|DESTROYER|171	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
+summary|option1|DESTROYER|172	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
 summary|option1|DESTROYER|173	1	<bad>20%</bad> reduced weapon and engine repair time.
 summary|option1|DESTROYER|174	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 summary|option1|DESTROYER|175	0	Removes this ship's shield entirely.
@@ -5329,8 +5329,8 @@ summary|option1|CRUISER|167	0	Repairs hull equal to <good>10%</good> of the armo
 summary|option1|CRUISER|168	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
 summary|option1|CRUISER|169	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 summary|option1|CRUISER|170	0	The full Seraphim damage bonus is reached after dealing 175000 armor and hull damage.
-summary|option1|CRUISER|171	0	Every 100 armor and hull damage this ship takes grants a stack of Seraph's Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-summary|option1|CRUISER|172	0	Each Seraph's Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
+summary|option1|CRUISER|171	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
+summary|option1|CRUISER|172	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
 summary|option1|CRUISER|173	1	<bad>20%</bad> reduced weapon and engine repair time.
 summary|option1|CRUISER|174	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 summary|option1|CRUISER|175	0	Removes this ship's shield entirely.
@@ -5522,8 +5522,8 @@ summary|option1|CAPITAL_SHIP|167	0	Repairs hull equal to <good>10%</good> of the
 summary|option1|CAPITAL_SHIP|168	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
 summary|option1|CAPITAL_SHIP|169	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 summary|option1|CAPITAL_SHIP|170	0	The full Seraphim damage bonus is reached after dealing 225000 armor and hull damage.
-summary|option1|CAPITAL_SHIP|171	0	Every 100 armor and hull damage this ship takes grants a stack of Seraph's Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-summary|option1|CAPITAL_SHIP|172	0	Each Seraph's Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
+summary|option1|CAPITAL_SHIP|171	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
+summary|option1|CAPITAL_SHIP|172	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
 summary|option1|CAPITAL_SHIP|173	1	<bad>20%</bad> reduced weapon and engine repair time.
 summary|option1|CAPITAL_SHIP|174	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 summary|option1|CAPITAL_SHIP|175	0	Removes this ship's shield entirely.
@@ -5715,8 +5715,8 @@ summary|option2|FRIGATE|167	0	Repairs hull equal to <good>10%</good> of the armo
 summary|option2|FRIGATE|168	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
 summary|option2|FRIGATE|169	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 summary|option2|FRIGATE|170	0	The full Seraphim damage bonus is reached after dealing 75000 armor and hull damage.
-summary|option2|FRIGATE|171	0	Every 100 armor and hull damage this ship takes grants a stack of Seraph's Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-summary|option2|FRIGATE|172	0	Each Seraph's Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
+summary|option2|FRIGATE|171	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
+summary|option2|FRIGATE|172	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
 summary|option2|FRIGATE|173	1	<bad>20%</bad> reduced weapon and engine repair time.
 summary|option2|FRIGATE|174	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 summary|option2|FRIGATE|175	0	Removes this ship's shield entirely.
@@ -5908,8 +5908,8 @@ summary|option2|DESTROYER|167	0	Repairs hull equal to <good>10%</good> of the ar
 summary|option2|DESTROYER|168	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
 summary|option2|DESTROYER|169	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 summary|option2|DESTROYER|170	0	The full Seraphim damage bonus is reached after dealing 125000 armor and hull damage.
-summary|option2|DESTROYER|171	0	Every 100 armor and hull damage this ship takes grants a stack of Seraph's Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-summary|option2|DESTROYER|172	0	Each Seraph's Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
+summary|option2|DESTROYER|171	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
+summary|option2|DESTROYER|172	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
 summary|option2|DESTROYER|173	1	<bad>20%</bad> reduced weapon and engine repair time.
 summary|option2|DESTROYER|174	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 summary|option2|DESTROYER|175	0	Removes this ship's shield entirely.
@@ -6101,8 +6101,8 @@ summary|option2|CRUISER|167	0	Repairs hull equal to <good>10%</good> of the armo
 summary|option2|CRUISER|168	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
 summary|option2|CRUISER|169	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 summary|option2|CRUISER|170	0	The full Seraphim damage bonus is reached after dealing 175000 armor and hull damage.
-summary|option2|CRUISER|171	0	Every 100 armor and hull damage this ship takes grants a stack of Seraph's Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-summary|option2|CRUISER|172	0	Each Seraph's Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
+summary|option2|CRUISER|171	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
+summary|option2|CRUISER|172	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
 summary|option2|CRUISER|173	1	<bad>20%</bad> reduced weapon and engine repair time.
 summary|option2|CRUISER|174	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 summary|option2|CRUISER|175	0	Removes this ship's shield entirely.
@@ -6294,8 +6294,8 @@ summary|option2|CAPITAL_SHIP|167	0	Repairs hull equal to <good>10%</good> of the
 summary|option2|CAPITAL_SHIP|168	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
 summary|option2|CAPITAL_SHIP|169	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 summary|option2|CAPITAL_SHIP|170	0	The full Seraphim damage bonus is reached after dealing 225000 armor and hull damage.
-summary|option2|CAPITAL_SHIP|171	0	Every 100 armor and hull damage this ship takes grants a stack of Seraph's Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-summary|option2|CAPITAL_SHIP|172	0	Each Seraph's Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
+summary|option2|CAPITAL_SHIP|171	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
+summary|option2|CAPITAL_SHIP|172	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
 summary|option2|CAPITAL_SHIP|173	1	<bad>20%</bad> reduced weapon and engine repair time.
 summary|option2|CAPITAL_SHIP|174	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 summary|option2|CAPITAL_SHIP|175	0	Removes this ship's shield entirely.
