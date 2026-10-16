@@ -140,6 +140,7 @@
 			"phantomHullMods": [
 				"hbi"
 			],
+			"description": "Stripping decommissioned Onslaughts at the Agreus shipbreaking yards showed the crew how the Navy seats its heaviest guns directly into the hull. Large ballistic weapons take up far less of this ship's ordnance budget.",
 			"tags": [
 				"ballistic",
 				"req_ballistic"
@@ -288,7 +289,7 @@
 		},
 		{
 			"id": "torpedo_specialisation",
-			"name": "Torpedo Specialisation",
+			"name": "XIV Torpedo Doctrine",
 			"icon": "graphics/icons/torpedo_specialisation.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -301,6 +302,7 @@
 					"magnitude": -30
 				}
 			],
+			"description": "XIV Battlegroup strike manuals, kept by the Hegemony since the Domain, teach that a torpedo should close fast and fly straight. Re-routing each missile's maneuvering thrusters into its rear thrusters sends this ship's missiles in quicker, though they can no longer turn as sharply.",
 			"tags": [
 				"missile",
 				"req_missile"
@@ -590,7 +592,7 @@
 		},
 		{
 			"id": "hull_breacher",
-			"name": "Hull Breacher Rounds",
+			"name": "Navy Breacher Rounds",
 			"icon": "graphics/icons/explosion3_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -599,6 +601,7 @@
 					"magnitude": 20
 				}
 			],
+			"description": "Former Hegemony Navy gunners in the crew remember the breacher loads the Navy keeps for boarding actions, shells hardened to punch through plating instead of bursting on it. Some ballistic hits tear clean through an enemy hull and carry on beyond it.",
 			"tags": [
 				"ballistic",
 				"req_ballistic"
@@ -606,7 +609,7 @@
 		},
 		{
 			"id": "ballistic_momentum",
-			"name": "Ballistic Momentum",
+			"name": "Navy Heartbeat",
 			"icon": "graphics/icons/ballistic_momentum.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -615,6 +618,7 @@
 					"magnitude": 3
 				}
 			],
+			"description": "Sailing alongside Hegemony battle lines teaches the crew the Navy's habit of arriving at speed and firing before the enemy has settled, guns thumping out what the Navy calls its heartbeat. The harder this ship is pushed past its usual burn, the harder its ballistic weapons hit.",
 			"tags": [
 				"ballistic",
 				"speed",

@@ -1236,7 +1236,7 @@
     "skillType.disintegration.name": "瓦解",
     "skillType.machine_precision.name": "机械精度",
     "skillType.terrifying_presence.name": "恐怖威压",
-    "skillType.torpedo_specialisation.name": "鱼雷专精",
+    "skillType.torpedo_specialisation.name": "XIV鱼雷条令",
     "skillType.missile_damage.name": "导弹武器伤害",
     "skillType.non_beam_energy_damage.name": "非光束能量武器伤害",
     "skillType.beam_damage.name": "光束武器伤害",
@@ -1252,8 +1252,8 @@
     "skillType.fuel_core_overload.name": "卢德之光",
     "skillType.exposed_fuel_lines.name": "不惜代价",
     "skillType.energy_chain.name": "折射弹体",
-    "skillType.hull_breacher.name": "破舱弹",
-    "skillType.ballistic_momentum.name": "实弹动量",
+    "skillType.hull_breacher.name": "海军破舱弹",
+    "skillType.ballistic_momentum.name": "海军心跳",
     "skillType.attuned_sensors.name": "调谐传感器",
     "skillType.advancedshieldemitter.name": "加速护盾",
     "skillType.adaptive_coils.name": "自适应相位线圈",
@@ -1404,5 +1404,9 @@
     "skillType.seraphs_grace.description": "炽天使舰体以自身的创伤为食。每一次落在装甲或船体上的打击都会驱使舰船更加奋力，但其护盾发生器从未为承受这种负荷而设计。",
     "skillType.abyssal_grid.description": "深渊无人舰的能源网格，经过强化以抵御深渊风暴，并为能量武器专门调校。",
     "skillType.seraphim.description": "炽天使核心的猎手本能。舰船依靠自身造成的伤害自我修复，追猎持续越久就越致命。",
-    "skillType.chronos_adaptability.description": "按克洛诺斯核心偏好调校的机械，使舰船系统的循环速度超出其设计者的预期。"
+    "skillType.chronos_adaptability.description": "按克洛诺斯核心偏好调校的机械，使舰船系统的循环速度超出其设计者的预期。",
+    "skillType.hull_breacher.description": "船员中的前霸主海军炮手还记得海军为接舷战保留的破舱装药：经过硬化的炮弹能贯穿装甲，而不是在表面炸开。部分实弹命中会彻底撕穿敌舰船体，并继续向前飞行。",
+    "skillType.heavy_ballistics_integration.description": "在 Agreus 拆船厂拆解退役的 Onslaught，让船员学会了海军如何把最重的火炮直接嵌入船体。大型实弹武器在本舰上占用的装配点大幅减少。",
+    "skillType.torpedo_specialisation.description": "霸主自人类领域时代保存至今的第十四战斗群打击手册教导：鱼雷应当快速接近、笔直飞行。把每枚导弹的机动推进器改接到尾部推进器上，能让本舰的导弹更快抵达目标，但转向不再那么灵活。",
+    "skillType.ballistic_momentum.description": "与霸主战列并肩航行，让船员学到海军的习惯：高速抵达，在敌人站稳之前开火，炮声如海军所说的心跳般隆隆作响。本舰的航速被推得越超出平常，实弹武器的命中就越重。"
 }

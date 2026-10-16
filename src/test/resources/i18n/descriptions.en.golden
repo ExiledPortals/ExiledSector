@@ -2281,11 +2281,16 @@ type|ballistic_damage|FRIGATE|0	0	<good>3%</good> increased ballistic weapon dam
 type|ballistic_damage|DESTROYER|0	0	<good>3%</good> increased ballistic weapon damage.
 type|ballistic_damage|CRUISER|0	0	<good>3%</good> increased ballistic weapon damage.
 type|ballistic_damage|CAPITAL_SHIP|0	0	<good>3%</good> increased ballistic weapon damage.
-type|ballistic_momentum|null|0	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
-type|ballistic_momentum|FRIGATE|0	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
-type|ballistic_momentum|DESTROYER|0	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
-type|ballistic_momentum|CRUISER|0	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
-type|ballistic_momentum|CAPITAL_SHIP|0	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
+type|ballistic_momentum|null|0	0	Sailing alongside Hegemony battle lines teaches the crew the Navy's habit of arriving at speed and firing before the enemy has settled, guns thumping out what the Navy calls its heartbeat. The harder this ship is pushed past its usual burn, the harder its ballistic weapons hit.
+type|ballistic_momentum|null|1	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
+type|ballistic_momentum|FRIGATE|0	0	Sailing alongside Hegemony battle lines teaches the crew the Navy's habit of arriving at speed and firing before the enemy has settled, guns thumping out what the Navy calls its heartbeat. The harder this ship is pushed past its usual burn, the harder its ballistic weapons hit.
+type|ballistic_momentum|FRIGATE|1	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
+type|ballistic_momentum|DESTROYER|0	0	Sailing alongside Hegemony battle lines teaches the crew the Navy's habit of arriving at speed and firing before the enemy has settled, guns thumping out what the Navy calls its heartbeat. The harder this ship is pushed past its usual burn, the harder its ballistic weapons hit.
+type|ballistic_momentum|DESTROYER|1	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
+type|ballistic_momentum|CRUISER|0	0	Sailing alongside Hegemony battle lines teaches the crew the Navy's habit of arriving at speed and firing before the enemy has settled, guns thumping out what the Navy calls its heartbeat. The harder this ship is pushed past its usual burn, the harder its ballistic weapons hit.
+type|ballistic_momentum|CRUISER|1	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
+type|ballistic_momentum|CAPITAL_SHIP|0	0	Sailing alongside Hegemony battle lines teaches the crew the Navy's habit of arriving at speed and firing before the enemy has settled, guns thumping out what the Navy calls its heartbeat. The harder this ship is pushed past its usual burn, the harder its ballistic weapons hit.
+type|ballistic_momentum|CAPITAL_SHIP|1	0	Grants <good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.
 type|ballistic_projectile_speed|null|0	0	<good>10%</good> increased ballistic weapon projectile speed.
 type|ballistic_projectile_speed|FRIGATE|0	0	<good>10%</good> increased ballistic weapon projectile speed.
 type|ballistic_projectile_speed|DESTROYER|0	0	<good>10%</good> increased ballistic weapon projectile speed.
@@ -2933,15 +2938,20 @@ type-detail|hardenedshieldemitter|CRUISER|0	0	Mutually exclusive with <hullmod>h
 type|hardenedshieldemitter|CAPITAL_SHIP|0	1	<bad>10%</bad> less damage taken by shields.
 type|hardenedshieldemitter|CAPITAL_SHIP|1	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 type-detail|hardenedshieldemitter|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Hardened Shields</hullmod>
-type|heavy_ballistics_integration|null|0	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
+type|heavy_ballistics_integration|null|0	0	Stripping decommissioned Onslaughts at the Agreus shipbreaking yards showed the crew how the Navy seats its heaviest guns directly into the hull. Large ballistic weapons take up far less of this ship's ordnance budget.
+type|heavy_ballistics_integration|null|1	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 type-detail|heavy_ballistics_integration|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Heavy Ballistics Integration</hullmod>
-type|heavy_ballistics_integration|FRIGATE|0	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
+type|heavy_ballistics_integration|FRIGATE|0	0	Stripping decommissioned Onslaughts at the Agreus shipbreaking yards showed the crew how the Navy seats its heaviest guns directly into the hull. Large ballistic weapons take up far less of this ship's ordnance budget.
+type|heavy_ballistics_integration|FRIGATE|1	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 type-detail|heavy_ballistics_integration|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Heavy Ballistics Integration</hullmod>
-type|heavy_ballistics_integration|DESTROYER|0	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
+type|heavy_ballistics_integration|DESTROYER|0	0	Stripping decommissioned Onslaughts at the Agreus shipbreaking yards showed the crew how the Navy seats its heaviest guns directly into the hull. Large ballistic weapons take up far less of this ship's ordnance budget.
+type|heavy_ballistics_integration|DESTROYER|1	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 type-detail|heavy_ballistics_integration|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Heavy Ballistics Integration</hullmod>
-type|heavy_ballistics_integration|CRUISER|0	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
+type|heavy_ballistics_integration|CRUISER|0	0	Stripping decommissioned Onslaughts at the Agreus shipbreaking yards showed the crew how the Navy seats its heaviest guns directly into the hull. Large ballistic weapons take up far less of this ship's ordnance budget.
+type|heavy_ballistics_integration|CRUISER|1	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 type-detail|heavy_ballistics_integration|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Heavy Ballistics Integration</hullmod>
-type|heavy_ballistics_integration|CAPITAL_SHIP|0	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
+type|heavy_ballistics_integration|CAPITAL_SHIP|0	0	Stripping decommissioned Onslaughts at the Agreus shipbreaking yards showed the crew how the Navy seats its heaviest guns directly into the hull. Large ballistic weapons take up far less of this ship's ordnance budget.
+type|heavy_ballistics_integration|CAPITAL_SHIP|1	1	Decreases ordnance point cost of large ballistic weapons by <bad>5</bad>.
 type-detail|heavy_ballistics_integration|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Heavy Ballistics Integration</hullmod>
 type|heavyarmor|null|0	0	<bad>20%</bad> reduced maneuverability.
 type|heavyarmor|null|1	0	<good>30%</good> increased armor.
@@ -3006,11 +3016,16 @@ type|hull|FRIGATE|0	0	<good>2%</good> more hull points.
 type|hull|DESTROYER|0	0	<good>2%</good> more hull points.
 type|hull|CRUISER|0	0	<good>2%</good> more hull points.
 type|hull|CAPITAL_SHIP|0	0	<good>2%</good> more hull points.
-type|hull_breacher|null|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-type|hull_breacher|FRIGATE|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-type|hull_breacher|DESTROYER|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-type|hull_breacher|CRUISER|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-type|hull_breacher|CAPITAL_SHIP|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
+type|hull_breacher|null|0	0	Former Hegemony Navy gunners in the crew remember the breacher loads the Navy keeps for boarding actions, shells hardened to punch through plating instead of bursting on it. Some ballistic hits tear clean through an enemy hull and carry on beyond it.
+type|hull_breacher|null|1	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
+type|hull_breacher|FRIGATE|0	0	Former Hegemony Navy gunners in the crew remember the breacher loads the Navy keeps for boarding actions, shells hardened to punch through plating instead of bursting on it. Some ballistic hits tear clean through an enemy hull and carry on beyond it.
+type|hull_breacher|FRIGATE|1	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
+type|hull_breacher|DESTROYER|0	0	Former Hegemony Navy gunners in the crew remember the breacher loads the Navy keeps for boarding actions, shells hardened to punch through plating instead of bursting on it. Some ballistic hits tear clean through an enemy hull and carry on beyond it.
+type|hull_breacher|DESTROYER|1	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
+type|hull_breacher|CRUISER|0	0	Former Hegemony Navy gunners in the crew remember the breacher loads the Navy keeps for boarding actions, shells hardened to punch through plating instead of bursting on it. Some ballistic hits tear clean through an enemy hull and carry on beyond it.
+type|hull_breacher|CRUISER|1	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
+type|hull_breacher|CAPITAL_SHIP|0	0	Former Hegemony Navy gunners in the crew remember the breacher loads the Navy keeps for boarding actions, shells hardened to punch through plating instead of bursting on it. Some ballistic hits tear clean through an enemy hull and carry on beyond it.
+type|hull_breacher|CAPITAL_SHIP|1	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
 type|hull_multi|null|0	0	<good>5%</good> more hull points.
 type|hull_multi|FRIGATE|0	0	<good>5%</good> more hull points.
 type|hull_multi|DESTROYER|0	0	<good>5%</good> more hull points.
@@ -3877,16 +3892,21 @@ type|top_speed_while_escorting|CRUISER|0	0	While within 700 su of a larger frien
 type-detail|top_speed_while_escorting|CRUISER|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser.
 type|top_speed_while_escorting|CAPITAL_SHIP|0	0	While within 700 su of a larger friendly ship, increases top speed by up to 5%, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 type-detail|top_speed_while_escorting|CAPITAL_SHIP|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser.
-type|torpedo_specialisation|null|0	0	<good>30%</good> increased missile weapon projectile speed.
-type|torpedo_specialisation|null|1	0	<bad>30%</bad> reduced missile maneuverability.
-type|torpedo_specialisation|FRIGATE|0	0	<good>30%</good> increased missile weapon projectile speed.
-type|torpedo_specialisation|FRIGATE|1	0	<bad>30%</bad> reduced missile maneuverability.
-type|torpedo_specialisation|DESTROYER|0	0	<good>30%</good> increased missile weapon projectile speed.
-type|torpedo_specialisation|DESTROYER|1	0	<bad>30%</bad> reduced missile maneuverability.
-type|torpedo_specialisation|CRUISER|0	0	<good>30%</good> increased missile weapon projectile speed.
-type|torpedo_specialisation|CRUISER|1	0	<bad>30%</bad> reduced missile maneuverability.
-type|torpedo_specialisation|CAPITAL_SHIP|0	0	<good>30%</good> increased missile weapon projectile speed.
-type|torpedo_specialisation|CAPITAL_SHIP|1	0	<bad>30%</bad> reduced missile maneuverability.
+type|torpedo_specialisation|null|0	0	XIV Battlegroup strike manuals, kept by the Hegemony since the Domain, teach that a torpedo should close fast and fly straight. Re-routing each missile's maneuvering thrusters into its rear thrusters sends this ship's missiles in quicker, though they can no longer turn as sharply.
+type|torpedo_specialisation|null|1	0	<good>30%</good> increased missile weapon projectile speed.
+type|torpedo_specialisation|null|2	0	<bad>30%</bad> reduced missile maneuverability.
+type|torpedo_specialisation|FRIGATE|0	0	XIV Battlegroup strike manuals, kept by the Hegemony since the Domain, teach that a torpedo should close fast and fly straight. Re-routing each missile's maneuvering thrusters into its rear thrusters sends this ship's missiles in quicker, though they can no longer turn as sharply.
+type|torpedo_specialisation|FRIGATE|1	0	<good>30%</good> increased missile weapon projectile speed.
+type|torpedo_specialisation|FRIGATE|2	0	<bad>30%</bad> reduced missile maneuverability.
+type|torpedo_specialisation|DESTROYER|0	0	XIV Battlegroup strike manuals, kept by the Hegemony since the Domain, teach that a torpedo should close fast and fly straight. Re-routing each missile's maneuvering thrusters into its rear thrusters sends this ship's missiles in quicker, though they can no longer turn as sharply.
+type|torpedo_specialisation|DESTROYER|1	0	<good>30%</good> increased missile weapon projectile speed.
+type|torpedo_specialisation|DESTROYER|2	0	<bad>30%</bad> reduced missile maneuverability.
+type|torpedo_specialisation|CRUISER|0	0	XIV Battlegroup strike manuals, kept by the Hegemony since the Domain, teach that a torpedo should close fast and fly straight. Re-routing each missile's maneuvering thrusters into its rear thrusters sends this ship's missiles in quicker, though they can no longer turn as sharply.
+type|torpedo_specialisation|CRUISER|1	0	<good>30%</good> increased missile weapon projectile speed.
+type|torpedo_specialisation|CRUISER|2	0	<bad>30%</bad> reduced missile maneuverability.
+type|torpedo_specialisation|CAPITAL_SHIP|0	0	XIV Battlegroup strike manuals, kept by the Hegemony since the Domain, teach that a torpedo should close fast and fly straight. Re-routing each missile's maneuvering thrusters into its rear thrusters sends this ship's missiles in quicker, though they can no longer turn as sharply.
+type|torpedo_specialisation|CAPITAL_SHIP|1	0	<good>30%</good> increased missile weapon projectile speed.
+type|torpedo_specialisation|CAPITAL_SHIP|2	0	<bad>30%</bad> reduced missile maneuverability.
 type|turretgyros|null|0	0	<good>40%</good> increased weapon turn rate.
 type-detail|turretgyros|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Advanced Turret Gyros</hullmod>
 type|turretgyros|FRIGATE|0	0	<good>40%</good> increased weapon turn rate.
