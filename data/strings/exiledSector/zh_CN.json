@@ -1219,7 +1219,7 @@
     "skillType.reduced_D_mod_effect.name": "降低D插效果",
     "skillType.heavy_ballistics_integration.name": "重型实弹整合",
     "skillType.ground_support.name": "地面支援",
-    "skillType.tactical_superiority.name": "战术优势",
+    "skillType.tactical_superiority.name": "TriPad后门",
     "skillType.objective_capture_range.name": "目标占领范围",
     "skillType.combat_readiness.name": "战备值",
     "skillType.nskr_criticalArmor.name": "临界点改装",
@@ -1273,7 +1273,7 @@
     "skillType.ecm_resistance.name": "ECM抗性",
     "skillType.escort_package.name": "护航套件",
     "skillType.expanded_deck_crew.name": "扩充甲板人员",
-    "skillType.phase_hull_upgrades.name": "相位船体升级",
+    "skillType.phase_hull_upgrades.name": "混合物理遮蔽",
     "skillType.hoarded_arms.name": "联盟装填操典",
     "skillType.magazines.name": "扩充弹匣",
     "skillType.missleracks.name": "扩充导弹挂架",
@@ -1415,5 +1415,8 @@
     "skillType.reckless_assault.description": "加入船员的海盗船长训练出让自由海盗在近距离如此危险的习惯：冲进去，倾泻所有火力，伤亡以后再算。武器的命中重得多，但舰船装甲会削弱，护盾承受更多伤害，船员损失也大得多。",
     "skillType.hoarded_arms.description": "英仙座联盟的舰队来自十几个争吵不休的政体，却共用同一套装填操典，让任何一艘舰船都能为另一艘补充弹药；在联盟委任下服役，会把这套操典练进船员的骨子里。实弹和能量武器的弹药恢复得更快。",
     "skillType.attuned_sensors.description": "研究英仙座联盟沿霸主边境部署的传感器哨舰，让船员学会把能量武器的瞄准接入舰船自身的传感器。本舰的传感器越强，能量武器的射程就越远。",
-    "skillType.shared_fate.description": "由彼此竞争的政体组成的英仙座联盟战列，学会了同生共死。"
+    "skillType.shared_fate.description": "由彼此竞争的政体组成的英仙座联盟战列，学会了同生共死。",
+    "skillType.phase_hull_upgrades.description": "从速子科技混合物理部泄露出来的文件，记录着该公司发誓已按 Thule 条约放弃的相位研究；它们教会船员把本舰的传感器辐射导入相位舰为舰队撑起的遮蔽场。本舰的传感器有助于让舰队避开远距离探测，船体也更能扛住日冕和风暴带来的损耗。",
+    "skillType.tactical_superiority.description": "每个太空人身上都带着一台 TriPad，而学会利用速子科技自己硬写入的后门的船员，可以说服战场目标交出控制权。本舰占领战场目标的速度快得多。",
+    "skillType.energy_chain.description": "拆开速子科技战舰残骸中的能量转换器，让船员学会调校本舰的能量弹，使其从敌方护盾上擦过，继续飞向另一个目标。部分命中护盾的非光束能量弹会折射向最近的另一艘敌舰，每跳一次都会减弱。"
 }

@@ -171,7 +171,7 @@
 		},
 		{
 			"id": "tactical_superiority",
-			"name": "Tactical Superiority",
+			"name": "TriPad Backdoor",
 			"icon": "graphics/icons/tactical_superiority.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -180,6 +180,7 @@
 					"magnitude": 100
 				}
 			],
+			"description": "Every spacer carries a TriPad, and a crew that learns to use Tri-Tachyon's own hardwired backdoors can talk combat objectives into handing over control. This ship captures combat objectives much faster.",
 			"tags": [
 				"fleet_support"
 			]
@@ -586,6 +587,7 @@
 					"magnitude": 20
 				}
 			],
+			"description": "Pulling apart the energy converters of wrecked Tri-Tachyon warships shows the crew how to tune this ship's energy bolts to glance off an enemy shield and carry on to another target. Some non-beam energy shots that hit a shield refract into the nearest other enemy, weakening with each jump.",
 			"tags": [
 				"energy",
 				"req_non_beam_energy"
@@ -1183,7 +1185,7 @@
 		},
 		{
 			"id": "phase_hull_upgrades",
-			"name": "Phase Hull Upgrades",
+			"name": "Hybrid Physics Shrouding",
 			"icon": "graphics/icons/phase_sensor_upgrades.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -1199,6 +1201,7 @@
 			"exclusiveHullMods": [
 				"phasefield"
 			],
+			"description": "Leaked papers from Tri-Tachyon's Hybrid Physics Division, on phase work the corporation swears it abandoned under the Treaty of Thule, show the crew how to bleed this ship's sensor emissions into the masking field phase ships throw over a fleet. Its sensors help hide the fleet from long-range detection, and the hull shrugs off more of the strain of coronas and storms.",
 			"tags": [
 				"phase",
 				"req_phase",
