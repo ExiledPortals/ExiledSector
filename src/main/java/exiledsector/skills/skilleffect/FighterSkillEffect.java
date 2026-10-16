@@ -159,6 +159,33 @@ public enum FighterSkillEffect implements BackedSkillEffect {
         public StyledText deallocationWarning(float magnitude) {
             return FIGHTER_BAYS_FLAT.deallocationWarning(magnitude);
         }
+    },
+    FIGHTER_FOCUS_FIRE_DAMAGE_PERCENT_PER_HIT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod(FighterFocusFireMarks.PERCENT_PER_HIT_KEY).modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            FighterFocusFireMarks.markFighter(fighter, parentShip);
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("reset", FighterFocusFireMarks.RESET_AFTER_SECONDS).styled();
+        }
+    },
+    FIGHTER_FOCUS_FIRE_MAX_DAMAGE_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod(FighterFocusFireMarks.MAX_PERCENT_KEY).modifyFlat(modId, magnitude);
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            FighterFocusFireMarks.markFighter(fighter, parentShip);
+        }
     };
 
     private static float convertedHangarBonusBays(MutableShipStatsAPI stats) {
