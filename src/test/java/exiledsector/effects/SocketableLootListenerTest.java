@@ -267,6 +267,7 @@ class SocketableLootListenerTest {
     void wonBattlesAddPartsForTheEnemyDeploymentPointsDefeated() {
         try (MockedStatic<LunaSettings> luna = Mockito.mockStatic(LunaSettings.class)) {
             luna.when(() -> LunaSettings.getFloat(Mockito.anyString(), Mockito.anyString())).thenReturn(null);
+            luna.when(() -> LunaSettings.getInt(Mockito.anyString(), Mockito.anyString())).thenReturn(null);
             BattleAPI battle = mock(BattleAPI.class);
             listener.holdLoot(PlayerEngagement.of(engagement(battle, List.of(warship("a", 120f)), List.of(warship("b", 80f))), 1f));
             CargoAPI loot = mock(CargoAPI.class);
@@ -281,6 +282,7 @@ class SocketableLootListenerTest {
     void lostBattlesAddNoParts() {
         try (MockedStatic<LunaSettings> luna = Mockito.mockStatic(LunaSettings.class)) {
             luna.when(() -> LunaSettings.getFloat(Mockito.anyString(), Mockito.anyString())).thenReturn(null);
+            luna.when(() -> LunaSettings.getInt(Mockito.anyString(), Mockito.anyString())).thenReturn(null);
             BattleAPI battle = mock(BattleAPI.class);
             EngagementResultAPI result = engagement(battle, List.of(warship("a", 200f)), List.of());
             when(result.didPlayerWin()).thenReturn(false);
