@@ -224,6 +224,7 @@
 					"magnitude": 1
 				}
 			],
+			"description": "Stripping the repair nanoforge out of a gutted Nexus shows the crew how the [REDACTED] keep their hulls whole long after a fight should have broken them.",
 			"tags": [
 				"hull",
 				"repair"
@@ -240,6 +241,7 @@
 					"magnitude": 20
 				}
 			],
+			"description": "Hulls killed by [REDACTED] energy weapons come apart around every impact in a way no human weapon manages, and taking those wrecks apart shows the crew how to tune this ship's energy weapons the same way.",
 			"tags": [
 				"energy",
 				"armour",
@@ -269,6 +271,7 @@
 					"magnitude": 5
 				}
 			],
+			"description": "A recovered Gamma core, kept powered just long enough to be questioned, gives up the targeting routines [REDACTED] drones use to lead a target. Patched into this ship's fire control, they make its autofiring weapons far more accurate and stretch every weapon's reach a little.",
 			"tags": [
 				"weapons",
 				"range"
@@ -285,6 +288,7 @@
 					"magnitude": 25
 				}
 			],
+			"description": "Sensor logs from fights with [REDACTED] fleets show how the drones flood the spectrum with false returns, and rebuilding the ship's ECM suite around those recordings feeds enemy fire control a target that is never quite where it seems.",
 			"tags": [
 				"fleet_support"
 			]

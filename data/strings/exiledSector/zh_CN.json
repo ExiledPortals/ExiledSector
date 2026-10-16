@@ -1422,5 +1422,9 @@
     "skillType.violence_of_action.description": "卢德骑士团认为，正义之舰应以全速迎敌；在 Ceyx 与他们一同操练，让船员学会为冲锋调校引擎与操控。舰船飞得更快，对舵令的反应也更灵敏。",
     "skillType.perseverence_through_faith.description": "船员中的卢德信徒认为，一艘伤痕累累的船就像一名苦修者，会在艰难中找到力量；他们用祈祷和耐心的双手让它残破的火炮继续作战。本舰每带有一个D插，武器的命中就会更重一些。",
     "skillType.sindrian_shielding.description": "辛德里亚的向阳面饱受辐射冲刷，在 Askonia 危机中逃离、上船入伙的阵列工人懂得如何让发生器扛住恒星的怒火。本舰的护盾承受的伤害更少，在日冕和风暴中受到的影响也更小。",
-    "skillType.beam_split.description": "辛达强权的宣传坚称，雄狮的目光同时落在每一位公民身上，而雄狮卫队的工程技师把这句口号当了真。研究他们改装的 Executor，让船员学会把本舰的光束分散到目标及其周围的敌舰上。"
+    "skillType.beam_split.description": "辛达强权的宣传坚称，雄狮的目光同时落在每一位公民身上，而雄狮卫队的工程技师把这句口号当了真。研究他们改装的 Executor，让船员学会把本舰的光束分散到目标及其周围的敌舰上。",
+    "skillType.machine_precision.description": "一枚回收的Gamma级AI核心，只通电到足以审问它的时候，交出了[数据删除]无人舰用来预判目标的瞄准程序。把这些程序接入本舰的火控系统后，自动开火的武器会精准得多，所有武器的射程也会稍稍延长。",
+    "skillType.terrifying_presence.description": "与[数据删除]舰队交战留下的传感器记录显示，那些无人舰会用虚假回波淹没整个频谱；以这些记录为基础重建本舰的电子对抗套件，就能让敌方火控看到一个永远不在它看起来那个位置的目标。",
+    "skillType.nanoforge_mending.description": "从一座被掏空的 Nexus 中拆出修复用的纳米锻炉，让船员明白了[数据删除]为何能在一场本该把船体打碎的战斗之后，依然保持完好。",
+    "skillType.disintegration.description": "被[数据删除]能量武器击毁的船体，会在每一个弹着点周围以任何人类武器都做不到的方式分崩离析；拆解这些残骸，让船员学会以同样的方式调校本舰的能量武器。"
 }

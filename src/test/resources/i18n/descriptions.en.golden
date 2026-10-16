@@ -2516,11 +2516,16 @@ type|defensive_targeting_array|CRUISER|0	0	Increases the damage fighters launche
 type-detail|defensive_targeting_array|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Defensive Targeting Array</hullmod>
 type|defensive_targeting_array|CAPITAL_SHIP|0	0	Increases the damage fighters launched from this ship deal to other fighters and missiles. Also locks launched fighters to stay near the ship instead of patrolling freely.
 type-detail|defensive_targeting_array|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Defensive Targeting Array</hullmod>
-type|disintegration|null|0	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.
-type|disintegration|FRIGATE|0	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.
-type|disintegration|DESTROYER|0	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.
-type|disintegration|CRUISER|0	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.
-type|disintegration|CAPITAL_SHIP|0	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.
+type|disintegration|null|0	0	Hulls killed by [REDACTED] energy weapons come apart around every impact in a way no human weapon manages, and taking those wrecks apart shows the crew how to tune this ship's energy weapons the same way.
+type|disintegration|null|1	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.
+type|disintegration|FRIGATE|0	0	Hulls killed by [REDACTED] energy weapons come apart around every impact in a way no human weapon manages, and taking those wrecks apart shows the crew how to tune this ship's energy weapons the same way.
+type|disintegration|FRIGATE|1	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.
+type|disintegration|DESTROYER|0	0	Hulls killed by [REDACTED] energy weapons come apart around every impact in a way no human weapon manages, and taking those wrecks apart shows the crew how to tune this ship's energy weapons the same way.
+type|disintegration|DESTROYER|1	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.
+type|disintegration|CRUISER|0	0	Hulls killed by [REDACTED] energy weapons come apart around every impact in a way no human weapon manages, and taking those wrecks apart shows the crew how to tune this ship's energy weapons the same way.
+type|disintegration|CRUISER|1	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.
+type|disintegration|CAPITAL_SHIP|0	0	Hulls killed by [REDACTED] energy weapons come apart around every impact in a way no human weapon manages, and taking those wrecks apart shows the crew how to tune this ship's energy weapons the same way.
+type|disintegration|CAPITAL_SHIP|1	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.
 type|eccm|null|0	0	<good>50%</good> increased chance for missiles to resist enemy ECM and flares.
 type|eccm|null|1	0	Significantly improved missile guidance algorithm.
 type|eccm|null|2	0	<good>25%</good> increased missile weapon projectile speed.
@@ -3120,26 +3125,31 @@ type|live_munitions|CRUISER|2	0	Each Heartless stack increases missile top speed
 type|live_munitions|CAPITAL_SHIP|0	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
 type|live_munitions|CAPITAL_SHIP|1	0	Each Heartless stack increases missile damage by <good>3%</good> while the fleet has crew left to give.
 type|live_munitions|CAPITAL_SHIP|2	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
-type|machine_precision|null|0	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
-type|machine_precision|null|1	0	<good>5%</good> increased energy weapon range.
-type|machine_precision|null|2	0	<good>5%</good> increased ballistic weapon range.
-type|machine_precision|null|3	0	<good>5%</good> increased beam weapon range.
-type|machine_precision|FRIGATE|0	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
-type|machine_precision|FRIGATE|1	0	<good>5%</good> increased energy weapon range.
-type|machine_precision|FRIGATE|2	0	<good>5%</good> increased ballistic weapon range.
-type|machine_precision|FRIGATE|3	0	<good>5%</good> increased beam weapon range.
-type|machine_precision|DESTROYER|0	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
-type|machine_precision|DESTROYER|1	0	<good>5%</good> increased energy weapon range.
-type|machine_precision|DESTROYER|2	0	<good>5%</good> increased ballistic weapon range.
-type|machine_precision|DESTROYER|3	0	<good>5%</good> increased beam weapon range.
-type|machine_precision|CRUISER|0	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
-type|machine_precision|CRUISER|1	0	<good>5%</good> increased energy weapon range.
-type|machine_precision|CRUISER|2	0	<good>5%</good> increased ballistic weapon range.
-type|machine_precision|CRUISER|3	0	<good>5%</good> increased beam weapon range.
-type|machine_precision|CAPITAL_SHIP|0	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
-type|machine_precision|CAPITAL_SHIP|1	0	<good>5%</good> increased energy weapon range.
-type|machine_precision|CAPITAL_SHIP|2	0	<good>5%</good> increased ballistic weapon range.
-type|machine_precision|CAPITAL_SHIP|3	0	<good>5%</good> increased beam weapon range.
+type|machine_precision|null|0	0	A recovered Gamma core, kept powered just long enough to be questioned, gives up the targeting routines [REDACTED] drones use to lead a target. Patched into this ship's fire control, they make its autofiring weapons far more accurate and stretch every weapon's reach a little.
+type|machine_precision|null|1	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
+type|machine_precision|null|2	0	<good>5%</good> increased energy weapon range.
+type|machine_precision|null|3	0	<good>5%</good> increased ballistic weapon range.
+type|machine_precision|null|4	0	<good>5%</good> increased beam weapon range.
+type|machine_precision|FRIGATE|0	0	A recovered Gamma core, kept powered just long enough to be questioned, gives up the targeting routines [REDACTED] drones use to lead a target. Patched into this ship's fire control, they make its autofiring weapons far more accurate and stretch every weapon's reach a little.
+type|machine_precision|FRIGATE|1	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
+type|machine_precision|FRIGATE|2	0	<good>5%</good> increased energy weapon range.
+type|machine_precision|FRIGATE|3	0	<good>5%</good> increased ballistic weapon range.
+type|machine_precision|FRIGATE|4	0	<good>5%</good> increased beam weapon range.
+type|machine_precision|DESTROYER|0	0	A recovered Gamma core, kept powered just long enough to be questioned, gives up the targeting routines [REDACTED] drones use to lead a target. Patched into this ship's fire control, they make its autofiring weapons far more accurate and stretch every weapon's reach a little.
+type|machine_precision|DESTROYER|1	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
+type|machine_precision|DESTROYER|2	0	<good>5%</good> increased energy weapon range.
+type|machine_precision|DESTROYER|3	0	<good>5%</good> increased ballistic weapon range.
+type|machine_precision|DESTROYER|4	0	<good>5%</good> increased beam weapon range.
+type|machine_precision|CRUISER|0	0	A recovered Gamma core, kept powered just long enough to be questioned, gives up the targeting routines [REDACTED] drones use to lead a target. Patched into this ship's fire control, they make its autofiring weapons far more accurate and stretch every weapon's reach a little.
+type|machine_precision|CRUISER|1	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
+type|machine_precision|CRUISER|2	0	<good>5%</good> increased energy weapon range.
+type|machine_precision|CRUISER|3	0	<good>5%</good> increased ballistic weapon range.
+type|machine_precision|CRUISER|4	0	<good>5%</good> increased beam weapon range.
+type|machine_precision|CAPITAL_SHIP|0	0	A recovered Gamma core, kept powered just long enough to be questioned, gives up the targeting routines [REDACTED] drones use to lead a target. Patched into this ship's fire control, they make its autofiring weapons far more accurate and stretch every weapon's reach a little.
+type|machine_precision|CAPITAL_SHIP|1	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
+type|machine_precision|CAPITAL_SHIP|2	0	<good>5%</good> increased energy weapon range.
+type|machine_precision|CAPITAL_SHIP|3	0	<good>5%</good> increased ballistic weapon range.
+type|machine_precision|CAPITAL_SHIP|4	0	<good>5%</good> increased beam weapon range.
 type|magazines|null|0	0	<good>50%</good> increased ballistic weapon ammo capacity.
 type|magazines|null|1	0	<good>50%</good> increased energy weapon ammo capacity.
 type-detail|magazines|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Expanded Magazines</hullmod>
@@ -3225,11 +3235,16 @@ type|modular_hull_socket|FRIGATE|0	0	A stripped-out compartment wired straight i
 type|modular_hull_socket|DESTROYER|0	0	A stripped-out compartment wired straight into the ship's computer core. It holds a single subroutine and runs it alongside the ship's own control software.
 type|modular_hull_socket|CRUISER|0	0	A stripped-out compartment wired straight into the ship's computer core. It holds a single subroutine and runs it alongside the ship's own control software.
 type|modular_hull_socket|CAPITAL_SHIP|0	0	A stripped-out compartment wired straight into the ship's computer core. It holds a single subroutine and runs it alongside the ship's own control software.
-type|nanoforge_mending|null|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
-type|nanoforge_mending|FRIGATE|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
-type|nanoforge_mending|DESTROYER|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
-type|nanoforge_mending|CRUISER|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
-type|nanoforge_mending|CAPITAL_SHIP|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+type|nanoforge_mending|null|0	0	Stripping the repair nanoforge out of a gutted Nexus shows the crew how the [REDACTED] keep their hulls whole long after a fight should have broken them.
+type|nanoforge_mending|null|1	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+type|nanoforge_mending|FRIGATE|0	0	Stripping the repair nanoforge out of a gutted Nexus shows the crew how the [REDACTED] keep their hulls whole long after a fight should have broken them.
+type|nanoforge_mending|FRIGATE|1	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+type|nanoforge_mending|DESTROYER|0	0	Stripping the repair nanoforge out of a gutted Nexus shows the crew how the [REDACTED] keep their hulls whole long after a fight should have broken them.
+type|nanoforge_mending|DESTROYER|1	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+type|nanoforge_mending|CRUISER|0	0	Stripping the repair nanoforge out of a gutted Nexus shows the crew how the [REDACTED] keep their hulls whole long after a fight should have broken them.
+type|nanoforge_mending|CRUISER|1	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+type|nanoforge_mending|CAPITAL_SHIP|0	0	Stripping the repair nanoforge out of a gutted Nexus shows the crew how the [REDACTED] keep their hulls whole long after a fight should have broken them.
+type|nanoforge_mending|CAPITAL_SHIP|1	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 type-detail|nav_relay|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Nav Relay</hullmod>
 type|nav_relay|FRIGATE|0	0	Increases fleet nav rating by <good>2</good>.
 type-detail|nav_relay|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Nav Relay</hullmod>
@@ -3928,11 +3943,16 @@ type|temporary_acceleration|CRUISER|0	0	<good>50%</good> increased maneuverabili
 type|temporary_acceleration|CRUISER|1	0	These effects only last for the first 90 seconds after the ship is deployed.
 type|temporary_acceleration|CAPITAL_SHIP|0	0	<good>50%</good> increased maneuverability.
 type|temporary_acceleration|CAPITAL_SHIP|1	0	These effects only last for the first 90 seconds after the ship is deployed.
-type|terrifying_presence|null|0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>. Penalties from several ships with this effect stack.
-type|terrifying_presence|FRIGATE|0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>. Penalties from several ships with this effect stack.
-type|terrifying_presence|DESTROYER|0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>. Penalties from several ships with this effect stack.
-type|terrifying_presence|CRUISER|0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>. Penalties from several ships with this effect stack.
-type|terrifying_presence|CAPITAL_SHIP|0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>. Penalties from several ships with this effect stack.
+type|terrifying_presence|null|0	0	Sensor logs from fights with [REDACTED] fleets show how the drones flood the spectrum with false returns, and rebuilding the ship's ECM suite around those recordings feeds enemy fire control a target that is never quite where it seems.
+type|terrifying_presence|null|1	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>. Penalties from several ships with this effect stack.
+type|terrifying_presence|FRIGATE|0	0	Sensor logs from fights with [REDACTED] fleets show how the drones flood the spectrum with false returns, and rebuilding the ship's ECM suite around those recordings feeds enemy fire control a target that is never quite where it seems.
+type|terrifying_presence|FRIGATE|1	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>. Penalties from several ships with this effect stack.
+type|terrifying_presence|DESTROYER|0	0	Sensor logs from fights with [REDACTED] fleets show how the drones flood the spectrum with false returns, and rebuilding the ship's ECM suite around those recordings feeds enemy fire control a target that is never quite where it seems.
+type|terrifying_presence|DESTROYER|1	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>. Penalties from several ships with this effect stack.
+type|terrifying_presence|CRUISER|0	0	Sensor logs from fights with [REDACTED] fleets show how the drones flood the spectrum with false returns, and rebuilding the ship's ECM suite around those recordings feeds enemy fire control a target that is never quite where it seems.
+type|terrifying_presence|CRUISER|1	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>. Penalties from several ships with this effect stack.
+type|terrifying_presence|CAPITAL_SHIP|0	0	Sensor logs from fights with [REDACTED] fleets show how the drones flood the spectrum with false returns, and rebuilding the ship's ECM suite around those recordings feeds enemy fire control a target that is never quite where it seems.
+type|terrifying_presence|CAPITAL_SHIP|1	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>. Penalties from several ships with this effect stack.
 type|timeflow|null|0	0	<good>2%</good> increased timeflow.
 type|timeflow|FRIGATE|0	0	<good>2%</good> increased timeflow.
 type|timeflow|DESTROYER|0	0	<good>2%</good> increased timeflow.
