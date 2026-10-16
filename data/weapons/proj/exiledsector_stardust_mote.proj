@@ -1,0 +1,38 @@
+{
+	"id":"exiledsector_stardust_mote",
+	"specClass":"missile",
+	"missileType":"MOTE",
+	"onHitEffect":"exiledsector.motes.MoteImpactSound",
+	"sprite":"graphics/missiles/bomblet0.png",
+	"size":[4,4],
+	"center":[2,2],
+	"collisionRadius":11,
+	"collisionClass":"MISSILE_NO_FF",
+	"explosionColor":[255,40,70,255],
+	"explosionRadius":75,
+	"flameoutTime":1,
+	"noEngineGlowTime":0.5,
+	"fadeTime":0.5,
+	"glowColor":[255,60,90,125],
+	"engineSpec":{"turnAcc":600,
+				  "turnRate":400,
+				  "acc":650,
+				  "dec":650},
+	"engineSlots":[
+					{"id":"ES1",
+					"loc":[0, 0],
+				    "style":"CUSTOM",
+					"styleSpec":{
+						"engineColor":[255,60,90,255],
+						"contrailParticleSizeMult":10,
+						"contrailParticleDuration":2,
+						"contrailMaxSpeedMult":-0.1,
+						"contrailAngularVelocityMult":0f,
+						"contrailColor":[255,40,70,25],
+						"type":"GLOW"
+					},
+				    "width":12.0,
+				    "length":35.0,
+				    "angle":180.0},
+				   ]
+}

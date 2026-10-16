@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.HullDamageAboutToBeTakenListener;
@@ -13,6 +14,9 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
 import exiledsector.compat.LostSectorCompat;
 import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
+import exiledsector.motes.Motes;
+import exiledsector.skills.ShipFacts;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
@@ -130,6 +134,76 @@ public enum CombatSkillEffect implements BackedSkillEffect {
     SERAPHIM_HEAL_CAP_PERCENT(SeraphimListener.HEAL_CAP_PERCENT_KEY, SeraphimListener.class, SeraphimListener::new),
     SERAPHIM_DAMAGE_BONUS_PERCENT(SeraphimListener.DAMAGE_BONUS_PERCENT_KEY, SeraphimListener.class, SeraphimListener::new),
     SERAPHIM_FULL_BONUS_DAMAGE_FLAT(SeraphimListener.FULL_BONUS_DAMAGE_KEY, SeraphimListener.class, SeraphimListener::new),
+    DYNAMIC_GRID_ENERGY_WEAPON_BONUS_PERCENT(DynamicGridListener.ENERGY_BONUS_PERCENT_KEY, DynamicGridListener.class,
+            DynamicGridListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude)
+                    .arg("frigate", DynamicGridListener.shieldsDownSecondsFor(ShipAPI.HullSize.FRIGATE))
+                    .arg("destroyer", DynamicGridListener.shieldsDownSecondsFor(ShipAPI.HullSize.DESTROYER))
+                    .arg("cruiser", DynamicGridListener.shieldsDownSecondsFor(ShipAPI.HullSize.CRUISER))
+                    .arg("capital", DynamicGridListener.shieldsDownSecondsFor(ShipAPI.HullSize.CAPITAL_SHIP)).styled();
+        }
+
+        @Override
+        public String blockAllocationReason(ShipFacts ship, ShieldAPI.ShieldType currentShieldType) {
+            boolean hasShields = currentShieldType == ShieldAPI.ShieldType.FRONT || currentShieldType == ShieldAPI.ShieldType.OMNI;
+            return hasShields ? null : Translation.text("node.block.noShields");
+        }
+    },
+    ION_ARC_CHANCE_PERCENT(IonArcListener.CHANCE_AT_FULL_HARD_FLUX_KEY, IonArcListener.class, IonArcListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("damage", IonArcListener.ARC_DAMAGE_FRACTION * 100f)
+                    .arg("emp", IonArcListener.ARC_EMP_FRACTION * 100f).styled();
+        }
+    },
+    GRAVITY_DRAG_TIMEFLOW_PERCENT(GravityDragListener.TIMEFLOW_PERCENT_KEY, GravityDragListener.class, GravityDragListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("range", GravityDragField.RANGE)
+                    .arg("phased", magnitude * GravityDragListener.PHASED_MULT).arg("cap", GravityDragField.MAX_TOTAL_REDUCTION_PERCENT).styled();
+        }
+    },
+    TERMINAL_DESCENT_HULL_DAMAGE_TAKEN_PERCENT(TerminalDescentListener.HULL_DAMAGE_TAKEN_PERCENT_KEY, TerminalDescentListener.class,
+            TerminalDescentListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", Math.abs(magnitude))
+                    .arg("enter", TerminalDescentListener.ENTER_BELOW_HULL_FRACTION * 100f)
+                    .arg("leave", TerminalDescentListener.LEAVE_ABOVE_HULL_FRACTION * 100f).styled();
+        }
+    },
+    TERMINAL_DESCENT_FLUX_DISSIPATION_PERCENT(TerminalDescentListener.FLUX_DISSIPATION_PERCENT_KEY, TerminalDescentListener.class,
+            TerminalDescentListener::new),
+    TERMINAL_DESCENT_SYSTEM_REGEN_PERCENT(TerminalDescentListener.SYSTEM_REGEN_PERCENT_KEY, TerminalDescentListener.class,
+            TerminalDescentListener::new),
+    TERMINAL_DESCENT_SHIELD_DAMAGE_TAKEN_PERCENT(TerminalDescentListener.SHIELD_DAMAGE_TAKEN_PERCENT_KEY, TerminalDescentListener.class,
+            TerminalDescentListener::new),
+    FUROR_RATE_OF_FIRE_PERCENT(FurorListener.RATE_OF_FIRE_PERCENT_KEY, FurorListener.class, FurorListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude)
+                    .arg("frigate", FurorListener.damageForFullFuror(ShipAPI.HullSize.FRIGATE))
+                    .arg("destroyer", FurorListener.damageForFullFuror(ShipAPI.HullSize.DESTROYER))
+                    .arg("cruiser", FurorListener.damageForFullFuror(ShipAPI.HullSize.CRUISER))
+                    .arg("capital", FurorListener.damageForFullFuror(ShipAPI.HullSize.CAPITAL_SHIP))
+                    .arg("decay", FurorListener.DECAY_PERCENT_PER_SECOND).styled();
+        }
+    },
+    MALFUNCTION_AURA_PERCENT(MalfunctionAuraListener.MALFUNCTION_PERCENT_KEY, MalfunctionAuraListener.class, MalfunctionAuraListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("range", MalfunctionAuraField.RANGE).styled();
+        }
+    },
+    CORROSION_MOTE_DAMAGE_FLAT(CorrosionMoteListener.MOTE_DAMAGE_KEY, CorrosionMoteListener.class, CorrosionMoteListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("seconds", CorrosionMoteListener.CONTACT_SECONDS_PER_MOTE)
+                    .arg("max", Motes.MAX_LIVE_MOTES_PER_SOURCE).styled();
+        }
+    },
     CREW_STEAL_RANGE_FLAT(CrewStealListener.RANGE_KEY, CrewStealListener.class, CrewStealListener::new),
     CREW_STEAL_SKELETON_CREW_PERCENT(CrewStealListener.SKELETON_CREW_PERCENT_KEY, CrewStealListener.class, CrewStealListener::new),
     FLUX_SCALED_TOP_SPEED_FLAT(FluxScaledVolatilityListener.TOP_SPEED_KEY,

@@ -1596,6 +1596,21 @@
 			]
 		},
 		{
+			"id": "energy_weapon_fire_rate",
+			"name": "Energy Weapon Fire Rate",
+			"icon": "graphics/icons/evasive_maneuvering_shifted_blue.png",
+			"effects": [
+				{
+					"effect": "ENERGY_WEAPON_FIRE_RATE_PERCENT",
+					"magnitude": 3
+				}
+			],
+			"tags": [
+				"energy",
+				"req_energy"
+			]
+		},
+		{
 			"id": "nskr_absorption",
 			"name": "ABSORB System",
 			"icon": "graphics/icons/frozen_heart_shifted.png",
@@ -2598,7 +2613,7 @@
 			"effects": [
 				{
 					"effect": "FIGHTER_WEAPON_DAMAGE_PERCENT",
-					"magnitude": 5
+					"magnitude": 3
 				}
 			],
 			"todo": "Placeholder magnitude (15%) pending real balance numbers.",
@@ -3503,6 +3518,184 @@
 			],
 			"tags": [
 				"speed"
+			]
+		},
+		{
+			"id": "dynamic_grid",
+			"name": "Dynamic Grid",
+			"icon": "graphics/icons/na_dynamic_grid.png",
+			"tier": "KEYSTONE",
+			"effects": [
+				{
+					"effect": "DYNAMIC_GRID_ENERGY_WEAPON_BONUS_PERCENT",
+					"magnitude": 15
+				},
+				{
+					"effect": "SHIELD_RAISE_RATE_PERCENT",
+					"magnitude": 25
+				},
+				{
+					"effect": "SHIELD_DAMAGE_TAKEN_MULT",
+					"magnitude": 10
+				}
+			],
+			"hullSizeEffects": [
+				{
+					"effect": "VENT_RATE_PERCENT",
+					"frigate": 12,
+					"destroyer": 10,
+					"cruiser": 8,
+					"capitalShip": 6
+				}
+			],
+			"exclusiveHullMods": [
+				"nightcrosstargeting"
+			],
+			"description": "Nightcross's signature power grid. The moment the shields come down, the power that fed them is routed to the energy weapons.",
+			"tags": [
+				"shield",
+				"energy",
+				"req_shields"
+			]
+		},
+		{
+			"id": "ion_rounds",
+			"name": "Ion Rounds",
+			"icon": "graphics/icons/na_ion_rounds.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "ION_ARC_CHANCE_PERCENT",
+					"magnitude": 15
+				}
+			],
+			"description": "Keep pressure on an enemy shield until its hard flux climbs, and the arcs start getting through.",
+			"tags": [
+				"energy",
+				"req_non_beam_energy"
+			]
+		},
+		{
+			"id": "hardlight_infusion",
+			"name": "Hardlight Infusion",
+			"icon": "graphics/icons/na_hardlight_infusion.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "FIGHTER_FOCUS_FIRE_DAMAGE_PERCENT_PER_HIT",
+					"magnitude": 2
+				},
+				{
+					"effect": "FIGHTER_FOCUS_FIRE_MAX_DAMAGE_PERCENT",
+					"magnitude": 30
+				}
+			],
+			"description": "Fighter hits paint the target with hardlight markers that guide the rest of the carrier's wings onto it.",
+			"tags": [
+				"fighter",
+				"req_fighter_bays"
+			]
+		},
+		{
+			"id": "gravitational_drag",
+			"name": "Gravitational Drag",
+			"icon": "graphics/icons/na_gravitational_drag.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "GRAVITY_DRAG_TIMEFLOW_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"exclusiveHullMods": [
+				"na_gravitydrag"
+			],
+			"description": "A gravitational disturbance around the hull drags at the timeflow of nearby enemies, strongest from inside phase space.",
+			"tags": [
+				"speed"
+			]
+		},
+		{
+			"id": "beautiful_nightmare",
+			"name": "Beautiful Nightmare",
+			"icon": "graphics/icons/na_beautiful_nightmare.png",
+			"tier": "KEYSTONE",
+			"effects": [
+				{
+					"effect": "TERMINAL_DESCENT_HULL_DAMAGE_TAKEN_PERCENT",
+					"magnitude": -25
+				},
+				{
+					"effect": "TERMINAL_DESCENT_FLUX_DISSIPATION_PERCENT",
+					"magnitude": 15
+				},
+				{
+					"effect": "TERMINAL_DESCENT_SYSTEM_REGEN_PERCENT",
+					"magnitude": 15
+				},
+				{
+					"effect": "TERMINAL_DESCENT_SHIELD_DAMAGE_TAKEN_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"description": "When the hull is failing, the frozen soul at the core stops holding anything back. The ship fights on through its terminal descent, burning its readiness to do it.",
+			"tags": [
+				"hull",
+				"combat_readiness"
+			]
+		},
+		{
+			"id": "furor_machinae",
+			"name": "Furor Machinae",
+			"icon": "graphics/icons/na_furor_machinae.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "FUROR_RATE_OF_FIRE_PERCENT",
+					"magnitude": 15
+				}
+			],
+			"description": "Digital rage climbs with every hit that lands, driving the guns faster and faster.",
+			"tags": [
+				"weapons"
+			]
+		},
+		{
+			"id": "language_of_the_lost",
+			"name": "Language of the Lost",
+			"icon": "graphics/icons/na_language_of_the_lost.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "ELECTRONIC_WARFARE",
+					"magnitude": 1
+				},
+				{
+					"effect": "MALFUNCTION_AURA_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"description": "Broken signals bleed into enemy fire control, and their weapons fail them when it matters.",
+			"tags": [
+				"fleet_support"
+			]
+		},
+		{
+			"id": "corrosion_beam",
+			"name": "Corrosion Beam",
+			"icon": "graphics/icons/na_corrosion_beam.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CORROSION_MOTE_DAMAGE_FLAT",
+					"magnitude": 200
+				}
+			],
+			"description": "Beams held on a target gather stardust, which breaks loose as motes that hunt it down.",
+			"tags": [
+				"energy",
+				"beam",
+				"req_beam"
 			]
 		},
 		{

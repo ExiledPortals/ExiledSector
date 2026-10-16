@@ -18,7 +18,8 @@ public final class SkillTags {
             "luddic", "tritachyon", "hegemony", "sindrian_dictat", "pirate", "REDACTED", "persean_league");
 
     public static final List<String> REGION = List.of(
-            "core", "luddic", "tritachyon", "hegemony", "sindrian_dictat", "pirate", "REDACTED", "persean_league", "enigma", "kesteven", "exotech", "abyss");
+            "core", "luddic", "tritachyon", "hegemony", "sindrian_dictat", "pirate", "REDACTED", "persean_league", "enigma", "kesteven", "exotech", "abyss",
+            "nightcross", "stargazer");
 
     public static final List<String> HULL_REQUIREMENT = List.of("req_civilian_hull", "req_non_phase_hull", "req_system_charges");
 

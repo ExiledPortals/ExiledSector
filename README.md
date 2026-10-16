@@ -89,6 +89,7 @@ These mods have dedicated compatibility. The version listed is the one I last te
 | [MagicLib](https://fractalsoftworks.com/forum/index.php?topic=25868.0) | 1.5.6 | Required. A hull mod that tries to strip one of your nodes' hull mods through MagicLib is removed instead. |
 | Exotica Technologies | 1.8.7 | The Skill Tree button moves one slot down on the refit screen so it doesn't cover the Exotica button. |
 | Random Assortment of Things | 3.3.1 | The Abyss area of the tree appears, along with the ExoTech Exoship, which warps between notables carrying its own branches. Modular Hull Socket items can also drop from the mod's abyssal structures, abyssal drones and relic sites. |
+| Nightcross Armory | 2.1.6 | The Nightcross and Stargazer areas of the tree appear. |
 | Industrial Evolution | 4.1.b | Modular Hull Socket items can drop from its orbital laboratories and arsenal stations. |
 | Knights of Ludd | 1.4.0 | Modular Hull Socket items can drop from its research stations and caches. |
 | Secrets of the Frontier | 0.15.1 | Modular Hull Socket items can drop from its A Promise station and Hypnos laboratory. |
