@@ -55,18 +55,32 @@ class PlayerTreePowerTest {
         }
 
         assertEquals(2, shipData.paidNodeCount());
-        assertEquals(5, PlayerTreePower.shipPower(shipData, 0));
+        assertEquals(5, PlayerTreePower.shipPower(shipData, 0, 1));
+    }
+
+    @Test
+    void atZeroOpPerNodeTheTreeIsCountedOnceRatherThanOnTopOfTheLevel() {
+        ShipSkillData shipData = levelled("free-nodes", 10);
+        for (int node = 0; node < 10; node++) {
+            shipData.allocate(new SkillNode("node_" + node, SMALL, List.of(), 0f, 0f), 0);
+        }
+
+        assertEquals(10, PlayerTreePower.shipPower(shipData, 0, 0));
+        for (int node = 10; node < 14; node++) {
+            shipData.allocate(new SkillNode("node_" + node, SMALL, List.of(), 0f, 0f), 0);
+        }
+        assertEquals(14, PlayerTreePower.shipPower(shipData, 0, 0));
     }
 
     @Test
     void unspentFreeNodesStillCountThroughTheShipsLevel() {
-        assertEquals(30, PlayerTreePower.shipPower(levelled("hoarder", 30), 0));
+        assertEquals(30, PlayerTreePower.shipPower(levelled("hoarder", 30), 0, 1));
     }
 
     @Test
     void aShipBelowTheLevelFloorCountsAsBeingAtIt() {
-        assertEquals(15, PlayerTreePower.shipPower(levelled("rookie", 4), 15));
-        assertEquals(15, PlayerTreePower.shipPower(null, 15));
+        assertEquals(15, PlayerTreePower.shipPower(levelled("rookie", 4), 15, 1));
+        assertEquals(15, PlayerTreePower.shipPower(null, 15, 1));
     }
 
     @Test

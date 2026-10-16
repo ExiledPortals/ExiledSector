@@ -7,6 +7,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.npc.NpcTreeSize;
+import exiledsector.skills.progression.SkillNodeOpCost;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -67,7 +68,7 @@ public final class PlayerTreePower {
             if (member.isFighterWing() || member.isCivilian() || member.isMothballed()) {
                 continue;
             }
-            shipPowers.add(shipPower(ShipSkillDataManager.find(member.getId()), levelFloor));
+            shipPowers.add(shipPower(ShipSkillDataManager.find(member.getId()), levelFloor, SkillNodeOpCost.perNode(member.getHullSpec())));
         }
         if (shipPowers.isEmpty()) {
             shipPowers.add(Math.max(0, levelFloor));
@@ -76,10 +77,21 @@ public final class PlayerTreePower {
         return List.copyOf(shipPowers);
     }
 
-    static int shipPower(ShipSkillData shipData, int levelFloor) {
-        int level = shipData == null ? 0 : shipData.getLevel();
-        int paidNodes = shipData == null ? 0 : shipData.paidNodeCount();
-        return Math.max(level, levelFloor) + paidNodes;
+    static int shipPower(ShipSkillData shipData, int levelFloor, int opCostPerNode) {
+        int level = Math.max(shipData == null ? 0 : shipData.getLevel(), levelFloor);
+        if (shipData == null) {
+            return level;
+        }
+        if (opCostPerNode <= 0) {
+            return Math.max(level, allocatedBesidesRoot(shipData));
+        }
+        return level + shipData.paidNodeCount();
+    }
+
+    private static int allocatedBesidesRoot(ShipSkillData shipData) {
+        String startingRoot = shipData.resolveStartingRootId();
+        int allocated = shipData.getAllocatedNodeIds().size();
+        return startingRoot != null && shipData.getAllocatedNodeIds().contains(startingRoot) ? allocated - 1 : allocated;
     }
 
     public static float average(List<Integer> shipPowers) {
