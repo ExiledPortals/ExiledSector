@@ -89,19 +89,23 @@ export class DescribeService {
     this.status = 'building';
     this.message = 'Compiling the mod for in-game descriptions...';
     const buildLog = fs.openSync(this.buildLogFile, 'w');
-    const build = spawn(
+    const mavenCommandLine = [
       `"${maven}"`,
-      [
-        '-B',
-        '-q',
-        'test-compile',
-        'dependency:build-classpath',
-        '-Dmdep.outputFile=target\\editor-describe.classpath',
-        '-Dmdep.includeScope=test',
-        `"-Dlibs.dir=${libsDir(this.paths.projectRoot)}"`,
-      ],
-      { cwd: this.paths.projectRoot, shell: true, windowsHide: true, stdio: ['ignore', buildLog, buildLog], env: { ...process.env, JAVA_HOME: javaHome } },
-    );
+      '-B',
+      '-q',
+      'test-compile',
+      'dependency:build-classpath',
+      '-Dmdep.outputFile=target\\editor-describe.classpath',
+      '-Dmdep.includeScope=test',
+      `"-Dlibs.dir=${libsDir(this.paths.projectRoot)}"`,
+    ].join(' ');
+    const build = spawn(mavenCommandLine, {
+      cwd: this.paths.projectRoot,
+      shell: true,
+      windowsHide: true,
+      stdio: ['ignore', buildLog, buildLog],
+      env: { ...process.env, JAVA_HOME: javaHome },
+    });
     build.on('exit', (exitCode) => {
       fs.closeSync(buildLog);
       if (exitCode === 0 && fs.existsSync(this.classpathFile)) {
