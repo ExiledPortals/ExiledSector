@@ -3,7 +3,7 @@ import { IconBinaryTree, IconCpu, IconMoon, IconPhoto, IconSun } from '@tabler/i
 import { useEffect, type ComponentType } from 'react';
 import { NavLink as RouterNavLink, Outlet, useBlocker } from 'react-router';
 import { confirmAction } from '../shared/dialogs.tsx';
-import { hasUnsavedChanges } from '../shared/unsavedChanges.ts';
+import { hasUnsavedChanges, hasUnsavedWork } from '../shared/unsavedChanges.ts';
 
 interface EditorPageLink {
   path: string;
@@ -49,7 +49,7 @@ function useUnsavedChangesGuard() {
 
   useEffect(() => {
     const warnBeforeUnload = (event: BeforeUnloadEvent) => {
-      if (hasUnsavedChanges()) {
+      if (hasUnsavedWork()) {
         event.preventDefault();
       }
     };

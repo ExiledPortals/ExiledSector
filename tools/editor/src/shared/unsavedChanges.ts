@@ -23,3 +23,14 @@ export function useReportUnsavedChanges(key: string, dirty: boolean): void {
   }, [key, dirty, setDirty]);
   useEffect(() => () => setDirty(key, false), [key, setDirty]);
 }
+
+const unloadChecks = new Set<() => boolean>();
+
+export function registerUnloadCheck(check: () => boolean): () => void {
+  unloadChecks.add(check);
+  return () => unloadChecks.delete(check);
+}
+
+export function hasUnsavedWork(): boolean {
+  return hasUnsavedChanges() || [...unloadChecks].some((check) => check());
+}

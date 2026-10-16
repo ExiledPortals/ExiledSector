@@ -6,9 +6,9 @@ import { DataToolbar } from '../../../shared/DataToolbar.tsx';
 import { confirmAction, notifyError, promptText } from '../../../shared/dialogs.tsx';
 import { DocumentState } from '../../../shared/DocumentState.tsx';
 import { useDataDocument, type DataDocument } from '../../../shared/useDataDocument.ts';
+import { lineEndingOf } from '../../../shared/lineEndings.ts';
 import { parseSocketablesCsv } from '../model/definitions.ts';
 import {
-  lineEndingOf,
   missingEffects,
   parseAffixesCsv,
   RARE_NAME_STYLES,

@@ -1,0 +1,200 @@
+.canvasFrame {
+  --tree-canvas-bg: #0a0e15;
+  --tree-faint: #566274;
+  --tree-text: #dbe4ee;
+  --tree-text-dim: #8494a8;
+  --tree-panel: #0e1420;
+  --tree-accent: #5fd0ff;
+  --tree-accent-dim: #2c5c70;
+  --tree-danger: #ff6b6b;
+  --tree-small: #7c8ba0;
+  --tree-notable: #5fd0ff;
+  --tree-keystone: #ffb454;
+  --tree-wormhole: #ff5ad1;
+  --tree-socket: #4fd1c5;
+  --tree-root: #b98aff;
+
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--tree-canvas-bg);
+  touch-action: none;
+}
+
+:global([data-mantine-color-scheme='light']) .canvasFrame {
+  --tree-canvas-bg: #f7f9fb;
+  --tree-faint: #93a1b0;
+  --tree-text: #1b2430;
+  --tree-text-dim: #5c6b7d;
+  --tree-panel: #f5f7fa;
+  --tree-accent: #0d84ad;
+  --tree-accent-dim: #cfe9f4;
+  --tree-danger: #c8393a;
+  --tree-small: #6b7686;
+  --tree-notable: #0d84ad;
+  --tree-keystone: #b9720a;
+  --tree-wormhole: #a3168a;
+  --tree-socket: #0f8a7e;
+  --tree-root: #7c4dff;
+}
+
+.modeAdd {
+  cursor: copy;
+}
+
+.modeAddAnchor,
+.modeAddImage,
+.modeAddStar {
+  cursor: crosshair;
+}
+
+.stage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+}
+
+.nodeShape {
+  cursor: grab;
+}
+
+.nodeLabel {
+  font-size: 11px;
+  fill: var(--tree-text-dim);
+  pointer-events: none;
+}
+
+.edgeLine {
+  fill: none;
+  stroke: var(--tree-faint);
+  stroke-width: 1.4;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.hiddenConnector {
+  stroke-dasharray: 2 5;
+  opacity: 0.3;
+}
+
+.handle {
+  fill: var(--tree-faint);
+  opacity: 0.55;
+}
+
+.handle:hover,
+.handleActive {
+  fill: var(--tree-accent);
+  opacity: 1;
+}
+
+.curveHandle {
+  cursor: grab;
+  opacity: 0.45;
+}
+
+.resizeHandle {
+  cursor: ew-resize;
+}
+
+.rotateHandle {
+  cursor: grab;
+}
+
+.shapeCycleHandle {
+  cursor: pointer;
+}
+
+.orbitRing {
+  fill: none;
+  stroke: var(--tree-faint);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 5;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.orbitRingSelected {
+  stroke: var(--tree-accent);
+  opacity: 0.9;
+}
+
+.centerHandle {
+  fill: var(--tree-panel);
+  stroke: var(--tree-faint);
+  stroke-width: 1.5;
+  cursor: move;
+}
+
+.centerHandle:hover {
+  stroke: var(--tree-accent);
+}
+
+.centerHandleSelected {
+  stroke: var(--tree-accent);
+  fill: var(--tree-accent-dim);
+}
+
+.centerMark {
+  fill: none;
+  stroke: var(--tree-accent);
+  stroke-width: 1.5;
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.imagePlaceholder {
+  fill: var(--tree-panel);
+  stroke: var(--tree-faint);
+  stroke-width: 1;
+  stroke-dasharray: 4 6;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.imageRotateLine {
+  stroke: var(--tree-faint);
+  stroke-width: 1;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.marquee {
+  fill: var(--tree-accent);
+  fill-opacity: 0.12;
+  stroke: var(--tree-accent);
+  stroke-width: 1;
+  stroke-dasharray: 4 3;
+  pointer-events: none;
+}
+
+.overlayTopLeft {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 5;
+}
+
+.overlayBottomLeft {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  z-index: 5;
+}
+
+.overlayBottomRight {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  z-index: 5;
+}
+
+.legendDot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  flex: none;
+}

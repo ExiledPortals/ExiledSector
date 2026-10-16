@@ -67,3 +67,7 @@ export function notifySuccess(message: string): void {
 export function notifyError(message: string): void {
   notifications.show({ color: 'red', title: 'Something went wrong', message, autoClose: 8000 });
 }
+
+export function notifyInfo(message: string): void {
+  notifications.show({ message, autoClose: 2000 });
+}

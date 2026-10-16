@@ -5,7 +5,8 @@ import { parseCsvTable, serializeCsvTable } from '../../../shared/csv.ts';
 import { parseCraftingCsv, serializeCraftingCsv } from './crafting.ts';
 import { parseSocketablesCsv, serializeSocketablesCsv } from './definitions.ts';
 import { parseSalvageCsv, serializeSalvageCsv } from './drops.ts';
-import { lineEndingOf, parseAffixesCsv, serializeAffixesCsv, serializeRareNames } from './names.ts';
+import { lineEndingOf } from '../../../shared/lineEndings.ts';
+import { parseAffixesCsv, serializeAffixesCsv, serializeRareNames } from './names.ts';
 
 const repositoryRoot = path.resolve(import.meta.dirname, '..', '..', '..', '..', '..', '..');
 const configDir = path.join(repositoryRoot, 'data', 'config', 'exiledSector');

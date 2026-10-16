@@ -6,7 +6,7 @@ import { notifyError } from './dialogs.tsx';
 import { ImageBrowser } from './ImageBrowser.tsx';
 
 interface ImagePickButtonProps extends ButtonProps {
-  targetFolder?: string;
+  targetFolder?: string | null;
   onPicked: (path: string) => void;
   label?: string;
 }
@@ -18,7 +18,7 @@ export function ImagePickButton({ targetFolder = 'graphics/icons/', onPicked, la
 
   const pick = async (path: string) => {
     setOpened(false);
-    const outcome = await moveImageIfNeeded(path, targetFolder);
+    const outcome = targetFolder === null ? { path } : await moveImageIfNeeded(path, targetFolder);
     if ('error' in outcome) {
       notifyError(outcome.error);
       return;

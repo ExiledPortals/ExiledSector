@@ -1,4 +1,5 @@
 import { compareText } from '../../../shared/arrays.ts';
+import { withLineEnding, type LineEnding } from '../../../shared/lineEndings.ts';
 import { csvCell, emptyCsvTable, parseCsvTable, serializeCsvTable, setCsvCell, type CsvTable } from '../../../shared/csv.ts';
 import { isTrueText, type SocketableDefinition } from './definitions.ts';
 
@@ -63,12 +64,6 @@ export function wordList(text: string): string[] {
     .filter(Boolean);
 }
 
-export type LineEnding = '\r\n' | '\n';
-
-export function lineEndingOf(text: string): LineEnding {
-  return /\r\n/.test(text) ? '\r\n' : '\n';
-}
-
 export function serializeRareNames(names: Record<string, RareNameWords>, lineEnding: LineEnding = '\n'): string {
   const text =
     '{\n' +
@@ -84,7 +79,7 @@ export function serializeRareNames(names: Record<string, RareNameWords>, lineEnd
       })
       .join(',\n') +
     '\n}\n';
-  return lineEnding === '\n' ? text : text.replace(/\n/g, lineEnding);
+  return withLineEnding(text, lineEnding);
 }
 
 export function usedEffectsOf(definitions: SocketableDefinition[]): Record<string, string[]> {
