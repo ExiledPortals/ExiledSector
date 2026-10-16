@@ -82,8 +82,8 @@
 				"blast_doors_1",
 				"hull_multi_1"
 			],
-			"x": 1728,
-			"y": 1959,
+			"x": 1716,
+			"y": 1776,
 			"orbitAnchorId": "anchor_7",
 			"orbitAngle": 90,
 			"tags": [
@@ -139,10 +139,10 @@
 			"connectedTo": [
 				"weapon_durability_1"
 			],
-			"x": 1282,
-			"y": 2016,
+			"x": 1202,
+			"y": 1830,
 			"orbitAnchorId": "anchor_18",
-			"orbitAngle": -29.999999999999996,
+			"orbitAngle": -72.19999999999999,
 			"tags": [
 				"core"
 			]
@@ -169,8 +169,8 @@
 				"armor_1",
 				"hull_multi_2"
 			],
-			"x": 1550,
-			"y": 1781,
+			"x": 1538,
+			"y": 1598,
 			"orbitAnchorId": "anchor_7",
 			"orbitAngle": 180,
 			"tags": [
@@ -185,8 +185,8 @@
 				"armor_1",
 				"small_flux_optional_31"
 			],
-			"x": 1906,
-			"y": 1781,
+			"x": 1894,
+			"y": 1598,
 			"orbitAnchorId": "anchor_7",
 			"orbitAngle": 0,
 			"tags": [
@@ -569,10 +569,10 @@
 			"connectedTo": [
 				"armor_4"
 			],
-			"x": 722,
-			"y": 3585,
+			"x": 846,
+			"y": 3556,
 			"orbitAnchorId": "anchor_10",
-			"orbitAngle": 90,
+			"orbitAngle": 49.99999999999996,
 			"tags": [
 				"core",
 				"req_shields"
@@ -631,8 +631,8 @@
 				"maneuverability_percent_1",
 				"acceleration_percent_1"
 			],
-			"x": 2252,
-			"y": -12,
+			"x": 2220,
+			"y": -128,
 			"orbitAnchorId": "anchor_22",
 			"orbitAngle": 90,
 			"tags": [
@@ -855,7 +855,7 @@
 				"small_flux_optional_101"
 			],
 			"x": 2070,
-			"y": -1020,
+			"y": -1143,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#ffca80",
 			"tags": [
@@ -2435,13 +2435,13 @@
 			"id": "armor_4",
 			"type": "armor",
 			"connectedTo": [
-				"shield_shunt_1",
-				"armor_5"
+				"armor_5",
+				"shield_shunt_1"
 			],
-			"x": 566,
-			"y": 3315,
+			"x": 553,
+			"y": 3449,
 			"orbitAnchorId": "anchor_10",
-			"orbitAngle": -150.00000000000003,
+			"orbitAngle": 170,
 			"tags": [
 				"core"
 			]
@@ -2453,10 +2453,10 @@
 				"small_flux_optional_33",
 				"armor_4"
 			],
-			"x": 878,
-			"y": 3315,
+			"x": 792,
+			"y": 3249,
 			"orbitAnchorId": "anchor_10",
-			"orbitAngle": -29.999999999999996,
+			"orbitAngle": -70,
 			"tags": [
 				"core"
 			]
@@ -2706,13 +2706,13 @@
 			"id": "weapon_durability_1",
 			"type": "weapon_durability",
 			"connectedTo": [
-				"weapon_durability_2",
-				"armoredweapons_1"
+				"armoredweapons_1",
+				"weapon_durability_2"
 			],
-			"x": 970,
-			"y": 2016,
+			"x": 971,
+			"y": 2039,
 			"orbitAnchorId": "anchor_18",
-			"orbitAngle": -150.00000000000003,
+			"orbitAngle": 167.8,
 			"tags": [
 				"core"
 			]
@@ -2721,13 +2721,13 @@
 			"id": "weapon_durability_2",
 			"type": "weapon_durability",
 			"connectedTo": [
-				"weapon_durability_1",
-				"small_flux_optional_32"
+				"small_flux_optional_32",
+				"weapon_durability_1"
 			],
-			"x": 1126,
-			"y": 2286,
+			"x": 1268,
+			"y": 2134,
 			"orbitAnchorId": "anchor_18",
-			"orbitAngle": 90,
+			"orbitAngle": 47.80000000000002,
 			"tags": [
 				"core"
 			]
@@ -2935,8 +2935,8 @@
 				"auxiliarythrusters_1",
 				"turn_acceleration_percent_1"
 			],
-			"x": 2072,
-			"y": -192,
+			"x": 2040,
+			"y": -308,
 			"orbitAnchorId": "anchor_22",
 			"orbitAngle": 180,
 			"tags": [
@@ -2950,8 +2950,8 @@
 				"turn_acceleration_percent_1",
 				"auxiliarythrusters_1"
 			],
-			"x": 2432,
-			"y": -192,
+			"x": 2400,
+			"y": -308,
 			"orbitAnchorId": "anchor_22",
 			"orbitAngle": 0,
 			"tags": [
@@ -2966,8 +2966,8 @@
 				"small_flux_optional_101",
 				"maneuverability_percent_1"
 			],
-			"x": 2252,
-			"y": -372,
+			"x": 2220,
+			"y": -488,
 			"orbitAnchorId": "anchor_22",
 			"orbitAngle": 270,
 			"tags": [
@@ -3127,8 +3127,8 @@
 				"hull_multi_1",
 				"blast_doors_1"
 			],
-			"x": 1728,
-			"y": 1603,
+			"x": 1716,
+			"y": 1420,
 			"orbitAnchorId": "anchor_7",
 			"orbitAngle": 270,
 			"tags": [
@@ -5695,8 +5695,8 @@
 				"converted_fighterbay_1",
 				"turn_acceleration_percent_1"
 			],
-			"x": 2173,
-			"y": -692,
+			"x": 2145,
+			"y": -833,
 			"tags": [
 				"core"
 			]
@@ -6119,18 +6119,6 @@
 			"controlY": -3100
 		},
 		{
-			"a": "weapon_durability_1",
-			"b": "weapon_durability_2",
-			"controlX": 1048,
-			"controlY": 2151
-		},
-		{
-			"a": "armoredweapons_1",
-			"b": "weapon_durability_1",
-			"controlX": 1126,
-			"controlY": 2016
-		},
-		{
 			"a": "missile_damage_3",
 			"b": "missile_damage_4",
 			"controlX": -3013,
@@ -6157,20 +6145,20 @@
 		{
 			"a": "auxiliarythrusters_1",
 			"b": "maneuverability_percent_1",
-			"controlX": 2125,
-			"controlY": -65
+			"controlX": 2093,
+			"controlY": -181
 		},
 		{
 			"a": "acceleration_percent_1",
 			"b": "turn_acceleration_percent_1",
-			"controlX": 2379,
-			"controlY": -319
+			"controlX": 2347,
+			"controlY": -435
 		},
 		{
 			"a": "acceleration_percent_1",
 			"b": "auxiliarythrusters_1",
-			"controlX": 2379,
-			"controlY": -65
+			"controlX": 2347,
+			"controlY": -181
 		},
 		{
 			"a": "fighter_replacement_1",
@@ -6205,8 +6193,8 @@
 		{
 			"a": "armor_1",
 			"b": "blast_doors_1",
-			"controlX": 1638,
-			"controlY": 1871
+			"controlX": 1626,
+			"controlY": 1688
 		},
 		{
 			"a": "shield_arc_mult_1",
@@ -6217,20 +6205,20 @@
 		{
 			"a": "hull_multi_1",
 			"b": "hull_multi_2",
-			"controlX": 1818,
-			"controlY": 1691
+			"controlX": 1806,
+			"controlY": 1508
 		},
 		{
 			"a": "armor_1",
 			"b": "hull_multi_1",
-			"controlX": 1818,
-			"controlY": 1871
+			"controlX": 1806,
+			"controlY": 1688
 		},
 		{
 			"a": "blast_doors_1",
 			"b": "hull_multi_2",
-			"controlX": 1638,
-			"controlY": 1691
+			"controlX": 1626,
+			"controlY": 1508
 		},
 		{
 			"a": "armor_2",
@@ -6971,12 +6959,6 @@
 			"controlY": 1647
 		},
 		{
-			"a": "armor_4",
-			"b": "shield_shunt_1",
-			"controlX": 644,
-			"controlY": 3450
-		},
-		{
 			"a": "beam_damage_1",
 			"b": "beam_damage_3",
 			"controlX": -3816,
@@ -7381,8 +7363,8 @@
 		{
 			"a": "armor_4",
 			"b": "armor_5",
-			"controlX": 722,
-			"controlY": 3315
+			"controlX": 672,
+			"controlY": 3349
 		},
 		{
 			"a": "small_flux_optional_93",
@@ -7459,8 +7441,8 @@
 		{
 			"a": "maneuverability_percent_1",
 			"b": "turn_acceleration_percent_1",
-			"controlX": 2125,
-			"controlY": -319
+			"controlX": 2093,
+			"controlY": -435
 		},
 		{
 			"a": "small_flux_optional_90",
@@ -7485,6 +7467,24 @@
 			"b": "small_flux_optional_84",
 			"controlX": 1061,
 			"controlY": -1061
+		},
+		{
+			"a": "armoredweapons_1",
+			"b": "weapon_durability_1",
+			"controlX": 1087,
+			"controlY": 1934
+		},
+		{
+			"a": "weapon_durability_1",
+			"b": "weapon_durability_2",
+			"controlX": 1119,
+			"controlY": 2087
+		},
+		{
+			"a": "armor_4",
+			"b": "shield_shunt_1",
+			"controlX": 699,
+			"controlY": 3503
 		}
 	],
 	"hiddenConnectors": [
@@ -7631,8 +7631,8 @@
 		},
 		{
 			"id": "anchor_7",
-			"x": 1728,
-			"y": 1781,
+			"x": 1716,
+			"y": 1598,
 			"radius": 180,
 			"shape": "square",
 			"rotation": 314.3
@@ -7667,11 +7667,11 @@
 		},
 		{
 			"id": "anchor_10",
-			"x": 722,
-			"y": 3405,
+			"x": 730,
+			"y": 3418,
 			"radius": 180,
 			"shape": "triangle",
-			"rotation": 180
+			"rotation": 140
 		},
 		{
 			"id": "anchor_11",
@@ -7722,14 +7722,6 @@
 			"radius": 180
 		},
 		{
-			"id": "anchor_18",
-			"x": 1126,
-			"y": 2106,
-			"radius": 180,
-			"shape": "triangle",
-			"rotation": 180
-		},
-		{
 			"id": "middle_ringbelt",
 			"x": 0,
 			"y": 0,
@@ -7770,8 +7762,8 @@
 		},
 		{
 			"id": "anchor_22",
-			"x": 2252,
-			"y": -192,
+			"x": 2220,
+			"y": -308,
 			"radius": 180
 		},
 		{
@@ -8092,6 +8084,14 @@
 			"x": 570,
 			"y": 2444,
 			"radius": 180
+		},
+		{
+			"id": "anchor_18",
+			"x": 1147,
+			"y": 2001,
+			"radius": 180,
+			"shape": "triangle",
+			"rotation": 17.8
 		}
 	],
 	"ringBelts": [
