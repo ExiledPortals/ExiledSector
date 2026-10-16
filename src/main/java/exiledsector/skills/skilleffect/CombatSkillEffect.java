@@ -15,6 +15,7 @@ import com.fs.starfarer.api.util.IntervalUtil;
 import exiledsector.compat.LostSectorCompat;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.motes.Motes;
 import exiledsector.skills.ShipFacts;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -150,6 +151,45 @@ public enum CombatSkillEffect implements BackedSkillEffect {
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("value", magnitude).arg("range", GravityDragField.RANGE)
                     .arg("phased", magnitude * GravityDragListener.PHASED_MULT).arg("cap", GravityDragField.MAX_TOTAL_REDUCTION_PERCENT).styled();
+        }
+    },
+    TERMINAL_DESCENT_HULL_DAMAGE_TAKEN_PERCENT(TerminalDescentListener.HULL_DAMAGE_TAKEN_PERCENT_KEY, TerminalDescentListener.class,
+            TerminalDescentListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", Math.abs(magnitude))
+                    .arg("enter", TerminalDescentListener.ENTER_BELOW_HULL_FRACTION * 100f)
+                    .arg("leave", TerminalDescentListener.LEAVE_ABOVE_HULL_FRACTION * 100f).styled();
+        }
+    },
+    TERMINAL_DESCENT_FLUX_DISSIPATION_PERCENT(TerminalDescentListener.FLUX_DISSIPATION_PERCENT_KEY, TerminalDescentListener.class,
+            TerminalDescentListener::new),
+    TERMINAL_DESCENT_SYSTEM_REGEN_PERCENT(TerminalDescentListener.SYSTEM_REGEN_PERCENT_KEY, TerminalDescentListener.class,
+            TerminalDescentListener::new),
+    TERMINAL_DESCENT_SHIELD_DAMAGE_TAKEN_PERCENT(TerminalDescentListener.SHIELD_DAMAGE_TAKEN_PERCENT_KEY, TerminalDescentListener.class,
+            TerminalDescentListener::new),
+    FUROR_RATE_OF_FIRE_PERCENT(FurorListener.RATE_OF_FIRE_PERCENT_KEY, FurorListener.class, FurorListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude)
+                    .arg("frigate", FurorListener.damageForFullFuror(ShipAPI.HullSize.FRIGATE))
+                    .arg("destroyer", FurorListener.damageForFullFuror(ShipAPI.HullSize.DESTROYER))
+                    .arg("cruiser", FurorListener.damageForFullFuror(ShipAPI.HullSize.CRUISER))
+                    .arg("capital", FurorListener.damageForFullFuror(ShipAPI.HullSize.CAPITAL_SHIP))
+                    .arg("decay", FurorListener.DECAY_PERCENT_PER_SECOND).styled();
+        }
+    },
+    MALFUNCTION_AURA_PERCENT(MalfunctionAuraListener.MALFUNCTION_PERCENT_KEY, MalfunctionAuraListener.class, MalfunctionAuraListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("range", MalfunctionAuraField.RANGE).styled();
+        }
+    },
+    CORROSION_MOTE_DAMAGE_FLAT(CorrosionMoteListener.MOTE_DAMAGE_KEY, CorrosionMoteListener.class, CorrosionMoteListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("seconds", CorrosionMoteListener.CONTACT_SECONDS_PER_MOTE)
+                    .arg("max", Motes.MAX_LIVE_MOTES_PER_SOURCE).styled();
         }
     },
     CREW_STEAL_RANGE_FLAT(CrewStealListener.RANGE_KEY, CrewStealListener.class, CrewStealListener::new),

@@ -6,6 +6,8 @@ import com.fs.starfarer.api.combat.BaseEveryFrameCombatPlugin;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
+import exiledsector.compat.NightcrossCompat;
+import exiledsector.i18n.Translation;
 
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
@@ -19,11 +21,14 @@ final class GravityDragField extends BaseEveryFrameCombatPlugin {
     static final float MAX_TOTAL_REDUCTION_PERCENT = 25f;
     static final float UPDATE_INTERVAL_SECONDS = 0.25f;
     static final String MOD_ID = "exiledSector_gravityDrag";
+    static final String STATUS_ICON = "graphics/icons/na_gravitational_drag.png";
     private static final String CUSTOM_DATA_KEY = "exiledSector_gravityDragField";
-    private static final float CHANGE_EPSILON_PERCENT = 0.05f;
+    private static final String STATUS_KEY = "exiledSector_gravityDragStatus";
+    private static final float CHANGE_EPSILON = 0.0005f;
 
     private final List<GravityDragListener> sources = new ArrayList<>();
-    private final Map<ShipAPI, Float> appliedReductionPercent = new IdentityHashMap<>();
+    private final Map<ShipAPI, Float> appliedTimeMult = new IdentityHashMap<>();
+    private final Map<ShipAPI, Float> combinedPercentByTarget = new IdentityHashMap<>();
     private float secondsSinceUpdate = UPDATE_INTERVAL_SECONDS;
 
     static void register(GravityDragListener source) {
@@ -37,10 +42,19 @@ final class GravityDragField extends BaseEveryFrameCombatPlugin {
         GravityDragField field = (GravityDragField) engine.getCustomData().get(CUSTOM_DATA_KEY);
         if (field == null) {
             field = new GravityDragField();
+            loadStatusIcon();
             engine.getCustomData().put(CUSTOM_DATA_KEY, field);
             engine.addPlugin(field);
         }
         field.sources.add(source);
+    }
+
+    private static void loadStatusIcon() {
+        try {
+            Global.getSettings().loadTexture(STATUS_ICON);
+        } catch (Exception e) {
+            return;
+        }
     }
 
     @Override
@@ -49,6 +63,7 @@ final class GravityDragField extends BaseEveryFrameCombatPlugin {
         if (engine == null || engine.isPaused()) {
             return;
         }
+        showPlayerStatus(engine);
         secondsSinceUpdate += amount;
         if (secondsSinceUpdate < UPDATE_INTERVAL_SECONDS) {
             return;
@@ -56,6 +71,14 @@ final class GravityDragField extends BaseEveryFrameCombatPlugin {
         secondsSinceUpdate = 0f;
         sources.removeIf(source -> !engine.isEntityInPlay(source.source()) || !CombatQueries.isAliveNotHulk(source.source()));
         applyReductions(reductionsFrom(sources, (source, radius, filter) -> CombatQueries.shipsNear(source.getLocation(), radius, filter)));
+    }
+
+    private void showPlayerStatus(CombatEngineAPI engine) {
+        Float combinedPercent = combinedPercentByTarget.get(engine.getPlayerShip());
+        if (combinedPercent != null && combinedPercent >= 0.5f) {
+            engine.maintainStatusForPlayerShip(STATUS_KEY, STATUS_ICON, Translation.gameText("combat.gravityDrag"),
+                    Translation.msg("combat.gravityDrag.status").arg("value", Math.round(combinedPercent)).text(), true);
+        }
     }
 
     interface ShipsNear {
@@ -84,19 +107,32 @@ final class GravityDragField extends BaseEveryFrameCombatPlugin {
         return reductions;
     }
 
-    private void applyReductions(Map<ShipAPI, Float> reductions) {
-        for (ShipAPI previouslyDragged : new ArrayList<>(appliedReductionPercent.keySet())) {
-            if (!reductions.containsKey(previouslyDragged)) {
+    static float combinedPercent(float ownPercent, float nightcrossPercent) {
+        return Math.min(MAX_TOTAL_REDUCTION_PERCENT, ownPercent + nightcrossPercent);
+    }
+
+    static float ownTimeMult(float ownPercent, float nightcrossPercent) {
+        float nightcrossMult = Math.max(0.01f, 1f - nightcrossPercent / 100f);
+        return (1f - combinedPercent(ownPercent, nightcrossPercent) / 100f) / nightcrossMult;
+    }
+
+    private void applyReductions(Map<ShipAPI, Float> ownReductions) {
+        for (ShipAPI previouslyDragged : new ArrayList<>(appliedTimeMult.keySet())) {
+            if (!ownReductions.containsKey(previouslyDragged)) {
                 previouslyDragged.getMutableStats().getTimeMult().unmodify(MOD_ID);
-                appliedReductionPercent.remove(previouslyDragged);
+                appliedTimeMult.remove(previouslyDragged);
+                combinedPercentByTarget.remove(previouslyDragged);
             }
         }
-        reductions.forEach((target, percent) -> {
-            Float applied = appliedReductionPercent.get(target);
-            if (applied == null || Math.abs(applied - percent) > CHANGE_EPSILON_PERCENT) {
-                target.getMutableStats().getTimeMult().modifyMult(MOD_ID, 1f - percent / 100f);
-                appliedReductionPercent.put(target, percent);
+        ownReductions.forEach((target, ownPercent) -> {
+            float nightcrossPercent = NightcrossCompat.gravityDragPercentOn(target);
+            float timeMult = ownTimeMult(ownPercent, nightcrossPercent);
+            Float applied = appliedTimeMult.get(target);
+            if (applied == null || Math.abs(applied - timeMult) > CHANGE_EPSILON) {
+                target.getMutableStats().getTimeMult().modifyMult(MOD_ID, timeMult);
+                appliedTimeMult.put(target, timeMult);
             }
+            combinedPercentByTarget.put(target, combinedPercent(ownPercent, nightcrossPercent));
         });
     }
 }

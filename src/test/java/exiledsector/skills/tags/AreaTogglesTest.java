@@ -29,10 +29,10 @@ class AreaTogglesTest {
     @Test
     void autoShowsTheNightcrossAreaOnlyWhenNightcrossIsInstalled() {
         assertEquals(Set.of(), AreaToggles.disabledNightcrossRegions(AreaToggles.AUTO, true));
-        assertEquals(Set.of("nightcross"), AreaToggles.disabledNightcrossRegions(AreaToggles.AUTO, false));
+        assertEquals(Set.of("nightcross", "stargazer"), AreaToggles.disabledNightcrossRegions(AreaToggles.AUTO, false));
         assertEquals(Set.of(), AreaToggles.disabledNightcrossRegions(AreaToggles.ON, false));
-        assertEquals(Set.of("nightcross"), AreaToggles.disabledNightcrossRegions(AreaToggles.OFF, true));
-        assertEquals(Set.of("nightcross"), AreaToggles.disabledNightcrossRegions(null, false));
+        assertEquals(Set.of("nightcross", "stargazer"), AreaToggles.disabledNightcrossRegions(AreaToggles.OFF, true));
+        assertEquals(Set.of("nightcross", "stargazer"), AreaToggles.disabledNightcrossRegions(null, false));
     }
 
     @Test

@@ -2,6 +2,9 @@ package exiledsector.compat;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
+import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.MutableStat;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.skills.npc.RealSkillData;
 import org.json.JSONArray;
@@ -136,6 +139,38 @@ class CompatChecksTest {
 
         assertEquals(1, missing.size());
         assertTrue(missing.get(0).contains("SCData.isSkillActive"));
+    }
+
+    @Test
+    void nightcrossNodesExcludeExactlyTheHullModsTheSelfCheckWatches() throws Exception {
+        JSONArray types = RealSkillData.readJson(RealSkillData.projectRoot().resolve(RealSkillData.TYPES_FILE)).getJSONArray("skillTypes");
+        List<String> excludedNightcrossHullMods = new ArrayList<>();
+        for (int i = 0; i < types.length(); i++) {
+            JSONArray exclusive = types.getJSONObject(i).optJSONArray("exclusiveHullMods");
+            for (int j = 0; exclusive != null && j < exclusive.length(); j++) {
+                String hullModId = exclusive.getString(j);
+                if (NightcrossCompat.REQUIRED_HULL_MOD_IDS.contains(hullModId) || hullModId.startsWith("na_")) {
+                    excludedNightcrossHullMods.add(hullModId);
+                }
+            }
+        }
+
+        assertEquals(NightcrossCompat.REQUIRED_HULL_MOD_IDS.stream().sorted().toList(), excludedNightcrossHullMods.stream().sorted().toList());
+    }
+
+    @Test
+    void nightcrossGravityDragIsReadFromItsTimeflowModifier() {
+        ShipAPI target = mock(ShipAPI.class);
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        MutableStat timeMult = new MutableStat(1f);
+        when(target.getId()).thenReturn("target");
+        when(target.getMutableStats()).thenReturn(stats);
+        when(stats.getTimeMult()).thenReturn(timeMult);
+
+        assertEquals(0f, NightcrossCompat.gravityDragPercentOn(target), 0.0001f);
+        timeMult.modifyMult("target" + NightcrossCompat.GRAVITY_DRAG_MOD_SUFFIX, 0.85f);
+        timeMult.modifyMult("unrelated", 0.5f);
+        assertEquals(15f, NightcrossCompat.gravityDragPercentOn(target), 0.0001f);
     }
 
     @Test

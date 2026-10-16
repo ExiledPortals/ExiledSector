@@ -13,7 +13,7 @@ public final class AreaToggles {
     public static final String LOST_SECTOR_FIELD_ID = "exiledSector_lostSectorArea";
     public static final Set<String> LOST_SECTOR_REGIONS = Set.of("enigma", "kesteven");
     public static final String NIGHTCROSS_FIELD_ID = "exiledSector_nightcrossArea";
-    public static final Set<String> NIGHTCROSS_REGIONS = Set.of("nightcross");
+    public static final Set<String> NIGHTCROSS_REGIONS = Set.of("nightcross", "stargazer");
     public static final List<Set<String>> TOGGLED_AREAS = List.of(LOST_SECTOR_REGIONS, NIGHTCROSS_REGIONS);
     public static final String AUTO = "Auto";
     public static final String ON = "On";

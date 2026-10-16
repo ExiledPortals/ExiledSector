@@ -3522,16 +3522,16 @@
 				},
 				{
 					"effect": "SHIELD_DAMAGE_TAKEN_MULT",
-					"magnitude": 7.5
+					"magnitude": 10
 				}
 			],
 			"hullSizeEffects": [
 				{
 					"effect": "VENT_RATE_PERCENT",
-					"frigate": 12.5,
+					"frigate": 12,
 					"destroyer": 10,
-					"cruiser": 7.5,
-					"capitalShip": 5
+					"cruiser": 8,
+					"capitalShip": 6
 				}
 			],
 			"exclusiveHullMods": [
@@ -3562,9 +3562,9 @@
 			]
 		},
 		{
-			"id": "hardlight_rifle",
-			"name": "Hardlight Rifle",
-			"icon": "graphics/icons/na_hardlight_rifle.png",
+			"id": "hardlight_infusion",
+			"name": "Hardlight Infusion",
+			"icon": "graphics/icons/na_hardlight_infusion.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3599,6 +3599,89 @@
 			"description": "A gravitational disturbance around the hull drags at the timeflow of nearby enemies, strongest from inside phase space.",
 			"tags": [
 				"speed"
+			]
+		},
+		{
+			"id": "beautiful_nightmare",
+			"name": "Beautiful Nightmare",
+			"icon": "graphics/icons/na_beautiful_nightmare.png",
+			"tier": "KEYSTONE",
+			"effects": [
+				{
+					"effect": "TERMINAL_DESCENT_HULL_DAMAGE_TAKEN_PERCENT",
+					"magnitude": -25
+				},
+				{
+					"effect": "TERMINAL_DESCENT_FLUX_DISSIPATION_PERCENT",
+					"magnitude": 15
+				},
+				{
+					"effect": "TERMINAL_DESCENT_SYSTEM_REGEN_PERCENT",
+					"magnitude": 15
+				},
+				{
+					"effect": "TERMINAL_DESCENT_SHIELD_DAMAGE_TAKEN_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"description": "When the hull is failing, the frozen soul at the core stops holding anything back. The ship fights on through its terminal descent, burning its readiness to do it.",
+			"tags": [
+				"hull",
+				"combat_readiness"
+			]
+		},
+		{
+			"id": "furor_machinae",
+			"name": "Furor Machinae",
+			"icon": "graphics/icons/na_furor_machinae.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "FUROR_RATE_OF_FIRE_PERCENT",
+					"magnitude": 15
+				}
+			],
+			"description": "Digital rage climbs with every hit that lands, driving the guns faster and faster.",
+			"tags": [
+				"weapons"
+			]
+		},
+		{
+			"id": "language_of_the_lost",
+			"name": "Language of the Lost",
+			"icon": "graphics/icons/na_language_of_the_lost.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "ELECTRONIC_WARFARE",
+					"magnitude": 1
+				},
+				{
+					"effect": "MALFUNCTION_AURA_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"description": "Broken signals bleed into enemy fire control, and their weapons fail them when it matters.",
+			"tags": [
+				"fleet_support"
+			]
+		},
+		{
+			"id": "corrosion_beam",
+			"name": "Corrosion Beam",
+			"icon": "graphics/icons/na_corrosion_beam.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CORROSION_MOTE_DAMAGE_FLAT",
+					"magnitude": 200
+				}
+			],
+			"description": "Beams held on a target gather stardust, which breaks loose as motes that hunt it down.",
+			"tags": [
+				"energy",
+				"beam",
+				"req_beam"
 			]
 		}
 	]

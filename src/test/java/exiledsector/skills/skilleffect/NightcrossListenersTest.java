@@ -231,6 +231,16 @@ class NightcrossListenersTest {
     }
 
     @Test
+    void gravityDragSharesItsCapWithNightcrossOwnHullMod() {
+        assertEquals(20f, GravityDragField.combinedPercent(5f, 15f), 0.001f);
+        assertEquals(GravityDragField.MAX_TOTAL_REDUCTION_PERCENT, GravityDragField.combinedPercent(20f, 20f), 0.001f);
+
+        float ownMult = GravityDragField.ownTimeMult(20f, 20f);
+        assertEquals(0.75f, ownMult * 0.8f, 0.0001f);
+        assertEquals(0.95f, GravityDragField.ownTimeMult(5f, 0f), 0.0001f);
+    }
+
+    @Test
     void gravityDragLeavesAlliesFightersAndHulksAlone() {
         ShipAPI ally = ship("ally", 0, Map.of());
         ShipAPI fighter = enemyAt(0f);
