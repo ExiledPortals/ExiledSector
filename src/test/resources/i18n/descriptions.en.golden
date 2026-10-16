@@ -2316,11 +2316,16 @@ type|beam_damage|FRIGATE|0	0	<good>5%</good> increased beam weapon damage.
 type|beam_damage|DESTROYER|0	0	<good>5%</good> increased beam weapon damage.
 type|beam_damage|CRUISER|0	0	<good>5%</good> increased beam weapon damage.
 type|beam_damage|CAPITAL_SHIP|0	0	<good>5%</good> increased beam weapon damage.
-type|beam_split|null|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
-type|beam_split|FRIGATE|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
-type|beam_split|DESTROYER|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
-type|beam_split|CRUISER|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
-type|beam_split|CAPITAL_SHIP|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+type|beam_split|null|0	0	Diktat propaganda insists that the Lion's gaze falls on every citizen at once, and the engineer-technicians of the Lion's Guard took the slogan literally. Studying the Executors they refit teaches the crew to split this ship's beams across the target and the enemy ships around it.
+type|beam_split|null|1	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+type|beam_split|FRIGATE|0	0	Diktat propaganda insists that the Lion's gaze falls on every citizen at once, and the engineer-technicians of the Lion's Guard took the slogan literally. Studying the Executors they refit teaches the crew to split this ship's beams across the target and the enemy ships around it.
+type|beam_split|FRIGATE|1	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+type|beam_split|DESTROYER|0	0	Diktat propaganda insists that the Lion's gaze falls on every citizen at once, and the engineer-technicians of the Lion's Guard took the slogan literally. Studying the Executors they refit teaches the crew to split this ship's beams across the target and the enemy ships around it.
+type|beam_split|DESTROYER|1	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+type|beam_split|CRUISER|0	0	Diktat propaganda insists that the Lion's gaze falls on every citizen at once, and the engineer-technicians of the Lion's Guard took the slogan literally. Studying the Executors they refit teaches the crew to split this ship's beams across the target and the enemy ships around it.
+type|beam_split|CRUISER|1	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
+type|beam_split|CAPITAL_SHIP|0	0	Diktat propaganda insists that the Lion's gaze falls on every citizen at once, and the engineer-technicians of the Lion's Guard took the slogan literally. Studying the Executors they refit teaches the crew to split this ship's beams across the target and the enemy ships around it.
+type|beam_split|CAPITAL_SHIP|1	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 type|beam_split_reduced_damage|null|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 type|beam_split_reduced_damage|FRIGATE|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 type|beam_split_reduced_damage|DESTROYER|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
@@ -3821,16 +3826,21 @@ type|shield_upkeep_multi|FRIGATE|0	1	<bad>10%</bad> less shield flux upkeep.
 type|shield_upkeep_multi|DESTROYER|0	1	<bad>10%</bad> less shield flux upkeep.
 type|shield_upkeep_multi|CRUISER|0	1	<bad>10%</bad> less shield flux upkeep.
 type|shield_upkeep_multi|CAPITAL_SHIP|0	1	<bad>10%</bad> less shield flux upkeep.
-type|sindrian_shielding|null|0	1	<bad>10%</bad> less damage taken by shields.
-type|sindrian_shielding|null|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-type|sindrian_shielding|FRIGATE|0	1	<bad>10%</bad> less damage taken by shields.
-type|sindrian_shielding|FRIGATE|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-type|sindrian_shielding|DESTROYER|0	1	<bad>10%</bad> less damage taken by shields.
-type|sindrian_shielding|DESTROYER|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-type|sindrian_shielding|CRUISER|0	1	<bad>10%</bad> less damage taken by shields.
-type|sindrian_shielding|CRUISER|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-type|sindrian_shielding|CAPITAL_SHIP|0	1	<bad>10%</bad> less damage taken by shields.
-type|sindrian_shielding|CAPITAL_SHIP|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+type|sindrian_shielding|null|0	0	Sindria's day side is scoured by radiation, and array workers who fled the Askonia Crisis to sign on with this crew know how to harden an emitter against a star's fury. The ship's shields take less damage, and it suffers less in coronas and storms.
+type|sindrian_shielding|null|1	1	<bad>10%</bad> less damage taken by shields.
+type|sindrian_shielding|null|2	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+type|sindrian_shielding|FRIGATE|0	0	Sindria's day side is scoured by radiation, and array workers who fled the Askonia Crisis to sign on with this crew know how to harden an emitter against a star's fury. The ship's shields take less damage, and it suffers less in coronas and storms.
+type|sindrian_shielding|FRIGATE|1	1	<bad>10%</bad> less damage taken by shields.
+type|sindrian_shielding|FRIGATE|2	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+type|sindrian_shielding|DESTROYER|0	0	Sindria's day side is scoured by radiation, and array workers who fled the Askonia Crisis to sign on with this crew know how to harden an emitter against a star's fury. The ship's shields take less damage, and it suffers less in coronas and storms.
+type|sindrian_shielding|DESTROYER|1	1	<bad>10%</bad> less damage taken by shields.
+type|sindrian_shielding|DESTROYER|2	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+type|sindrian_shielding|CRUISER|0	0	Sindria's day side is scoured by radiation, and array workers who fled the Askonia Crisis to sign on with this crew know how to harden an emitter against a star's fury. The ship's shields take less damage, and it suffers less in coronas and storms.
+type|sindrian_shielding|CRUISER|1	1	<bad>10%</bad> less damage taken by shields.
+type|sindrian_shielding|CRUISER|2	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+type|sindrian_shielding|CAPITAL_SHIP|0	0	Sindria's day side is scoured by radiation, and array workers who fled the Askonia Crisis to sign on with this crew know how to harden an emitter against a star's fury. The ship's shields take less damage, and it suffers less in coronas and storms.
+type|sindrian_shielding|CAPITAL_SHIP|1	1	<bad>10%</bad> less damage taken by shields.
+type|sindrian_shielding|CAPITAL_SHIP|2	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type|solar_shielding|null|0	1	<bad>75%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type-detail|solar_shielding|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Solar Shielding</hullmod>
 type|solar_shielding|FRIGATE|0	1	<bad>75%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.

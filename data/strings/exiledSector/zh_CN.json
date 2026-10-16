@@ -1420,5 +1420,7 @@
     "skillType.tactical_superiority.description": "每个太空人身上都带着一台 TriPad，而学会利用速子科技自己硬写入的后门的船员，可以说服战场目标交出控制权。本舰占领战场目标的速度快得多。",
     "skillType.energy_chain.description": "拆开速子科技战舰残骸中的能量转换器，让船员学会调校本舰的能量弹，使其从敌方护盾上擦过，继续飞向另一个目标。部分命中护盾的非光束能量弹会折射向最近的另一艘敌舰，每跳一次都会减弱。",
     "skillType.violence_of_action.description": "卢德骑士团认为，正义之舰应以全速迎敌；在 Ceyx 与他们一同操练，让船员学会为冲锋调校引擎与操控。舰船飞得更快，对舵令的反应也更灵敏。",
-    "skillType.perseverence_through_faith.description": "船员中的卢德信徒认为，一艘伤痕累累的船就像一名苦修者，会在艰难中找到力量；他们用祈祷和耐心的双手让它残破的火炮继续作战。本舰每带有一个D插，武器的命中就会更重一些。"
+    "skillType.perseverence_through_faith.description": "船员中的卢德信徒认为，一艘伤痕累累的船就像一名苦修者，会在艰难中找到力量；他们用祈祷和耐心的双手让它残破的火炮继续作战。本舰每带有一个D插，武器的命中就会更重一些。",
+    "skillType.sindrian_shielding.description": "辛德里亚的向阳面饱受辐射冲刷，在 Askonia 危机中逃离、上船入伙的阵列工人懂得如何让发生器扛住恒星的怒火。本舰的护盾承受的伤害更少，在日冕和风暴中受到的影响也更小。",
+    "skillType.beam_split.description": "辛达强权的宣传坚称，雄狮的目光同时落在每一位公民身上，而雄狮卫队的工程技师把这句口号当了真。研究他们改装的 Executor，让船员学会把本舰的光束分散到目标及其周围的敌舰上。"
 }

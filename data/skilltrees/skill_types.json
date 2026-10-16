@@ -425,6 +425,7 @@
 					"magnitude": 1
 				}
 			],
+			"description": "Diktat propaganda insists that the Lion's gaze falls on every citizen at once, and the engineer-technicians of the Lion's Guard took the slogan literally. Studying the Executors they refit teaches the crew to split this ship's beams across the target and the enemy ships around it.",
 			"tags": [
 				"energy",
 				"beam",
@@ -3380,6 +3381,7 @@
 					"magnitude": -25
 				}
 			],
+			"description": "Sindria's day side is scoured by radiation, and array workers who fled the Askonia Crisis to sign on with this crew know how to harden an emitter against a star's fury. The ship's shields take less damage, and it suffers less in coronas and storms.",
 			"tags": [
 				"shield",
 				"req_shields"
