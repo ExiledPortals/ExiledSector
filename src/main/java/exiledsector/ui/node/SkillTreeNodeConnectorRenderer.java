@@ -131,7 +131,8 @@ final class SkillTreeNodeConnectorRenderer {
 
     private float endpointRadius(SkillNode node, float zoom, float towardX, float towardY) {
         if (ExoshipNodes.isExoship(node)) return exoshipRadius * zoom * EXOSHIP_ENDPOINT_SHARE;
-        SkillTier tier = ExoshipNodes.isBeacon(node) ? SkillTier.SMALL : node.getType().getTier();
+        if (ExoshipNodes.isBeacon(node)) return 0f;
+        SkillTier tier = node.getType().getTier();
         float footprintSize = NODE_SIZE * zoom * tier.getSizeMultiplier();
         if (tier == SkillTier.SOCKET) return SkillTreeSocketRenderer.visibleEdgeDistance(footprintSize, towardX, towardY);
         float fullRadius = connectorEndpointRadius(tier, footprintSize, zoom);
