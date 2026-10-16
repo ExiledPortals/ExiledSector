@@ -253,9 +253,147 @@ $serveEditor = {
     Write-FileResponse $response $editorPath "text/html; charset=utf-8"
 }
 
+$describeClasspathPath = Join-Path $projectRoot "target\editor-describe.classpath"
+$describeBuildLogPath = Join-Path ([System.IO.Path]::GetTempPath()) "exiledsector-editor-describe-build.log"
+$script:describeBuild = $null
+$script:describeHelper = $null
+$script:describeInput = $null
+$script:describeStatus = "idle"
+$script:describeMessage = ""
+
+function Find-DescribeJavaHome {
+    if ($env:JAVA_HOME -and (Test-Path (Join-Path $env:JAVA_HOME "bin\java.exe"))) { return $env:JAVA_HOME }
+    $defaultJavaHome = "C:\Program Files\Java\jdk-17"
+    if (Test-Path (Join-Path $defaultJavaHome "bin\java.exe")) { return $defaultJavaHome }
+    return $null
+}
+
+function Find-DescribeMaven {
+    $onPath = Get-Command mvn.cmd -ErrorAction SilentlyContinue
+    if ($onPath) { return $onPath.Source }
+    $bundled = Get-ChildItem "C:\Program Files\JetBrains\IntelliJ IDEA*\plugins\maven-plugin\lib\maven3\bin\mvn.cmd" -ErrorAction SilentlyContinue |
+        Sort-Object FullName -Descending | Select-Object -First 1
+    if ($bundled) { return $bundled.FullName }
+    return $null
+}
+
+function Find-DescribeLibsDir {
+    $ownLibs = Join-Path $projectRoot "libs"
+    if (Test-Path (Join-Path $ownLibs "starfarer.api.jar")) { return $ownLibs }
+    $mainCheckoutLibs = Join-Path (Split-Path -Parent $projectRoot) "ExiledSector\libs"
+    if (Test-Path (Join-Path $mainCheckoutLibs "starfarer.api.jar")) { return $mainCheckoutLibs }
+    return $ownLibs
+}
+
+function Start-DescribeBuild {
+    $javaHome = Find-DescribeJavaHome
+    $maven = Find-DescribeMaven
+    if (-not $javaHome -or -not $maven) {
+        $script:describeStatus = "failed"
+        $script:describeMessage = "In-game descriptions need JDK 17 and Maven; neither JAVA_HOME nor the IntelliJ bundled Maven was found."
+        return
+    }
+    $libsDir = Find-DescribeLibsDir
+    $startInfo = New-Object System.Diagnostics.ProcessStartInfo
+    $startInfo.FileName = $env:ComSpec
+    $startInfo.Arguments = "/c `"`"$maven`" -B -q test-compile dependency:build-classpath -Dmdep.outputFile=target\editor-describe.classpath " +
+        "-Dmdep.includeScope=test `"-Dlibs.dir=$libsDir`" > `"$describeBuildLogPath`" 2>&1`""
+    $startInfo.WorkingDirectory = $projectRoot
+    $startInfo.UseShellExecute = $false
+    $startInfo.CreateNoWindow = $true
+    $startInfo.EnvironmentVariables["JAVA_HOME"] = $javaHome
+    $script:describeBuild = [System.Diagnostics.Process]::Start($startInfo)
+    $script:describeStatus = "building"
+    $script:describeMessage = "Compiling the mod for in-game descriptions..."
+}
+
+function Start-DescribeHelper {
+    $classpath = "target\classes;target\test-classes;" + (Get-Content $describeClasspathPath -Raw).Trim()
+    $startInfo = New-Object System.Diagnostics.ProcessStartInfo
+    $startInfo.FileName = Join-Path (Find-DescribeJavaHome) "bin\java.exe"
+    $startInfo.Arguments = "-cp `"$classpath`" exiledsector.tools.EditorDescribeServer"
+    $startInfo.WorkingDirectory = $projectRoot
+    $startInfo.UseShellExecute = $false
+    $startInfo.CreateNoWindow = $true
+    $startInfo.RedirectStandardInput = $true
+    $startInfo.RedirectStandardOutput = $true
+    $startInfo.RedirectStandardError = $true
+    $startInfo.StandardOutputEncoding = [System.Text.Encoding]::UTF8
+    $helper = [System.Diagnostics.Process]::Start($startInfo)
+    $null = $helper.StandardError.ReadToEndAsync()
+    $script:describeInput = New-Object System.IO.StreamWriter($helper.StandardInput.BaseStream, (New-Object System.Text.UTF8Encoding($false)))
+    $script:describeInput.AutoFlush = $true
+    $script:describeHelper = $helper
+    $readyLine = Read-DescribeLine 30000
+    if ($readyLine -ne '{"ready":true}') {
+        Stop-DescribeHelper
+        $script:describeStatus = "failed"
+        $script:describeMessage = "The description helper did not start."
+        return
+    }
+    $script:describeStatus = "ready"
+}
+
+function Read-DescribeLine($timeoutMilliseconds) {
+    $readTask = $script:describeHelper.StandardOutput.ReadLineAsync()
+    if (-not $readTask.Wait($timeoutMilliseconds)) {
+        Stop-DescribeHelper
+        return $null
+    }
+    return $readTask.Result
+}
+
+function Stop-DescribeHelper {
+    if ($script:describeHelper -and -not $script:describeHelper.HasExited) {
+        try { $script:describeHelper.Kill() } catch {}
+    }
+    $script:describeHelper = $null
+    $script:describeInput = $null
+    if ($script:describeStatus -eq "ready") { $script:describeStatus = "built" }
+}
+
+function Update-DescribeStatus {
+    if ($script:describeStatus -eq "building" -and $script:describeBuild.HasExited) {
+        if ($script:describeBuild.ExitCode -eq 0 -and (Test-Path $describeClasspathPath)) {
+            $script:describeStatus = "built"
+        } else {
+            $script:describeStatus = "failed"
+            $script:describeMessage = "Compiling the mod for in-game descriptions failed; see $describeBuildLogPath"
+        }
+    }
+    if ($script:describeStatus -eq "built" -or ($script:describeStatus -eq "ready" -and $script:describeHelper.HasExited)) {
+        Start-DescribeHelper
+    }
+}
+
+function Write-RawJsonResponse($response, $jsonText) {
+    $response.ContentType = "application/json; charset=utf-8"
+    $bytes = [System.Text.Encoding]::UTF8.GetBytes($jsonText)
+    $response.OutputStream.Write($bytes, 0, $bytes.Length)
+}
+
 $routes = @{
     "GET /" = $serveEditor
     "GET /index.html" = $serveEditor
+
+    "POST /describe" = {
+        param($request, $response)
+        $reader = New-Object System.IO.StreamReader($request.InputStream, [System.Text.Encoding]::UTF8)
+        $requestLine = $reader.ReadToEnd() -replace "[\r\n]+", " "
+        Update-DescribeStatus
+        if ($script:describeStatus -ne "ready") {
+            Write-JsonResponse $response 200 @{ pending = ($script:describeStatus -ne "failed"); message = $script:describeMessage }
+            return
+        }
+        $script:describeInput.WriteLine($requestLine)
+        $describedLine = Read-DescribeLine 10000
+        if (-not $describedLine) {
+            Write-JsonResponse $response 200 @{ error = "The description helper stopped responding and will restart on the next hover." }
+            return
+        }
+        Write-RawJsonResponse $response $describedLine
+    }
+
 
     "GET /data/vocabulary" = {
         param($request, $response)
@@ -476,6 +614,7 @@ $listener.Start()
 Write-Host "Skill tree editor running at http://localhost:$Port/ - open that URL in your browser."
 Write-Host "Saves write directly to the skill tree, socketable and commodity data files under $fullProjectRoot"
 Write-Host "Press Ctrl+C to stop."
+Start-DescribeBuild
 
 try {
     while ($listener.IsListening) {
@@ -500,5 +639,6 @@ try {
         }
     }
 } finally {
+    Stop-DescribeHelper
     $listener.Stop()
 }

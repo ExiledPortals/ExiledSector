@@ -1,10 +1,6 @@
 package exiledsector.i18n;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.ModManagerAPI;
-import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.NodeDescription;
 import exiledsector.skills.ShipSkillData;
@@ -17,28 +13,21 @@ import exiledsector.skills.npc.RealSkillData;
 import exiledsector.skills.skilleffect.CompatSkillEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.SkillEffectNames;
-import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class DescriptionGoldenTest {
 
@@ -48,56 +37,25 @@ class DescriptionGoldenTest {
     private static final float[] SAMPLE_MAGNITUDES = {1f, 10f, 12.5f, 100f, -10f, -12.5f};
     private static final HullSize[] HULL_SIZES = {null, HullSize.FRIGATE, HullSize.DESTROYER, HullSize.CRUISER, HullSize.CAPITAL_SHIP};
 
-    private static final Path HULL_MOD_NAMES_FILE = Path.of("src/test/resources/i18n/hullmod_names.csv");
-    private static final Set<String> unnamedHullMods = new TreeSet<>();
-
-    private static MockedStatic<LunaSettings> lunaSettingsMock;
-    private static MockedStatic<Global> globalMock;
+    private static HeadlessGameText headlessGameText;
     private static boolean secondInCommandEnabled;
 
     @BeforeAll
     static void setUp() throws Exception {
-        lunaSettingsMock = Mockito.mockStatic(LunaSettings.class, invocation -> null);
-        SettingsAPI settings = mock(SettingsAPI.class);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSettings).thenReturn(settings);
-        Map<String, HullModSpecAPI> hullMods = namedHullModSpecs();
-        when(settings.getHullModSpec(Mockito.anyString())).thenAnswer(invocation -> {
-            String id = invocation.getArgument(0);
-            if (!hullMods.containsKey(id)) {
-                unnamedHullMods.add(id);
-            }
-            return hullMods.get(id);
-        });
-        ModManagerAPI modManager = mock(ModManagerAPI.class);
-        when(settings.getModManager()).thenReturn(modManager);
-        when(modManager.isModEnabled(Mockito.anyString())).thenAnswer(invocation -> secondInCommandEnabled);
+        headlessGameText = HeadlessGameText.install(() -> secondInCommandEnabled);
         RealSkillData.load();
-    }
-
-    private static Map<String, HullModSpecAPI> namedHullModSpecs() throws IOException {
-        Map<String, HullModSpecAPI> specs = new HashMap<>();
-        List<String> rows = Files.readAllLines(RealSkillData.projectRoot().resolve(HULL_MOD_NAMES_FILE), StandardCharsets.UTF_8);
-        for (String row : rows.subList(1, rows.size())) {
-            int comma = row.indexOf(',');
-            HullModSpecAPI spec = mock(HullModSpecAPI.class);
-            when(spec.getDisplayName()).thenReturn(row.substring(comma + 1));
-            specs.put(row.substring(0, comma), spec);
-        }
-        return specs;
     }
 
     @AfterAll
     static void tearDown() {
         RealSkillData.clear();
-        globalMock.close();
-        lunaSettingsMock.close();
+        headlessGameText.close();
     }
 
     @Test
     void everyPlayerVisibleDescriptionMatchesTheRecordedEnglishTextAndHighlights() throws IOException {
         List<String> actual = generate();
-        assertEquals(Set.of(), unnamedHullMods, "Add the in-game names of these hull mods to " + HULL_MOD_NAMES_FILE);
+        assertEquals(Set.of(), headlessGameText.unnamedHullMods(), "Add the in-game names of these hull mods to " + HeadlessGameText.HULL_MOD_NAMES_FILE);
         Path actualFile = RealSkillData.projectRoot().resolve(ACTUAL_FILE);
         Files.createDirectories(actualFile.getParent());
         Files.writeString(actualFile, String.join("\n", actual) + "\n", StandardCharsets.UTF_8);

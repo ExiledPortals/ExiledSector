@@ -428,6 +428,17 @@
     font-family: var(--font-mono); width: fit-content;
     border: 1px solid var(--line);
   }
+  .gameTooltip {
+    position: fixed; z-index: 1000; max-width: 440px; padding: 12px 14px; pointer-events: none;
+    background: rgba(8, 12, 18, 0.94); border: 1px solid rgba(120, 200, 255, 0.75); border-radius: 2px;
+    box-shadow: 0 0 12px rgba(120, 200, 255, 0.25);
+    color: rgb(230, 230, 230); font-family: var(--font-display); font-size: 13px; line-height: 1.4;
+  }
+  .gameTooltip[hidden] { display: none; }
+  .gameTooltipTitle { color: #ffffff; font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+  .gameTooltipFlavour { color: #8c8c8c; font-style: italic; font-size: 12px; margin-bottom: 6px; }
+  .gameTooltipLine + .gameTooltipLine { margin-top: 4px; }
+  .gameTooltipHint, .gameTooltipNote { color: #8c8c8c; font-size: 11px; margin-top: 6px; }
   .tagDropdownList { display: flex; flex-direction: column; gap: 4px; }
   .tagDropdown { position: relative; }
   .tagDropdown > summary {
@@ -660,6 +671,7 @@
       <div class="legendRow"><span class="legendDot" style="background:var(--socket);border-radius:2px"></span>Modular Hull Socket</div>
       <div class="legendRow"><span class="legendDot" style="background:var(--root)"></span>Root (ship start)</div>
       <label class="legendRow" for="labelsToggle" style="cursor:pointer"><input type="checkbox" id="labelsToggle" checked> Show labels</label>
+      <label class="legendRow" for="tooltipHullSize">Tooltip hull size <select id="tooltipHullSize" style="margin-left:auto"><option value="">All sizes</option><option value="FRIGATE">Frigate</option><option value="DESTROYER">Destroyer</option><option value="CRUISER">Cruiser</option><option value="CAPITAL_SHIP">Capital ship</option></select></label>
     </div>
 
     <div class="toolSection">
@@ -5250,5 +5262,170 @@ function loadInitialTree(){
 document.getElementById('serverErrorRetry').addEventListener('click', loadInitialTree);
 updateSaveAvailability();
 loadInitialTree();
+
+var GAME_TOOLTIP_DELAY_MS = 250;
+var GAME_TOOLTIP_RETRY_MS = 2000;
+var GAME_TOOLTIP_COLORS = { good: '#98fb00', bad: '#fc6300', hl: '#ffc800', hullmod: '#ffa03c', node: '#5abeff' };
+var gameTooltip = { element: null, typeId: null, timer: null, x: 0, y: 0, expanded: false, cache: {}, requestSerial: 0 };
+
+function gameTooltipElement(){
+  if (!gameTooltip.element) {
+    gameTooltip.element = document.createElement('div');
+    gameTooltip.element.className = 'gameTooltip';
+    gameTooltip.element.hidden = true;
+    document.body.appendChild(gameTooltip.element);
+  }
+  return gameTooltip.element;
+}
+
+function gameTooltipHullSize(){
+  var picker = document.getElementById('tooltipHullSize');
+  return picker && picker.value ? picker.value : null;
+}
+
+function hashText(text){
+  var hash = 5381;
+  for (var i = 0; i < text.length; i++) hash = ((hash << 5) + hash + text.charCodeAt(i)) | 0;
+  return hash;
+}
+
+function appendGameMarkup(parent, markup){
+  var pattern = /<(\/?)(good|bad|hl|hullmod|node)>/g;
+  var cursor = 0, colour = null, match;
+  while ((match = pattern.exec(markup)) !== null) {
+    appendGameText(parent, markup.slice(cursor, match.index), colour);
+    colour = match[1] ? null : GAME_TOOLTIP_COLORS[match[2]];
+    cursor = pattern.lastIndex;
+  }
+  appendGameText(parent, markup.slice(cursor), colour);
+}
+
+function appendGameText(parent, text, colour){
+  if (!text) return;
+  if (!colour) { parent.appendChild(document.createTextNode(text)); return; }
+  var span = document.createElement('span');
+  span.style.color = colour;
+  span.textContent = text;
+  parent.appendChild(span);
+}
+
+function renderGameTooltip(described){
+  var box = gameTooltipElement();
+  box.innerHTML = '';
+  if (described.pending || described.error) {
+    var note = document.createElement('div');
+    note.className = 'gameTooltipNote';
+    note.textContent = described.message || described.error || 'Preparing in-game descriptions...';
+    box.appendChild(note);
+  } else {
+    var title = document.createElement('div');
+    title.className = 'gameTooltipTitle';
+    title.textContent = described.title;
+    box.appendChild(title);
+    if (described.flavour) {
+      var flavour = document.createElement('div');
+      flavour.className = 'gameTooltipFlavour';
+      flavour.textContent = described.flavour;
+      box.appendChild(flavour);
+    }
+    var lines = (described.effects || []).concat(gameTooltip.expanded ? (described.details || []) : []);
+    lines.forEach(function(line){
+      var paragraph = document.createElement('div');
+      paragraph.className = 'gameTooltipLine';
+      appendGameMarkup(paragraph, line);
+      box.appendChild(paragraph);
+    });
+    if ((described.details || []).length && !gameTooltip.expanded) {
+      var hint = document.createElement('div');
+      hint.className = 'gameTooltipHint';
+      hint.textContent = described.expandHint;
+      box.appendChild(hint);
+    }
+  }
+  box.hidden = false;
+  positionGameTooltip();
+}
+
+function positionGameTooltip(){
+  var box = gameTooltip.element;
+  if (!box || box.hidden) return;
+  var margin = 16;
+  var left = gameTooltip.x + margin;
+  var top = gameTooltip.y + margin;
+  if (left + box.offsetWidth > window.innerWidth - 4) left = Math.max(4, gameTooltip.x - margin - box.offsetWidth);
+  if (top + box.offsetHeight > window.innerHeight - 4) top = Math.max(4, window.innerHeight - 4 - box.offsetHeight);
+  box.style.left = left + 'px';
+  box.style.top = top + 'px';
+}
+
+function hideGameTooltip(){
+  clearTimeout(gameTooltip.timer);
+  gameTooltip.typeId = null;
+  gameTooltip.requestSerial++;
+  if (gameTooltip.element) gameTooltip.element.hidden = true;
+}
+
+function requestGameTooltip(){
+  var typeId = gameTooltip.typeId;
+  if (!typeId) return;
+  var typesJson = JSON.stringify({ skillTypes: state.types.map(serializeType) });
+  var hullSize = gameTooltipHullSize();
+  var cacheKey = typeId + '|' + hullSize + '|' + typesJson.length + '|' + hashText(typesJson);
+  if (gameTooltip.cache[cacheKey]) { renderGameTooltip(gameTooltip.cache[cacheKey]); return; }
+  var serial = ++gameTooltip.requestSerial;
+  fetch('/describe', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Skill-Tree-Editor': '1' },
+    body: '{"types":' + typesJson + ',"typeId":' + JSON.stringify(typeId) + ',"hullSize":' + JSON.stringify(hullSize) + '}'
+  }).then(function(r){ return r.json(); }).catch(function(){
+    return { error: 'In-game descriptions need the editor server (tools/skill_tree_server.ps1).' };
+  }).then(function(described){
+    if (serial !== gameTooltip.requestSerial || gameTooltip.typeId !== typeId) return;
+    if (!described.pending && !described.error) gameTooltip.cache[cacheKey] = described;
+    renderGameTooltip(described);
+    if (described.pending) gameTooltip.timer = setTimeout(requestGameTooltip, GAME_TOOLTIP_RETRY_MS);
+  });
+}
+
+function hoveredTypeId(target){
+  var hovered = target && target.closest ? target.closest('[data-node-id], [data-type-id]') : null;
+  if (!hovered) return null;
+  if (hovered.dataset.typeId) return hovered.dataset.typeId;
+  var node = state.nodes.find(function(n){ return n.id === hovered.dataset.nodeId; });
+  return node ? node.type : null;
+}
+
+document.addEventListener('mouseover', function(ev){
+  var typeId = hoveredTypeId(ev.target);
+  if (typeId === gameTooltip.typeId) return;
+  hideGameTooltip();
+  if (!typeId) return;
+  gameTooltip.typeId = typeId;
+  gameTooltip.timer = setTimeout(requestGameTooltip, GAME_TOOLTIP_DELAY_MS);
+});
+
+document.addEventListener('mousemove', function(ev){
+  gameTooltip.x = ev.clientX;
+  gameTooltip.y = ev.clientY;
+  positionGameTooltip();
+});
+
+document.addEventListener('mousedown', hideGameTooltip, true);
+document.addEventListener('wheel', hideGameTooltip, { passive: true });
+
+document.addEventListener('keydown', function(ev){
+  if (ev.key !== 'F1') return;
+  ev.preventDefault();
+  gameTooltip.expanded = !gameTooltip.expanded;
+  if (gameTooltip.typeId && gameTooltip.element && !gameTooltip.element.hidden) requestGameTooltip();
+});
+
+document.getElementById('tooltipHullSize').addEventListener('change', function(){
+  try { localStorage.setItem('skillTreeEditor.tooltipHullSize', this.value); } catch (e) {}
+});
+try {
+  var savedTooltipHullSize = localStorage.getItem('skillTreeEditor.tooltipHullSize');
+  if (savedTooltipHullSize !== null) document.getElementById('tooltipHullSize').value = savedTooltipHullSize;
+} catch (e) {}
 })();
 </script>
