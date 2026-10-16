@@ -1005,9 +1005,9 @@
 			"id": "root_high_tech_1",
 			"type": "root_high_tech",
 			"connectedTo": [
-				"small_flux_optional_1",
 				"small_flux_optional_89",
-				"small_flux_optional_76"
+				"small_flux_optional_76",
+				"small_flux_optional_1"
 			],
 			"x": 0,
 			"y": -1500,
@@ -1224,10 +1224,10 @@
 			"id": "small_flux_optional_1",
 			"type": "small_flux_optional",
 			"connectedTo": [
-				"root_high_tech_1",
 				"small_flux_optional_4",
 				"shield_arc_1",
-				"flux_capacity_1"
+				"flux_capacity_1",
+				"root_high_tech_1"
 			],
 			"x": 0,
 			"y": -2277,
@@ -5723,12 +5723,6 @@
 		}
 	],
 	"connectorCurves": [
-		{
-			"a": "root_high_tech_1",
-			"b": "small_flux_optional_1",
-			"controlX": 0,
-			"controlY": -1500
-		},
 		{
 			"a": "extendedshieldemitter_1",
 			"b": "shield_arc_2",
