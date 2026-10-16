@@ -1,5 +1,6 @@
 package exiledsector.ui.node;
 
+import exiledsector.skills.ExoshipNodes;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -7,6 +8,7 @@ import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillTreeTopology;
 import exiledsector.skills.layout.ConnectorCurve;
 import exiledsector.ui.SkillTreePanelStyle;
+import exiledsector.ui.TreeLayers;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.LineBatch;
 import org.lwjgl.opengl.GL11;
@@ -37,6 +39,7 @@ final class SkillTreeNodeConnectorRenderer {
     private static final float TEMPLATE_ALPHA = 0.9f;
     private static final int BLACK_RGB = Color.BLACK.getRGB();
     private static final float EDGE_CULL_MARGIN = NODE_CONNECTOR_GLOW_HALO_THICKNESS + NODE_CONNECTOR_PARALLEL_GAP;
+    private static final float EXOSHIP_ENDPOINT_SHARE = 0.4f;
 
     private final SkillTreePanelStyle panelStyle;
     private final NodeSearch nodeSearch;
@@ -48,6 +51,7 @@ final class SkillTreeNodeConnectorRenderer {
     private final Segment scratchPart = new Segment();
     private final float[] cumulativeArcLength = new float[CURVE_ARC_SAMPLES + 1];
     private final WormholeOpenness wormholeOpenness;
+    private float exoshipRadius;
 
     SkillTreeNodeConnectorRenderer(SkillTreePanelStyle panelStyle, NodeSearch nodeSearch, WormholeOpenness wormholeOpenness) {
         this.panelStyle = panelStyle;
@@ -55,16 +59,22 @@ final class SkillTreeNodeConnectorRenderer {
         this.wormholeOpenness = wormholeOpenness;
     }
 
-    void draw(TreeViewport viewport, NodeAllocator.Snapshot allocation, Set<String> templateNodeIds, Set<String> plannedOnlyNodeIds,
-              ConnectorFills connectorFills, float alphaMult) {
+    void draw(TreeLayers layers, NodeAllocator.Snapshot allocation, Set<String> templateNodeIds, Set<String> plannedOnlyNodeIds,
+              ConnectorFills connectorFills) {
         TemplateHighlight templateHighlight = new TemplateHighlight(templateNodeIds, plannedOnlyNodeIds);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         clearBatch();
+        exoshipRadius = layers.exoshipRadius();
 
         for (SkillTreeTopology.Connector connector : SkillTree.topology().connectors()) {
-            drawConnector(connector, viewport, allocation, templateHighlight, connectorFills, alphaMult);
+            boolean carried = ExoshipNodes.isCarried(connector.from());
+            float alphaMult = carried ? layers.carriedAlpha() : layers.treeAlpha();
+            if (alphaMult > 0f && carried == ExoshipNodes.isCarried(connector.to())) {
+                drawConnector(connector, carried ? layers.carriedViewport() : layers.treeViewport(), allocation, templateHighlight,
+                        connectorFills, alphaMult);
+            }
         }
 
         flushBatch();
@@ -120,7 +130,8 @@ final class SkillTreeNodeConnectorRenderer {
     }
 
     private float endpointRadius(SkillNode node, float zoom, float towardX, float towardY) {
-        SkillTier tier = node.getType().getTier();
+        if (ExoshipNodes.isExoship(node)) return exoshipRadius * zoom * EXOSHIP_ENDPOINT_SHARE;
+        SkillTier tier = ExoshipNodes.isBeacon(node) ? SkillTier.SMALL : node.getType().getTier();
         float footprintSize = NODE_SIZE * zoom * tier.getSizeMultiplier();
         if (tier == SkillTier.SOCKET) return SkillTreeSocketRenderer.visibleEdgeDistance(footprintSize, towardX, towardY);
         float fullRadius = connectorEndpointRadius(tier, footprintSize, zoom);
@@ -129,11 +140,11 @@ final class SkillTreeNodeConnectorRenderer {
     }
 
     private static boolean isOpenWormhole(SkillNode node, ShipSkillData skillData, String satisfiedRootId) {
-        return node.getType().getTier() == SkillTier.WORMHOLE && skillData.isSatisfied(node.getId(), satisfiedRootId);
+        return isWormhole(node) && skillData.isSatisfied(node.getId(), satisfiedRootId);
     }
 
     private static boolean isWormhole(SkillNode node) {
-        return node.getType().getTier() == SkillTier.WORMHOLE;
+        return node.getType().getTier() == SkillTier.WORMHOLE && !ExoshipNodes.isBeacon(node) && !ExoshipNodes.isExoship(node);
     }
 
     private void drawStraightNodeConnectorLine(ConnectorEndpoint a, ConnectorEndpoint b, LineStyle lineStyle) {

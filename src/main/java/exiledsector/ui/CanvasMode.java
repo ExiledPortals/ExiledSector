@@ -1,12 +1,12 @@
 package exiledsector.ui;
 
 enum CanvasMode {
-    ROOT_CHOICE, MODAL, WORKBENCH, HYPERSPACE, FLEET_FOLLOW, ALLOCATION_RUN, TREE;
+    ROOT_CHOICE, MODAL, WORKBENCH, HYPERSPACE, EXOSHIP_VIEW, FLEET_FOLLOW, ALLOCATION_RUN, TREE;
 
     enum Chrome { STATS_TOGGLE, READOUTS, SEARCH, TEMPLATE_BAR, STORAGE_BUTTON }
 
     static CanvasMode resolve(boolean rootChoiceLocked, boolean modalBlocking, boolean workbenchOpen, boolean hyperspaceActive,
-                              boolean followingFleet, boolean allocationRunning) {
+                              boolean viewingExoship, boolean followingFleet, boolean allocationRunning) {
         if (rootChoiceLocked) {
             return ROOT_CHOICE;
         }
@@ -19,6 +19,9 @@ enum CanvasMode {
         if (hyperspaceActive) {
             return HYPERSPACE;
         }
+        if (viewingExoship) {
+            return EXOSHIP_VIEW;
+        }
         if (followingFleet) {
             return FLEET_FOLLOW;
         }
@@ -28,11 +31,15 @@ enum CanvasMode {
     boolean shows(Chrome chrome) {
         return switch (chrome) {
             case READOUTS -> true;
-            case SEARCH -> this != HYPERSPACE && this != ROOT_CHOICE && this != FLEET_FOLLOW;
+            case SEARCH -> this != HYPERSPACE && this != ROOT_CHOICE && !followsTarget();
             case STATS_TOGGLE -> this != HYPERSPACE;
-            case TEMPLATE_BAR -> this != HYPERSPACE && this != FLEET_FOLLOW;
+            case TEMPLATE_BAR -> this != HYPERSPACE && !followsTarget();
             case STORAGE_BUTTON -> this != HYPERSPACE && this != ROOT_CHOICE;
         };
+    }
+
+    boolean followsTarget() {
+        return this == FLEET_FOLLOW || this == EXOSHIP_VIEW;
     }
 
     boolean hidesChromeThroughTransition() {
@@ -44,7 +51,7 @@ enum CanvasMode {
             case TREE, ALLOCATION_RUN -> true;
             case ROOT_CHOICE -> chrome == Chrome.STATS_TOGGLE || chrome == Chrome.READOUTS;
             case HYPERSPACE -> chrome == Chrome.READOUTS;
-            case FLEET_FOLLOW -> chrome != Chrome.TEMPLATE_BAR && chrome != Chrome.SEARCH;
+            case FLEET_FOLLOW, EXOSHIP_VIEW -> chrome != Chrome.TEMPLATE_BAR && chrome != Chrome.SEARCH;
             case WORKBENCH -> chrome == Chrome.STORAGE_BUTTON;
             case MODAL -> false;
         };
@@ -55,7 +62,7 @@ enum CanvasMode {
     }
 
     boolean hoversTree() {
-        return this == TREE || this == ALLOCATION_RUN || this == ROOT_CHOICE || this == FLEET_FOLLOW;
+        return this == TREE || this == ALLOCATION_RUN || this == ROOT_CHOICE || followsTarget();
     }
 
     boolean closesStorage() {
@@ -71,6 +78,6 @@ enum CanvasMode {
     }
 
     boolean letsShipCardFollowFleet() {
-        return this == TREE || this == ALLOCATION_RUN || this == FLEET_FOLLOW;
+        return this == TREE || this == ALLOCATION_RUN || followsTarget();
     }
 }

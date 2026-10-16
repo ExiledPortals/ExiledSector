@@ -3236,7 +3236,7 @@
 				"tritach_2",
 				"engine_durability_3",
 				"modular_hull_socket_6",
-				"exotech_wormhole_2"
+				"exotech_beacon"
 			],
 			"x": -1311,
 			"y": -12998,
@@ -5765,81 +5765,45 @@
 			]
 		},
 		{
-			"id": "small_flux_optional_103",
-			"type": "small_flux_optional",
-			"connectedTo": [
-				"modular_hull_socket_12",
-				"exotech_wormhole_1",
-				"sensor_profile_1"
-			],
-			"x": -9663,
-			"y": -15887,
-			"orbitAnchorId": "exotech_inner",
-			"orbitAngle": 180,
-			"tags": [
-				"exotech"
-			]
-		},
-		{
-			"id": "small_flux_optional_104",
-			"type": "small_flux_optional",
-			"connectedTo": [
-				"modular_hull_socket_12",
-				"exotech_wormhole_1",
-				"timeflow_1"
-			],
-			"x": -7263,
-			"y": -15887,
-			"orbitAnchorId": "exotech_inner",
-			"orbitAngle": 0,
-			"tags": [
-				"exotech"
-			]
-		},
-		{
 			"id": "modular_hull_socket_12",
 			"type": "modular_hull_socket",
 			"connectedTo": [
-				"small_flux_optional_103",
-				"small_flux_optional_104",
-				"phase_cloak_flux_threshold_3"
+				"exoship"
 			],
-			"x": -8463,
-			"y": -17087,
-			"orbitAnchorId": "exotech_inner",
-			"orbitAngle": 270,
+			"x": -8791,
+			"y": -16378,
 			"tags": [
 				"exotech"
 			]
 		},
 		{
-			"id": "exotech_wormhole_1",
-			"type": "wormhole",
+			"id": "exoship",
+			"type": "exoship",
 			"connectedTo": [
-				"small_flux_optional_104",
-				"small_flux_optional_103",
-				"exotech_wormhole_2",
-				"energy_flux_cost_3"
+				"exotech_beacon",
+				"energy_flux_cost_3",
+				"phase_cloak_flux_threshold_3",
+				"timeflow_1",
+				"sensor_profile_1",
+				"modular_hull_socket_12"
 			],
 			"x": -8463,
-			"y": -14687,
-			"orbitAnchorId": "exotech_inner",
-			"orbitAngle": 90,
-			"pairedWith": "exotech_wormhole_2",
+			"y": -15887,
+			"pairedWith": "exotech_beacon",
 			"tags": [
 				"exotech"
 			]
 		},
 		{
-			"id": "exotech_wormhole_2",
-			"type": "wormhole",
+			"id": "exotech_beacon",
+			"type": "exotech_beacon",
 			"connectedTo": [
-				"exotech_wormhole_1",
+				"exoship",
 				"small_flux_optional_46"
 			],
 			"x": -1754,
 			"y": -13106,
-			"pairedWith": "exotech_wormhole_1",
+			"pairedWith": "exoship",
 			"tags": [
 				"tritachyon"
 			]
@@ -5848,11 +5812,11 @@
 			"id": "energy_flux_cost_3",
 			"type": "energy_flux_cost",
 			"connectedTo": [
-				"exotech_wormhole_1",
+				"exoship",
 				"energy_flux_cost_4"
 			],
-			"x": -8463,
-			"y": -14967,
+			"x": -8117,
+			"y": -16409,
 			"orbitAnchorId": "anchor_63",
 			"orbitAngle": 90,
 			"tags": [
@@ -5866,8 +5830,8 @@
 				"energy_flux_cost_3",
 				"warpfield_1"
 			],
-			"x": -8303,
-			"y": -15127,
+			"x": -7957,
+			"y": -16569,
 			"orbitAnchorId": "anchor_63",
 			"orbitAngle": 0,
 			"tags": [
@@ -5880,8 +5844,8 @@
 			"connectedTo": [
 				"energy_flux_cost_4"
 			],
-			"x": -8463,
-			"y": -15287,
+			"x": -8117,
+			"y": -16729,
 			"orbitAnchorId": "anchor_63",
 			"orbitAngle": 270,
 			"tags": [
@@ -5892,11 +5856,11 @@
 			"id": "sensor_profile_1",
 			"type": "sensor_profile",
 			"connectedTo": [
-				"small_flux_optional_103",
-				"sensor_profile_2"
+				"sensor_profile_2",
+				"exoship"
 			],
-			"x": -9383,
-			"y": -15887,
+			"x": -7958,
+			"y": -15899,
 			"orbitAnchorId": "anchor_64",
 			"orbitAngle": 180,
 			"tags": [
@@ -5910,8 +5874,8 @@
 				"sensor_profile_1",
 				"phased_recharging_1"
 			],
-			"x": -9223,
-			"y": -15727,
+			"x": -7798,
+			"y": -15739,
 			"orbitAnchorId": "anchor_64",
 			"orbitAngle": 90,
 			"tags": [
@@ -5924,8 +5888,8 @@
 			"connectedTo": [
 				"sensor_profile_2"
 			],
-			"x": -9063,
-			"y": -15887,
+			"x": -7638,
+			"y": -15899,
 			"orbitAnchorId": "anchor_64",
 			"orbitAngle": 0,
 			"tags": [
@@ -5936,11 +5900,11 @@
 			"id": "phase_cloak_flux_threshold_3",
 			"type": "phase_cloak_flux_threshold",
 			"connectedTo": [
-				"modular_hull_socket_12",
-				"phase_cloak_flux_threshold_4"
+				"phase_cloak_flux_threshold_4",
+				"exoship"
 			],
-			"x": -8463,
-			"y": -16807,
+			"x": -8450,
+			"y": -15508,
 			"orbitAnchorId": "anchor_65",
 			"orbitAngle": 270,
 			"tags": [
@@ -5954,8 +5918,8 @@
 				"phase_cloak_flux_threshold_3",
 				"coil_efficiency_1"
 			],
-			"x": -8623,
-			"y": -16647,
+			"x": -8610,
+			"y": -15348,
 			"orbitAnchorId": "anchor_65",
 			"orbitAngle": 180,
 			"tags": [
@@ -5968,8 +5932,8 @@
 			"connectedTo": [
 				"phase_cloak_flux_threshold_4"
 			],
-			"x": -8463,
-			"y": -16487,
+			"x": -8450,
+			"y": -15188,
 			"orbitAnchorId": "anchor_65",
 			"orbitAngle": 90,
 			"tags": [
@@ -5981,10 +5945,10 @@
 			"type": "timeflow",
 			"connectedTo": [
 				"timeflow_2",
-				"small_flux_optional_104"
+				"exoship"
 			],
-			"x": -7543,
-			"y": -15887,
+			"x": -8937,
+			"y": -15881,
 			"orbitAnchorId": "anchor_62",
 			"orbitAngle": 0,
 			"tags": [
@@ -5998,8 +5962,8 @@
 				"timeflow_1",
 				"exogrid_1"
 			],
-			"x": -7703,
-			"y": -16047,
+			"x": -9097,
+			"y": -16041,
 			"orbitAnchorId": "anchor_62",
 			"orbitAngle": 270,
 			"tags": [
@@ -6012,8 +5976,8 @@
 			"connectedTo": [
 				"timeflow_2"
 			],
-			"x": -7863,
-			"y": -15887,
+			"x": -9257,
+			"y": -15881,
 			"orbitAnchorId": "anchor_62",
 			"orbitAngle": 180,
 			"tags": [
@@ -6028,8 +5992,8 @@
 				"rat_abyss_wormhole_1",
 				"system_cooldown_1"
 			],
-			"x": -27970,
-			"y": 26352,
+			"x": -45507,
+			"y": 28915,
 			"orbitAnchorId": "abyss_inner",
 			"orbitAngle": 90,
 			"tags": [
@@ -6044,8 +6008,8 @@
 				"rat_abyss_wormhole_1",
 				"armor_8"
 			],
-			"x": -27970,
-			"y": 23952,
+			"x": -45507,
+			"y": 26515,
 			"orbitAnchorId": "abyss_inner",
 			"orbitAngle": 270,
 			"tags": [
@@ -6060,8 +6024,8 @@
 				"small_flux_optional_105",
 				"weapon_durability_6"
 			],
-			"x": -29170,
-			"y": 25152,
+			"x": -46707,
+			"y": 27715,
 			"orbitAnchorId": "abyss_inner",
 			"orbitAngle": 180,
 			"tags": [
@@ -6077,8 +6041,8 @@
 				"small_flux_optional_106",
 				"energy_flux_cost_5"
 			],
-			"x": -26770,
-			"y": 25152,
+			"x": -44307,
+			"y": 27715,
 			"orbitAnchorId": "abyss_inner",
 			"orbitAngle": 0,
 			"pairedWith": "rat_abyss_wormhole_2",
@@ -6107,8 +6071,8 @@
 				"rat_abyss_wormhole_1",
 				"energy_flux_cost_6"
 			],
-			"x": -27050,
-			"y": 25152,
+			"x": -44587,
+			"y": 27715,
 			"orbitAnchorId": "anchor_66",
 			"orbitAngle": 0,
 			"tags": [
@@ -6122,8 +6086,8 @@
 				"energy_flux_cost_5",
 				"abyssal_grid_1"
 			],
-			"x": -27210,
-			"y": 24992,
+			"x": -44747,
+			"y": 27555,
 			"orbitAnchorId": "anchor_66",
 			"orbitAngle": 270,
 			"tags": [
@@ -6136,8 +6100,8 @@
 			"connectedTo": [
 				"energy_flux_cost_6"
 			],
-			"x": -27370,
-			"y": 25152,
+			"x": -44907,
+			"y": 27715,
 			"orbitAnchorId": "anchor_66",
 			"orbitAngle": 180,
 			"tags": [
@@ -6151,8 +6115,8 @@
 				"small_flux_optional_105",
 				"system_cooldown_2"
 			],
-			"x": -27970,
-			"y": 26072,
+			"x": -45507,
+			"y": 28635,
 			"orbitAnchorId": "anchor_67",
 			"orbitAngle": 90,
 			"tags": [
@@ -6166,8 +6130,8 @@
 				"system_cooldown_1",
 				"chronos_adaptability_1"
 			],
-			"x": -27810,
-			"y": 25912,
+			"x": -45347,
+			"y": 28475,
 			"orbitAnchorId": "anchor_67",
 			"orbitAngle": 0,
 			"tags": [
@@ -6180,8 +6144,8 @@
 			"connectedTo": [
 				"system_cooldown_2"
 			],
-			"x": -27970,
-			"y": 25752,
+			"x": -45507,
+			"y": 28315,
 			"orbitAnchorId": "anchor_67",
 			"orbitAngle": 270,
 			"tags": [
@@ -6196,8 +6160,8 @@
 				"weapon_durability_7",
 				"weapon_durability_8"
 			],
-			"x": -28890,
-			"y": 25152,
+			"x": -46427,
+			"y": 27715,
 			"orbitAnchorId": "anchor_68",
 			"orbitAngle": 180,
 			"tags": [
@@ -6211,8 +6175,8 @@
 				"weapon_durability_6",
 				"seraphs_grace_1"
 			],
-			"x": -28730,
-			"y": 25312,
+			"x": -46267,
+			"y": 27875,
 			"orbitAnchorId": "anchor_68",
 			"orbitAngle": 90,
 			"tags": [
@@ -6226,8 +6190,8 @@
 				"weapon_durability_7",
 				"weapon_durability_8"
 			],
-			"x": -28570,
-			"y": 25152,
+			"x": -46107,
+			"y": 27715,
 			"orbitAnchorId": "anchor_68",
 			"orbitAngle": 0,
 			"tags": [
@@ -6241,8 +6205,8 @@
 				"small_flux_optional_106",
 				"armor_9"
 			],
-			"x": -27970,
-			"y": 24232,
+			"x": -45507,
+			"y": 26795,
 			"orbitAnchorId": "anchor_69",
 			"orbitAngle": 270,
 			"tags": [
@@ -6256,8 +6220,8 @@
 				"armor_8",
 				"seraphim_1"
 			],
-			"x": -28130,
-			"y": 24392,
+			"x": -45667,
+			"y": 26955,
 			"orbitAnchorId": "anchor_69",
 			"orbitAngle": 180,
 			"tags": [
@@ -6270,8 +6234,8 @@
 			"connectedTo": [
 				"armor_9"
 			],
-			"x": -27970,
-			"y": 24552,
+			"x": -45507,
+			"y": 27115,
 			"orbitAnchorId": "anchor_69",
 			"orbitAngle": 90,
 			"tags": [
@@ -6285,8 +6249,8 @@
 				"weapon_durability_6",
 				"seraphs_grace_1"
 			],
-			"x": -28730,
-			"y": 24992,
+			"x": -46267,
+			"y": 27555,
 			"orbitAnchorId": "anchor_68",
 			"orbitAngle": 270,
 			"tags": [
@@ -8018,160 +7982,136 @@
 			"controlY": 3503
 		},
 		{
-			"a": "modular_hull_socket_12",
-			"b": "small_flux_optional_103",
-			"controlX": -9312,
-			"controlY": -16736
-		},
-		{
-			"a": "modular_hull_socket_12",
-			"b": "small_flux_optional_104",
-			"controlX": -7614,
-			"controlY": -16736
-		},
-		{
-			"a": "small_flux_optional_104",
-			"b": "exotech_wormhole_1",
-			"controlX": -7614,
-			"controlY": -15038
-		},
-		{
-			"a": "small_flux_optional_103",
-			"b": "exotech_wormhole_1",
-			"controlX": -9312,
-			"controlY": -15038
-		},
-		{
 			"a": "energy_flux_cost_3",
 			"b": "energy_flux_cost_4",
-			"controlX": -8350,
-			"controlY": -15014
+			"controlX": -8004,
+			"controlY": -16456
 		},
 		{
 			"a": "energy_flux_cost_4",
 			"b": "warpfield_1",
-			"controlX": -8350,
-			"controlY": -15240
+			"controlX": -8004,
+			"controlY": -16682
 		},
 		{
 			"a": "sensor_profile_1",
 			"b": "sensor_profile_2",
-			"controlX": -9336,
-			"controlY": -15774
+			"controlX": -7911,
+			"controlY": -15786
 		},
 		{
 			"a": "sensor_profile_2",
 			"b": "phased_recharging_1",
-			"controlX": -9110,
-			"controlY": -15774
+			"controlX": -7685,
+			"controlY": -15786
 		},
 		{
 			"a": "phase_cloak_flux_threshold_3",
 			"b": "phase_cloak_flux_threshold_4",
-			"controlX": -8576,
-			"controlY": -16760
+			"controlX": -8563,
+			"controlY": -15461
 		},
 		{
 			"a": "phase_cloak_flux_threshold_4",
 			"b": "coil_efficiency_1",
-			"controlX": -8576,
-			"controlY": -16534
+			"controlX": -8563,
+			"controlY": -15235
 		},
 		{
 			"a": "timeflow_1",
 			"b": "timeflow_2",
-			"controlX": -7590,
-			"controlY": -16000
+			"controlX": -8984,
+			"controlY": -15994
 		},
 		{
 			"a": "exogrid_1",
 			"b": "timeflow_2",
-			"controlX": -7816,
-			"controlY": -16000
+			"controlX": -9210,
+			"controlY": -15994
 		},
 		{
 			"a": "modular_hull_socket_13",
 			"b": "small_flux_optional_106",
-			"controlX": -28819,
-			"controlY": 24303
+			"controlX": -46356,
+			"controlY": 26866
 		},
 		{
 			"a": "modular_hull_socket_13",
 			"b": "small_flux_optional_105",
-			"controlX": -28819,
-			"controlY": 26001
+			"controlX": -46356,
+			"controlY": 28564
 		},
 		{
 			"a": "rat_abyss_wormhole_1",
 			"b": "small_flux_optional_105",
-			"controlX": -27121,
-			"controlY": 26001
+			"controlX": -44658,
+			"controlY": 28564
 		},
 		{
 			"a": "small_flux_optional_106",
 			"b": "rat_abyss_wormhole_1",
-			"controlX": -27121,
-			"controlY": 24303
+			"controlX": -44658,
+			"controlY": 26866
 		},
 		{
 			"a": "energy_flux_cost_5",
 			"b": "energy_flux_cost_6",
-			"controlX": -27097,
-			"controlY": 25039
+			"controlX": -44634,
+			"controlY": 27602
 		},
 		{
 			"a": "energy_flux_cost_6",
 			"b": "abyssal_grid_1",
-			"controlX": -27323,
-			"controlY": 25039
+			"controlX": -44860,
+			"controlY": 27602
 		},
 		{
 			"a": "system_cooldown_1",
 			"b": "system_cooldown_2",
-			"controlX": -27857,
-			"controlY": 26025
+			"controlX": -45394,
+			"controlY": 28588
 		},
 		{
 			"a": "system_cooldown_2",
 			"b": "chronos_adaptability_1",
-			"controlX": -27857,
-			"controlY": 25799
+			"controlX": -45394,
+			"controlY": 28362
 		},
 		{
 			"a": "weapon_durability_6",
 			"b": "weapon_durability_7",
-			"controlX": -28843,
-			"controlY": 25265
+			"controlX": -46380,
+			"controlY": 27828
 		},
 		{
 			"a": "weapon_durability_7",
 			"b": "seraphs_grace_1",
-			"controlX": -28617,
-			"controlY": 25265
+			"controlX": -46154,
+			"controlY": 27828
 		},
 		{
 			"a": "armor_8",
 			"b": "armor_9",
-			"controlX": -28083,
-			"controlY": 24279
+			"controlX": -45620,
+			"controlY": 26842
 		},
 		{
 			"a": "armor_9",
 			"b": "seraphim_1",
-			"controlX": -28083,
-			"controlY": 24505
+			"controlX": -45620,
+			"controlY": 27068
 		},
 		{
 			"a": "weapon_durability_6",
 			"b": "weapon_durability_8",
-			"controlX": -28843,
-			"controlY": 25039
+			"controlX": -46380,
+			"controlY": 27602
 		},
 		{
 			"a": "seraphs_grace_1",
 			"b": "weapon_durability_8",
-			"controlX": -28617,
-			"controlY": 25039
+			"controlX": -46154,
+			"controlY": 27602
 		}
 	],
 	"hiddenConnectors": [
@@ -8224,8 +8164,8 @@
 			"b": "kesteven_wormhole1"
 		},
 		{
-			"a": "exotech_wormhole_2",
-			"b": "exotech_wormhole_1"
+			"a": "exotech_beacon",
+			"b": "exoship"
 		},
 		{
 			"a": "rat_abyss_wormhole_2",
@@ -8789,63 +8729,57 @@
 			"rotation": 17.8
 		},
 		{
-			"id": "exotech_inner",
-			"x": -8463,
-			"y": -15887,
-			"radius": 1200
-		},
-		{
 			"id": "anchor_62",
-			"x": -7703,
-			"y": -15887,
+			"x": -9097,
+			"y": -15881,
 			"radius": 160
 		},
 		{
 			"id": "anchor_63",
-			"x": -8463,
-			"y": -15127,
+			"x": -8117,
+			"y": -16569,
 			"radius": 160
 		},
 		{
 			"id": "anchor_64",
-			"x": -9223,
-			"y": -15887,
+			"x": -7798,
+			"y": -15899,
 			"radius": 160
 		},
 		{
 			"id": "anchor_65",
-			"x": -8463,
-			"y": -16647,
+			"x": -8450,
+			"y": -15348,
 			"radius": 160
 		},
 		{
 			"id": "abyss_inner",
-			"x": -27970,
-			"y": 25152,
+			"x": -45507,
+			"y": 27715,
 			"radius": 1200
 		},
 		{
 			"id": "anchor_66",
-			"x": -27210,
-			"y": 25152,
+			"x": -44747,
+			"y": 27715,
 			"radius": 160
 		},
 		{
 			"id": "anchor_67",
-			"x": -27970,
-			"y": 25912,
+			"x": -45507,
+			"y": 28475,
 			"radius": 160
 		},
 		{
 			"id": "anchor_68",
-			"x": -28730,
-			"y": 25152,
+			"x": -46267,
+			"y": 27715,
 			"radius": 160
 		},
 		{
 			"id": "anchor_69",
-			"x": -27970,
-			"y": 24392,
+			"x": -45507,
+			"y": 26955,
 			"radius": 160
 		}
 	],
@@ -9045,8 +8979,8 @@
 		},
 		{
 			"id": "image_17",
-			"x": -26494,
-			"y": 24942,
+			"x": -44031,
+			"y": 27505,
 			"width": 927,
 			"height": 830,
 			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_01.png",
@@ -9057,8 +8991,8 @@
 		},
 		{
 			"id": "image_18",
-			"x": -26968,
-			"y": 26344,
+			"x": -44505,
+			"y": 28907,
 			"width": 923,
 			"height": 806,
 			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_02.png",
@@ -9069,8 +9003,8 @@
 		},
 		{
 			"id": "image_19",
-			"x": -27867,
-			"y": 26765,
+			"x": -45404,
+			"y": 29328,
 			"width": 906,
 			"height": 899,
 			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_03.png",
@@ -9081,8 +9015,8 @@
 		},
 		{
 			"id": "image_20",
-			"x": -29484,
-			"y": 25869,
+			"x": -47021,
+			"y": 28432,
 			"width": 1009,
 			"height": 936,
 			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_05.png",
@@ -9093,8 +9027,8 @@
 		},
 		{
 			"id": "image_21",
-			"x": -28945,
-			"y": 23843,
+			"x": -46482,
+			"y": 26406,
 			"width": 1032,
 			"height": 1082,
 			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_06.png",
@@ -9105,8 +9039,8 @@
 		},
 		{
 			"id": "image_22",
-			"x": -26946,
-			"y": 23850,
+			"x": -44483,
+			"y": 26413,
 			"width": 1003,
 			"height": 1040,
 			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_07.png",
@@ -9117,8 +9051,8 @@
 		},
 		{
 			"id": "image_23",
-			"x": -27217,
-			"y": 23696,
+			"x": -44754,
+			"y": 26259,
 			"width": 901,
 			"height": 1017,
 			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_12.png",
@@ -9129,8 +9063,8 @@
 		},
 		{
 			"id": "image_24",
-			"x": -26357,
-			"y": 25699,
+			"x": -43894,
+			"y": 28262,
 			"width": 1097,
 			"height": 1227,
 			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_14.png",
@@ -9141,8 +9075,8 @@
 		},
 		{
 			"id": "image_25",
-			"x": -26149,
-			"y": 25179,
+			"x": -43686,
+			"y": 27742,
 			"width": 1129,
 			"height": 1072,
 			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_01.png",
@@ -9153,8 +9087,8 @@
 		},
 		{
 			"id": "image_26",
-			"x": -26784,
-			"y": 25992,
+			"x": -44321,
+			"y": 28555,
 			"width": 1135,
 			"height": 982,
 			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_02.png",
@@ -9165,8 +9099,8 @@
 		},
 		{
 			"id": "image_27",
-			"x": -27346,
-			"y": 26610,
+			"x": -44883,
+			"y": 29173,
 			"width": 1183,
 			"height": 1023,
 			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_03.png",
@@ -9177,8 +9111,8 @@
 		},
 		{
 			"id": "image_28",
-			"x": -28642,
-			"y": 26625,
+			"x": -46179,
+			"y": 29188,
 			"width": 1471,
 			"height": 1399,
 			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_05.png",
@@ -9189,8 +9123,8 @@
 		},
 		{
 			"id": "image_29",
-			"x": -29319,
-			"y": 26265,
+			"x": -46856,
+			"y": 28828,
 			"width": 1235,
 			"height": 1298,
 			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_06.png",
@@ -9201,8 +9135,8 @@
 		},
 		{
 			"id": "image_30",
-			"x": -29832,
-			"y": 25145,
+			"x": -47369,
+			"y": 27708,
 			"width": 1332,
 			"height": 1350,
 			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_07.png",
@@ -9213,8 +9147,8 @@
 		},
 		{
 			"id": "image_31",
-			"x": -29392,
-			"y": 24289,
+			"x": -46929,
+			"y": 26852,
 			"width": 1474,
 			"height": 1615,
 			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_12.png",
@@ -9225,8 +9159,8 @@
 		},
 		{
 			"id": "image_32",
-			"x": -28467,
-			"y": 23512,
+			"x": -46004,
+			"y": 26075,
 			"width": 1398,
 			"height": 1449,
 			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_14.png",
@@ -9237,8 +9171,8 @@
 		},
 		{
 			"id": "image_33",
-			"x": -27657,
-			"y": 23296,
+			"x": -45194,
+			"y": 25859,
 			"width": 1325,
 			"height": 1310,
 			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_01.png",
@@ -9249,8 +9183,8 @@
 		},
 		{
 			"id": "image_34",
-			"x": -26558,
-			"y": 24366,
+			"x": -44095,
+			"y": 26929,
 			"width": 1123,
 			"height": 1173,
 			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_02.png",
@@ -9357,20 +9291,9 @@
 			]
 		},
 		{
-			"id": "exotech_star",
-			"x": -8463,
-			"y": -15887,
-			"radius": 400,
-			"starType": "star_yellow",
-			"color": "#fcbe12",
-			"tags": [
-				"exotech"
-			]
-		},
-		{
 			"id": "abyss_star",
-			"x": -27970,
-			"y": 25152,
+			"x": -45507,
+			"y": 27715,
 			"radius": 400,
 			"starType": "star_yellow",
 			"color": "#ff0032",

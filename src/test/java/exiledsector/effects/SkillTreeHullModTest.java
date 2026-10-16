@@ -385,6 +385,7 @@ class SkillTreeHullModTest {
         verify(variant, never()).removeMod(SkillTreeHullMod.ID);
         verify(variant, never()).removeMod("armoredcladding");
         verify(variant, never()).addMod("exiledSector_conflictWarning");
+        assertNull(SkillConflictWarnings.get(variant));
     }
 
     @Test

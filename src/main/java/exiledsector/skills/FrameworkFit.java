@@ -29,7 +29,7 @@ public final class FrameworkFit {
                 hullSpec.getArmorRating(), hullSpec.isPhase(), ShipSystemCharges.limited(hullSpec), ShipFacts.onlyBuiltInWings(hullSpec));
     }
 
-    static ShieldType fittedShieldType(ShieldType hullShieldType, ShipVariantAPI variant) {
+    public static ShieldType fittedShieldType(ShieldType hullShieldType, ShipVariantAPI variant) {
         if (variant == null || hullShieldType == ShieldType.PHASE) {
             return hullShieldType;
         }

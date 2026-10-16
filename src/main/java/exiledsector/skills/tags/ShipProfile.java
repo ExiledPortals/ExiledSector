@@ -8,6 +8,7 @@ import com.fs.starfarer.api.combat.WeaponAPI.AIHints;
 import com.fs.starfarer.api.combat.WeaponAPI.WeaponType;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
+import exiledsector.skills.FrameworkFit;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.ShipSystemCharges;
 
@@ -34,7 +35,8 @@ public record ShipProfile(HullSize hullSize, ShieldAPI.ShieldType shieldType, in
 
     public static ShipProfile of(FleetMemberAPI member) {
         ShipHullSpecAPI hullSpec = member.getHullSpec();
-        return new ShipProfile(hullSpec.getHullSize(), hullSpec.getShieldType(), fighterBays(member, hullSpec),
+        return new ShipProfile(hullSpec.getHullSize(), FrameworkFit.fittedShieldType(hullSpec.getShieldType(), member.getVariant()),
+                fighterBays(member, hullSpec),
                 fittedWeaponKinds(member.getVariant()), member.isFlagship(), hullSpec.getArmorRating(),
                 hullSpec.isPhase(), ShipSystemCharges.limited(hullSpec), ShipFacts.onlyBuiltInWings(hullSpec));
     }

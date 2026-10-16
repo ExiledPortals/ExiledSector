@@ -9,6 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public class ShipSkillData {
 
@@ -346,6 +347,13 @@ public class ShipSkillData {
         level++;
     }
 
+    public void capLevel(int maxLevel) {
+        if (level > maxLevel) {
+            level = Math.max(0, maxLevel);
+            revision++;
+        }
+    }
+
     public void addFreeAllocationCredit() {
         bankedFreeAllocations++;
     }
@@ -369,12 +377,34 @@ public class ShipSkillData {
         return removedNodeIds;
     }
 
+    public List<String> trimFreeAllocationsToLevel(Map<String, SkillNode> tree, SkillTreeTopology topology) {
+        revision++;
+        String startingRoot = resolveStartingRootId(tree.values());
+        List<String> removedNodeIds = new ArrayList<>();
+        bankedFreeAllocations = Math.max(0, Math.min(bankedFreeAllocations, level - freeNodeIds().size()));
+        while (freeNodeIds().size() > level) {
+            SkillNode removable = newestRemovableNode(tree, topology, startingRoot, freeNodeIds()::contains);
+            if (removable == null) {
+                break;
+            }
+            deallocate(removable);
+            bankedFreeAllocations = Math.max(0, bankedFreeAllocations - 1);
+            removedNodeIds.add(removable.getId());
+        }
+        return removedNodeIds;
+    }
+
     private SkillNode newestRemovableNode(Map<String, SkillNode> tree, SkillTreeTopology topology, String startingRoot) {
+        return newestRemovableNode(tree, topology, startingRoot, nodeId -> true);
+    }
+
+    private SkillNode newestRemovableNode(Map<String, SkillNode> tree, SkillTreeTopology topology, String startingRoot,
+                                          Predicate<String> candidate) {
         List<String> order = new ArrayList<>(allocatedNodeIds);
         for (int i = order.size() - 1; i >= 0; i--) {
             String nodeId = order.get(i);
             SkillNode node = tree.get(nodeId);
-            if (node != null && !nodeId.equals(startingRoot) && !pairedFreeNodeIds().contains(nodeId)
+            if (node != null && candidate.test(nodeId) && !nodeId.equals(startingRoot) && !pairedFreeNodeIds().contains(nodeId)
                     && canDeallocate(node, topology, startingRoot)) {
                 return node;
             }

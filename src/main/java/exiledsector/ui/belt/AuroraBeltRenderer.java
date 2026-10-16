@@ -37,7 +37,7 @@ public final class AuroraBeltRenderer {
         float imageWidth = texture.getWidth();
         float imageHeight = texture.getHeight();
         float aspectRatio = imageHeight / BAND_WIDTH_IN_TEXTURE;
-        float tileCount = Math.max(1f, TILE_DENSITY * circumference / (thickness * aspectRatio));
+        float tileCount = Math.max(1f, Math.round(TILE_DENSITY * circumference / (thickness * aspectRatio)));
         float texPerSegment = tileCount / segments;
         float wobble = Math.min(thickness * WOBBLE_RATIO, outerRadius * MAX_SAFE_WOBBLE_FRACTION / MAX_WOBBLE_FREQUENCY);
 

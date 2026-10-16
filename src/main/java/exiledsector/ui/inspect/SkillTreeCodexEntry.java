@@ -12,6 +12,7 @@ import com.fs.starfarer.api.ui.UIPanelAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
+import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.ui.VanillaText;
 
 import java.util.List;
@@ -38,7 +39,7 @@ public class SkillTreeCodexEntry extends CodexEntryV2 implements CustomUIPanelPl
     public void createTitleForList(TooltipMakerAPI info, float width, ListMode mode) {
         I18n.forGameText(() -> {
             VanillaText.addPara(info, Translation.styled("codex.title"), 0f, Misc.getBasePlayerColor());
-            VanillaText.addPara(info, Translation.msg("summary.level").arg("level", shipTree.skillData().getLevel()).styled(), 0f,
+            VanillaText.addPara(info, Translation.msg("summary.level").arg("level", Math.min(shipTree.skillData().getLevel(), ShipLevelConfig.maxLevel())).styled(), 0f,
                     Misc.getGrayColor());
         });
     }

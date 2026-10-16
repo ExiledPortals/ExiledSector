@@ -48,7 +48,7 @@ public final class TextWrapper {
 
         StyledText run() {
             int lineStart = 0;
-            while (lineStart <= sourceText.length()) {
+            while (lineStart <= sourceText.length() && linesWritten < maxLines) {
                 int lineEnd = sourceText.indexOf('\n', lineStart);
                 if (lineEnd < 0) {
                     lineEnd = sourceText.length();

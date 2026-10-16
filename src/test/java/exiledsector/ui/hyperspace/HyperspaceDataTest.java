@@ -1,5 +1,6 @@
 package exiledsector.ui.hyperspace;
 
+import exiledsector.skills.ExoshipNodes;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.loader.SkillTreeLoader;
@@ -36,7 +37,7 @@ class HyperspaceDataTest {
         Set<String> missing = new TreeSet<>();
         for (SkillNode node : nodes) {
             String region = node.getRegion();
-            if (region != null && anchors.stream().noneMatch(anchor -> anchor.region().equals(region))) {
+            if (region != null && !ExoshipNodes.isCarried(node) && anchors.stream().noneMatch(anchor -> anchor.region().equals(region))) {
                 missing.add(region);
             }
         }
@@ -48,7 +49,7 @@ class HyperspaceDataTest {
     void everyWormholeEndIsTaggedWithTheRegionOfTheStarItSitsBeside() {
         List<String> problems = new ArrayList<>();
         for (SkillNode node : nodes) {
-            if (node.getPairedNodeId() == null) {
+            if (node.getPairedNodeId() == null || ExoshipNodes.isCarried(node)) {
                 continue;
             }
             HyperspaceAnchor nearest = null;

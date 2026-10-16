@@ -271,6 +271,35 @@ class ShipLevelSystemTest {
     }
 
     @Test
+    void aShipAboveTheMaxLevelSetsTheCatchUpAsIfItWereAtTheMax() {
+        Map<String, Object> persistentData = new HashMap<>();
+        SectorAPI sector = mock(SectorAPI.class);
+        when(sector.getPersistentData()).thenReturn(persistentData);
+
+        try (MockedStatic<LunaSettings> lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
+             MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
+            lunaSettingsMock.when(() -> LunaSettings.getInt(anyString(), anyString())).thenReturn(null);
+            lunaSettingsMock.when(() -> LunaSettings.getFloat(anyString(), anyString())).thenReturn(null);
+            globalMock.when(Global::getSector).thenReturn(sector);
+            ShipSkillData overLevelled = ShipSkillDataManager.get("captured");
+            for (int level = 0; level < ShipLevelConfig.DEFAULT_MAX_LEVEL + 9; level++) {
+                overLevelled.incrementLevel();
+            }
+            ShipLevelSystem.raiseToLevel(ShipSkillDataManager.get("middling"), ShipLevelConfig.DEFAULT_MAX_LEVEL - 5, List.of());
+
+            CampaignFleetAPI fleet = mock(CampaignFleetAPI.class);
+            FleetDataAPI fleetData = mock(FleetDataAPI.class);
+            when(fleet.getFleetData()).thenReturn(fleetData);
+            List<FleetMemberAPI> members = List.of(mockMember("captured"), mockMember("middling"));
+            when(fleetData.getMembersListCopy()).thenReturn(members);
+
+            ShipLevelSystem.awardXpToFleet(fleet, 10f);
+
+            assertEquals(15f, ShipSkillDataManager.get("middling").getXp(), 0.001f);
+        }
+    }
+
+    @Test
     void catchUpGrowsPerLevelBehindUpToItsCap() {
         assertEquals(1f, ShipLevelSystem.catchUpMultiplier(0, 0.1f, 4f));
         assertEquals(1f, ShipLevelSystem.catchUpMultiplier(-5, 0.1f, 4f));

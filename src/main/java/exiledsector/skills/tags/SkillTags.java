@@ -11,6 +11,8 @@ public final class SkillTags {
             "dmgtypeenergy", "weapons", "point_defense", "combat_readiness", "repair", "fleet_support", "d_mods");
 
     public static final String CORE_REGION = "core";
+    public static final String ABYSS_REGION = "abyss";
+    public static final String EXOTECH_REGION = "exotech";
 
     public static final List<String> FACTION_VOLUMES = List.of(
             "luddic", "tritachyon", "hegemony", "sindrian_dictat", "pirate", "REDACTED", "persean_league");

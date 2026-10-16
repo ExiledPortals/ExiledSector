@@ -99,16 +99,17 @@ final class FrameworkInspection {
         return inspectLevel;
     }
 
-    void advance(float amount, PositionAPI canvasPosition, TreeCamera camera, SkillTreeFleetRenderer fleetRenderer, float mouseX, float mouseY) {
+    void advance(float amount, PositionAPI canvasPosition, TreeCamera camera, SkillTreeFleetRenderer fleetRenderer, boolean fleetFocused,
+                 float mouseX, float mouseY) {
         elapsedSeconds += amount;
-        active = camera.isFollowSettled();
+        active = fleetFocused && camera.isFollowSettled();
         socketPlacement.setInspectingShip(active);
         refreshIfChanged();
         float fadeStep = amount / INSPECT_FADE_SECONDS;
         inspectLevel = Math.max(0f, Math.min(1f, inspectLevel + (active ? fadeStep : -fadeStep)));
         if (active && fleetRenderer.soloLongestSide() > 0f) {
             fitShipToFreeSpace(canvasPosition, camera, fleetRenderer.soloLongestSide());
-        } else if (camera.isFollowing()) {
+        } else if (fleetFocused && camera.isFollowing()) {
             camera.stopInspecting();
         }
         if (!camera.isFollowing()) {
@@ -193,10 +194,17 @@ final class FrameworkInspection {
         return false;
     }
 
+    boolean pressUpgradesButton(float x, float y) {
+        if (!upgradesButton.isClickable(x, y)) {
+            return false;
+        }
+        toggleFrameworkPanel();
+        SkillTreeSounds.panelOpened();
+        return true;
+    }
+
     boolean pressLeft(float x, float y, PositionAPI canvasPosition, ScreenRect shipCard) {
-        if (upgradesButton.isClickable(x, y)) {
-            toggleFrameworkPanel();
-            SkillTreeSounds.panelOpened();
+        if (pressUpgradesButton(x, y)) {
             return true;
         }
         int socketIndex = inspectLevel < 0.5f ? -1 : socketAt(x, y);

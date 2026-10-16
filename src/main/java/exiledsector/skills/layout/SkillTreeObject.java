@@ -11,12 +11,23 @@ public abstract class SkillTreeObject {
     private final float treeX;
     private final float treeY;
     private final List<String> tags;
+    private final String region;
 
     protected SkillTreeObject(String id, float treeX, float treeY, List<String> tags) {
         this.id = id;
         this.treeX = treeX;
         this.treeY = treeY;
         this.tags = tags == null ? Collections.emptyList() : tags;
+        this.region = firstRegion(this.tags);
+    }
+
+    private static String firstRegion(List<String> tags) {
+        for (String tag : tags) {
+            if (SkillTags.isRegion(tag)) {
+                return tag;
+            }
+        }
+        return null;
     }
 
     public String getId() {
@@ -36,11 +47,6 @@ public abstract class SkillTreeObject {
     }
 
     public String getRegion() {
-        for (String tag : tags) {
-            if (SkillTags.isRegion(tag)) {
-                return tag;
-            }
-        }
-        return null;
+        return region;
     }
 }

@@ -37,7 +37,7 @@ function Copy-ModFiles {
     foreach ($file in @("mod_info.json", "ExiledSector.version", "LICENSE")) {
         Copy-Item -Path (Join-Path $ProjectRoot $file) -Destination $Destination -Force
     }
-    foreach ($folder in @("jars", "data")) {
+    foreach ($folder in @("jars", "data", "sounds")) {
         Copy-Item -Path (Join-Path $ProjectRoot $folder) -Destination $Destination -Recurse -Force
     }
     $graphics = New-Item -ItemType Directory -Force -Path (Join-Path $Destination "graphics")

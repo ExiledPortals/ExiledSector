@@ -34,7 +34,7 @@ public final class TreeCameraMemory {
         void save(float viewTreeX, float viewTreeY, float viewZoom) {
             treeX = viewTreeX;
             treeY = viewTreeY;
-            zoom = viewZoom;
+            zoom = Math.max(SmoothZoom.MIN_ZOOM, Math.min(SmoothZoom.MAX_ZOOM, viewZoom));
             saved = true;
         }
 

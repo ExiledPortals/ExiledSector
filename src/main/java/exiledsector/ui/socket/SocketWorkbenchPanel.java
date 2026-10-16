@@ -281,8 +281,9 @@ public final class SocketWorkbenchPanel extends HoloPanel {
                 .arg("before", nameBefore).arg("name", result.name()).text();
         SocketCustody.markHostsChanged(result);
         if (currency == SocketCurrency.TRANSPOSITION && SocketCustody.unsocketIfMisfit(result)) {
-            noticeText += " " + Translation.msg("ui.workbench.notice.movedToStorage").arg("name", result.name())
+            String movedNotice = Translation.msg("ui.workbench.notice.movedToStorage").arg("name", result.name())
                     .arg("type", result.kind().displayName()).text();
+            noticeText = Translation.msg("format.sentences").arg("a", noticeText).arg("b", movedNotice).text();
         }
         SkillTreeSounds.socketed();
         socketFlair.flash(result.rarity().color());

@@ -37,6 +37,7 @@ final class SocketPlacement {
     private SocketType targetFrameworkType;
     private boolean inspectingShip;
     private int storageRevision;
+    private int shownStoredCount = -1;
     private Map<String, FleetMemberAPI> ownedShips = Map.of();
     private ScreenRect lastShipCard = ScreenRect.NONE;
 
@@ -141,6 +142,7 @@ final class SocketPlacement {
         if (storagePanel == null) {
             return;
         }
+        refreshButtonLabel();
         if (mustClose) {
             storagePanel.close();
         } else if (treeSession.statsRevision() != storageRevision) {
@@ -219,6 +221,10 @@ final class SocketPlacement {
 
     private void refreshButtonLabel() {
         int storedCount = Global.getSector() == null ? 0 : SocketableStore.get().owned().size();
+        if (storedCount == shownStoredCount) {
+            return;
+        }
+        shownStoredCount = storedCount;
         storageButton.setLabel(Translation.msg("ui.socketStorage.button").arg("count", storedCount).text());
     }
 
