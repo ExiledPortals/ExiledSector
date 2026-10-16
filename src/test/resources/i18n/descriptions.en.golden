@@ -3995,7 +3995,7 @@ type|wormhole|FRIGATE|0	0	Allocating this wormhole automatically allocates its p
 type|wormhole|DESTROYER|0	0	Allocating this wormhole automatically allocates its paired wormhole as well at no extra cost, connecting both branches of the tree. \n\nDeallocating either end deallocates both.\n\nCtrl click on a wormhole to travel through it.
 type|wormhole|CRUISER|0	0	Allocating this wormhole automatically allocates its paired wormhole as well at no extra cost, connecting both branches of the tree. \n\nDeallocating either end deallocates both.\n\nCtrl click on a wormhole to travel through it.
 type|wormhole|CAPITAL_SHIP|0	0	Allocating this wormhole automatically allocates its paired wormhole as well at no extra cost, connecting both branches of the tree. \n\nDeallocating either end deallocates both.\n\nCtrl click on a wormhole to travel through it.
-summary|option0|FRIGATE|0	1	<bad>45%</bad> reduced energy weapon flux cost.
+summary|option0|FRIGATE|0	1	<bad>35%</bad> reduced energy weapon flux cost.
 summary|option0|FRIGATE|1	0	Increases energy weapon range by <good>100</good>.
 summary|option0|FRIGATE|2	1	<bad>50%</bad> reduced EMP damage taken.
 summary|option0|FRIGATE|3	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
@@ -4122,7 +4122,7 @@ summary|option0|FRIGATE|123	0	<good>100%</good> increased missile weapon ammo ca
 summary|option0|FRIGATE|124	0	<bad>15%</bad> reduced missile weapon rate of fire.
 summary|option0|FRIGATE|125	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 summary|option0|FRIGATE|126	0	Increases fleet nav rating by <good>2</good>.
-summary|option0|FRIGATE|127	0	<good>15%</good> increased non-beam energy weapon damage.
+summary|option0|FRIGATE|127	0	<good>24%</good> increased non-beam energy weapon damage.
 summary|option0|FRIGATE|128	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
 summary|option0|FRIGATE|129	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
 summary|option0|FRIGATE|130	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
@@ -4188,7 +4188,7 @@ summary|option0|FRIGATE|189	0	<good>3%</good> increased post-battle salvage reco
 summary|option0|FRIGATE|190	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option0|FRIGATE|191	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option0|FRIGATE|192	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
-summary|option0|DESTROYER|0	1	<bad>45%</bad> reduced energy weapon flux cost.
+summary|option0|DESTROYER|0	1	<bad>35%</bad> reduced energy weapon flux cost.
 summary|option0|DESTROYER|1	0	Increases energy weapon range by <good>100</good>.
 summary|option0|DESTROYER|2	1	<bad>50%</bad> reduced EMP damage taken.
 summary|option0|DESTROYER|3	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
@@ -4315,7 +4315,7 @@ summary|option0|DESTROYER|123	0	<good>100%</good> increased missile weapon ammo 
 summary|option0|DESTROYER|124	0	<bad>15%</bad> reduced missile weapon rate of fire.
 summary|option0|DESTROYER|125	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 summary|option0|DESTROYER|126	0	Increases fleet nav rating by <good>3</good>.
-summary|option0|DESTROYER|127	0	<good>15%</good> increased non-beam energy weapon damage.
+summary|option0|DESTROYER|127	0	<good>24%</good> increased non-beam energy weapon damage.
 summary|option0|DESTROYER|128	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
 summary|option0|DESTROYER|129	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
 summary|option0|DESTROYER|130	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
@@ -4381,7 +4381,7 @@ summary|option0|DESTROYER|189	0	<good>6%</good> increased post-battle salvage re
 summary|option0|DESTROYER|190	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option0|DESTROYER|191	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option0|DESTROYER|192	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
-summary|option0|CRUISER|0	1	<bad>45%</bad> reduced energy weapon flux cost.
+summary|option0|CRUISER|0	1	<bad>35%</bad> reduced energy weapon flux cost.
 summary|option0|CRUISER|1	0	Increases energy weapon range by <good>100</good>.
 summary|option0|CRUISER|2	1	<bad>50%</bad> reduced EMP damage taken.
 summary|option0|CRUISER|3	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
@@ -4508,7 +4508,7 @@ summary|option0|CRUISER|123	0	<good>100%</good> increased missile weapon ammo ca
 summary|option0|CRUISER|124	0	<bad>15%</bad> reduced missile weapon rate of fire.
 summary|option0|CRUISER|125	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 summary|option0|CRUISER|126	0	Increases fleet nav rating by <good>4</good>.
-summary|option0|CRUISER|127	0	<good>15%</good> increased non-beam energy weapon damage.
+summary|option0|CRUISER|127	0	<good>24%</good> increased non-beam energy weapon damage.
 summary|option0|CRUISER|128	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
 summary|option0|CRUISER|129	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
 summary|option0|CRUISER|130	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
@@ -4574,7 +4574,7 @@ summary|option0|CRUISER|189	0	<good>10%</good> increased post-battle salvage rec
 summary|option0|CRUISER|190	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option0|CRUISER|191	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option0|CRUISER|192	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
-summary|option0|CAPITAL_SHIP|0	1	<bad>45%</bad> reduced energy weapon flux cost.
+summary|option0|CAPITAL_SHIP|0	1	<bad>35%</bad> reduced energy weapon flux cost.
 summary|option0|CAPITAL_SHIP|1	0	Increases energy weapon range by <good>100</good>.
 summary|option0|CAPITAL_SHIP|2	1	<bad>50%</bad> reduced EMP damage taken.
 summary|option0|CAPITAL_SHIP|3	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
@@ -4701,7 +4701,7 @@ summary|option0|CAPITAL_SHIP|123	0	<good>100%</good> increased missile weapon am
 summary|option0|CAPITAL_SHIP|124	0	<bad>15%</bad> reduced missile weapon rate of fire.
 summary|option0|CAPITAL_SHIP|125	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 summary|option0|CAPITAL_SHIP|126	0	Increases fleet nav rating by <good>5</good>.
-summary|option0|CAPITAL_SHIP|127	0	<good>15%</good> increased non-beam energy weapon damage.
+summary|option0|CAPITAL_SHIP|127	0	<good>24%</good> increased non-beam energy weapon damage.
 summary|option0|CAPITAL_SHIP|128	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
 summary|option0|CAPITAL_SHIP|129	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
 summary|option0|CAPITAL_SHIP|130	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
@@ -4767,7 +4767,7 @@ summary|option0|CAPITAL_SHIP|189	0	<good>15%</good> increased post-battle salvag
 summary|option0|CAPITAL_SHIP|190	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option0|CAPITAL_SHIP|191	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option0|CAPITAL_SHIP|192	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
-summary|option1|FRIGATE|0	1	<bad>45%</bad> reduced energy weapon flux cost.
+summary|option1|FRIGATE|0	1	<bad>35%</bad> reduced energy weapon flux cost.
 summary|option1|FRIGATE|1	0	Increases energy weapon range by <good>100</good>.
 summary|option1|FRIGATE|2	1	<bad>50%</bad> reduced EMP damage taken.
 summary|option1|FRIGATE|3	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
@@ -4894,7 +4894,7 @@ summary|option1|FRIGATE|123	0	<good>100%</good> increased missile weapon ammo ca
 summary|option1|FRIGATE|124	0	<bad>15%</bad> reduced missile weapon rate of fire.
 summary|option1|FRIGATE|125	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 summary|option1|FRIGATE|126	0	Increases fleet nav rating by <good>2</good>.
-summary|option1|FRIGATE|127	0	<good>15%</good> increased non-beam energy weapon damage.
+summary|option1|FRIGATE|127	0	<good>24%</good> increased non-beam energy weapon damage.
 summary|option1|FRIGATE|128	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
 summary|option1|FRIGATE|129	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
 summary|option1|FRIGATE|130	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
@@ -4960,7 +4960,7 @@ summary|option1|FRIGATE|189	0	<good>3%</good> increased post-battle salvage reco
 summary|option1|FRIGATE|190	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option1|FRIGATE|191	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option1|FRIGATE|192	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
-summary|option1|DESTROYER|0	1	<bad>45%</bad> reduced energy weapon flux cost.
+summary|option1|DESTROYER|0	1	<bad>35%</bad> reduced energy weapon flux cost.
 summary|option1|DESTROYER|1	0	Increases energy weapon range by <good>100</good>.
 summary|option1|DESTROYER|2	1	<bad>50%</bad> reduced EMP damage taken.
 summary|option1|DESTROYER|3	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
@@ -5087,7 +5087,7 @@ summary|option1|DESTROYER|123	0	<good>100%</good> increased missile weapon ammo 
 summary|option1|DESTROYER|124	0	<bad>15%</bad> reduced missile weapon rate of fire.
 summary|option1|DESTROYER|125	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 summary|option1|DESTROYER|126	0	Increases fleet nav rating by <good>3</good>.
-summary|option1|DESTROYER|127	0	<good>15%</good> increased non-beam energy weapon damage.
+summary|option1|DESTROYER|127	0	<good>24%</good> increased non-beam energy weapon damage.
 summary|option1|DESTROYER|128	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
 summary|option1|DESTROYER|129	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
 summary|option1|DESTROYER|130	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
@@ -5153,7 +5153,7 @@ summary|option1|DESTROYER|189	0	<good>6%</good> increased post-battle salvage re
 summary|option1|DESTROYER|190	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option1|DESTROYER|191	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option1|DESTROYER|192	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
-summary|option1|CRUISER|0	1	<bad>45%</bad> reduced energy weapon flux cost.
+summary|option1|CRUISER|0	1	<bad>35%</bad> reduced energy weapon flux cost.
 summary|option1|CRUISER|1	0	Increases energy weapon range by <good>100</good>.
 summary|option1|CRUISER|2	1	<bad>50%</bad> reduced EMP damage taken.
 summary|option1|CRUISER|3	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
@@ -5280,7 +5280,7 @@ summary|option1|CRUISER|123	0	<good>100%</good> increased missile weapon ammo ca
 summary|option1|CRUISER|124	0	<bad>15%</bad> reduced missile weapon rate of fire.
 summary|option1|CRUISER|125	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 summary|option1|CRUISER|126	0	Increases fleet nav rating by <good>4</good>.
-summary|option1|CRUISER|127	0	<good>15%</good> increased non-beam energy weapon damage.
+summary|option1|CRUISER|127	0	<good>24%</good> increased non-beam energy weapon damage.
 summary|option1|CRUISER|128	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
 summary|option1|CRUISER|129	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
 summary|option1|CRUISER|130	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
@@ -5346,7 +5346,7 @@ summary|option1|CRUISER|189	0	<good>10%</good> increased post-battle salvage rec
 summary|option1|CRUISER|190	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option1|CRUISER|191	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option1|CRUISER|192	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
-summary|option1|CAPITAL_SHIP|0	1	<bad>45%</bad> reduced energy weapon flux cost.
+summary|option1|CAPITAL_SHIP|0	1	<bad>35%</bad> reduced energy weapon flux cost.
 summary|option1|CAPITAL_SHIP|1	0	Increases energy weapon range by <good>100</good>.
 summary|option1|CAPITAL_SHIP|2	1	<bad>50%</bad> reduced EMP damage taken.
 summary|option1|CAPITAL_SHIP|3	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
@@ -5473,7 +5473,7 @@ summary|option1|CAPITAL_SHIP|123	0	<good>100%</good> increased missile weapon am
 summary|option1|CAPITAL_SHIP|124	0	<bad>15%</bad> reduced missile weapon rate of fire.
 summary|option1|CAPITAL_SHIP|125	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 summary|option1|CAPITAL_SHIP|126	0	Increases fleet nav rating by <good>5</good>.
-summary|option1|CAPITAL_SHIP|127	0	<good>15%</good> increased non-beam energy weapon damage.
+summary|option1|CAPITAL_SHIP|127	0	<good>24%</good> increased non-beam energy weapon damage.
 summary|option1|CAPITAL_SHIP|128	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
 summary|option1|CAPITAL_SHIP|129	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
 summary|option1|CAPITAL_SHIP|130	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
@@ -5539,7 +5539,7 @@ summary|option1|CAPITAL_SHIP|189	0	<good>15%</good> increased post-battle salvag
 summary|option1|CAPITAL_SHIP|190	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option1|CAPITAL_SHIP|191	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option1|CAPITAL_SHIP|192	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
-summary|option2|FRIGATE|0	1	<bad>45%</bad> reduced energy weapon flux cost.
+summary|option2|FRIGATE|0	1	<bad>35%</bad> reduced energy weapon flux cost.
 summary|option2|FRIGATE|1	0	Increases energy weapon range by <good>100</good>.
 summary|option2|FRIGATE|2	1	<bad>50%</bad> reduced EMP damage taken.
 summary|option2|FRIGATE|3	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
@@ -5666,7 +5666,7 @@ summary|option2|FRIGATE|123	0	<good>100%</good> increased missile weapon ammo ca
 summary|option2|FRIGATE|124	0	<bad>15%</bad> reduced missile weapon rate of fire.
 summary|option2|FRIGATE|125	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 summary|option2|FRIGATE|126	0	Increases fleet nav rating by <good>2</good>.
-summary|option2|FRIGATE|127	0	<good>15%</good> increased non-beam energy weapon damage.
+summary|option2|FRIGATE|127	0	<good>24%</good> increased non-beam energy weapon damage.
 summary|option2|FRIGATE|128	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
 summary|option2|FRIGATE|129	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
 summary|option2|FRIGATE|130	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
@@ -5732,7 +5732,7 @@ summary|option2|FRIGATE|189	0	<good>3%</good> increased post-battle salvage reco
 summary|option2|FRIGATE|190	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option2|FRIGATE|191	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option2|FRIGATE|192	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
-summary|option2|DESTROYER|0	1	<bad>45%</bad> reduced energy weapon flux cost.
+summary|option2|DESTROYER|0	1	<bad>35%</bad> reduced energy weapon flux cost.
 summary|option2|DESTROYER|1	0	Increases energy weapon range by <good>100</good>.
 summary|option2|DESTROYER|2	1	<bad>50%</bad> reduced EMP damage taken.
 summary|option2|DESTROYER|3	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
@@ -5859,7 +5859,7 @@ summary|option2|DESTROYER|123	0	<good>100%</good> increased missile weapon ammo 
 summary|option2|DESTROYER|124	0	<bad>15%</bad> reduced missile weapon rate of fire.
 summary|option2|DESTROYER|125	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 summary|option2|DESTROYER|126	0	Increases fleet nav rating by <good>3</good>.
-summary|option2|DESTROYER|127	0	<good>15%</good> increased non-beam energy weapon damage.
+summary|option2|DESTROYER|127	0	<good>24%</good> increased non-beam energy weapon damage.
 summary|option2|DESTROYER|128	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
 summary|option2|DESTROYER|129	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
 summary|option2|DESTROYER|130	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
@@ -5925,7 +5925,7 @@ summary|option2|DESTROYER|189	0	<good>6%</good> increased post-battle salvage re
 summary|option2|DESTROYER|190	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option2|DESTROYER|191	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option2|DESTROYER|192	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
-summary|option2|CRUISER|0	1	<bad>45%</bad> reduced energy weapon flux cost.
+summary|option2|CRUISER|0	1	<bad>35%</bad> reduced energy weapon flux cost.
 summary|option2|CRUISER|1	0	Increases energy weapon range by <good>100</good>.
 summary|option2|CRUISER|2	1	<bad>50%</bad> reduced EMP damage taken.
 summary|option2|CRUISER|3	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
@@ -6052,7 +6052,7 @@ summary|option2|CRUISER|123	0	<good>100%</good> increased missile weapon ammo ca
 summary|option2|CRUISER|124	0	<bad>15%</bad> reduced missile weapon rate of fire.
 summary|option2|CRUISER|125	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 summary|option2|CRUISER|126	0	Increases fleet nav rating by <good>4</good>.
-summary|option2|CRUISER|127	0	<good>15%</good> increased non-beam energy weapon damage.
+summary|option2|CRUISER|127	0	<good>24%</good> increased non-beam energy weapon damage.
 summary|option2|CRUISER|128	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
 summary|option2|CRUISER|129	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
 summary|option2|CRUISER|130	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.
@@ -6118,7 +6118,7 @@ summary|option2|CRUISER|189	0	<good>10%</good> increased post-battle salvage rec
 summary|option2|CRUISER|190	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option2|CRUISER|191	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option2|CRUISER|192	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
-summary|option2|CAPITAL_SHIP|0	1	<bad>45%</bad> reduced energy weapon flux cost.
+summary|option2|CAPITAL_SHIP|0	1	<bad>35%</bad> reduced energy weapon flux cost.
 summary|option2|CAPITAL_SHIP|1	0	Increases energy weapon range by <good>100</good>.
 summary|option2|CAPITAL_SHIP|2	1	<bad>50%</bad> reduced EMP damage taken.
 summary|option2|CAPITAL_SHIP|3	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
@@ -6245,7 +6245,7 @@ summary|option2|CAPITAL_SHIP|123	0	<good>100%</good> increased missile weapon am
 summary|option2|CAPITAL_SHIP|124	0	<bad>15%</bad> reduced missile weapon rate of fire.
 summary|option2|CAPITAL_SHIP|125	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 summary|option2|CAPITAL_SHIP|126	0	Increases fleet nav rating by <good>5</good>.
-summary|option2|CAPITAL_SHIP|127	0	<good>15%</good> increased non-beam energy weapon damage.
+summary|option2|CAPITAL_SHIP|127	0	<good>24%</good> increased non-beam energy weapon damage.
 summary|option2|CAPITAL_SHIP|128	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, ballistic and energy weapon rate of fire increases by up to <good>50%</good>, at full strength from 500 reserve, and non-beam weapons pay less flux per shot so their faster fire costs no extra flux.
 summary|option2|CAPITAL_SHIP|129	0	Increases armor by up to <good>400/700/900/1200</good>. Hulls with less base armor gain more: the bonus falls to <good>150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
 summary|option2|CAPITAL_SHIP|130	0	Increases ballistic and non-beam energy weapon damage by <good>0.08%</good> for every su/s of the ship's current speed, with no cap.

@@ -6036,7 +6036,7 @@
 				"rat_abyss_wormhole_2",
 				"small_flux_optional_105",
 				"small_flux_optional_106",
-				"energy_flux_cost_5"
+				"non_beam_energy_damage_6"
 			],
 			"x": -44307,
 			"y": 27715,
@@ -6062,11 +6062,12 @@
 			]
 		},
 		{
-			"id": "energy_flux_cost_5",
-			"type": "energy_flux_cost",
+			"id": "non_beam_energy_damage_6",
+			"type": "non_beam_energy_damage",
 			"connectedTo": [
 				"rat_abyss_wormhole_1",
-				"energy_flux_cost_6"
+				"non_beam_energy_damage_7",
+				"non_beam_energy_damage_8"
 			],
 			"x": -44587,
 			"y": 27715,
@@ -6077,10 +6078,10 @@
 			]
 		},
 		{
-			"id": "energy_flux_cost_6",
-			"type": "energy_flux_cost",
+			"id": "non_beam_energy_damage_7",
+			"type": "non_beam_energy_damage",
 			"connectedTo": [
-				"energy_flux_cost_5",
+				"non_beam_energy_damage_6",
 				"abyssal_grid_1"
 			],
 			"x": -44747,
@@ -6095,7 +6096,8 @@
 			"id": "abyssal_grid_1",
 			"type": "abyssal_grid",
 			"connectedTo": [
-				"energy_flux_cost_6"
+				"non_beam_energy_damage_7",
+				"non_beam_energy_damage_8"
 			],
 			"x": -44907,
 			"y": 27715,
@@ -6328,6 +6330,21 @@
 			"y": 28475,
 			"orbitAnchorId": "anchor_67",
 			"orbitAngle": 180,
+			"tags": [
+				"abyss"
+			]
+		},
+		{
+			"id": "non_beam_energy_damage_8",
+			"type": "non_beam_energy_damage",
+			"connectedTo": [
+				"non_beam_energy_damage_6",
+				"abyssal_grid_1"
+			],
+			"x": -44747,
+			"y": 27875,
+			"orbitAnchorId": "anchor_66",
+			"orbitAngle": 90,
 			"tags": [
 				"abyss"
 			]
@@ -8129,13 +8146,13 @@
 			"controlY": 26866
 		},
 		{
-			"a": "energy_flux_cost_5",
-			"b": "energy_flux_cost_6",
+			"a": "non_beam_energy_damage_6",
+			"b": "non_beam_energy_damage_7",
 			"controlX": -44634,
 			"controlY": 27602
 		},
 		{
-			"a": "energy_flux_cost_6",
+			"a": "non_beam_energy_damage_7",
 			"b": "abyssal_grid_1",
 			"controlX": -44860,
 			"controlY": 27602
@@ -8247,6 +8264,18 @@
 			"b": "system_cooldown_3",
 			"controlX": -45620,
 			"controlY": 28362
+		},
+		{
+			"a": "non_beam_energy_damage_6",
+			"b": "non_beam_energy_damage_8",
+			"controlX": -44634,
+			"controlY": 27828
+		},
+		{
+			"a": "abyssal_grid_1",
+			"b": "non_beam_energy_damage_8",
+			"controlX": -44860,
+			"controlY": 27828
 		}
 	],
 	"hiddenConnectors": [
