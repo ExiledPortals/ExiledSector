@@ -5765,18 +5765,6 @@
 			]
 		},
 		{
-			"id": "modular_hull_socket_12",
-			"type": "modular_hull_socket",
-			"connectedTo": [
-				"exoship"
-			],
-			"x": -8791,
-			"y": -16378,
-			"tags": [
-				"exotech"
-			]
-		},
-		{
 			"id": "exoship",
 			"type": "exoship",
 			"connectedTo": [
@@ -5784,11 +5772,10 @@
 				"energy_flux_cost_3",
 				"phase_cloak_flux_threshold_3",
 				"timeflow_1",
-				"sensor_profile_1",
-				"modular_hull_socket_12"
+				"sensor_profile_1"
 			],
-			"x": -8463,
-			"y": -15887,
+			"x": -3764,
+			"y": -7758,
 			"pairedWith": "exotech_beacon",
 			"tags": [
 				"exotech"
@@ -5801,8 +5788,10 @@
 				"exoship",
 				"small_flux_optional_46"
 			],
-			"x": -1754,
-			"y": -13106,
+			"x": -1509,
+			"y": -12687,
+			"orbitAnchorId": "tritach_asteroids",
+			"orbitAngle": 168.29316381413813,
 			"pairedWith": "exoship",
 			"tags": [
 				"tritachyon"
@@ -5813,10 +5802,11 @@
 			"type": "energy_flux_cost",
 			"connectedTo": [
 				"exoship",
-				"energy_flux_cost_4"
+				"energy_flux_cost_4",
+				"energy_flux_cost_7"
 			],
-			"x": -8117,
-			"y": -16409,
+			"x": -3768,
+			"y": -8174,
 			"orbitAnchorId": "anchor_63",
 			"orbitAngle": 90,
 			"tags": [
@@ -5830,8 +5820,8 @@
 				"energy_flux_cost_3",
 				"warpfield_1"
 			],
-			"x": -7957,
-			"y": -16569,
+			"x": -3608,
+			"y": -8334,
 			"orbitAnchorId": "anchor_63",
 			"orbitAngle": 0,
 			"tags": [
@@ -5842,10 +5832,11 @@
 			"id": "warpfield_1",
 			"type": "warpfield",
 			"connectedTo": [
-				"energy_flux_cost_4"
+				"energy_flux_cost_4",
+				"energy_flux_cost_7"
 			],
-			"x": -8117,
-			"y": -16729,
+			"x": -3768,
+			"y": -8494,
 			"orbitAnchorId": "anchor_63",
 			"orbitAngle": 270,
 			"tags": [
@@ -5857,10 +5848,11 @@
 			"type": "sensor_profile",
 			"connectedTo": [
 				"sensor_profile_2",
-				"exoship"
+				"exoship",
+				"sensor_profile_3"
 			],
-			"x": -7958,
-			"y": -15899,
+			"x": -3259,
+			"y": -7770,
 			"orbitAnchorId": "anchor_64",
 			"orbitAngle": 180,
 			"tags": [
@@ -5874,8 +5866,8 @@
 				"sensor_profile_1",
 				"phased_recharging_1"
 			],
-			"x": -7798,
-			"y": -15739,
+			"x": -3099,
+			"y": -7610,
 			"orbitAnchorId": "anchor_64",
 			"orbitAngle": 90,
 			"tags": [
@@ -5886,10 +5878,11 @@
 			"id": "phased_recharging_1",
 			"type": "phased_recharging",
 			"connectedTo": [
-				"sensor_profile_2"
+				"sensor_profile_2",
+				"sensor_profile_3"
 			],
-			"x": -7638,
-			"y": -15899,
+			"x": -2939,
+			"y": -7770,
 			"orbitAnchorId": "anchor_64",
 			"orbitAngle": 0,
 			"tags": [
@@ -5901,10 +5894,11 @@
 			"type": "phase_cloak_flux_threshold",
 			"connectedTo": [
 				"phase_cloak_flux_threshold_4",
-				"exoship"
+				"exoship",
+				"phase_cloak_flux_threshold_5"
 			],
-			"x": -8450,
-			"y": -15508,
+			"x": -3751,
+			"y": -7379,
 			"orbitAnchorId": "anchor_65",
 			"orbitAngle": 270,
 			"tags": [
@@ -5918,8 +5912,8 @@
 				"phase_cloak_flux_threshold_3",
 				"coil_efficiency_1"
 			],
-			"x": -8610,
-			"y": -15348,
+			"x": -3911,
+			"y": -7219,
 			"orbitAnchorId": "anchor_65",
 			"orbitAngle": 180,
 			"tags": [
@@ -5930,10 +5924,11 @@
 			"id": "coil_efficiency_1",
 			"type": "coil_efficiency",
 			"connectedTo": [
-				"phase_cloak_flux_threshold_4"
+				"phase_cloak_flux_threshold_4",
+				"phase_cloak_flux_threshold_5"
 			],
-			"x": -8450,
-			"y": -15188,
+			"x": -3751,
+			"y": -7059,
 			"orbitAnchorId": "anchor_65",
 			"orbitAngle": 90,
 			"tags": [
@@ -5945,10 +5940,11 @@
 			"type": "timeflow",
 			"connectedTo": [
 				"timeflow_2",
-				"exoship"
+				"exoship",
+				"timeflow_3"
 			],
-			"x": -8937,
-			"y": -15881,
+			"x": -4238,
+			"y": -7752,
 			"orbitAnchorId": "anchor_62",
 			"orbitAngle": 0,
 			"tags": [
@@ -5962,8 +5958,8 @@
 				"timeflow_1",
 				"exogrid_1"
 			],
-			"x": -9097,
-			"y": -16041,
+			"x": -4398,
+			"y": -7912,
 			"orbitAnchorId": "anchor_62",
 			"orbitAngle": 270,
 			"tags": [
@@ -5974,10 +5970,11 @@
 			"id": "exogrid_1",
 			"type": "exogrid",
 			"connectedTo": [
-				"timeflow_2"
+				"timeflow_2",
+				"timeflow_3"
 			],
-			"x": -9257,
-			"y": -15881,
+			"x": -4558,
+			"y": -7752,
 			"orbitAnchorId": "anchor_62",
 			"orbitAngle": 180,
 			"tags": [
@@ -6113,7 +6110,8 @@
 			"type": "system_cooldown",
 			"connectedTo": [
 				"small_flux_optional_105",
-				"system_cooldown_2"
+				"system_cooldown_2",
+				"system_cooldown_3"
 			],
 			"x": -45507,
 			"y": 28635,
@@ -6142,7 +6140,8 @@
 			"id": "chronos_adaptability_1",
 			"type": "chronos_adaptability",
 			"connectedTo": [
-				"system_cooldown_2"
+				"system_cooldown_2",
+				"system_cooldown_3"
 			],
 			"x": -45507,
 			"y": 28315,
@@ -6253,6 +6252,81 @@
 			"y": 27555,
 			"orbitAnchorId": "anchor_68",
 			"orbitAngle": 270,
+			"tags": [
+				"abyss"
+			]
+		},
+		{
+			"id": "timeflow_3",
+			"type": "timeflow",
+			"connectedTo": [
+				"timeflow_1",
+				"exogrid_1"
+			],
+			"x": -4398,
+			"y": -7592,
+			"orbitAnchorId": "anchor_62",
+			"orbitAngle": 90,
+			"tags": [
+				"exotech"
+			]
+		},
+		{
+			"id": "sensor_profile_3",
+			"type": "sensor_profile",
+			"connectedTo": [
+				"sensor_profile_1",
+				"phased_recharging_1"
+			],
+			"x": -3099,
+			"y": -7930,
+			"orbitAnchorId": "anchor_64",
+			"orbitAngle": 270,
+			"tags": [
+				"exotech"
+			]
+		},
+		{
+			"id": "phase_cloak_flux_threshold_5",
+			"type": "phase_cloak_flux_threshold",
+			"connectedTo": [
+				"phase_cloak_flux_threshold_3",
+				"coil_efficiency_1"
+			],
+			"x": -3591,
+			"y": -7219,
+			"orbitAnchorId": "anchor_65",
+			"orbitAngle": 0,
+			"tags": [
+				"exotech"
+			]
+		},
+		{
+			"id": "energy_flux_cost_7",
+			"type": "energy_flux_cost",
+			"connectedTo": [
+				"energy_flux_cost_3",
+				"warpfield_1"
+			],
+			"x": -3928,
+			"y": -8334,
+			"orbitAnchorId": "anchor_63",
+			"orbitAngle": 180,
+			"tags": [
+				"exotech"
+			]
+		},
+		{
+			"id": "system_cooldown_3",
+			"type": "system_cooldown",
+			"connectedTo": [
+				"system_cooldown_1",
+				"chronos_adaptability_1"
+			],
+			"x": -45667,
+			"y": 28475,
+			"orbitAnchorId": "anchor_67",
+			"orbitAngle": 180,
 			"tags": [
 				"abyss"
 			]
@@ -7984,50 +8058,50 @@
 		{
 			"a": "energy_flux_cost_3",
 			"b": "energy_flux_cost_4",
-			"controlX": -8004,
-			"controlY": -16456
+			"controlX": -3655,
+			"controlY": -8221
 		},
 		{
 			"a": "energy_flux_cost_4",
 			"b": "warpfield_1",
-			"controlX": -8004,
-			"controlY": -16682
+			"controlX": -3655,
+			"controlY": -8447
 		},
 		{
 			"a": "sensor_profile_1",
 			"b": "sensor_profile_2",
-			"controlX": -7911,
-			"controlY": -15786
+			"controlX": -3212,
+			"controlY": -7657
 		},
 		{
 			"a": "sensor_profile_2",
 			"b": "phased_recharging_1",
-			"controlX": -7685,
-			"controlY": -15786
+			"controlX": -2986,
+			"controlY": -7657
 		},
 		{
 			"a": "phase_cloak_flux_threshold_3",
 			"b": "phase_cloak_flux_threshold_4",
-			"controlX": -8563,
-			"controlY": -15461
+			"controlX": -3864,
+			"controlY": -7332
 		},
 		{
 			"a": "phase_cloak_flux_threshold_4",
 			"b": "coil_efficiency_1",
-			"controlX": -8563,
-			"controlY": -15235
+			"controlX": -3864,
+			"controlY": -7106
 		},
 		{
 			"a": "timeflow_1",
 			"b": "timeflow_2",
-			"controlX": -8984,
-			"controlY": -15994
+			"controlX": -4285,
+			"controlY": -7865
 		},
 		{
 			"a": "exogrid_1",
 			"b": "timeflow_2",
-			"controlX": -9210,
-			"controlY": -15994
+			"controlX": -4511,
+			"controlY": -7865
 		},
 		{
 			"a": "modular_hull_socket_13",
@@ -8112,6 +8186,66 @@
 			"b": "weapon_durability_8",
 			"controlX": -46154,
 			"controlY": 27602
+		},
+		{
+			"a": "timeflow_1",
+			"b": "timeflow_3",
+			"controlX": -4285,
+			"controlY": -7639
+		},
+		{
+			"a": "exogrid_1",
+			"b": "timeflow_3",
+			"controlX": -4511,
+			"controlY": -7639
+		},
+		{
+			"a": "sensor_profile_1",
+			"b": "sensor_profile_3",
+			"controlX": -3212,
+			"controlY": -7883
+		},
+		{
+			"a": "phased_recharging_1",
+			"b": "sensor_profile_3",
+			"controlX": -2986,
+			"controlY": -7883
+		},
+		{
+			"a": "phase_cloak_flux_threshold_3",
+			"b": "phase_cloak_flux_threshold_5",
+			"controlX": -3638,
+			"controlY": -7332
+		},
+		{
+			"a": "coil_efficiency_1",
+			"b": "phase_cloak_flux_threshold_5",
+			"controlX": -3638,
+			"controlY": -7106
+		},
+		{
+			"a": "energy_flux_cost_3",
+			"b": "energy_flux_cost_7",
+			"controlX": -3881,
+			"controlY": -8221
+		},
+		{
+			"a": "energy_flux_cost_7",
+			"b": "warpfield_1",
+			"controlX": -3881,
+			"controlY": -8447
+		},
+		{
+			"a": "system_cooldown_1",
+			"b": "system_cooldown_3",
+			"controlX": -45620,
+			"controlY": 28588
+		},
+		{
+			"a": "chronos_adaptability_1",
+			"b": "system_cooldown_3",
+			"controlX": -45620,
+			"controlY": 28362
 		}
 	],
 	"hiddenConnectors": [
@@ -8730,26 +8864,26 @@
 		},
 		{
 			"id": "anchor_62",
-			"x": -9097,
-			"y": -15881,
+			"x": -4398,
+			"y": -7752,
 			"radius": 160
 		},
 		{
 			"id": "anchor_63",
-			"x": -8117,
-			"y": -16569,
+			"x": -3768,
+			"y": -8334,
 			"radius": 160
 		},
 		{
 			"id": "anchor_64",
-			"x": -7798,
-			"y": -15899,
+			"x": -3099,
+			"y": -7770,
 			"radius": 160
 		},
 		{
 			"id": "anchor_65",
-			"x": -8450,
-			"y": -15348,
+			"x": -3751,
+			"y": -7219,
 			"radius": 160
 		},
 		{

@@ -3107,7 +3107,7 @@
 			"effects": [
 				{
 					"effect": "PHASE_CLOAK_FLUX_THRESHOLD_PERCENT",
-					"magnitude": 10
+					"magnitude": 5
 				}
 			],
 			"tags": [
@@ -3638,7 +3638,7 @@
 			"effects": [
 				{
 					"effect": "SENSOR_PROFILE_PERCENT",
-					"magnitude": -15
+					"magnitude": -10
 				}
 			],
 			"tags": [
