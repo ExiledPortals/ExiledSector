@@ -80,7 +80,7 @@ public class SocketableCodexEntry extends CodexEntryV2 implements CustomUIPanelP
         float panelWidth = panel.getPosition().getWidth();
         float textWidth = panelWidth - RELATED_ENTRIES_WIDTH - PAD - BOX_HORIZONTAL_PAD + PAD;
         TooltipMakerAPI textElement = panel.createUIElement(textWidth, 0f, false);
-        I18n.forGameText(() -> writeDetail(textElement));
+        I18n.forGameText(() -> writeDetail(textElement, textWidth));
         panel.updateUIElementSizeAndMakeItProcessInput(textElement);
 
         UIPanelAPI textBox = panel.wrapTooltipWithBox(textElement);
@@ -93,7 +93,7 @@ public class SocketableCodexEntry extends CodexEntryV2 implements CustomUIPanelP
         panel.getPosition().setSize(panelWidth, panelHeight);
     }
 
-    private void writeDetail(TooltipMakerAPI info) {
+    private void writeDetail(TooltipMakerAPI info, float textWidth) {
         TooltipMakerAPI header = info.beginImageWithText(definition.icon(), ICON_SIZE);
         header.setTitleOrbitronLarge();
         header.addTitle(definition.displayName(), definition.unique() ? SocketableRarity.UNIQUE.color() : Misc.getBasePlayerColor());
@@ -107,7 +107,7 @@ public class SocketableCodexEntry extends CodexEntryV2 implements CustomUIPanelP
         if (definition.unique()) {
             writeUnique(info);
         } else {
-            writeAffixes(info);
+            writeAffixes(info, textWidth);
         }
     }
 
@@ -123,18 +123,19 @@ public class SocketableCodexEntry extends CodexEntryV2 implements CustomUIPanelP
         }
     }
 
-    private void writeAffixes(TooltipMakerAPI info) {
+    private void writeAffixes(TooltipMakerAPI info, float textWidth) {
         Map<String, Double> weightShares = SocketableRollOdds.weightShares(definition);
-        writePool(info, "codex.socketables.prefixes", definition.prefixes(), weightShares);
-        writePool(info, "codex.socketables.suffixes", definition.suffixes(), weightShares);
+        writePool(info, "codex.socketables.prefixes", definition.prefixes(), weightShares, textWidth);
+        writePool(info, "codex.socketables.suffixes", definition.suffixes(), weightShares, textWidth);
     }
 
-    private static void writePool(TooltipMakerAPI info, String headingKey, List<PoolEntry> pool, Map<String, Double> weightShares) {
+    private static void writePool(TooltipMakerAPI info, String headingKey, List<PoolEntry> pool, Map<String, Double> weightShares,
+                                  float textWidth) {
         if (pool.isEmpty()) {
             return;
         }
         info.addSectionHeading(Translation.text(headingKey), Alignment.MID, PAD);
-        float effectColumnWidth = info.getPosition().getWidth() - CHANCE_COLUMN_WIDTH - COLUMN_GAP;
+        float effectColumnWidth = textWidth - CHANCE_COLUMN_WIDTH - COLUMN_GAP;
         float linePad = PAD;
         for (PoolEntry entry : pool) {
             StyledText effectText = effectText(entry);
