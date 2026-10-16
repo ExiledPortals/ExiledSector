@@ -58,9 +58,10 @@ class EditorVocabularyTest {
     @Test
     void theEditorLoadsTheManifestThroughTheServer() throws IOException {
         Path root = RealSkillData.projectRoot();
-        String server = Files.readString(root.resolve("tools/skill_tree_server.ps1"), StandardCharsets.UTF_8);
-        String editor = Files.readString(root.resolve("tools/skill_tree_editor.html"), StandardCharsets.UTF_8);
-        assertTrue(server.contains(EditorVocabulary.FILE.getFileName().toString()), "skill_tree_server.ps1 no longer serves " + EditorVocabulary.FILE);
-        assertTrue(editor.contains("'/data/vocabulary'"), "skill_tree_editor.html no longer loads /data/vocabulary");
+        String server = Files.readString(root.resolve("tools/editor/server/routes/data.ts"), StandardCharsets.UTF_8);
+        String editor = Files.readString(root.resolve("tools/editor/src/api/vocabulary.ts"), StandardCharsets.UTF_8);
+        assertTrue(server.contains("'" + EditorVocabulary.FILE.getFileName() + "'"), "the editor server no longer serves " + EditorVocabulary.FILE);
+        assertTrue(server.contains("'/api/vocabulary'"), "the editor server no longer serves /api/vocabulary");
+        assertTrue(editor.contains("'/api/vocabulary'"), "the editor no longer loads /api/vocabulary");
     }
 }

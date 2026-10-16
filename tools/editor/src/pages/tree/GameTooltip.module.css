@@ -1,0 +1,50 @@
+.tooltip {
+  position: fixed;
+  z-index: 1000;
+  max-width: 440px;
+  padding: 12px 14px;
+  pointer-events: none;
+  background: rgba(8, 12, 18, 0.94);
+  border: 1px solid rgba(120, 200, 255, 0.75);
+  border-radius: 2px;
+  box-shadow: 0 0 12px rgba(120, 200, 255, 0.25);
+  color: rgb(230, 230, 230);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.title {
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.flavour {
+  color: #8c8c8c;
+  font-style: italic;
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+
+.line + .line {
+  margin-top: 4px;
+}
+
+.group + .group {
+  margin-top: 6px;
+}
+
+.groupLabel {
+  color: #8c8c8c;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
+}
+
+.note {
+  color: #8c8c8c;
+  font-size: 11px;
+  margin-top: 6px;
+}

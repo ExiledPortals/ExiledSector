@@ -1,0 +1,40 @@
+.panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: none;
+  min-height: 0;
+  border-left: 1px solid var(--mantine-color-default-border);
+  background: var(--mantine-color-body);
+}
+
+.collapsedPanel {
+  flex: none;
+  border-left: 1px solid var(--mantine-color-default-border);
+}
+
+.resizeHandle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -3px;
+  width: 6px;
+  cursor: col-resize;
+  z-index: 10;
+}
+
+.resizeHandle:hover {
+  background: var(--mantine-primary-color-light);
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--mantine-color-default-border);
+}
+
+.panelBody {
+  flex: 1;
+  min-height: 0;
+}

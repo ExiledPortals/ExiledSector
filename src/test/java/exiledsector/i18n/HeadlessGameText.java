@@ -1,0 +1,77 @@
+package exiledsector.i18n;
+
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.ModManagerAPI;
+import com.fs.starfarer.api.SettingsAPI;
+import com.fs.starfarer.api.loading.HullModSpecAPI;
+import exiledsector.skills.npc.RealSkillData;
+import lunalib.lunaSettings.LunaSettings;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.function.BooleanSupplier;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+public final class HeadlessGameText implements AutoCloseable {
+
+    static final Path HULL_MOD_NAMES_FILE = Path.of("src/test/resources/i18n/hullmod_names.csv");
+
+    private final MockedStatic<LunaSettings> lunaSettingsMock;
+    private final MockedStatic<Global> globalMock;
+    private final Set<String> unnamedHullMods = new TreeSet<>();
+
+    private HeadlessGameText(BooleanSupplier secondInCommandEnabled) throws IOException {
+        lunaSettingsMock = Mockito.mockStatic(LunaSettings.class, invocation -> null);
+        SettingsAPI settings = mock(SettingsAPI.class);
+        globalMock = Mockito.mockStatic(Global.class);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+        Map<String, HullModSpecAPI> hullMods = namedHullModSpecs();
+        when(settings.getHullModSpec(Mockito.anyString())).thenAnswer(invocation -> {
+            String id = invocation.getArgument(0);
+            if (!hullMods.containsKey(id)) {
+                unnamedHullMods.add(id);
+            }
+            return hullMods.get(id);
+        });
+        ModManagerAPI modManager = mock(ModManagerAPI.class);
+        when(settings.getModManager()).thenReturn(modManager);
+        when(modManager.isModEnabled(Mockito.anyString())).thenAnswer(invocation -> secondInCommandEnabled.getAsBoolean());
+    }
+
+    public static HeadlessGameText install(BooleanSupplier secondInCommandEnabled) throws IOException {
+        return new HeadlessGameText(secondInCommandEnabled);
+    }
+
+    public Set<String> unnamedHullMods() {
+        return unnamedHullMods;
+    }
+
+    private static Map<String, HullModSpecAPI> namedHullModSpecs() throws IOException {
+        Map<String, HullModSpecAPI> specs = new HashMap<>();
+        List<String> rows = Files.readAllLines(RealSkillData.projectRoot().resolve(HULL_MOD_NAMES_FILE), StandardCharsets.UTF_8);
+        for (String row : rows.subList(1, rows.size())) {
+            int comma = row.indexOf(',');
+            HullModSpecAPI spec = mock(HullModSpecAPI.class);
+            when(spec.getDisplayName()).thenReturn(row.substring(comma + 1));
+            specs.put(row.substring(0, comma), spec);
+        }
+        return specs;
+    }
+
+    @Override
+    public void close() {
+        globalMock.close();
+        lunaSettingsMock.close();
+    }
+}

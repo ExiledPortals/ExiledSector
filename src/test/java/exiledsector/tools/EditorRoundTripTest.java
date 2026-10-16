@@ -25,8 +25,14 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 class EditorRoundTripTest {
 
-    private static final Path EDITOR = Path.of("tools/skill_tree_editor.html");
+    private static final Path EDITOR_SOURCES = Path.of("tools/editor/src");
     private static final Path MAIN_SOURCES = Path.of("src/main/java");
+
+    private static final String TREE_SERIALIZATION = "pages/tree/model/serialization.ts";
+    private static final String SOCKETABLE_DEFINITIONS_MODEL = "pages/socketables/model/definitions.ts";
+    private static final String SOCKETABLE_NAMES_MODEL = "pages/socketables/model/names.ts";
+    private static final String SOCKETABLE_DROPS_MODEL = "pages/socketables/model/drops.ts";
+    private static final String SOCKETABLE_CRAFTING_MODEL = "pages/socketables/model/crafting.ts";
 
     private static final String TYPE_LOADER = "exiledsector/skills/loader/SkillTypeLoader.java";
     private static final String TREE_LOADER = "exiledsector/skills/loader/SkillTreeLoader.java";
@@ -43,36 +49,54 @@ class EditorRoundTripTest {
     private static final List<String> EDITED_DATA_PATHS = List.of("data/skilltrees/skill_types.json", "data/skilltrees/ship_skill_tree.json",
             "data/config/exiledSector/socketable", "compat/salvage/");
 
-    private record Pin(String description, String loader, List<String> loaderMethods, List<String> editorSources, boolean nameLiterals) {
+    private record EditorSource(String file, String symbol) {
+        String label() {
+            return EDITOR_SOURCES.resolve(file).toString().replace('\\', '/') + "#" + symbol;
+        }
+    }
+
+    private record Pin(String description, String loader, List<String> loaderMethods, List<EditorSource> editorSources, boolean nameLiterals) {
+        String editorLabels() {
+            return editorSources.stream().map(EditorSource::label).collect(Collectors.joining(" / "));
+        }
+    }
+
+    private static EditorSource tree(String symbol) {
+        return new EditorSource(TREE_SERIALIZATION, symbol);
     }
 
     private static final List<Pin> PINS = List.of(
             new Pin("skill_types.json root", TYPE_LOADER, List.of("loadAll", "parseSkillTypes"),
-                    List.of("serializeSkillTypesFile"), false),
+                    List.of(tree("skillTypesFileObject")), false),
             new Pin("skill_types.json skill type", TYPE_LOADER, List.of("parseSkillType", "parseTemporaryAfterDeploymentSeconds", "entryLabel"),
-                    List.of("serializeType"), false),
-            new Pin("skill_types.json itemCost", TYPE_LOADER, List.of("parseItemCost"), List.of("serializeType"), false),
+                    List.of(tree("serializeType")), false),
+            new Pin("skill_types.json itemCost", TYPE_LOADER, List.of("parseItemCost"), List.of(tree("serializeType")), false),
             new Pin("skill_types.json effects and hullSizeEffects", TYPE_LOADER, List.of("parseEffects", "parseHullSizeEffects"),
-                    List.of("serializeType"), false),
+                    List.of(tree("serializeType")), false),
             new Pin("skill_types.json unlockConditions", TYPE_LOADER, List.of("parseUnlockCondition"),
-                    List.of("serializeUnlockConditions"), false),
+                    List.of(tree("serializeUnlockConditions")), false),
             new Pin("ship_skill_tree.json root, connectorCurves and hiddenConnectors", TREE_LOADER,
-                    List.of("loadAll", "parseNodes", "parseConnectorCurves", "parseHiddenConnectors"), List.of("buildTreeExportObject"), false),
-            new Pin("ship_skill_tree.json node", TREE_LOADER, List.of("parseNode"), List.of("serializeTreeNode"), false),
+                    List.of("loadAll", "parseNodes", "parseConnectorCurves", "parseHiddenConnectors"), List.of(tree("treeFileObject")), false),
+            new Pin("ship_skill_tree.json node", TREE_LOADER, List.of("parseNode"), List.of(tree("serializeTreeNode")), false),
             new Pin("ship_skill_tree.json ringBelts", TREE_LOADER, List.of("parseRingBelts"),
-                    List.of("buildTreeExportObject", "serializeRingBelt"), false),
+                    List.of(tree("treeFileObject"), tree("serializeRingBelt")), false),
             new Pin("ship_skill_tree.json staticImages", TREE_LOADER, List.of("parseStaticImages"),
-                    List.of("buildTreeExportObject", "serializeStaticImage"), false),
+                    List.of(tree("treeFileObject"), tree("serializeStaticImage")), false),
             new Pin("ship_skill_tree.json stars", TREE_LOADER, List.of("parseStars"),
-                    List.of("buildTreeExportObject", "serializeStar"), false),
-            new Pin("socketables.csv columns", SOCKETABLE_DEFINITION, List.of("parse"), List.of("var SOCKETABLE_COLUMNS"), true),
+                    List.of(tree("treeFileObject"), tree("serializeStar")), false),
+            new Pin("socketables.csv columns", SOCKETABLE_DEFINITION, List.of("parse"),
+                    List.of(new EditorSource(SOCKETABLE_DEFINITIONS_MODEL, "SOCKETABLE_COLUMNS")), true),
             new Pin("socketable_affixes.csv columns", SOCKETABLE_NAMES, List.of("load", "registerAffixes"),
-                    List.of("serializeAffixesCsv"), true),
+                    List.of(new EditorSource(SOCKETABLE_NAMES_MODEL, "serializeAffixesCsv")), true),
             new Pin("socketable_names.json word fields", SOCKETABLE_NAMES, List.of("registerWords"),
-                    List.of("serializeRareNames", "openSocketableNamesModal"), true),
-            new Pin("socketable_salvage.csv columns", SOCKETABLE_DROPS, List.of("load", "parse"), List.of("serializeSalvageCsv"), true),
-            new Pin("compat/salvage/*.csv columns", SALVAGE_COMPAT, List.of("rows", "missingSites"), List.of("serializeSalvageCsv"), true),
-            new Pin("socketable_crafting.csv columns", SOCKETABLE_CRAFTING, List.of("load", "register"), List.of("serializeCraftingCsv"), true));
+                    List.of(new EditorSource(SOCKETABLE_NAMES_MODEL, "serializeRareNames"), new EditorSource(SOCKETABLE_NAMES_MODEL, "RARE_NAME_WORD_LISTS"),
+                            new EditorSource(SOCKETABLE_NAMES_MODEL, "newRareNameWords")), true),
+            new Pin("socketable_salvage.csv columns", SOCKETABLE_DROPS, List.of("load", "parse"),
+                    List.of(new EditorSource(SOCKETABLE_DROPS_MODEL, "serializeSalvageCsv")), true),
+            new Pin("compat/salvage/*.csv columns", SALVAGE_COMPAT, List.of("rows", "missingSites"),
+                    List.of(new EditorSource(SOCKETABLE_DROPS_MODEL, "serializeSalvageCsv")), true),
+            new Pin("socketable_crafting.csv columns", SOCKETABLE_CRAFTING, List.of("load", "register"),
+                    List.of(new EditorSource(SOCKETABLE_CRAFTING_MODEL, "serializeCraftingCsv")), true));
 
     private static final Pattern JAVA_KEY_READ = Pattern.compile("(?:\\.\\s*(?:opt|get|has|isNull)[A-Za-z]*\\s*\\(\\s*"
             + "|\\bModCsv\\.text\\s*\\([^,()\"]*,\\s*|\\bModCsv\\.(?:load|rows)\\s*\\(\\s*)\"([^\"\\\\]*)\"");
@@ -85,7 +109,14 @@ class EditorRoundTripTest {
 
     @Test
     void theEditorWritesEveryFieldTheLoadersRead() throws IOException {
-        String editor = read(EDITOR);
+        Map<String, String> editorFiles = new TreeMap<>();
+        for (Pin pin : PINS) {
+            for (EditorSource source : pin.editorSources()) {
+                if (!editorFiles.containsKey(source.file())) {
+                    editorFiles.put(source.file(), read(EDITOR_SOURCES.resolve(source.file())));
+                }
+            }
+        }
         Map<String, Map<String, Set<String>>> keysByLoader = new LinkedHashMap<>();
         for (String loader : LOADERS) {
             keysByLoader.put(loader, keysReadByMethod(read(MAIN_SOURCES.resolve(loader))));
@@ -104,17 +135,17 @@ class EditorRoundTripTest {
                 }
             }
             Set<String> editorKeys = new TreeSet<>();
-            for (String source : pin.editorSources()) {
-                editorKeys.addAll(editorKeys(editor, source, pin.nameLiterals()));
+            for (EditorSource source : pin.editorSources()) {
+                editorKeys.addAll(editorKeys(editorFiles.get(source.file()), source.symbol(), source.label(), pin.nameLiterals()));
             }
             if (editorKeys.isEmpty()) {
-                problems.add(pin.description() + ": found no written fields in " + String.join(" / ", pin.editorSources()) + " in " + EDITOR);
+                problems.add(pin.description() + ": found no written fields in " + pin.editorLabels());
             }
             Set<String> missing = new TreeSet<>(loaderKeys);
             missing.removeAll(editorKeys);
             if (!missing.isEmpty()) {
                 problems.add(pin.description() + ": the editor drops " + missing + " on save - " + loaderName(pin.loader()) + " reads "
-                        + (missing.size() == 1 ? "it" : "them") + " but " + String.join(" / ", pin.editorSources()) + " in " + EDITOR
+                        + (missing.size() == 1 ? "it" : "them") + " but " + pin.editorLabels()
                         + " never write" + (pin.editorSources().size() == 1 ? "s " : " ") + (missing.size() == 1 ? "it" : "them"));
             }
         }
@@ -193,9 +224,19 @@ class EditorRoundTripTest {
                 "  return out;",
                 "}",
                 "function after(){ return { outside: 1 }; }");
-        assertEquals(Set.of("first", "quoted", "nested", "inner", "assigned", "bracketed"), editorKeys(js, "serializeSample", false));
-        assertTrue(editorKeys("function h(){ return ['site,chances', 'not a name', 'x'].join(); }", "h", true)
+        assertEquals(Set.of("first", "quoted", "nested", "inner", "assigned", "bracketed"), editorKeys(js, "serializeSample", "sample", false));
+        assertTrue(editorKeys("function h(){ return ['site,chances', 'not a name', 'x'].join(); }", "h", "sample", true)
                 .containsAll(Set.of("site", "chances", "x")));
+
+        String ts = String.join("\n",
+                "export function typed(entry: { a: number }, ratio = 2): Record<string, unknown> {",
+                "  const out: Record<string, unknown> = { kept: entry.a / ratio };",
+                "  out.later = 1;",
+                "  return out;",
+                "}",
+                "export const COLUMNS = ['id', 'kind'] as const;");
+        assertEquals(Set.of("kept", "later"), editorKeys(ts, "typed", "sample", false));
+        assertEquals(Set.of("id", "kind"), editorKeys(ts, "COLUMNS", "sample", true));
     }
 
     private static String loaderName(String loader) {
@@ -261,16 +302,9 @@ class EditorRoundTripTest {
         return i < code.length() && code.charAt(i) == '{' ? i : -1;
     }
 
-    private static String scriptOf(String html) {
-        int open = html.indexOf("<script>");
-        int close = html.lastIndexOf("</script>");
-        return open < 0 || close < open ? html : html.substring(open + "<script>".length(), close);
-    }
-
-    private static Set<String> editorKeys(String editor, String source, boolean nameLiterals) {
-        String html = scriptOf(editor);
-        Scan scan = Scan.javaScript(html);
-        int[] range = sourceRange(scan.masked, source);
+    private static Set<String> editorKeys(String source, String symbol, String label, boolean nameLiterals) {
+        Scan scan = Scan.javaScript(source);
+        int[] range = sourceRange(scan.masked, symbol, label);
         Set<String> keys = new TreeSet<>();
         String code = scan.masked.substring(range[0], range[1]);
         addGroups(keys, JS_OBJECT_KEY.matcher(code));
@@ -279,7 +313,7 @@ class EditorRoundTripTest {
             if (literal[0] < range[0] || literal[1] > range[1]) {
                 continue;
             }
-            String value = html.substring(literal[0] + 1, literal[1] - 1);
+            String value = source.substring(literal[0] + 1, literal[1] - 1);
             char before = previousNonSpace(scan.masked, literal[0] - 1);
             char after = nextNonSpace(scan.masked, literal[1]);
             if ((before == '{' || before == ',') && after == ':') {
@@ -299,38 +333,29 @@ class EditorRoundTripTest {
         return i < code.length() && code.charAt(i) == '=' && (i + 1 >= code.length() || code.charAt(i + 1) != '=');
     }
 
-    private static int[] sourceRange(String code, String source) {
-        if (source.startsWith("var ")) {
-            Matcher declaration = Pattern.compile("\\bvar\\s+" + Pattern.quote(source.substring(4)) + "\\s*=\\s*").matcher(code);
-            if (!declaration.find()) {
-                fail(source + " not found in " + EDITOR);
+    private static int[] sourceRange(String code, String symbol, String label) {
+        Matcher function = Pattern.compile("\\bfunction\\s+" + Pattern.quote(symbol) + "\\s*\\(").matcher(code);
+        if (function.find()) {
+            int paramsEnd = matching(code, function.end() - 1, '(', ')');
+            int open = skipSpace(code, paramsEnd + 1);
+            if (open < code.length() && code.charAt(open) == ':') {
+                open = code.indexOf('{', open);
             }
-            int open = declaration.end();
-            char opener = code.charAt(open);
-            int close = opener == '[' ? matching(code, open, '[', ']') : opener == '{' ? matching(code, open, '{', '}') : code.indexOf(';', open);
-            assertTrue(close > open, "Could not find the end of " + source + " in " + EDITOR);
-            assertFalse(declaration.find(), source + " is declared more than once in " + EDITOR);
+            int close = matching(code, open, '{', '}');
+            assertTrue(paramsEnd > 0 && close > open, "Could not find the body of " + label);
+            assertFalse(function.find(), label + " is declared more than once");
             return new int[]{open, close + 1};
         }
-        String[] parts = source.split("#");
-        Matcher function = Pattern.compile("\\bfunction\\s+" + Pattern.quote(parts[0]) + "\\s*\\(").matcher(code);
-        if (!function.find()) {
-            fail("function " + parts[0] + " not found in " + EDITOR);
+        Matcher declaration = Pattern.compile("\\b(?:var|let|const)\\s+" + Pattern.quote(symbol) + "\\b[^=]*=\\s*").matcher(code);
+        if (!declaration.find()) {
+            fail(label + " not found");
         }
-        int paramsEnd = matching(code, function.end() - 1, '(', ')');
-        int open = skipSpace(code, paramsEnd + 1);
-        int close = matching(code, open, '{', '}');
-        assertTrue(paramsEnd > 0 && code.charAt(open) == '{' && close > open, "Could not find the body of function " + parts[0] + " in " + EDITOR);
-        assertFalse(function.find(), "function " + parts[0] + " is declared more than once in " + EDITOR);
-        if (parts.length == 1) {
-            return new int[]{open, close + 1};
-        }
-        Matcher variable = Pattern.compile("\\bvar\\s+" + Pattern.quote(parts[1]) + "\\s*=\\s*\\{").matcher(code).region(open, close);
-        if (!variable.find()) {
-            fail("var " + parts[1] + " = { ... } not found in function " + parts[0] + " in " + EDITOR);
-        }
-        int literalEnd = matching(code, variable.end() - 1, '{', '}');
-        return new int[]{variable.end() - 1, literalEnd + 1};
+        int open = declaration.end();
+        char opener = code.charAt(open);
+        int close = opener == '[' ? matching(code, open, '[', ']') : opener == '{' ? matching(code, open, '{', '}') : code.indexOf(';', open);
+        assertTrue(close > open, "Could not find the end of " + label);
+        assertFalse(declaration.find(), label + " is declared more than once");
+        return new int[]{open, close + 1};
     }
 
     private static void addGroups(Set<String> keys, Matcher matcher) {
