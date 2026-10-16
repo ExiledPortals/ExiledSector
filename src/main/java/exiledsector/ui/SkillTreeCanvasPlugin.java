@@ -14,6 +14,7 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillType;
 import exiledsector.socketables.SocketCustody;
 import exiledsector.socketables.Socketable;
+import exiledsector.ui.decoration.AbyssDarknessRenderer;
 import exiledsector.ui.decoration.SkillTreeFleetRenderer;
 import exiledsector.ui.decoration.SkillTreeRingBeltRenderer;
 import exiledsector.ui.decoration.SkillTreeStarRenderer;
@@ -36,6 +37,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private static final float WORKBENCH_DIM_ALPHA = 0.45f;
 
     private final SkillTreeStarfieldRenderer starfieldRenderer;
+    private final AbyssDarknessRenderer abyssDarkness = AbyssDarknessRenderer.forActiveTree();
     private final SkillTreeStaticImageRenderer staticImageRenderer = new SkillTreeStaticImageRenderer();
     private final SkillTreeRingBeltRenderer ringBeltRenderer = new SkillTreeRingBeltRenderer();
     private final SkillTreeFleetRenderer fleetRenderer;
@@ -511,6 +513,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         float sceneryAlpha = backgroundAlpha * inspectFade;
         starRenderer.setMapRadius(hyperspaceMode.starRadius(), hyperspaceMode.mapAmount());
         starfieldRenderer.render(canvasPosition, camera.panX(), camera.panY(), backgroundAlpha);
+        abyssDarkness.render(canvasPosition, viewport, alphaMult);
         starRenderer.renderDisc(viewport, sceneryAlpha);
         starRenderer.renderAtmosphere(viewport, sceneryAlpha);
         starRenderer.renderAurora(viewport, sceneryAlpha);
