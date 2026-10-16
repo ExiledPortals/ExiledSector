@@ -3879,6 +3879,10 @@
 					"magnitude": 20
 				}
 			],
+			"itemCost": {
+				"itemId": "rat_abyssal_matter",
+				"quantity": 50
+			},
 			"exclusiveHullMods": [
 				"rat_seraphs_grace",
 				"rat_raphaels_grace"
@@ -3912,6 +3916,10 @@
 					"magnitude": -25
 				}
 			],
+			"itemCost": {
+				"itemId": "rat_abyssal_matter",
+				"quantity": 50
+			},
 			"exclusiveHullMods": [
 				"rat_abyssal_grid"
 			],
@@ -3949,6 +3957,10 @@
 					"capitalShip": 225000
 				}
 			],
+			"itemCost": {
+				"itemId": "rat_abyssal_matter",
+				"quantity": 50
+			},
 			"description": "Code pulled from a dissected Seraph core, pieced back together and patched into the damage-control software. The ship mends itself on the damage it deals, and grows deadlier the longer the hunt goes on.",
 			"tags": [
 				"weapons",
@@ -3970,6 +3982,10 @@
 					"magnitude": 20
 				}
 			],
+			"itemCost": {
+				"itemId": "rat_abyssal_matter",
+				"quantity": 50
+			},
 			"exclusiveHullMods": [
 				"rat_abyssal_core"
 			],

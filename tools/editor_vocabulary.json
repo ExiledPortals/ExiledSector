@@ -353,10 +353,11 @@
   "tags": {
     "theme": ["flux", "shield", "armour", "hull", "speed", "logistics", "missile", "fighter", "energy", "ballistic", "phase", "beam", "range", "ammo", "dmgtypekinetic", "dmgtypehighexplosive", "dmgtypefragmentation", "dmgtypeenergy", "weapons", "point_defense", "combat_readiness", "repair", "fleet_support", "d_mods"],
     "region": ["core", "luddic", "tritachyon", "hegemony", "sindrian_dictat", "pirate", "REDACTED", "persean_league", "enigma", "kesteven", "exotech", "abyss", "nightcross", "stargazer"],
-    "requirement": ["req_shields", "req_no_shields", "req_phase", "req_fighter_bays", "req_no_fighter_bays", "req_ballistic", "req_missile", "req_energy", "req_beam", "req_offensive_beam", "req_non_beam_energy", "req_flagship", "campaign_only", "player_only", "req_civilian_hull", "req_non_phase_hull", "req_system_charges"]
+    "requirement": ["req_shields", "req_no_shields", "req_phase", "req_fighter_bays", "req_no_fighter_bays", "req_ballistic", "req_missile", "req_energy", "req_beam", "req_offensive_beam", "req_non_beam_energy", "req_flagship", "campaign_only", "player_only", "req_civilian_hull", "req_non_phase_hull", "req_system_charges"],
+    "gate": ["gate_primordial_catalyst"]
   },
   "tiers": ["SMALL", "NOTABLE", "KEYSTONE", "WORMHOLE", "ROOT", "SOCKET"],
-  "unlockConditionTypes": ["blueprint", "characterStat", "minShipLevel", "memoryFlag", "ratPlayerExoship"],
+  "unlockConditionTypes": ["blueprint", "characterStat", "minShipLevel", "memoryFlag", "ratPlayerExoship", "ratPrimordialCatalyst"],
   "blueprintCategories": ["hullmod"],
   "socketableKinds": ["subroutine", "bridge", "crew_quarters", "engine_room", "reactor", "armor_plating", "weapon_mount", "shield_generator", "phase_coil", "flight_deck"],
   "socketableUnlocks": ["found_onslaught_mk1", "found_gate_hauler", "found_planetkiller", "defeated_ziggurat"]

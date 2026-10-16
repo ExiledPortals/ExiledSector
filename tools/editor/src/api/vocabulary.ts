@@ -10,7 +10,7 @@ export interface EffectInfo {
 
 interface VocabularyFile {
   effects: EffectInfo[];
-  tags: { theme: string[]; region: string[]; requirement: string[] };
+  tags: { theme: string[]; region: string[]; requirement: string[]; gate?: string[] };
   tiers: string[];
   unlockConditionTypes: string[];
   blueprintCategories: string[];
@@ -24,6 +24,7 @@ export interface Vocabulary {
   themeTags: string[];
   regionTags: string[];
   requirementTags: string[];
+  gateTags: string[];
   allTags: string[];
   tiers: string[];
   unlockConditionTypes: string[];
@@ -39,7 +40,8 @@ export function buildVocabulary(file: VocabularyFile): Vocabulary {
     themeTags: file.tags.theme.slice(),
     regionTags: file.tags.region.slice(),
     requirementTags: file.tags.requirement.slice(),
-    allTags: [...file.tags.theme, ...file.tags.region, ...file.tags.requirement],
+    gateTags: (file.tags.gate ?? []).slice(),
+    allTags: [...file.tags.theme, ...file.tags.region, ...file.tags.requirement, ...(file.tags.gate ?? [])],
     tiers: file.tiers.slice(),
     unlockConditionTypes: file.unlockConditionTypes.slice(),
     blueprintCategories: file.blueprintCategories.slice(),

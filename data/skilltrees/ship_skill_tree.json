@@ -6495,7 +6495,8 @@
 			"orbitAnchorId": "abyss_inner",
 			"orbitAngle": 90,
 			"tags": [
-				"abyss"
+				"abyss",
+				"gate_primordial_catalyst"
 			]
 		},
 		{
@@ -6511,7 +6512,8 @@
 			"orbitAnchorId": "abyss_inner",
 			"orbitAngle": 270,
 			"tags": [
-				"abyss"
+				"abyss",
+				"gate_primordial_catalyst"
 			]
 		},
 		{
@@ -6527,7 +6529,8 @@
 			"orbitAnchorId": "abyss_inner",
 			"orbitAngle": 180,
 			"tags": [
-				"abyss"
+				"abyss",
+				"gate_primordial_catalyst"
 			]
 		},
 		{
@@ -6545,7 +6548,8 @@
 			"orbitAngle": 0,
 			"pairedWith": "rat_abyss_wormhole_2",
 			"tags": [
-				"abyss"
+				"abyss",
+				"gate_primordial_catalyst"
 			]
 		},
 		{
@@ -6559,7 +6563,8 @@
 			"y": 12160,
 			"pairedWith": "rat_abyss_wormhole_1",
 			"tags": [
-				"hegemony"
+				"hegemony",
+				"gate_primordial_catalyst"
 			]
 		},
 		{
@@ -6575,7 +6580,8 @@
 			"orbitAnchorId": "anchor_66",
 			"orbitAngle": 0,
 			"tags": [
-				"abyss"
+				"abyss",
+				"gate_primordial_catalyst"
 			]
 		},
 		{
@@ -6590,7 +6596,8 @@
 			"orbitAnchorId": "anchor_66",
 			"orbitAngle": 270,
 			"tags": [
-				"abyss"
+				"abyss",
+				"gate_primordial_catalyst"
 			]
 		},
 		{
@@ -6605,7 +6612,8 @@
 			"orbitAnchorId": "anchor_66",
 			"orbitAngle": 180,
 			"tags": [
-				"abyss"
+				"abyss",
+				"gate_primordial_catalyst"
 			]
 		},
 		{
@@ -6621,7 +6629,8 @@
 			"orbitAnchorId": "anchor_67",
 			"orbitAngle": 90,
 			"tags": [
-				"abyss"
+				"abyss",
+				"gate_primordial_catalyst"
 			]
 		},
 		{
@@ -6636,7 +6645,8 @@
 			"orbitAnchorId": "anchor_67",
 			"orbitAngle": 0,
 			"tags": [
-				"abyss"
+				"abyss",
+				"gate_primordial_catalyst"
 			]
 		},
 		{
@@ -6651,7 +6661,8 @@
 			"orbitAnchorId": "anchor_67",
 			"orbitAngle": 270,
 			"tags": [
-				"abyss"
+				"abyss",
+				"gate_primordial_catalyst"
 			]
 		},
 		{
@@ -6667,7 +6678,8 @@
 			"orbitAnchorId": "anchor_68",
 			"orbitAngle": 180,
 			"tags": [
-				"abyss"
+				"abyss",
+				"gate_primordial_catalyst"
 			]
 		},
 		{
@@ -6682,7 +6694,8 @@
 			"orbitAnchorId": "anchor_68",
 			"orbitAngle": 90,
 			"tags": [
-				"abyss"
+				"abyss",
+				"gate_primordial_catalyst"
 			]
 		},
 		{
@@ -6698,7 +6711,8 @@
 			"orbitAngle": 0,
 			"ringBeltColor": "#df022f",
 			"tags": [
-				"abyss"
+				"abyss",
+				"gate_primordial_catalyst"
 			]
 		},
 		{
@@ -6713,7 +6727,8 @@
 			"orbitAnchorId": "anchor_69",
 			"orbitAngle": 270,
 			"tags": [
-				"abyss"
+				"abyss",
+				"gate_primordial_catalyst"
 			]
 		},
 		{
@@ -6728,7 +6743,8 @@
 			"orbitAnchorId": "anchor_69",
 			"orbitAngle": 180,
 			"tags": [
-				"abyss"
+				"abyss",
+				"gate_primordial_catalyst"
 			]
 		},
 		{
@@ -6742,7 +6758,8 @@
 			"orbitAnchorId": "anchor_69",
 			"orbitAngle": 90,
 			"tags": [
-				"abyss"
+				"abyss",
+				"gate_primordial_catalyst"
 			]
 		},
 		{
@@ -6757,7 +6774,8 @@
 			"orbitAnchorId": "anchor_68",
 			"orbitAngle": 270,
 			"tags": [
-				"abyss"
+				"abyss",
+				"gate_primordial_catalyst"
 			]
 		},
 		{
@@ -6832,7 +6850,8 @@
 			"orbitAnchorId": "anchor_67",
 			"orbitAngle": 180,
 			"tags": [
-				"abyss"
+				"abyss",
+				"gate_primordial_catalyst"
 			]
 		},
 		{
@@ -6847,7 +6866,8 @@
 			"orbitAnchorId": "anchor_66",
 			"orbitAngle": 90,
 			"tags": [
-				"abyss"
+				"abyss",
+				"gate_primordial_catalyst"
 			]
 		}
 	],

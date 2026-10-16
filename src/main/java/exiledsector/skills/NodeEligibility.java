@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.skilleffect.ShieldSkillEffect;
 import exiledsector.skills.tags.NodeRequirements;
 import exiledsector.skills.tags.ShipProfile;
+import exiledsector.skills.unlock.NodeGates;
 
 import java.util.List;
 import java.util.function.Function;
@@ -66,7 +67,8 @@ public final class NodeEligibility {
             return new Block(Kind.INVALID_OPTION, optionProblem.name(), null);
         }
         AllocatedNode candidate = AllocatedNode.planned(node, option);
-        if (context.locked() != null && (context.locked().test(node.getType()) || context.locked().test(candidate.effectiveType()))) {
+        if (context.locked() != null && (context.locked().test(node.getType()) || context.locked().test(candidate.effectiveType())
+                || NodeGates.isLocked(node, null))) {
             return new Block(Kind.LOCKED, null, null);
         }
         if (optionProblem != null) {

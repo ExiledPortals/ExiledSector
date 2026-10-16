@@ -3,6 +3,7 @@ package exiledsector.i18n;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ModManagerAPI;
 import com.fs.starfarer.api.SettingsAPI;
+import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.skills.npc.RealSkillData;
 import lunalib.lunaSettings.LunaSettings;
@@ -44,9 +45,18 @@ public final class HeadlessGameText implements AutoCloseable {
             }
             return hullMods.get(id);
         });
+        Map<String, CommoditySpecAPI> commodities = new HashMap<>();
+        when(settings.getCommoditySpec(Mockito.anyString())).thenAnswer(invocation -> commodities.computeIfAbsent(invocation.getArgument(0),
+                HeadlessGameText::commodityNamed));
         ModManagerAPI modManager = mock(ModManagerAPI.class);
         when(settings.getModManager()).thenReturn(modManager);
         when(modManager.isModEnabled(Mockito.anyString())).thenAnswer(invocation -> secondInCommandEnabled.getAsBoolean());
+    }
+
+    private static CommoditySpecAPI commodityNamed(String commodityId) {
+        CommoditySpecAPI commodity = mock(CommoditySpecAPI.class);
+        when(commodity.getName()).thenReturn(commodityId);
+        return commodity;
     }
 
     public static HeadlessGameText install(BooleanSupplier secondInCommandEnabled) throws IOException {

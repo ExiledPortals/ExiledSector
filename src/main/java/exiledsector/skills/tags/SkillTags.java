@@ -28,7 +28,9 @@ public final class SkillTags {
             "req_missile", "req_energy", "req_beam", "req_offensive_beam", "req_non_beam_energy", "req_flagship",
             "campaign_only", "player_only"), HULL_REQUIREMENT).flatMap(List::stream).toList();
 
-    public static final List<String> ALL = Stream.of(THEME, REGION, REQUIREMENT).flatMap(List::stream).toList();
+    public static final List<String> GATE = List.of("gate_primordial_catalyst");
+
+    public static final List<String> ALL = Stream.of(THEME, REGION, REQUIREMENT, GATE).flatMap(List::stream).toList();
 
     private SkillTags() {
     }

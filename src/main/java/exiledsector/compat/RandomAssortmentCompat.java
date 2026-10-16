@@ -1,13 +1,16 @@
 package exiledsector.compat;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
+import com.fs.starfarer.api.campaign.StarSystemAPI;
 import org.apache.log4j.Logger;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +26,13 @@ public final class RandomAssortmentCompat {
     static final String EXO_DATA_MEMORY_KEY = "$rat_exo_data";
     static final String EXO_DATA_CLASS = "assortment_of_things.exotech.ExoData";
 
+    static final String CATALYST_ENTITY_TYPE = "rat_abyss_primordial_activator";
+    static final String CATALYST_COMPLETED_TAG = "completed";
+    private static final long CATALYST_SEARCH_INTERVAL_NANOS = 10_000_000_000L;
+
+    private static WeakReference<SectorEntityToken> cachedCatalyst = new WeakReference<>(null);
+    private static WeakReference<SectorAPI> cachedCatalystSector = new WeakReference<>(null);
+    private static long lastCatalystSearchNanos;
     private static MethodHandle recoveredExoshipHandle;
     private static MethodHandle playerExoshipHandle;
     private static boolean exoshipLookupUnavailable;
@@ -55,10 +65,45 @@ public final class RandomAssortmentCompat {
         }
     }
 
+    public static boolean primordialCatalystActivated() {
+        SectorAPI sector = Global.getSector();
+        if (sector == null) {
+            return false;
+        }
+        SectorEntityToken catalyst = catalystIn(sector);
+        return catalyst != null && catalyst.hasTag(CATALYST_COMPLETED_TAG);
+    }
+
+    private static SectorEntityToken catalystIn(SectorAPI sector) {
+        SectorEntityToken cached = cachedCatalyst.get();
+        if (cached != null && cachedCatalystSector.get() == sector) {
+            return cached;
+        }
+        long now = System.nanoTime();
+        if (cachedCatalystSector.get() == sector && now - lastCatalystSearchNanos < CATALYST_SEARCH_INTERVAL_NANOS) {
+            return null;
+        }
+        lastCatalystSearchNanos = now;
+        cachedCatalystSector = new WeakReference<>(sector);
+        cachedCatalyst = new WeakReference<>(null);
+        for (StarSystemAPI system : sector.getStarSystems()) {
+            for (CustomCampaignEntityAPI entity : system.getCustomEntities()) {
+                if (CATALYST_ENTITY_TYPE.equals(entity.getCustomEntityType())) {
+                    cachedCatalyst = new WeakReference<>(entity);
+                    return entity;
+                }
+            }
+        }
+        return null;
+    }
+
     static void clearCachedLookups() {
         recoveredExoshipHandle = null;
         playerExoshipHandle = null;
         exoshipLookupUnavailable = false;
+        cachedCatalyst = new WeakReference<>(null);
+        cachedCatalystSector = new WeakReference<>(null);
+        lastCatalystSearchNanos = 0L;
     }
 
     static List<String> missingFeatures() {

@@ -43,6 +43,7 @@ import exiledsector.skills.skilleffect.EffectAliases;
 import exiledsector.skills.skilleffect.FleetCrewLedger;
 import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.skills.tags.AreaToggles;
+import exiledsector.skills.unlock.NodeGates;
 import exiledsector.socketables.SocketCraftingCosts;
 import exiledsector.socketables.SocketCurrency;
 import exiledsector.socketables.SocketableDefinitions;
@@ -95,6 +96,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         SocketCraftingCosts.load();
         SocketableNames.load();
         NodeReplacements.load();
+        NodeGates.load();
         SocketableDrops.load();
         CompatChecks.logAtStartup();
         TexturePreloader.preloadAll(MOD_ID);
