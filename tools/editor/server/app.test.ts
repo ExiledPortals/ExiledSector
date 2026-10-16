@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { FastifyInstance } from 'fastify';
 import { createEditorServer } from './app.ts';
 import { hashBytes } from './dataFiles.ts';
-import { DescribeService } from './describe.ts';
+import { DescribeService, describeRequestWithStrings } from './describe.ts';
 import type { ProjectPaths } from './paths.ts';
 
 const PORT = 8792;
@@ -122,6 +122,21 @@ describe('data files', () => {
     expect(refused.json().message).toContain('must start with the id column');
   });
 
+  it('saves the English strings only when every value is text and none contains a hash', async () => {
+    const original = '{\r\n    "stat.armor": "armor"\r\n}\r\n';
+    writeProjectFile('data/strings/exiledSector/en.json', original);
+    const loaded = (await app.inject({ method: 'GET', url: '/api/files?names=strings-en' })).json().files['strings-en'];
+    expect(loaded.content).toBe(original);
+    const save = (content: string) =>
+      app.inject({ method: 'POST', url: '/api/files', headers: EDITOR_HEADERS, payload: { files: { 'strings-en': { content, baseHash: loaded.hash } } } });
+
+    expect((await save('{"stat.armor": "armour #1"}')).json().message).toContain("contains '#'");
+    expect((await save('{"stat.armor": 3}')).json().message).toContain('not text');
+    const reworded = original.replace('"armor"', '"plating"');
+    expect((await save(reworded)).statusCode).toBe(200);
+    expect(fs.readFileSync(path.join(projectRoot, 'data/strings/exiledSector/en.json'), 'utf8')).toBe(reworded);
+  });
+
   it('lists salvage files with the default first', async () => {
     writeProjectFile('data/config/exiledSector/compat/salvage/zzz.csv', 'site,chances\n');
     writeProjectFile('data/config/exiledSector/compat/salvage/aaa.csv', 'site,chances\n');
@@ -214,5 +229,13 @@ describe('describe', () => {
     service.startBuild();
     const result = await service.describe('{}');
     expect(result).toEqual({ body: { pending: false, message: expect.stringContaining('JDK 17 and Maven') } });
+  });
+
+  it('sends the saved English strings with a request that has none, and keeps strings a request brings', () => {
+    expect(JSON.parse(describeRequestWithStrings(paths, { typeId: 'a' }))).toEqual({ typeId: 'a' });
+    writeProjectFile('data/strings/exiledSector/en.json', '{"stat.armor": "armor"}');
+    expect(JSON.parse(describeRequestWithStrings(paths, { typeId: 'a' }))).toEqual({ typeId: 'a', strings: { 'stat.armor': 'armor' } });
+    const ownStrings = { typeId: 'a', strings: { 'stat.armor': 'plating' } };
+    expect(JSON.parse(describeRequestWithStrings(paths, ownStrings))).toEqual(ownStrings);
   });
 });

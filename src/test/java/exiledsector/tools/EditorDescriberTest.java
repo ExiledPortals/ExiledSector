@@ -1,6 +1,9 @@
 package exiledsector.tools;
 
 import exiledsector.i18n.HeadlessGameText;
+import exiledsector.i18n.LocaleChain;
+import exiledsector.i18n.RealCatalogue;
+import exiledsector.i18n.Translation;
 import exiledsector.skills.npc.RealSkillData;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -57,6 +60,18 @@ class EditorDescriberTest {
 
         assertEquals("Edited Capacity", response.getString("title"));
         assertTrue(response.getJSONArray("effects").getString(0).contains("37"), response.toString());
+    }
+
+    @Test
+    void unsavedStringsAreUsedAndTheKeysBehindTheTooltipAreReported() throws Exception {
+        JSONObject strings = new JSONObject(RealCatalogue.entries(LocaleChain.ENGLISH));
+        strings.put("stat.fluxCapacity", "reworded capacity");
+        JSONObject response = new JSONObject(new EditorDescriber().respond(request(savedTypes, "flux_capacity", "FRIGATE").put("strings", strings).toString()));
+
+        assertTrue(response.getJSONArray("effects").getString(0).contains("reworded capacity"), response.toString());
+        String keys = response.getJSONArray("keys").toString();
+        assertTrue(keys.contains("\"stat.fluxCapacity\""), keys);
+        assertEquals("flux capacity", Translation.text("stat.fluxCapacity"));
     }
 
     @Test

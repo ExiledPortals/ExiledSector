@@ -71,6 +71,18 @@ function checkJsonObject(text: string): string | null {
   return parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed) ? null : 'it is not a JSON object';
 }
 
+function checkStringCatalogue(text: string): string | null {
+  const objectRefusal = checkJsonObject(text);
+  if (objectRefusal) {
+    return objectRefusal;
+  }
+  if (text.includes('#')) {
+    return "it contains '#', which Starsector's JSON loader treats as a comment";
+  }
+  const values = Object.values(JSON.parse(text) as Record<string, unknown>);
+  return values.every((value) => typeof value === 'string') ? null : 'some of its values are not text';
+}
+
 function checkCsvHeader(text: string, prefix: string, columns: string): string | null {
   return text.startsWith(prefix) ? null : `it must start with ${columns}`;
 }
@@ -91,6 +103,8 @@ export function resolveDataResource(paths: ProjectPaths, name: string): DataReso
       return { filePath: path.join(configDir, 'socketable_names.json'), check: checkJsonObject };
     case 'socketable-crafting':
       return { filePath: path.join(configDir, 'socketable_crafting.csv'), check: (text) => checkCsvHeader(text, 'item,', 'the item column') };
+    case 'strings-en':
+      return { filePath: path.join(paths.projectRoot, 'data', 'strings', 'exiledSector', 'en.json'), check: checkStringCatalogue };
     case 'commodities':
       return {
         filePath: path.join(paths.projectRoot, 'data', 'campaign', 'commodities.csv'),

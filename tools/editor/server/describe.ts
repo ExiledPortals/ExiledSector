@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import readline from 'node:readline';
+import { readDataFile, resolveDataResource } from './dataFiles.ts';
 import type { ProjectPaths } from './paths.ts';
 
 type DescribeStatus = 'idle' | 'building' | 'built' | 'ready' | 'failed';
@@ -61,6 +62,18 @@ function libsDir(projectRoot: string): string {
 }
 
 export type DescribeResult = { body: unknown } | { raw: string };
+
+export function describeRequestWithStrings(paths: ProjectPaths, requestBody: unknown): string {
+  if (typeof requestBody === 'string') {
+    return requestBody;
+  }
+  const body = (requestBody ?? {}) as Record<string, unknown>;
+  const stringsResource = resolveDataResource(paths, 'strings-en');
+  if ('strings' in body || !stringsResource || !fs.existsSync(stringsResource.filePath)) {
+    return JSON.stringify(body);
+  }
+  return JSON.stringify({ ...body, strings: JSON.parse(readDataFile(stringsResource.filePath).content) as unknown });
+}
 
 export class DescribeService {
   private status: DescribeStatus = 'idle';

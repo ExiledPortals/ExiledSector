@@ -1,16 +1,16 @@
 import { Portal } from '@mantine/core';
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
-import { SERVER_HINT } from '../../api/client.ts';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { fetchDescription, stringsRevision } from '../../api/describe.ts';
+import { TooltipBody, TooltipNote } from '../../shared/TooltipBody.tsx';
+import { TOOLTIP_PANEL_CLASS } from '../../shared/tooltipMarkup.ts';
+import { mergeDescriptions, type Described, type LabelledDescription, type TooltipContent } from '../../shared/tooltipContent.ts';
 import { skillTypesFileObject } from './model/serialization.ts';
 import { HULL_SIZE_OPTIONS, nodeById } from './model/types.ts';
 import { useTreeStore } from './state/treeStore.ts';
-import { mergeDescriptions, type Described, type LabelledDescription, type TooltipContent, type TooltipGroup } from './tooltipContent.ts';
 import classes from './GameTooltip.module.css';
 
 const SHOW_DELAY_MS = 250;
 const RETRY_DELAY_MS = 2000;
-const MARKUP_COLOURS: Record<string, string> = { good: '#98fb00', bad: '#fc6300', hl: '#ffc800', hullmod: '#ffa03c', node: '#5abeff' };
-const MARKUP_PATTERN = /<(\/?)(good|bad|hl|hullmod|node)>/g;
 
 type TooltipState = { kind: 'note'; message: string } | { kind: 'content'; content: TooltipContent };
 
@@ -22,24 +22,6 @@ function hashText(text: string): number {
   return hash;
 }
 
-function renderMarkup(markup: string): ReactNode[] {
-  const parts: ReactNode[] = [];
-  let cursor = 0;
-  let colour: string | null = null;
-  const push = (text: string) => {
-    if (text) {
-      parts.push(colour ? <span key={parts.length} style={{ color: colour }}>{text}</span> : text);
-    }
-  };
-  for (const match of markup.matchAll(MARKUP_PATTERN)) {
-    push(markup.slice(cursor, match.index));
-    colour = match[1] ? null : MARKUP_COLOURS[match[2]];
-    cursor = (match.index ?? 0) + match[0].length;
-  }
-  push(markup.slice(cursor));
-  return parts;
-}
-
 function hoveredTypeId(target: EventTarget | null): string | null {
   const element = target instanceof Element ? target.closest<HTMLElement | SVGElement>('[data-node-id], [data-type-id]') : null;
   if (!element) {
@@ -49,36 +31,6 @@ function hoveredTypeId(target: EventTarget | null): string | null {
     return element.dataset.typeId;
   }
   return nodeById(useTreeStore.getState().document, element.dataset.nodeId ?? '')?.type ?? null;
-}
-
-async function fetchDescription(typesJson: string, typeId: string, hullSize: string): Promise<Described> {
-  try {
-    const response = await fetch('/api/describe', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Skill-Tree-Editor': '1' },
-      body: `{"types":${typesJson},"typeId":${JSON.stringify(typeId)},"hullSize":${JSON.stringify(hullSize)}}`,
-    });
-    return (await response.json()) as Described;
-  } catch {
-    return { error: `In-game descriptions need the editor server - ${SERVER_HINT}.` };
-  }
-}
-
-function Groups({ groups }: { groups: TooltipGroup[] }) {
-  return (
-    <>
-      {groups.map((group, groupIndex) => (
-        <div key={group.label ?? `shared-${groupIndex}`} className={classes.group}>
-          {group.label ? <div className={classes.groupLabel}>{group.label}</div> : null}
-          {group.lines.map((line, index) => (
-            <div key={index} className={classes.line}>
-              {renderMarkup(line)}
-            </div>
-          ))}
-        </div>
-      ))}
-    </>
-  );
 }
 
 export function GameTooltip({ hullSize }: { hullSize: string }) {
@@ -126,12 +78,12 @@ export function GameTooltip({ hullSize }: { hullSize: string }) {
       state.serial++;
       const serial = state.serial;
       const typesJson = JSON.stringify(skillTypesFileObject(useTreeStore.getState().document.types));
-      const typesKey = `${typesJson.length}|${hashText(typesJson)}`;
+      const typesKey = `${typesJson.length}|${hashText(typesJson)}|${stringsRevision()}`;
       const sizes = hullSizeRef.current ? HULL_SIZE_OPTIONS.filter((option) => option.value === hullSizeRef.current) : HULL_SIZE_OPTIONS;
       const entries: LabelledDescription[] = [];
       for (const size of sizes) {
         const cacheKey = `${typeId}|${size.value}|${typesKey}`;
-        const described = cache.current.get(cacheKey) ?? (await fetchDescription(typesJson, typeId, size.value));
+        const described = cache.current.get(cacheKey) ?? (await fetchDescription({ typesJson, typeId, hullSize: size.value }));
         if (serial !== state.serial || state.typeId !== typeId) {
           return;
         }
@@ -203,18 +155,8 @@ export function GameTooltip({ hullSize }: { hullSize: string }) {
   }
   return (
     <Portal>
-      <div ref={attachBox} className={classes.tooltip}>
-        {shown.kind === 'note' ? (
-          <div className={classes.note}>{shown.message}</div>
-        ) : (
-          <>
-            <div className={classes.title}>{shown.content.title}</div>
-            {shown.content.flavour ? <div className={classes.flavour}>{shown.content.flavour}</div> : null}
-            <Groups groups={shown.content.effects} />
-            {expanded ? <Groups groups={shown.content.details} /> : null}
-            {shown.content.details.length > 0 && !expanded ? <div className={classes.note}>{shown.content.expandHint}</div> : null}
-          </>
-        )}
+      <div ref={attachBox} className={`${classes.tooltip} ${TOOLTIP_PANEL_CLASS}`}>
+        {shown.kind === 'note' ? <TooltipNote>{shown.message}</TooltipNote> : <TooltipBody content={shown.content} showDetails={expanded} />}
       </div>
     </Portal>
   );

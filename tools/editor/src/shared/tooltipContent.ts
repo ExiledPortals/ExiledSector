@@ -7,6 +7,7 @@ export interface Described {
   effects?: string[];
   details?: string[];
   expandHint?: string;
+  keys?: string[];
 }
 
 export interface TooltipGroup {
