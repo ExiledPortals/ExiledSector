@@ -250,6 +250,8 @@
     "stat.weaponDamagePerDMod": "每个D插（最多计5个）使武器伤害",
     "stat.topSpeedPerDMod": "每个D插（最多计5个）使最高速度",
     "stat.negativeEffectsFromDModsPerDMod": "每个D插（最多计5个）使D插的负面效果",
+    "stat.negativeEffectsFromLogisticsDModsPerDMod": "每个D插（最多计5个）使后勤类D插（储存、驱动场、维护、自动化、生命维持与燃料喷射器）的负面效果",
+    "stat.negativeEffectsFromNonLogisticsDModsPerDMod": "每个D插（最多计5个）使战斗类D插（除后勤类以外的所有D插）的负面效果",
     "effect.GROUND_SUPPORT_PER_MAX_CREW_PERCENT": "行星突袭的有效强度提高本舰最大船员容量（计入修正后）的<good>{value}%</good>（不超过舰队中陆战队的总数）。",
     "effect.BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_MULT": "本舰航速每比船体默认值高1级（任何来源），实弹武器伤害提高<good>{value}%</good>（乘算）。",
     "effect.MISSILE_RELOAD_PERCENT_PER_MINUTE": "无法自行恢复弹药的导弹武器在战斗中每分钟装填其基础弹药的<good>{value}%</good>。",

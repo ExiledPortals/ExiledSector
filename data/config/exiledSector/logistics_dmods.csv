@@ -1,0 +1,7 @@
+hullmod,mod,reason
+comp_storage,vanilla,Crew cargo and fuel capacity
+degraded_drive_field,vanilla,Burn level and sensor profile
+increased_maintenance,vanilla,Monthly supplies and minimum crew with a small max CR loss
+faulty_auto,vanilla,Minimum crew with a small max CR loss
+degraded_life_support,vanilla,Crew capacity with a small max CR loss
+erratic_injector,vanilla,Fuel use with a small zero-flux speed loss

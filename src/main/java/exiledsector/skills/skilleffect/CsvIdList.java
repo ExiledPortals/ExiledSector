@@ -21,6 +21,8 @@ public final class CsvIdList {
             register("data/config/exiledSector/ballistic_pierce_blocklist.csv", "weapon");
     public static final CsvIdList DRONE_MARKER_HULLMODS =
             register("data/config/exiledSector/drone_marker_hullmods.csv", "hullmod");
+    public static final CsvIdList LOGISTICS_DMODS =
+            register("data/config/exiledSector/logistics_dmods.csv", "hullmod");
 
     private final String csvPath;
     private final String idColumn;

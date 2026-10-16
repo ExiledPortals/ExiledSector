@@ -90,6 +90,8 @@ class ExiledSectorModPluginTest {
                 .thenReturn(new JSONArray());
         when(settings.getMergedSpreadsheetDataForMod("hullmod", "data/config/exiledSector/drone_marker_hullmods.csv", "exiledSector"))
                 .thenReturn(new JSONArray());
+        when(settings.getMergedSpreadsheetDataForMod("hullmod", "data/config/exiledSector/logistics_dmods.csv", "exiledSector"))
+                .thenReturn(new JSONArray());
         when(settings.getMergedSpreadsheetDataForMod("faction", "data/config/exiledSector/npc_faction_volumes.csv", "exiledSector"))
                 .thenReturn(new JSONArray("[{\"faction\": \"hegemony\", \"region\": \"hegemony\"}]"));
         when(settings.getMergedSpreadsheetDataForMod("id", "data/config/exiledSector/socketables.csv", "exiledSector"))
@@ -241,6 +243,7 @@ class ExiledSectorModPluginTest {
         verify(Global.getSettings()).getMergedSpreadsheetDataForMod("weapon", "data/config/exiledSector/energy_chain_blocklist.csv", "exiledSector");
         verify(Global.getSettings()).getMergedSpreadsheetDataForMod("weapon", "data/config/exiledSector/ballistic_pierce_blocklist.csv", "exiledSector");
         verify(Global.getSettings()).getMergedSpreadsheetDataForMod("hullmod", "data/config/exiledSector/drone_marker_hullmods.csv", "exiledSector");
+        verify(Global.getSettings()).getMergedSpreadsheetDataForMod("hullmod", "data/config/exiledSector/logistics_dmods.csv", "exiledSector");
     }
 
     @Test

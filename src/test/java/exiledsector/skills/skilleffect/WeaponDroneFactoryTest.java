@@ -171,6 +171,8 @@ class WeaponDroneFactoryTest {
                 .thenReturn(new org.json.JSONArray());
         when(settings.getMergedSpreadsheetDataForMod("weapon", "data/config/exiledSector/ballistic_pierce_blocklist.csv", "exiledSector"))
                 .thenReturn(new org.json.JSONArray());
+        when(settings.getMergedSpreadsheetDataForMod("hullmod", "data/config/exiledSector/logistics_dmods.csv", "exiledSector"))
+                .thenReturn(new org.json.JSONArray());
         CsvIdList.loadAll();
         ShipAPI firingShip = mock(ShipAPI.class);
         ShipVariantAPI firingVariant = mock(ShipVariantAPI.class);

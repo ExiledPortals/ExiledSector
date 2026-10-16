@@ -256,6 +256,8 @@
     "stat.weaponDamagePerDMod": "weapon damage per D-mod, up to 5 D-mods",
     "stat.topSpeedPerDMod": "top speed per D-mod, up to 5 D-mods",
     "stat.negativeEffectsFromDModsPerDMod": "negative effects from D-mods per D-mod, up to 5 D-mods",
+    "stat.negativeEffectsFromLogisticsDModsPerDMod": "negative effects from logistics D-mods (storage, drive field, maintenance, automation, life support and fuel injector) per D-mod, up to 5 D-mods",
+    "stat.negativeEffectsFromNonLogisticsDModsPerDMod": "negative effects from combat D-mods (every D-mod except logistics ones) per D-mod, up to 5 D-mods",
     "effect.GROUND_SUPPORT_PER_MAX_CREW_PERCENT": "Increases the effective strength of planetary raids by <good>{value}%</good> of this ship's maximum crew capacity (after modifiers), up to the total number of marines in the fleet.",
     "effect.BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_MULT": "Grants <good>{value}%</good> more ballistic weapon damage for every burn level this ship has above its hull's default, from any source.",
     "effect.MISSILE_RELOAD_PERCENT_PER_MINUTE": "Missile weapons that cannot regenerate ammo reload <good>{value}%</good> of their base ammo every minute in combat.",

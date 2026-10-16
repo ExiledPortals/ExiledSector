@@ -17,6 +17,11 @@ import java.util.function.Function;
 final class SkillEffectSupport {
 
     static final int MAX_COUNTED_DMODS = 5;
+    static final String NON_LOGISTICS_DMOD_EFFECT_MULT = "exiledSector_nonLogisticsDModEffectMult";
+    static final String LOGISTICS_DMOD_EFFECT_MULT = "exiledSector_logisticsDModEffectMult";
+    static final String LOGISTICS_COPY_PREFIX = "exiledSector_logisticsDModCopy_";
+    private static final String COPY_SCALE_ID = "exiledSector_logisticsDModCopyScale";
+    private static final float MIN_EFFECT_MULT = 0.0001f;
 
     private SkillEffectSupport() {
     }
@@ -49,11 +54,52 @@ final class SkillEffectSupport {
 
     static void applyDModEffectMult(MutableShipStatsAPI stats, String modId, float magnitude) {
         applyMult(stats.getDynamic().getStat(Stats.DMOD_EFFECT_MULT), modId, magnitude);
+        reapplyDMods(stats);
+        refreshLogisticsDModCopies(stats);
+    }
+
+    static void applyNonLogisticsDModEffectMult(MutableShipStatsAPI stats, String modId, float magnitude) {
+        applyMult(stats.getDynamic().getStat(Stats.DMOD_EFFECT_MULT), modId, magnitude);
+        applyMult(stats.getDynamic().getStat(NON_LOGISTICS_DMOD_EFFECT_MULT), modId, magnitude);
+        reapplyDMods(stats);
+        refreshLogisticsDModCopies(stats);
+    }
+
+    static void applyLogisticsDModEffectMult(MutableShipStatsAPI stats, String modId, float magnitude) {
+        applyMult(stats.getDynamic().getStat(LOGISTICS_DMOD_EFFECT_MULT), modId, magnitude);
+        refreshLogisticsDModCopies(stats);
+    }
+
+    private static void reapplyDMods(MutableShipStatsAPI stats) {
         ShipVariantAPI variant = stats.getVariant();
         for (HullModSpecAPI spec : dModSpecs(variant)) {
             if (spec.getEffect() != null) {
                 spec.getEffect().applyEffectsBeforeShipCreation(variant.getHullSize(), stats, spec.getId());
             }
+        }
+    }
+
+    private static void refreshLogisticsDModCopies(MutableShipStatsAPI stats) {
+        float nonLogisticsMult = stats.getDynamic().getValue(NON_LOGISTICS_DMOD_EFFECT_MULT);
+        float logisticsMult = stats.getDynamic().getValue(LOGISTICS_DMOD_EFFECT_MULT);
+        MutableStat sharedEffect = stats.getDynamic().getStat(Stats.DMOD_EFFECT_MULT);
+        float sharedValue = sharedEffect.getModifiedValue();
+        if (nonLogisticsMult <= MIN_EFFECT_MULT || sharedValue <= MIN_EFFECT_MULT || Math.abs(logisticsMult - nonLogisticsMult) < MIN_EFFECT_MULT) {
+            return;
+        }
+        float copyEffect = sharedValue / nonLogisticsMult * (logisticsMult - nonLogisticsMult);
+        ShipVariantAPI variant = stats.getVariant();
+        for (HullModSpecAPI spec : dModSpecs(variant)) {
+            if (spec.getEffect() == null || !CsvIdList.LOGISTICS_DMODS.contains(spec.getId())) {
+                continue;
+            }
+            String copyId = LOGISTICS_COPY_PREFIX + spec.getId();
+            sharedEffect.modifyMult(COPY_SCALE_ID, copyEffect / sharedValue);
+            spec.getEffect().applyEffectsBeforeShipCreation(variant.getHullSize(), stats, copyId);
+            sharedEffect.unmodifyMult(COPY_SCALE_ID);
+            stats.getSuppliesToRecover().unmodifyMult(copyId);
+            stats.getSuppliesPerMonth().unmodifyMult(copyId);
+            stats.getMaxBurnLevel().unmodifyFlat(copyId);
         }
     }
 

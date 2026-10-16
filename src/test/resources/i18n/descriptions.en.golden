@@ -1102,6 +1102,12 @@ effect|KINETIC_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased kinetic 
 effect|KINETIC_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased kinetic damage taken.
 effect|KINETIC_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced kinetic damage taken.
 effect|KINETIC_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced kinetic damage taken.
+effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|1.0	1	<good>1%</good> more negative effects from logistics D-mods (storage, drive field, maintenance, automation, life support and fuel injector) per D-mod, up to 5 D-mods.
+effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|10.0	1	<good>10%</good> more negative effects from logistics D-mods (storage, drive field, maintenance, automation, life support and fuel injector) per D-mod, up to 5 D-mods.
+effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|12.5	1	<good>12.5%</good> more negative effects from logistics D-mods (storage, drive field, maintenance, automation, life support and fuel injector) per D-mod, up to 5 D-mods.
+effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|100.0	1	<good>100%</good> more negative effects from logistics D-mods (storage, drive field, maintenance, automation, life support and fuel injector) per D-mod, up to 5 D-mods.
+effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|-10.0	1	<bad>10%</bad> less negative effects from logistics D-mods (storage, drive field, maintenance, automation, life support and fuel injector) per D-mod, up to 5 D-mods.
+effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|-12.5	1	<bad>12.5%</bad> less negative effects from logistics D-mods (storage, drive field, maintenance, automation, life support and fuel injector) per D-mod, up to 5 D-mods.
 effect|MANEUVERABILITY_PERCENT|1.0	0	<good>1%</good> increased maneuverability.
 effect|MANEUVERABILITY_PERCENT|10.0	0	<good>10%</good> increased maneuverability.
 effect|MANEUVERABILITY_PERCENT|12.5	0	<good>12.5%</good> increased maneuverability.
@@ -1444,6 +1450,12 @@ effect|NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT|12.5	0	Increases ballistic and n
 effect|NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT|100.0	0	Increases ballistic and non-beam energy weapon damage by <good>100%</good> for every su/s of the ship's current speed, with no cap.
 effect|NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT|-10.0	0	Increases ballistic and non-beam energy weapon damage by <good>-10%</good> for every su/s of the ship's current speed, with no cap.
 effect|NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT|-12.5	0	Increases ballistic and non-beam energy weapon damage by <good>-12.5%</good> for every su/s of the ship's current speed, with no cap.
+effect|NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|1.0	1	<good>1%</good> more negative effects from combat D-mods (every D-mod except logistics ones) per D-mod, up to 5 D-mods.
+effect|NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|10.0	1	<good>10%</good> more negative effects from combat D-mods (every D-mod except logistics ones) per D-mod, up to 5 D-mods.
+effect|NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|12.5	1	<good>12.5%</good> more negative effects from combat D-mods (every D-mod except logistics ones) per D-mod, up to 5 D-mods.
+effect|NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|100.0	1	<good>100%</good> more negative effects from combat D-mods (every D-mod except logistics ones) per D-mod, up to 5 D-mods.
+effect|NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|-10.0	1	<bad>10%</bad> less negative effects from combat D-mods (every D-mod except logistics ones) per D-mod, up to 5 D-mods.
+effect|NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|-12.5	1	<bad>12.5%</bad> less negative effects from combat D-mods (every D-mod except logistics ones) per D-mod, up to 5 D-mods.
 effect|OBJECTIVE_CAPTURE_RANGE_FLAT|1.0	0	Increases range from which combat objectives can be captured by <good>1</good>.
 effect|OBJECTIVE_CAPTURE_RANGE_FLAT|10.0	0	Increases range from which combat objectives can be captured by <good>10</good>.
 effect|OBJECTIVE_CAPTURE_RANGE_FLAT|12.5	0	Increases range from which combat objectives can be captured by <good>12.5</good>.

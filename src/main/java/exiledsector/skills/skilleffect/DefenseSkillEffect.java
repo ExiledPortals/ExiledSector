@@ -144,6 +144,50 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
             return StatMode.MULT.describeStat(magnitude, "stat.negativeEffectsFromDModsPerDMod");
         }
     },
+    NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
+        public boolean isMultiplicative() {
+            return true;
+        }
+
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            float mult = SkillEffectSupport.compoundMultPerDMod(stats, magnitude);
+            SkillEffectSupport.applyNonLogisticsDModEffectMult(stats, modId, (mult - 1f) * 100f);
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return StatMode.MULT.describeStat(magnitude, "stat.negativeEffectsFromNonLogisticsDModsPerDMod");
+        }
+    },
+    LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
+        public boolean isMultiplicative() {
+            return true;
+        }
+
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            float mult = SkillEffectSupport.compoundMultPerDMod(stats, magnitude);
+            SkillEffectSupport.applyLogisticsDModEffectMult(stats, modId, (mult - 1f) * 100f);
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return StatMode.MULT.describeStat(magnitude, "stat.negativeEffectsFromLogisticsDModsPerDMod");
+        }
+    },
     SHIELD_ABSORPTION_PERCENT(PERCENT, liveStat(MutableShipStatsAPI::getShieldAbsorptionMult), "stat.damageTakenByShields", true),
     SHIELD_DAMAGE_TAKEN_MULT(MULT, liveStat(MutableShipStatsAPI::getShieldDamageTakenMult), "stat.damageTakenByShields", true),
     ENGINE_DURABILITY_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getEngineHealthBonus), "stat.engineDurability", false),
