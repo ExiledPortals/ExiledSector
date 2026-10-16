@@ -27,20 +27,9 @@ class AreaTogglesTest {
     }
 
     @Test
-    void autoShowsTheNightcrossAreaOnlyWhenNightcrossIsInstalled() {
-        assertEquals(Set.of(), AreaToggles.disabledNightcrossRegions(AreaToggles.AUTO, true));
-        assertEquals(Set.of("nightcross"), AreaToggles.disabledNightcrossRegions(AreaToggles.AUTO, false));
-        assertEquals(Set.of(), AreaToggles.disabledNightcrossRegions(AreaToggles.ON, false));
-        assertEquals(Set.of("nightcross"), AreaToggles.disabledNightcrossRegions(AreaToggles.OFF, true));
-        assertEquals(Set.of("nightcross"), AreaToggles.disabledNightcrossRegions(null, false));
-    }
-
-    @Test
     void everyToggledAreaIsARealRegion() {
-        for (Set<String> area : AreaToggles.TOGGLED_AREAS) {
-            for (String region : area) {
-                assertEquals(true, SkillTags.isRegion(region));
-            }
+        for (String region : AreaToggles.LOST_SECTOR_REGIONS) {
+            assertEquals(true, SkillTags.isRegion(region));
         }
     }
 }

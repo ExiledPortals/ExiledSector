@@ -2,9 +2,7 @@ package exiledsector.skills.tags;
 
 import exiledsector.ModSettings;
 import exiledsector.compat.LostSectorCompat;
-import exiledsector.compat.NightcrossCompat;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -12,9 +10,6 @@ public final class AreaToggles {
 
     public static final String LOST_SECTOR_FIELD_ID = "exiledSector_lostSectorArea";
     public static final Set<String> LOST_SECTOR_REGIONS = Set.of("enigma", "kesteven");
-    public static final String NIGHTCROSS_FIELD_ID = "exiledSector_nightcrossArea";
-    public static final Set<String> NIGHTCROSS_REGIONS = Set.of("nightcross");
-    public static final List<Set<String>> TOGGLED_AREAS = List.of(LOST_SECTOR_REGIONS, NIGHTCROSS_REGIONS);
     public static final String AUTO = "Auto";
     public static final String ON = "On";
     public static final String OFF = "Off";
@@ -24,24 +19,15 @@ public final class AreaToggles {
     }
 
     public static Set<String> disabledRegions() {
-        Set<String> disabled = new HashSet<>(disabledRegions(ModSettings.stringOr(LOST_SECTOR_FIELD_ID, AUTO), LostSectorCompat.isModEnabled()));
-        disabled.addAll(disabledNightcrossRegions(ModSettings.stringOr(NIGHTCROSS_FIELD_ID, AUTO), NightcrossCompat.isModEnabled()));
-        return Set.copyOf(disabled);
+        return disabledRegions(ModSettings.stringOr(LOST_SECTOR_FIELD_ID, AUTO), LostSectorCompat.isModEnabled());
     }
 
     static Set<String> disabledRegions(String lostSectorSetting, boolean lostSectorInstalled) {
-        return isShown(lostSectorSetting, lostSectorInstalled) ? Set.of() : LOST_SECTOR_REGIONS;
-    }
-
-    static Set<String> disabledNightcrossRegions(String nightcrossSetting, boolean nightcrossInstalled) {
-        return isShown(nightcrossSetting, nightcrossInstalled) ? Set.of() : NIGHTCROSS_REGIONS;
-    }
-
-    private static boolean isShown(String areaSetting, boolean modInstalled) {
-        return switch (areaSetting == null ? AUTO : areaSetting) {
+        boolean regionsShown = switch (lostSectorSetting == null ? AUTO : lostSectorSetting) {
             case ON -> true;
             case OFF -> false;
-            default -> modInstalled;
+            default -> lostSectorInstalled;
         };
+        return regionsShown ? Set.of() : LOST_SECTOR_REGIONS;
     }
 }

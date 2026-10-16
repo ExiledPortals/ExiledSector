@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AreaToggleDataTest {
 
-    private static final List<Set<String>> TOGGLED_AREAS = AreaToggles.TOGGLED_AREAS;
+    private static final List<Set<String>> TOGGLED_AREAS = List.of(AreaToggles.LOST_SECTOR_REGIONS);
 
     private static JSONObject treeJson() throws Exception {
         return RealSkillData.readJson(RealSkillData.projectRoot().resolve(RealSkillData.TREE_FILE));
