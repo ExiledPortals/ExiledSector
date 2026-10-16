@@ -9,7 +9,6 @@ import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.combat.listeners.DamageListener;
 
 import java.util.IdentityHashMap;
-import java.util.List;
 import java.util.Map;
 
 final class SeraphimListener extends ShipCombatListener {
@@ -84,14 +83,14 @@ final class SeraphimListener extends ShipCombatListener {
         private final Map<ShipAPI, SeraphimListener> listenersByDealer = new IdentityHashMap<>();
 
         static void register(SeraphimListener listener) {
-            DealtDamageRouter router = inCombat() ? instance() : null;
+            DealtDamageRouter router = inCombat() ? SkillEffectSupport.ensureEngineListener(DealtDamageRouter.class, DealtDamageRouter::new) : null;
             if (router != null) {
                 router.listenersByDealer.put(listener.ownerShip, listener);
             }
         }
 
         static void routeDroneDamage(ShipAPI firingShip, ShipAPI drone) {
-            DealtDamageRouter router = inCombat() ? existingInstance() : null;
+            DealtDamageRouter router = inCombat() ? SkillEffectSupport.existingEngineListener(DealtDamageRouter.class) : null;
             SeraphimListener listener = router == null ? null : router.listenersByDealer.get(firingShip);
             if (listener != null) {
                 router.listenersByDealer.put(drone, listener);
@@ -100,20 +99,6 @@ final class SeraphimListener extends ShipCombatListener {
 
         private static boolean inCombat() {
             return Global.getSettings() != null && Global.getCurrentState() == GameState.COMBAT && Global.getCombatEngine() != null;
-        }
-
-        private static DealtDamageRouter existingInstance() {
-            List<DealtDamageRouter> existing = Global.getCombatEngine().getListenerManager().getListeners(DealtDamageRouter.class);
-            return existing.isEmpty() ? null : existing.get(0);
-        }
-
-        private static DealtDamageRouter instance() {
-            DealtDamageRouter router = existingInstance();
-            if (router == null) {
-                router = new DealtDamageRouter();
-                Global.getCombatEngine().getListenerManager().addListener(router);
-            }
-            return router;
         }
 
         @Override

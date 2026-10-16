@@ -45,13 +45,7 @@ final class HeartlessStacks extends ShipCombatListener {
     }
 
     static HeartlessStacks of(ShipAPI ownerShip) {
-        List<HeartlessStacks> existing = ownerShip.getListeners(HeartlessStacks.class);
-        if (existing != null && !existing.isEmpty()) {
-            return existing.get(0);
-        }
-        HeartlessStacks created = new HeartlessStacks(ownerShip);
-        ownerShip.addListener(created);
-        return created;
+        return SkillEffectSupport.ensureListener(ownerShip, HeartlessStacks.class, HeartlessStacks::new);
     }
 
     int stacks() {
@@ -86,12 +80,7 @@ final class HeartlessStacks extends ShipCombatListener {
         }
         ArmorGridAPI grid = ownerShip.getArmorGrid();
         float added = grid.getMaxArmorInCell() * percent / 100f;
-        float[][] cells = grid.getGrid();
-        for (int x = 0; x < cells.length; x++) {
-            for (int y = 0; y < cells[x].length; y++) {
-                grid.setArmorValue(x, y, grid.getArmorValue(x, y) + added);
-            }
-        }
+        ArmorCells.update(grid, current -> current + added);
     }
 
     private void restoreArmor(float percent, float percentPerStack) {
@@ -102,13 +91,7 @@ final class HeartlessStacks extends ShipCombatListener {
         float max = grid.getMaxArmorInCell();
         float ceiling = max * (1f + Math.max(0f, percentPerStack) * stackCount / 100f);
         float restored = max * percent / 100f;
-        float[][] cells = grid.getGrid();
-        for (int x = 0; x < cells.length; x++) {
-            for (int y = 0; y < cells[x].length; y++) {
-                float current = grid.getArmorValue(x, y);
-                grid.setArmorValue(x, y, Math.max(current, Math.min(ceiling, current + restored)));
-            }
-        }
+        ArmorCells.update(grid, current -> Math.max(current, Math.min(ceiling, current + restored)));
     }
 
     private void radiationBurst(float emp) {

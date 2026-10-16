@@ -59,18 +59,19 @@ public final class FrameworkSocketFlair {
             return;
         }
         try (GlScope scope = GlScope.save(GlScope.DRAW_ATTRIBS)) {
-            renderLayers(cx, cy, radius, look.active() ? typeColor : INACTIVE_COLOR, look, elapsedSeconds,
+            renderLayers(scope, cx, cy, radius, look.active() ? typeColor : INACTIVE_COLOR, look, elapsedSeconds,
                     look.active() ? alpha : alpha * 0.65f);
         }
     }
 
-    private static void renderLayers(float cx, float cy, float radius, Color accent, SocketLook look, float elapsedSeconds, float alpha) {
+    private static void renderLayers(GlScope scope, float cx, float cy, float radius, Color accent, SocketLook look,
+                                     float elapsedSeconds, float alpha) {
         float hover = look.hover();
         float pulse = 0.5f + 0.5f * (float) Math.sin(elapsedSeconds * 2.4f);
         float half = radius * SQUARE_SHARE;
         boolean filled = look.iconPath() != null;
 
-        HoloShapes.additive();
+        scope.untextured().additive();
         HoloShapes.radialGlow(cx, cy, half * 0.8f, radius * 1.45f, accent, (0.1f + 0.08f * pulse + 0.18f * hover) * alpha);
         HoloShapes.circle(cx, cy, radius, accent, 1f, (0.3f + 0.3f * hover) * alpha);
         HoloShapes.arcSegments(cx, cy, radius - 4f, 8, 0.55f, elapsedSeconds * OUTER_RING_SPEED, 2.5f, accent, (0.5f + 0.3f * hover) * alpha);
@@ -85,7 +86,7 @@ public final class FrameworkSocketFlair {
             HoloShapes.circle(cx, cy, radius + 6f + 2f * pulse, accent, 2f, (0.5f + 0.4f * pulse) * alpha);
             HoloShapes.arcSegments(cx, cy, radius + 12f, 4, 0.12f, -elapsedSeconds * OUTER_RING_SPEED * 2f, 3f, accent, 0.8f * alpha);
         }
-        HoloShapes.normalBlend();
+        scope.normalBlend();
 
         GLDraw.fillQuad(cx - half, cy - half, half * 2f, half * 2f, SOCKET_FILL, alpha);
         GLDraw.innerGlow(cx - half, cy - half, half * 2f, half * 2f, half * 0.5f, accent, (0.15f + 0.25f * pulse + 0.2f * hover) * alpha);
@@ -94,7 +95,7 @@ public final class FrameworkSocketFlair {
             float size = half * 2f * (1f - ICON_INSET * 2f);
             SpriteDraw.drawAtCenter(ICONS, look.iconPath(), cx, cy, size, size, Color.WHITE, alpha);
         }
-        HoloShapes.additive();
+        scope.untextured().additive();
         if (!filled) {
             float arm = half * 0.35f * (0.8f + 0.2f * pulse);
             HoloShapes.line(cx - arm, cy, cx + arm, cy, 2f, accent, (0.35f + 0.4f * hover) * alpha);
@@ -108,7 +109,7 @@ public final class FrameworkSocketFlair {
         if (filled && look.active()) {
             scanLine(cx, cy, half, accent, elapsedSeconds, alpha);
         }
-        HoloShapes.normalBlend();
+        scope.normalBlend();
     }
 
     private static void scanLine(float cx, float cy, float half, Color accent, float elapsedSeconds, float alpha) {
@@ -129,7 +130,7 @@ public final class FrameworkSocketFlair {
             return;
         }
         try (GlScope scope = GlScope.save(GlScope.DRAW_ATTRIBS)) {
-            HoloShapes.additive();
+            scope.untextured().additive();
             HoloShapes.line(socketEdgeX, socketY, elbowX, socketY, 4f, accent, 0.12f * alpha);
             HoloShapes.line(elbowX, socketY, anchorX, anchorY, 4f, accent, 0.12f * alpha);
             HoloShapes.line(socketEdgeX, socketY, elbowX, socketY, 1.5f, accent, 0.75f * alpha);
@@ -152,7 +153,7 @@ public final class FrameworkSocketFlair {
             float markerPulse = 0.5f + 0.5f * (float) Math.sin(elapsedSeconds * 3f);
             HoloShapes.circle(anchorX, anchorY, 6f + 2f * markerPulse, accent, 1.5f, (0.5f + 0.4f * markerPulse) * alpha);
             HoloShapes.diamond(anchorX, anchorY, 2.5f, accent, alpha);
-            HoloShapes.normalBlend();
+            scope.normalBlend();
             GL11.glLineWidth(1f);
         }
     }

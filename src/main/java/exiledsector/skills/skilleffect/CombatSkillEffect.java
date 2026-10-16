@@ -167,7 +167,7 @@ public enum CombatSkillEffect implements BackedSkillEffect {
     }
 
     <T> CombatSkillEffect(String magnitudeKey, Class<T> listenerType, Function<ShipAPI, ? extends T> listenerFactory) {
-        this.backing = new ListenerEffect(magnitudeKey, listenerType, listenerFactory);
+        this.backing = new ListenerEffect<>(magnitudeKey, listenerType, listenerFactory);
     }
 
     @Override

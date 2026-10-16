@@ -4037,7 +4037,7 @@ summary|option0|FRIGATE|33	0	Beam weapon hits split their damage evenly across t
 summary|option0|FRIGATE|34	0	<good>70%</good> increased hull points.
 summary|option0|FRIGATE|35	1	<bad>60%</bad> less crew casualties.
 summary|option0|FRIGATE|36	0	Increases cargo capacity by <good>35</good>.
-summary|option0|FRIGATE|37	1	<bad>30%</bad> reduced ship system cooldown.
+summary|option0|FRIGATE|37	1	<bad>35%</bad> reduced ship system cooldown.
 summary|option0|FRIGATE|38	0	<good>20%</good> increased ship system charge regeneration.
 summary|option0|FRIGATE|39	0	<good>25%</good> increased flux dissipation while phased.
 summary|option0|FRIGATE|40	0	<good>29%</good> increased maximum combat readiness.
@@ -4230,7 +4230,7 @@ summary|option0|DESTROYER|33	0	Beam weapon hits split their damage evenly across
 summary|option0|DESTROYER|34	0	<good>70%</good> increased hull points.
 summary|option0|DESTROYER|35	1	<bad>60%</bad> less crew casualties.
 summary|option0|DESTROYER|36	0	Increases cargo capacity by <good>65</good>.
-summary|option0|DESTROYER|37	1	<bad>30%</bad> reduced ship system cooldown.
+summary|option0|DESTROYER|37	1	<bad>35%</bad> reduced ship system cooldown.
 summary|option0|DESTROYER|38	0	<good>20%</good> increased ship system charge regeneration.
 summary|option0|DESTROYER|39	0	<good>25%</good> increased flux dissipation while phased.
 summary|option0|DESTROYER|40	0	<good>29%</good> increased maximum combat readiness.
@@ -4423,7 +4423,7 @@ summary|option0|CRUISER|33	0	Beam weapon hits split their damage evenly across t
 summary|option0|CRUISER|34	0	<good>70%</good> increased hull points.
 summary|option0|CRUISER|35	1	<bad>60%</bad> less crew casualties.
 summary|option0|CRUISER|36	0	Increases cargo capacity by <good>110</good>.
-summary|option0|CRUISER|37	1	<bad>30%</bad> reduced ship system cooldown.
+summary|option0|CRUISER|37	1	<bad>35%</bad> reduced ship system cooldown.
 summary|option0|CRUISER|38	0	<good>20%</good> increased ship system charge regeneration.
 summary|option0|CRUISER|39	0	<good>25%</good> increased flux dissipation while phased.
 summary|option0|CRUISER|40	0	<good>29%</good> increased maximum combat readiness.
@@ -4616,7 +4616,7 @@ summary|option0|CAPITAL_SHIP|33	0	Beam weapon hits split their damage evenly acr
 summary|option0|CAPITAL_SHIP|34	0	<good>70%</good> increased hull points.
 summary|option0|CAPITAL_SHIP|35	1	<bad>60%</bad> less crew casualties.
 summary|option0|CAPITAL_SHIP|36	0	Increases cargo capacity by <good>225</good>.
-summary|option0|CAPITAL_SHIP|37	1	<bad>30%</bad> reduced ship system cooldown.
+summary|option0|CAPITAL_SHIP|37	1	<bad>35%</bad> reduced ship system cooldown.
 summary|option0|CAPITAL_SHIP|38	0	<good>20%</good> increased ship system charge regeneration.
 summary|option0|CAPITAL_SHIP|39	0	<good>25%</good> increased flux dissipation while phased.
 summary|option0|CAPITAL_SHIP|40	0	<good>29%</good> increased maximum combat readiness.
@@ -4809,7 +4809,7 @@ summary|option1|FRIGATE|33	0	Beam weapon hits split their damage evenly across t
 summary|option1|FRIGATE|34	0	<good>70%</good> increased hull points.
 summary|option1|FRIGATE|35	1	<bad>60%</bad> less crew casualties.
 summary|option1|FRIGATE|36	0	Increases cargo capacity by <good>35</good>.
-summary|option1|FRIGATE|37	1	<bad>30%</bad> reduced ship system cooldown.
+summary|option1|FRIGATE|37	1	<bad>35%</bad> reduced ship system cooldown.
 summary|option1|FRIGATE|38	0	<good>20%</good> increased ship system charge regeneration.
 summary|option1|FRIGATE|39	0	<good>25%</good> increased flux dissipation while phased.
 summary|option1|FRIGATE|40	0	<good>29%</good> increased maximum combat readiness.
@@ -5002,7 +5002,7 @@ summary|option1|DESTROYER|33	0	Beam weapon hits split their damage evenly across
 summary|option1|DESTROYER|34	0	<good>70%</good> increased hull points.
 summary|option1|DESTROYER|35	1	<bad>60%</bad> less crew casualties.
 summary|option1|DESTROYER|36	0	Increases cargo capacity by <good>65</good>.
-summary|option1|DESTROYER|37	1	<bad>30%</bad> reduced ship system cooldown.
+summary|option1|DESTROYER|37	1	<bad>35%</bad> reduced ship system cooldown.
 summary|option1|DESTROYER|38	0	<good>20%</good> increased ship system charge regeneration.
 summary|option1|DESTROYER|39	0	<good>25%</good> increased flux dissipation while phased.
 summary|option1|DESTROYER|40	0	<good>29%</good> increased maximum combat readiness.
@@ -5195,7 +5195,7 @@ summary|option1|CRUISER|33	0	Beam weapon hits split their damage evenly across t
 summary|option1|CRUISER|34	0	<good>70%</good> increased hull points.
 summary|option1|CRUISER|35	1	<bad>60%</bad> less crew casualties.
 summary|option1|CRUISER|36	0	Increases cargo capacity by <good>110</good>.
-summary|option1|CRUISER|37	1	<bad>30%</bad> reduced ship system cooldown.
+summary|option1|CRUISER|37	1	<bad>35%</bad> reduced ship system cooldown.
 summary|option1|CRUISER|38	0	<good>20%</good> increased ship system charge regeneration.
 summary|option1|CRUISER|39	0	<good>25%</good> increased flux dissipation while phased.
 summary|option1|CRUISER|40	0	<good>29%</good> increased maximum combat readiness.
@@ -5388,7 +5388,7 @@ summary|option1|CAPITAL_SHIP|33	0	Beam weapon hits split their damage evenly acr
 summary|option1|CAPITAL_SHIP|34	0	<good>70%</good> increased hull points.
 summary|option1|CAPITAL_SHIP|35	1	<bad>60%</bad> less crew casualties.
 summary|option1|CAPITAL_SHIP|36	0	Increases cargo capacity by <good>225</good>.
-summary|option1|CAPITAL_SHIP|37	1	<bad>30%</bad> reduced ship system cooldown.
+summary|option1|CAPITAL_SHIP|37	1	<bad>35%</bad> reduced ship system cooldown.
 summary|option1|CAPITAL_SHIP|38	0	<good>20%</good> increased ship system charge regeneration.
 summary|option1|CAPITAL_SHIP|39	0	<good>25%</good> increased flux dissipation while phased.
 summary|option1|CAPITAL_SHIP|40	0	<good>29%</good> increased maximum combat readiness.
@@ -5581,7 +5581,7 @@ summary|option2|FRIGATE|33	0	Beam weapon hits split their damage evenly across t
 summary|option2|FRIGATE|34	0	<good>70%</good> increased hull points.
 summary|option2|FRIGATE|35	1	<bad>60%</bad> less crew casualties.
 summary|option2|FRIGATE|36	0	Increases cargo capacity by <good>35</good>.
-summary|option2|FRIGATE|37	1	<bad>30%</bad> reduced ship system cooldown.
+summary|option2|FRIGATE|37	1	<bad>35%</bad> reduced ship system cooldown.
 summary|option2|FRIGATE|38	0	<good>20%</good> increased ship system charge regeneration.
 summary|option2|FRIGATE|39	0	<good>25%</good> increased flux dissipation while phased.
 summary|option2|FRIGATE|40	0	<good>29%</good> increased maximum combat readiness.
@@ -5774,7 +5774,7 @@ summary|option2|DESTROYER|33	0	Beam weapon hits split their damage evenly across
 summary|option2|DESTROYER|34	0	<good>70%</good> increased hull points.
 summary|option2|DESTROYER|35	1	<bad>60%</bad> less crew casualties.
 summary|option2|DESTROYER|36	0	Increases cargo capacity by <good>65</good>.
-summary|option2|DESTROYER|37	1	<bad>30%</bad> reduced ship system cooldown.
+summary|option2|DESTROYER|37	1	<bad>35%</bad> reduced ship system cooldown.
 summary|option2|DESTROYER|38	0	<good>20%</good> increased ship system charge regeneration.
 summary|option2|DESTROYER|39	0	<good>25%</good> increased flux dissipation while phased.
 summary|option2|DESTROYER|40	0	<good>29%</good> increased maximum combat readiness.
@@ -5967,7 +5967,7 @@ summary|option2|CRUISER|33	0	Beam weapon hits split their damage evenly across t
 summary|option2|CRUISER|34	0	<good>70%</good> increased hull points.
 summary|option2|CRUISER|35	1	<bad>60%</bad> less crew casualties.
 summary|option2|CRUISER|36	0	Increases cargo capacity by <good>110</good>.
-summary|option2|CRUISER|37	1	<bad>30%</bad> reduced ship system cooldown.
+summary|option2|CRUISER|37	1	<bad>35%</bad> reduced ship system cooldown.
 summary|option2|CRUISER|38	0	<good>20%</good> increased ship system charge regeneration.
 summary|option2|CRUISER|39	0	<good>25%</good> increased flux dissipation while phased.
 summary|option2|CRUISER|40	0	<good>29%</good> increased maximum combat readiness.
@@ -6160,7 +6160,7 @@ summary|option2|CAPITAL_SHIP|33	0	Beam weapon hits split their damage evenly acr
 summary|option2|CAPITAL_SHIP|34	0	<good>70%</good> increased hull points.
 summary|option2|CAPITAL_SHIP|35	1	<bad>60%</bad> less crew casualties.
 summary|option2|CAPITAL_SHIP|36	0	Increases cargo capacity by <good>225</good>.
-summary|option2|CAPITAL_SHIP|37	1	<bad>30%</bad> reduced ship system cooldown.
+summary|option2|CAPITAL_SHIP|37	1	<bad>35%</bad> reduced ship system cooldown.
 summary|option2|CAPITAL_SHIP|38	0	<good>20%</good> increased ship system charge regeneration.
 summary|option2|CAPITAL_SHIP|39	0	<good>25%</good> increased flux dissipation while phased.
 summary|option2|CAPITAL_SHIP|40	0	<good>29%</good> increased maximum combat readiness.

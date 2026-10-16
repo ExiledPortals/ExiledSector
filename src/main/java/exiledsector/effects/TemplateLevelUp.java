@@ -61,7 +61,7 @@ final class TemplateLevelUp {
         int allocatedCount = 0;
         while (shipData.getBankedFreeAllocations() > 0) {
             NodeEligibility.Context eligibility = NodeEligibility.Context.of(shipData, shipFacts,
-                    type -> SkillTypeUnlockStatus.isLocked(type, shipData), itemId -> 0d);
+                    SkillTypeUnlockStatus.lockedFor(shipData), itemId -> 0d);
             AllocationGate gate = new AllocationGate(shipData, SkillTree.topology(), rootId, budget, eligibility);
             TemplateStep nextStep = TemplateStepRules.firstAllocatable(template.steps(), shipData, rootId, gate);
             if (nextStep == null) {

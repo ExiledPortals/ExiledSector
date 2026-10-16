@@ -17,7 +17,6 @@ final class SkillTreeSearchBar {
     private static final float TEXT_WIDTH = WIDTH - TEXT_PADDING * 2f;
 
     private final NodeSearch nodeSearch;
-    private final BorderedPanel borderPanel = new BorderedPanel(SkillTreeSearchBar.class);
     private final SkillTreeTextField queryField = new SkillTreeTextField(MAX_QUERY_LENGTH,
             SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
     private final String placeholderText = Translation.text("ui.search.placeholder");
@@ -64,7 +63,7 @@ final class SkillTreeSearchBar {
     void render(PositionAPI canvasPosition, float alphaMult) {
         float barLeft = left(canvasPosition);
         float barBottom = bottom(canvasPosition);
-        borderPanel.draw(barLeft, barBottom, WIDTH, ChromeMetrics.CONTROL_HEIGHT, alphaMult);
+        BorderedPanel.draw(barLeft, barBottom, WIDTH, ChromeMetrics.CONTROL_HEIGHT, alphaMult);
         queryField.setText(nodeSearch.getQuery());
         queryField.render(barLeft + TEXT_PADDING, barBottom, TEXT_WIDTH, ChromeMetrics.CONTROL_HEIGHT, placeholderText, alphaMult);
     }

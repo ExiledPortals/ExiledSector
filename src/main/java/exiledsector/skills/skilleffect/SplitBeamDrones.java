@@ -7,9 +7,7 @@ import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
-import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
-import exiledsector.ui.util.FallbackSupport;
 import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.MathUtils;
 import org.lazywizard.lazylib.VectorUtils;
@@ -79,11 +77,9 @@ final class SplitBeamDrones {
 
     private SplitDrone start(SplitKey key, WeaponAPI weapon) {
         ShareListener shareListener = new ShareListener();
-        ShipAPI droneShip = FallbackSupport.getOrFallback(() -> WeaponDroneFactory.create(firingShip, weapon, shareListener), null, LOG,
-                "Beam splitting could not build a drone for weapon " + weapon.getId()
-                        + "; that weapon splits without a drone for the rest of the session");
+        ShipAPI droneShip = WeaponDroneShell.buildOrMarkUnsupported(() -> WeaponDroneFactory.create(firingShip, weapon, shareListener),
+                weapon, weapon.getId(), WeaponDroneFactory::markBeamUnsupported, LOG, "Beam splitting", "splits without a drone");
         if (droneShip == null) {
-            WeaponDroneFactory.markBeamUnsupported(weapon);
             return null;
         }
         SplitDrone split = new SplitDrone(key, droneShip, shareListener);
@@ -98,10 +94,9 @@ final class SplitBeamDrones {
     private record BeamClaim(WeaponAPI weapon, List<ShipAPI> splitTargets, float claimedAt) {
     }
 
-    private final class SplitDrone implements AdvanceableListener {
+    private final class SplitDrone extends WeaponDroneShell {
 
         private final SplitKey splitKey;
-        private final ShipAPI droneShip;
         private final WeaponAPI droneWeapon;
         private final ShipAPI splitTarget;
         private final ShareListener shareListener;
@@ -110,19 +105,18 @@ final class SplitBeamDrones {
         private float secondsSinceRefresh;
         private float secondsSinceStart;
         private float secondsSinceMirror;
-        private boolean removed;
-        private boolean markersMirrored;
 
         private SplitDrone(SplitKey splitKey, ShipAPI droneShip, ShareListener shareListener) {
+            super(droneShip);
             this.splitKey = splitKey;
-            this.droneShip = droneShip;
             this.droneWeapon = droneShip.getAllWeapons().get(0);
             this.splitTarget = splitKey.splitTarget();
             this.shareListener = shareListener;
         }
 
-        private boolean isInPlay() {
-            return !removed && Global.getCombatEngine().isEntityInPlay(droneShip);
+        @Override
+        ShipAPI firingShip() {
+            return firingShip;
         }
 
         private void retarget(Vector2f newImpactPoint, Vector2f newOrigin, float share) {
@@ -138,14 +132,7 @@ final class SplitBeamDrones {
         }
 
         @Override
-        public void advance(float amount) {
-            if (removed) {
-                return;
-            }
-            if (!markersMirrored) {
-                WeaponDroneFactory.mirrorMarkerHullMods(firingShip, droneShip);
-                markersMirrored = true;
-            }
+        void advanceState(float amount) {
             boolean firingShipGone = !firingShip.isAlive();
             if (!firingShipGone) {
                 WeaponDroneStats.mirrorTimeMult(firingShip.getMutableStats(), droneShip.getMutableStats());
@@ -176,9 +163,8 @@ final class SplitBeamDrones {
             drawRefractionConnector(amount, angle);
         }
 
-        private void remove() {
-            removed = true;
-            Global.getCombatEngine().removeEntity(droneShip);
+        @Override
+        void forget() {
             drones.remove(splitKey, this);
         }
 

@@ -36,7 +36,7 @@ final class DormantNodeWake {
         ShipVariantAPI variant = member.getVariant();
         ShipOpBudget opBudget = ShipOpBudget.of(member, variant);
         int opCostPerNode = SkillNodeOpCost.perNode(member.getHullSpec());
-        int totalOp = opBudget.totalOp - opBudget.usedOp + OpReserveParity.reservedOp(variant);
+        int totalOp = OpReserveParity.availableOp(opBudget, OpReserveParity.reservedOp(variant));
         ShipFacts shipFacts = PlayerShipFacts.of(member, variant);
         List<String> releasedNodeIds = shipData.wakeDormantNodes(tree, ShipLevelConfig.maxAllocatedNodes(),
                 dormantNode -> fitsTheOpBudget(shipData, dormantNode, opCostPerNode, totalOp) && isEligible(shipData, dormantNode, shipFacts));
@@ -56,7 +56,7 @@ final class DormantNodeWake {
 
     private static boolean isEligible(ShipSkillData shipData, SkillNode dormantNode, ShipFacts shipFacts) {
         SkillType option = dormantNode.getType().isOptional() ? SkillTree.getType(shipData.getOptionalSelection(dormantNode.getId())) : null;
-        NodeEligibility.Context context = NodeEligibility.Context.of(shipData, shipFacts, type -> SkillTypeUnlockStatus.isLocked(type, shipData),
+        NodeEligibility.Context context = NodeEligibility.Context.of(shipData, shipFacts, SkillTypeUnlockStatus.lockedFor(shipData),
                 itemId -> Double.MAX_VALUE);
         return NodeEligibility.check(dormantNode, option, context) == null;
     }

@@ -57,6 +57,11 @@ interface BackedSkillEffect extends SkillEffect {
     }
 
     @Override
+    default boolean isMultiplicative() {
+        return (backing() != null && backing().isMultiplicative()) || SkillEffect.super.isMultiplicative();
+    }
+
+    @Override
     default StyledText description(float magnitude) {
         return backing() != null ? backing().description(this, magnitude) : EffectText.templated(this, magnitude);
     }

@@ -1,5 +1,5 @@
 import type { Vocabulary } from '../../../api/vocabulary.ts';
-import { csvCell, dropCsvColumn, emptyCsvTable, parseCsvTable, serializeCsvTable, setCsvCell, type CsvTable } from '../../../shared/csv.ts';
+import { csvCell, csvTableFromRows, dropCsvColumn, parseCsvTable, serializeCsvTable, trimmedCsvCells, type CsvTable } from '../../../shared/csv.ts';
 import { isNumberText } from '../../../shared/decimalText.ts';
 import { isUnshippedImagePath } from '../../../shared/imagePaths.ts';
 
@@ -94,35 +94,24 @@ export function parseSocketablesCsv(text: string): SocketablesModel {
   const table = parseCsvTable(text);
   const definitions = table.rows.map((cells): SocketableDefinition => {
     const value = (column: string) => csvCell(table, cells, column);
-    const id = value('id').trim();
+    const textColumns = trimmedCsvCells(table, cells, ['id', 'kind', 'name', 'icon', 'rarity', 'unique', 'description', 'unlock']);
     return {
       cells,
-      id,
-      kind: value('kind').trim(),
-      name: value('name').trim(),
-      icon: value('icon').trim(),
-      rarity: value('rarity').trim(),
-      unique: value('unique').trim(),
-      description: value('description').trim(),
+      ...textColumns,
       prefixes: [...parsePool(value('prefixes')), ...parsePool(value('pool'))],
       suffixes: parsePool(value('suffixes')),
-      unlock: value('unlock').trim(),
-      loadedId: id,
+      loadedId: textColumns.id,
     };
   });
   return { table, definitions };
 }
 
 export function serializeSocketablesCsv(model: SocketablesModel): string {
-  const out = emptyCsvTable(model.table);
-  for (const definition of model.definitions) {
-    const cells = definition.cells.slice();
-    for (const column of SOCKETABLE_COLUMNS) {
-      const value = column === 'prefixes' || column === 'suffixes' ? formatPool(definition[column]) : definition[column];
-      setCsvCell(out, cells, column, value);
-    }
-    out.rows.push(cells);
-  }
+  const out = csvTableFromRows(model.table, model.definitions, (definition) =>
+    Object.fromEntries(
+      SOCKETABLE_COLUMNS.map((column) => [column, column === 'prefixes' || column === 'suffixes' ? formatPool(definition[column]) : definition[column]]),
+    ),
+  );
   dropCsvColumn(out, 'pool');
   return serializeCsvTable(out);
 }

@@ -1,8 +1,8 @@
 package exiledsector.socketables;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import exiledsector.ModSettings;
+import exiledsector.persistence.SaveData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,10 +33,8 @@ public final class SocketMaterials {
         return new SocketMaterials(cargo, new HashMap<>(), false);
     }
 
-    // persistentData is a raw Object map; this key is only ever written as Map<String, Integer>
-    @SuppressWarnings("unchecked")
     private static Map<String, Integer> storedCounts() {
-        return (Map<String, Integer>) Global.getSector().getPersistentData().computeIfAbsent(STORED_KEY, key -> new HashMap<String, Integer>());
+        return SaveData.getOrCreate(STORED_KEY, HashMap::new);
     }
 
     public static List<String> commodityIds() {

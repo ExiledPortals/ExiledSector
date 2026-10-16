@@ -179,10 +179,10 @@ final class NodeAllocator {
         int opCostPerNode = SkillNodeOpCost.perNode(fleetMember.getHullSpec());
         int reservedOp = OpReserveParity.reservedOp(shipVariant);
         OpReserveParity.warnIfOutOfSync(fleetMember, shipVariant, skillData.getSpentOp(opCostPerNode), reservedOp, "while allocating nodes");
-        int totalOpBudget = opBudget.totalOp - opBudget.usedOp + reservedOp;
+        int totalOpBudget = OpReserveParity.availableOp(opBudget, reservedOp);
         AllocationGate.Budget budget = new AllocationGate.Budget(totalOpBudget, opCostPerNode, ShipLevelConfig.maxAllocatedNodes());
         NodeEligibility.Context eligibility = NodeEligibility.Context.of(skillData, PlayerShipFacts.of(fleetMember, shipVariant),
-                type -> SkillTypeUnlockStatus.isLocked(type, skillData), NodeAllocator::heldInCargo);
+                SkillTypeUnlockStatus.lockedFor(skillData), NodeAllocator::heldInCargo);
         AllocationGate gate = new AllocationGate(skillData, SkillTree.topology(), satisfiedRootId(), budget, eligibility);
         return new Snapshot(skillData, opBudget, statsRevision, hiddenNodeIds(skillData), gate, this::describe);
     }
@@ -191,7 +191,7 @@ final class NodeAllocator {
         ShipSkillData liveData = liveSnapshot.skillData();
         AllocationGate.Budget budget = new AllocationGate.Budget(Integer.MAX_VALUE, 0, ShipLevelConfig.maxAllocatedNodes());
         NodeEligibility.Context eligibility = NodeEligibility.Context.of(planData, PlayerShipFacts.of(fleetMember, shipVariant),
-                type -> SkillTypeUnlockStatus.isLocked(type, liveData), itemId -> Double.MAX_VALUE);
+                SkillTypeUnlockStatus.lockedFor(liveData), itemId -> Double.MAX_VALUE);
         AllocationGate gate = new AllocationGate(planData, SkillTree.topology(), satisfiedRootId(), budget, eligibility);
         return new Snapshot(planData, liveSnapshot.opBudget(), liveSnapshot.statsRevision(), liveSnapshot.hiddenNodeIds, gate, this::describe);
     }
@@ -255,59 +255,31 @@ final class NodeAllocator {
     }
 
     boolean socketItem(SkillNode node, String socketableId) {
-        if (!data().socketItem(node.getId(), socketableId)) {
-            return false;
-        }
-        refreshShipStats();
-        return true;
+        return changed(data().socketItem(node.getId(), socketableId));
     }
 
     boolean unsocketItem(SkillNode node) {
-        if (data().unsocketItem(node.getId()) == null) {
-            return false;
-        }
-        refreshShipStats();
-        return true;
+        return changed(data().unsocketItem(node.getId()) != null);
     }
 
     boolean installUpgrade() {
-        if (!FrameworkSockets.installUpgrade(data(), hullSize(), SocketableStore.get())) {
-            return false;
-        }
-        refreshShipStats();
-        return true;
+        return changed(FrameworkSockets.installUpgrade(data(), hullSize(), SocketableStore.get()));
     }
 
     boolean unlockSocket(SocketType socketType) {
-        if (!FrameworkSockets.unlock(data(), socketType, currentFit())) {
-            return false;
-        }
-        refreshShipStats();
-        return true;
+        return changed(FrameworkSockets.unlock(data(), socketType, currentFit()));
     }
 
     boolean lockSocket(SocketType socketType) {
-        if (!FrameworkSockets.lock(data(), socketType)) {
-            return false;
-        }
-        refreshShipStats();
-        return true;
+        return changed(FrameworkSockets.lock(data(), socketType));
     }
 
     boolean socketFrameworkItem(SocketType socketType, Socketable socketable) {
-        if (!FrameworkSockets.socket(data(), socketType, socketable, ShipSkillDataManager.all())) {
-            return false;
-        }
-        refreshShipStats();
-        return true;
+        return changed(FrameworkSockets.socket(data(), socketType, socketable, ShipSkillDataManager.all()));
     }
 
     boolean unsocketFrameworkItem(SocketType socketType) {
-        if (data().unsocketFrameworkItem(socketType.id()) == null) {
-            return false;
-        }
-        refreshShipStats();
-        return true;
+        return changed(data().unsocketFrameworkItem(socketType.id()) != null);
     }
 
     List<FrameworkSlots.Slot> frameworkSlots() {
@@ -331,11 +303,7 @@ final class NodeAllocator {
     }
 
     boolean chooseStartingRoot(SkillNode root) {
-        if (!data().chooseStartingRoot(root)) {
-            return false;
-        }
-        refreshShipStats();
-        return true;
+        return changed(data().chooseStartingRoot(root));
     }
 
     boolean canUnchooseStartingRoot(SkillNode node) {
@@ -343,11 +311,7 @@ final class NodeAllocator {
     }
 
     boolean unchooseStartingRoot(SkillNode node) {
-        if (!canUnchooseStartingRoot(node) || !data().unchooseStartingRoot()) {
-            return false;
-        }
-        refreshShipStats();
-        return true;
+        return changed(canUnchooseStartingRoot(node) && data().unchooseStartingRoot());
     }
 
     List<SkillNode> respecPlan(SkillNode node) {
@@ -355,7 +319,11 @@ final class NodeAllocator {
     }
 
     boolean applyPendingPhantomConflicts() {
-        if (!PhantomConflictWatch.hasPendingReverts() || !PhantomConflictWatch.applyPendingReverts(fleetMember.getId())) {
+        return changed(PhantomConflictWatch.hasPendingReverts() && PhantomConflictWatch.applyPendingReverts(fleetMember.getId()));
+    }
+
+    private boolean changed(boolean applied) {
+        if (!applied) {
             return false;
         }
         refreshShipStats();

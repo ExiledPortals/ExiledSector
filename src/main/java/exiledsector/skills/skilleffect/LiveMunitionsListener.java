@@ -27,7 +27,7 @@ final class LiveMunitionsListener extends ShipCombatListener implements Advancea
     private int[] lastAmmo;
     private float[] lastReloadProgress;
     private HeartlessStacks heartlessStacks;
-    private FleetCrewLedger crewLedger;
+    private final FleetCrewLedger.Lazy crewLedger = new FleetCrewLedger.Lazy();
     private int appliedStacks;
 
     LiveMunitionsListener(ShipAPI ownerShip) {
@@ -87,27 +87,18 @@ final class LiveMunitionsListener extends ShipCombatListener implements Advancea
     }
 
     private boolean crewLeft() {
-        if (!paysWithFleetCrew()) {
-            return true;
-        }
-        if (crewLedger == null) {
-            crewLedger = FleetCrewLedger.forCurrentCombat();
-        }
-        return crewLedger.hasCrew();
-    }
-
-    private boolean paysWithFleetCrew() {
-        return ownerShip.getOwner() == 0 && !ownerShip.isAlly();
+        return !FleetCrewLedger.usesFleetCrew(ownerShip) || crewLedger.get().hasCrew();
     }
 
     private void sacrificeCrew(int fired, int stackCount) {
         float chance = magnitude(CREW_DEATH_CHANCE_PERCENT_PER_STACK_KEY) * stackCount / 100f;
-        if (chance <= 0f || !paysWithFleetCrew()) {
+        if (chance <= 0f || !FleetCrewLedger.usesFleetCrew(ownerShip)) {
             return;
         }
-        for (int i = 0; i < fired && crewLedger.hasCrew(); i++) {
+        FleetCrewLedger ledger = crewLedger.get();
+        for (int i = 0; i < fired && ledger.hasCrew(); i++) {
             if (random.nextFloat() < chance) {
-                crewLedger.sacrifice();
+                ledger.sacrifice();
             }
         }
     }

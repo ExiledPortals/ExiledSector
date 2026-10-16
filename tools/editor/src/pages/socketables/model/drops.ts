@@ -1,4 +1,4 @@
-import { csvCell, emptyCsvTable, parseCsvTable, serializeCsvTable, setCsvCell, type CsvTable } from '../../../shared/csv.ts';
+import { csvCell, csvTableFromRows, parseCsvTable, serializeCsvTable, type CsvTable } from '../../../shared/csv.ts';
 import { formatPercent, isNumberText } from '../../../shared/decimalText.ts';
 
 export const DROP_SLOTS = 5;
@@ -37,17 +37,11 @@ export function parseSalvageCsv(text: string): DropsModel {
 }
 
 export function serializeSalvageCsv(model: DropsModel): string {
-  const out = emptyCsvTable(model.table);
-  for (const row of model.rows) {
-    const cells = row.cells.slice();
-    if (!row.passthrough) {
-      setCsvCell(out, cells, 'site', row.site);
-      setCsvCell(out, cells, 'chances', row.chances.join(';'));
-      setCsvCell(out, cells, 'uniqueChance', row.unique);
-    }
-    out.rows.push(cells);
-  }
-  return serializeCsvTable(out);
+  return serializeCsvTable(
+    csvTableFromRows(model.table, model.rows, (row) =>
+      row.passthrough ? {} : { site: row.site, chances: row.chances.join(';'), uniqueChance: row.unique },
+    ),
+  );
 }
 
 export function chancePercent(fraction: string | undefined): number {

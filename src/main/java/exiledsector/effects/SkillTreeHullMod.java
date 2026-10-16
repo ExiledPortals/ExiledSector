@@ -76,7 +76,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
             }
         }
         boolean playerTree = !SkillDataResolver.isNpcTree(ship.getVariant());
-        FleetMemberAPI member = ship.getFleetMember() != null ? ship.getFleetMember() : ship.getMutableStats().getFleetMember();
+        FleetMemberAPI member = memberOf(ship);
         PhantomConflictWatch.inspect(member, ship.getVariant(), resolvedTree.phantomHullModIds(), playerTree);
         HullModConflictResolver.removeHullModsThatTriedToStripAPhantom(resolvedTree.allocated(), ship.getVariant(), playerTree);
     }
@@ -90,11 +90,16 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         return stats.getFleetMember() == null;
     }
 
+    static FleetMemberAPI memberOf(ShipAPI ship) {
+        FleetMemberAPI shipMember = ship.getFleetMember();
+        return shipMember != null ? shipMember : ship.getMutableStats().getFleetMember();
+    }
+
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, HullSize hullSize, ShipAPI ship, float width, boolean isForModSpec) {
         if (ship == null || isForModSpec) return;
 
-        FleetMemberAPI member = ship.getFleetMember() != null ? ship.getFleetMember() : ship.getMutableStats().getFleetMember();
+        FleetMemberAPI member = memberOf(ship);
         ShipTreeLookup.ShipTree shipTree = ShipTreeLookup.forShip(member, ship.getVariant());
         if (shipTree == null) {
             I18n.forGameText(() -> VanillaText.addPara(tooltip, Translation.styled("hullmod.exiledSector_core.noTree"), TOOLTIP_PAD,

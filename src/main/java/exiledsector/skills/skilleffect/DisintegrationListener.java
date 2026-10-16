@@ -29,8 +29,7 @@ final class DisintegrationListener extends ShipCombatListener implements DamageD
             return null;
         }
         float percent = magnitude(ARMOR_DAMAGE_PERCENT_KEY);
-        float hitDamage = damage.isDps() ? damage.getDamage() * damage.getDpsDuration() : damage.getDamage();
-        float armorDamage = hitDamage * percent / 100f
+        float armorDamage = CombatQueries.hitDamage(damage) * percent / 100f
                 * targetShip.getMutableStats().getArmorDamageTakenMult().getModifiedValue();
         if (armorDamage > 0f) {
             stripArmor(targetShip, point, armorDamage);

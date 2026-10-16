@@ -6,7 +6,7 @@ import exiledsector.i18n.StyledText;
 
 import java.util.function.Function;
 
-record ListenerEffect(String magnitudeKey, Class<?> listenerType, Function<ShipAPI, ?> listenerFactory) implements EffectBacking {
+record ListenerEffect<T>(String magnitudeKey, Class<T> listenerType, Function<ShipAPI, ? extends T> listenerFactory) implements EffectBacking {
 
     @Override
     public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {

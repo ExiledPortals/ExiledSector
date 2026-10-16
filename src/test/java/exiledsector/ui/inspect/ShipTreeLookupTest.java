@@ -93,6 +93,7 @@ class ShipTreeLookupTest {
     void aPlayerShipShowsItsSavedTreeOnceItHasOne() {
         FleetMemberAPI ship = member("mine", true);
         assertNull(ShipTreeLookup.find(ship));
+        assertNull(ShipSkillDataManager.find("mine"));
 
         ShipSkillDataManager.get("mine").incrementLevel();
         ShipTreeLookup.ShipTree tree = ShipTreeLookup.find(ship);

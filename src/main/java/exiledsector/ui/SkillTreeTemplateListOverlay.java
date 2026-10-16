@@ -39,7 +39,7 @@ final class SkillTreeTemplateListOverlay {
     private static final Color META_COLOR = new Color(170, 170, 170);
     private static final Color CONFIRM_COLOR = SkillTreePanelStyle.NEGATIVE_STAT_COLOR;
 
-    private final HoloFrame modalFrame = new HoloFrame(SkillTreeTemplateListOverlay.class, HoloFrame.Look.MODAL);
+    private final HoloFrame modalFrame = new HoloFrame(HoloFrame.Look.MODAL);
     private final SkillTreePanelStyle panelStyle;
     private final Map<HullSize, SkillTreeUiButton> hullSizeChips = new EnumMap<>(HullSize.class);
     private final SkillTreeUiButton clearButton = new SkillTreeUiButton(Translation.text("ui.template.list.clear"));

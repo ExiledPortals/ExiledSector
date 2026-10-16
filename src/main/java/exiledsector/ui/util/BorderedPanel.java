@@ -21,14 +21,13 @@ public final class BorderedPanel {
 
     public static final Color BACKGROUND_COLOR = new Color(0, 0, 0, 230);
 
-    private final SpriteCache spriteCache;
-    private final Set<String> insetSprites = new HashSet<>();
+    private static final SpriteCache SPRITE_CACHE = new SpriteCache(BorderedPanel.class);
+    private static final Set<String> INSET_SPRITES = new HashSet<>();
 
-    public BorderedPanel(Class<?> owner) {
-        this.spriteCache = new SpriteCache(owner);
+    private BorderedPanel() {
     }
 
-    public void draw(float x, float y, float width, float height, float alphaMult) {
+    public static void draw(float x, float y, float width, float height, float alphaMult) {
         GLDraw.fillQuad(x, y, width, height, BACKGROUND_COLOR, alphaMult);
 
         float edgeWidth = Math.min(BORDER_EDGE_WIDTH, width / 2f);
@@ -44,17 +43,17 @@ public final class BorderedPanel {
         drawPiece(EDGE_E_BOT, x + width - edgeWidth, y, edgeWidth, capHeight, alphaMult);
     }
 
-    private void drawPiece(String path, float x, float y, float width, float height, float alphaMult) {
+    private static void drawPiece(String path, float x, float y, float width, float height, float alphaMult) {
         if (width <= 0f || height <= 0f) return;
-        SpriteAPI sprite = spriteCache.sprite(path);
+        SpriteAPI sprite = SPRITE_CACHE.sprite(path);
         if (sprite == null) return;
-        if (insetSprites.add(path)) {
+        if (INSET_SPRITES.add(path)) {
             float fullWidth = sprite.getTextureWidth();
             float halfTexel = fullWidth * 0.5f / BORDER_SOURCE_PIXELS;
             sprite.setTexX(halfTexel);
             sprite.setTexWidth(fullWidth - 2f * halfTexel);
         }
-        SpriteDraw.drawAtCenter(spriteCache, path, x + width / 2f, y + height / 2f,
+        SpriteDraw.drawAtCenter(SPRITE_CACHE, path, x + width / 2f, y + height / 2f,
                 width, height, BORDER_TINT, alphaMult);
     }
 }

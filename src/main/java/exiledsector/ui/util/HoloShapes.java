@@ -10,19 +10,9 @@ public final class HoloShapes {
     public static final float TWO_PI = (float) (Math.PI * 2.0);
     private static final int CIRCLE_STEPS = 72;
     private static final int ARC_STEPS = 8;
+    private static final UnitCircle UNIT_CIRCLE = UnitCircle.of(CIRCLE_STEPS);
 
     private HoloShapes() {
-    }
-
-    public static void additive() {
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-    }
-
-    public static void normalBlend() {
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glDisable(GL11.GL_BLEND);
     }
 
     public static void circle(float cx, float cy, float radius, Color color, float width, float alpha) {
@@ -30,8 +20,7 @@ public final class HoloShapes {
         Misc.setColor(color, alpha);
         GL11.glBegin(GL11.GL_LINE_LOOP);
         for (int i = 0; i < CIRCLE_STEPS; i++) {
-            float angle = TWO_PI * i / CIRCLE_STEPS;
-            GL11.glVertex2f(cx + (float) Math.cos(angle) * radius, cy + (float) Math.sin(angle) * radius);
+            GL11.glVertex2f(cx + UNIT_CIRCLE.cos(i) * radius, cy + UNIT_CIRCLE.sin(i) * radius);
         }
         GL11.glEnd();
         GL11.glLineWidth(1f);
@@ -74,9 +63,9 @@ public final class HoloShapes {
     public static void radialGlow(float cx, float cy, float inner, float outer, Color color, float alpha) {
         GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
         for (int i = 0; i <= CIRCLE_STEPS; i++) {
-            float angle = TWO_PI * i / CIRCLE_STEPS;
-            float cos = (float) Math.cos(angle);
-            float sin = (float) Math.sin(angle);
+            int index = i % CIRCLE_STEPS;
+            float cos = UNIT_CIRCLE.cos(index);
+            float sin = UNIT_CIRCLE.sin(index);
             Misc.setColor(color, alpha);
             GL11.glVertex2f(cx + cos * inner, cy + sin * inner);
             Misc.setColor(color, 0f);

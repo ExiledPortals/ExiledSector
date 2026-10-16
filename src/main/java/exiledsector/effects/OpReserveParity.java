@@ -7,6 +7,7 @@ import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
+import exiledsector.skills.progression.ShipOpBudget;
 import exiledsector.skills.progression.SkillNodeOpCost;
 import org.apache.log4j.Logger;
 
@@ -31,6 +32,10 @@ public final class OpReserveParity {
             }
         }
         return reservedOpTotal;
+    }
+
+    public static int availableOp(ShipOpBudget opBudget, int reservedOp) {
+        return opBudget.totalOp - opBudget.usedOp + reservedOp;
     }
 
     public static void warnIfOutOfSync(FleetMemberAPI member, ShipVariantAPI variant, String moment) {

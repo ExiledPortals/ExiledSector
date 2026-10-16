@@ -8,7 +8,6 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import com.fs.starfarer.api.Global;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillNode;
@@ -22,11 +21,8 @@ public class ShipSkillDataManager {
     private ShipSkillDataManager() {
     }
 
-    // persistentData is a raw Object map; this key is only ever written as Map<String, ShipSkillData>
-    @SuppressWarnings("unchecked")
     private static Map<String, ShipSkillData> getStore() {
-        Map<String, Object> persistentData = Global.getSector().getPersistentData();
-        return (Map<String, ShipSkillData>) persistentData.computeIfAbsent(DATA_KEY, key -> new HashMap<String, ShipSkillData>());
+        return SaveData.getOrCreate(DATA_KEY, HashMap::new);
     }
 
     public static ShipSkillData get(String shipId) {

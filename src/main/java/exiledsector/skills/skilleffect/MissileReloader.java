@@ -47,7 +47,12 @@ final class MissileReloader {
             reloaders = new Reloaders();
             ship.setCustomData(RELOADERS_KEY, reloaders);
         }
-        return reloaders.byModId.computeIfAbsent(modId, id -> new MissileReloader(launchersOf(ship)));
+        MissileReloader reloader = reloaders.byModId.get(modId);
+        if (reloader == null) {
+            reloader = new MissileReloader(launchersOf(ship));
+            reloaders.byModId.put(modId, reloader);
+        }
+        return reloader;
     }
 
     private static List<WeaponAPI> launchersOf(ShipAPI ship) {

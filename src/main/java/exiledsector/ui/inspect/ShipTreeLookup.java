@@ -39,8 +39,7 @@ public final class ShipTreeLookup {
         if (!isInPlayerFleet(member)) {
             return null;
         }
-        ShipSkillData skillData = ShipSkillDataManager.get(member.getId());
-        return skillData.isBlank() ? null : new ShipTree(skillData, List.of(), 1f, FrameworkSlots.forVariant(skillData, member.getVariant()));
+        return forShip(member, member.getVariant());
     }
 
     public static ShipTree forShip(FleetMemberAPI member, ShipVariantAPI variant) {

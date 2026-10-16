@@ -1,10 +1,8 @@
 package exiledsector.skills.skilleffect;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
-import com.fs.starfarer.api.combat.listeners.CombatListenerManagerAPI;
 import com.fs.starfarer.api.combat.listeners.DamageListener;
 
 import java.util.ArrayList;
@@ -15,7 +13,7 @@ final class ChainHitDamageRestorer implements DamageListener {
     private final List<PendingRestore> pending = new ArrayList<>();
 
     static void reduceForThisHit(DamageAPI damage, float dealtMult, CombatEntityAPI target) {
-        ChainHitDamageRestorer restorer = instance();
+        ChainHitDamageRestorer restorer = SkillEffectSupport.ensureEngineListener(ChainHitDamageRestorer.class, ChainHitDamageRestorer::new);
         restorer.restoreStaleHits();
         float baseDamage = damage.getBaseDamage();
         restorer.pending.add(new PendingRestore(damage, baseDamage, target));
@@ -27,17 +25,6 @@ final class ChainHitDamageRestorer implements DamageListener {
             stale.damage().setDamage(stale.baseDamage());
         }
         pending.clear();
-    }
-
-    private static ChainHitDamageRestorer instance() {
-        CombatListenerManagerAPI listeners = Global.getCombatEngine().getListenerManager();
-        List<ChainHitDamageRestorer> existing = listeners.getListeners(ChainHitDamageRestorer.class);
-        if (!existing.isEmpty()) {
-            return existing.get(0);
-        }
-        ChainHitDamageRestorer restorer = new ChainHitDamageRestorer();
-        listeners.addListener(restorer);
-        return restorer;
     }
 
     @Override

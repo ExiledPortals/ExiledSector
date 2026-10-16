@@ -1,6 +1,6 @@
 import { compareText } from '../../../shared/arrays.ts';
 import { withLineEnding, type LineEnding } from '../../../shared/lineEndings.ts';
-import { csvCell, emptyCsvTable, parseCsvTable, serializeCsvTable, setCsvCell, type CsvTable } from '../../../shared/csv.ts';
+import { csvTableFromRows, parseCsvTable, serializeCsvTable, trimmedCsvCells, type CsvTable } from '../../../shared/csv.ts';
 import { isTrueText, type SocketableDefinition } from './definitions.ts';
 
 export interface AffixRow {
@@ -48,25 +48,12 @@ export function parseAffixesCsv(text: string): { table: CsvTable; rows: AffixRow
   const table = parseCsvTable(text);
   return {
     table,
-    rows: table.rows.map((cells) => ({
-      cells,
-      effect: csvCell(table, cells, 'effect').trim(),
-      prefix: csvCell(table, cells, 'prefix').trim(),
-      suffix: csvCell(table, cells, 'suffix').trim(),
-    })),
+    rows: table.rows.map((cells) => ({ cells, ...trimmedCsvCells(table, cells, ['effect', 'prefix', 'suffix']) })),
   };
 }
 
 export function serializeAffixesCsv(table: CsvTable, rows: AffixRow[]): string {
-  const out = emptyCsvTable(table);
-  for (const row of rows) {
-    const cells = row.cells.slice();
-    setCsvCell(out, cells, 'effect', row.effect);
-    setCsvCell(out, cells, 'prefix', row.prefix);
-    setCsvCell(out, cells, 'suffix', row.suffix);
-    out.rows.push(cells);
-  }
-  return serializeCsvTable(out);
+  return serializeCsvTable(csvTableFromRows(table, rows, (row) => ({ effect: row.effect, prefix: row.prefix, suffix: row.suffix })));
 }
 
 export function wordList(text: string): string[] {

@@ -9,7 +9,6 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.combat.WeaponAPI;
-import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import org.lazywizard.lazylib.MathUtils;
 import org.lwjgl.util.vector.Vector2f;
@@ -18,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-abstract class SingleShotDrone implements DamageDealtModifier, AdvanceableListener {
+abstract class SingleShotDrone extends WeaponDroneShell implements DamageDealtModifier {
 
     static final float FIRE_TIMEOUT_SECONDS = 0.5f;
     static final float SHOT_SEARCH_SECONDS = 0.25f;
@@ -30,7 +29,6 @@ abstract class SingleShotDrone implements DamageDealtModifier, AdvanceableListen
 
     private static final float RANGE_TOLERANCE = 1f;
 
-    private final ShipAPI droneShip;
     private final WeaponAPI droneWeapon;
     private final SingleShotDrones<?> dronePool;
     private final String weaponId;
@@ -39,15 +37,13 @@ abstract class SingleShotDrone implements DamageDealtModifier, AdvanceableListen
     private boolean firing;
     private boolean shotSeen;
     private boolean shotKept;
-    private boolean removed;
-    private boolean markersMirrored;
     private float firingSeconds;
     private float firedSeconds;
     private float idleSeconds;
     private float aimFacing;
 
     protected SingleShotDrone(ShipAPI droneShip, SingleShotDrones<?> dronePool, String rangeMatchModId) {
-        this.droneShip = droneShip;
+        super(droneShip);
         this.droneWeapon = droneShip.getAllWeapons().get(0);
         this.dronePool = dronePool;
         this.weaponId = droneWeapon.getSpec().getWeaponId();
@@ -69,15 +65,11 @@ abstract class SingleShotDrone implements DamageDealtModifier, AdvanceableListen
     }
 
     boolean isReady() {
-        return !firing && !removed;
+        return !firing && !isRemoved();
     }
 
     float idleSeconds() {
         return idleSeconds;
-    }
-
-    boolean isInPlay() {
-        return !removed && Global.getCombatEngine().isEntityInPlay(droneShip);
     }
 
     WeaponAPI weapon() {
@@ -89,15 +81,8 @@ abstract class SingleShotDrone implements DamageDealtModifier, AdvanceableListen
     }
 
     @Override
-    public void advance(float amount) {
-        if (removed) {
-            return;
-        }
-        if (!markersMirrored) {
-            WeaponDroneFactory.mirrorMarkerHullMods(dronePool.firingShip(), droneShip);
-            markersMirrored = true;
-        }
-        advanceState(amount);
+    ShipAPI firingShip() {
+        return dronePool.firingShip();
     }
 
     @Override
@@ -108,10 +93,14 @@ abstract class SingleShotDrone implements DamageDealtModifier, AdvanceableListen
         return null;
     }
 
+    @Override
     void remove() {
-        removed = true;
         firing = false;
-        Global.getCombatEngine().removeEntity(droneShip);
+        super.remove();
+    }
+
+    @Override
+    void forget() {
         dronePool.forget(this);
     }
 
@@ -134,6 +123,7 @@ abstract class SingleShotDrone implements DamageDealtModifier, AdvanceableListen
         droneWeapon.setForceFireOneFrame(true);
     }
 
+    @Override
     void advanceState(float amount) {
         if (firing) {
             advanceFiring(amount);

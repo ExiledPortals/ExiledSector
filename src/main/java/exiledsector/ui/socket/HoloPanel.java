@@ -42,7 +42,6 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
 
     protected final CustomPanelAPI hostPanel;
     protected final SocketableHoverTooltip hoverTooltip;
-    private final Class<?> panelOwner;
     private final HoloFrame panelFrame;
     private final List<Runnable> queuedActions = new ArrayList<>();
     protected CustomPanelAPI panelRoot;
@@ -55,11 +54,10 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
     private CustomPanelAPI confirmBlocker;
     private boolean closing;
 
-    HoloPanel(CustomPanelAPI hostPanel, Class<?> owner) {
+    HoloPanel(CustomPanelAPI hostPanel) {
         this.hostPanel = hostPanel;
         this.hoverTooltip = new SocketableHoverTooltip(hostPanel);
-        this.panelOwner = owner;
-        this.panelFrame = new HoloFrame(owner, HoloFrame.Look.VANILLA_HOST);
+        this.panelFrame = new HoloFrame(HoloFrame.Look.VANILLA_HOST);
     }
 
     final void attach(float left, float top, float width, float height) {
@@ -234,7 +232,7 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
         confirmBlocker = Global.getSettings().createCustom(panelWidth, panelHeight, new InputBlocker());
         panelRoot.addComponent(confirmBlocker).inTL(0f, 0f);
         float confirmWidth = panelWidth - PAD * 2f;
-        confirmPanel = Global.getSettings().createCustom(confirmWidth, confirmHeight, new FramedPanelPlugin(panelOwner, this::buttonPressed));
+        confirmPanel = Global.getSettings().createCustom(confirmWidth, confirmHeight, new FramedPanelPlugin(this::buttonPressed));
         TooltipMakerAPI element = confirmPanel.createUIElement(confirmWidth - PAD * 2f, confirmHeight - PAD * 2f, false);
         bodyWriter.accept(element);
         float buttonWidth = (confirmWidth - PAD * 2f - GAP) / 2f;

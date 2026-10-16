@@ -130,7 +130,7 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
     }
 
     <T> ShieldSkillEffect(String magnitudeKey, Class<T> listenerType, Function<ShipAPI, ? extends T> listenerFactory) {
-        this(new ListenerEffect(magnitudeKey, listenerType, listenerFactory));
+        this(new ListenerEffect<>(magnitudeKey, listenerType, listenerFactory));
     }
 
     ShieldSkillEffect(EffectBacking backing) {

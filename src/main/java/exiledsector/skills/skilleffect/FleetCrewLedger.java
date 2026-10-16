@@ -3,6 +3,7 @@ package exiledsector.skills.skilleffect;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
 import exiledsector.PlayerFleet;
 
 import java.util.HashMap;
@@ -33,6 +34,22 @@ public final class FleetCrewLedger {
         public int net() {
             return stolen - sacrificed;
         }
+    }
+
+    static final class Lazy {
+
+        private FleetCrewLedger ledger;
+
+        FleetCrewLedger get() {
+            if (ledger == null) {
+                ledger = forCurrentCombat();
+            }
+            return ledger;
+        }
+    }
+
+    static boolean usesFleetCrew(ShipAPI ship) {
+        return ship.getOwner() == 0 && !ship.isAlly();
     }
 
     static FleetCrewLedger forCurrentCombat() {

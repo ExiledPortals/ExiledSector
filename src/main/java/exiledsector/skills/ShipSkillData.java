@@ -134,6 +134,10 @@ public class ShipSkillData {
         return installedIds;
     }
 
+    public boolean holdsSocketable(String socketableId) {
+        return getSocketedItems().containsValue(socketableId) || getFrameworkSocketedItems().containsValue(socketableId);
+    }
+
     public String getFrameworkSocketedItem(String socketTypeId) {
         return frameworkItemsBySocketType == null ? null : frameworkItemsBySocketType.get(socketTypeId);
     }

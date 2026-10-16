@@ -22,7 +22,7 @@ class HoloFrameTest {
 
     @Test
     void aClosingFrameKeepsBlockingUntilItHasFadedOut() {
-        HoloFrame frame = new HoloFrame(HoloFrameTest.class, HoloFrame.Look.MODAL);
+        HoloFrame frame = new HoloFrame(HoloFrame.Look.MODAL);
         frame.open();
         frame.advance(1f);
         assertEquals(1f, frame.chromeAlpha());
@@ -41,7 +41,7 @@ class HoloFrameTest {
 
     @Test
     void advanceReportsWhetherTheAnimationMoved() {
-        HoloFrame frame = new HoloFrame(HoloFrameTest.class, HoloFrame.Look.PANEL);
+        HoloFrame frame = new HoloFrame(HoloFrame.Look.PANEL);
         frame.openInstantly();
 
         assertFalse(frame.advance(0.1f));

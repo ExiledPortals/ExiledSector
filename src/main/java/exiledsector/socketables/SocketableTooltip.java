@@ -28,29 +28,31 @@ public final class SocketableTooltip {
 
     public static void write(TooltipMakerAPI tooltip, Socketable socketable, HullSize hullSize, Supplier<List<StyledText>> footer,
                              boolean showRollRanges) {
+        writeFrame(tooltip, socketable == null ? null : () -> {
+            SocketableName socketableName = socketable.displayName();
+            tooltip.addTitle(socketableName.title(), socketableName.rarity().color());
+            if (socketableName.baseName() != null) {
+                VanillaText.plainPara(tooltip, socketableName.baseName(), 0f, Misc.getGrayColor());
+            }
+            addLines(tooltip, socketable.headerLines(), Misc.getGrayColor());
+            List<StyledText> effectLines = socketable.effectLines(showRollRanges, hullSize);
+            if (!effectLines.isEmpty()) {
+                tooltip.addSectionHeading(Translation.text("socketable.tooltip.primaryData"), Alignment.MID, PAD);
+                addLines(tooltip, effectLines, Misc.getTextColor());
+            }
+        }, footer);
+    }
+
+    static void writeFrame(TooltipMakerAPI tooltip, Runnable knownItemBody, Supplier<List<StyledText>> footer) {
         I18n.forGameText(() -> {
             tooltip.setTitleOrbitronVeryLarge();
             tooltip.setParaInsigniaVeryLarge();
-            if (socketable == null) {
+            if (knownItemBody == null) {
                 tooltip.addTitle(Translation.text("socketable.unknown"));
             } else {
-                SocketableName socketableName = socketable.displayName();
-                tooltip.addTitle(socketableName.title(), socketableName.rarity().color());
-                if (socketableName.baseName() != null) {
-                    VanillaText.plainPara(tooltip, socketableName.baseName(), 0f, Misc.getGrayColor());
-                }
-                addLines(tooltip, socketable.headerLines(), Misc.getGrayColor());
-                List<StyledText> effectLines = socketable.effectLines(showRollRanges, hullSize);
-                if (!effectLines.isEmpty()) {
-                    tooltip.addSectionHeading(Translation.text("socketable.tooltip.primaryData"), Alignment.MID, PAD);
-                    addLines(tooltip, effectLines, Misc.getTextColor());
-                }
+                knownItemBody.run();
             }
-            float linePad = PAD;
-            for (StyledText line : footer.get()) {
-                VanillaText.addPara(tooltip, line, linePad, Misc.getGrayColor());
-                linePad = LINE_PAD;
-            }
+            addLines(tooltip, footer.get(), Misc.getGrayColor());
             tooltip.setParaFontDefault();
         });
     }

@@ -31,7 +31,6 @@ final class SkillTreeChrome {
     private final String readoutTooltipBody;
     private final String storageTooltipTitle = Translation.text("ui.socketStorage.title");
     private final String storageTooltipHint = Translation.text("ui.socketStorage.hint");
-    private final BorderedPanel shipCardPanel = new BorderedPanel(SkillTreeChrome.class);
     private final ChromeVisibility visibility = new ChromeVisibility();
     private final float shipCardHeight;
     private boolean statsHiddenBySidePanel;
@@ -143,7 +142,7 @@ final class SkillTreeChrome {
         socketPlacement.renderButton(mouseX, mouseY, alphaMult * visibility.alpha(CanvasMode.Chrome.STORAGE_BUTTON),
                 mode.enables(CanvasMode.Chrome.STORAGE_BUTTON));
         ScreenRect frame = shipCardFrame(canvasPosition);
-        shipCardPanel.draw(frame.left(), frame.bottom(), frame.width(), frame.height(), alphaMult);
+        BorderedPanel.draw(frame.left(), frame.bottom(), frame.width(), frame.height(), alphaMult);
     }
 
     void renderTooltips(PositionAPI canvasPosition, CanvasMode mode, float mouseX, float mouseY, float alphaMult) {

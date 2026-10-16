@@ -12,7 +12,7 @@ final class CrewStealListener extends ShipCombatListener implements AdvanceableL
 
     private final IntervalUtil checkInterval = new IntervalUtil(CHECK_SECONDS, CHECK_SECONDS);
     private final NearbyWrecks wrecks;
-    private FleetCrewLedger crewLedger;
+    private final FleetCrewLedger.Lazy crewLedger = new FleetCrewLedger.Lazy();
 
     CrewStealListener(ShipAPI ownerShip) {
         super(ownerShip);
@@ -21,7 +21,7 @@ final class CrewStealListener extends ShipCombatListener implements AdvanceableL
 
     @Override
     public void advance(float amount) {
-        if (!stealsForTheFleet() || !ownerIsAliveNotHulk()) {
+        if (!FleetCrewLedger.usesFleetCrew(ownerShip) || !ownerIsAliveNotHulk()) {
             return;
         }
         checkInterval.advance(amount);
@@ -34,15 +34,8 @@ final class CrewStealListener extends ShipCombatListener implements AdvanceableL
             return;
         }
         for (ShipAPI wreck : wrecks.newWithin(range)) {
-            if (crewLedger == null) {
-                crewLedger = FleetCrewLedger.forCurrentCombat();
-            }
-            crewLedger.credit(wreck, skeletonCrew(wreck) * percent / 100f);
+            crewLedger.get().credit(wreck, skeletonCrew(wreck) * percent / 100f);
         }
-    }
-
-    private boolean stealsForTheFleet() {
-        return ownerShip.getOwner() == 0 && !ownerShip.isAlly();
     }
 
     private static boolean isCrewedHull(ShipAPI other) {

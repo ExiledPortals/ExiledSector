@@ -2,7 +2,6 @@ package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
-import exiledsector.ui.util.FallbackSupport;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -60,12 +59,9 @@ abstract class SingleShotDrones<D extends SingleShotDrone> {
     }
 
     private D create(WeaponAPI weapon) {
-        D created = FallbackSupport.getOrFallback(
-                () -> WeaponDroneFactory.createSingleShot(firingShip, weapon, this::build),
-                null, log, effectName + " could not build a drone for weapon " + weapon.getSpec().getWeaponId()
-                        + "; that weapon won't " + effectVerb + " for the rest of the session");
+        D created = WeaponDroneShell.buildOrMarkUnsupported(() -> WeaponDroneFactory.createSingleShot(firingShip, weapon, this::build),
+                weapon, weapon.getSpec().getWeaponId(), WeaponDroneFactory::markProjectileUnsupported, log, effectName, "won't " + effectVerb);
         if (created == null) {
-            WeaponDroneFactory.markProjectileUnsupported(weapon);
             return null;
         }
         drones.add(created);

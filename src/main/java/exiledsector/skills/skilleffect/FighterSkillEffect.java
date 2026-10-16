@@ -280,12 +280,7 @@ public enum FighterSkillEffect implements BackedSkillEffect {
             if (grid == null || factor == 1f) {
                 return;
             }
-            float[][] cells = grid.getGrid();
-            for (int x = 0; x < cells.length; x++) {
-                for (int y = 0; y < cells[x].length; y++) {
-                    grid.setArmorValue(x, y, grid.getArmorValue(x, y) * factor);
-                }
-            }
+            ArmorCells.update(grid, current -> current * factor);
         }
     }
 }

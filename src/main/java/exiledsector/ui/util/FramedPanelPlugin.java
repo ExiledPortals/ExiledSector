@@ -10,18 +10,16 @@ import java.util.function.Consumer;
 
 public final class FramedPanelPlugin extends BaseCustomUIPanelPlugin {
 
-    private final BorderedPanel panelFrame;
     private final Consumer<Object> buttonListener;
     private PositionAPI panelPosition;
     private int hotkeyCode = -1;
     private BooleanSupplier hotkeyAction;
 
-    public FramedPanelPlugin(Class<?> owner) {
-        this(owner, id -> { });
+    public FramedPanelPlugin() {
+        this(id -> { });
     }
 
-    public FramedPanelPlugin(Class<?> owner, Consumer<Object> buttonListener) {
-        this.panelFrame = new BorderedPanel(owner);
+    public FramedPanelPlugin(Consumer<Object> buttonListener) {
         this.buttonListener = buttonListener;
     }
 
@@ -33,7 +31,7 @@ public final class FramedPanelPlugin extends BaseCustomUIPanelPlugin {
     @Override
     public void renderBelow(float alphaMult) {
         if (panelPosition != null) {
-            panelFrame.draw(panelPosition.getX(), panelPosition.getY(), panelPosition.getWidth(), panelPosition.getHeight(), alphaMult);
+            BorderedPanel.draw(panelPosition.getX(), panelPosition.getY(), panelPosition.getWidth(), panelPosition.getHeight(), alphaMult);
         }
     }
 

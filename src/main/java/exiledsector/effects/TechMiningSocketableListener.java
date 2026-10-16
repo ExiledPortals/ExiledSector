@@ -3,7 +3,6 @@ package exiledsector.effects;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
-import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.listeners.EconomyTickListener;
@@ -14,6 +13,7 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.Seeds;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
+import exiledsector.skills.CommodityNames;
 import exiledsector.socketables.HullUpgradeData;
 import exiledsector.socketables.Socketable;
 import exiledsector.socketables.SocketableDrops;
@@ -106,8 +106,7 @@ public class TechMiningSocketableListener implements EconomyTickListener {
         }
         for (Map.Entry<String, Integer> material : foundMaterials.entrySet()) {
             storageCargo.addCommodity(material.getKey(), material.getValue());
-            CommoditySpecAPI commoditySpec = Global.getSettings().getCommoditySpec(material.getKey());
-            String commodityName = commoditySpec == null ? material.getKey() : commoditySpec.getName();
+            String commodityName = CommodityNames.displayName(material.getKey());
             announce(minedMarket, storageMarket, () -> Translation.msg("socketable.techMining.material").arg("count", material.getValue())
                     .arg("name", commodityName).text());
         }

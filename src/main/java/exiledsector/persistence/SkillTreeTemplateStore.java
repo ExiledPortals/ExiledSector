@@ -1,6 +1,5 @@
 package exiledsector.persistence;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.TemplateCodec;
@@ -140,23 +139,11 @@ public final class SkillTreeTemplateStore {
         }
     }
 
-    // persistentData is a raw Object map; this key is only ever written as Map<String, String>
-    @SuppressWarnings("unchecked")
     private static Map<String, String> storedTemplates(boolean createIfMissing) {
-        Map<String, Object> persistentData = Global.getSector().getPersistentData();
-        if (createIfMissing) {
-            return (Map<String, String>) persistentData.computeIfAbsent(TEMPLATES_KEY, key -> new LinkedHashMap<String, String>());
-        }
-        return persistentData.get(TEMPLATES_KEY) instanceof Map<?, ?> storedMap ? (Map<String, String>) storedMap : null;
+        return createIfMissing ? SaveData.getOrCreate(TEMPLATES_KEY, LinkedHashMap::new) : SaveData.findOrNull(TEMPLATES_KEY, Map.class);
     }
 
-    // persistentData is a raw Object map; this key is only ever written as Map<String, String>
-    @SuppressWarnings("unchecked")
     private static Map<String, String> storedAssignments(boolean createIfMissing) {
-        Map<String, Object> persistentData = Global.getSector().getPersistentData();
-        if (createIfMissing) {
-            return (Map<String, String>) persistentData.computeIfAbsent(ASSIGNMENTS_KEY, key -> new HashMap<String, String>());
-        }
-        return persistentData.get(ASSIGNMENTS_KEY) instanceof Map<?, ?> storedMap ? (Map<String, String>) storedMap : null;
+        return createIfMissing ? SaveData.getOrCreate(ASSIGNMENTS_KEY, HashMap::new) : SaveData.findOrNull(ASSIGNMENTS_KEY, Map.class);
     }
 }

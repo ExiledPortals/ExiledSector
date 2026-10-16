@@ -28,7 +28,7 @@ final class TerrifyingPresenceListener extends ShipCombatListener implements Adv
             return;
         }
         float penalty = isPresent() ? magnitude(ACCURACY_PENALTY_PERCENT_KEY) / 100f : 0f;
-        Set<ShipAPI> inRange = penalty > 0f ? new HashSet<>(CombatQueries.shipsMatching(this::isTerrified)) : new HashSet<>();
+        Set<ShipAPI> inRange = penalty > 0f ? new HashSet<>(CombatQueries.shipsNear(ownerShip.getLocation(), RANGE, this::isTerrified)) : new HashSet<>();
         for (ShipAPI previous : affectedEnemies) {
             if (!inRange.contains(previous)) {
                 previous.getMutableStats().getAutofireAimAccuracy().unmodify(modId);

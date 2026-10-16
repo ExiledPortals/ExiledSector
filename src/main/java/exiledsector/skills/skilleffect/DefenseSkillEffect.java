@@ -37,32 +37,8 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
     },
     BREAK_PROBABILITY_PERCENT(PERCENT, stat(MutableShipStatsAPI::getBreakProb), "stat.chanceOfThisShipBreakingApartWhenDestroyed", true),
     ARMOR_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getArmorBonus), "stat.armor", false),
-    ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD {
-        @Override
-        public boolean lowerIsBetter() {
-            return true;
-        }
-
-        @Override
-        public boolean isMultiplicative() {
-            return true;
-        }
-
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getArmorDamageTakenMult().modifyMult(modId, SkillEffectSupport.compoundMultPerDMod(stats, magnitude));
-        }
-
-        @Override
-        public boolean supportsTemporaryGating() {
-            return true;
-        }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return StatMode.MULT.describeStat(magnitude, "stat.armorDamageTakenPerDMod");
-        }
-    },
+    ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD(new PerDModMultEffect(liveStat(MutableShipStatsAPI::getArmorDamageTakenMult),
+            "stat.armorDamageTakenPerDMod", true)),
     ARMOR_FLAT_FOR_LOW_BASE_ARMOR {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {

@@ -1135,7 +1135,7 @@ class SkillEffectTest {
     @Test
     void beamDamageHardFluxPercentAddsAListenerOnce() {
         ShipAPI ship = mock(ShipAPI.class);
-        when(ship.hasListenerOfClass(any())).thenReturn(false);
+        when(ship.getListeners(any())).thenReturn(List.of());
 
         ShieldSkillEffect.BEAM_WEAPON_HARD_FLUX_PERCENT.applyAfterShipCreation(ship, "mod_id", 50f);
 
@@ -1145,7 +1145,7 @@ class SkillEffectTest {
     @Test
     void beamDamageHardFluxPercentDoesNotDuplicateTheListener() {
         ShipAPI ship = mock(ShipAPI.class);
-        when(ship.hasListenerOfClass(any())).thenReturn(true);
+        when(ship.getListeners(any())).thenReturn(List.of(new Object()));
 
         ShieldSkillEffect.BEAM_WEAPON_HARD_FLUX_PERCENT.applyAfterShipCreation(ship, "mod_id", 50f);
 
@@ -1168,7 +1168,7 @@ class SkillEffectTest {
     @Test
     void phaseAnchorEmergencyDiveAddsAListenerOnce() {
         ShipAPI ship = mock(ShipAPI.class);
-        when(ship.hasListenerOfClass(any())).thenReturn(false);
+        when(ship.getListeners(any())).thenReturn(List.of());
 
         PhaseSkillEffect.PHASE_ANCHOR_EMERGENCY_DIVE.applyAfterShipCreation(ship, "mod_id", 100f);
 
@@ -1178,7 +1178,7 @@ class SkillEffectTest {
     @Test
     void phaseAnchorEmergencyDiveDoesNotDuplicateTheListener() {
         ShipAPI ship = mock(ShipAPI.class);
-        when(ship.hasListenerOfClass(any())).thenReturn(true);
+        when(ship.getListeners(any())).thenReturn(List.of(new Object()));
 
         PhaseSkillEffect.PHASE_ANCHOR_EMERGENCY_DIVE.applyAfterShipCreation(ship, "mod_id", 100f);
 
@@ -1197,7 +1197,7 @@ class SkillEffectTest {
         when(ship.getMutableStats()).thenReturn(stats);
         when(stats.getDynamic()).thenReturn(dynamic);
         when(dynamic.getValue("exiledSector_phaseAnchorCrPenaltyPercent", 0f)).thenReturn(magnitude);
-        when(ship.hasListenerOfClass(any())).thenReturn(false);
+        when(ship.getListeners(any())).thenReturn(List.of());
         PhaseSkillEffect.PHASE_ANCHOR_EMERGENCY_DIVE.applyAfterShipCreation(ship, "mod_id", magnitude);
         ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
         verify(ship).addListener(captor.capture());
@@ -1412,7 +1412,7 @@ class SkillEffectTest {
     @Test
     void beamSplitTargetsFlatAddsAListenerOnce() {
         ShipAPI ship = mock(ShipAPI.class);
-        when(ship.hasListenerOfClass(any())).thenReturn(false);
+        when(ship.getListeners(any())).thenReturn(List.of());
 
         CombatSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.applyAfterShipCreation(ship, "mod_id", 1f);
 
@@ -1422,7 +1422,7 @@ class SkillEffectTest {
     @Test
     void beamSplitTargetsFlatDoesNotDuplicateTheListener() {
         ShipAPI ship = mock(ShipAPI.class);
-        when(ship.hasListenerOfClass(any())).thenReturn(true);
+        when(ship.getListeners(any())).thenReturn(List.of(new Object()));
 
         CombatSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.applyAfterShipCreation(ship, "mod_id", 1f);
 
@@ -1430,7 +1430,7 @@ class SkillEffectTest {
     }
 
     private DamageDealtModifier captureBeamSplitListener(ShipAPI ship) {
-        when(ship.hasListenerOfClass(any())).thenReturn(false);
+        when(ship.getListeners(any())).thenReturn(List.of());
         CombatSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.applyAfterShipCreation(ship, "mod_id", 1f);
         ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
         verify(ship).addListener(captor.capture());

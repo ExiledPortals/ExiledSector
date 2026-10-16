@@ -32,16 +32,14 @@ public final class SocketTypeMigration {
         for (ShipSkillData shipData : shipDataById.values()) {
             for (Map.Entry<String, String> socketedEntry : List.copyOf(shipData.getSocketedItems().entrySet())) {
                 Socketable socketable = store.find(socketedEntry.getValue());
-                SocketType socketType = socketable == null ? null : socketable.kind();
-                if (socketType != null && socketType != SocketType.SUBROUTINE) {
+                if (socketable != null && socketable.kind() != null && !SocketCustody.fitsTreeSocket(socketable)) {
                     shipData.unsocketItem(socketedEntry.getKey());
                     returnedItems.add(socketable);
                 }
             }
             for (Map.Entry<String, String> slotEntry : List.copyOf(shipData.getFrameworkSocketedItems().entrySet())) {
                 Socketable socketable = store.find(slotEntry.getValue());
-                if (socketable != null && socketable.kind() != null
-                        && !socketable.canSocketInto(SocketType.byIdOrNull(slotEntry.getKey()))) {
+                if (socketable != null && socketable.kind() != null && !SocketCustody.fitsFrameworkSocket(socketable, slotEntry.getKey())) {
                     shipData.unsocketFrameworkItem(slotEntry.getKey());
                     returnedItems.add(socketable);
                 }

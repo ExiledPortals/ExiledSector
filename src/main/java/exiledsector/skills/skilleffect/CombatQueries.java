@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.BoundsAPI;
 import com.fs.starfarer.api.combat.CollisionClass;
 import com.fs.starfarer.api.combat.CollisionGridAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
+import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -39,6 +40,10 @@ final class CombatQueries {
 
     static boolean withinRadius(Vector2f a, Vector2f b, float radius) {
         return distanceSquared(a, b) <= radius * radius;
+    }
+
+    static float hitDamage(DamageAPI damage) {
+        return damage.isDps() ? damage.getDamage() * damage.getDpsDuration() : damage.getDamage();
     }
 
     static List<ShipAPI> shipsMatching(Predicate<ShipAPI> filter) {

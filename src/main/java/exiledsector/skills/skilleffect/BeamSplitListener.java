@@ -80,8 +80,7 @@ final class BeamSplitListener extends ShipCombatListener implements DamageDealtM
     }
 
     private void simulateSplit(BeamAPI beam, DamageAPI damage, Vector2f point, List<ShipAPI> splitTargets, float share) {
-        float tickDamage = damage.isDps() ? damage.getDamage() * damage.getDpsDuration() : damage.getDamage();
-        float perTargetDamage = tickDamage * share;
+        float perTargetDamage = CombatQueries.hitDamage(damage) * share;
         float perTargetEmp = perTargetDamage * empToDamageRatio(beam.getWeapon());
         CombatEngineAPI engine = Global.getCombatEngine();
         processingSplit = true;

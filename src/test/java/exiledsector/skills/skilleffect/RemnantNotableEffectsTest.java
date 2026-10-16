@@ -2,6 +2,7 @@ package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ArmorGridAPI;
+import com.fs.starfarer.api.combat.CollisionGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamagingProjectileAPI;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -194,6 +196,12 @@ class RemnantNotableEffectsTest {
         verify(grid, never()).setArmorValue(anyInt(), anyInt(), anyFloat());
     }
 
+    private static void shipGridHolds(CombatEngineAPI engine, List<ShipAPI> ships) {
+        CollisionGridAPI shipGrid = mock(CollisionGridAPI.class);
+        when(engine.getShipGrid()).thenReturn(shipGrid);
+        when(shipGrid.getCheckIterator(any(), anyFloat(), anyFloat())).thenAnswer(invocation -> new ArrayList<Object>(ships).iterator());
+    }
+
     private static ShipAPI enemyAt(Vector2f location, MutableStat accuracy) {
         ShipAPI enemy = mock(ShipAPI.class);
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
@@ -214,8 +222,7 @@ class RemnantNotableEffectsTest {
         MutableStat accuracy = mock(MutableStat.class);
         ShipAPI enemy = enemyAt(enemyLocation, accuracy);
         CombatEngineAPI engine = mock(CombatEngineAPI.class);
-        List<ShipAPI> ships = new ArrayList<>(List.of(ship, enemy));
-        when(engine.getShips()).thenReturn(ships);
+        shipGridHolds(engine, List.of(ship, enemy));
 
         try (MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
             global.when(Global::getCombatEngine).thenReturn(engine);
@@ -238,7 +245,7 @@ class RemnantNotableEffectsTest {
         MutableStat accuracy = mock(MutableStat.class);
         ShipAPI enemy = enemyAt(new Vector2f(100f, 0f), accuracy);
         CombatEngineAPI engine = mock(CombatEngineAPI.class);
-        when(engine.getShips()).thenReturn(List.of(ship, enemy));
+        shipGridHolds(engine, List.of(ship, enemy));
 
         try (MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
             global.when(Global::getCombatEngine).thenReturn(engine);

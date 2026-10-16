@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import org.apache.log4j.Logger;
 
+import exiledsector.persistence.SaveData;
 import exiledsector.skills.ShipHullSizes;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,8 +32,7 @@ public final class SocketableStore {
     private transient int upgradeRevision;
 
     public static SocketableStore get() {
-        Map<String, Object> persistentData = Global.getSector().getPersistentData();
-        return (SocketableStore) persistentData.computeIfAbsent(DATA_KEY, key -> new SocketableStore());
+        return SaveData.getOrCreate(DATA_KEY, SocketableStore::new);
     }
 
     public static Socketable lookup(String socketableId) {

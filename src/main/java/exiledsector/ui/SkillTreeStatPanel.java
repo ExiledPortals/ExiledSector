@@ -50,7 +50,7 @@ final class SkillTreeStatPanel {
     private static final float TOGGLE_GAP = 8f;
 
     private final FleetMemberAPI member;
-    private final HoloFrame panelFrame = new HoloFrame(SkillTreeStatPanel.class, HoloFrame.Look.PANEL);
+    private final HoloFrame panelFrame = new HoloFrame(HoloFrame.Look.PANEL);
     private final SkillTreeUiButton toggleButton = new SkillTreeUiButton("");
     private final String showLabel = Translation.text("ui.stats.show");
     private final String hideLabel = Translation.text("ui.stats.hide");

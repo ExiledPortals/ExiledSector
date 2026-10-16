@@ -71,7 +71,7 @@ public final class HullUpgradePanel extends HoloPanel {
     private TooltipMakerAPI listElement;
 
     private HullUpgradePanel(CustomPanelAPI hostPanel, View view, Listener panelListener) {
-        super(hostPanel, HullUpgradePanel.class);
+        super(hostPanel);
         this.view = view;
         this.panelListener = panelListener;
     }

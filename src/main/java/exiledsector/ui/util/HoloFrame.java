@@ -28,12 +28,10 @@ public final class HoloFrame {
     private static final float BACKDROP_ALPHA = 0.55f;
     private static final Color BACKDROP_COLOR = Color.BLACK;
 
-    private final BorderedPanel borderedPanel;
     private final HoloTransition holoTransition = new HoloTransition();
     private final Look look;
 
-    public HoloFrame(Class<?> owner, Look look) {
-        this.borderedPanel = new BorderedPanel(owner);
+    public HoloFrame(Look look) {
         this.look = look;
     }
 
@@ -100,12 +98,12 @@ public final class HoloFrame {
         }
         float borderAlpha = look.borderFadesWithContent ? contentAlpha * alphaMult : alphaMult;
         if (!look.revealSweep) {
-            borderedPanel.draw(left, bottom, width, height, borderAlpha);
+            BorderedPanel.draw(left, bottom, width, height, borderAlpha);
             renderContent(left, bottom, width, height, alphaMult, content);
             return;
         }
         try (GlScope clip = holoTransition.reveal(left, bottom, width, height)) {
-            borderedPanel.draw(left, bottom, width, height, borderAlpha);
+            BorderedPanel.draw(left, bottom, width, height, borderAlpha);
             renderContent(left, bottom, width, height, alphaMult, content);
         }
         holoTransition.drawRevealLine(left, bottom, width, height, accent, alphaMult);

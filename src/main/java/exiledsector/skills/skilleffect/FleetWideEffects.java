@@ -146,7 +146,7 @@ public final class FleetWideEffects {
             phaseSensors[i] = phaseSensorValues.get(i);
         }
 
-        int topShips = Global.getSettings().getInt("maxSensorShips");
+        int topShips = maxSensorShips();
         float totalProfile = PhaseField.getTopKValuesSum(profiles, topShips);
         float totalPhaseSensors = PhaseField.getTopKValuesSum(phaseSensors, topShips);
         float total = Math.max(totalProfile + totalPhaseSensors, 1f);

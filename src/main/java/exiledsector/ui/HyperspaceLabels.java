@@ -22,34 +22,20 @@ final class HyperspaceLabels {
     private static final Color TEXT_COLOR = SkillTreePanelStyle.TOOLTIP_TITLE_COLOR;
     private static final Color HOVER_COLOR = SkillTreePanelStyle.GLOW_COLOR;
 
-    private final BorderedPanel labelPanel = new BorderedPanel(HyperspaceLabels.class);
     private final Map<String, TextLabel> regionTexts = new HashMap<>();
-    private int textAlpha = -1;
-    private Color textColor = TEXT_COLOR;
-    private Color hoverColor = HOVER_COLOR;
 
     void render(TreeViewport viewport, List<HyperspaceAnchor> anchors, float mapStarRadius, float mapAmount, HyperspaceAnchor hovered,
                 float alphaMult) {
         if (alphaMult <= 0f) {
             return;
         }
-        int alpha = Math.round(255f * Math.min(1f, alphaMult));
-        if (alpha != textAlpha) {
-            textAlpha = alpha;
-            textColor = withAlpha(TEXT_COLOR, alpha);
-            hoverColor = withAlpha(HOVER_COLOR, alpha);
-        }
         for (HyperspaceAnchor anchor : anchors) {
             TextLabel labelText = text(anchor);
             ScreenRect labelBox = box(viewport, anchor, mapStarRadius, mapAmount, labelText.width());
-            labelPanel.draw(labelBox.left(), labelBox.bottom(), labelBox.width(), labelBox.height(), alphaMult);
-            labelText.setColor(anchor.equals(hovered) ? hoverColor : textColor);
+            BorderedPanel.draw(labelBox.left(), labelBox.bottom(), labelBox.width(), labelBox.height(), alphaMult);
+            labelText.setColor(anchor.equals(hovered) ? HOVER_COLOR : TEXT_COLOR).setAlpha(alphaMult);
             labelText.draw(labelBox.left() + PADDING_X, labelBox.bottom() + labelBox.height() - PADDING_Y);
         }
-    }
-
-    private static Color withAlpha(Color color, int alpha) {
-        return new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
     }
 
     HyperspaceAnchor anchorAt(TreeViewport viewport, List<HyperspaceAnchor> anchors, float mapStarRadius, float mapAmount, float x, float y) {

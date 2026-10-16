@@ -105,7 +105,7 @@ public final class PhantomHullMods {
 
     static String providingNodeName(ShipAPI ship, String hullModId) {
         if (ship == null) return null;
-        ShipSkillData shipData = SkillDataResolver.resolve(ship.getFleetMember(), ship.getVariant());
+        ShipSkillData shipData = SkillDataResolver.resolve(SkillTreeHullMod.memberOf(ship), ship.getVariant());
         if (shipData == null) return null;
         for (AllocatedNode allocated : AllocatedNode.of(shipData)) {
             if (allocated.effectiveType().getPhantomHullModIds().contains(hullModId)) {

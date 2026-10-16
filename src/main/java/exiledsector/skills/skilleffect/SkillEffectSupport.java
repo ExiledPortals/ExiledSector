@@ -13,6 +13,7 @@ import com.fs.starfarer.api.loading.HullModSpecAPI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 final class SkillEffectSupport {
 
@@ -38,10 +39,29 @@ final class SkillEffectSupport {
         return 1f + magnitude / 100f;
     }
 
-    static void ensureListener(ShipAPI ship, Class<?> listenerType, Function<ShipAPI, ?> listenerFactory) {
-        if (!ship.hasListenerOfClass(listenerType)) {
-            ship.addListener(listenerFactory.apply(ship));
+    static <T> T ensureListener(ShipAPI ship, Class<T> listenerType, Function<ShipAPI, ? extends T> listenerFactory) {
+        List<T> existing = ship.getListeners(listenerType);
+        if (existing != null && !existing.isEmpty()) {
+            return existing.get(0);
         }
+        T created = listenerFactory.apply(ship);
+        ship.addListener(created);
+        return created;
+    }
+
+    static <T> T existingEngineListener(Class<T> listenerType) {
+        List<T> existing = Global.getCombatEngine().getListenerManager().getListeners(listenerType);
+        return existing.isEmpty() ? null : existing.get(0);
+    }
+
+    static <T> T ensureEngineListener(Class<T> listenerType, Supplier<? extends T> listenerFactory) {
+        T existing = existingEngineListener(listenerType);
+        if (existing != null) {
+            return existing;
+        }
+        T created = listenerFactory.get();
+        Global.getCombatEngine().getListenerManager().addListener(created);
+        return created;
     }
 
     static float compoundMultPerDMod(MutableShipStatsAPI stats, float magnitudePerDMod) {

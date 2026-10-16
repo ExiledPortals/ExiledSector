@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
@@ -86,8 +87,12 @@ public final class SocketableDrops {
     }
 
     public static boolean hasRule(String siteId) {
+        return activeRule(siteId) != null;
+    }
+
+    private static Rule activeRule(String siteId) {
         Rule rule = siteId == null ? null : RULES.get().get(siteId);
-        return rule != null && (!rule.otherMod() || SalvageSiteCompat.dropsEnabled());
+        return rule == null || rule.otherMod() && !SalvageSiteCompat.dropsEnabled() ? null : rule;
     }
 
     public static List<SocketableItemData> roll(String siteId, Random random) {
@@ -100,20 +105,11 @@ public final class SocketableDrops {
 
     public static List<SocketableItemData> roll(String siteId, Random random, float chanceMult,
                                                 Predicate<SocketableDefinition> uniqueAllowed) {
-        List<SocketableItemData> droppedItems = new ArrayList<>();
-        Rule rule = siteId == null ? null : RULES.get().get(siteId);
-        if (rule == null || rule.otherMod() && !SalvageSiteCompat.dropsEnabled()) {
-            return droppedItems;
+        Rule rule = activeRule(siteId);
+        if (rule == null) {
+            return new ArrayList<>();
         }
-        for (float chance : rule.chances()) {
-            if (random.nextFloat() >= chance * chanceMult) {
-                break;
-            }
-            SocketableDefinition basicDefinition = pickBasic(random);
-            if (basicDefinition != null) {
-                droppedItems.add(SocketableItemData.rolled(basicDefinition, random.nextLong()));
-            }
-        }
+        List<SocketableItemData> droppedItems = rollCascade(rule, random, chanceMult, SocketableDrops::pickBasic);
         if (random.nextFloat() < rule.uniqueChance() * chanceMult) {
             SocketableDefinition uniqueDefinition = pickUnique(random, uniqueAllowed);
             if (uniqueDefinition != null) {
@@ -129,8 +125,8 @@ public final class SocketableDrops {
 
     public static Map<String, Integer> rollMaterials(String siteId, Random random, float chanceMult) {
         Map<String, Integer> droppedMaterials = new LinkedHashMap<>();
-        Rule rule = siteId == null ? null : RULES.get().get(siteId);
-        if (rule == null || rule.chances().isEmpty() || rule.otherMod() && !SalvageSiteCompat.dropsEnabled()) {
+        Rule rule = activeRule(siteId);
+        if (rule == null || rule.chances().isEmpty()) {
             return droppedMaterials;
         }
         int partsFound = 0;
@@ -169,7 +165,7 @@ public final class SocketableDrops {
     }
 
     public static boolean canBeSynthesised(SocketableDefinition definition) {
-        return definition.kind() == SocketType.SUBROUTINE && !definition.unique() && definition.rarity() > 0f && SAFE_ID.matcher(definition.id()).matches();
+        return definition.kind() == SocketType.SUBROUTINE && !definition.unique() && isDroppable(definition);
     }
 
     public record FrameworkLoot(List<SocketableItemData> items, List<HullUpgradeData> upgrades) {
@@ -182,25 +178,31 @@ public final class SocketableDrops {
     }
 
     public static FrameworkLoot rollFrameworkLoot(String siteId, Random random, float chanceMult) {
-        Rule rule = siteId == null ? null : RULES.get().get(siteId);
-        if (rule == null || rule.chances().isEmpty() || rule.otherMod() && !SalvageSiteCompat.dropsEnabled()) {
+        Rule rule = activeRule(siteId);
+        if (rule == null || rule.chances().isEmpty()) {
             return FrameworkLoot.NONE;
         }
-        List<SocketableItemData> droppedItems = new ArrayList<>();
-        for (float chance : rule.chances()) {
-            if (random.nextFloat() >= chance * chanceMult) {
-                break;
-            }
-            SocketableDefinition basicDefinition = pickFrameworkBasic(random);
-            if (basicDefinition != null) {
-                droppedItems.add(SocketableItemData.rolled(basicDefinition, random.nextLong()));
-            }
-        }
+        List<SocketableItemData> droppedItems = rollCascade(rule, random, chanceMult, SocketableDrops::pickFrameworkBasic);
         List<HullUpgradeData> droppedUpgrades = new ArrayList<>();
         if (random.nextFloat() < rule.chances().get(0) * chanceMult) {
             droppedUpgrades.add(new HullUpgradeData(HullUpgradeRoller.rollHullSize(random)));
         }
         return new FrameworkLoot(List.copyOf(droppedItems), List.copyOf(droppedUpgrades));
+    }
+
+    private static List<SocketableItemData> rollCascade(Rule rule, Random random, float chanceMult,
+                                                        Function<Random, SocketableDefinition> picker) {
+        List<SocketableItemData> droppedItems = new ArrayList<>();
+        for (float chance : rule.chances()) {
+            if (random.nextFloat() >= chance * chanceMult) {
+                break;
+            }
+            SocketableDefinition basicDefinition = picker.apply(random);
+            if (basicDefinition != null) {
+                droppedItems.add(SocketableItemData.rolled(basicDefinition, random.nextLong()));
+            }
+        }
+        return droppedItems;
     }
 
     public static SocketableDefinition pickFrameworkBasic(Random random) {
@@ -218,7 +220,11 @@ public final class SocketableDrops {
     }
 
     private static boolean isDroppableBasic(SocketableDefinition definition, SocketType socketType) {
-        return definition.kind() == socketType && !definition.unique() && definition.rarity() > 0f && SAFE_ID.matcher(definition.id()).matches();
+        return definition.kind() == socketType && !definition.unique() && isDroppable(definition);
+    }
+
+    private static boolean isDroppable(SocketableDefinition definition) {
+        return definition.rarity() > 0f && SAFE_ID.matcher(definition.id()).matches();
     }
 
     public static SocketableDefinition pickUnique(Random random, Predicate<SocketableDefinition> allowedUniques) {
@@ -228,7 +234,7 @@ public final class SocketableDrops {
     private static SocketableDefinition pick(Random random, Predicate<SocketableDefinition> filter) {
         List<SocketableDefinition> candidates = new ArrayList<>();
         for (SocketableDefinition definition : SocketableDefinitions.all()) {
-            if (filter.test(definition) && definition.rarity() > 0f && SAFE_ID.matcher(definition.id()).matches()) {
+            if (filter.test(definition) && isDroppable(definition)) {
                 candidates.add(definition);
             }
         }

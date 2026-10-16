@@ -11,6 +11,7 @@ import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.skills.CommodityNames;
 import exiledsector.socketables.SocketCurrency;
 import exiledsector.socketables.SocketCustody;
 import exiledsector.socketables.SocketMaterials;
@@ -96,7 +97,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     private String noticeText;
 
     private SocketWorkbenchPanel(CustomPanelAPI hostPanel, Listener workbenchListener) {
-        super(hostPanel, SocketWorkbenchPanel.class);
+        super(hostPanel);
         this.workbenchListener = workbenchListener;
     }
 
@@ -252,7 +253,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     private void use(SocketCurrency currency) {
         SocketMaterials materials = playerMaterials();
         if (materials.count(currency.commodityId()) < 1) {
-            showNotice(Translation.msg("ui.workbench.notice.noneOwned").arg("name", commodityName(currency.commodityId())).text());
+            showNotice(Translation.msg("ui.workbench.notice.noneOwned").arg("name", CommodityNames.displayName(currency.commodityId())).text());
             return;
         }
         if (loadedSocketable == null) {
@@ -264,7 +265,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
                 showNotice(Translation.text("ui.workbench.notice.noOtherUnique"));
                 return;
             }
-            showNotice(Translation.msg("ui.workbench.notice.cannotUse").arg("name", commodityName(currency.commodityId()))
+            showNotice(Translation.msg("ui.workbench.notice.cannotUse").arg("name", CommodityNames.displayName(currency.commodityId()))
                     .arg("target", loadedSocketable.name()).text());
             return;
         }
@@ -430,12 +431,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     }
 
     private static String recipeName(Recipe recipe) {
-        return recipe.currency == null ? Translation.text("ui.workbench.recipe.common.name") : commodityName(recipe.currency.commodityId());
-    }
-
-    private static String commodityName(String commodityId) {
-        CommoditySpecAPI spec = Global.getSettings().getCommoditySpec(commodityId);
-        return spec == null ? commodityId : spec.getName();
+        return recipe.currency == null ? Translation.text("ui.workbench.recipe.common.name") : CommodityNames.displayName(recipe.currency.commodityId());
     }
 
     private void rebuildDetails() {

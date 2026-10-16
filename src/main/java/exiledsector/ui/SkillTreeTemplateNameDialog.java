@@ -24,8 +24,7 @@ final class SkillTreeTemplateNameDialog {
     private static final float BUTTON_HEIGHT = 36f;
     private static final Color PROBLEM_COLOR = SkillTreePanelStyle.NEGATIVE_STAT_COLOR;
 
-    private final HoloFrame modalFrame = new HoloFrame(SkillTreeTemplateNameDialog.class, HoloFrame.Look.MODAL);
-    private final BorderedPanel fieldPanel = new BorderedPanel(SkillTreeTemplateNameDialog.class);
+    private final HoloFrame modalFrame = new HoloFrame(HoloFrame.Look.MODAL);
     private final SkillTreeTextField nameField = new SkillTreeTextField(TemplateNames.MAX_LENGTH,
             SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
     private final SkillTreeUiButton saveButton = new SkillTreeUiButton(Translation.text("ui.template.dialog.save"));
@@ -134,7 +133,7 @@ final class SkillTreeTemplateNameDialog {
         summaryLine.setAlpha(alphaMult).draw(dialogLeft + PADDING, cursorTop);
         cursorTop -= SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE + 12f;
         float fieldBottom = cursorTop - FIELD_HEIGHT;
-        fieldPanel.draw(dialogLeft + PADDING, fieldBottom, WIDTH - PADDING * 2f, FIELD_HEIGHT, alphaMult);
+        BorderedPanel.draw(dialogLeft + PADDING, fieldBottom, WIDTH - PADDING * 2f, FIELD_HEIGHT, alphaMult);
         nameField.render(dialogLeft + PADDING + FIELD_TEXT_PADDING, fieldBottom, WIDTH - (PADDING + FIELD_TEXT_PADDING) * 2f, FIELD_HEIGHT, "", alphaMult);
         if (nameProblem == TemplateNames.Problem.DUPLICATE) {
             problemLine.setAlpha(alphaMult).draw(dialogLeft + PADDING, fieldBottom - 6f);

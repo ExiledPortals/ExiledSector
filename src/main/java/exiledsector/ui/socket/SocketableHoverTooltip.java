@@ -78,7 +78,7 @@ public final class SocketableHoverTooltip {
                       float innerPad, String codexDefinitionId) {
         hide();
         boolean expanded = TooltipExpansion.isExpandedOrHeld();
-        FramedPanelPlugin panelPlugin = new FramedPanelPlugin(SocketableHoverTooltip.class);
+        FramedPanelPlugin panelPlugin = new FramedPanelPlugin();
         if (codexDefinitionId != null) {
             panelPlugin.onKeyDown(Keyboard.KEY_F2, () -> SocketableCodex.open(codexDefinitionId));
         }

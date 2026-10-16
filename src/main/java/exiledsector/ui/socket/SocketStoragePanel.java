@@ -115,7 +115,7 @@ public final class SocketStoragePanel extends HoloPanel {
 
     private SocketStoragePanel(CustomPanelAPI hostPanel, Function<Socketable, String> installedShipLookup, Listener storageListener,
                                SocketType kindFilter) {
-        super(hostPanel, SocketStoragePanel.class);
+        super(hostPanel);
         this.kindFilter = kindFilter;
         this.installedShipLookup = installedShipLookup;
         this.storageListener = storageListener;

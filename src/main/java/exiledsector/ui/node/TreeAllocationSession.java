@@ -567,23 +567,16 @@ public final class TreeAllocationSession {
     }
 
     public boolean installInSocket(SkillNode node, Socketable socketable) {
-        if (isBusy() || !socketable.canSocketInto(node)
-                || SocketCustody.installations(ShipSkillDataManager.all()).containsKey(socketable.id())
-                || !allocator.socketItem(node, socketable.id())) {
-            return false;
-        }
-        refreshAfterAllocation();
-        SkillTreeSounds.socketed();
-        feedback.pulse(node);
-        return true;
+        return apply(() -> socketable.canSocketInto(node)
+                && !SocketCustody.installations(ShipSkillDataManager.all()).containsKey(socketable.id())
+                && allocator.socketItem(node, socketable.id()), () -> {
+            SkillTreeSounds.socketed();
+            feedback.pulse(node);
+        });
     }
 
     public boolean emptySocket(SkillNode node) {
-        if (isBusy() || !allocator.unsocketItem(node)) {
-            return false;
-        }
-        refreshAfterAllocation();
-        return true;
+        return apply(() -> allocator.unsocketItem(node), () -> { });
     }
 
     public List<FrameworkSlots.Slot> frameworkSlots() {
@@ -615,45 +608,31 @@ public final class TreeAllocationSession {
     }
 
     public boolean installUpgrade() {
-        if (isBusy() || !allocator.installUpgrade()) {
-            return false;
-        }
-        refreshAfterAllocation();
-        SkillTreeSounds.socketed();
-        return true;
+        return apply(allocator::installUpgrade, SkillTreeSounds::socketed);
     }
 
     public boolean unlockSocket(SocketType socketType) {
-        if (isBusy() || !allocator.unlockSocket(socketType)) {
-            return false;
-        }
-        refreshAfterAllocation();
-        SkillTreeSounds.socketed();
-        return true;
+        return apply(() -> allocator.unlockSocket(socketType), SkillTreeSounds::socketed);
     }
 
     public boolean lockSocket(SocketType socketType) {
-        if (isBusy() || !allocator.lockSocket(socketType)) {
-            return false;
-        }
-        refreshAfterAllocation();
-        return true;
+        return apply(() -> allocator.lockSocket(socketType), () -> { });
     }
 
     public boolean socketFrameworkItem(SocketType socketType, Socketable socketable) {
-        if (isBusy() || !allocator.socketFrameworkItem(socketType, socketable)) {
-            return false;
-        }
-        refreshAfterAllocation();
-        SkillTreeSounds.socketed();
-        return true;
+        return apply(() -> allocator.socketFrameworkItem(socketType, socketable), SkillTreeSounds::socketed);
     }
 
     public boolean unsocketFrameworkItem(SocketType socketType) {
-        if (isBusy() || !allocator.unsocketFrameworkItem(socketType)) {
+        return apply(() -> allocator.unsocketFrameworkItem(socketType), () -> { });
+    }
+
+    private boolean apply(BooleanSupplier change, Runnable afterChange) {
+        if (isBusy() || !change.getAsBoolean()) {
             return false;
         }
         refreshAfterAllocation();
+        afterChange.run();
         return true;
     }
 

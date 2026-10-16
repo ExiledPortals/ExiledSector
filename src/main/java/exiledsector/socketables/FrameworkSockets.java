@@ -56,7 +56,7 @@ public final class FrameworkSockets {
 
     public static boolean canSocket(ShipSkillData shipData, SocketType socketType, Socketable socketable, Map<String, ShipSkillData> shipDataById) {
         return shipData.isSocketTypeUnlocked(socketType.id()) && socketable.canSocketInto(socketType)
-                && !SocketCustody.installations(shipDataById).containsKey(socketable.id());
+                && !SocketCustody.isInstalled(shipDataById, socketable);
     }
 
     public static boolean socket(ShipSkillData shipData, SocketType socketType, Socketable socketable, Map<String, ShipSkillData> shipDataById) {

@@ -7,28 +7,7 @@ import exiledsector.i18n.StyledText;
 
 public enum WeaponSkillEffect implements BackedSkillEffect {
 
-    WEAPON_DAMAGE_MULT_PER_DMOD {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            float mult = SkillEffectSupport.compoundMultPerDMod(stats, magnitude);
-            WeaponStatFamily.DAMAGE.target(WeaponScope.ALL).apply(stats, modId, StatMode.MULT, (mult - 1f) * 100f);
-        }
-
-        @Override
-        public boolean isMultiplicative() {
-            return true;
-        }
-
-        @Override
-        public boolean supportsTemporaryGating() {
-            return WeaponStatFamily.DAMAGE.target(WeaponScope.ALL).supportsTemporaryGating();
-        }
-
-        @Override
-        public StyledText description(float magnitude) {
-            return StatMode.MULT.describeStat(magnitude, "stat.weaponDamagePerDMod");
-        }
-    },
+    WEAPON_DAMAGE_MULT_PER_DMOD(new PerDModMultEffect(WeaponStatFamily.DAMAGE.target(WeaponScope.ALL), "stat.weaponDamagePerDMod", false)),
     BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_MULT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -100,6 +79,16 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
 
     private static final String LARGE_BALLISTIC_OP_COST_KEY = "large_ballistic_mod";
 
+    private final EffectBacking backing;
+
+    WeaponSkillEffect() {
+        this((EffectBacking) null);
+    }
+
+    WeaponSkillEffect(EffectBacking backing) {
+        this.backing = backing;
+    }
+
     private static void applyBurnDamage(MutableShipStatsAPI stats, String modId, float magnitude) {
         MutableStat burnLevel = stats.getMaxBurnLevel();
         float burnOverDefault = Math.max(0f, burnLevel.getModifiedValue() - burnLevel.getBaseValue());
@@ -113,6 +102,6 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
 
     @Override
     public EffectBacking backing() {
-        return null;
+        return backing;
     }
 }

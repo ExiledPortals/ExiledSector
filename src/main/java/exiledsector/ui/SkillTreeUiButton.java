@@ -19,7 +19,6 @@ final class SkillTreeUiButton {
     private static final float FADE_SECONDS = 0.2f;
     private static final float MAX_FADE_STEP_SECONDS = 0.1f;
 
-    private final BorderedPanel borderPanel = new BorderedPanel(SkillTreeUiButton.class);
     private final TextLabel labelText = new TextLabel(FONT_SIZE, TEXT_COLOR);
     private Color textColor = TEXT_COLOR;
     private ScreenRect buttonBounds = ScreenRect.NONE;
@@ -93,7 +92,7 @@ final class SkillTreeUiButton {
             return;
         }
         alphaMult *= fadeAlpha;
-        borderPanel.draw(buttonBounds.left(), buttonBounds.bottom(), buttonBounds.width(), buttonBounds.height(), alphaMult);
+        BorderedPanel.draw(buttonBounds.left(), buttonBounds.bottom(), buttonBounds.width(), buttonBounds.height(), alphaMult);
         float fillAlpha = 0f;
         if (buttonEnabled && buttonBounds.contains(mouseX, mouseY)) {
             fillAlpha = HOVER_ALPHA;

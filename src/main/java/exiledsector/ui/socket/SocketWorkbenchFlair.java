@@ -50,25 +50,26 @@ final class SocketWorkbenchFlair {
             return;
         }
         try (GlScope scope = GlScope.save(GlScope.DRAW_ATTRIBS)) {
-            renderLayers(cx, cy, radius, accent, subjectColor, iconPath, alpha);
+            renderLayers(scope, cx, cy, radius, accent, subjectColor, iconPath, alpha);
         }
     }
 
-    private void renderLayers(float cx, float cy, float radius, Color accent, Color subjectColor, String iconPath, float alpha) {
+    private void renderLayers(GlScope scope, float cx, float cy, float radius, Color accent, Color subjectColor, String iconPath,
+                              float alpha) {
         float easedLoad = 1f - (1f - loadProgress) * (1f - loadProgress);
         float pulse = 0.5f + 0.5f * (float) Math.sin(elapsedSeconds * 2.2f);
         float half = radius * 0.42f;
         Color coreColor = subjectColor == null ? accent : subjectColor;
 
         drawGrid(cx, cy, radius, accent, alpha);
-        HoloShapes.additive();
+        scope.untextured().additive();
         HoloShapes.radialGlow(cx, cy, half * 0.8f, radius * 1.05f, coreColor, (0.12f + 0.18f * easedLoad) * (0.7f + 0.3f * pulse) * alpha);
         HoloShapes.circle(cx, cy, radius, accent, 1f, 0.25f * alpha);
         HoloShapes.arcSegments(cx, cy, radius - 5f, 12, 0.62f, elapsedSeconds * OUTER_RING_SPEED, 3f, accent, 0.55f * alpha);
         HoloShapes.ticks(cx, cy, radius * 0.8f, 90, 9, 9f, 4f, elapsedSeconds * TICK_RING_SPEED, accent, 0.45f * alpha);
         HoloShapes.arcSegments(cx, cy, radius * 0.66f, 3, 0.2f, elapsedSeconds * SCANNER_SPEED, 2f, coreColor, (0.35f + 0.5f * easedLoad) * alpha);
         arms(cx, cy, half, radius * 0.62f, accent, coreColor, easedLoad, alpha);
-        HoloShapes.normalBlend();
+        scope.normalBlend();
 
         GLDraw.fillQuad(cx - half, cy - half, half * 2f, half * 2f, SOCKET_FILL, alpha);
         GLDraw.innerGlow(cx - half, cy - half, half * 2f, half * 2f, half * 0.5f, coreColor, (0.15f + 0.35f * easedLoad * pulse) * alpha);
@@ -77,7 +78,7 @@ final class SocketWorkbenchFlair {
             float size = half * 2f * (1f - ICON_INSET * 2f);
             SpriteDraw.drawAtCenter(ICONS, iconPath, cx, cy, size, size, Color.WHITE, easedLoad * alpha);
         }
-        HoloShapes.additive();
+        scope.untextured().additive();
         HoloShapes.brackets(cx, cy, half + 6f + (1f - easedLoad) * BRACKET_TRAVEL, half * 0.35f, accent, (0.6f + 0.4f * easedLoad) * alpha);
         if (iconPath != null) {
             scanLine(cx, cy, half, coreColor, easedLoad * alpha);
@@ -87,9 +88,9 @@ final class SocketWorkbenchFlair {
             HoloShapes.circle(cx, cy, half + (radius + 4f - half) * spread, flashColor, 3f, flashProgress * alpha);
             HoloShapes.circle(cx, cy, half + (radius - half) * spread * 0.6f, flashColor, 1.5f, flashProgress * 0.6f * alpha);
             GLDraw.fillQuad(cx - half, cy - half, half * 2f, half * 2f, flashColor, flashProgress * flashProgress * 0.5f * alpha);
-            HoloShapes.additive();
+            scope.untextured().additive();
         }
-        HoloShapes.normalBlend();
+        scope.normalBlend();
     }
 
     private void drawGrid(float cx, float cy, float radius, Color accent, float alpha) {

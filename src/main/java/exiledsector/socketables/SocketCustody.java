@@ -10,6 +10,7 @@ import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import exiledsector.PlayerFleet;
+import exiledsector.persistence.SaveData;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
 import exiledsector.skills.ShipSkillData;
@@ -118,7 +119,7 @@ public final class SocketCustody {
     static boolean isInstalled(Map<String, ShipSkillData> shipDataById, Socketable socketable) {
         String socketableId = socketable.id();
         for (ShipSkillData shipData : shipDataById.values()) {
-            if (shipData.getSocketedItems().containsValue(socketableId) || shipData.getFrameworkSocketedItems().containsValue(socketableId)) {
+            if (shipData.holdsSocketable(socketableId)) {
                 return true;
             }
         }
@@ -128,10 +129,18 @@ public final class SocketCustody {
     public static void markHostsChanged(Socketable socketable) {
         String socketableId = socketable.id();
         for (ShipSkillData shipData : ShipSkillDataManager.all().values()) {
-            if (shipData.getSocketedItems().containsValue(socketableId) || shipData.getFrameworkSocketedItems().containsValue(socketableId)) {
+            if (shipData.holdsSocketable(socketableId)) {
                 shipData.markChanged();
             }
         }
+    }
+
+    static boolean fitsTreeSocket(Socketable socketable) {
+        return socketable.kind() == SocketType.SUBROUTINE;
+    }
+
+    static boolean fitsFrameworkSocket(Socketable socketable, String socketTypeId) {
+        return socketable.canSocketInto(SocketType.byIdOrNull(socketTypeId));
     }
 
     public static boolean unsocketIfMisfit(Socketable socketable) {
@@ -142,13 +151,13 @@ public final class SocketCustody {
         String socketableId = socketable.id();
         for (ShipSkillData shipData : shipDataById.values()) {
             for (Map.Entry<String, String> socketedEntry : List.copyOf(shipData.getSocketedItems().entrySet())) {
-                if (socketedEntry.getValue().equals(socketableId) && socketable.kind() != SocketType.SUBROUTINE) {
+                if (socketedEntry.getValue().equals(socketableId) && !fitsTreeSocket(socketable)) {
                     shipData.unsocketItem(socketedEntry.getKey());
                     return true;
                 }
             }
             for (Map.Entry<String, String> slotEntry : List.copyOf(shipData.getFrameworkSocketedItems().entrySet())) {
-                if (slotEntry.getValue().equals(socketableId) && !socketable.canSocketInto(SocketType.byIdOrNull(slotEntry.getKey()))) {
+                if (slotEntry.getValue().equals(socketableId) && !fitsFrameworkSocket(socketable, slotEntry.getKey())) {
                     shipData.unsocketFrameworkItem(slotEntry.getKey());
                     return true;
                 }
@@ -179,10 +188,8 @@ public final class SocketCustody {
         };
     }
 
-    // persistentData is a raw Object map; this key is only ever written as Set<String>
-    @SuppressWarnings("unchecked")
     private static Set<String> lostInCombat() {
-        return (Set<String>) Global.getSector().getPersistentData().computeIfAbsent(LOST_KEY, key -> new HashSet<String>());
+        return SaveData.getOrCreate(LOST_KEY, HashSet::new);
     }
 
     private static Map<String, FleetMemberAPI> ownedShips() {

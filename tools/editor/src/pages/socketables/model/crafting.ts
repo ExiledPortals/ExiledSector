@@ -1,4 +1,4 @@
-import { csvCell, emptyCsvTable, parseCsvTable, serializeCsvTable, setCsvCell, type CsvTable } from '../../../shared/csv.ts';
+import { csvCell, csvTableFromRows, parseCsvTable, serializeCsvTable, setCsvCell, trimmedCsvCells, type CsvTable } from '../../../shared/csv.ts';
 import { isUnshippedImagePath } from '../../../shared/imagePaths.ts';
 
 export interface CraftingItem {
@@ -30,11 +30,7 @@ export interface CraftingModel {
 
 export function parseCraftingCsv(text: string): { table: CsvTable; rows: CostRow[] } {
   const table = parseCsvTable(text);
-  const rows = table.rows.map((cells) => ({
-    cells,
-    item: csvCell(table, cells, 'item').trim(),
-    partsCost: csvCell(table, cells, 'partsCost').trim(),
-  }));
+  const rows = table.rows.map((cells) => ({ cells, ...trimmedCsvCells(table, cells, ['item', 'partsCost']) }));
   for (const item of CRAFTING_ITEMS) {
     if (item.cost && !rows.some((row) => row.item === item.id)) {
       rows.push({ cells: [], item: item.id, partsCost: '' });
@@ -44,14 +40,7 @@ export function parseCraftingCsv(text: string): { table: CsvTable; rows: CostRow
 }
 
 export function serializeCraftingCsv(table: CsvTable, rows: CostRow[]): string {
-  const out = emptyCsvTable(table);
-  for (const row of rows) {
-    const cells = row.cells.slice();
-    setCsvCell(out, cells, 'item', row.item);
-    setCsvCell(out, cells, 'partsCost', row.partsCost);
-    out.rows.push(cells);
-  }
-  return serializeCsvTable(out);
+  return serializeCsvTable(csvTableFromRows(table, rows, (row) => ({ item: row.item, partsCost: row.partsCost })));
 }
 
 export function commodityRow(commodities: CsvTable, id: string): string[] | undefined {

@@ -77,6 +77,26 @@ export function emptyCsvTable(table: CsvTable): CsvTable {
   return { header: table.header.slice(), rows: [], lineEnding: table.lineEnding };
 }
 
+export function trimmedCsvCells<Column extends string>(table: CsvTable, cells: string[], columns: readonly Column[]): Record<Column, string> {
+  return Object.fromEntries(columns.map((column) => [column, csvCell(table, cells, column).trim()])) as Record<Column, string>;
+}
+
+export function csvTableFromRows<Row extends { cells: string[] }>(
+  table: CsvTable,
+  rows: readonly Row[],
+  columnValues: (row: Row) => Record<string, unknown>,
+): CsvTable {
+  const out = emptyCsvTable(table);
+  for (const row of rows) {
+    const cells = row.cells.slice();
+    for (const [column, value] of Object.entries(columnValues(row))) {
+      setCsvCell(out, cells, column, value);
+    }
+    out.rows.push(cells);
+  }
+  return out;
+}
+
 export function dropCsvColumn(table: CsvTable, column: string): void {
   const index = table.header.indexOf(column);
   if (index < 0) {

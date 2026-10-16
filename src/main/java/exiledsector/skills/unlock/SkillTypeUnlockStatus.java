@@ -8,6 +8,7 @@ import exiledsector.skills.SkillType;
 import org.apache.log4j.Logger;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 public final class SkillTypeUnlockStatus {
 
@@ -22,6 +23,10 @@ public final class SkillTypeUnlockStatus {
             if (isSatisfied(condition, shipData)) return false;
         }
         return true;
+    }
+
+    public static Predicate<SkillType> lockedFor(ShipSkillData shipData) {
+        return skillType -> isLocked(skillType, shipData);
     }
 
     public static boolean isHidden(SkillType skillType, ShipSkillData shipData) {
