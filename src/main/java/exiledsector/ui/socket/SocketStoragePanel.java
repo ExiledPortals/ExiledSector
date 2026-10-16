@@ -626,6 +626,7 @@ public final class SocketStoragePanel extends HoloPanel {
         if (targets.isEmpty()) {
             return;
         }
+        hoverTooltip.hide();
         pendingDisassembly = List.copyOf(targets);
         boolean singleTarget = targets.size() == 1;
         float confirmHeight = singleTarget ? CONFIRM_HEIGHT : BATCH_CONFIRM_HEIGHT;
@@ -797,6 +798,9 @@ public final class SocketStoragePanel extends HoloPanel {
     }
 
     private void showHoverTooltip(SocketStorageRow row, PositionAPI cellPosition) {
+        if (confirmPanel != null) {
+            return;
+        }
         hoverTooltip.show(row, row.socketable(), () -> cellFooter(row), cellPosition);
     }
 

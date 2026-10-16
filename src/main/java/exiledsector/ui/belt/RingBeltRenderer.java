@@ -38,7 +38,7 @@ public final class RingBeltRenderer {
         float imageWidth = texture.getWidth();
         float imageHeight = texture.getHeight();
         float aspectRatio = imageHeight / imageWidth;
-        float tileCount = Math.min(MAX_TILE_COUNT, Math.max(1f, circumference / (thickness * aspectRatio)));
+        float tileCount = Math.min(MAX_TILE_COUNT, Math.max(1f, Math.round(circumference / (thickness * aspectRatio))));
         float texPerSegment = tileCount / segments;
 
         RadialBandGL.begin(texture, band.center().x, band.center().y, GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, color, alphaMult);

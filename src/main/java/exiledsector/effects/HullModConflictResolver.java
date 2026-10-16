@@ -62,8 +62,7 @@ public final class HullModConflictResolver {
 
         variant.removeMod(MagicLibCompat.WARNING_HULLMOD_ID);
         String causeId = stripAttempt.get(1);
-        if (causeId == null || Global.getSettings().getHullModSpec(causeId) == null || !isRemovableConflict(variant, causeId)
-                || variant.getPermaMods().contains(causeId)) {
+        if (causeId == null || Global.getSettings().getHullModSpec(causeId) == null || !isRemovableConflict(variant, causeId)) {
             return false;
         }
         variant.removeMod(causeId);
@@ -75,8 +74,8 @@ public final class HullModConflictResolver {
     }
 
     private static boolean isRemovableConflict(ShipVariantAPI variant, String hullModId) {
-        boolean builtIn = variant.getHullSpec() != null && variant.getHullSpec().isBuiltInMod(hullModId);
-        return variant.hasHullMod(hullModId) && !builtIn && !InstalledHullMods.isInstalledBySkillTree(variant, hullModId);
+        return variant.hasHullMod(hullModId) && InstalledHullMods.isRemovable(variant, hullModId)
+                && !InstalledHullMods.isInstalledBySkillTree(variant, hullModId);
     }
 
     private static SkillType phantomProvider(List<AllocatedNode> allocatedNodes, String hullModId) {

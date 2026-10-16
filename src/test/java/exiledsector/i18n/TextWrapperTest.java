@@ -2,6 +2,7 @@ package exiledsector.i18n;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -43,10 +44,16 @@ class TextWrapperTest {
             float maxWidth = 3f + random.nextInt(40);
             float maxHeight = random.nextInt(5) == 0 ? FONT_SIZE * (1 + random.nextInt(4)) : 10_000f;
             TextWrapper.Metrics metrics = random.nextBoolean() ? ONE_PER_CHAR : VARIABLE;
-            String expected = LazyFontWrapOracle.wrapString(text.toString(), metrics, FONT_SIZE, maxWidth, maxHeight);
+            String expected = linesWithin(LazyFontWrapOracle.wrapString(text.toString(), metrics, FONT_SIZE, maxWidth, maxHeight),
+                    (int) (maxHeight / FONT_SIZE));
             String actual = TextWrapper.wrap(StyledText.of(text.toString()), metrics, FONT_SIZE, maxWidth, maxHeight).plain();
             assertEquals(expected, actual, "text \"" + text + "\" width " + maxWidth + " height " + maxHeight);
         }
+    }
+
+    private static String linesWithin(String wrapped, int maxLines) {
+        String[] lines = wrapped.split("\n", -1);
+        return lines.length <= maxLines ? wrapped : String.join("\n", Arrays.copyOf(lines, maxLines));
     }
 
     @Test
@@ -99,6 +106,13 @@ class TextWrapperTest {
 
         assertEquals("aaaa\nbbbb", wrapped.plain());
         assertTrue(wrapped.spans().isEmpty());
+    }
+
+    @Test
+    void blankLinesStopAtTheLineLimitLikeEveryOtherLine() {
+        assertEquals("a", TextWrapper.wrap(StyledText.of("a\n\n\nb"), ONE_PER_CHAR, 50f, 1).plain());
+        assertEquals("a\n", TextWrapper.wrap(StyledText.of("a\n\n\nb"), ONE_PER_CHAR, 50f, 2).plain());
+        assertEquals("", TextWrapper.wrap(StyledText.of("\n\n\n"), ONE_PER_CHAR, 50f, 0).plain());
     }
 
     @Test

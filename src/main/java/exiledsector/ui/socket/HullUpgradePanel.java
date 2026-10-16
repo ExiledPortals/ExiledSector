@@ -247,7 +247,7 @@ public final class HullUpgradePanel extends HoloPanel {
         CustomPanelAPI cellPanel = Global.getSettings().createCustom(tileWidth, tileWidth + NAME_HEIGHT + STATE_HEIGHT, null);
         TooltipMakerAPI cellElement = cellPanel.createUIElement(tileWidth, tileWidth + NAME_HEIGHT + STATE_HEIGHT, false);
         IconTileCell.Hooks hooks = new IconTileCell.Hooks(() -> queue(this::openConfirm),
-                tilePosition -> queue(() -> showUpgradeTooltip(upgrade, tilePosition)), () -> queue(hoverTooltip::hide));
+                tilePosition -> queue(() -> showUpgradeTooltip(upgrade, tilePosition)), () -> queue(() -> hideTooltipOf(upgrade)));
         cellElement.addCustom(Global.getSettings().createCustom(tileWidth, tileWidth,
                 new IconTileCell(upgrade.iconPath(), SocketableRarity.UNIQUE.color(), blocked, hooks)), 0f);
         addCentredLabel(cellElement, upgrade.name(), blocked ? BLOCKED_TEXT_COLOR : SocketableRarity.UNIQUE.color(), tileWidth);
@@ -283,7 +283,7 @@ public final class HullUpgradePanel extends HoloPanel {
         CustomPanelAPI cellPanel = Global.getSettings().createCustom(tileWidth, tileWidth + NAME_HEIGHT + STATE_HEIGHT, null);
         TooltipMakerAPI cellElement = cellPanel.createUIElement(tileWidth, tileWidth + NAME_HEIGHT + STATE_HEIGHT, false);
         IconTileCell.Hooks hooks = new IconTileCell.Hooks(() -> queue(() -> panelListener.toggleSocket(entry.type())),
-                tilePosition -> queue(() -> showSocketTooltip(entry, tilePosition)), () -> queue(hoverTooltip::hide));
+                tilePosition -> queue(() -> showSocketTooltip(entry, tilePosition)), () -> queue(() -> hideTooltipOf(entry)));
         cellElement.addCustom(Global.getSettings().createCustom(tileWidth, tileWidth, new SocketTypeTile(entry.type(), entry.state(),
                 entry.itemIconPath(), hooks)), 0f);
         boolean blocked = entry.state() != SocketState.UNLOCKED;
@@ -317,12 +317,24 @@ public final class HullUpgradePanel extends HoloPanel {
         label.getPosition().setSize(width, NAME_HEIGHT - LINE_PAD);
     }
 
+    private void hideTooltipOf(Object tooltipKey) {
+        if (hoverTooltip.isShowing(tooltipKey)) {
+            hoverTooltip.hide();
+        }
+    }
+
     private void showUpgradeTooltip(HullUpgradeData upgrade, PositionAPI tilePosition) {
+        if (confirmPanel != null) {
+            return;
+        }
         hoverTooltip.show(upgrade, TOOLTIP_WIDTH, (tooltip, expanded) -> HullUpgradeTooltip.write(tooltip, upgrade,
                 () -> List.of(StyledText.of(upgradeStateText()))), tilePosition);
     }
 
     private void showSocketTooltip(SocketEntry entry, PositionAPI tilePosition) {
+        if (confirmPanel != null) {
+            return;
+        }
         hoverTooltip.show(entry, TOOLTIP_WIDTH, (tooltip, expanded) -> I18n.forGameText(() -> {
             tooltip.setTitleOrbitronVeryLarge();
             tooltip.addTitle(entry.type().displayName(), FrameworkSocketFlair.colorOf(entry.type()));

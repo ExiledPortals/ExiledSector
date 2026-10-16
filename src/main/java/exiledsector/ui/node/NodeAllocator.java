@@ -46,7 +46,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 final class NodeAllocator {
@@ -61,11 +60,11 @@ final class NodeAllocator {
         private final int dataRevision;
         private final Set<String> hiddenNodeIds;
         private final AllocationGate gate;
-        private final BiFunction<AllocationGate.Verdict, AllocationGate, String> describer;
+        private final RefusalDescriber describer;
         private final Map<String, String> reasonsByKey = new HashMap<>();
 
         Snapshot(ShipSkillData skillData, ShipOpBudget opBudget, int statsRevision, Set<String> hiddenNodeIds, AllocationGate gate,
-                 BiFunction<AllocationGate.Verdict, AllocationGate, String> describer) {
+                 RefusalDescriber describer) {
             this.skillData = skillData;
             this.opBudget = opBudget;
             this.statsRevision = statsRevision;
@@ -132,23 +131,23 @@ final class NodeAllocator {
 
         String allocationRefusalReason(SkillNode node, SkillType option) {
             if (option == null) {
-                return reason(node.getId(), gate.allocation(node));
+                return reason(node.getId(), gate.allocation(node), null);
             }
-            return reason(node.getId() + '/' + option.getId(), gate.allocation(node, option));
+            return reason(node.getId() + '/' + option.getId(), gate.allocation(node, option), null);
         }
 
         String optionRefusalReason(SkillNode node, SkillType option) {
             if (!skillData.isAllocated(node.getId())) {
                 return allocationRefusalReason(node, option);
             }
-            return reason(node.getId() + '/' + option.getId(), gate.optionSwitch(node, option));
+            return reason(node.getId() + '/' + option.getId(), gate.optionSwitch(node, option), skillData.itemCharge(node.getId()));
         }
 
-        private String reason(String key, AllocationGate.Verdict verdict) {
+        private String reason(String key, AllocationGate.Verdict verdict, SkillItemCost refund) {
             if (!verdict.worthExplaining()) {
                 return null;
             }
-            return reasonsByKey.computeIfAbsent(key, ignored -> describer.apply(verdict, gate));
+            return reasonsByKey.computeIfAbsent(key, ignored -> describer.describe(verdict, gate, refund));
         }
     }
 
@@ -431,16 +430,20 @@ final class NodeAllocator {
         return spec == null ? BEST_OF_THE_BEST_SKILL_ID : spec.getName();
     }
 
-    private String describe(AllocationGate.Verdict verdict, AllocationGate gate) {
+    interface RefusalDescriber {
+        String describe(AllocationGate.Verdict verdict, AllocationGate gate, SkillItemCost refund);
+    }
+
+    private String describe(AllocationGate.Verdict verdict, AllocationGate gate, SkillItemCost refund) {
         return switch (verdict.refusal()) {
             case NODE_CAP -> Translation.msg("node.block.nodeCap").arg("maxNodes", gate.budget().maxAllocatedNodes()).text();
             case OUT_OF_OP -> Translation.msg("node.block.outOfOp").arg("cost", gate.budget().opCostPerNode()).arg("free", gate.freeOp()).text();
-            case INELIGIBLE -> describe(verdict.block());
+            case INELIGIBLE -> describe(verdict.block(), refund);
             default -> null;
         };
     }
 
-    private String describe(NodeEligibility.Block block) {
+    private String describe(NodeEligibility.Block block, SkillItemCost refund) {
         return switch (block.kind()) {
             case LOCKED -> Translation.text("node.block.locked");
             case INVALID_OPTION -> Translation.text("node.block.invalidOption");
@@ -455,7 +458,9 @@ final class NodeAllocator {
             case TYPE_CONFLICT -> Translation.msg("node.block.typeAllocated").arg("node", block.conflictingType().getDisplayName()).text();
             case EFFECT_BLOCK -> block.detail();
             case ITEM_COST -> Translation.msg("node.block.itemCost").arg("quantity", block.itemCost().formattedQuantity())
-                    .arg("item", block.itemCost().commodityName()).arg("have", SkillItemCost.formatQuantity((float) heldInCargo(block.itemCost().itemId())))
+                    .arg("item", block.itemCost().commodityName())
+                    .arg("have", SkillItemCost.formatQuantity((float) heldInCargo(block.itemCost().itemId())
+                            + refundOf(refund, block.itemCost().itemId())))
                     .text();
         };
     }

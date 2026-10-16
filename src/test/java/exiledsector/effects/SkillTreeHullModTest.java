@@ -384,7 +384,36 @@ class SkillTreeHullModTest {
 
         verify(variant, never()).removeMod(SkillTreeHullMod.ID);
         verify(variant, never()).removeMod("armoredcladding");
-        verify(variant).removeMod("exiledSector_conflictWarning");
+        assertNull(SkillConflictWarnings.get(variant));
+    }
+
+    @Test
+    void aPermaModConflictIsNeverRecordedAsRemoved() {
+        SkillType hullType = new SkillType.Builder("hull", "Reinforced Hull", "graphics/hullmods/reinforced_bulkheads.png", SkillTier.SMALL)
+                .exclusiveHullModIds(List.of("armoredcladding"))
+                .build();
+        SkillNode hullNode = new SkillNode("hull_1", hullType, List.of(), 0f, 0f);
+        SkillTree.register(hullNode);
+
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getId()).thenReturn("ship-a");
+        ShipSkillDataManager.get("ship-a").allocate(hullNode, 1);
+
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        when(stats.getFleetMember()).thenReturn(member);
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(stats.getVariant()).thenReturn(variant);
+        when(variant.hasHullMod("armoredcladding")).thenReturn(true);
+        when(variant.getHullMods()).thenReturn(new LinkedHashSet<>(List.of("armoredcladding")));
+        when(variant.getPermaMods()).thenReturn(new LinkedHashSet<>(List.of("armoredcladding")));
+
+        SettingsAPI settings = mock(SettingsAPI.class);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+
+        new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
+
+        verify(variant, never()).removeMod("armoredcladding");
+        assertNull(SkillConflictWarnings.get(variant));
     }
 
     @Test

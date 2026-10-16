@@ -33,12 +33,22 @@ final class SocketableIconStrip extends BaseCustomUIPanelPlugin {
 
     static CustomPanelAPI create(CustomPanelAPI tooltipHost, float stripWidth, List<Entry> entries) {
         SocketableIconStrip strip = new SocketableIconStrip(tooltipHost);
-        CustomPanelAPI stripPanel = Global.getSettings().createCustom(stripWidth, CELL_SIZE, strip);
+        int cellsPerRow = cellsPerRow(stripWidth);
+        CustomPanelAPI stripPanel = Global.getSettings().createCustom(stripWidth, height(entries.size(), cellsPerRow), strip);
         for (int i = 0; i < entries.size(); i++) {
             CustomPanelAPI cellPanel = Global.getSettings().createCustom(CELL_SIZE, CELL_SIZE, strip.cellFor(entries.get(i)));
-            stripPanel.addComponent(cellPanel).inTL(i * (CELL_SIZE + GAP), 0f);
+            stripPanel.addComponent(cellPanel).inTL((i % cellsPerRow) * (CELL_SIZE + GAP), (i / cellsPerRow) * (CELL_SIZE + GAP));
         }
         return stripPanel;
+    }
+
+    static int cellsPerRow(float stripWidth) {
+        return Math.max(1, (int) ((stripWidth + GAP) / (CELL_SIZE + GAP)));
+    }
+
+    static float height(int entryCount, int cellsPerRow) {
+        int rows = Math.max(1, (entryCount + cellsPerRow - 1) / cellsPerRow);
+        return rows * CELL_SIZE + (rows - 1) * GAP;
     }
 
     @Override

@@ -34,6 +34,15 @@ class TreeCameraMemoryTest {
     }
 
     @Test
+    void aZoomCaughtMidWayOutOfShipInspectionIsRememberedAtTheNormalMaximum() {
+        TreeCameraMemory.View view = TreeCameraMemory.forShip("eagle");
+
+        view.save(0f, 0f, 20f);
+
+        assertEquals(SmoothZoom.MAX_ZOOM, view.camera().zoom());
+    }
+
+    @Test
     void aShipWithNoIdIsNeverRemembered() {
         TreeCameraMemory.forShip(null).save(1f, 2f, 1f);
 
