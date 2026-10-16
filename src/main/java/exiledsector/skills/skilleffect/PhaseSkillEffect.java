@@ -39,6 +39,11 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
             "stat.fluxRateOfFireAndAmmoRegenWhilePhased", PhaseSkillEffect::isBoostedByPhase)),
     PHASE_TOP_SPEED_PERCENT(new ConditionalStatEffect(PERCENT, stat(MutableShipStatsAPI::getMaxSpeed), "stat.topSpeedWhilePhased",
             PhaseSkillEffect::isBoostedByPhase)),
+    FLUX_DISSIPATION_WHILE_PHASED_PERCENT(new ConditionalStatEffect(PERCENT, stat(MutableShipStatsAPI::getFluxDissipation),
+            "stat.fluxDissipationWhilePhased", PhaseSkillEffect::isBoostedByPhase)),
+    AMMO_REGEN_WHILE_PHASED_PERCENT(new ConditionalStatEffect(PERCENT, all(stat(MutableShipStatsAPI::getBallisticAmmoRegenMult),
+            stat(MutableShipStatsAPI::getEnergyAmmoRegenMult), stat(MutableShipStatsAPI::getMissileAmmoRegenMult)),
+            "stat.ammoRegenWhilePhased", PhaseSkillEffect::isBoostedByPhase)),
     PHASE_ANCHOR_EMERGENCY_DIVE {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {

@@ -118,6 +118,18 @@ public enum CombatSkillEffect implements BackedSkillEffect {
             LiveMunitionsListener.class, LiveMunitionsListener::new),
     HEARTLESS_MISSILE_SPEED_PERCENT_PER_STACK(LiveMunitionsListener.MISSILE_SPEED_PERCENT_PER_STACK_KEY,
             LiveMunitionsListener.class, LiveMunitionsListener::new),
+    SERAPHS_GRACE_MAX_STACKS_FLAT(SeraphsGraceListener.MAX_STACKS_KEY, SeraphsGraceListener.class, SeraphsGraceListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("damage", SeraphsGraceListener.DAMAGE_PER_STACK)
+                    .arg("duration", SeraphsGraceListener.STACK_DURATION_SECONDS).styled();
+        }
+    },
+    SERAPHS_GRACE_PERCENT_PER_STACK(SeraphsGraceListener.PERCENT_PER_STACK_KEY, SeraphsGraceListener.class, SeraphsGraceListener::new),
+    SERAPHIM_HEAL_PERCENT(SeraphimListener.HEAL_PERCENT_KEY, SeraphimListener.class, SeraphimListener::new),
+    SERAPHIM_HEAL_CAP_PERCENT(SeraphimListener.HEAL_CAP_PERCENT_KEY, SeraphimListener.class, SeraphimListener::new),
+    SERAPHIM_DAMAGE_BONUS_PERCENT(SeraphimListener.DAMAGE_BONUS_PERCENT_KEY, SeraphimListener.class, SeraphimListener::new),
+    SERAPHIM_FULL_BONUS_DAMAGE_FLAT(SeraphimListener.FULL_BONUS_DAMAGE_KEY, SeraphimListener.class, SeraphimListener::new),
     CREW_STEAL_RANGE_FLAT(CrewStealListener.RANGE_KEY, CrewStealListener.class, CrewStealListener::new),
     CREW_STEAL_SKELETON_CREW_PERCENT(CrewStealListener.SKELETON_CREW_PERCENT_KEY, CrewStealListener.class, CrewStealListener::new),
     FLUX_SCALED_TOP_SPEED_FLAT(FluxScaledVolatilityListener.TOP_SPEED_KEY,

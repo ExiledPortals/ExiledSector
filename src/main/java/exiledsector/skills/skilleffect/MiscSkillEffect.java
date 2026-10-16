@@ -59,6 +59,8 @@ public enum MiscSkillEffect implements BackedSkillEffect {
     ELECTRONIC_WARFARE(FLAT, dynamicMod("electronic_warfare_flat"), "stat.ecmRating", false),
     NAV_RATING(FLAT, dynamicMod("coord_maneuvers_flat"), "stat.fleetNavRating", false),
     SYSTEM_CHARGES_FLAT(FLAT, bonus(MutableShipStatsAPI::getSystemUsesBonus), "stat.systemCharges", false),
+    SYSTEM_COOLDOWN_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getSystemCooldownBonus), "stat.shipSystemCooldown", true),
+    SYSTEM_CHARGE_REGEN_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getSystemRegenBonus), "stat.shipSystemChargeRegeneration", false),
     DAMAGE_TO_FRIGATE_PERCENT(PERCENT, stat(MutableShipStatsAPI::getDamageToFrigates), "stat.damageToFrigates", false),
     DAMAGE_TO_DESTROYER_PERCENT(PERCENT, stat(MutableShipStatsAPI::getDamageToDestroyers), "stat.damageToDestroyers", false),
     DAMAGE_TO_CRUISER_PERCENT(PERCENT, stat(MutableShipStatsAPI::getDamageToCruisers), "stat.damageToCruisers", false),

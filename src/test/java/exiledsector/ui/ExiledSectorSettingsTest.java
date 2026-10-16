@@ -93,6 +93,13 @@ class ExiledSectorSettingsTest {
     }
 
     @Test
+    void registersTheRandomAssortmentAreaToggleDefaultingToAuto() {
+        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addRadio(eq("exiledSector"),
+                eq(AreaToggles.RANDOM_ASSORTMENT_FIELD_ID), anyString(), anyString(), eq(AreaToggles.AUTO),
+                eq(String.join(",", AreaToggles.OPTIONS)), eq("")));
+    }
+
+    @Test
     void registersTheRefitButtonToggleDefaultingToTheButtonUnderTheHullMods() {
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addBoolean(eq("exiledSector"),
                 eq(RefitButtonConfig.FIELD_ID), anyString(), anyString(), eq(true), eq("")));

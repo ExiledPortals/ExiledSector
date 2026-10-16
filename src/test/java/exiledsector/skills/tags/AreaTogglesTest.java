@@ -27,9 +27,20 @@ class AreaTogglesTest {
     }
 
     @Test
+    void autoShowsTheRandomAssortmentAreasOnlyWhenRandomAssortmentIsInstalled() {
+        assertEquals(Set.of(), AreaToggles.disabledRandomAssortmentRegions(AreaToggles.AUTO, true));
+        assertEquals(Set.of("exotech", "abyss"), AreaToggles.disabledRandomAssortmentRegions(AreaToggles.AUTO, false));
+        assertEquals(Set.of(), AreaToggles.disabledRandomAssortmentRegions(AreaToggles.ON, false));
+        assertEquals(Set.of("exotech", "abyss"), AreaToggles.disabledRandomAssortmentRegions(AreaToggles.OFF, true));
+        assertEquals(Set.of("exotech", "abyss"), AreaToggles.disabledRandomAssortmentRegions(null, false));
+    }
+
+    @Test
     void everyToggledAreaIsARealRegion() {
-        for (String region : AreaToggles.LOST_SECTOR_REGIONS) {
-            assertEquals(true, SkillTags.isRegion(region));
+        for (Set<String> area : AreaToggles.TOGGLED_AREAS) {
+            for (String region : area) {
+                assertEquals(true, SkillTags.isRegion(region));
+            }
         }
     }
 }

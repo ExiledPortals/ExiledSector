@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import exiledsector.i18n.StyledText;
 
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
@@ -27,8 +28,27 @@ public enum FluxSkillEffect implements BackedSkillEffect {
             stats.getZeroFluxMinimumFluxLevel().modifyFlat(modId, 2f);
         }
     },
+    ZERO_FLUX_BOOST_FLUX_LEVEL_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getZeroFluxMinimumFluxLevel().modifyFlat(modId, magnitude / 100f);
+        }
+    },
     FLUX_DISSIPATION_WHILE_VENTING_PERCENT(new ConditionalStatEffect(PERCENT, stat(MutableShipStatsAPI::getFluxDissipation),
             "stat.fluxDissipationWhileVenting", ship -> ship.getFluxTracker().isVenting())),
+    FLUX_DISSIPATION_PER_FLUX_VENT_FLAT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            ShipVariantAPI variant = stats.getVariant();
+            int vents = variant == null ? 0 : variant.getNumFluxVents();
+            stats.getFluxDissipation().modifyFlat(modId + VENT_MOD_SUFFIX, vents * magnitude);
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return FLAT.describeStat(magnitude, "stat.fluxDissipationPerFluxVent");
+        }
+    },
     FLUX_CAPACITOR_EFFECTIVENESS_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -39,6 +59,7 @@ public enum FluxSkillEffect implements BackedSkillEffect {
     };
 
     private static final String CAPACITOR_MOD_SUFFIX = "_capacitors";
+    private static final String VENT_MOD_SUFFIX = "_vents";
     private static final String FLUX_PER_CAPACITOR_SETTING = "fluxPerCapacitor";
     private static final float DEFAULT_FLUX_PER_CAPACITOR = 200f;
 
