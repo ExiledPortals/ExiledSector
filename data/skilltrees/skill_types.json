@@ -3607,7 +3607,7 @@
 			"exclusiveHullMods": [
 				"rat_hypatia_hullmod"
 			],
-			"description": "Exo-Tech engineers walk the crew through scaling down the Hypatia's warp field to wrap the energy mounts. The weapons hit harder and cycle faster without raising flux per second, and the zero-flux engine boost holds on at low flux.",
+			"description": "Exo-Tech engineers walk the crew through scaling down the Hypatia's warp field to wrap the energy mounts. The weapons hit harder and cycle faster, and the zero-flux engine boost holds on at low flux.",
 			"tags": [
 				"energy",
 				"req_energy"

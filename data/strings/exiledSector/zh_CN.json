@@ -1400,7 +1400,7 @@
     "skillType.exogrid.description": "在 Exo-Tech 的指导下，船员将相位线圈组件嫁接进舰船的能源网格，像 Exo-Tech 建造自家舰体那样把它与幅能网格融为一体。舰船的时间流速略快于常态，更难被探测，也更能抵御EMP，但这套混合网格的主动排散更慢，每个幅能排散口带来的收益也更少。",
     "skillType.coil_efficiency.description": "Exo-Tech 技术员教船员按他们自己的公差重新调校相位线圈。相位速度在更高幅能下仍能保持，并在相位状态下更快地排散幅能。",
     "skillType.phased_recharging.description": "一名 Exo-Tech 军械师向船员演示如何让供弹机构穿过相位线圈，使舰船处于相位状态时弹药恢复速度提高一倍。",
-    "skillType.warpfield.description": "Exo-Tech 工程师手把手教船员把希帕提亚的曲速场缩小，包覆在能量武器挂点上。武器伤害更高、射速更快，且不增加每秒幅能；在低幅能时也能维持零幅能引擎加成。",
+    "skillType.warpfield.description": "Exo-Tech 工程师手把手教船员把希帕提亚的曲速场缩小，包覆在能量武器挂点上。武器伤害更高、射速更快，在低幅能时也能维持零幅能引擎加成。",
     "skillType.seraphs_grace.description": "船员拆过足够多的炽天使舰体，看清了它们如何以自身创伤为食，于是改装舰船照此行事。每一次落在装甲或船体上的打击都会驱使引擎、武器和幅能网格更加奋力，但护盾发生器从未为承受这种负荷而建造。",
     "skillType.abyssal_grid.description": "船员拆解深渊无人舰残骸的能源网格，弄清其连接件如何熬过深渊风暴，并据此改造舰船的能量武器挂点。能量武器耗能更低、射程更远，舰船也更能抵御EMP和日冕风暴。",
     "skillType.seraphim.description": "从一枚被拆解的炽天使核心中提取出的代码，经重新拼合后写入损管软件。舰船依靠自身造成的伤害自我修复，追猎持续越久就越致命。",

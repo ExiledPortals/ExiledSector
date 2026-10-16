@@ -3946,27 +3946,27 @@ type|violence_of_action|CRUISER|2	0	These effects only last for the first 60 sec
 type|violence_of_action|CAPITAL_SHIP|0	0	<good>20%</good> increased maneuverability.
 type|violence_of_action|CAPITAL_SHIP|1	0	<good>25%</good> increased top speed.
 type|violence_of_action|CAPITAL_SHIP|2	0	These effects only last for the first 60 seconds after the ship is deployed.
-type|warpfield|null|0	0	Exo-Tech engineers walk the crew through scaling down the Hypatia's warp field to wrap the energy mounts. The weapons hit harder and cycle faster without raising flux per second, and the zero-flux engine boost holds on at low flux.
+type|warpfield|null|0	0	Exo-Tech engineers walk the crew through scaling down the Hypatia's warp field to wrap the energy mounts. The weapons hit harder and cycle faster, and the zero-flux engine boost holds on at low flux.
 type|warpfield|null|1	0	<good>15%</good> increased energy weapon damage.
 type|warpfield|null|2	0	<good>20%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|warpfield|null|3	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 type-detail|warpfield|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Warpfield</hullmod>
-type|warpfield|FRIGATE|0	0	Exo-Tech engineers walk the crew through scaling down the Hypatia's warp field to wrap the energy mounts. The weapons hit harder and cycle faster without raising flux per second, and the zero-flux engine boost holds on at low flux.
+type|warpfield|FRIGATE|0	0	Exo-Tech engineers walk the crew through scaling down the Hypatia's warp field to wrap the energy mounts. The weapons hit harder and cycle faster, and the zero-flux engine boost holds on at low flux.
 type|warpfield|FRIGATE|1	0	<good>15%</good> increased energy weapon damage.
 type|warpfield|FRIGATE|2	0	<good>20%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|warpfield|FRIGATE|3	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 type-detail|warpfield|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Warpfield</hullmod>
-type|warpfield|DESTROYER|0	0	Exo-Tech engineers walk the crew through scaling down the Hypatia's warp field to wrap the energy mounts. The weapons hit harder and cycle faster without raising flux per second, and the zero-flux engine boost holds on at low flux.
+type|warpfield|DESTROYER|0	0	Exo-Tech engineers walk the crew through scaling down the Hypatia's warp field to wrap the energy mounts. The weapons hit harder and cycle faster, and the zero-flux engine boost holds on at low flux.
 type|warpfield|DESTROYER|1	0	<good>15%</good> increased energy weapon damage.
 type|warpfield|DESTROYER|2	0	<good>20%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|warpfield|DESTROYER|3	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 type-detail|warpfield|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Warpfield</hullmod>
-type|warpfield|CRUISER|0	0	Exo-Tech engineers walk the crew through scaling down the Hypatia's warp field to wrap the energy mounts. The weapons hit harder and cycle faster without raising flux per second, and the zero-flux engine boost holds on at low flux.
+type|warpfield|CRUISER|0	0	Exo-Tech engineers walk the crew through scaling down the Hypatia's warp field to wrap the energy mounts. The weapons hit harder and cycle faster, and the zero-flux engine boost holds on at low flux.
 type|warpfield|CRUISER|1	0	<good>15%</good> increased energy weapon damage.
 type|warpfield|CRUISER|2	0	<good>20%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|warpfield|CRUISER|3	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 type-detail|warpfield|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Warpfield</hullmod>
-type|warpfield|CAPITAL_SHIP|0	0	Exo-Tech engineers walk the crew through scaling down the Hypatia's warp field to wrap the energy mounts. The weapons hit harder and cycle faster without raising flux per second, and the zero-flux engine boost holds on at low flux.
+type|warpfield|CAPITAL_SHIP|0	0	Exo-Tech engineers walk the crew through scaling down the Hypatia's warp field to wrap the energy mounts. The weapons hit harder and cycle faster, and the zero-flux engine boost holds on at low flux.
 type|warpfield|CAPITAL_SHIP|1	0	<good>15%</good> increased energy weapon damage.
 type|warpfield|CAPITAL_SHIP|2	0	<good>20%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|warpfield|CAPITAL_SHIP|3	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
