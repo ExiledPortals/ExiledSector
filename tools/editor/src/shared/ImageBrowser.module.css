@@ -1,0 +1,44 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: var(--mantine-spacing-xs);
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px;
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: var(--mantine-radius-sm);
+  background: var(--mantine-color-default);
+  cursor: pointer;
+  min-width: 0;
+}
+
+.tile:hover {
+  border-color: var(--mantine-color-cyan-6);
+}
+
+.tileSelected {
+  border-color: var(--mantine-color-cyan-5);
+  box-shadow: 0 0 0 1px var(--mantine-color-cyan-5);
+}
+
+.thumbnail {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  image-rendering: auto;
+}
+
+.name {
+  width: 100%;
+  font-size: 10px;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--mantine-color-dimmed);
+}

@@ -13,7 +13,7 @@ export interface DataResource {
   check: (text: string) => string | null;
 }
 
-const BYTE_ORDER_MARK = '﻿';
+const BYTE_ORDER_MARK = String.fromCharCode(0xfeff);
 
 export function hashBytes(bytes: Buffer): string {
   return createHash('sha256').update(bytes).digest('hex');
