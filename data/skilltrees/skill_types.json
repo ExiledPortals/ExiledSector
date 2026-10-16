@@ -3600,10 +3600,6 @@
 					"magnitude": 20
 				},
 				{
-					"effect": "ENERGY_WEAPON_FLUX_COST_PERCENT",
-					"magnitude": -17
-				},
-				{
 					"effect": "ZERO_FLUX_BOOST_FLUX_LEVEL_PERCENT",
 					"magnitude": 10
 				}

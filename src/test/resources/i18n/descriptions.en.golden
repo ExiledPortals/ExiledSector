@@ -3949,32 +3949,27 @@ type|violence_of_action|CAPITAL_SHIP|2	0	These effects only last for the first 6
 type|warpfield|null|0	0	Exo-Tech engineers walk the crew through scaling down the Hypatia's warp field to wrap the energy mounts. The weapons hit harder and cycle faster without raising flux per second, and the zero-flux engine boost holds on at low flux.
 type|warpfield|null|1	0	<good>15%</good> increased energy weapon damage.
 type|warpfield|null|2	0	<good>20%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
-type|warpfield|null|3	1	<bad>17%</bad> reduced energy weapon flux cost.
-type|warpfield|null|4	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+type|warpfield|null|3	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 type-detail|warpfield|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Warpfield</hullmod>
 type|warpfield|FRIGATE|0	0	Exo-Tech engineers walk the crew through scaling down the Hypatia's warp field to wrap the energy mounts. The weapons hit harder and cycle faster without raising flux per second, and the zero-flux engine boost holds on at low flux.
 type|warpfield|FRIGATE|1	0	<good>15%</good> increased energy weapon damage.
 type|warpfield|FRIGATE|2	0	<good>20%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
-type|warpfield|FRIGATE|3	1	<bad>17%</bad> reduced energy weapon flux cost.
-type|warpfield|FRIGATE|4	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+type|warpfield|FRIGATE|3	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 type-detail|warpfield|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Warpfield</hullmod>
 type|warpfield|DESTROYER|0	0	Exo-Tech engineers walk the crew through scaling down the Hypatia's warp field to wrap the energy mounts. The weapons hit harder and cycle faster without raising flux per second, and the zero-flux engine boost holds on at low flux.
 type|warpfield|DESTROYER|1	0	<good>15%</good> increased energy weapon damage.
 type|warpfield|DESTROYER|2	0	<good>20%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
-type|warpfield|DESTROYER|3	1	<bad>17%</bad> reduced energy weapon flux cost.
-type|warpfield|DESTROYER|4	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+type|warpfield|DESTROYER|3	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 type-detail|warpfield|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Warpfield</hullmod>
 type|warpfield|CRUISER|0	0	Exo-Tech engineers walk the crew through scaling down the Hypatia's warp field to wrap the energy mounts. The weapons hit harder and cycle faster without raising flux per second, and the zero-flux engine boost holds on at low flux.
 type|warpfield|CRUISER|1	0	<good>15%</good> increased energy weapon damage.
 type|warpfield|CRUISER|2	0	<good>20%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
-type|warpfield|CRUISER|3	1	<bad>17%</bad> reduced energy weapon flux cost.
-type|warpfield|CRUISER|4	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+type|warpfield|CRUISER|3	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 type-detail|warpfield|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Warpfield</hullmod>
 type|warpfield|CAPITAL_SHIP|0	0	Exo-Tech engineers walk the crew through scaling down the Hypatia's warp field to wrap the energy mounts. The weapons hit harder and cycle faster without raising flux per second, and the zero-flux engine boost holds on at low flux.
 type|warpfield|CAPITAL_SHIP|1	0	<good>15%</good> increased energy weapon damage.
 type|warpfield|CAPITAL_SHIP|2	0	<good>20%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
-type|warpfield|CAPITAL_SHIP|3	1	<bad>17%</bad> reduced energy weapon flux cost.
-type|warpfield|CAPITAL_SHIP|4	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+type|warpfield|CAPITAL_SHIP|3	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 type-detail|warpfield|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Warpfield</hullmod>
 type|waste_not|null|0	0	<good>10%</good> increased combat readiness recovery rate.
 type|waste_not|FRIGATE|0	0	<good>10%</good> increased combat readiness recovery rate.
@@ -4000,7 +3995,7 @@ type|wormhole|FRIGATE|0	0	Allocating this wormhole automatically allocates its p
 type|wormhole|DESTROYER|0	0	Allocating this wormhole automatically allocates its paired wormhole as well at no extra cost, connecting both branches of the tree. \n\nDeallocating either end deallocates both.\n\nCtrl click on a wormhole to travel through it.
 type|wormhole|CRUISER|0	0	Allocating this wormhole automatically allocates its paired wormhole as well at no extra cost, connecting both branches of the tree. \n\nDeallocating either end deallocates both.\n\nCtrl click on a wormhole to travel through it.
 type|wormhole|CAPITAL_SHIP|0	0	Allocating this wormhole automatically allocates its paired wormhole as well at no extra cost, connecting both branches of the tree. \n\nDeallocating either end deallocates both.\n\nCtrl click on a wormhole to travel through it.
-summary|option0|FRIGATE|0	1	<bad>62%</bad> reduced energy weapon flux cost.
+summary|option0|FRIGATE|0	1	<bad>45%</bad> reduced energy weapon flux cost.
 summary|option0|FRIGATE|1	0	Increases energy weapon range by <good>100</good>.
 summary|option0|FRIGATE|2	1	<bad>50%</bad> reduced EMP damage taken.
 summary|option0|FRIGATE|3	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
@@ -4193,7 +4188,7 @@ summary|option0|FRIGATE|189	0	<good>3%</good> increased post-battle salvage reco
 summary|option0|FRIGATE|190	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option0|FRIGATE|191	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option0|FRIGATE|192	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
-summary|option0|DESTROYER|0	1	<bad>62%</bad> reduced energy weapon flux cost.
+summary|option0|DESTROYER|0	1	<bad>45%</bad> reduced energy weapon flux cost.
 summary|option0|DESTROYER|1	0	Increases energy weapon range by <good>100</good>.
 summary|option0|DESTROYER|2	1	<bad>50%</bad> reduced EMP damage taken.
 summary|option0|DESTROYER|3	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
@@ -4386,7 +4381,7 @@ summary|option0|DESTROYER|189	0	<good>6%</good> increased post-battle salvage re
 summary|option0|DESTROYER|190	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option0|DESTROYER|191	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option0|DESTROYER|192	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
-summary|option0|CRUISER|0	1	<bad>62%</bad> reduced energy weapon flux cost.
+summary|option0|CRUISER|0	1	<bad>45%</bad> reduced energy weapon flux cost.
 summary|option0|CRUISER|1	0	Increases energy weapon range by <good>100</good>.
 summary|option0|CRUISER|2	1	<bad>50%</bad> reduced EMP damage taken.
 summary|option0|CRUISER|3	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
@@ -4579,7 +4574,7 @@ summary|option0|CRUISER|189	0	<good>10%</good> increased post-battle salvage rec
 summary|option0|CRUISER|190	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option0|CRUISER|191	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option0|CRUISER|192	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
-summary|option0|CAPITAL_SHIP|0	1	<bad>62%</bad> reduced energy weapon flux cost.
+summary|option0|CAPITAL_SHIP|0	1	<bad>45%</bad> reduced energy weapon flux cost.
 summary|option0|CAPITAL_SHIP|1	0	Increases energy weapon range by <good>100</good>.
 summary|option0|CAPITAL_SHIP|2	1	<bad>50%</bad> reduced EMP damage taken.
 summary|option0|CAPITAL_SHIP|3	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
@@ -4772,7 +4767,7 @@ summary|option0|CAPITAL_SHIP|189	0	<good>15%</good> increased post-battle salvag
 summary|option0|CAPITAL_SHIP|190	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option0|CAPITAL_SHIP|191	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option0|CAPITAL_SHIP|192	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
-summary|option1|FRIGATE|0	1	<bad>62%</bad> reduced energy weapon flux cost.
+summary|option1|FRIGATE|0	1	<bad>45%</bad> reduced energy weapon flux cost.
 summary|option1|FRIGATE|1	0	Increases energy weapon range by <good>100</good>.
 summary|option1|FRIGATE|2	1	<bad>50%</bad> reduced EMP damage taken.
 summary|option1|FRIGATE|3	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
@@ -4965,7 +4960,7 @@ summary|option1|FRIGATE|189	0	<good>3%</good> increased post-battle salvage reco
 summary|option1|FRIGATE|190	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option1|FRIGATE|191	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option1|FRIGATE|192	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
-summary|option1|DESTROYER|0	1	<bad>62%</bad> reduced energy weapon flux cost.
+summary|option1|DESTROYER|0	1	<bad>45%</bad> reduced energy weapon flux cost.
 summary|option1|DESTROYER|1	0	Increases energy weapon range by <good>100</good>.
 summary|option1|DESTROYER|2	1	<bad>50%</bad> reduced EMP damage taken.
 summary|option1|DESTROYER|3	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
@@ -5158,7 +5153,7 @@ summary|option1|DESTROYER|189	0	<good>6%</good> increased post-battle salvage re
 summary|option1|DESTROYER|190	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option1|DESTROYER|191	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option1|DESTROYER|192	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
-summary|option1|CRUISER|0	1	<bad>62%</bad> reduced energy weapon flux cost.
+summary|option1|CRUISER|0	1	<bad>45%</bad> reduced energy weapon flux cost.
 summary|option1|CRUISER|1	0	Increases energy weapon range by <good>100</good>.
 summary|option1|CRUISER|2	1	<bad>50%</bad> reduced EMP damage taken.
 summary|option1|CRUISER|3	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
@@ -5351,7 +5346,7 @@ summary|option1|CRUISER|189	0	<good>10%</good> increased post-battle salvage rec
 summary|option1|CRUISER|190	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option1|CRUISER|191	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option1|CRUISER|192	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
-summary|option1|CAPITAL_SHIP|0	1	<bad>62%</bad> reduced energy weapon flux cost.
+summary|option1|CAPITAL_SHIP|0	1	<bad>45%</bad> reduced energy weapon flux cost.
 summary|option1|CAPITAL_SHIP|1	0	Increases energy weapon range by <good>100</good>.
 summary|option1|CAPITAL_SHIP|2	1	<bad>50%</bad> reduced EMP damage taken.
 summary|option1|CAPITAL_SHIP|3	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
@@ -5544,7 +5539,7 @@ summary|option1|CAPITAL_SHIP|189	0	<good>15%</good> increased post-battle salvag
 summary|option1|CAPITAL_SHIP|190	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option1|CAPITAL_SHIP|191	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option1|CAPITAL_SHIP|192	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
-summary|option2|FRIGATE|0	1	<bad>62%</bad> reduced energy weapon flux cost.
+summary|option2|FRIGATE|0	1	<bad>45%</bad> reduced energy weapon flux cost.
 summary|option2|FRIGATE|1	0	Increases energy weapon range by <good>100</good>.
 summary|option2|FRIGATE|2	1	<bad>50%</bad> reduced EMP damage taken.
 summary|option2|FRIGATE|3	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
@@ -5737,7 +5732,7 @@ summary|option2|FRIGATE|189	0	<good>3%</good> increased post-battle salvage reco
 summary|option2|FRIGATE|190	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option2|FRIGATE|191	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option2|FRIGATE|192	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
-summary|option2|DESTROYER|0	1	<bad>62%</bad> reduced energy weapon flux cost.
+summary|option2|DESTROYER|0	1	<bad>45%</bad> reduced energy weapon flux cost.
 summary|option2|DESTROYER|1	0	Increases energy weapon range by <good>100</good>.
 summary|option2|DESTROYER|2	1	<bad>50%</bad> reduced EMP damage taken.
 summary|option2|DESTROYER|3	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
@@ -5930,7 +5925,7 @@ summary|option2|DESTROYER|189	0	<good>6%</good> increased post-battle salvage re
 summary|option2|DESTROYER|190	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option2|DESTROYER|191	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option2|DESTROYER|192	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
-summary|option2|CRUISER|0	1	<bad>62%</bad> reduced energy weapon flux cost.
+summary|option2|CRUISER|0	1	<bad>45%</bad> reduced energy weapon flux cost.
 summary|option2|CRUISER|1	0	Increases energy weapon range by <good>100</good>.
 summary|option2|CRUISER|2	1	<bad>50%</bad> reduced EMP damage taken.
 summary|option2|CRUISER|3	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
@@ -6123,7 +6118,7 @@ summary|option2|CRUISER|189	0	<good>10%</good> increased post-battle salvage rec
 summary|option2|CRUISER|190	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option2|CRUISER|191	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option2|CRUISER|192	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
-summary|option2|CAPITAL_SHIP|0	1	<bad>62%</bad> reduced energy weapon flux cost.
+summary|option2|CAPITAL_SHIP|0	1	<bad>45%</bad> reduced energy weapon flux cost.
 summary|option2|CAPITAL_SHIP|1	0	Increases energy weapon range by <good>100</good>.
 summary|option2|CAPITAL_SHIP|2	1	<bad>50%</bad> reduced EMP damage taken.
 summary|option2|CAPITAL_SHIP|3	1	<bad>100%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
