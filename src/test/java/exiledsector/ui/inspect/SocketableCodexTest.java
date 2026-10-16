@@ -18,6 +18,7 @@ import org.mockito.Mockito;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -82,5 +83,15 @@ class SocketableCodexTest {
         globalMock.when(Global::getSector).thenReturn(mock(SectorAPI.class));
         assertFalse(SocketableCodex.isRevealed(gated));
         SocketableDefinitions.clear();
+    }
+
+    @Test
+    void chancesShowOneDecimalOrTwoBelowOnePercent() {
+        assertEquals("25", SocketableCodexEntry.percentText(0.25));
+        assertEquals("7.5", SocketableCodexEntry.percentText(0.075));
+        assertEquals("0.25", SocketableCodexEntry.percentText(0.0025));
+        assertEquals("0.01", SocketableCodexEntry.percentText(0.00001));
+        assertEquals("99.9", SocketableCodexEntry.percentText(0.99999));
+        assertEquals("100", SocketableCodexEntry.percentText(1.0));
     }
 }

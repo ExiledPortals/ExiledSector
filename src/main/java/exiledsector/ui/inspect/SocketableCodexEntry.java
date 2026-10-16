@@ -12,6 +12,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
+import exiledsector.i18n.NumberText;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.socketables.PoolEntry;
@@ -31,6 +32,8 @@ public class SocketableCodexEntry extends CodexEntryV2 implements CustomUIPanelP
     private static final float PAD = 10f;
     private static final float LINE_PAD = 3f;
     private static final float ICON_SIZE = 64f;
+    private static final float CHANCE_COLUMN_WIDTH = 60f;
+    private static final float COLUMN_GAP = 10f;
 
     private final SocketableDefinition definition;
 
@@ -131,6 +134,7 @@ public class SocketableCodexEntry extends CodexEntryV2 implements CustomUIPanelP
             return;
         }
         info.addSectionHeading(Translation.text(headingKey), Alignment.MID, PAD);
+        float effectColumnWidth = info.getPosition().getWidth() - CHANCE_COLUMN_WIDTH - COLUMN_GAP;
         float linePad = PAD;
         for (PoolEntry entry : pool) {
             StyledText effectText = effectText(entry);
@@ -138,8 +142,19 @@ public class SocketableCodexEntry extends CodexEntryV2 implements CustomUIPanelP
                 continue;
             }
             String chance = percentText(weightShares.getOrDefault(entry.effectName(), 0.0));
-            VanillaText.addPara(info, Translation.msg("codex.socketables.effectChance").arg("chance", chance).arg("effect", effectText).styled(),
-                    linePad, Misc.getTextColor());
+            TooltipMakerAPI chanceCell = info.beginSubTooltip(CHANCE_COLUMN_WIDTH);
+            VanillaText.addPara(chanceCell, Translation.msg("codex.socketables.chance").arg("chance", chance).styled(), 0f, Misc.getTextColor())
+                    .setAlignment(Alignment.RMID);
+            info.endSubTooltip();
+            TooltipMakerAPI effectCell = info.beginSubTooltip(effectColumnWidth);
+            VanillaText.addPara(effectCell, effectText, 0f, Misc.getTextColor());
+            info.endSubTooltip();
+            info.addCustom(chanceCell, linePad);
+            info.addCustomDoNotSetPosition(effectCell).getPosition().rightOfTop(chanceCell, COLUMN_GAP);
+            float extraEffectHeight = effectCell.getPosition().getHeight() - chanceCell.getPosition().getHeight();
+            if (extraEffectHeight > 0f) {
+                info.addSpacer(extraEffectHeight);
+            }
             linePad = LINE_PAD;
         }
     }
@@ -152,14 +167,12 @@ public class SocketableCodexEntry extends CodexEntryV2 implements CustomUIPanelP
         if (chance <= 0.0) {
             return "0";
         }
-        if (chance < 0.0005) {
-            return Translation.text("codex.socketables.belowTenth");
-        }
         if (chance >= 1.0 - 1e-9) {
             return "100";
         }
-        double tenths = Math.min(99.9, Math.round(chance * 1000.0) / 10.0);
-        return tenths == Math.rint(tenths) ? Long.toString((long) tenths) : Double.toString(tenths);
+        double hundredths = Math.min(99.9, Math.max(0.01, Math.round(chance * 10000.0) / 100.0));
+        double shown = hundredths < 1.0 ? hundredths : Math.round(hundredths * 10.0) / 10.0;
+        return NumberText.format((float) shown);
     }
 
     @Override
