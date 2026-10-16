@@ -16,6 +16,11 @@
         <sonar.organization>exiledportals</sonar.organization>
         <sonar.projectKey>ExiledPortals_ExiledSector</sonar.projectKey>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.sources>pom.xml,src/main/java,tools/editor/src,tools/editor/server</sonar.sources>
+        <sonar.tests>src/test/java,tools/editor/src,tools/editor/server</sonar.tests>
+        <sonar.test.inclusions>src/test/java/**,tools/editor/**/*.test.ts,tools/editor/**/*.test.tsx</sonar.test.inclusions>
+        <sonar.exclusions>tools/editor/**/*.test.ts,tools/editor/**/*.test.tsx</sonar.exclusions>
+        <sonar.javascript.lcov.reportPaths>tools/editor/coverage/lcov.info</sonar.javascript.lcov.reportPaths>
     </properties>
 
     <dependencies>
