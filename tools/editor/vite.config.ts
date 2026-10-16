@@ -18,6 +18,7 @@ export default defineConfig({
   },
   server: {
     port: 5173,
+    watch: { usePolling: true, interval: 250 },
     proxy: {
       '/api': { target: serverOrigin, changeOrigin: true },
       '/files': { target: serverOrigin, changeOrigin: true },
