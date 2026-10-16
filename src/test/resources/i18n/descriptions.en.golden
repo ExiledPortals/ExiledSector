@@ -3648,11 +3648,11 @@ type|waste_not|CRUISER|0	0	<good>10%</good> increased combat readiness recovery 
 type|waste_not|CRUISER|1	0	<good>10%</good> increased post-battle salvage recovered (fleet-wide).
 type|waste_not|CAPITAL_SHIP|0	0	<good>10%</good> increased combat readiness recovery rate.
 type|waste_not|CAPITAL_SHIP|1	0	<good>15%</good> increased post-battle salvage recovered (fleet-wide).
-type|weapon_durability|null|0	0	<good>10%</good> increased weapon durability.
-type|weapon_durability|FRIGATE|0	0	<good>10%</good> increased weapon durability.
-type|weapon_durability|DESTROYER|0	0	<good>10%</good> increased weapon durability.
-type|weapon_durability|CRUISER|0	0	<good>10%</good> increased weapon durability.
-type|weapon_durability|CAPITAL_SHIP|0	0	<good>10%</good> increased weapon durability.
+type|weapon_durability|null|0	0	<good>5%</good> increased weapon durability.
+type|weapon_durability|FRIGATE|0	0	<good>5%</good> increased weapon durability.
+type|weapon_durability|DESTROYER|0	0	<good>5%</good> increased weapon durability.
+type|weapon_durability|CRUISER|0	0	<good>5%</good> increased weapon durability.
+type|weapon_durability|CAPITAL_SHIP|0	0	<good>5%</good> increased weapon durability.
 type|weapon_turn_rate|null|0	0	<good>20%</good> increased weapon turn rate.
 type|weapon_turn_rate|FRIGATE|0	0	<good>20%</good> increased weapon turn rate.
 type|weapon_turn_rate|DESTROYER|0	0	<good>20%</good> increased weapon turn rate.
@@ -3677,7 +3677,7 @@ summary|option0|FRIGATE|10	0	<good>110%</good> increased ballistic weapon ammo c
 summary|option0|FRIGATE|11	0	<good>110%</good> increased energy weapon ammo capacity.
 summary|option0|FRIGATE|12	0	Increases armor by <good>105</good>.
 summary|option0|FRIGATE|13	0	<good>45%</good> increased armor.
-summary|option0|FRIGATE|14	0	<good>130%</good> increased weapon durability.
+summary|option0|FRIGATE|14	0	<good>105%</good> increased weapon durability.
 summary|option0|FRIGATE|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option0|FRIGATE|16	1	<bad>25%</bad> less weapon recoil.
 summary|option0|FRIGATE|17	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
@@ -3851,7 +3851,7 @@ summary|option0|DESTROYER|10	0	<good>110%</good> increased ballistic weapon ammo
 summary|option0|DESTROYER|11	0	<good>110%</good> increased energy weapon ammo capacity.
 summary|option0|DESTROYER|12	0	Increases armor by <good>210</good>.
 summary|option0|DESTROYER|13	0	<good>45%</good> increased armor.
-summary|option0|DESTROYER|14	0	<good>130%</good> increased weapon durability.
+summary|option0|DESTROYER|14	0	<good>105%</good> increased weapon durability.
 summary|option0|DESTROYER|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option0|DESTROYER|16	1	<bad>25%</bad> less weapon recoil.
 summary|option0|DESTROYER|17	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
@@ -4025,7 +4025,7 @@ summary|option0|CRUISER|10	0	<good>110%</good> increased ballistic weapon ammo c
 summary|option0|CRUISER|11	0	<good>110%</good> increased energy weapon ammo capacity.
 summary|option0|CRUISER|12	0	Increases armor by <good>350</good>.
 summary|option0|CRUISER|13	0	<good>45%</good> increased armor.
-summary|option0|CRUISER|14	0	<good>130%</good> increased weapon durability.
+summary|option0|CRUISER|14	0	<good>105%</good> increased weapon durability.
 summary|option0|CRUISER|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option0|CRUISER|16	1	<bad>25%</bad> less weapon recoil.
 summary|option0|CRUISER|17	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
@@ -4199,7 +4199,7 @@ summary|option0|CAPITAL_SHIP|10	0	<good>110%</good> increased ballistic weapon a
 summary|option0|CAPITAL_SHIP|11	0	<good>110%</good> increased energy weapon ammo capacity.
 summary|option0|CAPITAL_SHIP|12	0	Increases armor by <good>525</good>.
 summary|option0|CAPITAL_SHIP|13	0	<good>45%</good> increased armor.
-summary|option0|CAPITAL_SHIP|14	0	<good>130%</good> increased weapon durability.
+summary|option0|CAPITAL_SHIP|14	0	<good>105%</good> increased weapon durability.
 summary|option0|CAPITAL_SHIP|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option0|CAPITAL_SHIP|16	1	<bad>25%</bad> less weapon recoil.
 summary|option0|CAPITAL_SHIP|17	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
@@ -4373,7 +4373,7 @@ summary|option1|FRIGATE|10	0	<good>110%</good> increased ballistic weapon ammo c
 summary|option1|FRIGATE|11	0	<good>110%</good> increased energy weapon ammo capacity.
 summary|option1|FRIGATE|12	0	Increases armor by <good>105</good>.
 summary|option1|FRIGATE|13	0	<good>45%</good> increased armor.
-summary|option1|FRIGATE|14	0	<good>130%</good> increased weapon durability.
+summary|option1|FRIGATE|14	0	<good>105%</good> increased weapon durability.
 summary|option1|FRIGATE|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option1|FRIGATE|16	1	<bad>25%</bad> less weapon recoil.
 summary|option1|FRIGATE|17	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
@@ -4547,7 +4547,7 @@ summary|option1|DESTROYER|10	0	<good>110%</good> increased ballistic weapon ammo
 summary|option1|DESTROYER|11	0	<good>110%</good> increased energy weapon ammo capacity.
 summary|option1|DESTROYER|12	0	Increases armor by <good>210</good>.
 summary|option1|DESTROYER|13	0	<good>45%</good> increased armor.
-summary|option1|DESTROYER|14	0	<good>130%</good> increased weapon durability.
+summary|option1|DESTROYER|14	0	<good>105%</good> increased weapon durability.
 summary|option1|DESTROYER|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option1|DESTROYER|16	1	<bad>25%</bad> less weapon recoil.
 summary|option1|DESTROYER|17	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
@@ -4721,7 +4721,7 @@ summary|option1|CRUISER|10	0	<good>110%</good> increased ballistic weapon ammo c
 summary|option1|CRUISER|11	0	<good>110%</good> increased energy weapon ammo capacity.
 summary|option1|CRUISER|12	0	Increases armor by <good>350</good>.
 summary|option1|CRUISER|13	0	<good>45%</good> increased armor.
-summary|option1|CRUISER|14	0	<good>130%</good> increased weapon durability.
+summary|option1|CRUISER|14	0	<good>105%</good> increased weapon durability.
 summary|option1|CRUISER|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option1|CRUISER|16	1	<bad>25%</bad> less weapon recoil.
 summary|option1|CRUISER|17	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
@@ -4895,7 +4895,7 @@ summary|option1|CAPITAL_SHIP|10	0	<good>110%</good> increased ballistic weapon a
 summary|option1|CAPITAL_SHIP|11	0	<good>110%</good> increased energy weapon ammo capacity.
 summary|option1|CAPITAL_SHIP|12	0	Increases armor by <good>525</good>.
 summary|option1|CAPITAL_SHIP|13	0	<good>45%</good> increased armor.
-summary|option1|CAPITAL_SHIP|14	0	<good>130%</good> increased weapon durability.
+summary|option1|CAPITAL_SHIP|14	0	<good>105%</good> increased weapon durability.
 summary|option1|CAPITAL_SHIP|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option1|CAPITAL_SHIP|16	1	<bad>25%</bad> less weapon recoil.
 summary|option1|CAPITAL_SHIP|17	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
@@ -5069,7 +5069,7 @@ summary|option2|FRIGATE|10	0	<good>110%</good> increased ballistic weapon ammo c
 summary|option2|FRIGATE|11	0	<good>110%</good> increased energy weapon ammo capacity.
 summary|option2|FRIGATE|12	0	Increases armor by <good>105</good>.
 summary|option2|FRIGATE|13	0	<good>45%</good> increased armor.
-summary|option2|FRIGATE|14	0	<good>130%</good> increased weapon durability.
+summary|option2|FRIGATE|14	0	<good>105%</good> increased weapon durability.
 summary|option2|FRIGATE|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option2|FRIGATE|16	1	<bad>25%</bad> less weapon recoil.
 summary|option2|FRIGATE|17	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
@@ -5243,7 +5243,7 @@ summary|option2|DESTROYER|10	0	<good>110%</good> increased ballistic weapon ammo
 summary|option2|DESTROYER|11	0	<good>110%</good> increased energy weapon ammo capacity.
 summary|option2|DESTROYER|12	0	Increases armor by <good>210</good>.
 summary|option2|DESTROYER|13	0	<good>45%</good> increased armor.
-summary|option2|DESTROYER|14	0	<good>130%</good> increased weapon durability.
+summary|option2|DESTROYER|14	0	<good>105%</good> increased weapon durability.
 summary|option2|DESTROYER|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option2|DESTROYER|16	1	<bad>25%</bad> less weapon recoil.
 summary|option2|DESTROYER|17	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
@@ -5417,7 +5417,7 @@ summary|option2|CRUISER|10	0	<good>110%</good> increased ballistic weapon ammo c
 summary|option2|CRUISER|11	0	<good>110%</good> increased energy weapon ammo capacity.
 summary|option2|CRUISER|12	0	Increases armor by <good>350</good>.
 summary|option2|CRUISER|13	0	<good>45%</good> increased armor.
-summary|option2|CRUISER|14	0	<good>130%</good> increased weapon durability.
+summary|option2|CRUISER|14	0	<good>105%</good> increased weapon durability.
 summary|option2|CRUISER|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option2|CRUISER|16	1	<bad>25%</bad> less weapon recoil.
 summary|option2|CRUISER|17	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
@@ -5591,7 +5591,7 @@ summary|option2|CAPITAL_SHIP|10	0	<good>110%</good> increased ballistic weapon a
 summary|option2|CAPITAL_SHIP|11	0	<good>110%</good> increased energy weapon ammo capacity.
 summary|option2|CAPITAL_SHIP|12	0	Increases armor by <good>525</good>.
 summary|option2|CAPITAL_SHIP|13	0	<good>45%</good> increased armor.
-summary|option2|CAPITAL_SHIP|14	0	<good>130%</good> increased weapon durability.
+summary|option2|CAPITAL_SHIP|14	0	<good>105%</good> increased weapon durability.
 summary|option2|CAPITAL_SHIP|15	0	<bad>25%</bad> less weapon turn rate.
 summary|option2|CAPITAL_SHIP|16	1	<bad>25%</bad> less weapon recoil.
 summary|option2|CAPITAL_SHIP|17	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).

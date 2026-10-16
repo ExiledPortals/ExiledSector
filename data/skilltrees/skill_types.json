@@ -3168,7 +3168,7 @@
 			"effects": [
 				{
 					"effect": "WEAPON_DURABILITY_PERCENT",
-					"magnitude": 10
+					"magnitude": 5
 				}
 			],
 			"tags": [

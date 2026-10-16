@@ -52,8 +52,8 @@
 				"beam_damage_5",
 				"beam_damage_3"
 			],
-			"x": -3869,
-			"y": -630,
+			"x": -3789,
+			"y": -572,
 			"orbitAnchorId": "anchor_58",
 			"orbitAngle": 180,
 			"tags": [
@@ -420,8 +420,8 @@
 			"connectedTo": [
 				"beam_damage_5"
 			],
-			"x": -3480,
-			"y": -1011,
+			"x": -3400,
+			"y": -953,
 			"tags": [
 				"core"
 			]
@@ -448,8 +448,8 @@
 			"connectedTo": [
 				"beam_damage_5"
 			],
-			"x": -3864,
-			"y": -1011,
+			"x": -3784,
+			"y": -953,
 			"tags": [
 				"core"
 			]
@@ -927,8 +927,8 @@
 				"high_scatter_amp_1",
 				"advancedoptics_1"
 			],
-			"x": -3689,
-			"y": -810,
+			"x": -3609,
+			"y": -752,
 			"orbitAnchorId": "anchor_58",
 			"orbitAngle": 270,
 			"tags": [
@@ -2694,8 +2694,8 @@
 				"beam_damage_1",
 				"small_flux_optional_40"
 			],
-			"x": -3689,
-			"y": -450,
+			"x": -3609,
+			"y": -392,
 			"orbitAnchorId": "anchor_58",
 			"orbitAngle": 90,
 			"tags": [
@@ -6961,14 +6961,14 @@
 		{
 			"a": "beam_damage_1",
 			"b": "beam_damage_3",
-			"controlX": -3816,
-			"controlY": -503
+			"controlX": -3736,
+			"controlY": -445
 		},
 		{
 			"a": "beam_damage_1",
 			"b": "beam_damage_5",
-			"controlX": -3816,
-			"controlY": -757
+			"controlX": -3736,
+			"controlY": -699
 		},
 		{
 			"a": "modular_hull_socket_6",
@@ -8062,8 +8062,8 @@
 		},
 		{
 			"id": "anchor_58",
-			"x": -3689,
-			"y": -630,
+			"x": -3609,
+			"y": -572,
 			"radius": 180
 		},
 		{
