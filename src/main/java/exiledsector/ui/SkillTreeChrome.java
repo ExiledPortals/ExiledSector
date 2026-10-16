@@ -5,6 +5,7 @@ import com.fs.starfarer.api.impl.campaign.FleetEncounterContext;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import exiledsector.i18n.Translation;
+import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.ShipLevelSystem;
 import exiledsector.skills.progression.ShipOpBudget;
@@ -14,13 +15,18 @@ import exiledsector.ui.util.BorderedPanel;
 final class SkillTreeChrome {
 
     private static final float SHIP_CARD_FRAME_OUTSET = 8f;
+    private static final int READOUT_ROWS = 3;
+    private static final float SIDE_PANEL_GAP = 16f;
 
     private final SkillTreeStatPanel statPanel;
     private final SkillTreeSearchBar searchBar;
     private final SkillTreeTemplateController templateUi;
     private final SocketPlacement socketPlacement;
-    private final SkillTreeReadoutBar ordnancePointsBar = new SkillTreeReadoutBar(SkillTreeChrome.class, 0);
+    private final FleetMemberAPI member;
+    private final SkillTreeReadoutBar ordnancePointsBar = new SkillTreeReadoutBar(SkillTreeChrome.class, 0, "ui.readout.opBar");
     private final SkillTreeLevelBar levelBar;
+    private final SkillTreeReadoutBar nodesBar = new SkillTreeReadoutBar(SkillTreeChrome.class, 2, "ui.readout.nodesBar");
+    private final int maxAllocatedNodes = ShipLevelConfig.maxAllocatedNodes();
     private final SkillTreeInfoTooltipRenderer infoTooltipRenderer;
     private final String readoutTooltipTitle = Translation.text("ui.readout.title");
     private final String readoutTooltipBody;
@@ -38,6 +44,7 @@ final class SkillTreeChrome {
 
     SkillTreeChrome(FleetMemberAPI member, SkillTreePanelStyle panelStyle, SkillTreeStatPanel statPanel, SkillTreeSearchBar searchBar,
                     SkillTreeTemplateController templateUi, SocketPlacement socketPlacement, float shipCardHeight) {
+        this.member = member;
         this.statPanel = statPanel;
         this.searchBar = searchBar;
         this.templateUi = templateUi;
@@ -69,6 +76,8 @@ final class SkillTreeChrome {
         boolean readoutsLive = mouseKnown && mode.enables(CanvasMode.Chrome.READOUTS);
         ordnancePointsBar.advance(amount, canvasPosition, budget.usedOp, budget.totalOp, mouseX, mouseY, readoutsLive);
         levelBar.advance(amount, canvasPosition, mouseX, mouseY, readoutsLive);
+        nodesBar.advance(amount, canvasPosition, ShipSkillDataManager.get(member.getId()).getAllocatedNodeIds().size(), maxAllocatedNodes, mouseX,
+                mouseY, readoutsLive);
     }
 
     private void hideShipCard(boolean hide) {
@@ -82,6 +91,7 @@ final class SkillTreeChrome {
         return (mode.shows(CanvasMode.Chrome.STATS_TOGGLE) && statPanel.contains(x, y))
                 || ordnancePointsBar.isHovered(canvasPosition, x, y)
                 || levelBar.isHovered(canvasPosition, x, y)
+                || nodesBar.isHovered(canvasPosition, x, y)
                 || (mode.shows(CanvasMode.Chrome.SEARCH) && SkillTreeSearchBar.contains(canvasPosition, x, y))
                 || (mode.shows(CanvasMode.Chrome.TEMPLATE_BAR) && templateUi.barContains(x, y))
                 || (mode.shows(CanvasMode.Chrome.STORAGE_BUTTON) && socketPlacement.buttonContains(x, y))
@@ -122,6 +132,7 @@ final class SkillTreeChrome {
         float readoutAlpha = alphaMult * visibility.alpha(CanvasMode.Chrome.READOUTS);
         ordnancePointsBar.render(canvasPosition, readoutAlpha, null);
         levelBar.render(canvasPosition, readoutAlpha);
+        nodesBar.render(canvasPosition, readoutAlpha, null);
         float searchAlpha = visibility.alpha(CanvasMode.Chrome.SEARCH);
         if (searchAlpha > 0f) {
             searchBar.render(canvasPosition, alphaMult * searchAlpha);
@@ -141,7 +152,7 @@ final class SkillTreeChrome {
             return;
         }
         if (mode.enables(CanvasMode.Chrome.READOUTS)
-                && (ordnancePointsBar.isHovered(canvasPosition, mouseX, mouseY) || levelBar.isHovered(canvasPosition, mouseX, mouseY))) {
+                && readoutHovered(canvasPosition, mouseX, mouseY)) {
             infoTooltipRenderer.render(readoutTooltipTitle, readoutTooltipBody, mouseX, mouseY, alphaMult);
         }
         if (mode.enables(CanvasMode.Chrome.STORAGE_BUTTON) && socketPlacement.buttonContains(mouseX, mouseY)) {
@@ -163,6 +174,14 @@ final class SkillTreeChrome {
                     SkillTreeRefitButton.SHIP_CARD_ICON_SIZE + SHIP_CARD_FRAME_OUTSET * 2f, shipCardHeight + SHIP_CARD_FRAME_OUTSET * 2f);
         }
         return shipCardFrame;
+    }
+
+    private boolean readoutHovered(PositionAPI canvasPosition, float x, float y) {
+        return ordnancePointsBar.isHovered(canvasPosition, x, y) || levelBar.isHovered(canvasPosition, x, y) || nodesBar.isHovered(canvasPosition, x, y);
+    }
+
+    static float sidePanelTop() {
+        return SkillTreeReadoutBar.stackHeight(READOUT_ROWS) + SIDE_PANEL_GAP;
     }
 
     private static String buildReadoutTooltipBody(FleetMemberAPI member) {
