@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -71,6 +72,10 @@ public final class Catalogue {
 
     public int size() {
         return stringsByKey.size();
+    }
+
+    public Set<String> requestedKeys() {
+        return new TreeSet<>(templates.keySet());
     }
 
     Template template(String key) {

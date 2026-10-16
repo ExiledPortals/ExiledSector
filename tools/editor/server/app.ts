@@ -2,7 +2,7 @@ import fastifyStatic from '@fastify/static';
 import Fastify, { type FastifyInstance } from 'fastify';
 import fs from 'node:fs';
 import path from 'node:path';
-import { DescribeService } from './describe.ts';
+import { DescribeService, describeRequestWithStrings } from './describe.ts';
 import { registerDataRoutes } from './routes/data.ts';
 import { registerFileRoutes } from './routes/files.ts';
 import { registerImageRoutes } from './routes/images.ts';
@@ -33,8 +33,7 @@ export function createEditorServer(options: EditorServerOptions): FastifyInstanc
   registerFileRoutes(app, options.paths);
 
   app.post('/api/describe', async (request, reply) => {
-    const body = typeof request.body === 'string' ? request.body : JSON.stringify(request.body ?? {});
-    const result = await describe.describe(body);
+    const result = await describe.describe(describeRequestWithStrings(options.paths, request.body));
     reply.header('content-type', 'application/json; charset=utf-8');
     return 'raw' in result ? result.raw : result.body;
   });

@@ -6,6 +6,7 @@ import { createBrowserRouter, Navigate, RouterProvider } from 'react-router';
 import { EditorLayout } from './layout/EditorLayout.tsx';
 import { ImagesPage } from './pages/images/ImagesPage.tsx';
 import { SocketablesPage } from './pages/socketables/SocketablesPage.tsx';
+import { TextPage } from './pages/text/TextPage.tsx';
 import { TreePage } from './pages/tree/TreePage.tsx';
 import { editorTheme } from './theme.ts';
 
@@ -21,6 +22,7 @@ const router = createBrowserRouter([
       { path: '/tree', element: <TreePage /> },
       { path: '/images', element: <ImagesPage /> },
       { path: '/socketables', element: <SocketablesPage /> },
+      { path: '/text', element: <TextPage /> },
       { path: '*', element: <Navigate to="/tree" replace /> },
     ],
   },

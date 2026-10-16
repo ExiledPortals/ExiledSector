@@ -1,0 +1,67 @@
+.listColumn {
+  width: 380px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--mantine-color-default-border);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.row {
+  display: block;
+  width: 100%;
+  padding: 6px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--mantine-color-default-border);
+}
+
+.row:hover {
+  background: var(--mantine-color-default-hover);
+}
+
+.rowSelected {
+  background: var(--mantine-color-blue-light);
+}
+
+.rowSelected:hover {
+  background: var(--mantine-color-blue-light-hover);
+}
+
+.rowKey {
+  font-family: var(--mantine-font-family-monospace);
+  font-size: 11px;
+  color: var(--mantine-color-dimmed);
+}
+
+.marker {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.templatePreview {
+  white-space: pre-wrap;
+  padding: 10px 12px;
+  border-radius: 4px;
+  background: rgba(8, 12, 18, 0.94);
+  color: rgb(230, 230, 230);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.placeholder {
+  border: 1px dashed rgba(230, 230, 230, 0.45);
+  border-radius: 3px;
+  padding: 0 3px;
+  font-family: var(--mantine-font-family-monospace);
+  font-size: 12px;
+}
+
+.keyChip {
+  font-family: var(--mantine-font-family-monospace);
+  text-transform: none;
+  cursor: pointer;
+}

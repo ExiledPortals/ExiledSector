@@ -1,6 +1,9 @@
 package exiledsector.tools;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.i18n.Catalogue;
+import exiledsector.i18n.I18n;
+import exiledsector.i18n.LocaleChain;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.NodeDescription;
@@ -21,9 +24,23 @@ public final class EditorDescriber {
 
     public String respond(String requestLine) {
         try {
-            return describe(new JSONObject(requestLine)).toString();
+            JSONObject request = new JSONObject(requestLine);
+            JSONObject strings = request.optJSONObject("strings");
+            return strings == null ? describe(request).toString() : describeWithStrings(request, strings).toString();
         } catch (JSONException | IllegalArgumentException e) {
             return error(e.getMessage());
+        }
+    }
+
+    private JSONObject describeWithStrings(JSONObject request, JSONObject strings) throws JSONException {
+        Catalogue previousCatalogue = I18n.catalogue();
+        Catalogue requestCatalogue = new Catalogue(LocaleChain.ENGLISH, I18n.flatten(strings));
+        I18n.install(requestCatalogue);
+        try {
+            JSONObject response = describe(request);
+            return response.put("keys", new JSONArray(requestCatalogue.requestedKeys()));
+        } finally {
+            I18n.install(previousCatalogue);
         }
     }
 

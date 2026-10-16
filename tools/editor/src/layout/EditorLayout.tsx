@@ -1,5 +1,5 @@
 import { ActionIcon, AppShell, Group, NavLink, Stack, Text, Tooltip, useMantineColorScheme } from '@mantine/core';
-import { IconBinaryTree, IconCpu, IconMoon, IconPhoto, IconSun } from '@tabler/icons-react';
+import { IconBinaryTree, IconCpu, IconLanguage, IconMoon, IconPhoto, IconSun } from '@tabler/icons-react';
 import { useEffect, type ComponentType } from 'react';
 import { NavLink as RouterNavLink, Outlet, useBlocker } from 'react-router';
 import { confirmAction } from '../shared/dialogs.tsx';
@@ -16,6 +16,7 @@ const PAGE_LINKS: EditorPageLink[] = [
   { path: '/tree', label: 'Skill tree', description: 'Nodes, types and layout', icon: IconBinaryTree },
   { path: '/images', label: 'Images', description: 'Browse, recolour and crop', icon: IconPhoto },
   { path: '/socketables', label: 'Socketables', description: 'Definitions, names, drops, crafting', icon: IconCpu },
+  { path: '/text', label: 'Text', description: 'English wording and tooltips', icon: IconLanguage },
 ];
 
 export const NAVBAR_WIDTH = 230;
