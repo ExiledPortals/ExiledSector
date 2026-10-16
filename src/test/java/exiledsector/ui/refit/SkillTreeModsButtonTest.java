@@ -1,6 +1,7 @@
 package exiledsector.ui.refit;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.ModManagerAPI;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.CustomUIPanelPlugin;
 import com.fs.starfarer.api.campaign.SectorAPI;
@@ -11,6 +12,7 @@ import com.fs.starfarer.api.ui.CutStyle;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
+import exiledsector.compat.ExoticaCompat;
 import exiledsector.ui.SkillTreeRefitButton;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
@@ -111,6 +113,18 @@ class SkillTreeModsButtonTest {
         verify(container).createUIElement(150f, 25f, false);
         verify(button).setShortcut(Keyboard.KEY_K, true);
         verify(placement).belowMid(buildIn, SkillTreeModsButton.GAP_BELOW_BUILD_IN);
+        verify(placement).setXAlignOffset(SkillTreeModsButton.X_ALIGN_OFFSET);
+    }
+
+    @Test
+    void withExoticaInstalledTheButtonDropsOneSlotToMakeRoomForTheExoticaButton() {
+        ModManagerAPI modManager = mock(ModManagerAPI.class);
+        when(modManager.isModEnabled(ExoticaCompat.MOD_ID)).thenReturn(true);
+        when(Global.getSettings().getModManager()).thenReturn(modManager);
+
+        SkillTreeModsButton.attach(widget);
+
+        verify(placement).belowMid(buildIn, 31f);
         verify(placement).setXAlignOffset(SkillTreeModsButton.X_ALIGN_OFFSET);
     }
 

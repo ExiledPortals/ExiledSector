@@ -86,4 +86,13 @@ class TemplateNamesAndFilterTest {
         String unique = TemplateNames.unique(longName, "r", withLong);
         assertEquals("x".repeat(TemplateNames.MAX_LENGTH - 2) + " 2", unique);
     }
+
+    @Test
+    void aDefaultNameCutAtASpaceStillSpotsTheTemplateItDuplicates() {
+        String shortName = "y".repeat(TemplateNames.MAX_LENGTH - 1);
+        List<SkillTreeTemplate> withShort = List.of(template("8", shortName, "r", null));
+
+        assertEquals(shortName, TemplateNames.unique(shortName + " tail", "r", List.of()));
+        assertEquals("y".repeat(TemplateNames.MAX_LENGTH - 2) + " 2", TemplateNames.unique(shortName + " tail", "r", withShort));
+    }
 }

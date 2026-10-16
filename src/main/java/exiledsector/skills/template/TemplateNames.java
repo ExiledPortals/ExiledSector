@@ -23,7 +23,11 @@ public final class TemplateNames {
     }
 
     public static Problem validate(String rawName, String rootNodeId, Collection<SkillTreeTemplate> existing, String renamedTemplateId) {
-        String normalisedName = normalise(rawName);
+        return validateNormalised(normalise(rawName), rootNodeId, existing, renamedTemplateId);
+    }
+
+    private static Problem validateNormalised(String normalisedName, String rootNodeId, Collection<SkillTreeTemplate> existing,
+                                              String renamedTemplateId) {
         if (normalisedName.isEmpty()) {
             return Problem.EMPTY;
         }
@@ -41,14 +45,14 @@ public final class TemplateNames {
     }
 
     public static String unique(String baseName, String rootNodeId, Collection<SkillTreeTemplate> existing) {
-        String normalisedBase = truncate(normalise(baseName), MAX_LENGTH);
-        if (validate(normalisedBase, rootNodeId, existing) == Problem.NONE) {
+        String normalisedBase = truncate(normalise(baseName), MAX_LENGTH).stripTrailing();
+        if (validateNormalised(normalisedBase, rootNodeId, existing, null) == Problem.NONE) {
             return normalisedBase;
         }
         for (int suffix = 2; ; suffix++) {
             String suffixText = " " + suffix;
             String candidate = truncate(normalisedBase, MAX_LENGTH - suffixText.length()).stripTrailing() + suffixText;
-            if (validate(candidate, rootNodeId, existing) == Problem.NONE) {
+            if (validateNormalised(candidate, rootNodeId, existing, null) == Problem.NONE) {
                 return candidate;
             }
         }

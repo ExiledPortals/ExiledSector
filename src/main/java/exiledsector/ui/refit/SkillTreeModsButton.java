@@ -10,6 +10,7 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.compat.ExoticaCompat;
 import exiledsector.i18n.Translation;
 import exiledsector.ui.SkillTreeRefitButton;
 import org.apache.log4j.Logger;
@@ -52,10 +53,14 @@ final class SkillTreeModsButton extends BaseCustomUIPanelPlugin {
             skillTreeButton.setShortcut(HOTKEY, true);
             plugin.skillTreeButton = skillTreeButton;
             container.addUIElement(element);
-            widget.addComponent(container).belowMid(buildIn, GAP_BELOW_BUILD_IN).setXAlignOffset(X_ALIGN_OFFSET);
+            widget.addComponent(container).belowMid(buildIn, gapBelowBuildIn(buttonHeight)).setXAlignOffset(X_ALIGN_OFFSET);
         } catch (Throwable e) {
             disable(e);
         }
+    }
+
+    static float gapBelowBuildIn(float buttonHeight) {
+        return ExoticaCompat.isModEnabled() ? GAP_BELOW_BUILD_IN + buttonHeight + GAP_BELOW_BUILD_IN : GAP_BELOW_BUILD_IN;
     }
 
     private void show(CustomPanelAPI container, boolean visible) {
