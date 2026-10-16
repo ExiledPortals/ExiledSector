@@ -1322,7 +1322,7 @@
     "skillType.survey_supplies_cost_reduction.name": "降低勘测补给消耗",
     "skillType.survey_generic_cost_reduction.name": "降低勘测消耗",
     "skillType.increased_sensor_strength.name": "传感器强度",
-    "skillType.violence_of_action.name": "惊人登场",
+    "skillType.violence_of_action.name": "骑士冲锋",
     "skillType.restriction_breeds_creativity.name": "限制催生创意",
     "skillType.perseverence_through_faith.name": "信仰中坚守",
     "skillType.crustacean_integration.name": "甲壳类整合",
@@ -1418,5 +1418,7 @@
     "skillType.shared_fate.description": "由彼此竞争的政体组成的英仙座联盟战列，学会了同生共死。",
     "skillType.phase_hull_upgrades.description": "从速子科技混合物理部泄露出来的文件，记录着该公司发誓已按 Thule 条约放弃的相位研究；它们教会船员把本舰的传感器辐射导入相位舰为舰队撑起的遮蔽场。本舰的传感器有助于让舰队避开远距离探测，船体也更能扛住日冕和风暴带来的损耗。",
     "skillType.tactical_superiority.description": "每个太空人身上都带着一台 TriPad，而学会利用速子科技自己硬写入的后门的船员，可以说服战场目标交出控制权。本舰占领战场目标的速度快得多。",
-    "skillType.energy_chain.description": "拆开速子科技战舰残骸中的能量转换器，让船员学会调校本舰的能量弹，使其从敌方护盾上擦过，继续飞向另一个目标。部分命中护盾的非光束能量弹会折射向最近的另一艘敌舰，每跳一次都会减弱。"
+    "skillType.energy_chain.description": "拆开速子科技战舰残骸中的能量转换器，让船员学会调校本舰的能量弹，使其从敌方护盾上擦过，继续飞向另一个目标。部分命中护盾的非光束能量弹会折射向最近的另一艘敌舰，每跳一次都会减弱。",
+    "skillType.violence_of_action.description": "卢德骑士团认为，正义之舰应以全速迎敌；在 Ceyx 与他们一同操练，让船员学会为冲锋调校引擎与操控。舰船飞得更快，对舵令的反应也更灵敏。",
+    "skillType.perseverence_through_faith.description": "船员中的卢德信徒认为，一艘伤痕累累的船就像一名苦修者，会在艰难中找到力量；他们用祈祷和耐心的双手让它残破的火炮继续作战。本舰每带有一个D插，武器的命中就会更重一些。"
 }

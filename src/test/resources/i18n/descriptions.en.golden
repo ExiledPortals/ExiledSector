@@ -3437,11 +3437,16 @@ type|peak_cr_duration|FRIGATE|0	0	<good>25%</good> increased peak combat readine
 type|peak_cr_duration|DESTROYER|0	0	<good>25%</good> increased peak combat readiness duration.
 type|peak_cr_duration|CRUISER|0	0	<good>25%</good> increased peak combat readiness duration.
 type|peak_cr_duration|CAPITAL_SHIP|0	0	<good>25%</good> increased peak combat readiness duration.
-type|perseverence_through_faith|null|0	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
-type|perseverence_through_faith|FRIGATE|0	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
-type|perseverence_through_faith|DESTROYER|0	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
-type|perseverence_through_faith|CRUISER|0	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
-type|perseverence_through_faith|CAPITAL_SHIP|0	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
+type|perseverence_through_faith|null|0	0	Luddic faithful among the crew hold that a scarred ship, like a penitent, finds its strength in hardship, and they keep its battered guns fighting with prayer and patient hands. Each d-mod this ship carries makes its weapons hit a little harder.
+type|perseverence_through_faith|null|1	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
+type|perseverence_through_faith|FRIGATE|0	0	Luddic faithful among the crew hold that a scarred ship, like a penitent, finds its strength in hardship, and they keep its battered guns fighting with prayer and patient hands. Each d-mod this ship carries makes its weapons hit a little harder.
+type|perseverence_through_faith|FRIGATE|1	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
+type|perseverence_through_faith|DESTROYER|0	0	Luddic faithful among the crew hold that a scarred ship, like a penitent, finds its strength in hardship, and they keep its battered guns fighting with prayer and patient hands. Each d-mod this ship carries makes its weapons hit a little harder.
+type|perseverence_through_faith|DESTROYER|1	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
+type|perseverence_through_faith|CRUISER|0	0	Luddic faithful among the crew hold that a scarred ship, like a penitent, finds its strength in hardship, and they keep its battered guns fighting with prayer and patient hands. Each d-mod this ship carries makes its weapons hit a little harder.
+type|perseverence_through_faith|CRUISER|1	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
+type|perseverence_through_faith|CAPITAL_SHIP|0	0	Luddic faithful among the crew hold that a scarred ship, like a penitent, finds its strength in hardship, and they keep its battered guns fighting with prayer and patient hands. Each d-mod this ship carries makes its weapons hit a little harder.
+type|perseverence_through_faith|CAPITAL_SHIP|1	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
 type|phase_anchor|null|0	1	<bad>100%</bad> less phase cloak activation cost.
 type|phase_anchor|null|1	0	<good>100%</good> more flux dissipation, weapon rate of fire, and ammo regeneration while phased.
 type|phase_anchor|null|2	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
@@ -3996,21 +4001,26 @@ type|vent_rate_and_emp_damage|CRUISER|0	0	<good>5%</good> increased venting spee
 type|vent_rate_and_emp_damage|CRUISER|1	1	<bad>10%</bad> less EMP damage taken.
 type|vent_rate_and_emp_damage|CAPITAL_SHIP|0	0	<good>5%</good> increased venting speed.
 type|vent_rate_and_emp_damage|CAPITAL_SHIP|1	1	<bad>10%</bad> less EMP damage taken.
-type|violence_of_action|null|0	0	<good>20%</good> increased maneuverability.
-type|violence_of_action|null|1	0	<good>25%</good> increased top speed.
-type|violence_of_action|null|2	0	These effects only last for the first 60 seconds after the ship is deployed.
-type|violence_of_action|FRIGATE|0	0	<good>20%</good> increased maneuverability.
-type|violence_of_action|FRIGATE|1	0	<good>25%</good> increased top speed.
-type|violence_of_action|FRIGATE|2	0	These effects only last for the first 60 seconds after the ship is deployed.
-type|violence_of_action|DESTROYER|0	0	<good>20%</good> increased maneuverability.
-type|violence_of_action|DESTROYER|1	0	<good>25%</good> increased top speed.
-type|violence_of_action|DESTROYER|2	0	These effects only last for the first 60 seconds after the ship is deployed.
-type|violence_of_action|CRUISER|0	0	<good>20%</good> increased maneuverability.
-type|violence_of_action|CRUISER|1	0	<good>25%</good> increased top speed.
-type|violence_of_action|CRUISER|2	0	These effects only last for the first 60 seconds after the ship is deployed.
-type|violence_of_action|CAPITAL_SHIP|0	0	<good>20%</good> increased maneuverability.
-type|violence_of_action|CAPITAL_SHIP|1	0	<good>25%</good> increased top speed.
-type|violence_of_action|CAPITAL_SHIP|2	0	These effects only last for the first 60 seconds after the ship is deployed.
+type|violence_of_action|null|0	0	The Knights of Ludd hold that a righteous ship meets its enemy at full burn, and drilling alongside them at Ceyx teaches the crew to trim the engines and controls for the charge. The ship flies faster and answers the helm more sharply.
+type|violence_of_action|null|1	0	<good>20%</good> increased maneuverability.
+type|violence_of_action|null|2	0	<good>25%</good> increased top speed.
+type|violence_of_action|null|3	0	These effects only last for the first 60 seconds after the ship is deployed.
+type|violence_of_action|FRIGATE|0	0	The Knights of Ludd hold that a righteous ship meets its enemy at full burn, and drilling alongside them at Ceyx teaches the crew to trim the engines and controls for the charge. The ship flies faster and answers the helm more sharply.
+type|violence_of_action|FRIGATE|1	0	<good>20%</good> increased maneuverability.
+type|violence_of_action|FRIGATE|2	0	<good>25%</good> increased top speed.
+type|violence_of_action|FRIGATE|3	0	These effects only last for the first 60 seconds after the ship is deployed.
+type|violence_of_action|DESTROYER|0	0	The Knights of Ludd hold that a righteous ship meets its enemy at full burn, and drilling alongside them at Ceyx teaches the crew to trim the engines and controls for the charge. The ship flies faster and answers the helm more sharply.
+type|violence_of_action|DESTROYER|1	0	<good>20%</good> increased maneuverability.
+type|violence_of_action|DESTROYER|2	0	<good>25%</good> increased top speed.
+type|violence_of_action|DESTROYER|3	0	These effects only last for the first 60 seconds after the ship is deployed.
+type|violence_of_action|CRUISER|0	0	The Knights of Ludd hold that a righteous ship meets its enemy at full burn, and drilling alongside them at Ceyx teaches the crew to trim the engines and controls for the charge. The ship flies faster and answers the helm more sharply.
+type|violence_of_action|CRUISER|1	0	<good>20%</good> increased maneuverability.
+type|violence_of_action|CRUISER|2	0	<good>25%</good> increased top speed.
+type|violence_of_action|CRUISER|3	0	These effects only last for the first 60 seconds after the ship is deployed.
+type|violence_of_action|CAPITAL_SHIP|0	0	The Knights of Ludd hold that a righteous ship meets its enemy at full burn, and drilling alongside them at Ceyx teaches the crew to trim the engines and controls for the charge. The ship flies faster and answers the helm more sharply.
+type|violence_of_action|CAPITAL_SHIP|1	0	<good>20%</good> increased maneuverability.
+type|violence_of_action|CAPITAL_SHIP|2	0	<good>25%</good> increased top speed.
+type|violence_of_action|CAPITAL_SHIP|3	0	These effects only last for the first 60 seconds after the ship is deployed.
 type|warpfield|null|0	0	A localised warp field supercharges the ship's energy weapons without raising their flux per second, and keeps the zero-flux engine boost running at low flux.
 type|warpfield|null|1	0	<good>15%</good> increased energy weapon damage.
 type|warpfield|null|2	0	<good>20%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.

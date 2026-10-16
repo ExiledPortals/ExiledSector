@@ -2783,7 +2783,7 @@
 		},
 		{
 			"id": "violence_of_action",
-			"name": "Dramatic Entrance",
+			"name": "Knight's Charge",
 			"icon": "graphics/icons/violence_of_action.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -2797,6 +2797,7 @@
 				}
 			],
 			"temporaryAfterDeploymentSeconds": 60,
+			"description": "The Knights of Ludd hold that a righteous ship meets its enemy at full burn, and drilling alongside them at Ceyx teaches the crew to trim the engines and controls for the charge. The ship flies faster and answers the helm more sharply.",
 			"tags": [
 				"speed"
 			]
@@ -2820,7 +2821,7 @@
 		},
 		{
 			"id": "perseverence_through_faith",
-			"name": "Perseverence Through Faith",
+			"name": "Perseverance Through Faith",
 			"icon": "graphics/icons/perseverence_through_faith.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -2829,6 +2830,7 @@
 					"magnitude": 2
 				}
 			],
+			"description": "Luddic faithful among the crew hold that a scarred ship, like a penitent, finds its strength in hardship, and they keep its battered guns fighting with prayer and patient hands. Each d-mod this ship carries makes its weapons hit a little harder.",
 			"tags": [
 				"d_mods",
 				"weapons"
