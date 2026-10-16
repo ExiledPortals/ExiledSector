@@ -59,6 +59,7 @@ import exiledsector.socketables.SocketableStore;
 import exiledsector.socketables.SocketTypeMigration;
 import exiledsector.ui.ExiledSectorSettings;
 import exiledsector.ui.SkillTreeRefitButton;
+import exiledsector.ui.TreeCameraMemory;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
 import exiledsector.ui.inspect.SkillTreeCodexListener;
 import exiledsector.ui.inspect.SocketableCodex;
@@ -198,6 +199,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         SkillDataResolver.clearCache();
         ResolvedTree.clearCache();
         PhantomConflictWatch.clearPendingReverts();
+        TreeCameraMemory.forgetAll();
         FleetCrewLedger.discardPending();
         FrameworkSlots.clearCache();
         NpcBonusScale.invalidate();

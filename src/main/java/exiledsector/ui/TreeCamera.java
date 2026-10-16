@@ -182,6 +182,14 @@ final class TreeCamera {
         return currentZoom;
     }
 
+    float centreTreeX() {
+        return -panX / currentZoom;
+    }
+
+    float centreTreeY() {
+        return panY / currentZoom;
+    }
+
     float panX() {
         return panX;
     }

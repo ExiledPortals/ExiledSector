@@ -52,6 +52,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final FrameworkInspection frameworkInspection;
     private final SkillTreeChrome chrome;
     private final PointerGesture gesture = new PointerGesture();
+    private final TreeCameraMemory.View cameraMemory;
 
     private PositionAPI canvasPosition;
     private float mouseX = 0f;
@@ -83,8 +84,11 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.frameworkInspection = new FrameworkInspection(hostPanel, treeSession, socketPlacement);
         this.chrome = new SkillTreeChrome(member, panelStyle, statPanel, searchBar, templateUi, socketPlacement, shipCardHeight);
 
+        this.cameraMemory = TreeCameraMemory.forShip(member == null ? null : member.getId());
         SkillNode startingRoot = treeSession.getStartingRoot();
-        if (startingRoot != null) {
+        if (startingRoot != null && cameraMemory.isSaved()) {
+            camera.jumpTo(cameraMemory.camera());
+        } else if (startingRoot != null) {
             camera.centreOn(startingRoot.getOffsetX(), startingRoot.getOffsetY());
         }
     }
@@ -140,6 +144,13 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         chrome.advance(amount, canvasPosition, mode, treeSession.budget(), mouseX, mouseY, mouseKnown);
         float dimStep = amount / WORKBENCH_DIM_SECONDS;
         workbenchDimProgress = Math.max(0f, Math.min(1f, workbenchDimProgress + (socketPlacement.isWorkbenchOpen() ? dimStep : -dimStep)));
+        rememberCamera(mode);
+    }
+
+    private void rememberCamera(CanvasMode mode) {
+        if ((mode == CanvasMode.TREE || mode == CanvasMode.ALLOCATION_RUN) && treeSession.getStartingRoot() != null) {
+            cameraMemory.save(camera.centreTreeX(), camera.centreTreeY(), camera.zoom());
+        }
     }
 
     private boolean mustCloseStorage(CanvasMode mode) {
