@@ -31,6 +31,10 @@ public final class UnlockCondition {
         return new UnlockCondition(UnlockConditionType.MEMORY_FLAG, null, conditionKey, 0);
     }
 
+    public static UnlockCondition ratPlayerExoship() {
+        return new UnlockCondition(UnlockConditionType.RAT_PLAYER_EXOSHIP, null, null, 0);
+    }
+
     public UnlockConditionType getType() {
         return unlockType;
     }

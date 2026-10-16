@@ -5,7 +5,6 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocationGate;
-import exiledsector.skills.ExoshipNodes;
 import exiledsector.skills.FrameworkSlots;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
@@ -193,6 +192,10 @@ public final class TreeAllocationSession {
         return allocator.data().isAllocated(node.getId());
     }
 
+    public boolean isHidden(SkillNode node) {
+        return node != null && viewSnapshot().isHidden(node);
+    }
+
     public Socketable socketedItem(SkillNode node) {
         return node == null ? null : SocketableStore.lookup(allocator.data().getSocketedItem(node.getId()));
     }
@@ -266,9 +269,6 @@ public final class TreeAllocationSession {
         SkillNode paired = pairedId == null ? null : SkillTree.get(pairedId);
         if (paired == null) {
             return null;
-        }
-        if (ExoshipNodes.isExoship(paired) || ExoshipNodes.isExoship(node)) {
-            return paired;
         }
         NodeAllocator.Snapshot allocation = snapshot();
         return allocation.isHidden(node) || allocation.isHidden(paired) ? null : paired;

@@ -3208,6 +3208,11 @@
 			"name": "Hyper-Nav Beacon",
 			"icon": "",
 			"tier": "WORMHOLE",
+			"unlockConditions": [
+				{
+					"type": "ratPlayerExoship"
+				}
+			],
 			"description": "A beacon left by the Exo-Tech faction to guide their Exoship's warp drive. Allocating it docks your ship with the Exoship at no extra cost, opening the branches it carries.\n\nThe Exoship never stays put: every 30 seconds it warps to orbit a different notable somewhere in the tree.\n\nDeallocating the beacon undocks the Exoship as well.\n\nCtrl click on the beacon, or click the Exoship wherever it is, to travel to it."
 		},
 		{
@@ -3215,6 +3220,11 @@
 			"name": "Exoship",
 			"icon": "",
 			"tier": "WORMHOLE",
+			"unlockConditions": [
+				{
+					"type": "ratPlayerExoship"
+				}
+			],
 			"description": "The last Exoship of the Exo-Tech faction, warping from system to system across the sector. Its branches travel with it.\n\nAllocated together with its Hyper-Nav Beacon. Deallocating either deallocates both.\n\nCtrl click on the Exoship to return to the beacon."
 		},
 		{

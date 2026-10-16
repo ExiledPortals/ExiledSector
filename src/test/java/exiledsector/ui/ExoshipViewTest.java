@@ -136,6 +136,25 @@ class ExoshipViewTest {
     }
 
     @Test
+    void untilTheBeaconIsUnlockedTheExoshipRoamsButCannotBeClickedOrBoarded() {
+        ExoshipView view = view();
+        TreeViewport viewport = new TreeViewport(800f, 450f, 1f);
+        view.render(viewport, 1f);
+        view.enter();
+        view.advance(ExoshipView.VIEW_FADE_SECONDS, false);
+
+        view.setBoardable(false);
+        view.enter();
+
+        assertTrue(view.isAvailable());
+        assertFalse(view.isBoardable());
+        assertFalse(view.isActive());
+        assertEquals(0f, view.viewLevel());
+        assertFalse(view.shipContains(viewport, viewport.screenX(view.focusX()), viewport.screenY(view.focusY())));
+        assertEquals(0f, view.layers(viewport, 1f).carriedAlpha());
+    }
+
+    @Test
     void aTreeWithoutTheExoshipCannotBeBoarded() {
         ExoshipView view = new ExoshipView(null, List.of(CORE_NOTABLE, FAR_NOTABLE), new Random(3));
 

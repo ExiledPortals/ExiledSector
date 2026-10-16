@@ -127,6 +127,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             stopFollowingFleet();
         }
         fleetRenderer.advance(amount);
+        exoshipView.setBoardable(!treeSession.isHidden(exoshipView.exoshipNode()));
         exoshipView.advance(amount, exoshipView.isAvailable() && treeSession.isAllocated(exoshipView.exoshipNode()));
         if (exoshipView.isActive()) {
             camera.follow(exoshipView.focusX(), exoshipView.focusY(), amount);
@@ -378,7 +379,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void boardExoship() {
-        if (!exoshipView.isAvailable()) {
+        if (!exoshipView.isBoardable()) {
             return;
         }
         stopFollowingFleet();

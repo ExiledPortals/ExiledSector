@@ -136,6 +136,8 @@ class CompatChecksTest {
     void randomAssortmentReportsEachExotechHullModThatIsGone() {
         when(settings.getHullModSpec(anyString())).thenReturn(mock(HullModSpecAPI.class));
         when(settings.getHullModSpec("rat_hypatia_hullmod")).thenReturn(null);
+        when(settings.getScriptClassLoader()).thenReturn(CompatChecksTest.class.getClassLoader());
+        RandomAssortmentCompat.clearCachedLookups();
 
         assertEquals(List.of("the hull mod rat_hypatia_hullmod"), RandomAssortmentCompat.TARGET.missingFeatures().get());
     }
