@@ -163,6 +163,7 @@
 			"phantomHullMods": [
 				"ground_support"
 			],
+			"description": "Raiding colonies alongside pirate crews teaches the crew to turn spare berths and cargo lifts into a drop platform for the marines. The more crew this ship can carry, the more weight it adds to planetary raids.",
 			"tags": [
 				"logistics",
 				"campaign_only"
@@ -2805,6 +2806,7 @@
 					"magnitude": -2
 				}
 			],
+			"description": "Captured pirate hulls show the crew how freebooters keep a battered ship fighting, bracing broken frames and patched plates around the damage instead of hiding it. Each d-mod this ship carries makes its armour shrug off a little more damage.",
 			"tags": [
 				"d_mods",
 				"armour"
@@ -2876,6 +2878,7 @@
 					"capitalShip": 15
 				}
 			],
+			"description": "Freebooters who signed on at a pirate base taught the crew to strip every wreck to the frame and to patch the ship back to fighting trim from whatever a battle leaves behind. More salvage comes back after each fight, and the ship regains its combat readiness faster.",
 			"tags": [
 				"combat_readiness",
 				"player_only"
@@ -3437,7 +3440,7 @@
 		},
 		{
 			"id": "reckless_assault",
-			"name": "Reckless Assault",
+			"name": "Freebooter's Charge",
 			"icon": "graphics/icons/reckless_assault.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -3458,6 +3461,7 @@
 					"magnitude": -10
 				}
 			],
+			"description": "Pirate captains who joined the crew drill the habits that make freebooters so dangerous up close: charge in, fire everything and count the casualties later. Weapons hit much harder, but the ship sheds armour, takes more damage on its shields and loses far more crew.",
 			"tags": [
 				"weapons"
 			]

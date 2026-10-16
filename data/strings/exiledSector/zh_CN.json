@@ -1364,7 +1364,7 @@
     "skillType.ammo_capacity.name": "弹药容量",
     "skillType.peak_cr_duration.name": "峰值战备时间",
     "skillType.temporary_acceleration.name": "临时机动性",
-    "skillType.reckless_assault.name": "鲁莽突击",
+    "skillType.reckless_assault.name": "自由海盗冲锋",
     "skillType.exogrid.name": "Exo 网格",
     "skillType.coil_efficiency.name": "线圈效率",
     "skillType.phased_recharging.name": "相位充能",
@@ -1408,5 +1408,9 @@
     "skillType.hull_breacher.description": "船员中的前霸主海军炮手还记得海军为接舷战保留的破舱装药：经过硬化的炮弹能贯穿装甲，而不是在表面炸开。部分实弹命中会彻底撕穿敌舰船体，并继续向前飞行。",
     "skillType.heavy_ballistics_integration.description": "在 Agreus 拆船厂拆解退役的 Onslaught，让船员学会了海军如何把最重的火炮直接嵌入船体。大型实弹武器在本舰上占用的装配点大幅减少。",
     "skillType.torpedo_specialisation.description": "霸主自人类领域时代保存至今的第十四战斗群打击手册教导：鱼雷应当快速接近、笔直飞行。把每枚导弹的机动推进器改接到尾部推进器上，能让本舰的导弹更快抵达目标，但转向不再那么灵活。",
-    "skillType.ballistic_momentum.description": "与霸主战列并肩航行，让船员学到海军的习惯：高速抵达，在敌人站稳之前开火，炮声如海军所说的心跳般隆隆作响。本舰的航速被推得越超出平常，实弹武器的命中就越重。"
+    "skillType.ballistic_momentum.description": "与霸主战列并肩航行，让船员学到海军的习惯：高速抵达，在敌人站稳之前开火，炮声如海军所说的心跳般隆隆作响。本舰的航速被推得越超出平常，实弹武器的命中就越重。",
+    "skillType.waste_not.description": "在海盗基地入伙的自由海盗教会船员把每一具残骸拆到只剩骨架，并用战斗留下的一切把舰船修回战斗状态。每场战斗后能带回更多战利品，舰船的战备值也恢复得更快。",
+    "skillType.ground_support.description": "与海盗船员一同袭击殖民地，让船员学会把空余铺位和货运升降机改造成陆战队的投送平台。本舰能搭载的船员越多，对行星突袭的助力就越大。",
+    "skillType.restriction_breeds_creativity.description": "缴获的海盗船体向船员展示了自由海盗如何让伤痕累累的舰船继续作战：围绕损伤加固断裂的骨架和补过的装甲板，而不是遮掩它们。本舰每带有一个D插，装甲就能多抵挡一些伤害。",
+    "skillType.reckless_assault.description": "加入船员的海盗船长训练出让自由海盗在近距离如此危险的习惯：冲进去，倾泻所有火力，伤亡以后再算。武器的命中重得多，但舰船装甲会削弱，护盾承受更多伤害，船员损失也大得多。"
 }

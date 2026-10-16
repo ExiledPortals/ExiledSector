@@ -2903,15 +2903,20 @@ type|fuel_flat|FRIGATE|0	0	Increases fuel capacity by <good>5</good>.
 type|fuel_flat|DESTROYER|0	0	Increases fuel capacity by <good>15</good>.
 type|fuel_flat|CRUISER|0	0	Increases fuel capacity by <good>25</good>.
 type|fuel_flat|CAPITAL_SHIP|0	0	Increases fuel capacity by <good>50</good>.
-type|ground_support|null|0	0	Increases the effective strength of planetary raids by <good>25%</good> of this ship's maximum crew capacity (after modifiers), up to the total number of marines in the fleet.
+type|ground_support|null|0	0	Raiding colonies alongside pirate crews teaches the crew to turn spare berths and cargo lifts into a drop platform for the marines. The more crew this ship can carry, the more weight it adds to planetary raids.
+type|ground_support|null|1	0	Increases the effective strength of planetary raids by <good>25%</good> of this ship's maximum crew capacity (after modifiers), up to the total number of marines in the fleet.
 type-detail|ground_support|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Ground Support</hullmod>\n• <hullmod>Ground Support Package</hullmod>
-type|ground_support|FRIGATE|0	0	Increases the effective strength of planetary raids by <good>25%</good> of this ship's maximum crew capacity (after modifiers), up to the total number of marines in the fleet.
+type|ground_support|FRIGATE|0	0	Raiding colonies alongside pirate crews teaches the crew to turn spare berths and cargo lifts into a drop platform for the marines. The more crew this ship can carry, the more weight it adds to planetary raids.
+type|ground_support|FRIGATE|1	0	Increases the effective strength of planetary raids by <good>25%</good> of this ship's maximum crew capacity (after modifiers), up to the total number of marines in the fleet.
 type-detail|ground_support|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Ground Support</hullmod>\n• <hullmod>Ground Support Package</hullmod>
-type|ground_support|DESTROYER|0	0	Increases the effective strength of planetary raids by <good>25%</good> of this ship's maximum crew capacity (after modifiers), up to the total number of marines in the fleet.
+type|ground_support|DESTROYER|0	0	Raiding colonies alongside pirate crews teaches the crew to turn spare berths and cargo lifts into a drop platform for the marines. The more crew this ship can carry, the more weight it adds to planetary raids.
+type|ground_support|DESTROYER|1	0	Increases the effective strength of planetary raids by <good>25%</good> of this ship's maximum crew capacity (after modifiers), up to the total number of marines in the fleet.
 type-detail|ground_support|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Ground Support</hullmod>\n• <hullmod>Ground Support Package</hullmod>
-type|ground_support|CRUISER|0	0	Increases the effective strength of planetary raids by <good>25%</good> of this ship's maximum crew capacity (after modifiers), up to the total number of marines in the fleet.
+type|ground_support|CRUISER|0	0	Raiding colonies alongside pirate crews teaches the crew to turn spare berths and cargo lifts into a drop platform for the marines. The more crew this ship can carry, the more weight it adds to planetary raids.
+type|ground_support|CRUISER|1	0	Increases the effective strength of planetary raids by <good>25%</good> of this ship's maximum crew capacity (after modifiers), up to the total number of marines in the fleet.
 type-detail|ground_support|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Ground Support</hullmod>\n• <hullmod>Ground Support Package</hullmod>
-type|ground_support|CAPITAL_SHIP|0	0	Increases the effective strength of planetary raids by <good>25%</good> of this ship's maximum crew capacity (after modifiers), up to the total number of marines in the fleet.
+type|ground_support|CAPITAL_SHIP|0	0	Raiding colonies alongside pirate crews teaches the crew to turn spare berths and cargo lifts into a drop platform for the marines. The more crew this ship can carry, the more weight it adds to planetary raids.
+type|ground_support|CAPITAL_SHIP|1	0	Increases the effective strength of planetary raids by <good>25%</good> of this ship's maximum crew capacity (after modifiers), up to the total number of marines in the fleet.
 type-detail|ground_support|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Ground Support</hullmod>\n• <hullmod>Ground Support Package</hullmod>
 type|hardened_subsystems|null|0	1	<bad>30%</bad> less rate of combat readiness loss from extended deployment.
 type-detail|hardened_subsystems|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Hardened Subsystems</hullmod>
@@ -3502,26 +3507,31 @@ type|rationing|CRUISER|0	1	<bad>10%</bad> less supply use for maintenance.
 type|rationing|CRUISER|1	1	<bad>10%</bad> less fuel consumption rate.
 type|rationing|CAPITAL_SHIP|0	1	<bad>10%</bad> less supply use for maintenance.
 type|rationing|CAPITAL_SHIP|1	1	<bad>10%</bad> less fuel consumption rate.
-type|reckless_assault|null|0	1	<good>50%</good> increased crew casualties.
-type|reckless_assault|null|1	0	<good>30%</good> increased weapon damage.
-type|reckless_assault|null|2	1	<good>10%</good> more damage taken by shields.
-type|reckless_assault|null|3	0	<bad>10%</bad> reduced armor.
-type|reckless_assault|FRIGATE|0	1	<good>50%</good> increased crew casualties.
-type|reckless_assault|FRIGATE|1	0	<good>30%</good> increased weapon damage.
-type|reckless_assault|FRIGATE|2	1	<good>10%</good> more damage taken by shields.
-type|reckless_assault|FRIGATE|3	0	<bad>10%</bad> reduced armor.
-type|reckless_assault|DESTROYER|0	1	<good>50%</good> increased crew casualties.
-type|reckless_assault|DESTROYER|1	0	<good>30%</good> increased weapon damage.
-type|reckless_assault|DESTROYER|2	1	<good>10%</good> more damage taken by shields.
-type|reckless_assault|DESTROYER|3	0	<bad>10%</bad> reduced armor.
-type|reckless_assault|CRUISER|0	1	<good>50%</good> increased crew casualties.
-type|reckless_assault|CRUISER|1	0	<good>30%</good> increased weapon damage.
-type|reckless_assault|CRUISER|2	1	<good>10%</good> more damage taken by shields.
-type|reckless_assault|CRUISER|3	0	<bad>10%</bad> reduced armor.
-type|reckless_assault|CAPITAL_SHIP|0	1	<good>50%</good> increased crew casualties.
-type|reckless_assault|CAPITAL_SHIP|1	0	<good>30%</good> increased weapon damage.
-type|reckless_assault|CAPITAL_SHIP|2	1	<good>10%</good> more damage taken by shields.
-type|reckless_assault|CAPITAL_SHIP|3	0	<bad>10%</bad> reduced armor.
+type|reckless_assault|null|0	0	Pirate captains who joined the crew drill the habits that make freebooters so dangerous up close: charge in, fire everything and count the casualties later. Weapons hit much harder, but the ship sheds armour, takes more damage on its shields and loses far more crew.
+type|reckless_assault|null|1	1	<good>50%</good> increased crew casualties.
+type|reckless_assault|null|2	0	<good>30%</good> increased weapon damage.
+type|reckless_assault|null|3	1	<good>10%</good> more damage taken by shields.
+type|reckless_assault|null|4	0	<bad>10%</bad> reduced armor.
+type|reckless_assault|FRIGATE|0	0	Pirate captains who joined the crew drill the habits that make freebooters so dangerous up close: charge in, fire everything and count the casualties later. Weapons hit much harder, but the ship sheds armour, takes more damage on its shields and loses far more crew.
+type|reckless_assault|FRIGATE|1	1	<good>50%</good> increased crew casualties.
+type|reckless_assault|FRIGATE|2	0	<good>30%</good> increased weapon damage.
+type|reckless_assault|FRIGATE|3	1	<good>10%</good> more damage taken by shields.
+type|reckless_assault|FRIGATE|4	0	<bad>10%</bad> reduced armor.
+type|reckless_assault|DESTROYER|0	0	Pirate captains who joined the crew drill the habits that make freebooters so dangerous up close: charge in, fire everything and count the casualties later. Weapons hit much harder, but the ship sheds armour, takes more damage on its shields and loses far more crew.
+type|reckless_assault|DESTROYER|1	1	<good>50%</good> increased crew casualties.
+type|reckless_assault|DESTROYER|2	0	<good>30%</good> increased weapon damage.
+type|reckless_assault|DESTROYER|3	1	<good>10%</good> more damage taken by shields.
+type|reckless_assault|DESTROYER|4	0	<bad>10%</bad> reduced armor.
+type|reckless_assault|CRUISER|0	0	Pirate captains who joined the crew drill the habits that make freebooters so dangerous up close: charge in, fire everything and count the casualties later. Weapons hit much harder, but the ship sheds armour, takes more damage on its shields and loses far more crew.
+type|reckless_assault|CRUISER|1	1	<good>50%</good> increased crew casualties.
+type|reckless_assault|CRUISER|2	0	<good>30%</good> increased weapon damage.
+type|reckless_assault|CRUISER|3	1	<good>10%</good> more damage taken by shields.
+type|reckless_assault|CRUISER|4	0	<bad>10%</bad> reduced armor.
+type|reckless_assault|CAPITAL_SHIP|0	0	Pirate captains who joined the crew drill the habits that make freebooters so dangerous up close: charge in, fire everything and count the casualties later. Weapons hit much harder, but the ship sheds armour, takes more damage on its shields and loses far more crew.
+type|reckless_assault|CAPITAL_SHIP|1	1	<good>50%</good> increased crew casualties.
+type|reckless_assault|CAPITAL_SHIP|2	0	<good>30%</good> increased weapon damage.
+type|reckless_assault|CAPITAL_SHIP|3	1	<good>10%</good> more damage taken by shields.
+type|reckless_assault|CAPITAL_SHIP|4	0	<bad>10%</bad> reduced armor.
 type|recovery_shuttles|null|0	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
 type-detail|recovery_shuttles|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Recovery Shuttles</hullmod>
 type|recovery_shuttles|FRIGATE|0	1	<bad>75%</bad> less casualties suffered by fighter pilots launched from this ship.
@@ -3567,11 +3577,16 @@ type|repair_time|FRIGATE|0	0	Reduces weapon and engine repair time by <good>15%<
 type|repair_time|DESTROYER|0	0	Reduces weapon and engine repair time by <good>15%</good>.
 type|repair_time|CRUISER|0	0	Reduces weapon and engine repair time by <good>15%</good>.
 type|repair_time|CAPITAL_SHIP|0	0	Reduces weapon and engine repair time by <good>15%</good>.
-type|restriction_breeds_creativity|null|0	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-type|restriction_breeds_creativity|FRIGATE|0	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-type|restriction_breeds_creativity|DESTROYER|0	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-type|restriction_breeds_creativity|CRUISER|0	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-type|restriction_breeds_creativity|CAPITAL_SHIP|0	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+type|restriction_breeds_creativity|null|0	0	Captured pirate hulls show the crew how freebooters keep a battered ship fighting, bracing broken frames and patched plates around the damage instead of hiding it. Each d-mod this ship carries makes its armour shrug off a little more damage.
+type|restriction_breeds_creativity|null|1	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+type|restriction_breeds_creativity|FRIGATE|0	0	Captured pirate hulls show the crew how freebooters keep a battered ship fighting, bracing broken frames and patched plates around the damage instead of hiding it. Each d-mod this ship carries makes its armour shrug off a little more damage.
+type|restriction_breeds_creativity|FRIGATE|1	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+type|restriction_breeds_creativity|DESTROYER|0	0	Captured pirate hulls show the crew how freebooters keep a battered ship fighting, bracing broken frames and patched plates around the damage instead of hiding it. Each d-mod this ship carries makes its armour shrug off a little more damage.
+type|restriction_breeds_creativity|DESTROYER|1	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+type|restriction_breeds_creativity|CRUISER|0	0	Captured pirate hulls show the crew how freebooters keep a battered ship fighting, bracing broken frames and patched plates around the damage instead of hiding it. Each d-mod this ship carries makes its armour shrug off a little more damage.
+type|restriction_breeds_creativity|CRUISER|1	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
+type|restriction_breeds_creativity|CAPITAL_SHIP|0	0	Captured pirate hulls show the crew how freebooters keep a battered ship fighting, bracing broken frames and patched plates around the damage instead of hiding it. Each d-mod this ship carries makes its armour shrug off a little more damage.
+type|restriction_breeds_creativity|CAPITAL_SHIP|1	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 type|root_high_tech|null|0	0	<good>10%</good> increased flux dissipation.
 type|root_high_tech|FRIGATE|0	0	<good>10%</good> increased flux dissipation.
 type|root_high_tech|FRIGATE|1	0	Increases flux capacity by <good>50</good>.
@@ -3996,15 +4011,20 @@ type|warpfield|CAPITAL_SHIP|2	0	<good>20%</good> increased energy weapon rate of
 type|warpfield|CAPITAL_SHIP|3	1	<bad>17%</bad> reduced energy weapon flux cost.
 type|warpfield|CAPITAL_SHIP|4	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 type-detail|warpfield|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Warpfield</hullmod>
-type|waste_not|null|0	0	<good>10%</good> increased combat readiness recovery rate.
-type|waste_not|FRIGATE|0	0	<good>10%</good> increased combat readiness recovery rate.
-type|waste_not|FRIGATE|1	0	<good>3%</good> increased post-battle salvage recovered (fleet-wide).
-type|waste_not|DESTROYER|0	0	<good>10%</good> increased combat readiness recovery rate.
-type|waste_not|DESTROYER|1	0	<good>6%</good> increased post-battle salvage recovered (fleet-wide).
-type|waste_not|CRUISER|0	0	<good>10%</good> increased combat readiness recovery rate.
-type|waste_not|CRUISER|1	0	<good>10%</good> increased post-battle salvage recovered (fleet-wide).
-type|waste_not|CAPITAL_SHIP|0	0	<good>10%</good> increased combat readiness recovery rate.
-type|waste_not|CAPITAL_SHIP|1	0	<good>15%</good> increased post-battle salvage recovered (fleet-wide).
+type|waste_not|null|0	0	Freebooters who signed on at a pirate base taught the crew to strip every wreck to the frame and to patch the ship back to fighting trim from whatever a battle leaves behind. More salvage comes back after each fight, and the ship regains its combat readiness faster.
+type|waste_not|null|1	0	<good>10%</good> increased combat readiness recovery rate.
+type|waste_not|FRIGATE|0	0	Freebooters who signed on at a pirate base taught the crew to strip every wreck to the frame and to patch the ship back to fighting trim from whatever a battle leaves behind. More salvage comes back after each fight, and the ship regains its combat readiness faster.
+type|waste_not|FRIGATE|1	0	<good>10%</good> increased combat readiness recovery rate.
+type|waste_not|FRIGATE|2	0	<good>3%</good> increased post-battle salvage recovered (fleet-wide).
+type|waste_not|DESTROYER|0	0	Freebooters who signed on at a pirate base taught the crew to strip every wreck to the frame and to patch the ship back to fighting trim from whatever a battle leaves behind. More salvage comes back after each fight, and the ship regains its combat readiness faster.
+type|waste_not|DESTROYER|1	0	<good>10%</good> increased combat readiness recovery rate.
+type|waste_not|DESTROYER|2	0	<good>6%</good> increased post-battle salvage recovered (fleet-wide).
+type|waste_not|CRUISER|0	0	Freebooters who signed on at a pirate base taught the crew to strip every wreck to the frame and to patch the ship back to fighting trim from whatever a battle leaves behind. More salvage comes back after each fight, and the ship regains its combat readiness faster.
+type|waste_not|CRUISER|1	0	<good>10%</good> increased combat readiness recovery rate.
+type|waste_not|CRUISER|2	0	<good>10%</good> increased post-battle salvage recovered (fleet-wide).
+type|waste_not|CAPITAL_SHIP|0	0	Freebooters who signed on at a pirate base taught the crew to strip every wreck to the frame and to patch the ship back to fighting trim from whatever a battle leaves behind. More salvage comes back after each fight, and the ship regains its combat readiness faster.
+type|waste_not|CAPITAL_SHIP|1	0	<good>10%</good> increased combat readiness recovery rate.
+type|waste_not|CAPITAL_SHIP|2	0	<good>15%</good> increased post-battle salvage recovered (fleet-wide).
 type|weapon_durability|null|0	0	<good>5%</good> increased weapon durability.
 type|weapon_durability|FRIGATE|0	0	<good>5%</good> increased weapon durability.
 type|weapon_durability|DESTROYER|0	0	<good>5%</good> increased weapon durability.
