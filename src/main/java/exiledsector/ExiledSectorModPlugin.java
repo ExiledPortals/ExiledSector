@@ -12,6 +12,7 @@ import exiledsector.effects.NpcBonusScale;
 import exiledsector.effects.NpcFleetDialogListener;
 import exiledsector.effects.NpcFleetInflationListener;
 import exiledsector.effects.NpcFleetSweepScript;
+import exiledsector.effects.OpReserveHullMods;
 import exiledsector.effects.PhantomConflictWatch;
 import exiledsector.effects.PhantomHullMods;
 import exiledsector.effects.PlayerEngagementPipeline;
@@ -26,7 +27,7 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.LanguageSetting;
 import exiledsector.i18n.Languages;
 import exiledsector.i18n.Translation;
-import exiledsector.persistence.OpSpentSlotManager;
+import exiledsector.persistence.RetiredReserveIds;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
 import exiledsector.skills.FrameworkSlots;
@@ -186,6 +187,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
     @Override
     public void configureXStream(XStream xStream) {
         SocketableSaveAliases.register(xStream);
+        RetiredReserveIds.register(xStream);
         xStream.alias(SHIP_SKILL_DATA_ALIAS, ShipSkillData.class);
     }
 
@@ -200,7 +202,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         NpcBonusScale.invalidate();
         NpcSocketables.clearCache();
         SocketableStore.get().freezeNames();
-        OpSpentSlotManager.releaseUnless(ShipSkillDataManager::hasProgress);
+        OpReserveHullMods.forgetLegacySlots(Global.getSector().getPersistentData());
         ShipSkillDataManager.removeBlankRecords();
         forgetUnknownNodes();
         SkillTreeTemplateStore.pruneAssignments(ShipSkillDataManager::hasProgress);
