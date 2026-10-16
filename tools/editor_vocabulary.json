@@ -114,7 +114,6 @@
     {"name": "ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT", "statMode": null, "lowerIsBetter": false},
     {"name": "ENGINE_DURABILITY_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},
     {"name": "ESCORT_MANEUVER_BONUS_PERCENT", "statMode": null, "lowerIsBetter": false},
-    {"name": "ESCORT_PROXIMITY_RANGE_FLAT", "statMode": null, "lowerIsBetter": false},
     {"name": "ESCORT_SPEED_BONUS_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "ESCORT_WEAPON_RANGE_BONUS_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "EXPLODE_ON_DEATH", "statMode": null, "lowerIsBetter": false},

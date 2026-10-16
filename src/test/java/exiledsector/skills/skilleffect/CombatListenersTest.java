@@ -48,7 +48,6 @@ class CombatListenersTest {
     private static final String MANEUVER_BONUS_KEY = "exiledSector_escortManeuverBonusPercent";
     private static final String SPEED_BONUS_KEY = "exiledSector_escortSpeedBonusPercent";
     private static final String WEAPON_RANGE_BONUS_KEY = "exiledSector_escortWeaponRangeBonusPercent";
-    private static final String PROXIMITY_RANGE_KEY = "exiledSector_escortProximityRange";
     private static final String ESCORT_BONUS_MOD_ID = "exiledSector_escortBonus";
 
     private final List<ShipAPI> ships = new ArrayList<>();
@@ -276,8 +275,7 @@ class CombatListenersTest {
     }
 
     private ShipAPI escortAt(float x, HullSize size) {
-        ShipAPI escort = ship(x, 0f, Map.of(MANEUVER_BONUS_KEY, 20f, SPEED_BONUS_KEY, 10f, WEAPON_RANGE_BONUS_KEY, 15f,
-                PROXIMITY_RANGE_KEY, 600f));
+        ShipAPI escort = ship(x, 0f, Map.of(MANEUVER_BONUS_KEY, 20f, SPEED_BONUS_KEY, 10f, WEAPON_RANGE_BONUS_KEY, 15f));
         when(escort.getHullSize()).thenReturn(size);
         when(escort.getShieldCenterEvenIfNoShield()).thenReturn(new Vector2f(x, 0f));
         when(escort.getShieldRadiusEvenIfNoShield()).thenReturn(100f);
@@ -311,10 +309,10 @@ class CombatListenersTest {
     }
 
     @Test
-    void theBonusesFadeOutOverFiveHundredSuPastTheProximityRange() {
+    void theBonusesFadeOutOverFiveHundredSuPastTheSevenHundredSuEscortRange() {
         ShipAPI escort = escortAt(0f, HullSize.FRIGATE);
         EscortStats stats = escortStats(escort);
-        deploy(escort, friendlyAt(1000f, HullSize.CRUISER));
+        deploy(escort, friendlyAt(1100f, HullSize.CRUISER));
         AdvanceableListener listener = attachedListener(CombatSkillEffect.ESCORT_MANEUVER_BONUS_PERCENT, escort, AdvanceableListener.class);
 
         listener.advance(2f);
@@ -343,9 +341,9 @@ class CombatListenersTest {
         ShipAPI escort = escortAt(0f, HullSize.DESTROYER);
         when(escort.isDestroyer()).thenReturn(true);
         EscortStats stats = escortStats(escort);
-        ShipAPI capital = friendlyAt(1000f, HullSize.CAPITAL_SHIP);
+        ShipAPI capital = friendlyAt(1100f, HullSize.CAPITAL_SHIP);
         when(capital.isCapital()).thenReturn(true);
-        deploy(escort, friendlyAt(900f, HullSize.CRUISER), capital);
+        deploy(escort, friendlyAt(1000f, HullSize.CRUISER), capital);
         AdvanceableListener listener = attachedListener(CombatSkillEffect.ESCORT_MANEUVER_BONUS_PERCENT, escort, AdvanceableListener.class);
 
         listener.advance(2f);

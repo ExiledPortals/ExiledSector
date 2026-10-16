@@ -48,10 +48,24 @@ public enum CombatSkillEffect implements BackedSkillEffect {
         }
     },
     BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT(BallisticPierceListener.CHANCE_KEY, BallisticPierceListener.class, BallisticPierceListener::new),
-    ESCORT_MANEUVER_BONUS_PERCENT(EscortListener.MANEUVER_BONUS_KEY, EscortListener.class, EscortListener::new),
-    ESCORT_SPEED_BONUS_PERCENT(EscortListener.SPEED_BONUS_KEY, EscortListener.class, EscortListener::new),
-    ESCORT_WEAPON_RANGE_BONUS_PERCENT(EscortListener.WEAPON_RANGE_BONUS_KEY, EscortListener.class, EscortListener::new),
-    ESCORT_PROXIMITY_RANGE_FLAT(EscortListener.PROXIMITY_RANGE_KEY, EscortListener.class, EscortListener::new),
+    ESCORT_MANEUVER_BONUS_PERCENT(EscortListener.MANEUVER_BONUS_KEY, EscortListener.class, EscortListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return escortDescription(this, magnitude);
+        }
+    },
+    ESCORT_SPEED_BONUS_PERCENT(EscortListener.SPEED_BONUS_KEY, EscortListener.class, EscortListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return escortDescription(this, magnitude);
+        }
+    },
+    ESCORT_WEAPON_RANGE_BONUS_PERCENT(EscortListener.WEAPON_RANGE_BONUS_KEY, EscortListener.class, EscortListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return escortDescription(this, magnitude);
+        }
+    },
     NANOFORGE_HULL_REGEN_PERCENT(NanoforgeMendingListener.REGEN_PERCENT_KEY, NanoforgeMendingListener.class, NanoforgeMendingListener::new) {
         @Override
         public StyledText description(float magnitude) {
@@ -124,6 +138,11 @@ public enum CombatSkillEffect implements BackedSkillEffect {
             return lostSectorOnly(super.description(magnitude));
         }
     };
+
+    private static StyledText escortDescription(CombatSkillEffect effect, float magnitude) {
+        return EffectText.msg(effect).arg("range", EscortListener.ESCORT_RANGE).arg("fade", EscortListener.PROXIMITY_FADE_DISTANCE)
+                .arg("value", magnitude).styled();
+    }
 
     private static StyledText lostSectorOnly(StyledText description) {
         return LostSectorCompat.isModEnabled() ? description : null;
@@ -266,13 +285,13 @@ public enum CombatSkillEffect implements BackedSkillEffect {
         private static final String MANEUVER_BONUS_KEY = "exiledSector_escortManeuverBonusPercent";
         private static final String SPEED_BONUS_KEY = "exiledSector_escortSpeedBonusPercent";
         private static final String WEAPON_RANGE_BONUS_KEY = "exiledSector_escortWeaponRangeBonusPercent";
-        private static final String PROXIMITY_RANGE_KEY = "exiledSector_escortProximityRange";
         private static final ScaledBonus ESCORT_BONUS = new ScaledBonus(
                 ScaledBonus.percent(Maneuverability.target(), MANEUVER_BONUS_KEY),
                 ScaledBonus.percent(StatTarget.liveStat(MutableShipStatsAPI::getMaxSpeed), SPEED_BONUS_KEY),
                 ScaledBonus.percent(StatTarget.all(StatTarget.liveBonus(MutableShipStatsAPI::getBallisticWeaponRangeBonus),
                         StatTarget.liveBonus(MutableShipStatsAPI::getEnergyWeaponRangeBonus)), WEAPON_RANGE_BONUS_KEY));
 
+        private static final float ESCORT_RANGE = 700f;
         private static final float PROXIMITY_FADE_DISTANCE = 500f;
         private static final float SHIELD_RADIUS_OVERLAP_MULT = 0.75f;
         private static final float DESTROYER_ESCORTING_CAPITAL_MULT = 2f;
@@ -315,11 +334,10 @@ public enum CombatSkillEffect implements BackedSkillEffect {
         }
 
         private float proximityMagnitude() {
-            float range = magnitude(PROXIMITY_RANGE_KEY);
-            float searchRadius = range + PROXIMITY_FADE_DISTANCE + ownerShip.getCollisionRadius() + SEARCH_MARGIN;
+            float searchRadius = ESCORT_RANGE + PROXIMITY_FADE_DISTANCE + ownerShip.getCollisionRadius() + SEARCH_MARGIN;
             float best = 0f;
             for (ShipAPI escorted : CombatQueries.shipsNear(ownerShip.getLocation(), searchRadius, this::isLargerFriendly)) {
-                best = Math.max(best, magnitudeFor(escorted, range));
+                best = Math.max(best, magnitudeFor(escorted));
             }
             return best;
         }
@@ -329,17 +347,17 @@ public enum CombatSkillEffect implements BackedSkillEffect {
                     && candidate.getHullSize().ordinal() > ownerShip.getHullSize().ordinal();
         }
 
-        private float magnitudeFor(ShipAPI escorted, float range) {
+        private float magnitudeFor(ShipAPI escorted) {
             float radiusOverlap = (ownerShip.getShieldRadiusEvenIfNoShield() + escorted.getShieldRadiusEvenIfNoShield())
                     * SHIELD_RADIUS_OVERLAP_MULT;
             float distance = Vector2f.sub(ownerShip.getShieldCenterEvenIfNoShield(),
                     escorted.getShieldCenterEvenIfNoShield(), null).length() - radiusOverlap;
 
             float mag;
-            if (distance < range) {
+            if (distance < ESCORT_RANGE) {
                 mag = 1f;
-            } else if (distance < range + PROXIMITY_FADE_DISTANCE) {
-                mag = 1f - (distance - range) / PROXIMITY_FADE_DISTANCE;
+            } else if (distance < ESCORT_RANGE + PROXIMITY_FADE_DISTANCE) {
+                mag = 1f - (distance - ESCORT_RANGE) / PROXIMITY_FADE_DISTANCE;
             } else {
                 mag = 0f;
             }

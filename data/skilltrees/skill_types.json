@@ -1107,7 +1107,7 @@
 			"id": "escort_package",
 			"name": "Escort Package",
 			"icon": "graphics/icons/escort_package.png",
-			"tier": "KEYSTONE",
+			"tier": "NOTABLE",
 			"effects": [
 				{
 					"effect": "ESCORT_MANEUVER_BONUS_PERCENT",
@@ -1119,11 +1119,7 @@
 				},
 				{
 					"effect": "ESCORT_WEAPON_RANGE_BONUS_PERCENT",
-					"magnitude": 20
-				},
-				{
-					"effect": "ESCORT_PROXIMITY_RANGE_FLAT",
-					"magnitude": 700
+					"magnitude": 15
 				}
 			],
 			"requiredHullSizes": [
@@ -2565,10 +2561,10 @@
 			"hullSizeEffects": [
 				{
 					"effect": "FLUX_CAPACITY_FLAT",
-					"frigate": 20,
-					"destroyer": 40,
-					"cruiser": 60,
-					"capitalShip": 80
+					"frigate": 50,
+					"destroyer": 100,
+					"cruiser": 150,
+					"capitalShip": 200
 				}
 			]
 		},
@@ -3012,7 +3008,7 @@
 		},
 		{
 			"id": "ballistic_and_energy_weapon_range",
-			"name": "Weapon Range",
+			"name": "Ballistic and Energy Weapon Range",
 			"icon": "graphics/icons/ballistic_and_energy_weapon_range.png",
 			"hullSizeEffects": [
 				{
@@ -3457,6 +3453,42 @@
 					"effect": "ELECTRONIC_WARFARE_PENALTY_MULT",
 					"magnitude": -15
 				}
+			]
+		},
+		{
+			"id": "ballistic_and_energy_weapon_range_while_escorting",
+			"name": "Ballistic and Energy Weapon Range While Escorting",
+			"icon": "graphics/icons/gunnery_implants_shifted_shifted.png",
+			"effects": [
+				{
+					"effect": "ESCORT_WEAPON_RANGE_BONUS_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"requiredHullSizes": [
+				"DESTROYER",
+				"CRUISER"
+			],
+			"tags": [
+				"range"
+			]
+		},
+		{
+			"id": "top_speed_while_escorting",
+			"name": "Top Speed While Escorting",
+			"icon": "graphics/icons/engine3_shifted.png",
+			"effects": [
+				{
+					"effect": "ESCORT_SPEED_BONUS_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"requiredHullSizes": [
+				"DESTROYER",
+				"CRUISER"
+			],
+			"tags": [
+				"speed"
 			]
 		}
 	]

@@ -23,7 +23,7 @@ Assault Package,assault_package,1,3,6,9,15,,,,,,,,,,,,,,,,,,,,
 Augmented Drive Field,augmentedengines,1,8,16,24,40,augmentedengines,notable,augmentedengines_1 augmentedengines_2,core,phantom hull mod,8,9,7,8,16,24,40,9,18,27,45,7,14,21,35
 Auxiliary Thrusters,auxiliarythrusters,1,4,8,12,20,auxiliarythrusters,notable,auxiliarythrusters_1,core,phantom hull mod,6,11,10,6,12,18,30,11,22,33,55,10,20,30,50
 Converted Hangar,converted_hangar,1,0,10,10,10,converted_hangar,keystone,converted_hangar_1,core,phantom hull mod,4,4,9,4,8,12,20,4,8,12,20,9,18,27,45
-Escort Package,escort_package,1,0,7,15,0,escort_package,keystone,escort_package_1,core,exclusion list,4,4,9,4,8,12,20,4,8,12,20,9,18,27,45
+Escort Package,escort_package,1,0,7,15,0,escort_package,notable,escort_package_1,core,exclusion list,5,5,10,5,10,15,25,5,10,15,25,10,20,30,50
 Expanded Deck Crew,expanded_deck_crew,1,5,10,15,25,expanded_deck_crew,notable,expanded_deck_crew_1,core,phantom hull mod,11,6,10,11,22,33,55,6,12,18,30,10,20,30,50
 Expanded Magazines,magazines,1,3,5,7,10,magazines,notable,magazines_1,core,phantom hull mod,7,6,10,7,14,21,35,6,12,18,30,10,20,30,50
 Expanded Missile Racks,missleracks,1,8,12,20,30,missleracks,notable,missleracks_1,core,phantom hull mod,7,7,10,7,14,21,35,7,14,21,35,10,20,30,50
@@ -45,7 +45,7 @@ High Resolution Sensors,hiressensors,2,4,6,9,15,hiressensors,notable,hiressensor
 Nav Relay,nav_relay,2,10,15,20,25,nav_relay,notable,nav_relay_1,core,phantom hull mod,10,5,10,10,20,30,50,5,10,15,25,10,20,30,50
 Resistant Flux Conduits,fluxbreakers,2,3,6,9,15,fluxbreakers,notable,fluxbreakers_1,core,phantom hull mod,11,11,7,11,22,33,55,11,22,33,55,7,14,21,35
 Shield Conversion - Front,frontemitter,2,3,5,8,12,frontemitter,notable,frontemitter_1,core,phantom hull mod,9,11,7,9,18,27,45,11,22,33,55,7,14,21,35
-Solar Shielding,solar_shielding,2,3,6,9,15,solar_shielding,notable,solar_shielding_1,core,type id,8,10,10,8,16,24,40,10,20,30,50,10,20,30,50
+Solar Shielding,solar_shielding,2,3,6,9,15,solar_shielding,notable,solar_shielding_1,core,phantom hull mod,8,10,10,8,16,24,40,10,20,30,50,10,20,30,50
 Hardened Shields,hardenedshieldemitter,3,5,10,15,25,hardenedshieldemitter,notable,hardenedshieldemitter_1,core,phantom hull mod,12,8,8,12,24,36,60,8,16,24,40,8,16,24,40
 High Scatter Amplifier,high_scatter_amp,3,4,8,12,20,high_scatter_amp,notable,high_scatter_amp_1,core,phantom hull mod,12,7,11,12,24,36,60,7,14,21,35,11,22,33,55
 Integrated Point Defense AI,pointdefenseai,3,3,6,9,15,pointdefenseai,notable,pointdefenseai_1,core,phantom hull mod,8,12,8,8,16,24,40,12,24,36,60,8,16,24,40
