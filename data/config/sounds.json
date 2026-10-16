@@ -1,0 +1,8 @@
+{
+	"exiledSector_exoship_warp_chargeup":[
+		{"file":"sounds/exiledSector/rat_exoship_warp_chargeup.ogg","pitch":1,"volume":1},
+	],
+	"exiledSector_exoship_warp":[
+		{"file":"sounds/exiledSector/rat_exoship_warp.ogg","pitch":1,"volume":1},
+	],
+}

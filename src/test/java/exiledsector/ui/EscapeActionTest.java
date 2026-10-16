@@ -43,6 +43,13 @@ class EscapeActionTest {
     }
 
     @Test
+    void viewingTheExoshipClosesADropdownFirstAndThenLeavesTheShip() {
+        assertEquals(EscapeAction.CLOSE_DROPDOWN, EscapeAction.resolve(CanvasMode.EXOSHIP_VIEW, false, false, true, false, false));
+        assertEquals(EscapeAction.STOP_FOLLOWING, EscapeAction.resolve(CanvasMode.EXOSHIP_VIEW, false, false, false, false, false));
+        assertEquals(EscapeAction.CANCEL_ALLOCATION, EscapeAction.resolve(CanvasMode.EXOSHIP_VIEW, true, false, false, false, false));
+    }
+
+    @Test
     void anIdleTreePassesEscapeOnToTheSearchFieldAndThePanel() {
         assertEquals(EscapeAction.NONE, EscapeAction.resolve(CanvasMode.TREE, false, false, false, false, false));
         assertEquals(EscapeAction.NONE, EscapeAction.resolve(CanvasMode.TREE, false, false, false, true, false));

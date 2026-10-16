@@ -2700,6 +2700,16 @@ type|exogrid|CAPITAL_SHIP|4	1	<bad>25%</bad> reduced EMP damage taken.
 type|exogrid|CAPITAL_SHIP|5	0	<bad>25%</bad> reduced venting speed.
 type|exogrid|CAPITAL_SHIP|6	0	Decreases flux dissipation per flux vent by <bad>5</bad>.
 type-detail|exogrid|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Exogrid</hullmod>
+type|exoship|null|0	0	The last Exoship of the Exo-Tech faction, warping from system to system across the sector. Its branches travel with it.\n\nAllocated together with its Hyper-Nav Beacon. Deallocating either deallocates both.\n\nCtrl click on the Exoship to return to the beacon.
+type|exoship|FRIGATE|0	0	The last Exoship of the Exo-Tech faction, warping from system to system across the sector. Its branches travel with it.\n\nAllocated together with its Hyper-Nav Beacon. Deallocating either deallocates both.\n\nCtrl click on the Exoship to return to the beacon.
+type|exoship|DESTROYER|0	0	The last Exoship of the Exo-Tech faction, warping from system to system across the sector. Its branches travel with it.\n\nAllocated together with its Hyper-Nav Beacon. Deallocating either deallocates both.\n\nCtrl click on the Exoship to return to the beacon.
+type|exoship|CRUISER|0	0	The last Exoship of the Exo-Tech faction, warping from system to system across the sector. Its branches travel with it.\n\nAllocated together with its Hyper-Nav Beacon. Deallocating either deallocates both.\n\nCtrl click on the Exoship to return to the beacon.
+type|exoship|CAPITAL_SHIP|0	0	The last Exoship of the Exo-Tech faction, warping from system to system across the sector. Its branches travel with it.\n\nAllocated together with its Hyper-Nav Beacon. Deallocating either deallocates both.\n\nCtrl click on the Exoship to return to the beacon.
+type|exotech_beacon|null|0	0	A beacon left by the Exo-Tech faction to guide their Exoship's warp drive. Allocating it docks your ship with the Exoship at no extra cost, opening the branches it carries.\n\nThe Exoship never stays put: every 30 seconds it warps to orbit a different notable somewhere in the tree.\n\nDeallocating the beacon undocks the Exoship as well.\n\nCtrl click on the beacon, or click the Exoship wherever it is, to travel to it.
+type|exotech_beacon|FRIGATE|0	0	A beacon left by the Exo-Tech faction to guide their Exoship's warp drive. Allocating it docks your ship with the Exoship at no extra cost, opening the branches it carries.\n\nThe Exoship never stays put: every 30 seconds it warps to orbit a different notable somewhere in the tree.\n\nDeallocating the beacon undocks the Exoship as well.\n\nCtrl click on the beacon, or click the Exoship wherever it is, to travel to it.
+type|exotech_beacon|DESTROYER|0	0	A beacon left by the Exo-Tech faction to guide their Exoship's warp drive. Allocating it docks your ship with the Exoship at no extra cost, opening the branches it carries.\n\nThe Exoship never stays put: every 30 seconds it warps to orbit a different notable somewhere in the tree.\n\nDeallocating the beacon undocks the Exoship as well.\n\nCtrl click on the beacon, or click the Exoship wherever it is, to travel to it.
+type|exotech_beacon|CRUISER|0	0	A beacon left by the Exo-Tech faction to guide their Exoship's warp drive. Allocating it docks your ship with the Exoship at no extra cost, opening the branches it carries.\n\nThe Exoship never stays put: every 30 seconds it warps to orbit a different notable somewhere in the tree.\n\nDeallocating the beacon undocks the Exoship as well.\n\nCtrl click on the beacon, or click the Exoship wherever it is, to travel to it.
+type|exotech_beacon|CAPITAL_SHIP|0	0	A beacon left by the Exo-Tech faction to guide their Exoship's warp drive. Allocating it docks your ship with the Exoship at no extra cost, opening the branches it carries.\n\nThe Exoship never stays put: every 30 seconds it warps to orbit a different notable somewhere in the tree.\n\nDeallocating the beacon undocks the Exoship as well.\n\nCtrl click on the beacon, or click the Exoship wherever it is, to travel to it.
 type|expanded_cargo_holds|null|0	0	<good>20%</good> increased cargo capacity.
 type-detail|expanded_cargo_holds|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Expanded Cargo Holds</hullmod>
 type|expanded_cargo_holds|FRIGATE|0	0	<good>20%</good> increased cargo capacity.
@@ -4077,7 +4087,7 @@ summary|option0|FRIGATE|83	0	Touching another ship's hull, however slightly, is 
 summary|option0|FRIGATE|84	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
 summary|option0|FRIGATE|85	0	Increases shield arc by <good>100</good>.
 summary|option0|FRIGATE|86	0	<good>10%</good> increased weapon damage of fighters launched from this ship.
-summary|option0|FRIGATE|87	0	<good>170%</good> more flux capacity.
+summary|option0|FRIGATE|87	0	<good>166%</good> more flux capacity.
 summary|option0|FRIGATE|88	0	<good>104%</good> more flux dissipation.
 summary|option0|FRIGATE|89	0	<good>100%</good> increased shield arc.
 summary|option0|FRIGATE|90	0	Converts this ship's shield to front-facing.
@@ -4270,7 +4280,7 @@ summary|option0|DESTROYER|83	0	Touching another ship's hull, however slightly, i
 summary|option0|DESTROYER|84	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
 summary|option0|DESTROYER|85	0	Increases shield arc by <good>100</good>.
 summary|option0|DESTROYER|86	0	<good>10%</good> increased weapon damage of fighters launched from this ship.
-summary|option0|DESTROYER|87	0	<good>170%</good> more flux capacity.
+summary|option0|DESTROYER|87	0	<good>166%</good> more flux capacity.
 summary|option0|DESTROYER|88	0	<good>104%</good> more flux dissipation.
 summary|option0|DESTROYER|89	0	<good>100%</good> increased shield arc.
 summary|option0|DESTROYER|90	0	Converts this ship's shield to front-facing.
@@ -4463,7 +4473,7 @@ summary|option0|CRUISER|83	0	Touching another ship's hull, however slightly, is 
 summary|option0|CRUISER|84	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
 summary|option0|CRUISER|85	0	Increases shield arc by <good>100</good>.
 summary|option0|CRUISER|86	0	<good>10%</good> increased weapon damage of fighters launched from this ship.
-summary|option0|CRUISER|87	0	<good>170%</good> more flux capacity.
+summary|option0|CRUISER|87	0	<good>166%</good> more flux capacity.
 summary|option0|CRUISER|88	0	<good>104%</good> more flux dissipation.
 summary|option0|CRUISER|89	0	<good>100%</good> increased shield arc.
 summary|option0|CRUISER|90	0	Converts this ship's shield to front-facing.
@@ -4656,7 +4666,7 @@ summary|option0|CAPITAL_SHIP|83	0	Touching another ship's hull, however slightly
 summary|option0|CAPITAL_SHIP|84	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
 summary|option0|CAPITAL_SHIP|85	0	Increases shield arc by <good>100</good>.
 summary|option0|CAPITAL_SHIP|86	0	<good>10%</good> increased weapon damage of fighters launched from this ship.
-summary|option0|CAPITAL_SHIP|87	0	<good>170%</good> more flux capacity.
+summary|option0|CAPITAL_SHIP|87	0	<good>166%</good> more flux capacity.
 summary|option0|CAPITAL_SHIP|88	0	<good>104%</good> more flux dissipation.
 summary|option0|CAPITAL_SHIP|89	0	<good>100%</good> increased shield arc.
 summary|option0|CAPITAL_SHIP|90	0	Converts this ship's shield to front-facing.
@@ -4850,7 +4860,7 @@ summary|option1|FRIGATE|84	0	When this ship isn't flown by you, it flies straigh
 summary|option1|FRIGATE|85	0	Increases shield arc by <good>100</good>.
 summary|option1|FRIGATE|86	0	<good>10%</good> increased weapon damage of fighters launched from this ship.
 summary|option1|FRIGATE|87	0	<good>4%</good> more flux capacity.
-summary|option1|FRIGATE|88	0	<good>270%</good> more flux dissipation.
+summary|option1|FRIGATE|88	0	<good>266%</good> more flux dissipation.
 summary|option1|FRIGATE|89	0	<good>100%</good> increased shield arc.
 summary|option1|FRIGATE|90	0	Converts this ship's shield to front-facing.
 summary|option1|FRIGATE|91	0	<bad>20%</bad> less top speed.
@@ -5043,7 +5053,7 @@ summary|option1|DESTROYER|84	0	When this ship isn't flown by you, it flies strai
 summary|option1|DESTROYER|85	0	Increases shield arc by <good>100</good>.
 summary|option1|DESTROYER|86	0	<good>10%</good> increased weapon damage of fighters launched from this ship.
 summary|option1|DESTROYER|87	0	<good>4%</good> more flux capacity.
-summary|option1|DESTROYER|88	0	<good>270%</good> more flux dissipation.
+summary|option1|DESTROYER|88	0	<good>266%</good> more flux dissipation.
 summary|option1|DESTROYER|89	0	<good>100%</good> increased shield arc.
 summary|option1|DESTROYER|90	0	Converts this ship's shield to front-facing.
 summary|option1|DESTROYER|91	0	<bad>20%</bad> less top speed.
@@ -5236,7 +5246,7 @@ summary|option1|CRUISER|84	0	When this ship isn't flown by you, it flies straigh
 summary|option1|CRUISER|85	0	Increases shield arc by <good>100</good>.
 summary|option1|CRUISER|86	0	<good>10%</good> increased weapon damage of fighters launched from this ship.
 summary|option1|CRUISER|87	0	<good>4%</good> more flux capacity.
-summary|option1|CRUISER|88	0	<good>270%</good> more flux dissipation.
+summary|option1|CRUISER|88	0	<good>266%</good> more flux dissipation.
 summary|option1|CRUISER|89	0	<good>100%</good> increased shield arc.
 summary|option1|CRUISER|90	0	Converts this ship's shield to front-facing.
 summary|option1|CRUISER|91	0	<bad>20%</bad> less top speed.
@@ -5429,7 +5439,7 @@ summary|option1|CAPITAL_SHIP|84	0	When this ship isn't flown by you, it flies st
 summary|option1|CAPITAL_SHIP|85	0	Increases shield arc by <good>100</good>.
 summary|option1|CAPITAL_SHIP|86	0	<good>10%</good> increased weapon damage of fighters launched from this ship.
 summary|option1|CAPITAL_SHIP|87	0	<good>4%</good> more flux capacity.
-summary|option1|CAPITAL_SHIP|88	0	<good>270%</good> more flux dissipation.
+summary|option1|CAPITAL_SHIP|88	0	<good>266%</good> more flux dissipation.
 summary|option1|CAPITAL_SHIP|89	0	<good>100%</good> increased shield arc.
 summary|option1|CAPITAL_SHIP|90	0	Converts this ship's shield to front-facing.
 summary|option1|CAPITAL_SHIP|91	0	<bad>20%</bad> less top speed.
@@ -5643,7 +5653,7 @@ summary|option2|FRIGATE|105	0	Increases this ship's sensor strength by <good>90<
 summary|option2|FRIGATE|106	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option2|FRIGATE|107	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 summary|option2|FRIGATE|108	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-summary|option2|FRIGATE|109	0	<good>196%</good> more hull points.
+summary|option2|FRIGATE|109	0	<good>192%</good> more hull points.
 summary|option2|FRIGATE|110	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option2|FRIGATE|111	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
 summary|option2|FRIGATE|112	0	Each Heartless stack reduces top speed and maneuverability by <bad>3%</bad>.
@@ -5836,7 +5846,7 @@ summary|option2|DESTROYER|105	0	Increases this ship's sensor strength by <good>1
 summary|option2|DESTROYER|106	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option2|DESTROYER|107	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 summary|option2|DESTROYER|108	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-summary|option2|DESTROYER|109	0	<good>196%</good> more hull points.
+summary|option2|DESTROYER|109	0	<good>192%</good> more hull points.
 summary|option2|DESTROYER|110	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option2|DESTROYER|111	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
 summary|option2|DESTROYER|112	0	Each Heartless stack reduces top speed and maneuverability by <bad>3%</bad>.
@@ -6029,7 +6039,7 @@ summary|option2|CRUISER|105	0	Increases this ship's sensor strength by <good>160
 summary|option2|CRUISER|106	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option2|CRUISER|107	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 summary|option2|CRUISER|108	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-summary|option2|CRUISER|109	0	<good>196%</good> more hull points.
+summary|option2|CRUISER|109	0	<good>192%</good> more hull points.
 summary|option2|CRUISER|110	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option2|CRUISER|111	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
 summary|option2|CRUISER|112	0	Each Heartless stack reduces top speed and maneuverability by <bad>3%</bad>.
@@ -6222,7 +6232,7 @@ summary|option2|CAPITAL_SHIP|105	0	Increases this ship's sensor strength by <goo
 summary|option2|CAPITAL_SHIP|106	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option2|CAPITAL_SHIP|107	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 summary|option2|CAPITAL_SHIP|108	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-summary|option2|CAPITAL_SHIP|109	0	<good>196%</good> more hull points.
+summary|option2|CAPITAL_SHIP|109	0	<good>192%</good> more hull points.
 summary|option2|CAPITAL_SHIP|110	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option2|CAPITAL_SHIP|111	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
 summary|option2|CAPITAL_SHIP|112	0	Each Heartless stack reduces top speed and maneuverability by <bad>3%</bad>.

@@ -24,8 +24,14 @@ final class TreeCamera {
     private float followSeconds;
     private float followOffsetX;
     private float followOffsetTargetX;
+    private float followNudgeX;
+    private float followNudgeY;
 
     void startFollowing() {
+        startFollowing(SmoothZoom.MAX_ZOOM);
+    }
+
+    void startFollowing(float zoomTarget) {
         followingTarget = true;
         followStartX = -panX / currentZoom;
         followStartY = panY / currentZoom;
@@ -34,13 +40,17 @@ final class TreeCamera {
         panAnimation = null;
         zoomPivotX = 0f;
         zoomPivotY = 0f;
-        smoothZoom.aimAt(SmoothZoom.MAX_ZOOM);
+        followNudgeX = 0f;
+        followNudgeY = 0f;
+        smoothZoom.aimAt(zoomTarget);
     }
 
     void stopFollowing() {
         followingTarget = false;
         followOffsetX = 0f;
         followOffsetTargetX = 0f;
+        followNudgeX = 0f;
+        followNudgeY = 0f;
     }
 
     void setFollowOffset(float screenOffsetX) {
@@ -72,7 +82,7 @@ final class TreeCamera {
         followSeconds += amount;
         float progress = Math.min(1f, followSeconds / FOLLOW_SETTLE_SECONDS);
         float eased = progress * progress * (3f - 2f * progress);
-        centreOn(followStartX + (treeX - followStartX) * eased, followStartY + (treeY - followStartY) * eased);
+        centreOn(followStartX + (treeX - followStartX) * eased + followNudgeX, followStartY + (treeY - followStartY) * eased + followNudgeY);
         followOffsetX += (followOffsetTargetX - followOffsetX) * Math.min(1f, amount * FOLLOW_OFFSET_RESPONSE_PER_SECOND);
         panX += followOffsetX;
     }
@@ -165,6 +175,10 @@ final class TreeCamera {
         }
         panX += dx;
         panY += dy;
+        if (followingTarget && currentZoom > 0f) {
+            followNudgeX -= dx / currentZoom;
+            followNudgeY += dy / currentZoom;
+        }
         return true;
     }
 

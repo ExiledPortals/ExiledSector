@@ -2,6 +2,7 @@ package exiledsector.ui.node;
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.i18n.Translation;
+import exiledsector.skills.ExoshipNodes;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -10,6 +11,7 @@ import exiledsector.skills.SkillType;
 import exiledsector.socketables.Socketable;
 import exiledsector.socketables.SocketableStore;
 import exiledsector.ui.SkillTreePanelStyle;
+import exiledsector.ui.TreeLayers;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.TextLabel;
 import org.lazywizard.lazylib.ui.LazyFont;
@@ -25,6 +27,7 @@ public final class SkillTreeNodeDrawer {
 
     private static final Color ALLOCATED_TINT = Color.WHITE;
     private static final Color UNALLOCATED_TINT = new Color(90, 90, 90);
+    private static final float EXOSHIP_HIT_SHARE = 0.6f;
 
     private final TreeAllocationSession session;
     private final SkillTreePanelStyle panelStyle;
@@ -32,6 +35,7 @@ public final class SkillTreeNodeDrawer {
     private final SkillTreeNodeRingRenderer ringRenderer;
     private final SkillTreeNodeIconRenderer iconRenderer = new SkillTreeNodeIconRenderer();
     private final SkillTreeSocketRenderer socketRenderer = new SkillTreeSocketRenderer();
+    private final SkillTreeBeaconRenderer beaconRenderer = new SkillTreeBeaconRenderer();
     private final SkillTreeNodeGhostRenderer ghostRenderer = new SkillTreeNodeGhostRenderer();
     private final SkillTreeWormholeGhostFlights wormholeGhostFlights = new SkillTreeWormholeGhostFlights(new Random());
     private final SkillTreeNodeConnectorRenderer connectorRenderer;
@@ -84,6 +88,7 @@ public final class SkillTreeNodeDrawer {
         connectorFills.advance(amount, startPulse);
         ghostRenderer.advance(amount);
         socketRenderer.advance(amount);
+        beaconRenderer.advance(amount);
         ShipSkillData skillData = session.snapshot().skillData();
         wormholeGhostFlights.advance(amount, skillData);
         wormholeOpenness.advance(amount, session.viewSnapshot().skillData());
@@ -93,17 +98,22 @@ public final class SkillTreeNodeDrawer {
         wormholeGhostFlights.launchFrom(from, to);
     }
 
-    public void render(TreeViewport viewport, float alphaMult, float mouseX, float mouseY, boolean hovered) {
+    public void render(TreeLayers layers, float mouseX, float mouseY, boolean hovered) {
         NodeAllocator.Snapshot allocation = session.viewSnapshot();
         StartingRootChoice rootChoice = session.rootChoice();
-        float treeAlphaMult = alphaMult * rootChoice.treeAlpha();
+        TreeViewport viewport = layers.treeViewport();
+        float alphaMult = layers.treeAlpha();
+        TreeLayers shownLayers = layers.withAlpha(rootChoice.treeAlpha());
 
         for (SkillNode node : SkillTree.topology().nonRoots()) {
-            renderNode(node, viewport, treeAlphaMult, allocation);
+            float nodeAlpha = shownLayers.alphaFor(node);
+            if (nodeAlpha > 0f && !ExoshipNodes.isExoship(node)) {
+                renderNode(node, shownLayers.viewportFor(node), nodeAlpha, allocation);
+            }
         }
 
-        connectorRenderer.draw(viewport, allocation, session.templateNodeIds(), session.plannedOnlyNodeIds(), connectorFills, treeAlphaMult);
-        wormholeGhostFlights.draw(viewport, treeAlphaMult * nodeSearch.backgroundAlpha());
+        connectorRenderer.draw(shownLayers, allocation, session.templateNodeIds(), session.plannedOnlyNodeIds(), connectorFills);
+        wormholeGhostFlights.draw(viewport, shownLayers.treeAlpha() * nodeSearch.backgroundAlpha());
 
         boolean choosing = rootChoice.phase() == StartingRootChoice.Phase.CHOOSING;
         for (SkillNode node : SkillTree.topology().roots()) {
@@ -114,7 +124,11 @@ public final class SkillTreeNodeDrawer {
             startingRootPrompt.setAlpha(alphaMult).draw(viewport.centerX(), viewport.screenY(rootChoice.promptOffsetY()));
         }
 
-        dropdownRenderer.render(session.dropdownNode(), viewport, mouseX, mouseY, hovered, alphaMult, session.dropdownOptionUsable());
+        SkillNode dropdownNode = session.dropdownNode();
+        if (dropdownNode != null) {
+            dropdownRenderer.render(dropdownNode, layers.viewportFor(dropdownNode), mouseX, mouseY, hovered, layers.alphaFor(dropdownNode),
+                    session.dropdownOptionUsable());
+        }
     }
 
     private void renderNode(SkillNode node, TreeViewport viewport, float alphaMult, NodeAllocator.Snapshot allocation) {
@@ -140,6 +154,10 @@ public final class SkillTreeNodeDrawer {
         float iconSize = footprintSize * ICON_INSET_RATIO;
 
         float nodeAlpha = alphaMult * nodeSearch.nodeAlpha(node, allocation);
+        if (ExoshipNodes.isBeacon(node)) {
+            beaconRenderer.draw(nodeX, nodeY, footprintSize, live, breathing, nodeAlpha);
+            return;
+        }
         if (tier == SkillTier.SOCKET) {
             socketRenderer.drawFrame(nodeX, nodeY, footprintSize, live, panelStyle.getAccentColor(), nodeAlpha);
             socketRenderer.drawContent(nodeX, nodeY, footprintSize, socketedIcon(skillData, node), iconTint(node, allocation, allocated),
@@ -188,10 +206,10 @@ public final class SkillTreeNodeDrawer {
         return socketed == null ? null : socketed.iconPath();
     }
 
-    public void renderHoverTooltip(TreeViewport viewport, float mouseX, float mouseY, float alphaMult) {
+    public void renderHoverTooltip(TreeLayers layers, float mouseX, float mouseY, float alphaMult) {
         SkillNode openDropdownNode = session.dropdownNode();
         if (openDropdownNode != null) {
-            SkillType hoveredOption = dropdownRenderer.findOptionAt(openDropdownNode, viewport, mouseX, mouseY);
+            SkillType hoveredOption = dropdownRenderer.findOptionAt(openDropdownNode, layers.viewportFor(openDropdownNode), mouseX, mouseY);
             if (hoveredOption != null) {
                 tooltipRenderer.renderTooltipForType(hoveredOption, session.dropdownOptionRefusalReason(hoveredOption), mouseX, mouseY,
                         alphaMult);
@@ -199,25 +217,27 @@ public final class SkillTreeNodeDrawer {
             return;
         }
 
-        SkillNode hoveredNode = findNodeAt(viewport, mouseX, mouseY);
+        SkillNode hoveredNode = findNodeAt(layers, mouseX, mouseY);
         if (hoveredNode != null) {
             tooltipRenderer.renderTooltip(hoveredNode, session.viewSnapshot(), mouseX, mouseY, alphaMult);
         }
     }
 
-    public SkillNode findNodeAt(TreeViewport viewport, float screenX, float screenY) {
+    public SkillNode findNodeAt(TreeLayers layers, float screenX, float screenY) {
         StartingRootChoice rootChoice = session.rootChoice();
         if (rootChoice.isMoving()) {
             return null;
         }
         boolean choosing = rootChoice.phase() == StartingRootChoice.Phase.CHOOSING;
         for (SkillNode node : SkillTree.getAllNodes().values()) {
-            if (choosing && node.getType().getTier() != SkillTier.ROOT) {
+            if ((choosing && node.getType().getTier() != SkillTier.ROOT) || !layers.isInteractive(node)) {
                 continue;
             }
+            TreeViewport viewport = layers.viewportFor(node);
             float nodeX = viewport.screenX(rootChoice.offsetX(node));
             float nodeY = viewport.screenY(rootChoice.offsetY(node));
-            float halfSize = NODE_SIZE * viewport.zoom() * node.getType().getTier().getSizeMultiplier() / 2f;
+            float halfSize = ExoshipNodes.isExoship(node) ? layers.exoshipRadius() * viewport.zoom() * EXOSHIP_HIT_SHARE
+                    : NODE_SIZE * viewport.zoom() * node.getType().getTier().getSizeMultiplier() / 2f;
             if (Math.abs(screenX - nodeX) <= halfSize && Math.abs(screenY - nodeY) <= halfSize) {
                 return node;
             }
@@ -225,9 +245,10 @@ public final class SkillTreeNodeDrawer {
         return null;
     }
 
-    public SkillType findDropdownOptionAt(TreeViewport viewport, float screenX, float screenY) {
+    public SkillType findDropdownOptionAt(TreeLayers layers, float screenX, float screenY) {
         SkillNode openDropdownNode = session.dropdownNode();
-        return openDropdownNode == null ? null : dropdownRenderer.findOptionAt(openDropdownNode, viewport, screenX, screenY);
+        return openDropdownNode == null ? null
+                : dropdownRenderer.findOptionAt(openDropdownNode, layers.viewportFor(openDropdownNode), screenX, screenY);
     }
 
     private final class DrawerFeedback implements TreeFeedback {

@@ -8,7 +8,7 @@ enum EscapeAction {
         return switch (mode) {
             case MODAL, HYPERSPACE, ROOT_CHOICE -> NONE;
             case WORKBENCH -> SOCKET_PLACEMENT;
-            case TREE, ALLOCATION_RUN, FLEET_FOLLOW -> {
+            case TREE, ALLOCATION_RUN, FLEET_FOLLOW, EXOSHIP_VIEW -> {
                 if (allocationRunning) {
                     yield CANCEL_ALLOCATION;
                 }
@@ -20,6 +20,9 @@ enum EscapeAction {
                 }
                 if (mode == CanvasMode.FLEET_FOLLOW) {
                     yield frameworkPanelOpen ? CLOSE_FRAMEWORK_PANEL : STOP_FOLLOWING;
+                }
+                if (mode == CanvasMode.EXOSHIP_VIEW) {
+                    yield STOP_FOLLOWING;
                 }
                 yield planning ? EXIT_TEMPLATE_MODE : NONE;
             }

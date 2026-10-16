@@ -10,6 +10,7 @@ import com.fs.starfarer.api.ui.UIComponentAPI;
 import exiledsector.effects.OpReserveParity;
 import exiledsector.effects.PhantomConflictWatch;
 import exiledsector.effects.ShipTreeSync;
+import exiledsector.skills.ExoshipNodes;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillType;
 import exiledsector.socketables.SocketCustody;
@@ -38,6 +39,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     private final SkillTreeStarfieldRenderer starfieldRenderer;
     private final AbyssDarknessRenderer abyssDarkness = AbyssDarknessRenderer.forActiveTree();
+    private final ExoshipView exoshipView = new ExoshipView();
     private final SkillTreeStaticImageRenderer staticImageRenderer = new SkillTreeStaticImageRenderer();
     private final SkillTreeRingBeltRenderer ringBeltRenderer = new SkillTreeRingBeltRenderer();
     private final SkillTreeFleetRenderer fleetRenderer;
@@ -106,7 +108,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     private CanvasMode mode() {
         return CanvasMode.resolve(treeSession.isStartingRootInputLocked(), templateUi.isModalOpen(), socketPlacement.isWorkbenchOpen(),
-                hyperspaceMode.isActive(), camera.isFollowing(), treeSession.isAutoAllocating() || treeSession.isRespeccing());
+                hyperspaceMode.isActive(), exoshipView.isActive(), camera.isFollowing(), treeSession.isAutoAllocating() || treeSession.isRespeccing());
     }
 
     @Override
@@ -124,10 +126,13 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             stopFollowingFleet();
         }
         fleetRenderer.advance(amount);
-        if (camera.isFollowing()) {
+        exoshipView.advance(amount, exoshipView.isAvailable() && treeSession.isAllocated(exoshipView.exoshipNode()));
+        if (exoshipView.isActive()) {
+            camera.follow(exoshipView.focusX(), exoshipView.focusY(), amount);
+        } else if (camera.isFollowing()) {
             camera.follow(fleetRenderer.focusX(), fleetRenderer.focusY(), amount);
         }
-        frameworkInspection.advance(amount, canvasPosition, camera, fleetRenderer, mouseX, mouseY);
+        frameworkInspection.advance(amount, canvasPosition, camera, fleetRenderer, !exoshipView.isActive(), mouseX, mouseY);
         starRenderer.advance(amount);
         boolean followingStartingRoot = treeSession.isStartingRootMoving();
         camera.beginStartingRootFollow(treeSession);
@@ -224,6 +229,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                 case HYPERSPACE -> hyperspaceMode.handleEvent(event, canvasPosition,
                         event.isLMBDownEvent() && chrome.contains(canvasPosition, mode, event.getX(), event.getY()));
                 case FLEET_FOLLOW -> handleFleetFollowEvent(event, mode);
+                case EXOSHIP_VIEW -> handleExoshipViewEvent(event, mode);
                 case ALLOCATION_RUN -> handleAllocationRunEvent(event, mode);
                 case TREE -> handleTreeEvent(event, mode);
             }
@@ -235,7 +241,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                 || chrome.contains(canvasPosition, mode, mouseX, mouseY)) {
             return false;
         }
-        Socketable socketed = treeSession.socketedItem(nodeDrawer.findNodeAt(viewport(), mouseX, mouseY));
+        Socketable socketed = treeSession.socketedItem(nodeDrawer.findNodeAt(layers(), mouseX, mouseY));
         return socketed != null && SocketableCodex.open(socketed.definitionId());
     }
 
@@ -276,11 +282,11 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private void handleRootChoiceEvent(InputEventAPI event, CanvasMode mode) {
         if (event.isLMBDownEvent() && canvasPosition.containsEvent(event)) {
             if (!chrome.press(canvasPosition, mode, event.getX(), event.getY())) {
-                pressTarget(mode, nodeDrawer.findNodeAt(viewport(), event.getX(), event.getY()), event, false);
+                pressTarget(mode, nodeDrawer.findNodeAt(layers(), event.getX(), event.getY()), event, false);
             }
             event.consume();
         } else if (event.isLMBUpEvent() && gesture.isActive()) {
-            SkillNode released = nodeDrawer.findNodeAt(viewport(), event.getX(), event.getY());
+            SkillNode released = nodeDrawer.findNodeAt(layers(), event.getX(), event.getY());
             if (gesture.releasedOn(released)) {
                 treeSession.chooseStartingRoot(released);
             }
@@ -306,8 +312,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     private void handleWorkbenchEvent(InputEventAPI event, CanvasMode mode) {
         if ((event.isMouseDownEvent() || event.isMouseScrollEvent()) && canvasPosition.containsEvent(event)) {
-            if (event.isLMBDownEvent()) {
-                chrome.press(canvasPosition, mode, event.getX(), event.getY());
+            if (event.isLMBDownEvent() && !chrome.press(canvasPosition, mode, event.getX(), event.getY())) {
+                frameworkInspection.pressUpgradesButton(event.getX(), event.getY());
             }
             consume(event);
         }
@@ -318,6 +324,14 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             handleAllocationRunEvent(event, mode);
         } else if (frameworkInspection.isInspecting()) {
             handleInspectionEvent(event, mode);
+        } else {
+            handleTreeEvent(event, mode);
+        }
+    }
+
+    private void handleExoshipViewEvent(InputEventAPI event, CanvasMode mode) {
+        if (treeSession.isAutoAllocating() || treeSession.isRespeccing()) {
+            handleAllocationRunEvent(event, mode);
         } else {
             handleTreeEvent(event, mode);
         }
@@ -350,9 +364,10 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void toggleFollowingFleet() {
-        if (camera.isFollowing()) {
+        if (camera.isFollowing() && !exoshipView.isActive()) {
             stopFollowingFleet();
         } else {
+            stopFollowingFleet();
             gesture.clear();
             camera.stopDrag();
             camera.startFollowing();
@@ -361,11 +376,28 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         }
     }
 
+    private void boardExoship() {
+        if (!exoshipView.isAvailable()) {
+            return;
+        }
+        stopFollowingFleet();
+        gesture.clear();
+        camera.stopDrag();
+        treeSession.closeDropdown();
+        exoshipView.enter();
+        camera.startFollowing(exoshipView.fitZoom(canvasPosition));
+        searchBar.unfocus();
+    }
+
     private void stopFollowingFleet() {
+        if (exoshipView.isActive()) {
+            treeSession.closeDropdown();
+        }
         camera.stopInspecting();
         camera.stopFollowing();
         fleetRenderer.setSoloActive(false);
         frameworkInspection.stop();
+        exoshipView.leave();
     }
 
     private void handleAllocationRunEvent(InputEventAPI event, CanvasMode mode) {
@@ -400,7 +432,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private boolean emptySocketAt(CanvasMode mode, float x, float y) {
-        return !chrome.contains(canvasPosition, mode, x, y) && socketPlacement.emptySocket(nodeDrawer.findNodeAt(viewport(), x, y));
+        return !chrome.contains(canvasPosition, mode, x, y) && socketPlacement.emptySocket(nodeDrawer.findNodeAt(layers(), x, y));
     }
 
     private void handleTreePress(InputEventAPI event, CanvasMode mode) {
@@ -412,17 +444,24 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         }
         camera.stopDrag();
         if (treeSession.isDropdownOpen()) {
-            SkillType option = nodeDrawer.findDropdownOptionAt(viewport(), x, y);
+            SkillType option = nodeDrawer.findDropdownOptionAt(layers(), x, y);
             if (option != null) {
                 gesture.pressTarget(mode, option, x, y, false, false, true);
             } else {
                 treeSession.closeDropdown();
             }
-        } else if (!pressTarget(mode, nodeDrawer.findNodeAt(viewport(), x, y), event, mode.pansOnDrag()) && mode.pansOnDrag()) {
+        } else if (!pressTarget(mode, treeTargetAt(x, y), event, mode.pansOnDrag()) && mode.pansOnDrag()) {
             gesture.pressPan(mode, x, y);
             camera.startDrag();
         }
         event.consume();
+    }
+
+    private Object treeTargetAt(float x, float y) {
+        if (exoshipView.shipContains(viewport(), x, y)) {
+            return exoshipView;
+        }
+        return nodeDrawer.findNodeAt(layers(), x, y);
     }
 
     private boolean pressTarget(CanvasMode mode, Object target, InputEventAPI event, boolean mayPan) {
@@ -444,13 +483,16 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         if (panning) {
             camera.stopDrag();
         } else if (treeSession.isDropdownOpen()) {
-            SkillType releasedOption = nodeDrawer.findDropdownOptionAt(viewport(), event.getX(), event.getY());
+            SkillType releasedOption = nodeDrawer.findDropdownOptionAt(layers(), event.getX(), event.getY());
             if (gesture.releasedOn(releasedOption)) {
                 treeSession.commitDropdownSelection(releasedOption);
             }
         } else {
-            SkillNode releasedNode = nodeDrawer.findNodeAt(viewport(), event.getX(), event.getY());
-            if (gesture.releasedOn(releasedNode)) {
+            Object released = treeTargetAt(event.getX(), event.getY());
+            if (gesture.releasedOn(released) && released == exoshipView) {
+                boardExoship();
+                SkillTreeSounds.wormholeJumped();
+            } else if (gesture.releasedOn(released) && released instanceof SkillNode releasedNode) {
                 commitNodeClick(releasedNode, gesture.ctrlDown(), gesture.shiftDown());
             }
         }
@@ -470,10 +512,15 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         if (socketPlacement.handleSocketClick(node, ctrlDown, canvasPosition, chrome.shipCardFrame(canvasPosition))) {
             return;
         }
-        if (jumpTarget != null) {
+        if (jumpTarget != null && ExoshipNodes.isExoship(jumpTarget)) {
+            boardExoship();
+            SkillTreeSounds.wormholeJumped();
+        } else if (jumpTarget != null) {
             stopFollowingFleet();
             camera.panTo(jumpTarget.getOffsetX(), jumpTarget.getOffsetY());
-            nodeDrawer.launchWormholeGhosts(node, jumpTarget);
+            if (!ExoshipNodes.isExoship(node)) {
+                nodeDrawer.launchWormholeGhosts(node, jumpTarget);
+            }
             SkillTreeSounds.wormholeJumped();
         } else {
             treeSession.clickNode(node, ctrlDown);
@@ -510,9 +557,10 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         float searchDim = nodeSearch.backgroundAlpha() + (1f - nodeSearch.backgroundAlpha()) * (1f - treeAlpha);
         float backgroundAlpha = alphaMult * searchDim * treeSession.treeAlpha();
         float inspectFade = 1f - frameworkInspection.inspectLevel();
-        float sceneryAlpha = backgroundAlpha * inspectFade;
+        float exoshipFade = 1f - exoshipView.viewLevel();
+        float sceneryAlpha = backgroundAlpha * inspectFade * exoshipFade;
         starRenderer.setMapRadius(hyperspaceMode.starRadius(), hyperspaceMode.mapAmount());
-        starfieldRenderer.render(canvasPosition, camera.panX(), camera.panY(), backgroundAlpha);
+        starfieldRenderer.render(canvasPosition, camera.panX(), camera.panY(), backgroundAlpha * exoshipView.starfieldAlpha());
         abyssDarkness.render(canvasPosition, viewport, alphaMult);
         starRenderer.renderDisc(viewport, sceneryAlpha);
         starRenderer.renderAtmosphere(viewport, sceneryAlpha);
@@ -522,11 +570,17 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         frameworkInspection.renderBackdrop(canvasPosition, alphaMult);
         boolean pointerOverTree = mouseKnown && !chrome.contains(canvasPosition, mode, mouseX, mouseY)
                 && !frameworkInspection.buttonContains(mouseX, mouseY);
-        boolean treeHovered = pointerOverTree && mode.hoversTree() && !frameworkInspection.isInspecting();
+        boolean shipHovered = pointerOverTree && mode.hoversTree() && !frameworkInspection.isInspecting()
+                && exoshipView.shipContains(viewport, mouseX, mouseY);
+        boolean treeHovered = pointerOverTree && mode.hoversTree() && !frameworkInspection.isInspecting() && !shipHovered;
+        exoshipView.setHovered(shipHovered);
+        TreeLayers layers = exoshipView.layers(viewport, alphaMult * treeAlpha * inspectFade);
         if (treeAlpha * inspectFade > 0f) {
-            nodeDrawer.render(viewport, alphaMult * treeAlpha * inspectFade, mouseX, mouseY, treeHovered);
+            nodeDrawer.render(layers, mouseX, mouseY, treeHovered);
         }
-        fleetRenderer.render(viewport, backgroundAlpha * treeAlpha);
+        fleetRenderer.render(viewport, backgroundAlpha * treeAlpha * exoshipFade);
+        float shipAlpha = backgroundAlpha + (alphaMult * treeSession.treeAlpha() - backgroundAlpha) * exoshipView.viewLevel();
+        exoshipView.render(viewport, shipAlpha * treeAlpha * inspectFade);
         starRenderer.renderGlow(viewport, sceneryAlpha);
         frameworkInspection.render(canvasPosition, viewport, fleetRenderer, alphaMult);
         if (workbenchDimProgress > 0f) {
@@ -540,7 +594,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         frameworkInspection.renderButton(mouseX, mouseY, alphaMult);
         if (!camera.isDragging() && mouseKnown) {
             if (treeHovered) {
-                nodeDrawer.renderHoverTooltip(viewport, mouseX, mouseY, alphaMult);
+                nodeDrawer.renderHoverTooltip(layers, mouseX, mouseY, alphaMult);
             }
             chrome.renderTooltips(canvasPosition, mode, mouseX, mouseY, alphaMult);
         }
@@ -549,5 +603,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     private TreeViewport viewport() {
         return camera.viewport(canvasPosition);
+    }
+
+    private TreeLayers layers() {
+        return exoshipView.layers(viewport(), 1f);
     }
 }

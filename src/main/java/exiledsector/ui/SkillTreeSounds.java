@@ -21,6 +21,8 @@ public final class SkillTreeSounds {
     static final String PANEL_OPEN = "ui_select_command_ui_icon";
     static final String SOCKET = "ui_industry_install_any_item";
     static final String CRAFT = "ui_cargo_machinery_drop";
+    static final String EXOSHIP_CHARGE_UP = "exiledSector_exoship_warp_chargeup";
+    static final String EXOSHIP_WARP = "exiledSector_exoship_warp";
     static final long NODE_SOUND_GAP_NANOS = 100_000_000L;
 
     private static long lastNodeSoundNanos = Long.MIN_VALUE;
@@ -66,6 +68,14 @@ public final class SkillTreeSounds {
 
     public static void crafted() {
         play(CRAFT);
+    }
+
+    public static void exoshipChargingUp() {
+        play(EXOSHIP_CHARGE_UP);
+    }
+
+    public static void exoshipWarped() {
+        play(EXOSHIP_WARP);
     }
 
     static void resetForTests() {
