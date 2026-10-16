@@ -16,7 +16,7 @@ public final class SkillNodeOpCost {
     public static final int DEFAULT_DESTROYER = 2;
     public static final int DEFAULT_CRUISER = 3;
     public static final int DEFAULT_CAPITAL = 5;
-    public static final int DEFAULT_UNDEFINED = 4;
+    public static final int DEFAULT_UNDEFINED = 5;
 
     private SkillNodeOpCost() {
     }
