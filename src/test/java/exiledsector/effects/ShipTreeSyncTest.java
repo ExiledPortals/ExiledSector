@@ -314,6 +314,49 @@ class ShipTreeSyncTest {
                 List.of("root_1"), 0f, 0f));
     }
 
+    private static void registerChain(String... nodeIds) {
+        String previous = "a_1";
+        for (String nodeId : nodeIds) {
+            SkillTree.register(new SkillNode(nodeId, new SkillType.Builder(nodeId, nodeId, "a.png", SkillTier.SMALL).build(),
+                    List.of(previous), 0f, 0f));
+            previous = nodeId;
+        }
+    }
+
+    @Test
+    void aCapturedTreeLosesTheNodesItBoughtWithOpBeyondItsLevel() {
+        registerNpcTreeNodes();
+        registerChain("b_1", "c_1");
+        Set<String> hullMods = new HashSet<>(Set.of(SkillTreeHullMod.ID));
+        List<String> tags = new ArrayList<>(List.of("exiledSector_npcTree|generated|1|root_1,a_1,b_1,c_1"));
+        FleetMemberAPI member = recoveredNpc("captured", hullMods, tags);
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
+
+        ShipTreeSync.fleetChanged(playerFleet());
+
+        ShipSkillData adopted = ShipSkillDataManager.get("captured");
+        assertEquals(List.of("root_1", "a_1"), List.copyOf(adopted.getAllocatedNodeIds()));
+        assertEquals(1, adopted.getLevel());
+        assertEquals(0, adopted.paidNodeCount());
+    }
+
+    @Test
+    void aCapturedPaidNodeHoldingTheTreeTogetherStaysAndBecomesFreeInsteadOfANewerLeaf() {
+        registerNpcTreeNodes();
+        registerChain("b_1", "c_1");
+        Set<String> hullMods = new HashSet<>(Set.of(SkillTreeHullMod.ID));
+        List<String> tags = new ArrayList<>(List.of("exiledSector_npcTree|generated|2|root_1,a_1,c_1,b_1"));
+        FleetMemberAPI member = recoveredNpc("captured", hullMods, tags);
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
+
+        ShipTreeSync.fleetChanged(playerFleet());
+
+        ShipSkillData adopted = ShipSkillDataManager.get("captured");
+        assertEquals(List.of("root_1", "a_1", "b_1"), List.copyOf(adopted.getAllocatedNodeIds()));
+        assertEquals(0, adopted.paidNodeCount());
+        assertEquals(0, adopted.getBankedFreeAllocations());
+    }
+
     @Test
     void aRecoveredNpcShipKeepsItsTreeAsItsOwnSavedTree() {
         registerNpcTreeNodes();

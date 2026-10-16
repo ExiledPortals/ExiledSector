@@ -350,6 +350,38 @@ public class ShipSkillData {
         bankedFreeAllocations++;
     }
 
+    public List<String> trimPaidNodes(Map<String, SkillNode> tree, SkillTreeTopology topology) {
+        revision++;
+        String startingRoot = resolveStartingRootId(tree.values());
+        List<String> removedNodeIds = new ArrayList<>();
+        while (paidNodeCount() > 0) {
+            if (bankedFreeAllocations > 0 && convertMostRecentAllocationToFree(tree.values())) {
+                bankedFreeAllocations--;
+                continue;
+            }
+            SkillNode removable = newestRemovableNode(tree, topology, startingRoot);
+            if (removable == null) {
+                break;
+            }
+            deallocate(removable);
+            removedNodeIds.add(removable.getId());
+        }
+        return removedNodeIds;
+    }
+
+    private SkillNode newestRemovableNode(Map<String, SkillNode> tree, SkillTreeTopology topology, String startingRoot) {
+        List<String> order = new ArrayList<>(allocatedNodeIds);
+        for (int i = order.size() - 1; i >= 0; i--) {
+            String nodeId = order.get(i);
+            SkillNode node = tree.get(nodeId);
+            if (node != null && !nodeId.equals(startingRoot) && !pairedFreeNodeIds().contains(nodeId)
+                    && canDeallocate(node, topology, startingRoot)) {
+                return node;
+            }
+        }
+        return null;
+    }
+
     public boolean convertMostRecentAllocationToFree(Collection<SkillNode> allNodes) {
         revision++;
         String startingRoot = resolveStartingRootId(allNodes);
