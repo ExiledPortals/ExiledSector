@@ -628,7 +628,7 @@
 		},
 		{
 			"id": "attuned_sensors",
-			"name": "Attuned Sensors",
+			"name": "League Picket Targeting",
 			"icon": "graphics/icons/attuned_sensors.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -637,6 +637,7 @@
 					"magnitude": 1
 				}
 			],
+			"description": "Studying the sensor pickets the League posts along its Hegemony border shows the crew how to slave energy weapon targeting to the ship's own sensors. The stronger this ship's sensors, the further its energy weapons reach.",
 			"tags": [
 				"energy",
 				"range",
@@ -1206,7 +1207,7 @@
 		},
 		{
 			"id": "hoarded_arms",
-			"name": "Co-ordinated Reload",
+			"name": "League Reload Drill",
 			"icon": "graphics/icons/hoarded_arms.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -1219,6 +1220,7 @@
 					"magnitude": 50
 				}
 			],
+			"description": "League fleets drawn from a dozen squabbling polities still share one reload drill, so that any ship can rearm any other, and serving under a League commission drills it into the crew. Ballistic and energy weapons regain their ammunition faster.",
 			"tags": [
 				"ballistic",
 				"energy",
@@ -2677,6 +2679,7 @@
 					"magnitude": -20
 				}
 			],
+			"description": "League battle lines drawn from rival polities learned to stand or fall together.",
 			"tags": [
 				"shield",
 				"req_shields"

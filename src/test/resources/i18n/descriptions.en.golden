@@ -2209,11 +2209,16 @@ type|armoredweapons|CAPITAL_SHIP|1	0	<good>80%</good> increased weapon durabilit
 type|armoredweapons|CAPITAL_SHIP|2	0	<bad>25%</bad> less weapon turn rate.
 type|armoredweapons|CAPITAL_SHIP|3	1	<bad>25%</bad> less weapon recoil.
 type-detail|armoredweapons|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Armored Weapon Mounts</hullmod>
-type|attuned_sensors|null|0	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
-type|attuned_sensors|FRIGATE|0	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
-type|attuned_sensors|DESTROYER|0	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
-type|attuned_sensors|CRUISER|0	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
-type|attuned_sensors|CAPITAL_SHIP|0	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
+type|attuned_sensors|null|0	0	Studying the sensor pickets the League posts along its Hegemony border shows the crew how to slave energy weapon targeting to the ship's own sensors. The stronger this ship's sensors, the further its energy weapons reach.
+type|attuned_sensors|null|1	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
+type|attuned_sensors|FRIGATE|0	0	Studying the sensor pickets the League posts along its Hegemony border shows the crew how to slave energy weapon targeting to the ship's own sensors. The stronger this ship's sensors, the further its energy weapons reach.
+type|attuned_sensors|FRIGATE|1	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
+type|attuned_sensors|DESTROYER|0	0	Studying the sensor pickets the League posts along its Hegemony border shows the crew how to slave energy weapon targeting to the ship's own sensors. The stronger this ship's sensors, the further its energy weapons reach.
+type|attuned_sensors|DESTROYER|1	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
+type|attuned_sensors|CRUISER|0	0	Studying the sensor pickets the League posts along its Hegemony border shows the crew how to slave energy weapon targeting to the ship's own sensors. The stronger this ship's sensors, the further its energy weapons reach.
+type|attuned_sensors|CRUISER|1	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
+type|attuned_sensors|CAPITAL_SHIP|0	0	Studying the sensor pickets the League posts along its Hegemony border shows the crew how to slave energy weapon targeting to the ship's own sensors. The stronger this ship's sensors, the further its energy weapons reach.
+type|attuned_sensors|CAPITAL_SHIP|1	0	Increases energy weapon range by <good>1</good> for every point of this ship's sensor strength (after modifiers).
 type|augmentedengines|null|0	0	Increases max burn level by <good>1</good>.
 type-detail|augmentedengines|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Augmented Drive Field</hullmod>
 type|augmentedengines|FRIGATE|0	0	Increases max burn level by <good>1</good>.
@@ -3006,16 +3011,21 @@ type-detail|hiressensors|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</h
 type|hiressensors|CAPITAL_SHIP|0	0	This ship's sensor strength always contributes to fleet-wide sensor strength.
 type|hiressensors|CAPITAL_SHIP|1	0	Increases this ship's sensor strength by <good>70</good>.
 type-detail|hiressensors|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>High Resolution Sensors</hullmod>
-type|hoarded_arms|null|0	0	<good>50%</good> increased energy weapon ammo regeneration rate.
-type|hoarded_arms|null|1	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
-type|hoarded_arms|FRIGATE|0	0	<good>50%</good> increased energy weapon ammo regeneration rate.
-type|hoarded_arms|FRIGATE|1	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
-type|hoarded_arms|DESTROYER|0	0	<good>50%</good> increased energy weapon ammo regeneration rate.
-type|hoarded_arms|DESTROYER|1	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
-type|hoarded_arms|CRUISER|0	0	<good>50%</good> increased energy weapon ammo regeneration rate.
-type|hoarded_arms|CRUISER|1	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
-type|hoarded_arms|CAPITAL_SHIP|0	0	<good>50%</good> increased energy weapon ammo regeneration rate.
-type|hoarded_arms|CAPITAL_SHIP|1	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
+type|hoarded_arms|null|0	0	League fleets drawn from a dozen squabbling polities still share one reload drill, so that any ship can rearm any other, and serving under a League commission drills it into the crew. Ballistic and energy weapons regain their ammunition faster.
+type|hoarded_arms|null|1	0	<good>50%</good> increased energy weapon ammo regeneration rate.
+type|hoarded_arms|null|2	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
+type|hoarded_arms|FRIGATE|0	0	League fleets drawn from a dozen squabbling polities still share one reload drill, so that any ship can rearm any other, and serving under a League commission drills it into the crew. Ballistic and energy weapons regain their ammunition faster.
+type|hoarded_arms|FRIGATE|1	0	<good>50%</good> increased energy weapon ammo regeneration rate.
+type|hoarded_arms|FRIGATE|2	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
+type|hoarded_arms|DESTROYER|0	0	League fleets drawn from a dozen squabbling polities still share one reload drill, so that any ship can rearm any other, and serving under a League commission drills it into the crew. Ballistic and energy weapons regain their ammunition faster.
+type|hoarded_arms|DESTROYER|1	0	<good>50%</good> increased energy weapon ammo regeneration rate.
+type|hoarded_arms|DESTROYER|2	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
+type|hoarded_arms|CRUISER|0	0	League fleets drawn from a dozen squabbling polities still share one reload drill, so that any ship can rearm any other, and serving under a League commission drills it into the crew. Ballistic and energy weapons regain their ammunition faster.
+type|hoarded_arms|CRUISER|1	0	<good>50%</good> increased energy weapon ammo regeneration rate.
+type|hoarded_arms|CRUISER|2	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
+type|hoarded_arms|CAPITAL_SHIP|0	0	League fleets drawn from a dozen squabbling polities still share one reload drill, so that any ship can rearm any other, and serving under a League commission drills it into the crew. Ballistic and energy weapons regain their ammunition faster.
+type|hoarded_arms|CAPITAL_SHIP|1	0	<good>50%</good> increased energy weapon ammo regeneration rate.
+type|hoarded_arms|CAPITAL_SHIP|2	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 type|hull|null|0	0	<good>2%</good> more hull points.
 type|hull|FRIGATE|0	0	<good>2%</good> more hull points.
 type|hull|DESTROYER|0	0	<good>2%</good> more hull points.
@@ -3736,16 +3746,21 @@ type|shared_damage_taken|FRIGATE|0	0	Disperses 5% of shield damage taken to near
 type|shared_damage_taken|DESTROYER|0	0	Disperses 5% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 type|shared_damage_taken|CRUISER|0	0	Disperses 5% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 type|shared_damage_taken|CAPITAL_SHIP|0	0	Disperses 5% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-type|shared_fate|null|0	0	Disperses 20% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-type|shared_fate|null|1	0	<bad>20%</bad> reduced weapon damage.
-type|shared_fate|FRIGATE|0	0	Disperses 20% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-type|shared_fate|FRIGATE|1	0	<bad>20%</bad> reduced weapon damage.
-type|shared_fate|DESTROYER|0	0	Disperses 20% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-type|shared_fate|DESTROYER|1	0	<bad>20%</bad> reduced weapon damage.
-type|shared_fate|CRUISER|0	0	Disperses 20% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-type|shared_fate|CRUISER|1	0	<bad>20%</bad> reduced weapon damage.
-type|shared_fate|CAPITAL_SHIP|0	0	Disperses 20% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-type|shared_fate|CAPITAL_SHIP|1	0	<bad>20%</bad> reduced weapon damage.
+type|shared_fate|null|0	0	League battle lines drawn from rival polities learned to stand or fall together.
+type|shared_fate|null|1	0	Disperses 20% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+type|shared_fate|null|2	0	<bad>20%</bad> reduced weapon damage.
+type|shared_fate|FRIGATE|0	0	League battle lines drawn from rival polities learned to stand or fall together.
+type|shared_fate|FRIGATE|1	0	Disperses 20% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+type|shared_fate|FRIGATE|2	0	<bad>20%</bad> reduced weapon damage.
+type|shared_fate|DESTROYER|0	0	League battle lines drawn from rival polities learned to stand or fall together.
+type|shared_fate|DESTROYER|1	0	Disperses 20% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+type|shared_fate|DESTROYER|2	0	<bad>20%</bad> reduced weapon damage.
+type|shared_fate|CRUISER|0	0	League battle lines drawn from rival polities learned to stand or fall together.
+type|shared_fate|CRUISER|1	0	Disperses 20% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+type|shared_fate|CRUISER|2	0	<bad>20%</bad> reduced weapon damage.
+type|shared_fate|CAPITAL_SHIP|0	0	League battle lines drawn from rival polities learned to stand or fall together.
+type|shared_fate|CAPITAL_SHIP|1	0	Disperses 20% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+type|shared_fate|CAPITAL_SHIP|2	0	<bad>20%</bad> reduced weapon damage.
 type|shield_arc|null|0	0	Increases shield arc by <good>15</good>.
 type|shield_arc|FRIGATE|0	0	Increases shield arc by <good>15</good>.
 type|shield_arc|DESTROYER|0	0	Increases shield arc by <good>15</good>.

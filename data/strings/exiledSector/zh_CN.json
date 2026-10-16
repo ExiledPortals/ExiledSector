@@ -1254,7 +1254,7 @@
     "skillType.energy_chain.name": "折射弹体",
     "skillType.hull_breacher.name": "海军破舱弹",
     "skillType.ballistic_momentum.name": "海军心跳",
-    "skillType.attuned_sensors.name": "调谐传感器",
+    "skillType.attuned_sensors.name": "联盟哨舰瞄准",
     "skillType.advancedshieldemitter.name": "加速护盾",
     "skillType.adaptive_coils.name": "自适应相位线圈",
     "skillType.advancedoptics.name": "高级光学",
@@ -1274,7 +1274,7 @@
     "skillType.escort_package.name": "护航套件",
     "skillType.expanded_deck_crew.name": "扩充甲板人员",
     "skillType.phase_hull_upgrades.name": "相位船体升级",
-    "skillType.hoarded_arms.name": "协同装填",
+    "skillType.hoarded_arms.name": "联盟装填操典",
     "skillType.magazines.name": "扩充弹匣",
     "skillType.missleracks.name": "扩充导弹挂架",
     "skillType.extendedshieldemitter.name": "扩展护盾",
@@ -1412,5 +1412,8 @@
     "skillType.waste_not.description": "在海盗基地入伙的自由海盗教会船员把每一具残骸拆到只剩骨架，并用战斗留下的一切把舰船修回战斗状态。每场战斗后能带回更多战利品，舰船的战备值也恢复得更快。",
     "skillType.ground_support.description": "与海盗船员一同袭击殖民地，让船员学会把空余铺位和货运升降机改造成陆战队的投送平台。本舰能搭载的船员越多，对行星突袭的助力就越大。",
     "skillType.restriction_breeds_creativity.description": "缴获的海盗船体向船员展示了自由海盗如何让伤痕累累的舰船继续作战：围绕损伤加固断裂的骨架和补过的装甲板，而不是遮掩它们。本舰每带有一个D插，装甲就能多抵挡一些伤害。",
-    "skillType.reckless_assault.description": "加入船员的海盗船长训练出让自由海盗在近距离如此危险的习惯：冲进去，倾泻所有火力，伤亡以后再算。武器的命中重得多，但舰船装甲会削弱，护盾承受更多伤害，船员损失也大得多。"
+    "skillType.reckless_assault.description": "加入船员的海盗船长训练出让自由海盗在近距离如此危险的习惯：冲进去，倾泻所有火力，伤亡以后再算。武器的命中重得多，但舰船装甲会削弱，护盾承受更多伤害，船员损失也大得多。",
+    "skillType.hoarded_arms.description": "英仙座联盟的舰队来自十几个争吵不休的政体，却共用同一套装填操典，让任何一艘舰船都能为另一艘补充弹药；在联盟委任下服役，会把这套操典练进船员的骨子里。实弹和能量武器的弹药恢复得更快。",
+    "skillType.attuned_sensors.description": "研究英仙座联盟沿霸主边境部署的传感器哨舰，让船员学会把能量武器的瞄准接入舰船自身的传感器。本舰的传感器越强，能量武器的射程就越远。",
+    "skillType.shared_fate.description": "由彼此竞争的政体组成的英仙座联盟战列，学会了同生共死。"
 }
