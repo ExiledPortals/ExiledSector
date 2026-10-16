@@ -16,6 +16,7 @@ import exiledsector.effects.OpReserveHullMods;
 import exiledsector.effects.PhantomConflictWatch;
 import exiledsector.effects.PhantomHullMods;
 import exiledsector.effects.PlayerEngagementPipeline;
+import exiledsector.effects.PlayerTreePower;
 import exiledsector.effects.ResolvedTree;
 import exiledsector.effects.SkillConflictWarningHullMod;
 import exiledsector.effects.SkillTreeHullMod;
@@ -225,5 +226,6 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         Global.getSector().getListenerManager().addListener(new TechMiningSocketableListener(), true);
         SocketTypeMigration.run();
         SocketCustody.reconcile();
+        PlayerTreePower.logNpcScaling();
     }
 }

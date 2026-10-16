@@ -8,8 +8,8 @@ import exiledsector.socketables.SocketableRoller;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.LanguageSetting;
 import exiledsector.i18n.Translation;
-import exiledsector.skills.npc.NpcLevelTable;
 import exiledsector.skills.npc.NpcTreeConfig;
+import exiledsector.skills.npc.NpcTreeSize;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.SkillNodeOpCost;
 import exiledsector.skills.skilleffect.MaxChainCountConfig;
@@ -182,36 +182,25 @@ public final class ExiledSectorSettings {
                 Translation.text("settings.npc.inspectKey.name"), Translation.text("settings.npc.inspectKey.tooltip"),
                 NpcInspectConfig.DEFAULT_KEY, npcTab);
 
+        SettingsCreator.addHeader(MOD_ID, "exiledSector_npcTreeSizeHeader", Translation.text("settings.npcTreeSize.header"), npcTab);
+        SettingsCreator.addText(MOD_ID, "exiledSector_npcTreeSizeAbout", Translation.text("settings.npcTreeSize.about"), npcTab);
+        SettingsCreator.addInt(MOD_ID, NpcTreeSize.MIN_PERCENT_FIELD_ID,
+                Translation.text("settings.npcTreeSize.min.name"), Translation.text("settings.npcTreeSize.min.tooltip"),
+                NpcTreeSize.DEFAULT_MIN_PERCENT, NpcTreeSize.LOWEST_PERCENT, NpcTreeSize.HIGHEST_PERCENT, npcTab);
+        SettingsCreator.addInt(MOD_ID, NpcTreeSize.MAX_PERCENT_FIELD_ID,
+                Translation.text("settings.npcTreeSize.max.name"), Translation.text("settings.npcTreeSize.max.tooltip"),
+                NpcTreeSize.DEFAULT_MAX_PERCENT, NpcTreeSize.LOWEST_PERCENT, NpcTreeSize.HIGHEST_PERCENT, npcTab);
+
         SettingsCreator.addHeader(MOD_ID, "exiledSector_npcBonusScaleHeader", Translation.text("settings.npcBonusScale.header"), npcTab);
         SettingsCreator.addText(MOD_ID, "exiledSector_npcBonusScaleAbout", Translation.text("settings.npcBonusScale.about"), npcTab);
-        SettingsCreator.addInt(MOD_ID, NpcBonusScale.START_PLAYER_LEVEL_FIELD_ID,
-                Translation.text("settings.npcBonusScale.startPlayerLevel.name"), Translation.text("settings.npcBonusScale.startPlayerLevel.tooltip"),
-                NpcBonusScale.DEFAULT_START_PLAYER_LEVEL, 1, 100, npcTab);
-        SettingsCreator.addInt(MOD_ID, NpcBonusScale.LOW_SHIP_LEVEL_FIELD_ID,
-                Translation.text("settings.npcBonusScale.lowShipLevel.name"), Translation.text("settings.npcBonusScale.lowShipLevel.tooltip"),
-                NpcBonusScale.DEFAULT_LOW_SHIP_LEVEL, 0, 200, npcTab);
-        SettingsCreator.addInt(MOD_ID, NpcBonusScale.HIGH_SHIP_LEVEL_FIELD_ID,
-                Translation.text("settings.npcBonusScale.highShipLevel.name"), Translation.text("settings.npcBonusScale.highShipLevel.tooltip"),
-                NpcBonusScale.DEFAULT_HIGH_SHIP_LEVEL, 1, 200, npcTab);
+        SettingsCreator.addInt(MOD_ID, NpcBonusScale.LOW_TREE_POWER_FIELD_ID,
+                Translation.text("settings.npcBonusScale.lowTreePower.name"), Translation.text("settings.npcBonusScale.lowTreePower.tooltip"),
+                NpcBonusScale.DEFAULT_LOW_TREE_POWER, 0, 300, npcTab);
+        SettingsCreator.addInt(MOD_ID, NpcBonusScale.HIGH_TREE_POWER_FIELD_ID,
+                Translation.text("settings.npcBonusScale.highTreePower.name"), Translation.text("settings.npcBonusScale.highTreePower.tooltip"),
+                NpcBonusScale.DEFAULT_HIGH_TREE_POWER, 1, 300, npcTab);
         SettingsCreator.addDouble(MOD_ID, NpcBonusScale.MAX_MULTIPLIER_FIELD_ID,
                 Translation.text("settings.npcBonusScale.maxMultiplier.name"), Translation.text("settings.npcBonusScale.maxMultiplier.tooltip"),
                 NpcBonusScale.DEFAULT_MAX_MULTIPLIER, 1.0, 10.0, npcTab);
-
-        SettingsCreator.addHeader(MOD_ID, "exiledSector_npcNodesHeader", Translation.text("settings.npcNodes.header"), npcTab);
-        SettingsCreator.addText(MOD_ID, "exiledSector_npcNodesAbout", Translation.text("settings.npcNodes.about"), npcTab);
-        for (int playerLevel = NpcLevelTable.MIN_PLAYER_LEVEL; playerLevel <= NpcLevelTable.MAX_PLAYER_LEVEL; playerLevel++) {
-            boolean andAbove = playerLevel == NpcLevelTable.MAX_PLAYER_LEVEL;
-            SettingsCreator.addHeader(MOD_ID, "exiledSector_npcLevel" + playerLevel + "Header",
-                    Translation.msg(andAbove ? "settings.npcNodes.levelHeaderAndAbove" : "settings.npcNodes.levelHeader")
-                            .arg("level", playerLevel).text(), npcTab);
-            SettingsCreator.addInt(MOD_ID, NpcLevelTable.minNodesFieldId(playerLevel), Translation.text("settings.npcNodes.min.name"),
-                    Translation.msg(andAbove ? "settings.npcNodes.min.tooltipAndAbove" : "settings.npcNodes.min.tooltip")
-                            .arg("level", playerLevel).text(),
-                    NpcLevelTable.defaultMinNodes(playerLevel), NpcLevelTable.MIN_NODES, NpcLevelTable.MAX_NODES, npcTab);
-            SettingsCreator.addInt(MOD_ID, NpcLevelTable.maxNodesFieldId(playerLevel), Translation.text("settings.npcNodes.max.name"),
-                    Translation.msg(andAbove ? "settings.npcNodes.max.tooltipAndAbove" : "settings.npcNodes.max.tooltip")
-                            .arg("level", playerLevel).text(),
-                    NpcLevelTable.defaultMaxNodes(playerLevel), NpcLevelTable.MIN_NODES, NpcLevelTable.MAX_NODES, npcTab);
-        }
     }
 }

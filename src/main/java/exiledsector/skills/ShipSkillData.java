@@ -241,7 +241,7 @@ public class ShipSkillData {
         return paidNodeCount() * opCostPerNode;
     }
 
-    private int paidNodeCount() {
+    public int paidNodeCount() {
         String startingRoot = resolveStartingRootId();
         int paid = 0;
         for (String nodeId : allocatedNodeIds) {
