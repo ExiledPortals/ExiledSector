@@ -24,6 +24,18 @@ export type RareNameWords = Record<string, unknown> & {
   models?: string[];
 };
 
+export type RareNameWordList = 'first' | 'second' | 'models';
+
+export const RARE_NAME_WORD_LISTS: { key: RareNameWordList; label: string; productOnly: boolean }[] = [
+  { key: 'first', label: 'First words', productOnly: false },
+  { key: 'second', label: 'Second words', productOnly: false },
+  { key: 'models', label: 'Models', productOnly: true },
+];
+
+export function newRareNameWords(): RareNameWords {
+  return { style: 'codename', first: [], second: [] };
+}
+
 export interface NamesModel {
   affixTable: CsvTable;
   affixes: AffixRow[];

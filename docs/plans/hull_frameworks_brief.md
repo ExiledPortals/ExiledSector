@@ -74,7 +74,7 @@ Ask the user; don't guess.
 - No code comments except TODOs and a one-line justification above every @SuppressWarnings.
 - All player-visible text goes through Translation with keys in both data/strings/exiledSector/en.json and zh_CN.json. Check new Chinese characters are in the CJK font atlas (graphics/fonts/exiledSector/notosanssc.fnt). LunaLib and addPara text must not contain a bare %.
 - Persisted save classes (ShipSkillData, SocketableStore, Socketable and its subclasses Subroutine, Officer, Team, AiCore, RolledEffect, FrozenName) must not be renamed or removed without XStream aliases. Their fields can be renamed safely, since saves ignore unknown fields.
-- New skill_types.json or socketable CSV fields must be added to tools/skill_tree_editor.html's serialisers, or saving from the editor will delete them.
+- New skill_types.json or socketable CSV fields must be added to the editor's serialisers (tools/editor/src/pages/tree/model/serialization.ts and the socketable models; EditorRoundTripTest checks them), or saving from the editor will delete them.
 - Reflection only through ui/refit/UiReflection (MethodHandles); ScriptSandboxRestrictionsTest enforces this.
 - Minimise per-frame cost: build once, cache, no per-frame allocations in render loops.
 - Name things descriptively (panelWidth, not width).

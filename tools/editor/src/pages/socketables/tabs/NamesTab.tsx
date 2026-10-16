@@ -10,8 +10,11 @@ import { lineEndingOf } from '../../../shared/lineEndings.ts';
 import { parseSocketablesCsv } from '../model/definitions.ts';
 import {
   missingEffects,
+  newRareNameWords,
+  RARE_NAME_WORD_LISTS,
   parseAffixesCsv,
   RARE_NAME_STYLES,
+  type RareNameWordList,
   sampleNames,
   serializeAffixesCsv,
   serializeRareNames,
@@ -237,7 +240,7 @@ function WordListInput({ label, words, onWords }: WordListInputProps) {
 
 function RareNameCard({ socketableId, words, document }: { socketableId: string; words: RareNameWords; document: DataDocument<NamesModel> }) {
   const samples = useMemo(() => sampleNames(words), [words]);
-  const setWords = (key: 'first' | 'second' | 'models', list: string[]) =>
+  const setWords = (key: RareNameWordList, list: string[]) =>
     document.update((draft) => {
       draft.rareNames[socketableId][key] = list;
     });
@@ -273,9 +276,9 @@ function RareNameCard({ socketableId, words, document }: { socketableId: string;
           allowDeselect={false}
         />
         <Group align="flex-start" grow>
-          <WordListInput label="First words" words={words.first ?? []} onWords={(list) => setWords('first', list)} />
-          <WordListInput label="Second words" words={words.second ?? []} onWords={(list) => setWords('second', list)} />
-          {words.style === 'product' && <WordListInput label="Models" words={words.models ?? []} onWords={(list) => setWords('models', list)} />}
+          {RARE_NAME_WORD_LISTS.filter((list) => !list.productOnly || words.style === 'product').map((list) => (
+            <WordListInput key={list.key} label={list.label} words={words[list.key] ?? []} onWords={(chosen) => setWords(list.key, chosen)} />
+          ))}
         </Group>
         <Text size="xs" c="dimmed">
           e.g. {samples.join(', ')}
@@ -296,7 +299,7 @@ function RareNames({ document, model }: SectionProps) {
       return;
     }
     document.update((draft) => {
-      draft.rareNames[socketableId] = { style: 'codename', first: [], second: [] };
+      draft.rareNames[socketableId] = newRareNameWords();
     });
   };
 

@@ -275,7 +275,11 @@ function serializeStar(star: Star): Record<string, unknown> {
   return out;
 }
 
-export function skillTypesFileObject(types: SkillType[]): { skillTypes: Record<string, unknown>[] } {
+export interface SkillTypesFile {
+  skillTypes: Record<string, unknown>[];
+}
+
+export function skillTypesFileObject(types: SkillType[]): SkillTypesFile {
   return { skillTypes: types.map(serializeType) };
 }
 

@@ -1,4 +1,3 @@
-param([switch]$Dev)
 $ErrorActionPreference = "Stop"
 $editorDir = Join-Path $PSScriptRoot "editor"
 $nodeDir = "C:\Program Files\nodejs"
@@ -13,11 +12,7 @@ try {
     if (-not (Test-Path (Join-Path $editorDir "node_modules"))) {
         npm install --no-audit --no-fund
     }
-    if ($Dev) {
-        npm run dev
-    } else {
-        npm start
-    }
+    npm run dev
 } finally {
     Pop-Location
 }
