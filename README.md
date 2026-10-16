@@ -88,7 +88,7 @@ These mods have dedicated compatibility. The version listed is the one I last te
 | Lost Sector | 0.6.2d, 1.0.b | The Kesteven and Frozen Heart areas of the tree appear, and Augmented Systems hulls get the same bonuses from those nodes as from the hull mods. |
 | [MagicLib](https://fractalsoftworks.com/forum/index.php?topic=25868.0) | 1.5.6 | Required. A hull mod that tries to strip one of your nodes' hull mods through MagicLib is removed instead. |
 | Exotica Technologies | 1.8.7 | The Skill Tree button moves one slot down on the refit screen so it doesn't cover the Exotica button. |
-| Random Assortment of Things | 3.3.1 | Modular Hull Socket items can drop from its abyssal structures, abyssal drones and relic sites. |
+| Random Assortment of Things | 3.3.1 | The ExoTech and Abyss areas of the tree appear, and Modular Hull Socket items can drop from its abyssal structures, abyssal drones and relic sites. |
 | Industrial Evolution | 4.1.b | Modular Hull Socket items can drop from its orbital laboratories and arsenal stations. |
 | Knights of Ludd | 1.4.0 | Modular Hull Socket items can drop from its research stations and caches. |
 | Secrets of the Frontier | 0.15.1 | Modular Hull Socket items can drop from its A Promise station and Hypnos laboratory. |

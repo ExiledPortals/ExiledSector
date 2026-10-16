@@ -2,7 +2,9 @@ package exiledsector.skills.tags;
 
 import exiledsector.ModSettings;
 import exiledsector.compat.LostSectorCompat;
+import exiledsector.compat.RandomAssortmentCompat;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -10,6 +12,9 @@ public final class AreaToggles {
 
     public static final String LOST_SECTOR_FIELD_ID = "exiledSector_lostSectorArea";
     public static final Set<String> LOST_SECTOR_REGIONS = Set.of("enigma", "kesteven");
+    public static final String RANDOM_ASSORTMENT_FIELD_ID = "exiledSector_randomAssortmentArea";
+    public static final Set<String> RANDOM_ASSORTMENT_REGIONS = Set.of("exotech", "abyss");
+    public static final List<Set<String>> TOGGLED_AREAS = List.of(LOST_SECTOR_REGIONS, RANDOM_ASSORTMENT_REGIONS);
     public static final String AUTO = "Auto";
     public static final String ON = "On";
     public static final String OFF = "Off";
@@ -19,15 +24,25 @@ public final class AreaToggles {
     }
 
     public static Set<String> disabledRegions() {
-        return disabledRegions(ModSettings.stringOr(LOST_SECTOR_FIELD_ID, AUTO), LostSectorCompat.isModEnabled());
+        Set<String> disabled = new HashSet<>(disabledRegions(ModSettings.stringOr(LOST_SECTOR_FIELD_ID, AUTO), LostSectorCompat.isModEnabled()));
+        disabled.addAll(disabledRandomAssortmentRegions(ModSettings.stringOr(RANDOM_ASSORTMENT_FIELD_ID, AUTO),
+                RandomAssortmentCompat.isModEnabled()));
+        return Set.copyOf(disabled);
     }
 
     static Set<String> disabledRegions(String lostSectorSetting, boolean lostSectorInstalled) {
-        boolean regionsShown = switch (lostSectorSetting == null ? AUTO : lostSectorSetting) {
+        return isShown(lostSectorSetting, lostSectorInstalled) ? Set.of() : LOST_SECTOR_REGIONS;
+    }
+
+    static Set<String> disabledRandomAssortmentRegions(String randomAssortmentSetting, boolean randomAssortmentInstalled) {
+        return isShown(randomAssortmentSetting, randomAssortmentInstalled) ? Set.of() : RANDOM_ASSORTMENT_REGIONS;
+    }
+
+    private static boolean isShown(String areaSetting, boolean modInstalled) {
+        return switch (areaSetting == null ? AUTO : areaSetting) {
             case ON -> true;
             case OFF -> false;
-            default -> lostSectorInstalled;
+            default -> modInstalled;
         };
-        return regionsShown ? Set.of() : LOST_SECTOR_REGIONS;
     }
 }

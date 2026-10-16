@@ -42,6 +42,25 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
     BURN_LEVEL_FLAT(FLAT, stat(MutableShipStatsAPI::getMaxBurnLevel), "stat.maxBurnLevel", false),
     SENSOR_PROFILE_PERCENT(PERCENT, stat(MutableShipStatsAPI::getSensorProfile), "stat.sensorProfile", true),
     SENSOR_PROFILE_MULT(MULT, stat(MutableShipStatsAPI::getSensorProfile), "stat.sensorProfile", true),
+    PHASE_HULL_SENSOR_PROFILE_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            ShipVariantAPI variant = stats.getVariant();
+            if (variant != null && variant.getHullSpec() != null && variant.getHullSpec().isPhase()) {
+                stats.getSensorProfile().modifyPercent(modId, magnitude);
+            }
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return PERCENT.describeStat(magnitude, "stat.sensorProfileOnPhaseHulls");
+        }
+
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+    },
     SENSOR_STRENGTH_PERCENT(PERCENT, stat(MutableShipStatsAPI::getSensorStrength), "stat.sensorStrength", false),
     SENSOR_STRENGTH_FLAT(FLAT, stat(MutableShipStatsAPI::getSensorStrength), "stat.sensorStrength", false),
     SENSOR_STRENGTH_ALWAYS_COUNTS {
