@@ -2470,6 +2470,9 @@
 					"id": "solar_shielding"
 				}
 			],
+			"phantomHullMods": [
+				"solar_shielding"
+			],
 			"tags": [
 				"logistics",
 				"campaign_only"

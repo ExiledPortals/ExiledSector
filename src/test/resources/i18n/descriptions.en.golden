@@ -3476,10 +3476,15 @@ type|sindrian_shielding|CRUISER|1	1	<bad>25%</bad> less combat readiness loss fr
 type|sindrian_shielding|CAPITAL_SHIP|0	1	<bad>10%</bad> less damage taken by shields.
 type|sindrian_shielding|CAPITAL_SHIP|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type|solar_shielding|null|0	1	<bad>75%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+type-detail|solar_shielding|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Solar Shielding</hullmod>
 type|solar_shielding|FRIGATE|0	1	<bad>75%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+type-detail|solar_shielding|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Solar Shielding</hullmod>
 type|solar_shielding|DESTROYER|0	1	<bad>75%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+type-detail|solar_shielding|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Solar Shielding</hullmod>
 type|solar_shielding|CRUISER|0	1	<bad>75%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+type-detail|solar_shielding|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Solar Shielding</hullmod>
 type|solar_shielding|CAPITAL_SHIP|0	1	<bad>75%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+type-detail|solar_shielding|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Solar Shielding</hullmod>
 type|stabilizedshieldemitter|null|0	1	<bad>40%</bad> less shield flux upkeep.
 type-detail|stabilizedshieldemitter|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Stabilized Shields</hullmod>
 type|stabilizedshieldemitter|FRIGATE|0	1	<bad>40%</bad> less shield flux upkeep.
