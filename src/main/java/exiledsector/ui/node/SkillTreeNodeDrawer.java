@@ -17,6 +17,8 @@ import exiledsector.ui.util.TextLabel;
 import org.lazywizard.lazylib.ui.LazyFont;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 
@@ -36,6 +38,7 @@ public final class SkillTreeNodeDrawer {
     private final SkillTreeNodeIconRenderer iconRenderer = new SkillTreeNodeIconRenderer();
     private final SkillTreeSocketRenderer socketRenderer = new SkillTreeSocketRenderer();
     private final SkillTreeBeaconRenderer beaconRenderer = new SkillTreeBeaconRenderer();
+    private final List<SkillNode> beaconsOverConnectors = new ArrayList<>();
     private final SkillTreeNodeGhostRenderer ghostRenderer = new SkillTreeNodeGhostRenderer();
     private final SkillTreeWormholeGhostFlights wormholeGhostFlights = new SkillTreeWormholeGhostFlights(new Random());
     private final SkillTreeNodeConnectorRenderer connectorRenderer;
@@ -105,14 +108,23 @@ public final class SkillTreeNodeDrawer {
         float alphaMult = layers.treeAlpha();
         TreeLayers shownLayers = layers.withAlpha(rootChoice.treeAlpha());
 
+        beaconsOverConnectors.clear();
         for (SkillNode node : SkillTree.topology().nonRoots()) {
             float nodeAlpha = shownLayers.alphaFor(node);
-            if (nodeAlpha > 0f && !ExoshipNodes.isExoship(node)) {
+            if (ExoshipNodes.isBeacon(node)) {
+                beaconsOverConnectors.add(node);
+            } else if (nodeAlpha > 0f && !ExoshipNodes.isExoship(node)) {
                 renderNode(node, shownLayers.viewportFor(node), nodeAlpha, allocation);
             }
         }
 
         connectorRenderer.draw(shownLayers, allocation, session.templateNodeIds(), session.plannedOnlyNodeIds(), connectorFills);
+        for (SkillNode beacon : beaconsOverConnectors) {
+            float beaconAlpha = shownLayers.alphaFor(beacon);
+            if (beaconAlpha > 0f) {
+                renderNode(beacon, shownLayers.viewportFor(beacon), beaconAlpha, allocation);
+            }
+        }
         wormholeGhostFlights.draw(viewport, shownLayers.treeAlpha() * nodeSearch.backgroundAlpha());
 
         boolean choosing = rootChoice.phase() == StartingRootChoice.Phase.CHOOSING;
