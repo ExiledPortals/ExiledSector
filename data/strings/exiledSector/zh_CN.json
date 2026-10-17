@@ -372,6 +372,7 @@
     "socket.type.phase_coil": "相位线圈",
     "socket.type.flight_deck": "飞行甲板",
     "socketable.tooltip.primaryData": "主要数据",
+    "hullItem.tooltip.implicit": "固有属性",
     "socketable.noun.subroutine": "子程序",
     "socketable.noun.bridge": "军官",
     "socketable.noun.crew_quarters": "船员",

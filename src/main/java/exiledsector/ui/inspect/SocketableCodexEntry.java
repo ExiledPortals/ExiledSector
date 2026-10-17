@@ -8,6 +8,7 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.NumberText;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.socketables.HullItemImplicits;
 import exiledsector.socketables.PoolEntry;
 import exiledsector.socketables.RolledEffect;
 import exiledsector.socketables.SocketableDefinition;
@@ -71,10 +72,27 @@ public class SocketableCodexEntry extends BoxedCodexEntry {
         if (description != null) {
             VanillaText.addPara(info, description, PAD, Misc.getGrayColor());
         }
+        writeImplicits(info);
         if (definition.unique()) {
             writeUnique(info);
         } else {
             writeAffixes(info, textWidth);
+        }
+    }
+
+    private void writeImplicits(TooltipMakerAPI info) {
+        List<PoolEntry> implicits = HullItemImplicits.forType(definition.kind());
+        if (implicits.isEmpty()) {
+            return;
+        }
+        info.addSectionHeading(Translation.text("hullItem.tooltip.implicit"), Alignment.MID, PAD);
+        float linePad = PAD;
+        for (PoolEntry implicit : implicits) {
+            StyledText effectText = effectText(implicit);
+            if (effectText != null) {
+                VanillaText.addPara(info, effectText, linePad, Misc.getTextColor());
+                linePad = LINE_PAD;
+            }
         }
     }
 

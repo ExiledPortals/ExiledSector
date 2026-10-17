@@ -51,6 +51,7 @@ import exiledsector.skills.tags.AreaToggles;
 import exiledsector.skills.unlock.NodeGates;
 import exiledsector.socketables.SocketCraftingCosts;
 import exiledsector.socketables.SocketCurrency;
+import exiledsector.socketables.HullItemImplicits;
 import exiledsector.socketables.SocketableDefinitions;
 import exiledsector.socketables.SocketableDisassembly;
 import exiledsector.socketables.SocketableNames;
@@ -100,6 +101,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         CsvIdList.loadAll();
         NpcFactionVolumes.load();
         SocketableDefinitions.load();
+        HullItemImplicits.load();
         SocketCraftingCosts.load();
         SocketableNames.load();
         NodeReplacements.load();

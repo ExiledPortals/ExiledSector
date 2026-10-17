@@ -17,6 +17,7 @@ public class Socketable {
     private final String definitionId;
     private final long seed;
     private final List<RolledEffect> effects;
+    private List<RolledEffect> implicits;
     private FrozenName frozenName;
 
     Socketable(String id, String definitionId, long seed, List<RolledEffect> effects) {
@@ -45,6 +46,17 @@ public class Socketable {
 
     public List<RolledEffect> effects() {
         return Collections.unmodifiableList(effects);
+    }
+
+    public List<RolledEffect> implicits() {
+        if (implicits != null) {
+            return Collections.unmodifiableList(implicits);
+        }
+        List<RolledEffect> rolled = HullItemImplicits.roll(kind(), seed);
+        if (HullItemImplicits.isLoaded() && definition() != null) {
+            implicits = new ArrayList<>(rolled);
+        }
+        return rolled;
     }
 
     public SocketableDefinition definition() {
@@ -105,6 +117,7 @@ public class Socketable {
 
     public List<StyledText> tooltipLines() {
         List<StyledText> lines = new ArrayList<>(headerLines());
+        lines.addAll(implicitLines(false));
         lines.addAll(effectLines());
         return lines;
     }
@@ -135,7 +148,13 @@ public class Socketable {
 
     public List<SkillTypeEffect> skillEffects(HullSize hullSize) {
         SocketableDefinition definition = definition();
-        List<SkillTypeEffect> appliedEffects = new ArrayList<>(effects.size());
+        List<SkillTypeEffect> appliedEffects = new ArrayList<>(effects.size() + 2);
+        for (RolledEffect implicit : implicits()) {
+            SkillEffect resolvedImplicit = implicit.effect();
+            if (resolvedImplicit != null) {
+                appliedEffects.add(new SkillTypeEffect(resolvedImplicit, implicit.magnitude()));
+            }
+        }
         for (RolledEffect effect : effects) {
             SkillEffect resolvedEffect = effect.effect();
             if (resolvedEffect != null) {
@@ -145,6 +164,18 @@ public class Socketable {
             }
         }
         return appliedEffects;
+    }
+
+    public List<StyledText> implicitLines(boolean withRollRanges) {
+        List<StyledText> lines = new ArrayList<>();
+        SocketType type = kind();
+        for (RolledEffect implicit : implicits()) {
+            StyledText description = implicit.description(withRollRanges ? HullItemImplicits.entry(type, implicit.effectName()) : null);
+            if (description != null) {
+                lines.add(description);
+            }
+        }
+        return lines;
     }
 
     public List<StyledText> effectLines() {

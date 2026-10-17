@@ -96,6 +96,8 @@ class ExiledSectorModPluginTest {
                 .thenReturn(new JSONArray("[{\"faction\": \"hegemony\", \"region\": \"hegemony\"}]"));
         when(settings.getMergedSpreadsheetDataForMod("id", "data/config/exiledSector/socketables.csv", "exiledSector"))
                 .thenReturn(new JSONArray("[{\"id\": \"chip\", \"kind\": \"subroutine\", \"prefixes\": \"HULL_MULT:4:6\"}]"));
+        when(settings.getMergedSpreadsheetDataForMod("type", "data/config/exiledSector/hull_item_implicits.csv", "exiledSector"))
+                .thenReturn(new JSONArray());
         when(settings.getMergedJSONForMod("data/config/exiledSector/socketable_names.json", "exiledSector")).thenReturn(new JSONObject("{}"));
         when(settings.getMergedSpreadsheetDataForMod("effect", "data/config/exiledSector/socketable_affixes.csv", "exiledSector"))
                 .thenReturn(new JSONArray());

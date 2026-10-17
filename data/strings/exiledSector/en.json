@@ -378,6 +378,7 @@
     "socket.type.phase_coil": "Phase Coil",
     "socket.type.flight_deck": "Flight Deck",
     "socketable.tooltip.primaryData": "Primary data",
+    "hullItem.tooltip.implicit": "Implicit",
     "socketable.noun.subroutine": "subroutine",
     "socketable.noun.bridge": "officer",
     "socketable.noun.crew_quarters": "crew",

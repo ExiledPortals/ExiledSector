@@ -35,6 +35,11 @@ public final class SocketableTooltip {
                 VanillaText.plainPara(tooltip, socketableName.baseName(), 0f, Misc.getGrayColor());
             }
             addLines(tooltip, socketable.headerLines(), Misc.getGrayColor());
+            List<StyledText> implicitLines = socketable.implicitLines(showRollRanges);
+            if (!implicitLines.isEmpty()) {
+                tooltip.addSectionHeading(Translation.text("hullItem.tooltip.implicit"), Alignment.MID, PAD);
+                addLines(tooltip, implicitLines, Misc.getTextColor());
+            }
             List<StyledText> effectLines = socketable.effectLines(showRollRanges, hullSize);
             if (!effectLines.isEmpty()) {
                 tooltip.addSectionHeading(Translation.text("socketable.tooltip.primaryData"), Alignment.MID, PAD);

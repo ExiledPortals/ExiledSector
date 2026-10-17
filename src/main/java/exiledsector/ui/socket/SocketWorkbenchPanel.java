@@ -446,6 +446,14 @@ public final class SocketWorkbenchPanel extends HoloPanel {
                 VanillaText.plainPara(element, displayName.baseName(), LINE_PAD, Misc.getGrayColor());
             }
             float paraPad = GAP * 2f;
+            List<StyledText> implicitLines = loadedSocketable.implicitLines(true);
+            for (StyledText line : implicitLines) {
+                VanillaText.addPara(element, line, paraPad, Misc.getTextColor());
+                paraPad = LINE_PAD;
+            }
+            if (!implicitLines.isEmpty()) {
+                paraPad = GAP * 2f;
+            }
             for (StyledText line : loadedSocketable.effectLines(true)) {
                 VanillaText.addPara(element, line, paraPad, Misc.getTextColor());
                 paraPad = LINE_PAD;

@@ -75,7 +75,7 @@ public record SocketableDefinition(String id, SocketType kind, String name, Stri
         return name.isEmpty() ? id : name;
     }
 
-    private static List<PoolEntry> parsePool(String poolText) {
+    static List<PoolEntry> parsePool(String poolText) {
         List<PoolEntry> pool = new ArrayList<>();
         for (String entryText : poolText.split(ENTRY_SEPARATOR)) {
             String trimmed = entryText.trim();
