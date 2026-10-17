@@ -213,7 +213,18 @@ export const UNLOCK_CONDITION_LABELS: Record<string, string> = {
   memoryFlag: 'Game state (memory flag)',
   ratPlayerExoship: 'RAT: player owns an Exoship',
   ratSingularityDefeated: 'RAT: Singularity defeated',
+  nightcrossPascalVisited: 'Nightcross: player has entered Pascal',
+  nightcrossLunarFleetDefeated: 'Nightcross: Stargazer lunar fleet defeated',
+  nightcrossAncientPrototypeFound: 'Nightcross: an Ancient Prototype found',
 };
+
+export const PARAMETERLESS_UNLOCK_CONDITIONS: ReadonlySet<string> = new Set([
+  'ratPlayerExoship',
+  'ratSingularityDefeated',
+  'nightcrossPascalVisited',
+  'nightcrossLunarFleetDefeated',
+  'nightcrossAncientPrototypeFound',
+]);
 
 export function isAuroraBelt(node: Pick<TreeNode, 'ringBeltPath'>): boolean {
   return !node.ringBeltPath || node.ringBeltPath === AURORA_RING_BELT_PATH;

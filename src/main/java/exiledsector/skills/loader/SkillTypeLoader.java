@@ -208,6 +208,9 @@ public final class SkillTypeLoader {
             case MEMORY_FLAG -> UnlockCondition.memoryFlag(conditionJson.getString("key"));
             case RAT_PLAYER_EXOSHIP -> UnlockCondition.ratPlayerExoship();
             case RAT_SINGULARITY_DEFEATED -> UnlockCondition.ratSingularityDefeated();
+            case NIGHTCROSS_PASCAL_VISITED -> UnlockCondition.nightcrossPascalVisited();
+            case NIGHTCROSS_LUNAR_FLEET_DEFEATED -> UnlockCondition.nightcrossLunarFleetDefeated();
+            case NIGHTCROSS_ANCIENT_PROTOTYPE_FOUND -> UnlockCondition.nightcrossAncientPrototypeFound();
         };
     }
 

@@ -22,6 +22,7 @@ public final class AreaToggles {
     public static final String ON = "On";
     public static final String OFF = "Off";
     public static final List<String> OPTIONS = List.of(AUTO, ON, OFF);
+    public static final List<String> REQUIRED_MOD_OPTIONS = List.of(AUTO, OFF);
 
     private AreaToggles() {
     }
@@ -39,7 +40,7 @@ public final class AreaToggles {
     }
 
     static Set<String> disabledRandomAssortmentRegions(String randomAssortmentSetting, boolean randomAssortmentInstalled) {
-        return isShown(randomAssortmentSetting, randomAssortmentInstalled) ? Set.of() : RANDOM_ASSORTMENT_REGIONS;
+        return randomAssortmentInstalled && !OFF.equals(randomAssortmentSetting) ? Set.of() : RANDOM_ASSORTMENT_REGIONS;
     }
 
     static Set<String> disabledNightcrossRegions(String nightcrossSetting, boolean nightcrossInstalled) {

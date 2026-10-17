@@ -5779,7 +5779,8 @@
 			"orbitAnchorId": "nightcross_inner",
 			"orbitAngle": 180,
 			"tags": [
-				"nightcross"
+				"nightcross",
+				"gate_pascal_visited"
 			]
 		},
 		{
@@ -5795,7 +5796,8 @@
 			"orbitAnchorId": "nightcross_inner",
 			"orbitAngle": 270,
 			"tags": [
-				"nightcross"
+				"nightcross",
+				"gate_pascal_visited"
 			]
 		},
 		{
@@ -5811,7 +5813,8 @@
 			"orbitAnchorId": "nightcross_inner",
 			"orbitAngle": 90,
 			"tags": [
-				"nightcross"
+				"nightcross",
+				"gate_pascal_visited"
 			]
 		},
 		{
@@ -5829,7 +5832,8 @@
 			"orbitAngle": 0,
 			"pairedWith": "nightcross_wormhole_2",
 			"tags": [
-				"nightcross"
+				"nightcross",
+				"gate_pascal_visited"
 			]
 		},
 		{
@@ -5843,7 +5847,8 @@
 			"y": -6717,
 			"pairedWith": "nightcross_wormhole_1",
 			"tags": [
-				"sindrian_dictat"
+				"sindrian_dictat",
+				"gate_pascal_visited"
 			]
 		},
 		{
@@ -5859,7 +5864,8 @@
 			"orbitAnchorId": "anchor_70",
 			"orbitAngle": 180,
 			"tags": [
-				"nightcross"
+				"nightcross",
+				"gate_pascal_visited"
 			]
 		},
 		{
@@ -5874,7 +5880,8 @@
 			"orbitAnchorId": "anchor_70",
 			"orbitAngle": 270,
 			"tags": [
-				"nightcross"
+				"nightcross",
+				"gate_pascal_visited"
 			]
 		},
 		{
@@ -5889,7 +5896,8 @@
 			"orbitAnchorId": "anchor_70",
 			"orbitAngle": 0,
 			"tags": [
-				"nightcross"
+				"nightcross",
+				"gate_pascal_visited"
 			]
 		},
 		{
@@ -5905,7 +5913,8 @@
 			"orbitAnchorId": "anchor_71",
 			"orbitAngle": 90,
 			"tags": [
-				"nightcross"
+				"nightcross",
+				"gate_pascal_visited"
 			]
 		},
 		{
@@ -5920,7 +5929,8 @@
 			"orbitAnchorId": "anchor_71",
 			"orbitAngle": 0,
 			"tags": [
-				"nightcross"
+				"nightcross",
+				"gate_pascal_visited"
 			]
 		},
 		{
@@ -5935,7 +5945,8 @@
 			"orbitAnchorId": "anchor_71",
 			"orbitAngle": 270,
 			"tags": [
-				"nightcross"
+				"nightcross",
+				"gate_pascal_visited"
 			]
 		},
 		{
@@ -5947,7 +5958,8 @@
 			"x": -16796,
 			"y": -3850,
 			"tags": [
-				"nightcross"
+				"nightcross",
+				"gate_pascal_visited"
 			]
 		},
 		{
@@ -5958,12 +5970,13 @@
 				"maneuverability_percent_4",
 				"modular_hull_socket_15"
 			],
-			"x": 18215,
-			"y": -5188,
+			"x": 18149,
+			"y": -5279,
 			"orbitAnchorId": "anchor_73",
 			"orbitAngle": 0,
 			"tags": [
-				"stargazer"
+				"stargazer",
+				"gate_lunar_fleet_defeated"
 			]
 		},
 		{
@@ -5973,12 +5986,13 @@
 				"maneuverability_percent_3",
 				"maneuverability_percent_4"
 			],
-			"x": 17895,
-			"y": -5188,
+			"x": 17829,
+			"y": -5279,
 			"orbitAnchorId": "anchor_73",
 			"orbitAngle": 180,
 			"tags": [
-				"stargazer"
+				"stargazer",
+				"gate_ancient_prototype_found"
 			]
 		},
 		{
@@ -5988,12 +6002,13 @@
 				"top_speed_8",
 				"gravitational_drag_1"
 			],
-			"x": 18055,
-			"y": -5348,
+			"x": 17989,
+			"y": -5439,
 			"orbitAnchorId": "anchor_73",
 			"orbitAngle": 270,
 			"tags": [
-				"stargazer"
+				"stargazer",
+				"gate_lunar_fleet_defeated"
 			]
 		},
 		{
@@ -6008,7 +6023,8 @@
 			"orbitAnchorId": "anchor_70",
 			"orbitAngle": 90,
 			"tags": [
-				"nightcross"
+				"nightcross",
+				"gate_pascal_visited"
 			]
 		},
 		{
@@ -6023,7 +6039,8 @@
 			"orbitAnchorId": "anchor_71",
 			"orbitAngle": 180,
 			"tags": [
-				"nightcross"
+				"nightcross",
+				"gate_pascal_visited"
 			]
 		},
 		{
@@ -6033,12 +6050,13 @@
 				"top_speed_8",
 				"gravitational_drag_1"
 			],
-			"x": 18055,
-			"y": -5028,
+			"x": 17989,
+			"y": -5119,
 			"orbitAnchorId": "anchor_73",
 			"orbitAngle": 90,
 			"tags": [
-				"stargazer"
+				"stargazer",
+				"gate_lunar_fleet_defeated"
 			]
 		},
 		{
@@ -6054,7 +6072,8 @@
 			"orbitAnchorId": "stargazer_inner",
 			"orbitAngle": 270,
 			"tags": [
-				"stargazer"
+				"stargazer",
+				"gate_lunar_fleet_defeated"
 			]
 		},
 		{
@@ -6070,7 +6089,8 @@
 			"orbitAnchorId": "stargazer_inner",
 			"orbitAngle": 90,
 			"tags": [
-				"stargazer"
+				"stargazer",
+				"gate_lunar_fleet_defeated"
 			]
 		},
 		{
@@ -6087,7 +6107,8 @@
 			"orbitAnchorId": "stargazer_inner",
 			"orbitAngle": 0,
 			"tags": [
-				"stargazer"
+				"stargazer",
+				"gate_lunar_fleet_defeated"
 			]
 		},
 		{
@@ -6105,7 +6126,8 @@
 			"orbitAngle": 180,
 			"pairedWith": "stargazer_wormhole_2",
 			"tags": [
-				"stargazer"
+				"stargazer",
+				"gate_lunar_fleet_defeated"
 			]
 		},
 		{
@@ -6119,7 +6141,8 @@
 			"y": -7839,
 			"pairedWith": "stargazer_wormhole_1",
 			"tags": [
-				"REDACTED"
+				"REDACTED",
+				"gate_lunar_fleet_defeated"
 			]
 		},
 		{
@@ -6130,12 +6153,13 @@
 				"beam_damage_8",
 				"modular_hull_socket_15"
 			],
-			"x": 18226,
-			"y": -4382,
+			"x": 18164,
+			"y": -4279,
 			"orbitAnchorId": "anchor_74",
 			"orbitAngle": 0,
 			"tags": [
-				"stargazer"
+				"stargazer",
+				"gate_lunar_fleet_defeated"
 			]
 		},
 		{
@@ -6145,12 +6169,13 @@
 				"beam_damage_2",
 				"corrosion_beam_1"
 			],
-			"x": 18066,
-			"y": -4222,
+			"x": 18004,
+			"y": -4119,
 			"orbitAnchorId": "anchor_74",
 			"orbitAngle": 90,
 			"tags": [
-				"stargazer"
+				"stargazer",
+				"gate_lunar_fleet_defeated"
 			]
 		},
 		{
@@ -6160,12 +6185,13 @@
 				"beam_damage_7",
 				"beam_damage_8"
 			],
-			"x": 17906,
-			"y": -4382,
+			"x": 17844,
+			"y": -4279,
 			"orbitAnchorId": "anchor_74",
 			"orbitAngle": 180,
 			"tags": [
-				"stargazer"
+				"stargazer",
+				"gate_lunar_fleet_defeated"
 			]
 		},
 		{
@@ -6176,12 +6202,13 @@
 				"energy_weapon_fire_rate_5",
 				"energy_weapon_fire_rate_6"
 			],
-			"x": 17365,
-			"y": -3825,
+			"x": 17112,
+			"y": -3821,
 			"orbitAnchorId": "anchor_75",
 			"orbitAngle": 90,
 			"tags": [
-				"stargazer"
+				"stargazer",
+				"gate_lunar_fleet_defeated"
 			]
 		},
 		{
@@ -6191,12 +6218,13 @@
 				"energy_weapon_fire_rate_4",
 				"furor_machinae_1"
 			],
-			"x": 17525,
-			"y": -3985,
+			"x": 17272,
+			"y": -3981,
 			"orbitAnchorId": "anchor_75",
 			"orbitAngle": 0,
 			"tags": [
-				"stargazer"
+				"stargazer",
+				"gate_lunar_fleet_defeated"
 			]
 		},
 		{
@@ -6206,12 +6234,13 @@
 				"energy_weapon_fire_rate_5",
 				"energy_weapon_fire_rate_6"
 			],
-			"x": 17365,
-			"y": -4145,
+			"x": 17112,
+			"y": -4141,
 			"orbitAnchorId": "anchor_75",
 			"orbitAngle": 270,
 			"tags": [
-				"stargazer"
+				"stargazer",
+				"gate_lunar_fleet_defeated"
 			]
 		},
 		{
@@ -6225,7 +6254,8 @@
 			"orbitAnchorId": "mod_star_ring",
 			"orbitAngle": -15.28784294852075,
 			"tags": [
-				"stargazer"
+				"stargazer",
+				"gate_lunar_fleet_defeated"
 			]
 		},
 		{
@@ -6236,12 +6266,13 @@
 				"ecm_resistance_4",
 				"ecm_resistance_5"
 			],
-			"x": 17365,
-			"y": -5665,
+			"x": 17107,
+			"y": -5675,
 			"orbitAnchorId": "anchor_77",
 			"orbitAngle": 270,
 			"tags": [
-				"stargazer"
+				"stargazer",
+				"gate_lunar_fleet_defeated"
 			]
 		},
 		{
@@ -6251,12 +6282,13 @@
 				"ecm_resistance_3",
 				"language_of_the_lost_1"
 			],
-			"x": 17205,
-			"y": -5505,
+			"x": 16947,
+			"y": -5515,
 			"orbitAnchorId": "anchor_77",
 			"orbitAngle": 180,
 			"tags": [
-				"stargazer"
+				"stargazer",
+				"gate_lunar_fleet_defeated"
 			]
 		},
 		{
@@ -6266,12 +6298,13 @@
 				"ecm_resistance_4",
 				"ecm_resistance_5"
 			],
-			"x": 17365,
-			"y": -5345,
+			"x": 17107,
+			"y": -5355,
 			"orbitAnchorId": "anchor_77",
 			"orbitAngle": 90,
 			"tags": [
-				"stargazer"
+				"stargazer",
+				"gate_lunar_fleet_defeated"
 			]
 		},
 		{
@@ -6886,12 +6919,13 @@
 				"corrosion_beam_1",
 				"beam_damage_2"
 			],
-			"x": 18066,
-			"y": -4542,
+			"x": 18004,
+			"y": -4439,
 			"orbitAnchorId": "anchor_74",
 			"orbitAngle": 270,
 			"tags": [
-				"stargazer"
+				"stargazer",
+				"gate_lunar_fleet_defeated"
 			]
 		},
 		{
@@ -6901,12 +6935,13 @@
 				"ecm_resistance_3",
 				"language_of_the_lost_1"
 			],
-			"x": 17525,
-			"y": -5505,
+			"x": 17267,
+			"y": -5515,
 			"orbitAnchorId": "anchor_77",
 			"orbitAngle": 0,
 			"tags": [
-				"stargazer"
+				"stargazer",
+				"gate_lunar_fleet_defeated"
 			]
 		},
 		{
@@ -6916,12 +6951,13 @@
 				"energy_weapon_fire_rate_4",
 				"furor_machinae_1"
 			],
-			"x": 17205,
-			"y": -3985,
+			"x": 16952,
+			"y": -3981,
 			"orbitAnchorId": "anchor_75",
 			"orbitAngle": 180,
 			"tags": [
-				"stargazer"
+				"stargazer",
+				"gate_lunar_fleet_defeated"
 			]
 		},
 		{
@@ -6937,7 +6973,8 @@
 			"orbitAnchorId": "anchor_78",
 			"orbitAngle": 270,
 			"tags": [
-				"nightcross"
+				"nightcross",
+				"gate_pascal_visited"
 			]
 		},
 		{
@@ -6952,7 +6989,8 @@
 			"orbitAnchorId": "anchor_78",
 			"orbitAngle": 180,
 			"tags": [
-				"nightcross"
+				"nightcross",
+				"gate_pascal_visited"
 			]
 		},
 		{
@@ -6967,7 +7005,8 @@
 			"orbitAnchorId": "anchor_78",
 			"orbitAngle": 0,
 			"tags": [
-				"nightcross"
+				"nightcross",
+				"gate_pascal_visited"
 			]
 		},
 		{
@@ -6982,7 +7021,8 @@
 			"orbitAnchorId": "anchor_78",
 			"orbitAngle": 90,
 			"tags": [
-				"nightcross"
+				"nightcross",
+				"gate_pascal_visited"
 			]
 		}
 	],
@@ -8760,14 +8800,14 @@
 		{
 			"a": "maneuverability_percent_3",
 			"b": "top_speed_8",
-			"controlX": 18168,
-			"controlY": -5301
+			"controlX": 18102,
+			"controlY": -5392
 		},
 		{
 			"a": "gravitational_drag_1",
 			"b": "maneuverability_percent_3",
-			"controlX": 17942,
-			"controlY": -5301
+			"controlX": 17876,
+			"controlY": -5392
 		},
 		{
 			"a": "energy_weapon_fire_rate_1",
@@ -8796,14 +8836,14 @@
 		{
 			"a": "maneuverability_percent_4",
 			"b": "top_speed_8",
-			"controlX": 18168,
-			"controlY": -5075
+			"controlX": 18102,
+			"controlY": -5166
 		},
 		{
 			"a": "gravitational_drag_1",
 			"b": "maneuverability_percent_4",
-			"controlX": 17942,
-			"controlY": -5075
+			"controlX": 17876,
+			"controlY": -5166
 		},
 		{
 			"a": "modular_hull_socket_15",
@@ -8832,38 +8872,38 @@
 		{
 			"a": "beam_damage_2",
 			"b": "beam_damage_7",
-			"controlX": 18179,
-			"controlY": -4269
+			"controlX": 18117,
+			"controlY": -4166
 		},
 		{
 			"a": "beam_damage_7",
 			"b": "corrosion_beam_1",
-			"controlX": 17953,
-			"controlY": -4269
+			"controlX": 17891,
+			"controlY": -4166
 		},
 		{
 			"a": "energy_weapon_fire_rate_4",
 			"b": "energy_weapon_fire_rate_5",
-			"controlX": 17478,
-			"controlY": -3872
+			"controlX": 17225,
+			"controlY": -3868
 		},
 		{
 			"a": "energy_weapon_fire_rate_5",
 			"b": "furor_machinae_1",
-			"controlX": 17478,
-			"controlY": -4098
+			"controlX": 17225,
+			"controlY": -4094
 		},
 		{
 			"a": "ecm_resistance_3",
 			"b": "ecm_resistance_4",
-			"controlX": 17252,
-			"controlY": -5618
+			"controlX": 16994,
+			"controlY": -5628
 		},
 		{
 			"a": "ecm_resistance_4",
 			"b": "language_of_the_lost_1",
-			"controlX": 17252,
-			"controlY": -5392
+			"controlX": 16994,
+			"controlY": -5402
 		},
 		{
 			"a": "energy_flux_cost_3",
@@ -9072,38 +9112,38 @@
 		{
 			"a": "beam_damage_8",
 			"b": "corrosion_beam_1",
-			"controlX": 17953,
-			"controlY": -4495
+			"controlX": 17891,
+			"controlY": -4392
 		},
 		{
 			"a": "beam_damage_2",
 			"b": "beam_damage_8",
-			"controlX": 18179,
-			"controlY": -4495
+			"controlX": 18117,
+			"controlY": -4392
 		},
 		{
 			"a": "ecm_resistance_3",
 			"b": "ecm_resistance_5",
-			"controlX": 17478,
-			"controlY": -5618
+			"controlX": 17220,
+			"controlY": -5628
 		},
 		{
 			"a": "ecm_resistance_5",
 			"b": "language_of_the_lost_1",
-			"controlX": 17478,
-			"controlY": -5392
+			"controlX": 17220,
+			"controlY": -5402
 		},
 		{
 			"a": "energy_weapon_fire_rate_4",
 			"b": "energy_weapon_fire_rate_6",
-			"controlX": 17252,
-			"controlY": -3872
+			"controlX": 16999,
+			"controlY": -3868
 		},
 		{
 			"a": "energy_weapon_fire_rate_6",
 			"b": "furor_machinae_1",
-			"controlX": 17252,
-			"controlY": -4098
+			"controlX": 16999,
+			"controlY": -4094
 		},
 		{
 			"a": "armor_10",
@@ -9772,8 +9812,8 @@
 		},
 		{
 			"id": "anchor_73",
-			"x": 18055,
-			"y": -5188,
+			"x": 17989,
+			"y": -5279,
 			"radius": 160
 		},
 		{
@@ -9784,20 +9824,20 @@
 		},
 		{
 			"id": "anchor_74",
-			"x": 18066,
-			"y": -4382,
+			"x": 18004,
+			"y": -4279,
 			"radius": 160
 		},
 		{
 			"id": "anchor_75",
-			"x": 17365,
-			"y": -3985,
+			"x": 17112,
+			"y": -3981,
 			"radius": 160
 		},
 		{
 			"id": "anchor_77",
-			"x": 17365,
-			"y": -5505,
+			"x": 17107,
+			"y": -5515,
 			"radius": 160
 		},
 		{

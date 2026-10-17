@@ -156,7 +156,7 @@ public final class ExiledSectorSettings {
         SettingsCreator.addRadio(MOD_ID, AreaToggles.LOST_SECTOR_FIELD_ID, Translation.text("settings.areas.lostSector.name"),
                 Translation.text("settings.areas.lostSector.tooltip"), AreaToggles.AUTO, String.join(",", AreaToggles.OPTIONS), MAIN_TAB);
         SettingsCreator.addRadio(MOD_ID, AreaToggles.RANDOM_ASSORTMENT_FIELD_ID, Translation.text("settings.areas.randomAssortment.name"),
-                Translation.text("settings.areas.randomAssortment.tooltip"), AreaToggles.AUTO, String.join(",", AreaToggles.OPTIONS), MAIN_TAB);
+                Translation.text("settings.areas.randomAssortment.tooltip"), AreaToggles.AUTO, String.join(",", AreaToggles.REQUIRED_MOD_OPTIONS), MAIN_TAB);
         SettingsCreator.addRadio(MOD_ID, AreaToggles.NIGHTCROSS_FIELD_ID, Translation.text("settings.areas.nightcross.name"),
                 Translation.text("settings.areas.nightcross.tooltip"), AreaToggles.AUTO, String.join(",", AreaToggles.OPTIONS), MAIN_TAB);
 

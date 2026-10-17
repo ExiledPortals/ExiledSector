@@ -96,7 +96,7 @@ class ExiledSectorSettingsTest {
     void registersTheRandomAssortmentAreaToggleDefaultingToAuto() {
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addRadio(eq("exiledSector"),
                 eq(AreaToggles.RANDOM_ASSORTMENT_FIELD_ID), anyString(), anyString(), eq(AreaToggles.AUTO),
-                eq(String.join(",", AreaToggles.OPTIONS)), eq("")));
+                eq(String.join(",", AreaToggles.REQUIRED_MOD_OPTIONS)), eq("")));
     }
 
     @Test
@@ -130,7 +130,8 @@ class ExiledSectorSettingsTest {
         String areaOptions = String.join(",", AreaToggles.OPTIONS);
         for (String text : registeredTexts) {
             boolean untranslated = text.isEmpty() || text.startsWith("exiledSector") || text.equals(options)
-                    || LanguageSetting.OPTIONS.contains(text) || text.equals(areaOptions) || AreaToggles.OPTIONS.contains(text);
+                    || LanguageSetting.OPTIONS.contains(text) || text.equals(areaOptions) || text.equals(String.join(",", AreaToggles.REQUIRED_MOD_OPTIONS))
+                    || AreaToggles.OPTIONS.contains(text);
             assertFalse(!untranslated && PseudoLeaks.hasLeak(text), () -> "Hardcoded settings text: " + text);
         }
     }

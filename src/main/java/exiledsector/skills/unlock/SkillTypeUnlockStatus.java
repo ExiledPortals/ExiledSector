@@ -4,6 +4,8 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CharacterDataAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import exiledsector.compat.AbyssSingularity;
+import exiledsector.compat.NightcrossCompat;
+import exiledsector.compat.NightcrossUnlocks;
 import exiledsector.compat.RandomAssortmentCompat;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillType;
@@ -49,6 +51,9 @@ public final class SkillTypeUnlockStatus {
                 case MEMORY_FLAG -> hasMemoryFlag(condition);
                 case RAT_PLAYER_EXOSHIP -> !RandomAssortmentCompat.isModEnabled() || RandomAssortmentCompat.playerOwnsExoship();
                 case RAT_SINGULARITY_DEFEATED -> !RandomAssortmentCompat.isModEnabled() || AbyssSingularity.isDefeated(Global.getSector());
+                case NIGHTCROSS_PASCAL_VISITED -> !NightcrossCompat.isModEnabled() || NightcrossUnlocks.isPascalVisited(Global.getSector());
+                case NIGHTCROSS_LUNAR_FLEET_DEFEATED -> !NightcrossCompat.isModEnabled() || NightcrossUnlocks.isLunarFleetDefeated(Global.getSector());
+                case NIGHTCROSS_ANCIENT_PROTOTYPE_FOUND -> !NightcrossCompat.isModEnabled() || NightcrossUnlocks.isAncientPrototypeFound(Global.getSector());
             };
         } catch (RuntimeException e) {
             Logger.getLogger(SkillTypeUnlockStatus.class).error("Failed to check unlock condition " + condition, e);

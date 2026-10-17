@@ -5,5 +5,26 @@
 				"type": "ratSingularityDefeated"
 			}
 		]
+	},
+	"gate_pascal_visited": {
+		"unlockConditions": [
+			{
+				"type": "nightcrossPascalVisited"
+			}
+		]
+	},
+	"gate_lunar_fleet_defeated": {
+		"unlockConditions": [
+			{
+				"type": "nightcrossLunarFleetDefeated"
+			}
+		]
+	},
+	"gate_ancient_prototype_found": {
+		"unlockConditions": [
+			{
+				"type": "nightcrossAncientPrototypeFound"
+			}
+		]
 	}
 }
