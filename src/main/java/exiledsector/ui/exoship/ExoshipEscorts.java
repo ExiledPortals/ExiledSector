@@ -22,7 +22,9 @@ final class ExoshipEscorts {
             new Escort("graphics/fx/rat_protostar.png", 60f, 60f, 0.03f, 0.56f, 0.6f, 11f, -1f, 1f, 110f, 0.12f, 3)
     };
     static final float BEHIND_ALPHA = 0.7f;
-    private static final String ENGINE_GLOW_PATH = "graphics/fx/engineglow32.png";
+    private static final float NOZZLE_SHARE = 0.45f;
+    private static final float FLAME_LENGTH_SHARE = 0.5f;
+    private static final float FLAME_WIDTH_SHARE = 0.18f;
     private static final Color ENGINE_COLOR = new Color(247, 121, 86);
     private static final float TANGENT_STEP_RAD = 0.002f;
 
@@ -72,7 +74,8 @@ final class ExoshipEscorts {
             return;
         }
         float zoom = viewport.zoom();
-        for (Escort escort : ESCORTS) {
+        for (int escortIndex = 0; escortIndex < ESCORTS.length; escortIndex++) {
+            Escort escort = ESCORTS[escortIndex];
             Pose pose = pose(escort, centerX, centerY, shipLength, elapsedSeconds);
             if (pose.inFront() != inFront) {
                 continue;
@@ -87,10 +90,13 @@ final class ExoshipEscorts {
             float alpha = alphaMult * (inFront ? 1f : BEHIND_ALPHA);
             float angle = -pose.facingDeg() - 90f;
             double screenFacing = Math.toRadians(-pose.facingDeg());
-            float engineX = screenX - (float) Math.cos(screenFacing) * length * 0.55f;
-            float engineY = screenY - (float) Math.sin(screenFacing) * length * 0.55f;
-            SpriteDraw.drawAdditiveAtCenter(spriteCache, ENGINE_GLOW_PATH, engineX, engineY, width * 0.6f, length * 0.6f, ENGINE_COLOR, alpha * 0.8f,
-                    angle);
+            float forwardX = (float) Math.cos(screenFacing);
+            float forwardY = (float) Math.sin(screenFacing);
+            float nozzleX = screenX - forwardX * length * NOZZLE_SHARE;
+            float nozzleY = screenY - forwardY * length * NOZZLE_SHARE;
+            float flicker = EngineFlames.flicker(elapsedSeconds, escortIndex);
+            EngineFlames.draw(spriteCache, nozzleX, nozzleY, forwardX, forwardY, pose.facingDeg(), length * FLAME_LENGTH_SHARE * flicker,
+                    length * FLAME_WIDTH_SHARE, ENGINE_COLOR, alpha * Math.min(1f, flicker));
             SpriteDraw.drawAtCenter(spriteCache, escort.spritePath(), screenX, screenY, width, length, null, alpha, angle);
         }
     }

@@ -13,7 +13,6 @@ public final class ExoshipRenderer {
     static final String HULL_PATH = "graphics/fx/rat_exoship.png";
     static final String LIGHTS_PATH = "graphics/fx/rat_exoship_lights.png";
     static final String EXTERIOR_LIGHTS_PATH = "graphics/fx/rat_exoship_ext_lights.png";
-    static final String ENGINE_GLOW_PATH = "graphics/fx/engineglow32.png";
     static final String FLASH_CORE_PATH = "graphics/fx/hit_glow.png";
     static final String FLASH_HALO_PATH = "graphics/fx/star_halo.png";
     static final Color EXO_ORANGE = new Color(248, 172, 44);
@@ -67,8 +66,10 @@ public final class ExoshipRenderer {
     private final List<Flash> flashes = new ArrayList<>();
     private final ExoshipEscorts escorts = new ExoshipEscorts();
     private float secondsSinceTrail;
+    private float elapsedSeconds;
 
     public void advance(float amount, ExoshipVoyage voyage, float shipLength) {
+        elapsedSeconds += amount;
         escorts.advance(amount);
         for (Afterimage afterimage : afterimages) {
             afterimage.ageSeconds += amount;
@@ -186,20 +187,17 @@ public final class ExoshipRenderer {
         double screenFacing = Math.toRadians(-facingDeg);
         float forwardX = (float) Math.cos(screenFacing);
         float forwardY = (float) Math.sin(screenFacing);
-        float angle = spriteAngle(facingDeg);
-        for (float[] engine : ENGINES) {
+        for (int engineIndex = 0; engineIndex < ENGINES.length; engineIndex++) {
+            float[] engine = ENGINES[engineIndex];
             float forwardOffset = engine[0] * screenLength;
             float leftOffset = engine[1] * screenLength;
             float engineX = screenX + forwardX * forwardOffset - forwardY * leftOffset;
             float engineY = screenY + forwardY * forwardOffset + forwardX * leftOffset;
+            float flicker = EngineFlames.flicker(elapsedSeconds, engineIndex);
             float flameWidth = engine[2] * screenLength * (0.7f + 0.3f * thrustLevel);
-            float flameLength = engine[3] * screenLength * (0.3f + thrustLevel);
-            float flameX = engineX - forwardX * flameLength / 2f;
-            float flameY = engineY - forwardY * flameLength / 2f;
-            SpriteDraw.drawAdditiveAtCenter(spriteCache, ENGINE_GLOW_PATH, flameX, flameY, flameWidth, flameLength, EXO_EMBER,
-                    alphaMult * (0.5f + 0.5f * thrustLevel), angle);
-            SpriteDraw.drawAdditiveAtCenter(spriteCache, ENGINE_GLOW_PATH, engineX, engineY, flameWidth * 1.6f, flameWidth * 1.6f, EXO_ORANGE,
-                    alphaMult * (0.4f + 0.6f * thrustLevel));
+            float flameLength = engine[3] * screenLength * (0.3f + thrustLevel) * flicker;
+            EngineFlames.draw(spriteCache, engineX, engineY, forwardX, forwardY, facingDeg, flameLength, flameWidth, EXO_EMBER,
+                    alphaMult * (0.5f + 0.5f * thrustLevel) * Math.min(1f, flicker));
         }
     }
 
