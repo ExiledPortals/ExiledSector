@@ -40,7 +40,7 @@ class HullItemTooltipTest {
     @Test
     void theTooltipListsEachRolledEffectWithoutAKindLine() throws Exception {
         HullItemFixtures.registerMilitary();
-        HullItem hullItem = new HullItem("socketable_1", HullItemFixtures.MILITARY, 1L,
+        HullItem hullItem = HullItem.withEffects("socketable_1", HullItemFixtures.MILITARY, 1L,
                 List.of(new RolledEffect("BEAM_WEAPON_DAMAGE_PERCENT", 12f), new RolledEffect("REMOVED_EFFECT", 3f)));
 
         List<String> lines = hullItem.tooltipLines().stream().map(StyledText::plain).toList();
@@ -52,7 +52,7 @@ class HullItemTooltipTest {
     @Test
     void expandedEffectLinesShowTheRollRangeInBracketsAfterTheValue() throws Exception {
         HullItemFixtures.registerMilitary();
-        HullItem hullItem = new HullItem("socketable_4", HullItemFixtures.MILITARY, 1L,
+        HullItem hullItem = HullItem.withEffects("socketable_4", HullItemFixtures.MILITARY, 1L,
                 List.of(new RolledEffect("BEAM_WEAPON_DAMAGE_PERCENT", 12f), new RolledEffect("SHIELD_DAMAGE_TAKEN_MULT", -12f),
                         new RolledEffect("REMOVED_EFFECT", 3f)));
 
@@ -68,7 +68,7 @@ class HullItemTooltipTest {
     @Test
     void anEffectNoLongerInItsPoolOrWithAFixedValueShowsNoRange() throws Exception {
         HullItemDefinitions.register(new org.json.JSONArray().put(HullItemFixtures.row("fixed", "subroutine", "HULL_MULT:5:5")));
-        HullItem hullItem = new HullItem("socketable_5", "fixed", 1L,
+        HullItem hullItem = HullItem.withEffects("socketable_5", "fixed", 1L,
                 List.of(new RolledEffect("HULL_MULT", 5f), new RolledEffect("ARMOR_PERCENT", 7f)));
 
         assertEquals(List.of("5% more hull points.", "7% increased armor."),
@@ -78,7 +78,7 @@ class HullItemTooltipTest {
     @Test
     void onAKnownHullSizeTheTooltipShowsOnlyThatSizesValue() throws Exception {
         HullItemDefinitions.register(new org.json.JSONArray().put(HullItemFixtures.row("plating", "subroutine", "ARMOR_FLAT:5/10/15/20")));
-        HullItem hullItem = new HullItem("socketable_6", "plating", 1L, List.of(new RolledEffect("ARMOR_FLAT", 5f)));
+        HullItem hullItem = HullItem.withEffects("socketable_6", "plating", 1L, List.of(new RolledEffect("ARMOR_FLAT", 5f)));
 
         List<String> onCapital = writtenParagraphs(hullItem, HullSize.CAPITAL_SHIP, List::of);
         List<String> withoutShip = writtenParagraphs(hullItem, null, List::of);
@@ -122,7 +122,7 @@ class HullItemTooltipTest {
     void theDescriptionIsTheOnlyLineAboveTheEffects() throws Exception {
         HullItemDefinitions.register(new org.json.JSONArray().put(HullItemFixtures.row("described", "subroutine", "HULL_MULT:4:6")
                 .put("description", "Pulled from a Domain-era warship.")));
-        HullItem hullItem = new HullItem("socketable_3", "described", 1L, List.of());
+        HullItem hullItem = HullItem.withEffects("socketable_3", "described", 1L, List.of());
 
         List<String> lines = hullItem.tooltipLines().stream().map(StyledText::plain).toList();
 
@@ -131,7 +131,7 @@ class HullItemTooltipTest {
 
     @Test
     void anItemWhoseDefinitionIsGoneKeepsItsEffectsButShowsAsUnrecognised() {
-        HullItem hullItem = new HullItem("socketable_2", "removed_mod_item", 1L,
+        HullItem hullItem = HullItem.withEffects("socketable_2", "removed_mod_item", 1L,
                 List.of(new RolledEffect("BEAM_WEAPON_DAMAGE_PERCENT", 12f)));
 
         assertEquals("Unrecognised hull item", hullItem.name());

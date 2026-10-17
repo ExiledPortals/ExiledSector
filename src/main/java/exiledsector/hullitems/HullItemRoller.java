@@ -34,48 +34,43 @@ public final class HullItemRoller {
         return averageRollsSetting;
     }
 
-    public static List<RolledEffect> roll(HullItemDefinition definition, long seed) {
+    public static List<RolledModifier> roll(HullItemDefinition definition, long seed) {
         return roll(definition, seed, averageRolls());
     }
 
-    static List<RolledEffect> roll(HullItemDefinition definition, long seed, boolean averageRolls) {
+    static List<RolledModifier> roll(HullItemDefinition definition, long seed, boolean averageRolls) {
         Random random = Seeds.random(seed);
         if (definition.unique()) {
-            List<RolledEffect> rolledEffects = new ArrayList<>(definition.pool().size());
+            List<RolledModifier> rolledModifiers = new ArrayList<>(definition.pool().size());
             for (PoolEntry entry : definition.pool()) {
-                rolledEffects.add(rollEffect(entry, random, averageRolls));
+                rolledModifiers.add(RolledModifier.roll(entry.modifier(), random, averageRolls));
             }
-            return rolledEffects;
+            return rolledModifiers;
         }
         return rollAffixes(definition, AffixLayout.rolledEffectCount(random.nextFloat()), random, averageRolls);
     }
 
-    static List<RolledEffect> rollCommon(HullItemDefinition definition, long seed) {
+    static List<RolledModifier> rollCommon(HullItemDefinition definition, long seed) {
         return rollCommon(definition, seed, averageRolls());
     }
 
-    static List<RolledEffect> rollCommon(HullItemDefinition definition, long seed, boolean averageRolls) {
+    static List<RolledModifier> rollCommon(HullItemDefinition definition, long seed, boolean averageRolls) {
         return rollAffixes(definition, AffixLayout.COMMON_MAX_EFFECTS, Seeds.random(seed), averageRolls);
     }
 
-    private static List<RolledEffect> rollAffixes(HullItemDefinition definition, int rolledEffectCount, Random random, boolean averageRolls) {
-        int prefixCount = AffixLayout.prefixCount(rolledEffectCount, random.nextBoolean());
-        List<RolledEffect> rolledEffects = new ArrayList<>(rolledEffectCount);
-        draw(definition.prefixes(), prefixCount, random, averageRolls, rolledEffects);
-        draw(definition.suffixes(), rolledEffectCount - prefixCount, random, averageRolls, rolledEffects);
-        return rolledEffects;
+    private static List<RolledModifier> rollAffixes(HullItemDefinition definition, int modifierCount, Random random, boolean averageRolls) {
+        int prefixCount = AffixLayout.prefixCount(modifierCount, random.nextBoolean());
+        List<RolledModifier> rolledModifiers = new ArrayList<>(modifierCount);
+        draw(definition.prefixes(), prefixCount, random, averageRolls, rolledModifiers);
+        draw(definition.suffixes(), modifierCount - prefixCount, random, averageRolls, rolledModifiers);
+        return rolledModifiers;
     }
 
-    private static void draw(List<PoolEntry> pool, int drawCount, Random random, boolean averageRolls, List<RolledEffect> rolledEffects) {
+    private static void draw(List<PoolEntry> pool, int drawCount, Random random, boolean averageRolls, List<RolledModifier> rolledModifiers) {
         List<PoolEntry> remainingPool = new ArrayList<>(pool);
         for (int drawsLeft = Math.min(drawCount, pool.size()); drawsLeft > 0; drawsLeft--) {
             PoolEntry entry = remainingPool.remove(WeightedPick.index(remainingPool, PoolEntry::weight, random.nextFloat()));
-            rolledEffects.add(rollEffect(entry, random, averageRolls));
+            rolledModifiers.add(RolledModifier.roll(entry.modifier(), random, averageRolls));
         }
-    }
-
-    private static RolledEffect rollEffect(PoolEntry entry, Random random, boolean averageRolls) {
-        float rolledMagnitude = entry.roll(random);
-        return new RolledEffect(entry.effectName(), averageRolls ? entry.average() : rolledMagnitude);
     }
 }

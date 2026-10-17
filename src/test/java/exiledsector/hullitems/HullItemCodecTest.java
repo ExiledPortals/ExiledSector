@@ -1,5 +1,11 @@
 package exiledsector.hullitems;
 
+import exiledsector.modifiers.ModifierSlot;
+import exiledsector.skills.skilleffect.EffectAliases;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -11,11 +17,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class HullItemCodecTest {
 
-    private static final List<RolledEffect> COMMON = List.of(new RolledEffect("FIGHTER_ARMOR_PERCENT", 12f), new RolledEffect("HULL_MULT", 5f));
-    private static final List<RolledEffect> RARE = List.of(new RolledEffect("FIGHTER_ARMOR_PERCENT", 12f),
-            new RolledEffect("FLUX_DISSIPATION_MULT", 5.5f), new RolledEffect("ARMOR_PERCENT", -0.25f), new RolledEffect("HULL_MULT", 0.0001f));
-    private static final String COMMON_TEXT = "FIGHTER_ARMOR_PERCENT:12;HULL_MULT:5";
-    private static final String RARE_TEXT = "FIGHTER_ARMOR_PERCENT:12;FLUX_DISSIPATION_MULT:5.5;ARMOR_PERCENT:-0.25;HULL_MULT:1.0E-4";
+    private static final String PREFIXES = "FIGHTER_ARMOR_PERCENT:10:15; FLUX_DISSIPATION_MULT:4:6";
+    private static final String SUFFIXES = "ARMOR_PERCENT:-1:1; HULL_MULT:0:6";
+
+    private static final List<RolledModifier> COMMON = List.of(prefix("FIGHTER_ARMOR_PERCENT", 12f), suffix("HULL_MULT", 5f));
+    private static final List<RolledModifier> RARE = List.of(prefix("FIGHTER_ARMOR_PERCENT", 12f), prefix("FLUX_DISSIPATION_MULT", 5.5f),
+            suffix("ARMOR_PERCENT", -0.25f), suffix("HULL_MULT", 0.0001f));
+    private static final List<RolledModifier> HYBRID = List.of(new RolledModifier("plated_frame", ModifierSlot.PREFIX,
+            List.of(new RolledEffect("ARMOR_PERCENT", 5f), new RolledEffect("HULL_MULT", 3f))), suffix("HULL_MULT", 5f));
+
+    private static final String COMMON_TEXT = "P=FIGHTER_ARMOR_PERCENT:12;S=HULL_MULT:5";
+    private static final String RARE_TEXT = "P=FIGHTER_ARMOR_PERCENT:12;P=FLUX_DISSIPATION_MULT:5.5;S=ARMOR_PERCENT:-0.25;S=HULL_MULT:1.0E-4";
+    private static final String HYBRID_TEXT = "P=plated_frame=ARMOR_PERCENT:5+HULL_MULT:3;S=HULL_MULT:5";
+    private static final String RELEASED_COMMON_TEXT = "FIGHTER_ARMOR_PERCENT:12;HULL_MULT:5";
+    private static final String RELEASED_RARE_TEXT = "FIGHTER_ARMOR_PERCENT:12;FLUX_DISSIPATION_MULT:5.5;ARMOR_PERCENT:-0.25;HULL_MULT:1.0E-4";
 
     private static final HullItemData COMMON_ITEM =
             new HullItemData("sub", 42L, COMMON, new FrozenName("FIGHTER_ARMOR_PERCENT", "HULL_MULT", null, null));
@@ -23,6 +38,7 @@ class HullItemCodecTest {
     private static final HullItemData PRODUCT_ITEM =
             new HullItemData("gadget", -9L, RARE, FrozenName.product("Sunny", "Brand", "Pal", "X-7"));
     private static final HullItemData UNIQUE_ITEM = new HullItemData("relic", 3L, COMMON, FrozenName.NONE);
+    private static final HullItemData HYBRID_ITEM = new HullItemData("sub", 11L, HYBRID, new FrozenName("plated_frame", "HULL_MULT", null, null));
     private static final HullItemData ASSEMBLED_ITEM =
             new HullItemData("sub", 8L, List.of(), new FrozenName(null, null, "Sunny Pal", null));
     private static final HullItemData UNNAMED_ITEM = new HullItemData("removed", 9L, COMMON, null);
@@ -36,12 +52,33 @@ class HullItemCodecTest {
     private static final String ASSEMBLED_CARGO = "{\"s\":8,\"d\":\"sub\",\"e\":\"\",\"n\":true,\"r1\":\"Sunny Pal\"}";
     private static final String UNNAMED_CARGO = "{\"s\":9,\"d\":\"removed\",\"e\":\"" + COMMON_TEXT + "\"}";
 
+    @BeforeEach
+    void registerDefinitions() throws Exception {
+        HullItemDefinitions.register(new JSONArray()
+                .put(HullItemFixtures.row("sub", "subroutine", PREFIXES, SUFFIXES))
+                .put(HullItemFixtures.row("gadget", "subroutine", PREFIXES, SUFFIXES))
+                .put(HullItemFixtures.row("relic", "subroutine", PREFIXES, SUFFIXES)));
+    }
+
+    @AfterEach
+    void clearDefinitions() {
+        HullItemDefinitions.clear();
+    }
+
+    private static RolledModifier prefix(String effectName, float magnitude) {
+        return RolledModifier.single(ModifierSlot.PREFIX, new RolledEffect(effectName, magnitude));
+    }
+
+    private static RolledModifier suffix(String effectName, float magnitude) {
+        return RolledModifier.single(ModifierSlot.SUFFIX, new RolledEffect(effectName, magnitude));
+    }
+
     private static HullItemData npcItem(HullItemData item) {
-        return new HullItemData(item.definitionId(), item.seed(), item.effects(), null);
+        return new HullItemData(item.definitionId(), item.seed(), item.explicits(), null);
     }
 
     @Test
-    void cargoItemsAreWrittenExactlyAsTheReleasedBuildWroteThem() {
+    void cargoItemsAreWrittenWithTheSlotAndIdOfEveryModifier() {
         assertEquals(COMMON_CARGO, COMMON_ITEM.toSpecialItem().getData());
         assertEquals(RARE_CARGO, RARE_ITEM.toSpecialItem().getData());
         assertEquals(PRODUCT_CARGO, PRODUCT_ITEM.toSpecialItem().getData());
@@ -53,24 +90,32 @@ class HullItemCodecTest {
     }
 
     @Test
-    void npcIdsAreWrittenExactlyAsTheReleasedBuildWroteThem() {
+    void npcIdsAreWrittenWithTheSlotAndIdOfEveryModifier() {
         assertEquals("npc:sub/42/" + COMMON_TEXT, NpcHullItems.id(COMMON_ITEM));
         assertEquals("npc:sub/42/" + RARE_TEXT, NpcHullItems.id(RARE_ITEM));
-        assertEquals("npc:gadget/-9/" + RARE_TEXT, NpcHullItems.id(PRODUCT_ITEM));
-        assertEquals("npc:relic/3/" + COMMON_TEXT, NpcHullItems.id(UNIQUE_ITEM));
+        assertEquals("npc:sub/11/" + HYBRID_TEXT, NpcHullItems.id(HYBRID_ITEM));
         assertEquals("npc:sub/8/", NpcHullItems.id(ASSEMBLED_ITEM));
         assertEquals("npc:sub/7", NpcHullItems.id(new HullItemData("sub", 7L)));
         assertEquals("npc:sub/7", NpcHullItems.id("sub", 7L));
     }
 
     @Test
-    void savedFrozenCargoStringsDecodeToTheSameItems() {
+    void writtenCargoStringsDecodeToTheSameItems() {
         assertEquals(COMMON_ITEM, HullItemData.parse(COMMON_CARGO));
         assertEquals(RARE_ITEM, HullItemData.parse(RARE_CARGO));
         assertEquals(PRODUCT_ITEM, HullItemData.parse(PRODUCT_CARGO));
         assertEquals(UNIQUE_ITEM, HullItemData.parse(UNIQUE_CARGO));
         assertEquals(ASSEMBLED_ITEM, HullItemData.parse(ASSEMBLED_CARGO));
         assertEquals(UNNAMED_ITEM, HullItemData.parse(UNNAMED_CARGO));
+    }
+
+    @Test
+    void releasedEffectOnlyStringsDecodeIntoModifiersWithSlotsFromTheDefinition() {
+        assertEquals(COMMON_ITEM, HullItemData.parse(COMMON_CARGO.replace(COMMON_TEXT, RELEASED_COMMON_TEXT)));
+        assertEquals(RARE_ITEM, HullItemData.parse(RARE_CARGO.replace(RARE_TEXT, RELEASED_RARE_TEXT)));
+        assertEquals(npcItem(RARE_ITEM), NpcHullItems.item("npc:sub/42/" + RELEASED_RARE_TEXT));
+        assertEquals(new HullItemData("removed", 9L, List.of(suffix("FIGHTER_ARMOR_PERCENT", 12f), suffix("HULL_MULT", 5f)), null),
+                HullItemData.parse(UNNAMED_CARGO.replace(COMMON_TEXT, RELEASED_COMMON_TEXT)), "without a definition the slot falls back to suffix");
     }
 
     @Test
@@ -108,12 +153,12 @@ class HullItemCodecTest {
     void savedNpcIdsDecodeToTheSameItems() {
         assertEquals(npcItem(COMMON_ITEM), NpcHullItems.item("npc:sub/42/" + COMMON_TEXT));
         assertEquals(npcItem(RARE_ITEM), NpcHullItems.item("npc:sub/42/" + RARE_TEXT));
-        assertEquals(npcItem(PRODUCT_ITEM), NpcHullItems.item("npc:gadget/-9/" + RARE_TEXT));
+        assertEquals(npcItem(HYBRID_ITEM), NpcHullItems.item("npc:sub/11/" + HYBRID_TEXT));
         assertEquals(new HullItemData("sub", 8L, List.of(), null), NpcHullItems.item("npc:sub/8/"));
         assertEquals(new HullItemData("sub", 7L), NpcHullItems.item("npc:sub/7"));
         assertEquals(new HullItemData("a/b", 7L), NpcHullItems.item("npc:a/b/7"));
-        assertEquals(new HullItemData("sub", 42L, List.of(new RolledEffect("B", 2f)), null), NpcHullItems.item("npc:sub/42/A:1/B:2"));
-        assertEquals(new HullItemData("sub", 42L, List.of(new RolledEffect("A", 1f), new RolledEffect("B", 2f)), null),
+        assertEquals(HullItemFixtures.data("sub", 42L, List.of(new RolledEffect("B", 2f)), null), NpcHullItems.item("npc:sub/42/A:1/B:2"));
+        assertEquals(HullItemFixtures.data("sub", 42L, List.of(new RolledEffect("A", 1f), new RolledEffect("B", 2f)), null),
                 NpcHullItems.item("npc:sub/42/A:1;;B:2;"));
     }
 
@@ -122,6 +167,9 @@ class HullItemCodecTest {
         assertNull(NpcHullItems.item("npc:sub/42/BROKEN"));
         assertNull(NpcHullItems.item("npc:sub/42/A:x"));
         assertNull(NpcHullItems.item("npc:sub/42/:1"));
+        assertNull(NpcHullItems.item("npc:sub/42/X=A:1"));
+        assertNull(NpcHullItems.item("npc:sub/42/P==A:1"));
+        assertNull(NpcHullItems.item("npc:sub/42/P=frame=A:1+B"));
         assertNull(NpcHullItems.item("npc:sub/x"));
         assertNull(NpcHullItems.item("npc:/7"));
         assertNull(NpcHullItems.item("npc:/7/A:1"));
@@ -138,7 +186,7 @@ class HullItemCodecTest {
 
     @Test
     void everyWrittenFormRoundTripsThroughTheSharedDecoder() {
-        for (HullItemData item : List.of(COMMON_ITEM, RARE_ITEM, PRODUCT_ITEM, UNIQUE_ITEM, ASSEMBLED_ITEM, UNNAMED_ITEM)) {
+        for (HullItemData item : List.of(COMMON_ITEM, RARE_ITEM, PRODUCT_ITEM, UNIQUE_ITEM, HYBRID_ITEM, ASSEMBLED_ITEM, UNNAMED_ITEM)) {
             assertEquals(item, HullItemData.of(item.toSpecialItem()));
             assertEquals(npcItem(item), NpcHullItems.item(NpcHullItems.id(item)));
             assertEquals(npcItem(item), HullItemCodec.decode(HullItemCodec.npc(item)));
@@ -147,29 +195,29 @@ class HullItemCodecTest {
     }
 
     @Test
-    void rolledEffectListsKeepTheirTextForm() {
-        assertEquals(COMMON_TEXT, HullItemCodec.effects(COMMON));
-        assertEquals(RARE_TEXT, HullItemCodec.effects(RARE));
-        assertEquals("", HullItemCodec.effects(List.of()));
-        assertEquals(RARE, HullItemCodec.decodeEffects(RARE_TEXT));
-        assertEquals(List.of(), HullItemCodec.decodeEffects(""));
-        assertEquals(List.of(new RolledEffect("A:B", 1f)), HullItemCodec.decodeEffects("A:B:1"));
-        assertNull(HullItemCodec.decodeEffects("A"));
-        assertNull(HullItemCodec.decodeEffects(":1"));
-        assertNull(HullItemCodec.decodeEffects("A:"));
-        assertNull(HullItemCodec.decodeEffects(null));
+    void rolledModifierListsKeepTheirTextForm() {
+        assertEquals(COMMON_TEXT, HullItemCodec.modifiers(COMMON));
+        assertEquals(RARE_TEXT, HullItemCodec.modifiers(RARE));
+        assertEquals(HYBRID_TEXT, HullItemCodec.modifiers(HYBRID));
+        assertEquals("", HullItemCodec.modifiers(List.of()));
+        assertEquals(RARE, HullItemCodec.decodeModifiers(RARE_TEXT, "sub"));
+        assertEquals(HYBRID, HullItemCodec.decodeModifiers(HYBRID_TEXT, "sub"));
+        assertEquals(List.of(), HullItemCodec.decodeModifiers("", "sub"));
+        assertNull(HullItemCodec.decodeModifiers("A", "sub"));
+        assertNull(HullItemCodec.decodeModifiers(":1", "sub"));
+        assertNull(HullItemCodec.decodeModifiers("A:", "sub"));
+        assertNull(HullItemCodec.decodeModifiers(null, "sub"));
     }
 
     @Test
     void aSavedItemWithARenamedEffectDecodesToTheCurrentName() throws Exception {
-        exiledsector.skills.skilleffect.EffectAliases.register(new org.json.JSONArray()
-                .put(new org.json.JSONObject().put("alias", "OLD_HULL_MULT").put("effect", "HULL_MULT")));
+        EffectAliases.register(new JSONArray().put(new JSONObject().put("alias", "OLD_HULL_MULT").put("effect", "HULL_MULT")));
         try {
-            HullItemData decoded = HullItemCodec.decode(COMMON_CARGO.replace("HULL_MULT", "OLD_HULL_MULT"));
-
-            assertEquals(COMMON_ITEM, decoded);
+            assertEquals(COMMON_ITEM, HullItemCodec.decode(COMMON_CARGO.replace("HULL_MULT", "OLD_HULL_MULT")));
+            assertEquals(COMMON_ITEM, HullItemCodec.decode(COMMON_CARGO.replace(COMMON_TEXT, RELEASED_COMMON_TEXT)
+                    .replace("HULL_MULT", "OLD_HULL_MULT")));
         } finally {
-            exiledsector.skills.skilleffect.EffectAliases.clear();
+            EffectAliases.clear();
         }
     }
 }

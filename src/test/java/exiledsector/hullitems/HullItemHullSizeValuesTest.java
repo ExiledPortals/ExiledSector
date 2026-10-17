@@ -53,7 +53,7 @@ class HullItemHullSizeValuesTest {
     @Test
     void eachHullSizeGetsItsOwnValueWhateverWasStored() throws Exception {
         HullItemDefinitions.register(new JSONArray().put(row("scaled", "subroutine", SCALED_POOL)));
-        HullItem hullItem = new HullItem("socketable_1", "scaled", 1L,
+        HullItem hullItem = HullItem.withEffects("socketable_1", "scaled", 1L,
                 List.of(new RolledEffect("ARMOR_FLAT", 3f), new RolledEffect("HULL_MULT", 5f)));
 
         assertEquals(List.of(5f, 5f), magnitudes(hullItem.skillEffects(HullSize.FRIGATE)));
@@ -67,13 +67,13 @@ class HullItemHullSizeValuesTest {
     void aNewRollStoresTheFrigateValue() throws Exception {
         HullItemDefinitions.register(new JSONArray().put(row("scaled", "subroutine", "ARMOR_FLAT:5/10/15/20")));
 
-        assertEquals(List.of(new RolledEffect("ARMOR_FLAT", 5f)), HullItemRoller.rollCommon(HullItemDefinitions.get("scaled"), 7L));
+        assertEquals(List.of(new RolledEffect("ARMOR_FLAT", 5f)), RolledModifier.lines(HullItemRoller.rollCommon(HullItemDefinitions.get("scaled"), 7L)));
     }
 
     @Test
     void theGenericTooltipListsEveryHullSizeValueLikeVanilla() throws Exception {
         HullItemDefinitions.register(new JSONArray().put(row("scaled", "subroutine", SCALED_POOL)));
-        HullItem hullItem = new HullItem("socketable_2", "scaled", 1L,
+        HullItem hullItem = HullItem.withEffects("socketable_2", "scaled", 1L,
                 List.of(new RolledEffect("ARMOR_FLAT", 5f), new RolledEffect("HULL_MULT", 5f)));
 
         List<StyledText> lines = hullItem.effectLines(true);
@@ -87,7 +87,7 @@ class HullItemHullSizeValuesTest {
     @Test
     void onAShipTheTooltipShowsOnlyThatHullSizesValueWithNoRange() throws Exception {
         HullItemDefinitions.register(new JSONArray().put(row("scaled", "subroutine", SCALED_POOL)));
-        HullItem hullItem = new HullItem("socketable_3", "scaled", 1L, List.of(new RolledEffect("ARMOR_FLAT", 5f)));
+        HullItem hullItem = HullItem.withEffects("socketable_3", "scaled", 1L, List.of(new RolledEffect("ARMOR_FLAT", 5f)));
 
         String expanded = hullItem.effectLines(true, HullSize.CAPITAL_SHIP).get(0).plain();
 

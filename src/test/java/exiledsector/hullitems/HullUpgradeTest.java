@@ -177,7 +177,7 @@ class HullUpgradeTest {
 
         shipData.resetAllocations();
         assertEquals(List.of("bridge"), shipData.getUnlockedSocketTypeIds());
-        HullItem transposed = new HullItem(officer.id(), "chip", 3L, List.of());
+        HullItem transposed = HullItem.withEffects(officer.id(), "chip", 3L, List.of());
         store.replace(officer, transposed);
 
         assertTrue(SocketCustody.unsocketIfMisfit(ships, transposed));

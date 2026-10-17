@@ -50,6 +50,15 @@ public record HullItemDefinition(String id, HullItemType kind, String name, Stri
         return combinedPool;
     }
 
+    public PoolEntry poolEntryFor(String modifierId) {
+        for (PoolEntry entry : pool()) {
+            if (entry.modifier().id().equals(modifierId)) {
+                return entry;
+            }
+        }
+        return null;
+    }
+
     public PoolEntry poolEntry(String effectName) {
         for (PoolEntry entry : prefixes) {
             if (entry.effectName().equals(effectName)) {

@@ -52,7 +52,7 @@ class HullItemCraftingTest {
 
     private HullItem common() {
         List<RolledEffect> effects = List.of(new RolledEffect("FLUX_CAPACITY_MULT", 5f), new RolledEffect("ARMOR_PERCENT", 7f));
-        return store.add(new HullItemData(HullItemFixtures.MILITARY, 1L, effects, null));
+        return store.add(HullItemFixtures.data(HullItemFixtures.MILITARY, 1L, effects, null));
     }
 
     private void owns(String commodityId, float quantity) {
@@ -122,7 +122,7 @@ class HullItemCraftingTest {
     @Test
     void everyRecalibrationChangesAValueSoTheKernelIsNeverWasted() throws Exception {
         HullItemDefinitions.register(new JSONArray().put(HullItemFixtures.row("narrow", "subroutine", "HULL_MULT:4:5", "ARMOR_PERCENT:1:1")));
-        HullItem hullItem = store.add(new HullItemData("narrow", 1L,
+        HullItem hullItem = store.add(HullItemFixtures.data("narrow", 1L,
                 List.of(new RolledEffect("HULL_MULT", 4f), new RolledEffect("ARMOR_PERCENT", 1f)), null));
 
         for (long seed = 0; seed < 50; seed++) {
@@ -138,9 +138,9 @@ class HullItemCraftingTest {
         HullItemDefinitions.register(new JSONArray()
                 .put(HullItemFixtures.row("decimal", "subroutine", "HULL_MULT:0.15:0.25", "ARMOR_PERCENT:0.01:0.03"))
                 .put(HullItemFixtures.row("fixed", "subroutine", "HULL_MULT:1:1", "ARMOR_PERCENT:2.5:2.5")));
-        HullItem decimal = store.add(new HullItemData("decimal", 1L,
+        HullItem decimal = store.add(HullItemFixtures.data("decimal", 1L,
                 List.of(new RolledEffect("HULL_MULT", 0.2f), new RolledEffect("ARMOR_PERCENT", 0.02f)), null));
-        HullItem fixed = store.add(new HullItemData("fixed", 1L,
+        HullItem fixed = store.add(HullItemFixtures.data("fixed", 1L,
                 List.of(new RolledEffect("HULL_MULT", 1f), new RolledEffect("ARMOR_PERCENT", 2.5f)), null));
 
         assertTrue(HullItemCrafting.canUse(CraftingCurrency.RECALIBRATION, decimal, definition -> true));

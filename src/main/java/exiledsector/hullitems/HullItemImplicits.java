@@ -95,17 +95,15 @@ public final class HullItemImplicits {
         return null;
     }
 
-    static List<RolledEffect> roll(HullItemType type, long seed) {
+    static List<RolledModifier> roll(HullItemType type, long seed) {
         List<Modifier> implicits = type == null ? List.of() : type.implicits();
         if (implicits.isEmpty()) {
             return List.of();
         }
         Random random = new Random(seed ^ IMPLICIT_SEED_SALT);
-        List<RolledEffect> rolled = new ArrayList<>(implicits.size());
+        List<RolledModifier> rolled = new ArrayList<>(implicits.size());
         for (Modifier implicit : implicits) {
-            for (ModifierLine line : implicit.lines()) {
-                rolled.add(new RolledEffect(line.effectName(), line.roll(random)));
-            }
+            rolled.add(RolledModifier.roll(implicit, random, false));
         }
         return List.copyOf(rolled);
     }

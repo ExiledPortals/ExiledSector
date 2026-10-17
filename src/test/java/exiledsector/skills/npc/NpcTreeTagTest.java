@@ -8,6 +8,7 @@ import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.hullitems.NpcHullItems;
 import exiledsector.hullitems.RolledEffect;
+import exiledsector.hullitems.RolledModifier;
 import exiledsector.hullitems.HullItemDefinitions;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -157,7 +158,7 @@ class NpcTreeTagTest {
         assertEquals(rolled, legacy.getSocketedItem("socket_1"));
         assertEquals(saved, NpcTreeTag.encode(decoded));
         assertEquals(List.of(new RolledEffect("HULL_MULT", 5f), new RolledEffect("ARMOR_PERCENT", -0.25f)),
-                NpcHullItems.item(decoded.getSocketedItem("socket_1")).effects());
+                RolledModifier.lines(NpcHullItems.item(decoded.getSocketedItem("socket_1")).explicits()));
     }
 
     @Test

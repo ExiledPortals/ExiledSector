@@ -54,7 +54,8 @@ class HullItemFreezingTest {
 
     private static HullItemData frozen(List<RolledEffect> effects) {
         HullItemDefinition definition = HullItemDefinitions.get("sub");
-        return new HullItemData("sub", 42L, effects, HullItemNames.freeze(definition, 42L, effects));
+        List<RolledModifier> modifiers = RolledModifier.fromLegacyEffects(definition, effects);
+        return new HullItemData("sub", 42L, modifiers, HullItemNames.freeze(definition, 42L, modifiers));
     }
 
     private static void rebalance() throws Exception {
@@ -72,7 +73,8 @@ class HullItemFreezingTest {
     @Test
     void consumerProductNamesFreezeTheirWordsSoTheyCanBeTranslated() throws Exception {
         registerGadget();
-        HullItemData item = new HullItemData("gadget", 42L, RARE, HullItemNames.freeze(HullItemDefinitions.get("gadget"), 42L, RARE));
+        List<RolledModifier> rare = RolledModifier.fromLegacyEffects(HullItemDefinitions.get("gadget"), RARE);
+        HullItemData item = new HullItemData("gadget", 42L, rare, HullItemNames.freeze(HullItemDefinitions.get("gadget"), 42L, rare));
 
         assertEquals(FrozenName.product("Sunny", null, "Pal", null), item.frozenName());
         assertEquals(item, HullItemData.of(item.toSpecialItem()));
@@ -82,7 +84,7 @@ class HullItemFreezingTest {
     @Test
     void anAssembledProductNameFromAnOlderSaveIsRefrozenFromItsSeed() throws Exception {
         registerGadget();
-        HullItem owned = new HullItem("socketable_1", "gadget", 42L, RARE);
+        HullItem owned = HullItem.withEffects("socketable_1", "gadget", 42L, RARE);
         owned.freezeName(new FrozenName(null, null, "Sunny Pal", null));
 
         assertEquals("Sunny Pal", owned.name());
@@ -96,7 +98,7 @@ class HullItemFreezingTest {
         HullItemData restored = HullItemData.of(item.toSpecialItem());
 
         assertEquals(item, restored);
-        assertEquals(RARE, restored.effects());
+        assertEquals(RARE, RolledModifier.lines(restored.explicits()));
     }
 
     @Test
@@ -104,11 +106,11 @@ class HullItemFreezingTest {
         HullItemData dropped = HullItemData.rolled(HullItemDefinitions.get("sub"), 7L);
         HullItemData legacy = HullItemData.parse("sub|7");
 
-        assertNotNull(dropped.effects());
+        assertNotNull(dropped.explicits());
         assertNotNull(dropped.frozenName());
         assertEquals(new HullItemData("sub", 7L), legacy);
-        assertNull(legacy.effects());
-        assertEquals(dropped.effects(), legacy.preview().effects());
+        assertNull(legacy.explicits());
+        assertEquals(RolledModifier.lines(dropped.explicits()), legacy.preview().effects());
     }
 
     @Test
@@ -132,13 +134,13 @@ class HullItemFreezingTest {
 
     @Test
     void anOwnedHullItemFromAnOlderSaveFreezesItsNameOnceAndKeepsIt() throws Exception {
-        HullItem owned = new HullItem("socketable_1", "sub", 42L, RARE);
+        HullItem owned = HullItem.withEffects("socketable_1", "sub", 42L, RARE);
         String before = owned.name();
 
         rebalance();
 
         assertEquals(before, owned.name());
-        assertNotEquals(before, new HullItem("socketable_2", "sub", 42L, RARE).name());
+        assertNotEquals(before, HullItem.withEffects("socketable_2", "sub", 42L, RARE).name());
     }
 
     @Test
@@ -167,7 +169,7 @@ class HullItemFreezingTest {
     @Test
     void missingNameWordsAreNotFrozenSoTheNameAppearsOnceTheWordsLoad() throws Exception {
         HullItemNames.registerWords(new JSONObject());
-        HullItem owned = new HullItem("socketable_1", "sub", 42L, RARE);
+        HullItem owned = HullItem.withEffects("socketable_1", "sub", 42L, RARE);
         HullItemData dropped = HullItemData.of(frozen(RARE).toSpecialItem());
         assertEquals("Military-grade Domain Subroutine", owned.name());
 
@@ -183,7 +185,7 @@ class HullItemFreezingTest {
         String id = NpcHullItems.id(new HullItemData("sub", 42L, List.of(), null));
 
         assertEquals("npc:sub/42/", id);
-        assertEquals(List.of(), NpcHullItems.item(id).effects());
+        assertEquals(List.of(), RolledModifier.lines(NpcHullItems.item(id).explicits()));
     }
 
     @Test
@@ -195,7 +197,7 @@ class HullItemFreezingTest {
         HullItemData parsed = NpcHullItems.item(id);
 
         assertTrue(id.startsWith("npc:sub/42/"), id);
-        assertEquals(RARE, parsed.effects());
+        assertEquals(RARE, RolledModifier.lines(parsed.explicits()));
         assertEquals(RARE, HullItemStore.lookup(id).effects());
         HullItemData legacy = NpcHullItems.item("npc:sub/42");
         assertEquals(new HullItemData("sub", 42L), legacy);

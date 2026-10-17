@@ -70,7 +70,7 @@ class HullItemStoreTest {
 
         assertEquals(HullItemType.SUBROUTINE, first.kind());
         assertNotEquals(first.id(), second.id());
-        assertEquals(HullItemRoller.roll(military, 7L), first.effects());
+        assertEquals(HullItemRoller.roll(military, 7L), first.explicits());
         assertEquals(List.of(first, second), store.owned());
     }
 

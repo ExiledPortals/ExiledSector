@@ -1,0 +1,115 @@
+package exiledsector.hullitems;
+
+import exiledsector.modifiers.Modifier;
+import exiledsector.modifiers.ModifierCategory;
+import exiledsector.modifiers.ModifierLine;
+import exiledsector.modifiers.ModifierSlot;
+import exiledsector.skills.SkillTypeEffect;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import java.util.Random;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+class HullItemHybridTest {
+
+    private static final Modifier PLATED_FRAME = new Modifier("plated_frame", ModifierSlot.PREFIX,
+            List.of(ModifierLine.range("ARMOR_PERCENT", 5f, 10f), ModifierLine.range("HULL_PERCENT", 3f, 6f)));
+    private static final Modifier FORTITUDE = Modifier.single(ModifierSlot.SUFFIX, ModifierLine.range("HULL_MULT", 4f, 6f));
+    private static final Modifier CAPACITY = Modifier.single(ModifierSlot.PREFIX, ModifierLine.range("FLUX_CAPACITY_MULT", 4f, 6f));
+    private static final Modifier SHIELDING = Modifier.single(ModifierSlot.SUFFIX, ModifierLine.range("SHIELD_DAMAGE_TAKEN_MULT", -6f, -4f));
+
+    private static final HullItemDefinition FRAME = new HullItemDefinition("frame", HullItemType.SUBROUTINE, "Frame", HullItemDefinition.FALLBACK_ICON,
+            1f, false, "", List.of(new PoolEntry(PLATED_FRAME, 1f), new PoolEntry(CAPACITY, 1f)),
+            List.of(new PoolEntry(FORTITUDE, 1f), new PoolEntry(SHIELDING, 1f)), "");
+
+    @BeforeEach
+    void register() {
+        HullItemDefinitions.register(List.of(FRAME));
+    }
+
+    @AfterEach
+    void clear() {
+        HullItemDefinitions.clear();
+    }
+
+    private static HullItem item(List<RolledModifier> explicits) {
+        return new HullItem("frame_1", "frame", 1L, explicits);
+    }
+
+    private static RolledModifier platedFrame(float armor, float hull) {
+        return new RolledModifier("plated_frame", ModifierSlot.PREFIX,
+                List.of(new RolledEffect("ARMOR_PERCENT", armor), new RolledEffect("HULL_PERCENT", hull)));
+    }
+
+    @Test
+    void aHybridRollsEveryLineWithinItsOwnRange() {
+        for (long seed = 0; seed < 50; seed++) {
+            RolledModifier rolled = RolledModifier.roll(PLATED_FRAME, new Random(seed), false);
+
+            assertEquals("plated_frame", rolled.modifierId());
+            assertTrue(rolled.isHybrid());
+            assertTrue(rolled.lines().get(0).magnitude() >= 5f && rolled.lines().get(0).magnitude() <= 10f);
+            assertTrue(rolled.lines().get(1).magnitude() >= 3f && rolled.lines().get(1).magnitude() <= 6f);
+        }
+    }
+
+    @Test
+    void aHybridCountsAsOneModifierForRarityButAppliesEveryLine() {
+        HullItem hullItem = item(List.of(platedFrame(7f, 4f), RolledModifier.single(ModifierSlot.SUFFIX, new RolledEffect("HULL_MULT", 5f))));
+        List<SkillTypeEffect> applied = hullItem.skillEffects();
+
+        assertEquals(HullItemRarity.COMMON, hullItem.rarity());
+        assertEquals(List.of("ARMOR_PERCENT", "HULL_PERCENT", "HULL_MULT"), applied.stream().map(effect -> effect.effect().name()).toList());
+        assertEquals(3, hullItem.effectLines().size());
+        assertEquals(List.of(ModifierSlot.PREFIX, ModifierSlot.PREFIX, ModifierSlot.SUFFIX),
+                hullItem.rolls(ModifierCategory.EXPLICIT).stream().map(SlottedRoll::slot).toList());
+    }
+
+    @Test
+    void recalibratingAHybridRerollsEachOfItsLines() {
+        HullItem hullItem = item(List.of(platedFrame(5f, 3f)));
+
+        for (long seed = 0; seed < 20; seed++) {
+            List<RolledModifier> before = hullItem.explicits();
+            assertSame(hullItem, HullItemCrafting.recalibrate(hullItem, new Random(seed)));
+            assertNotEquals(before, hullItem.explicits());
+            assertEquals("plated_frame", hullItem.explicits().get(0).modifierId());
+            assertEquals(2, hullItem.explicits().get(0).lines().size());
+        }
+    }
+
+    @Test
+    void augmentingAddsAWholeModifierAndAPrefixLandsAfterTheOtherPrefixes() {
+        HullItem hullItem = item(List.of(RolledModifier.single(ModifierSlot.SUFFIX, new RolledEffect("HULL_MULT", 5f))));
+
+        for (long seed = 0; seed < 50 && hullItem.explicits().size() < 3; seed++) {
+            HullItemCrafting.augment(hullItem, new Random(seed));
+        }
+
+        List<RolledModifier> explicits = hullItem.explicits();
+        assertTrue(explicits.size() >= 2);
+        long prefixes = explicits.stream().filter(modifier -> modifier.slot() == ModifierSlot.PREFIX).count();
+        assertTrue(explicits.subList(0, (int) prefixes).stream().allMatch(modifier -> modifier.slot() == ModifierSlot.PREFIX));
+        assertEquals(explicits.size(), explicits.stream().map(RolledModifier::modifierId).distinct().count(), "no modifier is added twice");
+    }
+
+    @Test
+    void theRollerDrawsHybridsFromTheirSideOfThePool() {
+        boolean sawHybrid = false;
+        for (long seed = 0; seed < 200; seed++) {
+            for (RolledModifier rolled : HullItemRoller.roll(FRAME, seed, false)) {
+                sawHybrid |= rolled.isHybrid();
+                assertEquals(rolled.modifierId().equals("plated_frame") || rolled.modifierId().equals("FLUX_CAPACITY_MULT"),
+                        rolled.slot() == ModifierSlot.PREFIX);
+            }
+        }
+        assertTrue(sawHybrid);
+    }
+}

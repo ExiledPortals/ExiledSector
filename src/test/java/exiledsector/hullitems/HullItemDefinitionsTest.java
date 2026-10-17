@@ -110,8 +110,8 @@ class HullItemDefinitionsTest {
     void aHullItemsKindFollowsItsDefinition() throws Exception {
         HullItemDefinitions.register(new JSONArray().put(row("bridge_item", "bridge", "HULL_MULT:4:6")));
 
-        assertEquals(HullItemType.BRIDGE, new HullItem("a", "bridge_item", 1L, List.of()).kind());
-        assertNull(new HullItem("b", "not_loaded", 1L, List.of()).kind());
+        assertEquals(HullItemType.BRIDGE, HullItem.withEffects("a", "bridge_item", 1L, List.of()).kind());
+        assertNull(HullItem.withEffects("b", "not_loaded", 1L, List.of()).kind());
     }
 
     @Test

@@ -4,12 +4,12 @@ import com.fs.starfarer.api.campaign.SpecialItemData;
 
 import java.util.List;
 
-public record HullItemData(String definitionId, long seed, List<RolledEffect> effects, FrozenName frozenName) {
+public record HullItemData(String definitionId, long seed, List<RolledModifier> explicits, FrozenName frozenName) {
 
     public static final String ITEM_ID = "exiledSector_socketable";
 
     public HullItemData {
-        effects = effects == null ? null : List.copyOf(effects);
+        explicits = explicits == null ? null : List.copyOf(explicits);
     }
 
     public HullItemData(String definitionId, long seed) {
@@ -17,8 +17,8 @@ public record HullItemData(String definitionId, long seed, List<RolledEffect> ef
     }
 
     public static HullItemData rolled(HullItemDefinition definition, long seed) {
-        List<RolledEffect> effects = HullItemRoller.roll(definition, seed);
-        return new HullItemData(definition.id(), seed, effects, HullItemNames.freeze(definition, seed, effects));
+        List<RolledModifier> modifiers = HullItemRoller.roll(definition, seed);
+        return new HullItemData(definition.id(), seed, modifiers, HullItemNames.freeze(definition, seed, modifiers));
     }
 
     public static HullItemData parse(String data) {
@@ -31,8 +31,8 @@ public record HullItemData(String definitionId, long seed, List<RolledEffect> ef
 
     public SpecialItemData toSpecialItem() {
         FrozenName resolvedName = frozenName;
-        if (effects != null && resolvedName == null) {
-            resolvedName = HullItemNames.freeze(definition(), seed, effects);
+        if (explicits != null && resolvedName == null) {
+            resolvedName = HullItemNames.freeze(definition(), seed, explicits);
         }
         return new SpecialItemData(ITEM_ID, HullItemCodec.cargo(this, resolvedName));
     }
@@ -51,7 +51,7 @@ public record HullItemData(String definitionId, long seed, List<RolledEffect> ef
             return null;
         }
         HullItem hullItem = new HullItem(instanceId, definitionId, seed,
-                effects != null ? effects : HullItemRoller.roll(itemDefinition, seed));
+                explicits != null ? explicits : HullItemRoller.roll(itemDefinition, seed));
         hullItem.freezeName(frozenName);
         return hullItem;
     }

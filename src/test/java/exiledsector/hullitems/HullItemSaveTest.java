@@ -3,12 +3,14 @@ package exiledsector.hullitems;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.security.AnyTypePermission;
+import exiledsector.modifiers.ModifierSlot;
 import exiledsector.skills.skilleffect.EffectAliases;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -27,6 +29,25 @@ class HullItemSaveTest {
         xstream.addPermission(AnyTypePermission.ANY);
         HullItemSaveAliases.register(xstream);
         return xstream;
+    }
+
+    @Test
+    void itemsSavedAsLooseEffectsLoadAsModifiersWithSlotsFromTheirDefinition() throws Exception {
+        HullItemFixtures.registerMilitary();
+        String legacyXml = "<exiledSector.SocketableStore><owned><exiledSector.Socketable>"
+                + "<id>socketable_1</id><definitionId>" + HullItemFixtures.MILITARY + "</definitionId><seed>5</seed><effects>"
+                + "<exiledSector.RolledEffect><effectName>FLUX_CAPACITY_MULT</effectName><magnitude>5.0</magnitude></exiledSector.RolledEffect>"
+                + "<exiledSector.RolledEffect><effectName>HULL_MULT</effectName><magnitude>6.0</magnitude></exiledSector.RolledEffect>"
+                + "</effects></exiledSector.Socketable></owned><nextId>2</nextId></exiledSector.SocketableStore>";
+
+        HullItemStore loaded = (HullItemStore) xstream().fromXML(legacyXml);
+        HullItem restored = loaded.owned().get(0);
+
+        assertEquals(List.of(RolledModifier.single(ModifierSlot.PREFIX, new RolledEffect("FLUX_CAPACITY_MULT", 5f)),
+                RolledModifier.single(ModifierSlot.SUFFIX, new RolledEffect("HULL_MULT", 6f))), restored.explicits());
+        String resaved = xstream().toXML(loaded);
+        assertTrue(resaved.contains("<explicitModifiers>") && resaved.contains("<exiledSector.RolledModifier>"), resaved);
+        assertFalse(resaved.contains("<effects>"), resaved);
     }
 
     @Test
@@ -56,7 +77,7 @@ class HullItemSaveTest {
         XStream gameLike = xstream();
         gameLike.ignoreUnknownElements();
 
-        String xml = xstream().toXML(store).replace("</effects>", "</effects>\n<favourite>true</favourite>");
+        String xml = xstream().toXML(store).replace("</explicitModifiers>", "</explicitModifiers>\n<favourite>true</favourite>");
         HullItemStore loaded = (HullItemStore) gameLike.fromXML(xml);
 
         assertTrue(xml.contains("<favourite>true</favourite>"), xml);

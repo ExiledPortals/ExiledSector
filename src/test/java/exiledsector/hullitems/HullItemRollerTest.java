@@ -36,13 +36,13 @@ class HullItemRollerTest {
         Map<String, PoolEntry> pool = military.pool().stream()
                 .collect(Collectors.toMap(PoolEntry::effectName, Function.identity()));
         for (long seed = 0; seed < 200; seed++) {
-            List<RolledEffect> random = HullItemRoller.roll(military, seed, false);
-            List<RolledEffect> averaged = HullItemRoller.roll(military, seed, true);
+            List<RolledEffect> random = RolledModifier.lines(HullItemRoller.roll(military, seed, false));
+            List<RolledEffect> averaged = RolledModifier.lines(HullItemRoller.roll(military, seed, true));
             assertEquals(random.stream().map(RolledEffect::effectName).toList(), averaged.stream().map(RolledEffect::effectName).toList());
             for (RolledEffect effect : averaged) {
                 assertEquals(pool.get(effect.effectName()).average(), effect.magnitude());
             }
-            List<RolledEffect> common = HullItemRoller.rollCommon(military, seed, true);
+            List<RolledEffect> common = RolledModifier.lines(HullItemRoller.rollCommon(military, seed, true));
             for (RolledEffect effect : common) {
                 assertEquals(pool.get(effect.effectName()).average(), effect.magnitude());
             }
@@ -60,7 +60,7 @@ class HullItemRollerTest {
         Map<String, PoolEntry> pool = military.pool().stream()
                 .collect(Collectors.toMap(PoolEntry::effectName, Function.identity()));
         for (long seed = 0; seed < SAMPLES; seed++) {
-            List<RolledEffect> rolled = HullItemRoller.roll(military, seed);
+            List<RolledEffect> rolled = RolledModifier.lines(HullItemRoller.roll(military, seed));
             Set<String> names = new HashSet<>();
             for (RolledEffect effect : rolled) {
                 PoolEntry entry = pool.get(effect.effectName());
@@ -87,7 +87,7 @@ class HullItemRollerTest {
         boolean twoPrefixes = false;
         boolean twoSuffixes = false;
         for (long seed = 0; seed < SAMPLES; seed++) {
-            List<RolledEffect> rolled = HullItemRoller.roll(military, seed);
+            List<RolledEffect> rolled = RolledModifier.lines(HullItemRoller.roll(military, seed));
             long prefixes = rolled.stream().filter(effect -> military.isPrefix(effect.effectName())).count();
             long suffixes = rolled.size() - prefixes;
             assertTrue(prefixes <= 2 && suffixes <= 2, rolled.toString());

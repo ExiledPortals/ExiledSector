@@ -59,14 +59,14 @@ class HullItemImplicitsTest {
 
     @Test
     void anItemRollsTheSameImplicitsFromItsSeedAndKeepsThemFrozen() throws Exception {
-        HullItem shieldItem = new HullItem("item", "framework_shield_generator_emitter", 42L, List.of());
-        List<RolledEffect> firstRoll = shieldItem.implicits();
-        HullItem sameSeed = new HullItem("other", "framework_shield_generator_emitter", 42L, List.of());
+        HullItem shieldItem = HullItem.withEffects("item", "framework_shield_generator_emitter", 42L, List.of());
+        List<RolledEffect> firstRoll = RolledModifier.lines(shieldItem.implicits());
+        HullItem sameSeed = HullItem.withEffects("other", "framework_shield_generator_emitter", 42L, List.of());
 
         assertEquals(2, firstRoll.size());
-        assertEquals(magnitudes(firstRoll), magnitudes(sameSeed.implicits()));
+        assertEquals(magnitudes(firstRoll), magnitudes(RolledModifier.lines(sameSeed.implicits())));
         HullItemImplicits.register(new JSONArray().put(new JSONObject().put("type", "shield_generator").put("implicits", "HULL_PERCENT:50:60")));
-        assertEquals(magnitudes(firstRoll), magnitudes(shieldItem.implicits()), "already-rolled implicits stay frozen");
+        assertEquals(magnitudes(firstRoll), magnitudes(RolledModifier.lines(shieldItem.implicits())), "already-rolled implicits stay frozen");
     }
 
     @Test
@@ -76,13 +76,13 @@ class HullItemImplicitsTest {
         HullItemDefinition subroutine = HullItemDefinitions.all().stream()
                 .filter(definition -> definition.kind() == HullItemType.SUBROUTINE).findFirst().orElseThrow();
 
-        assertEquals(1, new HullItem("u", unique.id(), 7L, List.of()).implicits().size());
-        assertTrue(new HullItem("s", subroutine.id(), 7L, List.of()).implicits().isEmpty());
+        assertEquals(1, HullItem.withEffects("u", unique.id(), 7L, List.of()).implicits().size());
+        assertTrue(HullItem.withEffects("s", subroutine.id(), 7L, List.of()).implicits().isEmpty());
     }
 
     @Test
     void implicitsApplyAlongsideExplicitsWithoutChangingRarity() {
-        HullItem plate = new HullItem("plate", "framework_armor_plating_plate", 9L, List.of(new RolledEffect("HULL_PERCENT", 5f)));
+        HullItem plate = HullItem.withEffects("plate", "framework_armor_plating_plate", 9L, List.of(new RolledEffect("HULL_PERCENT", 5f)));
         List<SkillTypeEffect> applied = plate.skillEffects();
 
         assertEquals(2, applied.size());
@@ -92,7 +92,7 @@ class HullItemImplicitsTest {
 
     @Test
     void anItemGroupsItsRollsIntoImplicitAndExplicitWithPrefixesAndSuffixesUnderExplicit() {
-        HullItem plate = new HullItem("plate", "framework_armor_plating_plate", 9L,
+        HullItem plate = HullItem.withEffects("plate", "framework_armor_plating_plate", 9L,
                 List.of(new RolledEffect("HULL_PERCENT", 5f), new RolledEffect("KINETIC_DAMAGE_TAKEN_PERCENT", -5f)));
 
         assertEquals(List.of(ModifierSlot.IMPLICIT), plate.rolls(ModifierCategory.IMPLICIT).stream().map(SlottedRoll::slot).toList());

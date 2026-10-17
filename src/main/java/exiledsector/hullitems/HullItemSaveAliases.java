@@ -1,5 +1,6 @@
 package exiledsector.hullitems;
 
+import exiledsector.modifiers.ModifierSlot;
 import com.thoughtworks.xstream.XStream;
 
 import java.util.List;
@@ -13,7 +14,9 @@ public final class HullItemSaveAliases {
             "exiledSector.SocketableStore", HullItemStore.class,
             "exiledSector.RolledEffect", RolledEffect.class,
             "exiledSector.FrozenName", FrozenName.class,
-            "exiledSector.Socketable", HullItem.class);
+            "exiledSector.Socketable", HullItem.class,
+            "exiledSector.RolledModifier", RolledModifier.class,
+            "exiledSector.ModifierSlot", ModifierSlot.class);
 
     private HullItemSaveAliases() {
     }

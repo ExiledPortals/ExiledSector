@@ -1,9 +1,11 @@
 package exiledsector.hullitems;
 
-import exiledsector.modifiers.ModifierCategory;
-import exiledsector.modifiers.ModifierSlot;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.i18n.StyledText;
+import exiledsector.modifiers.Modifier;
+import exiledsector.modifiers.ModifierCategory;
+import exiledsector.modifiers.ModifierLine;
+import exiledsector.modifiers.ModifierSlot;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTypeEffect;
@@ -18,15 +20,21 @@ public class HullItem {
     private final String id;
     private final String definitionId;
     private final long seed;
-    private final List<RolledEffect> effects;
+    private List<RolledEffect> effects;
     private List<RolledEffect> implicits;
+    private List<RolledModifier> explicitModifiers;
+    private List<RolledModifier> implicitModifiers;
     private FrozenName frozenName;
 
-    HullItem(String id, String definitionId, long seed, List<RolledEffect> effects) {
+    HullItem(String id, String definitionId, long seed, List<RolledModifier> explicitModifiers) {
         this.id = id;
         this.definitionId = definitionId;
         this.seed = seed;
-        this.effects = new ArrayList<>(effects);
+        this.explicitModifiers = new ArrayList<>(explicitModifiers);
+    }
+
+    static HullItem withEffects(String id, String definitionId, long seed, List<RolledEffect> effects) {
+        return new HullItem(id, definitionId, seed, RolledModifier.fromLegacyEffects(HullItemDefinitions.get(definitionId), effects));
     }
 
     public HullItemType kind() {
@@ -46,19 +54,32 @@ public class HullItem {
         return seed;
     }
 
-    public List<RolledEffect> effects() {
-        return Collections.unmodifiableList(effects);
+    public List<RolledModifier> explicits() {
+        if (explicitModifiers == null) {
+            explicitModifiers = RolledModifier.fromLegacyEffects(definition(), effects == null ? List.of() : effects);
+            effects = null;
+        }
+        return Collections.unmodifiableList(explicitModifiers);
     }
 
-    public List<RolledEffect> implicits() {
-        if (implicits != null) {
-            return Collections.unmodifiableList(implicits);
+    public List<RolledEffect> effects() {
+        return RolledModifier.lines(explicits());
+    }
+
+    public List<RolledModifier> implicits() {
+        if (implicitModifiers != null) {
+            return Collections.unmodifiableList(implicitModifiers);
         }
-        List<RolledEffect> rolled = HullItemImplicits.roll(kind(), seed);
-        if (HullItemImplicits.isLoaded() && definition() != null) {
-            implicits = new ArrayList<>(rolled);
+        List<RolledModifier> rolled = implicits != null ? implicitsFromLegacy(implicits) : HullItemImplicits.roll(kind(), seed);
+        if (implicits != null || (HullItemImplicits.isLoaded() && definition() != null)) {
+            implicitModifiers = new ArrayList<>(rolled);
+            implicits = null;
         }
         return rolled;
+    }
+
+    private static List<RolledModifier> implicitsFromLegacy(List<RolledEffect> legacyImplicits) {
+        return legacyImplicits.stream().map(implicit -> RolledModifier.single(ModifierSlot.IMPLICIT, implicit)).toList();
     }
 
     public HullItemDefinition definition() {
@@ -67,7 +88,7 @@ public class HullItem {
 
     public HullItemName displayName() {
         HullItemDefinition definition = definition();
-        return HullItemNames.render(definition, kind(), effects, frozenName(definition));
+        return HullItemNames.render(definition, kind(), explicits(), frozenName(definition));
     }
 
     FrozenName frozenName() {
@@ -76,7 +97,7 @@ public class HullItem {
 
     private FrozenName frozenName(HullItemDefinition definition) {
         if (definition != null && (frozenName == null || frozenName.isAssembledText())) {
-            FrozenName freshName = HullItemNames.freeze(definition, seed, effects);
+            FrozenName freshName = HullItemNames.freeze(definition, seed, explicits());
             if (freshName != null || frozenName == null) {
                 frozenName = freshName;
             }
@@ -94,14 +115,14 @@ public class HullItem {
         }
     }
 
-    void replaceEffects(List<RolledEffect> replacementEffects) {
-        effects.clear();
-        effects.addAll(replacementEffects);
+    void replaceExplicits(List<RolledModifier> replacementModifiers) {
+        explicitModifiers = new ArrayList<>(replacementModifiers);
+        effects = null;
     }
 
     void refreezeName() {
         HullItemDefinition definition = definition();
-        frozenName = definition == null ? null : HullItemNames.freeze(definition, seed, effects);
+        frozenName = definition == null ? null : HullItemNames.freeze(definition, seed, explicits());
     }
 
     public String name() {
@@ -109,7 +130,7 @@ public class HullItem {
     }
 
     public HullItemRarity rarity() {
-        return AffixLayout.rarityFor(definition(), effects.size());
+        return AffixLayout.rarityFor(definition(), explicits().size());
     }
 
     public String iconPath() {
@@ -149,18 +170,34 @@ public class HullItem {
     }
 
     public List<SlottedRoll> rolls() {
-        HullItemDefinition definition = definition();
-        HullItemType type = kind();
-        List<SlottedRoll> rolls = new ArrayList<>(effects.size() + 2);
-        for (RolledEffect implicit : implicits()) {
-            rolls.add(new SlottedRoll(ModifierSlot.IMPLICIT, implicit, HullItemImplicits.line(type, implicit.effectName())));
+        List<SlottedRoll> rolls = new ArrayList<>();
+        for (RolledModifier implicit : implicits()) {
+            addRolls(rolls, implicit, implicitModifier(implicit.modifierId()));
         }
-        for (RolledEffect explicit : effects) {
-            PoolEntry poolEntry = definition == null ? null : definition.poolEntry(explicit.effectName());
-            ModifierSlot slot = poolEntry == null ? ModifierSlot.SUFFIX : poolEntry.slot();
-            rolls.add(new SlottedRoll(slot, explicit, poolEntry == null ? null : poolEntry.line()));
+        for (RolledModifier explicit : explicits()) {
+            addRolls(rolls, explicit, explicitModifier(explicit.modifierId()));
         }
         return rolls;
+    }
+
+    private static void addRolls(List<SlottedRoll> rolls, RolledModifier rolledModifier, Modifier modifier) {
+        for (RolledEffect line : rolledModifier.lines()) {
+            rolls.add(new SlottedRoll(rolledModifier.slot(), line, modifier == null ? null : modifier.line(line.effectName())));
+        }
+    }
+
+    private Modifier implicitModifier(String modifierId) {
+        HullItemType type = kind();
+        if (type == null) {
+            return null;
+        }
+        return type.implicits().stream().filter(modifier -> modifier.id().equals(modifierId)).findFirst().orElse(null);
+    }
+
+    private Modifier explicitModifier(String modifierId) {
+        HullItemDefinition definition = definition();
+        PoolEntry entry = definition == null ? null : definition.poolEntryFor(modifierId);
+        return entry == null ? null : entry.modifier();
     }
 
     public List<SlottedRoll> rolls(ModifierCategory category) {
@@ -168,7 +205,7 @@ public class HullItem {
     }
 
     public List<SkillTypeEffect> skillEffects(HullSize hullSize) {
-        List<SkillTypeEffect> appliedEffects = new ArrayList<>(effects.size() + 2);
+        List<SkillTypeEffect> appliedEffects = new ArrayList<>();
         for (SlottedRoll slottedRoll : rolls()) {
             SkillEffect resolvedEffect = slottedRoll.roll().effect();
             if (resolvedEffect != null) {
@@ -182,9 +219,8 @@ public class HullItem {
 
     public List<StyledText> implicitLines(boolean withRollRanges) {
         List<StyledText> lines = new ArrayList<>();
-        HullItemType type = kind();
-        for (RolledEffect implicit : implicits()) {
-            StyledText description = implicit.description(withRollRanges ? HullItemImplicits.line(type, implicit.effectName()) : null);
+        for (SlottedRoll implicit : rolls(ModifierCategory.IMPLICIT)) {
+            StyledText description = implicit.roll().description(withRollRanges ? implicit.line() : null);
             if (description != null) {
                 lines.add(description);
             }
@@ -201,18 +237,18 @@ public class HullItem {
     }
 
     public List<StyledText> effectLines(boolean withRollRanges, HullSize hullSize) {
-        HullItemDefinition definition = definition();
         List<StyledText> lines = new ArrayList<>();
-        for (RolledEffect effect : effects) {
-            PoolEntry poolEntry = definition == null ? null : definition.poolEntry(effect.effectName());
+        for (SlottedRoll explicit : rolls(ModifierCategory.EXPLICIT)) {
+            RolledEffect effect = explicit.roll();
+            ModifierLine line = explicit.line();
             StyledText description;
-            if (poolEntry == null) {
+            if (line == null) {
                 description = effect.description(null);
-            } else if (poolEntry.listsEveryHullValueFor(hullSize)) {
-                description = effect.hullValuesDescription(poolEntry.hullValues());
+            } else if (line.listsEveryHullValueFor(hullSize)) {
+                description = effect.hullValuesDescription(line.hullValues());
             } else {
-                RolledEffect shownEffect = new RolledEffect(effect.effectName(), poolEntry.valueFor(effect.magnitude(), hullSize));
-                description = shownEffect.description(withRollRanges ? poolEntry.line() : null);
+                RolledEffect shownEffect = new RolledEffect(effect.effectName(), line.valueFor(effect.magnitude(), hullSize));
+                description = shownEffect.description(withRollRanges ? line : null);
             }
             if (description != null) {
                 lines.add(description);

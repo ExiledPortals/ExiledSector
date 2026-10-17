@@ -1,5 +1,7 @@
 package exiledsector.hullitems;
 
+import exiledsector.modifiers.ModifierSlot;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -12,8 +14,6 @@ final class AffixLayout {
     static final int MAX_PER_SIDE = 2;
     static final float TWO_EFFECTS_CHANCE = 0.55f;
     static final float THREE_EFFECTS_CHANCE = 0.35f;
-
-    enum Side {PREFIX, SUFFIX, EITHER}
 
     private AffixLayout() {
     }
@@ -40,62 +40,39 @@ final class AffixLayout {
         return evenShare + 1;
     }
 
-    static List<List<PoolEntry>> openSides(HullItemDefinition definition, List<RolledEffect> effects) {
-        if (definition.unique() || effects.size() >= MAX_EFFECTS) {
+    static List<List<PoolEntry>> openSides(HullItemDefinition definition, List<RolledModifier> modifiers) {
+        if (definition.unique() || modifiers.size() >= MAX_EFFECTS) {
             return List.of();
         }
-        Set<String> presentEffects = new HashSet<>();
+        Set<String> presentModifiers = new HashSet<>();
         int takenPrefixes = 0;
         int takenSuffixes = 0;
-        for (int index = 0; index < effects.size(); index++) {
-            presentEffects.add(effects.get(index).effectName());
-            Side side = sideAt(definition, effects, index);
-            takenPrefixes += side == Side.SUFFIX ? 0 : 1;
-            takenSuffixes += side == Side.PREFIX ? 0 : 1;
+        for (RolledModifier modifier : modifiers) {
+            presentModifiers.add(modifier.modifierId());
+            if (modifier.slot() == ModifierSlot.PREFIX) {
+                takenPrefixes++;
+            } else {
+                takenSuffixes++;
+            }
         }
         List<List<PoolEntry>> sides = new ArrayList<>();
-        addOpenSide(sides, definition.prefixes(), takenPrefixes, presentEffects);
-        addOpenSide(sides, definition.suffixes(), takenSuffixes, presentEffects);
+        addOpenSide(sides, definition.prefixes(), takenPrefixes, presentModifiers);
+        addOpenSide(sides, definition.suffixes(), takenSuffixes, presentModifiers);
         return sides;
     }
 
-    static int insertIndex(HullItemDefinition definition, List<RolledEffect> effects, String addedEffectName) {
-        if (!definition.isPrefix(addedEffectName)) {
-            return effects.size();
+    static int insertIndex(List<RolledModifier> modifiers, ModifierSlot addedSlot) {
+        if (addedSlot != ModifierSlot.PREFIX) {
+            return modifiers.size();
         }
-        int prefixTotal = 0;
-        for (int index = 0; index < effects.size(); index++) {
-            prefixTotal += sideAt(definition, effects, index) == Side.PREFIX ? 1 : 0;
-        }
-        return prefixTotal;
+        return (int) modifiers.stream().filter(modifier -> modifier.slot() == ModifierSlot.PREFIX).count();
     }
 
-    static Side sideAt(HullItemDefinition definition, List<RolledEffect> effects, int index) {
-        String effectName = effects.get(index).effectName();
-        if (definition.isPrefix(effectName)) {
-            return Side.PREFIX;
-        }
-        if (definition.isSuffix(effectName)) {
-            return Side.SUFFIX;
-        }
-        for (RolledEffect laterEffect : effects.subList(index + 1, effects.size())) {
-            if (definition.isPrefix(laterEffect.effectName())) {
-                return Side.PREFIX;
-            }
-        }
-        for (RolledEffect earlierEffect : effects.subList(0, index)) {
-            if (definition.isSuffix(earlierEffect.effectName())) {
-                return Side.SUFFIX;
-            }
-        }
-        return Side.EITHER;
-    }
-
-    private static void addOpenSide(List<List<PoolEntry>> sides, List<PoolEntry> sidePool, int taken, Set<String> presentEffects) {
+    private static void addOpenSide(List<List<PoolEntry>> sides, List<PoolEntry> sidePool, int taken, Set<String> presentModifiers) {
         if (taken >= MAX_PER_SIDE) {
             return;
         }
-        List<PoolEntry> openEntries = sidePool.stream().filter(entry -> !presentEffects.contains(entry.effectName())).toList();
+        List<PoolEntry> openEntries = sidePool.stream().filter(entry -> !presentModifiers.contains(entry.modifier().id())).toList();
         if (!openEntries.isEmpty()) {
             sides.add(openEntries);
         }

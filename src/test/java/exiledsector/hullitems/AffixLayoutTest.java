@@ -1,5 +1,6 @@
 package exiledsector.hullitems;
 
+import exiledsector.modifiers.ModifierSlot;
 import org.json.JSONArray;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +34,7 @@ class AffixLayoutTest {
     }
 
     private List<List<PoolEntry>> openSides(RolledEffect... effects) {
-        return AffixLayout.openSides(military, List.of(effects));
+        return AffixLayout.openSides(military, RolledModifier.fromLegacyEffects(military, List.of(effects)));
     }
 
     private boolean prefixesOpen(List<List<PoolEntry>> sides) {
@@ -93,27 +94,30 @@ class AffixLayoutTest {
     }
 
     @Test
-    void anEffectWhoseSideCannotBeToldTakesASlotOnBothSides() {
+    void anEffectWhoseSideCannotBeToldIsKeptAsASuffix() {
         List<List<PoolEntry>> sides = openSides(RETIRED, SUFFIX_SHIELDS);
 
         assertTrue(prefixesOpen(sides));
         assertFalse(suffixesOpen(sides));
-        assertEquals(List.of(), openSides(PREFIX_CAPACITY, RETIRED, SUFFIX_SHIELDS));
+        List<List<PoolEntry>> betweenSides = openSides(PREFIX_CAPACITY, RETIRED, SUFFIX_SHIELDS);
+        assertTrue(prefixesOpen(betweenSides));
+        assertFalse(suffixesOpen(betweenSides));
     }
 
     @Test
     void newPrefixesGoAfterTheLastPrefixAndNewSuffixesGoLast() {
-        List<RolledEffect> effects = List.of(PREFIX_CAPACITY, SUFFIX_SHIELDS);
+        List<RolledModifier> modifiers = RolledModifier.fromLegacyEffects(military, List.of(PREFIX_CAPACITY, SUFFIX_SHIELDS));
+        List<RolledModifier> retiredFirst = RolledModifier.fromLegacyEffects(military, List.of(RETIRED, PREFIX_CAPACITY, SUFFIX_SHIELDS));
 
-        assertEquals(1, AffixLayout.insertIndex(military, effects, PREFIX_DISSIPATION.effectName()));
-        assertEquals(2, AffixLayout.insertIndex(military, effects, SUFFIX_HULL.effectName()));
-        assertEquals(2, AffixLayout.insertIndex(military, List.of(RETIRED, PREFIX_CAPACITY, SUFFIX_SHIELDS), PREFIX_DISSIPATION.effectName()));
+        assertEquals(1, AffixLayout.insertIndex(modifiers, ModifierSlot.PREFIX));
+        assertEquals(2, AffixLayout.insertIndex(modifiers, ModifierSlot.SUFFIX));
+        assertEquals(2, AffixLayout.insertIndex(retiredFirst, ModifierSlot.PREFIX));
     }
 
     @Test
     void augmentingAnItemWithARetiredSuffixNeverAddsAThirdSuffix() {
         for (long seed = 0; seed < 200; seed++) {
-            HullItem hullItem = new HullItem("socketable_" + seed, HullItemFixtures.MILITARY, seed,
+            HullItem hullItem = HullItem.withEffects("socketable_" + seed, HullItemFixtures.MILITARY, seed,
                     List.of(PREFIX_CAPACITY, SUFFIX_SHIELDS, RETIRED));
 
             HullItemCrafting.augment(hullItem, new Random(seed));

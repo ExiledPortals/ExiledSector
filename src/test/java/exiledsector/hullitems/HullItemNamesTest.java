@@ -54,7 +54,7 @@ class HullItemNamesTest {
 
     private static HullItemName name(String definitionId, long seed, List<RolledEffect> effects) {
         HullItemDefinition definition = HullItemDefinitions.get(definitionId);
-        return HullItemNames.nameFor(definition, definition.kind(), seed, effects);
+        return HullItemNames.nameFor(definition, definition.kind(), seed, RolledModifier.fromLegacyEffects(definition, effects));
     }
 
     @Test
@@ -137,10 +137,10 @@ class HullItemNamesTest {
     @Test
     void uniquesKeepTheirHandWrittenNameAndRollEveryEffectInOrder() {
         HullItemDefinition relic = HullItemDefinitions.get("relic");
-        List<RolledEffect> effects = HullItemRoller.roll(relic, 3L);
+        List<RolledModifier> modifiers = HullItemRoller.roll(relic, 3L);
 
-        assertEquals(List.of("HULL_MULT", "ARMOR_PERCENT", "FLUX_CAPACITY_MULT"), effects.stream().map(RolledEffect::effectName).toList());
-        HullItemName name = HullItemNames.nameFor(relic, relic.kind(), 3L, effects);
+        assertEquals(List.of("HULL_MULT", "ARMOR_PERCENT", "FLUX_CAPACITY_MULT"), RolledModifier.lines(modifiers).stream().map(RolledEffect::effectName).toList());
+        HullItemName name = HullItemNames.nameFor(relic, relic.kind(), 3L, modifiers);
         assertEquals(new HullItemName("Omega Shard", null, HullItemRarity.UNIQUE), name);
     }
 

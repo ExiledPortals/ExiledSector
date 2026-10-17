@@ -38,6 +38,12 @@ public final class HullItemDefinitions {
         BY_ID.set(Collections.unmodifiableMap(loaded));
     }
 
+    static void register(Collection<HullItemDefinition> definitions) {
+        Map<String, HullItemDefinition> loaded = new LinkedHashMap<>();
+        definitions.forEach(definition -> loaded.put(definition.id(), definition));
+        BY_ID.set(Collections.unmodifiableMap(loaded));
+    }
+
     public static HullItemDefinition get(String definitionId) {
         return definitionId == null ? null : BY_ID.get().get(definitionId);
     }

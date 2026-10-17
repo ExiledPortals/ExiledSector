@@ -1,5 +1,6 @@
 package exiledsector.hullitems;
 
+import exiledsector.modifiers.ModifierLine;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -39,9 +40,9 @@ public final class HullItemCrafting {
             return null;
         }
         long seed = random.nextLong();
-        List<RolledEffect> effects = HullItemRoller.rollCommon(definition, seed);
-        HullItem created = store.add(new HullItemData(definition.id(), seed, effects,
-                HullItemNames.freeze(definition, seed, effects)));
+        List<RolledModifier> modifiers = HullItemRoller.rollCommon(definition, seed);
+        HullItem created = store.add(new HullItemData(definition.id(), seed, modifiers,
+                HullItemNames.freeze(definition, seed, modifiers)));
         if (created != null) {
             materials.take(HullItemDisassembly.PARTS_COMMODITY_ID, partsCost);
         }
@@ -54,7 +55,7 @@ public final class HullItemCrafting {
             return false;
         }
         return switch (currency) {
-            case AUGMENTATION -> !AffixLayout.openSides(definition, hullItem.effects()).isEmpty();
+            case AUGMENTATION -> !AffixLayout.openSides(definition, hullItem.explicits()).isEmpty();
             case RECALIBRATION -> canRecalibrate(hullItem, definition);
             case TRANSPOSITION -> canTranspose(definition, allowedUniques);
         };
@@ -76,29 +77,30 @@ public final class HullItemCrafting {
         return craftedHullItem;
     }
 
-    static RolledEffect augment(HullItem hullItem, Random random) {
+    static RolledModifier augment(HullItem hullItem, Random random) {
         HullItemDefinition definition = hullItem.definition();
-        List<List<PoolEntry>> openSides = definition == null ? List.of() : AffixLayout.openSides(definition, hullItem.effects());
+        List<List<PoolEntry>> openSides = definition == null ? List.of() : AffixLayout.openSides(definition, hullItem.explicits());
         if (definition == null || openSides.isEmpty()) {
             return null;
         }
         List<PoolEntry> chosenSide = openSides.get(random.nextInt(openSides.size()));
         PoolEntry poolEntry = WeightedPick.pick(chosenSide, PoolEntry::weight, random);
-        RolledEffect addedEffect = new RolledEffect(poolEntry.effectName(), poolEntry.roll(random));
+        RolledModifier addedModifier = RolledModifier.roll(poolEntry.modifier(), random, false);
         HullItemRarity rarityBefore = hullItem.rarity();
-        List<RolledEffect> updatedEffects = new ArrayList<>(hullItem.effects());
-        updatedEffects.add(AffixLayout.insertIndex(definition, updatedEffects, addedEffect.effectName()), addedEffect);
-        hullItem.replaceEffects(updatedEffects);
+        List<RolledModifier> updatedModifiers = new ArrayList<>(hullItem.explicits());
+        updatedModifiers.add(AffixLayout.insertIndex(updatedModifiers, addedModifier.slot()), addedModifier);
+        hullItem.replaceExplicits(updatedModifiers);
         if (hullItem.rarity() != rarityBefore) {
             hullItem.refreezeName();
         }
-        return addedEffect;
+        return addedModifier;
     }
 
     private static boolean canRecalibrate(HullItem hullItem, HullItemDefinition definition) {
-        for (RolledEffect effect : hullItem.effects()) {
-            PoolEntry poolEntry = definition.poolEntry(effect.effectName());
-            if (poolEntry != null && poolEntry.canVary()) {
+        for (RolledModifier rolled : hullItem.explicits()) {
+            PoolEntry poolEntry = definition.poolEntryFor(rolled.modifierId());
+            if (poolEntry != null && rolled.lines().stream().map(line -> poolEntry.modifier().line(line.effectName()))
+                    .anyMatch(line -> line != null && line.canVary())) {
                 return true;
             }
         }
@@ -111,20 +113,29 @@ public final class HullItemCrafting {
             return null;
         }
         for (int attempt = 0; attempt < MAX_RECALIBRATION_ATTEMPTS; attempt++) {
-            List<RolledEffect> rerolled = reroll(hullItem.effects(), definition, random);
-            if (!rerolled.equals(hullItem.effects())) {
-                hullItem.replaceEffects(rerolled);
+            List<RolledModifier> rerolled = reroll(hullItem.explicits(), definition, random);
+            if (!rerolled.equals(hullItem.explicits())) {
+                hullItem.replaceExplicits(rerolled);
                 return hullItem;
             }
         }
         return null;
     }
 
-    private static List<RolledEffect> reroll(List<RolledEffect> effects, HullItemDefinition definition, Random random) {
-        List<RolledEffect> rerolled = new ArrayList<>(effects.size());
-        for (RolledEffect effect : effects) {
-            PoolEntry poolEntry = definition.poolEntry(effect.effectName());
-            rerolled.add(poolEntry == null ? effect : new RolledEffect(effect.effectName(), poolEntry.roll(random)));
+    private static List<RolledModifier> reroll(List<RolledModifier> modifiers, HullItemDefinition definition, Random random) {
+        List<RolledModifier> rerolled = new ArrayList<>(modifiers.size());
+        for (RolledModifier rolled : modifiers) {
+            PoolEntry poolEntry = definition.poolEntryFor(rolled.modifierId());
+            if (poolEntry == null) {
+                rerolled.add(rolled);
+                continue;
+            }
+            List<RolledEffect> rerolledLines = new ArrayList<>(rolled.lines().size());
+            for (RolledEffect line : rolled.lines()) {
+                ModifierLine lineDefinition = poolEntry.modifier().line(line.effectName());
+                rerolledLines.add(lineDefinition == null ? line : new RolledEffect(line.effectName(), lineDefinition.roll(random)));
+            }
+            rerolled.add(rolled.withLines(rerolledLines));
         }
         return rerolled;
     }

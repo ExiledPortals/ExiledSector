@@ -4,6 +4,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+
 final class HullItemFixtures {
 
     static final String MILITARY = "military_subroutine";
@@ -11,6 +13,10 @@ final class HullItemFixtures {
     static final String MILITARY_SUFFIXES = "SHIELD_DAMAGE_TAKEN_MULT:-15:-10; ARMOR_PERCENT:6:9; HULL_MULT:4:6";
 
     private HullItemFixtures() {
+    }
+
+    static HullItemData data(String definitionId, long seed, List<RolledEffect> effects, FrozenName frozenName) {
+        return new HullItemData(definitionId, seed, RolledModifier.fromLegacyEffects(HullItemDefinitions.get(definitionId), effects), frozenName);
     }
 
     static JSONObject row(String id, String kind, String prefixes) throws JSONException {

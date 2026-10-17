@@ -1,5 +1,6 @@
 package exiledsector.hullitems;
 
+import exiledsector.modifiers.ModifierSlot;
 import com.fs.starfarer.api.Global;
 import exiledsector.ModCsv;
 import exiledsector.Seeds;
@@ -86,23 +87,23 @@ public final class HullItemNames {
         return AFFIXES.get().containsKey(effectName);
     }
 
-    static HullItemName nameFor(HullItemDefinition definition, HullItemType kind, long seed, List<RolledEffect> effects) {
-        return render(definition, kind, effects, freeze(definition, seed, effects));
+    static HullItemName nameFor(HullItemDefinition definition, HullItemType kind, long seed, List<RolledModifier> modifiers) {
+        return render(definition, kind, modifiers, freeze(definition, seed, modifiers));
     }
 
-    static FrozenName freeze(HullItemDefinition definition, long seed, List<RolledEffect> effects) {
+    static FrozenName freeze(HullItemDefinition definition, long seed, List<RolledModifier> modifiers) {
         if (definition == null) {
             return null;
         }
-        return switch (AffixLayout.rarityFor(definition, effects.size())) {
+        return switch (AffixLayout.rarityFor(definition, modifiers.size())) {
             case UNIQUE -> FrozenName.NONE;
-            case COMMON -> new FrozenName(firstInRole(definition, effects, true), firstInRole(definition, effects, false), null, null);
+            case COMMON -> new FrozenName(firstInSlot(definition, modifiers, ModifierSlot.PREFIX), firstInSlot(definition, modifiers, ModifierSlot.SUFFIX), null, null);
             case RARE -> rareWords(definition.id(), seed);
         };
     }
 
-    static HullItemName render(HullItemDefinition definition, HullItemType kind, List<RolledEffect> effects, FrozenName frozen) {
-        HullItemRarity rarity = AffixLayout.rarityFor(definition, effects.size());
+    static HullItemName render(HullItemDefinition definition, HullItemType kind, List<RolledModifier> modifiers, FrozenName frozen) {
+        HullItemRarity rarity = AffixLayout.rarityFor(definition, modifiers.size());
         if (definition == null) {
             return new HullItemName(Translation.text("socketable.unknown"), null, rarity);
         }
@@ -139,11 +140,10 @@ public final class HullItemNames {
         return commonText.isEmpty() ? commonText : commonText.substring(0, 1).toUpperCase(Locale.ROOT) + commonText.substring(1);
     }
 
-    private static String firstInRole(HullItemDefinition definition, List<RolledEffect> effects, boolean asPrefix) {
-        for (RolledEffect effect : effects) {
-            String effectName = effect.effectName();
-            if (asPrefix ? definition.isPrefix(effectName) : definition.isSuffix(effectName)) {
-                return effectName;
+    private static String firstInSlot(HullItemDefinition definition, List<RolledModifier> modifiers, ModifierSlot slot) {
+        for (RolledModifier modifier : modifiers) {
+            if (modifier.slot() == slot && definition.poolEntryFor(modifier.modifierId()) != null) {
+                return modifier.modifierId();
             }
         }
         return null;
