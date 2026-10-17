@@ -82,6 +82,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         SkillTreePanelStyle panelStyle = new SkillTreePanelStyle();
         this.starfieldRenderer = new SkillTreeStarfieldRenderer(panelStyle);
         this.fleetRenderer = SkillTreeFleetRenderer.forPlayerFleet(member == null ? null : member.getId());
+        exoshipView.setPlayerShip(member);
         this.treeSession = new TreeAllocationSession(member, variant, refitButton, nodeSearch);
         this.nodeDrawer = SkillTreeNodeDrawer.attachedTo(treeSession, member, panelStyle, nodeSearch);
         this.templateUi = new SkillTreeTemplateController(member, treeSession, panelStyle);

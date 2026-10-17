@@ -95,6 +95,41 @@ class ExoshipVoyageTest {
     }
 
     @Test
+    void escortsAreAllAboardWhenTheShipWarpsAndFlyOutAgainAfterItArrives() {
+        RecordedEvents events = new RecordedEvents();
+        ExoshipVoyage voyage = new ExoshipVoyage(FAR_APART, new Random(5), events);
+        ExoshipEscorts escorts = new ExoshipEscorts();
+        float launchLevelAtDeparture = -1f;
+        float launchLevelAtArrival = -1f;
+        boolean launchedWhileLiningUp = false;
+        for (float elapsed = 0f; elapsed < ExoshipVoyage.JUMP_INTERVAL_SECONDS * 2f; elapsed += FRAME) {
+            int eventsBefore = events.names.size();
+            voyage.advance(FRAME);
+            escorts.advance(FRAME, voyage.escortsLaunched());
+            launchedWhileLiningUp |= voyage.escortsLaunched()
+                    && (voyage.phase() == ExoshipVoyage.Phase.TURNING || voyage.phase() == ExoshipVoyage.Phase.BURNING);
+            if (events.names.size() > eventsBefore && events.names.get(events.names.size() - 1).equals("departed")) {
+                launchLevelAtDeparture = escorts.launchLevel();
+            }
+            if (events.names.size() > eventsBefore && events.names.get(events.names.size() - 1).equals("arrived")) {
+                launchLevelAtArrival = escorts.launchLevel();
+            }
+            if (launchLevelAtArrival >= 0f && voyage.phase() == ExoshipVoyage.Phase.ORBITING) {
+                break;
+            }
+        }
+        for (float settle = 0f; settle < ExoshipEscorts.LAUNCH_SECONDS; settle += FRAME) {
+            voyage.advance(FRAME);
+            escorts.advance(FRAME, voyage.escortsLaunched());
+        }
+
+        assertEquals(0f, launchLevelAtDeparture);
+        assertEquals(0f, launchLevelAtArrival);
+        assertFalse(launchedWhileLiningUp);
+        assertEquals(1f, escorts.launchLevel());
+    }
+
+    @Test
     void outsideTheWarpTheShipNeverJumpsMoreThanItsTopSpeedInOneFrame() {
         ExoshipVoyage voyage = new ExoshipVoyage(FAR_APART, new Random(4), new RecordedEvents());
         float previousX = voyage.shipX();

@@ -1,5 +1,7 @@
 package exiledsector.ui.exoship;
 
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.graphics.SpriteAPI;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
@@ -68,9 +70,18 @@ public final class ExoshipRenderer {
     private float secondsSinceTrail;
     private float elapsedSeconds;
 
+    public void setPlayerShip(String spritePath, HullSize hullSize) {
+        SpriteAPI texture = spritePath == null ? null : spriteCache.texture(spritePath);
+        if (texture == null || texture.getWidth() <= 0f || texture.getHeight() <= 0f) {
+            escorts.setPlayerEscort(null);
+            return;
+        }
+        escorts.setPlayerEscort(ExoshipEscorts.playerEscort(spritePath, texture.getWidth(), texture.getHeight(), hullSize));
+    }
+
     public void advance(float amount, ExoshipVoyage voyage, float shipLength) {
         elapsedSeconds += amount;
-        escorts.advance(amount);
+        escorts.advance(amount, voyage.escortsLaunched());
         for (Afterimage afterimage : afterimages) {
             afterimage.ageSeconds += amount;
         }

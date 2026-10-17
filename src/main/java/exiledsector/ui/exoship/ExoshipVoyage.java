@@ -33,6 +33,7 @@ public final class ExoshipVoyage {
     static final float ARRIVAL_SECONDS = 3f;
     static final float APPROACH_DISTANCE = 900f;
     static final float MIN_JUMP_DISTANCE = 2500f;
+    static final float ESCORT_LAUNCH_DELAY_SECONDS = 0.5f;
     private static final float ALIGNED_DEGREES = 1f;
 
     private final List<Anchor> anchors;
@@ -292,6 +293,10 @@ public final class ExoshipVoyage {
 
     public float warpLevel() {
         return phase == Phase.WARPING ? 1f : 0f;
+    }
+
+    public boolean escortsLaunched() {
+        return phase == Phase.ORBITING || phase == Phase.ARRIVING && phaseSeconds >= ESCORT_LAUNCH_DELAY_SECONDS;
     }
 
     public Anchor currentAnchor() {
