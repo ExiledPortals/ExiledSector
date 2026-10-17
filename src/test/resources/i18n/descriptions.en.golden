@@ -2133,35 +2133,35 @@ type|abyssal_grid|null|1	1	<bad>10%</bad> reduced energy weapon flux cost.
 type|abyssal_grid|null|2	0	Increases energy weapon range by <good>100</good>.
 type|abyssal_grid|null|3	1	<bad>25%</bad> reduced EMP damage taken.
 type|abyssal_grid|null|4	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-type-detail|abyssal_grid|null|0	0	Costs 50 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
+type-detail|abyssal_grid|null|0	0	Costs 25 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
 type-detail|abyssal_grid|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Grid</hullmod>
 type|abyssal_grid|FRIGATE|0	0	Picking apart the power grids of abyssal drone wrecks, the crew work out how their couplings survive the storms of the deep and rebuild the ship's energy mounts to match. Energy weapons run cheaper and reach further, and the ship shrugs off EMP and corona storms.
 type|abyssal_grid|FRIGATE|1	1	<bad>10%</bad> reduced energy weapon flux cost.
 type|abyssal_grid|FRIGATE|2	0	Increases energy weapon range by <good>100</good>.
 type|abyssal_grid|FRIGATE|3	1	<bad>25%</bad> reduced EMP damage taken.
 type|abyssal_grid|FRIGATE|4	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-type-detail|abyssal_grid|FRIGATE|0	0	Costs 50 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
+type-detail|abyssal_grid|FRIGATE|0	0	Costs 25 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
 type-detail|abyssal_grid|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Grid</hullmod>
 type|abyssal_grid|DESTROYER|0	0	Picking apart the power grids of abyssal drone wrecks, the crew work out how their couplings survive the storms of the deep and rebuild the ship's energy mounts to match. Energy weapons run cheaper and reach further, and the ship shrugs off EMP and corona storms.
 type|abyssal_grid|DESTROYER|1	1	<bad>10%</bad> reduced energy weapon flux cost.
 type|abyssal_grid|DESTROYER|2	0	Increases energy weapon range by <good>100</good>.
 type|abyssal_grid|DESTROYER|3	1	<bad>25%</bad> reduced EMP damage taken.
 type|abyssal_grid|DESTROYER|4	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-type-detail|abyssal_grid|DESTROYER|0	0	Costs 50 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
+type-detail|abyssal_grid|DESTROYER|0	0	Costs 25 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
 type-detail|abyssal_grid|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Grid</hullmod>
 type|abyssal_grid|CRUISER|0	0	Picking apart the power grids of abyssal drone wrecks, the crew work out how their couplings survive the storms of the deep and rebuild the ship's energy mounts to match. Energy weapons run cheaper and reach further, and the ship shrugs off EMP and corona storms.
 type|abyssal_grid|CRUISER|1	1	<bad>10%</bad> reduced energy weapon flux cost.
 type|abyssal_grid|CRUISER|2	0	Increases energy weapon range by <good>100</good>.
 type|abyssal_grid|CRUISER|3	1	<bad>25%</bad> reduced EMP damage taken.
 type|abyssal_grid|CRUISER|4	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-type-detail|abyssal_grid|CRUISER|0	0	Costs 50 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
+type-detail|abyssal_grid|CRUISER|0	0	Costs 25 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
 type-detail|abyssal_grid|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Grid</hullmod>
 type|abyssal_grid|CAPITAL_SHIP|0	0	Picking apart the power grids of abyssal drone wrecks, the crew work out how their couplings survive the storms of the deep and rebuild the ship's energy mounts to match. Energy weapons run cheaper and reach further, and the ship shrugs off EMP and corona storms.
 type|abyssal_grid|CAPITAL_SHIP|1	1	<bad>10%</bad> reduced energy weapon flux cost.
 type|abyssal_grid|CAPITAL_SHIP|2	0	Increases energy weapon range by <good>100</good>.
 type|abyssal_grid|CAPITAL_SHIP|3	1	<bad>25%</bad> reduced EMP damage taken.
 type|abyssal_grid|CAPITAL_SHIP|4	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-type-detail|abyssal_grid|CAPITAL_SHIP|0	0	Costs 50 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
+type-detail|abyssal_grid|CAPITAL_SHIP|0	0	Costs 25 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
 type-detail|abyssal_grid|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Grid</hullmod>
 type|adaptive_coils|null|0	0	Phase coils are less able to maintain a connection with normal space as the ship's hard flux levels rise, resulting in a greatly reduced top speed as the coils struggle to gain traction.\n\nThis modification allows the coils to handle higher levels of hard flux, increasing the threshold at which speed bottoms out.
 type|adaptive_coils|null|1	0	<good>40%</good> increased hard flux level at which phased speed reaches its minimum.
@@ -2455,27 +2455,27 @@ type|cargo_capacity_flat|CAPITAL_SHIP|0	0	Increases cargo capacity by <good>50</
 type|chronos_adaptability|null|0	0	After long hours with a recovered Chronos core, the crew decode how it times its own systems and rewrite the ship system's control loop to match, cycling it faster than its makers ever intended.
 type|chronos_adaptability|null|1	1	<bad>20%</bad> reduced ship system cooldown.
 type|chronos_adaptability|null|2	0	<good>20%</good> increased ship system charge regeneration.
-type-detail|chronos_adaptability|null|0	0	Costs 50 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
+type-detail|chronos_adaptability|null|0	0	Costs 1 rat_chronos_core to allocate. It is returned to you upon de-allocation.
 type-detail|chronos_adaptability|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Adaptability</hullmod>
 type|chronos_adaptability|FRIGATE|0	0	After long hours with a recovered Chronos core, the crew decode how it times its own systems and rewrite the ship system's control loop to match, cycling it faster than its makers ever intended.
 type|chronos_adaptability|FRIGATE|1	1	<bad>20%</bad> reduced ship system cooldown.
 type|chronos_adaptability|FRIGATE|2	0	<good>20%</good> increased ship system charge regeneration.
-type-detail|chronos_adaptability|FRIGATE|0	0	Costs 50 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
+type-detail|chronos_adaptability|FRIGATE|0	0	Costs 1 rat_chronos_core to allocate. It is returned to you upon de-allocation.
 type-detail|chronos_adaptability|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Adaptability</hullmod>
 type|chronos_adaptability|DESTROYER|0	0	After long hours with a recovered Chronos core, the crew decode how it times its own systems and rewrite the ship system's control loop to match, cycling it faster than its makers ever intended.
 type|chronos_adaptability|DESTROYER|1	1	<bad>20%</bad> reduced ship system cooldown.
 type|chronos_adaptability|DESTROYER|2	0	<good>20%</good> increased ship system charge regeneration.
-type-detail|chronos_adaptability|DESTROYER|0	0	Costs 50 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
+type-detail|chronos_adaptability|DESTROYER|0	0	Costs 1 rat_chronos_core to allocate. It is returned to you upon de-allocation.
 type-detail|chronos_adaptability|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Adaptability</hullmod>
 type|chronos_adaptability|CRUISER|0	0	After long hours with a recovered Chronos core, the crew decode how it times its own systems and rewrite the ship system's control loop to match, cycling it faster than its makers ever intended.
 type|chronos_adaptability|CRUISER|1	1	<bad>20%</bad> reduced ship system cooldown.
 type|chronos_adaptability|CRUISER|2	0	<good>20%</good> increased ship system charge regeneration.
-type-detail|chronos_adaptability|CRUISER|0	0	Costs 50 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
+type-detail|chronos_adaptability|CRUISER|0	0	Costs 1 rat_chronos_core to allocate. It is returned to you upon de-allocation.
 type-detail|chronos_adaptability|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Adaptability</hullmod>
 type|chronos_adaptability|CAPITAL_SHIP|0	0	After long hours with a recovered Chronos core, the crew decode how it times its own systems and rewrite the ship system's control loop to match, cycling it faster than its makers ever intended.
 type|chronos_adaptability|CAPITAL_SHIP|1	1	<bad>20%</bad> reduced ship system cooldown.
 type|chronos_adaptability|CAPITAL_SHIP|2	0	<good>20%</good> increased ship system charge regeneration.
-type-detail|chronos_adaptability|CAPITAL_SHIP|0	0	Costs 50 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
+type-detail|chronos_adaptability|CAPITAL_SHIP|0	0	Costs 1 rat_chronos_core to allocate. It is returned to you upon de-allocation.
 type-detail|chronos_adaptability|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Adaptability</hullmod>
 type|coil_efficiency|null|0	0	Exo-Tech technicians teach the crew to retune the phase coils to their own tolerances. Phased speed holds up under heavier flux, and the ship sheds flux faster while phased.
 type|coil_efficiency|null|1	0	<good>20%</good> increased hard flux level at which phased speed reaches its minimum.
@@ -3937,38 +3937,38 @@ type|seraphim|null|0	0	Code pulled from a dissected Seraph core, pieced back tog
 type|seraphim|null|1	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
 type|seraphim|null|2	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
 type|seraphim|null|3	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-type-detail|seraphim|null|0	0	Costs 50 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
+type-detail|seraphim|null|0	0	Costs 25 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
 type|seraphim|FRIGATE|0	0	Code pulled from a dissected Seraph core, pieced back together and patched into the damage-control software. The ship mends itself on the damage it deals, and grows deadlier the longer the hunt goes on.
 type|seraphim|FRIGATE|1	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
 type|seraphim|FRIGATE|2	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
 type|seraphim|FRIGATE|3	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 type|seraphim|FRIGATE|4	0	The full Seraph Hunting Routines damage bonus is reached after dealing 75000 armor and hull damage.
-type-detail|seraphim|FRIGATE|0	0	Costs 50 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
+type-detail|seraphim|FRIGATE|0	0	Costs 25 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
 type|seraphim|DESTROYER|0	0	Code pulled from a dissected Seraph core, pieced back together and patched into the damage-control software. The ship mends itself on the damage it deals, and grows deadlier the longer the hunt goes on.
 type|seraphim|DESTROYER|1	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
 type|seraphim|DESTROYER|2	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
 type|seraphim|DESTROYER|3	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 type|seraphim|DESTROYER|4	0	The full Seraph Hunting Routines damage bonus is reached after dealing 125000 armor and hull damage.
-type-detail|seraphim|DESTROYER|0	0	Costs 50 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
+type-detail|seraphim|DESTROYER|0	0	Costs 25 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
 type|seraphim|CRUISER|0	0	Code pulled from a dissected Seraph core, pieced back together and patched into the damage-control software. The ship mends itself on the damage it deals, and grows deadlier the longer the hunt goes on.
 type|seraphim|CRUISER|1	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
 type|seraphim|CRUISER|2	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
 type|seraphim|CRUISER|3	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 type|seraphim|CRUISER|4	0	The full Seraph Hunting Routines damage bonus is reached after dealing 175000 armor and hull damage.
-type-detail|seraphim|CRUISER|0	0	Costs 50 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
+type-detail|seraphim|CRUISER|0	0	Costs 25 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
 type|seraphim|CAPITAL_SHIP|0	0	Code pulled from a dissected Seraph core, pieced back together and patched into the damage-control software. The ship mends itself on the damage it deals, and grows deadlier the longer the hunt goes on.
 type|seraphim|CAPITAL_SHIP|1	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
 type|seraphim|CAPITAL_SHIP|2	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
 type|seraphim|CAPITAL_SHIP|3	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 type|seraphim|CAPITAL_SHIP|4	0	The full Seraph Hunting Routines damage bonus is reached after dealing 225000 armor and hull damage.
-type-detail|seraphim|CAPITAL_SHIP|0	0	Costs 50 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
+type-detail|seraphim|CAPITAL_SHIP|0	0	Costs 25 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
 type|seraphs_grace|null|0	0	Having taken apart enough Seraph hulls to see how they feed on their own wounds, the crew rewire the ship to do the same. Every blow to armor or hull pushes its engines, weapons and flux grid harder, but the shield emitters were never built for that load.
 type|seraphs_grace|null|1	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
 type|seraphs_grace|null|2	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
 type|seraphs_grace|null|3	0	<good>20%</good> increased weapon durability.
 type|seraphs_grace|null|4	1	<bad>20%</bad> reduced weapon and engine repair time.
 type|seraphs_grace|null|5	1	<good>20%</good> more damage taken by shields.
-type-detail|seraphs_grace|null|0	0	Costs 50 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
+type-detail|seraphs_grace|null|0	0	Costs 25 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
 type-detail|seraphs_grace|null|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Seraphs Grace</hullmod>\n• <hullmod>Raphaels Grace</hullmod>
 type|seraphs_grace|FRIGATE|0	0	Having taken apart enough Seraph hulls to see how they feed on their own wounds, the crew rewire the ship to do the same. Every blow to armor or hull pushes its engines, weapons and flux grid harder, but the shield emitters were never built for that load.
 type|seraphs_grace|FRIGATE|1	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
@@ -3976,7 +3976,7 @@ type|seraphs_grace|FRIGATE|2	0	Each Borrowed Grace stack increases top speed, fl
 type|seraphs_grace|FRIGATE|3	0	<good>20%</good> increased weapon durability.
 type|seraphs_grace|FRIGATE|4	1	<bad>20%</bad> reduced weapon and engine repair time.
 type|seraphs_grace|FRIGATE|5	1	<good>20%</good> more damage taken by shields.
-type-detail|seraphs_grace|FRIGATE|0	0	Costs 50 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
+type-detail|seraphs_grace|FRIGATE|0	0	Costs 25 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
 type-detail|seraphs_grace|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Seraphs Grace</hullmod>\n• <hullmod>Raphaels Grace</hullmod>
 type|seraphs_grace|DESTROYER|0	0	Having taken apart enough Seraph hulls to see how they feed on their own wounds, the crew rewire the ship to do the same. Every blow to armor or hull pushes its engines, weapons and flux grid harder, but the shield emitters were never built for that load.
 type|seraphs_grace|DESTROYER|1	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
@@ -3984,7 +3984,7 @@ type|seraphs_grace|DESTROYER|2	0	Each Borrowed Grace stack increases top speed, 
 type|seraphs_grace|DESTROYER|3	0	<good>20%</good> increased weapon durability.
 type|seraphs_grace|DESTROYER|4	1	<bad>20%</bad> reduced weapon and engine repair time.
 type|seraphs_grace|DESTROYER|5	1	<good>20%</good> more damage taken by shields.
-type-detail|seraphs_grace|DESTROYER|0	0	Costs 50 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
+type-detail|seraphs_grace|DESTROYER|0	0	Costs 25 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
 type-detail|seraphs_grace|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Seraphs Grace</hullmod>\n• <hullmod>Raphaels Grace</hullmod>
 type|seraphs_grace|CRUISER|0	0	Having taken apart enough Seraph hulls to see how they feed on their own wounds, the crew rewire the ship to do the same. Every blow to armor or hull pushes its engines, weapons and flux grid harder, but the shield emitters were never built for that load.
 type|seraphs_grace|CRUISER|1	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
@@ -3992,7 +3992,7 @@ type|seraphs_grace|CRUISER|2	0	Each Borrowed Grace stack increases top speed, fl
 type|seraphs_grace|CRUISER|3	0	<good>20%</good> increased weapon durability.
 type|seraphs_grace|CRUISER|4	1	<bad>20%</bad> reduced weapon and engine repair time.
 type|seraphs_grace|CRUISER|5	1	<good>20%</good> more damage taken by shields.
-type-detail|seraphs_grace|CRUISER|0	0	Costs 50 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
+type-detail|seraphs_grace|CRUISER|0	0	Costs 25 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
 type-detail|seraphs_grace|CRUISER|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Seraphs Grace</hullmod>\n• <hullmod>Raphaels Grace</hullmod>
 type|seraphs_grace|CAPITAL_SHIP|0	0	Having taken apart enough Seraph hulls to see how they feed on their own wounds, the crew rewire the ship to do the same. Every blow to armor or hull pushes its engines, weapons and flux grid harder, but the shield emitters were never built for that load.
 type|seraphs_grace|CAPITAL_SHIP|1	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
@@ -4000,7 +4000,7 @@ type|seraphs_grace|CAPITAL_SHIP|2	0	Each Borrowed Grace stack increases top spee
 type|seraphs_grace|CAPITAL_SHIP|3	0	<good>20%</good> increased weapon durability.
 type|seraphs_grace|CAPITAL_SHIP|4	1	<bad>20%</bad> reduced weapon and engine repair time.
 type|seraphs_grace|CAPITAL_SHIP|5	1	<good>20%</good> more damage taken by shields.
-type-detail|seraphs_grace|CAPITAL_SHIP|0	0	Costs 50 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
+type-detail|seraphs_grace|CAPITAL_SHIP|0	0	Costs 25 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
 type-detail|seraphs_grace|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Seraphs Grace</hullmod>\n• <hullmod>Raphaels Grace</hullmod>
 type|shared_damage_taken|null|0	0	Disperses 5% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 type|shared_damage_taken|FRIGATE|0	0	Disperses 5% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.

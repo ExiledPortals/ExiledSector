@@ -1,5 +1,6 @@
 package exiledsector.skills.unlock;
 
+import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -54,14 +55,22 @@ class NodeGatesDataTest {
     }
 
     @Test
-    void everyAbyssNotableAndKeystoneCostsFiftyAbyssalMatter() {
+    void everyAbyssNotableAndKeystoneCostsTwentyFiveAbyssalMatter() {
         SkillTree.getAllNodes().values().stream()
                 .filter(node -> SkillTags.ABYSS_REGION.equals(node.getRegion()))
                 .filter(node -> node.getType().getTier() == SkillTier.NOTABLE || node.getType().getTier() == SkillTier.KEYSTONE)
+                .filter(node -> !node.getType().getId().equals("chronos_adaptability"))
                 .forEach(node -> {
                     assertEquals("rat_abyssal_matter", node.getType().getItemCost().itemId(), node.getId());
-                    assertEquals(50f, node.getType().getItemCost().quantity(), node.getId());
+                    assertEquals(25f, node.getType().getItemCost().quantity(), node.getId());
                 });
+    }
+
+    @Test
+    void chronosRhythmsCostsAChronosCore() {
+        SkillItemCost itemCost = SkillTree.getAllNodes().get("chronos_adaptability_1").getType().getItemCost();
+        assertEquals("rat_chronos_core", itemCost.itemId());
+        assertEquals(1f, itemCost.quantity());
     }
 
     private static boolean leadsIntoTheAbyss(SkillNode node) {
