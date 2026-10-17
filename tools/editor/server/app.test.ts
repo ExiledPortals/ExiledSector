@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { FastifyInstance } from 'fastify';
 import { createEditorServer } from './app.ts';
 import { hashBytes, writeTextFilesAtomic } from './dataFiles.ts';
-import { DescribeService, REBUILD_COOLDOWN_MS, describeRequestWithStrings, needsRebuild } from './describe.ts';
+import { BUILD_LOCK_FILE, DescribeService, REBUILD_COOLDOWN_MS, describeRequestWithStrings, needsRebuild } from './describe.ts';
 import type { ProjectPaths } from './paths.ts';
 
 const PORT = 8792;
@@ -294,6 +294,25 @@ describe('describe', () => {
   it('retries a failed build once the cooldown has passed, but not sooner', () => {
     expect(needsRebuild('failed', false, true, REBUILD_COOLDOWN_MS - 1)).toBe(false);
     expect(needsRebuild('failed', false, true, REBUILD_COOLDOWN_MS)).toBe(true);
+  });
+
+  it('waits for another Maven build of the mod instead of starting a second one in the same target folder', () => {
+    expect(needsRebuild('built', false, false, 0, true)).toBe(false);
+    expect(needsRebuild('failed', false, true, REBUILD_COOLDOWN_MS, true)).toBe(false);
+    expect(needsRebuild('waiting', false, false, 0, true)).toBe(false);
+    expect(needsRebuild('waiting', false, false, 0, false)).toBe(true);
+  });
+
+  it('reports that it is waiting while a deploy build holds the build lock', async () => {
+    writeProjectFile(BUILD_LOCK_FILE, '1234');
+    try {
+      const service = new DescribeService(paths, { javaHome: 'fake-jdk', maven: 'fake-mvn.cmd' });
+      service.startBuild();
+      const result = await service.describe('{}');
+      expect(result).toEqual({ body: { pending: true, message: expect.stringContaining('another Maven build') } });
+    } finally {
+      fs.rmSync(path.join(paths.projectRoot, BUILD_LOCK_FILE), { force: true });
+    }
   });
 
   it('rebuilds when the compiled mod disappears before the helper restarts', () => {

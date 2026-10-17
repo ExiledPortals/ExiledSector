@@ -1,57 +1,42 @@
 package exiledsector.skills.skilleffect;
 
-import com.fs.starfarer.api.GameState;
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.combat.BaseEveryFrameCombatPlugin;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.input.InputEventAPI;
 import exiledsector.compat.CombatGlow;
 import exiledsector.compat.NightcrossCompat;
 import exiledsector.i18n.Translation;
 
-import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 
-final class GravityDragField extends BaseEveryFrameCombatPlugin {
+final class GravityDragField extends AuraField<GravityDragListener> {
 
     static final float RANGE = 1500f;
     static final float MAX_TOTAL_REDUCTION_PERCENT = 25f;
-    static final float UPDATE_INTERVAL_SECONDS = 0.25f;
     static final String MOD_ID = "exiledSector_gravityDrag";
     static final String STATUS_ICON = "graphics/icons/na_gravitational_drag.png";
     private static final String CUSTOM_DATA_KEY = "exiledSector_gravityDragField";
     private static final String STATUS_KEY = "exiledSector_gravityDragStatus";
     private static final float CHANGE_EPSILON = 0.0005f;
+    private static final float MIN_SHOWN_PERCENT = 0.5f;
     private static final float LENS_SIZE_SHARE = 2.5f;
     private static final float LENS_MAX_INTENSITY_SHARE = 0.15f;
     private static final float LENS_FADE_SECONDS = 0.5f;
 
-    private final List<GravityDragListener> sources = new ArrayList<>();
-    private final Map<ShipAPI, Float> appliedTimeMult = new IdentityHashMap<>();
-    private final Map<ShipAPI, Float> combinedPercentByTarget = new IdentityHashMap<>();
+    private final AppliedAuraValues appliedTimeMult = new AppliedAuraValues(AppliedAuraValues.Change.beyond(CHANGE_EPSILON));
+    private final Map<ShipAPI, Float> shownPercentByTarget = new IdentityHashMap<>();
     private final Map<GravityDragListener, LensState> lenses = new IdentityHashMap<>();
-    private float secondsSinceUpdate = UPDATE_INTERVAL_SECONDS;
+    private final PlayerStatus playerStatus = new PlayerStatus(STATUS_KEY, STATUS_ICON, "combat.gravityDrag");
+    private int shownRoundedPercent = Integer.MIN_VALUE;
+
+    GravityDragField() {
+        super(true);
+    }
 
     static void register(GravityDragListener source) {
-        if (Global.getSettings() == null || Global.getCurrentState() != GameState.COMBAT) {
-            return;
-        }
-        CombatEngineAPI engine = Global.getCombatEngine();
-        if (engine == null) {
-            return;
-        }
-        GravityDragField field = (GravityDragField) engine.getCustomData().get(CUSTOM_DATA_KEY);
-        if (field == null) {
-            field = new GravityDragField();
-            loadStatusIcon();
-            engine.getCustomData().put(CUSTOM_DATA_KEY, field);
-            engine.addPlugin(field);
-        }
-        field.sources.add(source);
+        AuraField.register(source, CUSTOM_DATA_KEY, GravityDragField.class, GravityDragField::new, (engine, field) -> loadStatusIcon());
     }
 
     private static void loadStatusIcon() {
@@ -63,21 +48,15 @@ final class GravityDragField extends BaseEveryFrameCombatPlugin {
     }
 
     @Override
-    public void advance(float amount, List<InputEventAPI> events) {
-        CombatEngineAPI engine = Global.getCombatEngine();
-        if (engine == null || engine.isPaused()) {
-            return;
-        }
+    void everyFrame(CombatEngineAPI engine) {
         showPlayerStatus(engine);
         moveLenses();
-        secondsSinceUpdate += amount;
-        if (secondsSinceUpdate < UPDATE_INTERVAL_SECONDS) {
-            return;
-        }
-        secondsSinceUpdate = 0f;
-        sources.removeIf(source -> !engine.isEntityInPlay(source.source()) || !CombatQueries.isAliveNotHulk(source.source()));
+    }
+
+    @Override
+    void update(float elapsedSeconds) {
         refreshLenses();
-        applyReductions(reductionsFrom(sources, (source, radius, filter) -> CombatQueries.shipsNear(source.getLocation(), radius, filter)));
+        applyReductions(reductionsFrom(sources, ENGINE_SHIPS_NEAR));
     }
 
     private static final class LensState {
@@ -117,15 +96,16 @@ final class GravityDragField extends BaseEveryFrameCombatPlugin {
     }
 
     private void showPlayerStatus(CombatEngineAPI engine) {
-        Float combinedPercent = combinedPercentByTarget.get(engine.getPlayerShip());
-        if (combinedPercent != null && combinedPercent >= 0.5f) {
-            engine.maintainStatusForPlayerShip(STATUS_KEY, STATUS_ICON, Translation.gameText("combat.gravityDrag"),
-                    Translation.msg("combat.gravityDrag.status").arg("value", Math.round(combinedPercent)).text(), true);
+        Float shownPercent = shownPercentByTarget.get(engine.getPlayerShip());
+        if (shownPercent == null || shownPercent < MIN_SHOWN_PERCENT) {
+            return;
         }
-    }
-
-    interface ShipsNear {
-        List<ShipAPI> find(ShipAPI source, float radius, Predicate<ShipAPI> filter);
+        int roundedPercent = Math.round(shownPercent);
+        if (roundedPercent != shownRoundedPercent || playerStatus.needsText()) {
+            shownRoundedPercent = roundedPercent;
+            playerStatus.setText(() -> Translation.msg("combat.gravityDrag.status").arg("value", roundedPercent).text());
+        }
+        playerStatus.show(engine, true);
     }
 
     static Map<ShipAPI, Float> reductionsFrom(List<GravityDragListener> sources, ShipsNear shipsNear) {
@@ -154,28 +134,24 @@ final class GravityDragField extends BaseEveryFrameCombatPlugin {
         return Math.min(MAX_TOTAL_REDUCTION_PERCENT, ownPercent + nightcrossPercent);
     }
 
+    static float shownPercent(float ownPercent, float nightcrossPercent) {
+        return Math.max(0f, combinedPercent(ownPercent, nightcrossPercent) - nightcrossPercent);
+    }
+
     static float ownTimeMult(float ownPercent, float nightcrossPercent) {
         float nightcrossMult = Math.max(0.01f, 1f - nightcrossPercent / 100f);
         return (1f - combinedPercent(ownPercent, nightcrossPercent) / 100f) / nightcrossMult;
     }
 
     private void applyReductions(Map<ShipAPI, Float> ownReductions) {
-        for (ShipAPI previouslyDragged : new ArrayList<>(appliedTimeMult.keySet())) {
-            if (!ownReductions.containsKey(previouslyDragged)) {
-                previouslyDragged.getMutableStats().getTimeMult().unmodify(MOD_ID);
-                appliedTimeMult.remove(previouslyDragged);
-                combinedPercentByTarget.remove(previouslyDragged);
-            }
-        }
+        Map<ShipAPI, Float> timeMultByTarget = new IdentityHashMap<>();
+        shownPercentByTarget.clear();
         ownReductions.forEach((target, ownPercent) -> {
             float nightcrossPercent = NightcrossCompat.gravityDragPercentOn(target);
-            float timeMult = ownTimeMult(ownPercent, nightcrossPercent);
-            Float applied = appliedTimeMult.get(target);
-            if (applied == null || Math.abs(applied - timeMult) > CHANGE_EPSILON) {
-                target.getMutableStats().getTimeMult().modifyMult(MOD_ID, timeMult);
-                appliedTimeMult.put(target, timeMult);
-            }
-            combinedPercentByTarget.put(target, combinedPercent(ownPercent, nightcrossPercent));
+            timeMultByTarget.put(target, ownTimeMult(ownPercent, nightcrossPercent));
+            shownPercentByTarget.put(target, shownPercent(ownPercent, nightcrossPercent));
         });
+        appliedTimeMult.update(timeMultByTarget, target -> target.getMutableStats().getTimeMult().unmodify(MOD_ID),
+                (target, timeMult) -> target.getMutableStats().getTimeMult().modifyMult(MOD_ID, timeMult));
     }
 }

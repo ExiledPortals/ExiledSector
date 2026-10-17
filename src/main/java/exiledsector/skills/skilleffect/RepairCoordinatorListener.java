@@ -6,7 +6,7 @@ import org.lwjgl.util.vector.Vector2f;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
-final class RepairCoordinatorListener extends ShipCombatListener {
+final class RepairCoordinatorListener extends ShipCombatListener implements AuraField.Source {
 
     static final String ARMOR_REPAIR_PERCENT_KEY = "exiledSector_repairCoordinatorArmorPercent";
 
@@ -20,7 +20,8 @@ final class RepairCoordinatorListener extends ShipCombatListener {
         RepairCoordinatorField.register(this);
     }
 
-    ShipAPI source() {
+    @Override
+    public ShipAPI source() {
         return ownerShip;
     }
 

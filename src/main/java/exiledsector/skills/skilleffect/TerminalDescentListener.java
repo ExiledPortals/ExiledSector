@@ -8,6 +8,11 @@ import com.fs.starfarer.api.combat.ShipCommand;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import exiledsector.i18n.Translation;
 
+import static exiledsector.skills.skilleffect.ScaledBonus.fixed;
+import static exiledsector.skills.skilleffect.ScaledBonus.percent;
+import static exiledsector.skills.skilleffect.StatTarget.bonus;
+import static exiledsector.skills.skilleffect.StatTarget.stat;
+
 final class TerminalDescentListener extends ShipCombatListener implements AdvanceableListener {
 
     static final String HULL_DAMAGE_TAKEN_PERCENT_KEY = "exiledSector_terminalDescentHullDamageTakenPercent";
@@ -18,12 +23,21 @@ final class TerminalDescentListener extends ShipCombatListener implements Advanc
     static final float LEAVE_ABOVE_HULL_FRACTION = 0.4f;
     private static final String STATUS_ICON = "graphics/icons/hullsys/damper_field.png";
     private static final String MOD_ID_PREFIX = "exiledSector_terminalDescent_";
+    private static final ScaledBonus DESCENT_STATS = new ScaledBonus(
+            percent(stat(MutableShipStatsAPI::getHullDamageTakenMult), HULL_DAMAGE_TAKEN_PERCENT_KEY),
+            percent(stat(MutableShipStatsAPI::getFluxDissipation), FLUX_DISSIPATION_PERCENT_KEY),
+            percent(bonus(MutableShipStatsAPI::getSystemRegenBonus), SYSTEM_REGEN_PERCENT_KEY),
+            percent(stat(MutableShipStatsAPI::getShieldDamageTakenMult), SHIELD_DAMAGE_TAKEN_PERCENT_KEY),
+            fixed(bonus(MutableShipStatsAPI::getPeakCRDuration), StatMode.MULT, -100f));
+
+    private final PlayerStatus status;
 
     private boolean inDescent;
     private boolean seenAboveEntryThreshold;
 
     TerminalDescentListener(ShipAPI ownerShip) {
         super(ownerShip, MOD_ID_PREFIX);
+        status = new PlayerStatus(modId, STATUS_ICON, "combat.terminalDescent");
     }
 
     boolean inDescent() {
@@ -53,20 +67,10 @@ final class TerminalDescentListener extends ShipCombatListener implements Advanc
     }
 
     private void apply(boolean descending) {
-        MutableShipStatsAPI stats = ownerShip.getMutableStats();
+        DESCENT_STATS.apply(ownerShip.getMutableStats(), modId, descending ? 1f : 0f);
         if (!descending) {
-            stats.getHullDamageTakenMult().unmodify(modId);
-            stats.getFluxDissipation().unmodify(modId);
-            stats.getSystemRegenBonus().unmodify(modId);
-            stats.getShieldDamageTakenMult().unmodify(modId);
-            stats.getPeakCRDuration().unmodify(modId);
             return;
         }
-        stats.getHullDamageTakenMult().modifyPercent(modId, magnitude(HULL_DAMAGE_TAKEN_PERCENT_KEY));
-        stats.getFluxDissipation().modifyPercent(modId, magnitude(FLUX_DISSIPATION_PERCENT_KEY));
-        stats.getSystemRegenBonus().modifyPercent(modId, magnitude(SYSTEM_REGEN_PERCENT_KEY));
-        stats.getShieldDamageTakenMult().modifyPercent(modId, magnitude(SHIELD_DAMAGE_TAKEN_PERCENT_KEY));
-        stats.getPeakCRDuration().modifyMult(modId, 0f);
         if (ownerShip.getFluxTracker() != null && ownerShip.getFluxTracker().isVenting()) {
             ownerShip.getFluxTracker().stopVenting();
         }
@@ -75,8 +79,10 @@ final class TerminalDescentListener extends ShipCombatListener implements Advanc
     private void showStatus() {
         CombatEngineAPI engine = Global.getCombatEngine();
         if (engine != null && engine.getPlayerShip() == ownerShip) {
-            engine.maintainStatusForPlayerShip(modId, STATUS_ICON, Translation.gameText("combat.terminalDescent"),
-                    Translation.gameText("combat.terminalDescent.status"), false);
+            if (status.needsText()) {
+                status.setText(() -> Translation.text("combat.terminalDescent.status"));
+            }
+            status.show(engine, false);
         }
     }
 }

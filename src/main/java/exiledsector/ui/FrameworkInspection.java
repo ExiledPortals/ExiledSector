@@ -11,6 +11,7 @@ import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.FrameworkSlots;
 import exiledsector.socketables.FrameworkSockets;
+import exiledsector.socketables.HullUpgradesSetting;
 import exiledsector.socketables.HullUpgradeTooltip;
 import exiledsector.socketables.SocketType;
 import exiledsector.socketables.Socketable;
@@ -95,6 +96,10 @@ final class FrameworkInspection {
         return inspectLevel > 0f;
     }
 
+    boolean hasSocketedItems() {
+        return treeSession.frameworkSlots().stream().anyMatch(slot -> slot.item() != null);
+    }
+
     float inspectLevel() {
         return inspectLevel;
     }
@@ -115,7 +120,7 @@ final class FrameworkInspection {
         if (!camera.isFollowing()) {
             panelDismissed = false;
         }
-        boolean wantsPanel = active && !panelDismissed && !socketPlacement.isEngaged();
+        boolean wantsPanel = active && !panelDismissed && !socketPlacement.isEngaged() && HullUpgradesSetting.enabled();
         if (wantsPanel && frameworkPanel == null) {
             openPanel(canvasPosition);
         } else if (!wantsPanel && frameworkPanel != null) {
@@ -149,7 +154,7 @@ final class FrameworkInspection {
 
     private void placeUpgradesButton() {
         ScreenRect storageButton = socketPlacement.storageButtonBounds();
-        if (!active || storageButton == ScreenRect.NONE) {
+        if (!active || storageButton == ScreenRect.NONE || !HullUpgradesSetting.enabled()) {
             upgradesButton.hide();
             return;
         }
@@ -210,6 +215,10 @@ final class FrameworkInspection {
         int socketIndex = inspectLevel < 0.5f ? -1 : socketAt(x, y);
         if (socketIndex < 0) {
             return false;
+        }
+        if (!HullUpgradesSetting.enabled()) {
+            SkillTreeSounds.refused();
+            return true;
         }
         if (socketPlacement.placeIntoFrameworkSocket(slots.get(socketIndex).type())) {
             return true;
@@ -418,7 +427,7 @@ final class FrameworkInspection {
         if (inspectLevel <= 0f) {
             return;
         }
-        float eased = inspectLevel * inspectLevel * (3f - 2f * inspectLevel);
+        float eased = Fade.smooth(inspectLevel);
         float alpha = alphaMult * eased;
         SkillTreeFleetRenderer.InspectedShip ship = slots.isEmpty() ? null : fleetRenderer.inspectedShip(viewport);
         if (ship == null) {

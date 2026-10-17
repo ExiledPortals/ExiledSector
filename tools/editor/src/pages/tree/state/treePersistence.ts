@@ -3,6 +3,7 @@ import { fetchDataFiles, fetchReservedNodeIds, saveDataFiles, SERVER_HINT } from
 import { confirmAction, notifyError } from '../../../shared/dialogs.tsx';
 import { lineEndingOf } from '../../../shared/lineEndings.ts';
 import { handleSaveResult } from '../../../shared/saveResult.ts';
+import { saveOutcome, type SaveTicket } from '../../../shared/saveTracking.ts';
 import { pruneConnectorEntries } from '../model/connectors.ts';
 import { parseTreeDocument, serializeTreeFiles } from '../model/serialization.ts';
 import type { TreeDocument } from '../model/types.ts';
@@ -19,6 +20,7 @@ interface TreeDraft {
 }
 
 let draftTimer: ReturnType<typeof setTimeout> | null = null;
+let treeLoadGeneration = 0;
 
 function writeDraft(): void {
   const state = useTreeStore.getState();
@@ -124,6 +126,7 @@ async function offerDraftRestore(diskDocument: TreeDocument): Promise<void> {
 }
 
 export async function loadTree(): Promise<void> {
+  treeLoadGeneration += 1;
   useTreeStore.setState({ load: { status: 'loading' } });
   try {
     const [files, reservedIds] = await Promise.all([fetchDataFiles(['types', 'tree']), fetchReservedNodeIds()]);
@@ -178,7 +181,7 @@ export async function saveTree(vocabulary: Vocabulary | undefined): Promise<void
       return;
     }
   }
-  const revision = useTreeStore.getState().revision;
+  const ticket: SaveTicket = { revision: useTreeStore.getState().revision, loadGeneration: treeLoadGeneration };
   const texts = serializeTreeFiles(useTreeStore.getState().document, state.lineEndings);
   useTreeStore.setState({ saving: true });
   try {
@@ -186,9 +189,12 @@ export async function saveTree(vocabulary: Vocabulary | undefined): Promise<void
     await handleSaveResult(result, {
       discardedChanges: 'your unsaved skill tree changes',
       onSaved: (hashes) => {
-        const unchanged = useTreeStore.getState().revision === revision;
-        useTreeStore.setState((current) => ({ baseHashes: { ...current.baseHashes, ...hashes }, dirty: !unchanged }));
-        if (unchanged) {
+        const outcome = saveOutcome(ticket, { revision: useTreeStore.getState().revision, loadGeneration: treeLoadGeneration });
+        if (outcome === 'superseded') {
+          return;
+        }
+        useTreeStore.setState((current) => ({ baseHashes: { ...current.baseHashes, ...hashes }, dirty: outcome !== 'clean' }));
+        if (outcome === 'clean') {
           clearDraft();
         } else {
           writeDraft();

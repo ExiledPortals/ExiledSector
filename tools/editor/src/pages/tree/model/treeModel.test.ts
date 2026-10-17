@@ -25,11 +25,12 @@ import {
   snapAngleToTargets,
   snapNodeToAnchor,
 } from './geometry.ts';
+import { serializeUnlockConditions } from './serialization.ts';
 import { replaceGroupTags } from './tags.ts';
 import { nodeById, type TreeDocument, type TreeNode } from './types.ts';
 import { validateTree } from './validation.ts';
 
-const vocabulary = buildVocabulary({
+const vocabularyFile = {
   effects: [{ name: 'HULL_PERCENT', statMode: 'PERCENT', lowerIsBetter: false }],
   tags: { theme: ['armor'], region: ['north', 'south'], requirement: ['req_civilian_hull'] },
   tiers: ['SMALL', 'NOTABLE', 'KEYSTONE', 'WORMHOLE', 'ROOT', 'SOCKET'],
@@ -37,7 +38,8 @@ const vocabulary = buildVocabulary({
   blueprintCategories: ['hullmod'],
   socketableKinds: [],
   socketableUnlocks: [],
-});
+};
+const vocabulary = buildVocabulary(vocabularyFile);
 
 function node(id: string, x: number, y: number, connectedTo: string[] = [], extra: Partial<TreeNode> = {}): TreeNode {
   return { id, type: 'small', connectedTo, x, y, tags: ['north'], ...extra };
@@ -208,5 +210,27 @@ describe('validation and tags', () => {
   it('replaces only the tags of one group and keeps the rest in order', () => {
     expect(replaceGroupTags(vocabulary, ['armor', 'north', 'req_civilian_hull'], 'region', ['south'])).toEqual(['armor', 'req_civilian_hull', 'south']);
     expect(replaceGroupTags(vocabulary, ['bogus', 'armor'], 'unknown', [])).toEqual(['armor']);
+  });
+
+  it('keeps parameterless unlock conditions and drops parameterised ones that lost their parameters', () => {
+    expect(
+      serializeUnlockConditions([
+        { type: 'nightcrossPascalVisited' },
+        { type: 'characterStat' },
+        { type: 'memoryFlag', key: 'someFlag' },
+        { type: 'blueprint', id: 'heavyarmor' },
+        { type: '' },
+      ]),
+    ).toEqual([
+      { type: 'nightcrossPascalVisited' },
+      { type: 'memoryFlag', key: 'someFlag' },
+      { type: 'blueprint', category: 'hullmod', id: 'heavyarmor' },
+    ]);
+  });
+
+  it('reads the parameterless unlock condition list from the vocabulary and tolerates an older file without it', () => {
+    expect(vocabulary.parameterlessUnlockConditionTypes).toEqual([]);
+    const withGates = buildVocabulary({ ...vocabularyFile, parameterlessUnlockConditionTypes: ['ratPlayerExoship'] });
+    expect(withGates.parameterlessUnlockConditionTypes).toEqual(['ratPlayerExoship']);
   });
 });

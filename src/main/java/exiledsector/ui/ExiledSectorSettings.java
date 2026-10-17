@@ -1,5 +1,6 @@
 package exiledsector.ui;
 
+import exiledsector.ModSettingsListener;
 import exiledsector.compat.CombatGlow;
 import exiledsector.compat.SalvageSiteCompat;
 import exiledsector.effects.NpcBonusScale;
@@ -20,7 +21,6 @@ import exiledsector.skills.unlock.HiddenNodeDisplayConfig;
 import exiledsector.skills.unlock.UnlockConditionOverrides;
 import exiledsector.ui.inspect.NpcInspectConfig;
 import exiledsector.ui.refit.RefitButtonConfig;
-import lunalib.lunaSettings.LunaSettings;
 import lunalib.lunaSettings.LunaSettings.SettingsCreator;
 
 import static exiledsector.ExiledSectorModPlugin.MOD_ID;
@@ -51,16 +51,10 @@ public final class ExiledSectorSettings {
             registerNpcScaling();
         });
         SettingsCreator.refresh(MOD_ID);
-        if (!LunaSettings.hasSettingsListenerOfClass(NpcBonusScale.SettingsListener.class)) {
-            LunaSettings.addSettingsListener(new NpcBonusScale.SettingsListener());
-        }
-        if (!LunaSettings.hasSettingsListenerOfClass(SocketableRoller.SettingsListener.class)) {
-            LunaSettings.addSettingsListener(new SocketableRoller.SettingsListener());
-        }
+        ModSettingsListener.ensureRegistered(NpcBonusScale.SettingsListener.class, NpcBonusScale.SettingsListener::new);
+        ModSettingsListener.ensureRegistered(SocketableRoller.SettingsListener.class, SocketableRoller.SettingsListener::new);
         SocketableRoller.reloadSettings();
-        if (!LunaSettings.hasSettingsListenerOfClass(HullUpgradesSetting.SettingsListener.class)) {
-            LunaSettings.addSettingsListener(new HullUpgradesSetting.SettingsListener());
-        }
+        ModSettingsListener.ensureRegistered(HullUpgradesSetting.SettingsListener.class, HullUpgradesSetting.SettingsListener::new);
         HullUpgradesSetting.reloadSettings();
     }
 

@@ -41,7 +41,7 @@ public final class AbyssSingularity {
     static boolean canDetectDefeat() {
         Boolean known = genesisHullKnown;
         if (known == null) {
-            known = RandomAssortmentCompat.specExists(() -> Global.getSettings().getHullSpec(GENESIS_HULL_ID));
+            known = CompatTarget.specExists(() -> Global.getSettings().getHullSpec(GENESIS_HULL_ID));
             genesisHullKnown = known;
             if (!known) {
                 LOG.warn("[ExiledSector] Random Assortment of Things has no " + GENESIS_HULL_ID
@@ -77,8 +77,7 @@ public final class AbyssSingularity {
     }
 
     private static void markDefeated(SectorAPI sector, String reason) {
-        sector.getMemoryWithoutUpdate().set(DEFEATED_FLAG, true);
-        LOG.info("[ExiledSector] Unlocking the Abyss area: " + reason + ".");
+        CompatTarget.raiseSectorFlag(sector, DEFEATED_FLAG, LOG, "Unlocking the Abyss area: " + reason);
     }
 
     static boolean containsGenesis(List<FleetMemberAPI> members) {

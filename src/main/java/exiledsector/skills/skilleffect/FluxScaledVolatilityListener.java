@@ -8,7 +8,6 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.util.IntervalUtil;
 import exiledsector.compat.LostSectorCompat;
-import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 
 import java.awt.Color;
@@ -34,8 +33,7 @@ final class FluxScaledVolatilityListener extends ShipCombatListener implements A
     private float appliedRatio = Float.NaN;
     private Float penaltyScale;
     private Color afterimageColor = AFTERIMAGE_COLOR;
-    private String statusTitle;
-    private String statusText;
+    private final PlayerStatus status = new PlayerStatus(STATUS_KEY, STATUS_ICON, "combat.fluxScaled.title");
 
     FluxScaledVolatilityListener(ShipAPI ownerShip) {
         super(ownerShip, MOD_ID_PREFIX);
@@ -73,7 +71,7 @@ final class FluxScaledVolatilityListener extends ShipCombatListener implements A
 
     private void applyRatio(float ratio, float topSpeed, float rateOfFire) {
         appliedRatio = ratio;
-        statusText = null;
+        status.invalidate();
         afterimageColor = new Color(AFTERIMAGE_COLOR.getRed(), AFTERIMAGE_COLOR.getGreen(), AFTERIMAGE_COLOR.getBlue(),
                 Math.round(AFTERIMAGE_COLOR.getAlpha() * Math.max(ratio, 0f)));
         MutableShipStatsAPI stats = ownerShip.getMutableStats();
@@ -87,12 +85,11 @@ final class FluxScaledVolatilityListener extends ShipCombatListener implements A
     }
 
     private void showStatus(CombatEngineAPI engine, float ratio, float topSpeed, float rateOfFire) {
-        if (statusText == null) {
-            statusTitle = I18n.forGameText(() -> Translation.text("combat.fluxScaled.title"));
-            statusText = I18n.forGameText(() -> Translation.msg("combat.fluxScaled.status")
+        if (status.needsText()) {
+            status.setText(() -> Translation.msg("combat.fluxScaled.status")
                     .arg("speed", signed(topSpeed * ratio)).arg("rateOfFire", signed(rateOfFire * ratio)).text());
         }
-        engine.maintainStatusForPlayerShip(STATUS_KEY, STATUS_ICON, statusTitle, statusText, ratio < 0f);
+        status.show(engine, ratio < 0f);
     }
 
     private void showLowFluxEffects(CombatEngineAPI engine, float ratio) {

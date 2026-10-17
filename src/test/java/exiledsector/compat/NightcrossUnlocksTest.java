@@ -13,6 +13,7 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.skills.unlock.UnlockCondition;
+import exiledsector.skills.unlock.UnlockConditionType;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,13 +31,15 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class NightcrossUnlocksTest {
 
-    private static final List<UnlockCondition> PASCAL_GATE = List.of(UnlockCondition.nightcrossPascalVisited());
-    private static final List<UnlockCondition> LUNAR_FLEET_GATE = List.of(UnlockCondition.nightcrossLunarFleetDefeated());
-    private static final List<UnlockCondition> PROTOTYPE_GATE = List.of(UnlockCondition.nightcrossAncientPrototypeFound());
+    private static final List<UnlockCondition> PASCAL_GATE = List.of(UnlockCondition.modGate(UnlockConditionType.NIGHTCROSS_PASCAL_VISITED));
+    private static final List<UnlockCondition> LUNAR_FLEET_GATE = List.of(UnlockCondition.modGate(UnlockConditionType.NIGHTCROSS_LUNAR_FLEET_DEFEATED));
+    private static final List<UnlockCondition> PROTOTYPE_GATE = List.of(UnlockCondition.modGate(UnlockConditionType.NIGHTCROSS_ANCIENT_PROTOTYPE_FOUND));
 
     private MockedStatic<LunaSettings> lunaSettingsMock;
     private MockedStatic<Global> globalMock;
@@ -115,6 +118,17 @@ class NightcrossUnlocksTest {
     }
 
     @Test
+    void pascalMissingAtLoadDoesNotRecordAVisitSoTheGateClosesOnceNightcrossCreatesIt() {
+        when(sector.getStarSystem(NightcrossUnlocks.PASCAL_SYSTEM_NAME)).thenReturn(null);
+        NightcrossUnlocks.checkSaveOnLoad(sector);
+        assertFalse(sectorMemory.getBoolean(NightcrossUnlocks.PASCAL_VISITED_FLAG));
+
+        when(sector.getStarSystem(NightcrossUnlocks.PASCAL_SYSTEM_NAME)).thenReturn(pascal);
+
+        assertTrue(SkillTypeUnlockStatus.isLocked(PASCAL_GATE, null));
+    }
+
+    @Test
     void theStargazerAreaOpensWhenEitherLunarFleetFlagIsSet() {
         assertTrue(SkillTypeUnlockStatus.isLocked(LUNAR_FLEET_GATE, null));
 
@@ -131,6 +145,7 @@ class NightcrossUnlocksTest {
         wreck("na_mare_x_wreck", true);
 
         assertTrue(SkillTypeUnlockStatus.isLocked(PROTOTYPE_GATE, null));
+        verify(sector, never()).getEntityById(anyString());
     }
 
     @Test
@@ -144,8 +159,11 @@ class NightcrossUnlocksTest {
     }
 
     @Test
-    void aWreckTheSensorsAlreadyFoundCountsEvenWithoutTheDiscoveryEvent() {
+    void aWreckTheSensorsAlreadyFoundCountsOnLoadEvenWithoutTheDiscoveryEvent() {
         wreck("na_mare_x_wreck", false);
+        assertTrue(SkillTypeUnlockStatus.isLocked(PROTOTYPE_GATE, null), "the gate check itself only reads flags");
+
+        NightcrossUnlocks.checkSaveOnLoad(sector);
 
         assertFalse(SkillTypeUnlockStatus.isLocked(PROTOTYPE_GATE, null));
     }

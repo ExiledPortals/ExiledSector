@@ -22,6 +22,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -91,9 +92,20 @@ class NodeGatesTest {
     @Test
     void aGatedNodeCannotBeAllocatedEvenWhenItsTypeIsUnlocked() {
         SkillNode gated = node("abyss", GATE_TAG);
-        NodeEligibility.Context context = new NodeEligibility.Context(List.of(), null, null, type -> false, null);
+        ShipSkillData shipData = new ShipSkillData();
+        NodeEligibility.Context context = new NodeEligibility.Context(List.of(), null, null, type -> false, null, null,
+                node -> NodeGates.isLocked(node, shipData));
 
         assertEquals(NodeEligibility.Kind.LOCKED, NodeEligibility.check(gated, null, context).kind());
+    }
+
+    @Test
+    void npcTreesBuiltWithoutAGateCheckIgnoreThePlayersGates() {
+        SkillNode gated = node("abyss", GATE_TAG);
+        NodeEligibility.Context npcContext = new NodeEligibility.Context(List.of(), null, null, type -> false, null);
+
+        assertTrue(NodeGates.isLocked(gated, null));
+        assertNull(npcContext.gated());
     }
 
     @Test

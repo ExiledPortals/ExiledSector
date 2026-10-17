@@ -2,9 +2,8 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;
-import exiledsector.ExiledSectorModPlugin;
 import exiledsector.ModSettings;
-import lunalib.lunaSettings.LunaSettingsListener;
+import exiledsector.ModSettingsListener;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -34,14 +33,12 @@ public final class NpcBonusScale {
         }
     }
 
-    public static final class SettingsListener implements LunaSettingsListener {
+    public static final class SettingsListener extends ModSettingsListener {
 
         @Override
-        public void settingsChanged(String modId) {
-            if (ExiledSectorModPlugin.MOD_ID.equals(modId)) {
-                invalidate();
-                PlayerTreePower.logNpcScaling();
-            }
+        protected void reload() {
+            invalidate();
+            PlayerTreePower.logNpcScaling();
         }
     }
 

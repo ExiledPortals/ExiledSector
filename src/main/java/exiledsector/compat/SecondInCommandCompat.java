@@ -1,16 +1,13 @@
 package exiledsector.compat;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.PlayerFleet;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,9 +24,12 @@ public final class SecondInCommandCompat {
     private static final String SC_UTILS_CLASS = "second_in_command.SCUtils";
     private static final String SC_DATA_CLASS = "second_in_command.SCData";
 
-    private static MethodHandle getFleetDataHandle;
-    private static MethodHandle isSkillActiveHandle;
-    private static boolean lookupUnavailable;
+    static final ApiMember GET_FLEET_DATA = ApiMember.staticMethod(SC_UTILS_CLASS, "getFleetData", SC_DATA_CLASS,
+            "com.fs.starfarer.api.campaign.CampaignFleetAPI");
+    static final ApiMember IS_SKILL_ACTIVE = ApiMember.instanceMethod(SC_DATA_CLASS, "isSkillActive", ApiMember.BOOLEAN, "java.lang.String");
+    private static final OptionalApi SKILL_API = new OptionalApi(List.of(IS_SKILL_ACTIVE, GET_FLEET_DATA),
+            Logger.getLogger(SecondInCommandCompat.class), Level.ERROR,
+            "Second-in-Command skill lookup failed; disabling compatibility checks", OptionalApi.RuntimeFailure.DISABLE);
 
     private SecondInCommandCompat() {
     }
@@ -38,31 +38,22 @@ public final class SecondInCommandCompat {
         return TARGET.isEnabled();
     }
 
-    // java:S1181: MethodHandle.invoke declares Throwable, and any failure inside Second-in-Command must disable the checks rather than crash the game
-    @SuppressWarnings("java:S1181")
     public static boolean isSkillActive(FleetMemberAPI member, String skillId) {
-        if (member == null || lookupUnavailable || !isModEnabled()) {
+        if (member == null || !isModEnabled()) {
             return false;
         }
         CampaignFleetAPI commandingFleet = fleetFor(member);
         if (commandingFleet == null) {
             return false;
         }
-        try {
-            resolveMethods();
-            Object scData = getFleetDataHandle.invoke(commandingFleet);
-            return scData != null && (boolean) isSkillActiveHandle.invoke(scData, skillId);
-        } catch (Throwable e) {
-            lookupUnavailable = true;
-            Logger.getLogger(SecondInCommandCompat.class).error("Second-in-Command skill lookup failed; disabling compatibility checks", e);
-            return false;
-        }
+        return SKILL_API.call(api -> {
+            Object scData = api.handle(GET_FLEET_DATA).invoke(commandingFleet);
+            return scData != null && (boolean) api.handle(IS_SKILL_ACTIVE).invoke(scData, skillId);
+        }, false);
     }
 
     static void clearCachedLookups() {
-        getFleetDataHandle = null;
-        isSkillActiveHandle = null;
-        lookupUnavailable = false;
+        SKILL_API.reset();
     }
 
     public static boolean hasDeactivatedSMod(ShipVariantAPI variant, String hullModId) {
@@ -71,24 +62,10 @@ public final class SecondInCommandCompat {
 
     static List<String> missingFeatures() {
         List<String> missing = new ArrayList<>(CompatTarget.missingHullMods(List.of(CONTROLLER_HULLMOD_ID)));
-        try {
-            resolveMethods();
-        } catch (ReflectiveOperationException | LinkageError e) {
+        if (!SKILL_API.missingMembers().isEmpty()) {
             missing.add("SCUtils.getFleetData and SCData.isSkillActive, used to check its skills");
         }
         return missing;
-    }
-
-    private static void resolveMethods() throws ReflectiveOperationException {
-        if (getFleetDataHandle != null) {
-            return;
-        }
-        ClassLoader loader = Global.getSettings().getScriptClassLoader();
-        Class<?> scUtilsClass = Class.forName(SC_UTILS_CLASS, true, loader);
-        Class<?> scDataClass = Class.forName(SC_DATA_CLASS, true, loader);
-        MethodHandles.Lookup lookup = MethodHandles.publicLookup();
-        isSkillActiveHandle = lookup.findVirtual(scDataClass, "isSkillActive", MethodType.methodType(boolean.class, String.class));
-        getFleetDataHandle = lookup.findStatic(scUtilsClass, "getFleetData", MethodType.methodType(scDataClass, CampaignFleetAPI.class));
     }
 
     private static CampaignFleetAPI fleetFor(FleetMemberAPI member) {

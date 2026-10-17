@@ -198,6 +198,9 @@ public final class SkillTypeLoader {
 
     private static UnlockCondition parseUnlockCondition(JSONObject conditionJson) throws JSONException {
         UnlockConditionType conditionType = UnlockConditionType.valueOf(toEnumName(conditionJson.getString("type")));
+        if (conditionType.isModGate()) {
+            return UnlockCondition.modGate(conditionType);
+        }
         return switch (conditionType) {
             case BLUEPRINT -> {
                 BlueprintCategory category = BlueprintCategory.valueOf(toEnumName(conditionJson.getString("category")));
@@ -206,11 +209,7 @@ public final class SkillTypeLoader {
             case CHARACTER_STAT -> UnlockCondition.characterStat(conditionJson.getString("statId"));
             case MIN_SHIP_LEVEL -> UnlockCondition.minShipLevel(conditionJson.getInt("level"));
             case MEMORY_FLAG -> UnlockCondition.memoryFlag(conditionJson.getString("key"));
-            case RAT_PLAYER_EXOSHIP -> UnlockCondition.ratPlayerExoship();
-            case RAT_SINGULARITY_DEFEATED -> UnlockCondition.ratSingularityDefeated();
-            case NIGHTCROSS_PASCAL_VISITED -> UnlockCondition.nightcrossPascalVisited();
-            case NIGHTCROSS_LUNAR_FLEET_DEFEATED -> UnlockCondition.nightcrossLunarFleetDefeated();
-            case NIGHTCROSS_ANCIENT_PROTOTYPE_FOUND -> UnlockCondition.nightcrossAncientPrototypeFound();
+            default -> throw new JSONException("Unlock condition type " + conditionType + " has no parameter reader");
         };
     }
 

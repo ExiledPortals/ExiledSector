@@ -3,10 +3,14 @@ package exiledsector.compat;
 import com.fs.starfarer.api.Global;
 import org.apache.log4j.Logger;
 
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
-import java.util.ArrayList;
 import java.util.List;
+
+import static exiledsector.compat.ApiMember.BOOLEAN;
+import static exiledsector.compat.ApiMember.FLOAT;
+import static exiledsector.compat.ApiMember.VOID;
+import static exiledsector.compat.ApiMember.constructor;
+import static exiledsector.compat.ApiMember.instanceMethod;
+import static exiledsector.compat.ApiMember.staticMethod;
 
 public final class GraphicsLibCompat {
 
@@ -18,12 +22,15 @@ public final class GraphicsLibCompat {
     private static final String LIGHT = "org.dark.shaders.light.";
     private static final String DISTORTION = "org.dark.shaders.distortion.";
     private static final String VECTOR = "org.lwjgl.util.vector.Vector2f";
-    private static final String VOID = "void";
-    private static final String BOOLEAN = "boolean";
-    private static final String FLOAT = "float";
     private static final String SHADER_API = "org.dark.shaders.util.ShaderAPI";
-    static final List<UsedMethod> USED_METHODS = List.of(
+    private static final String COMBAT_ENTITY = "com.fs.starfarer.api.combat.CombatEntityAPI";
+    private static final String BEAM = "com.fs.starfarer.api.combat.BeamAPI";
+    static final List<ApiMember> USED_METHODS = List.of(
             staticMethod("org.dark.shaders.util.ShaderLib", "getShaderAPI", SHADER_API, "java.lang.Class"),
+            constructor(LIGHT + "StandardLight", VECTOR, VECTOR, VECTOR, COMBAT_ENTITY, FLOAT, FLOAT),
+            constructor(LIGHT + "StandardLight", VECTOR, VECTOR, VECTOR, VECTOR, BEAM, FLOAT, FLOAT),
+            constructor(DISTORTION + "RippleDistortion", VECTOR, VECTOR),
+            constructor(DISTORTION + "WaveDistortion", VECTOR, VECTOR),
             staticMethod(LIGHT + "LightShader", "addLight", VOID, LIGHT + "LightAPI"),
             instanceMethod(LIGHT + "LightShader", "isEnabled", BOOLEAN),
             staticMethod(LIGHT + "LightData", "readLightDataCSVNoOverwrite", VOID, "java.lang.String"),
@@ -31,6 +38,8 @@ public final class GraphicsLibCompat {
             instanceMethod(LIGHT + "StandardLight", "fadeOut", VOID, FLOAT),
             staticMethod(DISTORTION + "DistortionShader", "addDistortion", VOID, DISTORTION + "DistortionAPI"),
             instanceMethod(DISTORTION + "DistortionShader", "isEnabled", BOOLEAN),
+            instanceMethod(DISTORTION + "RippleDistortion", "setSize", VOID, FLOAT),
+            instanceMethod(DISTORTION + "RippleDistortion", "setIntensity", VOID, FLOAT),
             instanceMethod(DISTORTION + "RippleDistortion", "setFrameRate", VOID, FLOAT),
             instanceMethod(DISTORTION + "RippleDistortion", "fadeInSize", VOID, FLOAT),
             instanceMethod(DISTORTION + "RippleDistortion", "fadeOutSize", VOID, FLOAT),
@@ -39,21 +48,11 @@ public final class GraphicsLibCompat {
             instanceMethod(DISTORTION + "WaveDistortion", "setLocation", VOID, VECTOR),
             instanceMethod(DISTORTION + "WaveDistortion", "setSize", VOID, FLOAT),
             instanceMethod(DISTORTION + "WaveDistortion", "setIntensity", VOID, FLOAT),
+            instanceMethod(DISTORTION + "WaveDistortion", "flip", VOID, BOOLEAN),
             instanceMethod(DISTORTION + "WaveDistortion", "fadeOutIntensity", VOID, FLOAT));
     private static final Logger LOG = Logger.getLogger(GraphicsLibCompat.class);
 
     private static boolean bridgeBroken;
-
-    record UsedMethod(boolean isStatic, String className, String methodName, String returnClassName, List<String> parameterClassNames) {
-    }
-
-    static UsedMethod staticMethod(String className, String methodName, String returnClassName, String... parameterClassNames) {
-        return new UsedMethod(true, className, methodName, returnClassName, List.of(parameterClassNames));
-    }
-
-    static UsedMethod instanceMethod(String className, String methodName, String returnClassName, String... parameterClassNames) {
-        return new UsedMethod(false, className, methodName, returnClassName, List.of(parameterClassNames));
-    }
 
     private GraphicsLibCompat() {
     }
@@ -85,6 +84,14 @@ public final class GraphicsLibCompat {
         }
     }
 
+    static boolean isBridgeBroken() {
+        return bridgeBroken;
+    }
+
+    static void resetBridgeForTests() {
+        bridgeBroken = false;
+    }
+
     static void reportBroken(Throwable cause) {
         if (!bridgeBroken) {
             LOG.warn("[ExiledSector] GraphicsLib lighting for Exiled Sector effects is off: the installed GraphicsLib didn't accept our calls.",
@@ -97,34 +104,9 @@ public final class GraphicsLibCompat {
         return missingFrom(USED_METHODS, Global.getSettings().getScriptClassLoader());
     }
 
-    static List<String> missingFrom(List<UsedMethod> usedMethods, ClassLoader loader) {
-        List<String> missing = new ArrayList<>();
-        for (UsedMethod used : usedMethods) {
-            try {
-                Class<?>[] parameterTypes = new Class<?>[used.parameterClassNames().size()];
-                for (int index = 0; index < parameterTypes.length; index++) {
-                    parameterTypes[index] = typeNamed(used.parameterClassNames().get(index), loader);
-                }
-                MethodType type = MethodType.methodType(typeNamed(used.returnClassName(), loader), parameterTypes);
-                Class<?> owner = typeNamed(used.className(), loader);
-                if (used.isStatic()) {
-                    MethodHandles.publicLookup().findStatic(owner, used.methodName(), type);
-                } else {
-                    MethodHandles.publicLookup().findVirtual(owner, used.methodName(), type);
-                }
-            } catch (ReflectiveOperationException | LinkageError e) {
-                missing.add(used.className() + "." + used.methodName() + ", used for combat lights and distortions");
-            }
-        }
-        return missing;
-    }
-
-    private static Class<?> typeNamed(String name, ClassLoader loader) throws ClassNotFoundException {
-        return switch (name) {
-            case VOID -> void.class;
-            case FLOAT -> float.class;
-            case BOOLEAN -> boolean.class;
-            default -> Class.forName(name, false, loader);
-        };
+    static List<String> missingFrom(List<ApiMember> usedMethods, ClassLoader loader) {
+        return ApiMember.missingFrom(usedMethods, loader).stream()
+                .map(used -> used.displayName() + ", used for combat lights and distortions")
+                .toList();
     }
 }

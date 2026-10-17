@@ -3,10 +3,6 @@ package exiledsector.skills.unlock;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CharacterDataAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
-import exiledsector.compat.AbyssSingularity;
-import exiledsector.compat.NightcrossCompat;
-import exiledsector.compat.NightcrossUnlocks;
-import exiledsector.compat.RandomAssortmentCompat;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillType;
 import org.apache.log4j.Logger;
@@ -41,23 +37,21 @@ public final class SkillTypeUnlockStatus {
     }
 
     private static boolean isSatisfied(UnlockCondition condition, ShipSkillData shipData) {
-        if (UnlockConditionOverrides.isDisabled(condition.getType())) return true;
+        UnlockConditionType type = condition.getType();
+        if (UnlockConditionOverrides.isDisabled(type)) return true;
 
         try {
-            return switch (condition.getType()) {
+            return switch (type) {
                 case BLUEPRINT -> isBlueprintKnown(condition);
                 case CHARACTER_STAT -> hasCharacterStat(condition);
                 case MIN_SHIP_LEVEL -> hasMinShipLevel(condition, shipData);
                 case MEMORY_FLAG -> hasMemoryFlag(condition);
-                case RAT_PLAYER_EXOSHIP -> !RandomAssortmentCompat.isModEnabled() || RandomAssortmentCompat.exoshipGateOpen();
-                case RAT_SINGULARITY_DEFEATED -> !RandomAssortmentCompat.isModEnabled() || AbyssSingularity.isGateOpen(Global.getSector());
-                case NIGHTCROSS_PASCAL_VISITED -> !NightcrossCompat.isModEnabled() || NightcrossUnlocks.isPascalVisited(Global.getSector());
-                case NIGHTCROSS_LUNAR_FLEET_DEFEATED -> !NightcrossCompat.isModEnabled() || NightcrossUnlocks.isLunarFleetDefeated(Global.getSector());
-                case NIGHTCROSS_ANCIENT_PROTOTYPE_FOUND -> !NightcrossCompat.isModEnabled() || NightcrossUnlocks.isAncientPrototypeFound(Global.getSector());
+                default -> type.isModGate() && type.modGate().isOpen(Global.getSector());
             };
         } catch (RuntimeException e) {
-            Logger.getLogger(SkillTypeUnlockStatus.class).error("Failed to check unlock condition " + condition, e);
-            return false;
+            Logger.getLogger(SkillTypeUnlockStatus.class).error("Failed to check unlock condition " + condition
+                    + (type.failsOpen() ? "; leaving it open" : "; leaving it locked"), e);
+            return type.failsOpen();
         }
     }
 

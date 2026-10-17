@@ -8,6 +8,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ViewportAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import exiledsector.compat.CombatGlow;
+import exiledsector.ui.util.Fade;
 import exiledsector.ui.util.SpriteCache;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -29,6 +30,7 @@ final class RepairDroneRenderer extends BaseCombatLayeredRenderingPlugin {
     private static final float SPARK_SECONDS = 0.3f;
     private static final float SPARK_LIGHT_SIZE = 50f;
     private static final float SPARK_LIGHT_INTENSITY = 0.5f;
+    static final float ORPHAN_FADE_SECONDS = 0.6f;
 
     private final RepairCoordinatorField field;
     private final Map<RepairCoordinatorListener, Swarm> swarms = new IdentityHashMap<>();
@@ -37,11 +39,17 @@ final class RepairDroneRenderer extends BaseCombatLayeredRenderingPlugin {
     private static final class Swarm {
         private final RepairDrone[] drones = new RepairDrone[DRONES_PER_COORDINATOR];
         private float secondsSinceSpark;
+        private float presence = 1f;
 
         Swarm() {
             for (int index = 0; index < drones.length; index++) {
                 drones[index] = new RepairDrone((float) (Math.PI * 2 * index / drones.length));
             }
+        }
+
+        private boolean fadedAway(float amount) {
+            presence = Fade.step(presence, false, amount / ORPHAN_FADE_SECONDS);
+            return presence <= 0f;
         }
     }
 
@@ -66,7 +74,9 @@ final class RepairDroneRenderer extends BaseCombatLayeredRenderingPlugin {
         if (engine == null || engine.isPaused() || amount <= 0f) {
             return;
         }
-        swarms.keySet().retainAll(field.sources());
+        if (swarms.size() > field.sources().size()) {
+            swarms.entrySet().removeIf(entry -> !field.sources().contains(entry.getKey()) && entry.getValue().fadedAway(amount));
+        }
         for (RepairCoordinatorListener source : field.sources()) {
             ShipAPI ship = source.source();
             Vector2f workPoint = source.workPoint();
@@ -85,6 +95,10 @@ final class RepairDroneRenderer extends BaseCombatLayeredRenderingPlugin {
         }
     }
 
+    int swarmCount() {
+        return swarms.size();
+    }
+
     @Override
     public void render(CombatEngineLayers layer, ViewportAPI viewport) {
         if (swarms.isEmpty()) {
@@ -95,8 +109,8 @@ final class RepairDroneRenderer extends BaseCombatLayeredRenderingPlugin {
             return;
         }
         sprite.setSize(DRONE_SIZE, DRONE_SIZE);
-        sprite.setAlphaMult(viewport.getAlphaMult());
         for (Swarm swarm : swarms.values()) {
+            sprite.setAlphaMult(viewport.getAlphaMult() * swarm.presence);
             for (RepairDrone drone : swarm.drones) {
                 Vector2f position = drone.position();
                 if (drone.isDocked() || !viewport.isNearViewport(position, DRONE_SIZE)) {

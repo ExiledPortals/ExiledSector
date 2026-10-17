@@ -4,27 +4,27 @@ import com.fs.starfarer.api.combat.FluxTrackerAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
+import exiledsector.skills.HullSizeTable;
 
-import java.util.Map;
+import static exiledsector.skills.skilleffect.ScaledBonus.percent;
+import static exiledsector.skills.skilleffect.StatTarget.bonus;
+import static exiledsector.skills.skilleffect.StatTarget.scaled;
+import static exiledsector.skills.skilleffect.StatTarget.stat;
 
 final class DynamicGridListener extends ShipCombatListener implements AdvanceableListener {
 
     static final String ENERGY_BONUS_PERCENT_KEY = "exiledSector_dynamicGridEnergyBonusPercent";
-    static final Map<HullSize, Float> SHIELDS_DOWN_SECONDS = Map.of(HullSize.FIGHTER, 0.75f, HullSize.FRIGATE, 0.75f,
-            HullSize.DESTROYER, 1.1f, HullSize.CRUISER, 2f, HullSize.CAPITAL_SHIP, 3f);
+    static final HullSizeTable SHIELDS_DOWN_SECONDS = new HullSizeTable(0.75f, 0.75f, 1.1f, 2f, 3f, 3f);
     private static final String MOD_ID_PREFIX = "exiledSector_dynamicGrid_";
+    private static final ScaledBonus ENERGY_BONUS = new ScaledBonus(percent(stat(MutableShipStatsAPI::getEnergyRoFMult)),
+            percent(scaled(bonus(MutableShipStatsAPI::getEnergyWeaponFluxCostMod), -1f)));
 
     private float shieldsDownSeconds;
     private boolean bonusApplied;
 
     DynamicGridListener(ShipAPI ownerShip) {
         super(ownerShip, MOD_ID_PREFIX);
-    }
-
-    static float shieldsDownSecondsFor(HullSize hullSize) {
-        return SHIELDS_DOWN_SECONDS.getOrDefault(hullSize, 3f);
     }
 
     boolean bonusActive() {
@@ -38,21 +38,10 @@ final class DynamicGridListener extends ShipCombatListener implements Advanceabl
         boolean gridOpen = shield != null && !shield.isOn() && !fluxTracker.isVenting() && !fluxTracker.isOverloaded()
                 && ownerIsAliveNotHulk();
         shieldsDownSeconds = gridOpen ? shieldsDownSeconds + amount : 0f;
-        boolean bonusDue = gridOpen && shieldsDownSeconds >= shieldsDownSecondsFor(ownerShip.getHullSize());
+        boolean bonusDue = gridOpen && shieldsDownSeconds >= SHIELDS_DOWN_SECONDS.of(ownerShip.getHullSize());
         if (bonusDue != bonusApplied) {
             bonusApplied = bonusDue;
-            apply(bonusDue ? magnitude(ENERGY_BONUS_PERCENT_KEY) : 0f);
+            ENERGY_BONUS.apply(ownerShip.getMutableStats(), modId, bonusDue ? magnitude(ENERGY_BONUS_PERCENT_KEY) : 0f);
         }
-    }
-
-    private void apply(float percent) {
-        MutableShipStatsAPI stats = ownerShip.getMutableStats();
-        if (percent <= 0f) {
-            stats.getEnergyRoFMult().unmodify(modId);
-            stats.getEnergyWeaponFluxCostMod().unmodify(modId);
-            return;
-        }
-        stats.getEnergyRoFMult().modifyPercent(modId, percent);
-        stats.getEnergyWeaponFluxCostMod().modifyPercent(modId, -percent);
     }
 }

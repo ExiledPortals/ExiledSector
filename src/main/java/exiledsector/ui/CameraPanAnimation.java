@@ -1,5 +1,7 @@
 package exiledsector.ui;
 
+import exiledsector.ui.util.Fade;
+
 final class CameraPanAnimation {
 
     static final float DURATION_SECONDS = 1f;
@@ -35,6 +37,6 @@ final class CameraPanAnimation {
 
     private float eased() {
         float t = panAnimationElapsed / DURATION_SECONDS;
-        return t * t * (3f - 2f * t);
+        return Fade.smooth(t);
     }
 }

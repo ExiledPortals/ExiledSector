@@ -38,7 +38,6 @@ public final class NightcrossUnlocks {
         }
         StarSystemAPI pascal = sector.getStarSystem(PASCAL_SYSTEM_NAME);
         if (pascal == null) {
-            record(sector, PASCAL_VISITED_FLAG, "Nightcross's Pascal system does not exist in this sector, so its gate stays open");
             return true;
         }
         if (pascal.isEnteredByPlayer()) {
@@ -62,15 +61,8 @@ public final class NightcrossUnlocks {
             return false;
         }
         MemoryAPI memory = sector.getMemoryWithoutUpdate();
-        if (memory.getBoolean(PROTOTYPE_FOUND_FLAG) || memory.getBoolean(PROTOTYPE_DEFENDERS_DEFEATED_FLAG)
-                || memory.getBoolean(LUNAR_FLEET_DEFEATED_SECTOR_FLAG)) {
-            return true;
-        }
-        if (anyPrototypeWreckDiscovered(sector)) {
-            record(sector, PROTOTYPE_FOUND_FLAG, "an Ancient Prototype wreck has been discovered");
-            return true;
-        }
-        return false;
+        return memory.getBoolean(PROTOTYPE_FOUND_FLAG) || memory.getBoolean(PROTOTYPE_DEFENDERS_DEFEATED_FLAG)
+                || memory.getBoolean(LUNAR_FLEET_DEFEATED_SECTOR_FLAG);
     }
 
     public static void checkSaveOnLoad(SectorAPI sector) {
@@ -78,7 +70,12 @@ public final class NightcrossUnlocks {
             return;
         }
         isPascalVisited(sector);
-        if (!isAncientPrototypeFound(sector) && playerOwnsPrototype(sector.getPlayerFleet())) {
+        if (isAncientPrototypeFound(sector)) {
+            return;
+        }
+        if (anyPrototypeWreckDiscovered(sector)) {
+            record(sector, PROTOTYPE_FOUND_FLAG, "an Ancient Prototype wreck has been discovered");
+        } else if (playerOwnsPrototype(sector.getPlayerFleet())) {
             record(sector, PROTOTYPE_FOUND_FLAG, "the player already owns an Ancient Prototype hull");
         }
     }
@@ -114,8 +111,7 @@ public final class NightcrossUnlocks {
     }
 
     private static void record(SectorAPI sector, String flag, String reason) {
-        sector.getMemoryWithoutUpdate().set(flag, true);
-        LOG.info("[ExiledSector] Recording " + flag + ": " + reason + ".");
+        CompatTarget.raiseSectorFlag(sector, flag, LOG, "Recording " + flag + ": " + reason);
     }
 
     public static final class DiscoveryListener implements DiscoverEntityListener {

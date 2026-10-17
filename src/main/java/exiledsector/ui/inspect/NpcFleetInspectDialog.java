@@ -137,7 +137,7 @@ public class NpcFleetInspectDialog implements CustomVisualDialogDelegate {
         if (stripEntries.isEmpty()) {
             return;
         }
-        contentElement.addPara("%s", PAD, Misc.getBasePlayerColor(), Translation.text("inspect.socketables"));
+        VanillaText.plainPara(contentElement, Translation.text("inspect.socketables"), PAD, Misc.getBasePlayerColor());
         contentElement.addCustom(SocketableIconStrip.create(dialogPanel, stripWidth, stripEntries), PAD / 2f);
     }
 
@@ -157,7 +157,7 @@ public class NpcFleetInspectDialog implements CustomVisualDialogDelegate {
     }
 
     private static void addShip(TooltipMakerAPI tooltip, CampaignFleetAPI fleet, ShipEntry shipEntry, float pad) {
-        tooltip.addPara("%s", pad, Misc.getBasePlayerColor(), shipTitle(shipEntry.member()));
+        VanillaText.plainPara(tooltip, shipTitle(shipEntry.member()), pad, Misc.getBasePlayerColor());
         tooltip.addShipList(1, 1, ICON_SIZE, fleet.getFaction().getBaseUIColor(), List.of(shipEntry.member()), PAD / 2f);
         ShipTreeSummaryRenderer.render(tooltip, shipEntry.member(), shipEntry.shipTree(), PAD / 2f);
     }

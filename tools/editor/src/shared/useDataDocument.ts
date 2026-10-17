@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { fetchDataFiles, saveDataFiles, SERVER_HINT, type DataFiles } from '../api/client.ts';
 import { confirmAction, showIssues } from './dialogs.tsx';
 import { handleSaveResult } from './saveResult.ts';
+import { saveOutcome, type SaveTicket } from './saveTracking.ts';
 import { useReportUnsavedChanges } from './unsavedChanges.ts';
 
 export interface DataDocumentOptions<TModel> {
@@ -92,15 +93,15 @@ export function useDataDocument<TModel>(options: DataDocumentOptions<TModel>): D
       showIssues('Not saved', issues);
       return;
     }
-    const savedRevision = editRevision.current;
-    const savedLoadGeneration = loadGeneration.current;
+    const ticket: SaveTicket = { revision: editRevision.current, loadGeneration: loadGeneration.current };
     setSaving(true);
     try {
       const result = await saveDataFiles(serialize(savedModel), baseHashes.current);
       await handleSaveResult(result, {
         discardedChanges: `your unsaved ${noun} changes`,
         onSaved: (hashes) => {
-          if (loadGeneration.current !== savedLoadGeneration) {
+          const outcome = saveOutcome(ticket, { revision: editRevision.current, loadGeneration: loadGeneration.current });
+          if (outcome === 'superseded') {
             return;
           }
           baseHashes.current = { ...baseHashes.current, ...hashes };
@@ -109,7 +110,7 @@ export function useDataDocument<TModel>(options: DataDocumentOptions<TModel>): D
               current.status === 'ready' ? { status: 'ready', model: produce(current.model, (draft) => afterSave(draft, savedModel)) } : current,
             );
           }
-          if (editRevision.current === savedRevision) {
+          if (outcome === 'clean') {
             setDirty(false);
           }
         },

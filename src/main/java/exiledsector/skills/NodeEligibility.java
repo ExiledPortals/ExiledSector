@@ -31,11 +31,11 @@ public final class NodeEligibility {
     }
 
     public record Context(List<AllocatedNode> allocated, ShieldType shieldType, ShipFacts shipFacts, Predicate<SkillType> locked,
-                          ShipProfile profile, ToDoubleFunction<String> heldItems) {
+                          ShipProfile profile, ToDoubleFunction<String> heldItems, Predicate<SkillNode> gated) {
 
         public Context(List<AllocatedNode> allocated, ShieldType shieldType, ShipFacts shipFacts, Predicate<SkillType> locked,
                        ShipProfile profile) {
-            this(allocated, shieldType, shipFacts, locked, profile, null);
+            this(allocated, shieldType, shipFacts, locked, profile, null, null);
         }
 
         public static Context of(ShipSkillData data, ShipFacts shipFacts, Predicate<SkillType> locked) {
@@ -44,7 +44,7 @@ public final class NodeEligibility {
 
         public static Context of(ShipSkillData data, ShipFacts shipFacts, Predicate<SkillType> locked, ToDoubleFunction<String> heldItems) {
             return new Context(AllocatedNode.of(data), currentShieldType(data, shipFacts.hullSize(), shipFacts.hullShieldType()), shipFacts, locked,
-                    null, heldItems);
+                    null, heldItems, node -> NodeGates.isLocked(node, data));
         }
 
         public Context excluding(String nodeId, ShipSkillData data) {
@@ -54,7 +54,7 @@ public final class NodeEligibility {
             SkillItemCost refund = data.itemCharge(nodeId);
             ToDoubleFunction<String> heldAfterRefund = refund == null || heldItems == null ? heldItems
                     : itemId -> heldItems.applyAsDouble(itemId) + (itemId.equals(refund.itemId()) ? refund.quantity() : 0f);
-            return new Context(remaining, remainingShieldType, shipFacts, locked, profile, heldAfterRefund);
+            return new Context(remaining, remainingShieldType, shipFacts, locked, profile, heldAfterRefund, gated);
         }
     }
 
@@ -67,8 +67,8 @@ public final class NodeEligibility {
             return new Block(Kind.INVALID_OPTION, optionProblem.name(), null);
         }
         AllocatedNode candidate = AllocatedNode.planned(node, option);
-        if (context.locked() != null && (context.locked().test(node.getType()) || context.locked().test(candidate.effectiveType())
-                || NodeGates.isLocked(node, null))) {
+        boolean typeLocked = context.locked() != null && (context.locked().test(node.getType()) || context.locked().test(candidate.effectiveType()));
+        if (typeLocked || context.gated() != null && context.gated().test(node)) {
             return new Block(Kind.LOCKED, null, null);
         }
         if (optionProblem != null) {

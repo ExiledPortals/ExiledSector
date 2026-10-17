@@ -29,12 +29,7 @@ final class HeartlessStacks extends ShipCombatListener {
     private static final float ARC_THICKNESS = 12f;
     private static final Color ARC_FRINGE = new Color(120, 200, 255, 200);
     private static final Color STACK_LIGHT_COLOR = new Color(120, 200, 255);
-    private static final float STACK_LIGHT_SIZE_SHARE = 3f;
-    private static final float STACK_LIGHT_INTENSITY = 0.8f;
-    private static final float STACK_LIGHT_SECONDS = 1.2f;
-    private static final float STACK_RIPPLE_SIZE_SHARE = 2f;
-    private static final float STACK_RIPPLE_INTENSITY_SHARE = 0.15f;
-    private static final float STACK_RIPPLE_SECONDS = 0.8f;
+    private static final CombatGlow.Burst STACK_GLOW = new CombatGlow.Burst(STACK_LIGHT_COLOR, 3f, 0.8f, 1.2f, 2f, 0.15f, 0.8f, false);
     private static final float ARC_LIGHT_SIZE = 60f;
     private static final float ARC_LIGHT_INTENSITY = 0.8f;
     private static final float ARC_LIGHT_SECONDS = 0.3f;
@@ -83,11 +78,7 @@ final class HeartlessStacks extends ShipCombatListener {
     }
 
     private void stackGlow() {
-        float radius = ownerShip.getCollisionRadius();
-        CombatGlow.flash(ownerShip.getLocation(), ownerShip, STACK_LIGHT_COLOR, radius * STACK_LIGHT_SIZE_SHARE, STACK_LIGHT_INTENSITY,
-                STACK_LIGHT_SECONDS);
-        CombatGlow.ripple(ownerShip.getLocation(), ownerShip.getVelocity(), radius * STACK_RIPPLE_SIZE_SHARE,
-                radius * STACK_RIPPLE_INTENSITY_SHARE, STACK_RIPPLE_SECONDS, false);
+        STACK_GLOW.play(ownerShip.getLocation(), ownerShip, ownerShip.getVelocity(), ownerShip.getCollisionRadius());
     }
 
     int maxStacks() {

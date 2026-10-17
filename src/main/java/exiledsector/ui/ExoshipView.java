@@ -121,7 +121,7 @@ final class ExoshipView {
     }
 
     float viewLevel() {
-        return viewLevel * viewLevel * (3f - 2f * viewLevel);
+        return Fade.smooth(viewLevel);
     }
 
     float focusX() {

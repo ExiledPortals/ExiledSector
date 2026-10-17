@@ -1,9 +1,8 @@
 package exiledsector.socketables;
 
-import exiledsector.ExiledSectorModPlugin;
 import exiledsector.ModSettings;
+import exiledsector.ModSettingsListener;
 import exiledsector.Seeds;
-import lunalib.lunaSettings.LunaSettingsListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,13 +15,11 @@ public final class SocketableRoller {
 
     private static volatile boolean averageRollsSetting = DEFAULT_AVERAGE_ROLLS;
 
-    public static final class SettingsListener implements LunaSettingsListener {
+    public static final class SettingsListener extends ModSettingsListener {
 
         @Override
-        public void settingsChanged(String modId) {
-            if (ExiledSectorModPlugin.MOD_ID.equals(modId)) {
-                reloadSettings();
-            }
+        protected void reload() {
+            reloadSettings();
         }
     }
 

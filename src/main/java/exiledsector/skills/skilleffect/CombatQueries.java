@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
-final class CombatQueries {
+public final class CombatQueries {
 
     private CombatQueries() {
     }
@@ -28,7 +28,7 @@ final class CombatQueries {
         return ship.isAlive() && !ship.isHulk();
     }
 
-    static boolean isHostile(ShipAPI source, ShipAPI other) {
+    public static boolean isHostile(ShipAPI source, ShipAPI other) {
         return other.getOwner() != source.getOwner() && other.getOwner() != Misc.OWNER_NEUTRAL;
     }
 
@@ -66,6 +66,22 @@ final class CombatQueries {
             }
         }
         return result;
+    }
+
+    public static ShipAPI nearestShip(Vector2f point, float radius, Predicate<ShipAPI> filter) {
+        ShipAPI nearest = null;
+        float nearestDistanceSquared = radius * radius;
+        Iterator<Object> nearby = objectsNear(Global.getCombatEngine().getShipGrid(), point, radius);
+        while (nearby.hasNext()) {
+            if (nearby.next() instanceof ShipAPI candidate && filter.test(candidate)) {
+                float candidateDistanceSquared = distanceSquared(candidate.getLocation(), point);
+                if (candidateDistanceSquared < nearestDistanceSquared) {
+                    nearestDistanceSquared = candidateDistanceSquared;
+                    nearest = candidate;
+                }
+            }
+        }
+        return nearest;
     }
 
     static List<ShipAPI> hostilesNear(ShipAPI owner, Vector2f point, float radius, Predicate<ShipAPI> extraFilter) {

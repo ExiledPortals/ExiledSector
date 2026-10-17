@@ -77,14 +77,14 @@ class ShipTreeSummaryRendererTest {
     void showsLevelBuildThemesStartAndNodeCountOnOneLine() {
         ShipTreeSummaryRenderer.render(info, member, new ShipTreeLookup.ShipTree(data, List.of("ballistic", "armour")), 5f);
 
-        verify(info).addPara(eq("%s"), eq(5f), (Color) any(), eq("Level 1  |  Ballistic / Armor build  |  Low Tech start  |  1 node"));
+        verify(info).addPara(eq("%s"), eq(5f), (Color) any(), (Color) any(), eq("Level 1  |  Ballistic / Armor build  |  Low Tech start  |  1 node"));
     }
 
     @Test
     void leavesTheBuildOutWhenTheTreeHasNoThemes() {
         ShipTreeSummaryRenderer.render(info, member, new ShipTreeLookup.ShipTree(data, List.of()), 5f);
 
-        verify(info).addPara(eq("%s"), eq(5f), (Color) any(), eq("Level 1  |  Low Tech start  |  1 node"));
+        verify(info).addPara(eq("%s"), eq(5f), (Color) any(), (Color) any(), eq("Level 1  |  Low Tech start  |  1 node"));
     }
 
     @Test
@@ -101,7 +101,7 @@ class ShipTreeSummaryRendererTest {
     void scaledNpcTreesShowTheMultiplierAndTheScaledBonuses() {
         ShipTreeSummaryRenderer.render(info, member, new ShipTreeLookup.ShipTree(data, List.of(), 2.5f), 5f);
 
-        verify(info).addPara(eq("%s"), eq(5f), (Color) any(), eq("Level 1  |  Low Tech start  |  1 node  |  2.5x bonuses"));
+        verify(info).addPara(eq("%s"), eq(5f), (Color) any(), (Color) any(), eq("Level 1  |  Low Tech start  |  1 node  |  2.5x bonuses"));
         verify(info).addPara(eq("%s"), anyFloat(), (Color) any(), (Color) any(), eq("    - " + DefenseSkillEffect.HULL_PERCENT.description(25f).plain()));
     }
 }

@@ -3,6 +3,7 @@ package exiledsector.ui;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.ui.hyperspace.HyperspaceCamera;
 import exiledsector.ui.node.TreeAllocationSession;
+import exiledsector.ui.util.Fade;
 
 final class TreeCamera {
 
@@ -81,7 +82,7 @@ final class TreeCamera {
         }
         followSeconds += amount;
         float progress = Math.min(1f, followSeconds / FOLLOW_SETTLE_SECONDS);
-        float eased = progress * progress * (3f - 2f * progress);
+        float eased = Fade.smooth(progress);
         centreOn(followStartX + (treeX - followStartX) * eased + followNudgeX, followStartY + (treeY - followStartY) * eased + followNudgeY);
         followOffsetX += (followOffsetTargetX - followOffsetX) * Math.min(1f, amount * FOLLOW_OFFSET_RESPONSE_PER_SECOND);
         panX += followOffsetX;

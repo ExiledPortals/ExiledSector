@@ -11,6 +11,7 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.skills.unlock.UnlockCondition;
+import exiledsector.skills.unlock.UnlockConditionType;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +31,7 @@ class RandomAssortmentExoshipTest {
 
     private static final String RAT_EXO_DATA_MEMORY_KEY = "$rat_exo_data";
     private static final SkillType BEACON = new SkillType.Builder("exotech_beacon", "Hyper-Nav Beacon", "", SkillTier.WORMHOLE)
-            .unlockConditions(List.of(UnlockCondition.ratPlayerExoship()))
+            .unlockConditions(List.of(UnlockCondition.modGate(UnlockConditionType.RAT_PLAYER_EXOSHIP)))
             .build();
 
     private MockedStatic<Global> globalMock;
@@ -121,5 +122,16 @@ class RandomAssortmentExoshipTest {
         lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", "exiledSector_disableMemoryFlagUnlock")).thenReturn(true);
 
         assertFalse(SkillTypeUnlockStatus.isLocked(BEACON, null));
+    }
+
+    @Test
+    void aOneOffFailureInsideRatOpensTheBeaconForThatCheckOnlyAndTheNextCheckReadsRatAgain() {
+        when(sectorMemory.get(RAT_EXO_DATA_MEMORY_KEY)).thenThrow(new IllegalStateException("save still loading")).thenReturn(exoData);
+
+        assertTrue(RandomAssortmentCompat.exoshipGateOpen());
+        assertFalse(RandomAssortmentCompat.exoshipGateOpen());
+
+        exoData.setRecoveredExoship(true);
+        assertTrue(RandomAssortmentCompat.exoshipGateOpen());
     }
 }

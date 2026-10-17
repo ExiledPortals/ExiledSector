@@ -2,7 +2,7 @@ package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.ShipAPI;
 
-final class MalfunctionAuraListener extends ShipCombatListener {
+final class MalfunctionAuraListener extends ShipCombatListener implements AuraField.Source {
 
     static final String MALFUNCTION_PERCENT_KEY = "exiledSector_malfunctionAuraPercent";
 
@@ -11,7 +11,8 @@ final class MalfunctionAuraListener extends ShipCombatListener {
         MalfunctionAuraField.register(this);
     }
 
-    ShipAPI source() {
+    @Override
+    public ShipAPI source() {
         return ownerShip;
     }
 

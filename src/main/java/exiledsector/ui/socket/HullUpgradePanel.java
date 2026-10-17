@@ -159,9 +159,6 @@ public final class HullUpgradePanel extends HoloPanel {
     private void rebuildList() {
         hoverTooltip.hide();
         closeConfirm();
-        if (listElement != null) {
-            panelRoot.removeComponent(placedComponent(listElement));
-        }
         float listWidth = panelWidth - PAD * 2f;
         float listTop = PAD + HEADER_HEIGHT + GAP;
         TooltipMakerAPI element = panelRoot.createUIElement(listWidth, panelHeight - listTop - PAD, true);
@@ -188,8 +185,7 @@ public final class HullUpgradePanel extends HoloPanel {
             }
             element.addCustom(rowPanel, GAP * 2f);
         }
-        panelRoot.addUIElement(element).inTL(PAD, listTop);
-        listElement = element;
+        listElement = replaceElement(placedComponent(listElement), element, PAD, listTop);
         refreshOpacity();
     }
 

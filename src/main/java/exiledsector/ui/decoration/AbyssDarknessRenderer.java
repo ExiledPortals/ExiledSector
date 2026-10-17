@@ -4,6 +4,7 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.SkillTree;
 import exiledsector.ui.TreeViewport;
+import exiledsector.ui.util.Fade;
 import exiledsector.ui.util.GlScope;
 import org.lwjgl.opengl.GL11;
 
@@ -89,7 +90,7 @@ public class AbyssDarknessRenderer {
 
     static float darkness(float depth) {
         float clamped = Math.max(0f, Math.min(1f, depth));
-        return clamped * clamped * (3f - 2f * clamped);
+        return Fade.smooth(clamped);
     }
 
     private float depthAt(float screenX, float screenY) {

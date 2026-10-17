@@ -10,9 +10,7 @@ import exiledsector.skills.SkillTree;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.Fade;
 import exiledsector.ui.util.SpriteCache;
-import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.TexturedQuadBatch;
-import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -39,17 +37,18 @@ public class SkillTreeFleetRenderer {
 
         public float anchorScreenX(ShipAnchors.Anchor anchor) {
             double facing = Math.toRadians(facingDeg);
-            return screenX + (anchor.forward() * (float) Math.cos(facing) - anchor.left() * (float) Math.sin(facing)) * screenScale;
+            return screenX + HullFrame.rotatedX(anchor.forward(), anchor.left(), (float) Math.cos(facing), (float) Math.sin(facing)) * screenScale;
         }
 
         public float anchorScreenY(ShipAnchors.Anchor anchor) {
             double facing = Math.toRadians(facingDeg);
-            return screenY + (anchor.forward() * (float) Math.sin(facing) + anchor.left() * (float) Math.cos(facing)) * screenScale;
+            return screenY + HullFrame.rotatedY(anchor.forward(), anchor.left(), (float) Math.cos(facing), (float) Math.sin(facing)) * screenScale;
         }
     }
 
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeFleetRenderer.class);
     private final TexturedQuadBatch glowQuads = new TexturedQuadBatch();
+    private final FlameBatch flameBatch = new FlameBatch();
     private final List<FleetShip> ships;
     private final FleetFlight flight;
     private final float cullRadius;
@@ -211,19 +210,14 @@ public class SkillTreeFleetRenderer {
         SpriteAPI flameTexture = spriteCache.texture(HullEngines.FLAME_PATH);
         if (flameTexture == null) return;
         float lengthFactor = HullEngines.flameLengthFactor(flight.engineLevel());
-        float textureRight = flameTexture.getTextureWidth();
-        float textureTop = flameTexture.getTextureHeight();
-        try (GlScope scope = GlScope.textured(GL11.GL_SRC_ALPHA, GL11.GL_ONE)) {
-            flameTexture.bindTexture();
-            GL11.glBegin(GL11.GL_QUADS);
+        try (FlameBatch flames = flameBatch.begin(flameTexture)) {
             for (int i = 0; i < ships.size(); i++) {
                 if (shipScreenScale[i] > 0f) {
                     FleetShip ship = ships.get(i);
-                    ship.engines().addFlames(shipScreenX[i], shipScreenY[i], Math.toRadians(ship.drift().facingDeg()), shipScreenScale[i],
-                            zoom, lengthFactor, shipAlpha[i], textureRight, textureTop);
+                    ship.engines().addFlames(flames, shipScreenX[i], shipScreenY[i], Math.toRadians(ship.drift().facingDeg()), shipScreenScale[i],
+                            zoom, lengthFactor, shipAlpha[i]);
                 }
             }
-            GL11.glEnd();
         }
     }
 

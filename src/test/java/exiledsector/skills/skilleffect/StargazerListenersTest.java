@@ -134,6 +134,7 @@ class StargazerListenersTest {
         DamageAPI damage = mock(DamageAPI.class);
         when(damage.getDamage()).thenReturn(amount);
         when(damage.getFluxComponent()).thenReturn(emp);
+        when(damage.computeFluxDealt(0f)).thenReturn(emp);
         when(damage.getMultiplier()).thenReturn(1f);
         return damage;
     }
@@ -149,7 +150,18 @@ class StargazerListenersTest {
         when(beamTick.getDpsDuration()).thenReturn(0.1f);
         assertEquals(50f, FurorListener.countedDamage(beamTick, false), 0.001f);
         when(beamTick.getMultiplier()).thenReturn(0.5f);
-        assertEquals(25f, FurorListener.countedDamage(beamTick, false), 0.001f);
+        when(beamTick.getDamage()).thenReturn(250f);
+        assertEquals(25f, FurorListener.countedDamage(beamTick, false), 0.001f, "a half-bright beam counts its multiplier once, not squared");
+    }
+
+    @Test
+    void furorCountsEmpAfterDamageModifiersAndAcrossTheBeamTick() {
+        DamageAPI beamTick = damage(500f, 0f);
+        when(beamTick.isDps()).thenReturn(true);
+        when(beamTick.getDpsDuration()).thenReturn(0.1f);
+        when(beamTick.computeFluxDealt(0f)).thenReturn(40f);
+
+        assertEquals(50f + 40f * FurorListener.EMP_WEIGHT, FurorListener.countedDamage(beamTick, false), 0.001f);
     }
 
     @Test
@@ -228,12 +240,52 @@ class StargazerListenersTest {
             verify(mote.getDamage()).setDamage(200f);
             verify(mote.getDamage()).setFluxComponent(200f);
 
-            float contactBefore = corrosion.contactSeconds(weapon);
+            float contactBefore = corrosion.contactSeconds(weapon, 0);
             corrosion.modifyDamageDealt(beam, ship("ally", 0, Map.of()), tick, new Vector2f(), false);
             corrosion.modifyDamageDealt(new Object(), enemy, tick, new Vector2f(), false);
             corrosion.modifyDamageDealt(beam, enemy, tick, new Vector2f(), true);
-            assertEquals(contactBefore, corrosion.contactSeconds(weapon), 0.0001f);
+            assertEquals(contactBefore, corrosion.contactSeconds(weapon, 0), 0.0001f);
         }
-        assertTrue(corrosion.contactSeconds(weapon) < CorrosionMoteListener.CONTACT_SECONDS_PER_MOTE);
+        assertTrue(corrosion.contactSeconds(weapon, 0) < CorrosionMoteListener.CONTACT_SECONDS_PER_MOTE);
+    }
+
+    @Test
+    void corrosionCountsEachBeamOfAMultiBeamWeaponSeparately() {
+        ShipAPI ship = ship("corrosion", 0, Map.of(CorrosionMoteListener.MOTE_DAMAGE_KEY, 200f));
+        ShipAPI enemy = ship("enemy", 1, Map.of());
+        CorrosionMoteListener corrosion = new CorrosionMoteListener(ship, new Random(1));
+        WeaponAPI weapon = mock(WeaponAPI.class);
+        BeamAPI left = mock(BeamAPI.class);
+        BeamAPI right = mock(BeamAPI.class);
+        when(left.getWeapon()).thenReturn(weapon);
+        when(right.getWeapon()).thenReturn(weapon);
+        when(weapon.getBeams()).thenReturn(List.of(left, right));
+        DamageAPI tick = mock(DamageAPI.class);
+        when(tick.isDps()).thenReturn(true);
+        when(tick.getDpsDuration()).thenReturn(0.1f);
+
+        for (int ticks = 0; ticks < 15; ticks++) {
+            corrosion.modifyDamageDealt(left, enemy, tick, new Vector2f(), false);
+            corrosion.modifyDamageDealt(right, enemy, tick, new Vector2f(), false);
+        }
+
+        assertEquals(1.5f, corrosion.contactSeconds(weapon, 0), 0.0001f);
+        assertEquals(1.5f, corrosion.contactSeconds(weapon, 1), 0.0001f);
+    }
+
+    @Test
+    void furorAndDynamicGridKeepTheirPerHullSizeValuesAndFallbacks() {
+        assertEquals(2000f, FurorListener.DAMAGE_FOR_FULL_FUROR.of(HullSize.FIGHTER));
+        assertEquals(2000f, FurorListener.DAMAGE_FOR_FULL_FUROR.of(HullSize.FRIGATE));
+        assertEquals(4000f, FurorListener.DAMAGE_FOR_FULL_FUROR.of(HullSize.DESTROYER));
+        assertEquals(8000f, FurorListener.DAMAGE_FOR_FULL_FUROR.of(HullSize.CRUISER));
+        assertEquals(20000f, FurorListener.DAMAGE_FOR_FULL_FUROR.of(HullSize.CAPITAL_SHIP));
+        assertEquals(20000f, FurorListener.DAMAGE_FOR_FULL_FUROR.of(HullSize.DEFAULT));
+        assertEquals(0.75f, DynamicGridListener.SHIELDS_DOWN_SECONDS.of(HullSize.FIGHTER));
+        assertEquals(0.75f, DynamicGridListener.SHIELDS_DOWN_SECONDS.of(HullSize.FRIGATE));
+        assertEquals(1.1f, DynamicGridListener.SHIELDS_DOWN_SECONDS.of(HullSize.DESTROYER));
+        assertEquals(2f, DynamicGridListener.SHIELDS_DOWN_SECONDS.of(HullSize.CRUISER));
+        assertEquals(3f, DynamicGridListener.SHIELDS_DOWN_SECONDS.of(HullSize.CAPITAL_SHIP));
+        assertEquals(3f, DynamicGridListener.SHIELDS_DOWN_SECONDS.of(HullSize.DEFAULT));
     }
 }

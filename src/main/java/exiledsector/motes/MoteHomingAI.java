@@ -9,9 +9,9 @@ import com.fs.starfarer.api.combat.MissileAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipCommand;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.skills.skilleffect.CombatQueries;
 import org.lwjgl.util.vector.Vector2f;
 
-import java.util.Iterator;
 
 public final class MoteHomingAI implements MissileAIPlugin, GuidedMissileAI {
 
@@ -47,8 +47,7 @@ public final class MoteHomingAI implements MissileAIPlugin, GuidedMissileAI {
     }
 
     static boolean isHostileShip(ShipAPI source, ShipAPI candidate) {
-        return source != null && !candidate.isFighter() && candidate.getOwner() != source.getOwner()
-                && candidate.getOwner() != Misc.OWNER_NEUTRAL;
+        return source != null && !candidate.isFighter() && CombatQueries.isHostile(source, candidate);
     }
 
     @Override
@@ -74,34 +73,18 @@ public final class MoteHomingAI implements MissileAIPlugin, GuidedMissileAI {
                 return;
             }
             secondsUntilRetargetScan = RETARGET_SCAN_SECONDS;
-            target = nearestEnemyShip(engine, source);
+            target = CombatQueries.nearestShip(mote.getLocation(), RETARGET_RANGE,
+                    candidate -> isHostileShip(source, candidate) && isValidTarget(engine, candidate));
             if (target == null) {
                 return;
             }
         }
         Vector2f aimPoint = engine.getAimPointWithLeadForAutofire(mote, LEAD_ACCURACY, target, LEAD_MAX_RANGE_PAD);
-        engine.headInDirectionWithoutTurning(mote, Motes.angleDegrees(mote.getLocation(), aimPoint), HEAD_IN_DIRECTION_TOLERANCE);
+        engine.headInDirectionWithoutTurning(mote, Misc.getAngleInDegreesStrict(mote.getLocation(), aimPoint), HEAD_IN_DIRECTION_TOLERANCE);
         mote.giveCommand(spinsLeft ? ShipCommand.TURN_LEFT : ShipCommand.TURN_RIGHT);
     }
 
     static boolean isValidTarget(CombatEngineAPI engine, CombatEntityAPI candidate) {
         return candidate instanceof ShipAPI ship && ship.isAlive() && !ship.isHulk() && !ship.isPhased() && engine.isEntityInPlay(ship);
-    }
-
-    private ShipAPI nearestEnemyShip(CombatEngineAPI engine, ShipAPI source) {
-        ShipAPI nearest = null;
-        float nearestDistanceSquared = RETARGET_RANGE * RETARGET_RANGE;
-        Vector2f moteLocation = mote.getLocation();
-        Iterator<Object> nearby = engine.getShipGrid().getCheckIterator(moteLocation, RETARGET_RANGE * 2f, RETARGET_RANGE * 2f);
-        while (nearby.hasNext()) {
-            if (nearby.next() instanceof ShipAPI candidate && isHostileShip(source, candidate) && isValidTarget(engine, candidate)) {
-                float distanceSquared = Vector2f.sub(candidate.getLocation(), moteLocation, null).lengthSquared();
-                if (distanceSquared < nearestDistanceSquared) {
-                    nearestDistanceSquared = distanceSquared;
-                    nearest = candidate;
-                }
-            }
-        }
-        return nearest;
     }
 }

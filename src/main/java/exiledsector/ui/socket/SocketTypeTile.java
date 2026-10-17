@@ -6,6 +6,7 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.socketables.SocketType;
 import exiledsector.ui.socket.HullUpgradePanel.SocketState;
 import exiledsector.ui.framework.FrameworkSocketFlair;
+import exiledsector.ui.util.Fade;
 import exiledsector.ui.util.GLDraw;
 
 import java.awt.Color;
@@ -45,7 +46,7 @@ final class SocketTypeTile extends BaseCustomUIPanelPlugin {
         float step = Math.min(MAX_STEP_SECONDS, amount);
         elapsedSeconds += step;
         float hoverStep = step / HOVER_SECONDS;
-        hoverLevel = Math.max(0f, Math.min(1f, hoverLevel + (tileInput.isHovered() && isClickable() ? hoverStep : -hoverStep)));
+        hoverLevel = Fade.step(hoverLevel, tileInput.isHovered() && isClickable(), hoverStep);
     }
 
     @Override

@@ -45,6 +45,9 @@ final class EditorVocabulary {
         json.append("  \"tiers\": ").append(list(Arrays.stream(SkillTier.values()).map(Enum::name).toList())).append(",\n");
         json.append("  \"unlockConditionTypes\": ")
                 .append(list(Arrays.stream(UnlockConditionType.values()).map(type -> camelCase(type.name())).toList())).append(",\n");
+        json.append("  \"parameterlessUnlockConditionTypes\": ")
+                .append(list(Arrays.stream(UnlockConditionType.values()).filter(UnlockConditionType::isModGate)
+                        .map(type -> camelCase(type.name())).toList())).append(",\n");
         json.append("  \"blueprintCategories\": ")
                 .append(list(Arrays.stream(BlueprintCategory.values()).map(category -> camelCase(category.name())).toList())).append(",\n");
         json.append("  \"socketableKinds\": ").append(list(Arrays.stream(SocketType.values()).map(SocketType::id).toList())).append(",\n");

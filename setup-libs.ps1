@@ -20,7 +20,11 @@ $coreJars = @(
 )
 
 foreach ($jar in $coreJars) {
-    Copy-Item -Path (Join-Path $starsectorCore $jar) -Destination $libs -Force
+    $coreJar = Join-Path $starsectorCore $jar
+    if (-not (Test-Path -LiteralPath $coreJar)) {
+        throw "Missing $coreJar. Install Starsector at $starsectorCore (or change `$starsectorCore in setup-libs.ps1) and run it again."
+    }
+    Copy-Item -Path $coreJar -Destination $libs -Force
 }
 
 $libJars = @{
@@ -34,7 +38,11 @@ $libJars = @{
 foreach ($modName in $libJars.Keys) {
     $srcJarsDir = Join-Path $sourceMods "$modName\jars"
     foreach ($jar in $libJars[$modName]) {
-        Copy-Item -Path (Join-Path $srcJarsDir $jar) -Destination (Join-Path $libs (Split-Path $jar -Leaf)) -Force
+        $modJar = Join-Path $srcJarsDir $jar
+        if (-not (Test-Path -LiteralPath $modJar)) {
+            throw "Missing $modJar. Exiled Sector compiles against $modName, so install $modName into $sourceMods and run setup-libs.ps1 again."
+        }
+        Copy-Item -Path $modJar -Destination (Join-Path $libs (Split-Path $jar -Leaf)) -Force
     }
 }
 

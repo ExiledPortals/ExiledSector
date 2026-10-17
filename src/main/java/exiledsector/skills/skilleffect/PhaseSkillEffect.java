@@ -91,12 +91,7 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
     private static final class PhaseAnchorDiveListener implements HullDamageAboutToBeTakenListener, AdvanceableListener {
 
         private static final String DIVE_FLAG_KEY = "phaseAnchor_canDive";
-        private static final float VANISH_LIGHT_SIZE_SHARE = 4f;
-        private static final float VANISH_LIGHT_INTENSITY = 1f;
-        private static final float VANISH_LIGHT_SECONDS = 1f;
-        private static final float VANISH_RIPPLE_SIZE_SHARE = 3f;
-        private static final float VANISH_RIPPLE_INTENSITY_SHARE = 0.3f;
-        private static final float VANISH_RIPPLE_SECONDS = 0.8f;
+        private static final CombatGlow.Burst VANISH_GLOW = new CombatGlow.Burst(null, 4f, 1f, 1f, 3f, 0.3f, 0.8f, true);
 
         private final ShipAPI ownerShip;
         private final String modId;
@@ -193,10 +188,7 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
         }
 
         private void vanishGlow(Color effectColor) {
-            float radius = ownerShip.getCollisionRadius();
-            CombatGlow.flash(ownerShip.getLocation(), null, effectColor, radius * VANISH_LIGHT_SIZE_SHARE, VANISH_LIGHT_INTENSITY, VANISH_LIGHT_SECONDS);
-            CombatGlow.ripple(ownerShip.getLocation(), new Vector2f(), radius * VANISH_RIPPLE_SIZE_SHARE, radius * VANISH_RIPPLE_INTENSITY_SHARE,
-                    VANISH_RIPPLE_SECONDS, true);
+            VANISH_GLOW.play(ownerShip.getLocation(), null, new Vector2f(), ownerShip.getCollisionRadius(), effectColor);
         }
     }
 }

@@ -4,8 +4,8 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.util.IntervalUtil;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.IdentityHashMap;
+import java.util.Map;
 
 final class TerrifyingPresenceListener extends ShipCombatListener implements AdvanceableListener {
 
@@ -15,7 +15,7 @@ final class TerrifyingPresenceListener extends ShipCombatListener implements Adv
     private static final String MOD_ID_PREFIX = "exiledSector_terrifyingPresence_";
 
     private final IntervalUtil updateInterval = new IntervalUtil(UPDATE_SECONDS, UPDATE_SECONDS);
-    private Set<ShipAPI> affectedEnemies = new HashSet<>();
+    private final AppliedAuraValues affectedEnemies = new AppliedAuraValues(AppliedAuraValues.Change.ALWAYS);
 
     TerrifyingPresenceListener(ShipAPI ownerShip) {
         super(ownerShip, MOD_ID_PREFIX);
@@ -28,16 +28,14 @@ final class TerrifyingPresenceListener extends ShipCombatListener implements Adv
             return;
         }
         float penalty = isPresent() ? magnitude(ACCURACY_PENALTY_PERCENT_KEY) / 100f : 0f;
-        Set<ShipAPI> inRange = penalty > 0f ? new HashSet<>(CombatQueries.shipsNear(ownerShip.getLocation(), RANGE, this::isTerrified)) : new HashSet<>();
-        for (ShipAPI previous : affectedEnemies) {
-            if (!inRange.contains(previous)) {
-                previous.getMutableStats().getAutofireAimAccuracy().unmodify(modId);
+        Map<ShipAPI, Float> penaltyByEnemy = new IdentityHashMap<>();
+        if (penalty > 0f) {
+            for (ShipAPI enemy : CombatQueries.shipsNear(ownerShip.getLocation(), RANGE, this::isTerrified)) {
+                penaltyByEnemy.put(enemy, penalty);
             }
         }
-        for (ShipAPI enemy : inRange) {
-            enemy.getMutableStats().getAutofireAimAccuracy().modifyFlat(modId, -penalty);
-        }
-        affectedEnemies = inRange;
+        affectedEnemies.update(penaltyByEnemy, enemy -> enemy.getMutableStats().getAutofireAimAccuracy().unmodify(modId),
+                (enemy, enemyPenalty) -> enemy.getMutableStats().getAutofireAimAccuracy().modifyFlat(modId, -enemyPenalty));
     }
 
     private boolean isPresent() {

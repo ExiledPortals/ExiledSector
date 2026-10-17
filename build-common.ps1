@@ -1,3 +1,5 @@
+$ModRootFiles = @("mod_info.json", "ExiledSector.version", "LICENSE", "CREDITS.md")
+
 function Get-MavenCommand {
     $mvnCmd = Get-Command mvn -ErrorAction SilentlyContinue
     if ($mvnCmd) {
@@ -18,6 +20,8 @@ function Invoke-ModBuild {
     param([string]$ProjectRoot)
 
     $mvn = Get-MavenCommand
+    $buildLock = Join-Path $ProjectRoot ".maven-build.lock"
+    Set-Content -LiteralPath $buildLock -Value $PID
     Push-Location $ProjectRoot
     try {
         & $mvn -q clean package
@@ -26,6 +30,7 @@ function Invoke-ModBuild {
         }
     } finally {
         Pop-Location
+        Remove-Item -LiteralPath $buildLock -Force -ErrorAction SilentlyContinue
     }
 }
 
@@ -34,7 +39,7 @@ function Copy-ModFiles {
 
     $excludedGraphics = @("description", "unused")
     New-Item -ItemType Directory -Force -Path $Destination | Out-Null
-    foreach ($file in @("mod_info.json", "ExiledSector.version", "LICENSE", "CREDITS.md")) {
+    foreach ($file in $ModRootFiles) {
         Copy-Item -Path (Join-Path $ProjectRoot $file) -Destination $Destination -Force
     }
     foreach ($folder in @("jars", "data", "sounds")) {

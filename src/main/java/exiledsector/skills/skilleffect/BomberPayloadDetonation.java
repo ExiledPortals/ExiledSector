@@ -50,10 +50,11 @@ final class BomberPayloadDetonation implements AdvanceableListener {
     }
 
     static void arm(ShipAPI bomber, ShipAPI carrier, float chancePercent) {
-        if (chancePercent <= 0f || !isBomber(bomber) || bomber.hasListenerOfClass(BomberPayloadDetonation.class)) {
+        if (chancePercent <= 0f || !isBomber(bomber)) {
             return;
         }
-        bomber.addListener(new BomberPayloadDetonation(bomber, carrier, chancePercent, new Random()));
+        SkillEffectSupport.ensureListener(bomber, BomberPayloadDetonation.class,
+                ship -> new BomberPayloadDetonation(ship, carrier, chancePercent, new Random()));
     }
 
     static boolean isBomber(ShipAPI fighter) {

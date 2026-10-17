@@ -3,6 +3,8 @@ package exiledsector.compat;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ModManagerAPI;
 import com.fs.starfarer.api.SettingsAPI;
+import com.fs.starfarer.api.campaign.SectorAPI;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,5 +27,18 @@ public record CompatTarget(String displayName, List<String> modIds, List<String>
             }
         }
         return missing;
+    }
+
+    static boolean specExists(Supplier<Object> spec) {
+        try {
+            return spec.get() != null;
+        } catch (RuntimeException e) {
+            return false;
+        }
+    }
+
+    static void raiseSectorFlag(SectorAPI sector, String flag, Logger log, String logLine) {
+        sector.getMemoryWithoutUpdate().set(flag, true);
+        log.info("[ExiledSector] " + logLine + ".");
     }
 }

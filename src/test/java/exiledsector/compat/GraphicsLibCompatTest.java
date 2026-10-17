@@ -6,6 +6,7 @@ import com.fs.starfarer.api.ModManagerAPI;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import org.junit.jupiter.api.Test;
+import org.dark.shaders.distortion.WaveDistortion;
 import org.lwjgl.util.vector.Vector2f;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -67,8 +68,8 @@ class GraphicsLibCompatTest {
         assertEquals(List.of(), GraphicsLibCompat.missingFrom(GraphicsLibCompat.USED_METHODS, loader));
 
         List<String> missing = GraphicsLibCompat.missingFrom(List.of(
-                GraphicsLibCompat.staticMethod("org.dark.shaders.light.LightShader", "addLightRenamed", "void", "org.dark.shaders.light.LightAPI"),
-                GraphicsLibCompat.instanceMethod("org.dark.shaders.gone.Shader", "isEnabled", "boolean")), loader);
+                ApiMember.staticMethod("org.dark.shaders.light.LightShader", "addLightRenamed", "void", "org.dark.shaders.light.LightAPI"),
+                ApiMember.instanceMethod("org.dark.shaders.gone.Shader", "isEnabled", "boolean")), loader);
         assertEquals(2, missing.size());
         assertTrue(missing.get(0).startsWith("org.dark.shaders.light.LightShader.addLightRenamed"));
     }
@@ -143,6 +144,74 @@ class GraphicsLibCompatTest {
             assertSame(CombatGlow.Lens.NONE, CombatGlow.lens(new Vector2f(), 100f, 10f));
             verify(modManager, times(1)).isModEnabled(GraphicsLibCompat.MOD_ID);
             verify(engine, Mockito.never()).getViewport();
+        }
+    }
+
+    @Test
+    void aLensWhoseGraphicsLibCallsFailTurnsGraphicsLibOffAndFadesItselfOut() {
+        GraphicsLibCompat.resetBridgeForTests();
+        try {
+            WaveDistortion wave = mock(WaveDistortion.class);
+            Mockito.doThrow(new NoSuchMethodError("setLocation")).when(wave).setLocation(Mockito.any());
+            GraphicsLibGlow.WaveLens lens = new GraphicsLibGlow.WaveLens(wave);
+
+            lens.update(new Vector2f(), 100f, 1f);
+            lens.update(new Vector2f(), 100f, 1f);
+            lens.fadeOut(1f);
+
+            assertTrue(GraphicsLibCompat.isBridgeBroken());
+            verify(wave, times(1)).setLocation(Mockito.any());
+            verify(wave, times(1)).fadeOutIntensity(Mockito.anyFloat());
+        } finally {
+            GraphicsLibCompat.resetBridgeForTests();
+        }
+    }
+
+    @Test
+    void aLensFadesOutInsteadOfFreezingOnceAnotherCallBrokeTheBridge() {
+        GraphicsLibCompat.resetBridgeForTests();
+        try {
+            WaveDistortion wave = mock(WaveDistortion.class);
+            GraphicsLibGlow.WaveLens lens = new GraphicsLibGlow.WaveLens(wave);
+            GraphicsLibCompat.reportBroken(new NoSuchMethodError("addLight"));
+
+            lens.update(new Vector2f(), 100f, 1f);
+            lens.fadeOut(1f);
+
+            verify(wave, Mockito.never()).setLocation(Mockito.any());
+            verify(wave, times(1)).fadeOutIntensity(Mockito.anyFloat());
+        } finally {
+            GraphicsLibCompat.resetBridgeForTests();
+        }
+    }
+
+    @Test
+    void aBurstFlashesAndRipplesScaledByItsRadius() {
+        GraphicsLibCompat.resetBridgeForTests();
+        SettingsAPI settings = mock(SettingsAPI.class);
+        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+        Map<String, Object> customData = new HashMap<>();
+        CombatGlow.Renderer renderer = mock(CombatGlow.Renderer.class);
+        when(renderer.lightsOn()).thenReturn(true);
+        when(renderer.distortionOn()).thenReturn(true);
+        customData.put(CombatGlow.CUSTOM_DATA_KEY, new CombatGlow.Battle(renderer));
+        when(engine.getCustomData()).thenReturn(customData);
+        Vector2f location = new Vector2f(10f, 20f);
+        Vector2f velocity = new Vector2f(1f, 0f);
+        CombatGlow.Burst burst = new CombatGlow.Burst(Color.RED, 2f, 0.5f, 1.5f, 3f, 0.1f, 0.8f, true);
+        try (MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
+            global.when(Global::getSettings).thenReturn(settings);
+            global.when(Global::getCurrentState).thenReturn(GameState.COMBAT);
+            global.when(Global::getCombatEngine).thenReturn(engine);
+
+            burst.play(location, null, velocity, 100f);
+            burst.play(location, null, velocity, 100f, Color.BLUE);
+
+            verify(renderer).flash(location, null, Color.RED, 200f, 0.5f, 1.5f);
+            verify(renderer).flash(location, null, Color.BLUE, 200f, 0.5f, 1.5f);
+            verify(renderer, times(2)).ripple(location, velocity, 300f, 10f, 0.8f, true);
+        } finally {
+            GraphicsLibCompat.resetBridgeForTests();
         }
     }
 }

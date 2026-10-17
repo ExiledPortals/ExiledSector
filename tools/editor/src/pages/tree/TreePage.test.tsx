@@ -9,7 +9,7 @@ import { readRepositoryFile, startTestServer, type TestServer } from '../../test
 import { openAddNode, openTypeEditor, openTypePicker } from './dialogs/treeDialogs.tsx';
 import { nodeById } from './model/types.ts';
 import { addNodeOfType, duplicateNode, selectOnly, setMode } from './state/treeActions.ts';
-import { saveTree } from './state/treePersistence.ts';
+import { loadTree, saveTree } from './state/treePersistence.ts';
 import { EMPTY_SELECTION, isReservedNodeId, setSelection, useTreeStore } from './state/treeStore.ts';
 import { TreePage } from './TreePage.tsx';
 
@@ -254,6 +254,49 @@ describe('tree page', () => {
       expect(server.readProjectFile(TREE_FILE)).toBe(`${diskText}\n`);
     } finally {
       fs.writeFileSync(treePath, diskText);
+    }
+  });
+
+  it('keeps the reloaded hashes when a reload from disk finishes while a save is still in flight', async () => {
+    await renderLoadedTree();
+    const treePath = path.join(server.projectRoot, TREE_FILE);
+    const typesPath = path.join(server.projectRoot, TYPES_FILE);
+    const diskTree = server.readProjectFile(TREE_FILE);
+    const diskTypes = server.readProjectFile(TYPES_FILE);
+    const serverFetch = globalThis.fetch;
+    let releaseSave: () => void = () => undefined;
+    const saveReleased = new Promise<void>((resolve) => {
+      releaseSave = resolve;
+    });
+    let saveRequested = false;
+    vi.stubGlobal('fetch', async (input: RequestInfo | URL, init?: RequestInit) => {
+      if (String(input) === '/api/files' && init?.method === 'POST') {
+        saveRequested = true;
+        await saveReleased;
+      }
+      return serverFetch(input, init);
+    });
+    try {
+      const document = useTreeStore.getState().document;
+      act(() => selectOnly('nodes', document.nodes[0].id));
+      commitField('X', '2468');
+      let saving: Promise<void> = Promise.resolve();
+      act(() => {
+        saving = saveTree(vocabulary);
+      });
+      await waitFor(() => expect(saveRequested).toBe(true));
+      expect((screen.getByRole('button', { name: 'Reload from disk' }) as HTMLButtonElement).disabled).toBe(true);
+      localStorage.clear();
+      await act(async () => loadTree());
+      const reloadedHashes = useTreeStore.getState().baseHashes;
+      releaseSave();
+      await act(async () => saving);
+      expect(JSON.parse(server.readProjectFile(TREE_FILE)).nodes[0].x).toBe(2468);
+      expect(useTreeStore.getState().baseHashes).toEqual(reloadedHashes);
+    } finally {
+      vi.stubGlobal('fetch', serverFetch);
+      fs.writeFileSync(treePath, diskTree);
+      fs.writeFileSync(typesPath, diskTypes);
     }
   });
 

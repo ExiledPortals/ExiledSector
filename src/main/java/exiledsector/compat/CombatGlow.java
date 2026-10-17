@@ -34,6 +34,19 @@ public final class CombatGlow {
         void fadeOut(float seconds);
     }
 
+    public record Burst(Color lightColor, float lightSizeShare, float lightIntensity, float lightSeconds, float rippleSizeShare,
+                        float rippleIntensityShare, float rippleSeconds, boolean inward) {
+
+        public void play(Vector2f location, CombatEntityAPI attachedTo, Vector2f rippleVelocity, float radius) {
+            play(location, attachedTo, rippleVelocity, radius, lightColor);
+        }
+
+        public void play(Vector2f location, CombatEntityAPI attachedTo, Vector2f rippleVelocity, float radius, Color color) {
+            flash(location, attachedTo, color, radius * lightSizeShare, lightIntensity, lightSeconds);
+            ripple(location, rippleVelocity, radius * rippleSizeShare, radius * rippleIntensityShare, rippleSeconds, inward);
+        }
+    }
+
     interface Renderer {
         boolean lightsOn();
 
@@ -134,7 +147,7 @@ public final class CombatGlow {
         }
         Object stored = engine.getCustomData().get(CUSTOM_DATA_KEY);
         if (stored instanceof Battle battle) {
-            return battle.renderer == null ? null : battle;
+            return battle.renderer == null || GraphicsLibCompat.isBridgeBroken() ? null : battle;
         }
         boolean wanted = GraphicsLibCompat.isModEnabled() && ModSettings.booleanOr(ENABLED_FIELD_ID, DEFAULT_ENABLED);
         Battle battle = new Battle(wanted ? GraphicsLibCompat.activeRenderer() : null);

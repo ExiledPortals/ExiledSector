@@ -324,9 +324,6 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     private void rebuildTiles() {
         hoverTooltip.hide();
-        if (recipesElement != null) {
-            panelRoot.removeComponent(recipesElement);
-        }
         TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), tilesHeight(), false);
         SocketMaterials materials = playerMaterials();
         Recipe[] allRecipes = Recipe.values();
@@ -336,8 +333,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             float tileTop = (i / TILE_COLUMNS) * (TILE_SIZE + TILE_GAP);
             addTile(element, allRecipes[i], tileLeft, tileTop, materials);
         }
-        panelRoot.addUIElement(element).inTL(PAD, tilesTop());
-        recipesElement = element;
+        recipesElement = replaceElement(recipesElement, element, PAD, tilesTop());
     }
 
     private void addTile(TooltipMakerAPI element, Recipe recipe, float tileLeft, float tileTop, SocketMaterials materials) {
@@ -435,9 +431,6 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     }
 
     private void rebuildDetails() {
-        if (detailsElement != null) {
-            panelRoot.removeComponent(detailsElement);
-        }
         float detailsTop = socketAreaTop() + socketAreaHeight + GAP;
         float detailsHeight = Math.max(BUTTON_HEIGHT, panelHeight - detailsTop - bottomReserve());
         TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), detailsHeight, true);
@@ -457,20 +450,15 @@ public final class SocketWorkbenchPanel extends HoloPanel {
                 paraPad = LINE_PAD;
             }
         }
-        panelRoot.addUIElement(element).inTL(PAD, detailsTop);
-        detailsElement = placedComponent(element);
+        detailsElement = placedComponent(replaceElement(detailsElement, element, PAD, detailsTop));
     }
 
     private void rebuildNotice() {
-        if (noticeElement != null) {
-            panelRoot.removeComponent(noticeElement);
-        }
         TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), NOTICE_HEIGHT, false);
         if (noticeText != null) {
             VanillaText.plainPara(element, noticeText, 0f, Misc.getPositiveHighlightColor());
         }
-        panelRoot.addUIElement(element).inTL(PAD, panelHeight - PAD - NOTICE_HEIGHT);
-        noticeElement = element;
+        noticeElement = replaceElement(noticeElement, element, PAD, panelHeight - PAD - NOTICE_HEIGHT);
     }
 
     private float innerWidth() {

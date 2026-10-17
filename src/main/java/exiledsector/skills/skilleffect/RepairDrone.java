@@ -1,5 +1,6 @@
 package exiledsector.skills.skilleffect;
 
+import com.fs.starfarer.api.util.Misc;
 import org.lwjgl.util.vector.Vector2f;
 
 final class RepairDrone {
@@ -39,7 +40,7 @@ final class RepairDrone {
         moveToward(destination, SPEED * amount);
         working = workPoint != null && CombatQueries.withinRadius(position, workPoint, WORKING_DISTANCE);
         if (working) {
-            facingDeg = angleDeg(position, workPoint);
+            facingDeg = Misc.getAngleInDegreesStrict(position, workPoint);
         }
         if (workPoint == null && CombatQueries.withinRadius(position, home, dockRadius)) {
             docked = true;
@@ -58,10 +59,6 @@ final class RepairDrone {
         if (step > TURN_THRESHOLD) {
             facingDeg = (float) Math.toDegrees(Math.atan2(deltaY, deltaX));
         }
-    }
-
-    private static float angleDeg(Vector2f from, Vector2f to) {
-        return (float) Math.toDegrees(Math.atan2(to.y - from.y, to.x - from.x));
     }
 
     Vector2f position() {

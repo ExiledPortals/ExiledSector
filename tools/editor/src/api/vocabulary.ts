@@ -13,6 +13,7 @@ interface VocabularyFile {
   tags: { theme: string[]; region: string[]; requirement: string[]; gate?: string[] };
   tiers: string[];
   unlockConditionTypes: string[];
+  parameterlessUnlockConditionTypes?: string[];
   blueprintCategories: string[];
   socketableKinds: string[];
   socketableUnlocks: string[];
@@ -28,6 +29,7 @@ export interface Vocabulary {
   allTags: string[];
   tiers: string[];
   unlockConditionTypes: string[];
+  parameterlessUnlockConditionTypes: string[];
   blueprintCategories: string[];
   socketableKinds: string[];
   socketableUnlocks: string[];
@@ -44,6 +46,7 @@ export function buildVocabulary(file: VocabularyFile): Vocabulary {
     allTags: [...file.tags.theme, ...file.tags.region, ...file.tags.requirement, ...(file.tags.gate ?? [])],
     tiers: file.tiers.slice(),
     unlockConditionTypes: file.unlockConditionTypes.slice(),
+    parameterlessUnlockConditionTypes: (file.parameterlessUnlockConditionTypes ?? []).slice(),
     blueprintCategories: file.blueprintCategories.slice(),
     socketableKinds: file.socketableKinds.slice(),
     socketableUnlocks: file.socketableUnlocks.slice(),

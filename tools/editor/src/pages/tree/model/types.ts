@@ -218,13 +218,7 @@ export const UNLOCK_CONDITION_LABELS: Record<string, string> = {
   nightcrossAncientPrototypeFound: 'Nightcross: an Ancient Prototype found',
 };
 
-export const PARAMETERLESS_UNLOCK_CONDITIONS: ReadonlySet<string> = new Set([
-  'ratPlayerExoship',
-  'ratSingularityDefeated',
-  'nightcrossPascalVisited',
-  'nightcrossLunarFleetDefeated',
-  'nightcrossAncientPrototypeFound',
-]);
+export const PARAMETERISED_UNLOCK_CONDITIONS: ReadonlySet<string> = new Set(['blueprint', 'characterStat', 'minShipLevel', 'memoryFlag']);
 
 export function isAuroraBelt(node: Pick<TreeNode, 'ringBeltPath'>): boolean {
   return !node.ringBeltPath || node.ringBeltPath === AURORA_RING_BELT_PATH;

@@ -11,6 +11,7 @@ import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.loading.ProjectileSpecAPI;
+import exiledsector.compat.CombatGlow;
 import org.lazywizard.lazylib.MathUtils;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -95,6 +96,10 @@ abstract class SingleShotDrone extends WeaponDroneShell implements DamageDealtMo
 
     Vector2f origin() {
         return origin;
+    }
+
+    void exitFlash(Color fallback) {
+        CombatGlow.flash(origin(), null, shotColor(fallback), EXIT_FLASH_SIZE, EXIT_FLASH_INTENSITY, EXIT_FLASH_SECONDS);
     }
 
     @Override

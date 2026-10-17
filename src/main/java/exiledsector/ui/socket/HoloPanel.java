@@ -211,12 +211,16 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
     }
 
     final UIComponentAPI finishHeader(TooltipMakerAPI element, UIComponentAPI previousHeader, float partsRight) {
-        if (previousHeader != null) {
-            panelRoot.removeComponent(previousHeader);
-        }
         addPartsCount(element, partsRight);
-        panelRoot.addUIElement(element).inTL(PAD, PAD);
-        return element;
+        return replaceElement(previousHeader, element, PAD, PAD);
+    }
+
+    final TooltipMakerAPI replaceElement(UIComponentAPI previous, TooltipMakerAPI replacement, float left, float top) {
+        if (previous != null) {
+            panelRoot.removeComponent(previous);
+        }
+        panelRoot.addUIElement(replacement).inTL(left, top);
+        return replacement;
     }
 
     final boolean isConfirmOpen() {

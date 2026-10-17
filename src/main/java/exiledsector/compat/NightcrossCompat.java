@@ -1,8 +1,6 @@
 package exiledsector.compat;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.ModManagerAPI;
-import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 
@@ -29,24 +27,14 @@ public final class NightcrossCompat {
     static List<String> missingFeatures() {
         List<String> missing = new ArrayList<>(CompatTarget.missingHullMods(REQUIRED_HULL_MOD_IDS));
         for (String hullId : NightcrossUnlocks.PROTOTYPE_HULL_IDS.stream().sorted().toList()) {
-            if (!hullSpecExists(hullId)) {
+            if (!CompatTarget.specExists(() -> Global.getSettings().getHullSpec(hullId))) {
                 missing.add("the Ancient Prototype hull " + hullId + ", used to unlock Candle's Grace Replica");
             }
         }
         return missing;
     }
 
-    private static boolean hullSpecExists(String hullId) {
-        try {
-            return Global.getSettings().getHullSpec(hullId) != null;
-        } catch (RuntimeException e) {
-            return false;
-        }
-    }
-
     public static boolean isModEnabled() {
-        SettingsAPI settings = Global.getSettings();
-        ModManagerAPI modManager = settings == null ? null : settings.getModManager();
-        return modManager != null && modManager.isModEnabled(MOD_ID);
+        return TARGET.isEnabled();
     }
 }

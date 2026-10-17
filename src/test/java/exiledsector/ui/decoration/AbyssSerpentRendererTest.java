@@ -84,7 +84,7 @@ class AbyssSerpentRendererTest {
                 nearest = Math.min(nearest, distance);
                 farthest = Math.max(farthest, distance);
             }
-            float band = radius * serpent.windAmplitudeShare();
+            float band = radius * serpent.path().wobbleShare();
             assertTrue(farthest - nearest > band, "winds by " + (farthest - nearest));
             assertTrue(nearest >= radius - band - 1f && farthest <= radius + band + 1f);
         }
@@ -101,5 +101,16 @@ class AbyssSerpentRendererTest {
         float difference = (travelDeg - now.facingDeg() + 540f) % 360f - 180f;
 
         assertTrue(Math.abs(difference) < 5f, "facing off by " + difference);
+    }
+
+    @Test
+    void aStarWithNoRadiusAndNoCloudsStillGivesAWalkableOrbit() {
+        Star pointStar = new Star("abyss_star", 0f, 0f, 0f, "star_red", null, List.of(SkillTags.ABYSS_REGION));
+        AbyssSerpentRenderer serpents = new AbyssSerpentRenderer(pointStar, List.of());
+
+        assertEquals(AbyssSerpentRenderer.MIN_ORBIT_RADIUS, serpents.orbitRadius(), 0.01f);
+        for (AbyssSerpentRenderer.Pose pose : serpents.poses(AbyssSerpentRenderer.SERPENTS[0], 3f)) {
+            assertTrue(Float.isFinite(pose.treeX()) && Float.isFinite(pose.treeY()) && Float.isFinite(pose.facingDeg()));
+        }
     }
 }

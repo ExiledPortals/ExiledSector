@@ -2,6 +2,7 @@ package exiledsector.ui.node;
 
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
+import exiledsector.ui.util.Fade;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.HashMap;
@@ -156,13 +157,9 @@ final class StartingRootChoice {
         return switch (phase) {
             case CHOOSING -> 0f;
             case CHOSEN -> 1f;
-            case FLYING -> eased(flightElapsed / FLIGHT_SECONDS);
-            case RETURNING -> 1f - eased(flightElapsed / FLIGHT_SECONDS);
+            case FLYING -> Fade.smooth(flightElapsed / FLIGHT_SECONDS);
+            case RETURNING -> 1f - Fade.smooth(flightElapsed / FLIGHT_SECONDS);
         };
-    }
-
-    private static float eased(float t) {
-        return t * t * (3f - 2f * t);
     }
 
     private static float lerp(float from, float to, float t) {

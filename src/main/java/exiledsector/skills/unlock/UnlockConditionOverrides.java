@@ -15,20 +15,9 @@ public final class UnlockConditionOverrides {
     }
 
     public static boolean isDisabled(UnlockConditionType conditionType) {
-        String fieldId = fieldIdFor(conditionType);
+        String fieldId = conditionType.overrideFieldId();
         if (fieldId == null) return false;
 
         return ModSettings.booleanOr(fieldId, DEFAULT_DISABLED);
-    }
-
-    private static String fieldIdFor(UnlockConditionType conditionType) {
-        return switch (conditionType) {
-            case BLUEPRINT -> DISABLE_BLUEPRINT_FIELD_ID;
-            case CHARACTER_STAT -> DISABLE_CHARACTER_STAT_FIELD_ID;
-            case MIN_SHIP_LEVEL -> DISABLE_MIN_SHIP_LEVEL_FIELD_ID;
-            case MEMORY_FLAG, RAT_PLAYER_EXOSHIP, RAT_SINGULARITY_DEFEATED, NIGHTCROSS_PASCAL_VISITED, NIGHTCROSS_LUNAR_FLEET_DEFEATED,
-                 NIGHTCROSS_ANCIENT_PROTOTYPE_FOUND -> DISABLE_MEMORY_FLAG_FIELD_ID;
-            default -> null;
-        };
     }
 }

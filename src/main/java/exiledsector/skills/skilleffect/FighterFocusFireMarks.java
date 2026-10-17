@@ -9,7 +9,6 @@ import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.IdentityHashMap;
-import java.util.List;
 import java.util.Map;
 
 final class FighterFocusFireMarks extends ShipCombatListener {
@@ -27,20 +26,11 @@ final class FighterFocusFireMarks extends ShipCombatListener {
     }
 
     static FighterFocusFireMarks of(ShipAPI carrier) {
-        List<FighterFocusFireMarks> existing = carrier.getListeners(FighterFocusFireMarks.class);
-        if (existing != null && !existing.isEmpty()) {
-            return existing.get(0);
-        }
-        FighterFocusFireMarks created = new FighterFocusFireMarks(carrier);
-        carrier.addListener(created);
-        return created;
+        return SkillEffectSupport.ensureListener(carrier, FighterFocusFireMarks.class, FighterFocusFireMarks::new);
     }
 
     static void markFighter(ShipAPI fighter, ShipAPI carrier) {
-        if (fighter.hasListenerOfClass(FighterHits.class)) {
-            return;
-        }
-        fighter.addListener(new FighterHits(of(carrier)));
+        SkillEffectSupport.ensureListener(fighter, FighterHits.class, ignored -> new FighterHits(of(carrier)));
     }
 
     float markPercent(ShipAPI target) {

@@ -53,7 +53,7 @@ public final class ShipTreeSummaryRenderer {
         if (shipTree.bonusScale() > 1f) {
             headerParts.add(Translation.msg("summary.bonusScale").arg("scale", shipTree.bonusScale()).text());
         }
-        info.addPara("%s", pad, Misc.getHighlightColor(), String.join(Translation.text("summary.separator"), headerParts));
+        VanillaText.plainPara(info, String.join(Translation.text("summary.separator"), headerParts), pad, Misc.getHighlightColor());
 
         if (bonusSummary.notables().isEmpty()) {
             VanillaText.addPara(info, Translation.styled("summary.noNotables"), LINE_PAD, Misc.getGrayColor());

@@ -22,6 +22,7 @@ record FleetHullVisuals(float centerX, float centerY, List<EngineFlame> flames, 
 
     static final FleetHullVisuals NONE = new FleetHullVisuals(Float.NaN, Float.NaN, List.of(), List.of());
 
+    static final Color DEFAULT_FLAME_COLOR = new Color(255, 125, 25);
     private static final Logger LOG = Logger.getLogger(FleetHullVisuals.class);
     private static final String HULL_FILE_FOLDER = "data/hulls/";
     private static final String HULL_FILE_SUFFIX = ".ship";
@@ -83,7 +84,8 @@ record FleetHullVisuals(float centerX, float centerY, List<EngineFlame> flames, 
                 EngineSlotAPI slot = engineSlot instanceof EngineSlotAPI direct ? direct : campaignSlot(engineSlot);
                 if (slot != null && !Boolean.TRUE.equals(UiReflection.call(slot, "isSystemActivated"))) {
                     Vector2f position = slot.computePosition(new Vector2f(), 0f);
-                    flames.add(new EngineFlame(position.x, position.y, slot.getAngle(), slot.getWidth(), slot.getLength(), slot.getColor()));
+                    Color flameColor = slot.getColor() == null ? DEFAULT_FLAME_COLOR : slot.getColor();
+                    flames.add(new EngineFlame(position.x, position.y, slot.getAngle(), slot.getWidth(), slot.getLength(), flameColor));
                 }
             }
             return List.copyOf(flames);

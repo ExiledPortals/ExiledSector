@@ -39,7 +39,7 @@ class ExoshipEscortsTest {
                 seenBehind |= !pose.inFront();
             }
             assertTrue(seenInFront && seenBehind, escort.spritePath());
-            assertTrue(farthest <= escort.orbitShare() * SHIP_LENGTH * (1f + escort.wobbleShare()) + 1f, escort.spritePath());
+            assertTrue(farthest <= escort.orbitShare() * SHIP_LENGTH * (1f + escort.orbit().wobbleShare()) + 1f, escort.spritePath());
             assertTrue(nearest > SHIP_LENGTH * 0.1f, escort.spritePath() + " flies through the hull centre");
         }
     }

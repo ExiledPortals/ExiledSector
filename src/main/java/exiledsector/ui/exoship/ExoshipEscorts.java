@@ -2,28 +2,31 @@ package exiledsector.ui.exoship;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.compat.RandomAssortmentCompat;
+import exiledsector.skills.HullSizeTable;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.decoration.HullEngines;
 import exiledsector.ui.util.Fade;
 import exiledsector.ui.util.SpriteCache;
 import exiledsector.ui.util.TexturedQuadBatch;
+import exiledsector.ui.util.WobblyOrbit;
 
 import java.util.Arrays;
 
 final class ExoshipEscorts {
 
-    record Escort(String spritePath, String hullId, HullSize hullSize, float width, float height, float lengthShare, float orbitShare, float squash,
-                  float secondsPerLap, float direction, float startRad, float tiltDeg, float wobbleShare, int wobbleWaves) {
+    record Escort(String spritePath, String hullId, HullSize hullSize, float width, float height, float lengthShare, float orbitShare,
+                  float secondsPerLap, float direction, float startRad, WobblyOrbit orbit) {
     }
 
     record Pose(float treeX, float treeY, float facingDeg, boolean inFront) {
     }
 
     static final Escort[] ESCORTS = {
-            new Escort("graphics/fx/rat_hypatia.png", "rat_hypatia", HullSize.DESTROYER, 108f, 160f, 0.04f, 0.85f, 0.5f, 24f, 1f, 0f, 20f, 0.06f, 3),
-            new Escort("graphics/fx/rat_dawnblade.png", "rat_dawnblade", HullSize.FIGHTER, 60f, 60f, 0.035f, 0.62f, 0.55f, 13f, -1f, 2f, -35f, 0.1f, 4),
-            new Escort("graphics/fx/rat_nightblade.png", "rat_nightblade", HullSize.FIGHTER, 60f, 60f, 0.035f, 0.72f, 0.45f, 15f, 1f, 4f, 60f, 0.08f, 5),
-            new Escort("graphics/fx/rat_protostar.png", "rat_protostar", HullSize.FIGHTER, 60f, 60f, 0.03f, 0.56f, 0.6f, 11f, -1f, 1f, 110f, 0.12f, 3)
+            escort("graphics/fx/rat_hypatia.png", "rat_hypatia", HullSize.DESTROYER, 108f, 160f, 0.04f, 0.85f, 0.5f, 24f, 1f, 0f, 20f, 0.06f, 3),
+            escort("graphics/fx/rat_dawnblade.png", "rat_dawnblade", HullSize.FIGHTER, 60f, 60f, 0.035f, 0.62f, 0.55f, 13f, -1f, 2f, -35f, 0.1f, 4),
+            escort("graphics/fx/rat_nightblade.png", "rat_nightblade", HullSize.FIGHTER, 60f, 60f, 0.035f, 0.72f, 0.45f, 15f, 1f, 4f, 60f, 0.08f, 5),
+            escort("graphics/fx/rat_protostar.png", "rat_protostar", HullSize.FIGHTER, 60f, 60f, 0.03f, 0.56f, 0.6f, 11f, -1f, 1f, 110f, 0.12f, 3)
     };
     static final int MAX_ESCORTS = ESCORTS.length + 1;
     static final float BEHIND_ALPHA = 0.7f;
@@ -39,6 +42,10 @@ final class ExoshipEscorts {
     static final float HANGAR_LEVEL = 0.35f;
     private static final float HANGAR_SCALE = 0.55f;
     private static final float VANISH_LEVEL = 0.15f;
+    private static final HullSizeTable PLAYER_LENGTH_SHARE = new HullSizeTable(0.04f, 0.025f, 0.04f, 0.06f, 0.08f, 0.04f);
+    private static final HullSizeTable DEPART_SECONDS = new HullSizeTable(2f, 2.5f, 3.1f, 3.9f, 4.68f, 3.1f);
+    private static final WobblyOrbit.Point ORBIT_POINT = new WobblyOrbit.Point();
+    private static final WobblyOrbit.Point AHEAD_POINT = new WobblyOrbit.Point();
 
     private final SpriteCache spriteCache = new SpriteCache(ExoshipEscorts.class);
     private final TexturedQuadBatch glowQuads = new TexturedQuadBatch();
@@ -56,25 +63,29 @@ final class ExoshipEscorts {
         return levels;
     }
 
+    private static Escort escort(String spritePath, String hullId, HullSize hullSize, float width, float height, float lengthShare, float orbitShare,
+                                 float squash, float secondsPerLap, float direction, float startRad, float tiltDeg, float wobbleShare,
+                                 int wobbleWaves) {
+        return new Escort(spritePath, hullId, hullSize, width, height, lengthShare, orbitShare, secondsPerLap, direction, startRad,
+                new WobblyOrbit(wobbleShare, wobbleWaves, 0f, squash, tiltDeg));
+    }
+
     static Escort playerEscort(String spritePath, String hullId, float spriteWidth, float spriteHeight, HullSize hullSize) {
-        return new Escort(spritePath, hullId, hullSize, spriteWidth, spriteHeight, playerLengthShare(hullSize), 0.66f, 0.5f, 17f, 1f, 3f, -70f, 0.07f, 4);
+        return escort(spritePath, hullId, hullSize, spriteWidth, spriteHeight, playerLengthShare(hullSize), 0.66f, 0.5f, 17f, 1f, 3f, -70f, 0.07f, 4);
     }
 
     static float playerLengthShare(HullSize hullSize) {
-        if (hullSize == null) {
-            return 0.04f;
-        }
-        return switch (hullSize) {
-            case FRIGATE -> 0.025f;
-            case CRUISER -> 0.06f;
-            case CAPITAL_SHIP -> 0.08f;
-            default -> 0.04f;
-        };
+        return PLAYER_LENGTH_SHARE.of(hullSize);
     }
 
     void setPlayerEscort(Escort escort, HullEngines engines) {
         playerEscort = escort;
         playerEngines = engines == null ? HullEngines.NONE : engines;
+        if (RandomAssortmentCompat.isModEnabled()) {
+            for (int escortIndex = 0; escortIndex < ESCORTS.length; escortIndex++) {
+                engines(escortIndex);
+            }
+        }
     }
 
     int escortCount() {
@@ -86,16 +97,7 @@ final class ExoshipEscorts {
     }
 
     static float departSeconds(HullSize hullSize) {
-        if (hullSize == null) {
-            return 3.1f;
-        }
-        return switch (hullSize) {
-            case FIGHTER -> 2f;
-            case FRIGATE -> 2.5f;
-            case CRUISER -> 3.9f;
-            case CAPITAL_SHIP -> 4.68f;
-            default -> 3.1f;
-        };
+        return DEPART_SECONDS.of(hullSize);
     }
 
     void advance(float amount, boolean launched) {
@@ -136,7 +138,7 @@ final class ExoshipEscorts {
         if (escortLevel >= 1f) {
             return orbit;
         }
-        float eased = smooth(escortLevel);
+        float eased = Fade.smooth(escortLevel);
         float offsetX = orbit.treeX() - centerX;
         float offsetY = orbit.treeY() - centerY;
         double outwardRad = Math.atan2(offsetY, offsetX);
@@ -148,38 +150,16 @@ final class ExoshipEscorts {
         return new Pose(centerX + offsetX * eased, centerY + offsetY * eased, facingDeg, orbit.inFront() && escortLevel > HANGAR_LEVEL);
     }
 
-    private static float smooth(float level) {
-        return level * level * (3f - 2f * level);
-    }
-
     static Pose pose(Escort escort, float centerX, float centerY, float shipLength, float atSeconds) {
         float angle = escort.startRad() + escort.direction() * (float) (Math.PI * 2) * atSeconds / escort.secondsPerLap();
-        float x = loopX(escort, centerX, centerY, shipLength, angle);
-        float y = loopY(escort, centerX, centerY, shipLength, angle);
+        float orbitRadius = escort.orbitShare() * shipLength;
+        WobblyOrbit.Point point = escort.orbit().locate(centerX, centerY, orbitRadius, angle, ORBIT_POINT);
+        float x = point.x();
+        float y = point.y();
         float ahead = angle + escort.direction() * TANGENT_STEP_RAD;
-        float facingDeg = (float) Math.toDegrees(Math.atan2(loopY(escort, centerX, centerY, shipLength, ahead) - y,
-                loopX(escort, centerX, centerY, shipLength, ahead) - x));
+        WobblyOrbit.Point aheadPoint = escort.orbit().locate(centerX, centerY, orbitRadius, ahead, AHEAD_POINT);
+        float facingDeg = (float) Math.toDegrees(Math.atan2(aheadPoint.y() - y, aheadPoint.x() - x));
         return new Pose(x, y, facingDeg, Math.sin(angle) > 0);
-    }
-
-    private static float radius(Escort escort, float shipLength, float angle) {
-        return escort.orbitShare() * shipLength * (1f + escort.wobbleShare() * (float) Math.sin(escort.wobbleWaves() * angle));
-    }
-
-    private static float loopX(Escort escort, float centerX, float centerY, float shipLength, float angle) {
-        float radius = radius(escort, shipLength, angle);
-        float localX = radius * (float) Math.cos(angle);
-        float localY = radius * escort.squash() * (float) Math.sin(angle);
-        double tilt = Math.toRadians(escort.tiltDeg());
-        return centerX + localX * (float) Math.cos(tilt) - localY * (float) Math.sin(tilt);
-    }
-
-    private static float loopY(Escort escort, float centerX, float centerY, float shipLength, float angle) {
-        float radius = radius(escort, shipLength, angle);
-        float localX = radius * (float) Math.cos(angle);
-        float localY = radius * escort.squash() * (float) Math.sin(angle);
-        double tilt = Math.toRadians(escort.tiltDeg());
-        return centerY + localX * (float) Math.sin(tilt) + localY * (float) Math.cos(tilt);
     }
 
     void render(TreeViewport viewport, float centerX, float centerY, float shipLength, boolean inFront, float alphaMult) {
@@ -197,7 +177,7 @@ final class ExoshipEscorts {
             if (pose.inFront() != inFront) {
                 continue;
             }
-            float scale = HANGAR_SCALE + (1f - HANGAR_SCALE) * smooth(escortLevel);
+            float scale = HANGAR_SCALE + (1f - HANGAR_SCALE) * Fade.smooth(escortLevel);
             float length = escort.lengthShare() * shipLength * zoom * scale;
             float width = length * escort.width() / escort.height();
             float screenX = viewport.screenX(pose.treeX());
@@ -210,7 +190,7 @@ final class ExoshipEscorts {
             float screenScale = length / escort.height();
             HullEngines engines = engines(escortIndex);
             engines.drawHull(spriteCache, escort.spritePath(), screenX, screenY, width, length, screenScale, screenFacingDeg, alpha);
-            engines.drawEngines(spriteCache, glowQuads, screenX, screenY, screenFacingDeg, screenScale, zoom, ESCORT_ENGINE_LEVEL, alpha);
+            engines.drawEngines(spriteCache, glowQuads, screenX, screenY, screenFacingDeg, screenScale, ESCORT_ENGINE_LEVEL, alpha);
         }
     }
 

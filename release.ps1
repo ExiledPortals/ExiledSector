@@ -61,7 +61,7 @@ try {
 } finally {
     $archive.Dispose()
 }
-$required = @("mod_info.json", "ExiledSector.version", "LICENSE", "CREDITS.md", "jars/ExiledSector.jar", "data/config/version/version_files.csv")
+$required = $ModRootFiles + @("jars/ExiledSector.jar", "data/config/version/version_files.csv")
 foreach ($path in $required) {
     if ($entries -notcontains "$modFolderName/$path") {
         throw "Release zip is missing $modFolderName/$path"

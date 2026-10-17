@@ -32,10 +32,6 @@ public final class Motes {
                          float damage, float emp, float flightSeconds) {
     }
 
-    public static float angleDegrees(Vector2f from, Vector2f to) {
-        return (float) Math.toDegrees(Math.atan2(to.y - from.y, to.x - from.x));
-    }
-
     public static MissileAPI launch(Launch launch) {
         CombatEngineAPI engine = Global.getCombatEngine();
         if (engine == null || launch.source() == null || !launch.source().isAlive()) {

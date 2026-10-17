@@ -6,13 +6,16 @@ import readline from 'node:readline';
 import { readDataFile, resolveDataResource } from './dataFiles.ts';
 import type { ProjectPaths } from './paths.ts';
 
-export type DescribeStatus = 'idle' | 'building' | 'built' | 'ready' | 'failed';
+export type DescribeStatus = 'idle' | 'waiting' | 'building' | 'built' | 'ready' | 'failed';
 
 const READY_LINE = '{"ready":true}';
 const READY_TIMEOUT_MS = 30000;
 const REQUEST_TIMEOUT_MS = 10000;
 const HELPER_CLASS = 'exiledsector.tools.EditorDescribeServer';
 export const REBUILD_COOLDOWN_MS = 15000;
+export const BUILD_LOCK_FILE = '.maven-build.lock';
+export const BUILD_LOCK_STALE_MS = 10 * 60 * 1000;
+const WAITING_MESSAGE = 'Waiting for another Maven build of the mod (deploy.ps1 or release.ps1) to finish...';
 
 export interface DescribeToolchain {
   javaHome: string | null;
@@ -64,7 +67,19 @@ function libsDir(projectRoot: string): string {
 
 export type DescribeResult = { body: unknown } | { raw: string };
 
-export function needsRebuild(status: DescribeStatus, helperRunning: boolean, classpathExists: boolean, msSinceFailure: number): boolean {
+export function needsRebuild(
+  status: DescribeStatus,
+  helperRunning: boolean,
+  classpathExists: boolean,
+  msSinceFailure: number,
+  otherBuildRunning = false,
+): boolean {
+  if (otherBuildRunning) {
+    return false;
+  }
+  if (status === 'waiting') {
+    return true;
+  }
   if (status === 'failed') {
     return msSinceFailure >= REBUILD_COOLDOWN_MS;
   }
@@ -93,6 +108,7 @@ export class DescribeService {
   private readonly classpathFile: string;
   private failedAtMs = 0;
   private readonly buildLogFile = path.join(os.tmpdir(), 'exiledsector-editor-describe-build.log');
+  private readonly buildLockFile: string;
 
   constructor(
     private readonly paths: ProjectPaths,
@@ -100,12 +116,17 @@ export class DescribeService {
     private readonly nowMs: () => number = Date.now,
   ) {
     this.classpathFile = path.join(paths.projectRoot, 'target', 'editor-describe.classpath');
+    this.buildLockFile = path.join(paths.projectRoot, BUILD_LOCK_FILE);
   }
 
   startBuild(): void {
     const { javaHome, maven } = this.toolchain;
     if (!javaHome || !maven) {
       this.fail('In-game descriptions need JDK 17 and Maven; neither JAVA_HOME nor the IntelliJ bundled Maven was found.');
+      return;
+    }
+    if (this.otherBuildRunning()) {
+      this.wait();
       return;
     }
     this.status = 'building';
@@ -141,6 +162,19 @@ export class DescribeService {
     });
   }
 
+  private otherBuildRunning(): boolean {
+    try {
+      return this.nowMs() - fs.statSync(this.buildLockFile).mtimeMs < BUILD_LOCK_STALE_MS;
+    } catch {
+      return false;
+    }
+  }
+
+  private wait(): void {
+    this.status = 'waiting';
+    this.message = WAITING_MESSAGE;
+  }
+
   private fail(message: string): void {
     this.status = 'failed';
     this.message = message;
@@ -151,7 +185,12 @@ export class DescribeService {
     if (!this.toolchain.javaHome || !this.toolchain.maven) {
       return;
     }
-    if (needsRebuild(this.status, this.helper !== null, fs.existsSync(this.classpathFile), this.nowMs() - this.failedAtMs)) {
+    const otherBuildRunning = this.otherBuildRunning();
+    if (otherBuildRunning && this.helper === null && this.status !== 'building') {
+      this.wait();
+      return;
+    }
+    if (needsRebuild(this.status, this.helper !== null, fs.existsSync(this.classpathFile), this.nowMs() - this.failedAtMs, otherBuildRunning)) {
       this.startBuild();
     }
   }

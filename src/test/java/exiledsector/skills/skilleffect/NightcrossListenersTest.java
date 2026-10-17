@@ -251,4 +251,22 @@ class NightcrossListenersTest {
 
         assertTrue(GravityDragField.reductionsFrom(List.of(dragSource("source", 5f, false)), everyone).isEmpty());
     }
+
+    @Test
+    void aRetreatingCandlesGraceShipStopsDraggingLikeTheOtherAuras() {
+        GravityDragListener source = dragSource("source", 5f, false);
+        when(source.source().isRetreating()).thenReturn(true);
+        GravityDragField.ShipsNear everyone = (ship, radius, filter) -> List.of(enemyAt(0f)).stream().filter(filter).toList();
+
+        assertEquals(0f, source.reductionPercentAtPointBlank());
+        assertTrue(GravityDragField.reductionsFrom(List.of(source), everyone).isEmpty());
+    }
+
+    @Test
+    void thePlayerStatusShowsOnlyOurShareSoItDoesNotRepeatNightcrossOwnDragIcon() {
+        assertEquals(5f, GravityDragField.shownPercent(5f, 0f), 0.001f);
+        assertEquals(5f, GravityDragField.shownPercent(5f, 15f), 0.001f);
+        assertEquals(5f, GravityDragField.shownPercent(20f, 20f), 0.001f);
+        assertEquals(0f, GravityDragField.shownPercent(5f, 30f), 0.001f);
+    }
 }

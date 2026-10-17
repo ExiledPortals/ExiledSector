@@ -1,8 +1,7 @@
 package exiledsector.socketables;
 
-import exiledsector.ExiledSectorModPlugin;
 import exiledsector.ModSettings;
-import lunalib.lunaSettings.LunaSettingsListener;
+import exiledsector.ModSettingsListener;
 
 public final class HullUpgradesSetting {
 
@@ -11,13 +10,11 @@ public final class HullUpgradesSetting {
 
     private static volatile boolean enabledSetting = DEFAULT_ENABLED;
 
-    public static final class SettingsListener implements LunaSettingsListener {
+    public static final class SettingsListener extends ModSettingsListener {
 
         @Override
-        public void settingsChanged(String modId) {
-            if (ExiledSectorModPlugin.MOD_ID.equals(modId)) {
-                reloadSettings();
-            }
+        protected void reload() {
+            reloadSettings();
         }
     }
 

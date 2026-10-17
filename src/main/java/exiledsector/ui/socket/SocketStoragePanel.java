@@ -466,9 +466,6 @@ public final class SocketStoragePanel extends HoloPanel {
     }
 
     private void rebuildControls() {
-        if (controlsElement != null) {
-            panelRoot.removeComponent(controlsElement);
-        }
         List<SocketType> chipTypes = kindFilter == null ? List.of(SocketType.values()) : List.of();
         int typeRows = typeChipRows(chipTypes);
         int controlRows = FIXED_CONTROL_ROWS + typeRows;
@@ -497,8 +494,7 @@ public final class SocketStoragePanel extends HoloPanel {
                     storageFilter.socketTypes.contains(socketType), chipLeft, chipRow) + GAP;
         }
         float controlsTop = PAD + HEADER_HEIGHT + GAP + FIELD_HEIGHT + GAP;
-        panelRoot.addUIElement(element).inTL(PAD, controlsTop);
-        controlsElement = element;
+        controlsElement = replaceElement(controlsElement, element, PAD, controlsTop);
         gridTop = controlsTop + controlRows * (CHIP_HEIGHT + GAP) + NOTICE_HEIGHT;
         rebuildGrid();
     }
@@ -539,9 +535,6 @@ public final class SocketStoragePanel extends HoloPanel {
 
     private void rebuildGrid() {
         hideHoverTooltip();
-        if (gridElement != null) {
-            panelRoot.removeComponent(placedComponent(gridElement));
-        }
         List<SocketStorageRow> matching = SocketStorageQuery.apply(storageRows, storageFilter);
         float gridHeight = Math.max(CELL_SIZE, panelHeight - PAD - FOOTER_HEIGHT - GAP - gridTop);
         TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), gridHeight, true);
@@ -563,19 +556,12 @@ public final class SocketStoragePanel extends HoloPanel {
             }
             element.addCustom(rowPanel, start == 0 ? 0f : GAP);
         }
-        panelRoot.addUIElement(element).inTL(PAD, gridTop);
-        gridElement = element;
+        gridElement = replaceElement(placedComponent(gridElement), element, PAD, gridTop);
         rebuildFooter(matching);
     }
 
     private void rebuildFooter(List<SocketStorageRow> matching) {
         int shownCount = matching.size();
-        if (noticeElement != null) {
-            panelRoot.removeComponent(noticeElement);
-        }
-        if (summaryElement != null) {
-            panelRoot.removeComponent(summaryElement);
-        }
         TooltipMakerAPI newNotice = panelRoot.createUIElement(innerWidth(), NOTICE_HEIGHT, false);
         if (disassemblyMode) {
             int markedParts = markedForDisassembly.stream().mapToInt(socketable -> socketable.rarity().disassemblyParts()).sum();
@@ -596,8 +582,7 @@ public final class SocketStoragePanel extends HoloPanel {
         } else if (movedFromCargo > 0 || materialsNotice != null) {
             VanillaText.plainPara(newNotice, cargoNotice(), 0f, Misc.getPositiveHighlightColor());
         }
-        panelRoot.addUIElement(newNotice).inTL(PAD, gridTop - NOTICE_HEIGHT);
-        noticeElement = newNotice;
+        noticeElement = replaceElement(noticeElement, newNotice, PAD, gridTop - NOTICE_HEIGHT);
 
         TooltipMakerAPI newSummary = panelRoot.createUIElement(innerWidth(), FOOTER_HEIGHT, false);
         int installedCount = (int) storageRows.stream().filter(SocketStorageRow::installed).count();
@@ -611,8 +596,7 @@ public final class SocketStoragePanel extends HoloPanel {
         ButtonAPI modeButton = newSummary.addButton(modeLabel, Control.DISASSEMBLY_MODE, modeWidth, FOOTER_HEIGHT, 0f);
         modeButton.getPosition().inTR(0f, 0f);
         modeButton.setEnabled(disassemblyMode || storageRows.stream().anyMatch(row -> !row.installed()));
-        panelRoot.addUIElement(newSummary).inTL(PAD, panelHeight - PAD - FOOTER_HEIGHT);
-        summaryElement = newSummary;
+        summaryElement = replaceElement(summaryElement, newSummary, PAD, panelHeight - PAD - FOOTER_HEIGHT);
     }
 
     private void openDisassemblyConfirm(List<Socketable> targets) {

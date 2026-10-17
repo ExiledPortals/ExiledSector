@@ -16,7 +16,7 @@ export function DataToolbar<TModel>({ document, children }: DataToolbarProps<TMo
         {document.dirty ? 'Unsaved changes' : ready ? 'Saved' : ''}
       </Text>
       {children}
-      <Button variant="default" size="xs" leftSection={<IconRefresh size={14} />} onClick={() => void document.reload()}>
+      <Button variant="default" size="xs" leftSection={<IconRefresh size={14} />} disabled={document.saving} onClick={() => void document.reload()}>
         Reload from disk
       </Button>
       <Button size="xs" leftSection={<IconDeviceFloppy size={14} />} loading={document.saving} disabled={!ready} onClick={() => void document.save()}>

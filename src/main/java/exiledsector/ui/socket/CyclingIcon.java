@@ -2,6 +2,7 @@ package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.ui.PositionAPI;
+import exiledsector.ui.util.Fade;
 import exiledsector.ui.util.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
 
@@ -41,7 +42,7 @@ final class CyclingIcon extends BaseCustomUIPanelPlugin {
         int currentIndex = (int) (cycleSeconds / step) % iconPaths.size();
         float secondsIntoStep = cycleSeconds - currentIndex * step;
         float fade = secondsIntoStep <= HOLD_SECONDS ? 0f : (secondsIntoStep - HOLD_SECONDS) / FADE_SECONDS;
-        float eased = fade * fade * (3f - 2f * fade);
+        float eased = Fade.smooth(fade);
         draw(iconPaths.get(currentIndex), (1f - eased) * alphaMult);
         if (eased > 0f) {
             draw(iconPaths.get((currentIndex + 1) % iconPaths.size()), eased * alphaMult);

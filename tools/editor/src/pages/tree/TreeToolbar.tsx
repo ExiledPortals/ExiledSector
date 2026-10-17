@@ -76,7 +76,7 @@ export function TreeToolbar({ vocabulary, tooltipHullSize, onTooltipHullSize }: 
       <Text size="xs" c={dirty ? 'yellow' : 'dimmed'}>
         {dirty ? 'Unsaved changes' : ready ? 'Saved' : ''}
       </Text>
-      <Button size="xs" variant="default" leftSection={<IconRefresh size={14} />} onClick={() => void reloadTreeFromDisk()}>
+      <Button size="xs" variant="default" leftSection={<IconRefresh size={14} />} disabled={saving} onClick={() => void reloadTreeFromDisk()}>
         Reload from disk
       </Button>
       <Tooltip label="Disabled until the tree files and the editor vocabulary have loaded" disabled={ready && Boolean(vocabulary)}>

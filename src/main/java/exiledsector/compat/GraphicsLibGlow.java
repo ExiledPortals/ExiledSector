@@ -90,14 +90,15 @@ final class GraphicsLibGlow implements CombatGlow.Renderer {
         return new WaveLens(wave);
     }
 
-    private static final class WaveLens implements CombatGlow.Lens {
+    static final class WaveLens implements CombatGlow.Lens {
 
         private static final float MIN_INTENSITY = 0.01f;
+        private static final float GIVE_UP_FADE_SECONDS = 0.5f;
 
         private final WaveDistortion wave;
         private boolean fading;
 
-        private WaveLens(WaveDistortion wave) {
+        WaveLens(WaveDistortion wave) {
             this.wave = wave;
         }
 
@@ -106,9 +107,18 @@ final class GraphicsLibGlow implements CombatGlow.Renderer {
             if (fading) {
                 return;
             }
-            wave.setLocation(location);
-            wave.setSize(size);
-            wave.setIntensity(Math.max(MIN_INTENSITY, intensity));
+            if (GraphicsLibCompat.isBridgeBroken()) {
+                fadeOut(GIVE_UP_FADE_SECONDS);
+                return;
+            }
+            try {
+                wave.setLocation(location);
+                wave.setSize(size);
+                wave.setIntensity(Math.max(MIN_INTENSITY, intensity));
+            } catch (LinkageError | RuntimeException e) {
+                GraphicsLibCompat.reportBroken(e);
+                fadeOut(GIVE_UP_FADE_SECONDS);
+            }
         }
 
         @Override
@@ -117,7 +127,11 @@ final class GraphicsLibGlow implements CombatGlow.Renderer {
                 return;
             }
             fading = true;
-            wave.fadeOutIntensity(seconds);
+            try {
+                wave.fadeOutIntensity(seconds);
+            } catch (LinkageError | RuntimeException e) {
+                GraphicsLibCompat.reportBroken(e);
+            }
         }
     }
 }

@@ -31,24 +31,11 @@ public final class UnlockCondition {
         return new UnlockCondition(UnlockConditionType.MEMORY_FLAG, null, conditionKey, 0);
     }
 
-    public static UnlockCondition ratPlayerExoship() {
-        return new UnlockCondition(UnlockConditionType.RAT_PLAYER_EXOSHIP, null, null, 0);
-    }
-
-    public static UnlockCondition ratSingularityDefeated() {
-        return new UnlockCondition(UnlockConditionType.RAT_SINGULARITY_DEFEATED, null, null, 0);
-    }
-
-    public static UnlockCondition nightcrossPascalVisited() {
-        return new UnlockCondition(UnlockConditionType.NIGHTCROSS_PASCAL_VISITED, null, null, 0);
-    }
-
-    public static UnlockCondition nightcrossLunarFleetDefeated() {
-        return new UnlockCondition(UnlockConditionType.NIGHTCROSS_LUNAR_FLEET_DEFEATED, null, null, 0);
-    }
-
-    public static UnlockCondition nightcrossAncientPrototypeFound() {
-        return new UnlockCondition(UnlockConditionType.NIGHTCROSS_ANCIENT_PROTOTYPE_FOUND, null, null, 0);
+    public static UnlockCondition modGate(UnlockConditionType type) {
+        if (!type.isModGate()) {
+            throw new IllegalArgumentException(type + " takes parameters, so it is not a mod gate");
+        }
+        return new UnlockCondition(type, null, null, 0);
     }
 
     public UnlockConditionType getType() {

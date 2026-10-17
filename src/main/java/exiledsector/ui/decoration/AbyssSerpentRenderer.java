@@ -7,6 +7,7 @@ import exiledsector.skills.tags.SkillTags;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
+import exiledsector.ui.util.WobblyOrbit;
 
 import java.awt.Color;
 import java.util.List;
@@ -16,7 +17,7 @@ public final class AbyssSerpentRenderer {
     record Part(String spritePath, String glowPath, float width, float height, float behindHead, float imageBackOffset) {
     }
 
-    record Serpent(float direction, float secondsPerOrbit, float startAngleRad, float windAmplitudeShare, int windWaves, float windPhaseRad) {
+    record Serpent(float direction, float secondsPerOrbit, float startAngleRad, WobblyOrbit path) {
     }
 
     record Pose(float treeX, float treeY, float facingDeg) {
@@ -32,11 +33,12 @@ public final class AbyssSerpentRenderer {
             part("head", 280f, 240f, 0f, 0f)
     };
     static final Serpent[] SERPENTS = {
-            new Serpent(1f, 150f, 0f, 0.12f, 9, 0f),
-            new Serpent(-1f, 190f, (float) Math.PI, 0.15f, 7, 1.3f)
+            new Serpent(1f, 150f, 0f, new WobblyOrbit(0.12f, 9, 0f, 1f, 0f)),
+            new Serpent(-1f, 190f, (float) Math.PI, new WobblyOrbit(0.15f, 7, 1.3f, 1f, 0f))
     };
     static final float SCALE = 1.4f;
     static final float DEFAULT_ORBIT_STAR_RADII = 4f;
+    static final float MIN_ORBIT_RADIUS = 200f;
     private static final float BODY_ALPHA = 0.45f;
     private static final float GLOW_ALPHA = 0.25f;
     private static final Color BODY_TINT = new Color(150, 140, 175);
@@ -45,6 +47,7 @@ public final class AbyssSerpentRenderer {
     private static final float WALK_STEP = 6f;
 
     private final SpriteCache spriteCache = new SpriteCache(AbyssSerpentRenderer.class);
+    private final WobblyOrbit.Point pathPoint = new WobblyOrbit.Point();
     private final float centerX;
     private final float centerY;
     private final float orbitRadius;
@@ -55,7 +58,8 @@ public final class AbyssSerpentRenderer {
         present = abyssStar != null;
         centerX = present ? abyssStar.getX() : 0f;
         centerY = present ? abyssStar.getY() : 0f;
-        orbitRadius = present ? orbitRadius(abyssStar, clouds) : 0f;
+        float measuredRadius = present ? orbitRadius(abyssStar, clouds) : 0f;
+        orbitRadius = measuredRadius >= MIN_ORBIT_RADIUS ? measuredRadius : MIN_ORBIT_RADIUS;
     }
 
     public static AbyssSerpentRenderer forActiveTree() {
@@ -92,8 +96,9 @@ public final class AbyssSerpentRenderer {
         Pose[] poses = new Pose[PARTS.length];
         float angle = serpent.startAngleRad() + serpent.direction() * (float) (Math.PI * 2) * atSeconds / serpent.secondsPerOrbit();
         float angleStep = serpent.direction() * WALK_STEP / orbitRadius;
-        float x = pathX(serpent, angle);
-        float y = pathY(serpent, angle);
+        serpent.path().locate(centerX, centerY, orbitRadius, angle, pathPoint);
+        float x = pathPoint.x();
+        float y = pathPoint.y();
         float walked = 0f;
         float previousX = x;
         float previousY = y;
@@ -104,8 +109,9 @@ public final class AbyssSerpentRenderer {
                 angle -= angleStep;
                 previousX = x;
                 previousY = y;
-                x = pathX(serpent, angle);
-                y = pathY(serpent, angle);
+                serpent.path().locate(centerX, centerY, orbitRadius, angle, pathPoint);
+                x = pathPoint.x();
+                y = pathPoint.y();
                 stepLength = (float) Math.hypot(x - previousX, y - previousY);
                 walked += stepLength;
             }
@@ -119,19 +125,8 @@ public final class AbyssSerpentRenderer {
 
     private float facingDeg(Serpent serpent, float angle, float x, float y) {
         float aheadAngle = angle + serpent.direction() * TANGENT_STEP_RAD;
-        return (float) Math.toDegrees(Math.atan2(pathY(serpent, aheadAngle) - y, pathX(serpent, aheadAngle) - x));
-    }
-
-    private float pathRadius(Serpent serpent, float angle) {
-        return orbitRadius * (1f + serpent.windAmplitudeShare() * (float) Math.sin(serpent.windWaves() * angle + serpent.windPhaseRad()));
-    }
-
-    private float pathX(Serpent serpent, float angle) {
-        return centerX + pathRadius(serpent, angle) * (float) Math.cos(angle);
-    }
-
-    private float pathY(Serpent serpent, float angle) {
-        return centerY + pathRadius(serpent, angle) * (float) Math.sin(angle);
+        serpent.path().locate(centerX, centerY, orbitRadius, aheadAngle, pathPoint);
+        return (float) Math.toDegrees(Math.atan2(pathPoint.y() - y, pathPoint.x() - x));
     }
 
     public void render(TreeViewport viewport, float alphaMult) {

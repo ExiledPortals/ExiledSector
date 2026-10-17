@@ -9,7 +9,6 @@ import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.util.Misc;
-import exiledsector.compat.CombatGlow;
 import org.lazywizard.lazylib.MathUtils;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -113,7 +112,7 @@ final class PierceDrone extends SingleShotDrone {
         hitShip = null;
         crossing = false;
         fire();
-        CombatGlow.flash(origin(), null, shotColor(EXIT_FALLBACK_COLOR), EXIT_FLASH_SIZE, EXIT_FLASH_INTENSITY, EXIT_FLASH_SECONDS);
+        exitFlash(EXIT_FALLBACK_COLOR);
     }
 
     private float deviationAwayFrom(ShipAPI ship) {

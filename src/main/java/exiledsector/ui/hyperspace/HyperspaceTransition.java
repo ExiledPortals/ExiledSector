@@ -1,5 +1,7 @@
 package exiledsector.ui.hyperspace;
 
+import exiledsector.ui.util.Fade;
+
 public final class HyperspaceTransition {
 
     static final float DURATION_SECONDS = 0.9f;
@@ -58,12 +60,12 @@ public final class HyperspaceTransition {
     }
 
     public HyperspaceCamera camera() {
-        HyperspaceCamera blended = HyperspaceCamera.between(treeCamera, mapCamera, eased(transitionProgress));
+        HyperspaceCamera blended = HyperspaceCamera.between(treeCamera, mapCamera, Fade.smooth(transitionProgress));
         return pivoted ? mapCamera.zoomedAbout(pivotX, pivotY, blended.zoom()) : blended;
     }
 
     public float mapAmount() {
-        return eased(transitionProgress);
+        return Fade.smooth(transitionProgress);
     }
 
     public float treeAlpha() {
@@ -82,11 +84,7 @@ public final class HyperspaceTransition {
         return smoothstep(LABEL_FADE_START, 1f, transitionProgress);
     }
 
-    private static float eased(float t) {
-        return t * t * (3f - 2f * t);
-    }
-
     private static float smoothstep(float edge0, float edge1, float value) {
-        return eased(Math.max(0f, Math.min(1f, (value - edge0) / (edge1 - edge0))));
+        return Fade.smooth(Math.max(0f, Math.min(1f, (value - edge0) / (edge1 - edge0))));
     }
 }

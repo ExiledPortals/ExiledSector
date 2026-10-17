@@ -1,5 +1,6 @@
 package exiledsector.ui.socket;
 
+import exiledsector.ui.util.Fade;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.HoloShapes;
@@ -32,7 +33,7 @@ final class SocketWorkbenchFlair {
     void advance(float amount, boolean loaded) {
         elapsedSeconds += amount;
         float step = amount / LOAD_SECONDS;
-        loadProgress = Math.max(0f, Math.min(1f, loadProgress + (loaded ? step : -step)));
+        loadProgress = Fade.step(loadProgress, loaded, step);
         flashProgress = Math.max(0f, flashProgress - amount / FLASH_SECONDS);
     }
 

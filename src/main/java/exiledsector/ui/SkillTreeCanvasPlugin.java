@@ -365,7 +365,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     void shipCardClicked() {
-        if (HullUpgradesSetting.enabled() && fleetRenderer.hasShips() && mode().letsShipCardFollowFleet()) {
+        boolean inspectionUsable = HullUpgradesSetting.enabled() || camera.isFollowing() || frameworkInspection.hasSocketedItems();
+        if (inspectionUsable && fleetRenderer.hasShips() && mode().letsShipCardFollowFleet()) {
             toggleFollowingFleet();
         }
     }

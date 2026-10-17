@@ -17,6 +17,7 @@ import com.fs.starfarer.api.impl.campaign.DerelictShipEntityPlugin;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.ShipRecoverySpecial;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.skills.unlock.UnlockCondition;
+import exiledsector.skills.unlock.UnlockConditionType;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,7 +39,7 @@ import static org.mockito.Mockito.when;
 
 class AbyssSingularityTest {
 
-    private static final List<UnlockCondition> ABYSS_GATE = List.of(UnlockCondition.ratSingularityDefeated());
+    private static final List<UnlockCondition> ABYSS_GATE = List.of(UnlockCondition.modGate(UnlockConditionType.RAT_SINGULARITY_DEFEATED));
 
     private MockedStatic<LunaSettings> lunaSettingsMock;
     private MockedStatic<Global> globalMock;

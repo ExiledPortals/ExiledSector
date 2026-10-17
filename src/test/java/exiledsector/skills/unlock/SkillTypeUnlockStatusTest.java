@@ -1,6 +1,8 @@
 package exiledsector.skills.unlock;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.ModManagerAPI;
+import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.CharacterDataAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
@@ -8,6 +10,7 @@ import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.compat.NightcrossCompat;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillType;
@@ -20,7 +23,11 @@ import org.mockito.Mockito;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -241,5 +248,30 @@ class SkillTypeUnlockStatusTest {
 
         assertFalse(SkillTypeUnlockStatus.isHidden(type, new ShipSkillData()));
         assertTrue(SkillTypeUnlockStatus.isLocked(type, new ShipSkillData()));
+    }
+
+    @Test
+    void aModGateThatFailsToCheckFallsBackOpenButAVanillaConditionStaysLocked() {
+        SettingsAPI settings = mock(SettingsAPI.class);
+        ModManagerAPI modManager = mock(ModManagerAPI.class);
+        when(settings.getModManager()).thenReturn(modManager);
+        when(modManager.isModEnabled(NightcrossCompat.MOD_ID)).thenReturn(true);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+        when(sector.getMemoryWithoutUpdate()).thenThrow(new IllegalStateException("memory gone"));
+
+        assertFalse(SkillTypeUnlockStatus.isLocked(typeWithConditions(UnlockCondition.modGate(UnlockConditionType.NIGHTCROSS_PASCAL_VISITED)), null));
+        assertTrue(SkillTypeUnlockStatus.isLocked(typeWithConditions(UnlockCondition.memoryFlag("someFlag")), null));
+    }
+
+    @Test
+    void everyModGateFailsOpenAndEveryConditionHasAnOverride() {
+        for (UnlockConditionType type : UnlockConditionType.values()) {
+            assertNotNull(type.overrideFieldId(), type.name());
+            assertEquals(type.isModGate(), type.failsOpen(), type.name());
+            if (type.isModGate()) {
+                assertSame(type, UnlockCondition.modGate(type).getType());
+            }
+        }
+        assertThrows(IllegalArgumentException.class, () -> UnlockCondition.modGate(UnlockConditionType.MEMORY_FLAG));
     }
 }
