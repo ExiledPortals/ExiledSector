@@ -160,7 +160,7 @@ final class ExoshipView {
     void render(TreeViewport viewport, float alphaMult) {
         lastViewport = alphaMult >= AUDIBLE_ALPHA ? viewport : null;
         if (isAvailable()) {
-            renderer.render(viewport, voyage, shipLength(), dockedLevel, hovered && !active, alphaMult);
+            renderer.render(viewport, voyage, shipLength(), dockedLevel, hovered && !active, viewLevel(), alphaMult);
         }
     }
 

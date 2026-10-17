@@ -65,9 +65,11 @@ public final class ExoshipRenderer {
     private final SpriteCache spriteCache = new SpriteCache(ExoshipRenderer.class);
     private final List<Afterimage> afterimages = new ArrayList<>();
     private final List<Flash> flashes = new ArrayList<>();
+    private final ExoshipEscorts escorts = new ExoshipEscorts();
     private float secondsSinceTrail;
 
     public void advance(float amount, ExoshipVoyage voyage, float shipLength) {
+        escorts.advance(amount);
         for (Afterimage afterimage : afterimages) {
             afterimage.ageSeconds += amount;
         }
@@ -128,7 +130,8 @@ public final class ExoshipRenderer {
         flashes.add(flash);
     }
 
-    public void render(TreeViewport viewport, ExoshipVoyage voyage, float shipLength, float dockedLevel, boolean hovered, float alphaMult) {
+    public void render(TreeViewport viewport, ExoshipVoyage voyage, float shipLength, float dockedLevel, boolean hovered, float escortLevel,
+                       float alphaMult) {
         if (alphaMult <= 0f) {
             return;
         }
@@ -146,7 +149,10 @@ public final class ExoshipRenderer {
                     trailColor(progress), alpha, spriteAngle(afterimage.facingDeg));
         }
         if (voyage.isVisible()) {
+            float escortAlpha = alphaMult * escortLevel;
+            escorts.render(viewport, voyage.shipX(), voyage.shipY(), shipLength, false, escortAlpha);
             renderShip(viewport, voyage, shipLength, dockedLevel, hovered, alphaMult);
+            escorts.render(viewport, voyage.shipX(), voyage.shipY(), shipLength, true, escortAlpha);
         }
         for (Flash flash : flashes) {
             renderFlash(viewport, flash, alphaMult);
