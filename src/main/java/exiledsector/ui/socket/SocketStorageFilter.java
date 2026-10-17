@@ -1,6 +1,6 @@
 package exiledsector.ui.socket;
 
-import exiledsector.hullitems.SocketType;
+import exiledsector.hullitems.HullItemType;
 import exiledsector.hullitems.HullItemRarity;
 
 import java.util.EnumSet;
@@ -15,7 +15,7 @@ public final class SocketStorageFilter {
     Status status = Status.FREE;
     String query = "";
     final Set<HullItemRarity> rarities = EnumSet.noneOf(HullItemRarity.class);
-    final Set<SocketType> socketTypes = EnumSet.noneOf(SocketType.class);
+    final Set<HullItemType> socketTypes = EnumSet.noneOf(HullItemType.class);
 
     void setStatus(Status value) {
         status = value;
@@ -27,7 +27,7 @@ public final class SocketStorageFilter {
         }
     }
 
-    void toggleSocketType(SocketType socketType) {
+    void toggleSocketType(HullItemType socketType) {
         if (!socketTypes.remove(socketType)) {
             socketTypes.add(socketType);
         }

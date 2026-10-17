@@ -2,6 +2,9 @@ package exiledsector.hullitems;
 
 import exiledsector.skills.npc.RealSkillData;
 import exiledsector.skills.SkillTypeEffect;
+import exiledsector.modifiers.Modifier;
+import exiledsector.modifiers.ModifierCategory;
+import exiledsector.modifiers.ModifierSlot;
 import exiledsector.skills.skilleffect.EffectAliases;
 import org.json.CDL;
 import org.json.JSONArray;
@@ -36,22 +39,22 @@ class HullItemImplicitsTest {
 
     @Test
     void everyHullSocketTypeHasImplicitsThatRollRangesOfKnownEffects() {
-        for (SocketType type : SocketType.frameworkTypes()) {
-            List<PoolEntry> implicits = HullItemImplicits.forType(type);
+        for (HullItemType type : HullItemType.frameworkTypes()) {
+            List<Modifier> implicits = HullItemImplicits.forType(type);
             assertFalse(implicits.isEmpty(), type.id() + " has no implicits");
-            for (PoolEntry implicit : implicits) {
-                assertFalse(implicit.scalesWithHullSize(), implicit.effectName());
-                assertTrue(implicit.canVary(), implicit.effectName() + " should roll a range");
+            for (Modifier implicit : implicits) {
+                assertFalse(implicit.line().scalesWithHullSize(), implicit.id());
+                assertTrue(implicit.line().canVary(), implicit.id() + " should roll a range");
             }
         }
-        assertTrue(HullItemImplicits.forType(SocketType.SUBROUTINE).isEmpty());
+        assertTrue(HullItemImplicits.forType(HullItemType.SUBROUTINE).isEmpty());
     }
 
     @Test
     void subroutinesCannotBeGivenImplicits() {
-        assertThrows(IllegalArgumentException.class, () -> HullItemImplicits.parseImplicits(SocketType.SUBROUTINE, "HULL_PERCENT:5:10"));
+        assertThrows(IllegalArgumentException.class, () -> HullItemImplicits.parseImplicits(HullItemType.SUBROUTINE, "HULL_PERCENT:5:10"));
         assertThrows(IllegalArgumentException.class,
-                () -> HullItemImplicits.parseImplicits(SocketType.ARMOR_PLATING, "ARMOR_FLAT:10/15/20/30"));
+                () -> HullItemImplicits.parseImplicits(HullItemType.ARMOR_PLATING, "ARMOR_FLAT:10/15/20/30"));
     }
 
     @Test
@@ -69,9 +72,9 @@ class HullItemImplicitsTest {
     @Test
     void uniquesGetTheirTypeImplicitsAndSubroutinesGetNone() {
         HullItemDefinition unique = HullItemDefinitions.all().stream()
-                .filter(definition -> definition.unique() && definition.kind() == SocketType.WEAPON_MOUNT).findFirst().orElseThrow();
+                .filter(definition -> definition.unique() && definition.kind() == HullItemType.WEAPON_MOUNT).findFirst().orElseThrow();
         HullItemDefinition subroutine = HullItemDefinitions.all().stream()
-                .filter(definition -> definition.kind() == SocketType.SUBROUTINE).findFirst().orElseThrow();
+                .filter(definition -> definition.kind() == HullItemType.SUBROUTINE).findFirst().orElseThrow();
 
         assertEquals(1, new HullItem("u", unique.id(), 7L, List.of()).implicits().size());
         assertTrue(new HullItem("s", subroutine.id(), 7L, List.of()).implicits().isEmpty());
@@ -85,6 +88,16 @@ class HullItemImplicitsTest {
         assertEquals(2, applied.size());
         assertEquals("ARMOR_PERCENT", applied.get(0).effect().name());
         assertEquals(HullItemRarity.COMMON, plate.rarity());
+    }
+
+    @Test
+    void anItemGroupsItsRollsIntoImplicitAndExplicitWithPrefixesAndSuffixesUnderExplicit() {
+        HullItem plate = new HullItem("plate", "framework_armor_plating_plate", 9L,
+                List.of(new RolledEffect("HULL_PERCENT", 5f), new RolledEffect("KINETIC_DAMAGE_TAKEN_PERCENT", -5f)));
+
+        assertEquals(List.of(ModifierSlot.IMPLICIT), plate.rolls(ModifierCategory.IMPLICIT).stream().map(SlottedRoll::slot).toList());
+        assertEquals(List.of(ModifierSlot.PREFIX, ModifierSlot.SUFFIX),
+                plate.rolls(ModifierCategory.EXPLICIT).stream().map(SlottedRoll::slot).toList());
     }
 
     private static List<Float> magnitudes(List<RolledEffect> effects) {

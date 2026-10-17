@@ -28,9 +28,9 @@ public final class HullUpgradeRoller {
         return ShipHullSizes.ORDER.get(random.nextInt(ShipHullSizes.ORDER.size()));
     }
 
-    public static List<SocketType> rollTypes(int socketCount, List<SocketType> allowedTypes, Random random) {
-        List<SocketType> shuffledTypes = new ArrayList<>();
-        for (SocketType allowedType : allowedTypes) {
+    public static List<HullItemType> rollTypes(int socketCount, List<HullItemType> allowedTypes, Random random) {
+        List<HullItemType> shuffledTypes = new ArrayList<>();
+        for (HullItemType allowedType : allowedTypes) {
             if (allowedType.isFramework() && !shuffledTypes.contains(allowedType)) {
                 shuffledTypes.add(allowedType);
             }

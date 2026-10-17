@@ -1,7 +1,7 @@
 package exiledsector.ui.framework;
 
 import com.fs.starfarer.api.util.Misc;
-import exiledsector.hullitems.SocketType;
+import exiledsector.hullitems.HullItemType;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.HoloShapes;
@@ -29,24 +29,24 @@ public final class FrameworkSocketFlair {
     private static final Color SOCKET_FILL = new Color(0, 0, 0, 190);
     private static final Color INACTIVE_COLOR = new Color(200, 70, 60);
     private static final SpriteCache ICONS = new SpriteCache(FrameworkSocketFlair.class);
-    private static final Map<SocketType, Color> TYPE_COLORS = new EnumMap<>(SocketType.class);
+    private static final Map<HullItemType, Color> TYPE_COLORS = new EnumMap<>(HullItemType.class);
 
     static {
-        TYPE_COLORS.put(SocketType.BRIDGE, new Color(255, 205, 90));
-        TYPE_COLORS.put(SocketType.CREW_QUARTERS, new Color(120, 220, 170));
-        TYPE_COLORS.put(SocketType.ENGINE_ROOM, new Color(255, 150, 60));
-        TYPE_COLORS.put(SocketType.REACTOR, new Color(190, 255, 110));
-        TYPE_COLORS.put(SocketType.ARMOR_PLATING, new Color(205, 175, 140));
-        TYPE_COLORS.put(SocketType.WEAPON_MOUNT, new Color(255, 95, 85));
-        TYPE_COLORS.put(SocketType.SHIELD_GENERATOR, new Color(90, 170, 255));
-        TYPE_COLORS.put(SocketType.PHASE_COIL, new Color(200, 120, 255));
-        TYPE_COLORS.put(SocketType.FLIGHT_DECK, new Color(90, 230, 255));
+        TYPE_COLORS.put(HullItemType.BRIDGE, new Color(255, 205, 90));
+        TYPE_COLORS.put(HullItemType.CREW_QUARTERS, new Color(120, 220, 170));
+        TYPE_COLORS.put(HullItemType.ENGINE_ROOM, new Color(255, 150, 60));
+        TYPE_COLORS.put(HullItemType.REACTOR, new Color(190, 255, 110));
+        TYPE_COLORS.put(HullItemType.ARMOR_PLATING, new Color(205, 175, 140));
+        TYPE_COLORS.put(HullItemType.WEAPON_MOUNT, new Color(255, 95, 85));
+        TYPE_COLORS.put(HullItemType.SHIELD_GENERATOR, new Color(90, 170, 255));
+        TYPE_COLORS.put(HullItemType.PHASE_COIL, new Color(200, 120, 255));
+        TYPE_COLORS.put(HullItemType.FLIGHT_DECK, new Color(90, 230, 255));
     }
 
     private FrameworkSocketFlair() {
     }
 
-    public static Color colorOf(SocketType socketType) {
+    public static Color colorOf(HullItemType socketType) {
         return TYPE_COLORS.getOrDefault(socketType, Misc.getBasePlayerColor());
     }
 

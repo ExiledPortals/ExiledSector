@@ -12,7 +12,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.skills.FrameworkSlots;
 import exiledsector.hullitems.FrameworkSockets;
 import exiledsector.hullitems.HullUpgradeTooltip;
-import exiledsector.hullitems.SocketType;
+import exiledsector.hullitems.HullItemType;
 import exiledsector.hullitems.HullItem;
 import exiledsector.hullitems.HullItemStore;
 import exiledsector.ui.decoration.ShipAnchors;
@@ -214,7 +214,7 @@ final class HullSocketsDisplay {
             }
 
             @Override
-            public void toggleSocket(SocketType socketType) {
+            public void toggleSocket(HullItemType socketType) {
                 if (treeSession.isSocketTypeUnlocked(socketType)) {
                     treeSession.lockSocket(socketType);
                 } else {
@@ -239,14 +239,14 @@ final class HullSocketsDisplay {
             upgradeBlock = FrameworkSockets.UpgradeBlock.NONE_IN_STORAGE;
         }
         List<HullUpgradePanel.SocketEntry> socketEntries = new ArrayList<>();
-        for (SocketType socketType : SocketType.frameworkTypes()) {
+        for (HullItemType socketType : HullItemType.frameworkTypes()) {
             socketEntries.add(socketEntry(socketType));
         }
         return new HullUpgradePanel.View(hullSize, treeSession.frameworkPoints(), treeSession.unspentFrameworkPoints(), upgradesInStorage,
                 upgradeBlock, List.copyOf(socketEntries));
     }
 
-    private HullUpgradePanel.SocketEntry socketEntry(SocketType socketType) {
+    private HullUpgradePanel.SocketEntry socketEntry(HullItemType socketType) {
         if (treeSession.isSocketTypeUnlocked(socketType)) {
             String itemIcon = null;
             for (FrameworkSlots.Slot slot : slots) {
@@ -267,7 +267,7 @@ final class HullSocketsDisplay {
     }
 
     void render(SkillTreeFleetRenderer.InspectedShip ship, FrameworkSocketLayout.ShipExtent extent, float alpha, SocketBounds bounds,
-                HullItem placing, SocketType targetedType) {
+                HullItem placing, HullItemType targetedType) {
         renderedSockets = 0;
         if (ship == null || slots.isEmpty() || alpha <= 0f) {
             return;
@@ -307,7 +307,7 @@ final class HullSocketsDisplay {
         }
     }
 
-    private static float placingDim(HullItem placing, SocketType socketType) {
+    private static float placingDim(HullItem placing, HullItemType socketType) {
         return placing == null || placing.kind() == socketType ? 1f : OTHER_SOCKET_DIM;
     }
 

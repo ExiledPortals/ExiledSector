@@ -1,5 +1,6 @@
 package exiledsector.hullitems;
 
+import exiledsector.modifiers.ModifierSlot;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.skilleffect.SkillEffect;
@@ -9,7 +10,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public record HullItemDefinition(String id, SocketType kind, String name, String icon, float rarity, boolean unique,
+public record HullItemDefinition(String id, HullItemType kind, String name, String icon, float rarity, boolean unique,
                                    String description, List<PoolEntry> prefixes, List<PoolEntry> suffixes, String unlock) {
 
     public static final String FALLBACK_ICON = "graphics/icons/cargo/chip1.png";
@@ -26,8 +27,8 @@ public record HullItemDefinition(String id, SocketType kind, String name, String
         if (!(rarity >= 0f)) {
             throw new IllegalArgumentException("rarity must be zero or more");
         }
-        List<PoolEntry> prefixes = parsePool(row.optString("prefixes", ""));
-        List<PoolEntry> suffixes = parsePool(row.optString("suffixes", ""));
+        List<PoolEntry> prefixes = parsePool(row.optString("prefixes", ""), ModifierSlot.PREFIX);
+        List<PoolEntry> suffixes = parsePool(row.optString("suffixes", ""), ModifierSlot.SUFFIX);
         if (prefixes.isEmpty() && suffixes.isEmpty()) {
             throw new IllegalArgumentException("it has no prefixes or suffixes");
         }
@@ -37,7 +38,7 @@ public record HullItemDefinition(String id, SocketType kind, String name, String
             }
         }
         boolean unique = "true".equalsIgnoreCase(row.optString("unique", "").trim());
-        return new HullItemDefinition(definitionId, SocketType.byId(row.optString("kind", "").trim()),
+        return new HullItemDefinition(definitionId, HullItemType.byId(row.optString("kind", "").trim()),
                 nameOrId(row.optString("name", "").trim(), definitionId), icon.isEmpty() ? FALLBACK_ICON : icon, rarity, unique,
                 row.optString("description", "").trim(), prefixes, suffixes,
                 row.optString("unlock", "").trim());
@@ -75,14 +76,14 @@ public record HullItemDefinition(String id, SocketType kind, String name, String
         return name.isEmpty() ? id : name;
     }
 
-    static List<PoolEntry> parsePool(String poolText) {
+    static List<PoolEntry> parsePool(String poolText, ModifierSlot slot) {
         List<PoolEntry> pool = new ArrayList<>();
         for (String entryText : poolText.split(ENTRY_SEPARATOR)) {
             String trimmed = entryText.trim();
             if (trimmed.isEmpty()) {
                 continue;
             }
-            PoolEntry listedEntry = PoolEntry.parse(trimmed);
+            PoolEntry listedEntry = PoolEntry.parse(trimmed, slot);
             String effectName = currentEffectName(listedEntry.effectName());
             if (effectName == null) {
                 continue;
@@ -95,7 +96,7 @@ public record HullItemDefinition(String id, SocketType kind, String name, String
         return List.copyOf(pool);
     }
 
-    private static String currentEffectName(String listedName) {
+    static String currentEffectName(String listedName) {
         try {
             return SkillEffect.byName(listedName).name();
         } catch (IllegalArgumentException e) {

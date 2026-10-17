@@ -86,7 +86,7 @@ public final class HullItemNames {
         return AFFIXES.get().containsKey(effectName);
     }
 
-    static HullItemName nameFor(HullItemDefinition definition, SocketType kind, long seed, List<RolledEffect> effects) {
+    static HullItemName nameFor(HullItemDefinition definition, HullItemType kind, long seed, List<RolledEffect> effects) {
         return render(definition, kind, effects, freeze(definition, seed, effects));
     }
 
@@ -101,7 +101,7 @@ public final class HullItemNames {
         };
     }
 
-    static HullItemName render(HullItemDefinition definition, SocketType kind, List<RolledEffect> effects, FrozenName frozen) {
+    static HullItemName render(HullItemDefinition definition, HullItemType kind, List<RolledEffect> effects, FrozenName frozen) {
         HullItemRarity rarity = AffixLayout.rarityFor(definition, effects.size());
         if (definition == null) {
             return new HullItemName(Translation.text("socketable.unknown"), null, rarity);
@@ -118,7 +118,7 @@ public final class HullItemNames {
         };
     }
 
-    private static String commonName(HullItemDefinition definition, SocketType kind, FrozenName frozen) {
+    private static String commonName(HullItemDefinition definition, HullItemType kind, FrozenName frozen) {
         String prefixEffect = frozen == null ? null : frozen.prefixEffect();
         String suffixEffect = frozen == null ? null : frozen.suffixEffect();
         String prefix = prefixEffect == null ? null : affix(prefixEffect, true);

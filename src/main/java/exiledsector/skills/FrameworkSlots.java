@@ -4,7 +4,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import exiledsector.skills.tags.NodeRequirements;
 import exiledsector.skills.tags.ShipProfile;
-import exiledsector.hullitems.SocketType;
+import exiledsector.hullitems.HullItemType;
 import exiledsector.hullitems.HullItem;
 import exiledsector.hullitems.HullItemStore;
 
@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 
 public final class FrameworkSlots {
 
-    public record Slot(SocketType type, HullItem item, String unmetRequirement) {
+    public record Slot(HullItemType type, HullItem item, String unmetRequirement) {
 
         public boolean active() {
             return unmetRequirement == null;
@@ -46,7 +46,7 @@ public final class FrameworkSlots {
         List<Slot> slots = new ArrayList<>();
         ShipProfile resolvedFit = null;
         for (String socketTypeId : shipData.getUnlockedSocketTypeIds()) {
-            SocketType socketType = SocketType.byIdOrNull(socketTypeId);
+            HullItemType socketType = HullItemType.byIdOrNull(socketTypeId);
             if (socketType == null || !socketType.isFramework()) {
                 continue;
             }
@@ -82,7 +82,7 @@ public final class FrameworkSlots {
         CACHE.clear();
     }
 
-    public static String unmetRequirement(SocketType socketType, ShipProfile fit) {
+    public static String unmetRequirement(HullItemType socketType, ShipProfile fit) {
         if (socketType.requirementTag() == null || fit == null) {
             return null;
         }

@@ -3,7 +3,7 @@ package exiledsector.ui.socket;
 import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledsector.hullitems.SocketType;
+import exiledsector.hullitems.HullItemType;
 import exiledsector.ui.socket.HullUpgradePanel.SocketState;
 import exiledsector.ui.framework.FrameworkSocketFlair;
 import exiledsector.ui.util.Fade;
@@ -21,7 +21,7 @@ final class SocketTypeTile extends BaseCustomUIPanelPlugin {
     private static final float DIMMED_ALPHA = 0.45f;
     private static final float MAX_STEP_SECONDS = 0.1f;
 
-    private final SocketType socketType;
+    private final HullItemType socketType;
     private final SocketState state;
     private final String itemIconPath;
     private final TileInput tileInput;
@@ -29,7 +29,7 @@ final class SocketTypeTile extends BaseCustomUIPanelPlugin {
     private float hoverLevel;
     private float elapsedSeconds;
 
-    SocketTypeTile(SocketType socketType, SocketState state, String itemIconPath, IconTileCell.Hooks hooks) {
+    SocketTypeTile(HullItemType socketType, SocketState state, String itemIconPath, IconTileCell.Hooks hooks) {
         this.socketType = socketType;
         this.state = state;
         this.itemIconPath = itemIconPath;

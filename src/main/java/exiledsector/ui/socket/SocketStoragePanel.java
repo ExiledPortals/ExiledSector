@@ -16,7 +16,7 @@ import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.hullitems.SocketCustody;
 import exiledsector.hullitems.SocketMaterials;
-import exiledsector.hullitems.SocketType;
+import exiledsector.hullitems.HullItemType;
 import exiledsector.hullitems.HullItem;
 import exiledsector.hullitems.HullItemDisassembly;
 import exiledsector.hullitems.HullItemRarity;
@@ -75,7 +75,7 @@ public final class SocketStoragePanel extends HoloPanel {
     private record RarityChip(HullItemRarity rarity) {
     }
 
-    private record TypeChip(SocketType socketType) {
+    private record TypeChip(HullItemType socketType) {
     }
 
     private record ChipColors(Color base, Color dark, Color bright) {
@@ -116,10 +116,10 @@ public final class SocketStoragePanel extends HoloPanel {
     private int movedFromCargo;
     private String materialsNotice;
     private String disassembledNotice;
-    private SocketType kindFilter;
+    private HullItemType kindFilter;
 
     private SocketStoragePanel(CustomPanelAPI hostPanel, Function<HullItem, String> installedShipLookup, Listener storageListener,
-                               SocketType kindFilter) {
+                               HullItemType kindFilter) {
         super(hostPanel);
         this.kindFilter = kindFilter;
         this.installedShipLookup = installedShipLookup;
@@ -127,7 +127,7 @@ public final class SocketStoragePanel extends HoloPanel {
     }
 
     public static SocketStoragePanel open(CustomPanelAPI hostPanel, SocketPanelPlacement placement, Function<HullItem, String> installedShipLookup,
-                                          Listener storageListener, SocketType kindFilter, Consumer<SocketPanelTab> tabListener) {
+                                          Listener storageListener, HullItemType kindFilter, Consumer<SocketPanelTab> tabListener) {
         SocketStoragePanel storagePanel = new SocketStoragePanel(hostPanel, installedShipLookup, storageListener, kindFilter);
         storagePanel.movedFromCargo = absorbPlayerCargo();
         storagePanel.materialsNotice = settleMaterials();
@@ -191,7 +191,7 @@ public final class SocketStoragePanel extends HoloPanel {
         return new UIComponentAPI[]{controlsElement, placedComponent(gridElement), noticeElement, summaryElement};
     }
 
-    public void restrictTo(SocketType socketType) {
+    public void restrictTo(HullItemType socketType) {
         if (socketType == kindFilter) {
             return;
         }
@@ -510,7 +510,7 @@ public final class SocketStoragePanel extends HoloPanel {
         storageRows = built;
     }
 
-    private boolean showsKind(SocketType kind) {
+    private boolean showsKind(HullItemType kind) {
         if (kindFilter != null) {
             return kind == kindFilter;
         }
@@ -518,7 +518,7 @@ public final class SocketStoragePanel extends HoloPanel {
     }
 
     private void rebuildControls() {
-        List<SocketType> chipTypes = kindFilter == null ? List.of(SocketType.values()) : List.of();
+        List<HullItemType> chipTypes = kindFilter == null ? List.of(HullItemType.values()) : List.of();
         int typeRows = typeChipRows(chipTypes);
         int controlRows = FIXED_CONTROL_ROWS + typeRows;
         TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), controlRows * CHIP_HEIGHT + (controlRows - 1) * GAP, false);
@@ -535,7 +535,7 @@ public final class SocketStoragePanel extends HoloPanel {
         }
         chipLeft = 0f;
         int chipRow = FIXED_CONTROL_ROWS;
-        for (SocketType socketType : chipTypes) {
+        for (HullItemType socketType : chipTypes) {
             String label = socketType.displayName();
             float chipWidth = chipWidth(label);
             if (chipLeft > 0f && chipLeft + chipWidth > innerWidth()) {
@@ -555,13 +555,13 @@ public final class SocketStoragePanel extends HoloPanel {
         return Global.getSettings().computeStringWidth(label, Fonts.ORBITRON_12) + CHIP_TEXT_PADDING;
     }
 
-    private int typeChipRows(List<SocketType> chipTypes) {
+    private int typeChipRows(List<HullItemType> chipTypes) {
         if (chipTypes.isEmpty()) {
             return 0;
         }
         int rows = 1;
         float chipLeft = 0f;
-        for (SocketType socketType : chipTypes) {
+        for (HullItemType socketType : chipTypes) {
             float chipWidth = chipWidth(socketType.displayName());
             if (chipLeft > 0f && chipLeft + chipWidth > innerWidth()) {
                 chipLeft = 0f;
@@ -572,7 +572,7 @@ public final class SocketStoragePanel extends HoloPanel {
         return rows;
     }
 
-    private static Color typeColor(SocketType socketType) {
+    private static Color typeColor(HullItemType socketType) {
         return socketType.isFramework() ? FrameworkSocketFlair.colorOf(socketType) : Misc.getBasePlayerColor();
     }
 
@@ -757,7 +757,7 @@ public final class SocketStoragePanel extends HoloPanel {
     }
 
     private static boolean isSubroutine(SocketStorageRow row) {
-        return row.hullItem().kind() == null || row.hullItem().kind() == SocketType.SUBROUTINE;
+        return row.hullItem().kind() == null || row.hullItem().kind() == HullItemType.SUBROUTINE;
     }
 
     private HullItemCell cellFor(SocketStorageRow row) {

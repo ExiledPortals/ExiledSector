@@ -5,7 +5,7 @@ import exiledsector.skills.FrameworkSlots;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.hullitems.NpcHullItems;
-import exiledsector.hullitems.SocketType;
+import exiledsector.hullitems.HullItemType;
 import exiledsector.hullitems.HullItemDefinitions;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -44,7 +44,7 @@ class ResolvedTreeFrameworkTest {
         assertEquals(List.of(new ResolvedTree.EffectEntry(DefenseSkillEffect.HULL_PERCENT, "exiledSector_framework_bridge_HULL_PERCENT", 5f)),
                 effectEntries);
         assertSame(resolvedTree, ResolvedTree.of(shipData, HullSize.CRUISER, 1f, FrameworkSlots.of(shipData, () -> null)));
-        List<FrameworkSlots.Slot> inactiveSlots = List.of(new FrameworkSlots.Slot(SocketType.BRIDGE, slots.get(0).item(), "req_test"),
+        List<FrameworkSlots.Slot> inactiveSlots = List.of(new FrameworkSlots.Slot(HullItemType.BRIDGE, slots.get(0).item(), "req_test"),
                 slots.get(1));
         assertNotSame(resolvedTree, ResolvedTree.of(shipData, HullSize.CRUISER, 1f, inactiveSlots));
     }

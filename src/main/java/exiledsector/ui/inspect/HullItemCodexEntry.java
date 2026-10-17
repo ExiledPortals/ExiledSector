@@ -9,6 +9,8 @@ import exiledsector.i18n.NumberText;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.hullitems.HullItemImplicits;
+import exiledsector.modifiers.Modifier;
+import exiledsector.modifiers.ModifierLine;
 import exiledsector.hullitems.PoolEntry;
 import exiledsector.hullitems.RolledEffect;
 import exiledsector.hullitems.HullItemDefinition;
@@ -81,14 +83,14 @@ public class HullItemCodexEntry extends BoxedCodexEntry {
     }
 
     private void writeImplicits(TooltipMakerAPI info) {
-        List<PoolEntry> implicits = HullItemImplicits.forType(definition.kind());
+        List<Modifier> implicits = definition.kind().implicits();
         if (implicits.isEmpty()) {
             return;
         }
         info.addSectionHeading(Translation.text("hullItem.tooltip.implicit"), Alignment.MID, PAD);
         float linePad = PAD;
-        for (PoolEntry implicit : implicits) {
-            StyledText effectText = effectText(implicit);
+        for (Modifier implicit : implicits) {
+            StyledText effectText = effectText(implicit.line());
             if (effectText != null) {
                 VanillaText.addPara(info, effectText, linePad, Misc.getTextColor());
                 linePad = LINE_PAD;
@@ -146,7 +148,11 @@ public class HullItemCodexEntry extends BoxedCodexEntry {
     }
 
     private static StyledText effectText(PoolEntry entry) {
-        return new RolledEffect(entry.effectName(), entry.boundFarthestFromZero()).rangeDescription(entry);
+        return effectText(entry.line());
+    }
+
+    private static StyledText effectText(ModifierLine line) {
+        return new RolledEffect(line.effectName(), line.boundFarthestFromZero()).rangeDescription(line);
     }
 
     static String percentText(double chance) {

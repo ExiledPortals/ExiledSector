@@ -7,7 +7,7 @@ import exiledsector.skills.skilleffect.StatMode;
 import exiledsector.skills.tags.SkillTags;
 import exiledsector.skills.unlock.BlueprintCategory;
 import exiledsector.skills.unlock.UnlockConditionType;
-import exiledsector.hullitems.SocketType;
+import exiledsector.hullitems.HullItemType;
 import exiledsector.hullitems.HullItemUnlock;
 import org.json.JSONObject;
 
@@ -50,7 +50,7 @@ final class EditorVocabulary {
                         .map(type -> camelCase(type.name())).toList())).append(",\n");
         json.append("  \"blueprintCategories\": ")
                 .append(list(Arrays.stream(BlueprintCategory.values()).map(category -> camelCase(category.name())).toList())).append(",\n");
-        json.append("  \"socketableKinds\": ").append(list(Arrays.stream(SocketType.values()).map(SocketType::id).toList())).append(",\n");
+        json.append("  \"socketableKinds\": ").append(list(Arrays.stream(HullItemType.values()).map(HullItemType::id).toList())).append(",\n");
         json.append("  \"socketableUnlocks\": ")
                 .append(list(Arrays.stream(HullItemUnlock.values()).map(HullItemUnlock::id).toList())).append("\n");
         return json.append("}\n").toString();

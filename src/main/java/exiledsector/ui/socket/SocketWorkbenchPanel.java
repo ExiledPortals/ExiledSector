@@ -19,7 +19,7 @@ import exiledsector.hullitems.HullItem;
 import exiledsector.hullitems.HullItemCrafting;
 import exiledsector.hullitems.HullItemDefinition;
 import exiledsector.hullitems.HullItemDefinitions;
-import exiledsector.hullitems.SocketType;
+import exiledsector.hullitems.HullItemType;
 import exiledsector.hullitems.HullItemName;
 import exiledsector.hullitems.HullItemRarity;
 import exiledsector.hullitems.HullItemStore;
@@ -419,7 +419,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     private static List<String> recipeIcons(Recipe recipe) {
         if (recipe.currency == null) {
             List<String> icons = HullItemDefinitions.all().stream()
-                    .filter(definition -> definition.kind() == SocketType.SUBROUTINE && !definition.unique())
+                    .filter(definition -> definition.kind() == HullItemType.SUBROUTINE && !definition.unique())
                     .map(HullItemDefinition::icon).distinct().toList();
             return icons.isEmpty() ? List.of(FALLBACK_SUBROUTINE_ICON) : icons;
         }

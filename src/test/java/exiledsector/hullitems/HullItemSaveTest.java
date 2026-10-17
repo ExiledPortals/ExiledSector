@@ -41,7 +41,7 @@ class HullItemSaveTest {
         assertTrue(xml.contains("<exiledSector.SocketableStore>") && xml.contains("<exiledSector.Socketable>") && xml.contains("<exiledSector.RolledEffect>"), xml);
         assertFalse(xml.contains("exiledsector.socketables"), xml);
         HullItem restored = loaded.owned().get(0);
-        assertEquals(SocketType.SUBROUTINE, restored.kind());
+        assertEquals(HullItemType.SUBROUTINE, restored.kind());
         assertEquals(saved.id(), restored.id());
         assertEquals(saved.effects(), restored.effects());
         assertEquals(99L, restored.seed());
@@ -78,7 +78,7 @@ class HullItemSaveTest {
             HullItem restored = loaded.owned().get(0);
             assertEquals(HullItem.class, restored.getClass());
             assertEquals(saved.effects(), restored.effects());
-            assertEquals(SocketType.SUBROUTINE, restored.kind());
+            assertEquals(HullItemType.SUBROUTINE, restored.kind());
             assertTrue(xstream().toXML(loaded).contains("<exiledSector.Socketable>"));
         }
     }

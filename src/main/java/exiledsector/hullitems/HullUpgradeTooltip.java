@@ -26,7 +26,7 @@ public final class HullUpgradeTooltip {
         }, footer);
     }
 
-    public static StyledText socketLine(SocketType socketType) {
+    public static StyledText socketLine(HullItemType socketType) {
         if (socketType.requirementTag() == null) {
             return StyledText.of(socketType.displayName());
         }

@@ -1,5 +1,6 @@
 package exiledsector.hullitems;
 
+import exiledsector.modifiers.ModifierLine;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.DescriptionLine;
@@ -57,7 +58,7 @@ public final class RolledEffect {
         return description(null);
     }
 
-    public StyledText description(PoolEntry rollRange) {
+    public StyledText description(ModifierLine rollRange) {
         SkillEffect effect = effect();
         if (effect == null) {
             return null;
@@ -91,7 +92,7 @@ public final class RolledEffect {
         return replaceValue(firstValueText, joinSharingAffixes(valueTexts));
     }
 
-    public StyledText rangeDescription(PoolEntry rollRange) {
+    public StyledText rangeDescription(ModifierLine rollRange) {
         SkillEffect effect = effect();
         if (effect == null) {
             return null;

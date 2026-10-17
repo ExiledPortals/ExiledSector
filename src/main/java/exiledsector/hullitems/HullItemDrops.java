@@ -165,7 +165,7 @@ public final class HullItemDrops {
     }
 
     public static boolean canBeSynthesised(HullItemDefinition definition) {
-        return definition.kind() == SocketType.SUBROUTINE && !definition.unique() && isDroppable(definition);
+        return definition.kind() == HullItemType.SUBROUTINE && !definition.unique() && isDroppable(definition);
     }
 
     public record FrameworkLoot(List<HullItemData> items, List<HullUpgradeData> upgrades) {
@@ -206,8 +206,8 @@ public final class HullItemDrops {
     }
 
     public static HullItemDefinition pickFrameworkBasic(Random random) {
-        List<SocketType> typesWithBasics = new ArrayList<>();
-        for (SocketType socketType : SocketType.frameworkTypes()) {
+        List<HullItemType> typesWithBasics = new ArrayList<>();
+        for (HullItemType socketType : HullItemType.frameworkTypes()) {
             if (HullItemDefinitions.all().stream().anyMatch(definition -> isDroppableBasic(definition, socketType))) {
                 typesWithBasics.add(socketType);
             }
@@ -215,11 +215,11 @@ public final class HullItemDrops {
         return typesWithBasics.isEmpty() ? null : pickFrameworkBasic(typesWithBasics.get(random.nextInt(typesWithBasics.size())), random);
     }
 
-    public static HullItemDefinition pickFrameworkBasic(SocketType socketType, Random random) {
+    public static HullItemDefinition pickFrameworkBasic(HullItemType socketType, Random random) {
         return pick(random, definition -> definition.kind() == socketType && !definition.unique());
     }
 
-    private static boolean isDroppableBasic(HullItemDefinition definition, SocketType socketType) {
+    private static boolean isDroppableBasic(HullItemDefinition definition, HullItemType socketType) {
         return definition.kind() == socketType && !definition.unique() && isDroppable(definition);
     }
 

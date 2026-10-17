@@ -21,7 +21,7 @@ import exiledsector.skills.npc.NpcFactionVolumes;
 import exiledsector.skills.skilleffect.FleetCrewLedger;
 import exiledsector.hullitems.SocketLossListener;
 import exiledsector.hullitems.HullItemDefinitions;
-import exiledsector.hullitems.SocketType;
+import exiledsector.hullitems.HullItemType;
 import exiledsector.hullitems.HullItemNames;
 import exiledsector.ui.SkillTreeRefitButton;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
@@ -317,7 +317,7 @@ class ExiledSectorModPluginTest {
     void onApplicationLoadLoadsTheHullItemDefinitionsMergedAcrossMods() throws Exception {
         new ExiledSectorModPlugin().onApplicationLoad();
 
-        assertEquals(SocketType.SUBROUTINE, HullItemDefinitions.get("chip").kind());
+        assertEquals(HullItemType.SUBROUTINE, HullItemDefinitions.get("chip").kind());
     }
 
     @Test

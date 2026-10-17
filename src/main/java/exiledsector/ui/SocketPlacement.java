@@ -9,7 +9,7 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.hullitems.HullUpgradesSetting;
 import exiledsector.hullitems.SocketCustody;
-import exiledsector.hullitems.SocketType;
+import exiledsector.hullitems.HullItemType;
 import exiledsector.hullitems.HullItem;
 import exiledsector.hullitems.HullItemStore;
 import exiledsector.ui.node.NodeSearch;
@@ -77,7 +77,7 @@ final class SocketPlacement {
     private SocketStoragePanel storagePanel;
     private HullItem placingHullItem;
     private SkillNode targetSocket;
-    private SocketType targetFrameworkType;
+    private HullItemType targetFrameworkType;
     private boolean inspectingShip;
     private int storageRevision;
     private int shownStoredCount = -1;
@@ -136,7 +136,7 @@ final class SocketPlacement {
         return targetFrameworkType != null;
     }
 
-    SocketType targetFrameworkType() {
+    HullItemType targetFrameworkType() {
         return targetFrameworkType;
     }
 
@@ -148,7 +148,7 @@ final class SocketPlacement {
         treeCanvasPosition = canvasPosition;
     }
 
-    void openForFrameworkSocket(SocketType socketType, PositionAPI canvasPosition, ScreenRect shipCard) {
+    void openForFrameworkSocket(HullItemType socketType, PositionAPI canvasPosition, ScreenRect shipCard) {
         stopPlacing();
         clearTargetSocket();
         targetFrameworkType = socketType;
@@ -320,10 +320,10 @@ final class SocketPlacement {
     }
 
     private void open(PositionAPI canvasPosition, ScreenRect shipCard) {
-        open(canvasPosition, shipCard, targetSocket != null ? SocketType.SUBROUTINE : null);
+        open(canvasPosition, shipCard, targetSocket != null ? HullItemType.SUBROUTINE : null);
     }
 
-    private void open(PositionAPI canvasPosition, ScreenRect shipCard, SocketType kindFilter) {
+    private void open(PositionAPI canvasPosition, ScreenRect shipCard, HullItemType kindFilter) {
         if (storagePanel != null) {
             return;
         }
@@ -401,7 +401,7 @@ final class SocketPlacement {
         }
     }
 
-    boolean placeIntoFrameworkSocket(SocketType socketType) {
+    boolean placeIntoFrameworkSocket(HullItemType socketType) {
         if (placingHullItem == null) {
             return false;
         }
@@ -420,7 +420,7 @@ final class SocketPlacement {
             return Translation.msg(inspectingShip ? "ui.socketStorage.placingHintShipView" : "ui.socketStorage.placingHint")
                     .arg("name", name).text();
         }
-        SocketType socketType = hullItem.kind();
+        HullItemType socketType = hullItem.kind();
         String key;
         if (!HullUpgradesSetting.enabled()) {
             key = "ui.socketStorage.placingHintFrameworkDisabled";
@@ -433,7 +433,7 @@ final class SocketPlacement {
     }
 
     private static boolean isSubroutine(HullItem hullItem) {
-        return hullItem.kind() == null || hullItem.kind() == SocketType.SUBROUTINE;
+        return hullItem.kind() == null || hullItem.kind() == HullItemType.SUBROUTINE;
     }
 
     private void stopPlacing() {
@@ -450,7 +450,7 @@ final class SocketPlacement {
         treeSession.setTargetedSocket(socket);
         if (storagePanel != null) {
             storagePanel.setTargetingSocket(socket != null);
-            storagePanel.restrictTo(socket != null ? SocketType.SUBROUTINE : null);
+            storagePanel.restrictTo(socket != null ? HullItemType.SUBROUTINE : null);
         }
     }
 

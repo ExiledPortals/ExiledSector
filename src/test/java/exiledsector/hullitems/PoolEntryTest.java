@@ -1,5 +1,6 @@
 package exiledsector.hullitems;
 
+import exiledsector.modifiers.ModifierSlot;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class PoolEntryTest {
 
     private static PoolEntry range(float min, float max) {
-        return new PoolEntry("HULL_MULT", min, max, 1f);
+        return PoolEntry.of(ModifierSlot.PREFIX, "HULL_MULT", min, max, 1f);
     }
 
     @Test
@@ -89,12 +90,12 @@ class PoolEntryTest {
         assertEquals(0.18f, range(0.13f, 0.22f).average(), 1e-6f);
         assertEquals(0.02f, range(0.01f, 0.03f).average(), 1e-6f);
         assertEquals(1.8f, range(1.5f, 2f).average(), 1e-6f);
-        assertEquals(5f, PoolEntry.parse("ARMOR_FLAT:5/10/15/20").average());
+        assertEquals(5f, PoolEntry.parse("ARMOR_FLAT:5/10/15/20", ModifierSlot.PREFIX).average());
     }
 
     @Test
     void hullSizeEntriesAreFourFixedValuesThatNeverVary() {
-        PoolEntry armor = PoolEntry.parse("ARMOR_FLAT:5/10/15/20:2");
+        PoolEntry armor = PoolEntry.parse("ARMOR_FLAT:5/10/15/20:2", ModifierSlot.PREFIX);
 
         assertEquals(List.of(5f, 10f, 15f, 20f), armor.hullValues());
         assertEquals(2f, armor.weight());
@@ -110,11 +111,11 @@ class PoolEntryTest {
 
     @Test
     void parsingOrdersTheBoundsAndDefaultsTheWeight() {
-        assertEquals(new PoolEntry("HULL_MULT", -15f, -10f, 1f), PoolEntry.parse("HULL_MULT:-10:-15"));
-        assertEquals(new PoolEntry("HULL_MULT", 4f, 6f, 2.5f), PoolEntry.parse("HULL_MULT:4:6:2.5"));
-        assertThrows(IllegalArgumentException.class, () -> PoolEntry.parse("HULL_MULT:4"));
-        assertThrows(IllegalArgumentException.class, () -> PoolEntry.parse("HULL_MULT:4:6:0"));
-        assertThrows(IllegalArgumentException.class, () -> PoolEntry.parse("ARMOR_FLAT:5/10/15"));
+        assertEquals(PoolEntry.of(ModifierSlot.PREFIX, "HULL_MULT", -15f, -10f, 1f), PoolEntry.parse("HULL_MULT:-10:-15", ModifierSlot.PREFIX));
+        assertEquals(PoolEntry.of(ModifierSlot.PREFIX, "HULL_MULT", 4f, 6f, 2.5f), PoolEntry.parse("HULL_MULT:4:6:2.5", ModifierSlot.PREFIX));
+        assertThrows(IllegalArgumentException.class, () -> PoolEntry.parse("HULL_MULT:4", ModifierSlot.PREFIX));
+        assertThrows(IllegalArgumentException.class, () -> PoolEntry.parse("HULL_MULT:4:6:0", ModifierSlot.PREFIX));
+        assertThrows(IllegalArgumentException.class, () -> PoolEntry.parse("ARMOR_FLAT:5/10/15", ModifierSlot.PREFIX));
     }
 
     @Test

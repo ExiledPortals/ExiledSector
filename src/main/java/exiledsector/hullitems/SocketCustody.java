@@ -136,11 +136,11 @@ public final class SocketCustody {
     }
 
     static boolean fitsTreeSocket(HullItem hullItem) {
-        return hullItem.kind() == SocketType.SUBROUTINE;
+        return hullItem.kind() == HullItemType.SUBROUTINE;
     }
 
     static boolean fitsFrameworkSocket(HullItem hullItem, String socketTypeId) {
-        return hullItem.canSocketInto(SocketType.byIdOrNull(socketTypeId));
+        return hullItem.canSocketInto(HullItemType.byIdOrNull(socketTypeId));
     }
 
     public static boolean unsocketIfMisfit(HullItem hullItem) {

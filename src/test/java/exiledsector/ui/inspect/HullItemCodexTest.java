@@ -1,10 +1,11 @@
 package exiledsector.ui.inspect;
 
+import exiledsector.modifiers.ModifierSlot;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.hullitems.PoolEntry;
-import exiledsector.hullitems.SocketType;
+import exiledsector.hullitems.HullItemType;
 import exiledsector.hullitems.HullItemDefinition;
 import exiledsector.hullitems.HullItemDefinitions;
 import org.json.JSONArray;
@@ -46,8 +47,8 @@ class HullItemCodexTest {
     }
 
     private static HullItemDefinition definition(String id, boolean unique, String unlock) {
-        return new HullItemDefinition(id, SocketType.BRIDGE, id, HullItemDefinition.FALLBACK_ICON, 1f, unique, "",
-                List.of(new PoolEntry("HULL_MULT", 1f, 2f, 1f)), List.of(), unlock);
+        return new HullItemDefinition(id, HullItemType.BRIDGE, id, HullItemDefinition.FALLBACK_ICON, 1f, unique, "",
+                List.of(PoolEntry.of(ModifierSlot.PREFIX, "HULL_MULT", 1f, 2f, 1f)), List.of(), unlock);
     }
 
     @Test

@@ -33,7 +33,7 @@ import exiledsector.skills.unlock.NodeGates;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.skills.tags.ShipProfile;
 import exiledsector.hullitems.FrameworkSockets;
-import exiledsector.hullitems.SocketType;
+import exiledsector.hullitems.HullItemType;
 import exiledsector.hullitems.HullItem;
 import exiledsector.hullitems.HullItemStore;
 
@@ -267,19 +267,19 @@ final class NodeAllocator {
         return changed(FrameworkSockets.installUpgrade(data(), hullSize(), HullItemStore.get()));
     }
 
-    boolean unlockSocket(SocketType socketType) {
+    boolean unlockSocket(HullItemType socketType) {
         return changed(FrameworkSockets.unlock(data(), socketType, currentFit()));
     }
 
-    boolean lockSocket(SocketType socketType) {
+    boolean lockSocket(HullItemType socketType) {
         return changed(FrameworkSockets.lock(data(), socketType));
     }
 
-    boolean socketFrameworkItem(SocketType socketType, HullItem hullItem) {
+    boolean socketFrameworkItem(HullItemType socketType, HullItem hullItem) {
         return changed(FrameworkSockets.socket(data(), socketType, hullItem, ShipSkillDataManager.all()));
     }
 
-    boolean unsocketFrameworkItem(SocketType socketType) {
+    boolean unsocketFrameworkItem(HullItemType socketType) {
         return changed(data().unsocketFrameworkItem(socketType.id()) != null);
     }
 
@@ -287,11 +287,11 @@ final class NodeAllocator {
         return FrameworkSlots.forVariant(data(), shipVariant);
     }
 
-    FrameworkSockets.UnlockBlock unlockBlock(SocketType socketType) {
+    FrameworkSockets.UnlockBlock unlockBlock(HullItemType socketType) {
         return FrameworkSockets.unlockBlock(data(), socketType, currentFit());
     }
 
-    String unmetRequirement(SocketType socketType) {
+    String unmetRequirement(HullItemType socketType) {
         return FrameworkSlots.unmetRequirement(socketType, currentFit());
     }
 

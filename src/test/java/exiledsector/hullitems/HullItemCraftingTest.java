@@ -159,7 +159,7 @@ class HullItemCraftingTest {
 
         assertNotNull(replacement);
         assertEquals("relic_b", replacement.definitionId());
-        assertEquals(SocketType.CREW_QUARTERS, replacement.kind());
+        assertEquals(HullItemType.CREW_QUARTERS, replacement.kind());
         assertEquals(unique.id(), replacement.id());
         assertEquals(List.of(first, replacement), store.owned());
         assertSame(replacement, store.find(unique.id()));

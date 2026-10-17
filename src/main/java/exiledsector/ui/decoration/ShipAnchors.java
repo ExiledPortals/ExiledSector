@@ -3,7 +3,7 @@ package exiledsector.ui.decoration;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.WeaponAPI.WeaponType;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
-import exiledsector.hullitems.SocketType;
+import exiledsector.hullitems.HullItemType;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.EnumMap;
@@ -21,13 +21,13 @@ public final class ShipAnchors {
     static final int PULL_IN_STEPS = 10;
     private static final float PARALLEL_TOLERANCE = 1e-6f;
 
-    private final Map<SocketType, Anchor> anchorsByType;
+    private final Map<HullItemType, Anchor> anchorsByType;
 
-    private ShipAnchors(Map<SocketType, Anchor> anchorsByType) {
+    private ShipAnchors(Map<HullItemType, Anchor> anchorsByType) {
         this.anchorsByType = anchorsByType;
     }
 
-    public Anchor forSocket(SocketType socketType) {
+    public Anchor forSocket(HullItemType socketType) {
         return anchorsByType.getOrDefault(socketType, CENTRE);
     }
 
@@ -37,21 +37,21 @@ public final class ShipAnchors {
         float rearExtent = Math.max(1f, centreY);
         float halfBeam = Math.max(1f, spriteWidth / 2f);
         List<WeaponSlotAPI> weaponSlots = hullSpec == null ? List.of() : hullSpec.getAllWeaponSlotsCopy();
-        Map<SocketType, Anchor> anchors = new EnumMap<>(SocketType.class);
-        anchors.put(SocketType.BRIDGE, new Anchor(frontExtent * 0.45f, 0f));
-        anchors.put(SocketType.CREW_QUARTERS, new Anchor(frontExtent * 0.1f, halfBeam * 0.4f));
-        anchors.put(SocketType.REACTOR, new Anchor(-rearExtent * 0.25f, 0f));
-        anchors.put(SocketType.ARMOR_PLATING, new Anchor(frontExtent * 0.3f, halfBeam * 0.85f));
-        anchors.put(SocketType.PHASE_COIL, new Anchor(-rearExtent * 0.05f, -halfBeam * 0.35f));
-        anchors.put(SocketType.ENGINE_ROOM, engineAnchor(visuals, rearExtent));
-        anchors.put(SocketType.WEAPON_MOUNT, weaponAnchor(weaponSlots, frontExtent));
-        anchors.put(SocketType.FLIGHT_DECK, launchBayAnchor(weaponSlots, halfBeam));
-        anchors.put(SocketType.SHIELD_GENERATOR, shieldAnchor(hullSpec, frontExtent, halfBeam));
+        Map<HullItemType, Anchor> anchors = new EnumMap<>(HullItemType.class);
+        anchors.put(HullItemType.BRIDGE, new Anchor(frontExtent * 0.45f, 0f));
+        anchors.put(HullItemType.CREW_QUARTERS, new Anchor(frontExtent * 0.1f, halfBeam * 0.4f));
+        anchors.put(HullItemType.REACTOR, new Anchor(-rearExtent * 0.25f, 0f));
+        anchors.put(HullItemType.ARMOR_PLATING, new Anchor(frontExtent * 0.3f, halfBeam * 0.85f));
+        anchors.put(HullItemType.PHASE_COIL, new Anchor(-rearExtent * 0.05f, -halfBeam * 0.35f));
+        anchors.put(HullItemType.ENGINE_ROOM, engineAnchor(visuals, rearExtent));
+        anchors.put(HullItemType.WEAPON_MOUNT, weaponAnchor(weaponSlots, frontExtent));
+        anchors.put(HullItemType.FLIGHT_DECK, launchBayAnchor(weaponSlots, halfBeam));
+        anchors.put(HullItemType.SHIELD_GENERATOR, shieldAnchor(hullSpec, frontExtent, halfBeam));
         List<Anchor> outline = visuals.outline();
         if (outline.size() >= 3) {
-            anchors.put(SocketType.ARMOR_PLATING, armorAnchor(outline, anchors.get(SocketType.ARMOR_PLATING)));
+            anchors.put(HullItemType.ARMOR_PLATING, armorAnchor(outline, anchors.get(HullItemType.ARMOR_PLATING)));
             if (contains(outline, CENTRE)) {
-                anchors.replaceAll((socketType, anchor) -> socketType == SocketType.ARMOR_PLATING ? anchor : pullInside(outline, anchor));
+                anchors.replaceAll((socketType, anchor) -> socketType == HullItemType.ARMOR_PLATING ? anchor : pullInside(outline, anchor));
             }
         }
         return new ShipAnchors(anchors);

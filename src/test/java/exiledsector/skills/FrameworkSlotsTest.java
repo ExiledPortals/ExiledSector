@@ -5,7 +5,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.skills.tags.ShipProfile;
 import exiledsector.hullitems.NpcHullItems;
-import exiledsector.hullitems.SocketType;
+import exiledsector.hullitems.HullItemType;
 import exiledsector.hullitems.HullItemDefinitions;
 import org.json.JSONArray;
 import org.json.JSONObject;

@@ -1,6 +1,9 @@
 package exiledsector.hullitems;
 
 import exiledsector.ModCsv;
+import exiledsector.modifiers.Modifier;
+import exiledsector.modifiers.ModifierLine;
+import exiledsector.modifiers.ModifierSlot;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,9 +19,10 @@ import java.util.concurrent.atomic.AtomicReference;
 public final class HullItemImplicits {
 
     static final String DATA_PATH = "data/config/exiledSector/hull_item_implicits.csv";
+    private static final String ENTRY_SEPARATOR = ";";
     private static final long IMPLICIT_SEED_SALT = 0x5DEECE66DL;
     private static final Logger LOG = Logger.getLogger(HullItemImplicits.class);
-    private static final AtomicReference<Map<SocketType, List<PoolEntry>>> BY_TYPE = new AtomicReference<>();
+    private static final AtomicReference<Map<HullItemType, List<Modifier>>> BY_TYPE = new AtomicReference<>();
 
     private HullItemImplicits() {
     }
@@ -28,11 +32,11 @@ public final class HullItemImplicits {
     }
 
     public static void register(JSONArray rows) throws JSONException {
-        Map<SocketType, List<PoolEntry>> loaded = new EnumMap<>(SocketType.class);
+        Map<HullItemType, List<Modifier>> loaded = new EnumMap<>(HullItemType.class);
         ModCsv.forEach(rows, (index, row) -> {
             try {
-                SocketType type = SocketType.byId(ModCsv.text(row, "type"));
-                List<PoolEntry> implicits = parseImplicits(type, ModCsv.text(row, "implicits"));
+                HullItemType type = HullItemType.byId(ModCsv.text(row, "type"));
+                List<Modifier> implicits = parseImplicits(type, ModCsv.text(row, "implicits"));
                 if (loaded.put(type, implicits) != null) {
                     throw new IllegalArgumentException(type.id() + " is listed more than once");
                 }
@@ -43,46 +47,65 @@ public final class HullItemImplicits {
         BY_TYPE.set(Collections.unmodifiableMap(loaded));
     }
 
-    static List<PoolEntry> parseImplicits(SocketType type, String implicitsText) {
+    static List<Modifier> parseImplicits(HullItemType type, String implicitsText) {
         if (type == null || !type.isFramework()) {
             throw new IllegalArgumentException("implicits only belong to hull socket types, not subroutines");
         }
-        List<PoolEntry> implicits = HullItemDefinition.parsePool(implicitsText);
-        for (PoolEntry implicit : implicits) {
-            if (implicit.scalesWithHullSize()) {
-                throw new IllegalArgumentException(implicit.effectName() + " must roll a min:max range, not per-hull-size values");
+        List<Modifier> implicits = new ArrayList<>();
+        for (String entryText : implicitsText.split(ENTRY_SEPARATOR)) {
+            String trimmed = entryText.trim();
+            if (trimmed.isEmpty()) {
+                continue;
             }
+            ModifierLine.Parsed parsed = ModifierLine.parse(trimmed);
+            if (parsed.trailingField() != null) {
+                throw new IllegalArgumentException("implicit \"" + trimmed + "\" has a weight, but implicits always roll");
+            }
+            if (parsed.line().scalesWithHullSize()) {
+                throw new IllegalArgumentException(parsed.line().effectName() + " must roll a min:max range, not per-hull-size values");
+            }
+            String effectName = HullItemDefinition.currentEffectName(parsed.line().effectName());
+            if (effectName == null) {
+                continue;
+            }
+            if (implicits.stream().anyMatch(existing -> existing.id().equals(effectName))) {
+                throw new IllegalArgumentException(effectName + " is listed more than once");
+            }
+            implicits.add(Modifier.single(ModifierSlot.IMPLICIT, parsed.line().named(effectName)));
         }
-        return implicits;
+        return List.copyOf(implicits);
     }
 
     public static boolean isLoaded() {
         return BY_TYPE.get() != null;
     }
 
-    public static List<PoolEntry> forType(SocketType type) {
-        Map<SocketType, List<PoolEntry>> byType = BY_TYPE.get();
+    public static List<Modifier> forType(HullItemType type) {
+        Map<HullItemType, List<Modifier>> byType = BY_TYPE.get();
         return byType == null || type == null ? List.of() : byType.getOrDefault(type, List.of());
     }
 
-    public static PoolEntry entry(SocketType type, String effectName) {
-        for (PoolEntry implicit : forType(type)) {
-            if (implicit.effectName().equals(effectName)) {
-                return implicit;
+    public static ModifierLine line(HullItemType type, String effectName) {
+        for (Modifier implicit : forType(type)) {
+            ModifierLine line = implicit.line(effectName);
+            if (line != null) {
+                return line;
             }
         }
         return null;
     }
 
-    static List<RolledEffect> roll(SocketType type, long seed) {
-        List<PoolEntry> implicits = forType(type);
+    static List<RolledEffect> roll(HullItemType type, long seed) {
+        List<Modifier> implicits = type == null ? List.of() : type.implicits();
         if (implicits.isEmpty()) {
             return List.of();
         }
         Random random = new Random(seed ^ IMPLICIT_SEED_SALT);
         List<RolledEffect> rolled = new ArrayList<>(implicits.size());
-        for (PoolEntry implicit : implicits) {
-            rolled.add(new RolledEffect(implicit.effectName(), implicit.roll(random)));
+        for (Modifier implicit : implicits) {
+            for (ModifierLine line : implicit.lines()) {
+                rolled.add(new RolledEffect(line.effectName(), line.roll(random)));
+            }
         }
         return List.copyOf(rolled);
     }

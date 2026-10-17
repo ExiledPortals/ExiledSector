@@ -117,15 +117,15 @@ class HullUpgradeTest {
     void pointsUnlockSocketTypesWithinTheShipsRestrictionsAndLockingRefundsThem() {
         ShipSkillData shipData = shipWithPoints("ship", 2);
 
-        assertEquals(FrameworkSockets.UnlockBlock.UNMET_REQUIREMENT, FrameworkSockets.unlockBlock(shipData, SocketType.SHIELD_GENERATOR, fit(ShieldType.NONE)));
-        assertTrue(FrameworkSockets.unlock(shipData, SocketType.BRIDGE, fit(ShieldType.NONE)));
-        assertEquals(FrameworkSockets.UnlockBlock.ALREADY_UNLOCKED, FrameworkSockets.unlockBlock(shipData, SocketType.BRIDGE, fit(ShieldType.NONE)));
-        assertTrue(FrameworkSockets.unlock(shipData, SocketType.SHIELD_GENERATOR, fit(ShieldType.FRONT)));
-        assertEquals(FrameworkSockets.UnlockBlock.NO_POINTS, FrameworkSockets.unlockBlock(shipData, SocketType.REACTOR, fit(ShieldType.FRONT)));
+        assertEquals(FrameworkSockets.UnlockBlock.UNMET_REQUIREMENT, FrameworkSockets.unlockBlock(shipData, HullItemType.SHIELD_GENERATOR, fit(ShieldType.NONE)));
+        assertTrue(FrameworkSockets.unlock(shipData, HullItemType.BRIDGE, fit(ShieldType.NONE)));
+        assertEquals(FrameworkSockets.UnlockBlock.ALREADY_UNLOCKED, FrameworkSockets.unlockBlock(shipData, HullItemType.BRIDGE, fit(ShieldType.NONE)));
+        assertTrue(FrameworkSockets.unlock(shipData, HullItemType.SHIELD_GENERATOR, fit(ShieldType.FRONT)));
+        assertEquals(FrameworkSockets.UnlockBlock.NO_POINTS, FrameworkSockets.unlockBlock(shipData, HullItemType.REACTOR, fit(ShieldType.FRONT)));
 
         HullItem officer = store.add(HullItemDefinitions.get("officer"), 1L);
-        assertTrue(FrameworkSockets.socket(shipData, SocketType.BRIDGE, officer, ships));
-        assertTrue(FrameworkSockets.lock(shipData, SocketType.BRIDGE));
+        assertTrue(FrameworkSockets.socket(shipData, HullItemType.BRIDGE, officer, ships));
+        assertTrue(FrameworkSockets.lock(shipData, HullItemType.BRIDGE));
 
         assertEquals(1, shipData.getUnspentFrameworkPoints());
         assertEquals(List.of("shield_generator"), shipData.getUnlockedSocketTypeIds());
@@ -136,29 +136,29 @@ class HullUpgradeTest {
     @Test
     void itemsOnlyGoIntoUnlockedSocketsOfTheirOwnTypeAndOnlyOnce() {
         ShipSkillData shipData = shipWithPoints("ship", 2);
-        FrameworkSockets.unlock(shipData, SocketType.BRIDGE, fit(ShieldType.FRONT));
+        FrameworkSockets.unlock(shipData, HullItemType.BRIDGE, fit(ShieldType.FRONT));
         HullItem officer = store.add(HullItemDefinitions.get("officer"), 1L);
         HullItem chip = store.add(HullItemDefinitions.get("chip"), 2L);
 
-        assertFalse(FrameworkSockets.socket(shipData, SocketType.REACTOR, officer, ships));
-        assertFalse(FrameworkSockets.socket(shipData, SocketType.BRIDGE, chip, ships));
-        assertTrue(FrameworkSockets.socket(shipData, SocketType.BRIDGE, officer, ships));
+        assertFalse(FrameworkSockets.socket(shipData, HullItemType.REACTOR, officer, ships));
+        assertFalse(FrameworkSockets.socket(shipData, HullItemType.BRIDGE, chip, ships));
+        assertTrue(FrameworkSockets.socket(shipData, HullItemType.BRIDGE, officer, ships));
         ShipSkillData otherShip = shipWithPoints("other", 1);
-        FrameworkSockets.unlock(otherShip, SocketType.BRIDGE, fit(ShieldType.FRONT));
-        assertFalse(FrameworkSockets.socket(otherShip, SocketType.BRIDGE, officer, ships));
+        FrameworkSockets.unlock(otherShip, HullItemType.BRIDGE, fit(ShieldType.FRONT));
+        assertFalse(FrameworkSockets.socket(otherShip, HullItemType.BRIDGE, officer, ships));
         assertEquals(SocketCustody.Installation.inFramework("ship", "bridge"), SocketCustody.installations(ships).get(officer.id()));
     }
 
     @Test
     void aSoldShipReturnsItsItemsAndALostShipTakesThemWithIt() {
         ShipSkillData sold = shipWithPoints("sold", 1);
-        FrameworkSockets.unlock(sold, SocketType.BRIDGE, fit(ShieldType.FRONT));
+        FrameworkSockets.unlock(sold, HullItemType.BRIDGE, fit(ShieldType.FRONT));
         HullItem kept = store.add(HullItemDefinitions.get("officer"), 1L);
-        FrameworkSockets.socket(sold, SocketType.BRIDGE, kept, ships);
+        FrameworkSockets.socket(sold, HullItemType.BRIDGE, kept, ships);
         ShipSkillData destroyed = shipWithPoints("destroyed", 1);
-        FrameworkSockets.unlock(destroyed, SocketType.BRIDGE, fit(ShieldType.FRONT));
+        FrameworkSockets.unlock(destroyed, HullItemType.BRIDGE, fit(ShieldType.FRONT));
         HullItem gone = store.add(HullItemDefinitions.get("officer"), 2L);
-        FrameworkSockets.socket(destroyed, SocketType.BRIDGE, gone, ships);
+        FrameworkSockets.socket(destroyed, HullItemType.BRIDGE, gone, ships);
         lost.add("destroyed");
 
         SocketCustody.reconcile(ships, Set.of(), lost, store);
@@ -171,9 +171,9 @@ class HullUpgradeTest {
     @Test
     void aRespecKeepsTheFrameworkAndATransposedMisfitLeavesItsSocket() {
         ShipSkillData shipData = shipWithPoints("ship", 1);
-        FrameworkSockets.unlock(shipData, SocketType.BRIDGE, fit(ShieldType.FRONT));
+        FrameworkSockets.unlock(shipData, HullItemType.BRIDGE, fit(ShieldType.FRONT));
         HullItem officer = store.add(HullItemDefinitions.get("officer"), 1L);
-        FrameworkSockets.socket(shipData, SocketType.BRIDGE, officer, ships);
+        FrameworkSockets.socket(shipData, HullItemType.BRIDGE, officer, ships);
 
         shipData.resetAllocations();
         assertEquals(List.of("bridge"), shipData.getUnlockedSocketTypeIds());
@@ -218,7 +218,7 @@ class HullUpgradeTest {
         int framed = 0;
         int trials = 20000;
         int[] counts = new int[5];
-        Set<SocketType> seen = EnumSet.noneOf(SocketType.class);
+        Set<HullItemType> seen = EnumSet.noneOf(HullItemType.class);
         for (int i = 0; i < trials; i++) {
             ShipSkillData shipData = new ShipSkillData();
             NpcHullItems.rollFramework(shipData, HullSize.CRUISER, () -> fit(ShieldType.NONE), 20, random);
@@ -227,7 +227,7 @@ class HullUpgradeTest {
                 framed++;
                 counts[unlocked.size()]++;
                 assertEquals(unlocked.size(), new HashSet<>(unlocked).size());
-                unlocked.forEach(socketTypeId -> seen.add(SocketType.byId(socketTypeId)));
+                unlocked.forEach(socketTypeId -> seen.add(HullItemType.byId(socketTypeId)));
             }
         }
 
@@ -235,9 +235,9 @@ class HullUpgradeTest {
         assertEquals(0.7, counts[2] / (double) framed, 0.02);
         assertEquals(0.2, counts[3] / (double) framed, 0.02);
         assertEquals(0.1, counts[4] / (double) framed, 0.02);
-        assertFalse(seen.contains(SocketType.SHIELD_GENERATOR));
-        assertFalse(seen.contains(SocketType.PHASE_COIL));
-        assertFalse(seen.contains(SocketType.FLIGHT_DECK));
+        assertFalse(seen.contains(HullItemType.SHIELD_GENERATOR));
+        assertFalse(seen.contains(HullItemType.PHASE_COIL));
+        assertFalse(seen.contains(HullItemType.FLIGHT_DECK));
     }
 
     @Test

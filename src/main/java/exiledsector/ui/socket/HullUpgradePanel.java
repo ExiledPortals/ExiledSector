@@ -17,7 +17,7 @@ import exiledsector.skills.ShipHullSizes;
 import exiledsector.hullitems.FrameworkSockets;
 import exiledsector.hullitems.HullUpgradeData;
 import exiledsector.hullitems.HullUpgradeTooltip;
-import exiledsector.hullitems.SocketType;
+import exiledsector.hullitems.HullItemType;
 import exiledsector.hullitems.HullItemRarity;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.VanillaText;
@@ -33,14 +33,14 @@ public final class HullUpgradePanel extends HoloPanel {
 
         void installUpgrade();
 
-        void toggleSocket(SocketType socketType);
+        void toggleSocket(HullItemType socketType);
 
         void closed();
     }
 
     public enum SocketState {UNLOCKED, AVAILABLE, RESTRICTED, NO_POINTS}
 
-    public record SocketEntry(SocketType type, SocketState state, String requirementText, String itemIconPath) {
+    public record SocketEntry(HullItemType type, SocketState state, String requirementText, String itemIconPath) {
     }
 
     public record View(HullSize hullSize, int points, int unspentPoints, int upgradesInStorage,

@@ -72,7 +72,7 @@ public final class NpcHullItems {
     public static HullItemDefinition pickDefinition(Random random, Predicate<HullItemDefinition> uniqueAllowed) {
         if (random.nextFloat() < UNIQUE_SHARE) {
             HullItemDefinition uniqueDefinition = HullItemDrops.pickUnique(random,
-                    definition -> definition.kind() == SocketType.SUBROUTINE && uniqueAllowed.test(definition));
+                    definition -> definition.kind() == HullItemType.SUBROUTINE && uniqueAllowed.test(definition));
             if (uniqueDefinition != null) {
                 return uniqueDefinition;
             }
@@ -86,14 +86,14 @@ public final class NpcHullItems {
             return;
         }
         ShipProfile fit = currentFit.get();
-        List<SocketType> fittingTypes = new ArrayList<>();
-        for (SocketType socketType : SocketType.frameworkTypes()) {
+        List<HullItemType> fittingTypes = new ArrayList<>();
+        for (HullItemType socketType : HullItemType.frameworkTypes()) {
             if (FrameworkSlots.unmetRequirement(socketType, fit) == null) {
                 fittingTypes.add(socketType);
             }
         }
-        List<SocketType> socketTypes = HullUpgradeRoller.rollTypes(HullUpgradeRoller.rollSocketCount(random), fittingTypes, new Random(random.nextLong()));
-        for (SocketType socketType : socketTypes) {
+        List<HullItemType> socketTypes = HullUpgradeRoller.rollTypes(HullUpgradeRoller.rollSocketCount(random), fittingTypes, new Random(random.nextLong()));
+        for (HullItemType socketType : socketTypes) {
             shipData.grantUnlockedSocketType(socketType.id());
             if (random.nextFloat() < firstChance(playerLevel)) {
                 HullItemDefinition definition = HullItemDrops.pickFrameworkBasic(socketType, random);

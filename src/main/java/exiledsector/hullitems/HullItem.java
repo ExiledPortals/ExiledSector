@@ -1,5 +1,7 @@
 package exiledsector.hullitems;
 
+import exiledsector.modifiers.ModifierCategory;
+import exiledsector.modifiers.ModifierSlot;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.i18n.StyledText;
 import exiledsector.skills.SkillNode;
@@ -27,7 +29,7 @@ public class HullItem {
         this.effects = new ArrayList<>(effects);
     }
 
-    public SocketType kind() {
+    public HullItemType kind() {
         HullItemDefinition definition = definition();
         return definition == null ? null : definition.kind();
     }
@@ -135,10 +137,10 @@ public class HullItem {
     }
 
     public boolean canSocketInto(SkillNode socket) {
-        return socket != null && socket.getType().getTier() == SkillTier.SOCKET && kind() == SocketType.SUBROUTINE;
+        return socket != null && socket.getType().getTier() == SkillTier.SOCKET && kind() == HullItemType.SUBROUTINE;
     }
 
-    public boolean canSocketInto(SocketType frameworkSocket) {
+    public boolean canSocketInto(HullItemType frameworkSocket) {
         return frameworkSocket != null && frameworkSocket.isFramework() && kind() == frameworkSocket;
     }
 
@@ -146,20 +148,32 @@ public class HullItem {
         return skillEffects(null);
     }
 
-    public List<SkillTypeEffect> skillEffects(HullSize hullSize) {
+    public List<SlottedRoll> rolls() {
         HullItemDefinition definition = definition();
-        List<SkillTypeEffect> appliedEffects = new ArrayList<>(effects.size() + 2);
+        HullItemType type = kind();
+        List<SlottedRoll> rolls = new ArrayList<>(effects.size() + 2);
         for (RolledEffect implicit : implicits()) {
-            SkillEffect resolvedImplicit = implicit.effect();
-            if (resolvedImplicit != null) {
-                appliedEffects.add(new SkillTypeEffect(resolvedImplicit, implicit.magnitude()));
-            }
+            rolls.add(new SlottedRoll(ModifierSlot.IMPLICIT, implicit, HullItemImplicits.line(type, implicit.effectName())));
         }
-        for (RolledEffect effect : effects) {
-            SkillEffect resolvedEffect = effect.effect();
+        for (RolledEffect explicit : effects) {
+            PoolEntry poolEntry = definition == null ? null : definition.poolEntry(explicit.effectName());
+            ModifierSlot slot = poolEntry == null ? ModifierSlot.SUFFIX : poolEntry.slot();
+            rolls.add(new SlottedRoll(slot, explicit, poolEntry == null ? null : poolEntry.line()));
+        }
+        return rolls;
+    }
+
+    public List<SlottedRoll> rolls(ModifierCategory category) {
+        return rolls().stream().filter(roll -> roll.category() == category).toList();
+    }
+
+    public List<SkillTypeEffect> skillEffects(HullSize hullSize) {
+        List<SkillTypeEffect> appliedEffects = new ArrayList<>(effects.size() + 2);
+        for (SlottedRoll slottedRoll : rolls()) {
+            SkillEffect resolvedEffect = slottedRoll.roll().effect();
             if (resolvedEffect != null) {
-                PoolEntry poolEntry = definition == null ? null : definition.poolEntry(effect.effectName());
-                float magnitude = poolEntry == null ? effect.magnitude() : poolEntry.valueFor(effect.magnitude(), hullSize);
+                float rolledMagnitude = slottedRoll.roll().magnitude();
+                float magnitude = slottedRoll.line() == null ? rolledMagnitude : slottedRoll.line().valueFor(rolledMagnitude, hullSize);
                 appliedEffects.add(new SkillTypeEffect(resolvedEffect, magnitude));
             }
         }
@@ -168,9 +182,9 @@ public class HullItem {
 
     public List<StyledText> implicitLines(boolean withRollRanges) {
         List<StyledText> lines = new ArrayList<>();
-        SocketType type = kind();
+        HullItemType type = kind();
         for (RolledEffect implicit : implicits()) {
-            StyledText description = implicit.description(withRollRanges ? HullItemImplicits.entry(type, implicit.effectName()) : null);
+            StyledText description = implicit.description(withRollRanges ? HullItemImplicits.line(type, implicit.effectName()) : null);
             if (description != null) {
                 lines.add(description);
             }
@@ -198,7 +212,7 @@ public class HullItem {
                 description = effect.hullValuesDescription(poolEntry.hullValues());
             } else {
                 RolledEffect shownEffect = new RolledEffect(effect.effectName(), poolEntry.valueFor(effect.magnitude(), hullSize));
-                description = shownEffect.description(withRollRanges ? poolEntry : null);
+                description = shownEffect.description(withRollRanges ? poolEntry.line() : null);
             }
             if (description != null) {
                 lines.add(description);

@@ -32,7 +32,7 @@ public final class FrameworkSockets {
         return shipData.addFrameworkPoint(MAX_POINTS);
     }
 
-    public static UnlockBlock unlockBlock(ShipSkillData shipData, SocketType socketType, ShipProfile currentFit) {
+    public static UnlockBlock unlockBlock(ShipSkillData shipData, HullItemType socketType, ShipProfile currentFit) {
         if (shipData.isSocketTypeUnlocked(socketType.id())) {
             return UnlockBlock.ALREADY_UNLOCKED;
         }
@@ -42,11 +42,11 @@ public final class FrameworkSockets {
         return shipData.getUnspentFrameworkPoints() <= 0 ? UnlockBlock.NO_POINTS : null;
     }
 
-    public static boolean unlock(ShipSkillData shipData, SocketType socketType, ShipProfile currentFit) {
+    public static boolean unlock(ShipSkillData shipData, HullItemType socketType, ShipProfile currentFit) {
         return socketType.isFramework() && unlockBlock(shipData, socketType, currentFit) == null && shipData.unlockSocketType(socketType.id());
     }
 
-    public static boolean lock(ShipSkillData shipData, SocketType socketType) {
+    public static boolean lock(ShipSkillData shipData, HullItemType socketType) {
         if (!shipData.isSocketTypeUnlocked(socketType.id())) {
             return false;
         }
@@ -54,12 +54,12 @@ public final class FrameworkSockets {
         return true;
     }
 
-    public static boolean canSocket(ShipSkillData shipData, SocketType socketType, HullItem hullItem, Map<String, ShipSkillData> shipDataById) {
+    public static boolean canSocket(ShipSkillData shipData, HullItemType socketType, HullItem hullItem, Map<String, ShipSkillData> shipDataById) {
         return shipData.isSocketTypeUnlocked(socketType.id()) && hullItem.canSocketInto(socketType)
                 && !SocketCustody.isInstalled(shipDataById, hullItem);
     }
 
-    public static boolean socket(ShipSkillData shipData, SocketType socketType, HullItem hullItem, Map<String, ShipSkillData> shipDataById) {
+    public static boolean socket(ShipSkillData shipData, HullItemType socketType, HullItem hullItem, Map<String, ShipSkillData> shipDataById) {
         return canSocket(shipData, socketType, hullItem, shipDataById) && shipData.socketFrameworkItem(socketType.id(), hullItem.id());
     }
 }

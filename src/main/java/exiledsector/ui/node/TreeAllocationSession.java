@@ -19,7 +19,7 @@ import exiledsector.skills.template.TemplateCapture;
 import exiledsector.skills.template.TemplateStep;
 import exiledsector.hullitems.FrameworkSockets;
 import exiledsector.hullitems.SocketCustody;
-import exiledsector.hullitems.SocketType;
+import exiledsector.hullitems.HullItemType;
 import exiledsector.hullitems.HullItem;
 import exiledsector.hullitems.HullItemStore;
 import exiledsector.ui.SkillTreeSounds;
@@ -591,7 +591,7 @@ public final class TreeAllocationSession {
         return allocator.data().getUnspentFrameworkPoints();
     }
 
-    public boolean isSocketTypeUnlocked(SocketType socketType) {
+    public boolean isSocketTypeUnlocked(HullItemType socketType) {
         return allocator.data().isSocketTypeUnlocked(socketType.id());
     }
 
@@ -599,11 +599,11 @@ public final class TreeAllocationSession {
         return allocator.hullSize();
     }
 
-    public FrameworkSockets.UnlockBlock unlockBlock(SocketType socketType) {
+    public FrameworkSockets.UnlockBlock unlockBlock(HullItemType socketType) {
         return allocator.unlockBlock(socketType);
     }
 
-    public String unmetRequirement(SocketType socketType) {
+    public String unmetRequirement(HullItemType socketType) {
         return allocator.unmetRequirement(socketType);
     }
 
@@ -611,19 +611,19 @@ public final class TreeAllocationSession {
         return apply(allocator::installUpgrade, SkillTreeSounds::socketed);
     }
 
-    public boolean unlockSocket(SocketType socketType) {
+    public boolean unlockSocket(HullItemType socketType) {
         return apply(() -> allocator.unlockSocket(socketType), SkillTreeSounds::socketed);
     }
 
-    public boolean lockSocket(SocketType socketType) {
+    public boolean lockSocket(HullItemType socketType) {
         return apply(() -> allocator.lockSocket(socketType), () -> { });
     }
 
-    public boolean socketFrameworkItem(SocketType socketType, HullItem hullItem) {
+    public boolean socketFrameworkItem(HullItemType socketType, HullItem hullItem) {
         return apply(() -> allocator.socketFrameworkItem(socketType, hullItem), SkillTreeSounds::socketed);
     }
 
-    public boolean unsocketFrameworkItem(SocketType socketType) {
+    public boolean unsocketFrameworkItem(HullItemType socketType) {
         return apply(() -> allocator.unsocketFrameworkItem(socketType), () -> { });
     }
 

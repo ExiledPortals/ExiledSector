@@ -9,7 +9,7 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.hullitems.NpcHullItems;
-import exiledsector.hullitems.SocketType;
+import exiledsector.hullitems.HullItemType;
 import exiledsector.hullitems.HullItemData;
 import org.apache.log4j.Logger;
 
@@ -119,7 +119,7 @@ public final class NpcTreeTag {
             restoreSockets(shipData, tagField.substring(SOCKETS_MARKER.length()));
         } else if (tagField.startsWith(FRAMEWORK_TYPES_MARKER)) {
             for (String socketTypeId : tagField.substring(FRAMEWORK_TYPES_MARKER.length()).split("\\" + TYPE_SEPARATOR)) {
-                SocketType socketType = SocketType.byIdOrNull(socketTypeId);
+                HullItemType socketType = HullItemType.byIdOrNull(socketTypeId);
                 if (socketType != null && socketType.isFramework()) {
                     shipData.grantUnlockedSocketType(socketTypeId);
                 }
@@ -151,7 +151,7 @@ public final class NpcTreeTag {
             SkillNode node = SkillTree.get(nodeId);
             HullItemData itemData = NpcHullItems.item(hullItemId);
             boolean fitsTreeSocket = itemData != null
-                    && (itemData.definition() == null || itemData.definition().kind() == SocketType.SUBROUTINE);
+                    && (itemData.definition() == null || itemData.definition().kind() == HullItemType.SUBROUTINE);
             if (node != null && node.getType().getTier() == SkillTier.SOCKET && fitsTreeSocket) {
                 shipData.socketItem(nodeId, hullItemId);
             }

@@ -96,14 +96,14 @@ class FrameworkDropsTest {
     @Test
     void basicsArePickedTypeFirstSoEveryTypeWithABasicIsEquallyLikely() {
         Random random = new Random(1L);
-        Map<SocketType, Integer> counts = new HashMap<>();
+        Map<HullItemType, Integer> counts = new HashMap<>();
         for (int i = 0; i < TRIALS; i++) {
             counts.merge(HullItemDrops.pickFrameworkBasic(random).kind(), 1, Integer::sum);
         }
 
-        assertEquals(Set.of(SocketType.BRIDGE, SocketType.SHIELD_GENERATOR), counts.keySet());
-        assertEquals(0.5, counts.get(SocketType.BRIDGE) / (double) TRIALS, 0.02);
-        assertNull(HullItemDrops.pickFrameworkBasic(SocketType.PHASE_COIL, random));
+        assertEquals(Set.of(HullItemType.BRIDGE, HullItemType.SHIELD_GENERATOR), counts.keySet());
+        assertEquals(0.5, counts.get(HullItemType.BRIDGE) / (double) TRIALS, 0.02);
+        assertNull(HullItemDrops.pickFrameworkBasic(HullItemType.PHASE_COIL, random));
     }
 
     @Test
@@ -134,12 +134,12 @@ class FrameworkDropsTest {
             NpcHullItems.rollFramework(shipData, HullSize.CRUISER, () -> fit(ShieldType.FRONT), 20, random);
             for (String socketTypeId : shipData.getUnlockedSocketTypeIds()) {
                 String hullItemId = shipData.getFrameworkSocketedItem(socketTypeId);
-                if (SocketType.BRIDGE.id().equals(socketTypeId)) {
+                if (HullItemType.BRIDGE.id().equals(socketTypeId)) {
                     bridgeSockets++;
                     filledBridgeSockets += hullItemId == null ? 0 : 1;
                 }
                 if (hullItemId != null) {
-                    assertEquals(SocketType.byId(socketTypeId), NpcHullItems.item(hullItemId).definition().kind());
+                    assertEquals(HullItemType.byId(socketTypeId), NpcHullItems.item(hullItemId).definition().kind());
                 }
             }
         }

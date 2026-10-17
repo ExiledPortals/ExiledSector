@@ -9,7 +9,7 @@ import com.fs.starfarer.api.ui.CustomPanelAPI;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.FrameworkSlots;
 import exiledsector.hullitems.SocketCustody;
-import exiledsector.hullitems.SocketType;
+import exiledsector.hullitems.HullItemType;
 import exiledsector.hullitems.HullItem;
 import exiledsector.ui.decoration.RefitShipPortrait;
 import exiledsector.ui.decoration.SkillTreeFleetRenderer;
@@ -50,7 +50,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     private HullUpgradePanel upgradesPanel;
     private Map<String, FleetMemberAPI> ownedShips = Map.of();
     private HullItem placingHullItem;
-    private SocketType targetedType;
+    private HullItemType targetedType;
     private int storageRevision = Integer.MIN_VALUE;
     private float openLevel;
     private float contentLevel;
@@ -136,7 +136,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
         }
     }
 
-    private void openStorage(SocketType kindFilter) {
+    private void openStorage(HullItemType kindFilter) {
         storagePanel = SocketStoragePanel.open(hostPanel, placement(true), SocketCustody.shipNames(ownedShips), new SocketStoragePanel.Listener() {
             @Override
             public void selected(HullItem hullItem) {
@@ -171,7 +171,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
         }
     }
 
-    private void showStorage(SocketType kindFilter) {
+    private void showStorage(HullItemType kindFilter) {
         if (upgradesPanel != null) {
             HullUpgradePanel swapped = upgradesPanel;
             upgradesPanel = null;
@@ -220,8 +220,8 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     }
 
     private String placingHint(HullItem hullItem) {
-        SocketType socketType = hullItem.kind();
-        if (socketType == null || socketType == SocketType.SUBROUTINE) {
+        HullItemType socketType = hullItem.kind();
+        if (socketType == null || socketType == HullItemType.SUBROUTINE) {
             return Translation.msg("ui.hullUpgrades.placingHintSubroutine").arg("name", hullItem.name()).text();
         }
         String key = treeSession.isSocketTypeUnlocked(socketType) ? "ui.socketStorage.placingHintFramework"
@@ -269,7 +269,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
             clearTarget();
             return;
         }
-        SocketType socketType = sockets.slots().get(socketIndex).type();
+        HullItemType socketType = sockets.slots().get(socketIndex).type();
         if (placingHullItem != null) {
             if (placingHullItem.kind() == socketType && treeSession.socketFrameworkItem(socketType, placingHullItem)) {
                 stopPlacing();

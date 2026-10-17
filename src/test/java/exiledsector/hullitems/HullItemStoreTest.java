@@ -68,7 +68,7 @@ class HullItemStoreTest {
         HullItem first = store.add(military, 7L);
         HullItem second = store.add(military, 7L);
 
-        assertEquals(SocketType.SUBROUTINE, first.kind());
+        assertEquals(HullItemType.SUBROUTINE, first.kind());
         assertNotEquals(first.id(), second.id());
         assertEquals(HullItemRoller.roll(military, 7L), first.effects());
         assertEquals(List.of(first, second), store.owned());

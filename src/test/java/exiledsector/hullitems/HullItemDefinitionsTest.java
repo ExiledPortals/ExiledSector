@@ -1,5 +1,6 @@
 package exiledsector.hullitems;
 
+import exiledsector.modifiers.ModifierSlot;
 import exiledsector.skills.npc.RealSkillData;
 import org.json.CDL;
 import org.json.JSONArray;
@@ -34,11 +35,11 @@ class HullItemDefinitionsTest {
     void aRowBecomesADefinitionWithItsPrefixesAndSuffixesInOrderAndRangesLowToHigh() throws Exception {
         HullItemDefinition definition = HullItemFixtures.registerMilitary();
 
-        assertEquals(SocketType.SUBROUTINE, definition.kind());
+        assertEquals(HullItemType.SUBROUTINE, definition.kind());
         assertEquals(20f, definition.rarity());
         assertEquals(List.of("FLUX_CAPACITY_MULT", "FLUX_DISSIPATION_MULT", "BEAM_WEAPON_DAMAGE_PERCENT"),
                 definition.prefixes().stream().map(PoolEntry::effectName).toList());
-        assertEquals(new PoolEntry("SHIELD_DAMAGE_TAKEN_MULT", -15f, -10f, 1f), definition.suffixes().get(0));
+        assertEquals(PoolEntry.of(ModifierSlot.SUFFIX, "SHIELD_DAMAGE_TAKEN_MULT", -15f, -10f, 1f), definition.suffixes().get(0));
         assertEquals(6, definition.pool().size());
         assertTrue(definition.isPrefix("FLUX_CAPACITY_MULT") && definition.isSuffix("HULL_MULT"));
         assertFalse(definition.isPrefix("HULL_MULT") || definition.isSuffix("FLUX_CAPACITY_MULT"));
@@ -48,7 +49,7 @@ class HullItemDefinitionsTest {
     void reversedRangesAndExplicitWeightsAreAccepted() throws Exception {
         HullItemDefinitions.register(new JSONArray().put(row("x", "crew_quarters", "HULL_MULT:6:4:2.5")));
 
-        assertEquals(new PoolEntry("HULL_MULT", 4f, 6f, 2.5f), HullItemDefinitions.get("x").pool().get(0));
+        assertEquals(PoolEntry.of(ModifierSlot.PREFIX, "HULL_MULT", 4f, 6f, 2.5f), HullItemDefinitions.get("x").pool().get(0));
     }
 
     @Test
@@ -72,7 +73,7 @@ class HullItemDefinitionsTest {
     void anUnknownEffectIsDroppedFromThePoolWithoutLosingTheDefinition() throws Exception {
         HullItemDefinitions.register(new JSONArray().put(row("x", "crew_quarters", "NOT_AN_EFFECT:1:2; HULL_MULT:4:6")));
 
-        assertEquals(List.of(new PoolEntry("HULL_MULT", 4f, 6f, 1f)), HullItemDefinitions.get("x").pool());
+        assertEquals(List.of(PoolEntry.of(ModifierSlot.PREFIX, "HULL_MULT", 4f, 6f, 1f)), HullItemDefinitions.get("x").pool());
     }
 
     @Test
@@ -94,22 +95,22 @@ class HullItemDefinitionsTest {
 
     @Test
     void socketTypeIdsRoundTripAndLegacyKindsAreRejected() {
-        for (SocketType type : SocketType.values()) {
-            assertEquals(type, SocketType.byId(type.id()));
+        for (HullItemType type : HullItemType.values()) {
+            assertEquals(type, HullItemType.byId(type.id()));
         }
         for (String legacyKind : List.of("officer", "team", "ai_core", "drone")) {
-            assertThrows(IllegalArgumentException.class, () -> SocketType.byId(legacyKind));
-            assertNull(SocketType.byIdOrNull(legacyKind));
+            assertThrows(IllegalArgumentException.class, () -> HullItemType.byId(legacyKind));
+            assertNull(HullItemType.byIdOrNull(legacyKind));
         }
-        assertEquals(List.of(SocketType.SUBROUTINE), Arrays.stream(SocketType.values()).filter(type -> !type.isFramework()).toList());
-        assertEquals(9, SocketType.frameworkTypes().size());
+        assertEquals(List.of(HullItemType.SUBROUTINE), Arrays.stream(HullItemType.values()).filter(type -> !type.isFramework()).toList());
+        assertEquals(9, HullItemType.frameworkTypes().size());
     }
 
     @Test
     void aHullItemsKindFollowsItsDefinition() throws Exception {
         HullItemDefinitions.register(new JSONArray().put(row("bridge_item", "bridge", "HULL_MULT:4:6")));
 
-        assertEquals(SocketType.BRIDGE, new HullItem("a", "bridge_item", 1L, List.of()).kind());
+        assertEquals(HullItemType.BRIDGE, new HullItem("a", "bridge_item", 1L, List.of()).kind());
         assertNull(new HullItem("b", "not_loaded", 1L, List.of()).kind());
     }
 
@@ -132,7 +133,7 @@ class HullItemDefinitionsTest {
         for (String variant : List.of("military", "industrial", "consumer")) {
             HullItemDefinition definition = HullItemDefinitions.get("domain_subroutine_" + variant);
             assertNotNull(definition, variant);
-            assertEquals(SocketType.SUBROUTINE, definition.kind());
+            assertEquals(HullItemType.SUBROUTINE, definition.kind());
             assertTrue(definition.prefixes().size() >= 2 && definition.suffixes().size() >= 2,
                     variant + " needs two prefixes and two suffixes for a four-effect roll");
         }
