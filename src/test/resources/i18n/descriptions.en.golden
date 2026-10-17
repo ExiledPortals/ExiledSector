@@ -2116,12 +2116,12 @@ effect|WEAPON_TURN_RATE_PERCENT|12.5	0	<good>12.5%</good> increased weapon turn 
 effect|WEAPON_TURN_RATE_PERCENT|100.0	0	<good>100%</good> increased weapon turn rate.
 effect|WEAPON_TURN_RATE_PERCENT|-10.0	0	<bad>10%</bad> reduced weapon turn rate.
 effect|WEAPON_TURN_RATE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced weapon turn rate.
-effect|WING_SCRAMBLE_COPIES|1.0	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of the fighter from every other wing of the same role on this ship.
-effect|WING_SCRAMBLE_COPIES|10.0	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>10</good> copy of the fighter from every other wing of the same role on this ship.
-effect|WING_SCRAMBLE_COPIES|12.5	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>12.5</good> copy of the fighter from every other wing of the same role on this ship.
-effect|WING_SCRAMBLE_COPIES|100.0	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>100</good> copy of the fighter from every other wing of the same role on this ship.
-effect|WING_SCRAMBLE_COPIES|-10.0	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>-10</good> copy of the fighter from every other wing of the same role on this ship.
-effect|WING_SCRAMBLE_COPIES|-12.5	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>-12.5</good> copy of the fighter from every other wing of the same role on this ship.
+effect|WING_SCRAMBLE_COPIES|1.0	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of every other fighter type of the same role on this ship.
+effect|WING_SCRAMBLE_COPIES|10.0	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>10</good> copy of every other fighter type of the same role on this ship.
+effect|WING_SCRAMBLE_COPIES|12.5	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>12.5</good> copy of every other fighter type of the same role on this ship.
+effect|WING_SCRAMBLE_COPIES|100.0	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>100</good> copy of every other fighter type of the same role on this ship.
+effect|WING_SCRAMBLE_COPIES|-10.0	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>-10</good> copy of every other fighter type of the same role on this ship.
+effect|WING_SCRAMBLE_COPIES|-12.5	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>-12.5</good> copy of every other fighter type of the same role on this ship.
 effect|ZERO_FLUX_ALWAYS_ON|1.0	0	Allows the zero-flux speed boost to take effect regardless of flux level.
 effect|ZERO_FLUX_ALWAYS_ON|10.0	0	Allows the zero-flux speed boost to take effect regardless of flux level.
 effect|ZERO_FLUX_ALWAYS_ON|12.5	0	Allows the zero-flux speed boost to take effect regardless of flux level.
@@ -4408,15 +4408,15 @@ type|weapon_turn_rate|DESTROYER|0	0	<good>20%</good> increased weapon turn rate.
 type|weapon_turn_rate|CRUISER|0	0	<good>20%</good> increased weapon turn rate.
 type|weapon_turn_rate|CAPITAL_SHIP|0	0	<good>20%</good> increased weapon turn rate.
 type|wing_scramble|null|0	0	Every League member world sends its own carrier detachment to a joint fleet, and the League's flight doctrine makes them fly as one: a bomber from one world takes orders from a flight lead from another. Serving under a League commission, the crew learns to rewire this carrier's wing datalinks the same way, so every flight it launches carries a pilot from each of its bays.
-type|wing_scramble|null|1	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of the fighter from every other wing of the same role on this ship.
+type|wing_scramble|null|1	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of every other fighter type of the same role on this ship.
 type|wing_scramble|FRIGATE|0	0	Every League member world sends its own carrier detachment to a joint fleet, and the League's flight doctrine makes them fly as one: a bomber from one world takes orders from a flight lead from another. Serving under a League commission, the crew learns to rewire this carrier's wing datalinks the same way, so every flight it launches carries a pilot from each of its bays.
-type|wing_scramble|FRIGATE|1	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of the fighter from every other wing of the same role on this ship.
+type|wing_scramble|FRIGATE|1	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of every other fighter type of the same role on this ship.
 type|wing_scramble|DESTROYER|0	0	Every League member world sends its own carrier detachment to a joint fleet, and the League's flight doctrine makes them fly as one: a bomber from one world takes orders from a flight lead from another. Serving under a League commission, the crew learns to rewire this carrier's wing datalinks the same way, so every flight it launches carries a pilot from each of its bays.
-type|wing_scramble|DESTROYER|1	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of the fighter from every other wing of the same role on this ship.
+type|wing_scramble|DESTROYER|1	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of every other fighter type of the same role on this ship.
 type|wing_scramble|CRUISER|0	0	Every League member world sends its own carrier detachment to a joint fleet, and the League's flight doctrine makes them fly as one: a bomber from one world takes orders from a flight lead from another. Serving under a League commission, the crew learns to rewire this carrier's wing datalinks the same way, so every flight it launches carries a pilot from each of its bays.
-type|wing_scramble|CRUISER|1	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of the fighter from every other wing of the same role on this ship.
+type|wing_scramble|CRUISER|1	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of every other fighter type of the same role on this ship.
 type|wing_scramble|CAPITAL_SHIP|0	0	Every League member world sends its own carrier detachment to a joint fleet, and the League's flight doctrine makes them fly as one: a bomber from one world takes orders from a flight lead from another. Serving under a League commission, the crew learns to rewire this carrier's wing datalinks the same way, so every flight it launches carries a pilot from each of its bays.
-type|wing_scramble|CAPITAL_SHIP|1	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of the fighter from every other wing of the same role on this ship.
+type|wing_scramble|CAPITAL_SHIP|1	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of every other fighter type of the same role on this ship.
 type|wormhole|null|0	0	Allocating this wormhole automatically allocates its paired wormhole as well at no extra cost, connecting both branches of the tree. \n\nDeallocating either end deallocates both.\n\nCtrl click on a wormhole to travel through it.
 type|wormhole|FRIGATE|0	0	Allocating this wormhole automatically allocates its paired wormhole as well at no extra cost, connecting both branches of the tree. \n\nDeallocating either end deallocates both.\n\nCtrl click on a wormhole to travel through it.
 type|wormhole|DESTROYER|0	0	Allocating this wormhole automatically allocates its paired wormhole as well at no extra cost, connecting both branches of the tree. \n\nDeallocating either end deallocates both.\n\nCtrl click on a wormhole to travel through it.
@@ -4629,7 +4629,7 @@ summary|option0|FRIGATE|203	1	<good>25%</good> increased fighter refit time.
 summary|option0|FRIGATE|204	0	<good>15%</good> increased energy weapon damage.
 summary|option0|FRIGATE|205	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 summary|option0|FRIGATE|206	0	<good>3%</good> increased post-battle salvage recovered (fleet-wide).
-summary|option0|FRIGATE|207	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of the fighter from every other wing of the same role on this ship.
+summary|option0|FRIGATE|207	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of every other fighter type of the same role on this ship.
 summary|option0|FRIGATE|208	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option0|FRIGATE|209	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option0|FRIGATE|210	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
@@ -4840,7 +4840,7 @@ summary|option0|DESTROYER|203	1	<good>25%</good> increased fighter refit time.
 summary|option0|DESTROYER|204	0	<good>15%</good> increased energy weapon damage.
 summary|option0|DESTROYER|205	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 summary|option0|DESTROYER|206	0	<good>6%</good> increased post-battle salvage recovered (fleet-wide).
-summary|option0|DESTROYER|207	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of the fighter from every other wing of the same role on this ship.
+summary|option0|DESTROYER|207	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of every other fighter type of the same role on this ship.
 summary|option0|DESTROYER|208	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option0|DESTROYER|209	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option0|DESTROYER|210	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
@@ -5051,7 +5051,7 @@ summary|option0|CRUISER|203	1	<good>25%</good> increased fighter refit time.
 summary|option0|CRUISER|204	0	<good>15%</good> increased energy weapon damage.
 summary|option0|CRUISER|205	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 summary|option0|CRUISER|206	0	<good>10%</good> increased post-battle salvage recovered (fleet-wide).
-summary|option0|CRUISER|207	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of the fighter from every other wing of the same role on this ship.
+summary|option0|CRUISER|207	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of every other fighter type of the same role on this ship.
 summary|option0|CRUISER|208	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option0|CRUISER|209	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option0|CRUISER|210	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
@@ -5262,7 +5262,7 @@ summary|option0|CAPITAL_SHIP|203	1	<good>25%</good> increased fighter refit time
 summary|option0|CAPITAL_SHIP|204	0	<good>15%</good> increased energy weapon damage.
 summary|option0|CAPITAL_SHIP|205	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 summary|option0|CAPITAL_SHIP|206	0	<good>15%</good> increased post-battle salvage recovered (fleet-wide).
-summary|option0|CAPITAL_SHIP|207	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of the fighter from every other wing of the same role on this ship.
+summary|option0|CAPITAL_SHIP|207	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of every other fighter type of the same role on this ship.
 summary|option0|CAPITAL_SHIP|208	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option0|CAPITAL_SHIP|209	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option0|CAPITAL_SHIP|210	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
@@ -5473,7 +5473,7 @@ summary|option1|FRIGATE|203	1	<good>25%</good> increased fighter refit time.
 summary|option1|FRIGATE|204	0	<good>15%</good> increased energy weapon damage.
 summary|option1|FRIGATE|205	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 summary|option1|FRIGATE|206	0	<good>3%</good> increased post-battle salvage recovered (fleet-wide).
-summary|option1|FRIGATE|207	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of the fighter from every other wing of the same role on this ship.
+summary|option1|FRIGATE|207	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of every other fighter type of the same role on this ship.
 summary|option1|FRIGATE|208	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option1|FRIGATE|209	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option1|FRIGATE|210	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
@@ -5684,7 +5684,7 @@ summary|option1|DESTROYER|203	1	<good>25%</good> increased fighter refit time.
 summary|option1|DESTROYER|204	0	<good>15%</good> increased energy weapon damage.
 summary|option1|DESTROYER|205	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 summary|option1|DESTROYER|206	0	<good>6%</good> increased post-battle salvage recovered (fleet-wide).
-summary|option1|DESTROYER|207	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of the fighter from every other wing of the same role on this ship.
+summary|option1|DESTROYER|207	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of every other fighter type of the same role on this ship.
 summary|option1|DESTROYER|208	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option1|DESTROYER|209	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option1|DESTROYER|210	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
@@ -5895,7 +5895,7 @@ summary|option1|CRUISER|203	1	<good>25%</good> increased fighter refit time.
 summary|option1|CRUISER|204	0	<good>15%</good> increased energy weapon damage.
 summary|option1|CRUISER|205	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 summary|option1|CRUISER|206	0	<good>10%</good> increased post-battle salvage recovered (fleet-wide).
-summary|option1|CRUISER|207	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of the fighter from every other wing of the same role on this ship.
+summary|option1|CRUISER|207	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of every other fighter type of the same role on this ship.
 summary|option1|CRUISER|208	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option1|CRUISER|209	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option1|CRUISER|210	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
@@ -6106,7 +6106,7 @@ summary|option1|CAPITAL_SHIP|203	1	<good>25%</good> increased fighter refit time
 summary|option1|CAPITAL_SHIP|204	0	<good>15%</good> increased energy weapon damage.
 summary|option1|CAPITAL_SHIP|205	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 summary|option1|CAPITAL_SHIP|206	0	<good>15%</good> increased post-battle salvage recovered (fleet-wide).
-summary|option1|CAPITAL_SHIP|207	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of the fighter from every other wing of the same role on this ship.
+summary|option1|CAPITAL_SHIP|207	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of every other fighter type of the same role on this ship.
 summary|option1|CAPITAL_SHIP|208	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option1|CAPITAL_SHIP|209	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option1|CAPITAL_SHIP|210	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
@@ -6317,7 +6317,7 @@ summary|option2|FRIGATE|203	1	<good>25%</good> increased fighter refit time.
 summary|option2|FRIGATE|204	0	<good>15%</good> increased energy weapon damage.
 summary|option2|FRIGATE|205	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 summary|option2|FRIGATE|206	0	<good>3%</good> increased post-battle salvage recovered (fleet-wide).
-summary|option2|FRIGATE|207	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of the fighter from every other wing of the same role on this ship.
+summary|option2|FRIGATE|207	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of every other fighter type of the same role on this ship.
 summary|option2|FRIGATE|208	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option2|FRIGATE|209	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option2|FRIGATE|210	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
@@ -6528,7 +6528,7 @@ summary|option2|DESTROYER|203	1	<good>25%</good> increased fighter refit time.
 summary|option2|DESTROYER|204	0	<good>15%</good> increased energy weapon damage.
 summary|option2|DESTROYER|205	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 summary|option2|DESTROYER|206	0	<good>6%</good> increased post-battle salvage recovered (fleet-wide).
-summary|option2|DESTROYER|207	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of the fighter from every other wing of the same role on this ship.
+summary|option2|DESTROYER|207	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of every other fighter type of the same role on this ship.
 summary|option2|DESTROYER|208	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option2|DESTROYER|209	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option2|DESTROYER|210	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
@@ -6739,7 +6739,7 @@ summary|option2|CRUISER|203	1	<good>25%</good> increased fighter refit time.
 summary|option2|CRUISER|204	0	<good>15%</good> increased energy weapon damage.
 summary|option2|CRUISER|205	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 summary|option2|CRUISER|206	0	<good>10%</good> increased post-battle salvage recovered (fleet-wide).
-summary|option2|CRUISER|207	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of the fighter from every other wing of the same role on this ship.
+summary|option2|CRUISER|207	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of every other fighter type of the same role on this ship.
 summary|option2|CRUISER|208	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option2|CRUISER|209	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option2|CRUISER|210	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
@@ -6950,7 +6950,7 @@ summary|option2|CAPITAL_SHIP|203	1	<good>25%</good> increased fighter refit time
 summary|option2|CAPITAL_SHIP|204	0	<good>15%</good> increased energy weapon damage.
 summary|option2|CAPITAL_SHIP|205	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 summary|option2|CAPITAL_SHIP|206	0	<good>15%</good> increased post-battle salvage recovered (fleet-wide).
-summary|option2|CAPITAL_SHIP|207	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of the fighter from every other wing of the same role on this ship.
+summary|option2|CAPITAL_SHIP|207	0	When this ship deploys, each of its fighter wings keeps only <bad>1</bad> of its own fighter and gains <good>1</good> copy of every other fighter type of the same role on this ship.
 summary|option2|CAPITAL_SHIP|208	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option2|CAPITAL_SHIP|209	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option2|CAPITAL_SHIP|210	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.

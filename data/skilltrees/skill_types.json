@@ -3696,7 +3696,7 @@
 		{
 			"id": "wing_scramble",
 			"name": "Coalition Flight Doctrine",
-			"icon": "",
+			"icon": "graphics/icons/fighter_doctrine_shifted_shifted.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{

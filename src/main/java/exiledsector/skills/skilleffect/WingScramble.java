@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 final class WingScramble {
@@ -14,10 +16,10 @@ final class WingScramble {
     record Move<F, W>(F fighter, W toWing) {
     }
 
-    record Spawn<W>(W hostWing, W donorWing) {
+    record Spawn<W, K>(W hostWing, K fighterType) {
     }
 
-    record Routing<F, W>(List<Move<F, W>> moves, List<F> discards, List<Spawn<W>> spawns) {
+    record Routing<F, W, K>(List<Move<F, W>> moves, List<F> discards, List<Spawn<W, K>> spawns) {
     }
 
     private WingScramble() {
@@ -34,49 +36,56 @@ final class WingScramble {
         return wingsByRole.values().stream().filter(group -> group.size() > 1).toList();
     }
 
-    static <F, W> Routing<F, W> route(List<W> group, Map<W, List<F>> membersByWing, Map<F, W> donorByFighter, int copiesPerDonor,
-                                      boolean spawnMissing) {
-        Map<W, Map<W, List<F>>> holdingsByHost = new IdentityHashMap<>();
-        Map<W, Deque<F>> surplusByDonor = new IdentityHashMap<>();
+    static <F, W, K> Routing<F, W, K> route(List<W> group, Map<W, List<F>> membersByWing, Map<F, K> typeByFighter, Function<W, K> typeOf,
+                                            int copiesPerType, boolean spawnMissing) {
+        Set<K> groupTypes = new LinkedHashSet<>();
+        for (W wing : group) {
+            groupTypes.add(typeOf.apply(wing));
+        }
+        Map<W, Map<K, List<F>>> holdingsByHost = new IdentityHashMap<>();
+        Map<K, Deque<F>> surplusByType = new LinkedHashMap<>();
         for (W host : group) {
-            Map<W, List<F>> holdings = new IdentityHashMap<>();
+            K hostType = typeOf.apply(host);
+            Map<K, List<F>> holdings = new LinkedHashMap<>();
             for (F fighter : membersByWing.getOrDefault(host, List.of())) {
-                W donor = donorByFighter.getOrDefault(fighter, host);
-                holdings.computeIfAbsent(donor, ignored -> new ArrayList<>()).add(fighter);
+                K fighterType = typeByFighter.getOrDefault(fighter, hostType);
+                holdings.computeIfAbsent(fighterType, ignored -> new ArrayList<>()).add(fighter);
             }
             holdingsByHost.put(host, holdings);
-            for (Map.Entry<W, List<F>> holding : holdings.entrySet()) {
+            for (Map.Entry<K, List<F>> holding : holdings.entrySet()) {
                 List<F> held = holding.getValue();
-                int wanted = wanted(host, holding.getKey(), group, copiesPerDonor);
+                int wanted = wanted(hostType, holding.getKey(), groupTypes, copiesPerType);
                 for (int index = wanted; index < held.size(); index++) {
-                    surplusByDonor.computeIfAbsent(holding.getKey(), ignored -> new ArrayDeque<>()).add(held.get(index));
+                    surplusByType.computeIfAbsent(holding.getKey(), ignored -> new ArrayDeque<>()).add(held.get(index));
                 }
             }
         }
         List<Move<F, W>> moves = new ArrayList<>();
-        List<Spawn<W>> spawns = new ArrayList<>();
+        List<Spawn<W, K>> spawns = new ArrayList<>();
         for (W host : group) {
-            for (W donor : group) {
-                int missing = wanted(host, donor, group, copiesPerDonor) - holdingsByHost.get(host).getOrDefault(donor, List.of()).size();
-                Deque<F> surplus = surplusByDonor.getOrDefault(donor, new ArrayDeque<>());
+            K hostType = typeOf.apply(host);
+            for (K fighterType : groupTypes) {
+                int missing = wanted(hostType, fighterType, groupTypes, copiesPerType)
+                        - holdingsByHost.get(host).getOrDefault(fighterType, List.of()).size();
+                Deque<F> surplus = surplusByType.getOrDefault(fighterType, new ArrayDeque<>());
                 for (int slot = 0; slot < missing; slot++) {
                     if (!surplus.isEmpty()) {
                         moves.add(new Move<>(surplus.poll(), host));
-                    } else if (spawnMissing && donor != host) {
-                        spawns.add(new Spawn<>(host, donor));
+                    } else if (spawnMissing && !fighterType.equals(hostType)) {
+                        spawns.add(new Spawn<>(host, fighterType));
                     }
                 }
             }
         }
         List<F> discards = new ArrayList<>();
-        surplusByDonor.values().forEach(discards::addAll);
+        surplusByType.values().forEach(discards::addAll);
         return new Routing<>(moves, discards, spawns);
     }
 
-    private static <W> int wanted(W host, W donor, List<W> group, int copiesPerDonor) {
-        if (!group.contains(donor)) {
+    private static <K> int wanted(K hostType, K fighterType, Set<K> groupTypes, int copiesPerType) {
+        if (!groupTypes.contains(fighterType)) {
             return 0;
         }
-        return donor == host ? 1 : copiesPerDonor;
+        return fighterType.equals(hostType) ? 1 : copiesPerType;
     }
 }

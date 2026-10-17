@@ -6,7 +6,6 @@ import com.fs.starfarer.api.combat.CombatFleetManagerAPI;
 import com.fs.starfarer.api.combat.FighterWingAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
-import com.fs.starfarer.api.loading.FighterWingSpecAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
@@ -23,7 +22,7 @@ final class WingScrambleListener extends ShipCombatListener implements Advanceab
     static final float ROUTING_INTERVAL_SECONDS = 0.25f;
     private static final Logger LOG = Logger.getLogger(WingScrambleListener.class);
 
-    private final Map<ShipAPI, FighterWingAPI> donorByFighter = new IdentityHashMap<>();
+    private final Map<ShipAPI, String> typeByFighter = new IdentityHashMap<>();
     private List<List<FighterWingAPI>> roleGroups;
     private float secondsWaited;
     private float secondsSinceRouting;
@@ -41,8 +40,8 @@ final class WingScrambleListener extends ShipCombatListener implements Advanceab
         if (engine == null || engine.isPaused()) {
             return;
         }
-        int copiesPerDonor = Math.round(magnitude(COPIES_KEY));
-        if (copiesPerDonor <= 0) {
+        int copiesPerType = Math.round(magnitude(COPIES_KEY));
+        if (copiesPerType <= 0) {
             return;
         }
         if (roleGroups == null) {
@@ -52,13 +51,13 @@ final class WingScrambleListener extends ShipCombatListener implements Advanceab
                 return;
             }
             roleGroups = WingScramble.roleGroups(wings, wing -> wing.getSpec() == null ? null : wing.getSpec().getRole());
-            routeAll(engine, copiesPerDonor, true);
+            routeAll(engine, copiesPerType, true);
             return;
         }
         secondsSinceRouting += amount;
         if (secondsSinceRouting >= ROUTING_INTERVAL_SECONDS) {
             secondsSinceRouting = 0f;
-            routeAll(engine, copiesPerDonor, false);
+            routeAll(engine, copiesPerType, false);
         }
     }
 
@@ -75,20 +74,20 @@ final class WingScrambleListener extends ShipCombatListener implements Advanceab
         return true;
     }
 
-    private void routeAll(CombatEngineAPI engine, int copiesPerDonor, boolean spawnMissing) {
-        donorByFighter.keySet().removeIf(fighter -> !fighter.isAlive() || !engine.isEntityInPlay(fighter));
+    private void routeAll(CombatEngineAPI engine, int copiesPerType, boolean spawnMissing) {
+        typeByFighter.keySet().removeIf(fighter -> !fighter.isAlive() || !engine.isEntityInPlay(fighter));
         for (List<FighterWingAPI> group : roleGroups) {
             Map<FighterWingAPI, List<ShipAPI>> movableMembers = new IdentityHashMap<>();
             for (FighterWingAPI wing : group) {
                 movableMembers.put(wing, new ArrayList<>(wing.getWingMembers()));
             }
-            WingScramble.Routing<ShipAPI, FighterWingAPI> routing = WingScramble.route(group, movableMembers, donorByFighter, copiesPerDonor,
-                    spawnMissing);
+            WingScramble.Routing<ShipAPI, FighterWingAPI, String> routing = WingScramble.route(group, movableMembers, typeByFighter,
+                    WingScrambleListener::typeOf, copiesPerType, spawnMissing);
             for (WingScramble.Move<ShipAPI, FighterWingAPI> move : routing.moves()) {
                 if (isDocked(move.fighter())) {
                     continue;
                 }
-                donorByFighter.put(move.fighter(), donorOf(move.fighter()));
+                typeByFighter.put(move.fighter(), fighterTypeOf(move.fighter()));
                 rehome(move.fighter(), move.toWing());
             }
             for (ShipAPI surplus : routing.discards()) {
@@ -96,22 +95,26 @@ final class WingScrambleListener extends ShipCombatListener implements Advanceab
                     discard(engine, surplus);
                 }
             }
-            for (WingScramble.Spawn<FighterWingAPI> spawn : routing.spawns()) {
+            for (WingScramble.Spawn<FighterWingAPI, String> spawn : routing.spawns()) {
                 try {
-                    ShipAPI fighter = launchCopy(engine, spawn.donorWing().getSpec(), spawn.hostWing());
+                    ShipAPI fighter = launchCopy(engine, spawn.fighterType(), spawn.hostWing());
                     if (fighter != null) {
-                        donorByFighter.put(fighter, spawn.donorWing());
+                        typeByFighter.put(fighter, spawn.fighterType());
                     }
                 } catch (RuntimeException e) {
-                    LOG.error("Couldn't add a " + spawn.donorWing().getSpec().getId() + " to a wing of " + ownerShip.getName(), e);
+                    LOG.error("Couldn't add a " + spawn.fighterType() + " to a wing of " + ownerShip.getName(), e);
                 }
             }
         }
     }
 
-    private FighterWingAPI donorOf(ShipAPI fighter) {
-        FighterWingAPI donor = donorByFighter.get(fighter);
-        return donor != null ? donor : fighter.getWing();
+    private String fighterTypeOf(ShipAPI fighter) {
+        String fighterType = typeByFighter.get(fighter);
+        return fighterType != null ? fighterType : typeOf(fighter.getWing());
+    }
+
+    private static String typeOf(FighterWingAPI wing) {
+        return wing.getSpec().getId();
     }
 
     private static boolean isDocked(ShipAPI fighter) {
@@ -132,20 +135,20 @@ final class WingScrambleListener extends ShipCombatListener implements Advanceab
     }
 
     private void discard(CombatEngineAPI engine, ShipAPI fighter) {
-        donorByFighter.remove(fighter);
+        typeByFighter.remove(fighter);
         if (fighter.getWing() != null) {
             fighter.getWing().removeMember(fighter);
         }
         engine.removeEntity(fighter);
     }
 
-    private ShipAPI launchCopy(CombatEngineAPI engine, FighterWingSpecAPI copySpec, FighterWingAPI hostWing) {
+    private ShipAPI launchCopy(CombatEngineAPI engine, String wingSpecId, FighterWingAPI hostWing) {
         CombatFleetManagerAPI fleetManager = engine.getFleetManager(ownerShip.getOwner());
         boolean wasSuppressed = fleetManager.isSuppressDeploymentMessages();
         fleetManager.setSuppressDeploymentMessages(true);
         ShipAPI fighter;
         try {
-            fighter = fleetManager.spawnShipOrWing(copySpec.getId(), new Vector2f(ownerShip.getLocation()), ownerShip.getFacing());
+            fighter = fleetManager.spawnShipOrWing(wingSpecId,new Vector2f(ownerShip.getLocation()), ownerShip.getFacing());
         } finally {
             fleetManager.setSuppressDeploymentMessages(wasSuppressed);
         }

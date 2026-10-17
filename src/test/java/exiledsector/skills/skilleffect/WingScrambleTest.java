@@ -2,7 +2,9 @@ package exiledsector.skills.skilleffect;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,12 +13,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class WingScrambleTest {
 
-    private record Wing(String name, String role) {
+    private record Wing(String name, String role, String type) {
     }
 
-    private static final Wing BROADSWORDS_A = new Wing("broadswords_a", "fighter");
-    private static final Wing BROADSWORDS_B = new Wing("broadswords_b", "fighter");
-    private static final Wing ELITE = new Wing("elite", "fighter");
+    private static final Wing BROADSWORDS_A = new Wing("broadswords_a", "fighter", "broadsword");
+    private static final Wing BROADSWORDS_B = new Wing("broadswords_b", "fighter", "broadsword");
+    private static final Wing ELITE = new Wing("elite", "fighter", "elite");
     private static final List<Wing> FIGHTER_GROUP = List.of(BROADSWORDS_A, BROADSWORDS_B, ELITE);
 
     private static Map<Wing, List<String>> freshLaunch() {
@@ -26,11 +28,16 @@ class WingScrambleTest {
                 ELITE, List.of("e1"));
     }
 
+    private static WingScramble.Routing<String, Wing, String> route(List<Wing> group, Map<Wing, List<String>> members,
+                                                                    Map<String, String> typeByFighter, int copiesPerType, boolean spawnMissing) {
+        return WingScramble.route(group, members, typeByFighter, Wing::type, copiesPerType, spawnMissing);
+    }
+
     @Test
     void wingsOnlyMixWithinTheirRoleAndALoneWingIsLeftAlone() {
-        Wing daggers = new Wing("daggers", "bomber");
-        Wing tridents = new Wing("tridents", "bomber");
-        Wing talons = new Wing("talons", "interceptor");
+        Wing daggers = new Wing("daggers", "bomber", "dagger");
+        Wing tridents = new Wing("tridents", "bomber", "trident");
+        Wing talons = new Wing("talons", "interceptor", "talon");
 
         List<List<Wing>> groups = WingScramble.roleGroups(List.of(daggers, talons, tridents), Wing::role);
 
@@ -38,54 +45,94 @@ class WingScrambleTest {
     }
 
     @Test
-    void theFirstScrambleKeepsOneNativePerWingAndUsesTheRestAsCopiesBeforeSpawningAny() {
-        WingScramble.Routing<String, Wing> routing = WingScramble.route(FIGHTER_GROUP, freshLaunch(), Map.of(), 1, true);
+    void identicalWingsShareOneTypeSoEachKeepsOneNativeAndNothingIsSpawned() {
+        List<Wing> perditions = new ArrayList<>();
+        Map<Wing, List<String>> members = new LinkedHashMap<>();
+        for (int index = 0; index < 6; index++) {
+            Wing wing = new Wing("perditions_" + index, "bomber", "perdition");
+            perditions.add(wing);
+            members.put(wing, List.of("p" + index + "_1", "p" + index + "_2"));
+        }
 
-        assertEquals(4, routing.moves().size(), routing.toString());
-        assertTrue(routing.moves().stream().allMatch(move -> move.fighter().startsWith("a") || move.fighter().startsWith("b")));
-        assertEquals(List.of(), routing.discards(), "every spare Broadsword fills a copy slot");
-        assertEquals(List.of(new WingScramble.Spawn<>(BROADSWORDS_A, ELITE), new WingScramble.Spawn<>(BROADSWORDS_B, ELITE)), routing.spawns(),
-                "only the one-fighter elite has to be copied");
+        WingScramble.Routing<String, Wing, String> routing = route(perditions, members, Map.of(), 1, true);
+
+        assertEquals(List.of(), routing.moves());
+        assertEquals(List.of(), routing.spawns(), "a lone fighter type has nothing to copy");
+        assertEquals(6, routing.discards().size(), routing.toString());
+        assertTrue(routing.discards().stream().allMatch(fighter -> fighter.endsWith("_2")), "each wing keeps exactly one Perdition");
+    }
+
+    @Test
+    void theFirstScrambleGivesEveryWingOneOfEachTypeAndSpawnsOnlyTheMissingType() {
+        WingScramble.Routing<String, Wing, String> routing = route(FIGHTER_GROUP, freshLaunch(), Map.of(), 1, true);
+
+        assertEquals(List.of(new WingScramble.Move<>("a2", ELITE)), routing.moves(), "a spare Broadsword fills the elite wing's copy slot");
+        assertEquals(List.of(new WingScramble.Spawn<>(BROADSWORDS_A, "elite"), new WingScramble.Spawn<>(BROADSWORDS_B, "elite")),
+                routing.spawns(), "only the elite type has to be copied, once per Broadsword wing");
+        assertEquals(List.of("a3", "b2", "b3"), routing.discards(), "Broadswords beyond one per wing are scrapped");
     }
 
     @Test
     void aNativeTheBayLaunchesLaterRefillsACopySlotThatWasLostElsewhere() {
         Map<Wing, List<String>> members = new HashMap<>();
-        members.put(BROADSWORDS_A, List.of("a1", "b2", "e2"));
-        members.put(BROADSWORDS_B, List.of("b1", "a2", "e3", "b-new"));
-        members.put(ELITE, List.of("e1", "a3"));
-        Map<String, Wing> donors = Map.of("b2", BROADSWORDS_B, "e2", ELITE, "a2", BROADSWORDS_A, "e3", ELITE, "a3", BROADSWORDS_A);
+        members.put(BROADSWORDS_A, List.of("a1"));
+        members.put(BROADSWORDS_B, List.of("b1", "eB", "b-new"));
+        members.put(ELITE, List.of("e1"));
+        Map<String, String> types = Map.of("eB", "elite");
 
-        WingScramble.Routing<String, Wing> routing = WingScramble.route(FIGHTER_GROUP, members, donors, 1, false);
+        WingScramble.Routing<String, Wing, String> routing = route(FIGHTER_GROUP, members, types, 1, false);
 
         assertEquals(List.of(new WingScramble.Move<>("b-new", ELITE)), routing.moves(), "the elite wing lost its Broadsword copy");
         assertEquals(List.of(), routing.discards());
-        assertEquals(List.of(), routing.spawns(), "after the first scramble the node never spawns");
+        assertEquals(List.of(), routing.spawns(), "after the first scramble the node never spawns, even for the lost elite copy");
     }
 
     @Test
-    void aSurplusNativeNobodyNeedsIsRemovedSoEachWingKeepsOneOfItsOwnType() {
+    void aSurplusOfATypeFromAnotherWingRefillsAWingThatLostItsOwnNative() {
         Map<Wing, List<String>> members = Map.of(
-                BROADSWORDS_A, List.of("a1", "b2", "e2", "a-new"),
-                BROADSWORDS_B, List.of("b1", "a2", "e3"),
-                ELITE, List.of("e1", "a3", "b3"));
-        Map<String, Wing> donors = Map.of("b2", BROADSWORDS_B, "e2", ELITE, "a2", BROADSWORDS_A, "e3", ELITE, "a3", BROADSWORDS_A, "b3",
-                BROADSWORDS_B);
+                BROADSWORDS_A, List.of("eA"),
+                BROADSWORDS_B, List.of("b1", "eB", "b-new"),
+                ELITE, List.of("e1", "a2"));
+        Map<String, String> types = Map.of("eA", "elite", "eB", "elite", "a2", "broadsword");
 
-        WingScramble.Routing<String, Wing> routing = WingScramble.route(FIGHTER_GROUP, members, donors, 1, false);
+        WingScramble.Routing<String, Wing, String> routing = route(FIGHTER_GROUP, members, types, 1, false);
+
+        assertEquals(List.of(new WingScramble.Move<>("b-new", BROADSWORDS_A)), routing.moves());
+        assertEquals(List.of(), routing.discards());
+    }
+
+    @Test
+    void aSurplusNativeNobodyNeedsIsRemovedSoEachWingKeepsOneOfEachType() {
+        Map<Wing, List<String>> members = Map.of(
+                BROADSWORDS_A, List.of("a1", "eA", "a-new"),
+                BROADSWORDS_B, List.of("b1", "eB"),
+                ELITE, List.of("e1", "a2"));
+        Map<String, String> types = Map.of("eA", "elite", "eB", "elite", "a2", "broadsword");
+
+        WingScramble.Routing<String, Wing, String> routing = route(FIGHTER_GROUP, members, types, 1, false);
 
         assertEquals(List.of(), routing.moves());
         assertEquals(List.of("a-new"), routing.discards());
     }
 
     @Test
-    void theMagnitudeSetsHowManyCopiesOfEachOtherWingAHostWants() {
-        Wing first = new Wing("first", "fighter");
-        Wing second = new Wing("second", "fighter");
+    void theMagnitudeSetsHowManyCopiesOfEachOtherTypeAWingWants() {
+        Wing first = new Wing("first", "fighter", "first_type");
+        Wing second = new Wing("second", "fighter", "second_type");
 
-        WingScramble.Routing<String, Wing> routing = WingScramble.route(List.of(first, second), Map.of(first, List.of("f1"), second,
+        WingScramble.Routing<String, Wing, String> routing = route(List.of(first, second), Map.of(first, List.of("f1"), second,
                 List.of("s1")), Map.of(), 3, true);
 
         assertEquals(6, routing.spawns().size());
+    }
+
+    @Test
+    void theMagnitudeCountsTypesNotWings() {
+        WingScramble.Routing<String, Wing, String> routing = route(FIGHTER_GROUP, freshLaunch(), Map.of(), 2, true);
+
+        assertEquals(List.of(new WingScramble.Move<>("a2", ELITE), new WingScramble.Move<>("a3", ELITE)), routing.moves());
+        assertEquals(List.of(new WingScramble.Spawn<>(BROADSWORDS_A, "elite"), new WingScramble.Spawn<>(BROADSWORDS_A, "elite"),
+                new WingScramble.Spawn<>(BROADSWORDS_B, "elite"), new WingScramble.Spawn<>(BROADSWORDS_B, "elite")), routing.spawns());
+        assertEquals(List.of("b2", "b3"), routing.discards());
     }
 }
