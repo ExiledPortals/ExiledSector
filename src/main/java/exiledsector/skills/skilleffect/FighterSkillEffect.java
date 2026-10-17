@@ -110,6 +110,24 @@ public enum FighterSkillEffect implements BackedSkillEffect {
     BOMBER_ROLE_ARMOR_PERCENT(WingRole.BOMBER, RoleStat.ARMOR),
     BOMBER_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT(WingRole.BOMBER, RoleStat.SHIELD_DAMAGE_TAKEN),
     BOMBER_ROLE_RATE_OF_FIRE_PERCENT(WingRole.BOMBER, RoleStat.RATE_OF_FIRE),
+    BOMBER_ROLE_ACCELERATION_PERCENT(WingRole.BOMBER, RoleStat.ACCELERATION),
+    BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            BomberPayloadDetonation.arm(fighter, parentShip, magnitude);
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("interval", BomberPayloadDetonation.CHECK_INTERVAL_SECONDS)
+                    .arg("distance", BomberPayloadDetonation.SAFE_DISTANCE_FROM_CARRIER).styled();
+        }
+    },
 
     SUPPORT_ROLE_DAMAGE_PERCENT(WingRole.SUPPORT, RoleStat.WEAPON_DAMAGE),
     SUPPORT_ROLE_TOP_SPEED_PERCENT(WingRole.SUPPORT, RoleStat.TOP_SPEED),
@@ -271,6 +289,7 @@ public enum FighterSkillEffect implements BackedSkillEffect {
     private enum RoleStat {
         WEAPON_DAMAGE(PERCENT, WeaponStatFamily.DAMAGE.target(WeaponScope.ALL), "weapon.stat.DAMAGE"),
         TOP_SPEED(PERCENT, stat(MutableShipStatsAPI::getMaxSpeed), "stat.topSpeed"),
+        ACCELERATION(PERCENT, stat(MutableShipStatsAPI::getAcceleration), "stat.acceleration"),
         ARMOR(PERCENT, bonus(MutableShipStatsAPI::getArmorBonus), "stat.armor") {
             @Override
             void applyTo(ShipAPI fighter, String modId, float magnitude) {

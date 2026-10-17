@@ -48,6 +48,8 @@
     {"name": "BEAM_WEAPON_SPLIT_TARGETS_FLAT", "statMode": null, "lowerIsBetter": false},
     {"name": "BEAM_WEAPON_TURN_RATE_MULT", "statMode": "MULT", "lowerIsBetter": false},
     {"name": "BEAM_WEAPON_TURN_RATE_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},
+    {"name": "BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT", "statMode": null, "lowerIsBetter": true},
+    {"name": "BOMBER_ROLE_ACCELERATION_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},
     {"name": "BOMBER_ROLE_ARMOR_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},
     {"name": "BOMBER_ROLE_DAMAGE_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},
     {"name": "BOMBER_ROLE_RATE_OF_FIRE_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},

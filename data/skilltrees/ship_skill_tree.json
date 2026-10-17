@@ -3475,7 +3475,8 @@
 			"connectedTo": [
 				"luddic_1",
 				"small_flux_optional_54",
-				"small_flux_optional_56"
+				"small_flux_optional_56",
+				"fighter_speed_1"
 			],
 			"x": 5649,
 			"y": 10407,
@@ -7024,6 +7025,67 @@
 				"nightcross",
 				"gate_pascal_visited"
 			]
+		},
+		{
+			"id": "fighter_speed_1",
+			"type": "fighter_speed",
+			"connectedTo": [
+				"luddic_2",
+				"fighter_speed_2",
+				"fighter_speed_3"
+			],
+			"x": 5649,
+			"y": 10644,
+			"orbitAnchorId": "anchor_79",
+			"orbitAngle": 270,
+			"tags": [
+				"luddic"
+			]
+		},
+		{
+			"id": "fighter_speed_2",
+			"type": "fighter_speed",
+			"connectedTo": [
+				"fighter_speed_1",
+				"martyrs_payload_1"
+			],
+			"x": 5469,
+			"y": 10824,
+			"orbitAnchorId": "anchor_79",
+			"orbitAngle": 180,
+			"tags": [
+				"luddic"
+			]
+		},
+		{
+			"id": "fighter_speed_3",
+			"type": "fighter_speed",
+			"connectedTo": [
+				"fighter_speed_1",
+				"martyrs_payload_1"
+			],
+			"x": 5829,
+			"y": 10824,
+			"orbitAnchorId": "anchor_79",
+			"orbitAngle": 0,
+			"tags": [
+				"luddic"
+			]
+		},
+		{
+			"id": "martyrs_payload_1",
+			"type": "martyrs_payload",
+			"connectedTo": [
+				"fighter_speed_2",
+				"fighter_speed_3"
+			],
+			"x": 5649,
+			"y": 11004,
+			"orbitAnchorId": "anchor_79",
+			"orbitAngle": 90,
+			"tags": [
+				"luddic"
+			]
 		}
 	],
 	"connectorCurves": [
@@ -9905,6 +9967,12 @@
 			"x": -17586,
 			"y": -4614,
 			"radius": 160
+		},
+		{
+			"id": "anchor_79",
+			"x": 5649,
+			"y": 10824,
+			"radius": 180
 		}
 	],
 	"ringBelts": [

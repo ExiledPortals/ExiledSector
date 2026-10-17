@@ -2823,6 +2823,31 @@
 			]
 		},
 		{
+			"id": "martyrs_payload",
+			"name": "Martyr's Payload",
+			"icon": "graphics/icons/martyrs_payload.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "BOMBER_ROLE_TOP_SPEED_PERCENT",
+					"magnitude": 50
+				},
+				{
+					"effect": "BOMBER_ROLE_ACCELERATION_PERCENT",
+					"magnitude": 50
+				},
+				{
+					"effect": "BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"description": "Picking through the wrecks of Luddic Path carriers showed the crew how the Path tears the engine governors out of its bombers and arms their warheads the moment they leave the deck. Bombers fly faster and harder this way, and the faithful accept that some payloads go off before they ever reach the enemy.",
+			"tags": [
+				"fighter",
+				"req_fighter_bays"
+			]
+		},
+		{
 			"id": "restriction_breeds_creativity",
 			"name": "Restriction Breeds Creativity",
 			"icon": "graphics/icons/restriction_breeds_creativity.png",
