@@ -1,34 +1,31 @@
 package exiledsector.ui.exoship;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.ui.TreeViewport;
+import exiledsector.ui.decoration.HullEngines;
 import exiledsector.ui.util.Fade;
 import exiledsector.ui.util.SpriteCache;
-import exiledsector.ui.util.SpriteDraw;
-
-import java.awt.Color;
+import exiledsector.ui.util.TexturedQuadBatch;
 
 final class ExoshipEscorts {
 
-    record Escort(String spritePath, float width, float height, float lengthShare, float orbitShare, float squash, float secondsPerLap,
-                  float direction, float startRad, float tiltDeg, float wobbleShare, int wobbleWaves) {
+    record Escort(String spritePath, String hullId, float width, float height, float lengthShare, float orbitShare, float squash,
+                  float secondsPerLap, float direction, float startRad, float tiltDeg, float wobbleShare, int wobbleWaves) {
     }
 
     record Pose(float treeX, float treeY, float facingDeg, boolean inFront) {
     }
 
     static final Escort[] ESCORTS = {
-            new Escort("graphics/fx/rat_hypatia.png", 108f, 160f, 0.04f, 0.85f, 0.5f, 24f, 1f, 0f, 20f, 0.06f, 3),
-            new Escort("graphics/fx/rat_dawnblade.png", 60f, 60f, 0.035f, 0.62f, 0.55f, 13f, -1f, 2f, -35f, 0.1f, 4),
-            new Escort("graphics/fx/rat_nightblade.png", 60f, 60f, 0.035f, 0.72f, 0.45f, 15f, 1f, 4f, 60f, 0.08f, 5),
-            new Escort("graphics/fx/rat_protostar.png", 60f, 60f, 0.03f, 0.56f, 0.6f, 11f, -1f, 1f, 110f, 0.12f, 3)
+            new Escort("graphics/fx/rat_hypatia.png", "rat_hypatia", 108f, 160f, 0.04f, 0.85f, 0.5f, 24f, 1f, 0f, 20f, 0.06f, 3),
+            new Escort("graphics/fx/rat_dawnblade.png", "rat_dawnblade", 60f, 60f, 0.035f, 0.62f, 0.55f, 13f, -1f, 2f, -35f, 0.1f, 4),
+            new Escort("graphics/fx/rat_nightblade.png", "rat_nightblade", 60f, 60f, 0.035f, 0.72f, 0.45f, 15f, 1f, 4f, 60f, 0.08f, 5),
+            new Escort("graphics/fx/rat_protostar.png", "rat_protostar", 60f, 60f, 0.03f, 0.56f, 0.6f, 11f, -1f, 1f, 110f, 0.12f, 3)
     };
     static final int MAX_ESCORTS = ESCORTS.length + 1;
     static final float BEHIND_ALPHA = 0.7f;
-    private static final float NOZZLE_SHARE = 0.45f;
-    private static final float FLAME_LENGTH_SHARE = 0.5f;
-    private static final float FLAME_WIDTH_SHARE = 0.18f;
-    private static final Color ENGINE_COLOR = new Color(247, 121, 86);
+    private static final float ESCORT_ENGINE_LEVEL = 0.8f;
     private static final float TANGENT_STEP_RAD = 0.002f;
 
     static final float LAUNCH_SECONDS = 2.4f;
@@ -38,13 +35,16 @@ final class ExoshipEscorts {
     private static final float VANISH_LEVEL = 0.15f;
 
     private final SpriteCache spriteCache = new SpriteCache(ExoshipEscorts.class);
+    private final TexturedQuadBatch glowQuads = new TexturedQuadBatch();
+    private final HullEngines[] escortEngines = new HullEngines[ESCORTS.length];
     private Escort playerEscort;
+    private HullEngines playerEngines = HullEngines.NONE;
     private float elapsedSeconds;
     private float launchLevel = 1f;
     private boolean returning;
 
-    static Escort playerEscort(String spritePath, float spriteWidth, float spriteHeight, HullSize hullSize) {
-        return new Escort(spritePath, spriteWidth, spriteHeight, playerLengthShare(hullSize), 0.66f, 0.5f, 17f, 1f, 3f, -70f, 0.07f, 4);
+    static Escort playerEscort(String spritePath, String hullId, float spriteWidth, float spriteHeight, HullSize hullSize) {
+        return new Escort(spritePath, hullId, spriteWidth, spriteHeight, playerLengthShare(hullSize), 0.66f, 0.5f, 17f, 1f, 3f, -70f, 0.07f, 4);
     }
 
     static float playerLengthShare(HullSize hullSize) {
@@ -59,8 +59,9 @@ final class ExoshipEscorts {
         };
     }
 
-    void setPlayerEscort(Escort escort) {
+    void setPlayerEscort(Escort escort, HullEngines engines) {
         playerEscort = escort;
+        playerEngines = engines == null ? HullEngines.NONE : engines;
     }
 
     int escortCount() {
@@ -166,16 +167,29 @@ final class ExoshipEscorts {
                 continue;
             }
             float alpha = alphaMult * (inFront ? 1f : BEHIND_ALPHA) * Math.min(1f, escortLevel / VANISH_LEVEL);
-            float angle = -pose.facingDeg() - 90f;
-            double screenFacing = Math.toRadians(-pose.facingDeg());
-            float forwardX = (float) Math.cos(screenFacing);
-            float forwardY = (float) Math.sin(screenFacing);
-            float nozzleX = screenX - forwardX * length * NOZZLE_SHARE;
-            float nozzleY = screenY - forwardY * length * NOZZLE_SHARE;
-            float flicker = EngineFlames.flicker(elapsedSeconds, escortIndex);
-            EngineFlames.draw(spriteCache, nozzleX, nozzleY, forwardX, forwardY, pose.facingDeg(), length * FLAME_LENGTH_SHARE * flicker,
-                    length * FLAME_WIDTH_SHARE, ENGINE_COLOR, alpha);
-            SpriteDraw.drawAtCenter(spriteCache, escort.spritePath(), screenX, screenY, width, length, null, alpha, angle);
+            float screenFacingDeg = -pose.facingDeg();
+            float screenScale = length / escort.height();
+            HullEngines engines = engines(escortIndex);
+            engines.drawHull(spriteCache, escort.spritePath(), screenX, screenY, width, length, screenScale, screenFacingDeg, alpha);
+            engines.drawEngines(spriteCache, glowQuads, screenX, screenY, screenFacingDeg, screenScale, zoom, ESCORT_ENGINE_LEVEL, alpha);
+        }
+    }
+
+    private HullEngines engines(int escortIndex) {
+        if (escortIndex >= ESCORTS.length) {
+            return playerEngines;
+        }
+        if (escortEngines[escortIndex] == null) {
+            escortEngines[escortIndex] = enginesFor(ESCORTS[escortIndex].hullId());
+        }
+        return escortEngines[escortIndex];
+    }
+
+    private static HullEngines enginesFor(String hullId) {
+        try {
+            return HullEngines.of(Global.getSettings().getHullSpec(hullId));
+        } catch (RuntimeException e) {
+            return HullEngines.NONE;
         }
     }
 }

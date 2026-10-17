@@ -1,6 +1,5 @@
 package exiledsector.ui;
 
-import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.skills.ExoshipNodes;
@@ -108,8 +107,7 @@ final class ExoshipView {
     }
 
     void setPlayerShip(FleetMemberAPI member) {
-        ShipHullSpecAPI hullSpec = member == null ? null : member.getHullSpec();
-        renderer.setPlayerShip(hullSpec == null ? null : hullSpec.getSpriteName(), hullSpec == null ? null : hullSpec.getHullSize());
+        renderer.setPlayerShip(member == null ? null : member.getHullSpec());
     }
 
     void advance(float amount, boolean docked) {

@@ -10,12 +10,10 @@ import exiledsector.skills.SkillTree;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.Fade;
 import exiledsector.ui.util.SpriteCache;
-import exiledsector.ui.util.SpriteDraw;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.TexturedQuadBatch;
 import org.lwjgl.opengl.GL11;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -32,18 +30,8 @@ public class SkillTreeFleetRenderer {
     static final float MIN_SHIP_PIXELS = 1.5f;
     static final float SOLO_FADE_SECONDS = 0.4f;
     private static final Random FLIGHT_RANDOM = new Random();
-    private static final String FLAME_PATH = "graphics/fx/particleline32ln.png";
-    private static final String GLOW_PATH = "graphics/fx/hit_glow.png";
-    private static final float FLAME_LEAD = 3f;
-    private static final float MIN_FLAME_HALF_WIDTH = 0.3f;
-    private static final float GLOW_SIZE_MULT = 0.75f;
-    private static final float IDLE_FLAME_LENGTH = 0.25f;
-    private static final float IDLE_GLOW_GROWTH = 0.75f;
-    private static final float SPRITE_ANGLE_OFFSET = 90f;
-    private static final float COLOR_CHANNEL_MAX = 255f;
-
     private record FleetShip(String memberId, String spritePath, float width, float height, FleetShipDrift drift,
-                             FleetHullVisuals visuals, ShipAnchors anchors) {
+                             FleetHullVisuals visuals, HullEngines engines, ShipAnchors anchors) {
     }
 
     public record InspectedShip(float screenX, float screenY, float screenScale, float longestSidePixels, float facingDeg,
@@ -141,7 +129,7 @@ public class SkillTreeFleetRenderer {
             float maxOffset = FleetShipDrift.maxOffset(fleetRadius, largestSizeNum, sizeNum, onlyLargest);
             FleetShipDrift drift = new FleetShipDrift(motion, maxOffset, flight.facingDeg(), random);
             FleetHullVisuals visuals = FleetHullVisuals.of(member.getHullSpec());
-            ships.add(new FleetShip(member.getId(), spritePath, texture.getWidth(), texture.getHeight(), drift, visuals,
+            ships.add(new FleetShip(member.getId(), spritePath, texture.getWidth(), texture.getHeight(), drift, visuals, HullEngines.of(visuals),
                     ShipAnchors.of(member.getHullSpec(), visuals, texture.getWidth(), texture.getHeight())));
             largestSprite = Math.max(largestSprite, Math.max(texture.getWidth(), texture.getHeight()) * motion.scaleMult());
         }
@@ -215,22 +203,14 @@ public class SkillTreeFleetRenderer {
     }
 
     private void drawHull(FleetShip ship, float screenX, float screenY, float screenScale, float alpha) {
-        float hullWidth = ship.width() * screenScale;
-        float hullHeight = ship.height() * screenScale;
-        float angleDeg = ship.drift().facingDeg() - SPRITE_ANGLE_OFFSET;
-        if (ship.visuals().hasCenter()) {
-            SpriteDraw.drawAtPivot(spriteCache, ship.spritePath(), screenX, screenY, hullWidth, hullHeight,
-                    ship.visuals().centerX() * screenScale, ship.visuals().centerY() * screenScale, Color.WHITE, alpha, angleDeg);
-        } else {
-            SpriteDraw.drawAtCenter(spriteCache, ship.spritePath(), screenX, screenY, hullWidth, hullHeight, Color.WHITE, alpha, angleDeg);
-        }
+        ship.engines().drawHull(spriteCache, ship.spritePath(), screenX, screenY, ship.width() * screenScale, ship.height() * screenScale,
+                screenScale, ship.drift().facingDeg(), alpha);
     }
 
     private void renderFlames(float zoom) {
-        SpriteAPI flameTexture = spriteCache.texture(FLAME_PATH);
+        SpriteAPI flameTexture = spriteCache.texture(HullEngines.FLAME_PATH);
         if (flameTexture == null) return;
-        float engineLevel = flight.engineLevel();
-        float lengthFactor = (IDLE_FLAME_LENGTH + engineLevel) * (0.5f + 0.5f * engineLevel);
+        float lengthFactor = HullEngines.flameLengthFactor(flight.engineLevel());
         float textureRight = flameTexture.getTextureWidth();
         float textureTop = flameTexture.getTextureHeight();
         try (GlScope scope = GlScope.textured(GL11.GL_SRC_ALPHA, GL11.GL_ONE)) {
@@ -238,79 +218,27 @@ public class SkillTreeFleetRenderer {
             GL11.glBegin(GL11.GL_QUADS);
             for (int i = 0; i < ships.size(); i++) {
                 if (shipScreenScale[i] > 0f) {
-                    addShipFlames(i, zoom, lengthFactor, textureRight, textureTop);
+                    FleetShip ship = ships.get(i);
+                    ship.engines().addFlames(shipScreenX[i], shipScreenY[i], Math.toRadians(ship.drift().facingDeg()), shipScreenScale[i],
+                            zoom, lengthFactor, shipAlpha[i], textureRight, textureTop);
                 }
             }
             GL11.glEnd();
         }
     }
 
-    private void addShipFlames(int shipIndex, float zoom, float lengthFactor, float textureRight, float textureTop) {
-        float screenScale = shipScreenScale[shipIndex];
-        FleetShip ship = ships.get(shipIndex);
-        double facing = Math.toRadians(ship.drift().facingDeg());
-        float facingCos = (float) Math.cos(facing);
-        float facingSin = (float) Math.sin(facing);
-        for (FleetHullVisuals.EngineFlame flame : ship.visuals().flames()) {
-            float slotX = shipScreenX[shipIndex] + (flame.forwardOffset() * facingCos - flame.leftOffset() * facingSin) * screenScale;
-            float slotY = shipScreenY[shipIndex] + (flame.forwardOffset() * facingSin + flame.leftOffset() * facingCos) * screenScale;
-            float halfWidth = Math.max(1f, flame.width() * ship.drift().motion().scaleMult()) * zoom / 2f;
-            if (halfWidth < MIN_FLAME_HALF_WIDTH) continue;
-            double flameAngle = facing + Math.toRadians(flame.angleDeg());
-            float directionX = (float) Math.cos(flameAngle);
-            float directionY = (float) Math.sin(flameAngle);
-            float length = flame.length() * screenScale * lengthFactor;
-            float lead = FLAME_LEAD * zoom;
-            float backX = slotX - directionX * lead;
-            float backY = slotY - directionY * lead;
-            float tipX = slotX + directionX * length;
-            float tipY = slotY + directionY * length;
-            float sideX = -directionY;
-            float sideY = directionX;
-            Color color = flame.color();
-            float alpha = shipAlpha[shipIndex] * color.getAlpha() / COLOR_CHANNEL_MAX;
-            flameVertex(color, 0f, textureRight, textureTop, backX + sideX * halfWidth / 2f, backY + sideY * halfWidth / 2f);
-            flameVertex(color, 0f, textureRight, 0f, backX - sideX * halfWidth / 2f, backY - sideY * halfWidth / 2f);
-            flameVertex(color, alpha, 0f, 0f, slotX - sideX * halfWidth, slotY - sideY * halfWidth);
-            flameVertex(color, alpha, 0f, textureTop, slotX + sideX * halfWidth, slotY + sideY * halfWidth);
-            flameVertex(color, alpha, 0f, 0f, slotX - sideX * halfWidth, slotY - sideY * halfWidth);
-            flameVertex(color, alpha, 0f, textureTop, slotX + sideX * halfWidth, slotY + sideY * halfWidth);
-            flameVertex(color, 0f, textureRight, textureTop, tipX + sideX * halfWidth / 2f, tipY + sideY * halfWidth / 2f);
-            flameVertex(color, 0f, textureRight, 0f, tipX - sideX * halfWidth / 2f, tipY - sideY * halfWidth / 2f);
-        }
-    }
-
-    private static void flameVertex(Color color, float alpha, float textureX, float textureY, float x, float y) {
-        GL11.glColor4f(color.getRed() / COLOR_CHANNEL_MAX, color.getGreen() / COLOR_CHANNEL_MAX, color.getBlue() / COLOR_CHANNEL_MAX, alpha);
-        GL11.glTexCoord2f(textureX, textureY);
-        GL11.glVertex2f(x, y);
-    }
-
     private void renderGlows() {
-        SpriteAPI glowTexture = spriteCache.texture(GLOW_PATH);
+        SpriteAPI glowTexture = spriteCache.texture(HullEngines.GLOW_PATH);
         if (glowTexture == null) return;
-        float engineLevel = flight.engineLevel();
-        float glowFactor = GLOW_SIZE_MULT * (1f + IDLE_GLOW_GROWTH * (1f - engineLevel)) * (0.5f + 0.5f * engineLevel);
+        float glowFactor = HullEngines.glowFactor(flight.engineLevel());
         try (TexturedQuadBatch quads = glowQuads.beginAdditive(glowTexture)) {
             for (int i = 0; i < ships.size(); i++) {
                 if (shipScreenScale[i] > 0f) {
-                    addShipGlows(quads, i, glowFactor);
+                    FleetShip ship = ships.get(i);
+                    ship.engines().addGlows(quads, shipScreenX[i], shipScreenY[i], Math.toRadians(ship.drift().facingDeg()), shipScreenScale[i],
+                            glowFactor, shipAlpha[i]);
                 }
             }
-        }
-    }
-
-    private void addShipGlows(TexturedQuadBatch quads, int shipIndex, float glowFactor) {
-        float screenScale = shipScreenScale[shipIndex];
-        FleetShip ship = ships.get(shipIndex);
-        double facing = Math.toRadians(ship.drift().facingDeg());
-        float facingCos = (float) Math.cos(facing);
-        float facingSin = (float) Math.sin(facing);
-        for (FleetHullVisuals.EngineFlame flame : ship.visuals().flames()) {
-            float slotX = shipScreenX[shipIndex] + (flame.forwardOffset() * facingCos - flame.leftOffset() * facingSin) * screenScale;
-            float slotY = shipScreenY[shipIndex] + (flame.forwardOffset() * facingSin + flame.leftOffset() * facingCos) * screenScale;
-            float glowSize = flame.length() * screenScale * glowFactor;
-            quads.quadAtCenter(slotX, slotY, glowSize, glowSize, 0f, flame.color(), shipAlpha[shipIndex]);
         }
     }
 }

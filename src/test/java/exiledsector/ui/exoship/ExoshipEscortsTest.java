@@ -1,6 +1,7 @@
 package exiledsector.ui.exoship;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.ui.decoration.HullEngines;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -56,9 +57,9 @@ class ExoshipEscortsTest {
         ExoshipEscorts escorts = new ExoshipEscorts();
         assertEquals(ExoshipEscorts.ESCORTS.length, escorts.escortCount());
 
-        ExoshipEscorts.Escort playerShip = ExoshipEscorts.playerEscort("graphics/ships/onslaught.png", 160f, 280f,
+        ExoshipEscorts.Escort playerShip = ExoshipEscorts.playerEscort("graphics/ships/onslaught.png", "onslaught", 160f, 280f,
                 HullSize.CAPITAL_SHIP);
-        escorts.setPlayerEscort(playerShip);
+        escorts.setPlayerEscort(playerShip, HullEngines.NONE);
 
         assertEquals(ExoshipEscorts.MAX_ESCORTS, escorts.escortCount());
         assertEquals(playerShip, escorts.escort(ExoshipEscorts.ESCORTS.length));
