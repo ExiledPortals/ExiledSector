@@ -124,30 +124,39 @@ public final class FrameworkSocketFlair {
         }
     }
 
-    public static void leader(float socketEdgeX, float socketY, float elbowX, float anchorX, float anchorY, Color accent, float elapsedSeconds,
-                              float alpha) {
+    public record LeaderPath(float edgeX, float edgeY, float elbowX, float elbowY, float anchorX, float anchorY) {
+    }
+
+    public static void leader(LeaderPath path, Color accent, float elapsedSeconds, float alpha) {
         if (alpha <= 0f) {
             return;
         }
+        float edgeX = path.edgeX();
+        float edgeY = path.edgeY();
+        float elbowX = path.elbowX();
+        float elbowY = path.elbowY();
+        float anchorX = path.anchorX();
+        float anchorY = path.anchorY();
         try (GlScope scope = GlScope.save(GlScope.DRAW_ATTRIBS)) {
             scope.untextured().additive();
-            HoloShapes.line(socketEdgeX, socketY, elbowX, socketY, 4f, accent, 0.12f * alpha);
-            HoloShapes.line(elbowX, socketY, anchorX, anchorY, 4f, accent, 0.12f * alpha);
-            HoloShapes.line(socketEdgeX, socketY, elbowX, socketY, 1.5f, accent, 0.75f * alpha);
-            HoloShapes.line(elbowX, socketY, anchorX, anchorY, 1.5f, accent, 0.75f * alpha);
-            HoloShapes.diamond(elbowX, socketY, 3f, accent, 0.9f * alpha);
-            float firstLength = Math.abs(elbowX - socketEdgeX);
-            float secondLength = (float) Math.hypot(anchorX - elbowX, anchorY - socketY);
+            HoloShapes.line(edgeX, edgeY, elbowX, elbowY, 4f, accent, 0.12f * alpha);
+            HoloShapes.line(elbowX, elbowY, anchorX, anchorY, 4f, accent, 0.12f * alpha);
+            HoloShapes.line(edgeX, edgeY, elbowX, elbowY, 1.5f, accent, 0.75f * alpha);
+            HoloShapes.line(elbowX, elbowY, anchorX, anchorY, 1.5f, accent, 0.75f * alpha);
+            HoloShapes.diamond(elbowX, elbowY, 3f, accent, 0.9f * alpha);
+            float firstLength = (float) Math.hypot(elbowX - edgeX, elbowY - edgeY);
+            float secondLength = (float) Math.hypot(anchorX - elbowX, anchorY - elbowY);
             float travel = (elapsedSeconds * 0.6f) % 1f * (firstLength + secondLength);
             float pulseX;
             float pulseY;
             if (travel < firstLength) {
-                pulseX = socketEdgeX + Math.signum(elbowX - socketEdgeX) * travel;
-                pulseY = socketY;
+                float share = firstLength <= 0f ? 1f : travel / firstLength;
+                pulseX = edgeX + (elbowX - edgeX) * share;
+                pulseY = edgeY + (elbowY - edgeY) * share;
             } else {
                 float share = secondLength <= 0f ? 1f : (travel - firstLength) / secondLength;
                 pulseX = elbowX + (anchorX - elbowX) * share;
-                pulseY = socketY + (anchorY - socketY) * share;
+                pulseY = elbowY + (anchorY - elbowY) * share;
             }
             HoloShapes.diamond(pulseX, pulseY, 2.5f, Color.WHITE, 0.8f * alpha);
             float markerPulse = 0.5f + 0.5f * (float) Math.sin(elapsedSeconds * 3f);

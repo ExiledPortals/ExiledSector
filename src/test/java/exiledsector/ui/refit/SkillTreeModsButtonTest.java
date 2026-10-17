@@ -13,13 +13,14 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
 import exiledsector.compat.ExoticaCompat;
+import exiledsector.socketables.HullUpgradesSetting;
+import exiledsector.ui.HullUpgradesRefitButton;
 import exiledsector.ui.SkillTreeRefitButton;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.input.Keyboard;
-import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -57,13 +58,17 @@ class SkillTreeModsButtonTest {
 
     private MockedStatic<Global> globalMock;
     private MockedStatic<SkillTreeRefitButton> refitButtonMock;
+    private MockedStatic<HullUpgradesRefitButton> hullUpgradesButtonMock;
     private MockedStatic<LunaSettings> lunaSettingsMock;
     private ModWidget widget;
     private ButtonAPI buildIn;
     private PositionAPI placement;
     private CustomPanelAPI container;
     private ButtonAPI button;
-    private ArgumentCaptor<CustomUIPanelPlugin> plugin;
+    private CustomUIPanelPlugin skillTreePlugin;
+    private CustomUIPanelPlugin hullUpgradesPlugin;
+    private CustomPanelAPI hullUpgradesContainer;
+    private ButtonAPI hullUpgradesButton;
 
     @BeforeEach
     void setUp() {
@@ -84,16 +89,29 @@ class SkillTreeModsButtonTest {
         button = mock(ButtonAPI.class);
         when(element.addButton(any(), any(), any(), any(), any(), any(), anyFloat(), anyFloat(), anyFloat())).thenReturn(button);
 
+        hullUpgradesContainer = mock(CustomPanelAPI.class);
+        TooltipMakerAPI hullUpgradesElement = mock(TooltipMakerAPI.class);
+        when(hullUpgradesContainer.createUIElement(anyFloat(), anyFloat(), eq(false))).thenReturn(hullUpgradesElement);
+        hullUpgradesButton = mock(ButtonAPI.class);
+        when(hullUpgradesElement.addButton(any(), any(), any(), any(), any(), any(), anyFloat(), anyFloat(), anyFloat())).thenReturn(hullUpgradesButton);
+
         SettingsAPI settings = mock(SettingsAPI.class);
-        plugin = ArgumentCaptor.forClass(CustomUIPanelPlugin.class);
-        when(settings.createCustom(anyFloat(), anyFloat(), plugin.capture())).thenAnswer(invocation -> {
-            when(container.getPlugin()).thenReturn(invocation.getArgument(2));
-            return container;
+        when(settings.createCustom(anyFloat(), anyFloat(), any())).thenAnswer(invocation -> {
+            CustomUIPanelPlugin created = invocation.getArgument(2);
+            CustomPanelAPI target = created instanceof HullUpgradesModsButton ? hullUpgradesContainer : container;
+            if (created instanceof HullUpgradesModsButton) {
+                hullUpgradesPlugin = created;
+            } else {
+                skillTreePlugin = created;
+            }
+            when(target.getPlugin()).thenReturn(created);
+            return target;
         });
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSettings).thenReturn(settings);
         globalMock.when(Global::getSector).thenReturn(mock(SectorAPI.class, Mockito.RETURNS_DEEP_STUBS));
         refitButtonMock = Mockito.mockStatic(SkillTreeRefitButton.class);
+        hullUpgradesButtonMock = Mockito.mockStatic(HullUpgradesRefitButton.class);
         lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
         buttonUnderHullMods(true);
     }
@@ -101,9 +119,12 @@ class SkillTreeModsButtonTest {
     @AfterEach
     void tearDown() {
         lunaSettingsMock.close();
+        hullUpgradesButtonMock.close();
         refitButtonMock.close();
         globalMock.close();
         SkillTreeModsButton.resetForTests();
+        HullUpgradesModsButton.resetForTests();
+        HullUpgradesSetting.setEnabledForTests(HullUpgradesSetting.DEFAULT_ENABLED);
     }
 
     @Test
@@ -145,7 +166,7 @@ class SkillTreeModsButtonTest {
 
         SkillTreeModsButton.attach(widget);
 
-        verify(widget, times(1)).addComponent(any());
+        verify(widget, times(2)).addComponent(any());
     }
 
     @Test
@@ -161,8 +182,8 @@ class SkillTreeModsButtonTest {
     void pressingTheButtonOpensTheSkillTree() {
         SkillTreeModsButton.attach(widget);
 
-        plugin.getValue().buttonPressed(SkillTreeModsButton.BUTTON_ID);
-        plugin.getValue().buttonPressed("somethingElse");
+        skillTreePlugin.buttonPressed(SkillTreeModsButton.BUTTON_ID);
+        skillTreePlugin.buttonPressed("somethingElse");
 
         refitButtonMock.verify(() -> SkillTreeRefitButton.openPanel(null), times(1));
     }
@@ -174,7 +195,7 @@ class SkillTreeModsButtonTest {
         buttonUnderHullMods(false);
 
         SkillTreeModsButton.attach(widget);
-        plugin.getValue().buttonPressed(SkillTreeModsButton.BUTTON_ID);
+        skillTreePlugin.buttonPressed(SkillTreeModsButton.BUTTON_ID);
 
         verify(widget, never()).removeComponent(any());
         verify(container).setOpacity(0f);
@@ -185,7 +206,7 @@ class SkillTreeModsButtonTest {
         SkillTreeModsButton.attach(widget);
 
         verify(container).setOpacity(1f);
-        verify(widget, times(1)).addComponent(any());
+        verify(widget, times(2)).addComponent(any());
     }
 
     @Test
@@ -207,6 +228,42 @@ class SkillTreeModsButtonTest {
         } finally {
             refitButtonMock = Mockito.mockStatic(SkillTreeRefitButton.class);
         }
+    }
+
+    @Test
+    void theHullUpgradesButtonSitsRightBelowTheSkillTreeButtonWithTheLHotkey() {
+        SkillTreeModsButton.attach(widget);
+
+        verify(hullUpgradesContainer).createUIElement(150f, 25f, false);
+        verify(hullUpgradesButton).setShortcut(Keyboard.KEY_L, true);
+        verify(placement).belowMid(container, HullUpgradesModsButton.GAP_BELOW_SKILL_TREE);
+    }
+
+    @Test
+    void pressingTheHullUpgradesButtonOpensTheHullUpgradesScreen() {
+        SkillTreeModsButton.attach(widget);
+
+        hullUpgradesPlugin.buttonPressed(HullUpgradesModsButton.BUTTON_ID);
+        hullUpgradesPlugin.buttonPressed(SkillTreeModsButton.BUTTON_ID);
+
+        hullUpgradesButtonMock.verify(() -> HullUpgradesRefitButton.openPanel(null), times(1));
+        refitButtonMock.verify(() -> SkillTreeRefitButton.openPanel(null), never());
+    }
+
+    @Test
+    void switchingHullUpgradesOffHidesItsButtonWithoutRemovingIt() {
+        SkillTreeModsButton.attach(widget);
+        widget.children.add(container);
+        widget.children.add(hullUpgradesContainer);
+        HullUpgradesSetting.setEnabledForTests(false);
+
+        SkillTreeModsButton.attach(widget);
+        hullUpgradesPlugin.buttonPressed(HullUpgradesModsButton.BUTTON_ID);
+
+        verify(widget, never()).removeComponent(any());
+        verify(hullUpgradesContainer).setOpacity(0f);
+        verify(hullUpgradesButton).setEnabled(false);
+        hullUpgradesButtonMock.verify(() -> HullUpgradesRefitButton.openPanel(null), never());
     }
 
     private void buttonUnderHullMods(boolean value) {

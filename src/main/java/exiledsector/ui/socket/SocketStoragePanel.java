@@ -31,6 +31,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public final class SocketStoragePanel extends HoloPanel {
@@ -53,15 +54,18 @@ public final class SocketStoragePanel extends HoloPanel {
     private static final float NOTICE_HEIGHT = 56f;
     private static final float FOOTER_HEIGHT = 24f;
     private static final float SCROLLBAR_ROOM = 14f;
-    private static final float CELL_SIZE = 96f;
-    private static final int COLUMNS = 6;
-    public static final float WIDTH = PAD * 2f + SCROLLBAR_ROOM + COLUMNS * CELL_SIZE + (COLUMNS - 1) * GAP;
+    private static final float MIN_CELL_SIZE = 72f;
+    private static final int COMPACT_COLUMNS = 5;
+    private static final int TREE_COLUMNS = 6;
+    private static final float COLUMN_FIT_SLACK = 0.5f;
+    public static final float COMPACT_WIDTH = widthFor(COMPACT_COLUMNS);
+    public static final float WIDTH = widthFor(TREE_COLUMNS);
     private static final float CONFIRM_HEIGHT = 130f;
     private static final float WORKBENCH_GAP = 12f;
     private static final float BATCH_CONFIRM_HEIGHT = 170f;
     private static final float BUTTON_TEXT_PADDING = 30f;
     private static final float SEARCH_DELAY_SECONDS = 0.25f;
-    private static final SocketableCell.Look CELL_LOOK = new SocketableCell.Look(9f, true, 1f);
+    private static final SocketableCell.Look CELL_LOOK = new SocketableCell.Look(7f, true, 1f);
 
     private enum Control {CLOSE, WORKBENCH, DISASSEMBLY_MODE, CONFIRM_DISASSEMBLE, CANCEL_DISASSEMBLE}
 
@@ -94,6 +98,7 @@ public final class SocketStoragePanel extends HoloPanel {
     private float gridTop;
     private UIComponentAPI headerElement;
     private UIComponentAPI searchRowElement;
+    private UIComponentAPI toolsElement;
     private UIComponentAPI controlsElement;
     private TooltipMakerAPI gridElement;
     private UIComponentAPI noticeElement;
@@ -121,17 +126,13 @@ public final class SocketStoragePanel extends HoloPanel {
         this.storageListener = storageListener;
     }
 
-    public static SocketStoragePanel open(CustomPanelAPI hostPanel, float panelLeft, float panelTop, float panelHeight,
-                                          Function<Socketable, String> installedShipLookup, Listener storageListener) {
-        return open(hostPanel, panelLeft, panelTop, panelHeight, installedShipLookup, storageListener, null);
-    }
-
-    public static SocketStoragePanel open(CustomPanelAPI hostPanel, float panelLeft, float panelTop, float panelHeight,
-                                          Function<Socketable, String> installedShipLookup, Listener storageListener, SocketType kindFilter) {
+    public static SocketStoragePanel open(CustomPanelAPI hostPanel, SocketPanelPlacement placement, Function<Socketable, String> installedShipLookup,
+                                          Listener storageListener, SocketType kindFilter, Consumer<SocketPanelTab> tabListener) {
         SocketStoragePanel storagePanel = new SocketStoragePanel(hostPanel, installedShipLookup, storageListener, kindFilter);
         storagePanel.movedFromCargo = absorbPlayerCargo();
         storagePanel.materialsNotice = settleMaterials();
-        storagePanel.attach(panelLeft, panelTop, WIDTH, panelHeight);
+        storagePanel.setTabListener(tabListener);
+        storagePanel.attach(placement.panelLeft(), placement.panelTop(), placement.panelWidth(), placement.panelHeight(), placement.instantly());
         return storagePanel;
     }
 
@@ -169,8 +170,20 @@ public final class SocketStoragePanel extends HoloPanel {
     }
 
     @Override
+    protected void onSwappedOut() {
+        if (workbenchPanel != null) {
+            workbenchPanel.close();
+        }
+    }
+
+    @Override
+    protected SocketPanelTab tab() {
+        return SocketPanelTab.SOCKETABLES;
+    }
+
+    @Override
     protected UIComponentAPI[] chromeComponents() {
-        return new UIComponentAPI[]{headerElement, searchRowElement};
+        return new UIComponentAPI[]{headerElement, searchRowElement, toolsElement};
     }
 
     @Override
@@ -184,6 +197,7 @@ public final class SocketStoragePanel extends HoloPanel {
         }
         kindFilter = socketType;
         queue(() -> {
+            closeDisassemblyConfirm();
             reloadRows();
             rebuildControls();
         });
@@ -284,6 +298,9 @@ public final class SocketStoragePanel extends HoloPanel {
 
     @Override
     public void buttonPressed(Object id) {
+        if (tabPressed(id)) {
+            return;
+        }
         queue(() -> handleButton(id));
     }
 
@@ -303,7 +320,7 @@ public final class SocketStoragePanel extends HoloPanel {
                 }
                 closeDisassemblyConfirm();
                 reloadRows();
-                buildHeader();
+                rebuildTools();
                 rebuildControls();
             } else if (id == Control.CANCEL_DISASSEMBLE) {
                 closeDisassemblyConfirm();
@@ -364,6 +381,10 @@ public final class SocketStoragePanel extends HoloPanel {
         queue(() -> storageListener.selected(row.socketable() == selectedSocketable ? null : row.socketable()));
     }
 
+    public boolean workbenchContains(float x, float y) {
+        return workbenchPanel != null && workbenchPanel.contains(x, y);
+    }
+
     public boolean isWorkbenchOpen() {
         return workbenchPanel != null || (fadingWorkbenchPanel != null && fadingWorkbenchPanel.isVisible());
     }
@@ -391,7 +412,7 @@ public final class SocketStoragePanel extends HoloPanel {
                         }
                         markedForDisassembly.removeIf(socketable -> !owned.contains(socketable));
                         reloadRows();
-                        buildHeader();
+                        rebuildTools();
                         rebuildGrid();
                     }
 
@@ -418,33 +439,64 @@ public final class SocketStoragePanel extends HoloPanel {
         return panelWidth - PAD * 2f;
     }
 
+    private static float widthFor(int columns) {
+        return PAD * 2f + SCROLLBAR_ROOM + columns * MIN_CELL_SIZE + (columns - 1) * GAP;
+    }
+
+    static int columnsFor(float panelWidth) {
+        float gridWidth = panelWidth - PAD * 2f - SCROLLBAR_ROOM;
+        return Math.max(1, (int) ((gridWidth + GAP + COLUMN_FIT_SLACK) / (MIN_CELL_SIZE + GAP)));
+    }
+
     @Override
     protected void build() {
-        buildHeader();
+        rebuildHeader();
         buildSearch();
+        rebuildTools();
         reloadRows();
         rebuildControls();
     }
 
-    private void buildHeader() {
-        TooltipMakerAPI element = startHeader("ui.socketStorage.title", "ui.socketStorage.close", Control.CLOSE);
-        String workbenchLabel = Translation.text("ui.socketStorage.workbench");
-        float workbenchButtonWidth = Global.getSettings().computeStringWidth(workbenchLabel, Fonts.ORBITRON_20AA) + BUTTON_TEXT_PADDING;
-        element.addButton(workbenchLabel, Control.WORKBENCH, workbenchButtonWidth, HEADER_BUTTON_HEIGHT, 0f).getPosition()
-                .inTR(CLOSE_BUTTON_WIDTH + GAP, 0f);
-        headerElement = finishHeader(element, headerElement, CLOSE_BUTTON_WIDTH + GAP + workbenchButtonWidth + GAP * 2f);
+    @Override
+    protected void rebuildHeader() {
+        closeDisassemblyConfirm();
+        headerElement = finishHeader(startHeader("ui.socketStorage.title", "ui.socketStorage.close", Control.CLOSE), headerElement);
+        refreshOpacity();
+    }
+
+    private static float workbenchButtonWidth() {
+        return Global.getSettings().computeStringWidth(Translation.text("ui.socketStorage.workbench"), Fonts.ORBITRON_20AA) + BUTTON_TEXT_PADDING;
+    }
+
+    private static float toolsWidth() {
+        return workbenchButtonWidth() + GAP + PARTS_ROOM;
+    }
+
+    private float searchRowTop() {
+        return PAD + HEADER_HEIGHT + GAP;
     }
 
     private void buildSearch() {
-        TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), FIELD_HEIGHT, false);
+        float searchWidth = innerWidth() - toolsWidth() - GAP;
+        TooltipMakerAPI element = panelRoot.createUIElement(searchWidth, FIELD_HEIGHT, false);
         VanillaText.plainPara(element, Translation.text("ui.socketStorage.search"), 0f, Misc.getGrayColor())
                 .getPosition().inTL(0f, LINE_PAD * 2f);
-        searchField = element.addTextField(innerWidth() - LABEL_WIDTH, FIELD_HEIGHT, Fonts.DEFAULT_SMALL, 0f);
+        searchField = element.addTextField(searchWidth - LABEL_WIDTH, FIELD_HEIGHT, Fonts.DEFAULT_SMALL, 0f);
         searchField.getPosition().inTL(LABEL_WIDTH, 0f);
         searchField.setText(storageFilter.query);
         typedQuery = storageFilter.query;
-        panelRoot.addUIElement(element).inTL(PAD, PAD + HEADER_HEIGHT + GAP);
+        panelRoot.addUIElement(element).inTL(PAD, searchRowTop());
         searchRowElement = element;
+    }
+
+    private void rebuildTools() {
+        float workbenchWidth = workbenchButtonWidth();
+        TooltipMakerAPI element = panelRoot.createUIElement(toolsWidth(), FIELD_HEIGHT, false);
+        element.addButton(Translation.text("ui.socketStorage.workbench"), Control.WORKBENCH, workbenchWidth, HEADER_BUTTON_HEIGHT, 0f)
+                .getPosition().inTR(0f, (FIELD_HEIGHT - HEADER_BUTTON_HEIGHT) / 2f);
+        addPartsCount(element, workbenchWidth + GAP);
+        toolsElement = replaceElement(toolsElement, element, PAD + innerWidth() - toolsWidth(), searchRowTop());
+        refreshOpacity();
     }
 
     private void reloadRows() {
@@ -536,7 +588,9 @@ public final class SocketStoragePanel extends HoloPanel {
     private void rebuildGrid() {
         hideHoverTooltip();
         List<SocketStorageRow> matching = SocketStorageQuery.apply(storageRows, storageFilter);
-        float gridHeight = Math.max(CELL_SIZE, panelHeight - PAD - FOOTER_HEIGHT - GAP - gridTop);
+        int columns = columnsFor(panelWidth);
+        float cellSize = (innerWidth() - SCROLLBAR_ROOM - (columns - 1) * GAP) / columns;
+        float gridHeight = Math.max(cellSize, panelHeight - PAD - FOOTER_HEIGHT - GAP - gridTop);
         TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), gridHeight, true);
         if (matching.isEmpty()) {
             String emptyText;
@@ -547,12 +601,12 @@ public final class SocketStoragePanel extends HoloPanel {
             }
             VanillaText.plainPara(element, emptyText, 0f, Misc.getGrayColor());
         }
-        for (int start = 0; start < matching.size(); start += COLUMNS) {
-            CustomPanelAPI rowPanel = Global.getSettings().createCustom(innerWidth() - SCROLLBAR_ROOM, CELL_SIZE, null);
-            for (int i = start; i < Math.min(matching.size(), start + COLUMNS); i++) {
+        for (int start = 0; start < matching.size(); start += columns) {
+            CustomPanelAPI rowPanel = Global.getSettings().createCustom(innerWidth() - SCROLLBAR_ROOM, cellSize, null);
+            for (int i = start; i < Math.min(matching.size(), start + columns); i++) {
                 SocketStorageRow row = matching.get(i);
-                CustomPanelAPI cellPanel = Global.getSettings().createCustom(CELL_SIZE, CELL_SIZE, cellFor(row));
-                rowPanel.addComponent(cellPanel).inTL((i - start) * (CELL_SIZE + GAP), 0f);
+                CustomPanelAPI cellPanel = Global.getSettings().createCustom(cellSize, cellSize, cellFor(row));
+                rowPanel.addComponent(cellPanel).inTL((i - start) * (cellSize + GAP), 0f);
             }
             element.addCustom(rowPanel, start == 0 ? 0f : GAP);
         }

@@ -14,11 +14,57 @@ import exiledsector.socketables.Socketable;
 import exiledsector.socketables.SocketableStore;
 import exiledsector.ui.node.NodeSearch;
 import exiledsector.ui.node.TreeAllocationSession;
+import exiledsector.ui.socket.SocketPanelPlacement;
+import exiledsector.ui.socket.SocketPanelTab;
 import exiledsector.ui.socket.SocketStoragePanel;
 
 import java.util.Map;
+import java.util.function.Consumer;
 
 final class SocketPlacement {
+
+    interface HullUpgradesTab {
+
+        boolean available();
+
+        boolean isOpen();
+
+        void swapOut();
+
+        void swapIn();
+
+        void open();
+
+        void close();
+    }
+
+    private static final HullUpgradesTab NO_HULL_UPGRADES_TAB = new HullUpgradesTab() {
+        @Override
+        public boolean available() {
+            return false;
+        }
+
+        @Override
+        public boolean isOpen() {
+            return false;
+        }
+
+        @Override
+        public void swapOut() {
+        }
+
+        @Override
+        public void swapIn() {
+        }
+
+        @Override
+        public void open() {
+        }
+
+        @Override
+        public void close() {
+        }
+    };
 
     private static final float PANEL_TOP = SkillTreeChrome.sidePanelTop();
     private static final float PANEL_GAP = 12f;
@@ -37,6 +83,9 @@ final class SocketPlacement {
     private int shownStoredCount = -1;
     private Map<String, FleetMemberAPI> ownedShips = Map.of();
     private ScreenRect lastShipCard = ScreenRect.NONE;
+    private PositionAPI treeCanvasPosition;
+    private HullUpgradesTab hullUpgradesTab = NO_HULL_UPGRADES_TAB;
+    private final Consumer<SocketPanelTab> storageTabListener = this::storageTabChosen;
 
     SocketPlacement(CustomPanelAPI hostPanel, TreeAllocationSession treeSession, NodeSearch nodeSearch, SkillTreeSearchBar searchBar) {
         this.hostPanel = hostPanel;
@@ -91,14 +140,23 @@ final class SocketPlacement {
         return targetFrameworkType;
     }
 
+    void setHullUpgradesTab(HullUpgradesTab tab) {
+        hullUpgradesTab = tab;
+    }
+
+    void setCanvasPosition(PositionAPI canvasPosition) {
+        treeCanvasPosition = canvasPosition;
+    }
+
     void openForFrameworkSocket(SocketType socketType, PositionAPI canvasPosition, ScreenRect shipCard) {
-        if (storagePanel != null) {
-            storagePanel.close();
-        }
         stopPlacing();
         clearTargetSocket();
         targetFrameworkType = socketType;
-        open(canvasPosition, shipCard, socketType);
+        if (storagePanel != null) {
+            storagePanel.restrictTo(socketType);
+        } else {
+            open(canvasPosition, shipCard, socketType);
+        }
         storagePanel.setTargetingSocket(true);
     }
 
@@ -108,18 +166,46 @@ final class SocketPlacement {
         }
     }
 
+    void swapToHullUpgrades() {
+        if (storagePanel == null || !hullUpgradesTab.available()) {
+            return;
+        }
+        SocketStoragePanel swapped = storagePanel;
+        forgetStorage();
+        swapped.swapOut();
+        hullUpgradesTab.swapIn();
+    }
+
+    void openFromHullUpgradesTab() {
+        if (treeCanvasPosition != null) {
+            open(treeCanvasPosition, lastShipCard);
+        }
+    }
+
+    private void storageTabChosen(SocketPanelTab tab) {
+        if (tab == SocketPanelTab.HULL_UPGRADES) {
+            swapToHullUpgrades();
+        }
+    }
+
     void escape() {
         if (storagePanel != null && storagePanel.escape()) {
             return;
         }
         if (targetFrameworkType != null && storagePanel != null) {
-            storagePanel.close();
+            if (hullUpgradesTab.available()) {
+                swapToHullUpgrades();
+            } else {
+                storagePanel.close();
+            }
             return;
         }
         if (placingSocketable != null) {
             stopPlacing();
         } else if (targetSocket != null && storagePanel != null) {
             clearTargetSocket();
+        } else if (storagePanel != null && hullUpgradesTab.available()) {
+            swapToHullUpgrades();
         } else if (storagePanel != null) {
             storagePanel.close();
         }
@@ -169,9 +255,17 @@ final class SocketPlacement {
     void toggle(PositionAPI canvasPosition, ScreenRect shipCard) {
         if (storagePanel != null) {
             storagePanel.close();
+        } else if (hullUpgradesTab.isOpen()) {
+            hullUpgradesTab.close();
+        } else if (hullUpgradesTab.available()) {
+            hullUpgradesTab.open();
         } else {
             open(canvasPosition, shipCard);
         }
+    }
+
+    void refreshButtonSelected() {
+        storageButton.setSelected(storagePanel != null || hullUpgradesTab.isOpen());
     }
 
     boolean placeInto(SkillNode node) {
@@ -233,13 +327,19 @@ final class SocketPlacement {
         if (storagePanel != null) {
             return;
         }
-        SkillTreeSounds.panelOpened();
+        boolean swapping = hullUpgradesTab.isOpen();
+        if (swapping) {
+            hullUpgradesTab.swapOut();
+        } else {
+            SkillTreeSounds.panelOpened();
+        }
         treeSession.closeDropdown();
         searchBar.unfocus();
         ownedShips = SocketCustody.reconcile();
         storageRevision = treeSession.statsRevision();
-        storagePanel = SocketStoragePanel.open(hostPanel, ChromeMetrics.EDGE_MARGIN, PANEL_TOP, sidePanelHeight(canvasPosition, shipCard),
-                SocketCustody.shipNames(ownedShips), new SocketStoragePanel.Listener() {
+        SocketPanelPlacement placement = new SocketPanelPlacement(ChromeMetrics.EDGE_MARGIN, PANEL_TOP, SocketStoragePanel.WIDTH,
+                sidePanelHeight(canvasPosition, shipCard), swapping);
+        storagePanel = SocketStoragePanel.open(hostPanel, placement, SocketCustody.shipNames(ownedShips), new SocketStoragePanel.Listener() {
                     @Override
                     public void selected(Socketable socketable) {
                         if (socketable == null) {
@@ -251,19 +351,29 @@ final class SocketPlacement {
 
                     @Override
                     public void closed() {
-                        storagePanel = null;
-                        stopPlacing();
-                        clearTargetSocket();
-                        targetFrameworkType = null;
-                        refreshButtonLabel();
+                        forgetStorage();
                     }
 
                     @Override
                     public void pressedInside() {
                         searchBar.unfocus();
                     }
-                }, kindFilter);
+                }, kindFilter, storageTabs());
         storagePanel.setTargetingSocket(targetSocket != null);
+        refreshButtonSelected();
+    }
+
+    private Consumer<SocketPanelTab> storageTabs() {
+        return hullUpgradesTab.available() ? storageTabListener : null;
+    }
+
+    private void forgetStorage() {
+        storagePanel = null;
+        stopPlacing();
+        clearTargetSocket();
+        targetFrameworkType = null;
+        refreshButtonLabel();
+        refreshButtonSelected();
     }
 
     private void startPlacing(Socketable socketable) {
@@ -283,6 +393,9 @@ final class SocketPlacement {
             return;
         }
         inspectingShip = inspecting;
+        if (storagePanel != null) {
+            storagePanel.setTabListener(storageTabs());
+        }
         if (placingSocketable != null && storagePanel != null) {
             storagePanel.setSelected(placingSocketable, placingHint(placingSocketable));
         }

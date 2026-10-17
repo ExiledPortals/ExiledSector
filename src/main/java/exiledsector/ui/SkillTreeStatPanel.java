@@ -90,6 +90,10 @@ final class SkillTreeStatPanel {
         return panelOpen;
     }
 
+    float reservedWidth() {
+        return panelOpen && cachedLayout != null ? cachedLayout.width + ChromeMetrics.EDGE_MARGIN : 0f;
+    }
+
     void toggle() {
         if (panelOpen) {
             close();

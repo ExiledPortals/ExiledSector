@@ -16,7 +16,7 @@ final class SocketTypeTile extends BaseCustomUIPanelPlugin {
 
     private static final Color BACKGROUND = new Color(0, 0, 0, 200);
     private static final float BORDER_WIDTH = 1.5f;
-    private static final float FLAIR_SHARE = 0.3f;
+    private static final float FLAIR_SHARE = 0.42f;
     private static final float HOVER_SECONDS = 0.15f;
     private static final float DIMMED_ALPHA = 0.45f;
     private static final float MAX_STEP_SECONDS = 0.1f;

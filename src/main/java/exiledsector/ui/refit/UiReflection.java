@@ -3,6 +3,7 @@ package exiledsector.ui.refit;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,8 @@ public final class UiReflection {
     private static final MethodHandle METHOD_TRY_SET_ACCESSIBLE = virtual(METHOD, "trySetAccessible", boolean.class);
     private static final MethodHandle FIELD_TRY_SET_ACCESSIBLE = virtual(FIELD, "trySetAccessible", boolean.class);
     private static final MethodHandle FIELD_GET = virtual(FIELD, "get", Object.class, Object.class);
+    private static final MethodHandle FIELD_MODIFIERS = virtual(FIELD, "getModifiers", int.class);
+    private static final int STATIC_MODIFIER = 0x0008;
 
     private static final int MAX_PARAMETER_COUNT = 3;
     private static final Object[] NO_ARGS = new Object[0];
@@ -74,6 +77,23 @@ public final class UiReflection {
         if (field == NONE) return null;
         Object value = FIELD_GET.invoke(field, target);
         return type.isInstance(value) ? type.cast(value) : null;
+    }
+
+    static float[] declaredFloats(Object target) throws Throwable {
+        if (target == null) return new float[0];
+        List<Float> values = new ArrayList<>();
+        for (Object candidate : (Object[]) GET_DECLARED_FIELDS.invoke(target.getClass())) {
+            if (FIELD_TYPE.invoke(candidate) == float.class && ((int) FIELD_MODIFIERS.invoke(candidate) & STATIC_MODIFIER) == 0
+                    && (boolean) FIELD_TRY_SET_ACCESSIBLE.invoke(candidate)
+                    && FIELD_GET.invoke(candidate, target) instanceof Float value) {
+                values.add(value);
+            }
+        }
+        float[] floats = new float[values.size()];
+        for (int index = 0; index < floats.length; index++) {
+            floats[index] = values.get(index);
+        }
+        return floats;
     }
 
     private static Object method(Class<?> type, String name, int parameterCount) throws Throwable {

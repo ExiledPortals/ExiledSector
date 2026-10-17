@@ -105,7 +105,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
                                             Listener workbenchListener) {
         SocketWorkbenchPanel workbenchPanel = new SocketWorkbenchPanel(hostPanel, workbenchListener);
         workbenchPanel.socketAreaHeight = socketAreaFor(panelHeight);
-        workbenchPanel.attach(panelLeft, panelTop, WIDTH, panelHeight);
+        workbenchPanel.attach(panelLeft, panelTop, WIDTH, panelHeight, false);
         return workbenchPanel;
     }
 
@@ -312,7 +312,8 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     private void buildHeader() {
         TooltipMakerAPI element = startHeader("ui.workbench.title", "ui.workbench.close", Control.CLOSE);
-        headerElement = finishHeader(element, headerElement, CLOSE_BUTTON_WIDTH + GAP * 2f);
+        addPartsCount(element, CLOSE_BUTTON_WIDTH + GAP * 2f);
+        headerElement = finishHeader(element, headerElement);
     }
 
     private void rebuildContent() {
