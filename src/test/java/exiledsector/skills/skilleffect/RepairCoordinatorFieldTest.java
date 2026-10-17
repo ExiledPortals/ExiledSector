@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
@@ -166,5 +167,23 @@ class RepairCoordinatorFieldTest {
 
         assertEquals(0, repaired.size());
         assertEquals(50f, allyCells[0][1], 0.001f);
+    }
+
+    @Test
+    void theDronesAreSentToTheAllysMostDamagedCellAndRecalledWhenTheWorkIsDone() {
+        ArmorGridAPI allyGrid = grid(damagedCells());
+        Vector2f worstCellLocation = new Vector2f(210f, 5f);
+        when(allyGrid.getLocation(0, 0)).thenReturn(worstCellLocation);
+        ShipAPI ally = ship(0, 200f, allyGrid);
+        ShipAPI source = ship(0, 0f, grid(fullCells()));
+        RepairCoordinatorListener coordinator = coordinator(source, 1f);
+        Map<ShipAPI, Float> repaired = new IdentityHashMap<>();
+
+        RepairCoordinatorField.repair(List.of(coordinator), among(ally, source), repaired, 1f);
+        assertEquals(worstCellLocation, coordinator.workPoint());
+
+        when(ally.isAlive()).thenReturn(false);
+        RepairCoordinatorField.repair(List.of(coordinator), among(ally, source), repaired, 1f);
+        assertNull(coordinator.workPoint());
     }
 }

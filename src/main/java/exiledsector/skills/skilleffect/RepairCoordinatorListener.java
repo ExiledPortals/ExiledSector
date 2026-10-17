@@ -1,6 +1,7 @@
 package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.ShipAPI;
+import org.lwjgl.util.vector.Vector2f;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -10,6 +11,9 @@ final class RepairCoordinatorListener extends ShipCombatListener {
     static final String ARMOR_REPAIR_PERCENT_KEY = "exiledSector_repairCoordinatorArmorPercent";
 
     private final Map<ShipAPI, Float> armorRepairedByAlly = new IdentityHashMap<>();
+    private ShipAPI repairTarget;
+    private int repairCellX;
+    private int repairCellY;
 
     RepairCoordinatorListener(ShipAPI ownerShip) {
         super(ownerShip);
@@ -25,6 +29,24 @@ final class RepairCoordinatorListener extends ShipCombatListener {
             return 0f;
         }
         return magnitude(ARMOR_REPAIR_PERCENT_KEY);
+    }
+
+    void workOn(ShipAPI ally, int cellX, int cellY) {
+        repairTarget = ally;
+        repairCellX = cellX;
+        repairCellY = cellY;
+    }
+
+    void stopWork() {
+        repairTarget = null;
+    }
+
+    Vector2f workPoint() {
+        ShipAPI ally = repairTarget;
+        if (ally == null || !CombatQueries.isAliveNotHulk(ally) || ally.getArmorGrid() == null) {
+            return null;
+        }
+        return ally.getArmorGrid().getLocation(repairCellX, repairCellY);
     }
 
     float armorRepaired(ShipAPI ally) {
