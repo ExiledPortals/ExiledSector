@@ -1,11 +1,13 @@
 package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.combat.BeamAPI;
 import com.fs.starfarer.api.combat.BoundsAPI;
 import com.fs.starfarer.api.combat.CollisionClass;
 import com.fs.starfarer.api.combat.CollisionGridAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
+import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -40,6 +42,21 @@ public final class CombatQueries {
 
     static boolean withinRadius(Vector2f a, Vector2f b, float radius) {
         return distanceSquared(a, b) <= radius * radius;
+    }
+
+    static ShipAPI attackingShip(Object reportedSource, Object damageParam) {
+        ShipAPI reported = shipBehind(reportedSource);
+        return reported != null ? reported : shipBehind(damageParam);
+    }
+
+    static ShipAPI shipBehind(Object damageSource) {
+        if (damageSource instanceof ShipAPI ship) {
+            return ship;
+        }
+        if (damageSource instanceof DamagingProjectileAPI projectile) {
+            return projectile.getSource();
+        }
+        return damageSource instanceof BeamAPI beam ? beam.getSource() : null;
     }
 
     static float hitDamage(DamageAPI damage) {

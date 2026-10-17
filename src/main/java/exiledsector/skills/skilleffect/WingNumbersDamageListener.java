@@ -1,11 +1,15 @@
 package exiledsector.skills.skilleffect;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.FighterWingAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
 import org.lwjgl.util.vector.Vector2f;
+
+import java.util.List;
 
 final class WingNumbersDamageListener implements DamageTakenModifier {
 
@@ -33,7 +37,10 @@ final class WingNumbersDamageListener implements DamageTakenModifier {
 
     @Override
     public String modifyDamageTaken(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
-        float mult = damageTakenMult(reductionPercentPerFighter, livingFighters());
+        if (WingSharedFateListener.isApplyingSharedDamage()) {
+            return null;
+        }
+        float mult = damageTakenMult(reductionPercentPerFighter, fightersOutWithWing(fighter, Global.getCombatEngine()));
         if (mult >= 1f) {
             return null;
         }
@@ -41,17 +48,19 @@ final class WingNumbersDamageListener implements DamageTakenModifier {
         return REDUCTION_MOD_ID;
     }
 
-    private int livingFighters() {
+    static int fightersOutWithWing(ShipAPI fighter, CombatEngineAPI engine) {
+        int count = CombatQueries.isAliveNotHulk(fighter) ? 1 : 0;
         FighterWingAPI wing = fighter.getWing();
         if (wing == null) {
-            return CombatQueries.isAliveNotHulk(fighter) ? 1 : 0;
+            return count;
         }
-        int living = 0;
-        for (ShipAPI member : wing.getWingMembers()) {
-            if (CombatQueries.isAliveNotHulk(member)) {
-                living++;
+        List<ShipAPI> members = wing.getWingMembers();
+        for (int i = 0; i < members.size(); i++) {
+            ShipAPI member = members.get(i);
+            if (member != fighter && WingSharedFateListener.isOutWithWing(member, engine)) {
+                count++;
             }
         }
-        return living;
+        return count;
     }
 }

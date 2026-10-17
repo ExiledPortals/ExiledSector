@@ -234,7 +234,10 @@ public enum FighterSkillEffect implements BackedSkillEffect {
 
     private static WingRole effectiveRole(ShipAPI fighter) {
         FighterWingAPI wing = fighter.getWing();
-        WingRole role = wing == null ? null : wing.getRole();
+        return effectiveRole(wing == null ? null : wing.getRole());
+    }
+
+    static WingRole effectiveRole(WingRole role) {
         if (role == WingRole.FIGHTER || role == WingRole.INTERCEPTOR || role == WingRole.BOMBER || role == WingRole.SUPPORT) {
             return role;
         }

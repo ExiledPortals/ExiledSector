@@ -1,13 +1,17 @@
 package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.combat.ArmorGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.FighterWingAPI;
 import com.fs.starfarer.api.combat.FluxTrackerAPI;
+import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipSystemAPI;
 import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.combat.listeners.DamageListener;
 import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
@@ -20,17 +24,23 @@ final class WingSharedFateListener implements DamageTakenModifier, DamageListene
 
     static final String SHARE_MOD_ID = "exiledSector_wingSharedFate";
     static final float MAX_SHARED_PERCENT = 100f;
-    private static final float KILLING_BLOW_DAMAGE = 1_000_000f;
+    static final float KILLING_BLOW_MULTIPLE = 3f;
+    static final float KILLING_BLOW_HULL_LEFT = 1f;
+    static final float OVERLOAD_MARGIN = 1f;
+    static final String SHIELDSISTER_REDIRECT_SUFFIX = "fighterDamageNullifyer";
+    static final String DAMPER_FLOOR_SUFFIX = "DamperFieldFightersScript";
 
     private static boolean applyingSharedDamage;
 
     private final ShipAPI fighter;
     private final float sharedPercent;
-    private final List<ShipAPI> pendingWingmates = new ArrayList<>();
-    private Object pendingSource;
+    private final List<ShipAPI> recipients = new ArrayList<>();
+    private Object pendingParam;
     private float pendingRatio;
     private float pendingKeptFraction;
     private boolean sharePending;
+    private DamageAPI empScaledDamage;
+    private float unscaledEmp;
 
     private WingSharedFateListener(ShipAPI fighter, float sharedPercent) {
         this.fighter = fighter;
@@ -56,21 +66,30 @@ final class WingSharedFateListener implements DamageTakenModifier, DamageListene
         return new Split(keptFraction, sharedFraction / wingmates / keptFraction);
     }
 
+    static boolean isApplyingSharedDamage() {
+        return applyingSharedDamage;
+    }
+
     @Override
     public String modifyDamageTaken(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
+        restoreEmp();
         sharePending = false;
-        if (applyingSharedDamage) {
+        recipients.clear();
+        if (applyingSharedDamage || protectedByAnotherMod(fighter)) {
             return null;
         }
-        List<ShipAPI> wingmates = wingmates();
-        Split split = split(sharedPercent, wingmates.size());
+        collectRecipients(Global.getCombatEngine(), shieldHit);
+        Split split = split(sharedPercent, recipients.size());
         if (split.perWingmateRatio() <= 0f) {
             return null;
         }
         damage.getModifier().modifyMult(SHARE_MOD_ID, split.keptFraction());
-        pendingWingmates.clear();
-        pendingWingmates.addAll(wingmates);
-        pendingSource = param;
+        if (!shieldHit && damage.getFluxComponent() > 0f) {
+            empScaledDamage = damage;
+            unscaledEmp = damage.getFluxComponent();
+            damage.setFluxComponent(unscaledEmp / split.keptFraction());
+        }
+        pendingParam = param;
         pendingRatio = split.perWingmateRatio();
         pendingKeptFraction = split.keptFraction();
         sharePending = true;
@@ -81,73 +100,204 @@ final class WingSharedFateListener implements DamageTakenModifier, DamageListene
         return wholeHit > 0f && wholeHit >= fighterMaximum;
     }
 
+    @Override
+    public void reportDamageApplied(Object source, CombatEntityAPI target, ApplyDamageResultAPI result) {
+        if (!sharePending) {
+            return;
+        }
+        sharePending = false;
+        restoreEmp();
+        if (fighter.getParamAboutToApplyDamage() == pendingParam) {
+            CombatEngineAPI engine = Global.getCombatEngine();
+            shareFlux(result.getDamageToShields(), engine);
+            shareHull(result.getDamageToHull(), CombatQueries.attackingShip(source, pendingParam), engine);
+        }
+        recipients.clear();
+        pendingParam = null;
+    }
+
+    private void restoreEmp() {
+        if (empScaledDamage != null) {
+            empScaledDamage.setFluxComponent(unscaledEmp);
+            empScaledDamage = null;
+        }
+    }
+
+    private void collectRecipients(CombatEngineAPI engine, boolean shieldHit) {
+        FighterWingAPI wing = fighter.getWing();
+        if (wing == null) {
+            return;
+        }
+        List<ShipAPI> members = wing.getWingMembers();
+        for (int i = 0; i < members.size(); i++) {
+            ShipAPI member = members.get(i);
+            if (member != fighter && canReceive(member, engine, shieldHit)) {
+                recipients.add(member);
+            }
+        }
+    }
+
+    private static boolean canReceive(ShipAPI member, CombatEngineAPI engine, boolean shieldHit) {
+        if (!isOutWithWing(member, engine) || member.isPhased()) {
+            return false;
+        }
+        boolean hasRoom = shieldHit ? hasShieldRoom(member) : hullDamageTakenMult(member) > 0f;
+        return hasRoom && !protectedByAnotherMod(member);
+    }
+
+    static boolean isOutWithWing(ShipAPI member, CombatEngineAPI engine) {
+        return canTakeDamage(member, engine) && !member.isLanding() && !member.isLiftingOff() && !member.isFinishedLanding();
+    }
+
+    private static boolean canTakeDamage(ShipAPI ship, CombatEngineAPI engine) {
+        return CombatQueries.isAliveNotHulk(ship) && ship.getHitpoints() > 0f && (engine == null || engine.isEntityInPlay(ship));
+    }
+
+    static boolean protectedByAnotherMod(ShipAPI ship) {
+        List<DamageTakenModifier> modifiers = ship.getListeners(DamageTakenModifier.class);
+        if (modifiers == null) {
+            return false;
+        }
+        for (int i = 0; i < modifiers.size(); i++) {
+            String className = modifiers.get(i).getClass().getName();
+            if (className.endsWith(SHIELDSISTER_REDIRECT_SUFFIX) || (className.endsWith(DAMPER_FLOOR_SUFFIX) && carrierSystemActive(ship))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean carrierSystemActive(ShipAPI ship) {
+        FighterWingAPI wing = ship.getWing();
+        ShipAPI carrier = wing == null ? null : wing.getSourceShip();
+        ShipSystemAPI system = carrier == null ? null : carrier.getSystem();
+        return system != null && system.isActive();
+    }
+
+    private static boolean hasShieldRoom(ShipAPI ship) {
+        ShieldAPI shield = ship.getShield();
+        FluxTrackerAPI flux = ship.getFluxTracker();
+        return shield != null && shield.isOn() && flux != null && !flux.isOverloadedOrVenting()
+                && shieldEfficiency(ship) > 0f && spareFlux(flux) > 0f;
+    }
+
+    private static float shieldEfficiency(ShipAPI ship) {
+        ShieldAPI shield = ship.getShield();
+        return shield == null ? 0f : shield.getFluxPerPointOfDamage() * ship.getMutableStats().getShieldDamageTakenMult().getModifiedValue();
+    }
+
+    private static float spareFlux(FluxTrackerAPI flux) {
+        return Math.max(0f, flux.getMaxFlux() - flux.getCurrFlux() - OVERLOAD_MARGIN);
+    }
+
     private static float fluxCapacity(ShipAPI ship) {
         FluxTrackerAPI flux = ship.getFluxTracker();
         return flux == null ? 0f : flux.getMaxFlux();
     }
 
-    @Override
-    public void reportDamageApplied(Object source, CombatEntityAPI target, ApplyDamageResultAPI result) {
-        if (!sharePending || fighter.getParamAboutToApplyDamage() != pendingSource) {
-            return;
-        }
-        sharePending = false;
-        float keptFlux = result.getDamageToShields();
-        float keptHull = result.getDamageToHull();
-        float sharedFlux = keptFlux * pendingRatio;
-        float sharedHull = keptHull * pendingRatio;
-        if (tooBigToShare(keptFlux / pendingKeptFraction, fluxCapacity(fighter))) {
-            if (fighter.getFluxTracker() != null) {
-                fighter.getFluxTracker().increaseFlux(keptFlux / pendingKeptFraction - keptFlux, true);
-            }
-            sharedFlux = 0f;
-        }
-        if (tooBigToShare(keptHull / pendingKeptFraction, fighter.getMaxHitpoints())) {
-            damageHull(fighter, keptHull / pendingKeptFraction - keptHull, fighter);
-            sharedHull = 0f;
-        }
-        for (ShipAPI wingmate : pendingWingmates) {
-            if (!CombatQueries.isAliveNotHulk(wingmate)) {
-                continue;
-            }
-            if (sharedFlux > 0f && wingmate.getFluxTracker() != null) {
-                wingmate.getFluxTracker().increaseFlux(sharedFlux, true);
-            }
-            if (sharedHull > 0f) {
-                damageHull(wingmate, sharedHull, fighter);
-            }
-        }
-        pendingWingmates.clear();
+    private static float hullDamageTakenMult(ShipAPI ship) {
+        return ship.getMutableStats().getHullDamageTakenMult().getModifiedValue();
     }
 
-    private List<ShipAPI> wingmates() {
-        FighterWingAPI wing = fighter.getWing();
-        List<ShipAPI> wingmates = new ArrayList<>();
-        if (wing == null) {
-            return wingmates;
-        }
-        for (ShipAPI member : wing.getWingMembers()) {
-            if (member != fighter && CombatQueries.isAliveNotHulk(member) && !member.isFinishedLanding()) {
-                wingmates.add(member);
-            }
-        }
-        return wingmates;
-    }
-
-    private static void damageHull(ShipAPI wingmate, float hullDamage, ShipAPI sharingFighter) {
-        if (wingmate.getHitpoints() > hullDamage) {
-            wingmate.setHitpoints(wingmate.getHitpoints() - hullDamage);
+    private void shareFlux(float keptFlux, CombatEngineAPI engine) {
+        if (keptFlux <= 0f) {
             return;
         }
-        CombatEngineAPI engine = Global.getCombatEngine();
+        float wholeFlux = keptFlux / pendingKeptFraction;
+        float struckEfficiency = shieldEfficiency(fighter);
+        float returnedFlux = 0f;
+        if (tooBigToShare(wholeFlux, fluxCapacity(fighter)) || struckEfficiency <= 0f) {
+            returnedFlux = wholeFlux - keptFlux;
+        } else {
+            float sharedDamage = keptFlux * pendingRatio / struckEfficiency;
+            float wholeDamage = wholeFlux / struckEfficiency;
+            float unabsorbedDamage = 0f;
+            for (int i = 0; i < recipients.size(); i++) {
+                unabsorbedDamage += shareFluxWith(recipients.get(i), sharedDamage, wholeDamage, engine);
+            }
+            returnedFlux = unabsorbedDamage * struckEfficiency;
+        }
+        if (returnedFlux > 0f && canTakeDamage(fighter, engine) && fighter.getFluxTracker() != null) {
+            fighter.getFluxTracker().increaseFlux(returnedFlux, true);
+        }
+    }
+
+    private static float shareFluxWith(ShipAPI recipient, float sharedDamage, float wholeDamage, CombatEngineAPI engine) {
+        if (!canTakeDamage(recipient, engine) || !hasShieldRoom(recipient)) {
+            return sharedDamage;
+        }
+        float recipientEfficiency = shieldEfficiency(recipient);
+        if (tooBigToShare(wholeDamage * recipientEfficiency, fluxCapacity(recipient))) {
+            return sharedDamage;
+        }
+        float wantedFlux = sharedDamage * recipientEfficiency;
+        float absorbedFlux = Math.min(wantedFlux, spareFlux(recipient.getFluxTracker()));
+        recipient.getFluxTracker().increaseFlux(absorbedFlux, true);
+        return (wantedFlux - absorbedFlux) / recipientEfficiency;
+    }
+
+    private void shareHull(float keptHull, ShipAPI attacker, CombatEngineAPI engine) {
+        if (keptHull <= 0f) {
+            return;
+        }
+        float wholeHull = keptHull / pendingKeptFraction;
+        float struckVulnerability = hullDamageTakenMult(fighter);
+        float returnedHull = 0f;
+        if (tooBigToShare(wholeHull, fighter.getMaxHitpoints()) || struckVulnerability <= 0f) {
+            returnedHull = wholeHull - keptHull;
+        } else {
+            float sharedDamage = keptHull * pendingRatio / struckVulnerability;
+            float wholeDamage = wholeHull / struckVulnerability;
+            float unabsorbedDamage = 0f;
+            for (int i = 0; i < recipients.size(); i++) {
+                unabsorbedDamage += shareHullWith(recipients.get(i), sharedDamage, wholeDamage, attacker, engine);
+            }
+            returnedHull = unabsorbedDamage * struckVulnerability;
+        }
+        if (returnedHull > 0f && canTakeDamage(fighter, engine)) {
+            damageHull(fighter, returnedHull, attacker, engine);
+        }
+    }
+
+    private static float shareHullWith(ShipAPI recipient, float sharedDamage, float wholeDamage, ShipAPI attacker, CombatEngineAPI engine) {
+        float recipientVulnerability = hullDamageTakenMult(recipient);
+        if (recipientVulnerability <= 0f || !canTakeDamage(recipient, engine)
+                || tooBigToShare(wholeDamage * recipientVulnerability, recipient.getMaxHitpoints())) {
+            return sharedDamage;
+        }
+        damageHull(recipient, sharedDamage * recipientVulnerability, attacker, engine);
+        return 0f;
+    }
+
+    private static void damageHull(ShipAPI ship, float hullDamage, ShipAPI attacker, CombatEngineAPI engine) {
+        if (ship.getHitpoints() > hullDamage) {
+            ship.setHitpoints(ship.getHitpoints() - hullDamage);
+            return;
+        }
         if (engine == null) {
             return;
         }
+        ship.setHitpoints(Math.min(ship.getHitpoints(), KILLING_BLOW_HULL_LEFT));
+        boolean wasApplying = applyingSharedDamage;
         applyingSharedDamage = true;
         try {
-            engine.applyDamage(wingmate, new Vector2f(wingmate.getLocation()), KILLING_BLOW_DAMAGE, DamageType.ENERGY, 0f, true, false, sharingFighter);
+            engine.applyDamage(ship, new Vector2f(ship.getLocation()), killingBlowDamage(ship), DamageType.ENERGY, 0f, true, false, attacker);
         } finally {
-            applyingSharedDamage = false;
+            applyingSharedDamage = wasApplying;
         }
+    }
+
+    static float killingBlowDamage(ShipAPI ship) {
+        ArmorGridAPI armor = ship.getArmorGrid();
+        MutableShipStatsAPI stats = ship.getMutableStats();
+        float armorRating = armor == null ? 0f : armor.getArmorRating() / resistanceOnly(stats.getArmorDamageTakenMult().getModifiedValue());
+        float damageTakenMult = resistanceOnly(stats.getHullDamageTakenMult().getModifiedValue())
+                * resistanceOnly(stats.getEnergyDamageTakenMult().getModifiedValue())
+                * resistanceOnly(stats.getProjectileDamageTakenMult().getModifiedValue());
+        return KILLING_BLOW_MULTIPLE * (Math.max(0f, ship.getHitpoints()) + armorRating) / damageTakenMult;
+    }
+
+    private static float resistanceOnly(float damageTakenMult) {
+        return damageTakenMult > 0f && damageTakenMult < 1f ? damageTakenMult : 1f;
     }
 }
