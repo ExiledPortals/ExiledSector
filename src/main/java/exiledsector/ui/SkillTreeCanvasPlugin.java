@@ -16,6 +16,7 @@ import exiledsector.skills.SkillType;
 import exiledsector.socketables.SocketCustody;
 import exiledsector.socketables.Socketable;
 import exiledsector.ui.decoration.AbyssDarknessRenderer;
+import exiledsector.ui.decoration.AbyssSerpentRenderer;
 import exiledsector.ui.decoration.SkillTreeFleetRenderer;
 import exiledsector.ui.decoration.SkillTreeRingBeltRenderer;
 import exiledsector.ui.decoration.SkillTreeStarRenderer;
@@ -40,6 +41,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     private final SkillTreeStarfieldRenderer starfieldRenderer;
     private final AbyssDarknessRenderer abyssDarkness = AbyssDarknessRenderer.forActiveTree();
+    private final AbyssSerpentRenderer abyssSerpents = AbyssSerpentRenderer.forActiveTree();
     private final ExoshipView exoshipView = new ExoshipView();
     private final SkillTreeStaticImageRenderer staticImageRenderer = new SkillTreeStaticImageRenderer();
     private final SkillTreeRingBeltRenderer ringBeltRenderer = new SkillTreeRingBeltRenderer();
@@ -123,6 +125,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         starfieldRenderer.advance(amount);
         staticImageRenderer.advance(amount);
         ringBeltRenderer.advance(amount);
+        abyssSerpents.advance(amount);
         if (camera.isFollowing() && hyperspaceMode.isActive()) {
             stopFollowingFleet();
         }
@@ -568,6 +571,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         starRenderer.renderAtmosphere(viewport, sceneryAlpha);
         starRenderer.renderAurora(viewport, sceneryAlpha);
         ringBeltRenderer.render(viewport, sceneryAlpha * treeAlpha);
+        abyssSerpents.render(viewport, sceneryAlpha * treeAlpha);
         staticImageRenderer.render(viewport, sceneryAlpha, hyperspaceMode.anchorIds(), treeAlpha);
         frameworkInspection.renderBackdrop(canvasPosition, alphaMult);
         boolean pointerOverTree = mouseKnown && !chrome.contains(canvasPosition, mode, mouseX, mouseY)
