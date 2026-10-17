@@ -10,7 +10,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.Translation;
-import exiledsector.socketables.HullUpgradesSetting;
+import exiledsector.hullitems.HullUpgradesSetting;
 import exiledsector.ui.HullUpgradesRefitButton;
 import org.apache.log4j.Logger;
 import org.lwjgl.input.Keyboard;

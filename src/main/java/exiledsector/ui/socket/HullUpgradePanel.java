@@ -14,11 +14,11 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.ShipHullSizes;
-import exiledsector.socketables.FrameworkSockets;
-import exiledsector.socketables.HullUpgradeData;
-import exiledsector.socketables.HullUpgradeTooltip;
-import exiledsector.socketables.SocketType;
-import exiledsector.socketables.SocketableRarity;
+import exiledsector.hullitems.FrameworkSockets;
+import exiledsector.hullitems.HullUpgradeData;
+import exiledsector.hullitems.HullUpgradeTooltip;
+import exiledsector.hullitems.SocketType;
+import exiledsector.hullitems.HullItemRarity;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.VanillaText;
 import exiledsector.ui.framework.FrameworkSocketFlair;
@@ -170,7 +170,7 @@ public final class HullUpgradePanel extends HoloPanel {
     private void openInstallConfirm() {
         HullUpgradeData upgrade = new HullUpgradeData(view.hullSize());
         openConfirm(CONFIRM_HEIGHT, element -> {
-            Color uniqueColor = SocketableRarity.UNIQUE.color();
+            Color uniqueColor = HullItemRarity.UNIQUE.color();
             VanillaText.plainPara(element, Translation.msg("framework.confirm.title").arg("name", upgrade.name()).text(), 0f, uniqueColor);
             VanillaText.plainPara(element, Translation.msg("framework.confirm.body")
                     .arg("left", view.upgradesInStorage() - 1).arg("points", view.points() + 1).arg("max", FrameworkSockets.MAX_POINTS).text(),
@@ -238,12 +238,12 @@ public final class HullUpgradePanel extends HoloPanel {
         IconTileCell.Hooks hooks = new IconTileCell.Hooks(() -> queue(this::openInstallConfirm),
                 tilePosition -> queue(() -> showUpgradeTooltip(upgrade, tilePosition)), () -> queue(() -> hideTooltipOf(upgrade)));
         rowPanel.addComponent(Global.getSettings().createCustom(UPGRADE_TILE_SIZE, UPGRADE_TILE_SIZE,
-                new IconTileCell(upgrade.iconPath(), SocketableRarity.UNIQUE.color(), blocked, hooks))).inTL(0f, 0f);
+                new IconTileCell(upgrade.iconPath(), HullItemRarity.UNIQUE.color(), blocked, hooks))).inTL(0f, 0f);
         float textLeft = UPGRADE_TILE_SIZE + GAP * 2f;
         float textWidth = gridWidth - textLeft - POINTS_WIDTH;
         float textTop = (UPGRADE_TILE_SIZE - NAME_HEIGHT - STATE_HEIGHT) / 2f;
         TooltipMakerAPI labelElement = rowPanel.createUIElement(textWidth, NAME_HEIGHT + STATE_HEIGHT, false);
-        addLabel(labelElement, upgrade.name(), blocked ? BLOCKED_TEXT_COLOR : SocketableRarity.UNIQUE.color(), Alignment.LMID, textWidth, 0f,
+        addLabel(labelElement, upgrade.name(), blocked ? BLOCKED_TEXT_COLOR : HullItemRarity.UNIQUE.color(), Alignment.LMID, textWidth, 0f,
                 NAME_HEIGHT);
         addLabel(labelElement, Translation.msg("framework.panel.inStorage").arg("count", view.upgradesInStorage()).text(),
                 Misc.getGrayColor(), Alignment.LMID, textWidth, NAME_HEIGHT, STATE_HEIGHT);

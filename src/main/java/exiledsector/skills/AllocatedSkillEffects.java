@@ -4,8 +4,8 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.skilleffect.SkillEffect;
-import exiledsector.socketables.Socketable;
-import exiledsector.socketables.SocketableStore;
+import exiledsector.hullitems.HullItem;
+import exiledsector.hullitems.HullItemStore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +49,7 @@ public final class AllocatedSkillEffects {
 
     public static List<SkillTypeEffect> appliedEffects(ShipSkillData data, AllocatedNode allocated, HullSize hullSize) {
         List<SkillTypeEffect> applied = appliedEffects(data, allocated.effectiveType(), hullSize);
-        Socketable socketed = SocketableStore.lookup(data.getSocketedItem(allocated.node().getId()));
+        HullItem socketed = HullItemStore.lookup(data.getSocketedItem(allocated.node().getId()));
         if (socketed != null && socketed.canSocketInto(allocated.node())) {
             for (SkillTypeEffect effect : socketed.skillEffects(hullSize)) {
                 if (appliesTo(data, effect.effect())) {

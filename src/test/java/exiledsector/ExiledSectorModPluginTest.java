@@ -19,10 +19,10 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.npc.NpcFactionVolumes;
 import exiledsector.skills.skilleffect.FleetCrewLedger;
-import exiledsector.socketables.SocketLossListener;
-import exiledsector.socketables.SocketableDefinitions;
-import exiledsector.socketables.SocketType;
-import exiledsector.socketables.SocketableNames;
+import exiledsector.hullitems.SocketLossListener;
+import exiledsector.hullitems.HullItemDefinitions;
+import exiledsector.hullitems.SocketType;
+import exiledsector.hullitems.HullItemNames;
 import exiledsector.ui.SkillTreeRefitButton;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
 import exiledsector.ui.inspect.SkillTreeCodexListener;
@@ -123,8 +123,8 @@ class ExiledSectorModPluginTest {
         loadTree("");
         SkillTree.clearTypes();
         NpcFactionVolumes.clear();
-        SocketableDefinitions.clear();
-        SocketableNames.clear();
+        HullItemDefinitions.clear();
+        HullItemNames.clear();
         settingsCreatorMock.close();
         globalMock.close();
         lunaSettingsMock.close();
@@ -314,10 +314,10 @@ class ExiledSectorModPluginTest {
     }
 
     @Test
-    void onApplicationLoadLoadsTheSocketableDefinitionsMergedAcrossMods() throws Exception {
+    void onApplicationLoadLoadsTheHullItemDefinitionsMergedAcrossMods() throws Exception {
         new ExiledSectorModPlugin().onApplicationLoad();
 
-        assertEquals(SocketType.SUBROUTINE, SocketableDefinitions.get("chip").kind());
+        assertEquals(SocketType.SUBROUTINE, HullItemDefinitions.get("chip").kind());
     }
 
     @Test

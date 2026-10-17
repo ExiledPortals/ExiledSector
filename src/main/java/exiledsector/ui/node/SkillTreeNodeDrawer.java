@@ -8,8 +8,8 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledsector.socketables.Socketable;
-import exiledsector.socketables.SocketableStore;
+import exiledsector.hullitems.HullItem;
+import exiledsector.hullitems.HullItemStore;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.TreeLayers;
 import exiledsector.ui.TreeViewport;
@@ -214,7 +214,7 @@ public final class SkillTreeNodeDrawer {
     }
 
     private static String socketedIcon(ShipSkillData skillData, SkillNode node) {
-        Socketable socketed = SocketableStore.lookup(skillData.getSocketedItem(node.getId()));
+        HullItem socketed = HullItemStore.lookup(skillData.getSocketedItem(node.getId()));
         return socketed == null ? null : socketed.iconPath();
     }
 

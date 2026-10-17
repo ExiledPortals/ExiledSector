@@ -3,7 +3,7 @@ package exiledsector.ui.socket;
 import exiledsector.i18n.Translation;
 
 public enum SocketPanelTab {
-    SOCKETABLES("ui.socketPanel.tab.socketables"),
+    HULL_ITEMS("ui.socketPanel.tab.socketables"),
     HULL_UPGRADES("ui.socketPanel.tab.hullUpgrades");
 
     private final String labelKey;

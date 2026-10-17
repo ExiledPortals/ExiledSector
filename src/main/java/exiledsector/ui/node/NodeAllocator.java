@@ -32,10 +32,10 @@ import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.skills.unlock.NodeGates;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.skills.tags.ShipProfile;
-import exiledsector.socketables.FrameworkSockets;
-import exiledsector.socketables.SocketType;
-import exiledsector.socketables.Socketable;
-import exiledsector.socketables.SocketableStore;
+import exiledsector.hullitems.FrameworkSockets;
+import exiledsector.hullitems.SocketType;
+import exiledsector.hullitems.HullItem;
+import exiledsector.hullitems.HullItemStore;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -255,8 +255,8 @@ final class NodeAllocator {
         return true;
     }
 
-    boolean socketItem(SkillNode node, String socketableId) {
-        return changed(data().socketItem(node.getId(), socketableId));
+    boolean socketItem(SkillNode node, String hullItemId) {
+        return changed(data().socketItem(node.getId(), hullItemId));
     }
 
     boolean unsocketItem(SkillNode node) {
@@ -264,7 +264,7 @@ final class NodeAllocator {
     }
 
     boolean installUpgrade() {
-        return changed(FrameworkSockets.installUpgrade(data(), hullSize(), SocketableStore.get()));
+        return changed(FrameworkSockets.installUpgrade(data(), hullSize(), HullItemStore.get()));
     }
 
     boolean unlockSocket(SocketType socketType) {
@@ -275,8 +275,8 @@ final class NodeAllocator {
         return changed(FrameworkSockets.lock(data(), socketType));
     }
 
-    boolean socketFrameworkItem(SocketType socketType, Socketable socketable) {
-        return changed(FrameworkSockets.socket(data(), socketType, socketable, ShipSkillDataManager.all()));
+    boolean socketFrameworkItem(SocketType socketType, HullItem hullItem) {
+        return changed(FrameworkSockets.socket(data(), socketType, hullItem, ShipSkillDataManager.all()));
     }
 
     boolean unsocketFrameworkItem(SocketType socketType) {

@@ -7,8 +7,8 @@ import exiledsector.skills.skilleffect.StatMode;
 import exiledsector.skills.tags.SkillTags;
 import exiledsector.skills.unlock.BlueprintCategory;
 import exiledsector.skills.unlock.UnlockConditionType;
-import exiledsector.socketables.SocketType;
-import exiledsector.socketables.SocketableUnlock;
+import exiledsector.hullitems.SocketType;
+import exiledsector.hullitems.HullItemUnlock;
 import org.json.JSONObject;
 
 import java.nio.file.Path;
@@ -52,7 +52,7 @@ final class EditorVocabulary {
                 .append(list(Arrays.stream(BlueprintCategory.values()).map(category -> camelCase(category.name())).toList())).append(",\n");
         json.append("  \"socketableKinds\": ").append(list(Arrays.stream(SocketType.values()).map(SocketType::id).toList())).append(",\n");
         json.append("  \"socketableUnlocks\": ")
-                .append(list(Arrays.stream(SocketableUnlock.values()).map(SocketableUnlock::id).toList())).append("\n");
+                .append(list(Arrays.stream(HullItemUnlock.values()).map(HullItemUnlock::id).toList())).append("\n");
         return json.append("}\n").toString();
     }
 

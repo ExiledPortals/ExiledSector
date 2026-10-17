@@ -13,8 +13,8 @@ import exiledsector.skills.FrameworkSlots;
 import exiledsector.skills.SkillTreeBonusSummary;
 import exiledsector.skills.SkillTreeBonusSummary.Summary;
 import exiledsector.skills.SkillType;
-import exiledsector.socketables.Socketable;
-import exiledsector.socketables.SocketableStore;
+import exiledsector.hullitems.HullItem;
+import exiledsector.hullitems.HullItemStore;
 import exiledsector.ui.VanillaText;
 
 import java.util.ArrayList;
@@ -67,10 +67,10 @@ public final class ShipTreeSummaryRenderer {
         }
 
         List<StyledText> socketedNames = new ArrayList<>();
-        for (String socketableId : shipTree.skillData().getSocketedItems().values()) {
-            Socketable socketable = SocketableStore.lookup(socketableId);
-            if (socketable != null) {
-                socketedNames.add(StyledText.styled(socketable.name(), Style.HIGHLIGHT));
+        for (String hullItemId : shipTree.skillData().getSocketedItems().values()) {
+            HullItem hullItem = HullItemStore.lookup(hullItemId);
+            if (hullItem != null) {
+                socketedNames.add(StyledText.styled(hullItem.name(), Style.HIGHLIGHT));
             }
         }
         if (!socketedNames.isEmpty()) {

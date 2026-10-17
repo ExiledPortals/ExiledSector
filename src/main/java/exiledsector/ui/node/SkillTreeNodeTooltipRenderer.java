@@ -11,13 +11,13 @@ import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillType;
-import exiledsector.socketables.Socketable;
-import exiledsector.socketables.SocketableStore;
+import exiledsector.hullitems.HullItem;
+import exiledsector.hullitems.HullItemStore;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeTooltipTable;
 import exiledsector.ui.TooltipExpansion;
 import exiledsector.ui.TooltipTable;
-import exiledsector.ui.inspect.SocketableCodex;
+import exiledsector.ui.inspect.HullItemCodex;
 import exiledsector.ui.util.TextLabel;
 import org.lazywizard.lazylib.ui.LazyFont;
 
@@ -65,7 +65,7 @@ final class SkillTreeNodeTooltipRenderer {
                 && effectiveType.getDescriptionOverride() == null;
         boolean expanded = TooltipExpansion.isExpanded();
         boolean allocatedSocket = node.getType().getTier() == SkillTier.SOCKET && skillData.isAllocated(node.getId());
-        Socketable socketed = allocatedSocket ? SocketableStore.lookup(skillData.getSocketedItem(node.getId())) : null;
+        HullItem socketed = allocatedSocket ? HullItemStore.lookup(skillData.getSocketedItem(node.getId())) : null;
         String refusalReason = allocation.refusalReason(node);
         List<Object> signature = List.of(effectiveType.getId(), hidden, showOptionalHint, expanded, allocatedSocket,
                 socketed == null ? "" : socketed.id(), refusalReason == null ? "" : refusalReason);
@@ -152,7 +152,7 @@ final class SkillTreeNodeTooltipRenderer {
     }
 
     private NodeDescription describe(SkillType effectiveType, boolean hidden, boolean showOptionalHint, boolean allocatedSocket,
-                                     Socketable socketed, boolean expanded) {
+                                     HullItem socketed, boolean expanded) {
         if (hidden) {
             return new NodeDescription(List.of(plainLine("ui.node.lockedBody"), plainLine("ui.node.lockedHint")), List.of());
         }
@@ -161,7 +161,7 @@ final class SkillTreeNodeTooltipRenderer {
             for (StyledText effectLine : socketed.effectLines(expanded, fleetMember.getHullSpec().getHullSize())) {
                 lines.add(new DescriptionLine(effectLine, false));
             }
-            if (SocketableCodex.existingEntryId(socketed.definitionId()) != null) {
+            if (HullItemCodex.existingEntryId(socketed.definitionId()) != null) {
                 lines.add(plainLine("socketable.tooltip.codexHint"));
             }
             return new NodeDescription(lines, List.of());

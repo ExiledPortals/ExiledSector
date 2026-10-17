@@ -4,9 +4,9 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.FrameworkSlots;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
-import exiledsector.socketables.NpcSocketables;
-import exiledsector.socketables.SocketType;
-import exiledsector.socketables.SocketableDefinitions;
+import exiledsector.hullitems.NpcHullItems;
+import exiledsector.hullitems.SocketType;
+import exiledsector.hullitems.HullItemDefinitions;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -22,19 +22,19 @@ class ResolvedTreeFrameworkTest {
 
     @AfterEach
     void tearDown() {
-        SocketableDefinitions.clear();
-        NpcSocketables.clearCache();
+        HullItemDefinitions.clear();
+        NpcHullItems.clearCache();
         ResolvedTree.clearCache();
     }
 
     @Test
     void frameworkItemsApplyUnderTheirOwnSlotModIdsAndAFitChangeRebuildsTheTree() throws Exception {
-        SocketableDefinitions.register(new JSONArray().put(new JSONObject().put("id", "officer").put("kind", "bridge").put("name", "Officer")
+        HullItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "officer").put("kind", "bridge").put("name", "Officer")
                 .put("rarity", "10").put("prefixes", "HULL_PERCENT:5:5")));
         ShipSkillData shipData = new ShipSkillData();
         shipData.grantUnlockedSocketType("bridge");
         shipData.grantUnlockedSocketType("reactor");
-        shipData.socketFrameworkItem("bridge", NpcSocketables.id("officer", 1L));
+        shipData.socketFrameworkItem("bridge", NpcHullItems.id("officer", 1L));
         List<FrameworkSlots.Slot> slots = FrameworkSlots.of(shipData, () -> null);
 
         ResolvedTree resolvedTree = ResolvedTree.of(shipData, HullSize.CRUISER, 1f, slots);

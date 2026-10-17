@@ -4,9 +4,9 @@ import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.skills.tags.ShipProfile;
-import exiledsector.socketables.NpcSocketables;
-import exiledsector.socketables.SocketType;
-import exiledsector.socketables.SocketableDefinitions;
+import exiledsector.hullitems.NpcHullItems;
+import exiledsector.hullitems.SocketType;
+import exiledsector.hullitems.HullItemDefinitions;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -29,23 +29,23 @@ class FrameworkSlotsTest {
     void setUp() throws Exception {
         SkillTree.clearNodes();
         SkillTree.clearTypes();
-        SocketableDefinitions.register(new JSONArray()
+        HullItemDefinitions.register(new JSONArray()
                 .put(definition("bridge_item", "bridge", "HULL_PERCENT:5:5"))
                 .put(definition("emitter", "shield_generator", "HULL_PERCENT:10:10"))
                 .put(definition("chip", "subroutine", "HULL_PERCENT:20:20")));
         shipData = new ShipSkillData();
         shipData.grantUnlockedSocketType("bridge");
         shipData.grantUnlockedSocketType("shield_generator");
-        shipData.socketFrameworkItem("bridge", NpcSocketables.id("bridge_item", 1L));
-        shipData.socketFrameworkItem("shield_generator", NpcSocketables.id("emitter", 2L));
+        shipData.socketFrameworkItem("bridge", NpcHullItems.id("bridge_item", 1L));
+        shipData.socketFrameworkItem("shield_generator", NpcHullItems.id("emitter", 2L));
     }
 
     @AfterEach
     void tearDown() {
         SkillTree.clearNodes();
         SkillTree.clearTypes();
-        SocketableDefinitions.clear();
-        NpcSocketables.clearCache();
+        HullItemDefinitions.clear();
+        NpcHullItems.clearCache();
     }
 
     private static JSONObject definition(String id, String kind, String prefixes) throws Exception {
@@ -100,7 +100,7 @@ class FrameworkSlotsTest {
 
     @Test
     void anItemOfTheWrongTypeInASocketDoesNothing() {
-        shipData.socketFrameworkItem("bridge", NpcSocketables.id("chip", 3L));
+        shipData.socketFrameworkItem("bridge", NpcHullItems.id("chip", 3L));
 
         List<FrameworkSlots.Slot> slots = FrameworkSlots.of(shipData, () -> fit(ShieldType.FRONT));
 

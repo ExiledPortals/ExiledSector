@@ -25,10 +25,10 @@ import exiledsector.skills.npc.NpcTreeTag;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.tags.ShipProfile;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
-import exiledsector.socketables.NpcSocketables;
-import exiledsector.socketables.SocketableDefinition;
-import exiledsector.socketables.SocketableItemData;
-import exiledsector.socketables.SocketableUnlock;
+import exiledsector.hullitems.NpcHullItems;
+import exiledsector.hullitems.HullItemDefinition;
+import exiledsector.hullitems.HullItemData;
+import exiledsector.hullitems.HullItemUnlock;
 
 import java.util.List;
 import java.util.Map;
@@ -38,7 +38,7 @@ import java.util.function.Predicate;
 
 public final class NpcFleetLeveller {
 
-    private static final String SOCKETABLE_SEED_SUFFIX = "|socketables";
+    private static final String HULL_ITEM_SEED_SUFFIX = "|socketables";
 
     private NpcFleetLeveller() {
     }
@@ -65,10 +65,10 @@ public final class NpcFleetLeveller {
                     playerShipPowers = PlayerTreePower.current();
                     seedPrefix = Global.getSector().getSeedString() + "|" + npcFleet.getId() + "|";
                 }
-                Random socketableRandom = member.isFlagship() && carriesSocketables(npcFleet)
-                        ? Seeds.random(seedPrefix + member.getId() + SOCKETABLE_SEED_SUFFIX) : null;
+                Random hullItemRandom = member.isFlagship() && carriesHullItems(npcFleet)
+                        ? Seeds.random(seedPrefix + member.getId() + HULL_ITEM_SEED_SUFFIX) : null;
                 memberRecord = decide(member, playerLevel, playerShipPowers, factionRegion, Seeds.random(seedPrefix + member.getId()),
-                        socketableRandom, definition -> SocketableUnlock.canDrop(definition, Global.getSector()));
+                        hullItemRandom, definition -> HullItemUnlock.canDrop(definition, Global.getSector()));
                 recordsByMemberId.put(member.getId(), memberRecord);
                 NpcUniqueAlerts.markIfCarrying(npcFleet, memberRecord);
             }
@@ -87,12 +87,12 @@ public final class NpcFleetLeveller {
         return member.getVariant().getPermaMods().contains(SkillTreeHullMod.ID) || ShipSkillDataManager.hasProgress(member.getId());
     }
 
-    static boolean carriesSocketables(CampaignFleetAPI fleet) {
+    static boolean carriesHullItems(CampaignFleetAPI fleet) {
         return fleet.getFaction() != null && !fleet.getFaction().isPlayerFaction();
     }
 
     static String decide(FleetMemberAPI member, int playerLevel, List<Integer> playerShipPowers, String factionRegion, Random random,
-                         Random socketableRandom, Predicate<SocketableDefinition> uniqueAllowed) {
+                         Random hullItemRandom, Predicate<HullItemDefinition> uniqueAllowed) {
         if (!NpcShipSelector.isCandidate(member) || !NpcShipSelector.isChosen(member, random)) {
             return NpcTreeRecords.NOT_LEVELLED;
         }
@@ -100,19 +100,19 @@ public final class NpcFleetLeveller {
         int nodeCount = Math.min(NpcTreeSize.roll(playerShipPowers, random), ShipLevelConfig.maxAllocatedNodesBesidesRoot());
         NpcHullMods hullMods = NpcHullMods.of(member.getVariant());
         String designType = designType(member.getHullSpec());
-        int socketableCount = socketableRandom == null ? 0 : NpcSocketables.rollCount(playerLevel, socketableRandom);
+        int hullItemCount = hullItemRandom == null ? 0 : NpcHullItems.rollCount(playerLevel, hullItemRandom);
         NpcTreeBuild treeBuild = NpcSkillTreeBuilder.generate(new NpcBuildRequest(shipProfile, designType, factionRegion, hullMods,
-                NpcFreedOp.of(member, hullMods), nodeCount, socketableCount, SkillTypeUnlockStatus.lockedFor(null),
+                NpcFreedOp.of(member, hullMods), nodeCount, hullItemCount, SkillTypeUnlockStatus.lockedFor(null),
                 member.getHullSpec().getHullId()), random);
         for (String socketNodeId : treeBuild.claimedSockets()) {
-            SocketableDefinition definition = NpcSocketables.pickDefinition(socketableRandom, uniqueAllowed);
+            HullItemDefinition definition = NpcHullItems.pickDefinition(hullItemRandom, uniqueAllowed);
             if (definition != null) {
-                treeBuild.shipData().socketItem(socketNodeId, NpcSocketables.id(SocketableItemData.rolled(definition, socketableRandom.nextLong())));
+                treeBuild.shipData().socketItem(socketNodeId, NpcHullItems.id(HullItemData.rolled(definition, hullItemRandom.nextLong())));
             }
         }
-        if (socketableRandom != null) {
-            NpcSocketables.rollFramework(treeBuild.shipData(), member.getHullSpec().getHullSize(),
-                    () -> FrameworkFit.profile(member.getHullSpec(), member.getVariant(), treeBuild.shipData()), playerLevel, socketableRandom);
+        if (hullItemRandom != null) {
+            NpcHullItems.rollFramework(treeBuild.shipData(), member.getHullSpec().getHullSize(),
+                    () -> FrameworkFit.profile(member.getHullSpec(), member.getVariant(), treeBuild.shipData()), playerLevel, hullItemRandom);
         }
         return NpcTreeTag.encode(treeBuild.shipData());
     }

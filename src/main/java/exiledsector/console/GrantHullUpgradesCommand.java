@@ -4,7 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.ShipHullSizes;
-import exiledsector.socketables.HullUpgradeData;
+import exiledsector.hullitems.HullUpgradeData;
 import org.lazywizard.console.BaseCommand;
 import org.lazywizard.console.CommonStrings;
 import org.lazywizard.console.Console;

@@ -3,7 +3,7 @@ package exiledsector.ui;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.skills.FrameworkSlots;
-import exiledsector.socketables.HullUpgradesSetting;
+import exiledsector.hullitems.HullUpgradesSetting;
 import exiledsector.ui.decoration.SkillTreeFleetRenderer;
 import exiledsector.ui.framework.FrameworkSocketLayout;
 import exiledsector.ui.node.TreeAllocationSession;
@@ -51,7 +51,7 @@ final class FrameworkInspection {
         this.socketPlacement = socketPlacement;
         this.sockets = new HullSocketsDisplay(hostPanel, treeSession, FrameworkSocketLayout.Arrangement.BOTH_SIDES);
         this.upgradesTabListener = tab -> {
-            if (tab == SocketPanelTab.SOCKETABLES) {
+            if (tab == SocketPanelTab.HULL_ITEMS) {
                 socketPlacement.openFromHullUpgradesTab();
             }
         };
@@ -254,7 +254,7 @@ final class FrameworkInspection {
             treeShipExtent = FrameworkSocketLayout.ShipExtent.square(ship.longestSidePixels());
         }
         sockets.render(ship, treeShipExtent, alpha,
-                HullSocketsDisplay.SocketBounds.UNBOUNDED, socketPlacement.placingSocketable(),
+                HullSocketsDisplay.SocketBounds.UNBOUNDED, socketPlacement.placingHullItem(),
                 socketPlacement.isFrameworkTargeted() ? socketPlacement.targetFrameworkType() : null);
     }
 }

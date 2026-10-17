@@ -1,7 +1,7 @@
 package exiledsector.ui.framework;
 
 import com.fs.starfarer.api.util.Misc;
-import exiledsector.socketables.SocketType;
+import exiledsector.hullitems.SocketType;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.HoloShapes;

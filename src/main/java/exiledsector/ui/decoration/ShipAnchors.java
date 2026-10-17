@@ -3,7 +3,7 @@ package exiledsector.ui.decoration;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.WeaponAPI.WeaponType;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
-import exiledsector.socketables.SocketType;
+import exiledsector.hullitems.SocketType;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.EnumMap;

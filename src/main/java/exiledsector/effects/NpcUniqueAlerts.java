@@ -9,9 +9,9 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.npc.NpcTreeRecords;
 import exiledsector.skills.npc.NpcTreeTag;
-import exiledsector.socketables.NpcSocketables;
-import exiledsector.socketables.Socketable;
-import exiledsector.socketables.SocketableRarity;
+import exiledsector.hullitems.NpcHullItems;
+import exiledsector.hullitems.HullItem;
+import exiledsector.hullitems.HullItemRarity;
 import exiledsector.ui.CampaignMessages;
 
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public final class NpcUniqueAlerts {
         if (visibility == null || visibility == VisibilityLevel.NONE) {
             return;
         }
-        List<Socketable> carriedUniques = new ArrayList<>();
+        List<HullItem> carriedUniques = new ArrayList<>();
         for (FleetMemberAPI member : sensedFleet.getFleetData().getMembersListCopy()) {
             carriedUniques.addAll(uniquesIn(NpcTreeRecords.of(fleetMemory).get(member.getId())));
         }
@@ -50,21 +50,21 @@ public final class NpcUniqueAlerts {
         }
         boolean identified = visibility == VisibilityLevel.COMPOSITION_AND_FACTION_DETAILS;
         I18n.forGameText(() -> {
-            String uniqueNames = String.join(", ", carriedUniques.stream().map(Socketable::name).toList());
+            String uniqueNames = String.join(", ", carriedUniques.stream().map(HullItem::name).toList());
             String fleetName = identified ? sensedFleet.getNameWithFactionKeepCase() : "";
             String fleetText = identified
                     ? Translation.msg("socketable.npcUnique.identifiedFleet").arg("fleet", fleetName).text()
                     : Translation.text("socketable.npcUnique.unidentifiedFleet");
             String alertMessage = Translation.msg("socketable.npcUnique.sensed").arg("name", uniqueNames).arg("fleet", fleetText).text();
             CampaignMessages.highlighted(alertMessage, Misc.getTextColor(), uniqueNames, identified ? fleetName : fleetText,
-                    SocketableRarity.UNIQUE.color(), Misc.getHighlightColor());
+                    HullItemRarity.UNIQUE.color(), Misc.getHighlightColor());
         });
     }
 
-    private static List<Socketable> uniquesIn(String treeRecord) {
-        if (treeRecord == null || !NpcTreeRecords.isLevelled(treeRecord) || !treeRecord.contains(NpcSocketables.ID_PREFIX)) {
+    private static List<HullItem> uniquesIn(String treeRecord) {
+        if (treeRecord == null || !NpcTreeRecords.isLevelled(treeRecord) || !treeRecord.contains(NpcHullItems.ID_PREFIX)) {
             return List.of();
         }
-        return NpcSocketables.uniquesCarriedBy(NpcTreeTag.decode(treeRecord));
+        return NpcHullItems.uniquesCarriedBy(NpcTreeTag.decode(treeRecord));
     }
 }

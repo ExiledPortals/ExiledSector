@@ -8,9 +8,9 @@ import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.FrameworkSlots;
-import exiledsector.socketables.SocketCustody;
-import exiledsector.socketables.SocketType;
-import exiledsector.socketables.Socketable;
+import exiledsector.hullitems.SocketCustody;
+import exiledsector.hullitems.SocketType;
+import exiledsector.hullitems.HullItem;
 import exiledsector.ui.decoration.RefitShipPortrait;
 import exiledsector.ui.decoration.SkillTreeFleetRenderer;
 import exiledsector.ui.framework.FrameworkSocketLayout;
@@ -49,7 +49,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     private SocketStoragePanel storagePanel;
     private HullUpgradePanel upgradesPanel;
     private Map<String, FleetMemberAPI> ownedShips = Map.of();
-    private Socketable placingSocketable;
+    private HullItem placingHullItem;
     private SocketType targetedType;
     private int storageRevision = Integer.MIN_VALUE;
     private float openLevel;
@@ -139,8 +139,8 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     private void openStorage(SocketType kindFilter) {
         storagePanel = SocketStoragePanel.open(hostPanel, placement(true), SocketCustody.shipNames(ownedShips), new SocketStoragePanel.Listener() {
             @Override
-            public void selected(Socketable socketable) {
-                chooseFromStorage(socketable);
+            public void selected(HullItem hullItem) {
+                chooseFromStorage(hullItem);
             }
 
             @Override
@@ -161,7 +161,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
         if (closing) {
             return;
         }
-        if (tab == SocketPanelTab.SOCKETABLES && upgradesPanel != null) {
+        if (tab == SocketPanelTab.HULL_ITEMS && upgradesPanel != null) {
             showStorage(null);
         } else if (tab == SocketPanelTab.HULL_UPGRADES && storagePanel != null) {
             SocketStoragePanel swapped = storagePanel;
@@ -186,7 +186,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
 
     private void forgetStorage() {
         storagePanel = null;
-        placingSocketable = null;
+        placingHullItem = null;
         targetedType = null;
     }
 
@@ -197,40 +197,40 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     private void refreshStorage() {
         storageRevision = treeSession.statsRevision();
         storagePanel.refresh(SocketCustody.shipNames(ownedShips));
-        if (placingSocketable != null) {
-            storagePanel.setSelected(placingSocketable, placingHint(placingSocketable));
+        if (placingHullItem != null) {
+            storagePanel.setSelected(placingHullItem, placingHint(placingHullItem));
         }
     }
 
-    private void chooseFromStorage(Socketable socketable) {
-        if (socketable == null) {
+    private void chooseFromStorage(HullItem hullItem) {
+        if (hullItem == null) {
             stopPlacing();
             return;
         }
         if (targetedType != null) {
-            if (!treeSession.socketFrameworkItem(targetedType, socketable)) {
+            if (!treeSession.socketFrameworkItem(targetedType, hullItem)) {
                 SkillTreeSounds.refused();
             }
             return;
         }
-        placingSocketable = socketable;
+        placingHullItem = hullItem;
         if (storagePanel != null) {
-            storagePanel.setSelected(socketable, placingHint(socketable));
+            storagePanel.setSelected(hullItem, placingHint(hullItem));
         }
     }
 
-    private String placingHint(Socketable socketable) {
-        SocketType socketType = socketable.kind();
+    private String placingHint(HullItem hullItem) {
+        SocketType socketType = hullItem.kind();
         if (socketType == null || socketType == SocketType.SUBROUTINE) {
-            return Translation.msg("ui.hullUpgrades.placingHintSubroutine").arg("name", socketable.name()).text();
+            return Translation.msg("ui.hullUpgrades.placingHintSubroutine").arg("name", hullItem.name()).text();
         }
         String key = treeSession.isSocketTypeUnlocked(socketType) ? "ui.socketStorage.placingHintFramework"
                 : "ui.socketStorage.placingHintFrameworkLocked";
-        return Translation.msg(key).arg("name", socketable.name()).arg("type", socketType.displayName()).text();
+        return Translation.msg(key).arg("name", hullItem.name()).arg("type", socketType.displayName()).text();
     }
 
     private void stopPlacing() {
-        placingSocketable = null;
+        placingHullItem = null;
         if (storagePanel != null) {
             storagePanel.setSelected(null);
         }
@@ -270,8 +270,8 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
             return;
         }
         SocketType socketType = sockets.slots().get(socketIndex).type();
-        if (placingSocketable != null) {
-            if (placingSocketable.kind() == socketType && treeSession.socketFrameworkItem(socketType, placingSocketable)) {
+        if (placingHullItem != null) {
+            if (placingHullItem.kind() == socketType && treeSession.socketFrameworkItem(socketType, placingHullItem)) {
                 stopPlacing();
             } else {
                 SkillTreeSounds.refused();
@@ -307,7 +307,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
         if (upgradesPanel != null && upgradesPanel.escape()) {
             return;
         }
-        if (placingSocketable != null) {
+        if (placingHullItem != null) {
             stopPlacing();
         } else if (targetedType != null) {
             clearTarget();
@@ -366,6 +366,6 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
         float shipX = shipCentreX();
         portrait.draw(shipX, layout.shipCentreY(), layout.shipZoom(), frameAlpha);
         SkillTreeFleetRenderer.InspectedShip ship = portrait.at(shipX, layout.shipCentreY(), layout.shipZoom());
-        sockets.render(ship, shipExtent, alphaMult * Fade.smooth(contentLevel), screenLayout.socketBounds(), placingSocketable, targetedType);
+        sockets.render(ship, shipExtent, alphaMult * Fade.smooth(contentLevel), screenLayout.socketBounds(), placingHullItem, targetedType);
     }
 }

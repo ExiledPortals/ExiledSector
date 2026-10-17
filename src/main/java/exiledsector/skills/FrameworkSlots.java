@@ -4,9 +4,9 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import exiledsector.skills.tags.NodeRequirements;
 import exiledsector.skills.tags.ShipProfile;
-import exiledsector.socketables.SocketType;
-import exiledsector.socketables.Socketable;
-import exiledsector.socketables.SocketableStore;
+import exiledsector.hullitems.SocketType;
+import exiledsector.hullitems.HullItem;
+import exiledsector.hullitems.HullItemStore;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 
 public final class FrameworkSlots {
 
-    public record Slot(SocketType type, Socketable item, String unmetRequirement) {
+    public record Slot(SocketType type, HullItem item, String unmetRequirement) {
 
         public boolean active() {
             return unmetRequirement == null;
@@ -57,7 +57,7 @@ public final class FrameworkSlots {
                 }
                 unmetRequirement = unmetRequirement(socketType, resolvedFit);
             }
-            slots.add(new Slot(socketType, SocketableStore.lookup(shipData.getFrameworkSocketedItem(socketTypeId)), unmetRequirement));
+            slots.add(new Slot(socketType, HullItemStore.lookup(shipData.getFrameworkSocketedItem(socketTypeId)), unmetRequirement));
         }
         return Collections.unmodifiableList(slots);
     }

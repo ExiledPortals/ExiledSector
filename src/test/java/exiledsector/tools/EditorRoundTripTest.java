@@ -29,25 +29,27 @@ class EditorRoundTripTest {
     private static final Path MAIN_SOURCES = Path.of("src/main/java");
 
     private static final String TREE_SERIALIZATION = "pages/tree/model/serialization.ts";
-    private static final String SOCKETABLE_DEFINITIONS_MODEL = "pages/socketables/model/definitions.ts";
-    private static final String SOCKETABLE_NAMES_MODEL = "pages/socketables/model/names.ts";
-    private static final String SOCKETABLE_DROPS_MODEL = "pages/socketables/model/drops.ts";
-    private static final String SOCKETABLE_CRAFTING_MODEL = "pages/socketables/model/crafting.ts";
+    private static final String HULL_ITEM_DEFINITIONS_MODEL = "pages/hullItems/model/definitions.ts";
+    private static final String HULL_ITEM_NAMES_MODEL = "pages/hullItems/model/names.ts";
+    private static final String HULL_ITEM_DROPS_MODEL = "pages/hullItems/model/drops.ts";
+    private static final String HULL_ITEM_CRAFTING_MODEL = "pages/hullItems/model/crafting.ts";
+    private static final String HULL_ITEM_IMPLICITS_MODEL = "pages/hullItems/model/implicits.ts";
 
     private static final String TYPE_LOADER = "exiledsector/skills/loader/SkillTypeLoader.java";
     private static final String TREE_LOADER = "exiledsector/skills/loader/SkillTreeLoader.java";
-    private static final String SOCKETABLE_DEFINITIONS = "exiledsector/socketables/SocketableDefinitions.java";
-    private static final String SOCKETABLE_DEFINITION = "exiledsector/socketables/SocketableDefinition.java";
-    private static final String SOCKETABLE_NAMES = "exiledsector/socketables/SocketableNames.java";
-    private static final String SOCKETABLE_DROPS = "exiledsector/socketables/SocketableDrops.java";
+    private static final String HULL_ITEM_DEFINITIONS = "exiledsector/hullitems/HullItemDefinitions.java";
+    private static final String HULL_ITEM_DEFINITION = "exiledsector/hullitems/HullItemDefinition.java";
+    private static final String HULL_ITEM_NAMES = "exiledsector/hullitems/HullItemNames.java";
+    private static final String HULL_ITEM_DROPS = "exiledsector/hullitems/HullItemDrops.java";
     private static final String SALVAGE_COMPAT = "exiledsector/compat/SalvageSiteCompat.java";
-    private static final String SOCKETABLE_CRAFTING = "exiledsector/socketables/SocketCraftingCosts.java";
+    private static final String HULL_ITEM_CRAFTING = "exiledsector/hullitems/SocketCraftingCosts.java";
+    private static final String HULL_ITEM_IMPLICITS = "exiledsector/hullitems/HullItemImplicits.java";
 
-    private static final List<String> LOADERS = List.of(TYPE_LOADER, TREE_LOADER, SOCKETABLE_DEFINITIONS, SOCKETABLE_DEFINITION,
-            SOCKETABLE_NAMES, SOCKETABLE_DROPS, SALVAGE_COMPAT, SOCKETABLE_CRAFTING);
+    private static final List<String> LOADERS = List.of(TYPE_LOADER, TREE_LOADER, HULL_ITEM_DEFINITIONS, HULL_ITEM_DEFINITION,
+            HULL_ITEM_NAMES, HULL_ITEM_DROPS, SALVAGE_COMPAT, HULL_ITEM_CRAFTING, HULL_ITEM_IMPLICITS);
 
     private static final List<String> EDITED_DATA_PATHS = List.of("data/skilltrees/skill_types.json", "data/skilltrees/ship_skill_tree.json",
-            "data/config/exiledSector/socketable", "compat/salvage/");
+            "data/config/exiledSector/socketable", "data/config/exiledSector/hull_item", "compat/salvage/");
 
     private record EditorSource(String file, String symbol) {
         String label() {
@@ -84,19 +86,21 @@ class EditorRoundTripTest {
                     List.of(tree("treeFileObject"), tree("serializeStaticImage")), false),
             new Pin("ship_skill_tree.json stars", TREE_LOADER, List.of("parseStars"),
                     List.of(tree("treeFileObject"), tree("serializeStar")), false),
-            new Pin("socketables.csv columns", SOCKETABLE_DEFINITION, List.of("parse"),
-                    List.of(new EditorSource(SOCKETABLE_DEFINITIONS_MODEL, "SOCKETABLE_COLUMNS")), true),
-            new Pin("socketable_affixes.csv columns", SOCKETABLE_NAMES, List.of("load", "registerAffixes"),
-                    List.of(new EditorSource(SOCKETABLE_NAMES_MODEL, "serializeAffixesCsv")), true),
-            new Pin("socketable_names.json word fields", SOCKETABLE_NAMES, List.of("registerWords"),
-                    List.of(new EditorSource(SOCKETABLE_NAMES_MODEL, "serializeRareNames"), new EditorSource(SOCKETABLE_NAMES_MODEL, "RARE_NAME_WORD_LISTS"),
-                            new EditorSource(SOCKETABLE_NAMES_MODEL, "newRareNameWords")), true),
-            new Pin("socketable_salvage.csv columns", SOCKETABLE_DROPS, List.of("load", "parse"),
-                    List.of(new EditorSource(SOCKETABLE_DROPS_MODEL, "serializeSalvageCsv")), true),
+            new Pin("socketables.csv columns", HULL_ITEM_DEFINITION, List.of("parse"),
+                    List.of(new EditorSource(HULL_ITEM_DEFINITIONS_MODEL, "HULL_ITEM_COLUMNS")), true),
+            new Pin("socketable_affixes.csv columns", HULL_ITEM_NAMES, List.of("load", "registerAffixes"),
+                    List.of(new EditorSource(HULL_ITEM_NAMES_MODEL, "serializeAffixesCsv")), true),
+            new Pin("socketable_names.json word fields", HULL_ITEM_NAMES, List.of("registerWords"),
+                    List.of(new EditorSource(HULL_ITEM_NAMES_MODEL, "serializeRareNames"), new EditorSource(HULL_ITEM_NAMES_MODEL, "RARE_NAME_WORD_LISTS"),
+                            new EditorSource(HULL_ITEM_NAMES_MODEL, "newRareNameWords")), true),
+            new Pin("socketable_salvage.csv columns", HULL_ITEM_DROPS, List.of("load", "parse"),
+                    List.of(new EditorSource(HULL_ITEM_DROPS_MODEL, "serializeSalvageCsv")), true),
             new Pin("compat/salvage/*.csv columns", SALVAGE_COMPAT, List.of("rows", "missingSites"),
-                    List.of(new EditorSource(SOCKETABLE_DROPS_MODEL, "serializeSalvageCsv")), true),
-            new Pin("socketable_crafting.csv columns", SOCKETABLE_CRAFTING, List.of("load", "register"),
-                    List.of(new EditorSource(SOCKETABLE_CRAFTING_MODEL, "serializeCraftingCsv")), true));
+                    List.of(new EditorSource(HULL_ITEM_DROPS_MODEL, "serializeSalvageCsv")), true),
+            new Pin("socketable_crafting.csv columns", HULL_ITEM_CRAFTING, List.of("load", "register"),
+                    List.of(new EditorSource(HULL_ITEM_CRAFTING_MODEL, "serializeCraftingCsv")), true),
+            new Pin("hull_item_implicits.csv columns", HULL_ITEM_IMPLICITS, List.of("load", "register"),
+                    List.of(new EditorSource(HULL_ITEM_IMPLICITS_MODEL, "serializeImplicitsCsv")), true));
 
     private static final Pattern JAVA_KEY_READ = Pattern.compile("(?:\\.\\s*(?:opt|get|has|isNull)[A-Za-z]*\\s*\\(\\s*"
             + "|\\bModCsv\\.text\\s*\\([^,()\"]*,\\s*|\\bModCsv\\.(?:load|rows)\\s*\\(\\s*)\"([^\"\\\\]*)\"");

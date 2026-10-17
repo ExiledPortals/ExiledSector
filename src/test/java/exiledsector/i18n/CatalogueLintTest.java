@@ -29,9 +29,9 @@ class CatalogueLintTest {
     private static final Path REPORT_DIRECTORY = Path.of("target/i18n");
     private static final Set<String> REPORTED_LOCALES = Set.of(LocaleChain.SIMPLIFIED_CHINESE);
     private static final String HULL_MODS_FILE = "data/hullmods/hull_mods.csv";
-    private static final String SOCKETABLES_FILE = "data/config/exiledSector/socketables.csv";
-    private static final String SOCKETABLE_AFFIXES_FILE = "data/config/exiledSector/socketable_affixes.csv";
-    private static final String SOCKETABLE_NAMES_FILE = "data/config/exiledSector/socketable_names.json";
+    private static final String HULL_ITEMS_FILE = "data/config/exiledSector/socketables.csv";
+    private static final String HULL_ITEM_AFFIXES_FILE = "data/config/exiledSector/socketable_affixes.csv";
+    private static final String HULL_ITEM_NAMES_FILE = "data/config/exiledSector/socketable_names.json";
 
     static Map<String, String> dataSources() throws IOException, JSONException {
         Path root = RealSkillData.projectRoot();
@@ -50,17 +50,17 @@ class CatalogueLintTest {
                 sources.put("skillType." + id + ".flavour", flavour);
             }
         }
-        String socketableRows = Files.readString(root.resolve(SOCKETABLES_FILE), StandardCharsets.UTF_8).replace("\r\n", "\n");
-        JSONArray socketables = CDL.toJSONArray(socketableRows);
-        for (int i = 0; i < socketables.length(); i++) {
-            JSONObject socketable = socketables.getJSONObject(i);
-            sources.put("socketable." + socketable.getString("id") + ".name", socketable.getString("name"));
-            String description = socketable.optString("description", "");
+        String hullItemRows = Files.readString(root.resolve(HULL_ITEMS_FILE), StandardCharsets.UTF_8).replace("\r\n", "\n");
+        JSONArray hullItems = CDL.toJSONArray(hullItemRows);
+        for (int i = 0; i < hullItems.length(); i++) {
+            JSONObject hullItem = hullItems.getJSONObject(i);
+            sources.put("socketable." + hullItem.getString("id") + ".name", hullItem.getString("name"));
+            String description = hullItem.optString("description", "");
             if (!description.isEmpty()) {
-                sources.put("socketable." + socketable.getString("id") + ".description", description);
+                sources.put("socketable." + hullItem.getString("id") + ".description", description);
             }
         }
-        String affixRows = Files.readString(root.resolve(SOCKETABLE_AFFIXES_FILE), StandardCharsets.UTF_8).replace("\r\n", "\n");
+        String affixRows = Files.readString(root.resolve(HULL_ITEM_AFFIXES_FILE), StandardCharsets.UTF_8).replace("\r\n", "\n");
         JSONArray affixes = CDL.toJSONArray(affixRows);
         for (int i = 0; i < affixes.length(); i++) {
             JSONObject affix = affixes.getJSONObject(i);
@@ -68,7 +68,7 @@ class CatalogueLintTest {
             sources.put(key + ".prefix", affix.getString("prefix"));
             sources.put(key + ".suffix", affix.getString("suffix"));
         }
-        JSONObject nameWords = RealSkillData.readJson(root.resolve(SOCKETABLE_NAMES_FILE));
+        JSONObject nameWords = RealSkillData.readJson(root.resolve(HULL_ITEM_NAMES_FILE));
         for (Iterator<?> grades = nameWords.keys(); grades.hasNext(); ) {
             JSONObject words = nameWords.getJSONObject(String.valueOf(grades.next()));
             for (String list : List.of("first", "second", "models")) {

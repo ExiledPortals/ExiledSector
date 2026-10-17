@@ -6,9 +6,9 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledsector.socketables.NpcSocketables;
-import exiledsector.socketables.RolledEffect;
-import exiledsector.socketables.SocketableDefinitions;
+import exiledsector.hullitems.NpcHullItems;
+import exiledsector.hullitems.RolledEffect;
+import exiledsector.hullitems.HullItemDefinitions;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -87,9 +87,9 @@ class NpcTreeTagTest {
     }
 
     @Test
-    void anNpcSocketableSurvivesEncodingAndDecodingInItsSocket() {
+    void anNpcHullItemSurvivesEncodingAndDecodingInItsSocket() {
         ShipSkillData data = withSocket();
-        data.socketItem("socket_1", NpcSocketables.id("domain_subroutine_military", -42L));
+        data.socketItem("socket_1", NpcHullItems.id("domain_subroutine_military", -42L));
 
         String tag = NpcTreeTag.encode(data);
         ShipSkillData decoded = NpcTreeTag.decode(tag);
@@ -101,11 +101,11 @@ class NpcTreeTagTest {
     @Test
     void aFlagshipsUnlockedSocketsAndTheirItemsSurviveTheTagAlongsideTreeSockets() {
         ShipSkillData data = withSocket();
-        data.socketItem("socket_1", NpcSocketables.id("domain_subroutine_military", -42L));
+        data.socketItem("socket_1", NpcHullItems.id("domain_subroutine_military", -42L));
         data.grantUnlockedSocketType("bridge");
         data.grantUnlockedSocketType("reactor");
         data.grantUnlockedSocketType("flight_deck");
-        data.socketFrameworkItem("flight_deck", NpcSocketables.id("deck_basic", 3L));
+        data.socketFrameworkItem("flight_deck", NpcHullItems.id("deck_basic", 3L));
 
         String tag = NpcTreeTag.encode(data);
         ShipSkillData decoded = NpcTreeTag.decode(tag);
@@ -121,14 +121,14 @@ class NpcTreeTagTest {
     @Test
     void aSavedTreeSocketHoldingAFrameworkItemIsDroppedOnRestore() throws Exception {
         withSocket();
-        SocketableDefinitions.register(new JSONArray().put(new JSONObject().put("id", "gunners").put("kind", "weapon_mount")
+        HullItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "gunners").put("kind", "weapon_mount")
                 .put("name", "Gunners").put("prefixes", "HULL_MULT:4:6")));
         try {
             ShipSkillData decoded = NpcTreeTag.decode("exiledSector_npcTree|generated|2|root,a,socket_1|sockets:socket_1=npc:gunners/5");
 
             assertNull(decoded.getSocketedItem("socket_1"));
         } finally {
-            SocketableDefinitions.clear();
+            HullItemDefinitions.clear();
         }
     }
 
@@ -157,11 +157,11 @@ class NpcTreeTagTest {
         assertEquals(rolled, legacy.getSocketedItem("socket_1"));
         assertEquals(saved, NpcTreeTag.encode(decoded));
         assertEquals(List.of(new RolledEffect("HULL_MULT", 5f), new RolledEffect("ARMOR_PERCENT", -0.25f)),
-                NpcSocketables.item(decoded.getSocketedItem("socket_1")).effects());
+                NpcHullItems.item(decoded.getSocketedItem("socket_1")).effects());
     }
 
     @Test
-    void aTreeWithoutSocketablesKeepsTheThreeFieldFormat() {
+    void aTreeWithoutHullItemsKeepsTheThreeFieldFormat() {
         assertEquals("exiledSector_npcTree|generated|2|root,a,socket_1", NpcTreeTag.encode(withSocket()));
     }
 

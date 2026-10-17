@@ -59,16 +59,16 @@ class ShipSkillDataSocketTest {
     }
 
     @Test
-    void installedSocketablesCoverTreeSocketsAndFrameworkSlots() {
+    void installedHullItemsCoverTreeSocketsAndFrameworkSlots() {
         ShipSkillData data = socketed();
-        assertEquals(List.of("socketable_1"), data.getInstalledSocketableIds());
+        assertEquals(List.of("socketable_1"), data.getInstalledHullItemIds());
 
         data.addFrameworkPoint(4);
         assertTrue(data.unlockSocketType("bridge"));
         assertTrue(data.socketFrameworkItem("bridge", "socketable_2"));
 
-        assertEquals(List.of("socketable_1", "socketable_2"), data.getInstalledSocketableIds());
-        assertEquals(List.of(), new ShipSkillData().getInstalledSocketableIds());
+        assertEquals(List.of("socketable_1", "socketable_2"), data.getInstalledHullItemIds());
+        assertEquals(List.of(), new ShipSkillData().getInstalledHullItemIds());
     }
 
     @Test

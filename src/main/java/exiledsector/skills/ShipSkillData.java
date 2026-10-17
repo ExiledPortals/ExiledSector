@@ -56,13 +56,13 @@ public class ShipSkillData {
         return socketedItems == null ? Map.of() : Collections.unmodifiableMap(socketedItems);
     }
 
-    public boolean socketItem(String nodeId, String socketableId) {
+    public boolean socketItem(String nodeId, String hullItemId) {
         revision++;
         if (!isAllocated(nodeId)) {
             return false;
         }
         if (socketedItems == null) socketedItems = new LinkedHashMap<>();
-        socketedItems.put(nodeId, socketableId);
+        socketedItems.put(nodeId, hullItemId);
         return true;
     }
 
@@ -128,27 +128,27 @@ public class ShipSkillData {
         return frameworkItemsBySocketType == null ? Map.of() : Collections.unmodifiableMap(frameworkItemsBySocketType);
     }
 
-    public List<String> getInstalledSocketableIds() {
+    public List<String> getInstalledHullItemIds() {
         List<String> installedIds = new ArrayList<>(getSocketedItems().values());
         installedIds.addAll(getFrameworkSocketedItems().values());
         return installedIds;
     }
 
-    public boolean holdsSocketable(String socketableId) {
-        return getSocketedItems().containsValue(socketableId) || getFrameworkSocketedItems().containsValue(socketableId);
+    public boolean holdsHullItem(String hullItemId) {
+        return getSocketedItems().containsValue(hullItemId) || getFrameworkSocketedItems().containsValue(hullItemId);
     }
 
     public String getFrameworkSocketedItem(String socketTypeId) {
         return frameworkItemsBySocketType == null ? null : frameworkItemsBySocketType.get(socketTypeId);
     }
 
-    public boolean socketFrameworkItem(String socketTypeId, String socketableId) {
+    public boolean socketFrameworkItem(String socketTypeId, String hullItemId) {
         revision++;
         if (!isSocketTypeUnlocked(socketTypeId)) {
             return false;
         }
         if (frameworkItemsBySocketType == null) frameworkItemsBySocketType = new LinkedHashMap<>();
-        frameworkItemsBySocketType.put(socketTypeId, socketableId);
+        frameworkItemsBySocketType.put(socketTypeId, hullItemId);
         return true;
     }
 

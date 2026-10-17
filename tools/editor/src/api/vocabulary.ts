@@ -31,8 +31,8 @@ export interface Vocabulary {
   unlockConditionTypes: string[];
   parameterlessUnlockConditionTypes: string[];
   blueprintCategories: string[];
-  socketableKinds: string[];
-  socketableUnlocks: string[];
+  hullItemKinds: string[];
+  hullItemUnlocks: string[];
 }
 
 export function buildVocabulary(file: VocabularyFile): Vocabulary {
@@ -48,8 +48,8 @@ export function buildVocabulary(file: VocabularyFile): Vocabulary {
     unlockConditionTypes: file.unlockConditionTypes.slice(),
     parameterlessUnlockConditionTypes: (file.parameterlessUnlockConditionTypes ?? []).slice(),
     blueprintCategories: file.blueprintCategories.slice(),
-    socketableKinds: file.socketableKinds.slice(),
-    socketableUnlocks: file.socketableUnlocks.slice(),
+    hullItemKinds: file.socketableKinds.slice(),
+    hullItemUnlocks: file.socketableUnlocks.slice(),
   };
 }
 

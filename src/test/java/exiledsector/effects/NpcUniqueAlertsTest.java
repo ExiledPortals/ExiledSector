@@ -18,8 +18,8 @@ import exiledsector.skills.npc.NpcSkillTreeBuilder;
 import exiledsector.skills.npc.NpcTreeRecords;
 import exiledsector.skills.npc.NpcTreeTag;
 import exiledsector.skills.npc.RealSkillData;
-import exiledsector.socketables.NpcSocketables;
-import exiledsector.socketables.SocketableDefinitions;
+import exiledsector.hullitems.NpcHullItems;
+import exiledsector.hullitems.HullItemDefinitions;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -58,7 +58,7 @@ class NpcUniqueAlertsTest {
         RealSkillData.clear();
         register("root", SkillTier.ROOT);
         register("socket_1", SkillTier.SOCKET, "root");
-        SocketableDefinitions.register(new JSONArray()
+        HullItemDefinitions.register(new JSONArray()
                 .put(definition("basic", false))
                 .put(definition("relic", true).put("name", "Ancient Relic")));
 
@@ -90,8 +90,8 @@ class NpcUniqueAlertsTest {
     @AfterEach
     void tearDown() {
         globalMock.close();
-        NpcSocketables.clearCache();
-        SocketableDefinitions.clear();
+        NpcHullItems.clearCache();
+        HullItemDefinitions.clear();
         RealSkillData.clear();
     }
 
@@ -109,7 +109,7 @@ class NpcUniqueAlertsTest {
     private String recordCarrying(String definitionId) {
         ShipSkillData data = NpcSkillTreeBuilder.rootedTree(SkillTree.get("root"), 1);
         data.allocate(SkillTree.get("socket_1"), 1);
-        data.socketItem("socket_1", NpcSocketables.id(definitionId, 7L));
+        data.socketItem("socket_1", NpcHullItems.id(definitionId, 7L));
         String record = NpcTreeTag.encode(data);
         NpcTreeRecords.of(fleet.getMemoryWithoutUpdate()).put("flagship", record);
         return record;

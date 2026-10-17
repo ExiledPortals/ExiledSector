@@ -17,11 +17,11 @@ import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.StepVerdict;
 import exiledsector.skills.template.TemplateCapture;
 import exiledsector.skills.template.TemplateStep;
-import exiledsector.socketables.FrameworkSockets;
-import exiledsector.socketables.SocketCustody;
-import exiledsector.socketables.SocketType;
-import exiledsector.socketables.Socketable;
-import exiledsector.socketables.SocketableStore;
+import exiledsector.hullitems.FrameworkSockets;
+import exiledsector.hullitems.SocketCustody;
+import exiledsector.hullitems.SocketType;
+import exiledsector.hullitems.HullItem;
+import exiledsector.hullitems.HullItemStore;
 import exiledsector.ui.SkillTreeSounds;
 import lunalib.lunaRefit.BaseRefitButton;
 
@@ -196,8 +196,8 @@ public final class TreeAllocationSession {
         return node != null && viewSnapshot().isHidden(node);
     }
 
-    public Socketable socketedItem(SkillNode node) {
-        return node == null ? null : SocketableStore.lookup(allocator.data().getSocketedItem(node.getId()));
+    public HullItem socketedItem(SkillNode node) {
+        return node == null ? null : HullItemStore.lookup(allocator.data().getSocketedItem(node.getId()));
     }
 
     public boolean isAllocatedSocket(SkillNode node) {
@@ -566,10 +566,10 @@ public final class TreeAllocationSession {
         }
     }
 
-    public boolean installInSocket(SkillNode node, Socketable socketable) {
-        return apply(() -> socketable.canSocketInto(node)
-                && !SocketCustody.installations(ShipSkillDataManager.all()).containsKey(socketable.id())
-                && allocator.socketItem(node, socketable.id()), () -> {
+    public boolean installInSocket(SkillNode node, HullItem hullItem) {
+        return apply(() -> hullItem.canSocketInto(node)
+                && !SocketCustody.installations(ShipSkillDataManager.all()).containsKey(hullItem.id())
+                && allocator.socketItem(node, hullItem.id()), () -> {
             SkillTreeSounds.socketed();
             feedback.pulse(node);
         });
@@ -619,8 +619,8 @@ public final class TreeAllocationSession {
         return apply(() -> allocator.lockSocket(socketType), () -> { });
     }
 
-    public boolean socketFrameworkItem(SocketType socketType, Socketable socketable) {
-        return apply(() -> allocator.socketFrameworkItem(socketType, socketable), SkillTreeSounds::socketed);
+    public boolean socketFrameworkItem(SocketType socketType, HullItem hullItem) {
+        return apply(() -> allocator.socketFrameworkItem(socketType, hullItem), SkillTreeSounds::socketed);
     }
 
     public boolean unsocketFrameworkItem(SocketType socketType) {

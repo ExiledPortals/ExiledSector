@@ -8,7 +8,7 @@ import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.i18n.Translation;
-import exiledsector.socketables.HullUpgradesSetting;
+import exiledsector.hullitems.HullUpgradesSetting;
 import exiledsector.ui.refit.RefitButtonConfig;
 import exiledsector.ui.refit.RefitScreenLayout;
 import lunalib.lunaRefit.BaseRefitButton;

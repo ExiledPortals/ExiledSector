@@ -103,6 +103,8 @@ export function resolveDataResource(paths: ProjectPaths, name: string): DataReso
       return { filePath: path.join(configDir, 'socketable_names.json'), check: checkJsonObject };
     case 'socketable-crafting':
       return { filePath: path.join(configDir, 'socketable_crafting.csv'), check: (text) => checkCsvHeader(text, 'item,', 'the item column') };
+    case 'hull-item-implicits':
+      return { filePath: path.join(configDir, 'hull_item_implicits.csv'), check: (text) => checkCsvHeader(text, 'type,', 'the type column') };
     case 'strings-en':
       return { filePath: path.join(paths.projectRoot, 'data', 'strings', 'exiledSector', 'en.json'), check: checkStringCatalogue };
     case 'commodities':

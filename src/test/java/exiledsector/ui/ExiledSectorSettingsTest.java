@@ -9,7 +9,7 @@ import exiledsector.skills.npc.NpcTreeConfig;
 import exiledsector.skills.npc.NpcTreeSize;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.tags.AreaToggles;
-import exiledsector.socketables.HullUpgradesSetting;
+import exiledsector.hullitems.HullUpgradesSetting;
 import exiledsector.ui.inspect.NpcInspectConfig;
 import exiledsector.ui.refit.RefitButtonConfig;
 import lunalib.lunaSettings.LunaSettings;

@@ -10,18 +10,18 @@ import exiledsector.PlayerFleet;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.FrameworkSlots;
-import exiledsector.socketables.FrameworkSockets;
-import exiledsector.socketables.HullUpgradeTooltip;
-import exiledsector.socketables.SocketType;
-import exiledsector.socketables.Socketable;
-import exiledsector.socketables.SocketableStore;
+import exiledsector.hullitems.FrameworkSockets;
+import exiledsector.hullitems.HullUpgradeTooltip;
+import exiledsector.hullitems.SocketType;
+import exiledsector.hullitems.HullItem;
+import exiledsector.hullitems.HullItemStore;
 import exiledsector.ui.decoration.ShipAnchors;
 import exiledsector.ui.decoration.SkillTreeFleetRenderer;
 import exiledsector.ui.framework.FrameworkSocketFlair;
 import exiledsector.ui.framework.FrameworkSocketLayout;
 import exiledsector.ui.node.TreeAllocationSession;
 import exiledsector.ui.socket.HullUpgradePanel;
-import exiledsector.ui.socket.SocketableHoverTooltip;
+import exiledsector.ui.socket.HullItemHoverTooltip;
 import exiledsector.ui.util.Fade;
 import exiledsector.ui.util.TextLabel;
 
@@ -55,7 +55,7 @@ final class HullSocketsDisplay {
     private final CustomPanelAPI hostPanel;
     private final TreeAllocationSession treeSession;
     private final FrameworkSocketLayout.Arrangement arrangement;
-    private final SocketableHoverTooltip hoverTooltip;
+    private final HullItemHoverTooltip hoverTooltip;
     private final TextLabel[] typeLabels = new TextLabel[MAX_SOCKETS];
     private final TextLabel[] stateLabels = new TextLabel[MAX_SOCKETS];
     private final float[] hoverLevels = new float[MAX_SOCKETS];
@@ -65,7 +65,7 @@ final class HullSocketsDisplay {
     private int tooltipSlot = -1;
     private float elapsedSeconds;
     private int shownRevision = Integer.MIN_VALUE;
-    private SocketableStore upgradeStore;
+    private HullItemStore upgradeStore;
     private int shownUpgradeRevision = Integer.MIN_VALUE;
     private Map<HullSize, Integer> shownUpgradeCounts = Map.of();
     private List<FrameworkSlots.Slot> slots = List.of();
@@ -76,7 +76,7 @@ final class HullSocketsDisplay {
         this.hostPanel = hostPanel;
         this.treeSession = treeSession;
         this.arrangement = arrangement;
-        this.hoverTooltip = new SocketableHoverTooltip(hostPanel);
+        this.hoverTooltip = new HullItemHoverTooltip(hostPanel);
         for (int i = 0; i < MAX_SOCKETS; i++) {
             typeLabels[i] = new TextLabel(LABEL_FONT_SIZE, Color.WHITE);
             stateLabels[i] = new TextLabel(LABEL_FONT_SIZE, Misc.getGrayColor());
@@ -89,7 +89,7 @@ final class HullSocketsDisplay {
 
     boolean refreshIfChanged() {
         int revision = treeSession.statsRevision();
-        SocketableStore store = upgradeStore();
+        HullItemStore store = upgradeStore();
         int upgradeRevision = store == null ? 0 : store.upgradeRevision();
         if (revision == shownRevision && upgradeRevision == shownUpgradeRevision) {
             return false;
@@ -109,7 +109,7 @@ final class HullSocketsDisplay {
 
     void absorbUpgradesFromCargo() {
         CampaignFleetAPI playerFleet = PlayerFleet.orNull();
-        SocketableStore store = upgradeStore();
+        HullItemStore store = upgradeStore();
         if (playerFleet != null && store != null) {
             store.absorbFrom(playerFleet.getCargo());
             shownUpgradeRevision = store.upgradeRevision();
@@ -141,9 +141,9 @@ final class HullSocketsDisplay {
         renderedSockets = 0;
     }
 
-    private SocketableStore upgradeStore() {
+    private HullItemStore upgradeStore() {
         if (upgradeStore == null && Global.getSector() != null) {
-            upgradeStore = SocketableStore.get();
+            upgradeStore = HullItemStore.get();
         }
         return upgradeStore;
     }
@@ -267,7 +267,7 @@ final class HullSocketsDisplay {
     }
 
     void render(SkillTreeFleetRenderer.InspectedShip ship, FrameworkSocketLayout.ShipExtent extent, float alpha, SocketBounds bounds,
-                Socketable placing, SocketType targetedType) {
+                HullItem placing, SocketType targetedType) {
         renderedSockets = 0;
         if (ship == null || slots.isEmpty() || alpha <= 0f) {
             return;
@@ -307,7 +307,7 @@ final class HullSocketsDisplay {
         }
     }
 
-    private static float placingDim(Socketable placing, SocketType socketType) {
+    private static float placingDim(HullItem placing, SocketType socketType) {
         return placing == null || placing.kind() == socketType ? 1f : OTHER_SOCKET_DIM;
     }
 

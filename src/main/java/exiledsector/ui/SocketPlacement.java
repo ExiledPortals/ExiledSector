@@ -7,11 +7,11 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
-import exiledsector.socketables.HullUpgradesSetting;
-import exiledsector.socketables.SocketCustody;
-import exiledsector.socketables.SocketType;
-import exiledsector.socketables.Socketable;
-import exiledsector.socketables.SocketableStore;
+import exiledsector.hullitems.HullUpgradesSetting;
+import exiledsector.hullitems.SocketCustody;
+import exiledsector.hullitems.SocketType;
+import exiledsector.hullitems.HullItem;
+import exiledsector.hullitems.HullItemStore;
 import exiledsector.ui.node.NodeSearch;
 import exiledsector.ui.node.TreeAllocationSession;
 import exiledsector.ui.socket.SocketPanelPlacement;
@@ -75,7 +75,7 @@ final class SocketPlacement {
     private final SkillTreeSearchBar searchBar;
     private final SkillTreeUiButton storageButton = new SkillTreeUiButton("");
     private SocketStoragePanel storagePanel;
-    private Socketable placingSocketable;
+    private HullItem placingHullItem;
     private SkillNode targetSocket;
     private SocketType targetFrameworkType;
     private boolean inspectingShip;
@@ -109,7 +109,7 @@ final class SocketPlacement {
     }
 
     boolean isEngaged() {
-        return storagePanel != null || placingSocketable != null;
+        return storagePanel != null || placingHullItem != null;
     }
 
     boolean isWorkbenchOpen() {
@@ -200,7 +200,7 @@ final class SocketPlacement {
             }
             return;
         }
-        if (placingSocketable != null) {
+        if (placingHullItem != null) {
             stopPlacing();
         } else if (targetSocket != null && storagePanel != null) {
             clearTargetSocket();
@@ -269,10 +269,10 @@ final class SocketPlacement {
     }
 
     boolean placeInto(SkillNode node) {
-        if (placingSocketable == null) {
+        if (placingHullItem == null) {
             return false;
         }
-        if (treeSession.installInSocket(node, placingSocketable)) {
+        if (treeSession.installInSocket(node, placingHullItem)) {
             stopPlacing();
             refresh();
         } else {
@@ -304,14 +304,14 @@ final class SocketPlacement {
         if (storagePanel != null) {
             storageRevision = treeSession.statsRevision();
             storagePanel.refresh(SocketCustody.shipNames(ownedShips));
-            if (placingSocketable != null) {
-                storagePanel.setSelected(placingSocketable, placingHint(placingSocketable));
+            if (placingHullItem != null) {
+                storagePanel.setSelected(placingHullItem, placingHint(placingHullItem));
             }
         }
     }
 
     private void refreshButtonLabel() {
-        int storedCount = Global.getSector() == null ? 0 : SocketableStore.get().owned().size();
+        int storedCount = Global.getSector() == null ? 0 : HullItemStore.get().owned().size();
         if (storedCount == shownStoredCount) {
             return;
         }
@@ -341,11 +341,11 @@ final class SocketPlacement {
                 sidePanelHeight(canvasPosition, shipCard), swapping);
         storagePanel = SocketStoragePanel.open(hostPanel, placement, SocketCustody.shipNames(ownedShips), new SocketStoragePanel.Listener() {
                     @Override
-                    public void selected(Socketable socketable) {
-                        if (socketable == null) {
+                    public void selected(HullItem hullItem) {
+                        if (hullItem == null) {
                             stopPlacing();
-                        } else if (!installInTargetSocket(socketable)) {
-                            startPlacing(socketable);
+                        } else if (!installInTargetSocket(hullItem)) {
+                            startPlacing(hullItem);
                         }
                     }
 
@@ -376,16 +376,16 @@ final class SocketPlacement {
         refreshButtonSelected();
     }
 
-    private void startPlacing(Socketable socketable) {
-        placingSocketable = socketable;
-        nodeSearch.setSocketFocus(true, isSubroutine(socketable));
+    private void startPlacing(HullItem hullItem) {
+        placingHullItem = hullItem;
+        nodeSearch.setSocketFocus(true, isSubroutine(hullItem));
         if (storagePanel != null) {
-            storagePanel.setSelected(socketable, placingHint(socketable));
+            storagePanel.setSelected(hullItem, placingHint(hullItem));
         }
     }
 
-    Socketable placingSocketable() {
-        return placingSocketable;
+    HullItem placingHullItem() {
+        return placingHullItem;
     }
 
     void setInspectingShip(boolean inspecting) {
@@ -396,16 +396,16 @@ final class SocketPlacement {
         if (storagePanel != null) {
             storagePanel.setTabListener(storageTabs());
         }
-        if (placingSocketable != null && storagePanel != null) {
-            storagePanel.setSelected(placingSocketable, placingHint(placingSocketable));
+        if (placingHullItem != null && storagePanel != null) {
+            storagePanel.setSelected(placingHullItem, placingHint(placingHullItem));
         }
     }
 
     boolean placeIntoFrameworkSocket(SocketType socketType) {
-        if (placingSocketable == null) {
+        if (placingHullItem == null) {
             return false;
         }
-        if (placingSocketable.kind() == socketType && treeSession.socketFrameworkItem(socketType, placingSocketable)) {
+        if (placingHullItem.kind() == socketType && treeSession.socketFrameworkItem(socketType, placingHullItem)) {
             stopPlacing();
             refresh();
         } else {
@@ -414,13 +414,13 @@ final class SocketPlacement {
         return true;
     }
 
-    private String placingHint(Socketable socketable) {
-        String name = socketable.name();
-        if (isSubroutine(socketable)) {
+    private String placingHint(HullItem hullItem) {
+        String name = hullItem.name();
+        if (isSubroutine(hullItem)) {
             return Translation.msg(inspectingShip ? "ui.socketStorage.placingHintShipView" : "ui.socketStorage.placingHint")
                     .arg("name", name).text();
         }
-        SocketType socketType = socketable.kind();
+        SocketType socketType = hullItem.kind();
         String key;
         if (!HullUpgradesSetting.enabled()) {
             key = "ui.socketStorage.placingHintFrameworkDisabled";
@@ -432,12 +432,12 @@ final class SocketPlacement {
         return Translation.msg(key).arg("name", name).arg("type", socketType.displayName()).text();
     }
 
-    private static boolean isSubroutine(Socketable socketable) {
-        return socketable.kind() == null || socketable.kind() == SocketType.SUBROUTINE;
+    private static boolean isSubroutine(HullItem hullItem) {
+        return hullItem.kind() == null || hullItem.kind() == SocketType.SUBROUTINE;
     }
 
     private void stopPlacing() {
-        placingSocketable = null;
+        placingHullItem = null;
         nodeSearch.setSocketFocus(false);
         if (storagePanel != null) {
             storagePanel.setSelected(null);
@@ -465,9 +465,9 @@ final class SocketPlacement {
         }
     }
 
-    private boolean installInTargetSocket(Socketable socketable) {
+    private boolean installInTargetSocket(HullItem hullItem) {
         if (targetFrameworkType != null) {
-            if (treeSession.socketFrameworkItem(targetFrameworkType, socketable)) {
+            if (treeSession.socketFrameworkItem(targetFrameworkType, hullItem)) {
                 refresh();
             }
             return true;
@@ -479,7 +479,7 @@ final class SocketPlacement {
             clearTargetSocket();
             return false;
         }
-        if (treeSession.installInSocket(targetSocket, socketable)) {
+        if (treeSession.installInSocket(targetSocket, hullItem)) {
             refresh();
         }
         return true;
