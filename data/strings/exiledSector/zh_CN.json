@@ -1460,8 +1460,8 @@
     "skillType.ion_rounds.description": "NCA Vendor 把 Ion Bolter 卖给任何出得起钱的雇佣兵，拆开一门就能让船员学会以同样的方式让本舰的能量弹超载。持续压迫敌方护盾，直到其硬幅能堆高，电弧便会穿透而过。",
     "skillType.hardlight_infusion.description": "从一座隐蔽的 NCA 研究前哨缴获的夜十字限制级 Hardlight Rifle 会记下它在目标上的每一次命中，船员学会把这个计数器移植进本舰的战机联队数据链。战机的命中会在目标上留下硬光标记，引导其余战机集中火力。",
     "skillType.gravitational_drag.description": "在一艘回收的远古原型舰内部，所有导管都汇聚于一个完美的球形空洞，船员在那里找到了 Candle's Grace 装置，它会拖慢附近一切事物的时间流速。船上没人说得清 Candle's Grace 是谁，据此造出的复制品大多靠猜。附近的敌舰会减速，在本舰处于相位状态时尤为明显。",
-    "skillType.beautiful_nightmare.description": "濒临毁灭之际，冰封的灵魂不再保留。舰船以战备为代价，挣扎着撑过最后一程。",
-    "skillType.furor_machinae.description": "数字化的怒火随每一次命中而高涨，驱使武器越打越快。",
-    "skillType.language_of_the_lost.description": "一阵阵残缺的信号渗入敌方火控系统，让他们的武器在关键时刻失灵。",
-    "skillType.corrosion_beam.description": "持续照射的光束会积聚星尘，随后化作微粒扑向目标。"
+    "skillType.beautiful_nightmare.description": "观星者在濒死之际战斗得最为凶狠，从其中一艘回收的星尘核心，那曾经是一个人的残骸，教会船员在船体开始崩溃的那一刻拆除舰船的安全装置。舰船在终末坠落中继续战斗，以消耗战备为代价。",
+    "skillType.furor_machinae.description": "从一艘观星者的数据核心中提取的战斗记录显示，它的射速随每一次命中不断攀升，仿佛其中有什么东西越来越愤怒；船员据此重接本舰的火控系统，追赶同样的节奏。数字化的怒火随每一次命中而高涨，驱使武器越打越快。",
+    "skillType.language_of_the_lost.description": "观星者舰队在每个频道上低语的残缺通讯中夹带着入侵代码片段，船员学会把这些代码剥离出来，再反向发射给敌人。恶意程序潜入敌方火控系统，让他们的武器在关键时刻失灵。",
+    "skillType.corrosion_beam.description": "从观星者残骸中回收的腐蚀发射器，仍会把星尘拖过它触及的一切，船员学会了以同样的方式调校本舰的光束。持续照射的光束会积聚星尘，随后化作微粒扑向目标。"
 }

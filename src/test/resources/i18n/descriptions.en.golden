@@ -2408,27 +2408,27 @@ type|beam_split_reduced_damage|FRIGATE|0	0	Beam weapon hits split their damage e
 type|beam_split_reduced_damage|DESTROYER|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 type|beam_split_reduced_damage|CRUISER|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 type|beam_split_reduced_damage|CAPITAL_SHIP|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
-type|beautiful_nightmare|null|0	0	When the hull is failing, the frozen soul at the core stops holding anything back. The ship fights on through its terminal descent, burning its readiness to do it.
+type|beautiful_nightmare|null|0	0	Stargazers fight hardest when they are dying, and the Stardust Core recovered from one, the remains of what was once a person, shows the crew how to strip the ship's safeties the moment its hull starts to fail. The ship fights on through its terminal descent, burning its readiness to do it.
 type|beautiful_nightmare|null|1	0	When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, hull damage taken is reduced by <good>25%</good>, but peak performance time stops so combat readiness drains, and venting is blocked.
 type|beautiful_nightmare|null|2	0	During Terminal Descent, flux dissipation rises by <good>15%</good>.
 type|beautiful_nightmare|null|3	0	During Terminal Descent, ship system charges regenerate <good>15%</good> faster.
 type|beautiful_nightmare|null|4	0	During Terminal Descent, shields take <bad>10%</bad> more damage.
-type|beautiful_nightmare|FRIGATE|0	0	When the hull is failing, the frozen soul at the core stops holding anything back. The ship fights on through its terminal descent, burning its readiness to do it.
+type|beautiful_nightmare|FRIGATE|0	0	Stargazers fight hardest when they are dying, and the Stardust Core recovered from one, the remains of what was once a person, shows the crew how to strip the ship's safeties the moment its hull starts to fail. The ship fights on through its terminal descent, burning its readiness to do it.
 type|beautiful_nightmare|FRIGATE|1	0	When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, hull damage taken is reduced by <good>25%</good>, but peak performance time stops so combat readiness drains, and venting is blocked.
 type|beautiful_nightmare|FRIGATE|2	0	During Terminal Descent, flux dissipation rises by <good>15%</good>.
 type|beautiful_nightmare|FRIGATE|3	0	During Terminal Descent, ship system charges regenerate <good>15%</good> faster.
 type|beautiful_nightmare|FRIGATE|4	0	During Terminal Descent, shields take <bad>10%</bad> more damage.
-type|beautiful_nightmare|DESTROYER|0	0	When the hull is failing, the frozen soul at the core stops holding anything back. The ship fights on through its terminal descent, burning its readiness to do it.
+type|beautiful_nightmare|DESTROYER|0	0	Stargazers fight hardest when they are dying, and the Stardust Core recovered from one, the remains of what was once a person, shows the crew how to strip the ship's safeties the moment its hull starts to fail. The ship fights on through its terminal descent, burning its readiness to do it.
 type|beautiful_nightmare|DESTROYER|1	0	When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, hull damage taken is reduced by <good>25%</good>, but peak performance time stops so combat readiness drains, and venting is blocked.
 type|beautiful_nightmare|DESTROYER|2	0	During Terminal Descent, flux dissipation rises by <good>15%</good>.
 type|beautiful_nightmare|DESTROYER|3	0	During Terminal Descent, ship system charges regenerate <good>15%</good> faster.
 type|beautiful_nightmare|DESTROYER|4	0	During Terminal Descent, shields take <bad>10%</bad> more damage.
-type|beautiful_nightmare|CRUISER|0	0	When the hull is failing, the frozen soul at the core stops holding anything back. The ship fights on through its terminal descent, burning its readiness to do it.
+type|beautiful_nightmare|CRUISER|0	0	Stargazers fight hardest when they are dying, and the Stardust Core recovered from one, the remains of what was once a person, shows the crew how to strip the ship's safeties the moment its hull starts to fail. The ship fights on through its terminal descent, burning its readiness to do it.
 type|beautiful_nightmare|CRUISER|1	0	When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, hull damage taken is reduced by <good>25%</good>, but peak performance time stops so combat readiness drains, and venting is blocked.
 type|beautiful_nightmare|CRUISER|2	0	During Terminal Descent, flux dissipation rises by <good>15%</good>.
 type|beautiful_nightmare|CRUISER|3	0	During Terminal Descent, ship system charges regenerate <good>15%</good> faster.
 type|beautiful_nightmare|CRUISER|4	0	During Terminal Descent, shields take <bad>10%</bad> more damage.
-type|beautiful_nightmare|CAPITAL_SHIP|0	0	When the hull is failing, the frozen soul at the core stops holding anything back. The ship fights on through its terminal descent, burning its readiness to do it.
+type|beautiful_nightmare|CAPITAL_SHIP|0	0	Stargazers fight hardest when they are dying, and the Stardust Core recovered from one, the remains of what was once a person, shows the crew how to strip the ship's safeties the moment its hull starts to fail. The ship fights on through its terminal descent, burning its readiness to do it.
 type|beautiful_nightmare|CAPITAL_SHIP|1	0	When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, hull damage taken is reduced by <good>25%</good>, but peak performance time stops so combat readiness drains, and venting is blocked.
 type|beautiful_nightmare|CAPITAL_SHIP|2	0	During Terminal Descent, flux dissipation rises by <good>15%</good>.
 type|beautiful_nightmare|CAPITAL_SHIP|3	0	During Terminal Descent, ship system charges regenerate <good>15%</good> faster.
@@ -2566,15 +2566,15 @@ type|converted_hangar|CAPITAL_SHIP|4	1	Increases minimum crew required by <good>
 type-detail|converted_hangar|CAPITAL_SHIP|0	0	Unallocating it returns any fighter wing in the bay it adds to your cargo.
 type-detail|converted_hangar|CAPITAL_SHIP|1	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
 type-detail|converted_hangar|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Converted Fighter Bay</hullmod>\n• <hullmod>Converted Hangar</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Converted Fighter Bay</node>
-type|corrosion_beam|null|0	0	Beams held on a target gather stardust, which breaks loose as motes that hunt it down.
+type|corrosion_beam|null|0	0	A corrosion emitter salvaged from a Stargazer wreck still drags stardust through whatever it touches, and the crew learns to tune this ship's beams to do the same. Beams held on a target gather stardust, which breaks loose as motes that hunt it down.
 type|corrosion_beam|null|1	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
-type|corrosion_beam|FRIGATE|0	0	Beams held on a target gather stardust, which breaks loose as motes that hunt it down.
+type|corrosion_beam|FRIGATE|0	0	A corrosion emitter salvaged from a Stargazer wreck still drags stardust through whatever it touches, and the crew learns to tune this ship's beams to do the same. Beams held on a target gather stardust, which breaks loose as motes that hunt it down.
 type|corrosion_beam|FRIGATE|1	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
-type|corrosion_beam|DESTROYER|0	0	Beams held on a target gather stardust, which breaks loose as motes that hunt it down.
+type|corrosion_beam|DESTROYER|0	0	A corrosion emitter salvaged from a Stargazer wreck still drags stardust through whatever it touches, and the crew learns to tune this ship's beams to do the same. Beams held on a target gather stardust, which breaks loose as motes that hunt it down.
 type|corrosion_beam|DESTROYER|1	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
-type|corrosion_beam|CRUISER|0	0	Beams held on a target gather stardust, which breaks loose as motes that hunt it down.
+type|corrosion_beam|CRUISER|0	0	A corrosion emitter salvaged from a Stargazer wreck still drags stardust through whatever it touches, and the crew learns to tune this ship's beams to do the same. Beams held on a target gather stardust, which breaks loose as motes that hunt it down.
 type|corrosion_beam|CRUISER|1	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
-type|corrosion_beam|CAPITAL_SHIP|0	0	Beams held on a target gather stardust, which breaks loose as motes that hunt it down.
+type|corrosion_beam|CAPITAL_SHIP|0	0	A corrosion emitter salvaged from a Stargazer wreck still drags stardust through whatever it touches, and the crew learns to tune this ship's beams to do the same. Beams held on a target gather stardust, which breaks loose as motes that hunt it down.
 type|corrosion_beam|CAPITAL_SHIP|1	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
 type|crew_capacity_flat|FRIGATE|0	0	Increases crew capacity by <good>5</good>.
 type|crew_capacity_flat|DESTROYER|0	0	Increases crew capacity by <good>15</good>.
@@ -3074,15 +3074,15 @@ type|fuel_flat|FRIGATE|0	0	Increases fuel capacity by <good>5</good>.
 type|fuel_flat|DESTROYER|0	0	Increases fuel capacity by <good>15</good>.
 type|fuel_flat|CRUISER|0	0	Increases fuel capacity by <good>25</good>.
 type|fuel_flat|CAPITAL_SHIP|0	0	Increases fuel capacity by <good>50</good>.
-type|furor_machinae|null|0	0	Digital rage climbs with every hit that lands, driving the guns faster and faster.
+type|furor_machinae|null|0	0	Combat recordings pulled from a Stargazer's data core show its fire rate climbing with every hit, as if something inside it were growing angrier, and the crew rewires this ship's fire control to chase the same rhythm. Digital rage climbs with every hit that lands, driving the guns faster and faster.
 type|furor_machinae|null|1	0	Damage dealt to enemy ships builds fury, raising weapon rate of fire by up to <good>15%</good>, full after 2000/4000/8000/20000 damage (frigate to capital). Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
-type|furor_machinae|FRIGATE|0	0	Digital rage climbs with every hit that lands, driving the guns faster and faster.
+type|furor_machinae|FRIGATE|0	0	Combat recordings pulled from a Stargazer's data core show its fire rate climbing with every hit, as if something inside it were growing angrier, and the crew rewires this ship's fire control to chase the same rhythm. Digital rage climbs with every hit that lands, driving the guns faster and faster.
 type|furor_machinae|FRIGATE|1	0	Damage dealt to enemy ships builds fury, raising weapon rate of fire by up to <good>15%</good>, full after 2000/4000/8000/20000 damage (frigate to capital). Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
-type|furor_machinae|DESTROYER|0	0	Digital rage climbs with every hit that lands, driving the guns faster and faster.
+type|furor_machinae|DESTROYER|0	0	Combat recordings pulled from a Stargazer's data core show its fire rate climbing with every hit, as if something inside it were growing angrier, and the crew rewires this ship's fire control to chase the same rhythm. Digital rage climbs with every hit that lands, driving the guns faster and faster.
 type|furor_machinae|DESTROYER|1	0	Damage dealt to enemy ships builds fury, raising weapon rate of fire by up to <good>15%</good>, full after 2000/4000/8000/20000 damage (frigate to capital). Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
-type|furor_machinae|CRUISER|0	0	Digital rage climbs with every hit that lands, driving the guns faster and faster.
+type|furor_machinae|CRUISER|0	0	Combat recordings pulled from a Stargazer's data core show its fire rate climbing with every hit, as if something inside it were growing angrier, and the crew rewires this ship's fire control to chase the same rhythm. Digital rage climbs with every hit that lands, driving the guns faster and faster.
 type|furor_machinae|CRUISER|1	0	Damage dealt to enemy ships builds fury, raising weapon rate of fire by up to <good>15%</good>, full after 2000/4000/8000/20000 damage (frigate to capital). Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
-type|furor_machinae|CAPITAL_SHIP|0	0	Digital rage climbs with every hit that lands, driving the guns faster and faster.
+type|furor_machinae|CAPITAL_SHIP|0	0	Combat recordings pulled from a Stargazer's data core show its fire rate climbing with every hit, as if something inside it were growing angrier, and the crew rewires this ship's fire control to chase the same rhythm. Digital rage climbs with every hit that lands, driving the guns faster and faster.
 type|furor_machinae|CAPITAL_SHIP|1	0	Damage dealt to enemy ships builds fury, raising weapon rate of fire by up to <good>15%</good>, full after 2000/4000/8000/20000 damage (frigate to capital). Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
 type|gravitational_drag|null|0	0	Inside a recovered Ancient Prototype, where every conduit converges on a perfectly spherical void, the crew finds the Candle's Grace device that drags at the timeflow of anything near it. Nobody aboard can say who Candle's Grace was, and the replica built from it is mostly guesswork. Nearby enemies slow, most of all while the ship is phased.
 type|gravitational_drag|null|1	0	Enemy ships within 1500 su lose up to <good>5%</good> timeflow, more the closer they are, or <good>10%</good> while this ship is phased. Gravitational drag from every source, including Nightcross's own Gravitational Drag hull mod, is capped at 25% per ship.
@@ -3306,19 +3306,19 @@ type|ion_rounds|CRUISER|0	0	The NCA Vendor sells Ion Bolters to any well-funded 
 type|ion_rounds|CRUISER|1	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
 type|ion_rounds|CAPITAL_SHIP|0	0	The NCA Vendor sells Ion Bolters to any well-funded mercenary, and taking one apart shows the crew how to overdrive this ship's energy shots the same way. Keep pressure on an enemy shield until its hard flux climbs, and the arcs start getting through.
 type|ion_rounds|CAPITAL_SHIP|1	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
-type|language_of_the_lost|null|0	0	Broken signals bleed into enemy fire control, and their weapons fail them when it matters.
+type|language_of_the_lost|null|0	0	The broken transmissions Stargazer fleets whisper across every channel carry fragments of intrusion code, and the crew learns to strip that code out and fire it back at the enemy. The malware slips into enemy fire control, and their weapons fail them when it matters.
 type|language_of_the_lost|null|1	0	Increases ECM rating by <good>1</good>.
 type|language_of_the_lost|null|2	0	Enemy ships within 1000 su have a <good>5%</good> chance of weapon malfunctions. Several ships with this effect don't stack; the strongest applies.
-type|language_of_the_lost|FRIGATE|0	0	Broken signals bleed into enemy fire control, and their weapons fail them when it matters.
+type|language_of_the_lost|FRIGATE|0	0	The broken transmissions Stargazer fleets whisper across every channel carry fragments of intrusion code, and the crew learns to strip that code out and fire it back at the enemy. The malware slips into enemy fire control, and their weapons fail them when it matters.
 type|language_of_the_lost|FRIGATE|1	0	Increases ECM rating by <good>1</good>.
 type|language_of_the_lost|FRIGATE|2	0	Enemy ships within 1000 su have a <good>5%</good> chance of weapon malfunctions. Several ships with this effect don't stack; the strongest applies.
-type|language_of_the_lost|DESTROYER|0	0	Broken signals bleed into enemy fire control, and their weapons fail them when it matters.
+type|language_of_the_lost|DESTROYER|0	0	The broken transmissions Stargazer fleets whisper across every channel carry fragments of intrusion code, and the crew learns to strip that code out and fire it back at the enemy. The malware slips into enemy fire control, and their weapons fail them when it matters.
 type|language_of_the_lost|DESTROYER|1	0	Increases ECM rating by <good>1</good>.
 type|language_of_the_lost|DESTROYER|2	0	Enemy ships within 1000 su have a <good>5%</good> chance of weapon malfunctions. Several ships with this effect don't stack; the strongest applies.
-type|language_of_the_lost|CRUISER|0	0	Broken signals bleed into enemy fire control, and their weapons fail them when it matters.
+type|language_of_the_lost|CRUISER|0	0	The broken transmissions Stargazer fleets whisper across every channel carry fragments of intrusion code, and the crew learns to strip that code out and fire it back at the enemy. The malware slips into enemy fire control, and their weapons fail them when it matters.
 type|language_of_the_lost|CRUISER|1	0	Increases ECM rating by <good>1</good>.
 type|language_of_the_lost|CRUISER|2	0	Enemy ships within 1000 su have a <good>5%</good> chance of weapon malfunctions. Several ships with this effect don't stack; the strongest applies.
-type|language_of_the_lost|CAPITAL_SHIP|0	0	Broken signals bleed into enemy fire control, and their weapons fail them when it matters.
+type|language_of_the_lost|CAPITAL_SHIP|0	0	The broken transmissions Stargazer fleets whisper across every channel carry fragments of intrusion code, and the crew learns to strip that code out and fire it back at the enemy. The malware slips into enemy fire control, and their weapons fail them when it matters.
 type|language_of_the_lost|CAPITAL_SHIP|1	0	Increases ECM rating by <good>1</good>.
 type|language_of_the_lost|CAPITAL_SHIP|2	0	Enemy ships within 1000 su have a <good>5%</good> chance of weapon malfunctions. Several ships with this effect don't stack; the strongest applies.
 type|less_energy_damage_taken|null|0	1	<bad>5%</bad> reduced energy damage taken.

@@ -3670,7 +3670,7 @@
 					"magnitude": 10
 				}
 			],
-			"description": "When the hull is failing, the frozen soul at the core stops holding anything back. The ship fights on through its terminal descent, burning its readiness to do it.",
+			"description": "Stargazers fight hardest when they are dying, and the Stardust Core recovered from one, the remains of what was once a person, shows the crew how to strip the ship's safeties the moment its hull starts to fail. The ship fights on through its terminal descent, burning its readiness to do it.",
 			"tags": [
 				"hull",
 				"combat_readiness"
@@ -3687,7 +3687,7 @@
 					"magnitude": 15
 				}
 			],
-			"description": "Digital rage climbs with every hit that lands, driving the guns faster and faster.",
+			"description": "Combat recordings pulled from a Stargazer's data core show its fire rate climbing with every hit, as if something inside it were growing angrier, and the crew rewires this ship's fire control to chase the same rhythm. Digital rage climbs with every hit that lands, driving the guns faster and faster.",
 			"tags": [
 				"weapons"
 			]
@@ -3707,7 +3707,7 @@
 					"magnitude": 5
 				}
 			],
-			"description": "Broken signals bleed into enemy fire control, and their weapons fail them when it matters.",
+			"description": "The broken transmissions Stargazer fleets whisper across every channel carry fragments of intrusion code, and the crew learns to strip that code out and fire it back at the enemy. The malware slips into enemy fire control, and their weapons fail them when it matters.",
 			"tags": [
 				"fleet_support"
 			]
@@ -3723,7 +3723,7 @@
 					"magnitude": 200
 				}
 			],
-			"description": "Beams held on a target gather stardust, which breaks loose as motes that hunt it down.",
+			"description": "A corrosion emitter salvaged from a Stargazer wreck still drags stardust through whatever it touches, and the crew learns to tune this ship's beams to do the same. Beams held on a target gather stardust, which breaks loose as motes that hunt it down.",
 			"tags": [
 				"energy",
 				"beam",
