@@ -1,16 +1,16 @@
 # Credits
 
-Exiled Sector's source code and original art are licensed under the [GNU General Public License v3.0](LICENSE). The files listed below are not. They belong to their original authors and are included with those authors' permission or under their own licences. The GPL does not cover them, so if you want to reuse them outside Exiled Sector, ask the original author.
+Exiled Sector's source code is licensed under the [GNU General Public License v3.0](LICENSE). The files listed below are not. They belong to their original authors and are included with those authors' permission or under their own licences. The GPL does not cover them, so if you want to reuse them outside Exiled Sector, ask the original author.
 
 ## Random Assortment of Things
 
-By Lukas04 and SnazzyPantsMcGee. Used with permission from Lukas04, given on Discord on 16 October 2026, for RAT-themed skill tree areas using RAT's icons and themes.
+By Lukas04 and SnazzyPantsMcGee. Used with permission from Lukas04 for RAT-themed skill tree areas using RAT's icons and themes.
 
 Files: everything prefixed `rat_`, which covers the icons in `graphics/icons`, the Abyss clouds in `graphics/backgrounds/static_images`, the Exoship, escort and serpent sprites in `graphics/fx`, and the Exoship warp sounds in `sounds/exiledSector`.
 
 ## Nightcross Armory
 
-By YukiM. Nightcross's own licence makes its graphics free to use for kitbashing and its code available under GPLv3, and the author confirmed the assets are free to use in Starsector modding (Discord, 16 October 2026). The Repair Coordinator node is modelled on Nightcross's Repair Coordinator hull mod, reworked to mend armor instead of hull.
+By YukiM. Nightcross's own licence makes its graphics free to use for kitbashing and its code available under GPLv3, and the author confirmed the assets are free to use in Starsector modding.
 
 Files: everything prefixed `na_` in `graphics/icons`, and the repair drone sprite `graphics/fx/na_repair_drone.png` (from the Healing Bolt drone).
 
