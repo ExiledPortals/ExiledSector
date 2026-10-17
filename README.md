@@ -260,8 +260,8 @@ You can find me on the [Unofficial Starsector Discord](https://fractalsoftworks.
 
 ## Credits
 
-A big thank you to Lukas04 for letting me build the ExoTech and Abyss areas from Random Assortment of Things, to YukiM for Nightcross Armory's art, and to Kissa Mies and SirHartley for LOST_SECTOR. [CREDITS.md](CREDITS.md) lists every borrowed file, who made it and the terms it is used under.
+A big thank you to Lukas04 for letting me build the ExoTech and Abyss areas from Random Assortment of Things, to YukiM for the same in Nightcross Armory, and to Kissa Mies and SirHartley for LOST_SECTOR. [CREDITS.md](CREDITS.md) lists every borrowed file, who made it and the terms it is used under.
 
 ## License
 
-Exiled Sector is licensed under the [GNU General Public License v3.0](LICENSE). Fork it, reuse it, change it; just keep your version open source under the same license. This covers the source code and my own art only. Art and sounds borrowed from other mods belong to their authors and are not covered by the GPL; ask them before reusing those files.
+Exiled Sector is licensed under the [GNU General Public License v3.0](LICENSE). Fork it, reuse it, change it; just keep your version open source under the same license. This covers the source code only. Art and sounds borrowed from other mods belong to their authors and are not covered by the GPL; ask them before reusing those files.
