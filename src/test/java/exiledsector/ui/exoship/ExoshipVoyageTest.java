@@ -101,6 +101,8 @@ class ExoshipVoyageTest {
         ExoshipEscorts escorts = new ExoshipEscorts();
         float launchLevelAtDeparture = -1f;
         float launchLevelAtArrival = -1f;
+        float settleSeconds = ExoshipEscorts.DEPART_GAP_SECONDS * (ExoshipEscorts.MAX_ESCORTS - 1)
+                + ExoshipEscorts.departSeconds(null);
         boolean launchedWhileLiningUp = false;
         for (float elapsed = 0f; elapsed < ExoshipVoyage.JUMP_INTERVAL_SECONDS * 2f; elapsed += FRAME) {
             int eventsBefore = events.names.size();
@@ -109,16 +111,16 @@ class ExoshipVoyageTest {
             launchedWhileLiningUp |= voyage.escortsLaunched()
                     && (voyage.phase() == ExoshipVoyage.Phase.TURNING || voyage.phase() == ExoshipVoyage.Phase.BURNING);
             if (events.names.size() > eventsBefore && events.names.get(events.names.size() - 1).equals("departed")) {
-                launchLevelAtDeparture = escorts.launchLevel();
+                launchLevelAtDeparture = highestEscortLevel(escorts);
             }
             if (events.names.size() > eventsBefore && events.names.get(events.names.size() - 1).equals("arrived")) {
-                launchLevelAtArrival = escorts.launchLevel();
+                launchLevelAtArrival = highestEscortLevel(escorts);
             }
             if (launchLevelAtArrival >= 0f && voyage.phase() == ExoshipVoyage.Phase.ORBITING) {
                 break;
             }
         }
-        for (float settle = 0f; settle < ExoshipEscorts.LAUNCH_SECONDS; settle += FRAME) {
+        for (float settle = 0f; settle < settleSeconds; settle += FRAME) {
             voyage.advance(FRAME);
             escorts.advance(FRAME, voyage.escortsLaunched());
         }
@@ -126,7 +128,17 @@ class ExoshipVoyageTest {
         assertEquals(0f, launchLevelAtDeparture);
         assertEquals(0f, launchLevelAtArrival);
         assertFalse(launchedWhileLiningUp);
-        assertEquals(1f, escorts.launchLevel());
+        for (int escortIndex = 0; escortIndex < ExoshipEscorts.MAX_ESCORTS; escortIndex++) {
+            assertEquals(1f, escorts.escortLevel(escortIndex));
+        }
+    }
+
+    private static float highestEscortLevel(ExoshipEscorts escorts) {
+        float highest = 0f;
+        for (int escortIndex = 0; escortIndex < ExoshipEscorts.MAX_ESCORTS; escortIndex++) {
+            highest = Math.max(highest, escorts.escortLevel(escortIndex));
+        }
+        return highest;
     }
 
     @Test

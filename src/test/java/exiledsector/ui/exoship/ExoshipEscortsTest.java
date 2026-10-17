@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ExoshipEscortsTest {
 
     private static final float SHIP_LENGTH = 700f;
+    private static final float FRAME = 1f / 60f;
 
     @Test
     void threeToFiveSmallEscortsFlyBothWaysAroundTheShip() {
@@ -43,13 +44,46 @@ class ExoshipEscortsTest {
         }
     }
 
+    private static ExoshipEscorts runOrder(ExoshipEscorts escorts, boolean launched, float seconds) {
+        for (float elapsed = 0f; elapsed < seconds; elapsed += FRAME) {
+            escorts.advance(FRAME, launched);
+        }
+        return escorts;
+    }
+
+    private static ExoshipEscorts withPlayerShip(HullSize hullSize) {
+        ExoshipEscorts escorts = new ExoshipEscorts();
+        escorts.setPlayerEscort(ExoshipEscorts.playerEscort("graphics/ships/onslaught.png", "onslaught", 160f, 280f, hullSize),
+                HullEngines.NONE);
+        return escorts;
+    }
+
     @Test
     void everyEscortIsAboardBeforeTheShortestPossibleRunUpToAJump() {
-        assertTrue(ExoshipEscorts.LAUNCH_SECONDS < ExoshipVoyage.BURN_SECONDS);
-        for (int escortIndex = 0; escortIndex < ExoshipEscorts.ESCORTS.length; escortIndex++) {
-            assertEquals(0f, ExoshipEscorts.escortLevel(0f, escortIndex), 0.0001f);
-            assertEquals(1f, ExoshipEscorts.escortLevel(1f, escortIndex), 0.0001f);
+        assertTrue(ExoshipEscorts.RECALL_SECONDS < ExoshipVoyage.BURN_SECONDS);
+        ExoshipEscorts escorts = runOrder(withPlayerShip(HullSize.CAPITAL_SHIP), false, ExoshipEscorts.RECALL_SECONDS + FRAME);
+        for (int escortIndex = 0; escortIndex < ExoshipEscorts.MAX_ESCORTS; escortIndex++) {
+            assertEquals(0f, escorts.escortLevel(escortIndex), 0.0001f);
         }
+    }
+
+    @Test
+    void capitalsLeaveTheHangarAtTheSlowestPaceAndSmallerHullsFaster() {
+        assertEquals(4.68f, ExoshipEscorts.departSeconds(HullSize.CAPITAL_SHIP), 0.0001f);
+        assertTrue(ExoshipEscorts.departSeconds(HullSize.CRUISER) < ExoshipEscorts.departSeconds(HullSize.CAPITAL_SHIP));
+        assertTrue(ExoshipEscorts.departSeconds(HullSize.DESTROYER) < ExoshipEscorts.departSeconds(HullSize.CRUISER));
+        assertTrue(ExoshipEscorts.departSeconds(HullSize.FRIGATE) < ExoshipEscorts.departSeconds(HullSize.DESTROYER));
+        assertTrue(ExoshipEscorts.departSeconds(HullSize.FIGHTER) < ExoshipEscorts.departSeconds(HullSize.FRIGATE));
+
+        int playerIndex = ExoshipEscorts.ESCORTS.length;
+        float released = ExoshipEscorts.DEPART_GAP_SECONDS * playerIndex;
+        ExoshipEscorts capital = runOrder(runOrder(withPlayerShip(HullSize.CAPITAL_SHIP), false, ExoshipEscorts.RECALL_SECONDS + FRAME),
+                true, released + ExoshipEscorts.departSeconds(HullSize.FRIGATE) + FRAME);
+        ExoshipEscorts frigate = runOrder(runOrder(withPlayerShip(HullSize.FRIGATE), false, ExoshipEscorts.RECALL_SECONDS + FRAME),
+                true, released + ExoshipEscorts.departSeconds(HullSize.FRIGATE) + FRAME);
+
+        assertEquals(1f, frigate.escortLevel(playerIndex));
+        assertTrue(capital.escortLevel(playerIndex) < 0.6f);
     }
 
     @Test
@@ -68,14 +102,20 @@ class ExoshipEscortsTest {
         assertTrue(ExoshipEscorts.playerLengthShare(HullSize.DESTROYER) < ExoshipEscorts.playerLengthShare(HullSize.CRUISER));
         assertTrue(ExoshipEscorts.playerLengthShare(HullSize.CRUISER) < playerShip.lengthShare());
         assertEquals(ExoshipEscorts.ESCORTS[0].lengthShare(), ExoshipEscorts.playerLengthShare(HullSize.DESTROYER), 0.0001f);
-        assertEquals(0f, ExoshipEscorts.escortLevel(0f, ExoshipEscorts.ESCORTS.length), 0.0001f);
-        assertEquals(1f, ExoshipEscorts.escortLevel(1f, ExoshipEscorts.ESCORTS.length), 0.0001f);
+        assertEquals(HullSize.CAPITAL_SHIP, playerShip.hullSize());
     }
 
     @Test
-    void escortsLaunchOneAfterAnother() {
-        assertTrue(ExoshipEscorts.escortLevel(0.3f, 0) > ExoshipEscorts.escortLevel(0.3f, 1));
-        assertTrue(ExoshipEscorts.escortLevel(0.3f, 1) > ExoshipEscorts.escortLevel(0.3f, 2));
+    void escortsLaunchOneAfterAnotherAndTheLastOutIsTheFirstBackIn() {
+        ExoshipEscorts aboard = runOrder(withPlayerShip(HullSize.CAPITAL_SHIP), false, ExoshipEscorts.RECALL_SECONDS + FRAME);
+        ExoshipEscorts launching = runOrder(aboard, true, ExoshipEscorts.DEPART_GAP_SECONDS * 1.5f);
+        assertTrue(launching.escortLevel(0) > launching.escortLevel(1));
+        assertTrue(launching.escortLevel(1) > 0f);
+        assertEquals(0f, launching.escortLevel(2));
+
+        ExoshipEscorts returning = runOrder(runOrder(withPlayerShip(HullSize.CAPITAL_SHIP), true, 1f), false, 0.5f);
+        assertTrue(returning.escortLevel(ExoshipEscorts.MAX_ESCORTS - 1) < returning.escortLevel(1));
+        assertEquals(1f, returning.escortLevel(0));
     }
 
     @Test
