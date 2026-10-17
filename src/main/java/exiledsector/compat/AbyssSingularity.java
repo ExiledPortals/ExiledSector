@@ -25,12 +25,34 @@ public final class AbyssSingularity {
     static final String REQUIEM_SKILL_ID = "rat_abyssal_requiem";
     static final String ABYSS_WRECK_TAG = "rat_abyss_wreck";
     private static final Logger LOG = Logger.getLogger(AbyssSingularity.class);
+    private static volatile Boolean genesisHullKnown;
 
     private AbyssSingularity() {
     }
 
     public static boolean isDefeated(SectorAPI sector) {
         return sector != null && sector.getMemoryWithoutUpdate().getBoolean(DEFEATED_FLAG);
+    }
+
+    public static boolean isGateOpen(SectorAPI sector) {
+        return isDefeated(sector) || !canDetectDefeat();
+    }
+
+    static boolean canDetectDefeat() {
+        Boolean known = genesisHullKnown;
+        if (known == null) {
+            known = RandomAssortmentCompat.specExists(() -> Global.getSettings().getHullSpec(GENESIS_HULL_ID));
+            genesisHullKnown = known;
+            if (!known) {
+                LOG.warn("[ExiledSector] Random Assortment of Things has no " + GENESIS_HULL_ID
+                        + " hull, so the Singularity win can't be detected; the Abyss unlocks so its area stays usable.");
+            }
+        }
+        return known;
+    }
+
+    static void clearCachedDetection() {
+        genesisHullKnown = null;
     }
 
     public static void recordBattle(SectorAPI sector, EngagementResultAPI result) {

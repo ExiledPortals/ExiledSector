@@ -1161,7 +1161,7 @@
     "settings.areas.lostSector.name": "Lost Sector 区域（凯斯特文与冰封之心）",
     "settings.areas.lostSector.tooltip": "Auto 只在安装了 Lost Sector 时显示该区域；On 始终显示，Off 始终隐藏。舰船在隐藏区域中已分配的节点会被保留，但在该区域重新显示前不生效，也不占用装配点或节点名额；重新显示后，仍与舰船技能树相连的节点会恢复。",
     "settings.areas.randomAssortment.name": "Random Assortment of Things 区域（ExoTech 与深渊）",
-    "settings.areas.randomAssortment.tooltip": "Auto 会在安装了 Random Assortment of Things 时显示这些区域，Off 则将其隐藏。这些区域需要 Random Assortment of Things：未安装时，无论此设置如何都会保持隐藏，因为外星舰、其护航舰与深渊都使用了该模组的舰船和美术资源。舰船在隐藏区域中已分配的节点会被保留，但在该区域重新显示前不生效，也不占用装配点或节点名额；重新显示后，仍与舰船技能树相连的节点会恢复。",
+    "settings.areas.randomAssortment.tooltip": "Auto 会在安装了 Random Assortment of Things 时显示这些区域，Off 则将其隐藏。这些区域需要 Random Assortment of Things：未安装时，无论此设置如何都会保持隐藏，因为这些区域是围绕该模组的剧情、势力和物品设计的。舰船在隐藏区域中已分配的节点会被保留，但在该区域重新显示前不生效，也不占用装配点或节点名额；重新显示后，仍与舰船技能树相连的节点会恢复。",
     "settings.areas.nightcross.name": "Nightcross Armory 区域（夜十字与观星者）",
     "settings.areas.nightcross.tooltip": "Auto 只在安装了 Nightcross Armory 时显示这些区域；On 始终显示，Off 始终隐藏。舰船在隐藏区域中已分配的节点会被保留，但在该区域重新显示前不生效，也不占用装配点或节点名额；重新显示后，仍与舰船技能树相连的节点会恢复。",
     "settings.energyChain.header": "折射弹体",

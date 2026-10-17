@@ -49,8 +49,8 @@ public final class SkillTypeUnlockStatus {
                 case CHARACTER_STAT -> hasCharacterStat(condition);
                 case MIN_SHIP_LEVEL -> hasMinShipLevel(condition, shipData);
                 case MEMORY_FLAG -> hasMemoryFlag(condition);
-                case RAT_PLAYER_EXOSHIP -> !RandomAssortmentCompat.isModEnabled() || RandomAssortmentCompat.playerOwnsExoship();
-                case RAT_SINGULARITY_DEFEATED -> !RandomAssortmentCompat.isModEnabled() || AbyssSingularity.isDefeated(Global.getSector());
+                case RAT_PLAYER_EXOSHIP -> !RandomAssortmentCompat.isModEnabled() || RandomAssortmentCompat.exoshipGateOpen();
+                case RAT_SINGULARITY_DEFEATED -> !RandomAssortmentCompat.isModEnabled() || AbyssSingularity.isGateOpen(Global.getSector());
                 case NIGHTCROSS_PASCAL_VISITED -> !NightcrossCompat.isModEnabled() || NightcrossUnlocks.isPascalVisited(Global.getSector());
                 case NIGHTCROSS_LUNAR_FLEET_DEFEATED -> !NightcrossCompat.isModEnabled() || NightcrossUnlocks.isLunarFleetDefeated(Global.getSector());
                 case NIGHTCROSS_ANCIENT_PROTOTYPE_FOUND -> !NightcrossCompat.isModEnabled() || NightcrossUnlocks.isAncientPrototypeFound(Global.getSector());

@@ -3,6 +3,7 @@ package exiledsector.compat;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ModManagerAPI;
 import com.fs.starfarer.api.SettingsAPI;
+import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.characters.SkillSpecAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
@@ -141,9 +142,27 @@ class CompatChecksTest {
         when(settings.getScriptClassLoader()).thenReturn(CompatChecksTest.class.getClassLoader());
         when(settings.getHullSpec("rat_genesis")).thenReturn(mock(ShipHullSpecAPI.class));
         when(settings.getSkillSpec("rat_abyssal_requiem")).thenReturn(mock(SkillSpecAPI.class));
+        when(settings.doesVariantExist("rat_genesis_Hull")).thenReturn(true);
+        when(settings.getCommoditySpec(anyString())).thenReturn(mock(CommoditySpecAPI.class));
         RandomAssortmentCompat.clearCachedLookups();
 
         assertEquals(List.of("the hull mod rat_hypatia_hullmod"), RandomAssortmentCompat.TARGET.missingFeatures().get());
+    }
+
+    @Test
+    void randomAssortmentReportsTheAbyssCurrenciesAndTheGenesisWreckVariantWhenTheyAreGone() {
+        when(settings.getHullModSpec(anyString())).thenReturn(mock(HullModSpecAPI.class));
+        when(settings.getScriptClassLoader()).thenReturn(CompatChecksTest.class.getClassLoader());
+        when(settings.getHullSpec("rat_genesis")).thenReturn(mock(ShipHullSpecAPI.class));
+        when(settings.getSkillSpec("rat_abyssal_requiem")).thenReturn(mock(SkillSpecAPI.class));
+        when(settings.getCommoditySpec("rat_abyssal_matter")).thenReturn(mock(CommoditySpecAPI.class));
+        RandomAssortmentCompat.clearCachedLookups();
+
+        List<String> missing = RandomAssortmentCompat.TARGET.missingFeatures().get();
+
+        assertEquals(2, missing.size(), missing.toString());
+        assertTrue(missing.stream().anyMatch(feature -> feature.contains("rat_genesis_Hull")), missing.toString());
+        assertTrue(missing.stream().anyMatch(feature -> feature.contains("rat_chronos_core")), missing.toString());
     }
 
     @Test
