@@ -37,10 +37,10 @@ public final class SocketTypeMigration {
                     returnedItems.add(hullItem);
                 }
             }
-            for (Map.Entry<String, String> slotEntry : List.copyOf(shipData.getFrameworkSocketedItems().entrySet())) {
+            for (Map.Entry<String, String> slotEntry : List.copyOf(shipData.getSectionItems().entrySet())) {
                 HullItem hullItem = store.find(slotEntry.getValue());
-                if (hullItem != null && hullItem.kind() != null && !SocketCustody.fitsFrameworkSocket(hullItem, slotEntry.getKey())) {
-                    shipData.unsocketFrameworkItem(slotEntry.getKey());
+                if (hullItem != null && hullItem.kind() != null && !SocketCustody.fitsSection(hullItem, slotEntry.getKey())) {
+                    shipData.removeFromSection(slotEntry.getKey());
                     returnedItems.add(hullItem);
                 }
             }

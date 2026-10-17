@@ -45,7 +45,7 @@ import static org.mockito.Mockito.when;
 class HullItemLootListenerTest {
 
     private static final String TAG = "exiledSector_npcTree|generated|1|root,socket_1|sockets:socket_1=npc:domain_subroutine_military/12";
-    private static final String FRAMEWORK_TAG = TAG + "|frameworkTypes:bridge+reactor|frameworkSockets:bridge=npc:bridge_basic/3";
+    private static final String SECTION_ITEM_TAG = TAG + "|frameworkTypes:bridge+reactor|frameworkSockets:bridge=npc:bridge_basic/3";
 
     private MockedStatic<Global> globalMock;
     private CargoAPI playerCargo;
@@ -133,7 +133,7 @@ class HullItemLootListenerTest {
     }
 
     private static FleetMemberAPI cruiserFlagship(String id) {
-        FleetMemberAPI member = flagship(id, FRAMEWORK_TAG);
+        FleetMemberAPI member = flagship(id, SECTION_ITEM_TAG);
         ShipHullSpecAPI hullSpec = mock(ShipHullSpecAPI.class);
         when(hullSpec.getHullSize()).thenReturn(HullSize.CRUISER);
         when(member.getHullSpec()).thenReturn(hullSpec);
@@ -186,7 +186,7 @@ class HullItemLootListenerTest {
     }
 
     @Test
-    void aRecoveredFlagshipKeepsItsFrameworkOutOfTheLoot() {
+    void aRecoveredFlagshipKeepsItsSectionOutOfTheLoot() {
         HullItemLootListener luckyListener = new HullItemLootListener(alwaysLucky());
         BattleAPI battle = mock(BattleAPI.class);
         FleetMemberAPI crippled = cruiserFlagship("crippled");

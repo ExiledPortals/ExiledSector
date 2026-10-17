@@ -1,4 +1,4 @@
-package exiledsector.ui.framework;
+package exiledsector.ui.section;
 
 import exiledsector.ui.decoration.ShipAnchors;
 
@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public final class FrameworkSocketLayout {
+public final class SectionLayout {
 
     public enum Side {LEFT, RIGHT, ABOVE, BELOW}
 
@@ -30,16 +30,16 @@ public final class FrameworkSocketLayout {
         }
     }
 
-    public static final float SOCKET_RADIUS = 88f;
+    public static final float SECTION_RADIUS = 88f;
     public static final float COLUMN_GAP = 110f;
     static final float VERTICAL_GAP = 70f;
-    static final float END_SOCKET_SHIFT = 120f;
+    static final float END_SECTION_SHIFT = 120f;
     static final float ELBOW_RUN = 50f;
     static final float ROW_SPACING = 270f;
     private static final float CENTRELINE_TOLERANCE = 1f;
-    private static final int MIN_SOCKETS_FOR_ENDS = 3;
+    private static final int MIN_SECTIONS_FOR_ENDS = 3;
 
-    private FrameworkSocketLayout() {
+    private SectionLayout() {
     }
 
     public static List<Placement> place(List<ShipAnchors.Anchor> anchors, Arrangement arrangement) {
@@ -47,12 +47,12 @@ public final class FrameworkSocketLayout {
     }
 
     static List<Placement> placeBothSides(List<ShipAnchors.Anchor> anchors) {
-        int socketCount = anchors.size();
-        boolean[] leftSide = new boolean[socketCount];
+        int sectionCount = anchors.size();
+        boolean[] leftSide = new boolean[sectionCount];
         List<Integer> leftSlots = new ArrayList<>();
         List<Integer> rightSlots = new ArrayList<>();
         List<Integer> centreSlots = new ArrayList<>();
-        for (int slot = 0; slot < socketCount; slot++) {
+        for (int slot = 0; slot < sectionCount; slot++) {
             float left = anchors.get(slot).left();
             if (left > CENTRELINE_TOLERANCE) {
                 leftSlots.add(slot);
@@ -74,7 +74,7 @@ public final class FrameworkSocketLayout {
             smaller.add(moved);
         }
         leftSlots.forEach(slot -> leftSide[slot] = true);
-        Placement[] placements = new Placement[socketCount];
+        Placement[] placements = new Placement[sectionCount];
         for (List<Integer> sideSlots : List.of(leftSlots, rightSlots)) {
             List<Integer> topToBottom = frontToBack(anchors, sideSlots);
             for (int row = 0; row < topToBottom.size(); row++) {
@@ -92,7 +92,7 @@ public final class FrameworkSocketLayout {
         }
         List<Integer> frontToBack = frontToBack(anchors, slots);
         Placement[] placements = new Placement[anchors.size()];
-        if (frontToBack.size() >= MIN_SOCKETS_FOR_ENDS) {
+        if (frontToBack.size() >= MIN_SECTIONS_FOR_ENDS) {
             placements[frontToBack.remove(0)] = new Placement(Side.ABOVE, 0, 1);
             placements[frontToBack.remove(frontToBack.size() - 1)] = new Placement(Side.BELOW, 0, 1);
         }
@@ -108,17 +108,17 @@ public final class FrameworkSocketLayout {
         return ordered;
     }
 
-    public static float socketX(Placement placement, float shipX, ShipExtent extent) {
-        float offset = extent.halfWidth() + COLUMN_GAP + SOCKET_RADIUS;
+    public static float sectionX(Placement placement, float shipX, ShipExtent extent) {
+        float offset = extent.halfWidth() + COLUMN_GAP + SECTION_RADIUS;
         return switch (placement.side()) {
             case LEFT -> shipX - offset;
             case RIGHT -> shipX + offset;
-            case ABOVE, BELOW -> shipX - Math.min(END_SOCKET_SHIFT, extent.halfWidth());
+            case ABOVE, BELOW -> shipX - Math.min(END_SECTION_SHIFT, extent.halfWidth());
         };
     }
 
-    public static float socketY(Placement placement, float shipY, ShipExtent extent) {
-        float endOffset = extent.halfLength() + VERTICAL_GAP + SOCKET_RADIUS;
+    public static float sectionY(Placement placement, float shipY, ShipExtent extent) {
+        float endOffset = extent.halfLength() + VERTICAL_GAP + SECTION_RADIUS;
         return switch (placement.side()) {
             case LEFT, RIGHT -> shipY + ((placement.rowsOnSide() - 1) / 2f - placement.row()) * ROW_SPACING;
             case ABOVE -> shipY + endOffset;
@@ -126,29 +126,29 @@ public final class FrameworkSocketLayout {
         };
     }
 
-    public static float edgeX(Placement placement, float socketX) {
+    public static float edgeX(Placement placement, float sectionX) {
         return switch (placement.side()) {
-            case LEFT -> socketX + SOCKET_RADIUS;
-            case RIGHT -> socketX - SOCKET_RADIUS;
-            case ABOVE, BELOW -> socketX;
+            case LEFT -> sectionX + SECTION_RADIUS;
+            case RIGHT -> sectionX - SECTION_RADIUS;
+            case ABOVE, BELOW -> sectionX;
         };
     }
 
-    public static float edgeY(Placement placement, float socketY) {
+    public static float edgeY(Placement placement, float sectionY) {
         return switch (placement.side()) {
-            case LEFT, RIGHT -> socketY;
-            case ABOVE -> socketY - SOCKET_RADIUS;
-            case BELOW -> socketY + SOCKET_RADIUS;
+            case LEFT, RIGHT -> sectionY;
+            case ABOVE -> sectionY - SECTION_RADIUS;
+            case BELOW -> sectionY + SECTION_RADIUS;
         };
     }
 
-    public static float elbowX(Placement placement, float socketX) {
-        float edgeX = edgeX(placement, socketX);
-        return placement.vertical() ? edgeX : edgeX + Math.signum(edgeX - socketX) * ELBOW_RUN;
+    public static float elbowX(Placement placement, float sectionX) {
+        float edgeX = edgeX(placement, sectionX);
+        return placement.vertical() ? edgeX : edgeX + Math.signum(edgeX - sectionX) * ELBOW_RUN;
     }
 
-    public static float elbowY(Placement placement, float socketY) {
-        float edgeY = edgeY(placement, socketY);
-        return placement.vertical() ? edgeY + Math.signum(edgeY - socketY) * ELBOW_RUN : edgeY;
+    public static float elbowY(Placement placement, float sectionY) {
+        float edgeY = edgeY(placement, sectionY);
+        return placement.vertical() ? edgeY + Math.signum(edgeY - sectionY) * ELBOW_RUN : edgeY;
     }
 }

@@ -16,7 +16,7 @@ public final class HullUpgradeRoller {
     private HullUpgradeRoller() {
     }
 
-    public static int rollSocketCount(Random random) {
+    public static int rollSectionCount(Random random) {
         float roll = random.nextFloat();
         if (roll < TWO_SOCKET_SHARE) {
             return 2;
@@ -28,14 +28,14 @@ public final class HullUpgradeRoller {
         return ShipHullSizes.ORDER.get(random.nextInt(ShipHullSizes.ORDER.size()));
     }
 
-    public static List<HullItemType> rollTypes(int socketCount, List<HullItemType> allowedTypes, Random random) {
-        List<HullItemType> shuffledTypes = new ArrayList<>();
-        for (HullItemType allowedType : allowedTypes) {
-            if (allowedType.isFramework() && !shuffledTypes.contains(allowedType)) {
-                shuffledTypes.add(allowedType);
+    public static List<ShipSection> rollSections(int sectionCount, List<ShipSection> allowedSections, Random random) {
+        List<ShipSection> shuffledSections = new ArrayList<>();
+        for (ShipSection allowedSection : allowedSections) {
+            if (!shuffledSections.contains(allowedSection)) {
+                shuffledSections.add(allowedSection);
             }
         }
-        Collections.shuffle(shuffledTypes, random);
-        return List.copyOf(shuffledTypes.subList(0, Math.min(socketCount, shuffledTypes.size())));
+        Collections.shuffle(shuffledSections, random);
+        return List.copyOf(shuffledSections.subList(0, Math.min(sectionCount, shuffledSections.size())));
     }
 }

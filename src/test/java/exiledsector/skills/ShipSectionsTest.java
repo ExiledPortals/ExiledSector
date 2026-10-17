@@ -5,7 +5,6 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.skills.tags.ShipProfile;
 import exiledsector.hullitems.NpcHullItems;
-import exiledsector.hullitems.HullItemType;
 import exiledsector.hullitems.HullItemDefinitions;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -21,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class FrameworkSlotsTest {
+class ShipSectionsTest {
 
     private ShipSkillData shipData;
 
@@ -36,8 +35,8 @@ class FrameworkSlotsTest {
         shipData = new ShipSkillData();
         shipData.grantUnlockedSocketType("bridge");
         shipData.grantUnlockedSocketType("shield_generator");
-        shipData.socketFrameworkItem("bridge", NpcHullItems.id("bridge_item", 1L));
-        shipData.socketFrameworkItem("shield_generator", NpcHullItems.id("emitter", 2L));
+        shipData.installInSection("bridge", NpcHullItems.id("bridge_item", 1L));
+        shipData.installInSection("shield_generator", NpcHullItems.id("emitter", 2L));
     }
 
     @AfterEach
@@ -61,19 +60,19 @@ class FrameworkSlotsTest {
     }
 
     @Test
-    void everySocketedFrameworkItemCountsOnceWhenItsSocketIsActive() {
-        List<FrameworkSlots.Slot> slots = FrameworkSlots.of(shipData, () -> fit(ShieldType.FRONT));
+    void everySocketedSectionItemCountsOnceWhenItsSocketIsActive() {
+        List<ShipSections.UnlockedSection> slots = ShipSections.of(shipData, () -> fit(ShieldType.FRONT));
         EffectTotals totals = EffectTotals.of(shipData, List.of(), HullSize.CRUISER, 1f, slots);
 
         assertEquals(2, slots.size());
-        assertTrue(slots.stream().allMatch(FrameworkSlots.Slot::active));
+        assertTrue(slots.stream().allMatch(ShipSections.UnlockedSection::active));
         assertEquals(15f, hullPercent(totals), 1e-4f);
-        assertEquals(2, totals.slotEffects().size());
+        assertEquals(2, totals.sectionEffects().size());
     }
 
     @Test
     void aRestrictedSocketTheCurrentFitFailsGoesInactiveAndStopsItsItem() {
-        List<FrameworkSlots.Slot> slots = FrameworkSlots.of(shipData, () -> fit(ShieldType.NONE));
+        List<ShipSections.UnlockedSection> slots = ShipSections.of(shipData, () -> fit(ShieldType.NONE));
 
         assertTrue(slots.get(0).active());
         assertFalse(slots.get(1).active());
@@ -84,13 +83,13 @@ class FrameworkSlotsTest {
     @Test
     void theFitIsOnlyWorkedOutForRestrictedSocketsAndAtMostOnce() {
         AtomicInteger fitRequests = new AtomicInteger();
-        FrameworkSlots.of(shipData, () -> {
+        ShipSections.of(shipData, () -> {
             fitRequests.incrementAndGet();
             return fit(ShieldType.FRONT);
         });
         shipData.lockSocketType("shield_generator");
         shipData.grantUnlockedSocketType("reactor");
-        FrameworkSlots.of(shipData, () -> {
+        ShipSections.of(shipData, () -> {
             fitRequests.incrementAndGet();
             return fit(ShieldType.FRONT);
         });
@@ -100,24 +99,24 @@ class FrameworkSlotsTest {
 
     @Test
     void anItemOfTheWrongTypeInASocketDoesNothing() {
-        shipData.socketFrameworkItem("bridge", NpcHullItems.id("chip", 3L));
+        shipData.installInSection("bridge", NpcHullItems.id("chip", 3L));
 
-        List<FrameworkSlots.Slot> slots = FrameworkSlots.of(shipData, () -> fit(ShieldType.FRONT));
+        List<ShipSections.UnlockedSection> slots = ShipSections.of(shipData, () -> fit(ShieldType.FRONT));
 
         assertFalse(slots.get(0).appliesItem());
         assertEquals(10f, hullPercent(EffectTotals.of(shipData, List.of(), HullSize.CRUISER, 1f, slots)), 1e-4f);
     }
 
     @Test
-    void theNpcBonusMultiplierScalesFrameworkItems() {
+    void theNpcBonusMultiplierScalesSectionItems() {
         shipData.markNpcBuild();
-        List<FrameworkSlots.Slot> slots = FrameworkSlots.of(shipData, () -> fit(ShieldType.FRONT));
+        List<ShipSections.UnlockedSection> slots = ShipSections.of(shipData, () -> fit(ShieldType.FRONT));
 
         assertEquals(30f, hullPercent(EffectTotals.of(shipData, List.of(), HullSize.CRUISER, 2f, slots)), 1e-4f);
     }
 
     @Test
     void aShipWithoutUnlockedSocketsHasNoSlots() {
-        assertEquals(List.of(), FrameworkSlots.of(new ShipSkillData(), () -> fit(ShieldType.FRONT)));
+        assertEquals(List.of(), ShipSections.of(new ShipSkillData(), () -> fit(ShieldType.FRONT)));
     }
 }

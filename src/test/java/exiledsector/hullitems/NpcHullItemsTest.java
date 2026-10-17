@@ -115,7 +115,7 @@ class NpcHullItemsTest {
     }
 
     @Test
-    void fleetTreeSocketsNeverDrawAFrameworkUnique() {
+    void fleetTreeSocketsNeverDrawASectionUnique() {
         Random random = new Random(11L);
         for (int i = 0; i < 20000; i++) {
             assertEquals(HullItemType.SUBROUTINE, NpcHullItems.pickDefinition(random, definition -> true).kind());

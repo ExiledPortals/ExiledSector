@@ -2,10 +2,10 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledsector.skills.FrameworkSlots;
+import exiledsector.skills.ShipSections;
 import exiledsector.hullitems.HullUpgradesSetting;
 import exiledsector.ui.decoration.SkillTreeFleetRenderer;
-import exiledsector.ui.framework.FrameworkSocketLayout;
+import exiledsector.ui.section.SectionLayout;
 import exiledsector.ui.node.TreeAllocationSession;
 import exiledsector.ui.socket.HullUpgradePanel;
 import exiledsector.ui.socket.SocketPanelPlacement;
@@ -18,7 +18,7 @@ import java.awt.Color;
 import java.util.List;
 import java.util.function.Consumer;
 
-final class FrameworkInspection {
+final class SectionInspection {
 
     private static final float INSPECT_SHIP_SHARE = 0.4f;
     private static final float INSPECT_FADE_SECONDS = 0.6f;
@@ -27,29 +27,29 @@ final class FrameworkInspection {
     private static final float GRID_ALPHA = 0.06f;
     private static final Color GRID_COLOR = SkillTreePanelStyle.GLOW_COLOR;
     private static final float FREE_SPACE_MARGIN = 24f;
-    private static final float SOCKET_LABEL_ROOM = 70f;
+    private static final float SECTION_LABEL_ROOM = 70f;
     private static final float MIN_SHIP_PIXELS = 120f;
 
     private final CustomPanelAPI hostPanel;
     private final TreeAllocationSession treeSession;
     private final SocketPlacement socketPlacement;
     private final SkillTreeStatPanel statPanel;
-    private final HullSocketsDisplay sockets;
-    private HullUpgradePanel frameworkPanel;
+    private final SectionsDisplay sectionsDisplay;
+    private HullUpgradePanel hullUpgradesPanel;
     private boolean panelDismissed;
     private boolean active;
     private float inspectLevel;
     private PositionAPI treeCanvasPosition;
-    private FrameworkSocketLayout.ShipExtent treeShipExtent = FrameworkSocketLayout.ShipExtent.square(0f);
+    private SectionLayout.ShipExtent treeShipExtent = SectionLayout.ShipExtent.square(0f);
     private final Consumer<SocketPanelTab> upgradesTabListener;
 
-    FrameworkInspection(CustomPanelAPI hostPanel, TreeAllocationSession treeSession, SocketPlacement socketPlacement,
+    SectionInspection(CustomPanelAPI hostPanel, TreeAllocationSession treeSession, SocketPlacement socketPlacement,
                         SkillTreeStatPanel statPanel) {
         this.hostPanel = hostPanel;
         this.statPanel = statPanel;
         this.treeSession = treeSession;
         this.socketPlacement = socketPlacement;
-        this.sockets = new HullSocketsDisplay(hostPanel, treeSession, FrameworkSocketLayout.Arrangement.BOTH_SIDES);
+        this.sectionsDisplay = new SectionsDisplay(hostPanel, treeSession, SectionLayout.Arrangement.BOTH_SIDES);
         this.upgradesTabListener = tab -> {
             if (tab == SocketPanelTab.HULL_ITEMS) {
                 socketPlacement.openFromHullUpgradesTab();
@@ -63,16 +63,16 @@ final class FrameworkInspection {
 
             @Override
             public boolean isOpen() {
-                return frameworkPanel != null;
+                return hullUpgradesPanel != null;
             }
 
             @Override
             public void swapOut() {
-                if (frameworkPanel == null) {
+                if (hullUpgradesPanel == null) {
                     return;
                 }
-                HullUpgradePanel swapped = frameworkPanel;
-                frameworkPanel = null;
+                HullUpgradePanel swapped = hullUpgradesPanel;
+                hullUpgradesPanel = null;
                 panelDismissed = true;
                 swapped.swapOut();
                 socketPlacement.refreshButtonSelected();
@@ -81,7 +81,7 @@ final class FrameworkInspection {
             @Override
             public void swapIn() {
                 panelDismissed = false;
-                if (frameworkPanel == null && treeCanvasPosition != null) {
+                if (hullUpgradesPanel == null && treeCanvasPosition != null) {
                     openPanel(treeCanvasPosition, true);
                 }
             }
@@ -89,15 +89,15 @@ final class FrameworkInspection {
             @Override
             public void open() {
                 panelDismissed = false;
-                if (frameworkPanel == null && treeCanvasPosition != null) {
+                if (hullUpgradesPanel == null && treeCanvasPosition != null) {
                     openPanel(treeCanvasPosition, false);
                 }
             }
 
             @Override
             public void close() {
-                if (frameworkPanel != null) {
-                    frameworkPanel.close();
+                if (hullUpgradesPanel != null) {
+                    hullUpgradesPanel.close();
                 }
             }
         });
@@ -108,15 +108,15 @@ final class FrameworkInspection {
     }
 
     boolean isPanelOpen() {
-        return frameworkPanel != null;
+        return hullUpgradesPanel != null;
     }
 
     boolean isInspecting() {
         return inspectLevel > 0f;
     }
 
-    boolean hasSocketedItems() {
-        return treeSession.frameworkSlots().stream().anyMatch(slot -> slot.item() != null);
+    boolean hasSectionItems() {
+        return treeSession.sections().stream().anyMatch(unlocked -> unlocked.item() != null);
     }
 
     float inspectLevel() {
@@ -127,8 +127,8 @@ final class FrameworkInspection {
                  float mouseX, float mouseY) {
         active = fleetFocused && camera.isFollowSettled();
         socketPlacement.setInspectingShip(active);
-        if (sockets.refreshIfChanged() && frameworkPanel != null) {
-            frameworkPanel.update(sockets.panelView());
+        if (sectionsDisplay.refreshIfChanged() && hullUpgradesPanel != null) {
+            hullUpgradesPanel.update(sectionsDisplay.panelView());
         }
         float fadeStep = amount / INSPECT_FADE_SECONDS;
         inspectLevel = Fade.step(inspectLevel, active, fadeStep);
@@ -141,46 +141,46 @@ final class FrameworkInspection {
             panelDismissed = false;
         }
         boolean wantsPanel = active && !panelDismissed && !socketPlacement.isEngaged() && HullUpgradesSetting.enabled();
-        if (wantsPanel && frameworkPanel == null) {
+        if (wantsPanel && hullUpgradesPanel == null) {
             openPanel(canvasPosition, false);
-        } else if (!wantsPanel && frameworkPanel != null) {
-            frameworkPanel.close();
+        } else if (!wantsPanel && hullUpgradesPanel != null) {
+            hullUpgradesPanel.close();
         }
-        sockets.advance(amount, mouseX, mouseY, isInspecting());
+        sectionsDisplay.advance(amount, mouseX, mouseY, isInspecting());
     }
 
     private void fitShipToFreeSpace(PositionAPI canvasPosition, TreeCamera camera, float shipTreeLength) {
         float panelRight = 0f;
         if (socketPlacement.isStorageOpen()) {
             panelRight = ChromeMetrics.EDGE_MARGIN + SocketStoragePanel.WIDTH;
-        } else if (frameworkPanel != null) {
+        } else if (hullUpgradesPanel != null) {
             panelRight = ChromeMetrics.EDGE_MARGIN + HullUpgradePanel.WIDTH;
         }
         float freeLeft = panelRight + FREE_SPACE_MARGIN;
         float freeRight = canvasPosition.getWidth() - statPanel.reservedWidth() - FREE_SPACE_MARGIN;
-        float socketColumnRoom = sockets.slots().isEmpty() ? 0f
-                : FrameworkSocketLayout.COLUMN_GAP + FrameworkSocketLayout.SOCKET_RADIUS * 2f + SOCKET_LABEL_ROOM;
-        float shipPixelsForWidth = Math.max(MIN_SHIP_PIXELS, freeRight - freeLeft - socketColumnRoom * 2f);
+        float sectionColumnRoom = sectionsDisplay.sections().isEmpty() ? 0f
+                : SectionLayout.COLUMN_GAP + SectionLayout.SECTION_RADIUS * 2f + SECTION_LABEL_ROOM;
+        float shipPixelsForWidth = Math.max(MIN_SHIP_PIXELS, freeRight - freeLeft - sectionColumnRoom * 2f);
         float shipPixels = Math.min(canvasPosition.getHeight() * INSPECT_SHIP_SHARE, shipPixelsForWidth);
         camera.inspect(shipPixels / shipTreeLength);
         camera.setFollowOffset((freeLeft + freeRight) / 2f - canvasPosition.getWidth() / 2f);
     }
 
     void stop() {
-        sockets.hideTooltip();
-        if (frameworkPanel != null) {
-            frameworkPanel.close();
+        sectionsDisplay.hideTooltip();
+        if (hullUpgradesPanel != null) {
+            hullUpgradesPanel.close();
         }
         panelDismissed = false;
-        if (socketPlacement.isFrameworkTargeted()) {
+        if (socketPlacement.isSectionTargeted()) {
             socketPlacement.close();
         }
     }
 
     boolean escape() {
-        if (frameworkPanel != null) {
-            if (!frameworkPanel.escape()) {
-                frameworkPanel.close();
+        if (hullUpgradesPanel != null) {
+            if (!hullUpgradesPanel.escape()) {
+                hullUpgradesPanel.close();
             }
             return true;
         }
@@ -188,40 +188,40 @@ final class FrameworkInspection {
     }
 
     boolean pressLeft(float x, float y, PositionAPI canvasPosition, ScreenRect shipCard) {
-        int socketIndex = inspectLevel < 0.5f ? -1 : socketAt(x, y);
-        if (socketIndex < 0) {
+        int sectionIndex = inspectLevel < 0.5f ? -1 : sectionAt(x, y);
+        if (sectionIndex < 0) {
             return false;
         }
         if (!HullUpgradesSetting.enabled()) {
             SkillTreeSounds.refused();
             return true;
         }
-        List<FrameworkSlots.Slot> slots = sockets.slots();
-        if (socketPlacement.placeIntoFrameworkSocket(slots.get(socketIndex).type())) {
+        List<ShipSections.UnlockedSection> unlockedSections = sectionsDisplay.sections();
+        if (socketPlacement.placeIntoSection(unlockedSections.get(sectionIndex).section())) {
             return true;
         }
-        socketPlacement.openForFrameworkSocket(slots.get(socketIndex).type(), canvasPosition, shipCard);
+        socketPlacement.openForSection(unlockedSections.get(sectionIndex).section(), canvasPosition, shipCard);
         SkillTreeSounds.panelOpened();
         return true;
     }
 
     boolean pressRight(float x, float y) {
-        int socketIndex = socketAt(x, y);
-        if (socketIndex < 0 || sockets.slots().get(socketIndex).item() == null) {
+        int sectionIndex = sectionAt(x, y);
+        if (sectionIndex < 0 || sectionsDisplay.sections().get(sectionIndex).item() == null) {
             return false;
         }
-        treeSession.unsocketFrameworkItem(sockets.slots().get(socketIndex).type());
+        treeSession.removeFromSection(sectionsDisplay.sections().get(sectionIndex).section());
         socketPlacement.refresh();
         return true;
     }
 
     private void openPanel(PositionAPI canvasPosition, boolean instantly) {
-        sockets.absorbUpgradesFromCargo();
+        sectionsDisplay.absorbUpgradesFromCargo();
         float panelHeight = socketPlacement.sidePanelHeight(canvasPosition);
         SocketPanelPlacement placement = new SocketPanelPlacement(ChromeMetrics.EDGE_MARGIN, PANEL_TOP, HullUpgradePanel.WIDTH, panelHeight,
                 instantly);
-        frameworkPanel = HullUpgradePanel.open(hostPanel, placement, sockets.panelView(), sockets.panelListener(() -> {
-                    frameworkPanel = null;
+        hullUpgradesPanel = HullUpgradePanel.open(hostPanel, placement, sectionsDisplay.panelView(), sectionsDisplay.panelListener(() -> {
+                    hullUpgradesPanel = null;
                     panelDismissed = true;
                     socketPlacement.refreshButtonSelected();
                 }), upgradesTabListener, HullUpgradePanel.Sizing.FIT_HEIGHT);
@@ -231,8 +231,8 @@ final class FrameworkInspection {
         }
     }
 
-    private int socketAt(float x, float y) {
-        return isInspecting() ? sockets.socketAt(x, y) : -1;
+    private int sectionAt(float x, float y) {
+        return isInspecting() ? sectionsDisplay.sectionAt(x, y) : -1;
     }
 
     void renderBackdrop(PositionAPI canvasPosition, float alphaMult) {
@@ -245,16 +245,16 @@ final class FrameworkInspection {
 
     void render(PositionAPI canvasPosition, TreeViewport viewport, SkillTreeFleetRenderer fleetRenderer, float alphaMult) {
         if (inspectLevel <= 0f) {
-            sockets.forgetRenderedSockets();
+            sectionsDisplay.forgetRenderedSections();
             return;
         }
         float alpha = alphaMult * Fade.smooth(inspectLevel);
-        SkillTreeFleetRenderer.InspectedShip ship = sockets.slots().isEmpty() ? null : fleetRenderer.inspectedShip(viewport);
+        SkillTreeFleetRenderer.InspectedShip ship = sectionsDisplay.sections().isEmpty() ? null : fleetRenderer.inspectedShip(viewport);
         if (ship != null && ship.longestSidePixels() != treeShipExtent.halfLength() * 2f) {
-            treeShipExtent = FrameworkSocketLayout.ShipExtent.square(ship.longestSidePixels());
+            treeShipExtent = SectionLayout.ShipExtent.square(ship.longestSidePixels());
         }
-        sockets.render(ship, treeShipExtent, alpha,
-                HullSocketsDisplay.SocketBounds.UNBOUNDED, socketPlacement.placingHullItem(),
-                socketPlacement.isFrameworkTargeted() ? socketPlacement.targetFrameworkType() : null);
+        sectionsDisplay.render(ship, treeShipExtent, alpha,
+                SectionsDisplay.SectionBounds.UNBOUNDED, socketPlacement.placingHullItem(),
+                socketPlacement.isSectionTargeted() ? socketPlacement.targetSection() : null);
     }
 }

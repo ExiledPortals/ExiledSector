@@ -168,26 +168,26 @@ public final class HullItemDrops {
         return definition.kind() == HullItemType.SUBROUTINE && !definition.unique() && isDroppable(definition);
     }
 
-    public record FrameworkLoot(List<HullItemData> items, List<HullUpgradeData> upgrades) {
+    public record SectionItemLoot(List<HullItemData> items, List<HullUpgradeData> upgrades) {
 
-        public static final FrameworkLoot NONE = new FrameworkLoot(List.of(), List.of());
+        public static final SectionItemLoot NONE = new SectionItemLoot(List.of(), List.of());
 
         public boolean isEmpty() {
             return items.isEmpty() && upgrades.isEmpty();
         }
     }
 
-    public static FrameworkLoot rollFrameworkLoot(String siteId, Random random, float chanceMult) {
+    public static SectionItemLoot rollSectionItemLoot(String siteId, Random random, float chanceMult) {
         Rule rule = activeRule(siteId);
         if (rule == null || rule.chances().isEmpty()) {
-            return FrameworkLoot.NONE;
+            return SectionItemLoot.NONE;
         }
-        List<HullItemData> droppedItems = rollCascade(rule, random, chanceMult, HullItemDrops::pickFrameworkBasic);
+        List<HullItemData> droppedItems = rollCascade(rule, random, chanceMult, HullItemDrops::pickSectionItemBasic);
         List<HullUpgradeData> droppedUpgrades = new ArrayList<>();
         if (random.nextFloat() < rule.chances().get(0) * chanceMult) {
             droppedUpgrades.add(new HullUpgradeData(HullUpgradeRoller.rollHullSize(random)));
         }
-        return new FrameworkLoot(List.copyOf(droppedItems), List.copyOf(droppedUpgrades));
+        return new SectionItemLoot(List.copyOf(droppedItems), List.copyOf(droppedUpgrades));
     }
 
     private static List<HullItemData> rollCascade(Rule rule, Random random, float chanceMult,
@@ -205,17 +205,17 @@ public final class HullItemDrops {
         return droppedItems;
     }
 
-    public static HullItemDefinition pickFrameworkBasic(Random random) {
+    public static HullItemDefinition pickSectionItemBasic(Random random) {
         List<HullItemType> typesWithBasics = new ArrayList<>();
-        for (HullItemType socketType : HullItemType.frameworkTypes()) {
+        for (HullItemType socketType : HullItemType.sectionItemTypes()) {
             if (HullItemDefinitions.all().stream().anyMatch(definition -> isDroppableBasic(definition, socketType))) {
                 typesWithBasics.add(socketType);
             }
         }
-        return typesWithBasics.isEmpty() ? null : pickFrameworkBasic(typesWithBasics.get(random.nextInt(typesWithBasics.size())), random);
+        return typesWithBasics.isEmpty() ? null : pickSectionItemBasic(typesWithBasics.get(random.nextInt(typesWithBasics.size())), random);
     }
 
-    public static HullItemDefinition pickFrameworkBasic(HullItemType socketType, Random random) {
+    public static HullItemDefinition pickSectionItemBasic(HullItemType socketType, Random random) {
         return pick(random, definition -> definition.kind() == socketType && !definition.unique());
     }
 

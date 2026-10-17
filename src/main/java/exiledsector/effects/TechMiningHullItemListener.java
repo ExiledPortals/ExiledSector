@@ -55,12 +55,12 @@ public class TechMiningHullItemListener implements EconomyTickListener {
             float chanceMult = minedMonths == 0 ? 1f : (float) Math.pow(decay, minedMonths - 1);
             List<HullItemData> foundItems = HullItemDrops.roll(dropSite, random, chanceMult);
             Map<String, Integer> foundMaterials = HullItemDrops.rollMaterials(dropSite, random, chanceMult);
-            HullItemDrops.FrameworkLoot frameworkLoot = HullItemUnlock.frameworksOpen(sector)
-                    ? HullItemDrops.rollFrameworkLoot(dropSite, random, chanceMult) : HullItemDrops.FrameworkLoot.NONE;
+            HullItemDrops.SectionItemLoot sectionItemLoot = HullItemUnlock.sectionsOpen(sector)
+                    ? HullItemDrops.rollSectionItemLoot(dropSite, random, chanceMult) : HullItemDrops.SectionItemLoot.NONE;
             marketMemory.set(MONTHS_KEY, minedMonths + 1);
             List<HullItemData> allFoundItems = new ArrayList<>(foundItems);
-            allFoundItems.addAll(frameworkLoot.items());
-            deliver(market, allFoundItems, foundMaterials, frameworkLoot.upgrades());
+            allFoundItems.addAll(sectionItemLoot.items());
+            deliver(market, allFoundItems, foundMaterials, sectionItemLoot.upgrades());
         }
     }
 

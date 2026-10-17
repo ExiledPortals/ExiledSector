@@ -1,7 +1,8 @@
-package exiledsector.ui.framework;
+package exiledsector.ui.section;
 
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.hullitems.HullItemType;
+import exiledsector.hullitems.ShipSection;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.HoloShapes;
@@ -13,9 +14,9 @@ import java.awt.Color;
 import java.util.EnumMap;
 import java.util.Map;
 
-public final class FrameworkSocketFlair {
+public final class SectionFlair {
 
-    public record SocketLook(float hover, boolean selected, boolean active, String iconPath) {
+    public record SectionLook(float hover, boolean selected, boolean active, String iconPath) {
     }
 
     private static final float OUTER_RING_SPEED = 14f;
@@ -26,35 +27,39 @@ public final class FrameworkSocketFlair {
     private static final float SQUARE_SHARE = 0.42f;
     private static final float ICON_INSET = 0.1f;
     private static final float BRACKET_HOVER_TRAVEL = 6f;
-    private static final Color SOCKET_FILL = new Color(0, 0, 0, 190);
+    private static final Color SECTION_FILL = new Color(0, 0, 0, 190);
     private static final Color INACTIVE_COLOR = new Color(200, 70, 60);
-    private static final SpriteCache ICONS = new SpriteCache(FrameworkSocketFlair.class);
-    private static final Map<HullItemType, Color> TYPE_COLORS = new EnumMap<>(HullItemType.class);
+    private static final SpriteCache ICONS = new SpriteCache(SectionFlair.class);
+    private static final Map<ShipSection, Color> SECTION_COLORS = new EnumMap<>(ShipSection.class);
 
     static {
-        TYPE_COLORS.put(HullItemType.BRIDGE, new Color(255, 205, 90));
-        TYPE_COLORS.put(HullItemType.CREW_QUARTERS, new Color(120, 220, 170));
-        TYPE_COLORS.put(HullItemType.ENGINE_ROOM, new Color(255, 150, 60));
-        TYPE_COLORS.put(HullItemType.REACTOR, new Color(190, 255, 110));
-        TYPE_COLORS.put(HullItemType.ARMOR_PLATING, new Color(205, 175, 140));
-        TYPE_COLORS.put(HullItemType.WEAPON_MOUNT, new Color(255, 95, 85));
-        TYPE_COLORS.put(HullItemType.SHIELD_GENERATOR, new Color(90, 170, 255));
-        TYPE_COLORS.put(HullItemType.PHASE_COIL, new Color(200, 120, 255));
-        TYPE_COLORS.put(HullItemType.FLIGHT_DECK, new Color(90, 230, 255));
+        SECTION_COLORS.put(ShipSection.BRIDGE, new Color(255, 205, 90));
+        SECTION_COLORS.put(ShipSection.CREW_QUARTERS, new Color(120, 220, 170));
+        SECTION_COLORS.put(ShipSection.ENGINE_ROOM, new Color(255, 150, 60));
+        SECTION_COLORS.put(ShipSection.REACTOR, new Color(190, 255, 110));
+        SECTION_COLORS.put(ShipSection.ARMOR_PLATING, new Color(205, 175, 140));
+        SECTION_COLORS.put(ShipSection.WEAPON_MOUNT, new Color(255, 95, 85));
+        SECTION_COLORS.put(ShipSection.SHIELD_GENERATOR, new Color(90, 170, 255));
+        SECTION_COLORS.put(ShipSection.PHASE_COIL, new Color(200, 120, 255));
+        SECTION_COLORS.put(ShipSection.FLIGHT_DECK, new Color(90, 230, 255));
     }
 
-    private FrameworkSocketFlair() {
+    private SectionFlair() {
     }
 
-    public static Color colorOf(HullItemType socketType) {
-        return TYPE_COLORS.getOrDefault(socketType, Misc.getBasePlayerColor());
+    public static Color colorOf(ShipSection section) {
+        return SECTION_COLORS.getOrDefault(section, Misc.getBasePlayerColor());
+    }
+
+    public static Color colorOf(HullItemType itemType) {
+        return itemType == null ? Misc.getBasePlayerColor() : colorOf(itemType.section());
     }
 
     public static Color inactiveColor() {
         return INACTIVE_COLOR;
     }
 
-    public static void render(float cx, float cy, float radius, Color typeColor, SocketLook look, float elapsedSeconds, float alpha) {
+    public static void render(float cx, float cy, float radius, Color typeColor, SectionLook look, float elapsedSeconds, float alpha) {
         if (alpha <= 0f) {
             return;
         }
@@ -64,7 +69,7 @@ public final class FrameworkSocketFlair {
         }
     }
 
-    private static void renderLayers(GlScope scope, float cx, float cy, float radius, Color accent, SocketLook look,
+    private static void renderLayers(GlScope scope, float cx, float cy, float radius, Color accent, SectionLook look,
                                      float elapsedSeconds, float alpha) {
         float hover = look.hover();
         float pulse = 0.5f + 0.5f * (float) Math.sin(elapsedSeconds * 2.4f);
@@ -88,7 +93,7 @@ public final class FrameworkSocketFlair {
         }
         scope.normalBlend();
 
-        GLDraw.fillQuad(cx - half, cy - half, half * 2f, half * 2f, SOCKET_FILL, alpha);
+        GLDraw.fillQuad(cx - half, cy - half, half * 2f, half * 2f, SECTION_FILL, alpha);
         GLDraw.innerGlow(cx - half, cy - half, half * 2f, half * 2f, half * 0.5f, accent, (0.15f + 0.25f * pulse + 0.2f * hover) * alpha);
         GLDraw.strokeQuad(cx - half, cy - half, half * 2f, half * 2f, accent, 1.5f, (0.55f + 0.35f * hover) * alpha);
         if (filled) {

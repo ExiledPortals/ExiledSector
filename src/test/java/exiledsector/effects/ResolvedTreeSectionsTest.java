@@ -1,11 +1,11 @@
 package exiledsector.effects;
 
+import exiledsector.hullitems.ShipSection;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledsector.skills.FrameworkSlots;
+import exiledsector.skills.ShipSections;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.hullitems.NpcHullItems;
-import exiledsector.hullitems.HullItemType;
 import exiledsector.hullitems.HullItemDefinitions;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-class ResolvedTreeFrameworkTest {
+class ResolvedTreeSectionsTest {
 
     @AfterEach
     void tearDown() {
@@ -28,14 +28,14 @@ class ResolvedTreeFrameworkTest {
     }
 
     @Test
-    void frameworkItemsApplyUnderTheirOwnSlotModIdsAndAFitChangeRebuildsTheTree() throws Exception {
+    void sectionItemsApplyUnderTheirOwnSlotModIdsAndAFitChangeRebuildsTheTree() throws Exception {
         HullItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "officer").put("kind", "bridge").put("name", "Officer")
                 .put("rarity", "10").put("prefixes", "HULL_PERCENT:5:5")));
         ShipSkillData shipData = new ShipSkillData();
         shipData.grantUnlockedSocketType("bridge");
         shipData.grantUnlockedSocketType("reactor");
-        shipData.socketFrameworkItem("bridge", NpcHullItems.id("officer", 1L));
-        List<FrameworkSlots.Slot> slots = FrameworkSlots.of(shipData, () -> null);
+        shipData.installInSection("bridge", NpcHullItems.id("officer", 1L));
+        List<ShipSections.UnlockedSection> slots = ShipSections.of(shipData, () -> null);
 
         ResolvedTree resolvedTree = ResolvedTree.of(shipData, HullSize.CRUISER, 1f, slots);
 
@@ -43,8 +43,8 @@ class ResolvedTreeFrameworkTest {
                 .filter(ResolvedTree.EffectEntry.class::isInstance).map(ResolvedTree.EffectEntry.class::cast).toList();
         assertEquals(List.of(new ResolvedTree.EffectEntry(DefenseSkillEffect.HULL_PERCENT, "exiledSector_framework_bridge_HULL_PERCENT", 5f)),
                 effectEntries);
-        assertSame(resolvedTree, ResolvedTree.of(shipData, HullSize.CRUISER, 1f, FrameworkSlots.of(shipData, () -> null)));
-        List<FrameworkSlots.Slot> inactiveSlots = List.of(new FrameworkSlots.Slot(HullItemType.BRIDGE, slots.get(0).item(), "req_test"),
+        assertSame(resolvedTree, ResolvedTree.of(shipData, HullSize.CRUISER, 1f, ShipSections.of(shipData, () -> null)));
+        List<ShipSections.UnlockedSection> inactiveSlots = List.of(new ShipSections.UnlockedSection(ShipSection.BRIDGE, slots.get(0).item(), "req_test"),
                 slots.get(1));
         assertNotSame(resolvedTree, ResolvedTree.of(shipData, HullSize.CRUISER, 1f, inactiveSlots));
     }

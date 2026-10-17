@@ -40,7 +40,7 @@ public final class NpcBonusScaling {
     }
 
     public static NpcBonusScaling of(float bonusScale, ShipSkillData shipData, List<AllocatedNode> allocatedNodes, HullSize hullSize,
-                                     List<FrameworkSlots.Slot> frameworkSlots) {
+                                     List<ShipSections.UnlockedSection> sections) {
         if (Float.compare(bonusScale, 1f) == 0) {
             return NONE;
         }
@@ -50,8 +50,8 @@ public final class NpcBonusScaling {
                 addScalableBonuses(bonusTotals, AllocatedSkillEffects.treeEffects(shipData, node, hullSize));
             }
         }
-        for (FrameworkSlots.Slot slot : frameworkSlots) {
-            addScalableBonuses(bonusTotals, FrameworkSlots.appliedEffects(shipData, slot, hullSize));
+        for (ShipSections.UnlockedSection slot : sections) {
+            addScalableBonuses(bonusTotals, ShipSections.appliedEffects(shipData, slot, hullSize));
         }
         Map<SkillEffect, Float> effectFactors = new HashMap<>();
         bonusTotals.forEach((effect, bonusTotal) -> effectFactors.put(effect, factor(effect.statMode(), bonusTotal, bonusScale)));
@@ -74,7 +74,7 @@ public final class NpcBonusScaling {
         return magnitude * factors.getOrDefault(effect, 1f);
     }
 
-    public float scaledFrameworkItem(SkillEffect effect, float magnitude) {
+    public float scaledSectionItem(SkillEffect effect, float magnitude) {
         if (Float.compare(bonusScale, 1f) == 0 || !isScalableBonus(effect, magnitude)) {
             return magnitude;
         }

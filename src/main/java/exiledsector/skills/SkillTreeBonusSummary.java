@@ -24,7 +24,7 @@ public final class SkillTreeBonusSummary {
         return of(data, hullSize, bonusScale, List.of());
     }
 
-    public static Summary of(ShipSkillData data, HullSize hullSize, float bonusScale, List<FrameworkSlots.Slot> frameworkSlots) {
+    public static Summary of(ShipSkillData data, HullSize hullSize, float bonusScale, List<ShipSections.UnlockedSection> sections) {
         SkillType root = null;
         int nodeCount = 0;
         List<SkillType> notables = new ArrayList<>();
@@ -41,7 +41,7 @@ public final class SkillTreeBonusSummary {
                 notables.add(type);
             }
         }
-        EffectTotals effectTotals = EffectTotals.of(data, allocatedNodes, hullSize, bonusScale, frameworkSlots);
+        EffectTotals effectTotals = EffectTotals.of(data, allocatedNodes, hullSize, bonusScale, sections);
         return new Summary(root, data.getLevel(), nodeCount, notables, describe(effectTotals.groups()));
     }
 

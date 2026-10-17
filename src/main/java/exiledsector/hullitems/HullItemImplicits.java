@@ -48,7 +48,7 @@ public final class HullItemImplicits {
     }
 
     static List<Modifier> parseImplicits(HullItemType type, String implicitsText) {
-        if (type == null || !type.isFramework()) {
+        if (type == null || !type.fitsSection()) {
             throw new IllegalArgumentException("implicits only belong to hull socket types, not subroutines");
         }
         List<Modifier> implicits = new ArrayList<>();

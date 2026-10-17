@@ -37,10 +37,10 @@ public class HullItemSalvageListener implements ShowLootListener {
             loot.addSpecial(item.toSpecialItem(), 1f);
         }
         HullItemDrops.rollMaterials(siteId, random).forEach(loot::addCommodity);
-        if (HullItemUnlock.frameworksOpen(Global.getSector())) {
-            HullItemDrops.FrameworkLoot frameworkLoot = HullItemDrops.rollFrameworkLoot(siteId, random, 1f);
-            frameworkLoot.items().forEach(item -> loot.addSpecial(item.toSpecialItem(), 1f));
-            frameworkLoot.upgrades().forEach(upgrade -> loot.addSpecial(upgrade.toSpecialItem(), 1f));
+        if (HullItemUnlock.sectionsOpen(Global.getSector())) {
+            HullItemDrops.SectionItemLoot sectionItemLoot = HullItemDrops.rollSectionItemLoot(siteId, random, 1f);
+            sectionItemLoot.items().forEach(item -> loot.addSpecial(item.toSpecialItem(), 1f));
+            sectionItemLoot.upgrades().forEach(upgrade -> loot.addSpecial(upgrade.toSpecialItem(), 1f));
         }
     }
 

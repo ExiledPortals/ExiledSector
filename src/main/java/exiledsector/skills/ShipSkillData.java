@@ -71,15 +71,15 @@ public class ShipSkillData {
         return socketedItems == null ? null : socketedItems.remove(nodeId);
     }
 
-    public int getFrameworkPoints() {
+    public int getHullUpgradePoints() {
         return frameworkPoints;
     }
 
-    public int getUnspentFrameworkPoints() {
+    public int getUnspentHullUpgradePoints() {
         return Math.max(0, frameworkPoints - getUnlockedSocketTypeIds().size());
     }
 
-    public boolean addFrameworkPoint(int maxPoints) {
+    public boolean addHullUpgradePoint(int maxPoints) {
         revision++;
         if (frameworkPoints >= maxPoints) {
             return false;
@@ -98,7 +98,7 @@ public class ShipSkillData {
 
     public boolean unlockSocketType(String socketTypeId) {
         revision++;
-        if (socketTypeId == null || isSocketTypeUnlocked(socketTypeId) || getUnspentFrameworkPoints() <= 0) {
+        if (socketTypeId == null || isSocketTypeUnlocked(socketTypeId) || getUnspentHullUpgradePoints() <= 0) {
             return false;
         }
         if (unlockedSocketTypes == null) unlockedSocketTypes = new ArrayList<>();
@@ -124,25 +124,25 @@ public class ShipSkillData {
         return frameworkItemsBySocketType == null ? null : frameworkItemsBySocketType.remove(socketTypeId);
     }
 
-    public Map<String, String> getFrameworkSocketedItems() {
+    public Map<String, String> getSectionItems() {
         return frameworkItemsBySocketType == null ? Map.of() : Collections.unmodifiableMap(frameworkItemsBySocketType);
     }
 
     public List<String> getInstalledHullItemIds() {
         List<String> installedIds = new ArrayList<>(getSocketedItems().values());
-        installedIds.addAll(getFrameworkSocketedItems().values());
+        installedIds.addAll(getSectionItems().values());
         return installedIds;
     }
 
     public boolean holdsHullItem(String hullItemId) {
-        return getSocketedItems().containsValue(hullItemId) || getFrameworkSocketedItems().containsValue(hullItemId);
+        return getSocketedItems().containsValue(hullItemId) || getSectionItems().containsValue(hullItemId);
     }
 
-    public String getFrameworkSocketedItem(String socketTypeId) {
+    public String getSectionItem(String socketTypeId) {
         return frameworkItemsBySocketType == null ? null : frameworkItemsBySocketType.get(socketTypeId);
     }
 
-    public boolean socketFrameworkItem(String socketTypeId, String hullItemId) {
+    public boolean installInSection(String socketTypeId, String hullItemId) {
         revision++;
         if (!isSocketTypeUnlocked(socketTypeId)) {
             return false;
@@ -152,7 +152,7 @@ public class ShipSkillData {
         return true;
     }
 
-    public String unsocketFrameworkItem(String socketTypeId) {
+    public String removeFromSection(String socketTypeId) {
         revision++;
         return frameworkItemsBySocketType == null ? null : frameworkItemsBySocketType.remove(socketTypeId);
     }

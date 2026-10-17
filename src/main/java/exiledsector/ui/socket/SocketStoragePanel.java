@@ -23,7 +23,7 @@ import exiledsector.hullitems.HullItemRarity;
 import exiledsector.hullitems.HullItemStore;
 import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.VanillaText;
-import exiledsector.ui.framework.FrameworkSocketFlair;
+import exiledsector.ui.section.SectionFlair;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -573,7 +573,7 @@ public final class SocketStoragePanel extends HoloPanel {
     }
 
     private static Color typeColor(HullItemType socketType) {
-        return socketType.isFramework() ? FrameworkSocketFlair.colorOf(socketType) : Misc.getBasePlayerColor();
+        return socketType.fitsSection() ? SectionFlair.colorOf(socketType) : Misc.getBasePlayerColor();
     }
 
     private static float addChip(TooltipMakerAPI element, String label, Object chipId, ChipColors colors, boolean checked, float chipLeft,

@@ -26,9 +26,9 @@ public final class NpcTreeTag {
     private static final int CHARGED_NODE_COST = 1;
     static final String GENERATED = "generated";
     static final String SOCKETS_MARKER = "sockets:";
-    static final String FRAMEWORK_TYPES_MARKER = "frameworkTypes:";
+    static final String UNLOCKED_SECTIONS_MARKER = "frameworkTypes:";
     private static final String TYPE_SEPARATOR = "+";
-    static final String FRAMEWORK_SOCKETS_MARKER = "frameworkSockets:";
+    static final String SECTION_ITEMS_MARKER = "frameworkSockets:";
     private static final int MIN_FIELDS = 3;
     private static final int MAX_FIELDS = 6;
     private static final String[] NO_FIELDS = new String[0];
@@ -55,16 +55,16 @@ public final class NpcTreeTag {
             encodedTag.append(FIELD_SEPARATOR).append(SOCKETS_MARKER).append(String.join(NODE_SEPARATOR, socketEntries));
         }
         if (!shipData.getUnlockedSocketTypeIds().isEmpty()) {
-            encodedTag.append(FIELD_SEPARATOR).append(FRAMEWORK_TYPES_MARKER)
+            encodedTag.append(FIELD_SEPARATOR).append(UNLOCKED_SECTIONS_MARKER)
                     .append(String.join(TYPE_SEPARATOR, shipData.getUnlockedSocketTypeIds()));
-            List<String> frameworkSocketEntries = new ArrayList<>();
-            shipData.getFrameworkSocketedItems().forEach((socketTypeId, hullItemId) -> {
+            List<String> sectionEntries = new ArrayList<>();
+            shipData.getSectionItems().forEach((socketTypeId, hullItemId) -> {
                 if (NpcHullItems.isNpcId(hullItemId)) {
-                    frameworkSocketEntries.add(socketTypeId + OPTION_SEPARATOR + hullItemId);
+                    sectionEntries.add(socketTypeId + OPTION_SEPARATOR + hullItemId);
                 }
             });
-            if (!frameworkSocketEntries.isEmpty()) {
-                encodedTag.append(FIELD_SEPARATOR).append(FRAMEWORK_SOCKETS_MARKER).append(String.join(NODE_SEPARATOR, frameworkSocketEntries));
+            if (!sectionEntries.isEmpty()) {
+                encodedTag.append(FIELD_SEPARATOR).append(SECTION_ITEMS_MARKER).append(String.join(NODE_SEPARATOR, sectionEntries));
             }
         }
         return encodedTag.toString();
@@ -117,24 +117,24 @@ public final class NpcTreeTag {
     private static void restoreField(ShipSkillData shipData, String tagField) {
         if (tagField.startsWith(SOCKETS_MARKER)) {
             restoreSockets(shipData, tagField.substring(SOCKETS_MARKER.length()));
-        } else if (tagField.startsWith(FRAMEWORK_TYPES_MARKER)) {
-            for (String socketTypeId : tagField.substring(FRAMEWORK_TYPES_MARKER.length()).split("\\" + TYPE_SEPARATOR)) {
+        } else if (tagField.startsWith(UNLOCKED_SECTIONS_MARKER)) {
+            for (String socketTypeId : tagField.substring(UNLOCKED_SECTIONS_MARKER.length()).split("\\" + TYPE_SEPARATOR)) {
                 HullItemType socketType = HullItemType.byIdOrNull(socketTypeId);
-                if (socketType != null && socketType.isFramework()) {
+                if (socketType != null && socketType.fitsSection()) {
                     shipData.grantUnlockedSocketType(socketTypeId);
                 }
             }
-        } else if (tagField.startsWith(FRAMEWORK_SOCKETS_MARKER)) {
-            restoreFrameworkSockets(shipData, tagField.substring(FRAMEWORK_SOCKETS_MARKER.length()));
+        } else if (tagField.startsWith(SECTION_ITEMS_MARKER)) {
+            restoreSections(shipData, tagField.substring(SECTION_ITEMS_MARKER.length()));
         }
     }
 
-    private static void restoreFrameworkSockets(ShipSkillData shipData, String socketEntries) {
+    private static void restoreSections(ShipSkillData shipData, String socketEntries) {
         for (String entry : socketEntries.split(NODE_SEPARATOR)) {
             int separator = entry.indexOf(OPTION_SEPARATOR);
             String hullItemId = separator <= 0 ? null : entry.substring(separator + 1);
             if (hullItemId != null && NpcHullItems.item(hullItemId) != null
-                    && !shipData.socketFrameworkItem(entry.substring(0, separator), hullItemId)) {
+                    && !shipData.installInSection(entry.substring(0, separator), hullItemId)) {
                 LOG.warn("Skipping an NPC framework socket entry for a socket type the ship has not unlocked: " + entry);
             }
         }

@@ -9,7 +9,7 @@ import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.DescriptionLine;
-import exiledsector.skills.FrameworkSlots;
+import exiledsector.skills.ShipSections;
 import exiledsector.skills.SkillTreeBonusSummary;
 import exiledsector.skills.SkillTreeBonusSummary.Summary;
 import exiledsector.skills.SkillType;
@@ -39,7 +39,7 @@ public final class ShipTreeSummaryRenderer {
 
     private static void renderSummary(TooltipMakerAPI info, ShipTreeLookup.ShipTree shipTree, HullSize hullSize, float pad,
                                       int maxBonusLines) {
-        Summary bonusSummary = SkillTreeBonusSummary.of(shipTree.skillData(), hullSize, shipTree.bonusScale(), shipTree.frameworkSlots());
+        Summary bonusSummary = SkillTreeBonusSummary.of(shipTree.skillData(), hullSize, shipTree.bonusScale(), shipTree.sections());
 
         List<String> headerParts = new ArrayList<>();
         headerParts.add(Translation.msg("summary.level").arg("level", bonusSummary.level()).text());
@@ -77,7 +77,7 @@ public final class ShipTreeSummaryRenderer {
             VanillaText.addPara(info, Translation.msg("summary.sockets").arg("names", Translation.list(socketedNames)).styled(), LINE_PAD,
                     Misc.getTextColor());
         }
-        renderFramework(info, shipTree);
+        renderSections(info, shipTree);
 
         if (!bonusSummary.bonuses().isEmpty()) {
             VanillaText.addPara(info, Translation.styled("summary.bonuses"), SECTION_PAD, Misc.getTextColor());
@@ -93,28 +93,28 @@ public final class ShipTreeSummaryRenderer {
         }
     }
 
-    private static void renderFramework(TooltipMakerAPI info, ShipTreeLookup.ShipTree shipTree) {
-        int frameworkPoints = shipTree.skillData().getFrameworkPoints();
-        if (frameworkPoints <= 0) {
+    private static void renderSections(TooltipMakerAPI info, ShipTreeLookup.ShipTree shipTree) {
+        int hullUpgradePoints = shipTree.skillData().getHullUpgradePoints();
+        if (hullUpgradePoints <= 0) {
             return;
         }
         List<StyledText> socketTexts = new ArrayList<>();
-        for (FrameworkSlots.Slot slot : shipTree.frameworkSlots()) {
-            socketTexts.add(frameworkSocketText(slot));
+        for (ShipSections.UnlockedSection slot : shipTree.sections()) {
+            socketTexts.add(sectionText(slot));
         }
         StyledText sockets = socketTexts.isEmpty() ? Translation.styled("summary.frameworkNone") : Translation.list(socketTexts);
         VanillaText.addPara(info, Translation.msg("summary.framework").arg("used", shipTree.skillData().getUnlockedSocketTypeIds().size())
-                .arg("points", frameworkPoints).arg("sockets", sockets).styled(), LINE_PAD, Misc.getTextColor());
+                .arg("points", hullUpgradePoints).arg("sockets", sockets).styled(), LINE_PAD, Misc.getTextColor());
     }
 
-    private static StyledText frameworkSocketText(FrameworkSlots.Slot slot) {
+    private static StyledText sectionText(ShipSections.UnlockedSection slot) {
         if (!slot.active()) {
-            return Translation.msg("summary.frameworkSocket.inactive").arg("type", slot.type().displayName()).styled();
+            return Translation.msg("summary.frameworkSocket.inactive").arg("type", slot.section().displayName()).styled();
         }
         if (slot.item() == null) {
-            return StyledText.of(slot.type().displayName());
+            return StyledText.of(slot.section().displayName());
         }
-        return Translation.msg("summary.frameworkSocket.filled").arg("type", slot.type().displayName())
+        return Translation.msg("summary.frameworkSocket.filled").arg("type", slot.section().displayName())
                 .arg("item", StyledText.styled(slot.item().name(), Style.HIGHLIGHT)).styled();
     }
 }

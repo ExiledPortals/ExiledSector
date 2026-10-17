@@ -3,16 +3,16 @@ package exiledsector.ui.socket;
 import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledsector.hullitems.HullItemType;
-import exiledsector.ui.socket.HullUpgradePanel.SocketState;
-import exiledsector.ui.framework.FrameworkSocketFlair;
+import exiledsector.hullitems.ShipSection;
+import exiledsector.ui.socket.HullUpgradePanel.SectionState;
+import exiledsector.ui.section.SectionFlair;
 import exiledsector.ui.util.Fade;
 import exiledsector.ui.util.GLDraw;
 
 import java.awt.Color;
 import java.util.List;
 
-final class SocketTypeTile extends BaseCustomUIPanelPlugin {
+final class SectionTile extends BaseCustomUIPanelPlugin {
 
     private static final Color BACKGROUND = new Color(0, 0, 0, 200);
     private static final float BORDER_WIDTH = 1.5f;
@@ -21,16 +21,16 @@ final class SocketTypeTile extends BaseCustomUIPanelPlugin {
     private static final float DIMMED_ALPHA = 0.45f;
     private static final float MAX_STEP_SECONDS = 0.1f;
 
-    private final HullItemType socketType;
-    private final SocketState state;
+    private final ShipSection section;
+    private final SectionState state;
     private final String itemIconPath;
     private final TileInput tileInput;
     private PositionAPI tilePosition;
     private float hoverLevel;
     private float elapsedSeconds;
 
-    SocketTypeTile(HullItemType socketType, SocketState state, String itemIconPath, IconTileCell.Hooks hooks) {
-        this.socketType = socketType;
+    SectionTile(ShipSection section, SectionState state, String itemIconPath, IconTileCell.Hooks hooks) {
+        this.section = section;
         this.state = state;
         this.itemIconPath = itemIconPath;
         this.tileInput = TileInput.forHooks(hooks, !isClickable());
@@ -54,12 +54,12 @@ final class SocketTypeTile extends BaseCustomUIPanelPlugin {
         if (tilePosition == null) {
             return;
         }
-        Color accent = state == SocketState.RESTRICTED ? FrameworkSocketFlair.inactiveColor() : FrameworkSocketFlair.colorOf(socketType);
+        Color accent = state == SectionState.RESTRICTED ? SectionFlair.inactiveColor() : SectionFlair.colorOf(section);
         float x = tilePosition.getX();
         float y = tilePosition.getY();
         GLDraw.fillQuad(x, y, tilePosition.getWidth(), tilePosition.getHeight(), BACKGROUND, alphaMult);
         GLDraw.strokeQuad(x, y, tilePosition.getWidth(), tilePosition.getHeight(), accent, BORDER_WIDTH,
-                (state == SocketState.UNLOCKED ? 1f : DIMMED_ALPHA + 0.5f * hoverLevel) * alphaMult);
+                (state == SectionState.UNLOCKED ? 1f : DIMMED_ALPHA + 0.5f * hoverLevel) * alphaMult);
     }
 
     @Override
@@ -67,11 +67,11 @@ final class SocketTypeTile extends BaseCustomUIPanelPlugin {
         if (tilePosition == null) {
             return;
         }
-        boolean dimmed = state != SocketState.UNLOCKED;
-        FrameworkSocketFlair.SocketLook look = new FrameworkSocketFlair.SocketLook(hoverLevel, state == SocketState.UNLOCKED,
-                state != SocketState.RESTRICTED, state == SocketState.UNLOCKED ? itemIconPath : null);
-        FrameworkSocketFlair.render(tilePosition.getCenterX(), tilePosition.getCenterY(), tilePosition.getWidth() * FLAIR_SHARE,
-                FrameworkSocketFlair.colorOf(socketType), look, elapsedSeconds, (dimmed ? DIMMED_ALPHA : 1f) * alphaMult);
+        boolean dimmed = state != SectionState.UNLOCKED;
+        SectionFlair.SectionLook look = new SectionFlair.SectionLook(hoverLevel, state == SectionState.UNLOCKED,
+                state != SectionState.RESTRICTED, state == SectionState.UNLOCKED ? itemIconPath : null);
+        SectionFlair.render(tilePosition.getCenterX(), tilePosition.getCenterY(), tilePosition.getWidth() * FLAIR_SHARE,
+                SectionFlair.colorOf(section), look, elapsedSeconds, (dimmed ? DIMMED_ALPHA : 1f) * alphaMult);
     }
 
     @Override
@@ -80,6 +80,6 @@ final class SocketTypeTile extends BaseCustomUIPanelPlugin {
     }
 
     private boolean isClickable() {
-        return state == SocketState.UNLOCKED || state == SocketState.AVAILABLE;
+        return state == SectionState.UNLOCKED || state == SectionState.AVAILABLE;
     }
 }

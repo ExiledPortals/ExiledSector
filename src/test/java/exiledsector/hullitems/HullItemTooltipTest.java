@@ -134,7 +134,7 @@ class HullItemTooltipTest {
         HullItem hullItem = new HullItem("socketable_2", "removed_mod_item", 1L,
                 List.of(new RolledEffect("BEAM_WEAPON_DAMAGE_PERCENT", 12f)));
 
-        assertEquals("Unrecognised hull socket module", hullItem.name());
+        assertEquals("Unrecognised hull item", hullItem.name());
         assertEquals(HullItemDefinition.FALLBACK_ICON, hullItem.iconPath());
         assertEquals(1, hullItem.tooltipLines().size());
     }

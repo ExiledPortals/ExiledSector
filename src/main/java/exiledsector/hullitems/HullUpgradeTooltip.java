@@ -26,12 +26,12 @@ public final class HullUpgradeTooltip {
         }, footer);
     }
 
-    public static StyledText socketLine(HullItemType socketType) {
-        if (socketType.requirementTag() == null) {
-            return StyledText.of(socketType.displayName());
+    public static StyledText sectionLine(ShipSection section) {
+        if (section.requirementTag() == null) {
+            return StyledText.of(section.displayName());
         }
-        return Translation.msg("framework.socketNeeds").arg("type", socketType.displayName())
-                .arg("requirement", requirementText(socketType.requirementTag())).styled();
+        return Translation.msg("framework.socketNeeds").arg("type", section.displayName())
+                .arg("requirement", requirementText(section.requirementTag())).styled();
     }
 
     public static String requirementText(String requirementTag) {

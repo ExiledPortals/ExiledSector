@@ -16,7 +16,7 @@ public enum HullItemUnlock {
     DEFEATED_ZIGGURAT("defeated_ziggurat", sector -> sector.getMemoryWithoutUpdate().getBoolean("$defeatedZiggurat"));
 
     public static final int UNIQUE_MIN_PLAYER_LEVEL = 15;
-    public static final int FRAMEWORK_MIN_PLAYER_LEVEL = 15;
+    public static final int SECTION_ITEM_MIN_PLAYER_LEVEL = 15;
     private static final String LATCH_PREFIX = "$exiledSector_socketUnlock_";
 
     private final String id;
@@ -40,13 +40,13 @@ public enum HullItemUnlock {
         return null;
     }
 
-    public static boolean frameworksOpen(SectorAPI sector) {
+    public static boolean sectionsOpen(SectorAPI sector) {
         MutableCharacterStatsAPI playerStats = sector == null ? null : sector.getPlayerStats();
-        return playerStats != null && frameworksOpen(playerStats.getLevel());
+        return playerStats != null && sectionsOpen(playerStats.getLevel());
     }
 
-    public static boolean frameworksOpen(int playerLevel) {
-        return HullUpgradesSetting.enabled() && playerLevel >= FRAMEWORK_MIN_PLAYER_LEVEL;
+    public static boolean sectionsOpen(int playerLevel) {
+        return HullUpgradesSetting.enabled() && playerLevel >= SECTION_ITEM_MIN_PLAYER_LEVEL;
     }
 
     public static boolean canDrop(HullItemDefinition definition, SectorAPI sector) {

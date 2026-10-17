@@ -1,5 +1,6 @@
 package exiledsector.ui.node;
 
+import exiledsector.hullitems.ShipSection;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.characters.SkillSpecAPI;
@@ -15,8 +16,8 @@ import exiledsector.effects.ShipTreeSync;
 import exiledsector.i18n.Translation;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocationGate;
-import exiledsector.skills.FrameworkFit;
-import exiledsector.skills.FrameworkSlots;
+import exiledsector.skills.FittedShipProfile;
+import exiledsector.skills.ShipSections;
 import exiledsector.skills.HullModNames;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.RespecPlan;
@@ -32,8 +33,7 @@ import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.skills.unlock.NodeGates;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.skills.tags.ShipProfile;
-import exiledsector.hullitems.FrameworkSockets;
-import exiledsector.hullitems.HullItemType;
+import exiledsector.hullitems.HullUpgradeRules;
 import exiledsector.hullitems.HullItem;
 import exiledsector.hullitems.HullItemStore;
 
@@ -264,39 +264,39 @@ final class NodeAllocator {
     }
 
     boolean installUpgrade() {
-        return changed(FrameworkSockets.installUpgrade(data(), hullSize(), HullItemStore.get()));
+        return changed(HullUpgradeRules.installUpgrade(data(), hullSize(), HullItemStore.get()));
     }
 
-    boolean unlockSocket(HullItemType socketType) {
-        return changed(FrameworkSockets.unlock(data(), socketType, currentFit()));
+    boolean unlockSection(ShipSection section) {
+        return changed(HullUpgradeRules.unlock(data(), section, currentFit()));
     }
 
-    boolean lockSocket(HullItemType socketType) {
-        return changed(FrameworkSockets.lock(data(), socketType));
+    boolean lockSection(ShipSection section) {
+        return changed(HullUpgradeRules.lock(data(), section));
     }
 
-    boolean socketFrameworkItem(HullItemType socketType, HullItem hullItem) {
-        return changed(FrameworkSockets.socket(data(), socketType, hullItem, ShipSkillDataManager.all()));
+    boolean installInSection(ShipSection section, HullItem hullItem) {
+        return changed(HullUpgradeRules.socket(data(), section, hullItem, ShipSkillDataManager.all()));
     }
 
-    boolean unsocketFrameworkItem(HullItemType socketType) {
-        return changed(data().unsocketFrameworkItem(socketType.id()) != null);
+    boolean removeFromSection(ShipSection section) {
+        return changed(data().removeFromSection(section.id()) != null);
     }
 
-    List<FrameworkSlots.Slot> frameworkSlots() {
-        return FrameworkSlots.forVariant(data(), shipVariant);
+    List<ShipSections.UnlockedSection> sections() {
+        return ShipSections.forVariant(data(), shipVariant);
     }
 
-    FrameworkSockets.UnlockBlock unlockBlock(HullItemType socketType) {
-        return FrameworkSockets.unlockBlock(data(), socketType, currentFit());
+    HullUpgradeRules.UnlockBlock unlockBlock(ShipSection section) {
+        return HullUpgradeRules.unlockBlock(data(), section, currentFit());
     }
 
-    String unmetRequirement(HullItemType socketType) {
-        return FrameworkSlots.unmetRequirement(socketType, currentFit());
+    String unmetRequirement(ShipSection section) {
+        return ShipSections.unmetRequirement(section, currentFit());
     }
 
     private ShipProfile currentFit() {
-        return FrameworkFit.profile(fleetMember.getHullSpec(), shipVariant, data());
+        return FittedShipProfile.profile(fleetMember.getHullSpec(), shipVariant, data());
     }
 
     HullSize hullSize() {

@@ -78,12 +78,12 @@ class HullItemUnlockTest {
 
     @Test
     void hullSocketsOpenAtLevelFifteenUnlessHullUpgradesAreSwitchedOff() {
-        assertFalse(HullItemUnlock.frameworksOpen(14));
-        assertTrue(HullItemUnlock.frameworksOpen(15));
+        assertFalse(HullItemUnlock.sectionsOpen(14));
+        assertTrue(HullItemUnlock.sectionsOpen(15));
 
         HullUpgradesSetting.setEnabledForTests(false);
         try {
-            assertFalse(HullItemUnlock.frameworksOpen(50));
+            assertFalse(HullItemUnlock.sectionsOpen(50));
         } finally {
             HullUpgradesSetting.setEnabledForTests(HullUpgradesSetting.DEFAULT_ENABLED);
         }

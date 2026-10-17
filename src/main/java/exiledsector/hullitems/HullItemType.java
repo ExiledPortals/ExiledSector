@@ -9,27 +9,25 @@ import java.util.stream.Collectors;
 
 public enum HullItemType {
 
-    SUBROUTINE("subroutine", null, false),
-    BRIDGE("bridge", null, true),
-    CREW_QUARTERS("crew_quarters", null, true),
-    ENGINE_ROOM("engine_room", null, true),
-    REACTOR("reactor", null, true),
-    ARMOR_PLATING("armor_plating", null, true),
-    WEAPON_MOUNT("weapon_mount", null, true),
-    SHIELD_GENERATOR("shield_generator", "req_shields", true),
-    PHASE_COIL("phase_coil", "req_phase", true),
-    FLIGHT_DECK("flight_deck", "req_fighter_bays", true);
+    SUBROUTINE("subroutine", null),
+    BRIDGE("bridge", ShipSection.BRIDGE),
+    CREW_QUARTERS("crew_quarters", ShipSection.CREW_QUARTERS),
+    ENGINE_ROOM("engine_room", ShipSection.ENGINE_ROOM),
+    REACTOR("reactor", ShipSection.REACTOR),
+    ARMOR_PLATING("armor_plating", ShipSection.ARMOR_PLATING),
+    WEAPON_MOUNT("weapon_mount", ShipSection.WEAPON_MOUNT),
+    SHIELD_GENERATOR("shield_generator", ShipSection.SHIELD_GENERATOR),
+    PHASE_COIL("phase_coil", ShipSection.PHASE_COIL),
+    FLIGHT_DECK("flight_deck", ShipSection.FLIGHT_DECK);
 
-    private static final List<HullItemType> FRAMEWORK_TYPES = Arrays.stream(values()).filter(HullItemType::isFramework).toList();
+    private static final List<HullItemType> SECTION_ITEM_TYPES = Arrays.stream(values()).filter(HullItemType::fitsSection).toList();
 
     private final String id;
-    private final String requirementTag;
-    private final boolean framework;
+    private final ShipSection section;
 
-    HullItemType(String id, String requirementTag, boolean framework) {
+    HullItemType(String id, ShipSection section) {
         this.id = id;
-        this.requirementTag = requirementTag;
-        this.framework = framework;
+        this.section = section;
     }
 
     public static HullItemType byId(String id) {
@@ -38,7 +36,7 @@ public enum HullItemType {
                 return type;
             }
         }
-        throw new IllegalArgumentException("Unknown socket type \"" + id + "\"; expected one of "
+        throw new IllegalArgumentException("Unknown hull item type \"" + id + "\"; expected one of "
                 + Arrays.stream(values()).map(HullItemType::id).collect(Collectors.joining(", ")));
     }
 
@@ -51,20 +49,20 @@ public enum HullItemType {
         return null;
     }
 
-    public static List<HullItemType> frameworkTypes() {
-        return FRAMEWORK_TYPES;
+    public static List<HullItemType> sectionItemTypes() {
+        return SECTION_ITEM_TYPES;
     }
 
     public String id() {
         return id;
     }
 
-    public String requirementTag() {
-        return requirementTag;
+    public ShipSection section() {
+        return section;
     }
 
-    public boolean isFramework() {
-        return framework;
+    public boolean fitsSection() {
+        return section != null;
     }
 
     public List<Modifier> implicits() {

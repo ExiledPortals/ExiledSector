@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public final class FrameworkFit {
+public final class FittedShipProfile {
 
-    private FrameworkFit() {
+    private FittedShipProfile() {
     }
 
     public static ShipProfile profile(ShipHullSpecAPI hullSpec, ShipVariantAPI variant, ShipSkillData shipData) {

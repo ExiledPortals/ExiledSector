@@ -102,8 +102,8 @@ class HullItemDefinitionsTest {
             assertThrows(IllegalArgumentException.class, () -> HullItemType.byId(legacyKind));
             assertNull(HullItemType.byIdOrNull(legacyKind));
         }
-        assertEquals(List.of(HullItemType.SUBROUTINE), Arrays.stream(HullItemType.values()).filter(type -> !type.isFramework()).toList());
-        assertEquals(9, HullItemType.frameworkTypes().size());
+        assertEquals(List.of(HullItemType.SUBROUTINE), Arrays.stream(HullItemType.values()).filter(type -> !type.fitsSection()).toList());
+        assertEquals(9, HullItemType.sectionItemTypes().size());
     }
 
     @Test

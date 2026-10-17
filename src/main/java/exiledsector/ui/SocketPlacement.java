@@ -10,6 +10,7 @@ import exiledsector.skills.SkillTier;
 import exiledsector.hullitems.HullUpgradesSetting;
 import exiledsector.hullitems.SocketCustody;
 import exiledsector.hullitems.HullItemType;
+import exiledsector.hullitems.ShipSection;
 import exiledsector.hullitems.HullItem;
 import exiledsector.hullitems.HullItemStore;
 import exiledsector.ui.node.NodeSearch;
@@ -77,7 +78,7 @@ final class SocketPlacement {
     private SocketStoragePanel storagePanel;
     private HullItem placingHullItem;
     private SkillNode targetSocket;
-    private HullItemType targetFrameworkType;
+    private ShipSection targetSection;
     private boolean inspectingShip;
     private int storageRevision;
     private int shownStoredCount = -1;
@@ -132,12 +133,12 @@ final class SocketPlacement {
         return storageButton.isClickable(x, y);
     }
 
-    boolean isFrameworkTargeted() {
-        return targetFrameworkType != null;
+    boolean isSectionTargeted() {
+        return targetSection != null;
     }
 
-    HullItemType targetFrameworkType() {
-        return targetFrameworkType;
+    ShipSection targetSection() {
+        return targetSection;
     }
 
     void setHullUpgradesTab(HullUpgradesTab tab) {
@@ -148,14 +149,14 @@ final class SocketPlacement {
         treeCanvasPosition = canvasPosition;
     }
 
-    void openForFrameworkSocket(HullItemType socketType, PositionAPI canvasPosition, ScreenRect shipCard) {
+    void openForSection(ShipSection section, PositionAPI canvasPosition, ScreenRect shipCard) {
         stopPlacing();
         clearTargetSocket();
-        targetFrameworkType = socketType;
+        targetSection = section;
         if (storagePanel != null) {
-            storagePanel.restrictTo(socketType);
+            storagePanel.restrictTo(section.itemType());
         } else {
-            open(canvasPosition, shipCard, socketType);
+            open(canvasPosition, shipCard, section.itemType());
         }
         storagePanel.setTargetingSocket(true);
     }
@@ -192,7 +193,7 @@ final class SocketPlacement {
         if (storagePanel != null && storagePanel.escape()) {
             return;
         }
-        if (targetFrameworkType != null && storagePanel != null) {
+        if (targetSection != null && storagePanel != null) {
             if (hullUpgradesTab.available()) {
                 swapToHullUpgrades();
             } else {
@@ -371,7 +372,7 @@ final class SocketPlacement {
         storagePanel = null;
         stopPlacing();
         clearTargetSocket();
-        targetFrameworkType = null;
+        targetSection = null;
         refreshButtonLabel();
         refreshButtonSelected();
     }
@@ -401,11 +402,11 @@ final class SocketPlacement {
         }
     }
 
-    boolean placeIntoFrameworkSocket(HullItemType socketType) {
+    boolean placeIntoSection(ShipSection section) {
         if (placingHullItem == null) {
             return false;
         }
-        if (placingHullItem.kind() == socketType && treeSession.socketFrameworkItem(socketType, placingHullItem)) {
+        if (placingHullItem.canSocketInto(section) && treeSession.installInSection(section, placingHullItem)) {
             stopPlacing();
             refresh();
         } else {
@@ -424,7 +425,7 @@ final class SocketPlacement {
         String key;
         if (!HullUpgradesSetting.enabled()) {
             key = "ui.socketStorage.placingHintFrameworkDisabled";
-        } else if (!treeSession.isSocketTypeUnlocked(socketType)) {
+        } else if (!treeSession.isSectionUnlocked(socketType.section())) {
             key = "ui.socketStorage.placingHintFrameworkLocked";
         } else {
             key = inspectingShip ? "ui.socketStorage.placingHintFramework" : "ui.socketStorage.placingHintFrameworkZoom";
@@ -459,15 +460,15 @@ final class SocketPlacement {
         treeSession.setTargetedSocket(null);
         if (storagePanel != null) {
             storagePanel.setTargetingSocket(false);
-            if (targetFrameworkType == null) {
+            if (targetSection == null) {
                 storagePanel.restrictTo(null);
             }
         }
     }
 
     private boolean installInTargetSocket(HullItem hullItem) {
-        if (targetFrameworkType != null) {
-            if (treeSession.socketFrameworkItem(targetFrameworkType, hullItem)) {
+        if (targetSection != null) {
+            if (treeSession.installInSection(targetSection, hullItem)) {
                 refresh();
             }
             return true;

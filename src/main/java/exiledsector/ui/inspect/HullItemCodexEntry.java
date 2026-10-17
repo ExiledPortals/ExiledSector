@@ -67,8 +67,8 @@ public class HullItemCodexEntry extends BoxedCodexEntry {
         TooltipMakerAPI header = info.beginImageWithText(definition.icon(), ICON_SIZE);
         header.setTitleOrbitronLarge();
         header.addTitle(definition.displayName(), definition.unique() ? HullItemRarity.UNIQUE.color() : Misc.getBasePlayerColor());
-        VanillaText.addPara(header, Translation.msg("codex.socketables.socket").arg("socket", definition.kind().displayName()).styled(),
-                LINE_PAD, Misc.getTextColor());
+        String installsInKey = definition.kind().fitsSection() ? "codex.hullItems.section" : "codex.socketables.socket";
+        VanillaText.addPara(header, Translation.msg(installsInKey).arg("socket", definition.kind().displayName()).styled(), LINE_PAD, Misc.getTextColor());
         info.addImageWithText(0f);
         StyledText description = definition.descriptionText();
         if (description != null) {

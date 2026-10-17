@@ -1,6 +1,6 @@
 package exiledsector.ui;
 
-import exiledsector.ui.framework.FrameworkSocketLayout;
+import exiledsector.ui.section.SectionLayout;
 import exiledsector.ui.refit.RefitScreenLayout;
 import exiledsector.ui.socket.SocketStoragePanel;
 import org.junit.jupiter.api.Test;
@@ -22,39 +22,39 @@ class HullUpgradesScreenLayoutTest {
 
     @Test
     void boundsPullSocketsInsideTheFrameAndLeaveOthersAlone() {
-        HullSocketsDisplay.SocketBounds bounds = new HullSocketsDisplay.SocketBounds(300f, 900f, 100f, 700f);
+        SectionsDisplay.SectionBounds bounds = new SectionsDisplay.SectionBounds(300f, 900f, 100f, 700f);
 
         assertEquals(300f, bounds.clampX(120f), 0.001f);
         assertEquals(900f, bounds.clampX(1200f), 0.001f);
         assertEquals(500f, bounds.clampX(500f), 0.001f);
         assertEquals(700f, bounds.clampY(900f), 0.001f);
-        assertEquals(-5000f, HullSocketsDisplay.SocketBounds.UNBOUNDED.clampX(-5000f), 0.001f);
+        assertEquals(-5000f, SectionsDisplay.SectionBounds.UNBOUNDED.clampX(-5000f), 0.001f);
     }
 
     @Test
     void theShipSettlesAgainstTheRightEdgeAndThePanelTakesTheRoomLeftOfTheSocketColumn() {
-        FrameworkSocketLayout.ShipExtent capital = new FrameworkSocketLayout.ShipExtent(160f, 180f);
+        SectionLayout.ShipExtent capital = new SectionLayout.ShipExtent(160f, 180f);
         HullUpgradesLayout screenLayout = HullUpgradesLayout.of(WIDE_FRAME, capital);
         float frameRight = WIDE_FRAME.frameX() + WIDE_FRAME.frameWidth();
 
         assertEquals(frameRight - HullUpgradesLayout.SHIP_EDGE_MARGIN - 160f, screenLayout.settledShipX(), 0.001f);
         assertTrue(screenLayout.panelWidth() > SocketStoragePanel.COMPACT_WIDTH, "a wide frame widens the panel: " + screenLayout.panelWidth());
-        float leftSocketX = FrameworkSocketLayout.socketX(new FrameworkSocketLayout.Placement(FrameworkSocketLayout.Side.LEFT, 0, 1),
+        float leftSocketX = SectionLayout.sectionX(new SectionLayout.Placement(SectionLayout.Side.LEFT, 0, 1),
                 screenLayout.settledShipX(), capital);
-        assertEquals(leftSocketX, screenLayout.socketBounds().clampX(leftSocketX), 0.001f, "the left column is not pushed by the panel");
+        assertEquals(leftSocketX, screenLayout.sectionBounds().clampX(leftSocketX), 0.001f, "the left column is not pushed by the panel");
     }
 
     @Test
     void aSmallShipNeverStretchesThePanelPastItsCap() {
-        HullUpgradesLayout screenLayout = HullUpgradesLayout.of(WIDE_FRAME, new FrameworkSocketLayout.ShipExtent(30f, 50f));
+        HullUpgradesLayout screenLayout = HullUpgradesLayout.of(WIDE_FRAME, new SectionLayout.ShipExtent(30f, 50f));
 
         assertEquals(HullUpgradesLayout.MAX_PANEL_WIDTH, screenLayout.panelWidth(), 0.001f);
     }
 
     @Test
     void evenTheSmallestRefitFrameKeepsTheCompactPanelWidthAndRoomForASocketColumn() {
-        HullUpgradesLayout screenLayout = HullUpgradesLayout.of(NARROW_FRAME, new FrameworkSocketLayout.ShipExtent(200f, 250f));
-        HullSocketsDisplay.SocketBounds bounds = screenLayout.socketBounds();
+        HullUpgradesLayout screenLayout = HullUpgradesLayout.of(NARROW_FRAME, new SectionLayout.ShipExtent(200f, 250f));
+        SectionsDisplay.SectionBounds bounds = screenLayout.sectionBounds();
 
         assertEquals(SocketStoragePanel.COMPACT_WIDTH, screenLayout.panelWidth(), 0.001f);
         assertTrue(bounds.minCentreX() <= bounds.maxCentreX(), "band " + bounds.minCentreX() + ".." + bounds.maxCentreX());

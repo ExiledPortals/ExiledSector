@@ -1,11 +1,12 @@
 package exiledsector.ui.node;
 
+import exiledsector.hullitems.ShipSection;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocationGate;
-import exiledsector.skills.FrameworkSlots;
+import exiledsector.skills.ShipSections;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -17,9 +18,8 @@ import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.StepVerdict;
 import exiledsector.skills.template.TemplateCapture;
 import exiledsector.skills.template.TemplateStep;
-import exiledsector.hullitems.FrameworkSockets;
+import exiledsector.hullitems.HullUpgradeRules;
 import exiledsector.hullitems.SocketCustody;
-import exiledsector.hullitems.HullItemType;
 import exiledsector.hullitems.HullItem;
 import exiledsector.hullitems.HullItemStore;
 import exiledsector.ui.SkillTreeSounds;
@@ -579,52 +579,52 @@ public final class TreeAllocationSession {
         return apply(() -> allocator.unsocketItem(node), () -> { });
     }
 
-    public List<FrameworkSlots.Slot> frameworkSlots() {
-        return allocator.frameworkSlots();
+    public List<ShipSections.UnlockedSection> sections() {
+        return allocator.sections();
     }
 
-    public int frameworkPoints() {
-        return allocator.data().getFrameworkPoints();
+    public int hullUpgradePoints() {
+        return allocator.data().getHullUpgradePoints();
     }
 
-    public int unspentFrameworkPoints() {
-        return allocator.data().getUnspentFrameworkPoints();
+    public int unspentHullUpgradePoints() {
+        return allocator.data().getUnspentHullUpgradePoints();
     }
 
-    public boolean isSocketTypeUnlocked(HullItemType socketType) {
-        return allocator.data().isSocketTypeUnlocked(socketType.id());
+    public boolean isSectionUnlocked(ShipSection section) {
+        return allocator.data().isSocketTypeUnlocked(section.id());
     }
 
     public HullSize hullSize() {
         return allocator.hullSize();
     }
 
-    public FrameworkSockets.UnlockBlock unlockBlock(HullItemType socketType) {
-        return allocator.unlockBlock(socketType);
+    public HullUpgradeRules.UnlockBlock unlockBlock(ShipSection section) {
+        return allocator.unlockBlock(section);
     }
 
-    public String unmetRequirement(HullItemType socketType) {
-        return allocator.unmetRequirement(socketType);
+    public String unmetRequirement(ShipSection section) {
+        return allocator.unmetRequirement(section);
     }
 
     public boolean installUpgrade() {
         return apply(allocator::installUpgrade, SkillTreeSounds::socketed);
     }
 
-    public boolean unlockSocket(HullItemType socketType) {
-        return apply(() -> allocator.unlockSocket(socketType), SkillTreeSounds::socketed);
+    public boolean unlockSection(ShipSection section) {
+        return apply(() -> allocator.unlockSection(section), SkillTreeSounds::socketed);
     }
 
-    public boolean lockSocket(HullItemType socketType) {
-        return apply(() -> allocator.lockSocket(socketType), () -> { });
+    public boolean lockSection(ShipSection section) {
+        return apply(() -> allocator.lockSection(section), () -> { });
     }
 
-    public boolean socketFrameworkItem(HullItemType socketType, HullItem hullItem) {
-        return apply(() -> allocator.socketFrameworkItem(socketType, hullItem), SkillTreeSounds::socketed);
+    public boolean installInSection(ShipSection section, HullItem hullItem) {
+        return apply(() -> allocator.installInSection(section, hullItem), SkillTreeSounds::socketed);
     }
 
-    public boolean unsocketFrameworkItem(HullItemType socketType) {
-        return apply(() -> allocator.unsocketFrameworkItem(socketType), () -> { });
+    public boolean removeFromSection(ShipSection section) {
+        return apply(() -> allocator.removeFromSection(section), () -> { });
     }
 
     private boolean apply(BooleanSupplier change, Runnable afterChange) {

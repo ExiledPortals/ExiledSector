@@ -39,7 +39,7 @@ class HullItemImplicitsTest {
 
     @Test
     void everyHullSocketTypeHasImplicitsThatRollRangesOfKnownEffects() {
-        for (HullItemType type : HullItemType.frameworkTypes()) {
+        for (HullItemType type : HullItemType.sectionItemTypes()) {
             List<Modifier> implicits = HullItemImplicits.forType(type);
             assertFalse(implicits.isEmpty(), type.id() + " has no implicits");
             for (Modifier implicit : implicits) {

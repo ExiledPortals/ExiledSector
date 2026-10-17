@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class FrameworkDropsTest {
+class SectionItemDropsTest {
 
     private static final int TRIALS = 20000;
 
@@ -56,21 +56,21 @@ class FrameworkDropsTest {
     }
 
     @Test
-    void frameworksOpenAtPlayerLevelFifteen() {
-        assertFalse(HullItemUnlock.frameworksOpen(14));
-        assertTrue(HullItemUnlock.frameworksOpen(15));
-        assertFalse(HullItemUnlock.frameworksOpen((SectorAPI) null));
+    void sectionItemsOpenAtPlayerLevelFifteen() {
+        assertFalse(HullItemUnlock.sectionsOpen(14));
+        assertTrue(HullItemUnlock.sectionsOpen(15));
+        assertFalse(HullItemUnlock.sectionsOpen((SectorAPI) null));
     }
 
     @Test
-    void frameworkHullItemRollsMatchTheSubroutineChancesAndOnlyDrawFrameworkBasics() {
+    void frameworkHullItemRollsMatchTheSubroutineChancesAndOnlyDrawSectionBasics() {
         Random random = new Random(5L);
         int[] itemCounts = new int[3];
-        int frameworkCount = 0;
+        int sectionItemCount = 0;
         for (int i = 0; i < TRIALS; i++) {
-            HullItemDrops.FrameworkLoot loot = HullItemDrops.rollFrameworkLoot("station", random, 1f);
+            HullItemDrops.SectionItemLoot loot = HullItemDrops.rollSectionItemLoot("station", random, 1f);
             itemCounts[loot.items().size()]++;
-            frameworkCount += loot.upgrades().size();
+            sectionItemCount += loot.upgrades().size();
             for (HullItemData item : loot.items()) {
                 assertTrue(Set.of("bridge_basic", "emitter_basic").contains(item.definitionId()), item.definitionId());
             }
@@ -79,18 +79,18 @@ class FrameworkDropsTest {
         assertEquals(0, itemCounts[0]);
         assertEquals(0.5, itemCounts[1] / (double) TRIALS, 0.02);
         assertEquals(0.5, itemCounts[2] / (double) TRIALS, 0.02);
-        assertEquals(TRIALS, frameworkCount);
+        assertEquals(TRIALS, sectionItemCount);
     }
 
     @Test
     void frameworkRollsLeaveTheSubroutineRollUntouched() {
         Random first = new Random(9L);
         Random second = new Random(9L);
-        List<HullItemData> withoutFrameworks = HullItemDrops.roll("station", first, 1f, definition -> true);
-        List<HullItemData> withFrameworks = HullItemDrops.roll("station", second, 1f, definition -> true);
-        HullItemDrops.rollFrameworkLoot("station", second, 1f);
+        List<HullItemData> withoutSectionItems = HullItemDrops.roll("station", first, 1f, definition -> true);
+        List<HullItemData> withSectionItems = HullItemDrops.roll("station", second, 1f, definition -> true);
+        HullItemDrops.rollSectionItemLoot("station", second, 1f);
 
-        assertEquals(withoutFrameworks, withFrameworks);
+        assertEquals(withoutSectionItems, withSectionItems);
     }
 
     @Test
@@ -98,27 +98,27 @@ class FrameworkDropsTest {
         Random random = new Random(1L);
         Map<HullItemType, Integer> counts = new HashMap<>();
         for (int i = 0; i < TRIALS; i++) {
-            counts.merge(HullItemDrops.pickFrameworkBasic(random).kind(), 1, Integer::sum);
+            counts.merge(HullItemDrops.pickSectionItemBasic(random).kind(), 1, Integer::sum);
         }
 
         assertEquals(Set.of(HullItemType.BRIDGE, HullItemType.SHIELD_GENERATOR), counts.keySet());
         assertEquals(0.5, counts.get(HullItemType.BRIDGE) / (double) TRIALS, 0.02);
-        assertNull(HullItemDrops.pickFrameworkBasic(HullItemType.PHASE_COIL, random));
+        assertNull(HullItemDrops.pickSectionItemBasic(HullItemType.PHASE_COIL, random));
     }
 
     @Test
-    void sitesWithoutChancesOrRulesDropNoFrameworkLoot() {
-        assertTrue(HullItemDrops.rollFrameworkLoot("empty", new Random(1L), 1f).isEmpty());
-        assertTrue(HullItemDrops.rollFrameworkLoot("unknown", new Random(1L), 1f).isEmpty());
-        assertTrue(HullItemDrops.rollFrameworkLoot(null, new Random(1L), 1f).isEmpty());
+    void sitesWithoutChancesOrRulesDropNoSectionLoot() {
+        assertTrue(HullItemDrops.rollSectionItemLoot("empty", new Random(1L), 1f).isEmpty());
+        assertTrue(HullItemDrops.rollSectionItemLoot("unknown", new Random(1L), 1f).isEmpty());
+        assertTrue(HullItemDrops.rollSectionItemLoot(null, new Random(1L), 1f).isEmpty());
     }
 
     @Test
-    void flagshipsBelowLevelFifteenNeverGetAFramework() {
+    void flagshipsBelowLevelFifteenNeverGetASection() {
         ShipSkillData shipData = new ShipSkillData();
         Random random = new Random(2L);
         for (int i = 0; i < 200; i++) {
-            NpcHullItems.rollFramework(shipData, HullSize.CRUISER, () -> fit(ShieldType.FRONT), 14, random);
+            NpcHullItems.rollSectionItems(shipData, HullSize.CRUISER, () -> fit(ShieldType.FRONT), 14, random);
         }
 
         assertEquals(List.of(), shipData.getUnlockedSocketTypeIds());
@@ -131,9 +131,9 @@ class FrameworkDropsTest {
         int filledBridgeSockets = 0;
         for (int i = 0; i < TRIALS; i++) {
             ShipSkillData shipData = new ShipSkillData();
-            NpcHullItems.rollFramework(shipData, HullSize.CRUISER, () -> fit(ShieldType.FRONT), 20, random);
+            NpcHullItems.rollSectionItems(shipData, HullSize.CRUISER, () -> fit(ShieldType.FRONT), 20, random);
             for (String socketTypeId : shipData.getUnlockedSocketTypeIds()) {
-                String hullItemId = shipData.getFrameworkSocketedItem(socketTypeId);
+                String hullItemId = shipData.getSectionItem(socketTypeId);
                 if (HullItemType.BRIDGE.id().equals(socketTypeId)) {
                     bridgeSockets++;
                     filledBridgeSockets += hullItemId == null ? 0 : 1;
@@ -157,14 +157,14 @@ class FrameworkDropsTest {
             ShipSkillData shipData = new ShipSkillData();
             shipData.grantUnlockedSocketType("reactor");
             shipData.grantUnlockedSocketType("bridge");
-            shipData.socketFrameworkItem("bridge", NpcHullItems.id("bridge_basic", 7L));
+            shipData.installInSection("bridge", NpcHullItems.id("bridge_basic", 7L));
 
             NpcHullItems.claimForPlayer(shipData);
 
             HullItemStore store = HullItemStore.get();
             assertEquals(List.of("reactor", "bridge"), shipData.getUnlockedSocketTypeIds());
-            assertEquals(2, shipData.getFrameworkPoints());
-            assertEquals(Map.of("bridge", store.owned().get(0).id()), shipData.getFrameworkSocketedItems());
+            assertEquals(2, shipData.getHullUpgradePoints());
+            assertEquals(Map.of("bridge", store.owned().get(0).id()), shipData.getSectionItems());
         }
     }
 
@@ -177,7 +177,7 @@ class FrameworkDropsTest {
             globalMock.when(Global::getSector).thenReturn(sector);
             ShipSkillData shipData = new ShipSkillData();
             shipData.grantUnlockedSocketType("bridge");
-            shipData.socketFrameworkItem("bridge", NpcHullItems.id("bridge_basic", 7L));
+            shipData.installInSection("bridge", NpcHullItems.id("bridge_basic", 7L));
 
             NpcHullItems.storeForPlayer(shipData);
 

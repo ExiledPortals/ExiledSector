@@ -1,7 +1,7 @@
 package exiledsector.hullitems;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledsector.skills.FrameworkSlots;
+import exiledsector.skills.ShipSections;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.tags.ShipProfile;
 
@@ -22,7 +22,7 @@ public final class NpcHullItems {
     static final int SECOND_ROLL_PLAYER_LEVEL = 15;
     static final float SECOND_CHANCE = 0.05f;
     static final float UNIQUE_SHARE = 0.02f;
-    static final float FRAMEWORK_CHANCE = 0.5f;
+    static final float SECTION_ITEM_CHANCE = 0.5f;
     static final float UPGRADE_DROP_CHANCE = 0.1f;
     private static final Map<String, HullItem> PREVIEWS = new ConcurrentHashMap<>();
 
@@ -80,36 +80,37 @@ public final class NpcHullItems {
         return HullItemDrops.pickBasic(random);
     }
 
-    public static void rollFramework(ShipSkillData shipData, HullSize hullSize, Supplier<ShipProfile> currentFit, int playerLevel,
+    public static void rollSectionItems(ShipSkillData shipData, HullSize hullSize, Supplier<ShipProfile> currentFit, int playerLevel,
                                      Random random) {
-        if (!HullItemUnlock.frameworksOpen(playerLevel) || random.nextFloat() >= FRAMEWORK_CHANCE) {
+        if (!HullItemUnlock.sectionsOpen(playerLevel) || random.nextFloat() >= SECTION_ITEM_CHANCE) {
             return;
         }
         ShipProfile fit = currentFit.get();
-        List<HullItemType> fittingTypes = new ArrayList<>();
-        for (HullItemType socketType : HullItemType.frameworkTypes()) {
-            if (FrameworkSlots.unmetRequirement(socketType, fit) == null) {
-                fittingTypes.add(socketType);
+        List<ShipSection> fittingSections = new ArrayList<>();
+        for (ShipSection section : ShipSection.all()) {
+            if (ShipSections.unmetRequirement(section, fit) == null) {
+                fittingSections.add(section);
             }
         }
-        List<HullItemType> socketTypes = HullUpgradeRoller.rollTypes(HullUpgradeRoller.rollSocketCount(random), fittingTypes, new Random(random.nextLong()));
-        for (HullItemType socketType : socketTypes) {
-            shipData.grantUnlockedSocketType(socketType.id());
+        List<ShipSection> unlockedSections = HullUpgradeRoller.rollSections(HullUpgradeRoller.rollSectionCount(random), fittingSections,
+                new Random(random.nextLong()));
+        for (ShipSection section : unlockedSections) {
+            shipData.grantUnlockedSocketType(section.id());
             if (random.nextFloat() < firstChance(playerLevel)) {
-                HullItemDefinition definition = HullItemDrops.pickFrameworkBasic(socketType, random);
+                HullItemDefinition definition = HullItemDrops.pickSectionItemBasic(section.itemType(), random);
                 if (definition != null) {
-                    shipData.socketFrameworkItem(socketType.id(), id(HullItemData.rolled(definition, random.nextLong())));
+                    shipData.installInSection(section.id(), id(HullItemData.rolled(definition, random.nextLong())));
                 }
             }
         }
     }
 
-    public static boolean carriesFramework(ShipSkillData shipData) {
+    public static boolean carriesSectionItem(ShipSkillData shipData) {
         return shipData != null && !shipData.getUnlockedSocketTypeIds().isEmpty();
     }
 
     public static HullUpgradeData rollUpgradeDrop(ShipSkillData shipData, HullSize hullSize, Random random) {
-        return carriesFramework(shipData) && hullSize != null && random.nextFloat() < UPGRADE_DROP_CHANCE ? new HullUpgradeData(hullSize) : null;
+        return carriesSectionItem(shipData) && hullSize != null && random.nextFloat() < UPGRADE_DROP_CHANCE ? new HullUpgradeData(hullSize) : null;
     }
 
     public static List<HullItem> uniquesCarriedBy(ShipSkillData shipData) {
@@ -157,16 +158,16 @@ public final class NpcHullItems {
                 shipData.socketItem(socketedEntry.getKey(), ownedHullItem.id());
             }
         }
-        Map<String, String> frameworkItems = Map.copyOf(shipData.getFrameworkSocketedItems());
-        frameworkItems.forEach((socketTypeId, hullItemId) -> {
+        Map<String, String> sectionItems = Map.copyOf(shipData.getSectionItems());
+        sectionItems.forEach((socketTypeId, hullItemId) -> {
             HullItemData itemData = item(hullItemId);
             if (itemData == null) {
                 return;
             }
-            shipData.unsocketFrameworkItem(socketTypeId);
+            shipData.removeFromSection(socketTypeId);
             HullItem ownedHullItem = HullItemStore.get().add(itemData);
             if (ownedHullItem != null) {
-                shipData.socketFrameworkItem(socketTypeId, ownedHullItem.id());
+                shipData.installInSection(socketTypeId, ownedHullItem.id());
             }
         });
     }

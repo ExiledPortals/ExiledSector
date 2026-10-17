@@ -140,8 +140,8 @@ public class HullItem {
         return socket != null && socket.getType().getTier() == SkillTier.SOCKET && kind() == HullItemType.SUBROUTINE;
     }
 
-    public boolean canSocketInto(HullItemType frameworkSocket) {
-        return frameworkSocket != null && frameworkSocket.isFramework() && kind() == frameworkSocket;
+    public boolean canSocketInto(ShipSection section) {
+        return section != null && kind() != null && kind().section() == section;
     }
 
     public List<SkillTypeEffect> skillEffects() {

@@ -35,7 +35,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.persistence.RetiredReserveIds;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
-import exiledsector.skills.FrameworkSlots;
+import exiledsector.skills.ShipSections;
 import exiledsector.skills.LearnedPhantomConflicts;
 import exiledsector.skills.NodeReplacements;
 import exiledsector.skills.ShipSkillData;
@@ -204,7 +204,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         PhantomConflictWatch.clearPendingReverts();
         TreeCameraMemory.forgetAll();
         FleetCrewLedger.discardPending();
-        FrameworkSlots.clearCache();
+        ShipSections.clearCache();
         NpcBonusScale.invalidate();
         NpcHullItems.clearCache();
         HullItemStore.get().freezeNames();

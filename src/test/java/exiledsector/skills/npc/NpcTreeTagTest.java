@@ -105,7 +105,7 @@ class NpcTreeTagTest {
         data.grantUnlockedSocketType("bridge");
         data.grantUnlockedSocketType("reactor");
         data.grantUnlockedSocketType("flight_deck");
-        data.socketFrameworkItem("flight_deck", NpcHullItems.id("deck_basic", 3L));
+        data.installInSection("flight_deck", NpcHullItems.id("deck_basic", 3L));
 
         String tag = NpcTreeTag.encode(data);
         ShipSkillData decoded = NpcTreeTag.decode(tag);
@@ -114,12 +114,12 @@ class NpcTreeTagTest {
                 + "|frameworkTypes:bridge+reactor+flight_deck|frameworkSockets:flight_deck=npc:deck_basic/3", tag);
         assertEquals("npc:domain_subroutine_military/-42", decoded.getSocketedItem("socket_1"));
         assertEquals(List.of("bridge", "reactor", "flight_deck"), decoded.getUnlockedSocketTypeIds());
-        assertEquals(3, decoded.getFrameworkPoints());
-        assertEquals(Map.of("flight_deck", "npc:deck_basic/3"), decoded.getFrameworkSocketedItems());
+        assertEquals(3, decoded.getHullUpgradePoints());
+        assertEquals(Map.of("flight_deck", "npc:deck_basic/3"), decoded.getSectionItems());
     }
 
     @Test
-    void aSavedTreeSocketHoldingAFrameworkItemIsDroppedOnRestore() throws Exception {
+    void aSavedTreeSocketHoldingASectionItemIsDroppedOnRestore() throws Exception {
         withSocket();
         HullItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "gunners").put("kind", "weapon_mount")
                 .put("name", "Gunners").put("prefixes", "HULL_MULT:4:6")));
@@ -133,7 +133,7 @@ class NpcTreeTagTest {
     }
 
     @Test
-    void socketsWithoutItemsRoundTripAndTagsFromEarlierFrameworkBuildsAreIgnored() {
+    void socketsWithoutItemsRoundTripAndTagsFromEarlierSectionBuildsAreIgnored() {
         ShipSkillData data = withSocket();
         data.grantUnlockedSocketType("bridge");
 
@@ -141,7 +141,7 @@ class NpcTreeTagTest {
         ShipSkillData legacy = NpcTreeTag.decode("exiledSector_npcTree|generated|2|root,a|framework:npcfw:CRUISER/RARE/bridge/1"
                 + "|frameworkSockets:0=npc:x/1");
         assertEquals(List.of(), legacy.getUnlockedSocketTypeIds());
-        assertEquals(Map.of(), legacy.getFrameworkSocketedItems());
+        assertEquals(Map.of(), legacy.getSectionItems());
     }
 
     @Test

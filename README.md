@@ -38,12 +38,12 @@ Open the refit screen and click the skill tree button on any of your ships. Ther
 <img src="graphics/description/at_any_cost.png" alt="At Any Cost">
 
 - Some nodes are Subroutine Sockets: perfectly good empty rooms that your engineers swear were always part of the design. Allocate one like any other node, then shove a subroutine into it. Hull items turn up at salvage sites, in Tech Mining finds, and aboard NPC flagships whose captains will not be needing them after you're done.
-- Ctrl+click a socket to open Hull Item Storage, a hoard of every hull item you own, lovingly organised by people who will never be allowed to use any of them. Filter by rarity or socket type, search by name, and pick what goes in. Right-click one you don't want to disassemble it into Hull Item Parts: 3 for a common, 5 for a rare and 10 for a unique, because priceless relics and talented people are, it turns out, mostly screws.
-- Hull Item Storage's Modify button opens the Socket Modification workbench beside it, and the skill tree is locked while it's open so nobody gets distracted mid-surgery. Spend Hull Item Parts there to synthesise a new common subroutine or kernels which allow specific kinds of modification. Click an item in storage to load it onto the workbench, left-click a kernel to use it, and right-click a kernel or the new subroutine to synthesise one. 
+- Ctrl+click a socket to open Hull Item Storage, a hoard of every hull item you own, lovingly organised by people who will never be allowed to use any of them. Filter by rarity or hull item type, search by name, and pick what goes in. Right-click one you don't want to disassemble it into Hull Item Parts: 3 for a common, 5 for a rare and 10 for a unique, because priceless relics and talented people are, it turns out, mostly screws.
+- Hull Item Storage's Modify button opens the Hull Item Modification workbench beside it, and the skill tree is locked while it's open so nobody gets distracted mid-surgery. Spend Hull Item Parts there to synthesise a new common subroutine or kernels which allow specific kinds of modification. Click an item in storage to load it onto the workbench, left-click a kernel to use it, and right-click a kernel or the new subroutine to synthesise one. 
 - Parts and kernels also turn up wherever hull items do. Winning a battle pays out parts too, scaled by the enemy deployment points you destroy or disable and by the battle difficulty bonus. Nothing says "salvage rights" like a smoking hull. If your hold is groaning, a LunaLib setting (off by default) has Hull Item Storage swallow every part and kernel in your cargo whenever you open it, where they weigh nothing and the workbench can still reach them.
 
 <img src="graphics/description/socket_storage.png" alt="Hull Item Storage">
-<img src="graphics/description/crafting.gif" alt="Socket modification">
+<img src="graphics/description/crafting.gif" alt="Hull item modification">
 
 - Common hull items are Domain Subroutines in four grades, each rolling one prefix and one suffix.
 - Rare ones roll three or four mods and get a name of their own. If you'd rather not gamble, a LunaLib setting (off by default) rolls every new hull item's mods at the middle of their range.
@@ -56,8 +56,8 @@ Open the refit screen and click the skill tree button on any of your ships. Ther
 <img src="graphics/description/unique_socketable.png" alt="A unique hull item">
 <img src="graphics/description/socketed_unique.png" alt="A unique in its socket">
 
-- From level 15 your ships can take Hull Upgrades as well, one kind per hull size, found in the same places as hull items. Click the ship card in the skill tree to zoom in on the ship, install an upgrade from the Hull Upgrades panel, and spend the point it gives you to unlock a socket bolted onto the hull: Bridge, Crew Quarters, Engine Room, Reactor, Armor Plating, Weapon Mount, Shield Generator, Phase Coil or Flight Deck. The last three need shields, a phase cloak or fighter bays to plug into. A ship holds up to four points, and locking a socket again hands its point back, because the yard keeps receipts.
-- Each of those sockets has hull items of its own, and the officers, crews and relics that used to squeeze into Subroutine Sockets now live in the socket that suits them. Half of the NPC flagships you meet past level 15 have sockets unlocked too, and now and then one of them leaves a spare Hull Upgrade in the wreckage.
+- From level 15 your ships can take Hull Upgrades as well, one kind per hull size, found in the same places as hull items. Click the ship card in the skill tree to zoom in on the ship, install an upgrade from the Hull Upgrades panel, and spend the point it gives you to unlock a section of the ship: Bridge, Crew Quarters, Engine Room, Reactor, Armor Plating, Weapon Mount, Shield Generator, Phase Coil or Flight Deck. The last three need shields, a phase cloak or fighter bays to work. A ship holds up to four points, and locking a section again hands its point back, because the yard keeps receipts.
+- Each of those sections has hull items of its own, and the officers, crews and relics that used to squeeze into Subroutine Sockets now live in the section that suits them. Half of the NPC flagships you meet past level 15 have sections unlocked too, and now and then one of them leaves a spare Hull Upgrade in the wreckage.
 
 ## Requirements
 
@@ -88,17 +88,17 @@ These mods have dedicated compatibility. The version listed is the one I last te
 | Lost Sector | 0.6.2d, 1.0.b | The Kesteven and Frozen Heart areas of the tree appear, and Augmented Systems hulls get the same bonuses from those nodes as from the hull mods. |
 | [MagicLib](https://fractalsoftworks.com/forum/index.php?topic=25868.0) | 1.5.6 | Required. A hull mod that tries to strip one of your nodes' hull mods through MagicLib is removed instead. |
 | Exotica Technologies | 1.8.7 | The Skill Tree button moves one slot down on the refit screen so it doesn't cover the Exotica button. |
-| Random Assortment of Things | 3.3.1 | The Abyss area of the tree appears, along with the ExoTech Exoship, which warps between notables carrying its own branches. Modular Hull Socket items can also drop from the mod's abyssal structures, abyssal drones and relic sites. |
+| Random Assortment of Things | 3.3.1 | The Abyss area of the tree appears, along with the ExoTech Exoship, which warps between notables carrying its own branches. Hull items can also drop from the mod's abyssal structures, abyssal drones and relic sites. |
 | Nightcross Armory | 2.1.6 | The Nightcross and Stargazer areas of the tree appear. |
 | [GraphicsLib](https://fractalsoftworks.com/forum/index.php?topic=10982.0) | 1.12.1 | Optional. When its lights and distortion are on, Exiled Sector's combat effects light up: Ludd's Light and Phase Anchor send out shockwaves, Frozen Heart stacks pulse, Ion Bolter arcs, Corrosion Beam motes and redirected Hullbreacher and Refracting shots glow, Repair Coordinator drones throw light as they weld, and Candle's Grace Replica bends space around the ship. The Exiled Sector settings can switch all of this off except the mote glow, which GraphicsLib draws itself. |
-| Industrial Evolution | 4.1.b | Modular Hull Socket items can drop from its orbital laboratories and arsenal stations. |
-| Knights of Ludd | 1.4.0 | Modular Hull Socket items can drop from its research stations and caches. |
-| Secrets of the Frontier | 0.15.1 | Modular Hull Socket items can drop from its A Promise station and Hypnos laboratory. |
-| Arthr's Ships n Shit | 0.100-dev | Modular Hull Socket items can drop from its Exodyne research stations. |
-| What We Left Behind | 4.5.3 | Modular Hull Socket items can drop from its research stations, Omega derelicts and corrupted caches. |
-| Ship Mastery System | 2.0.8 | Modular Hull Socket items can drop from its concealed stations, nucleus stations and concealed probes. |
-| Unthemed Weapons Collection | 0.7.4 | Modular Hull Socket items can drop from its weapon caches. |
-| DIY Planets | 1.0.30 | Modular Hull Socket items can drop from its Genesis terraforming stations. |
+| Industrial Evolution | 4.1.b | Hull items can drop from its orbital laboratories and arsenal stations. |
+| Knights of Ludd | 1.4.0 | Hull items can drop from its research stations and caches. |
+| Secrets of the Frontier | 0.15.1 | Hull items can drop from its A Promise station and Hypnos laboratory. |
+| Arthr's Ships n Shit | 0.100-dev | Hull items can drop from its Exodyne research stations. |
+| What We Left Behind | 4.5.3 | Hull items can drop from its research stations, Omega derelicts and corrupted caches. |
+| Ship Mastery System | 2.0.8 | Hull items can drop from its concealed stations, nucleus stations and concealed probes. |
+| Unthemed Weapons Collection | 0.7.4 | Hull items can drop from its weapon caches. |
+| DIY Planets | 1.0.30 | Hull items can drop from its Genesis terraforming stations. |
 
 Some weapons from other mods misbehave (often hilariously) when their beams are split, their shots are chained or their shells pierce. These are listed in:
 

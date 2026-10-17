@@ -28,18 +28,18 @@ public final class SocketCustody {
 
     static final String LOST_KEY = "exiledSector_socketShipsLostInCombat";
 
-    public record Installation(String shipId, String nodeId, String frameworkSocketType) {
+    public record Installation(String shipId, String nodeId, String sectionType) {
 
         public Installation(String shipId, String nodeId) {
             this(shipId, nodeId, null);
         }
 
-        public static Installation inFramework(String shipId, String frameworkSocketType) {
-            return new Installation(shipId, null, frameworkSocketType);
+        public static Installation inSection(String shipId, String sectionType) {
+            return new Installation(shipId, null, sectionType);
         }
 
-        public boolean isFrameworkSocket() {
-            return frameworkSocketType != null;
+        public boolean isSection() {
+            return sectionType != null;
         }
     }
 
@@ -50,8 +50,8 @@ public final class SocketCustody {
         Map<String, Installation> installations = new HashMap<>();
         shipDataById.forEach((shipId, shipData) -> {
             shipData.getSocketedItems().forEach((nodeId, hullItemId) -> installations.put(hullItemId, new Installation(shipId, nodeId)));
-            shipData.getFrameworkSocketedItems().forEach((socketTypeId, hullItemId) ->
-                    installations.put(hullItemId, Installation.inFramework(shipId, socketTypeId)));
+            shipData.getSectionItems().forEach((socketTypeId, hullItemId) ->
+                    installations.put(hullItemId, Installation.inSection(shipId, socketTypeId)));
         });
         return installations;
     }
@@ -72,8 +72,8 @@ public final class SocketCustody {
                     store.remove(hullItem);
                 }
             }
-            for (String socketTypeId : Set.copyOf(shipData.getFrameworkSocketedItems().keySet())) {
-                HullItem hullItem = store.find(shipData.unsocketFrameworkItem(socketTypeId));
+            for (String socketTypeId : Set.copyOf(shipData.getSectionItems().keySet())) {
+                HullItem hullItem = store.find(shipData.removeFromSection(socketTypeId));
                 if (destroyed && hullItem != null) {
                     store.remove(hullItem);
                 }
@@ -84,7 +84,7 @@ public final class SocketCustody {
     }
 
     static boolean holdsSocketItems(ShipSkillData shipData) {
-        return !shipData.getSocketedItems().isEmpty() || !shipData.getFrameworkSocketedItems().isEmpty();
+        return !shipData.getSocketedItems().isEmpty() || !shipData.getSectionItems().isEmpty();
     }
 
     public static Map<String, FleetMemberAPI> reconcile() {
@@ -139,8 +139,8 @@ public final class SocketCustody {
         return hullItem.kind() == HullItemType.SUBROUTINE;
     }
 
-    static boolean fitsFrameworkSocket(HullItem hullItem, String socketTypeId) {
-        return hullItem.canSocketInto(HullItemType.byIdOrNull(socketTypeId));
+    static boolean fitsSection(HullItem hullItem, String socketTypeId) {
+        return hullItem.canSocketInto(ShipSection.byIdOrNull(socketTypeId));
     }
 
     public static boolean unsocketIfMisfit(HullItem hullItem) {
@@ -156,9 +156,9 @@ public final class SocketCustody {
                     return true;
                 }
             }
-            for (Map.Entry<String, String> slotEntry : List.copyOf(shipData.getFrameworkSocketedItems().entrySet())) {
-                if (slotEntry.getValue().equals(hullItemId) && !fitsFrameworkSocket(hullItem, slotEntry.getKey())) {
-                    shipData.unsocketFrameworkItem(slotEntry.getKey());
+            for (Map.Entry<String, String> slotEntry : List.copyOf(shipData.getSectionItems().entrySet())) {
+                if (slotEntry.getValue().equals(hullItemId) && !fitsSection(hullItem, slotEntry.getKey())) {
+                    shipData.removeFromSection(slotEntry.getKey());
                     return true;
                 }
             }

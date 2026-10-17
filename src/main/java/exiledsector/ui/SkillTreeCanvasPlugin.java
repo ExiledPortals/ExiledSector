@@ -57,7 +57,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final TreeCamera camera = new TreeCamera();
     private final HyperspaceMode hyperspaceMode;
     private final SocketPlacement socketPlacement;
-    private final FrameworkInspection frameworkInspection;
+    private final SectionInspection sectionInspection;
     private final SkillTreeChrome chrome;
     private final PointerGesture gesture = new PointerGesture();
     private final TreeCameraMemory.View cameraMemory;
@@ -89,7 +89,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.statPanel = new SkillTreeStatPanel(member);
         this.hyperspaceMode = new HyperspaceMode(camera, statPanel, treeSession::isHidden);
         this.socketPlacement = new SocketPlacement(hostPanel, treeSession, nodeSearch, searchBar);
-        this.frameworkInspection = new FrameworkInspection(hostPanel, treeSession, socketPlacement, statPanel);
+        this.sectionInspection = new SectionInspection(hostPanel, treeSession, socketPlacement, statPanel);
         this.chrome = new SkillTreeChrome(member, panelStyle, statPanel, searchBar, templateUi, socketPlacement, shipCardHeight);
 
         this.cameraMemory = TreeCameraMemory.forShip(member == null ? null : member.getId());
@@ -105,7 +105,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     public void positionChanged(PositionAPI canvasPosition) {
         this.canvasPosition = canvasPosition;
         socketPlacement.setCanvasPosition(canvasPosition);
-        frameworkInspection.setCanvasPosition(canvasPosition);
+        sectionInspection.setCanvasPosition(canvasPosition);
     }
 
     void setShipCard(UIComponentAPI component) {
@@ -140,7 +140,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         } else if (camera.isFollowing()) {
             camera.follow(fleetRenderer.focusX(), fleetRenderer.focusY(), amount);
         }
-        frameworkInspection.advance(amount, canvasPosition, camera, fleetRenderer, !exoshipView.isActive(), mouseX, mouseY);
+        sectionInspection.advance(amount, canvasPosition, camera, fleetRenderer, !exoshipView.isActive(), mouseX, mouseY);
         starRenderer.advance(amount);
         boolean followingStartingRoot = treeSession.isStartingRootMoving();
         camera.beginStartingRootFollow(treeSession);
@@ -168,8 +168,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private boolean mustCloseStorage(CanvasMode mode) {
-        if (socketPlacement.isFrameworkTargeted()) {
-            return !camera.isFollowing() || !frameworkInspection.isInspecting();
+        if (socketPlacement.isSectionTargeted()) {
+            return !camera.isFollowing() || !sectionInspection.isInspecting();
         }
         return mode.closesStorage();
     }
@@ -226,7 +226,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private boolean openHoveredHullItemCodex(CanvasMode mode) {
-        if (!mouseKnown || !mode.hoversTree() || frameworkInspection.isInspecting() || treeSession.isDropdownOpen() || socketPlacement.isEngaged()
+        if (!mouseKnown || !mode.hoversTree() || sectionInspection.isInspecting() || treeSession.isDropdownOpen() || socketPlacement.isEngaged()
                 || chrome.contains(canvasPosition, mode, mouseX, mouseY)) {
             return false;
         }
@@ -236,7 +236,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     private boolean escape(CanvasMode mode) {
         EscapeAction action = EscapeAction.resolve(mode, treeSession.isAutoAllocating() || treeSession.isRespeccing(),
-                socketPlacement.isEngaged(), treeSession.isDropdownOpen(), frameworkInspection.isPanelOpen(),
+                socketPlacement.isEngaged(), treeSession.isDropdownOpen(), sectionInspection.isPanelOpen(),
                 templateUi.isPlanning() && !searchBar.isFocused());
         switch (action) {
             case NONE -> {
@@ -248,7 +248,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                 treeSession.cancelRespec();
             }
             case CLOSE_DROPDOWN -> treeSession.closeDropdown();
-            case CLOSE_FRAMEWORK_PANEL -> frameworkInspection.escape();
+            case CLOSE_HULL_UPGRADES_PANEL -> sectionInspection.escape();
             case STOP_FOLLOWING -> stopFollowingFleet();
             case EXIT_TEMPLATE_MODE -> templateUi.exitTemplateMode();
         }
@@ -311,7 +311,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private void handleFleetFollowEvent(InputEventAPI event, CanvasMode mode) {
         if (treeSession.isAutoAllocating() || treeSession.isRespeccing()) {
             handleAllocationRunEvent(event, mode);
-        } else if (frameworkInspection.isInspecting()) {
+        } else if (sectionInspection.isInspecting()) {
             handleInspectionEvent(event, mode);
         } else {
             handleTreeEvent(event, mode);
@@ -331,11 +331,11 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         float y = event.getY();
         if (event.isLMBDownEvent() && canvasPosition.containsEvent(event)) {
             if (!chrome.press(canvasPosition, mode, x, y)) {
-                frameworkInspection.pressLeft(x, y, canvasPosition, chrome.shipCardFrame(canvasPosition));
+                sectionInspection.pressLeft(x, y, canvasPosition, chrome.shipCardFrame(canvasPosition));
             }
             event.consume();
         } else if (event.isRMBDownEvent() && canvasPosition.containsEvent(event)) {
-            frameworkInspection.pressRight(x, y);
+            sectionInspection.pressRight(x, y);
             event.consume();
         } else if (event.isLMBUpEvent()) {
             if (chrome.release(x, y)) {
@@ -347,7 +347,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     void shipCardClicked() {
-        boolean inspectionUsable = HullUpgradesSetting.enabled() || camera.isFollowing() || frameworkInspection.hasSocketedItems();
+        boolean inspectionUsable = HullUpgradesSetting.enabled() || camera.isFollowing() || sectionInspection.hasSectionItems();
         if (inspectionUsable && fleetRenderer.hasShips() && mode().letsShipCardFollowFleet()) {
             toggleFollowingFleet();
         }
@@ -386,7 +386,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         camera.stopInspecting();
         camera.stopFollowing();
         fleetRenderer.setSoloActive(false);
-        frameworkInspection.stop();
+        sectionInspection.stop();
         exoshipView.leave();
     }
 
@@ -546,7 +546,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         float treeAlpha = hyperspaceMode.treeAlpha();
         float searchDim = nodeSearch.backgroundAlpha() + (1f - nodeSearch.backgroundAlpha()) * (1f - treeAlpha);
         float backgroundAlpha = alphaMult * searchDim * treeSession.treeAlpha();
-        float inspectFade = 1f - frameworkInspection.inspectLevel();
+        float inspectFade = 1f - sectionInspection.inspectLevel();
         float exoshipFade = 1f - exoshipView.viewLevel();
         float sceneryAlpha = backgroundAlpha * inspectFade * exoshipFade;
         starRenderer.setMapRadius(hyperspaceMode.starRadius(), hyperspaceMode.mapAmount());
@@ -559,11 +559,11 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         ringBeltRenderer.render(viewport, sceneryAlpha * treeAlpha);
         abyssSerpents.render(viewport, sceneryAlpha * treeAlpha);
         staticImageRenderer.render(viewport, sceneryAlpha, hyperspaceMode.anchorIds(), treeAlpha);
-        frameworkInspection.renderBackdrop(canvasPosition, alphaMult);
+        sectionInspection.renderBackdrop(canvasPosition, alphaMult);
         boolean pointerOverTree = mouseKnown && !chrome.contains(canvasPosition, mode, mouseX, mouseY);
-        boolean shipHovered = pointerOverTree && mode.hoversTree() && !frameworkInspection.isInspecting()
+        boolean shipHovered = pointerOverTree && mode.hoversTree() && !sectionInspection.isInspecting()
                 && exoshipView.shipContains(viewport, mouseX, mouseY);
-        boolean treeHovered = pointerOverTree && mode.hoversTree() && !frameworkInspection.isInspecting() && !shipHovered;
+        boolean treeHovered = pointerOverTree && mode.hoversTree() && !sectionInspection.isInspecting() && !shipHovered;
         exoshipView.setHovered(shipHovered);
         TreeLayers layers = exoshipView.layers(viewport, alphaMult * treeAlpha * inspectFade);
         if (treeAlpha * inspectFade > 0f) {
@@ -573,7 +573,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         float shipAlpha = backgroundAlpha + (alphaMult * treeSession.treeAlpha() - backgroundAlpha) * exoshipView.viewLevel();
         exoshipView.render(viewport, shipAlpha * treeAlpha * inspectFade);
         starRenderer.renderGlow(viewport, sceneryAlpha);
-        frameworkInspection.render(canvasPosition, viewport, fleetRenderer, alphaMult);
+        sectionInspection.render(canvasPosition, viewport, fleetRenderer, alphaMult);
         if (workbenchDimProgress > 0f) {
             GLDraw.fillQuad(canvasPosition.getX(), canvasPosition.getY(), canvasPosition.getWidth(), canvasPosition.getHeight(), Color.BLACK,
                     WORKBENCH_DIM_ALPHA * workbenchDimProgress * alphaMult);

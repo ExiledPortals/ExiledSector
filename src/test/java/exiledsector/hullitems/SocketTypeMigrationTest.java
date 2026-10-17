@@ -62,9 +62,9 @@ class SocketTypeMigrationTest {
 
         assertTrue(chip.canSocketInto(firstSocket));
         assertFalse(gunners.canSocketInto(firstSocket));
-        assertTrue(gunners.canSocketInto(HullItemType.WEAPON_MOUNT));
-        assertFalse(gunners.canSocketInto(HullItemType.BRIDGE));
-        assertFalse(chip.canSocketInto(HullItemType.SUBROUTINE));
+        assertTrue(gunners.canSocketInto(ShipSection.WEAPON_MOUNT));
+        assertFalse(gunners.canSocketInto(ShipSection.BRIDGE));
+        assertFalse(chip.canSocketInto(ShipSection.BRIDGE));
     }
 
     @Test
