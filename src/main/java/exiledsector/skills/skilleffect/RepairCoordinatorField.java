@@ -38,6 +38,7 @@ final class RepairCoordinatorField extends BaseEveryFrameCombatPlugin {
             field = new RepairCoordinatorField();
             engine.getCustomData().put(CUSTOM_DATA_KEY, field);
             engine.addPlugin(field);
+            engine.addLayeredRenderingPlugin(new RepairDroneRenderer(field));
         }
         field.sources.add(source);
     }
@@ -62,22 +63,45 @@ final class RepairCoordinatorField extends BaseEveryFrameCombatPlugin {
                        float elapsedSeconds) {
         for (RepairCoordinatorListener source : sources) {
             float percentPerSecond = source.armorRepairPercentPerSecond();
-            if (percentPerSecond <= 0f) {
-                continue;
-            }
-            ShipAPI ally = closestAllyNeedingArmor(source, shipsNear, repairedArmorByAlly);
+            ShipAPI ally = percentPerSecond <= 0f ? null : closestAllyNeedingArmor(source, shipsNear, repairedArmorByAlly);
             if (ally == null) {
+                source.stopWork();
                 continue;
             }
             ArmorGridAPI grid = ally.getArmorGrid();
+            int[] worstCell = mostDamagedCell(grid);
             float restored = restoreArmor(grid, Math.min(totalArmor(grid) * percentPerSecond / 100f * elapsedSeconds,
                     remainingAllowance(source, ally, repairedArmorByAlly)));
             if (restored > 0f) {
                 repairedArmorByAlly.merge(ally, restored, Float::sum);
                 source.recordRepair(ally, restored);
+                source.workOn(ally, worstCell[0], worstCell[1]);
                 ally.syncWithArmorGridState();
+            } else {
+                source.stopWork();
             }
         }
+    }
+
+    static int[] mostDamagedCell(ArmorGridAPI grid) {
+        float[][] cells = grid.getGrid();
+        int[] worst = {0, 0};
+        float lowest = Float.MAX_VALUE;
+        for (int x = 0; x < cells.length; x++) {
+            for (int y = 0; y < cells[x].length; y++) {
+                float armor = grid.getArmorValue(x, y);
+                if (armor < lowest) {
+                    lowest = armor;
+                    worst[0] = x;
+                    worst[1] = y;
+                }
+            }
+        }
+        return worst;
+    }
+
+    List<RepairCoordinatorListener> sources() {
+        return sources;
     }
 
     private static ShipAPI closestAllyNeedingArmor(RepairCoordinatorListener source, GravityDragField.ShipsNear shipsNear,

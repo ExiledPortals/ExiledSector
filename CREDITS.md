@@ -12,7 +12,7 @@ Files: everything prefixed `rat_`, which covers the icons in `graphics/icons`, t
 
 By YukiM. Nightcross's own licence makes its graphics free to use for kitbashing and its code available under GPLv3, and the author confirmed the assets are free to use in Starsector modding (Discord, 16 October 2026). The Repair Coordinator node is modelled on Nightcross's Repair Coordinator hull mod, reworked to mend armor instead of hull.
 
-Files: everything prefixed `na_` in `graphics/icons`.
+Files: everything prefixed `na_` in `graphics/icons`, and the repair drone sprite `graphics/fx/na_repair_drone.png` (from the Healing Bolt drone).
 
 ## LOST_SECTOR
 
