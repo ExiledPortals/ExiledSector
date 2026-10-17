@@ -197,7 +197,7 @@ public final class ExoshipRenderer {
             float flameWidth = engine[2] * screenLength * (0.7f + 0.3f * thrustLevel);
             float flameLength = engine[3] * screenLength * (0.3f + thrustLevel) * flicker;
             EngineFlames.draw(spriteCache, engineX, engineY, forwardX, forwardY, facingDeg, flameLength, flameWidth, EXO_EMBER,
-                    alphaMult * (0.5f + 0.5f * thrustLevel) * Math.min(1f, flicker));
+                    alphaMult * (0.5f + 0.5f * thrustLevel));
         }
     }
 

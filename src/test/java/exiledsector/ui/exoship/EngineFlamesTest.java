@@ -26,17 +26,22 @@ class EngineFlamesTest {
     }
 
     @Test
-    void theFlickerStaysWithinAFewPercentAndKeepsChanging() {
+    void theFlickerStaysGentleAndKeepsChanging() {
         float lowest = Float.MAX_VALUE;
         float highest = -Float.MAX_VALUE;
-        for (int frame = 0; frame < 600; frame++) {
+        float largestFrameStep = 0f;
+        float previous = EngineFlames.flicker(0f, 2);
+        for (int frame = 1; frame < 600; frame++) {
             float flicker = EngineFlames.flicker(frame / 60f, 2);
             lowest = Math.min(lowest, flicker);
             highest = Math.max(highest, flicker);
+            largestFrameStep = Math.max(largestFrameStep, Math.abs(flicker - previous));
+            previous = flicker;
         }
 
-        assertTrue(lowest >= 0.89f && highest <= 1.11f, lowest + ".." + highest);
-        assertTrue(highest - lowest > 0.1f, lowest + ".." + highest);
+        assertTrue(lowest >= 0.96f && highest <= 1.04f, lowest + ".." + highest);
+        assertTrue(highest - lowest > 0.03f, lowest + ".." + highest);
+        assertTrue(largestFrameStep < 0.005f, "largest step between frames " + largestFrameStep);
     }
 
     @Test

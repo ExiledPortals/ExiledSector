@@ -22,8 +22,8 @@ final class EngineFlames {
     }
 
     static float flicker(float elapsedSeconds, int engineIndex) {
-        return 1f + 0.07f * (float) Math.sin(elapsedSeconds * 29f + engineIndex * 1.7f)
-                + 0.04f * (float) Math.sin(elapsedSeconds * 47f + engineIndex * 2.9f);
+        return 1f + 0.025f * (float) Math.sin(elapsedSeconds * 6f + engineIndex * 1.7f)
+                + 0.01f * (float) Math.sin(elapsedSeconds * 11f + engineIndex * 2.9f);
     }
 
     static float cappedLength(float flameLength, float flameWidth) {

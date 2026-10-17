@@ -96,7 +96,7 @@ final class ExoshipEscorts {
             float nozzleY = screenY - forwardY * length * NOZZLE_SHARE;
             float flicker = EngineFlames.flicker(elapsedSeconds, escortIndex);
             EngineFlames.draw(spriteCache, nozzleX, nozzleY, forwardX, forwardY, pose.facingDeg(), length * FLAME_LENGTH_SHARE * flicker,
-                    length * FLAME_WIDTH_SHARE, ENGINE_COLOR, alpha * Math.min(1f, flicker));
+                    length * FLAME_WIDTH_SHARE, ENGINE_COLOR, alpha);
             SpriteDraw.drawAtCenter(spriteCache, escort.spritePath(), screenX, screenY, width, length, null, alpha, angle);
         }
     }
