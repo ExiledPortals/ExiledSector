@@ -34,7 +34,7 @@ function Copy-ModFiles {
 
     $excludedGraphics = @("description", "unused")
     New-Item -ItemType Directory -Force -Path $Destination | Out-Null
-    foreach ($file in @("mod_info.json", "ExiledSector.version", "LICENSE")) {
+    foreach ($file in @("mod_info.json", "ExiledSector.version", "LICENSE", "CREDITS.md")) {
         Copy-Item -Path (Join-Path $ProjectRoot $file) -Destination $Destination -Force
     }
     foreach ($folder in @("jars", "data", "sounds")) {
