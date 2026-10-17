@@ -148,6 +148,8 @@
     {"name": "FIGHTER_TOP_SPEED_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},
     {"name": "FIGHTER_WEAPON_DAMAGE_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},
     {"name": "FIGHTER_WEAPON_RANGE_FLAT", "statMode": "FLAT", "lowerIsBetter": false},
+    {"name": "FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER", "statMode": null, "lowerIsBetter": false},
+    {"name": "FIGHTER_WING_SHARED_DAMAGE_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "FLUX_CAPACITOR_EFFECTIVENESS_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "FLUX_CAPACITY_FLAT", "statMode": "FLAT", "lowerIsBetter": false},
     {"name": "FLUX_CAPACITY_MULT", "statMode": "MULT", "lowerIsBetter": false},
