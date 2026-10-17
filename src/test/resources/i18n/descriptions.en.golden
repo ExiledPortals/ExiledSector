@@ -2408,27 +2408,27 @@ type|beam_split_reduced_damage|FRIGATE|0	0	Beam weapon hits split their damage e
 type|beam_split_reduced_damage|DESTROYER|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 type|beam_split_reduced_damage|CRUISER|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
 type|beam_split_reduced_damage|CAPITAL_SHIP|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. The target acquisition range is half the beam weapon's range. Split beams also carry the weapon's special beam effects.
-type|beautiful_nightmare|null|0	0	When the hull is failing, the frozen soul at the core stops holding anything back. The ship fights on through its terminal descent, burning its readiness to do it.
+type|beautiful_nightmare|null|0	0	Stargazers fight hardest when they are dying, and the Stardust Core recovered from one, the remains of what was once a person, shows the crew how to strip the ship's safeties the moment its hull starts to fail. The ship fights on through its terminal descent, burning its readiness to do it.
 type|beautiful_nightmare|null|1	0	When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, hull damage taken is reduced by <good>25%</good>, but peak performance time stops so combat readiness drains, and venting is blocked.
 type|beautiful_nightmare|null|2	0	During Terminal Descent, flux dissipation rises by <good>15%</good>.
 type|beautiful_nightmare|null|3	0	During Terminal Descent, ship system charges regenerate <good>15%</good> faster.
 type|beautiful_nightmare|null|4	0	During Terminal Descent, shields take <bad>10%</bad> more damage.
-type|beautiful_nightmare|FRIGATE|0	0	When the hull is failing, the frozen soul at the core stops holding anything back. The ship fights on through its terminal descent, burning its readiness to do it.
+type|beautiful_nightmare|FRIGATE|0	0	Stargazers fight hardest when they are dying, and the Stardust Core recovered from one, the remains of what was once a person, shows the crew how to strip the ship's safeties the moment its hull starts to fail. The ship fights on through its terminal descent, burning its readiness to do it.
 type|beautiful_nightmare|FRIGATE|1	0	When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, hull damage taken is reduced by <good>25%</good>, but peak performance time stops so combat readiness drains, and venting is blocked.
 type|beautiful_nightmare|FRIGATE|2	0	During Terminal Descent, flux dissipation rises by <good>15%</good>.
 type|beautiful_nightmare|FRIGATE|3	0	During Terminal Descent, ship system charges regenerate <good>15%</good> faster.
 type|beautiful_nightmare|FRIGATE|4	0	During Terminal Descent, shields take <bad>10%</bad> more damage.
-type|beautiful_nightmare|DESTROYER|0	0	When the hull is failing, the frozen soul at the core stops holding anything back. The ship fights on through its terminal descent, burning its readiness to do it.
+type|beautiful_nightmare|DESTROYER|0	0	Stargazers fight hardest when they are dying, and the Stardust Core recovered from one, the remains of what was once a person, shows the crew how to strip the ship's safeties the moment its hull starts to fail. The ship fights on through its terminal descent, burning its readiness to do it.
 type|beautiful_nightmare|DESTROYER|1	0	When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, hull damage taken is reduced by <good>25%</good>, but peak performance time stops so combat readiness drains, and venting is blocked.
 type|beautiful_nightmare|DESTROYER|2	0	During Terminal Descent, flux dissipation rises by <good>15%</good>.
 type|beautiful_nightmare|DESTROYER|3	0	During Terminal Descent, ship system charges regenerate <good>15%</good> faster.
 type|beautiful_nightmare|DESTROYER|4	0	During Terminal Descent, shields take <bad>10%</bad> more damage.
-type|beautiful_nightmare|CRUISER|0	0	When the hull is failing, the frozen soul at the core stops holding anything back. The ship fights on through its terminal descent, burning its readiness to do it.
+type|beautiful_nightmare|CRUISER|0	0	Stargazers fight hardest when they are dying, and the Stardust Core recovered from one, the remains of what was once a person, shows the crew how to strip the ship's safeties the moment its hull starts to fail. The ship fights on through its terminal descent, burning its readiness to do it.
 type|beautiful_nightmare|CRUISER|1	0	When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, hull damage taken is reduced by <good>25%</good>, but peak performance time stops so combat readiness drains, and venting is blocked.
 type|beautiful_nightmare|CRUISER|2	0	During Terminal Descent, flux dissipation rises by <good>15%</good>.
 type|beautiful_nightmare|CRUISER|3	0	During Terminal Descent, ship system charges regenerate <good>15%</good> faster.
 type|beautiful_nightmare|CRUISER|4	0	During Terminal Descent, shields take <bad>10%</bad> more damage.
-type|beautiful_nightmare|CAPITAL_SHIP|0	0	When the hull is failing, the frozen soul at the core stops holding anything back. The ship fights on through its terminal descent, burning its readiness to do it.
+type|beautiful_nightmare|CAPITAL_SHIP|0	0	Stargazers fight hardest when they are dying, and the Stardust Core recovered from one, the remains of what was once a person, shows the crew how to strip the ship's safeties the moment its hull starts to fail. The ship fights on through its terminal descent, burning its readiness to do it.
 type|beautiful_nightmare|CAPITAL_SHIP|1	0	When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, hull damage taken is reduced by <good>25%</good>, but peak performance time stops so combat readiness drains, and venting is blocked.
 type|beautiful_nightmare|CAPITAL_SHIP|2	0	During Terminal Descent, flux dissipation rises by <good>15%</good>.
 type|beautiful_nightmare|CAPITAL_SHIP|3	0	During Terminal Descent, ship system charges regenerate <good>15%</good> faster.
@@ -2566,15 +2566,15 @@ type|converted_hangar|CAPITAL_SHIP|4	1	Increases minimum crew required by <good>
 type-detail|converted_hangar|CAPITAL_SHIP|0	0	Unallocating it returns any fighter wing in the bay it adds to your cargo.
 type-detail|converted_hangar|CAPITAL_SHIP|1	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
 type-detail|converted_hangar|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Converted Fighter Bay</hullmod>\n• <hullmod>Converted Hangar</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Converted Fighter Bay</node>
-type|corrosion_beam|null|0	0	Beams held on a target gather stardust, which breaks loose as motes that hunt it down.
+type|corrosion_beam|null|0	0	A corrosion emitter salvaged from a Stargazer wreck still drags stardust through whatever it touches, and the crew learns to tune this ship's beams to do the same. Beams held on a target gather stardust, which breaks loose as motes that hunt it down.
 type|corrosion_beam|null|1	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
-type|corrosion_beam|FRIGATE|0	0	Beams held on a target gather stardust, which breaks loose as motes that hunt it down.
+type|corrosion_beam|FRIGATE|0	0	A corrosion emitter salvaged from a Stargazer wreck still drags stardust through whatever it touches, and the crew learns to tune this ship's beams to do the same. Beams held on a target gather stardust, which breaks loose as motes that hunt it down.
 type|corrosion_beam|FRIGATE|1	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
-type|corrosion_beam|DESTROYER|0	0	Beams held on a target gather stardust, which breaks loose as motes that hunt it down.
+type|corrosion_beam|DESTROYER|0	0	A corrosion emitter salvaged from a Stargazer wreck still drags stardust through whatever it touches, and the crew learns to tune this ship's beams to do the same. Beams held on a target gather stardust, which breaks loose as motes that hunt it down.
 type|corrosion_beam|DESTROYER|1	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
-type|corrosion_beam|CRUISER|0	0	Beams held on a target gather stardust, which breaks loose as motes that hunt it down.
+type|corrosion_beam|CRUISER|0	0	A corrosion emitter salvaged from a Stargazer wreck still drags stardust through whatever it touches, and the crew learns to tune this ship's beams to do the same. Beams held on a target gather stardust, which breaks loose as motes that hunt it down.
 type|corrosion_beam|CRUISER|1	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
-type|corrosion_beam|CAPITAL_SHIP|0	0	Beams held on a target gather stardust, which breaks loose as motes that hunt it down.
+type|corrosion_beam|CAPITAL_SHIP|0	0	A corrosion emitter salvaged from a Stargazer wreck still drags stardust through whatever it touches, and the crew learns to tune this ship's beams to do the same. Beams held on a target gather stardust, which breaks loose as motes that hunt it down.
 type|corrosion_beam|CAPITAL_SHIP|1	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
 type|crew_capacity_flat|FRIGATE|0	0	Increases crew capacity by <good>5</good>.
 type|crew_capacity_flat|DESTROYER|0	0	Increases crew capacity by <good>15</good>.
@@ -2633,35 +2633,40 @@ type|defensive_targeting_array|CRUISER|0	0	Increases the damage fighters launche
 type-detail|defensive_targeting_array|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Defensive Targeting Array</hullmod>
 type|defensive_targeting_array|CAPITAL_SHIP|0	0	Increases the damage fighters launched from this ship deal to other fighters and missiles. Also locks launched fighters to stay near the ship instead of patrolling freely.
 type-detail|defensive_targeting_array|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Defensive Targeting Array</hullmod>
-type|disintegration|null|0	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.
-type|disintegration|FRIGATE|0	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.
-type|disintegration|DESTROYER|0	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.
-type|disintegration|CRUISER|0	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.
-type|disintegration|CAPITAL_SHIP|0	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.
-type|dynamic_grid|null|0	0	Nightcross's signature power grid. The moment the shields come down, the power that fed them is routed to the energy weapons.
+type|disintegration|null|0	0	Hulls killed by [REDACTED] energy weapons come apart around every impact in a way no human weapon manages, and taking those wrecks apart shows the crew how to tune this ship's energy weapons the same way.
+type|disintegration|null|1	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.
+type|disintegration|FRIGATE|0	0	Hulls killed by [REDACTED] energy weapons come apart around every impact in a way no human weapon manages, and taking those wrecks apart shows the crew how to tune this ship's energy weapons the same way.
+type|disintegration|FRIGATE|1	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.
+type|disintegration|DESTROYER|0	0	Hulls killed by [REDACTED] energy weapons come apart around every impact in a way no human weapon manages, and taking those wrecks apart shows the crew how to tune this ship's energy weapons the same way.
+type|disintegration|DESTROYER|1	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.
+type|disintegration|CRUISER|0	0	Hulls killed by [REDACTED] energy weapons come apart around every impact in a way no human weapon manages, and taking those wrecks apart shows the crew how to tune this ship's energy weapons the same way.
+type|disintegration|CRUISER|1	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.
+type|disintegration|CAPITAL_SHIP|0	0	Hulls killed by [REDACTED] energy weapons come apart around every impact in a way no human weapon manages, and taking those wrecks apart shows the crew how to tune this ship's energy weapons the same way.
+type|disintegration|CAPITAL_SHIP|1	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.
+type|dynamic_grid|null|0	0	Nightcross fits its dynamic coils to almost every hull it builds and never sells them on their own, so the crew pulls a set from a boarded Nightcross wreck and retrofits them into a hull that never shipped with one. The moment the shields come down, the power that fed them is routed to the energy weapons. The warranty, naturally, does not cover third-party installation.
 type|dynamic_grid|null|1	0	Once shields have been down for 0.75/1.1/2/3 seconds (frigate to capital) while not venting or overloaded, energy weapon rate of fire rises by <good>15%</good> and their flux cost falls by <good>15%</good>.
 type|dynamic_grid|null|2	0	<good>25%</good> increased shield raise rate.
 type|dynamic_grid|null|3	1	<good>10%</good> more damage taken by shields.
 type-detail|dynamic_grid|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Dynamic Grid</hullmod>
-type|dynamic_grid|FRIGATE|0	0	Nightcross's signature power grid. The moment the shields come down, the power that fed them is routed to the energy weapons.
+type|dynamic_grid|FRIGATE|0	0	Nightcross fits its dynamic coils to almost every hull it builds and never sells them on their own, so the crew pulls a set from a boarded Nightcross wreck and retrofits them into a hull that never shipped with one. The moment the shields come down, the power that fed them is routed to the energy weapons. The warranty, naturally, does not cover third-party installation.
 type|dynamic_grid|FRIGATE|1	0	Once shields have been down for 0.75/1.1/2/3 seconds (frigate to capital) while not venting or overloaded, energy weapon rate of fire rises by <good>15%</good> and their flux cost falls by <good>15%</good>.
 type|dynamic_grid|FRIGATE|2	0	<good>25%</good> increased shield raise rate.
 type|dynamic_grid|FRIGATE|3	1	<good>10%</good> more damage taken by shields.
 type|dynamic_grid|FRIGATE|4	0	<good>12%</good> increased venting speed.
 type-detail|dynamic_grid|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Dynamic Grid</hullmod>
-type|dynamic_grid|DESTROYER|0	0	Nightcross's signature power grid. The moment the shields come down, the power that fed them is routed to the energy weapons.
+type|dynamic_grid|DESTROYER|0	0	Nightcross fits its dynamic coils to almost every hull it builds and never sells them on their own, so the crew pulls a set from a boarded Nightcross wreck and retrofits them into a hull that never shipped with one. The moment the shields come down, the power that fed them is routed to the energy weapons. The warranty, naturally, does not cover third-party installation.
 type|dynamic_grid|DESTROYER|1	0	Once shields have been down for 0.75/1.1/2/3 seconds (frigate to capital) while not venting or overloaded, energy weapon rate of fire rises by <good>15%</good> and their flux cost falls by <good>15%</good>.
 type|dynamic_grid|DESTROYER|2	0	<good>25%</good> increased shield raise rate.
 type|dynamic_grid|DESTROYER|3	1	<good>10%</good> more damage taken by shields.
 type|dynamic_grid|DESTROYER|4	0	<good>10%</good> increased venting speed.
 type-detail|dynamic_grid|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Dynamic Grid</hullmod>
-type|dynamic_grid|CRUISER|0	0	Nightcross's signature power grid. The moment the shields come down, the power that fed them is routed to the energy weapons.
+type|dynamic_grid|CRUISER|0	0	Nightcross fits its dynamic coils to almost every hull it builds and never sells them on their own, so the crew pulls a set from a boarded Nightcross wreck and retrofits them into a hull that never shipped with one. The moment the shields come down, the power that fed them is routed to the energy weapons. The warranty, naturally, does not cover third-party installation.
 type|dynamic_grid|CRUISER|1	0	Once shields have been down for 0.75/1.1/2/3 seconds (frigate to capital) while not venting or overloaded, energy weapon rate of fire rises by <good>15%</good> and their flux cost falls by <good>15%</good>.
 type|dynamic_grid|CRUISER|2	0	<good>25%</good> increased shield raise rate.
 type|dynamic_grid|CRUISER|3	1	<good>10%</good> more damage taken by shields.
 type|dynamic_grid|CRUISER|4	0	<good>8%</good> increased venting speed.
 type-detail|dynamic_grid|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Dynamic Grid</hullmod>
-type|dynamic_grid|CAPITAL_SHIP|0	0	Nightcross's signature power grid. The moment the shields come down, the power that fed them is routed to the energy weapons.
+type|dynamic_grid|CAPITAL_SHIP|0	0	Nightcross fits its dynamic coils to almost every hull it builds and never sells them on their own, so the crew pulls a set from a boarded Nightcross wreck and retrofits them into a hull that never shipped with one. The moment the shields come down, the power that fed them is routed to the energy weapons. The warranty, naturally, does not cover third-party installation.
 type|dynamic_grid|CAPITAL_SHIP|1	0	Once shields have been down for 0.75/1.1/2/3 seconds (frigate to capital) while not venting or overloaded, energy weapon rate of fire rises by <good>15%</good> and their flux cost falls by <good>15%</good>.
 type|dynamic_grid|CAPITAL_SHIP|2	0	<good>25%</good> increased shield raise rate.
 type|dynamic_grid|CAPITAL_SHIP|3	1	<good>10%</good> more damage taken by shields.
@@ -3069,29 +3074,29 @@ type|fuel_flat|FRIGATE|0	0	Increases fuel capacity by <good>5</good>.
 type|fuel_flat|DESTROYER|0	0	Increases fuel capacity by <good>15</good>.
 type|fuel_flat|CRUISER|0	0	Increases fuel capacity by <good>25</good>.
 type|fuel_flat|CAPITAL_SHIP|0	0	Increases fuel capacity by <good>50</good>.
-type|furor_machinae|null|0	0	Digital rage climbs with every hit that lands, driving the guns faster and faster.
+type|furor_machinae|null|0	0	Combat recordings pulled from a Stargazer's data core show its fire rate climbing with every hit, as if something inside it were growing angrier, and the crew rewires this ship's fire control to chase the same rhythm. Digital rage climbs with every hit that lands, driving the guns faster and faster.
 type|furor_machinae|null|1	0	Damage dealt to enemy ships builds fury, raising weapon rate of fire by up to <good>15%</good>, full after 2000/4000/8000/20000 damage (frigate to capital). Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
-type|furor_machinae|FRIGATE|0	0	Digital rage climbs with every hit that lands, driving the guns faster and faster.
+type|furor_machinae|FRIGATE|0	0	Combat recordings pulled from a Stargazer's data core show its fire rate climbing with every hit, as if something inside it were growing angrier, and the crew rewires this ship's fire control to chase the same rhythm. Digital rage climbs with every hit that lands, driving the guns faster and faster.
 type|furor_machinae|FRIGATE|1	0	Damage dealt to enemy ships builds fury, raising weapon rate of fire by up to <good>15%</good>, full after 2000/4000/8000/20000 damage (frigate to capital). Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
-type|furor_machinae|DESTROYER|0	0	Digital rage climbs with every hit that lands, driving the guns faster and faster.
+type|furor_machinae|DESTROYER|0	0	Combat recordings pulled from a Stargazer's data core show its fire rate climbing with every hit, as if something inside it were growing angrier, and the crew rewires this ship's fire control to chase the same rhythm. Digital rage climbs with every hit that lands, driving the guns faster and faster.
 type|furor_machinae|DESTROYER|1	0	Damage dealt to enemy ships builds fury, raising weapon rate of fire by up to <good>15%</good>, full after 2000/4000/8000/20000 damage (frigate to capital). Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
-type|furor_machinae|CRUISER|0	0	Digital rage climbs with every hit that lands, driving the guns faster and faster.
+type|furor_machinae|CRUISER|0	0	Combat recordings pulled from a Stargazer's data core show its fire rate climbing with every hit, as if something inside it were growing angrier, and the crew rewires this ship's fire control to chase the same rhythm. Digital rage climbs with every hit that lands, driving the guns faster and faster.
 type|furor_machinae|CRUISER|1	0	Damage dealt to enemy ships builds fury, raising weapon rate of fire by up to <good>15%</good>, full after 2000/4000/8000/20000 damage (frigate to capital). Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
-type|furor_machinae|CAPITAL_SHIP|0	0	Digital rage climbs with every hit that lands, driving the guns faster and faster.
+type|furor_machinae|CAPITAL_SHIP|0	0	Combat recordings pulled from a Stargazer's data core show its fire rate climbing with every hit, as if something inside it were growing angrier, and the crew rewires this ship's fire control to chase the same rhythm. Digital rage climbs with every hit that lands, driving the guns faster and faster.
 type|furor_machinae|CAPITAL_SHIP|1	0	Damage dealt to enemy ships builds fury, raising weapon rate of fire by up to <good>15%</good>, full after 2000/4000/8000/20000 damage (frigate to capital). Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
-type|gravitational_drag|null|0	0	A gravitational disturbance around the hull drags at the timeflow of nearby enemies, strongest from inside phase space.
+type|gravitational_drag|null|0	0	Inside a recovered Ancient Prototype, where every conduit converges on a perfectly spherical void, the crew finds the Candle's Grace device that drags at the timeflow of anything near it. Nobody aboard can say who Candle's Grace was, and the replica built from it is mostly guesswork. Nearby enemies slow, most of all while the ship is phased.
 type|gravitational_drag|null|1	0	Enemy ships within 1500 su lose up to <good>5%</good> timeflow, more the closer they are, or <good>10%</good> while this ship is phased. Gravitational drag from every source, including Nightcross's own Gravitational Drag hull mod, is capped at 25% per ship.
 type-detail|gravitational_drag|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Gravitational Drag</hullmod>
-type|gravitational_drag|FRIGATE|0	0	A gravitational disturbance around the hull drags at the timeflow of nearby enemies, strongest from inside phase space.
+type|gravitational_drag|FRIGATE|0	0	Inside a recovered Ancient Prototype, where every conduit converges on a perfectly spherical void, the crew finds the Candle's Grace device that drags at the timeflow of anything near it. Nobody aboard can say who Candle's Grace was, and the replica built from it is mostly guesswork. Nearby enemies slow, most of all while the ship is phased.
 type|gravitational_drag|FRIGATE|1	0	Enemy ships within 1500 su lose up to <good>5%</good> timeflow, more the closer they are, or <good>10%</good> while this ship is phased. Gravitational drag from every source, including Nightcross's own Gravitational Drag hull mod, is capped at 25% per ship.
 type-detail|gravitational_drag|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Gravitational Drag</hullmod>
-type|gravitational_drag|DESTROYER|0	0	A gravitational disturbance around the hull drags at the timeflow of nearby enemies, strongest from inside phase space.
+type|gravitational_drag|DESTROYER|0	0	Inside a recovered Ancient Prototype, where every conduit converges on a perfectly spherical void, the crew finds the Candle's Grace device that drags at the timeflow of anything near it. Nobody aboard can say who Candle's Grace was, and the replica built from it is mostly guesswork. Nearby enemies slow, most of all while the ship is phased.
 type|gravitational_drag|DESTROYER|1	0	Enemy ships within 1500 su lose up to <good>5%</good> timeflow, more the closer they are, or <good>10%</good> while this ship is phased. Gravitational drag from every source, including Nightcross's own Gravitational Drag hull mod, is capped at 25% per ship.
 type-detail|gravitational_drag|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Gravitational Drag</hullmod>
-type|gravitational_drag|CRUISER|0	0	A gravitational disturbance around the hull drags at the timeflow of nearby enemies, strongest from inside phase space.
+type|gravitational_drag|CRUISER|0	0	Inside a recovered Ancient Prototype, where every conduit converges on a perfectly spherical void, the crew finds the Candle's Grace device that drags at the timeflow of anything near it. Nobody aboard can say who Candle's Grace was, and the replica built from it is mostly guesswork. Nearby enemies slow, most of all while the ship is phased.
 type|gravitational_drag|CRUISER|1	0	Enemy ships within 1500 su lose up to <good>5%</good> timeflow, more the closer they are, or <good>10%</good> while this ship is phased. Gravitational drag from every source, including Nightcross's own Gravitational Drag hull mod, is capped at 25% per ship.
 type-detail|gravitational_drag|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Gravitational Drag</hullmod>
-type|gravitational_drag|CAPITAL_SHIP|0	0	A gravitational disturbance around the hull drags at the timeflow of nearby enemies, strongest from inside phase space.
+type|gravitational_drag|CAPITAL_SHIP|0	0	Inside a recovered Ancient Prototype, where every conduit converges on a perfectly spherical void, the crew finds the Candle's Grace device that drags at the timeflow of anything near it. Nobody aboard can say who Candle's Grace was, and the replica built from it is mostly guesswork. Nearby enemies slow, most of all while the ship is phased.
 type|gravitational_drag|CAPITAL_SHIP|1	0	Enemy ships within 1500 su lose up to <good>5%</good> timeflow, more the closer they are, or <good>10%</good> while this ship is phased. Gravitational drag from every source, including Nightcross's own Gravitational Drag hull mod, is capped at 25% per ship.
 type-detail|gravitational_drag|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Gravitational Drag</hullmod>
 type|ground_support|null|0	0	Raiding colonies alongside pirate crews teaches the crew to turn spare berths and cargo lifts into a drop platform for the marines. The more crew this ship can carry, the more weight it adds to planetary raids.
@@ -3134,19 +3139,19 @@ type-detail|hardenedshieldemitter|CRUISER|0	0	Mutually exclusive with <hullmod>h
 type|hardenedshieldemitter|CAPITAL_SHIP|0	1	<bad>10%</bad> less damage taken by shields.
 type|hardenedshieldemitter|CAPITAL_SHIP|1	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 type-detail|hardenedshieldemitter|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Hardened Shields</hullmod>
-type|hardlight_infusion|null|0	0	Fighter hits paint the target with hardlight markers that guide the rest of the carrier's wings onto it.
+type|hardlight_infusion|null|0	0	Nightcross Restricted Hardlight Rifles, looted from a hidden NCA research outpost, keep count of every hit they land on a target, and the crew learns to port that counter into this carrier's wing datalink. Fighter hits paint the target with hardlight markers that guide the rest of the wings onto it.
 type|hardlight_infusion|null|1	0	Each hit by a fighter launched from this ship marks the enemy ship it hits, raising the damage that ship takes from this ship's fighters by <good>2%</good>. The mark clears 2 seconds after the last hit. Each second of beam contact counts as one hit.
 type|hardlight_infusion|null|2	0	The fighter mark raises damage taken by up to <good>30%</good>.
-type|hardlight_infusion|FRIGATE|0	0	Fighter hits paint the target with hardlight markers that guide the rest of the carrier's wings onto it.
+type|hardlight_infusion|FRIGATE|0	0	Nightcross Restricted Hardlight Rifles, looted from a hidden NCA research outpost, keep count of every hit they land on a target, and the crew learns to port that counter into this carrier's wing datalink. Fighter hits paint the target with hardlight markers that guide the rest of the wings onto it.
 type|hardlight_infusion|FRIGATE|1	0	Each hit by a fighter launched from this ship marks the enemy ship it hits, raising the damage that ship takes from this ship's fighters by <good>2%</good>. The mark clears 2 seconds after the last hit. Each second of beam contact counts as one hit.
 type|hardlight_infusion|FRIGATE|2	0	The fighter mark raises damage taken by up to <good>30%</good>.
-type|hardlight_infusion|DESTROYER|0	0	Fighter hits paint the target with hardlight markers that guide the rest of the carrier's wings onto it.
+type|hardlight_infusion|DESTROYER|0	0	Nightcross Restricted Hardlight Rifles, looted from a hidden NCA research outpost, keep count of every hit they land on a target, and the crew learns to port that counter into this carrier's wing datalink. Fighter hits paint the target with hardlight markers that guide the rest of the wings onto it.
 type|hardlight_infusion|DESTROYER|1	0	Each hit by a fighter launched from this ship marks the enemy ship it hits, raising the damage that ship takes from this ship's fighters by <good>2%</good>. The mark clears 2 seconds after the last hit. Each second of beam contact counts as one hit.
 type|hardlight_infusion|DESTROYER|2	0	The fighter mark raises damage taken by up to <good>30%</good>.
-type|hardlight_infusion|CRUISER|0	0	Fighter hits paint the target with hardlight markers that guide the rest of the carrier's wings onto it.
+type|hardlight_infusion|CRUISER|0	0	Nightcross Restricted Hardlight Rifles, looted from a hidden NCA research outpost, keep count of every hit they land on a target, and the crew learns to port that counter into this carrier's wing datalink. Fighter hits paint the target with hardlight markers that guide the rest of the wings onto it.
 type|hardlight_infusion|CRUISER|1	0	Each hit by a fighter launched from this ship marks the enemy ship it hits, raising the damage that ship takes from this ship's fighters by <good>2%</good>. The mark clears 2 seconds after the last hit. Each second of beam contact counts as one hit.
 type|hardlight_infusion|CRUISER|2	0	The fighter mark raises damage taken by up to <good>30%</good>.
-type|hardlight_infusion|CAPITAL_SHIP|0	0	Fighter hits paint the target with hardlight markers that guide the rest of the carrier's wings onto it.
+type|hardlight_infusion|CAPITAL_SHIP|0	0	Nightcross Restricted Hardlight Rifles, looted from a hidden NCA research outpost, keep count of every hit they land on a target, and the crew learns to port that counter into this carrier's wing datalink. Fighter hits paint the target with hardlight markers that guide the rest of the wings onto it.
 type|hardlight_infusion|CAPITAL_SHIP|1	0	Each hit by a fighter launched from this ship marks the enemy ship it hits, raising the damage that ship takes from this ship's fighters by <good>2%</good>. The mark clears 2 seconds after the last hit. Each second of beam contact counts as one hit.
 type|hardlight_infusion|CAPITAL_SHIP|2	0	The fighter mark raises damage taken by up to <good>30%</good>.
 type|heavy_ballistics_integration|null|0	0	Stripping decommissioned Onslaughts at the Agreus shipbreaking yards showed the crew how the Navy seats its heaviest guns directly into the hull. Large ballistic weapons take up far less of this ship's ordnance budget.
@@ -3291,29 +3296,29 @@ type|insulatedengine|CAPITAL_SHIP|0	0	<good>60%</good> increased engine durabili
 type|insulatedengine|CAPITAL_SHIP|1	0	<good>10%</good> increased hull points.
 type|insulatedengine|CAPITAL_SHIP|2	1	<bad>50%</bad> less sensor profile.
 type-detail|insulatedengine|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Insulated Engine Assembly</hullmod>
-type|ion_rounds|null|0	0	Keep pressure on an enemy shield until its hard flux climbs, and the arcs start getting through.
+type|ion_rounds|null|0	0	The NCA Vendor sells Ion Bolters to any well-funded mercenary, and taking one apart shows the crew how to overdrive this ship's energy shots the same way. Keep pressure on an enemy shield until its hard flux climbs, and the arcs start getting through.
 type|ion_rounds|null|1	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
-type|ion_rounds|FRIGATE|0	0	Keep pressure on an enemy shield until its hard flux climbs, and the arcs start getting through.
+type|ion_rounds|FRIGATE|0	0	The NCA Vendor sells Ion Bolters to any well-funded mercenary, and taking one apart shows the crew how to overdrive this ship's energy shots the same way. Keep pressure on an enemy shield until its hard flux climbs, and the arcs start getting through.
 type|ion_rounds|FRIGATE|1	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
-type|ion_rounds|DESTROYER|0	0	Keep pressure on an enemy shield until its hard flux climbs, and the arcs start getting through.
+type|ion_rounds|DESTROYER|0	0	The NCA Vendor sells Ion Bolters to any well-funded mercenary, and taking one apart shows the crew how to overdrive this ship's energy shots the same way. Keep pressure on an enemy shield until its hard flux climbs, and the arcs start getting through.
 type|ion_rounds|DESTROYER|1	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
-type|ion_rounds|CRUISER|0	0	Keep pressure on an enemy shield until its hard flux climbs, and the arcs start getting through.
+type|ion_rounds|CRUISER|0	0	The NCA Vendor sells Ion Bolters to any well-funded mercenary, and taking one apart shows the crew how to overdrive this ship's energy shots the same way. Keep pressure on an enemy shield until its hard flux climbs, and the arcs start getting through.
 type|ion_rounds|CRUISER|1	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
-type|ion_rounds|CAPITAL_SHIP|0	0	Keep pressure on an enemy shield until its hard flux climbs, and the arcs start getting through.
+type|ion_rounds|CAPITAL_SHIP|0	0	The NCA Vendor sells Ion Bolters to any well-funded mercenary, and taking one apart shows the crew how to overdrive this ship's energy shots the same way. Keep pressure on an enemy shield until its hard flux climbs, and the arcs start getting through.
 type|ion_rounds|CAPITAL_SHIP|1	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
-type|language_of_the_lost|null|0	0	Broken signals bleed into enemy fire control, and their weapons fail them when it matters.
+type|language_of_the_lost|null|0	0	The broken transmissions Stargazer fleets whisper across every channel carry fragments of intrusion code, and the crew learns to strip that code out and fire it back at the enemy. The malware slips into enemy fire control, and their weapons fail them when it matters.
 type|language_of_the_lost|null|1	0	Increases ECM rating by <good>1</good>.
 type|language_of_the_lost|null|2	0	Enemy ships within 1000 su have a <good>5%</good> chance of weapon malfunctions. Several ships with this effect don't stack; the strongest applies.
-type|language_of_the_lost|FRIGATE|0	0	Broken signals bleed into enemy fire control, and their weapons fail them when it matters.
+type|language_of_the_lost|FRIGATE|0	0	The broken transmissions Stargazer fleets whisper across every channel carry fragments of intrusion code, and the crew learns to strip that code out and fire it back at the enemy. The malware slips into enemy fire control, and their weapons fail them when it matters.
 type|language_of_the_lost|FRIGATE|1	0	Increases ECM rating by <good>1</good>.
 type|language_of_the_lost|FRIGATE|2	0	Enemy ships within 1000 su have a <good>5%</good> chance of weapon malfunctions. Several ships with this effect don't stack; the strongest applies.
-type|language_of_the_lost|DESTROYER|0	0	Broken signals bleed into enemy fire control, and their weapons fail them when it matters.
+type|language_of_the_lost|DESTROYER|0	0	The broken transmissions Stargazer fleets whisper across every channel carry fragments of intrusion code, and the crew learns to strip that code out and fire it back at the enemy. The malware slips into enemy fire control, and their weapons fail them when it matters.
 type|language_of_the_lost|DESTROYER|1	0	Increases ECM rating by <good>1</good>.
 type|language_of_the_lost|DESTROYER|2	0	Enemy ships within 1000 su have a <good>5%</good> chance of weapon malfunctions. Several ships with this effect don't stack; the strongest applies.
-type|language_of_the_lost|CRUISER|0	0	Broken signals bleed into enemy fire control, and their weapons fail them when it matters.
+type|language_of_the_lost|CRUISER|0	0	The broken transmissions Stargazer fleets whisper across every channel carry fragments of intrusion code, and the crew learns to strip that code out and fire it back at the enemy. The malware slips into enemy fire control, and their weapons fail them when it matters.
 type|language_of_the_lost|CRUISER|1	0	Increases ECM rating by <good>1</good>.
 type|language_of_the_lost|CRUISER|2	0	Enemy ships within 1000 su have a <good>5%</good> chance of weapon malfunctions. Several ships with this effect don't stack; the strongest applies.
-type|language_of_the_lost|CAPITAL_SHIP|0	0	Broken signals bleed into enemy fire control, and their weapons fail them when it matters.
+type|language_of_the_lost|CAPITAL_SHIP|0	0	The broken transmissions Stargazer fleets whisper across every channel carry fragments of intrusion code, and the crew learns to strip that code out and fire it back at the enemy. The malware slips into enemy fire control, and their weapons fail them when it matters.
 type|language_of_the_lost|CAPITAL_SHIP|1	0	Increases ECM rating by <good>1</good>.
 type|language_of_the_lost|CAPITAL_SHIP|2	0	Enemy ships within 1000 su have a <good>5%</good> chance of weapon malfunctions. Several ships with this effect don't stack; the strongest applies.
 type|less_energy_damage_taken|null|0	1	<bad>5%</bad> reduced energy damage taken.
@@ -3336,26 +3341,31 @@ type|live_munitions|CRUISER|2	0	Each Heartless stack increases missile top speed
 type|live_munitions|CAPITAL_SHIP|0	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
 type|live_munitions|CAPITAL_SHIP|1	0	Each Heartless stack increases missile damage by <good>3%</good> while the fleet has crew left to give.
 type|live_munitions|CAPITAL_SHIP|2	0	Each Heartless stack increases missile top speed by <good>3%</good> while the fleet has crew left to give.
-type|machine_precision|null|0	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
-type|machine_precision|null|1	0	<good>5%</good> increased energy weapon range.
-type|machine_precision|null|2	0	<good>5%</good> increased ballistic weapon range.
-type|machine_precision|null|3	0	<good>5%</good> increased beam weapon range.
-type|machine_precision|FRIGATE|0	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
-type|machine_precision|FRIGATE|1	0	<good>5%</good> increased energy weapon range.
-type|machine_precision|FRIGATE|2	0	<good>5%</good> increased ballistic weapon range.
-type|machine_precision|FRIGATE|3	0	<good>5%</good> increased beam weapon range.
-type|machine_precision|DESTROYER|0	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
-type|machine_precision|DESTROYER|1	0	<good>5%</good> increased energy weapon range.
-type|machine_precision|DESTROYER|2	0	<good>5%</good> increased ballistic weapon range.
-type|machine_precision|DESTROYER|3	0	<good>5%</good> increased beam weapon range.
-type|machine_precision|CRUISER|0	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
-type|machine_precision|CRUISER|1	0	<good>5%</good> increased energy weapon range.
-type|machine_precision|CRUISER|2	0	<good>5%</good> increased ballistic weapon range.
-type|machine_precision|CRUISER|3	0	<good>5%</good> increased beam weapon range.
-type|machine_precision|CAPITAL_SHIP|0	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
-type|machine_precision|CAPITAL_SHIP|1	0	<good>5%</good> increased energy weapon range.
-type|machine_precision|CAPITAL_SHIP|2	0	<good>5%</good> increased ballistic weapon range.
-type|machine_precision|CAPITAL_SHIP|3	0	<good>5%</good> increased beam weapon range.
+type|machine_precision|null|0	0	A recovered Gamma core, kept powered just long enough to be questioned, gives up the targeting routines [REDACTED] drones use to lead a target. Patched into this ship's fire control, they make its autofiring weapons far more accurate and stretch every weapon's reach a little.
+type|machine_precision|null|1	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
+type|machine_precision|null|2	0	<good>5%</good> increased energy weapon range.
+type|machine_precision|null|3	0	<good>5%</good> increased ballistic weapon range.
+type|machine_precision|null|4	0	<good>5%</good> increased beam weapon range.
+type|machine_precision|FRIGATE|0	0	A recovered Gamma core, kept powered just long enough to be questioned, gives up the targeting routines [REDACTED] drones use to lead a target. Patched into this ship's fire control, they make its autofiring weapons far more accurate and stretch every weapon's reach a little.
+type|machine_precision|FRIGATE|1	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
+type|machine_precision|FRIGATE|2	0	<good>5%</good> increased energy weapon range.
+type|machine_precision|FRIGATE|3	0	<good>5%</good> increased ballistic weapon range.
+type|machine_precision|FRIGATE|4	0	<good>5%</good> increased beam weapon range.
+type|machine_precision|DESTROYER|0	0	A recovered Gamma core, kept powered just long enough to be questioned, gives up the targeting routines [REDACTED] drones use to lead a target. Patched into this ship's fire control, they make its autofiring weapons far more accurate and stretch every weapon's reach a little.
+type|machine_precision|DESTROYER|1	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
+type|machine_precision|DESTROYER|2	0	<good>5%</good> increased energy weapon range.
+type|machine_precision|DESTROYER|3	0	<good>5%</good> increased ballistic weapon range.
+type|machine_precision|DESTROYER|4	0	<good>5%</good> increased beam weapon range.
+type|machine_precision|CRUISER|0	0	A recovered Gamma core, kept powered just long enough to be questioned, gives up the targeting routines [REDACTED] drones use to lead a target. Patched into this ship's fire control, they make its autofiring weapons far more accurate and stretch every weapon's reach a little.
+type|machine_precision|CRUISER|1	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
+type|machine_precision|CRUISER|2	0	<good>5%</good> increased energy weapon range.
+type|machine_precision|CRUISER|3	0	<good>5%</good> increased ballistic weapon range.
+type|machine_precision|CRUISER|4	0	<good>5%</good> increased beam weapon range.
+type|machine_precision|CAPITAL_SHIP|0	0	A recovered Gamma core, kept powered just long enough to be questioned, gives up the targeting routines [REDACTED] drones use to lead a target. Patched into this ship's fire control, they make its autofiring weapons far more accurate and stretch every weapon's reach a little.
+type|machine_precision|CAPITAL_SHIP|1	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
+type|machine_precision|CAPITAL_SHIP|2	0	<good>5%</good> increased energy weapon range.
+type|machine_precision|CAPITAL_SHIP|3	0	<good>5%</good> increased ballistic weapon range.
+type|machine_precision|CAPITAL_SHIP|4	0	<good>5%</good> increased beam weapon range.
 type|magazines|null|0	0	<good>50%</good> increased ballistic weapon ammo capacity.
 type|magazines|null|1	0	<good>50%</good> increased energy weapon ammo capacity.
 type-detail|magazines|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Expanded Magazines</hullmod>
@@ -3441,11 +3451,16 @@ type|modular_hull_socket|FRIGATE|0	0	A stripped-out compartment wired straight i
 type|modular_hull_socket|DESTROYER|0	0	A stripped-out compartment wired straight into the ship's computer core. It holds a single subroutine and runs it alongside the ship's own control software.
 type|modular_hull_socket|CRUISER|0	0	A stripped-out compartment wired straight into the ship's computer core. It holds a single subroutine and runs it alongside the ship's own control software.
 type|modular_hull_socket|CAPITAL_SHIP|0	0	A stripped-out compartment wired straight into the ship's computer core. It holds a single subroutine and runs it alongside the ship's own control software.
-type|nanoforge_mending|null|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
-type|nanoforge_mending|FRIGATE|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
-type|nanoforge_mending|DESTROYER|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
-type|nanoforge_mending|CRUISER|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
-type|nanoforge_mending|CAPITAL_SHIP|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+type|nanoforge_mending|null|0	0	Stripping the repair nanoforge out of a gutted Nexus shows the crew how the [REDACTED] keep their hulls whole long after a fight should have broken them.
+type|nanoforge_mending|null|1	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+type|nanoforge_mending|FRIGATE|0	0	Stripping the repair nanoforge out of a gutted Nexus shows the crew how the [REDACTED] keep their hulls whole long after a fight should have broken them.
+type|nanoforge_mending|FRIGATE|1	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+type|nanoforge_mending|DESTROYER|0	0	Stripping the repair nanoforge out of a gutted Nexus shows the crew how the [REDACTED] keep their hulls whole long after a fight should have broken them.
+type|nanoforge_mending|DESTROYER|1	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+type|nanoforge_mending|CRUISER|0	0	Stripping the repair nanoforge out of a gutted Nexus shows the crew how the [REDACTED] keep their hulls whole long after a fight should have broken them.
+type|nanoforge_mending|CRUISER|1	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
+type|nanoforge_mending|CAPITAL_SHIP|0	0	Stripping the repair nanoforge out of a gutted Nexus shows the crew how the [REDACTED] keep their hulls whole long after a fight should have broken them.
+type|nanoforge_mending|CAPITAL_SHIP|1	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 type-detail|nav_relay|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Nav Relay</hullmod>
 type|nav_relay|FRIGATE|0	0	Increases fleet nav rating by <good>2</good>.
 type-detail|nav_relay|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Nav Relay</hullmod>
@@ -4154,11 +4169,16 @@ type|temporary_acceleration|CRUISER|0	0	<good>50%</good> increased maneuverabili
 type|temporary_acceleration|CRUISER|1	0	These effects only last for the first 90 seconds after the ship is deployed.
 type|temporary_acceleration|CAPITAL_SHIP|0	0	<good>50%</good> increased maneuverability.
 type|temporary_acceleration|CAPITAL_SHIP|1	0	These effects only last for the first 90 seconds after the ship is deployed.
-type|terrifying_presence|null|0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>. Penalties from several ships with this effect stack.
-type|terrifying_presence|FRIGATE|0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>. Penalties from several ships with this effect stack.
-type|terrifying_presence|DESTROYER|0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>. Penalties from several ships with this effect stack.
-type|terrifying_presence|CRUISER|0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>. Penalties from several ships with this effect stack.
-type|terrifying_presence|CAPITAL_SHIP|0	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>. Penalties from several ships with this effect stack.
+type|terrifying_presence|null|0	0	Sensor logs from fights with [REDACTED] fleets show how the drones flood the spectrum with false returns, and rebuilding the ship's ECM suite around those recordings feeds enemy fire control a target that is never quite where it seems.
+type|terrifying_presence|null|1	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>. Penalties from several ships with this effect stack.
+type|terrifying_presence|FRIGATE|0	0	Sensor logs from fights with [REDACTED] fleets show how the drones flood the spectrum with false returns, and rebuilding the ship's ECM suite around those recordings feeds enemy fire control a target that is never quite where it seems.
+type|terrifying_presence|FRIGATE|1	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>. Penalties from several ships with this effect stack.
+type|terrifying_presence|DESTROYER|0	0	Sensor logs from fights with [REDACTED] fleets show how the drones flood the spectrum with false returns, and rebuilding the ship's ECM suite around those recordings feeds enemy fire control a target that is never quite where it seems.
+type|terrifying_presence|DESTROYER|1	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>. Penalties from several ships with this effect stack.
+type|terrifying_presence|CRUISER|0	0	Sensor logs from fights with [REDACTED] fleets show how the drones flood the spectrum with false returns, and rebuilding the ship's ECM suite around those recordings feeds enemy fire control a target that is never quite where it seems.
+type|terrifying_presence|CRUISER|1	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>. Penalties from several ships with this effect stack.
+type|terrifying_presence|CAPITAL_SHIP|0	0	Sensor logs from fights with [REDACTED] fleets show how the drones flood the spectrum with false returns, and rebuilding the ship's ECM suite around those recordings feeds enemy fire control a target that is never quite where it seems.
+type|terrifying_presence|CAPITAL_SHIP|1	0	Enemy ships within 1000 su have the target leading accuracy of their autofiring weapons reduced by <good>25%</good>. Penalties from several ships with this effect stack.
 type|timeflow|null|0	0	<good>2%</good> increased timeflow.
 type|timeflow|FRIGATE|0	0	<good>2%</good> increased timeflow.
 type|timeflow|DESTROYER|0	0	<good>2%</good> increased timeflow.
