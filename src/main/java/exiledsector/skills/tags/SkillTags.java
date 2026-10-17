@@ -18,7 +18,8 @@ public final class SkillTags {
             "luddic", "tritachyon", "hegemony", "sindrian_dictat", "pirate", "REDACTED", "persean_league");
 
     public static final List<String> REGION = List.of(
-            "core", "luddic", "tritachyon", "hegemony", "sindrian_dictat", "pirate", "REDACTED", "persean_league", "enigma", "kesteven", "exotech", "abyss");
+            "core", "luddic", "tritachyon", "hegemony", "sindrian_dictat", "pirate", "REDACTED", "persean_league", "enigma", "kesteven", "exotech", "abyss",
+            "nightcross", "stargazer");
 
     public static final List<String> HULL_REQUIREMENT = List.of("req_civilian_hull", "req_non_phase_hull", "req_system_charges");
 
@@ -27,7 +28,9 @@ public final class SkillTags {
             "req_missile", "req_energy", "req_beam", "req_offensive_beam", "req_non_beam_energy", "req_flagship",
             "campaign_only", "player_only"), HULL_REQUIREMENT).flatMap(List::stream).toList();
 
-    public static final List<String> ALL = Stream.of(THEME, REGION, REQUIREMENT).flatMap(List::stream).toList();
+    public static final List<String> GATE = List.of("gate_primordial_catalyst");
+
+    public static final List<String> ALL = Stream.of(THEME, REGION, REQUIREMENT, GATE).flatMap(List::stream).toList();
 
     private SkillTags() {
     }

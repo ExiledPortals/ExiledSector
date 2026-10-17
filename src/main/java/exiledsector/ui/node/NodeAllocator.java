@@ -29,6 +29,7 @@ import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.ShipOpBudget;
 import exiledsector.skills.progression.SkillNodeOpCost;
 import exiledsector.skills.skilleffect.FleetWideEffects;
+import exiledsector.skills.unlock.NodeGates;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.skills.tags.ShipProfile;
 import exiledsector.socketables.FrameworkSockets;
@@ -199,7 +200,7 @@ final class NodeAllocator {
     private static Set<String> hiddenNodeIds(ShipSkillData skillData) {
         Set<String> hidden = new HashSet<>();
         for (SkillNode node : SkillTree.getAllNodes().values()) {
-            if (SkillTypeUnlockStatus.isHidden(node.getType(), skillData)) {
+            if (SkillTypeUnlockStatus.isHidden(node.getType(), skillData) || NodeGates.isHidden(node, skillData)) {
                 hidden.add(node.getId());
             }
         }

@@ -3,6 +3,7 @@ package exiledsector.skills.unlock;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CharacterDataAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
+import exiledsector.compat.RandomAssortmentCompat;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillType;
 import org.apache.log4j.Logger;
@@ -16,8 +17,11 @@ public final class SkillTypeUnlockStatus {
     }
 
     public static boolean isLocked(SkillType skillType, ShipSkillData shipData) {
-        List<UnlockCondition> conditions = skillType.getUnlockConditions();
-        if (conditions.isEmpty()) return false;
+        return isLocked(skillType.getUnlockConditions(), shipData);
+    }
+
+    public static boolean isLocked(List<UnlockCondition> conditions, ShipSkillData shipData) {
+        if (conditions == null || conditions.isEmpty()) return false;
 
         for (UnlockCondition condition : conditions) {
             if (isSatisfied(condition, shipData)) return false;
@@ -42,7 +46,8 @@ public final class SkillTypeUnlockStatus {
                 case CHARACTER_STAT -> hasCharacterStat(condition);
                 case MIN_SHIP_LEVEL -> hasMinShipLevel(condition, shipData);
                 case MEMORY_FLAG -> hasMemoryFlag(condition);
-                default -> false;
+                case RAT_PLAYER_EXOSHIP -> !RandomAssortmentCompat.isModEnabled() || RandomAssortmentCompat.playerOwnsExoship();
+                case RAT_PRIMORDIAL_CATALYST -> !RandomAssortmentCompat.isModEnabled() || RandomAssortmentCompat.primordialCatalystActivated();
             };
         } catch (RuntimeException e) {
             Logger.getLogger(SkillTypeUnlockStatus.class).error("Failed to check unlock condition " + condition, e);

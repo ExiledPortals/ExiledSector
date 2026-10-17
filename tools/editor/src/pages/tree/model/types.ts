@@ -211,6 +211,8 @@ export const UNLOCK_CONDITION_LABELS: Record<string, string> = {
   characterStat: 'Character stat flag',
   minShipLevel: 'Min ship level',
   memoryFlag: 'Game state (memory flag)',
+  ratPlayerExoship: 'RAT: player owns an Exoship',
+  ratPrimordialCatalyst: 'RAT: Primordial Catalyst activated',
 };
 
 export function isAuroraBelt(node: Pick<TreeNode, 'ringBeltPath'>): boolean {

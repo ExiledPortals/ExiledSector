@@ -1,0 +1,9 @@
+{
+	"gate_primordial_catalyst": {
+		"unlockConditions": [
+			{
+				"type": "ratPrimordialCatalyst"
+			}
+		]
+	}
+}

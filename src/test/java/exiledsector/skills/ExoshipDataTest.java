@@ -1,6 +1,8 @@
 package exiledsector.skills;
 
 import exiledsector.skills.npc.RealSkillData;
+import exiledsector.skills.unlock.UnlockCondition;
+import exiledsector.skills.unlock.UnlockConditionType;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -46,6 +48,14 @@ class ExoshipDataTest {
         assertEquals(exoship.getId(), beacon.getPairedNodeId());
         assertTrue(ExoshipNodes.isCarried(exoship));
         assertFalse(ExoshipNodes.isCarried(beacon));
+    }
+
+    @Test
+    void bothEndsOfTheDockingLinkWaitForThePlayerToOwnAnExoshipInRat() {
+        for (SkillNode end : List.of(beacon, exoship)) {
+            assertEquals(List.of(UnlockConditionType.RAT_PLAYER_EXOSHIP),
+                    end.getType().getUnlockConditions().stream().map(UnlockCondition::getType).toList(), end.getId());
+        }
     }
 
     @Test

@@ -157,6 +157,8 @@ public final class ExiledSectorSettings {
                 Translation.text("settings.areas.lostSector.tooltip"), AreaToggles.AUTO, String.join(",", AreaToggles.OPTIONS), MAIN_TAB);
         SettingsCreator.addRadio(MOD_ID, AreaToggles.RANDOM_ASSORTMENT_FIELD_ID, Translation.text("settings.areas.randomAssortment.name"),
                 Translation.text("settings.areas.randomAssortment.tooltip"), AreaToggles.AUTO, String.join(",", AreaToggles.OPTIONS), MAIN_TAB);
+        SettingsCreator.addRadio(MOD_ID, AreaToggles.NIGHTCROSS_FIELD_ID, Translation.text("settings.areas.nightcross.name"),
+                Translation.text("settings.areas.nightcross.tooltip"), AreaToggles.AUTO, String.join(",", AreaToggles.OPTIONS), MAIN_TAB);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_energyChainHeader", Translation.text("settings.energyChain.header"), MAIN_TAB);
         SettingsCreator.addInt(MOD_ID, MaxChainCountConfig.FIELD_ID,

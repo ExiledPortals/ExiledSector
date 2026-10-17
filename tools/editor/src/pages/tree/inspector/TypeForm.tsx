@@ -180,6 +180,9 @@ function HullSizeEffectRows({ type, onEdit, vocabulary, note }: Pick<TypeFormPro
 
 function UnlockConditionParameters({ condition, index, onEdit, vocabulary }: { condition: UnlockCondition; index: number; onEdit: TypeFormProps['onEdit']; vocabulary: Vocabulary }) {
   const edit = (change: (target: UnlockCondition) => void) => onEdit((draft) => change(draft.unlockConditions![index]));
+  if (condition.type === 'ratPlayerExoship' || condition.type === 'ratPrimordialCatalyst') {
+    return null;
+  }
   if (condition.type === 'characterStat') {
     return <CommitTextInput size="xs" style={{ flex: 2 }} label="Stat id" placeholder="has_neural_link" value={condition.statId ?? ''} onCommit={(text) => edit((target) => {
       target.statId = text.trim();

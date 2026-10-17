@@ -26,7 +26,7 @@ public final class UnlockConditionOverrides {
             case BLUEPRINT -> DISABLE_BLUEPRINT_FIELD_ID;
             case CHARACTER_STAT -> DISABLE_CHARACTER_STAT_FIELD_ID;
             case MIN_SHIP_LEVEL -> DISABLE_MIN_SHIP_LEVEL_FIELD_ID;
-            case MEMORY_FLAG -> DISABLE_MEMORY_FLAG_FIELD_ID;
+            case MEMORY_FLAG, RAT_PLAYER_EXOSHIP, RAT_PRIMORDIAL_CATALYST -> DISABLE_MEMORY_FLAG_FIELD_ID;
             default -> null;
         };
     }

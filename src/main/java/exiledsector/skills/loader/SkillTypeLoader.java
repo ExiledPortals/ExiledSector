@@ -1,6 +1,7 @@
 package exiledsector.skills.loader;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.HullSizeSkillEffect;
 import exiledsector.skills.ShipHullSizes;
@@ -107,7 +108,24 @@ public final class SkillTypeLoader {
         if (itemCostJson == null) {
             return null;
         }
-        return new SkillItemCost(itemCostJson.getString("itemId"), (float) itemCostJson.getDouble("quantity"));
+        SkillItemCost itemCost = new SkillItemCost(itemCostJson.getString("itemId"), (float) itemCostJson.getDouble("quantity"));
+        if (!commodityExists(itemCost.itemId())) {
+            Logger.getLogger(SkillTypeLoader.class).info("Waiving the " + itemCost.itemId() + " item cost: no such commodity in this game");
+            return null;
+        }
+        return itemCost;
+    }
+
+    static boolean commodityExists(String commodityId) {
+        SettingsAPI settings = Global.getSettings();
+        if (settings == null) {
+            return true;
+        }
+        try {
+            return settings.getCommoditySpec(commodityId) != null;
+        } catch (RuntimeException e) {
+            return false;
+        }
     }
 
     private static Set<HullSize> parseRequiredHullSizes(String typeId, JSONArray hullSizesArray) throws JSONException {
@@ -167,7 +185,7 @@ public final class SkillTypeLoader {
         Logger.getLogger(SkillTypeLoader.class).error("Skill type \"" + typeId + "\" " + problem);
     }
 
-    private static List<UnlockCondition> parseUnlockConditions(JSONArray conditionsArray) throws JSONException {
+    public static List<UnlockCondition> parseUnlockConditions(JSONArray conditionsArray) throws JSONException {
         List<UnlockCondition> conditions = new ArrayList<>();
         if (conditionsArray == null) {
             return conditions;
@@ -188,6 +206,8 @@ public final class SkillTypeLoader {
             case CHARACTER_STAT -> UnlockCondition.characterStat(conditionJson.getString("statId"));
             case MIN_SHIP_LEVEL -> UnlockCondition.minShipLevel(conditionJson.getInt("level"));
             case MEMORY_FLAG -> UnlockCondition.memoryFlag(conditionJson.getString("key"));
+            case RAT_PLAYER_EXOSHIP -> UnlockCondition.ratPlayerExoship();
+            case RAT_PRIMORDIAL_CATALYST -> UnlockCondition.ratPrimordialCatalyst();
         };
     }
 

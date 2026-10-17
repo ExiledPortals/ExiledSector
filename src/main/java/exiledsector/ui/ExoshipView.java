@@ -35,6 +35,7 @@ final class ExoshipView {
     private TreeViewport lastViewport;
     private boolean active;
     private boolean hovered;
+    private boolean boardable = true;
     private float viewLevel;
     private float dockedLevel;
 
@@ -80,12 +81,24 @@ final class ExoshipView {
         return exoshipNode != null && voyage.hasRoute();
     }
 
+    boolean isBoardable() {
+        return isAvailable() && boardable;
+    }
+
+    void setBoardable(boolean boardable) {
+        this.boardable = boardable;
+        if (!boardable) {
+            active = false;
+            viewLevel = 0f;
+        }
+    }
+
     boolean isActive() {
         return active;
     }
 
     void enter() {
-        active = isAvailable();
+        active = isBoardable();
     }
 
     void leave() {
@@ -152,7 +165,7 @@ final class ExoshipView {
     }
 
     boolean shipContains(TreeViewport viewport, float screenX, float screenY) {
-        if (active || !isAvailable() || !voyage.isVisible() || lastViewport == null || viewport.zoom() <= 0f) {
+        if (active || !isBoardable() || !voyage.isVisible() || lastViewport == null || viewport.zoom() <= 0f) {
             return false;
         }
         float zoom = viewport.zoom();
@@ -174,6 +187,9 @@ final class ExoshipView {
 
     private boolean audible() {
         TreeViewport viewport = lastViewport;
+        if (!isAvailable()) {
+            return false;
+        }
         if (active && viewport != null) {
             return true;
         }
