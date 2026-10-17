@@ -347,6 +347,7 @@
     {"name": "WEAPON_RECOIL_PERCENT", "statMode": "PERCENT", "lowerIsBetter": true},
     {"name": "WEAPON_TURN_RATE_MULT", "statMode": "MULT", "lowerIsBetter": false},
     {"name": "WEAPON_TURN_RATE_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},
+    {"name": "WING_SCRAMBLE_COPIES", "statMode": null, "lowerIsBetter": false},
     {"name": "ZERO_FLUX_ALWAYS_ON", "statMode": null, "lowerIsBetter": false},
     {"name": "ZERO_FLUX_BOOST_FLUX_LEVEL_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "ZERO_FLUX_SPEED_FLAT", "statMode": "FLAT", "lowerIsBetter": false}

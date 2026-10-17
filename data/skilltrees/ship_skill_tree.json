@@ -3937,7 +3937,8 @@
 			"connectedTo": [
 				"league_wormhole_1",
 				"small_flux_optional_63",
-				"small_flux_optional_65"
+				"small_flux_optional_65",
+				"wing_scramble_1"
 			],
 			"x": -11470,
 			"y": 2892,
@@ -7023,6 +7024,18 @@
 			"tags": [
 				"nightcross",
 				"gate_pascal_visited"
+			]
+		},
+		{
+			"id": "wing_scramble_1",
+			"type": "wing_scramble",
+			"connectedTo": [
+				"league_wormhole_2"
+			],
+			"x": -11884,
+			"y": 2893,
+			"tags": [
+				"persean_league"
 			]
 		}
 	],
