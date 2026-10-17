@@ -2,7 +2,10 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
+import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
+import exiledsector.skills.layout.Star;
+import exiledsector.skills.tags.SkillTags;
 import exiledsector.ui.hyperspace.HyperspaceAnchor;
 import exiledsector.ui.hyperspace.HyperspaceCamera;
 import exiledsector.ui.hyperspace.HyperspaceRoute;
@@ -12,12 +15,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 final class HyperspaceMode {
 
     private static final float MARGIN = 60f;
     private static final float RETURN_ZOOM = 0.35f;
     private static final float STAR_SCALE = 1.5f;
+    private static final Set<String> OFF_SCREEN_REGIONS = Set.of(SkillTags.ABYSS_REGION);
 
     private final TreeCamera treeCamera;
     private final SkillTreeStatPanel statPanel;
@@ -26,12 +32,19 @@ final class HyperspaceMode {
     private final HyperspaceGhostFlights ghostFlights = new HyperspaceGhostFlights(new Random());
     private List<HyperspaceAnchor> anchors = List.of();
     private Set<String> anchorIds = Set.of();
+    private Set<String> hiddenStarIds = Set.of();
+    private final Predicate<SkillNode> nodeHidden;
     private float mapStarRadius;
     private boolean reopenStats;
 
-    HyperspaceMode(TreeCamera treeCamera, SkillTreeStatPanel statPanel) {
+    HyperspaceMode(TreeCamera treeCamera, SkillTreeStatPanel statPanel, Predicate<SkillNode> nodeHidden) {
         this.treeCamera = treeCamera;
         this.statPanel = statPanel;
+        this.nodeHidden = nodeHidden;
+    }
+
+    Set<String> hiddenStarIds() {
+        return hiddenStarIds;
     }
 
     boolean isActive() {
@@ -80,7 +93,11 @@ final class HyperspaceMode {
     }
 
     boolean enter(PositionAPI canvasPosition) {
-        anchors = HyperspaceAnchor.collect(SkillTree.getStars(), SkillTree.getStaticImages());
+        Set<String> lockedRegions = HyperspaceAnchor.lockedRegions(SkillTree.getAllNodes().values(), SkillNode::getRegion, nodeHidden);
+        hiddenStarIds = SkillTree.getStars().stream().filter(star -> lockedRegions.contains(star.getRegion())).map(Star::getId)
+                .collect(Collectors.toUnmodifiableSet());
+        anchors = HyperspaceAnchor.collect(SkillTree.getStars(), SkillTree.getStaticImages()).stream()
+                .filter(anchor -> !lockedRegions.contains(anchor.region())).toList();
         if (anchors.isEmpty()) {
             return false;
         }
@@ -92,14 +109,24 @@ final class HyperspaceMode {
         ghostFlights.setRoutes(HyperspaceRoute.between(anchors, SkillTree.topology().wormholePairs()));
         treeCamera.stopMoving();
         mapStarRadius = HyperspaceAnchor.mapStarRadius(anchors, STAR_SCALE);
-        HyperspaceCamera fittedCamera = HyperspaceCamera.fit(anchors, mapStarRadius, canvasPosition.getWidth(), canvasPosition.getHeight(), MARGIN,
-                HyperspaceLabels.LABEL_SPACE);
+        HyperspaceCamera fittedCamera = framing(canvasPosition);
         HyperspaceCamera mapCamera = new HyperspaceCamera(fittedCamera.x(), fittedCamera.y(), Math.min(fittedCamera.zoom(), treeCamera.zoom()));
         hyperspaceTransition.enter(treeCamera.current(), mapCamera);
         SkillTreeSounds.hyperspaceOut();
         reopenStats = reopenStats || statPanel.isOpen();
         statPanel.close();
         return true;
+    }
+
+    private HyperspaceCamera framing(PositionAPI canvasPosition) {
+        List<HyperspaceAnchor> framed = anchors.stream().filter(anchor -> !OFF_SCREEN_REGIONS.contains(anchor.region())).toList();
+        HyperspaceAnchor core = framed.stream().filter(anchor -> SkillTags.CORE_REGION.equals(anchor.region())).findFirst().orElse(null);
+        if (core == null) {
+            return HyperspaceCamera.fit(framed.isEmpty() ? anchors : framed, mapStarRadius, canvasPosition.getWidth(), canvasPosition.getHeight(),
+                    MARGIN, HyperspaceLabels.LABEL_SPACE);
+        }
+        return HyperspaceCamera.fitAround(core.x(), core.y(), framed, mapStarRadius, canvasPosition.getWidth(), canvasPosition.getHeight(), MARGIN,
+                HyperspaceLabels.LABEL_SPACE);
     }
 
     void handleEvent(InputEventAPI event, PositionAPI canvasPosition, boolean overOverlay) {

@@ -88,7 +88,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.nodeDrawer = SkillTreeNodeDrawer.attachedTo(treeSession, member, panelStyle, nodeSearch);
         this.templateUi = new SkillTreeTemplateController(member, treeSession, panelStyle);
         this.statPanel = new SkillTreeStatPanel(member);
-        this.hyperspaceMode = new HyperspaceMode(camera, statPanel);
+        this.hyperspaceMode = new HyperspaceMode(camera, statPanel, treeSession::isHidden);
         this.socketPlacement = new SocketPlacement(hostPanel, treeSession, nodeSearch, searchBar);
         this.frameworkInspection = new FrameworkInspection(hostPanel, treeSession, socketPlacement);
         this.chrome = new SkillTreeChrome(member, panelStyle, statPanel, searchBar, templateUi, socketPlacement, shipCardHeight);
@@ -568,6 +568,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         float exoshipFade = 1f - exoshipView.viewLevel();
         float sceneryAlpha = backgroundAlpha * inspectFade * exoshipFade;
         starRenderer.setMapRadius(hyperspaceMode.starRadius(), hyperspaceMode.mapAmount());
+        starRenderer.setHiddenOnMap(hyperspaceMode.hiddenStarIds());
         starfieldRenderer.render(canvasPosition, camera.panX(), camera.panY(), backgroundAlpha * exoshipView.starfieldAlpha());
         abyssDarkness.render(canvasPosition, viewport, alphaMult);
         starRenderer.renderDisc(viewport, sceneryAlpha);

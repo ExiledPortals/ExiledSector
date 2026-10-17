@@ -11,6 +11,7 @@ import exiledsector.skills.layout.StaticImage;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -192,5 +193,33 @@ class HyperspaceTest {
                 new SkillTreeTopology.WormholePair(wormhole("lost_a", "core"), wormhole("lost_b", "luddic"))));
 
         assertEquals(List.of(new HyperspaceRoute(core, league), new HyperspaceRoute(kesteven, league)), routes);
+    }
+
+    @Test
+    void framingAroundTheCoreCentresOnItAndReachesTheFarthestVolumeOnEitherSide() {
+        List<HyperspaceAnchor> anchors = List.of(
+                new HyperspaceAnchor("sun", "core", 0f, 0f, 100f, true),
+                new HyperspaceAnchor("near", "pirate", 1000f, 0f, 100f, true),
+                new HyperspaceAnchor("far", "kesteven", -3000f, 0f, 100f, true));
+
+        HyperspaceCamera camera = HyperspaceCamera.fitAround(0f, 0f, anchors, 100f, 1000f, 1000f, 0f, 0f);
+
+        assertEquals(0f, camera.x(), 0.001f);
+        float reach = 100f * HyperspaceCamera.ANCHOR_REACH;
+        assertEquals(1000f / ((3000f + reach) * 2f), camera.zoom(), 0.0001f, "the far side sets the zoom so both sides fit around the core");
+    }
+
+    private record Node(String region, boolean hidden) {
+    }
+
+    @Test
+    void aVolumeIsLockedOnlyWhileEveryOneOfItsNodesIsHidden() {
+        List<Node> nodes = List.of(
+                new Node("abyss", true), new Node("abyss", true),
+                new Node("nightcross", true), new Node("nightcross", false),
+                new Node("core", false),
+                new Node(null, true));
+
+        assertEquals(Set.of("abyss"), HyperspaceAnchor.lockedRegions(nodes, Node::region, Node::hidden));
     }
 }

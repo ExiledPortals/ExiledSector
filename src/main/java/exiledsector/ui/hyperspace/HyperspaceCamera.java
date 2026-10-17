@@ -30,6 +30,21 @@ public record HyperspaceCamera(float x, float y, float zoom) {
         return new HyperspaceCamera(centreX, centreY, zoom);
     }
 
+    public static HyperspaceCamera fitAround(float centreX, float centreY, List<HyperspaceAnchor> anchors, float mapStarRadius, float viewWidth,
+                                             float viewHeight, float margin, float labelSpace) {
+        float halfWidth = 1f;
+        float halfHeight = 1f;
+        for (HyperspaceAnchor anchor : anchors) {
+            float reach = anchor.displayRadius(mapStarRadius, 1f) * ANCHOR_REACH;
+            halfWidth = Math.max(halfWidth, Math.abs(anchor.x() - centreX) + reach);
+            halfHeight = Math.max(halfHeight, Math.abs(anchor.y() - centreY) + reach);
+        }
+        float usableWidth = Math.max(1f, viewWidth - margin * 2f);
+        float usableHeight = Math.max(1f, viewHeight - margin * 2f - labelSpace);
+        float zoom = Math.min(usableWidth / (halfWidth * 2f), usableHeight / (halfHeight * 2f));
+        return new HyperspaceCamera(centreX, centreY - labelSpace / zoom / 2f, zoom);
+    }
+
     public HyperspaceCamera zoomedAbout(float pivotX, float pivotY, float newZoom) {
         float keep = zoom / newZoom;
         return new HyperspaceCamera(pivotX - (pivotX - x) * keep, pivotY - (pivotY - y) * keep, newZoom);

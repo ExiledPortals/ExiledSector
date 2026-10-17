@@ -5,9 +5,12 @@ import exiledsector.skills.layout.Star;
 import exiledsector.skills.layout.StaticImage;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public record HyperspaceAnchor(String id, String region, float x, float y, float radius, boolean isStar) {
 
@@ -31,6 +34,23 @@ public record HyperspaceAnchor(String id, String region, float x, float y, float
             }
         }
         return anchors;
+    }
+
+    public static <N> Set<String> lockedRegions(Collection<N> nodes, Function<N, String> regionOf, Predicate<N> hidden) {
+        Set<String> regionsWithNodes = new HashSet<>();
+        Set<String> regionsWithVisibleNodes = new HashSet<>();
+        for (N node : nodes) {
+            String region = regionOf.apply(node);
+            if (region == null) {
+                continue;
+            }
+            regionsWithNodes.add(region);
+            if (!hidden.test(node)) {
+                regionsWithVisibleNodes.add(region);
+            }
+        }
+        regionsWithNodes.removeAll(regionsWithVisibleNodes);
+        return regionsWithNodes;
     }
 
     public static float mapStarRadius(List<HyperspaceAnchor> anchors, float scale) {

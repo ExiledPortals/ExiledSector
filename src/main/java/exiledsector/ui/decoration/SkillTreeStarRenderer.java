@@ -22,6 +22,7 @@ import java.awt.Color;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class SkillTreeStarRenderer {
 
@@ -51,6 +52,7 @@ public class SkillTreeStarRenderer {
     private SpriteAPI auroraTexture;
     private float mapRadius;
     private float mapAmount;
+    private Set<String> starIdsHiddenOnMap = Set.of();
     private final Map<String, Map<Color, Color>> resolvedColors = new HashMap<>();
 
     public void setMapRadius(float mapRadius, float mapAmount) {
@@ -58,8 +60,19 @@ public class SkillTreeStarRenderer {
         this.mapAmount = mapAmount;
     }
 
+    public void setHiddenOnMap(Set<String> starIds) {
+        this.starIdsHiddenOnMap = starIds;
+    }
+
     private float radiusOf(Star star) {
+        if (starIdsHiddenOnMap.contains(star.getId())) {
+            return star.getRadius();
+        }
         return star.getRadius() + (mapRadius - star.getRadius()) * mapAmount;
+    }
+
+    private float alphaOf(Star star, float alphaMult) {
+        return starIdsHiddenOnMap.contains(star.getId()) ? alphaMult * (1f - mapAmount) : alphaMult;
     }
 
     public void advance(float amount) {
@@ -79,7 +92,7 @@ public class SkillTreeStarRenderer {
         if (stars.isEmpty()) return;
 
         for (Star star : stars) {
-            renderStarDisc(star, viewport, zoom, alphaMult);
+            renderStarDisc(star, viewport, zoom, alphaOf(star, alphaMult));
         }
     }
 
@@ -151,7 +164,8 @@ public class SkillTreeStarRenderer {
                 float screenX = viewport.screenX(star.getX());
                 float screenY = viewport.screenY(star.getY());
                 if (viewport.isVisible(screenX, screenY, outerRadius)) {
-                    drawAtmosphereRing(texture, screenX, screenY, innerRadius, outerRadius, resolveColor(star, spec.getAtmosphereColor()), alphaMult);
+                    drawAtmosphereRing(texture, screenX, screenY, innerRadius, outerRadius, resolveColor(star, spec.getAtmosphereColor()),
+                            alphaOf(star, alphaMult));
                 }
             }
         }
@@ -192,7 +206,7 @@ public class SkillTreeStarRenderer {
         if (texture == null) return;
 
         for (Star star : stars) {
-            renderStarAurora(star, viewport, zoom, alphaMult, texture);
+            renderStarAurora(star, viewport, zoom, alphaOf(star, alphaMult), texture);
         }
     }
 
@@ -255,7 +269,7 @@ public class SkillTreeStarRenderer {
             float screenY = viewport.screenY(star.getY());
             if (haloRadius > starRadius && viewport.isVisible(screenX, screenY, haloRadius)) {
                 SpriteDraw.drawAdditiveAtCenter(spriteCache, coronaPath, screenX, screenY,
-                        haloRadius * 2f, haloRadius * 2f, resolveColor(star, spec.getCoronaColor()), alphaMult);
+                        haloRadius * 2f, haloRadius * 2f, resolveColor(star, spec.getCoronaColor()), alphaOf(star, alphaMult));
             }
         }
     }
