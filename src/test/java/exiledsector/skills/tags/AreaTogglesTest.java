@@ -27,10 +27,11 @@ class AreaTogglesTest {
     }
 
     @Test
-    void autoShowsTheRandomAssortmentAreasOnlyWhenRandomAssortmentIsInstalled() {
+    void theRandomAssortmentAreasNeedRandomAssortmentInstalledWhateverTheSetting() {
         assertEquals(Set.of(), AreaToggles.disabledRandomAssortmentRegions(AreaToggles.AUTO, true));
         assertEquals(Set.of("exotech", "abyss"), AreaToggles.disabledRandomAssortmentRegions(AreaToggles.AUTO, false));
-        assertEquals(Set.of(), AreaToggles.disabledRandomAssortmentRegions(AreaToggles.ON, false));
+        assertEquals(Set.of("exotech", "abyss"), AreaToggles.disabledRandomAssortmentRegions(AreaToggles.ON, false));
+        assertEquals(Set.of(), AreaToggles.disabledRandomAssortmentRegions(AreaToggles.ON, true));
         assertEquals(Set.of("exotech", "abyss"), AreaToggles.disabledRandomAssortmentRegions(AreaToggles.OFF, true));
         assertEquals(Set.of("exotech", "abyss"), AreaToggles.disabledRandomAssortmentRegions(null, false));
     }
