@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { FastifyInstance } from 'fastify';
 import { createEditorServer } from './app.ts';
 import { hashBytes, writeTextFilesAtomic } from './dataFiles.ts';
-import { DescribeService, describeRequestWithStrings } from './describe.ts';
+import { DescribeService, REBUILD_COOLDOWN_MS, describeRequestWithStrings, needsRebuild } from './describe.ts';
 import type { ProjectPaths } from './paths.ts';
 
 const PORT = 8792;
@@ -280,6 +280,29 @@ describe('describe', () => {
     service.startBuild();
     const result = await service.describe('{}');
     expect(result).toEqual({ body: { pending: false, message: expect.stringContaining('JDK 17 and Maven') } });
+  });
+
+  it('keeps reporting the missing toolchain instead of retrying a build that cannot run', async () => {
+    let nowMs = 0;
+    const service = new DescribeService(paths, { javaHome: null, maven: null }, () => nowMs);
+    service.startBuild();
+    nowMs += REBUILD_COOLDOWN_MS * 2;
+    const result = await service.describe('{}');
+    expect(result).toEqual({ body: { pending: false, message: expect.stringContaining('JDK 17 and Maven') } });
+  });
+
+  it('retries a failed build once the cooldown has passed, but not sooner', () => {
+    expect(needsRebuild('failed', false, true, REBUILD_COOLDOWN_MS - 1)).toBe(false);
+    expect(needsRebuild('failed', false, true, REBUILD_COOLDOWN_MS)).toBe(true);
+  });
+
+  it('rebuilds when the compiled mod disappears before the helper restarts', () => {
+    expect(needsRebuild('built', false, false, 0)).toBe(true);
+    expect(needsRebuild('ready', false, false, 0)).toBe(true);
+    expect(needsRebuild('built', false, true, 0)).toBe(false);
+    expect(needsRebuild('ready', true, false, 0)).toBe(false);
+    expect(needsRebuild('building', false, false, 0)).toBe(false);
+    expect(needsRebuild('idle', false, false, 0)).toBe(false);
   });
 
   it('sends the saved English strings with a request that has none, and keeps strings a request brings', () => {

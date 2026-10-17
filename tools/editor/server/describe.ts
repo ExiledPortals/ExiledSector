@@ -6,12 +6,13 @@ import readline from 'node:readline';
 import { readDataFile, resolveDataResource } from './dataFiles.ts';
 import type { ProjectPaths } from './paths.ts';
 
-type DescribeStatus = 'idle' | 'building' | 'built' | 'ready' | 'failed';
+export type DescribeStatus = 'idle' | 'building' | 'built' | 'ready' | 'failed';
 
 const READY_LINE = '{"ready":true}';
 const READY_TIMEOUT_MS = 30000;
 const REQUEST_TIMEOUT_MS = 10000;
 const HELPER_CLASS = 'exiledsector.tools.EditorDescribeServer';
+export const REBUILD_COOLDOWN_MS = 15000;
 
 export interface DescribeToolchain {
   javaHome: string | null;
@@ -63,6 +64,13 @@ function libsDir(projectRoot: string): string {
 
 export type DescribeResult = { body: unknown } | { raw: string };
 
+export function needsRebuild(status: DescribeStatus, helperRunning: boolean, classpathExists: boolean, msSinceFailure: number): boolean {
+  if (status === 'failed') {
+    return msSinceFailure >= REBUILD_COOLDOWN_MS;
+  }
+  return (status === 'built' || status === 'ready') && !helperRunning && !classpathExists;
+}
+
 export function describeRequestWithStrings(paths: ProjectPaths, requestBody: unknown): string {
   if (typeof requestBody === 'string') {
     return requestBody;
@@ -83,11 +91,13 @@ export class DescribeService {
   private pendingLine: ((line: string | null) => void) | null = null;
   private queue: Promise<unknown> = Promise.resolve();
   private readonly classpathFile: string;
+  private failedAtMs = 0;
   private readonly buildLogFile = path.join(os.tmpdir(), 'exiledsector-editor-describe-build.log');
 
   constructor(
     private readonly paths: ProjectPaths,
     private readonly toolchain: DescribeToolchain = defaultToolchain(),
+    private readonly nowMs: () => number = Date.now,
   ) {
     this.classpathFile = path.join(paths.projectRoot, 'target', 'editor-describe.classpath');
   }
@@ -95,8 +105,7 @@ export class DescribeService {
   startBuild(): void {
     const { javaHome, maven } = this.toolchain;
     if (!javaHome || !maven) {
-      this.status = 'failed';
-      this.message = 'In-game descriptions need JDK 17 and Maven; neither JAVA_HOME nor the IntelliJ bundled Maven was found.';
+      this.fail('In-game descriptions need JDK 17 and Maven; neither JAVA_HOME nor the IntelliJ bundled Maven was found.');
       return;
     }
     this.status = 'building';
@@ -124,14 +133,27 @@ export class DescribeService {
       if (exitCode === 0 && fs.existsSync(this.classpathFile)) {
         this.status = 'built';
       } else {
-        this.status = 'failed';
-        this.message = `Compiling the mod for in-game descriptions failed; see ${this.buildLogFile}`;
+        this.fail(`Compiling the mod for in-game descriptions failed; see ${this.buildLogFile}`);
       }
     });
     build.on('error', () => {
-      this.status = 'failed';
-      this.message = `Could not run Maven; see ${this.buildLogFile}`;
+      this.fail(`Could not run Maven; see ${this.buildLogFile}`);
     });
+  }
+
+  private fail(message: string): void {
+    this.status = 'failed';
+    this.message = message;
+    this.failedAtMs = this.nowMs();
+  }
+
+  private rebuildIfNeeded(): void {
+    if (!this.toolchain.javaHome || !this.toolchain.maven) {
+      return;
+    }
+    if (needsRebuild(this.status, this.helper !== null, fs.existsSync(this.classpathFile), this.nowMs() - this.failedAtMs)) {
+      this.startBuild();
+    }
   }
 
   describe(requestBody: string): Promise<DescribeResult> {
@@ -141,6 +163,7 @@ export class DescribeService {
   }
 
   private async describeNow(requestBody: string): Promise<DescribeResult> {
+    this.rebuildIfNeeded();
     if (this.status === 'built' || (this.status === 'ready' && !this.helper)) {
       await this.startHelper();
     }
@@ -160,6 +183,10 @@ export class DescribeService {
     if (!javaHome) {
       return;
     }
+    if (!fs.existsSync(this.classpathFile)) {
+      this.fail('The compiled mod went missing; it will be rebuilt on the next hover.');
+      return;
+    }
     const classpath = 'target\\classes;target\\test-classes;' + fs.readFileSync(this.classpathFile, 'utf8').trim();
     const helper = spawn(path.join(javaHome, 'bin', 'java.exe'), ['-cp', classpath, HELPER_CLASS], {
       cwd: this.paths.projectRoot,
@@ -174,8 +201,7 @@ export class DescribeService {
     const readyLine = await this.nextLine(READY_TIMEOUT_MS);
     if (readyLine !== READY_LINE) {
       this.stopHelper();
-      this.status = 'failed';
-      this.message = 'The description helper did not start.';
+      this.fail('The description helper did not start; it will be rebuilt on the next hover.');
       return;
     }
     this.status = 'ready';
