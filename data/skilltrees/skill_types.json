@@ -3583,7 +3583,7 @@
 			"exclusiveHullMods": [
 				"nightcrosstargeting"
 			],
-			"description": "Nightcross's signature power grid. The moment the shields come down, the power that fed them is routed to the energy weapons.",
+			"description": "Nightcross fits its dynamic coils to almost every hull it builds and never sells them on their own, so the crew pulls a set from a boarded Nightcross wreck and retrofits them into a hull that never shipped with one. The moment the shields come down, the power that fed them is routed to the energy weapons. The warranty, naturally, does not cover third-party installation.",
 			"tags": [
 				"shield",
 				"energy",
@@ -3592,7 +3592,7 @@
 		},
 		{
 			"id": "ion_rounds",
-			"name": "Ion Rounds",
+			"name": "Ion Bolter Rounds",
 			"icon": "graphics/icons/na_ion_rounds.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -3601,7 +3601,7 @@
 					"magnitude": 15
 				}
 			],
-			"description": "Keep pressure on an enemy shield until its hard flux climbs, and the arcs start getting through.",
+			"description": "The NCA Vendor sells Ion Bolters to any well-funded mercenary, and taking one apart shows the crew how to overdrive this ship's energy shots the same way. Keep pressure on an enemy shield until its hard flux climbs, and the arcs start getting through.",
 			"tags": [
 				"energy",
 				"req_non_beam_energy"
@@ -3609,7 +3609,7 @@
 		},
 		{
 			"id": "hardlight_infusion",
-			"name": "Hardlight Infusion",
+			"name": "Hardlight Marking",
 			"icon": "graphics/icons/na_hardlight_infusion.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -3622,7 +3622,7 @@
 					"magnitude": 30
 				}
 			],
-			"description": "Fighter hits paint the target with hardlight markers that guide the rest of the carrier's wings onto it.",
+			"description": "Nightcross Restricted Hardlight Rifles, looted from a hidden NCA research outpost, keep count of every hit they land on a target, and the crew learns to port that counter into this carrier's wing datalink. Fighter hits paint the target with hardlight markers that guide the rest of the wings onto it.",
 			"tags": [
 				"fighter",
 				"req_fighter_bays"
@@ -3630,7 +3630,7 @@
 		},
 		{
 			"id": "gravitational_drag",
-			"name": "Gravitational Drag",
+			"name": "Candle's Grace Replica",
 			"icon": "graphics/icons/na_gravitational_drag.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -3642,7 +3642,7 @@
 			"exclusiveHullMods": [
 				"na_gravitydrag"
 			],
-			"description": "A gravitational disturbance around the hull drags at the timeflow of nearby enemies, strongest from inside phase space.",
+			"description": "Inside a recovered Ancient Prototype, where every conduit converges on a perfectly spherical void, the crew finds the Candle's Grace device that drags at the timeflow of anything near it. Nobody aboard can say who Candle's Grace was, and the replica built from it is mostly guesswork. Nearby enemies slow, most of all while the ship is phased.",
 			"tags": [
 				"speed"
 			]
