@@ -3219,7 +3219,8 @@
 			"connectedTo": [
 				"tritach_1",
 				"small_flux_optional_46",
-				"small_flux_optional_48"
+				"small_flux_optional_48",
+				"fighter_speed_4"
 			],
 			"x": -1,
 			"y": -11688,
@@ -3833,7 +3834,8 @@
 			"id": "ground_support_1",
 			"type": "ground_support",
 			"connectedTo": [
-				"crew_capacity_flat_3"
+				"crew_capacity_flat_3",
+				"crew_capacity_flat_8"
 			],
 			"x": 13304,
 			"y": 2898,
@@ -4836,7 +4838,8 @@
 			"type": "crew_capacity_flat",
 			"connectedTo": [
 				"crew_capacity_flat_3",
-				"modular_hull_socket_3"
+				"modular_hull_socket_3",
+				"crew_capacity_flat_8"
 			],
 			"x": 13664,
 			"y": 2898,
@@ -4901,8 +4904,8 @@
 				"lost_sector_wormhole1",
 				"modular_hull_socket_5"
 			],
-			"x": 9996,
-			"y": -10013,
+			"x": 9965,
+			"y": -10004,
 			"wormholeColor": "#3254fb",
 			"pairedWith": "lost_sector_wormhole1",
 			"tags": [
@@ -5163,8 +5166,8 @@
 				"kesteven_wormhole1",
 				"small_flux_optional_65"
 			],
-			"x": -12694,
-			"y": 4627,
+			"x": -12746,
+			"y": 4616,
 			"wormholeColor": "#fbb434",
 			"pairedWith": "kesteven_wormhole1",
 			"tags": [
@@ -5845,8 +5848,8 @@
 				"nightcross_wormhole_1",
 				"small_flux_optional_53"
 			],
-			"x": -10785,
-			"y": -6717,
+			"x": -10704,
+			"y": -6625,
 			"pairedWith": "nightcross_wormhole_1",
 			"tags": [
 				"sindrian_dictat",
@@ -6603,8 +6606,8 @@
 				"rat_abyss_wormhole_1",
 				"small_flux_optional_59"
 			],
-			"x": -7540,
-			"y": 12160,
+			"x": -7603,
+			"y": 11997,
 			"pairedWith": "rat_abyss_wormhole_1",
 			"tags": [
 				"hegemony",
@@ -7062,8 +7065,8 @@
 			"id": "fighter_speed_3",
 			"type": "fighter_speed",
 			"connectedTo": [
-				"fighter_speed_1",
-				"martyrs_payload_1"
+				"martyrs_payload_1",
+				"fighter_speed_1"
 			],
 			"x": 5829,
 			"y": 10824,
@@ -7098,6 +7101,82 @@
 			"y": 2893,
 			"tags": [
 				"persean_league"
+			]
+		},
+		{
+			"id": "crew_capacity_flat_8",
+			"type": "crew_capacity_flat",
+			"connectedTo": [
+				"ground_support_1",
+				"crew_capacity_flat_4"
+			],
+			"x": 13484,
+			"y": 2718,
+			"orbitAnchorId": "anchor_49",
+			"orbitAngle": 270,
+			"tags": [
+				"pirate"
+			]
+		},
+		{
+			"id": "fighter_speed_4",
+			"type": "fighter_speed",
+			"connectedTo": [
+				"tritach_2",
+				"fighter_replacement_3",
+				"fighter_replacement_4"
+			],
+			"x": 0,
+			"y": -11996,
+			"orbitAnchorId": "anchor_76",
+			"orbitAngle": 90,
+			"tags": [
+				"tritachyon"
+			]
+		},
+		{
+			"id": "fighter_replacement_3",
+			"type": "fighter_replacement",
+			"connectedTo": [
+				"fighter_speed_4",
+				"phase_entangled_wings_1"
+			],
+			"x": -180,
+			"y": -12176,
+			"orbitAnchorId": "anchor_76",
+			"orbitAngle": 180,
+			"tags": [
+				"tritachyon"
+			]
+		},
+		{
+			"id": "fighter_replacement_4",
+			"type": "fighter_replacement",
+			"connectedTo": [
+				"fighter_speed_4",
+				"phase_entangled_wings_1"
+			],
+			"x": 180,
+			"y": -12176,
+			"orbitAnchorId": "anchor_76",
+			"orbitAngle": 0,
+			"tags": [
+				"tritachyon"
+			]
+		},
+		{
+			"id": "phase_entangled_wings_1",
+			"type": "phase_entangled_wings",
+			"connectedTo": [
+				"fighter_replacement_3",
+				"fighter_replacement_4"
+			],
+			"x": 0,
+			"y": -12356,
+			"orbitAnchorId": "anchor_76",
+			"orbitAngle": 270,
+			"tags": [
+				"tritachyon"
 			]
 		}
 	],
@@ -9243,6 +9322,66 @@
 			"b": "armor_11",
 			"controlX": -17473,
 			"controlY": -4501
+		},
+		{
+			"a": "crew_capacity_flat_8",
+			"b": "ground_support_1",
+			"controlX": 13357,
+			"controlY": 2771
+		},
+		{
+			"a": "crew_capacity_flat_4",
+			"b": "crew_capacity_flat_8",
+			"controlX": 13611,
+			"controlY": 2771
+		},
+		{
+			"a": "fighter_replacement_3",
+			"b": "fighter_speed_4",
+			"controlX": -127,
+			"controlY": -12049
+		},
+		{
+			"a": "phase_entangled_wings_1",
+			"b": "fighter_replacement_3",
+			"controlX": -127,
+			"controlY": -12303
+		},
+		{
+			"a": "fighter_replacement_4",
+			"b": "fighter_speed_4",
+			"controlX": 127,
+			"controlY": -12049
+		},
+		{
+			"a": "phase_entangled_wings_1",
+			"b": "fighter_replacement_4",
+			"controlX": 127,
+			"controlY": -12303
+		},
+		{
+			"a": "fighter_speed_1",
+			"b": "fighter_speed_2",
+			"controlX": 5522,
+			"controlY": 10697
+		},
+		{
+			"a": "fighter_speed_1",
+			"b": "fighter_speed_3",
+			"controlX": 5776,
+			"controlY": 10697
+		},
+		{
+			"a": "fighter_speed_2",
+			"b": "martyrs_payload_1",
+			"controlX": 5522,
+			"controlY": 10951
+		},
+		{
+			"a": "fighter_speed_3",
+			"b": "martyrs_payload_1",
+			"controlX": 5776,
+			"controlY": 10951
 		}
 	],
 	"hiddenConnectors": [
@@ -9985,6 +10124,12 @@
 			"id": "anchor_79",
 			"x": 5649,
 			"y": 10824,
+			"radius": 180
+		},
+		{
+			"id": "anchor_76",
+			"x": 0,
+			"y": -12176,
 			"radius": 180
 		}
 	],

@@ -2624,7 +2624,7 @@
 		{
 			"id": "fighter_weapon_damage",
 			"name": "Fighter Weapon Damage",
-			"icon": "graphics/icons/fighter_weapon_damage.png",
+			"icon": "graphics/icons/fighter_weapon_damage_shifted.png",
 			"effects": [
 				{
 					"effect": "FIGHTER_WEAPON_DAMAGE_PERCENT",
@@ -3648,6 +3648,28 @@
 				}
 			],
 			"description": "Nightcross Restricted Hardlight Rifles, looted from a hidden NCA research outpost, keep count of every hit they land on a target, and the crew learns to port that counter into this carrier's wing datalink. Fighter hits paint the target with hardlight markers that guide the rest of the wings onto it.",
+			"tags": [
+				"fighter",
+				"req_fighter_bays"
+			]
+		},
+		{
+			"id": "phase_entangled_wings",
+			"name": "Phase-Entangled Wings",
+			"icon": "graphics/icons/field_modulation_circular_alt1.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "FIGHTER_WING_SHARED_DAMAGE_PERCENT",
+					"magnitude": 100
+				},
+				{
+					"effect": "FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER",
+					"magnitude": 10
+				}
+			],
+			"description": "Tri-Tachyon's phase labs learned to lock the coils of a fighter wing into one shared state, so a hit on one craft bleeds through p-space into the whole wing. A defector from those labs, smuggled out at no small cost, walks the crew through retuning this carrier's fighter coils to the same entangled frequency.",
+			"todo": "Needs an icon.",
 			"tags": [
 				"fighter",
 				"req_fighter_bays"

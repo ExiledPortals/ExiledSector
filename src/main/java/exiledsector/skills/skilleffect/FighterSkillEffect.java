@@ -178,6 +178,28 @@ public enum FighterSkillEffect implements BackedSkillEffect {
             return FIGHTER_BAYS_FLAT.deallocationWarning(magnitude);
         }
     },
+    FIGHTER_WING_SHARED_DAMAGE_PERCENT {
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            WingSharedFateListener.attach(fighter, magnitude);
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", Math.min(magnitude, WingSharedFateListener.MAX_SHARED_PERCENT)).styled();
+        }
+    },
+    FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER {
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            WingNumbersDamageListener.attach(fighter, magnitude);
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("max", WingNumbersDamageListener.MAX_REDUCTION_PERCENT).styled();
+        }
+    },
     FIGHTER_FOCUS_FIRE_DAMAGE_PERCENT_PER_HIT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
