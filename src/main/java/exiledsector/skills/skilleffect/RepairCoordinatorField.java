@@ -147,8 +147,11 @@ final class RepairCoordinatorField extends BaseEveryFrameCombatPlugin {
     }
 
     static float restoreArmor(ArmorGridAPI grid, float armorPoints) {
+        if (grid == null || armorPoints <= 0f) {
+            return 0f;
+        }
         float missing = missingArmor(grid);
-        if (armorPoints <= 0f || missing <= 0f) {
+        if (missing <= 0f) {
             return 0f;
         }
         float share = Math.min(1f, armorPoints / missing);

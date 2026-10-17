@@ -44,6 +44,8 @@ final class IonArcListener extends ShipCombatListener implements DamageDealtModi
         return chanceAtFullHardFluxPercent / 100f * hardFluxLevel;
     }
 
+    // java:S3516: the engine reads a null return as "leave the damage unchanged"; arcs are spawned as a side effect instead
+    @SuppressWarnings("java:S3516")
     @Override
     public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
         if (!shieldHit || !(param instanceof DamagingProjectileAPI projectile) || !(target instanceof ShipAPI hitShip)

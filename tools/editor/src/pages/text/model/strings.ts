@@ -47,7 +47,7 @@ export function parseStrings(text: string): StringsModel {
     if (!match) {
       throw new Error(`line ${lineIndex + 1} is not a single "key": "text" entry`);
     }
-    const key = JSON.parse(match[1].trim().replace(/\s*:$/, '')) as string;
+    const key = JSON.parse(match[1].trim().slice(0, -1)) as string;
     const value = JSON.parse(match[2]) as string;
     entries.push({ key, value, savedValue: value, lineIndex });
   });
