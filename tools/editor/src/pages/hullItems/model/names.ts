@@ -1,14 +1,4 @@
-import { compareText } from '../../../shared/arrays.ts';
 import { withLineEnding, type LineEnding } from '../../../shared/lineEndings.ts';
-import { csvTableFromRows, parseCsvTable, serializeCsvTable, trimmedCsvCells, type CsvTable } from '../../../shared/csv.ts';
-import { isTrueText, type HullItemDefinition } from './definitions.ts';
-
-export interface AffixRow {
-  cells: string[];
-  effect: string;
-  prefix: string;
-  suffix: string;
-}
 
 export type RareNameStyle = 'codename' | 'product';
 
@@ -37,23 +27,8 @@ export function newRareNameWords(): RareNameWords {
 }
 
 export interface NamesModel {
-  affixTable: CsvTable;
-  affixes: AffixRow[];
   rareNames: Record<string, RareNameWords>;
   rareNamesLineEnding: LineEnding;
-  usedEffects: Record<string, string[]>;
-}
-
-export function parseAffixesCsv(text: string): { table: CsvTable; rows: AffixRow[] } {
-  const table = parseCsvTable(text);
-  return {
-    table,
-    rows: table.rows.map((cells) => ({ cells, ...trimmedCsvCells(table, cells, ['effect', 'prefix', 'suffix']) })),
-  };
-}
-
-export function serializeAffixesCsv(table: CsvTable, rows: AffixRow[]): string {
-  return serializeCsvTable(csvTableFromRows(table, rows, (row) => ({ effect: row.effect, prefix: row.prefix, suffix: row.suffix })));
 }
 
 export function wordList(text: string): string[] {
@@ -79,25 +54,6 @@ export function serializeRareNames(names: Record<string, RareNameWords>, lineEnd
       .join(',\n') +
     '\n}\n';
   return withLineEnding(text, lineEnding);
-}
-
-export function usedEffectsOf(definitions: HullItemDefinition[]): Record<string, string[]> {
-  const used: Record<string, string[]> = {};
-  for (const definition of definitions) {
-    if (isTrueText(definition.unique)) {
-      continue;
-    }
-    for (const entry of [...definition.prefixes, ...definition.suffixes]) {
-      (used[entry.effect] ??= []).push(definition.id);
-    }
-  }
-  return used;
-}
-
-export function missingEffects(model: Pick<NamesModel, 'affixes' | 'usedEffects'>): string[] {
-  return Object.keys(model.usedEffects)
-    .filter((effect) => !model.affixes.some((row) => row.effect === effect))
-    .sort(compareText);
 }
 
 export function sampleNames(words: RareNameWords, random: () => number = Math.random): string[] {
@@ -126,23 +82,6 @@ export function sampleNames(words: RareNameWords, random: () => number = Math.ra
 
 export function validateNames(model: NamesModel): string[] {
   const issues: string[] = [];
-  const seen = new Set<string>();
-  model.affixes.forEach((row, index) => {
-    const label = row.effect || `row ${index + 1}`;
-    if (!row.effect) {
-      issues.push(`${label}: pick an effect`);
-    }
-    if (seen.has(row.effect)) {
-      issues.push(`${label}: listed more than once`);
-    }
-    seen.add(row.effect);
-    if (model.usedEffects[row.effect] && (!row.prefix.trim() || !row.suffix.trim())) {
-      issues.push(`${label}: used by hull items, so it needs both a prefix and a suffix`);
-    }
-  });
-  for (const effect of missingEffects(model)) {
-    issues.push(`${effect}: used by ${model.usedEffects[effect].join(', ')} but has no names`);
-  }
   for (const [hullItemId, words] of Object.entries(model.rareNames)) {
     if (!(words.first ?? []).length || !(words.second ?? []).length) {
       issues.push(`${hullItemId}: needs at least one first word and one second word`);

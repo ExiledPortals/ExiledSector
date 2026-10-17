@@ -23,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class HullItemNamesTest {
 
     private static final Path NAMES = Path.of(HullItemNames.NAMES_PATH);
-    private static final Path AFFIXES = Path.of(HullItemNames.AFFIXES_PATH);
     private static final RolledEffect DISSIPATION = new RolledEffect("FLUX_DISSIPATION_MULT", 5f);
     private static final RolledEffect SHIELDING = new RolledEffect("SHIELD_DAMAGE_TAKEN_MULT", -12f);
     private static final RolledEffect HULL = new RolledEffect("HULL_MULT", 5f);
@@ -33,8 +32,8 @@ class HullItemNamesTest {
     void setUp() throws Exception {
         Path root = RealSkillData.projectRoot();
         HullItemNames.registerWords(new JSONObject(Files.readString(root.resolve(NAMES), StandardCharsets.UTF_8)));
-        HullItemNames.registerAffixes(CDL.toJSONArray(Files.readString(root.resolve(AFFIXES), StandardCharsets.UTF_8)
-                .replace("\r\n", "\n")));
+        HullItemFixtures.registerModifierNames("FLUX_DISSIPATION_MULT,prefix,FLUX_DISSIPATION_MULT:4:6,Vent-efficient",
+                "SHIELD_DAMAGE_TAKEN_MULT,suffix,SHIELD_DAMAGE_TAKEN_MULT:-15:-10,Shielding", "HULL_MULT,suffix,HULL_MULT:4:6,Fortitude");
         HullItemDefinitions.register(new JSONArray()
                 .put(HullItemFixtures.row("domain_subroutine_military", "subroutine", HullItemFixtures.MILITARY_PREFIXES,
                         HullItemFixtures.MILITARY_SUFFIXES))
@@ -46,9 +45,14 @@ class HullItemNamesTest {
                         .put("name", "Omega Shard").put("unique", "TRUE")));
     }
 
+    private static JSONArray csvRows(String dataPath) throws Exception {
+        return CDL.toJSONArray(Files.readString(RealSkillData.projectRoot().resolve(dataPath), StandardCharsets.UTF_8).replace("\r\n", "\n"));
+    }
+
     @AfterEach
     void tearDown() {
         HullItemNames.clear();
+        HullItemModifiers.clear();
         HullItemDefinitions.clear();
     }
 
@@ -73,9 +77,8 @@ class HullItemNamesTest {
 
     @Test
     void aCommonItemMissingAnAffixKeepsTheOtherOne() throws Exception {
-        HullItemNames.registerAffixes(new JSONArray()
-                .put(new JSONObject().put("effect", "FLUX_DISSIPATION_MULT").put("prefix", "Dissipation").put("suffix", ""))
-                .put(new JSONObject().put("effect", "HULL_MULT").put("prefix", "").put("suffix", "Fortitude")));
+        HullItemFixtures.registerModifierNames("FLUX_DISSIPATION_MULT,prefix,FLUX_DISSIPATION_MULT:4:6,Dissipation",
+                "HULL_MULT,suffix,HULL_MULT:4:6,Fortitude");
 
         assertEquals("Dissipation subroutine", name("domain_subroutine_military", 1L, List.of(DISSIPATION, ARMOR)).title());
         assertEquals("Subroutine of Fortitude",
@@ -145,9 +148,9 @@ class HullItemNamesTest {
     }
 
     @Test
-    void everyShippedPoolEffectHasBothAffixesAndEveryCommonHullItemHasRareNameWords() throws Exception {
-        String csv = Files.readString(RealSkillData.projectRoot().resolve(HullItemDefinitions.DATA_PATH), StandardCharsets.UTF_8);
-        HullItemDefinitions.register(CDL.toJSONArray(csv.replace("\r\n", "\n")));
+    void everyShippedPoolModifierHasANameAndEveryCommonHullItemHasRareNameWords() throws Exception {
+        HullItemModifiers.register(csvRows(HullItemModifiers.DATA_PATH));
+        HullItemDefinitions.register(csvRows(HullItemDefinitions.DATA_PATH));
         JSONObject words = new JSONObject(Files.readString(RealSkillData.projectRoot().resolve(NAMES), StandardCharsets.UTF_8));
         for (HullItemDefinition definition : HullItemDefinitions.all()) {
             if (definition.unique()) {
@@ -155,7 +158,7 @@ class HullItemNamesTest {
             }
             assertTrue(words.has(definition.id()), definition.id() + " has no rare name words");
             for (PoolEntry entry : definition.pool()) {
-                assertTrue(HullItemNames.hasAffix(entry.effectName()), entry.effectName() + " has no affix row");
+                assertTrue(HullItemNames.hasName(definition, entry.modifier().id(), entry.slot()), entry.modifier().id() + " has no name");
                 assertFalse(name(definition.id(), 1L, List.of(new RolledEffect(entry.effectName(), 1f),
                         new RolledEffect(entry.effectName(), 1f))).title().contains("  "));
             }

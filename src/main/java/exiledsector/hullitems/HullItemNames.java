@@ -1,8 +1,8 @@
 package exiledsector.hullitems;
 
+import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierSlot;
 import com.fs.starfarer.api.Global;
-import exiledsector.ModCsv;
 import exiledsector.Seeds;
 import exiledsector.i18n.Message;
 import exiledsector.i18n.Translation;
@@ -27,20 +27,15 @@ import static exiledsector.ExiledSectorModPlugin.MOD_ID;
 public final class HullItemNames {
 
     static final String NAMES_PATH = "data/config/exiledSector/socketable_names.json";
-    static final String AFFIXES_PATH = "data/config/exiledSector/socketable_affixes.csv";
     static final float COMPOUND_CHANCE = 0.3f;
     static final float MODEL_CHANCE = 0.4f;
     private static final long NAME_SALT = 0x6E616D6573L;
     private static final Logger LOG = Logger.getLogger(HullItemNames.class);
     private static final AtomicReference<Map<String, NameWords>> WORDS = new AtomicReference<>(Map.of());
-    private static final AtomicReference<Map<String, Affix>> AFFIXES = new AtomicReference<>(Map.of());
 
     enum Style {CODENAME, PRODUCT}
 
     record NameWords(Style style, List<String> firstWords, List<String> secondWords, List<String> models) {
-    }
-
-    record Affix(String prefix, String suffix) {
     }
 
     private HullItemNames() {
@@ -52,7 +47,6 @@ public final class HullItemNames {
         } catch (IOException | JSONException e) {
             LOG.error("Failed to load " + NAMES_PATH, e);
         }
-        ModCsv.load("effect", AFFIXES_PATH, LOG, HullItemNames::registerAffixes);
     }
 
     public static void registerWords(JSONObject namesJson) throws JSONException {
@@ -67,24 +61,12 @@ public final class HullItemNames {
         WORDS.set(Map.copyOf(loaded));
     }
 
-    public static void registerAffixes(JSONArray rows) throws JSONException {
-        Map<String, Affix> loaded = new HashMap<>();
-        ModCsv.forEach(rows, (index, row) -> {
-            String effectName = ModCsv.text(row, "effect");
-            if (!effectName.isEmpty()) {
-                loaded.put(effectName, new Affix(ModCsv.text(row, "prefix"), ModCsv.text(row, "suffix")));
-            }
-        });
-        AFFIXES.set(Map.copyOf(loaded));
-    }
-
     public static void clear() {
         WORDS.set(Map.of());
-        AFFIXES.set(Map.of());
     }
 
-    static boolean hasAffix(String effectName) {
-        return AFFIXES.get().containsKey(effectName);
+    static boolean hasName(HullItemDefinition definition, String modifierId, ModifierSlot slot) {
+        return namedModifier(definition, modifierId, slot) != null;
     }
 
     static HullItemName nameFor(HullItemDefinition definition, HullItemType kind, long seed, List<RolledModifier> modifiers) {
@@ -110,7 +92,7 @@ public final class HullItemNames {
         FrozenName nameParts = frozen == null ? FrozenName.NONE : frozen;
         return switch (rarity) {
             case UNIQUE -> new HullItemName(definition.displayName(), null, rarity);
-            case COMMON -> new HullItemName(commonName(definition, kind, frozen), definition.displayName(), rarity);
+            case COMMON -> new HullItemName(commonName(definition, kind, modifiers, frozen), definition.displayName(), rarity);
             case RARE -> {
                 String rareText = rareName(nameParts);
                 yield rareText == null ? new HullItemName(definition.displayName(), null, rarity)
@@ -119,11 +101,9 @@ public final class HullItemNames {
         };
     }
 
-    private static String commonName(HullItemDefinition definition, HullItemType kind, FrozenName frozen) {
-        String prefixEffect = frozen == null ? null : frozen.prefixEffect();
-        String suffixEffect = frozen == null ? null : frozen.suffixEffect();
-        String prefix = prefixEffect == null ? null : affix(prefixEffect, true);
-        String suffix = suffixEffect == null ? null : affix(suffixEffect, false);
+    private static String commonName(HullItemDefinition definition, HullItemType kind, List<RolledModifier> modifiers, FrozenName frozen) {
+        String prefix = frozenWord(definition, modifiers, frozen == null ? null : frozen.prefixModifierId(), ModifierSlot.PREFIX);
+        String suffix = frozenWord(definition, modifiers, frozen == null ? null : frozen.suffixModifierId(), ModifierSlot.SUFFIX);
         if (prefix == null && suffix == null) {
             return definition.displayName();
         }
@@ -149,13 +129,32 @@ public final class HullItemNames {
         return null;
     }
 
-    private static String affix(String effectName, boolean asPrefix) {
-        Affix effectAffix = AFFIXES.get().get(effectName);
-        String englishAffix = effectAffix == null ? "" : asPrefix ? effectAffix.prefix() : effectAffix.suffix();
-        if (englishAffix.isEmpty()) {
+    private static String frozenWord(HullItemDefinition definition, List<RolledModifier> modifiers, String frozenModifierId, ModifierSlot slot) {
+        if (frozenModifierId == null) {
             return null;
         }
-        return Translation.data("socketable.affix." + effectName + (asPrefix ? ".prefix" : ".suffix"), englishAffix);
+        String word = modifierName(definition, frozenModifierId, slot);
+        return word != null ? word : modifierName(definition, firstInSlot(definition, modifiers, slot), slot);
+    }
+
+    private static String modifierName(HullItemDefinition definition, String modifierId, ModifierSlot slot) {
+        Modifier named = namedModifier(definition, modifierId, slot);
+        return named == null ? null : HullItemModifiers.name(named.id());
+    }
+
+    private static Modifier namedModifier(HullItemDefinition definition, String modifierId, ModifierSlot slot) {
+        if (modifierId == null) {
+            return null;
+        }
+        PoolEntry entry = definition.poolEntryFor(modifierId, slot);
+        if (entry != null && HullItemModifiers.hasName(entry.modifier().id())) {
+            return entry.modifier();
+        }
+        Modifier listed = HullItemModifiers.get(modifierId);
+        if (listed != null && listed.slot() == slot && HullItemModifiers.hasName(listed.id())) {
+            return listed;
+        }
+        return HullItemModifiers.namedForEffect(modifierId, slot);
     }
 
     private static FrozenName rareWords(String definitionId, long seed) {

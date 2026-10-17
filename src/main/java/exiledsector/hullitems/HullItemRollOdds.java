@@ -22,7 +22,7 @@ public final class HullItemRollOdds {
             weightTotal += entry.weight();
         }
         for (PoolEntry entry : pool) {
-            shares.put(entry.effectName(), weightTotal > 0.0 ? entry.weight() / weightTotal : 0.0);
+            shares.put(entry.modifier().id(), weightTotal > 0.0 ? entry.weight() / weightTotal : 0.0);
         }
     }
 }

@@ -1,10 +1,9 @@
 import type { Vocabulary } from '../../../api/vocabulary.ts';
 import { csvCell, csvTableFromRows, dropCsvColumn, parseCsvTable, serializeCsvTable, trimmedCsvCells, type CsvTable } from '../../../shared/csv.ts';
-import { isNumberText } from '../../../shared/decimalText.ts';
 import { isUnshippedImagePath } from '../../../shared/imagePaths.ts';
+import { MODIFIER_REFERENCE_MARK, type HullItemModifier } from './modifiers.ts';
 
 export const HULL_ITEM_COLUMNS = ['id', 'kind', 'name', 'icon', 'rarity', 'unique', 'description', 'prefixes', 'suffixes', 'unlock'] as const;
-export const HULL_SIZE_LABELS = ['Frigate', 'Destroyer', 'Cruiser', 'Capital'];
 export const UNLOCK_LABELS: Record<string, string> = {
   found_onslaught_mk1: 'Found the Onslaught Mk.I in the Abyss',
   found_gate_hauler: 'Found the Gate Hauler',
@@ -13,18 +12,15 @@ export const UNLOCK_LABELS: Record<string, string> = {
 };
 
 export type AffixGroup = 'prefixes' | 'suffixes';
-export const AFFIX_GROUPS: { key: AffixGroup; label: string; singular: string }[] = [
+export const AFFIX_GROUPS: { key: AffixGroup; label: string; singular: 'prefix' | 'suffix' }[] = [
   { key: 'prefixes', label: 'Prefixes', singular: 'prefix' },
   { key: 'suffixes', label: 'Suffixes', singular: 'suffix' },
 ];
 
 export interface PoolEntry {
-  effect: string;
-  min: string;
-  max: string;
-  hullValues?: string[];
+  modifierId: string;
   weight: string;
-  rangeBeforeHullValues?: { min: string; max: string };
+  inlineText?: string;
 }
 
 export interface HullItemDefinition {
@@ -47,33 +43,31 @@ export interface HullItemsModel {
   definitions: HullItemDefinition[];
 }
 
+export function parsePoolEntry(text: string): PoolEntry {
+  if (!text.startsWith(MODIFIER_REFERENCE_MARK)) {
+    return { modifierId: '', weight: '', inlineText: text };
+  }
+  const [modifierId, ...weightParts] = text.slice(MODIFIER_REFERENCE_MARK.length).split(':');
+  return { modifierId: modifierId.trim(), weight: weightParts.join(':').trim() };
+}
+
 export function parsePool(text: string): PoolEntry[] {
   return String(text ?? '')
     .split(';')
     .map((entry) => entry.trim())
     .filter(Boolean)
-    .map((entry) => {
-      const parts = entry.split(':').map((part) => part.trim());
-      if ((parts[1] ?? '').includes('/')) {
-        return {
-          effect: parts[0] ?? '',
-          min: '',
-          max: '',
-          hullValues: parts[1].split('/').map((value) => value.trim()),
-          weight: parts.length > 2 ? parts[2] : '',
-        };
-      }
-      return { effect: parts[0] ?? '', min: parts[1] ?? '', max: parts[2] ?? '', weight: parts.length > 3 ? parts[3] : '' };
-    });
+    .map(parsePoolEntry);
+}
+
+export function formatPoolEntry(entry: PoolEntry): string {
+  if (entry.inlineText !== undefined) {
+    return entry.inlineText;
+  }
+  return MODIFIER_REFERENCE_MARK + entry.modifierId + (entry.weight === '' ? '' : `:${entry.weight}`);
 }
 
 export function formatPool(pool: PoolEntry[]): string {
-  return pool
-    .map((entry) => {
-      const values = entry.hullValues ? entry.hullValues.join('/') : `${entry.min}:${entry.max}`;
-      return `${entry.effect}:${values}${entry.weight === '' ? '' : `:${entry.weight}`}`;
-    })
-    .join('; ');
+  return pool.map(formatPoolEntry).join('; ');
 }
 
 export function poolWeight(entry: PoolEntry): number {
@@ -136,7 +130,12 @@ export function uniqueHullItemId(definitions: HullItemDefinition[], base: string
   return id;
 }
 
-export function newHullItem(definitions: HullItemDefinition[], kind: string, vocabulary: Vocabulary): HullItemDefinition {
+function firstReference(catalogue: HullItemModifier[], slot: string): PoolEntry[] {
+  const modifier = catalogue.find((candidate) => candidate.slot === slot);
+  return modifier ? [{ modifierId: modifier.id, weight: '' }] : [];
+}
+
+export function newHullItem(definitions: HullItemDefinition[], kind: string, catalogue: HullItemModifier[]): HullItemDefinition {
   return {
     cells: [],
     id: uniqueHullItemId(definitions, 'new_hull_item'),
@@ -147,12 +146,45 @@ export function newHullItem(definitions: HullItemDefinition[], kind: string, voc
     unique: '',
     description: '',
     unlock: '',
-    prefixes: [{ effect: vocabulary.effectNames[0] ?? '', min: '1', max: '2', weight: '' }],
-    suffixes: [{ effect: vocabulary.effectNames[1] ?? '', min: '1', max: '2', weight: '' }],
+    prefixes: firstReference(catalogue, 'prefix'),
+    suffixes: firstReference(catalogue, 'suffix'),
   };
 }
 
-export function validateHullItems(definitions: HullItemDefinition[], vocabulary: Vocabulary): string[] {
+function poolIssues(label: string, definition: HullItemDefinition, catalogue: Map<string, HullItemModifier>): string[] {
+  const issues: string[] = [];
+  const listed: HullItemModifier[] = [];
+  for (const group of AFFIX_GROUPS) {
+    for (const entry of definition[group.key]) {
+      if (entry.inlineText !== undefined) {
+        issues.push(`${label}: "${entry.inlineText}" is written inline; pick a modifier instead`);
+        continue;
+      }
+      if (!(poolWeight(entry) > 0)) {
+        issues.push(`${label}: ${entry.modifierId || '(no modifier)'} needs a weight above zero`);
+      }
+      const modifier = catalogue.get(entry.modifierId);
+      if (!modifier) {
+        issues.push(`${label}: ${entry.modifierId || '(no modifier)'} is not in hull_item_modifiers.csv`);
+        continue;
+      }
+      if (modifier.slot !== group.singular) {
+        issues.push(`${label}: ${modifier.id} is a ${modifier.slot}, so it cannot be one of its ${group.key}`);
+      }
+      for (const earlier of listed) {
+        if (earlier.id === modifier.id) {
+          issues.push(`${label}: ${modifier.id} is listed more than once`);
+        } else if (earlier.lines.length === 1 && modifier.lines.length === 1 && earlier.lines[0].effect === modifier.lines[0].effect) {
+          issues.push(`${label}: ${modifier.lines[0].effect} is listed twice, as ${earlier.id} and ${modifier.id}`);
+        }
+      }
+      listed.push(modifier);
+    }
+  }
+  return issues;
+}
+
+export function validateHullItems(definitions: HullItemDefinition[], vocabulary: Vocabulary, catalogue: Map<string, HullItemModifier>): string[] {
   const issues: string[] = [];
   const seenIds = new Set<string>();
   definitions.forEach((definition, index) => {
@@ -179,54 +211,7 @@ export function validateHullItems(definitions: HullItemDefinition[], vocabulary:
     if (definition.unlock && !vocabulary.hullItemUnlocks.includes(definition.unlock)) {
       issues.push(`${label}: unknown drop condition ${definition.unlock}`);
     }
-    const poolEffects = new Set<string>();
-    for (const entry of [...definition.prefixes, ...definition.suffixes]) {
-      if (poolEffects.has(entry.effect)) {
-        issues.push(`${label}: ${entry.effect} is listed more than once across its prefixes and suffixes`);
-      }
-      poolEffects.add(entry.effect);
-      if (!vocabulary.effectInfo.has(entry.effect)) {
-        issues.push(`${label}: unknown effect ${entry.effect}`);
-      }
-      if (!(poolWeight(entry) > 0)) {
-        issues.push(`${label}: ${entry.effect} needs a weight above zero`);
-      }
-      if (entry.hullValues) {
-        if (entry.hullValues.length !== HULL_SIZE_LABELS.length) {
-          issues.push(`${label}: ${entry.effect} needs exactly four hull size values`);
-        }
-        if (!entry.hullValues.every(isNumberText)) {
-          issues.push(`${label}: ${entry.effect} has a hull size value that is not a number`);
-        }
-      } else if (!isNumberText(entry.min) || !isNumberText(entry.max)) {
-        issues.push(`${label}: ${entry.effect} needs a number for both min and max`);
-      } else if (Number.parseFloat(entry.min) > Number.parseFloat(entry.max)) {
-        issues.push(`${label}: ${entry.effect} has a min above its max`);
-      }
-    }
+    issues.push(...poolIssues(label, definition, catalogue));
   });
   return issues;
-}
-
-export function togglePerHullSize(entry: PoolEntry, perHullSize: boolean): void {
-  if (perHullSize) {
-    entry.rangeBeforeHullValues = { min: entry.min, max: entry.max };
-    entry.hullValues = HULL_SIZE_LABELS.map(() => entry.min || '0');
-  } else {
-    const range = entry.rangeBeforeHullValues ?? { min: entry.hullValues?.[0] ?? '', max: entry.hullValues?.[0] ?? '' };
-    entry.min = range.min;
-    entry.max = range.max;
-    delete entry.hullValues;
-    delete entry.rangeBeforeHullValues;
-  }
-}
-
-export function setHullValue(entry: PoolEntry, hullIndex: number, value: string): void {
-  if (!entry.hullValues) {
-    return;
-  }
-  entry.hullValues[hullIndex] = value;
-  while (entry.hullValues.length > HULL_SIZE_LABELS.length && entry.hullValues[entry.hullValues.length - 1] === '') {
-    entry.hullValues.pop();
-  }
 }

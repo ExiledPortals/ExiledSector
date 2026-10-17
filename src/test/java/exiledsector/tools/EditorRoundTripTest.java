@@ -34,6 +34,7 @@ class EditorRoundTripTest {
     private static final String HULL_ITEM_DROPS_MODEL = "pages/hullItems/model/drops.ts";
     private static final String HULL_ITEM_CRAFTING_MODEL = "pages/hullItems/model/crafting.ts";
     private static final String HULL_ITEM_IMPLICITS_MODEL = "pages/hullItems/model/implicits.ts";
+    private static final String HULL_ITEM_MODIFIERS_MODEL = "pages/hullItems/model/modifiers.ts";
 
     private static final String TYPE_LOADER = "exiledsector/skills/loader/SkillTypeLoader.java";
     private static final String TREE_LOADER = "exiledsector/skills/loader/SkillTreeLoader.java";
@@ -44,9 +45,10 @@ class EditorRoundTripTest {
     private static final String SALVAGE_COMPAT = "exiledsector/compat/SalvageSiteCompat.java";
     private static final String HULL_ITEM_CRAFTING = "exiledsector/hullitems/SocketCraftingCosts.java";
     private static final String HULL_ITEM_IMPLICITS = "exiledsector/hullitems/HullItemImplicits.java";
+    private static final String HULL_ITEM_MODIFIERS = "exiledsector/hullitems/HullItemModifiers.java";
 
     private static final List<String> LOADERS = List.of(TYPE_LOADER, TREE_LOADER, HULL_ITEM_DEFINITIONS, HULL_ITEM_DEFINITION,
-            HULL_ITEM_NAMES, HULL_ITEM_DROPS, SALVAGE_COMPAT, HULL_ITEM_CRAFTING, HULL_ITEM_IMPLICITS);
+            HULL_ITEM_NAMES, HULL_ITEM_DROPS, SALVAGE_COMPAT, HULL_ITEM_CRAFTING, HULL_ITEM_IMPLICITS, HULL_ITEM_MODIFIERS);
 
     private static final List<String> EDITED_DATA_PATHS = List.of("data/skilltrees/skill_types.json", "data/skilltrees/ship_skill_tree.json",
             "data/config/exiledSector/socketable", "data/config/exiledSector/hull_item", "compat/salvage/");
@@ -88,8 +90,8 @@ class EditorRoundTripTest {
                     List.of(tree("treeFileObject"), tree("serializeStar")), false),
             new Pin("socketables.csv columns", HULL_ITEM_DEFINITION, List.of("parse"),
                     List.of(new EditorSource(HULL_ITEM_DEFINITIONS_MODEL, "HULL_ITEM_COLUMNS")), true),
-            new Pin("socketable_affixes.csv columns", HULL_ITEM_NAMES, List.of("load", "registerAffixes"),
-                    List.of(new EditorSource(HULL_ITEM_NAMES_MODEL, "serializeAffixesCsv")), true),
+            new Pin("hull_item_modifiers.csv columns", HULL_ITEM_MODIFIERS, List.of("load", "register", "parse"),
+                    List.of(new EditorSource(HULL_ITEM_MODIFIERS_MODEL, "serializeModifiersCsv")), true),
             new Pin("socketable_names.json word fields", HULL_ITEM_NAMES, List.of("registerWords"),
                     List.of(new EditorSource(HULL_ITEM_NAMES_MODEL, "serializeRareNames"), new EditorSource(HULL_ITEM_NAMES_MODEL, "RARE_NAME_WORD_LISTS"),
                             new EditorSource(HULL_ITEM_NAMES_MODEL, "newRareNameWords")), true),

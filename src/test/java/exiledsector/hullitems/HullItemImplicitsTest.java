@@ -27,6 +27,7 @@ class HullItemImplicitsTest {
     @BeforeEach
     void loadRealData() throws Exception {
         EffectAliases.register(csvRows(EffectAliases.DATA_PATH));
+        HullItemModifiers.register(csvRows(HullItemModifiers.DATA_PATH));
         HullItemDefinitions.register(csvRows(HullItemDefinitions.DATA_PATH));
         HullItemImplicits.register(csvRows(HullItemImplicits.DATA_PATH));
     }
@@ -35,6 +36,7 @@ class HullItemImplicitsTest {
     void clear() {
         HullItemImplicits.clear();
         HullItemDefinitions.clear();
+        HullItemModifiers.clear();
     }
 
     @Test

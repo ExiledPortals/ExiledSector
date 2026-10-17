@@ -18,6 +18,7 @@ import exiledsector.hullitems.HullItemRarity;
 import exiledsector.hullitems.HullItemRollOdds;
 import exiledsector.ui.VanillaText;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -90,8 +91,7 @@ public class HullItemCodexEntry extends BoxedCodexEntry {
         info.addSectionHeading(Translation.text("hullItem.tooltip.implicit"), Alignment.MID, PAD);
         float linePad = PAD;
         for (Modifier implicit : implicits) {
-            StyledText effectText = effectText(implicit.line());
-            if (effectText != null) {
+            for (StyledText effectText : effectTexts(implicit)) {
                 VanillaText.addPara(info, effectText, linePad, Misc.getTextColor());
                 linePad = LINE_PAD;
             }
@@ -102,8 +102,7 @@ public class HullItemCodexEntry extends BoxedCodexEntry {
         info.addSectionHeading(Translation.text("codex.socketables.effects"), Alignment.MID, PAD);
         float linePad = PAD;
         for (PoolEntry entry : definition.pool()) {
-            StyledText effectText = effectText(entry);
-            if (effectText != null) {
+            for (StyledText effectText : effectTexts(entry.modifier())) {
                 VanillaText.addPara(info, effectText, linePad, Misc.getTextColor());
                 linePad = LINE_PAD;
             }
@@ -125,17 +124,21 @@ public class HullItemCodexEntry extends BoxedCodexEntry {
         float effectColumnWidth = textWidth - CHANCE_COLUMN_WIDTH - COLUMN_GAP;
         float linePad = PAD;
         for (PoolEntry entry : pool) {
-            StyledText effectText = effectText(entry);
-            if (effectText == null) {
+            List<StyledText> effectTexts = effectTexts(entry.modifier());
+            if (effectTexts.isEmpty()) {
                 continue;
             }
-            String chance = percentText(weightShares.getOrDefault(entry.effectName(), 0.0));
+            String chance = percentText(weightShares.getOrDefault(entry.modifier().id(), 0.0));
             TooltipMakerAPI chanceCell = info.beginSubTooltip(CHANCE_COLUMN_WIDTH);
             VanillaText.addPara(chanceCell, Translation.msg("codex.socketables.chance").arg("chance", chance).styled(), 0f, Misc.getTextColor())
                     .setAlignment(Alignment.RMID);
             info.endSubTooltip();
             TooltipMakerAPI effectCell = info.beginSubTooltip(effectColumnWidth);
-            VanillaText.addPara(effectCell, effectText, 0f, Misc.getTextColor());
+            float effectLinePad = 0f;
+            for (StyledText effectText : effectTexts) {
+                VanillaText.addPara(effectCell, effectText, effectLinePad, Misc.getTextColor());
+                effectLinePad = LINE_PAD;
+            }
             info.endSubTooltip();
             info.addCustom(chanceCell, linePad);
             info.addCustomDoNotSetPosition(effectCell).getPosition().rightOfTop(chanceCell, COLUMN_GAP);
@@ -147,8 +150,15 @@ public class HullItemCodexEntry extends BoxedCodexEntry {
         }
     }
 
-    private static StyledText effectText(PoolEntry entry) {
-        return effectText(entry.line());
+    private static List<StyledText> effectTexts(Modifier modifier) {
+        List<StyledText> effectTexts = new ArrayList<>(modifier.lines().size());
+        for (ModifierLine line : modifier.lines()) {
+            StyledText effectText = effectText(line);
+            if (effectText != null) {
+                effectTexts.add(effectText);
+            }
+        }
+        return effectTexts;
     }
 
     private static StyledText effectText(ModifierLine line) {

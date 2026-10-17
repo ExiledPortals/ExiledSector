@@ -11,6 +11,7 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -57,6 +58,10 @@ public final class HullItemImplicits {
             if (trimmed.isEmpty()) {
                 continue;
             }
+            if (HullItemModifiers.isReference(trimmed)) {
+                addImplicit(implicits, referencedImplicit(trimmed));
+                continue;
+            }
             ModifierLine.Parsed parsed = ModifierLine.parse(trimmed);
             if (parsed.trailingField() != null) {
                 throw new IllegalArgumentException("implicit \"" + trimmed + "\" has a weight, but implicits always roll");
@@ -68,12 +73,67 @@ public final class HullItemImplicits {
             if (effectName == null) {
                 continue;
             }
-            if (implicits.stream().anyMatch(existing -> existing.id().equals(effectName))) {
-                throw new IllegalArgumentException(effectName + " is listed more than once");
-            }
-            implicits.add(Modifier.single(ModifierSlot.IMPLICIT, parsed.line().named(effectName)));
+            addImplicit(implicits, Modifier.single(ModifierSlot.IMPLICIT, parsed.line().named(effectName)));
         }
         return List.copyOf(implicits);
+    }
+
+    private static Modifier referencedImplicit(String entryText) {
+        String referenceId = entryText.substring(HullItemModifiers.REFERENCE_MARK.length()).trim();
+        if (referenceId.contains(":")) {
+            throw new IllegalArgumentException("implicit \"" + entryText + "\" has a weight, but implicits always roll");
+        }
+        return HullItemModifiers.referenced(referenceId, ModifierSlot.IMPLICIT);
+    }
+
+    private static void addImplicit(List<Modifier> implicits, Modifier implicit) {
+        for (Modifier existing : implicits) {
+            if (existing.id().equals(implicit.id())) {
+                throw new IllegalArgumentException(implicit.id() + " is listed more than once");
+            }
+            for (ModifierLine line : implicit.lines()) {
+                if (existing.line(line.effectName()) != null) {
+                    throw new IllegalArgumentException(line.effectName() + " is in both " + existing.id() + " and " + implicit.id());
+                }
+            }
+        }
+        implicits.add(implicit);
+    }
+
+    static List<RolledModifier> withCurrentIds(HullItemType type, List<RolledModifier> savedImplicits, long seed) {
+        List<Modifier> implicits = forType(type);
+        if (implicits.isEmpty() || matchesIds(implicits, savedImplicits)) {
+            return savedImplicits;
+        }
+        Map<String, RolledEffect> savedLines = new HashMap<>();
+        RolledModifier.lines(savedImplicits).forEach(line -> savedLines.putIfAbsent(line.effectName(), line));
+        List<RolledModifier> freshRolls = roll(type, seed);
+        List<RolledModifier> resolved = new ArrayList<>(implicits.size());
+        for (int index = 0; index < implicits.size(); index++) {
+            Modifier implicit = implicits.get(index);
+            List<RolledEffect> keptLines = new ArrayList<>(implicit.lines().size());
+            for (ModifierLine line : implicit.lines()) {
+                RolledEffect savedLine = savedLines.get(line.effectName());
+                if (savedLine != null) {
+                    keptLines.add(savedLine);
+                }
+            }
+            resolved.add(keptLines.size() == implicit.lines().size()
+                    ? new RolledModifier(implicit.id(), ModifierSlot.IMPLICIT, keptLines) : freshRolls.get(index));
+        }
+        return resolved;
+    }
+
+    private static boolean matchesIds(List<Modifier> implicits, List<RolledModifier> savedImplicits) {
+        if (implicits.size() != savedImplicits.size()) {
+            return false;
+        }
+        for (int index = 0; index < implicits.size(); index++) {
+            if (!implicits.get(index).id().equals(savedImplicits.get(index).modifierId())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public static boolean isLoaded() {

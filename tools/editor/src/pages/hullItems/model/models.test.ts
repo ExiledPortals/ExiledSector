@@ -1,18 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { buildVocabulary } from '../../../api/vocabulary.ts';
 import { fractionToPercentText, percentToFractionText } from '../../../shared/decimalText.ts';
-import {
-  formatPool,
-  markDefinitionsSaved,
-  parsePool,
-  poolShares,
-  togglePerHullSize,
-  validateHullItems,
-  type HullItemDefinition,
-  type HullItemsModel,
-} from './definitions.ts';
+import { formatPool, markDefinitionsSaved, parsePool, poolShares, validateHullItems, type HullItemDefinition, type HullItemsModel } from './definitions.ts';
 import { dropSummary, setChance, validateDrops, type DropRow } from './drops.ts';
-import { missingEffects, validateNames, wordList } from './names.ts';
+import { modifierById, parseModifiersCsv } from './modifiers.ts';
+import { validateNames, wordList } from './names.ts';
 
 const vocabulary = buildVocabulary({
   effects: [
@@ -27,6 +19,12 @@ const vocabulary = buildVocabulary({
   socketableUnlocks: ['defeated_ziggurat'],
 });
 
+const catalogue = modifierById(
+  parseModifiersCsv(
+    'id,slot,lines,name\nHULL_MULT,prefix,HULL_MULT:1:2,Reinforced\nHULL_MULT_BRIDGE,prefix,HULL_MULT:3:4,Reinforced\nARMOR_FLAT,suffix,ARMOR_FLAT:5/10/15/20,Plating\n',
+  ).modifiers,
+);
+
 function definition(overrides: Partial<HullItemDefinition>): HullItemDefinition {
   return {
     cells: [],
@@ -37,33 +35,26 @@ function definition(overrides: Partial<HullItemDefinition>): HullItemDefinition 
     rarity: '10',
     unique: '',
     description: '',
-    prefixes: parsePool('HULL_MULT:1:2'),
-    suffixes: parsePool('ARMOR_FLAT:5/10/15/20:3'),
+    prefixes: parsePool('@HULL_MULT'),
+    suffixes: parsePool('@ARMOR_FLAT:3'),
     unlock: '',
     ...overrides,
   };
 }
 
-describe('socketable pools', () => {
-  it('parses ranged and per-hull-size entries with optional weights and formats them back', () => {
-    const pool = parsePool(' HULL_MULT:4:6:1500 ;ARMOR_FLAT:5/10/15/20; ');
+describe('hull item pools', () => {
+  it('parses modifier references with optional weights, keeps inline entries as written and formats them back', () => {
+    const pool = parsePool(' @HULL_MULT:1500 ;@ARMOR_FLAT; HULL_MULT:4:6 ');
     expect(pool).toEqual([
-      { effect: 'HULL_MULT', min: '4', max: '6', weight: '1500' },
-      { effect: 'ARMOR_FLAT', min: '', max: '', hullValues: ['5', '10', '15', '20'], weight: '' },
+      { modifierId: 'HULL_MULT', weight: '1500' },
+      { modifierId: 'ARMOR_FLAT', weight: '' },
+      { modifierId: '', weight: '', inlineText: 'HULL_MULT:4:6' },
     ]);
-    expect(formatPool(pool)).toBe('HULL_MULT:4:6:1500; ARMOR_FLAT:5/10/15/20');
+    expect(formatPool(pool)).toBe('@HULL_MULT:1500; @ARMOR_FLAT; HULL_MULT:4:6');
   });
 
   it('shares weight within a group, counting a blank weight as 1', () => {
-    expect(poolShares(parsePool('HULL_MULT:1:2:3; ARMOR_FLAT:1:2'))).toEqual([0.75, 0.25]);
-  });
-
-  it('switches to per-hull-size values and back to the original range', () => {
-    const [entry] = parsePool('HULL_MULT:4:6');
-    togglePerHullSize(entry, true);
-    expect(entry.hullValues).toEqual(['4', '4', '4', '4']);
-    togglePerHullSize(entry, false);
-    expect(entry).toEqual({ effect: 'HULL_MULT', min: '4', max: '6', weight: '' });
+    expect(poolShares(parsePool('@HULL_MULT:3; @ARMOR_FLAT'))).toEqual([0.75, 0.25]);
   });
 
   it('marks the ids that were saved, not ids renamed or added after the save started', () => {
@@ -85,7 +76,7 @@ describe('socketable pools', () => {
   });
 
   it('reports every rule the game would reject', () => {
-    expect(validateHullItems([definition({})], vocabulary)).toEqual([]);
+    expect(validateHullItems([definition({})], vocabulary, catalogue)).toEqual([]);
     const issues = validateHullItems(
       [
         definition({
@@ -94,11 +85,12 @@ describe('socketable pools', () => {
           icon: 'graphics/unused/x.png',
           rarity: '-1',
           unlock: 'mystery',
-          prefixes: parsePool('HULL_MULT:6:4; UNKNOWN:1:2:0'),
-          suffixes: parsePool('HULL_MULT:5/10/15'),
+          prefixes: parsePool('@HULL_MULT; @HULL_MULT_BRIDGE; @NOT_THERE:0; ARMOR_FLAT:1:2'),
+          suffixes: parsePool('@HULL_MULT'),
         }),
       ],
       vocabulary,
+      catalogue,
     );
     expect(issues).toEqual([
       'Bad Id: id must use only lowercase letters, digits and underscores',
@@ -106,11 +98,13 @@ describe('socketable pools', () => {
       'Bad Id: icon graphics/unused/x.png is in a folder that is not deployed',
       'Bad Id: rarity must be zero or more',
       'Bad Id: unknown drop condition mystery',
-      'Bad Id: HULL_MULT has a min above its max',
-      'Bad Id: unknown effect UNKNOWN',
-      'Bad Id: UNKNOWN needs a weight above zero',
-      'Bad Id: HULL_MULT is listed more than once across its prefixes and suffixes',
-      'Bad Id: HULL_MULT needs exactly four hull size values',
+      'Bad Id: HULL_MULT is listed twice, as HULL_MULT and HULL_MULT_BRIDGE',
+      'Bad Id: NOT_THERE needs a weight above zero',
+      'Bad Id: NOT_THERE is not in hull_item_modifiers.csv',
+      'Bad Id: "ARMOR_FLAT:1:2" is written inline; pick a modifier instead',
+      'Bad Id: HULL_MULT is a prefix, so it cannot be one of its suffixes',
+      'Bad Id: HULL_MULT is listed more than once',
+      'Bad Id: HULL_MULT is listed twice, as HULL_MULT_BRIDGE and HULL_MULT',
     ]);
   });
 });
@@ -153,17 +147,8 @@ describe('drops', () => {
 });
 
 describe('names', () => {
-  it('lists effects used by non-unique socketables that have no names yet', () => {
-    const model = {
-      affixes: [{ cells: [], effect: 'HULL_MULT', prefix: 'Hard', suffix: '' }],
-      usedEffects: { HULL_MULT: ['a'], ARMOR_FLAT: ['a', 'b'] },
-    };
-    expect(missingEffects(model)).toEqual(['ARMOR_FLAT']);
-    expect(
-      validateNames({ ...model, affixTable: { header: [], rows: [], lineEnding: '\n' }, rareNames: { a: { first: ['X'] } }, rareNamesLineEnding: '\n' }),
-    ).toEqual([
-      'HULL_MULT: used by hull items, so it needs both a prefix and a suffix',
-      'ARMOR_FLAT: used by a, b but has no names',
+  it('needs both word lists for every rare name entry', () => {
+    expect(validateNames({ rareNames: { a: { first: ['X'] }, b: { first: ['Y'], second: ['Z'] } }, rareNamesLineEnding: '\n' })).toEqual([
       'a: needs at least one first word and one second word',
     ]);
   });

@@ -25,6 +25,8 @@ public class HullItem {
     private List<RolledModifier> explicitModifiers;
     private List<RolledModifier> implicitModifiers;
     private FrozenName frozenName;
+    private transient boolean explicitIdsCurrent;
+    private transient boolean implicitIdsCurrent;
 
     HullItem(String id, String definitionId, long seed, List<RolledModifier> explicitModifiers) {
         this.id = id;
@@ -55,11 +57,21 @@ public class HullItem {
     }
 
     public List<RolledModifier> explicits() {
-        if (explicitModifiers == null) {
-            explicitModifiers = RolledModifier.fromLegacyEffects(definition(), effects == null ? List.of() : effects);
+        HullItemDefinition definition = definition();
+        if (explicitModifiers != null) {
+            if (!explicitIdsCurrent && definition != null) {
+                explicitModifiers = new ArrayList<>(definition.withCurrentIds(explicitModifiers));
+                explicitIdsCurrent = true;
+            }
+            return Collections.unmodifiableList(explicitModifiers);
+        }
+        List<RolledModifier> converted = RolledModifier.fromLegacyEffects(definition, effects == null ? List.of() : effects);
+        if (definition != null || effects == null) {
+            explicitModifiers = new ArrayList<>(converted);
+            explicitIdsCurrent = definition != null;
             effects = null;
         }
-        return Collections.unmodifiableList(explicitModifiers);
+        return Collections.unmodifiableList(converted);
     }
 
     public List<RolledEffect> effects() {
@@ -68,11 +80,18 @@ public class HullItem {
 
     public List<RolledModifier> implicits() {
         if (implicitModifiers != null) {
+            if (!implicitIdsCurrent && HullItemImplicits.isLoaded() && kind() != null && !kind().implicits().isEmpty()) {
+                implicitModifiers = new ArrayList<>(HullItemImplicits.withCurrentIds(kind(), implicitModifiers, seed));
+                implicitIdsCurrent = true;
+            }
             return Collections.unmodifiableList(implicitModifiers);
         }
-        List<RolledModifier> rolled = implicits != null ? implicitsFromLegacy(implicits) : HullItemImplicits.roll(kind(), seed);
-        if (implicits != null || (HullItemImplicits.isLoaded() && definition() != null)) {
+        boolean resolvable = HullItemImplicits.isLoaded() && kind() != null;
+        List<RolledModifier> rolled = implicits == null ? HullItemImplicits.roll(kind(), seed)
+                : resolvable ? HullItemImplicits.withCurrentIds(kind(), implicitsFromLegacy(implicits), seed) : implicitsFromLegacy(implicits);
+        if (implicits != null || resolvable) {
             implicitModifiers = new ArrayList<>(rolled);
+            implicitIdsCurrent = resolvable && !kind().implicits().isEmpty();
             implicits = null;
         }
         return rolled;

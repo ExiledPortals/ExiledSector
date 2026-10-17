@@ -10,6 +10,8 @@ import java.util.Random;
 
 public record PoolEntry(Modifier modifier, float weight) {
 
+    private static final String WEIGHT_SEPARATOR = ":";
+
     public static PoolEntry of(ModifierSlot slot, String effectName, float min, float max, float weight) {
         return new PoolEntry(Modifier.single(slot, ModifierLine.range(effectName, min, max)), weight);
     }
@@ -19,16 +21,38 @@ public record PoolEntry(Modifier modifier, float weight) {
     }
 
     static PoolEntry parse(String entryText, ModifierSlot slot) {
+        if (HullItemModifiers.isReference(entryText)) {
+            return parseReference(entryText, slot);
+        }
         ModifierLine.Parsed parsed = ModifierLine.parse(entryText);
-        float weight = parsed.trailingField() == null ? 1f : ModifierLine.parseNumber(parsed.trailingField(), entryText);
+        float weight = parseWeight(parsed.trailingField(), entryText);
+        String effectName = HullItemDefinition.currentEffectName(parsed.line().effectName());
+        return effectName == null ? null : new PoolEntry(Modifier.single(slot, parsed.line().named(effectName)), weight);
+    }
+
+    private static PoolEntry parseReference(String entryText, ModifierSlot slot) {
+        String[] fields = entryText.substring(HullItemModifiers.REFERENCE_MARK.length()).split(WEIGHT_SEPARATOR, -1);
+        if (fields.length > 2) {
+            throw new IllegalArgumentException("entry \"" + entryText + "\" is not @MODIFIER_ID or @MODIFIER_ID:weight");
+        }
+        Modifier referencedModifier = HullItemModifiers.referenced(fields[0].trim(), slot);
+        return new PoolEntry(referencedModifier, parseWeight(fields.length == 2 ? fields[1] : null, entryText));
+    }
+
+    private static float parseWeight(String weightText, String entryText) {
+        float weight = weightText == null ? 1f : ModifierLine.parseNumber(weightText, entryText);
         if (!(weight > 0f)) {
             throw new IllegalArgumentException("entry \"" + entryText + "\" needs a weight above zero");
         }
-        return new PoolEntry(Modifier.single(slot, parsed.line()), weight);
+        return weight;
     }
 
-    PoolEntry named(String currentEffectName) {
-        return new PoolEntry(Modifier.single(modifier.slot(), line().named(currentEffectName)), weight);
+    boolean isSingle() {
+        return !modifier.isHybrid();
+    }
+
+    boolean hasLine(String effectName) {
+        return modifier.line(effectName) != null;
     }
 
     public ModifierLine line() {

@@ -116,6 +116,9 @@ class HullItemCodecTest {
         assertEquals(npcItem(RARE_ITEM), NpcHullItems.item("npc:sub/42/" + RELEASED_RARE_TEXT));
         assertEquals(new HullItemData("removed", 9L, List.of(suffix("FIGHTER_ARMOR_PERCENT", 12f), suffix("HULL_MULT", 5f)), null),
                 HullItemData.parse(UNNAMED_CARGO.replace(COMMON_TEXT, RELEASED_COMMON_TEXT)), "without a definition the slot falls back to suffix");
+        assertEquals(List.of(ModifierSlot.PREFIX, ModifierSlot.PREFIX, ModifierSlot.SUFFIX),
+                HullItemCodec.decodeModifiers("BEAM_WEAPON_DAMAGE_PERCENT:12;FIGHTER_ARMOR_PERCENT:12;HULL_MULT:5", "sub").stream()
+                        .map(RolledModifier::slot).toList(), "a retired effect before a prefix is a prefix, as in old saves");
     }
 
     @Test
@@ -216,6 +219,7 @@ class HullItemCodecTest {
             assertEquals(COMMON_ITEM, HullItemCodec.decode(COMMON_CARGO.replace("HULL_MULT", "OLD_HULL_MULT")));
             assertEquals(COMMON_ITEM, HullItemCodec.decode(COMMON_CARGO.replace(COMMON_TEXT, RELEASED_COMMON_TEXT)
                     .replace("HULL_MULT", "OLD_HULL_MULT")));
+            assertEquals(List.of(suffix("HULL_MULT", 5f)), HullItemCodec.decodeModifiers("S=OLD_HULL_MULT=OLD_HULL_MULT:5", "sub"));
         } finally {
             EffectAliases.clear();
         }

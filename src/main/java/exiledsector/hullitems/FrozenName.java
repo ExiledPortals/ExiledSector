@@ -39,11 +39,11 @@ public final class FrozenName {
         return new FrozenName(null, null, firstWord, secondWord, brandWord, modelWord, true);
     }
 
-    String prefixEffect() {
+    String prefixModifierId() {
         return prefixEffect;
     }
 
-    String suffixEffect() {
+    String suffixModifierId() {
         return suffixEffect;
     }
 

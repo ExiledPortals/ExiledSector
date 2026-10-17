@@ -99,7 +99,7 @@ class ExiledSectorModPluginTest {
         when(settings.getMergedSpreadsheetDataForMod("type", "data/config/exiledSector/hull_item_implicits.csv", "exiledSector"))
                 .thenReturn(new JSONArray());
         when(settings.getMergedJSONForMod("data/config/exiledSector/socketable_names.json", "exiledSector")).thenReturn(new JSONObject("{}"));
-        when(settings.getMergedSpreadsheetDataForMod("effect", "data/config/exiledSector/socketable_affixes.csv", "exiledSector"))
+        when(settings.getMergedSpreadsheetDataForMod("id", "data/config/exiledSector/hull_item_modifiers.csv", "exiledSector"))
                 .thenReturn(new JSONArray());
         when(settings.getMergedSpreadsheetDataForMod("old", "data/config/exiledSector/node_replacements.csv", "exiledSector"))
                 .thenReturn(new JSONArray());

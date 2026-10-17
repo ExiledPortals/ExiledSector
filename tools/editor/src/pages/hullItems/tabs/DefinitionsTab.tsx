@@ -24,18 +24,23 @@ import {
   type HullItemDefinition,
   type HullItemsModel,
 } from '../model/definitions.ts';
+import { modifierById, parseModifiersCsv, type HullItemModifier } from '../model/modifiers.ts';
 import { PoolEntryRow } from './PoolEntryRow.tsx';
 
 const LIST_WIDTH = 270;
 
+interface DefinitionsModel extends HullItemsModel {
+  catalogue: HullItemModifier[];
+}
+
 export function DefinitionsTab({ vocabulary }: { vocabulary: Vocabulary }) {
-  const document = useDataDocument<HullItemsModel>({
+  const document = useDataDocument<DefinitionsModel>({
     key: 'socketables.definitions',
     noun: 'hull item',
-    fileNames: ['socketables'],
-    parse: (files) => parseHullItemsCsv(files.hullItems.content),
-    serialize: (model) => ({ hullItems: serializeHullItemsCsv(model) }),
-    validate: (model) => validateHullItems(model.definitions, vocabulary),
+    fileNames: ['socketables', 'hull-item-modifiers'],
+    parse: (files) => ({ ...parseHullItemsCsv(files.socketables.content), catalogue: parseModifiersCsv(files['hull-item-modifiers'].content).modifiers }),
+    serialize: (model) => ({ socketables: serializeHullItemsCsv(model) }),
+    validate: (model) => validateHullItems(model.definitions, vocabulary, modifierById(model.catalogue)),
     savedMessage: () => 'Saved socketables.csv',
     afterSave: markDefinitionsSaved,
   });
@@ -46,7 +51,7 @@ export function DefinitionsTab({ vocabulary }: { vocabulary: Vocabulary }) {
   const addHullItem = () => {
     const kind = kindFilter || vocabulary.hullItemKinds[0] || 'subroutine';
     document.update((draft) => {
-      draft.definitions.push(newHullItem(draft.definitions, kind, vocabulary));
+      draft.definitions.push(newHullItem(draft.definitions, kind, draft.catalogue));
     });
     setSelectedIndex(definitions.length);
   };
@@ -56,11 +61,11 @@ export function DefinitionsTab({ vocabulary }: { vocabulary: Vocabulary }) {
       <Box px="md" py="xs">
         <DataToolbar document={document}>
           <Button size="xs" variant="default" leftSection={<IconPlus size={14} />} onClick={addHullItem} disabled={document.state.status !== 'ready'}>
-            New hullItem
+            New hull item
           </Button>
         </DataToolbar>
         <Text size="xs" c="dimmed" mt={4}>
-          Edits data/config/exiledSector/hullItems.csv. Names and descriptions are English; add zh text under hullItem.&lt;id&gt;.name / .description in
+          Edits data/config/exiledSector/socketables.csv. Names and descriptions are English; add zh text under socketable.&lt;id&gt;.name / .description in
           zh_CN.json.
         </Text>
       </Box>
@@ -86,10 +91,11 @@ export function DefinitionsTab({ vocabulary }: { vocabulary: Vocabulary }) {
                     definition={model.definitions[selectedIndex]}
                     index={selectedIndex}
                     vocabulary={vocabulary}
+                    catalogue={model.catalogue}
                     onSelect={setSelectedIndex}
                   />
                 ) : (
-                  <Text c="dimmed">Select a hullItem, or add a new one.</Text>
+                  <Text c="dimmed">Select a hull item, or add a new one.</Text>
                 )}
               </Box>
             </ScrollArea>
@@ -101,7 +107,7 @@ export function DefinitionsTab({ vocabulary }: { vocabulary: Vocabulary }) {
 }
 
 interface DefinitionListProps {
-  model: HullItemsModel;
+  model: DefinitionsModel;
   vocabulary: Vocabulary;
   kindFilter: string;
   onKindFilter: (kind: string) => void;
@@ -152,14 +158,15 @@ function DefinitionList({ model, vocabulary, kindFilter, onKindFilter, selectedI
 }
 
 interface DefinitionFormProps {
-  document: DataDocument<HullItemsModel>;
+  document: DataDocument<DefinitionsModel>;
   definition: HullItemDefinition;
   index: number;
   vocabulary: Vocabulary;
+  catalogue: HullItemModifier[];
   onSelect: (index: number) => void;
 }
 
-function DefinitionForm({ document, definition, index, vocabulary, onSelect }: DefinitionFormProps) {
+function DefinitionForm({ document, definition, index, vocabulary, catalogue, onSelect }: DefinitionFormProps) {
   const [idText, setIdText] = useState(definition.id);
   useEffect(() => setIdText(definition.id), [definition.id]);
 
@@ -276,9 +283,9 @@ function DefinitionForm({ document, definition, index, vocabulary, onSelect }: D
       />
       <Divider />
       <Text size="xs" c="dimmed">
-        Items roll 2 effects (common: 1 prefix + 1 suffix) 55% of the time, 3 (rare: 2+1 or 1+2) 35% and 4 (rare: 2+2) 10%, never repeating an effect. A
-        higher rarity weight makes an effect come up more often within its group; a blank weight counts as 1. Rolled values land between min and max with up to
-        3 decimals.
+        Items roll 2 effects (common: 1 prefix + 1 suffix) 55% of the time, 3 (rare: 2+1 or 1+2) 35% and 4 (rare: 2+2) 10%, never repeating a modifier. A
+        higher rarity weight makes a modifier come up more often within its group; a blank weight counts as 1. Each entry picks a modifier from
+        hull_item_modifiers.csv (Modifiers tab), which holds its rolled ranges and its name.
       </Text>
       {AFFIX_GROUPS.map((group) => {
         const pool = definition[group.key];
@@ -295,10 +302,11 @@ function DefinitionForm({ document, definition, index, vocabulary, onSelect }: D
               <PoolEntryRow
                 key={entryIndex}
                 entry={entry}
+                slot={group.singular}
                 index={entryIndex}
                 count={pool.length}
                 share={shares[entryIndex]}
-                vocabulary={vocabulary}
+                catalogue={catalogue}
                 onEdit={(recipe) => edit((draft) => recipe(draft[group.key][entryIndex]))}
                 onMove={(from, to) => edit((draft) => moveItem(draft[group.key], from, to))}
                 onRemove={() => edit((draft) => void draft[group.key].splice(entryIndex, 1))}
@@ -309,7 +317,7 @@ function DefinitionForm({ document, definition, index, vocabulary, onSelect }: D
               variant="default"
               w="fit-content"
               leftSection={<IconPlus size={14} />}
-              onClick={() => edit((draft) => void draft[group.key].push({ effect: vocabulary.effectNames[0] ?? '', min: '1', max: '2', weight: '' }))}
+              onClick={() => edit((draft) => void draft[group.key].push({ modifierId: '', weight: '' }))}
             >
               Add {group.singular}
             </Button>
@@ -322,7 +330,7 @@ function DefinitionForm({ document, definition, index, vocabulary, onSelect }: D
           Duplicate
         </Button>
         <Button color="red" variant="light" leftSection={<IconTrash size={14} />} onClick={() => void remove()}>
-          Delete this hullItem
+          Delete this hull item
         </Button>
       </Group>
     </Stack>

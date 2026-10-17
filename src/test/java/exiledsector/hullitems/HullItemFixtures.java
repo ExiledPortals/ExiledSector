@@ -34,6 +34,19 @@ final class HullItemFixtures {
                 .put("suffixes", suffixes);
     }
 
+    static JSONObject modifierRow(String id, String slot, String lines, String name) throws JSONException {
+        return new JSONObject().put("id", id).put("slot", slot).put("lines", lines).put("name", name);
+    }
+
+    static void registerModifierNames(String... idSlotLinesNames) throws JSONException {
+        JSONArray rows = new JSONArray();
+        for (String row : idSlotLinesNames) {
+            String[] fields = row.split(",", -1);
+            rows.put(modifierRow(fields[0], fields[1], fields[2], fields[3]));
+        }
+        HullItemModifiers.register(rows);
+    }
+
     static HullItemDefinition registerMilitary() throws JSONException {
         HullItemDefinitions.register(new JSONArray().put(row(MILITARY, "subroutine", MILITARY_PREFIXES, MILITARY_SUFFIXES)));
         return HullItemDefinitions.get(MILITARY);

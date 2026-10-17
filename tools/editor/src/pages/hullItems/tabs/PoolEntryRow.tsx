@@ -1,62 +1,38 @@
-import { Group, Switch, Text, Tooltip } from '@mantine/core';
-import type { Vocabulary } from '../../../api/vocabulary.ts';
+import { Group, Text } from '@mantine/core';
 import { DecimalInput } from '../../../shared/DecimalInput.tsx';
-import { EffectSelect } from '../../../shared/EffectSelect.tsx';
 import { RowButtons } from '../../../shared/MoveButtons.tsx';
-import { HULL_SIZE_LABELS, setHullValue, togglePerHullSize, type PoolEntry } from '../model/definitions.ts';
+import type { PoolEntry } from '../model/definitions.ts';
+import type { HullItemModifier } from '../model/modifiers.ts';
+import { ModifierSelect } from './ModifierSelect.tsx';
 
 interface PoolEntryRowProps {
   entry: PoolEntry;
+  slot: 'prefix' | 'suffix';
   index: number;
   count: number;
   share: number;
-  vocabulary: Vocabulary;
+  catalogue: HullItemModifier[];
   onEdit: (recipe: (entry: PoolEntry) => void) => void;
   onMove: (from: number, to: number) => void;
   onRemove: () => void;
 }
 
-export function PoolEntryRow({ entry, index, count, share, vocabulary, onEdit, onMove, onRemove }: PoolEntryRowProps) {
-  const hullInputs = entry.hullValues ? [...entry.hullValues] : [];
-  while (entry.hullValues && hullInputs.length < HULL_SIZE_LABELS.length) {
-    hullInputs.push('');
-  }
+export function PoolEntryRow({ entry, slot, index, count, share, catalogue, onEdit, onMove, onRemove }: PoolEntryRowProps) {
   return (
-    <Group align="flex-end" gap="xs" wrap="nowrap">
-      <EffectSelect
-        style={{ flex: 3, minWidth: 220 }}
-        label={`Effect ${index + 1}`}
-        vocabulary={vocabulary}
-        value={entry.effect}
-        onChange={(effect) => onEdit((draft) => void (draft.effect = effect))}
+    <Group align="flex-start" gap="xs" wrap="nowrap">
+      <ModifierSelect
+        style={{ flex: 4, minWidth: 260 }}
+        label={entry.inlineText === undefined ? `Modifier ${index + 1}` : `Modifier ${index + 1} (was written inline as ${entry.inlineText})`}
+        catalogue={catalogue}
+        slot={slot}
+        value={entry.modifierId}
+        onChange={(modifierId) =>
+          onEdit((draft) => {
+            draft.modifierId = modifierId;
+            delete draft.inlineText;
+          })
+        }
       />
-      <Tooltip label="Fixed values per hull size (frigate/destroyer/cruiser/capital) instead of a rolled range">
-        <Switch
-          label="Per hull size"
-          checked={Boolean(entry.hullValues)}
-          onChange={(event) => {
-            const perHullSize = event.currentTarget.checked;
-            onEdit((draft) => togglePerHullSize(draft, perHullSize));
-          }}
-          mb={8}
-        />
-      </Tooltip>
-      {entry.hullValues ? (
-        hullInputs.map((value, hullIndex) => (
-          <DecimalInput
-            key={hullIndex}
-            style={{ flex: 1 }}
-            label={HULL_SIZE_LABELS[hullIndex] ?? 'Extra (clear to remove)'}
-            value={value}
-            onChange={(text) => onEdit((draft) => setHullValue(draft, hullIndex, text))}
-          />
-        ))
-      ) : (
-        <>
-          <DecimalInput style={{ flex: 2 }} label="Min" value={entry.min} onChange={(text) => onEdit((draft) => void (draft.min = text))} />
-          <DecimalInput style={{ flex: 2 }} label="Max" value={entry.max} onChange={(text) => onEdit((draft) => void (draft.max = text))} />
-        </>
-      )}
       <DecimalInput
         style={{ flex: 2 }}
         label={
@@ -71,7 +47,9 @@ export function PoolEntryRow({ entry, index, count, share, vocabulary, onEdit, o
         value={entry.weight}
         onChange={(text) => onEdit((draft) => void (draft.weight = text))}
       />
-      <RowButtons index={index} count={count} onMove={onMove} onRemove={onRemove} />
+      <Group pt={24}>
+        <RowButtons index={index} count={count} onMove={onMove} onRemove={onRemove} />
+      </Group>
     </Group>
   );
 }

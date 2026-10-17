@@ -51,6 +51,36 @@ class HullItemSaveTest {
     }
 
     @Test
+    void anOldItemLoadedWhileItsDefinitionIsMissingKeepsItsSlotsForWhenTheDefinitionReturns() throws Exception {
+        String legacyXml = "<exiledSector.SocketableStore><owned><exiledSector.Socketable>"
+                + "<id>socketable_1</id><definitionId>" + HullItemFixtures.MILITARY + "</definitionId><seed>5</seed><effects>"
+                + "<exiledSector.RolledEffect><effectName>FLUX_CAPACITY_MULT</effectName><magnitude>5.0</magnitude></exiledSector.RolledEffect>"
+                + "</effects></exiledSector.Socketable></owned><nextId>2</nextId></exiledSector.SocketableStore>";
+        HullItem restored = ((HullItemStore) xstream().fromXML(legacyXml)).owned().get(0);
+
+        assertEquals(ModifierSlot.SUFFIX, restored.explicits().get(0).slot(), "without a definition the slot cannot be known yet");
+        HullItemFixtures.registerMilitary();
+        assertEquals(ModifierSlot.PREFIX, restored.explicits().get(0).slot());
+    }
+
+    @Test
+    void aSavedModifierWhoseEffectWasRenamedLoadsUnderTheCurrentName() throws Exception {
+        HullItemDefinition military = HullItemFixtures.registerMilitary();
+        HullItemStore store = new HullItemStore();
+        store.add(military, 1L);
+        String xml = xstream().toXML(store).replace("HULL_MULT", "OLD_HULL_MULT");
+        EffectAliases.register(new JSONArray().put(new JSONObject().put("alias", "OLD_HULL_MULT").put("effect", "HULL_MULT")));
+        try {
+            HullItem restored = ((HullItemStore) xstream().fromXML(xml)).owned().get(0);
+
+            assertTrue(restored.explicits().stream().noneMatch(modifier -> modifier.modifierId().startsWith("OLD_")), restored.explicits().toString());
+            assertTrue(restored.explicits().stream().flatMap(modifier -> modifier.lines().stream()).noneMatch(line -> line.effectName().startsWith("OLD_")));
+        } finally {
+            EffectAliases.clear();
+        }
+    }
+
+    @Test
     void theStoreSurvivesASaveAndLoadUnderStableNamesRatherThanJavaClassPaths() throws Exception {
         HullItemDefinition military = HullItemFixtures.registerMilitary();
         HullItemStore store = new HullItemStore();
@@ -115,8 +145,8 @@ class HullItemSaveTest {
 
             assertTrue(rolledXml.contains("OLD_HULL_MULT"), rolledXml);
             assertEquals(new RolledEffect("HULL_MULT", 5f), loadedEffect);
-            assertEquals("HULL_MULT", loadedName.prefixEffect());
-            assertEquals("HULL_MULT", loadedName.suffixEffect());
+            assertEquals("HULL_MULT", loadedName.prefixModifierId());
+            assertEquals("HULL_MULT", loadedName.suffixModifierId());
         } finally {
             EffectAliases.clear();
         }

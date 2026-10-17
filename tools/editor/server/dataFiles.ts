@@ -97,8 +97,8 @@ export function resolveDataResource(paths: ProjectPaths, name: string): DataReso
       return { filePath: path.join(skillTreeDir, 'ship_skill_tree.json'), check: (text) => checkJsonArrayField(text, 'nodes') };
     case 'socketables':
       return { filePath: path.join(configDir, 'socketables.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
-    case 'socketable-affixes':
-      return { filePath: path.join(configDir, 'socketable_affixes.csv'), check: (text) => checkCsvHeader(text, 'effect,', 'the effect column') };
+    case 'hull-item-modifiers':
+      return { filePath: path.join(configDir, 'hull_item_modifiers.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
     case 'socketable-names':
       return { filePath: path.join(configDir, 'socketable_names.json'), check: checkJsonObject };
     case 'socketable-crafting':

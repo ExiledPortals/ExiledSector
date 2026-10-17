@@ -46,8 +46,8 @@ final class HullItemCodec {
                     .put(EFFECTS_KEY, modifiers(item.explicits()));
             if (frozenName != null) {
                 cargoJson.put(NAMED_KEY, true);
-                putText(cargoJson, PREFIX_KEY, frozenName.prefixEffect());
-                putText(cargoJson, SUFFIX_KEY, frozenName.suffixEffect());
+                putText(cargoJson, PREFIX_KEY, frozenName.prefixModifierId());
+                putText(cargoJson, SUFFIX_KEY, frozenName.suffixModifierId());
                 putText(cargoJson, RARE_FIRST_KEY, frozenName.rareFirst());
                 putText(cargoJson, RARE_SECOND_KEY, frozenName.rareSecond());
                 putText(cargoJson, RARE_BRAND_KEY, frozenName.rareBrand());
@@ -132,19 +132,29 @@ final class HullItemCodec {
         if (encoded == null) {
             return null;
         }
-        HullItemDefinition definition = HullItemDefinitions.get(definitionId);
         List<RolledModifier> modifiers = new ArrayList<>();
+        List<RolledEffect> legacyEffects = new ArrayList<>();
         for (String entry : encoded.split(EFFECT_SEPARATOR)) {
             if (entry.isEmpty()) {
                 continue;
             }
-            RolledModifier modifier = entry.contains(MODIFIER_FIELD_SEPARATOR) ? decodeModifier(entry) : decodeLegacy(entry, definition);
-            if (modifier == null) {
-                return null;
+            if (entry.contains(MODIFIER_FIELD_SEPARATOR)) {
+                RolledModifier modifier = decodeModifier(entry);
+                if (modifier == null) {
+                    return null;
+                }
+                modifiers.add(modifier);
+            } else {
+                RolledEffect effect = decodeEffect(entry);
+                if (effect == null) {
+                    return null;
+                }
+                legacyEffects.add(effect);
             }
-            modifiers.add(modifier);
         }
-        return modifiers;
+        HullItemDefinition definition = HullItemDefinitions.get(definitionId);
+        modifiers.addAll(RolledModifier.fromLegacyEffects(definition, legacyEffects));
+        return definition == null ? modifiers : definition.withCurrentIds(modifiers);
     }
 
     private static RolledModifier decodeModifier(String entry) {
@@ -157,7 +167,7 @@ final class HullItemCodec {
             RolledEffect line = decodeEffect(fields[1]);
             return line == null ? null : RolledModifier.single(slot, line);
         }
-        if (fields[1].isEmpty()) {
+        if (!HullItemModifiers.ID_PATTERN.matcher(fields[1]).matches()) {
             return null;
         }
         List<RolledEffect> lines = new ArrayList<>();
@@ -168,12 +178,7 @@ final class HullItemCodec {
             }
             lines.add(line);
         }
-        return new RolledModifier(fields[1], slot, lines);
-    }
-
-    private static RolledModifier decodeLegacy(String entry, HullItemDefinition definition) {
-        RolledEffect effect = decodeEffect(entry);
-        return effect == null ? null : RolledModifier.fromLegacyEffects(definition, List.of(effect)).get(0);
+        return new RolledModifier(RolledEffect.currentName(fields[1]), slot, lines);
     }
 
     private static RolledEffect decodeEffect(String entry) {

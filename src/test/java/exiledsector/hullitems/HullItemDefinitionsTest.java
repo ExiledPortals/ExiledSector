@@ -28,6 +28,7 @@ class HullItemDefinitionsTest {
     @AfterEach
     void tearDown() {
         HullItemDefinitions.clear();
+        HullItemModifiers.clear();
         exiledsector.skills.skilleffect.EffectAliases.clear();
     }
 
@@ -127,6 +128,8 @@ class HullItemDefinitionsTest {
                 .replace("\r\n", "\n");
         JSONArray rows = CDL.toJSONArray(csv);
 
+        HullItemModifiers.register(CDL.toJSONArray(Files.readString(RealSkillData.projectRoot().resolve(HullItemModifiers.DATA_PATH),
+                StandardCharsets.UTF_8).replace("\r\n", "\n")));
         HullItemDefinitions.register(rows);
 
         assertEquals(rows.length(), HullItemDefinitions.all().size());

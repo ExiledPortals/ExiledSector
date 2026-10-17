@@ -30,15 +30,15 @@ class HullItemFreezingTest {
     void setUp() throws Exception {
         registerSubroutine(BEFORE_PREFIXES, BEFORE_SUFFIXES);
         registerWords("Askonia", "Corvus");
-        HullItemNames.registerAffixes(new JSONArray()
-                .put(new JSONObject().put("effect", "FIGHTER_ARMOR_PERCENT").put("prefix", "Plated").put("suffix", "Wings"))
-                .put(new JSONObject().put("effect", "HULL_MULT").put("prefix", "Sturdy").put("suffix", "Fortitude")));
+        HullItemFixtures.registerModifierNames("FIGHTER_ARMOR_PERCENT,prefix,FIGHTER_ARMOR_PERCENT:10:15,Plated",
+                "HULL_MULT,suffix,HULL_MULT:4:6,Fortitude");
     }
 
     @AfterEach
     void tearDown() {
         NpcHullItems.clearCache();
         HullItemNames.clear();
+        HullItemModifiers.clear();
         HullItemDefinitions.clear();
     }
 

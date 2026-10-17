@@ -1,5 +1,7 @@
 package exiledsector.modifiers;
 
+import java.util.Locale;
+
 public enum ModifierSlot {
     IMPLICIT(ModifierCategory.IMPLICIT),
     PREFIX(ModifierCategory.EXPLICIT),
@@ -17,5 +19,18 @@ public enum ModifierSlot {
 
     public boolean isExplicit() {
         return category == ModifierCategory.EXPLICIT;
+    }
+
+    public String id() {
+        return name().toLowerCase(Locale.ROOT);
+    }
+
+    public static ModifierSlot byIdOrNull(String id) {
+        for (ModifierSlot slot : values()) {
+            if (slot.id().equals(id)) {
+                return slot;
+            }
+        }
+        return null;
     }
 }

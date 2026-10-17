@@ -1,5 +1,6 @@
 package exiledsector.hullitems;
 
+import exiledsector.modifiers.ModifierSlot;
 import exiledsector.skills.npc.RealSkillData;
 import exiledsector.skills.skilleffect.EffectAliases;
 import org.json.CDL;
@@ -45,13 +46,13 @@ class ReleasedHullItemsTest {
     @BeforeEach
     void setUp() throws Exception {
         EffectAliases.register(csvRows(EffectAliases.DATA_PATH));
+        HullItemModifiers.register(csvRows(HullItemModifiers.DATA_PATH));
         HullItemDefinitions.register(csvRows(HullItemDefinitions.DATA_PATH));
-        HullItemNames.registerAffixes(csvRows(HullItemNames.AFFIXES_PATH));
     }
 
     @AfterEach
     void tearDown() {
-        HullItemNames.clear();
+        HullItemModifiers.clear();
         HullItemDefinitions.clear();
         EffectAliases.clear();
     }
@@ -136,14 +137,22 @@ class ReleasedHullItemsTest {
     }
 
     @Test
-    void everyReleasedEffectOnARollingDefinitionKeepsTheAffixItsFrozenNamesUse() throws Exception {
+    void everyReleasedEffectOnARollingDefinitionKeepsTheNameItsFrozenNamesUse() throws Exception {
         List<ReleasedPoolEffect> nameless = ledger().stream()
                 .filter(entry -> HullItemDefinitions.get(entry.definitionId()) != null && !HullItemDefinitions.get(entry.definitionId()).unique())
-                .filter(entry -> !HullItemNames.hasAffix(entry.currentEffectName()))
+                .filter(entry -> !namesEffect(HullItemDefinitions.get(entry.definitionId()), entry.currentEffectName()))
                 .toList();
 
-        assertEquals(List.of(), nameless, "These pool effects shipped in a release but have no row in " + HullItemNames.AFFIXES_PATH
-                + ". Common items keep the effect in their frozen name, so the name loses that word. Keep the affix row even after"
-                + " the effect leaves the pool.");
+        assertEquals(List.of(), nameless, "These pool effects shipped in a release but no named modifier in " + HullItemModifiers.DATA_PATH
+                + " covers them. Common items keep the effect in their frozen name, so the name loses that word. Keep a named modifier"
+                + " for the effect in the slot it had, even after it leaves the pool.");
+    }
+
+    private static boolean namesEffect(HullItemDefinition definition, String effectName) {
+        PoolEntry entry = definition.poolEntry(effectName);
+        if (entry != null) {
+            return HullItemNames.hasName(definition, effectName, entry.slot());
+        }
+        return HullItemNames.hasName(definition, effectName, ModifierSlot.PREFIX) || HullItemNames.hasName(definition, effectName, ModifierSlot.SUFFIX);
     }
 }

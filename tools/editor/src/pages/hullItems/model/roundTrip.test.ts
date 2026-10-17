@@ -6,7 +6,8 @@ import { parseCraftingCsv, serializeCraftingCsv } from './crafting.ts';
 import { parseHullItemsCsv, serializeHullItemsCsv } from './definitions.ts';
 import { parseSalvageCsv, serializeSalvageCsv } from './drops.ts';
 import { lineEndingOf } from '../../../shared/lineEndings.ts';
-import { parseAffixesCsv, serializeAffixesCsv, serializeRareNames } from './names.ts';
+import { parseModifiersCsv, serializeModifiersCsv } from './modifiers.ts';
+import { serializeRareNames } from './names.ts';
 
 const repositoryRoot = path.resolve(import.meta.dirname, '..', '..', '..', '..', '..', '..');
 const configDir = path.join(repositoryRoot, 'data', 'config', 'exiledSector');
@@ -22,10 +23,9 @@ describe('saving unchanged socketable data reproduces the files byte for byte', 
     expect(serializeHullItemsCsv(parseHullItemsCsv(text))).toBe(text);
   });
 
-  it('socketable_affixes.csv', () => {
-    const text = readData(path.join(configDir, 'socketable_affixes.csv'));
-    const parsed = parseAffixesCsv(text);
-    expect(serializeAffixesCsv(parsed.table, parsed.rows)).toBe(text);
+  it('hull_item_modifiers.csv', () => {
+    const text = readData(path.join(configDir, 'hull_item_modifiers.csv'));
+    expect(serializeModifiersCsv(parseModifiersCsv(text))).toBe(text);
   });
 
   it('socketable_names.json', () => {

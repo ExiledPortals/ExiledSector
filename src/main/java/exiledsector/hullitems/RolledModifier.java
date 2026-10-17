@@ -41,7 +41,7 @@ public final class RolledModifier {
         for (int index = 0; index < effects.size(); index++) {
             modifiers.add(single(legacySlot(definition, effects, index), effects.get(index)));
         }
-        return modifiers;
+        return definition == null ? modifiers : definition.withCurrentIds(modifiers);
     }
 
     private static ModifierSlot legacySlot(HullItemDefinition definition, List<RolledEffect> effects, int index) {
@@ -66,6 +66,11 @@ public final class RolledModifier {
         List<RolledEffect> flattened = new ArrayList<>();
         modifiers.forEach(modifier -> flattened.addAll(modifier.lines()));
         return flattened;
+    }
+
+    private Object readResolve() {
+        String currentId = RolledEffect.currentName(modifierId);
+        return Objects.equals(currentId, modifierId) ? this : new RolledModifier(currentId, slot, lines());
     }
 
     public String modifierId() {

@@ -27,21 +27,34 @@ public record HullItemDefinition(String id, HullItemType kind, String name, Stri
         if (!(rarity >= 0f)) {
             throw new IllegalArgumentException("rarity must be zero or more");
         }
-        List<PoolEntry> prefixes = parsePool(row.optString("prefixes", ""), ModifierSlot.PREFIX);
-        List<PoolEntry> suffixes = parsePool(row.optString("suffixes", ""), ModifierSlot.SUFFIX);
+        List<PoolEntry> prefixes = parsePool(definitionId, row.optString("prefixes", ""), ModifierSlot.PREFIX);
+        List<PoolEntry> suffixes = parsePool(definitionId, row.optString("suffixes", ""), ModifierSlot.SUFFIX);
         if (prefixes.isEmpty() && suffixes.isEmpty()) {
             throw new IllegalArgumentException("it has no prefixes or suffixes");
         }
-        for (PoolEntry prefix : prefixes) {
-            if (suffixes.stream().anyMatch(suffix -> suffix.effectName().equals(prefix.effectName()))) {
-                throw new IllegalArgumentException(prefix.effectName() + " is listed as both a prefix and a suffix");
-            }
-        }
+        rejectRepeats(prefixes, suffixes);
         boolean unique = "true".equalsIgnoreCase(row.optString("unique", "").trim());
         return new HullItemDefinition(definitionId, HullItemType.byId(row.optString("kind", "").trim()),
                 nameOrId(row.optString("name", "").trim(), definitionId), icon.isEmpty() ? FALLBACK_ICON : icon, rarity, unique,
                 row.optString("description", "").trim(), prefixes, suffixes,
                 row.optString("unlock", "").trim());
+    }
+
+    private static void rejectRepeats(List<PoolEntry> prefixes, List<PoolEntry> suffixes) {
+        List<PoolEntry> combinedPool = new ArrayList<>(prefixes);
+        combinedPool.addAll(suffixes);
+        for (int index = 0; index < combinedPool.size(); index++) {
+            PoolEntry entry = combinedPool.get(index);
+            for (PoolEntry laterEntry : combinedPool.subList(index + 1, combinedPool.size())) {
+                if (laterEntry.modifier().id().equals(entry.modifier().id())) {
+                    throw new IllegalArgumentException(entry.modifier().id() + " is listed more than once");
+                }
+                if (entry.isSingle() && laterEntry.isSingle() && entry.effectName().equals(laterEntry.effectName())) {
+                    throw new IllegalArgumentException(entry.effectName() + " is listed more than once, as "
+                            + entry.modifier().id() + " and " + laterEntry.modifier().id());
+                }
+            }
+        }
     }
 
     public List<PoolEntry> pool() {
@@ -51,34 +64,82 @@ public record HullItemDefinition(String id, HullItemType kind, String name, Stri
     }
 
     public PoolEntry poolEntryFor(String modifierId) {
-        for (PoolEntry entry : pool()) {
-            if (entry.modifier().id().equals(modifierId)) {
+        for (List<PoolEntry> side : List.of(prefixes, suffixes)) {
+            for (PoolEntry entry : side) {
+                if (entry.modifier().id().equals(modifierId)) {
+                    return entry;
+                }
+            }
+        }
+        return null;
+    }
+
+    PoolEntry poolEntryFor(String modifierId, ModifierSlot slot) {
+        PoolEntry listedEntry = poolEntryFor(modifierId);
+        return listedEntry != null ? listedEntry : singleEntryFor(modifierId, slot);
+    }
+
+    private PoolEntry singleEntryFor(String effectName, ModifierSlot slot) {
+        for (PoolEntry entry : side(slot)) {
+            if (entry.isSingle() && entry.effectName().equals(effectName)) {
                 return entry;
             }
         }
         return null;
+    }
+
+    List<RolledModifier> withCurrentIds(List<RolledModifier> modifiers) {
+        List<RolledModifier> resolved = null;
+        for (int index = 0; index < modifiers.size(); index++) {
+            RolledModifier modifier = modifiers.get(index);
+            String currentId = currentId(modifier);
+            if (!currentId.equals(modifier.modifierId())) {
+                if (resolved == null) {
+                    resolved = new ArrayList<>(modifiers);
+                }
+                resolved.set(index, new RolledModifier(currentId, modifier.slot(), modifier.lines()));
+            }
+        }
+        return resolved == null ? modifiers : resolved;
+    }
+
+    private String currentId(RolledModifier modifier) {
+        if (poolEntryFor(modifier.modifierId()) != null || modifier.lines().size() != 1) {
+            return modifier.modifierId();
+        }
+        PoolEntry entry = singleEntryFor(modifier.lines().get(0).effectName(), modifier.slot());
+        return entry == null ? modifier.modifierId() : entry.modifier().id();
+    }
+
+    private List<PoolEntry> side(ModifierSlot slot) {
+        return switch (slot) {
+            case PREFIX -> prefixes;
+            case SUFFIX -> suffixes;
+            case IMPLICIT -> List.of();
+        };
     }
 
     public PoolEntry poolEntry(String effectName) {
-        for (PoolEntry entry : prefixes) {
-            if (entry.effectName().equals(effectName)) {
-                return entry;
+        PoolEntry hybridEntry = null;
+        for (List<PoolEntry> side : List.of(prefixes, suffixes)) {
+            for (PoolEntry entry : side) {
+                if (entry.isSingle() && entry.effectName().equals(effectName)) {
+                    return entry;
+                }
+                if (hybridEntry == null && entry.hasLine(effectName)) {
+                    hybridEntry = entry;
+                }
             }
         }
-        for (PoolEntry entry : suffixes) {
-            if (entry.effectName().equals(effectName)) {
-                return entry;
-            }
-        }
-        return null;
+        return hybridEntry;
     }
 
     public boolean isPrefix(String effectName) {
-        return prefixes.stream().anyMatch(entry -> entry.effectName().equals(effectName));
+        return prefixes.stream().anyMatch(entry -> entry.hasLine(effectName));
     }
 
     public boolean isSuffix(String effectName) {
-        return suffixes.stream().anyMatch(entry -> entry.effectName().equals(effectName));
+        return suffixes.stream().anyMatch(entry -> entry.hasLine(effectName));
     }
 
     private static String nameOrId(String name, String id) {
@@ -86,23 +147,34 @@ public record HullItemDefinition(String id, HullItemType kind, String name, Stri
     }
 
     static List<PoolEntry> parsePool(String poolText, ModifierSlot slot) {
+        return parsePool(null, poolText, slot);
+    }
+
+    private static List<PoolEntry> parsePool(String definitionId, String poolText, ModifierSlot slot) {
         List<PoolEntry> pool = new ArrayList<>();
         for (String entryText : poolText.split(ENTRY_SEPARATOR)) {
             String trimmed = entryText.trim();
             if (trimmed.isEmpty()) {
                 continue;
             }
-            PoolEntry listedEntry = PoolEntry.parse(trimmed, slot);
-            String effectName = currentEffectName(listedEntry.effectName());
-            if (effectName == null) {
-                continue;
+            PoolEntry entry = parseEntry(definitionId, trimmed, slot);
+            if (entry != null) {
+                pool.add(entry);
             }
-            if (pool.stream().anyMatch(existing -> existing.effectName().equals(effectName))) {
-                throw new IllegalArgumentException(effectName + " is listed more than once");
-            }
-            pool.add(listedEntry.named(effectName));
         }
         return List.copyOf(pool);
+    }
+
+    private static PoolEntry parseEntry(String definitionId, String entryText, ModifierSlot slot) {
+        if (!HullItemModifiers.isReference(entryText)) {
+            return PoolEntry.parse(entryText, slot);
+        }
+        try {
+            return PoolEntry.parse(entryText, slot);
+        } catch (IllegalArgumentException e) {
+            LOG.error("Skipping pool entry " + entryText + (definitionId == null ? "" : " of " + definitionId) + ": " + e.getMessage());
+            return null;
+        }
     }
 
     static String currentEffectName(String listedName) {
