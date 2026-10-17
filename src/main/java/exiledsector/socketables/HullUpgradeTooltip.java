@@ -20,6 +20,9 @@ public final class HullUpgradeTooltip {
             tooltip.addTitle(upgrade.name(), SocketableRarity.UNIQUE.color());
             VanillaText.addPara(tooltip, Translation.msg("upgrade.tooltip.body")
                     .arg("size", ShipHullSizes.displayName(upgrade.hullSize())).styled(), SocketableTooltip.PAD, Misc.getTextColor());
+            if (!HullUpgradesSetting.enabled()) {
+                VanillaText.addPara(tooltip, Translation.msg("upgrade.tooltip.disabled").styled(), SocketableTooltip.PAD, Misc.getNegativeHighlightColor());
+            }
         }, footer);
     }
 

@@ -37,6 +37,8 @@ final class CorrosionMoteListener extends ShipCombatListener implements DamageDe
         return contactSecondsByWeapon.getOrDefault(weapon, 0f);
     }
 
+    // java:S3516: the engine reads a null return as "leave the damage unchanged"; motes are launched as a side effect instead
+    @SuppressWarnings("java:S3516")
     @Override
     public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
         if (shieldHit || !(param instanceof BeamAPI beam) || !(target instanceof ShipAPI targetShip) || targetShip.isHulk() || targetShip.isFighter()

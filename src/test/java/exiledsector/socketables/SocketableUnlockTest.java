@@ -77,6 +77,19 @@ class SocketableUnlockTest {
     }
 
     @Test
+    void hullSocketsOpenAtLevelFifteenUnlessHullUpgradesAreSwitchedOff() {
+        assertFalse(SocketableUnlock.frameworksOpen(14));
+        assertTrue(SocketableUnlock.frameworksOpen(15));
+
+        HullUpgradesSetting.setEnabledForTests(false);
+        try {
+            assertFalse(SocketableUnlock.frameworksOpen(50));
+        } finally {
+            HullUpgradesSetting.setEnabledForTests(HullUpgradesSetting.DEFAULT_ENABLED);
+        }
+    }
+
+    @Test
     void uniquesNeverDropBeforePlayerLevelFifteenButBasicsAlwaysCan() {
         when(player.getLevel()).thenReturn(14);
 

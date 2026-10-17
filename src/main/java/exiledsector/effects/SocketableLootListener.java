@@ -21,6 +21,7 @@ import exiledsector.skills.npc.NpcTreeTag;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.ShipLevelSystem;
 import exiledsector.socketables.HullUpgradeData;
+import exiledsector.socketables.HullUpgradesSetting;
 import exiledsector.socketables.NpcSocketables;
 import exiledsector.socketables.Socketable;
 import exiledsector.socketables.SocketableDisassembly;
@@ -91,12 +92,13 @@ public class SocketableLootListener extends BaseCampaignEventListener implements
         for (FleetMemberAPI member : lostMembers) {
             String npcTreeTag = member == null ? null : NpcTreeTag.find(member.getVariant());
             ShipSkillData npcTree = npcTreeTag == null ? null : NpcTreeTag.decode(npcTreeTag);
-            List<SocketableItemData> carriedItems = NpcSocketables.carriedBy(npcTree);
+            List<SocketableItemData> carriedItems = HullUpgradesSetting.enabled() ? NpcSocketables.carriedBy(npcTree)
+                    : NpcSocketables.subroutinesCarriedBy(npcTree);
             if (!carriedItems.isEmpty()) {
                 pendingLoot.itemsByMemberId.put(member.getId(), carriedItems);
             }
-            HullUpgradeData droppedUpgrade = NpcSocketables.rollUpgradeDrop(npcTree, member.getHullSpec() == null ? null : member.getHullSpec().getHullSize(),
-                    random);
+            HullUpgradeData droppedUpgrade = !HullUpgradesSetting.enabled() ? null
+                    : NpcSocketables.rollUpgradeDrop(npcTree, member.getHullSpec() == null ? null : member.getHullSpec().getHullSize(), random);
             if (droppedUpgrade != null) {
                 pendingLoot.upgradeByMemberId.put(member.getId(), droppedUpgrade);
             }

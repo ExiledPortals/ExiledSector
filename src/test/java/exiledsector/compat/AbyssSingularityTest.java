@@ -53,6 +53,8 @@ class AbyssSingularityTest {
         SettingsAPI settings = mock(SettingsAPI.class);
         ModManagerAPI modManager = mock(ModManagerAPI.class);
         when(settings.getModManager()).thenReturn(modManager);
+        when(settings.getHullSpec(AbyssSingularity.GENESIS_HULL_ID)).thenReturn(mock(ShipHullSpecAPI.class));
+        AbyssSingularity.clearCachedDetection();
         when(modManager.isModEnabled(RandomAssortmentCompat.MOD_ID)).thenReturn(true);
 
         Map<String, Object> memoryValues = new HashMap<>();
@@ -75,6 +77,7 @@ class AbyssSingularityTest {
 
     @AfterEach
     void tearDown() {
+        AbyssSingularity.clearCachedDetection();
         globalMock.close();
         lunaSettingsMock.close();
     }
@@ -117,6 +120,14 @@ class AbyssSingularityTest {
         AbyssSingularity.recordBattle(sector, battle(true, List.of(shipOfHull("rat_genesis_serpent_head"), shipOfHull(AbyssSingularity.GENESIS_HULL_ID)), List.of()));
 
         assertTrue(AbyssSingularity.isDefeated(sector));
+        assertFalse(SkillTypeUnlockStatus.isLocked(ABYSS_GATE, null));
+    }
+
+    @Test
+    void ifRatRenamesTheGenesisHullTheAbyssUnlocksBecauseTheWinCanNoLongerBeSeen() {
+        when(Global.getSettings().getHullSpec(AbyssSingularity.GENESIS_HULL_ID)).thenReturn(null);
+        AbyssSingularity.clearCachedDetection();
+
         assertFalse(SkillTypeUnlockStatus.isLocked(ABYSS_GATE, null));
     }
 

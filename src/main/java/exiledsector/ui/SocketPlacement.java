@@ -7,6 +7,7 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
+import exiledsector.socketables.HullUpgradesSetting;
 import exiledsector.socketables.SocketCustody;
 import exiledsector.socketables.SocketType;
 import exiledsector.socketables.Socketable;
@@ -308,7 +309,9 @@ final class SocketPlacement {
         }
         SocketType socketType = socketable.kind();
         String key;
-        if (!treeSession.isSocketTypeUnlocked(socketType)) {
+        if (!HullUpgradesSetting.enabled()) {
+            key = "ui.socketStorage.placingHintFrameworkDisabled";
+        } else if (!treeSession.isSocketTypeUnlocked(socketType)) {
             key = "ui.socketStorage.placingHintFrameworkLocked";
         } else {
             key = inspectingShip ? "ui.socketStorage.placingHintFramework" : "ui.socketStorage.placingHintFrameworkZoom";

@@ -46,7 +46,7 @@ public enum SocketableUnlock {
     }
 
     public static boolean frameworksOpen(int playerLevel) {
-        return playerLevel >= FRAMEWORK_MIN_PLAYER_LEVEL;
+        return HullUpgradesSetting.enabled() && playerLevel >= FRAMEWORK_MIN_PLAYER_LEVEL;
     }
 
     public static boolean canDrop(SocketableDefinition definition, SectorAPI sector) {

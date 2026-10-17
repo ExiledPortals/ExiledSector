@@ -6,6 +6,7 @@ import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.tags.ShipProfile;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -126,11 +127,16 @@ public final class NpcSocketables {
     }
 
     public static List<SocketableItemData> carriedBy(ShipSkillData shipData) {
+        return shipData == null ? new ArrayList<>() : itemsFor(shipData.getInstalledSocketableIds());
+    }
+
+    public static List<SocketableItemData> subroutinesCarriedBy(ShipSkillData shipData) {
+        return shipData == null ? new ArrayList<>() : itemsFor(shipData.getSocketedItems().values());
+    }
+
+    private static List<SocketableItemData> itemsFor(Collection<String> socketableIds) {
         List<SocketableItemData> carriedItems = new ArrayList<>();
-        if (shipData == null) {
-            return carriedItems;
-        }
-        for (String socketableId : shipData.getInstalledSocketableIds()) {
+        for (String socketableId : socketableIds) {
             SocketableItemData itemData = item(socketableId);
             if (itemData != null) {
                 carriedItems.add(itemData);

@@ -28,6 +28,7 @@ import static org.mockito.Mockito.when;
 
 class RandomAssortmentExoshipTest {
 
+    private static final String RAT_EXO_DATA_MEMORY_KEY = "$rat_exo_data";
     private static final SkillType BEACON = new SkillType.Builder("exotech_beacon", "Hyper-Nav Beacon", "", SkillTier.WORMHOLE)
             .unlockConditions(List.of(UnlockCondition.ratPlayerExoship()))
             .build();
@@ -49,7 +50,7 @@ class RandomAssortmentExoshipTest {
         when(settings.getScriptClassLoader()).thenReturn(getClass().getClassLoader());
         sectorMemory = mock(MemoryAPI.class);
         exoData = new ExoData();
-        when(sectorMemory.get(RandomAssortmentCompat.EXO_DATA_MEMORY_KEY)).thenReturn(exoData);
+        when(sectorMemory.get(RAT_EXO_DATA_MEMORY_KEY)).thenReturn(exoData);
         SectorAPI sector = mock(SectorAPI.class);
         when(sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
 
@@ -69,7 +70,7 @@ class RandomAssortmentExoshipTest {
 
     @Test
     void theBeaconStaysAnUnidentifiedSensorGhostUntilThePlayerHasTheirOwnExoship() {
-        assertFalse(RandomAssortmentCompat.playerOwnsExoship());
+        assertFalse(RandomAssortmentCompat.exoshipGateOpen());
         assertTrue(SkillTypeUnlockStatus.isLocked(BEACON, null));
         assertTrue(SkillTypeUnlockStatus.isHidden(BEACON, null));
     }
@@ -78,7 +79,7 @@ class RandomAssortmentExoshipTest {
     void finishingTheRecoveryUnlocksTheBeacon() {
         exoData.setRecoveredExoship(true);
 
-        assertTrue(RandomAssortmentCompat.playerOwnsExoship());
+        assertTrue(RandomAssortmentCompat.exoshipGateOpen());
         assertFalse(SkillTypeUnlockStatus.isLocked(BEACON, null));
     }
 
@@ -86,13 +87,13 @@ class RandomAssortmentExoshipTest {
     void owningAnExoshipEntityAlsoUnlocksTheBeacon() {
         exoData.setPlayerExoship(mock(SectorEntityToken.class));
 
-        assertTrue(RandomAssortmentCompat.playerOwnsExoship());
+        assertTrue(RandomAssortmentCompat.exoshipGateOpen());
         assertFalse(SkillTypeUnlockStatus.isLocked(BEACON, null));
     }
 
     @Test
     void aSaveWhereRatHasNotStartedItsExotechDataKeepsTheBeaconLocked() {
-        when(sectorMemory.get(RandomAssortmentCompat.EXO_DATA_MEMORY_KEY)).thenReturn(null);
+        when(sectorMemory.get(RAT_EXO_DATA_MEMORY_KEY)).thenReturn(null);
 
         assertTrue(SkillTypeUnlockStatus.isLocked(BEACON, null));
     }
@@ -105,12 +106,12 @@ class RandomAssortmentExoshipTest {
     }
 
     @Test
-    void ifRatChangesItsExotechDataTheBeaconStaysLockedAndTheCompatCheckSaysWhy() {
+    void ifRatChangesItsExotechDataTheBeaconUnlocksAndTheCompatCheckSaysWhy() {
         when(settings.getScriptClassLoader()).thenReturn(new ClassLoader(null) {
         });
-        exoData.setRecoveredExoship(true);
 
-        assertFalse(RandomAssortmentCompat.playerOwnsExoship());
+        assertTrue(RandomAssortmentCompat.exoshipGateOpen());
+        assertFalse(SkillTypeUnlockStatus.isLocked(BEACON, null));
         RandomAssortmentCompat.clearCachedLookups();
         assertTrue(RandomAssortmentCompat.missingFeatures().stream().anyMatch(feature -> feature.contains("ExoData")));
     }

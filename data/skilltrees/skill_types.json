@@ -600,7 +600,7 @@
 		},
 		{
 			"id": "hull_breacher",
-			"name": "Navy Breacher Rounds",
+			"name": "Hullbreacher Rounds",
 			"icon": "graphics/icons/explosion3_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -3631,7 +3631,7 @@
 		{
 			"id": "repair_coordinator",
 			"name": "Repair Coordinator",
-			"icon": "graphics/icons/repair_coordinator.png",
+			"icon": "graphics/icons/repair_coordinator_shifted_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{

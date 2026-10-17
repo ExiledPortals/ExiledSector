@@ -3,6 +3,7 @@ package exiledsector.ui;
 import exiledsector.compat.CombatGlow;
 import exiledsector.compat.SalvageSiteCompat;
 import exiledsector.effects.NpcBonusScale;
+import exiledsector.socketables.HullUpgradesSetting;
 import exiledsector.socketables.SocketMaterials;
 import exiledsector.socketables.SocketableDrops;
 import exiledsector.socketables.SocketableRoller;
@@ -57,6 +58,10 @@ public final class ExiledSectorSettings {
             LunaSettings.addSettingsListener(new SocketableRoller.SettingsListener());
         }
         SocketableRoller.reloadSettings();
+        if (!LunaSettings.hasSettingsListenerOfClass(HullUpgradesSetting.SettingsListener.class)) {
+            LunaSettings.addSettingsListener(new HullUpgradesSetting.SettingsListener());
+        }
+        HullUpgradesSetting.reloadSettings();
     }
 
     private static void registerGeneral() {
@@ -77,6 +82,9 @@ public final class ExiledSectorSettings {
                 CombatGlow.DEFAULT_ENABLED, MAIN_TAB);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_socketStorageHeader", Translation.text("settings.socketStorage.header"), MAIN_TAB);
+        SettingsCreator.addBoolean(MOD_ID, HullUpgradesSetting.ENABLED_FIELD_ID,
+                Translation.text("settings.socketStorage.hullUpgrades.name"), Translation.text("settings.socketStorage.hullUpgrades.tooltip"),
+                HullUpgradesSetting.DEFAULT_ENABLED, MAIN_TAB);
         SettingsCreator.addBoolean(MOD_ID, SalvageSiteCompat.DROPS_FIELD_ID,
                 Translation.text("settings.socketStorage.otherModDrops.name"), Translation.text("settings.socketStorage.otherModDrops.tooltip"),
                 SalvageSiteCompat.DEFAULT_DROPS, MAIN_TAB);
