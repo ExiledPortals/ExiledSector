@@ -1081,7 +1081,8 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_91",
-				"root_high_tech_1"
+				"root_high_tech_1",
+				"exotech_beacon"
 			],
 			"x": -750,
 			"y": -1299,
@@ -3235,8 +3236,7 @@
 			"connectedTo": [
 				"tritach_2",
 				"engine_durability_3",
-				"modular_hull_socket_6",
-				"exotech_beacon"
+				"modular_hull_socket_6"
 			],
 			"x": -1311,
 			"y": -12998,
@@ -3663,7 +3663,7 @@
 				"ballistic_projectile_speed_4"
 			],
 			"x": -5643,
-			"y": 12413,
+			"y": 12374,
 			"orbitAnchorId": "anchor_37",
 			"orbitAngle": 270,
 			"tags": [
@@ -3678,7 +3678,7 @@
 				"ballistic_projectile_speed_2"
 			],
 			"x": -5823,
-			"y": 12593,
+			"y": 12554,
 			"orbitAnchorId": "anchor_37",
 			"orbitAngle": 180,
 			"tags": [
@@ -3709,7 +3709,7 @@
 				"missile_damage_5",
 				"missile_top_speed_1"
 			],
-			"x": -6373,
+			"x": -6308,
 			"y": 11713,
 			"orbitAnchorId": "anchor_36",
 			"orbitAngle": 0,
@@ -3724,7 +3724,7 @@
 				"missile_top_speed_2",
 				"torpedo_specialisation_1"
 			],
-			"x": -6553,
+			"x": -6488,
 			"y": 11893,
 			"orbitAnchorId": "anchor_36",
 			"orbitAngle": 90,
@@ -3740,7 +3740,7 @@
 				"missile_top_speed_1",
 				"small_flux_optional_59"
 			],
-			"x": -6733,
+			"x": -6668,
 			"y": 11713,
 			"orbitAnchorId": "anchor_36",
 			"orbitAngle": 180,
@@ -4380,7 +4380,7 @@
 				"missile_top_speed_2",
 				"torpedo_specialisation_1"
 			],
-			"x": -6553,
+			"x": -6488,
 			"y": 11533,
 			"orbitAnchorId": "anchor_36",
 			"orbitAngle": 270,
@@ -4397,7 +4397,7 @@
 				"modular_hull_socket_8"
 			],
 			"x": -5643,
-			"y": 12773,
+			"y": 12734,
 			"orbitAnchorId": "anchor_37",
 			"orbitAngle": 90,
 			"tags": [
@@ -5207,7 +5207,7 @@
 				"heavy_ballistics_integration_1"
 			],
 			"x": -5463,
-			"y": 12593,
+			"y": 12554,
 			"orbitAnchorId": "anchor_37",
 			"orbitAngle": 0,
 			"tags": [
@@ -6137,8 +6137,8 @@
 				"stargazer_wormhole_1",
 				"small_flux_optional_49"
 			],
-			"x": 12019,
-			"y": -7839,
+			"x": 11974,
+			"y": -7743,
 			"pairedWith": "stargazer_wormhole_1",
 			"tags": [
 				"REDACTED",
@@ -6253,6 +6253,7 @@
 			"y": -4745,
 			"orbitAnchorId": "mod_star_ring",
 			"orbitAngle": -15.28784294852075,
+			"ringBeltColor": "#840b1d",
 			"tags": [
 				"stargazer",
 				"gate_lunar_fleet_defeated"
@@ -6329,15 +6330,13 @@
 			"type": "exotech_beacon",
 			"connectedTo": [
 				"exoship",
-				"small_flux_optional_46"
+				"small_flux_optional_90"
 			],
-			"x": -1509,
-			"y": -12687,
-			"orbitAnchorId": "tritach_asteroids",
-			"orbitAngle": 168.29316381413813,
+			"x": -947,
+			"y": -1635,
 			"pairedWith": "exoship",
 			"tags": [
-				"tritachyon"
+				"core"
 			]
 		},
 		{
@@ -6520,6 +6519,7 @@
 			"y": -7747,
 			"orbitAnchorId": "anchor_62",
 			"orbitAngle": 180,
+			"ringBeltColor": "#dba940",
 			"tags": [
 				"exotech"
 			]
@@ -7708,25 +7708,25 @@
 		{
 			"a": "missile_damage_5",
 			"b": "missile_top_speed_2",
-			"controlX": -6680,
+			"controlX": -6615,
 			"controlY": 11586
 		},
 		{
 			"a": "missile_top_speed_1",
 			"b": "missile_top_speed_2",
-			"controlX": -6680,
+			"controlX": -6615,
 			"controlY": 11840
 		},
 		{
 			"a": "missile_damage_5",
 			"b": "torpedo_specialisation_1",
-			"controlX": -6426,
+			"controlX": -6361,
 			"controlY": 11586
 		},
 		{
 			"a": "missile_top_speed_1",
 			"b": "torpedo_specialisation_1",
-			"controlX": -6426,
+			"controlX": -6361,
 			"controlY": 11840
 		},
 		{
@@ -7739,13 +7739,13 @@
 			"a": "ballistic_projectile_speed_1",
 			"b": "heavy_ballistics_integration_1",
 			"controlX": -5770,
-			"controlY": 12466
+			"controlY": 12427
 		},
 		{
 			"a": "ballistic_projectile_speed_1",
 			"b": "ballistic_projectile_speed_2",
 			"controlX": -5770,
-			"controlY": 12720
+			"controlY": 12681
 		},
 		{
 			"a": "less_energy_damage_taken_1",
@@ -8045,13 +8045,13 @@
 			"a": "ballistic_projectile_speed_2",
 			"b": "ballistic_projectile_speed_4",
 			"controlX": -5516,
-			"controlY": 12720
+			"controlY": 12681
 		},
 		{
 			"a": "ballistic_projectile_speed_4",
 			"b": "heavy_ballistics_integration_1",
 			"controlX": -5516,
-			"controlY": 12466
+			"controlY": 12427
 		},
 		{
 			"a": "ballistic_damage_1",
@@ -9593,14 +9593,14 @@
 		},
 		{
 			"id": "anchor_36",
-			"x": -6553,
+			"x": -6488,
 			"y": 11713,
 			"radius": 180
 		},
 		{
 			"id": "anchor_37",
 			"x": -5643,
-			"y": 12593,
+			"y": 12554,
 			"radius": 180
 		},
 		{
