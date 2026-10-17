@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -58,6 +59,7 @@ final class WingScrambleListener extends ShipCombatListener implements Advanceab
 
     private final Map<ShipAPI, String> typeByFighter = new IdentityHashMap<>();
     private final Set<String> unlaunchableTypes = new HashSet<>();
+    private final Map<String, FleetMemberAPI> temporaryMemberByType = new HashMap<>();
     private List<List<FighterLaunchBayAPI>> bayGroups;
     private float secondsWaited;
     private float secondsSinceRouting;
@@ -240,7 +242,7 @@ final class WingScrambleListener extends ShipCombatListener implements Advanceab
 
     ShipAPI launchCopy(CombatEngineAPI engine, String wingSpecId, FighterLaunchBayAPI hostBay) {
         CombatFleetManagerAPI fleetManager = engine.getFleetManager(ownerShip.getOwner());
-        FleetMemberAPI wingMember = Global.getFactory().createFleetMember(FleetMemberType.FIGHTER_WING, wingSpecId);
+        FleetMemberAPI wingMember = temporaryMemberFor(fleetManager, wingSpecId);
         wingMember.setOwner(ownerShip.getOwner());
         wingMember.setAlly(ownerShip.isAlly());
         CrewCompositionAPI crew = wingMember.getCrewComposition();
@@ -257,6 +259,16 @@ final class WingScrambleListener extends ShipCombatListener implements Advanceab
             prepareLikeABayLaunch(fighter, hostBay.getWing(), fleetManager, launchLocation, launchFacing);
         }
         return fighter;
+    }
+
+    private FleetMemberAPI temporaryMemberFor(CombatFleetManagerAPI fleetManager, String wingSpecId) {
+        FleetMemberAPI cachedMember = temporaryMemberByType.get(wingSpecId);
+        if (cachedMember != null && fleetManager.getShipFor(cachedMember) == null) {
+            return cachedMember;
+        }
+        FleetMemberAPI wingMember = Global.getFactory().createFleetMember(FleetMemberType.FIGHTER_WING, wingSpecId);
+        temporaryMemberByType.put(wingSpecId, wingMember);
+        return wingMember;
     }
 
     private static float jitter() {
@@ -293,10 +305,14 @@ final class WingScrambleListener extends ShipCombatListener implements Advanceab
         if (!spawned.isFighter()) {
             fleetManager.removeDeployed(spawned, false);
             engine.removeEntity(spawned);
+            DeploymentRecordPruner.forget(fleetManager, wingMember);
             if (REPORTED_UNLAUNCHABLE_TYPES.add(wingSpecId)) {
                 LOG.warn("Wing " + wingSpecId + " spawned a " + spawned.getHullSize() + " instead of a fighter; Coalition Flight Doctrine won't copy it");
             }
             return null;
+        }
+        if (spawnedWing != null) {
+            DeploymentRecordPruner.forget(fleetManager, wingMember);
         }
         return spawned;
     }

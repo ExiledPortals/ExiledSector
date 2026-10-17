@@ -58,6 +58,35 @@ class CompatChecksTest {
     }
 
     @Test
+    void theEngineCheckLooksForTheFleetManagersDeploymentRecord() {
+        assertEquals(List.of("com.fs.starfarer.combat.CombatFleetManager.getAllEverDeployed"),
+                CompatChecks.ENGINE_MEMBERS.stream().map(ApiMember::displayName).toList());
+    }
+
+    @Test
+    void anEngineThatStillHasEveryMethodLogsOneReassuringLine() {
+        List<CompatChecks.Finding> findings = CompatChecks.checkEngine(
+                List.of(ApiMember.instanceMethod("java.util.ArrayList", "subList", "java.util.List", ApiMember.INT, ApiMember.INT)),
+                CompatChecksTest.class.getClassLoader());
+
+        assertEquals(1, findings.size());
+        assertEquals(CompatChecks.Level.INFO, findings.get(0).level());
+    }
+
+    @Test
+    void anEngineMissingAMethodOrClassWarnsAboutEachOne() {
+        List<CompatChecks.Finding> findings = CompatChecks.checkEngine(List.of(
+                ApiMember.instanceMethod("java.util.ArrayList", "getAllEverDeployed", "java.util.List"),
+                ApiMember.instanceMethod("com.fs.starfarer.combat.RenamedFleetManager", "getAllEverDeployed", "java.util.List")),
+                CompatChecksTest.class.getClassLoader());
+
+        assertEquals(2, findings.size());
+        assertTrue(findings.stream().allMatch(finding -> finding.level() == CompatChecks.Level.WARN));
+        assertTrue(findings.get(0).message().contains("java.util.ArrayList.getAllEverDeployed"));
+        assertTrue(findings.get(1).message().contains("Coalition Flight Doctrine"));
+    }
+
+    @Test
     void aModThatIsNotInstalledOnlyNotesThatItsCompatIsIdle() {
         List<CompatChecks.Finding> findings = check(target(List.of("the hull mod x")), Map.of());
 

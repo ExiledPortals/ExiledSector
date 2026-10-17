@@ -10,6 +10,7 @@ import com.fs.starfarer.api.characters.SkillSpecAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatFleetManagerAPI;
 import com.fs.starfarer.api.combat.CombatReadinessPlugin;
+import com.fs.starfarer.api.combat.DeployedFleetMemberAPI;
 import com.fs.starfarer.api.combat.FighterLaunchBayAPI;
 import com.fs.starfarer.api.combat.FighterWingAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
@@ -182,6 +183,134 @@ class WingScrambleListenerTest {
 
         verify(gunPlatformSpec).setNumFighters(GUN_PLATFORM_WING_SIZE);
         verify(fleetManager).setSuppressDeploymentMessages(false);
+    }
+
+    public abstract static class FleetManagerWithDeploymentRecord implements CombatFleetManagerAPI {
+        public abstract List<DeployedFleetMemberAPI> getAllEverDeployed();
+    }
+
+    private static DeployedFleetMemberAPI deploymentOf(FleetMemberAPI member) {
+        DeployedFleetMemberAPI deployed = mock(DeployedFleetMemberAPI.class);
+        when(deployed.getMember()).thenReturn(member);
+        return deployed;
+    }
+
+    private FleetManagerWithDeploymentRecord fleetManagerWithRecord(List<DeployedFleetMemberAPI> deploymentRecord) {
+        FleetManagerWithDeploymentRecord recordingFleetManager = mock(FleetManagerWithDeploymentRecord.class);
+        when(recordingFleetManager.getAllEverDeployed()).thenReturn(deploymentRecord);
+        when(engine.getFleetManager(0)).thenReturn(recordingFleetManager);
+        return recordingFleetManager;
+    }
+
+    @Test
+    void theTemporaryWingIsDroppedFromTheDeploymentRecordAndEverythingElseStays() {
+        DeployedFleetMemberAPI carrierDeployment = deploymentOf(mock(FleetMemberAPI.class));
+        DeployedFleetMemberAPI temporaryDeployment = deploymentOf(wingMember);
+        DeployedFleetMemberAPI otherWingDeployment = deploymentOf(mock(FleetMemberAPI.class));
+        DeployedFleetMemberAPI memberlessDeployment = deploymentOf(null);
+        List<DeployedFleetMemberAPI> deploymentRecord = new ArrayList<>(List.of(carrierDeployment, temporaryDeployment, otherWingDeployment,
+                memberlessDeployment));
+        FleetManagerWithDeploymentRecord recordingFleetManager = fleetManagerWithRecord(deploymentRecord);
+        ShipAPI leader = fighter();
+        FighterWingAPI spawnedWing = spawnedWingOf(leader);
+        when(recordingFleetManager.spawnFleetMember(eq(wingMember), any(Vector2f.class), anyFloat(), eq(0f))).thenReturn(leader);
+
+        ShipAPI copy = new WingScrambleListener(carrier).launchCopy(engine, GUN_PLATFORM, hostBay);
+
+        assertSame(leader, copy);
+        assertEquals(List.of(carrierDeployment, otherWingDeployment, memberlessDeployment), deploymentRecord);
+        InOrder removal = inOrder(recordingFleetManager);
+        removal.verify(recordingFleetManager).removeDeployed(spawnedWing, false);
+        removal.verify(recordingFleetManager).getAllEverDeployed();
+    }
+
+    @Test
+    void aSpawnThatIsNotAFighterIsAlsoDroppedFromTheDeploymentRecord() {
+        DeployedFleetMemberAPI carrierDeployment = deploymentOf(mock(FleetMemberAPI.class));
+        List<DeployedFleetMemberAPI> deploymentRecord = new ArrayList<>(List.of(carrierDeployment, deploymentOf(wingMember)));
+        FleetManagerWithDeploymentRecord recordingFleetManager = fleetManagerWithRecord(deploymentRecord);
+        ShipAPI freighter = mock(ShipAPI.class);
+        when(freighter.getHullSize()).thenReturn(ShipAPI.HullSize.FRIGATE);
+        when(recordingFleetManager.spawnFleetMember(eq(wingMember), any(Vector2f.class), anyFloat(), eq(0f))).thenReturn(freighter);
+
+        assertNull(new WingScrambleListener(carrier).launchCopy(engine, GUN_PLATFORM, hostBay));
+
+        assertEquals(List.of(carrierDeployment), deploymentRecord);
+    }
+
+    @Test
+    void aFleetManagerWithoutAReachableDeploymentRecordStillGetsItsCopy() {
+        ShipAPI leader = fighter();
+        FighterWingAPI spawnedWing = spawnedWingOf(leader);
+        when(fleetManager.spawnFleetMember(eq(wingMember), any(Vector2f.class), anyFloat(), eq(0f))).thenReturn(leader);
+
+        ShipAPI copy = new WingScrambleListener(carrier).launchCopy(engine, GUN_PLATFORM, hostBay);
+
+        assertSame(leader, copy);
+        verify(fleetManager).removeDeployed(spawnedWing, false);
+        verify(hostWing).addMember(leader);
+        assertFalse(DeploymentRecordPruner.forget(fleetManager, wingMember));
+    }
+
+    @Test
+    void aDeploymentRecordThatFailsToOpenIsSkippedWithoutLosingTheCopy() {
+        FleetManagerWithDeploymentRecord recordingFleetManager = fleetManagerWithRecord(List.of());
+        when(recordingFleetManager.getAllEverDeployed()).thenThrow(new IllegalStateException("engine changed"));
+        ShipAPI leader = fighter();
+        spawnedWingOf(leader);
+        when(recordingFleetManager.spawnFleetMember(eq(wingMember), any(Vector2f.class), anyFloat(), eq(0f))).thenReturn(leader);
+
+        ShipAPI copy = new WingScrambleListener(carrier).launchCopy(engine, GUN_PLATFORM, hostBay);
+
+        assertSame(leader, copy);
+        verify(hostWing).addMember(leader);
+    }
+
+    @Test
+    void everyCopyOfATypeReusesOneTemporaryMemberAndGetsFreshReadiness() {
+        ShipAPI firstCopy = fighter();
+        ShipAPI secondCopy = fighter();
+        spawnedWingOf(firstCopy);
+        spawnedWingOf(secondCopy);
+        when(fleetManager.spawnFleetMember(eq(wingMember), any(Vector2f.class), anyFloat(), eq(0f))).thenReturn(firstCopy, secondCopy);
+        WingScrambleListener listener = new WingScrambleListener(carrier);
+
+        assertSame(firstCopy, listener.launchCopy(engine, GUN_PLATFORM, hostBay));
+        assertSame(secondCopy, listener.launchCopy(engine, GUN_PLATFORM, hostBay));
+
+        verify(factory, Mockito.times(1)).createFleetMember(FleetMemberType.FIGHTER_WING, GUN_PLATFORM);
+        verify(wingMember.getRepairTracker(), Mockito.times(2)).setCR(0.7f);
+        verify(wingMember, Mockito.times(2)).setOwner(0);
+    }
+
+    @Test
+    void aTemporaryMemberThatIsStillDeployedIsNotReused() {
+        FleetMemberAPI replacementMember = mock(FleetMemberAPI.class);
+        when(replacementMember.getRepairTracker()).thenReturn(mock(RepairTrackerAPI.class));
+        when(factory.createFleetMember(FleetMemberType.FIGHTER_WING, GUN_PLATFORM)).thenReturn(wingMember, replacementMember);
+        ShipAPI firstCopy = fighter();
+        ShipAPI secondCopy = fighter();
+        spawnedWingOf(firstCopy);
+        spawnedWingOf(secondCopy);
+        when(fleetManager.spawnFleetMember(eq(wingMember), any(Vector2f.class), anyFloat(), eq(0f))).thenReturn(firstCopy);
+        when(fleetManager.spawnFleetMember(eq(replacementMember), any(Vector2f.class), anyFloat(), eq(0f))).thenReturn(secondCopy);
+        WingScrambleListener listener = new WingScrambleListener(carrier);
+        listener.launchCopy(engine, GUN_PLATFORM, hostBay);
+        ShipAPI stillDeployed = fighter();
+        when(fleetManager.getShipFor(wingMember)).thenReturn(stillDeployed);
+
+        assertSame(secondCopy, listener.launchCopy(engine, GUN_PLATFORM, hostBay));
+
+        verify(factory, Mockito.times(2)).createFleetMember(FleetMemberType.FIGHTER_WING, GUN_PLATFORM);
+    }
+
+    @Test
+    void anUnmodifiableDeploymentRecordIsLeftAlone() {
+        List<DeployedFleetMemberAPI> deploymentRecord = List.of(deploymentOf(wingMember));
+        FleetManagerWithDeploymentRecord recordingFleetManager = fleetManagerWithRecord(deploymentRecord);
+
+        assertFalse(DeploymentRecordPruner.forget(recordingFleetManager, wingMember));
+        assertEquals(1, deploymentRecord.size());
     }
 
     @Test

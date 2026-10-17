@@ -15,6 +15,8 @@ public final class CompatChecks {
     private static final Logger LOG = Logger.getLogger(CompatChecks.class);
     private static final String PREFIX = "[ExiledSector] ";
     private static final String UNKNOWN_VERSION = "(unknown version)";
+    static final List<ApiMember> ENGINE_MEMBERS = List.of(
+            ApiMember.instanceMethod("com.fs.starfarer.combat.CombatFleetManager", "getAllEverDeployed", "java.util.List"));
 
     public enum Level { INFO, WARN }
 
@@ -37,14 +39,27 @@ public final class CompatChecks {
         if (modManager == null) return;
 
         for (CompatTarget target : targets()) {
-            for (Finding finding : check(target, modId -> modManager.isModEnabled(modId) ? versionOf(modManager, modId) : null)) {
-                if (finding.level() == Level.WARN) {
-                    LOG.warn(finding.message());
-                } else {
-                    LOG.info(finding.message());
-                }
-            }
+            check(target, modId -> modManager.isModEnabled(modId) ? versionOf(modManager, modId) : null).forEach(CompatChecks::log);
         }
+        checkEngine(ENGINE_MEMBERS, settings.getScriptClassLoader()).forEach(CompatChecks::log);
+    }
+
+    private static void log(Finding finding) {
+        if (finding.level() == Level.WARN) {
+            LOG.warn(finding.message());
+        } else {
+            LOG.info(finding.message());
+        }
+    }
+
+    static List<Finding> checkEngine(List<ApiMember> engineMembers, ClassLoader loader) {
+        List<ApiMember> missing = ApiMember.missingFrom(engineMembers, loader);
+        if (missing.isEmpty()) {
+            return List.of(new Finding(Level.INFO, PREFIX + "Starsector still provides the engine methods Exiled Sector relies on."));
+        }
+        return missing.stream().map(member -> new Finding(Level.WARN, PREFIX + "This Starsector version no longer provides "
+                + member.displayName() + ", so Coalition Flight Doctrine's copy fighters will keep their temporary wings in memory until each battle ends."))
+                .toList();
     }
 
     static List<Finding> check(CompatTarget target, Function<String, String> installedVersion) {
