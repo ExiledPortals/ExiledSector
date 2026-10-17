@@ -75,6 +75,24 @@ class NodeGatesTest {
     }
 
     @Test
+    void aNodeWithTwoGatesStaysHiddenUntilBothAreOpen() throws Exception {
+        String secondFlag = "$test_secondGateOpen";
+        NodeGates.register(new JSONObject("{\"" + GATE_TAG + "\": {\"unlockConditions\": [{\"type\": \"memoryFlag\", \"key\": \"" + FLAG
+                + "\"}]}, \"gate_second\": {\"unlockConditions\": [{\"type\": \"memoryFlag\", \"key\": \"" + secondFlag + "\"}]}}"));
+        SkillNode twiceGated = node("stargazer", GATE_TAG, "gate_second");
+
+        when(sectorMemory.getBoolean(FLAG)).thenReturn(true);
+        assertTrue(NodeGates.isHidden(twiceGated, null));
+
+        when(sectorMemory.getBoolean(FLAG)).thenReturn(false);
+        when(sectorMemory.getBoolean(secondFlag)).thenReturn(true);
+        assertTrue(NodeGates.isHidden(twiceGated, null));
+
+        when(sectorMemory.getBoolean(FLAG)).thenReturn(true);
+        assertFalse(NodeGates.isHidden(twiceGated, null));
+    }
+
+    @Test
     void nodesWithoutAGateTagAreNeverGated() {
         assertFalse(NodeGates.isLocked(node("abyss"), null));
         assertFalse(NodeGates.isLocked(node("abyss", "gate_without_config"), null));

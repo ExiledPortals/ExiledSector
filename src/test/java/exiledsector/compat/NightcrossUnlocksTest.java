@@ -169,12 +169,12 @@ class NightcrossUnlocksTest {
     }
 
     @Test
-    void beatingAPrototypesDefendersOrTheLunarFleetCountsAsFindingOne() {
-        sectorMemory.set(NightcrossUnlocks.PROTOTYPE_DEFENDERS_DEFEATED_FLAG, true);
-        assertFalse(SkillTypeUnlockStatus.isLocked(PROTOTYPE_GATE, null));
-
-        sectorMemory.set(NightcrossUnlocks.PROTOTYPE_DEFENDERS_DEFEATED_FLAG, false);
+    void beatingAPrototypesDefendersCountsAsFindingOneButBeatingTheLunarFleetDoesNot() {
         sectorMemory.set(NightcrossUnlocks.LUNAR_FLEET_DEFEATED_SECTOR_FLAG, true);
+        playerMemory.set(NightcrossUnlocks.LUNAR_FLEET_DEFEATED_PLAYER_FLAG, true);
+        assertTrue(SkillTypeUnlockStatus.isLocked(PROTOTYPE_GATE, null));
+
+        sectorMemory.set(NightcrossUnlocks.PROTOTYPE_DEFENDERS_DEFEATED_FLAG, true);
         assertFalse(SkillTypeUnlockStatus.isLocked(PROTOTYPE_GATE, null));
     }
 

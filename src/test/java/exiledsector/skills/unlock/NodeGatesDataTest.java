@@ -23,6 +23,7 @@ import org.mockito.Mockito;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -93,9 +94,10 @@ class NodeGatesDataTest {
     }
 
     @Test
-    void candlesGraceWaitsOnlyForAnAncientPrototype() {
-        List<String> gates = SkillTree.get(CANDLES_GRACE_NODE_ID).getTags().stream().filter(SkillTags.GATE::contains).toList();
-        assertEquals(List.of(PROTOTYPE_GATE), gates);
+    void candlesGraceWaitsForBothTheLunarFleetAndAnAncientPrototype() {
+        Set<String> gates = SkillTree.get(CANDLES_GRACE_NODE_ID).getTags().stream().filter(SkillTags.GATE::contains)
+                .collect(Collectors.toSet());
+        assertEquals(Set.of(PROTOTYPE_GATE, LUNAR_FLEET_GATE), gates);
     }
 
     @Test

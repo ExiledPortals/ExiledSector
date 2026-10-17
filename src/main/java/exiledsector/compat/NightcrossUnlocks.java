@@ -61,8 +61,7 @@ public final class NightcrossUnlocks {
             return false;
         }
         MemoryAPI memory = sector.getMemoryWithoutUpdate();
-        return memory.getBoolean(PROTOTYPE_FOUND_FLAG) || memory.getBoolean(PROTOTYPE_DEFENDERS_DEFEATED_FLAG)
-                || memory.getBoolean(LUNAR_FLEET_DEFEATED_SECTOR_FLAG);
+        return memory.getBoolean(PROTOTYPE_FOUND_FLAG) || memory.getBoolean(PROTOTYPE_DEFENDERS_DEFEATED_FLAG);
     }
 
     public static void checkSaveOnLoad(SectorAPI sector) {
