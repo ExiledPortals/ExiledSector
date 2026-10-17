@@ -233,6 +233,7 @@
     "effect.TERMINAL_DESCENT_SHIELD_DAMAGE_TAKEN_PERCENT": "终末坠落期间，护盾所受伤害提高<bad>{value}%</bad>。",
     "effect.FUROR_RATE_OF_FIRE_PERCENT": "对敌舰造成伤害会积累怒意，使武器射速最多提高<good>{value}%</good>，造成{frigate}/{destroyer}/{cruiser}/{capital}点伤害（护卫舰至主力舰）时达到上限。命中护盾按一半计算，EMP按四分之一计算。怒意每秒消退{decay}%。",
     "effect.MALFUNCTION_AURA_PERCENT": "{range} su内的敌舰武器有<good>{value}%</good>几率发生故障。多艘具有此效果的舰船不会叠加，取最强者。",
+    "effect.REPAIR_COORDINATOR_ARMOR_PERCENT": "每秒为{range} su内最近的受损友舰修复其总装甲值的<good>{value}%</good>。每场战斗中，每艘具有此效果的舰船对同一艘友舰最多修复其{perShip}%的装甲值，每艘友舰从所有此类舰船处最多共恢复{limit}%的装甲值。过载或主动排散时暂停。",
     "effect.CORROSION_MOTE_DAMAGE_FLAT": "光束武器每在敌舰装甲或船体上持续命中{seconds}秒，就向目标发射一枚追踪星尘微粒，造成<good>{value}</good>点能量伤害和<good>{value}</good>点EMP伤害。本舰同时最多存在{max}枚微粒。",
     "effect.CREW_STEAL_SKELETON_CREW_PERCENT": "强征每具此类残骸<good>{value}%</good>的最低船员。他们可立即供活体弹药使用；战斗结束后，无论胜负，剩余的人会在舱位允许时加入你的舰队。",
     "effect.FLUX_SCALED_TOP_SPEED_FLAT": "最大航速随幅能变化：无幅能时提高<good>{value}</good> su/s，半幅能时不变，满幅能时降低<bad>{value}</bad> su/s。幅能低于一半时，加速度和转向加速度还会提高最多<good>{value}%</good>。",
@@ -1404,6 +1405,7 @@
     "skillType.energy_weapon_fire_rate.name": "能量武器射速",
     "skillType.ion_rounds.name": "Ion Bolter弹药",
     "skillType.hardlight_infusion.name": "硬光标记",
+    "skillType.repair_coordinator.name": "维修协调器",
     "skillType.gravitational_drag.name": "Candle's Grace复制品",
 
     "skillType.adaptive_coils.description": "随着舰船的硬幅能水平上升，相位线圈越来越难以维持与常规空间的连接，线圈难以获得牵引力，导致最高速度大幅降低。\n\n此改装使线圈能够承受更高的硬幅能水平，提高速度降至最低时的阈值。",
@@ -1459,6 +1461,7 @@
     "skillType.dynamic_grid.description": "夜十字几乎为它建造的每一艘舰船都装上动态线圈，却从不单独出售，于是船员从一艘被登舰的夜十字残骸中拆下一套，改装进一艘出厂时从未配备过的船体。护盾一旦收起，原本供给护盾的功率便转入能量武器。当然，保修条款不涵盖第三方安装。",
     "skillType.ion_rounds.description": "NCA Vendor 把 Ion Bolter 卖给任何出得起钱的雇佣兵，拆开一门就能让船员学会以同样的方式让本舰的能量弹超载。持续压迫敌方护盾，直到其硬幅能堆高，电弧便会穿透而过。",
     "skillType.hardlight_infusion.description": "从一座隐蔽的 NCA 研究前哨缴获的夜十字限制级 Hardlight Rifle 会记下它在目标上的每一次命中，船员学会把这个计数器移植进本舰的战机联队数据链。战机的命中会在目标上留下硬光标记，引导其余战机集中火力。",
+    "skillType.repair_coordinator.description": "一艘 NCA Occator 的残骸中仍保存着那台曾在受损舰体之间调度维修无人机的 delta 级协调器。船员将它接入本舰的损管网络，教它在战斗中派出作业小组和无人机，为附近友舰修补装甲。",
     "skillType.gravitational_drag.description": "在一艘回收的远古原型舰内部，所有导管都汇聚于一个完美的球形空洞，船员在那里找到了 Candle's Grace 装置，它会拖慢附近一切事物的时间流速。船上没人说得清 Candle's Grace 是谁，据此造出的复制品大多靠猜。附近的敌舰会减速，在本舰处于相位状态时尤为明显。",
     "skillType.beautiful_nightmare.description": "观星者在濒死之际战斗得最为凶狠，从其中一艘回收的星尘核心，那曾经是一个人的残骸，教会船员在船体开始崩溃的那一刻拆除舰船的安全装置。舰船在终末坠落中继续战斗，以消耗战备为代价。",
     "skillType.furor_machinae.description": "从一艘观星者的数据核心中提取的战斗记录显示，它的射速随每一次命中不断攀升，仿佛其中有什么东西越来越愤怒；船员据此重接本舰的火控系统，追赶同样的节奏。数字化的怒火随每一次命中而高涨，驱使武器越打越快。",

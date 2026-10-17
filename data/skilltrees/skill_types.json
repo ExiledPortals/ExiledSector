@@ -351,7 +351,7 @@
 			"effects": [
 				{
 					"effect": "BEAM_WEAPON_DAMAGE_PERCENT",
-					"magnitude": 5
+					"magnitude": 3
 				}
 			],
 			"tags": [
@@ -1601,7 +1601,7 @@
 			"effects": [
 				{
 					"effect": "ENERGY_WEAPON_FLUX_COST_PERCENT",
-					"magnitude": -5
+					"magnitude": -3
 				}
 			],
 			"tags": [
@@ -3512,7 +3512,7 @@
 			"effects": [
 				{
 					"effect": "ELECTRONIC_WARFARE_PENALTY_MULT",
-					"magnitude": -15
+					"magnitude": -10
 				}
 			]
 		},
@@ -3626,6 +3626,24 @@
 			"tags": [
 				"fighter",
 				"req_fighter_bays"
+			]
+		},
+		{
+			"id": "repair_coordinator",
+			"name": "Repair Coordinator",
+			"icon": "graphics/icons/repair_coordinator.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "REPAIR_COORDINATOR_ARMOR_PERCENT",
+					"magnitude": 1
+				}
+			],
+			"description": "The wreck of an NCA Occator still holds the delta-level coordinator that once steered its repair drones between damaged hulls. The crew wires it into this ship's damage-control network, teaching it to send work teams and drones across to patch the armor of nearby allies in the middle of a battle.",
+			"tags": [
+				"armour",
+				"repair",
+				"fleet_support"
 			]
 		},
 		{

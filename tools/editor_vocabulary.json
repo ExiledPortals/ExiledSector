@@ -266,6 +266,7 @@
     {"name": "REMOVE_ALL_FIGHTER_BAYS", "statMode": null, "lowerIsBetter": false},
     {"name": "REMOVE_CIVILIAN_HULL_PENALTY", "statMode": null, "lowerIsBetter": false},
     {"name": "REMOVE_SHIELD", "statMode": null, "lowerIsBetter": false},
+    {"name": "REPAIR_COORDINATOR_ARMOR_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "REPAIR_RATE_PER_DAY_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},
     {"name": "REPAIR_TIME_MULT", "statMode": "MULT", "lowerIsBetter": true},
     {"name": "REPAIR_TIME_PERCENT", "statMode": "PERCENT", "lowerIsBetter": true},

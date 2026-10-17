@@ -5788,7 +5788,7 @@
 			"connectedTo": [
 				"modular_hull_socket_14",
 				"nightcross_wormhole_1",
-				"top_speed_8"
+				"hull_multi_7"
 			],
 			"x": -17586,
 			"y": -5054,
@@ -5954,16 +5954,16 @@
 			"id": "top_speed_8",
 			"type": "top_speed",
 			"connectedTo": [
-				"small_flux_optional_71",
 				"maneuverability_percent_3",
-				"maneuverability_percent_4"
+				"maneuverability_percent_4",
+				"modular_hull_socket_15"
 			],
-			"x": -17586,
-			"y": -4774,
+			"x": 18215,
+			"y": -5188,
 			"orbitAnchorId": "anchor_73",
-			"orbitAngle": 270,
+			"orbitAngle": 0,
 			"tags": [
-				"nightcross"
+				"stargazer"
 			]
 		},
 		{
@@ -5973,12 +5973,12 @@
 				"maneuverability_percent_3",
 				"maneuverability_percent_4"
 			],
-			"x": -17586,
-			"y": -4454,
+			"x": 17895,
+			"y": -5188,
 			"orbitAnchorId": "anchor_73",
-			"orbitAngle": 90,
+			"orbitAngle": 180,
 			"tags": [
-				"nightcross"
+				"stargazer"
 			]
 		},
 		{
@@ -5988,12 +5988,12 @@
 				"top_speed_8",
 				"gravitational_drag_1"
 			],
-			"x": -17746,
-			"y": -4614,
+			"x": 18055,
+			"y": -5348,
 			"orbitAnchorId": "anchor_73",
-			"orbitAngle": 180,
+			"orbitAngle": 270,
 			"tags": [
-				"nightcross"
+				"stargazer"
 			]
 		},
 		{
@@ -6033,12 +6033,12 @@
 				"top_speed_8",
 				"gravitational_drag_1"
 			],
-			"x": -17426,
-			"y": -4614,
+			"x": 18055,
+			"y": -5028,
 			"orbitAnchorId": "anchor_73",
-			"orbitAngle": 0,
+			"orbitAngle": 90,
 			"tags": [
-				"nightcross"
+				"stargazer"
 			]
 		},
 		{
@@ -6079,7 +6079,8 @@
 			"connectedTo": [
 				"small_flux_optional_76",
 				"small_flux_optional_75",
-				"beautiful_nightmare_1"
+				"top_speed_8",
+				"beam_damage_2"
 			],
 			"x": 18565,
 			"y": -4745,
@@ -6096,7 +6097,7 @@
 				"stargazer_wormhole_2",
 				"small_flux_optional_76",
 				"small_flux_optional_75",
-				"beam_damage_2"
+				"beautiful_nightmare_1"
 			],
 			"x": 16165,
 			"y": -4745,
@@ -6125,13 +6126,14 @@
 			"id": "beam_damage_2",
 			"type": "beam_damage",
 			"connectedTo": [
-				"stargazer_wormhole_1",
-				"beam_damage_7"
+				"beam_damage_7",
+				"beam_damage_8",
+				"modular_hull_socket_15"
 			],
-			"x": 16445,
-			"y": -4745,
+			"x": 18226,
+			"y": -4382,
 			"orbitAnchorId": "anchor_74",
-			"orbitAngle": 180,
+			"orbitAngle": 0,
 			"tags": [
 				"stargazer"
 			]
@@ -6143,8 +6145,8 @@
 				"beam_damage_2",
 				"corrosion_beam_1"
 			],
-			"x": 16605,
-			"y": -4585,
+			"x": 18066,
+			"y": -4222,
 			"orbitAnchorId": "anchor_74",
 			"orbitAngle": 90,
 			"tags": [
@@ -6155,12 +6157,13 @@
 			"id": "corrosion_beam_1",
 			"type": "corrosion_beam",
 			"connectedTo": [
-				"beam_damage_7"
+				"beam_damage_7",
+				"beam_damage_8"
 			],
-			"x": 16765,
-			"y": -4745,
+			"x": 17906,
+			"y": -4382,
 			"orbitAnchorId": "anchor_74",
-			"orbitAngle": 0,
+			"orbitAngle": 180,
 			"tags": [
 				"stargazer"
 			]
@@ -6170,7 +6173,8 @@
 			"type": "energy_weapon_fire_rate",
 			"connectedTo": [
 				"small_flux_optional_76",
-				"energy_weapon_fire_rate_5"
+				"energy_weapon_fire_rate_5",
+				"energy_weapon_fire_rate_6"
 			],
 			"x": 17365,
 			"y": -3825,
@@ -6199,7 +6203,8 @@
 			"id": "furor_machinae_1",
 			"type": "furor_machinae",
 			"connectedTo": [
-				"energy_weapon_fire_rate_5"
+				"energy_weapon_fire_rate_5",
+				"energy_weapon_fire_rate_6"
 			],
 			"x": 17365,
 			"y": -4145,
@@ -6213,10 +6218,12 @@
 			"id": "beautiful_nightmare_1",
 			"type": "beautiful_nightmare",
 			"connectedTo": [
-				"modular_hull_socket_15"
+				"stargazer_wormhole_1"
 			],
-			"x": 18220,
+			"x": 17365,
 			"y": -4745,
+			"orbitAnchorId": "mod_star_ring",
+			"orbitAngle": -15.28784294852075,
 			"tags": [
 				"stargazer"
 			]
@@ -6226,7 +6233,8 @@
 			"type": "ecm_resistance",
 			"connectedTo": [
 				"small_flux_optional_75",
-				"ecm_resistance_4"
+				"ecm_resistance_4",
+				"ecm_resistance_5"
 			],
 			"x": 17365,
 			"y": -5665,
@@ -6255,7 +6263,8 @@
 			"id": "language_of_the_lost_1",
 			"type": "language_of_the_lost",
 			"connectedTo": [
-				"ecm_resistance_4"
+				"ecm_resistance_4",
+				"ecm_resistance_5"
 			],
 			"x": 17365,
 			"y": -5345,
@@ -6306,8 +6315,8 @@
 				"energy_flux_cost_4",
 				"energy_flux_cost_7"
 			],
-			"x": -3768,
-			"y": -8174,
+			"x": -3780,
+			"y": -8461,
 			"orbitAnchorId": "anchor_63",
 			"orbitAngle": 90,
 			"tags": [
@@ -6321,8 +6330,8 @@
 				"energy_flux_cost_3",
 				"warpfield_1"
 			],
-			"x": -3608,
-			"y": -8334,
+			"x": -3620,
+			"y": -8621,
 			"orbitAnchorId": "anchor_63",
 			"orbitAngle": 0,
 			"tags": [
@@ -6336,8 +6345,8 @@
 				"energy_flux_cost_4",
 				"energy_flux_cost_7"
 			],
-			"x": -3768,
-			"y": -8494,
+			"x": -3780,
+			"y": -8781,
 			"orbitAnchorId": "anchor_63",
 			"orbitAngle": 270,
 			"tags": [
@@ -6352,7 +6361,7 @@
 				"exoship",
 				"sensor_profile_3"
 			],
-			"x": -3259,
+			"x": -3059,
 			"y": -7770,
 			"orbitAnchorId": "anchor_64",
 			"orbitAngle": 180,
@@ -6367,7 +6376,7 @@
 				"sensor_profile_1",
 				"phased_recharging_1"
 			],
-			"x": -3099,
+			"x": -2899,
 			"y": -7610,
 			"orbitAnchorId": "anchor_64",
 			"orbitAngle": 90,
@@ -6382,7 +6391,7 @@
 				"sensor_profile_2",
 				"sensor_profile_3"
 			],
-			"x": -2939,
+			"x": -2739,
 			"y": -7770,
 			"orbitAnchorId": "anchor_64",
 			"orbitAngle": 0,
@@ -6398,8 +6407,8 @@
 				"exoship",
 				"phase_cloak_flux_threshold_5"
 			],
-			"x": -3751,
-			"y": -7379,
+			"x": -3748,
+			"y": -7050,
 			"orbitAnchorId": "anchor_65",
 			"orbitAngle": 270,
 			"tags": [
@@ -6413,8 +6422,8 @@
 				"phase_cloak_flux_threshold_3",
 				"coil_efficiency_1"
 			],
-			"x": -3911,
-			"y": -7219,
+			"x": -3908,
+			"y": -6890,
 			"orbitAnchorId": "anchor_65",
 			"orbitAngle": 180,
 			"tags": [
@@ -6428,8 +6437,8 @@
 				"phase_cloak_flux_threshold_4",
 				"phase_cloak_flux_threshold_5"
 			],
-			"x": -3751,
-			"y": -7059,
+			"x": -3748,
+			"y": -6730,
 			"orbitAnchorId": "anchor_65",
 			"orbitAngle": 90,
 			"tags": [
@@ -6444,8 +6453,8 @@
 				"exoship",
 				"timeflow_3"
 			],
-			"x": -4238,
-			"y": -7752,
+			"x": -4471,
+			"y": -7747,
 			"orbitAnchorId": "anchor_62",
 			"orbitAngle": 0,
 			"tags": [
@@ -6459,8 +6468,8 @@
 				"timeflow_1",
 				"exogrid_1"
 			],
-			"x": -4398,
-			"y": -7912,
+			"x": -4631,
+			"y": -7907,
 			"orbitAnchorId": "anchor_62",
 			"orbitAngle": 270,
 			"tags": [
@@ -6474,8 +6483,8 @@
 				"timeflow_2",
 				"timeflow_3"
 			],
-			"x": -4558,
-			"y": -7752,
+			"x": -4791,
+			"y": -7747,
 			"orbitAnchorId": "anchor_62",
 			"orbitAngle": 180,
 			"tags": [
@@ -6785,8 +6794,8 @@
 				"timeflow_1",
 				"exogrid_1"
 			],
-			"x": -4398,
-			"y": -7592,
+			"x": -4631,
+			"y": -7587,
 			"orbitAnchorId": "anchor_62",
 			"orbitAngle": 90,
 			"tags": [
@@ -6800,7 +6809,7 @@
 				"sensor_profile_1",
 				"phased_recharging_1"
 			],
-			"x": -3099,
+			"x": -2899,
 			"y": -7930,
 			"orbitAnchorId": "anchor_64",
 			"orbitAngle": 270,
@@ -6815,8 +6824,8 @@
 				"phase_cloak_flux_threshold_3",
 				"coil_efficiency_1"
 			],
-			"x": -3591,
-			"y": -7219,
+			"x": -3588,
+			"y": -6890,
 			"orbitAnchorId": "anchor_65",
 			"orbitAngle": 0,
 			"tags": [
@@ -6830,8 +6839,8 @@
 				"energy_flux_cost_3",
 				"warpfield_1"
 			],
-			"x": -3928,
-			"y": -8334,
+			"x": -3940,
+			"y": -8621,
 			"orbitAnchorId": "anchor_63",
 			"orbitAngle": 180,
 			"tags": [
@@ -6868,6 +6877,112 @@
 			"tags": [
 				"abyss",
 				"gate_singularity_defeated"
+			]
+		},
+		{
+			"id": "beam_damage_8",
+			"type": "beam_damage",
+			"connectedTo": [
+				"corrosion_beam_1",
+				"beam_damage_2"
+			],
+			"x": 18066,
+			"y": -4542,
+			"orbitAnchorId": "anchor_74",
+			"orbitAngle": 270,
+			"tags": [
+				"stargazer"
+			]
+		},
+		{
+			"id": "ecm_resistance_5",
+			"type": "ecm_resistance",
+			"connectedTo": [
+				"ecm_resistance_3",
+				"language_of_the_lost_1"
+			],
+			"x": 17525,
+			"y": -5505,
+			"orbitAnchorId": "anchor_77",
+			"orbitAngle": 0,
+			"tags": [
+				"stargazer"
+			]
+		},
+		{
+			"id": "energy_weapon_fire_rate_6",
+			"type": "energy_weapon_fire_rate",
+			"connectedTo": [
+				"energy_weapon_fire_rate_4",
+				"furor_machinae_1"
+			],
+			"x": 17205,
+			"y": -3985,
+			"orbitAnchorId": "anchor_75",
+			"orbitAngle": 180,
+			"tags": [
+				"stargazer"
+			]
+		},
+		{
+			"id": "hull_multi_7",
+			"type": "hull_multi",
+			"connectedTo": [
+				"small_flux_optional_71",
+				"armor_10",
+				"armor_11"
+			],
+			"x": -17586,
+			"y": -4774,
+			"orbitAnchorId": "anchor_78",
+			"orbitAngle": 270,
+			"tags": [
+				"nightcross"
+			]
+		},
+		{
+			"id": "armor_10",
+			"type": "armor",
+			"connectedTo": [
+				"hull_multi_7",
+				"repair_coordinator_1"
+			],
+			"x": -17746,
+			"y": -4614,
+			"orbitAnchorId": "anchor_78",
+			"orbitAngle": 180,
+			"tags": [
+				"nightcross"
+			]
+		},
+		{
+			"id": "armor_11",
+			"type": "armor",
+			"connectedTo": [
+				"hull_multi_7",
+				"repair_coordinator_1"
+			],
+			"x": -17426,
+			"y": -4614,
+			"orbitAnchorId": "anchor_78",
+			"orbitAngle": 0,
+			"tags": [
+				"nightcross"
+			]
+		},
+		{
+			"id": "repair_coordinator_1",
+			"type": "repair_coordinator",
+			"connectedTo": [
+				"armor_10",
+				"armor_11"
+			],
+			"x": -17586,
+			"y": -4454,
+			"orbitAnchorId": "anchor_78",
+			"orbitAngle": 90,
+			"tags": [
+				"nightcross"
 			]
 		}
 	],
@@ -8645,14 +8760,14 @@
 		{
 			"a": "maneuverability_percent_3",
 			"b": "top_speed_8",
-			"controlX": -17699,
-			"controlY": -4727
+			"controlX": 18168,
+			"controlY": -5301
 		},
 		{
 			"a": "gravitational_drag_1",
 			"b": "maneuverability_percent_3",
-			"controlX": -17699,
-			"controlY": -4501
+			"controlX": 17942,
+			"controlY": -5301
 		},
 		{
 			"a": "energy_weapon_fire_rate_1",
@@ -8681,14 +8796,14 @@
 		{
 			"a": "maneuverability_percent_4",
 			"b": "top_speed_8",
-			"controlX": -17473,
-			"controlY": -4727
+			"controlX": 18168,
+			"controlY": -5075
 		},
 		{
 			"a": "gravitational_drag_1",
 			"b": "maneuverability_percent_4",
-			"controlX": -17473,
-			"controlY": -4501
+			"controlX": 17942,
+			"controlY": -5075
 		},
 		{
 			"a": "modular_hull_socket_15",
@@ -8717,14 +8832,14 @@
 		{
 			"a": "beam_damage_2",
 			"b": "beam_damage_7",
-			"controlX": 16492,
-			"controlY": -4632
+			"controlX": 18179,
+			"controlY": -4269
 		},
 		{
 			"a": "beam_damage_7",
 			"b": "corrosion_beam_1",
-			"controlX": 16718,
-			"controlY": -4632
+			"controlX": 17953,
+			"controlY": -4269
 		},
 		{
 			"a": "energy_weapon_fire_rate_4",
@@ -8753,50 +8868,50 @@
 		{
 			"a": "energy_flux_cost_3",
 			"b": "energy_flux_cost_4",
-			"controlX": -3655,
-			"controlY": -8221
+			"controlX": -3667,
+			"controlY": -8508
 		},
 		{
 			"a": "energy_flux_cost_4",
 			"b": "warpfield_1",
-			"controlX": -3655,
-			"controlY": -8447
+			"controlX": -3667,
+			"controlY": -8734
 		},
 		{
 			"a": "sensor_profile_1",
 			"b": "sensor_profile_2",
-			"controlX": -3212,
+			"controlX": -3012,
 			"controlY": -7657
 		},
 		{
 			"a": "sensor_profile_2",
 			"b": "phased_recharging_1",
-			"controlX": -2986,
+			"controlX": -2786,
 			"controlY": -7657
 		},
 		{
 			"a": "phase_cloak_flux_threshold_3",
 			"b": "phase_cloak_flux_threshold_4",
-			"controlX": -3864,
-			"controlY": -7332
+			"controlX": -3861,
+			"controlY": -7003
 		},
 		{
 			"a": "phase_cloak_flux_threshold_4",
 			"b": "coil_efficiency_1",
-			"controlX": -3864,
-			"controlY": -7106
+			"controlX": -3861,
+			"controlY": -6777
 		},
 		{
 			"a": "timeflow_1",
 			"b": "timeflow_2",
-			"controlX": -4285,
-			"controlY": -7865
+			"controlX": -4518,
+			"controlY": -7860
 		},
 		{
 			"a": "exogrid_1",
 			"b": "timeflow_2",
-			"controlX": -4511,
-			"controlY": -7865
+			"controlX": -4744,
+			"controlY": -7860
 		},
 		{
 			"a": "modular_hull_socket_13",
@@ -8885,50 +9000,50 @@
 		{
 			"a": "timeflow_1",
 			"b": "timeflow_3",
-			"controlX": -4285,
-			"controlY": -7639
+			"controlX": -4518,
+			"controlY": -7634
 		},
 		{
 			"a": "exogrid_1",
 			"b": "timeflow_3",
-			"controlX": -4511,
-			"controlY": -7639
+			"controlX": -4744,
+			"controlY": -7634
 		},
 		{
 			"a": "sensor_profile_1",
 			"b": "sensor_profile_3",
-			"controlX": -3212,
+			"controlX": -3012,
 			"controlY": -7883
 		},
 		{
 			"a": "phased_recharging_1",
 			"b": "sensor_profile_3",
-			"controlX": -2986,
+			"controlX": -2786,
 			"controlY": -7883
 		},
 		{
 			"a": "phase_cloak_flux_threshold_3",
 			"b": "phase_cloak_flux_threshold_5",
-			"controlX": -3638,
-			"controlY": -7332
+			"controlX": -3635,
+			"controlY": -7003
 		},
 		{
 			"a": "coil_efficiency_1",
 			"b": "phase_cloak_flux_threshold_5",
-			"controlX": -3638,
-			"controlY": -7106
+			"controlX": -3635,
+			"controlY": -6777
 		},
 		{
 			"a": "energy_flux_cost_3",
 			"b": "energy_flux_cost_7",
-			"controlX": -3881,
-			"controlY": -8221
+			"controlX": -3893,
+			"controlY": -8508
 		},
 		{
 			"a": "energy_flux_cost_7",
 			"b": "warpfield_1",
-			"controlX": -3881,
-			"controlY": -8447
+			"controlX": -3893,
+			"controlY": -8734
 		},
 		{
 			"a": "system_cooldown_1",
@@ -8953,6 +9068,66 @@
 			"b": "non_beam_energy_damage_8",
 			"controlX": -44860,
 			"controlY": 27828
+		},
+		{
+			"a": "beam_damage_8",
+			"b": "corrosion_beam_1",
+			"controlX": 17953,
+			"controlY": -4495
+		},
+		{
+			"a": "beam_damage_2",
+			"b": "beam_damage_8",
+			"controlX": 18179,
+			"controlY": -4495
+		},
+		{
+			"a": "ecm_resistance_3",
+			"b": "ecm_resistance_5",
+			"controlX": 17478,
+			"controlY": -5618
+		},
+		{
+			"a": "ecm_resistance_5",
+			"b": "language_of_the_lost_1",
+			"controlX": 17478,
+			"controlY": -5392
+		},
+		{
+			"a": "energy_weapon_fire_rate_4",
+			"b": "energy_weapon_fire_rate_6",
+			"controlX": 17252,
+			"controlY": -3872
+		},
+		{
+			"a": "energy_weapon_fire_rate_6",
+			"b": "furor_machinae_1",
+			"controlX": 17252,
+			"controlY": -4098
+		},
+		{
+			"a": "armor_10",
+			"b": "hull_multi_7",
+			"controlX": -17699,
+			"controlY": -4727
+		},
+		{
+			"a": "repair_coordinator_1",
+			"b": "armor_10",
+			"controlX": -17699,
+			"controlY": -4501
+		},
+		{
+			"a": "armor_11",
+			"b": "hull_multi_7",
+			"controlX": -17473,
+			"controlY": -4727
+		},
+		{
+			"a": "repair_coordinator_1",
+			"b": "armor_11",
+			"controlX": -17473,
+			"controlY": -4501
 		}
 	],
 	"hiddenConnectors": [
@@ -9597,8 +9772,8 @@
 		},
 		{
 			"id": "anchor_73",
-			"x": -17586,
-			"y": -4614,
+			"x": 18055,
+			"y": -5188,
 			"radius": 160
 		},
 		{
@@ -9609,8 +9784,8 @@
 		},
 		{
 			"id": "anchor_74",
-			"x": 16605,
-			"y": -4745,
+			"x": 18066,
+			"y": -4382,
 			"radius": 160
 		},
 		{
@@ -9627,26 +9802,26 @@
 		},
 		{
 			"id": "anchor_62",
-			"x": -4398,
-			"y": -7752,
+			"x": -4631,
+			"y": -7747,
 			"radius": 160
 		},
 		{
 			"id": "anchor_63",
-			"x": -3768,
-			"y": -8334,
+			"x": -3780,
+			"y": -8621,
 			"radius": 160
 		},
 		{
 			"id": "anchor_64",
-			"x": -3099,
+			"x": -2899,
 			"y": -7770,
 			"radius": 160
 		},
 		{
 			"id": "anchor_65",
-			"x": -3751,
-			"y": -7219,
+			"x": -3748,
+			"y": -6890,
 			"radius": 160
 		},
 		{
@@ -9677,6 +9852,18 @@
 			"id": "anchor_69",
 			"x": -45507,
 			"y": 26955,
+			"radius": 160
+		},
+		{
+			"id": "anchor_72",
+			"x": -3765,
+			"y": -7757,
+			"radius": 866
+		},
+		{
+			"id": "anchor_78",
+			"x": -17586,
+			"y": -4614,
 			"radius": 160
 		}
 	],

@@ -197,6 +197,15 @@ public enum CombatSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", magnitude).arg("range", MalfunctionAuraField.RANGE).styled();
         }
     },
+    REPAIR_COORDINATOR_ARMOR_PERCENT(RepairCoordinatorListener.ARMOR_REPAIR_PERCENT_KEY, RepairCoordinatorListener.class,
+            RepairCoordinatorListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("range", RepairCoordinatorField.RANGE)
+                    .arg("perShip", RepairCoordinatorField.MAX_REPAIR_PERCENT_PER_COORDINATOR)
+                    .arg("limit", RepairCoordinatorField.MAX_REPAIR_PERCENT_OF_ARMOR).styled();
+        }
+    },
     CORROSION_MOTE_DAMAGE_FLAT(CorrosionMoteListener.MOTE_DAMAGE_KEY, CorrosionMoteListener.class, CorrosionMoteListener::new) {
         @Override
         public StyledText description(float magnitude) {
