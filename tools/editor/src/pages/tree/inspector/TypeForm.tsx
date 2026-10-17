@@ -180,7 +180,7 @@ function HullSizeEffectRows({ type, onEdit, vocabulary, note }: Pick<TypeFormPro
 
 function UnlockConditionParameters({ condition, index, onEdit, vocabulary }: { condition: UnlockCondition; index: number; onEdit: TypeFormProps['onEdit']; vocabulary: Vocabulary }) {
   const edit = (change: (target: UnlockCondition) => void) => onEdit((draft) => change(draft.unlockConditions![index]));
-  if (condition.type === 'ratPlayerExoship' || condition.type === 'ratPrimordialCatalyst') {
+  if (condition.type === 'ratPlayerExoship' || condition.type === 'ratSingularityDefeated') {
     return null;
   }
   if (condition.type === 'characterStat') {

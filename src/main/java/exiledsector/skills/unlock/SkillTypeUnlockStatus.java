@@ -3,6 +3,7 @@ package exiledsector.skills.unlock;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CharacterDataAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
+import exiledsector.compat.AbyssSingularity;
 import exiledsector.compat.RandomAssortmentCompat;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillType;
@@ -47,7 +48,7 @@ public final class SkillTypeUnlockStatus {
                 case MIN_SHIP_LEVEL -> hasMinShipLevel(condition, shipData);
                 case MEMORY_FLAG -> hasMemoryFlag(condition);
                 case RAT_PLAYER_EXOSHIP -> !RandomAssortmentCompat.isModEnabled() || RandomAssortmentCompat.playerOwnsExoship();
-                case RAT_PRIMORDIAL_CATALYST -> !RandomAssortmentCompat.isModEnabled() || RandomAssortmentCompat.primordialCatalystActivated();
+                case RAT_SINGULARITY_DEFEATED -> !RandomAssortmentCompat.isModEnabled() || AbyssSingularity.isDefeated(Global.getSector());
             };
         } catch (RuntimeException e) {
             Logger.getLogger(SkillTypeUnlockStatus.class).error("Failed to check unlock condition " + condition, e);

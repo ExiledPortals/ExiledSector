@@ -6,5 +6,5 @@ public enum UnlockConditionType {
     MIN_SHIP_LEVEL,
     MEMORY_FLAG,
     RAT_PLAYER_EXOSHIP,
-    RAT_PRIMORDIAL_CATALYST
+    RAT_SINGULARITY_DEFEATED
 }

@@ -3,9 +3,11 @@ package exiledsector.compat;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ModManagerAPI;
 import com.fs.starfarer.api.SettingsAPI;
+import com.fs.starfarer.api.characters.SkillSpecAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.skills.npc.RealSkillData;
 import org.json.JSONArray;
@@ -137,9 +139,24 @@ class CompatChecksTest {
         when(settings.getHullModSpec(anyString())).thenReturn(mock(HullModSpecAPI.class));
         when(settings.getHullModSpec("rat_hypatia_hullmod")).thenReturn(null);
         when(settings.getScriptClassLoader()).thenReturn(CompatChecksTest.class.getClassLoader());
+        when(settings.getHullSpec("rat_genesis")).thenReturn(mock(ShipHullSpecAPI.class));
+        when(settings.getSkillSpec("rat_abyssal_requiem")).thenReturn(mock(SkillSpecAPI.class));
         RandomAssortmentCompat.clearCachedLookups();
 
         assertEquals(List.of("the hull mod rat_hypatia_hullmod"), RandomAssortmentCompat.TARGET.missingFeatures().get());
+    }
+
+    @Test
+    void randomAssortmentReportsWhenTheSingularityHullOrRequiemSkillIsRenamed() {
+        when(settings.getHullModSpec(anyString())).thenReturn(mock(HullModSpecAPI.class));
+        when(settings.getScriptClassLoader()).thenReturn(CompatChecksTest.class.getClassLoader());
+        when(settings.getHullSpec("rat_genesis")).thenThrow(new RuntimeException("no such hull"));
+        RandomAssortmentCompat.clearCachedLookups();
+
+        List<String> missing = RandomAssortmentCompat.TARGET.missingFeatures().get();
+
+        assertTrue(missing.stream().anyMatch(feature -> feature.contains("rat_genesis")), missing.toString());
+        assertTrue(missing.stream().anyMatch(feature -> feature.contains("rat_abyssal_requiem")), missing.toString());
     }
 
     @Test

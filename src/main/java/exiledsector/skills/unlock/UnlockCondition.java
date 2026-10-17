@@ -35,8 +35,8 @@ public final class UnlockCondition {
         return new UnlockCondition(UnlockConditionType.RAT_PLAYER_EXOSHIP, null, null, 0);
     }
 
-    public static UnlockCondition ratPrimordialCatalyst() {
-        return new UnlockCondition(UnlockConditionType.RAT_PRIMORDIAL_CATALYST, null, null, 0);
+    public static UnlockCondition ratSingularityDefeated() {
+        return new UnlockCondition(UnlockConditionType.RAT_SINGULARITY_DEFEATED, null, null, 0);
     }
 
     public UnlockConditionType getType() {

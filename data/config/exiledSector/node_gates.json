@@ -1,8 +1,8 @@
 {
-	"gate_primordial_catalyst": {
+	"gate_singularity_defeated": {
 		"unlockConditions": [
 			{
-				"type": "ratPrimordialCatalyst"
+				"type": "ratSingularityDefeated"
 			}
 		]
 	}

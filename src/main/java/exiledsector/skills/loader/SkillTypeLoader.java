@@ -207,7 +207,7 @@ public final class SkillTypeLoader {
             case MIN_SHIP_LEVEL -> UnlockCondition.minShipLevel(conditionJson.getInt("level"));
             case MEMORY_FLAG -> UnlockCondition.memoryFlag(conditionJson.getString("key"));
             case RAT_PLAYER_EXOSHIP -> UnlockCondition.ratPlayerExoship();
-            case RAT_PRIMORDIAL_CATALYST -> UnlockCondition.ratPrimordialCatalyst();
+            case RAT_SINGULARITY_DEFEATED -> UnlockCondition.ratSingularityDefeated();
         };
     }
 

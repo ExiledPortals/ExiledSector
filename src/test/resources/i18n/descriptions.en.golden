@@ -1660,18 +1660,18 @@ effect|SERAPHIM_DAMAGE_BONUS_PERCENT|12.5	0	Ballistic and energy weapon damage r
 effect|SERAPHIM_DAMAGE_BONUS_PERCENT|100.0	0	Ballistic and energy weapon damage rises by up to <good>100%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 effect|SERAPHIM_DAMAGE_BONUS_PERCENT|-10.0	0	Ballistic and energy weapon damage rises by up to <good>-10%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 effect|SERAPHIM_DAMAGE_BONUS_PERCENT|-12.5	0	Ballistic and energy weapon damage rises by up to <good>-12.5%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-effect|SERAPHIM_FULL_BONUS_DAMAGE_FLAT|1.0	0	The full Seraphim damage bonus is reached after dealing 1 armor and hull damage.
-effect|SERAPHIM_FULL_BONUS_DAMAGE_FLAT|10.0	0	The full Seraphim damage bonus is reached after dealing 10 armor and hull damage.
-effect|SERAPHIM_FULL_BONUS_DAMAGE_FLAT|12.5	0	The full Seraphim damage bonus is reached after dealing 12.5 armor and hull damage.
-effect|SERAPHIM_FULL_BONUS_DAMAGE_FLAT|100.0	0	The full Seraphim damage bonus is reached after dealing 100 armor and hull damage.
-effect|SERAPHIM_FULL_BONUS_DAMAGE_FLAT|-10.0	0	The full Seraphim damage bonus is reached after dealing -10 armor and hull damage.
-effect|SERAPHIM_FULL_BONUS_DAMAGE_FLAT|-12.5	0	The full Seraphim damage bonus is reached after dealing -12.5 armor and hull damage.
-effect|SERAPHIM_HEAL_CAP_PERCENT|1.0	0	Seraphim repairs at most <good>1%</good> of this ship's maximum hull per battle.
-effect|SERAPHIM_HEAL_CAP_PERCENT|10.0	0	Seraphim repairs at most <good>10%</good> of this ship's maximum hull per battle.
-effect|SERAPHIM_HEAL_CAP_PERCENT|12.5	0	Seraphim repairs at most <good>12.5%</good> of this ship's maximum hull per battle.
-effect|SERAPHIM_HEAL_CAP_PERCENT|100.0	0	Seraphim repairs at most <good>100%</good> of this ship's maximum hull per battle.
-effect|SERAPHIM_HEAL_CAP_PERCENT|-10.0	0	Seraphim repairs at most <good>-10%</good> of this ship's maximum hull per battle.
-effect|SERAPHIM_HEAL_CAP_PERCENT|-12.5	0	Seraphim repairs at most <good>-12.5%</good> of this ship's maximum hull per battle.
+effect|SERAPHIM_FULL_BONUS_DAMAGE_FLAT|1.0	0	The full Seraph Hunting Routines damage bonus is reached after dealing 1 armor and hull damage.
+effect|SERAPHIM_FULL_BONUS_DAMAGE_FLAT|10.0	0	The full Seraph Hunting Routines damage bonus is reached after dealing 10 armor and hull damage.
+effect|SERAPHIM_FULL_BONUS_DAMAGE_FLAT|12.5	0	The full Seraph Hunting Routines damage bonus is reached after dealing 12.5 armor and hull damage.
+effect|SERAPHIM_FULL_BONUS_DAMAGE_FLAT|100.0	0	The full Seraph Hunting Routines damage bonus is reached after dealing 100 armor and hull damage.
+effect|SERAPHIM_FULL_BONUS_DAMAGE_FLAT|-10.0	0	The full Seraph Hunting Routines damage bonus is reached after dealing -10 armor and hull damage.
+effect|SERAPHIM_FULL_BONUS_DAMAGE_FLAT|-12.5	0	The full Seraph Hunting Routines damage bonus is reached after dealing -12.5 armor and hull damage.
+effect|SERAPHIM_HEAL_CAP_PERCENT|1.0	0	Seraph Hunting Routines repair at most <good>1%</good> of this ship's maximum hull per battle.
+effect|SERAPHIM_HEAL_CAP_PERCENT|10.0	0	Seraph Hunting Routines repair at most <good>10%</good> of this ship's maximum hull per battle.
+effect|SERAPHIM_HEAL_CAP_PERCENT|12.5	0	Seraph Hunting Routines repair at most <good>12.5%</good> of this ship's maximum hull per battle.
+effect|SERAPHIM_HEAL_CAP_PERCENT|100.0	0	Seraph Hunting Routines repair at most <good>100%</good> of this ship's maximum hull per battle.
+effect|SERAPHIM_HEAL_CAP_PERCENT|-10.0	0	Seraph Hunting Routines repair at most <good>-10%</good> of this ship's maximum hull per battle.
+effect|SERAPHIM_HEAL_CAP_PERCENT|-12.5	0	Seraph Hunting Routines repair at most <good>-12.5%</good> of this ship's maximum hull per battle.
 effect|SERAPHIM_HEAL_PERCENT|1.0	0	Repairs hull equal to <good>1%</good> of the armor and hull damage this ship deals to enemy ships.
 effect|SERAPHIM_HEAL_PERCENT|10.0	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
 effect|SERAPHIM_HEAL_PERCENT|12.5	0	Repairs hull equal to <good>12.5%</good> of the armor and hull damage this ship deals to enemy ships.
@@ -3920,32 +3920,32 @@ type|sensor_profile|CRUISER|0	1	<bad>10%</bad> reduced sensor profile.
 type|sensor_profile|CAPITAL_SHIP|0	1	<bad>10%</bad> reduced sensor profile.
 type|seraphim|null|0	0	Code pulled from a dissected Seraph core, pieced back together and patched into the damage-control software. The ship mends itself on the damage it deals, and grows deadlier the longer the hunt goes on.
 type|seraphim|null|1	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
-type|seraphim|null|2	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
+type|seraphim|null|2	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
 type|seraphim|null|3	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 type-detail|seraphim|null|0	0	Costs 50 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
 type|seraphim|FRIGATE|0	0	Code pulled from a dissected Seraph core, pieced back together and patched into the damage-control software. The ship mends itself on the damage it deals, and grows deadlier the longer the hunt goes on.
 type|seraphim|FRIGATE|1	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
-type|seraphim|FRIGATE|2	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
+type|seraphim|FRIGATE|2	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
 type|seraphim|FRIGATE|3	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-type|seraphim|FRIGATE|4	0	The full Seraphim damage bonus is reached after dealing 75000 armor and hull damage.
+type|seraphim|FRIGATE|4	0	The full Seraph Hunting Routines damage bonus is reached after dealing 75000 armor and hull damage.
 type-detail|seraphim|FRIGATE|0	0	Costs 50 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
 type|seraphim|DESTROYER|0	0	Code pulled from a dissected Seraph core, pieced back together and patched into the damage-control software. The ship mends itself on the damage it deals, and grows deadlier the longer the hunt goes on.
 type|seraphim|DESTROYER|1	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
-type|seraphim|DESTROYER|2	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
+type|seraphim|DESTROYER|2	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
 type|seraphim|DESTROYER|3	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-type|seraphim|DESTROYER|4	0	The full Seraphim damage bonus is reached after dealing 125000 armor and hull damage.
+type|seraphim|DESTROYER|4	0	The full Seraph Hunting Routines damage bonus is reached after dealing 125000 armor and hull damage.
 type-detail|seraphim|DESTROYER|0	0	Costs 50 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
 type|seraphim|CRUISER|0	0	Code pulled from a dissected Seraph core, pieced back together and patched into the damage-control software. The ship mends itself on the damage it deals, and grows deadlier the longer the hunt goes on.
 type|seraphim|CRUISER|1	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
-type|seraphim|CRUISER|2	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
+type|seraphim|CRUISER|2	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
 type|seraphim|CRUISER|3	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-type|seraphim|CRUISER|4	0	The full Seraphim damage bonus is reached after dealing 175000 armor and hull damage.
+type|seraphim|CRUISER|4	0	The full Seraph Hunting Routines damage bonus is reached after dealing 175000 armor and hull damage.
 type-detail|seraphim|CRUISER|0	0	Costs 50 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
 type|seraphim|CAPITAL_SHIP|0	0	Code pulled from a dissected Seraph core, pieced back together and patched into the damage-control software. The ship mends itself on the damage it deals, and grows deadlier the longer the hunt goes on.
 type|seraphim|CAPITAL_SHIP|1	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
-type|seraphim|CAPITAL_SHIP|2	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
+type|seraphim|CAPITAL_SHIP|2	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
 type|seraphim|CAPITAL_SHIP|3	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-type|seraphim|CAPITAL_SHIP|4	0	The full Seraphim damage bonus is reached after dealing 225000 armor and hull damage.
+type|seraphim|CAPITAL_SHIP|4	0	The full Seraph Hunting Routines damage bonus is reached after dealing 225000 armor and hull damage.
 type-detail|seraphim|CAPITAL_SHIP|0	0	Costs 50 rat_abyssal_matter to allocate. It is returned to you upon de-allocation.
 type|seraphs_grace|null|0	0	Having taken apart enough Seraph hulls to see how they feed on their own wounds, the crew rewire the ship to do the same. Every blow to armor or hull pushes its engines, weapons and flux grid harder, but the shield emitters were never built for that load.
 type|seraphs_grace|null|1	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
@@ -4491,9 +4491,9 @@ summary|option0|FRIGATE|176	0	Increases top speed by <good>123</good>.
 summary|option0|FRIGATE|177	0	Increases acceleration by <good>100</good>.
 summary|option0|FRIGATE|178	0	Increases deceleration by <good>100</good>.
 summary|option0|FRIGATE|179	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
-summary|option0|FRIGATE|180	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
+summary|option0|FRIGATE|180	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
 summary|option0|FRIGATE|181	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-summary|option0|FRIGATE|182	0	The full Seraphim damage bonus is reached after dealing 75000 armor and hull damage.
+summary|option0|FRIGATE|182	0	The full Seraph Hunting Routines damage bonus is reached after dealing 75000 armor and hull damage.
 summary|option0|FRIGATE|183	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
 summary|option0|FRIGATE|184	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
 summary|option0|FRIGATE|185	1	<bad>20%</bad> reduced weapon and engine repair time.
@@ -4695,9 +4695,9 @@ summary|option0|DESTROYER|176	0	Increases top speed by <good>90</good>.
 summary|option0|DESTROYER|177	0	Increases acceleration by <good>60</good>.
 summary|option0|DESTROYER|178	0	Increases deceleration by <good>60</good>.
 summary|option0|DESTROYER|179	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
-summary|option0|DESTROYER|180	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
+summary|option0|DESTROYER|180	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
 summary|option0|DESTROYER|181	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-summary|option0|DESTROYER|182	0	The full Seraphim damage bonus is reached after dealing 125000 armor and hull damage.
+summary|option0|DESTROYER|182	0	The full Seraph Hunting Routines damage bonus is reached after dealing 125000 armor and hull damage.
 summary|option0|DESTROYER|183	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
 summary|option0|DESTROYER|184	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
 summary|option0|DESTROYER|185	1	<bad>20%</bad> reduced weapon and engine repair time.
@@ -4899,9 +4899,9 @@ summary|option0|CRUISER|176	0	Increases top speed by <good>67</good>.
 summary|option0|CRUISER|177	0	Increases acceleration by <good>40</good>.
 summary|option0|CRUISER|178	0	Increases deceleration by <good>40</good>.
 summary|option0|CRUISER|179	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
-summary|option0|CRUISER|180	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
+summary|option0|CRUISER|180	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
 summary|option0|CRUISER|181	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-summary|option0|CRUISER|182	0	The full Seraphim damage bonus is reached after dealing 175000 armor and hull damage.
+summary|option0|CRUISER|182	0	The full Seraph Hunting Routines damage bonus is reached after dealing 175000 armor and hull damage.
 summary|option0|CRUISER|183	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
 summary|option0|CRUISER|184	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
 summary|option0|CRUISER|185	1	<bad>20%</bad> reduced weapon and engine repair time.
@@ -5103,9 +5103,9 @@ summary|option0|CAPITAL_SHIP|176	0	Increases top speed by <good>57</good>.
 summary|option0|CAPITAL_SHIP|177	0	Increases acceleration by <good>20</good>.
 summary|option0|CAPITAL_SHIP|178	0	Increases deceleration by <good>20</good>.
 summary|option0|CAPITAL_SHIP|179	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
-summary|option0|CAPITAL_SHIP|180	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
+summary|option0|CAPITAL_SHIP|180	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
 summary|option0|CAPITAL_SHIP|181	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-summary|option0|CAPITAL_SHIP|182	0	The full Seraphim damage bonus is reached after dealing 225000 armor and hull damage.
+summary|option0|CAPITAL_SHIP|182	0	The full Seraph Hunting Routines damage bonus is reached after dealing 225000 armor and hull damage.
 summary|option0|CAPITAL_SHIP|183	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
 summary|option0|CAPITAL_SHIP|184	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
 summary|option0|CAPITAL_SHIP|185	1	<bad>20%</bad> reduced weapon and engine repair time.
@@ -5307,9 +5307,9 @@ summary|option1|FRIGATE|176	0	Increases top speed by <good>123</good>.
 summary|option1|FRIGATE|177	0	Increases acceleration by <good>100</good>.
 summary|option1|FRIGATE|178	0	Increases deceleration by <good>100</good>.
 summary|option1|FRIGATE|179	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
-summary|option1|FRIGATE|180	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
+summary|option1|FRIGATE|180	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
 summary|option1|FRIGATE|181	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-summary|option1|FRIGATE|182	0	The full Seraphim damage bonus is reached after dealing 75000 armor and hull damage.
+summary|option1|FRIGATE|182	0	The full Seraph Hunting Routines damage bonus is reached after dealing 75000 armor and hull damage.
 summary|option1|FRIGATE|183	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
 summary|option1|FRIGATE|184	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
 summary|option1|FRIGATE|185	1	<bad>20%</bad> reduced weapon and engine repair time.
@@ -5511,9 +5511,9 @@ summary|option1|DESTROYER|176	0	Increases top speed by <good>90</good>.
 summary|option1|DESTROYER|177	0	Increases acceleration by <good>60</good>.
 summary|option1|DESTROYER|178	0	Increases deceleration by <good>60</good>.
 summary|option1|DESTROYER|179	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
-summary|option1|DESTROYER|180	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
+summary|option1|DESTROYER|180	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
 summary|option1|DESTROYER|181	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-summary|option1|DESTROYER|182	0	The full Seraphim damage bonus is reached after dealing 125000 armor and hull damage.
+summary|option1|DESTROYER|182	0	The full Seraph Hunting Routines damage bonus is reached after dealing 125000 armor and hull damage.
 summary|option1|DESTROYER|183	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
 summary|option1|DESTROYER|184	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
 summary|option1|DESTROYER|185	1	<bad>20%</bad> reduced weapon and engine repair time.
@@ -5715,9 +5715,9 @@ summary|option1|CRUISER|176	0	Increases top speed by <good>67</good>.
 summary|option1|CRUISER|177	0	Increases acceleration by <good>40</good>.
 summary|option1|CRUISER|178	0	Increases deceleration by <good>40</good>.
 summary|option1|CRUISER|179	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
-summary|option1|CRUISER|180	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
+summary|option1|CRUISER|180	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
 summary|option1|CRUISER|181	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-summary|option1|CRUISER|182	0	The full Seraphim damage bonus is reached after dealing 175000 armor and hull damage.
+summary|option1|CRUISER|182	0	The full Seraph Hunting Routines damage bonus is reached after dealing 175000 armor and hull damage.
 summary|option1|CRUISER|183	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
 summary|option1|CRUISER|184	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
 summary|option1|CRUISER|185	1	<bad>20%</bad> reduced weapon and engine repair time.
@@ -5919,9 +5919,9 @@ summary|option1|CAPITAL_SHIP|176	0	Increases top speed by <good>57</good>.
 summary|option1|CAPITAL_SHIP|177	0	Increases acceleration by <good>20</good>.
 summary|option1|CAPITAL_SHIP|178	0	Increases deceleration by <good>20</good>.
 summary|option1|CAPITAL_SHIP|179	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
-summary|option1|CAPITAL_SHIP|180	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
+summary|option1|CAPITAL_SHIP|180	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
 summary|option1|CAPITAL_SHIP|181	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-summary|option1|CAPITAL_SHIP|182	0	The full Seraphim damage bonus is reached after dealing 225000 armor and hull damage.
+summary|option1|CAPITAL_SHIP|182	0	The full Seraph Hunting Routines damage bonus is reached after dealing 225000 armor and hull damage.
 summary|option1|CAPITAL_SHIP|183	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
 summary|option1|CAPITAL_SHIP|184	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
 summary|option1|CAPITAL_SHIP|185	1	<bad>20%</bad> reduced weapon and engine repair time.
@@ -6123,9 +6123,9 @@ summary|option2|FRIGATE|176	0	Increases top speed by <good>123</good>.
 summary|option2|FRIGATE|177	0	Increases acceleration by <good>100</good>.
 summary|option2|FRIGATE|178	0	Increases deceleration by <good>100</good>.
 summary|option2|FRIGATE|179	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
-summary|option2|FRIGATE|180	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
+summary|option2|FRIGATE|180	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
 summary|option2|FRIGATE|181	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-summary|option2|FRIGATE|182	0	The full Seraphim damage bonus is reached after dealing 75000 armor and hull damage.
+summary|option2|FRIGATE|182	0	The full Seraph Hunting Routines damage bonus is reached after dealing 75000 armor and hull damage.
 summary|option2|FRIGATE|183	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
 summary|option2|FRIGATE|184	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
 summary|option2|FRIGATE|185	1	<bad>20%</bad> reduced weapon and engine repair time.
@@ -6327,9 +6327,9 @@ summary|option2|DESTROYER|176	0	Increases top speed by <good>90</good>.
 summary|option2|DESTROYER|177	0	Increases acceleration by <good>60</good>.
 summary|option2|DESTROYER|178	0	Increases deceleration by <good>60</good>.
 summary|option2|DESTROYER|179	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
-summary|option2|DESTROYER|180	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
+summary|option2|DESTROYER|180	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
 summary|option2|DESTROYER|181	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-summary|option2|DESTROYER|182	0	The full Seraphim damage bonus is reached after dealing 125000 armor and hull damage.
+summary|option2|DESTROYER|182	0	The full Seraph Hunting Routines damage bonus is reached after dealing 125000 armor and hull damage.
 summary|option2|DESTROYER|183	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
 summary|option2|DESTROYER|184	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
 summary|option2|DESTROYER|185	1	<bad>20%</bad> reduced weapon and engine repair time.
@@ -6531,9 +6531,9 @@ summary|option2|CRUISER|176	0	Increases top speed by <good>67</good>.
 summary|option2|CRUISER|177	0	Increases acceleration by <good>40</good>.
 summary|option2|CRUISER|178	0	Increases deceleration by <good>40</good>.
 summary|option2|CRUISER|179	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
-summary|option2|CRUISER|180	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
+summary|option2|CRUISER|180	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
 summary|option2|CRUISER|181	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-summary|option2|CRUISER|182	0	The full Seraphim damage bonus is reached after dealing 175000 armor and hull damage.
+summary|option2|CRUISER|182	0	The full Seraph Hunting Routines damage bonus is reached after dealing 175000 armor and hull damage.
 summary|option2|CRUISER|183	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
 summary|option2|CRUISER|184	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
 summary|option2|CRUISER|185	1	<bad>20%</bad> reduced weapon and engine repair time.
@@ -6735,9 +6735,9 @@ summary|option2|CAPITAL_SHIP|176	0	Increases top speed by <good>57</good>.
 summary|option2|CAPITAL_SHIP|177	0	Increases acceleration by <good>20</good>.
 summary|option2|CAPITAL_SHIP|178	0	Increases deceleration by <good>20</good>.
 summary|option2|CAPITAL_SHIP|179	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
-summary|option2|CAPITAL_SHIP|180	0	Seraphim repairs at most <good>20%</good> of this ship's maximum hull per battle.
+summary|option2|CAPITAL_SHIP|180	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
 summary|option2|CAPITAL_SHIP|181	0	Ballistic and energy weapon damage rises by up to <good>30%</good> as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-summary|option2|CAPITAL_SHIP|182	0	The full Seraphim damage bonus is reached after dealing 225000 armor and hull damage.
+summary|option2|CAPITAL_SHIP|182	0	The full Seraph Hunting Routines damage bonus is reached after dealing 225000 armor and hull damage.
 summary|option2|CAPITAL_SHIP|183	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
 summary|option2|CAPITAL_SHIP|184	0	Each Borrowed Grace stack increases top speed, flux dissipation and weapon rate of fire by <good>1%</good>, and reduces weapon flux cost and damage taken by <good>1%</good>.
 summary|option2|CAPITAL_SHIP|185	1	<bad>20%</bad> reduced weapon and engine repair time.

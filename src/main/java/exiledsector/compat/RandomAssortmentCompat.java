@@ -1,18 +1,16 @@
 package exiledsector.compat;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.campaign.StarSystemAPI;
 import org.apache.log4j.Logger;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public final class RandomAssortmentCompat {
 
@@ -26,13 +24,6 @@ public final class RandomAssortmentCompat {
     static final String EXO_DATA_MEMORY_KEY = "$rat_exo_data";
     static final String EXO_DATA_CLASS = "assortment_of_things.exotech.ExoData";
 
-    static final String CATALYST_ENTITY_TYPE = "rat_abyss_primordial_activator";
-    static final String CATALYST_COMPLETED_TAG = "completed";
-    private static final long CATALYST_SEARCH_INTERVAL_NANOS = 10_000_000_000L;
-
-    private static WeakReference<SectorEntityToken> cachedCatalyst = new WeakReference<>(null);
-    private static WeakReference<SectorAPI> cachedCatalystSector = new WeakReference<>(null);
-    private static long lastCatalystSearchNanos;
     private static MethodHandle recoveredExoshipHandle;
     private static MethodHandle playerExoshipHandle;
     private static boolean exoshipLookupUnavailable;
@@ -65,45 +56,10 @@ public final class RandomAssortmentCompat {
         }
     }
 
-    public static boolean primordialCatalystActivated() {
-        SectorAPI sector = Global.getSector();
-        if (sector == null) {
-            return false;
-        }
-        SectorEntityToken catalyst = catalystIn(sector);
-        return catalyst != null && catalyst.hasTag(CATALYST_COMPLETED_TAG);
-    }
-
-    private static SectorEntityToken catalystIn(SectorAPI sector) {
-        SectorEntityToken cached = cachedCatalyst.get();
-        if (cached != null && cachedCatalystSector.get() == sector) {
-            return cached;
-        }
-        long now = System.nanoTime();
-        if (cachedCatalystSector.get() == sector && now - lastCatalystSearchNanos < CATALYST_SEARCH_INTERVAL_NANOS) {
-            return null;
-        }
-        lastCatalystSearchNanos = now;
-        cachedCatalystSector = new WeakReference<>(sector);
-        cachedCatalyst = new WeakReference<>(null);
-        for (StarSystemAPI system : sector.getStarSystems()) {
-            for (CustomCampaignEntityAPI entity : system.getCustomEntities()) {
-                if (CATALYST_ENTITY_TYPE.equals(entity.getCustomEntityType())) {
-                    cachedCatalyst = new WeakReference<>(entity);
-                    return entity;
-                }
-            }
-        }
-        return null;
-    }
-
     static void clearCachedLookups() {
         recoveredExoshipHandle = null;
         playerExoshipHandle = null;
         exoshipLookupUnavailable = false;
-        cachedCatalyst = new WeakReference<>(null);
-        cachedCatalystSector = new WeakReference<>(null);
-        lastCatalystSearchNanos = 0L;
     }
 
     static List<String> missingFeatures() {
@@ -113,7 +69,21 @@ public final class RandomAssortmentCompat {
         } catch (ReflectiveOperationException | LinkageError e) {
             missing.add("ExoData.getRecoveredExoship and getPlayerExoship, used to unlock the ExoTech beacon");
         }
+        if (!specExists(() -> Global.getSettings().getHullSpec(AbyssSingularity.GENESIS_HULL_ID))) {
+            missing.add("the Genesis-class hull " + AbyssSingularity.GENESIS_HULL_ID + ", used to unlock the Abyss when the Singularity is beaten");
+        }
+        if (!specExists(() -> Global.getSettings().getSkillSpec(AbyssSingularity.REQUIEM_SKILL_ID))) {
+            missing.add("the skill " + AbyssSingularity.REQUIEM_SKILL_ID + ", used to spot saves that already beat the Singularity");
+        }
         return missing;
+    }
+
+    private static boolean specExists(Supplier<Object> spec) {
+        try {
+            return spec.get() != null;
+        } catch (RuntimeException e) {
+            return false;
+        }
     }
 
     private static void resolveExoshipMethods() throws ReflectiveOperationException {

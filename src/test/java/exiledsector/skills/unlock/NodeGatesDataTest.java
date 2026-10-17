@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class NodeGatesDataTest {
 
-    private static final String ABYSS_GATE = "gate_primordial_catalyst";
+    private static final String ABYSS_GATE = "gate_singularity_defeated";
 
     @BeforeAll
     static void loadRealData() throws Exception {
@@ -38,8 +38,8 @@ class NodeGatesDataTest {
     }
 
     @Test
-    void theAbyssGateWaitsForThePrimordialCatalyst() {
-        assertEquals(List.of(UnlockConditionType.RAT_PRIMORDIAL_CATALYST),
+    void theAbyssGateWaitsForTheSingularityToBeDefeated() {
+        assertEquals(List.of(UnlockConditionType.RAT_SINGULARITY_DEFEATED),
                 NodeGates.all().get(ABYSS_GATE).stream().map(UnlockCondition::getType).toList());
     }
 

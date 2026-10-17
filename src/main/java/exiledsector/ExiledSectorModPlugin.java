@@ -6,7 +6,9 @@ import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.loading.Description;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.thoughtworks.xstream.XStream;
+import exiledsector.compat.AbyssSingularity;
 import exiledsector.compat.CompatChecks;
+import exiledsector.compat.RandomAssortmentCompat;
 import exiledsector.effects.NpcBonusScale;
 import exiledsector.effects.NpcFleetDialogListener;
 import exiledsector.effects.NpcFleetInflationListener;
@@ -219,6 +221,10 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         Global.getSector().addTransientListener(PlayerEngagementPipeline.create(socketLossListener, socketableLootListener));
         Global.getSector().getListenerManager().addListener(new SocketableSalvageListener(), true);
         Global.getSector().getListenerManager().addListener(new TechMiningSocketableListener(), true);
+        if (RandomAssortmentCompat.isModEnabled()) {
+            AbyssSingularity.checkSaveOnLoad(Global.getSector());
+            Global.getSector().addTransientListener(new AbyssSingularity.BattleListener());
+        }
         SocketTypeMigration.run();
         SocketCustody.reconcile();
         PlayerTreePower.logNpcScaling();
