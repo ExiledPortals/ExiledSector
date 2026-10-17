@@ -1425,7 +1425,7 @@
     "skillType.frozen_heart.description": "query. hull?. scanning. [HULL] collect, amass, gather, fuse, keep. 核心从未停歇。它所容纳的一切也是如此。",
     "skillType.crustacean_integration.description": "你来决定这些龙虾死得多快。",
     "skillType.wormhole.description": "分配此虫洞会自动分配与其配对的虫洞，无需额外消耗，从而连接技能树的两个分支。\n\n取消分配任意一端都会同时取消两端。\n\n按住Ctrl点击虫洞即可穿越。",
-    "skillType.exotech_beacon.description": "Exo-Tech派系为引导其外星舰跃迁引擎而留下的信标。分配它会让你的舰船与外星舰对接，无需额外消耗，并开启外星舰所承载的分支。\n\n外星舰从不停留：每30秒它就会跃迁到技能树中另一个精英节点的轨道上。\n\n取消分配信标也会解除与外星舰的对接。\n\n按住Ctrl点击信标，或直接点击外星舰（无论它在何处），即可前往外星舰。",
+    "skillType.exotech_beacon.description": "Exo-Tech派系为引导其外星舰跃迁引擎而留下的信标。分配此节点即可让你的舰船与外星舰对接，从而获得 Exo-Tech 的船体改装。\n\n按住Ctrl点击信标，或直接点击外星舰（无论它在何处），即可前往外星舰。",
     "skillType.exoship.description": "Exo-Tech派系最后一艘外星舰，在星区的各个星系之间跃迁。它所承载的分支随它一同移动。\n\n与其超空间导航信标一同分配。取消分配任意一方都会同时取消两者。\n\n按住Ctrl点击外星舰即可返回信标。",
     "skillType.exogrid.description": "在 Exo-Tech 的指导下，船员将相位线圈组件嫁接进舰船的能源网格，像 Exo-Tech 建造自家舰体那样把它与幅能网格融为一体。舰船的时间流速略快于常态，更难被探测，也更能抵御EMP，但这套混合网格的主动排散更慢，每个幅能排散口带来的收益也更少。",
     "skillType.coil_efficiency.description": "Exo-Tech 技术员教船员按他们自己的公差重新调校相位线圈。相位速度在更高幅能下仍能保持，并在相位状态下更快地排散幅能。",
