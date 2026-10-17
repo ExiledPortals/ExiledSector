@@ -260,7 +260,7 @@
     "stat.fighterEngagementRange": "战机交战范围",
     "effect.FIGHTER_FOCUS_FIRE_DAMAGE_PERCENT_PER_HIT": "本舰放出的战机每次命中敌舰都会为其留下标记，使该舰受到本舰战机的伤害提高<good>{value}%</good>。最后一次命中{reset}秒后标记清除。光束每持续命中一秒计为一次命中。",
     "effect.FIGHTER_FOCUS_FIRE_MAX_DAMAGE_PERCENT": "战机标记最多使所受伤害提高<good>{value}%</good>。",
-    "effect.BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT": "每{interval}秒，从本舰起飞且仍携带载荷的每架轰炸机有<bad>{value}%</bad>的几率引爆载荷，摧毁自身并伤害附近所有舰船，无论敌友。距本舰舰体{distance}单位以内的轰炸机不会引爆。",
+    "effect.BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT": "每{interval}秒，从本舰起飞且仍携带载荷的每架轰炸机有<bad>{value}%</bad>的几率一次性引爆所有已装填武器的一轮齐射，摧毁自身并伤害附近所有舰船，无论敌友。可自动补充弹药的武器仅在轰炸机仍携带其他弹药时，或当它们是轰炸机唯一的弹药时，才视为已装填。距本舰舰体{distance}单位以内的轰炸机不会引爆。",
     "stat.systemCharges": "舰船系统充能次数",
     "stat.zeroFluxSpeedBoost": "零幅能速度加成",
     "stat.topSpeedWhilePhased": "相位状态下的最高速度",

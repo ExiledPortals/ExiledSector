@@ -266,7 +266,7 @@
     "stat.fighterEngagementRange": "fighter engagement range",
     "effect.FIGHTER_FOCUS_FIRE_DAMAGE_PERCENT_PER_HIT": "Each hit by a fighter launched from this ship marks the enemy ship it hits, raising the damage that ship takes from this ship's fighters by <good>{value}%</good>. The mark clears {reset} seconds after the last hit. Each second of beam contact counts as one hit.",
     "effect.FIGHTER_FOCUS_FIRE_MAX_DAMAGE_PERCENT": "The fighter mark raises damage taken by up to <good>{value}%</good>.",
-    "effect.BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT": "Every {interval} seconds, each bomber launched from this ship that still carries its payload has a <bad>{value}%</bad> chance to detonate it, destroying itself and damaging every ship nearby, friend or foe. Bombers within {distance} units of this ship's hull never detonate.",
+    "effect.BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT": "Every {interval} seconds, each bomber launched from this ship that still carries any payload has a <bad>{value}%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Weapons that regenerate ammunition count as loaded only while the bomber still carries its other ordnance, or when they are all it carries. Bombers within {distance} units of this ship's hull never detonate.",
     "stat.systemCharges": "ship system charges",
     "stat.zeroFluxSpeedBoost": "zero-flux speed bonus",
     "stat.topSpeedWhilePhased": "top speed while phased",

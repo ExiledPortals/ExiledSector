@@ -286,12 +286,12 @@ effect|BEAM_WEAPON_TURN_RATE_PERCENT|12.5	0	<good>12.5%</good> increased beam we
 effect|BEAM_WEAPON_TURN_RATE_PERCENT|100.0	0	<good>100%</good> increased beam weapon turn rate.
 effect|BEAM_WEAPON_TURN_RATE_PERCENT|-10.0	0	<bad>10%</bad> reduced beam weapon turn rate.
 effect|BEAM_WEAPON_TURN_RATE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced beam weapon turn rate.
-effect|BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT|1.0	1	Every 3 seconds, each bomber launched from this ship that still carries its payload has a <bad>1%</bad> chance to detonate it, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 units of this ship's hull never detonate.
-effect|BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT|10.0	1	Every 3 seconds, each bomber launched from this ship that still carries its payload has a <bad>10%</bad> chance to detonate it, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 units of this ship's hull never detonate.
-effect|BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT|12.5	1	Every 3 seconds, each bomber launched from this ship that still carries its payload has a <bad>12.5%</bad> chance to detonate it, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 units of this ship's hull never detonate.
-effect|BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT|100.0	1	Every 3 seconds, each bomber launched from this ship that still carries its payload has a <bad>100%</bad> chance to detonate it, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 units of this ship's hull never detonate.
-effect|BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT|-10.0	1	Every 3 seconds, each bomber launched from this ship that still carries its payload has a <bad>-10%</bad> chance to detonate it, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 units of this ship's hull never detonate.
-effect|BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT|-12.5	1	Every 3 seconds, each bomber launched from this ship that still carries its payload has a <bad>-12.5%</bad> chance to detonate it, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 units of this ship's hull never detonate.
+effect|BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT|1.0	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>1%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Weapons that regenerate ammunition count as loaded only while the bomber still carries its other ordnance, or when they are all it carries. Bombers within 600 units of this ship's hull never detonate.
+effect|BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT|10.0	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>10%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Weapons that regenerate ammunition count as loaded only while the bomber still carries its other ordnance, or when they are all it carries. Bombers within 600 units of this ship's hull never detonate.
+effect|BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT|12.5	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>12.5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Weapons that regenerate ammunition count as loaded only while the bomber still carries its other ordnance, or when they are all it carries. Bombers within 600 units of this ship's hull never detonate.
+effect|BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT|100.0	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>100%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Weapons that regenerate ammunition count as loaded only while the bomber still carries its other ordnance, or when they are all it carries. Bombers within 600 units of this ship's hull never detonate.
+effect|BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT|-10.0	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>-10%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Weapons that regenerate ammunition count as loaded only while the bomber still carries its other ordnance, or when they are all it carries. Bombers within 600 units of this ship's hull never detonate.
+effect|BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT|-12.5	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>-12.5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Weapons that regenerate ammunition count as loaded only while the bomber still carries its other ordnance, or when they are all it carries. Bombers within 600 units of this ship's hull never detonate.
 effect|BOMBER_ROLE_ACCELERATION_PERCENT|1.0	0	<good>1%</good> increased acceleration of Bombers launched from this ship.
 effect|BOMBER_ROLE_ACCELERATION_PERCENT|10.0	0	<good>10%</good> increased acceleration of Bombers launched from this ship.
 effect|BOMBER_ROLE_ACCELERATION_PERCENT|12.5	0	<good>12.5%</good> increased acceleration of Bombers launched from this ship.
@@ -3425,23 +3425,23 @@ type|maneuverability_percent|CAPITAL_SHIP|0	0	<good>25%</good> increased maneuve
 type|martyrs_payload|null|0	0	Picking through the wrecks of Luddic Path carriers showed the crew how the Path tears the engine governors out of its bombers and arms their warheads the moment they leave the deck. Bombers fly faster and harder this way, and the faithful accept that some payloads go off before they ever reach the enemy.
 type|martyrs_payload|null|1	0	<good>50%</good> increased top speed of Bombers launched from this ship.
 type|martyrs_payload|null|2	0	<good>50%</good> increased acceleration of Bombers launched from this ship.
-type|martyrs_payload|null|3	1	Every 3 seconds, each bomber launched from this ship that still carries its payload has a <bad>5%</bad> chance to detonate it, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 units of this ship's hull never detonate.
+type|martyrs_payload|null|3	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Weapons that regenerate ammunition count as loaded only while the bomber still carries its other ordnance, or when they are all it carries. Bombers within 600 units of this ship's hull never detonate.
 type|martyrs_payload|FRIGATE|0	0	Picking through the wrecks of Luddic Path carriers showed the crew how the Path tears the engine governors out of its bombers and arms their warheads the moment they leave the deck. Bombers fly faster and harder this way, and the faithful accept that some payloads go off before they ever reach the enemy.
 type|martyrs_payload|FRIGATE|1	0	<good>50%</good> increased top speed of Bombers launched from this ship.
 type|martyrs_payload|FRIGATE|2	0	<good>50%</good> increased acceleration of Bombers launched from this ship.
-type|martyrs_payload|FRIGATE|3	1	Every 3 seconds, each bomber launched from this ship that still carries its payload has a <bad>5%</bad> chance to detonate it, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 units of this ship's hull never detonate.
+type|martyrs_payload|FRIGATE|3	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Weapons that regenerate ammunition count as loaded only while the bomber still carries its other ordnance, or when they are all it carries. Bombers within 600 units of this ship's hull never detonate.
 type|martyrs_payload|DESTROYER|0	0	Picking through the wrecks of Luddic Path carriers showed the crew how the Path tears the engine governors out of its bombers and arms their warheads the moment they leave the deck. Bombers fly faster and harder this way, and the faithful accept that some payloads go off before they ever reach the enemy.
 type|martyrs_payload|DESTROYER|1	0	<good>50%</good> increased top speed of Bombers launched from this ship.
 type|martyrs_payload|DESTROYER|2	0	<good>50%</good> increased acceleration of Bombers launched from this ship.
-type|martyrs_payload|DESTROYER|3	1	Every 3 seconds, each bomber launched from this ship that still carries its payload has a <bad>5%</bad> chance to detonate it, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 units of this ship's hull never detonate.
+type|martyrs_payload|DESTROYER|3	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Weapons that regenerate ammunition count as loaded only while the bomber still carries its other ordnance, or when they are all it carries. Bombers within 600 units of this ship's hull never detonate.
 type|martyrs_payload|CRUISER|0	0	Picking through the wrecks of Luddic Path carriers showed the crew how the Path tears the engine governors out of its bombers and arms their warheads the moment they leave the deck. Bombers fly faster and harder this way, and the faithful accept that some payloads go off before they ever reach the enemy.
 type|martyrs_payload|CRUISER|1	0	<good>50%</good> increased top speed of Bombers launched from this ship.
 type|martyrs_payload|CRUISER|2	0	<good>50%</good> increased acceleration of Bombers launched from this ship.
-type|martyrs_payload|CRUISER|3	1	Every 3 seconds, each bomber launched from this ship that still carries its payload has a <bad>5%</bad> chance to detonate it, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 units of this ship's hull never detonate.
+type|martyrs_payload|CRUISER|3	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Weapons that regenerate ammunition count as loaded only while the bomber still carries its other ordnance, or when they are all it carries. Bombers within 600 units of this ship's hull never detonate.
 type|martyrs_payload|CAPITAL_SHIP|0	0	Picking through the wrecks of Luddic Path carriers showed the crew how the Path tears the engine governors out of its bombers and arms their warheads the moment they leave the deck. Bombers fly faster and harder this way, and the faithful accept that some payloads go off before they ever reach the enemy.
 type|martyrs_payload|CAPITAL_SHIP|1	0	<good>50%</good> increased top speed of Bombers launched from this ship.
 type|martyrs_payload|CAPITAL_SHIP|2	0	<good>50%</good> increased acceleration of Bombers launched from this ship.
-type|martyrs_payload|CAPITAL_SHIP|3	1	Every 3 seconds, each bomber launched from this ship that still carries its payload has a <bad>5%</bad> chance to detonate it, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 units of this ship's hull never detonate.
+type|martyrs_payload|CAPITAL_SHIP|3	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Weapons that regenerate ammunition count as loaded only while the bomber still carries its other ordnance, or when they are all it carries. Bombers within 600 units of this ship's hull never detonate.
 type|militarized_subsystems|null|0	0	Removes the penalties of a civilian-grade hull.
 type|militarized_subsystems|null|1	0	Increases max burn level by <good>1</good>.
 type|militarized_subsystems|null|2	1	<good>100%</good> increased minimum crew required.
@@ -4557,7 +4557,7 @@ summary|option0|FRIGATE|131	0	<good>100%</good> increased target leading accurac
 summary|option0|FRIGATE|132	0	<good>5%</good> increased beam weapon range.
 summary|option0|FRIGATE|133	0	<good>50%</good> increased top speed of Bombers launched from this ship.
 summary|option0|FRIGATE|134	0	<good>50%</good> increased acceleration of Bombers launched from this ship.
-summary|option0|FRIGATE|135	1	Every 3 seconds, each bomber launched from this ship that still carries its payload has a <bad>5%</bad> chance to detonate it, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 units of this ship's hull never detonate.
+summary|option0|FRIGATE|135	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Weapons that regenerate ammunition count as loaded only while the bomber still carries its other ordnance, or when they are all it carries. Bombers within 600 units of this ship's hull never detonate.
 summary|option0|FRIGATE|136	0	Removes the penalties of a civilian-grade hull.
 summary|option0|FRIGATE|137	1	<good>100%</good> increased minimum crew required.
 summary|option0|FRIGATE|138	0	<good>24%</good> increased missile weapon damage.
@@ -4768,7 +4768,7 @@ summary|option0|DESTROYER|131	0	<good>100%</good> increased target leading accur
 summary|option0|DESTROYER|132	0	<good>5%</good> increased beam weapon range.
 summary|option0|DESTROYER|133	0	<good>50%</good> increased top speed of Bombers launched from this ship.
 summary|option0|DESTROYER|134	0	<good>50%</good> increased acceleration of Bombers launched from this ship.
-summary|option0|DESTROYER|135	1	Every 3 seconds, each bomber launched from this ship that still carries its payload has a <bad>5%</bad> chance to detonate it, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 units of this ship's hull never detonate.
+summary|option0|DESTROYER|135	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Weapons that regenerate ammunition count as loaded only while the bomber still carries its other ordnance, or when they are all it carries. Bombers within 600 units of this ship's hull never detonate.
 summary|option0|DESTROYER|136	0	Removes the penalties of a civilian-grade hull.
 summary|option0|DESTROYER|137	1	<good>100%</good> increased minimum crew required.
 summary|option0|DESTROYER|138	0	<good>24%</good> increased missile weapon damage.
@@ -4979,7 +4979,7 @@ summary|option0|CRUISER|131	0	<good>100%</good> increased target leading accurac
 summary|option0|CRUISER|132	0	<good>5%</good> increased beam weapon range.
 summary|option0|CRUISER|133	0	<good>50%</good> increased top speed of Bombers launched from this ship.
 summary|option0|CRUISER|134	0	<good>50%</good> increased acceleration of Bombers launched from this ship.
-summary|option0|CRUISER|135	1	Every 3 seconds, each bomber launched from this ship that still carries its payload has a <bad>5%</bad> chance to detonate it, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 units of this ship's hull never detonate.
+summary|option0|CRUISER|135	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Weapons that regenerate ammunition count as loaded only while the bomber still carries its other ordnance, or when they are all it carries. Bombers within 600 units of this ship's hull never detonate.
 summary|option0|CRUISER|136	0	Removes the penalties of a civilian-grade hull.
 summary|option0|CRUISER|137	1	<good>100%</good> increased minimum crew required.
 summary|option0|CRUISER|138	0	<good>24%</good> increased missile weapon damage.
@@ -5190,7 +5190,7 @@ summary|option0|CAPITAL_SHIP|131	0	<good>100%</good> increased target leading ac
 summary|option0|CAPITAL_SHIP|132	0	<good>5%</good> increased beam weapon range.
 summary|option0|CAPITAL_SHIP|133	0	<good>50%</good> increased top speed of Bombers launched from this ship.
 summary|option0|CAPITAL_SHIP|134	0	<good>50%</good> increased acceleration of Bombers launched from this ship.
-summary|option0|CAPITAL_SHIP|135	1	Every 3 seconds, each bomber launched from this ship that still carries its payload has a <bad>5%</bad> chance to detonate it, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 units of this ship's hull never detonate.
+summary|option0|CAPITAL_SHIP|135	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Weapons that regenerate ammunition count as loaded only while the bomber still carries its other ordnance, or when they are all it carries. Bombers within 600 units of this ship's hull never detonate.
 summary|option0|CAPITAL_SHIP|136	0	Removes the penalties of a civilian-grade hull.
 summary|option0|CAPITAL_SHIP|137	1	<good>100%</good> increased minimum crew required.
 summary|option0|CAPITAL_SHIP|138	0	<good>24%</good> increased missile weapon damage.
@@ -5401,7 +5401,7 @@ summary|option1|FRIGATE|131	0	<good>100%</good> increased target leading accurac
 summary|option1|FRIGATE|132	0	<good>5%</good> increased beam weapon range.
 summary|option1|FRIGATE|133	0	<good>50%</good> increased top speed of Bombers launched from this ship.
 summary|option1|FRIGATE|134	0	<good>50%</good> increased acceleration of Bombers launched from this ship.
-summary|option1|FRIGATE|135	1	Every 3 seconds, each bomber launched from this ship that still carries its payload has a <bad>5%</bad> chance to detonate it, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 units of this ship's hull never detonate.
+summary|option1|FRIGATE|135	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Weapons that regenerate ammunition count as loaded only while the bomber still carries its other ordnance, or when they are all it carries. Bombers within 600 units of this ship's hull never detonate.
 summary|option1|FRIGATE|136	0	Removes the penalties of a civilian-grade hull.
 summary|option1|FRIGATE|137	1	<good>100%</good> increased minimum crew required.
 summary|option1|FRIGATE|138	0	<good>24%</good> increased missile weapon damage.
@@ -5612,7 +5612,7 @@ summary|option1|DESTROYER|131	0	<good>100%</good> increased target leading accur
 summary|option1|DESTROYER|132	0	<good>5%</good> increased beam weapon range.
 summary|option1|DESTROYER|133	0	<good>50%</good> increased top speed of Bombers launched from this ship.
 summary|option1|DESTROYER|134	0	<good>50%</good> increased acceleration of Bombers launched from this ship.
-summary|option1|DESTROYER|135	1	Every 3 seconds, each bomber launched from this ship that still carries its payload has a <bad>5%</bad> chance to detonate it, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 units of this ship's hull never detonate.
+summary|option1|DESTROYER|135	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Weapons that regenerate ammunition count as loaded only while the bomber still carries its other ordnance, or when they are all it carries. Bombers within 600 units of this ship's hull never detonate.
 summary|option1|DESTROYER|136	0	Removes the penalties of a civilian-grade hull.
 summary|option1|DESTROYER|137	1	<good>100%</good> increased minimum crew required.
 summary|option1|DESTROYER|138	0	<good>24%</good> increased missile weapon damage.
@@ -5823,7 +5823,7 @@ summary|option1|CRUISER|131	0	<good>100%</good> increased target leading accurac
 summary|option1|CRUISER|132	0	<good>5%</good> increased beam weapon range.
 summary|option1|CRUISER|133	0	<good>50%</good> increased top speed of Bombers launched from this ship.
 summary|option1|CRUISER|134	0	<good>50%</good> increased acceleration of Bombers launched from this ship.
-summary|option1|CRUISER|135	1	Every 3 seconds, each bomber launched from this ship that still carries its payload has a <bad>5%</bad> chance to detonate it, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 units of this ship's hull never detonate.
+summary|option1|CRUISER|135	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Weapons that regenerate ammunition count as loaded only while the bomber still carries its other ordnance, or when they are all it carries. Bombers within 600 units of this ship's hull never detonate.
 summary|option1|CRUISER|136	0	Removes the penalties of a civilian-grade hull.
 summary|option1|CRUISER|137	1	<good>100%</good> increased minimum crew required.
 summary|option1|CRUISER|138	0	<good>24%</good> increased missile weapon damage.
@@ -6034,7 +6034,7 @@ summary|option1|CAPITAL_SHIP|131	0	<good>100%</good> increased target leading ac
 summary|option1|CAPITAL_SHIP|132	0	<good>5%</good> increased beam weapon range.
 summary|option1|CAPITAL_SHIP|133	0	<good>50%</good> increased top speed of Bombers launched from this ship.
 summary|option1|CAPITAL_SHIP|134	0	<good>50%</good> increased acceleration of Bombers launched from this ship.
-summary|option1|CAPITAL_SHIP|135	1	Every 3 seconds, each bomber launched from this ship that still carries its payload has a <bad>5%</bad> chance to detonate it, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 units of this ship's hull never detonate.
+summary|option1|CAPITAL_SHIP|135	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Weapons that regenerate ammunition count as loaded only while the bomber still carries its other ordnance, or when they are all it carries. Bombers within 600 units of this ship's hull never detonate.
 summary|option1|CAPITAL_SHIP|136	0	Removes the penalties of a civilian-grade hull.
 summary|option1|CAPITAL_SHIP|137	1	<good>100%</good> increased minimum crew required.
 summary|option1|CAPITAL_SHIP|138	0	<good>24%</good> increased missile weapon damage.
@@ -6245,7 +6245,7 @@ summary|option2|FRIGATE|131	0	<good>100%</good> increased target leading accurac
 summary|option2|FRIGATE|132	0	<good>5%</good> increased beam weapon range.
 summary|option2|FRIGATE|133	0	<good>50%</good> increased top speed of Bombers launched from this ship.
 summary|option2|FRIGATE|134	0	<good>50%</good> increased acceleration of Bombers launched from this ship.
-summary|option2|FRIGATE|135	1	Every 3 seconds, each bomber launched from this ship that still carries its payload has a <bad>5%</bad> chance to detonate it, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 units of this ship's hull never detonate.
+summary|option2|FRIGATE|135	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Weapons that regenerate ammunition count as loaded only while the bomber still carries its other ordnance, or when they are all it carries. Bombers within 600 units of this ship's hull never detonate.
 summary|option2|FRIGATE|136	0	Removes the penalties of a civilian-grade hull.
 summary|option2|FRIGATE|137	1	<good>100%</good> increased minimum crew required.
 summary|option2|FRIGATE|138	0	<good>24%</good> increased missile weapon damage.
@@ -6456,7 +6456,7 @@ summary|option2|DESTROYER|131	0	<good>100%</good> increased target leading accur
 summary|option2|DESTROYER|132	0	<good>5%</good> increased beam weapon range.
 summary|option2|DESTROYER|133	0	<good>50%</good> increased top speed of Bombers launched from this ship.
 summary|option2|DESTROYER|134	0	<good>50%</good> increased acceleration of Bombers launched from this ship.
-summary|option2|DESTROYER|135	1	Every 3 seconds, each bomber launched from this ship that still carries its payload has a <bad>5%</bad> chance to detonate it, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 units of this ship's hull never detonate.
+summary|option2|DESTROYER|135	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Weapons that regenerate ammunition count as loaded only while the bomber still carries its other ordnance, or when they are all it carries. Bombers within 600 units of this ship's hull never detonate.
 summary|option2|DESTROYER|136	0	Removes the penalties of a civilian-grade hull.
 summary|option2|DESTROYER|137	1	<good>100%</good> increased minimum crew required.
 summary|option2|DESTROYER|138	0	<good>24%</good> increased missile weapon damage.
@@ -6667,7 +6667,7 @@ summary|option2|CRUISER|131	0	<good>100%</good> increased target leading accurac
 summary|option2|CRUISER|132	0	<good>5%</good> increased beam weapon range.
 summary|option2|CRUISER|133	0	<good>50%</good> increased top speed of Bombers launched from this ship.
 summary|option2|CRUISER|134	0	<good>50%</good> increased acceleration of Bombers launched from this ship.
-summary|option2|CRUISER|135	1	Every 3 seconds, each bomber launched from this ship that still carries its payload has a <bad>5%</bad> chance to detonate it, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 units of this ship's hull never detonate.
+summary|option2|CRUISER|135	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Weapons that regenerate ammunition count as loaded only while the bomber still carries its other ordnance, or when they are all it carries. Bombers within 600 units of this ship's hull never detonate.
 summary|option2|CRUISER|136	0	Removes the penalties of a civilian-grade hull.
 summary|option2|CRUISER|137	1	<good>100%</good> increased minimum crew required.
 summary|option2|CRUISER|138	0	<good>24%</good> increased missile weapon damage.
@@ -6878,7 +6878,7 @@ summary|option2|CAPITAL_SHIP|131	0	<good>100%</good> increased target leading ac
 summary|option2|CAPITAL_SHIP|132	0	<good>5%</good> increased beam weapon range.
 summary|option2|CAPITAL_SHIP|133	0	<good>50%</good> increased top speed of Bombers launched from this ship.
 summary|option2|CAPITAL_SHIP|134	0	<good>50%</good> increased acceleration of Bombers launched from this ship.
-summary|option2|CAPITAL_SHIP|135	1	Every 3 seconds, each bomber launched from this ship that still carries its payload has a <bad>5%</bad> chance to detonate it, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 units of this ship's hull never detonate.
+summary|option2|CAPITAL_SHIP|135	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Weapons that regenerate ammunition count as loaded only while the bomber still carries its other ordnance, or when they are all it carries. Bombers within 600 units of this ship's hull never detonate.
 summary|option2|CAPITAL_SHIP|136	0	Removes the penalties of a civilian-grade hull.
 summary|option2|CAPITAL_SHIP|137	1	<good>100%</good> increased minimum crew required.
 summary|option2|CAPITAL_SHIP|138	0	<good>24%</good> increased missile weapon damage.
