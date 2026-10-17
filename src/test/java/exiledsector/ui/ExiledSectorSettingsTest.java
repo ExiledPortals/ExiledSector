@@ -9,6 +9,7 @@ import exiledsector.skills.npc.NpcTreeConfig;
 import exiledsector.skills.npc.NpcTreeSize;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.tags.AreaToggles;
+import exiledsector.socketables.HullUpgradesSetting;
 import exiledsector.ui.inspect.NpcInspectConfig;
 import exiledsector.ui.refit.RefitButtonConfig;
 import lunalib.lunaSettings.LunaSettings;
@@ -83,6 +84,12 @@ class ExiledSectorSettingsTest {
                 eq(ShipLevelConfig.XP_DIFFICULTY_STRENGTH_FIELD_ID), anyString(), anyString(), eq(1.0), eq(0.0), eq(5.0), eq("")));
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addDouble(eq("exiledSector"),
                 eq(ShipLevelConfig.XP_DIFFICULTY_MAX_MULTIPLIER_FIELD_ID), anyString(), anyString(), eq(6.0), eq(1.0), eq(20.0), eq("")));
+    }
+
+    @Test
+    void registersTheHullUpgradesToggleSwitchedOnByDefault() {
+        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addBoolean(eq("exiledSector"),
+                eq(HullUpgradesSetting.ENABLED_FIELD_ID), anyString(), anyString(), eq(true), eq("")));
     }
 
     @Test

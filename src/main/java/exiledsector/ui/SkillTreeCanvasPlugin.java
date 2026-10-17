@@ -13,6 +13,7 @@ import exiledsector.effects.ShipTreeSync;
 import exiledsector.skills.ExoshipNodes;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillType;
+import exiledsector.socketables.HullUpgradesSetting;
 import exiledsector.socketables.SocketCustody;
 import exiledsector.socketables.Socketable;
 import exiledsector.ui.decoration.AbyssDarknessRenderer;
@@ -364,7 +365,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     void shipCardClicked() {
-        if (fleetRenderer.hasShips() && mode().letsShipCardFollowFleet()) {
+        if (HullUpgradesSetting.enabled() && fleetRenderer.hasShips() && mode().letsShipCardFollowFleet()) {
             toggleFollowingFleet();
         }
     }

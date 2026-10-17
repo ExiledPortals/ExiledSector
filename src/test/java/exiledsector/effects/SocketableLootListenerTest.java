@@ -20,6 +20,7 @@ import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.npc.RealSkillData;
 import exiledsector.socketables.HullUpgradeData;
+import exiledsector.socketables.HullUpgradesSetting;
 import exiledsector.socketables.SocketableItemData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -162,6 +163,26 @@ class SocketableLootListenerTest {
         assertEquals(List.of(SocketableItemData.ITEM_ID + ":domain_subroutine_military|12", SocketableItemData.ITEM_ID + ":bridge_basic|3",
                         HullUpgradeData.ITEM_ID + ":CRUISER"),
                 items.getAllValues().stream().map(item -> item.getId() + ":" + item.getData()).toList());
+    }
+
+    @Test
+    void withHullUpgradesSwitchedOffAFlagshipDropsOnlyItsSubroutines() {
+        HullUpgradesSetting.setEnabledForTests(false);
+        try {
+            SocketableLootListener luckyListener = new SocketableLootListener(alwaysLucky());
+            BattleAPI battle = mock(BattleAPI.class);
+            luckyListener.holdLoot(PlayerEngagement.of(engagement(battle, List.of(cruiserFlagship("wrecked")), List.of()), 1f));
+            CargoAPI loot = mock(CargoAPI.class);
+
+            luckyListener.reportEncounterLootGenerated(context(battle), loot);
+
+            ArgumentCaptor<SpecialItemData> items = ArgumentCaptor.forClass(SpecialItemData.class);
+            verify(loot, Mockito.times(1)).addSpecial(items.capture(), Mockito.eq(1f));
+            assertEquals(List.of(SocketableItemData.ITEM_ID + ":domain_subroutine_military|12"),
+                    items.getAllValues().stream().map(item -> item.getId() + ":" + item.getData()).toList());
+        } finally {
+            HullUpgradesSetting.setEnabledForTests(HullUpgradesSetting.DEFAULT_ENABLED);
+        }
     }
 
     @Test
