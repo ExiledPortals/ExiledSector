@@ -3672,6 +3672,24 @@
 			]
 		},
 		{
+			"id": "wing_scramble",
+			"name": "Coalition Flight Doctrine",
+			"icon": "",
+			"tier": "KEYSTONE",
+			"effects": [
+				{
+					"effect": "WING_SCRAMBLE_COPIES",
+					"magnitude": 1
+				}
+			],
+			"description": "Every League member world sends its own carrier detachment to a joint fleet, and the League's flight doctrine makes them fly as one: a bomber from one world takes orders from a flight lead from another. Serving under a League commission, the crew learns to rewire this carrier's wing datalinks the same way, so every flight it launches carries a pilot from each of its bays.",
+			"todo": "Prototype: copies are spawned once when the carrier deploys. Afterwards a lost copy only comes back when its donor bay launches a spare native, which is routed to it; a lost slot whose donor bay is already at full headcount stays empty. Still to check: copies landing and rearming, the replacement rate sitting at its floor while wings stay under their normal size, and the churn of scrapped natives. Still to build: the scaling nerf and an icon.",
+			"tags": [
+				"fighter",
+				"req_fighter_bays"
+			]
+		},
+		{
 			"id": "gravitational_drag",
 			"name": "Candle's Grace Replica",
 			"icon": "graphics/icons/na_gravitational_drag.png",
