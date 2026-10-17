@@ -139,6 +139,16 @@
             <scope>system</scope>
             <systemPath>${libs.dir}/lw_Console.jar</systemPath>
         </dependency>
+        <!-- Compile-time only: GraphicsLib is an OPTIONAL integration, deliberately not listed as a
+             mod_info.json dependency. Only exiledsector.compat.GraphicsLibGlow imports it, and that class
+             is only loaded after GraphicsLibCompat confirms the mod and its shaders are enabled. -->
+        <dependency>
+            <groupId>org.dark</groupId>
+            <artifactId>graphicslib</artifactId>
+            <version>1.12.1</version>
+            <scope>system</scope>
+            <systemPath>${libs.dir}/Graphics.jar</systemPath>
+        </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-runtime</artifactId>

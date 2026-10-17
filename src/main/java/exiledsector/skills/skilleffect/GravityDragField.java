@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.BaseEveryFrameCombatPlugin;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
+import exiledsector.compat.CombatGlow;
 import exiledsector.compat.NightcrossCompat;
 import exiledsector.i18n.Translation;
 
@@ -25,10 +26,14 @@ final class GravityDragField extends BaseEveryFrameCombatPlugin {
     private static final String CUSTOM_DATA_KEY = "exiledSector_gravityDragField";
     private static final String STATUS_KEY = "exiledSector_gravityDragStatus";
     private static final float CHANGE_EPSILON = 0.0005f;
+    private static final float LENS_SIZE_SHARE = 2.5f;
+    private static final float LENS_MAX_INTENSITY_SHARE = 0.15f;
+    private static final float LENS_FADE_SECONDS = 0.5f;
 
     private final List<GravityDragListener> sources = new ArrayList<>();
     private final Map<ShipAPI, Float> appliedTimeMult = new IdentityHashMap<>();
     private final Map<ShipAPI, Float> combinedPercentByTarget = new IdentityHashMap<>();
+    private final Map<GravityDragListener, LensState> lenses = new IdentityHashMap<>();
     private float secondsSinceUpdate = UPDATE_INTERVAL_SECONDS;
 
     static void register(GravityDragListener source) {
@@ -64,13 +69,51 @@ final class GravityDragField extends BaseEveryFrameCombatPlugin {
             return;
         }
         showPlayerStatus(engine);
+        moveLenses();
         secondsSinceUpdate += amount;
         if (secondsSinceUpdate < UPDATE_INTERVAL_SECONDS) {
             return;
         }
         secondsSinceUpdate = 0f;
         sources.removeIf(source -> !engine.isEntityInPlay(source.source()) || !CombatQueries.isAliveNotHulk(source.source()));
+        refreshLenses();
         applyReductions(reductionsFrom(sources, (source, radius, filter) -> CombatQueries.shipsNear(source.getLocation(), radius, filter)));
+    }
+
+    private static final class LensState {
+        private final CombatGlow.Lens lens;
+        private float size;
+        private float intensity;
+
+        private LensState(CombatGlow.Lens lens) {
+            this.lens = lens;
+        }
+    }
+
+    private void refreshLenses() {
+        lenses.entrySet().removeIf(entry -> {
+            if (sources.contains(entry.getKey())) {
+                return false;
+            }
+            entry.getValue().lens.fadeOut(LENS_FADE_SECONDS);
+            return true;
+        });
+        for (GravityDragListener source : sources) {
+            ShipAPI ship = source.source();
+            float radius = ship.getCollisionRadius();
+            float strength = Math.min(1f, Math.max(0f, source.reductionPercentAtPointBlank() / MAX_TOTAL_REDUCTION_PERCENT));
+            LensState state = lenses.get(source);
+            if (state == null) {
+                state = new LensState(CombatGlow.lens(ship.getLocation(), radius * LENS_SIZE_SHARE, radius * LENS_MAX_INTENSITY_SHARE * strength));
+                lenses.put(source, state);
+            }
+            state.size = radius * LENS_SIZE_SHARE;
+            state.intensity = radius * LENS_MAX_INTENSITY_SHARE * strength;
+        }
+    }
+
+    private void moveLenses() {
+        lenses.forEach((source, state) -> state.lens.update(source.source().getLocation(), state.size, state.intensity));
     }
 
     private void showPlayerStatus(CombatEngineAPI engine) {

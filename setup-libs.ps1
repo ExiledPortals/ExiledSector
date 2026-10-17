@@ -28,6 +28,7 @@ $libJars = @{
     "MagicLib"         = @("MagicLib.jar", "MagicLib-Kotlin.jar")
     "LunaLib"          = @("LunaLib.jar", "libs\fuzzywuzzy-1.3.0.jar")
     "Console Commands" = @("lw_Console.jar")
+    "GraphicsLib"      = @("Graphics.jar")
 }
 
 foreach ($modName in $libJars.Keys) {

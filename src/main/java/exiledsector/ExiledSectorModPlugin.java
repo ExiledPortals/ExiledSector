@@ -8,6 +8,7 @@ import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.thoughtworks.xstream.XStream;
 import exiledsector.compat.AbyssSingularity;
 import exiledsector.compat.CompatChecks;
+import exiledsector.compat.GraphicsLibCompat;
 import exiledsector.compat.NightcrossCompat;
 import exiledsector.compat.NightcrossUnlocks;
 import exiledsector.compat.RandomAssortmentCompat;
@@ -103,6 +104,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         NodeGates.load();
         SocketableDrops.load();
         CompatChecks.logAtStartup();
+        GraphicsLibCompat.loadLightData();
         TexturePreloader.preloadAll(MOD_ID);
     }
 

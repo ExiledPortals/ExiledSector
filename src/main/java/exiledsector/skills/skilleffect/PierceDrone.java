@@ -9,8 +9,11 @@ import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.compat.CombatGlow;
 import org.lazywizard.lazylib.MathUtils;
 import org.lwjgl.util.vector.Vector2f;
+
+import java.awt.Color;
 
 final class PierceDrone extends SingleShotDrone {
 
@@ -18,6 +21,7 @@ final class PierceDrone extends SingleShotDrone {
     static final String RANGE_MATCH_MOD_ID = "exiledSector_pierceRange";
 
     private static final float MIN_TRAVEL_SPEED = 100f;
+    private static final Color EXIT_FALLBACK_COLOR = new Color(255, 200, 120);
 
     private final Vector2f localImpact = new Vector2f();
     private final Vector2f direction = new Vector2f();
@@ -109,6 +113,7 @@ final class PierceDrone extends SingleShotDrone {
         hitShip = null;
         crossing = false;
         fire();
+        CombatGlow.flash(origin(), null, shotColor(EXIT_FALLBACK_COLOR), EXIT_FLASH_SIZE, EXIT_FLASH_INTENSITY, EXIT_FLASH_SECONDS);
     }
 
     private float deviationAwayFrom(ShipAPI ship) {

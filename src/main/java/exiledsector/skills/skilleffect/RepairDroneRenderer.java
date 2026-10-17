@@ -7,6 +7,7 @@ import com.fs.starfarer.api.combat.CombatEngineLayers;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ViewportAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
+import exiledsector.compat.CombatGlow;
 import exiledsector.ui.util.SpriteCache;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -26,6 +27,8 @@ final class RepairDroneRenderer extends BaseCombatLayeredRenderingPlugin {
     private static final Color SPARK_COLOR = new Color(255, 200, 120);
     private static final float SPARK_SIZE = 10f;
     private static final float SPARK_SECONDS = 0.3f;
+    private static final float SPARK_LIGHT_SIZE = 50f;
+    private static final float SPARK_LIGHT_INTENSITY = 0.5f;
 
     private final RepairCoordinatorField field;
     private final Map<RepairCoordinatorListener, Swarm> swarms = new IdentityHashMap<>();
@@ -77,6 +80,7 @@ final class RepairDroneRenderer extends BaseCombatLayeredRenderingPlugin {
             if (anyWorking && workPoint != null && swarm.secondsSinceSpark >= SPARK_INTERVAL_SECONDS) {
                 swarm.secondsSinceSpark = 0f;
                 engine.addHitParticle(new Vector2f(workPoint), new Vector2f(), SPARK_SIZE, 1f, SPARK_SECONDS, SPARK_COLOR);
+                CombatGlow.flash(workPoint, null, SPARK_COLOR, SPARK_LIGHT_SIZE, SPARK_LIGHT_INTENSITY, SPARK_SECONDS);
             }
         }
     }

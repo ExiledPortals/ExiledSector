@@ -7,6 +7,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.loading.ProjectileSpecAPI;
+import exiledsector.compat.CombatGlow;
 import org.lazywizard.lazylib.MathUtils;
 import org.lazywizard.lazylib.VectorUtils;
 import org.lazywizard.lazylib.combat.AIUtils;
@@ -23,6 +24,7 @@ final class RefractionDrone extends SingleShotDrone {
     private static final float STREAK_FADE_SECONDS = 0.15f;
     private static final float DEFAULT_STREAK_WIDTH = 10f;
     private static final float MIN_STREAK_GAP = 1f;
+    private static final Color EXIT_FALLBACK_COLOR = new Color(150, 200, 255);
 
     private final Vector2f aimPoint = new Vector2f();
     private EnergyChainListener chainListener;
@@ -43,6 +45,7 @@ final class RefractionDrone extends SingleShotDrone {
         origin().set(exit.x + direction.x * CLEARANCE, exit.y + direction.y * CLEARANCE);
         fire();
         drawStreak(impactPoint);
+        CombatGlow.flash(origin(), null, shotColor(EXIT_FALLBACK_COLOR), EXIT_FLASH_SIZE, EXIT_FLASH_INTENSITY, EXIT_FLASH_SECONDS);
     }
 
     @Override

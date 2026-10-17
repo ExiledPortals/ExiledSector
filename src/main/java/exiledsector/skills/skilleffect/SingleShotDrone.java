@@ -10,8 +10,11 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
+import com.fs.starfarer.api.loading.ProjectileSpecAPI;
 import org.lazywizard.lazylib.MathUtils;
 import org.lwjgl.util.vector.Vector2f;
+
+import java.awt.Color;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -26,6 +29,10 @@ abstract class SingleShotDrone extends WeaponDroneShell implements DamageDealtMo
 
     static final float SHOT_SEARCH_MARGIN = 150f;
     static final float SHOT_SEARCH_FRAMES = 3f;
+
+    static final float EXIT_FLASH_SIZE = 70f;
+    static final float EXIT_FLASH_INTENSITY = 0.6f;
+    static final float EXIT_FLASH_SECONDS = 0.25f;
 
     private static final float RANGE_TOLERANCE = 1f;
 
@@ -74,6 +81,16 @@ abstract class SingleShotDrone extends WeaponDroneShell implements DamageDealtMo
 
     WeaponAPI weapon() {
         return droneWeapon;
+    }
+
+    Color shotColor(Color fallback) {
+        if (droneWeapon.getSpec().getProjectileSpec() instanceof ProjectileSpecAPI spec) {
+            Color glow = spec.getGlowColor() != null ? spec.getGlowColor() : spec.getCoreColor();
+            if (glow != null) {
+                return glow;
+            }
+        }
+        return fallback;
     }
 
     Vector2f origin() {

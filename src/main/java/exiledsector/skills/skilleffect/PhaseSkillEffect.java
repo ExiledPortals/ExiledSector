@@ -12,6 +12,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.skills.NeuralLinkScript;
 import com.fs.starfarer.api.util.FaderUtil;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.compat.CombatGlow;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.ShipFacts;
 import org.lwjgl.util.vector.Vector2f;
@@ -90,6 +91,12 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
     private static final class PhaseAnchorDiveListener implements HullDamageAboutToBeTakenListener, AdvanceableListener {
 
         private static final String DIVE_FLAG_KEY = "phaseAnchor_canDive";
+        private static final float VANISH_LIGHT_SIZE_SHARE = 4f;
+        private static final float VANISH_LIGHT_INTENSITY = 1f;
+        private static final float VANISH_LIGHT_SECONDS = 1f;
+        private static final float VANISH_RIPPLE_SIZE_SHARE = 3f;
+        private static final float VANISH_RIPPLE_INTENSITY_SHARE = 0.3f;
+        private static final float VANISH_RIPPLE_SECONDS = 0.8f;
 
         private final ShipAPI ownerShip;
         private final String modId;
@@ -170,6 +177,7 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
 
             if (diveFader.isIdle()) {
                 Global.getSoundPlayer().playSound("phase_anchor_vanish", 1f, 1f, ownerShip.getLocation(), ownerShip.getVelocity());
+                vanishGlow(effectColor);
             }
             diveFader.fadeOut();
             diveFader.advance(amount);
@@ -182,6 +190,13 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
             if (diveFader.isFadedOut()) {
                 ownerShip.getLocation().set(0f, -1000000f);
             }
+        }
+
+        private void vanishGlow(Color effectColor) {
+            float radius = ownerShip.getCollisionRadius();
+            CombatGlow.flash(ownerShip.getLocation(), null, effectColor, radius * VANISH_LIGHT_SIZE_SHARE, VANISH_LIGHT_INTENSITY, VANISH_LIGHT_SECONDS);
+            CombatGlow.ripple(ownerShip.getLocation(), new Vector2f(), radius * VANISH_RIPPLE_SIZE_SHARE, radius * VANISH_RIPPLE_INTENSITY_SHARE,
+                    VANISH_RIPPLE_SECONDS, true);
         }
     }
 }

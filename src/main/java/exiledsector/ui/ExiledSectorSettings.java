@@ -1,5 +1,6 @@
 package exiledsector.ui;
 
+import exiledsector.compat.CombatGlow;
 import exiledsector.compat.SalvageSiteCompat;
 import exiledsector.effects.NpcBonusScale;
 import exiledsector.socketables.SocketMaterials;
@@ -69,6 +70,11 @@ public final class ExiledSectorSettings {
         SettingsCreator.addBoolean(MOD_ID, SkillTreeSounds.ENABLED_FIELD_ID,
                 Translation.text("settings.sounds.enabled.name"), Translation.text("settings.sounds.enabled.tooltip"),
                 SkillTreeSounds.DEFAULT_ENABLED, MAIN_TAB);
+
+        SettingsCreator.addHeader(MOD_ID, "exiledSector_combatEffectsHeader", Translation.text("settings.combatEffects.header"), MAIN_TAB);
+        SettingsCreator.addBoolean(MOD_ID, CombatGlow.ENABLED_FIELD_ID,
+                Translation.text("settings.combatEffects.graphicsLib.name"), Translation.text("settings.combatEffects.graphicsLib.tooltip"),
+                CombatGlow.DEFAULT_ENABLED, MAIN_TAB);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_socketStorageHeader", Translation.text("settings.socketStorage.header"), MAIN_TAB);
         SettingsCreator.addBoolean(MOD_ID, SalvageSiteCompat.DROPS_FIELD_ID,

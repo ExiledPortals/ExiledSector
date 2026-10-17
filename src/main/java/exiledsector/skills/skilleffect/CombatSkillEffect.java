@@ -12,6 +12,7 @@ import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.HullDamageAboutToBeTakenListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
+import exiledsector.compat.CombatGlow;
 import exiledsector.compat.LostSectorCompat;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
@@ -266,6 +267,13 @@ public enum CombatSkillEffect implements BackedSkillEffect {
         private static final float MIN_RADIUS = 300f;
         private static final Color BLAST_COLOR = new Color(255, 200, 120, 40);
         private static final Color CORE_COLOR = new Color(255, 255, 255, 60);
+        private static final Color BLAST_LIGHT_COLOR = new Color(255, 200, 120);
+        private static final float BLAST_LIGHT_SIZE_SHARE = 1.5f;
+        private static final float BLAST_LIGHT_INTENSITY = 1.5f;
+        private static final float BLAST_LIGHT_SECONDS = 1.5f;
+        private static final float SHOCKWAVE_SIZE_SHARE = 1.2f;
+        private static final float SHOCKWAVE_INTENSITY_SHARE = 0.15f;
+        private static final float SHOCKWAVE_SECONDS = 1.2f;
 
         private boolean exploded;
 
@@ -306,6 +314,8 @@ public enum CombatSkillEffect implements BackedSkillEffect {
 
             engine.spawnExplosion(loc, new Vector2f(), BLAST_COLOR, radius, 1.2f);
             engine.spawnExplosion(loc, new Vector2f(), CORE_COLOR, radius * 0.5f, 0.6f);
+            CombatGlow.flash(loc, null, BLAST_LIGHT_COLOR, radius * BLAST_LIGHT_SIZE_SHARE, BLAST_LIGHT_INTENSITY, BLAST_LIGHT_SECONDS);
+            CombatGlow.ripple(loc, new Vector2f(), radius * SHOCKWAVE_SIZE_SHARE, radius * SHOCKWAVE_INTENSITY_SHARE, SHOCKWAVE_SECONDS, false);
         }
 
         private float fuelDamage() {

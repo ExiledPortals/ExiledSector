@@ -8,6 +8,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipEngineControllerAPI.ShipEngineAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
+import exiledsector.compat.CombatGlow;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
@@ -27,6 +28,16 @@ final class HeartlessStacks extends ShipCombatListener {
     static final int DEFAULT_MAX_STACKS = 5;
     private static final float ARC_THICKNESS = 12f;
     private static final Color ARC_FRINGE = new Color(120, 200, 255, 200);
+    private static final Color STACK_LIGHT_COLOR = new Color(120, 200, 255);
+    private static final float STACK_LIGHT_SIZE_SHARE = 3f;
+    private static final float STACK_LIGHT_INTENSITY = 0.8f;
+    private static final float STACK_LIGHT_SECONDS = 1.2f;
+    private static final float STACK_RIPPLE_SIZE_SHARE = 2f;
+    private static final float STACK_RIPPLE_INTENSITY_SHARE = 0.15f;
+    private static final float STACK_RIPPLE_SECONDS = 0.8f;
+    private static final float ARC_LIGHT_SIZE = 60f;
+    private static final float ARC_LIGHT_INTENSITY = 0.8f;
+    private static final float ARC_LIGHT_SECONDS = 0.3f;
     private static final String MOD_ID_PREFIX = "exiledSector_heartless_";
     private static final ScaledBonus MOBILITY_PENALTY = new ScaledBonus(percent(StatTarget.scaled(
             StatTarget.all(liveStat(MutableShipStatsAPI::getMaxSpeed), Maneuverability.target()), -1f),
@@ -57,6 +68,7 @@ final class HeartlessStacks extends ShipCombatListener {
             return;
         }
         stackCount++;
+        stackGlow();
         float armorPercentPerStack = magnitude(ARMOR_PERCENT_PER_STACK_KEY);
         float restorePercent = magnitude(ARMOR_RESTORE_PERCENT_KEY);
         if (armorPercentPerStack > 0f || restorePercent > 0f) {
@@ -68,6 +80,14 @@ final class HeartlessStacks extends ShipCombatListener {
             MOBILITY_PENALTY.apply(ownerShip.getMutableStats(), modId, stackCount);
         }
         radiationBurst(magnitude(RADIATION_EMP_KEY));
+    }
+
+    private void stackGlow() {
+        float radius = ownerShip.getCollisionRadius();
+        CombatGlow.flash(ownerShip.getLocation(), ownerShip, STACK_LIGHT_COLOR, radius * STACK_LIGHT_SIZE_SHARE, STACK_LIGHT_INTENSITY,
+                STACK_LIGHT_SECONDS);
+        CombatGlow.ripple(ownerShip.getLocation(), ownerShip.getVelocity(), radius * STACK_RIPPLE_SIZE_SHARE,
+                radius * STACK_RIPPLE_INTENSITY_SHARE, STACK_RIPPLE_SECONDS, false);
     }
 
     int maxStacks() {
@@ -119,5 +139,6 @@ final class HeartlessStacks extends ShipCombatListener {
         Vector2f target = new Vector2f(point);
         engine.applyDamage(ownerShip, target, 0f, DamageType.ENERGY, emp, true, false, ownerShip);
         engine.spawnEmpArcVisual(new Vector2f(ownerShip.getLocation()), ownerShip, target, ownerShip, ARC_THICKNESS, ARC_FRINGE, Color.WHITE);
+        CombatGlow.arc(ownerShip.getLocation(), target, STACK_LIGHT_COLOR, ARC_LIGHT_SIZE, ARC_LIGHT_INTENSITY, ARC_LIGHT_SECONDS);
     }
 }

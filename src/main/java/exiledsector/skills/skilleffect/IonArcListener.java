@@ -6,10 +6,12 @@ import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.DamagingProjectileAPI;
+import com.fs.starfarer.api.combat.EmpArcEntityAPI;
 import com.fs.starfarer.api.combat.FluxTrackerAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
+import exiledsector.compat.CombatGlow;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
@@ -25,6 +27,12 @@ final class IonArcListener extends ShipCombatListener implements DamageDealtModi
     private static final Color ARC_FRINGE = new Color(95, 98, 205, 255);
     private static final Color ARC_CORE = new Color(220, 225, 255, 255);
     private static final String ARC_SOUND = "tachyon_lance_emp_impact";
+    private static final float ARC_LIGHT_SIZE = 80f;
+    private static final float ARC_LIGHT_INTENSITY = 1f;
+    private static final float ARC_LIGHT_SECONDS = 0.35f;
+    private static final float IMPACT_LIGHT_SIZE = 120f;
+    private static final float IMPACT_LIGHT_INTENSITY = 0.8f;
+    private static final float IMPACT_LIGHT_SECONDS = 0.3f;
 
     private final Random random;
 
@@ -65,7 +73,12 @@ final class IonArcListener extends ShipCombatListener implements DamageDealtModi
         if (engine == null) {
             return;
         }
-        engine.spawnEmpArcPierceShields(ownerShip, new Vector2f(point), hitShip, hitShip, DamageType.ENERGY, shotDamage * ARC_DAMAGE_FRACTION,
-                shotDamage * ARC_EMP_FRACTION, ARC_RANGE, ARC_SOUND, ARC_THICKNESS, ARC_FRINGE, ARC_CORE);
+        EmpArcEntityAPI arc = engine.spawnEmpArcPierceShields(ownerShip, new Vector2f(point), hitShip, hitShip, DamageType.ENERGY,
+                shotDamage * ARC_DAMAGE_FRACTION, shotDamage * ARC_EMP_FRACTION, ARC_RANGE, ARC_SOUND, ARC_THICKNESS, ARC_FRINGE, ARC_CORE);
+        Vector2f arcEnd = arc == null ? null : arc.getTargetLocation();
+        if (arcEnd != null) {
+            CombatGlow.arc(point, arcEnd, ARC_FRINGE, ARC_LIGHT_SIZE, ARC_LIGHT_INTENSITY, ARC_LIGHT_SECONDS);
+            CombatGlow.flash(arcEnd, null, ARC_CORE, IMPACT_LIGHT_SIZE, IMPACT_LIGHT_INTENSITY, IMPACT_LIGHT_SECONDS);
+        }
     }
 }
