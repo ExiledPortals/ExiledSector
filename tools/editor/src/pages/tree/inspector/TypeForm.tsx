@@ -7,7 +7,7 @@ import { EffectSelect } from '../../../shared/EffectSelect.tsx';
 import { ImagePickButton } from '../../../shared/ImagePickButton.tsx';
 import { RowButtons } from '../../../shared/MoveButtons.tsx';
 import { TYPE_TAG_GROUPS } from '../model/tags.ts';
-import { HULL_SIZE_OPTIONS, tierOf, UNLOCK_CONDITION_LABELS, type SkillType, type UnlockCondition } from '../model/types.ts';
+import { HULL_SIZE_OPTIONS, PARAMETERLESS_UNLOCK_CONDITIONS, tierOf, UNLOCK_CONDITION_LABELS, type SkillType, type UnlockCondition } from '../model/types.ts';
 import { TagGroupsField } from './TagGroupsField.tsx';
 import type { TypeFormSection } from './typeFormSections.ts';
 
@@ -180,7 +180,7 @@ function HullSizeEffectRows({ type, onEdit, vocabulary, note }: Pick<TypeFormPro
 
 function UnlockConditionParameters({ condition, index, onEdit, vocabulary }: { condition: UnlockCondition; index: number; onEdit: TypeFormProps['onEdit']; vocabulary: Vocabulary }) {
   const edit = (change: (target: UnlockCondition) => void) => onEdit((draft) => change(draft.unlockConditions![index]));
-  if (condition.type === 'ratPlayerExoship' || condition.type === 'ratSingularityDefeated') {
+  if (PARAMETERLESS_UNLOCK_CONDITIONS.has(condition.type)) {
     return null;
   }
   if (condition.type === 'characterStat') {

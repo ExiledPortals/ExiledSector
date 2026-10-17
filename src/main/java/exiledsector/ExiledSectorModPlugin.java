@@ -8,6 +8,8 @@ import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.thoughtworks.xstream.XStream;
 import exiledsector.compat.AbyssSingularity;
 import exiledsector.compat.CompatChecks;
+import exiledsector.compat.NightcrossCompat;
+import exiledsector.compat.NightcrossUnlocks;
 import exiledsector.compat.RandomAssortmentCompat;
 import exiledsector.effects.NpcBonusScale;
 import exiledsector.effects.NpcFleetDialogListener;
@@ -224,6 +226,10 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         if (RandomAssortmentCompat.isModEnabled()) {
             AbyssSingularity.checkSaveOnLoad(Global.getSector());
             Global.getSector().addTransientListener(new AbyssSingularity.BattleListener());
+        }
+        if (NightcrossCompat.isModEnabled()) {
+            NightcrossUnlocks.checkSaveOnLoad(Global.getSector());
+            Global.getSector().getListenerManager().addListener(new NightcrossUnlocks.DiscoveryListener(), true);
         }
         SocketTypeMigration.run();
         SocketCustody.reconcile();

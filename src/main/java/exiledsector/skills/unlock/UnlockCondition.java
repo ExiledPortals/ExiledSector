@@ -39,6 +39,18 @@ public final class UnlockCondition {
         return new UnlockCondition(UnlockConditionType.RAT_SINGULARITY_DEFEATED, null, null, 0);
     }
 
+    public static UnlockCondition nightcrossPascalVisited() {
+        return new UnlockCondition(UnlockConditionType.NIGHTCROSS_PASCAL_VISITED, null, null, 0);
+    }
+
+    public static UnlockCondition nightcrossLunarFleetDefeated() {
+        return new UnlockCondition(UnlockConditionType.NIGHTCROSS_LUNAR_FLEET_DEFEATED, null, null, 0);
+    }
+
+    public static UnlockCondition nightcrossAncientPrototypeFound() {
+        return new UnlockCondition(UnlockConditionType.NIGHTCROSS_ANCIENT_PROTOTYPE_FOUND, null, null, 0);
+    }
+
     public UnlockConditionType getType() {
         return unlockType;
     }
