@@ -2,7 +2,7 @@ package exiledsector.ui;
 
 import exiledsector.ui.section.SectionLayout;
 import exiledsector.ui.refit.RefitScreenLayout;
-import exiledsector.ui.socket.SocketStoragePanel;
+import exiledsector.ui.socket.HullItemStoragePanel;
 
 record HullUpgradesLayout(float panelLeft, float panelWidth, float settledShipX, SectionsDisplay.SectionBounds sectionBounds) {
 
@@ -19,7 +19,7 @@ record HullUpgradesLayout(float panelLeft, float panelWidth, float settledShipX,
         float settledShipX = frameRight - SHIP_EDGE_MARGIN - Math.max(extent.halfWidth(), radius + SECTION_LABEL_OVERHANG);
         float leftColumnCentre = settledShipX - (extent.halfWidth() + SectionLayout.COLUMN_GAP + radius);
         float leftColumnEdge = leftColumnCentre - radius - SECTION_LABEL_OVERHANG;
-        float panelWidth = Math.max(SocketStoragePanel.COMPACT_WIDTH, Math.min(MAX_PANEL_WIDTH, leftColumnEdge - SECTION_BAND_MARGIN - panelLeft));
+        float panelWidth = Math.max(HullItemStoragePanel.COMPACT_WIDTH, Math.min(MAX_PANEL_WIDTH, leftColumnEdge - SECTION_BAND_MARGIN - panelLeft));
         float verticalReach = SectionsDisplay.VERTICAL_REACH;
         SectionsDisplay.SectionBounds bounds = new SectionsDisplay.SectionBounds(
                 panelLeft + panelWidth + SECTION_BAND_MARGIN + radius, frameRight - SECTION_BAND_MARGIN - radius,

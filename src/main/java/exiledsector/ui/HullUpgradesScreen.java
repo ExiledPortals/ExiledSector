@@ -21,7 +21,7 @@ import exiledsector.ui.refit.RefitScreenLayout;
 import exiledsector.ui.socket.HullUpgradePanel;
 import exiledsector.ui.socket.SocketPanelPlacement;
 import exiledsector.ui.socket.SocketPanelTab;
-import exiledsector.ui.socket.SocketStoragePanel;
+import exiledsector.ui.socket.HullItemStoragePanel;
 import exiledsector.ui.util.Fade;
 import lunalib.lunaRefit.BaseRefitButton;
 import org.lwjgl.input.Keyboard;
@@ -47,7 +47,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     private CustomPanelAPI hostPanel;
     private TreeAllocationSession treeSession;
     private SectionsDisplay sectionsDisplay;
-    private SocketStoragePanel storagePanel;
+    private HullItemStoragePanel storagePanel;
     private HullUpgradePanel upgradesPanel;
     private Map<String, FleetMemberAPI> ownedShips = Map.of();
     private HullItem placingHullItem;
@@ -138,7 +138,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     }
 
     private void openStorage(HullItemType kindFilter) {
-        storagePanel = SocketStoragePanel.open(hostPanel, placement(true), SocketCustody.shipNames(ownedShips), new SocketStoragePanel.Listener() {
+        storagePanel = HullItemStoragePanel.open(hostPanel, placement(true), SocketCustody.shipNames(ownedShips), new HullItemStoragePanel.Listener() {
             @Override
             public void selected(HullItem hullItem) {
                 chooseFromStorage(hullItem);
@@ -165,7 +165,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
         if (tab == SocketPanelTab.HULL_ITEMS && upgradesPanel != null) {
             showStorage(null);
         } else if (tab == SocketPanelTab.HULL_UPGRADES && storagePanel != null) {
-            SocketStoragePanel swapped = storagePanel;
+            HullItemStoragePanel swapped = storagePanel;
             forgetStorage();
             swapped.swapOut();
             openUpgrades(true);

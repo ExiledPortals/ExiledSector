@@ -17,11 +17,11 @@ public final class HullItemCrafting {
         return SocketCraftingCosts.cost(SocketCraftingCosts.COMMON_SUBROUTINE, DEFAULT_COMMON_SYNTHESIS_PARTS);
     }
 
-    public static int parts(SocketMaterials materials) {
+    public static int parts(CraftingMaterials materials) {
         return materials.count(HullItemDisassembly.PARTS_COMMODITY_ID);
     }
 
-    public static boolean synthesise(SocketCurrency currency, SocketMaterials materials) {
+    public static boolean synthesise(CraftingCurrency currency, CraftingMaterials materials) {
         if (!materials.take(HullItemDisassembly.PARTS_COMMODITY_ID, currency.partsCost())) {
             return false;
         }
@@ -29,7 +29,7 @@ public final class HullItemCrafting {
         return true;
     }
 
-    public static HullItem synthesiseCommon(SocketMaterials materials, HullItemStore store, Random random) {
+    public static HullItem synthesiseCommon(CraftingMaterials materials, HullItemStore store, Random random) {
         int partsCost = commonSynthesisParts();
         if (parts(materials) < partsCost) {
             return null;
@@ -48,7 +48,7 @@ public final class HullItemCrafting {
         return created;
     }
 
-    public static boolean canUse(SocketCurrency currency, HullItem hullItem, Predicate<HullItemDefinition> allowedUniques) {
+    public static boolean canUse(CraftingCurrency currency, HullItem hullItem, Predicate<HullItemDefinition> allowedUniques) {
         HullItemDefinition definition = hullItem == null ? null : hullItem.definition();
         if (definition == null) {
             return false;
@@ -60,7 +60,7 @@ public final class HullItemCrafting {
         };
     }
 
-    public static HullItem use(SocketCurrency currency, HullItem hullItem, SocketMaterials materials, HullItemStore store, Random random,
+    public static HullItem use(CraftingCurrency currency, HullItem hullItem, CraftingMaterials materials, HullItemStore store, Random random,
                                  Predicate<HullItemDefinition> allowedUniques) {
         if (materials.count(currency.commodityId()) < 1 || !canUse(currency, hullItem, allowedUniques)) {
             return null;

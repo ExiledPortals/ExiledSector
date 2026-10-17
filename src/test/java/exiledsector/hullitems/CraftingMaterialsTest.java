@@ -16,10 +16,10 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class SocketMaterialsTest {
+class CraftingMaterialsTest {
 
     private static final String PARTS = HullItemDisassembly.PARTS_COMMODITY_ID;
-    private static final String AUGMENTATION = SocketCurrency.AUGMENTATION.commodityId();
+    private static final String AUGMENTATION = CraftingCurrency.AUGMENTATION.commodityId();
 
     private static CargoAPI cargoHolding(String commodityId, float quantity) {
         CargoAPI cargo = mock(CargoAPI.class);
@@ -31,7 +31,7 @@ class SocketMaterialsTest {
     void storedAndCarriedMaterialsCountTogetherAndAreSpentFromStorageFirst() {
         CargoAPI cargo = cargoHolding(PARTS, 5f);
         Map<String, Integer> stored = new HashMap<>(Map.of(PARTS, 3));
-        SocketMaterials materials = new SocketMaterials(cargo, stored, true);
+        CraftingMaterials materials = new CraftingMaterials(cargo, stored, true);
 
         assertEquals(8, materials.count(PARTS));
         assertFalse(materials.take(PARTS, 9));
@@ -48,11 +48,11 @@ class SocketMaterialsTest {
         CargoAPI cargo = mock(CargoAPI.class);
         Map<String, Integer> stored = new HashMap<>();
 
-        new SocketMaterials(cargo, stored, true).add(AUGMENTATION, 2);
+        new CraftingMaterials(cargo, stored, true).add(AUGMENTATION, 2);
         assertEquals(Map.of(AUGMENTATION, 2), stored);
         verify(cargo, never()).addCommodity(anyString(), anyFloat());
 
-        new SocketMaterials(cargo, stored, false).add(AUGMENTATION, 1);
+        new CraftingMaterials(cargo, stored, false).add(AUGMENTATION, 1);
         assertEquals(Map.of(AUGMENTATION, 2), stored);
         verify(cargo).addCommodity(AUGMENTATION, 1f);
     }
@@ -63,7 +63,7 @@ class SocketMaterialsTest {
         when(cargo.getCommodityQuantity(AUGMENTATION)).thenReturn(2f);
         Map<String, Integer> stored = new HashMap<>(Map.of(PARTS, 5));
 
-        assertEquals(42, new SocketMaterials(cargo, stored, true).settle());
+        assertEquals(42, new CraftingMaterials(cargo, stored, true).settle());
 
         assertEquals(Map.of(PARTS, 45, AUGMENTATION, 2), stored);
         verify(cargo).removeCommodity(PARTS, 40f);
@@ -75,7 +75,7 @@ class SocketMaterialsTest {
         CargoAPI cargo = mock(CargoAPI.class);
         Map<String, Integer> stored = new HashMap<>(Map.of(PARTS, 12, AUGMENTATION, 1));
 
-        assertEquals(13, new SocketMaterials(cargo, stored, false).settle());
+        assertEquals(13, new CraftingMaterials(cargo, stored, false).settle());
 
         assertTrue(stored.isEmpty());
         verify(cargo).addCommodity(PARTS, 12f);
@@ -85,7 +85,7 @@ class SocketMaterialsTest {
     @Test
     void cargoOnlyMaterialsNeverTouchTheStore() {
         CargoAPI cargo = cargoHolding(PARTS, 3f);
-        SocketMaterials materials = SocketMaterials.cargoOnly(cargo);
+        CraftingMaterials materials = CraftingMaterials.cargoOnly(cargo);
 
         assertFalse(materials.isStoring());
         assertEquals(0, materials.settle());
@@ -94,7 +94,7 @@ class SocketMaterialsTest {
 
     @Test
     void thePartsAndAllThreeKernelsAreManaged() {
-        assertEquals(1 + SocketCurrency.values().length, SocketMaterials.commodityIds().size());
-        assertTrue(SocketMaterials.commodityIds().contains(PARTS));
+        assertEquals(1 + CraftingCurrency.values().length, CraftingMaterials.commodityIds().size());
+        assertTrue(CraftingMaterials.commodityIds().contains(PARTS));
     }
 }

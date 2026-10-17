@@ -47,7 +47,7 @@ public final class HullUpgradePanel extends HoloPanel {
                        HullUpgradeRules.UpgradeBlock upgradeBlock, List<SectionEntry> sections) {
     }
 
-    public static final float WIDTH = SocketStoragePanel.WIDTH;
+    public static final float WIDTH = HullItemStoragePanel.WIDTH;
     private static final int MIN_SECTION_COLUMNS = 3;
     private static final int MAX_SECTION_COLUMNS = 6;
     private static final float UPGRADE_TILE_SIZE = 64f;
@@ -288,8 +288,8 @@ public final class HullUpgradePanel extends HoloPanel {
 
     private static String stateText(SectionState state) {
         return switch (state) {
-            case UNLOCKED -> Translation.text("framework.sectionState.unlocked");
-            case AVAILABLE -> Translation.text("framework.sectionState.available");
+            case UNLOCKED -> Translation.text("framework.socketState.unlocked");
+            case AVAILABLE -> Translation.text("framework.socketState.available");
             case RESTRICTED, NO_POINTS -> null;
         };
     }

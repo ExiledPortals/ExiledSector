@@ -9,10 +9,10 @@ import exiledsector.hullitems.HullItemRarity;
 import java.util.Locale;
 import java.util.function.Function;
 
-public record SocketStorageRow(HullItem hullItem, int storeOrder, String name, HullItemRarity rarity, String searchText,
+public record HullItemStorageRow(HullItem hullItem, int storeOrder, String name, HullItemRarity rarity, String searchText,
                                String installedShipName) {
 
-    static SocketStorageRow of(HullItem hullItem, int storeOrder, Function<HullItem, String> installedShipLookup) {
+    static HullItemStorageRow of(HullItem hullItem, int storeOrder, Function<HullItem, String> installedShipLookup) {
         HullItemDefinition definition = hullItem.definition();
         HullItemName displayName = hullItem.displayName();
         StringBuilder searchBuilder = new StringBuilder(displayName.title());
@@ -25,7 +25,7 @@ public record SocketStorageRow(HullItem hullItem, int storeOrder, String name, H
         for (StyledText line : hullItem.tooltipLines()) {
             searchBuilder.append('\n').append(line.plain());
         }
-        return new SocketStorageRow(hullItem, storeOrder, displayName.title(), displayName.rarity(),
+        return new HullItemStorageRow(hullItem, storeOrder, displayName.title(), displayName.rarity(),
                 searchBuilder.toString().toLowerCase(Locale.ROOT), installedShipLookup.apply(hullItem));
     }
 

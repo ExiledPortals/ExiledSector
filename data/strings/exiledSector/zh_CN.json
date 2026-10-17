@@ -371,7 +371,7 @@
     "socket.type.shield_generator": "护盾发生器",
     "socket.type.phase_coil": "相位线圈",
     "socket.type.flight_deck": "飞行甲板",
-    "socketable.tooltip.primaryData": "主要数据",
+    "socketable.tooltip.primaryData": "附加属性",
     "hullItem.tooltip.implicit": "固有属性",
     "socketable.noun.subroutine": "子程序",
     "socketable.noun.bridge": "军官",

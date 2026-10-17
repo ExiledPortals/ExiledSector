@@ -15,7 +15,7 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.PlayerFleet;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
-import exiledsector.hullitems.SocketMaterials;
+import exiledsector.hullitems.CraftingMaterials;
 import exiledsector.hullitems.HullItemCrafting;
 import exiledsector.hullitems.HullItemDisassembly;
 import exiledsector.ui.SkillTreePanelStyle;
@@ -344,8 +344,8 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
         return element.getExternalScroller() != null ? element.getExternalScroller() : element;
     }
 
-    static SocketMaterials playerMaterials() {
-        return SocketMaterials.forPlayer(PlayerFleet.cargoOrNull());
+    static CraftingMaterials playerMaterials() {
+        return CraftingMaterials.forPlayer(PlayerFleet.cargoOrNull());
     }
 
     static void addPartsCount(TooltipMakerAPI element, float countRight) {

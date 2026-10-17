@@ -6,11 +6,11 @@ import exiledsector.hullitems.HullItemRarity;
 import java.util.EnumSet;
 import java.util.Set;
 
-public final class SocketStorageFilter {
+public final class HullItemStorageFilter {
 
     public enum Status {ALL, FREE, INSTALLED}
 
-    static final SocketStorageFilter SESSION = new SocketStorageFilter();
+    static final HullItemStorageFilter SESSION = new HullItemStorageFilter();
 
     Status status = Status.FREE;
     String query = "";

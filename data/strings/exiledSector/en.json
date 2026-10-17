@@ -377,7 +377,7 @@
     "socket.type.shield_generator": "Shield Generator",
     "socket.type.phase_coil": "Phase Coil",
     "socket.type.flight_deck": "Flight Deck",
-    "socketable.tooltip.primaryData": "Primary data",
+    "socketable.tooltip.primaryData": "Explicit",
     "hullItem.tooltip.implicit": "Implicit",
     "socketable.noun.subroutine": "subroutine",
     "socketable.noun.bridge": "officer",

@@ -211,7 +211,7 @@ class HullItemDropsTest {
     }
 
     private static boolean hasKernel(Map<String, Integer> roll) {
-        return java.util.Arrays.stream(SocketCurrency.values()).anyMatch(currency -> roll.containsKey(currency.commodityId()));
+        return java.util.Arrays.stream(CraftingCurrency.values()).anyMatch(currency -> roll.containsKey(currency.commodityId()));
     }
 
     @Test
@@ -233,8 +233,8 @@ class HullItemDropsTest {
 
         assertEquals(HullItemDrops.KERNEL_CHANCE_SHARE, kernels.size() / (double) TRIALS, 0.02);
         assertEquals(0.5 * HullItemDrops.KERNEL_CHANCE_SHARE, materialShare(materials("probe", 1f), HullItemDropsTest::hasKernel), 0.02);
-        assertEquals(0.6, materialShare(kernels, roll -> roll.containsKey(SocketCurrency.AUGMENTATION.commodityId())), 0.03);
-        assertEquals(0.1, materialShare(kernels, roll -> roll.containsKey(SocketCurrency.TRANSPOSITION.commodityId())), 0.02);
+        assertEquals(0.6, materialShare(kernels, roll -> roll.containsKey(CraftingCurrency.AUGMENTATION.commodityId())), 0.03);
+        assertEquals(0.1, materialShare(kernels, roll -> roll.containsKey(CraftingCurrency.TRANSPOSITION.commodityId())), 0.02);
     }
 
     @Test

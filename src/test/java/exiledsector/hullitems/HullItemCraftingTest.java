@@ -79,7 +79,7 @@ class HullItemCraftingTest {
             PoolEntry range = definition.poolEntry(effect.effectName());
             assertTrue(effect.magnitude() >= range.min() && effect.magnitude() <= range.max(), effect.effectName());
         }
-        assertFalse(HullItemCrafting.canUse(SocketCurrency.AUGMENTATION, hullItem, definitionAllowed -> true));
+        assertFalse(HullItemCrafting.canUse(CraftingCurrency.AUGMENTATION, hullItem, definitionAllowed -> true));
         assertNull(HullItemCrafting.augment(hullItem, random));
     }
 
@@ -98,10 +98,10 @@ class HullItemCraftingTest {
     void uniquesCannotBeAugmentedButCanBeRecalibratedAndTransposed() {
         HullItem unique = store.add(HullItemDefinitions.get("relic_a"), 5L);
 
-        assertFalse(HullItemCrafting.canUse(SocketCurrency.AUGMENTATION, unique, definition -> true));
-        assertTrue(HullItemCrafting.canUse(SocketCurrency.RECALIBRATION, unique, definition -> true));
-        assertTrue(HullItemCrafting.canUse(SocketCurrency.TRANSPOSITION, unique, definition -> true));
-        assertFalse(HullItemCrafting.canUse(SocketCurrency.TRANSPOSITION, common(), definition -> true));
+        assertFalse(HullItemCrafting.canUse(CraftingCurrency.AUGMENTATION, unique, definition -> true));
+        assertTrue(HullItemCrafting.canUse(CraftingCurrency.RECALIBRATION, unique, definition -> true));
+        assertTrue(HullItemCrafting.canUse(CraftingCurrency.TRANSPOSITION, unique, definition -> true));
+        assertFalse(HullItemCrafting.canUse(CraftingCurrency.TRANSPOSITION, common(), definition -> true));
     }
 
     @Test
@@ -143,10 +143,10 @@ class HullItemCraftingTest {
         HullItem fixed = store.add(new HullItemData("fixed", 1L,
                 List.of(new RolledEffect("HULL_MULT", 1f), new RolledEffect("ARMOR_PERCENT", 2.5f)), null));
 
-        assertTrue(HullItemCrafting.canUse(SocketCurrency.RECALIBRATION, decimal, definition -> true));
-        assertFalse(HullItemCrafting.canUse(SocketCurrency.RECALIBRATION, fixed, definition -> true));
-        owns(SocketCurrency.RECALIBRATION.commodityId(), 1f);
-        assertNull(HullItemCrafting.use(SocketCurrency.RECALIBRATION, fixed, SocketMaterials.cargoOnly(cargo), store, new Random(1L), definition -> true));
+        assertTrue(HullItemCrafting.canUse(CraftingCurrency.RECALIBRATION, decimal, definition -> true));
+        assertFalse(HullItemCrafting.canUse(CraftingCurrency.RECALIBRATION, fixed, definition -> true));
+        owns(CraftingCurrency.RECALIBRATION.commodityId(), 1f);
+        assertNull(HullItemCrafting.use(CraftingCurrency.RECALIBRATION, fixed, CraftingMaterials.cargoOnly(cargo), store, new Random(1L), definition -> true));
         verify(cargo, never()).removeCommodity(anyString(), anyFloat());
     }
 
@@ -169,7 +169,7 @@ class HullItemCraftingTest {
     void transposingNeedsAnotherAllowedUnique() {
         HullItem unique = store.add(HullItemDefinitions.get("relic_a"), 5L);
 
-        assertFalse(HullItemCrafting.canUse(SocketCurrency.TRANSPOSITION, unique, definition -> !definition.id().equals("relic_b")));
+        assertFalse(HullItemCrafting.canUse(CraftingCurrency.TRANSPOSITION, unique, definition -> !definition.id().equals("relic_b")));
         assertNull(HullItemCrafting.transpose(store, unique, new Random(2L), definition -> false));
     }
 
@@ -177,7 +177,7 @@ class HullItemCraftingTest {
     void synthesisingACommonSpendsPartsAndStoresAOnePrefixOneSuffixSubroutine() {
         owns(PARTS, 12f);
 
-        HullItem created = HullItemCrafting.synthesiseCommon(SocketMaterials.cargoOnly(cargo), store, new Random(4L));
+        HullItem created = HullItemCrafting.synthesiseCommon(CraftingMaterials.cargoOnly(cargo), store, new Random(4L));
 
         assertNotNull(created);
         assertEquals(HullItemRarity.COMMON, created.rarity());
@@ -192,8 +192,8 @@ class HullItemCraftingTest {
     void synthesisNeedsEnoughParts() {
         owns(PARTS, 2f);
 
-        assertNull(HullItemCrafting.synthesiseCommon(SocketMaterials.cargoOnly(cargo), store, new Random(4L)));
-        assertFalse(HullItemCrafting.synthesise(SocketCurrency.AUGMENTATION, SocketMaterials.cargoOnly(cargo)));
+        assertNull(HullItemCrafting.synthesiseCommon(CraftingMaterials.cargoOnly(cargo), store, new Random(4L)));
+        assertFalse(HullItemCrafting.synthesise(CraftingCurrency.AUGMENTATION, CraftingMaterials.cargoOnly(cargo)));
         assertTrue(store.owned().isEmpty());
         verify(cargo, never()).removeCommodity(anyString(), anyFloat());
         verify(cargo, never()).addCommodity(anyString(), anyFloat());
@@ -203,42 +203,42 @@ class HullItemCraftingTest {
     void synthesisingACurrencyTradesItsPartsCostForOneCurrency() {
         owns(PARTS, 10f);
 
-        assertTrue(HullItemCrafting.synthesise(SocketCurrency.AUGMENTATION, SocketMaterials.cargoOnly(cargo)));
+        assertTrue(HullItemCrafting.synthesise(CraftingCurrency.AUGMENTATION, CraftingMaterials.cargoOnly(cargo)));
 
-        verify(cargo).removeCommodity(PARTS, SocketCurrency.AUGMENTATION.partsCost());
-        verify(cargo).addCommodity(SocketCurrency.AUGMENTATION.commodityId(), 1);
+        verify(cargo).removeCommodity(PARTS, CraftingCurrency.AUGMENTATION.partsCost());
+        verify(cargo).addCommodity(CraftingCurrency.AUGMENTATION.commodityId(), 1);
     }
 
     @Test
     void usingACurrencySpendsOneOnlyWhenItWorks() {
         HullItem hullItem = common();
-        String recalibration = SocketCurrency.RECALIBRATION.commodityId();
+        String recalibration = CraftingCurrency.RECALIBRATION.commodityId();
         owns(recalibration, 0f);
-        assertNull(HullItemCrafting.use(SocketCurrency.RECALIBRATION, hullItem, SocketMaterials.cargoOnly(cargo), store, new Random(1L), definition -> true));
+        assertNull(HullItemCrafting.use(CraftingCurrency.RECALIBRATION, hullItem, CraftingMaterials.cargoOnly(cargo), store, new Random(1L), definition -> true));
         verify(cargo, never()).removeCommodity(anyString(), anyFloat());
 
         owns(recalibration, 2f);
-        assertSame(hullItem, HullItemCrafting.use(SocketCurrency.RECALIBRATION, hullItem, SocketMaterials.cargoOnly(cargo), store, new Random(1L),
+        assertSame(hullItem, HullItemCrafting.use(CraftingCurrency.RECALIBRATION, hullItem, CraftingMaterials.cargoOnly(cargo), store, new Random(1L),
                 definition -> true));
         verify(cargo).removeCommodity(recalibration, 1);
 
-        owns(SocketCurrency.TRANSPOSITION.commodityId(), 1f);
-        assertNull(HullItemCrafting.use(SocketCurrency.TRANSPOSITION, hullItem, SocketMaterials.cargoOnly(cargo), store, new Random(1L), definition -> true));
+        owns(CraftingCurrency.TRANSPOSITION.commodityId(), 1f);
+        assertNull(HullItemCrafting.use(CraftingCurrency.TRANSPOSITION, hullItem, CraftingMaterials.cargoOnly(cargo), store, new Random(1L), definition -> true));
         assertNotEquals(0, hullItem.effects().size());
     }
 
     @Test
     void costsComeFromTheCraftingCsvAndFallBackToTheDefaults() throws Exception {
         assertEquals(10, HullItemCrafting.commonSynthesisParts());
-        assertEquals(100, SocketCurrency.TRANSPOSITION.partsCost());
+        assertEquals(100, CraftingCurrency.TRANSPOSITION.partsCost());
 
         SocketCraftingCosts.register(new JSONArray()
                 .put(new JSONObject().put("item", SocketCraftingCosts.COMMON_SUBROUTINE).put("partsCost", "7"))
-                .put(new JSONObject().put("item", SocketCurrency.TRANSPOSITION.commodityId()).put("partsCost", "55"))
-                .put(new JSONObject().put("item", SocketCurrency.RECALIBRATION.commodityId()).put("partsCost", "lots")));
+                .put(new JSONObject().put("item", CraftingCurrency.TRANSPOSITION.commodityId()).put("partsCost", "55"))
+                .put(new JSONObject().put("item", CraftingCurrency.RECALIBRATION.commodityId()).put("partsCost", "lots")));
 
         assertEquals(7, HullItemCrafting.commonSynthesisParts());
-        assertEquals(55, SocketCurrency.TRANSPOSITION.partsCost());
-        assertEquals(20, SocketCurrency.RECALIBRATION.partsCost());
+        assertEquals(55, CraftingCurrency.TRANSPOSITION.partsCost());
+        assertEquals(20, CraftingCurrency.RECALIBRATION.partsCost());
     }
 }

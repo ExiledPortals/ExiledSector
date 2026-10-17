@@ -17,7 +17,7 @@ import exiledsector.ui.node.NodeSearch;
 import exiledsector.ui.node.TreeAllocationSession;
 import exiledsector.ui.socket.SocketPanelPlacement;
 import exiledsector.ui.socket.SocketPanelTab;
-import exiledsector.ui.socket.SocketStoragePanel;
+import exiledsector.ui.socket.HullItemStoragePanel;
 
 import java.util.Map;
 import java.util.function.Consumer;
@@ -75,7 +75,7 @@ final class SocketPlacement {
     private final NodeSearch nodeSearch;
     private final SkillTreeSearchBar searchBar;
     private final SkillTreeUiButton storageButton = new SkillTreeUiButton("");
-    private SocketStoragePanel storagePanel;
+    private HullItemStoragePanel storagePanel;
     private HullItem placingHullItem;
     private SkillNode targetSocket;
     private ShipSection targetSection;
@@ -171,7 +171,7 @@ final class SocketPlacement {
         if (storagePanel == null || !hullUpgradesTab.available()) {
             return;
         }
-        SocketStoragePanel swapped = storagePanel;
+        HullItemStoragePanel swapped = storagePanel;
         forgetStorage();
         swapped.swapOut();
         hullUpgradesTab.swapIn();
@@ -338,9 +338,9 @@ final class SocketPlacement {
         searchBar.unfocus();
         ownedShips = SocketCustody.reconcile();
         storageRevision = treeSession.statsRevision();
-        SocketPanelPlacement placement = new SocketPanelPlacement(ChromeMetrics.EDGE_MARGIN, PANEL_TOP, SocketStoragePanel.WIDTH,
+        SocketPanelPlacement placement = new SocketPanelPlacement(ChromeMetrics.EDGE_MARGIN, PANEL_TOP, HullItemStoragePanel.WIDTH,
                 sidePanelHeight(canvasPosition, shipCard), swapping);
-        storagePanel = SocketStoragePanel.open(hostPanel, placement, SocketCustody.shipNames(ownedShips), new SocketStoragePanel.Listener() {
+        storagePanel = HullItemStoragePanel.open(hostPanel, placement, SocketCustody.shipNames(ownedShips), new HullItemStoragePanel.Listener() {
                     @Override
                     public void selected(HullItem hullItem) {
                         if (hullItem == null) {

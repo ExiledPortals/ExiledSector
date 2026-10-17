@@ -50,7 +50,7 @@ import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.skills.tags.AreaToggles;
 import exiledsector.skills.unlock.NodeGates;
 import exiledsector.hullitems.SocketCraftingCosts;
-import exiledsector.hullitems.SocketCurrency;
+import exiledsector.hullitems.CraftingCurrency;
 import exiledsector.hullitems.HullItemImplicits;
 import exiledsector.hullitems.HullItemDefinitions;
 import exiledsector.hullitems.HullItemDisassembly;
@@ -135,7 +135,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         I18n.forGameText(() -> {
             LOCALISED_HULLMODS.forEach(ExiledSectorModPlugin::localise);
             localiseCommodity(HullItemDisassembly.PARTS_COMMODITY_ID);
-            for (SocketCurrency currency : SocketCurrency.values()) {
+            for (CraftingCurrency currency : CraftingCurrency.values()) {
                 localiseCommodity(currency.commodityId());
             }
         });

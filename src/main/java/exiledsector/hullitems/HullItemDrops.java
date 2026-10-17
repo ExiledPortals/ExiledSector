@@ -156,8 +156,8 @@ public final class HullItemDrops {
         return wholePartCount + (random.nextFloat() < exactParts - wholePartCount ? 1 : 0);
     }
 
-    static SocketCurrency pickKernel(Random random) {
-        return WeightedPick.pick(List.of(SocketCurrency.values()), SocketCurrency::dropWeight, random);
+    static CraftingCurrency pickKernel(Random random) {
+        return WeightedPick.pick(List.of(CraftingCurrency.values()), CraftingCurrency::dropWeight, random);
     }
 
     public static HullItemDefinition pickBasic(Random random) {

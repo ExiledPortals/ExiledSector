@@ -5,7 +5,7 @@ import exiledsector.compat.CombatGlow;
 import exiledsector.compat.SalvageSiteCompat;
 import exiledsector.effects.NpcBonusScale;
 import exiledsector.hullitems.HullUpgradesSetting;
-import exiledsector.hullitems.SocketMaterials;
+import exiledsector.hullitems.CraftingMaterials;
 import exiledsector.hullitems.HullItemDrops;
 import exiledsector.hullitems.HullItemRoller;
 import exiledsector.i18n.I18n;
@@ -85,9 +85,9 @@ public final class ExiledSectorSettings {
         SettingsCreator.addInt(MOD_ID, HullItemDrops.BATTLE_PARTS_FIELD_ID,
                 Translation.text("settings.socketStorage.battleParts.name"), Translation.text("settings.socketStorage.battleParts.tooltip"),
                 HullItemDrops.DEFAULT_BATTLE_PARTS_PER_100_DP, 0, HullItemDrops.MAX_BATTLE_PARTS_PER_100_DP, MAIN_TAB);
-        SettingsCreator.addBoolean(MOD_ID, SocketMaterials.STORE_FIELD_ID,
+        SettingsCreator.addBoolean(MOD_ID, CraftingMaterials.STORE_FIELD_ID,
                 Translation.text("settings.socketStorage.storeMaterials.name"), Translation.text("settings.socketStorage.storeMaterials.tooltip"),
-                SocketMaterials.DEFAULT_STORE, MAIN_TAB);
+                CraftingMaterials.DEFAULT_STORE, MAIN_TAB);
         SettingsCreator.addBoolean(MOD_ID, HullItemRoller.AVERAGE_ROLLS_FIELD_ID,
                 Translation.text("settings.socketStorage.averageRolls.name"), Translation.text("settings.socketStorage.averageRolls.tooltip"),
                 HullItemRoller.DEFAULT_AVERAGE_ROLLS, MAIN_TAB);

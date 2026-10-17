@@ -2,7 +2,7 @@ package exiledsector.ui;
 
 import exiledsector.ui.section.SectionLayout;
 import exiledsector.ui.refit.RefitScreenLayout;
-import exiledsector.ui.socket.SocketStoragePanel;
+import exiledsector.ui.socket.HullItemStoragePanel;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -38,7 +38,7 @@ class HullUpgradesScreenLayoutTest {
         float frameRight = WIDE_FRAME.frameX() + WIDE_FRAME.frameWidth();
 
         assertEquals(frameRight - HullUpgradesLayout.SHIP_EDGE_MARGIN - 160f, screenLayout.settledShipX(), 0.001f);
-        assertTrue(screenLayout.panelWidth() > SocketStoragePanel.COMPACT_WIDTH, "a wide frame widens the panel: " + screenLayout.panelWidth());
+        assertTrue(screenLayout.panelWidth() > HullItemStoragePanel.COMPACT_WIDTH, "a wide frame widens the panel: " + screenLayout.panelWidth());
         float leftSocketX = SectionLayout.sectionX(new SectionLayout.Placement(SectionLayout.Side.LEFT, 0, 1),
                 screenLayout.settledShipX(), capital);
         assertEquals(leftSocketX, screenLayout.sectionBounds().clampX(leftSocketX), 0.001f, "the left column is not pushed by the panel");
@@ -56,7 +56,7 @@ class HullUpgradesScreenLayoutTest {
         HullUpgradesLayout screenLayout = HullUpgradesLayout.of(NARROW_FRAME, new SectionLayout.ShipExtent(200f, 250f));
         SectionsDisplay.SectionBounds bounds = screenLayout.sectionBounds();
 
-        assertEquals(SocketStoragePanel.COMPACT_WIDTH, screenLayout.panelWidth(), 0.001f);
+        assertEquals(HullItemStoragePanel.COMPACT_WIDTH, screenLayout.panelWidth(), 0.001f);
         assertTrue(bounds.minCentreX() <= bounds.maxCentreX(), "band " + bounds.minCentreX() + ".." + bounds.maxCentreX());
         assertTrue(bounds.minCentreY() < bounds.maxCentreY());
     }

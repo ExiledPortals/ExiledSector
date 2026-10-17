@@ -15,7 +15,7 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.hullitems.SocketCustody;
-import exiledsector.hullitems.SocketMaterials;
+import exiledsector.hullitems.CraftingMaterials;
 import exiledsector.hullitems.HullItemType;
 import exiledsector.hullitems.HullItem;
 import exiledsector.hullitems.HullItemDisassembly;
@@ -34,7 +34,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public final class SocketStoragePanel extends HoloPanel {
+public final class HullItemStoragePanel extends HoloPanel {
 
     public interface Listener {
 
@@ -69,7 +69,7 @@ public final class SocketStoragePanel extends HoloPanel {
 
     private enum Control {CLOSE, WORKBENCH, DISASSEMBLY_MODE, CONFIRM_DISASSEMBLE, CANCEL_DISASSEMBLE}
 
-    private record StatusChip(SocketStorageFilter.Status status) {
+    private record StatusChip(HullItemStorageFilter.Status status) {
     }
 
     private record RarityChip(HullItemRarity rarity) {
@@ -90,7 +90,7 @@ public final class SocketStoragePanel extends HoloPanel {
     }
 
     private final Listener storageListener;
-    private final SocketStorageFilter storageFilter = SocketStorageFilter.SESSION;
+    private final HullItemStorageFilter storageFilter = HullItemStorageFilter.SESSION;
 
     private Function<HullItem, String> installedShipLookup;
     private SocketWorkbenchPanel workbenchPanel;
@@ -106,7 +106,7 @@ public final class SocketStoragePanel extends HoloPanel {
     private TextFieldAPI searchField;
     private String typedQuery;
     private float searchDelay;
-    private List<SocketStorageRow> storageRows = List.of();
+    private List<HullItemStorageRow> storageRows = List.of();
     private HullItem selectedHullItem;
     private String placingHint;
     private boolean targetingSocket;
@@ -118,7 +118,7 @@ public final class SocketStoragePanel extends HoloPanel {
     private String disassembledNotice;
     private HullItemType kindFilter;
 
-    private SocketStoragePanel(CustomPanelAPI hostPanel, Function<HullItem, String> installedShipLookup, Listener storageListener,
+    private HullItemStoragePanel(CustomPanelAPI hostPanel, Function<HullItem, String> installedShipLookup, Listener storageListener,
                                HullItemType kindFilter) {
         super(hostPanel);
         this.kindFilter = kindFilter;
@@ -126,9 +126,9 @@ public final class SocketStoragePanel extends HoloPanel {
         this.storageListener = storageListener;
     }
 
-    public static SocketStoragePanel open(CustomPanelAPI hostPanel, SocketPanelPlacement placement, Function<HullItem, String> installedShipLookup,
+    public static HullItemStoragePanel open(CustomPanelAPI hostPanel, SocketPanelPlacement placement, Function<HullItem, String> installedShipLookup,
                                           Listener storageListener, HullItemType kindFilter, Consumer<SocketPanelTab> tabListener) {
-        SocketStoragePanel storagePanel = new SocketStoragePanel(hostPanel, installedShipLookup, storageListener, kindFilter);
+        HullItemStoragePanel storagePanel = new HullItemStoragePanel(hostPanel, installedShipLookup, storageListener, kindFilter);
         storagePanel.movedFromCargo = absorbPlayerCargo();
         storagePanel.materialsNotice = settleMaterials();
         storagePanel.setTabListener(tabListener);
@@ -151,7 +151,7 @@ public final class SocketStoragePanel extends HoloPanel {
     }
 
     private static String settleMaterials() {
-        SocketMaterials materials = playerMaterials();
+        CraftingMaterials materials = playerMaterials();
         int movedCount = materials.settle();
         if (movedCount <= 0) {
             return null;
@@ -213,7 +213,7 @@ public final class SocketStoragePanel extends HoloPanel {
         if (hullItem != null) {
             leaveDisassemblyMode();
         }
-        queue(() -> rebuildFooter(SocketStorageQuery.apply(storageRows, storageFilter)));
+        queue(() -> rebuildFooter(HullItemStorageQuery.apply(storageRows, storageFilter)));
     }
 
     public void setTargetingSocket(boolean targeting) {
@@ -224,7 +224,7 @@ public final class SocketStoragePanel extends HoloPanel {
         if (targeting) {
             leaveDisassemblyMode();
         }
-        queue(() -> rebuildFooter(SocketStorageQuery.apply(storageRows, storageFilter)));
+        queue(() -> rebuildFooter(HullItemStorageQuery.apply(storageRows, storageFilter)));
     }
 
     public void refresh(Function<HullItem, String> installedShipLookup) {
@@ -352,16 +352,16 @@ public final class SocketStoragePanel extends HoloPanel {
             if (selectedHullItem != null) {
                 storageListener.selected(null);
             }
-            rebuildFooter(SocketStorageQuery.apply(storageRows, storageFilter));
+            rebuildFooter(HullItemStorageQuery.apply(storageRows, storageFilter));
         } else if (markedForDisassembly.isEmpty()) {
             leaveDisassemblyMode();
-            rebuildFooter(SocketStorageQuery.apply(storageRows, storageFilter));
+            rebuildFooter(HullItemStorageQuery.apply(storageRows, storageFilter));
         } else {
             openDisassemblyConfirm(List.copyOf(markedForDisassembly));
         }
     }
 
-    private void cellClicked(SocketStorageRow row) {
+    private void cellClicked(HullItemStorageRow row) {
         if (isConfirmOpen() || row.installed()) {
             return;
         }
@@ -370,7 +370,7 @@ public final class SocketStoragePanel extends HoloPanel {
                 if (!markedForDisassembly.remove(row.hullItem())) {
                     markedForDisassembly.add(row.hullItem());
                 }
-                rebuildFooter(SocketStorageQuery.apply(storageRows, storageFilter));
+                rebuildFooter(HullItemStorageQuery.apply(storageRows, storageFilter));
             });
             return;
         }
@@ -429,7 +429,7 @@ public final class SocketStoragePanel extends HoloPanel {
                 });
     }
 
-    private void cellRightClicked(SocketStorageRow row) {
+    private void cellRightClicked(HullItemStorageRow row) {
         if (!isConfirmOpen() && !disassemblyMode && !row.installed()) {
             queue(() -> openDisassemblyConfirm(List.of(row.hullItem())));
         }
@@ -501,10 +501,10 @@ public final class SocketStoragePanel extends HoloPanel {
 
     private void reloadRows() {
         List<HullItem> owned = HullItemStore.get().owned();
-        List<SocketStorageRow> built = new ArrayList<>(owned.size());
+        List<HullItemStorageRow> built = new ArrayList<>(owned.size());
         for (int i = 0; i < owned.size(); i++) {
             if (showsKind(owned.get(i).kind())) {
-                built.add(SocketStorageRow.of(owned.get(i), i, installedShipLookup));
+                built.add(HullItemStorageRow.of(owned.get(i), i, installedShipLookup));
             }
         }
         storageRows = built;
@@ -523,7 +523,7 @@ public final class SocketStoragePanel extends HoloPanel {
         int controlRows = FIXED_CONTROL_ROWS + typeRows;
         TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), controlRows * CHIP_HEIGHT + (controlRows - 1) * GAP, false);
         float chipLeft = 0f;
-        for (SocketStorageFilter.Status status : SocketStorageFilter.Status.values()) {
+        for (HullItemStorageFilter.Status status : HullItemStorageFilter.Status.values()) {
             String label = Translation.text("ui.socketStorage.status." + status.name().toLowerCase(Locale.ROOT));
             chipLeft += addChip(element, label, new StatusChip(status), ChipColors.player(), storageFilter.status == status, chipLeft, 0) + GAP;
         }
@@ -587,7 +587,7 @@ public final class SocketStoragePanel extends HoloPanel {
 
     private void rebuildGrid() {
         hideHoverTooltip();
-        List<SocketStorageRow> matching = SocketStorageQuery.apply(storageRows, storageFilter);
+        List<HullItemStorageRow> matching = HullItemStorageQuery.apply(storageRows, storageFilter);
         int columns = columnsFor(panelWidth);
         float cellSize = (innerWidth() - SCROLLBAR_ROOM - (columns - 1) * GAP) / columns;
         float gridHeight = Math.max(cellSize, panelHeight - PAD - FOOTER_HEIGHT - GAP - gridTop);
@@ -604,7 +604,7 @@ public final class SocketStoragePanel extends HoloPanel {
         for (int start = 0; start < matching.size(); start += columns) {
             CustomPanelAPI rowPanel = Global.getSettings().createCustom(innerWidth() - SCROLLBAR_ROOM, cellSize, null);
             for (int i = start; i < Math.min(matching.size(), start + columns); i++) {
-                SocketStorageRow row = matching.get(i);
+                HullItemStorageRow row = matching.get(i);
                 CustomPanelAPI cellPanel = Global.getSettings().createCustom(cellSize, cellSize, cellFor(row));
                 rowPanel.addComponent(cellPanel).inTL((i - start) * (cellSize + GAP), 0f);
             }
@@ -614,7 +614,7 @@ public final class SocketStoragePanel extends HoloPanel {
         rebuildFooter(matching);
     }
 
-    private void rebuildFooter(List<SocketStorageRow> matching) {
+    private void rebuildFooter(List<HullItemStorageRow> matching) {
         int shownCount = matching.size();
         TooltipMakerAPI newNotice = panelRoot.createUIElement(innerWidth(), NOTICE_HEIGHT, false);
         if (disassemblyMode) {
@@ -639,7 +639,7 @@ public final class SocketStoragePanel extends HoloPanel {
         noticeElement = replaceElement(noticeElement, newNotice, PAD, gridTop - NOTICE_HEIGHT);
 
         TooltipMakerAPI newSummary = panelRoot.createUIElement(innerWidth(), FOOTER_HEIGHT, false);
-        int installedCount = (int) storageRows.stream().filter(SocketStorageRow::installed).count();
+        int installedCount = (int) storageRows.stream().filter(HullItemStorageRow::installed).count();
         VanillaText.plainPara(newSummary, Translation.msg("ui.socketStorage.summary")
                 .arg("shown", shownCount).arg("stored", storageRows.size()).arg("installed", installedCount).text(), 0f, Misc.getGrayColor())
                 .getPosition().inTL(0f, PARTS_TEXT_TOP);
@@ -699,7 +699,7 @@ public final class SocketStoragePanel extends HoloPanel {
     }
 
     private void disassemble(List<HullItem> targets) {
-        SocketMaterials materials = playerMaterials();
+        CraftingMaterials materials = playerMaterials();
         int totalParts = 0;
         int disassembledCount = 0;
         HullItem lastDisassembled = null;
@@ -732,7 +732,7 @@ public final class SocketStoragePanel extends HoloPanel {
         pendingDisassembly = List.of();
     }
 
-    private List<StyledText> cellFooter(SocketStorageRow row) {
+    private List<StyledText> cellFooter(HullItemStorageRow row) {
         if (row.installed()) {
             String installedKey = isSubroutine(row) ? "ui.socketStorage.cell.installed" : "ui.socketStorage.cell.installedFramework";
             return List.of(Translation.msg(installedKey).arg("ship", row.installedShipName()).styled());
@@ -756,11 +756,11 @@ public final class SocketStoragePanel extends HoloPanel {
                 .count(row.hullItem().rarity().disassemblyParts()).arg("count", row.hullItem().rarity().disassemblyParts()).styled());
     }
 
-    private static boolean isSubroutine(SocketStorageRow row) {
+    private static boolean isSubroutine(HullItemStorageRow row) {
         return row.hullItem().kind() == null || row.hullItem().kind() == HullItemType.SUBROUTINE;
     }
 
-    private HullItemCell cellFor(SocketStorageRow row) {
+    private HullItemCell cellFor(HullItemStorageRow row) {
         return new HullItemCell(row.hullItem(), CELL_LOOK, new HullItemCell.Listener() {
             @Override
             public void hovered(PositionAPI cellPosition) {
@@ -801,11 +801,11 @@ public final class SocketStoragePanel extends HoloPanel {
         });
     }
 
-    private void cellHovered(SocketStorageRow row, PositionAPI cellPosition) {
+    private void cellHovered(HullItemStorageRow row, PositionAPI cellPosition) {
         queue(() -> showHoverTooltip(row, cellPosition));
     }
 
-    private void cellLeft(SocketStorageRow row) {
+    private void cellLeft(HullItemStorageRow row) {
         queue(() -> {
             if (hoverTooltip.isShowing(row)) {
                 hideHoverTooltip();
@@ -813,7 +813,7 @@ public final class SocketStoragePanel extends HoloPanel {
         });
     }
 
-    private void showHoverTooltip(SocketStorageRow row, PositionAPI cellPosition) {
+    private void showHoverTooltip(HullItemStorageRow row, PositionAPI cellPosition) {
         if (isConfirmOpen()) {
             return;
         }

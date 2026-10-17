@@ -12,9 +12,9 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.CommodityNames;
-import exiledsector.hullitems.SocketCurrency;
+import exiledsector.hullitems.CraftingCurrency;
 import exiledsector.hullitems.SocketCustody;
-import exiledsector.hullitems.SocketMaterials;
+import exiledsector.hullitems.CraftingMaterials;
 import exiledsector.hullitems.HullItem;
 import exiledsector.hullitems.HullItemCrafting;
 import exiledsector.hullitems.HullItemDefinition;
@@ -64,13 +64,13 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     private enum Recipe {
         COMMON(null),
-        AUGMENTATION(SocketCurrency.AUGMENTATION),
-        RECALIBRATION(SocketCurrency.RECALIBRATION),
-        TRANSPOSITION(SocketCurrency.TRANSPOSITION);
+        AUGMENTATION(CraftingCurrency.AUGMENTATION),
+        RECALIBRATION(CraftingCurrency.RECALIBRATION),
+        TRANSPOSITION(CraftingCurrency.TRANSPOSITION);
 
-        private final SocketCurrency currency;
+        private final CraftingCurrency currency;
 
-        Recipe(SocketCurrency currency) {
+        Recipe(CraftingCurrency currency) {
             this.currency = currency;
         }
 
@@ -223,7 +223,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     }
 
     private boolean synthesise(Recipe recipe) {
-        SocketMaterials materials = playerMaterials();
+        CraftingMaterials materials = playerMaterials();
         int ownedParts = HullItemCrafting.parts(materials);
         if (ownedParts < recipe.partsCost()) {
             showNotice(Translation.msg("ui.workbench.notice.notEnoughParts").arg("cost", recipe.partsCost()).arg("parts", ownedParts)
@@ -250,8 +250,8 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         return true;
     }
 
-    private void use(SocketCurrency currency) {
-        SocketMaterials materials = playerMaterials();
+    private void use(CraftingCurrency currency) {
+        CraftingMaterials materials = playerMaterials();
         if (materials.count(currency.commodityId()) < 1) {
             showNotice(Translation.msg("ui.workbench.notice.noneOwned").arg("name", CommodityNames.displayName(currency.commodityId())).text());
             return;
@@ -261,7 +261,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             return;
         }
         if (!HullItemCrafting.canUse(currency, loadedHullItem, allowedUniques())) {
-            if (currency == SocketCurrency.TRANSPOSITION && loadedHullItem.rarity() == HullItemRarity.UNIQUE) {
+            if (currency == CraftingCurrency.TRANSPOSITION && loadedHullItem.rarity() == HullItemRarity.UNIQUE) {
                 showNotice(Translation.text("ui.workbench.notice.noOtherUnique"));
                 return;
             }
@@ -278,7 +278,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         noticeText = Translation.msg("ui.workbench.notice.used." + currency.name().toLowerCase(Locale.ROOT))
                 .arg("before", nameBefore).arg("name", result.name()).text();
         SocketCustody.markHostsChanged(result);
-        if (currency == SocketCurrency.TRANSPOSITION && SocketCustody.unsocketIfMisfit(result)) {
+        if (currency == CraftingCurrency.TRANSPOSITION && SocketCustody.unsocketIfMisfit(result)) {
             String movedNotice = Translation.msg("ui.workbench.notice.movedToStorage").arg("name", result.name())
                     .arg("type", result.kind().displayName()).text();
             noticeText = Translation.msg("format.sentences").arg("a", noticeText).arg("b", movedNotice).text();
@@ -326,7 +326,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     private void rebuildTiles() {
         hoverTooltip.hide();
         TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), tilesHeight(), false);
-        SocketMaterials materials = playerMaterials();
+        CraftingMaterials materials = playerMaterials();
         Recipe[] allRecipes = Recipe.values();
         float cellWidth = innerWidth() / TILE_COLUMNS;
         for (int i = 0; i < allRecipes.length; i++) {
@@ -337,7 +337,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         recipesElement = replaceElement(recipesElement, element, PAD, tilesTop());
     }
 
-    private void addTile(TooltipMakerAPI element, Recipe recipe, float tileLeft, float tileTop, SocketMaterials materials) {
+    private void addTile(TooltipMakerAPI element, Recipe recipe, float tileLeft, float tileTop, CraftingMaterials materials) {
         CustomPanelAPI tilePanel = Global.getSettings().createCustom(TILE_SIZE, TILE_SIZE, new WorkbenchTile(recipeIcons(recipe),
                 new TileInput.Handler() {
                     @Override

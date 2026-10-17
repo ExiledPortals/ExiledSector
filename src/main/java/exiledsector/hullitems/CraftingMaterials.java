@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public final class SocketMaterials {
+public final class CraftingMaterials {
 
     public static final String STORE_FIELD_ID = "exiledSector_storeSocketMaterials";
     public static final boolean DEFAULT_STORE = false;
@@ -19,18 +19,18 @@ public final class SocketMaterials {
     private final Map<String, Integer> storedCounts;
     private final boolean storing;
 
-    SocketMaterials(CargoAPI cargo, Map<String, Integer> storedCounts, boolean storing) {
+    CraftingMaterials(CargoAPI cargo, Map<String, Integer> storedCounts, boolean storing) {
         this.cargo = cargo;
         this.storedCounts = storedCounts;
         this.storing = storing;
     }
 
-    public static SocketMaterials forPlayer(CargoAPI cargo) {
-        return new SocketMaterials(cargo, storedCounts(), ModSettings.booleanOr(STORE_FIELD_ID, DEFAULT_STORE));
+    public static CraftingMaterials forPlayer(CargoAPI cargo) {
+        return new CraftingMaterials(cargo, storedCounts(), ModSettings.booleanOr(STORE_FIELD_ID, DEFAULT_STORE));
     }
 
-    public static SocketMaterials cargoOnly(CargoAPI cargo) {
-        return new SocketMaterials(cargo, new HashMap<>(), false);
+    public static CraftingMaterials cargoOnly(CargoAPI cargo) {
+        return new CraftingMaterials(cargo, new HashMap<>(), false);
     }
 
     private static Map<String, Integer> storedCounts() {
@@ -40,7 +40,7 @@ public final class SocketMaterials {
     public static List<String> commodityIds() {
         List<String> commodityIds = new ArrayList<>();
         commodityIds.add(HullItemDisassembly.PARTS_COMMODITY_ID);
-        for (SocketCurrency currency : SocketCurrency.values()) {
+        for (CraftingCurrency currency : CraftingCurrency.values()) {
             commodityIds.add(currency.commodityId());
         }
         return commodityIds;

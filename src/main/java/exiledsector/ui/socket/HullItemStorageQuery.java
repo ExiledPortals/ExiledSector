@@ -4,22 +4,22 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-final class SocketStorageQuery {
+final class HullItemStorageQuery {
 
-    private SocketStorageQuery() {
+    private HullItemStorageQuery() {
     }
 
-    static List<SocketStorageRow> apply(List<SocketStorageRow> rows, SocketStorageFilter filter) {
+    static List<HullItemStorageRow> apply(List<HullItemStorageRow> rows, HullItemStorageFilter filter) {
         String[] words = filter.query.trim().toLowerCase(Locale.ROOT).split("\\s+");
         return rows.stream()
                 .filter(row -> matchesStatus(row, filter.status))
                 .filter(row -> filter.rarities.isEmpty() || filter.rarities.contains(row.rarity()))
                 .filter(row -> matchesWords(row, words))
-                .sorted(Comparator.comparingInt(SocketStorageRow::storeOrder).reversed())
+                .sorted(Comparator.comparingInt(HullItemStorageRow::storeOrder).reversed())
                 .toList();
     }
 
-    private static boolean matchesStatus(SocketStorageRow row, SocketStorageFilter.Status status) {
+    private static boolean matchesStatus(HullItemStorageRow row, HullItemStorageFilter.Status status) {
         return switch (status) {
             case ALL -> true;
             case FREE -> !row.installed();
@@ -27,7 +27,7 @@ final class SocketStorageQuery {
         };
     }
 
-    private static boolean matchesWords(SocketStorageRow row, String[] words) {
+    private static boolean matchesWords(HullItemStorageRow row, String[] words) {
         for (String word : words) {
             if (!word.isEmpty() && !row.searchText().contains(word)) {
                 return false;

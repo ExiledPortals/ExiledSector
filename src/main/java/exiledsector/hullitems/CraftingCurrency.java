@@ -1,6 +1,6 @@
 package exiledsector.hullitems;
 
-public enum SocketCurrency {
+public enum CraftingCurrency {
 
     AUGMENTATION("exiledSector_augmentation_kernel", 10, 6),
     RECALIBRATION("exiledSector_recalibration_kernel", 20, 3),
@@ -10,7 +10,7 @@ public enum SocketCurrency {
     private final int defaultPartsCost;
     private final float dropWeight;
 
-    SocketCurrency(String commodityId, int defaultPartsCost, float dropWeight) {
+    CraftingCurrency(String commodityId, int defaultPartsCost, float dropWeight) {
         this.commodityId = commodityId;
         this.defaultPartsCost = defaultPartsCost;
         this.dropWeight = dropWeight;

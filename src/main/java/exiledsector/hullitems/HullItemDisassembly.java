@@ -12,11 +12,11 @@ public final class HullItemDisassembly {
     private HullItemDisassembly() {
     }
 
-    public static int disassemble(HullItem hullItem, SocketMaterials materials) {
+    public static int disassemble(HullItem hullItem, CraftingMaterials materials) {
         return disassemble(hullItem, materials, HullItemStore.get(), ShipSkillDataManager.all());
     }
 
-    static int disassemble(HullItem hullItem, SocketMaterials materials, HullItemStore store, Map<String, ShipSkillData> shipDataById) {
+    static int disassemble(HullItem hullItem, CraftingMaterials materials, HullItemStore store, Map<String, ShipSkillData> shipDataById) {
         if (hullItem == null || SocketCustody.isInstalled(shipDataById, hullItem) || !store.remove(hullItem)) {
             return 0;
         }

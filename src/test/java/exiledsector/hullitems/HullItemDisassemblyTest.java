@@ -53,7 +53,7 @@ class HullItemDisassemblyTest {
         HullItem hullItem = store.add(HullItemDefinitions.get(HullItemFixtures.MILITARY), 7L);
         int expected = hullItem.rarity().disassemblyParts();
 
-        assertEquals(expected, HullItemDisassembly.disassemble(hullItem, SocketMaterials.cargoOnly(cargo), store, ships));
+        assertEquals(expected, HullItemDisassembly.disassemble(hullItem, CraftingMaterials.cargoOnly(cargo), store, ships));
 
         assertNull(store.find(hullItem.id()));
         verify(cargo).addCommodity(HullItemDisassembly.PARTS_COMMODITY_ID, expected);
@@ -70,7 +70,7 @@ class HullItemDisassemblyTest {
         data.socketItem("socket", hullItem.id());
         ships.put("ship-a", data);
 
-        assertEquals(0, HullItemDisassembly.disassemble(hullItem, SocketMaterials.cargoOnly(cargo), store, ships));
+        assertEquals(0, HullItemDisassembly.disassemble(hullItem, CraftingMaterials.cargoOnly(cargo), store, ships));
 
         assertNotNull(store.find(hullItem.id()));
         verify(cargo, never()).addCommodity(anyString(), anyFloat());
@@ -79,8 +79,8 @@ class HullItemDisassemblyTest {
     @Test
     void anItemNoLongerInStorageIsNotPaidOutTwice() {
         HullItem hullItem = store.add(HullItemDefinitions.get(HullItemFixtures.MILITARY), 7L);
-        HullItemDisassembly.disassemble(hullItem, SocketMaterials.cargoOnly(cargo), store, ships);
+        HullItemDisassembly.disassemble(hullItem, CraftingMaterials.cargoOnly(cargo), store, ships);
 
-        assertEquals(0, HullItemDisassembly.disassemble(hullItem, SocketMaterials.cargoOnly(cargo), store, ships));
+        assertEquals(0, HullItemDisassembly.disassemble(hullItem, CraftingMaterials.cargoOnly(cargo), store, ships));
     }
 }
