@@ -271,8 +271,10 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
         TooltipMakerAPI element = panelRoot.createUIElement(panelWidth - PAD * 2f, HEADER_HEIGHT, false);
         activeTabButton = null;
         if (tabListener == null) {
-            element.setParaFont(Fonts.ORBITRON_20AABOLD);
-            VanillaText.plainPara(element, Translation.text(titleKey), 0f, Misc.getBasePlayerColor());
+            if (titleKey != null) {
+                element.setParaFont(Fonts.ORBITRON_20AABOLD);
+                VanillaText.plainPara(element, Translation.text(titleKey), 0f, Misc.getBasePlayerColor());
+            }
         } else {
             addTabs(element);
         }

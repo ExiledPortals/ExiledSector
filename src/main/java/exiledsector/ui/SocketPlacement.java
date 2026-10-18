@@ -135,7 +135,7 @@ final class SocketPlacement {
     }
 
     boolean isWorkbenchOpen() {
-        return storagePanel != null && storagePanel.isWorkbenchOpen();
+        return (storagePanel != null && storagePanel.isWorkbenchOpen()) || (chartTab != null && chartTab.isWorkbenchOpen());
     }
 
     boolean panelContains(float x, float y) {
@@ -237,13 +237,14 @@ final class SocketPlacement {
         searchBar.unfocus();
         SocketPanelPlacement storagePlacement = new SocketPanelPlacement(ChromeMetrics.EDGE_MARGIN, PANEL_TOP, ItemStoragePanel.WIDTH,
                 sidePanelHeight(treeCanvasPosition, lastShipCard), swapping);
-        SocketPanelPlacement detailPlacement = StarChartTab.detailBeside(storagePlacement,
-                chartsRoomRight(treeCanvasPosition.getWidth(), (float) reservedRightWidth.getAsDouble()), StarChartTab.DETAIL_WIDTH);
+        float roomRight = chartsRoomRight(treeCanvasPosition.getWidth(), (float) reservedRightWidth.getAsDouble());
+        SocketPanelPlacement detailPlacement = StarChartTab.detailBeside(storagePlacement, roomRight, StarChartTab.DETAIL_WIDTH);
+        SocketPanelPlacement benchPlacement = StarChartTab.detailBeside(storagePlacement, roomRight, Float.MAX_VALUE);
         chartsRight = detailPlacement.panelLeft() + detailPlacement.panelWidth();
         if (!swapping) {
             SkillTreeSounds.panelOpened();
         }
-        chartTab = StarChartTab.open(hostPanel, storagePlacement, detailPlacement, storageTabListener, shownTabs(), new StarChartTab.Listener() {
+        chartTab = StarChartTab.open(hostPanel, storagePlacement, detailPlacement, benchPlacement, storageTabListener, shownTabs(), new StarChartTab.Listener() {
             @Override
             public void closed() {
                 chartTab = null;
