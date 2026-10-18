@@ -198,7 +198,7 @@ framework_phase_coil_array,VENT_RATE_PERCENT,0.8.0,
 framework_reactor_regulator,BALLISTIC_WEAPON_FLUX_COST_MULT,0.8.0,
 framework_reactor_regulator,BEAM_WEAPON_FLUX_COST_PERCENT,0.8.0,
 framework_reactor_regulator,EMP_DAMAGE_TAKEN_PERCENT,0.8.0,
-framework_reactor_regulator,ENERGY_WEAPON_FLUX_COST_PERCENT,0.8.0,
+framework_reactor_regulator,ENERGY_WEAPON_FLUX_COST_PERCENT,0.8.0,0.8.0
 framework_reactor_regulator,FLUX_CAPACITOR_EFFECTIVENESS_PERCENT,0.8.0,
 framework_reactor_regulator,VENT_RATE_PERCENT,0.8.0,
 framework_shield_generator_emitter,ENERGY_DAMAGE_TAKEN_PERCENT,0.8.0,
