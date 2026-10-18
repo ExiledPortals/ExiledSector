@@ -79,6 +79,9 @@ public abstract class Item {
         if (traits.corruption() != null) {
             corruption = traits.corruption();
         }
+        if (traits.mirrored()) {
+            mirrored = true;
+        }
     }
 
     void copyTraitsFrom(Item source) {
@@ -351,7 +354,7 @@ public abstract class Item {
         return ItemImplicits.corruptionPool();
     }
 
-    private Modifier explicitModifier(String modifierId) {
+    Modifier explicitModifier(String modifierId) {
         ItemDefinition definition = definition();
         PoolEntry entry = definition == null ? null : definition.poolEntryFor(modifierId);
         return entry == null ? null : entry.modifier();
@@ -419,13 +422,17 @@ public abstract class Item {
         return lines;
     }
 
-    private static StyledText explicitLine(ModifierEffects effects, RolledEffect effect, ModifierLine line, boolean withRollRanges,
-                                           ScaleContext context) {
+    StyledText unresolvedLine(ModifierEffects effects, RolledEffect effect) {
+        return effect.description(effects, null);
+    }
+
+    private StyledText explicitLine(ModifierEffects effects, RolledEffect effect, ModifierLine line, boolean withRollRanges,
+                                    ScaleContext context) {
         if (line == null) {
-            return effect.description(effects, null);
+            return unresolvedLine(effects, effect);
         }
         if (line.listsEveryValueFor(context)) {
-            return effect.scaledValuesDescription(effects, line.scaledValues());
+            return effect.scaledValuesDescription(effects, line);
         }
         RolledEffect shownEffect = new RolledEffect(effect.effectName(), line.valueFor(effect.magnitude(), context));
         return shownEffect.description(effects, withRollRanges ? line.rangeFor(context) : null);

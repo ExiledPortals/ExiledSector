@@ -260,6 +260,7 @@ public final class ItemDataIntegrity {
             }
             if (itemType == ItemType.STAR_CHART) {
                 checkSystemType(file, line, definitionId, ModCsv.text(row, StarChartDefinitions.SYSTEM_TYPE_COLUMN));
+                checkMinTier(file, line, definitionId, ModCsv.text(row, StarChartDefinitions.MIN_TIER_COLUMN));
             }
             boolean unique = "true".equalsIgnoreCase(ModCsv.text(row, "unique"));
             List<ModifierRow> pool = new ArrayList<>();
@@ -282,6 +283,13 @@ public final class ItemDataIntegrity {
         if (StarChartDefinitions.normalisedSystemType(systemTypeText) == null) {
             error(file, line, ownerId + " has system type \"" + systemTypeText + "\"; expected one of " + StarChartDefinitions.SYSTEM_TYPES
                     + " or " + StarChartDefinitions.ANY_SYSTEM_TYPE);
+        }
+    }
+
+    private void checkMinTier(String file, int line, String definitionId, String minTierText) {
+        if (StarChartDefinitions.parsedMinTier(minTierText) == null) {
+            error(file, line, definitionId + " has minimum tier \"" + minTierText + "\"; expected a whole number from " + StarChart.LOWEST_TIER
+                    + " to " + StarChart.HIGHEST_TIER + " or blank");
         }
     }
 

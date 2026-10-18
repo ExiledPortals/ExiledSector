@@ -9,4 +9,8 @@ public enum ChartRunState {
     public boolean isLive() {
         return this == OPEN || this == INSIDE;
     }
+
+    public boolean keepsRunEffects() {
+        return this != CLOSED;
+    }
 }

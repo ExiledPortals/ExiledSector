@@ -3,6 +3,7 @@ package exiledsector.items;
 import exiledsector.modifiers.ModifierEffect;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
+import exiledsector.modifiers.ValueScaling;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.DescriptionLine;
@@ -95,6 +96,48 @@ public final class RolledEffect {
         return replaceValue(firstValueText, joinSharingAffixes(valueTexts));
     }
 
+    public StyledText scaledValuesDescription(ModifierEffects effects, ModifierLine scaledLine) {
+        if (scaledLine.scaling() instanceof ValueScaling.PerTierBand tierBands && tierBands.variesWithinAPoint()) {
+            return tierBandRangesDescription(effects, tierBands);
+        }
+        return scaledValuesDescription(effects, scaledLine.scaledValues());
+    }
+
+    private StyledText tierBandRangesDescription(ModifierEffects effects, ValueScaling.PerTierBand tierBands) {
+        ModifierEffect effect = effect(effects);
+        if (effect == null) {
+            return null;
+        }
+        StyledText firstBandText = display(effect, tierBands.lowAt(0));
+        List<String> bandTexts = new ArrayList<>(tierBands.values().size());
+        for (int band = 0; band < tierBands.values().size(); band++) {
+            String bandText = bandRangeText(effect, tierBands.lowAt(band), tierBands.highAt(band));
+            if (bandText == null || firstBandText.spans().isEmpty()) {
+                return firstBandText;
+            }
+            bandTexts.add(bandText);
+        }
+        return replaceValue(firstBandText, joinSharingAffixes(bandTexts));
+    }
+
+    private static String bandRangeText(ModifierEffect effect, float bandLow, float bandHigh) {
+        boolean lowNearestZero = Math.abs(bandLow) <= Math.abs(bandHigh);
+        String weakestText = valueText(effect, lowNearestZero ? bandLow : bandHigh);
+        String strongestText = valueText(effect, lowNearestZero ? bandHigh : bandLow);
+        if (weakestText == null || strongestText == null || weakestText.equals(strongestText)) {
+            return weakestText;
+        }
+        List<String> bothTexts = List.of(weakestText, strongestText);
+        String sharedPrefix = sharedNonNumericEdge(bothTexts, true);
+        String sharedSuffix = sharedNonNumericEdge(bothTexts, false);
+        if (sharedPrefix.length() + sharedSuffix.length() > Math.min(weakestText.length(), strongestText.length())) {
+            sharedPrefix = "";
+            sharedSuffix = "";
+        }
+        return Translation.msg("socketable.tierBandRange").arg("low", weakestText.substring(0, weakestText.length() - sharedSuffix.length()))
+                .arg("high", strongestText.substring(sharedPrefix.length())).text();
+    }
+
     public StyledText rangeDescription(ModifierLine rollRange) {
         return rangeDescription(ItemEffects.SKILL_EFFECTS, rollRange);
     }
@@ -105,7 +148,7 @@ public final class RolledEffect {
             return null;
         }
         if (rollRange.isScaled()) {
-            return scaledValuesDescription(effects, rollRange.scaledValues());
+            return scaledValuesDescription(effects, rollRange);
         }
         StyledText strongestText = display(effect, rollRange.boundFarthestFromZero());
         if (!rollRange.canVary() || strongestText.spans().isEmpty()) {

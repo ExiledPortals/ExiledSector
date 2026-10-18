@@ -33,6 +33,7 @@ final class ItemCodec {
     private static final String QUALITY_KEY = "q";
     private static final String CORRUPTED_KEY = "c";
     private static final String IMPLICITS_KEY = "i";
+    private static final String MIRRORED_KEY = "m";
 
     private ItemCodec() {
     }
@@ -261,14 +262,18 @@ final class ItemCodec {
         if (traits.implicits() != null) {
             json.put(IMPLICITS_KEY, modifiers(traits.implicits()));
         }
+        if (traits.mirrored()) {
+            json.put(MIRRORED_KEY, true);
+        }
     }
 
     private static ItemTraits traits(JSONObject json, String definitionId) throws JSONException {
-        if (!json.has(TIER_KEY) && !json.has(QUALITY_KEY) && !json.has(CORRUPTED_KEY) && !json.has(IMPLICITS_KEY)) {
+        if (!json.has(TIER_KEY) && !json.has(QUALITY_KEY) && !json.has(CORRUPTED_KEY) && !json.has(IMPLICITS_KEY) && !json.has(MIRRORED_KEY)) {
             return null;
         }
         List<RolledModifier> implicits = json.has(IMPLICITS_KEY) ? decodeModifiers(json.getString(IMPLICITS_KEY), definitionId) : null;
-        return new ItemTraits(json.optInt(TIER_KEY, StarChart.LOWEST_TIER), json.optInt(QUALITY_KEY, 0), corruption(json), implicits);
+        return new ItemTraits(json.optInt(TIER_KEY, StarChart.LOWEST_TIER), json.optInt(QUALITY_KEY, 0), corruption(json), implicits,
+                json.optBoolean(MIRRORED_KEY, false));
     }
 
     private static CorruptionOutcome corruption(JSONObject json) {

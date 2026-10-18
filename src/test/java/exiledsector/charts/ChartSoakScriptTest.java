@@ -215,6 +215,37 @@ class ChartSoakScriptTest {
     }
 
     @Test
+    void aChartPocketThatFailsToOpenIsNotCountedAsOpened() throws Exception {
+        ChartContentDataTest.loadShippedTables();
+        exiledsector.items.StarChartFixtures.registerShipped();
+        FakeChartContentEngine.install(new FakeChartContentEngine().offering(-4000f, 0f, 0f, 5000f));
+        when(sector.getFaction(anyString())).thenReturn(mock(FactionAPI.class));
+        try {
+            ChartSoakScript soak = new ChartSoakScript(2, ChartCensus.take(sector), reports::add, new Random(13));
+            ChartRunScript watchdog = new ChartRunScript();
+            for (int frame = 0; frame < 200 && soak.pocketsDone() < 1; frame++) {
+                runFrames(soak, watchdog, 1);
+            }
+            assertEquals(1, soak.pocketsDone());
+            assertNull(ChartRuns.currentOrNull());
+            ChartRuns.store(new ChartRun("busy", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1));
+
+            soak.advance(0f);
+
+            assertTrue(soak.isDone());
+            assertEquals(0, soak.chartsOpened());
+            assertTrue(reports.get(0).contains("returned RUN_EXISTS"), reports.get(0));
+            assertTrue(reports.get(0).contains("0 pocket(s) opened from rolled Star Charts"), reports.get(0));
+        } finally {
+            exiledsector.items.StarChartFixtures.clear();
+            ChartContentGenerator.resetForTests();
+            ChartTiers.resetForTests();
+            ChartPois.resetForTests();
+            ChartFactions.resetForTests();
+        }
+    }
+
+    @Test
     void tiersCycleThroughOneToFifteen() {
         assertEquals(1, ChartSoakScript.tierForIteration(0));
         assertEquals(15, ChartSoakScript.tierForIteration(14));

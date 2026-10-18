@@ -78,7 +78,7 @@ public class ChartRunScript implements EveryFrameScript {
         if (inside) {
             blockEscapeAbilities(playerFleet);
         }
-        applyRunEffects(playerFleet, run, inside && run.runState() != ChartRunState.CLOSED);
+        applyRunEffects(playerFleet, run, inside && run.runState().keepsRunEffects());
         if (run.runState() == ChartRunState.CLOSED) {
             ChartRuns.delete(run.runId());
             forget();

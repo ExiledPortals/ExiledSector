@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -128,6 +129,38 @@ class StarChartDataTest {
         assertTrue(errors.contains("chart_b references CHART_MISSING, which is not in " + StarChartItems.MODIFIERS_PATH), errors.toString());
         assertTrue(errors.stream().anyMatch(error -> error.contains("NEBULA")), errors.toString());
         assertTrue(shipErrors.contains("chip entry \"@HULL_MULT:5:t3\" has a tier range, but only star charts have tiers"), shipErrors.toString());
+    }
+
+    @Test
+    void chartsCanStartAtAMinimumTierAndTheDataCheckRejectsBadOnes() throws Exception {
+        ItemModifiers.registerStarCharts(new JSONArray().put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:t1=1", "Discovery")),
+                StarChartItems.MODIFIERS_PATH);
+        StarChartDefinitions.register(new JSONArray()
+                .put(chart("chart_low", "SINGLE", "", "@CHART_EXTRA_POIS"))
+                .put(chart("chart_high", "SINGLE", "", "@CHART_EXTRA_POIS").put("min_tier", "6"))
+                .put(chart("chart_zero", "SINGLE", "", "@CHART_EXTRA_POIS").put("min_tier", "0"))
+                .put(chart("chart_word", "SINGLE", "", "@CHART_EXTRA_POIS").put("min_tier", "six")));
+
+        assertEquals(StarChart.LOWEST_TIER, StarChartDefinitions.minTier("chart_low"));
+        assertEquals(6, StarChartDefinitions.minTier("chart_high"));
+        assertNull(ItemDefinitions.get("chart_zero"));
+        assertNull(ItemDefinitions.get("chart_word"));
+        assertEquals(6, StarChartDefinitions.tierAtLeastMinimum("chart_high", 2));
+        assertEquals(9, StarChartDefinitions.tierAtLeastMinimum("chart_high", 9));
+        assertEquals(StarChart.HIGHEST_TIER, StarChartDefinitions.tierAtLeastMinimum("chart_low", 40));
+        assertTrue(StarChartDefinitions.rollsAtTier("chart_high", 6));
+        assertFalse(StarChartDefinitions.rollsAtTier("chart_high", 5));
+
+        JSONArray charts = new JSONArray()
+                .put(chart("chart_zero", "SINGLE", "", "@CHART_EXTRA_POIS").put("min_tier", "0"))
+                .put(chart("chart_word", "SINGLE", "", "@CHART_EXTRA_POIS").put("min_tier", "six"))
+                .put(chart("chart_fine", "SINGLE", "", "@CHART_EXTRA_POIS").put("min_tier", "15"));
+        JSONArray chartModifiers = new JSONArray().put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:t1=1", "Discovery"));
+        List<String> errors = chartErrors(new JSONArray(), chartModifiers, charts, new JSONArray());
+
+        assertTrue(errors.contains("chart_zero has minimum tier \"0\"; expected a whole number from 1 to 15 or blank"), errors.toString());
+        assertTrue(errors.contains("chart_word has minimum tier \"six\"; expected a whole number from 1 to 15 or blank"), errors.toString());
+        assertTrue(errors.stream().noneMatch(error -> error.contains("chart_fine")), errors.toString());
     }
 
     @Test

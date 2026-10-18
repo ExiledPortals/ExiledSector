@@ -87,7 +87,7 @@ public class GrantStarChartsCommand implements BaseCommand {
         }
         List<String> names = new ArrayList<>();
         for (int i = 0; i < arguments.count(); i++) {
-            ItemDefinition definition = ItemDrops.pickChart(random, chart -> true);
+            ItemDefinition definition = ItemDrops.pickChartAtTier(random, arguments.tier(), chart -> true);
             if (definition == null) {
                 break;
             }

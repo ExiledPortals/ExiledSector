@@ -1,10 +1,18 @@
 package exiledsector.modifiers;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import org.json.CDL;
+import org.json.JSONArray;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -46,6 +54,52 @@ class TierBandLineTest {
             assertTrue(value >= 20f && value <= 30f, "value " + value);
         }
         assertEquals(50f, line.average());
+    }
+
+    private static Map<Float, Integer> valueCounts(ModifierLine line, int tier) {
+        Map<Float, Integer> counts = new TreeMap<>();
+        for (int position = 0; position <= (int) ModifierLine.TIER_ROLL_POSITIONS; position++) {
+            counts.merge(line.valueFor(position, ScaleContext.ofTier(tier)), 1, Integer::sum);
+        }
+        return counts;
+    }
+
+    @Test
+    void everyStepOfABandIsAsLikelyAsAnyOtherWithinOnePosition() {
+        ModifierLine line = ModifierLine.parse("QUANTITY:t1=4-6/t6=10-15/t11=-25--15").line();
+
+        assertEquals(Map.of(4f, 34, 5f, 34, 6f, 33), valueCounts(line, 1));
+        assertEquals(Map.of(10f, 17, 11f, 17, 12f, 17, 13f, 17, 14f, 17, 15f, 16), valueCounts(line, 6));
+        Map<Float, Integer> negativeCounts = valueCounts(line, 11);
+        assertEquals(11, negativeCounts.size());
+        assertEquals(Map.of(9, 9, 10, 2), negativeCounts.values().stream().collect(Collectors.groupingBy(count -> count, Collectors.summingInt(count -> 1))));
+        assertEquals(-25f, line.valueFor(0f, ScaleContext.ofTier(11)));
+        assertEquals(-15f, line.valueFor(ModifierLine.TIER_ROLL_POSITIONS, ScaleContext.ofTier(11)));
+    }
+
+    @Test
+    void everyShippedChartBandRollsEachOfItsValuesEvenly() throws Exception {
+        String csv = Files.readString(Path.of("data/config/exiledSector/star_chart_modifiers.csv"), StandardCharsets.UTF_8);
+        JSONArray rows = CDL.toJSONArray(csv.replace("\r\n", "\n"));
+        int checkedBands = 0;
+        for (int row = 0; row < rows.length(); row++) {
+            for (String entry : rows.getJSONObject(row).getString("lines").split(";")) {
+                ModifierLine line = ModifierLine.parse(entry.trim()).line();
+                if (!(line.scaling() instanceof ValueScaling.PerTierBand tierBands) || !tierBands.variesWithinAPoint()) {
+                    continue;
+                }
+                for (int band = 0; band < tierBands.bandStartTiers().size(); band++) {
+                    Map<Float, Integer> counts = valueCounts(line, tierBands.bandStartTiers().get(band));
+                    int stepCount = Math.round(tierBands.highAt(band) - tierBands.lowAt(band)) + 1;
+                    assertEquals(stepCount, counts.size(), entry);
+                    int fewest = counts.values().stream().mapToInt(Integer::intValue).min().orElseThrow();
+                    int most = counts.values().stream().mapToInt(Integer::intValue).max().orElseThrow();
+                    assertTrue(most - fewest <= 1, entry + " band " + band + ": " + counts);
+                    checkedBands++;
+                }
+            }
+        }
+        assertTrue(checkedBands > 20, "checked " + checkedBands);
     }
 
     @Test

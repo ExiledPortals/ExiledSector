@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -86,6 +87,20 @@ class StarChartCommandsTest {
         for (SpecialItemData special : added.getAllValues()) {
             assertEquals(ItemData.STAR_CHART_ITEM_ID, special.getId());
             assertEquals(7, ItemData.ofStarChart(special).preview().tier());
+        }
+    }
+
+    @Test
+    void grantingAtALowTierNeverPicksAUniqueThatStartsHigher() {
+        CommandResult result = new GrantStarChartsCommand(new java.util.Random(11)).runCommand("50 3", campaign());
+
+        assertEquals(CommandResult.SUCCESS, result);
+        ArgumentCaptor<SpecialItemData> added = ArgumentCaptor.forClass(SpecialItemData.class);
+        verify(cargo, times(50)).addSpecial(added.capture(), anyFloat());
+        for (SpecialItemData special : added.getAllValues()) {
+            ItemData chart = ItemData.ofStarChart(special);
+            assertNotEquals("unique_chart_wardens_vigil", chart.definitionId(), "the Warden's Vigil starts at tier 4");
+            assertEquals(3, chart.preview().tier());
         }
     }
 

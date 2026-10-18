@@ -17,11 +17,13 @@ public final class StarChartDefinitions {
 
     static final String DATA_PATH = "data/config/exiledSector/star_charts.csv";
     static final String SYSTEM_TYPE_COLUMN = "system_type";
+    static final String MIN_TIER_COLUMN = "min_tier";
     public static final String ANY_SYSTEM_TYPE = "any";
     public static final List<String> SYSTEM_TYPES = List.of("SINGLE", "BINARY_CLOSE", "BINARY_FAR", "TRINARY_2CLOSE", "TRINARY_1CLOSE_1FAR",
             "TRINARY_2FAR");
     private static final Logger LOG = Logger.getLogger(StarChartDefinitions.class);
     private static final AtomicReference<Map<String, String>> SYSTEM_TYPE_BY_ID = new AtomicReference<>(Map.of());
+    private static final AtomicReference<Map<String, Integer>> MIN_TIER_BY_ID = new AtomicReference<>(Map.of());
 
     private StarChartDefinitions() {
     }
@@ -33,6 +35,7 @@ public final class StarChartDefinitions {
     public static void register(JSONArray rows) throws JSONException {
         List<ItemDefinition> definitions = new ArrayList<>();
         Map<String, String> systemTypes = new LinkedHashMap<>();
+        Map<String, Integer> minTiers = new LinkedHashMap<>();
         ModCsv.forEach(rows == null ? new JSONArray() : rows, (index, row) -> {
             try {
                 ItemDefinition definition = ItemDefinition.parseStarChart(row);
@@ -41,18 +44,27 @@ public final class StarChartDefinitions {
                     throw new IllegalArgumentException(definition.id() + " has system type \"" + ModCsv.text(row, SYSTEM_TYPE_COLUMN)
                             + "\"; expected " + SYSTEM_TYPES + " or " + ANY_SYSTEM_TYPE);
                 }
+                Integer minTier = parsedMinTier(ModCsv.text(row, MIN_TIER_COLUMN));
+                if (minTier == null) {
+                    throw new IllegalArgumentException(definition.id() + " has minimum tier \"" + ModCsv.text(row, MIN_TIER_COLUMN)
+                            + "\"; expected a whole number from " + StarChart.LOWEST_TIER + " to " + StarChart.HIGHEST_TIER + " or blank");
+                }
                 ItemDefinition shipItem = ItemDefinitions.get(definition.id());
                 if ((shipItem != null && shipItem.type() != ItemType.STAR_CHART) || systemTypes.containsKey(definition.id())) {
                     throw new IllegalArgumentException(definition.id() + " is already defined");
                 }
                 definitions.add(definition);
                 systemTypes.put(definition.id(), systemType);
+                if (minTier > StarChart.LOWEST_TIER) {
+                    minTiers.put(definition.id(), minTier);
+                }
             } catch (IllegalArgumentException e) {
                 LOG.error("Skipping row " + (index + 1) + " of " + DATA_PATH + ": " + e.getMessage());
             }
         });
         ItemDefinitions.registerStarCharts(definitions);
         SYSTEM_TYPE_BY_ID.set(Collections.unmodifiableMap(systemTypes));
+        MIN_TIER_BY_ID.set(Collections.unmodifiableMap(minTiers));
     }
 
     static String normalisedSystemType(String text) {
@@ -64,13 +76,40 @@ public final class StarChartDefinitions {
         return SYSTEM_TYPES.contains(upper) ? upper : null;
     }
 
+    static Integer parsedMinTier(String text) {
+        String trimmed = text == null ? "" : text.trim();
+        if (trimmed.isEmpty()) {
+            return StarChart.LOWEST_TIER;
+        }
+        try {
+            int minTier = Integer.parseInt(trimmed);
+            return minTier >= StarChart.LOWEST_TIER && minTier <= StarChart.HIGHEST_TIER ? minTier : null;
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
     public static String systemType(String definitionId) {
         String systemType = definitionId == null ? null : SYSTEM_TYPE_BY_ID.get().get(ItemIdAliases.currentId(definitionId));
         return systemType == null ? ANY_SYSTEM_TYPE : systemType;
     }
 
+    public static int minTier(String definitionId) {
+        Integer minTier = definitionId == null ? null : MIN_TIER_BY_ID.get().get(ItemIdAliases.currentId(definitionId));
+        return minTier == null ? StarChart.LOWEST_TIER : minTier;
+    }
+
+    public static int tierAtLeastMinimum(String definitionId, int tier) {
+        return Math.max(minTier(definitionId), StarChart.clampTier(tier));
+    }
+
+    public static boolean rollsAtTier(String definitionId, int tier) {
+        return minTier(definitionId) <= StarChart.clampTier(tier);
+    }
+
     public static void clear() {
         SYSTEM_TYPE_BY_ID.set(Map.of());
+        MIN_TIER_BY_ID.set(Map.of());
         ItemDefinitions.clearStarCharts();
     }
 }

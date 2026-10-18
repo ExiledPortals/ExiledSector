@@ -241,6 +241,10 @@ public final class ItemDrops {
         return pick(random, definition -> definition.unique() && allowedUniques.test(definition));
     }
 
+    public static ItemDefinition pickChartAtTier(Random random, int tier, Predicate<ItemDefinition> filter) {
+        return pickChart(random, definition -> StarChartDefinitions.rollsAtTier(definition.id(), tier) && filter.test(definition));
+    }
+
     public static ItemDefinition pickChart(Random random, Predicate<ItemDefinition> filter) {
         List<ItemDefinition> candidates = new ArrayList<>();
         for (ItemDefinition definition : ItemDefinitions.ofType(ItemType.STAR_CHART)) {

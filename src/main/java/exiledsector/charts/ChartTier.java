@@ -30,6 +30,11 @@ public record ChartTier(int tier, float fleetPower, int fleetsMin, int fleetsMax
         vaultWeight = Math.max(0f, vaultWeight);
     }
 
+    public ChartTier withLootBudget(float replacementLootBudget) {
+        return new ChartTier(tier, fleetPower, fleetsMin, fleetsMax, officerLevelBonus, officerCountBonus, quality, averageSMods, treePercentMin,
+                treePercentMax, replacementLootBudget, boss, bossPower, clearWeight, bossWeight, vaultWeight);
+    }
+
     public float weightFor(ChartObjective objective) {
         return switch (objective) {
             case CLEAR -> clearWeight;

@@ -5,12 +5,16 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.items.Item;
 import exiledsector.items.SlottedRoll;
+import exiledsector.items.StarChart;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ScaleContext;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class ChartGenContext {
 
@@ -19,13 +23,17 @@ public final class ChartGenContext {
     static final float MIN_SENSOR_RANGE_MULT = 0.1f;
     static final float MAX_SENSOR_RANGE_MULT = 2f;
     static final float PERCENT = 100f;
+    static final float QUANTITY_PERCENT_PER_QUALITY = 1f;
+    private static final Logger LOG = Logger.getLogger(ChartGenContext.class);
+    private static final Set<String> REPORTED_UNRESOLVED_ROLLS = ConcurrentHashMap.newKeySet();
 
     public record AppliedEffect(ChartEffect effect, float value) {
     }
 
-    private static final ChartGenContext NONE = new ChartGenContext(List.of());
+    private static final ChartGenContext NONE = new ChartGenContext(List.of(), 0);
 
     private final List<AppliedEffect> applied;
+    private final int quality;
     private float fleetPowerPercent;
     private int extraFleets;
     private int officerLevelBonus;
@@ -41,8 +49,9 @@ public final class ChartGenContext {
     private float vaultRichnessPercent;
     private float rewardPercent;
 
-    private ChartGenContext(List<AppliedEffect> applied) {
+    private ChartGenContext(List<AppliedEffect> applied, int quality) {
         this.applied = List.copyOf(applied);
+        this.quality = Math.max(0, quality);
         for (AppliedEffect effect : this.applied) {
             effect.effect().beforeGeneration(this, effect.value());
         }
@@ -53,7 +62,15 @@ public final class ChartGenContext {
     }
 
     public static ChartGenContext of(List<AppliedEffect> applied) {
-        return applied == null || applied.isEmpty() ? NONE : new ChartGenContext(applied);
+        return of(applied, 0);
+    }
+
+    public static ChartGenContext of(List<AppliedEffect> applied, int quality) {
+        boolean noEffects = applied == null || applied.isEmpty();
+        if (noEffects && quality <= 0) {
+            return NONE;
+        }
+        return new ChartGenContext(noEffects ? List.of() : applied, quality);
     }
 
     public static ChartGenContext from(Item chart) {
@@ -65,19 +82,33 @@ public final class ChartGenContext {
         List<AppliedEffect> applied = new ArrayList<>();
         for (SlottedRoll roll : chart.rolls()) {
             if (roll.roll().effect(effects) instanceof ChartEffect effect) {
-                float magnitude = roll.roll().magnitude();
-                applied.add(new AppliedEffect(effect, roll.line() == null ? magnitude : roll.line().valueFor(magnitude, scale)));
+                if (roll.line() == null) {
+                    reportUnresolved(chart, effect);
+                } else {
+                    applied.add(new AppliedEffect(effect, roll.line().valueFor(roll.roll().magnitude(), scale)));
+                }
             }
         }
-        return of(applied);
+        return of(applied, chart instanceof StarChart starChart ? starChart.quality() : 0);
+    }
+
+    private static void reportUnresolved(Item chart, ChartEffect effect) {
+        if (REPORTED_UNRESOLVED_ROLLS.add(chart.definitionId() + "/" + effect.name())) {
+            LOG.warn("[ExiledSector] Star Chart " + chart.definitionId() + " has a " + effect.name()
+                    + " roll whose modifier is no longer defined; the roll is ignored");
+        }
     }
 
     public List<AppliedEffect> applied() {
         return applied;
     }
 
+    public int quality() {
+        return quality;
+    }
+
     public boolean isEmpty() {
-        return applied.isEmpty();
+        return applied.isEmpty() && quality == 0;
     }
 
     void addFleetPowerPercent(float value) {
@@ -140,15 +171,15 @@ public final class ChartGenContext {
         if (isEmpty()) {
             return base;
         }
-        int fleetsMin = Math.max(1, base.fleetsMin() + extraFleets);
-        int fleetsMax = Math.max(fleetsMin, base.fleetsMax() + extraFleets);
+        int fleetsMin = Math.min(ChartContentPlanner.MAX_FLEETS, Math.max(1, base.fleetsMin() + extraFleets));
+        int fleetsMax = Math.min(ChartContentPlanner.MAX_FLEETS, Math.max(fleetsMin, base.fleetsMax() + extraFleets));
         float averageFleets = Math.max(1f, (base.fleetsMin() + base.fleetsMax()) / 2f);
         float fleetCountMult = Math.max(0f, 1f + extraFleets / averageFleets);
         float fleetPower = base.fleetPower() * multiplier(fleetPowerPercent) * fleetCountMult;
         return new ChartTier(base.tier(), fleetPower, fleetsMin, fleetsMax, base.officerLevelBonus() + officerLevelBonus,
                 base.officerCountBonus() + extraOfficers, base.quality() + fleetQualityPercent / PERCENT, base.averageSMods() + averageSModsBonus,
-                base.treePercentMin(), base.treePercentMax(), base.lootBudget() * lootMult(), base.boss(),
-                base.bossPower() * multiplier(bossPowerPercent), base.clearWeight(), base.bossWeight(), base.vaultWeight());
+                base.treePercentMin(), base.treePercentMax(), base.lootBudget() * lootMult(), base.boss(), base.bossPower(), base.clearWeight(),
+                base.bossWeight(), base.vaultWeight());
     }
 
     private static float multiplier(float percent) {
@@ -159,12 +190,28 @@ public final class ChartGenContext {
         return Math.max(0, extraPois);
     }
 
+    public float bossPowerMult() {
+        return multiplier(bossPowerPercent);
+    }
+
+    private float qualityQuantityPercent() {
+        return quality * QUANTITY_PERCENT_PER_QUALITY;
+    }
+
     public float lootMult() {
-        return multiplier(lootBudgetPercent + quantityPercent);
+        return multiplier(lootBudgetPercent + quantityPercent + qualityQuantityPercent());
+    }
+
+    public float lootMultWithoutVault() {
+        return multiplier(lootBudgetPercent + quantityPercent + qualityQuantityPercent() + vaultRichnessPercent);
+    }
+
+    public float lootBudgetWithoutVault(ChartTier base) {
+        return isEmpty() ? base.lootBudget() : base.lootBudget() * lootMultWithoutVault();
     }
 
     public float rewardMult() {
-        return multiplier(rewardPercent + quantityPercent);
+        return multiplier(rewardPercent + quantityPercent + qualityQuantityPercent());
     }
 
     public float itemChanceMult() {
@@ -224,8 +271,10 @@ public final class ChartGenContext {
             return "no chart modifiers";
         }
         return String.format(Locale.ROOT, "fleet power x%.2f, %+d fleet(s), %+d officer level(s), %+d officer(s), %+d S-mod(s), boss power x%.2f, "
-                        + "quality %+.0f%%, loot x%.2f, %+d point(s) of interest, hull item chance x%.2f, vault x%.2f, reward x%.2f, sensor range x%.2f",
-                multiplier(fleetPowerPercent), extraFleets, officerLevelBonus, extraOfficers, averageSModsBonus, multiplier(bossPowerPercent),
-                fleetQualityPercent, lootMult(), extraPois(), itemChanceMult(), multiplier(vaultRichnessPercent), rewardMult(), sensorRangeMult());
+                        + "quality %+.0f%%, loot x%.2f (x%.2f without a vault), %+d point(s) of interest, hull item chance x%.2f, vault x%.2f, "
+                        + "reward x%.2f, sensor range x%.2f, chart quality %d",
+                multiplier(fleetPowerPercent), extraFleets, officerLevelBonus, extraOfficers, averageSModsBonus, bossPowerMult(),
+                fleetQualityPercent, lootMult(), lootMultWithoutVault(), extraPois(), itemChanceMult(), multiplier(vaultRichnessPercent), rewardMult(),
+                sensorRangeMult(), quality);
     }
 }

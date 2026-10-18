@@ -31,8 +31,10 @@ public record ItemData(String definitionId, long seed, List<RolledModifier> expl
     }
 
     public static ItemData rolledAtTier(ItemDefinition definition, long seed, int tier) {
-        List<RolledModifier> modifiers = ItemRoller.rollAtTier(definition, seed, tier);
-        ItemTraits tierTraits = definition.type() == ItemType.STAR_CHART ? ItemTraits.ofTier(StarChart.clampTier(tier)) : null;
+        boolean starChart = definition.type() == ItemType.STAR_CHART;
+        int rolledTier = starChart ? StarChartDefinitions.tierAtLeastMinimum(definition.id(), tier) : tier;
+        List<RolledModifier> modifiers = ItemRoller.rollAtTier(definition, seed, rolledTier);
+        ItemTraits tierTraits = starChart ? ItemTraits.ofTier(rolledTier) : null;
         return new ItemData(definition.id(), seed, modifiers, ItemNames.freeze(definition, seed, modifiers), tierTraits);
     }
 
@@ -50,7 +52,10 @@ public record ItemData(String definitionId, long seed, List<RolledModifier> expl
 
     public static ItemData ofStarChart(SpecialItemData special) {
         ItemData chart = special != null && STAR_CHART_ITEM_ID.equals(special.getId()) ? parse(special.getData()) : null;
-        return chart == null || chart.traits() != null ? chart : chart.withTraits(ItemTraits.ofTier(StarChart.LOWEST_TIER));
+        if (chart == null || chart.traits() != null) {
+            return chart;
+        }
+        return chart.withTraits(ItemTraits.ofTier(StarChartDefinitions.minTier(chart.definitionId())));
     }
 
     public boolean isStarChart() {
@@ -89,10 +94,20 @@ public record ItemData(String definitionId, long seed, List<RolledModifier> expl
         }
         List<RolledModifier> modifiers = explicits;
         if (modifiers == null) {
-            modifiers = traits == null ? ItemRoller.roll(itemDefinition, seed) : ItemRoller.rollAtTier(itemDefinition, seed, traits.tier());
+            modifiers = rolledModifiers(itemDefinition);
         }
         Item item = Item.create(instanceId, definitionId, seed, modifiers, traits);
         item.freezeName(frozenName);
         return item;
+    }
+
+    private List<RolledModifier> rolledModifiers(ItemDefinition itemDefinition) {
+        if (traits != null) {
+            return ItemRoller.rollAtTier(itemDefinition, seed, traits.tier());
+        }
+        if (itemDefinition.type() == ItemType.STAR_CHART) {
+            return ItemRoller.rollAtTier(itemDefinition, seed, StarChart.LOWEST_TIER);
+        }
+        return ItemRoller.roll(itemDefinition, seed);
     }
 }

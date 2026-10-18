@@ -91,14 +91,18 @@ public sealed interface ValueScaling permits ValueScaling.Unscaled, ValueScaling
 
         @Override
         public float valueAt(int point, float rollFraction) {
-            float low = values.get(point);
-            float high = highValues.get(point);
+            float low = lowAt(point);
+            float high = highAt(point);
             if (low == high) {
                 return low;
             }
             float stepsPerUnit = (float) Math.pow(10, Math.max(ModifierLine.decimalPlaces(low), ModifierLine.decimalPlaces(high)));
-            float fraction = Math.max(0f, Math.min(1f, rollFraction));
-            return Math.round((low + (high - low) * fraction) * stepsPerUnit) / stepsPerUnit + 0f;
+            int lowStep = Math.round(low * stepsPerUnit);
+            int bandSteps = Math.round(high * stepsPerUnit) - lowStep + 1;
+            int rollPositions = Math.round(ModifierLine.TIER_ROLL_POSITIONS) + 1;
+            int position = Math.round(Math.max(0f, Math.min(1f, rollFraction)) * ModifierLine.TIER_ROLL_POSITIONS);
+            int step = Math.min(bandSteps - 1, position * bandSteps / rollPositions);
+            return (lowStep + step) / stepsPerUnit + 0f;
         }
 
         @Override

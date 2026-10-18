@@ -358,7 +358,7 @@ public final class ItemCrafting {
             return null;
         }
         if (definition.unique()) {
-            return canTranspose(definition, allowedUniques) ? transpose(store, item, random, allowedUniques) : null;
+            return canTranspose(definition, item.tier(), allowedUniques) ? transpose(store, item, random, allowedUniques) : null;
         }
         Set<String> previousIds = new HashSet<>();
         item.explicits().forEach(rolled -> previousIds.add(rolled.modifierId()));
@@ -394,12 +394,12 @@ public final class ItemCrafting {
         return merged;
     }
 
-    static boolean canTranspose(ItemDefinition currentDefinition, Predicate<ItemDefinition> allowedUniques) {
+    static boolean canTranspose(ItemDefinition currentDefinition, int tier, Predicate<ItemDefinition> allowedUniques) {
         if (!currentDefinition.unique()) {
             return false;
         }
         for (ItemDefinition definition : transpositionCandidates(currentDefinition)) {
-            if (otherUnique(definition, currentDefinition, allowedUniques)) {
+            if (otherUnique(definition, currentDefinition, tier, allowedUniques)) {
                 return true;
             }
         }
@@ -411,7 +411,7 @@ public final class ItemCrafting {
         if (currentDefinition == null) {
             return null;
         }
-        Predicate<ItemDefinition> otherUniques = definition -> otherUnique(definition, currentDefinition, allowedUniques);
+        Predicate<ItemDefinition> otherUniques = definition -> otherUnique(definition, currentDefinition, item.tier(), allowedUniques);
         ItemDefinition nextDefinition = currentDefinition.type() == ItemType.STAR_CHART ? ItemDrops.pickChart(random, otherUniques)
                 : ItemDrops.pickUnique(random, otherUniques);
         if (nextDefinition == null) {
@@ -428,7 +428,10 @@ public final class ItemCrafting {
         return currentDefinition.type() == ItemType.STAR_CHART ? ItemDefinitions.ofType(ItemType.STAR_CHART) : ItemDefinitions.all();
     }
 
-    private static boolean otherUnique(ItemDefinition definition, ItemDefinition currentDefinition, Predicate<ItemDefinition> allowedUniques) {
-        return definition.unique() && !definition.id().equals(currentDefinition.id()) && definition.rarity() > 0f && allowedUniques.test(definition);
+    private static boolean otherUnique(ItemDefinition definition, ItemDefinition currentDefinition, int tier,
+                                       Predicate<ItemDefinition> allowedUniques) {
+        boolean tierAllowed = definition.type() != ItemType.STAR_CHART || StarChartDefinitions.rollsAtTier(definition.id(), tier);
+        return definition.unique() && !definition.id().equals(currentDefinition.id()) && definition.rarity() > 0f && tierAllowed
+                && allowedUniques.test(definition);
     }
 }

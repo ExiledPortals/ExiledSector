@@ -58,6 +58,14 @@ public class ChartSoakScript implements EveryFrameScript {
         return done;
     }
 
+    int pocketsDone() {
+        return pocketsDone;
+    }
+
+    int chartsOpened() {
+        return chartsOpened;
+    }
+
     @Override
     public boolean runWhilePaused() {
         return true;
@@ -105,7 +113,6 @@ public class ChartSoakScript implements EveryFrameScript {
         ChartRunActions.OpenResult result;
         if (chart != null) {
             result = ChartRunActions.openWithChart(sector, 1, random, chart);
-            chartsOpened++;
         } else {
             ChartLayoutRequest layoutRequest = new ChartLayoutRequest(random.nextLong(), typeForIteration(pocketsDone), tierForIteration(pocketsDone));
             result = ChartRunActions.openBesidePlayer(sector, 1, random, layoutRequest);
@@ -113,6 +120,9 @@ public class ChartSoakScript implements EveryFrameScript {
         if (result != ChartRunActions.OpenResult.OPENED) {
             finish(sector, "stopped: opening pocket " + (pocketsDone + 1) + " returned " + result);
             return;
+        }
+        if (chart != null) {
+            chartsOpened++;
         }
         ChartRun run = ChartRuns.currentOrNull();
         if (run.isLayoutGenerated()) {

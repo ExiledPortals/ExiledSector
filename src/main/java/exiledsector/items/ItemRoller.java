@@ -40,7 +40,8 @@ public final class ItemRoller {
     }
 
     public static List<RolledModifier> rollAtTier(ItemDefinition definition, long seed, int tier) {
-        return roll(definition, seed, averageRolls(), tier);
+        int rolledTier = definition.type() == ItemType.STAR_CHART ? StarChartDefinitions.tierAtLeastMinimum(definition.id(), tier) : tier;
+        return roll(definition, seed, averageRolls(), rolledTier);
     }
 
     static List<RolledModifier> roll(ItemDefinition definition, long seed, boolean averageRolls) {

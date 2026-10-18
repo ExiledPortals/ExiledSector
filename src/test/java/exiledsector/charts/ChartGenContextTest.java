@@ -5,7 +5,10 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.ChartContentPlan.FleetRole;
+import exiledsector.charts.ChartContentPlan.PlannedFleet;
 import exiledsector.charts.ChartGenContext.AppliedEffect;
+import exiledsector.items.ItemData;
+import exiledsector.items.ItemTraits;
 import exiledsector.items.StarChart;
 import exiledsector.items.StarChartFixtures;
 import org.json.JSONObject;
@@ -78,7 +81,8 @@ class ChartGenContextTest {
         assertTrue(first.applied().contains(new AppliedEffect(ChartEffect.CHART_OFFICER_LEVEL_BONUS, 2f)), first.applied().toString());
         assertTrue(first.applied().stream().anyMatch(applied -> applied.effect() == ChartEffect.CHART_LOOT_BUDGET_PERCENT),
                 "the trinary implicit is read too");
-        assertEquals(1.8f, first.adjust(BASE).bossPower() / BASE.bossPower(), TOLERANCE);
+        assertEquals(1.8f, first.bossPowerMult(), TOLERANCE);
+        assertEquals(BASE.bossPower(), first.adjust(BASE).bossPower(), TOLERANCE, "the planner applies the boss percentage after the cap");
     }
 
     @Test
@@ -93,7 +97,7 @@ class ChartGenContextTest {
         assertEquals(BASE.officerLevelBonus() + 1, with(ChartEffect.CHART_OFFICER_LEVEL_BONUS, 1f).adjust(BASE).officerLevelBonus());
         assertEquals(BASE.officerCountBonus() + 2, with(ChartEffect.CHART_EXTRA_OFFICERS, 2f).adjust(BASE).officerCountBonus());
         assertEquals(BASE.averageSMods() + 1, with(ChartEffect.CHART_AVERAGE_SMODS_BONUS, 1f).adjust(BASE).averageSMods());
-        assertEquals(BASE.bossPower() * 1.4f, with(ChartEffect.CHART_BOSS_POWER_PERCENT, 40f).adjust(BASE).bossPower(), TOLERANCE);
+        assertEquals(1.4f, with(ChartEffect.CHART_BOSS_POWER_PERCENT, 40f).bossPowerMult(), TOLERANCE);
         assertEquals(BASE.quality() + 0.2f, with(ChartEffect.CHART_FLEET_QUALITY_PERCENT, 20f).adjust(BASE).quality(), TOLERANCE);
         assertEquals(BASE.lootBudget(), with(ChartEffect.CHART_FLEET_POWER_PERCENT, 50f).adjust(BASE).lootBudget(), TOLERANCE);
     }
@@ -117,8 +121,11 @@ class ChartGenContextTest {
     }
 
     private static ChartContentPlan plan(ChartGenContext context, long seed) {
-        return ChartContentPlanner.plan(seed, context.adjust(ChartTiers.forTier(8)), ChartPois.all(), ChartFactions.all(), faction -> true,
-                context.extraPois());
+        return plan(context, seed, 8);
+    }
+
+    private static ChartContentPlan plan(ChartGenContext context, long seed, int tier) {
+        return ChartContentPlanner.plan(seed, ChartTiers.forTier(tier), ChartPois.all(), ChartFactions.all(), faction -> true, context);
     }
 
     @Test
@@ -214,5 +221,128 @@ class ChartGenContextTest {
         assertTrue(ChartRewards.creditsFor(6, 1.5f) > ChartRewards.creditsFor(6));
         assertEquals(0, ChartRewards.creditsFor(6, 1.5f) % 1000);
         assertEquals(0, ChartRewards.creditsFor(6, -1f));
+    }
+
+    @Test
+    void theWardenGetsTheWholeBossPercentageAfterTheCapAndOverflowsPastTheCeiling() {
+        ChartFaction plainFaction = new ChartFaction("pirates", 1f, ChartTiers.LOWEST_TIER, ChartTiers.HIGHEST_TIER, 1f, 0f);
+        boolean sawOverflow = false;
+        boolean sawFullPercentage = false;
+        for (int tier = 10; tier <= 15; tier++) {
+            ChartTier base = ChartTiers.forTier(tier);
+            float cappedBasePower = Math.min(ChartContentPlanner.BOSS_POWER_CAP, base.bossPower());
+            ChartGenContext vigil = ChartGenContext.from(StarChartFixtures.chart("unique_chart_wardens_vigil", 5L, tier));
+            ChartGenContext vigilAndWarded = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_BOSS_POWER_PERCENT, 80f),
+                    new AppliedEffect(ChartEffect.CHART_BOSS_POWER_PERCENT, 60f)));
+            assertEquals(1.8f, vigil.bossPowerMult(), TOLERANCE, "tier " + tier);
+            for (ChartGenContext context : List.of(vigil, vigilAndWarded)) {
+                ChartTier adjusted = context.adjust(base);
+                float scaledPower = cappedBasePower * context.bossPowerMult();
+                PlannedFleet boss = ChartContentPlanner.plannedBoss(adjusted, plainFaction, 0.5f, context.bossPowerMult(), 0);
+                PlannedFleet atCeiling = ChartContentPlanner.plannedBoss(adjusted, plainFaction, 0.5f,
+                        Math.min(context.bossPowerMult(), ChartContentPlanner.BOSS_POWER_CEILING / cappedBasePower), 0);
+                assertEquals(Math.min(ChartContentPlanner.BOSS_POWER_CEILING, scaledPower), boss.combatPoints(), TOLERANCE, "tier " + tier);
+                if (scaledPower > ChartContentPlanner.BOSS_POWER_CEILING) {
+                    sawOverflow = true;
+                    assertTrue(boss.quality() > atCeiling.quality(), "tier " + tier);
+                    assertEquals(atCeiling.officerLevelBonus() + ChartContentPlanner.BOSS_OVERFLOW_BONUS, boss.officerLevelBonus(), "tier " + tier);
+                    assertEquals(atCeiling.averageSMods() + ChartContentPlanner.BOSS_OVERFLOW_BONUS, boss.averageSMods(), "tier " + tier);
+                } else {
+                    sawFullPercentage |= scaledPower > ChartContentPlanner.BOSS_POWER_CAP;
+                    assertEquals(atCeiling, boss, "tier " + tier);
+                }
+            }
+        }
+        assertTrue(sawOverflow);
+        assertTrue(sawFullPercentage, "a warden above the old cap keeps its whole percentage");
+    }
+
+    @Test
+    void aPlannedWardenFleetCarriesTheChartsBossPercentage() {
+        ChartGenContext vigil = ChartGenContext.from(StarChartFixtures.chart("unique_chart_wardens_vigil", 5L, 12));
+        ChartTier base = ChartTiers.forTier(12);
+        for (long seed = 0; seed < 20; seed++) {
+            ChartContentPlan plan = plan(vigil, seed, 12);
+            float cappedBasePower = Math.min(ChartContentPlanner.BOSS_POWER_CAP, base.bossPower() * plan.faction().powerMult());
+            float expected = Math.min(ChartContentPlanner.BOSS_POWER_CEILING, cappedBasePower * 1.8f);
+            assertEquals(expected, plan.fleetPower(FleetRole.BOSS), TOLERANCE, "seed " + seed);
+            assertTrue(plan.fleetPower(FleetRole.BOSS) > ChartContentPlanner.BOSS_POWER_CAP, "seed " + seed);
+        }
+        ChartContentPlan plainPlan = plan(ChartGenContext.none(), 3L, 12);
+        assertEquals(Math.min(ChartContentPlanner.BOSS_POWER_CAP, base.bossPower() * plainPlan.faction().powerMult()), plainPlan.fleetPower(FleetRole.BOSS),
+                TOLERANCE);
+    }
+
+    @Test
+    void extraFleetsNeverPushTheFleetCountPastTheLimit() {
+        ChartTier top = ChartTiers.forTier(15);
+        ChartTier crowded = with(ChartEffect.CHART_EXTRA_FLEETS, 4f).adjust(top);
+        float averageFleets = (top.fleetsMin() + top.fleetsMax()) / 2f;
+
+        assertTrue(top.fleetsMax() + 4 > ChartContentPlanner.MAX_FLEETS);
+        assertEquals(ChartContentPlanner.MAX_FLEETS, crowded.fleetsMax());
+        assertEquals(Math.min(ChartContentPlanner.MAX_FLEETS, top.fleetsMin() + 4), crowded.fleetsMin());
+        assertEquals(top.fleetPower() * (1f + 4f / averageFleets), crowded.fleetPower(), TOLERANCE, "clamped fleets keep their power");
+        ChartTier packed = with(ChartEffect.CHART_EXTRA_FLEETS, 30f).adjust(top);
+        assertEquals(ChartContentPlanner.MAX_FLEETS, packed.fleetsMin());
+        assertEquals(ChartContentPlanner.MAX_FLEETS, packed.fleetsMax());
+        ChartTier oversizedData = new ChartTier(15, 900f, 14, 16, 0, 0, 0.5f, 0, 100, 100, 0f, false, 0f, 1f, 0f, 0f);
+        for (long seed = 0; seed < 60; seed++) {
+            ChartContentPlan crowdedPlan = plan(with(ChartEffect.CHART_EXTRA_FLEETS, 4f), seed, 15);
+            assertTrue(crowdedPlan.count(FleetRole.GUARD) + crowdedPlan.count(FleetRole.PATROL) <= ChartContentPlanner.MAX_FLEETS, "seed " + seed);
+            ChartContentPlan oversizedPlan = ChartContentPlanner.plan(seed, oversizedData, List.of(), List.of(), faction -> true);
+            assertTrue(oversizedPlan.count(FleetRole.GUARD) + oversizedPlan.count(FleetRole.PATROL) <= ChartContentPlanner.MAX_FLEETS, "seed " + seed);
+        }
+    }
+
+    @Test
+    void vaultRichnessBecomesLootWhenThePocketHasNoVault() {
+        ChartGenContext hoard = with(ChartEffect.CHART_VAULT_RICHNESS_PERCENT, 100f);
+        assertEquals(BASE.lootBudget(), hoard.adjust(BASE).lootBudget(), TOLERANCE);
+        assertEquals(BASE.lootBudget() * 2f, hoard.lootBudgetWithoutVault(BASE), TOLERANCE);
+        assertEquals(BASE.lootBudget(), ChartGenContext.none().lootBudgetWithoutVault(BASE), TOLERANCE);
+        boolean sawVault = false;
+        boolean sawNoVault = false;
+        for (long seed = 0; seed < 40; seed++) {
+            ChartContentPlan plain = plan(ChartGenContext.none(), seed);
+            ChartContentPlan hoarded = plan(hoard, seed);
+            assertEquals(plain.objective(), hoarded.objective(), "seed " + seed);
+            if (plain.objective() == ChartObjective.VAULT) {
+                sawVault = true;
+                assertEquals(plain, hoarded, "with a vault, the richness stays in the vault: seed " + seed);
+            } else {
+                sawNoVault = true;
+                assertTrue(hoarded.lootSpent() > plain.lootSpent(), "seed " + seed + ": " + plain.lootSpent() + " -> " + hoarded.lootSpent());
+            }
+        }
+        assertTrue(sawVault);
+        assertTrue(sawNoVault);
+        assertTrue(ChartEffect.CHART_VAULT_RICHNESS_PERCENT.description(25f).plain().contains("without a vault"));
+    }
+
+    @Test
+    void chartQualityAddsOnePercentLootAndRewardPerPoint() {
+        ChartGenContext polished = ChartGenContext.of(List.of(), 12);
+        assertFalse(polished.isEmpty());
+        assertEquals(1.12f, polished.lootMult(), TOLERANCE);
+        assertEquals(1.12f, polished.rewardMult(), TOLERANCE);
+        assertEquals(BASE.lootBudget() * 1.12f, polished.adjust(BASE).lootBudget(), TOLERANCE);
+        assertEquals(BASE.fleetPower(), polished.adjust(BASE).fleetPower(), TOLERANCE);
+        assertSame(ChartGenContext.none(), ChartGenContext.of(List.of(), 0));
+
+        ItemData plainData = ItemData.rolledAtTier(StarChartFixtures.definition("star_chart_single"), 3L, 5);
+        StarChart plainChart = (StarChart) plainData.preview();
+        StarChart polishedChart = (StarChart) plainData.withTraits(new ItemTraits(5, 12, null, null)).preview();
+        ChartGenContext plainContext = ChartGenContext.from(plainChart);
+        ChartGenContext polishedContext = ChartGenContext.from(polishedChart);
+
+        assertEquals(0, plainContext.quality());
+        assertEquals(12, polishedContext.quality());
+        assertEquals(plainContext.rewardMult() + 0.12f, polishedContext.rewardMult(), TOLERANCE);
+        assertEquals(plainContext.lootMult() + 0.12f, polishedContext.lootMult(), TOLERANCE);
+        assertTrue(ChartRewards.creditsFor(5, polishedContext.rewardMult()) >= ChartRewards.creditsFor(5, plainContext.rewardMult()));
+        assertTrue(polishedChart.headerLines().stream().anyMatch(line -> line.plain().contains("12% more loot and completion reward")),
+                polishedChart.headerLines().toString());
+        assertTrue(plainChart.headerLines().stream().noneMatch(line -> line.plain().contains("Quality")));
     }
 }

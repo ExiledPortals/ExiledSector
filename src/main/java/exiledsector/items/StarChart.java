@@ -3,6 +3,7 @@ package exiledsector.items;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.modifiers.Modifier;
+import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
 
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ public final class StarChart extends Item {
 
     @Override
     public int tier() {
-        return clampTier(tier);
+        return StarChartDefinitions.tierAtLeastMinimum(definitionId(), tier);
     }
 
     public int quality() {
@@ -64,7 +65,7 @@ public final class StarChart extends Item {
     @Override
     void applyTraits(ItemTraits traits) {
         super.applyTraits(traits);
-        tier = clampTier(traits.tier());
+        tier = StarChartDefinitions.tierAtLeastMinimum(definitionId(), traits.tier());
         quality = clampQuality(traits.quality());
         if (traits.implicits() != null) {
             replaceImplicits(traits.implicits());
@@ -83,7 +84,7 @@ public final class StarChart extends Item {
     public ItemTraits traits() {
         List<RolledModifier> currentImplicits = implicits();
         boolean seededImplicits = currentImplicits.equals(StarChartImplicits.roll(systemType(), seed()));
-        return new ItemTraits(tier(), quality(), corruption(), seededImplicits ? null : currentImplicits);
+        return new ItemTraits(tier(), quality(), corruption(), seededImplicits ? null : currentImplicits, mirrored());
     }
 
     @Override
@@ -106,7 +107,23 @@ public final class StarChart extends Item {
                 return implicit;
             }
         }
-        return StarChartImplicits.anyById(modifierId);
+        Modifier corruptionImplicit = StarChartImplicits.anyById(modifierId);
+        return corruptionImplicit != null ? corruptionImplicit : catalogueModifier(modifierId);
+    }
+
+    @Override
+    Modifier explicitModifier(String modifierId) {
+        Modifier poolModifier = super.explicitModifier(modifierId);
+        return poolModifier != null ? poolModifier : catalogueModifier(modifierId);
+    }
+
+    private static Modifier catalogueModifier(String modifierId) {
+        return ItemModifiers.itemTypes(modifierId).contains(ItemType.STAR_CHART) ? ItemModifiers.get(modifierId) : null;
+    }
+
+    @Override
+    StyledText unresolvedLine(ModifierEffects effects, RolledEffect effect) {
+        return effect.effect(effects) == null ? null : Translation.styled("chart.item.unresolvedModifier");
     }
 
     @Override

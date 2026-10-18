@@ -86,7 +86,7 @@ public enum CraftingCurrency implements ItemCurrency {
             case RECALIBRATION -> ItemCrafting.canRecalibrate(item, item.definition(), context.guardedSlots());
             case SUBSTITUTION -> ItemCrafting.canSubstitute(item, item.definition(), context.guardedSlots());
             case TRANSPOSITION -> !ItemCrafting.wardBlocksTransposition(item, context.guardedSlots())
-                    && ItemCrafting.canTranspose(item.definition(), context.allowedUniques());
+                    && ItemCrafting.canTranspose(item.definition(), item.tier(), context.allowedUniques());
             case FIXATION -> ItemCrafting.canFixate(item, context.guardedSlots());
             case CORRUPTION, REPLICATION -> true;
         };

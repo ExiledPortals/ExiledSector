@@ -23,6 +23,8 @@ final class ChartContentPlanner {
     static final int MAX_FLEETS = 12;
     static final float FLEET_POWER_CAP = 300f;
     static final float BOSS_POWER_CAP = 450f;
+    static final float BOSS_POWER_CEILING = 600f;
+    static final int BOSS_OVERFLOW_BONUS = 1;
     static final float MIN_FLEET_POWER = 15f;
     static final float SHARE_SPREAD = 0.25f;
     static final float MAX_OVERFLOW_QUALITY = 0.25f;
@@ -38,19 +40,22 @@ final class ChartContentPlanner {
     }
 
     static ChartContentPlan plan(long seed, ChartTier tier, List<ChartPoi> pois, List<ChartFaction> factions, Predicate<String> factionLoaded) {
-        return plan(seed, tier, pois, factions, factionLoaded, 0);
+        return plan(seed, tier, pois, factions, factionLoaded, ChartGenContext.none());
     }
 
-    static ChartContentPlan plan(long seed, ChartTier tier, List<ChartPoi> pois, List<ChartFaction> factions, Predicate<String> factionLoaded,
-                                 int extraPois) {
+    static ChartContentPlan plan(long seed, ChartTier baseTier, List<ChartPoi> pois, List<ChartFaction> factions, Predicate<String> factionLoaded,
+                                 ChartGenContext chartContext) {
+        ChartTier tier = chartContext.adjust(baseTier);
         ChartFaction faction = ChartFactions.pick(factions, tier.tier(), factionLoaded, ChartLayoutGenerator.derivedRandom(seed, FACTION_SALT));
         List<ChartPoi> vaults = affordableVaults(pois, tier);
         ChartObjective objective = pickObjective(tier, !vaults.isEmpty(), ChartLayoutGenerator.derivedRandom(seed, OBJECTIVE_SALT));
-        List<PlannedPoi> plannedPois = spendLoot(tier, pois, objective == ChartObjective.VAULT ? vaults : List.of(),
-                ChartLayoutGenerator.derivedRandom(seed, LOOT_SALT));
-        plannedPois = addExtraPois(tier, pois, plannedPois, extraPois, ChartLayoutGenerator.derivedRandom(seed, EXTRA_POI_SALT));
+        boolean vaultPlanned = objective == ChartObjective.VAULT;
+        ChartTier lootTier = vaultPlanned ? tier : tier.withLootBudget(chartContext.lootBudgetWithoutVault(baseTier));
+        List<PlannedPoi> plannedPois = spendLoot(lootTier, pois, vaultPlanned ? vaults : List.of(), ChartLayoutGenerator.derivedRandom(seed, LOOT_SALT));
+        plannedPois = addExtraPois(tier, pois, plannedPois, chartContext.extraPois(), ChartLayoutGenerator.derivedRandom(seed, EXTRA_POI_SALT));
         List<PlannedFleet> plannedFleets = new ArrayList<>();
-        plannedPois = planFleets(tier, faction, objective, plannedPois, plannedFleets, ChartLayoutGenerator.derivedRandom(seed, FLEET_SALT));
+        plannedPois = planFleets(tier, faction, objective, plannedPois, plannedFleets, ChartLayoutGenerator.derivedRandom(seed, FLEET_SALT),
+                chartContext.bossPowerMult());
         return new ChartContentPlan(tier.tier(), faction, objective, plannedPois, plannedFleets);
     }
 
@@ -133,9 +138,9 @@ final class ChartContentPlanner {
     }
 
     static List<PlannedPoi> planFleets(ChartTier tier, ChartFaction faction, ChartObjective objective, List<PlannedPoi> pois,
-                                       List<PlannedFleet> fleets, Random random) {
+                                       List<PlannedFleet> fleets, Random random, float bossPowerMult) {
         float power = tier.fleetPower() * faction.powerMult();
-        int fleetCount = tier.fleetsMin() + random.nextInt(tier.fleetsMax() - tier.fleetsMin() + 1);
+        int fleetCount = Math.min(MAX_FLEETS, tier.fleetsMin() + random.nextInt(tier.fleetsMax() - tier.fleetsMin() + 1));
         if (power / fleetCount > FLEET_POWER_CAP) {
             fleetCount = Math.min(MAX_FLEETS, (int) Math.ceil(power / FLEET_POWER_CAP));
         }
@@ -174,12 +179,21 @@ final class ChartContentPlanner {
             }
         }
         if (tier.boss()) {
-            float bossPower = Math.max(MIN_FLEET_POWER, Math.min(BOSS_POWER_CAP, tier.bossPower() * faction.powerMult()));
-            fleets.add(new PlannedFleet(FleetRole.BOSS, bossTarget(guardedPois), bossPower,
-                    Math.max(0f, Math.min(MAX_QUALITY, quality + BOSS_QUALITY_BONUS)), tier.officerLevelBonus() + BOSS_OFFICER_LEVEL_BONUS,
-                    tier.officerCountBonus() + BOSS_OFFICER_COUNT_BONUS, tier.averageSMods() + BOSS_SMOD_BONUS));
+            fleets.add(plannedBoss(tier, faction, quality, bossPowerMult, bossTarget(guardedPois)));
         }
         return guardedPois;
+    }
+
+    static PlannedFleet plannedBoss(ChartTier tier, ChartFaction faction, float fleetQuality, float bossPowerMult, int targetPoi) {
+        float scaledBossPower = Math.min(BOSS_POWER_CAP, tier.bossPower() * faction.powerMult()) * Math.max(0f, bossPowerMult);
+        float bossPower = Math.max(MIN_FLEET_POWER, Math.min(BOSS_POWER_CEILING, scaledBossPower));
+        float bossOverflow = Math.max(0f, scaledBossPower - BOSS_POWER_CEILING);
+        float overflowQuality = bossOverflow <= 0f ? 0f : Math.min(MAX_OVERFLOW_QUALITY, bossOverflow / BOSS_POWER_CEILING * MAX_OVERFLOW_QUALITY);
+        int overflowBonus = bossOverflow > 0f ? BOSS_OVERFLOW_BONUS : 0;
+        return new PlannedFleet(FleetRole.BOSS, targetPoi, bossPower,
+                Math.max(0f, Math.min(MAX_QUALITY, fleetQuality + BOSS_QUALITY_BONUS + overflowQuality)),
+                tier.officerLevelBonus() + BOSS_OFFICER_LEVEL_BONUS + overflowBonus, tier.officerCountBonus() + BOSS_OFFICER_COUNT_BONUS,
+                tier.averageSMods() + BOSS_SMOD_BONUS + overflowBonus);
     }
 
     private static List<Integer> guardedIndices(List<PlannedPoi> pois) {

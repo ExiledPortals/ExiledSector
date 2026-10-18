@@ -7,8 +7,14 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.security.AnyTypePermission;
 import exiledsector.charts.ChartEffect;
+import exiledsector.charts.ChartGenContext;
+import exiledsector.charts.ChartGenContext.AppliedEffect;
+import exiledsector.i18n.StyledText;
 import exiledsector.modifiers.Modifier;
+import exiledsector.modifiers.ModifierEffects;
+import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
+import exiledsector.modifiers.ScaleContext;
 import exiledsector.modifiers.TierRange;
 import exiledsector.skills.skilleffect.SkillEffect;
 import org.junit.jupiter.api.AfterEach;
@@ -24,6 +30,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -357,6 +364,126 @@ class StarChartTest {
         }
         assertTrue(sawCommonName);
         assertTrue(StarChartFixtures.chart(SINGLE, 1L, 4).headerLines().get(0).plain().startsWith("Tier 4 chart, single star"));
+    }
+
+    @Test
+    void aRollWhoseModifierLeftThePoolFallsBackToTheCatalogueOrIsDroppedAndFlagged() {
+        List<RolledModifier> movedExplicits = List.of(new RolledModifier("HYBRID_CHART_BOSS_POWER", ModifierSlot.PREFIX,
+                List.of(new RolledEffect("CHART_BOSS_POWER_PERCENT", 100f), new RolledEffect("CHART_QUANTITY_PERCENT", 0f))));
+        StarChart moved = (StarChart) Item.create(null, SILENT_REACH, 4L, movedExplicits, ItemTraits.ofTier(12));
+        ChartGenContext movedContext = ChartGenContext.from(moved);
+
+        assertNull(moved.definition().poolEntryFor("HYBRID_CHART_BOSS_POWER"));
+        assertTrue(movedContext.applied().contains(new AppliedEffect(ChartEffect.CHART_BOSS_POWER_PERCENT, 60f)), movedContext.applied().toString());
+        assertTrue(movedContext.applied().contains(new AppliedEffect(ChartEffect.CHART_QUANTITY_PERCENT, 8f)), movedContext.applied().toString());
+        assertTrue(moved.effectLines().get(0).plain().contains("60%"), moved.effectLines().toString());
+
+        List<RolledModifier> orphanExplicits = List.of(new RolledModifier("CHART_REMOVED_MODIFIER", ModifierSlot.SUFFIX,
+                List.of(new RolledEffect("CHART_EXTRA_FLEETS", 73f))));
+        StarChart orphaned = (StarChart) Item.create(null, SINGLE, 4L, orphanExplicits, ItemTraits.ofTier(6));
+        ChartGenContext orphanContext = ChartGenContext.from(orphaned);
+        List<String> orphanLines = orphaned.effectLines().stream().map(StyledText::plain).toList();
+
+        assertTrue(orphanContext.applied().stream().noneMatch(applied -> applied.effect() == ChartEffect.CHART_EXTRA_FLEETS),
+                orphanContext.applied().toString());
+        assertEquals(1, orphanLines.size(), orphanLines.toString());
+        assertTrue(orphanLines.get(0).contains("Unreadable modifier"), orphanLines.toString());
+        assertFalse(orphanLines.get(0).contains("73"), orphanLines.toString());
+
+        ItemDefinition hullDefinition = ItemDefinitions.ofType(ItemType.HULL_ITEM).iterator().next();
+        RolledEffect hullLine = new RolledEffect("HULL_MULT", 73f);
+        RolledEffect armorLine = new RolledEffect("ARMOR_FLAT", 7f);
+        Item hullItem = Item.create(null, hullDefinition.id(), 4L, List.of(new RolledModifier("NOT_IN_ANY_POOL", ModifierSlot.PREFIX,
+                List.of(hullLine, armorLine))));
+        assertEquals(List.of(hullLine.description().plain(), armorLine.description().plain()),
+                hullItem.effectLines().stream().map(StyledText::plain).toList(), "hull items keep showing their rolled values");
+    }
+
+    @Test
+    void uniqueChartsNeverExistBelowTheirMinimumTier() {
+        ItemDefinition vigil = ItemDefinitions.get(WARDENS_VIGIL);
+
+        assertEquals(4, StarChartDefinitions.minTier(WARDENS_VIGIL));
+        assertEquals(StarChart.LOWEST_TIER, StarChartDefinitions.minTier(SILENT_REACH));
+        assertEquals(StarChart.LOWEST_TIER, StarChartDefinitions.minTier(SINGLE));
+        assertEquals(4, ItemData.rolledAtTier(vigil, 3L, 1).traits().tier());
+        assertEquals(4, ItemData.rolledAtTier(vigil, 3L, 1).preview().tier());
+        assertEquals(4, ItemData.rolled(vigil, 3L).preview().tier());
+        assertEquals(4, new ItemData(WARDENS_VIGIL, 3L).preview().tier());
+        assertEquals(9, ItemData.rolledAtTier(vigil, 3L, 9).preview().tier());
+        ItemData lowTierData = new ItemData(WARDENS_VIGIL, 3L, null, null, ItemTraits.ofTier(2));
+        assertEquals(4, lowTierData.preview().tier());
+        assertEquals(4, ItemStore.forStarCharts().add(lowTierData).tier());
+        assertEquals(4, ItemData.ofStarChart(new SpecialItemData(ItemData.STAR_CHART_ITEM_ID, WARDENS_VIGIL + "|5")).preview().tier());
+        assertTrue(exiledsector.charts.ChartTiers.forTier(StarChartDefinitions.minTier(WARDENS_VIGIL)).boss(),
+                "the Warden's Vigil boss prefix always has a warden to strengthen");
+
+        Random random = new Random(5);
+        boolean vigilAtTierFour = false;
+        for (int draw = 0; draw < 1000; draw++) {
+            assertNotEquals(WARDENS_VIGIL, ItemDrops.pickChartAtTier(random, 3, definition -> true).id());
+            vigilAtTierFour |= WARDENS_VIGIL.equals(ItemDrops.pickChartAtTier(random, 4, definition -> true).id());
+        }
+        assertTrue(vigilAtTierFour);
+
+        ItemDefinition silentReach = ItemDefinitions.get(SILENT_REACH);
+        assertFalse(ItemCrafting.canTranspose(silentReach, 3, definition -> true));
+        assertTrue(ItemCrafting.canTranspose(silentReach, 4, definition -> true));
+        ItemStore store = ItemStore.forStarCharts();
+        Item lowSilentReach = store.add(ItemData.rolledAtTier(silentReach, 12L, 3));
+        assertNull(ItemCrafting.transpose(store, lowSilentReach, new Random(5), definition -> true));
+    }
+
+    @Test
+    void aChartWithoutTraitsRollsAtItsLowestTier() {
+        for (long seed = 0; seed < 400; seed++) {
+            Item chart = new ItemData(SINGLE, seed).preview();
+            assertEquals(StarChart.LOWEST_TIER, chart.tier());
+            Set<String> ids = modifierIds(chart);
+            assertFalse(ids.contains("HYBRID_CHART_BOSS_POWER") || ids.contains("HYBRID_CHART_AVERAGE_SMODS")
+                    || ids.contains("HYBRID_CHART_EXTRA_OFFICERS") || ids.contains("CHART_VAULT_RICHNESS_PERCENT"), "seed " + seed + ": " + ids);
+        }
+    }
+
+    @Test
+    void aTierlessViewListsEveryBandsWholeRange() {
+        ModifierLine fleetPower = ModifierLine.parse("CHART_FLEET_POWER_PERCENT:t1=10-15/t6=20-30/t11=35-45").line();
+        ModifierLine sensorRange = ModifierLine.parse("CHART_SENSOR_RANGE_PERCENT:t1=-25--15/t6=-35--25").line();
+        ModifierLine extraFleets = ModifierLine.parse("CHART_EXTRA_FLEETS:t1=1/t8=2/t13=3").line();
+        ModifierEffects chartEffects = ItemEffects.forType(ItemType.STAR_CHART);
+
+        assertTrue(fleetPower.listsEveryValueFor(ScaleContext.NONE));
+        assertEquals("Enemy fleets are 10-15/20-30/35-45% stronger",
+                new RolledEffect("CHART_FLEET_POWER_PERCENT", 50f).scaledValuesDescription(chartEffects, fleetPower).plain());
+        assertEquals("Enemy fleets are 10-15/20-30/35-45% stronger",
+                new RolledEffect("CHART_FLEET_POWER_PERCENT", 45f).rangeDescription(chartEffects, fleetPower).plain());
+        assertEquals("Your sensor range is 15-25/25-35% shorter inside the pocket",
+                new RolledEffect("CHART_SENSOR_RANGE_PERCENT", -35f).scaledValuesDescription(chartEffects, sensorRange).plain());
+        assertTrue(new RolledEffect("CHART_EXTRA_FLEETS", 3f).scaledValuesDescription(chartEffects, extraFleets).plain().startsWith("1/2/3 "));
+        ModifierLine hullValues = ModifierLine.parse("ARMOR_FLAT:5/10/15/20").line();
+        assertEquals(new RolledEffect("ARMOR_FLAT", 5f).scaledValuesDescription(ItemEffects.SKILL_EFFECTS, hullValues.scaledValues()).plain(),
+                new RolledEffect("ARMOR_FLAT", 5f).scaledValuesDescription(ItemEffects.SKILL_EFFECTS, hullValues).plain());
+    }
+
+    @Test
+    void aMirroredChartStaysMirroredThroughTheCodecAndTheStore() {
+        ItemStore store = ItemStore.forStarCharts();
+        Item chart = store.add(ItemData.rolledAtTier(ItemDefinitions.get(SINGLE), 31L, 7));
+        Item mirror = store.addMirrorOf(chart);
+
+        String plainEncoded = ItemData.of(chart).encode();
+        String mirrorEncoded = ItemData.of(mirror).encode();
+        ItemData decodedMirror = ItemData.parse(mirrorEncoded);
+
+        assertFalse(plainEncoded.contains("\"m\""), plainEncoded);
+        assertTrue(mirrorEncoded.contains("\"m\":true"), mirrorEncoded);
+        assertTrue(decodedMirror.traits().mirrored());
+        assertTrue(decodedMirror.preview().mirrored());
+        assertEquals(7, decodedMirror.preview().tier());
+        assertTrue(ItemStore.forStarCharts().add(decodedMirror).mirrored());
+        assertTrue(ItemData.ofStarChart(decodedMirror.toSpecialItem()).preview().mirrored());
+        assertFalse(ItemData.parse(plainEncoded).preview().mirrored());
+        assertFalse(ItemTraits.ofTier(3).mirrored());
     }
 
     @Test

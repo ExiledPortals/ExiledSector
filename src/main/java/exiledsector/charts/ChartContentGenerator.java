@@ -74,8 +74,8 @@ public final class ChartContentGenerator {
         int clampedTier = ChartTiers.clamp(tier);
         ChartContentPlan plan;
         try {
-            plan = ChartContentPlanner.plan(seed, chartContext.adjust(ChartTiers.forTier(clampedTier)), ChartPois.all(), ChartFactions.all(),
-                    factionId -> isLoaded(sector, factionId), chartContext.extraPois());
+            plan = ChartContentPlanner.plan(seed, ChartTiers.forTier(clampedTier), ChartPois.all(), ChartFactions.all(),
+                    factionId -> isLoaded(sector, factionId), chartContext);
         } catch (RuntimeException e) {
             report("plan the content", seed, e);
             return ChartContent.none(clampedTier);

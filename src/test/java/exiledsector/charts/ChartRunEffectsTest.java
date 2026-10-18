@@ -173,6 +173,25 @@ class ChartRunEffectsTest {
     }
 
     @Test
+    void aClosingRunKeepsThePenaltyInsideForBothTheWatchdogAndTheLoadSweep() {
+        ChartRun run = storeRun(StarChartFixtures.chart("unique_chart_silent_reach", 9L, 6));
+        run.recordArrival();
+        run.beginClosing();
+        when(playerFleet.getContainingLocation()).thenReturn(pocket);
+        sensorRange.modifyMult(ChartIds.SENSOR_MOD_ID, 0.5f);
+
+        ChartLoadSweep.liftEffectsOutsidePocket(sector);
+        assertFalse(sensorRange.getMultBonus(ChartIds.SENSOR_MOD_ID) == null, "the load sweep keeps the penalty of a closing run");
+        new ChartRunScript().watch(sector, run);
+        verify(stats).addTemporaryModMult(eq(ChartRunEffects.SENSOR_MOD_DAYS), eq(ChartIds.SENSOR_MOD_ID), anyString(), eq(0.5f), eq(sensorRange));
+        verify(stats, never()).removeTemporaryMod(ChartIds.SENSOR_MOD_ID);
+
+        assertTrue(ChartRunState.CLOSING.keepsRunEffects());
+        assertTrue(ChartRunState.INSIDE.keepsRunEffects());
+        assertFalse(ChartRunState.CLOSED.keepsRunEffects());
+    }
+
+    @Test
     void applyingAMultOfOneRemovesInsteadOfAdding() {
         assertFalse(ChartRunEffects.applySensorRange(playerFleet, 1f, "src"));
         verify(stats).removeTemporaryMod(ChartIds.SENSOR_MOD_ID);
