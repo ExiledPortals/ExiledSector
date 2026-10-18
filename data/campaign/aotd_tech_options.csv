@@ -1,0 +1,2 @@
+id,name,tier,timeToResearch,reqToResearchFirst,itemReqToResearch,iconId,rewards,columnNumber,rowNumber,isResearchedFromStart,otherReq,tags,modId
+exiledSector_tech_wormhole_gateway,Wormhole Gateway,5,30,aotd_tech_hyperspace_stabilization,research_databank:12,exiledSector_wormhole_gateway,exiledSector_wormhole_gateway:industry,1,6,false,$aotd_experimental_tier:Requires obtaining a Hyperdimensional processor and installing it Into a Research Facility,,aotd_vok

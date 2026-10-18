@@ -9,6 +9,7 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.ChartRuns;
 import exiledsector.charts.StarChartSettings;
+import exiledsector.charts.WormholeGateway;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
 import exiledsector.items.StarChart;
@@ -20,12 +21,13 @@ public final class WormholeOpenCheck {
     public enum Blocker {
         NONE,
         NO_CHART,
-        SETTING_OFF,
         RUN_OPEN,
         NO_FLEET,
         IN_TRANSITION,
         IN_SYSTEM,
-        IN_FLEET_ENCOUNTER;
+        IN_FLEET_ENCOUNTER,
+        NO_GATEWAY,
+        GATEWAY_INACTIVE;
 
         public boolean allowsOpening() {
             return this == NONE;
@@ -60,9 +62,6 @@ public final class WormholeOpenCheck {
                 || store.find(chart.id()) != chart) {
             return Blocker.NO_CHART;
         }
-        if (!openAnywhere) {
-            return Blocker.SETTING_OFF;
-        }
         if (runOpen) {
             return Blocker.RUN_OPEN;
         }
@@ -79,6 +78,13 @@ public final class WormholeOpenCheck {
         if (dialogTarget instanceof CampaignFleetAPI otherFleet && otherFleet != playerFleet) {
             return Blocker.IN_FLEET_ENCOUNTER;
         }
-        return Blocker.NONE;
+        if (openAnywhere) {
+            return Blocker.NONE;
+        }
+        return switch (WormholeGateway.statusAt(dialogTarget)) {
+            case WORKING -> Blocker.NONE;
+            case INACTIVE -> Blocker.GATEWAY_INACTIVE;
+            case NONE -> Blocker.NO_GATEWAY;
+        };
     }
 }

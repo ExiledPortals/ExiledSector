@@ -50,6 +50,7 @@ class ChartPersistenceGuardTest {
         assertTrue(ChartSaveAliases.ALIASES.containsValue(ChartRunState.class));
         assertTrue(ChartSaveAliases.ALIASES.containsValue(ChartWormholePlugin.class));
         assertTrue(ChartSaveAliases.ALIASES.containsValue(ChartObjectiveIntel.class));
+        assertTrue(ChartSaveAliases.ALIASES.containsValue(WormholeGateway.class));
         ChartSaveAliases.ALIASES.keySet().forEach(alias -> assertTrue(alias.startsWith("exiledSector."), alias));
     }
 

@@ -10,7 +10,8 @@ public final class ChartSaveAliases {
             "exiledSector.ChartRun", ChartRun.class,
             "exiledSector.ChartRunState", ChartRunState.class,
             "exiledSector.ChartWormholePlugin", ChartWormholePlugin.class,
-            "exiledSector.ChartObjectiveIntel", ChartObjectiveIntel.class);
+            "exiledSector.ChartObjectiveIntel", ChartObjectiveIntel.class,
+            "exiledSector.WormholeGateway", WormholeGateway.class);
 
     private ChartSaveAliases() {
     }

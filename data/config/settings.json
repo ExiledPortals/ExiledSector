@@ -1,0 +1,7 @@
+{
+	"graphics":{
+		"ui_icons_tech_tree":{
+			"exiledSector_wormhole_gateway":"graphics/icons/tech/exiledSector_wormhole_gateway.png",
+		},
+	},
+}

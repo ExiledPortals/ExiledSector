@@ -7,10 +7,13 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
+import com.fs.starfarer.api.campaign.econ.Industry;
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.ChartRun;
 import exiledsector.charts.ChartRuns;
 import exiledsector.charts.StarChartSettings;
+import exiledsector.charts.WormholeGateway;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
@@ -72,10 +75,44 @@ class WormholeOpenCheckTest {
         assertEquals(Blocker.NO_CHART, WormholeOpenCheck.evaluate(chart, store, true, false, playerFleet));
     }
 
+    private static SectorEntityToken colony(boolean playerOwned, Boolean gatewayFunctional) {
+        SectorEntityToken colony = mock(SectorEntityToken.class);
+        MarketAPI market = mock(MarketAPI.class);
+        when(colony.getMarket()).thenReturn(market);
+        when(market.isPlayerOwned()).thenReturn(playerOwned);
+        if (gatewayFunctional != null) {
+            Industry gateway = mock(Industry.class);
+            when(gateway.isFunctional()).thenReturn(gatewayFunctional);
+            when(market.getIndustry(WormholeGateway.ID)).thenReturn(gateway);
+        }
+        return colony;
+    }
+
     @Test
-    void theSettingSwitchBlocksOpening() {
-        assertEquals(Blocker.SETTING_OFF, WormholeOpenCheck.evaluate(chart, store, false, false, playerFleet));
-        assertFalse(Blocker.SETTING_OFF.allowsOpening());
+    void withoutTheDevSwitchTheFleetMustBeDockedAtAPlayerColonyWithAWorkingGateway() {
+        assertEquals(Blocker.NO_GATEWAY, WormholeOpenCheck.evaluate(chart, store, false, false, playerFleet));
+        assertEquals(Blocker.NO_GATEWAY, WormholeOpenCheck.evaluate(chart, store, false, false, playerFleet, mock(SectorEntityToken.class)));
+        assertEquals(Blocker.NO_GATEWAY, WormholeOpenCheck.evaluate(chart, store, false, false, playerFleet, colony(true, null)));
+        assertEquals(Blocker.NO_GATEWAY, WormholeOpenCheck.evaluate(chart, store, false, false, playerFleet, colony(false, true)));
+        assertEquals(Blocker.GATEWAY_INACTIVE, WormholeOpenCheck.evaluate(chart, store, false, false, playerFleet, colony(true, false)));
+        assertEquals(Blocker.NONE, WormholeOpenCheck.evaluate(chart, store, false, false, playerFleet, colony(true, true)));
+        assertFalse(Blocker.NO_GATEWAY.allowsOpening());
+        assertFalse(Blocker.GATEWAY_INACTIVE.allowsOpening());
+    }
+
+    @Test
+    void theDevSwitchOpensAnywhereWithoutAGateway() {
+        assertEquals(Blocker.NONE, WormholeOpenCheck.evaluate(chart, store, true, false, playerFleet, colony(true, false)));
+        assertEquals(Blocker.NONE, WormholeOpenCheck.evaluate(chart, store, true, false, playerFleet));
+    }
+
+    @Test
+    void aWorkingGatewayNeverOverridesTheOtherBlockers() {
+        SectorEntityToken gatewayColony = colony(true, true);
+
+        assertEquals(Blocker.RUN_OPEN, WormholeOpenCheck.evaluate(chart, store, false, true, playerFleet, gatewayColony));
+        when(hyperspace.hasTag(ChartIds.SYSTEM_TAG)).thenReturn(true);
+        assertEquals(Blocker.IN_SYSTEM, WormholeOpenCheck.evaluate(chart, store, false, false, playerFleet, gatewayColony));
     }
 
     @Test
@@ -132,14 +169,14 @@ class WormholeOpenCheckTest {
              MockedStatic<LunaSettings> lunaMock = Mockito.mockStatic(LunaSettings.class)) {
             globalMock.when(Global::getSector).thenReturn(sector);
             lunaMock.when(() -> LunaSettings.getBoolean("exiledSector", StarChartSettings.OPEN_ANYWHERE_FIELD_ID)).thenReturn(null);
-            assertEquals(Blocker.NONE, WormholeOpenCheck.current(sector, store, chart), "the switch defaults to on");
+            assertEquals(Blocker.NO_GATEWAY, WormholeOpenCheck.current(sector, store, chart), "the dev switch defaults to off");
 
             ChartRuns.store(new ChartRun("busy", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1));
             assertEquals(Blocker.RUN_OPEN, WormholeOpenCheck.current(sector, store, chart));
             ChartRuns.delete("busy");
 
-            lunaMock.when(() -> LunaSettings.getBoolean("exiledSector", StarChartSettings.OPEN_ANYWHERE_FIELD_ID)).thenReturn(false);
-            assertEquals(Blocker.SETTING_OFF, WormholeOpenCheck.current(sector, store, chart));
+            lunaMock.when(() -> LunaSettings.getBoolean("exiledSector", StarChartSettings.OPEN_ANYWHERE_FIELD_ID)).thenReturn(true);
+            assertEquals(Blocker.NONE, WormholeOpenCheck.current(sector, store, chart));
         }
     }
 }

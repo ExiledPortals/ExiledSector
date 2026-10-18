@@ -11,6 +11,7 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI.SurveyLevel;
 import com.fs.starfarer.api.campaign.econ.MarketConditionAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
+import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.impl.campaign.procgen.ProcgenUsedNames;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
 import org.junit.jupiter.api.AfterEach;
@@ -238,6 +239,8 @@ class ChartLayoutGeneratorTest {
         ChartLayoutGenerator.generate(sector, fake.system, RUN_ID, new ChartLayoutRequest(3L, StarSystemType.SINGLE));
 
         verify(economy).removeMarket(market);
+        verify(planet).addTag(Tags.NOT_RANDOM_MISSION_TARGET);
+        verify(star).addTag(Tags.NOT_RANDOM_MISSION_TARGET);
         verify(market).setPlanetConditionMarketOnly(true);
         verify(market).setSurveyLevel(SurveyLevel.SEEN);
         verify(visible).setSurveyed(true);

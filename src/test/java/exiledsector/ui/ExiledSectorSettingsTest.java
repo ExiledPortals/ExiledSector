@@ -128,9 +128,9 @@ class ExiledSectorSettingsTest {
     }
 
     @Test
-    void registersTheOpenWormholesAnywhereSwitchedOnByDefault() {
+    void registersTheOpenWormholesAnywhereDevSwitchOffByDefault() {
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addBoolean(eq("exiledSector"),
-                eq(StarChartSettings.OPEN_ANYWHERE_FIELD_ID), anyString(), anyString(), eq(true), eq("")));
+                eq(StarChartSettings.OPEN_ANYWHERE_FIELD_ID), anyString(), anyString(), eq(false), eq("")));
     }
 
     @Test

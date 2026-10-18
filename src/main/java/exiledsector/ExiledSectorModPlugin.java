@@ -4,9 +4,11 @@ import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SpecialItemSpecAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
+import com.fs.starfarer.api.loading.IndustrySpecAPI;
 import com.thoughtworks.xstream.XStream;
 import exiledsector.charts.ChartSaveAliases;
 import exiledsector.charts.StarCharts;
+import exiledsector.charts.WormholeGateway;
 import exiledsector.compat.AbyssSingularity;
 import exiledsector.compat.CompatChecks;
 import exiledsector.compat.GraphicsLibCompat;
@@ -149,7 +151,16 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         I18n.forGameText(() -> {
             LOCALISED_HULLMODS.forEach(ExiledSectorModPlugin::localise);
             MaterialItems.ids().forEach(ExiledSectorModPlugin::localiseMaterial);
+            localiseIndustry(WormholeGateway.ID);
         });
+    }
+
+    private static void localiseIndustry(String industryId) {
+        IndustrySpecAPI industrySpec = Global.getSettings().getIndustrySpec(industryId);
+        if (industrySpec != null) {
+            industrySpec.setName(Translation.data("industry." + industryId + ".name", industrySpec.getName()));
+            industrySpec.setDesc(Translation.data("industry." + industryId + ".description", industrySpec.getDesc()));
+        }
     }
 
     private static void localiseMaterial(String itemId) {

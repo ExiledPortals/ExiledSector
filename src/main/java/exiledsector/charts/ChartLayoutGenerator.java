@@ -10,6 +10,7 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI.SurveyLevel;
 import com.fs.starfarer.api.campaign.econ.MarketConditionAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
+import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.impl.campaign.procgen.StarAge;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
 import org.apache.log4j.Logger;
@@ -166,6 +167,7 @@ public final class ChartLayoutGenerator {
 
     static void prepareMarkets(StarSystemAPI system, EconomyAPI economy) {
         for (PlanetAPI planet : system.getPlanets()) {
+            planet.addTag(Tags.NOT_RANDOM_MISSION_TARGET);
             MarketAPI market = planet.getMarket();
             if (planet.isStar() || market == null) {
                 continue;

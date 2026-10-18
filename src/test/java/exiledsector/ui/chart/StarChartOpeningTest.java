@@ -2,13 +2,19 @@ package exiledsector.ui.chart;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.CampaignUIAPI;
+import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.campaign.SectorEntityToken;
+import com.fs.starfarer.api.campaign.econ.Industry;
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.ChartRun;
 import exiledsector.charts.ChartRunActions.OpenResult;
 import exiledsector.charts.ChartRuns;
 import exiledsector.charts.StarChartSettings;
+import exiledsector.charts.WormholeGateway;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
@@ -54,7 +60,7 @@ class StarChartOpeningTest {
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSector).thenReturn(sector);
         lunaMock = Mockito.mockStatic(LunaSettings.class);
-        lunaMock.when(() -> LunaSettings.getBoolean("exiledSector", StarChartSettings.OPEN_ANYWHERE_FIELD_ID)).thenReturn(null);
+        lunaMock.when(() -> LunaSettings.getBoolean("exiledSector", StarChartSettings.OPEN_ANYWHERE_FIELD_ID)).thenReturn(true);
         store = ItemStore.starCharts();
         chart = store.add(ItemData.rolledAtTier(ItemDefinitions.get("star_chart_single"), 12L, 4));
     }
@@ -122,14 +128,34 @@ class StarChartOpeningTest {
     }
 
     @Test
-    void theSwitchTurnedOffStopsOpening() {
+    void withoutTheDevSwitchOpeningNeedsAWorkingGatewayWhereTheFleetIsDocked() {
         lunaMock.when(() -> LunaSettings.getBoolean("exiledSector", StarChartSettings.OPEN_ANYWHERE_FIELD_ID))
-                .thenReturn(false);
+                .thenReturn(null);
 
         StarChartOpening.Outcome outcome = StarChartOpening.open(answering(OpenResult.OPENED), sector, store, chart, 1, new Random(1L));
 
-        assertEquals(Blocker.SETTING_OFF, outcome.blocker());
+        assertEquals(Blocker.NO_GATEWAY, outcome.blocker());
+        assertEquals("chart.ui.open.blocked.no_gateway", outcome.messageKey());
         assertTrue(openedCharts.isEmpty());
         assertEquals(List.of(chart), store.owned());
+
+        dockAtColonyWithWorkingGateway();
+
+        assertTrue(StarChartOpening.open(answering(OpenResult.OPENED), sector, store, chart, 1, new Random(1L)).opened());
+    }
+
+    private void dockAtColonyWithWorkingGateway() {
+        CampaignUIAPI campaignUi = mock(CampaignUIAPI.class);
+        InteractionDialogAPI dialog = mock(InteractionDialogAPI.class);
+        SectorEntityToken colony = mock(SectorEntityToken.class);
+        MarketAPI market = mock(MarketAPI.class);
+        Industry gateway = mock(Industry.class);
+        when(sector.getCampaignUI()).thenReturn(campaignUi);
+        when(campaignUi.getCurrentInteractionDialog()).thenReturn(dialog);
+        when(dialog.getInteractionTarget()).thenReturn(colony);
+        when(colony.getMarket()).thenReturn(market);
+        when(market.isPlayerOwned()).thenReturn(true);
+        when(market.getIndustry(WormholeGateway.ID)).thenReturn(gateway);
+        when(gateway.isFunctional()).thenReturn(true);
     }
 }

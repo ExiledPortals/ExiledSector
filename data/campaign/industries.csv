@@ -1,0 +1,2 @@
+id,name,cost mult,build time,income,upkeep,downgrade,upgrade,tags,data,image,plugin,desc,order,disruptDanger
+exiledSector_wormhole_gateway,Wormhole Gateway,100,120,,4,,,"structure, unraidable",,graphics/icons/industry/exiledSector_wormhole_gateway.png,exiledsector.charts.WormholeGateway,"A lattice of field projectors that holds a Star Chart's coordinates steady long enough to tear a wormhole open to the charted system. Fleets docked here can open Star Chart wormholes.",3300,MEDIUM

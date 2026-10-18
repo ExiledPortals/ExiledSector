@@ -8,8 +8,8 @@ public final class StarChartSettings {
     public static final int DEFAULT_ENTRIES = 1;
     public static final int MIN_ENTRIES = 1;
     public static final int MAX_ENTRIES = 10;
-    public static final String OPEN_ANYWHERE_FIELD_ID = "exiledSector_starChartOpenAnywhere";
-    public static final boolean DEFAULT_OPEN_ANYWHERE = true;
+    public static final String OPEN_ANYWHERE_FIELD_ID = "exiledSector_starChartOpenAnywhereDev";
+    public static final boolean DEFAULT_OPEN_ANYWHERE = false;
 
     private StarChartSettings() {
     }
