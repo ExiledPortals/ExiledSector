@@ -3,14 +3,14 @@ package exiledsector.ui;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.skills.ShipSections;
-import exiledsector.hullitems.HullUpgradesSetting;
+import exiledsector.items.HullUpgradesSetting;
 import exiledsector.ui.decoration.SkillTreeFleetRenderer;
 import exiledsector.ui.section.SectionLayout;
 import exiledsector.ui.node.TreeAllocationSession;
 import exiledsector.ui.socket.HullUpgradePanel;
 import exiledsector.ui.socket.SocketPanelPlacement;
 import exiledsector.ui.socket.SocketPanelTab;
-import exiledsector.ui.socket.HullItemStoragePanel;
+import exiledsector.ui.socket.ItemStoragePanel;
 import exiledsector.ui.util.Fade;
 import exiledsector.ui.util.GLDraw;
 
@@ -152,7 +152,7 @@ final class SectionInspection {
     private void fitShipToFreeSpace(PositionAPI canvasPosition, TreeCamera camera, float shipTreeLength) {
         float panelRight = 0f;
         if (socketPlacement.isStorageOpen()) {
-            panelRight = ChromeMetrics.EDGE_MARGIN + HullItemStoragePanel.WIDTH;
+            panelRight = ChromeMetrics.EDGE_MARGIN + ItemStoragePanel.WIDTH;
         } else if (hullUpgradesPanel != null) {
             panelRight = ChromeMetrics.EDGE_MARGIN + HullUpgradePanel.WIDTH;
         }
@@ -254,7 +254,7 @@ final class SectionInspection {
             treeShipExtent = SectionLayout.ShipExtent.square(ship.longestSidePixels());
         }
         sectionsDisplay.render(ship, treeShipExtent, alpha,
-                SectionsDisplay.SectionBounds.UNBOUNDED, socketPlacement.placingHullItem(),
+                SectionsDisplay.SectionBounds.UNBOUNDED, socketPlacement.placingItem(),
                 socketPlacement.isSectionTargeted() ? socketPlacement.targetSection() : null);
     }
 }

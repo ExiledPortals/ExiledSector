@@ -18,8 +18,8 @@ import exiledsector.skills.npc.NpcSkillTreeBuilder;
 import exiledsector.skills.npc.NpcTreeRecords;
 import exiledsector.skills.npc.NpcTreeTag;
 import exiledsector.skills.npc.RealSkillData;
-import exiledsector.hullitems.NpcHullItems;
-import exiledsector.hullitems.HullItemDefinitions;
+import exiledsector.items.NpcItems;
+import exiledsector.items.ItemDefinitions;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -58,7 +58,7 @@ class NpcUniqueAlertsTest {
         RealSkillData.clear();
         register("root", SkillTier.ROOT);
         register("socket_1", SkillTier.SOCKET, "root");
-        HullItemDefinitions.register(new JSONArray()
+        ItemDefinitions.register(new JSONArray()
                 .put(definition("basic", false))
                 .put(definition("relic", true).put("name", "Ancient Relic")));
 
@@ -90,13 +90,13 @@ class NpcUniqueAlertsTest {
     @AfterEach
     void tearDown() {
         globalMock.close();
-        NpcHullItems.clearCache();
-        HullItemDefinitions.clear();
+        NpcItems.clearCache();
+        ItemDefinitions.clear();
         RealSkillData.clear();
     }
 
     private static JSONObject definition(String id, boolean unique) throws Exception {
-        return new JSONObject().put("id", id).put("kind", "subroutine").put("prefixes", "HULL_MULT:4:6")
+        return new JSONObject().put("id", id).put("prefixes", "HULL_MULT:4:6")
                 .put("unique", Boolean.toString(unique));
     }
 
@@ -109,7 +109,7 @@ class NpcUniqueAlertsTest {
     private String recordCarrying(String definitionId) {
         ShipSkillData data = NpcSkillTreeBuilder.rootedTree(SkillTree.get("root"), 1);
         data.allocate(SkillTree.get("socket_1"), 1);
-        data.socketItem("socket_1", NpcHullItems.id(definitionId, 7L));
+        data.socketItem("socket_1", NpcItems.id(definitionId, 7L));
         String record = NpcTreeTag.encode(data);
         NpcTreeRecords.of(fleet.getMemoryWithoutUpdate()).put("flagship", record);
         return record;

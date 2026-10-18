@@ -15,8 +15,8 @@ import exiledsector.effects.NpcFleetLeveller;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
-import exiledsector.hullitems.HullItem;
-import exiledsector.hullitems.HullItemStore;
+import exiledsector.items.Item;
+import exiledsector.items.ItemStore;
 import exiledsector.ui.VanillaText;
 import org.lwjgl.input.Keyboard;
 
@@ -105,7 +105,7 @@ public class NpcFleetInspectDialog implements CustomVisualDialogDelegate {
             }
         }
         contentElement.addSectionHeading(fleet.getFullName(), Alignment.MID, PAD);
-        addHullItems(dialogPanel, contentElement, shipEntries, contentWidth - SCROLLBAR_ALLOWANCE);
+        addItems(dialogPanel, contentElement, shipEntries, contentWidth - SCROLLBAR_ALLOWANCE);
         VanillaText.addPara(contentElement, Translation.msg("inspect.levelledShips").arg("levelled", levelled.size())
                 .arg("total", allMembers.size()).styled(), PAD, Misc.getTextColor());
         if (columns <= 1) {
@@ -121,16 +121,16 @@ public class NpcFleetInspectDialog implements CustomVisualDialogDelegate {
         }
     }
 
-    private static void addHullItems(CustomPanelAPI dialogPanel, TooltipMakerAPI contentElement, List<ShipEntry> shipEntries,
+    private static void addItems(CustomPanelAPI dialogPanel, TooltipMakerAPI contentElement, List<ShipEntry> shipEntries,
                                        float stripWidth) {
-        List<HullItemIconStrip.Entry> stripEntries = new ArrayList<>();
+        List<ItemIconStrip.Entry> stripEntries = new ArrayList<>();
         for (ShipEntry shipEntry : shipEntries) {
             List<StyledText> footer = List.of(Translation.msg("inspect.socketable.installedIn").arg("ship", shipTitle(shipEntry.member())).styled(),
                     Translation.styled("inspect.socketable.drops"));
-            for (String hullItemId : shipEntry.shipTree().skillData().getInstalledHullItemIds()) {
-                HullItem hullItem = HullItemStore.lookup(hullItemId);
-                if (hullItem != null) {
-                    stripEntries.add(new HullItemIconStrip.Entry(hullItem, shipEntry.member().getHullSpec().getHullSize(), footer));
+            for (String itemId : shipEntry.shipTree().skillData().getInstalledItemIds()) {
+                Item item = ItemStore.lookup(itemId);
+                if (item != null) {
+                    stripEntries.add(new ItemIconStrip.Entry(item, shipEntry.member().getHullSpec().getHullSize(), footer));
                 }
             }
         }
@@ -138,7 +138,7 @@ public class NpcFleetInspectDialog implements CustomVisualDialogDelegate {
             return;
         }
         VanillaText.plainPara(contentElement, Translation.text("inspect.socketables"), PAD, Misc.getBasePlayerColor());
-        contentElement.addCustom(HullItemIconStrip.create(dialogPanel, stripWidth, stripEntries), PAD / 2f);
+        contentElement.addCustom(ItemIconStrip.create(dialogPanel, stripWidth, stripEntries), PAD / 2f);
     }
 
     private static void addShipRow(TooltipMakerAPI contentElement, CampaignFleetAPI fleet, List<ShipEntry> shipEntries,

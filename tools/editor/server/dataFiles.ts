@@ -95,16 +95,18 @@ export function resolveDataResource(paths: ProjectPaths, name: string): DataReso
       return { filePath: path.join(skillTreeDir, 'skill_types.json'), check: (text) => checkJsonArrayField(text, 'skillTypes') };
     case 'tree':
       return { filePath: path.join(skillTreeDir, 'ship_skill_tree.json'), check: (text) => checkJsonArrayField(text, 'nodes') };
-    case 'socketables':
-      return { filePath: path.join(configDir, 'socketables.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
-    case 'hull-item-modifiers':
-      return { filePath: path.join(configDir, 'hull_item_modifiers.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
-    case 'socketable-names':
-      return { filePath: path.join(configDir, 'socketable_names.json'), check: checkJsonObject };
-    case 'socketable-crafting':
-      return { filePath: path.join(configDir, 'socketable_crafting.csv'), check: (text) => checkCsvHeader(text, 'item,', 'the item column') };
+    case 'subroutines':
+      return { filePath: path.join(configDir, 'subroutines.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
+    case 'hull-items':
+      return { filePath: path.join(configDir, 'hull_items.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
+    case 'item-modifiers':
+      return { filePath: path.join(configDir, 'item_modifiers.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
+    case 'item-names':
+      return { filePath: path.join(configDir, 'item_names.json'), check: checkJsonObject };
+    case 'item-crafting':
+      return { filePath: path.join(configDir, 'item_crafting.csv'), check: (text) => checkCsvHeader(text, 'item,', 'the item column') };
     case 'hull-item-implicits':
-      return { filePath: path.join(configDir, 'hull_item_implicits.csv'), check: (text) => checkCsvHeader(text, 'type,', 'the type column') };
+      return { filePath: path.join(configDir, 'hull_item_implicits.csv'), check: (text) => checkCsvHeader(text, 'section,', 'the section column') };
     case 'strings-en':
       return { filePath: path.join(paths.projectRoot, 'data', 'strings', 'exiledSector', 'en.json'), check: checkStringCatalogue };
     case 'commodities':

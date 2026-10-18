@@ -4,8 +4,8 @@ import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.skills.tags.ShipProfile;
-import exiledsector.hullitems.NpcHullItems;
-import exiledsector.hullitems.HullItemDefinitions;
+import exiledsector.items.NpcItems;
+import exiledsector.items.ItemDefinitions;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -28,27 +28,28 @@ class ShipSectionsTest {
     void setUp() throws Exception {
         SkillTree.clearNodes();
         SkillTree.clearTypes();
-        HullItemDefinitions.register(new JSONArray()
+        ItemDefinitions.register(new JSONArray()
                 .put(definition("bridge_item", "bridge", "HULL_PERCENT:5:5"))
                 .put(definition("emitter", "shield_generator", "HULL_PERCENT:10:10"))
                 .put(definition("chip", "subroutine", "HULL_PERCENT:20:20")));
         shipData = new ShipSkillData();
         shipData.grantUnlockedSocketType("bridge");
         shipData.grantUnlockedSocketType("shield_generator");
-        shipData.installInSection("bridge", NpcHullItems.id("bridge_item", 1L));
-        shipData.installInSection("shield_generator", NpcHullItems.id("emitter", 2L));
+        shipData.installInSection("bridge", NpcItems.id("bridge_item", 1L));
+        shipData.installInSection("shield_generator", NpcItems.id("emitter", 2L));
     }
 
     @AfterEach
     void tearDown() {
         SkillTree.clearNodes();
         SkillTree.clearTypes();
-        HullItemDefinitions.clear();
-        NpcHullItems.clearCache();
+        ItemDefinitions.clear();
+        NpcItems.clearCache();
     }
 
     private static JSONObject definition(String id, String kind, String prefixes) throws Exception {
-        return new JSONObject().put("id", id).put("kind", kind).put("name", id).put("rarity", "10").put("prefixes", prefixes);
+        JSONObject row = new JSONObject().put("id", id).put("name", id).put("rarity", "10").put("prefixes", prefixes);
+        return "subroutine".equals(kind) ? row : row.put("section", kind);
     }
 
     private static ShipProfile fit(ShieldType shieldType) {
@@ -99,7 +100,7 @@ class ShipSectionsTest {
 
     @Test
     void anItemOfTheWrongTypeInASocketDoesNothing() {
-        shipData.installInSection("bridge", NpcHullItems.id("chip", 3L));
+        shipData.installInSection("bridge", NpcItems.id("chip", 3L));
 
         List<ShipSections.UnlockedSection> slots = ShipSections.of(shipData, () -> fit(ShieldType.FRONT));
 

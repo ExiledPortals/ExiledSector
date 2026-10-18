@@ -15,7 +15,7 @@ import com.fs.starfarer.api.util.DynamicStatsAPI;
 import exiledsector.effects.PlayerEngagementPipeline.Stage;
 import exiledsector.effects.PlayerEngagementPipeline.Step;
 import exiledsector.skills.skilleffect.FleetWideEffects;
-import exiledsector.hullitems.SocketLossListener;
+import exiledsector.items.SocketLossListener;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -170,8 +170,8 @@ class PlayerEngagementPipelineTest {
         List<String> calls = new ArrayList<>();
         SocketLossListener socketLossListener = mock(SocketLossListener.class);
         doAnswer(invocation -> calls.add("losses")).when(socketLossListener).reportPlayerEngagement(any());
-        HullItemLootListener hullItemLootListener = mock(HullItemLootListener.class);
-        doAnswer(invocation -> calls.add("loot")).when(hullItemLootListener).holdLoot(any());
+        ItemLootListener itemLootListener = mock(ItemLootListener.class);
+        doAnswer(invocation -> calls.add("loot")).when(itemLootListener).holdLoot(any());
         EngagementResultAPI result = wonEngagement(List.of(), List.of(), List.of());
 
         try (MockedStatic<ShipTreeSync> treeSync = Mockito.mockStatic(ShipTreeSync.class);
@@ -183,7 +183,7 @@ class PlayerEngagementPipelineTest {
             crewSettlement.when(FleetCrewLedgerSettlement::schedule).thenAnswer(invocation -> calls.add("crew"));
             fleetWideEffects.when(() -> FleetWideEffects.recomputeSalvageBonus(any())).thenAnswer(invocation -> calls.add("salvage"));
 
-            PlayerEngagementPipeline.create(socketLossListener, hullItemLootListener).reportPlayerEngagement(result);
+            PlayerEngagementPipeline.create(socketLossListener, itemLootListener).reportPlayerEngagement(result);
         }
 
         assertEquals(List.of("losses", "trees", "xp", "crew", "loot", "salvage"), calls);

@@ -2,9 +2,9 @@ package exiledsector.console;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import exiledsector.hullitems.HullItemDefinition;
-import exiledsector.hullitems.HullItemDefinitions;
-import exiledsector.hullitems.HullItemData;
+import exiledsector.items.ItemDefinition;
+import exiledsector.items.ItemDefinitions;
+import exiledsector.items.ItemData;
 import org.lazywizard.console.BaseCommand;
 import org.lazywizard.console.CommonStrings;
 import org.lazywizard.console.Console;
@@ -40,9 +40,9 @@ public class GrantUniqueHullItemsCommand implements BaseCommand {
         }
 
         int grantedUniqueCount = 0;
-        for (HullItemDefinition definition : HullItemDefinitions.all()) {
+        for (ItemDefinition definition : ItemDefinitions.all()) {
             if (definition.unique()) {
-                playerFleet.getCargo().addSpecial(HullItemData.rolled(definition, random.nextLong()).toSpecialItem(), 1f);
+                playerFleet.getCargo().addSpecial(ItemData.rolled(definition, random.nextLong()).toSpecialItem(), 1f);
                 grantedUniqueCount++;
             }
         }

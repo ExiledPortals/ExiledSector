@@ -4,9 +4,9 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import exiledsector.skills.tags.NodeRequirements;
 import exiledsector.skills.tags.ShipProfile;
-import exiledsector.hullitems.ShipSection;
-import exiledsector.hullitems.HullItem;
-import exiledsector.hullitems.HullItemStore;
+import exiledsector.items.ShipSection;
+import exiledsector.items.Item;
+import exiledsector.items.ItemStore;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 
 public final class ShipSections {
 
-    public record UnlockedSection(ShipSection section, HullItem item, String unmetRequirement) {
+    public record UnlockedSection(ShipSection section, Item item, String unmetRequirement) {
 
         public boolean active() {
             return unmetRequirement == null;
@@ -57,7 +57,7 @@ public final class ShipSections {
                 }
                 unmetRequirement = unmetRequirement(section, resolvedFit);
             }
-            sections.add(new UnlockedSection(section, HullItemStore.lookup(shipData.getSectionItem(sectionId)), unmetRequirement));
+            sections.add(new UnlockedSection(section, ItemStore.lookup(shipData.getSectionItem(sectionId)), unmetRequirement));
         }
         return Collections.unmodifiableList(sections);
     }

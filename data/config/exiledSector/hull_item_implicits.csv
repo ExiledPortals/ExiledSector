@@ -1,4 +1,4 @@
-type,implicits
+section,implicits
 shield_generator,@HYBRID_FLUX_CAPACITY_FLUX_DISSIPATION
 armor_plating,@ARMOR_PERCENT_IMPLICIT
 reactor,@VENT_RATE_PERCENT_IMPLICIT

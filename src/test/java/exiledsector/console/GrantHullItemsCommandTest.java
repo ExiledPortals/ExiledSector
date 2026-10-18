@@ -5,8 +5,8 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
-import exiledsector.hullitems.HullItemDefinitions;
-import exiledsector.hullitems.HullItemData;
+import exiledsector.items.ItemDefinitions;
+import exiledsector.items.ItemData;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -51,26 +51,26 @@ class GrantHullItemsCommandTest {
         globalMock.when(Global::getSector).thenReturn(sector);
         when(sector.getPlayerFleet()).thenReturn(fleet);
         when(fleet.getCargo()).thenReturn(cargo);
-        HullItemDefinitions.register(new JSONArray()
+        ItemDefinitions.register(new JSONArray()
                 .put(definition("first_subroutine"))
                 .put(definition("second_subroutine")));
     }
 
     @AfterEach
     void tearDown() {
-        HullItemDefinitions.clear();
+        ItemDefinitions.clear();
         consoleMock.close();
         globalMock.close();
     }
 
     private static JSONObject definition(String id) throws Exception {
-        return new JSONObject().put("id", id).put("kind", "subroutine").put("prefixes", "HULL_MULT:4:6").put("suffixes", "ARMOR_PERCENT:6:9");
+        return new JSONObject().put("id", id).put("prefixes", "HULL_MULT:4:6").put("suffixes", "ARMOR_PERCENT:6:9");
     }
 
-    private List<HullItemData> granted(int expectedItems) {
+    private List<ItemData> granted(int expectedItems) {
         ArgumentCaptor<SpecialItemData> items = ArgumentCaptor.forClass(SpecialItemData.class);
         verify(cargo, times(expectedItems)).addSpecial(items.capture(), Mockito.eq(1f));
-        return items.getAllValues().stream().map(HullItemData::of).toList();
+        return items.getAllValues().stream().map(ItemData::of).toList();
     }
 
     @Test
@@ -78,8 +78,8 @@ class GrantHullItemsCommandTest {
         CommandResult result = new GrantHullItemsCommand(new Random(3L)).runCommand("", CommandContext.CAMPAIGN_MAP);
 
         assertEquals(CommandResult.SUCCESS, result);
-        List<HullItemData> items = granted(10);
-        Map<String, Long> perType = items.stream().collect(Collectors.groupingBy(HullItemData::definitionId, Collectors.counting()));
+        List<ItemData> items = granted(10);
+        Map<String, Long> perType = items.stream().collect(Collectors.groupingBy(ItemData::definitionId, Collectors.counting()));
         assertEquals(Map.of("first_subroutine", 5L, "second_subroutine", 5L), perType);
         Set<Long> seeds = new HashSet<>();
         items.forEach(item -> seeds.add(item.seed()));

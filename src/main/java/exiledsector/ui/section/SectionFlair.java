@@ -1,8 +1,8 @@
 package exiledsector.ui.section;
 
 import com.fs.starfarer.api.util.Misc;
-import exiledsector.hullitems.HullItemType;
-import exiledsector.hullitems.ShipSection;
+import exiledsector.items.ItemKind;
+import exiledsector.items.ShipSection;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.HoloShapes;
@@ -51,7 +51,7 @@ public final class SectionFlair {
         return SECTION_COLORS.getOrDefault(section, Misc.getBasePlayerColor());
     }
 
-    public static Color colorOf(HullItemType itemType) {
+    public static Color colorOf(ItemKind itemType) {
         return itemType == null ? Misc.getBasePlayerColor() : colorOf(itemType.section());
     }
 

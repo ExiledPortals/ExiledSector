@@ -56,13 +56,13 @@ public class ShipSkillData {
         return socketedItems == null ? Map.of() : Collections.unmodifiableMap(socketedItems);
     }
 
-    public boolean socketItem(String nodeId, String hullItemId) {
+    public boolean socketItem(String nodeId, String itemId) {
         revision++;
         if (!isAllocated(nodeId)) {
             return false;
         }
         if (socketedItems == null) socketedItems = new LinkedHashMap<>();
-        socketedItems.put(nodeId, hullItemId);
+        socketedItems.put(nodeId, itemId);
         return true;
     }
 
@@ -128,27 +128,27 @@ public class ShipSkillData {
         return frameworkItemsBySocketType == null ? Map.of() : Collections.unmodifiableMap(frameworkItemsBySocketType);
     }
 
-    public List<String> getInstalledHullItemIds() {
+    public List<String> getInstalledItemIds() {
         List<String> installedIds = new ArrayList<>(getSocketedItems().values());
         installedIds.addAll(getSectionItems().values());
         return installedIds;
     }
 
-    public boolean holdsHullItem(String hullItemId) {
-        return getSocketedItems().containsValue(hullItemId) || getSectionItems().containsValue(hullItemId);
+    public boolean holdsItem(String itemId) {
+        return getSocketedItems().containsValue(itemId) || getSectionItems().containsValue(itemId);
     }
 
     public String getSectionItem(String socketTypeId) {
         return frameworkItemsBySocketType == null ? null : frameworkItemsBySocketType.get(socketTypeId);
     }
 
-    public boolean installInSection(String socketTypeId, String hullItemId) {
+    public boolean installInSection(String socketTypeId, String itemId) {
         revision++;
         if (!isSocketTypeUnlocked(socketTypeId)) {
             return false;
         }
         if (frameworkItemsBySocketType == null) frameworkItemsBySocketType = new LinkedHashMap<>();
-        frameworkItemsBySocketType.put(socketTypeId, hullItemId);
+        frameworkItemsBySocketType.put(socketTypeId, itemId);
         return true;
     }
 

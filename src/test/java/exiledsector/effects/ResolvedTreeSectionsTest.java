@@ -1,12 +1,12 @@
 package exiledsector.effects;
 
-import exiledsector.hullitems.ShipSection;
+import exiledsector.items.ShipSection;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.ShipSections;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
-import exiledsector.hullitems.NpcHullItems;
-import exiledsector.hullitems.HullItemDefinitions;
+import exiledsector.items.NpcItems;
+import exiledsector.items.ItemDefinitions;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -22,19 +22,19 @@ class ResolvedTreeSectionsTest {
 
     @AfterEach
     void tearDown() {
-        HullItemDefinitions.clear();
-        NpcHullItems.clearCache();
+        ItemDefinitions.clear();
+        NpcItems.clearCache();
         ResolvedTree.clearCache();
     }
 
     @Test
     void sectionItemsApplyUnderTheirOwnSlotModIdsAndAFitChangeRebuildsTheTree() throws Exception {
-        HullItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "officer").put("kind", "bridge").put("name", "Officer")
+        ItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "officer").put("section", "bridge").put("name", "Officer")
                 .put("rarity", "10").put("prefixes", "HULL_PERCENT:5:5")));
         ShipSkillData shipData = new ShipSkillData();
         shipData.grantUnlockedSocketType("bridge");
         shipData.grantUnlockedSocketType("reactor");
-        shipData.installInSection("bridge", NpcHullItems.id("officer", 1L));
+        shipData.installInSection("bridge", NpcItems.id("officer", 1L));
         List<ShipSections.UnlockedSection> slots = ShipSections.of(shipData, () -> null);
 
         ResolvedTree resolvedTree = ResolvedTree.of(shipData, HullSize.CRUISER, 1f, slots);

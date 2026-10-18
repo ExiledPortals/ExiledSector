@@ -10,18 +10,18 @@ import exiledsector.PlayerFleet;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.ShipSections;
-import exiledsector.hullitems.HullUpgradeRules;
-import exiledsector.hullitems.HullUpgradeTooltip;
-import exiledsector.hullitems.ShipSection;
-import exiledsector.hullitems.HullItem;
-import exiledsector.hullitems.HullItemStore;
+import exiledsector.items.HullUpgradeRules;
+import exiledsector.items.HullUpgradeTooltip;
+import exiledsector.items.ShipSection;
+import exiledsector.items.Item;
+import exiledsector.items.ItemStore;
 import exiledsector.ui.decoration.ShipAnchors;
 import exiledsector.ui.decoration.SkillTreeFleetRenderer;
 import exiledsector.ui.section.SectionFlair;
 import exiledsector.ui.section.SectionLayout;
 import exiledsector.ui.node.TreeAllocationSession;
 import exiledsector.ui.socket.HullUpgradePanel;
-import exiledsector.ui.socket.HullItemHoverTooltip;
+import exiledsector.ui.socket.ItemHoverTooltip;
 import exiledsector.ui.util.Fade;
 import exiledsector.ui.util.TextLabel;
 
@@ -55,7 +55,7 @@ final class SectionsDisplay {
     private final CustomPanelAPI hostPanel;
     private final TreeAllocationSession treeSession;
     private final SectionLayout.Arrangement arrangement;
-    private final HullItemHoverTooltip hoverTooltip;
+    private final ItemHoverTooltip hoverTooltip;
     private final TextLabel[] typeLabels = new TextLabel[MAX_SECTIONS];
     private final TextLabel[] stateLabels = new TextLabel[MAX_SECTIONS];
     private final float[] hoverLevels = new float[MAX_SECTIONS];
@@ -65,7 +65,7 @@ final class SectionsDisplay {
     private int tooltipSection = -1;
     private float elapsedSeconds;
     private int shownRevision = Integer.MIN_VALUE;
-    private HullItemStore upgradeStore;
+    private ItemStore upgradeStore;
     private int shownUpgradeRevision = Integer.MIN_VALUE;
     private Map<HullSize, Integer> shownUpgradeCounts = Map.of();
     private List<ShipSections.UnlockedSection> unlockedSections = List.of();
@@ -76,7 +76,7 @@ final class SectionsDisplay {
         this.hostPanel = hostPanel;
         this.treeSession = treeSession;
         this.arrangement = arrangement;
-        this.hoverTooltip = new HullItemHoverTooltip(hostPanel);
+        this.hoverTooltip = new ItemHoverTooltip(hostPanel);
         for (int i = 0; i < MAX_SECTIONS; i++) {
             typeLabels[i] = new TextLabel(LABEL_FONT_SIZE, Color.WHITE);
             stateLabels[i] = new TextLabel(LABEL_FONT_SIZE, Misc.getGrayColor());
@@ -89,7 +89,7 @@ final class SectionsDisplay {
 
     boolean refreshIfChanged() {
         int revision = treeSession.statsRevision();
-        HullItemStore store = upgradeStore();
+        ItemStore store = upgradeStore();
         int upgradeRevision = store == null ? 0 : store.upgradeRevision();
         if (revision == shownRevision && upgradeRevision == shownUpgradeRevision) {
             return false;
@@ -109,7 +109,7 @@ final class SectionsDisplay {
 
     void absorbUpgradesFromCargo() {
         CampaignFleetAPI playerFleet = PlayerFleet.orNull();
-        HullItemStore store = upgradeStore();
+        ItemStore store = upgradeStore();
         if (playerFleet != null && store != null) {
             store.absorbFrom(playerFleet.getCargo());
             shownUpgradeRevision = store.upgradeRevision();
@@ -141,9 +141,9 @@ final class SectionsDisplay {
         renderedSections = 0;
     }
 
-    private HullItemStore upgradeStore() {
+    private ItemStore upgradeStore() {
         if (upgradeStore == null && Global.getSector() != null) {
-            upgradeStore = HullItemStore.get();
+            upgradeStore = ItemStore.get();
         }
         return upgradeStore;
     }
@@ -267,7 +267,7 @@ final class SectionsDisplay {
     }
 
     void render(SkillTreeFleetRenderer.InspectedShip ship, SectionLayout.ShipExtent extent, float alpha, SectionBounds bounds,
-                HullItem placing, ShipSection targetedSection) {
+                Item placing, ShipSection targetedSection) {
         renderedSections = 0;
         if (ship == null || unlockedSections.isEmpty() || alpha <= 0f) {
             return;
@@ -307,7 +307,7 @@ final class SectionsDisplay {
         }
     }
 
-    private static float placingDim(HullItem placing, ShipSection section) {
+    private static float placingDim(Item placing, ShipSection section) {
         return placing == null || placing.canSocketInto(section) ? 1f : OTHER_SECTION_DIM;
     }
 

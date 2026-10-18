@@ -15,9 +15,9 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.PlayerFleet;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
-import exiledsector.hullitems.CraftingMaterials;
-import exiledsector.hullitems.HullItemCrafting;
-import exiledsector.hullitems.HullItemDisassembly;
+import exiledsector.items.CraftingMaterials;
+import exiledsector.items.ItemCrafting;
+import exiledsector.items.ItemDisassembly;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.VanillaText;
 import exiledsector.ui.util.FramedPanelPlugin;
@@ -47,7 +47,7 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
     }
 
     protected final CustomPanelAPI hostPanel;
-    protected final HullItemHoverTooltip hoverTooltip;
+    protected final ItemHoverTooltip hoverTooltip;
     private final HoloFrame panelFrame;
     private final List<Runnable> queuedActions = new ArrayList<>();
     protected CustomPanelAPI panelRoot;
@@ -64,7 +64,7 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
 
     HoloPanel(CustomPanelAPI hostPanel) {
         this.hostPanel = hostPanel;
-        this.hoverTooltip = new HullItemHoverTooltip(hostPanel);
+        this.hoverTooltip = new ItemHoverTooltip(hostPanel);
         this.panelFrame = new HoloFrame(HoloFrame.Look.VANILLA_HOST);
     }
 
@@ -349,11 +349,11 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
     }
 
     static void addPartsCount(TooltipMakerAPI element, float countRight) {
-        CommoditySpecAPI partsSpec = Global.getSettings().getCommoditySpec(HullItemDisassembly.PARTS_COMMODITY_ID);
+        CommoditySpecAPI partsSpec = Global.getSettings().getCommoditySpec(ItemDisassembly.PARTS_COMMODITY_ID);
         if (partsSpec == null) {
             return;
         }
-        String countText = String.valueOf(HullItemCrafting.parts(playerMaterials()));
+        String countText = String.valueOf(ItemCrafting.parts(playerMaterials()));
         float countWidth = Global.getSettings().computeStringWidth(countText, Fonts.ORBITRON_12) + LINE_PAD;
         element.setParaFont(Fonts.ORBITRON_12);
         LabelAPI countLabel = VanillaText.plainPara(element, countText, 0f, Misc.getTextColor());

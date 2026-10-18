@@ -13,9 +13,9 @@ import exiledsector.effects.ShipTreeSync;
 import exiledsector.skills.ExoshipNodes;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillType;
-import exiledsector.hullitems.HullUpgradesSetting;
-import exiledsector.hullitems.SocketCustody;
-import exiledsector.hullitems.HullItem;
+import exiledsector.items.HullUpgradesSetting;
+import exiledsector.items.SocketCustody;
+import exiledsector.items.Item;
 import exiledsector.ui.decoration.AbyssDarknessRenderer;
 import exiledsector.ui.decoration.AbyssSerpentRenderer;
 import exiledsector.ui.decoration.SkillTreeFleetRenderer;
@@ -23,7 +23,7 @@ import exiledsector.ui.decoration.SkillTreeRingBeltRenderer;
 import exiledsector.ui.decoration.SkillTreeStarRenderer;
 import exiledsector.ui.decoration.SkillTreeStarfieldRenderer;
 import exiledsector.ui.decoration.SkillTreeStaticImageRenderer;
-import exiledsector.ui.inspect.HullItemCodex;
+import exiledsector.ui.inspect.ItemCodex;
 import exiledsector.ui.node.NodeSearch;
 import exiledsector.ui.node.SkillTreeNodeDrawer;
 import exiledsector.ui.node.TreeAllocationSession;
@@ -205,7 +205,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             event.consume();
         } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE && escape(mode)) {
             consume(event);
-        } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_F2 && openHoveredHullItemCodex(mode)) {
+        } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_F2 && openHoveredItemCodex(mode)) {
             event.consume();
         } else if (mode != CanvasMode.MODAL && TooltipExpansion.isToggle(event)) {
             TooltipExpansion.toggle();
@@ -225,13 +225,13 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         }
     }
 
-    private boolean openHoveredHullItemCodex(CanvasMode mode) {
+    private boolean openHoveredItemCodex(CanvasMode mode) {
         if (!mouseKnown || !mode.hoversTree() || sectionInspection.isInspecting() || treeSession.isDropdownOpen() || socketPlacement.isEngaged()
                 || chrome.contains(canvasPosition, mode, mouseX, mouseY)) {
             return false;
         }
-        HullItem socketed = treeSession.socketedItem(nodeDrawer.findNodeAt(layers(), mouseX, mouseY));
-        return socketed != null && HullItemCodex.open(socketed.definitionId());
+        Item socketed = treeSession.socketedItem(nodeDrawer.findNodeAt(layers(), mouseX, mouseY));
+        return socketed != null && ItemCodex.open(socketed.definitionId());
     }
 
     private boolean escape(CanvasMode mode) {

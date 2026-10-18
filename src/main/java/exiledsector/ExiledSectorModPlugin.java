@@ -25,9 +25,9 @@ import exiledsector.effects.ResolvedTree;
 import exiledsector.effects.SkillConflictWarningHullMod;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.effects.SkillTreeInstaller;
-import exiledsector.effects.HullItemLootListener;
-import exiledsector.effects.HullItemSalvageListener;
-import exiledsector.effects.TechMiningHullItemListener;
+import exiledsector.effects.ItemLootListener;
+import exiledsector.effects.ItemSalvageListener;
+import exiledsector.effects.TechMiningItemListener;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.LanguageSetting;
 import exiledsector.i18n.Languages;
@@ -49,28 +49,29 @@ import exiledsector.skills.skilleffect.FleetCrewLedger;
 import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.skills.tags.AreaToggles;
 import exiledsector.skills.unlock.NodeGates;
-import exiledsector.hullitems.SocketCraftingCosts;
-import exiledsector.hullitems.CraftingCurrency;
-import exiledsector.hullitems.HullItemImplicits;
-import exiledsector.hullitems.HullItemDataIntegrity;
-import exiledsector.hullitems.HullItemModifiers;
-import exiledsector.hullitems.HullItemDefinitions;
-import exiledsector.hullitems.HullItemDisassembly;
-import exiledsector.hullitems.HullItemNames;
-import exiledsector.hullitems.NpcHullItems;
-import exiledsector.hullitems.HullItemDrops;
-import exiledsector.hullitems.SocketCustody;
-import exiledsector.hullitems.SocketLossListener;
-import exiledsector.hullitems.HullItemSaveAliases;
-import exiledsector.hullitems.HullItemStore;
-import exiledsector.hullitems.SocketTypeMigration;
+import exiledsector.items.ItemCraftingCosts;
+import exiledsector.items.CraftingCurrency;
+import exiledsector.items.ItemImplicits;
+import exiledsector.items.ItemDataIntegrity;
+import exiledsector.items.ItemModifiers;
+import exiledsector.items.ItemIdAliases;
+import exiledsector.items.ItemDefinitions;
+import exiledsector.items.ItemDisassembly;
+import exiledsector.items.ItemNames;
+import exiledsector.items.NpcItems;
+import exiledsector.items.ItemDrops;
+import exiledsector.items.SocketCustody;
+import exiledsector.items.SocketLossListener;
+import exiledsector.items.ItemSaveAliases;
+import exiledsector.items.ItemStore;
+import exiledsector.items.SocketTypeMigration;
 import exiledsector.ui.ExiledSectorSettings;
 import exiledsector.ui.HullUpgradesRefitButton;
 import exiledsector.ui.SkillTreeRefitButton;
 import exiledsector.ui.TreeCameraMemory;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
 import exiledsector.ui.inspect.SkillTreeCodexListener;
-import exiledsector.ui.inspect.HullItemCodex;
+import exiledsector.ui.inspect.ItemCodex;
 import exiledsector.ui.refit.PhantomHullModRefitHider;
 import exiledsector.ui.util.TexturePreloader;
 
@@ -102,15 +103,16 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         LearnedPhantomConflicts.load();
         CsvIdList.loadAll();
         NpcFactionVolumes.load();
-        HullItemModifiers.load();
-        HullItemDefinitions.load();
-        HullItemImplicits.load();
-        HullItemDataIntegrity.logLoaded();
-        SocketCraftingCosts.load();
-        HullItemNames.load();
+        ItemIdAliases.load();
+        ItemModifiers.load();
+        ItemDefinitions.load();
+        ItemImplicits.load();
+        ItemDataIntegrity.logLoaded();
+        ItemCraftingCosts.load();
+        ItemNames.load();
         NodeReplacements.load();
         NodeGates.load();
-        HullItemDrops.load();
+        ItemDrops.load();
         CompatChecks.logAtStartup();
         GraphicsLibCompat.loadLightData();
         TexturePreloader.preloadAll(MOD_ID);
@@ -138,7 +140,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
     private static void localiseHullModText() {
         I18n.forGameText(() -> {
             LOCALISED_HULLMODS.forEach(ExiledSectorModPlugin::localise);
-            localiseCommodity(HullItemDisassembly.PARTS_COMMODITY_ID);
+            localiseCommodity(ItemDisassembly.PARTS_COMMODITY_ID);
             for (CraftingCurrency currency : CraftingCurrency.values()) {
                 localiseCommodity(currency.commodityId());
             }
@@ -190,12 +192,12 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
 
     @Override
     public void onAboutToLinkCodexEntries() {
-        HullItemCodex.addEntries();
+        ItemCodex.addEntries();
     }
 
     @Override
     public void configureXStream(XStream xStream) {
-        HullItemSaveAliases.register(xStream);
+        ItemSaveAliases.register(xStream);
         RetiredReserveIds.register(xStream);
         xStream.alias(SHIP_SKILL_DATA_ALIAS, ShipSkillData.class);
     }
@@ -210,8 +212,8 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         FleetCrewLedger.discardPending();
         ShipSections.clearCache();
         NpcBonusScale.invalidate();
-        NpcHullItems.clearCache();
-        HullItemStore.get().freezeNames();
+        NpcItems.clearCache();
+        ItemStore.get().freezeNames();
         OpReserveHullMods.forgetLegacySlots(Global.getSector().getPersistentData());
         ShipSkillDataManager.removeBlankRecords();
         forgetUnknownNodes();
@@ -227,12 +229,12 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         Global.getSector().getListenerManager().addListener(new PhantomHullModRefitHider(), true);
         SocketLossListener socketLossListener = new SocketLossListener();
         Global.getSector().getListenerManager().addListener(socketLossListener, true);
-        HullItemLootListener hullItemLootListener = new HullItemLootListener();
-        Global.getSector().addTransientListener(hullItemLootListener);
-        Global.getSector().getListenerManager().addListener(hullItemLootListener, true);
-        Global.getSector().addTransientListener(PlayerEngagementPipeline.create(socketLossListener, hullItemLootListener));
-        Global.getSector().getListenerManager().addListener(new HullItemSalvageListener(), true);
-        Global.getSector().getListenerManager().addListener(new TechMiningHullItemListener(), true);
+        ItemLootListener itemLootListener = new ItemLootListener();
+        Global.getSector().addTransientListener(itemLootListener);
+        Global.getSector().getListenerManager().addListener(itemLootListener, true);
+        Global.getSector().addTransientListener(PlayerEngagementPipeline.create(socketLossListener, itemLootListener));
+        Global.getSector().getListenerManager().addListener(new ItemSalvageListener(), true);
+        Global.getSector().getListenerManager().addListener(new TechMiningItemListener(), true);
         if (RandomAssortmentCompat.isModEnabled()) {
             AbyssSingularity.checkSaveOnLoad(Global.getSector());
             Global.getSector().addTransientListener(new AbyssSingularity.BattleListener());

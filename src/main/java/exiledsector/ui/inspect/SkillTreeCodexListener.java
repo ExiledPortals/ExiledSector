@@ -10,8 +10,8 @@ import exiledsector.i18n.I18n;
 import exiledsector.skills.ShipSections;
 import exiledsector.skills.InstalledHullMods;
 import exiledsector.skills.PhantomHullModStatus;
-import exiledsector.hullitems.HullItem;
-import exiledsector.hullitems.HullItemStore;
+import exiledsector.items.Item;
+import exiledsector.items.ItemStore;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class SkillTreeCodexListener implements CodexEventListener {
 
     @Override
     public void reportAboutToOpenCodex() {
-        HullItemCodex.refreshUnlocks(Global.getSector());
+        ItemCodex.refreshUnlocks(Global.getSector());
         try {
             for (CodexEntryPlugin entry : new ArrayList<>(CodexDataV2.ENTRIES.values())) {
                 if (entry.getParam() instanceof FleetMemberAPI member) {
@@ -56,16 +56,16 @@ public class SkillTreeCodexListener implements CodexEventListener {
         CodexDataV2.ENTRIES.put(treeEntry.getId(), treeEntry);
         memberEntry.addRelatedEntry(treeEntry);
         treeEntry.addRelatedEntry(memberEntry);
-        linkInstalledHullItems(treeEntry, shipTree);
+        linkInstalledItems(treeEntry, shipTree);
         addedEntries.add(treeEntry);
     }
 
-    private static void linkInstalledHullItems(SkillTreeCodexEntry treeEntry, ShipTreeLookup.ShipTree shipTree) {
-        List<HullItem> installed = new ArrayList<>();
-        for (String hullItemId : shipTree.skillData().getSocketedItems().values()) {
-            HullItem hullItem = HullItemStore.lookup(hullItemId);
-            if (hullItem != null) {
-                installed.add(hullItem);
+    private static void linkInstalledItems(SkillTreeCodexEntry treeEntry, ShipTreeLookup.ShipTree shipTree) {
+        List<Item> installed = new ArrayList<>();
+        for (String itemId : shipTree.skillData().getSocketedItems().values()) {
+            Item item = ItemStore.lookup(itemId);
+            if (item != null) {
+                installed.add(item);
             }
         }
         for (ShipSections.UnlockedSection slot : shipTree.sections()) {
@@ -73,10 +73,10 @@ public class SkillTreeCodexListener implements CodexEventListener {
                 installed.add(slot.item());
             }
         }
-        for (HullItem hullItem : installed) {
-            CodexEntryPlugin hullItemEntry = CodexDataV2.getEntry(HullItemCodex.entryId(hullItem.definitionId()));
-            if (hullItemEntry != null && hullItemEntry.isVisible()) {
-                treeEntry.addRelatedEntry(hullItemEntry);
+        for (Item item : installed) {
+            CodexEntryPlugin itemEntry = CodexDataV2.getEntry(ItemCodex.entryId(item.definitionId()));
+            if (itemEntry != null && itemEntry.isVisible()) {
+                treeEntry.addRelatedEntry(itemEntry);
             }
         }
     }

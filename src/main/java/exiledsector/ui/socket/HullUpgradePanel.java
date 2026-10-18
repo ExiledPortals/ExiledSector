@@ -14,11 +14,11 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.ShipHullSizes;
-import exiledsector.hullitems.HullUpgradeRules;
-import exiledsector.hullitems.HullUpgradeData;
-import exiledsector.hullitems.HullUpgradeTooltip;
-import exiledsector.hullitems.ShipSection;
-import exiledsector.hullitems.HullItemRarity;
+import exiledsector.items.HullUpgradeRules;
+import exiledsector.items.HullUpgradeData;
+import exiledsector.items.HullUpgradeTooltip;
+import exiledsector.items.ShipSection;
+import exiledsector.items.ItemRarity;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.VanillaText;
 import exiledsector.ui.section.SectionFlair;
@@ -47,7 +47,7 @@ public final class HullUpgradePanel extends HoloPanel {
                        HullUpgradeRules.UpgradeBlock upgradeBlock, List<SectionEntry> sections) {
     }
 
-    public static final float WIDTH = HullItemStoragePanel.WIDTH;
+    public static final float WIDTH = ItemStoragePanel.WIDTH;
     private static final int MIN_SECTION_COLUMNS = 3;
     private static final int MAX_SECTION_COLUMNS = 6;
     private static final float UPGRADE_TILE_SIZE = 64f;
@@ -170,7 +170,7 @@ public final class HullUpgradePanel extends HoloPanel {
     private void openInstallConfirm() {
         HullUpgradeData upgrade = new HullUpgradeData(view.hullSize());
         openConfirm(CONFIRM_HEIGHT, element -> {
-            Color uniqueColor = HullItemRarity.UNIQUE.color();
+            Color uniqueColor = ItemRarity.UNIQUE.color();
             VanillaText.plainPara(element, Translation.msg("framework.confirm.title").arg("name", upgrade.name()).text(), 0f, uniqueColor);
             VanillaText.plainPara(element, Translation.msg("framework.confirm.body")
                     .arg("left", view.upgradesInStorage() - 1).arg("points", view.points() + 1).arg("max", HullUpgradeRules.MAX_POINTS).text(),
@@ -238,12 +238,12 @@ public final class HullUpgradePanel extends HoloPanel {
         IconTileCell.Hooks hooks = new IconTileCell.Hooks(() -> queue(this::openInstallConfirm),
                 tilePosition -> queue(() -> showUpgradeTooltip(upgrade, tilePosition)), () -> queue(() -> hideTooltipOf(upgrade)));
         rowPanel.addComponent(Global.getSettings().createCustom(UPGRADE_TILE_SIZE, UPGRADE_TILE_SIZE,
-                new IconTileCell(upgrade.iconPath(), HullItemRarity.UNIQUE.color(), blocked, hooks))).inTL(0f, 0f);
+                new IconTileCell(upgrade.iconPath(), ItemRarity.UNIQUE.color(), blocked, hooks))).inTL(0f, 0f);
         float textLeft = UPGRADE_TILE_SIZE + GAP * 2f;
         float textWidth = gridWidth - textLeft - POINTS_WIDTH;
         float textTop = (UPGRADE_TILE_SIZE - NAME_HEIGHT - STATE_HEIGHT) / 2f;
         TooltipMakerAPI labelElement = rowPanel.createUIElement(textWidth, NAME_HEIGHT + STATE_HEIGHT, false);
-        addLabel(labelElement, upgrade.name(), blocked ? BLOCKED_TEXT_COLOR : HullItemRarity.UNIQUE.color(), Alignment.LMID, textWidth, 0f,
+        addLabel(labelElement, upgrade.name(), blocked ? BLOCKED_TEXT_COLOR : ItemRarity.UNIQUE.color(), Alignment.LMID, textWidth, 0f,
                 NAME_HEIGHT);
         addLabel(labelElement, Translation.msg("framework.panel.inStorage").arg("count", view.upgradesInStorage()).text(),
                 Misc.getGrayColor(), Alignment.LMID, textWidth, NAME_HEIGHT, STATE_HEIGHT);

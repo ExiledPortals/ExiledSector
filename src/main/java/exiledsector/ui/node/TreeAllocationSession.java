@@ -1,6 +1,6 @@
 package exiledsector.ui.node;
 
-import exiledsector.hullitems.ShipSection;
+import exiledsector.items.ShipSection;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -18,10 +18,10 @@ import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.StepVerdict;
 import exiledsector.skills.template.TemplateCapture;
 import exiledsector.skills.template.TemplateStep;
-import exiledsector.hullitems.HullUpgradeRules;
-import exiledsector.hullitems.SocketCustody;
-import exiledsector.hullitems.HullItem;
-import exiledsector.hullitems.HullItemStore;
+import exiledsector.items.HullUpgradeRules;
+import exiledsector.items.SocketCustody;
+import exiledsector.items.Item;
+import exiledsector.items.ItemStore;
 import exiledsector.ui.SkillTreeSounds;
 import lunalib.lunaRefit.BaseRefitButton;
 
@@ -196,8 +196,8 @@ public final class TreeAllocationSession {
         return node != null && viewSnapshot().isHidden(node);
     }
 
-    public HullItem socketedItem(SkillNode node) {
-        return node == null ? null : HullItemStore.lookup(allocator.data().getSocketedItem(node.getId()));
+    public Item socketedItem(SkillNode node) {
+        return node == null ? null : ItemStore.lookup(allocator.data().getSocketedItem(node.getId()));
     }
 
     public boolean isAllocatedSocket(SkillNode node) {
@@ -566,10 +566,10 @@ public final class TreeAllocationSession {
         }
     }
 
-    public boolean installInSocket(SkillNode node, HullItem hullItem) {
-        return apply(() -> hullItem.canSocketInto(node)
-                && !SocketCustody.installations(ShipSkillDataManager.all()).containsKey(hullItem.id())
-                && allocator.socketItem(node, hullItem.id()), () -> {
+    public boolean installInSocket(SkillNode node, Item item) {
+        return apply(() -> item.canSocketInto(node)
+                && !SocketCustody.installations(ShipSkillDataManager.all()).containsKey(item.id())
+                && allocator.socketItem(node, item.id()), () -> {
             SkillTreeSounds.socketed();
             feedback.pulse(node);
         });
@@ -619,8 +619,8 @@ public final class TreeAllocationSession {
         return apply(() -> allocator.lockSection(section), () -> { });
     }
 
-    public boolean installInSection(ShipSection section, HullItem hullItem) {
-        return apply(() -> allocator.installInSection(section, hullItem), SkillTreeSounds::socketed);
+    public boolean installInSection(ShipSection section, Item item) {
+        return apply(() -> allocator.installInSection(section, item), SkillTreeSounds::socketed);
     }
 
     public boolean removeFromSection(ShipSection section) {

@@ -1,6 +1,6 @@
 package exiledsector.ui.node;
 
-import exiledsector.hullitems.ShipSection;
+import exiledsector.items.ShipSection;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.characters.SkillSpecAPI;
@@ -33,9 +33,9 @@ import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.skills.unlock.NodeGates;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.skills.tags.ShipProfile;
-import exiledsector.hullitems.HullUpgradeRules;
-import exiledsector.hullitems.HullItem;
-import exiledsector.hullitems.HullItemStore;
+import exiledsector.items.HullUpgradeRules;
+import exiledsector.items.Item;
+import exiledsector.items.ItemStore;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -255,8 +255,8 @@ final class NodeAllocator {
         return true;
     }
 
-    boolean socketItem(SkillNode node, String hullItemId) {
-        return changed(data().socketItem(node.getId(), hullItemId));
+    boolean socketItem(SkillNode node, String itemId) {
+        return changed(data().socketItem(node.getId(), itemId));
     }
 
     boolean unsocketItem(SkillNode node) {
@@ -264,7 +264,7 @@ final class NodeAllocator {
     }
 
     boolean installUpgrade() {
-        return changed(HullUpgradeRules.installUpgrade(data(), hullSize(), HullItemStore.get()));
+        return changed(HullUpgradeRules.installUpgrade(data(), hullSize(), ItemStore.get()));
     }
 
     boolean unlockSection(ShipSection section) {
@@ -275,8 +275,8 @@ final class NodeAllocator {
         return changed(HullUpgradeRules.lock(data(), section));
     }
 
-    boolean installInSection(ShipSection section, HullItem hullItem) {
-        return changed(HullUpgradeRules.socket(data(), section, hullItem, ShipSkillDataManager.all()));
+    boolean installInSection(ShipSection section, Item item) {
+        return changed(HullUpgradeRules.socket(data(), section, item, ShipSkillDataManager.all()));
     }
 
     boolean removeFromSection(ShipSection section) {

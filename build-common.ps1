@@ -98,10 +98,28 @@ function Save-ReleasedSkillNodes {
     }
 }
 
-function Save-ReleasedSocketables {
+function Get-PoolEntryEffects {
+    param([string]$Entry, [hashtable]$EffectsByModifier)
+
+    $trimmed = $Entry.Trim()
+    if (-not $trimmed) {
+        return @()
+    }
+    if ($trimmed.StartsWith("@")) {
+        $modifierId = $trimmed.Substring(1).Split(":")[0].Trim()
+        if ($EffectsByModifier.ContainsKey($modifierId)) {
+            return $EffectsByModifier[$modifierId]
+        }
+        throw "Pool entry $trimmed references a modifier that is not in item_modifiers.csv"
+    }
+    return @($trimmed.Split(":")[0].Trim())
+}
+
+function Save-ReleasedItems {
     param([string]$ProjectRoot, [string]$Version)
 
-    $ledgerFile = Join-Path $ProjectRoot "src\test\resources\released_socketables.csv"
+    $configDir = Join-Path $ProjectRoot "data\config\exiledSector"
+    $ledgerFile = Join-Path $ProjectRoot "src\test\resources\released_items.csv"
     $header = "definition,effect,firstRelease,retiredAfter"
     $rows = @{}
     if (Test-Path $ledgerFile) {
@@ -109,18 +127,27 @@ function Save-ReleasedSocketables {
             $rows["$($row.definition),$($row.effect)"] = "$($row.firstRelease),$($row.retiredAfter)"
         }
     }
+    $effectsByModifier = @{}
+    foreach ($modifier in (Import-Csv (Join-Path $configDir "item_modifiers.csv") -Encoding UTF8)) {
+        $effectsByModifier["$($modifier.id)".Trim()] = @("$($modifier.lines)".Split(";") | ForEach-Object { $_.Split(":")[0].Trim() } | Where-Object { $_ })
+    }
+    $definitions = @()
+    foreach ($definitionFile in @("subroutines.csv", "hull_items.csv")) {
+        $definitions += @(Import-Csv (Join-Path $configDir $definitionFile) -Encoding UTF8)
+    }
     $added = 0
-    foreach ($definition in (Import-Csv (Join-Path $ProjectRoot "data\config\exiledSector\socketables.csv") -Encoding UTF8)) {
+    foreach ($definition in $definitions) {
         $definitionId = "$($definition.id)".Trim()
         if (-not $definitionId -or $definitionId.StartsWith("#")) {
             continue
         }
         foreach ($pool in @($definition.prefixes, $definition.suffixes)) {
             foreach ($entry in "$pool".Split(";")) {
-                $effect = $entry.Split(":")[0].Trim()
-                if ($effect -and -not $rows.ContainsKey("$definitionId,$effect")) {
-                    $rows["$definitionId,$effect"] = "$Version,"
-                    $added++
+                foreach ($effect in (Get-PoolEntryEffects -Entry $entry -EffectsByModifier $effectsByModifier)) {
+                    if ($effect -and -not $rows.ContainsKey("$definitionId,$effect")) {
+                        $rows["$definitionId,$effect"] = "$Version,"
+                        $added++
+                    }
                 }
             }
         }
@@ -130,6 +157,6 @@ function Save-ReleasedSocketables {
         [Array]::Sort($pairs, [StringComparer]::Ordinal)
         $lines = @($header) + ($pairs | ForEach-Object { "$_,$($rows[$_])" })
         [System.IO.File]::WriteAllLines($ledgerFile, [string[]]$lines, (New-Object System.Text.UTF8Encoding($false)))
-        Write-Host "Recorded $added newly released socketable pool effects in $ledgerFile; commit it with the release."
+        Write-Host "Recorded $added newly released item pool effects in $ledgerFile; commit it with the release."
     }
 }

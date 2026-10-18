@@ -36,8 +36,9 @@ const vocabularyFile = {
   tiers: ['SMALL', 'NOTABLE', 'KEYSTONE', 'WORMHOLE', 'ROOT', 'SOCKET'],
   unlockConditionTypes: ['blueprint'],
   blueprintCategories: ['hullmod'],
-  socketableKinds: [],
-  socketableUnlocks: [],
+  itemTypes: [],
+  itemKinds: [],
+  itemUnlocks: [],
 };
 const vocabulary = buildVocabulary(vocabularyFile);
 

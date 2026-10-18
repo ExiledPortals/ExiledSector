@@ -29,29 +29,30 @@ class EditorRoundTripTest {
     private static final Path MAIN_SOURCES = Path.of("src/main/java");
 
     private static final String TREE_SERIALIZATION = "pages/tree/model/serialization.ts";
-    private static final String HULL_ITEM_DEFINITIONS_MODEL = "pages/hullItems/model/definitions.ts";
-    private static final String HULL_ITEM_NAMES_MODEL = "pages/hullItems/model/names.ts";
-    private static final String HULL_ITEM_DROPS_MODEL = "pages/hullItems/model/drops.ts";
-    private static final String HULL_ITEM_CRAFTING_MODEL = "pages/hullItems/model/crafting.ts";
-    private static final String HULL_ITEM_IMPLICITS_MODEL = "pages/hullItems/model/implicits.ts";
-    private static final String HULL_ITEM_MODIFIERS_MODEL = "pages/hullItems/model/modifiers.ts";
+    private static final String ITEM_DEFINITIONS_MODEL = "pages/items/model/definitions.ts";
+    private static final String ITEM_NAMES_MODEL = "pages/items/model/names.ts";
+    private static final String ITEM_DROPS_MODEL = "pages/items/model/drops.ts";
+    private static final String ITEM_CRAFTING_MODEL = "pages/items/model/crafting.ts";
+    private static final String HULL_ITEM_IMPLICITS_MODEL = "pages/items/model/implicits.ts";
+    private static final String ITEM_MODIFIERS_MODEL = "pages/items/model/modifiers.ts";
 
     private static final String TYPE_LOADER = "exiledsector/skills/loader/SkillTypeLoader.java";
     private static final String TREE_LOADER = "exiledsector/skills/loader/SkillTreeLoader.java";
-    private static final String HULL_ITEM_DEFINITIONS = "exiledsector/hullitems/HullItemDefinitions.java";
-    private static final String HULL_ITEM_DEFINITION = "exiledsector/hullitems/HullItemDefinition.java";
-    private static final String HULL_ITEM_NAMES = "exiledsector/hullitems/HullItemNames.java";
-    private static final String HULL_ITEM_DROPS = "exiledsector/hullitems/HullItemDrops.java";
+    private static final String ITEM_DEFINITIONS = "exiledsector/items/ItemDefinitions.java";
+    private static final String ITEM_DEFINITION = "exiledsector/items/ItemDefinition.java";
+    private static final String ITEM_NAMES = "exiledsector/items/ItemNames.java";
+    private static final String ITEM_DROPS = "exiledsector/items/ItemDrops.java";
     private static final String SALVAGE_COMPAT = "exiledsector/compat/SalvageSiteCompat.java";
-    private static final String HULL_ITEM_CRAFTING = "exiledsector/hullitems/SocketCraftingCosts.java";
-    private static final String HULL_ITEM_IMPLICITS = "exiledsector/hullitems/HullItemImplicits.java";
-    private static final String HULL_ITEM_MODIFIERS = "exiledsector/hullitems/HullItemModifiers.java";
+    private static final String ITEM_CRAFTING = "exiledsector/items/ItemCraftingCosts.java";
+    private static final String HULL_ITEM_IMPLICITS = "exiledsector/items/ItemImplicits.java";
+    private static final String ITEM_MODIFIERS = "exiledsector/items/ItemModifiers.java";
 
-    private static final List<String> LOADERS = List.of(TYPE_LOADER, TREE_LOADER, HULL_ITEM_DEFINITIONS, HULL_ITEM_DEFINITION,
-            HULL_ITEM_NAMES, HULL_ITEM_DROPS, SALVAGE_COMPAT, HULL_ITEM_CRAFTING, HULL_ITEM_IMPLICITS, HULL_ITEM_MODIFIERS);
+    private static final List<String> LOADERS = List.of(TYPE_LOADER, TREE_LOADER, ITEM_DEFINITIONS, ITEM_DEFINITION,
+            ITEM_NAMES, ITEM_DROPS, SALVAGE_COMPAT, ITEM_CRAFTING, HULL_ITEM_IMPLICITS, ITEM_MODIFIERS);
 
     private static final List<String> EDITED_DATA_PATHS = List.of("data/skilltrees/skill_types.json", "data/skilltrees/ship_skill_tree.json",
-            "data/config/exiledSector/socketable", "data/config/exiledSector/hull_item", "compat/salvage/");
+            "data/config/exiledSector/item_modifiers", "data/config/exiledSector/item_names", "data/config/exiledSector/item_crafting",
+            "data/config/exiledSector/item_salvage", "data/config/exiledSector/hull_item", "data/config/exiledSector/subroutines", "compat/salvage/");
 
     private record EditorSource(String file, String symbol) {
         String label() {
@@ -88,19 +89,21 @@ class EditorRoundTripTest {
                     List.of(tree("treeFileObject"), tree("serializeStaticImage")), false),
             new Pin("ship_skill_tree.json stars", TREE_LOADER, List.of("parseStars"),
                     List.of(tree("treeFileObject"), tree("serializeStar")), false),
-            new Pin("socketables.csv columns", HULL_ITEM_DEFINITION, List.of("parse"),
-                    List.of(new EditorSource(HULL_ITEM_DEFINITIONS_MODEL, "HULL_ITEM_COLUMNS")), true),
-            new Pin("hull_item_modifiers.csv columns", HULL_ITEM_MODIFIERS, List.of("load", "register", "parse"),
-                    List.of(new EditorSource(HULL_ITEM_MODIFIERS_MODEL, "serializeModifiersCsv")), true),
-            new Pin("socketable_names.json word fields", HULL_ITEM_NAMES, List.of("registerWords"),
-                    List.of(new EditorSource(HULL_ITEM_NAMES_MODEL, "serializeRareNames"), new EditorSource(HULL_ITEM_NAMES_MODEL, "RARE_NAME_WORD_LISTS"),
-                            new EditorSource(HULL_ITEM_NAMES_MODEL, "newRareNameWords")), true),
-            new Pin("socketable_salvage.csv columns", HULL_ITEM_DROPS, List.of("load", "parse"),
-                    List.of(new EditorSource(HULL_ITEM_DROPS_MODEL, "serializeSalvageCsv")), true),
+            new Pin("subroutines.csv columns", ITEM_DEFINITION, List.of("parse"),
+                    List.of(new EditorSource(ITEM_DEFINITIONS_MODEL, "SUBROUTINE_COLUMNS")), true),
+            new Pin("hull_items.csv columns", ITEM_DEFINITION, List.of("parse", "parseHullItem"),
+                    List.of(new EditorSource(ITEM_DEFINITIONS_MODEL, "HULL_ITEM_COLUMNS")), true),
+            new Pin("item_modifiers.csv columns", ITEM_MODIFIERS, List.of("load", "register", "parse"),
+                    List.of(new EditorSource(ITEM_MODIFIERS_MODEL, "serializeModifiersCsv")), true),
+            new Pin("item_names.json word fields", ITEM_NAMES, List.of("registerWords"),
+                    List.of(new EditorSource(ITEM_NAMES_MODEL, "serializeRareNames"), new EditorSource(ITEM_NAMES_MODEL, "RARE_NAME_WORD_LISTS"),
+                            new EditorSource(ITEM_NAMES_MODEL, "newRareNameWords")), true),
+            new Pin("item_salvage.csv columns", ITEM_DROPS, List.of("load", "parse"),
+                    List.of(new EditorSource(ITEM_DROPS_MODEL, "serializeSalvageCsv")), true),
             new Pin("compat/salvage/*.csv columns", SALVAGE_COMPAT, List.of("rows", "missingSites"),
-                    List.of(new EditorSource(HULL_ITEM_DROPS_MODEL, "serializeSalvageCsv")), true),
-            new Pin("socketable_crafting.csv columns", HULL_ITEM_CRAFTING, List.of("load", "register"),
-                    List.of(new EditorSource(HULL_ITEM_CRAFTING_MODEL, "serializeCraftingCsv")), true),
+                    List.of(new EditorSource(ITEM_DROPS_MODEL, "serializeSalvageCsv")), true),
+            new Pin("item_crafting.csv columns", ITEM_CRAFTING, List.of("load", "register"),
+                    List.of(new EditorSource(ITEM_CRAFTING_MODEL, "serializeCraftingCsv")), true),
             new Pin("hull_item_implicits.csv columns", HULL_ITEM_IMPLICITS, List.of("load", "register"),
                     List.of(new EditorSource(HULL_ITEM_IMPLICITS_MODEL, "serializeImplicitsCsv")), true));
 

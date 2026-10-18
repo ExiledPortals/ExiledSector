@@ -8,9 +8,10 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledsector.hullitems.NpcHullItems;
-import exiledsector.hullitems.HullItemType;
-import exiledsector.hullitems.HullItemData;
+import exiledsector.items.NpcItems;
+import exiledsector.items.ItemKind;
+import exiledsector.items.ItemType;
+import exiledsector.items.ItemData;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -45,9 +46,9 @@ public final class NpcTreeTag {
         }
         String tag = PREFIX + GENERATED + FIELD_SEPARATOR + shipData.getLevel() + FIELD_SEPARATOR + String.join(NODE_SEPARATOR, nodeEntries);
         List<String> socketEntries = new ArrayList<>();
-        shipData.getSocketedItems().forEach((nodeId, hullItemId) -> {
-            if (NpcHullItems.isNpcId(hullItemId)) {
-                socketEntries.add(nodeId + OPTION_SEPARATOR + hullItemId);
+        shipData.getSocketedItems().forEach((nodeId, itemId) -> {
+            if (NpcItems.isNpcId(itemId)) {
+                socketEntries.add(nodeId + OPTION_SEPARATOR + itemId);
             }
         });
         StringBuilder encodedTag = new StringBuilder(tag);
@@ -58,9 +59,9 @@ public final class NpcTreeTag {
             encodedTag.append(FIELD_SEPARATOR).append(UNLOCKED_SECTIONS_MARKER)
                     .append(String.join(TYPE_SEPARATOR, shipData.getUnlockedSocketTypeIds()));
             List<String> sectionEntries = new ArrayList<>();
-            shipData.getSectionItems().forEach((socketTypeId, hullItemId) -> {
-                if (NpcHullItems.isNpcId(hullItemId)) {
-                    sectionEntries.add(socketTypeId + OPTION_SEPARATOR + hullItemId);
+            shipData.getSectionItems().forEach((socketTypeId, itemId) -> {
+                if (NpcItems.isNpcId(itemId)) {
+                    sectionEntries.add(socketTypeId + OPTION_SEPARATOR + itemId);
                 }
             });
             if (!sectionEntries.isEmpty()) {
@@ -119,7 +120,7 @@ public final class NpcTreeTag {
             restoreSockets(shipData, tagField.substring(SOCKETS_MARKER.length()));
         } else if (tagField.startsWith(UNLOCKED_SECTIONS_MARKER)) {
             for (String socketTypeId : tagField.substring(UNLOCKED_SECTIONS_MARKER.length()).split("\\" + TYPE_SEPARATOR)) {
-                HullItemType socketType = HullItemType.byIdOrNull(socketTypeId);
+                ItemKind socketType = ItemKind.byIdOrNull(socketTypeId);
                 if (socketType != null && socketType.fitsSection()) {
                     shipData.grantUnlockedSocketType(socketTypeId);
                 }
@@ -132,9 +133,9 @@ public final class NpcTreeTag {
     private static void restoreSections(ShipSkillData shipData, String socketEntries) {
         for (String entry : socketEntries.split(NODE_SEPARATOR)) {
             int separator = entry.indexOf(OPTION_SEPARATOR);
-            String hullItemId = separator <= 0 ? null : entry.substring(separator + 1);
-            if (hullItemId != null && NpcHullItems.item(hullItemId) != null
-                    && !shipData.installInSection(entry.substring(0, separator), hullItemId)) {
+            String itemId = separator <= 0 ? null : entry.substring(separator + 1);
+            if (itemId != null && NpcItems.item(itemId) != null
+                    && !shipData.installInSection(entry.substring(0, separator), itemId)) {
                 LOG.warn("Skipping an NPC framework socket entry for a socket type the ship has not unlocked: " + entry);
             }
         }
@@ -147,13 +148,13 @@ public final class NpcTreeTag {
                 continue;
             }
             String nodeId = NodeReplacements.resolve(entry.substring(0, separator));
-            String hullItemId = entry.substring(separator + 1);
+            String itemId = entry.substring(separator + 1);
             SkillNode node = SkillTree.get(nodeId);
-            HullItemData itemData = NpcHullItems.item(hullItemId);
+            ItemData itemData = NpcItems.item(itemId);
             boolean fitsTreeSocket = itemData != null
-                    && (itemData.definition() == null || itemData.definition().kind() == HullItemType.SUBROUTINE);
+                    && (itemData.definition() == null || itemData.definition().type() == ItemType.SUBROUTINE);
             if (node != null && node.getType().getTier() == SkillTier.SOCKET && fitsTreeSocket) {
-                shipData.socketItem(nodeId, hullItemId);
+                shipData.socketItem(nodeId, itemId);
             }
         }
     }

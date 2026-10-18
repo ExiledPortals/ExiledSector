@@ -2,9 +2,9 @@ package exiledsector.console;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import exiledsector.hullitems.HullItemDefinition;
-import exiledsector.hullitems.HullItemDefinitions;
-import exiledsector.hullitems.HullItemData;
+import exiledsector.items.ItemDefinition;
+import exiledsector.items.ItemDefinitions;
+import exiledsector.items.ItemData;
 import org.lazywizard.console.BaseCommand;
 import org.lazywizard.console.CommonStrings;
 import org.lazywizard.console.Console;
@@ -58,15 +58,15 @@ public class GrantHullItemsCommand implements BaseCommand {
             Console.showMessage("No player fleet found.");
             return CommandResult.ERROR;
         }
-        if (HullItemDefinitions.all().isEmpty()) {
+        if (ItemDefinitions.all().isEmpty()) {
             Console.showMessage("No hull items are defined.");
             return CommandResult.ERROR;
         }
 
         int grantedDefinitionCount = 0;
-        for (HullItemDefinition definition : HullItemDefinitions.all()) {
+        for (ItemDefinition definition : ItemDefinitions.all()) {
             for (int i = 0; i < copies; i++) {
-                playerFleet.getCargo().addSpecial(HullItemData.rolled(definition, random.nextLong()).toSpecialItem(), 1f);
+                playerFleet.getCargo().addSpecial(ItemData.rolled(definition, random.nextLong()).toSpecialItem(), 1f);
             }
             grantedDefinitionCount++;
         }

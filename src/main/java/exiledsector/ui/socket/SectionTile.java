@@ -3,7 +3,7 @@ package exiledsector.ui.socket;
 import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledsector.hullitems.ShipSection;
+import exiledsector.items.ShipSection;
 import exiledsector.ui.socket.HullUpgradePanel.SectionState;
 import exiledsector.ui.section.SectionFlair;
 import exiledsector.ui.util.Fade;

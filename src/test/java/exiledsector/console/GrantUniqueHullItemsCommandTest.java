@@ -5,8 +5,8 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
-import exiledsector.hullitems.HullItemDefinitions;
-import exiledsector.hullitems.HullItemData;
+import exiledsector.items.ItemDefinitions;
+import exiledsector.items.ItemData;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -51,19 +51,19 @@ class GrantUniqueHullItemsCommandTest {
 
     @AfterEach
     void tearDown() {
-        HullItemDefinitions.clear();
+        ItemDefinitions.clear();
         consoleMock.close();
         globalMock.close();
     }
 
     private static JSONObject definition(String id, boolean unique) throws Exception {
-        return new JSONObject().put("id", id).put("kind", "crew_quarters").put("prefixes", "HULL_MULT:4:6")
+        return new JSONObject().put("id", id).put("section", "crew_quarters").put("prefixes", "HULL_MULT:4:6")
                 .put("suffixes", "ARMOR_PERCENT:6:9").put("unique", Boolean.toString(unique));
     }
 
     @Test
     void itAddsOneCopyOfEachUniqueAndNothingElse() throws Exception {
-        HullItemDefinitions.register(new JSONArray()
+        ItemDefinitions.register(new JSONArray()
                 .put(definition("basic", false))
                 .put(definition("first_unique", true))
                 .put(definition("second_unique", true)));
@@ -73,12 +73,12 @@ class GrantUniqueHullItemsCommandTest {
         ArgumentCaptor<SpecialItemData> items = ArgumentCaptor.forClass(SpecialItemData.class);
         verify(cargo, times(2)).addSpecial(items.capture(), Mockito.eq(1f));
         assertEquals(List.of("first_unique", "second_unique"),
-                items.getAllValues().stream().map(HullItemData::of).map(HullItemData::definitionId).sorted().toList());
+                items.getAllValues().stream().map(ItemData::of).map(ItemData::definitionId).sorted().toList());
     }
 
     @Test
     void withNoUniquesDefinedItReportsAnError() throws Exception {
-        HullItemDefinitions.register(new JSONArray().put(definition("basic", false)));
+        ItemDefinitions.register(new JSONArray().put(definition("basic", false)));
 
         assertEquals(CommandResult.ERROR, new GrantUniqueHullItemsCommand().runCommand("", CommandContext.CAMPAIGN_MAP));
         verify(cargo, never()).addSpecial(any(), anyFloat());

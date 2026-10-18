@@ -13,7 +13,7 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
 import exiledsector.compat.ExoticaCompat;
-import exiledsector.hullitems.HullUpgradesSetting;
+import exiledsector.items.HullUpgradesSetting;
 import exiledsector.ui.HullUpgradesRefitButton;
 import exiledsector.ui.SkillTreeRefitButton;
 import lunalib.lunaSettings.LunaSettings;

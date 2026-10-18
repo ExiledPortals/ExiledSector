@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router';
 import { EditorLayout } from './layout/EditorLayout.tsx';
 import { ImagesPage } from './pages/images/ImagesPage.tsx';
-import { HullItemsPage } from './pages/hullItems/HullItemsPage.tsx';
+import { ItemsPage } from './pages/items/ItemsPage.tsx';
 import { TextPage } from './pages/text/TextPage.tsx';
 import { TreePage } from './pages/tree/TreePage.tsx';
 import { editorTheme } from './theme.ts';
@@ -21,7 +21,7 @@ const router = createBrowserRouter([
       { index: true, element: <Navigate to="/tree" replace /> },
       { path: '/tree', element: <TreePage /> },
       { path: '/images', element: <ImagesPage /> },
-      { path: '/hull-items', element: <HullItemsPage /> },
+      { path: '/hull-items', element: <ItemsPage /> },
       { path: '/text', element: <TextPage /> },
       { path: '*', element: <Navigate to="/tree" replace /> },
     ],
