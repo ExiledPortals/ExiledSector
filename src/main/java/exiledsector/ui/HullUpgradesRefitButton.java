@@ -16,7 +16,7 @@ import lunalib.lunaRefit.LunaRefitManager;
 
 public class HullUpgradesRefitButton extends BaseRefitButton {
 
-    static final String ICON_PATH = "graphics/icons/frameworks/framework_cruiser_unique.png";
+    static final String ICON_PATH = "graphics/icons/hull_upgrades/hull_upgrade_cruiser_unique.png";
 
     public static void addButton() {
         LunaRefitManager.addRefitButton(new HullUpgradesRefitButton());

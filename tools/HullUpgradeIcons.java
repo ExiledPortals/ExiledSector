@@ -15,13 +15,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public final class FrameworkIcons {
+public final class HullUpgradeIcons {
 
     private static final int WORK_SIZE = 512;
     private static final int ICON_SIZE = 128;
     private static final int GRID_SPACING = 24;
     private static final String DEFAULT_SHIPS_DIR = "E:/Dev/Starsector/starsector-core/graphics/ships";
-    private static final String DEFAULT_OUTPUT_DIR = "graphics/icons/frameworks";
+    private static final String DEFAULT_OUTPUT_DIR = "graphics/icons/hull_upgrades";
     private static final String[] HULL_SIZES = {"frigate", "destroyer", "cruiser", "capital"};
     private static final String[] DEFAULT_SPRITES = {
             "wolf/wolf_base.png", "hammerhead/hammerhead_base.png", "dominator/dominator_base.png", "onslaught/onslaught_base.png"};
@@ -35,7 +35,7 @@ public final class FrameworkIcons {
 
     private final float[] tint;
 
-    private FrameworkIcons(Color rarityColor) {
+    private HullUpgradeIcons(Color rarityColor) {
         this.tint = rarityColor.getRGBColorComponents(null);
     }
 
@@ -48,7 +48,7 @@ public final class FrameworkIcons {
 
         List<BufferedImage> previewIcons = new ArrayList<>();
         for (Map.Entry<String, Color> rarity : RARITY_COLORS.entrySet()) {
-            FrameworkIcons generator = new FrameworkIcons(rarity.getValue());
+            HullUpgradeIcons generator = new HullUpgradeIcons(rarity.getValue());
             for (int sizeIndex = 0; sizeIndex < HULL_SIZES.length; sizeIndex++) {
                 String hullSize = HULL_SIZES[sizeIndex];
                 File spriteFile = resolveSprite(shipsDir, options.getOrDefault(hullSize, DEFAULT_SPRITES[sizeIndex]));
@@ -57,7 +57,7 @@ public final class FrameworkIcons {
                     throw new IOException("Not a readable image: " + spriteFile);
                 }
                 BufferedImage icon = downsample(generator.render(sprite, sizeIndex + 1), WORK_SIZE / ICON_SIZE);
-                File iconFile = new File(outputDir, "framework_" + hullSize + "_" + rarity.getKey() + ".png");
+                File iconFile = new File(outputDir, "hull_upgrade_" + hullSize + "_" + rarity.getKey() + ".png");
                 if (iconFile.exists() && !overwrite) {
                     throw new IOException(iconFile + " already exists; pass --overwrite to replace it");
                 }
@@ -95,7 +95,7 @@ public final class FrameworkIcons {
     }
 
     private static String usage() {
-        return "java tools/FrameworkIcons.java [--ships <dir>] [--out <dir>] [--frigate <sprite>] [--destroyer <sprite>]\n"
+        return "java tools/HullUpgradeIcons.java [--ships <dir>] [--out <dir>] [--frigate <sprite>] [--destroyer <sprite>]\n"
                 + "    [--cruiser <sprite>] [--capital <sprite>] [--preview <file.png>] [--overwrite]\n"
                 + "Sprites are relative to --ships (default " + DEFAULT_SHIPS_DIR + ") or absolute.\n"
                 + "Defaults: " + String.join(", ", DEFAULT_SPRITES) + ". Output: " + DEFAULT_OUTPUT_DIR + ".";

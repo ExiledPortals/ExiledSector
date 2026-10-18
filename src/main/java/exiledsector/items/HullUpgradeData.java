@@ -10,7 +10,7 @@ import java.util.Locale;
 public record HullUpgradeData(HullSize hullSize) {
 
     public static final String ITEM_ID = "exiledSector_hull_upgrade";
-    private static final String ICON_FOLDER = "graphics/icons/frameworks/framework_";
+    private static final String ICON_FOLDER = "graphics/icons/hull_upgrades/hull_upgrade_";
 
     public static HullUpgradeData parse(String encoded) {
         if (encoded == null || encoded.isBlank()) {

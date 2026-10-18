@@ -90,7 +90,7 @@ class HullUpgradeTest {
         assertEquals(new HullUpgradeData(HullSize.CRUISER), HullUpgradeData.parse("CRUISER"));
         assertNull(HullUpgradeData.parse("FIGHTER"));
         assertNull(HullUpgradeData.parse(""));
-        assertEquals("graphics/icons/frameworks/framework_capital_unique.png", upgrade.iconPath());
+        assertEquals("graphics/icons/hull_upgrades/hull_upgrade_capital_unique.png", upgrade.iconPath());
     }
 
     @Test
