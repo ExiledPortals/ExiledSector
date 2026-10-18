@@ -128,6 +128,12 @@ class ExiledSectorSettingsTest {
     }
 
     @Test
+    void registersTheOpenWormholesAnywhereSwitchedOnByDefault() {
+        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addBoolean(eq("exiledSector"),
+                eq(StarChartSettings.OPEN_ANYWHERE_FIELD_ID), anyString(), anyString(), eq(true), eq("")));
+    }
+
+    @Test
     void noSettingTextContainsAPercentSignBecauseLunaLibFormatsItBeforeDisplaying() {
         assertFalse(registeredTexts.isEmpty());
         for (String text : registeredTexts) {

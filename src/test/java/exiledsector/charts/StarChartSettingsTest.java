@@ -8,6 +8,8 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class StarChartSettingsTest {
 
@@ -49,5 +51,14 @@ class StarChartSettingsTest {
 
         configure(99);
         assertEquals(StarChartSettings.MAX_ENTRIES, StarChartSettings.wormholeEntries());
+    }
+
+    @Test
+    void opensWormholesAnywhereUntilSwitchedOff() {
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", StarChartSettings.OPEN_ANYWHERE_FIELD_ID)).thenReturn(null);
+        assertTrue(StarChartSettings.openAnywhere());
+
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", StarChartSettings.OPEN_ANYWHERE_FIELD_ID)).thenReturn(false);
+        assertFalse(StarChartSettings.openAnywhere());
     }
 }

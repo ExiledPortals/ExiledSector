@@ -190,6 +190,30 @@ public final class ChartGenContext {
         return Math.max(0, extraPois);
     }
 
+    public float fleetPowerMult() {
+        return multiplier(fleetPowerPercent);
+    }
+
+    public int extraFleets() {
+        return extraFleets;
+    }
+
+    public int officerLevelBonus() {
+        return officerLevelBonus;
+    }
+
+    public int extraOfficers() {
+        return extraOfficers;
+    }
+
+    public int averageSModsBonus() {
+        return averageSModsBonus;
+    }
+
+    public float fleetQualityPercent() {
+        return fleetQualityPercent;
+    }
+
     public float bossPowerMult() {
         return multiplier(bossPowerPercent);
     }
