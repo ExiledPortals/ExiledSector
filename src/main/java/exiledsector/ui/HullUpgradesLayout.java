@@ -26,12 +26,4 @@ record HullUpgradesLayout(float panelLeft, float panelWidth, float settledShipX,
                 layout.frameY() + PANEL_MARGIN + verticalReach, layout.frameTop() - PANEL_MARGIN - verticalReach);
         return new HullUpgradesLayout(panelLeft, panelWidth, settledShipX, bounds);
     }
-
-    float panelRight() {
-        return panelLeft + panelWidth;
-    }
-
-    static float chartsRoomRight(RefitScreenLayout layout) {
-        return layout.frameX() + layout.frameWidth() - PANEL_MARGIN;
-    }
 }

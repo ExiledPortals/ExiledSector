@@ -17,9 +17,7 @@ import exiledsector.ui.decoration.SkillTreeFleetRenderer;
 import exiledsector.ui.section.SectionLayout;
 import exiledsector.ui.node.NodeSearch;
 import exiledsector.ui.node.TreeAllocationSession;
-import exiledsector.ui.chart.StarChartTab;
 import exiledsector.ui.refit.RefitScreenLayout;
-import exiledsector.ui.socket.BenchMode;
 import exiledsector.ui.socket.HullUpgradePanel;
 import exiledsector.ui.socket.SocketPanelPlacement;
 import exiledsector.ui.socket.SocketPanelTab;
@@ -34,12 +32,14 @@ import java.awt.Color;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
 
     static final float OPEN_SECONDS = 0.25f;
     static final float CONTENT_SECONDS = 0.3f;
+    static final Set<SocketPanelTab> SHOWN_TABS = EnumSet.of(SocketPanelTab.HULL_ITEMS, SocketPanelTab.HULL_UPGRADES);
     private static final float BAY_BACKDROP_ALPHA = 0.8f;
 
     private final FleetMemberAPI member;
@@ -56,9 +56,6 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     private SectionsDisplay sectionsDisplay;
     private ItemStoragePanel storagePanel;
     private HullUpgradePanel upgradesPanel;
-    private StarChartTab chartTab;
-    private String wormholeMessage;
-    private float chartsLevel;
     private ModificationBay bay;
     private float bayDim;
     private Map<String, FleetMemberAPI> ownedShips = Map.of();
@@ -113,19 +110,14 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
             refreshStorage();
         }
         bayDim = Fade.step(bayDim, bay != null, amount / OPEN_SECONDS);
-        chartsLevel = Fade.step(chartsLevel, chartTab != null, amount / CONTENT_SECONDS);
-        sectionsDisplay.advance(amount, mouseX, mouseY, contentLevel >= 0.5f && !pointerOverPanel && bay == null && chartTab == null);
+        sectionsDisplay.advance(amount, mouseX, mouseY, contentLevel >= 0.5f && !pointerOverPanel && bay == null);
         if (closing && openLevel <= 0f && !closeRequested) {
             closeRequested = true;
             sectionsDisplay.hideTooltip();
             if (portrait != null) {
                 portrait.cleanup();
             }
-            if (wormholeMessage != null) {
-                RefitScreenExit.leave(refitButton, wormholeMessage);
-            } else {
-                refitButton.closePanel();
-            }
+            refitButton.closePanel();
         }
     }
 
@@ -149,14 +141,14 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
         upgradesPanel = HullUpgradePanel.open(hostPanel, placement(instantly), sectionsDisplay.panelView(), sectionsDisplay.panelListener(() -> {
             upgradesPanel = null;
             close();
-        }), tabListener, HullUpgradePanel.Sizing.SCROLL);
+        }), tabListener, SHOWN_TABS, HullUpgradePanel.Sizing.SCROLL);
         if (!instantly) {
             SkillTreeSounds.panelOpened();
         }
     }
 
     private void openStorage(ItemKind kindFilter) {
-        storagePanel = ItemStoragePanel.open(hostPanel, placement(true), SocketCustody.shipNames(ownedShips), new ItemStoragePanel.Listener() {
+        storagePanel = ItemStoragePanel.openSectionItems(hostPanel, placement(true), SocketCustody.shipNames(ownedShips), new ItemStoragePanel.Listener() {
             @Override
             public void selected(Item item) {
                 chooseFromStorage(item);
@@ -172,36 +164,23 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
             public void pressedInside() {
                 sectionsDisplay.hideTooltip();
             }
-        }, kindFilter, tabListener);
+        }, kindFilter, tabListener, SHOWN_TABS);
         storagePanel.setModifyHandler(this::openBay);
         storageRevision = treeSession.statsRevision();
     }
 
     private void openBay() {
-        if (storagePanel != null) {
-            openBay(BenchMode.HULL_ITEMS, null);
-        }
-    }
-
-    private void openBay(BenchMode mode, Item initialItem) {
-        if (bay != null || closing) {
+        if (storagePanel == null || bay != null || closing) {
             return;
         }
         swapOutStorage();
-        swapOutCharts();
         SkillTreeSounds.panelOpened();
-        bay = ModificationBay.open(hostPanel, ModificationBenchScreen.benchArea(Global.getSettings().getScreenWidth(),
-                Global.getSettings().getScreenHeight(), false), SocketCustody.shipNames(ownedShips), mode, initialItem, new ModificationBay.Listener() {
+        bay = ModificationBay.openHullItemsOnly(hostPanel, ModificationBenchScreen.benchArea(Global.getSettings().getScreenWidth(),
+                Global.getSettings().getScreenHeight(), false), SocketCustody.shipNames(ownedShips), new ModificationBay.Listener() {
             @Override
             public void closed() {
-                BenchMode closedMode = bay == null ? mode : bay.mode();
                 bay = null;
-                if (closing) {
-                    return;
-                }
-                if (closedMode == BenchMode.STAR_CHARTS) {
-                    openCharts();
-                } else {
+                if (!closing) {
                     showStorage(null);
                 }
             }
@@ -217,57 +196,12 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
         if (closing || bay != null) {
             return;
         }
-        switch (tab) {
-            case HULL_ITEMS -> {
-                if (storagePanel == null) {
-                    showStorage(null);
-                }
-            }
-            case HULL_UPGRADES -> {
-                if (upgradesPanel == null) {
-                    swapOutStorage();
-                    swapOutCharts();
-                    openUpgrades(true);
-                }
-            }
-            case STAR_CHARTS -> {
-                if (chartTab == null) {
-                    swapOutStorage();
-                    swapOutUpgrades();
-                    openCharts();
-                }
-            }
+        if (tab == SocketPanelTab.HULL_ITEMS && storagePanel == null) {
+            showStorage(null);
+        } else if (tab == SocketPanelTab.HULL_UPGRADES && upgradesPanel == null) {
+            swapOutStorage();
+            openUpgrades(true);
         }
-    }
-
-    private void openCharts() {
-        SocketPanelPlacement storagePlacement = placement(true);
-        SocketPanelPlacement detailPlacement = StarChartTab.detailBeside(storagePlacement, HullUpgradesLayout.chartsRoomRight(layout),
-                Float.MAX_VALUE);
-        chartTab = StarChartTab.open(hostPanel, storagePlacement, detailPlacement, detailPlacement, tabListener, EnumSet.allOf(SocketPanelTab.class),
-                new StarChartTab.Listener() {
-                    @Override
-                    public void closed() {
-                        close();
-                    }
-
-                    @Override
-                    public void wormholeOpened(String message) {
-                        wormholeMessage = message;
-                        close();
-                    }
-
-                    @Override
-                    public void pressedInside() {
-                        sectionsDisplay.hideTooltip();
-                    }
-
-                    @Override
-                    public boolean openModifyScreen(Item chart) {
-                        openBay(BenchMode.STAR_CHARTS, chart);
-                        return true;
-                    }
-                });
     }
 
     private void swapOutStorage() {
@@ -286,17 +220,8 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
         }
     }
 
-    private void swapOutCharts() {
-        if (chartTab != null) {
-            StarChartTab swapped = chartTab;
-            chartTab = null;
-            swapped.swapOut();
-        }
-    }
-
     private void showStorage(ItemKind kindFilter) {
         swapOutUpgrades();
-        swapOutCharts();
         if (storagePanel == null) {
             openStorage(kindFilter);
         } else {
@@ -341,9 +266,6 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
 
     private String placingHint(Item item) {
         ItemKind itemType = item.kind();
-        if (itemType == null || itemType == ItemKind.SUBROUTINE) {
-            return Translation.msg("ui.hullUpgrades.placingHintSubroutine").arg("name", item.name()).text();
-        }
         String key = treeSession.isSectionUnlocked(itemType.section()) ? "ui.socketStorage.placingHintFramework"
                 : "ui.socketStorage.placingHintFrameworkLocked";
         return Translation.msg(key).arg("name", item.name()).arg("type", itemType.displayName()).text();
@@ -378,9 +300,6 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
         }
         if (upgradesPanel != null) {
             upgradesPanel.close();
-        }
-        if (chartTab != null) {
-            chartTab.close();
         }
     }
 
@@ -417,7 +336,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     }
 
     private int sectionIndexAt(float x, float y) {
-        boolean sectionsLive = contentLevel >= 0.5f && bay == null && chartTab == null && (storagePanel == null || !storagePanel.isWorkbenchOpen());
+        boolean sectionsLive = contentLevel >= 0.5f && bay == null && (storagePanel == null || !storagePanel.isWorkbenchOpen());
         return sectionsLive ? sectionsDisplay.sectionAt(x, y) : -1;
     }
 
@@ -443,12 +362,6 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
         if (upgradesPanel != null && upgradesPanel.escape()) {
             return;
         }
-        if (chartTab != null) {
-            if (!chartTab.escape()) {
-                switchTab(SocketPanelTab.HULL_UPGRADES);
-            }
-            return;
-        }
         if (placingItem != null) {
             stopPlacing();
         } else if (targetedSection != null) {
@@ -468,8 +381,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     private boolean panelContains(float x, float y) {
         return (bay != null && bay.contains(x, y))
                 || (storagePanel != null && (storagePanel.contains(x, y) || storagePanel.workbenchContains(x, y)))
-                || (upgradesPanel != null && upgradesPanel.contains(x, y))
-                || (chartTab != null && chartTab.contains(x, y));
+                || (upgradesPanel != null && upgradesPanel.contains(x, y));
     }
 
     @Override
@@ -508,13 +420,9 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
             return;
         }
         float shipX = shipCentreX();
-        float shipShown = 1f - Fade.smooth(chartsLevel);
-        if (shipShown > 0f) {
-            portrait.draw(shipX, layout.shipCentreY(), layout.shipZoom(), frameAlpha * shipShown);
-            SkillTreeFleetRenderer.InspectedShip ship = portrait.at(shipX, layout.shipCentreY(), layout.shipZoom());
-            sectionsDisplay.render(ship, shipExtent, alphaMult * Fade.smooth(contentLevel) * shipShown, screenLayout.sectionBounds(), placingItem,
-                    targetedSection);
-        }
+        portrait.draw(shipX, layout.shipCentreY(), layout.shipZoom(), frameAlpha);
+        SkillTreeFleetRenderer.InspectedShip ship = portrait.at(shipX, layout.shipCentreY(), layout.shipZoom());
+        sectionsDisplay.render(ship, shipExtent, alphaMult * Fade.smooth(contentLevel), screenLayout.sectionBounds(), placingItem, targetedSection);
         if (bayDim > 0f) {
             GLDraw.fillQuad(0f, 0f, Global.getSettings().getScreenWidth(), Global.getSettings().getScreenHeight(), Color.BLACK,
                     BAY_BACKDROP_ALPHA * Fade.smooth(bayDim) * alphaMult);

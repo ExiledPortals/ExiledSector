@@ -13,7 +13,6 @@ import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemStore;
 import exiledsector.items.StarChartFixtures;
-import exiledsector.ui.socket.SocketPanelPlacement;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,15 +24,13 @@ import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class StarChartTabTest {
+class StarChartCargoTest {
 
     private MockedStatic<Global> globalMock;
     private SectorAPI sector;
@@ -67,13 +64,13 @@ class StarChartTabTest {
     }
 
     @Test
-    void openingTheTabMovesChartsFromCargoIntoStorageAndShowsThemByTier() {
+    void preparingMovesChartsFromCargoIntoStorageAndShowsThemByTier() {
         CargoStackAPI threes = chartStack(3, 2f);
         CargoStackAPI eight = chartStack(8, 1f);
         when(cargo.getStacksCopy()).thenReturn(new ArrayList<>(List.of(threes, eight)));
         StarChartBrowser browser = new StarChartBrowser();
 
-        int moved = StarChartTab.prepare(sector, browser);
+        int moved = StarChartBrowser.prepare(sector, browser);
 
         assertEquals(3, moved);
         verify(cargo).removeStack(threes);
@@ -82,17 +79,17 @@ class StarChartTabTest {
         assertEquals(2, browser.count(3));
         assertEquals(1, browser.count(8));
         assertEquals(3, browser.selectedTier());
-        assertEquals("3 Star Charts moved from your cargo into storage.", StarChartTab.movedNotice(moved));
-        assertEquals("1 Star Chart moved from your cargo into storage.", StarChartTab.movedNotice(1));
-        assertNull(StarChartTab.movedNotice(0));
+        assertEquals("3 Star Charts moved from your cargo into storage.", StarChartBrowser.movedNotice(moved));
+        assertEquals("1 Star Chart moved from your cargo into storage.", StarChartBrowser.movedNotice(1));
+        assertNull(StarChartBrowser.movedNotice(0));
     }
 
     @Test
-    void openingWithNoChartsAnywhereCreatesNoStorage() {
+    void preparingWithNoChartsAnywhereCreatesNoStorage() {
         when(cargo.getStacksCopy()).thenReturn(new ArrayList<>());
         StarChartBrowser browser = new StarChartBrowser();
 
-        assertEquals(0, StarChartTab.prepare(sector, browser));
+        assertEquals(0, StarChartBrowser.prepare(sector, browser));
 
         assertNull(ItemStore.starChartsIfCreated());
         assertEquals(0, browser.storedCount());
@@ -103,73 +100,6 @@ class StarChartTabTest {
     void theMovedNoticeUsesTheGameTextLanguageBecauseVanillaDrawsIt() {
         I18n.install(RealCatalogue.of(LocaleChain.SIMPLIFIED_CHINESE), RealCatalogue.english());
 
-        assertEquals("2 Star Charts moved from your cargo into storage.", StarChartTab.movedNotice(2));
-    }
-
-    @Test
-    void theDetailPanelSitsBesideTheStorageAtItsHeightAndFillsTheRoomUpToItsCap() {
-        SocketPanelPlacement storage = new SocketPanelPlacement(16f, 80f, 500f, 700f, true);
-
-        SocketPanelPlacement capped = StarChartTab.detailBeside(storage, 1900f, StarChartTab.DETAIL_WIDTH);
-        SocketPanelPlacement filled = StarChartTab.detailBeside(storage, 1300f, Float.MAX_VALUE);
-        SocketPanelPlacement cramped = StarChartTab.detailBeside(storage, 700f, StarChartTab.DETAIL_WIDTH);
-
-        assertEquals(16f + 500f + StarChartTab.PANEL_GAP, capped.panelLeft(), 0.01f);
-        assertEquals(StarChartTab.DETAIL_WIDTH, capped.panelWidth(), 0.01f);
-        assertEquals(80f, capped.panelTop(), 0.01f);
-        assertEquals(700f, capped.panelHeight(), 0.01f);
-        assertTrue(capped.instantly());
-        assertEquals(1300f, filled.panelLeft() + filled.panelWidth(), 0.01f);
-        assertEquals(StarChartTab.MIN_DETAIL_WIDTH, cramped.panelWidth(), 0.01f);
-    }
-
-    @Test
-    void theWormholeIsReportedOnceAndClosingIsReportedOnce() {
-        RecordingListener listener = new RecordingListener();
-        StarChartTab chartTab = new StarChartTab(listener);
-
-        chartTab.wormholeOpened("Opened.");
-        chartTab.wormholeOpened("Opened again.");
-        chartTab.storageClosed();
-        chartTab.storageClosed();
-
-        assertEquals(List.of("Opened."), listener.wormholeMessages);
-        assertEquals(1, listener.closings);
-        assertTrue(chartTab.hasOpenedWormhole());
-    }
-
-    @Test
-    void aTabThatHasNotOpenedItsPanelsIgnoresInputSafely() {
-        StarChartTab chartTab = new StarChartTab(new RecordingListener());
-
-        chartTab.chartClicked(null);
-        chartTab.close();
-        chartTab.swapOut();
-        chartTab.hideTooltips();
-
-        assertFalse(chartTab.escape());
-        assertFalse(chartTab.contains(0f, 0f));
-        assertFalse(chartTab.isVisible());
-        assertFalse(chartTab.hasOpenedWormhole());
-    }
-
-    private static final class RecordingListener implements StarChartTab.Listener {
-
-        private final List<String> wormholeMessages = new ArrayList<>();
-        private int closings;
-
-        @Override
-        public void closed() {
-            closings++;
-        }
-
-        @Override
-        public void wormholeOpened(String message) {
-            wormholeMessages.add(message);
-        }
-
-        @Override
-        public void pressedInside() {
-        }
+        assertEquals("2 Star Charts moved from your cargo into storage.", StarChartBrowser.movedNotice(2));
     }
 }

@@ -13,7 +13,6 @@ import exiledsector.effects.ShipTreeSync;
 import exiledsector.skills.ExoshipNodes;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillType;
-import exiledsector.items.HullUpgradesSetting;
 import exiledsector.items.SocketCustody;
 import exiledsector.items.Item;
 import exiledsector.ui.decoration.AbyssDarknessRenderer;
@@ -57,7 +56,6 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final TreeCamera camera = new TreeCamera();
     private final HyperspaceMode hyperspaceMode;
     private final SocketPlacement socketPlacement;
-    private final SectionInspection sectionInspection;
     private final SkillTreeChrome chrome;
     private final PointerGesture gesture = new PointerGesture();
     private final TreeCameraMemory.View cameraMemory;
@@ -88,8 +86,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.templateUi = new SkillTreeTemplateController(member, treeSession, panelStyle);
         this.statPanel = new SkillTreeStatPanel(member);
         this.hyperspaceMode = new HyperspaceMode(camera, statPanel, treeSession::isHidden);
-        this.socketPlacement = new SocketPlacement(hostPanel, treeSession, nodeSearch, searchBar, refitButton, statPanel::reservedWidth);
-        this.sectionInspection = new SectionInspection(hostPanel, treeSession, socketPlacement, statPanel);
+        this.socketPlacement = new SocketPlacement(hostPanel, treeSession, nodeSearch, searchBar);
         this.chrome = new SkillTreeChrome(member, panelStyle, statPanel, searchBar, templateUi, socketPlacement, shipCardHeight);
 
         this.cameraMemory = TreeCameraMemory.forShip(member == null ? null : member.getId());
@@ -104,8 +101,6 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     @Override
     public void positionChanged(PositionAPI canvasPosition) {
         this.canvasPosition = canvasPosition;
-        socketPlacement.setCanvasPosition(canvasPosition);
-        sectionInspection.setCanvasPosition(canvasPosition);
     }
 
     void setShipCard(UIComponentAPI component) {
@@ -114,7 +109,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     private CanvasMode mode() {
         return CanvasMode.resolve(treeSession.isStartingRootInputLocked(), templateUi.isModalOpen(), socketPlacement.isWorkbenchOpen(),
-                hyperspaceMode.isActive(), exoshipView.isActive(), camera.isFollowing(), treeSession.isAutoAllocating() || treeSession.isRespeccing());
+                hyperspaceMode.isActive(), exoshipView.isActive(), treeSession.isAutoAllocating() || treeSession.isRespeccing());
     }
 
     @Override
@@ -130,17 +125,14 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         ringBeltRenderer.advance(amount);
         abyssSerpents.advance(amount);
         if (camera.isFollowing() && hyperspaceMode.isActive()) {
-            stopFollowingFleet();
+            stopFollowing();
         }
         fleetRenderer.advance(amount);
         exoshipView.setBoardable(!treeSession.isHidden(exoshipView.exoshipNode()));
         exoshipView.advance(amount, exoshipView.isAvailable() && treeSession.isAllocated(exoshipView.exoshipNode()));
         if (exoshipView.isActive()) {
             camera.follow(exoshipView.focusX(), exoshipView.focusY(), amount);
-        } else if (camera.isFollowing()) {
-            camera.follow(fleetRenderer.focusX(), fleetRenderer.focusY(), amount);
         }
-        sectionInspection.advance(amount, canvasPosition, camera, fleetRenderer, !exoshipView.isActive(), mouseX, mouseY);
         starRenderer.advance(amount);
         boolean followingStartingRoot = treeSession.isStartingRootMoving();
         camera.beginStartingRootFollow(treeSession);
@@ -150,7 +142,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         CanvasMode mode = mode();
         dropStaleGesture(mode);
         templateUi.advance(amount, canvasPosition, mode.enables(CanvasMode.Chrome.TEMPLATE_BAR));
-        socketPlacement.advance(mustCloseStorage(mode));
+        socketPlacement.advance(mode.closesStorage());
         statPanel.refresh(treeSession.budget(), treeSession.statsRevision());
         hyperspaceMode.reopenStatsWhenBack();
         statPanel.advance(amount);
@@ -165,13 +157,6 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         if ((mode == CanvasMode.TREE || mode == CanvasMode.ALLOCATION_RUN) && treeSession.getStartingRoot() != null) {
             cameraMemory.save(camera.centreTreeX(), camera.centreTreeY(), camera.zoom());
         }
-    }
-
-    private boolean mustCloseStorage(CanvasMode mode) {
-        if (socketPlacement.isSectionTargeted()) {
-            return !camera.isFollowing() || !sectionInspection.isInspecting();
-        }
-        return mode.closesStorage();
     }
 
     private void dropStaleGesture(CanvasMode mode) {
@@ -217,7 +202,6 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                 case WORKBENCH -> handleWorkbenchEvent(event, mode);
                 case HYPERSPACE -> hyperspaceMode.handleEvent(event, canvasPosition,
                         event.isLMBDownEvent() && chrome.contains(canvasPosition, mode, event.getX(), event.getY()));
-                case FLEET_FOLLOW -> handleFleetFollowEvent(event, mode);
                 case EXOSHIP_VIEW -> handleExoshipViewEvent(event, mode);
                 case ALLOCATION_RUN -> handleAllocationRunEvent(event, mode);
                 case TREE -> handleTreeEvent(event, mode);
@@ -226,7 +210,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private boolean openHoveredItemCodex(CanvasMode mode) {
-        if (!mouseKnown || !mode.hoversTree() || sectionInspection.isInspecting() || treeSession.isDropdownOpen() || socketPlacement.isEngaged()
+        if (!mouseKnown || !mode.hoversTree() || treeSession.isDropdownOpen() || socketPlacement.isEngaged()
                 || chrome.contains(canvasPosition, mode, mouseX, mouseY)) {
             return false;
         }
@@ -236,8 +220,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     private boolean escape(CanvasMode mode) {
         EscapeAction action = EscapeAction.resolve(mode, treeSession.isAutoAllocating() || treeSession.isRespeccing(),
-                socketPlacement.isEngaged(), treeSession.isDropdownOpen(), sectionInspection.isPanelOpen(),
-                templateUi.isPlanning() && !searchBar.isFocused());
+                socketPlacement.isEngaged(), treeSession.isDropdownOpen(), templateUi.isPlanning() && !searchBar.isFocused());
         switch (action) {
             case NONE -> {
                 return false;
@@ -248,8 +231,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                 treeSession.cancelRespec();
             }
             case CLOSE_DROPDOWN -> treeSession.closeDropdown();
-            case CLOSE_HULL_UPGRADES_PANEL -> sectionInspection.escape();
-            case STOP_FOLLOWING -> stopFollowingFleet();
+            case STOP_FOLLOWING -> stopFollowing();
             case EXIT_TEMPLATE_MODE -> templateUi.exitTemplateMode();
         }
         return true;
@@ -308,16 +290,6 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         }
     }
 
-    private void handleFleetFollowEvent(InputEventAPI event, CanvasMode mode) {
-        if (treeSession.isAutoAllocating() || treeSession.isRespeccing()) {
-            handleAllocationRunEvent(event, mode);
-        } else if (sectionInspection.isInspecting()) {
-            handleInspectionEvent(event, mode);
-        } else {
-            handleTreeEvent(event, mode);
-        }
-    }
-
     private void handleExoshipViewEvent(InputEventAPI event, CanvasMode mode) {
         if (treeSession.isAutoAllocating() || treeSession.isRespeccing()) {
             handleAllocationRunEvent(event, mode);
@@ -326,51 +298,11 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         }
     }
 
-    private void handleInspectionEvent(InputEventAPI event, CanvasMode mode) {
-        float x = event.getX();
-        float y = event.getY();
-        if (event.isLMBDownEvent() && canvasPosition.containsEvent(event)) {
-            if (!chrome.press(canvasPosition, mode, x, y)) {
-                sectionInspection.pressLeft(x, y, canvasPosition, chrome.shipCardFrame(canvasPosition));
-            }
-            event.consume();
-        } else if (event.isRMBDownEvent() && canvasPosition.containsEvent(event)) {
-            sectionInspection.pressRight(x, y);
-            event.consume();
-        } else if (event.isLMBUpEvent()) {
-            if (chrome.release(x, y)) {
-                event.consume();
-            }
-        } else if (event.isMouseScrollEvent() && canvasPosition.containsEvent(event)) {
-            event.consume();
-        }
-    }
-
-    void shipCardClicked() {
-        boolean inspectionUsable = HullUpgradesSetting.enabled() || camera.isFollowing() || sectionInspection.hasSectionItems();
-        if (inspectionUsable && fleetRenderer.hasShips() && mode().letsShipCardFollowFleet()) {
-            toggleFollowingFleet();
-        }
-    }
-
-    private void toggleFollowingFleet() {
-        if (camera.isFollowing() && !exoshipView.isActive()) {
-            stopFollowingFleet();
-        } else {
-            stopFollowingFleet();
-            gesture.clear();
-            camera.stopDrag();
-            camera.startFollowing();
-            fleetRenderer.setSoloActive(true);
-            searchBar.unfocus();
-        }
-    }
-
     private void boardExoship() {
         if (!exoshipView.isBoardable()) {
             return;
         }
-        stopFollowingFleet();
+        stopFollowing();
         gesture.clear();
         camera.stopDrag();
         treeSession.closeDropdown();
@@ -379,14 +311,12 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         searchBar.unfocus();
     }
 
-    private void stopFollowingFleet() {
+    private void stopFollowing() {
         if (exoshipView.isActive()) {
             treeSession.closeDropdown();
         }
         camera.stopInspecting();
         camera.stopFollowing();
-        fleetRenderer.setSoloActive(false);
-        sectionInspection.stop();
         exoshipView.leave();
     }
 
@@ -440,7 +370,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             } else {
                 treeSession.closeDropdown();
             }
-        } else if (!pressTarget(mode, treeTargetAt(x, y), event, mode.pansOnDrag()) && mode.pansOnDrag()) {
+        } else if (!pressTarget(mode, treeTargetAt(x, y), event, true)) {
             gesture.pressPan(mode, x, y);
             camera.startDrag();
         }
@@ -506,7 +436,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             boardExoship();
             SkillTreeSounds.wormholeJumped();
         } else if (jumpTarget != null) {
-            stopFollowingFleet();
+            stopFollowing();
             camera.panTo(jumpTarget.getOffsetX(), jumpTarget.getOffsetY());
             if (!ExoshipNodes.isExoship(node)) {
                 nodeDrawer.launchWormholeGhosts(node, jumpTarget);
@@ -546,9 +476,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         float treeAlpha = hyperspaceMode.treeAlpha();
         float searchDim = nodeSearch.backgroundAlpha() + (1f - nodeSearch.backgroundAlpha()) * (1f - treeAlpha);
         float backgroundAlpha = alphaMult * searchDim * treeSession.treeAlpha();
-        float inspectFade = 1f - sectionInspection.inspectLevel();
         float exoshipFade = 1f - exoshipView.viewLevel();
-        float sceneryAlpha = backgroundAlpha * inspectFade * exoshipFade;
+        float sceneryAlpha = backgroundAlpha * exoshipFade;
         starRenderer.setMapRadius(hyperspaceMode.starRadius(), hyperspaceMode.mapAmount());
         starRenderer.setHiddenOnMap(hyperspaceMode.hiddenStarIds());
         starfieldRenderer.render(canvasPosition, camera.panX(), camera.panY(), backgroundAlpha * exoshipView.starfieldAlpha());
@@ -559,21 +488,18 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         ringBeltRenderer.render(viewport, sceneryAlpha * treeAlpha);
         abyssSerpents.render(viewport, sceneryAlpha * treeAlpha);
         staticImageRenderer.render(viewport, sceneryAlpha, hyperspaceMode.anchorIds(), treeAlpha);
-        sectionInspection.renderBackdrop(canvasPosition, alphaMult);
         boolean pointerOverTree = mouseKnown && !chrome.contains(canvasPosition, mode, mouseX, mouseY);
-        boolean shipHovered = pointerOverTree && mode.hoversTree() && !sectionInspection.isInspecting()
-                && exoshipView.shipContains(viewport, mouseX, mouseY);
-        boolean treeHovered = pointerOverTree && mode.hoversTree() && !sectionInspection.isInspecting() && !shipHovered;
+        boolean shipHovered = pointerOverTree && mode.hoversTree() && exoshipView.shipContains(viewport, mouseX, mouseY);
+        boolean treeHovered = pointerOverTree && mode.hoversTree() && !shipHovered;
         exoshipView.setHovered(shipHovered);
-        TreeLayers layers = exoshipView.layers(viewport, alphaMult * treeAlpha * inspectFade);
-        if (treeAlpha * inspectFade > 0f) {
+        TreeLayers layers = exoshipView.layers(viewport, alphaMult * treeAlpha);
+        if (treeAlpha > 0f) {
             nodeDrawer.render(layers, mouseX, mouseY, treeHovered);
         }
         fleetRenderer.render(viewport, backgroundAlpha * treeAlpha * exoshipFade);
         float shipAlpha = backgroundAlpha + (alphaMult * treeSession.treeAlpha() - backgroundAlpha) * exoshipView.viewLevel();
-        exoshipView.render(viewport, shipAlpha * treeAlpha * inspectFade);
+        exoshipView.render(viewport, shipAlpha * treeAlpha);
         starRenderer.renderGlow(viewport, sceneryAlpha);
-        sectionInspection.render(canvasPosition, viewport, fleetRenderer, alphaMult);
         if (workbenchDimProgress > 0f) {
             GLDraw.fillQuad(canvasPosition.getX(), canvasPosition.getY(), canvasPosition.getWidth(), canvasPosition.getHeight(), Color.BLACK,
                     WORKBENCH_DIM_ALPHA * workbenchDimProgress * alphaMult);

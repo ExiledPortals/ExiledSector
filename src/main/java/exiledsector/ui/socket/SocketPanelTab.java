@@ -4,8 +4,7 @@ import exiledsector.i18n.Translation;
 
 public enum SocketPanelTab {
     HULL_ITEMS("ui.socketPanel.tab.socketables"),
-    HULL_UPGRADES("ui.socketPanel.tab.hullUpgrades"),
-    STAR_CHARTS("ui.socketPanel.tab.starCharts");
+    HULL_UPGRADES("ui.socketPanel.tab.hullUpgrades");
 
     private final String labelKey;
 

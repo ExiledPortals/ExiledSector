@@ -82,9 +82,5 @@ public class SkillTreeRefitButton extends BaseRefitButton {
         backgroundPanel.addUIElement(shipCard);
         shipCard.getPosition().inBL(ChromeMetrics.EDGE_MARGIN, ChromeMetrics.EDGE_MARGIN);
         canvasPlugin.setShipCard(shipCard);
-
-        CustomPanelAPI shipCardClickTarget = Global.getSettings().createCustom(SHIP_CARD_ICON_SIZE, shipCardHeight,
-                new ShipCardClickTarget(canvasPlugin::shipCardClicked));
-        backgroundPanel.addComponent(shipCardClickTarget).inBL(ChromeMetrics.EDGE_MARGIN, ChromeMetrics.EDGE_MARGIN);
     }
 }

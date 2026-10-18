@@ -2,13 +2,16 @@ package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ui.Alignment;
+import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
+import com.fs.starfarer.api.ui.CutStyle;
 import com.fs.starfarer.api.ui.Fonts;
 import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.charts.StarChartSettings;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.items.MaterialItems;
@@ -35,7 +38,9 @@ import exiledsector.ui.VanillaText;
 import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.cargo.CargoIconLooks;
 import exiledsector.ui.chart.StarChartCrafting;
+import exiledsector.ui.chart.StarChartOpening;
 import exiledsector.ui.chart.StarChartPreviewText;
+import exiledsector.ui.chart.WormholeOpenCheck;
 import exiledsector.ui.util.GLDraw;
 import com.fs.starfarer.api.input.InputEventAPI;
 
@@ -73,6 +78,13 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
         default void modeChanged(BenchMode mode) {
         }
+
+        default boolean offersWormholeOpening() {
+            return false;
+        }
+
+        default void wormholeOpened(String message) {
+        }
     }
 
     static final float FRAME_INSET = 8f;
@@ -82,10 +94,12 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     private static final float VIGNETTE_SHARE = 0.06f;
     private static final float PICK_BUTTON_WIDTH = 120f;
     private static final float TOOLTIP_WIDTH = 340f;
+    private static final float MIN_OPEN_BUTTON_HEIGHT = 26f;
+    private static final float OPEN_CONFIRM_HEIGHT = 170f;
     private static final Color PLATE_COLOR = Color.BLACK;
     private static final String FALLBACK_ICON = ItemDefinition.FALLBACK_ICON;
 
-    private enum Control {CLOSE, PICK, CONFIRM_USE, CONFIRM_GROW, CANCEL_CONFIRM}
+    private enum Control {CLOSE, PICK, CONFIRM_USE, CONFIRM_GROW, CANCEL_CONFIRM, OPEN_WORMHOLE, CONFIRM_OPEN}
 
     private record ModeButton(BenchMode mode) {
     }
@@ -108,10 +122,14 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     private UIComponentAPI recipesElement;
     private UIComponentAPI detailsElement;
     private UIComponentAPI noticeElement;
+    private UIComponentAPI openElement;
+    private Item pendingChart;
+    private boolean wormholeOpened;
     private Item loadedItem;
     private CargoIconLook loadedLook;
     private final Set<CraftingWard> activeWards = EnumSet.noneOf(CraftingWard.class);
     private String noticeText;
+    private boolean noticeIsWarning;
 
     private SocketWorkbenchPanel(CustomPanelAPI hostPanel, Listener workbenchListener) {
         super(hostPanel);
@@ -227,7 +245,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     @Override
     protected UIComponentAPI[] contentComponents() {
-        return new UIComponentAPI[]{recipesElement, detailsElement, noticeElement};
+        return new UIComponentAPI[]{recipesElement, detailsElement, noticeElement, openElement};
     }
 
     @Override
@@ -247,7 +265,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         BenchScene.drawArt(benchMode, artLeft, artBottom, sceneScale, contentAlpha);
         float vignette = Math.min(artWidth, artHeight) * VIGNETTE_SHARE;
         GLDraw.innerGlow(artLeft, artBottom, artWidth, artHeight, vignette, PLATE_COLOR, contentAlpha);
-        drawPlate(BenchScene.DETAILS_LEFT, BenchScene.DETAILS_TOP, BenchScene.DETAILS_WIDTH, BenchScene.DETAILS_HEIGHT, contentAlpha);
+        drawPlate(BenchScene.DETAILS_LEFT, BenchScene.DETAILS_TOP, BenchScene.DETAILS_WIDTH, detailsArtHeight(), contentAlpha);
         Color subjectColor = loadedItem == null ? null : loadedItem.frameColor();
         socketFlair.render(socketScreenX(), socketScreenY(), slotRadius(), SkillTreePanelStyle.GLOW_COLOR, subjectColor,
                 loadedItem == null ? null : loadedItem.iconPath(), loadedLook, contentAlpha);
@@ -314,7 +332,12 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     }
 
     private void handleButton(Object id) {
-        if (id == Control.CONFIRM_USE || id == Control.CONFIRM_GROW) {
+        if (wormholeOpened) {
+            return;
+        }
+        if (id == Control.CONFIRM_OPEN) {
+            confirmOpen();
+        } else if (id == Control.CONFIRM_USE || id == Control.CONFIRM_GROW) {
             ItemCurrency currency = pendingCurrency;
             cancelConfirm();
             if (currency == null) {
@@ -335,6 +358,8 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             close();
         } else if (id == Control.PICK) {
             requestItem();
+        } else if (id == Control.OPEN_WORMHOLE) {
+            openPressed();
         }
     }
 
@@ -365,6 +390,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     private void cancelConfirm() {
         pendingCurrency = null;
+        pendingChart = null;
         closeConfirm();
     }
 
@@ -375,7 +401,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     private void tileClicked(ItemCurrency currency, boolean skipConfirm) {
         hoverTooltip.hide();
-        if (isConfirmOpen() || !usable(currency)) {
+        if (wormholeOpened || isConfirmOpen() || !usable(currency)) {
             return;
         }
         if (skipConfirm) {
@@ -387,7 +413,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     private void tileRightClicked(ItemCurrency currency, boolean skipConfirm) {
         hoverTooltip.hide();
-        if (isConfirmOpen() || !growable(currency)) {
+        if (wormholeOpened || isConfirmOpen() || !growable(currency)) {
             return;
         }
         if (skipConfirm) {
@@ -562,11 +588,20 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     private void showNotice(String text) {
         noticeText = text;
+        noticeIsWarning = false;
+        rebuildNotice();
+        refreshOpacity();
+    }
+
+    private void showWarning(String text) {
+        noticeText = text;
+        noticeIsWarning = true;
         rebuildNotice();
         refreshOpacity();
     }
 
     private void afterChange() {
+        noticeIsWarning = false;
         buildHeader();
         rebuildContent();
         workbenchListener.changed(loadedItem);
@@ -622,7 +657,95 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         rebuildTiles();
         rebuildDetails();
         rebuildNotice();
+        rebuildOpenButton();
         refreshOpacity();
+    }
+
+    private boolean showsOpenButton() {
+        return benchMode == BenchMode.STAR_CHARTS && workbenchListener.offersWormholeOpening();
+    }
+
+    private float detailsArtHeight() {
+        return showsOpenButton() ? BenchScene.CHART_DETAILS_HEIGHT : BenchScene.DETAILS_HEIGHT;
+    }
+
+    private WormholeOpenCheck.Blocker openBlocker() {
+        return WormholeOpenCheck.current(Global.getSector(), benchMode.store(), loadedItem);
+    }
+
+    private void rebuildOpenButton() {
+        if (!showsOpenButton()) {
+            if (openElement != null) {
+                panelRoot.removeComponent(openElement);
+                openElement = null;
+            }
+            return;
+        }
+        WormholeOpenCheck.Blocker blocker = openBlocker();
+        float buttonWidth = BenchScene.DETAILS_WIDTH * sceneScale;
+        float plateBottom = artY(BenchScene.DETAILS_TOP + BenchScene.CHART_DETAILS_HEIGHT) + PLATE_PAD;
+        float buttonTop = Math.max(artY(BenchScene.OPEN_BUTTON_TOP), plateBottom + PLATE_PAD);
+        float artBottom = artY(BenchScene.ART_HEIGHT);
+        float buttonHeight = Math.min(Math.max(MIN_OPEN_BUTTON_HEIGHT, BenchScene.OPEN_BUTTON_HEIGHT * sceneScale), artBottom - buttonTop);
+        TooltipMakerAPI element = panelRoot.createUIElement(buttonWidth, buttonHeight, false);
+        element.setButtonFontOrbitron20Bold();
+        ButtonAPI openButton = element.addButton(Translation.text("chart.ui.open.button"), Control.OPEN_WORMHOLE, Misc.getBrightPlayerColor(),
+                Misc.getDarkPlayerColor(), Alignment.MID, CutStyle.ALL, buttonWidth, buttonHeight, 0f);
+        openButton.setEnabled(blocker.allowsOpening() && !wormholeOpened);
+        openButton.setShowTooltipWhileInactive(true);
+        String tooltipText = Translation.text(blocker.allowsOpening() ? "chart.ui.open.tooltip" : blocker.reasonKey());
+        element.addTooltipToPrevious(new GameTextTooltip(TOOLTIP_WIDTH, tooltip -> VanillaText.plainPara(tooltip, tooltipText, 0f,
+                Misc.getTextColor())), TooltipMakerAPI.TooltipLocation.BELOW);
+        element.setButtonFontDefault();
+        openElement = replaceElement(openElement, element, artX(BenchScene.DETAILS_LEFT), buttonTop);
+    }
+
+    private void openPressed() {
+        hoverTooltip.hide();
+        WormholeOpenCheck.Blocker blocker = openBlocker();
+        if (!blocker.allowsOpening()) {
+            SkillTreeSounds.refused();
+            showWarning(Translation.text(blocker.reasonKey()));
+            rebuildOpenButton();
+            refreshOpacity();
+            return;
+        }
+        pendingChart = loadedItem;
+        Item confirmedChart = pendingChart;
+        int entries = StarChartSettings.wormholeEntries();
+        openConfirm(OPEN_CONFIRM_HEIGHT, element -> writeOpenConfirm(element, confirmedChart, entries), "chart.ui.open.confirm.yes",
+                Control.CONFIRM_OPEN, "chart.ui.open.confirm.no", Control.CANCEL_CONFIRM);
+    }
+
+    private static void writeOpenConfirm(TooltipMakerAPI element, Item chart, int entries) {
+        VanillaText.plainPara(element, Translation.msg("chart.ui.open.confirm.title").arg("name", chart.name()).text(), 0f,
+                chart.rarity().color());
+        VanillaText.plainPara(element, Translation.text("chart.ui.open.confirm.body"), LINE_PAD * 2f, Misc.getTextColor());
+        VanillaText.plainPara(element, Translation.msg("chart.ui.open.confirm.entries").count(entries).text(), LINE_PAD * 2f,
+                Misc.getGrayColor());
+    }
+
+    private void confirmOpen() {
+        Item chart = pendingChart;
+        cancelConfirm();
+        if (chart == null || chart != loadedItem) {
+            return;
+        }
+        StarChartOpening.Outcome outcome = StarChartOpening.open(StarChartOpening.FROM_STORE, Global.getSector(), benchMode.store(), chart,
+                StarChartSettings.wormholeEntries(), craftingRandom);
+        String message = Translation.msg(outcome.messageKey()).arg("name", chart.name()).text();
+        if (!outcome.opened()) {
+            SkillTreeSounds.refused();
+            showWarning(message);
+            rebuildOpenButton();
+            refreshOpacity();
+            return;
+        }
+        wormholeOpened = true;
+        SkillTreeSounds.wormholeJumped();
+        rebuildOpenButton();
+        refreshOpacity();
+        workbenchListener.wormholeOpened(message);
     }
 
     private void rebuildTiles() {
@@ -840,7 +963,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         loadedLook = CargoIconLooks.forItem(loadedItem);
         detailsShowRollRanges = TooltipExpansion.isExpandedOrHeld();
         float detailsWidth = BenchScene.DETAILS_WIDTH * sceneScale;
-        float detailsHeight = BenchScene.DETAILS_HEIGHT * sceneScale;
+        float detailsHeight = detailsArtHeight() * sceneScale;
         TooltipMakerAPI element = panelRoot.createUIElement(detailsWidth, detailsHeight, true);
         if (loadedItem == null) {
             String emptyKey = benchMode == BenchMode.STAR_CHARTS ? "ui.workbench.empty.starCharts" : "ui.workbench.empty";
@@ -906,7 +1029,8 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     private void rebuildNotice() {
         TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), BenchScene.NOTICE_HEIGHT * sceneScale, false);
         if (noticeText != null) {
-            centred(VanillaText.plainPara(element, noticeText, 0f, Misc.getPositiveHighlightColor()));
+            Color noticeColor = noticeIsWarning ? Misc.getNegativeHighlightColor() : Misc.getPositiveHighlightColor();
+            centred(VanillaText.plainPara(element, noticeText, 0f, noticeColor));
         }
         noticeElement = replaceElement(noticeElement, element, PAD, artY(BenchScene.NOTICE_TOP));
     }

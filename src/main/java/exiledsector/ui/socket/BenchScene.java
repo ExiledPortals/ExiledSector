@@ -21,6 +21,9 @@ final class BenchScene {
     static final float DETAILS_TOP = 111f;
     static final float DETAILS_WIDTH = 130f;
     static final float DETAILS_HEIGHT = 65f;
+    static final float CHART_DETAILS_HEIGHT = 47f;
+    static final float OPEN_BUTTON_TOP = 161f;
+    static final float OPEN_BUTTON_HEIGHT = 14f;
     static final float NOTICE_TOP = 15f;
     static final float NOTICE_HEIGHT = 13f;
     static final float SOCKET_CLICK_SHARE = 0.6f;

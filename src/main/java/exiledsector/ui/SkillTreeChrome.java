@@ -29,8 +29,8 @@ final class SkillTreeChrome {
     private final SkillTreeInfoTooltipRenderer infoTooltipRenderer;
     private final String readoutTooltipTitle = Translation.text("ui.readout.title");
     private final String readoutTooltipBody;
-    private final String storageTooltipTitle = Translation.text("ui.hullItems.title");
-    private final String storageTooltipHint = Translation.text("ui.socketStorage.hint");
+    private final String storageTooltipTitle = Translation.text("ui.subroutines.title");
+    private final String storageTooltipHint = Translation.text("ui.subroutines.hint");
     private final ChromeVisibility visibility = new ChromeVisibility();
     private final float shipCardHeight;
     private ScreenRect shipCardFrame = ScreenRect.NONE;

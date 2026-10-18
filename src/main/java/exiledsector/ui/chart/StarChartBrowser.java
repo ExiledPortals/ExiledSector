@@ -1,7 +1,12 @@
 package exiledsector.ui.chart;
 
+import com.fs.starfarer.api.campaign.SectorAPI;
+import exiledsector.charts.StarCharts;
+import exiledsector.i18n.I18n;
+import exiledsector.i18n.Translation;
 import exiledsector.items.Item;
 import exiledsector.items.ItemRarity;
+import exiledsector.items.ItemStore;
 import exiledsector.items.StarChart;
 
 import java.util.ArrayList;
@@ -25,6 +30,17 @@ public final class StarChartBrowser {
 
     public static int tierOf(Item chart) {
         return StarChart.clampTier(chart.tier());
+    }
+
+    public static int prepare(SectorAPI sector, StarChartBrowser browser) {
+        int moved = sector == null ? 0 : StarCharts.absorbCharts(sector);
+        ItemStore store = ItemStore.starChartsIfCreated();
+        browser.reload(store == null ? List.of() : store.owned());
+        return moved;
+    }
+
+    public static String movedNotice(int moved) {
+        return moved > 0 ? I18n.forGameText(() -> Translation.msg("chart.ui.storage.moved").count(moved).text()) : null;
     }
 
     public void reload(List<Item> charts) {

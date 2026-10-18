@@ -6,9 +6,7 @@ import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
 import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.chart.StarChartBrowser;
-import exiledsector.ui.chart.StarChartTab;
 
-import java.util.EnumSet;
 import java.util.List;
 import java.util.function.Function;
 
@@ -19,6 +17,9 @@ public final class ModificationBay {
         void closed();
 
         void pressedInside();
+
+        default void wormholeOpened(String message) {
+        }
     }
 
     static final float PANEL_GAP = 12f;
@@ -34,6 +35,7 @@ public final class ModificationBay {
     private SocketPanelPlacement drawerPlacement;
     private SocketPanelPlacement sidePlacement;
     private BenchMode benchMode = BenchMode.HULL_ITEMS;
+    private boolean hullItemsOnly;
     private boolean drawer;
     private boolean closing;
 
@@ -45,29 +47,17 @@ public final class ModificationBay {
 
     public static ModificationBay open(CustomPanelAPI hostPanel, SocketPanelPlacement area, Function<Item, String> installedShipLookup,
                                        Listener bayListener) {
-        return open(hostPanel, area, installedShipLookup, BenchMode.HULL_ITEMS, null, bayListener);
-    }
-
-    public static ModificationBay open(CustomPanelAPI hostPanel, SocketPanelPlacement area, Function<Item, String> installedShipLookup,
-                                       BenchMode initialMode, Item initialItem, Listener bayListener) {
         ModificationBay bay = new ModificationBay(hostPanel, installedShipLookup, bayListener);
-        bay.benchMode = initialMode;
         bay.layOut(area);
-        if (initialItem != null) {
-            bay.loadInitial(initialItem);
-        }
         return bay;
     }
 
-    private void loadInitial(Item item) {
-        benchPanel.load(item);
-        if (storagePanel != null) {
-            storagePanel.setSelected(item);
-        }
-        if (chartStoragePanel != null) {
-            chartBrowser.select(item);
-            chartStoragePanel.refresh();
-        }
+    public static ModificationBay openHullItemsOnly(CustomPanelAPI hostPanel, SocketPanelPlacement area, Function<Item, String> installedShipLookup,
+                                                    Listener bayListener) {
+        ModificationBay bay = new ModificationBay(hostPanel, installedShipLookup, bayListener);
+        bay.hullItemsOnly = true;
+        bay.layOut(area);
+        return bay;
     }
 
     static boolean fitsSideBySide(float areaWidth, float areaHeight) {
@@ -135,12 +125,23 @@ public final class ModificationBay {
 
             @Override
             public boolean offersModeSwitch() {
-                return true;
+                return !hullItemsOnly;
             }
 
             @Override
             public void modeChanged(BenchMode mode) {
                 switchPicker(mode);
+            }
+
+            @Override
+            public boolean offersWormholeOpening() {
+                return !hullItemsOnly;
+            }
+
+            @Override
+            public void wormholeOpened(String message) {
+                bayListener.wormholeOpened(message);
+                close();
             }
         };
     }
@@ -201,7 +202,7 @@ public final class ModificationBay {
     }
 
     private void openChartStorage(SocketPanelPlacement placement) {
-        int moved = StarChartTab.prepare(Global.getSector(), chartBrowser);
+        int moved = StarChartBrowser.prepare(Global.getSector(), chartBrowser);
         if (benchPanel != null && benchPanel.loaded() != null) {
             chartBrowser.select(benchPanel.loaded());
         }
@@ -232,7 +233,7 @@ public final class ModificationBay {
             public void pressedInside() {
                 bayListener.pressedInside();
             }
-        }, StarChartTab.movedNotice(moved), null, EnumSet.of(SocketPanelTab.STAR_CHARTS));
+        }, StarChartBrowser.movedNotice(moved));
     }
 
     private void openStorage(SocketPanelPlacement placement) {
@@ -275,7 +276,7 @@ public final class ModificationBay {
                     benchPanel.refresh();
                 }
             }
-        });
+        }, hullItemsOnly);
         if (benchPanel != null && benchPanel.loaded() != null) {
             storagePanel.setSelected(benchPanel.loaded());
         }

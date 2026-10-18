@@ -25,6 +25,7 @@ import exiledsector.ui.section.SectionFlair;
 
 import java.awt.Color;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 
 public final class HullUpgradePanel extends HoloPanel {
@@ -83,10 +84,11 @@ public final class HullUpgradePanel extends HoloPanel {
     }
 
     public static HullUpgradePanel open(CustomPanelAPI hostPanel, SocketPanelPlacement placement, View view, Listener panelListener,
-                                        Consumer<SocketPanelTab> tabListener, Sizing sizing) {
+                                        Consumer<SocketPanelTab> tabListener, Set<SocketPanelTab> shownTabs, Sizing sizing) {
         HullUpgradePanel panel = new HullUpgradePanel(hostPanel, view, panelListener);
         panel.sizing = sizing;
         panel.setTabListener(tabListener);
+        panel.setShownTabs(shownTabs);
         panel.attach(placement.panelLeft(), placement.panelTop(), placement.panelWidth(), placement.panelHeight(), placement.instantly());
         return panel;
     }

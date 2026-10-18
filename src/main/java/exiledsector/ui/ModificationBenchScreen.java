@@ -31,6 +31,7 @@ final class ModificationBenchScreen extends BaseCustomUIPanelPlugin {
     private boolean bayOpened;
     private boolean closing;
     private boolean closeRequested;
+    private String wormholeMessage;
 
     ModificationBenchScreen(BaseRefitButton refitButton) {
         this.refitButton = refitButton;
@@ -64,11 +65,20 @@ final class ModificationBenchScreen extends BaseCustomUIPanelPlugin {
                         @Override
                         public void pressedInside() {
                         }
+
+                        @Override
+                        public void wormholeOpened(String message) {
+                            wormholeMessage = message;
+                        }
                     });
         }
         if (closing && openLevel <= 0f && !closeRequested) {
             closeRequested = true;
-            refitButton.closePanel();
+            if (wormholeMessage != null) {
+                RefitScreenExit.leave(refitButton, wormholeMessage);
+            } else {
+                refitButton.closePanel();
+            }
         }
     }
 

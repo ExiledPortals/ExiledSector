@@ -37,15 +37,15 @@ class ChromeVisibilityTest {
     }
 
     @Test
-    void followingTheFleetFadesTheSearchBarAndTemplateBarOut() {
+    void viewingTheExoshipFadesTheSearchBarAndTemplateBarOut() {
         visibility.advance(0f, CanvasMode.TREE, 1f, 1f);
-        visibility.advance(HALF_FADE, CanvasMode.FLEET_FOLLOW, 1f, 1f);
+        visibility.advance(HALF_FADE, CanvasMode.EXOSHIP_VIEW, 1f, 1f);
 
         assertEquals(0.5f, visibility.alpha(CanvasMode.Chrome.SEARCH), TOLERANCE);
         assertEquals(0.5f, visibility.alpha(CanvasMode.Chrome.TEMPLATE_BAR), TOLERANCE);
         assertEquals(1f, visibility.alpha(CanvasMode.Chrome.STORAGE_BUTTON));
 
-        visibility.advance(HALF_FADE, CanvasMode.FLEET_FOLLOW, 1f, 1f);
+        visibility.advance(HALF_FADE, CanvasMode.EXOSHIP_VIEW, 1f, 1f);
 
         assertEquals(0f, visibility.alpha(CanvasMode.Chrome.SEARCH), TOLERANCE);
     }
@@ -63,7 +63,7 @@ class ChromeVisibilityTest {
 
     @Test
     void chromeAlreadyHiddenBeforeHyperspaceStaysHiddenThroughIt() {
-        visibility.advance(0f, CanvasMode.FLEET_FOLLOW, 1f, 1f);
+        visibility.advance(0f, CanvasMode.EXOSHIP_VIEW, 1f, 1f);
         visibility.advance(0.016f, CanvasMode.HYPERSPACE, 1f, 1f);
 
         assertEquals(0f, visibility.alpha(CanvasMode.Chrome.SEARCH));

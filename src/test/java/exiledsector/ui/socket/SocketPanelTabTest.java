@@ -16,10 +16,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class SocketPanelTabTest {
 
     @Test
-    void starChartsIsTheThirdTabOfTheItemsPanel() {
-        assertEquals(List.of(SocketPanelTab.HULL_ITEMS, SocketPanelTab.HULL_UPGRADES, SocketPanelTab.STAR_CHARTS),
-                List.of(SocketPanelTab.values()));
-        assertEquals("ui.socketPanel.tab.starCharts", SocketPanelTab.STAR_CHARTS.labelKey());
+    void theItemsPanelHasHullItemsThenHullUpgrades() {
+        assertEquals(List.of(SocketPanelTab.HULL_ITEMS, SocketPanelTab.HULL_UPGRADES), List.of(SocketPanelTab.values()));
     }
 
     @ParameterizedTest
@@ -29,14 +27,6 @@ class SocketPanelTabTest {
         for (SocketPanelTab tab : SocketPanelTab.values()) {
             assertNotNull(catalogue.get(tab.labelKey()), tab + " in " + language);
         }
-    }
-
-    @Test
-    void theStarChartsLabelMatchesTheStarChartTitleInBothLanguages() {
-        assertEquals("Star Charts", RealCatalogue.entries("en").get(SocketPanelTab.STAR_CHARTS.labelKey()));
-        assertEquals("星图", RealCatalogue.entries("zh_CN").get(SocketPanelTab.STAR_CHARTS.labelKey()));
-        assertEquals(RealCatalogue.entries("zh_CN").get("chart.ui.storage.title"),
-                RealCatalogue.entries("zh_CN").get(SocketPanelTab.STAR_CHARTS.labelKey()));
     }
 
     @Test

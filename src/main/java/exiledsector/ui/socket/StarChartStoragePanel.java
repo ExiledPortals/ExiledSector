@@ -18,8 +18,6 @@ import exiledsector.ui.chart.StarChartBrowser;
 import java.awt.Color;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
-import java.util.function.Consumer;
 
 public final class StarChartStoragePanel extends HoloPanel {
 
@@ -69,11 +67,8 @@ public final class StarChartStoragePanel extends HoloPanel {
     }
 
     public static StarChartStoragePanel open(CustomPanelAPI hostPanel, SocketPanelPlacement placement, StarChartBrowser browser,
-                                             Listener storageListener, String openNotice, Consumer<SocketPanelTab> tabListener,
-                                             Set<SocketPanelTab> shownTabs) {
+                                             Listener storageListener, String openNotice) {
         StarChartStoragePanel storagePanel = new StarChartStoragePanel(hostPanel, browser, storageListener, openNotice);
-        storagePanel.setTabListener(tabListener);
-        storagePanel.setShownTabs(shownTabs);
         storagePanel.attach(placement.panelLeft(), placement.panelTop(), placement.panelWidth(), placement.panelHeight(), placement.instantly());
         return storagePanel;
     }
@@ -118,15 +113,7 @@ public final class StarChartStoragePanel extends HoloPanel {
     }
 
     @Override
-    protected SocketPanelTab tab() {
-        return SocketPanelTab.STAR_CHARTS;
-    }
-
-    @Override
     public void buttonPressed(Object id) {
-        if (tabPressed(id)) {
-            return;
-        }
         queue(() -> handleButton(id));
     }
 

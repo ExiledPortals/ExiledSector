@@ -2,12 +2,8 @@ package exiledsector.ui;
 
 import exiledsector.ui.section.SectionLayout;
 import exiledsector.ui.refit.RefitScreenLayout;
-import exiledsector.ui.chart.StarChartTab;
 import exiledsector.ui.socket.ItemStoragePanel;
-import exiledsector.ui.socket.SocketPanelPlacement;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -63,23 +59,5 @@ class HullUpgradesScreenLayoutTest {
         assertEquals(ItemStoragePanel.COMPACT_WIDTH, screenLayout.panelWidth(), 0.001f);
         assertTrue(bounds.minCentreX() <= bounds.maxCentreX(), "band " + bounds.minCentreX() + ".." + bounds.maxCentreX());
         assertTrue(bounds.minCentreY() < bounds.maxCentreY());
-    }
-
-    @Test
-    void theStarChartsTabKeepsTheItemsPanelPlaceAndPutsTheChartDetailOverTheShipInsideTheFrame() {
-        for (RefitScreenLayout frame : List.of(WIDE_FRAME, NARROW_FRAME)) {
-            HullUpgradesLayout screenLayout = HullUpgradesLayout.of(frame, new SectionLayout.ShipExtent(160f, 180f));
-            SocketPanelPlacement storage = new SocketPanelPlacement(screenLayout.panelLeft(), 20f, screenLayout.panelWidth(), 700f, true);
-            float roomRight = HullUpgradesLayout.chartsRoomRight(frame);
-
-            SocketPanelPlacement detail = StarChartTab.detailBeside(storage, roomRight, Float.MAX_VALUE);
-
-            assertEquals(frame.frameX() + frame.frameWidth() - HullUpgradesLayout.PANEL_MARGIN, roomRight, 0.001f);
-            assertTrue(detail.panelLeft() > screenLayout.panelRight(), "the detail sits right of the storage panel");
-            assertEquals(roomRight, detail.panelLeft() + detail.panelWidth(), 0.001f);
-            assertTrue(detail.panelWidth() >= 360f, "room for the currency row: " + detail.panelWidth());
-            assertEquals(storage.panelTop(), detail.panelTop(), 0.001f);
-            assertEquals(storage.panelHeight(), detail.panelHeight(), 0.001f);
-        }
     }
 }

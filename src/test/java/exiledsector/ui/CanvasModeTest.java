@@ -14,18 +14,17 @@ class CanvasModeTest {
 
     @Test
     void rootChoiceOutranksEveryOtherMode() {
-        assertEquals(CanvasMode.ROOT_CHOICE, CanvasMode.resolve(true, true, true, true, true, true, true));
+        assertEquals(CanvasMode.ROOT_CHOICE, CanvasMode.resolve(true, true, true, true, true, true));
     }
 
     @Test
     void modesResolveInPriorityOrder() {
-        assertEquals(CanvasMode.MODAL, CanvasMode.resolve(false, true, true, true, true, true, true));
-        assertEquals(CanvasMode.WORKBENCH, CanvasMode.resolve(false, false, true, true, true, true, true));
-        assertEquals(CanvasMode.HYPERSPACE, CanvasMode.resolve(false, false, false, true, true, true, true));
-        assertEquals(CanvasMode.EXOSHIP_VIEW, CanvasMode.resolve(false, false, false, false, true, true, true));
-        assertEquals(CanvasMode.FLEET_FOLLOW, CanvasMode.resolve(false, false, false, false, false, true, true));
-        assertEquals(CanvasMode.ALLOCATION_RUN, CanvasMode.resolve(false, false, false, false, false, false, true));
-        assertEquals(CanvasMode.TREE, CanvasMode.resolve(false, false, false, false, false, false, false));
+        assertEquals(CanvasMode.MODAL, CanvasMode.resolve(false, true, true, true, true, true));
+        assertEquals(CanvasMode.WORKBENCH, CanvasMode.resolve(false, false, true, true, true, true));
+        assertEquals(CanvasMode.HYPERSPACE, CanvasMode.resolve(false, false, false, true, true, true));
+        assertEquals(CanvasMode.EXOSHIP_VIEW, CanvasMode.resolve(false, false, false, false, true, true));
+        assertEquals(CanvasMode.ALLOCATION_RUN, CanvasMode.resolve(false, false, false, false, false, true));
+        assertEquals(CanvasMode.TREE, CanvasMode.resolve(false, false, false, false, false, false));
     }
 
     @Test
@@ -99,35 +98,18 @@ class CanvasModeTest {
     }
 
     @Test
-    void onlyTheIdleOrFollowingTreeScrollsOutIntoHyperspace() {
-        assertEquals(EnumSet.of(CanvasMode.TREE, CanvasMode.FLEET_FOLLOW), matching(CanvasMode::entersHyperspaceOnScrollOut));
+    void onlyTheIdleTreeScrollsOutIntoHyperspace() {
+        assertEquals(EnumSet.of(CanvasMode.TREE), matching(CanvasMode::entersHyperspaceOnScrollOut));
     }
 
     @Test
-    void followingTheFleetHidesTheTemplateBarAndSearchButKeepsStorageAndStopsDragPanning() {
+    void viewingTheExoshipHidesTheTemplateBarAndSearchButKeepsStorage() {
         assertEquals(EnumSet.of(CanvasMode.Chrome.STATS_TOGGLE, CanvasMode.Chrome.READOUTS, CanvasMode.Chrome.STORAGE_BUTTON),
-                enabledIn(CanvasMode.FLEET_FOLLOW));
-        assertFalse(CanvasMode.FLEET_FOLLOW.shows(CanvasMode.Chrome.TEMPLATE_BAR));
-        assertFalse(CanvasMode.FLEET_FOLLOW.shows(CanvasMode.Chrome.SEARCH));
-        assertTrue(CanvasMode.FLEET_FOLLOW.shows(CanvasMode.Chrome.STORAGE_BUTTON));
-        assertTrue(CanvasMode.FLEET_FOLLOW.hoversTree());
-        assertEquals(EnumSet.of(CanvasMode.FLEET_FOLLOW), matching(mode -> !mode.pansOnDrag()));
-    }
-
-    @Test
-    void theShipCardTogglesFollowingOnlyFromTheTree() {
-        assertEquals(EnumSet.of(CanvasMode.TREE, CanvasMode.ALLOCATION_RUN, CanvasMode.FLEET_FOLLOW, CanvasMode.EXOSHIP_VIEW),
-                matching(CanvasMode::letsShipCardFollowFleet));
-    }
-
-    @Test
-    void viewingTheExoshipBehavesLikeFollowingTheFleetButDragsAndNeverScrollsIntoHyperspace() {
-        assertEquals(enabledIn(CanvasMode.FLEET_FOLLOW), enabledIn(CanvasMode.EXOSHIP_VIEW));
+                enabledIn(CanvasMode.EXOSHIP_VIEW));
         assertFalse(CanvasMode.EXOSHIP_VIEW.shows(CanvasMode.Chrome.TEMPLATE_BAR));
         assertFalse(CanvasMode.EXOSHIP_VIEW.shows(CanvasMode.Chrome.SEARCH));
+        assertTrue(CanvasMode.EXOSHIP_VIEW.shows(CanvasMode.Chrome.STORAGE_BUTTON));
         assertTrue(CanvasMode.EXOSHIP_VIEW.hoversTree());
-        assertFalse(CanvasMode.EXOSHIP_VIEW.entersHyperspaceOnScrollOut());
-        assertTrue(CanvasMode.EXOSHIP_VIEW.pansOnDrag());
     }
 
     private static Set<CanvasMode.Chrome> enabledIn(CanvasMode mode) {

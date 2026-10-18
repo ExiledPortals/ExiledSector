@@ -73,4 +73,11 @@ class BenchSceneTest {
         assertTrue(BenchScene.DETAILS_LEFT - BenchScene.TILE_SIZE / 2f > BenchScene.LEFT_CONSOLE_X);
         assertTrue(BenchScene.DETAILS_LEFT + BenchScene.DETAILS_WIDTH + BenchScene.TILE_SIZE / 2f < BenchScene.RIGHT_CONSOLE_X);
     }
+
+    @Test
+    void theOpenWormholeButtonSitsUnderTheShortenedChartPlateInsideTheArt() {
+        assertTrue(BenchScene.CHART_DETAILS_HEIGHT < BenchScene.DETAILS_HEIGHT);
+        assertTrue(BenchScene.DETAILS_TOP + BenchScene.CHART_DETAILS_HEIGHT < BenchScene.OPEN_BUTTON_TOP, "the button overlaps the plate");
+        assertTrue(BenchScene.OPEN_BUTTON_TOP + BenchScene.OPEN_BUTTON_HEIGHT <= BenchScene.ART_HEIGHT, "the button runs off the art");
+    }
 }

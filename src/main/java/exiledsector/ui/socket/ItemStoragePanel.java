@@ -28,7 +28,6 @@ import exiledsector.ui.section.SectionFlair;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -126,6 +125,8 @@ public final class ItemStoragePanel extends HoloPanel {
     private ItemKind kindFilter;
     private Runnable modifyHandler;
     private boolean pickerMode;
+    private String titleKey = "ui.socketStorage.title";
+    private boolean sectionItemsOnly;
 
     private ItemStoragePanel(CustomPanelAPI hostPanel, Function<Item, String> installedShipLookup, Listener storageListener,
                                ItemKind kindFilter) {
@@ -135,15 +136,11 @@ public final class ItemStoragePanel extends HoloPanel {
         this.storageListener = storageListener;
     }
 
-    public static ItemStoragePanel open(CustomPanelAPI hostPanel, SocketPanelPlacement placement, Function<Item, String> installedShipLookup,
-                                          Listener storageListener, ItemKind kindFilter, Consumer<SocketPanelTab> tabListener) {
-        return open(hostPanel, placement, installedShipLookup, storageListener, kindFilter, tabListener, EnumSet.allOf(SocketPanelTab.class));
-    }
-
-    public static ItemStoragePanel open(CustomPanelAPI hostPanel, SocketPanelPlacement placement, Function<Item, String> installedShipLookup,
-                                          Listener storageListener, ItemKind kindFilter, Consumer<SocketPanelTab> tabListener,
-                                          Set<SocketPanelTab> shownTabs) {
+    public static ItemStoragePanel openSectionItems(CustomPanelAPI hostPanel, SocketPanelPlacement placement,
+                                                    Function<Item, String> installedShipLookup, Listener storageListener, ItemKind kindFilter,
+                                                    Consumer<SocketPanelTab> tabListener, Set<SocketPanelTab> shownTabs) {
         ItemStoragePanel storagePanel = new ItemStoragePanel(hostPanel, installedShipLookup, storageListener, kindFilter);
+        storagePanel.sectionItemsOnly = true;
         storagePanel.movedFromCargo = absorbPlayerCargo();
         storagePanel.materialsNotice = settleMaterials();
         storagePanel.setTabListener(tabListener);
@@ -152,10 +149,21 @@ public final class ItemStoragePanel extends HoloPanel {
         return storagePanel;
     }
 
+    public static ItemStoragePanel openSubroutines(CustomPanelAPI hostPanel, SocketPanelPlacement placement,
+                                                   Function<Item, String> installedShipLookup, Listener storageListener) {
+        ItemStoragePanel storagePanel = new ItemStoragePanel(hostPanel, installedShipLookup, storageListener, ItemKind.SUBROUTINE);
+        storagePanel.titleKey = "ui.subroutines.title";
+        storagePanel.movedFromCargo = absorbPlayerCargo();
+        storagePanel.materialsNotice = settleMaterials();
+        storagePanel.attach(placement.panelLeft(), placement.panelTop(), placement.panelWidth(), placement.panelHeight(), placement.instantly());
+        return storagePanel;
+    }
+
     public static ItemStoragePanel openPicker(CustomPanelAPI hostPanel, SocketPanelPlacement placement, Function<Item, String> installedShipLookup,
-                                              Listener storageListener) {
+                                              Listener storageListener, boolean sectionItemsOnly) {
         ItemStoragePanel storagePanel = new ItemStoragePanel(hostPanel, installedShipLookup, storageListener, null);
         storagePanel.pickerMode = true;
+        storagePanel.sectionItemsOnly = sectionItemsOnly;
         storagePanel.movedFromCargo = absorbPlayerCargo();
         storagePanel.materialsNotice = settleMaterials();
         storagePanel.attach(placement.panelLeft(), placement.panelTop(), placement.panelWidth(), placement.panelHeight(), placement.instantly());
@@ -515,7 +523,7 @@ public final class ItemStoragePanel extends HoloPanel {
     @Override
     protected void rebuildHeader() {
         closeDisassemblyConfirm();
-        headerElement = finishHeader(startHeader("ui.socketStorage.title", "ui.socketStorage.close", Control.CLOSE), headerElement);
+        headerElement = finishHeader(startHeader(titleKey,"ui.socketStorage.close", Control.CLOSE), headerElement);
         refreshOpacity();
     }
 
@@ -573,11 +581,21 @@ public final class ItemStoragePanel extends HoloPanel {
         if (kindFilter != null) {
             return kind == kindFilter;
         }
-        return storageFilter.socketTypes.isEmpty() || storageFilter.socketTypes.contains(kind);
+        if (sectionItemsOnly && (kind == null || !kind.fitsSection())) {
+            return false;
+        }
+        return chipTypes().stream().noneMatch(storageFilter.socketTypes::contains) || storageFilter.socketTypes.contains(kind);
+    }
+
+    private List<ItemKind> chipTypes() {
+        if (kindFilter != null) {
+            return List.of();
+        }
+        return sectionItemsOnly ? ItemKind.sectionItemTypes() : List.of(ItemKind.values());
     }
 
     private void rebuildControls() {
-        List<ItemKind> chipTypes = kindFilter == null ? List.of(ItemKind.values()) : List.of();
+        List<ItemKind> chipTypes = chipTypes();
         int typeRows = typeChipRows(chipTypes);
         int controlRows = FIXED_CONTROL_ROWS + typeRows;
         TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), controlRows * CHIP_HEIGHT + (controlRows - 1) * GAP, false);
@@ -670,7 +688,7 @@ public final class ItemStoragePanel extends HoloPanel {
             if (storageRows.isEmpty() && kindFilter != null) {
                 emptyText = Translation.msg("ui.socketStorage.emptyType").arg("type", kindFilter.displayName()).text();
             } else {
-                emptyText = Translation.text(storageRows.isEmpty() && storageFilter.socketTypes.isEmpty() ? "ui.socketStorage.empty" : "ui.socketStorage.noMatches");
+                emptyText = Translation.text(storageRows.isEmpty() && chipTypes().stream().noneMatch(storageFilter.socketTypes::contains) ? "ui.socketStorage.empty" : "ui.socketStorage.noMatches");
             }
             VanillaText.plainPara(element, emptyText, 0f, Misc.getGrayColor());
         }
@@ -704,7 +722,7 @@ public final class ItemStoragePanel extends HoloPanel {
                     placingHint != null ? placingHint : Translation.msg("ui.socketStorage.placingHint").arg("name", selectedItem.name()).text(),
                     0f, Misc.getPositiveHighlightColor());
         } else if (targetingSocket) {
-            String targetHint = kindFilter == null ? Translation.text("ui.socketStorage.targetHint")
+            String targetHint = kindFilter == null || !kindFilter.fitsSection() ? Translation.text("ui.socketStorage.targetHint")
                     : Translation.msg("ui.socketStorage.frameworkTargetHint").arg("type", kindFilter.displayName()).text();
             VanillaText.plainPara(newNotice, targetHint, 0f, Misc.getPositiveHighlightColor());
         } else if (disassembledNotice != null) {
