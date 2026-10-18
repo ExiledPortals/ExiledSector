@@ -1,18 +1,16 @@
-import { ActionIcon, Badge, Box, Button, Divider, Group, MultiSelect, NavLink, ScrollArea, Select, Stack, Switch, Text, TextInput, Title, Tooltip } from '@mantine/core';
-import { IconCopy, IconPlus, IconSearch, IconTrash, IconX } from '@tabler/icons-react';
+import { Badge, Box, Button, Divider, Group, MultiSelect, NavLink, ScrollArea, Select, Stack, Text, TextInput, Title } from '@mantine/core';
+import { IconCopy, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 import type { Vocabulary } from '../../../api/vocabulary.ts';
 import { DataToolbar } from '../../../shared/DataToolbar.tsx';
-import { DecimalInput } from '../../../shared/DecimalInput.tsx';
 import { confirmAction, notifyError } from '../../../shared/dialogs.tsx';
 import { DocumentState } from '../../../shared/DocumentState.tsx';
-import { EffectSelect } from '../../../shared/EffectSelect.tsx';
 import { useDataDocument, type DataDocument } from '../../../shared/useDataDocument.ts';
+import { ModifierLineRow } from './ModifierLineRow.tsx';
 import { ITEM_TYPE_LABELS, parseItemDefinitions, serializeHullItemsCsv, serializeSubroutinesCsv, type ItemDefinitionsModel } from '../model/definitions.ts';
 import { parseImplicitsCsv, serializeImplicitsCsv, type ImplicitsModel } from '../model/implicits.ts';
 import { isUsed, modifierUsage, referenceIssues, renameModifierReferences } from '../model/modifierUsage.ts';
 import {
-  HULL_SIZE_LABELS,
   idConventionIssue,
   markModifiersSaved,
   modifierById,
@@ -22,13 +20,10 @@ import {
   newModifier,
   parseModifiersCsv,
   serializeModifiersCsv,
-  setHullValue,
   suggestedModifierId,
-  togglePerHullSize,
   uniqueModifierId,
   validateModifiers,
   type ItemModifier,
-  type ModifierLine,
   type ModifiersModel,
   type ModifierSlot,
   type ModifierUsage,
@@ -357,6 +352,7 @@ function ModifierForm({ document, modifier, index, usage, vocabulary, onSelect }
           line={line}
           index={lineIndex}
           perHullSizeAllowed={!isImplicit}
+          effectEditable
           removable={modifier.lines.length > 1}
           vocabulary={vocabulary}
           onEdit={(recipe) => edit((draft) => recipe(draft.lines[lineIndex]))}
@@ -394,66 +390,5 @@ function ModifierForm({ document, modifier, index, usage, vocabulary, onSelect }
         </Button>
       </Group>
     </Stack>
-  );
-}
-
-interface ModifierLineRowProps {
-  line: ModifierLine;
-  index: number;
-  perHullSizeAllowed: boolean;
-  removable: boolean;
-  vocabulary: Vocabulary;
-  onEdit: (recipe: (line: ModifierLine) => void) => void;
-  onRemove: () => void;
-}
-
-function ModifierLineRow({ line, index, perHullSizeAllowed, removable, vocabulary, onEdit, onRemove }: ModifierLineRowProps) {
-  const hullInputs = line.hullValues ? [...line.hullValues] : [];
-  while (line.hullValues && hullInputs.length < HULL_SIZE_LABELS.length) {
-    hullInputs.push('');
-  }
-  return (
-    <Group align="flex-end" gap="xs" wrap="nowrap">
-      <EffectSelect
-        style={{ flex: 3, minWidth: 220 }}
-        label={`Effect ${index + 1}`}
-        vocabulary={vocabulary}
-        value={line.effect}
-        onChange={(effect) => onEdit((draft) => void (draft.effect = effect))}
-      />
-      <Tooltip label="Fixed values per hull size (frigate/destroyer/cruiser/capital) instead of a rolled range">
-        <Switch
-          label="Per hull size"
-          checked={Boolean(line.hullValues)}
-          disabled={!perHullSizeAllowed && !line.hullValues}
-          onChange={(event) => {
-            const perHullSize = event.currentTarget.checked;
-            onEdit((draft) => togglePerHullSize(draft, perHullSize));
-          }}
-          mb={8}
-        />
-      </Tooltip>
-      {line.hullValues ? (
-        hullInputs.map((value, hullIndex) => (
-          <DecimalInput
-            key={hullIndex}
-            style={{ flex: 1 }}
-            label={HULL_SIZE_LABELS[hullIndex] ?? 'Extra (clear to remove)'}
-            value={value}
-            onChange={(text) => onEdit((draft) => setHullValue(draft, hullIndex, text))}
-          />
-        ))
-      ) : (
-        <>
-          <DecimalInput style={{ flex: 2 }} label="Min" value={line.min} onChange={(text) => onEdit((draft) => void (draft.min = text))} />
-          <DecimalInput style={{ flex: 2 }} label="Max" value={line.max} onChange={(text) => onEdit((draft) => void (draft.max = text))} />
-        </>
-      )}
-      {removable && (
-        <ActionIcon variant="subtle" color="red" mb={6} onClick={onRemove} aria-label={`Remove line ${index + 1}`}>
-          <IconX size={16} />
-        </ActionIcon>
-      )}
-    </Group>
   );
 }

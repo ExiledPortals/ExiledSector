@@ -273,3 +273,15 @@ export function markModifiersSaved(model: ModifiersModel, saved: ModifiersModel)
     }
   }
 }
+
+export function copiedModifier(modifiers: ItemModifier[], source: ItemModifier, qualifier: string, itemType: string): ItemModifier {
+  const lines = JSON.parse(JSON.stringify(source.lines)) as ModifierLine[];
+  return {
+    cells: [],
+    id: uniqueModifierId(modifiers, suggestedModifierId(lines, qualifier)),
+    slot: source.slot,
+    itemTypes: [itemType],
+    lines,
+    name: source.name,
+  };
+}

@@ -264,3 +264,7 @@ export function validateItemDefinitions(definitions: ItemDefinition[], vocabular
   });
   return issues;
 }
+
+export function modifierQualifierFor(definition: Pick<ItemDefinition, 'id'>): string {
+  return definition.id.replace(/^unique_/, '');
+}

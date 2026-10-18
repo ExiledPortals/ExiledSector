@@ -4,7 +4,10 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.i18n.Catalogue;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.LocaleChain;
+import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.items.RolledEffect;
+import exiledsector.modifiers.ModifierLine;
 import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.NodeDescription;
 import exiledsector.skills.SkillNode;
@@ -15,6 +18,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -45,6 +49,10 @@ public final class EditorDescriber {
     }
 
     private JSONObject describe(JSONObject request) throws JSONException {
+        JSONArray modifierLines = request.optJSONArray("modifierLines");
+        if (modifierLines != null) {
+            return describeModifierLines(modifierLines);
+        }
         registerTypes(request.getJSONObject("types"));
         SkillType type = SkillTree.getType(request.getString("typeId"));
         if (type == null) {
@@ -61,6 +69,31 @@ public final class EditorDescriber {
                 .put("effects", markup(description.effects()))
                 .put("details", markup(description.details()))
                 .put("expandHint", Translation.text("ui.tooltip.expandHint"));
+    }
+
+    private static JSONObject describeModifierLines(JSONArray modifierLines) throws JSONException {
+        JSONArray described = new JSONArray();
+        for (int index = 0; index < modifierLines.length(); index++) {
+            StyledText lineText = describeModifierLine(modifierLines.getJSONObject(index));
+            described.put(lineText == null ? JSONObject.NULL : lineText.toMarkup());
+        }
+        return new JSONObject().put("lines", described);
+    }
+
+    private static StyledText describeModifierLine(JSONObject lineJson) throws JSONException {
+        String effectName = lineJson.getString("effect");
+        JSONArray hullValuesJson = lineJson.optJSONArray("hullValues");
+        ModifierLine line;
+        if (hullValuesJson != null) {
+            List<Float> hullValues = new ArrayList<>();
+            for (int index = 0; index < hullValuesJson.length(); index++) {
+                hullValues.add((float) hullValuesJson.getDouble(index));
+            }
+            line = ModifierLine.perHullSize(effectName, hullValues);
+        } else {
+            line = ModifierLine.range(effectName, (float) lineJson.getDouble("min"), (float) lineJson.getDouble("max"));
+        }
+        return new RolledEffect(effectName, line.boundFarthestFromZero()).rangeDescription(line);
     }
 
     private void registerTypes(JSONObject typesJson) throws JSONException {

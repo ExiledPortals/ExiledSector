@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Checkbox, Divider, Group, NavLink, ScrollArea, Select, Stack, Text, Textarea, TextInput, Title } from '@mantine/core';
+import { Avatar, Box, Button, Checkbox, Divider, Group, NavLink, ScrollArea, SegmentedControl, Select, Stack, Text, Textarea, TextInput, Title } from '@mantine/core';
 import { IconCopy, IconPlus, IconTrash } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 import type { Vocabulary } from '../../../api/vocabulary.ts';
@@ -16,6 +16,8 @@ import {
   markDefinitionsSaved,
   itemTypeOfKind,
   ITEM_TYPE_LABELS,
+  modifierQualifierFor,
+  type AffixGroup,
   newItemDefinition,
   parseItemDefinitions,
   poolShares,
@@ -29,31 +31,76 @@ import {
   type ItemDefinition,
   type ItemDefinitionsModel,
 } from '../model/definitions.ts';
-import { modifierById, parseModifiersCsv, type ItemModifier } from '../model/modifiers.ts';
+import type { CsvTable } from '../../../shared/csv.ts';
+import { modifierUsage } from '../model/modifierUsage.ts';
+import {
+  copiedModifier,
+  markModifiersSaved,
+  modifierById,
+  parseModifiersCsv,
+  serializeModifiersCsv,
+  validateModifiers,
+  type ItemModifier,
+  type ModifierUsage,
+} from '../model/modifiers.ts';
+import { parseImplicitsCsv, type ImplicitsModel } from '../model/implicits.ts';
+import { DefinitionView } from './DefinitionView.tsx';
 import { PoolEntryRow } from './PoolEntryRow.tsx';
+
+type DefinitionsViewMode = 'edit' | 'view';
+
+function implicitIdsBySection(implicits: ImplicitsModel): Record<string, string[]> {
+  return Object.fromEntries(
+    implicits.rows.map((row) => [row.section, row.implicits.filter((reference) => reference.inlineText === undefined).map((reference) => reference.modifierId)]),
+  );
+}
 
 const LIST_WIDTH = 270;
 
 interface DefinitionsModel extends ItemDefinitionsModel {
   catalogue: ItemModifier[];
+  catalogueTable: CsvTable;
+  catalogueChanged: boolean;
+  implicitIdsBySection: Record<string, string[]>;
 }
 
 export function DefinitionsTab({ vocabulary }: { vocabulary: Vocabulary }) {
   const document = useDataDocument<DefinitionsModel>({
     key: 'items.definitions',
     noun: 'item definition',
-    fileNames: ['subroutines', 'hull-items', 'item-modifiers'],
-    parse: (files) => ({
-      ...parseItemDefinitions(files.subroutines.content, files['hull-items'].content),
-      catalogue: parseModifiersCsv(files['item-modifiers'].content).modifiers,
+    fileNames: ['subroutines', 'hull-items', 'item-modifiers', 'hull-item-implicits'],
+    parse: (files) => {
+      const modifiers = parseModifiersCsv(files['item-modifiers'].content);
+      return {
+        ...parseItemDefinitions(files.subroutines.content, files['hull-items'].content),
+        catalogue: modifiers.modifiers,
+        catalogueTable: modifiers.table,
+        catalogueChanged: false,
+        implicitIdsBySection: implicitIdsBySection(parseImplicitsCsv(files['hull-item-implicits'].content, vocabulary)),
+      };
+    },
+    serialize: (model) => ({
+      subroutines: serializeSubroutinesCsv(model),
+      'hull-items': serializeHullItemsCsv(model),
+      ...(model.catalogueChanged ? { 'item-modifiers': serializeModifiersCsv({ table: model.catalogueTable, modifiers: model.catalogue }) } : {}),
     }),
-    serialize: (model) => ({ subroutines: serializeSubroutinesCsv(model), 'hull-items': serializeHullItemsCsv(model) }),
-    validate: (model) => validateItemDefinitions(model.definitions, vocabulary, modifierById(model.catalogue)),
-    savedMessage: () => 'Saved subroutines.csv and hull_items.csv',
-    afterSave: markDefinitionsSaved,
+    validate: (model) => [
+      ...validateItemDefinitions(model.definitions, vocabulary, modifierById(model.catalogue)),
+      ...(model.catalogueChanged ? validateModifiers(model.catalogue, vocabulary, modifierUsage(model.definitions, [])) : []),
+    ],
+    savedMessage: (model) =>
+      model.catalogueChanged ? 'Saved subroutines.csv, hull_items.csv and item_modifiers.csv' : 'Saved subroutines.csv and hull_items.csv',
+    afterSave: (draft, saved) => {
+      markDefinitionsSaved(draft, saved);
+      markModifiersSaved({ table: draft.catalogueTable, modifiers: draft.catalogue }, { table: saved.catalogueTable, modifiers: saved.catalogue });
+      if (saved.catalogueChanged) {
+        draft.catalogueChanged = false;
+      }
+    },
   });
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [kindFilter, setKindFilter] = useState('');
+  const [viewMode, setViewMode] = useState<DefinitionsViewMode>('edit');
   const definitions = document.state.status === 'ready' ? document.state.model.definitions : [];
 
   const addItem = () => {
@@ -68,6 +115,16 @@ export function DefinitionsTab({ vocabulary }: { vocabulary: Vocabulary }) {
     <Stack h="100%" gap={0}>
       <Box px="md" py="xs">
         <DataToolbar document={document}>
+          <SegmentedControl
+            size="xs"
+            value={viewMode}
+            onChange={(value) => setViewMode(value as DefinitionsViewMode)}
+            data={[
+              { value: 'edit', label: 'Edit' },
+              { value: 'view', label: 'View' },
+            ]}
+            aria-label="Definitions mode"
+          />
           <Button size="xs" variant="default" leftSection={<IconPlus size={14} />} onClick={addItem} disabled={document.state.status !== 'ready'}>
             New item
           </Button>
@@ -92,7 +149,13 @@ export function DefinitionsTab({ vocabulary }: { vocabulary: Vocabulary }) {
             <Divider orientation="vertical" />
             <ScrollArea style={{ flex: 1 }} type="auto">
               <Box p="md">
-                {model.definitions[selectedIndex] ? (
+                {model.definitions[selectedIndex] && viewMode === 'view' ? (
+                  <DefinitionView
+                    definition={model.definitions[selectedIndex]}
+                    catalogue={model.catalogue}
+                    implicitModifierIds={model.implicitIdsBySection[model.definitions[selectedIndex].kind] ?? []}
+                  />
+                ) : model.definitions[selectedIndex] ? (
                   <DefinitionForm
                     key={selectedIndex}
                     document={document}
@@ -100,6 +163,7 @@ export function DefinitionsTab({ vocabulary }: { vocabulary: Vocabulary }) {
                     index={selectedIndex}
                     vocabulary={vocabulary}
                     catalogue={model.catalogue}
+                    usage={modifierUsage(model.definitions, [])}
                     onSelect={setSelectedIndex}
                   />
                 ) : (
@@ -171,16 +235,40 @@ interface DefinitionFormProps {
   index: number;
   vocabulary: Vocabulary;
   catalogue: ItemModifier[];
+  usage: Map<string, ModifierUsage>;
   onSelect: (index: number) => void;
 }
 
-function DefinitionForm({ document, definition, index, vocabulary, catalogue, onSelect }: DefinitionFormProps) {
+function DefinitionForm({ document, definition, index, vocabulary, catalogue, usage, onSelect }: DefinitionFormProps) {
   const [idText, setIdText] = useState(definition.id);
   useEffect(() => setIdText(definition.id), [definition.id]);
 
   const edit = (recipe: (draft: ItemDefinition) => void) =>
     document.update((draft) => {
       recipe(draft.definitions[index]);
+    });
+
+  const editModifier = (modifierId: string, recipe: (draft: ItemModifier) => void) =>
+    document.update((draft) => {
+      const modifier = draft.catalogue.find((candidate) => candidate.id === modifierId);
+      if (modifier) {
+        recipe(modifier);
+        draft.catalogueChanged = true;
+      }
+    });
+
+  const copyModifier = (groupKey: AffixGroup, entryIndex: number) =>
+    document.update((draft) => {
+      const draftDefinition = draft.definitions[index];
+      const entry = draftDefinition[groupKey][entryIndex];
+      const source = draft.catalogue.find((candidate) => candidate.id === entry.modifierId);
+      if (!source) {
+        return;
+      }
+      const copy = copiedModifier(draft.catalogue, source, modifierQualifierFor(draftDefinition), itemTypeOfKind(draftDefinition.kind));
+      draft.catalogue.push(copy);
+      entry.modifierId = copy.id;
+      draft.catalogueChanged = true;
     });
 
   const commitId = async () => {
@@ -301,7 +389,7 @@ function DefinitionForm({ document, definition, index, vocabulary, catalogue, on
       <Text size="xs" c="dimmed">
         Items roll 2 effects (common: 1 prefix + 1 suffix) 55% of the time, 3 (rare: 2+1 or 1+2) 35% and 4 (rare: 2+2) 10%, never repeating a modifier. A
         higher rarity weight makes a modifier come up more often within its group; a blank weight counts as 1. Each entry picks a modifier from
-        item_modifiers.csv (Modifiers tab), which holds its rolled ranges and its name.
+        item_modifiers.csv. Its values can be edited here or in the Modifiers tab; a shared modifier changes every item that uses it, so use "Copy for this item" to tune one item alone.
       </Text>
       {AFFIX_GROUPS.map((group) => {
         const pool = definition[group.key];
@@ -324,7 +412,11 @@ function DefinitionForm({ document, definition, index, vocabulary, catalogue, on
                 count={pool.length}
                 share={shares[entryIndex]}
                 catalogue={catalogue}
+                otherItemsUsingModifier={(usage.get(entry.modifierId)?.items ?? []).filter((itemId) => itemId !== definition.id)}
+                vocabulary={vocabulary}
                 onEdit={(recipe) => edit((draft) => recipe(draft[group.key][entryIndex]))}
+                onEditModifier={(recipe) => editModifier(entry.modifierId, recipe)}
+                onCopyModifier={() => copyModifier(group.key, entryIndex)}
                 onMove={(from, to) => edit((draft) => moveItem(draft[group.key], from, to))}
                 onRemove={() => edit((draft) => void draft[group.key].splice(entryIndex, 1))}
               />
