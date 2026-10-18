@@ -63,7 +63,29 @@ public abstract class Item {
         return switch (type) {
             case SUBROUTINE -> new Subroutine(id, definitionId, seed, explicitModifiers);
             case HULL_ITEM -> new HullItem(id, definitionId, seed, explicitModifiers);
+            case STAR_CHART -> new StarChart(id, definitionId, seed, explicitModifiers);
         };
+    }
+
+    static Item create(String id, String definitionId, long seed, List<RolledModifier> explicitModifiers, ItemTraits traits) {
+        Item item = create(id, definitionId, seed, explicitModifiers);
+        if (traits != null) {
+            item.applyTraits(traits);
+        }
+        return item;
+    }
+
+    void applyTraits(ItemTraits traits) {
+        if (traits.corruption() != null) {
+            corruption = traits.corruption();
+        }
+    }
+
+    void copyTraitsFrom(Item source) {
+    }
+
+    public ItemTraits traits() {
+        return null;
     }
 
     static Item withEffects(String id, String definitionId, long seed, List<RolledEffect> effects) {
@@ -97,6 +119,7 @@ public abstract class Item {
         return switch (definedType) {
             case SUBROUTINE -> new Subroutine(this);
             case HULL_ITEM -> new HullItem(this);
+            case STAR_CHART -> new StarChart(this);
         };
     }
 
@@ -158,6 +181,10 @@ public abstract class Item {
         return rolled;
     }
 
+    List<RolledModifier> storedImplicits() {
+        return implicitModifiers;
+    }
+
     private static List<RolledModifier> implicitsFromLegacy(List<RolledEffect> legacyImplicits) {
         return legacyImplicits.stream().map(implicit -> RolledModifier.single(ModifierSlot.IMPLICIT, implicit)).toList();
     }
@@ -207,6 +234,7 @@ public abstract class Item {
 
     Item mirrorAs(String copyId) {
         Item copy = create(copyId, definitionId, seed, explicits());
+        copy.copyTraitsFrom(this);
         copy.implicitModifiers = new ArrayList<>(implicits());
         copy.frozenName = frozenName;
         copy.mirrored = true;
@@ -306,13 +334,21 @@ public abstract class Item {
         }
     }
 
-    private Modifier implicitModifier(String modifierId) {
+    Modifier implicitModifier(String modifierId) {
         ItemKind type = kind();
         if (type == null) {
             return null;
         }
         return type.implicits().stream().filter(modifier -> modifier.id().equals(modifierId)).findFirst()
                 .orElseGet(() -> ItemImplicits.anyById(modifierId));
+    }
+
+    ModifierLine implicitLine(String effectName) {
+        return ItemImplicits.line(kind(), effectName);
+    }
+
+    List<Modifier> implicitCorruptionPool() {
+        return ItemImplicits.corruptionPool();
     }
 
     private Modifier explicitModifier(String modifierId) {
@@ -343,8 +379,9 @@ public abstract class Item {
     public List<StyledText> implicitLines(boolean withRollRanges) {
         List<StyledText> lines = new ArrayList<>();
         ModifierEffects effects = modifierEffects();
+        ScaleContext context = scaleContext(null);
         for (SlottedRoll implicit : rolls(ModifierCategory.IMPLICIT)) {
-            StyledText description = implicit.roll().description(effects, withRollRanges ? implicit.line() : null);
+            StyledText description = explicitLine(effects, implicit.roll(), implicit.line(), withRollRanges, context);
             if (description != null) {
                 lines.add(description);
             }
@@ -391,6 +428,6 @@ public abstract class Item {
             return effect.scaledValuesDescription(effects, line.scaledValues());
         }
         RolledEffect shownEffect = new RolledEffect(effect.effectName(), line.valueFor(effect.magnitude(), context));
-        return shownEffect.description(effects, withRollRanges ? line : null);
+        return shownEffect.description(effects, withRollRanges ? line.rangeFor(context) : null);
     }
 }

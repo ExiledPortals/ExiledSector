@@ -34,6 +34,7 @@ public final class ChartRun {
     private int contentPois;
     private boolean objectiveComplete;
     private boolean rewardClaimed;
+    private String chartData;
 
     public ChartRun(String runId, String originLocationId, float originX, float originY, int entriesAllowed) {
         this.runId = runId;
@@ -136,6 +137,18 @@ public final class ChartRun {
 
     public int tier() {
         return ChartTiers.clamp(tier);
+    }
+
+    public void recordChart(String encodedChart) {
+        chartData = encodedChart == null || encodedChart.isEmpty() ? null : encodedChart;
+    }
+
+    public String chartData() {
+        return chartData;
+    }
+
+    public boolean hasChart() {
+        return chartData != null;
     }
 
     public String contentFaction() {

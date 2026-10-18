@@ -1,5 +1,7 @@
 package exiledsector.items;
 
+import exiledsector.modifiers.TierRange;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,9 +12,13 @@ public final class ItemRollOdds {
     }
 
     public static Map<String, Double> weightShares(ItemDefinition definition) {
+        return weightShares(definition, TierRange.NO_TIER);
+    }
+
+    public static Map<String, Double> weightShares(ItemDefinition definition, int tier) {
         Map<String, Double> shares = new LinkedHashMap<>();
-        addPoolShares(definition.prefixes(), shares);
-        addPoolShares(definition.suffixes(), shares);
+        addPoolShares(AffixLayout.rollableAt(definition.prefixes(), tier), shares);
+        addPoolShares(AffixLayout.rollableAt(definition.suffixes(), tier), shares);
         return shares;
     }
 

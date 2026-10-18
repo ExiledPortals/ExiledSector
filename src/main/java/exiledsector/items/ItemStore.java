@@ -3,6 +3,7 @@ package exiledsector.items;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CargoStackAPI;
+import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import org.apache.log4j.Logger;
 
@@ -18,12 +19,15 @@ import java.util.Map;
 public final class ItemStore {
 
     static final String DATA_KEY = "exiledSector_socketables";
+    static final String STAR_CHART_DATA_KEY = "exiledSector_starCharts";
     private static final String ID_PREFIX = "socketable_";
+    private static final String STAR_CHART_ID_PREFIX = "star_chart_";
     private static final Logger LOG = Logger.getLogger(ItemStore.class);
 
     private final List<Item> owned = new ArrayList<>();
     private long nextId = 1;
     private Map<String, Integer> hullUpgrades;
+    private boolean holdsStarCharts;
     // XStream skips transient fields, so this lookup index is rebuilt after loading instead of being written into saves
     @SuppressWarnings("java:S2065")
     private transient Map<String, Item> byId;
@@ -31,8 +35,52 @@ public final class ItemStore {
     @SuppressWarnings("java:S2065")
     private transient int upgradeRevision;
 
+    public ItemStore() {
+    }
+
+    private ItemStore(boolean holdsStarCharts) {
+        this.holdsStarCharts = holdsStarCharts;
+    }
+
     public static ItemStore get() {
         return SaveData.getOrCreate(DATA_KEY, ItemStore::new);
+    }
+
+    public static ItemStore starCharts() {
+        return SaveData.getOrCreate(STAR_CHART_DATA_KEY, ItemStore::forStarCharts);
+    }
+
+    public static ItemStore starChartsIfCreated() {
+        return SaveData.findOrNull(STAR_CHART_DATA_KEY, ItemStore.class);
+    }
+
+    public static boolean carriesStarCharts(CargoAPI cargo) {
+        if (cargo == null) {
+            return false;
+        }
+        for (CargoStackAPI stack : cargo.getStacksCopy()) {
+            SpecialItemData special = stack.getSpecialDataIfSpecial();
+            if (special != null && ItemData.STAR_CHART_ITEM_ID.equals(special.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static ItemStore forStarCharts() {
+        return new ItemStore(true);
+    }
+
+    public boolean holdsStarCharts() {
+        return holdsStarCharts;
+    }
+
+    private boolean accepts(ItemDefinition definition) {
+        return definition != null && holdsStarCharts == (definition.type() == ItemType.STAR_CHART);
+    }
+
+    private String idPrefix() {
+        return holdsStarCharts ? STAR_CHART_ID_PREFIX : ID_PREFIX;
     }
 
     public static Item lookup(String itemId) {
@@ -59,10 +107,10 @@ public final class ItemStore {
     }
 
     public Item add(ItemData itemData) {
-        if (itemData.definition() == null) {
+        if (!accepts(itemData.definition())) {
             return null;
         }
-        Item item = itemData.create(ID_PREFIX + nextId++);
+        Item item = itemData.create(idPrefix() + nextId++);
         if (item == null) {
             return null;
         }
@@ -75,10 +123,10 @@ public final class ItemStore {
     }
 
     Item addMirrorOf(Item source) {
-        if (source == null || source.definition() == null) {
+        if (source == null || !accepts(source.definition())) {
             return null;
         }
-        Item copy = source.mirrorAs(ID_PREFIX + nextId++);
+        Item copy = source.mirrorAs(idPrefix() + nextId++);
         owned.add(copy);
         if (byId != null) {
             byId.put(copy.id(), copy);
@@ -164,16 +212,26 @@ public final class ItemStore {
     }
 
     private int absorbStack(CargoAPI cargo, CargoStackAPI stack) {
+        if (holdsStarCharts) {
+            return absorbItemStack(cargo, stack, ItemData.ofStarChart(stack.getSpecialDataIfSpecial()));
+        }
         HullUpgradeData upgrade = HullUpgradeData.of(stack.getSpecialDataIfSpecial());
         if (upgrade != null) {
             return absorbUpgradeStack(cargo, stack, upgrade);
         }
-        ItemData itemData = ItemData.of(stack.getSpecialDataIfSpecial());
+        return absorbItemStack(cargo, stack, ItemData.of(stack.getSpecialDataIfSpecial()));
+    }
+
+    private int absorbItemStack(CargoAPI cargo, CargoStackAPI stack, ItemData itemData) {
         if (itemData == null) {
             return 0;
         }
         if (itemData.definition() == null) {
             LOG.warn("Leaving an item in cargo: its definition \"" + itemData.definitionId() + "\" is not loaded");
+            return 0;
+        }
+        if (!accepts(itemData.definition())) {
+            LOG.warn("Leaving an item in cargo: \"" + itemData.definitionId() + "\" does not belong in this storage");
             return 0;
         }
         int stackCount = Math.round(stack.getSize());

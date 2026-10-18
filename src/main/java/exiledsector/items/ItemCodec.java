@@ -29,6 +29,10 @@ final class ItemCodec {
     private static final String RARE_BRAND_KEY = "rb";
     private static final String RARE_MODEL_KEY = "rm";
     private static final String PRODUCT_KEY = "rp";
+    private static final String TIER_KEY = "t";
+    private static final String QUALITY_KEY = "q";
+    private static final String CORRUPTED_KEY = "c";
+    private static final String IMPLICITS_KEY = "i";
 
     private ItemCodec() {
     }
@@ -38,13 +42,16 @@ final class ItemCodec {
     }
 
     static String cargo(ItemData item, FrozenName frozenName) {
-        if (item.explicits() == null) {
+        if (item.explicits() == null && item.traits() == null) {
             return seeded(item, CARGO_SEED_SEPARATOR);
         }
         try {
-            JSONObject cargoJson = new JSONObject().put(DEFINITION_KEY, item.definitionId()).put(SEED_KEY, item.seed())
-                    .put(EFFECTS_KEY, modifiers(item.explicits()));
-            if (frozenName != null) {
+            JSONObject cargoJson = new JSONObject().put(DEFINITION_KEY, item.definitionId()).put(SEED_KEY, item.seed());
+            if (item.explicits() != null) {
+                cargoJson.put(EFFECTS_KEY, modifiers(item.explicits()));
+            }
+            putTraits(cargoJson, item.traits());
+            if (frozenName != null && item.explicits() != null) {
                 cargoJson.put(NAMED_KEY, true);
                 putText(cargoJson, PREFIX_KEY, frozenName.prefixModifierId());
                 putText(cargoJson, SUFFIX_KEY, frozenName.suffixModifierId());
@@ -234,10 +241,47 @@ final class ItemCodec {
             }
             List<RolledModifier> modifiers = frozenJson.has(EFFECTS_KEY) ? decodeModifiers(frozenJson.getString(EFFECTS_KEY), definitionId) : null;
             FrozenName decodedName = modifiers == null || !frozenJson.optBoolean(NAMED_KEY, false) ? null : frozenName(frozenJson);
-            return new ItemData(definitionId, frozenJson.getLong(SEED_KEY), modifiers, decodedName);
+            return new ItemData(definitionId, frozenJson.getLong(SEED_KEY), modifiers, decodedName, traits(frozenJson, definitionId));
         } catch (JSONException e) {
             return null;
         }
+    }
+
+    private static void putTraits(JSONObject json, ItemTraits traits) throws JSONException {
+        if (traits == null) {
+            return;
+        }
+        json.put(TIER_KEY, traits.tier());
+        if (traits.quality() != 0) {
+            json.put(QUALITY_KEY, traits.quality());
+        }
+        if (traits.corruption() != null) {
+            json.put(CORRUPTED_KEY, traits.corruption().name());
+        }
+        if (traits.implicits() != null) {
+            json.put(IMPLICITS_KEY, modifiers(traits.implicits()));
+        }
+    }
+
+    private static ItemTraits traits(JSONObject json, String definitionId) throws JSONException {
+        if (!json.has(TIER_KEY) && !json.has(QUALITY_KEY) && !json.has(CORRUPTED_KEY) && !json.has(IMPLICITS_KEY)) {
+            return null;
+        }
+        List<RolledModifier> implicits = json.has(IMPLICITS_KEY) ? decodeModifiers(json.getString(IMPLICITS_KEY), definitionId) : null;
+        return new ItemTraits(json.optInt(TIER_KEY, StarChart.LOWEST_TIER), json.optInt(QUALITY_KEY, 0), corruption(json), implicits);
+    }
+
+    private static CorruptionOutcome corruption(JSONObject json) {
+        Object stored = json.opt(CORRUPTED_KEY);
+        if (stored == null || Boolean.FALSE.equals(stored)) {
+            return null;
+        }
+        for (CorruptionOutcome outcome : CorruptionOutcome.values()) {
+            if (outcome.name().equals(String.valueOf(stored))) {
+                return outcome;
+            }
+        }
+        return CorruptionOutcome.NOTHING;
     }
 
     private static FrozenName frozenName(JSONObject json) {

@@ -33,6 +33,7 @@ public final class ChartRunCloser {
 
     static final List<CloseStep> STEPS = List.of(
             new CloseStep("clear the player's interaction target and course", ChartRunCloser::clearPlayerTargetAndCourse),
+            new CloseStep("lift the chart's effects from the player fleet", target -> ChartRunEffects.removeFrom(target.sector().getPlayerFleet())),
             new CloseStep("reset the campaign map location", ChartRunCloser::resetCampaignMapLocation),
             new CloseStep("move the respawn location out of the pocket", ChartRunCloser::moveRespawnLocationOut),
             new CloseStep("refresh the stranded-in-deep-space script", ChartRunCloser::refreshStrandedScript),

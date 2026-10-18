@@ -6,9 +6,11 @@ import { modifierUsage, referenceIssues, renameModifierReferences } from './modi
 import {
   formatModifierLines,
   modifierById,
+  newModifier,
   parseModifierLines,
   parseModifiersCsv,
   serializeModifiersCsv,
+  shipItemTypes,
   suggestedModifierId,
   togglePerHullSize,
   validateModifiers,
@@ -107,6 +109,26 @@ describe('item modifiers', () => {
       'ARMOR_FLAT: ARMOR_FLAT needs exactly four hull size values',
       'ARMOR_FLAT: chip can roll it, so it needs a name for their common names',
       'UNNAMED_PERCENT: unknown effect UNNAMED_PERCENT',
+    ]);
+  });
+
+  it('keeps star chart modifiers out of item_modifiers.csv', () => {
+    const withCharts = buildVocabulary({
+      effects: [{ name: 'HULL_MULT', statMode: 'MULT', lowerIsBetter: false }],
+      tags: { theme: [], region: [], requirement: [] },
+      tiers: [],
+      unlockConditionTypes: [],
+      blueprintCategories: [],
+      itemTypes: ['subroutine', 'hull_item', 'star_chart'],
+      itemKinds: [{ id: 'subroutine', type: 'subroutine' }],
+      itemUnlocks: [],
+    });
+    expect(shipItemTypes(withCharts)).toEqual(['subroutine', 'hull_item']);
+    expect(newModifier([], 'prefix', withCharts).itemTypes).toEqual(['subroutine', 'hull_item']);
+    const modifiers = parseModifiersCsv('id,slot,item_types,lines,name\nHULL_MULT,prefix,subroutine;star_chart,HULL_MULT:4:6,Reinforced\n').modifiers;
+
+    expect(validateModifiers(modifiers, withCharts, new Map())).toEqual([
+      'HULL_MULT: star chart modifiers belong in star_chart_modifiers.csv, not item_modifiers.csv',
     ]);
   });
 

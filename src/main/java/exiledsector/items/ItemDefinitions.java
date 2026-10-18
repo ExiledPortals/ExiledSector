@@ -21,6 +21,7 @@ public final class ItemDefinitions {
     private static final String ID_COLUMN = "id";
     private static final Logger LOG = Logger.getLogger(ItemDefinitions.class);
     private static final AtomicReference<Map<String, ItemDefinition>> BY_ID = new AtomicReference<>(Map.of());
+    private static final AtomicReference<Map<String, ItemDefinition>> STAR_CHARTS_BY_ID = new AtomicReference<>(Map.of());
 
     private ItemDefinitions() {
     }
@@ -77,15 +78,43 @@ public final class ItemDefinitions {
         BY_ID.set(Collections.unmodifiableMap(loaded));
     }
 
+    static void registerStarCharts(Collection<ItemDefinition> definitions) {
+        Map<String, ItemDefinition> loaded = new LinkedHashMap<>();
+        for (ItemDefinition definition : definitions) {
+            if (definition.type() != ItemType.STAR_CHART) {
+                throw new IllegalArgumentException(definition.id() + " is not a star chart");
+            }
+            loaded.put(definition.id(), definition);
+        }
+        STAR_CHARTS_BY_ID.set(Collections.unmodifiableMap(loaded));
+    }
+
     public static ItemDefinition get(String definitionId) {
-        return definitionId == null ? null : BY_ID.get().get(ItemIdAliases.currentId(definitionId));
+        if (definitionId == null) {
+            return null;
+        }
+        String currentId = ItemIdAliases.currentId(definitionId);
+        ItemDefinition shipItem = BY_ID.get().get(currentId);
+        return shipItem != null ? shipItem : STAR_CHARTS_BY_ID.get().get(currentId);
     }
 
     public static Collection<ItemDefinition> all() {
         return BY_ID.get().values();
     }
 
+    public static Collection<ItemDefinition> ofType(ItemType type) {
+        if (type == ItemType.STAR_CHART) {
+            return STAR_CHARTS_BY_ID.get().values();
+        }
+        return BY_ID.get().values().stream().filter(definition -> definition.type() == type).toList();
+    }
+
     public static void clear() {
         BY_ID.set(Map.of());
+        STAR_CHARTS_BY_ID.set(Map.of());
+    }
+
+    public static void clearStarCharts() {
+        STAR_CHARTS_BY_ID.set(Map.of());
     }
 }

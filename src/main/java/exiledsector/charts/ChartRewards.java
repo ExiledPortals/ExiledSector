@@ -36,7 +36,11 @@ public final class ChartRewards {
     }
 
     static int creditsFor(int tier) {
-        float credits = CREDITS_PER_TIER_STEP * (float) Math.pow(ChartTiers.clamp(tier), CREDIT_TIER_EXPONENT);
+        return creditsFor(tier, 1f);
+    }
+
+    static int creditsFor(int tier, float rewardMult) {
+        float credits = CREDITS_PER_TIER_STEP * (float) Math.pow(ChartTiers.clamp(tier), CREDIT_TIER_EXPONENT) * Math.max(0f, rewardMult);
         return Math.round(credits / CREDIT_ROUNDING) * (int) CREDIT_ROUNDING;
     }
 
@@ -59,9 +63,10 @@ public final class ChartRewards {
             return new Reward(0, 0, 0);
         }
         Random random = rewardRandom(run);
-        int credits = creditsFor(run.tier());
+        float rewardMult = ChartRunEffects.contextOf(run).rewardMult();
+        int credits = creditsFor(run.tier(), rewardMult);
         cargo.getCredits().add(credits);
-        float chanceMult = itemChanceMultFor(run.tier());
+        float chanceMult = itemChanceMultFor(run.tier()) * rewardMult;
         int hullItems = 0;
         for (ItemData item : ItemDrops.roll(REWARD_SITE, random, chanceMult)) {
             cargo.addSpecial(item.toSpecialItem(), 1f);

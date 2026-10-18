@@ -66,11 +66,16 @@ public final class ChartContentGenerator {
     }
 
     public static ChartContent generate(SectorAPI sector, StarSystemAPI pocket, String runId, long seed, int tier, Vector2f innerWormhole) {
+        return generate(sector, pocket, runId, seed, tier, innerWormhole, ChartGenContext.none());
+    }
+
+    public static ChartContent generate(SectorAPI sector, StarSystemAPI pocket, String runId, long seed, int tier, Vector2f innerWormhole,
+                                        ChartGenContext chartContext) {
         int clampedTier = ChartTiers.clamp(tier);
         ChartContentPlan plan;
         try {
-            plan = ChartContentPlanner.plan(seed, ChartTiers.forTier(clampedTier), ChartPois.all(), ChartFactions.all(),
-                    factionId -> isLoaded(sector, factionId));
+            plan = ChartContentPlanner.plan(seed, chartContext.adjust(ChartTiers.forTier(clampedTier)), ChartPois.all(), ChartFactions.all(),
+                    factionId -> isLoaded(sector, factionId), chartContext.extraPois());
         } catch (RuntimeException e) {
             report("plan the content", seed, e);
             return ChartContent.none(clampedTier);

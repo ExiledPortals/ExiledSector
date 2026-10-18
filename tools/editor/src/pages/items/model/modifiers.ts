@@ -9,6 +9,7 @@ export const MODIFIER_SLOT_LABELS: Record<ModifierSlot, string> = { implicit: 'I
 export const HYBRID_ID_PREFIX = 'HYBRID_';
 export const MODIFIER_REFERENCE_MARK = '@';
 export const HULL_SIZE_LABELS = ['Frigate', 'Destroyer', 'Cruiser', 'Capital'];
+export const STAR_CHART_TYPE = 'star_chart';
 const MODIFIER_ID_PATTERN = /^[A-Za-z0-9_]+$/;
 
 export interface RolledValues {
@@ -149,9 +150,13 @@ export function uniqueModifierId(modifiers: ItemModifier[], base: string): strin
   return id;
 }
 
+export function shipItemTypes(vocabulary: Vocabulary): string[] {
+  return vocabulary.itemTypes.filter((itemType) => itemType !== STAR_CHART_TYPE);
+}
+
 export function newModifier(modifiers: ItemModifier[], slot: ModifierSlot, vocabulary: Vocabulary): ItemModifier {
   const lines = [{ effect: vocabulary.effectNames[0] ?? '', min: '1', max: '2' }];
-  const itemTypes = slot === 'implicit' ? ['hull_item'] : vocabulary.itemTypes.slice();
+  const itemTypes = slot === 'implicit' ? ['hull_item'] : shipItemTypes(vocabulary);
   return { cells: [], id: uniqueModifierId(modifiers, suggestedModifierId(lines, 'NEW')), slot, itemTypes, lines, name: '' };
 }
 
@@ -223,7 +228,9 @@ export function validateModifiers(modifiers: ItemModifier[], vocabulary: Vocabul
       issues.push(`${label}: pick at least one item type it rolls on`);
     }
     for (const itemType of modifier.itemTypes) {
-      if (!vocabulary.itemTypes.includes(itemType)) {
+      if (itemType === STAR_CHART_TYPE) {
+        issues.push(`${label}: star chart modifiers belong in star_chart_modifiers.csv, not item_modifiers.csv`);
+      } else if (!vocabulary.itemTypes.includes(itemType)) {
         issues.push(`${label}: unknown item type ${itemType}`);
       }
     }

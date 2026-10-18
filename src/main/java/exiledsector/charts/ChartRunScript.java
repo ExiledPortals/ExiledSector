@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.characters.AbilityPlugin;
+import exiledsector.i18n.Translation;
 import org.apache.log4j.Logger;
 
 public class ChartRunScript implements EveryFrameScript {
@@ -18,6 +19,10 @@ public class ChartRunScript implements EveryFrameScript {
     private boolean closeArmed;
     private boolean failureReported;
     private float secondsSinceObjectiveCheck;
+    private String effectsRunId;
+    private float cachedSensorRangeMult = 1f;
+    private boolean sensorRangeApplied;
+    private String sensorSourceText;
 
     @Override
     public boolean isDone() {
@@ -33,6 +38,9 @@ public class ChartRunScript implements EveryFrameScript {
     public void advance(float amount) {
         ChartRun run = ChartRuns.currentOrNull();
         if (run == null) {
+            if (sensorRangeApplied) {
+                liftRunEffects(Global.getSector().getPlayerFleet());
+            }
             forget();
             return;
         }
@@ -70,6 +78,7 @@ public class ChartRunScript implements EveryFrameScript {
         if (inside) {
             blockEscapeAbilities(playerFleet);
         }
+        applyRunEffects(playerFleet, run, inside && run.runState() != ChartRunState.CLOSED);
         if (run.runState() == ChartRunState.CLOSED) {
             ChartRuns.delete(run.runId());
             forget();
@@ -127,10 +136,46 @@ public class ChartRunScript implements EveryFrameScript {
         return cachedPocket;
     }
 
+    void applyRunEffects(CampaignFleetAPI playerFleet, ChartRun run, boolean inside) {
+        if (inside) {
+            float sensorRangeMult = sensorRangeMultFor(run);
+            if (sensorRangeMult != 1f) {
+                ChartRunEffects.applySensorRange(playerFleet, sensorRangeMult, sensorSource());
+                sensorRangeApplied = true;
+                return;
+            }
+        }
+        if (sensorRangeApplied) {
+            liftRunEffects(playerFleet);
+        }
+    }
+
+    private void liftRunEffects(CampaignFleetAPI playerFleet) {
+        ChartRunEffects.removeFrom(playerFleet);
+        sensorRangeApplied = false;
+    }
+
+    private float sensorRangeMultFor(ChartRun run) {
+        if (!run.runId().equals(effectsRunId)) {
+            effectsRunId = run.runId();
+            cachedSensorRangeMult = ChartRunEffects.contextOf(run).sensorRangeMult();
+        }
+        return cachedSensorRangeMult;
+    }
+
+    private String sensorSource() {
+        if (sensorSourceText == null) {
+            sensorSourceText = Translation.gameText("chart.effect.sensorSource");
+        }
+        return sensorSourceText;
+    }
+
     private void forget() {
         cachedRunId = null;
         cachedPocket = null;
         closeArmed = false;
+        effectsRunId = null;
+        cachedSensorRangeMult = 1f;
     }
 
     static void blockEscapeAbilities(CampaignFleetAPI playerFleet) {

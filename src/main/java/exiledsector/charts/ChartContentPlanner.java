@@ -18,6 +18,7 @@ final class ChartContentPlanner {
     static final long OBJECTIVE_SALT = 0x43484f424a4543L;
     static final long LOOT_SALT = 0x43484c4f4f5453L;
     static final long FLEET_SALT = 0x4348464c454554L;
+    static final long EXTRA_POI_SALT = 0x43484558545241L;
     static final int MAX_POIS = 24;
     static final int MAX_FLEETS = 12;
     static final float FLEET_POWER_CAP = 300f;
@@ -37,11 +38,17 @@ final class ChartContentPlanner {
     }
 
     static ChartContentPlan plan(long seed, ChartTier tier, List<ChartPoi> pois, List<ChartFaction> factions, Predicate<String> factionLoaded) {
+        return plan(seed, tier, pois, factions, factionLoaded, 0);
+    }
+
+    static ChartContentPlan plan(long seed, ChartTier tier, List<ChartPoi> pois, List<ChartFaction> factions, Predicate<String> factionLoaded,
+                                 int extraPois) {
         ChartFaction faction = ChartFactions.pick(factions, tier.tier(), factionLoaded, ChartLayoutGenerator.derivedRandom(seed, FACTION_SALT));
         List<ChartPoi> vaults = affordableVaults(pois, tier);
         ChartObjective objective = pickObjective(tier, !vaults.isEmpty(), ChartLayoutGenerator.derivedRandom(seed, OBJECTIVE_SALT));
         List<PlannedPoi> plannedPois = spendLoot(tier, pois, objective == ChartObjective.VAULT ? vaults : List.of(),
                 ChartLayoutGenerator.derivedRandom(seed, LOOT_SALT));
+        plannedPois = addExtraPois(tier, pois, plannedPois, extraPois, ChartLayoutGenerator.derivedRandom(seed, EXTRA_POI_SALT));
         List<PlannedFleet> plannedFleets = new ArrayList<>();
         plannedPois = planFleets(tier, faction, objective, plannedPois, plannedFleets, ChartLayoutGenerator.derivedRandom(seed, FLEET_SALT));
         return new ChartContentPlan(tier.tier(), faction, objective, plannedPois, plannedFleets);
@@ -100,6 +107,19 @@ final class ChartContentPlanner {
             remaining -= picked.cost();
         }
         return planned;
+    }
+
+    static List<PlannedPoi> addExtraPois(ChartTier tier, List<ChartPoi> pois, List<PlannedPoi> planned, int extraPois, Random random) {
+        List<ChartPoi> eligible = ChartPois.lootAt(pois, tier.tier());
+        if (extraPois <= 0 || eligible.isEmpty() || planned.size() >= MAX_POIS) {
+            return planned;
+        }
+        List<PlannedPoi> extended = new ArrayList<>(planned);
+        for (int added = 0; added < extraPois && extended.size() < MAX_POIS; added++) {
+            ChartPoi picked = WeightedPick.pick(eligible, poi -> Math.max(poi.weight(), 0.0001f), random);
+            extended.add(new PlannedPoi(picked, picked.guarded()));
+        }
+        return extended;
     }
 
     static float targetCost(List<ChartPoi> affordable, float remaining) {

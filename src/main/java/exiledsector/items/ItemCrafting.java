@@ -162,13 +162,9 @@ public final class ItemCrafting {
     }
 
     static boolean canAttune(Item item) {
-        ItemKind kind = item.kind();
-        if (kind == null) {
-            return false;
-        }
         for (RolledModifier implicit : item.implicits()) {
             for (RolledEffect line : implicit.lines()) {
-                ModifierLine lineDefinition = ItemImplicits.line(kind, line.effectName());
+                ModifierLine lineDefinition = item.implicitLine(line.effectName());
                 if (lineDefinition != null && lineDefinition.canVary()) {
                     return true;
                 }
@@ -178,8 +174,7 @@ public final class ItemCrafting {
     }
 
     static Item attune(Item item, Random random) {
-        ItemKind kind = item.kind();
-        if (kind == null) {
+        if (item.implicits().isEmpty()) {
             return null;
         }
         for (int attempt = 0; attempt < MAX_RECALIBRATION_ATTEMPTS; attempt++) {
@@ -187,7 +182,7 @@ public final class ItemCrafting {
             for (RolledModifier implicit : item.implicits()) {
                 List<RolledEffect> rerolledLines = new ArrayList<>(implicit.lines().size());
                 for (RolledEffect line : implicit.lines()) {
-                    ModifierLine lineDefinition = ItemImplicits.line(kind, line.effectName());
+                    ModifierLine lineDefinition = item.implicitLine(line.effectName());
                     rerolledLines.add(lineDefinition == null ? line : new RolledEffect(line.effectName(), lineDefinition.roll(random)));
                 }
                 rerolled.add(implicit.withLines(rerolledLines));
@@ -297,7 +292,7 @@ public final class ItemCrafting {
 
     static boolean replaceImplicit(Item item, Random random) {
         List<RolledModifier> implicits = new ArrayList<>(item.implicits());
-        List<Modifier> candidates = ItemImplicits.corruptionPool().stream()
+        List<Modifier> candidates = item.implicitCorruptionPool().stream()
                 .filter(implicit -> implicits.stream().noneMatch(current -> current.modifierId().equals(implicit.id()))).toList();
         if (candidates.isEmpty()) {
             return false;
@@ -330,6 +325,9 @@ public final class ItemCrafting {
     }
 
     private static Modifier implicitModifier(Item item, String modifierId) {
+        if (item instanceof StarChart) {
+            return item.implicitModifier(modifierId);
+        }
         ItemKind kind = item.kind();
         if (kind != null) {
             for (Modifier implicit : kind.implicits()) {
@@ -400,7 +398,7 @@ public final class ItemCrafting {
         if (!currentDefinition.unique()) {
             return false;
         }
-        for (ItemDefinition definition : ItemDefinitions.all()) {
+        for (ItemDefinition definition : transpositionCandidates(currentDefinition)) {
             if (otherUnique(definition, currentDefinition, allowedUniques)) {
                 return true;
             }
@@ -413,14 +411,21 @@ public final class ItemCrafting {
         if (currentDefinition == null) {
             return null;
         }
-        ItemDefinition nextDefinition = ItemDrops.pickUnique(random, definition -> otherUnique(definition, currentDefinition, allowedUniques));
+        Predicate<ItemDefinition> otherUniques = definition -> otherUnique(definition, currentDefinition, allowedUniques);
+        ItemDefinition nextDefinition = currentDefinition.type() == ItemType.STAR_CHART ? ItemDrops.pickChart(random, otherUniques)
+                : ItemDrops.pickUnique(random, otherUniques);
         if (nextDefinition == null) {
             return null;
         }
         long seed = random.nextLong();
         Item replacement = Item.create(item.id(), nextDefinition.id(), seed, ItemRoller.rollAtTier(nextDefinition, seed, item.tier()));
+        replacement.copyTraitsFrom(item);
         replacement.freezeName();
         return store.replace(item, replacement) ? replacement : null;
+    }
+
+    private static Collection<ItemDefinition> transpositionCandidates(ItemDefinition currentDefinition) {
+        return currentDefinition.type() == ItemType.STAR_CHART ? ItemDefinitions.ofType(ItemType.STAR_CHART) : ItemDefinitions.all();
     }
 
     private static boolean otherUnique(ItemDefinition definition, ItemDefinition currentDefinition, Predicate<ItemDefinition> allowedUniques) {

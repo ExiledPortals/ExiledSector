@@ -116,7 +116,7 @@ class ItemDataIntegrityTest {
         List<String> errors = errors(modifiers, validSubroutines(), validImplicits());
 
         assertTrue(errors.contains("HULL_PERCENT needs at least one item type in item_types"), errors.toString());
-        assertTrue(errors.contains("TOP_SPEED_PERCENT lists item type \"star_map\"; expected subroutine, hull_item"), errors.toString());
+        assertTrue(errors.contains("TOP_SPEED_PERCENT lists item type \"star_map\"; expected subroutine, hull_item, star_chart"), errors.toString());
     }
 
     @Test

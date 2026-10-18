@@ -43,6 +43,7 @@ public class ChartStatusCommand implements BaseCommand {
                 + "\n" + ChartOpenCommand.describeLayout(run)
                 + "\n" + ChartOpenCommand.describeContent(run)
                 + "\n" + describeObjective(run)
+                + "\n" + ChartOpenCommand.describeChart(run)
                 + (pocket == null ? "" : "\nPocket contents: " + ChartPocketContents.of(pocket).describe()
                 + "\nStill in the pocket: " + describeLiveContent(pocket));
     }

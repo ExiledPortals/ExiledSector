@@ -8,10 +8,14 @@ import exiledsector.modifiers.TierRange;
 
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public record PoolEntry(Modifier modifier, float weight, TierRange tiers) {
 
     private static final String WEIGHT_SEPARATOR = ":";
+    private static final String TIER_MARK = "t";
+    private static final Pattern TIER_RANGE = Pattern.compile("t(\\d+)(?:(\\+)|-(\\d+))?");
 
     public PoolEntry {
         tiers = tiers == null ? TierRange.ANY : tiers;
@@ -45,11 +49,34 @@ public record PoolEntry(Modifier modifier, float weight, TierRange tiers) {
 
     private static PoolEntry parseReference(String entryText, ModifierSlot slot, ItemType itemType) {
         String[] fields = entryText.substring(ItemModifiers.REFERENCE_MARK.length()).split(WEIGHT_SEPARATOR, -1);
-        if (fields.length > 2) {
-            throw new IllegalArgumentException("entry \"" + entryText + "\" is not @MODIFIER_ID or @MODIFIER_ID:weight");
+        boolean tierGated = fields.length >= 2 && isTierRangeText(fields[fields.length - 1]);
+        int weightFields = fields.length - 1 - (tierGated ? 1 : 0);
+        if (weightFields > 1 || fields.length > 3) {
+            throw new IllegalArgumentException("entry \"" + entryText + "\" is not @MODIFIER_ID, @MODIFIER_ID:weight, @MODIFIER_ID:tMIN-MAX "
+                    + "or @MODIFIER_ID:weight:tMIN-MAX");
         }
         Modifier referencedModifier = ItemModifiers.referenced(fields[0].trim(), slot, itemType);
-        return new PoolEntry(referencedModifier, parseWeight(fields.length == 2 ? fields[1] : null, entryText));
+        float weight = parseWeight(weightFields == 1 ? fields[1] : null, entryText);
+        TierRange tiers = tierGated ? parseTierRange(fields[fields.length - 1], entryText) : TierRange.ANY;
+        return new PoolEntry(referencedModifier, weight, tiers);
+    }
+
+    static boolean isTierRangeText(String fieldText) {
+        return fieldText != null && fieldText.trim().startsWith(TIER_MARK);
+    }
+
+    static TierRange parseTierRange(String fieldText, String entryText) {
+        Matcher tierMatch = TIER_RANGE.matcher(fieldText.trim());
+        if (!tierMatch.matches()) {
+            throw new IllegalArgumentException("entry \"" + entryText + "\" has the tier range \"" + fieldText.trim()
+                    + "\"; write it as tN, tN-M or tN+");
+        }
+        int minTier = Integer.parseInt(tierMatch.group(1));
+        if (tierMatch.group(2) != null) {
+            return TierRange.atLeast(minTier);
+        }
+        int maxTier = tierMatch.group(3) == null ? minTier : Integer.parseInt(tierMatch.group(3));
+        return TierRange.between(minTier, maxTier);
     }
 
     private static float parseWeight(String weightText, String entryText) {

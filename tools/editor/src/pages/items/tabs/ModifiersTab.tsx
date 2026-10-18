@@ -20,6 +20,7 @@ import {
   newModifier,
   parseModifiersCsv,
   serializeModifiersCsv,
+  shipItemTypes,
   suggestedModifierId,
   uniqueModifierId,
   validateModifiers,
@@ -323,7 +324,7 @@ function ModifierForm({ document, modifier, index, usage, vocabulary, onSelect }
       <MultiSelect
         label="Item types"
         description="Which item types can roll it. Ship modifiers suit subroutines and hull items; other item types get their own modifiers."
-        data={vocabulary.itemTypes.map((itemType) => ({ value: itemType, label: ITEM_TYPE_LABELS[itemType] ?? itemType }))}
+        data={shipItemTypes(vocabulary).map((itemType) => ({ value: itemType, label: ITEM_TYPE_LABELS[itemType] ?? itemType }))}
         value={modifier.itemTypes}
         onChange={(itemTypes) => edit((draft) => void (draft.itemTypes = itemTypes))}
         error={modifier.itemTypes.length === 0 ? 'Pick at least one item type' : undefined}

@@ -93,7 +93,7 @@ class EditorRoundTripTest {
                     List.of(new EditorSource(ITEM_DEFINITIONS_MODEL, "SUBROUTINE_COLUMNS")), true),
             new Pin("hull_items.csv columns", ITEM_DEFINITION, List.of("parse", "parseHullItem"),
                     List.of(new EditorSource(ITEM_DEFINITIONS_MODEL, "HULL_ITEM_COLUMNS")), true),
-            new Pin("item_modifiers.csv columns", ITEM_MODIFIERS, List.of("load", "register", "parse"),
+            new Pin("item_modifiers.csv columns", ITEM_MODIFIERS, List.of("load", "catalogueOf", "parse"),
                     List.of(new EditorSource(ITEM_MODIFIERS_MODEL, "serializeModifiersCsv")), true),
             new Pin("item_names.json word fields", ITEM_NAMES, List.of("registerWords"),
                     List.of(new EditorSource(ITEM_NAMES_MODEL, "serializeRareNames"), new EditorSource(ITEM_NAMES_MODEL, "RARE_NAME_WORD_LISTS"),

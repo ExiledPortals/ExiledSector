@@ -21,7 +21,8 @@ final class AffixLayout {
     static final float THREE_EFFECTS_CHANCE = 0.35f;
     static final Limits DEFAULT_LIMITS = new Limits(COMMON_MAX_EFFECTS, MAX_EFFECTS, MAX_PER_SIDE,
             List.of(ONE_EFFECT_CHANCE, TWO_EFFECTS_CHANCE, THREE_EFFECTS_CHANCE));
-    private static final AtomicReference<Map<ItemType, Limits>> LIMITS_BY_TYPE = new AtomicReference<>(Map.of());
+    static final Limits STAR_CHART_LIMITS = new Limits(2, 6, 3, List.of(0.2f, 0.25f, 0.2f, 0.15f, 0.1f));
+    private static final AtomicReference<Map<ItemType, Limits>> LIMITS_BY_TYPE = new AtomicReference<>(Map.of(ItemType.STAR_CHART, STAR_CHART_LIMITS));
 
     record Limits(int commonMaxEffects, int maxEffects, int maxPerSide, List<Float> effectCountChances) {
 

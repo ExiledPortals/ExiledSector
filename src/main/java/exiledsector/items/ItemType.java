@@ -6,7 +6,8 @@ import java.util.stream.Collectors;
 public enum ItemType {
 
     SUBROUTINE("subroutine"),
-    HULL_ITEM("hull_item");
+    HULL_ITEM("hull_item"),
+    STAR_CHART("star_chart");
 
     private final String id;
 

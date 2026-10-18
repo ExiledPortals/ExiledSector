@@ -7,6 +7,7 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.charts.ChartIds;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemDrops;
 import org.json.JSONArray;
@@ -89,6 +90,21 @@ class ItemSalvageListenerTest {
     void aSalvageSpecOverrideDecidesTheSite() {
         assertEquals("station_research", ItemSalvageListener.siteId(site("custom_station", "station_research")));
         assertEquals("custom_station", ItemSalvageListener.siteId(site("custom_station", null)));
+    }
+
+    @Test
+    void aChartPocketSiteCanRaiseTheHullItemChance() {
+        MemoryAPI plain = mock(MemoryAPI.class);
+        MemoryAPI boosted = mock(MemoryAPI.class);
+        MemoryAPI broken = mock(MemoryAPI.class);
+        when(boosted.contains(ChartIds.ITEM_CHANCE_MEMORY_KEY)).thenReturn(true);
+        when(boosted.getFloat(ChartIds.ITEM_CHANCE_MEMORY_KEY)).thenReturn(1.5f);
+        when(broken.contains(ChartIds.ITEM_CHANCE_MEMORY_KEY)).thenReturn(true);
+        when(broken.getFloat(ChartIds.ITEM_CHANCE_MEMORY_KEY)).thenReturn(-2f);
+
+        assertEquals(1f, ItemSalvageListener.itemChanceMult(plain));
+        assertEquals(1.5f, ItemSalvageListener.itemChanceMult(boosted));
+        assertEquals(1f, ItemSalvageListener.itemChanceMult(broken));
     }
 
     @Test

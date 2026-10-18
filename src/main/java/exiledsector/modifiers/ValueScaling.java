@@ -25,6 +25,18 @@ public sealed interface ValueScaling permits ValueScaling.Unscaled, ValueScaling
         return new PerTierBand(bandStartTiers, bandValues);
     }
 
+    static ValueScaling perTierBand(List<Integer> bandStartTiers, List<Float> bandLowValues, List<Float> bandHighValues) {
+        return new PerTierBand(bandStartTiers, bandLowValues, bandHighValues);
+    }
+
+    default float valueAt(int point, float rollFraction) {
+        return values().get(point);
+    }
+
+    default boolean variesWithinAPoint() {
+        return false;
+    }
+
     record Unscaled() implements ValueScaling {
 
         @Override
@@ -50,14 +62,18 @@ public sealed interface ValueScaling permits ValueScaling.Unscaled, ValueScaling
         }
     }
 
-    record PerTierBand(List<Integer> bandStartTiers, List<Float> values) implements ValueScaling {
+    record PerTierBand(List<Integer> bandStartTiers, List<Float> values, List<Float> highValues) implements ValueScaling {
 
         public PerTierBand {
             bandStartTiers = List.copyOf(bandStartTiers);
             values = List.copyOf(values);
+            highValues = highValues == null ? values : List.copyOf(highValues);
             if (bandStartTiers.isEmpty() || bandStartTiers.size() != values.size()) {
                 throw new IllegalArgumentException("tier bands need one value per band, but there are " + bandStartTiers.size()
                         + " bands and " + values.size() + " values");
+            }
+            if (highValues.size() != values.size()) {
+                throw new IllegalArgumentException("tier bands need a high value for each of their " + values.size() + " low values");
             }
             int previousStart = TierRange.NO_TIER;
             for (int bandStart : bandStartTiers) {
@@ -67,6 +83,35 @@ public sealed interface ValueScaling permits ValueScaling.Unscaled, ValueScaling
                 }
                 previousStart = bandStart;
             }
+        }
+
+        public PerTierBand(List<Integer> bandStartTiers, List<Float> values) {
+            this(bandStartTiers, values, values);
+        }
+
+        @Override
+        public float valueAt(int point, float rollFraction) {
+            float low = values.get(point);
+            float high = highValues.get(point);
+            if (low == high) {
+                return low;
+            }
+            float stepsPerUnit = (float) Math.pow(10, Math.max(ModifierLine.decimalPlaces(low), ModifierLine.decimalPlaces(high)));
+            float fraction = Math.max(0f, Math.min(1f, rollFraction));
+            return Math.round((low + (high - low) * fraction) * stepsPerUnit) / stepsPerUnit + 0f;
+        }
+
+        @Override
+        public boolean variesWithinAPoint() {
+            return !values.equals(highValues);
+        }
+
+        public float lowAt(int point) {
+            return Math.min(values.get(point), highValues.get(point));
+        }
+
+        public float highAt(int point) {
+            return Math.max(values.get(point), highValues.get(point));
         }
 
         @Override

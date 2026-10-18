@@ -66,6 +66,7 @@ import exiledsector.items.SocketLossListener;
 import exiledsector.items.ItemSaveAliases;
 import exiledsector.items.ItemStore;
 import exiledsector.items.SocketTypeMigration;
+import exiledsector.items.StarChartItems;
 import exiledsector.ui.ExiledSectorSettings;
 import exiledsector.ui.HullUpgradesRefitButton;
 import exiledsector.ui.SkillTreeRefitButton;
@@ -109,6 +110,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         ItemModifiers.load();
         ItemDefinitions.load();
         ItemImplicits.load();
+        StarChartItems.load();
         ItemDataIntegrity.logLoaded();
         ItemCraftingCosts.load();
         ItemNames.load();

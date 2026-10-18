@@ -11,12 +11,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public record ItemDefinition(String id, ItemKind kind, String name, String icon, float rarity, boolean unique,
-                                   String description, List<PoolEntry> prefixes, List<PoolEntry> suffixes, String unlock) {
+                                   String description, List<PoolEntry> prefixes, List<PoolEntry> suffixes, String unlock, ItemType type) {
 
     public static final String FALLBACK_ICON = "graphics/icons/cargo/chip1.png";
     private static final Logger LOG = Logger.getLogger(ItemDefinition.class);
     private static final String ENTRY_SEPARATOR = ";";
     static final String SECTION_COLUMN = "section";
+
+    public ItemDefinition {
+        if (kind != null) {
+            type = kind.type();
+        }
+    }
+
+    public ItemDefinition(String id, ItemKind kind, String name, String icon, float rarity, boolean unique, String description,
+                          List<PoolEntry> prefixes, List<PoolEntry> suffixes, String unlock) {
+        this(id, kind, name, icon, rarity, unique, description, prefixes, suffixes, unlock, null);
+    }
 
     static ItemDefinition parseSubroutine(JSONObject row) {
         return parse(row, ItemKind.SUBROUTINE);
@@ -31,7 +42,15 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
         return parse(row, kind);
     }
 
+    static ItemDefinition parseStarChart(JSONObject row) {
+        return parse(row, null, ItemType.STAR_CHART);
+    }
+
     static ItemDefinition parse(JSONObject row, ItemKind kind) {
+        return parse(row, kind, kind.type());
+    }
+
+    static ItemDefinition parse(JSONObject row, ItemKind kind, ItemType itemType) {
         String definitionId = row.optString("id", "").trim();
         if (definitionId.isEmpty()) {
             throw new IllegalArgumentException("a row has no id");
@@ -41,8 +60,8 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
         if (!(rarity >= 0f)) {
             throw new IllegalArgumentException("rarity must be zero or more");
         }
-        List<PoolEntry> prefixes = parsePool(definitionId, row.optString("prefixes", ""), ModifierSlot.PREFIX, kind.type());
-        List<PoolEntry> suffixes = parsePool(definitionId, row.optString("suffixes", ""), ModifierSlot.SUFFIX, kind.type());
+        List<PoolEntry> prefixes = parsePool(definitionId, row.optString("prefixes", ""), ModifierSlot.PREFIX, itemType);
+        List<PoolEntry> suffixes = parsePool(definitionId, row.optString("suffixes", ""), ModifierSlot.SUFFIX, itemType);
         if (prefixes.isEmpty() && suffixes.isEmpty()) {
             throw new IllegalArgumentException("it has no prefixes or suffixes");
         }
@@ -51,7 +70,7 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
         return new ItemDefinition(definitionId, kind,
                 nameOrId(row.optString("name", "").trim(), definitionId), icon.isEmpty() ? FALLBACK_ICON : icon, rarity, unique,
                 row.optString("description", "").trim(), prefixes, suffixes,
-                row.optString("unlock", "").trim());
+                row.optString("unlock", "").trim(), itemType);
     }
 
     private static void rejectRepeats(List<PoolEntry> prefixes, List<PoolEntry> suffixes) {
@@ -71,8 +90,11 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
         }
     }
 
-    public ItemType type() {
-        return kind == null ? null : kind.type();
+    public String noun() {
+        if (kind != null) {
+            return kind.noun();
+        }
+        return type == null ? Translation.text("socketable.unknown") : Translation.text("socketable.noun." + type.id());
     }
 
     public List<PoolEntry> pool() {

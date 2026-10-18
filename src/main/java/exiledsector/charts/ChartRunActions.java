@@ -6,6 +6,10 @@ import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
+import exiledsector.items.Item;
+import exiledsector.items.ItemData;
+import exiledsector.items.ItemStore;
+import exiledsector.items.StarChart;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -22,6 +26,7 @@ public final class ChartRunActions {
         NO_PLAYER_FLEET,
         PLAYER_IN_TRANSITION,
         PLAYER_IN_POCKET,
+        NO_CHART,
         FAILED
     }
 
@@ -33,6 +38,29 @@ public final class ChartRunActions {
     }
 
     public static OpenResult openBesidePlayer(SectorAPI sector, int entriesAllowed, Random random, ChartLayoutRequest layoutRequest) {
+        return openBesidePlayer(sector, entriesAllowed, random, layoutRequest, null);
+    }
+
+    public static OpenResult openWithChart(SectorAPI sector, int entriesAllowed, Random random, StarChart chart) {
+        if (chart == null || chart.definition() == null) {
+            return OpenResult.NO_CHART;
+        }
+        return openBesidePlayer(sector, entriesAllowed, random, ChartLayoutRequest.forChart(chart), ItemData.of(chart).encode());
+    }
+
+    public static OpenResult openFromStore(SectorAPI sector, int entriesAllowed, Random random, ItemStore store, Item storedChart) {
+        if (!(storedChart instanceof StarChart chart) || store == null || !store.holdsStarCharts() || store.find(chart.id()) != chart) {
+            return OpenResult.NO_CHART;
+        }
+        OpenResult result = openWithChart(sector, entriesAllowed, random, chart);
+        if (result == OpenResult.OPENED) {
+            store.remove(chart);
+        }
+        return result;
+    }
+
+    private static OpenResult openBesidePlayer(SectorAPI sector, int entriesAllowed, Random random, ChartLayoutRequest layoutRequest,
+                                               String chartData) {
         if (ChartRuns.hasRun()) {
             return OpenResult.RUN_EXISTS;
         }
@@ -49,6 +77,7 @@ public final class ChartRunActions {
         }
         Vector2f playerLocation = playerFleet.getLocation();
         ChartRun run = new ChartRun(newRunId(random), ChartIds.locationIdOf(origin), playerLocation.x, playerLocation.y, entriesAllowed);
+        run.recordChart(chartData);
         ChartRuns.store(run);
         try {
             ChartPocketFactory.ChartPocket created = ChartPocketFactory.createPocket(sector, run.runId(), layoutRequest);

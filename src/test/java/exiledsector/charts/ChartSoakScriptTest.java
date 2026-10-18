@@ -187,6 +187,34 @@ class ChartSoakScriptTest {
     }
 
     @Test
+    void soaksPocketsOpenedFromRolledChartsAndStillLeavesEveryCountUnchanged() throws Exception {
+        ChartContentDataTest.loadShippedTables();
+        exiledsector.items.StarChartFixtures.registerShipped();
+        FakeChartContentEngine.install(new FakeChartContentEngine().offering(-4000f, 0f, 0f, 5000f));
+        when(sector.getFaction(anyString())).thenReturn(mock(FactionAPI.class));
+        try {
+            ChartCensus before = ChartCensus.take(sector);
+            ChartSoakScript soak = new ChartSoakScript(16, before, reports::add, new Random(13));
+
+            runFrames(soak, new ChartRunScript(), 400);
+
+            assertTrue(reports.get(0).contains("finished, 16 of 16"), reports.get(0));
+            assertTrue(reports.get(0).contains("8 pocket(s) opened from rolled Star Charts"), reports.get(0));
+            assertTrue(reports.get(0).contains("Unchanged before vs after"), reports.get(0));
+            assertTrue(starSystems.isEmpty());
+            assertNull(ChartRuns.currentOrNull());
+            assertTrue(ChartSoakScript.chartForIteration(1, new Random(1)) != null);
+            assertNull(ChartSoakScript.chartForIteration(2, new Random(1)));
+        } finally {
+            exiledsector.items.StarChartFixtures.clear();
+            ChartContentGenerator.resetForTests();
+            ChartTiers.resetForTests();
+            ChartPois.resetForTests();
+            ChartFactions.resetForTests();
+        }
+    }
+
+    @Test
     void tiersCycleThroughOneToFifteen() {
         assertEquals(1, ChartSoakScript.tierForIteration(0));
         assertEquals(15, ChartSoakScript.tierForIteration(14));

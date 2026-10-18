@@ -34,7 +34,21 @@ public final class ChartLoadSweep {
         runSafely("purge orphan pockets", () -> purgeOrphanPockets(sector));
         runSafely("remove leftover chart entities", () -> removeLeftoverEntities(sector));
         runSafely("remove orphan chart intel", () -> removeOrphanIntel(sector));
+        runSafely("lift chart effects outside a live pocket", () -> liftEffectsOutsidePocket(sector));
         runSafely("catch up on the objective", () -> ChartObjectives.reconcile(sector));
+    }
+
+    static void liftEffectsOutsidePocket(SectorAPI sector) {
+        CampaignFleetAPI playerFleet = sector.getPlayerFleet();
+        if (playerFleet == null) {
+            return;
+        }
+        ChartRun run = ChartRuns.currentOrNull();
+        StarSystemAPI pocket = run == null ? null : sector.getStarSystem(run.pocketSystemId());
+        boolean insideLivePocket = pocket != null && run.runState().isLive() && playerFleet.getContainingLocation() == pocket;
+        if (!insideLivePocket) {
+            ChartRunEffects.removeFrom(playerFleet);
+        }
     }
 
     static PocketDecision decide(StarSystemAPI pocket, ChartRun run, boolean playerInside) {

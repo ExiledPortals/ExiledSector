@@ -44,8 +44,9 @@ public final class ChartPocketFactory {
         localiseName(pocket);
         addInnerWormhole(pocket, runId, layout.innerWormholeLocation());
         ChartContent content = ChartContentGenerator.generate(sector, pocket, runId, request.seed(), request.tier(),
-                innerWormholeSpot(layout.innerWormholeLocation()));
+                innerWormholeSpot(layout.innerWormholeLocation()), request.chartContext());
         tagEveryEntity(pocket, runId);
+        request.chartContext().afterGeneration(new ChartGenerated(pocket, runId, content, request.chartContext()));
         return new ChartPocket(pocket, layout, content);
     }
 

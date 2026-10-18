@@ -6,6 +6,8 @@ import exiledsector.skills.ShipHullSizes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public record ModifierLine(String effectName, float min, float max, ValueScaling scaling) {
 
@@ -13,6 +15,11 @@ public record ModifierLine(String effectName, float min, float max, ValueScaling
     private static final float STEP_TOLERANCE = 0.001f;
     private static final String FIELD_SEPARATOR = ":";
     private static final String HULL_VALUE_SEPARATOR = "/";
+    private static final String TIER_BAND_MARK = "t";
+    private static final String TIER_BAND_VALUE_SEPARATOR = "=";
+    private static final String NUMBER = "-?\\d+(?:\\.\\d+)?";
+    private static final Pattern TIER_BAND = Pattern.compile("t(\\d+)=(" + NUMBER + ")(?:-(" + NUMBER + "))?");
+    public static final float TIER_ROLL_POSITIONS = 100f;
 
     public ModifierLine {
         scaling = scaling == null || !scaling.scales() ? ValueScaling.NONE : scaling;
@@ -31,23 +38,73 @@ public record ModifierLine(String effectName, float min, float max, ValueScaling
         return new ModifierLine(effectName, bandValues.get(0), bandValues.get(0), tierBands);
     }
 
+    public static ModifierLine perTierBandRanges(String effectName, List<Integer> bandStartTiers, List<Float> bandLowValues,
+                                                 List<Float> bandHighValues) {
+        ValueScaling tierBands = ValueScaling.perTierBand(bandStartTiers, bandLowValues, bandHighValues);
+        if (!tierBands.variesWithinAPoint()) {
+            return new ModifierLine(effectName, bandLowValues.get(0), bandLowValues.get(0), tierBands);
+        }
+        return new ModifierLine(effectName, 0f, TIER_ROLL_POSITIONS, tierBands);
+    }
+
     public record Parsed(ModifierLine line, String trailingField) {
+    }
+
+    public static boolean isTierBandText(String valuesText) {
+        String trimmed = valuesText == null ? "" : valuesText.trim();
+        return trimmed.startsWith(TIER_BAND_MARK) && trimmed.contains(TIER_BAND_VALUE_SEPARATOR);
     }
 
     public static Parsed parse(String entryText) {
         String[] entryFields = entryText.split(FIELD_SEPARATOR);
-        boolean perHullSize = entryFields.length >= 2 && entryFields[1].contains(HULL_VALUE_SEPARATOR);
-        if (perHullSize ? entryFields.length > 3 : entryFields.length < 3 || entryFields.length > 4) {
+        boolean perTier = entryFields.length >= 2 && isTierBandText(entryFields[1]);
+        boolean perHullSize = !perTier && entryFields.length >= 2 && entryFields[1].contains(HULL_VALUE_SEPARATOR);
+        boolean scaled = perTier || perHullSize;
+        if (scaled ? entryFields.length > 3 : entryFields.length < 3 || entryFields.length > 4) {
             throw new IllegalArgumentException("entry \"" + entryText + "\" is not EFFECT:min:max, EFFECT:min:max:weight, "
-                    + "EFFECT:frigate/destroyer/cruiser/capital or EFFECT:frigate/destroyer/cruiser/capital:weight");
+                    + "EFFECT:frigate/destroyer/cruiser/capital, EFFECT:frigate/destroyer/cruiser/capital:weight "
+                    + "or EFFECT:t1=min-max/t5=min-max with an optional :weight");
         }
         String effectName = entryFields[0].trim();
-        int trailingIndex = perHullSize ? 2 : 3;
+        int trailingIndex = scaled ? 2 : 3;
         String trailingField = entryFields.length > trailingIndex ? entryFields[trailingIndex] : null;
+        if (perTier) {
+            return new Parsed(parseTierBands(effectName, entryFields[1], entryText), trailingField);
+        }
         if (perHullSize) {
             return new Parsed(perHullSize(effectName, parseHullValues(entryFields[1], entryText)), trailingField);
         }
         return new Parsed(range(effectName, parseNumber(entryFields[1], entryText), parseNumber(entryFields[2], entryText)), trailingField);
+    }
+
+    private static ModifierLine parseTierBands(String effectName, String bandsText, String entryText) {
+        List<Integer> bandStarts = new ArrayList<>();
+        List<Float> lowValues = new ArrayList<>();
+        List<Float> highValues = new ArrayList<>();
+        for (String bandText : bandsText.trim().split(HULL_VALUE_SEPARATOR, -1)) {
+            Matcher band = TIER_BAND.matcher(bandText.trim());
+            if (!band.matches()) {
+                throw new IllegalArgumentException("entry \"" + entryText + "\" has the tier band \"" + bandText.trim()
+                        + "\"; write each band as tN=value or tN=min-max");
+            }
+            float firstValue = parseNumber(band.group(2), entryText);
+            float secondValue = band.group(3) == null ? firstValue : parseNumber(band.group(3), entryText);
+            bandStarts.add(Integer.parseInt(band.group(1)));
+            lowValues.add(Math.min(firstValue, secondValue));
+            highValues.add(Math.max(firstValue, secondValue));
+        }
+        if (bandStarts.get(0) != TierRange.LOWEST_TIER) {
+            throw new IllegalArgumentException("entry \"" + entryText + "\" must start its first tier band at t" + TierRange.LOWEST_TIER);
+        }
+        return perTierBandRanges(effectName, bandStarts, lowValues, highValues);
+    }
+
+    public ModifierLine rangeFor(ScaleContext context) {
+        if (!(scaling instanceof ValueScaling.PerTierBand tierBands)) {
+            return this;
+        }
+        int point = tierBands.pointFor(context);
+        return point == ValueScaling.NO_POINT ? this : range(effectName, tierBands.lowAt(point), tierBands.highAt(point));
     }
 
     public ModifierLine named(String currentEffectName) {
@@ -136,7 +193,11 @@ public record ModifierLine(String effectName, float min, float max, ValueScaling
 
     public float valueFor(float rolledMagnitude, ScaleContext context) {
         int point = scaling.pointFor(context);
-        return point == ValueScaling.NO_POINT ? rolledMagnitude : scaling.values().get(point);
+        return point == ValueScaling.NO_POINT ? rolledMagnitude : scaling.valueAt(point, rollFraction(rolledMagnitude));
+    }
+
+    private float rollFraction(float rolledMagnitude) {
+        return max > min ? (rolledMagnitude - min) / (max - min) : 0f;
     }
 
     public float boundNearestZero() {

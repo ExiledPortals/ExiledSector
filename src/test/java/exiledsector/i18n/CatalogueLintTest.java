@@ -29,8 +29,10 @@ class CatalogueLintTest {
     private static final Path REPORT_DIRECTORY = Path.of("target/i18n");
     private static final Set<String> REPORTED_LOCALES = Set.of(LocaleChain.SIMPLIFIED_CHINESE);
     private static final String HULL_MODS_FILE = "data/hullmods/hull_mods.csv";
-    private static final List<String> ITEM_DEFINITION_FILES = List.of("data/config/exiledSector/subroutines.csv", "data/config/exiledSector/hull_items.csv");
-    private static final String ITEM_MODIFIERS_FILE = "data/config/exiledSector/item_modifiers.csv";
+    private static final List<String> ITEM_DEFINITION_FILES = List.of("data/config/exiledSector/subroutines.csv", "data/config/exiledSector/hull_items.csv",
+            "data/config/exiledSector/star_charts.csv");
+    private static final List<String> ITEM_MODIFIERS_FILES = List.of("data/config/exiledSector/item_modifiers.csv",
+            "data/config/exiledSector/star_chart_modifiers.csv");
     private static final String ITEM_NAMES_FILE = "data/config/exiledSector/item_names.json";
 
     static Map<String, String> dataSources() throws IOException, JSONException {
@@ -62,13 +64,15 @@ class CatalogueLintTest {
                 }
             }
         }
-        String modifierRows = Files.readString(root.resolve(ITEM_MODIFIERS_FILE), StandardCharsets.UTF_8).replace("\r\n", "\n");
-        JSONArray modifiers = CDL.toJSONArray(modifierRows);
-        for (int i = 0; i < modifiers.length(); i++) {
-            JSONObject modifier = modifiers.getJSONObject(i);
-            String name = modifier.optString("name", "");
-            if (!name.isEmpty()) {
-                sources.put("socketable.modifier." + modifier.getString("id"), name);
+        for (String modifiersFile : ITEM_MODIFIERS_FILES) {
+            String modifierRows = Files.readString(root.resolve(modifiersFile), StandardCharsets.UTF_8).replace("\r\n", "\n");
+            JSONArray modifiers = CDL.toJSONArray(modifierRows);
+            for (int i = 0; i < modifiers.length(); i++) {
+                JSONObject modifier = modifiers.getJSONObject(i);
+                String name = modifier.optString("name", "");
+                if (!name.isEmpty()) {
+                    sources.put("socketable.modifier." + modifier.getString("id"), name);
+                }
             }
         }
         JSONObject nameWords = RealSkillData.readJson(root.resolve(ITEM_NAMES_FILE));

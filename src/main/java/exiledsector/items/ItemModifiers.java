@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 public final class ItemModifiers {
@@ -30,9 +31,31 @@ public final class ItemModifiers {
     private static final String LINE_SEPARATOR = ";";
     private static final Logger LOG = Logger.getLogger(ItemModifiers.class);
     private static final AtomicReference<Catalogue> LOADED = new AtomicReference<>(Catalogue.EMPTY);
+    private static final AtomicReference<Catalogue> SHIP_ITEM_PART = new AtomicReference<>(Catalogue.EMPTY);
+    private static final AtomicReference<Catalogue> STAR_CHART_PART = new AtomicReference<>(Catalogue.EMPTY);
 
     private record Catalogue(Map<String, Modifier> modifiersById, Map<String, String> namesById, Map<String, Set<ItemType>> itemTypesById) {
         static final Catalogue EMPTY = new Catalogue(Map.of(), Map.of(), Map.of());
+
+        static Catalogue merged(Catalogue first, Catalogue second) {
+            if (second.modifiersById().isEmpty()) {
+                return first;
+            }
+            Map<String, Modifier> modifiersById = new LinkedHashMap<>(first.modifiersById());
+            Map<String, String> namesById = new LinkedHashMap<>(first.namesById());
+            Map<String, Set<ItemType>> itemTypesById = new LinkedHashMap<>(first.itemTypesById());
+            second.modifiersById().forEach((modifierId, modifier) -> {
+                if (modifiersById.putIfAbsent(modifierId, modifier) == null) {
+                    itemTypesById.put(modifierId, second.itemTypesById().get(modifierId));
+                    String englishName = second.namesById().get(modifierId);
+                    if (englishName != null) {
+                        namesById.put(modifierId, englishName);
+                    }
+                }
+            });
+            return new Catalogue(Collections.unmodifiableMap(modifiersById), Collections.unmodifiableMap(namesById),
+                    Collections.unmodifiableMap(itemTypesById));
+        }
     }
 
     private ItemModifiers() {
@@ -43,6 +66,23 @@ public final class ItemModifiers {
     }
 
     public static void register(JSONArray rows) throws JSONException {
+        SHIP_ITEM_PART.set(catalogueOf(rows, DATA_PATH, itemTypes -> true));
+        LOADED.set(Catalogue.merged(SHIP_ITEM_PART.get(), STAR_CHART_PART.get()));
+    }
+
+    static void registerStarCharts(JSONArray rows, String sourcePath) throws JSONException {
+        Catalogue shipItemModifiers = SHIP_ITEM_PART.get();
+        STAR_CHART_PART.set(catalogueOf(rows == null ? new JSONArray() : rows, sourcePath, itemTypes -> itemTypes.equals(Set.of(ItemType.STAR_CHART)),
+                shipItemModifiers.modifiersById().keySet()));
+        LOADED.set(Catalogue.merged(shipItemModifiers, STAR_CHART_PART.get()));
+    }
+
+    private static Catalogue catalogueOf(JSONArray rows, String sourcePath, Predicate<Set<ItemType>> allowedTypes) throws JSONException {
+        return catalogueOf(rows, sourcePath, allowedTypes, Set.of());
+    }
+
+    private static Catalogue catalogueOf(JSONArray rows, String sourcePath, Predicate<Set<ItemType>> allowedTypes, Set<String> takenIds)
+            throws JSONException {
         Map<String, Modifier> modifiersById = new LinkedHashMap<>();
         Map<String, String> namesById = new LinkedHashMap<>();
         Map<String, Set<ItemType>> itemTypesById = new LinkedHashMap<>();
@@ -50,7 +90,11 @@ public final class ItemModifiers {
             try {
                 Modifier modifier = parse(row);
                 Set<ItemType> itemTypes = parseItemTypes(modifier.id(), ModCsv.text(row, "item_types"));
-                if (modifiersById.putIfAbsent(modifier.id(), modifier) != null) {
+                if (!allowedTypes.test(itemTypes)) {
+                    throw new IllegalArgumentException(modifier.id() + " lists item types " + itemTypes.stream().map(ItemType::id).toList()
+                            + ", which do not belong in this file");
+                }
+                if (takenIds.contains(modifier.id()) || modifiersById.putIfAbsent(modifier.id(), modifier) != null) {
                     throw new IllegalArgumentException(modifier.id() + " is listed more than once");
                 }
                 itemTypesById.put(modifier.id(), itemTypes);
@@ -59,11 +103,11 @@ public final class ItemModifiers {
                     namesById.put(modifier.id(), englishName);
                 }
             } catch (IllegalArgumentException e) {
-                LOG.error("Skipping row " + (index + 1) + " of " + DATA_PATH + ": " + e.getMessage());
+                LOG.error("Skipping row " + (index + 1) + " of " + sourcePath + ": " + e.getMessage());
             }
         });
-        LOADED.set(new Catalogue(Collections.unmodifiableMap(modifiersById), Collections.unmodifiableMap(namesById),
-                Collections.unmodifiableMap(itemTypesById)));
+        return new Catalogue(Collections.unmodifiableMap(modifiersById), Collections.unmodifiableMap(namesById),
+                Collections.unmodifiableMap(itemTypesById));
     }
 
     static Modifier parse(JSONObject row) {
@@ -189,7 +233,14 @@ public final class ItemModifiers {
         return null;
     }
 
+    static void clearStarCharts() {
+        STAR_CHART_PART.set(Catalogue.EMPTY);
+        LOADED.set(SHIP_ITEM_PART.get());
+    }
+
     public static void clear() {
         LOADED.set(Catalogue.EMPTY);
+        SHIP_ITEM_PART.set(Catalogue.EMPTY);
+        STAR_CHART_PART.set(Catalogue.EMPTY);
     }
 }

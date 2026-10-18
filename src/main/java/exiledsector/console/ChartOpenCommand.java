@@ -2,14 +2,17 @@ package exiledsector.console;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
+import exiledsector.charts.ChartGenContext;
 import exiledsector.charts.ChartLayoutGenerator;
 import exiledsector.charts.ChartLayoutRequest;
 import exiledsector.charts.ChartRun;
 import exiledsector.charts.ChartRunActions;
 import exiledsector.charts.ChartRunActions.OpenResult;
+import exiledsector.charts.ChartRunEffects;
 import exiledsector.charts.ChartRuns;
 import exiledsector.charts.ChartTiers;
 import exiledsector.charts.StarChartSettings;
+import exiledsector.items.StarChart;
 import org.lazywizard.console.BaseCommand;
 import org.lazywizard.console.CommonStrings;
 import org.lazywizard.console.Console;
@@ -77,7 +80,19 @@ public class ChartOpenCommand implements BaseCommand {
         }
         return "Layout seed " + run.layoutSeed() + ", type " + run.layoutType()
                 + (run.isLayoutGenerated() ? "" : " (generation failed, so the pocket has a single star; see starsector.log)")
-                + ". Reopen the same pocket with: ExiledSectorChartOpen " + run.layoutSeed() + " " + run.layoutType() + " tier=" + run.tier();
+                + ". Reopen the same pocket with: ExiledSectorChartOpen " + run.layoutSeed() + " " + run.layoutType() + " tier=" + run.tier()
+                + (run.hasChart() ? " (that leaves out the chart's modifiers)" : "");
+    }
+
+    static String describeChart(ChartRun run) {
+        if (run == null || !run.hasChart()) {
+            return "Chart: none (opened by ExiledSectorChartOpen, so no modifiers apply).";
+        }
+        StarChart chart = ChartRunEffects.chartOf(run);
+        if (chart == null) {
+            return "Chart: its data could not be read (" + run.chartData() + ").";
+        }
+        return "Chart: " + ChartListCommand.describe(chart) + "\nChart effects: " + ChartGenContext.from(chart).describe() + ".";
     }
 
     static String describeContent(ChartRun run) {

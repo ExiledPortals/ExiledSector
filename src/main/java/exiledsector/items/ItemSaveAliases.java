@@ -16,6 +16,7 @@ public final class ItemSaveAliases {
             "exiledSector.FrozenName", FrozenName.class,
             "exiledSector.Subroutine", Subroutine.class,
             "exiledSector.HullItem", HullItem.class,
+            "exiledSector.StarChart", StarChart.class,
             "exiledSector.RolledModifier", RolledModifier.class,
             "exiledSector.ModifierSlot", ModifierSlot.class);
 

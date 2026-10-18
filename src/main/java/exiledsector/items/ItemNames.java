@@ -109,7 +109,7 @@ public final class ItemNames {
         }
         String affixForm = prefix == null ? "suffix" : suffix == null ? "prefix" : "both";
         Message nameMessage = Translation.msg("socketable.commonName." + affixForm)
-                .arg("noun", kind.noun());
+                .arg("noun", kind != null ? kind.noun() : definition.noun());
         if (prefix != null) {
             nameMessage.arg("prefix", prefix);
         }

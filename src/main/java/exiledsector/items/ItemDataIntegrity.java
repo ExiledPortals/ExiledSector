@@ -4,6 +4,8 @@ import exiledsector.ModCsv;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
+import exiledsector.modifiers.TierRange;
+import exiledsector.modifiers.ValueScaling;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,7 +39,8 @@ public final class ItemDataIntegrity {
     private static final String WEIGHT_SEPARATOR = ":";
     private static final int FIRST_DATA_LINE = 2;
 
-    private record ModifierRow(String id, ModifierSlot slot, Set<ItemType> itemTypes, List<String> effectNames, boolean named, int line) {
+    private record ModifierRow(String id, ModifierSlot slot, Set<ItemType> itemTypes, List<String> effectNames, boolean named, int line,
+                               String file) {
     }
 
     private final List<Violation> violations = new ArrayList<>();
@@ -51,11 +54,20 @@ public final class ItemDataIntegrity {
 
     public static List<Violation> check(JSONArray modifierRows, JSONArray subroutineRows, JSONArray hullItemRows, JSONArray implicitRows)
             throws JSONException {
+        return checkWithStarCharts(modifierRows, subroutineRows, hullItemRows, implicitRows, new JSONArray(), new JSONArray(), new JSONArray());
+    }
+
+    public static List<Violation> checkWithStarCharts(JSONArray modifierRows, JSONArray subroutineRows, JSONArray hullItemRows,
+                                                      JSONArray implicitRows, JSONArray chartModifierRows, JSONArray chartRows,
+                                                      JSONArray chartImplicitRows) throws JSONException {
         ItemDataIntegrity integrity = new ItemDataIntegrity();
-        integrity.checkModifiers(modifierRows);
+        integrity.checkModifiers(modifierRows, ItemModifiers.DATA_PATH, false);
+        integrity.checkModifiers(chartModifierRows, StarChartItems.MODIFIERS_PATH, true);
         integrity.checkDefinitions(subroutineRows, ItemDefinitions.SUBROUTINES_PATH, ItemType.SUBROUTINE);
         integrity.checkDefinitions(hullItemRows, ItemDefinitions.HULL_ITEMS_PATH, ItemType.HULL_ITEM);
+        integrity.checkDefinitions(chartRows, StarChartDefinitions.DATA_PATH, ItemType.STAR_CHART);
         integrity.checkImplicits(implicitRows);
+        integrity.checkStarChartImplicits(chartImplicitRows);
         integrity.checkNames();
         integrity.checkReferences();
         return List.copyOf(integrity.violations);
@@ -70,7 +82,11 @@ public final class ItemDataIntegrity {
             if (modifierRows == null || subroutineRows == null || hullItemRows == null || implicitRows == null) {
                 return;
             }
-            for (Violation violation : check(modifierRows, subroutineRows, hullItemRows, implicitRows)) {
+            JSONArray chartModifierRows = orEmpty(ModCsv.rows("id", StarChartItems.MODIFIERS_PATH));
+            JSONArray chartRows = orEmpty(ModCsv.rows("id", StarChartDefinitions.DATA_PATH));
+            JSONArray chartImplicitRows = orEmpty(ModCsv.rows(StarChartImplicits.SYSTEM_TYPE_COLUMN, StarChartImplicits.DATA_PATH));
+            for (Violation violation : checkWithStarCharts(modifierRows, subroutineRows, hullItemRows, implicitRows, chartModifierRows, chartRows,
+                    chartImplicitRows)) {
                 if (violation.severity() == Severity.ERROR) {
                     LOG.error(violation);
                 }
@@ -78,6 +94,10 @@ public final class ItemDataIntegrity {
         } catch (IOException | JSONException e) {
             LOG.error("Could not check the item data", e);
         }
+    }
+
+    private static JSONArray orEmpty(JSONArray rows) {
+        return rows == null ? new JSONArray() : rows;
     }
 
     private void error(String file, int line, String message) {
@@ -88,8 +108,7 @@ public final class ItemDataIntegrity {
         violations.add(new Violation(Severity.WARNING, file, line, message));
     }
 
-    private void checkModifiers(JSONArray rows) throws JSONException {
-        String file = ItemModifiers.DATA_PATH;
+    private void checkModifiers(JSONArray rows, String file, boolean starChartFile) throws JSONException {
         ModCsv.forEach(rows, (index, row) -> {
             int line = index + FIRST_DATA_LINE;
             String modifierId = ModCsv.text(row, "id");
@@ -102,7 +121,8 @@ public final class ItemDataIntegrity {
             }
             ModifierRow earlier = modifiersById.get(modifierId);
             if (earlier != null) {
-                error(file, line, "id " + modifierId + " is already used on line " + earlier.line());
+                error(file, line, "id " + modifierId + " is already used on line " + earlier.line()
+                        + (earlier.file().equals(file) ? "" : " of " + earlier.file()));
                 return;
             }
             String slotText = ModCsv.text(row, "slot");
@@ -111,11 +131,24 @@ public final class ItemDataIntegrity {
                 error(file, line, modifierId + " has slot \"" + slotText + "\"; expected implicit, prefix or suffix");
             }
             Set<ItemType> itemTypes = checkItemTypes(file, line, modifierId, ModCsv.text(row, "item_types"));
-            List<String> effectNames = checkLines(file, line, modifierId, slot, effectsFor(file, line, itemTypes), ModCsv.text(row, "lines"));
+            checkItemTypesBelongInFile(file, line, modifierId, itemTypes, starChartFile);
+            List<String> effectNames = checkLines(file, line, modifierId, slot, effectsFor(file, line, itemTypes), ModCsv.text(row, "lines"),
+                    starChartFile);
             checkIdConvention(file, line, modifierId, effectNames);
             modifiersById.put(modifierId, new ModifierRow(modifierId, slot, itemTypes, effectNames,
-                    !ModCsv.text(row, "name").isEmpty(), line));
+                    !ModCsv.text(row, "name").isEmpty(), line, file));
         });
+    }
+
+    private void checkItemTypesBelongInFile(String file, int line, String modifierId, Set<ItemType> itemTypes, boolean starChartFile) {
+        if (itemTypes.isEmpty()) {
+            return;
+        }
+        if (starChartFile && !itemTypes.equals(Set.of(ItemType.STAR_CHART))) {
+            error(file, line, modifierId + " is in " + file + ", so its item_types must be " + ItemType.STAR_CHART.id() + " only");
+        } else if (!starChartFile && itemTypes.contains(ItemType.STAR_CHART)) {
+            error(file, line, modifierId + " rolls on " + ItemType.STAR_CHART.id() + "; star chart modifiers belong in " + StarChartItems.MODIFIERS_PATH);
+        }
     }
 
     private Set<ItemType> checkItemTypes(String file, int line, String modifierId, String itemTypesText) {
@@ -136,7 +169,8 @@ public final class ItemDataIntegrity {
         }
     }
 
-    private List<String> checkLines(String file, int line, String modifierId, ModifierSlot slot, ModifierEffects effects, String linesText) {
+    private List<String> checkLines(String file, int line, String modifierId, ModifierSlot slot, ModifierEffects effects, String linesText,
+                                    boolean starChartFile) {
         List<String> effectNames = new ArrayList<>();
         for (String lineText : linesText.split(ENTRY_SEPARATOR)) {
             String trimmed = lineText.trim();
@@ -157,6 +191,7 @@ public final class ItemDataIntegrity {
             if (slot == ModifierSlot.IMPLICIT && parsed.line().scalesWithHullSize()) {
                 error(file, line, modifierId + " is an implicit, so " + effectName + " must roll a min:max range");
             }
+            checkTierBands(file, line, modifierId, parsed.line(), starChartFile);
             checkEffectName(file, line, modifierId, effects, effectName);
             if (effectNames.contains(effectName)) {
                 error(file, line, modifierId + " lists " + effectName + " more than once");
@@ -167,6 +202,21 @@ public final class ItemDataIntegrity {
             error(file, line, modifierId + " has no lines");
         }
         return effectNames;
+    }
+
+    private void checkTierBands(String file, int line, String modifierId, ModifierLine modifierLine, boolean starChartFile) {
+        if (!modifierLine.scalesWithTier()) {
+            return;
+        }
+        if (!starChartFile) {
+            error(file, line, modifierId + " gives " + modifierLine.effectName() + " tier bands, but only star chart modifiers in "
+                    + StarChartItems.MODIFIERS_PATH + " have tiers");
+            return;
+        }
+        if (modifierLine.scaling() instanceof ValueScaling.PerTierBand tierBands
+                && tierBands.bandStartTiers().get(tierBands.bandStartTiers().size() - 1) > StarChart.HIGHEST_TIER) {
+            error(file, line, modifierId + " starts a tier band above tier " + StarChart.HIGHEST_TIER);
+        }
     }
 
     private void checkEffectName(String file, int line, String modifierId, ModifierEffects effects, String effectName) {
@@ -208,6 +258,9 @@ public final class ItemDataIntegrity {
             if (itemType == ItemType.HULL_ITEM) {
                 checkSection(file, line, definitionId, ModCsv.text(row, "section"));
             }
+            if (itemType == ItemType.STAR_CHART) {
+                checkSystemType(file, line, definitionId, ModCsv.text(row, StarChartDefinitions.SYSTEM_TYPE_COLUMN));
+            }
             boolean unique = "true".equalsIgnoreCase(ModCsv.text(row, "unique"));
             List<ModifierRow> pool = new ArrayList<>();
             checkPool(file, line, definitionId, ModCsv.text(row, "prefixes"), ModifierSlot.PREFIX, itemType, unique, pool);
@@ -225,6 +278,13 @@ public final class ItemDataIntegrity {
         }
     }
 
+    private void checkSystemType(String file, int line, String ownerId, String systemTypeText) {
+        if (StarChartDefinitions.normalisedSystemType(systemTypeText) == null) {
+            error(file, line, ownerId + " has system type \"" + systemTypeText + "\"; expected one of " + StarChartDefinitions.SYSTEM_TYPES
+                    + " or " + StarChartDefinitions.ANY_SYSTEM_TYPE);
+        }
+    }
+
     private void checkPool(String file, int line, String definitionId, String poolText, ModifierSlot slot, ItemType itemType, boolean unique,
                            List<ModifierRow> pool) {
         for (String entryText : poolText.split(ENTRY_SEPARATOR)) {
@@ -237,12 +297,17 @@ public final class ItemDataIntegrity {
                 continue;
             }
             String[] fields = trimmed.substring(ItemModifiers.REFERENCE_MARK.length()).split(WEIGHT_SEPARATOR, -1);
-            if (fields.length > 2) {
-                error(file, line, definitionId + " entry \"" + trimmed + "\" is not @ID or @ID:weight");
+            boolean tierGated = fields.length >= 2 && PoolEntry.isTierRangeText(fields[fields.length - 1]);
+            int weightFields = fields.length - 1 - (tierGated ? 1 : 0);
+            if (weightFields > 1 || fields.length > 3) {
+                error(file, line, definitionId + " entry \"" + trimmed + "\" is not @ID, @ID:weight, @ID:tMIN-MAX or @ID:weight:tMIN-MAX");
                 continue;
             }
-            if (fields.length == 2) {
+            if (weightFields == 1) {
                 checkWeight(file, line, definitionId, trimmed, fields[1]);
+            }
+            if (tierGated) {
+                checkTierGate(file, line, definitionId, trimmed, fields[fields.length - 1], itemType);
             }
             ModifierRow modifier = referencedModifier(file, line, definitionId, fields[0].trim(), slot, itemType);
             if (modifier == null) {
@@ -253,6 +318,21 @@ public final class ItemDataIntegrity {
             if (!unique) {
                 idsNeedingNames.putIfAbsent(modifier.id(), modifier.line());
             }
+        }
+    }
+
+    private void checkTierGate(String file, int line, String definitionId, String entryText, String tierText, ItemType itemType) {
+        if (itemType != ItemType.STAR_CHART) {
+            error(file, line, definitionId + " entry \"" + entryText + "\" has a tier range, but only star charts have tiers");
+            return;
+        }
+        try {
+            TierRange tiers = PoolEntry.parseTierRange(tierText, entryText);
+            if (tiers.minTier() > StarChart.HIGHEST_TIER || tiers.maxTier() != Integer.MAX_VALUE && tiers.maxTier() > StarChart.HIGHEST_TIER) {
+                error(file, line, definitionId + " entry \"" + entryText + "\" reaches past tier " + StarChart.HIGHEST_TIER);
+            }
+        } catch (IllegalArgumentException e) {
+            error(file, line, definitionId + ": " + e.getMessage());
         }
     }
 
@@ -269,7 +349,8 @@ public final class ItemDataIntegrity {
     private ModifierRow referencedModifier(String file, int line, String ownerId, String referenceId, ModifierSlot slot, ItemType itemType) {
         ModifierRow modifier = modifiersById.get(referenceId);
         if (modifier == null) {
-            error(file, line, ownerId + " references " + referenceId + ", which is not in " + ItemModifiers.DATA_PATH);
+            String modifierFile = itemType == ItemType.STAR_CHART ? StarChartItems.MODIFIERS_PATH : ItemModifiers.DATA_PATH;
+            error(file, line, ownerId + " references " + referenceId + ", which is not in " + modifierFile);
             return null;
         }
         referencedIds.add(referenceId);
@@ -310,12 +391,31 @@ public final class ItemDataIntegrity {
             }
             List<ModifierRow> implicits = new ArrayList<>();
             for (String entryText : ModCsv.text(row, "implicits").split(ENTRY_SEPARATOR)) {
-                checkImplicitEntry(file, line, typeId, entryText.trim(), implicits);
+                checkImplicitEntry(file, line, typeId, entryText.trim(), implicits, ItemType.HULL_ITEM);
             }
         });
     }
 
-    private void checkImplicitEntry(String file, int line, String typeId, String entryText, List<ModifierRow> implicits) {
+    private void checkStarChartImplicits(JSONArray rows) throws JSONException {
+        String file = StarChartImplicits.DATA_PATH;
+        Map<String, Integer> linesByType = new HashMap<>();
+        ModCsv.forEach(rows, (index, row) -> {
+            int line = index + FIRST_DATA_LINE;
+            String systemTypeText = ModCsv.text(row, StarChartImplicits.SYSTEM_TYPE_COLUMN);
+            checkSystemType(file, line, "the row", systemTypeText);
+            String systemType = StarChartDefinitions.normalisedSystemType(systemTypeText);
+            Integer earlierLine = systemType == null ? null : linesByType.putIfAbsent(systemType, line);
+            if (earlierLine != null) {
+                error(file, line, systemType + " is already listed on line " + earlierLine);
+            }
+            List<ModifierRow> implicits = new ArrayList<>();
+            for (String entryText : ModCsv.text(row, "implicits").split(ENTRY_SEPARATOR)) {
+                checkImplicitEntry(file, line, systemTypeText, entryText.trim(), implicits, ItemType.STAR_CHART);
+            }
+        });
+    }
+
+    private void checkImplicitEntry(String file, int line, String typeId, String entryText, List<ModifierRow> implicits, ItemType itemType) {
         if (entryText.isEmpty()) {
             return;
         }
@@ -328,7 +428,7 @@ public final class ItemDataIntegrity {
             error(file, line, typeId + " entry \"" + entryText + "\" has a weight, but implicits always roll");
             return;
         }
-        ModifierRow implicit = referencedModifier(file, line, typeId, referenceId, ModifierSlot.IMPLICIT, ItemType.HULL_ITEM);
+        ModifierRow implicit = referencedModifier(file, line, typeId, referenceId, ModifierSlot.IMPLICIT, itemType);
         if (implicit == null) {
             return;
         }
@@ -343,15 +443,15 @@ public final class ItemDataIntegrity {
     }
 
     private void checkNames() {
-        String file = ItemModifiers.DATA_PATH;
         idsNeedingNames.forEach((modifierId, line) -> {
-            if (!modifiersById.get(modifierId).named()) {
-                error(file, line, modifierId + " rolls on items that are not unique, so it needs a name for their common names");
+            ModifierRow modifier = modifiersById.get(modifierId);
+            if (!modifier.named()) {
+                error(modifier.file(), line, modifierId + " rolls on items that are not unique, so it needs a name for their common names");
             }
         });
         for (ModifierRow modifier : modifiersById.values()) {
             if (modifier.slot() == ModifierSlot.IMPLICIT && modifier.named()) {
-                warning(file, modifier.line(), modifier.id() + " is an implicit, and implicits never show a name");
+                warning(modifier.file(), modifier.line(), modifier.id() + " is an implicit, and implicits never show a name");
             }
         }
     }
@@ -359,7 +459,7 @@ public final class ItemDataIntegrity {
     private void checkReferences() {
         for (ModifierRow modifier : modifiersById.values()) {
             if (!referencedIds.contains(modifier.id())) {
-                warning(ItemModifiers.DATA_PATH, modifier.line(), modifier.id() + " is not used by any item or implicit");
+                warning(modifier.file(), modifier.line(), modifier.id() + " is not used by any item or implicit");
             }
         }
     }
