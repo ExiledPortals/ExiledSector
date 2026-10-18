@@ -211,19 +211,19 @@ class ItemDropsTest {
     }
 
     private static boolean hasKernel(Map<String, Integer> roll) {
-        return java.util.Arrays.stream(CraftingCurrency.values()).anyMatch(currency -> roll.containsKey(currency.commodityId()));
+        return java.util.Arrays.stream(CraftingCurrency.values()).anyMatch(currency -> roll.containsKey(currency.itemId()));
     }
 
     @Test
     void partsDropAlongsideHullItemsWithEachSlotAddingOneToThree() {
         List<Map<String, Integer>> station = materials("station", 1f);
-        double average = station.stream().mapToInt(roll -> roll.getOrDefault(ItemDisassembly.PARTS_COMMODITY_ID, 0)).average().orElse(0);
+        double average = station.stream().mapToInt(roll -> roll.getOrDefault(ItemDisassembly.PARTS_ITEM_ID, 0)).average().orElse(0);
 
-        assertEquals(1.0, materialShare(station, roll -> roll.containsKey(ItemDisassembly.PARTS_COMMODITY_ID)), 0.0);
+        assertEquals(1.0, materialShare(station, roll -> roll.containsKey(ItemDisassembly.PARTS_ITEM_ID)), 0.0);
         assertEquals((1 + 0.6 + 0.3) * 2, average, 0.1);
-        assertTrue(station.stream().allMatch(roll -> roll.getOrDefault(ItemDisassembly.PARTS_COMMODITY_ID, 0) <= 9));
-        assertEquals(0.5, materialShare(materials("probe", 1f), roll -> roll.containsKey(ItemDisassembly.PARTS_COMMODITY_ID)), 0.02);
-        assertEquals(0.25, materialShare(materials("probe", 0.5f), roll -> roll.containsKey(ItemDisassembly.PARTS_COMMODITY_ID)), 0.02);
+        assertTrue(station.stream().allMatch(roll -> roll.getOrDefault(ItemDisassembly.PARTS_ITEM_ID, 0) <= 9));
+        assertEquals(0.5, materialShare(materials("probe", 1f), roll -> roll.containsKey(ItemDisassembly.PARTS_ITEM_ID)), 0.02);
+        assertEquals(0.25, materialShare(materials("probe", 0.5f), roll -> roll.containsKey(ItemDisassembly.PARTS_ITEM_ID)), 0.02);
     }
 
     @Test
@@ -233,8 +233,14 @@ class ItemDropsTest {
 
         assertEquals(ItemDrops.KERNEL_CHANCE_SHARE, kernels.size() / (double) TRIALS, 0.02);
         assertEquals(0.5 * ItemDrops.KERNEL_CHANCE_SHARE, materialShare(materials("probe", 1f), ItemDropsTest::hasKernel), 0.02);
-        assertEquals(0.6, materialShare(kernels, roll -> roll.containsKey(CraftingCurrency.AUGMENTATION.commodityId())), 0.03);
-        assertEquals(0.1, materialShare(kernels, roll -> roll.containsKey(CraftingCurrency.TRANSPOSITION.commodityId())), 0.02);
+        assertEquals(dropShare(CraftingCurrency.AUGMENTATION), materialShare(kernels, roll -> roll.containsKey(CraftingCurrency.AUGMENTATION.itemId())), 0.03);
+        assertEquals(dropShare(CraftingCurrency.TRANSPOSITION), materialShare(kernels, roll -> roll.containsKey(CraftingCurrency.TRANSPOSITION.itemId())), 0.02);
+        assertTrue(dropShare(CraftingCurrency.REPLICATION) < 0.005);
+    }
+
+    private static double dropShare(CraftingCurrency currency) {
+        double totalWeight = java.util.Arrays.stream(CraftingCurrency.values()).mapToDouble(CraftingCurrency::dropWeight).sum();
+        return currency.dropWeight() / totalWeight;
     }
 
     @Test

@@ -6,6 +6,7 @@ import exiledsector.compat.CombatGlow;
 import exiledsector.compat.SalvageSiteCompat;
 import exiledsector.effects.NpcBonusScale;
 import exiledsector.items.HullUpgradesSetting;
+import exiledsector.ui.cargo.ItemAnimationSetting;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemRoller;
@@ -57,6 +58,8 @@ public final class ExiledSectorSettings {
         ItemRoller.reloadSettings();
         ModSettingsListener.ensureRegistered(HullUpgradesSetting.SettingsListener.class, HullUpgradesSetting.SettingsListener::new);
         HullUpgradesSetting.reloadSettings();
+        ModSettingsListener.ensureRegistered(ItemAnimationSetting.SettingsListener.class, ItemAnimationSetting.SettingsListener::new);
+        ItemAnimationSetting.reloadSettings();
     }
 
     private static void registerGeneral() {
@@ -80,6 +83,9 @@ public final class ExiledSectorSettings {
         SettingsCreator.addBoolean(MOD_ID, HullUpgradesSetting.ENABLED_FIELD_ID,
                 Translation.text("settings.socketStorage.hullUpgrades.name"), Translation.text("settings.socketStorage.hullUpgrades.tooltip"),
                 HullUpgradesSetting.DEFAULT_ENABLED, MAIN_TAB);
+        SettingsCreator.addRadio(MOD_ID, ItemAnimationSetting.FIELD_ID, Translation.text("settings.socketStorage.itemAnimations.name"),
+                Translation.text("settings.socketStorage.itemAnimations.tooltip"), ItemAnimationSetting.FULL,
+                String.join(",", ItemAnimationSetting.OPTIONS), MAIN_TAB);
         SettingsCreator.addBoolean(MOD_ID, SalvageSiteCompat.DROPS_FIELD_ID,
                 Translation.text("settings.socketStorage.otherModDrops.name"), Translation.text("settings.socketStorage.otherModDrops.tooltip"),
                 SalvageSiteCompat.DEFAULT_DROPS, MAIN_TAB);

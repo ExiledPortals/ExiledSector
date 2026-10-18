@@ -1,7 +1,6 @@
 package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.Fonts;
 import com.fs.starfarer.api.ui.LabelAPI;
@@ -11,7 +10,7 @@ import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
-import exiledsector.skills.CommodityNames;
+import exiledsector.items.MaterialItems;
 import exiledsector.items.CraftingCurrency;
 import exiledsector.items.SocketCustody;
 import exiledsector.items.CraftingMaterials;
@@ -51,9 +50,9 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     private static final float BUTTON_HEIGHT = 24f;
     private static final float TILE_SIZE = 80f;
     private static final float TILE_GAP = 10f;
-    private static final int TILE_COLUMNS = 2;
+    private static final int TILE_COLUMNS = 3;
     private static final float COUNT_LEFT = 12f;
-    private static final float COUNT_WIDTH = 120f;
+    private static final float COUNT_WIDTH = 60f;
     private static final float NOTICE_HEIGHT = 36f;
     private static final float MIN_SOCKET_AREA = 110f;
     private static final float MIN_DETAILS_HEIGHT = 110f;
@@ -66,8 +65,12 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     private enum Recipe {
         COMMON(null),
         AUGMENTATION(CraftingCurrency.AUGMENTATION),
+        ATTUNEMENT(CraftingCurrency.ATTUNEMENT),
         RECALIBRATION(CraftingCurrency.RECALIBRATION),
-        TRANSPOSITION(CraftingCurrency.TRANSPOSITION);
+        SUBSTITUTION(CraftingCurrency.SUBSTITUTION),
+        TRANSPOSITION(CraftingCurrency.TRANSPOSITION),
+        FIXATION(CraftingCurrency.FIXATION),
+        REPLICATION(CraftingCurrency.REPLICATION);
 
         private final CraftingCurrency currency;
 
@@ -81,6 +84,10 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
         int partsCost() {
             return currency == null ? ItemCrafting.commonSynthesisParts() : currency.partsCost();
+        }
+
+        boolean synthesisable() {
+            return currency == null || currency.synthesisable();
         }
     }
 
@@ -224,6 +231,10 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     }
 
     private boolean synthesise(Recipe recipe) {
+        if (!recipe.synthesisable()) {
+            showNotice(Translation.msg("ui.workbench.notice.notSynthesisable").arg("name", recipeName(recipe)).text());
+            return false;
+        }
         CraftingMaterials materials = playerMaterials();
         int ownedParts = ItemCrafting.parts(materials);
         if (ownedParts < recipe.partsCost()) {
@@ -253,8 +264,9 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     private void use(CraftingCurrency currency) {
         CraftingMaterials materials = playerMaterials();
-        if (materials.count(currency.commodityId()) < 1) {
-            showNotice(Translation.msg("ui.workbench.notice.noneOwned").arg("name", CommodityNames.displayName(currency.commodityId())).text());
+        if (materials.count(currency.itemId()) < 1) {
+            String noneOwnedKey = currency.synthesisable() ? "ui.workbench.notice.noneOwned" : "ui.workbench.notice.noneFound";
+            showNotice(Translation.msg(noneOwnedKey).arg("name", MaterialItems.displayName(currency.itemId())).text());
             return;
         }
         if (loadedItem == null) {
@@ -262,11 +274,19 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             return;
         }
         if (!ItemCrafting.canUse(currency, loadedItem, allowedUniques())) {
+            if (loadedItem.mirrored()) {
+                showNotice(Translation.msg("ui.workbench.notice.mirrored").arg("name", loadedItem.name()).text());
+                return;
+            }
+            if (currency == CraftingCurrency.FIXATION && loadedItem.hasLockedModifier()) {
+                showNotice(Translation.msg("ui.workbench.notice.alreadyFixed").arg("name", loadedItem.name()).text());
+                return;
+            }
             if (currency == CraftingCurrency.TRANSPOSITION && loadedItem.rarity() == ItemRarity.UNIQUE) {
                 showNotice(Translation.text("ui.workbench.notice.noOtherUnique"));
                 return;
             }
-            showNotice(Translation.msg("ui.workbench.notice.cannotUse").arg("name", CommodityNames.displayName(currency.commodityId()))
+            showNotice(Translation.msg("ui.workbench.notice.cannotUse").arg("name", MaterialItems.displayName(currency.itemId()))
                     .arg("target", loadedItem.name()).text());
             return;
         }
@@ -275,7 +295,9 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         if (result == null) {
             return;
         }
-        loadedItem = result;
+        if (currency != CraftingCurrency.REPLICATION) {
+            loadedItem = result;
+        }
         noticeText = Translation.msg("ui.workbench.notice.used." + currency.name().toLowerCase(Locale.ROOT))
                 .arg("before", nameBefore).arg("name", result.name()).text();
         SocketCustody.markHostsChanged(result);
@@ -371,7 +393,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         if (recipe.currency == null) {
             return;
         }
-        int ownedCount = materials.count(recipe.currency.commodityId());
+        int ownedCount = materials.count(recipe.currency.itemId());
         Color countColor = ownedCount > 0 ? Misc.getBrightPlayerColor() : Misc.getGrayColor();
         element.setParaFont(Fonts.ORBITRON_20AABOLD);
         LabelAPI countLabel = VanillaText.plainPara(element, String.valueOf(ownedCount), 0f, countColor);
@@ -399,15 +421,17 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     }
 
     private List<String> tooltipHints(Recipe recipe) {
-        String synthesiseHint = Translation.msg("ui.workbench.tile.synthesise").arg("cost", recipe.partsCost()).text();
+        String synthesiseHint = recipe.synthesisable()
+                ? Translation.msg("ui.workbench.tile.synthesise").arg("cost", recipe.partsCost()).text()
+                : Translation.text("ui.workbench.tile.notSynthesisable");
         if (recipe.currency == null) {
             return List.of(synthesiseHint);
         }
         List<String> hints = new ArrayList<>();
-        int ownedCount = playerMaterials().count(recipe.currency.commodityId());
+        int ownedCount = playerMaterials().count(recipe.currency.itemId());
         hints.add(Translation.msg("ui.workbench.tile.inStorage").arg("count", ownedCount).text());
         if (ownedCount == 0) {
-            hints.add(Translation.text("ui.workbench.tile.noneOwned"));
+            hints.add(Translation.text(recipe.synthesisable() ? "ui.workbench.tile.noneOwned" : "ui.workbench.tile.noneFound"));
         } else if (loadedItem != null && ItemCrafting.canUse(recipe.currency, loadedItem, allowedUniques())) {
             hints.add(Translation.msg("ui.workbench.tile.use").arg("target", loadedItem.name()).text());
         } else {
@@ -424,12 +448,12 @@ public final class SocketWorkbenchPanel extends HoloPanel {
                     .map(ItemDefinition::icon).distinct().toList();
             return icons.isEmpty() ? List.of(FALLBACK_SUBROUTINE_ICON) : icons;
         }
-        CommoditySpecAPI spec = Global.getSettings().getCommoditySpec(recipe.currency.commodityId());
-        return List.of(spec == null ? FALLBACK_SUBROUTINE_ICON : spec.getIconName());
+        String iconPath = MaterialItems.loadedIconPath(recipe.currency.itemId());
+        return List.of(iconPath == null ? FALLBACK_SUBROUTINE_ICON : iconPath);
     }
 
     private static String recipeName(Recipe recipe) {
-        return recipe.currency == null ? Translation.text("ui.workbench.recipe.common.name") : CommodityNames.displayName(recipe.currency.commodityId());
+        return recipe.currency == null ? Translation.text("ui.workbench.recipe.common.name") : MaterialItems.displayName(recipe.currency.itemId());
     }
 
     private void rebuildDetails() {
@@ -445,6 +469,9 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             element.setParaFontDefault();
             if (displayName.baseName() != null) {
                 VanillaText.plainPara(element, displayName.baseName(), LINE_PAD, Misc.getGrayColor());
+            }
+            if (loadedItem.mirrored()) {
+                VanillaText.addPara(element, Translation.styled("socketable.tooltip.mirrored"), LINE_PAD, Misc.getGrayColor());
             }
             float paraPad = GAP * 2f;
             List<StyledText> implicitLines = loadedItem.implicitLines(true);

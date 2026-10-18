@@ -114,6 +114,11 @@ export function resolveDataResource(paths: ProjectPaths, name: string): DataReso
         filePath: path.join(paths.projectRoot, 'data', 'campaign', 'commodities.csv'),
         check: (text) => checkCsvHeader(text, 'name,id,', 'the name and id columns'),
       };
+    case 'special-items':
+      return {
+        filePath: path.join(paths.projectRoot, 'data', 'campaign', 'special_items.csv'),
+        check: (text) => checkCsvHeader(text, 'name,id,', 'the name and id columns'),
+      };
     default:
       break;
   }

@@ -47,6 +47,11 @@ describe('saving unchanged item data reproduces the files byte for byte', () => 
     expect(serializeCsvTable(parseCsvTable(text))).toBe(text);
   });
 
+  it('special_items.csv', () => {
+    const text = readData(path.join(repositoryRoot, 'data', 'campaign', 'special_items.csv'));
+    expect(serializeCsvTable(parseCsvTable(text))).toBe(text);
+  });
+
   it('every salvage file', () => {
     const compatDir = path.join(configDir, 'compat', 'salvage');
     const salvageFiles = [path.join(configDir, 'item_salvage.csv'), ...fs.readdirSync(compatDir).map((name) => path.join(compatDir, name))];

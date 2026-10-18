@@ -2,8 +2,7 @@ package exiledsector;
 
 import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
-import com.fs.starfarer.api.loading.Description;
+import com.fs.starfarer.api.campaign.SpecialItemSpecAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.thoughtworks.xstream.XStream;
 import exiledsector.charts.ChartSaveAliases;
@@ -52,13 +51,13 @@ import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.skills.tags.AreaToggles;
 import exiledsector.skills.unlock.NodeGates;
 import exiledsector.items.ItemCraftingCosts;
-import exiledsector.items.CraftingCurrency;
 import exiledsector.items.ItemImplicits;
 import exiledsector.items.ItemDataIntegrity;
 import exiledsector.items.ItemModifiers;
 import exiledsector.items.ItemIdAliases;
 import exiledsector.items.ItemDefinitions;
-import exiledsector.items.ItemDisassembly;
+import exiledsector.items.MaterialItems;
+import exiledsector.items.MaterialMigration;
 import exiledsector.items.ItemNames;
 import exiledsector.items.NpcItems;
 import exiledsector.items.ItemDrops;
@@ -142,21 +141,15 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
     private static void localiseHullModText() {
         I18n.forGameText(() -> {
             LOCALISED_HULLMODS.forEach(ExiledSectorModPlugin::localise);
-            localiseCommodity(ItemDisassembly.PARTS_COMMODITY_ID);
-            for (CraftingCurrency currency : CraftingCurrency.values()) {
-                localiseCommodity(currency.commodityId());
-            }
+            MaterialItems.ids().forEach(ExiledSectorModPlugin::localiseMaterial);
         });
     }
 
-    private static void localiseCommodity(String commodityId) {
-        CommoditySpecAPI commoditySpec = Global.getSettings().getCommoditySpec(commodityId);
-        if (commoditySpec != null) {
-            commoditySpec.setName(Translation.data("commodity." + commodityId + ".name", commoditySpec.getName()));
-        }
-        Description description = Global.getSettings().getDescription(commodityId, Description.Type.RESOURCE);
-        if (description != null) {
-            description.setText1(Translation.data("commodity." + commodityId + ".description", description.getText1()));
+    private static void localiseMaterial(String itemId) {
+        SpecialItemSpecAPI materialSpec = MaterialItems.spec(itemId);
+        if (materialSpec != null) {
+            materialSpec.setName(Translation.data("material." + itemId + ".name", materialSpec.getName()));
+            materialSpec.setDesc(Translation.data("material." + itemId + ".description", materialSpec.getDesc()));
         }
     }
 
@@ -217,6 +210,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         NpcBonusScale.invalidate();
         NpcItems.clearCache();
         ItemStore.get().freezeNames();
+        MaterialMigration.run(Global.getSector());
         OpReserveHullMods.forgetLegacySlots(Global.getSector().getPersistentData());
         ShipSkillDataManager.removeBlankRecords();
         forgetUnknownNodes();

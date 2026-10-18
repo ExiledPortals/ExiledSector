@@ -74,6 +74,18 @@ public final class ItemStore {
         return item;
     }
 
+    Item addMirrorOf(Item source) {
+        if (source == null || source.definition() == null) {
+            return null;
+        }
+        Item copy = source.mirrorAs(ID_PREFIX + nextId++);
+        owned.add(copy);
+        if (byId != null) {
+            byId.put(copy.id(), copy);
+        }
+        return copy;
+    }
+
     public void freezeNames() {
         owned.forEach(Item::freezeName);
     }

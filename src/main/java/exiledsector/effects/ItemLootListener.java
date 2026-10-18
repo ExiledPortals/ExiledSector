@@ -1,6 +1,5 @@
 package exiledsector.effects;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BaseCampaignEventListener;
 import com.fs.starfarer.api.campaign.BattleAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
@@ -8,7 +7,6 @@ import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.EngagementResultForFleetAPI;
 import com.fs.starfarer.api.campaign.FleetEncounterContextPlugin;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
-import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.campaign.listeners.ShipRecoveryListener;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -25,6 +23,7 @@ import exiledsector.items.HullUpgradesSetting;
 import exiledsector.items.NpcItems;
 import exiledsector.items.Item;
 import exiledsector.items.ItemDisassembly;
+import exiledsector.items.MaterialItems;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemData;
 import exiledsector.ui.CampaignMessages;
@@ -127,7 +126,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
             pendingLoot.upgradeByMemberId.values().forEach(upgrade -> loot.addSpecial(upgrade.toSpecialItem(), 1f));
             int wholeParts = ItemDrops.wholeParts(pendingLoot.partsEarned, lootRandom);
             if (wholeParts > 0) {
-                loot.addCommodity(ItemDisassembly.PARTS_COMMODITY_ID, wholeParts);
+                MaterialItems.add(loot, ItemDisassembly.PARTS_ITEM_ID, wholeParts);
             }
         }
         pendingByBattle.keySet().removeIf(BattleAPI::isDone);
@@ -153,11 +152,11 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         }
         int wholeParts = ItemDrops.wholeParts(pendingLoot.partsEarned, lootRandom);
         if (wholeParts > 0) {
-            playerFleet.getCargo().addCommodity(ItemDisassembly.PARTS_COMMODITY_ID, wholeParts);
-            CommoditySpecAPI partsSpec = Global.getSettings().getCommoditySpec(ItemDisassembly.PARTS_COMMODITY_ID);
-            if (partsSpec != null && CampaignMessages.available()) {
+            MaterialItems.add(playerFleet.getCargo(), ItemDisassembly.PARTS_ITEM_ID, wholeParts);
+            String partsName = MaterialItems.displayName(ItemDisassembly.PARTS_ITEM_ID);
+            if (CampaignMessages.available()) {
                 String salvageMessage = I18n.forGameText(() -> Translation.msg("socketable.salvaged").arg("name",
-                        Translation.msg("socketable.techMining.material").arg("count", wholeParts).arg("name", partsSpec.getName()).text()).text());
+                        Translation.msg("socketable.techMining.material").arg("count", wholeParts).arg("name", partsName).text()).text());
                 CampaignMessages.plain(salvageMessage, Misc.getPositiveHighlightColor());
             }
         }

@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
+import org.mockito.Mockito;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -18,12 +19,12 @@ import static org.mockito.Mockito.when;
 
 class CraftingMaterialsTest {
 
-    private static final String PARTS = ItemDisassembly.PARTS_COMMODITY_ID;
-    private static final String AUGMENTATION = CraftingCurrency.AUGMENTATION.commodityId();
+    private static final String PARTS = ItemDisassembly.PARTS_ITEM_ID;
+    private static final String AUGMENTATION = CraftingCurrency.AUGMENTATION.itemId();
 
     private static CargoAPI cargoHolding(String commodityId, float quantity) {
         CargoAPI cargo = mock(CargoAPI.class);
-        when(cargo.getCommodityQuantity(commodityId)).thenReturn(quantity);
+        when(cargo.getQuantity(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(commodityId))).thenReturn(quantity);
         return cargo;
     }
 
@@ -35,12 +36,12 @@ class CraftingMaterialsTest {
 
         assertEquals(8, materials.count(PARTS));
         assertFalse(materials.take(PARTS, 9));
-        verify(cargo, never()).removeCommodity(anyString(), anyFloat());
+        verify(cargo, never()).removeItems(Mockito.any(), Mockito.any(), anyFloat());
 
         assertTrue(materials.take(PARTS, 4));
         assertEquals(0, materials.stored(PARTS));
         assertFalse(stored.containsKey(PARTS));
-        verify(cargo).removeCommodity(PARTS, 1f);
+        verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(PARTS), 1f);
     }
 
     @Test
@@ -50,24 +51,24 @@ class CraftingMaterialsTest {
 
         new CraftingMaterials(cargo, stored, true).add(AUGMENTATION, 2);
         assertEquals(Map.of(AUGMENTATION, 2), stored);
-        verify(cargo, never()).addCommodity(anyString(), anyFloat());
+        verify(cargo, never()).addSpecial(Mockito.any(), anyFloat());
 
         new CraftingMaterials(cargo, stored, false).add(AUGMENTATION, 1);
         assertEquals(Map.of(AUGMENTATION, 2), stored);
-        verify(cargo).addCommodity(AUGMENTATION, 1f);
+        verify(cargo).addSpecial(MaterialItems.data(AUGMENTATION), 1f);
     }
 
     @Test
     void settlingWhileStoringMovesEveryPartAndKernelOutOfCargo() {
         CargoAPI cargo = cargoHolding(PARTS, 40f);
-        when(cargo.getCommodityQuantity(AUGMENTATION)).thenReturn(2f);
+        when(cargo.getQuantity(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(AUGMENTATION))).thenReturn(2f);
         Map<String, Integer> stored = new HashMap<>(Map.of(PARTS, 5));
 
         assertEquals(42, new CraftingMaterials(cargo, stored, true).settle());
 
         assertEquals(Map.of(PARTS, 45, AUGMENTATION, 2), stored);
-        verify(cargo).removeCommodity(PARTS, 40f);
-        verify(cargo).removeCommodity(AUGMENTATION, 2f);
+        verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(PARTS), 40f);
+        verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(AUGMENTATION), 2f);
     }
 
     @Test
@@ -78,8 +79,8 @@ class CraftingMaterialsTest {
         assertEquals(13, new CraftingMaterials(cargo, stored, false).settle());
 
         assertTrue(stored.isEmpty());
-        verify(cargo).addCommodity(PARTS, 12f);
-        verify(cargo).addCommodity(AUGMENTATION, 1f);
+        verify(cargo).addSpecial(MaterialItems.data(PARTS), 12f);
+        verify(cargo).addSpecial(MaterialItems.data(AUGMENTATION), 1f);
     }
 
     @Test
@@ -94,7 +95,7 @@ class CraftingMaterialsTest {
 
     @Test
     void thePartsAndAllThreeKernelsAreManaged() {
-        assertEquals(1 + CraftingCurrency.values().length, CraftingMaterials.commodityIds().size());
-        assertTrue(CraftingMaterials.commodityIds().contains(PARTS));
+        assertEquals(1 + CraftingCurrency.values().length, MaterialItems.ids().size());
+        assertTrue(MaterialItems.ids().contains(PARTS));
     }
 }

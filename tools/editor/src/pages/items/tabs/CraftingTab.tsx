@@ -7,12 +7,12 @@ import { fileUrl } from '../../../shared/imagePaths.ts';
 import { ImagePickButton } from '../../../shared/ImagePickButton.tsx';
 import { useDataDocument } from '../../../shared/useDataDocument.ts';
 import {
-  commodityIcon,
+  materialIcon,
   CRAFTING_ITEMS,
   costRow,
   parseCraftingCsv,
   serializeCraftingCsv,
-  setCommodityIcon,
+  setMaterialIcon,
   validateCrafting,
   type CraftingModel,
 } from '../model/crafting.ts';
@@ -21,17 +21,17 @@ export function CraftingTab() {
   const document = useDataDocument<CraftingModel>({
     key: 'items.crafting',
     noun: 'crafting',
-    fileNames: ['item-crafting', 'commodities'],
+    fileNames: ['item-crafting', 'special-items'],
     parse: (files) => {
       const crafting = parseCraftingCsv(files['item-crafting'].content);
-      return { costTable: crafting.table, costs: crafting.rows, commodities: parseCsvTable(files.commodities.content) };
+      return { costTable: crafting.table, costs: crafting.rows, specialItems: parseCsvTable(files['special-items'].content) };
     },
     serialize: (model) => ({
       'item-crafting': serializeCraftingCsv(model.costTable, model.costs),
-      commodities: serializeCsvTable(model.commodities),
+      'special-items': serializeCsvTable(model.specialItems),
     }),
     validate: validateCrafting,
-    savedMessage: () => 'Saved item_crafting.csv and commodities.csv',
+    savedMessage: () => 'Saved item_crafting.csv and special_items.csv',
   });
 
   return (
@@ -45,16 +45,16 @@ export function CraftingTab() {
           <ScrollArea style={{ flex: 1 }} type="auto">
             <Stack p="md" gap="md" maw={1000}>
               <Text size="xs" c="dimmed">
-                Edits data/config/exiledSector/hullItem_crafting.csv (costs) and the icon column of data/campaign/commodities.csv (images). Images picked from
+                Edits data/config/exiledSector/item_crafting.csv (costs) and the plugin params column of data/campaign/special_items.csv (images). Images picked from
                 graphics/unused/ move to graphics/icons/cargo/.
               </Text>
               {CRAFTING_ITEMS.map((item) => {
-                const icon = commodityIcon(model.commodities, item.id);
-                const setIcon = (path: string) => document.update((draft) => setCommodityIcon(draft.commodities, item.id, path));
+                const icon = materialIcon(model.specialItems, item.id);
+                const setIcon = (path: string) => document.update((draft) => setMaterialIcon(draft.specialItems, item.id, path));
                 const cost = costRow(model, item.id);
                 return (
                   <Group key={item.id} align="flex-end" wrap="nowrap">
-                    {item.commodity ? (
+                    {item.material ? (
                       <>
                         <Avatar src={fileUrl(icon)} radius="sm" size={56} />
                         <TextInput style={{ flex: 2 }} label={`${item.label} - image`} value={icon} onChange={(event) => setIcon(event.currentTarget.value.trim())} />
@@ -90,7 +90,7 @@ export function CraftingTab() {
                           Parts to synthesise
                         </Text>
                         <Text size="xs" c="dimmed">
-                          Not synthesised - comes from disassembly and loot.
+                          Not synthesised - comes from disassembly or loot.
                         </Text>
                       </Stack>
                     )}

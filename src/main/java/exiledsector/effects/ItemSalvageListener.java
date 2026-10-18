@@ -10,9 +10,12 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.items.ItemDrops;
+import exiledsector.items.MaterialItems;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemUnlock;
+import exiledsector.ui.cargo.MaterialDropAnnouncer;
 
+import java.util.Map;
 import java.util.Random;
 
 public class ItemSalvageListener implements ShowLootListener {
@@ -36,7 +39,9 @@ public class ItemSalvageListener implements ShowLootListener {
         for (ItemData item : ItemDrops.roll(siteId, random)) {
             loot.addSpecial(item.toSpecialItem(), 1f);
         }
-        ItemDrops.rollMaterials(siteId, random).forEach(loot::addCommodity);
+        Map<String, Integer> droppedMaterials = ItemDrops.rollMaterials(siteId, random);
+        droppedMaterials.forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
+        MaterialDropAnnouncer.announce(droppedMaterials);
         if (ItemUnlock.sectionsOpen(Global.getSector())) {
             ItemDrops.SectionItemLoot sectionItemLoot = ItemDrops.rollSectionItemLoot(siteId, random, 1f);
             sectionItemLoot.items().forEach(item -> loot.addSpecial(item.toSpecialItem(), 1f));

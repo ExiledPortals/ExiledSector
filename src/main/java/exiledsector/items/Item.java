@@ -2,6 +2,7 @@ package exiledsector.items;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierCategory;
 import exiledsector.modifiers.ModifierLine;
@@ -24,6 +25,7 @@ public abstract class Item {
     private List<RolledModifier> explicitModifiers;
     private List<RolledModifier> implicitModifiers;
     private FrozenName frozenName;
+    private boolean mirrored;
     private transient boolean explicitIdsCurrent;
     private transient boolean implicitIdsCurrent;
 
@@ -43,6 +45,7 @@ public abstract class Item {
         this.explicitModifiers = source.explicitModifiers;
         this.implicitModifiers = source.implicitModifiers;
         this.frozenName = source.frozenName;
+        this.mirrored = source.mirrored;
     }
 
     static Item create(String id, String definitionId, long seed, List<RolledModifier> explicitModifiers) {
@@ -179,6 +182,27 @@ public abstract class Item {
         effects = null;
     }
 
+    void replaceImplicits(List<RolledModifier> replacementImplicits) {
+        implicitModifiers = new ArrayList<>(replacementImplicits);
+        implicits = null;
+    }
+
+    Item mirrorAs(String copyId) {
+        Item copy = create(copyId, definitionId, seed, explicits());
+        copy.implicitModifiers = new ArrayList<>(implicits());
+        copy.frozenName = frozenName;
+        copy.mirrored = true;
+        return copy;
+    }
+
+    public boolean mirrored() {
+        return mirrored;
+    }
+
+    public boolean hasLockedModifier() {
+        return explicits().stream().anyMatch(RolledModifier::locked);
+    }
+
     void refreezeName() {
         ItemDefinition definition = definition();
         frozenName = definition == null ? null : ItemNames.freeze(definition, seed, explicits());
@@ -212,6 +236,9 @@ public abstract class Item {
             if (description != null) {
                 lines.add(description);
             }
+        }
+        if (mirrored) {
+            lines.add(Translation.styled("socketable.tooltip.mirrored"));
         }
         return lines;
     }
@@ -297,22 +324,32 @@ public abstract class Item {
 
     public List<StyledText> effectLines(boolean withRollRanges, HullSize hullSize) {
         List<StyledText> lines = new ArrayList<>();
-        for (SlottedRoll explicit : rolls(ModifierCategory.EXPLICIT)) {
-            RolledEffect effect = explicit.roll();
-            ModifierLine line = explicit.line();
-            StyledText description;
-            if (line == null) {
-                description = effect.description(null);
-            } else if (line.listsEveryHullValueFor(hullSize)) {
-                description = effect.hullValuesDescription(line.hullValues());
-            } else {
-                RolledEffect shownEffect = new RolledEffect(effect.effectName(), line.valueFor(effect.magnitude(), hullSize));
-                description = shownEffect.description(withRollRanges ? line : null);
+        for (RolledModifier explicitModifier : explicits()) {
+            Modifier modifier = explicitModifier(explicitModifier.modifierId());
+            int firstLineIndex = lines.size();
+            for (RolledEffect effect : explicitModifier.lines()) {
+                StyledText description = explicitLine(effect, modifier == null ? null : modifier.line(effect.effectName()),
+                        withRollRanges, hullSize);
+                if (description != null) {
+                    lines.add(description);
+                }
             }
-            if (description != null) {
-                lines.add(description);
+            if (explicitModifier.locked() && lines.size() > firstLineIndex) {
+                int lastLineIndex = lines.size() - 1;
+                lines.set(lastLineIndex, lines.get(lastLineIndex).append(Translation.styled("socketable.tooltip.lockedTag")));
             }
         }
         return lines;
+    }
+
+    private static StyledText explicitLine(RolledEffect effect, ModifierLine line, boolean withRollRanges, HullSize hullSize) {
+        if (line == null) {
+            return effect.description(null);
+        }
+        if (line.listsEveryHullValueFor(hullSize)) {
+            return effect.hullValuesDescription(line.hullValues());
+        }
+        RolledEffect shownEffect = new RolledEffect(effect.effectName(), line.valueFor(effect.magnitude(), hullSize));
+        return shownEffect.description(withRollRanges ? line : null);
     }
 }
