@@ -165,7 +165,7 @@ framework_bridge_officer,DAMAGE_TO_FRIGATE_PERCENT,0.8.0,
 framework_bridge_officer,MAX_COMBAT_READINESS_PERCENT,0.8.0,
 framework_bridge_officer,PEAK_CR_DURATION_PERCENT,0.8.0,
 framework_bridge_officer,WEAPON_AUTOFIRE_ACCURACY_PERCENT,0.8.0,
-framework_bridge_officer,WEAPON_TURN_RATE_PERCENT,0.8.0,
+framework_bridge_officer,WEAPON_TURN_RATE_PERCENT,0.8.0,0.8.0
 framework_crew_quarters_specialists,CREW_CAPACITY_PERCENT,0.8.0,
 framework_crew_quarters_specialists,CREW_LOSS_PERCENT,0.8.0,
 framework_crew_quarters_specialists,ELECTRONIC_WARFARE,0.8.0,
