@@ -198,7 +198,7 @@ class StarChartTest {
         StarChart binary = StarChartFixtures.chart(BINARY, 8L, 3);
 
         assertEquals(List.of("CHART_ITEM_DROP_CHANCE_PERCENT_SINGLE"), single.implicits().stream().map(RolledModifier::modifierId).toList());
-        assertEquals(List.of("CHART_EXTRA_FLEETS_BINARY"), binary.implicits().stream().map(RolledModifier::modifierId).toList());
+        assertEquals(List.of("CHART_BASE_FLEETS_BINARY"), binary.implicits().stream().map(RolledModifier::modifierId).toList());
         assertEquals(single.implicits(), StarChartFixtures.chart(SINGLE, 8L, 3).implicits());
         assertEquals(1, single.implicitLines(false).size());
         assertFalse(StarChartImplicits.corruptionPool().isEmpty());

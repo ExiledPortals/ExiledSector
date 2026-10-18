@@ -12,6 +12,7 @@ public final class ChartPreview {
     public enum Stat {
         FLEET_SIZE(Kind.PERCENT, false),
         EXTRA_FLEETS(Kind.COUNT, false),
+        FLEET_STRENGTH(Kind.PERCENT, false),
         OFFICER_LEVELS(Kind.COUNT, false),
         EXTRA_OFFICERS(Kind.COUNT, false),
         WARDEN_SIZE(Kind.PERCENT, false),
@@ -64,13 +65,24 @@ public final class ChartPreview {
     }
 
     public static List<Line> of(ChartGenContext context, ChartTier base) {
+        return of(context, base, StarChartSettings.DEFAULT_FLEET_LIMIT);
+    }
+
+    public static List<Line> of(ChartGenContext context, ChartTier base, int fleetLimit) {
         List<Line> lines = new ArrayList<>();
         if (context == null || context.isEmpty() || base == null) {
             return lines;
         }
         ChartTier adjusted = context.adjust(base);
-        add(lines, Stat.FLEET_SIZE, adjusted.fleetSize() - base.fleetSize());
-        add(lines, Stat.EXTRA_FLEETS, adjusted.fleetsMin() - base.fleetsMin(), adjusted.fleetsMax() - base.fleetsMax());
+        int extraFleets = context.extraFleets();
+        ChartFleetSpread baseLow = ChartFleetSpread.of(base.fleetsMin(), base.fleetSize(), 0, fleetLimit);
+        ChartFleetSpread baseHigh = ChartFleetSpread.of(base.fleetsMax(), base.fleetSize(), 0, fleetLimit);
+        ChartFleetSpread adjustedLow = ChartFleetSpread.of(adjusted.fleetsMin(), adjusted.fleetSize(), extraFleets, fleetLimit);
+        ChartFleetSpread adjustedHigh = ChartFleetSpread.of(adjusted.fleetsMax(), adjusted.fleetSize(), extraFleets, fleetLimit);
+        add(lines, Stat.FLEET_SIZE, adjustedLow.cappedFleetSize() - baseLow.cappedFleetSize(), adjustedHigh.cappedFleetSize() - baseHigh.cappedFleetSize());
+        add(lines, Stat.EXTRA_FLEETS, adjustedLow.fleets() - baseLow.fleets(), adjustedHigh.fleets() - baseHigh.fleets());
+        add(lines, Stat.FLEET_STRENGTH, adjustedLow.totalStrengthBonus() - baseLow.totalStrengthBonus(),
+                adjustedHigh.totalStrengthBonus() - baseHigh.totalStrengthBonus());
         add(lines, Stat.OFFICER_LEVELS, adjusted.officerLevelBonus() - base.officerLevelBonus());
         add(lines, Stat.EXTRA_OFFICERS, adjusted.officerCountBonus() - base.officerCountBonus());
         add(lines, Stat.WARDEN_SIZE, adjusted.wardenSize() - base.wardenSize());

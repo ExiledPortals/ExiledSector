@@ -54,6 +54,21 @@ class StarChartSettingsTest {
     }
 
     @Test
+    void readsTheFleetLimitWithinItsRangeAndDefaultsToSeven() {
+        lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", StarChartSettings.FLEET_LIMIT_FIELD_ID)).thenReturn(null);
+        assertEquals(7, StarChartSettings.fleetLimit());
+
+        lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", StarChartSettings.FLEET_LIMIT_FIELD_ID)).thenReturn(4);
+        assertEquals(4, StarChartSettings.fleetLimit());
+
+        lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", StarChartSettings.FLEET_LIMIT_FIELD_ID)).thenReturn(0);
+        assertEquals(StarChartSettings.MIN_FLEET_LIMIT, StarChartSettings.fleetLimit());
+
+        lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", StarChartSettings.FLEET_LIMIT_FIELD_ID)).thenReturn(99);
+        assertEquals(StarChartSettings.MAX_FLEET_LIMIT, StarChartSettings.fleetLimit());
+    }
+
+    @Test
     void opensWormholesAnywhereOnlyWhenTheDevSwitchIsOn() {
         lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", StarChartSettings.OPEN_ANYWHERE_FIELD_ID)).thenReturn(null);
         assertFalse(StarChartSettings.openAnywhere());

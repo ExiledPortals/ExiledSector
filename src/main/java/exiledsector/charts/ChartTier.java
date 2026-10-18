@@ -54,7 +54,8 @@ public record ChartTier(int tier, float fleetSize, int fleetsMin, int fleetsMax,
         int steps = Math.max(0, tier - 1);
         boolean hasBoss = tier >= FALLBACK_FIRST_BOSS_TIER;
         int strengthMin = Math.min(200, 50 + 10 * steps);
-        return new ChartTier(tier, FALLBACK_FIRST_TIER_FLEET_SIZE + FALLBACK_FLEET_SIZE_PER_TIER * steps, 2 + steps / 3, 4 + steps / 3,
+        return new ChartTier(tier, FALLBACK_FIRST_TIER_FLEET_SIZE + FALLBACK_FLEET_SIZE_PER_TIER * steps, 2 + steps / 3,
+                4 + steps / 3,
                 steps / 3, steps / 3, Math.min(100f, 30f + 5f * steps), strengthMin, Math.min(300, strengthMin + 40),
                 FALLBACK_FIRST_TIER_LOOT + FALLBACK_LOOT_PER_TIER * steps, hasBoss,
                 hasBoss ? FALLBACK_FIRST_WARDEN_SIZE + FALLBACK_WARDEN_SIZE_PER_TIER * (tier - FALLBACK_FIRST_BOSS_TIER) : 0f,

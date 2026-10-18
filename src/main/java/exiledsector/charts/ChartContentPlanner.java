@@ -20,7 +20,7 @@ final class ChartContentPlanner {
     static final long FLEET_SALT = 0x4348464c454554L;
     static final long EXTRA_POI_SALT = 0x43484558545241L;
     static final int MAX_POIS = 24;
-    static final int MAX_FLEETS = 12;
+    static final int MAX_FLEETS = 15;
     static final float FLEET_SIZE_CAP = 600f;
     static final float WARDEN_SIZE_CAP = 1200f;
     static final float MIN_FLEET_SIZE = 30f;
@@ -41,6 +41,11 @@ final class ChartContentPlanner {
 
     static ChartContentPlan plan(long seed, ChartTier baseTier, List<ChartPoi> pois, List<ChartFaction> factions, Predicate<String> factionLoaded,
                                  ChartGenContext chartContext) {
+        return plan(seed, baseTier, pois, factions, factionLoaded, chartContext, StarChartSettings.DEFAULT_FLEET_LIMIT);
+    }
+
+    static ChartContentPlan plan(long seed, ChartTier baseTier, List<ChartPoi> pois, List<ChartFaction> factions, Predicate<String> factionLoaded,
+                                 ChartGenContext chartContext, int fleetLimit) {
         ChartTier tier = chartContext.adjust(baseTier);
         ChartFaction faction = ChartFactions.pick(factions, tier.tier(), factionLoaded, ChartLayoutGenerator.derivedRandom(seed, FACTION_SALT));
         List<ChartPoi> vaults = affordableVaults(pois, tier);
@@ -50,7 +55,8 @@ final class ChartContentPlanner {
         List<PlannedPoi> plannedPois = spendLoot(lootTier, pois, vaultPlanned ? vaults : List.of(), ChartLayoutGenerator.derivedRandom(seed, LOOT_SALT));
         plannedPois = addExtraPois(tier, pois, plannedPois, chartContext.extraPois(), ChartLayoutGenerator.derivedRandom(seed, EXTRA_POI_SALT));
         List<PlannedFleet> plannedFleets = new ArrayList<>();
-        plannedPois = planFleets(tier, faction, objective, plannedPois, plannedFleets, ChartLayoutGenerator.derivedRandom(seed, FLEET_SALT));
+        plannedPois = planFleets(tier, faction, objective, plannedPois, plannedFleets, ChartLayoutGenerator.derivedRandom(seed, FLEET_SALT),
+                chartContext.extraFleets(), fleetLimit);
         return new ChartContentPlan(tier.tier(), faction, objective, plannedPois, plannedFleets);
     }
 
@@ -133,9 +139,12 @@ final class ChartContentPlanner {
     }
 
     static List<PlannedPoi> planFleets(ChartTier tier, ChartFaction faction, ChartObjective objective, List<PlannedPoi> pois,
-                                       List<PlannedFleet> fleets, Random random) {
-        float fleetSize = tier.fleetSize() + faction.fleetSizeBonus();
-        int fleetCount = Math.min(MAX_FLEETS, tier.fleetsMin() + random.nextInt(tier.fleetsMax() - tier.fleetsMin() + 1));
+                                       List<PlannedFleet> fleets, Random random, int extraFleets, int fleetLimit) {
+        float tierFleetSize = tier.fleetSize() + faction.fleetSizeBonus();
+        int rolledFleets = tier.fleetsMin() + random.nextInt(tier.fleetsMax() - tier.fleetsMin() + 1);
+        ChartFleetSpread spread = ChartFleetSpread.of(rolledFleets, tierFleetSize, extraFleets, fleetLimit);
+        int fleetCount = spread.fleets();
+        float fleetSize = spread.fleetSize();
         float[] shares = new float[fleetCount];
         float shareTotal = 0f;
         for (int i = 0; i < fleetCount; i++) {
@@ -159,7 +168,8 @@ final class ChartContentPlanner {
             boolean guard = i < guardCount;
             int poiIndex = guard && i < guardedIndices.size() ? guardedIndices.get(i) : NO_POI;
             fleets.add(new PlannedFleet(guard ? FleetRole.GUARD : FleetRole.PATROL, poiIndex, ChartTier.fleetPoints(Math.min(FLEET_SIZE_CAP, sizePercent)),
-                    quality / ChartTier.PERCENT, tier.officerLevelBonus(), tier.officerCountBonus(), overflowStrength(sizePercent, FLEET_SIZE_CAP)));
+                    quality / ChartTier.PERCENT, tier.officerLevelBonus(), tier.officerCountBonus(),
+                    Math.min(MAX_OVERFLOW_STRENGTH, spread.strengthBonus() + overflowStrength(sizePercent, FLEET_SIZE_CAP))));
         }
         for (int i = 0; i < guardedPois.size(); i++) {
             PlannedPoi planned = guardedPois.get(i);

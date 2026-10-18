@@ -104,7 +104,9 @@ class ChartContentDataTest {
         MemoryAPI garbled = mock(MemoryAPI.class);
         when(garbled.get(ChartIds.TIER_MEMORY_KEY)).thenReturn("fifteen");
 
-        assertEquals(new NpcTreeSize.PercentRange(200, 300), ChartTiers.fleetStrengthRangeFor(tierFifteen));
+        ChartTier fifteen = ChartTiers.forTier(15);
+        assertEquals(new NpcTreeSize.PercentRange(fifteen.fleetStrengthMin(), fifteen.fleetStrengthMax()), ChartTiers.fleetStrengthRangeFor(tierFifteen));
+        assertTrue(fifteen.fleetStrengthMax() < NpcTreeSize.HIGHEST_PERCENT, "tier 15 leaves room for overflow strength");
         assertNull(ChartTiers.fleetStrengthRangeFor(notAChartFleet));
         assertNull(ChartTiers.fleetStrengthRangeFor(garbled));
         assertNull(ChartTiers.fleetStrengthRangeFor(null));
@@ -119,11 +121,12 @@ class ChartContentDataTest {
         when(tierSeven.get(ChartIds.STRENGTH_BONUS_MEMORY_KEY)).thenReturn(20);
         MemoryAPI tierFifteen = mock(MemoryAPI.class);
         when(tierFifteen.get(ChartIds.TIER_MEMORY_KEY)).thenReturn(15);
-        when(tierFifteen.get(ChartIds.STRENGTH_BONUS_MEMORY_KEY)).thenReturn(20);
+        when(tierFifteen.get(ChartIds.STRENGTH_BONUS_MEMORY_KEY)).thenReturn(80);
 
         assertEquals(new NpcTreeSize.PercentRange(seventh.fleetStrengthMin() + 20, seventh.fleetStrengthMax() + 20),
                 ChartTiers.fleetStrengthRangeFor(tierSeven));
-        assertEquals(new NpcTreeSize.PercentRange(220, NpcTreeSize.HIGHEST_PERCENT), ChartTiers.fleetStrengthRangeFor(tierFifteen));
+        ChartTier fifteen = ChartTiers.forTier(15);
+        assertEquals(new NpcTreeSize.PercentRange(fifteen.fleetStrengthMin() + 80, NpcTreeSize.HIGHEST_PERCENT), ChartTiers.fleetStrengthRangeFor(tierFifteen));
     }
 
     @Test

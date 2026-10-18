@@ -88,10 +88,13 @@ class ChartGenContextTest {
     @Test
     void eachDifficultyEffectChangesTheFleets() {
         assertEquals(BASE.fleetSize() + 50f, with(ChartEffect.CHART_FLEET_SIZE_PERCENT, 50f).adjust(BASE).fleetSize(), TOLERANCE);
-        ChartTier moreFleets = with(ChartEffect.CHART_EXTRA_FLEETS, 2f).adjust(BASE);
-        assertEquals(BASE.fleetsMin() + 2, moreFleets.fleetsMin());
-        assertEquals(BASE.fleetsMax() + 2, moreFleets.fleetsMax());
-        assertEquals(BASE.fleetSize(), moreFleets.fleetSize(), TOLERANCE, "extra fleets are full size, not a thinner split");
+        ChartTier moreRolled = with(ChartEffect.CHART_BASE_FLEETS, 2f).adjust(BASE);
+        assertEquals(BASE.fleetsMin() + 2, moreRolled.fleetsMin());
+        assertEquals(BASE.fleetsMax() + 2, moreRolled.fleetsMax());
+        assertEquals(BASE.fleetSize(), moreRolled.fleetSize(), TOLERANCE, "extra fleets are full size, not a thinner split");
+        ChartGenContext crowded = with(ChartEffect.CHART_EXTRA_FLEETS, 2f);
+        assertEquals(BASE, crowded.adjust(BASE).withLootBudget(BASE.lootBudget()), "crowded fleets are added after the soft limit, not to the roll");
+        assertEquals(2, crowded.extraFleets());
         assertEquals(BASE.officerLevelBonus() + 1, with(ChartEffect.CHART_OFFICER_LEVEL_BONUS, 1f).adjust(BASE).officerLevelBonus());
         assertEquals(BASE.officerCountBonus() + 2, with(ChartEffect.CHART_EXTRA_OFFICERS, 2f).adjust(BASE).officerCountBonus());
         assertEquals(BASE.wardenSize() + 40f, with(ChartEffect.CHART_WARDEN_SIZE_PERCENT, 40f).adjust(BASE).wardenSize(), TOLERANCE);
@@ -270,23 +273,38 @@ class ChartGenContextTest {
     }
 
     @Test
-    void extraFleetsNeverPushTheFleetCountPastTheLimit() {
-        ChartTier top = ChartTiers.forTier(15);
-        ChartTier crowded = with(ChartEffect.CHART_EXTRA_FLEETS, 4f).adjust(top);
+    void rolledFleetsPastTheFleetLimitMergeIntoTheRestAsSizeAndStrength() {
+        int limit = StarChartSettings.DEFAULT_FLEET_LIMIT;
+        assertEquals(new ChartFleetSpread(limit, 200f, 0), ChartFleetSpread.of(limit, 200f, 0, limit));
+        ChartFleetSpread doubled = ChartFleetSpread.of(limit * 2, 200f, 0, limit);
+        assertEquals(limit, doubled.fleets());
+        assertEquals(350f, doubled.fleetSize(), TOLERANCE, "75% of the cut fleets' size goes to the kept fleets");
+        assertEquals(25, doubled.strengthBonus(), "25% of it goes to their strength");
+        assertEquals(limit + 2, ChartFleetSpread.of(limit * 2, 200f, 2, limit).fleets(), "crowded fleets still spawn");
+        assertEquals(ChartContentPlanner.MAX_FLEETS, ChartFleetSpread.of(limit, 200f, 30, limit).fleets());
+        assertEquals(1, ChartFleetSpread.of(2, 200f, -5, limit).fleets());
+        ChartFleetSpread squeezed = ChartFleetSpread.of(7, 550f, 0, 4);
+        assertEquals(ChartContentPlanner.FLEET_SIZE_CAP, squeezed.cappedFleetSize(), TOLERANCE);
+        assertEquals(ChartContentPlanner.MAX_OVERFLOW_STRENGTH, squeezed.totalStrengthBonus(), "size past the cap adds strength too");
 
-        assertTrue(top.fleetsMax() + 4 > ChartContentPlanner.MAX_FLEETS);
-        assertEquals(ChartContentPlanner.MAX_FLEETS, crowded.fleetsMax());
-        assertEquals(Math.min(ChartContentPlanner.MAX_FLEETS, top.fleetsMin() + 4), crowded.fleetsMin());
-        assertEquals(top.fleetSize(), crowded.fleetSize(), TOLERANCE, "clamped fleets keep their size");
-        ChartTier packed = with(ChartEffect.CHART_EXTRA_FLEETS, 30f).adjust(top);
-        assertEquals(ChartContentPlanner.MAX_FLEETS, packed.fleetsMin());
-        assertEquals(ChartContentPlanner.MAX_FLEETS, packed.fleetsMax());
-        ChartTier oversizedData = new ChartTier(15, 300f, 14, 16, 0, 0, 50f, 100, 100, 0f, false, 0f, 1f, 0f, 0f);
-        for (long seed = 0; seed < 60; seed++) {
-            ChartContentPlan crowdedPlan = plan(with(ChartEffect.CHART_EXTRA_FLEETS, 4f), seed, 15);
-            assertTrue(crowdedPlan.count(FleetRole.GUARD) + crowdedPlan.count(FleetRole.PATROL) <= ChartContentPlanner.MAX_FLEETS, "seed " + seed);
-            ChartContentPlan oversizedPlan = ChartContentPlanner.plan(seed, oversizedData, List.of(), List.of(), faction -> true);
-            assertTrue(oversizedPlan.count(FleetRole.GUARD) + oversizedPlan.count(FleetRole.PATROL) <= ChartContentPlanner.MAX_FLEETS, "seed " + seed);
+        ChartTier overRolled = new ChartTier(15, 200f, limit * 2, limit * 2, 0, 0, 50f, 100, 100, 0f, false, 0f, 1f, 0f, 0f);
+        for (long seed = 0; seed < 20; seed++) {
+            ChartContentPlan plain = ChartContentPlanner.plan(seed, overRolled, List.of(), List.of(), faction -> true);
+            assertEquals(limit, plain.count(FleetRole.GUARD) + plain.count(FleetRole.PATROL), "seed " + seed);
+            assertEquals(limit * ChartTier.fleetPoints(350f), plain.fleetPoints(FleetRole.GUARD) + plain.fleetPoints(FleetRole.PATROL), 1f, "seed " + seed);
+            assertTrue(plain.fleets().stream().allMatch(fleet -> fleet.strengthBonus() == 25), plain.fleets().toString());
+            ChartContentPlan crowdedPlan = ChartContentPlanner.plan(seed, overRolled, List.of(), List.of(), faction -> true,
+                    with(ChartEffect.CHART_EXTRA_FLEETS, 3f));
+            assertEquals(limit + 3, crowdedPlan.count(FleetRole.GUARD) + crowdedPlan.count(FleetRole.PATROL), "seed " + seed);
+            ChartContentPlan fewer = ChartContentPlanner.plan(seed, overRolled, List.of(), List.of(), faction -> true, ChartGenContext.none(), 4);
+            assertEquals(4, fewer.count(FleetRole.GUARD) + fewer.count(FleetRole.PATROL), "seed " + seed);
+            assertTrue(fewer.fleets().stream().allMatch(fleet -> fleet.strengthBonus() > 25), fewer.fleets().toString());
+        }
+        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_TIER; tier++) {
+            for (long seed = 0; seed < 20; seed++) {
+                ChartContentPlan binary = plan(with(ChartEffect.CHART_BASE_FLEETS, 1f), seed, tier);
+                assertTrue(binary.count(FleetRole.GUARD) + binary.count(FleetRole.PATROL) <= limit, "tier " + tier + " seed " + seed);
+            }
         }
     }
 

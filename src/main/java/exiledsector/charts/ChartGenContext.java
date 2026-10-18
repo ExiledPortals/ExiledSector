@@ -35,6 +35,7 @@ public final class ChartGenContext {
     private final List<AppliedEffect> applied;
     private final int quality;
     private float fleetSizePercent;
+    private int baseFleets;
     private int extraFleets;
     private int officerLevelBonus;
     private int extraOfficers;
@@ -114,6 +115,10 @@ public final class ChartGenContext {
         fleetSizePercent += value;
     }
 
+    void addBaseFleets(int value) {
+        baseFleets += value;
+    }
+
     void addExtraFleets(int value) {
         extraFleets += value;
     }
@@ -166,8 +171,8 @@ public final class ChartGenContext {
         if (isEmpty()) {
             return base;
         }
-        int fleetsMin = Math.min(ChartContentPlanner.MAX_FLEETS, Math.max(1, base.fleetsMin() + extraFleets));
-        int fleetsMax = Math.min(ChartContentPlanner.MAX_FLEETS, Math.max(fleetsMin, base.fleetsMax() + extraFleets));
+        int fleetsMin = Math.max(1, base.fleetsMin() + baseFleets);
+        int fleetsMax = Math.max(fleetsMin, base.fleetsMax() + baseFleets);
         return new ChartTier(base.tier(), base.fleetSize() + fleetSizePercent, fleetsMin, fleetsMax, base.officerLevelBonus() + officerLevelBonus,
                 base.officerCountBonus() + extraOfficers, base.fleetQuality() + fleetQualityPercent, base.fleetStrengthMin(), base.fleetStrengthMax(),
                 base.lootBudget() * lootMult(), base.boss(), base.boss() ? Math.max(0f, base.wardenSize() + wardenSizePercent) : base.wardenSize(),
@@ -286,10 +291,10 @@ public final class ChartGenContext {
         if (isEmpty()) {
             return "no chart modifiers";
         }
-        return String.format(Locale.ROOT, "fleet size %+.0f%%, %+d fleet(s), %+d officer level(s), %+d officer(s), warden size %+.0f%%, "
+        return String.format(Locale.ROOT, "fleet size %+.0f%%, %+d rolled fleet(s), %+d added fleet(s), %+d officer level(s), %+d officer(s), warden size %+.0f%%, "
                         + "fleet quality %+.0f%%, loot x%.2f (x%.2f without a vault), %+d point(s) of interest, hull item chance x%.2f, vault x%.2f, "
                         + "reward x%.2f, sensor range x%.2f, chart quality %d",
-                fleetSizePercent, extraFleets, officerLevelBonus, extraOfficers, wardenSizePercent,
+                fleetSizePercent, baseFleets, extraFleets, officerLevelBonus, extraOfficers, wardenSizePercent,
                 fleetQualityPercent, lootMult(), lootMultWithoutVault(), extraPois(), itemChanceMult(), multiplier(vaultRichnessPercent), rewardMult(),
                 sensorRangeMult(), quality);
     }

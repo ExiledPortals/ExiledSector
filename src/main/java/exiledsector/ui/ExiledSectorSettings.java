@@ -187,6 +187,9 @@ public final class ExiledSectorSettings {
         SettingsCreator.addInt(MOD_ID, StarChartSettings.ENTRIES_FIELD_ID,
                 Translation.text("settings.starCharts.entries.name"), Translation.text("settings.starCharts.entries.tooltip"),
                 StarChartSettings.DEFAULT_ENTRIES, StarChartSettings.MIN_ENTRIES, StarChartSettings.MAX_ENTRIES, MAIN_TAB);
+        SettingsCreator.addInt(MOD_ID, StarChartSettings.FLEET_LIMIT_FIELD_ID,
+                Translation.text("settings.starCharts.fleetLimit.name"), Translation.text("settings.starCharts.fleetLimit.tooltip"),
+                StarChartSettings.DEFAULT_FLEET_LIMIT, StarChartSettings.MIN_FLEET_LIMIT, StarChartSettings.MAX_FLEET_LIMIT, MAIN_TAB);
         SettingsCreator.addBoolean(MOD_ID, StarChartSettings.OPEN_ANYWHERE_FIELD_ID,
                 Translation.text("chart.ui.settings.openAnywhere.name"), Translation.text("chart.ui.settings.openAnywhere.tooltip"),
                 StarChartSettings.DEFAULT_OPEN_ANYWHERE, MAIN_TAB);

@@ -7,6 +7,7 @@ import exiledsector.charts.ChartPreview;
 import exiledsector.charts.ChartPreview.Stat;
 import exiledsector.charts.ChartTier;
 import exiledsector.charts.ChartTiers;
+import exiledsector.charts.StarChartSettings;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.items.Item;
@@ -81,15 +82,12 @@ class StarChartPreviewTest {
     @Test
     void fleetCountsClampedAtTheFloorPreviewTheChangeThatActuallySpawns() {
         ChartGenContext context = with(0, effect(ChartEffect.CHART_EXTRA_FLEETS, -3f));
-        ChartTier adjusted = context.adjust(BASE_TIER);
 
         ChartPreview.Line fleets = preview(context).stream().filter(line -> line.stat() == Stat.EXTRA_FLEETS).findFirst().orElseThrow();
 
-        assertEquals(1, adjusted.fleetsMin());
-        assertEquals(1, adjusted.fleetsMax());
         assertTrue(fleets.isRange());
-        assertEquals(adjusted.fleetsMax() - BASE_TIER.fleetsMax(), fleets.value(), TOLERANCE);
-        assertEquals(adjusted.fleetsMin() - BASE_TIER.fleetsMin(), fleets.upperValue(), TOLERANCE);
+        assertEquals(1 - BASE_TIER.fleetsMax(), fleets.value(), TOLERANCE);
+        assertEquals(1 - BASE_TIER.fleetsMin(), fleets.upperValue(), TOLERANCE);
         assertTrue(fleets.favourable());
         assertTrue(texts(context).contains("Enemy fleets -3 to -1"), texts(context).toString());
     }
@@ -174,13 +172,22 @@ class StarChartPreviewTest {
 
         assertFalse(withoutWarden.boss());
         assertTrue(withWarden.boss());
-        String early = StarChartPreviewText.tierLine(1).plain();
-        String late = StarChartPreviewText.tierLine(ChartTiers.HIGHEST_TIER).plain();
+        String early = StarChartPreviewText.tierLine(1, StarChartSettings.DEFAULT_FLEET_LIMIT).plain();
+        String late = StarChartPreviewText.tierLine(ChartTiers.HIGHEST_TIER, StarChartSettings.DEFAULT_FLEET_LIMIT).plain();
         assertTrue(early.startsWith("Tier 1 baseline: " + withoutWarden.fleetsMin() + " to " + withoutWarden.fleetsMax()), early);
         assertFalse(early.contains("warden"), early);
         assertTrue(early.contains(Math.round(withoutWarden.fleetSize()) + "% fleet size"), early);
         assertTrue(early.contains(Math.round(withoutWarden.fleetQuality()) + "% fleet quality"), early);
         assertTrue(early.contains(withoutWarden.fleetStrengthMin() + "% to " + withoutWarden.fleetStrengthMax() + "% fleet strength"), early);
         assertTrue(late.contains("warden fleet at " + Math.round(withWarden.wardenSize()) + "% fleet size"), late);
+    }
+
+    @Test
+    void aLowerFleetLimitShowsFewerLargerAndStrongerFleets() {
+        String squeezed = StarChartPreviewText.tierLine(ChartTiers.HIGHEST_TIER, 4).plain();
+        ChartTier top = ChartTiers.forTier(ChartTiers.HIGHEST_TIER);
+
+        assertTrue(squeezed.contains("4 to 4 enemy fleets at 600% fleet size"), squeezed);
+        assertTrue(squeezed.contains((top.fleetStrengthMin() + 39) + "% to " + (top.fleetStrengthMax() + 50) + "% fleet strength"), squeezed);
     }
 }

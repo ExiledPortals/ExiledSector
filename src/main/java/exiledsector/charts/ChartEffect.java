@@ -13,6 +13,12 @@ public enum ChartEffect implements ModifierEffect {
             context.addFleetSizePercent(value);
         }
     },
+    CHART_BASE_FLEETS(true) {
+        @Override
+        public void beforeGeneration(ChartGenContext context, float value) {
+            context.addBaseFleets(Math.round(value));
+        }
+    },
     CHART_EXTRA_FLEETS(true) {
         @Override
         public void beforeGeneration(ChartGenContext context, float value) {

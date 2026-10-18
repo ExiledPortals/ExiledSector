@@ -117,7 +117,7 @@ describe('star chart editing', () => {
     await switchToStarCharts();
 
     const maxInput = await screen.findByLabelText('CHART_ITEM_DROP_CHANCE_PERCENT max', undefined, { timeout: 30000 });
-    expect(screen.getAllByText(/CHART_EXTRA_FLEETS_BINARY is shared/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/CHART_BASE_FLEETS_BINARY is shared/).length).toBeGreaterThan(0);
     const implicitsBefore = server.readProjectFile(CHART_IMPLICITS_FILE);
     const modifiersBefore = server.readProjectFile(CHART_MODIFIERS_FILE);
 

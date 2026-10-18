@@ -208,7 +208,11 @@ export const CHART_TIER_SPEC: ChartTableSpec = {
       help: 'Size of each enemy fleet, where 100% is a standard fleet of 50 fleet points (about a vanilla heavy patrol). Scales the number and hull size of ships, capped at 600% per fleet.',
     },
     fleets_min: { label: 'Fleets min', kind: 'integer' },
-    fleets_max: { label: 'Fleets max', kind: 'integer' },
+    fleets_max: {
+      label: 'Fleets max',
+      kind: 'integer',
+      help: 'Fleets rolled past the fleet limit (a LunaLib setting) merge into the fleets that spawn: 75% of their size makes those fleets larger and 25% makes them stronger. Crowded fleets always spawn.',
+    },
     officer_level_bonus: { label: 'Officer levels', kind: 'integer', help: 'Extra levels on enemy officers' },
     officer_count_bonus: { label: 'Extra officers', kind: 'integer' },
     fleet_quality: { label: 'Fleet quality %', kind: 'number', help: 'Controls d-mods and weapon quality, 0 to 150; 100% means no d-mods' },
