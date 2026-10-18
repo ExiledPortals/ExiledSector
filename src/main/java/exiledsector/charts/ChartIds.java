@@ -21,6 +21,7 @@ public final class ChartIds {
     public static final String SYSTEM_BASE_NAME = "Charted Space";
     public static final String TIER_MEMORY_KEY = "$exiledSector_chartTier";
     public static final String SEED_MEMORY_KEY = "$exiledSector_chartSeed";
+    public static final String STRENGTH_BONUS_MEMORY_KEY = "$exiledSector_chartStrengthBonus";
     public static final String VAULT_TAG = PREFIX + "vault";
     public static final String CONTENT_TAG = PREFIX + "content";
     public static final String ITEM_CHANCE_MEMORY_KEY = MEMORY_PREFIX + "itemChanceMult";

@@ -62,6 +62,8 @@ public final class StarChartPreviewText {
         ChartTier base = ChartTiers.forTier(tier);
         String key = base.boss() ? "chart.ui.preview.tierBaseWarden" : "chart.ui.preview.tierBase";
         return Translation.msg(key).arg("tier", base.tier()).arg("fleetsMin", base.fleetsMin()).arg("fleetsMax", base.fleetsMax())
-                .arg("power", Math.round(base.fleetPower())).arg("loot", Math.round(base.lootBudget())).styled();
+                .arg("size", Math.round(base.fleetSize())).arg("quality", Math.round(base.fleetQuality()))
+                .arg("strengthMin", base.fleetStrengthMin()).arg("strengthMax", base.fleetStrengthMax())
+                .arg("warden", Math.round(base.wardenSize())).arg("loot", Math.round(base.lootBudget())).styled();
     }
 }

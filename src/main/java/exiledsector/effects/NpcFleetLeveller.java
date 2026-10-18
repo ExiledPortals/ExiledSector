@@ -55,7 +55,7 @@ public final class NpcFleetLeveller {
         int playerLevel = 0;
         List<Integer> playerShipPowers = List.of();
         String factionRegion = npcFleet.getFaction() == null ? null : NpcFactionVolumes.regionFor(npcFleet.getFaction().getId());
-        NpcTreeSize.PercentRange chartTreeRange = ChartTiers.treePercentRangeFor(npcFleet.getMemoryWithoutUpdate());
+        NpcTreeSize.PercentRange chartTreeRange = ChartTiers.fleetStrengthRangeFor(npcFleet.getMemoryWithoutUpdate());
         String chartSeed = ChartIds.fleetSeed(npcFleet.getMemoryWithoutUpdate());
         List<FleetMemberAPI> members = npcFleet.getFleetData().getMembersListCopy();
         for (int memberIndex = 0; memberIndex < members.size(); memberIndex++) {

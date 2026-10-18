@@ -202,20 +202,20 @@ describe('star chart definitions', () => {
 });
 
 describe('review findings', () => {
-  const withDefaults = { ...vocabulary, chartTierDefaults: [{ tier: 10, fleetsMin: 5, fleetsMax: 7, treePercentMin: 140, treePercentMax: 180, bossPower: 0 }] };
+  const withDefaults = { ...vocabulary, chartTierDefaults: [{ tier: 10, fleetsMin: 5, fleetsMax: 7, fleetStrengthMin: 140, fleetStrengthMax: 180, wardenSize: 0 }] };
 
   it('compares blank tier cells against the built-in values', () => {
-    const model = chartTable(CHART_TIER_SPEC, 'tier,fleets_min,fleets_max,boss,boss_power,tree_percent_min,tree_percent_max\n10,,3,yes,,,100\n');
+    const model = chartTable(CHART_TIER_SPEC, 'tier,fleets_min,fleets_max,boss,warden_size,fleet_strength_min,fleet_strength_max\n10,,3,yes,,,100\n');
     expect(CHART_TIER_SPEC.warnings(model, withDefaults).slice(0, 3)).toEqual([
       'tier 10: fleets_max is below fleets_min (built-in 5), so it is raised to fleets_min',
-      'tier 10: tree_percent_min (140) is above tree_percent_max (100), counting built-in values for blanks, so the game swaps them',
-      'tier 10: boss is yes but boss_power is blank and the built-in value is 0, so there is no boss',
+      'tier 10: fleet_strength_min (140) is above fleet_strength_max (100), counting built-in values for blanks, so the game swaps them',
+      'tier 10: boss is yes but warden_size is blank and the built-in value is 0, so there is no boss',
     ]);
   });
 
   it('warns about the values the faction, point of interest and drop loaders change', () => {
-    expect(CHART_FACTION_SPEC.warnings(chartTable(CHART_FACTION_SPEC, 'faction,weight,power_mult\npirates,1,0\n'), vocabulary)).toEqual([
-      'pirates: a power_mult of 0 or less counts as 1',
+    expect(CHART_FACTION_SPEC.warnings(chartTable(CHART_FACTION_SPEC, 'faction,weight,fleet_size_bonus\npirates,0,-20\n'), vocabulary)).toEqual([
+      'pirates: a weight of 0 or less means it is never picked',
     ]);
     expect(CHART_POI_SPEC.warnings(chartTable(CHART_POI_SPEC, 'id,kind,entity,guarded\nvault,vault,station_research,no\n'), vocabulary)).toEqual([
       'vault: a vault is always guarded, whatever guarded says',
@@ -314,19 +314,19 @@ describe('chart tables', () => {
   it('mirrors the tier loader', () => {
     const model = chartTable(
       CHART_TIER_SPEC,
-      'tier,fleet_power,fleets_min,fleets_max,boss,boss_power,tree_percent_min,tree_percent_max\n' +
+      'tier,fleet_size,fleets_min,fleets_max,boss,warden_size,fleet_strength_min,fleet_strength_max\n' +
         '1,60,2,1,yes,0,90,80\n' +
         '16,x,1.5,3,maybe,,,\n',
     );
     expect(CHART_TIER_SPEC.issues(model, vocabulary)).toEqual([
       'tier 16: tier must be a whole number from 1 to 15',
-      'tier 16: fleet_power "x" is not a number',
+      'tier 16: fleet_size "x" is not a number',
       'tier 16: boss "maybe" must be yes or no',
     ]);
     expect(CHART_TIER_SPEC.warnings(model, vocabulary)).toEqual([
       'tier 1: fleets_max is below fleets_min, so it is raised to fleets_min',
-      'tier 1: tree_percent_min (90) is above tree_percent_max (80), counting built-in values for blanks, so the game swaps them',
-      'tier 1: boss is yes but boss_power is 0, so there is no boss',
+      'tier 1: fleet_strength_min (90) is above fleet_strength_max (80), counting built-in values for blanks, so the game swaps them',
+      'tier 1: boss is yes but warden_size is 0, so there is no boss',
       'tier 16: fleets_min 1.5 is rounded to a whole number',
       'No row for tier 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15; the game uses built-in values for them',
     ]);
@@ -348,7 +348,7 @@ describe('chart tables', () => {
       'odd: a cost or weight of 0 or less means it is never placed',
       'No vault point of interest, so the vault objective is never picked',
     ]);
-    const factions = chartTable(CHART_FACTION_SPEC, 'faction,weight,min_tier,max_tier\npirates,0,0,8\npirates,1,1,8\n');
+    const factions = chartTable(CHART_FACTION_SPEC, 'faction,weight,min_tier\npirates,0,0\npirates,1,1\n');
     expect(CHART_FACTION_SPEC.issues(factions, vocabulary)).toEqual(['pirates: listed more than once, so only its last row is used']);
     expect(CHART_FACTION_SPEC.warnings(factions, vocabulary)).toEqual([
       'pirates: min_tier 0 is outside tiers 1 to 15, so it is clamped',

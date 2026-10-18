@@ -156,13 +156,13 @@ class StarChartTest {
         ItemDefinition single = ItemDefinitions.get(SINGLE);
         boolean bossAtHighTier = false;
         for (long seed = 0; seed < 400; seed++) {
-            assertFalse(modifierIds(StarChartFixtures.chart(SINGLE, seed, 1)).contains("HYBRID_CHART_BOSS_POWER"), "seed " + seed);
+            assertFalse(modifierIds(StarChartFixtures.chart(SINGLE, seed, 1)).contains("HYBRID_CHART_WARDEN_SIZE"), "seed " + seed);
             assertFalse(modifierIds(StarChartFixtures.chart(SINGLE, seed, 2)).contains("CHART_VAULT_RICHNESS_PERCENT"), "seed " + seed);
-            bossAtHighTier |= modifierIds(StarChartFixtures.chart(SINGLE, seed, 10)).contains("HYBRID_CHART_BOSS_POWER");
+            bossAtHighTier |= modifierIds(StarChartFixtures.chart(SINGLE, seed, 10)).contains("HYBRID_CHART_WARDEN_SIZE");
         }
         assertTrue(bossAtHighTier);
-        assertEquals(TierRange.atLeast(4), single.poolEntryFor("HYBRID_CHART_BOSS_POWER").tiers());
-        assertEquals(TierRange.ANY, single.poolEntryFor("HYBRID_CHART_FLEET_POWER").tiers());
+        assertEquals(TierRange.atLeast(4), single.poolEntryFor("HYBRID_CHART_WARDEN_SIZE").tiers());
+        assertEquals(TierRange.ANY, single.poolEntryFor("HYBRID_CHART_FLEET_SIZE").tiers());
     }
 
     @Test
@@ -186,8 +186,8 @@ class StarChartTest {
         String lowText = lowTier.effectLines().get(0).plain();
         String highText = highTier.effectLines().get(0).plain();
 
-        assertTrue(lowText.contains("50%"), lowText);
-        assertTrue(highText.contains("80%"), highText);
+        assertTrue(lowText.contains("+200%"), lowText);
+        assertTrue(highText.contains("+700%"), highText);
         assertTrue(lowTier.effectLines(true).stream().anyMatch(line -> line.plain().contains("(")),
                 "ranged tier bands show the band's range: " + lowTier.effectLines(true));
     }
@@ -368,15 +368,15 @@ class StarChartTest {
 
     @Test
     void aRollWhoseModifierLeftThePoolFallsBackToTheCatalogueOrIsDroppedAndFlagged() {
-        List<RolledModifier> movedExplicits = List.of(new RolledModifier("HYBRID_CHART_BOSS_POWER", ModifierSlot.PREFIX,
-                List.of(new RolledEffect("CHART_BOSS_POWER_PERCENT", 100f), new RolledEffect("CHART_QUANTITY_PERCENT", 0f))));
+        List<RolledModifier> movedExplicits = List.of(new RolledModifier("HYBRID_CHART_WARDEN_SIZE", ModifierSlot.PREFIX,
+                List.of(new RolledEffect("CHART_WARDEN_SIZE_PERCENT", 100f), new RolledEffect("CHART_QUANTITY_PERCENT", 0f))));
         StarChart moved = (StarChart) Item.create(null, SILENT_REACH, 4L, movedExplicits, ItemTraits.ofTier(12));
         ChartGenContext movedContext = ChartGenContext.from(moved);
 
-        assertNull(moved.definition().poolEntryFor("HYBRID_CHART_BOSS_POWER"));
-        assertTrue(movedContext.applied().contains(new AppliedEffect(ChartEffect.CHART_BOSS_POWER_PERCENT, 60f)), movedContext.applied().toString());
+        assertNull(moved.definition().poolEntryFor("HYBRID_CHART_WARDEN_SIZE"));
+        assertTrue(movedContext.applied().contains(new AppliedEffect(ChartEffect.CHART_WARDEN_SIZE_PERCENT, 540f)), movedContext.applied().toString());
         assertTrue(movedContext.applied().contains(new AppliedEffect(ChartEffect.CHART_QUANTITY_PERCENT, 8f)), movedContext.applied().toString());
-        assertTrue(moved.effectLines().get(0).plain().contains("60%"), moved.effectLines().toString());
+        assertTrue(moved.effectLines().get(0).plain().contains("540%"), moved.effectLines().toString());
 
         List<RolledModifier> orphanExplicits = List.of(new RolledModifier("CHART_REMOVED_MODIFIER", ModifierSlot.SUFFIX,
                 List.of(new RolledEffect("CHART_EXTRA_FLEETS", 73f))));
@@ -440,23 +440,22 @@ class StarChartTest {
             Item chart = new ItemData(SINGLE, seed).preview();
             assertEquals(StarChart.LOWEST_TIER, chart.tier());
             Set<String> ids = modifierIds(chart);
-            assertFalse(ids.contains("HYBRID_CHART_BOSS_POWER") || ids.contains("HYBRID_CHART_AVERAGE_SMODS")
-                    || ids.contains("HYBRID_CHART_EXTRA_OFFICERS") || ids.contains("CHART_VAULT_RICHNESS_PERCENT"), "seed " + seed + ": " + ids);
+            assertFalse(ids.contains("HYBRID_CHART_WARDEN_SIZE") || ids.contains("HYBRID_CHART_EXTRA_OFFICERS") || ids.contains("CHART_VAULT_RICHNESS_PERCENT"), "seed " + seed + ": " + ids);
         }
     }
 
     @Test
     void aTierlessViewListsEveryBandsWholeRange() {
-        ModifierLine fleetPower = ModifierLine.parse("CHART_FLEET_POWER_PERCENT:t1=10-15/t6=20-30/t11=35-45").line();
+        ModifierLine fleetSize = ModifierLine.parse("CHART_FLEET_SIZE_PERCENT:t1=15-20/t6=50-70/t11=150-200").line();
         ModifierLine sensorRange = ModifierLine.parse("CHART_SENSOR_RANGE_PERCENT:t1=-25--15/t6=-35--25").line();
         ModifierLine extraFleets = ModifierLine.parse("CHART_EXTRA_FLEETS:t1=1/t8=2/t13=3").line();
         ModifierEffects chartEffects = ItemEffects.forType(ItemType.STAR_CHART);
 
-        assertTrue(fleetPower.listsEveryValueFor(ScaleContext.NONE));
-        assertEquals("Enemy fleets are 10-15/20-30/35-45% stronger",
-                new RolledEffect("CHART_FLEET_POWER_PERCENT", 50f).scaledValuesDescription(chartEffects, fleetPower).plain());
-        assertEquals("Enemy fleets are 10-15/20-30/35-45% stronger",
-                new RolledEffect("CHART_FLEET_POWER_PERCENT", 45f).rangeDescription(chartEffects, fleetPower).plain());
+        assertTrue(fleetSize.listsEveryValueFor(ScaleContext.NONE));
+        assertEquals("Enemy fleet size +15-20/50-70/150-200%",
+                new RolledEffect("CHART_FLEET_SIZE_PERCENT", 50f).scaledValuesDescription(chartEffects, fleetSize).plain());
+        assertEquals("Enemy fleet size +15-20/50-70/150-200%",
+                new RolledEffect("CHART_FLEET_SIZE_PERCENT", 45f).rangeDescription(chartEffects, fleetSize).plain());
         assertEquals("Your sensor range is 15-25/25-35% shorter inside the system",
                 new RolledEffect("CHART_SENSOR_RANGE_PERCENT", -35f).scaledValuesDescription(chartEffects, sensorRange).plain());
         assertTrue(new RolledEffect("CHART_EXTRA_FLEETS", 3f).scaledValuesDescription(chartEffects, extraFleets).plain().startsWith("1/2/3 "));
@@ -490,9 +489,9 @@ class StarChartTest {
     void rollOddsLeaveOutEntriesGatedAboveTheTier() {
         ItemDefinition single = ItemDefinitions.get(SINGLE);
 
-        assertFalse(ItemRollOdds.weightShares(single, 1).containsKey("HYBRID_CHART_BOSS_POWER"));
-        assertTrue(ItemRollOdds.weightShares(single, 4).containsKey("HYBRID_CHART_BOSS_POWER"));
-        assertTrue(ItemRollOdds.weightShares(single).containsKey("HYBRID_CHART_BOSS_POWER"));
+        assertFalse(ItemRollOdds.weightShares(single, 1).containsKey("HYBRID_CHART_WARDEN_SIZE"));
+        assertTrue(ItemRollOdds.weightShares(single, 4).containsKey("HYBRID_CHART_WARDEN_SIZE"));
+        assertTrue(ItemRollOdds.weightShares(single).containsKey("HYBRID_CHART_WARDEN_SIZE"));
         double prefixShare = ItemRollOdds.weightShares(single, 1).entrySet().stream()
                 .filter(entry -> single.poolEntryFor(entry.getKey()).slot() == ModifierSlot.PREFIX).mapToDouble(java.util.Map.Entry::getValue).sum();
         assertEquals(1.0, prefixShare, 1e-9);

@@ -97,7 +97,7 @@ describe('star chart editing', () => {
     renderWithProviders(<ModifiersTab vocabulary={vocabulary} />);
     await screen.findByLabelText('Search modifiers', undefined, { timeout: 30000 });
     await switchToStarCharts();
-    await waitFor(() => expect(screen.getAllByText('HYBRID_CHART_FLEET_POWER', { selector: 'p' }).length).toBeGreaterThan(0), { timeout: 30000 });
+    await waitFor(() => expect(screen.getAllByText('HYBRID_CHART_FLEET_SIZE', { selector: 'p' }).length).toBeGreaterThan(0), { timeout: 30000 });
 
     fireEvent.change(screen.getByLabelText('Search modifiers'), { target: { value: 'CHART_REWARD_PERCENT' } });
     fireEvent.click((await screen.findAllByText('CHART_REWARD_PERCENT', { selector: 'p' }))[0]);
@@ -167,14 +167,14 @@ describe('star chart editing', () => {
 
   it('edits a tier and keeps the quoted notes', async () => {
     renderWithProviders(<ChartTableTab spec={CHART_TIER_SPEC} vocabulary={vocabulary} />);
-    const fleetPower = await findLabelled('1 fleet_power');
+    const fleetSize = await findLabelled('1 fleet_size');
     const before = server.readProjectFile(TIERS_FILE);
 
-    fireEvent.change(fleetPower, { target: { value: '65' } });
+    fireEvent.change(fleetSize, { target: { value: '110' } });
     fireEvent.click(saveButton());
     await screen.findByText('Saved star_chart_tiers.csv', undefined, { timeout: 30000 });
 
-    expect(server.readProjectFile(TIERS_FILE)).toBe(before.replace('1,60,2,3,0,0,0.3,0,50,80,6,no,0,1,0,0,"A couple', '1,65,2,3,0,0,0.3,0,50,80,6,no,0,1,0,0,"A couple'));
+    expect(server.readProjectFile(TIERS_FILE)).toBe(before.replace('1,100,2,3,0,0,30,50,80,6,no,0,1,0,0,"A couple', '1,110,2,3,0,0,30,50,80,6,no,0,1,0,0,"A couple'));
   }, 90000);
 
   it('warns before saving a cipher chance on a drop source outside chart systems', async () => {

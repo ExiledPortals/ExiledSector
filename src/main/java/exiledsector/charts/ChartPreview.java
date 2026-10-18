@@ -10,12 +10,11 @@ public final class ChartPreview {
     public enum Kind {MULTIPLIER, COUNT, PERCENT}
 
     public enum Stat {
-        FLEET_POWER(Kind.MULTIPLIER, false),
+        FLEET_SIZE(Kind.PERCENT, false),
         EXTRA_FLEETS(Kind.COUNT, false),
         OFFICER_LEVELS(Kind.COUNT, false),
         EXTRA_OFFICERS(Kind.COUNT, false),
-        AVERAGE_SMODS(Kind.COUNT, false),
-        BOSS_POWER(Kind.MULTIPLIER, false),
+        WARDEN_SIZE(Kind.PERCENT, false),
         FLEET_QUALITY(Kind.PERCENT, false),
         SENSOR_RANGE(Kind.MULTIPLIER, true),
         CHART_QUALITY(Kind.PERCENT, true),
@@ -70,13 +69,12 @@ public final class ChartPreview {
             return lines;
         }
         ChartTier adjusted = context.adjust(base);
-        add(lines, Stat.FLEET_POWER, base.fleetPower() > 0f ? adjusted.fleetPower() / base.fleetPower() : context.fleetPowerMult());
+        add(lines, Stat.FLEET_SIZE, adjusted.fleetSize() - base.fleetSize());
         add(lines, Stat.EXTRA_FLEETS, adjusted.fleetsMin() - base.fleetsMin(), adjusted.fleetsMax() - base.fleetsMax());
         add(lines, Stat.OFFICER_LEVELS, adjusted.officerLevelBonus() - base.officerLevelBonus());
         add(lines, Stat.EXTRA_OFFICERS, adjusted.officerCountBonus() - base.officerCountBonus());
-        add(lines, Stat.AVERAGE_SMODS, adjusted.averageSMods() - base.averageSMods());
-        add(lines, Stat.BOSS_POWER, context.bossPowerMult());
-        add(lines, Stat.FLEET_QUALITY, (adjusted.quality() - base.quality()) * ChartGenContext.PERCENT);
+        add(lines, Stat.WARDEN_SIZE, adjusted.wardenSize() - base.wardenSize());
+        add(lines, Stat.FLEET_QUALITY, adjusted.fleetQuality() - base.fleetQuality());
         add(lines, Stat.SENSOR_RANGE, context.sensorRangeMult());
         add(lines, Stat.CHART_QUALITY, context.quality());
         add(lines, Stat.LOOT, context.lootMult());

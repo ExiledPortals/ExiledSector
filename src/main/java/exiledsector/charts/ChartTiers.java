@@ -44,18 +44,17 @@ public final class ChartTiers {
                 ChartTier fallback = ChartTier.fallback(tier);
                 String label = "tier " + tier;
                 loaded.put(tier, new ChartTier(tier,
-                        csv.number(row, "fleet_power", fallback.fleetPower(), label),
+                        csv.number(row, "fleet_size", fallback.fleetSize(), label),
                         csv.integer(row, "fleets_min", fallback.fleetsMin(), label),
                         csv.integer(row, "fleets_max", fallback.fleetsMax(), label),
                         csv.integer(row, "officer_level_bonus", fallback.officerLevelBonus(), label),
                         csv.integer(row, "officer_count_bonus", fallback.officerCountBonus(), label),
-                        csv.number(row, "quality", fallback.quality(), label),
-                        csv.integer(row, "average_smods", fallback.averageSMods(), label),
-                        csv.integer(row, "tree_percent_min", fallback.treePercentMin(), label),
-                        csv.integer(row, "tree_percent_max", fallback.treePercentMax(), label),
+                        csv.number(row, "fleet_quality", fallback.fleetQuality(), label),
+                        csv.integer(row, "fleet_strength_min", fallback.fleetStrengthMin(), label),
+                        csv.integer(row, "fleet_strength_max", fallback.fleetStrengthMax(), label),
                         csv.number(row, "loot_budget", fallback.lootBudget(), label),
                         csv.flag(row, "boss", fallback.boss(), label),
-                        csv.number(row, "boss_power", fallback.bossPower(), label),
+                        csv.number(row, "warden_size", fallback.wardenSize(), label),
                         csv.number(row, "weight_clear", fallback.clearWeight(), label),
                         csv.number(row, "weight_boss", fallback.bossWeight(), label),
                         csv.number(row, "weight_vault", fallback.vaultWeight(), label)));
@@ -88,14 +87,15 @@ public final class ChartTiers {
         return loaded != null ? loaded : ChartTier.fallback(clamped);
     }
 
-    public static NpcTreeSize.PercentRange treePercentRangeFor(MemoryAPI fleetMemory) {
+    public static NpcTreeSize.PercentRange fleetStrengthRangeFor(MemoryAPI fleetMemory) {
         Object storedTier = fleetMemory == null ? null : fleetMemory.get(ChartIds.TIER_MEMORY_KEY);
         if (!(storedTier instanceof Number tierNumber)) {
             return null;
         }
         ChartTier tier = forTier(tierNumber.intValue());
-        int lowest = Math.max(NpcTreeSize.LOWEST_PERCENT, Math.min(NpcTreeSize.HIGHEST_PERCENT, tier.treePercentMin()));
-        int highest = Math.max(lowest, Math.min(NpcTreeSize.HIGHEST_PERCENT, tier.treePercentMax()));
+        int bonus = fleetMemory.get(ChartIds.STRENGTH_BONUS_MEMORY_KEY) instanceof Number storedBonus ? Math.max(0, storedBonus.intValue()) : 0;
+        int lowest = Math.max(NpcTreeSize.LOWEST_PERCENT, Math.min(NpcTreeSize.HIGHEST_PERCENT, tier.fleetStrengthMin() + bonus));
+        int highest = Math.max(lowest, Math.min(NpcTreeSize.HIGHEST_PERCENT, tier.fleetStrengthMax() + bonus));
         return new NpcTreeSize.PercentRange(lowest, highest);
     }
 

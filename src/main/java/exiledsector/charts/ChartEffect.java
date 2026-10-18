@@ -7,10 +7,10 @@ import exiledsector.modifiers.ModifierEffect;
 
 public enum ChartEffect implements ModifierEffect {
 
-    CHART_FLEET_POWER_PERCENT(false) {
+    CHART_FLEET_SIZE_PERCENT(false) {
         @Override
         public void beforeGeneration(ChartGenContext context, float value) {
-            context.addFleetPowerPercent(value);
+            context.addFleetSizePercent(value);
         }
     },
     CHART_EXTRA_FLEETS(true) {
@@ -31,16 +31,10 @@ public enum ChartEffect implements ModifierEffect {
             context.addExtraOfficers(Math.round(value));
         }
     },
-    CHART_AVERAGE_SMODS_BONUS(true) {
+    CHART_WARDEN_SIZE_PERCENT(false) {
         @Override
         public void beforeGeneration(ChartGenContext context, float value) {
-            context.addAverageSModsBonus(Math.round(value));
-        }
-    },
-    CHART_BOSS_POWER_PERCENT(false) {
-        @Override
-        public void beforeGeneration(ChartGenContext context, float value) {
-            context.addBossPowerPercent(value);
+            context.addWardenSizePercent(value);
         }
     },
     CHART_FLEET_QUALITY_PERCENT(false) {

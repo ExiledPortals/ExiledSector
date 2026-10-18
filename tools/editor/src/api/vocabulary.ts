@@ -32,9 +32,9 @@ export interface ChartTierDefault {
   tier: number;
   fleetsMin: number;
   fleetsMax: number;
-  treePercentMin: number;
-  treePercentMax: number;
-  bossPower: number;
+  fleetStrengthMin: number;
+  fleetStrengthMax: number;
+  wardenSize: number;
 }
 
 export interface ChartDropSource {

@@ -37,9 +37,9 @@ public final class ChartFactions {
                     return;
                 }
                 int minTier = ChartTiers.clamp(csv.integer(row, "min_tier", ChartTiers.LOWEST_TIER, factionId));
-                int maxTier = ChartTiers.clamp(csv.integer(row, "max_tier", ChartTiers.HIGHEST_TIER, factionId));
-                loaded.put(factionId, new ChartFaction(factionId, csv.number(row, "weight", 1f, factionId), Math.min(minTier, maxTier),
-                        Math.max(minTier, maxTier), csv.number(row, "power_mult", 1f, factionId), csv.number(row, "quality_bonus", 0f, factionId)));
+                loaded.put(factionId, new ChartFaction(factionId, csv.number(row, "weight", 1f, factionId), minTier,
+                        csv.number(row, "fleet_size_bonus", 0f, factionId),
+                        csv.number(row, "fleet_quality_bonus", 0f, factionId)));
             });
         }
         csv.report(LOG);

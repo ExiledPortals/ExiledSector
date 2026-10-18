@@ -14,7 +14,7 @@ public record ChartContentPlan(int tier, ChartFaction faction, ChartObjective ob
     }
 
     public record PlannedFleet(FleetRole role, int poiIndex, float combatPoints, float quality, int officerLevelBonus, int officerCountBonus,
-                               int averageSMods) {
+                               int strengthBonus) {
 
         public boolean guardsPoi() {
             return poiIndex >= 0;
@@ -34,14 +34,14 @@ public record ChartContentPlan(int tier, ChartFaction faction, ChartObjective ob
         return spent;
     }
 
-    public float fleetPower(FleetRole role) {
-        float power = 0f;
+    public float fleetPoints(FleetRole role) {
+        float points = 0f;
         for (PlannedFleet fleet : fleets) {
             if (fleet.role() == role) {
-                power += fleet.combatPoints();
+                points += fleet.combatPoints();
             }
         }
-        return power;
+        return points;
     }
 
     public long count(FleetRole role) {
