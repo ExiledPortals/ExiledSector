@@ -40,25 +40,24 @@ export const NO_FLAGS = ['no', 'false', 'n', '0'];
 
 export const CHART_TIER_COLUMNS = [
   'tier',
-  'fleet_power',
+  'fleet_size',
   'fleets_min',
   'fleets_max',
   'officer_level_bonus',
   'officer_count_bonus',
-  'quality',
-  'average_smods',
-  'tree_percent_min',
-  'tree_percent_max',
+  'fleet_quality',
+  'fleet_strength_min',
+  'fleet_strength_max',
   'loot_budget',
   'boss',
-  'boss_power',
+  'warden_size',
   'weight_clear',
   'weight_boss',
   'weight_vault',
   'note',
 ] as const;
 export const CHART_POI_COLUMNS = ['id', 'kind', 'entity', 'salvage_spec', 'derelict_type', 'cost', 'weight', 'min_tier', 'max_tier', 'guarded', 'note'] as const;
-export const CHART_FACTION_COLUMNS = ['faction', 'weight', 'min_tier', 'max_tier', 'power_mult', 'quality_bonus', 'note'] as const;
+export const CHART_FACTION_COLUMNS = ['faction', 'weight', 'min_tier', 'fleet_size_bonus', 'fleet_quality_bonus', 'note'] as const;
 export const CHART_BLOCKED_ABILITY_COLUMNS = ['ability_id', 'note'] as const;
 export const CHART_DROP_COLUMNS = [
   'source',
@@ -72,7 +71,7 @@ export const CHART_DROP_COLUMNS = [
   'note',
 ] as const;
 export const ALWAYS_BLOCKED_ABILITY = 'fracture_jump';
-const TREE_PERCENT_RANGE = [0, 300];
+const FLEET_STRENGTH_RANGE = [0, 300];
 const MAX_CHARTS_PER_DROP = 4;
 
 type ColumnDetails = Omit<ChartColumn, 'column'>;
@@ -200,21 +199,24 @@ export const CHART_TIER_SPEC: ChartTableSpec = {
   noun: 'chart tier',
   keyColumn: 'tier',
   description:
-    'One row per tier from 1 to 15. A blank value, or a missing tier, uses the built-in value. Fleet power, loot budget and boss power are budgets the generator spends; the three weights pick the objective (the vault only when a vault point of interest fits the loot budget).',
+    'One row per tier from 1 to 15. A blank value, or a missing tier, uses the built-in value. Fleet size and warden size are percents of a standard fleet of 50 fleet points (about a vanilla heavy patrol); the loot budget is spent on points of interest; the three weights pick the objective (the vault only when a vault point of interest fits the loot budget).',
   columns: columnsOf(CHART_TIER_COLUMNS, {
     tier: { label: 'Tier', kind: 'integer' },
-    fleet_power: { label: 'Fleet power', kind: 'number', help: 'Total enemy fleet points to spend' },
+    fleet_size: {
+      label: 'Fleet size %',
+      kind: 'number',
+      help: 'Size of each enemy fleet, where 100% is a standard fleet of 50 fleet points (about a vanilla heavy patrol). Scales the number and hull size of ships, capped at 600% per fleet.',
+    },
     fleets_min: { label: 'Fleets min', kind: 'integer' },
     fleets_max: { label: 'Fleets max', kind: 'integer' },
     officer_level_bonus: { label: 'Officer levels', kind: 'integer', help: 'Extra levels on enemy officers' },
     officer_count_bonus: { label: 'Extra officers', kind: 'integer' },
-    quality: { label: 'Quality', kind: 'number', help: 'Fleet quality, 0 to 1' },
-    average_smods: { label: 'Avg S-mods', kind: 'integer' },
-    tree_percent_min: { label: 'Tree % min', kind: 'integer', help: 'Enemy skill tree size, percent of the player-power default' },
-    tree_percent_max: { label: 'Tree % max', kind: 'integer' },
+    fleet_quality: { label: 'Fleet quality %', kind: 'number', help: 'Controls d-mods and weapon quality, 0 to 150; 100% means no d-mods' },
+    fleet_strength_min: { label: 'Fleet strength % min', kind: 'integer', help: 'Enemy Exiled Sector skill tree size, 0 to 300 percent' },
+    fleet_strength_max: { label: 'Fleet strength % max', kind: 'integer' },
     loot_budget: { label: 'Loot budget', kind: 'number', help: 'Spent on points of interest by their cost' },
     boss: { label: 'Boss', kind: 'flag' },
-    boss_power: { label: 'Boss power', kind: 'number' },
+    warden_size: { label: 'Warden size %', kind: 'number', help: 'Size of the warden fleet, where 100% is a standard fleet of 50 fleet points, capped at 1200%' },
     weight_clear: { label: 'Clear weight', kind: 'number' },
     weight_boss: { label: 'Boss weight', kind: 'number' },
     weight_vault: { label: 'Vault weight', kind: 'number' },
@@ -251,13 +253,12 @@ export const CHART_TIER_SPEC: ChartTableSpec = {
       const builtIn = vocabulary.chartTierDefaults.find((tierDefault) => tierDefault.tier === Math.round(numberValue(row, 'tier', 0)));
       warnings.push(
         ...negativeWarnings(row, label, [
-          'fleet_power',
+          'fleet_size',
           'officer_level_bonus',
           'officer_count_bonus',
-          'quality',
-          'average_smods',
+          'fleet_quality',
           'loot_budget',
-          'boss_power',
+          'warden_size',
           'weight_clear',
           'weight_boss',
           'weight_vault',
@@ -268,20 +269,22 @@ export const CHART_TIER_SPEC: ChartTableSpec = {
       if (Math.round(numberValue(row, 'fleets_max', builtIn?.fleetsMax ?? Number.POSITIVE_INFINITY)) < fleetsMin) {
         warnings.push(`${label}: fleets_max is below fleets_min${value(row, 'fleets_min') === '' ? ` (built-in ${fleetsMin})` : ''}, so it is raised to fleets_min`);
       }
-      const treeMin = Math.round(numberValue(row, 'tree_percent_min', builtIn?.treePercentMin ?? TREE_PERCENT_RANGE[0]));
-      const treeMax = Math.round(numberValue(row, 'tree_percent_max', builtIn?.treePercentMax ?? Number.POSITIVE_INFINITY));
-      if (treeMin > treeMax) {
-        warnings.push(`${label}: tree_percent_min (${treeMin}) is above tree_percent_max (${treeMax}), counting built-in values for blanks, so the game swaps them`);
+      const strengthMin = Math.round(numberValue(row, 'fleet_strength_min', builtIn?.fleetStrengthMin ?? FLEET_STRENGTH_RANGE[0]));
+      const strengthMax = Math.round(numberValue(row, 'fleet_strength_max', builtIn?.fleetStrengthMax ?? Number.POSITIVE_INFINITY));
+      if (strengthMin > strengthMax) {
+        warnings.push(
+          `${label}: fleet_strength_min (${strengthMin}) is above fleet_strength_max (${strengthMax}), counting built-in values for blanks, so the game swaps them`,
+        );
       }
-      for (const column of ['tree_percent_min', 'tree_percent_max']) {
-        const percent = numberValue(row, column, TREE_PERCENT_RANGE[0]);
-        if (percent < TREE_PERCENT_RANGE[0] || percent > TREE_PERCENT_RANGE[1]) {
-          warnings.push(`${label}: ${column} is clamped to ${TREE_PERCENT_RANGE[0]}-${TREE_PERCENT_RANGE[1]}`);
+      for (const column of ['fleet_strength_min', 'fleet_strength_max']) {
+        const percent = numberValue(row, column, FLEET_STRENGTH_RANGE[0]);
+        if (percent < FLEET_STRENGTH_RANGE[0] || percent > FLEET_STRENGTH_RANGE[1]) {
+          warnings.push(`${label}: ${column} is clamped to ${FLEET_STRENGTH_RANGE[0]}-${FLEET_STRENGTH_RANGE[1]}`);
         }
       }
-      const bossPower = numberValue(row, 'boss_power', builtIn?.bossPower ?? 0);
-      if (isYes(value(row, 'boss')) && !(bossPower > 0)) {
-        warnings.push(`${label}: boss is yes but boss_power is ${value(row, 'boss_power') === '' ? 'blank and the built-in value is 0' : '0'}, so there is no boss`);
+      const wardenSize = numberValue(row, 'warden_size', builtIn?.wardenSize ?? 0);
+      if (isYes(value(row, 'boss')) && !(wardenSize > 0)) {
+        warnings.push(`${label}: boss is yes but warden_size is ${value(row, 'warden_size') === '' ? 'blank and the built-in value is 0' : '0'}, so there is no boss`);
       }
     });
     const missing: number[] = [];
@@ -365,17 +368,16 @@ export const CHART_FACTION_SPEC: ChartTableSpec = {
   noun: 'chart faction',
   keyColumn: 'faction',
   description:
-    'Which factions guard a system, picked by weight among those whose tier span covers the chart tier. Factions from mods that are not installed are skipped. Power multiplies the tier fleet power; the quality bonus adds to the tier quality.',
+    'Which factions guard a system, picked by weight among those whose minimum tier the chart has reached. Every faction can guard tier 15 charts. Factions from mods that are not installed are skipped. The fleet size bonus adds percentage points to the tier fleet size and warden size; the fleet quality bonus adds percentage points to the tier fleet quality.',
   columns: columnsOf(CHART_FACTION_COLUMNS, {
     faction: { label: 'Faction id', kind: 'text' },
     weight: { label: 'Weight', kind: 'number' },
     min_tier: { label: 'Min tier', kind: 'integer' },
-    max_tier: { label: 'Max tier', kind: 'integer' },
-    power_mult: { label: 'Power mult', kind: 'number' },
-    quality_bonus: { label: 'Quality bonus', kind: 'number' },
+    fleet_size_bonus: { label: 'Fleet size bonus', kind: 'number', help: 'Percentage points added to fleet size and warden size' },
+    fleet_quality_bonus: { label: 'Fleet quality bonus', kind: 'number', help: 'Percentage points added to fleet quality' },
     note: NOTE_COLUMN,
   }),
-  newRow: () => ({ faction: '', weight: '1', min_tier: '1', max_tier: '15', power_mult: '1', quality_bonus: '0' }),
+  newRow: () => ({ faction: '', weight: '1', min_tier: '1', fleet_size_bonus: '0', fleet_quality_bonus: '0' }),
   issues: (model, vocabulary) => {
     const issues: string[] = [];
     model.rows.forEach((row, index) => {
@@ -393,9 +395,6 @@ export const CHART_FACTION_SPEC: ChartTableSpec = {
       const warnings = [...roundedIntegerWarnings(CHART_FACTION_SPEC.columns, row, label), ...tierSpanWarnings(row, label, vocabulary)];
       if (!(numberValue(row, 'weight', 1) > 0)) {
         warnings.push(`${label}: a weight of 0 or less means it is never picked`);
-      }
-      if (value(row, 'power_mult') !== '' && !(numberValue(row, 'power_mult', 1) > 0)) {
-        warnings.push(`${label}: a power_mult of 0 or less counts as 1`);
       }
       return warnings;
     }),

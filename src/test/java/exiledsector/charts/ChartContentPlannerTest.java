@@ -92,7 +92,7 @@ class ChartContentPlannerTest {
     }
 
     @Test
-    void fleetsStayWithinTheTierRangeAndThePerFleetCapAndSpendThePower() {
+    void fleetsStayWithinTheTierRangeAndTheSizeCapsAndAverageTheTierFleetSize() {
         for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_TIER; tier++) {
             ChartTier tierData = ChartTiers.forTier(tier);
             for (long seed = 0; seed < 20; seed++) {
@@ -100,36 +100,67 @@ class ChartContentPlannerTest {
                 long ordinary = plan.count(FleetRole.GUARD) + plan.count(FleetRole.PATROL);
                 assertTrue(ordinary >= tierData.fleetsMin() && ordinary <= tierData.fleetsMax(), "tier " + tier + ": " + ordinary + " fleets");
                 assertEquals(tierData.boss() ? 1 : 0, plan.count(FleetRole.BOSS), "tier " + tier);
-                float expectedPower = tierData.fleetPower() * plan.faction().powerMult();
-                float spent = plan.fleetPower(FleetRole.GUARD) + plan.fleetPower(FleetRole.PATROL);
-                assertEquals(expectedPower, spent, Math.max(1f, ordinary * ChartContentPlanner.MIN_FLEET_POWER), "tier " + tier);
+                float fleetSize = tierData.fleetSize() + plan.faction().fleetSizeBonus();
+                float expectedPoints = ordinary * ChartTier.fleetPoints(fleetSize);
+                float spent = plan.fleetPoints(FleetRole.GUARD) + plan.fleetPoints(FleetRole.PATROL);
+                float minimumPoints = ChartTier.fleetPoints(ChartContentPlanner.MIN_FLEET_SIZE);
+                if (fleetSize * (1f + ChartContentPlanner.SHARE_SPREAD) / (1f - ChartContentPlanner.SHARE_SPREAD) <= ChartContentPlanner.FLEET_SIZE_CAP) {
+                    assertEquals(expectedPoints, spent, Math.max(1f, ordinary * minimumPoints), "tier " + tier);
+                } else {
+                    assertTrue(spent <= expectedPoints + 1f, "tier " + tier);
+                }
                 for (PlannedFleet fleet : plan.fleets()) {
-                    float cap = fleet.role() == FleetRole.BOSS ? ChartContentPlanner.BOSS_POWER_CAP : ChartContentPlanner.FLEET_POWER_CAP;
+                    float cap = ChartTier.fleetPoints(fleet.role() == FleetRole.BOSS ? ChartContentPlanner.WARDEN_SIZE_CAP : ChartContentPlanner.FLEET_SIZE_CAP);
                     assertTrue(fleet.combatPoints() <= cap, fleet.toString());
-                    assertTrue(fleet.combatPoints() >= ChartContentPlanner.MIN_FLEET_POWER, fleet.toString());
-                    assertTrue(fleet.quality() <= ChartContentPlanner.MAX_QUALITY);
+                    assertTrue(fleet.combatPoints() >= minimumPoints, fleet.toString());
+                    assertTrue(fleet.quality() <= ChartContentPlanner.MAX_QUALITY / ChartTier.PERCENT);
+                    if (fleet.strengthBonus() > 0) {
+                        assertEquals(cap, fleet.combatPoints(), 0.01f, fleet.toString());
+                    }
                 }
             }
         }
     }
 
     @Test
-    void aHugeBudgetSplitsIntoMoreCappedFleetsAndPutsTheRestIntoQualityAndOfficers() {
-        ChartTier huge = new ChartTier(15, 9000f, 2, 2, 1, 1, 0.5f, 0, 100, 100, 0f, false, 0f, 1f, 0f, 0f);
+    void fleetsOverTheSizeCapAreCappedAndTurnTheRestIntoFleetStrength() {
+        ChartTier huge = new ChartTier(15, 1200f, 2, 2, 1, 1, 50f, 100, 100, 0f, true, 2000f, 1f, 0f, 0f);
 
         ChartContentPlan plan = ChartContentPlanner.plan(5L, huge, List.of(), List.of(), EVERY_FACTION);
 
-        assertEquals(ChartContentPlanner.MAX_FLEETS, plan.fleets().size());
+        assertEquals(2, plan.count(FleetRole.GUARD) + plan.count(FleetRole.PATROL));
         for (PlannedFleet fleet : plan.fleets()) {
-            assertTrue(fleet.combatPoints() <= ChartContentPlanner.FLEET_POWER_CAP);
-            assertTrue(fleet.quality() > 0.5f);
-            assertEquals(2, fleet.officerLevelBonus());
+            boolean warden = fleet.role() == FleetRole.BOSS;
+            assertEquals(ChartTier.fleetPoints(warden ? ChartContentPlanner.WARDEN_SIZE_CAP : ChartContentPlanner.FLEET_SIZE_CAP), fleet.combatPoints(), 0.01f);
+            assertTrue(fleet.strengthBonus() > 0, fleet.toString());
+            assertTrue(fleet.strengthBonus() <= ChartContentPlanner.MAX_OVERFLOW_STRENGTH, fleet.toString());
+            assertEquals(warden ? 0.65f : 0.5f, fleet.quality(), 0.001f);
+            assertEquals(warden ? 1 + ChartContentPlanner.BOSS_OFFICER_LEVEL_BONUS : 1, fleet.officerLevelBonus());
         }
+        assertEquals(ChartContentPlanner.MAX_OVERFLOW_STRENGTH, ChartContentPlanner.overflowStrength(2000f, ChartContentPlanner.WARDEN_SIZE_CAP));
+        assertEquals(25, ChartContentPlanner.overflowStrength(750f, ChartContentPlanner.FLEET_SIZE_CAP));
+        assertEquals(0, ChartContentPlanner.overflowStrength(600f, ChartContentPlanner.FLEET_SIZE_CAP));
+    }
+
+    @Test
+    void aFactionsFleetSizeBonusAddsToEveryFleetAndTheWarden() {
+        ChartTier tier = new ChartTier(8, 200f, 3, 3, 0, 0, 60f, 100, 100, 0f, true, 400f, 1f, 0f, 0f);
+        ChartFaction plain = new ChartFaction("hegemony", 1f, 1, 0f, 0f);
+        ChartFaction bigger = new ChartFaction("derelict", 1f, 1, 20f, -10f);
+
+        ChartContentPlan plainPlan = ChartContentPlanner.plan(3L, tier, List.of(), List.of(plain), EVERY_FACTION);
+        ChartContentPlan biggerPlan = ChartContentPlanner.plan(3L, tier, List.of(), List.of(bigger), EVERY_FACTION);
+
+        assertEquals(3 * ChartTier.fleetPoints(200f), plainPlan.fleetPoints(FleetRole.GUARD) + plainPlan.fleetPoints(FleetRole.PATROL), 0.5f);
+        assertEquals(3 * ChartTier.fleetPoints(220f), biggerPlan.fleetPoints(FleetRole.GUARD) + biggerPlan.fleetPoints(FleetRole.PATROL), 0.5f);
+        assertEquals(ChartTier.fleetPoints(400f), plainPlan.fleetPoints(FleetRole.BOSS), 0.01f);
+        assertEquals(ChartTier.fleetPoints(420f), biggerPlan.fleetPoints(FleetRole.BOSS), 0.01f);
+        assertEquals(0.5f, biggerPlan.fleets().get(0).quality(), 0.001f);
     }
 
     @Test
     void theClearObjectiveAlwaysHasAGuardEvenWithoutGuardedLoot() {
-        ChartTier clearOnly = new ChartTier(2, 100f, 2, 3, 0, 0, 0.4f, 0, 60, 90, 0f, false, 0f, 1f, 0f, 0f);
+        ChartTier clearOnly = new ChartTier(2, 100f, 2, 3, 0, 0, 40f, 60, 90, 0f, false, 0f, 1f, 0f, 0f);
 
         ChartContentPlan noLoot = ChartContentPlanner.plan(9L, clearOnly, List.of(), List.of(), EVERY_FACTION);
 
@@ -157,7 +188,7 @@ class ChartContentPlannerTest {
             assertEquals(ChartObjective.CLEAR, atTwo);
         }
         assertEquals(EnumSet.allOf(ChartObjective.class), seenAtFifteen);
-        ChartTier vaultWithoutVaults = new ChartTier(6, 300f, 3, 3, 0, 0, 0.5f, 0, 100, 100, 20f, false, 0f, 0f, 0f, 5f);
+        ChartTier vaultWithoutVaults = new ChartTier(6, 200f, 3, 3, 0, 0, 50f, 100, 100, 20f, false, 0f, 0f, 0f, 5f);
         assertEquals(ChartObjective.CLEAR, ChartContentPlanner.pickObjective(vaultWithoutVaults, false, new Random(3)));
         assertEquals(ChartObjective.VAULT, ChartContentPlanner.pickObjective(vaultWithoutVaults, true, new Random(3)));
     }

@@ -34,12 +34,11 @@ public final class ChartGenContext {
 
     private final List<AppliedEffect> applied;
     private final int quality;
-    private float fleetPowerPercent;
+    private float fleetSizePercent;
     private int extraFleets;
     private int officerLevelBonus;
     private int extraOfficers;
-    private int averageSModsBonus;
-    private float bossPowerPercent;
+    private float wardenSizePercent;
     private float fleetQualityPercent;
     private float sensorRangePercent;
     private float quantityPercent;
@@ -111,8 +110,8 @@ public final class ChartGenContext {
         return applied.isEmpty() && quality == 0;
     }
 
-    void addFleetPowerPercent(float value) {
-        fleetPowerPercent += value;
+    void addFleetSizePercent(float value) {
+        fleetSizePercent += value;
     }
 
     void addExtraFleets(int value) {
@@ -127,12 +126,8 @@ public final class ChartGenContext {
         extraOfficers += value;
     }
 
-    void addAverageSModsBonus(int value) {
-        averageSModsBonus += value;
-    }
-
-    void addBossPowerPercent(float value) {
-        bossPowerPercent += value;
+    void addWardenSizePercent(float value) {
+        wardenSizePercent += value;
     }
 
     void addFleetQualityPercent(float value) {
@@ -173,13 +168,10 @@ public final class ChartGenContext {
         }
         int fleetsMin = Math.min(ChartContentPlanner.MAX_FLEETS, Math.max(1, base.fleetsMin() + extraFleets));
         int fleetsMax = Math.min(ChartContentPlanner.MAX_FLEETS, Math.max(fleetsMin, base.fleetsMax() + extraFleets));
-        float averageFleets = Math.max(1f, (base.fleetsMin() + base.fleetsMax()) / 2f);
-        float fleetCountMult = Math.max(0f, 1f + extraFleets / averageFleets);
-        float fleetPower = base.fleetPower() * multiplier(fleetPowerPercent) * fleetCountMult;
-        return new ChartTier(base.tier(), fleetPower, fleetsMin, fleetsMax, base.officerLevelBonus() + officerLevelBonus,
-                base.officerCountBonus() + extraOfficers, base.quality() + fleetQualityPercent / PERCENT, base.averageSMods() + averageSModsBonus,
-                base.treePercentMin(), base.treePercentMax(), base.lootBudget() * lootMult(), base.boss(), base.bossPower(), base.clearWeight(),
-                base.bossWeight(), base.vaultWeight());
+        return new ChartTier(base.tier(), base.fleetSize() + fleetSizePercent, fleetsMin, fleetsMax, base.officerLevelBonus() + officerLevelBonus,
+                base.officerCountBonus() + extraOfficers, base.fleetQuality() + fleetQualityPercent, base.fleetStrengthMin(), base.fleetStrengthMax(),
+                base.lootBudget() * lootMult(), base.boss(), base.boss() ? Math.max(0f, base.wardenSize() + wardenSizePercent) : base.wardenSize(),
+                base.clearWeight(), base.bossWeight(), base.vaultWeight());
     }
 
     private static float multiplier(float percent) {
@@ -190,8 +182,8 @@ public final class ChartGenContext {
         return Math.max(0, extraPois);
     }
 
-    public float fleetPowerMult() {
-        return multiplier(fleetPowerPercent);
+    public float fleetSizePercent() {
+        return fleetSizePercent;
     }
 
     public int extraFleets() {
@@ -206,16 +198,12 @@ public final class ChartGenContext {
         return extraOfficers;
     }
 
-    public int averageSModsBonus() {
-        return averageSModsBonus;
-    }
-
     public float fleetQualityPercent() {
         return fleetQualityPercent;
     }
 
-    public float bossPowerMult() {
-        return multiplier(bossPowerPercent);
+    public float wardenSizePercent() {
+        return wardenSizePercent;
     }
 
     private float qualityQuantityPercent() {
@@ -298,10 +286,10 @@ public final class ChartGenContext {
         if (isEmpty()) {
             return "no chart modifiers";
         }
-        return String.format(Locale.ROOT, "fleet power x%.2f, %+d fleet(s), %+d officer level(s), %+d officer(s), %+d S-mod(s), boss power x%.2f, "
-                        + "quality %+.0f%%, loot x%.2f (x%.2f without a vault), %+d point(s) of interest, hull item chance x%.2f, vault x%.2f, "
+        return String.format(Locale.ROOT, "fleet size %+.0f%%, %+d fleet(s), %+d officer level(s), %+d officer(s), warden size %+.0f%%, "
+                        + "fleet quality %+.0f%%, loot x%.2f (x%.2f without a vault), %+d point(s) of interest, hull item chance x%.2f, vault x%.2f, "
                         + "reward x%.2f, sensor range x%.2f, chart quality %d",
-                multiplier(fleetPowerPercent), extraFleets, officerLevelBonus, extraOfficers, averageSModsBonus, bossPowerMult(),
+                fleetSizePercent, extraFleets, officerLevelBonus, extraOfficers, wardenSizePercent,
                 fleetQualityPercent, lootMult(), lootMultWithoutVault(), extraPois(), itemChanceMult(), multiplier(vaultRichnessPercent), rewardMult(),
                 sensorRangeMult(), quality);
     }

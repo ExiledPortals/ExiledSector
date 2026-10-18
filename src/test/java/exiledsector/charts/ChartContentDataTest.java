@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -53,26 +54,28 @@ class ChartContentDataTest {
             assertEquals(tier, current.tier());
             assertNotEquals(ChartTier.fallback(tier), current, "tier " + tier + " should come from the CSV");
             if (previous != null) {
-                assertTrue(current.fleetPower() > previous.fleetPower(), "fleet power rises at tier " + tier);
+                assertTrue(current.fleetSize() > previous.fleetSize(), "fleet size rises at tier " + tier);
                 assertTrue(current.lootBudget() >= previous.lootBudget(), "loot budget never drops at tier " + tier);
-                assertTrue(current.treePercentMax() >= previous.treePercentMax(), "NPC trees never shrink at tier " + tier);
+                assertTrue(current.fleetStrengthMax() >= previous.fleetStrengthMax(), "fleet strength never drops at tier " + tier);
             }
-            assertTrue(current.treePercentMax() <= NpcTreeSize.HIGHEST_PERCENT);
+            assertTrue(current.fleetStrengthMax() <= NpcTreeSize.HIGHEST_PERCENT);
+            assertTrue(current.fleetSize() <= ChartContentPlanner.FLEET_SIZE_CAP, "tier " + tier + " fleets fit under the size cap");
+            assertTrue(current.wardenSize() <= ChartContentPlanner.WARDEN_SIZE_CAP, "tier " + tier + " warden fits under the size cap");
             previous = current;
         }
         assertFalse(ChartTiers.forTier(1).boss());
         assertEquals(0f, ChartTiers.forTier(1).weightFor(ChartObjective.VAULT));
         assertTrue(ChartTiers.forTier(15).boss());
-        assertTrue(ChartTiers.forTier(15).bossPower() > 0f);
+        assertTrue(ChartTiers.forTier(15).wardenSize() > 0f);
     }
 
     @Test
     void badTierRowsFallBackPerValueAndOutOfRangeTiersAreSkipped() throws Exception {
-        ChartTiers.register(new JSONArray("[{\"tier\": \"2\", \"fleet_power\": \"lots\", \"fleets_min\": \"3\", \"boss\": \"maybe\"},"
-                + " {\"tier\": \"99\", \"fleet_power\": \"10\"}, {\"tier\": \"x\"}, {\"tier\": \"\"}]"));
+        ChartTiers.register(new JSONArray("[{\"tier\": \"2\", \"fleet_size\": \"lots\", \"fleets_min\": \"3\", \"boss\": \"maybe\"},"
+                + " {\"tier\": \"99\", \"fleet_size\": \"10\"}, {\"tier\": \"x\"}, {\"tier\": \"\"}]"));
 
         ChartTier second = ChartTiers.forTier(2);
-        assertEquals(ChartTier.fallback(2).fleetPower(), second.fleetPower());
+        assertEquals(ChartTier.fallback(2).fleetSize(), second.fleetSize());
         assertEquals(3, second.fleetsMin());
         assertEquals(ChartTier.fallback(2).boss(), second.boss());
         assertEquals(ChartTier.fallback(7), ChartTiers.forTier(7));
@@ -86,14 +89,14 @@ class ChartContentDataTest {
 
         for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_TIER; tier++) {
             ChartTier fallback = ChartTiers.forTier(tier);
-            assertTrue(fallback.fleetPower() > 0f);
+            assertTrue(fallback.fleetSize() > 0f);
             assertTrue(fallback.fleetsMax() >= fallback.fleetsMin());
-            assertTrue(fallback.treePercentMin() <= fallback.treePercentMax());
+            assertTrue(fallback.fleetStrengthMin() <= fallback.fleetStrengthMax());
         }
     }
 
     @Test
-    void aFleetsChartTierPicksItsTreePercentRange() throws Exception {
+    void aFleetsChartTierPicksItsFleetStrengthRange() throws Exception {
         ChartTiers.register(csvRows(ChartTiers.PATH));
         MemoryAPI tierFifteen = mock(MemoryAPI.class);
         when(tierFifteen.get(ChartIds.TIER_MEMORY_KEY)).thenReturn(15);
@@ -101,10 +104,26 @@ class ChartContentDataTest {
         MemoryAPI garbled = mock(MemoryAPI.class);
         when(garbled.get(ChartIds.TIER_MEMORY_KEY)).thenReturn("fifteen");
 
-        assertEquals(new NpcTreeSize.PercentRange(200, 300), ChartTiers.treePercentRangeFor(tierFifteen));
-        assertNull(ChartTiers.treePercentRangeFor(notAChartFleet));
-        assertNull(ChartTiers.treePercentRangeFor(garbled));
-        assertNull(ChartTiers.treePercentRangeFor(null));
+        assertEquals(new NpcTreeSize.PercentRange(200, 300), ChartTiers.fleetStrengthRangeFor(tierFifteen));
+        assertNull(ChartTiers.fleetStrengthRangeFor(notAChartFleet));
+        assertNull(ChartTiers.fleetStrengthRangeFor(garbled));
+        assertNull(ChartTiers.fleetStrengthRangeFor(null));
+    }
+
+    @Test
+    void anOversizedFleetsStrengthBonusRaisesItsRangeUpToTheTreeCap() throws Exception {
+        ChartTiers.register(csvRows(ChartTiers.PATH));
+        ChartTier seventh = ChartTiers.forTier(7);
+        MemoryAPI tierSeven = mock(MemoryAPI.class);
+        when(tierSeven.get(ChartIds.TIER_MEMORY_KEY)).thenReturn(7);
+        when(tierSeven.get(ChartIds.STRENGTH_BONUS_MEMORY_KEY)).thenReturn(20);
+        MemoryAPI tierFifteen = mock(MemoryAPI.class);
+        when(tierFifteen.get(ChartIds.TIER_MEMORY_KEY)).thenReturn(15);
+        when(tierFifteen.get(ChartIds.STRENGTH_BONUS_MEMORY_KEY)).thenReturn(20);
+
+        assertEquals(new NpcTreeSize.PercentRange(seventh.fleetStrengthMin() + 20, seventh.fleetStrengthMax() + 20),
+                ChartTiers.fleetStrengthRangeFor(tierSeven));
+        assertEquals(new NpcTreeSize.PercentRange(220, NpcTreeSize.HIGHEST_PERCENT), ChartTiers.fleetStrengthRangeFor(tierFifteen));
     }
 
     @Test
@@ -172,6 +191,7 @@ class ChartContentDataTest {
         assertTrue(atOne.stream().anyMatch(faction -> faction.factionId().equals("pirates")));
         assertTrue(atOne.stream().noneMatch(faction -> faction.factionId().equals("remnant")));
         assertTrue(atFifteen.stream().anyMatch(faction -> faction.factionId().equals("remnant")));
+        assertEquals(loaded, atFifteen.stream().map(ChartFaction::factionId).collect(Collectors.toSet()), "every loaded faction can guard tier 15");
         assertTrue(atFifteen.stream().noneMatch(faction -> faction.factionId().equals("diableavionics")));
         assertEquals(ChartFaction.FALLBACK, ChartFactions.pick(ChartFactions.all(), 5, id -> false, new Random(1)));
         for (int seed = 0; seed < 50; seed++) {

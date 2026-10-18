@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class StarChartPreviewTest {
 
     private static final float TOLERANCE = 0.001f;
-    private static final ChartTier BASE_TIER = new ChartTier(5, 200f, 2, 4, 1, 1, 0.5f, 1, 90, 120, 14f, true, 100f, 1f, 1f, 1f);
+    private static final ChartTier BASE_TIER = new ChartTier(5, 185f, 2, 4, 1, 1, 50f, 90, 120, 14f, true, 350f, 1f, 1f, 1f);
 
     private static ChartGenContext with(int quality, AppliedEffect... effects) {
         return ChartGenContext.of(List.of(effects), quality);
@@ -55,12 +55,12 @@ class StarChartPreviewTest {
 
     @Test
     void onlyTheValuesAModifierMovesAreShown() {
-        ChartGenContext context = with(0, effect(ChartEffect.CHART_FLEET_POWER_PERCENT, 25f), effect(ChartEffect.CHART_EXTRA_FLEETS, 2f));
+        ChartGenContext context = with(0, effect(ChartEffect.CHART_FLEET_SIZE_PERCENT, 25f), effect(ChartEffect.CHART_EXTRA_FLEETS, 2f));
 
         List<ChartPreview.Line> lines = preview(context);
 
-        assertEquals(List.of(Stat.FLEET_POWER, Stat.EXTRA_FLEETS), lines.stream().map(ChartPreview.Line::stat).toList());
-        assertEquals(1.25f * (1f + 2f / 3f), lines.get(0).value(), TOLERANCE);
+        assertEquals(List.of(Stat.FLEET_SIZE, Stat.EXTRA_FLEETS), lines.stream().map(ChartPreview.Line::stat).toList());
+        assertEquals(25f, lines.get(0).value(), TOLERANCE);
         assertEquals(2f, lines.get(1).value(), TOLERANCE);
         assertFalse(lines.get(1).isRange());
         assertFalse(lines.get(0).favourable());
@@ -68,16 +68,14 @@ class StarChartPreviewTest {
     }
 
     @Test
-    void extraFleetsRaiseThePreviewedFleetPowerTheWayGenerationDoes() {
+    void extraFleetsAddFullSizeFleetsWithoutChangingTheFleetSize() {
         ChartGenContext context = with(0, effect(ChartEffect.CHART_EXTRA_FLEETS, 3f));
-        ChartTier adjusted = context.adjust(BASE_TIER);
 
         List<ChartPreview.Line> lines = preview(context);
 
-        assertEquals(List.of(Stat.FLEET_POWER, Stat.EXTRA_FLEETS), lines.stream().map(ChartPreview.Line::stat).toList());
-        assertEquals(2f, lines.get(0).value(), TOLERANCE);
-        assertEquals(adjusted.fleetPower() / BASE_TIER.fleetPower(), lines.get(0).value(), TOLERANCE);
-        assertEquals(List.of("Enemy fleet power x2", "Enemy fleets +3"), texts(context));
+        assertEquals(List.of(Stat.EXTRA_FLEETS), lines.stream().map(ChartPreview.Line::stat).toList());
+        assertEquals(BASE_TIER.fleetSize(), context.adjust(BASE_TIER).fleetSize(), TOLERANCE);
+        assertEquals(List.of("Enemy fleets +3"), texts(context));
     }
 
     @Test
@@ -98,11 +96,11 @@ class StarChartPreviewTest {
 
     @Test
     void enemyBonusesBelowZeroPreviewOnlyWhatTheTierCanLose() {
-        ChartGenContext context = with(0, effect(ChartEffect.CHART_OFFICER_LEVEL_BONUS, -3f), effect(ChartEffect.CHART_AVERAGE_SMODS_BONUS, -2f));
+        ChartGenContext context = with(0, effect(ChartEffect.CHART_OFFICER_LEVEL_BONUS, -3f), effect(ChartEffect.CHART_EXTRA_OFFICERS, -2f));
 
         List<ChartPreview.Line> lines = preview(context);
 
-        assertEquals(List.of(Stat.OFFICER_LEVELS, Stat.AVERAGE_SMODS), lines.stream().map(ChartPreview.Line::stat).toList());
+        assertEquals(List.of(Stat.OFFICER_LEVELS, Stat.EXTRA_OFFICERS), lines.stream().map(ChartPreview.Line::stat).toList());
         assertEquals(-1f, lines.get(0).value(), TOLERANCE);
         assertEquals(-1f, lines.get(1).value(), TOLERANCE);
         assertTrue(lines.get(0).favourable());
@@ -110,19 +108,19 @@ class StarChartPreviewTest {
 
     @Test
     void modifiersThatCancelOutPreviewNothing() {
-        ChartGenContext context = with(0, effect(ChartEffect.CHART_FLEET_POWER_PERCENT, 10f), effect(ChartEffect.CHART_FLEET_POWER_PERCENT, -10f));
+        ChartGenContext context = with(0, effect(ChartEffect.CHART_FLEET_SIZE_PERCENT, 10f), effect(ChartEffect.CHART_FLEET_SIZE_PERCENT, -10f));
 
         assertTrue(preview(context).isEmpty());
     }
 
     @Test
     void valuesThatRoundToNeutralAreLeftOutAndTheRestShowTheirRoundedChange() {
-        ChartGenContext tiny = with(0, effect(ChartEffect.CHART_FLEET_POWER_PERCENT, 0.4f), effect(ChartEffect.CHART_FLEET_QUALITY_PERCENT, 0.004f),
+        ChartGenContext tiny = with(0, effect(ChartEffect.CHART_FLEET_SIZE_PERCENT, 0.004f), effect(ChartEffect.CHART_FLEET_QUALITY_PERCENT, 0.004f),
                 effect(ChartEffect.CHART_VAULT_RICHNESS_PERCENT, 0.003f), effect(ChartEffect.CHART_SENSOR_RANGE_PERCENT, -0.4f));
-        ChartGenContext justVisible = with(0, effect(ChartEffect.CHART_FLEET_POWER_PERCENT, 0.6f));
+        ChartGenContext justVisible = with(0, effect(ChartEffect.CHART_FLEET_SIZE_PERCENT, 0.6f));
 
         assertTrue(preview(tiny).isEmpty(), preview(tiny).toString());
-        assertEquals(List.of("Enemy fleet power x1.01"), texts(justVisible));
+        assertEquals(List.of("Enemy fleet size +0.6%"), texts(justVisible));
     }
 
     @Test
@@ -143,14 +141,14 @@ class StarChartPreviewTest {
     @Test
     void everyEnemyStatIsReadFromItsOwnEffect() {
         ChartGenContext context = with(0, effect(ChartEffect.CHART_OFFICER_LEVEL_BONUS, 2f), effect(ChartEffect.CHART_EXTRA_OFFICERS, 1f),
-                effect(ChartEffect.CHART_AVERAGE_SMODS_BONUS, 1f), effect(ChartEffect.CHART_BOSS_POWER_PERCENT, 20f),
+                effect(ChartEffect.CHART_WARDEN_SIZE_PERCENT, 20f),
                 effect(ChartEffect.CHART_ITEM_DROP_CHANCE_PERCENT, 50f));
 
         List<ChartPreview.Line> lines = preview(context);
 
-        assertEquals(List.of(Stat.OFFICER_LEVELS, Stat.EXTRA_OFFICERS, Stat.AVERAGE_SMODS, Stat.BOSS_POWER, Stat.ITEM_CHANCE),
+        assertEquals(List.of(Stat.OFFICER_LEVELS, Stat.EXTRA_OFFICERS, Stat.WARDEN_SIZE, Stat.ITEM_CHANCE),
                 lines.stream().map(ChartPreview.Line::stat).toList());
-        assertEquals(List.of(2f, 1f, 1f, 1.2f, 1.5f), lines.stream().map(line -> ChartPreview.rounded(line.value())).toList());
+        assertEquals(List.of(2f, 1f, 20f, 1.5f), lines.stream().map(line -> ChartPreview.rounded(line.value())).toList());
     }
 
     @Test
@@ -160,10 +158,10 @@ class StarChartPreviewTest {
 
     @Test
     void previewLinesReadInEnglishWithTheValueColouredByWhetherItHelps() {
-        List<StyledText> lines = StarChartPreviewText.modifierLines(with(0, effect(ChartEffect.CHART_FLEET_POWER_PERCENT, 25f),
+        List<StyledText> lines = StarChartPreviewText.modifierLines(with(0, effect(ChartEffect.CHART_FLEET_SIZE_PERCENT, 25f),
                 effect(ChartEffect.CHART_FLEET_QUALITY_PERCENT, 15f), effect(ChartEffect.CHART_REWARD_PERCENT, 50f)), BASE_TIER);
 
-        assertEquals(List.of("Enemy fleet power x1.25", "Enemy fleet quality +15%", "Completion reward x1.5"),
+        assertEquals(List.of("Enemy fleet size +25%", "Enemy fleet quality +15%", "Completion reward x1.5"),
                 lines.stream().map(StyledText::plain).toList());
         assertEquals(Style.BAD, lines.get(0).spans().get(0).style());
         assertEquals(Style.GOOD, lines.get(2).spans().get(0).style());
@@ -180,6 +178,9 @@ class StarChartPreviewTest {
         String late = StarChartPreviewText.tierLine(ChartTiers.HIGHEST_TIER).plain();
         assertTrue(early.startsWith("Tier 1 baseline: " + withoutWarden.fleetsMin() + " to " + withoutWarden.fleetsMax()), early);
         assertFalse(early.contains("warden"), early);
-        assertTrue(late.contains("warden fleet"), late);
+        assertTrue(early.contains(Math.round(withoutWarden.fleetSize()) + "% fleet size"), early);
+        assertTrue(early.contains(Math.round(withoutWarden.fleetQuality()) + "% fleet quality"), early);
+        assertTrue(early.contains(withoutWarden.fleetStrengthMin() + "% to " + withoutWarden.fleetStrengthMax() + "% fleet strength"), early);
+        assertTrue(late.contains("warden fleet at " + Math.round(withWarden.wardenSize()) + "% fleet size"), late);
     }
 }

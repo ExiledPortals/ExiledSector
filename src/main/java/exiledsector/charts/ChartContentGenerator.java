@@ -187,7 +187,6 @@ public final class ChartContentGenerator {
         params.withOfficers = true;
         params.officerLevelBonus = planned.officerLevelBonus();
         params.officerNumberBonus = planned.officerCountBonus();
-        params.averageSMods = planned.averageSMods() > 0 ? planned.averageSMods() : null;
         if (planned.role() == FleetRole.BOSS) {
             params.forceAllowPhaseShipsEtc = true;
         }
@@ -202,9 +201,12 @@ public final class ChartContentGenerator {
         };
     }
 
-    static void prepareFleet(CampaignFleetAPI fleet, String runId, int tier, FleetRole role, long fleetSeed) {
+    static void prepareFleet(CampaignFleetAPI fleet, String runId, int tier, FleetRole role, int strengthBonus, long fleetSeed) {
         MemoryAPI memory = fleet.getMemoryWithoutUpdate();
         memory.set(ChartIds.TIER_MEMORY_KEY, tier);
+        if (strengthBonus > 0) {
+            memory.set(ChartIds.STRENGTH_BONUS_MEMORY_KEY, strengthBonus);
+        }
         memory.set(ChartIds.SEED_MEMORY_KEY, Long.toString(fleetSeed, Character.MAX_RADIX));
         memory.set(ChartIds.fleetRunKey(runId), true);
         for (String flag : HOSTILITY_FLAGS) {
@@ -356,7 +358,7 @@ public final class ChartContentGenerator {
             if (fleet == null || fleet.isEmpty()) {
                 return;
             }
-            prepareFleet(fleet, runId, tier, planned.role(), fleetSeed);
+            prepareFleet(fleet, runId, tier, planned.role(), planned.strengthBonus(), fleetSeed);
             SectorEntityToken guarded = planned.guardsPoi() && planned.poiIndex() < poiEntities.size() ? poiEntities.get(planned.poiIndex()) : null;
             Vector2f spawnAt = spawnLocation(planned.role(), guarded, oneFleetRandom);
             system.addEntity(fleet);

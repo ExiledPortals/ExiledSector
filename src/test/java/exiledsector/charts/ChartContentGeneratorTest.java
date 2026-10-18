@@ -197,11 +197,9 @@ class ChartContentGeneratorTest {
         assertEquals(250f, params.combatPts);
         assertEquals(3, params.officerLevelBonus);
         assertEquals(2, params.officerNumberBonus);
-        assertEquals(2, params.averageSMods);
+        assertNull(params.averageSMods);
         assertEquals(Boolean.TRUE, params.ignoreMarketFleetSizeMult);
         assertNotNull(params.random);
-        assertNull(ChartContentGenerator.fleetParams("pirates", new PlannedFleet(FleetRole.PATROL, -1, 50f, 0.3f, 0, 0, 0),
-                new Random(5)).averageSMods);
     }
 
     @Test
@@ -289,11 +287,23 @@ class ChartContentGeneratorTest {
         when(boss.getMemoryWithoutUpdate()).thenReturn(bossMemory);
         when(boss.hasAbility(anyString())).thenReturn(false);
 
-        ChartContentGenerator.prepareFleet(boss, RUN_ID, 9, FleetRole.BOSS, 77L);
+        ChartContentGenerator.prepareFleet(boss, RUN_ID, 9, FleetRole.BOSS, 12, 77L);
 
         verify(boss).setName(anyString());
         verify(boss, never()).removeAbility(anyString());
         assertTrue(boss.getMemoryWithoutUpdate().getBoolean(MemFlags.FLEET_FIGHT_TO_THE_LAST));
         assertEquals(9, boss.getMemoryWithoutUpdate().get(ChartIds.TIER_MEMORY_KEY));
+        assertEquals(12, boss.getMemoryWithoutUpdate().get(ChartIds.STRENGTH_BONUS_MEMORY_KEY));
+    }
+
+    @Test
+    void aFleetWithinItsSizeCapGetsNoStrengthBonus() {
+        CampaignFleetAPI patrol = engine.tagged(mock(CampaignFleetAPI.class));
+        MemoryAPI patrolMemory = FakeChartContentEngine.memory();
+        when(patrol.getMemoryWithoutUpdate()).thenReturn(patrolMemory);
+
+        ChartContentGenerator.prepareFleet(patrol, RUN_ID, 9, FleetRole.PATROL, 0, 78L);
+
+        assertFalse(patrol.getMemoryWithoutUpdate().contains(ChartIds.STRENGTH_BONUS_MEMORY_KEY));
     }
 }

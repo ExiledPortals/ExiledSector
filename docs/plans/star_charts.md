@@ -74,8 +74,8 @@ Each chart instance holds:
 The seed plus the definition reproduce the same system every time, so a chart is a recipe, not a saved system. That makes it trivial to preview, to tooltip and to regenerate after a crash.
 
 Tier sets:
-- the fleet power budget;
-- officer levels, quality, average S-mods and NPC skill-tree size;
+- fleet size, as a percentage of a standard 50 fleet point fleet (about a vanilla heavy patrol), and the warden fleet's size on the same scale;
+- officer levels, fleet quality (d-mods) and fleet strength (the NPC skill-tree size);
 - the loot budget;
 - which modifiers can roll, through a minimum-tier filter;
 - the value band each modifier rolls in;
@@ -86,10 +86,10 @@ Higher tiers add bosses and remove the easy system types.
 Modifiers follow Path of Exile, using main's modifier layer of prefixes, suffixes and implicits.
 
 Prefixes are difficulty. They raise reward quantity and rarity, as PoE's item quantity does:
-- stronger fleets;
+- larger fleets;
 - extra fleets;
+- higher fleet quality;
 - officers with elite skills;
-- S-mods;
 - monofleets;
 - an Omega or Remnant presence;
 - storms and hazardous terrain;

@@ -42,7 +42,7 @@ class StarChartCurrencyTest {
     private static final String SINGLE = "star_chart_single";
     private static final String SILENT_REACH = "unique_chart_silent_reach";
     private static final String WARDENS_VIGIL = "unique_chart_wardens_vigil";
-    private static final String FLEET_POWER = "HYBRID_CHART_FLEET_POWER";
+    private static final String FLEET_SIZE = "HYBRID_CHART_FLEET_SIZE";
     private static final Predicate<ItemDefinition> ANY_UNIQUE = definition -> true;
 
     private final ItemStore store = ItemStore.forStarCharts();
@@ -169,14 +169,14 @@ class StarChartCurrencyTest {
             while (ItemCrafting.canUse(CraftingCurrency.AUGMENTATION, chart, ANY_UNIQUE)) {
                 use(CraftingCurrency.AUGMENTATION, chart, seed);
             }
-            assertFalse(has(chart, "HYBRID_CHART_BOSS_POWER"), "seed " + seed);
+            assertFalse(has(chart, "HYBRID_CHART_WARDEN_SIZE"), "seed " + seed);
             assertFalse(has(chart, "CHART_VAULT_RICHNESS_PERCENT"), "seed " + seed);
         }
     }
 
     @Test
     void recalibrationRerollsTheRollPositionsAndKeepsTheModifiersAndTier() {
-        StarChart chart = storedWith(SINGLE, 7, candidate -> has(candidate, FLEET_POWER));
+        StarChart chart = storedWith(SINGLE, 7, candidate -> has(candidate, FLEET_SIZE));
         List<String> idsBefore = chart.explicits().stream().map(RolledModifier::modifierId).toList();
         List<RolledModifier> before = List.copyOf(chart.explicits());
 
@@ -238,7 +238,7 @@ class StarChartCurrencyTest {
         boolean beyondBand = false;
         for (long seed = 0; seed < 300; seed++) {
             StarChart chart = StarChartFixtures.chart(SINGLE, seed, 6);
-            if (!has(chart, FLEET_POWER)) {
+            if (!has(chart, FLEET_SIZE)) {
                 continue;
             }
             ItemCrafting.randomiseValues(chart, new Random(seed));
@@ -284,8 +284,7 @@ class StarChartCurrencyTest {
             List<RolledModifier> before = List.copyOf(chart.explicits());
             assertSame(chart, use(StarChartCurrency.REFORGE, chart, seed));
             assertNotEquals(before, chart.explicits());
-            assertFalse(has(chart, "HYBRID_CHART_BOSS_POWER"));
-            assertFalse(has(chart, "HYBRID_CHART_AVERAGE_SMODS"));
+            assertFalse(has(chart, "HYBRID_CHART_WARDEN_SIZE"));
             assertEquals(chart.explicits().size() <= 2 ? ItemRarity.COMMON : ItemRarity.RARE, chart.rarity());
             assertEquals(3, chart.tier());
             counts.merge(chart.explicits().size(), 1, Integer::sum);
@@ -331,20 +330,20 @@ class StarChartCurrencyTest {
 
     @Test
     void cartographyRaisesTheTierAndTheRollPositionsTakeTheNewBand() {
-        StarChart chart = storedWith(SINGLE, 5, candidate -> has(candidate, FLEET_POWER));
-        RolledModifier fleetPower = chart.explicits().stream().filter(rolled -> rolled.modifierId().equals(FLEET_POWER)).findFirst().orElseThrow();
-        ModifierLine line = ItemDefinitions.get(SINGLE).poolEntryFor(FLEET_POWER).modifier().line(fleetPower.lines().get(0).effectName());
-        float position = fleetPower.lines().get(0).magnitude();
+        StarChart chart = storedWith(SINGLE, 5, candidate -> has(candidate, FLEET_SIZE));
+        RolledModifier fleetSize = chart.explicits().stream().filter(rolled -> rolled.modifierId().equals(FLEET_SIZE)).findFirst().orElseThrow();
+        ModifierLine line = ItemDefinitions.get(SINGLE).poolEntryFor(FLEET_SIZE).modifier().line(fleetSize.lines().get(0).effectName());
+        float position = fleetSize.lines().get(0).magnitude();
         float tierFiveValue = line.valueFor(position, chart.scaleContext(null));
-        assertTrue(tierFiveValue >= 10f && tierFiveValue <= 15f);
+        assertTrue(tierFiveValue >= 15f && tierFiveValue <= 20f);
 
         assertSame(chart, use(StarChartCurrency.CARTOGRAPHY, chart, 1L));
 
         assertEquals(6, chart.tier());
-        RolledModifier after = chart.explicits().stream().filter(rolled -> rolled.modifierId().equals(FLEET_POWER)).findFirst().orElseThrow();
+        RolledModifier after = chart.explicits().stream().filter(rolled -> rolled.modifierId().equals(FLEET_SIZE)).findFirst().orElseThrow();
         assertEquals(position, after.lines().get(0).magnitude());
         float tierSixValue = line.valueFor(position, chart.scaleContext(null));
-        assertTrue(tierSixValue >= 20f && tierSixValue <= 30f, "value " + tierSixValue);
+        assertTrue(tierSixValue >= 50f && tierSixValue <= 70f, "value " + tierSixValue);
         StarChart reloaded = (StarChart) ItemData.of(chart).preview();
         assertEquals(6, reloaded.tier());
     }

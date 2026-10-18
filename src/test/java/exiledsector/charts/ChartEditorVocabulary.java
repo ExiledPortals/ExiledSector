@@ -17,8 +17,8 @@ public final class ChartEditorVocabulary {
         for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_TIER; tier++) {
             ChartTier fallback = ChartTier.fallback(tier);
             defaults.add("{\"tier\": " + tier + ", \"fleetsMin\": " + fallback.fleetsMin() + ", \"fleetsMax\": " + fallback.fleetsMax()
-                    + ", \"treePercentMin\": " + fallback.treePercentMin() + ", \"treePercentMax\": " + fallback.treePercentMax()
-                    + ", \"bossPower\": " + fallback.bossPower() + "}");
+                    + ", \"fleetStrengthMin\": " + fallback.fleetStrengthMin() + ", \"fleetStrengthMax\": " + fallback.fleetStrengthMax()
+                    + ", \"wardenSize\": " + fallback.wardenSize() + "}");
         }
         return defaults;
     }
