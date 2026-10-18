@@ -23,6 +23,7 @@ import exiledsector.ui.VanillaText;
 import exiledsector.ui.util.FramedPanelPlugin;
 import exiledsector.ui.util.HoloFrame;
 import exiledsector.ui.util.Rects;
+import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -205,6 +206,9 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
             return;
         }
         for (InputEventAPI event : events) {
+            if (event.isConsumed()) {
+                continue;
+            }
             boolean inside = contains(event.getX(), event.getY());
             if (event.isMouseDownEvent() && inside) {
                 onPressInside();
@@ -315,16 +319,26 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
         hoverTooltip.hide();
         confirmBlocker = Global.getSettings().createCustom(panelWidth, panelHeight, new InputBlocker());
         panelRoot.addComponent(confirmBlocker).inTL(0f, 0f);
-        float confirmWidth = panelWidth - PAD * 2f;
+        float confirmWidth = confirmWidth();
         confirmPanel = Global.getSettings().createCustom(confirmWidth, confirmHeight, new FramedPanelPlugin(this::buttonPressed));
         TooltipMakerAPI element = confirmPanel.createUIElement(confirmWidth - PAD * 2f, confirmHeight - PAD * 2f, false);
         bodyWriter.accept(element);
         float buttonWidth = (confirmWidth - PAD * 2f - GAP) / 2f;
-        element.addButton(Translation.text(confirmKey), confirmId, buttonWidth, CONFIRM_BUTTON_HEIGHT, 0f).getPosition().inBR(0f, 0f);
+        ButtonAPI confirmButton = element.addButton(Translation.text(confirmKey), confirmId, buttonWidth, CONFIRM_BUTTON_HEIGHT, 0f);
+        confirmButton.setShortcut(Keyboard.KEY_RETURN, false);
+        confirmButton.getPosition().inBR(0f, 0f);
         element.addButton(Translation.text(cancelKey), cancelId, buttonWidth, CONFIRM_BUTTON_HEIGHT, 0f).getPosition().inBL(0f, 0f);
         confirmPanel.addUIElement(element).inTL(PAD, PAD);
-        panelRoot.addComponent(confirmPanel).inTL(PAD, (panelHeight - confirmHeight) / 2f);
+        panelRoot.addComponent(confirmPanel).inTL((panelWidth - confirmWidth) / 2f, (panelHeight - confirmHeight) / 2f);
         refreshOpacity();
+    }
+
+    protected float confirmWidth() {
+        return panelWidth - PAD * 2f;
+    }
+
+    static boolean ctrlHeld() {
+        return Keyboard.isCreated() && (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL));
     }
 
     final void closeConfirm() {

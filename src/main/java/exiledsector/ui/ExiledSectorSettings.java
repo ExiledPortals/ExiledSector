@@ -68,6 +68,9 @@ public final class ExiledSectorSettings {
         SettingsCreator.addBoolean(MOD_ID, RefitButtonConfig.FIELD_ID,
                 Translation.text("settings.refit.buttonUnderHullMods.name"), Translation.text("settings.refit.buttonUnderHullMods.tooltip"),
                 RefitButtonConfig.DEFAULT, MAIN_TAB);
+        SettingsCreator.addKeybind(MOD_ID, RefitButtonConfig.BENCH_KEYBIND_FIELD_ID,
+                Translation.text("settings.refit.benchKey.name"), Translation.text("settings.refit.benchKey.tooltip"),
+                RefitButtonConfig.DEFAULT_BENCH_KEY, MAIN_TAB);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_soundsHeader", Translation.text("settings.sounds.header"), MAIN_TAB);
         SettingsCreator.addBoolean(MOD_ID, SkillTreeSounds.ENABLED_FIELD_ID,

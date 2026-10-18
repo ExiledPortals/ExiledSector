@@ -69,6 +69,7 @@ import exiledsector.items.SocketTypeMigration;
 import exiledsector.items.StarChartItems;
 import exiledsector.ui.ExiledSectorSettings;
 import exiledsector.ui.HullUpgradesRefitButton;
+import exiledsector.ui.ModificationBenchRefitButton;
 import exiledsector.ui.SkillTreeRefitButton;
 import exiledsector.ui.TreeCameraMemory;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
@@ -97,6 +98,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         localiseHullModText();
         SkillTreeRefitButton.addButton();
         HullUpgradesRefitButton.addButton();
+        ModificationBenchRefitButton.addButton();
         ExiledSectorSettings.register();
         EffectAliases.load();
         SkillTree.load();

@@ -46,6 +46,22 @@ public record StyledText(String plain, List<Span> spans) {
         return new StyledText(plain, inverted);
     }
 
+    public StyledText withUnstyledAs(Style style) {
+        List<Span> filled = new ArrayList<>(spans.size() * 2 + 1);
+        int position = 0;
+        for (Span span : spans) {
+            if (span.start() > position) {
+                filled.add(new Span(position, span.start(), style));
+            }
+            filled.add(span);
+            position = span.end();
+        }
+        if (position < plain.length()) {
+            filled.add(new Span(position, plain.length(), style));
+        }
+        return new StyledText(plain, filled);
+    }
+
     public StyledText append(String literal) {
         return new StyledText(plain + literal, spans);
     }

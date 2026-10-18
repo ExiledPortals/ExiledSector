@@ -51,7 +51,7 @@ public final class CargoIconFx {
     private static final float BRACKET_ARM = 0.26f;
     private static final float BADGE_SIZE = 3.5f;
     private static final float BADGE_MARGIN = 7f;
-    private static final int BASE_SPECKS = 6;
+    private static final int BASE_SPECKS = 12;
     private static final float BASE_SWARM_SPEED = 0.5f;
     private static final float SPECK_SIZE = 1.1f;
     private static final float SPECK_ALPHA = 0.85f;
@@ -62,7 +62,7 @@ public final class CargoIconFx {
     private static final float FERAL_JITTER = 0.08f;
     private static final float SPLIT_RATE = 0.4f;
     private static final float SPLIT_DISTANCE = 0.09f;
-    private static final int SLURRY_BUBBLES = 4;
+    private static final int SLURRY_BUBBLES = 8;
     private static final float SLURRY_RISE_SECONDS = 3.5f;
     private static final float SLURRY_SIZE = 1.3f;
     private static final float SLURRY_ALPHA = 0.55f;
@@ -71,6 +71,8 @@ public final class CargoIconFx {
     private static final float SLURRY_BLUE = 0.65f;
     private static final float LATTICE_SPACING = 0.35f;
     private static final float LATTICE_SCAN_RATE = 0.7f;
+    private static final int LATTICE_ROWS = 6;
+    private static final float LATTICE_ROW_SHARE = 0.5f;
     private static final Color SPARK_COLOR = new Color(255, 250, 235);
     private static final Color ARC_CORE_COLOR = new Color(235, 245, 255);
     private static final long START_NANOS = System.nanoTime();
@@ -245,9 +247,9 @@ public final class CargoIconFx {
 
     static int speckCount(CargoIconLook look) {
         int count = BASE_SPECKS;
-        count += look.rings() ? 3 : 0;
-        count += look.arcs() ? 3 : 0;
-        count += look.prismatic() ? 2 : 0;
+        count += look.rings() ? 6 : 0;
+        count += look.arcs() ? 6 : 0;
+        count += look.prismatic() ? 4 : 0;
         return count;
     }
 
@@ -326,11 +328,12 @@ public final class CargoIconFx {
         float spacing = iconHalf * LATTICE_SPACING;
         float scan = (t * LATTICE_SCAN_RATE) % 1f * 4f - 1f;
         for (int column = -1; column <= 1; column++) {
-            for (int row = -1; row <= 1; row++) {
+            for (int row = 0; row < LATTICE_ROWS; row++) {
+                float rowOffset = (row - (LATTICE_ROWS - 1) / 2f) * spacing * LATTICE_ROW_SHARE;
                 float distance = Math.abs((column + 1) - scan);
                 float pulse = Math.max(0f, 1f - distance * 1.5f);
                 float hum = (float) Math.sin(t * 6f + column * 1.7f + row * 2.3f) * 0.4f;
-                speck(cx + column * spacing + hum, cy + row * spacing, SPECK_SIZE, red, green, blue,
+                speck(cx + column * spacing + hum, cy + rowOffset, SPECK_SIZE, red, green, blue,
                         (0.3f + 0.7f * pulse) * SPECK_ALPHA * alphaMult);
             }
         }

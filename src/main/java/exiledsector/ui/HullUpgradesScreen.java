@@ -22,10 +22,13 @@ import exiledsector.ui.socket.HullUpgradePanel;
 import exiledsector.ui.socket.SocketPanelPlacement;
 import exiledsector.ui.socket.SocketPanelTab;
 import exiledsector.ui.socket.ItemStoragePanel;
+import exiledsector.ui.socket.ModificationBay;
+import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.Fade;
 import lunalib.lunaRefit.BaseRefitButton;
 import org.lwjgl.input.Keyboard;
 
+import java.awt.Color;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -34,6 +37,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
 
     static final float OPEN_SECONDS = 0.25f;
     static final float CONTENT_SECONDS = 0.3f;
+    private static final float BAY_BACKDROP_ALPHA = 0.8f;
 
     private final FleetMemberAPI member;
     private final ShipVariantAPI variant;
@@ -49,6 +53,8 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     private SectionsDisplay sectionsDisplay;
     private ItemStoragePanel storagePanel;
     private HullUpgradePanel upgradesPanel;
+    private ModificationBay bay;
+    private float bayDim;
     private Map<String, FleetMemberAPI> ownedShips = Map.of();
     private Item placingItem;
     private ShipSection targetedSection;
@@ -100,7 +106,8 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
         if (storagePanel != null && treeSession.statsRevision() != storageRevision) {
             refreshStorage();
         }
-        sectionsDisplay.advance(amount, mouseX, mouseY, contentLevel >= 0.5f && !pointerOverPanel);
+        bayDim = Fade.step(bayDim, bay != null, amount / OPEN_SECONDS);
+        sectionsDisplay.advance(amount, mouseX, mouseY, contentLevel >= 0.5f && !pointerOverPanel && bay == null);
         if (closing && openLevel <= 0f && !closeRequested) {
             closeRequested = true;
             sectionsDisplay.hideTooltip();
@@ -155,7 +162,33 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
                 sectionsDisplay.hideTooltip();
             }
         }, kindFilter, tabListener);
+        storagePanel.setModifyHandler(this::openBay);
         storageRevision = treeSession.statsRevision();
+    }
+
+    private void openBay() {
+        if (bay != null || closing || storagePanel == null) {
+            return;
+        }
+        ItemStoragePanel swapped = storagePanel;
+        forgetStorage();
+        swapped.swapOut();
+        SkillTreeSounds.panelOpened();
+        bay = ModificationBay.open(hostPanel, ModificationBenchScreen.benchArea(Global.getSettings().getScreenWidth(),
+                Global.getSettings().getScreenHeight(), false), SocketCustody.shipNames(ownedShips), new ModificationBay.Listener() {
+            @Override
+            public void closed() {
+                bay = null;
+                if (!closing) {
+                    showStorage(null);
+                }
+            }
+
+            @Override
+            public void pressedInside() {
+                sectionsDisplay.hideTooltip();
+            }
+        });
     }
 
     private void switchTab(SocketPanelTab tab) {
@@ -251,6 +284,9 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
         }
         closing = true;
         sectionsDisplay.hideTooltip();
+        if (bay != null) {
+            bay.close();
+        }
         if (storagePanel != null) {
             storagePanel.close();
         }
@@ -260,6 +296,12 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     }
 
     private void pressLeft(float x, float y) {
+        if (bay != null) {
+            if (!bay.contains(x, y)) {
+                bay.close();
+            }
+            return;
+        }
         if (!insideFrame(x, y)) {
             close();
             return;
@@ -286,7 +328,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     }
 
     private int sectionIndexAt(float x, float y) {
-        boolean sectionsLive = contentLevel >= 0.5f && (storagePanel == null || !storagePanel.isWorkbenchOpen());
+        boolean sectionsLive = contentLevel >= 0.5f && bay == null && (storagePanel == null || !storagePanel.isWorkbenchOpen());
         return sectionsLive ? sectionsDisplay.sectionAt(x, y) : -1;
     }
 
@@ -302,6 +344,10 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     }
 
     private void escape() {
+        if (bay != null) {
+            bay.escape();
+            return;
+        }
         if (storagePanel != null && storagePanel.escape()) {
             return;
         }
@@ -325,7 +371,8 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     }
 
     private boolean panelContains(float x, float y) {
-        return (storagePanel != null && (storagePanel.contains(x, y) || storagePanel.workbenchContains(x, y)))
+        return (bay != null && bay.contains(x, y))
+                || (storagePanel != null && (storagePanel.contains(x, y) || storagePanel.workbenchContains(x, y)))
                 || (upgradesPanel != null && upgradesPanel.contains(x, y));
     }
 
@@ -368,5 +415,9 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
         portrait.draw(shipX, layout.shipCentreY(), layout.shipZoom(), frameAlpha);
         SkillTreeFleetRenderer.InspectedShip ship = portrait.at(shipX, layout.shipCentreY(), layout.shipZoom());
         sectionsDisplay.render(ship, shipExtent, alphaMult * Fade.smooth(contentLevel), screenLayout.sectionBounds(), placingItem, targetedSection);
+        if (bayDim > 0f) {
+            GLDraw.fillQuad(0f, 0f, Global.getSettings().getScreenWidth(), Global.getSettings().getScreenHeight(), Color.BLACK,
+                    BAY_BACKDROP_ALPHA * Fade.smooth(bayDim) * alphaMult);
+        }
     }
 }

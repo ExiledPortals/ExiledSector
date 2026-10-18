@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
+import exiledsector.i18n.Style;
 import exiledsector.modifiers.ModifierSlot;
 import org.mockito.Mockito;
 import org.json.JSONArray;
@@ -215,14 +216,14 @@ class ItemCraftingTest {
 
     @Test
     void costsComeFromTheCraftingCsvAndFallBackToTheDefaults() throws Exception {
-        assertEquals(100, CraftingCurrency.TRANSPOSITION.partsCost());
+        assertEquals(50, CraftingCurrency.CORRUPTION.partsCost());
 
         ItemCraftingCosts.register(new JSONArray()
-                .put(new JSONObject().put("item", CraftingCurrency.TRANSPOSITION.itemId()).put("partsCost", "55"))
-                .put(new JSONObject().put("item", CraftingCurrency.RECALIBRATION.itemId()).put("partsCost", "lots")));
+                .put(new JSONObject().put("item", CraftingCurrency.CORRUPTION.itemId()).put("partsCost", "55"))
+                .put(new JSONObject().put("item", CraftingCurrency.SUBSTITUTION.itemId()).put("partsCost", "lots")));
 
-        assertEquals(55, CraftingCurrency.TRANSPOSITION.partsCost());
-        assertEquals(20, CraftingCurrency.RECALIBRATION.partsCost());
+        assertEquals(55, CraftingCurrency.CORRUPTION.partsCost());
+        assertEquals(20, CraftingCurrency.SUBSTITUTION.partsCost());
     }
 
     @Test
@@ -239,7 +240,8 @@ class ItemCraftingTest {
             ItemCrafting.recalibrate(item, new Random(seed));
             assertTrue(item.explicits().contains(locked), "the fixed effect keeps its rolled value");
         }
-        assertTrue(item.effectLines().stream().anyMatch(line -> line.plain().endsWith("(Immutable)")));
+        assertTrue(item.effectLines().stream().anyMatch(line -> line.spans().stream().anyMatch(span -> span.style() == Style.IMMUTABLE)));
+        assertTrue(item.effectLines().stream().noneMatch(line -> line.plain().contains("(Immutable)")));
     }
 
     @Test

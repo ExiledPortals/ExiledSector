@@ -112,15 +112,38 @@ class ItemCurrenciesTest {
     }
 
     @Test
-    void everyBuiltInCurrencyIsRegisteredInOrderWithItsOldValues() {
+    void materialsGetRarerAndCostlierToGrowInTheIntendedOrder() {
+        List<String> commonestFirst = List.of(
+                CraftingCurrency.AUGMENTATION.itemId(), CraftingCurrency.ATTUNEMENT.itemId(), CraftingCurrency.SUBSTITUTION.itemId(),
+                CraftingCurrency.CORRUPTION.itemId(), CraftingWard.PREFIX.itemId(), CraftingWard.SUFFIX.itemId(),
+                CraftingCurrency.TRANSPOSITION.itemId(), CraftingCurrency.RECALIBRATION.itemId(), CraftingCurrency.FIXATION.itemId(),
+                CraftingCurrency.REPLICATION.itemId());
+        float previousWeight = Float.MAX_VALUE;
+        int previousCost = 0;
+        for (String itemId : commonestFirst) {
+            CraftingCurrency currency = CraftingCurrency.byItemId(itemId);
+            float weight = currency != null ? currency.dropWeight() : CraftingWard.byItemId(itemId).dropWeight();
+            assertTrue(weight <= previousWeight, itemId + " drops more often than the material before it");
+            previousWeight = weight;
+            if (currency != null && currency.synthesisable()) {
+                assertTrue(currency.partsCost() > previousCost, itemId + " is not dearer to grow than a commoner material");
+                previousCost = currency.partsCost();
+            }
+        }
+        assertTrue(CraftingWard.PREFIX.dropWeight() < CraftingCurrency.CORRUPTION.dropWeight());
+        assertTrue(CraftingCurrency.TRANSPOSITION.dropWeight() < CraftingWard.SUFFIX.dropWeight());
+    }
+
+    @Test
+    void everyBuiltInCurrencyIsRegisteredCommonestFirstWithItsValues() {
         List<Expected> expected = List.of(
                 new Expected("exiledSector_augmentation_kernel", "augmentation", 10, 6f, MaterialTier.MINOR, true),
-                new Expected("exiledSector_attunement_kernel", "attunement", 10, 4f, MaterialTier.MINOR, true),
-                new Expected("exiledSector_recalibration_kernel", "recalibration", 20, 3f, MaterialTier.MAJOR, true),
+                new Expected("exiledSector_attunement_kernel", "attunement", 15, 4f, MaterialTier.MINOR, true),
                 new Expected("exiledSector_substitution_kernel", "substitution", 20, 3f, MaterialTier.MAJOR, true),
-                new Expected("exiledSector_transposition_kernel", "transposition", 100, 1f, MaterialTier.EXOTIC, true),
-                new Expected("exiledSector_fixation_kernel", "fixation", 100, 1f, MaterialTier.EXOTIC, true),
                 new Expected("exiledSector_corruption_kernel", "corruption", 50, 1.5f, MaterialTier.EXOTIC, true),
+                new Expected("exiledSector_transposition_kernel", "transposition", 0, 0.4f, MaterialTier.MYTHIC, false),
+                new Expected("exiledSector_recalibration_kernel", "recalibration", 0, 0.3f, MaterialTier.MYTHIC, false),
+                new Expected("exiledSector_fixation_kernel", "fixation", 0, 0.2f, MaterialTier.MYTHIC, false),
                 new Expected("exiledSector_replication_kernel", "replication", 0, 0.035f, MaterialTier.MYTHIC, false));
 
         assertEquals(Arrays.asList(CraftingCurrency.values()), ItemCurrencies.all());
