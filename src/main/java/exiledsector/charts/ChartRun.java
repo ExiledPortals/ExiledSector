@@ -9,7 +9,7 @@ public final class ChartRun {
     static final String ID_SEPARATOR = "|";
 
     private final String runId;
-    private final String pocketSystemId;
+    private final String systemId;
     private final String outerWormholeId;
     private final String innerWormholeId;
     private final String originLocationId;
@@ -38,7 +38,7 @@ public final class ChartRun {
 
     public ChartRun(String runId, String originLocationId, float originX, float originY, int entriesAllowed) {
         this.runId = runId;
-        this.pocketSystemId = ChartIds.pocketSystemId(runId);
+        this.systemId = ChartIds.systemId(runId);
         this.outerWormholeId = ChartIds.outerWormholeId(runId);
         this.innerWormholeId = ChartIds.innerWormholeId(runId);
         this.originLocationId = originLocationId;
@@ -59,8 +59,8 @@ public final class ChartRun {
         return runId;
     }
 
-    public String pocketSystemId() {
-        return pocketSystemId;
+    public String systemId() {
+        return systemId;
     }
 
     public String outerWormholeId() {
@@ -289,7 +289,7 @@ public final class ChartRun {
         returnRequested = false;
     }
 
-    public ChartRunState recordLeftPocket() {
+    public ChartRunState recordLeftSystem() {
         if (runState() == ChartRunState.INSIDE) {
             boolean outerStillOpen = returnRequested && !outerCollapsed && entriesLeft() > 0;
             runState = outerStillOpen ? ChartRunState.OPEN : ChartRunState.CLOSING;

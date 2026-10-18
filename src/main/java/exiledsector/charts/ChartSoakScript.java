@@ -22,17 +22,17 @@ import java.util.function.Consumer;
 
 public class ChartSoakScript implements EveryFrameScript {
 
-    static final int MAX_FRAMES_PER_POCKET = 600;
+    static final int MAX_FRAMES_PER_SYSTEM = 600;
     static final List<String> COMPARED_COUNTS = List.of("used procgen names", "Hyperspace Topography scans", "star systems",
             "hyperspace entities other than fleets", "chart-tagged entities", "Economy markets", "intel", "fleets in the sector",
             "chart fleets anywhere", "sector scripts", "sector listeners");
     private static final Logger LOG = Logger.getLogger(ChartSoakScript.class);
 
-    private final int pocketsToSoak;
+    private final int systemsToSoak;
     private final Consumer<String> reporter;
     private final Random random;
     private final ChartCensus before;
-    private int pocketsDone;
+    private int systemsDone;
     private int generatedLayouts;
     private int fallbackLayouts;
     private final Set<String> typesSeen = new TreeSet<>();
@@ -43,11 +43,11 @@ public class ChartSoakScript implements EveryFrameScript {
     private int chartsOpened;
     private int framesWaiting;
     private String pendingRunId;
-    private StarSystemAPI pendingPocket;
+    private StarSystemAPI pendingSystem;
     private boolean done;
 
-    public ChartSoakScript(int pocketsToSoak, ChartCensus before, Consumer<String> reporter, Random random) {
-        this.pocketsToSoak = pocketsToSoak;
+    public ChartSoakScript(int systemsToSoak, ChartCensus before, Consumer<String> reporter, Random random) {
+        this.systemsToSoak = systemsToSoak;
         this.before = before;
         this.reporter = reporter;
         this.random = random;
@@ -58,8 +58,8 @@ public class ChartSoakScript implements EveryFrameScript {
         return done;
     }
 
-    int pocketsDone() {
-        return pocketsDone;
+    int systemsDone() {
+        return systemsDone;
     }
 
     int chartsOpened() {
@@ -79,14 +79,14 @@ public class ChartSoakScript implements EveryFrameScript {
         try {
             step(Global.getSector());
         } catch (RuntimeException | LinkageError e) {
-            LOG.error("[ExiledSector] The Star Chart soak failed after " + pocketsDone + " pocket(s)", e);
-            finish(Global.getSector(), "failed after " + pocketsDone + " pocket(s): " + e);
+            LOG.error("[ExiledSector] The Star Chart soak failed after " + systemsDone + " system(s)", e);
+            finish(Global.getSector(), "failed after " + systemsDone + " system(s): " + e);
         }
     }
 
     void step(SectorAPI sector) {
         if (pendingRunId == null) {
-            if (pocketsDone >= pocketsToSoak) {
+            if (systemsDone >= systemsToSoak) {
                 finish(sector, "finished");
                 return;
             }
@@ -95,30 +95,30 @@ public class ChartSoakScript implements EveryFrameScript {
         }
         framesWaiting++;
         boolean recordGone = ChartRuns.currentOrNull() == null;
-        boolean systemGone = pendingPocket == null || !sector.getStarSystems().contains(pendingPocket);
+        boolean systemGone = pendingSystem == null || !sector.getStarSystems().contains(pendingSystem);
         if (recordGone && systemGone) {
-            pocketsDone++;
+            systemsDone++;
             pendingRunId = null;
-            pendingPocket = null;
+            pendingSystem = null;
             framesWaiting = 0;
             return;
         }
-        if (framesWaiting > MAX_FRAMES_PER_POCKET) {
-            finish(sector, "stopped: pocket " + pendingRunId + " was still there after " + MAX_FRAMES_PER_POCKET + " frames");
+        if (framesWaiting > MAX_FRAMES_PER_SYSTEM) {
+            finish(sector, "stopped: system " + pendingRunId + " was still there after " + MAX_FRAMES_PER_SYSTEM + " frames");
         }
     }
 
     private void openNext(SectorAPI sector) {
-        StarChart chart = chartForIteration(pocketsDone, random);
+        StarChart chart = chartForIteration(systemsDone, random);
         ChartRunActions.OpenResult result;
         if (chart != null) {
             result = ChartRunActions.openWithChart(sector, 1, random, chart);
         } else {
-            ChartLayoutRequest layoutRequest = new ChartLayoutRequest(random.nextLong(), typeForIteration(pocketsDone), tierForIteration(pocketsDone));
+            ChartLayoutRequest layoutRequest = new ChartLayoutRequest(random.nextLong(), typeForIteration(systemsDone), tierForIteration(systemsDone));
             result = ChartRunActions.openBesidePlayer(sector, 1, random, layoutRequest);
         }
         if (result != ChartRunActions.OpenResult.OPENED) {
-            finish(sector, "stopped: opening pocket " + (pocketsDone + 1) + " returned " + result);
+            finish(sector, "stopped: opening system " + (systemsDone + 1) + " returned " + result);
             return;
         }
         if (chart != null) {
@@ -138,7 +138,7 @@ public class ChartSoakScript implements EveryFrameScript {
         fleetsGenerated += run.contentFleets();
         poisGenerated += run.contentPois();
         pendingRunId = run.runId();
-        pendingPocket = sector.getStarSystem(run.pocketSystemId());
+        pendingSystem = sector.getStarSystem(run.systemId());
         framesWaiting = 0;
         run.collapseOuter();
     }
@@ -166,13 +166,13 @@ public class ChartSoakScript implements EveryFrameScript {
 
     private void finish(SectorAPI sector, String outcome) {
         done = true;
-        pendingPocket = null;
+        pendingSystem = null;
         ChartCensus after = ChartCensus.take(sector);
         List<String> changes = after.changesSince(before);
-        String report = "Star Chart soak " + outcome + ", " + pocketsDone + " of " + pocketsToSoak + " pocket(s) opened and closed.\n"
+        String report = "Star Chart soak " + outcome + ", " + systemsDone + " of " + systemsToSoak + " system(s) opened and closed.\n"
                 + "Layouts: " + generatedLayouts + " generated, " + fallbackLayouts + " fell back to a single star; types " + typesSeen + ".\n"
                 + "Content: " + fleetsGenerated + " fleet(s) and " + poisGenerated + " point(s) of interest across tiers " + tiersSeen
-                + ", objectives " + objectivesSeen + "; " + chartsOpened + " pocket(s) opened from rolled Star Charts with modifiers.\n"
+                + ", objectives " + objectivesSeen + "; " + chartsOpened + " system(s) opened from rolled Star Charts with modifiers.\n"
                 + (changes.isEmpty() ? "Unchanged before vs after: " + String.join(", ", COMPARED_COUNTS) + "."
                 : "CHANGED before vs after: " + String.join("; ", changes)
                 + " (fleets and intel can also change if the game ran unpaused during the soak).")

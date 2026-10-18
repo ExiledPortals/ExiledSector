@@ -37,7 +37,7 @@ class ChartRunScriptTest {
 
     private MockedStatic<Global> globalMock;
     private SectorAPI sector;
-    private StarSystemAPI pocket;
+    private StarSystemAPI system;
     private LocationAPI hyperspace;
     private CampaignFleetAPI playerFleet;
     private AbilityPlugin transverseJump;
@@ -52,7 +52,7 @@ class ChartRunScriptTest {
         when(sector.getPersistentData()).thenReturn(persistentData);
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSector).thenReturn(sector);
-        pocket = mock(StarSystemAPI.class);
+        system = mock(StarSystemAPI.class);
         hyperspace = mock(LocationAPI.class);
         playerFleet = mock(CampaignFleetAPI.class);
         transverseJump = mock(AbilityPlugin.class);
@@ -61,8 +61,8 @@ class ChartRunScriptTest {
         when(sector.getPlayerFleet()).thenReturn(playerFleet);
         when(sector.getHyperspace()).thenReturn(hyperspace);
         when(sector.getCampaignUI()).thenReturn(campaignUi);
-        when(sector.getStarSystem(ChartIds.pocketSystemId(RUN_ID))).thenReturn(pocket);
-        when(sector.getStarSystems()).thenReturn(List.of(pocket));
+        when(sector.getStarSystem(ChartIds.systemId(RUN_ID))).thenReturn(system);
+        when(sector.getStarSystems()).thenReturn(List.of(system));
         when(sector.getEntityById(ChartIds.outerWormholeId(RUN_ID))).thenReturn(outer);
         when(outer.getContainingLocation()).thenReturn(hyperspace);
         when(playerFleet.getAbility(Abilities.TRANSVERSE_JUMP)).thenReturn(transverseJump);
@@ -96,7 +96,7 @@ class ChartRunScriptTest {
     @Test
     void arrivingWithTheLastEntryCollapsesTheOuterWormholeAndBlocksTransverseJump() {
         ChartRun run = storeRun(1);
-        playerIn(pocket);
+        playerIn(system);
 
         watchdog.advance(0.1f);
 
@@ -108,7 +108,7 @@ class ChartRunScriptTest {
     @Test
     void transverseJumpStaysBlockedEveryFrameInside() {
         storeRun(2);
-        playerIn(pocket);
+        playerIn(system);
 
         watchdog.advance(0f);
         watchdog.advance(0f);
@@ -120,7 +120,7 @@ class ChartRunScriptTest {
     @Test
     void arrivingWithEntriesLeftKeepsTheOuterWormhole() {
         ChartRun run = storeRun(2);
-        playerIn(pocket);
+        playerIn(system);
 
         watchdog.advance(0.1f);
 
@@ -131,7 +131,7 @@ class ChartRunScriptTest {
     @Test
     void nothingChangesWhileThePlayerIsMidJump() {
         ChartRun run = storeRun(1);
-        playerIn(pocket);
+        playerIn(system);
         watchdog.advance(0.1f);
         run.requestReturn();
         playerIn(hyperspace);
@@ -146,7 +146,7 @@ class ChartRunScriptTest {
     @Test
     void returningWithEntriesLeftReopensTheRun() {
         ChartRun run = storeRun(2);
-        playerIn(pocket);
+        playerIn(system);
         watchdog.advance(0.1f);
         run.requestReturn();
         playerIn(hyperspace);
@@ -158,14 +158,14 @@ class ChartRunScriptTest {
     }
 
     @Test
-    void leavingWithEntriesLeftDropsACourseLaidToSomethingInsideThePocket() {
+    void leavingWithEntriesLeftDropsACourseLaidToSomethingInsideTheSystem() {
         ChartRun run = storeRun(2);
         FakeCampaignUiData uiData = new FakeCampaignUiData();
-        CustomCampaignEntityAPI pocketPlanet = mock(CustomCampaignEntityAPI.class);
-        when(pocketPlanet.getContainingLocation()).thenReturn(pocket);
-        uiData.setCourseTarget(pocketPlanet);
+        CustomCampaignEntityAPI systemPlanet = mock(CustomCampaignEntityAPI.class);
+        when(systemPlanet.getContainingLocation()).thenReturn(system);
+        uiData.setCourseTarget(systemPlanet);
         when(sector.getUIData()).thenReturn(uiData);
-        playerIn(pocket);
+        playerIn(system);
         watchdog.advance(0.1f);
         run.requestReturn();
         playerIn(hyperspace);
@@ -180,7 +180,7 @@ class ChartRunScriptTest {
     @Test
     void dyingInsideClosesTheRunOnALaterFrameOnceNoDialogIsShowing() {
         ChartRun run = storeRun(3);
-        playerIn(pocket);
+        playerIn(system);
         watchdog.advance(0.1f);
         playerIn(hyperspace);
         when(campaignUi.isShowingDialog()).thenReturn(true);
@@ -196,14 +196,14 @@ class ChartRunScriptTest {
         verify(sector, never()).removeStarSystemNextFrame(any());
         watchdog.advance(0.1f);
 
-        verify(sector).removeStarSystemNextFrame(pocket);
+        verify(sector).removeStarSystemNextFrame(system);
         assertNull(ChartRuns.currentOrNull());
     }
 
     @Test
     void anAbortedReturnClearsTheRequestSoALaterDeathStillCloses() {
         ChartRun run = storeRun(3);
-        playerIn(pocket);
+        playerIn(system);
         watchdog.advance(0.1f);
         run.requestReturn();
 
@@ -221,14 +221,14 @@ class ChartRunScriptTest {
         verify(sector, never()).removeStarSystemNextFrame(any());
         watchdog.advance(0f);
 
-        verify(sector).removeStarSystemNextFrame(pocket);
+        verify(sector).removeStarSystemNextFrame(system);
         assertNull(ChartRuns.currentOrNull());
     }
 
     @Test
-    void aClosingRunWaitsWhileThePlayerIsStillInsideThePocket() {
+    void aClosingRunWaitsWhileThePlayerIsStillInsideTheSystem() {
         ChartRun run = storeRun(1);
-        playerIn(pocket);
+        playerIn(system);
         watchdog.advance(0f);
         run.beginClosing();
 
@@ -240,9 +240,9 @@ class ChartRunScriptTest {
     }
 
     @Test
-    void aLiveRunWhosePocketVanishedStartsClosing() {
+    void aLiveRunWhoseSystemVanishedStartsClosing() {
         ChartRun run = storeRun(1);
-        when(sector.getStarSystem(ChartIds.pocketSystemId(RUN_ID))).thenReturn(null);
+        when(sector.getStarSystem(ChartIds.systemId(RUN_ID))).thenReturn(null);
 
         watchdog.advance(0f);
 
@@ -250,9 +250,9 @@ class ChartRunScriptTest {
     }
 
     @Test
-    void aTransverseJumpAlreadyChargingIsCancelledInsideThePocket() {
+    void aTransverseJumpAlreadyChargingIsCancelledInsideTheSystem() {
         storeRun(2);
-        playerIn(pocket);
+        playerIn(system);
         when(transverseJump.isActiveOrInProgress()).thenReturn(true);
 
         watchdog.advance(0f);
@@ -264,7 +264,7 @@ class ChartRunScriptTest {
     @Test
     void returningToAnOuterWormholeThatVanishedClosesTheRun() {
         ChartRun run = storeRun(2);
-        playerIn(pocket);
+        playerIn(system);
         watchdog.advance(0.1f);
         run.requestReturn();
         playerIn(hyperspace);

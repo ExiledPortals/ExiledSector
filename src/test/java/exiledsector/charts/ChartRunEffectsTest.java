@@ -39,7 +39,7 @@ class ChartRunEffectsTest {
 
     private MockedStatic<Global> globalMock;
     private SectorAPI sector;
-    private StarSystemAPI pocket;
+    private StarSystemAPI system;
     private LocationAPI hyperspace;
     private CampaignFleetAPI playerFleet;
     private MutableFleetStatsAPI stats;
@@ -53,7 +53,7 @@ class ChartRunEffectsTest {
         when(sector.getPersistentData()).thenReturn(persistentData);
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSector).thenReturn(sector);
-        pocket = mock(StarSystemAPI.class);
+        system = mock(StarSystemAPI.class);
         hyperspace = mock(LocationAPI.class);
         playerFleet = mock(CampaignFleetAPI.class);
         stats = mock(MutableFleetStatsAPI.class);
@@ -62,8 +62,8 @@ class ChartRunEffectsTest {
         when(stats.getSensorRangeMod()).thenReturn(sensorRange);
         when(sector.getPlayerFleet()).thenReturn(playerFleet);
         when(sector.getHyperspace()).thenReturn(hyperspace);
-        when(sector.getStarSystem(ChartIds.pocketSystemId(RUN_ID))).thenReturn(pocket);
-        when(sector.getStarSystems()).thenReturn(List.of(pocket));
+        when(sector.getStarSystem(ChartIds.systemId(RUN_ID))).thenReturn(system);
+        when(sector.getStarSystems()).thenReturn(List.of(system));
         when(playerFleet.getContainingLocation()).thenReturn(hyperspace);
     }
 
@@ -102,7 +102,7 @@ class ChartRunEffectsTest {
         ChartRun run = storeRun(StarChartFixtures.chart("unique_chart_silent_reach", 9L, 6));
         run.recordArrival();
         ChartRunScript watchdog = new ChartRunScript();
-        when(playerFleet.getContainingLocation()).thenReturn(pocket);
+        when(playerFleet.getContainingLocation()).thenReturn(system);
 
         watchdog.advance(0f);
         watchdog.advance(0f);
@@ -122,7 +122,7 @@ class ChartRunEffectsTest {
     void aRunWithoutASensorModifierNeverTouchesTheFleetsSensors() {
         storeRun(null).recordArrival();
         ChartRunScript watchdog = new ChartRunScript();
-        when(playerFleet.getContainingLocation()).thenReturn(pocket);
+        when(playerFleet.getContainingLocation()).thenReturn(system);
 
         watchdog.advance(0f);
         when(playerFleet.getContainingLocation()).thenReturn(hyperspace);
@@ -137,7 +137,7 @@ class ChartRunEffectsTest {
         ChartRun run = storeRun(StarChartFixtures.chart("unique_chart_silent_reach", 9L, 6));
         run.recordArrival();
         ChartRunScript watchdog = new ChartRunScript();
-        when(playerFleet.getContainingLocation()).thenReturn(pocket);
+        when(playerFleet.getContainingLocation()).thenReturn(system);
         watchdog.advance(0f);
 
         ChartRuns.delete(RUN_ID);
@@ -156,7 +156,7 @@ class ChartRunEffectsTest {
         assertNull(sensorRange.getMultBonus(ChartIds.SENSOR_MOD_ID));
 
         sensorRange.modifyMult(ChartIds.SENSOR_MOD_ID, 0.5f);
-        ChartLoadSweep.liftEffectsOutsidePocket(sector);
+        ChartLoadSweep.liftEffectsOutsideSystem(sector);
         assertNull(sensorRange.getMultBonus(ChartIds.SENSOR_MOD_ID));
     }
 
@@ -164,10 +164,10 @@ class ChartRunEffectsTest {
     void loadingASaveMadeInsideKeepsThePenaltyForTheWatchdogToRenew() {
         ChartRun run = storeRun(StarChartFixtures.chart("unique_chart_silent_reach", 9L, 6));
         run.recordArrival();
-        when(playerFleet.getContainingLocation()).thenReturn(pocket);
+        when(playerFleet.getContainingLocation()).thenReturn(system);
         sensorRange.modifyMult(ChartIds.SENSOR_MOD_ID, 0.5f);
 
-        ChartLoadSweep.liftEffectsOutsidePocket(sector);
+        ChartLoadSweep.liftEffectsOutsideSystem(sector);
 
         assertFalse(sensorRange.getMultBonus(ChartIds.SENSOR_MOD_ID) == null);
     }
@@ -177,10 +177,10 @@ class ChartRunEffectsTest {
         ChartRun run = storeRun(StarChartFixtures.chart("unique_chart_silent_reach", 9L, 6));
         run.recordArrival();
         run.beginClosing();
-        when(playerFleet.getContainingLocation()).thenReturn(pocket);
+        when(playerFleet.getContainingLocation()).thenReturn(system);
         sensorRange.modifyMult(ChartIds.SENSOR_MOD_ID, 0.5f);
 
-        ChartLoadSweep.liftEffectsOutsidePocket(sector);
+        ChartLoadSweep.liftEffectsOutsideSystem(sector);
         assertFalse(sensorRange.getMultBonus(ChartIds.SENSOR_MOD_ID) == null, "the load sweep keeps the penalty of a closing run");
         new ChartRunScript().watch(sector, run);
         verify(stats).addTemporaryModMult(eq(ChartRunEffects.SENSOR_MOD_DAYS), eq(ChartIds.SENSOR_MOD_ID), anyString(), eq(0.5f), eq(sensorRange));

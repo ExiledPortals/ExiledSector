@@ -56,17 +56,17 @@ class ChartRunCloserTest {
 
     private MockedStatic<Global> globalMock;
     private SectorAPI sector;
-    private StarSystemAPI pocket;
+    private StarSystemAPI system;
     private StarSystemAPI realSystem;
     private LocationAPI hyperspace;
     private CampaignFleetAPI playerFleet;
-    private CampaignFleetAPI pocketFleet;
+    private CampaignFleetAPI systemFleet;
     private PlanetAPI star;
     private CustomCampaignEntityAPI inner;
     private CustomCampaignEntityAPI outer;
     private CampaignUIAPI campaignUi;
     private IntelManagerAPI intelManager;
-    private IntelInfoPlugin pocketIntel;
+    private IntelInfoPlugin systemIntel;
     private IntelInfoPlugin otherIntel;
     private FakeCampaignUiData uiData;
     private MemoryAPI globalMemory;
@@ -80,23 +80,23 @@ class ChartRunCloserTest {
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSector).thenReturn(sector);
 
-        pocket = mock(StarSystemAPI.class);
+        system = mock(StarSystemAPI.class);
         realSystem = mock(StarSystemAPI.class);
         hyperspace = mock(LocationAPI.class);
         playerFleet = mock(CampaignFleetAPI.class);
-        pocketFleet = mock(CampaignFleetAPI.class);
+        systemFleet = mock(CampaignFleetAPI.class);
         star = mock(PlanetAPI.class);
         inner = mock(CustomCampaignEntityAPI.class);
         outer = mock(CustomCampaignEntityAPI.class);
         campaignUi = mock(CampaignUIAPI.class);
         intelManager = mock(IntelManagerAPI.class);
-        pocketIntel = mock(IntelInfoPlugin.class);
+        systemIntel = mock(IntelInfoPlugin.class);
         otherIntel = mock(IntelInfoPlugin.class);
         uiData = new FakeCampaignUiData();
         globalMemory = mock(MemoryAPI.class);
 
-        when(sector.getStarSystem(ChartIds.pocketSystemId(RUN_ID))).thenReturn(pocket);
-        when(sector.getStarSystems()).thenReturn(List.of(realSystem, pocket));
+        when(sector.getStarSystem(ChartIds.systemId(RUN_ID))).thenReturn(system);
+        when(sector.getStarSystems()).thenReturn(List.of(realSystem, system));
         when(sector.getHyperspace()).thenReturn(hyperspace);
         when(sector.getPlayerFleet()).thenReturn(playerFleet);
         when(sector.getCampaignUI()).thenReturn(campaignUi);
@@ -109,18 +109,18 @@ class ChartRunCloserTest {
 
         when(playerFleet.getContainingLocation()).thenReturn(hyperspace);
         when(playerFleet.getInteractionTarget()).thenReturn(inner);
-        when(star.getContainingLocation()).thenReturn(pocket);
-        when(inner.getContainingLocation()).thenReturn(pocket);
-        when(pocketFleet.getContainingLocation()).thenReturn(pocket);
+        when(star.getContainingLocation()).thenReturn(system);
+        when(inner.getContainingLocation()).thenReturn(system);
+        when(systemFleet.getContainingLocation()).thenReturn(system);
         when(outer.getContainingLocation()).thenReturn(hyperspace);
         when(outer.hasTag(ChartIds.runTag(RUN_ID))).thenReturn(true);
-        when(pocket.getFleets()).thenReturn(List.of(pocketFleet));
-        when(pocket.getAllEntities()).thenReturn(List.of(star, inner, pocketFleet));
+        when(system.getFleets()).thenReturn(List.of(systemFleet));
+        when(system.getAllEntities()).thenReturn(List.of(star, inner, systemFleet));
         when(hyperspace.getEntitiesWithTag(ChartIds.runTag(RUN_ID))).thenReturn(List.of(outer));
-        when(intelManager.getIntel()).thenReturn(List.of(pocketIntel, otherIntel));
-        when(pocketIntel.getMapLocation(null)).thenReturn(star);
+        when(intelManager.getIntel()).thenReturn(List.of(systemIntel, otherIntel));
+        when(systemIntel.getMapLocation(null)).thenReturn(star);
         when(otherIntel.getMapLocation(null)).thenReturn(mock(SectorEntityToken.class));
-        uiData.setCampaignMapLocation(pocket);
+        uiData.setCampaignMapLocation(system);
         uiData.setCourseTarget(inner);
 
         run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
@@ -137,30 +137,30 @@ class ChartRunCloserTest {
         int failures = ChartRunCloser.close(sector, run);
 
         assertEquals(0, failures);
-        InOrder order = inOrder(playerFleet, campaignUi, sector, pocketFleet, intelManager, pocket, hyperspace);
+        InOrder order = inOrder(playerFleet, campaignUi, sector, systemFleet, intelManager, system, hyperspace);
         order.verify(playerFleet).setInteractionTarget(null);
         order.verify(campaignUi).clearLaidInCourse();
         order.verify(sector).removeScriptsOfClass(StrandedGiveTJScript.class);
         order.verify(sector).addScript(any(StrandedGiveTJScript.class));
-        order.verify(pocketFleet).despawn(FleetDespawnReason.PLAYER_FAR_AWAY, null);
-        order.verify(intelManager).removeIntel(pocketIntel);
-        order.verify(pocket).removeEntity(star);
-        order.verify(pocket).removeEntity(inner);
+        order.verify(systemFleet).despawn(FleetDespawnReason.PLAYER_FAR_AWAY, null);
+        order.verify(intelManager).removeIntel(systemIntel);
+        order.verify(system).removeEntity(star);
+        order.verify(system).removeEntity(inner);
         order.verify(hyperspace).removeEntity(outer);
-        order.verify(sector).removeStarSystemNextFrame(pocket);
+        order.verify(sector).removeStarSystemNextFrame(system);
         assertNull(ChartRuns.currentOrNull());
     }
 
     @Test
-    void onlyIntelPointingIntoThePocketIsEnded() {
+    void onlyIntelPointingIntoTheSystemIsEnded() {
         ChartRunCloser.close(sector, run);
 
-        verify(intelManager).removeIntel(pocketIntel);
+        verify(intelManager).removeIntel(systemIntel);
         verify(intelManager, never()).removeIntel(otherIntel);
     }
 
     @Test
-    void forgetsTheCampaignMapLocationAndCourseWhenTheyPointIntoThePocket() {
+    void forgetsTheCampaignMapLocationAndCourseWhenTheyPointIntoTheSystem() {
         ChartRunCloser.close(sector, run);
 
         assertNull(uiData.getCampaignMapLocation());
@@ -184,8 +184,8 @@ class ChartRunCloserTest {
     }
 
     @Test
-    void movesTheRespawnLocationOutOfThePocket() {
-        when(sector.getRespawnLocation()).thenReturn(pocket);
+    void movesTheRespawnLocationOutOfTheSystem() {
+        when(sector.getRespawnLocation()).thenReturn(system);
 
         ChartRunCloser.close(sector, run);
 
@@ -194,13 +194,13 @@ class ChartRunCloserTest {
 
     @Test
     void neverRemovesThePlayerFleet() {
-        when(pocket.getFleets()).thenReturn(List.of(pocketFleet, playerFleet));
-        when(pocket.getAllEntities()).thenReturn(List.of(star, playerFleet));
+        when(system.getFleets()).thenReturn(List.of(systemFleet, playerFleet));
+        when(system.getAllEntities()).thenReturn(List.of(star, playerFleet));
 
         ChartRunCloser.close(sector, run);
 
         verify(playerFleet, never()).despawn(any(), any());
-        verify(pocket, never()).removeEntity(playerFleet);
+        verify(system, never()).removeEntity(playerFleet);
     }
 
     @Test
@@ -224,9 +224,9 @@ class ChartRunCloserTest {
     }
 
     @Test
-    void officersStillPointingAtAFleetLeftInThePocketArePointedAtTheCurrentFleet() {
+    void officersStillPointingAtAFleetLeftInTheSystemArePointedAtTheCurrentFleet() {
         CampaignFleetAPI deadFleet = mock(CampaignFleetAPI.class);
-        when(deadFleet.getContainingLocation()).thenReturn(pocket);
+        when(deadFleet.getContainingLocation()).thenReturn(system);
         PersonAPI officer = mock(PersonAPI.class);
         PersonAPI commander = mock(PersonAPI.class);
         PersonAPI elsewhereOfficer = mock(PersonAPI.class);
@@ -251,7 +251,7 @@ class ChartRunCloserTest {
     }
 
     @Test
-    void queuedIntelPointingIntoThePocketIsUnqueued() {
+    void queuedIntelPointingIntoTheSystemIsUnqueued() {
         IntelInfoPlugin queued = mock(IntelInfoPlugin.class);
         when(queued.getMapLocation(null)).thenReturn(star);
         when(intelManager.getCommQueue()).thenReturn(List.of(queued, otherIntel));
@@ -263,16 +263,16 @@ class ChartRunCloserTest {
     }
 
     @Test
-    void anyHyperspacePresenceAnotherModGaveThePocketIsRemoved() {
+    void anyHyperspacePresenceAnotherModGaveTheSystemIsRemoved() {
         SectorEntityToken anchor = mock(SectorEntityToken.class);
-        when(pocket.getHyperspaceAnchor()).thenReturn(anchor);
+        when(system.getHyperspaceAnchor()).thenReturn(anchor);
         JumpPointAPI jumpIn = mock(JumpPointAPI.class);
         JumpPointAPI jumpElsewhere = mock(JumpPointAPI.class);
         when(jumpIn.getDestinations()).thenReturn(List.of(new JumpPointAPI.JumpDestination(star, "in")));
         SectorEntityToken elsewhere = mock(SectorEntityToken.class);
         when(elsewhere.getStarSystem()).thenReturn(realSystem);
         when(jumpElsewhere.getDestinations()).thenReturn(List.of(new JumpPointAPI.JumpDestination(elsewhere, "out")));
-        when(star.getStarSystem()).thenReturn(pocket);
+        when(star.getStarSystem()).thenReturn(system);
         when(hyperspace.getJumpPoints()).thenReturn(List.of(jumpIn, jumpElsewhere));
         NascentGravityWellAPI well = mock(NascentGravityWellAPI.class);
         when(well.getTarget()).thenReturn(star);
@@ -294,8 +294,8 @@ class ChartRunCloserTest {
     }
 
     @Test
-    void closingARunWhosePocketIsGoneStillRemovesTheWormholeAndTheRecord() {
-        when(sector.getStarSystem(ChartIds.pocketSystemId(RUN_ID))).thenReturn(null);
+    void closingARunWhoseSystemIsGoneStillRemovesTheWormholeAndTheRecord() {
+        when(sector.getStarSystem(ChartIds.systemId(RUN_ID))).thenReturn(null);
 
         assertEquals(0, ChartRunCloser.close(sector, run));
 
@@ -312,14 +312,14 @@ class ChartRunCloserTest {
         int failures = ChartRunCloser.close(sector, run);
 
         assertTrue(failures >= 2, "failed steps " + failures);
-        verify(pocketFleet).despawn(FleetDespawnReason.PLAYER_FAR_AWAY, null);
-        verify(pocket).removeEntity(star);
-        verify(sector).removeStarSystemNextFrame(pocket);
+        verify(systemFleet).despawn(FleetDespawnReason.PLAYER_FAR_AWAY, null);
+        verify(system).removeEntity(star);
+        verify(sector).removeStarSystemNextFrame(system);
         assertNull(ChartRuns.currentOrNull());
     }
 
     @Test
-    void aPocketAlreadyRemovedFromTheSectorIsNotRemovedAgain() {
+    void aSystemAlreadyRemovedFromTheSectorIsNotRemovedAgain() {
         when(sector.getStarSystems()).thenReturn(List.of(realSystem));
 
         ChartRunCloser.close(sector, run);
@@ -328,15 +328,15 @@ class ChartRunCloserTest {
     }
 
     @Test
-    void closingAnOrphanPocketLeavesTheLiveRunAndItsPocketAlone() {
+    void closingAnOrphanSystemLeavesTheLiveRunAndItsSystemAlone() {
         StarSystemAPI orphan = mock(StarSystemAPI.class);
-        when(sector.getStarSystems()).thenReturn(List.of(orphan, pocket));
+        when(sector.getStarSystems()).thenReturn(List.of(orphan, system));
 
         ChartRunCloser.close(sector, "orphan", orphan);
 
         assertSame(run, ChartRuns.currentOrNull());
         verify(sector).removeStarSystemNextFrame(orphan);
-        verify(sector, never()).removeStarSystemNextFrame(pocket);
+        verify(sector, never()).removeStarSystemNextFrame(system);
         verify(campaignUi, never()).clearLaidInCourse();
     }
 
@@ -352,7 +352,7 @@ class ChartRunCloserTest {
 
     @Test
     void intelThatCannotNameItsMapLocationIsLeftAlone() {
-        when(pocketIntel.getMapLocation(null)).thenThrow(new IllegalStateException("plugin needs a map"));
+        when(systemIntel.getMapLocation(null)).thenThrow(new IllegalStateException("plugin needs a map"));
 
         assertEquals(0, ChartRunCloser.close(sector, run));
         verify(intelManager, never()).removeIntel(any());
@@ -361,44 +361,44 @@ class ChartRunCloserTest {
     @Test
     void everyKindOfEntityTheLayoutGeneratorCreatesIsRemoved() {
         List<SectorEntityToken> generated = List.of(star, mock(PlanetAPI.class), mock(CampaignTerrainAPI.class), mock(RingBandAPI.class),
-                mock(AsteroidAPI.class), mock(JumpPointAPI.class), mock(SectorEntityToken.class), inner, pocketFleet);
-        when(pocket.getAllEntities()).thenReturn(generated);
+                mock(AsteroidAPI.class), mock(JumpPointAPI.class), mock(SectorEntityToken.class), inner, systemFleet);
+        when(system.getAllEntities()).thenReturn(generated);
 
         assertEquals(0, ChartRunCloser.close(sector, run));
 
         for (SectorEntityToken entity : generated) {
-            if (entity != pocketFleet) {
-                verify(pocket).removeEntity(entity);
+            if (entity != systemFleet) {
+                verify(system).removeEntity(entity);
             }
         }
     }
 
     @Test
-    void aSalvorsTallyStillWaitingToPostForThePocketIsDropped() {
-        SalvorsTallyAdder pocketTally = new SalvorsTallyAdder(new SalvorsTallyIntel(pocket), 10f);
+    void aSalvorsTallyStillWaitingToPostForTheSystemIsDropped() {
+        SalvorsTallyAdder systemTally = new SalvorsTallyAdder(new SalvorsTallyIntel(system), 10f);
         SalvorsTallyAdder otherTally = new SalvorsTallyAdder(new SalvorsTallyIntel(realSystem), 10f);
-        when(sector.getScripts()).thenReturn(new ArrayList<>(List.of(pocketTally, otherTally)));
+        when(sector.getScripts()).thenReturn(new ArrayList<>(List.of(systemTally, otherTally)));
 
         assertEquals(0, ChartRunCloser.close(sector, run));
 
-        verify(sector).removeScript(pocketTally);
+        verify(sector).removeScript(systemTally);
         verify(sector, never()).removeScript(otherTally);
     }
 
     @Test
-    void theRunsObjectiveIntelAndAPostedSalvorsTallyForThePocketAreRemovedThoughNeitherHasAMapLocation() {
+    void theRunsObjectiveIntelAndAPostedSalvorsTallyForTheSystemAreRemovedThoughNeitherHasAMapLocation() {
         ChartObjectiveIntel objectiveIntel = new ChartObjectiveIntel(RUN_ID);
         ChartObjectiveIntel otherRunIntel = new ChartObjectiveIntel("other");
-        SalvorsTallyIntel pocketTally = mock(SalvorsTallyIntel.class);
-        when(pocketTally.getSystem()).thenReturn(pocket);
+        SalvorsTallyIntel systemTally = mock(SalvorsTallyIntel.class);
+        when(systemTally.getSystem()).thenReturn(system);
         SalvorsTallyIntel otherTally = mock(SalvorsTallyIntel.class);
         when(otherTally.getSystem()).thenReturn(realSystem);
-        when(intelManager.getIntel()).thenReturn(List.of(objectiveIntel, otherRunIntel, pocketTally, otherTally));
+        when(intelManager.getIntel()).thenReturn(List.of(objectiveIntel, otherRunIntel, systemTally, otherTally));
 
         assertEquals(0, ChartRunCloser.close(sector, run));
 
         verify(intelManager).removeIntel(objectiveIntel);
-        verify(intelManager).removeIntel(pocketTally);
+        verify(intelManager).removeIntel(systemTally);
         verify(intelManager, never()).removeIntel(otherRunIntel);
         verify(intelManager, never()).removeIntel(otherTally);
         assertTrue(objectiveIntel.isEnded());
@@ -408,9 +408,9 @@ class ChartRunCloserTest {
     void theIntelTabForgetsASelectedIntelOfTheRunSoTheSaveDoesNotKeepIt() {
         IntelDataAPI intelTab = mock(IntelDataAPI.class);
         when(sector.getIntel()).thenReturn(intelTab);
-        SalvorsTallyIntel pocketTally = mock(SalvorsTallyIntel.class);
-        when(pocketTally.getSystem()).thenReturn(pocket);
-        when(intelTab.getSelectedIntel()).thenReturn(pocketTally);
+        SalvorsTallyIntel systemTally = mock(SalvorsTallyIntel.class);
+        when(systemTally.getSystem()).thenReturn(system);
+        when(intelTab.getSelectedIntel()).thenReturn(systemTally);
 
         ChartRunCloser.close(sector, run);
 
@@ -431,12 +431,12 @@ class ChartRunCloserTest {
     @Test
     void contentFleetsAreDespawnedWhileTheRunIsClosingSoTheirDefeatNeverCounts() {
         run.recordContent(new ChartContent(3, "pirates", ChartObjective.CLEAR, List.of("guard"), null, null, 1, 0));
-        when(pocketFleet.getId()).thenReturn("guard");
-        when(pocketFleet.hasTag(ChartIds.runTag(RUN_ID))).thenReturn(true);
+        when(systemFleet.getId()).thenReturn("guard");
+        when(systemFleet.hasTag(ChartIds.runTag(RUN_ID))).thenReturn(true);
         Mockito.doAnswer(invocation -> {
-            ChartObjectives.fleetGone(sector, pocketFleet, FleetDespawnReason.DESTROYED_BY_BATTLE);
+            ChartObjectives.fleetGone(sector, systemFleet, FleetDespawnReason.DESTROYED_BY_BATTLE);
             return null;
-        }).when(pocketFleet).despawn(any(), any());
+        }).when(systemFleet).despawn(any(), any());
         run.beginClosing();
 
         ChartRunCloser.close(sector, run);

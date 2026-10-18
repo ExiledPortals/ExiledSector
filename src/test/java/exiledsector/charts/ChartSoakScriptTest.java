@@ -61,7 +61,7 @@ class ChartSoakScriptTest {
         when(sector.getHyperspace()).thenReturn(hyperspace);
         when(sector.getPlayerFleet()).thenReturn(playerFleet);
         when(sector.getStarSystems()).thenAnswer(invocation -> new ArrayList<>(starSystems));
-        when(sector.createStarSystem(anyString())).thenAnswer(invocation -> newPocket());
+        when(sector.createStarSystem(anyString())).thenAnswer(invocation -> newSystem());
         when(sector.getStarSystem(anyString())).thenAnswer(invocation -> starSystems.stream()
                 .filter(system -> invocation.getArgument(0).equals(system.getOptionalUniqueId())).findFirst().orElse(null));
         doAnswer(invocation -> removeNextFrame.add(invocation.getArgument(0))).when(sector).removeStarSystemNextFrame(Mockito.any());
@@ -76,24 +76,24 @@ class ChartSoakScriptTest {
         ChartContentGenerator.resetForTests();
     }
 
-    private StarSystemAPI newPocket() {
-        StarSystemAPI pocket = mock(StarSystemAPI.class);
+    private StarSystemAPI newSystem() {
+        StarSystemAPI system = mock(StarSystemAPI.class);
         String[] uniqueId = new String[1];
-        doAnswer(invocation -> uniqueId[0] = invocation.getArgument(0)).when(pocket).setOptionalUniqueId(anyString());
-        when(pocket.getOptionalUniqueId()).thenAnswer(invocation -> uniqueId[0]);
-        when(pocket.getLocation()).thenReturn(new Vector2f());
-        when(pocket.getMemoryWithoutUpdate()).thenReturn(mock(MemoryAPI.class));
-        when(pocket.initStar(anyString(), anyString(), anyFloat(), anyFloat())).thenReturn(mock(PlanetAPI.class));
-        when(pocket.getStar()).thenReturn(mock(PlanetAPI.class));
-        when(pocket.addCustomEntity(anyString(), anyString(), anyString(), anyString())).thenReturn(mock(CustomCampaignEntityAPI.class));
+        doAnswer(invocation -> uniqueId[0] = invocation.getArgument(0)).when(system).setOptionalUniqueId(anyString());
+        when(system.getOptionalUniqueId()).thenAnswer(invocation -> uniqueId[0]);
+        when(system.getLocation()).thenReturn(new Vector2f());
+        when(system.getMemoryWithoutUpdate()).thenReturn(mock(MemoryAPI.class));
+        when(system.initStar(anyString(), anyString(), anyFloat(), anyFloat())).thenReturn(mock(PlanetAPI.class));
+        when(system.getStar()).thenReturn(mock(PlanetAPI.class));
+        when(system.addCustomEntity(anyString(), anyString(), anyString(), anyString())).thenReturn(mock(CustomCampaignEntityAPI.class));
         List<SectorEntityToken> added = new ArrayList<>();
-        doAnswer(invocation -> added.add(invocation.getArgument(0))).when(pocket).addEntity(Mockito.any());
-        doAnswer(invocation -> added.remove(invocation.<Object>getArgument(0))).when(pocket).removeEntity(Mockito.any());
-        when(pocket.getFleets()).thenAnswer(invocation -> added.stream().filter(CampaignFleetAPI.class::isInstance)
+        doAnswer(invocation -> added.add(invocation.getArgument(0))).when(system).addEntity(Mockito.any());
+        doAnswer(invocation -> added.remove(invocation.<Object>getArgument(0))).when(system).removeEntity(Mockito.any());
+        when(system.getFleets()).thenAnswer(invocation -> added.stream().filter(CampaignFleetAPI.class::isInstance)
                 .map(CampaignFleetAPI.class::cast).toList());
-        when(pocket.getAllEntities()).thenAnswer(invocation -> new ArrayList<>(added));
-        starSystems.add(pocket);
-        return pocket;
+        when(system.getAllEntities()).thenAnswer(invocation -> new ArrayList<>(added));
+        starSystems.add(system);
+        return system;
     }
 
     private void runFrames(ChartSoakScript soak, ChartRunScript watchdog, int frames) {
@@ -106,7 +106,7 @@ class ChartSoakScriptTest {
     }
 
     @Test
-    void soaksTheRequestedPocketsWithoutMovingThePlayerAndReportsBeforeAndAfter() {
+    void soaksTheRequestedSystemsWithoutMovingThePlayerAndReportsBeforeAndAfter() {
         ChartCensus before = ChartCensus.take(sector);
         ChartSoakScript soak = new ChartSoakScript(3, before, reports::add, new Random(7));
 
@@ -120,7 +120,7 @@ class ChartSoakScriptTest {
         assertTrue(reports.get(0).contains("[BINARY_CLOSE, BINARY_FAR, SINGLE]"), reports.get(0));
         assertTrue(starSystems.isEmpty());
         assertNull(ChartRuns.currentOrNull());
-        verify(sector, Mockito.times(3)).createStarSystem(ChartIds.POCKET_BASE_NAME);
+        verify(sector, Mockito.times(3)).createStarSystem(ChartIds.SYSTEM_BASE_NAME);
         verify(sector, never()).doHyperspaceTransition(Mockito.any(), Mockito.any(), Mockito.any());
         verify(playerFleet, never()).setLocation(anyFloat(), anyFloat());
     }
@@ -160,7 +160,7 @@ class ChartSoakScriptTest {
     }
 
     @Test
-    void soaksFullContentPocketsAcrossEveryTierAndStillLeavesEveryCountUnchanged() throws Exception {
+    void soaksFullContentSystemsAcrossEveryTierAndStillLeavesEveryCountUnchanged() throws Exception {
         ChartContentDataTest.loadShippedTables();
         FakeChartContentEngine content = FakeChartContentEngine.install(new FakeChartContentEngine().offering(-4000f, 0f, 0f, 5000f));
         when(sector.getFaction(anyString())).thenReturn(mock(FactionAPI.class));
@@ -187,7 +187,7 @@ class ChartSoakScriptTest {
     }
 
     @Test
-    void soaksPocketsOpenedFromRolledChartsAndStillLeavesEveryCountUnchanged() throws Exception {
+    void soaksSystemsOpenedFromRolledChartsAndStillLeavesEveryCountUnchanged() throws Exception {
         ChartContentDataTest.loadShippedTables();
         exiledsector.items.StarChartFixtures.registerShipped();
         FakeChartContentEngine.install(new FakeChartContentEngine().offering(-4000f, 0f, 0f, 5000f));
@@ -199,7 +199,7 @@ class ChartSoakScriptTest {
             runFrames(soak, new ChartRunScript(), 400);
 
             assertTrue(reports.get(0).contains("finished, 16 of 16"), reports.get(0));
-            assertTrue(reports.get(0).contains("8 pocket(s) opened from rolled Star Charts"), reports.get(0));
+            assertTrue(reports.get(0).contains("8 system(s) opened from rolled Star Charts"), reports.get(0));
             assertTrue(reports.get(0).contains("Unchanged before vs after"), reports.get(0));
             assertTrue(starSystems.isEmpty());
             assertNull(ChartRuns.currentOrNull());
@@ -215,7 +215,7 @@ class ChartSoakScriptTest {
     }
 
     @Test
-    void aChartPocketThatFailsToOpenIsNotCountedAsOpened() throws Exception {
+    void aChartSystemThatFailsToOpenIsNotCountedAsOpened() throws Exception {
         ChartContentDataTest.loadShippedTables();
         exiledsector.items.StarChartFixtures.registerShipped();
         FakeChartContentEngine.install(new FakeChartContentEngine().offering(-4000f, 0f, 0f, 5000f));
@@ -223,10 +223,10 @@ class ChartSoakScriptTest {
         try {
             ChartSoakScript soak = new ChartSoakScript(2, ChartCensus.take(sector), reports::add, new Random(13));
             ChartRunScript watchdog = new ChartRunScript();
-            for (int frame = 0; frame < 200 && soak.pocketsDone() < 1; frame++) {
+            for (int frame = 0; frame < 200 && soak.systemsDone() < 1; frame++) {
                 runFrames(soak, watchdog, 1);
             }
-            assertEquals(1, soak.pocketsDone());
+            assertEquals(1, soak.systemsDone());
             assertNull(ChartRuns.currentOrNull());
             ChartRuns.store(new ChartRun("busy", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1));
 
@@ -235,7 +235,7 @@ class ChartSoakScriptTest {
             assertTrue(soak.isDone());
             assertEquals(0, soak.chartsOpened());
             assertTrue(reports.get(0).contains("returned RUN_EXISTS"), reports.get(0));
-            assertTrue(reports.get(0).contains("0 pocket(s) opened from rolled Star Charts"), reports.get(0));
+            assertTrue(reports.get(0).contains("0 system(s) opened from rolled Star Charts"), reports.get(0));
         } finally {
             exiledsector.items.StarChartFixtures.clear();
             ChartContentGenerator.resetForTests();

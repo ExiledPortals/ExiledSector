@@ -28,11 +28,11 @@ final class ChartBodyNames {
         return String.format(Locale.ROOT, "%04X", namingRandom.nextInt(DESIGNATION_RANGE));
     }
 
-    static void assign(StarSystemAPI pocket, String designation) {
+    static void assign(StarSystemAPI system, String designation) {
         Map<PlanetAPI, String> names = new IdentityHashMap<>();
-        nameStars(pocket, designation, names);
+        nameStars(system, designation, names);
         List<PlanetAPI> bodies = new ArrayList<>();
-        for (PlanetAPI planet : pocket.getPlanets()) {
+        for (PlanetAPI planet : system.getPlanets()) {
             if (!planet.isStar()) {
                 bodies.add(planet);
             }
@@ -67,15 +67,15 @@ final class ChartBodyNames {
         names.forEach(ChartBodyNames::rename);
     }
 
-    private static void nameStars(StarSystemAPI pocket, String designation, Map<PlanetAPI, String> names) {
+    private static void nameStars(StarSystemAPI system, String designation, Map<PlanetAPI, String> names) {
         int starIndex = 0;
-        for (PlanetAPI star : new PlanetAPI[]{pocket.getStar(), pocket.getSecondary(), pocket.getTertiary()}) {
+        for (PlanetAPI star : new PlanetAPI[]{system.getStar(), system.getSecondary(), system.getTertiary()}) {
             if (star != null && !names.containsKey(star) && starIndex < STAR_LETTERS.length()) {
                 names.put(star, starName(designation, STAR_LETTERS.charAt(starIndex)));
                 starIndex++;
             }
         }
-        for (PlanetAPI planet : pocket.getPlanets()) {
+        for (PlanetAPI planet : system.getPlanets()) {
             if (planet.isStar() && !names.containsKey(planet)) {
                 names.put(planet, starName(designation, STAR_LETTERS.charAt(Math.min(starIndex, STAR_LETTERS.length() - 1))));
                 starIndex++;

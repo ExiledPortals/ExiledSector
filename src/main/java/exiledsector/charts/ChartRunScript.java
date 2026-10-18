@@ -15,7 +15,7 @@ public class ChartRunScript implements EveryFrameScript {
     private static final Logger LOG = Logger.getLogger(ChartRunScript.class);
 
     private String cachedRunId;
-    private StarSystemAPI cachedPocket;
+    private StarSystemAPI cachedSystem;
     private boolean closeArmed;
     private boolean failureReported;
     private float secondsSinceObjectiveCheck;
@@ -72,9 +72,9 @@ public class ChartRunScript implements EveryFrameScript {
         if (playerFleet == null || playerFleet.getContainingLocation() == null) {
             return;
         }
-        StarSystemAPI pocket = pocketFor(sector, run);
+        StarSystemAPI system = systemFor(sector, run);
         boolean inTransition = playerFleet.isInHyperspaceTransition();
-        boolean inside = pocket != null && playerFleet.getContainingLocation() == pocket;
+        boolean inside = system != null && playerFleet.getContainingLocation() == system;
         if (inside) {
             blockEscapeAbilities(playerFleet);
         }
@@ -84,7 +84,7 @@ public class ChartRunScript implements EveryFrameScript {
             forget();
             return;
         }
-        if (pocket == null && run.runState().isLive() && !inTransition) {
+        if (system == null && run.runState().isLive() && !inTransition) {
             run.beginClosing();
         }
         if (inTransition) {
@@ -100,8 +100,8 @@ public class ChartRunScript implements EveryFrameScript {
             case INSIDE -> {
                 if (inside) {
                     run.cancelReturn();
-                } else if (run.recordLeftPocket() == ChartRunState.OPEN) {
-                    ChartRunCloser.clearPlayerTargetAndCourse(new ChartRunCloser.CloseTarget(sector, run.runId(), pocket));
+                } else if (run.recordLeftSystem() == ChartRunState.OPEN) {
+                    ChartRunCloser.clearPlayerTargetAndCourse(new ChartRunCloser.CloseTarget(sector, run.runId(), system));
                     if (sector.getEntityById(run.outerWormholeId()) == null) {
                         run.beginClosing();
                     }
@@ -127,13 +127,13 @@ public class ChartRunScript implements EveryFrameScript {
         forget();
     }
 
-    private StarSystemAPI pocketFor(SectorAPI sector, ChartRun run) {
+    private StarSystemAPI systemFor(SectorAPI sector, ChartRun run) {
         if (!run.runId().equals(cachedRunId)) {
             cachedRunId = run.runId();
-            cachedPocket = sector.getStarSystem(run.pocketSystemId());
+            cachedSystem = sector.getStarSystem(run.systemId());
             closeArmed = false;
         }
-        return cachedPocket;
+        return cachedSystem;
     }
 
     void applyRunEffects(CampaignFleetAPI playerFleet, ChartRun run, boolean inside) {
@@ -172,7 +172,7 @@ public class ChartRunScript implements EveryFrameScript {
 
     private void forget() {
         cachedRunId = null;
-        cachedPocket = null;
+        cachedSystem = null;
         closeArmed = false;
         effectsRunId = null;
         cachedSensorRangeMult = 1f;

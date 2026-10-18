@@ -33,7 +33,7 @@ public final class ChartBlockedAbilities {
                 });
             }
             abilityIds = List.copyOf(loaded);
-            LOG.info("[ExiledSector] Star Chart pockets block " + abilityIds.size() + " escape abilities: " + abilityIds);
+            LOG.info("[ExiledSector] Star Chart systems block " + abilityIds.size() + " escape abilities: " + abilityIds);
         });
     }
 
@@ -43,7 +43,7 @@ public final class ChartBlockedAbilities {
 
     static void reportBlockFailure(String abilityId, Throwable cause) {
         if (REPORTED_FAILURES.add(abilityId)) {
-            LOG.warn("[ExiledSector] Could not block the ability " + abilityId + " inside a Star Chart pocket; the other abilities stay blocked", cause);
+            LOG.warn("[ExiledSector] Could not block the ability " + abilityId + " inside a Star Chart system; the other abilities stay blocked", cause);
         }
     }
 

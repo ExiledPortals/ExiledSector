@@ -30,11 +30,11 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
         backgroundName = backgrounds.get(random.nextInt(backgrounds.size()));
     }
 
-    void generateLayout(StarSystemAPI pocket, String starId) {
-        init(pocket, constellationAge);
-        pocket.setType(systemType);
+    void generateLayout(StarSystemAPI system, String starId) {
+        init(system, constellationAge);
+        system.setType(systemType);
         pickNebulaAndBackground();
-        pocket.setBackgroundTextureFilename(backgroundName);
+        system.setBackgroundTextureFilename(backgroundName);
         star = null;
         secondary = null;
         tertiary = null;
@@ -46,7 +46,7 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
         GenResult result = addPlanetsAndTerrain(MAX_ORBIT_RADIUS);
         addFarStars(result);
         addSystemwideNebula();
-        pocket.setAge(starAge);
+        system.setAge(starAge);
     }
 
     private void addFarStars(GenResult result) {

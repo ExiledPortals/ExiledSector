@@ -68,7 +68,7 @@ public class ChartOpenCommand implements BaseCommand {
             case RUN_EXISTS -> Console.showMessage("A Star Chart run is already open. Collapse it or finish it first (see ExiledSectorChartStatus).");
             case NO_PLAYER_FLEET -> Console.showMessage("No player fleet found.");
             case PLAYER_IN_TRANSITION -> Console.showMessage("Your fleet is jumping. Try again once it arrives.");
-            case PLAYER_IN_POCKET -> Console.showMessage("Your fleet is inside a Star Chart pocket.");
+            case PLAYER_IN_SYSTEM -> Console.showMessage("Your fleet is inside a Star Chart system.");
             default -> Console.showMessage("Opening the wormhole failed; see starsector.log.");
         }
         return CommandResult.ERROR;
@@ -76,11 +76,11 @@ public class ChartOpenCommand implements BaseCommand {
 
     static String describeLayout(ChartRun run) {
         if (run == null || !run.hasLayout()) {
-            return "The pocket's layout was not recorded.";
+            return "The system's layout was not recorded.";
         }
         return "Layout seed " + run.layoutSeed() + ", type " + run.layoutType()
-                + (run.isLayoutGenerated() ? "" : " (generation failed, so the pocket has a single star; see starsector.log)")
-                + ". Reopen the same pocket with: ExiledSectorChartOpen " + run.layoutSeed() + " " + run.layoutType() + " tier=" + run.tier()
+                + (run.isLayoutGenerated() ? "" : " (generation failed, so the system has a single star; see starsector.log)")
+                + ". Reopen the same system with: ExiledSectorChartOpen " + run.layoutSeed() + " " + run.layoutType() + " tier=" + run.tier()
                 + (run.hasChart() ? " (that leaves out the chart's modifiers)" : "");
     }
 
@@ -97,7 +97,7 @@ public class ChartOpenCommand implements BaseCommand {
 
     static String describeContent(ChartRun run) {
         if (run == null) {
-            return "The pocket's content was not recorded.";
+            return "The system's content was not recorded.";
         }
         String objective = run.objective() == null ? "none (no target could be placed; see starsector.log)"
                 : run.objective().name() + " (" + run.objectiveTargetIds().size() + " target(s))";

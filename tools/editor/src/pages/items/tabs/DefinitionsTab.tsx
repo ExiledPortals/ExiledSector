@@ -320,7 +320,7 @@ function StarChartFields({ definition, vocabulary, edit }: { definition: ItemDef
     <Group grow align="flex-start">
       <Select
         label="System type"
-        description="The pocket's star layout, and which implicits the chart rolls"
+        description="The system's star layout, and which implicits the chart rolls"
         data={options}
         value={current === '' ? ANY_SYSTEM_TYPE : current}
         onChange={(value) => edit((draft) => void (draft.systemType = value ?? ''))}

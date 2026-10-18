@@ -10,27 +10,27 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public record ChartCensus(int starSystems, int pocketSystems, int hyperspaceEntities, int hyperspaceFleets, int hyperspaceChartEntities,
+public record ChartCensus(int starSystems, int chartSystems, int hyperspaceEntities, int hyperspaceFleets, int hyperspaceChartEntities,
                           int chartEntities, int usedNames, int topographyScans, int economyMarkets, int intel, int persistentDataKeys,
                           int sectorFleets, int chartFleets, int sectorScripts, int sectorListeners) {
 
     public static final int UNKNOWN = -1;
 
-    public ChartCensus(int starSystems, int pocketSystems, int hyperspaceEntities, int hyperspaceFleets, int hyperspaceChartEntities,
+    public ChartCensus(int starSystems, int chartSystems, int hyperspaceEntities, int hyperspaceFleets, int hyperspaceChartEntities,
                        int chartEntities, int usedNames, int topographyScans, int economyMarkets, int intel, int persistentDataKeys) {
-        this(starSystems, pocketSystems, hyperspaceEntities, hyperspaceFleets, hyperspaceChartEntities, chartEntities, usedNames,
+        this(starSystems, chartSystems, hyperspaceEntities, hyperspaceFleets, hyperspaceChartEntities, chartEntities, usedNames,
                 topographyScans, economyMarkets, intel, persistentDataKeys, 0, 0, 0, 0);
     }
 
     public static ChartCensus take(SectorAPI sector) {
-        int pockets = 0;
+        int chartSystems = 0;
         int chartEntities = 0;
         int sectorFleets = 0;
         int chartFleets = 0;
         Collection<StarSystemAPI> systems = sector.getStarSystems();
         for (StarSystemAPI system : systems) {
-            if (system.hasTag(ChartIds.POCKET_TAG)) {
-                pockets++;
+            if (system.hasTag(ChartIds.SYSTEM_TAG)) {
+                chartSystems++;
             }
             chartEntities += system.getEntitiesWithTag(ChartIds.ENTITY_TAG).size();
             sectorFleets += system.getFleets().size();
@@ -46,7 +46,7 @@ public record ChartCensus(int starSystems, int pocketSystems, int hyperspaceEnti
         int intel = sector.getIntelManager() == null ? UNKNOWN : sector.getIntelManager().getIntel().size();
         int scripts = sector.getScripts() == null ? UNKNOWN : sector.getScripts().size();
         int listeners = sector.getAllListeners() == null ? UNKNOWN : sector.getAllListeners().size();
-        return new ChartCensus(systems.size(), pockets, hyperspaceEntities, hyperspaceFleets, hyperspaceChartEntities,
+        return new ChartCensus(systems.size(), chartSystems, hyperspaceEntities, hyperspaceFleets, hyperspaceChartEntities,
                 chartEntities + hyperspaceChartEntities, ChartUsedNames.count(), ChartTopographyScans.count(sector), economyMarkets, intel,
                 sector.getPersistentData().size(), sectorFleets, chartFleets, scripts, listeners);
     }
@@ -61,9 +61,9 @@ public record ChartCensus(int starSystems, int pocketSystems, int hyperspaceEnti
         return found;
     }
 
-    public static boolean pocketNameReserved() {
+    public static boolean systemNameReserved() {
         try {
-            return ProcgenUsedNames.isUsed(ChartIds.POCKET_BASE_NAME);
+            return ProcgenUsedNames.isUsed(ChartIds.SYSTEM_BASE_NAME);
         } catch (RuntimeException e) {
             return false;
         }
@@ -100,7 +100,7 @@ public record ChartCensus(int starSystems, int pocketSystems, int hyperspaceEnti
     }
 
     public String describe() {
-        return "star systems " + starSystems + ", chart pockets " + pocketSystems + ", hyperspace entities " + hyperspaceEntities
+        return "star systems " + starSystems + ", chart systems " + chartSystems + ", hyperspace entities " + hyperspaceEntities
                 + " (" + hyperspaceFleets + " fleets, " + hyperspaceChartEntities + " tagged for charts), chart-tagged entities anywhere "
                 + chartEntities + ", used procgen names " + shown(usedNames) + ", Hyperspace Topography scans " + shown(topographyScans)
                 + ", Economy markets " + shown(economyMarkets) + ", intel " + shown(intel) + ", persistent data keys " + persistentDataKeys

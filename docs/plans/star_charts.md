@@ -1,4 +1,4 @@
-# Star Charts: plan for procedurally generated pocket systems
+# Star Charts: plan for procedurally generated star systems
 
 This plan is based on three read-only investigations: Beyond the Sector (0.95), Exiled Space (0.96), and the 0.98a engine (decompiled) together with our own item code (re-checked after main's hull item refactor). File and line references for every claim are in those reports. This document keeps only the conclusions.
 
@@ -35,7 +35,7 @@ Vanilla 0.98a does the job properly, in two classes:
 - `AbyssalLocationDespawner` later removes the system and then deletes its hyperspace jump points, gravity wells and anchor.
 
 That pattern is what we build on, with three changes:
-1. Our pocket has no hyperspace presence at all.
+1. Our system has no hyperspace presence at all.
 2. Cleanup is triggered when the run ends, not by a 10-day timer.
 3. Cleanup is far more thorough, below.
 
@@ -160,7 +160,7 @@ Decided (2026-10-18):
   - selecting a chart opens a detail panel like the modify-hull-item UI;
   - currency is spent on the selected chart to roll or reroll its modifiers;
   - a big "Open Wormhole" button.
-- Eventually a colony building enables wormhole opening. Until it exists, a dev or settings switch allows opening anywhere, so the pocket can be built and tested first. The building can then gate where and when the button works, and whether it works at all.
+- Eventually a colony building enables wormhole opening. Until it exists, a dev or settings switch allows opening anywhere, so the system can be built and tested first. The building can then gate where and when the button works, and whether it works at all.
 
 Opening consumes the chart and creates a Wormhole entity beside the player fleet, in hyperspace or a normal system. It is a custom entity with our own plugin and visual (the skill tree's wormhole band renderer is a good look to reuse).
 
@@ -171,7 +171,7 @@ Run rules (decided):
   - When the last entry is used, the outer wormhole collapses behind the player. Leaving through the exit wormhole then ends the run.
   - With the default of 1, this means entering collapses the outer wormhole, and leaving ends the run.
   - The setting is read when a wormhole opens and stored on the run, so changing it mid-run doesn't affect that run.
-- **No time limit.** The pocket exists for as long as the run is open.
+- **No time limit.** The system exists for as long as the run is open.
 - **One open run at a time.** "Open Wormhole" is disabled while a run is open.
 - **Collapsing.** While outside, the player can collapse the outer wormhole at any time to end the run. The chart was already consumed when it opened.
 - **Anything left inside is deleted when the run closes,** including jettisoned cargo, unrecovered ships, unlooted caches and fleets.
@@ -185,7 +185,7 @@ The run also ends if:
 `ChartGenerator.generate(chart)` is pure, deterministic from the seed, and runs in two stages.
 
 Stage 1 is layout:
-- A fresh `StarSystemAPI` is created with base name "Charted Space", a unique optional id `exiledSector_chart_<runId>`, and our tag `exiledSector_chart_pocket`.
+- A fresh `StarSystemAPI` is created with base name "Charted Space", a unique optional id `exiledSector_chart_<runId>`, and our tag `exiledSector_chart_system`.
 - The vanilla isolation tags listed above are added, plus `setDoNotShowIntelFromThisLocationOnMap(true)`.
 - Its location is placed far outside the sector, never at the origin or near real systems.
 - A seeded `StarSystemGenerator` is used through `init(system, age)` and `GenContext`, following the abyssal code, with the static random swapped in and restored afterwards. It reuses vanilla `addStars` and `addPlanetsAndTerrain`, so planets, moons, rings, belts, magnetic fields, coronas and planet conditions look native.
@@ -214,7 +214,7 @@ Stage 2 is content, spending the tier's loot and fleet budgets:
 
 ## Isolation
 
-Rules for the pocket:
+Rules for the system:
 - No hyperspace presence at all.
 - No Economy markets.
 - Every fleet inside is `NO_JUMP` and has local assignments only.
@@ -231,7 +231,7 @@ This is the most important part. The aim: once a run closes, a save contains not
 1. **A single owner.** `ChartRun` lives in persistent data and stores only strings and numbers: run id, the system's unique id, the wormhole entity ids, the origin location id, the chart JSON, state and timers. It never stores a `StarSystemAPI`, entity or fleet. Everything the run creates goes through a `ChartRunFactory` that tags it with the run id. That covers entities, fleets, intel, scripts and memory keys. Nothing is created any other way.
 2. **States.**
    - `OPEN`: the outer wormhole exists and the player is outside.
-   - `INSIDE`: the player is in the pocket. The outer wormhole remains while entries are left; it collapses on the last entry.
+   - `INSIDE`: the player is in the system. The outer wormhole remains while entries are left; it collapses on the last entry.
    - `CLOSING`: entered when any of these happens:
      - the player leaves with no entries left;
      - the player collapses the outer wormhole while outside;
@@ -242,24 +242,24 @@ This is the most important part. The aim: once a run closes, a save contains not
    Only one run exists at a time. The run stores its entry allowance and the entries used.
 3. **Close order.** Closing runs from a script on the next frame, once the player is out and not mid-transition:
    1. Clear the player's interaction target and plotted course.
-   2. Reset the campaign map's last-viewed location if it points at the pocket. This needs a MethodHandle, because there's no API setter.
+   2. Reset the campaign map's last-viewed location if it points at the system. This needs a MethodHandle, because there's no API setter.
    3. Re-add `StrandedGiveTJScript`, which drops vanilla's stale reference.
-   4. Despawn every fleet in the pocket with `despawn(...)`, so listeners fire.
-   5. End every intel item the run created, and any intel whose map location is in the pocket.
+   4. Despawn every fleet in the system with `despawn(...)`, so listeners fire.
+   5. End every intel item the run created, and any intel whose map location is in the system.
    6. Remove our scripts and listeners for the run, and clear our memory keys.
-   7. Remove every entity in the pocket while its listener is still attached, which clears the engine's id map.
-   8. Remove both wormhole entities and any hyperspace entity that points into the pocket. There should be none; this is a safety net.
+   7. Remove every entity in the system while its listener is still attached, which clears the engine's id map.
+   8. Remove both wormhole entities and any hyperspace entity that points into the system. There should be none; this is a safety net.
    9. Call `removeStarSystemNextFrame`.
    10. Delete the run record.
 
    Every step is idempotent and wrapped, so a failure in one step can't stop the rest.
 4. **A sweep on load.** Every `onGameLoad` runs a purge of orphans:
-   - any system tagged `exiledSector_chart_pocket` with no live run gets the full close sequence;
+   - any system tagged `exiledSector_chart_system` with no live run gets the full close sequence;
    - any hyperspace entity tagged with a dead run id is removed;
-   - any intel pointing at a missing pocket is ended.
+   - any intel pointing at a missing system is ended.
 
    This catches crashes, mod updates, and saves made while a run was half-closed.
-5. **Disabling the mod.** We document that runs should be closed before removing the mod. Because no persisted class of ours sits inside the pocket's graph, besides plugins on our own entities, a closed run leaves nothing to break.
+5. **Disabling the mod.** We document that runs should be closed before removing the mod. Because no persisted class of ours sits inside the system's graph, besides plugins on our own entities, a closed run leaves nothing to break.
 6. **Verification.** There are two layers:
    - Unit tests over the run state machine and the factory's bookkeeping, with Mockito, as we do today.
    - A dev console command `ChartSoak N` that runs N charts back to back: open, enter, clear, exit, close. It reports the system count, hyperspace entity count, intel count and persistent-data size before and after. A PowerShell helper saves the game and greps `campaign.xml` for `exiledSector_chart_` ids and tags. The expected count is 0, and save size should return to its starting value within a few KB.
@@ -291,17 +291,17 @@ All visible text goes through the en and zh_CN catalogues.
 
 ## Compatibility
 
-- Nexerelin: tags cover colonies, missions and invasions. Special Task Group patrol orders can still list the pocket. Accept that, since the order fails harmlessly, or filter it if Nex exposes a hook.
+- Nexerelin: tags cover colonies, missions and invasions. Special Task Group patrol orders can still list the system. Accept that, since the order fails harmlessly, or filter it if Nex exposes a hook.
 - RAT, Nightcross and the area gates: unaffected, though we could add "clear a tier N chart" as a gate condition later.
 - GraphicsLib: optional visuals for the wormhole only, using the existing `CombatGlow` pattern.
 - Second-in-Command and other fleet mods: chart fleets are ordinary fleets.
-- Mods that loop over every star system see the pocket only while a run is open. The tags exclude it from the well-behaved ones.
+- Mods that loop over every star system see the system only while a run is open. The tags exclude it from the well-behaved ones.
 
 ## Build order
 
 Each phase ends with tests passing and, from phase 1 onwards, the soak check.
 
-1. **Skeleton.** A wormhole entity, an empty pocket (one star), enter and exit, the full close sequence, the load sweep, and the soak command plus save grep. This proves cleanup before any content exists.
+1. **Skeleton.** A wormhole entity, an empty system (one star), enter and exit, the full close sequence, the load sweep, and the soak command plus save grep. This proves cleanup before any content exists.
 2. **Generator layout.** Seeded vanilla stars, planets and terrain, the isolation tags, and blocking escape abilities.
 3. **Content.** Loot points of interest with salvage seeds, guard and patrol fleets, the boss, objectives, the NPC-levelling hook, and the drop-listener hooks.
 4. **Generalising the item layer (done 2026-10-18, except the workbench buttons).** These are refactors, with existing item behaviour unchanged and the released-item tests green:
@@ -317,7 +317,7 @@ Each phase ends with tests passing and, from phase 1 onwards, the soak check.
    - pass the tier to `ItemRollOdds` and the codex when a chart is shown, and cache `ScaleContext` if chart tooltips build it every frame.
 6. **The Star Chart UI.** Tier columns or tabs, the selected-chart panel, the currency buttons, and the Open Wormhole button with the one-run lock and a dev switch in place of the colony building. Since 2026-10-18 it is the Star Charts tab of the universal Items panel, beside Hull Items and Hull Upgrades, in the refit Hull Items screen and the skill tree socketing panel alike; the old console-opened screen and its command are gone. Opening a wormhole closes the panel, the refit screen and any market dialog it sits in, so the player lands on the campaign map beside the wormhole. Opening is refused during a fleet encounter, because that dialog cannot be closed safely from outside.
 7. **Crafting currencies and chart drops (done 2026-10-18).** The sustain loop and tier progression, described under "Chart currencies and drops" below.
-8. **Editor and localisation (done 2026-10-18).** The Definitions, Modifiers, Implicits and Names tabs have an item-type switch between hull items and subroutines and star charts, covering `star_charts.csv` (system type, minimum tier, cleared-tier unlocks, tier-gated pool entries), `star_chart_modifiers.csv` (tier-band values), `star_chart_implicits.csv` and `star_chart_names.json`. The Crafting tab lists the three ciphers. New Chart tiers, Chart POIs, Chart factions, Chart drops and Chart blocked abilities tabs edit the pocket tables, refusing what the loaders skip and warning, before saving, about what they clamp or ignore, such as a cipher chance outside pockets. Every chart file round-trips byte for byte in vitest, including quotes the files had, and `EditorRoundTripTest` pins every chart loader. Every chart key in `en.json` already had zh_CN text, apart from the `.one` plural forms, which Chinese never uses.
+8. **Editor and localisation (done 2026-10-18).** The Definitions, Modifiers, Implicits and Names tabs have an item-type switch between hull items and subroutines and star charts, covering `star_charts.csv` (system type, minimum tier, cleared-tier unlocks, tier-gated pool entries), `star_chart_modifiers.csv` (tier-band values), `star_chart_implicits.csv` and `star_chart_names.json`. The Crafting tab lists the three ciphers. New Chart tiers, Chart POIs, Chart factions, Chart drops and Chart blocked abilities tabs edit the system tables, refusing what the loaders skip and warning, before saving, about what they clamp or ignore, such as a cipher chance outside chart systems. Every chart file round-trips byte for byte in vitest, including quotes the files had, and `EditorRoundTripTest` pins every chart loader. Every chart key in `en.json` already had zh_CN text, apart from the `.one` plural forms, which Chinese never uses.
 9. **The colony building.** It enables the Open Wormhole button and replaces the dev switch. Its image is `Wormhole_gateway.png`, which the user added to the main checkout at `graphics/unused/Wormhole_gateway.png` (untracked as of 2026-10-18; move it to the building graphics folder when the building is built). Decided with the user on 2026-10-18:
    - The Wormhole Gateway is a structure, not an industry, because Ashes of the Domain makes industry slots scarce. One is allowed per faction, and it cannot be raided.
    - A wormhole can be opened only while docked at the planet that has the Gateway. Opening a wormhole from the Star Charts tab needs a working Gateway.
@@ -331,8 +331,8 @@ Each phase ends with tests passing and, from phase 1 onwards, the soak check.
      - Its icon is registered under `graphics.ui_icons_tech_tree` in `settings.json`.
      - The research check runs at runtime, behind `isModEnabled("aotd_vok")`, through `exiledsector.compat.ApiMember` to `AoTDMainResearchManager.getInstance().isResearchedForPlayer(id)`. There is no pom dependency.
      - The parser splits `otherReq` and reward text on colons, so neither may contain an extra colon. It also does not trim `reqToResearchFirst`, so it must contain no spaces.
-   - Pocket planets need the `not_random_mission_target` tag, which so far only the pocket system has. Vaults of Secrets' Project Charon otherwise picks unsurveyed planets. Pockets must never get ruins, remnant or derelict theme tags, or station-mode Remnant fleets, which Vaults of Secrets' Rogue AI looks for.
-   - Farming QoL commission merit in pockets is fine.
+   - System planets need the `not_random_mission_target` tag, which so far only the system itself has. Vaults of Secrets' Project Charon otherwise picks unsurveyed planets. Systems must never get ruins, remnant or derelict theme tags, or station-mode Remnant fleets, which Vaults of Secrets' Rogue AI looks for.
+   - Farming QoL commission merit in systems is fine.
    - Still open: the fate of the dev setting, and upgrade or downgrade chains for a maximum chart tier. Better Market Overhaul turns those chains into upgrade paths.
 10. **Polish.** Wormhole visuals and sounds, the fleet preview, and balance.
 
@@ -347,7 +347,7 @@ Atlas progression is deferred to a later project.
 5. When the wormhole closes, the system must vanish without a trace: nothing left in the save.
 6. Re-evaluated after main's hull item refactor (2026-10-18). Charts become a third item type on the shared item and modifier system, rather than a parallel copy of the old socketables code.
 7. Star charts use the same three rarities as hull items: Common, Rare and Unique (2026-10-18).
-8. Surveying pocket planets grants vanilla survey data and XP, as part of a chart's reward (2026-10-18).
+8. Surveying system planets grants vanilla survey data and XP, as part of a chart's reward (2026-10-18).
 
 ## Chart currencies and drops
 
@@ -366,11 +366,11 @@ Uniques refuse the reforge and the annulment, and corrupted or mirrored charts r
 
 Chart drops come from `chart_drops.csv`, one row per source, through `ChartDrops`:
 - run_reward: completing an objective drops one chart and a 25 percent chance of a second, scaled by the chart's reward multiplier and capped at four. Each chart is 40 percent likely to be one tier higher. A chart-only currency comes with it 75 percent of the time.
-- pocket_salvage and pocket_battle: each salvaged point of interest and each won battle inside a pocket has a 4 percent chance of a chart at the run tier, scaled by the chart's quantity multiplier, and a small chance of a chart-only currency.
-- battle: won battles outside pockets that defeat at least 150 enemy deployment points have a 1 percent chance, at tier 1 plus one per 120 more points, up to tier 6.
+- system_salvage and system_battle: each salvaged point of interest and each won battle inside a chart system has a 4 percent chance of a chart at the run tier, scaled by the chart's quantity multiplier, and a small chance of a chart-only currency.
+- battle: won battles outside chart systems that defeat at least 150 enemy deployment points have a 1 percent chance, at tier 1 plus one per 120 more points, up to tier 6.
 - salvage, techmining_first_find and techmining_monthly: rare finds at a tier from the player's level, up to tier 5.
 
-Chart-only currencies only drop from the pocket sources; the loader zeroes a currency chance on any other row. Dropped charts go into cargo, or colony storage for tech mining, and the chart store absorbs them from the player's cargo on load and when the Star Charts tab opens.
+Chart-only currencies only drop from the system sources; the loader zeroes a currency chance on any other row. Dropped charts go into cargo, or colony storage for tech mining, and the chart store absorbs them from the player's cargo on load and when the Star Charts tab opens.
 
 A unique chart's unlock column takes an `ItemUnlock` id or `cleared_chart_tier_N`. Completing an objective on a tier N chart raises the sector memory value `$exiledSector_chartsClearedTier` to N if it was lower, so the unlock stays latched. The Warden's Vigil needs a cleared tier 3 chart. A unique also never drops below its minimum tier, and an unknown unlock id is logged at load and never drops.
 

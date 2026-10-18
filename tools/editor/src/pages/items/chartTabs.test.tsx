@@ -159,16 +159,16 @@ describe('star chart editing', () => {
     expect(server.readProjectFile(TIERS_FILE)).toBe(before.replace('1,60,2,3,0,0,0.3,0,50,80,6,no,0,1,0,0,"A couple', '1,65,2,3,0,0,0.3,0,50,80,6,no,0,1,0,0,"A couple'));
   }, 90000);
 
-  it('warns before saving a cipher chance on a drop source outside pockets', async () => {
+  it('warns before saving a cipher chance on a drop source outside chart systems', async () => {
     renderWithProviders(<ChartTableTab spec={CHART_DROP_SPEC} vocabulary={vocabulary} />);
     const battleCipher = await findLabelled('battle currency_chance');
     const before = server.readProjectFile(DROPS_FILE);
 
     fireEvent.change(battleCipher, { target: { value: '5' } });
-    expect(await screen.findAllByText(/battle is outside a pocket, where chart currencies never drop/)).toHaveLength(1);
+    expect(await screen.findAllByText(/battle is outside a chart system, where chart currencies never drop/)).toHaveLength(1);
     fireEvent.click(saveButton());
     const dialog = await screen.findByRole('dialog');
-    expect(within(dialog).getByText(/battle is outside a pocket/)).toBeTruthy();
+    expect(within(dialog).getByText(/battle is outside a chart system/)).toBeTruthy();
     fireEvent.click(within(dialog).getByRole('button', { name: 'Save anyway' }));
     await screen.findByText('Saved chart_drops.csv', undefined, { timeout: 30000 });
 

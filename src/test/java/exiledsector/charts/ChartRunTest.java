@@ -52,7 +52,7 @@ class ChartRunTest {
         assertEquals(ChartRunState.OPEN, run.runState());
         assertEquals(2, run.entriesLeft());
         assertTrue(run.canEnter());
-        assertEquals("exiledSector_chart_abc", run.pocketSystemId());
+        assertEquals("exiledSector_chart_abc", run.systemId());
         assertEquals("exiledSector_chart_outer_abc", run.outerWormholeId());
         assertEquals("exiledSector_chart_inner_abc", run.innerWormholeId());
     }
@@ -71,7 +71,7 @@ class ChartRunTest {
         assertTrue(run.isOuterCollapsed());
         run.requestReturn();
 
-        assertEquals(ChartRunState.CLOSING, run.recordLeftPocket());
+        assertEquals(ChartRunState.CLOSING, run.recordLeftSystem());
     }
 
     @Test
@@ -80,7 +80,7 @@ class ChartRunTest {
 
         assertFalse(run.recordArrival());
         run.requestReturn();
-        assertEquals(ChartRunState.OPEN, run.recordLeftPocket());
+        assertEquals(ChartRunState.OPEN, run.recordLeftSystem());
         assertTrue(run.canEnter());
         assertTrue(run.recordArrival(), "the second and last entry collapses the outer wormhole");
         assertEquals(0, run.entriesLeft());
@@ -88,11 +88,11 @@ class ChartRunTest {
     }
 
     @Test
-    void leavingThePocketWithoutReturningThroughTheWormholeEndsTheRunEvenWithEntriesLeft() {
+    void leavingTheSystemWithoutReturningThroughTheWormholeEndsTheRunEvenWithEntriesLeft() {
         ChartRun run = run(3);
         run.recordArrival();
 
-        assertEquals(ChartRunState.CLOSING, run.recordLeftPocket(), "death respawns and escapes close the run");
+        assertEquals(ChartRunState.CLOSING, run.recordLeftSystem(), "death respawns and escapes close the run");
     }
 
     @Test
@@ -102,7 +102,7 @@ class ChartRunTest {
         run.requestReturn();
         run.cancelReturn();
 
-        assertEquals(ChartRunState.CLOSING, run.recordLeftPocket());
+        assertEquals(ChartRunState.CLOSING, run.recordLeftSystem());
     }
 
     @Test
@@ -138,7 +138,7 @@ class ChartRunTest {
     }
 
     @Test
-    void aClosingRunResumesInsideWhenTheSaveHasThePlayerInThePocket() {
+    void aClosingRunResumesInsideWhenTheSaveHasThePlayerInTheSystem() {
         ChartRun run = run(1);
         run.recordArrival();
         run.beginClosing();
@@ -155,7 +155,7 @@ class ChartRunTest {
         assertTrue(adopted.isOuterCollapsed());
         assertEquals(0, adopted.entriesLeft());
         adopted.requestReturn();
-        assertEquals(ChartRunState.CLOSING, adopted.recordLeftPocket());
+        assertEquals(ChartRunState.CLOSING, adopted.recordLeftSystem());
     }
 
     @Test

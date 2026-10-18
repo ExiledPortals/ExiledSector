@@ -46,7 +46,7 @@ export function CraftingTab() {
             <Stack p="md" gap="md" maw={1000}>
               <Text size="xs" c="dimmed">
                 Edits data/config/exiledSector/item_crafting.csv (costs) and the plugin params column of data/campaign/special_items.csv (images). Images picked from
-                graphics/unused/ move to graphics/icons/cargo/. The three ciphers only work on star charts and only drop inside chart pockets.
+                graphics/unused/ move to graphics/icons/cargo/. The three ciphers only work on star charts and only drop inside chart systems.
               </Text>
               {CRAFTING_ITEMS.map((item, itemIndex) => {
                 const icon = materialIcon(model.specialItems, item.id);

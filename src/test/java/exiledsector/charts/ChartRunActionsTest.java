@@ -46,7 +46,7 @@ class ChartRunActionsTest {
     private MockedStatic<Global> globalMock;
     private SectorAPI sector;
     private LocationAPI hyperspace;
-    private StarSystemAPI pocket;
+    private StarSystemAPI system;
     private CampaignFleetAPI playerFleet;
     private CustomCampaignEntityAPI outer;
 
@@ -58,21 +58,21 @@ class ChartRunActionsTest {
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSector).thenReturn(sector);
         hyperspace = mock(LocationAPI.class);
-        pocket = mock(StarSystemAPI.class);
+        system = mock(StarSystemAPI.class);
         playerFleet = mock(CampaignFleetAPI.class);
         outer = mock(CustomCampaignEntityAPI.class);
         when(hyperspace.isHyperspace()).thenReturn(true);
         when(sector.getHyperspace()).thenReturn(hyperspace);
         when(sector.getPlayerFleet()).thenReturn(playerFleet);
-        when(sector.createStarSystem(anyString())).thenReturn(pocket);
-        when(pocket.getLocation()).thenReturn(new Vector2f());
-        when(pocket.getMemoryWithoutUpdate()).thenReturn(mock(MemoryAPI.class));
-        when(pocket.initStar(anyString(), anyString(), anyFloat(), anyFloat())).thenReturn(mock(PlanetAPI.class));
-        when(pocket.addCustomEntity(anyString(), anyString(), anyString(), anyString())).thenReturn(mock(CustomCampaignEntityAPI.class));
+        when(sector.createStarSystem(anyString())).thenReturn(system);
+        when(system.getLocation()).thenReturn(new Vector2f());
+        when(system.getMemoryWithoutUpdate()).thenReturn(mock(MemoryAPI.class));
+        when(system.initStar(anyString(), anyString(), anyFloat(), anyFloat())).thenReturn(mock(PlanetAPI.class));
+        when(system.addCustomEntity(anyString(), anyString(), anyString(), anyString())).thenReturn(mock(CustomCampaignEntityAPI.class));
         when(hyperspace.addCustomEntity(anyString(), anyString(), anyString(), anyString())).thenReturn(outer);
         when(playerFleet.getContainingLocation()).thenReturn(hyperspace);
         when(playerFleet.getLocation()).thenReturn(new Vector2f(500f, 600f));
-        when(pocket.getStar()).thenReturn(mock(PlanetAPI.class));
+        when(system.getStar()).thenReturn(mock(PlanetAPI.class));
         FakeChartLayoutEngine.install(FakeChartLayoutEngine.doingNothing());
         FakeChartContentEngine.install(FakeChartContentEngine.offeringNothing());
     }
@@ -96,7 +96,7 @@ class ChartRunActionsTest {
         assertEquals(500f, run.originX());
         assertEquals(600f, run.originY());
         verify(hyperspace).addCustomEntity(eq(run.outerWormholeId()), anyString(), eq(ChartIds.WORMHOLE_TYPE), anyString());
-        verify(pocket).setOptionalUniqueId(run.pocketSystemId());
+        verify(system).setOptionalUniqueId(run.systemId());
     }
 
     @Test
@@ -108,15 +108,15 @@ class ChartRunActionsTest {
     }
 
     @Test
-    void refusesMidJumpOrFromInsideAPocket() {
+    void refusesMidJumpOrFromInsideASystem() {
         when(playerFleet.isInHyperspaceTransition()).thenReturn(true);
         assertEquals(ChartRunActions.OpenResult.PLAYER_IN_TRANSITION, ChartRunActions.openBesidePlayer(sector, 1, new Random(1)));
 
         when(playerFleet.isInHyperspaceTransition()).thenReturn(false);
-        StarSystemAPI otherPocket = mock(StarSystemAPI.class);
-        when(otherPocket.hasTag(ChartIds.POCKET_TAG)).thenReturn(true);
-        when(playerFleet.getContainingLocation()).thenReturn(otherPocket);
-        assertEquals(ChartRunActions.OpenResult.PLAYER_IN_POCKET, ChartRunActions.openBesidePlayer(sector, 1, new Random(1)));
+        StarSystemAPI otherSystem = mock(StarSystemAPI.class);
+        when(otherSystem.hasTag(ChartIds.SYSTEM_TAG)).thenReturn(true);
+        when(playerFleet.getContainingLocation()).thenReturn(otherSystem);
+        assertEquals(ChartRunActions.OpenResult.PLAYER_IN_SYSTEM, ChartRunActions.openBesidePlayer(sector, 1, new Random(1)));
 
         assertNull(ChartRuns.currentOrNull());
         verify(sector, never()).createStarSystem(anyString());
@@ -171,11 +171,11 @@ class ChartRunActionsTest {
     }
 
     @Test
-    void enteringJumpsToThePocketThroughTheOuterWormhole() {
+    void enteringJumpsToTheSystemThroughTheOuterWormhole() {
         ChartRun run = new ChartRun("abc", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        when(sector.getStarSystem(run.pocketSystemId())).thenReturn(pocket);
+        when(sector.getStarSystem(run.systemId())).thenReturn(system);
         SectorEntityToken entry = mock(SectorEntityToken.class);
-        when(pocket.createToken(anyFloat(), anyFloat())).thenReturn(entry);
+        when(system.createToken(anyFloat(), anyFloat())).thenReturn(entry);
 
         assertTrue(ChartRunActions.enter(sector, run, outer));
 
@@ -203,7 +203,7 @@ class ChartRunActionsTest {
         when(outer.getLocation()).thenReturn(new Vector2f(100f, 100f));
         SectorEntityToken arrival = mock(SectorEntityToken.class);
         when(arrival.getContainingLocation()).thenReturn(hyperspace);
-        when(hyperspace.createToken(100f + ChartPocketFactory.ENTRY_OFFSET, 100f)).thenReturn(arrival);
+        when(hyperspace.createToken(100f + ChartSystemFactory.ENTRY_OFFSET, 100f)).thenReturn(arrival);
         SectorEntityToken inner = mock(SectorEntityToken.class);
 
         assertTrue(ChartRunActions.returnToOrigin(sector, run, inner));

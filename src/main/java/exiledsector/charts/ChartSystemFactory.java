@@ -15,7 +15,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class ChartPocketFactory {
+public final class ChartSystemFactory {
 
     static final List<String> ISOLATION_TAGS = List.of(Tags.THEME_HIDDEN, Tags.THEME_SPECIAL, Tags.TEMPORARY_LOCATION,
             Tags.SYSTEM_CUT_OFF_FROM_HYPER, Tags.DO_NOT_SHOW_STRANDED_DIALOG, Tags.NOT_RANDOM_MISSION_TARGET, Tags.NO_TOPOGRAPHY_SCANS,
@@ -23,8 +23,8 @@ public final class ChartPocketFactory {
     static final String STAR_TYPE = "star_white";
     static final float STAR_RADIUS = 600f;
     static final float CORONA_SIZE = 300f;
-    static final Color POCKET_LIGHT = new Color(205, 215, 255);
-    static final String POCKET_BACKGROUND = "graphics/backgrounds/background4.jpg";
+    static final Color SYSTEM_LIGHT = new Color(205, 215, 255);
+    static final String SYSTEM_BACKGROUND = "graphics/backgrounds/background4.jpg";
     static final float INNER_WORMHOLE_X = 2600f;
     static final float INNER_WORMHOLE_Y = 0f;
     static final float ENTRY_OFFSET = 350f;
@@ -33,52 +33,52 @@ public final class ChartPocketFactory {
     static final float FAR_AWAY_SPACING = 4000f;
     static final int FAR_AWAY_CELLS = 40;
 
-    private ChartPocketFactory() {
+    private ChartSystemFactory() {
     }
 
-    public static ChartPocket createPocket(SectorAPI sector, String runId, ChartLayoutRequest request) {
-        StarSystemAPI pocket = createEmptyPocket(sector, runId);
-        ChartLayout layout = ChartLayoutGenerator.generate(sector, pocket, runId, request);
-        Vector2f farAway = pocketLocation(runId);
-        pocket.getLocation().set(farAway.x, farAway.y);
-        localiseName(pocket);
-        addInnerWormhole(pocket, runId, layout.innerWormholeLocation());
-        ChartContent content = ChartContentGenerator.generate(sector, pocket, runId, request.seed(), request.tier(),
+    public static ChartSystem createSystem(SectorAPI sector, String runId, ChartLayoutRequest request) {
+        StarSystemAPI system = createEmptySystem(sector, runId);
+        ChartLayout layout = ChartLayoutGenerator.generate(sector, system, runId, request);
+        Vector2f farAway = systemLocation(runId);
+        system.getLocation().set(farAway.x, farAway.y);
+        localiseName(system);
+        addInnerWormhole(system, runId, layout.innerWormholeLocation());
+        ChartContent content = ChartContentGenerator.generate(sector, system, runId, request.seed(), request.tier(),
                 innerWormholeSpot(layout.innerWormholeLocation()), request.chartContext());
-        tagEveryEntity(pocket, runId);
-        request.chartContext().afterGeneration(new ChartGenerated(pocket, runId, content, request.chartContext()));
-        return new ChartPocket(pocket, layout, content);
+        tagEveryEntity(system, runId);
+        request.chartContext().afterGeneration(new ChartGenerated(system, runId, content, request.chartContext()));
+        return new ChartSystem(system, layout, content);
     }
 
-    static StarSystemAPI createEmptyPocket(SectorAPI sector, String runId) {
-        StarSystemAPI pocket = sector.createStarSystem(ChartIds.POCKET_BASE_NAME);
-        pocket.setOptionalUniqueId(ChartIds.pocketSystemId(runId));
-        pocket.addTag(ChartIds.POCKET_TAG);
-        pocket.addTag(ChartIds.runTag(runId));
-        ISOLATION_TAGS.forEach(pocket::addTag);
-        pocket.getMemoryWithoutUpdate().set(ChartIds.NEX_DO_NOT_COLONIZE, true);
-        pocket.setDoNotShowIntelFromThisLocationOnMap(true);
-        Vector2f farAway = pocketLocation(runId);
-        pocket.getLocation().set(farAway.x, farAway.y);
-        return pocket;
+    static StarSystemAPI createEmptySystem(SectorAPI sector, String runId) {
+        StarSystemAPI system = sector.createStarSystem(ChartIds.SYSTEM_BASE_NAME);
+        system.setOptionalUniqueId(ChartIds.systemId(runId));
+        system.addTag(ChartIds.SYSTEM_TAG);
+        system.addTag(ChartIds.runTag(runId));
+        ISOLATION_TAGS.forEach(system::addTag);
+        system.getMemoryWithoutUpdate().set(ChartIds.NEX_DO_NOT_COLONIZE, true);
+        system.setDoNotShowIntelFromThisLocationOnMap(true);
+        Vector2f farAway = systemLocation(runId);
+        system.getLocation().set(farAway.x, farAway.y);
+        return system;
     }
 
-    static void ensureIsolationTags(StarSystemAPI pocket) {
+    static void ensureIsolationTags(StarSystemAPI system) {
         for (String tag : ISOLATION_TAGS) {
-            if (!pocket.hasTag(tag)) {
-                pocket.addTag(tag);
+            if (!system.hasTag(tag)) {
+                system.addTag(tag);
             }
         }
     }
 
-    static PlanetAPI addFallbackStar(StarSystemAPI pocket, String runId) {
-        pocket.setBackgroundTextureFilename(POCKET_BACKGROUND);
-        pocket.setLightColor(POCKET_LIGHT);
-        return pocket.initStar(ChartIds.starId(runId), STAR_TYPE, STAR_RADIUS, CORONA_SIZE);
+    static PlanetAPI addFallbackStar(StarSystemAPI system, String runId) {
+        system.setBackgroundTextureFilename(SYSTEM_BACKGROUND);
+        system.setLightColor(SYSTEM_LIGHT);
+        return system.initStar(ChartIds.starId(runId), STAR_TYPE, STAR_RADIUS, CORONA_SIZE);
     }
 
-    public static CustomCampaignEntityAPI addInnerWormhole(StarSystemAPI pocket, String runId, Vector2f location) {
-        CustomCampaignEntityAPI inner = pocket.addCustomEntity(ChartIds.innerWormholeId(runId),
+    public static CustomCampaignEntityAPI addInnerWormhole(StarSystemAPI system, String runId, Vector2f location) {
+        CustomCampaignEntityAPI inner = system.addCustomEntity(ChartIds.innerWormholeId(runId),
                 Translation.gameText("chart.wormhole.inner.name"), ChartIds.WORMHOLE_TYPE, Factions.NEUTRAL);
         Vector2f placed = innerWormholeSpot(location);
         inner.setFixedLocation(placed.x, placed.y);
@@ -100,34 +100,34 @@ public final class ChartPocketFactory {
         return outer;
     }
 
-    public static SectorEntityToken entryPoint(StarSystemAPI pocket, SectorEntityToken innerWormhole) {
+    public static SectorEntityToken entryPoint(StarSystemAPI system, SectorEntityToken innerWormhole) {
         if (innerWormhole == null) {
-            return pocket.createToken(INNER_WORMHOLE_X + ENTRY_OFFSET, INNER_WORMHOLE_Y);
+            return system.createToken(INNER_WORMHOLE_X + ENTRY_OFFSET, INNER_WORMHOLE_Y);
         }
         Vector2f innerLocation = innerWormhole.getLocation();
-        return pocket.createToken(innerLocation.x + ENTRY_OFFSET, innerLocation.y);
+        return system.createToken(innerLocation.x + ENTRY_OFFSET, innerLocation.y);
     }
 
-    static Vector2f pocketLocation(String runId) {
+    static Vector2f systemLocation(String runId) {
         int spread = runId.hashCode() & Integer.MAX_VALUE;
         float column = spread % FAR_AWAY_CELLS;
         float row = (spread / FAR_AWAY_CELLS) % FAR_AWAY_CELLS;
         return new Vector2f(FAR_AWAY_CORNER - column * FAR_AWAY_SPACING, FAR_AWAY_CORNER - row * FAR_AWAY_SPACING);
     }
 
-    private static void localiseName(StarSystemAPI pocket) {
-        String localisedName = Translation.gameText("chart.pocket.name");
-        if (localisedName == null || localisedName.isEmpty() || localisedName.equals(ChartIds.POCKET_BASE_NAME)) {
+    private static void localiseName(StarSystemAPI system) {
+        String localisedName = Translation.gameText("chart.system.name");
+        if (localisedName == null || localisedName.isEmpty() || localisedName.equals(ChartIds.SYSTEM_BASE_NAME)) {
             return;
         }
-        pocket.setBaseName(localisedName);
+        system.setBaseName(localisedName);
     }
 
-    public record ChartPocket(StarSystemAPI system, ChartLayout layout, ChartContent content) {
+    public record ChartSystem(StarSystemAPI system, ChartLayout layout, ChartContent content) {
     }
 
-    private static void tagEveryEntity(StarSystemAPI pocket, String runId) {
-        for (SectorEntityToken entity : new ArrayList<>(pocket.getAllEntities())) {
+    private static void tagEveryEntity(StarSystemAPI system, String runId) {
+        for (SectorEntityToken entity : new ArrayList<>(system.getAllEntities())) {
             tag(entity, runId);
         }
     }

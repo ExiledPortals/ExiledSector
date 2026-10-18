@@ -50,8 +50,8 @@ final class VanillaChartContentEngine implements ChartContentEngine {
     }
 
     @Override
-    public List<ChartSpot> spots(StarSystemAPI pocket, Random random, Set<SectorEntityToken> excludedFoci, float gap) {
-        WeightedRandomPicker<EntityLocation> picker = BaseThemeGenerator.getLocations(random, pocket, excludedFoci, gap, locationWeights());
+    public List<ChartSpot> spots(StarSystemAPI system, Random random, Set<SectorEntityToken> excludedFoci, float gap) {
+        WeightedRandomPicker<EntityLocation> picker = BaseThemeGenerator.getLocations(random, system, excludedFoci, gap, locationWeights());
         List<ChartSpot> spots = new ArrayList<>();
         List<EntityLocation> locations = picker.getItems();
         for (int i = 0; i < locations.size(); i++) {
@@ -66,8 +66,8 @@ final class VanillaChartContentEngine implements ChartContentEngine {
     }
 
     @Override
-    public SectorEntityToken addSalvageEntity(StarSystemAPI pocket, String entityType, String salvageSpec, Random random) {
-        SectorEntityToken entity = BaseThemeGenerator.addSalvageEntity(random, pocket, entityType, Factions.NEUTRAL);
+    public SectorEntityToken addSalvageEntity(StarSystemAPI system, String entityType, String salvageSpec, Random random) {
+        SectorEntityToken entity = BaseThemeGenerator.addSalvageEntity(random, system, entityType, Factions.NEUTRAL);
         if (salvageSpec == null || salvageSpec.equals(entityType)) {
             return entity;
         }
@@ -77,19 +77,19 @@ final class VanillaChartContentEngine implements ChartContentEngine {
             entity.getDetectedRangeMod().modifyFlat(DETECTION_MOD_ID, spec.getDetectionRange());
             return entity;
         } catch (RuntimeException | LinkageError e) {
-            pocket.removeEntity(entity);
+            system.removeEntity(entity);
             throw e;
         }
     }
 
     @Override
-    public SectorEntityToken addDerelict(StarSystemAPI pocket, String factionId, String derelictType, boolean recoverable, Random random) {
+    public SectorEntityToken addDerelict(StarSystemAPI system, String factionId, String derelictType, boolean recoverable, Random random) {
         DerelictShipData shipData = DerelictShipEntityPlugin.createRandom(factionId, DerelictType.valueOf(derelictType), random,
                 DerelictShipEntityPlugin.getDefaultSModProb());
         if (shipData == null || shipData.ship == null) {
             return null;
         }
-        SectorEntityToken wreck = BaseThemeGenerator.addSalvageEntity(random, pocket, Entities.WRECK, Factions.NEUTRAL, shipData);
+        SectorEntityToken wreck = BaseThemeGenerator.addSalvageEntity(random, system, Entities.WRECK, Factions.NEUTRAL, shipData);
         if (wreck instanceof CustomCampaignEntityAPI customWreck) {
             customWreck.setDiscoverable(true);
         }
@@ -100,7 +100,7 @@ final class VanillaChartContentEngine implements ChartContentEngine {
                     Misc.setSalvageSpecial(wreck, recovery);
                 }
             } catch (RuntimeException | LinkageError e) {
-                pocket.removeEntity(wreck);
+                system.removeEntity(wreck);
                 throw e;
             }
         }

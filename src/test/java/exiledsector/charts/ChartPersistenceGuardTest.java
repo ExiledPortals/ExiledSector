@@ -63,7 +63,7 @@ class ChartPersistenceGuardTest {
     }
 
     @Test
-    void theObjectiveIntelSavesOnlyItsRunIdSoItNeverHoldsThePocket() {
+    void theObjectiveIntelSavesOnlyItsRunIdSoItNeverHoldsTheSystem() {
         List<String> saved = new ArrayList<>();
         for (Field field : ChartObjectiveIntel.class.getDeclaredFields()) {
             if (!Modifier.isStatic(field.getModifiers()) && !Modifier.isTransient(field.getModifiers())) {

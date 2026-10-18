@@ -84,13 +84,13 @@ class WormholeOpenCheckTest {
     }
 
     @Test
-    void theFleetMustBeOutsideAPocketAndNotMidJump() {
+    void theFleetMustBeOutsideASystemAndNotMidJump() {
         assertEquals(Blocker.NO_FLEET, WormholeOpenCheck.evaluate(chart, store, true, false, null));
         when(playerFleet.isInHyperspaceTransition()).thenReturn(true);
         assertEquals(Blocker.IN_TRANSITION, WormholeOpenCheck.evaluate(chart, store, true, false, playerFleet));
         when(playerFleet.isInHyperspaceTransition()).thenReturn(false);
-        when(hyperspace.hasTag(ChartIds.POCKET_TAG)).thenReturn(true);
-        assertEquals(Blocker.IN_POCKET, WormholeOpenCheck.evaluate(chart, store, true, false, playerFleet));
+        when(hyperspace.hasTag(ChartIds.SYSTEM_TAG)).thenReturn(true);
+        assertEquals(Blocker.IN_SYSTEM, WormholeOpenCheck.evaluate(chart, store, true, false, playerFleet));
         when(playerFleet.getContainingLocation()).thenReturn(null);
         assertEquals(Blocker.NO_FLEET, WormholeOpenCheck.evaluate(chart, store, true, false, playerFleet));
     }

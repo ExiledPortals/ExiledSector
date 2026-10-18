@@ -45,7 +45,7 @@ public final class ChartPois {
         }
         csv.report(LOG);
         pois = List.copyOf(loaded.values());
-        LOG.info("[ExiledSector] Star Chart pockets can place " + pois.size() + " kinds of point of interest");
+        LOG.info("[ExiledSector] Star Chart systems can place " + pois.size() + " kinds of point of interest");
     }
 
     private static ChartPoi parse(ChartCsv csv, JSONObject row, String id) {

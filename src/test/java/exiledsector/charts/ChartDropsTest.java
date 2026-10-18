@@ -100,15 +100,15 @@ class ChartDropsTest {
     }
 
     @Test
-    void theShippedTableCoversEverySourceAndKeepsChartCurrenciesInsidePockets() throws Exception {
+    void theShippedTableCoversEverySourceAndKeepsChartCurrenciesInsideSystems() throws Exception {
         ChartDrops.register(ChartContentDataTest.csvRows(ChartDrops.PATH));
 
         for (ChartDrops.Source source : ChartDrops.Source.values()) {
             ChartDrops.Rule rule = ChartDrops.rule(source);
             assertNotNull(rule, source.id());
             assertTrue(rule.chance() > 0f, source.id());
-            assertEquals(source.insidePocket(), rule.currencyChance() > 0f, source.id());
-            if (!source.insidePocket()) {
+            assertEquals(source.insideSystem(), rule.currencyChance() > 0f, source.id());
+            if (!source.insideSystem()) {
                 assertTrue(rule.chance() <= 0.1f, source.id() + " must stay rare");
                 assertTrue(rule.maxTier() <= 6, source.id() + " must leave the high tiers to the sustain loop");
                 assertEquals(0f, rule.tierUpChance(), source.id());
@@ -118,7 +118,7 @@ class ChartDropsTest {
     }
 
     @Test
-    void aCurrencyChanceOutsideAPocketIsIgnored() throws Exception {
+    void aCurrencyChanceOutsideASystemIsIgnored() throws Exception {
         ChartDrops.register(new JSONArray().put(rule("battle", 1f, 0f, 0f, 1f)).put(rule("nowhere", 1f, 0f, 0f, 0f)));
 
         assertEquals(0f, ChartDrops.rule(ChartDrops.Source.BATTLE).currencyChance());
@@ -195,18 +195,18 @@ class ChartDropsTest {
     }
 
     @Test
-    void onlyPocketSourcesDropChartCurrencies() throws Exception {
-        ChartDrops.register(new JSONArray().put(rule("pocket_salvage", 0f, 0f, 0f, 1f)).put(rule("salvage", 1f, 0f, 0f, 0f)));
+    void onlySystemsourcesDropChartCurrencies() throws Exception {
+        ChartDrops.register(new JSONArray().put(rule("system_salvage", 0f, 0f, 0f, 1f)).put(rule("salvage", 1f, 0f, 0f, 0f)));
 
-        ChartDrops.Loot pocketLoot = ChartDrops.roll(ChartDrops.Source.POCKET_SALVAGE, 4, 1f, new Random(2L), anyUnique());
-        assertTrue(pocketLoot.charts().isEmpty());
-        assertEquals(1, pocketLoot.currencies().size());
-        assertTrue(CHART_CURRENCY_IDS.containsAll(pocketLoot.currencies().keySet()));
+        ChartDrops.Loot systemLoot = ChartDrops.roll(ChartDrops.Source.SYSTEM_SALVAGE, 4, 1f, new Random(2L), anyUnique());
+        assertTrue(systemLoot.charts().isEmpty());
+        assertEquals(1, systemLoot.currencies().size());
+        assertTrue(CHART_CURRENCY_IDS.containsAll(systemLoot.currencies().keySet()));
         assertTrue(ChartDrops.roll(ChartDrops.Source.SALVAGE, 4, 1f, new Random(2L), anyUnique()).currencies().isEmpty());
     }
 
     @Test
-    void outsidePocketsTheTierComesFromTheEncounterStrength() throws Exception {
+    void outsideSystemsTheTierComesFromTheEncounterStrength() throws Exception {
         ChartDrops.register(ChartContentDataTest.csvRows(ChartDrops.PATH));
 
         assertEquals(ChartDrops.NO_TIER, ChartDrops.tierForStrength(ChartDrops.Source.BATTLE, 100f));
@@ -221,11 +221,11 @@ class ChartDropsTest {
         assertTrue(ChartDrops.roll(ChartDrops.Source.BATTLE, ChartDrops.NO_TIER, 1f, new Random(1L), anyUnique()).isEmpty());
     }
 
-    private StarSystemAPI pocket(String runId) {
-        StarSystemAPI pocket = mock(StarSystemAPI.class);
-        when(pocket.hasTag(ChartIds.POCKET_TAG)).thenReturn(true);
-        when(pocket.getTags()).thenReturn(List.of(ChartIds.POCKET_TAG, ChartIds.runTag(runId)));
-        return pocket;
+    private StarSystemAPI system(String runId) {
+        StarSystemAPI system = mock(StarSystemAPI.class);
+        when(system.hasTag(ChartIds.SYSTEM_TAG)).thenReturn(true);
+        when(system.getTags()).thenReturn(List.of(ChartIds.SYSTEM_TAG, ChartIds.runTag(runId)));
+        return system;
     }
 
     private ChartRun storeRun(int tier) {
@@ -237,20 +237,20 @@ class ChartDropsTest {
     }
 
     @Test
-    void pocketSalvageAndBattlesDropAtTheRunTierAndOnlyWhileTheRunIsLive() throws Exception {
-        ChartDrops.register(new JSONArray().put(rule("pocket_salvage", 1f, 0f, 0f, 1f)).put(rule("pocket_battle", 1f, 0f, 0f, 0f))
+    void systemsalvageAndBattlesDropAtTheRunTierAndOnlyWhileTheRunIsLive() throws Exception {
+        ChartDrops.register(new JSONArray().put(rule("system_salvage", 1f, 0f, 0f, 1f)).put(rule("system_battle", 1f, 0f, 0f, 0f))
                 .put(rule("salvage", 1f, 0f, 0f, 0f)).put(rule("battle", 1f, 0f, 0f, 0f)));
-        StarSystemAPI pocket = pocket(RUN_ID);
+        StarSystemAPI system = system(RUN_ID);
 
-        assertTrue(ChartDrops.forSalvage(sector, pocket, new Random(1L)).isEmpty(), "a pocket without a live run drops nothing");
+        assertTrue(ChartDrops.forSalvage(sector, system, new Random(1L)).isEmpty(), "a system without a live run drops nothing");
 
         storeRun(9);
-        ChartDrops.Loot salvage = ChartDrops.forSalvage(sector, pocket, new Random(1L));
+        ChartDrops.Loot salvage = ChartDrops.forSalvage(sector, system, new Random(1L));
         assertEquals(9, tierOf(salvage.charts().get(0)));
         assertEquals(1, salvage.currencies().size());
-        ChartDrops.Loot battle = ChartDrops.forBattle(sector, pocket, 40f, new Random(1L));
+        ChartDrops.Loot battle = ChartDrops.forBattle(sector, system, 40f, new Random(1L));
         assertEquals(9, tierOf(battle.charts().get(0)));
-        assertTrue(ChartDrops.forSalvage(sector, pocket("otherRun"), new Random(1L)).isEmpty());
+        assertTrue(ChartDrops.forSalvage(sector, system("otherRun"), new Random(1L)).isEmpty());
 
         LocationAPI outside = mock(LocationAPI.class);
         assertEquals(1, tierOf(ChartDrops.forSalvage(sector, outside, new Random(1L)).charts().get(0)));

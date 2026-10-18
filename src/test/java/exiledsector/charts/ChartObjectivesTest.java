@@ -40,9 +40,9 @@ class ChartObjectivesTest {
 
     private MockedStatic<Global> globalMock;
     private SectorAPI sector;
-    private StarSystemAPI pocket;
+    private StarSystemAPI system;
     private MutableValue credits;
-    private final List<CampaignFleetAPI> pocketFleets = new ArrayList<>();
+    private final List<CampaignFleetAPI> systemFleets = new ArrayList<>();
     private final FakeChartContentEngine tags = new FakeChartContentEngine();
 
     @BeforeEach
@@ -52,9 +52,9 @@ class ChartObjectivesTest {
         when(sector.getPersistentData()).thenReturn(persistentData);
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSector).thenReturn(sector);
-        pocket = mock(StarSystemAPI.class);
-        when(sector.getStarSystem(ChartIds.pocketSystemId(RUN_ID))).thenReturn(pocket);
-        when(pocket.getFleets()).thenAnswer(invocation -> new ArrayList<>(pocketFleets));
+        system = mock(StarSystemAPI.class);
+        when(sector.getStarSystem(ChartIds.systemId(RUN_ID))).thenReturn(system);
+        when(system.getFleets()).thenAnswer(invocation -> new ArrayList<>(systemFleets));
         CampaignFleetAPI playerFleet = mock(CampaignFleetAPI.class);
         CargoAPI cargo = mock(CargoAPI.class);
         credits = mock(MutableValue.class);
@@ -174,14 +174,14 @@ class ChartObjectivesTest {
         CampaignFleetAPI survivor = fleet("g1", true);
         CampaignFleetAPI despawning = fleet("g2", true);
         when(despawning.isDespawning()).thenReturn(true);
-        pocketFleets.add(survivor);
-        pocketFleets.add(despawning);
+        systemFleets.add(survivor);
+        systemFleets.add(despawning);
 
         assertTrue(ChartObjectives.reconcile(sector));
         assertEquals(List.of("g2"), run.defeatedTargetIds());
         assertFalse(run.isObjectiveComplete());
 
-        pocketFleets.clear();
+        systemFleets.clear();
         assertTrue(ChartObjectives.reconcile(sector));
         assertTrue(run.isObjectiveComplete());
         assertFalse(ChartObjectives.reconcile(sector));
@@ -191,7 +191,7 @@ class ChartObjectivesTest {
     void aFadingVaultCountsAsSalvagedWhenReconciling() {
         ChartRun run = openRun(ChartObjective.VAULT, List.of("vault1"), "vault1");
         CustomCampaignEntityAPI vault = tags.tagged(mock(CustomCampaignEntityAPI.class));
-        when(pocket.getEntityById("vault1")).thenReturn(vault);
+        when(system.getEntityById("vault1")).thenReturn(vault);
 
         assertFalse(ChartObjectives.reconcile(sector));
         vault.addTag(Tags.FADING_OUT_AND_EXPIRING);

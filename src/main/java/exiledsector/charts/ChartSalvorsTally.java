@@ -21,13 +21,13 @@ final class ChartSalvorsTally {
     private ChartSalvorsTally() {
     }
 
-    static int removePendingFor(SectorAPI sector, StarSystemAPI pocket) {
-        if (pocket == null) {
+    static int removePendingFor(SectorAPI sector, StarSystemAPI system) {
+        if (system == null) {
             return 0;
         }
         int removed = 0;
         for (EveryFrameScript script : new ArrayList<>(sector.getScripts())) {
-            if (script instanceof SalvorsTallyAdder adder && pendingIntelSystem(adder) == pocket) {
+            if (script instanceof SalvorsTallyAdder adder && pendingIntelSystem(adder) == system) {
                 sector.removeScript(script);
                 removed++;
             }
@@ -49,7 +49,7 @@ final class ChartSalvorsTally {
             return intelGetter.invoke(adder) instanceof SalvorsTallyIntel intel ? intel.getSystem() : null;
         } catch (Throwable e) {
             unreachable = true;
-            LOG.warn("[ExiledSector] A pending Salvor's Tally can't be read, so one queued for a closed Star Chart pocket may keep it in the save", e);
+            LOG.warn("[ExiledSector] A pending Salvor's Tally can't be read, so one queued for a closed Star Chart system may keep it in the save", e);
             return null;
         }
     }

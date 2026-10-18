@@ -75,7 +75,7 @@ final class EditorVocabulary {
         json.append("  \"chartTierDefaults\": [").append(String.join(", ", ChartEditorVocabulary.tierDefaultsJson())).append("],\n");
         json.append("  \"chartDropSources\": [")
                 .append(Arrays.stream(ChartDrops.Source.values())
-                        .map(source -> "{\"id\": " + quote(source.id()) + ", \"insidePocket\": " + source.insidePocket() + "}")
+                        .map(source -> "{\"id\": " + quote(source.id()) + ", \"insideSystem\": " + source.insideSystem() + "}")
                         .collect(Collectors.joining(", ")))
                 .append("]\n");
         return json.append("}\n").toString();

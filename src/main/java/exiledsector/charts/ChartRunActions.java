@@ -25,7 +25,7 @@ public final class ChartRunActions {
         RUN_EXISTS,
         NO_PLAYER_FLEET,
         PLAYER_IN_TRANSITION,
-        PLAYER_IN_POCKET,
+        PLAYER_IN_SYSTEM,
         NO_CHART,
         FAILED
     }
@@ -72,18 +72,18 @@ public final class ChartRunActions {
             return OpenResult.PLAYER_IN_TRANSITION;
         }
         LocationAPI origin = playerFleet.getContainingLocation();
-        if (origin.hasTag(ChartIds.POCKET_TAG)) {
-            return OpenResult.PLAYER_IN_POCKET;
+        if (origin.hasTag(ChartIds.SYSTEM_TAG)) {
+            return OpenResult.PLAYER_IN_SYSTEM;
         }
         Vector2f playerLocation = playerFleet.getLocation();
         ChartRun run = new ChartRun(newRunId(random), ChartIds.locationIdOf(origin), playerLocation.x, playerLocation.y, entriesAllowed);
         run.recordChart(chartData);
         ChartRuns.store(run);
         try {
-            ChartPocketFactory.ChartPocket created = ChartPocketFactory.createPocket(sector, run.runId(), layoutRequest);
+            ChartSystemFactory.ChartSystem created = ChartSystemFactory.createSystem(sector, run.runId(), layoutRequest);
             run.recordLayout(created.layout());
             run.recordContent(created.content());
-            ChartPocketFactory.addOuterWormhole(origin, playerLocation, run.runId());
+            ChartSystemFactory.addOuterWormhole(origin, playerLocation, run.runId());
             ChartObjectiveIntel.addFor(sector, run);
             return OpenResult.OPENED;
         } catch (RuntimeException | LinkageError e) {
@@ -103,14 +103,14 @@ public final class ChartRunActions {
         if (!run.canEnter() || playerFleet == null || playerFleet.isInHyperspaceTransition()) {
             return false;
         }
-        StarSystemAPI pocket = sector.getStarSystem(run.pocketSystemId());
-        if (pocket == null) {
+        StarSystemAPI system = sector.getStarSystem(run.systemId());
+        if (system == null) {
             run.beginClosing();
             return false;
         }
-        SectorEntityToken entry = ChartPocketFactory.entryPoint(pocket, pocket.getEntityById(run.innerWormholeId()));
+        SectorEntityToken entry = ChartSystemFactory.entryPoint(system, system.getEntityById(run.innerWormholeId()));
         ChartRunScript.blockEscapeAbilities(playerFleet);
-        sector.doHyperspaceTransition(playerFleet, outerWormhole, new JumpDestination(entry, pocket.getName()));
+        sector.doHyperspaceTransition(playerFleet, outerWormhole, new JumpDestination(entry, system.getName()));
         return true;
     }
 
@@ -130,16 +130,16 @@ public final class ChartRunActions {
 
     static SectorEntityToken returnPoint(SectorAPI sector, ChartRun run) {
         SectorEntityToken outer = run.isOuterCollapsed() ? null : sector.getEntityById(run.outerWormholeId());
-        if (outer != null && outer.getContainingLocation() != null && !outer.getContainingLocation().hasTag(ChartIds.POCKET_TAG)) {
+        if (outer != null && outer.getContainingLocation() != null && !outer.getContainingLocation().hasTag(ChartIds.SYSTEM_TAG)) {
             Vector2f outerLocation = outer.getLocation();
-            return outer.getContainingLocation().createToken(outerLocation.x + ChartPocketFactory.ENTRY_OFFSET, outerLocation.y);
+            return outer.getContainingLocation().createToken(outerLocation.x + ChartSystemFactory.ENTRY_OFFSET, outerLocation.y);
         }
         LocationAPI origin = ChartIds.resolveLocation(sector, run.originLocationId());
-        if (origin != null && !origin.hasTag(ChartIds.POCKET_TAG)) {
+        if (origin != null && !origin.hasTag(ChartIds.SYSTEM_TAG)) {
             return origin.createToken(run.originX(), run.originY());
         }
         LocationAPI respawn = sector.getRespawnLocation();
-        if (respawn != null && !respawn.hasTag(ChartIds.POCKET_TAG) && sector.getRespawnCoordinates() != null) {
+        if (respawn != null && !respawn.hasTag(ChartIds.SYSTEM_TAG) && sector.getRespawnCoordinates() != null) {
             return respawn.createToken(sector.getRespawnCoordinates());
         }
         LocationAPI hyperspace = sector.getHyperspace();

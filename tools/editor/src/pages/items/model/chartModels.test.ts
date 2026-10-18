@@ -33,8 +33,8 @@ const vocabulary = buildVocabulary({
   chartPoiKinds: ['cache', 'station', 'derelict', 'vault'],
   chartDerelictTypes: ['CIVILIAN', 'LARGE', 'MEDIUM', 'SMALL'],
   chartDropSources: [
-    { id: 'run_reward', insidePocket: true },
-    { id: 'battle', insidePocket: false },
+    { id: 'run_reward', insideSystem: true },
+    { id: 'battle', insideSystem: false },
   ],
 });
 
@@ -289,7 +289,7 @@ describe('chart tables', () => {
     expect(serializeChartTable(model, CHART_FACTION_SPEC.columns)).toBe('faction,weight,note\r\npirates,10,Edited note\r\n');
   });
 
-  it('mirrors the drop loader: unknown sources refuse, ciphers outside pockets warn', () => {
+  it('mirrors the drop loader: unknown sources refuse, ciphers outside chart systems warn', () => {
     const model = chartTable(
       CHART_DROP_SPEC,
       'source,chance,extra_chance,tier_up_chance,currency_chance,min_strength,strength_per_tier,max_tier,note\n' +
@@ -304,7 +304,7 @@ describe('chart tables', () => {
     ]);
     expect(CHART_DROP_SPEC.warnings(model, vocabulary)).toEqual([
       'battle: tier_up_chance above 100% counts as 100%',
-      'battle: battle is outside a pocket, where chart currencies never drop, so the game reads currency_chance as 0',
+      'battle: battle is outside a chart system, where chart currencies never drop, so the game reads currency_chance as 0',
       'BATTLE: max_tier is clamped to 1-15',
       'No row for run_reward, so it never drops charts',
     ]);

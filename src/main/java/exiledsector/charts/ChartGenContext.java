@@ -265,11 +265,11 @@ public final class ChartGenContext {
     }
 
     static void markSalvageChances(ChartGenerated generated) {
-        if (generated.pocket() == null) {
+        if (generated.system() == null) {
             return;
         }
         String vaultId = generated.content() == null ? null : generated.content().vaultEntityId();
-        for (SectorEntityToken entity : generated.pocket().getEntitiesWithTag(ChartIds.CONTENT_TAG)) {
+        for (SectorEntityToken entity : generated.system().getEntitiesWithTag(ChartIds.CONTENT_TAG)) {
             if (entity instanceof CampaignFleetAPI || !ChartIds.belongsToRun(entity, generated.runId())) {
                 continue;
             }
@@ -284,10 +284,10 @@ public final class ChartGenContext {
 
     static void enrichVault(ChartGenerated generated, float richnessPercent) {
         String vaultId = generated.content() == null ? null : generated.content().vaultEntityId();
-        if (vaultId == null || generated.pocket() == null || richnessPercent <= 0f) {
+        if (vaultId == null || generated.system() == null || richnessPercent <= 0f) {
             return;
         }
-        SectorEntityToken vault = generated.pocket().getEntityById(vaultId);
+        SectorEntityToken vault = generated.system().getEntityById(vaultId);
         int extraValue = Math.round(VAULT_BASE_DROP_VALUE * richnessPercent / PERCENT);
         if (vault != null && extraValue > 0) {
             vault.addDropValue(VAULT_DROP_GROUP, extraValue);

@@ -8,7 +8,7 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import exiledsector.charts.ChartCensus;
 import exiledsector.charts.ChartIds;
-import exiledsector.charts.ChartPocketContents;
+import exiledsector.charts.ChartSystemContents;
 import exiledsector.charts.ChartRun;
 import exiledsector.charts.ChartRuns;
 import org.lazywizard.console.BaseCommand;
@@ -26,7 +26,7 @@ public class ChartStatusCommand implements BaseCommand {
         SectorAPI sector = Global.getSector();
         Console.showMessage(describeRun(sector, ChartRuns.currentOrNull()));
         Console.showMessage("Counts: " + ChartCensus.take(sector).describe());
-        Console.showMessage("\"Charted Space\" reserved in the used procgen names: " + ChartCensus.pocketNameReserved());
+        Console.showMessage("\"Charted Space\" reserved in the used procgen names: " + ChartCensus.systemNameReserved());
         return CommandResult.SUCCESS;
     }
 
@@ -34,18 +34,18 @@ public class ChartStatusCommand implements BaseCommand {
         if (run == null) {
             return "No Star Chart run is open.";
         }
-        StarSystemAPI pocket = sector.getStarSystem(run.pocketSystemId());
+        StarSystemAPI system = sector.getStarSystem(run.systemId());
         boolean outerExists = sector.getEntityById(run.outerWormholeId()) != null;
         return "Star Chart run " + run.runId() + ": " + run.runState() + ", entries used " + run.entriesUsed() + " of " + run.entriesAllowed()
-                + ", pocket " + (pocket != null ? "exists" : "missing") + ", outer wormhole " + (outerExists ? "exists" : "gone")
+                + ", system " + (system != null ? "exists" : "missing") + ", outer wormhole " + (outerExists ? "exists" : "gone")
                 + ", origin " + run.originLocationId() + " at (" + Math.round(run.originX()) + ", " + Math.round(run.originY()) + ")"
                 + (run.isReturnRequested() ? ", returning" : "")
                 + "\n" + ChartOpenCommand.describeLayout(run)
                 + "\n" + ChartOpenCommand.describeContent(run)
                 + "\n" + describeObjective(run)
                 + "\n" + ChartOpenCommand.describeChart(run)
-                + (pocket == null ? "" : "\nPocket contents: " + ChartPocketContents.of(pocket).describe()
-                + "\nStill in the pocket: " + describeLiveContent(pocket));
+                + (system == null ? "" : "\nSystem contents: " + ChartSystemContents.of(system).describe()
+                + "\nStill in the system: " + describeLiveContent(system));
     }
 
     static String describeObjective(ChartRun run) {
@@ -57,15 +57,15 @@ public class ChartStatusCommand implements BaseCommand {
                 + (run.isRewardClaimed() ? ", reward delivered" : run.isObjectiveComplete() ? ", reward NOT delivered" : "") + ".";
     }
 
-    static String describeLiveContent(StarSystemAPI pocket) {
+    static String describeLiveContent(StarSystemAPI system) {
         int chartFleets = 0;
-        for (CampaignFleetAPI fleet : pocket.getFleets()) {
+        for (CampaignFleetAPI fleet : system.getFleets()) {
             if (fleet.hasTag(ChartIds.CONTENT_TAG) && !fleet.isDespawning()) {
                 chartFleets++;
             }
         }
         int pois = 0;
-        for (SectorEntityToken entity : pocket.getEntitiesWithTag(ChartIds.CONTENT_TAG)) {
+        for (SectorEntityToken entity : system.getEntitiesWithTag(ChartIds.CONTENT_TAG)) {
             if (!(entity instanceof CampaignFleetAPI) && !entity.hasTag(Tags.FADING_OUT_AND_EXPIRING)) {
                 pois++;
             }

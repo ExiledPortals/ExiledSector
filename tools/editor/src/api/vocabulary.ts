@@ -39,7 +39,7 @@ export interface ChartTierDefault {
 
 export interface ChartDropSource {
   id: string;
-  insidePocket: boolean;
+  insideSystem: boolean;
 }
 
 export interface Vocabulary {

@@ -13,8 +13,8 @@ import java.util.Random;
 
 public class ChartSoakCommand implements BaseCommand {
 
-    static final int DEFAULT_POCKETS = 10;
-    static final int MAX_POCKETS = 500;
+    static final int DEFAULT_SYSTEMS = 10;
+    static final int MAX_SYSTEMS = 500;
 
     @Override
     public CommandResult runCommand(String args, CommandContext context) {
@@ -22,9 +22,9 @@ public class ChartSoakCommand implements BaseCommand {
             Console.showMessage(CommonStrings.ERROR_CAMPAIGN_ONLY);
             return CommandResult.WRONG_CONTEXT;
         }
-        int pockets = parsePockets(args);
-        if (pockets < 1 || pockets > MAX_POCKETS) {
-            Console.showMessage("Give a number of pockets from 1 to " + MAX_POCKETS + ".");
+        int systems = parseSystems(args);
+        if (systems < 1 || systems > MAX_SYSTEMS) {
+            Console.showMessage("Give a number of systems from 1 to " + MAX_SYSTEMS + ".");
             return CommandResult.BAD_SYNTAX;
         }
         SectorAPI sector = Global.getSector();
@@ -37,16 +37,16 @@ public class ChartSoakCommand implements BaseCommand {
             return CommandResult.ERROR;
         }
         ChartCensus before = ChartCensus.take(sector);
-        sector.addTransientScript(new ChartSoakScript(pockets, before, ChartSoakCommand::report, new Random()));
-        Console.showMessage("Soaking " + pockets + " full Star Chart pocket(s) with their fleets and points of interest, a few frames each,"
+        sector.addTransientScript(new ChartSoakScript(systems, before, ChartSoakCommand::report, new Random()));
+        Console.showMessage("Soaking " + systems + " full Star Chart system(s) with their fleets and points of interest, a few frames each,"
                 + " cycling seeds, system types and tiers 1 to 15. Close the console and keep the game paused so other fleets and intel do not change the counts; the result is shown"
                 + " in the campaign messages, in the console and in starsector.log.\nBefore: " + before.describe());
         return CommandResult.SUCCESS;
     }
 
-    static int parsePockets(String args) {
+    static int parseSystems(String args) {
         if (args == null || args.isBlank()) {
-            return DEFAULT_POCKETS;
+            return DEFAULT_SYSTEMS;
         }
         try {
             return Integer.parseInt(args.trim());

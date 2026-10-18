@@ -303,7 +303,7 @@ export const CHART_POI_SPEC: ChartTableSpec = {
   noun: 'point of interest',
   keyColumn: 'id',
   description:
-    'Loot points of interest the generator places in a pocket, spending the tier loot budget by cost and picking by weight. Derelicts need a derelict type. The vault kind is only placed for the vault objective.',
+    'Loot points of interest the generator places in a system, spending the tier loot budget by cost and picking by weight. Derelicts need a derelict type. The vault kind is only placed for the vault objective.',
   columns: columnsOf(CHART_POI_COLUMNS, {
     id: { label: 'Id', kind: 'text' },
     kind: { label: 'Kind', kind: 'choice', choices: (vocabulary) => vocabulary.chartPoiKinds },
@@ -365,7 +365,7 @@ export const CHART_FACTION_SPEC: ChartTableSpec = {
   noun: 'chart faction',
   keyColumn: 'faction',
   description:
-    'Which factions guard a pocket, picked by weight among those whose tier span covers the chart tier. Factions from mods that are not installed are skipped. Power multiplies the tier fleet power; the quality bonus adds to the tier quality.',
+    'Which factions guard a system, picked by weight among those whose tier span covers the chart tier. Factions from mods that are not installed are skipped. Power multiplies the tier fleet power; the quality bonus adds to the tier quality.',
   columns: columnsOf(CHART_FACTION_COLUMNS, {
     faction: { label: 'Faction id', kind: 'text' },
     weight: { label: 'Weight', kind: 'number' },
@@ -407,7 +407,7 @@ export const CHART_BLOCKED_ABILITY_SPEC: ChartTableSpec = {
   fileName: 'chart_blocked_abilities.csv',
   noun: 'blocked ability',
   keyColumn: 'ability_id',
-  description: `Abilities that are switched off while the player is inside a pocket, so other mods' escape abilities cannot leave it. ${ALWAYS_BLOCKED_ABILITY} (Transverse Jump) is always blocked, listed or not.`,
+  description: `Abilities that are switched off while the player is inside a chart system, so other mods' escape abilities cannot leave it. ${ALWAYS_BLOCKED_ABILITY} (Transverse Jump) is always blocked, listed or not.`,
   columns: columnsOf(CHART_BLOCKED_ABILITY_COLUMNS, {
     ability_id: { label: 'Ability id', kind: 'text', help: 'The ability id from data/campaign/abilities.csv' },
     note: NOTE_COLUMN,
@@ -429,7 +429,7 @@ export function dropTierSummary(row: ChartTableRow, vocabulary: Vocabulary): str
   if (!source) {
     return '';
   }
-  if (source.insidePocket) {
+  if (source.insideSystem) {
     return `${chance} at the run tier, up to t${maxTier}`;
   }
   const minStrength = Math.max(0, numberValue(row, 'min_strength', 0));
@@ -443,7 +443,7 @@ export const CHART_DROP_SPEC: ChartTableSpec = {
   noun: 'chart drop',
   keyColumn: 'source',
   description:
-    'One row per drop source. Chance is the expected number of charts (1 = one chart, 0.04 = a 4% chance); extra chance adds a second chart; tier-up is each chart\'s chance to be one tier higher; the currency chance gives a chart-only cipher and only works inside pockets. Outside pockets, strength is enemy deployment points for battles and player level for salvage and tech mining: the drop needs at least min strength and gains a tier per strength-per-tier above it. A missing source never drops charts.',
+    'One row per drop source. Chance is the expected number of charts (1 = one chart, 0.04 = a 4% chance); extra chance adds a second chart; tier-up is each chart\'s chance to be one tier higher; the currency chance gives a chart-only cipher and only works inside chart systems. Outside chart systems, strength is enemy deployment points for battles and player level for salvage and tech mining: the drop needs at least min strength and gains a tier per strength-per-tier above it. A missing source never drops charts.',
   columns: columnsOf(CHART_DROP_COLUMNS, {
     source: { label: 'Source', kind: 'choice', choices: (vocabulary) => vocabulary.chartDropSources.map((source) => source.id) },
     chance: { label: 'Chance %', kind: 'fraction' },
@@ -483,8 +483,8 @@ export const CHART_DROP_SPEC: ChartTableSpec = {
       if (numberValue(row, 'tier_up_chance', 0) > 1) {
         warnings.push(`${label}: tier_up_chance above 100% counts as 100%`);
       }
-      if (source && !source.insidePocket && numberValue(row, 'currency_chance', 0) > 0) {
-        warnings.push(`${label}: ${source.id} is outside a pocket, where chart currencies never drop, so the game reads currency_chance as 0`);
+      if (source && !source.insideSystem && numberValue(row, 'currency_chance', 0) > 0) {
+        warnings.push(`${label}: ${source.id} is outside a chart system, where chart currencies never drop, so the game reads currency_chance as 0`);
       }
       const maxTierText = value(row, 'max_tier');
       if (maxTierText !== '' && isNumberText(maxTierText)) {

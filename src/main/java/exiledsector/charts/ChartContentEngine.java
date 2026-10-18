@@ -11,11 +11,11 @@ import java.util.Set;
 
 interface ChartContentEngine {
 
-    List<ChartSpot> spots(StarSystemAPI pocket, Random random, Set<SectorEntityToken> excludedFoci, float gap);
+    List<ChartSpot> spots(StarSystemAPI system, Random random, Set<SectorEntityToken> excludedFoci, float gap);
 
-    SectorEntityToken addSalvageEntity(StarSystemAPI pocket, String entityType, String salvageSpec, Random random);
+    SectorEntityToken addSalvageEntity(StarSystemAPI system, String entityType, String salvageSpec, Random random);
 
-    SectorEntityToken addDerelict(StarSystemAPI pocket, String factionId, String derelictType, boolean recoverable, Random random);
+    SectorEntityToken addDerelict(StarSystemAPI system, String factionId, String derelictType, boolean recoverable, Random random);
 
     void place(SectorEntityToken entity, ChartSpot spot);
 

@@ -31,33 +31,33 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class ChartPocketFactoryTest {
+class ChartSystemFactoryTest {
 
     private static final String RUN_ID = "abc";
     private static final ChartLayoutRequest REQUEST = new ChartLayoutRequest(42L, StarSystemType.BINARY_FAR);
 
     private SectorAPI sector;
-    private StarSystemAPI pocket;
+    private StarSystemAPI system;
     private PlanetAPI star;
     private CustomCampaignEntityAPI inner;
-    private MemoryAPI pocketMemory;
+    private MemoryAPI systemMemory;
     private FakeChartLayoutEngine engine;
-    private final Vector2f pocketLocation = new Vector2f();
+    private final Vector2f systemLocation = new Vector2f();
 
     @BeforeEach
     void setUp() {
         sector = mock(SectorAPI.class);
-        pocket = mock(StarSystemAPI.class);
+        system = mock(StarSystemAPI.class);
         star = mock(PlanetAPI.class);
         inner = mock(CustomCampaignEntityAPI.class);
-        pocketMemory = mock(MemoryAPI.class);
-        when(sector.createStarSystem(anyString())).thenReturn(pocket);
-        when(pocket.getLocation()).thenReturn(pocketLocation);
-        when(pocket.getMemoryWithoutUpdate()).thenReturn(pocketMemory);
-        when(pocket.initStar(anyString(), anyString(), anyFloat(), anyFloat())).thenReturn(star);
-        when(pocket.addCustomEntity(anyString(), anyString(), anyString(), anyString())).thenReturn(inner);
-        when(pocket.getAllEntities()).thenReturn(List.of(star, inner));
-        when(pocket.getStar()).thenReturn(star);
+        systemMemory = mock(MemoryAPI.class);
+        when(sector.createStarSystem(anyString())).thenReturn(system);
+        when(system.getLocation()).thenReturn(systemLocation);
+        when(system.getMemoryWithoutUpdate()).thenReturn(systemMemory);
+        when(system.initStar(anyString(), anyString(), anyFloat(), anyFloat())).thenReturn(star);
+        when(system.addCustomEntity(anyString(), anyString(), anyString(), anyString())).thenReturn(inner);
+        when(system.getAllEntities()).thenReturn(List.of(star, inner));
+        when(system.getStar()).thenReturn(star);
         when(star.isStar()).thenReturn(true);
         when(star.getRadius()).thenReturn(500f);
         when(star.getLocation()).thenReturn(new Vector2f());
@@ -72,77 +72,77 @@ class ChartPocketFactoryTest {
     }
 
     @Test
-    void thePocketHasAConstantBaseNameAndARunUniqueId() {
-        ChartPocketFactory.createPocket(sector, RUN_ID, REQUEST);
+    void theSystemHasAConstantBaseNameAndARunUniqueId() {
+        ChartSystemFactory.createSystem(sector, RUN_ID, REQUEST);
 
-        verify(sector).createStarSystem(ChartIds.POCKET_BASE_NAME);
-        verify(pocket).setOptionalUniqueId("exiledSector_chart_abc");
-        verify(pocket, never()).setBaseName(anyString());
+        verify(sector).createStarSystem(ChartIds.SYSTEM_BASE_NAME);
+        verify(system).setOptionalUniqueId("exiledSector_chart_abc");
+        verify(system, never()).setBaseName(anyString());
     }
 
     @Test
-    void thePocketCarriesEveryIsolationTagAndOurOwnTags() {
-        ChartPocketFactory.createPocket(sector, RUN_ID, REQUEST);
+    void theSystemCarriesEveryIsolationTagAndOurOwnTags() {
+        ChartSystemFactory.createSystem(sector, RUN_ID, REQUEST);
 
         for (String tag : List.of(Tags.THEME_HIDDEN, Tags.THEME_SPECIAL, Tags.TEMPORARY_LOCATION, Tags.SYSTEM_CUT_OFF_FROM_HYPER,
-                Tags.DO_NOT_SHOW_STRANDED_DIALOG, Tags.NO_TOPOGRAPHY_SCANS, Tags.SYSTEM_ALREADY_USED_FOR_STORY, ChartIds.POCKET_TAG,
+                Tags.DO_NOT_SHOW_STRANDED_DIALOG, Tags.NO_TOPOGRAPHY_SCANS, Tags.SYSTEM_ALREADY_USED_FOR_STORY, ChartIds.SYSTEM_TAG,
                 ChartIds.runTag(RUN_ID))) {
-            verify(pocket).addTag(tag);
+            verify(system).addTag(tag);
         }
-        verify(pocketMemory).set(ChartIds.NEX_DO_NOT_COLONIZE, true);
-        verify(pocket).setDoNotShowIntelFromThisLocationOnMap(true);
+        verify(systemMemory).set(ChartIds.NEX_DO_NOT_COLONIZE, true);
+        verify(system).setDoNotShowIntelFromThisLocationOnMap(true);
     }
 
     @Test
     void theLayoutIsBuiltAroundTheRunsStarIdWithTheRequestedTypeAndRecordsIt() {
-        ChartPocketFactory.ChartPocket created = ChartPocketFactory.createPocket(sector, RUN_ID, REQUEST);
+        ChartSystemFactory.ChartSystem created = ChartSystemFactory.createSystem(sector, RUN_ID, REQUEST);
 
         assertEquals(1, engine.builds.size());
-        assertSame(pocket, engine.builds.get(0).pocket());
+        assertSame(system, engine.builds.get(0).system());
         assertEquals(ChartIds.starId(RUN_ID), engine.builds.get(0).starId());
         assertEquals(StarSystemType.BINARY_FAR, engine.builds.get(0).systemType());
-        assertSame(pocket, created.system());
+        assertSame(system, created.system());
         assertEquals(42L, created.layout().seed());
         assertEquals(StarSystemType.BINARY_FAR, created.layout().systemType());
         assertTrue(created.layout().generated());
-        verify(pocket, never()).initStar(anyString(), anyString(), anyFloat(), anyFloat());
+        verify(system, never()).initStar(anyString(), anyString(), anyFloat(), anyFloat());
     }
 
     @Test
     void aFailedLayoutFallsBackToTheSingleStarAndNeverAddsHyperspacePresence() {
         FakeChartLayoutEngine.install(FakeChartLayoutEngine.failing());
 
-        ChartPocketFactory.ChartPocket created = ChartPocketFactory.createPocket(sector, RUN_ID, REQUEST);
+        ChartSystemFactory.ChartSystem created = ChartSystemFactory.createSystem(sector, RUN_ID, REQUEST);
 
         assertFalse(created.layout().generated());
-        verify(pocket).initStar(eq(ChartIds.starId(RUN_ID)), eq(ChartPocketFactory.STAR_TYPE), anyFloat(), anyFloat());
-        verify(pocket, never()).initStar(anyString(), anyString(), anyFloat(), anyFloat(), anyFloat(), anyFloat());
-        verify(pocket, never()).generateAnchorIfNeeded();
-        verify(pocket, never()).autogenerateHyperspaceJumpPoints();
-        verify(pocket, never()).autogenerateHyperspaceJumpPoints(anyBoolean(), anyBoolean());
-        verify(pocket, never()).autogenerateHyperspaceJumpPoints(anyBoolean(), anyBoolean(), anyBoolean());
-        verify(pocket, never()).setHyperspaceAnchor(any());
-        verify(pocket).setLightColor(ChartPocketFactory.POCKET_LIGHT);
-        verify(pocket).setBackgroundTextureFilename(ChartPocketFactory.POCKET_BACKGROUND);
+        verify(system).initStar(eq(ChartIds.starId(RUN_ID)), eq(ChartSystemFactory.STAR_TYPE), anyFloat(), anyFloat());
+        verify(system, never()).initStar(anyString(), anyString(), anyFloat(), anyFloat(), anyFloat(), anyFloat());
+        verify(system, never()).generateAnchorIfNeeded();
+        verify(system, never()).autogenerateHyperspaceJumpPoints();
+        verify(system, never()).autogenerateHyperspaceJumpPoints(anyBoolean(), anyBoolean());
+        verify(system, never()).autogenerateHyperspaceJumpPoints(anyBoolean(), anyBoolean(), anyBoolean());
+        verify(system, never()).setHyperspaceAnchor(any());
+        verify(system).setLightColor(ChartSystemFactory.SYSTEM_LIGHT);
+        verify(system).setBackgroundTextureFilename(ChartSystemFactory.SYSTEM_BACKGROUND);
     }
 
     @Test
-    void thePocketSitsFarOutsideTheSector() {
-        ChartPocketFactory.createPocket(sector, RUN_ID, REQUEST);
+    void theSystemsitsFarOutsideTheSector() {
+        ChartSystemFactory.createSystem(sector, RUN_ID, REQUEST);
 
-        assertTrue(pocketLocation.x <= ChartPocketFactory.FAR_AWAY_CORNER && pocketLocation.y <= ChartPocketFactory.FAR_AWAY_CORNER,
-                "pocket at " + pocketLocation);
+        assertTrue(systemLocation.x <= ChartSystemFactory.FAR_AWAY_CORNER && systemLocation.y <= ChartSystemFactory.FAR_AWAY_CORNER,
+                "system at " + systemLocation);
     }
 
     @Test
-    void thePocketLocationIsDeterministicPerRunAndDiffersBetweenRuns() {
-        assertEquals(ChartPocketFactory.pocketLocation("abc"), ChartPocketFactory.pocketLocation("abc"));
-        assertNotEquals(ChartPocketFactory.pocketLocation("abc"), ChartPocketFactory.pocketLocation("abd"));
+    void theSystemLocationIsDeterministicPerRunAndDiffersBetweenRuns() {
+        assertEquals(ChartSystemFactory.systemLocation("abc"), ChartSystemFactory.systemLocation("abc"));
+        assertNotEquals(ChartSystemFactory.systemLocation("abc"), ChartSystemFactory.systemLocation("abd"));
     }
 
     @Test
-    void everyEntityInThePocketIsTaggedWithTheRun() {
-        ChartPocketFactory.createPocket(sector, RUN_ID, REQUEST);
+    void everyEntityInTheSystemIsTaggedWithTheRun() {
+        ChartSystemFactory.createSystem(sector, RUN_ID, REQUEST);
 
         verify(star).addTag(ChartIds.ENTITY_TAG);
         verify(star).addTag(ChartIds.runTag(RUN_ID));
@@ -152,10 +152,10 @@ class ChartPocketFactoryTest {
 
     @Test
     void theInnerWormholeIsOurCustomEntityPlacedClearOfTheStar() {
-        ChartPocketFactory.ChartPocket created = ChartPocketFactory.createPocket(sector, RUN_ID, REQUEST);
+        ChartSystemFactory.ChartSystem created = ChartSystemFactory.createSystem(sector, RUN_ID, REQUEST);
 
         Vector2f placed = created.layout().innerWormholeLocation();
-        verify(pocket).addCustomEntity(eq(ChartIds.innerWormholeId(RUN_ID)), anyString(), eq(ChartIds.WORMHOLE_TYPE), anyString());
+        verify(system).addCustomEntity(eq(ChartIds.innerWormholeId(RUN_ID)), anyString(), eq(ChartIds.WORMHOLE_TYPE), anyString());
         verify(inner).setFixedLocation(placed.x, placed.y);
         assertTrue(placed.length() > 500f + ChartWormholePlacement.STAR_CLEARANCE, "wormhole at " + placed);
     }
@@ -166,19 +166,19 @@ class ChartPocketFactoryTest {
         CustomCampaignEntityAPI outer = mock(CustomCampaignEntityAPI.class);
         when(hyperspace.addCustomEntity(anyString(), anyString(), anyString(), anyString())).thenReturn(outer);
 
-        ChartPocketFactory.addOuterWormhole(hyperspace, new Vector2f(1000f, 2000f), RUN_ID);
+        ChartSystemFactory.addOuterWormhole(hyperspace, new Vector2f(1000f, 2000f), RUN_ID);
 
         verify(hyperspace).addCustomEntity(eq(ChartIds.outerWormholeId(RUN_ID)), anyString(), eq(ChartIds.WORMHOLE_TYPE), anyString());
-        verify(outer).setFixedLocation(1000f + ChartPocketFactory.OUTER_WORMHOLE_OFFSET, 2000f);
+        verify(outer).setFixedLocation(1000f + ChartSystemFactory.OUTER_WORMHOLE_OFFSET, 2000f);
         verify(outer).addTag(ChartIds.ENTITY_TAG);
         verify(outer).addTag(ChartIds.runTag(RUN_ID));
         verify(outer).addTag(ChartIds.OUTER_WORMHOLE_TAG);
     }
 
     @Test
-    void theRunIdCanBeReadBackFromThePocket() {
-        when(pocket.getTags()).thenReturn(List.of(Tags.THEME_HIDDEN, ChartIds.runTag(RUN_ID)));
+    void theRunIdCanBeReadBackFromTheSystem() {
+        when(system.getTags()).thenReturn(List.of(Tags.THEME_HIDDEN, ChartIds.runTag(RUN_ID)));
 
-        assertEquals(RUN_ID, ChartIds.runIdOf(pocket));
+        assertEquals(RUN_ID, ChartIds.runIdOf(system));
     }
 }

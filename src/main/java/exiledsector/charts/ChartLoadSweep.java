@@ -19,7 +19,7 @@ public final class ChartLoadSweep {
 
     private static final Logger LOG = Logger.getLogger(ChartLoadSweep.class);
 
-    public enum PocketDecision {
+    public enum SystemDecision {
         KEEP,
         ADOPT,
         PURGE,
@@ -31,35 +31,35 @@ public final class ChartLoadSweep {
 
     public static void sweep(SectorAPI sector) {
         runSafely("repair the run record", () -> repairRunRecord(sector));
-        runSafely("purge orphan pockets", () -> purgeOrphanPockets(sector));
+        runSafely("purge orphan systems", () -> purgeOrphanSystems(sector));
         runSafely("remove leftover chart entities", () -> removeLeftoverEntities(sector));
         runSafely("remove orphan chart intel", () -> removeOrphanIntel(sector));
-        runSafely("lift chart effects outside the run's pocket", () -> liftEffectsOutsidePocket(sector));
+        runSafely("lift chart effects outside the run's system", () -> liftEffectsOutsideSystem(sector));
         runSafely("catch up on the objective", () -> ChartObjectives.reconcile(sector));
     }
 
-    static void liftEffectsOutsidePocket(SectorAPI sector) {
+    static void liftEffectsOutsideSystem(SectorAPI sector) {
         CampaignFleetAPI playerFleet = sector.getPlayerFleet();
         if (playerFleet == null) {
             return;
         }
         ChartRun run = ChartRuns.currentOrNull();
-        StarSystemAPI pocket = run == null ? null : sector.getStarSystem(run.pocketSystemId());
-        boolean insideRunPocket = pocket != null && run.runState().keepsRunEffects() && playerFleet.getContainingLocation() == pocket;
-        if (!insideRunPocket) {
+        StarSystemAPI system = run == null ? null : sector.getStarSystem(run.systemId());
+        boolean insideRunSystem = system != null && run.runState().keepsRunEffects() && playerFleet.getContainingLocation() == system;
+        if (!insideRunSystem) {
             ChartRunEffects.removeFrom(playerFleet);
         }
     }
 
-    static PocketDecision decide(StarSystemAPI pocket, ChartRun run, boolean playerInside) {
-        boolean ownedByRun = run != null && run.pocketSystemId().equals(pocket.getOptionalUniqueId());
+    static SystemDecision decide(StarSystemAPI system, ChartRun run, boolean playerInside) {
+        boolean ownedByRun = run != null && run.systemId().equals(system.getOptionalUniqueId());
         if (ownedByRun && run.runState().isLive()) {
-            return PocketDecision.KEEP;
+            return SystemDecision.KEEP;
         }
         if (playerInside) {
-            return run == null || ownedByRun || !run.runState().isLive() ? PocketDecision.ADOPT : PocketDecision.LEAVE_FOR_NOW;
+            return run == null || ownedByRun || !run.runState().isLive() ? SystemDecision.ADOPT : SystemDecision.LEAVE_FOR_NOW;
         }
-        return PocketDecision.PURGE;
+        return SystemDecision.PURGE;
     }
 
     static void repairRunRecord(SectorAPI sector) {
@@ -67,11 +67,11 @@ public final class ChartLoadSweep {
         if (run == null) {
             return;
         }
-        StarSystemAPI pocket = sector.getStarSystem(run.pocketSystemId());
+        StarSystemAPI system = sector.getStarSystem(run.systemId());
         CampaignFleetAPI playerFleet = sector.getPlayerFleet();
-        boolean playerInside = pocket != null && playerFleet != null && playerFleet.getContainingLocation() == pocket;
-        if (pocket == null) {
-            LOG.warn("[ExiledSector] Star Chart run " + run.runId() + " lost its pocket; closing it");
+        boolean playerInside = system != null && playerFleet != null && playerFleet.getContainingLocation() == system;
+        if (system == null) {
+            LOG.warn("[ExiledSector] Star Chart run " + run.runId() + " lost its system; closing it");
             run.beginClosing();
             ChartRunCloser.close(sector, run.runId(), null);
             return;
@@ -84,27 +84,27 @@ public final class ChartLoadSweep {
         }
     }
 
-    static void purgeOrphanPockets(SectorAPI sector) {
+    static void purgeOrphanSystems(SectorAPI sector) {
         CampaignFleetAPI playerFleet = sector.getPlayerFleet();
         LocationAPI playerLocation = playerFleet == null ? null : playerFleet.getContainingLocation();
         for (StarSystemAPI system : sector.getStarSystems()) {
-            if (!system.hasTag(ChartIds.POCKET_TAG)) {
+            if (!system.hasTag(ChartIds.SYSTEM_TAG)) {
                 continue;
             }
             ChartRun run = ChartRuns.currentOrNull();
-            PocketDecision decision = decide(system, run, playerLocation == system);
+            SystemDecision decision = decide(system, run, playerLocation == system);
             String runId = ChartIds.runIdOf(system);
             switch (decision) {
                 case PURGE -> {
-                    LOG.info("[ExiledSector] Purging Star Chart pocket " + system.getOptionalUniqueId() + " with no live run");
+                    LOG.info("[ExiledSector] Purging Star Chart system " + system.getOptionalUniqueId() + " with no live run");
                     ChartRunCloser.close(sector, runId, system);
                 }
                 case ADOPT -> {
-                    ChartPocketFactory.ensureIsolationTags(system);
+                    ChartSystemFactory.ensureIsolationTags(system);
                     adopt(sector, system, runId, run);
                 }
-                case KEEP -> ChartPocketFactory.ensureIsolationTags(system);
-                case LEAVE_FOR_NOW -> LOG.warn("[ExiledSector] The player is inside Star Chart pocket " + system.getOptionalUniqueId()
+                case KEEP -> ChartSystemFactory.ensureIsolationTags(system);
+                case LEAVE_FOR_NOW -> LOG.warn("[ExiledSector] The player is inside Star Chart system " + system.getOptionalUniqueId()
                         + " while another run is open; leaving it until they leave");
                 default -> {
                 }
@@ -112,34 +112,34 @@ public final class ChartLoadSweep {
         }
     }
 
-    private static void adopt(SectorAPI sector, StarSystemAPI pocket, String runId, ChartRun staleRun) {
+    private static void adopt(SectorAPI sector, StarSystemAPI system, String runId, ChartRun staleRun) {
         if (runId == null) {
             return;
         }
         if (staleRun != null && staleRun.runId().equals(runId)) {
             staleRun.resumeInside();
-            ensureInnerWormhole(sector, pocket, runId);
+            ensureInnerWormhole(sector, system, runId);
             return;
         }
         LocationAPI origin = sector.getRespawnLocation();
         Vector2f originCoordinates = sector.getRespawnCoordinates();
-        if (origin == null || origin == pocket || originCoordinates == null) {
+        if (origin == null || origin == system || originCoordinates == null) {
             origin = sector.getHyperspace();
             originCoordinates = new Vector2f();
         }
         ChartRun adopted = ChartRun.adoptedWhileInside(runId, ChartIds.locationIdOf(origin), originCoordinates.x, originCoordinates.y);
-        if (!adopted.pocketSystemId().equals(pocket.getOptionalUniqueId())) {
+        if (!adopted.systemId().equals(system.getOptionalUniqueId())) {
             return;
         }
-        LOG.warn("[ExiledSector] The player is inside Star Chart pocket " + pocket.getOptionalUniqueId() + " with no run record; adopting it");
+        LOG.warn("[ExiledSector] The player is inside Star Chart system " + system.getOptionalUniqueId() + " with no run record; adopting it");
         ChartRuns.replace(adopted);
-        ensureInnerWormhole(sector, pocket, runId);
+        ensureInnerWormhole(sector, system, runId);
     }
 
-    private static void ensureInnerWormhole(SectorAPI sector, StarSystemAPI pocket, String runId) {
-        if (pocket.getEntityById(ChartIds.innerWormholeId(runId)) == null) {
-            Vector2f clearSpot = ChartWormholePlacement.choose(pocket, new Random(runId.hashCode()));
-            ChartPocketFactory.addInnerWormhole(pocket, runId, clearSpot);
+    private static void ensureInnerWormhole(SectorAPI sector, StarSystemAPI system, String runId) {
+        if (system.getEntityById(ChartIds.innerWormholeId(runId)) == null) {
+            Vector2f clearSpot = ChartWormholePlacement.choose(system, new Random(runId.hashCode()));
+            ChartSystemFactory.addInnerWormhole(system, runId, clearSpot);
         }
     }
 
@@ -153,7 +153,7 @@ public final class ChartLoadSweep {
         CampaignFleetAPI playerFleet = sector.getPlayerFleet();
         LocationAPI playerLocation = playerFleet == null ? null : playerFleet.getContainingLocation();
         for (LocationAPI location : locations) {
-            if (location == playerLocation && location.hasTag(ChartIds.POCKET_TAG)) {
+            if (location == playerLocation && location.hasTag(ChartIds.SYSTEM_TAG)) {
                 continue;
             }
             for (SectorEntityToken entity : new ArrayList<>(location.getEntitiesWithTag(ChartIds.ENTITY_TAG))) {

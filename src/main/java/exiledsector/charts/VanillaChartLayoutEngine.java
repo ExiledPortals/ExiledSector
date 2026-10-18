@@ -10,11 +10,11 @@ import java.util.Random;
 final class VanillaChartLayoutEngine implements ChartLayoutEngine {
 
     @Override
-    public void build(StarSystemAPI pocket, String starId, StarSystemType systemType, StarAge age, Random random) {
+    public void build(StarSystemAPI system, String starId, StarSystemType systemType, StarAge age, Random random) {
         Random previous = StarSystemGenerator.random;
         StarSystemGenerator.random = random;
         try {
-            new ChartStarSystemGenerator(age, systemType).generateLayout(pocket, starId);
+            new ChartStarSystemGenerator(age, systemType).generateLayout(system, starId);
         } finally {
             StarSystemGenerator.random = previous;
         }

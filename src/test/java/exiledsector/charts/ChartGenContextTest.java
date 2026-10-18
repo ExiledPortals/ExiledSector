@@ -155,20 +155,20 @@ class ChartGenContextTest {
 
     @Test
     void afterGenerationMarksOnlyThisRunsSalvageAndEnrichesTheVault() {
-        StarSystemAPI pocket = mock(StarSystemAPI.class);
+        StarSystemAPI system = mock(StarSystemAPI.class);
         MemoryAPI cacheMemory = mock(MemoryAPI.class);
         MemoryAPI vaultMemory = mock(MemoryAPI.class);
         SectorEntityToken cache = entity("cache_1", "run1", cacheMemory);
         SectorEntityToken vault = entity("vault_1", "run1", vaultMemory);
         SectorEntityToken otherRun = entity("cache_2", "run2", mock(MemoryAPI.class));
         CampaignFleetAPI guard = mock(CampaignFleetAPI.class);
-        when(pocket.getEntitiesWithTag(ChartIds.CONTENT_TAG)).thenReturn(List.of(cache, vault, otherRun, guard));
-        when(pocket.getEntityById("vault_1")).thenReturn(vault);
+        when(system.getEntitiesWithTag(ChartIds.CONTENT_TAG)).thenReturn(List.of(cache, vault, otherRun, guard));
+        when(system.getEntityById("vault_1")).thenReturn(vault);
         ChartContent content = new ChartContent(5, "pirates", ChartObjective.VAULT, List.of("vault_1"), null, "vault_1", 1, 2);
         ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_ITEM_DROP_CHANCE_PERCENT, 50f),
                 new AppliedEffect(ChartEffect.CHART_VAULT_RICHNESS_PERCENT, 25f)));
 
-        context.afterGeneration(new ChartGenerated(pocket, "run1", content, context));
+        context.afterGeneration(new ChartGenerated(system, "run1", content, context));
 
         verify(cacheMemory, atLeastOnce()).set(ChartIds.ITEM_CHANCE_MEMORY_KEY, 1.5f);
         verify(vaultMemory, atLeastOnce()).set(eq(ChartIds.ITEM_CHANCE_MEMORY_KEY), eq(1.875f));
@@ -179,13 +179,13 @@ class ChartGenContextTest {
 
     @Test
     void afterGenerationWithoutRewardEffectsTouchesNothing() {
-        StarSystemAPI pocket = mock(StarSystemAPI.class);
+        StarSystemAPI system = mock(StarSystemAPI.class);
         MemoryAPI cacheMemory = mock(MemoryAPI.class);
         SectorEntityToken cache = entity("cache_1", "run1", cacheMemory);
-        when(pocket.getEntitiesWithTag(ChartIds.CONTENT_TAG)).thenReturn(List.of(cache));
+        when(system.getEntitiesWithTag(ChartIds.CONTENT_TAG)).thenReturn(List.of(cache));
         ChartGenContext context = with(ChartEffect.CHART_FLEET_POWER_PERCENT, 30f);
 
-        context.afterGeneration(new ChartGenerated(pocket, "run1", ChartContent.none(3), context));
+        context.afterGeneration(new ChartGenerated(system, "run1", ChartContent.none(3), context));
 
         verify(cacheMemory, never()).set(anyString(), anyFloat());
         verify(cache, never()).addDropValue(anyString(), anyInt());
@@ -296,7 +296,7 @@ class ChartGenContextTest {
     }
 
     @Test
-    void vaultRichnessBecomesLootWhenThePocketHasNoVault() {
+    void vaultRichnessBecomesLootWhenTheSystemHasNoVault() {
         ChartGenContext hoard = with(ChartEffect.CHART_VAULT_RICHNESS_PERCENT, 100f);
         assertEquals(BASE.lootBudget(), hoard.adjust(BASE).lootBudget(), TOLERANCE);
         assertEquals(BASE.lootBudget() * 2f, hoard.lootBudgetWithoutVault(BASE), TOLERANCE);

@@ -10,11 +10,11 @@ import java.util.Random;
 
 final class FakeChartLayoutEngine implements ChartLayoutEngine {
 
-    record Build(StarSystemAPI pocket, String starId, StarSystemType systemType, StarAge age, long firstRandomLong) {
+    record Build(StarSystemAPI system, String starId, StarSystemType systemType, StarAge age, long firstRandomLong) {
     }
 
     interface Layout {
-        void build(StarSystemAPI pocket, String starId, StarSystemType systemType, Random random);
+        void build(StarSystemAPI system, String starId, StarSystemType systemType, Random random);
     }
 
     final List<Build> builds = new ArrayList<>();
@@ -25,12 +25,12 @@ final class FakeChartLayoutEngine implements ChartLayoutEngine {
     }
 
     static FakeChartLayoutEngine doingNothing() {
-        return new FakeChartLayoutEngine((pocket, starId, systemType, random) -> {
+        return new FakeChartLayoutEngine((system, starId, systemType, random) -> {
         });
     }
 
     static FakeChartLayoutEngine failing() {
-        return new FakeChartLayoutEngine((pocket, starId, systemType, random) -> {
+        return new FakeChartLayoutEngine((system, starId, systemType, random) -> {
             throw new IllegalStateException("vanilla generator changed");
         });
     }
@@ -41,9 +41,9 @@ final class FakeChartLayoutEngine implements ChartLayoutEngine {
     }
 
     @Override
-    public void build(StarSystemAPI pocket, String starId, StarSystemType systemType, StarAge age, Random random) {
+    public void build(StarSystemAPI system, String starId, StarSystemType systemType, StarAge age, Random random) {
         long firstRandomLong = new Random(random.nextLong()).nextLong();
-        builds.add(new Build(pocket, starId, systemType, age, firstRandomLong));
-        layout.build(pocket, starId, systemType, random);
+        builds.add(new Build(system, starId, systemType, age, firstRandomLong));
+        layout.build(system, starId, systemType, random);
     }
 }

@@ -42,7 +42,7 @@ final class ChartUsedNames {
         return live == null ? UNKNOWN : live.size();
     }
 
-    // java:S1181: MethodHandle.invoke declares Throwable, and a changed engine may only cost releasing generated names, never the pocket
+    // java:S1181: MethodHandle.invoke declares Throwable, and a changed engine may only cost releasing generated names, never the system
     @SuppressWarnings("java:S1181")
     private static Set<?> liveNames() {
         if (unreachable) {
@@ -55,7 +55,7 @@ final class ChartUsedNames {
             }
         } catch (ReflectiveOperationException | RuntimeException | LinkageError e) {
             unreachable = true;
-            LOG.warn("[ExiledSector] The used procgen name list can't be reached, so names reserved while generating Star Chart pockets"
+            LOG.warn("[ExiledSector] The used procgen name list can't be reached, so names reserved while generating Star Chart systems"
                     + " stay reserved and the readout shows the count as unknown", e);
             return null;
         }

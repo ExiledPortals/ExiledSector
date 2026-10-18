@@ -108,7 +108,7 @@ class ItemSalvageListenerTest {
     }
 
     @Test
-    void aChartPocketSiteCanRaiseTheHullItemChance() {
+    void aChartSystemsiteCanRaiseTheHullItemChance() {
         MemoryAPI plain = mock(MemoryAPI.class);
         MemoryAPI boosted = mock(MemoryAPI.class);
         MemoryAPI broken = mock(MemoryAPI.class);
@@ -134,10 +134,10 @@ class ItemSalvageListenerTest {
     }
 
     @Test
-    void aSalvagedPocketSiteCanAlsoHoldAStarChartAndAChartCurrency() throws Exception {
+    void aSalvagedSystemsiteCanAlsoHoldAStarChartAndAChartCurrency() throws Exception {
         StarChartFixtures.registerShipped();
         StarChartCurrency.registerAll();
-        ChartDrops.register(new JSONArray().put(new JSONObject().put("source", "pocket_salvage").put("chance", "1").put("currency_chance", "1")));
+        ChartDrops.register(new JSONArray().put(new JSONObject().put("source", "system_salvage").put("chance", "1").put("currency_chance", "1")));
         try (MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
             SectorAPI sector = mock(SectorAPI.class);
             when(sector.getPersistentData()).thenReturn(new HashMap<>());
@@ -146,11 +146,11 @@ class ItemSalvageListenerTest {
             run.recordContent(new ChartContent(6, "hegemony", ChartObjective.CLEAR, List.of("g1"), "boss", null, 4, 6));
             run.recordArrival();
             ChartRuns.store(run);
-            StarSystemAPI pocket = mock(StarSystemAPI.class);
-            when(pocket.hasTag(ChartIds.POCKET_TAG)).thenReturn(true);
-            when(pocket.getTags()).thenReturn(List.of(ChartIds.POCKET_TAG, ChartIds.runTag("salvageRun")));
+            StarSystemAPI system = mock(StarSystemAPI.class);
+            when(system.hasTag(ChartIds.SYSTEM_TAG)).thenReturn(true);
+            when(system.getTags()).thenReturn(List.of(ChartIds.SYSTEM_TAG, ChartIds.runTag("salvageRun")));
             SectorEntityToken station = site("station_research", null);
-            when(station.getContainingLocation()).thenReturn(pocket);
+            when(station.getContainingLocation()).thenReturn(system);
             CargoAPI loot = mock(CargoAPI.class);
 
             listener.reportAboutToShowLootToPlayer(loot, dialogFor(station));
@@ -169,7 +169,7 @@ class ItemSalvageListenerTest {
     }
 
     @Test
-    void outsidePocketsChartSalvageNeedsASectorAndItsOwnRule() {
+    void outsideSystemsChartSalvageNeedsASectorAndItsOwnRule() {
         assertTrue(ItemSalvageListener.chartLoot(null, site("station_research", null)).isEmpty());
     }
 }

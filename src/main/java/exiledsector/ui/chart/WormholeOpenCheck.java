@@ -24,7 +24,7 @@ public final class WormholeOpenCheck {
         RUN_OPEN,
         NO_FLEET,
         IN_TRANSITION,
-        IN_POCKET,
+        IN_SYSTEM,
         IN_FLEET_ENCOUNTER;
 
         public boolean allowsOpening() {
@@ -73,8 +73,8 @@ public final class WormholeOpenCheck {
         if (playerFleet.isInHyperspaceTransition()) {
             return Blocker.IN_TRANSITION;
         }
-        if (location.hasTag(ChartIds.POCKET_TAG)) {
-            return Blocker.IN_POCKET;
+        if (location.hasTag(ChartIds.SYSTEM_TAG)) {
+            return Blocker.IN_SYSTEM;
         }
         if (dialogTarget instanceof CampaignFleetAPI otherFleet && otherFleet != playerFleet) {
             return Blocker.IN_FLEET_ENCOUNTER;

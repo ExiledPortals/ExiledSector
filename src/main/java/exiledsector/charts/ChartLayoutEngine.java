@@ -8,5 +8,5 @@ import java.util.Random;
 
 interface ChartLayoutEngine {
 
-    void build(StarSystemAPI pocket, String starId, StarSystemType systemType, StarAge age, Random random);
+    void build(StarSystemAPI system, String starId, StarSystemType systemType, StarAge age, Random random);
 }

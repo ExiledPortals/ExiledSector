@@ -43,9 +43,9 @@ class ChartContentGeneratorTest {
     private static final Vector2f WORMHOLE = new Vector2f(6000f, 0f);
 
     private SectorAPI sector;
-    private StarSystemAPI pocket;
+    private StarSystemAPI system;
     private PlanetAPI star;
-    private final List<SectorEntityToken> inPocket = new ArrayList<>();
+    private final List<SectorEntityToken> inSystem = new ArrayList<>();
     private FakeChartContentEngine engine;
 
     @BeforeEach
@@ -53,21 +53,21 @@ class ChartContentGeneratorTest {
         ChartContentDataTest.loadShippedTables();
         sector = mock(SectorAPI.class);
         when(sector.getFaction(anyString())).thenReturn(mock(FactionAPI.class));
-        pocket = mock(StarSystemAPI.class);
+        system = mock(StarSystemAPI.class);
         star = mock(PlanetAPI.class);
         when(star.isStar()).thenReturn(true);
         when(star.getRadius()).thenReturn(500f);
         when(star.getLocation()).thenReturn(new Vector2f());
-        when(pocket.getPlanets()).thenReturn(List.of(star));
-        when(pocket.getCenter()).thenReturn(star);
-        when(pocket.getStar()).thenReturn(star);
-        when(pocket.createToken(anyFloat(), anyFloat())).thenAnswer(invocation -> {
+        when(system.getPlanets()).thenReturn(List.of(star));
+        when(system.getCenter()).thenReturn(star);
+        when(system.getStar()).thenReturn(star);
+        when(system.createToken(anyFloat(), anyFloat())).thenAnswer(invocation -> {
             SectorEntityToken token = mock(SectorEntityToken.class);
             when(token.getLocation()).thenReturn(new Vector2f(invocation.<Float>getArgument(0), invocation.<Float>getArgument(1)));
             return token;
         });
-        doAnswer(invocation -> inPocket.add(invocation.getArgument(0))).when(pocket).addEntity(any());
-        doAnswer(invocation -> inPocket.remove(invocation.<SectorEntityToken>getArgument(0))).when(pocket).removeEntity(any());
+        doAnswer(invocation -> inSystem.add(invocation.getArgument(0))).when(system).addEntity(any());
+        doAnswer(invocation -> inSystem.remove(invocation.<SectorEntityToken>getArgument(0))).when(system).removeEntity(any());
         engine = FakeChartContentEngine.install(new FakeChartContentEngine().offering(-4000f, 0f, 0f, 5000f, 0f, -5000f, 6500f, 0f));
     }
 
@@ -80,7 +80,7 @@ class ChartContentGeneratorTest {
     }
 
     private ChartContent generate(long seed, int tier) {
-        return ChartContentGenerator.generate(sector, pocket, RUN_ID, seed, tier, WORMHOLE);
+        return ChartContentGenerator.generate(sector, system, RUN_ID, seed, tier, WORMHOLE);
     }
 
     @Test
@@ -94,7 +94,7 @@ class ChartContentGeneratorTest {
         assertEquals(plan.faction().factionId(), content.factionId());
         assertEquals(plan.objective(), content.objective());
         assertFalse(content.targetIds().isEmpty());
-        assertEquals(engine.fleets.size(), inPocket.size());
+        assertEquals(engine.fleets.size(), inSystem.size());
         assertNotNull(content.bossFleetId());
         for (String targetId : content.targetIds()) {
             assertTrue(targetId.startsWith(content.objective() == ChartObjective.VAULT ? "poi-" : "fleet-"), targetId);
@@ -228,7 +228,7 @@ class ChartContentGeneratorTest {
 
     @Test
     void starsAreHazardsSoNoLootLandsInsideThem() {
-        List<Hazard> hazards = ChartContentGenerator.hazards(pocket);
+        List<Hazard> hazards = ChartContentGenerator.hazards(system);
 
         assertEquals(1, hazards.size());
         assertEquals(500f + ChartContentGenerator.STAR_CLEARANCE, hazards.get(0).radius());
@@ -257,19 +257,19 @@ class ChartContentGeneratorTest {
         ChartContent content = generate(42L, 10);
 
         assertEquals(0, content.fleets());
-        assertTrue(inPocket.isEmpty());
+        assertTrue(inSystem.isEmpty());
         assertTrue(content.objective() == null || content.objective() == ChartObjective.VAULT);
-        verify(pocket, never()).addEntity(any(CampaignFleetAPI.class));
+        verify(system, never()).addEntity(any(CampaignFleetAPI.class));
     }
 
     @Test
-    void emptyFleetsAreNeverAddedToThePocket() {
+    void emptyFleetsAreNeverAddedToTheSystem() {
         engine.emptyFleets = true;
 
         ChartContent content = generate(42L, 4);
 
         assertEquals(0, content.fleets());
-        assertTrue(inPocket.isEmpty());
+        assertTrue(inSystem.isEmpty());
     }
 
     @Test

@@ -35,29 +35,29 @@ public final class ChartRunCloser {
             new CloseStep("clear the player's interaction target and course", ChartRunCloser::clearPlayerTargetAndCourse),
             new CloseStep("lift the chart's effects from the player fleet", target -> ChartRunEffects.removeFrom(target.sector().getPlayerFleet())),
             new CloseStep("reset the campaign map location", ChartRunCloser::resetCampaignMapLocation),
-            new CloseStep("move the respawn location out of the pocket", ChartRunCloser::moveRespawnLocationOut),
+            new CloseStep("move the respawn location out of the system", ChartRunCloser::moveRespawnLocationOut),
             new CloseStep("refresh the stranded-in-deep-space script", ChartRunCloser::refreshStrandedScript),
             new CloseStep("re-point the player's officers at the current fleet", ChartRunCloser::repointOfficers),
-            new CloseStep("despawn the pocket's fleets", ChartRunCloser::despawnFleets),
-            new CloseStep("end intel pointing into the pocket", ChartRunCloser::endIntel),
-            new CloseStep("drop a pending Salvor's Tally for the pocket",
-                    target -> ChartSalvorsTally.removePendingFor(target.sector(), target.pocket())),
+            new CloseStep("despawn the system's fleets", ChartRunCloser::despawnFleets),
+            new CloseStep("end intel pointing into the system", ChartRunCloser::endIntel),
+            new CloseStep("drop a pending Salvor's Tally for the system",
+                    target -> ChartSalvorsTally.removePendingFor(target.sector(), target.system())),
             new CloseStep("remove the run's scripts, listeners and memory keys", ChartRunCloser::removeRunScriptsAndMemory),
-            new CloseStep("remove the pocket's entities", ChartRunCloser::removePocketEntities),
+            new CloseStep("remove the system's entities", ChartRunCloser::removeSystemEntities),
             new CloseStep("remove the wormholes and tagged entities", ChartRunCloser::removeWormholesAndTaggedEntities),
-            new CloseStep("remove the pocket system", ChartRunCloser::removePocketSystem),
+            new CloseStep("remove the star system", ChartRunCloser::removeSystem),
             new CloseStep("delete the run record", ChartRunCloser::deleteRunRecord));
 
     private ChartRunCloser() {
     }
 
     public static int close(SectorAPI sector, ChartRun run) {
-        StarSystemAPI pocket = sector.getStarSystem(run.pocketSystemId());
-        return close(sector, run.runId(), pocket);
+        StarSystemAPI system = sector.getStarSystem(run.systemId());
+        return close(sector, run.runId(), system);
     }
 
-    public static int close(SectorAPI sector, String runId, StarSystemAPI pocket) {
-        CloseTarget target = new CloseTarget(sector, runId, pocket);
+    public static int close(SectorAPI sector, String runId, StarSystemAPI system) {
+        CloseTarget target = new CloseTarget(sector, runId, system);
         int failedSteps = 0;
         for (CloseStep step : STEPS) {
             try {
@@ -79,7 +79,7 @@ public final class ChartRunCloser {
         if (entity == null) {
             return false;
         }
-        if (target.pocket() != null && entity.getContainingLocation() == target.pocket()) {
+        if (target.system() != null && entity.getContainingLocation() == target.system()) {
             return true;
         }
         return ChartIds.belongsToRun(entity, target.runId());
@@ -107,17 +107,17 @@ public final class ChartRunCloser {
     }
 
     static void resetCampaignMapLocation(CloseTarget target) {
-        if (target.pocket() == null) {
+        if (target.system() == null) {
             return;
         }
         Object uiData = target.sector().getUIData();
-        if (ChartUiData.campaignMapLocation(uiData) == target.pocket()) {
+        if (ChartUiData.campaignMapLocation(uiData) == target.system()) {
             ChartUiData.forgetCampaignMapLocation(uiData);
         }
     }
 
     static void moveRespawnLocationOut(CloseTarget target) {
-        if (target.pocket() != null && target.sector().getRespawnLocation() == target.pocket()) {
+        if (target.system() != null && target.sector().getRespawnLocation() == target.system()) {
             target.sector().setRespawnLocation(target.sector().getHyperspace());
             if (target.sector().getRespawnCoordinates() != null) {
                 target.sector().getRespawnCoordinates().set(0f, 0f);
@@ -135,34 +135,34 @@ public final class ChartRunCloser {
 
     static void repointOfficers(CloseTarget target) {
         CampaignFleetAPI playerFleet = target.sector().getPlayerFleet();
-        if (playerFleet == null || target.pocket() == null) {
+        if (playerFleet == null || target.system() == null) {
             return;
         }
-        repoint(playerFleet.getCommander(), playerFleet, target.pocket());
+        repoint(playerFleet.getCommander(), playerFleet, target.system());
         if (playerFleet.getFleetData() == null) {
             return;
         }
         for (OfficerDataAPI officer : playerFleet.getFleetData().getOfficersCopy()) {
-            repoint(officer.getPerson(), playerFleet, target.pocket());
+            repoint(officer.getPerson(), playerFleet, target.system());
         }
     }
 
-    private static void repoint(PersonAPI person, CampaignFleetAPI playerFleet, StarSystemAPI pocket) {
+    private static void repoint(PersonAPI person, CampaignFleetAPI playerFleet, StarSystemAPI system) {
         if (person == null) {
             return;
         }
         CampaignFleetAPI recordedFleet = person.getFleet();
-        if (recordedFleet != null && recordedFleet != playerFleet && recordedFleet.getContainingLocation() == pocket) {
+        if (recordedFleet != null && recordedFleet != playerFleet && recordedFleet.getContainingLocation() == system) {
             person.setFleet(playerFleet);
         }
     }
 
     static void despawnFleets(CloseTarget target) {
-        if (target.pocket() == null) {
+        if (target.system() == null) {
             return;
         }
         CampaignFleetAPI playerFleet = target.sector().getPlayerFleet();
-        for (CampaignFleetAPI fleet : new ArrayList<>(target.pocket().getFleets())) {
+        for (CampaignFleetAPI fleet : new ArrayList<>(target.system().getFleets())) {
             if (fleet != playerFleet) {
                 fleet.despawn(FleetDespawnReason.PLAYER_FAR_AWAY, null);
             }
@@ -198,7 +198,7 @@ public final class ChartRunCloser {
             return true;
         }
         try {
-            if (target.pocket() != null && intel instanceof SalvorsTallyIntel tally && tally.getSystem() == target.pocket()) {
+            if (target.system() != null && intel instanceof SalvorsTallyIntel tally && tally.getSystem() == target.system()) {
                 return true;
             }
             return pointsIntoRun(intel.getMapLocation(null), target);
@@ -250,15 +250,15 @@ public final class ChartRunCloser {
         }
     }
 
-    static void removePocketEntities(CloseTarget target) {
-        StarSystemAPI pocket = target.pocket();
-        if (pocket == null) {
+    static void removeSystemEntities(CloseTarget target) {
+        StarSystemAPI system = target.system();
+        if (system == null) {
             return;
         }
         CampaignFleetAPI playerFleet = target.sector().getPlayerFleet();
-        for (SectorEntityToken entity : new ArrayList<>(pocket.getAllEntities())) {
+        for (SectorEntityToken entity : new ArrayList<>(system.getAllEntities())) {
             if (entity != playerFleet) {
-                pocket.removeEntity(entity);
+                system.removeEntity(entity);
             }
         }
     }
@@ -272,38 +272,38 @@ public final class ChartRunCloser {
         removeEntity(sector.getEntityById(ChartIds.outerWormholeId(runId)));
         removeEntity(sector.getEntityById(ChartIds.innerWormholeId(runId)));
         removeTagged(sector.getHyperspace(), runId);
-        removeHyperspacePresence(sector.getHyperspace(), target.pocket());
+        removeHyperspacePresence(sector.getHyperspace(), target.system());
         for (StarSystemAPI system : sector.getStarSystems()) {
-            if (system != target.pocket()) {
+            if (system != target.system()) {
                 removeTagged(system, runId);
             }
         }
     }
 
-    static void removeHyperspacePresence(LocationAPI hyperspace, StarSystemAPI pocket) {
-        if (hyperspace == null || pocket == null) {
+    static void removeHyperspacePresence(LocationAPI hyperspace, StarSystemAPI system) {
+        if (hyperspace == null || system == null) {
             return;
         }
         List<SectorEntityToken> pointingIn = new ArrayList<>();
         for (SectorEntityToken candidate : hyperspace.getJumpPoints()) {
-            if (candidate instanceof JumpPointAPI jumpPoint && leadsInto(jumpPoint, pocket)) {
+            if (candidate instanceof JumpPointAPI jumpPoint && leadsInto(jumpPoint, system)) {
                 pointingIn.add(candidate);
             }
         }
         for (NascentGravityWellAPI well : hyperspace.getGravityWells()) {
-            if (well.getTarget() != null && well.getTarget().getStarSystem() == pocket) {
+            if (well.getTarget() != null && well.getTarget().getStarSystem() == system) {
                 pointingIn.add(well);
             }
         }
-        if (pocket.getHyperspaceAnchor() != null) {
-            pointingIn.add(pocket.getHyperspaceAnchor());
+        if (system.getHyperspaceAnchor() != null) {
+            pointingIn.add(system.getHyperspaceAnchor());
         }
         pointingIn.forEach(hyperspace::removeEntity);
     }
 
-    private static boolean leadsInto(JumpPointAPI jumpPoint, StarSystemAPI pocket) {
+    private static boolean leadsInto(JumpPointAPI jumpPoint, StarSystemAPI system) {
         for (JumpPointAPI.JumpDestination destination : jumpPoint.getDestinations()) {
-            if (destination.getDestination() != null && destination.getDestination().getStarSystem() == pocket) {
+            if (destination.getDestination() != null && destination.getDestination().getStarSystem() == system) {
                 return true;
             }
         }
@@ -325,10 +325,10 @@ public final class ChartRunCloser {
         }
     }
 
-    static void removePocketSystem(CloseTarget target) {
-        StarSystemAPI pocket = target.pocket();
-        if (pocket != null && target.sector().getStarSystems().contains(pocket)) {
-            target.sector().removeStarSystemNextFrame(pocket);
+    static void removeSystem(CloseTarget target) {
+        StarSystemAPI system = target.system();
+        if (system != null && target.sector().getStarSystems().contains(system)) {
+            target.sector().removeStarSystemNextFrame(system);
         }
     }
 
@@ -340,7 +340,7 @@ public final class ChartRunCloser {
         }
     }
 
-    record CloseTarget(SectorAPI sector, String runId, StarSystemAPI pocket) {
+    record CloseTarget(SectorAPI sector, String runId, StarSystemAPI system) {
     }
 
     record CloseStep(String name, Consumer<CloseTarget> action) {

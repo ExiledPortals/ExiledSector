@@ -92,33 +92,33 @@ public final class ChartLayoutGenerator {
         return AGES.get(derivedRandom(seed, AGE_SALT).nextInt(AGES.size()));
     }
 
-    public static ChartLayout generate(SectorAPI sector, StarSystemAPI pocket, String runId, ChartLayoutRequest request) {
+    public static ChartLayout generate(SectorAPI sector, StarSystemAPI system, String runId, ChartLayoutRequest request) {
         long seed = request.seed();
         StarSystemType systemType = typeFor(request);
         Set<Object> namesBefore = ChartUsedNames.snapshot();
         boolean generated;
         try {
-            generated = buildWithVanilla(pocket, runId, systemType, seed);
+            generated = buildWithVanilla(system, runId, systemType, seed);
             if (!generated) {
-                scrub(pocket);
-                ChartPocketFactory.addFallbackStar(pocket, runId);
+                scrub(system);
+                ChartSystemFactory.addFallbackStar(system, runId);
             }
         } finally {
             ChartUsedNames.releaseAddedSince(namesBefore);
         }
-        removeJumpPoints(pocket);
-        removeHyperspacePresence(pocket);
-        prepareMarkets(pocket, sector.getEconomy());
-        ChartBodyNames.assign(pocket, ChartBodyNames.designation(derivedRandom(seed, NAME_SALT)));
-        pocket.updateAllOrbits();
-        Vector2f innerWormhole = ChartWormholePlacement.choose(pocket, derivedRandom(seed, PLACEMENT_SALT));
+        removeJumpPoints(system);
+        removeHyperspacePresence(system);
+        prepareMarkets(system, sector.getEconomy());
+        ChartBodyNames.assign(system, ChartBodyNames.designation(derivedRandom(seed, NAME_SALT)));
+        system.updateAllOrbits();
+        Vector2f innerWormhole = ChartWormholePlacement.choose(system, derivedRandom(seed, PLACEMENT_SALT));
         return new ChartLayout(seed, systemType, generated, innerWormhole);
     }
 
-    private static boolean buildWithVanilla(StarSystemAPI pocket, String runId, StarSystemType systemType, long seed) {
+    private static boolean buildWithVanilla(StarSystemAPI system, String runId, StarSystemType systemType, long seed) {
         try {
-            engine.build(pocket, ChartIds.starId(runId), systemType, pickAge(seed), derivedRandom(seed, LAYOUT_SALT));
-            if (pocket.getStar() == null) {
+            engine.build(system, ChartIds.starId(runId), systemType, pickAge(seed), derivedRandom(seed, LAYOUT_SALT));
+            if (system.getStar() == null) {
                 throw new IllegalStateException("the generator finished without a star");
             }
             return true;
@@ -134,26 +134,26 @@ public final class ChartLayoutGenerator {
         }
     }
 
-    static void scrub(StarSystemAPI pocket) {
-        for (SectorEntityToken entity : new ArrayList<>(pocket.getAllEntities())) {
-            pocket.removeEntity(entity);
+    static void scrub(StarSystemAPI system) {
+        for (SectorEntityToken entity : new ArrayList<>(system.getAllEntities())) {
+            system.removeEntity(entity);
         }
-        pocket.setStar(null);
-        pocket.setSecondary(null);
-        pocket.setTertiary(null);
-        pocket.setCenter(null);
-        pocket.setType(StarSystemType.SINGLE);
+        system.setStar(null);
+        system.setSecondary(null);
+        system.setTertiary(null);
+        system.setCenter(null);
+        system.setType(StarSystemType.SINGLE);
     }
 
-    static void removeJumpPoints(StarSystemAPI pocket) {
-        for (SectorEntityToken jumpPoint : new ArrayList<>(pocket.getJumpPoints())) {
-            pocket.removeEntity(jumpPoint);
+    static void removeJumpPoints(StarSystemAPI system) {
+        for (SectorEntityToken jumpPoint : new ArrayList<>(system.getJumpPoints())) {
+            system.removeEntity(jumpPoint);
         }
     }
 
-    static void removeHyperspacePresence(StarSystemAPI pocket) {
-        pocket.setHasSystemwideNebula(false);
-        SectorEntityToken anchor = pocket.getHyperspaceAnchor();
+    static void removeHyperspacePresence(StarSystemAPI system) {
+        system.setHasSystemwideNebula(false);
+        SectorEntityToken anchor = system.getHyperspaceAnchor();
         if (anchor == null) {
             return;
         }
@@ -161,11 +161,11 @@ public final class ChartLayoutGenerator {
         if (anchorLocation != null) {
             anchorLocation.removeEntity(anchor);
         }
-        pocket.setHyperspaceAnchor(null);
+        system.setHyperspaceAnchor(null);
     }
 
-    static void prepareMarkets(StarSystemAPI pocket, EconomyAPI economy) {
-        for (PlanetAPI planet : pocket.getPlanets()) {
+    static void prepareMarkets(StarSystemAPI system, EconomyAPI economy) {
+        for (PlanetAPI planet : system.getPlanets()) {
             MarketAPI market = planet.getMarket();
             if (planet.isStar() || market == null) {
                 continue;

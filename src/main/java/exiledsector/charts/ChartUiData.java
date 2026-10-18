@@ -97,6 +97,6 @@ final class ChartUiData {
         }
         failureReported = true;
         LOG.warn("[ExiledSector] Star Chart cleanup can't reach the campaign UI data (" + reason
-                + "); a closed pocket may stay in the save until the map is viewed elsewhere", cause);
+                + "); a closed system may stay in the save until the map is viewed elsewhere", cause);
     }
 }

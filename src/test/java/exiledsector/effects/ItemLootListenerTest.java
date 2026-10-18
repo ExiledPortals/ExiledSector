@@ -335,10 +335,10 @@ private static List<SpecialItemData> starCharts(CargoAPI cargo) {
     }
 
     @Test
-    void wonBattlesRollStarChartsInsideAPocketAtTheRunTierAndOutsideOnlyFromStrongEnemies() throws Exception {
+    void wonBattlesRollStarChartsInsideASystemAtTheRunTierAndOutsideOnlyFromStrongEnemies() throws Exception {
         StarChartFixtures.registerShipped();
         ChartDrops.register(new JSONArray()
-                .put(new JSONObject().put("source", "pocket_battle").put("chance", "1"))
+                .put(new JSONObject().put("source", "system_battle").put("chance", "1"))
                 .put(new JSONObject().put("source", "battle").put("chance", "1").put("min_strength", "150").put("strength_per_tier", "100")
                         .put("max_tier", "6")));
         try (MockedStatic<LunaSettings> luna = Mockito.mockStatic(LunaSettings.class)) {
@@ -350,20 +350,20 @@ private static List<SpecialItemData> starCharts(CargoAPI cargo) {
             run.recordContent(new ChartContent(8, "hegemony", ChartObjective.CLEAR, List.of("g1"), "boss", null, 4, 6));
             run.recordArrival();
             ChartRuns.store(run);
-            StarSystemAPI pocket = mock(StarSystemAPI.class);
-            when(pocket.hasTag(ChartIds.POCKET_TAG)).thenReturn(true);
-            when(pocket.getTags()).thenReturn(List.of(ChartIds.POCKET_TAG, ChartIds.runTag("lootRun")));
+            StarSystemAPI system = mock(StarSystemAPI.class);
+            when(system.hasTag(ChartIds.SYSTEM_TAG)).thenReturn(true);
+            when(system.getTags()).thenReturn(List.of(ChartIds.SYSTEM_TAG, ChartIds.runTag("lootRun")));
             CampaignFleetAPI playerFleet = sector.getPlayerFleet();
-            when(playerFleet.getContainingLocation()).thenReturn(pocket);
+            when(playerFleet.getContainingLocation()).thenReturn(system);
             ItemLootListener chartListener = new ItemLootListener(new Random(1L), new Random(2L));
 
-            BattleAPI pocketBattle = mock(BattleAPI.class);
-            chartListener.holdLoot(PlayerEngagement.of(engagement(pocketBattle, List.of(warship("a", 20f)), List.of()), 1f));
-            CargoAPI pocketLoot = mock(CargoAPI.class);
-            chartListener.reportEncounterLootGenerated(context(pocketBattle), pocketLoot);
-            List<SpecialItemData> pocketCharts = starCharts(pocketLoot);
-            assertEquals(1, pocketCharts.size());
-            assertEquals(8, ItemData.ofStarChart(pocketCharts.get(0)).preview().tier());
+            BattleAPI systemBattle = mock(BattleAPI.class);
+            chartListener.holdLoot(PlayerEngagement.of(engagement(systemBattle, List.of(warship("a", 20f)), List.of()), 1f));
+            CargoAPI systemLoot = mock(CargoAPI.class);
+            chartListener.reportEncounterLootGenerated(context(systemBattle), systemLoot);
+            List<SpecialItemData> systemCharts = starCharts(systemLoot);
+            assertEquals(1, systemCharts.size());
+            assertEquals(8, ItemData.ofStarChart(systemCharts.get(0)).preview().tier());
 
             when(playerFleet.getContainingLocation()).thenReturn(mock(LocationAPI.class));
             BattleAPI weakBattle = mock(BattleAPI.class);

@@ -43,17 +43,17 @@ class VanillaChartLayoutEngineTest {
     void theSeededRandomIsSwappedInForTheBuildAndRestoredEvenWhenVanillaThrows() {
         Random original = StarSystemGenerator.random;
         Random seeded = new Random(5L);
-        StarSystemAPI pocket = mock(StarSystemAPI.class);
+        StarSystemAPI system = mock(StarSystemAPI.class);
         AtomicReference<Random> duringBuild = new AtomicReference<>();
         doAnswer(invocation -> {
             duringBuild.set(StarSystemGenerator.random);
             return null;
-        }).when(pocket).setType(any());
+        }).when(system).setType(any());
 
         assertThrows(RuntimeException.class,
-                () -> new VanillaChartLayoutEngine().build(pocket, "star", StarSystemType.SINGLE, StarAge.OLD, seeded));
+                () -> new VanillaChartLayoutEngine().build(system, "star", StarSystemType.SINGLE, StarAge.OLD, seeded));
 
-        verify(pocket).setType(StarSystemType.SINGLE);
+        verify(system).setType(StarSystemType.SINGLE);
         assertSame(seeded, duringBuild.get());
         assertSame(original, StarSystemGenerator.random);
     }

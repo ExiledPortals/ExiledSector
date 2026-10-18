@@ -15,7 +15,7 @@ class ChartBodyNamesTest {
 
     @Test
     void starsAreLetteredPlanetsNumberedOutwardAndMoonsLetteredAfterTheirPlanet() {
-        FakePocket fake = new FakePocket();
+        FakeSystem fake = new FakeSystem();
         PlanetAPI primary = fake.addStar("star", 600f);
         PlanetAPI secondary = fake.addStar("star_b", 300f);
         when(fake.system.getSecondary()).thenReturn(secondary);

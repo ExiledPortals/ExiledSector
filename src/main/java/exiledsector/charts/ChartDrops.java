@@ -33,25 +33,25 @@ public final class ChartDrops {
 
     public enum Source {
         RUN_REWARD(true),
-        POCKET_SALVAGE(true),
-        POCKET_BATTLE(true),
+        SYSTEM_SALVAGE(true),
+        SYSTEM_BATTLE(true),
         BATTLE(false),
         SALVAGE(false),
         TECHMINING_FIRST_FIND(false),
         TECHMINING_MONTHLY(false);
 
-        private final boolean insidePocket;
+        private final boolean insideSystem;
 
-        Source(boolean insidePocket) {
-            this.insidePocket = insidePocket;
+        Source(boolean insideSystem) {
+            this.insideSystem = insideSystem;
         }
 
         public String id() {
             return name().toLowerCase(Locale.ROOT);
         }
 
-        public boolean insidePocket() {
-            return insidePocket;
+        public boolean insideSystem() {
+            return insideSystem;
         }
 
         static Source byId(String id) {
@@ -115,8 +115,8 @@ public final class ChartDrops {
                     return;
                 }
                 float currencyChance = csv.number(row, "currency_chance", 0f, sourceText);
-                if (currencyChance > 0f && !source.insidePocket()) {
-                    csv.problem(rowLabel, "currency_chance", sourceText + " is outside a pocket, where chart currencies never drop");
+                if (currencyChance > 0f && !source.insideSystem()) {
+                    csv.problem(rowLabel, "currency_chance", sourceText + " is outside a chart system, where chart currencies never drop");
                     currencyChance = 0f;
                 }
                 loaded.put(source, new Rule(csv.number(row, "chance", 0f, sourceText), csv.number(row, "extra_chance", 0f, sourceText),
@@ -156,7 +156,7 @@ public final class ChartDrops {
             }
         }
         Map<String, Integer> currencies = new LinkedHashMap<>();
-        if (source.insidePocket() && random.nextFloat() < rule.currencyChance() * chanceMult) {
+        if (source.insideSystem() && random.nextFloat() < rule.currencyChance() * chanceMult) {
             String currencyId = ItemDrops.pickChartCurrency(random);
             if (currencyId != null) {
                 currencies.merge(currencyId, 1, Integer::sum);
@@ -195,15 +195,15 @@ public final class ChartDrops {
     }
 
     public static Loot forBattle(SectorAPI sector, LocationAPI battleLocation, float defeatedDeploymentPoints, Random random) {
-        if (isPocket(battleLocation)) {
-            return forPocket(sector, Source.POCKET_BATTLE, livePocketRun(battleLocation), random);
+        if (isSystem(battleLocation)) {
+            return forSystem(sector, Source.SYSTEM_BATTLE, liveSystemRun(battleLocation), random);
         }
         return roll(Source.BATTLE, tierForStrength(Source.BATTLE, defeatedDeploymentPoints), 1f, random, uniquesFor(sector));
     }
 
     public static Loot forSalvage(SectorAPI sector, LocationAPI salvageLocation, Random random) {
-        if (isPocket(salvageLocation)) {
-            return forPocket(sector, Source.POCKET_SALVAGE, livePocketRun(salvageLocation), random);
+        if (isSystem(salvageLocation)) {
+            return forSystem(sector, Source.SYSTEM_SALVAGE, liveSystemRun(salvageLocation), random);
         }
         return roll(Source.SALVAGE, tierForStrength(Source.SALVAGE, playerLevel(sector)), 1f, random, uniquesFor(sector));
     }
@@ -218,19 +218,19 @@ public final class ChartDrops {
         return playerStats == null ? 0 : playerStats.getLevel();
     }
 
-    private static Loot forPocket(SectorAPI sector, Source source, ChartRun pocketRun, Random random) {
-        if (pocketRun == null) {
+    private static Loot forSystem(SectorAPI sector, Source source, ChartRun systemRun, Random random) {
+        if (systemRun == null) {
             return Loot.NONE;
         }
-        return roll(source, pocketRun.tier(), ChartRunEffects.contextOf(pocketRun).chartDropMult(), random, uniquesFor(sector));
+        return roll(source, systemRun.tier(), ChartRunEffects.contextOf(systemRun).chartDropMult(), random, uniquesFor(sector));
     }
 
-    static boolean isPocket(LocationAPI location) {
-        return location instanceof StarSystemAPI system && system.hasTag(ChartIds.POCKET_TAG);
+    static boolean isSystem(LocationAPI location) {
+        return location instanceof StarSystemAPI system && system.hasTag(ChartIds.SYSTEM_TAG);
     }
 
-    static ChartRun livePocketRun(LocationAPI location) {
-        if (!(location instanceof StarSystemAPI system) || !system.hasTag(ChartIds.POCKET_TAG)) {
+    static ChartRun liveSystemRun(LocationAPI location) {
+        if (!(location instanceof StarSystemAPI system) || !system.hasTag(ChartIds.SYSTEM_TAG)) {
             return null;
         }
         ChartRun run = ChartRuns.currentOrNull();

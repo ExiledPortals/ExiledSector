@@ -457,7 +457,7 @@ class StarChartTest {
                 new RolledEffect("CHART_FLEET_POWER_PERCENT", 50f).scaledValuesDescription(chartEffects, fleetPower).plain());
         assertEquals("Enemy fleets are 10-15/20-30/35-45% stronger",
                 new RolledEffect("CHART_FLEET_POWER_PERCENT", 45f).rangeDescription(chartEffects, fleetPower).plain());
-        assertEquals("Your sensor range is 15-25/25-35% shorter inside the pocket",
+        assertEquals("Your sensor range is 15-25/25-35% shorter inside the system",
                 new RolledEffect("CHART_SENSOR_RANGE_PERCENT", -35f).scaledValuesDescription(chartEffects, sensorRange).plain());
         assertTrue(new RolledEffect("CHART_EXTRA_FLEETS", 3f).scaledValuesDescription(chartEffects, extraFleets).plain().startsWith("1/2/3 "));
         ModifierLine hullValues = ModifierLine.parse("ARMOR_FLAT:5/10/15/20").line();

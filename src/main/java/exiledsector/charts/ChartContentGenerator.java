@@ -65,11 +65,11 @@ public final class ChartContentGenerator {
     private ChartContentGenerator() {
     }
 
-    public static ChartContent generate(SectorAPI sector, StarSystemAPI pocket, String runId, long seed, int tier, Vector2f innerWormhole) {
-        return generate(sector, pocket, runId, seed, tier, innerWormhole, ChartGenContext.none());
+    public static ChartContent generate(SectorAPI sector, StarSystemAPI system, String runId, long seed, int tier, Vector2f innerWormhole) {
+        return generate(sector, system, runId, seed, tier, innerWormhole, ChartGenContext.none());
     }
 
-    public static ChartContent generate(SectorAPI sector, StarSystemAPI pocket, String runId, long seed, int tier, Vector2f innerWormhole,
+    public static ChartContent generate(SectorAPI sector, StarSystemAPI system, String runId, long seed, int tier, Vector2f innerWormhole,
                                         ChartGenContext chartContext) {
         int clampedTier = ChartTiers.clamp(tier);
         ChartContentPlan plan;
@@ -80,7 +80,7 @@ public final class ChartContentGenerator {
             report("plan the content", seed, e);
             return ChartContent.none(clampedTier);
         }
-        Build build = new Build(pocket, runId, clampedTier, seed, innerWormhole);
+        Build build = new Build(system, runId, clampedTier, seed, innerWormhole);
         try {
             build.placePois(plan);
             build.spawnFleets(plan);
@@ -119,14 +119,14 @@ public final class ChartContentGenerator {
         return null;
     }
 
-    static List<Hazard> hazards(StarSystemAPI pocket) {
+    static List<Hazard> hazards(StarSystemAPI system) {
         List<Hazard> hazards = new ArrayList<>();
-        for (PlanetAPI body : pocket.getPlanets()) {
+        for (PlanetAPI body : system.getPlanets()) {
             if (body.isStar() && body.getLocation() != null) {
                 hazards.add(new Hazard(new Vector2f(body.getLocation()), body.getRadius() + STAR_CLEARANCE));
             }
         }
-        for (CampaignTerrainAPI terrain : pocket.getTerrainCopy()) {
+        for (CampaignTerrainAPI terrain : system.getTerrainCopy()) {
             CampaignTerrainPlugin plugin = terrain.getPlugin();
             if (plugin instanceof StarCoronaTerrainPlugin && plugin instanceof BaseRingTerrain ring && ring.params != null && terrain.getLocation() != null) {
                 float outerEdge = ring.params.middleRadius + ring.params.bandWidthInEngine * 0.5f;
@@ -242,10 +242,10 @@ public final class ChartContentGenerator {
             first = REPORTED_FAILURES.add(what);
         }
         if (first) {
-            LOG.error("[ExiledSector] A Star Chart pocket (seed " + seed + ") could not " + what
-                    + "; the pocket gets less content. Later failures of this kind are logged at debug level", cause);
+            LOG.error("[ExiledSector] A Star Chart system (seed " + seed + ") could not " + what
+                    + "; the system gets less content. Later failures of this kind are logged at debug level", cause);
         } else {
-            LOG.debug("[ExiledSector] A Star Chart pocket (seed " + seed + ") could not " + what + " again", cause);
+            LOG.debug("[ExiledSector] A Star Chart system (seed " + seed + ") could not " + what + " again", cause);
         }
     }
 
@@ -261,7 +261,7 @@ public final class ChartContentGenerator {
 
     private static final class Build {
 
-        private final StarSystemAPI pocket;
+        private final StarSystemAPI system;
         private final String runId;
         private final int tier;
         private final long seed;
@@ -277,8 +277,8 @@ public final class ChartContentGenerator {
         private String bossFleetId;
         private String vaultEntityId;
 
-        Build(StarSystemAPI pocket, String runId, int tier, long seed, Vector2f innerWormhole) {
-            this.pocket = pocket;
+        Build(StarSystemAPI system, String runId, int tier, long seed, Vector2f innerWormhole) {
+            this.system = system;
             this.runId = runId;
             this.tier = tier;
             this.seed = seed;
@@ -289,7 +289,7 @@ public final class ChartContentGenerator {
         }
 
         void placePois(ChartContentPlan plan) {
-            hazards = hazards(pocket);
+            hazards = hazards(system);
             for (PlannedPoi planned : plan.pois()) {
                 SectorEntityToken placed = null;
                 try {
@@ -305,7 +305,7 @@ public final class ChartContentGenerator {
         }
 
         private SectorEntityToken placePoi(ChartPoi poi, String factionId) {
-            List<ChartSpot> clear = clearSpots(engine.spots(pocket, placementRandom, usedFoci, POI_GAP), hazards, innerWormhole,
+            List<ChartSpot> clear = clearSpots(engine.spots(system, placementRandom, usedFoci, POI_GAP), hazards, innerWormhole,
                     POI_WORMHOLE_CLEARANCE);
             ChartSpot spot = WeightedPick.pick(clear, candidate -> Math.max(candidate.weight(), MIN_SPOT_WEIGHT), placementRandom);
             boolean recoverable = salvageRandom.nextFloat() < DERELICT_RECOVERY_CHANCE;
@@ -314,8 +314,8 @@ public final class ChartContentGenerator {
                 return null;
             }
             SectorEntityToken entity = poi.kind() == ChartPoi.Kind.DERELICT
-                    ? engine.addDerelict(pocket, factionId, poi.derelictType(), recoverable, entityRandom)
-                    : engine.addSalvageEntity(pocket, poi.entityType(), poi.specForSalvage(), entityRandom);
+                    ? engine.addDerelict(system, factionId, poi.derelictType(), recoverable, entityRandom)
+                    : engine.addSalvageEntity(system, poi.entityType(), poi.specForSalvage(), entityRandom);
             if (entity == null) {
                 return null;
             }
@@ -334,7 +334,7 @@ public final class ChartContentGenerator {
                 }
                 return entity;
             } catch (RuntimeException | LinkageError e) {
-                pocket.removeEntity(entity);
+                system.removeEntity(entity);
                 throw e;
             }
         }
@@ -359,12 +359,12 @@ public final class ChartContentGenerator {
             prepareFleet(fleet, runId, tier, planned.role(), fleetSeed);
             SectorEntityToken guarded = planned.guardsPoi() && planned.poiIndex() < poiEntities.size() ? poiEntities.get(planned.poiIndex()) : null;
             Vector2f spawnAt = spawnLocation(planned.role(), guarded, oneFleetRandom);
-            pocket.addEntity(fleet);
+            system.addEntity(fleet);
             try {
                 fleet.setLocation(spawnAt.x, spawnAt.y);
                 assign(fleet, planned.role(), guarded);
             } catch (RuntimeException | LinkageError e) {
-                pocket.removeEntity(fleet);
+                system.removeEntity(fleet);
                 throw e;
             }
             fleets.add(fleet);
@@ -382,7 +382,7 @@ public final class ChartContentGenerator {
                 return new Vector2f(at.x + (float) Math.cos(angle) * GUARD_OFFSET, at.y + (float) Math.sin(angle) * GUARD_OFFSET);
             }
             if (role == FleetRole.PATROL) {
-                List<ChartSpot> clear = clearSpots(engine.spots(pocket, oneFleetRandom, null, POI_GAP), hazards, innerWormhole,
+                List<ChartSpot> clear = clearSpots(engine.spots(system, oneFleetRandom, null, POI_GAP), hazards, innerWormhole,
                         FLEET_WORMHOLE_CLEARANCE);
                 ChartSpot spot = WeightedPick.pick(clear, candidate -> Math.max(candidate.weight(), MIN_SPOT_WEIGHT), oneFleetRandom);
                 if (spot != null) {
@@ -393,12 +393,12 @@ public final class ChartContentGenerator {
         }
 
         private void assign(CampaignFleetAPI fleet, FleetRole role, SectorEntityToken guarded) {
-            SectorEntityToken patrolCentre = pocket.getCenter() != null ? pocket.getCenter() : pocket.getStar();
+            SectorEntityToken patrolCentre = system.getCenter() != null ? system.getCenter() : system.getStar();
             if (role != FleetRole.PATROL) {
                 SectorEntityToken holdPoint = guarded;
                 if (holdPoint == null) {
                     Vector2f farSide = farSideOf(innerWormhole);
-                    holdPoint = pocket.createToken(farSide.x, farSide.y);
+                    holdPoint = system.createToken(farSide.x, farSide.y);
                 }
                 fleet.addAssignment(FleetAssignment.ORBIT_AGGRESSIVE, holdPoint, ASSIGNMENT_DAYS);
             }
@@ -427,7 +427,7 @@ public final class ChartContentGenerator {
             for (CampaignFleetAPI fleet : fleets) {
                 try {
                     fleet.despawn(FleetDespawnReason.PLAYER_FAR_AWAY, null);
-                    pocket.removeEntity(fleet);
+                    system.removeEntity(fleet);
                 } catch (RuntimeException e) {
                     LOG.debug("Removing a half-generated Star Chart fleet failed", e);
                 }
@@ -435,7 +435,7 @@ public final class ChartContentGenerator {
             for (SectorEntityToken entity : poiEntities) {
                 if (entity != null) {
                     try {
-                        pocket.removeEntity(entity);
+                        system.removeEntity(entity);
                     } catch (RuntimeException e) {
                         LOG.debug("Removing a half-generated Star Chart point of interest failed", e);
                     }

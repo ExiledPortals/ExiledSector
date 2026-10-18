@@ -18,14 +18,14 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-final class FakePocket {
+final class FakeSystem {
 
     final StarSystemAPI system = mock(StarSystemAPI.class);
     final List<SectorEntityToken> entities = new ArrayList<>();
     final Map<SectorEntityToken, String> names = new LinkedHashMap<>();
     private PlanetAPI primaryStar;
 
-    FakePocket() {
+    FakeSystem() {
         when(system.getAllEntities()).thenAnswer(invocation -> new ArrayList<>(entities));
         when(system.getPlanets()).thenAnswer(invocation -> entities.stream().filter(PlanetAPI.class::isInstance).map(PlanetAPI.class::cast).toList());
         when(system.getJumpPoints()).thenAnswer(invocation -> entities.stream().filter(JumpPointAPI.class::isInstance).toList());

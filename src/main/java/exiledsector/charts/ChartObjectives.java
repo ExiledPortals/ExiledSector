@@ -50,13 +50,13 @@ public final class ChartObjectives {
         if (run == null) {
             return false;
         }
-        StarSystemAPI pocket = sector.getStarSystem(run.pocketSystemId());
-        if (pocket == null) {
+        StarSystemAPI system = sector.getStarSystem(run.systemId());
+        if (system == null) {
             return false;
         }
         boolean changed = false;
         Set<String> remainingFleetIds = new HashSet<>();
-        for (CampaignFleetAPI fleet : pocket.getFleets()) {
+        for (CampaignFleetAPI fleet : system.getFleets()) {
             if (!fleet.isDespawning() && !fleet.isEmpty()) {
                 remainingFleetIds.add(fleet.getId());
             }
@@ -66,7 +66,7 @@ public final class ChartObjectives {
             if (defeated.contains(targetId)) {
                 continue;
             }
-            boolean gone = targetId.equals(run.vaultEntityId()) ? isSalvaged(pocket.getEntityById(targetId)) : !remainingFleetIds.contains(targetId);
+            boolean gone = targetId.equals(run.vaultEntityId()) ? isSalvaged(system.getEntityById(targetId)) : !remainingFleetIds.contains(targetId);
             if (gone && run.recordTargetGone(targetId)) {
                 changed = true;
             }

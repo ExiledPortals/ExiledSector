@@ -5,13 +5,13 @@ import com.fs.starfarer.api.campaign.RingBandAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 
-public record ChartPocketContents(int stars, int planets, int terrain, int ringBands, int asteroids, int customEntities, int jumpPoints,
+public record ChartSystemContents(int stars, int planets, int terrain, int ringBands, int asteroids, int customEntities, int jumpPoints,
                                   int fleets, int allEntities) {
 
-    public static ChartPocketContents of(StarSystemAPI pocket) {
+    public static ChartSystemContents of(StarSystemAPI system) {
         int stars = 0;
         int planets = 0;
-        for (PlanetAPI planet : pocket.getPlanets()) {
+        for (PlanetAPI planet : system.getPlanets()) {
             if (planet.isStar()) {
                 stars++;
             } else {
@@ -19,13 +19,13 @@ public record ChartPocketContents(int stars, int planets, int terrain, int ringB
             }
         }
         int ringBands = 0;
-        for (SectorEntityToken entity : pocket.getAllEntities()) {
+        for (SectorEntityToken entity : system.getAllEntities()) {
             if (entity instanceof RingBandAPI) {
                 ringBands++;
             }
         }
-        return new ChartPocketContents(stars, planets, pocket.getTerrainCopy().size(), ringBands, pocket.getAsteroids().size(),
-                pocket.getCustomEntities().size(), pocket.getJumpPoints().size(), pocket.getFleets().size(), pocket.getAllEntities().size());
+        return new ChartSystemContents(stars, planets, system.getTerrainCopy().size(), ringBands, system.getAsteroids().size(),
+                system.getCustomEntities().size(), system.getJumpPoints().size(), system.getFleets().size(), system.getAllEntities().size());
     }
 
     public String describe() {

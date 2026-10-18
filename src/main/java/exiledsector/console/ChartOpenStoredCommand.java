@@ -72,7 +72,7 @@ public class ChartOpenStoredCommand implements BaseCommand {
             case RUN_EXISTS -> Console.showMessage("A Star Chart run is already open. Collapse it or finish it first (see ExiledSectorChartStatus).");
             case NO_PLAYER_FLEET -> Console.showMessage("No player fleet found.");
             case PLAYER_IN_TRANSITION -> Console.showMessage("Your fleet is jumping. Try again once it arrives.");
-            case PLAYER_IN_POCKET -> Console.showMessage("Your fleet is inside a Star Chart pocket.");
+            case PLAYER_IN_SYSTEM -> Console.showMessage("Your fleet is inside a Star Chart system.");
             case NO_CHART -> Console.showMessage("Stored chart " + index + " can't be opened: its definition is not loaded.");
             default -> Console.showMessage("Opening the wormhole failed, so the chart was kept; see starsector.log.");
         }

@@ -55,7 +55,7 @@ class ChartLayoutGeneratorTest {
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSector).thenReturn(sector);
         ProcgenUsedNames.notifyUsed("Corvus");
-        ProcgenUsedNames.notifyUsed(ChartIds.POCKET_BASE_NAME);
+        ProcgenUsedNames.notifyUsed(ChartIds.SYSTEM_BASE_NAME);
     }
 
     @AfterEach
@@ -64,7 +64,7 @@ class ChartLayoutGeneratorTest {
         ChartLayoutGenerator.resetForTests();
     }
 
-    private static void buildLike(FakePocket fake, String starId, StarSystemType systemType, Random random) {
+    private static void buildLike(FakeSystem fake, String starId, StarSystemType systemType, Random random) {
         PlanetAPI star = fake.addStar(starId, 400f + random.nextInt(400));
         if (systemType != StarSystemType.SINGLE) {
             fake.addStar(starId + "_b", 200f + random.nextInt(200));
@@ -82,11 +82,11 @@ class ChartLayoutGeneratorTest {
         }
         fake.addPlanet("moon", 60f, first, 400f);
         fake.addJumpPoint();
-        ProcgenUsedNames.notifyUsed(ChartIds.POCKET_BASE_NAME + " B");
+        ProcgenUsedNames.notifyUsed(ChartIds.SYSTEM_BASE_NAME + " B");
     }
 
-    private FakeChartLayoutEngine installBuilding(FakePocket fake) {
-        return FakeChartLayoutEngine.install(new FakeChartLayoutEngine((pocket, starId, systemType, random) ->
+    private FakeChartLayoutEngine installBuilding(FakeSystem fake) {
+        return FakeChartLayoutEngine.install(new FakeChartLayoutEngine((system, starId, systemType, random) ->
                 buildLike(fake, starId, systemType, random)));
     }
 
@@ -94,7 +94,7 @@ class ChartLayoutGeneratorTest {
     }
 
     private Generated generateOnce(long seed, StarSystemType systemType) {
-        FakePocket fake = new FakePocket();
+        FakeSystem fake = new FakeSystem();
         FakeChartLayoutEngine engine = installBuilding(fake);
         ChartLayout layout = ChartLayoutGenerator.generate(sector, fake.system, RUN_ID, new ChartLayoutRequest(seed, systemType));
         return new Generated(layout, fake.namesInOrder(), engine.builds.get(0).firstRandomLong());
@@ -154,7 +154,7 @@ class ChartLayoutGeneratorTest {
 
     @Test
     void generationLeavesNoJumpPointsAnchorOrHyperspacePresence() {
-        FakePocket fake = new FakePocket();
+        FakeSystem fake = new FakeSystem();
         installBuilding(fake);
         LocationAPI hyperspace = mock(LocationAPI.class);
         SectorEntityToken anchor = mock(SectorEntityToken.class);
@@ -174,11 +174,11 @@ class ChartLayoutGeneratorTest {
     }
 
     @Test
-    void aSystemwideNebulaNeverPutsThePocketOnTheHyperspaceMap() {
-        FakePocket fake = new FakePocket();
-        FakeChartLayoutEngine.install(new FakeChartLayoutEngine((pocket, starId, systemType, random) -> {
+    void aSystemwideNebulaNeverPutsTheSystemOnTheHyperspaceMap() {
+        FakeSystem fake = new FakeSystem();
+        FakeChartLayoutEngine.install(new FakeChartLayoutEngine((system, starId, systemType, random) -> {
             buildLike(fake, starId, systemType, random);
-            pocket.setHasSystemwideNebula(true);
+            system.setHasSystemwideNebula(true);
         }));
 
         ChartLayoutGenerator.generate(sector, fake.system, RUN_ID, new ChartLayoutRequest(6L, StarSystemType.SINGLE));
@@ -198,14 +198,14 @@ class ChartLayoutGeneratorTest {
 
         assertEquals(before, ChartUsedNames.count());
         assertFalse(ProcgenUsedNames.isUsed("Planet 0"));
-        assertFalse(ProcgenUsedNames.isUsed(ChartIds.POCKET_BASE_NAME + " B"));
+        assertFalse(ProcgenUsedNames.isUsed(ChartIds.SYSTEM_BASE_NAME + " B"));
         assertTrue(ProcgenUsedNames.isUsed("Corvus"));
-        assertTrue(ProcgenUsedNames.isUsed(ChartIds.POCKET_BASE_NAME));
+        assertTrue(ProcgenUsedNames.isUsed(ChartIds.SYSTEM_BASE_NAME));
     }
 
     @Test
     void bodiesGetCatalogueNamesFromTheSeedAndMarketsFollow() {
-        FakePocket fake = new FakePocket();
+        FakeSystem fake = new FakeSystem();
         installBuilding(fake);
 
         ChartLayoutGenerator.generate(sector, fake.system, RUN_ID, new ChartLayoutRequest(11L, StarSystemType.SINGLE));
@@ -224,7 +224,7 @@ class ChartLayoutGeneratorTest {
 
     @Test
     void planetsKeepConditionOnlyMarketsSeenButNeverInTheEconomy() {
-        FakePocket fake = new FakePocket();
+        FakeSystem fake = new FakeSystem();
         PlanetAPI star = fake.addStar("star", 500f);
         PlanetAPI planet = fake.addPlanet("planet", 150f, star, 3000f);
         MarketAPI market = planet.getMarket();
@@ -249,7 +249,7 @@ class ChartLayoutGeneratorTest {
 
     @Test
     void aFailedGenerationLeavesNothingBehindAndFallsBackToOneStar() {
-        FakePocket fake = new FakePocket();
+        FakeSystem fake = new FakeSystem();
         PlanetAPI fallbackStar = mock(PlanetAPI.class);
         when(fallbackStar.isStar()).thenReturn(true);
         when(fake.system.initStar(anyString(), anyString(), anyFloat(), anyFloat())).thenAnswer(invocation -> {
@@ -257,7 +257,7 @@ class ChartLayoutGeneratorTest {
             fake.system.setStar(fallbackStar);
             return fallbackStar;
         });
-        FakeChartLayoutEngine.install(new FakeChartLayoutEngine((pocket, starId, systemType, random) -> {
+        FakeChartLayoutEngine.install(new FakeChartLayoutEngine((system, starId, systemType, random) -> {
             buildLike(fake, starId, systemType, random);
             throw new IllegalStateException("spec missing");
         }));
@@ -270,13 +270,13 @@ class ChartLayoutGeneratorTest {
         verify(fake.system).setSecondary(null);
         verify(fake.system).setTertiary(null);
         verify(fake.system).setCenter(null);
-        verify(fake.system).initStar(eq(ChartIds.starId(RUN_ID)), eq(ChartPocketFactory.STAR_TYPE), anyFloat(), anyFloat());
+        verify(fake.system).initStar(eq(ChartIds.starId(RUN_ID)), eq(ChartSystemFactory.STAR_TYPE), anyFloat(), anyFloat());
         assertEquals(namesBefore, ChartUsedNames.count());
     }
 
     @Test
     void anEngineThatLeavesNoStarCountsAsAFailure() {
-        FakePocket fake = new FakePocket();
+        FakeSystem fake = new FakeSystem();
         when(fake.system.initStar(anyString(), anyString(), anyFloat(), anyFloat())).thenReturn(mock(PlanetAPI.class));
         FakeChartLayoutEngine.install(FakeChartLayoutEngine.doingNothing());
 

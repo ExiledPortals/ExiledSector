@@ -84,7 +84,7 @@ final class FakeChartContentEngine implements ChartContentEngine {
     }
 
     @Override
-    public List<ChartSpot> spots(StarSystemAPI pocket, Random random, Set<SectorEntityToken> excludedFoci, float gap) {
+    public List<ChartSpot> spots(StarSystemAPI system, Random random, Set<SectorEntityToken> excludedFoci, float gap) {
         spotCalls++;
         List<ChartSpot> spots = new ArrayList<>();
         for (Vector2f position : spotPositions) {
@@ -94,12 +94,12 @@ final class FakeChartContentEngine implements ChartContentEngine {
     }
 
     @Override
-    public SectorEntityToken addSalvageEntity(StarSystemAPI pocket, String entityType, String salvageSpec, Random random) {
+    public SectorEntityToken addSalvageEntity(StarSystemAPI system, String entityType, String salvageSpec, Random random) {
         return newEntity(entityType);
     }
 
     @Override
-    public SectorEntityToken addDerelict(StarSystemAPI pocket, String factionId, String derelictType, boolean recoverable, Random random) {
+    public SectorEntityToken addDerelict(StarSystemAPI system, String factionId, String derelictType, boolean recoverable, Random random) {
         derelictRecoverable.add(recoverable);
         return newEntity("wreck");
     }

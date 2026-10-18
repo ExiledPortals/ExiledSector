@@ -9,7 +9,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
-import exiledsector.charts.ChartLoadSweep.PocketDecision;
+import exiledsector.charts.ChartLoadSweep.SystemDecision;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,10 +38,10 @@ class ChartLoadSweepTest {
 
     private MockedStatic<Global> globalMock;
     private SectorAPI sector;
-    private StarSystemAPI pocket;
+    private StarSystemAPI system;
     private LocationAPI hyperspace;
     private CampaignFleetAPI playerFleet;
-    private SectorEntityToken pocketStar;
+    private SectorEntityToken systemstar;
 
     @BeforeEach
     void setUp() {
@@ -50,14 +50,14 @@ class ChartLoadSweepTest {
         when(sector.getPersistentData()).thenReturn(persistentData);
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSector).thenReturn(sector);
-        pocket = pocketFor(RUN_ID);
+        system = systemFor(RUN_ID);
         hyperspace = mock(LocationAPI.class);
         playerFleet = mock(CampaignFleetAPI.class);
-        pocketStar = taggedEntity(RUN_ID, pocket);
-        when(pocket.getEntitiesWithTag(ChartIds.ENTITY_TAG)).thenReturn(List.of(pocketStar));
-        when(pocket.getAllEntities()).thenReturn(List.of(pocketStar));
-        when(sector.getStarSystems()).thenReturn(List.of(pocket));
-        when(sector.getStarSystem(ChartIds.pocketSystemId(RUN_ID))).thenReturn(pocket);
+        systemstar = taggedEntity(RUN_ID, system);
+        when(system.getEntitiesWithTag(ChartIds.ENTITY_TAG)).thenReturn(List.of(systemstar));
+        when(system.getAllEntities()).thenReturn(List.of(systemstar));
+        when(sector.getStarSystems()).thenReturn(List.of(system));
+        when(sector.getStarSystem(ChartIds.systemId(RUN_ID))).thenReturn(system);
         when(sector.getHyperspace()).thenReturn(hyperspace);
         when(sector.getPlayerFleet()).thenReturn(playerFleet);
         when(playerFleet.getContainingLocation()).thenReturn(hyperspace);
@@ -68,11 +68,11 @@ class ChartLoadSweepTest {
         globalMock.close();
     }
 
-    private static StarSystemAPI pocketFor(String runId) {
+    private static StarSystemAPI systemFor(String runId) {
         StarSystemAPI system = mock(StarSystemAPI.class);
-        when(system.hasTag(ChartIds.POCKET_TAG)).thenReturn(true);
-        when(system.getOptionalUniqueId()).thenReturn(ChartIds.pocketSystemId(runId));
-        when(system.getTags()).thenReturn(List.of(ChartIds.POCKET_TAG, ChartIds.runTag(runId)));
+        when(system.hasTag(ChartIds.SYSTEM_TAG)).thenReturn(true);
+        when(system.getOptionalUniqueId()).thenReturn(ChartIds.systemId(runId));
+        when(system.getTags()).thenReturn(List.of(ChartIds.SYSTEM_TAG, ChartIds.runTag(runId)));
         return system;
     }
 
@@ -97,33 +97,33 @@ class ChartLoadSweepTest {
     }
 
     @Test
-    void decidesToKeepALiveRunsPocketAndPurgeEverythingElse() {
-        assertEquals(PocketDecision.KEEP, ChartLoadSweep.decide(pocket, runInState(ChartRunState.OPEN), false));
-        assertEquals(PocketDecision.KEEP, ChartLoadSweep.decide(pocket, runInState(ChartRunState.INSIDE), true));
-        assertEquals(PocketDecision.PURGE, ChartLoadSweep.decide(pocket, null, false));
-        assertEquals(PocketDecision.PURGE, ChartLoadSweep.decide(pocket, runInState(ChartRunState.CLOSING), false));
-        assertEquals(PocketDecision.PURGE, ChartLoadSweep.decide(pocketFor("other"), runInState(ChartRunState.OPEN), false));
+    void decidesToKeepALiveRunsSystemAndPurgeEverythingElse() {
+        assertEquals(SystemDecision.KEEP, ChartLoadSweep.decide(system, runInState(ChartRunState.OPEN), false));
+        assertEquals(SystemDecision.KEEP, ChartLoadSweep.decide(system, runInState(ChartRunState.INSIDE), true));
+        assertEquals(SystemDecision.PURGE, ChartLoadSweep.decide(system, null, false));
+        assertEquals(SystemDecision.PURGE, ChartLoadSweep.decide(system, runInState(ChartRunState.CLOSING), false));
+        assertEquals(SystemDecision.PURGE, ChartLoadSweep.decide(systemFor("other"), runInState(ChartRunState.OPEN), false));
     }
 
     @Test
-    void decidesToAdoptAPocketThePlayerIsInsideWithoutALiveRun() {
-        assertEquals(PocketDecision.ADOPT, ChartLoadSweep.decide(pocket, null, true));
-        assertEquals(PocketDecision.ADOPT, ChartLoadSweep.decide(pocket, runInState(ChartRunState.CLOSING), true));
-        assertEquals(PocketDecision.LEAVE_FOR_NOW, ChartLoadSweep.decide(pocketFor("other"), runInState(ChartRunState.OPEN), true));
+    void decidesToAdoptASystemThePlayerIsInsideWithoutALiveRun() {
+        assertEquals(SystemDecision.ADOPT, ChartLoadSweep.decide(system, null, true));
+        assertEquals(SystemDecision.ADOPT, ChartLoadSweep.decide(system, runInState(ChartRunState.CLOSING), true));
+        assertEquals(SystemDecision.LEAVE_FOR_NOW, ChartLoadSweep.decide(systemFor("other"), runInState(ChartRunState.OPEN), true));
     }
 
     @Test
-    void aSaveMadeInsideKeepsItsRunAndPocket() {
+    void aSaveMadeInsideKeepsItsRunAndSystem() {
         ChartRun run = runInState(ChartRunState.INSIDE);
         ChartRuns.store(run);
-        when(playerFleet.getContainingLocation()).thenReturn(pocket);
+        when(playerFleet.getContainingLocation()).thenReturn(system);
 
         ChartLoadSweep.sweep(sector);
 
         assertSame(run, ChartRuns.currentOrNull());
         assertEquals(ChartRunState.INSIDE, run.runState());
         verify(sector, never()).removeStarSystemNextFrame(any());
-        verify(pocket, never()).removeEntity(any());
+        verify(system, never()).removeEntity(any());
     }
 
     @Test
@@ -140,11 +140,11 @@ class ChartLoadSweepTest {
     }
 
     @Test
-    void anOrphanPocketIsPurged() {
+    void anOrphanSystemIsPurged() {
         ChartLoadSweep.sweep(sector);
 
-        verify(pocket, Mockito.atLeastOnce()).removeEntity(pocketStar);
-        verify(sector).removeStarSystemNextFrame(pocket);
+        verify(system, Mockito.atLeastOnce()).removeEntity(systemstar);
+        verify(sector).removeStarSystemNextFrame(system);
     }
 
     @Test
@@ -153,14 +153,14 @@ class ChartLoadSweepTest {
 
         ChartLoadSweep.sweep(sector);
 
-        verify(sector).removeStarSystemNextFrame(pocket);
+        verify(sector).removeStarSystemNextFrame(system);
         assertNull(ChartRuns.currentOrNull());
     }
 
     @Test
-    void aRunWhosePocketIsGoneIsDeletedWithItsWormhole() {
+    void aRunWhoseSystemIsGoneIsDeletedWithItsWormhole() {
         ChartRuns.store(runInState(ChartRunState.OPEN));
-        when(sector.getStarSystem(ChartIds.pocketSystemId(RUN_ID))).thenReturn(null);
+        when(sector.getStarSystem(ChartIds.systemId(RUN_ID))).thenReturn(null);
         when(sector.getStarSystems()).thenReturn(List.of());
         SectorEntityToken outer = taggedEntity(RUN_ID, hyperspace);
         when(sector.getEntityById(ChartIds.outerWormholeId(RUN_ID))).thenReturn(outer);
@@ -183,13 +183,13 @@ class ChartLoadSweepTest {
     }
 
     @Test
-    void aPocketThePlayerIsStuckInWithNoRecordIsAdoptedSoTheyCanLeave() {
-        when(playerFleet.getContainingLocation()).thenReturn(pocket);
+    void aSystemThePlayerIsStuckInWithNoRecordIsAdoptedSoTheyCanLeave() {
+        when(playerFleet.getContainingLocation()).thenReturn(system);
         when(sector.getRespawnLocation()).thenReturn(hyperspace);
         when(sector.getRespawnCoordinates()).thenReturn(new Vector2f(10f, 20f));
         when(hyperspace.isHyperspace()).thenReturn(true);
         CustomCampaignEntityAPI inner = mock(CustomCampaignEntityAPI.class);
-        when(pocket.addCustomEntity(anyString(), anyString(), anyString(), anyString())).thenReturn(inner);
+        when(system.addCustomEntity(anyString(), anyString(), anyString(), anyString())).thenReturn(inner);
 
         ChartLoadSweep.sweep(sector);
 
@@ -198,7 +198,7 @@ class ChartLoadSweepTest {
         assertEquals(RUN_ID, adopted.runId());
         assertEquals(ChartRunState.INSIDE, adopted.runState());
         assertEquals(ChartIds.HYPERSPACE_LOCATION_ID, adopted.originLocationId());
-        verify(pocket).addCustomEntity(Mockito.eq(ChartIds.innerWormholeId(RUN_ID)), anyString(), anyString(), anyString());
+        verify(system).addCustomEntity(Mockito.eq(ChartIds.innerWormholeId(RUN_ID)), anyString(), anyString(), anyString());
         verify(sector, never()).removeStarSystemNextFrame(any());
     }
 
@@ -207,8 +207,8 @@ class ChartLoadSweepTest {
         ChartRun run = runInState(ChartRunState.INSIDE);
         run.beginClosing();
         ChartRuns.store(run);
-        when(playerFleet.getContainingLocation()).thenReturn(pocket);
-        when(pocket.getEntityById(ChartIds.innerWormholeId(RUN_ID))).thenReturn(mock(CustomCampaignEntityAPI.class));
+        when(playerFleet.getContainingLocation()).thenReturn(system);
+        when(system.getEntityById(ChartIds.innerWormholeId(RUN_ID))).thenReturn(mock(CustomCampaignEntityAPI.class));
 
         ChartLoadSweep.sweep(sector);
 
@@ -222,21 +222,21 @@ class ChartLoadSweepTest {
 
         ChartLoadSweep.sweep(sector);
 
-        verify(sector).removeStarSystemNextFrame(pocket);
+        verify(sector).removeStarSystemNextFrame(system);
         assertNull(ChartRuns.currentOrNull());
     }
 
     @Test
-    void aPocketThePlayerIsInsideKeepsItsEntitiesEvenWhenAnotherRunIsLive() {
+    void aSystemThePlayerIsInsideKeepsItsEntitiesEvenWhenAnotherRunIsLive() {
         ChartRuns.store(new ChartRun("other", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1));
-        when(sector.getStarSystem(ChartIds.pocketSystemId("other"))).thenReturn(mock(StarSystemAPI.class));
+        when(sector.getStarSystem(ChartIds.systemId("other"))).thenReturn(mock(StarSystemAPI.class));
         when(sector.getEntityById(ChartIds.outerWormholeId("other"))).thenReturn(mock(SectorEntityToken.class));
-        when(playerFleet.getContainingLocation()).thenReturn(pocket);
+        when(playerFleet.getContainingLocation()).thenReturn(system);
 
         ChartLoadSweep.sweep(sector);
 
-        verify(pocket, never()).removeEntity(any());
-        verify(sector, never()).removeStarSystemNextFrame(pocket);
+        verify(system, never()).removeEntity(any());
+        verify(sector, never()).removeStarSystemNextFrame(system);
     }
 
     @Test

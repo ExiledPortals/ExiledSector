@@ -27,8 +27,8 @@ final class ChartWormholePlacement {
     private ChartWormholePlacement() {
     }
 
-    static Vector2f choose(StarSystemAPI pocket, Random placementRandom) {
-        return place(blockedBands(pocket), placementRandom);
+    static Vector2f choose(StarSystemAPI system, Random placementRandom) {
+        return place(blockedBands(system), placementRandom);
     }
 
     static Vector2f place(List<Band> blocked, Random placementRandom) {
@@ -38,7 +38,7 @@ final class ChartWormholePlacement {
             outermost = Math.max(outermost, band.outer());
         }
         float radius = clearRadius(blocked, MIN_RADIUS);
-        while (!isClear(blocked, arrivalDistance(angle, radius)) && radius <= outermost + ChartPocketFactory.ENTRY_OFFSET) {
+        while (!isClear(blocked, arrivalDistance(angle, radius)) && radius <= outermost + ChartSystemFactory.ENTRY_OFFSET) {
             radius = clearRadius(blocked, radius + ARRIVAL_SEARCH_STEP);
         }
         return polar(angle, radius);
@@ -46,7 +46,7 @@ final class ChartWormholePlacement {
 
     static float arrivalDistance(double angle, float radius) {
         Vector2f wormhole = polar(angle, radius);
-        return new Vector2f(wormhole.x + ChartPocketFactory.ENTRY_OFFSET, wormhole.y).length();
+        return new Vector2f(wormhole.x + ChartSystemFactory.ENTRY_OFFSET, wormhole.y).length();
     }
 
     private static Vector2f polar(double angle, float radius) {
@@ -77,13 +77,13 @@ final class ChartWormholePlacement {
         return radius;
     }
 
-    static List<Band> blockedBands(StarSystemAPI pocket) {
+    static List<Band> blockedBands(StarSystemAPI system) {
         List<Band> blocked = new ArrayList<>();
-        for (PlanetAPI body : pocket.getPlanets()) {
+        for (PlanetAPI body : system.getPlanets()) {
             float clearance = body.getRadius() + (body.isStar() ? STAR_CLEARANCE : PLANET_CLEARANCE);
             blocked.add(centreBand(body, 0).widenedBy(clearance));
         }
-        for (CampaignTerrainAPI terrain : pocket.getTerrainCopy()) {
+        for (CampaignTerrainAPI terrain : system.getTerrainCopy()) {
             Band band = ringTerrainBand(terrain);
             if (band != null) {
                 blocked.add(band);
