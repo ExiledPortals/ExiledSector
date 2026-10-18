@@ -1780,6 +1780,12 @@ effect|SHIELD_RAISE_RATE_PERCENT|12.5	0	<good>12.5%</good> increased shield rais
 effect|SHIELD_RAISE_RATE_PERCENT|100.0	0	<good>100%</good> increased shield raise rate.
 effect|SHIELD_RAISE_RATE_PERCENT|-10.0	0	<bad>10%</bad> reduced shield raise rate.
 effect|SHIELD_RAISE_RATE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced shield raise rate.
+effect|SHIELD_SOFT_FLUX_CONVERSION_PERCENT|1.0	0	<good>1%</good> increased shield damage converted to soft flux.
+effect|SHIELD_SOFT_FLUX_CONVERSION_PERCENT|10.0	0	<good>10%</good> increased shield damage converted to soft flux.
+effect|SHIELD_SOFT_FLUX_CONVERSION_PERCENT|12.5	0	<good>12.5%</good> increased shield damage converted to soft flux.
+effect|SHIELD_SOFT_FLUX_CONVERSION_PERCENT|100.0	0	<good>100%</good> increased shield damage converted to soft flux.
+effect|SHIELD_SOFT_FLUX_CONVERSION_PERCENT|-10.0	0	<bad>10%</bad> reduced shield damage converted to soft flux.
+effect|SHIELD_SOFT_FLUX_CONVERSION_PERCENT|-12.5	0	<bad>12.5%</bad> reduced shield damage converted to soft flux.
 effect|SHIELD_TURN_RATE_PERCENT|1.0	0	<good>1%</good> increased shield turn rate.
 effect|SHIELD_TURN_RATE_PERCENT|10.0	0	<good>10%</good> increased shield turn rate.
 effect|SHIELD_TURN_RATE_PERCENT|12.5	0	<good>12.5%</good> increased shield turn rate.

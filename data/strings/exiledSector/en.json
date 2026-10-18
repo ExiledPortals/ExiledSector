@@ -185,6 +185,7 @@
     "stat.shieldArc": "shield arc",
     "stat.shieldFluxUpkeep": "shield flux upkeep",
     "stat.shieldRaiseRate": "shield raise rate",
+    "stat.shieldSoftFluxConversion": "shield damage converted to soft flux",
     "stat.shieldTurnRate": "shield turn rate",
     "stat.suppliesRequiredToPerformSurveysFleetWide": "supplies required to perform surveys (fleet-wide)",
     "stat.supplyUseForMaintenance": "supply use for maintenance",

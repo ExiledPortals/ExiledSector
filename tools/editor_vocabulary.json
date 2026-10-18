@@ -295,6 +295,7 @@
     {"name": "SHIELD_PIERCE_CHANCE_MULT", "statMode": "MULT", "lowerIsBetter": true},
     {"name": "SHIELD_PIERCE_CHANCE_PERCENT", "statMode": "PERCENT", "lowerIsBetter": true},
     {"name": "SHIELD_RAISE_RATE_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},
+    {"name": "SHIELD_SOFT_FLUX_CONVERSION_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},
     {"name": "SHIELD_TURN_RATE_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},
     {"name": "SHIELD_UPKEEP_MULT", "statMode": "MULT", "lowerIsBetter": true},
     {"name": "SHIELD_UPKEEP_PERCENT", "statMode": "PERCENT", "lowerIsBetter": true},
