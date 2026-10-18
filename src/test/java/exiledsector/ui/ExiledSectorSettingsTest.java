@@ -1,5 +1,6 @@
 package exiledsector.ui;
 
+import exiledsector.ui.cargo.ItemAnimationSetting;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.LanguageSetting;
@@ -145,7 +146,8 @@ class ExiledSectorSettingsTest {
         for (String text : registeredTexts) {
             boolean untranslated = text.isEmpty() || text.startsWith("exiledSector") || text.equals(options)
                     || LanguageSetting.OPTIONS.contains(text) || text.equals(areaOptions) || text.equals(String.join(",", AreaToggles.REQUIRED_MOD_OPTIONS))
-                    || AreaToggles.OPTIONS.contains(text);
+                    || AreaToggles.OPTIONS.contains(text) || ItemAnimationSetting.OPTIONS.contains(text)
+                    || text.equals(String.join(",", ItemAnimationSetting.OPTIONS));
             assertFalse(!untranslated && PseudoLeaks.hasLeak(text), () -> "Hardcoded settings text: " + text);
         }
     }

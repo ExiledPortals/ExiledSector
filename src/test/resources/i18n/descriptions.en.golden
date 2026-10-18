@@ -1570,18 +1570,36 @@ effect|PHASE_ANCHOR_EMERGENCY_DIVE|12.5	0	While at risk of being destroyed or di
 effect|PHASE_ANCHOR_EMERGENCY_DIVE|100.0	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to 100% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
 effect|PHASE_ANCHOR_EMERGENCY_DIVE|-10.0	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to -10% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
 effect|PHASE_ANCHOR_EMERGENCY_DIVE|-12.5	0	While at risk of being destroyed or disabled, this ship can instead perform an emergency dive into phase space, retreating from battle and suffering an additional combat readiness penalty equal to -12.5% of its deployment cost. The ship must have enough combat readiness to cover this cost. Only one ship per battle, regardless of side, can perform this dive.
+effect|PHASE_CLOAK_ACCELERATION_PERCENT|1.0	0	<good>1%</good> increased acceleration while phased.
+effect|PHASE_CLOAK_ACCELERATION_PERCENT|10.0	0	<good>10%</good> increased acceleration while phased.
+effect|PHASE_CLOAK_ACCELERATION_PERCENT|12.5	0	<good>12.5%</good> increased acceleration while phased.
+effect|PHASE_CLOAK_ACCELERATION_PERCENT|100.0	0	<good>100%</good> increased acceleration while phased.
+effect|PHASE_CLOAK_ACCELERATION_PERCENT|-10.0	0	<bad>10%</bad> reduced acceleration while phased.
+effect|PHASE_CLOAK_ACCELERATION_PERCENT|-12.5	0	<bad>12.5%</bad> reduced acceleration while phased.
 effect|PHASE_CLOAK_ACTIVATION_COST_MULT|1.0	1	<good>1%</good> more phase cloak activation cost.
 effect|PHASE_CLOAK_ACTIVATION_COST_MULT|10.0	1	<good>10%</good> more phase cloak activation cost.
 effect|PHASE_CLOAK_ACTIVATION_COST_MULT|12.5	1	<good>12.5%</good> more phase cloak activation cost.
 effect|PHASE_CLOAK_ACTIVATION_COST_MULT|100.0	1	<good>100%</good> more phase cloak activation cost.
 effect|PHASE_CLOAK_ACTIVATION_COST_MULT|-10.0	1	<bad>10%</bad> less phase cloak activation cost.
 effect|PHASE_CLOAK_ACTIVATION_COST_MULT|-12.5	1	<bad>12.5%</bad> less phase cloak activation cost.
+effect|PHASE_CLOAK_COOLDOWN_PERCENT|1.0	1	<good>1%</good> increased phase cloak cooldown.
+effect|PHASE_CLOAK_COOLDOWN_PERCENT|10.0	1	<good>10%</good> increased phase cloak cooldown.
+effect|PHASE_CLOAK_COOLDOWN_PERCENT|12.5	1	<good>12.5%</good> increased phase cloak cooldown.
+effect|PHASE_CLOAK_COOLDOWN_PERCENT|100.0	1	<good>100%</good> increased phase cloak cooldown.
+effect|PHASE_CLOAK_COOLDOWN_PERCENT|-10.0	1	<bad>10%</bad> reduced phase cloak cooldown.
+effect|PHASE_CLOAK_COOLDOWN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced phase cloak cooldown.
 effect|PHASE_CLOAK_FLUX_THRESHOLD_PERCENT|1.0	0	<good>1%</good> increased hard flux level at which phased speed reaches its minimum.
 effect|PHASE_CLOAK_FLUX_THRESHOLD_PERCENT|10.0	0	<good>10%</good> increased hard flux level at which phased speed reaches its minimum.
 effect|PHASE_CLOAK_FLUX_THRESHOLD_PERCENT|12.5	0	<good>12.5%</good> increased hard flux level at which phased speed reaches its minimum.
 effect|PHASE_CLOAK_FLUX_THRESHOLD_PERCENT|100.0	0	<good>100%</good> increased hard flux level at which phased speed reaches its minimum.
 effect|PHASE_CLOAK_FLUX_THRESHOLD_PERCENT|-10.0	0	<bad>10%</bad> reduced hard flux level at which phased speed reaches its minimum.
 effect|PHASE_CLOAK_FLUX_THRESHOLD_PERCENT|-12.5	0	<bad>12.5%</bad> reduced hard flux level at which phased speed reaches its minimum.
+effect|PHASE_CLOAK_UPKEEP_COST_MULT|1.0	1	<good>1%</good> more phase cloak flux upkeep.
+effect|PHASE_CLOAK_UPKEEP_COST_MULT|10.0	1	<good>10%</good> more phase cloak flux upkeep.
+effect|PHASE_CLOAK_UPKEEP_COST_MULT|12.5	1	<good>12.5%</good> more phase cloak flux upkeep.
+effect|PHASE_CLOAK_UPKEEP_COST_MULT|100.0	1	<good>100%</good> more phase cloak flux upkeep.
+effect|PHASE_CLOAK_UPKEEP_COST_MULT|-10.0	1	<bad>10%</bad> less phase cloak flux upkeep.
+effect|PHASE_CLOAK_UPKEEP_COST_MULT|-12.5	1	<bad>12.5%</bad> less phase cloak flux upkeep.
 effect|PHASE_FIELD_CONTRIBUTION_PERCENT|1.0	0	Even if this ship isn't a phase ship, 1% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
 effect|PHASE_FIELD_CONTRIBUTION_PERCENT|10.0	0	Even if this ship isn't a phase ship, 10% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
 effect|PHASE_FIELD_CONTRIBUTION_PERCENT|12.5	0	Even if this ship isn't a phase ship, 12.5% of its sensor strength counts toward the fleet-wide detected-at range reduction that phase ships normally provide (see the Phase Field hull mod) - the more (and stronger-sensor) ships contribute, the less visible the fleet becomes, with diminishing returns. Only applies while the fleet's transponder is off.
@@ -1594,6 +1612,12 @@ effect|PHASE_HULL_SENSOR_PROFILE_PERCENT|12.5	1	<good>12.5%</good> increased sen
 effect|PHASE_HULL_SENSOR_PROFILE_PERCENT|100.0	1	<good>100%</good> increased sensor profile on phase hulls.
 effect|PHASE_HULL_SENSOR_PROFILE_PERCENT|-10.0	1	<bad>10%</bad> reduced sensor profile on phase hulls.
 effect|PHASE_HULL_SENSOR_PROFILE_PERCENT|-12.5	1	<bad>12.5%</bad> reduced sensor profile on phase hulls.
+effect|PHASE_TIMEFLOW_PERCENT|1.0	0	<good>1%</good> increased phase cloak time flow bonus.
+effect|PHASE_TIMEFLOW_PERCENT|10.0	0	<good>10%</good> increased phase cloak time flow bonus.
+effect|PHASE_TIMEFLOW_PERCENT|12.5	0	<good>12.5%</good> increased phase cloak time flow bonus.
+effect|PHASE_TIMEFLOW_PERCENT|100.0	0	<good>100%</good> increased phase cloak time flow bonus.
+effect|PHASE_TIMEFLOW_PERCENT|-10.0	0	<bad>10%</bad> reduced phase cloak time flow bonus.
+effect|PHASE_TIMEFLOW_PERCENT|-12.5	0	<bad>12.5%</bad> reduced phase cloak time flow bonus.
 effect|PHASE_TOP_SPEED_PERCENT|1.0	0	<good>1%</good> increased top speed while phased.
 effect|PHASE_TOP_SPEED_PERCENT|10.0	0	<good>10%</good> increased top speed while phased.
 effect|PHASE_TOP_SPEED_PERCENT|12.5	0	<good>12.5%</good> increased top speed while phased.
@@ -1780,6 +1804,12 @@ effect|SHIELD_RAISE_RATE_PERCENT|12.5	0	<good>12.5%</good> increased shield rais
 effect|SHIELD_RAISE_RATE_PERCENT|100.0	0	<good>100%</good> increased shield raise rate.
 effect|SHIELD_RAISE_RATE_PERCENT|-10.0	0	<bad>10%</bad> reduced shield raise rate.
 effect|SHIELD_RAISE_RATE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced shield raise rate.
+effect|SHIELD_SOFT_FLUX_CONVERSION_PERCENT|1.0	0	<good>1%</good> of shield damage taken converted to soft flux.
+effect|SHIELD_SOFT_FLUX_CONVERSION_PERCENT|10.0	0	<good>10%</good> of shield damage taken converted to soft flux.
+effect|SHIELD_SOFT_FLUX_CONVERSION_PERCENT|12.5	0	<good>12.5%</good> of shield damage taken converted to soft flux.
+effect|SHIELD_SOFT_FLUX_CONVERSION_PERCENT|100.0	0	<good>100%</good> of shield damage taken converted to soft flux.
+effect|SHIELD_SOFT_FLUX_CONVERSION_PERCENT|-10.0	0	<good>-10%</good> of shield damage taken converted to soft flux.
+effect|SHIELD_SOFT_FLUX_CONVERSION_PERCENT|-12.5	0	<good>-12.5%</good> of shield damage taken converted to soft flux.
 effect|SHIELD_TURN_RATE_PERCENT|1.0	0	<good>1%</good> increased shield turn rate.
 effect|SHIELD_TURN_RATE_PERCENT|10.0	0	<good>10%</good> increased shield turn rate.
 effect|SHIELD_TURN_RATE_PERCENT|12.5	0	<good>12.5%</good> increased shield turn rate.

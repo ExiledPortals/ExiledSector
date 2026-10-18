@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
+import org.mockito.Mockito;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -56,7 +57,7 @@ class ItemDisassemblyTest {
         assertEquals(expected, ItemDisassembly.disassemble(item, CraftingMaterials.cargoOnly(cargo), store, ships));
 
         assertNull(store.find(item.id()));
-        verify(cargo).addCommodity(ItemDisassembly.PARTS_COMMODITY_ID, expected);
+        verify(cargo).addSpecial(MaterialItems.data(ItemDisassembly.PARTS_ITEM_ID), expected);
     }
 
     @Test
@@ -73,7 +74,7 @@ class ItemDisassemblyTest {
         assertEquals(0, ItemDisassembly.disassemble(item, CraftingMaterials.cargoOnly(cargo), store, ships));
 
         assertNotNull(store.find(item.id()));
-        verify(cargo, never()).addCommodity(anyString(), anyFloat());
+        verify(cargo, never()).addSpecial(Mockito.any(), anyFloat());
     }
 
     @Test

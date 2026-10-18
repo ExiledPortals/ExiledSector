@@ -136,10 +136,10 @@ public final class ItemDrops {
             }
         }
         if (partsFound > 0) {
-            droppedMaterials.put(ItemDisassembly.PARTS_COMMODITY_ID, partsFound);
+            droppedMaterials.put(ItemDisassembly.PARTS_ITEM_ID, partsFound);
         }
         if (random.nextFloat() < rule.chances().get(0) * KERNEL_CHANCE_SHARE * chanceMult) {
-            droppedMaterials.put(pickKernel(random).commodityId(), 1);
+            droppedMaterials.put(pickKernel(random).itemId(), 1);
         }
         return droppedMaterials;
     }

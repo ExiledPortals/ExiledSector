@@ -9,7 +9,10 @@ import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.ui.inspect.ItemCodex;
 import exiledsector.ui.util.SpriteCache;
-import exiledsector.ui.util.SpriteDraw;
+import exiledsector.ui.cargo.CargoIconAnimation;
+import exiledsector.ui.cargo.CargoIconFx;
+import exiledsector.ui.cargo.CargoIconLook;
+import exiledsector.ui.cargo.CargoIconLooks;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -18,7 +21,9 @@ public class ItemPlugin extends BaseSpecialItemPlugin {
 
     private static final SpriteCache SPRITES = new SpriteCache(ItemPlugin.class);
 
+    private final CargoIconAnimation animation = new CargoIconAnimation();
     private Item previewItem;
+    private CargoIconLook look;
 
     @Override
     public void init(CargoStackAPI stack) {
@@ -58,7 +63,10 @@ public class ItemPlugin extends BaseSpecialItemPlugin {
 
     @Override
     public void render(float x, float y, float w, float h, float alphaMult, float glowMult, SpecialItemRendererAPI renderer) {
+        if (look == null) {
+            look = CargoIconLooks.forItem(previewItem);
+        }
         String iconPath = previewItem == null ? ItemDefinition.FALLBACK_ICON : previewItem.iconPath();
-        SpriteDraw.drawAtCenter(SPRITES, iconPath, x + w / 2f, y + h / 2f, w, h, null, alphaMult);
+        CargoIconFx.render(SPRITES, iconPath, look, x, y, w, h, alphaMult, glowMult, animation.phaseSeed(), animation.burstAge(look, stack));
     }
 }

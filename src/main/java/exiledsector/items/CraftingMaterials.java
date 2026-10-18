@@ -4,9 +4,7 @@ import com.fs.starfarer.api.campaign.CargoAPI;
 import exiledsector.ModSettings;
 import exiledsector.persistence.SaveData;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public final class CraftingMaterials {
@@ -26,6 +24,7 @@ public final class CraftingMaterials {
     }
 
     public static CraftingMaterials forPlayer(CargoAPI cargo) {
+        MaterialMigration.convert(cargo);
         return new CraftingMaterials(cargo, storedCounts(), ModSettings.booleanOr(STORE_FIELD_ID, DEFAULT_STORE));
     }
 
@@ -37,50 +36,41 @@ public final class CraftingMaterials {
         return SaveData.getOrCreate(STORED_KEY, HashMap::new);
     }
 
-    public static List<String> commodityIds() {
-        List<String> commodityIds = new ArrayList<>();
-        commodityIds.add(ItemDisassembly.PARTS_COMMODITY_ID);
-        for (CraftingCurrency currency : CraftingCurrency.values()) {
-            commodityIds.add(currency.commodityId());
-        }
-        return commodityIds;
-    }
-
     public boolean isStoring() {
         return storing;
     }
 
-    public int count(String commodityId) {
-        return stored(commodityId) + inCargo(commodityId);
+    public int count(String itemId) {
+        return stored(itemId) + inCargo(itemId);
     }
 
-    public int stored(String commodityId) {
-        return storedCounts.getOrDefault(commodityId, 0);
+    public int stored(String itemId) {
+        return storedCounts.getOrDefault(itemId, 0);
     }
 
-    public boolean take(String commodityId, int quantity) {
+    public boolean take(String itemId, int quantity) {
         if (quantity <= 0) {
             return true;
         }
-        if (count(commodityId) < quantity) {
+        if (count(itemId) < quantity) {
             return false;
         }
-        int fromStore = Math.min(stored(commodityId), quantity);
-        setStored(commodityId, stored(commodityId) - fromStore);
+        int fromStore = Math.min(stored(itemId), quantity);
+        setStored(itemId, stored(itemId) - fromStore);
         if (quantity > fromStore && cargo != null) {
-            cargo.removeCommodity(commodityId, quantity - fromStore);
+            MaterialItems.remove(cargo, itemId, quantity - fromStore);
         }
         return true;
     }
 
-    public void add(String commodityId, int quantity) {
+    public void add(String itemId, int quantity) {
         if (quantity <= 0) {
             return;
         }
         if (storing || cargo == null) {
-            setStored(commodityId, stored(commodityId) + quantity);
+            setStored(itemId, stored(itemId) + quantity);
         } else {
-            cargo.addCommodity(commodityId, quantity);
+            MaterialItems.add(cargo, itemId, quantity);
         }
     }
 
@@ -89,19 +79,19 @@ public final class CraftingMaterials {
             return 0;
         }
         int movedCount = 0;
-        for (String commodityId : commodityIds()) {
+        for (String itemId : MaterialItems.ids()) {
             if (storing) {
-                int carried = inCargo(commodityId);
+                int carried = inCargo(itemId);
                 if (carried > 0) {
-                    cargo.removeCommodity(commodityId, carried);
-                    setStored(commodityId, stored(commodityId) + carried);
+                    MaterialItems.remove(cargo, itemId, carried);
+                    setStored(itemId, stored(itemId) + carried);
                     movedCount += carried;
                 }
             } else {
-                int kept = stored(commodityId);
+                int kept = stored(itemId);
                 if (kept > 0) {
-                    setStored(commodityId, 0);
-                    cargo.addCommodity(commodityId, kept);
+                    setStored(itemId, 0);
+                    MaterialItems.add(cargo, itemId, kept);
                     movedCount += kept;
                 }
             }
@@ -109,15 +99,15 @@ public final class CraftingMaterials {
         return movedCount;
     }
 
-    private int inCargo(String commodityId) {
-        return cargo == null ? 0 : Math.round(cargo.getCommodityQuantity(commodityId));
+    private int inCargo(String itemId) {
+        return MaterialItems.count(cargo, itemId);
     }
 
-    private void setStored(String commodityId, int quantity) {
+    private void setStored(String itemId, int quantity) {
         if (quantity > 0) {
-            storedCounts.put(commodityId, quantity);
+            storedCounts.put(itemId, quantity);
         } else {
-            storedCounts.remove(commodityId);
+            storedCounts.remove(itemId);
         }
     }
 }

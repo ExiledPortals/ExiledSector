@@ -2,7 +2,6 @@ package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
-import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
@@ -18,6 +17,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.items.ItemCrafting;
 import exiledsector.items.ItemDisassembly;
+import exiledsector.items.MaterialItems;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.VanillaText;
 import exiledsector.ui.util.FramedPanelPlugin;
@@ -349,19 +349,19 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
     }
 
     static void addPartsCount(TooltipMakerAPI element, float countRight) {
-        CommoditySpecAPI partsSpec = Global.getSettings().getCommoditySpec(ItemDisassembly.PARTS_COMMODITY_ID);
-        if (partsSpec == null) {
-            return;
-        }
+        String partsIconPath = MaterialItems.loadedIconPath(ItemDisassembly.PARTS_ITEM_ID);
+        String partsName = MaterialItems.displayName(ItemDisassembly.PARTS_ITEM_ID);
         String countText = String.valueOf(ItemCrafting.parts(playerMaterials()));
         float countWidth = Global.getSettings().computeStringWidth(countText, Fonts.ORBITRON_12) + LINE_PAD;
         element.setParaFont(Fonts.ORBITRON_12);
         LabelAPI countLabel = VanillaText.plainPara(element, countText, 0f, Misc.getTextColor());
         countLabel.autoSizeToWidth(countWidth).inTR(countRight, PARTS_TEXT_TOP);
-        element.addImage(partsSpec.getIconName(), PARTS_ICON_SIZE, PARTS_ICON_SIZE, 0f);
-        element.getPrev().getPosition().inTR(countRight + countWidth + LINE_PAD, 0f);
+        if (partsIconPath != null) {
+            element.addImage(partsIconPath, PARTS_ICON_SIZE, PARTS_ICON_SIZE, 0f);
+            element.getPrev().getPosition().inTR(countRight + countWidth + LINE_PAD, 0f);
+        }
         element.addTooltipToPrevious(new GameTextTooltip(PARTS_TOOLTIP_WIDTH,
-                tooltip -> VanillaText.plainPara(tooltip, Translation.msg("ui.socketStorage.parts.tooltip").arg("name", partsSpec.getName()).text(),
+                tooltip -> VanillaText.plainPara(tooltip, Translation.msg("ui.socketStorage.parts.tooltip").arg("name", partsName).text(),
                         0f, Misc.getTextColor())),
                 TooltipMakerAPI.TooltipLocation.BELOW);
     }

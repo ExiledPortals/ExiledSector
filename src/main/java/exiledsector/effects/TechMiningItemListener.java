@@ -13,10 +13,10 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.Seeds;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
-import exiledsector.skills.CommodityNames;
 import exiledsector.items.HullUpgradeData;
 import exiledsector.items.Item;
 import exiledsector.items.ItemDrops;
+import exiledsector.items.MaterialItems;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemUnlock;
 import exiledsector.ui.CampaignMessages;
@@ -105,10 +105,10 @@ public class TechMiningItemListener implements EconomyTickListener {
             announce(minedMarket, storageMarket, upgrade::name);
         }
         for (Map.Entry<String, Integer> material : foundMaterials.entrySet()) {
-            storageCargo.addCommodity(material.getKey(), material.getValue());
-            String commodityName = CommodityNames.displayName(material.getKey());
+            MaterialItems.add(storageCargo, material.getKey(), material.getValue());
+            String materialName = MaterialItems.displayName(material.getKey());
             announce(minedMarket, storageMarket, () -> Translation.msg("socketable.techMining.material").arg("count", material.getValue())
-                    .arg("name", commodityName).text());
+                    .arg("name", materialName).text());
         }
     }
 

@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BattleAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
+import exiledsector.items.MaterialItems;
 import com.fs.starfarer.api.campaign.EngagementResultForFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.campaign.FleetEncounterContextPlugin;
@@ -295,7 +296,7 @@ class ItemLootListenerTest {
 
             listener.reportEncounterLootGenerated(context(battle), loot);
 
-            verify(loot).addCommodity(ItemDisassembly.PARTS_COMMODITY_ID, 10);
+            verify(loot).addSpecial(MaterialItems.data(ItemDisassembly.PARTS_ITEM_ID), 10);
         }
     }
 
@@ -312,7 +313,7 @@ class ItemLootListenerTest {
 
             listener.reportEncounterLootGenerated(context(battle), loot);
 
-            verify(loot, never()).addCommodity(Mockito.anyString(), anyFloat());
+            verify(loot, never()).addSpecial(Mockito.any(), anyFloat());
         }
     }
 }

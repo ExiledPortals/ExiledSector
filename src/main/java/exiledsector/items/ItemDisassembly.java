@@ -7,7 +7,7 @@ import java.util.Map;
 
 public final class ItemDisassembly {
 
-    public static final String PARTS_COMMODITY_ID = "exiledSector_socketable_parts";
+    public static final String PARTS_ITEM_ID = "exiledSector_socketable_parts";
 
     private ItemDisassembly() {
     }
@@ -21,7 +21,7 @@ public final class ItemDisassembly {
             return 0;
         }
         int partsGained = item.rarity().disassemblyParts();
-        materials.add(PARTS_COMMODITY_ID, partsGained);
+        materials.add(PARTS_ITEM_ID, partsGained);
         return partsGained;
     }
 }

@@ -16,11 +16,17 @@ public final class RolledModifier {
     private final String modifierId;
     private final ModifierSlot slot;
     private final List<RolledEffect> lines;
+    private final boolean locked;
 
     public RolledModifier(String modifierId, ModifierSlot slot, List<RolledEffect> lines) {
+        this(modifierId, slot, lines, false);
+    }
+
+    RolledModifier(String modifierId, ModifierSlot slot, List<RolledEffect> lines, boolean locked) {
         this.modifierId = modifierId;
         this.slot = slot;
         this.lines = new ArrayList<>(lines);
+        this.locked = locked;
     }
 
     public static RolledModifier single(ModifierSlot slot, RolledEffect line) {
@@ -70,7 +76,7 @@ public final class RolledModifier {
 
     private Object readResolve() {
         String currentId = RolledEffect.currentName(modifierId);
-        return Objects.equals(currentId, modifierId) ? this : new RolledModifier(currentId, slot, lines());
+        return Objects.equals(currentId, modifierId) ? this : new RolledModifier(currentId, slot, lines(), locked);
     }
 
     public String modifierId() {
@@ -89,23 +95,31 @@ public final class RolledModifier {
         return lines == null ? List.of() : Collections.unmodifiableList(lines);
     }
 
+    public boolean locked() {
+        return locked;
+    }
+
+    RolledModifier asLocked() {
+        return new RolledModifier(modifierId, slot, lines(), true);
+    }
+
     public boolean isHybrid() {
         return lines().size() > 1;
     }
 
     public RolledModifier withLines(List<RolledEffect> replacementLines) {
-        return new RolledModifier(modifierId, slot, replacementLines);
+        return new RolledModifier(modifierId, slot, replacementLines, locked);
     }
 
     @Override
     public boolean equals(Object other) {
         return other instanceof RolledModifier rolled && Objects.equals(modifierId, rolled.modifierId) && slot == rolled.slot
-                && lines().equals(rolled.lines());
+                && lines().equals(rolled.lines()) && locked == rolled.locked;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(modifierId, slot, lines());
+        return Objects.hash(modifierId, slot, lines(), locked);
     }
 
     @Override
