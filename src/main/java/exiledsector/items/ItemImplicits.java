@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -24,6 +25,7 @@ public final class ItemImplicits {
     private static final long IMPLICIT_SEED_SALT = 0x5DEECE66DL;
     private static final Logger LOG = Logger.getLogger(ItemImplicits.class);
     private static final AtomicReference<Map<ItemKind, List<Modifier>>> BY_TYPE = new AtomicReference<>();
+    private static final AtomicReference<CorruptionPool> CORRUPTION_POOL = new AtomicReference<>();
 
     private ItemImplicits() {
     }
@@ -143,6 +145,42 @@ public final class ItemImplicits {
     public static List<Modifier> forType(ItemKind kind) {
         Map<ItemKind, List<Modifier>> byType = BY_TYPE.get();
         return byType == null || kind == null ? List.of() : byType.getOrDefault(kind, List.of());
+    }
+
+    public static List<Modifier> corruptionPool() {
+        Map<ItemKind, List<Modifier>> byType = BY_TYPE.get();
+        if (byType == null) {
+            return List.of();
+        }
+        CorruptionPool cached = CORRUPTION_POOL.get();
+        if (cached != null && cached.source() == byType) {
+            return cached.implicits();
+        }
+        List<Modifier> pool = buildCorruptionPool(byType);
+        CORRUPTION_POOL.set(new CorruptionPool(byType, pool));
+        return pool;
+    }
+
+    private record CorruptionPool(Map<ItemKind, List<Modifier>> source, List<Modifier> implicits) {
+    }
+
+    private static List<Modifier> buildCorruptionPool(Map<ItemKind, List<Modifier>> byType) {
+        Map<String, Modifier> distinctById = new LinkedHashMap<>();
+        for (ItemKind kind : ItemKind.values()) {
+            if (kind.type() == ItemType.HULL_ITEM) {
+                byType.getOrDefault(kind, List.of()).forEach(implicit -> distinctById.putIfAbsent(implicit.id(), implicit));
+            }
+        }
+        return List.copyOf(distinctById.values());
+    }
+
+    public static Modifier anyById(String modifierId) {
+        for (Modifier implicit : corruptionPool()) {
+            if (implicit.id().equals(modifierId)) {
+                return implicit;
+            }
+        }
+        return null;
     }
 
     public static ModifierLine line(ItemKind kind, String effectName) {

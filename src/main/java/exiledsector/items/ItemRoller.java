@@ -50,19 +50,22 @@ public final class ItemRoller {
         return rollAffixes(definition, AffixLayout.rolledEffectCount(random.nextFloat()), random, averageRolls);
     }
 
-    static List<RolledModifier> rollCommon(ItemDefinition definition, long seed) {
-        return rollCommon(definition, seed, averageRolls());
-    }
-
-    static List<RolledModifier> rollCommon(ItemDefinition definition, long seed, boolean averageRolls) {
-        return rollAffixes(definition, AffixLayout.COMMON_MAX_EFFECTS, Seeds.random(seed), averageRolls);
-    }
-
     private static List<RolledModifier> rollAffixes(ItemDefinition definition, int modifierCount, Random random, boolean averageRolls) {
         int prefixCount = AffixLayout.prefixCount(modifierCount, random.nextBoolean());
+        int suffixCount = modifierCount - prefixCount;
+        int prefixRoom = Math.min(AffixLayout.MAX_PER_SIDE, definition.prefixes().size());
+        int suffixRoom = Math.min(AffixLayout.MAX_PER_SIDE, definition.suffixes().size());
+        if (prefixCount > prefixRoom) {
+            suffixCount += prefixCount - prefixRoom;
+            prefixCount = prefixRoom;
+        }
+        if (suffixCount > suffixRoom) {
+            prefixCount = Math.min(prefixRoom, prefixCount + suffixCount - suffixRoom);
+            suffixCount = suffixRoom;
+        }
         List<RolledModifier> rolledModifiers = new ArrayList<>(modifierCount);
         draw(definition.prefixes(), prefixCount, random, averageRolls, rolledModifiers);
-        draw(definition.suffixes(), modifierCount - prefixCount, random, averageRolls, rolledModifiers);
+        draw(definition.suffixes(), suffixCount, random, averageRolls, rolledModifiers);
         return rolledModifiers;
     }
 

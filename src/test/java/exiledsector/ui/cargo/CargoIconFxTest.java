@@ -1,6 +1,7 @@
 package exiledsector.ui.cargo;
 
 import exiledsector.items.CraftingCurrency;
+import exiledsector.items.CraftingWard;
 import exiledsector.items.ItemDisassembly;
 import exiledsector.items.MaterialTier;
 import org.junit.jupiter.api.Test;
@@ -64,6 +65,30 @@ class CargoIconFxTest {
         assertTrue(major.rings() && !major.arcs());
         assertTrue(exotic.arcs() && exotic.heartbeat() && !exotic.prismatic());
         assertTrue(mythic.prismatic());
+    }
+
+    @Test
+    void eachMaterialGetsItsOwnSwarmMotion() {
+        assertEquals(SwarmMotion.SLURRY, CargoIconLooks.swarmFor(ItemDisassembly.PARTS_ITEM_ID));
+        assertEquals(SwarmMotion.ORBIT, CargoIconLooks.swarmFor(CraftingCurrency.AUGMENTATION.itemId()));
+        assertEquals(SwarmMotion.FERAL, CargoIconLooks.swarmFor(CraftingCurrency.CORRUPTION.itemId()));
+        assertEquals(SwarmMotion.REPLICATING, CargoIconLooks.swarmFor(CraftingCurrency.REPLICATION.itemId()));
+        assertEquals(SwarmMotion.CONTAINED, CargoIconLooks.swarmFor(CraftingWard.PREFIX.itemId()));
+        assertEquals(SwarmMotion.NONE, CargoIconLook.outlined(Color.WHITE).swarm(), "hull items have no swarm");
+    }
+
+    @Test
+    void busierAndFasterSwarmsAtHigherTiers() {
+        Color color = Color.CYAN;
+        CargoIconLook minor = CargoIconLooks.forMaterial(MaterialTier.MINOR, color);
+        CargoIconLook major = CargoIconLooks.forMaterial(MaterialTier.MAJOR, color);
+        CargoIconLook exotic = CargoIconLooks.forMaterial(MaterialTier.EXOTIC, color);
+        CargoIconLook mythic = CargoIconLooks.forMaterial(MaterialTier.MYTHIC, color);
+
+        assertTrue(CargoIconFx.speckCount(minor) < CargoIconFx.speckCount(major));
+        assertTrue(CargoIconFx.speckCount(major) < CargoIconFx.speckCount(exotic));
+        assertTrue(CargoIconFx.speckCount(exotic) < CargoIconFx.speckCount(mythic));
+        assertTrue(CargoIconFx.swarmSpeed(minor) < CargoIconFx.swarmSpeed(mythic));
     }
 
     @Test

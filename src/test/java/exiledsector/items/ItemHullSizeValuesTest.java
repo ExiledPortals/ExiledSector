@@ -67,7 +67,7 @@ class ItemHullSizeValuesTest {
     void aNewRollStoresTheFrigateValue() throws Exception {
         ItemDefinitions.register(new JSONArray().put(row("scaled", "subroutine", "ARMOR_FLAT:5/10/15/20")));
 
-        assertEquals(List.of(new RolledEffect("ARMOR_FLAT", 5f)), RolledModifier.lines(ItemRoller.rollCommon(ItemDefinitions.get("scaled"), 7L)));
+        assertEquals(List.of(new RolledEffect("ARMOR_FLAT", 5f)), RolledModifier.lines(ItemRoller.roll(ItemDefinitions.get("scaled"), 7L)));
     }
 
     @Test

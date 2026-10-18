@@ -51,6 +51,26 @@ public final class CargoIconFx {
     private static final float BRACKET_ARM = 0.26f;
     private static final float BADGE_SIZE = 3.5f;
     private static final float BADGE_MARGIN = 7f;
+    private static final int BASE_SPECKS = 6;
+    private static final float BASE_SWARM_SPEED = 0.5f;
+    private static final float SPECK_SIZE = 1.1f;
+    private static final float SPECK_ALPHA = 0.85f;
+    private static final float ORBIT_SQUASH = 0.85f;
+    private static final float FERAL_JITTER_SECONDS = 0.07f;
+    private static final float FERAL_LIFE_SECONDS = 0.6f;
+    private static final float FERAL_DEATH_CHANCE = 0.25f;
+    private static final float FERAL_JITTER = 0.08f;
+    private static final float SPLIT_RATE = 0.4f;
+    private static final float SPLIT_DISTANCE = 0.09f;
+    private static final int SLURRY_BUBBLES = 4;
+    private static final float SLURRY_RISE_SECONDS = 3.5f;
+    private static final float SLURRY_SIZE = 1.3f;
+    private static final float SLURRY_ALPHA = 0.55f;
+    private static final float SLURRY_RED = 0.75f;
+    private static final float SLURRY_GREEN = 0.7f;
+    private static final float SLURRY_BLUE = 0.65f;
+    private static final float LATTICE_SPACING = 0.35f;
+    private static final float LATTICE_SCAN_RATE = 0.7f;
     private static final Color SPARK_COLOR = new Color(255, 250, 235);
     private static final Color ARC_CORE_COLOR = new Color(235, 245, 255);
     private static final long START_NANOS = System.nanoTime();
@@ -143,7 +163,8 @@ public final class CargoIconFx {
     private static void drawFrontLayer(CargoIconLook look, float x, float y, float w, float h, float cx, float cy, float half,
                                        float iconHalf, float t, int phaseSeed, float burstAge, float alphaMult) {
         boolean bursting = burstAge >= 0f && burstAge < BURST_SECONDS;
-        if (!look.sparkles() && !look.arcs() && !look.prismatic() && !bursting) {
+        boolean swarming = look.swarm() != null && look.swarm() != SwarmMotion.NONE;
+        if (!look.sparkles() && !look.arcs() && !look.prismatic() && !bursting && !swarming) {
             return;
         }
         try (GlScope scope = GlScope.flat().additive()) {
@@ -152,6 +173,9 @@ public final class CargoIconFx {
             }
             if (look.arcs()) {
                 drawArcs(look.color(), cx, cy, half * ARC_INSET, t, phaseSeed, alphaMult);
+            }
+            if (swarming) {
+                drawSwarm(look, cx, cy, iconHalf, t, phaseSeed, alphaMult);
             }
             if (look.prismatic()) {
                 drawSweep(cx, cy, iconHalf, t, alphaMult);
@@ -217,6 +241,107 @@ public final class CargoIconFx {
         }
         GL11.glEnd();
         GL11.glLineWidth(1f);
+    }
+
+    static int speckCount(CargoIconLook look) {
+        int count = BASE_SPECKS;
+        count += look.rings() ? 3 : 0;
+        count += look.arcs() ? 3 : 0;
+        count += look.prismatic() ? 2 : 0;
+        return count;
+    }
+
+    static float swarmSpeed(CargoIconLook look) {
+        float speed = BASE_SWARM_SPEED;
+        speed += look.rings() ? 0.25f : 0f;
+        speed += look.arcs() ? 0.35f : 0f;
+        speed += look.prismatic() ? 0.3f : 0f;
+        return speed;
+    }
+
+    private static void drawSwarm(CargoIconLook look, float cx, float cy, float iconHalf, float t, int phaseSeed, float alphaMult) {
+        Color color = look.color();
+        float whiteMix = look.swarm() == SwarmMotion.FERAL ? 0.2f : 0.5f;
+        float red = color.getRed() / 255f * (1f - whiteMix) + whiteMix;
+        float green = color.getGreen() / 255f * (1f - whiteMix) + whiteMix;
+        float blue = color.getBlue() / 255f * (1f - whiteMix) + whiteMix;
+        GL11.glBegin(GL11.GL_QUADS);
+        switch (look.swarm()) {
+            case SLURRY -> drawSlurry(cx, cy, iconHalf, t, phaseSeed, alphaMult);
+            case CONTAINED -> drawContained(cx, cy, iconHalf, t, red, green, blue, alphaMult);
+            default -> drawOrbiting(look, cx, cy, iconHalf, t, phaseSeed, red, green, blue, alphaMult);
+        }
+        GL11.glEnd();
+    }
+
+    private static void drawOrbiting(CargoIconLook look, float cx, float cy, float iconHalf, float t, int phaseSeed, float red, float green,
+                                     float blue, float alphaMult) {
+        SwarmMotion motion = look.swarm();
+        int count = speckCount(look);
+        float speed = swarmSpeed(look);
+        int jitterStep = (int) (t / FERAL_JITTER_SECONDS);
+        int lifeStep = (int) (t / FERAL_LIFE_SECONDS);
+        for (int index = 0; index < count; index++) {
+            float radius = iconHalf * (0.18f + 0.5f * hash(phaseSeed, 41, index));
+            float direction = hash(phaseSeed, 47, index) < 0.5f ? -1f : 1f;
+            float angularSpeed = speed * (0.6f + 0.8f * hash(phaseSeed, 43, index)) * direction;
+            float phase = hash(phaseSeed, 53, index) * HoloShapes.TWO_PI;
+            float angle = phase + t * angularSpeed;
+            float wobble = 1f + 0.12f * (float) Math.sin(t * 1.9f + phase);
+            float speckX = cx + (float) Math.cos(angle) * radius * wobble;
+            float speckY = cy + (float) Math.sin(angle) * radius * wobble * ORBIT_SQUASH;
+            float alpha = (0.55f + 0.45f * (float) Math.sin(t * 3.1f + phase * 2f)) * SPECK_ALPHA * alphaMult;
+            if (motion == SwarmMotion.FERAL) {
+                if (hash(phaseSeed, 67 + index, lifeStep) < FERAL_DEATH_CHANCE) {
+                    continue;
+                }
+                speckX += (hash(phaseSeed, 61 + index, jitterStep) * 2f - 1f) * iconHalf * FERAL_JITTER;
+                speckY += (hash(phaseSeed, 63 + index, jitterStep) * 2f - 1f) * iconHalf * FERAL_JITTER;
+                alpha = (0.35f + 0.65f * hash(phaseSeed, 71 + index, jitterStep)) * SPECK_ALPHA * alphaMult;
+            }
+            if (motion == SwarmMotion.REPLICATING) {
+                float splitCycle = (t * SPLIT_RATE + hash(phaseSeed, 59, index)) % 1f;
+                float separation = (float) Math.sin(splitCycle * Math.PI) * iconHalf * SPLIT_DISTANCE;
+                float offsetX = -(float) Math.sin(angle) * separation;
+                float offsetY = (float) Math.cos(angle) * separation;
+                speck(speckX + offsetX, speckY + offsetY, SPECK_SIZE, red, green, blue, alpha);
+                speck(speckX - offsetX, speckY - offsetY, SPECK_SIZE, red, green, blue, alpha);
+                continue;
+            }
+            speck(speckX, speckY, SPECK_SIZE, red, green, blue, alpha);
+        }
+    }
+
+    private static void drawSlurry(float cx, float cy, float iconHalf, float t, int phaseSeed, float alphaMult) {
+        for (int index = 0; index < SLURRY_BUBBLES; index++) {
+            float progress = (t / SLURRY_RISE_SECONDS + hash(phaseSeed, 73, index)) % 1f;
+            float bubbleX = cx + (hash(phaseSeed, 79, index) * 2f - 1f) * iconHalf * 0.5f + (float) Math.sin(t * 1.3f + index) * iconHalf * 0.04f;
+            float bubbleY = cy - iconHalf * 0.6f + progress * iconHalf * 0.9f;
+            float alpha = (float) Math.sin(progress * Math.PI) * SLURRY_ALPHA * alphaMult;
+            speck(bubbleX, bubbleY, SLURRY_SIZE, SLURRY_RED, SLURRY_GREEN, SLURRY_BLUE, alpha);
+        }
+    }
+
+    private static void drawContained(float cx, float cy, float iconHalf, float t, float red, float green, float blue, float alphaMult) {
+        float spacing = iconHalf * LATTICE_SPACING;
+        float scan = (t * LATTICE_SCAN_RATE) % 1f * 4f - 1f;
+        for (int column = -1; column <= 1; column++) {
+            for (int row = -1; row <= 1; row++) {
+                float distance = Math.abs((column + 1) - scan);
+                float pulse = Math.max(0f, 1f - distance * 1.5f);
+                float hum = (float) Math.sin(t * 6f + column * 1.7f + row * 2.3f) * 0.4f;
+                speck(cx + column * spacing + hum, cy + row * spacing, SPECK_SIZE, red, green, blue,
+                        (0.3f + 0.7f * pulse) * SPECK_ALPHA * alphaMult);
+            }
+        }
+    }
+
+    private static void speck(float speckX, float speckY, float size, float red, float green, float blue, float alpha) {
+        GL11.glColor4f(red, green, blue, alpha);
+        GL11.glVertex2f(speckX - size, speckY - size);
+        GL11.glVertex2f(speckX + size, speckY - size);
+        GL11.glVertex2f(speckX + size, speckY + size);
+        GL11.glVertex2f(speckX - size, speckY + size);
     }
 
     private static void drawSweep(float cx, float cy, float iconHalf, float t, float alphaMult) {

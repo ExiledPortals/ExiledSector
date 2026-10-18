@@ -42,10 +42,6 @@ class ItemRollerTest {
             for (RolledEffect effect : averaged) {
                 assertEquals(pool.get(effect.effectName()).average(), effect.magnitude());
             }
-            List<RolledEffect> common = RolledModifier.lines(ItemRoller.rollCommon(military, seed, true));
-            for (RolledEffect effect : common) {
-                assertEquals(pool.get(effect.effectName()).average(), effect.magnitude());
-            }
         }
     }
 
@@ -72,12 +68,13 @@ class ItemRollerTest {
     }
 
     @Test
-    void mostRollsHaveTwoEffectsSomeThreeAndAFewFour() {
+    void rollsSpreadAcrossOneToFourEffects() {
         int[] counts = new int[5];
         for (long seed = 0; seed < SAMPLES; seed++) {
             counts[ItemRoller.roll(military, seed).size()]++;
         }
-        assertEquals(0.55, counts[2] / (double) SAMPLES, 0.04);
+        assertEquals(0.35, counts[1] / (double) SAMPLES, 0.04);
+        assertEquals(0.20, counts[2] / (double) SAMPLES, 0.04);
         assertEquals(0.35, counts[3] / (double) SAMPLES, 0.04);
         assertEquals(0.10, counts[4] / (double) SAMPLES, 0.03);
     }

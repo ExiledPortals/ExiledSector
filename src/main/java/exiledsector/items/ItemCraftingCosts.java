@@ -12,7 +12,6 @@ import java.util.concurrent.atomic.AtomicReference;
 public final class ItemCraftingCosts {
 
     static final String DATA_PATH = "data/config/exiledSector/item_crafting.csv";
-    public static final String COMMON_SUBROUTINE = "common_subroutine";
     private static final Logger LOG = Logger.getLogger(ItemCraftingCosts.class);
     private static final AtomicReference<Map<String, Integer>> COSTS = new AtomicReference<>(Map.of());
 

@@ -26,6 +26,7 @@ public abstract class Item {
     private List<RolledModifier> implicitModifiers;
     private FrozenName frozenName;
     private boolean mirrored;
+    private CorruptionOutcome corruption;
     private transient boolean explicitIdsCurrent;
     private transient boolean implicitIdsCurrent;
 
@@ -46,6 +47,7 @@ public abstract class Item {
         this.implicitModifiers = source.implicitModifiers;
         this.frozenName = source.frozenName;
         this.mirrored = source.mirrored;
+        this.corruption = source.corruption;
     }
 
     static Item create(String id, String definitionId, long seed, List<RolledModifier> explicitModifiers) {
@@ -123,7 +125,7 @@ public abstract class Item {
 
     public List<RolledModifier> implicits() {
         if (implicitModifiers != null) {
-            if (!implicitIdsCurrent && ItemImplicits.isLoaded() && kind() != null && !kind().implicits().isEmpty()) {
+            if (!implicitIdsCurrent && corruption != CorruptionOutcome.IMPLICIT_REPLACED && ItemImplicits.isLoaded() && kind() != null && !kind().implicits().isEmpty()) {
                 implicitModifiers = new ArrayList<>(ItemImplicits.withCurrentIds(kind(), implicitModifiers, seed));
                 implicitIdsCurrent = true;
             }
@@ -192,11 +194,24 @@ public abstract class Item {
         copy.implicitModifiers = new ArrayList<>(implicits());
         copy.frozenName = frozenName;
         copy.mirrored = true;
+        copy.corruption = corruption;
         return copy;
     }
 
     public boolean mirrored() {
         return mirrored;
+    }
+
+    public boolean corrupted() {
+        return corruption != null;
+    }
+
+    public CorruptionOutcome corruption() {
+        return corruption;
+    }
+
+    void corrupt(CorruptionOutcome outcome) {
+        corruption = outcome;
     }
 
     public boolean hasLockedModifier() {
@@ -240,6 +255,9 @@ public abstract class Item {
         if (mirrored) {
             lines.add(Translation.styled("socketable.tooltip.mirrored"));
         }
+        if (corruption != null) {
+            lines.add(Translation.styled("socketable.tooltip.corrupted"));
+        }
         return lines;
     }
 
@@ -277,7 +295,8 @@ public abstract class Item {
         if (type == null) {
             return null;
         }
-        return type.implicits().stream().filter(modifier -> modifier.id().equals(modifierId)).findFirst().orElse(null);
+        return type.implicits().stream().filter(modifier -> modifier.id().equals(modifierId)).findFirst()
+                .orElseGet(() -> ItemImplicits.anyById(modifierId));
     }
 
     private Modifier explicitModifier(String modifierId) {

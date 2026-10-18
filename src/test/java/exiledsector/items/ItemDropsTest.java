@@ -211,7 +211,8 @@ class ItemDropsTest {
     }
 
     private static boolean hasKernel(Map<String, Integer> roll) {
-        return java.util.Arrays.stream(CraftingCurrency.values()).anyMatch(currency -> roll.containsKey(currency.itemId()));
+        return java.util.Arrays.stream(CraftingCurrency.values()).anyMatch(currency -> roll.containsKey(currency.itemId()))
+                || java.util.Arrays.stream(CraftingWard.values()).anyMatch(ward -> roll.containsKey(ward.itemId()));
     }
 
     @Test
@@ -236,11 +237,16 @@ class ItemDropsTest {
         assertEquals(dropShare(CraftingCurrency.AUGMENTATION), materialShare(kernels, roll -> roll.containsKey(CraftingCurrency.AUGMENTATION.itemId())), 0.03);
         assertEquals(dropShare(CraftingCurrency.TRANSPOSITION), materialShare(kernels, roll -> roll.containsKey(CraftingCurrency.TRANSPOSITION.itemId())), 0.02);
         assertTrue(dropShare(CraftingCurrency.REPLICATION) < 0.005);
+        assertEquals(CraftingWard.PREFIX.dropWeight() / totalKernelWeight(), materialShare(kernels, roll -> roll.containsKey(CraftingWard.PREFIX.itemId())), 0.01);
     }
 
     private static double dropShare(CraftingCurrency currency) {
-        double totalWeight = java.util.Arrays.stream(CraftingCurrency.values()).mapToDouble(CraftingCurrency::dropWeight).sum();
-        return currency.dropWeight() / totalWeight;
+        return currency.dropWeight() / totalKernelWeight();
+    }
+
+    private static double totalKernelWeight() {
+        return java.util.Arrays.stream(CraftingCurrency.values()).mapToDouble(CraftingCurrency::dropWeight).sum()
+                + java.util.Arrays.stream(CraftingWard.values()).mapToDouble(CraftingWard::dropWeight).sum();
     }
 
     @Test

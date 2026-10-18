@@ -12,7 +12,8 @@ final class AffixLayout {
     static final int COMMON_MAX_EFFECTS = 2;
     static final int MAX_EFFECTS = 4;
     static final int MAX_PER_SIDE = 2;
-    static final float TWO_EFFECTS_CHANCE = 0.55f;
+    static final float ONE_EFFECT_CHANCE = 0.35f;
+    static final float TWO_EFFECTS_CHANCE = 0.2f;
     static final float THREE_EFFECTS_CHANCE = 0.35f;
 
     private AffixLayout() {
@@ -26,10 +27,14 @@ final class AffixLayout {
     }
 
     static int rolledEffectCount(float roll) {
-        if (roll < TWO_EFFECTS_CHANCE) {
+        if (roll < ONE_EFFECT_CHANCE) {
+            return 1;
+        }
+        float upToTwo = ONE_EFFECT_CHANCE + TWO_EFFECTS_CHANCE;
+        if (roll < upToTwo) {
             return 2;
         }
-        return roll < TWO_EFFECTS_CHANCE + THREE_EFFECTS_CHANCE ? 3 : 4;
+        return roll < upToTwo + THREE_EFFECTS_CHANCE ? 3 : 4;
     }
 
     static int prefixCount(int effectCount, boolean morePrefixes) {
