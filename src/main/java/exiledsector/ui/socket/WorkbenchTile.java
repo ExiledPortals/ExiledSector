@@ -29,16 +29,18 @@ final class WorkbenchTile extends BaseCustomUIPanelPlugin {
     private final TileInput tileInput;
     private final CargoIconLook iconLook;
     private final BooleanSupplier lit;
+    private final boolean toggle;
     private PositionAPI tilePosition;
 
     WorkbenchTile(List<String> iconPaths, CargoIconLook iconLook, TileInput.Handler tileHandler) {
-        this(iconPaths, iconLook, null, tileHandler);
+        this(iconPaths, iconLook, null, false, tileHandler);
     }
 
-    WorkbenchTile(List<String> iconPaths, CargoIconLook iconLook, BooleanSupplier lit, TileInput.Handler tileHandler) {
+    WorkbenchTile(List<String> iconPaths, CargoIconLook iconLook, BooleanSupplier lit, boolean toggle, TileInput.Handler tileHandler) {
         this.cyclingIcon = new CyclingIcon(iconPaths);
         this.iconLook = iconLook == null ? null : iconLook.unframed();
         this.lit = lit;
+        this.toggle = toggle;
         this.tileInput = new TileInput(tileHandler, false);
     }
 
@@ -57,10 +59,6 @@ final class WorkbenchTile extends BaseCustomUIPanelPlugin {
         return lit == null || lit.getAsBoolean();
     }
 
-    private boolean isToggle() {
-        return lit != null;
-    }
-
     @Override
     public void renderBelow(float alphaMult) {
         if (tilePosition == null) {
@@ -70,7 +68,7 @@ final class WorkbenchTile extends BaseCustomUIPanelPlugin {
         float y = tilePosition.getY();
         float width = tilePosition.getWidth();
         float height = tilePosition.getHeight();
-        boolean toggledOn = isToggle() && isLit();
+        boolean toggledOn = toggle && isLit();
         Color accent = toggledOn && iconLook != null ? iconLook.color() : SkillTreePanelStyle.GLOW_COLOR;
         boolean hovered = tileInput.isHovered();
         GLDraw.fillQuad(x, y, width, height, BACKGROUND, alphaMult);
