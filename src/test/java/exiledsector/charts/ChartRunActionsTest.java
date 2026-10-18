@@ -69,11 +69,14 @@ class ChartRunActionsTest {
         when(hyperspace.addCustomEntity(anyString(), anyString(), anyString(), anyString())).thenReturn(outer);
         when(playerFleet.getContainingLocation()).thenReturn(hyperspace);
         when(playerFleet.getLocation()).thenReturn(new Vector2f(500f, 600f));
+        when(pocket.getStar()).thenReturn(mock(PlanetAPI.class));
+        FakeChartLayoutEngine.install(FakeChartLayoutEngine.doingNothing());
     }
 
     @AfterEach
     void tearDown() {
         globalMock.close();
+        ChartLayoutGenerator.resetForTests();
     }
 
     @Test

@@ -37,6 +37,8 @@ public final class ChartRunCloser {
             new CloseStep("re-point the player's officers at the current fleet", ChartRunCloser::repointOfficers),
             new CloseStep("despawn the pocket's fleets", ChartRunCloser::despawnFleets),
             new CloseStep("end intel pointing into the pocket", ChartRunCloser::endIntel),
+            new CloseStep("drop a pending Salvor's Tally for the pocket",
+                    target -> ChartSalvorsTally.removePendingFor(target.sector(), target.pocket())),
             new CloseStep("remove the run's scripts, listeners and memory keys", ChartRunCloser::removeRunScriptsAndMemory),
             new CloseStep("remove the pocket's entities", ChartRunCloser::removePocketEntities),
             new CloseStep("remove the wormholes and tagged entities", ChartRunCloser::removeWormholesAndTaggedEntities),

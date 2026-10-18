@@ -4,14 +4,20 @@ import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
+import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
 import org.apache.log4j.Logger;
 
+import java.util.List;
 import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.Consumer;
 
 public class ChartSoakScript implements EveryFrameScript {
 
     static final int MAX_FRAMES_PER_POCKET = 600;
+    static final List<String> COMPARED_COUNTS = List.of("used procgen names", "Hyperspace Topography scans", "star systems", "hyperspace entities other than fleets",
+            "chart-tagged entities", "Economy markets", "intel");
     private static final Logger LOG = Logger.getLogger(ChartSoakScript.class);
 
     private final int pocketsToSoak;
@@ -19,6 +25,9 @@ public class ChartSoakScript implements EveryFrameScript {
     private final Random random;
     private final ChartCensus before;
     private int pocketsDone;
+    private int generatedLayouts;
+    private int fallbackLayouts;
+    private final Set<String> typesSeen = new TreeSet<>();
     private int framesWaiting;
     private String pendingRunId;
     private StarSystemAPI pendingPocket;
@@ -79,24 +88,44 @@ public class ChartSoakScript implements EveryFrameScript {
     }
 
     private void openNext(SectorAPI sector) {
-        ChartRunActions.OpenResult result = ChartRunActions.openBesidePlayer(sector, 1, random);
+        ChartLayoutRequest layoutRequest = new ChartLayoutRequest(random.nextLong(), typeForIteration(pocketsDone));
+        ChartRunActions.OpenResult result = ChartRunActions.openBesidePlayer(sector, 1, random, layoutRequest);
         if (result != ChartRunActions.OpenResult.OPENED) {
             finish(sector, "stopped: opening pocket " + (pocketsDone + 1) + " returned " + result);
             return;
         }
         ChartRun run = ChartRuns.currentOrNull();
+        if (run.isLayoutGenerated()) {
+            generatedLayouts++;
+        } else {
+            fallbackLayouts++;
+        }
+        if (run.hasLayout()) {
+            typesSeen.add(run.layoutType());
+        }
         pendingRunId = run.runId();
         pendingPocket = sector.getStarSystem(run.pocketSystemId());
         framesWaiting = 0;
         run.collapseOuter();
     }
 
+    static StarSystemType typeForIteration(int iteration) {
+        List<StarSystemType> types = ChartLayoutGenerator.ALLOWED_TYPES;
+        int slot = iteration % (types.size() + 1);
+        return slot < types.size() ? types.get(slot) : null;
+    }
+
     private void finish(SectorAPI sector, String outcome) {
         done = true;
         pendingPocket = null;
         ChartCensus after = ChartCensus.take(sector);
+        List<String> changes = after.changesSince(before);
         String report = "Star Chart soak " + outcome + ", " + pocketsDone + " of " + pocketsToSoak + " pocket(s) opened and closed.\n"
-                + "Before: " + before.describe() + "\nAfter:  " + after.describe();
+                + "Layouts: " + generatedLayouts + " generated, " + fallbackLayouts + " fell back to a single star; types " + typesSeen + ".\n"
+                + (changes.isEmpty() ? "Unchanged before vs after: " + String.join(", ", COMPARED_COUNTS) + "."
+                : "CHANGED before vs after: " + String.join("; ", changes)
+                + " (fleets and intel can also change if the game ran unpaused during the soak).")
+                + "\nBefore: " + before.describe() + "\nAfter:  " + after.describe();
         LOG.info("[ExiledSector] " + report);
         reporter.accept(report);
     }

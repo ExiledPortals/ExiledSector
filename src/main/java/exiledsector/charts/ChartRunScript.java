@@ -6,7 +6,6 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.characters.AbilityPlugin;
-import com.fs.starfarer.api.impl.campaign.ids.Abilities;
 import org.apache.log4j.Logger;
 
 public class ChartRunScript implements EveryFrameScript {
@@ -54,7 +53,7 @@ public class ChartRunScript implements EveryFrameScript {
         boolean inTransition = playerFleet.isInHyperspaceTransition();
         boolean inside = pocket != null && playerFleet.getContainingLocation() == pocket;
         if (inside) {
-            blockTransverseJump(playerFleet);
+            blockEscapeAbilities(playerFleet);
         }
         if (run.runState() == ChartRunState.CLOSED) {
             ChartRuns.delete(run.runId());
@@ -77,8 +76,11 @@ public class ChartRunScript implements EveryFrameScript {
             case INSIDE -> {
                 if (inside) {
                     run.cancelReturn();
-                } else if (run.recordLeftPocket() == ChartRunState.OPEN && sector.getEntityById(run.outerWormholeId()) == null) {
-                    run.beginClosing();
+                } else if (run.recordLeftPocket() == ChartRunState.OPEN) {
+                    ChartRunCloser.clearPlayerTargetAndCourse(new ChartRunCloser.CloseTarget(sector, run.runId(), pocket));
+                    if (sector.getEntityById(run.outerWormholeId()) == null) {
+                        run.beginClosing();
+                    }
                 }
             }
             case CLOSING -> closeWhenClear(sector, run, inside);
@@ -116,14 +118,23 @@ public class ChartRunScript implements EveryFrameScript {
         closeArmed = false;
     }
 
-    static void blockTransverseJump(CampaignFleetAPI playerFleet) {
-        AbilityPlugin transverseJump = playerFleet.getAbility(Abilities.TRANSVERSE_JUMP);
-        if (transverseJump == null) {
+    static void blockEscapeAbilities(CampaignFleetAPI playerFleet) {
+        for (String abilityId : ChartBlockedAbilities.abilityIds()) {
+            try {
+                block(playerFleet.getAbility(abilityId));
+            } catch (RuntimeException | LinkageError e) {
+                ChartBlockedAbilities.reportBlockFailure(abilityId, e);
+            }
+        }
+    }
+
+    private static void block(AbilityPlugin ability) {
+        if (ability == null) {
             return;
         }
-        if (transverseJump.isActiveOrInProgress()) {
-            transverseJump.deactivate();
+        if (ability.isActiveOrInProgress()) {
+            ability.deactivate();
         }
-        transverseJump.forceDisable();
+        ability.forceDisable();
     }
 }

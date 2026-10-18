@@ -2,7 +2,9 @@ package exiledsector.console;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.charts.ChartCensus;
+import exiledsector.charts.ChartPocketContents;
 import exiledsector.charts.ChartRun;
 import exiledsector.charts.ChartRuns;
 import org.lazywizard.console.BaseCommand;
@@ -28,11 +30,13 @@ public class ChartStatusCommand implements BaseCommand {
         if (run == null) {
             return "No Star Chart run is open.";
         }
-        boolean pocketExists = sector.getStarSystem(run.pocketSystemId()) != null;
+        StarSystemAPI pocket = sector.getStarSystem(run.pocketSystemId());
         boolean outerExists = sector.getEntityById(run.outerWormholeId()) != null;
         return "Star Chart run " + run.runId() + ": " + run.runState() + ", entries used " + run.entriesUsed() + " of " + run.entriesAllowed()
-                + ", pocket " + (pocketExists ? "exists" : "missing") + ", outer wormhole " + (outerExists ? "exists" : "gone")
+                + ", pocket " + (pocket != null ? "exists" : "missing") + ", outer wormhole " + (outerExists ? "exists" : "gone")
                 + ", origin " + run.originLocationId() + " at (" + Math.round(run.originX()) + ", " + Math.round(run.originY()) + ")"
-                + (run.isReturnRequested() ? ", returning" : "");
+                + (run.isReturnRequested() ? ", returning" : "")
+                + "\n" + ChartOpenCommand.describeLayout(run)
+                + (pocket == null ? "" : "\nPocket contents: " + ChartPocketContents.of(pocket).describe());
     }
 }

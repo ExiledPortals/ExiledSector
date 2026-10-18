@@ -92,6 +92,8 @@ class ExiledSectorModPluginTest {
                 .thenReturn(new JSONArray());
         when(settings.getMergedSpreadsheetDataForMod("hullmod", "data/config/exiledSector/logistics_dmods.csv", "exiledSector"))
                 .thenReturn(new JSONArray());
+        when(settings.getMergedSpreadsheetDataForMod("ability_id", "data/config/exiledSector/chart_blocked_abilities.csv", "exiledSector"))
+                .thenReturn(new JSONArray("[{\"ability_id\": \"fracture_jump\"}]"));
         when(settings.getMergedSpreadsheetDataForMod("faction", "data/config/exiledSector/npc_faction_volumes.csv", "exiledSector"))
                 .thenReturn(new JSONArray("[{\"faction\": \"hegemony\", \"region\": \"hegemony\"}]"));
         when(settings.getMergedSpreadsheetDataForMod("id", "data/config/exiledSector/subroutines.csv", "exiledSector"))
@@ -248,6 +250,7 @@ class ExiledSectorModPluginTest {
         verify(Global.getSettings()).getMergedSpreadsheetDataForMod("weapon", "data/config/exiledSector/ballistic_pierce_blocklist.csv", "exiledSector");
         verify(Global.getSettings()).getMergedSpreadsheetDataForMod("hullmod", "data/config/exiledSector/drone_marker_hullmods.csv", "exiledSector");
         verify(Global.getSettings()).getMergedSpreadsheetDataForMod("hullmod", "data/config/exiledSector/logistics_dmods.csv", "exiledSector");
+        verify(Global.getSettings()).getMergedSpreadsheetDataForMod("ability_id", "data/config/exiledSector/chart_blocked_abilities.csv", "exiledSector");
     }
 
     @Test

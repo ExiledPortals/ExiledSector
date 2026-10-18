@@ -10,6 +10,7 @@ import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public final class ChartLoadSweep {
 
@@ -79,7 +80,11 @@ public final class ChartLoadSweep {
                     LOG.info("[ExiledSector] Purging Star Chart pocket " + system.getOptionalUniqueId() + " with no live run");
                     ChartRunCloser.close(sector, runId, system);
                 }
-                case ADOPT -> adopt(sector, system, runId, run);
+                case ADOPT -> {
+                    ChartPocketFactory.ensureIsolationTags(system);
+                    adopt(sector, system, runId, run);
+                }
+                case KEEP -> ChartPocketFactory.ensureIsolationTags(system);
                 case LEAVE_FOR_NOW -> LOG.warn("[ExiledSector] The player is inside Star Chart pocket " + system.getOptionalUniqueId()
                         + " while another run is open; leaving it until they leave");
                 default -> {
@@ -114,7 +119,8 @@ public final class ChartLoadSweep {
 
     private static void ensureInnerWormhole(SectorAPI sector, StarSystemAPI pocket, String runId) {
         if (pocket.getEntityById(ChartIds.innerWormholeId(runId)) == null) {
-            ChartPocketFactory.addInnerWormhole(pocket, runId);
+            Vector2f clearSpot = ChartWormholePlacement.choose(pocket, new Random(runId.hashCode()));
+            ChartPocketFactory.addInnerWormhole(pocket, runId, clearSpot);
         }
     }
 

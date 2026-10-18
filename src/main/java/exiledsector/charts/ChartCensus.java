@@ -4,21 +4,15 @@ import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.procgen.ProcgenUsedNames;
-import org.apache.log4j.Logger;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Set;
+import java.util.List;
 
-public record ChartCensus(int starSystems, int pocketSystems, int hyperspaceEntities, int hyperspaceChartEntities, int chartEntities,
-                          int usedNames, int intel, int persistentDataKeys) {
+public record ChartCensus(int starSystems, int pocketSystems, int hyperspaceEntities, int hyperspaceFleets, int hyperspaceChartEntities,
+                          int chartEntities, int usedNames, int topographyScans, int economyMarkets, int intel, int persistentDataKeys) {
 
     public static final int UNKNOWN = -1;
-    static final String USED_NAMES_FIELD = "names";
-    private static final Logger LOG = Logger.getLogger(ChartCensus.class);
-    private static MethodHandle usedNamesGetter;
-    private static boolean usedNamesUnreachable;
 
     public static ChartCensus take(SectorAPI sector) {
         int pockets = 0;
@@ -32,10 +26,13 @@ public record ChartCensus(int starSystems, int pocketSystems, int hyperspaceEnti
         }
         LocationAPI hyperspace = sector.getHyperspace();
         int hyperspaceEntities = hyperspace == null ? 0 : hyperspace.getAllEntities().size();
+        int hyperspaceFleets = hyperspace == null ? 0 : hyperspace.getFleets().size();
         int hyperspaceChartEntities = hyperspace == null ? 0 : hyperspace.getEntitiesWithTag(ChartIds.ENTITY_TAG).size();
+        int economyMarkets = sector.getEconomy() == null ? UNKNOWN : sector.getEconomy().getNumMarkets();
         int intel = sector.getIntelManager() == null ? UNKNOWN : sector.getIntelManager().getIntel().size();
-        return new ChartCensus(systems.size(), pockets, hyperspaceEntities, hyperspaceChartEntities, chartEntities + hyperspaceChartEntities,
-                usedNameCount(), intel, sector.getPersistentData().size());
+        return new ChartCensus(systems.size(), pockets, hyperspaceEntities, hyperspaceFleets, hyperspaceChartEntities,
+                chartEntities + hyperspaceChartEntities, ChartUsedNames.count(), ChartTopographyScans.count(sector), economyMarkets, intel,
+                sector.getPersistentData().size());
     }
 
     public static boolean pocketNameReserved() {
@@ -46,29 +43,36 @@ public record ChartCensus(int starSystems, int pocketSystems, int hyperspaceEnti
         }
     }
 
-    // java:S1181: MethodHandle.invoke declares Throwable, and a changed engine may only cost this dev readout
-    @SuppressWarnings("java:S1181")
-    static int usedNameCount() {
-        if (usedNamesUnreachable) {
-            return UNKNOWN;
+    public int hyperspaceEntitiesOtherThanFleets() {
+        return hyperspaceEntities - hyperspaceFleets;
+    }
+
+    public List<String> changesSince(ChartCensus before) {
+        List<String> changes = new ArrayList<>();
+        compare(changes, "used procgen names", before.usedNames, usedNames);
+        compare(changes, "Hyperspace Topography scans", before.topographyScans, topographyScans);
+        compare(changes, "star systems", before.starSystems, starSystems);
+        compare(changes, "hyperspace entities other than fleets", before.hyperspaceEntitiesOtherThanFleets(), hyperspaceEntitiesOtherThanFleets());
+        compare(changes, "chart-tagged entities", before.chartEntities, chartEntities);
+        compare(changes, "Economy markets", before.economyMarkets, economyMarkets);
+        compare(changes, "intel", before.intel, intel);
+        return changes;
+    }
+
+    private static void compare(List<String> changes, String label, int before, int after) {
+        if (before != after) {
+            changes.add(label + " " + shown(before) + " -> " + shown(after));
         }
-        try {
-            if (usedNamesGetter == null) {
-                usedNamesGetter = MethodHandles.privateLookupIn(ProcgenUsedNames.class, MethodHandles.lookup())
-                        .findGetter(ProcgenUsedNames.class, USED_NAMES_FIELD, Set.class);
-            }
-            return usedNamesGetter.invoke(ProcgenUsedNames.getUsed()) instanceof Set<?> names ? names.size() : UNKNOWN;
-        } catch (Throwable e) {
-            usedNamesUnreachable = true;
-            LOG.warn("[ExiledSector] The used procgen name list can't be read, so the Star Chart readout shows it as unknown", e);
-            return UNKNOWN;
-        }
+    }
+
+    private static String shown(int count) {
+        return count == UNKNOWN ? "unknown" : String.valueOf(count);
     }
 
     public String describe() {
         return "star systems " + starSystems + ", chart pockets " + pocketSystems + ", hyperspace entities " + hyperspaceEntities
-                + " (" + hyperspaceChartEntities + " tagged for charts), chart-tagged entities anywhere " + chartEntities
-                + ", used procgen names " + (usedNames == UNKNOWN ? "unknown" : String.valueOf(usedNames))
-                + ", intel " + (intel == UNKNOWN ? "unknown" : String.valueOf(intel)) + ", persistent data keys " + persistentDataKeys;
+                + " (" + hyperspaceFleets + " fleets, " + hyperspaceChartEntities + " tagged for charts), chart-tagged entities anywhere "
+                + chartEntities + ", used procgen names " + shown(usedNames) + ", Hyperspace Topography scans " + shown(topographyScans)
+                + ", Economy markets " + shown(economyMarkets) + ", intel " + shown(intel) + ", persistent data keys " + persistentDataKeys;
     }
 }

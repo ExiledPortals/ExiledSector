@@ -8,6 +8,7 @@ import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -61,11 +62,13 @@ class ChartSoakScriptTest {
         when(sector.getStarSystem(anyString())).thenAnswer(invocation -> starSystems.stream()
                 .filter(system -> invocation.getArgument(0).equals(system.getOptionalUniqueId())).findFirst().orElse(null));
         doAnswer(invocation -> removeNextFrame.add(invocation.getArgument(0))).when(sector).removeStarSystemNextFrame(Mockito.any());
+        FakeChartLayoutEngine.install(FakeChartLayoutEngine.doingNothing());
     }
 
     @AfterEach
     void tearDown() {
         globalMock.close();
+        ChartLayoutGenerator.resetForTests();
     }
 
     private StarSystemAPI newPocket() {
@@ -76,6 +79,7 @@ class ChartSoakScriptTest {
         when(pocket.getLocation()).thenReturn(new Vector2f());
         when(pocket.getMemoryWithoutUpdate()).thenReturn(mock(MemoryAPI.class));
         when(pocket.initStar(anyString(), anyString(), anyFloat(), anyFloat())).thenReturn(mock(PlanetAPI.class));
+        when(pocket.getStar()).thenReturn(mock(PlanetAPI.class));
         when(pocket.addCustomEntity(anyString(), anyString(), anyString(), anyString())).thenReturn(mock(CustomCampaignEntityAPI.class));
         starSystems.add(pocket);
         return pocket;
@@ -100,11 +104,39 @@ class ChartSoakScriptTest {
         assertTrue(soak.isDone());
         assertEquals(1, reports.size());
         assertTrue(reports.get(0).contains("finished, 3 of 3"), reports.get(0));
+        assertTrue(reports.get(0).contains("Layouts: 3 generated, 0 fell back"), reports.get(0));
+        assertTrue(reports.get(0).contains("Unchanged before vs after"), reports.get(0));
+        assertTrue(reports.get(0).contains("[BINARY_CLOSE, BINARY_FAR, SINGLE]"), reports.get(0));
         assertTrue(starSystems.isEmpty());
         assertNull(ChartRuns.currentOrNull());
         verify(sector, Mockito.times(3)).createStarSystem(ChartIds.POCKET_BASE_NAME);
         verify(sector, never()).doHyperspaceTransition(Mockito.any(), Mockito.any(), Mockito.any());
         verify(playerFleet, never()).setLocation(anyFloat(), anyFloat());
+    }
+
+    @Test
+    void everyAllowedTypeAndARandomPickAreCycledThrough() {
+        List<StarSystemType> cycle = new ArrayList<>();
+        for (int iteration = 0; iteration <= ChartLayoutGenerator.ALLOWED_TYPES.size(); iteration++) {
+            cycle.add(ChartSoakScript.typeForIteration(iteration));
+        }
+
+        List<StarSystemType> expected = new ArrayList<>(ChartLayoutGenerator.ALLOWED_TYPES);
+        expected.add(null);
+        assertEquals(expected, cycle);
+        assertEquals(StarSystemType.SINGLE, ChartSoakScript.typeForIteration(expected.size()));
+    }
+
+    @Test
+    void theCensusNamesEveryCountThatChanged() {
+        ChartCensus before = new ChartCensus(10, 0, 100, 20, 0, 0, 500, 12, 40, 30, 7);
+        ChartCensus fleetsMoved = new ChartCensus(10, 0, 104, 24, 0, 0, 500, 12, 40, 30, 7);
+        ChartCensus leaked = new ChartCensus(11, 1, 101, 20, 1, 3, 502, 15, 41, 31, 8);
+
+        assertEquals(List.of(), fleetsMoved.changesSince(before));
+        assertEquals(List.of("used procgen names 500 -> 502", "Hyperspace Topography scans 12 -> 15", "star systems 10 -> 11",
+                "hyperspace entities other than fleets 80 -> 81",
+                "chart-tagged entities 0 -> 3", "Economy markets 40 -> 41", "intel 30 -> 31"), leaked.changesSince(before));
     }
 
     @Test

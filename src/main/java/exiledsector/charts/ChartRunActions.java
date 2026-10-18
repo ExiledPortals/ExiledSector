@@ -29,6 +29,10 @@ public final class ChartRunActions {
     }
 
     public static OpenResult openBesidePlayer(SectorAPI sector, int entriesAllowed, Random random) {
+        return openBesidePlayer(sector, entriesAllowed, random, ChartLayoutRequest.randomFrom(random));
+    }
+
+    public static OpenResult openBesidePlayer(SectorAPI sector, int entriesAllowed, Random random, ChartLayoutRequest layoutRequest) {
         if (ChartRuns.hasRun()) {
             return OpenResult.RUN_EXISTS;
         }
@@ -47,7 +51,7 @@ public final class ChartRunActions {
         ChartRun run = new ChartRun(newRunId(random), ChartIds.locationIdOf(origin), playerLocation.x, playerLocation.y, entriesAllowed);
         ChartRuns.store(run);
         try {
-            ChartPocketFactory.createPocket(sector, run.runId());
+            run.recordLayout(ChartPocketFactory.createPocket(sector, run.runId(), layoutRequest).layout());
             ChartPocketFactory.addOuterWormhole(origin, playerLocation, run.runId());
             return OpenResult.OPENED;
         } catch (RuntimeException | LinkageError e) {
@@ -73,7 +77,7 @@ public final class ChartRunActions {
             return false;
         }
         SectorEntityToken entry = ChartPocketFactory.entryPoint(pocket, pocket.getEntityById(run.innerWormholeId()));
-        ChartRunScript.blockTransverseJump(playerFleet);
+        ChartRunScript.blockEscapeAbilities(playerFleet);
         sector.doHyperspaceTransition(playerFleet, outerWormhole, new JumpDestination(entry, pocket.getName()));
         return true;
     }

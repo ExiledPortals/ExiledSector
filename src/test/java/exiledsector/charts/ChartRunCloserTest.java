@@ -2,8 +2,10 @@ package exiledsector.charts;
 
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.AsteroidAPI;
 import com.fs.starfarer.api.campaign.CampaignEventListener.FleetDespawnReason;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.CampaignTerrainAPI;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
@@ -11,15 +13,18 @@ import com.fs.starfarer.api.campaign.JumpPointAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.NascentGravityWellAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
+import com.fs.starfarer.api.campaign.RingBandAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
 import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
+import com.fs.starfarer.api.campaign.listeners.CoreDiscoverEntityPlugin.SalvorsTallyAdder;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.OfficerDataAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.impl.campaign.enc.StrandedGiveTJScript;
+import com.fs.starfarer.api.impl.campaign.intel.misc.SalvorsTallyIntel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -349,6 +354,33 @@ class ChartRunCloserTest {
 
         assertEquals(0, ChartRunCloser.close(sector, run));
         verify(intelManager, never()).removeIntel(any());
+    }
+
+    @Test
+    void everyKindOfEntityTheLayoutGeneratorCreatesIsRemoved() {
+        List<SectorEntityToken> generated = List.of(star, mock(PlanetAPI.class), mock(CampaignTerrainAPI.class), mock(RingBandAPI.class),
+                mock(AsteroidAPI.class), mock(JumpPointAPI.class), mock(SectorEntityToken.class), inner, pocketFleet);
+        when(pocket.getAllEntities()).thenReturn(generated);
+
+        assertEquals(0, ChartRunCloser.close(sector, run));
+
+        for (SectorEntityToken entity : generated) {
+            if (entity != pocketFleet) {
+                verify(pocket).removeEntity(entity);
+            }
+        }
+    }
+
+    @Test
+    void aSalvorsTallyStillWaitingToPostForThePocketIsDropped() {
+        SalvorsTallyAdder pocketTally = new SalvorsTallyAdder(new SalvorsTallyIntel(pocket), 10f);
+        SalvorsTallyAdder otherTally = new SalvorsTallyAdder(new SalvorsTallyIntel(realSystem), 10f);
+        when(sector.getScripts()).thenReturn(new ArrayList<>(List.of(pocketTally, otherTally)));
+
+        assertEquals(0, ChartRunCloser.close(sector, run));
+
+        verify(sector).removeScript(pocketTally);
+        verify(sector, never()).removeScript(otherTally);
     }
 
     private record BoundScript(String runId) implements EveryFrameScript, ChartRunBound {

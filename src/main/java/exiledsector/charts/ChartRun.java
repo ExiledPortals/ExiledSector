@@ -14,6 +14,9 @@ public final class ChartRun {
     private boolean outerCollapsed;
     private boolean returnRequested;
     private ChartRunState runState = ChartRunState.OPEN;
+    private long layoutSeed;
+    private String layoutType;
+    private boolean layoutGenerated;
 
     public ChartRun(String runId, String originLocationId, float originX, float originY, int entriesAllowed) {
         this.runId = runId;
@@ -76,6 +79,28 @@ public final class ChartRun {
 
     public boolean isOuterCollapsed() {
         return outerCollapsed;
+    }
+
+    public void recordLayout(ChartLayout layout) {
+        layoutSeed = layout.seed();
+        layoutType = layout.systemType() == null ? null : layout.systemType().name();
+        layoutGenerated = layout.generated();
+    }
+
+    public boolean hasLayout() {
+        return layoutType != null;
+    }
+
+    public long layoutSeed() {
+        return layoutSeed;
+    }
+
+    public String layoutType() {
+        return layoutType;
+    }
+
+    public boolean isLayoutGenerated() {
+        return layoutGenerated;
     }
 
     public boolean isReturnRequested() {

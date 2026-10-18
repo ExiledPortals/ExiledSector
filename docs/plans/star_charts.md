@@ -323,3 +323,4 @@ Atlas progression is deferred to a later project.
 5. When the wormhole closes, the system must vanish without a trace: nothing left in the save.
 6. Re-evaluated after main's hull item refactor (2026-10-18). Charts become a third item type on the shared item and modifier system, rather than a parallel copy of the old socketables code.
 7. Star charts use the same three rarities as hull items: Common, Rare and Unique (2026-10-18).
+8. Surveying pocket planets grants vanilla survey data and XP, as part of a chart's reward (2026-10-18).

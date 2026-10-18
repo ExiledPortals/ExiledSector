@@ -38,7 +38,8 @@ public class ChartSoakCommand implements BaseCommand {
         }
         ChartCensus before = ChartCensus.take(sector);
         sector.addTransientScript(new ChartSoakScript(pockets, before, ChartSoakCommand::report, new Random()));
-        Console.showMessage("Soaking " + pockets + " Star Chart pocket(s), a few frames each. Close the console; the result is shown"
+        Console.showMessage("Soaking " + pockets + " full Star Chart layout(s), a few frames each, varying seeds and system types. Close the console and keep"
+                + " the game paused so other fleets and intel do not change the counts; the result is shown"
                 + " in the campaign messages, in the console and in starsector.log.\nBefore: " + before.describe());
         return CommandResult.SUCCESS;
     }

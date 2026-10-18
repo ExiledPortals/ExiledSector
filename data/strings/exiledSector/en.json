@@ -20,6 +20,9 @@
     "chart.dialog.inner.canComeBack": "The way in is still open, so you can come back while entries remain.",
     "chart.dialog.inner.lastExit": "The way in has collapsed. Leaving now ends this run, and anything left in the pocket is lost.",
     "chart.dialog.stale": "The wormhole flickers and fades. Whatever it led to is gone.",
+    "chart.layout.name.star": "Chart {designation} {letter}",
+    "chart.layout.name.planet": "Chart {designation}-{index}",
+    "chart.layout.name.moon": "{planet}{letter}",
 
     "combat.xp.header": "ExiledSector skill tree",
     "combat.liveMunitions.crewLost.one": "{count} crew member died to Live Munitions.",

@@ -2,9 +2,11 @@ package exiledsector.charts;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.lwjgl.util.vector.Vector2f;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -174,6 +176,19 @@ class ChartRunTest {
         ChartRuns.delete("abc");
         assertNull(ChartRuns.currentOrNull());
         assertFalse(persistentData.containsKey(ChartRuns.DATA_KEY));
+    }
+
+    @Test
+    void theRunRemembersItsLayoutSeedAndTypeAsPlainValues() {
+        ChartRun run = new ChartRun("abc", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
+        assertFalse(run.hasLayout());
+
+        run.recordLayout(new ChartLayout(-9L, StarSystemType.TRINARY_2CLOSE, true, new Vector2f()));
+
+        assertTrue(run.hasLayout());
+        assertEquals(-9L, run.layoutSeed());
+        assertEquals("TRINARY_2CLOSE", run.layoutType());
+        assertTrue(run.isLayoutGenerated());
     }
 
     @Test

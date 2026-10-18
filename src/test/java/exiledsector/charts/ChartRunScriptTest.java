@@ -158,6 +158,26 @@ class ChartRunScriptTest {
     }
 
     @Test
+    void leavingWithEntriesLeftDropsACourseLaidToSomethingInsideThePocket() {
+        ChartRun run = storeRun(2);
+        FakeCampaignUiData uiData = new FakeCampaignUiData();
+        CustomCampaignEntityAPI pocketPlanet = mock(CustomCampaignEntityAPI.class);
+        when(pocketPlanet.getContainingLocation()).thenReturn(pocket);
+        uiData.setCourseTarget(pocketPlanet);
+        when(sector.getUIData()).thenReturn(uiData);
+        playerIn(pocket);
+        watchdog.advance(0.1f);
+        run.requestReturn();
+        playerIn(hyperspace);
+
+        watchdog.advance(0.1f);
+
+        assertEquals(ChartRunState.OPEN, run.runState());
+        verify(campaignUi).clearLaidInCourse();
+        assertNull(uiData.getCourseTarget());
+    }
+
+    @Test
     void dyingInsideClosesTheRunOnALaterFrameOnceNoDialogIsShowing() {
         ChartRun run = storeRun(3);
         playerIn(pocket);

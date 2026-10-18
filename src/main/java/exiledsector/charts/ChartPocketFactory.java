@@ -18,7 +18,8 @@ import java.util.List;
 public final class ChartPocketFactory {
 
     static final List<String> ISOLATION_TAGS = List.of(Tags.THEME_HIDDEN, Tags.THEME_SPECIAL, Tags.TEMPORARY_LOCATION,
-            Tags.SYSTEM_CUT_OFF_FROM_HYPER, Tags.DO_NOT_SHOW_STRANDED_DIALOG, Tags.NOT_RANDOM_MISSION_TARGET);
+            Tags.SYSTEM_CUT_OFF_FROM_HYPER, Tags.DO_NOT_SHOW_STRANDED_DIALOG, Tags.NOT_RANDOM_MISSION_TARGET, Tags.NO_TOPOGRAPHY_SCANS,
+            Tags.SYSTEM_ALREADY_USED_FOR_STORY);
     static final String STAR_TYPE = "star_white";
     static final float STAR_RADIUS = 600f;
     static final float CORONA_SIZE = 300f;
@@ -35,7 +36,18 @@ public final class ChartPocketFactory {
     private ChartPocketFactory() {
     }
 
-    public static StarSystemAPI createPocket(SectorAPI sector, String runId) {
+    public static ChartPocket createPocket(SectorAPI sector, String runId, ChartLayoutRequest request) {
+        StarSystemAPI pocket = createEmptyPocket(sector, runId);
+        ChartLayout layout = ChartLayoutGenerator.generate(sector, pocket, runId, request);
+        Vector2f farAway = pocketLocation(runId);
+        pocket.getLocation().set(farAway.x, farAway.y);
+        localiseName(pocket);
+        addInnerWormhole(pocket, runId, layout.innerWormholeLocation());
+        tagEveryEntity(pocket, runId);
+        return new ChartPocket(pocket, layout);
+    }
+
+    static StarSystemAPI createEmptyPocket(SectorAPI sector, String runId) {
         StarSystemAPI pocket = sector.createStarSystem(ChartIds.POCKET_BASE_NAME);
         pocket.setOptionalUniqueId(ChartIds.pocketSystemId(runId));
         pocket.addTag(ChartIds.POCKET_TAG);
@@ -43,21 +55,30 @@ public final class ChartPocketFactory {
         ISOLATION_TAGS.forEach(pocket::addTag);
         pocket.getMemoryWithoutUpdate().set(ChartIds.NEX_DO_NOT_COLONIZE, true);
         pocket.setDoNotShowIntelFromThisLocationOnMap(true);
-        pocket.setBackgroundTextureFilename(POCKET_BACKGROUND);
-        pocket.setLightColor(POCKET_LIGHT);
-        PlanetAPI star = pocket.initStar(ChartIds.starId(runId), STAR_TYPE, STAR_RADIUS, CORONA_SIZE);
         Vector2f farAway = pocketLocation(runId);
         pocket.getLocation().set(farAway.x, farAway.y);
-        localiseName(pocket, star);
-        addInnerWormhole(pocket, runId);
-        tagEveryEntity(pocket, runId);
         return pocket;
     }
 
-    public static CustomCampaignEntityAPI addInnerWormhole(StarSystemAPI pocket, String runId) {
+    static void ensureIsolationTags(StarSystemAPI pocket) {
+        for (String tag : ISOLATION_TAGS) {
+            if (!pocket.hasTag(tag)) {
+                pocket.addTag(tag);
+            }
+        }
+    }
+
+    static PlanetAPI addFallbackStar(StarSystemAPI pocket, String runId) {
+        pocket.setBackgroundTextureFilename(POCKET_BACKGROUND);
+        pocket.setLightColor(POCKET_LIGHT);
+        return pocket.initStar(ChartIds.starId(runId), STAR_TYPE, STAR_RADIUS, CORONA_SIZE);
+    }
+
+    public static CustomCampaignEntityAPI addInnerWormhole(StarSystemAPI pocket, String runId, Vector2f location) {
         CustomCampaignEntityAPI inner = pocket.addCustomEntity(ChartIds.innerWormholeId(runId),
                 Translation.gameText("chart.wormhole.inner.name"), ChartIds.WORMHOLE_TYPE, Factions.NEUTRAL);
-        inner.setFixedLocation(INNER_WORMHOLE_X, INNER_WORMHOLE_Y);
+        Vector2f placed = location == null ? new Vector2f(INNER_WORMHOLE_X, INNER_WORMHOLE_Y) : location;
+        inner.setFixedLocation(placed.x, placed.y);
         tag(inner, runId);
         inner.addTag(ChartIds.INNER_WORMHOLE_TAG);
         return inner;
@@ -87,15 +108,15 @@ public final class ChartPocketFactory {
         return new Vector2f(FAR_AWAY_CORNER - column * FAR_AWAY_SPACING, FAR_AWAY_CORNER - row * FAR_AWAY_SPACING);
     }
 
-    private static void localiseName(StarSystemAPI pocket, PlanetAPI star) {
+    private static void localiseName(StarSystemAPI pocket) {
         String localisedName = Translation.gameText("chart.pocket.name");
         if (localisedName == null || localisedName.isEmpty() || localisedName.equals(ChartIds.POCKET_BASE_NAME)) {
             return;
         }
         pocket.setBaseName(localisedName);
-        if (star != null) {
-            star.setName(localisedName);
-        }
+    }
+
+    public record ChartPocket(StarSystemAPI system, ChartLayout layout) {
     }
 
     private static void tagEveryEntity(StarSystemAPI pocket, String runId) {
