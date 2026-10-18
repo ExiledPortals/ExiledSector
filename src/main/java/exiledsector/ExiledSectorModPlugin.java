@@ -6,6 +6,8 @@ import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.loading.Description;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.thoughtworks.xstream.XStream;
+import exiledsector.charts.ChartSaveAliases;
+import exiledsector.charts.StarCharts;
 import exiledsector.compat.AbyssSingularity;
 import exiledsector.compat.CompatChecks;
 import exiledsector.compat.GraphicsLibCompat;
@@ -199,6 +201,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
     public void configureXStream(XStream xStream) {
         ItemSaveAliases.register(xStream);
         RetiredReserveIds.register(xStream);
+        ChartSaveAliases.register(xStream);
         xStream.alias(SHIP_SKILL_DATA_ALIAS, ShipSkillData.class);
     }
 
@@ -245,6 +248,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         }
         SocketTypeMigration.run();
         SocketCustody.reconcile();
+        StarCharts.onGameLoad(Global.getSector());
         PlayerTreePower.logNpcScaling();
     }
 }

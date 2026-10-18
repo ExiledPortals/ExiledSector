@@ -19,6 +19,14 @@ public final class SaveData {
         return storedType.isInstance(storedValue) ? stored(storedValue) : null;
     }
 
+    public static void put(String key, Object value) {
+        persistentData().put(key, value);
+    }
+
+    public static void remove(String key) {
+        persistentData().remove(key);
+    }
+
     private static Map<String, Object> persistentData() {
         return Global.getSector().getPersistentData();
     }

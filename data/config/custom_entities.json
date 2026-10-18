@@ -1,0 +1,22 @@
+{
+	"exiledSector_chart_wormhole":{
+		"defaultName":"Wormhole",
+		"nameInText":"wormhole",
+		"shortName":"wormhole",
+		"aOrAn":"a",
+		"isOrAre":"is",
+		"defaultRadius":60,
+		"icon":"graphics/icons/jump-point2.png",
+		"iconWidth":28,
+		"iconHeight":28,
+		"showInCampaign":true,
+		"showIconOnMap":true,
+		"showNameOnMap":false,
+		"scaleIconWithZoom":true,
+		"renderCircleIndicator":true,
+		"renderCircleIndicatorSelectionFlash":true,
+		"tags":["has_interaction_dialog"],
+		"layers":[STATIONS],
+		"pluginClass":"exiledsector.charts.ChartWormholePlugin",
+	},
+}

@@ -1,5 +1,6 @@
 package exiledsector.ui;
 
+import exiledsector.charts.StarChartSettings;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.LanguageSetting;
 import exiledsector.i18n.PseudoLeaks;
@@ -117,6 +118,12 @@ class ExiledSectorSettingsTest {
     void registersTheRefitButtonToggleDefaultingToTheButtonUnderTheHullMods() {
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addBoolean(eq("exiledSector"),
                 eq(RefitButtonConfig.FIELD_ID), anyString(), anyString(), eq(true), eq("")));
+    }
+
+    @Test
+    void registersTheStarChartEntriesDefaultingToOne() {
+        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addInt(eq("exiledSector"),
+                eq(StarChartSettings.ENTRIES_FIELD_ID), anyString(), anyString(), eq(1), eq(1), eq(StarChartSettings.MAX_ENTRIES), eq("")));
     }
 
     @Test

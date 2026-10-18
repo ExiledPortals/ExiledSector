@@ -1,6 +1,7 @@
 package exiledsector.ui;
 
 import exiledsector.ModSettingsListener;
+import exiledsector.charts.StarChartSettings;
 import exiledsector.compat.CombatGlow;
 import exiledsector.compat.SalvageSiteCompat;
 import exiledsector.effects.NpcBonusScale;
@@ -172,6 +173,11 @@ public final class ExiledSectorSettings {
         SettingsCreator.addInt(MOD_ID, MaxChainCountConfig.FIELD_ID,
                 Translation.text("settings.energyChain.maxChainCount.name"), Translation.text("settings.energyChain.maxChainCount.tooltip"),
                 MaxChainCountConfig.DEFAULT, 1, 20, MAIN_TAB);
+
+        SettingsCreator.addHeader(MOD_ID, "exiledSector_starChartsHeader", Translation.text("settings.starCharts.header"), MAIN_TAB);
+        SettingsCreator.addInt(MOD_ID, StarChartSettings.ENTRIES_FIELD_ID,
+                Translation.text("settings.starCharts.entries.name"), Translation.text("settings.starCharts.entries.tooltip"),
+                StarChartSettings.DEFAULT_ENTRIES, StarChartSettings.MIN_ENTRIES, StarChartSettings.MAX_ENTRIES, MAIN_TAB);
     }
 
     private static void registerNpcScaling() {
