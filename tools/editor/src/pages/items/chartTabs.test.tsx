@@ -1,4 +1,5 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
+import { StrictMode } from 'react';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { buildVocabulary } from '../../api/vocabulary.ts';
 import { renderWithProviders } from '../../test/renderWithProviders.tsx';
@@ -73,6 +74,23 @@ describe('star chart editing', () => {
     await screen.findByText('Saved star_charts.csv', undefined, { timeout: 30000 });
 
     expect(server.readProjectFile(STAR_CHARTS_FILE)).toBe(before.replace("The Warden's Vigil,graphics/icons/attuned_sensors.png,1,true,4,", "The Warden's Vigil,graphics/icons/attuned_sensors.png,1,true,5,"));
+  }, 90000);
+
+  it('edits a star chart description under StrictMode', async () => {
+    renderWithProviders(
+      <StrictMode>
+        <DefinitionsTab vocabulary={vocabulary} />
+      </StrictMode>,
+    );
+    await screen.findAllByDisplayValue('Military Domain Subroutine', undefined, { timeout: 30000 });
+    await switchToStarCharts();
+    fireEvent.click(await screen.findByText("The Warden's Vigil", undefined, { timeout: 30000 }));
+    const description = (await findLabelled('Tooltip description (optional)')) as HTMLTextAreaElement;
+    const edited = `${description.value} Edited.`;
+
+    fireEvent.change(description, { target: { value: edited } });
+
+    expect(description.value).toBe(edited);
   }, 90000);
 
   it('edits a tier band of a star chart modifier', async () => {
