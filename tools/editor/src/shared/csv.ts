@@ -1,18 +1,32 @@
 const BYTE_ORDER_MARK = String.fromCharCode(0xfeff);
+const HEADER_QUOTE_KEY = '\u0001header';
 
 export interface CsvTable {
   header: string[];
   rows: string[][];
   lineEnding: '\r\n' | '\n';
+  quotedValues?: Record<string, true>;
 }
 
-export function parseCsv(text: string): string[][] {
+interface ParsedCsvRow {
+  cells: string[];
+  quoted: boolean[];
+}
+
+function parseCsvRows(text: string): ParsedCsvRow[] {
   const raw = String(text);
   const source = raw.startsWith(BYTE_ORDER_MARK) ? raw.slice(1) : raw;
-  const rows: string[][] = [];
-  let row: string[] = [];
+  const rows: ParsedCsvRow[] = [];
+  let row: ParsedCsvRow = { cells: [], quoted: [] };
   let field = '';
+  let fieldQuoted = false;
   let inQuotes = false;
+  const endField = () => {
+    row.cells.push(field);
+    row.quoted.push(fieldQuoted);
+    field = '';
+    fieldQuoted = false;
+  };
   for (let index = 0; index < source.length; index++) {
     const character = source[index];
     if (inQuotes) {
@@ -26,34 +40,64 @@ export function parseCsv(text: string): string[][] {
       }
     } else if (character === '"') {
       inQuotes = true;
+      fieldQuoted = true;
     } else if (character === ',') {
-      row.push(field);
-      field = '';
+      endField();
     } else if (character === '\n') {
-      row.push(field);
+      endField();
       rows.push(row);
-      row = [];
-      field = '';
+      row = { cells: [], quoted: [] };
     } else if (character !== '\r') {
       field += character;
     }
   }
-  if (field !== '' || row.length > 0) {
-    row.push(field);
+  if (field !== '' || fieldQuoted || row.cells.length > 0) {
+    endField();
     rows.push(row);
   }
-  return rows.filter((cells) => cells.some((cell) => cell.trim() !== ''));
+  return rows.filter((parsed) => parsed.cells.some((cell) => cell.trim() !== ''));
 }
 
-export function csvField(value: unknown): string {
+export function parseCsv(text: string): string[][] {
+  return parseCsvRows(text).map((parsed) => parsed.cells);
+}
+
+function needsQuotes(text: string): boolean {
+  return /[",\r\n]/.test(text) || text !== text.trim();
+}
+
+export function csvField(value: unknown, keepQuotes = false): string {
   const text = value === undefined || value === null ? '' : String(value);
-  return /[",\r\n]/.test(text) || text !== text.trim() ? `"${text.replace(/"/g, '""')}"` : text;
+  return keepQuotes || needsQuotes(text) ? `"${text.replace(/"/g, '""')}"` : text;
+}
+
+function quoteKey(column: string, value: string): string {
+  return `${column}\u0000${value}`;
 }
 
 export function parseCsvTable(text: string): CsvTable {
-  const rows = parseCsv(text);
-  const header = (rows.shift() ?? []).map((column) => column.trim());
-  return { header, rows, lineEnding: /\r\n/.test(String(text)) ? '\r\n' : '\n' };
+  const parsedRows = parseCsvRows(text);
+  const headerRow = parsedRows.shift() ?? { cells: [], quoted: [] };
+  const header = headerRow.cells.map((column) => column.trim());
+  const quotedValues: Record<string, true> = {};
+  headerRow.quoted.forEach((quoted, index) => {
+    if (quoted && !needsQuotes(headerRow.cells[index])) {
+      quotedValues[quoteKey(HEADER_QUOTE_KEY, headerRow.cells[index])] = true;
+    }
+  });
+  for (const parsed of parsedRows) {
+    parsed.quoted.forEach((quoted, index) => {
+      const cell = parsed.cells[index];
+      if (quoted && cell !== '' && !needsQuotes(cell)) {
+        quotedValues[quoteKey(header[index] ?? String(index), cell)] = true;
+      }
+    });
+  }
+  const table: CsvTable = { header, rows: parsedRows.map((parsed) => parsed.cells), lineEnding: /\r\n/.test(String(text)) ? '\r\n' : '\n' };
+  if (Object.keys(quotedValues).length > 0) {
+    table.quotedValues = quotedValues;
+  }
+  return table;
 }
 
 export function csvCell(table: CsvTable, cells: string[], column: string): string {
@@ -74,7 +118,11 @@ export function setCsvCell(table: CsvTable, cells: string[], column: string, val
 }
 
 export function emptyCsvTable(table: CsvTable): CsvTable {
-  return { header: table.header.slice(), rows: [], lineEnding: table.lineEnding };
+  const empty: CsvTable = { header: table.header.slice(), rows: [], lineEnding: table.lineEnding };
+  if (table.quotedValues) {
+    empty.quotedValues = { ...table.quotedValues };
+  }
+  return empty;
 }
 
 export function trimmedCsvCells<Column extends string>(table: CsvTable, cells: string[], columns: readonly Column[]): Record<Column, string> {
@@ -112,15 +160,14 @@ export function dropCsvColumn(table: CsvTable, column: string): void {
 
 export function serializeCsvTable(table: CsvTable): string {
   const width = table.header.length;
-  return (
-    [table.header, ...table.rows]
-      .map((cells) => {
-        const padded = cells.slice();
-        while (padded.length < width) {
-          padded.push('');
-        }
-        return padded.map(csvField).join(',');
-      })
-      .join(table.lineEnding) + table.lineEnding
-  );
+  const quotedValues = table.quotedValues ?? {};
+  const headerLine = table.header.map((column) => csvField(column, Boolean(quotedValues[quoteKey(HEADER_QUOTE_KEY, column)]))).join(',');
+  const rowLines = table.rows.map((cells) => {
+    const padded = cells.slice();
+    while (padded.length < width) {
+      padded.push('');
+    }
+    return padded.map((cell, index) => csvField(cell, cell !== '' && Boolean(quotedValues[quoteKey(table.header[index] ?? String(index), cell)]))).join(',');
+  });
+  return [headerLine, ...rowLines].join(table.lineEnding) + table.lineEnding;
 }

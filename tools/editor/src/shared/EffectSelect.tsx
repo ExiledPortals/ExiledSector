@@ -6,6 +6,8 @@ interface EffectSelectProps extends Omit<SelectProps, 'data' | 'value' | 'onChan
   vocabulary: Vocabulary;
   value: string;
   onChange: (effectName: string) => void;
+  effectNames?: string[];
+  effectKindLabel?: string;
 }
 
 function effectDescription(vocabulary: Vocabulary, effectName: string): string {
@@ -16,11 +18,14 @@ function effectDescription(vocabulary: Vocabulary, effectName: string): string {
   return (info.statMode ?? 'special') + (info.lowerIsBetter ? ', lower is better' : '');
 }
 
-export function EffectSelect({ vocabulary, value, onChange, ...selectProps }: EffectSelectProps) {
+export function EffectSelect({ vocabulary, value, onChange, effectNames, effectKindLabel, ...selectProps }: EffectSelectProps) {
+  const offered = effectNames ?? vocabulary.effectNames;
+  const isKnown = (name: string) => (effectNames ? effectNames.includes(name) : vocabulary.effectInfo.has(name));
   const data = useMemo<ComboboxItem[]>(() => {
-    const names = value && !vocabulary.effectInfo.has(value) ? [value, ...vocabulary.effectNames] : vocabulary.effectNames;
-    return names.map((name) => ({ value: name, label: vocabulary.effectInfo.has(name) ? name : `${name} (unknown)` }));
-  }, [vocabulary, value]);
+    const known = (name: string) => (effectNames ? effectNames.includes(name) : vocabulary.effectInfo.has(name));
+    const names = value && !known(value) ? [value, ...offered] : offered;
+    return names.map((name) => ({ value: name, label: known(name) ? name : `${name} (unknown)` }));
+  }, [vocabulary, value, offered, effectNames]);
 
   return (
     <Select
@@ -38,11 +43,11 @@ export function EffectSelect({ vocabulary, value, onChange, ...selectProps }: Ef
         <div>
           <Text size="sm">{option.label}</Text>
           <Text size="xs" c="dimmed">
-            {effectDescription(vocabulary, option.value)}
+            {effectNames ? (isKnown(option.value) ? (effectKindLabel ?? 'effect') : 'not a known effect') : effectDescription(vocabulary, option.value)}
           </Text>
         </div>
       )}
-      error={value && !vocabulary.effectInfo.has(value) ? 'Unknown effect' : undefined}
+      error={value && !isKnown(value) ? 'Unknown effect' : undefined}
       {...selectProps}
     />
   );

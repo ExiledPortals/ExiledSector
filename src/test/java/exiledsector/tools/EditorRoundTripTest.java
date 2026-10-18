@@ -35,6 +35,7 @@ class EditorRoundTripTest {
     private static final String ITEM_CRAFTING_MODEL = "pages/items/model/crafting.ts";
     private static final String HULL_ITEM_IMPLICITS_MODEL = "pages/items/model/implicits.ts";
     private static final String ITEM_MODIFIERS_MODEL = "pages/items/model/modifiers.ts";
+    private static final String CHART_TABLES_MODEL = "pages/items/model/chartTables.ts";
 
     private static final String TYPE_LOADER = "exiledsector/skills/loader/SkillTypeLoader.java";
     private static final String TREE_LOADER = "exiledsector/skills/loader/SkillTreeLoader.java";
@@ -46,13 +47,24 @@ class EditorRoundTripTest {
     private static final String ITEM_CRAFTING = "exiledsector/items/ItemCraftingCosts.java";
     private static final String HULL_ITEM_IMPLICITS = "exiledsector/items/ItemImplicits.java";
     private static final String ITEM_MODIFIERS = "exiledsector/items/ItemModifiers.java";
+    private static final String STAR_CHART_DEFINITIONS = "exiledsector/items/StarChartDefinitions.java";
+    private static final String STAR_CHART_IMPLICITS = "exiledsector/items/StarChartImplicits.java";
+    private static final String STAR_CHART_ITEMS = "exiledsector/items/StarChartItems.java";
+    private static final String STAR_CHART_NAMES = "exiledsector/items/StarChartNames.java";
+    private static final String CHART_TIERS = "exiledsector/charts/ChartTiers.java";
+    private static final String CHART_POIS = "exiledsector/charts/ChartPois.java";
+    private static final String CHART_FACTIONS = "exiledsector/charts/ChartFactions.java";
+    private static final String CHART_BLOCKED_ABILITIES = "exiledsector/charts/ChartBlockedAbilities.java";
+    private static final String CHART_DROPS = "exiledsector/charts/ChartDrops.java";
 
     private static final List<String> LOADERS = List.of(TYPE_LOADER, TREE_LOADER, ITEM_DEFINITIONS, ITEM_DEFINITION,
-            ITEM_NAMES, ITEM_DROPS, SALVAGE_COMPAT, ITEM_CRAFTING, HULL_ITEM_IMPLICITS, ITEM_MODIFIERS);
+            ITEM_NAMES, ITEM_DROPS, SALVAGE_COMPAT, ITEM_CRAFTING, HULL_ITEM_IMPLICITS, ITEM_MODIFIERS, STAR_CHART_DEFINITIONS, STAR_CHART_IMPLICITS,
+            STAR_CHART_ITEMS, STAR_CHART_NAMES, CHART_TIERS, CHART_POIS, CHART_FACTIONS, CHART_BLOCKED_ABILITIES, CHART_DROPS);
 
     private static final List<String> EDITED_DATA_PATHS = List.of("data/skilltrees/skill_types.json", "data/skilltrees/ship_skill_tree.json",
             "data/config/exiledSector/item_modifiers", "data/config/exiledSector/item_names", "data/config/exiledSector/item_crafting",
-            "data/config/exiledSector/item_salvage", "data/config/exiledSector/hull_item", "data/config/exiledSector/subroutines", "compat/salvage/");
+            "data/config/exiledSector/item_salvage", "data/config/exiledSector/hull_item", "data/config/exiledSector/subroutines", "compat/salvage/",
+            "data/config/exiledSector/star_chart", "data/config/exiledSector/chart_");
 
     private record EditorSource(String file, String symbol) {
         String label() {
@@ -89,6 +101,8 @@ class EditorRoundTripTest {
                     List.of(tree("treeFileObject"), tree("serializeStaticImage")), false),
             new Pin("ship_skill_tree.json stars", TREE_LOADER, List.of("parseStars"),
                     List.of(tree("treeFileObject"), tree("serializeStar")), false),
+            new Pin("subroutines.csv and hull_items.csv row key", ITEM_DEFINITIONS, List.of("rows"),
+                    List.of(new EditorSource(ITEM_DEFINITIONS_MODEL, "SUBROUTINE_COLUMNS"), new EditorSource(ITEM_DEFINITIONS_MODEL, "HULL_ITEM_COLUMNS")), true),
             new Pin("subroutines.csv columns", ITEM_DEFINITION, List.of("parse"),
                     List.of(new EditorSource(ITEM_DEFINITIONS_MODEL, "SUBROUTINE_COLUMNS")), true),
             new Pin("hull_items.csv columns", ITEM_DEFINITION, List.of("parse", "parseHullItem"),
@@ -105,10 +119,36 @@ class EditorRoundTripTest {
             new Pin("item_crafting.csv columns", ITEM_CRAFTING, List.of("load", "register"),
                     List.of(new EditorSource(ITEM_CRAFTING_MODEL, "serializeCraftingCsv")), true),
             new Pin("hull_item_implicits.csv columns", HULL_ITEM_IMPLICITS, List.of("load", "register"),
-                    List.of(new EditorSource(HULL_ITEM_IMPLICITS_MODEL, "serializeImplicitsCsv")), true));
+                    List.of(new EditorSource(HULL_ITEM_IMPLICITS_MODEL, "serializeImplicitsCsv")), true),
+            new Pin("star_charts.csv columns", STAR_CHART_DEFINITIONS, List.of("load", "register"),
+                    List.of(new EditorSource(ITEM_DEFINITIONS_MODEL, "STAR_CHART_COLUMNS")), true),
+            new Pin("star_charts.csv shared item columns", ITEM_DEFINITION, List.of("parse"),
+                    List.of(new EditorSource(ITEM_DEFINITIONS_MODEL, "STAR_CHART_COLUMNS")), true),
+            new Pin("star_chart_modifiers.csv columns", STAR_CHART_ITEMS, List.of("load"),
+                    List.of(new EditorSource(ITEM_MODIFIERS_MODEL, "serializeModifiersCsv")), true),
+            new Pin("star_chart_modifiers.csv shared modifier columns", ITEM_MODIFIERS, List.of("catalogueOf", "parse"),
+                    List.of(new EditorSource(ITEM_MODIFIERS_MODEL, "serializeModifiersCsv")), true),
+            new Pin("star_chart_implicits.csv columns", STAR_CHART_IMPLICITS, List.of("load", "register"),
+                    List.of(new EditorSource(HULL_ITEM_IMPLICITS_MODEL, "serializeStarChartImplicitsCsv")), true),
+            new Pin("star_chart_names.json word fields", STAR_CHART_NAMES, List.of("register"),
+                    List.of(new EditorSource(ITEM_NAMES_MODEL, "serializeStarChartNames"), new EditorSource(ITEM_NAMES_MODEL, "RARE_NAME_WORD_LISTS"),
+                            new EditorSource(ITEM_NAMES_MODEL, "newRareNameWords")), true),
+            new Pin("star_chart_tiers.csv columns", CHART_TIERS, List.of("load", "register"),
+                    List.of(new EditorSource(CHART_TABLES_MODEL, "CHART_TIER_COLUMNS")), true),
+            new Pin("chart_poi.csv columns", CHART_POIS, List.of("load", "register", "parse"),
+                    List.of(new EditorSource(CHART_TABLES_MODEL, "CHART_POI_COLUMNS")), true),
+            new Pin("chart_factions.csv columns", CHART_FACTIONS, List.of("load", "register"),
+                    List.of(new EditorSource(CHART_TABLES_MODEL, "CHART_FACTION_COLUMNS")), true),
+            new Pin("chart_blocked_abilities.csv columns", CHART_BLOCKED_ABILITIES, List.of("load"),
+                    List.of(new EditorSource(CHART_TABLES_MODEL, "CHART_BLOCKED_ABILITY_COLUMNS")), true),
+            new Pin("chart_drops.csv columns", CHART_DROPS, List.of("load", "register"),
+                    List.of(new EditorSource(CHART_TABLES_MODEL, "CHART_DROP_COLUMNS")), true));
 
-    private static final Pattern JAVA_KEY_READ = Pattern.compile("(?:\\.\\s*(?:opt|get|has|isNull)[A-Za-z]*\\s*\\(\\s*"
-            + "|\\bModCsv\\.text\\s*\\([^,()\"]*,\\s*|\\bModCsv\\.(?:load|rows)\\s*\\(\\s*)\"([^\"\\\\]*)\"");
+    private static final String JAVA_KEY_READ_PREFIX = "(?:\\.\\s*(?:opt|get|has|isNull)[A-Za-z]*\\s*\\(\\s*"
+            + "|\\bModCsv\\.text\\s*\\([^,()\"]*,\\s*|\\bModCsv\\.(?:load|rows)\\s*\\(\\s*|\\bcsv\\.(?:integer|number|flag)\\s*\\([^,()\"]*,\\s*)";
+    private static final Pattern JAVA_KEY_READ = Pattern.compile(JAVA_KEY_READ_PREFIX + "\"([^\"\\\\]*)\"");
+    private static final Pattern JAVA_CONSTANT_KEY_READ = Pattern.compile(JAVA_KEY_READ_PREFIX + "([A-Z][A-Z0-9_]*)\\s*[,)]");
+    private static final Pattern JAVA_STRING_CONSTANT = Pattern.compile("\\bstatic\\s+final\\s+String\\s+([A-Z][A-Z0-9_]*)\\s*=\\s*\"([^\"\\\\]*)\"\\s*;");
     private static final Pattern JAVA_METHOD_START = Pattern.compile("([\\w$]+|[>\\]])\\s+([\\w$]+)\\s*\\(");
     private static final Set<String> JAVA_NOT_METHODS = Set.of("if", "for", "while", "switch", "catch", "synchronized", "return", "new",
             "else", "try", "do", "throw", "yield", "assert", "case", "throws");
@@ -219,6 +259,25 @@ class EditorRoundTripTest {
         assertEquals(Set.of("delta"), keys.get("other"));
         assertFalse(keys.values().stream().anyMatch(set -> set.contains("commented") || set.contains("block")));
 
+        String constantsJava = String.join("\n",
+                "class Constants {",
+                "    static final String TIER_COLUMN = \"tier\";",
+                "    private static final String UNREAD = \"unread\";",
+                "    static final String PATH_CONSTANT = \"data/config/x.csv\";",
+                "    static void register(JSONObject row, ChartCsv csv) {",
+                "        csv.integer(row, TIER_COLUMN, 0, label);",
+                "        csv.number(row, \"fleet_power\", 1f, label);",
+                "        csv.flag(row , \"boss\", false, label);",
+                "        ModCsv.text(row, OTHER_COLUMN);",
+                "        String unrelated = UNREAD;",
+                "        json.optString(PATH_CONSTANT);",
+                "    }",
+                "    static void load() { ModCsv.load(TIER_COLUMN, PATH, LOG, Constants::register); }",
+                "}");
+        Map<String, Set<String>> constantKeys = keysReadByMethod(constantsJava);
+        assertEquals(Set.of("tier", "fleet_power", "boss"), constantKeys.get("register"));
+        assertEquals(Set.of("tier"), constantKeys.get("load"));
+
         String js = String.join("\n",
                 "function serializeSample (t) {",
                 "  var re = /[\"'{]/g, half = t.size / 2;",
@@ -282,21 +341,36 @@ class EditorRoundTripTest {
         names.forEach(name -> keys.putIfAbsent(name, new TreeSet<>()));
         Matcher read = JAVA_KEY_READ.matcher(scan.stringsKept);
         while (read.find()) {
-            if (code.charAt(read.start()) != scan.stringsKept.charAt(read.start())) {
-                continue;
+            if (code.charAt(read.start()) == scan.stringsKept.charAt(read.start())) {
+                addKeyToInnermostMethod(keys, bodies, names, read.start(), read.group(1));
             }
-            int innermost = -1;
-            for (int i = 0; i < bodies.size(); i++) {
-                int[] body = bodies.get(i);
-                if (body[0] < read.start() && read.start() < body[1] && (innermost < 0 || body[0] > bodies.get(innermost)[0])) {
-                    innermost = i;
-                }
-            }
-            if (innermost >= 0) {
-                keys.get(names.get(innermost)).add(read.group(1));
+        }
+        Map<String, String> constants = new TreeMap<>();
+        Matcher constant = JAVA_STRING_CONSTANT.matcher(scan.stringsKept);
+        while (constant.find()) {
+            constants.put(constant.group(1), constant.group(2));
+        }
+        Matcher constantRead = JAVA_CONSTANT_KEY_READ.matcher(code);
+        while (constantRead.find()) {
+            String constantValue = constants.get(constantRead.group(1));
+            if (constantValue != null && !constantValue.contains("/")) {
+                addKeyToInnermostMethod(keys, bodies, names, constantRead.start(), constantValue);
             }
         }
         return keys;
+    }
+
+    private static void addKeyToInnermostMethod(Map<String, Set<String>> keys, List<int[]> bodies, List<String> names, int position, String key) {
+        int innermost = -1;
+        for (int i = 0; i < bodies.size(); i++) {
+            int[] body = bodies.get(i);
+            if (body[0] < position && position < body[1] && (innermost < 0 || body[0] > bodies.get(innermost)[0])) {
+                innermost = i;
+            }
+        }
+        if (innermost >= 0) {
+            keys.get(names.get(innermost)).add(key);
+        }
     }
 
     private static int skipThrowsClause(String code, int from) {

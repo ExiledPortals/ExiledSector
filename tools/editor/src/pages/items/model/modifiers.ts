@@ -1,6 +1,7 @@
 import type { Vocabulary } from '../../../api/vocabulary.ts';
 import { csvTableFromRows, parseCsvTable, serializeCsvTable, trimmedCsvCells, type CsvTable } from '../../../shared/csv.ts';
 import { isNumberText } from '../../../shared/decimalText.ts';
+import { familyEffectNames, isFamilyEffect, MODIFIER_FILE_NAMES, type ItemFamily } from './itemFamily.ts';
 
 export const MODIFIER_COLUMNS = ['id', 'slot', 'item_types', 'lines', 'name'] as const;
 export const MODIFIER_SLOTS = ['implicit', 'prefix', 'suffix'] as const;
@@ -11,12 +12,25 @@ export const MODIFIER_REFERENCE_MARK = '@';
 export const HULL_SIZE_LABELS = ['Frigate', 'Destroyer', 'Cruiser', 'Capital'];
 export const STAR_CHART_TYPE = 'star_chart';
 const MODIFIER_ID_PATTERN = /^[A-Za-z0-9_]+$/;
+const TIER_BAND_TEXT = /^t([^=]*)=(-?[^-]*)(?:-(.*))?$/;
+const TIER_BAND_NUMBER = /^-?\d+(?:\.\d+)?$/;
+const TIER_NUMBER = /^\d+$/;
+
+export interface TierBand {
+  tier: string;
+  min: string;
+  max: string;
+  unparsedText?: string;
+}
 
 export interface RolledValues {
   min: string;
   max: string;
   hullValues?: string[];
   rangeBeforeHullValues?: { min: string; max: string };
+  tierBands?: TierBand[];
+  rangeBeforeTierBands?: { min: string; max: string };
+  tierBandsBeforeRange?: TierBand[];
 }
 
 export interface ModifierLine extends RolledValues {
@@ -46,8 +60,38 @@ export interface ModifierUsage {
   implicitSections: string[];
 }
 
+export function isTierBandText(text: string | undefined): boolean {
+  const trimmed = String(text ?? '').trim();
+  return trimmed.startsWith('t') && trimmed.includes('=');
+}
+
+export function parseTierBands(text: string): TierBand[] {
+  return text
+    .trim()
+    .split('/')
+    .map((bandText): TierBand => {
+      const match = TIER_BAND_TEXT.exec(bandText.trim());
+      return match && match[3] !== '' ? { tier: match[1], min: match[2], max: match[3] ?? '' } : { tier: '', min: '', max: '', unparsedText: bandText };
+    });
+}
+
+export function formatTierBand(band: TierBand): string {
+  return band.unparsedText ?? `t${band.tier}=${band.min}${band.max === '' ? '' : `-${band.max}`}`;
+}
+
+export function formatTierBands(bands: TierBand[]): string {
+  return bands.map(formatTierBand).join('/');
+}
+
 export function parseModifierLine(text: string): ModifierLine {
   const parts = text.split(':').map((part) => part.trim());
+  if (isTierBandText(parts[1])) {
+    const line: ModifierLine = { effect: parts[0] ?? '', min: '', max: '', tierBands: parseTierBands(parts[1]) };
+    if (parts.length > 2) {
+      line.extraField = parts.slice(2).join(':');
+    }
+    return line;
+  }
   if ((parts[1] ?? '').includes('/')) {
     const line: ModifierLine = { effect: parts[0] ?? '', min: '', max: '', hullValues: parts[1].split('/').map((value) => value.trim()) };
     if (parts.length > 2) {
@@ -70,13 +114,15 @@ export function parseModifierLines(text: string): ModifierLine[] {
     .map(parseModifierLine);
 }
 
+function lineValuesText(line: ModifierLine): string {
+  if (line.tierBands) {
+    return formatTierBands(line.tierBands);
+  }
+  return line.hullValues ? line.hullValues.join('/') : `${line.min}:${line.max}`;
+}
+
 export function formatModifierLines(lines: ModifierLine[]): string {
-  return lines
-    .map((line) => {
-      const values = line.hullValues ? line.hullValues.join('/') : `${line.min}:${line.max}`;
-      return `${line.effect}:${values}${line.extraField === undefined ? '' : `:${line.extraField}`}`;
-    })
-    .join('; ');
+  return lines.map((line) => `${line.effect}:${lineValuesText(line)}${line.extraField === undefined ? '' : `:${line.extraField}`}`).join('; ');
 }
 
 export function parseItemTypes(text: string): string[] {
@@ -123,7 +169,14 @@ export function isHybrid(modifier: Pick<ItemModifier, 'lines'>): boolean {
   return modifier.lines.length > 1;
 }
 
+function rangeSummary(min: string, max: string): string {
+  return max === '' || min === max ? min : `${min} to ${max}`;
+}
+
 export function lineSummary(line: ModifierLine): string {
+  if (line.tierBands) {
+    return `${line.effect} ${line.tierBands.map((band) => band.unparsedText ?? `t${band.tier}+ ${rangeSummary(band.min, band.max)}`).join(', ')}`;
+  }
   const values = line.hullValues ? line.hullValues.join(' / ') : line.min === line.max ? line.min : `${line.min} to ${line.max}`;
   return `${line.effect} ${values}`;
 }
@@ -141,10 +194,10 @@ export function suggestedModifierId(lines: ModifierLine[], qualifier = ''): stri
   return qualifier ? `${base}_${qualifier.toUpperCase()}` : base;
 }
 
-export function uniqueModifierId(modifiers: ItemModifier[], base: string): string {
+export function uniqueModifierId(modifiers: ItemModifier[], base: string, takenIds: ReadonlySet<string> = new Set()): string {
   let id = base;
   let suffix = 2;
-  while (modifiers.some((modifier) => modifier.id === id)) {
+  while (takenIds.has(id) || modifiers.some((modifier) => modifier.id === id)) {
     id = `${base}_${suffix++}`;
   }
   return id;
@@ -154,10 +207,28 @@ export function shipItemTypes(vocabulary: Vocabulary): string[] {
   return vocabulary.itemTypes.filter((itemType) => itemType !== STAR_CHART_TYPE);
 }
 
-export function newModifier(modifiers: ItemModifier[], slot: ModifierSlot, vocabulary: Vocabulary): ItemModifier {
-  const lines = [{ effect: vocabulary.effectNames[0] ?? '', min: '1', max: '2' }];
-  const itemTypes = slot === 'implicit' ? ['hull_item'] : shipItemTypes(vocabulary);
-  return { cells: [], id: uniqueModifierId(modifiers, suggestedModifierId(lines, 'NEW')), slot, itemTypes, lines, name: '' };
+export function familyItemTypes(family: ItemFamily, vocabulary: Vocabulary): string[] {
+  return family === 'chart' ? [STAR_CHART_TYPE] : shipItemTypes(vocabulary);
+}
+
+export function newModifierLine(family: ItemFamily, vocabulary: Vocabulary, slot: string): ModifierLine {
+  const effect = familyEffectNames(family, vocabulary)[0] ?? '';
+  if (family === 'chart' && slot !== 'implicit') {
+    return { effect, min: '', max: '', tierBands: [{ tier: '1', min: '1', max: '2' }] };
+  }
+  return { effect, min: '1', max: '2' };
+}
+
+export function newModifier(
+  modifiers: ItemModifier[],
+  slot: ModifierSlot,
+  vocabulary: Vocabulary,
+  family: ItemFamily = 'ship',
+  takenIds: ReadonlySet<string> = new Set(),
+): ItemModifier {
+  const lines = [newModifierLine(family, vocabulary, slot)];
+  const itemTypes = family === 'chart' ? [STAR_CHART_TYPE] : slot === 'implicit' ? ['hull_item'] : shipItemTypes(vocabulary);
+  return { cells: [], id: uniqueModifierId(modifiers, suggestedModifierId(lines, 'NEW'), takenIds), slot, itemTypes, lines, name: '' };
 }
 
 export function idConventionIssue(modifier: Pick<ItemModifier, 'id' | 'lines'>): string | null {
@@ -168,7 +239,45 @@ export function idConventionIssue(modifier: Pick<ItemModifier, 'id' | 'lines'>):
   return modifier.lines.length > 1 && !modifier.id.startsWith(HYBRID_ID_PREFIX) ? `has several effects, so its id must start with ${HYBRID_ID_PREFIX}` : null;
 }
 
-export function rolledValuesIssues(label: string, values: RolledValues): string[] {
+function tierBandIssues(label: string, bands: TierBand[], vocabulary: Vocabulary): string[] {
+  const issues: string[] = [];
+  let previousTier = 0;
+  bands.forEach((band, index) => {
+    if (band.unparsedText !== undefined) {
+      issues.push(`${label} has the tier band "${band.unparsedText.trim()}"; write each band as tN=value or tN=min-max`);
+      return;
+    }
+    if (!TIER_NUMBER.test(band.tier)) {
+      issues.push(`${label} has a tier band without a whole tier number`);
+      return;
+    }
+    const tier = Number.parseInt(band.tier, 10);
+    if (index === 0 && tier !== vocabulary.lowestChartTier) {
+      issues.push(`${label} must start its first tier band at t${vocabulary.lowestChartTier}`);
+    }
+    if (tier <= previousTier) {
+      issues.push(`${label} has tier bands that do not rise`);
+    }
+    if (tier > vocabulary.highestChartTier) {
+      issues.push(`${label} has a band at t${tier}, above the highest tier ${vocabulary.highestChartTier}`);
+    }
+    previousTier = Math.max(previousTier, tier);
+    if (!TIER_BAND_NUMBER.test(band.min) || (band.max !== '' && !TIER_BAND_NUMBER.test(band.max))) {
+      issues.push(`${label} has a t${band.tier} value that is not a plain number`);
+    } else if (band.max !== '' && Number.parseFloat(band.min) > Number.parseFloat(band.max)) {
+      issues.push(`${label} has a t${band.tier} min above its max`);
+    }
+  });
+  if (bands.length === 0) {
+    issues.push(`${label} needs at least one tier band`);
+  }
+  return issues;
+}
+
+export function rolledValuesIssues(label: string, values: RolledValues, vocabulary?: Vocabulary): string[] {
+  if (values.tierBands) {
+    return vocabulary ? tierBandIssues(label, values.tierBands, vocabulary) : [];
+  }
   if (values.hullValues) {
     const issues: string[] = [];
     if (values.hullValues.length !== HULL_SIZE_LABELS.length) {
@@ -185,9 +294,33 @@ export function rolledValuesIssues(label: string, values: RolledValues): string[
   return Number.parseFloat(values.min) > Number.parseFloat(values.max) ? [`${label} has a min above its max`] : [];
 }
 
-export function validateModifiers(modifiers: ItemModifier[], vocabulary: Vocabulary, usage: Map<string, ModifierUsage>): string[] {
+function itemTypeIssues(label: string, modifier: ItemModifier, vocabulary: Vocabulary, family: ItemFamily): string[] {
+  if (family === 'chart') {
+    return modifier.itemTypes.length === 1 && modifier.itemTypes[0] === STAR_CHART_TYPE
+      ? []
+      : [`${label}: star chart modifiers must list only ${STAR_CHART_TYPE} as their item type`];
+  }
+  const issues: string[] = [];
+  for (const itemType of modifier.itemTypes) {
+    if (itemType === STAR_CHART_TYPE) {
+      issues.push(`${label}: star chart modifiers belong in star_chart_modifiers.csv, not item_modifiers.csv`);
+    } else if (!vocabulary.itemTypes.includes(itemType)) {
+      issues.push(`${label}: unknown item type ${itemType}`);
+    }
+  }
+  return issues;
+}
+
+export function validateModifiers(
+  modifiers: ItemModifier[],
+  vocabulary: Vocabulary,
+  usage: Map<string, ModifierUsage>,
+  family: ItemFamily = 'ship',
+  otherFileIds: ReadonlySet<string> = new Set(),
+): string[] {
   const issues: string[] = [];
   const seenIds = new Set<string>();
+  const otherFile = MODIFIER_FILE_NAMES[family === 'chart' ? 'ship' : 'chart'];
   modifiers.forEach((modifier, index) => {
     const label = modifier.id || `row ${index + 1}`;
     if (!MODIFIER_ID_PATTERN.test(modifier.id)) {
@@ -197,6 +330,9 @@ export function validateModifiers(modifiers: ItemModifier[], vocabulary: Vocabul
       issues.push(`${label}: id is used more than once`);
     }
     seenIds.add(modifier.id);
+    if (otherFileIds.has(modifier.id)) {
+      issues.push(`${label}: ${otherFile} already has this id, and ids must be unique across both modifier files`);
+    }
     if (!(MODIFIER_SLOTS as readonly string[]).includes(modifier.slot)) {
       issues.push(`${label}: slot must be one of ${MODIFIER_SLOTS.join(', ')}`);
     }
@@ -205,20 +341,26 @@ export function validateModifiers(modifiers: ItemModifier[], vocabulary: Vocabul
     }
     const seenEffects = new Set<string>();
     for (const line of modifier.lines) {
-      if (!vocabulary.effectInfo.has(line.effect)) {
-        issues.push(`${label}: unknown effect ${line.effect || '(none)'}`);
+      if (!isFamilyEffect(family, vocabulary, line.effect)) {
+        issues.push(`${label}: unknown ${family === 'chart' ? 'star chart ' : ''}effect ${line.effect || '(none)'}`);
       }
       if (seenEffects.has(line.effect)) {
         issues.push(`${label}: ${line.effect} is listed more than once`);
       }
       seenEffects.add(line.effect);
-      if (line.extraField !== undefined) {
+      if (line.extraField !== undefined && !/^:*$/.test(line.extraField)) {
         issues.push(`${label}: ${line.effect} has a weight; weights belong on the pool entry`);
       }
       if (modifier.slot === 'implicit' && line.hullValues) {
         issues.push(`${label}: ${line.effect} is on an implicit, so it must roll a min-max range`);
       }
-      issues.push(...rolledValuesIssues(`${label}: ${line.effect}`, line));
+      if (family === 'chart' && line.hullValues) {
+        issues.push(`${label}: ${line.effect} has hull size values, but star charts have no hull size; use tier bands or a min-max range`);
+      }
+      if (family === 'ship' && line.tierBands) {
+        issues.push(`${label}: ${line.effect} has tier bands, but only star charts have a tier`);
+      }
+      issues.push(...rolledValuesIssues(`${label}: ${line.effect}`, line, vocabulary));
     }
     const conventionIssue = idConventionIssue(modifier);
     if (conventionIssue) {
@@ -226,13 +368,8 @@ export function validateModifiers(modifiers: ItemModifier[], vocabulary: Vocabul
     }
     if (modifier.itemTypes.length === 0) {
       issues.push(`${label}: pick at least one item type it rolls on`);
-    }
-    for (const itemType of modifier.itemTypes) {
-      if (itemType === STAR_CHART_TYPE) {
-        issues.push(`${label}: star chart modifiers belong in star_chart_modifiers.csv, not item_modifiers.csv`);
-      } else if (!vocabulary.itemTypes.includes(itemType)) {
-        issues.push(`${label}: unknown item type ${itemType}`);
-      }
+    } else {
+      issues.push(...itemTypeIssues(label, modifier, vocabulary, family));
     }
     const modifierUsage = usage.get(modifier.id);
     if (modifierUsage && modifierUsage.nonUniqueItems.length > 0 && !modifier.name.trim()) {
@@ -249,6 +386,7 @@ export function validateModifiers(modifiers: ItemModifier[], vocabulary: Vocabul
 
 export function togglePerHullSize(values: RolledValues, perHullSize: boolean): void {
   if (perHullSize) {
+    delete values.tierBands;
     values.rangeBeforeHullValues = { min: values.min, max: values.max };
     values.hullValues = HULL_SIZE_LABELS.map(() => values.min || '0');
   } else {
@@ -258,6 +396,35 @@ export function togglePerHullSize(values: RolledValues, perHullSize: boolean): v
     delete values.hullValues;
     delete values.rangeBeforeHullValues;
   }
+}
+
+export function togglePerTierBand(values: RolledValues, perTierBand: boolean): void {
+  if (perTierBand) {
+    const firstHullValue = values.hullValues?.[0];
+    delete values.hullValues;
+    delete values.rangeBeforeHullValues;
+    const min = values.min || firstHullValue || '0';
+    values.rangeBeforeTierBands = { min: values.min, max: values.max };
+    values.tierBands = values.tierBandsBeforeRange ?? [{ tier: '1', min, max: values.max === values.min ? '' : values.max }];
+    delete values.tierBandsBeforeRange;
+  } else {
+    values.tierBandsBeforeRange = values.tierBands;
+    const firstBand = values.tierBands?.[0];
+    const range = values.rangeBeforeTierBands ?? { min: firstBand?.min ?? '', max: firstBand?.max || firstBand?.min || '' };
+    values.min = range.min;
+    values.max = range.max;
+    delete values.tierBands;
+    delete values.rangeBeforeTierBands;
+  }
+}
+
+export function addTierBand(values: RolledValues, highestTier: number): void {
+  if (!values.tierBands) {
+    return;
+  }
+  const last = values.tierBands[values.tierBands.length - 1];
+  const lastTier = last ? Number.parseInt(last.tier, 10) || 0 : 0;
+  values.tierBands.push({ tier: String(Math.min(highestTier, lastTier + 1)), min: last?.min ?? '1', max: last?.max ?? '' });
 }
 
 export function setHullValue(values: RolledValues, hullIndex: number, value: string): void {
@@ -281,11 +448,17 @@ export function markModifiersSaved(model: ModifiersModel, saved: ModifiersModel)
   }
 }
 
-export function copiedModifier(modifiers: ItemModifier[], source: ItemModifier, qualifier: string, itemType: string): ItemModifier {
+export function copiedModifier(
+  modifiers: ItemModifier[],
+  source: ItemModifier,
+  qualifier: string,
+  itemType: string,
+  takenIds: ReadonlySet<string> = new Set(),
+): ItemModifier {
   const lines = JSON.parse(JSON.stringify(source.lines)) as ModifierLine[];
   return {
     cells: [],
-    id: uniqueModifierId(modifiers, suggestedModifierId(lines, qualifier)),
+    id: uniqueModifierId(modifiers, suggestedModifierId(lines, qualifier), takenIds),
     slot: source.slot,
     itemTypes: [itemType],
     lines,

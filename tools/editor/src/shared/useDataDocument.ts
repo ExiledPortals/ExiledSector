@@ -13,6 +13,7 @@ export interface DataDocumentOptions<TModel> {
   parse: (files: DataFiles) => TModel;
   serialize: (model: TModel) => Record<string, string>;
   validate: (model: TModel) => string[];
+  warnings?: (model: TModel) => string[];
   savedMessage: (model: TModel) => string;
   afterSave?: (draft: Draft<TModel>, saved: TModel) => void;
 }
@@ -86,7 +87,7 @@ export function useDataDocument<TModel>(options: DataDocumentOptions<TModel>): D
     if (state.status !== 'ready') {
       return;
     }
-    const { validate, serialize, savedMessage, afterSave, noun } = optionsRef.current;
+    const { validate, warnings, serialize, savedMessage, afterSave, noun } = optionsRef.current;
     const savedModel = state.model;
     const issues = validate(savedModel);
     if (issues.length > 0) {
@@ -94,6 +95,18 @@ export function useDataDocument<TModel>(options: DataDocumentOptions<TModel>): D
       return;
     }
     const ticket: SaveTicket = { revision: editRevision.current, loadGeneration: loadGeneration.current };
+    const warningList = warnings ? warnings(savedModel) : [];
+    if (
+      warningList.length > 0 &&
+      !(await confirmAction({
+        title: 'Save with warnings?',
+        message: `The game accepts this, but:\n${warningList.map((warning) => `- ${warning}`).join('\n')}`,
+        confirmLabel: 'Save anyway',
+      })) ||
+      loadGeneration.current !== ticket.loadGeneration
+    ) {
+      return;
+    }
     setSaving(true);
     try {
       const result = await saveDataFiles(serialize(savedModel), baseHashes.current);

@@ -7,10 +7,21 @@ import { confirmAction, notifyError } from '../../../shared/dialogs.tsx';
 import { DocumentState } from '../../../shared/DocumentState.tsx';
 import { useDataDocument, type DataDocument } from '../../../shared/useDataDocument.ts';
 import { ModifierLineRow } from './ModifierLineRow.tsx';
-import { ITEM_TYPE_LABELS, parseItemDefinitions, serializeHullItemsCsv, serializeSubroutinesCsv, type ItemDefinitionsModel } from '../model/definitions.ts';
-import { parseImplicitsCsv, serializeImplicitsCsv, type ImplicitsModel } from '../model/implicits.ts';
+import { FamilySwitch } from './FamilySwitch.tsx';
+import { ITEM_TYPE_LABELS, parseFamilyDefinitions, serializeFamilyDefinitions, type FamilyDefinitions } from '../model/definitions.ts';
+import { implicitItemType, parseFamilyImplicits, serializeFamilyImplicits, type ImplicitsModel } from '../model/implicits.ts';
+import {
+  DEFINITION_FILE_NAMES,
+  DEFINITION_RESOURCES,
+  IMPLICIT_FILE_NAMES,
+  IMPLICIT_RESOURCES,
+  MODIFIER_FILE_NAMES,
+  MODIFIER_RESOURCES,
+  type ItemFamily,
+} from '../model/itemFamily.ts';
 import { isUsed, modifierUsage, referenceIssues, renameModifierReferences } from '../model/modifierUsage.ts';
 import {
+  familyItemTypes,
   idConventionIssue,
   markModifiersSaved,
   modifierById,
@@ -18,9 +29,9 @@ import {
   MODIFIER_SLOT_LABELS,
   MODIFIER_SLOTS,
   newModifier,
+  newModifierLine,
   parseModifiersCsv,
   serializeModifiersCsv,
-  shipItemTypes,
   suggestedModifierId,
   uniqueModifierId,
   validateModifiers,
@@ -33,41 +44,54 @@ import {
 const LIST_WIDTH = 320;
 
 interface ModifiersTabModel {
+  family: ItemFamily;
   catalogue: ModifiersModel;
-  items: ItemDefinitionsModel;
+  items: FamilyDefinitions;
   implicits: ImplicitsModel;
+  otherFileIds: string[];
   referencesChanged: boolean;
 }
 
+function otherFamily(family: ItemFamily): ItemFamily {
+  return family === 'chart' ? 'ship' : 'chart';
+}
+
+function modifiersFileNames(family: ItemFamily): string[] {
+  return [MODIFIER_RESOURCES[family], ...DEFINITION_RESOURCES[family], IMPLICIT_RESOURCES[family], MODIFIER_RESOURCES[otherFamily(family)]];
+}
+
+function usageOf(model: ModifiersTabModel): Map<string, ModifierUsage> {
+  return modifierUsage(model.items.definitions, model.implicits.rows, implicitItemType(model.family));
+}
+
 export function ModifiersTab({ vocabulary }: { vocabulary: Vocabulary }) {
+  const [family, setFamily] = useState<ItemFamily>('ship');
   const document = useDataDocument<ModifiersTabModel>({
     key: 'items.modifiers',
     noun: 'modifier',
-    fileNames: ['item-modifiers', 'subroutines', 'hull-items', 'hull-item-implicits'],
+    fileNames: modifiersFileNames(family),
     parse: (files) => ({
-      catalogue: parseModifiersCsv(files['item-modifiers'].content),
-      items: parseItemDefinitions(files.subroutines.content, files['hull-items'].content),
-      implicits: parseImplicitsCsv(files['hull-item-implicits'].content, vocabulary),
+      family,
+      catalogue: parseModifiersCsv(files[MODIFIER_RESOURCES[family]].content),
+      items: parseFamilyDefinitions(family, Object.fromEntries(DEFINITION_RESOURCES[family].map((name) => [name, files[name].content]))),
+      implicits: parseFamilyImplicits(family, files[IMPLICIT_RESOURCES[family]].content, vocabulary),
+      otherFileIds: parseModifiersCsv(files[MODIFIER_RESOURCES[otherFamily(family)]].content).modifiers.map((modifier) => modifier.id),
       referencesChanged: false,
     }),
     serialize: (model) => ({
-      'item-modifiers': serializeModifiersCsv(model.catalogue),
+      [MODIFIER_RESOURCES[model.family]]: serializeModifiersCsv(model.catalogue),
       ...(model.referencesChanged
-        ? {
-            subroutines: serializeSubroutinesCsv(model.items),
-            'hull-items': serializeHullItemsCsv(model.items),
-            'hull-item-implicits': serializeImplicitsCsv(model.implicits),
-          }
+        ? { ...serializeFamilyDefinitions(model.items), [IMPLICIT_RESOURCES[model.family]]: serializeFamilyImplicits(model.family, model.implicits) }
         : {}),
     }),
     validate: (model) => [
-      ...validateModifiers(model.catalogue.modifiers, vocabulary, modifierUsage(model.items.definitions, model.implicits.rows)),
+      ...validateModifiers(model.catalogue.modifiers, vocabulary, usageOf(model), model.family, new Set(model.otherFileIds)),
       ...referenceIssues(model.items.definitions, model.implicits.rows, modifierById(model.catalogue.modifiers)),
     ],
     savedMessage: (model) =>
       model.referencesChanged
-        ? 'Saved item_modifiers.csv and the renamed references in subroutines.csv, hull_items.csv and hull_item_implicits.csv'
-        : 'Saved item_modifiers.csv',
+        ? `Saved ${MODIFIER_FILE_NAMES[model.family]} and the renamed references in ${DEFINITION_FILE_NAMES[model.family]} and ${IMPLICIT_FILE_NAMES[model.family]}`
+        : `Saved ${MODIFIER_FILE_NAMES[model.family]}`,
     afterSave: (draft, saved) => {
       markModifiersSaved(draft.catalogue, saved.catalogue);
       if (saved.referencesChanged) {
@@ -83,29 +107,38 @@ export function ModifiersTab({ vocabulary }: { vocabulary: Vocabulary }) {
   const addModifier = () => {
     const slot = (slotFilter || 'prefix') as ModifierSlot;
     document.update((draft) => {
-      draft.catalogue.modifiers.push(newModifier(draft.catalogue.modifiers, slot, vocabulary));
+      draft.catalogue.modifiers.push(newModifier(draft.catalogue.modifiers, slot, vocabulary, draft.family, new Set(draft.otherFileIds)));
     });
     setSelectedIndex(modifierCount);
     setSearchText('');
+  };
+
+  const switchFamily = (nextFamily: ItemFamily) => {
+    setSelectedIndex(0);
+    setSearchText('');
+    setFamily(nextFamily);
   };
 
   return (
     <Stack h="100%" gap={0}>
       <Box px="md" py="xs">
         <DataToolbar document={document}>
+          <FamilySwitch document={document} family={family} onFamily={switchFamily} noun="modifier" />
           <Button size="xs" variant="default" leftSection={<IconPlus size={14} />} onClick={addModifier} disabled={document.state.status !== 'ready'}>
             New modifier
           </Button>
         </DataToolbar>
         <Text size="xs" c="dimmed" mt={4}>
-          Edits data/config/exiledSector/item_modifiers.csv, the shared list of modifiers that item pools and implicits pick from. Each modifier lists the item types that can roll it. Names are English;
-          add zh text under socketable.modifier.&lt;ID&gt; in zh_CN.json.
+          {family === 'chart'
+            ? 'Edits data/config/exiledSector/star_chart_modifiers.csv, the modifiers that star chart pools and system-type implicits pick from. Their values scale by tier band (t1=min-max/t6=min-max), and their ids must not repeat an id from item_modifiers.csv.'
+            : 'Edits data/config/exiledSector/item_modifiers.csv, the shared list of modifiers that item pools and implicits pick from. Each modifier lists the item types that can roll it.'}{' '}
+          Names are English; add zh text under socketable.modifier.&lt;ID&gt; in zh_CN.json.
         </Text>
       </Box>
       <Divider />
       <DocumentState state={document.state} onRetry={() => void document.reload()}>
         {(model) => {
-          const usage = modifierUsage(model.items.definitions, model.implicits.rows);
+          const usage = usageOf(model);
           const selected = model.catalogue.modifiers[selectedIndex];
           return (
             <Group align="stretch" gap={0} wrap="nowrap" style={{ flex: 1, minHeight: 0 }}>
@@ -124,8 +157,10 @@ export function ModifiersTab({ vocabulary }: { vocabulary: Vocabulary }) {
                 <Box p="md">
                   {selected ? (
                     <ModifierForm
-                      key={selectedIndex}
+                      key={`${model.family}-${selectedIndex}`}
                       document={document}
+                      family={model.family}
+                      otherFileIds={model.otherFileIds}
                       modifier={selected}
                       index={selectedIndex}
                       usage={usage.get(selected.id)}
@@ -214,6 +249,8 @@ function ModifierList({ modifiers, usage, slotFilter, onSlotFilter, searchText, 
 
 interface ModifierFormProps {
   document: DataDocument<ModifiersTabModel>;
+  family: ItemFamily;
+  otherFileIds: string[];
   modifier: ItemModifier;
   index: number;
   usage: ModifierUsage | undefined;
@@ -221,7 +258,7 @@ interface ModifierFormProps {
   onSelect: (index: number) => void;
 }
 
-function ModifierForm({ document, modifier, index, usage, vocabulary, onSelect }: ModifierFormProps) {
+function ModifierForm({ document, family, otherFileIds, modifier, index, usage, vocabulary, onSelect }: ModifierFormProps) {
   const [idText, setIdText] = useState(modifier.id);
   useEffect(() => setIdText(modifier.id), [modifier.id]);
 
@@ -250,7 +287,7 @@ function ModifierForm({ document, modifier, index, usage, vocabulary, onSelect }
         message:
           'Saved games store this id on every item that rolled it. Items whose id matches its effect name still find it, but other ids are only matched by ' +
           'their effect within the same slot, and common items whose frozen name used it take the word of their current first prefix or suffix. ' +
-          'References in subroutines.csv, hull_items.csv and hull_item_implicits.csv are renamed and saved with it. ' +
+          `References in ${DEFINITION_FILE_NAMES[family]} and ${IMPLICIT_FILE_NAMES[family]} are renamed and saved with it. ` +
           `Its socketable.modifier.${modifier.loadedId} key in zh_CN.json keeps the old id and must be renamed by hand.`,
         confirmLabel: 'Rename',
         danger: true,
@@ -266,11 +303,12 @@ function ModifierForm({ document, modifier, index, usage, vocabulary, onSelect }
   const conventionIssue = idConventionIssue(modifier);
   const suggestedId = suggestedModifierId(modifier.lines);
   const isImplicit = modifier.slot === 'implicit';
+  const isChart = family === 'chart';
 
   const duplicate = () => {
     document.update((draft) => {
       const copy = structuredClone(modifier);
-      copy.id = uniqueModifierId(draft.catalogue.modifiers, `${modifier.id}_COPY`);
+      copy.id = uniqueModifierId(draft.catalogue.modifiers, `${modifier.id}_COPY`, new Set(otherFileIds));
       copy.cells = [];
       delete copy.loadedId;
       draft.catalogue.modifiers.splice(index + 1, 0, copy);
@@ -321,14 +359,20 @@ function ModifierForm({ document, modifier, index, usage, vocabulary, onSelect }
           allowDeselect={false}
         />
       </Group>
-      <MultiSelect
-        label="Item types"
-        description="Which item types can roll it. Ship modifiers suit subroutines and hull items; other item types get their own modifiers."
-        data={shipItemTypes(vocabulary).map((itemType) => ({ value: itemType, label: ITEM_TYPE_LABELS[itemType] ?? itemType }))}
-        value={modifier.itemTypes}
-        onChange={(itemTypes) => edit((draft) => void (draft.itemTypes = itemTypes))}
-        error={modifier.itemTypes.length === 0 ? 'Pick at least one item type' : undefined}
-      />
+      {isChart ? (
+        <Text size="sm">
+          Item type: {ITEM_TYPE_LABELS.star_chart} - every modifier in star_chart_modifiers.csv rolls on star charts only.
+        </Text>
+      ) : (
+        <MultiSelect
+          label="Item types"
+          description="Which item types can roll it. Ship modifiers suit subroutines and hull items; star charts have their own modifier file."
+          data={familyItemTypes(family, vocabulary).map((itemType) => ({ value: itemType, label: ITEM_TYPE_LABELS[itemType] ?? itemType }))}
+          value={modifier.itemTypes}
+          onChange={(itemTypes) => edit((draft) => void (draft.itemTypes = itemTypes))}
+          error={modifier.itemTypes.length === 0 ? 'Pick at least one item type' : undefined}
+        />
+      )}
       {conventionIssue && (
         <Button size="xs" variant="light" w="fit-content" onClick={() => void commitId(suggestedId)}>
           Use {suggestedId}
@@ -352,7 +396,8 @@ function ModifierForm({ document, modifier, index, usage, vocabulary, onSelect }
           key={lineIndex}
           line={line}
           index={lineIndex}
-          perHullSizeAllowed={!isImplicit}
+          perHullSizeAllowed={!isImplicit && !isChart}
+          family={family}
           effectEditable
           removable={modifier.lines.length > 1}
           vocabulary={vocabulary}
@@ -365,7 +410,7 @@ function ModifierForm({ document, modifier, index, usage, vocabulary, onSelect }
         variant="default"
         w="fit-content"
         leftSection={<IconPlus size={14} />}
-        onClick={() => edit((draft) => void draft.lines.push({ effect: vocabulary.effectNames[0] ?? '', min: '1', max: '2' }))}
+        onClick={() => edit((draft) => void draft.lines.push(newModifierLine(family, vocabulary, draft.slot)))}
       >
         Add line (makes a hybrid)
       </Button>

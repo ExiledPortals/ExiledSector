@@ -1,44 +1,17 @@
 import { ActionIcon, Box, Button, Divider, Group, ScrollArea, Select, Stack, Table, Text, TextInput, Tooltip } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { IconPlus, IconSearch, IconX } from '@tabler/icons-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { getJson } from '../../../api/client.ts';
 import { DataToolbar } from '../../../shared/DataToolbar.tsx';
-import { fractionToPercentText, percentToFractionText } from '../../../shared/decimalText.ts';
-import { DecimalInput } from '../../../shared/DecimalInput.tsx';
 import { notifyError, promptText } from '../../../shared/dialogs.tsx';
 import { DocumentState } from '../../../shared/DocumentState.tsx';
+import { PercentInput } from '../../../shared/PercentInput.tsx';
 import { useDataDocument } from '../../../shared/useDataDocument.ts';
 import { DROP_SLOTS, dropSummary, parseSalvageCsv, serializeSalvageCsv, setChance, validateDrops, type DropsModel } from '../model/drops.ts';
 
 const DEFAULT_FILE = 'item_salvage.csv';
 const SLOT_INDEXES = Array.from({ length: DROP_SLOTS }, (_, slot) => slot);
-
-interface PercentCellProps {
-  fraction: string;
-  onFraction: (fraction: string) => void;
-  label: string;
-}
-
-function PercentCell({ fraction, onFraction, label }: PercentCellProps) {
-  const [text, setText] = useState(() => fractionToPercentText(fraction));
-  useEffect(() => {
-    setText((current) => (percentToFractionText(current) === fraction ? current : fractionToPercentText(fraction)));
-  }, [fraction]);
-  return (
-    <DecimalInput
-      w={78}
-      size="xs"
-      aria-label={label}
-      value={text}
-      styles={{ input: { textAlign: 'right' } }}
-      onChange={(nextText) => {
-        setText(nextText);
-        onFraction(percentToFractionText(nextText));
-      }}
-    />
-  );
-}
 
 export function DropsTab() {
   const [file, setFile] = useState(DEFAULT_FILE);
@@ -163,7 +136,7 @@ export function DropsTab() {
                         </Table.Td>
                         {SLOT_INDEXES.map((slot) => (
                           <Table.Td key={slot}>
-                            <PercentCell
+                            <PercentInput
                               label={`${row.site} item ${slot + 1} percent`}
                               fraction={row.chances[slot] ?? ''}
                               onFraction={(fraction) => document.update((draft) => setChance(draft.rows[index], slot, fraction))}
@@ -171,7 +144,7 @@ export function DropsTab() {
                           </Table.Td>
                         ))}
                         <Table.Td>
-                          <PercentCell
+                          <PercentInput
                             label={`${row.site} unique percent`}
                             fraction={row.unique}
                             onFraction={(fraction) => document.update((draft) => void (draft.rows[index].unique = fraction))}

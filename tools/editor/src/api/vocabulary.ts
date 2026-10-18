@@ -18,6 +18,28 @@ interface VocabularyFile {
   itemTypes: string[];
   itemKinds: { id: string; type: string }[];
   itemUnlocks: string[];
+  clearedChartTierPrefix?: string;
+  chartTierRange?: [number, number];
+  chartEffects?: string[];
+  chartSystemTypes?: string[];
+  chartPoiKinds?: string[];
+  chartDerelictTypes?: string[];
+  chartTierDefaults?: ChartTierDefault[];
+  chartDropSources?: ChartDropSource[];
+}
+
+export interface ChartTierDefault {
+  tier: number;
+  fleetsMin: number;
+  fleetsMax: number;
+  treePercentMin: number;
+  treePercentMax: number;
+  bossPower: number;
+}
+
+export interface ChartDropSource {
+  id: string;
+  insidePocket: boolean;
 }
 
 export interface Vocabulary {
@@ -36,6 +58,15 @@ export interface Vocabulary {
   itemKinds: string[];
   itemKindTypes: Map<string, string>;
   itemUnlocks: string[];
+  clearedChartTierPrefix: string;
+  lowestChartTier: number;
+  highestChartTier: number;
+  chartEffectNames: string[];
+  chartSystemTypes: string[];
+  chartPoiKinds: string[];
+  chartDerelictTypes: string[];
+  chartTierDefaults: ChartTierDefault[];
+  chartDropSources: ChartDropSource[];
 }
 
 export function buildVocabulary(file: VocabularyFile): Vocabulary {
@@ -55,6 +86,15 @@ export function buildVocabulary(file: VocabularyFile): Vocabulary {
     itemKinds: file.itemKinds.map((kind) => kind.id),
     itemKindTypes: new Map(file.itemKinds.map((kind) => [kind.id, kind.type])),
     itemUnlocks: file.itemUnlocks.slice(),
+    clearedChartTierPrefix: file.clearedChartTierPrefix ?? 'cleared_chart_tier_',
+    lowestChartTier: file.chartTierRange?.[0] ?? 1,
+    highestChartTier: file.chartTierRange?.[1] ?? 15,
+    chartEffectNames: (file.chartEffects ?? []).slice(),
+    chartSystemTypes: (file.chartSystemTypes ?? []).slice(),
+    chartPoiKinds: (file.chartPoiKinds ?? []).slice(),
+    chartDerelictTypes: (file.chartDerelictTypes ?? []).slice(),
+    chartTierDefaults: (file.chartTierDefaults ?? []).map((tierDefault) => ({ ...tierDefault })),
+    chartDropSources: (file.chartDropSources ?? []).map((source) => ({ ...source })),
   };
 }
 

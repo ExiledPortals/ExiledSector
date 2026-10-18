@@ -1,6 +1,8 @@
 import { Alert, Center, Loader, Tabs } from '@mantine/core';
 import { IconAlertTriangle } from '@tabler/icons-react';
 import { useVocabulary } from '../../api/vocabulary.ts';
+import { CHART_BLOCKED_ABILITY_SPEC, CHART_DROP_SPEC, CHART_FACTION_SPEC, CHART_POI_SPEC, CHART_TIER_SPEC } from './model/chartTables.ts';
+import { ChartTableTab } from './tabs/ChartTableTab.tsx';
 import { CraftingTab } from './tabs/CraftingTab.tsx';
 import { DefinitionsTab } from './tabs/DefinitionsTab.tsx';
 import { DropsTab } from './tabs/DropsTab.tsx';
@@ -35,6 +37,11 @@ export function ItemsPage() {
         <Tabs.Tab value="names">Names</Tabs.Tab>
         <Tabs.Tab value="drops">Drops</Tabs.Tab>
         <Tabs.Tab value="crafting">Crafting</Tabs.Tab>
+        <Tabs.Tab value="chart-tiers">Chart tiers</Tabs.Tab>
+        <Tabs.Tab value="chart-pois">Chart POIs</Tabs.Tab>
+        <Tabs.Tab value="chart-factions">Chart factions</Tabs.Tab>
+        <Tabs.Tab value="chart-drops">Chart drops</Tabs.Tab>
+        <Tabs.Tab value="chart-blocked-abilities">Chart blocked abilities</Tabs.Tab>
       </Tabs.List>
       <Tabs.Panel value="definitions" style={PANEL_STYLE}>
         <DefinitionsTab vocabulary={vocabulary.data} />
@@ -53,6 +60,21 @@ export function ItemsPage() {
       </Tabs.Panel>
       <Tabs.Panel value="crafting" style={PANEL_STYLE}>
         <CraftingTab />
+      </Tabs.Panel>
+      <Tabs.Panel value="chart-tiers" style={PANEL_STYLE}>
+        <ChartTableTab spec={CHART_TIER_SPEC} vocabulary={vocabulary.data} />
+      </Tabs.Panel>
+      <Tabs.Panel value="chart-pois" style={PANEL_STYLE}>
+        <ChartTableTab spec={CHART_POI_SPEC} vocabulary={vocabulary.data} />
+      </Tabs.Panel>
+      <Tabs.Panel value="chart-factions" style={PANEL_STYLE}>
+        <ChartTableTab spec={CHART_FACTION_SPEC} vocabulary={vocabulary.data} />
+      </Tabs.Panel>
+      <Tabs.Panel value="chart-drops" style={PANEL_STYLE}>
+        <ChartTableTab spec={CHART_DROP_SPEC} vocabulary={vocabulary.data} />
+      </Tabs.Panel>
+      <Tabs.Panel value="chart-blocked-abilities" style={PANEL_STYLE}>
+        <ChartTableTab spec={CHART_BLOCKED_ABILITY_SPEC} vocabulary={vocabulary.data} />
       </Tabs.Panel>
     </Tabs>
   );

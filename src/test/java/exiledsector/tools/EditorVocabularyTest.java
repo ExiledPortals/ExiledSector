@@ -38,7 +38,8 @@ class EditorVocabularyTest {
     void theManifestIsValidJsonWithEveryListTheEditorReads() throws JSONException {
         JSONObject manifest = new JSONObject(EditorVocabulary.generate());
         for (String key : new String[]{"effects", "tiers", "unlockConditionTypes", "parameterlessUnlockConditionTypes", "blueprintCategories",
-                "itemTypes", "itemKinds", "itemUnlocks"}) {
+                "itemTypes", "itemKinds", "itemUnlocks", "chartTierRange", "chartEffects", "chartSystemTypes", "chartPoiKinds", "chartDerelictTypes",
+                "chartTierDefaults", "chartDropSources"}) {
             assertTrue(manifest.getJSONArray(key).length() > 0, key);
         }
         JSONObject tags = manifest.getJSONObject("tags");

@@ -64,7 +64,7 @@ describe('tree page', () => {
   it('never gives a new or duplicated node an id that was retired or released', async () => {
     await renderLoadedTree();
     const state = useTreeStore.getState();
-    expect(state.replacedNodeIds.has('small_flux_optional_8')).toBe(true);
+    expect(state.replacedNodeIds.has('modular_hull_socket_2')).toBe(true);
     expect(state.releasedNodeIds.size).toBeGreaterThan(100);
 
     act(() => addNodeOfType('small_flux_optional', 0, 0, vocabulary));

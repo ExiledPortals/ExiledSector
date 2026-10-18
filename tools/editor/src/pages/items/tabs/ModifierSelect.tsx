@@ -8,14 +8,15 @@ interface ModifierSelectProps extends Omit<SelectProps, 'data' | 'value' | 'onCh
   itemType: string;
   value: string;
   onChange: (modifierId: string) => void;
+  catalogueFileName?: string;
 }
 
-function selectionProblem(value: string, selected: ItemModifier | undefined, slot: string, itemType: string): string | undefined {
+function selectionProblem(value: string, selected: ItemModifier | undefined, slot: string, itemType: string, catalogueFileName: string): string | undefined {
   if (!value) {
     return 'Pick a modifier';
   }
   if (!selected) {
-    return 'Not in item_modifiers.csv';
+    return `Not in ${catalogueFileName}`;
   }
   if (selected.slot !== slot) {
     return `This is a ${selected.slot}`;
@@ -23,7 +24,7 @@ function selectionProblem(value: string, selected: ItemModifier | undefined, slo
   return selected.itemTypes.includes(itemType) ? undefined : `This only rolls on ${selected.itemTypes.join(', ')}`;
 }
 
-export function ModifierSelect({ catalogue, slot, itemType, value, onChange, ...selectProps }: ModifierSelectProps) {
+export function ModifierSelect({ catalogue, slot, itemType, value, onChange, catalogueFileName = 'item_modifiers.csv', ...selectProps }: ModifierSelectProps) {
   const modifiersById = useMemo(() => new Map(catalogue.map((modifier) => [modifier.id, modifier])), [catalogue]);
   const data = useMemo<ComboboxItem[]>(() => {
     const options = catalogue
@@ -35,7 +36,7 @@ export function ModifierSelect({ catalogue, slot, itemType, value, onChange, ...
     return options;
   }, [catalogue, slot, itemType, value, modifiersById]);
   const selected = modifiersById.get(value);
-  const problem = selectionProblem(value, selected, slot, itemType);
+  const problem = selectionProblem(value, selected, slot, itemType, catalogueFileName);
 
   return (
     <Select

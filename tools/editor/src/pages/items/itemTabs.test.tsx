@@ -2,6 +2,7 @@ import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { buildVocabulary } from '../../api/vocabulary.ts';
 import { renderWithProviders } from '../../test/renderWithProviders.tsx';
+import { findLabelled } from '../../test/labelledQueries.ts';
 import { readRepositoryFile, startTestServer, type TestServer } from '../../test/testServer.ts';
 import { DefinitionsTab } from './tabs/DefinitionsTab.tsx';
 import { ImplicitsTab } from './tabs/ImplicitsTab.tsx';
@@ -12,12 +13,13 @@ const MODIFIERS_FILE = `${CONFIG_DIR}/item_modifiers.csv`;
 const HULL_ITEMS_FILE = `${CONFIG_DIR}/hull_items.csv`;
 const SUBROUTINES_FILE = `${CONFIG_DIR}/subroutines.csv`;
 const IMPLICITS_FILE = `${CONFIG_DIR}/hull_item_implicits.csv`;
+const CHART_FILES = ['star_charts.csv', 'star_chart_modifiers.csv', 'star_chart_implicits.csv'].map((name) => `${CONFIG_DIR}/${name}`);
 const vocabulary = buildVocabulary(JSON.parse(readRepositoryFile('tools/editor_vocabulary.json')));
 
 let server: TestServer;
 
 beforeAll(() => {
-  server = startTestServer(['tools/editor_vocabulary.json', MODIFIERS_FILE, SUBROUTINES_FILE, HULL_ITEMS_FILE, IMPLICITS_FILE]);
+  server = startTestServer(['tools/editor_vocabulary.json', MODIFIERS_FILE, SUBROUTINES_FILE, HULL_ITEMS_FILE, IMPLICITS_FILE, ...CHART_FILES]);
 });
 
 afterAll(async () => {
@@ -37,7 +39,7 @@ async function selectModifier(modifierId: string) {
 }
 
 function saveButton() {
-  return screen.getByRole('button', { name: 'Save to project' });
+  return screen.getByText('Save to project').closest('button') as HTMLButtonElement;
 }
 
 describe('hull item tabs', () => {
@@ -50,7 +52,7 @@ describe('hull item tabs', () => {
 
   it('edits a modifier value from a definition and saves it to item_modifiers.csv', async () => {
     renderWithProviders(<DefinitionsTab vocabulary={vocabulary} />);
-    const maxInput = await screen.findByLabelText('FLUX_CAPACITY_MULT max', undefined, { timeout: 30000 });
+    const maxInput = await findLabelled('FLUX_CAPACITY_MULT max');
     const subroutinesBefore = server.readProjectFile(SUBROUTINES_FILE);
     const modifiersBefore = server.readProjectFile(MODIFIERS_FILE);
 
@@ -67,9 +69,9 @@ describe('hull item tabs', () => {
 
   it('copies a shared modifier for one item so its values can be tuned alone', async () => {
     renderWithProviders(<DefinitionsTab vocabulary={vocabulary} />);
-    await screen.findByLabelText('FLUX_CAPACITY_MULT max', undefined, { timeout: 30000 });
+    await findLabelled('FLUX_CAPACITY_MULT max');
 
-    fireEvent.click(screen.getAllByRole('button', { name: 'Copy for this item' })[0]);
+    fireEvent.click(screen.getAllByText('Copy for this item')[0].closest('button') as HTMLButtonElement);
     await waitFor(() => expect(screen.getAllByDisplayValue('FLUX_CAPACITY_MULT_DOMAIN_SUBROUTINE_MILITARY').length).toBeGreaterThan(0));
     fireEvent.click(saveButton());
     await screen.findByText('Saved subroutines.csv, hull_items.csv and item_modifiers.csv', undefined, { timeout: 30000 });

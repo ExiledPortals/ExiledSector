@@ -1,4 +1,4 @@
-import { Avatar, Box, Divider, Group, ScrollArea, Stack, Text, TextInput } from '@mantine/core';
+import { Avatar, Box, Divider, Group, ScrollArea, Stack, Text, TextInput, Title } from '@mantine/core';
 import { parseCsvTable, serializeCsvTable } from '../../../shared/csv.ts';
 import { DataToolbar } from '../../../shared/DataToolbar.tsx';
 import { DecimalInput } from '../../../shared/DecimalInput.tsx';
@@ -46,42 +46,50 @@ export function CraftingTab() {
             <Stack p="md" gap="md" maw={1000}>
               <Text size="xs" c="dimmed">
                 Edits data/config/exiledSector/item_crafting.csv (costs) and the plugin params column of data/campaign/special_items.csv (images). Images picked from
-                graphics/unused/ move to graphics/icons/cargo/.
+                graphics/unused/ move to graphics/icons/cargo/. The three ciphers only work on star charts and only drop inside chart pockets.
               </Text>
-              {CRAFTING_ITEMS.map((item) => {
+              {CRAFTING_ITEMS.map((item, itemIndex) => {
                 const icon = materialIcon(model.specialItems, item.id);
                 const setIcon = (path: string) => document.update((draft) => setMaterialIcon(draft.specialItems, item.id, path));
                 const cost = costRow(model, item.id);
+                const startsCipherGroup = item.starChart && !CRAFTING_ITEMS[itemIndex - 1]?.starChart;
                 return (
-                  <Group key={item.id} align="flex-end" wrap="nowrap">
-                    <Avatar src={fileUrl(icon)} radius="sm" size={56} />
-                    <TextInput style={{ flex: 2 }} label={`${item.label} - image`} value={icon} onChange={(event) => setIcon(event.currentTarget.value.trim())} />
-                    <ImagePickButton targetFolder="graphics/icons/cargo/" onPicked={setIcon} />
-                    {item.cost && cost ? (
-                      <DecimalInput
-                        w={180}
-                        label="Parts to synthesise"
-                        value={cost.partsCost}
-                        onChange={(text) =>
-                          document.update((draft) => {
-                            const draftCost = costRow(draft, item.id);
-                            if (draftCost) {
-                              draftCost.partsCost = text;
-                            }
-                          })
-                        }
-                      />
-                    ) : (
-                      <Stack gap={2} w={180}>
-                        <Text size="sm" fw={500}>
-                          Parts to synthesise
-                        </Text>
-                        <Text size="xs" c="dimmed">
-                          Not synthesised - comes from disassembly or loot.
-                        </Text>
-                      </Stack>
+                  <Stack key={item.id} gap="xs">
+                    {startsCipherGroup && (
+                      <Title order={5} mt="sm">
+                        Star chart ciphers
+                      </Title>
                     )}
-                  </Group>
+                    <Group align="flex-end" wrap="nowrap">
+                      <Avatar src={fileUrl(icon)} radius="sm" size={56} />
+                      <TextInput style={{ flex: 2 }} label={`${item.label} - image`} value={icon} onChange={(event) => setIcon(event.currentTarget.value.trim())} />
+                      <ImagePickButton targetFolder="graphics/icons/cargo/" onPicked={setIcon} />
+                      {item.cost && cost ? (
+                        <DecimalInput
+                          w={180}
+                          label="Parts to synthesise"
+                          value={cost.partsCost}
+                          onChange={(text) =>
+                            document.update((draft) => {
+                              const draftCost = costRow(draft, item.id);
+                              if (draftCost) {
+                                draftCost.partsCost = text;
+                              }
+                            })
+                          }
+                        />
+                      ) : (
+                        <Stack gap={2} w={180}>
+                          <Text size="sm" fw={500}>
+                            Parts to synthesise
+                          </Text>
+                          <Text size="xs" c="dimmed">
+                            Not synthesised - comes from disassembly or loot.
+                          </Text>
+                        </Stack>
+                      )}
+                    </Group>
+                  </Stack>
                 );
               })}
             </Stack>

@@ -38,22 +38,44 @@ export function wordList(text: string): string[] {
     .filter(Boolean);
 }
 
+function wordFieldLines(words: RareNameWords, indent: string): string[] {
+  return Object.keys(words).map((key) => {
+    const value = words[key];
+    const text = Array.isArray(value) ? `[${value.map((word) => JSON.stringify(word)).join(', ')}]` : JSON.stringify(value);
+    return `${indent}${JSON.stringify(key)}: ${text}`;
+  });
+}
+
 export function serializeRareNames(names: Record<string, RareNameWords>, lineEnding: LineEnding = '\n'): string {
   const text =
     '{\n' +
     Object.keys(names)
-      .map((hullItemId) => {
-        const words = names[hullItemId];
-        const lines = Object.keys(words).map((key) => {
-          const value = words[key];
-          const text = Array.isArray(value) ? `[${value.map((word) => JSON.stringify(word)).join(', ')}]` : JSON.stringify(value);
-          return `\t\t${JSON.stringify(key)}: ${text}`;
-        });
-        return `\t${JSON.stringify(hullItemId)}: {\n${lines.join(',\n')}\n\t}`;
-      })
+      .map((hullItemId) => `\t${JSON.stringify(hullItemId)}: {\n${wordFieldLines(names[hullItemId], '\t\t').join(',\n')}\n\t}`)
       .join(',\n') +
     '\n}\n';
   return withLineEnding(text, lineEnding);
+}
+
+export interface StarChartNamesModel {
+  words: RareNameWords;
+  lineEnding: LineEnding;
+}
+
+export function serializeStarChartNames(words: RareNameWords, lineEnding: LineEnding = '\n'): string {
+  const lines = wordFieldLines(words, '\t');
+  return withLineEnding(lines.length === 0 ? '{\n}\n' : `{\n${lines.join(',\n')}\n}\n`, lineEnding);
+}
+
+export function validateStarChartNames(model: StarChartNamesModel): string[] {
+  const issues: string[] = [];
+  if (!(model.words.first ?? []).length || !(model.words.second ?? []).length) {
+    issues.push('Star charts: need at least one first word and one second word');
+  }
+  const styleText = String(model.words.style ?? 'codename').trim().toLowerCase();
+  if (!RARE_NAME_STYLES.some((style) => style.value === styleText)) {
+    issues.push(`Star charts: style must be one of ${RARE_NAME_STYLES.map((style) => style.value).join(', ')}`);
+  }
+  return issues;
 }
 
 export function sampleNames(words: RareNameWords, random: () => number = Math.random): string[] {

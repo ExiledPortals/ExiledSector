@@ -1,14 +1,17 @@
-import { Button, Group, Paper, Stack, Text } from '@mantine/core';
+import { Button, Group, Paper, Stack, Text, TextInput } from '@mantine/core';
 import { IconCopy } from '@tabler/icons-react';
+import { memo } from 'react';
 import type { Vocabulary } from '../../../api/vocabulary.ts';
 import { DecimalInput } from '../../../shared/DecimalInput.tsx';
 import { RowButtons } from '../../../shared/MoveButtons.tsx';
-import type { PoolEntry } from '../model/definitions.ts';
+import type { AffixGroup, PoolEntry } from '../model/definitions.ts';
+import { MODIFIER_FILE_NAMES, type ItemFamily } from '../model/itemFamily.ts';
 import type { ItemModifier, ModifierLine } from '../model/modifiers.ts';
 import { ModifierLineRow } from './ModifierLineRow.tsx';
 import { ModifierSelect } from './ModifierSelect.tsx';
 
 interface PoolEntryRowProps {
+  groupKey: AffixGroup;
   entry: PoolEntry;
   slot: 'prefix' | 'suffix';
   itemType: string;
@@ -16,16 +19,18 @@ interface PoolEntryRowProps {
   count: number;
   share: number;
   catalogue: ItemModifier[];
-  otherItemsUsingModifier: string[];
+  otherItemsUsingModifier: string;
   vocabulary: Vocabulary;
-  onEdit: (recipe: (entry: PoolEntry) => void) => void;
-  onEditModifier: (recipe: (modifier: ItemModifier) => void) => void;
-  onCopyModifier: () => void;
-  onMove: (from: number, to: number) => void;
-  onRemove: () => void;
+  family?: ItemFamily;
+  onEdit: (groupKey: AffixGroup, entryIndex: number, recipe: (entry: PoolEntry) => void) => void;
+  onEditModifier: (modifierId: string, recipe: (modifier: ItemModifier) => void) => void;
+  onCopyModifier: (groupKey: AffixGroup, entryIndex: number) => void;
+  onMove: (groupKey: AffixGroup, from: number, to: number) => void;
+  onRemove: (groupKey: AffixGroup, entryIndex: number) => void;
 }
 
-export function PoolEntryRow({
+export const PoolEntryRow = memo(function PoolEntryRow({
+  groupKey,
   entry,
   slot,
   itemType,
@@ -35,14 +40,16 @@ export function PoolEntryRow({
   catalogue,
   otherItemsUsingModifier,
   vocabulary,
+  family = 'ship',
   onEdit,
   onEditModifier,
   onCopyModifier,
   onMove,
   onRemove,
 }: PoolEntryRowProps) {
+  const editEntry = (recipe: (draft: PoolEntry) => void) => onEdit(groupKey, index, recipe);
   const modifier = entry.inlineText === undefined ? catalogue.find((candidate) => candidate.id === entry.modifierId) : undefined;
-  const editLine = (lineIndex: number, recipe: (line: ModifierLine) => void) => onEditModifier((draft) => recipe(draft.lines[lineIndex]));
+  const editLine = (lineIndex: number, recipe: (line: ModifierLine) => void) => onEditModifier(entry.modifierId, (draft) => recipe(draft.lines[lineIndex]));
   return (
     <Paper withBorder p="xs">
       <Stack gap="xs">
@@ -54,8 +61,9 @@ export function PoolEntryRow({
             slot={slot}
             itemType={itemType}
             value={entry.modifierId}
+            catalogueFileName={MODIFIER_FILE_NAMES[family]}
             onChange={(modifierId) =>
-              onEdit((draft) => {
+              editEntry((draft) => {
                 draft.modifierId = modifierId;
                 delete draft.inlineText;
               })
@@ -73,10 +81,34 @@ export function PoolEntryRow({
             }
             placeholder="1"
             value={entry.weight}
-            onChange={(text) => onEdit((draft) => void (draft.weight = text))}
+            onChange={(text) =>
+              editEntry((draft) => {
+                draft.weight = text;
+                delete draft.emptyWeightField;
+              })
+            }
           />
+          {family === 'chart' && (
+            <TextInput
+              style={{ flex: 1 }}
+              label="Tiers"
+              placeholder="all"
+              description="t3+, t2-6 or t5"
+              value={entry.tiers ?? ''}
+              onChange={(event) => {
+                const tiers = event.currentTarget.value.trim();
+                editEntry((draft) => {
+                  if (tiers) {
+                    draft.tiers = tiers;
+                  } else {
+                    delete draft.tiers;
+                  }
+                });
+              }}
+            />
+          )}
           <Group pt={24}>
-            <RowButtons index={index} count={count} onMove={onMove} onRemove={onRemove} />
+            <RowButtons index={index} count={count} onMove={(from, to) => onMove(groupKey, from, to)} onRemove={() => onRemove(groupKey, index)} />
           </Group>
         </Group>
         {modifier &&
@@ -85,7 +117,8 @@ export function PoolEntryRow({
               key={lineIndex}
               line={line}
               index={lineIndex}
-              perHullSizeAllowed
+              perHullSizeAllowed={family !== 'chart'}
+              family={family}
               effectEditable={false}
               removable={false}
               vocabulary={vocabulary}
@@ -93,12 +126,12 @@ export function PoolEntryRow({
               onRemove={() => undefined}
             />
           ))}
-        {modifier && otherItemsUsingModifier.length > 0 && (
+        {modifier && otherItemsUsingModifier !== '' && (
           <Group gap="xs" justify="space-between" wrap="nowrap">
             <Text size="xs" c="orange">
-              {modifier.id} is shared: editing its values also changes {otherItemsUsingModifier.join(', ')}.
+              {modifier.id} is shared: editing its values also changes {otherItemsUsingModifier}.
             </Text>
-            <Button size="compact-xs" variant="light" leftSection={<IconCopy size={12} />} onClick={onCopyModifier}>
+            <Button size="compact-xs" variant="light" leftSection={<IconCopy size={12} />} onClick={() => onCopyModifier(groupKey, index)}>
               Copy for this item
             </Button>
           </Group>
@@ -106,4 +139,4 @@ export function PoolEntryRow({
       </Stack>
     </Paper>
   );
-}
+});

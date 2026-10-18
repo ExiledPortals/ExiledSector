@@ -107,6 +107,30 @@ export function resolveDataResource(paths: ProjectPaths, name: string): DataReso
       return { filePath: path.join(configDir, 'item_crafting.csv'), check: (text) => checkCsvHeader(text, 'item,', 'the item column') };
     case 'hull-item-implicits':
       return { filePath: path.join(configDir, 'hull_item_implicits.csv'), check: (text) => checkCsvHeader(text, 'section,', 'the section column') };
+    case 'star-charts':
+      return { filePath: path.join(configDir, 'star_charts.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
+    case 'star-chart-modifiers':
+      return { filePath: path.join(configDir, 'star_chart_modifiers.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
+    case 'star-chart-implicits':
+      return {
+        filePath: path.join(configDir, 'star_chart_implicits.csv'),
+        check: (text) => checkCsvHeader(text, 'system_type,', 'the system_type column'),
+      };
+    case 'star-chart-names':
+      return { filePath: path.join(configDir, 'star_chart_names.json'), check: checkJsonObject };
+    case 'star-chart-tiers':
+      return { filePath: path.join(configDir, 'star_chart_tiers.csv'), check: (text) => checkCsvHeader(text, 'tier,', 'the tier column') };
+    case 'chart-pois':
+      return { filePath: path.join(configDir, 'chart_poi.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
+    case 'chart-factions':
+      return { filePath: path.join(configDir, 'chart_factions.csv'), check: (text) => checkCsvHeader(text, 'faction,', 'the faction column') };
+    case 'chart-blocked-abilities':
+      return {
+        filePath: path.join(configDir, 'chart_blocked_abilities.csv'),
+        check: (text) => checkCsvHeader(text, 'ability_id,', 'the ability_id column'),
+      };
+    case 'chart-drops':
+      return { filePath: path.join(configDir, 'chart_drops.csv'), check: (text) => checkCsvHeader(text, 'source,', 'the source column') };
     case 'strings-en':
       return { filePath: path.join(paths.projectRoot, 'data', 'strings', 'exiledSector', 'en.json'), check: checkStringCatalogue };
     case 'commodities':

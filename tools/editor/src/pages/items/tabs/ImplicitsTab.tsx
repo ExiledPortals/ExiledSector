@@ -1,21 +1,23 @@
 import { Box, Button, Divider, Group, Paper, ScrollArea, Stack, Text, Title } from '@mantine/core';
 import { IconCopy, IconPlus } from '@tabler/icons-react';
+import { useState } from 'react';
 import type { Vocabulary } from '../../../api/vocabulary.ts';
 import type { CsvTable } from '../../../shared/csv.ts';
 import { DataToolbar } from '../../../shared/DataToolbar.tsx';
 import { DocumentState } from '../../../shared/DocumentState.tsx';
 import { RowButtons } from '../../../shared/MoveButtons.tsx';
 import { useDataDocument } from '../../../shared/useDataDocument.ts';
-import { HULL_ITEM_TYPE } from '../model/definitions.ts';
 import {
+  implicitItemType,
   newImplicit,
-  parseImplicitsCsv,
-  serializeImplicitsCsv,
+  parseFamilyImplicits,
+  serializeFamilyImplicits,
   validateImplicits,
   type ImplicitReference,
   type ImplicitRow,
   type ImplicitsModel,
 } from '../model/implicits.ts';
+import { IMPLICIT_FILE_NAMES, IMPLICIT_RESOURCES, MODIFIER_FILE_NAMES, MODIFIER_RESOURCES, type ItemFamily } from '../model/itemFamily.ts';
 import { modifierUsage } from '../model/modifierUsage.ts';
 import {
   copiedModifier,
@@ -27,6 +29,7 @@ import {
   type ItemModifier,
   type ModifierLine,
 } from '../model/modifiers.ts';
+import { FamilySwitch } from './FamilySwitch.tsx';
 import { ModifierLineRow } from './ModifierLineRow.tsx';
 import { ModifierSelect } from './ModifierSelect.tsx';
 
@@ -35,41 +38,60 @@ interface ImplicitsTabProps {
 }
 
 interface ImplicitsTabModel extends ImplicitsModel {
+  family: ItemFamily;
   catalogue: ItemModifier[];
   catalogueTable: CsvTable;
   catalogueChanged: boolean;
+  otherFileIds: string[];
 }
 
-function sectionLabel(section: string): string {
-  return section
+function groupLabel(group: string, family: ItemFamily): string {
+  if (family === 'chart') {
+    return group === 'any' ? 'Any system type' : group;
+  }
+  return group
     .split('_')
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
 }
 
+function otherFamily(family: ItemFamily): ItemFamily {
+  return family === 'chart' ? 'ship' : 'chart';
+}
+
 export function ImplicitsTab({ vocabulary }: ImplicitsTabProps) {
+  const [family, setFamily] = useState<ItemFamily>('ship');
   const document = useDataDocument<ImplicitsTabModel>({
     key: 'items.implicits',
     noun: 'implicits',
-    fileNames: ['hull-item-implicits', 'item-modifiers'],
+    fileNames: [IMPLICIT_RESOURCES[family], MODIFIER_RESOURCES[family], MODIFIER_RESOURCES[otherFamily(family)]],
     parse: (files) => {
-      const modifiers = parseModifiersCsv(files['item-modifiers'].content);
+      const modifiers = parseModifiersCsv(files[MODIFIER_RESOURCES[family]].content);
       return {
-        ...parseImplicitsCsv(files['hull-item-implicits'].content, vocabulary),
+        ...parseFamilyImplicits(family, files[IMPLICIT_RESOURCES[family]].content, vocabulary),
+        family,
         catalogue: modifiers.modifiers,
         catalogueTable: modifiers.table,
         catalogueChanged: false,
+        otherFileIds: parseModifiersCsv(files[MODIFIER_RESOURCES[otherFamily(family)]].content).modifiers.map((modifier) => modifier.id),
       };
     },
     serialize: (model) => ({
-      'hull-item-implicits': serializeImplicitsCsv(model),
-      ...(model.catalogueChanged ? { 'item-modifiers': serializeModifiersCsv({ table: model.catalogueTable, modifiers: model.catalogue }) } : {}),
+      [IMPLICIT_RESOURCES[model.family]]: serializeFamilyImplicits(model.family, model),
+      ...(model.catalogueChanged
+        ? { [MODIFIER_RESOURCES[model.family]]: serializeModifiersCsv({ table: model.catalogueTable, modifiers: model.catalogue }) }
+        : {}),
     }),
     validate: (model) => [
-      ...validateImplicits(model, vocabulary, modifierById(model.catalogue)),
-      ...(model.catalogueChanged ? validateModifiers(model.catalogue, vocabulary, modifierUsage([], model.rows)) : []),
+      ...validateImplicits(model, vocabulary, modifierById(model.catalogue), model.family),
+      ...(model.catalogueChanged
+        ? validateModifiers(model.catalogue, vocabulary, modifierUsage([], model.rows, implicitItemType(model.family)), model.family, new Set(model.otherFileIds))
+        : []),
     ],
-    savedMessage: (model) => (model.catalogueChanged ? 'Saved hull_item_implicits.csv and item_modifiers.csv' : 'Saved hull_item_implicits.csv'),
+    savedMessage: (model) =>
+      model.catalogueChanged
+        ? `Saved ${IMPLICIT_FILE_NAMES[model.family]} and ${MODIFIER_FILE_NAMES[model.family]}`
+        : `Saved ${IMPLICIT_FILE_NAMES[model.family]}`,
     afterSave: (draft, saved) => {
       markModifiersSaved({ table: draft.catalogueTable, modifiers: draft.catalogue }, { table: saved.catalogueTable, modifiers: saved.catalogue });
       if (saved.catalogueChanged) {
@@ -102,7 +124,7 @@ export function ImplicitsTab({ vocabulary }: ImplicitsTabProps) {
       if (!reference || !source) {
         return;
       }
-      const copy = copiedModifier(draft.catalogue, source, section, HULL_ITEM_TYPE);
+      const copy = copiedModifier(draft.catalogue, source, section, implicitItemType(draft.family), new Set(draft.otherFileIds));
       draft.catalogue.push(copy);
       reference.modifierId = copy.id;
       draft.catalogueChanged = true;
@@ -111,31 +133,32 @@ export function ImplicitsTab({ vocabulary }: ImplicitsTabProps) {
   return (
     <Stack h="100%" gap={0}>
       <Box px="md" py="xs">
-        <DataToolbar document={document} />
+        <DataToolbar document={document}>
+          <FamilySwitch document={document} family={family} onFamily={setFamily} noun="implicit" />
+        </DataToolbar>
       </Box>
       <Divider />
       <DocumentState state={document.state} onRetry={() => void document.reload()}>
         {(model) => {
-          const usage = modifierUsage([], model.rows);
+          const usage = modifierUsage([], model.rows, implicitItemType(model.family));
           return (
             <ScrollArea style={{ flex: 1 }} type="auto">
               <Stack p="md" gap="md" maw={1000}>
                 <Text size="xs" c="dimmed">
-                  Edits data/config/exiledSector/hull_item_implicits.csv. Every hull item of a section rolls all of that section&apos;s implicits, uniques
-                  included. Each implicit is a hull item modifier from item_modifiers.csv with the implicit slot; its values can be edited here or in the
-                  Modifiers tab, and a modifier shared by several sections changes all of them unless you copy it for one section. Subroutines never get
-                  implicits. Items already rolled keep their values when these change.
+                  {model.family === 'chart'
+                    ? 'Edits data/config/exiledSector/star_chart_implicits.csv. Every star chart of a system type rolls all of that type\'s implicits, uniques included; charts whose system type is "any" use the Any row. Each implicit is a star chart modifier from star_chart_modifiers.csv with the implicit slot; its values can be edited here or in the Modifiers tab, and a modifier shared by several system types changes all of them unless you copy it for one. Charts already rolled keep their values when these change.'
+                    : "Edits data/config/exiledSector/hull_item_implicits.csv. Every hull item of a section rolls all of that section's implicits, uniques included. Each implicit is a hull item modifier from item_modifiers.csv with the implicit slot; its values can be edited here or in the Modifiers tab, and a modifier shared by several sections changes all of them unless you copy it for one section. Subroutines never get implicits. Items already rolled keep their values when these change."}
                 </Text>
                 {model.rows.map((row) => (
                   <Paper key={row.section} withBorder p="sm">
                     <Stack gap="xs">
                       <Group justify="space-between">
-                        <Title order={5}>{sectionLabel(row.section)}</Title>
+                        <Title order={5}>{groupLabel(row.section, model.family)}</Title>
                         <Button
                           size="xs"
                           variant="light"
                           leftSection={<IconPlus size={14} />}
-                          onClick={() => editRow(row.section, (draft) => void draft.implicits.push(newImplicit(model.catalogue)))}
+                          onClick={() => editRow(row.section, (draft) => void draft.implicits.push(newImplicit(model.catalogue, model.family)))}
                         >
                           Add implicit
                         </Button>
@@ -148,11 +171,14 @@ export function ImplicitsTab({ vocabulary }: ImplicitsTabProps) {
                         row.implicits.map((implicit, index) => (
                           <ImplicitEntryRow
                             key={index}
+                            family={model.family}
                             implicit={implicit}
                             index={index}
                             count={row.implicits.length}
                             catalogue={model.catalogue}
-                            otherSectionsUsingModifier={(usage.get(implicit.modifierId)?.implicitSections ?? []).filter((section) => section !== row.section)}
+                            otherGroupsUsingModifier={(usage.get(implicit.modifierId)?.implicitSections ?? [])
+                              .filter((section) => section !== row.section)
+                              .map((section) => groupLabel(section, model.family))}
                             vocabulary={vocabulary}
                             onSelect={(modifierId) =>
                               editRow(row.section, (draft) => {
@@ -184,11 +210,12 @@ export function ImplicitsTab({ vocabulary }: ImplicitsTabProps) {
 }
 
 interface ImplicitEntryRowProps {
+  family: ItemFamily;
   implicit: ImplicitReference;
   index: number;
   count: number;
   catalogue: ItemModifier[];
-  otherSectionsUsingModifier: string[];
+  otherGroupsUsingModifier: string[];
   vocabulary: Vocabulary;
   onSelect: (modifierId: string) => void;
   onEditModifier: (recipe: (modifier: ItemModifier) => void) => void;
@@ -198,11 +225,12 @@ interface ImplicitEntryRowProps {
 }
 
 function ImplicitEntryRow({
+  family,
   implicit,
   index,
   count,
   catalogue,
-  otherSectionsUsingModifier,
+  otherGroupsUsingModifier,
   vocabulary,
   onSelect,
   onEditModifier,
@@ -221,7 +249,8 @@ function ImplicitEntryRow({
             label={implicit.inlineText === undefined ? `Implicit ${index + 1}` : `Implicit ${index + 1} (was written inline as ${implicit.inlineText})`}
             catalogue={catalogue}
             slot="implicit"
-            itemType={HULL_ITEM_TYPE}
+            itemType={implicitItemType(family)}
+            catalogueFileName={MODIFIER_FILE_NAMES[family]}
             value={implicit.modifierId}
             onChange={onSelect}
           />
@@ -236,6 +265,7 @@ function ImplicitEntryRow({
               line={line}
               index={lineIndex}
               perHullSizeAllowed={false}
+              family={family}
               effectEditable={false}
               removable={false}
               vocabulary={vocabulary}
@@ -243,13 +273,13 @@ function ImplicitEntryRow({
               onRemove={() => undefined}
             />
           ))}
-        {modifier && otherSectionsUsingModifier.length > 0 && (
+        {modifier && otherGroupsUsingModifier.length > 0 && (
           <Group gap="xs" justify="space-between" wrap="nowrap">
             <Text size="xs" c="orange">
-              {modifier.id} is shared: editing its values also changes the {otherSectionsUsingModifier.map(sectionLabel).join(', ')} implicits.
+              {modifier.id} is shared: editing its values also changes the {otherGroupsUsingModifier.join(', ')} implicits.
             </Text>
             <Button size="compact-xs" variant="light" leftSection={<IconCopy size={12} />} onClick={onCopyModifier}>
-              Copy for this section
+              {family === 'chart' ? 'Copy for this system type' : 'Copy for this section'}
             </Button>
           </Group>
         )}

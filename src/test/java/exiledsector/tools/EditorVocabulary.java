@@ -7,15 +7,22 @@ import exiledsector.skills.skilleffect.StatMode;
 import exiledsector.skills.tags.SkillTags;
 import exiledsector.skills.unlock.BlueprintCategory;
 import exiledsector.skills.unlock.UnlockConditionType;
+import exiledsector.charts.ChartDrops;
+import exiledsector.charts.ChartEditorVocabulary;
+import exiledsector.charts.ChartEffect;
+import exiledsector.charts.ChartPoi;
+import exiledsector.charts.ChartTiers;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemUnlock;
+import exiledsector.items.StarChartDefinitions;
 import org.json.JSONObject;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -57,7 +64,20 @@ final class EditorVocabulary {
                         .collect(Collectors.joining(", ")))
                 .append("],\n");
         json.append("  \"itemUnlocks\": ")
-                .append(list(Arrays.stream(ItemUnlock.values()).map(ItemUnlock::id).toList())).append("\n");
+                .append(list(Arrays.stream(ItemUnlock.values()).map(ItemUnlock::id).toList())).append(",\n");
+        json.append("  \"clearedChartTierPrefix\": ").append(quote(ItemUnlock.CLEARED_CHART_TIER_PREFIX)).append(",\n");
+        json.append("  \"chartTierRange\": [").append(ChartTiers.LOWEST_TIER).append(", ").append(ChartTiers.HIGHEST_TIER).append("],\n");
+        json.append("  \"chartEffects\": ").append(list(Arrays.stream(ChartEffect.values()).map(Enum::name).toList())).append(",\n");
+        json.append("  \"chartSystemTypes\": ").append(list(StarChartDefinitions.SYSTEM_TYPES)).append(",\n");
+        json.append("  \"chartPoiKinds\": ")
+                .append(list(Arrays.stream(ChartPoi.Kind.values()).map(kind -> kind.name().toLowerCase(Locale.ROOT)).toList())).append(",\n");
+        json.append("  \"chartDerelictTypes\": ").append(list(ChartEditorVocabulary.derelictTypes())).append(",\n");
+        json.append("  \"chartTierDefaults\": [").append(String.join(", ", ChartEditorVocabulary.tierDefaultsJson())).append("],\n");
+        json.append("  \"chartDropSources\": [")
+                .append(Arrays.stream(ChartDrops.Source.values())
+                        .map(source -> "{\"id\": " + quote(source.id()) + ", \"insidePocket\": " + source.insidePocket() + "}")
+                        .collect(Collectors.joining(", ")))
+                .append("]\n");
         return json.append("}\n").toString();
     }
 

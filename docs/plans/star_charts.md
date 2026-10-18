@@ -317,8 +317,23 @@ Each phase ends with tests passing and, from phase 1 onwards, the soak check.
    - pass the tier to `ItemRollOdds` and the codex when a chart is shown, and cache `ScaleContext` if chart tooltips build it every frame.
 6. **The Star Chart UI.** Tier columns or tabs, the selected-chart panel, the currency buttons, and the Open Wormhole button with the one-run lock and a dev switch in place of the colony building. Since 2026-10-18 it is the Star Charts tab of the universal Items panel, beside Hull Items and Hull Upgrades, in the refit Hull Items screen and the skill tree socketing panel alike; the old console-opened screen and its command are gone. Opening a wormhole closes the panel, the refit screen and any market dialog it sits in, so the player lands on the campaign map beside the wormhole. Opening is refused during a fleet encounter, because that dialog cannot be closed safely from outside.
 7. **Crafting currencies and chart drops (done 2026-10-18).** The sustain loop and tier progression, described under "Chart currencies and drops" below.
-8. **Editor and localisation.** Editor pages, round-trip tests, and the zh_CN text.
-9. **The colony building.** It enables the Open Wormhole button and replaces the dev switch. Its image is `Wormhole_gateway.png`, which the user added to the main checkout at `graphics/unused/Wormhole_gateway.png` (untracked as of 2026-10-18; move it to the building graphics folder when the building is built). The rest of its design (industry or structure, where opening is allowed, whether the Star Charts tab needs it to open wormholes, upgrades and AI cores, the fate of the dev setting, running costs) is decided at phase 9.
+8. **Editor and localisation (done 2026-10-18).** The Definitions, Modifiers, Implicits and Names tabs have an item-type switch between hull items and subroutines and star charts, covering `star_charts.csv` (system type, minimum tier, cleared-tier unlocks, tier-gated pool entries), `star_chart_modifiers.csv` (tier-band values), `star_chart_implicits.csv` and `star_chart_names.json`. The Crafting tab lists the three ciphers. New Chart tiers, Chart POIs, Chart factions, Chart drops and Chart blocked abilities tabs edit the pocket tables, refusing what the loaders skip and warning, before saving, about what they clamp or ignore, such as a cipher chance outside pockets. Every chart file round-trips byte for byte in vitest, including quotes the files had, and `EditorRoundTripTest` pins every chart loader. Every chart key in `en.json` already had zh_CN text, apart from the `.one` plural forms, which Chinese never uses.
+9. **The colony building.** It enables the Open Wormhole button and replaces the dev switch. Its image is `Wormhole_gateway.png`, which the user added to the main checkout at `graphics/unused/Wormhole_gateway.png` (untracked as of 2026-10-18; move it to the building graphics folder when the building is built). Decided with the user on 2026-10-18:
+   - The Wormhole Gateway is a structure, not an industry, because Ashes of the Domain makes industry slots scarce. One is allowed per faction, and it cannot be raided.
+   - A wormhole can be opened only while docked at the planet that has the Gateway. Opening a wormhole from the Star Charts tab needs a working Gateway.
+   - It has a reasonable monthly upkeep. Whether opening a wormhole should also cost something is to be investigated later.
+   - It has no AI core or administrator effects for now; those are a later addition.
+   - Its `init` and `apply` must have no side effects and must work with a null market. Vaults of Knowledge builds industries on a fake market for tooltips, and Tides of Tomorrow calls `getNewPluginInstance(null)`.
+   - With Ashes of the Domain Vaults of Knowledge (`aotd_vok`) enabled, the Gateway is also a research node.
+     - The node goes in `data/campaign/aotd_tech_options.csv`, in Vaults of Knowledge's own tab (`modId=aotd_vok`), at tier 5, column 1, row 6, directly below the Bifrost Gate.
+     - Like the Bifrost, it requires `aotd_tech_hyperspace_stabilization`. It carries the `$aotd_experimental_tier` requirement like every tier 5 node, so it needs a Hyperdimensional Processor. That is intended, since Star Charts are an endgame mechanic.
+     - It costs `research_databank:12`, takes 30 research time, and has an `:industry` reward naming the Gateway.
+     - Its icon is registered under `graphics.ui_icons_tech_tree` in `settings.json`.
+     - The research check runs at runtime, behind `isModEnabled("aotd_vok")`, through `exiledsector.compat.ApiMember` to `AoTDMainResearchManager.getInstance().isResearchedForPlayer(id)`. There is no pom dependency.
+     - The parser splits `otherReq` and reward text on colons, so neither may contain an extra colon. It also does not trim `reqToResearchFirst`, so it must contain no spaces.
+   - Pocket planets need the `not_random_mission_target` tag, which so far only the pocket system has. Vaults of Secrets' Project Charon otherwise picks unsurveyed planets. Pockets must never get ruins, remnant or derelict theme tags, or station-mode Remnant fleets, which Vaults of Secrets' Rogue AI looks for.
+   - Farming QoL commission merit in pockets is fine.
+   - Still open: the fate of the dev setting, and upgrade or downgrade chains for a maximum chart tier. Better Market Overhaul turns those chains into upgrade paths.
 10. **Polish.** Wormhole visuals and sounds, the fleet preview, and balance.
 
 Atlas progression is deferred to a later project.
@@ -359,8 +374,8 @@ Chart-only currencies only drop from the pocket sources; the loader zeroes a cur
 
 A unique chart's unlock column takes an `ItemUnlock` id or `cleared_chart_tier_N`. Completing an objective on a tier N chart raises the sector memory value `$exiledSector_chartsClearedTier` to N if it was lower, so the unlock stays latched. The Warden's Vigil needs a cleared tier 3 chart. A unique also never drops below its minimum tier, and an unknown unlock id is logged at load and never drops.
 
-Rare charts take codename words from `star_chart_names.json`, which the editor doesn't touch.
+Rare charts take codename words from `star_chart_names.json`, which the editor's Names tab edits.
 
 None of this adds anything to a save for a closed run. The only new save value is that cleared-tier number.
 
-Left for later phases: editor pages for `chart_drops.csv` and `star_chart_names.json` and the chart currencies in the Crafting tab (phase 8), and drop balance (phase 10).
+Left for later phases: drop balance (phase 10).

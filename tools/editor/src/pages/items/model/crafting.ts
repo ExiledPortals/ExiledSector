@@ -7,20 +7,24 @@ export interface CraftingItem {
   id: string;
   label: string;
   cost: boolean;
+  starChart?: boolean;
 }
 
 export const CRAFTING_ITEMS: CraftingItem[] = [
   { id: 'exiledSector_socketable_parts', label: 'Nanite Feedstock', cost: false },
   { id: 'exiledSector_augmentation_kernel', label: 'Augmentation Nanoswarm', cost: true },
   { id: 'exiledSector_attunement_kernel', label: 'Fundamental Nanoswarm', cost: true },
-  { id: 'exiledSector_recalibration_kernel', label: 'Tuning Nanoswarm', cost: true },
+  { id: 'exiledSector_recalibration_kernel', label: 'Tuning Nanoswarm', cost: false },
   { id: 'exiledSector_substitution_kernel', label: 'Reshaping Nanoswarm', cost: true },
-  { id: 'exiledSector_transposition_kernel', label: 'Metamorph Nanoswarm', cost: true },
-  { id: 'exiledSector_fixation_kernel', label: 'Immutable Nanoswarm', cost: true },
+  { id: 'exiledSector_transposition_kernel', label: 'Metamorph Nanoswarm', cost: false },
+  { id: 'exiledSector_fixation_kernel', label: 'Immutable Nanoswarm', cost: false },
   { id: 'exiledSector_corruption_kernel', label: 'Corrupted Nanoswarm', cost: true },
   { id: 'exiledSector_replication_kernel', label: 'Replicator Nanoseed', cost: false },
   { id: 'exiledSector_prefix_ward', label: 'Prefix Inhibitor', cost: false },
   { id: 'exiledSector_suffix_ward', label: 'Suffix Inhibitor', cost: false },
+  { id: 'exiledSector_reforge_cipher', label: 'Reforging Cipher', cost: true, starChart: true },
+  { id: 'exiledSector_annul_cipher', label: 'Annulment Cipher', cost: true, starChart: true },
+  { id: 'exiledSector_cartographer_cipher', label: "Cartographer's Cipher", cost: true, starChart: true },
 ];
 
 export interface CostRow {

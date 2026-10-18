@@ -8,7 +8,7 @@ function addOnce(values: string[], value: string): void {
   }
 }
 
-export function modifierUsage(definitions: ItemDefinition[], implicitRows: ImplicitRow[]): Map<string, ModifierUsage> {
+export function modifierUsage(definitions: ItemDefinition[], implicitRows: ImplicitRow[], implicitItemType: string = HULL_ITEM_TYPE): Map<string, ModifierUsage> {
   const usage = new Map<string, ModifierUsage>();
   const usageOf = (modifierId: string) => {
     let entry = usage.get(modifierId);
@@ -38,7 +38,7 @@ export function modifierUsage(definitions: ItemDefinition[], implicitRows: Impli
       if (reference.inlineText === undefined) {
         const referenceUsage = usageOf(reference.modifierId);
         referenceUsage.implicitSections.push(row.section);
-        addOnce(referenceUsage.itemTypes, HULL_ITEM_TYPE);
+        addOnce(referenceUsage.itemTypes, implicitItemType);
       }
     }
   }

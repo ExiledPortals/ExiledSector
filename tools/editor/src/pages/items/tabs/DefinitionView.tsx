@@ -12,11 +12,14 @@ interface DefinitionViewProps {
   definition: ItemDefinition;
   catalogue: ItemModifier[];
   implicitModifierIds: string[];
+  catalogueFileName?: string;
+  describeLines?: boolean;
 }
 
 interface ViewRow {
   key: string;
   weight: string;
+  tiers?: string;
   share: number | null;
   modifierId: string;
   modifier: ItemModifier | undefined;
@@ -24,6 +27,9 @@ interface ViewRow {
 }
 
 function lineRequest(line: ModifierLine): ModifierLineRequest | null {
+  if (line.tierBands) {
+    return null;
+  }
   if (line.hullValues) {
     return line.hullValues.every(isNumberText) ? { effect: line.effect, hullValues: line.hullValues.map(Number) } : null;
   }
@@ -74,11 +80,12 @@ function LineText({ line, describedByKey }: { line: ModifierLine; describedByKey
   return <div>{markup ? renderMarkup(markup) : lineSummary(line)}</div>;
 }
 
-function rowsOf(entries: { modifierId: string; weight: string; inlineText?: string }[], catalogue: ItemModifier[], withShares: boolean): ViewRow[] {
+function rowsOf(entries: { modifierId: string; weight: string; tiers?: string; inlineText?: string }[], catalogue: ItemModifier[], withShares: boolean): ViewRow[] {
   const shares = withShares ? poolShares(entries.map((entry) => ({ modifierId: entry.modifierId, weight: entry.weight }))) : [];
   return entries.map((entry, index) => ({
     key: `${index}|${entry.modifierId}`,
     weight: entry.weight,
+    tiers: entry.tiers,
     share: withShares ? shares[index] : null,
     modifierId: entry.modifierId,
     modifier: catalogue.find((candidate) => candidate.id === entry.modifierId),
@@ -86,7 +93,14 @@ function rowsOf(entries: { modifierId: string; weight: string; inlineText?: stri
   }));
 }
 
-function RowsTable({ rows, describedByKey, showWeights }: { rows: ViewRow[]; describedByKey: Map<string, string | null>; showWeights: boolean }) {
+interface RowsTableProps {
+  rows: ViewRow[];
+  describedByKey: Map<string, string | null>;
+  showWeights: boolean;
+  catalogueFileName: string;
+}
+
+function RowsTable({ rows, describedByKey, showWeights, catalogueFileName }: RowsTableProps) {
   return (
     <Table verticalSpacing={4} horizontalSpacing="xs" withRowBorders={false}>
       <Table.Tbody>
@@ -101,6 +115,11 @@ function RowsTable({ rows, describedByKey, showWeights }: { rows: ViewRow[]; des
                   {' '}
                   ({Math.round((row.share ?? 0) * 100)}%)
                 </Text>
+                {row.tiers && (
+                  <Text size="xs" c="dimmed">
+                    {row.tiers}
+                  </Text>
+                )}
               </Table.Td>
             )}
             <Table.Td style={{ verticalAlign: 'top' }}>
@@ -108,7 +127,7 @@ function RowsTable({ rows, describedByKey, showWeights }: { rows: ViewRow[]; des
                 row.modifier.lines.map((line, lineIndex) => <LineText key={lineIndex} line={line} describedByKey={describedByKey} />)
               ) : (
                 <Text span size="sm" c="#fc6300">
-                  {row.inlineText ?? row.modifierId} is not in item_modifiers.csv
+                  {row.inlineText ?? row.modifierId} is not in {catalogueFileName}
                 </Text>
               )}
             </Table.Td>
@@ -127,7 +146,7 @@ function RowsTable({ rows, describedByKey, showWeights }: { rows: ViewRow[]; des
   );
 }
 
-export function DefinitionView({ definition, catalogue, implicitModifierIds }: DefinitionViewProps) {
+export function DefinitionView({ definition, catalogue, implicitModifierIds, catalogueFileName = 'item_modifiers.csv', describeLines = true }: DefinitionViewProps) {
   const implicitRows = rowsOf(
     implicitModifierIds.map((modifierId) => ({ modifierId, weight: '' })),
     catalogue,
@@ -135,7 +154,7 @@ export function DefinitionView({ definition, catalogue, implicitModifierIds }: D
   );
   const groupRows = AFFIX_GROUPS.map((group) => ({ group, rows: rowsOf(definition[group.key], catalogue, true) }));
   const allLines = [...implicitRows, ...groupRows.flatMap((entry) => entry.rows)].flatMap((row) => row.modifier?.lines ?? []);
-  const { describedByKey, note } = useLineDescriptions(allLines);
+  const { describedByKey, note } = useLineDescriptions(describeLines ? allLines : []);
 
   return (
     <div className={TOOLTIP_PANEL_CLASS} style={{ maxWidth: 'none' }}>
@@ -164,7 +183,7 @@ export function DefinitionView({ definition, catalogue, implicitModifierIds }: D
             <Text size="sm" fw={600} c="white">
               Implicit
             </Text>
-            <RowsTable rows={implicitRows} describedByKey={describedByKey} showWeights={false} />
+            <RowsTable rows={implicitRows} describedByKey={describedByKey} showWeights={false} catalogueFileName={catalogueFileName} />
           </Stack>
         )}
         {groupRows.map(({ group, rows }) => (
@@ -182,7 +201,7 @@ export function DefinitionView({ definition, catalogue, implicitModifierIds }: D
                 None.
               </Text>
             ) : (
-              <RowsTable rows={rows} describedByKey={describedByKey} showWeights />
+              <RowsTable rows={rows} describedByKey={describedByKey} showWeights catalogueFileName={catalogueFileName} />
             )}
           </Stack>
         ))}

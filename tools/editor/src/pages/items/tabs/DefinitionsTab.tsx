@@ -1,6 +1,6 @@
 import { Avatar, Box, Button, Checkbox, Divider, Group, NavLink, ScrollArea, SegmentedControl, Select, Stack, Text, Textarea, TextInput, Title } from '@mantine/core';
 import { IconCopy, IconPlus, IconTrash } from '@tabler/icons-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { Vocabulary } from '../../../api/vocabulary.ts';
 import { DataToolbar } from '../../../shared/DataToolbar.tsx';
 import { DecimalInput } from '../../../shared/DecimalInput.tsx';
@@ -12,6 +12,8 @@ import { moveItem } from '../../../shared/arrays.ts';
 import { useDataDocument, type DataDocument } from '../../../shared/useDataDocument.ts';
 import {
   AFFIX_GROUPS,
+  ANY_SYSTEM_TYPE,
+  definitionWarnings,
   isTrueText,
   markDefinitionsSaved,
   itemTypeOfKind,
@@ -19,19 +21,22 @@ import {
   modifierQualifierFor,
   type AffixGroup,
   newItemDefinition,
-  parseItemDefinitions,
+  normalisedSystemType,
+  parseFamilyDefinitions,
   poolShares,
-  serializeHullItemsCsv,
-  serializeSubroutinesCsv,
+  serializeFamilyDefinitions,
   setDefinitionKind,
+  STAR_CHART_KIND,
   SUBROUTINE_TYPE,
   UNLOCK_LABELS,
   uniqueItemId,
   validateItemDefinitions,
+  type FamilyDefinitions,
   type ItemDefinition,
-  type ItemDefinitionsModel,
+  type PoolEntry,
 } from '../model/definitions.ts';
 import type { CsvTable } from '../../../shared/csv.ts';
+import { DEFINITION_FILE_NAMES, DEFINITION_RESOURCES, IMPLICIT_RESOURCES, MODIFIER_FILE_NAMES, MODIFIER_RESOURCES, type ItemFamily } from '../model/itemFamily.ts';
 import { modifierUsage } from '../model/modifierUsage.ts';
 import {
   copiedModifier,
@@ -43,8 +48,9 @@ import {
   type ItemModifier,
   type ModifierUsage,
 } from '../model/modifiers.ts';
-import { parseImplicitsCsv, type ImplicitsModel } from '../model/implicits.ts';
+import { parseFamilyImplicits, type ImplicitsModel } from '../model/implicits.ts';
 import { DefinitionView } from './DefinitionView.tsx';
+import { FamilySwitch } from './FamilySwitch.tsx';
 import { PoolEntryRow } from './PoolEntryRow.tsx';
 
 type DefinitionsViewMode = 'edit' | 'view';
@@ -57,39 +63,63 @@ function implicitIdsBySection(implicits: ImplicitsModel): Record<string, string[
 
 const LIST_WIDTH = 270;
 
-interface DefinitionsModel extends ItemDefinitionsModel {
+interface DefinitionsModel extends FamilyDefinitions {
   catalogue: ItemModifier[];
   catalogueTable: CsvTable;
   catalogueChanged: boolean;
+  otherCatalogueIds: string[];
   implicitIdsBySection: Record<string, string[]>;
 }
 
+function otherFamily(family: ItemFamily): ItemFamily {
+  return family === 'chart' ? 'ship' : 'chart';
+}
+
+function definitionFileNames(family: ItemFamily): string[] {
+  return [...DEFINITION_RESOURCES[family], ...DEFINITION_RESOURCES[otherFamily(family)], MODIFIER_RESOURCES[family], IMPLICIT_RESOURCES[family], MODIFIER_RESOURCES[otherFamily(family)]];
+}
+
+function implicitGroupOf(definition: ItemDefinition, family: ItemFamily, vocabulary: Vocabulary): string {
+  return family === 'chart' ? (normalisedSystemType(definition.systemType, vocabulary) ?? '') : definition.kind;
+}
+
 export function DefinitionsTab({ vocabulary }: { vocabulary: Vocabulary }) {
+  const [family, setFamily] = useState<ItemFamily>('ship');
   const document = useDataDocument<DefinitionsModel>({
     key: 'items.definitions',
     noun: 'item definition',
-    fileNames: ['subroutines', 'hull-items', 'item-modifiers', 'hull-item-implicits'],
+    fileNames: definitionFileNames(family),
     parse: (files) => {
-      const modifiers = parseModifiersCsv(files['item-modifiers'].content);
+      const modifiers = parseModifiersCsv(files[MODIFIER_RESOURCES[family]].content);
+      const definitionTexts = Object.fromEntries(
+        [...DEFINITION_RESOURCES.ship, ...DEFINITION_RESOURCES.chart].map((name) => [name, files[name].content]),
+      );
       return {
-        ...parseItemDefinitions(files.subroutines.content, files['hull-items'].content),
+        ...parseFamilyDefinitions(family, definitionTexts),
         catalogue: modifiers.modifiers,
         catalogueTable: modifiers.table,
         catalogueChanged: false,
-        implicitIdsBySection: implicitIdsBySection(parseImplicitsCsv(files['hull-item-implicits'].content, vocabulary)),
+        otherCatalogueIds: parseModifiersCsv(files[MODIFIER_RESOURCES[otherFamily(family)]].content).modifiers.map((modifier) => modifier.id),
+        implicitIdsBySection: implicitIdsBySection(parseFamilyImplicits(family, files[IMPLICIT_RESOURCES[family]].content, vocabulary)),
       };
     },
     serialize: (model) => ({
-      subroutines: serializeSubroutinesCsv(model),
-      'hull-items': serializeHullItemsCsv(model),
-      ...(model.catalogueChanged ? { 'item-modifiers': serializeModifiersCsv({ table: model.catalogueTable, modifiers: model.catalogue }) } : {}),
+      ...serializeFamilyDefinitions(model),
+      ...(model.catalogueChanged
+        ? { [MODIFIER_RESOURCES[model.family]]: serializeModifiersCsv({ table: model.catalogueTable, modifiers: model.catalogue }) }
+        : {}),
     }),
     validate: (model) => [
-      ...validateItemDefinitions(model.definitions, vocabulary, modifierById(model.catalogue)),
-      ...(model.catalogueChanged ? validateModifiers(model.catalogue, vocabulary, modifierUsage(model.definitions, [])) : []),
+      ...validateItemDefinitions(model.definitions, vocabulary, modifierById(model.catalogue), model.family, model.otherFamilyIds),
+      ...(model.catalogueChanged
+        ? validateModifiers(model.catalogue, vocabulary, modifierUsage(model.definitions, []), model.family, new Set(model.otherCatalogueIds))
+        : []),
     ],
+    warnings: (model) => definitionWarnings(model.definitions, model.family),
     savedMessage: (model) =>
-      model.catalogueChanged ? 'Saved subroutines.csv, hull_items.csv and item_modifiers.csv' : 'Saved subroutines.csv and hull_items.csv',
+      model.catalogueChanged
+        ? `Saved ${DEFINITION_FILE_NAMES[model.family].replace(' and ', ', ')} and ${MODIFIER_FILE_NAMES[model.family]}`
+        : `Saved ${DEFINITION_FILE_NAMES[model.family]}`,
     afterSave: (draft, saved) => {
       markDefinitionsSaved(draft, saved);
       markModifiersSaved({ table: draft.catalogueTable, modifiers: draft.catalogue }, { table: saved.catalogueTable, modifiers: saved.catalogue });
@@ -104,17 +134,24 @@ export function DefinitionsTab({ vocabulary }: { vocabulary: Vocabulary }) {
   const definitions = document.state.status === 'ready' ? document.state.model.definitions : [];
 
   const addItem = () => {
-    const kind = kindFilter || vocabulary.itemKinds[0] || 'subroutine';
     document.update((draft) => {
-      draft.definitions.push(newItemDefinition(draft.definitions, kind, draft.catalogue));
+      const kind = draft.family === 'chart' ? STAR_CHART_KIND : kindFilter || vocabulary.itemKinds[0] || 'subroutine';
+      draft.definitions.push(newItemDefinition(draft.definitions, kind, draft.catalogue, draft.otherFamilyIds));
     });
     setSelectedIndex(definitions.length);
+  };
+
+  const switchFamily = (nextFamily: ItemFamily) => {
+    setSelectedIndex(0);
+    setKindFilter('');
+    setFamily(nextFamily);
   };
 
   return (
     <Stack h="100%" gap={0}>
       <Box px="md" py="xs">
         <DataToolbar document={document}>
+          <FamilySwitch document={document} family={family} onFamily={switchFamily} noun="item definition" />
           <SegmentedControl
             size="xs"
             value={viewMode}
@@ -130,8 +167,9 @@ export function DefinitionsTab({ vocabulary }: { vocabulary: Vocabulary }) {
           </Button>
         </DataToolbar>
         <Text size="xs" c="dimmed" mt={4}>
-          Edits data/config/exiledSector/subroutines.csv and hull_items.csv; a definition is saved to the file of its kind's item type. Names and descriptions are English; add zh text under socketable.&lt;id&gt;.name / .description in
-          zh_CN.json.
+          {family === 'chart'
+            ? 'Edits data/config/exiledSector/star_charts.csv. Each chart has a system type, which picks its implicits, and uniques can need a minimum tier. Names and descriptions are English; add zh text under socketable.<id>.name / .description in zh_CN.json.'
+            : "Edits data/config/exiledSector/subroutines.csv and hull_items.csv; a definition is saved to the file of its kind's item type. Names and descriptions are English; add zh text under socketable.<id>.name / .description in zh_CN.json."}
         </Text>
       </Box>
       <Divider />
@@ -153,16 +191,21 @@ export function DefinitionsTab({ vocabulary }: { vocabulary: Vocabulary }) {
                   <DefinitionView
                     definition={model.definitions[selectedIndex]}
                     catalogue={model.catalogue}
-                    implicitModifierIds={model.implicitIdsBySection[model.definitions[selectedIndex].kind] ?? []}
+                    catalogueFileName={MODIFIER_FILE_NAMES[model.family]}
+                    describeLines={model.family !== 'chart'}
+                    implicitModifierIds={model.implicitIdsBySection[implicitGroupOf(model.definitions[selectedIndex], model.family, vocabulary)] ?? []}
                   />
                 ) : model.definitions[selectedIndex] ? (
                   <DefinitionForm
-                    key={selectedIndex}
+                    key={`${model.family}-${selectedIndex}`}
                     document={document}
+                    family={model.family}
                     definition={model.definitions[selectedIndex]}
                     index={selectedIndex}
                     vocabulary={vocabulary}
                     catalogue={model.catalogue}
+                    otherCatalogueIds={model.otherCatalogueIds}
+                    otherFamilyIds={model.otherFamilyIds}
                     usage={modifierUsage(model.definitions, [])}
                     onSelect={setSelectedIndex}
                   />
@@ -187,30 +230,44 @@ interface DefinitionListProps {
   onSelect: (index: number) => void;
 }
 
+function groupOfListedDefinition(definition: ItemDefinition, family: ItemFamily): string {
+  return family === 'chart' ? definition.systemType || ANY_SYSTEM_TYPE : definition.kind;
+}
+
 function DefinitionList({ model, vocabulary, kindFilter, onKindFilter, selectedIndex, onSelect }: DefinitionListProps) {
+  const isChart = model.family === 'chart';
   const kindOptions = useMemo(() => {
-    const kinds = [...vocabulary.itemKinds];
+    const kinds = isChart ? [...vocabulary.chartSystemTypes, ANY_SYSTEM_TYPE] : [...vocabulary.itemKinds];
     for (const definition of model.definitions) {
-      if (!kinds.includes(definition.kind)) {
-        kinds.push(definition.kind);
+      const group = groupOfListedDefinition(definition, model.family);
+      if (!kinds.includes(group)) {
+        kinds.push(group);
       }
     }
-    const countOf = (kind: string) => model.definitions.filter((definition) => definition.kind === kind).length;
+    const countOf = (kind: string) => model.definitions.filter((definition) => groupOfListedDefinition(definition, model.family) === kind).length;
     return [
-      { value: '', label: `All socket types (${model.definitions.length})` },
+      { value: '', label: `${isChart ? 'All system types' : 'All socket types'} (${model.definitions.length})` },
       ...kinds.map((kind) => ({ value: kind, label: `${kind} (${countOf(kind)})` })),
     ];
-  }, [model.definitions, vocabulary.itemKinds]);
+  }, [model.definitions, model.family, isChart, vocabulary.itemKinds, vocabulary.chartSystemTypes]);
 
-  const shown = model.definitions.map((definition, index) => ({ definition, index })).filter(({ definition }) => !kindFilter || definition.kind === kindFilter);
+  const shown = model.definitions
+    .map((definition, index) => ({ definition, index }))
+    .filter(({ definition }) => !kindFilter || groupOfListedDefinition(definition, model.family) === kindFilter);
 
   return (
     <Stack w={LIST_WIDTH} gap="xs" p="xs" style={{ flexShrink: 0, minHeight: 0 }}>
-      <Select data={kindOptions} value={kindFilter} onChange={(value) => onKindFilter(value ?? '')} allowDeselect={false} aria-label="Socket type filter" />
+      <Select
+        data={kindOptions}
+        value={kindFilter}
+        onChange={(value) => onKindFilter(value ?? '')}
+        allowDeselect={false}
+        aria-label={isChart ? 'System type filter' : 'Socket type filter'}
+      />
       <ScrollArea style={{ flex: 1 }} type="auto">
         {shown.length === 0 ? (
           <Text size="sm" c="dimmed">
-            {kindFilter && model.definitions.length ? 'No hull items of this type.' : 'No hull items yet.'}
+            {kindFilter && model.definitions.length ? 'No items of this type.' : 'No items yet.'}
           </Text>
         ) : (
           shown.map(({ definition, index }) => (
@@ -219,7 +276,7 @@ function DefinitionList({ model, vocabulary, kindFilter, onKindFilter, selectedI
               active={index === selectedIndex}
               onClick={() => onSelect(index)}
               label={definition.name || definition.id}
-              description={`${definition.kind} - ${definition.prefixes.length} prefixes, ${definition.suffixes.length} suffixes`}
+              description={`${groupOfListedDefinition(definition, model.family)} - ${definition.prefixes.length} prefixes, ${definition.suffixes.length} suffixes`}
               leftSection={<Avatar src={fileUrl(definition.icon)} radius="sm" size={32} />}
             />
           ))
@@ -231,45 +288,103 @@ function DefinitionList({ model, vocabulary, kindFilter, onKindFilter, selectedI
 
 interface DefinitionFormProps {
   document: DataDocument<DefinitionsModel>;
+  family: ItemFamily;
   definition: ItemDefinition;
   index: number;
   vocabulary: Vocabulary;
   catalogue: ItemModifier[];
+  otherCatalogueIds: string[];
+  otherFamilyIds: string[];
   usage: Map<string, ModifierUsage>;
   onSelect: (index: number) => void;
 }
 
-function DefinitionForm({ document, definition, index, vocabulary, catalogue, usage, onSelect }: DefinitionFormProps) {
+function unlockOptions(definition: ItemDefinition, family: ItemFamily, vocabulary: Vocabulary): { value: string; label: string }[] {
+  const options = [{ value: '', label: 'None' }, ...vocabulary.itemUnlocks.map((unlockId) => ({ value: unlockId, label: UNLOCK_LABELS[unlockId] ?? unlockId }))];
+  if (family === 'chart') {
+    for (let tier = vocabulary.lowestChartTier; tier <= vocabulary.highestChartTier; tier++) {
+      options.push({ value: `${vocabulary.clearedChartTierPrefix}${tier}`, label: `Cleared a tier ${tier} chart objective` });
+    }
+  }
+  if (!options.some((option) => option.value === definition.unlock)) {
+    options.push({ value: definition.unlock, label: `${definition.unlock} (unknown)` });
+  }
+  return options;
+}
+
+function StarChartFields({ definition, vocabulary, edit }: { definition: ItemDefinition; vocabulary: Vocabulary; edit: (recipe: (draft: ItemDefinition) => void) => void }) {
+  const systemTypes = [...vocabulary.chartSystemTypes, ANY_SYSTEM_TYPE];
+  const current = definition.systemType ?? '';
+  const options = current === '' || systemTypes.includes(current) ? systemTypes : [current, ...systemTypes];
+  return (
+    <Group grow align="flex-start">
+      <Select
+        label="System type"
+        description="The pocket's star layout, and which implicits the chart rolls"
+        data={options}
+        value={current === '' ? ANY_SYSTEM_TYPE : current}
+        onChange={(value) => edit((draft) => void (draft.systemType = value ?? ''))}
+        allowDeselect={false}
+      />
+      <DecimalInput
+        label="Minimum tier"
+        description={`Blank for any tier; a chart never drops below it (${vocabulary.lowestChartTier} to ${vocabulary.highestChartTier})`}
+        value={definition.minTier ?? ''}
+        onChange={(text) => edit((draft) => void (draft.minTier = text))}
+      />
+    </Group>
+  );
+}
+
+function DefinitionForm({ document, family, definition, index, vocabulary, catalogue, otherCatalogueIds, otherFamilyIds, usage, onSelect }: DefinitionFormProps) {
   const [idText, setIdText] = useState(definition.id);
   useEffect(() => setIdText(definition.id), [definition.id]);
+  const isChart = family === 'chart';
+  const updateDocument = document.update;
 
-  const edit = (recipe: (draft: ItemDefinition) => void) =>
-    document.update((draft) => {
-      recipe(draft.definitions[index]);
-    });
+  const edit = useCallback(
+    (recipe: (draft: ItemDefinition) => void) =>
+      updateDocument((draft) => {
+        recipe(draft.definitions[index]);
+      }),
+    [updateDocument, index],
+  );
 
-  const editModifier = (modifierId: string, recipe: (draft: ItemModifier) => void) =>
-    document.update((draft) => {
-      const modifier = draft.catalogue.find((candidate) => candidate.id === modifierId);
-      if (modifier) {
-        recipe(modifier);
+  const editModifier = useCallback(
+    (modifierId: string, recipe: (draft: ItemModifier) => void) =>
+      updateDocument((draft) => {
+        const modifier = draft.catalogue.find((candidate) => candidate.id === modifierId);
+        if (modifier) {
+          recipe(modifier);
+          draft.catalogueChanged = true;
+        }
+      }),
+    [updateDocument],
+  );
+
+  const copyModifier = useCallback(
+    (groupKey: AffixGroup, entryIndex: number) =>
+      updateDocument((draft) => {
+        const draftDefinition = draft.definitions[index];
+        const entry = draftDefinition[groupKey][entryIndex];
+        const source = draft.catalogue.find((candidate) => candidate.id === entry.modifierId);
+        if (!source) {
+          return;
+        }
+        const copy = copiedModifier(draft.catalogue, source, modifierQualifierFor(draftDefinition), itemTypeOfKind(draftDefinition.kind), new Set(otherCatalogueIds));
+        draft.catalogue.push(copy);
+        entry.modifierId = copy.id;
         draft.catalogueChanged = true;
-      }
-    });
+      }),
+    [updateDocument, index, otherCatalogueIds],
+  );
 
-  const copyModifier = (groupKey: AffixGroup, entryIndex: number) =>
-    document.update((draft) => {
-      const draftDefinition = draft.definitions[index];
-      const entry = draftDefinition[groupKey][entryIndex];
-      const source = draft.catalogue.find((candidate) => candidate.id === entry.modifierId);
-      if (!source) {
-        return;
-      }
-      const copy = copiedModifier(draft.catalogue, source, modifierQualifierFor(draftDefinition), itemTypeOfKind(draftDefinition.kind));
-      draft.catalogue.push(copy);
-      entry.modifierId = copy.id;
-      draft.catalogueChanged = true;
-    });
+  const editEntry = useCallback(
+    (groupKey: AffixGroup, entryIndex: number, recipe: (entry: PoolEntry) => void) => edit((draft) => recipe(draft[groupKey][entryIndex])),
+    [edit],
+  );
+  const moveEntry = useCallback((groupKey: AffixGroup, from: number, to: number) => edit((draft) => moveItem(draft[groupKey], from, to)), [edit]);
+  const removeEntry = useCallback((groupKey: AffixGroup, entryIndex: number) => edit((draft) => void draft[groupKey].splice(entryIndex, 1)), [edit]);
 
   const commitId = async () => {
     const newId = idText.trim();
@@ -281,7 +396,7 @@ function DefinitionForm({ document, definition, index, vocabulary, catalogue, us
         title: `Rename "${definition.loadedId}" to "${newId}"?`,
         message:
           'Saved games store this id on every item players own. Once it has shipped, add a row to item_id_aliases.csv mapping the old id to the new one, or those items turn into unknown items. ' +
-          `Its rare-name words in item_names.json and its socketable.${definition.loadedId}.* keys in zh_CN.json keep the old id and must be renamed by hand.`,
+          `${isChart ? 'Its' : 'Its rare-name words in item_names.json and its'} socketable.${definition.loadedId}.* keys in zh_CN.json keep the old id and must be renamed by hand.`,
         confirmLabel: 'Rename',
         danger: true,
       });
@@ -294,17 +409,13 @@ function DefinitionForm({ document, definition, index, vocabulary, catalogue, us
   };
 
   const kinds = vocabulary.itemKinds.includes(definition.kind) ? vocabulary.itemKinds : [definition.kind, ...vocabulary.itemKinds];
-  const unlockIds = ['', ...vocabulary.itemUnlocks];
-  if (!unlockIds.includes(definition.unlock)) {
-    unlockIds.push(definition.unlock);
-  }
   const unique = isTrueText(definition.unique);
   const itemType = itemTypeOfKind(definition.kind);
 
   const duplicate = () => {
     document.update((draft) => {
       const copy = structuredClone(definition);
-      copy.id = uniqueItemId(draft.definitions, `${definition.id}_copy`);
+      copy.id = uniqueItemId(draft.definitions, `${definition.id}_copy`, otherFamilyIds);
       delete copy.loadedId;
       draft.definitions.splice(index + 1, 0, copy);
     });
@@ -331,7 +442,7 @@ function DefinitionForm({ document, definition, index, vocabulary, catalogue, us
       <Group align="flex-end" wrap="nowrap">
         <Avatar src={fileUrl(definition.icon)} radius="sm" size={64} />
         <TextInput style={{ flex: 1 }} label="Icon path" value={definition.icon} onChange={(event) => edit((draft) => void (draft.icon = event.currentTarget.value))} />
-        <ImagePickButton targetFolder="graphics/icons/socketables/" onPicked={(path) => edit((draft) => void (draft.icon = path))} />
+        <ImagePickButton targetFolder={isChart ? 'graphics/icons/' : 'graphics/icons/socketables/'} onPicked={(path) => edit((draft) => void (draft.icon = path))} />
       </Group>
       <Group grow align="flex-start">
         <TextInput
@@ -345,15 +456,20 @@ function DefinitionForm({ document, definition, index, vocabulary, catalogue, us
             }
           }}
         />
-        <Select
-          label="Kind"
-          description={`${ITEM_TYPE_LABELS[itemType] ?? itemType} - saved to ${itemType === SUBROUTINE_TYPE ? 'subroutines.csv' : 'hull_items.csv'}`}
-          data={kinds}
-          value={definition.kind}
-          onChange={(value) => value && edit((draft) => setDefinitionKind(draft, value))}
-          allowDeselect={false}
-        />
+        {isChart ? (
+          <TextInput label="Item type" value={`${ITEM_TYPE_LABELS[itemType] ?? itemType} - saved to star_charts.csv`} readOnly />
+        ) : (
+          <Select
+            label="Kind"
+            description={`${ITEM_TYPE_LABELS[itemType] ?? itemType} - saved to ${itemType === SUBROUTINE_TYPE ? 'subroutines.csv' : 'hull_items.csv'}`}
+            data={kinds}
+            value={definition.kind}
+            onChange={(value) => value && edit((draft) => setDefinitionKind(draft, value))}
+            allowDeselect={false}
+          />
+        )}
       </Group>
+      {isChart && <StarChartFields definition={definition} vocabulary={vocabulary} edit={edit} />}
       <TextInput label="Name" value={definition.name} onChange={(event) => edit((draft) => void (draft.name = event.currentTarget.value))} />
       <DecimalInput w={220} label="Rarity (loot weight)" value={definition.rarity} onChange={(text) => edit((draft) => void (draft.rarity = text))} />
       <Checkbox
@@ -371,11 +487,12 @@ function DefinitionForm({ document, definition, index, vocabulary, catalogue, us
       />
       {unique && (
         <Select
-          label="Drop condition (uniques never drop before player level 15)"
-          data={unlockIds.map((unlockId) => ({ value: unlockId, label: unlockId ? (UNLOCK_LABELS[unlockId] ?? unlockId) : 'None' }))}
+          label={isChart ? 'Drop condition (latched once met)' : 'Drop condition (uniques never drop before player level 15)'}
+          data={unlockOptions(definition, family, vocabulary)}
           value={definition.unlock}
           onChange={(value) => edit((draft) => void (draft.unlock = value ?? ''))}
           allowDeselect={false}
+          searchable
         />
       )}
       <Textarea
@@ -387,16 +504,20 @@ function DefinitionForm({ document, definition, index, vocabulary, catalogue, us
       />
       <Divider />
       <Text size="xs" c="dimmed">
-        Items roll 2 effects (common: 1 prefix + 1 suffix) 55% of the time, 3 (rare: 2+1 or 1+2) 35% and 4 (rare: 2+2) 10%, never repeating a modifier. A
-        higher rarity weight makes a modifier come up more often within its group; a blank weight counts as 1. Each entry picks a modifier from
-        item_modifiers.csv. Its values can be edited here or in the Modifiers tab; a shared modifier changes every item that uses it, so use "Copy for this item" to tune one item alone.
+        {isChart
+          ? 'Charts roll 2 to 6 modifiers, at most 3 a side; 3 or more makes a rare chart. A tier range (t3+, t2-6) keeps an entry out of charts below or above those tiers.'
+          : 'Items roll 2 effects (common: 1 prefix + 1 suffix) 55% of the time, 3 (rare: 2+1 or 1+2) 35% and 4 (rare: 2+2) 10%, never repeating a modifier.'}{' '}
+        A higher rarity weight makes a modifier come up more often within its group; a blank weight counts as 1. Each entry picks a modifier from {MODIFIER_FILE_NAMES[family]}. Its
+        values can be edited here or in the Modifiers tab; a shared modifier changes every item that uses it, so use &quot;Copy for this item&quot; to tune one item alone.
       </Text>
       {AFFIX_GROUPS.map((group) => {
         const pool = definition[group.key];
         const shares = poolShares(pool);
         return (
           <Stack key={group.key} gap="xs">
-            <Title order={5}>{group.label} - a common item rolls 1, a rare 1-2</Title>
+            <Title order={5}>
+              {group.label} - {isChart ? 'a common chart rolls 1, a rare 1-3' : 'a common item rolls 1, a rare 1-2'}
+            </Title>
             {pool.length === 0 && (
               <Text size="sm" c="dimmed">
                 None yet.
@@ -405,20 +526,22 @@ function DefinitionForm({ document, definition, index, vocabulary, catalogue, us
             {pool.map((entry, entryIndex) => (
               <PoolEntryRow
                 key={entryIndex}
+                groupKey={group.key}
                 entry={entry}
                 slot={group.singular}
                 itemType={itemType}
+                family={family}
                 index={entryIndex}
                 count={pool.length}
                 share={shares[entryIndex]}
                 catalogue={catalogue}
-                otherItemsUsingModifier={(usage.get(entry.modifierId)?.items ?? []).filter((itemId) => itemId !== definition.id)}
+                otherItemsUsingModifier={(usage.get(entry.modifierId)?.items ?? []).filter((itemId) => itemId !== definition.id).join(', ')}
                 vocabulary={vocabulary}
-                onEdit={(recipe) => edit((draft) => recipe(draft[group.key][entryIndex]))}
-                onEditModifier={(recipe) => editModifier(entry.modifierId, recipe)}
-                onCopyModifier={() => copyModifier(group.key, entryIndex)}
-                onMove={(from, to) => edit((draft) => moveItem(draft[group.key], from, to))}
-                onRemove={() => edit((draft) => void draft[group.key].splice(entryIndex, 1))}
+                onEdit={editEntry}
+                onEditModifier={editModifier}
+                onCopyModifier={copyModifier}
+                onMove={moveEntry}
+                onRemove={removeEntry}
               />
             ))}
             <Button
