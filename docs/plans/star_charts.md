@@ -162,7 +162,7 @@ Decided (2026-10-18):
   - a big "Open Wormhole" button.
 - Eventually a colony building enables wormhole opening. Until it exists, a dev or settings switch allows opening anywhere, so the system can be built and tested first. The building can then gate where and when the button works, and whether it works at all.
 
-Opening consumes the chart and creates a Wormhole entity beside the player fleet, in hyperspace or a normal system. It is a custom entity with our own plugin and visual (the skill tree's wormhole band renderer is a good look to reuse).
+Opening consumes the chart and creates a Wormhole entity beside the player fleet, in hyperspace or a normal system. It is a custom entity with our own plugin. Since 2026-10-18 its visual is a port of the vanilla wormhole terminus renderer (`JumpPoint` with `$wormhole` set), using the vanilla sprites: masked starfield or hyperspace backdrop, coronas, 100 rings, swirl bands and glow, opening when a fleet heads for it and closing 5 seconds after, except in hyperspace.
 
 Run rules (decided):
 - **Entries are a LunaLib setting.** "Star Chart wormhole entries" defaults to 1.

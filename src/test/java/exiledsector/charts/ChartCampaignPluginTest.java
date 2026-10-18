@@ -43,10 +43,4 @@ class ChartCampaignPluginTest {
         assertNull(new ChartCampaignPlugin().pickInteractionDialogPlugin(mock(SectorEntityToken.class)));
         assertNull(new ChartCampaignPlugin().pickInteractionDialogPlugin(null));
     }
-
-    @Test
-    void wrapsAnimationPhasesIntoTheirPeriod() {
-        assertEquals(10f, ChartWormholePlugin.wrap(370f, 360f), 1e-3f);
-        assertEquals(350f, ChartWormholePlugin.wrap(-10f, 360f), 1e-3f);
-    }
 }
