@@ -441,7 +441,7 @@ function DefinitionForm({ document, family, definition, index, vocabulary, catal
     <Stack gap="sm" maw={1100}>
       <Group align="flex-end" wrap="nowrap">
         <Avatar src={fileUrl(definition.icon)} radius="sm" size={64} />
-        <TextInput style={{ flex: 1 }} label="Icon path" value={definition.icon} onChange={(event) => edit((draft) => void (draft.icon = event.currentTarget.value))} />
+        <TextInput style={{ flex: 1 }} label="Icon path" value={definition.icon} onChange={(event) => { const text = event.currentTarget.value; edit((draft) => void (draft.icon = text)); }} />
         <ImagePickButton targetFolder={isChart ? 'graphics/icons/' : 'graphics/icons/socketables/'} onPicked={(path) => edit((draft) => void (draft.icon = path))} />
       </Group>
       <Group grow align="flex-start">
@@ -470,7 +470,7 @@ function DefinitionForm({ document, family, definition, index, vocabulary, catal
         )}
       </Group>
       {isChart && <StarChartFields definition={definition} vocabulary={vocabulary} edit={edit} />}
-      <TextInput label="Name" value={definition.name} onChange={(event) => edit((draft) => void (draft.name = event.currentTarget.value))} />
+      <TextInput label="Name" value={definition.name} onChange={(event) => { const text = event.currentTarget.value; edit((draft) => void (draft.name = text)); }} />
       <DecimalInput w={220} label="Rarity (loot weight)" value={definition.rarity} onChange={(text) => edit((draft) => void (draft.rarity = text))} />
       <Checkbox
         label="Unique - shown with the name above in orange, and rolls every prefix and suffix"
@@ -500,7 +500,7 @@ function DefinitionForm({ document, family, definition, index, vocabulary, catal
         autosize
         minRows={3}
         value={definition.description}
-        onChange={(event) => edit((draft) => void (draft.description = event.currentTarget.value))}
+        onChange={(event) => { const text = event.currentTarget.value; edit((draft) => void (draft.description = text)); }}
       />
       <Divider />
       <Text size="xs" c="dimmed">

@@ -387,7 +387,7 @@ function ModifierForm({ document, family, otherFileIds, modifier, index, usage, 
         }
         disabled={isImplicit && !modifier.name}
         value={modifier.name}
-        onChange={(event) => edit((draft) => void (draft.name = event.currentTarget.value))}
+        onChange={(event) => { const text = event.currentTarget.value; edit((draft) => void (draft.name = text)); }}
       />
       <Divider />
       <Title order={5}>{modifier.lines.length > 1 ? 'Lines - a hybrid rolls every line and counts as one modifier' : 'Line'}</Title>
