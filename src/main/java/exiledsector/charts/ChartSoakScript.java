@@ -16,8 +16,9 @@ import java.util.function.Consumer;
 public class ChartSoakScript implements EveryFrameScript {
 
     static final int MAX_FRAMES_PER_POCKET = 600;
-    static final List<String> COMPARED_COUNTS = List.of("used procgen names", "Hyperspace Topography scans", "star systems", "hyperspace entities other than fleets",
-            "chart-tagged entities", "Economy markets", "intel");
+    static final List<String> COMPARED_COUNTS = List.of("used procgen names", "Hyperspace Topography scans", "star systems",
+            "hyperspace entities other than fleets", "chart-tagged entities", "Economy markets", "intel", "fleets in the sector",
+            "chart fleets anywhere", "sector scripts", "sector listeners");
     private static final Logger LOG = Logger.getLogger(ChartSoakScript.class);
 
     private final int pocketsToSoak;
@@ -28,6 +29,10 @@ public class ChartSoakScript implements EveryFrameScript {
     private int generatedLayouts;
     private int fallbackLayouts;
     private final Set<String> typesSeen = new TreeSet<>();
+    private final Set<Integer> tiersSeen = new TreeSet<>();
+    private final Set<String> objectivesSeen = new TreeSet<>();
+    private int fleetsGenerated;
+    private int poisGenerated;
     private int framesWaiting;
     private String pendingRunId;
     private StarSystemAPI pendingPocket;
@@ -88,7 +93,7 @@ public class ChartSoakScript implements EveryFrameScript {
     }
 
     private void openNext(SectorAPI sector) {
-        ChartLayoutRequest layoutRequest = new ChartLayoutRequest(random.nextLong(), typeForIteration(pocketsDone));
+        ChartLayoutRequest layoutRequest = new ChartLayoutRequest(random.nextLong(), typeForIteration(pocketsDone), tierForIteration(pocketsDone));
         ChartRunActions.OpenResult result = ChartRunActions.openBesidePlayer(sector, 1, random, layoutRequest);
         if (result != ChartRunActions.OpenResult.OPENED) {
             finish(sector, "stopped: opening pocket " + (pocketsDone + 1) + " returned " + result);
@@ -103,10 +108,19 @@ public class ChartSoakScript implements EveryFrameScript {
         if (run.hasLayout()) {
             typesSeen.add(run.layoutType());
         }
+        tiersSeen.add(run.tier());
+        objectivesSeen.add(run.objective() == null ? "none" : run.objective().name());
+        fleetsGenerated += run.contentFleets();
+        poisGenerated += run.contentPois();
         pendingRunId = run.runId();
         pendingPocket = sector.getStarSystem(run.pocketSystemId());
         framesWaiting = 0;
         run.collapseOuter();
+    }
+
+    static int tierForIteration(int iteration) {
+        int tierCount = ChartTiers.HIGHEST_TIER - ChartTiers.LOWEST_TIER + 1;
+        return ChartTiers.LOWEST_TIER + Math.floorMod(iteration, tierCount);
     }
 
     static StarSystemType typeForIteration(int iteration) {
@@ -122,6 +136,8 @@ public class ChartSoakScript implements EveryFrameScript {
         List<String> changes = after.changesSince(before);
         String report = "Star Chart soak " + outcome + ", " + pocketsDone + " of " + pocketsToSoak + " pocket(s) opened and closed.\n"
                 + "Layouts: " + generatedLayouts + " generated, " + fallbackLayouts + " fell back to a single star; types " + typesSeen + ".\n"
+                + "Content: " + fleetsGenerated + " fleet(s) and " + poisGenerated + " point(s) of interest across tiers " + tiersSeen
+                + ", objectives " + objectivesSeen + ".\n"
                 + (changes.isEmpty() ? "Unchanged before vs after: " + String.join(", ", COMPARED_COUNTS) + "."
                 : "CHANGED before vs after: " + String.join("; ", changes)
                 + " (fleets and intel can also change if the game ran unpaused during the soak).")

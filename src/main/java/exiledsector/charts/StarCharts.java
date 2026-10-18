@@ -14,5 +14,16 @@ public final class StarCharts {
         sector.removeTransientScriptsOfClass(ChartRunScript.class);
         sector.removeTransientScriptsOfClass(ChartSoakScript.class);
         sector.addTransientScript(new ChartRunScript());
+        if (sector.getListenerManager() != null) {
+            sector.getListenerManager().removeListenerOfClass(ChartContentListener.class);
+            sector.getListenerManager().addListener(new ChartContentListener(), true);
+        }
+    }
+
+    public static void loadData() {
+        ChartBlockedAbilities.load();
+        ChartTiers.load();
+        ChartPois.load();
+        ChartFactions.load();
     }
 }

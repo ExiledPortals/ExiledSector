@@ -3,10 +3,12 @@ package exiledsector.charts;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
+import com.fs.starfarer.api.campaign.IntelDataAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
+import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
 import exiledsector.charts.ChartLoadSweep.PocketDecision;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -242,5 +244,24 @@ class ChartLoadSweepTest {
         when(sector.getStarSystems()).thenThrow(new IllegalStateException("not loaded"));
 
         ChartLoadSweep.sweep(sector);
+    }
+
+    @Test
+    void objectiveIntelOfADeadRunIsRemovedAndUnselectedButTheLiveRunsStays() {
+        ChartRuns.store(new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1));
+        ChartObjectiveIntel live = new ChartObjectiveIntel(RUN_ID);
+        ChartObjectiveIntel orphan = new ChartObjectiveIntel("long_gone");
+        IntelManagerAPI intelManager = mock(IntelManagerAPI.class);
+        when(intelManager.getIntel(ChartObjectiveIntel.class)).thenReturn(List.of(live, orphan));
+        when(sector.getIntelManager()).thenReturn(intelManager);
+        IntelDataAPI intelTab = mock(IntelDataAPI.class);
+        when(intelTab.getSelectedIntel()).thenReturn(orphan);
+        when(sector.getIntel()).thenReturn(intelTab);
+
+        assertEquals(1, ChartLoadSweep.removeOrphanIntel(sector));
+
+        verify(intelManager).removeIntel(orphan);
+        verify(intelManager, never()).removeIntel(live);
+        verify(intelTab).setSelectedIntel(null);
     }
 }

@@ -5,7 +5,6 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SpecialItemSpecAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.thoughtworks.xstream.XStream;
-import exiledsector.charts.ChartBlockedAbilities;
 import exiledsector.charts.ChartSaveAliases;
 import exiledsector.charts.StarCharts;
 import exiledsector.compat.AbyssSingularity;
@@ -104,7 +103,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         PhantomHullMods.install(phantomHullModIds());
         LearnedPhantomConflicts.load();
         CsvIdList.loadAll();
-        ChartBlockedAbilities.load();
+        StarCharts.loadData();
         NpcFactionVolumes.load();
         ItemIdAliases.load();
         ItemModifiers.load();

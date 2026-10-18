@@ -8,14 +8,23 @@ import exiledsector.charts.ChartRun;
 import exiledsector.charts.ChartRunActions;
 import exiledsector.charts.ChartRunActions.OpenResult;
 import exiledsector.charts.ChartRuns;
+import exiledsector.charts.ChartTiers;
 import exiledsector.charts.StarChartSettings;
 import org.lazywizard.console.BaseCommand;
 import org.lazywizard.console.CommonStrings;
 import org.lazywizard.console.Console;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ChartOpenCommand implements BaseCommand {
+
+    static final int DEFAULT_TIER = ChartTiers.LOWEST_TIER;
+    static final Pattern EXPLICIT_TIER = Pattern.compile("(?:tier|t)=?(-?\\d+)", Pattern.CASE_INSENSITIVE);
 
     private final Random random;
 
@@ -35,18 +44,22 @@ public class ChartOpenCommand implements BaseCommand {
         }
         OpenArguments arguments = OpenArguments.parse(args);
         if (arguments.problem() != null) {
-            Console.showMessage(arguments.problem() + "\nUsage: ExiledSectorChartOpen [seed] [type], where type is one of "
-                    + ChartLayoutGenerator.ALLOWED_TYPES + ". Both are optional.");
+            Console.showMessage(arguments.problem() + "\nUsage: ExiledSectorChartOpen [seed] [type] [tier], where type is one of "
+                    + ChartLayoutGenerator.ALLOWED_TYPES + " and tier is " + ChartTiers.LOWEST_TIER + " to " + ChartTiers.HIGHEST_TIER
+                    + " (default " + DEFAULT_TIER + "). All are optional and can come in any order; write the tier as tier=N when the"
+                    + " seed is also a small number.");
             return CommandResult.BAD_SYNTAX;
         }
         ChartLayoutRequest layoutRequest = new ChartLayoutRequest(arguments.seed() != null ? arguments.seed() : random.nextLong(),
-                arguments.systemType());
+                arguments.systemType(), arguments.tierOrDefault());
         int entries = StarChartSettings.wormholeEntries();
         OpenResult result = ChartRunActions.openBesidePlayer(Global.getSector(), entries, random, layoutRequest);
         switch (result) {
             case OPENED -> {
                 Console.showMessage("Opened a Star Chart wormhole beside your fleet with " + entries + (entries == 1 ? " entry." : " entries."));
-                Console.showMessage(describeLayout(ChartRuns.currentOrNull()));
+                ChartRun run = ChartRuns.currentOrNull();
+                Console.showMessage(describeLayout(run));
+                Console.showMessage(describeContent(run));
                 return CommandResult.SUCCESS;
             }
             case RUN_EXISTS -> Console.showMessage("A Star Chart run is already open. Collapse it or finish it first (see ExiledSectorChartStatus).");
@@ -64,34 +77,87 @@ public class ChartOpenCommand implements BaseCommand {
         }
         return "Layout seed " + run.layoutSeed() + ", type " + run.layoutType()
                 + (run.isLayoutGenerated() ? "" : " (generation failed, so the pocket has a single star; see starsector.log)")
-                + ". Reopen the same layout with: ExiledSectorChartOpen " + run.layoutSeed() + " " + run.layoutType();
+                + ". Reopen the same pocket with: ExiledSectorChartOpen " + run.layoutSeed() + " " + run.layoutType() + " tier=" + run.tier();
     }
 
-    record OpenArguments(Long seed, StarSystemType systemType, String problem) {
+    static String describeContent(ChartRun run) {
+        if (run == null) {
+            return "The pocket's content was not recorded.";
+        }
+        String objective = run.objective() == null ? "none (no target could be placed; see starsector.log)"
+                : run.objective().name() + " (" + run.objectiveTargetIds().size() + " target(s))";
+        return "Tier " + run.tier() + ", held by " + (run.contentFaction() == null ? "nobody" : run.contentFaction()) + ": "
+                + run.contentFleets() + " fleet(s), " + run.contentPois() + " point(s) of interest"
+                + (run.bossFleetId() != null ? ", a warden fleet" : "") + (run.vaultEntityId() != null ? ", a vault" : "")
+                + ". Objective: " + objective + ".";
+    }
+
+    record OpenArguments(Long seed, StarSystemType systemType, Integer tier, String problem) {
 
         static OpenArguments parse(String args) {
-            Long seed = null;
-            StarSystemType systemType = null;
             if (args == null || args.isBlank()) {
-                return new OpenArguments(null, null, null);
+                return new OpenArguments(null, null, null, null);
             }
+            StarSystemType systemType = null;
+            Integer explicitTier = null;
+            List<Long> numbers = new ArrayList<>();
             for (String token : args.trim().split("\\s+")) {
-                Long number = parseSeed(token);
+                Matcher tierMatch = EXPLICIT_TIER.matcher(token);
                 StarSystemType type = ChartLayoutGenerator.parseType(token);
-                if (number != null && seed == null) {
-                    seed = number;
-                } else if (type != null && systemType == null) {
+                Long number = parseNumber(token);
+                if (type != null && systemType == null) {
                     systemType = type;
+                } else if (tierMatch.matches() && explicitTier == null) {
+                    Long tierNumber = parseNumber(tierMatch.group(1));
+                    if (tierNumber == null || !ChartTiers.isValid(tierNumber.intValue()) || tierNumber.intValue() != tierNumber) {
+                        return problem("The tier in \"" + token + "\" must be " + ChartTiers.LOWEST_TIER + " to " + ChartTiers.HIGHEST_TIER + ".");
+                    }
+                    explicitTier = tierNumber.intValue();
+                } else if (number != null) {
+                    numbers.add(number);
                 } else {
-                    return new OpenArguments(null, null, "Can't use \"" + token + "\": give at most one seed (a whole number) and one system type.");
+                    return problem("Can't use \"" + token + "\": give at most one seed, one system type and one tier.");
                 }
             }
-            return new OpenArguments(seed, systemType, null);
+            return assign(numbers, systemType, explicitTier);
         }
 
-        private static Long parseSeed(String token) {
+        private static OpenArguments assign(List<Long> numbers, StarSystemType systemType, Integer explicitTier) {
+            if (numbers.size() > 2 || explicitTier != null && numbers.size() > 1) {
+                return problem("Too many numbers: give at most one seed and one tier.");
+            }
+            if (numbers.isEmpty()) {
+                return new OpenArguments(null, systemType, explicitTier, null);
+            }
+            if (numbers.size() == 1) {
+                return new OpenArguments(numbers.get(0), systemType, explicitTier, null);
+            }
+            long first = numbers.get(0);
+            long second = numbers.get(1);
+            if (isTier(second)) {
+                return new OpenArguments(first, systemType, (int) second, null);
+            }
+            if (isTier(first)) {
+                return new OpenArguments(second, systemType, (int) first, null);
+            }
+            return problem("Neither " + first + " nor " + second + " is a tier from " + ChartTiers.LOWEST_TIER + " to " + ChartTiers.HIGHEST_TIER + ".");
+        }
+
+        private static boolean isTier(long number) {
+            return number >= ChartTiers.LOWEST_TIER && number <= ChartTiers.HIGHEST_TIER;
+        }
+
+        private static OpenArguments problem(String problem) {
+            return new OpenArguments(null, null, null, problem);
+        }
+
+        int tierOrDefault() {
+            return tier != null ? tier : DEFAULT_TIER;
+        }
+
+        private static Long parseNumber(String token) {
             try {
-                return Long.parseLong(token);
+                return Long.parseLong(token.toLowerCase(Locale.ROOT));
             } catch (NumberFormatException e) {
                 return null;
             }

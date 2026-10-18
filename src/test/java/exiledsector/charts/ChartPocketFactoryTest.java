@@ -62,11 +62,13 @@ class ChartPocketFactoryTest {
         when(star.getRadius()).thenReturn(500f);
         when(star.getLocation()).thenReturn(new Vector2f());
         engine = FakeChartLayoutEngine.install(FakeChartLayoutEngine.doingNothing());
+        FakeChartContentEngine.install(FakeChartContentEngine.offeringNothing());
     }
 
     @AfterEach
     void tearDown() {
         ChartLayoutGenerator.resetForTests();
+        ChartContentGenerator.resetForTests();
     }
 
     @Test

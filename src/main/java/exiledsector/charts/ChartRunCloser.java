@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.CampaignEventListener;
 import com.fs.starfarer.api.campaign.CampaignEventListener.FleetDespawnReason;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
+import com.fs.starfarer.api.campaign.IntelDataAPI;
 import com.fs.starfarer.api.campaign.JumpPointAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.NascentGravityWellAPI;
@@ -19,6 +20,7 @@ import com.fs.starfarer.api.characters.OfficerDataAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.impl.campaign.enc.StrandedGiveTJScript;
 import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
+import com.fs.starfarer.api.impl.campaign.intel.misc.SalvorsTallyIntel;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -167,6 +169,10 @@ public final class ChartRunCloser {
     }
 
     static void endIntel(CloseTarget target) {
+        IntelDataAPI intelTab = target.sector().getIntel();
+        if (intelTab != null && intelTab.getSelectedIntel() != null && intelPointsIntoRun(intelTab.getSelectedIntel(), target)) {
+            intelTab.setSelectedIntel(null);
+        }
         IntelManagerAPI intelManager = target.sector().getIntelManager();
         if (intelManager == null) {
             return;
@@ -187,7 +193,13 @@ public final class ChartRunCloser {
     }
 
     private static boolean intelPointsIntoRun(IntelInfoPlugin intel, CloseTarget target) {
+        if (intel instanceof ChartRunBound bound && bound.belongsToRun(target.runId())) {
+            return true;
+        }
         try {
+            if (target.pocket() != null && intel instanceof SalvorsTallyIntel tally && tally.getSystem() == target.pocket()) {
+                return true;
+            }
             return pointsIntoRun(intel.getMapLocation(null), target);
         } catch (RuntimeException e) {
             return false;

@@ -30,7 +30,7 @@ public final class NpcTreeSize {
         return roll(playerShipPowers, percentRange(), random);
     }
 
-    static int roll(List<Integer> playerShipPowers, PercentRange percentRange, Random random) {
+    public static int roll(List<Integer> playerShipPowers, PercentRange percentRange, Random random) {
         if (playerShipPowers.isEmpty()) {
             return 0;
         }

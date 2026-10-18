@@ -9,7 +9,8 @@ public final class ChartSaveAliases {
     static final Map<String, Class<?>> ALIASES = Map.of(
             "exiledSector.ChartRun", ChartRun.class,
             "exiledSector.ChartRunState", ChartRunState.class,
-            "exiledSector.ChartWormholePlugin", ChartWormholePlugin.class);
+            "exiledSector.ChartWormholePlugin", ChartWormholePlugin.class,
+            "exiledSector.ChartObjectiveIntel", ChartObjectiveIntel.class);
 
     private ChartSaveAliases() {
     }

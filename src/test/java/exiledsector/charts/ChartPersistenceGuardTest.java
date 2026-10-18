@@ -49,6 +49,7 @@ class ChartPersistenceGuardTest {
         assertTrue(ChartSaveAliases.ALIASES.containsValue(ChartRun.class));
         assertTrue(ChartSaveAliases.ALIASES.containsValue(ChartRunState.class));
         assertTrue(ChartSaveAliases.ALIASES.containsValue(ChartWormholePlugin.class));
+        assertTrue(ChartSaveAliases.ALIASES.containsValue(ChartObjectiveIntel.class));
         ChartSaveAliases.ALIASES.keySet().forEach(alias -> assertTrue(alias.startsWith("exiledSector."), alias));
     }
 
@@ -59,6 +60,26 @@ class ChartPersistenceGuardTest {
         ChartSaveAliases.register(xstream);
 
         ChartSaveAliases.ALIASES.forEach((alias, type) -> verify(xstream).alias(alias, type));
+    }
+
+    @Test
+    void theObjectiveIntelSavesOnlyItsRunIdSoItNeverHoldsThePocket() {
+        List<String> saved = new ArrayList<>();
+        for (Field field : ChartObjectiveIntel.class.getDeclaredFields()) {
+            if (!Modifier.isStatic(field.getModifiers()) && !Modifier.isTransient(field.getModifiers())) {
+                saved.add(field.getName() + ": " + field.getType().getSimpleName());
+            }
+        }
+        assertEquals(List.of("runId: String"), saved);
+    }
+
+    @Test
+    void theContentListenerIsNeverSaved() {
+        for (Field field : ChartContentListener.class.getDeclaredFields()) {
+            if (!Modifier.isStatic(field.getModifiers())) {
+                assertTrue(field.getType().isPrimitive(), field.getName());
+            }
+        }
     }
 
     @Test

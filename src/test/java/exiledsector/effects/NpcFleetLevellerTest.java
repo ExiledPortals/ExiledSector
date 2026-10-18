@@ -22,6 +22,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.loading.VariantSource;
 import exiledsector.ExiledSectorModPlugin;
+import exiledsector.charts.ChartIds;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
@@ -515,5 +516,58 @@ class NpcFleetLevellerTest {
 
         assertTrue(NpcTreeTag.find(officered.getVariant()).contains("hangar_1"));
         assertFalse(hullMods.contains("converted_hangar"));
+    }
+
+    private int nodesForChartTier(Integer chartTier) {
+        FleetMemberAPI officered = member("m1", statefulVariant(new LinkedHashSet<>(), new ArrayList<>()), true);
+        CampaignFleetAPI fleet = fleetOf(officered);
+        if (chartTier != null) {
+            fleet.getMemoryWithoutUpdate().set(ChartIds.TIER_MEMORY_KEY, chartTier);
+        }
+        NpcFleetLeveller.ensure(fleet);
+        return NpcTreeTag.decode(NpcTreeTag.find(officered.getVariant())).getAllocatedNodeIds().size();
+    }
+
+    @Test
+    void chartFleetsSeedTheirTreesFromTheChartNotFromRandomFleetAndShipIds() {
+        String previous = "armor_1";
+        for (int i = 0; i < 12; i++) {
+            String id = "branch_" + i;
+            SkillTree.register(new SkillNode(id, type(id, SkillTier.SMALL).build(), List.of(i % 2 == 0 ? "a_1" : previous), 0f, 0f));
+            previous = id;
+        }
+        List<String> trees = new ArrayList<>();
+        for (String ids : List.of("first", "second")) {
+            FleetMemberAPI officered = member("ship_" + ids, statefulVariant(new LinkedHashSet<>(), new ArrayList<>()), true);
+            CampaignFleetAPI fleet = fleet("fleet_" + ids, List.of(officered), location, new Vector2f(100f, 0f));
+            fleet.getMemoryWithoutUpdate().set(ChartIds.TIER_MEMORY_KEY, 8);
+            fleet.getMemoryWithoutUpdate().set(ChartIds.SEED_MEMORY_KEY, "chartseed");
+            NpcFleetLeveller.ensure(fleet);
+            trees.add(NpcTreeTag.find(officered.getVariant()));
+        }
+
+        assertNotNull(trees.get(0));
+        assertEquals(trees.get(0), trees.get(1));
+    }
+
+    @Test
+    void chartFleetsSizeTheirTreesByTheChartTierInsteadOfTheSettings() {
+        String previous = "armor_1";
+        for (int i = 0; i < 30; i++) {
+            String id = "chain_" + i;
+            SkillTree.register(new SkillNode(id, type(id, SkillTier.SMALL).build(), List.of(previous), 0f, 0f));
+            previous = id;
+        }
+        when(playerStats.getLevel()).thenReturn(10);
+        lunaSettingsMock.when(() -> LunaSettings.getInt(ExiledSectorModPlugin.MOD_ID, ShipLevelConfig.MAX_ALLOCATED_NODES_FIELD_ID))
+                .thenReturn(40);
+
+        int byTheSettings = nodesForChartTier(null);
+        int tierOne = nodesForChartTier(1);
+        int tierFifteen = nodesForChartTier(15);
+
+        assertTrue(byTheSettings > 2, "the default tree has " + byTheSettings + " nodes");
+        assertTrue(tierFifteen > byTheSettings, tierFifteen + " vs " + byTheSettings);
+        assertTrue(tierOne < byTheSettings, tierOne + " vs " + byTheSettings);
     }
 }

@@ -1,0 +1,15 @@
+faction,weight,min_tier,max_tier,power_mult,quality_bonus,note
+pirates,10,1,8,1,-0.1,
+luddic_path,6,1,10,1,-0.05,
+independent,5,1,6,1,0,
+mercenary,3,4,15,1,0.1,
+hegemony,6,3,15,1,0,
+sindrian_diktat,4,3,15,1,0,
+persean,4,3,15,1,0,
+luddic_church,3,2,12,1,0,
+tritachyon,5,5,15,0.9,0.1,"Fewer, better ships"
+remnant,4,7,15,0.9,0.15,
+derelict,3,2,9,1.1,-0.1,"Domain-era drones"
+diableavionics,3,4,15,1,0,"Diable Avionics, only when installed"
+blackrock_driveyards,3,4,15,1,0,"Blackrock Drive Yards, only when installed"
+tahlan_legioinfernalis,3,6,15,1,0,"Tahlan Shipworks' Legio Infernalis, only when installed"

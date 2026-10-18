@@ -1,9 +1,13 @@
 package exiledsector.console;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import exiledsector.charts.ChartCensus;
+import exiledsector.charts.ChartIds;
 import exiledsector.charts.ChartPocketContents;
 import exiledsector.charts.ChartRun;
 import exiledsector.charts.ChartRuns;
@@ -37,6 +41,34 @@ public class ChartStatusCommand implements BaseCommand {
                 + ", origin " + run.originLocationId() + " at (" + Math.round(run.originX()) + ", " + Math.round(run.originY()) + ")"
                 + (run.isReturnRequested() ? ", returning" : "")
                 + "\n" + ChartOpenCommand.describeLayout(run)
-                + (pocket == null ? "" : "\nPocket contents: " + ChartPocketContents.of(pocket).describe());
+                + "\n" + ChartOpenCommand.describeContent(run)
+                + "\n" + describeObjective(run)
+                + (pocket == null ? "" : "\nPocket contents: " + ChartPocketContents.of(pocket).describe()
+                + "\nStill in the pocket: " + describeLiveContent(pocket));
+    }
+
+    static String describeObjective(ChartRun run) {
+        if (run.objective() == null) {
+            return "Objective: none.";
+        }
+        return "Objective " + run.objective().name() + ": " + run.objectiveTargetsDefeated() + " of " + run.objectiveTargetIds().size()
+                + " target(s) done" + (run.isObjectiveComplete() ? ", complete" : "")
+                + (run.isRewardClaimed() ? ", reward delivered" : run.isObjectiveComplete() ? ", reward NOT delivered" : "") + ".";
+    }
+
+    static String describeLiveContent(StarSystemAPI pocket) {
+        int chartFleets = 0;
+        for (CampaignFleetAPI fleet : pocket.getFleets()) {
+            if (fleet.hasTag(ChartIds.CONTENT_TAG) && !fleet.isDespawning()) {
+                chartFleets++;
+            }
+        }
+        int pois = 0;
+        for (SectorEntityToken entity : pocket.getEntitiesWithTag(ChartIds.CONTENT_TAG)) {
+            if (!(entity instanceof CampaignFleetAPI) && !entity.hasTag(Tags.FADING_OUT_AND_EXPIRING)) {
+                pois++;
+            }
+        }
+        return chartFleets + " chart fleet(s) and " + pois + " point(s) of interest not yet salvaged.";
     }
 }

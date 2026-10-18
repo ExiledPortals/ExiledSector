@@ -9,6 +9,7 @@ import com.fs.starfarer.api.campaign.CampaignTerrainAPI;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
+import com.fs.starfarer.api.campaign.IntelDataAPI;
 import com.fs.starfarer.api.campaign.JumpPointAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.NascentGravityWellAPI;
@@ -38,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -381,6 +383,66 @@ class ChartRunCloserTest {
 
         verify(sector).removeScript(pocketTally);
         verify(sector, never()).removeScript(otherTally);
+    }
+
+    @Test
+    void theRunsObjectiveIntelAndAPostedSalvorsTallyForThePocketAreRemovedThoughNeitherHasAMapLocation() {
+        ChartObjectiveIntel objectiveIntel = new ChartObjectiveIntel(RUN_ID);
+        ChartObjectiveIntel otherRunIntel = new ChartObjectiveIntel("other");
+        SalvorsTallyIntel pocketTally = mock(SalvorsTallyIntel.class);
+        when(pocketTally.getSystem()).thenReturn(pocket);
+        SalvorsTallyIntel otherTally = mock(SalvorsTallyIntel.class);
+        when(otherTally.getSystem()).thenReturn(realSystem);
+        when(intelManager.getIntel()).thenReturn(List.of(objectiveIntel, otherRunIntel, pocketTally, otherTally));
+
+        assertEquals(0, ChartRunCloser.close(sector, run));
+
+        verify(intelManager).removeIntel(objectiveIntel);
+        verify(intelManager).removeIntel(pocketTally);
+        verify(intelManager, never()).removeIntel(otherRunIntel);
+        verify(intelManager, never()).removeIntel(otherTally);
+        assertTrue(objectiveIntel.isEnded());
+    }
+
+    @Test
+    void theIntelTabForgetsASelectedIntelOfTheRunSoTheSaveDoesNotKeepIt() {
+        IntelDataAPI intelTab = mock(IntelDataAPI.class);
+        when(sector.getIntel()).thenReturn(intelTab);
+        SalvorsTallyIntel pocketTally = mock(SalvorsTallyIntel.class);
+        when(pocketTally.getSystem()).thenReturn(pocket);
+        when(intelTab.getSelectedIntel()).thenReturn(pocketTally);
+
+        ChartRunCloser.close(sector, run);
+
+        verify(intelTab).setSelectedIntel(null);
+    }
+
+    @Test
+    void anUnrelatedSelectedIntelIsLeftSelected() {
+        IntelDataAPI intelTab = mock(IntelDataAPI.class);
+        when(sector.getIntel()).thenReturn(intelTab);
+        when(intelTab.getSelectedIntel()).thenReturn(otherIntel);
+
+        ChartRunCloser.close(sector, run);
+
+        verify(intelTab, never()).setSelectedIntel(any());
+    }
+
+    @Test
+    void contentFleetsAreDespawnedWhileTheRunIsClosingSoTheirDefeatNeverCounts() {
+        run.recordContent(new ChartContent(3, "pirates", ChartObjective.CLEAR, List.of("guard"), null, null, 1, 0));
+        when(pocketFleet.getId()).thenReturn("guard");
+        when(pocketFleet.hasTag(ChartIds.runTag(RUN_ID))).thenReturn(true);
+        Mockito.doAnswer(invocation -> {
+            ChartObjectives.fleetGone(sector, pocketFleet, FleetDespawnReason.DESTROYED_BY_BATTLE);
+            return null;
+        }).when(pocketFleet).despawn(any(), any());
+        run.beginClosing();
+
+        ChartRunCloser.close(sector, run);
+
+        assertEquals(0, run.objectiveTargetsDefeated());
+        assertFalse(run.isRewardClaimed());
     }
 
     private record BoundScript(String runId) implements EveryFrameScript, ChartRunBound {

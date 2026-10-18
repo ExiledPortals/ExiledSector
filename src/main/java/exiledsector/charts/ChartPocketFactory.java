@@ -43,8 +43,10 @@ public final class ChartPocketFactory {
         pocket.getLocation().set(farAway.x, farAway.y);
         localiseName(pocket);
         addInnerWormhole(pocket, runId, layout.innerWormholeLocation());
+        ChartContent content = ChartContentGenerator.generate(sector, pocket, runId, request.seed(), request.tier(),
+                innerWormholeSpot(layout.innerWormholeLocation()));
         tagEveryEntity(pocket, runId);
-        return new ChartPocket(pocket, layout);
+        return new ChartPocket(pocket, layout, content);
     }
 
     static StarSystemAPI createEmptyPocket(SectorAPI sector, String runId) {
@@ -77,11 +79,15 @@ public final class ChartPocketFactory {
     public static CustomCampaignEntityAPI addInnerWormhole(StarSystemAPI pocket, String runId, Vector2f location) {
         CustomCampaignEntityAPI inner = pocket.addCustomEntity(ChartIds.innerWormholeId(runId),
                 Translation.gameText("chart.wormhole.inner.name"), ChartIds.WORMHOLE_TYPE, Factions.NEUTRAL);
-        Vector2f placed = location == null ? new Vector2f(INNER_WORMHOLE_X, INNER_WORMHOLE_Y) : location;
+        Vector2f placed = innerWormholeSpot(location);
         inner.setFixedLocation(placed.x, placed.y);
         tag(inner, runId);
         inner.addTag(ChartIds.INNER_WORMHOLE_TAG);
         return inner;
+    }
+
+    static Vector2f innerWormholeSpot(Vector2f location) {
+        return location == null ? new Vector2f(INNER_WORMHOLE_X, INNER_WORMHOLE_Y) : location;
     }
 
     public static CustomCampaignEntityAPI addOuterWormhole(LocationAPI origin, Vector2f besideHere, String runId) {
@@ -116,7 +122,7 @@ public final class ChartPocketFactory {
         pocket.setBaseName(localisedName);
     }
 
-    public record ChartPocket(StarSystemAPI system, ChartLayout layout) {
+    public record ChartPocket(StarSystemAPI system, ChartLayout layout, ChartContent content) {
     }
 
     private static void tagEveryEntity(StarSystemAPI pocket, String runId) {

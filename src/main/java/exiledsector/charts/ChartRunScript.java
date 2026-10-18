@@ -10,12 +10,14 @@ import org.apache.log4j.Logger;
 
 public class ChartRunScript implements EveryFrameScript {
 
+    static final float OBJECTIVE_CHECK_SECONDS = 1f;
     private static final Logger LOG = Logger.getLogger(ChartRunScript.class);
 
     private String cachedRunId;
     private StarSystemAPI cachedPocket;
     private boolean closeArmed;
     private boolean failureReported;
+    private float secondsSinceObjectiveCheck;
 
     @Override
     public boolean isDone() {
@@ -35,12 +37,25 @@ public class ChartRunScript implements EveryFrameScript {
             return;
         }
         try {
-            watch(Global.getSector(), run);
+            SectorAPI sector = Global.getSector();
+            watch(sector, run);
+            checkObjective(sector, run, amount);
         } catch (RuntimeException | LinkageError e) {
             if (!failureReported) {
                 failureReported = true;
                 LOG.error("[ExiledSector] The Star Chart watchdog failed; the run will be checked again next frame", e);
             }
+        }
+    }
+
+    void checkObjective(SectorAPI sector, ChartRun run, float amount) {
+        secondsSinceObjectiveCheck += amount;
+        if (secondsSinceObjectiveCheck < OBJECTIVE_CHECK_SECONDS) {
+            return;
+        }
+        secondsSinceObjectiveCheck = 0f;
+        if (run.runState() == ChartRunState.INSIDE && !run.isObjectiveComplete() && run.objective() != null) {
+            ChartObjectives.reconcile(sector);
         }
     }
 

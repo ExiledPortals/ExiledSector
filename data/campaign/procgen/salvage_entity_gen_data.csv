@@ -1,0 +1,7 @@
+id,rating,detection_range,type,autoXP,xpDiscover,xpSalvage,tags,drop_value,drop_random,defFaction,defQuality,probDefenders,minStr,maxStr,minSize,maxSize,probStation,stationRole
+exiledSector_chart_vault,1,2500,DISCOVERABLE,2500,2000,8000,not_a_custom_entity,basic:20000,"ai_cores3:6,
+high_weapons2:20,
+any_hullmod_high:8,
+blueprints_low:12,
+rare_tech_low:4,
+package_bp:3",,,,,,,,,

@@ -22,16 +22,20 @@ if ($SaveName) {
 $saveText = [System.IO.File]::ReadAllText($campaignFile.FullName)
 $markerMatches = [regex]::Matches($saveText, "$([regex]::Escape($marker))[A-Za-z0-9_]*")
 $chartedSpaceCount = [regex]::Matches($saveText, [regex]::Escape("Charted Space")).Count
+$contentMatches = [regex]::Matches($saveText, "exiledSector_chartTier|exiledSector\.Chart[A-Za-z]*|Sealed Vault")
 
 Write-Host "Save:            $($campaignFile.Directory.Name)"
 Write-Host "Saved at:        $($campaignFile.LastWriteTime)"
 Write-Host ("campaign.xml:    {0:N0} bytes ({1:N1} KB)" -f $campaignFile.Length, ($campaignFile.Length / 1KB))
 Write-Host "$marker occurrences: $($markerMatches.Count)"
 Write-Host "'Charted Space' occurrences: $chartedSpaceCount"
+Write-Host "Chart content markers (fleet tier keys, chart class aliases, vault names): $($contentMatches.Count)"
 
-if ($markerMatches.Count -gt 0) {
+if ($markerMatches.Count -gt 0 -or $contentMatches.Count -gt 0) {
     Write-Host "Most common chart ids and tags:"
     $markerMatches | Group-Object Value | Sort-Object Count -Descending | Select-Object -First 20 |
+        ForEach-Object { Write-Host ("  {0,6}  {1}" -f $_.Count, $_.Name) }
+    $contentMatches | Group-Object Value | Sort-Object Count -Descending | Select-Object -First 20 |
         ForEach-Object { Write-Host ("  {0,6}  {1}" -f $_.Count, $_.Name) }
     exit 1
 }

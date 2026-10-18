@@ -51,8 +51,11 @@ public final class ChartRunActions {
         ChartRun run = new ChartRun(newRunId(random), ChartIds.locationIdOf(origin), playerLocation.x, playerLocation.y, entriesAllowed);
         ChartRuns.store(run);
         try {
-            run.recordLayout(ChartPocketFactory.createPocket(sector, run.runId(), layoutRequest).layout());
+            ChartPocketFactory.ChartPocket created = ChartPocketFactory.createPocket(sector, run.runId(), layoutRequest);
+            run.recordLayout(created.layout());
+            run.recordContent(created.content());
             ChartPocketFactory.addOuterWormhole(origin, playerLocation, run.runId());
+            ChartObjectiveIntel.addFor(sector, run);
             return OpenResult.OPENED;
         } catch (RuntimeException | LinkageError e) {
             LOG.error("[ExiledSector] Opening Star Chart run " + run.runId() + " failed; cleaning up what was created", e);

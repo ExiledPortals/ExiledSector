@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.ToDoubleFunction;
 
-final class WeightedPick {
+public final class WeightedPick {
 
     private WeightedPick() {
     }
@@ -24,7 +24,7 @@ final class WeightedPick {
         return candidates.size() - 1;
     }
 
-    static <T> T pick(List<T> candidates, ToDoubleFunction<T> weightOf, Random random) {
+    public static <T> T pick(List<T> candidates, ToDoubleFunction<T> weightOf, Random random) {
         return candidates.isEmpty() ? null : candidates.get(index(candidates, weightOf, random.nextFloat()));
     }
 }

@@ -11,6 +11,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -194,5 +195,46 @@ class ChartRunTest {
     @Test
     void theRecordKeyIsNotCountedByTheSaveCheckerMarker() {
         assertFalse(ChartRuns.DATA_KEY.startsWith(ChartIds.PREFIX));
+    }
+
+    @Test
+    void theContentRecordKeepsOnlyIdsAndTracksTheObjectiveOnce() {
+        ChartRun run = new ChartRun("abc", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
+        assertEquals(ChartTiers.LOWEST_TIER, run.tier());
+        assertNull(run.objective());
+
+        run.recordContent(new ChartContent(12, "remnant", ChartObjective.CLEAR, List.of("g1", "g2"), "b", null, 5, 9));
+
+        assertEquals(12, run.tier());
+        assertEquals("remnant", run.contentFaction());
+        assertEquals(ChartObjective.CLEAR, run.objective());
+        assertEquals(List.of("g1", "g2"), run.objectiveTargetIds());
+        assertEquals(5, run.contentFleets());
+        assertEquals(9, run.contentPois());
+        assertFalse(run.markObjectiveComplete());
+        assertFalse(run.claimReward());
+        assertTrue(run.recordTargetGone("g1"));
+        assertFalse(run.recordTargetGone("g1"));
+        assertFalse(run.recordTargetGone("someone else"));
+        assertFalse(run.isObjectiveMet());
+        assertTrue(run.recordTargetGone("g2"));
+        assertTrue(run.isObjectiveMet());
+        assertTrue(run.markObjectiveComplete());
+        assertFalse(run.markObjectiveComplete());
+        assertFalse(run.recordTargetGone("g2"));
+        assertTrue(run.claimReward());
+        assertFalse(run.claimReward());
+    }
+
+    @Test
+    void idsThatCannotBeJoinedSafelyAreDroppedAndAnEmptyObjectiveIsNeverMet() {
+        assertEquals("a|b", ChartRun.join(List.of("a", "", "x|y", "b")));
+        assertNull(ChartRun.join(List.of()));
+        assertEquals(List.of(), ChartRun.split(null));
+        ChartRun run = new ChartRun("abc", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
+        run.recordContent(new ChartContent(40, null, ChartObjective.BOSS, List.of(), null, null, 0, 0));
+        assertEquals(ChartTiers.HIGHEST_TIER, run.tier());
+        assertFalse(run.isObjectiveMet());
+        assertFalse(run.recordTargetGone(null));
     }
 }

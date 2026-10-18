@@ -1,11 +1,14 @@
 package exiledsector.charts;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CampaignEventListener.FleetDespawnReason;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
+import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
@@ -63,12 +66,14 @@ class ChartSoakScriptTest {
                 .filter(system -> invocation.getArgument(0).equals(system.getOptionalUniqueId())).findFirst().orElse(null));
         doAnswer(invocation -> removeNextFrame.add(invocation.getArgument(0))).when(sector).removeStarSystemNextFrame(Mockito.any());
         FakeChartLayoutEngine.install(FakeChartLayoutEngine.doingNothing());
+        FakeChartContentEngine.install(FakeChartContentEngine.offeringNothing());
     }
 
     @AfterEach
     void tearDown() {
         globalMock.close();
         ChartLayoutGenerator.resetForTests();
+        ChartContentGenerator.resetForTests();
     }
 
     private StarSystemAPI newPocket() {
@@ -81,6 +86,12 @@ class ChartSoakScriptTest {
         when(pocket.initStar(anyString(), anyString(), anyFloat(), anyFloat())).thenReturn(mock(PlanetAPI.class));
         when(pocket.getStar()).thenReturn(mock(PlanetAPI.class));
         when(pocket.addCustomEntity(anyString(), anyString(), anyString(), anyString())).thenReturn(mock(CustomCampaignEntityAPI.class));
+        List<SectorEntityToken> added = new ArrayList<>();
+        doAnswer(invocation -> added.add(invocation.getArgument(0))).when(pocket).addEntity(Mockito.any());
+        doAnswer(invocation -> added.remove(invocation.<Object>getArgument(0))).when(pocket).removeEntity(Mockito.any());
+        when(pocket.getFleets()).thenAnswer(invocation -> added.stream().filter(CampaignFleetAPI.class::isInstance)
+                .map(CampaignFleetAPI.class::cast).toList());
+        when(pocket.getAllEntities()).thenAnswer(invocation -> new ArrayList<>(added));
         starSystems.add(pocket);
         return pocket;
     }
@@ -137,6 +148,49 @@ class ChartSoakScriptTest {
         assertEquals(List.of("used procgen names 500 -> 502", "Hyperspace Topography scans 12 -> 15", "star systems 10 -> 11",
                 "hyperspace entities other than fleets 80 -> 81",
                 "chart-tagged entities 0 -> 3", "Economy markets 40 -> 41", "intel 30 -> 31"), leaked.changesSince(before));
+    }
+
+    @Test
+    void theCensusAlsoNamesLeakedFleetsScriptsAndListeners() {
+        ChartCensus before = new ChartCensus(10, 0, 100, 20, 0, 0, 500, 12, 40, 30, 7, 60, 0, 25, 9);
+        ChartCensus leaked = new ChartCensus(10, 0, 100, 20, 0, 0, 500, 12, 40, 30, 7, 62, 2, 26, 10);
+
+        assertEquals(List.of("fleets in the sector 60 -> 62", "chart fleets anywhere 0 -> 2", "sector scripts 25 -> 26",
+                "sector listeners 9 -> 10"), leaked.changesSince(before));
+    }
+
+    @Test
+    void soaksFullContentPocketsAcrossEveryTierAndStillLeavesEveryCountUnchanged() throws Exception {
+        ChartContentDataTest.loadShippedTables();
+        FakeChartContentEngine content = FakeChartContentEngine.install(new FakeChartContentEngine().offering(-4000f, 0f, 0f, 5000f));
+        when(sector.getFaction(anyString())).thenReturn(mock(FactionAPI.class));
+        try {
+            ChartCensus before = ChartCensus.take(sector);
+            ChartSoakScript soak = new ChartSoakScript(15, before, reports::add, new Random(11));
+
+            runFrames(soak, new ChartRunScript(), 400);
+
+            assertTrue(reports.get(0).contains("finished, 15 of 15"), reports.get(0));
+            assertTrue(reports.get(0).contains("tiers [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]"), reports.get(0));
+            assertTrue(reports.get(0).contains("Unchanged before vs after"), reports.get(0));
+            assertTrue(content.fleets.size() > 15);
+            assertTrue(content.salvageEntities.size() > 15);
+            for (CampaignFleetAPI fleet : content.fleets) {
+                verify(fleet).despawn(FleetDespawnReason.PLAYER_FAR_AWAY, null);
+            }
+        } finally {
+            ChartContentGenerator.resetForTests();
+            ChartTiers.resetForTests();
+            ChartPois.resetForTests();
+            ChartFactions.resetForTests();
+        }
+    }
+
+    @Test
+    void tiersCycleThroughOneToFifteen() {
+        assertEquals(1, ChartSoakScript.tierForIteration(0));
+        assertEquals(15, ChartSoakScript.tierForIteration(14));
+        assertEquals(1, ChartSoakScript.tierForIteration(15));
     }
 
     @Test

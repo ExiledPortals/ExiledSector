@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 
 public final class ChartIds {
 
@@ -18,8 +19,21 @@ public final class ChartIds {
     public static final String NEX_DO_NOT_COLONIZE = "$nex_do_not_colonize";
     public static final String HYPERSPACE_LOCATION_ID = "hyperspace";
     public static final String POCKET_BASE_NAME = "Charted Space";
+    public static final String TIER_MEMORY_KEY = "$exiledSector_chartTier";
+    public static final String SEED_MEMORY_KEY = "$exiledSector_chartSeed";
+    public static final String VAULT_TAG = PREFIX + "vault";
+    public static final String CONTENT_TAG = PREFIX + "content";
 
     private ChartIds() {
+    }
+
+    public static String fleetSeed(MemoryAPI fleetMemory) {
+        Object stored = fleetMemory == null ? null : fleetMemory.get(SEED_MEMORY_KEY);
+        return stored instanceof String seed && !seed.isEmpty() ? seed : null;
+    }
+
+    public static String fleetRunKey(String runId) {
+        return MEMORY_PREFIX + "run_" + runId;
     }
 
     public static String pocketSystemId(String runId) {

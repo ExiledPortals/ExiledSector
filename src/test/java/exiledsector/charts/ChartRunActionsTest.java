@@ -3,12 +3,15 @@ package exiledsector.charts;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
+import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.JumpPointAPI.JumpDestination;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
+import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
+import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,12 +74,14 @@ class ChartRunActionsTest {
         when(playerFleet.getLocation()).thenReturn(new Vector2f(500f, 600f));
         when(pocket.getStar()).thenReturn(mock(PlanetAPI.class));
         FakeChartLayoutEngine.install(FakeChartLayoutEngine.doingNothing());
+        FakeChartContentEngine.install(FakeChartContentEngine.offeringNothing());
     }
 
     @AfterEach
     void tearDown() {
         globalMock.close();
         ChartLayoutGenerator.resetForTests();
+        ChartContentGenerator.resetForTests();
     }
 
     @Test
@@ -129,6 +134,32 @@ class ChartRunActionsTest {
         assertEquals("corvus", ChartRuns.currentOrNull().originLocationId());
         when(sector.getStarSystem("corvus")).thenReturn(realSystem);
         assertSame(realSystem, ChartIds.resolveLocation(sector, "corvus"));
+    }
+
+    @Test
+    void openingRecordsTheTiersContentAndPostsTheObjectiveIntel() throws Exception {
+        ChartContentDataTest.loadShippedTables();
+        FakeChartContentEngine content = FakeChartContentEngine.install(new FakeChartContentEngine().offering(-4000f, 0f, 0f, 5000f));
+        when(sector.getFaction(anyString())).thenReturn(mock(FactionAPI.class));
+        IntelManagerAPI intelManager = mock(IntelManagerAPI.class);
+        when(sector.getIntelManager()).thenReturn(intelManager);
+        try {
+            assertEquals(ChartRunActions.OpenResult.OPENED, ChartRunActions.openBesidePlayer(sector, 1, new Random(1),
+                    new ChartLayoutRequest(99L, null, 9)));
+
+            ChartRun run = ChartRuns.currentOrNull();
+            assertEquals(9, run.tier());
+            assertNotNull(run.objective());
+            assertEquals(content.fleets.size(), run.contentFleets());
+            ArgumentCaptor<IntelInfoPlugin> posted =
+                    ArgumentCaptor.forClass(IntelInfoPlugin.class);
+            verify(intelManager).addIntel(posted.capture(), Mockito.eq(true));
+            assertTrue(((ChartObjectiveIntel) posted.getValue()).belongsToRun(run.runId()));
+        } finally {
+            ChartTiers.resetForTests();
+            ChartPois.resetForTests();
+            ChartFactions.resetForTests();
+        }
     }
 
     @Test

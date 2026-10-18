@@ -44,11 +44,36 @@ class ChartOpenCommandTest {
     }
 
     @Test
+    void aTierCanBeGivenExplicitlyOrAsTheSmallerOfTwoNumbersInAnyOrder() {
+        assertEquals(1, OpenArguments.parse("").tierOrDefault());
+        assertNull(OpenArguments.parse("77").tier());
+        OpenArguments explicit = OpenArguments.parse("tier=12 77 binary_far");
+        assertEquals(12, explicit.tier());
+        assertEquals(77L, explicit.seed());
+        assertEquals(StarSystemType.BINARY_FAR, explicit.systemType());
+        assertEquals(3, OpenArguments.parse("T3").tier());
+        OpenArguments seedThenTier = OpenArguments.parse("123456 7");
+        assertEquals(123456L, seedThenTier.seed());
+        assertEquals(7, seedThenTier.tier());
+        OpenArguments tierThenSeed = OpenArguments.parse("SINGLE 7 123456");
+        assertEquals(123456L, tierThenSeed.seed());
+        assertEquals(7, tierThenSeed.tier());
+        OpenArguments bothSmall = OpenArguments.parse("3 9");
+        assertEquals(3L, bothSmall.seed());
+        assertEquals(9, bothSmall.tier());
+    }
+
+    @Test
     void unsafeTypesUnknownWordsAndRepeatsAreRejected() {
         assertNotNull(OpenArguments.parse("NEBULA").problem());
         assertNotNull(OpenArguments.parse("DEEP_SPACE").problem());
         assertNotNull(OpenArguments.parse("galaxy").problem());
-        assertNotNull(OpenArguments.parse("1 2").problem());
+        assertNotNull(OpenArguments.parse("100 200").problem());
+        assertNotNull(OpenArguments.parse("1 2 3").problem());
+        assertNotNull(OpenArguments.parse("tier=16").problem());
+        assertNotNull(OpenArguments.parse("tier=0").problem());
+        assertNotNull(OpenArguments.parse("5 6 tier=3").problem());
+        assertNotNull(OpenArguments.parse("tier=3 t=4").problem());
         assertNotNull(OpenArguments.parse("SINGLE BINARY_CLOSE").problem());
     }
 
