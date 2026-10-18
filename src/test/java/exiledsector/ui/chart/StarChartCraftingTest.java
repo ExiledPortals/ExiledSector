@@ -155,6 +155,26 @@ class StarChartCraftingTest {
     }
 
     @Test
+    void theNoticeForACopySaysWhereTheCopyWentWhileOtherCurrenciesNameTheChange() {
+        ItemCurrencies.register(copier);
+        ItemCurrencies.register(survey);
+        owns(COPY_ID, 1f);
+        owns(SURVEY_ID, 1f);
+        CraftingMaterials materials = CraftingMaterials.cargoOnly(cargo);
+        String nameBefore = chart.name();
+
+        StarChartCrafting.Used copied = StarChartCrafting.use(copier, chart, store, materials, new Random(1L), definition -> true);
+        StarChartCrafting.Used surveyed = StarChartCrafting.use(survey, chart, store, materials, new Random(1L), definition -> true);
+
+        assertEquals("chart.ui.currency.copied", StarChartCrafting.usedNoticeKey(copier));
+        assertEquals("chart.ui.currency.used", StarChartCrafting.usedNoticeKey(survey));
+        assertEquals(COPY_ID + " used: a copy of " + nameBefore + " went into storage as " + copied.result().name() + ".",
+                StarChartCrafting.usedNotice(copier, nameBefore, copied));
+        assertEquals(SURVEY_ID + " used: " + nameBefore + " is now " + surveyed.result().name() + ".",
+                StarChartCrafting.usedNotice(survey, nameBefore, surveyed));
+    }
+
+    @Test
     void refusalsExplainWhyACurrencyCannotBeUsed() throws Exception {
         ItemCurrencies.register(survey);
         CraftingMaterials materials = CraftingMaterials.cargoOnly(cargo);

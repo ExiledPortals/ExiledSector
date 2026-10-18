@@ -318,7 +318,7 @@ Each phase ends with tests passing and, from phase 1 onwards, the soak check.
 6. **The Star Chart UI.** Tier columns or tabs, the selected-chart panel, the currency buttons, and the Open Wormhole button with the one-run lock and a dev switch in place of the colony building.
 7. **Crafting currencies and chart drops.** The sustain loop and tier progression.
 8. **Editor and localisation.** Editor pages, round-trip tests, and the zh_CN text.
-9. **The colony building.** It enables the Open Wormhole button and replaces the dev switch.
+9. **The colony building.** It enables the Open Wormhole button and replaces the dev switch. Its image is `Wormhole_gateway.png`, which the user added to the main checkout at `graphics/unused/Wormhole_gateway.png` (untracked as of 2026-10-18; move it to the building graphics folder when the building is built). The rest of its design (industry or structure, where opening is allowed, how the screen is reached, upgrades and AI cores, the fate of the dev setting, running costs) is decided at phase 9.
 10. **Polish.** Wormhole visuals and sounds, the fleet preview, and balance.
 
 Atlas progression is deferred to a later project.

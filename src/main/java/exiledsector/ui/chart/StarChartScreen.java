@@ -12,6 +12,7 @@ import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.charts.StarCharts;
+import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
@@ -53,6 +54,7 @@ public final class StarChartScreen implements CustomVisualDialogDelegate {
     private String closingMessage;
     private boolean closing;
     private boolean dismissRequested;
+    private boolean dismissed;
 
     StarChartScreen(Runnable onDismissed) {
         this.onDismissed = onDismissed;
@@ -104,7 +106,7 @@ public final class StarChartScreen implements CustomVisualDialogDelegate {
     }
 
     static String movedNotice(int moved) {
-        return moved > 0 ? Translation.msg("chart.ui.storage.moved").count(moved).text() : null;
+        return moved > 0 ? I18n.forGameText(() -> Translation.msg("chart.ui.storage.moved").count(moved).text()) : null;
     }
 
     @Override
@@ -145,6 +147,10 @@ public final class StarChartScreen implements CustomVisualDialogDelegate {
 
     @Override
     public void reportDismissed(int option) {
+        if (dismissed) {
+            return;
+        }
+        dismissed = true;
         if (closingMessage != null) {
             CampaignMessages.plain(closingMessage, Misc.getPositiveHighlightColor());
             closingMessage = null;
@@ -152,6 +158,10 @@ public final class StarChartScreen implements CustomVisualDialogDelegate {
         if (onDismissed != null) {
             onDismissed.run();
         }
+    }
+
+    boolean isClosing() {
+        return closing;
     }
 
     private void close() {
@@ -240,7 +250,7 @@ public final class StarChartScreen implements CustomVisualDialogDelegate {
                 if (event.isConsumed() || !event.isKeyboardEvent() || event.getEventValue() != Keyboard.KEY_ESCAPE) {
                     continue;
                 }
-                if (event.isKeyDownEvent() && !closing) {
+                if (event.isKeyUpEvent() && !closing) {
                     escape();
                 }
                 event.consume();

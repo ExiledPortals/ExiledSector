@@ -16,18 +16,16 @@ import java.util.Locale;
 
 public final class StarChartPreviewText {
 
-    private static final float HUNDREDTHS = 100f;
-
     private StarChartPreviewText() {
     }
 
     public static List<StyledText> modifierLines(Item chart) {
-        return modifierLines(ChartGenContext.from(chart));
+        return chart == null ? List.of() : modifierLines(ChartGenContext.from(chart), ChartTiers.forTier(chart.tier()));
     }
 
-    public static List<StyledText> modifierLines(ChartGenContext context) {
+    public static List<StyledText> modifierLines(ChartGenContext context, ChartTier base) {
         List<StyledText> lines = new ArrayList<>();
-        for (ChartPreview.Line line : ChartPreview.of(context)) {
+        for (ChartPreview.Line line : ChartPreview.of(context, base)) {
             lines.add(describe(line));
         }
         return lines;
@@ -43,15 +41,21 @@ public final class StarChartPreviewText {
     }
 
     static String valueText(ChartPreview.Line line) {
-        float rounded = Math.round(line.value() * HUNDREDTHS) / HUNDREDTHS;
         if (line.stat().kind() == ChartPreview.Kind.MULTIPLIER) {
-            return Translation.msg("chart.ui.preview.multiplier").arg("value", rounded).text();
+            return Translation.msg("chart.ui.preview.multiplier").arg("value", ChartPreview.rounded(line.value())).text();
         }
-        String signed = (rounded > 0f ? "+" : "") + NumberText.format(rounded);
+        String signed = line.isRange()
+                ? Translation.msg("chart.ui.preview.range").arg("low", signed(line.value())).arg("high", signed(line.upperValue())).text()
+                : signed(line.value());
         if (line.stat().kind() == ChartPreview.Kind.PERCENT) {
             return Translation.msg("chart.ui.preview.percent").arg("value", signed).text();
         }
         return signed;
+    }
+
+    private static String signed(float value) {
+        float rounded = ChartPreview.rounded(value);
+        return (rounded > 0f ? "+" : "") + NumberText.format(rounded);
     }
 
     public static StyledText tierLine(int tier) {

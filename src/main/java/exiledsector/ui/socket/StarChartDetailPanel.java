@@ -363,8 +363,7 @@ public final class StarChartDetailPanel extends HoloPanel {
             return;
         }
         shownChart = used.selectedAfter();
-        noticeText = Translation.msg("chart.ui.currency.used").arg("currency", MaterialItems.displayName(currency.itemId()))
-                .arg("before", nameBefore).arg("name", used.result().name()).text();
+        noticeText = StarChartCrafting.usedNotice(currency, nameBefore, used);
         noticeIsWarning = false;
         SkillTreeSounds.socketed();
         rebuildContent();

@@ -1,5 +1,6 @@
 package exiledsector.ui.chart;
 
+import exiledsector.i18n.Translation;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.items.Item;
 import exiledsector.items.ItemCrafting;
@@ -8,6 +9,7 @@ import exiledsector.items.ItemCurrency;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemStore;
 import exiledsector.items.ItemType;
+import exiledsector.items.MaterialItems;
 
 import java.util.List;
 import java.util.Locale;
@@ -30,6 +32,15 @@ public final class StarChartCrafting {
     }
 
     public record Used(Item result, Item selectedAfter) {
+    }
+
+    public static String usedNoticeKey(ItemCurrency currency) {
+        return currency.createsCopy() ? "chart.ui.currency.copied" : "chart.ui.currency.used";
+    }
+
+    public static String usedNotice(ItemCurrency currency, String nameBefore, Used used) {
+        return Translation.msg(usedNoticeKey(currency)).arg("currency", MaterialItems.displayName(currency.itemId()))
+                .arg("before", nameBefore).arg("name", used.result().name()).text();
     }
 
     private StarChartCrafting() {

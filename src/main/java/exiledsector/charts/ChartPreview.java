@@ -5,7 +5,7 @@ import java.util.List;
 
 public final class ChartPreview {
 
-    static final float NEUTRAL_TOLERANCE = 0.0005f;
+    public static final float DISPLAY_STEPS = 100f;
 
     public enum Kind {MULTIPLIER, COUNT, PERCENT}
 
@@ -46,28 +46,37 @@ public final class ChartPreview {
         }
     }
 
-    public record Line(Stat stat, float value) {
+    public record Line(Stat stat, float value, float upperValue) {
+
+        public boolean isRange() {
+            return rounded(value) != rounded(upperValue);
+        }
 
         public boolean favourable() {
-            return stat.higherIsBetter() == (value > stat.neutral());
+            return stat.higherIsBetter() == ((value + upperValue) / 2f > stat.neutral());
         }
     }
 
     private ChartPreview() {
     }
 
-    public static List<Line> of(ChartGenContext context) {
+    public static float rounded(float value) {
+        return Math.round(value * DISPLAY_STEPS) / DISPLAY_STEPS;
+    }
+
+    public static List<Line> of(ChartGenContext context, ChartTier base) {
         List<Line> lines = new ArrayList<>();
-        if (context == null || context.isEmpty()) {
+        if (context == null || context.isEmpty() || base == null) {
             return lines;
         }
-        add(lines, Stat.FLEET_POWER, context.fleetPowerMult());
-        add(lines, Stat.EXTRA_FLEETS, context.extraFleets());
-        add(lines, Stat.OFFICER_LEVELS, context.officerLevelBonus());
-        add(lines, Stat.EXTRA_OFFICERS, context.extraOfficers());
-        add(lines, Stat.AVERAGE_SMODS, context.averageSModsBonus());
+        ChartTier adjusted = context.adjust(base);
+        add(lines, Stat.FLEET_POWER, base.fleetPower() > 0f ? adjusted.fleetPower() / base.fleetPower() : context.fleetPowerMult());
+        add(lines, Stat.EXTRA_FLEETS, adjusted.fleetsMin() - base.fleetsMin(), adjusted.fleetsMax() - base.fleetsMax());
+        add(lines, Stat.OFFICER_LEVELS, adjusted.officerLevelBonus() - base.officerLevelBonus());
+        add(lines, Stat.EXTRA_OFFICERS, adjusted.officerCountBonus() - base.officerCountBonus());
+        add(lines, Stat.AVERAGE_SMODS, adjusted.averageSMods() - base.averageSMods());
         add(lines, Stat.BOSS_POWER, context.bossPowerMult());
-        add(lines, Stat.FLEET_QUALITY, context.fleetQualityPercent());
+        add(lines, Stat.FLEET_QUALITY, (adjusted.quality() - base.quality()) * ChartGenContext.PERCENT);
         add(lines, Stat.SENSOR_RANGE, context.sensorRangeMult());
         add(lines, Stat.CHART_QUALITY, context.quality());
         add(lines, Stat.LOOT, context.lootMult());
@@ -79,8 +88,12 @@ public final class ChartPreview {
     }
 
     private static void add(List<Line> lines, Stat stat, float value) {
-        if (Math.abs(value - stat.neutral()) > NEUTRAL_TOLERANCE) {
-            lines.add(new Line(stat, value));
+        add(lines, stat, value, value);
+    }
+
+    private static void add(List<Line> lines, Stat stat, float firstValue, float secondValue) {
+        if (rounded(firstValue) != stat.neutral() || rounded(secondValue) != stat.neutral()) {
+            lines.add(new Line(stat, Math.min(firstValue, secondValue), Math.max(firstValue, secondValue)));
         }
     }
 }
