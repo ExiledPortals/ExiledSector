@@ -168,11 +168,11 @@ framework_bridge_officer,WEAPON_AUTOFIRE_ACCURACY_PERCENT,0.8.0,
 framework_bridge_officer,WEAPON_TURN_RATE_PERCENT,0.8.0,0.8.0
 framework_crew_quarters_specialists,CREW_CAPACITY_PERCENT,0.8.0,
 framework_crew_quarters_specialists,CREW_LOSS_PERCENT,0.8.0,
-framework_crew_quarters_specialists,ELECTRONIC_WARFARE,0.8.0,
+framework_crew_quarters_specialists,ELECTRONIC_WARFARE,0.8.0,0.8.0
 framework_crew_quarters_specialists,POST_BATTLE_SALVAGE_PERCENT,0.8.0,
 framework_crew_quarters_specialists,REPAIR_TIME_MULT,0.8.0,
-framework_crew_quarters_specialists,SENSOR_PROFILE_PERCENT,0.8.0,
-framework_crew_quarters_specialists,SENSOR_STRENGTH_FLAT,0.8.0,
+framework_crew_quarters_specialists,SENSOR_PROFILE_PERCENT,0.8.0,0.8.0
+framework_crew_quarters_specialists,SENSOR_STRENGTH_FLAT,0.8.0,0.8.0
 framework_crew_quarters_specialists,SUPPLIES_PER_MONTH_MULT,0.8.0,
 framework_engine_room_drive,BURN_LEVEL_FLAT,0.8.0,
 framework_engine_room_drive,ENGINE_DURABILITY_PERCENT,0.8.0,
