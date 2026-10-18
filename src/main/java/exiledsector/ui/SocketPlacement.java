@@ -16,12 +16,17 @@ import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
 import exiledsector.ui.node.NodeSearch;
 import exiledsector.ui.node.TreeAllocationSession;
+import exiledsector.ui.chart.StarChartTab;
 import exiledsector.ui.socket.SocketPanelPlacement;
 import exiledsector.ui.socket.SocketPanelTab;
 import exiledsector.ui.socket.ItemStoragePanel;
+import lunalib.lunaRefit.BaseRefitButton;
 
+import java.util.EnumSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.DoubleSupplier;
 
 final class SocketPlacement {
 
@@ -75,8 +80,12 @@ final class SocketPlacement {
     private final TreeAllocationSession treeSession;
     private final NodeSearch nodeSearch;
     private final SkillTreeSearchBar searchBar;
+    private final BaseRefitButton refitButton;
+    private final DoubleSupplier reservedRightWidth;
     private final SkillTreeUiButton storageButton = new SkillTreeUiButton("");
     private ItemStoragePanel storagePanel;
+    private StarChartTab chartTab;
+    private float chartsRight;
     private Item placingItem;
     private SkillNode targetSocket;
     private ShipSection targetSection;
@@ -87,13 +96,16 @@ final class SocketPlacement {
     private ScreenRect lastShipCard = ScreenRect.NONE;
     private PositionAPI treeCanvasPosition;
     private HullUpgradesTab hullUpgradesTab = NO_HULL_UPGRADES_TAB;
-    private final Consumer<SocketPanelTab> storageTabListener = this::storageTabChosen;
+    private final Consumer<SocketPanelTab> storageTabListener = this::showTab;
 
-    SocketPlacement(CustomPanelAPI hostPanel, TreeAllocationSession treeSession, NodeSearch nodeSearch, SkillTreeSearchBar searchBar) {
+    SocketPlacement(CustomPanelAPI hostPanel, TreeAllocationSession treeSession, NodeSearch nodeSearch, SkillTreeSearchBar searchBar,
+                    BaseRefitButton refitButton, DoubleSupplier reservedRightWidth) {
         this.hostPanel = hostPanel;
         this.treeSession = treeSession;
         this.nodeSearch = nodeSearch;
         this.searchBar = searchBar;
+        this.refitButton = refitButton;
+        this.reservedRightWidth = reservedRightWidth;
         refreshButtonLabel();
     }
 
@@ -111,7 +123,15 @@ final class SocketPlacement {
     }
 
     boolean isEngaged() {
-        return storagePanel != null || placingItem != null;
+        return storagePanel != null || placingItem != null || chartTab != null;
+    }
+
+    boolean isChartsOpen() {
+        return chartTab != null;
+    }
+
+    float chartsRight() {
+        return chartTab == null ? 0f : chartsRight;
     }
 
     boolean isWorkbenchOpen() {
@@ -119,7 +139,7 @@ final class SocketPlacement {
     }
 
     boolean panelContains(float x, float y) {
-        return storagePanel != null && storagePanel.contains(x, y);
+        return (storagePanel != null && storagePanel.contains(x, y)) || (chartTab != null && chartTab.contains(x, y));
     }
 
     boolean buttonContains(float x, float y) {
@@ -166,31 +186,112 @@ final class SocketPlacement {
         if (storagePanel != null) {
             storagePanel.close();
         }
+        if (chartTab != null) {
+            chartTab.close();
+        }
     }
 
     void swapToHullUpgrades() {
-        if (storagePanel == null || !hullUpgradesTab.available()) {
+        if ((storagePanel == null && chartTab == null) || !hullUpgradesTab.available()) {
             return;
         }
-        ItemStoragePanel swapped = storagePanel;
-        forgetStorage();
-        swapped.swapOut();
+        swapOutStorage();
+        swapOutCharts();
         hullUpgradesTab.swapIn();
     }
 
-    void openFromHullUpgradesTab() {
-        if (treeCanvasPosition != null) {
-            open(treeCanvasPosition, lastShipCard);
+    void showTab(SocketPanelTab tab) {
+        switch (tab) {
+            case HULL_ITEMS -> {
+                if (storagePanel == null && treeCanvasPosition != null) {
+                    open(treeCanvasPosition, lastShipCard);
+                }
+            }
+            case HULL_UPGRADES -> swapToHullUpgrades();
+            case STAR_CHARTS -> openCharts();
         }
     }
 
-    private void storageTabChosen(SocketPanelTab tab) {
-        if (tab == SocketPanelTab.HULL_UPGRADES) {
-            swapToHullUpgrades();
+    static Set<SocketPanelTab> shownTabs(boolean hullUpgradesAvailable) {
+        return hullUpgradesAvailable ? EnumSet.allOf(SocketPanelTab.class) : EnumSet.of(SocketPanelTab.HULL_ITEMS, SocketPanelTab.STAR_CHARTS);
+    }
+
+    static float chartsRoomRight(float canvasWidth, float reservedRightWidth) {
+        return canvasWidth - reservedRightWidth - ChromeMetrics.EDGE_MARGIN;
+    }
+
+    private Set<SocketPanelTab> shownTabs() {
+        return shownTabs(hullUpgradesTab.available());
+    }
+
+    private void openCharts() {
+        if (chartTab != null || treeCanvasPosition == null) {
+            return;
+        }
+        boolean swapping = storagePanel != null || hullUpgradesTab.isOpen();
+        swapOutStorage();
+        if (hullUpgradesTab.isOpen()) {
+            hullUpgradesTab.swapOut();
+        }
+        treeSession.closeDropdown();
+        searchBar.unfocus();
+        SocketPanelPlacement storagePlacement = new SocketPanelPlacement(ChromeMetrics.EDGE_MARGIN, PANEL_TOP, ItemStoragePanel.WIDTH,
+                sidePanelHeight(treeCanvasPosition, lastShipCard), swapping);
+        SocketPanelPlacement detailPlacement = StarChartTab.detailBeside(storagePlacement,
+                chartsRoomRight(treeCanvasPosition.getWidth(), (float) reservedRightWidth.getAsDouble()), StarChartTab.DETAIL_WIDTH);
+        chartsRight = detailPlacement.panelLeft() + detailPlacement.panelWidth();
+        if (!swapping) {
+            SkillTreeSounds.panelOpened();
+        }
+        chartTab = StarChartTab.open(hostPanel, storagePlacement, detailPlacement, storageTabListener, shownTabs(), new StarChartTab.Listener() {
+            @Override
+            public void closed() {
+                chartTab = null;
+                refreshButtonSelected();
+            }
+
+            @Override
+            public void wormholeOpened(String message) {
+                RefitScreenExit.leave(refitButton, message);
+            }
+
+            @Override
+            public void pressedInside() {
+                searchBar.unfocus();
+            }
+        });
+        refreshButtonSelected();
+    }
+
+    private void swapOutStorage() {
+        if (storagePanel != null) {
+            ItemStoragePanel swapped = storagePanel;
+            forgetStorage();
+            swapped.swapOut();
+        }
+    }
+
+    private void swapOutCharts() {
+        if (chartTab != null) {
+            StarChartTab swapped = chartTab;
+            chartTab = null;
+            swapped.swapOut();
+            refreshButtonSelected();
         }
     }
 
     void escape() {
+        if (chartTab != null) {
+            if (chartTab.escape()) {
+                return;
+            }
+            if (hullUpgradesTab.available()) {
+                swapToHullUpgrades();
+            } else {
+                chartTab.close();
+            }
+            return;
+        }
         if (storagePanel != null && storagePanel.escape()) {
             return;
         }
@@ -224,6 +325,9 @@ final class SocketPlacement {
     }
 
     void advance(boolean mustClose) {
+        if (chartTab != null && mustClose) {
+            chartTab.close();
+        }
         if (storagePanel == null) {
             return;
         }
@@ -257,6 +361,8 @@ final class SocketPlacement {
     void toggle(PositionAPI canvasPosition, ScreenRect shipCard) {
         if (storagePanel != null) {
             storagePanel.close();
+        } else if (chartTab != null) {
+            chartTab.close();
         } else if (hullUpgradesTab.isOpen()) {
             hullUpgradesTab.close();
         } else if (hullUpgradesTab.available()) {
@@ -267,7 +373,7 @@ final class SocketPlacement {
     }
 
     void refreshButtonSelected() {
-        storageButton.setSelected(storagePanel != null || hullUpgradesTab.isOpen());
+        storageButton.setSelected(storagePanel != null || chartTab != null || hullUpgradesTab.isOpen());
     }
 
     boolean placeInto(SkillNode node) {
@@ -329,10 +435,12 @@ final class SocketPlacement {
         if (storagePanel != null) {
             return;
         }
-        boolean swapping = hullUpgradesTab.isOpen();
-        if (swapping) {
+        boolean swapping = hullUpgradesTab.isOpen() || chartTab != null;
+        if (hullUpgradesTab.isOpen()) {
             hullUpgradesTab.swapOut();
-        } else {
+        }
+        swapOutCharts();
+        if (!swapping) {
             SkillTreeSounds.panelOpened();
         }
         treeSession.closeDropdown();
@@ -360,13 +468,9 @@ final class SocketPlacement {
                     public void pressedInside() {
                         searchBar.unfocus();
                     }
-                }, kindFilter, storageTabs());
+                }, kindFilter, storageTabListener, shownTabs());
         storagePanel.setTargetingSocket(targetSocket != null);
         refreshButtonSelected();
-    }
-
-    private Consumer<SocketPanelTab> storageTabs() {
-        return hullUpgradesTab.available() ? storageTabListener : null;
     }
 
     private void forgetStorage() {
@@ -396,7 +500,10 @@ final class SocketPlacement {
         }
         inspectingShip = inspecting;
         if (storagePanel != null) {
-            storagePanel.setTabListener(storageTabs());
+            storagePanel.setShownTabs(shownTabs());
+        }
+        if (chartTab != null) {
+            chartTab.setShownTabs(shownTabs());
         }
         if (placingItem != null && storagePanel != null) {
             storagePanel.setSelected(placingItem, placingHint(placingItem));

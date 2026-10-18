@@ -1,6 +1,7 @@
 package exiledsector.ui.chart;
 
 import exiledsector.i18n.Translation;
+import exiledsector.items.CraftingCurrency;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.items.Item;
 import exiledsector.items.ItemCrafting;
@@ -10,6 +11,8 @@ import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemStore;
 import exiledsector.items.ItemType;
 import exiledsector.items.MaterialItems;
+import exiledsector.items.StarChart;
+import exiledsector.items.StarChartCurrency;
 
 import java.util.List;
 import java.util.Locale;
@@ -24,6 +27,11 @@ public final class StarChartCrafting {
         NONE_OWNED,
         MIRRORED,
         CORRUPTED,
+        MAX_TIER,
+        UNIQUE,
+        NOT_UNIQUE,
+        NO_MODIFIERS,
+        FULL,
         CANNOT_USE;
 
         public String noticeKey() {
@@ -64,7 +72,29 @@ public final class StarChartCrafting {
         if (chart.mirrored()) {
             return Refusal.MIRRORED;
         }
-        return chart.corrupted() ? Refusal.CORRUPTED : Refusal.CANNOT_USE;
+        return chart.corrupted() ? Refusal.CORRUPTED : specificRefusal(currency, chart);
+    }
+
+    static Refusal specificRefusal(ItemCurrency currency, Item chart) {
+        if (!ItemCurrencies.appliesTo(currency, chart.type())) {
+            return Refusal.CANNOT_USE;
+        }
+        boolean unique = chart.definition() != null && chart.definition().unique();
+        if (currency == StarChartCurrency.CARTOGRAPHY && chart.tier() >= StarChart.HIGHEST_TIER) {
+            return Refusal.MAX_TIER;
+        }
+        if (currency == CraftingCurrency.TRANSPOSITION && !unique) {
+            return Refusal.NOT_UNIQUE;
+        }
+        boolean changesModifiers = currency == StarChartCurrency.REFORGE || currency == StarChartCurrency.ANNULMENT
+                || currency == CraftingCurrency.AUGMENTATION;
+        if (changesModifiers && unique) {
+            return Refusal.UNIQUE;
+        }
+        if (currency == StarChartCurrency.ANNULMENT && chart.explicits().isEmpty()) {
+            return Refusal.NO_MODIFIERS;
+        }
+        return currency == CraftingCurrency.AUGMENTATION ? Refusal.FULL : Refusal.CANNOT_USE;
     }
 
     public static Used use(ItemCurrency currency, Item chart, ItemStore store, CraftingMaterials materials, Random random,

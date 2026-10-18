@@ -8,6 +8,7 @@ public sealed interface ValueScaling permits ValueScaling.Unscaled, ValueScaling
 
     ValueScaling NONE = new Unscaled();
     int NO_POINT = -1;
+    float MAX_STRETCH_FRACTION = 1f;
 
     List<Float> values();
 
@@ -97,12 +98,30 @@ public sealed interface ValueScaling permits ValueScaling.Unscaled, ValueScaling
                 return low;
             }
             float stepsPerUnit = (float) Math.pow(10, Math.max(ModifierLine.decimalPlaces(low), ModifierLine.decimalPlaces(high)));
+            if (rollFraction < 0f) {
+                return stretchedPast(low, -1f, -rollFraction, stepsPerUnit);
+            }
+            if (rollFraction > 1f) {
+                return stretchedPast(high, 1f, rollFraction - 1f, stepsPerUnit);
+            }
             int lowStep = Math.round(low * stepsPerUnit);
             int bandSteps = Math.round(high * stepsPerUnit) - lowStep + 1;
             int rollPositions = Math.round(ModifierLine.TIER_ROLL_POSITIONS) + 1;
             int position = Math.round(Math.max(0f, Math.min(1f, rollFraction)) * ModifierLine.TIER_ROLL_POSITIONS);
             int step = Math.min(bandSteps - 1, position * bandSteps / rollPositions);
             return (lowStep + step) / stepsPerUnit + 0f;
+        }
+
+        private static float stretchedPast(float bound, float outward, float stretchFraction, float stepsPerUnit) {
+            float stretch = Math.min(MAX_STRETCH_FRACTION, stretchFraction);
+            float stretched = Math.round((bound + outward * Math.abs(bound) * stretch) * stepsPerUnit) / stepsPerUnit;
+            float oneStep = 1f / stepsPerUnit;
+            if (bound > 0f && stretched <= 0f) {
+                stretched = oneStep;
+            } else if (bound < 0f && stretched >= 0f) {
+                stretched = -oneStep;
+            }
+            return stretched + 0f;
         }
 
         @Override

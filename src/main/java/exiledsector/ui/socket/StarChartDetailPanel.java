@@ -15,6 +15,7 @@ import exiledsector.charts.StarChartSettings;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.items.CraftingMaterials;
+import exiledsector.items.ItemCrafting;
 import exiledsector.items.Item;
 import exiledsector.items.ItemCurrency;
 import exiledsector.items.ItemDefinition;
@@ -47,6 +48,7 @@ public final class StarChartDetailPanel extends HoloPanel {
     }
 
     private static final float TILE_SIZE = 52f;
+    private static final float MIN_TILE_SIZE = 36f;
     private static final float COUNT_INSET = 4f;
     private static final float CURRENCY_LABEL_HEIGHT = 20f;
     private static final float CURRENCY_HEIGHT = CURRENCY_LABEL_HEIGHT + TILE_SIZE;
@@ -54,10 +56,12 @@ public final class StarChartDetailPanel extends HoloPanel {
     private static final float REASON_HEIGHT = 20f;
     private static final float OPEN_BUTTON_HEIGHT = 44f;
     private static final float CONFIRM_HEIGHT = 170f;
+    private static final float USE_CONFIRM_HEIGHT = 180f;
+    private static final float GROW_CONFIRM_HEIGHT = 140f;
     private static final float TOOLTIP_WIDTH = 340f;
     private static final String FALLBACK_ICON = ItemDefinition.FALLBACK_ICON;
 
-    private enum Control {OPEN_WORMHOLE, CONFIRM_OPEN, CANCEL_OPEN}
+    private enum Control {OPEN_WORMHOLE, CONFIRM_OPEN, CONFIRM_USE, CONFIRM_GROW, CANCEL_CONFIRM}
 
     private final Listener detailListener;
     private final ItemStore chartStore;
@@ -71,6 +75,7 @@ public final class StarChartDetailPanel extends HoloPanel {
     private UIComponentAPI openElement;
     private Item shownChart;
     private Item pendingChart;
+    private ItemCurrency pendingCurrency;
     private String noticeText;
     private boolean noticeIsWarning;
     private boolean wormholeOpened;
@@ -97,7 +102,7 @@ public final class StarChartDetailPanel extends HoloPanel {
             }
             shownChart = chart;
             noticeText = null;
-            closeOpenConfirm();
+            cancelConfirm();
             rebuildContent();
         });
     }
@@ -108,7 +113,7 @@ public final class StarChartDetailPanel extends HoloPanel {
 
     public boolean escape() {
         if (isConfirmOpen()) {
-            queue(this::closeOpenConfirm);
+            queue(this::cancelConfirm);
             return true;
         }
         return false;
@@ -157,8 +162,10 @@ public final class StarChartDetailPanel extends HoloPanel {
             openPressed();
         } else if (id == Control.CONFIRM_OPEN) {
             confirmOpen();
-        } else if (id == Control.CANCEL_OPEN) {
-            closeOpenConfirm();
+        } else if (id == Control.CONFIRM_USE || id == Control.CONFIRM_GROW) {
+            confirmCraft(id == Control.CONFIRM_GROW);
+        } else if (id == Control.CANCEL_CONFIRM) {
+            cancelConfirm();
         }
     }
 
@@ -261,27 +268,38 @@ public final class StarChartDetailPanel extends HoloPanel {
             VanillaText.plainPara(element, Translation.text("chart.ui.currency.none"), LINE_PAD * 2f, Misc.getGrayColor());
         } else {
             CraftingMaterials materials = playerMaterials();
-            int perRow = Math.max(1, (int) ((innerWidth() + GAP) / (TILE_SIZE + GAP)));
+            float tileSize = tileSizeFor(innerWidth(), currencies.size());
+            int perRow = Math.max(1, (int) ((innerWidth() + GAP) / (tileSize + GAP)));
             for (int i = 0; i < Math.min(currencies.size(), perRow); i++) {
-                addTile(element, currencies.get(i), i * (TILE_SIZE + GAP), CURRENCY_LABEL_HEIGHT, materials);
+                addTile(element, currencies.get(i), i * (tileSize + GAP), CURRENCY_LABEL_HEIGHT, tileSize, materials);
             }
         }
         currencyElement = replaceElement(currencyElement, element, PAD, currencyTop());
     }
 
-    private void addTile(TooltipMakerAPI element, ItemCurrency currency, float tileLeft, float tileTop, CraftingMaterials materials) {
+    static float tileSizeFor(float rowWidth, int tileCount) {
+        if (tileCount <= 0) {
+            return TILE_SIZE;
+        }
+        float fittingSize = (rowWidth - GAP * (tileCount - 1)) / tileCount;
+        return Math.max(MIN_TILE_SIZE, Math.min(TILE_SIZE, fittingSize));
+    }
+
+    private void addTile(TooltipMakerAPI element, ItemCurrency currency, float tileLeft, float tileTop, float tileSize,
+                         CraftingMaterials materials) {
         String iconPath = MaterialItems.loadedIconPath(currency.itemId());
+        boolean owned = materials.count(currency.itemId()) > 0;
         WorkbenchTile tile = new WorkbenchTile(List.of(iconPath == null ? FALLBACK_ICON : iconPath), CargoIconLooks.forMaterial(currency.itemId()),
-                tileHandler(currency));
-        CustomPanelAPI tilePanel = Global.getSettings().createCustom(TILE_SIZE, TILE_SIZE, tile);
+                () -> owned, false, tileHandler(currency));
+        CustomPanelAPI tilePanel = Global.getSettings().createCustom(tileSize, tileSize, tile);
         element.addCustom(tilePanel, 0f).getPosition().inTL(tileLeft, tileTop);
         int ownedCount = materials.count(currency.itemId());
         element.setParaFont(Fonts.ORBITRON_12);
         LabelAPI countLabel = VanillaText.plainPara(element, String.valueOf(ownedCount), 0f,
                 ownedCount > 0 ? Misc.getBrightPlayerColor() : Misc.getGrayColor());
         countLabel.setAlignment(Alignment.RMID);
-        countLabel.autoSizeToWidth(TILE_SIZE - COUNT_INSET * 2f).inTL(tileLeft + COUNT_INSET,
-                tileTop + TILE_SIZE - countLabel.getPosition().getHeight() - COUNT_INSET);
+        countLabel.autoSizeToWidth(tileSize - COUNT_INSET * 2f).inTL(tileLeft + COUNT_INSET,
+                tileTop + tileSize - countLabel.getPosition().getHeight() - COUNT_INSET);
         element.setParaFontDefault();
     }
 
@@ -303,10 +321,64 @@ public final class StarChartDetailPanel extends HoloPanel {
 
             @Override
             public boolean clicked() {
-                queue(() -> useCurrency(currency));
+                boolean skipConfirm = ctrlHeld();
+                queue(() -> useClicked(currency, skipConfirm));
+                return true;
+            }
+
+            @Override
+            public boolean rightClicked() {
+                boolean skipConfirm = ctrlHeld();
+                queue(() -> growClicked(currency, skipConfirm));
                 return true;
             }
         };
+    }
+
+    private void growClicked(ItemCurrency currency, boolean skipConfirm) {
+        hoverTooltip.hide();
+        if (isConfirmOpen() || !growable(currency)) {
+            return;
+        }
+        if (skipConfirm) {
+            applyGrowth(currency);
+        } else {
+            openCraftConfirm(currency, Control.CONFIRM_GROW);
+        }
+    }
+
+    private boolean growable(ItemCurrency currency) {
+        if (!currency.synthesisable()) {
+            SkillTreeSounds.refused();
+            showNotice(Translation.msg("ui.workbench.notice.notSynthesisable").arg("name", MaterialItems.displayName(currency.itemId())).text(), true);
+            return false;
+        }
+        int ownedParts = ItemCrafting.parts(playerMaterials());
+        if (ownedParts < currency.partsCost()) {
+            refuseGrowth(currency, ownedParts);
+            return false;
+        }
+        return true;
+    }
+
+    private void refuseGrowth(ItemCurrency currency, int ownedParts) {
+        SkillTreeSounds.refused();
+        showNotice(Translation.msg("ui.workbench.notice.notEnoughParts").arg("cost", currency.partsCost()).arg("parts", ownedParts)
+                .arg("name", MaterialItems.displayName(currency.itemId())).text(), true);
+    }
+
+    private void applyGrowth(ItemCurrency currency) {
+        CraftingMaterials materials = playerMaterials();
+        int ownedParts = ItemCrafting.parts(materials);
+        if (ownedParts < currency.partsCost() || !ItemCrafting.synthesise(currency, materials)) {
+            refuseGrowth(currency, ownedParts);
+            return;
+        }
+        String currencyName = MaterialItems.displayName(currency.itemId());
+        noticeText = Translation.msg("ui.workbench.notice.synthesisedCurrency").arg("name", currencyName).text();
+        noticeIsWarning = false;
+        SkillTreeSounds.crafted();
+        rebuildContent();
     }
 
     private void showCurrencyTooltip(ItemCurrency currency, PositionAPI anchor) {
@@ -332,10 +404,19 @@ public final class StarChartDetailPanel extends HoloPanel {
         String hint = refusal == StarChartCrafting.Refusal.NONE
                 ? Translation.msg("chart.ui.currency.use").arg("target", shownChart.name()).text() : refusalText(currency, refusal);
         VanillaText.plainPara(element, hint, GAP, refusal == StarChartCrafting.Refusal.NONE ? Misc.getPositiveHighlightColor() : Misc.getGrayColor());
+        String synthesiseHint = currency.synthesisable()
+                ? Translation.msg("ui.workbench.tile.synthesise").arg("cost", currency.partsCost()).text()
+                : Translation.text("ui.workbench.tile.notSynthesisable");
+        VanillaText.plainPara(element, synthesiseHint, GAP, Misc.getGrayColor());
     }
 
     static String currencyDescriptionKey(ItemCurrency currency) {
-        return "ui.workbench.recipe." + currency.key() + ".description";
+        String chartKey = chartCurrencyDescriptionKey(currency);
+        return Translation.has(chartKey) ? chartKey : "material." + currency.itemId() + ".description";
+    }
+
+    static String chartCurrencyDescriptionKey(ItemCurrency currency) {
+        return "chart.currency." + currency.key() + ".description";
     }
 
     private String refusalText(ItemCurrency currency, StarChartCrafting.Refusal refusal) {
@@ -343,18 +424,66 @@ public final class StarChartDetailPanel extends HoloPanel {
                 .arg("target", shownChart == null ? "" : shownChart.name()).text();
     }
 
-    private void useCurrency(ItemCurrency currency) {
+    private void useClicked(ItemCurrency currency, boolean skipConfirm) {
         hoverTooltip.hide();
-        if (isConfirmOpen()) {
+        if (isConfirmOpen() || !usable(currency)) {
             return;
         }
-        CraftingMaterials materials = playerMaterials();
-        StarChartCrafting.Refusal refusal = StarChartCrafting.refusal(currency, shownChart, chartStore, materials, allowedUniques());
+        if (skipConfirm) {
+            applyUse(currency);
+        } else {
+            openCraftConfirm(currency, Control.CONFIRM_USE);
+        }
+    }
+
+    private boolean usable(ItemCurrency currency) {
+        StarChartCrafting.Refusal refusal = StarChartCrafting.refusal(currency, shownChart, chartStore, playerMaterials(), allowedUniques());
         if (refusal != StarChartCrafting.Refusal.NONE) {
             SkillTreeSounds.refused();
             showNotice(refusalText(currency, refusal), true);
+            return false;
+        }
+        return true;
+    }
+
+    private void openCraftConfirm(ItemCurrency currency, Control confirmId) {
+        pendingCurrency = currency;
+        pendingChart = shownChart;
+        boolean growing = confirmId == Control.CONFIRM_GROW;
+        openConfirm(growing ? GROW_CONFIRM_HEIGHT : USE_CONFIRM_HEIGHT, element -> writeCraftConfirm(element, currency, growing),
+                growing ? "ui.workbench.confirm.grow" : "ui.workbench.confirm.use", confirmId, "ui.workbench.confirm.cancel", Control.CANCEL_CONFIRM);
+    }
+
+    private void writeCraftConfirm(TooltipMakerAPI element, ItemCurrency currency, boolean growing) {
+        String name = MaterialItems.displayName(currency.itemId());
+        String title = growing ? Translation.msg("ui.workbench.confirm.growTitle").arg("name", name).text()
+                : Translation.msg("ui.workbench.confirm.useTitle").arg("name", name).arg("target", shownChart.name()).text();
+        VanillaText.plainPara(element, title, 0f, Misc.getBasePlayerColor());
+        String body = growing
+                ? Translation.msg("ui.workbench.confirm.growBody").arg("cost", currency.partsCost()).arg("parts", ItemCrafting.parts(playerMaterials())).text()
+                : Translation.text(currencyDescriptionKey(currency));
+        VanillaText.plainPara(element, body, LINE_PAD * 2f, Misc.getTextColor());
+        VanillaText.plainPara(element, Translation.text("ui.workbench.confirm.skipHint"), LINE_PAD * 2f, Misc.getGrayColor());
+    }
+
+    private void confirmCraft(boolean growing) {
+        ItemCurrency currency = pendingCurrency;
+        Item chart = pendingChart;
+        cancelConfirm();
+        if (currency == null) {
             return;
         }
+        if (growing) {
+            if (growable(currency)) {
+                applyGrowth(currency);
+            }
+        } else if (chart == shownChart && usable(currency)) {
+            applyUse(currency);
+        }
+    }
+
+    private void applyUse(ItemCurrency currency) {
+        CraftingMaterials materials = playerMaterials();
         String nameBefore = shownChart.name();
         StarChartCrafting.Used used = StarChartCrafting.use(currency, shownChart, chartStore, materials, craftingRandom, allowedUniques());
         if (used == null) {
@@ -421,7 +550,7 @@ public final class StarChartDetailPanel extends HoloPanel {
         int entries = StarChartSettings.wormholeEntries();
         Item confirmedChart = pendingChart;
         openConfirm(CONFIRM_HEIGHT, element -> writeConfirm(element, confirmedChart, entries), "chart.ui.open.confirm.yes", Control.CONFIRM_OPEN,
-                "chart.ui.open.confirm.no", Control.CANCEL_OPEN);
+                "chart.ui.open.confirm.no", Control.CANCEL_CONFIRM);
     }
 
     private static void writeConfirm(TooltipMakerAPI element, Item chart, int entries) {
@@ -432,14 +561,15 @@ public final class StarChartDetailPanel extends HoloPanel {
                 Misc.getGrayColor());
     }
 
-    private void closeOpenConfirm() {
+    private void cancelConfirm() {
         pendingChart = null;
+        pendingCurrency = null;
         closeConfirm();
     }
 
     private void confirmOpen() {
         Item chart = pendingChart;
-        closeOpenConfirm();
+        cancelConfirm();
         if (chart == null || chart != shownChart) {
             return;
         }

@@ -10,6 +10,19 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.charts.ChartIds;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemDrops;
+import exiledsector.items.ItemData;
+import exiledsector.items.StarChartCurrency;
+import exiledsector.items.StarChartFixtures;
+import exiledsector.charts.ChartContent;
+import exiledsector.charts.ChartDrops;
+import exiledsector.charts.ChartObjective;
+import exiledsector.charts.ChartRun;
+import exiledsector.charts.ChartRuns;
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.campaign.SpecialItemData;
+import com.fs.starfarer.api.campaign.StarSystemAPI;
+import org.mockito.ArgumentCaptor;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -19,9 +32,11 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -116,5 +131,45 @@ class ItemSalvageListenerTest {
         listener.reportAboutToShowLootToPlayer(loot, null);
 
         verify(loot, never()).addSpecial(any(), anyFloat());
+    }
+
+    @Test
+    void aSalvagedPocketSiteCanAlsoHoldAStarChartAndAChartCurrency() throws Exception {
+        StarChartFixtures.registerShipped();
+        StarChartCurrency.registerAll();
+        ChartDrops.register(new JSONArray().put(new JSONObject().put("source", "pocket_salvage").put("chance", "1").put("currency_chance", "1")));
+        try (MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
+            SectorAPI sector = mock(SectorAPI.class);
+            when(sector.getPersistentData()).thenReturn(new HashMap<>());
+            global.when(Global::getSector).thenReturn(sector);
+            ChartRun run = new ChartRun("salvageRun", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
+            run.recordContent(new ChartContent(6, "hegemony", ChartObjective.CLEAR, List.of("g1"), "boss", null, 4, 6));
+            run.recordArrival();
+            ChartRuns.store(run);
+            StarSystemAPI pocket = mock(StarSystemAPI.class);
+            when(pocket.hasTag(ChartIds.POCKET_TAG)).thenReturn(true);
+            when(pocket.getTags()).thenReturn(List.of(ChartIds.POCKET_TAG, ChartIds.runTag("salvageRun")));
+            SectorEntityToken station = site("station_research", null);
+            when(station.getContainingLocation()).thenReturn(pocket);
+            CargoAPI loot = mock(CargoAPI.class);
+
+            listener.reportAboutToShowLootToPlayer(loot, dialogFor(station));
+
+            ArgumentCaptor<SpecialItemData> specials = ArgumentCaptor.forClass(SpecialItemData.class);
+            verify(loot, Mockito.atLeastOnce()).addSpecial(specials.capture(), anyFloat());
+            List<SpecialItemData> charts = specials.getAllValues().stream().filter(special -> ItemData.STAR_CHART_ITEM_ID.equals(special.getId())).toList();
+            assertEquals(1, charts.size());
+            assertEquals(6, ItemData.ofStarChart(charts.get(0)).preview().tier());
+            assertEquals(1, specials.getAllValues().stream().filter(special -> StarChartCurrency.byItemId(special.getId()) != null).count());
+        } finally {
+            ChartDrops.clear();
+            StarChartCurrency.unregisterAll();
+            StarChartFixtures.clear();
+        }
+    }
+
+    @Test
+    void outsidePocketsChartSalvageNeedsASectorAndItsOwnRule() {
+        assertTrue(ItemSalvageListener.chartLoot(null, site("station_research", null)).isEmpty());
     }
 }

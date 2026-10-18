@@ -17,6 +17,7 @@ public final class StarChartItems {
         ModCsv.load("id", MODIFIERS_PATH, LOG, rows -> ItemModifiers.registerStarCharts(rows, MODIFIERS_PATH));
         StarChartImplicits.load();
         StarChartDefinitions.load();
+        StarChartNames.load();
     }
 
     public static void register(JSONArray modifierRows, JSONArray implicitRows, JSONArray definitionRows) throws JSONException {
@@ -26,6 +27,7 @@ public final class StarChartItems {
     }
 
     public static void clear() {
+        StarChartNames.clear();
         StarChartDefinitions.clear();
         StarChartImplicits.clear();
         ItemModifiers.clearStarCharts();

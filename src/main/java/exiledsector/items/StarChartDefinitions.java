@@ -53,6 +53,10 @@ public final class StarChartDefinitions {
                 if ((shipItem != null && shipItem.type() != ItemType.STAR_CHART) || systemTypes.containsKey(definition.id())) {
                     throw new IllegalArgumentException(definition.id() + " is already defined");
                 }
+                if (!ItemUnlock.isKnownUnlock(definition.unlock())) {
+                    LOG.warn(definition.id() + " in " + DATA_PATH + " has the unknown unlock \"" + definition.unlock()
+                            + "\", so it can never drop; use an unlock id or " + ItemUnlock.CLEARED_CHART_TIER_PREFIX + "N");
+                }
                 definitions.add(definition);
                 systemTypes.put(definition.id(), systemType);
                 if (minTier > StarChart.LOWEST_TIER) {

@@ -5,6 +5,17 @@ import com.fs.starfarer.api.campaign.BattleAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import exiledsector.items.MaterialItems;
+import exiledsector.charts.ChartContent;
+import exiledsector.charts.ChartDrops;
+import exiledsector.charts.ChartIds;
+import exiledsector.charts.ChartObjective;
+import exiledsector.charts.ChartRun;
+import exiledsector.charts.ChartRuns;
+import exiledsector.items.StarChartFixtures;
+import com.fs.starfarer.api.campaign.LocationAPI;
+import com.fs.starfarer.api.campaign.StarSystemAPI;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import com.fs.starfarer.api.campaign.EngagementResultForFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.campaign.FleetEncounterContextPlugin;
@@ -32,6 +43,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -316,4 +328,60 @@ class ItemLootListenerTest {
             verify(loot, never()).addSpecial(Mockito.any(), anyFloat());
         }
     }
+private static List<SpecialItemData> starCharts(CargoAPI cargo) {
+        ArgumentCaptor<SpecialItemData> specials = ArgumentCaptor.forClass(SpecialItemData.class);
+        verify(cargo, Mockito.atLeast(0)).addSpecial(specials.capture(), anyFloat());
+        return specials.getAllValues().stream().filter(special -> ItemData.STAR_CHART_ITEM_ID.equals(special.getId())).toList();
+    }
+
+    @Test
+    void wonBattlesRollStarChartsInsideAPocketAtTheRunTierAndOutsideOnlyFromStrongEnemies() throws Exception {
+        StarChartFixtures.registerShipped();
+        ChartDrops.register(new JSONArray()
+                .put(new JSONObject().put("source", "pocket_battle").put("chance", "1"))
+                .put(new JSONObject().put("source", "battle").put("chance", "1").put("min_strength", "150").put("strength_per_tier", "100")
+                        .put("max_tier", "6")));
+        try (MockedStatic<LunaSettings> luna = Mockito.mockStatic(LunaSettings.class)) {
+            luna.when(() -> LunaSettings.getFloat(Mockito.anyString(), Mockito.anyString())).thenReturn(null);
+            luna.when(() -> LunaSettings.getInt(Mockito.anyString(), Mockito.anyString())).thenReturn(null);
+            SectorAPI sector = Global.getSector();
+            when(sector.getPersistentData()).thenReturn(new HashMap<>());
+            ChartRun run = new ChartRun("lootRun", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
+            run.recordContent(new ChartContent(8, "hegemony", ChartObjective.CLEAR, List.of("g1"), "boss", null, 4, 6));
+            run.recordArrival();
+            ChartRuns.store(run);
+            StarSystemAPI pocket = mock(StarSystemAPI.class);
+            when(pocket.hasTag(ChartIds.POCKET_TAG)).thenReturn(true);
+            when(pocket.getTags()).thenReturn(List.of(ChartIds.POCKET_TAG, ChartIds.runTag("lootRun")));
+            CampaignFleetAPI playerFleet = sector.getPlayerFleet();
+            when(playerFleet.getContainingLocation()).thenReturn(pocket);
+            ItemLootListener chartListener = new ItemLootListener(new Random(1L), new Random(2L));
+
+            BattleAPI pocketBattle = mock(BattleAPI.class);
+            chartListener.holdLoot(PlayerEngagement.of(engagement(pocketBattle, List.of(warship("a", 20f)), List.of()), 1f));
+            CargoAPI pocketLoot = mock(CargoAPI.class);
+            chartListener.reportEncounterLootGenerated(context(pocketBattle), pocketLoot);
+            List<SpecialItemData> pocketCharts = starCharts(pocketLoot);
+            assertEquals(1, pocketCharts.size());
+            assertEquals(8, ItemData.ofStarChart(pocketCharts.get(0)).preview().tier());
+
+            when(playerFleet.getContainingLocation()).thenReturn(mock(LocationAPI.class));
+            BattleAPI weakBattle = mock(BattleAPI.class);
+            chartListener.holdLoot(PlayerEngagement.of(engagement(weakBattle, List.of(warship("b", 100f)), List.of()), 1f));
+            CargoAPI weakLoot = mock(CargoAPI.class);
+            chartListener.reportEncounterLootGenerated(context(weakBattle), weakLoot);
+            assertEquals(List.of(), starCharts(weakLoot));
+
+            BattleAPI strongBattle = mock(BattleAPI.class);
+            chartListener.holdLoot(PlayerEngagement.of(engagement(strongBattle, List.of(warship("c", 200f), warship("d", 160f)), List.of()), 1f));
+            chartListener.reportBattleFinished(null, strongBattle);
+            List<SpecialItemData> strongCharts = starCharts(playerCargo);
+            assertEquals(1, strongCharts.size());
+            assertEquals(3, ItemData.ofStarChart(strongCharts.get(0)).preview().tier());
+        } finally {
+            ChartDrops.clear();
+            StarChartFixtures.clear();
+        }
+    }
 }
+

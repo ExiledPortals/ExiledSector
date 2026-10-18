@@ -26,7 +26,10 @@ import exiledsector.ui.util.Rects;
 import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 abstract class HoloPanel extends BaseCustomUIPanelPlugin {
@@ -42,6 +45,8 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
     private static final float PARTS_TOOLTIP_WIDTH = 300f;
     private static final float CONFIRM_BUTTON_HEIGHT = 26f;
     private static final float TAB_TEXT_PADDING = 24f;
+    private static final float NARROW_TAB_TEXT_PADDING = 16f;
+    static final List<String> TAB_FONTS = List.of(Fonts.ORBITRON_20AABOLD, Fonts.ORBITRON_20AA, Fonts.ORBITRON_12);
     static final float PARTS_ROOM = 80f;
 
     private record TabButton(SocketPanelTab tab) {
@@ -61,6 +66,7 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
     private CustomPanelAPI confirmBlocker;
     private boolean closing;
     private Consumer<SocketPanelTab> tabListener;
+    private Set<SocketPanelTab> shownTabs = EnumSet.allOf(SocketPanelTab.class);
     private ButtonAPI activeTabButton;
 
     HoloPanel(CustomPanelAPI hostPanel) {
@@ -100,6 +106,17 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
         }
         tabListener = listener;
         if (panelRoot != null) {
+            queue(this::rebuildHeader);
+        }
+    }
+
+    public final void setShownTabs(Set<SocketPanelTab> tabs) {
+        Set<SocketPanelTab> wanted = tabs == null || tabs.isEmpty() ? EnumSet.allOf(SocketPanelTab.class) : EnumSet.copyOf(tabs);
+        if (wanted.equals(shownTabs)) {
+            return;
+        }
+        shownTabs = wanted;
+        if (panelRoot != null && tabListener != null) {
             queue(this::rebuildHeader);
         }
     }
@@ -268,10 +285,25 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
     }
 
     private void addTabs(TooltipMakerAPI element) {
-        float tabLeft = 0f;
+        List<SocketPanelTab> rowTabs = new ArrayList<>();
+        List<String> labels = new ArrayList<>();
         for (SocketPanelTab panelTab : SocketPanelTab.values()) {
-            String label = panelTab.label();
-            float tabWidth = Global.getSettings().computeStringWidth(label, Fonts.ORBITRON_20AABOLD) + TAB_TEXT_PADDING;
+            if (shownTabs.contains(panelTab) || panelTab == tab()) {
+                rowTabs.add(panelTab);
+                labels.add(panelTab.label());
+            }
+        }
+        float tabRoom = panelWidth - PAD * 2f - CLOSE_BUTTON_WIDTH - GAP;
+        int fontIndex = fittingTabFontIndex(labels, tabRoom, (label, font) -> Global.getSettings().computeStringWidth(label, font));
+        String tabFont = TAB_FONTS.get(fontIndex);
+        if (fontIndex > 0) {
+            element.setAreaCheckboxFont(tabFont);
+        }
+        float tabLeft = 0f;
+        for (int index = 0; index < rowTabs.size(); index++) {
+            SocketPanelTab panelTab = rowTabs.get(index);
+            String label = labels.get(index);
+            float tabWidth = Global.getSettings().computeStringWidth(label, tabFont) + tabTextPadding(fontIndex);
             ButtonAPI tabButton = element.addAreaCheckbox(label, new TabButton(panelTab), Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
                     Misc.getBrightPlayerColor(), tabWidth, HEADER_BUTTON_HEIGHT, 0f);
             tabButton.setChecked(panelTab == tab());
@@ -281,6 +313,31 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
             }
             tabLeft += tabWidth + GAP;
         }
+        if (fontIndex > 0) {
+            element.setAreaCheckboxFontDefault();
+        }
+    }
+
+    static int fittingTabFontIndex(List<String> labels, float tabRoom, BiFunction<String, String, Float> measure) {
+        int lastIndex = TAB_FONTS.size() - 1;
+        for (int fontIndex = 0; fontIndex < lastIndex; fontIndex++) {
+            if (tabRowWidth(labels, fontIndex, measure) <= tabRoom) {
+                return fontIndex;
+            }
+        }
+        return lastIndex;
+    }
+
+    private static float tabRowWidth(List<String> labels, int fontIndex, BiFunction<String, String, Float> measure) {
+        float rowWidth = Math.max(0, labels.size() - 1) * GAP;
+        for (String label : labels) {
+            rowWidth += measure.apply(label, TAB_FONTS.get(fontIndex)) + tabTextPadding(fontIndex);
+        }
+        return rowWidth;
+    }
+
+    private static float tabTextPadding(int fontIndex) {
+        return fontIndex == 0 ? TAB_TEXT_PADDING : NARROW_TAB_TEXT_PADDING;
     }
 
     final boolean tabPressed(Object id) {

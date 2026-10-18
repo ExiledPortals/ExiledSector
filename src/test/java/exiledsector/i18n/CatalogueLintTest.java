@@ -34,6 +34,16 @@ class CatalogueLintTest {
     private static final List<String> ITEM_MODIFIERS_FILES = List.of("data/config/exiledSector/item_modifiers.csv",
             "data/config/exiledSector/star_chart_modifiers.csv");
     private static final String ITEM_NAMES_FILE = "data/config/exiledSector/item_names.json";
+    private static final String STAR_CHART_NAMES_FILE = "data/config/exiledSector/star_chart_names.json";
+
+    private static void addNameWords(Map<String, String> sources, JSONObject words) throws JSONException {
+        for (String list : List.of("first", "second", "models")) {
+            JSONArray entries = words.optJSONArray(list);
+            for (int i = 0; entries != null && i < entries.length(); i++) {
+                sources.put("socketable.nameWord." + entries.getString(i), entries.getString(i));
+            }
+        }
+    }
 
     static Map<String, String> dataSources() throws IOException, JSONException {
         Path root = RealSkillData.projectRoot();
@@ -77,14 +87,9 @@ class CatalogueLintTest {
         }
         JSONObject nameWords = RealSkillData.readJson(root.resolve(ITEM_NAMES_FILE));
         for (Iterator<?> grades = nameWords.keys(); grades.hasNext(); ) {
-            JSONObject words = nameWords.getJSONObject(String.valueOf(grades.next()));
-            for (String list : List.of("first", "second", "models")) {
-                JSONArray entries = words.optJSONArray(list);
-                for (int i = 0; entries != null && i < entries.length(); i++) {
-                    sources.put("socketable.nameWord." + entries.getString(i), entries.getString(i));
-                }
-            }
+            addNameWords(sources, nameWords.getJSONObject(String.valueOf(grades.next())));
         }
+        addNameWords(sources, RealSkillData.readJson(root.resolve(STAR_CHART_NAMES_FILE)));
         String hullModRows = Files.readString(root.resolve(HULL_MODS_FILE), StandardCharsets.UTF_8).replace("\r\n", "\n");
         JSONArray hullMods = CDL.toJSONArray(hullModRows);
         for (int i = 0; i < hullMods.length(); i++) {

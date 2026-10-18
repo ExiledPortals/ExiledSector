@@ -14,6 +14,7 @@ import exiledsector.items.ItemStore;
 import exiledsector.items.ItemType;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.MaterialTier;
+import exiledsector.items.StarChartCurrency;
 import exiledsector.items.StarChartFixtures;
 import exiledsector.ui.chart.StarChartCrafting.Refusal;
 import org.json.JSONObject;
@@ -30,6 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -102,6 +105,7 @@ class StarChartCraftingTest {
 
     @AfterEach
     void tearDown() {
+        StarChartCurrency.unregisterAll();
         ItemCurrencies.unregister(survey);
         ItemCurrencies.unregister(copier);
         StarChartFixtures.clear();
@@ -112,11 +116,71 @@ class StarChartCraftingTest {
     }
 
     @Test
-    void noBuiltInCurrencyAppliesToChartsYet() {
+    void theChartCurrenciesAndTheExtendedKernelsJoinTheRowOnlyOnceRegistered() {
         assertEquals(List.of(), StarChartCrafting.currencies());
         for (CraftingCurrency currency : CraftingCurrency.values()) {
             assertEquals(Refusal.CANNOT_USE, refusalWithOne(currency));
         }
+
+        StarChartCurrency.registerAll();
+
+        assertEquals(List.of(CraftingCurrency.AUGMENTATION, CraftingCurrency.CORRUPTION, CraftingCurrency.TRANSPOSITION,
+                CraftingCurrency.RECALIBRATION, StarChartCurrency.REFORGE, StarChartCurrency.ANNULMENT, StarChartCurrency.CARTOGRAPHY),
+                StarChartCrafting.currencies());
+        for (ItemCurrency currency : List.of(CraftingCurrency.AUGMENTATION, CraftingCurrency.RECALIBRATION, CraftingCurrency.CORRUPTION,
+                StarChartCurrency.REFORGE, StarChartCurrency.ANNULMENT, StarChartCurrency.CARTOGRAPHY)) {
+            assertEquals(Refusal.NONE, refusalWithOne(currency), currency.key());
+        }
+        for (CraftingCurrency currency : List.of(CraftingCurrency.ATTUNEMENT, CraftingCurrency.SUBSTITUTION, CraftingCurrency.FIXATION,
+                CraftingCurrency.REPLICATION)) {
+            assertEquals(Refusal.CANNOT_USE, refusalWithOne(currency), currency.key());
+        }
+    }
+
+    @Test
+    void eachChartCurrencyExplainsWhyItCannotBeUsed() {
+        StarChartCurrency.registerAll();
+        CraftingMaterials materials = CraftingMaterials.cargoOnly(cargo);
+        when(cargo.getQuantity(eq(CargoAPI.CargoItemType.SPECIAL), any())).thenReturn(100f);
+        Item topTier = store.add(ItemData.rolledAtTier(ItemDefinitions.get("star_chart_single"), 3L, 15));
+        Item unique = store.add(ItemData.rolledAtTier(ItemDefinitions.get("unique_chart_silent_reach"), 3L, 2));
+
+        assertEquals(Refusal.MAX_TIER, StarChartCrafting.refusal(StarChartCurrency.CARTOGRAPHY, topTier, store, materials, definition -> true));
+        assertEquals(Refusal.UNIQUE, StarChartCrafting.refusal(StarChartCurrency.REFORGE, unique, store, materials, definition -> true));
+        assertEquals(Refusal.UNIQUE, StarChartCrafting.refusal(StarChartCurrency.ANNULMENT, unique, store, materials, definition -> true));
+        assertEquals(Refusal.UNIQUE, StarChartCrafting.refusal(CraftingCurrency.AUGMENTATION, unique, store, materials, definition -> true));
+        assertEquals(Refusal.NOT_UNIQUE, StarChartCrafting.refusal(CraftingCurrency.TRANSPOSITION, chart, store, materials, definition -> true));
+        assertEquals(Refusal.CANNOT_USE, StarChartCrafting.refusal(CraftingCurrency.TRANSPOSITION, unique, store, materials, definition -> true));
+        Random random = new Random(4L);
+        while (StarChartCrafting.use(StarChartCurrency.ANNULMENT, chart, store, materials, random, definition -> true) != null) {
+            assertTrue(chart.explicits().size() < 6);
+        }
+        assertEquals(Refusal.NO_MODIFIERS, StarChartCrafting.refusal(StarChartCurrency.ANNULMENT, chart, store, materials, definition -> true));
+        while (StarChartCrafting.use(CraftingCurrency.AUGMENTATION, chart, store, materials, random, definition -> true) != null) {
+            assertTrue(chart.explicits().size() <= 6);
+        }
+        assertEquals(6, chart.explicits().size());
+        assertEquals(Refusal.FULL, StarChartCrafting.refusal(CraftingCurrency.AUGMENTATION, chart, store, materials, definition -> true));
+    }
+
+    @Test
+    void aChartCurrencyKeepsTheChartSelectedAndATranspositionSelectsTheReplacement() {
+        StarChartCurrency.registerAll();
+        CraftingMaterials materials = CraftingMaterials.cargoOnly(cargo);
+        owns(StarChartCurrency.CARTOGRAPHY.itemId(), 1f);
+        owns(CraftingCurrency.TRANSPOSITION.itemId(), 1f);
+
+        StarChartCrafting.Used raised = StarChartCrafting.use(StarChartCurrency.CARTOGRAPHY, chart, store, materials, new Random(1L),
+                definition -> true);
+
+        assertSame(chart, raised.selectedAfter());
+        assertEquals(7, chart.tier());
+        Item unique = store.add(ItemData.rolledAtTier(ItemDefinitions.get("unique_chart_silent_reach"), 3L, 8));
+        StarChartCrafting.Used transposed = StarChartCrafting.use(CraftingCurrency.TRANSPOSITION, unique, store, materials, new Random(1L),
+                definition -> true);
+        assertEquals("unique_chart_wardens_vigil", transposed.selectedAfter().definitionId());
+        assertSame(transposed.selectedAfter(), store.find(unique.id()));
+        assertEquals(8, transposed.selectedAfter().tier());
     }
 
     private Refusal refusalWithOne(ItemCurrency currency) {

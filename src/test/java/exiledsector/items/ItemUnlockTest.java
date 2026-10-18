@@ -197,4 +197,43 @@ class ItemUnlockTest {
         assertEquals(Map.of("unique_vambrace_plating", "found_onslaught_mk1", "unique_gate_hauler_coil", "found_gate_hauler",
                 "unique_planetkiller_circuit", "found_planetkiller", "unique_alpha_site_survivor", "defeated_ziggurat"), unlocks);
     }
+
+    @Test
+    void clearingAStarChartTierUnlocksUniquesThatAskForItAndStaysLatched() throws Exception {
+        Map<String, Object> values = new HashMap<>();
+        MemoryAPI memory = memoryOver(values);
+        when(memory.contains(anyString())).thenAnswer(call -> values.containsKey(call.<String>getArgument(0)));
+        when(memory.getInt(anyString())).thenAnswer(call -> ((Number) values.get(call.<String>getArgument(0))).intValue());
+        when(sector.getMemoryWithoutUpdate()).thenReturn(memory);
+        ItemDefinitions.register(new JSONArray()
+                .put(ItemFixtures.row("basic", "subroutine", "HULL_MULT:4:6"))
+                .put(ItemFixtures.row("charted", "subroutine", "HULL_MULT:4:6").put("unique", "true").put("unlock", "cleared_chart_tier_4")));
+        ItemDefinition charted = ItemDefinitions.get("charted");
+
+        assertFalse(ItemUnlock.unlockConditionMet(charted, sector));
+        assertFalse(ItemUnlock.canDropChart(charted, sector));
+        assertTrue(ItemUnlock.canDropChart(ItemDefinitions.get("basic"), sector));
+        assertTrue(ItemUnlock.recordChartCleared(sector, 3));
+        assertFalse(ItemUnlock.unlockConditionMet(charted, sector));
+        assertTrue(ItemUnlock.recordChartCleared(sector, 4));
+        assertTrue(ItemUnlock.unlockConditionMet(charted, sector));
+        assertFalse(ItemUnlock.recordChartCleared(sector, 2));
+        assertEquals(4, ItemUnlock.highestClearedChartTier(sector));
+        assertTrue(ItemUnlock.canDropChart(charted, sector));
+        assertFalse(ItemUnlock.unlockConditionMet(charted, null));
+        assertFalse(ItemUnlock.recordChartCleared(null, 5));
+        assertEquals(0, ItemUnlock.highestClearedChartTier(null));
+    }
+
+    @Test
+    void onlyKnownUnlockIdsAndChartTiersFromOneToFifteenAreRecognised() {
+        assertTrue(ItemUnlock.isKnownUnlock(""));
+        assertTrue(ItemUnlock.isKnownUnlock("found_onslaught_mk1"));
+        assertTrue(ItemUnlock.isKnownUnlock("cleared_chart_tier_1"));
+        assertTrue(ItemUnlock.isKnownUnlock("cleared_chart_tier_15"));
+        assertFalse(ItemUnlock.isKnownUnlock("cleared_chart_tier_16"));
+        assertFalse(ItemUnlock.isKnownUnlock("cleared_chart_tier_0"));
+        assertFalse(ItemUnlock.isKnownUnlock("cleared_chart_tier_x"));
+        assertFalse(ItemUnlock.isKnownUnlock("found_something_else"));
+    }
 }

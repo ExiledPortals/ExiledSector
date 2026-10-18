@@ -10,6 +10,7 @@ import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemUnlock;
 import exiledsector.items.MaterialItems;
 import exiledsector.ui.CampaignMessages;
+import exiledsector.ui.cargo.MaterialDropAnnouncer;
 import org.apache.log4j.Logger;
 
 import java.awt.Color;
@@ -29,7 +30,7 @@ public final class ChartRewards {
     private static final Color REWARD_COLOUR = new Color(120, 230, 140);
     private static final Logger LOG = Logger.getLogger(ChartRewards.class);
 
-    public record Reward(int credits, int hullItems, int materials) {
+    public record Reward(int credits, int hullItems, int materials, int starCharts) {
     }
 
     private ChartRewards() {
@@ -56,11 +57,12 @@ public final class ChartRewards {
         if (!run.claimReward()) {
             return null;
         }
+        ItemUnlock.recordChartCleared(sector, run.tier());
         CampaignFleetAPI playerFleet = sector.getPlayerFleet();
         CargoAPI cargo = playerFleet == null ? null : playerFleet.getCargo();
         if (cargo == null) {
             LOG.warn("[ExiledSector] The Star Chart reward for run " + run.runId() + " had no cargo to go into");
-            return new Reward(0, 0, 0);
+            return new Reward(0, 0, 0, 0);
         }
         Random random = rewardRandom(run);
         float rewardMult = ChartRunEffects.contextOf(run).rewardMult();
@@ -82,22 +84,30 @@ public final class ChartRewards {
             }
             sectionLoot.upgrades().forEach(upgrade -> cargo.addSpecial(upgrade.toSpecialItem(), 1f));
         }
-        grantChartDrops(run, cargo, random);
+        ChartDrops.Loot chartLoot = grantChartDrops(sector, run, cargo, random, rewardMult);
         int materialCount = materials.values().stream().mapToInt(Integer::intValue).sum();
-        announce(run, credits, hullItems);
-        return new Reward(credits, hullItems, materialCount);
+        int chartCurrencyCount = chartLoot.currencies().values().stream().mapToInt(Integer::intValue).sum();
+        announce(run, credits, hullItems, chartLoot.charts().size());
+        MaterialDropAnnouncer.announce(chartLoot.currencies());
+        return new Reward(credits, hullItems, materialCount + chartCurrencyCount, chartLoot.charts().size());
     }
 
-    static void grantChartDrops(ChartRun run, CargoAPI cargo, Random random) {
-        // TODO phase 5: roll Star Chart drops here (same tier or one above, per the plan), into the cargo for the chart store to absorb
+    static ChartDrops.Loot grantChartDrops(SectorAPI sector, ChartRun run, CargoAPI cargo, Random random, float rewardMult) {
+        ChartDrops.Loot chartLoot = ChartDrops.forRunReward(sector, run, rewardMult, random);
+        chartLoot.charts().forEach(chart -> cargo.addSpecial(chart.toSpecialItem(), 1f));
+        chartLoot.currencies().forEach((itemId, quantity) -> MaterialItems.add(cargo, itemId, quantity));
+        return chartLoot;
     }
 
-    private static void announce(ChartRun run, int credits, int hullItems) {
+    private static void announce(ChartRun run, int credits, int hullItems, int charts) {
         String objective = ChartObjectiveIntel.objectiveName(run.objective());
         List<String> lines = new ArrayList<>();
         lines.add(I18n.forGameText(() -> Translation.msg("chart.reward.message").arg("objective", objective).arg("credits", credits).text()));
         if (hullItems > 0) {
             lines.add(I18n.forGameText(() -> Translation.msg("chart.reward.items").count(hullItems).text()));
+        }
+        if (charts > 0) {
+            lines.add(I18n.forGameText(() -> Translation.msg("chart.drop.reward").count(charts).text()));
         }
         for (String line : lines) {
             CampaignMessages.plain(line, REWARD_COLOUR);

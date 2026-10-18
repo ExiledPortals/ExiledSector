@@ -66,6 +66,7 @@ import exiledsector.items.SocketLossListener;
 import exiledsector.items.ItemSaveAliases;
 import exiledsector.items.ItemStore;
 import exiledsector.items.SocketTypeMigration;
+import exiledsector.items.StarChartCurrency;
 import exiledsector.items.StarChartItems;
 import exiledsector.ui.ExiledSectorSettings;
 import exiledsector.ui.HullUpgradesRefitButton;
@@ -95,6 +96,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
     public void onApplicationLoad() throws Exception {
         loadLanguage();
         Global.getLogger(ExiledSectorModPlugin.class).info(LOG_TAG + " loaded");
+        StarChartCurrency.registerAll();
         localiseHullModText();
         SkillTreeRefitButton.addButton();
         HullUpgradesRefitButton.addButton();

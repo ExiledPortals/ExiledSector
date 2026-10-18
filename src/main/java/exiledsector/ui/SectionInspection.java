@@ -51,8 +51,8 @@ final class SectionInspection {
         this.socketPlacement = socketPlacement;
         this.sectionsDisplay = new SectionsDisplay(hostPanel, treeSession, SectionLayout.Arrangement.BOTH_SIDES);
         this.upgradesTabListener = tab -> {
-            if (tab == SocketPanelTab.HULL_ITEMS) {
-                socketPlacement.openFromHullUpgradesTab();
+            if (tab != SocketPanelTab.HULL_UPGRADES) {
+                socketPlacement.showTab(tab);
             }
         };
         socketPlacement.setHullUpgradesTab(new SocketPlacement.HullUpgradesTab() {
@@ -151,7 +151,9 @@ final class SectionInspection {
 
     private void fitShipToFreeSpace(PositionAPI canvasPosition, TreeCamera camera, float shipTreeLength) {
         float panelRight = 0f;
-        if (socketPlacement.isStorageOpen()) {
+        if (socketPlacement.isChartsOpen()) {
+            panelRight = socketPlacement.chartsRight();
+        } else if (socketPlacement.isStorageOpen()) {
             panelRight = ChromeMetrics.EDGE_MARGIN + ItemStoragePanel.WIDTH;
         } else if (hullUpgradesPanel != null) {
             panelRight = ChromeMetrics.EDGE_MARGIN + HullUpgradePanel.WIDTH;

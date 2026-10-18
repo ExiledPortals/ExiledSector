@@ -3,6 +3,8 @@ package exiledsector.ui.chart;
 import exiledsector.charts.ChartPreview;
 import exiledsector.charts.ChartRunActions.OpenResult;
 import exiledsector.i18n.RealCatalogue;
+import exiledsector.items.CraftingCurrency;
+import exiledsector.items.StarChartCurrency;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -20,7 +22,7 @@ class StarChartUiStringKeysTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"en", "zh_CN"})
-    void everyKeyTheStarChartScreenBuildsExists(String language) {
+    void everyKeyTheStarChartsTabBuildsExists(String language) {
         Map<String, String> catalogue = RealCatalogue.entries(language);
         List<String> missing = new ArrayList<>();
         for (WormholeOpenCheck.Blocker blocker : WormholeOpenCheck.Blocker.values()) {
@@ -39,12 +41,38 @@ class StarChartUiStringKeysTest {
         for (ChartPreview.Stat stat : ChartPreview.Stat.values()) {
             require(catalogue, StarChartPreviewText.statKey(stat), missing);
         }
+        for (String key : List.of("chart.ui.currency.alsoStarCharts", "ui.workbench.confirm.useTitle", "ui.workbench.confirm.growTitle", "ui.workbench.confirm.growBody",
+                "ui.workbench.confirm.skipHint", "ui.workbench.confirm.use", "ui.workbench.confirm.grow", "ui.workbench.confirm.cancel")) {
+            require(catalogue, key, missing);
+        }
         assertEquals(List.of(), missing);
     }
 
     @ParameterizedTest
+    @ValueSource(strings = {"en", "zh_CN"})
+    void everyChartCurrencyHasItsNameDescriptionAndRecipeText(String language) {
+        Map<String, String> catalogue = RealCatalogue.entries(language);
+        List<String> missing = new ArrayList<>();
+        for (StarChartCurrency currency : StarChartCurrency.values()) {
+            require(catalogue, "material." + currency.itemId() + ".name", missing);
+            require(catalogue, "material." + currency.itemId() + ".description", missing);
+            require(catalogue, "chart.currency." + currency.key() + ".description", missing);
+        }
+        for (CraftingCurrency kernel : StarChartCurrency.KERNELS_ON_CHARTS) {
+            require(catalogue, "chart.currency." + kernel.key() + ".description", missing);
+        }
+        require(catalogue, "chart.drop.reward", missing);
+        assertEquals(List.of(), missing);
+        for (String key : catalogue.keySet()) {
+            if (key.startsWith("chart.currency.") || key.startsWith("chart.drop.")) {
+                assertFalse(catalogue.get(key).contains("%"), key);
+            }
+        }
+    }
+
+    @ParameterizedTest
     @ValueSource(strings = {"zh_CN"})
-    void everyStarChartScreenStringIsTranslated(String language) {
+    void everyStarChartsTabStringIsTranslated(String language) {
         Map<String, String> english = RealCatalogue.entries("en");
         Map<String, String> translated = RealCatalogue.entries(language);
         List<String> missing = new ArrayList<>();

@@ -23,6 +23,7 @@ import exiledsector.items.SocketLossListener;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemNames;
+import exiledsector.items.StarChartCurrency;
 import exiledsector.ui.SkillTreeRefitButton;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
 import exiledsector.ui.inspect.SkillTreeCodexListener;
@@ -129,6 +130,7 @@ class ExiledSectorModPluginTest {
         NpcFactionVolumes.clear();
         ItemDefinitions.clear();
         ItemNames.clear();
+        StarChartCurrency.unregisterAll();
         settingsCreatorMock.close();
         globalMock.close();
         lunaSettingsMock.close();

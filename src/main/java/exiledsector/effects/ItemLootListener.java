@@ -1,5 +1,6 @@
 package exiledsector.effects;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BaseCampaignEventListener;
 import com.fs.starfarer.api.campaign.BattleAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
@@ -7,11 +8,13 @@ import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.EngagementResultForFleetAPI;
 import com.fs.starfarer.api.campaign.FleetEncounterContextPlugin;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
+import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.listeners.ShipRecoveryListener;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.PlayerFleet;
+import exiledsector.charts.ChartDrops;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.ShipSkillData;
@@ -27,6 +30,8 @@ import exiledsector.items.MaterialItems;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemData;
 import exiledsector.ui.CampaignMessages;
+import exiledsector.ui.cargo.MaterialDropAnnouncer;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
@@ -43,6 +48,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         private final Map<String, HullUpgradeData> upgradeByMemberId = new LinkedHashMap<>();
         private boolean playerWon;
         private float partsEarned;
+        private float deploymentPointsDefeated;
 
         List<ItemData> items() {
             List<ItemData> allItems = new ArrayList<>();
@@ -51,16 +57,23 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         }
     }
 
+    private static final Logger LOG = Logger.getLogger(ItemLootListener.class);
     private final Map<BattleAPI, Pending> pendingByBattle = new IdentityHashMap<>();
     private final Random lootRandom;
+    private final Random chartRandom;
 
     public ItemLootListener() {
         this(new Random());
     }
 
     ItemLootListener(Random lootRandom) {
+        this(lootRandom, new Random());
+    }
+
+    ItemLootListener(Random lootRandom, Random chartRandom) {
         super(false);
         this.lootRandom = lootRandom;
+        this.chartRandom = chartRandom;
     }
 
     void holdLoot(PlayerEngagement engagement) {
@@ -81,6 +94,21 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
             float difficultyMultiplier = ShipLevelSystem.difficultyMultiplier(engagement.difficulty(), ShipLevelConfig.xpDifficultyStrength(),
                     ShipLevelConfig.xpDifficultyMaxMultiplier());
             pendingLoot.partsEarned += defeatedDp * ItemDrops.battlePartsPerDeploymentPoint() * difficultyMultiplier;
+            pendingLoot.deploymentPointsDefeated += defeatedDp;
+        }
+    }
+
+    private ChartDrops.Loot chartLoot(Pending pendingLoot) {
+        SectorAPI sector = Global.getSector();
+        CampaignFleetAPI playerFleet = PlayerFleet.orNull();
+        if (sector == null || playerFleet == null || !pendingLoot.playerWon || !(pendingLoot.deploymentPointsDefeated > 0f)) {
+            return ChartDrops.Loot.NONE;
+        }
+        try {
+            return ChartDrops.forBattle(sector, playerFleet.getContainingLocation(), pendingLoot.deploymentPointsDefeated, chartRandom);
+        } catch (RuntimeException e) {
+            LOG.error("[ExiledSector] Rolling Star Chart battle drops failed", e);
+            return ChartDrops.Loot.NONE;
         }
     }
 
@@ -128,6 +156,9 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
             if (wholeParts > 0) {
                 MaterialItems.add(loot, ItemDisassembly.PARTS_ITEM_ID, wholeParts);
             }
+            ChartDrops.Loot chartLoot = chartLoot(pendingLoot);
+            chartLoot.charts().forEach(chart -> loot.addSpecial(chart.toSpecialItem(), 1f));
+            chartLoot.currencies().forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
         }
         pendingByBattle.keySet().removeIf(BattleAPI::isDone);
     }
@@ -160,6 +191,16 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
                 CampaignMessages.plain(salvageMessage, Misc.getPositiveHighlightColor());
             }
         }
+        ChartDrops.Loot chartLoot = chartLoot(pendingLoot);
+        for (ItemData chart : chartLoot.charts()) {
+            playerFleet.getCargo().addSpecial(chart.toSpecialItem(), 1f);
+            Item previewChart = chart.preview();
+            if (previewChart != null) {
+                announceSalvaged(previewChart::name);
+            }
+        }
+        chartLoot.currencies().forEach((itemId, quantity) -> MaterialItems.add(playerFleet.getCargo(), itemId, quantity));
+        MaterialDropAnnouncer.announce(chartLoot.currencies());
     }
 
     private static void announceSalvaged(Supplier<String> itemName) {

@@ -18,6 +18,9 @@ public enum ItemUnlock {
     public static final int UNIQUE_MIN_PLAYER_LEVEL = 15;
     public static final int SECTION_ITEM_MIN_PLAYER_LEVEL = 15;
     private static final String LATCH_PREFIX = "$exiledSector_socketUnlock_";
+    public static final String CLEARED_CHART_TIER_PREFIX = "cleared_chart_tier_";
+    static final String CLEARED_CHART_TIER_KEY = "$exiledSector_chartsClearedTier";
+    static final int NO_CLEARED_TIER = 0;
 
     private final String id;
     private final Predicate<SectorAPI> condition;
@@ -67,8 +70,47 @@ public enum ItemUnlock {
         if (definition.unlock().isEmpty()) {
             return true;
         }
+        int requiredClearedTier = clearedChartTierRequiredBy(definition.unlock());
+        if (requiredClearedTier != NO_CLEARED_TIER) {
+            return sector != null && highestClearedChartTier(sector) >= requiredClearedTier;
+        }
         ItemUnlock unlock = sector == null ? null : byId(definition.unlock());
         return unlock != null && unlock.isMet(sector);
+    }
+
+    public static boolean isKnownUnlock(String unlockId) {
+        return unlockId == null || unlockId.isEmpty() || byId(unlockId) != null || clearedChartTierRequiredBy(unlockId) != NO_CLEARED_TIER;
+    }
+
+    public static boolean canDropChart(ItemDefinition definition, SectorAPI sector) {
+        return !definition.unique() || unlockConditionMet(definition, sector);
+    }
+
+    static int clearedChartTierRequiredBy(String unlockId) {
+        if (unlockId == null || !unlockId.startsWith(CLEARED_CHART_TIER_PREFIX)) {
+            return NO_CLEARED_TIER;
+        }
+        try {
+            int tier = Integer.parseInt(unlockId.substring(CLEARED_CHART_TIER_PREFIX.length()));
+            return tier >= StarChart.LOWEST_TIER && tier <= StarChart.HIGHEST_TIER ? tier : NO_CLEARED_TIER;
+        } catch (NumberFormatException e) {
+            return NO_CLEARED_TIER;
+        }
+    }
+
+    public static int highestClearedChartTier(SectorAPI sector) {
+        MemoryAPI sectorMemory = sector == null ? null : sector.getMemoryWithoutUpdate();
+        return sectorMemory == null || !sectorMemory.contains(CLEARED_CHART_TIER_KEY) ? NO_CLEARED_TIER : sectorMemory.getInt(CLEARED_CHART_TIER_KEY);
+    }
+
+    public static boolean recordChartCleared(SectorAPI sector, int tier) {
+        MemoryAPI sectorMemory = sector == null ? null : sector.getMemoryWithoutUpdate();
+        int clearedTier = StarChart.clampTier(tier);
+        if (sectorMemory == null || highestClearedChartTier(sector) >= clearedTier) {
+            return false;
+        }
+        sectorMemory.set(CLEARED_CHART_TIER_KEY, clearedTier);
+        return true;
     }
 
     boolean isMet(SectorAPI sector) {

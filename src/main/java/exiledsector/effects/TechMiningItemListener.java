@@ -11,6 +11,7 @@ import com.fs.starfarer.api.impl.campaign.econ.impl.TechMining;
 import com.fs.starfarer.api.impl.campaign.ids.Industries;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.Seeds;
+import exiledsector.charts.ChartDrops;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.items.HullUpgradeData;
@@ -20,6 +21,7 @@ import exiledsector.items.MaterialItems;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemUnlock;
 import exiledsector.ui.CampaignMessages;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +33,8 @@ public class TechMiningItemListener implements EconomyTickListener {
 
     static final String MONTHS_KEY = "$exiledSector_socketTechMiningMonths";
     private static final String DECAY_SETTING = "techMiningDecay";
+    private static final String CHART_SEED_SUFFIX = "|starChart";
+    private static final Logger LOG = Logger.getLogger(TechMiningItemListener.class);
 
     @Override
     public void reportEconomyTick(int iterIndex) {
@@ -60,7 +64,18 @@ public class TechMiningItemListener implements EconomyTickListener {
             marketMemory.set(MONTHS_KEY, minedMonths + 1);
             List<ItemData> allFoundItems = new ArrayList<>(foundItems);
             allFoundItems.addAll(sectionItemLoot.items());
+            allFoundItems.addAll(chartsFound(sector, market.getId(), minedMonths, chanceMult));
             deliver(market, allFoundItems, foundMaterials, sectionItemLoot.upgrades());
+        }
+    }
+
+    static List<ItemData> chartsFound(SectorAPI sector, String marketId, int minedMonths, float chanceMult) {
+        try {
+            Random chartRandom = Seeds.random(sector.getSeedString() + "|" + marketId + "|" + minedMonths + CHART_SEED_SUFFIX);
+            return ChartDrops.forTechMining(sector, minedMonths == 0, chanceMult, chartRandom).charts();
+        } catch (RuntimeException e) {
+            LOG.error("[ExiledSector] Rolling Star Chart tech mining finds failed", e);
+            return List.of();
         }
     }
 

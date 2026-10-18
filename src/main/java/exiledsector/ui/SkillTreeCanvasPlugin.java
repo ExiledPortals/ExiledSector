@@ -88,7 +88,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.templateUi = new SkillTreeTemplateController(member, treeSession, panelStyle);
         this.statPanel = new SkillTreeStatPanel(member);
         this.hyperspaceMode = new HyperspaceMode(camera, statPanel, treeSession::isHidden);
-        this.socketPlacement = new SocketPlacement(hostPanel, treeSession, nodeSearch, searchBar);
+        this.socketPlacement = new SocketPlacement(hostPanel, treeSession, nodeSearch, searchBar, refitButton, statPanel::reservedWidth);
         this.sectionInspection = new SectionInspection(hostPanel, treeSession, socketPlacement, statPanel);
         this.chrome = new SkillTreeChrome(member, panelStyle, statPanel, searchBar, templateUi, socketPlacement, shipCardHeight);
 

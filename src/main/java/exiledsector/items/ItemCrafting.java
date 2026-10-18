@@ -41,7 +41,7 @@ public final class ItemCrafting {
     public static boolean canUse(ItemCurrency currency, Item item, Predicate<ItemDefinition> allowedUniques,
                                  Collection<CraftingWard> wards) {
         ItemDefinition definition = item == null ? null : item.definition();
-        if (definition == null || item.mirrored() || item.corrupted() || !currency.appliesTo(definition.type())) {
+        if (definition == null || item.mirrored() || item.corrupted() || !ItemCurrencies.appliesTo(currency, definition.type())) {
             return false;
         }
         return currency.canUse(item, new CraftingContext(null, allowedUniques, CraftingWard.guardedSlots(wards)));
@@ -345,11 +345,20 @@ public final class ItemCrafting {
         }
         List<RolledEffect> lines = new ArrayList<>(rolled.lines().size());
         for (RolledEffect line : rolled.lines()) {
-            ModifierLine lineDefinition = modifier.line(line.effectName());
-            boolean varies = lineDefinition != null && lineDefinition.canVary() && !lineDefinition.isScaled();
-            lines.add(varies ? new RolledEffect(line.effectName(), lineDefinition.widened(CORRUPTION_RANGE_STRETCH).roll(random)) : line);
+            ModifierLine stretchedLine = stretchedForCorruption(modifier.line(line.effectName()));
+            lines.add(stretchedLine == null ? line : new RolledEffect(line.effectName(), stretchedLine.roll(random)));
         }
         return rolled.withLines(lines);
+    }
+
+    static ModifierLine stretchedForCorruption(ModifierLine lineDefinition) {
+        if (lineDefinition == null || !lineDefinition.canVary()) {
+            return null;
+        }
+        if (!lineDefinition.isScaled()) {
+            return lineDefinition.widened(CORRUPTION_RANGE_STRETCH);
+        }
+        return lineDefinition.scalesWithTier() ? lineDefinition.stretchedRollPositions(CORRUPTION_RANGE_STRETCH) : null;
     }
 
     static Item randomiseModifiers(ItemStore store, Item item, Random random, Predicate<ItemDefinition> allowedUniques) {

@@ -17,6 +17,7 @@ import exiledsector.ui.decoration.SkillTreeFleetRenderer;
 import exiledsector.ui.section.SectionLayout;
 import exiledsector.ui.node.NodeSearch;
 import exiledsector.ui.node.TreeAllocationSession;
+import exiledsector.ui.chart.StarChartTab;
 import exiledsector.ui.refit.RefitScreenLayout;
 import exiledsector.ui.socket.HullUpgradePanel;
 import exiledsector.ui.socket.SocketPanelPlacement;
@@ -29,6 +30,7 @@ import lunalib.lunaRefit.BaseRefitButton;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.Color;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -53,6 +55,9 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     private SectionsDisplay sectionsDisplay;
     private ItemStoragePanel storagePanel;
     private HullUpgradePanel upgradesPanel;
+    private StarChartTab chartTab;
+    private String wormholeMessage;
+    private float chartsLevel;
     private ModificationBay bay;
     private float bayDim;
     private Map<String, FleetMemberAPI> ownedShips = Map.of();
@@ -107,14 +112,19 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
             refreshStorage();
         }
         bayDim = Fade.step(bayDim, bay != null, amount / OPEN_SECONDS);
-        sectionsDisplay.advance(amount, mouseX, mouseY, contentLevel >= 0.5f && !pointerOverPanel && bay == null);
+        chartsLevel = Fade.step(chartsLevel, chartTab != null, amount / CONTENT_SECONDS);
+        sectionsDisplay.advance(amount, mouseX, mouseY, contentLevel >= 0.5f && !pointerOverPanel && bay == null && chartTab == null);
         if (closing && openLevel <= 0f && !closeRequested) {
             closeRequested = true;
             sectionsDisplay.hideTooltip();
             if (portrait != null) {
                 portrait.cleanup();
             }
-            refitButton.closePanel();
+            if (wormholeMessage != null) {
+                RefitScreenExit.leave(refitButton, wormholeMessage);
+            } else {
+                refitButton.closePanel();
+            }
         }
     }
 
@@ -192,25 +202,83 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     }
 
     private void switchTab(SocketPanelTab tab) {
-        if (closing) {
+        if (closing || bay != null) {
             return;
         }
-        if (tab == SocketPanelTab.HULL_ITEMS && upgradesPanel != null) {
-            showStorage(null);
-        } else if (tab == SocketPanelTab.HULL_UPGRADES && storagePanel != null) {
-            ItemStoragePanel swapped = storagePanel;
-            forgetStorage();
-            swapped.swapOut();
-            openUpgrades(true);
+        switch (tab) {
+            case HULL_ITEMS -> {
+                if (storagePanel == null) {
+                    showStorage(null);
+                }
+            }
+            case HULL_UPGRADES -> {
+                if (upgradesPanel == null) {
+                    swapOutStorage();
+                    swapOutCharts();
+                    openUpgrades(true);
+                }
+            }
+            case STAR_CHARTS -> {
+                if (chartTab == null) {
+                    swapOutStorage();
+                    swapOutUpgrades();
+                    openCharts();
+                }
+            }
         }
     }
 
-    private void showStorage(ItemKind kindFilter) {
+    private void openCharts() {
+        SocketPanelPlacement storagePlacement = placement(true);
+        SocketPanelPlacement detailPlacement = StarChartTab.detailBeside(storagePlacement, HullUpgradesLayout.chartsRoomRight(layout),
+                Float.MAX_VALUE);
+        chartTab = StarChartTab.open(hostPanel, storagePlacement, detailPlacement, tabListener, EnumSet.allOf(SocketPanelTab.class),
+                new StarChartTab.Listener() {
+                    @Override
+                    public void closed() {
+                        close();
+                    }
+
+                    @Override
+                    public void wormholeOpened(String message) {
+                        wormholeMessage = message;
+                        close();
+                    }
+
+                    @Override
+                    public void pressedInside() {
+                        sectionsDisplay.hideTooltip();
+                    }
+                });
+    }
+
+    private void swapOutStorage() {
+        if (storagePanel != null) {
+            ItemStoragePanel swapped = storagePanel;
+            forgetStorage();
+            swapped.swapOut();
+        }
+    }
+
+    private void swapOutUpgrades() {
         if (upgradesPanel != null) {
             HullUpgradePanel swapped = upgradesPanel;
             upgradesPanel = null;
             swapped.swapOut();
         }
+    }
+
+    private void swapOutCharts() {
+        if (chartTab != null) {
+            StarChartTab swapped = chartTab;
+            chartTab = null;
+            swapped.swapOut();
+        }
+    }
+
+    private void showStorage(ItemKind kindFilter) {
+        swapOutUpgrades();
+        swapOutCharts();
         if (storagePanel == null) {
             openStorage(kindFilter);
         } else {
@@ -293,6 +361,9 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
         if (upgradesPanel != null) {
             upgradesPanel.close();
         }
+        if (chartTab != null) {
+            chartTab.close();
+        }
     }
 
     private void pressLeft(float x, float y) {
@@ -328,7 +399,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     }
 
     private int sectionIndexAt(float x, float y) {
-        boolean sectionsLive = contentLevel >= 0.5f && bay == null && (storagePanel == null || !storagePanel.isWorkbenchOpen());
+        boolean sectionsLive = contentLevel >= 0.5f && bay == null && chartTab == null && (storagePanel == null || !storagePanel.isWorkbenchOpen());
         return sectionsLive ? sectionsDisplay.sectionAt(x, y) : -1;
     }
 
@@ -354,6 +425,12 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
         if (upgradesPanel != null && upgradesPanel.escape()) {
             return;
         }
+        if (chartTab != null) {
+            if (!chartTab.escape()) {
+                switchTab(SocketPanelTab.HULL_UPGRADES);
+            }
+            return;
+        }
         if (placingItem != null) {
             stopPlacing();
         } else if (targetedSection != null) {
@@ -373,7 +450,8 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     private boolean panelContains(float x, float y) {
         return (bay != null && bay.contains(x, y))
                 || (storagePanel != null && (storagePanel.contains(x, y) || storagePanel.workbenchContains(x, y)))
-                || (upgradesPanel != null && upgradesPanel.contains(x, y));
+                || (upgradesPanel != null && upgradesPanel.contains(x, y))
+                || (chartTab != null && chartTab.contains(x, y));
     }
 
     @Override
@@ -412,9 +490,13 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
             return;
         }
         float shipX = shipCentreX();
-        portrait.draw(shipX, layout.shipCentreY(), layout.shipZoom(), frameAlpha);
-        SkillTreeFleetRenderer.InspectedShip ship = portrait.at(shipX, layout.shipCentreY(), layout.shipZoom());
-        sectionsDisplay.render(ship, shipExtent, alphaMult * Fade.smooth(contentLevel), screenLayout.sectionBounds(), placingItem, targetedSection);
+        float shipShown = 1f - Fade.smooth(chartsLevel);
+        if (shipShown > 0f) {
+            portrait.draw(shipX, layout.shipCentreY(), layout.shipZoom(), frameAlpha * shipShown);
+            SkillTreeFleetRenderer.InspectedShip ship = portrait.at(shipX, layout.shipCentreY(), layout.shipZoom());
+            sectionsDisplay.render(ship, shipExtent, alphaMult * Fade.smooth(contentLevel) * shipShown, screenLayout.sectionBounds(), placingItem,
+                    targetedSection);
+        }
         if (bayDim > 0f) {
             GLDraw.fillQuad(0f, 0f, Global.getSettings().getScreenWidth(), Global.getSettings().getScreenHeight(), Color.BLACK,
                     BAY_BACKDROP_ALPHA * Fade.smooth(bayDim) * alphaMult);

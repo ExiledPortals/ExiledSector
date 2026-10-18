@@ -63,7 +63,7 @@ final class RefitPanelLauncher {
         return true;
     }
 
-    private static RefitButtonAdder refitButtonAdder() {
+    static RefitButtonAdder refitButtonAdder() {
         for (Object script : Global.getSector().getTransientScripts()) {
             if (script instanceof RefitButtonAdder adder) {
                 return adder;

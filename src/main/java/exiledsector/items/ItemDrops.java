@@ -159,12 +159,25 @@ public final class ItemDrops {
     static String pickKernel(Random random) {
         List<KernelDrop> kernelDrops = new ArrayList<>();
         for (ItemCurrency currency : ItemCurrencies.all()) {
-            kernelDrops.add(new KernelDrop(currency.itemId(), currency.dropWeight()));
+            if (currency.dropsFromShipLoot()) {
+                kernelDrops.add(new KernelDrop(currency.itemId(), currency.dropWeight()));
+            }
         }
         for (CraftingWard ward : CraftingWard.values()) {
             kernelDrops.add(new KernelDrop(ward.itemId(), ward.dropWeight()));
         }
         return WeightedPick.pick(kernelDrops, KernelDrop::weight, random).itemId();
+    }
+
+    public static String pickChartCurrency(Random random) {
+        List<KernelDrop> chartDrops = new ArrayList<>();
+        for (ItemCurrency currency : ItemCurrencies.forType(ItemType.STAR_CHART)) {
+            if (!currency.dropsFromShipLoot() && currency.dropWeight() > 0f) {
+                chartDrops.add(new KernelDrop(currency.itemId(), currency.dropWeight()));
+            }
+        }
+        KernelDrop picked = WeightedPick.pick(chartDrops, KernelDrop::weight, random);
+        return picked == null ? null : picked.itemId();
     }
 
     private record KernelDrop(String itemId, float weight) {

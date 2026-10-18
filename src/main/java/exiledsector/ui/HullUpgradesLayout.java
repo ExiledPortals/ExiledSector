@@ -30,4 +30,8 @@ record HullUpgradesLayout(float panelLeft, float panelWidth, float settledShipX,
     float panelRight() {
         return panelLeft + panelWidth;
     }
+
+    static float chartsRoomRight(RefitScreenLayout layout) {
+        return layout.frameX() + layout.frameWidth() - PANEL_MARGIN;
+    }
 }

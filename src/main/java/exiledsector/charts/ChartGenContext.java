@@ -226,6 +226,10 @@ public final class ChartGenContext {
         return multiplier(lootBudgetPercent + quantityPercent + qualityQuantityPercent());
     }
 
+    public float chartDropMult() {
+        return multiplier(quantityPercent + qualityQuantityPercent());
+    }
+
     public float lootMultWithoutVault() {
         return multiplier(lootBudgetPercent + quantityPercent + qualityQuantityPercent() + vaultRichnessPercent);
     }

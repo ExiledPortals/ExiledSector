@@ -28,6 +28,7 @@ import exiledsector.ui.section.SectionFlair;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -136,10 +137,17 @@ public final class ItemStoragePanel extends HoloPanel {
 
     public static ItemStoragePanel open(CustomPanelAPI hostPanel, SocketPanelPlacement placement, Function<Item, String> installedShipLookup,
                                           Listener storageListener, ItemKind kindFilter, Consumer<SocketPanelTab> tabListener) {
+        return open(hostPanel, placement, installedShipLookup, storageListener, kindFilter, tabListener, EnumSet.allOf(SocketPanelTab.class));
+    }
+
+    public static ItemStoragePanel open(CustomPanelAPI hostPanel, SocketPanelPlacement placement, Function<Item, String> installedShipLookup,
+                                          Listener storageListener, ItemKind kindFilter, Consumer<SocketPanelTab> tabListener,
+                                          Set<SocketPanelTab> shownTabs) {
         ItemStoragePanel storagePanel = new ItemStoragePanel(hostPanel, installedShipLookup, storageListener, kindFilter);
         storagePanel.movedFromCargo = absorbPlayerCargo();
         storagePanel.materialsNotice = settleMaterials();
         storagePanel.setTabListener(tabListener);
+        storagePanel.setShownTabs(shownTabs);
         storagePanel.attach(placement.panelLeft(), placement.panelTop(), placement.panelWidth(), placement.panelHeight(), placement.instantly());
         return storagePanel;
     }

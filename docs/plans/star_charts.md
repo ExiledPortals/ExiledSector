@@ -315,10 +315,10 @@ Each phase ends with tests passing and, from phase 1 onwards, the soak check.
    - register the chart resolver, limits and currencies before modifiers and definitions load and before saves load (`AffixLayout.register` is package-private, so that code lives in `exiledsector.items`);
    - charts need their own implicit table and corruption pool; `ItemImplicits` currently assumes hull items;
    - pass the tier to `ItemRollOdds` and the codex when a chart is shown, and cache `ScaleContext` if chart tooltips build it every frame.
-6. **The Star Chart UI.** Tier columns or tabs, the selected-chart panel, the currency buttons, and the Open Wormhole button with the one-run lock and a dev switch in place of the colony building.
-7. **Crafting currencies and chart drops.** The sustain loop and tier progression.
+6. **The Star Chart UI.** Tier columns or tabs, the selected-chart panel, the currency buttons, and the Open Wormhole button with the one-run lock and a dev switch in place of the colony building. Since 2026-10-18 it is the Star Charts tab of the universal Items panel, beside Hull Items and Hull Upgrades, in the refit Hull Items screen and the skill tree socketing panel alike; the old console-opened screen and its command are gone. Opening a wormhole closes the panel, the refit screen and any market dialog it sits in, so the player lands on the campaign map beside the wormhole. Opening is refused during a fleet encounter, because that dialog cannot be closed safely from outside.
+7. **Crafting currencies and chart drops (done 2026-10-18).** The sustain loop and tier progression, described under "Chart currencies and drops" below.
 8. **Editor and localisation.** Editor pages, round-trip tests, and the zh_CN text.
-9. **The colony building.** It enables the Open Wormhole button and replaces the dev switch. Its image is `Wormhole_gateway.png`, which the user added to the main checkout at `graphics/unused/Wormhole_gateway.png` (untracked as of 2026-10-18; move it to the building graphics folder when the building is built). The rest of its design (industry or structure, where opening is allowed, how the screen is reached, upgrades and AI cores, the fate of the dev setting, running costs) is decided at phase 9.
+9. **The colony building.** It enables the Open Wormhole button and replaces the dev switch. Its image is `Wormhole_gateway.png`, which the user added to the main checkout at `graphics/unused/Wormhole_gateway.png` (untracked as of 2026-10-18; move it to the building graphics folder when the building is built). The rest of its design (industry or structure, where opening is allowed, whether the Star Charts tab needs it to open wormholes, upgrades and AI cores, the fate of the dev setting, running costs) is decided at phase 9.
 10. **Polish.** Wormhole visuals and sounds, the fleet preview, and balance.
 
 Atlas progression is deferred to a later project.
@@ -333,3 +333,34 @@ Atlas progression is deferred to a later project.
 6. Re-evaluated after main's hull item refactor (2026-10-18). Charts become a third item type on the shared item and modifier system, rather than a parallel copy of the old socketables code.
 7. Star charts use the same three rarities as hull items: Common, Rare and Unique (2026-10-18).
 8. Surveying pocket planets grants vanilla survey data and XP, as part of a chart's reward (2026-10-18).
+
+## Chart currencies and drops
+
+Phase 7 built the sustain loop. This section records how it works.
+
+Four kernels also work on charts: Augmentation, Recalibration, Transposition and Corruption. Their code is not changed for it. Instead, `ItemCurrencies` keeps an overlay of extra item types per registered currency (`extend`, `retract` and `appliesTo(currency, type)`), and `StarChartCurrency.registerAll()` extends those four kernels to `STAR_CHART` at application load. Crafting and the currency row both read the overlay, so hull items and subroutines see exactly the same currencies as before. The kernels' own code was already type-aware: augment uses the chart limits (six modifiers, three a side) and the tier filter, recalibrate rerolls roll positions, transpose only picks a unique that rolls at the chart's tier and keeps the tier, and corruption uses the chart implicit pool.
+
+Corruption's "values stretched" outcome now reaches tier-band lines too. Their roll positions are rerolled from -35 to 135 instead of 0 to 100, and `ValueScaling.PerTierBand` reads a position outside 0 to 100 as a value up to 35 percent of the band's bound past that bound, never crossing zero. Positions inside 0 to 100 read exactly as before. Hull items have no tier, so their values never reach this code, and their own stretch is unchanged.
+
+Three chart-only currencies are `StarChartCurrency` entries, each a special item that reuses a kernel icon tinted with its own colour:
+- the Reforging Cipher rerolls every explicit modifier at the chart's tier, and the rarity follows the new count;
+- the Annulment Cipher removes one random explicit modifier, so a Rare chart can turn Common;
+- the Cartographer's Cipher raises the tier by one, up to 15. Modifiers keep their roll positions and take the new tier's values, and a unique starts from its minimum tier.
+
+Uniques refuse the reforge and the annulment, and corrupted or mirrored charts refuse everything. All three can be grown from Nanite Feedstock by right-clicking their tile on the Star Charts tab, at the costs in `item_crafting.csv`. Their `dropsFromShipLoot()` is false, so `ItemDrops.pickKernel` never picks them and ship kernel drops are unchanged.
+
+Chart drops come from `chart_drops.csv`, one row per source, through `ChartDrops`:
+- run_reward: completing an objective drops one chart and a 25 percent chance of a second, scaled by the chart's reward multiplier and capped at four. Each chart is 40 percent likely to be one tier higher. A chart-only currency comes with it 75 percent of the time.
+- pocket_salvage and pocket_battle: each salvaged point of interest and each won battle inside a pocket has a 4 percent chance of a chart at the run tier, scaled by the chart's quantity multiplier, and a small chance of a chart-only currency.
+- battle: won battles outside pockets that defeat at least 150 enemy deployment points have a 1 percent chance, at tier 1 plus one per 120 more points, up to tier 6.
+- salvage, techmining_first_find and techmining_monthly: rare finds at a tier from the player's level, up to tier 5.
+
+Chart-only currencies only drop from the pocket sources; the loader zeroes a currency chance on any other row. Dropped charts go into cargo, or colony storage for tech mining, and the chart store absorbs them from the player's cargo on load and when the Star Charts tab opens.
+
+A unique chart's unlock column takes an `ItemUnlock` id or `cleared_chart_tier_N`. Completing an objective on a tier N chart raises the sector memory value `$exiledSector_chartsClearedTier` to N if it was lower, so the unlock stays latched. The Warden's Vigil needs a cleared tier 3 chart. A unique also never drops below its minimum tier, and an unknown unlock id is logged at load and never drops.
+
+Rare charts take codename words from `star_chart_names.json`, which the editor doesn't touch.
+
+None of this adds anything to a save for a closed run. The only new save value is that cleared-tier number.
+
+Left for later phases: editor pages for `chart_drops.csv` and `star_chart_names.json` and the chart currencies in the Crafting tab (phase 8), and drop balance (phase 10).

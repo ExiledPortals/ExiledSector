@@ -46,6 +46,7 @@ public final class StarCharts {
         ChartEffects.register();
         ChartBlockedAbilities.load();
         ChartTiers.load();
+        ChartDrops.load();
         ChartPois.load();
         ChartFactions.load();
     }

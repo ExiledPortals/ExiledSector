@@ -125,6 +125,11 @@ public record ModifierLine(String effectName, float min, float max, ValueScaling
         return new ModifierLine(effectName, widenedMin + 0f, widenedMax + 0f, scaling);
     }
 
+    public ModifierLine stretchedRollPositions(float fraction) {
+        float stretch = (max - min) * Math.max(0f, fraction);
+        return new ModifierLine(effectName, Math.round(min - stretch) + 0f, Math.round(max + stretch) + 0f, scaling);
+    }
+
     public float roll(Random random) {
         RollSteps steps = steps();
         if (steps.highest() < steps.lowest()) {

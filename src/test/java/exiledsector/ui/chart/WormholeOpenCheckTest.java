@@ -2,8 +2,11 @@ package exiledsector.ui.chart;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.CampaignUIAPI;
+import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.campaign.SectorEntityToken;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.ChartRun;
 import exiledsector.charts.ChartRuns;
@@ -25,6 +28,7 @@ import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -89,6 +93,34 @@ class WormholeOpenCheckTest {
         assertEquals(Blocker.IN_POCKET, WormholeOpenCheck.evaluate(chart, store, true, false, playerFleet));
         when(playerFleet.getContainingLocation()).thenReturn(null);
         assertEquals(Blocker.NO_FLEET, WormholeOpenCheck.evaluate(chart, store, true, false, playerFleet));
+    }
+
+    @Test
+    void aFleetEncounterBlocksOpeningButADockedMarketDoesNot() {
+        CampaignFleetAPI otherFleet = mock(CampaignFleetAPI.class);
+        SectorEntityToken station = mock(SectorEntityToken.class);
+
+        assertEquals(Blocker.IN_FLEET_ENCOUNTER, WormholeOpenCheck.evaluate(chart, store, true, false, playerFleet, otherFleet));
+        assertFalse(Blocker.IN_FLEET_ENCOUNTER.allowsOpening());
+        assertEquals(Blocker.NONE, WormholeOpenCheck.evaluate(chart, store, true, false, playerFleet, station));
+        assertEquals(Blocker.NONE, WormholeOpenCheck.evaluate(chart, store, true, false, playerFleet, playerFleet));
+        assertEquals(Blocker.NONE, WormholeOpenCheck.evaluate(chart, store, true, false, playerFleet, null));
+    }
+
+    @Test
+    void theLiveCheckReadsTheCurrentDialogTarget() {
+        SectorAPI sector = mock(SectorAPI.class);
+        CampaignUIAPI campaignUi = mock(CampaignUIAPI.class);
+        InteractionDialogAPI dialog = mock(InteractionDialogAPI.class);
+        CampaignFleetAPI otherFleet = mock(CampaignFleetAPI.class);
+        when(sector.getCampaignUI()).thenReturn(campaignUi);
+        when(campaignUi.getCurrentInteractionDialog()).thenReturn(dialog);
+        when(dialog.getInteractionTarget()).thenReturn(otherFleet);
+
+        assertEquals(otherFleet, WormholeOpenCheck.dialogTarget(sector));
+        when(campaignUi.getCurrentInteractionDialog()).thenReturn(null);
+        assertNull(WormholeOpenCheck.dialogTarget(sector));
+        assertNull(WormholeOpenCheck.dialogTarget(null));
     }
 
     @Test

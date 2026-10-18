@@ -32,6 +32,7 @@ public final class ItemNames {
     private static final long NAME_SALT = 0x6E616D6573L;
     private static final Logger LOG = Logger.getLogger(ItemNames.class);
     private static final AtomicReference<Map<String, NameWords>> WORDS = new AtomicReference<>(Map.of());
+    private static final AtomicReference<NameWords> STAR_CHART_WORDS = new AtomicReference<>();
 
     enum Style {CODENAME, PRODUCT}
 
@@ -49,6 +50,10 @@ public final class ItemNames {
         }
     }
 
+    static void useStarChartWords(NameWords starChartWords) {
+        STAR_CHART_WORDS.set(starChartWords);
+    }
+
     public static void registerWords(JSONObject namesJson) throws JSONException {
         Map<String, NameWords> loaded = new HashMap<>();
         Iterator<?> definitionIds = namesJson.keys();
@@ -63,6 +68,7 @@ public final class ItemNames {
 
     public static void clear() {
         WORDS.set(Map.of());
+        STAR_CHART_WORDS.set(null);
     }
 
     static boolean hasName(ItemDefinition definition, String modifierId, ModifierSlot slot) {
@@ -80,8 +86,13 @@ public final class ItemNames {
         return switch (AffixLayout.rarityFor(definition, modifiers.size())) {
             case UNIQUE -> FrozenName.NONE;
             case COMMON -> new FrozenName(firstInSlot(definition, modifiers, ModifierSlot.PREFIX), firstInSlot(definition, modifiers, ModifierSlot.SUFFIX), null, null);
-            case RARE -> rareWords(definition.id(), seed);
+            case RARE -> rareWords(wordsFor(definition), seed);
         };
+    }
+
+    private static NameWords wordsFor(ItemDefinition definition) {
+        NameWords definitionWords = WORDS.get().get(definition.id());
+        return definitionWords == null && definition.type() == ItemType.STAR_CHART ? STAR_CHART_WORDS.get() : definitionWords;
     }
 
     static ItemName render(ItemDefinition definition, ItemKind kind, List<RolledModifier> modifiers, FrozenName frozen) {
@@ -157,8 +168,7 @@ public final class ItemNames {
         return ItemModifiers.namedForEffect(modifierId, slot);
     }
 
-    private static FrozenName rareWords(String definitionId, long seed) {
-        NameWords nameWords = WORDS.get().get(definitionId);
+    private static FrozenName rareWords(NameWords nameWords, long seed) {
         if (nameWords == null || nameWords.firstWords().isEmpty() || nameWords.secondWords().isEmpty()) {
             return null;
         }

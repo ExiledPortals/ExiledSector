@@ -40,4 +40,8 @@ public interface ItemCurrency {
     default boolean mayChangeDefinition() {
         return false;
     }
+
+    default boolean dropsFromShipLoot() {
+        return appliesTo(ItemType.SUBROUTINE) || appliesTo(ItemType.HULL_ITEM);
+    }
 }
