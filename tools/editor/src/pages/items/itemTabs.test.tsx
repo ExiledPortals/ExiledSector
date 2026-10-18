@@ -1,5 +1,5 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { buildVocabulary } from '../../api/vocabulary.ts';
 import { renderWithProviders } from '../../test/renderWithProviders.tsx';
 import { readRepositoryFile, startTestServer, type TestServer } from '../../test/testServer.ts';
@@ -96,6 +96,32 @@ describe('hull item tabs', () => {
       modifiersBefore.replace('ARMOR_PERCENT_IMPLICIT,implicit,hull_item,ARMOR_PERCENT:5:10,', 'ARMOR_PERCENT_IMPLICIT,implicit,hull_item,ARMOR_PERCENT:5:12,'),
     );
     expect(server.readProjectFile(IMPLICITS_FILE)).toBe(implicitsBefore);
+  }, 90000);
+
+  it('view mode lists each modifier as its in-game description with its weight and share', async () => {
+    const serverFetch = globalThis.fetch;
+    vi.stubGlobal('fetch', async (input: RequestInfo | URL, init?: RequestInit) => {
+      if (String(input) === '/api/describe') {
+        const { modifierLines } = JSON.parse(String(init?.body)) as { modifierLines: { effect: string }[] };
+        const lines = modifierLines.map((line) => (line.effect === 'FLUX_CAPACITY_MULT' ? '+<good>4%-6%</good> flux capacity' : null));
+        return new Response(JSON.stringify({ lines }), { status: 200, headers: { 'content-type': 'application/json' } });
+      }
+      return serverFetch(input, init);
+    });
+    try {
+      renderWithProviders(<DefinitionsTab vocabulary={vocabulary} />);
+      await screen.findAllByDisplayValue('Military Domain Subroutine', undefined, { timeout: 30000 });
+
+      fireEvent.click(screen.getByText('View'));
+
+      const highlighted = await screen.findByText('4%-6%');
+      expect(highlighted.parentElement?.textContent).toBe('+4%-6% flux capacity');
+      expect(screen.getAllByText('Capacitive').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('1500').length).toBeGreaterThan(0);
+      expect(screen.queryAllByLabelText('Modifier 1')).toEqual([]);
+    } finally {
+      vi.stubGlobal('fetch', serverFetch);
+    }
   }, 90000);
 
   it('loads the implicits with their modifiers resolved', async () => {

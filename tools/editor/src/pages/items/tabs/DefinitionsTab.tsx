@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Checkbox, Divider, Group, NavLink, ScrollArea, Select, Stack, Text, Textarea, TextInput, Title } from '@mantine/core';
+import { Avatar, Box, Button, Checkbox, Divider, Group, NavLink, ScrollArea, SegmentedControl, Select, Stack, Text, Textarea, TextInput, Title } from '@mantine/core';
 import { IconCopy, IconPlus, IconTrash } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 import type { Vocabulary } from '../../../api/vocabulary.ts';
@@ -43,7 +43,17 @@ import {
   type ItemModifier,
   type ModifierUsage,
 } from '../model/modifiers.ts';
+import { parseImplicitsCsv, type ImplicitsModel } from '../model/implicits.ts';
+import { DefinitionView } from './DefinitionView.tsx';
 import { PoolEntryRow } from './PoolEntryRow.tsx';
+
+type DefinitionsViewMode = 'edit' | 'view';
+
+function implicitIdsBySection(implicits: ImplicitsModel): Record<string, string[]> {
+  return Object.fromEntries(
+    implicits.rows.map((row) => [row.section, row.implicits.filter((reference) => reference.inlineText === undefined).map((reference) => reference.modifierId)]),
+  );
+}
 
 const LIST_WIDTH = 270;
 
@@ -51,13 +61,14 @@ interface DefinitionsModel extends ItemDefinitionsModel {
   catalogue: ItemModifier[];
   catalogueTable: CsvTable;
   catalogueChanged: boolean;
+  implicitIdsBySection: Record<string, string[]>;
 }
 
 export function DefinitionsTab({ vocabulary }: { vocabulary: Vocabulary }) {
   const document = useDataDocument<DefinitionsModel>({
     key: 'items.definitions',
     noun: 'item definition',
-    fileNames: ['subroutines', 'hull-items', 'item-modifiers'],
+    fileNames: ['subroutines', 'hull-items', 'item-modifiers', 'hull-item-implicits'],
     parse: (files) => {
       const modifiers = parseModifiersCsv(files['item-modifiers'].content);
       return {
@@ -65,6 +76,7 @@ export function DefinitionsTab({ vocabulary }: { vocabulary: Vocabulary }) {
         catalogue: modifiers.modifiers,
         catalogueTable: modifiers.table,
         catalogueChanged: false,
+        implicitIdsBySection: implicitIdsBySection(parseImplicitsCsv(files['hull-item-implicits'].content, vocabulary)),
       };
     },
     serialize: (model) => ({
@@ -88,6 +100,7 @@ export function DefinitionsTab({ vocabulary }: { vocabulary: Vocabulary }) {
   });
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [kindFilter, setKindFilter] = useState('');
+  const [viewMode, setViewMode] = useState<DefinitionsViewMode>('edit');
   const definitions = document.state.status === 'ready' ? document.state.model.definitions : [];
 
   const addItem = () => {
@@ -102,6 +115,16 @@ export function DefinitionsTab({ vocabulary }: { vocabulary: Vocabulary }) {
     <Stack h="100%" gap={0}>
       <Box px="md" py="xs">
         <DataToolbar document={document}>
+          <SegmentedControl
+            size="xs"
+            value={viewMode}
+            onChange={(value) => setViewMode(value as DefinitionsViewMode)}
+            data={[
+              { value: 'edit', label: 'Edit' },
+              { value: 'view', label: 'View' },
+            ]}
+            aria-label="Definitions mode"
+          />
           <Button size="xs" variant="default" leftSection={<IconPlus size={14} />} onClick={addItem} disabled={document.state.status !== 'ready'}>
             New item
           </Button>
@@ -126,7 +149,13 @@ export function DefinitionsTab({ vocabulary }: { vocabulary: Vocabulary }) {
             <Divider orientation="vertical" />
             <ScrollArea style={{ flex: 1 }} type="auto">
               <Box p="md">
-                {model.definitions[selectedIndex] ? (
+                {model.definitions[selectedIndex] && viewMode === 'view' ? (
+                  <DefinitionView
+                    definition={model.definitions[selectedIndex]}
+                    catalogue={model.catalogue}
+                    implicitModifierIds={model.implicitIdsBySection[model.definitions[selectedIndex].kind] ?? []}
+                  />
+                ) : model.definitions[selectedIndex] ? (
                   <DefinitionForm
                     key={selectedIndex}
                     document={document}

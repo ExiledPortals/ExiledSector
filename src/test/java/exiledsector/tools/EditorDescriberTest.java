@@ -37,6 +37,22 @@ class EditorDescriberTest {
     }
 
     @Test
+    void modifierLinesAreDescribedAsTheirRollRangeOrHullSizeValues() throws Exception {
+        JSONArray lines = new JSONArray()
+                .put(new JSONObject().put("effect", "MAX_COMBAT_READINESS_PERCENT").put("min", 3).put("max", 5))
+                .put(new JSONObject().put("effect", "ELECTRONIC_WARFARE").put("hullValues", new JSONArray().put(1).put(1).put(2).put(2)))
+                .put(new JSONObject().put("effect", "NOT_AN_EFFECT").put("min", 1).put("max", 2));
+
+        JSONArray described = new JSONObject(new EditorDescriber().respond(new JSONObject().put("modifierLines", lines).toString()))
+                .getJSONArray("lines");
+
+        assertEquals(3, described.length());
+        assertTrue(described.getString(0).contains("3") && described.getString(0).contains("5"), described.getString(0));
+        assertTrue(described.getString(1).contains("1/1/2/2"), described.getString(1));
+        assertTrue(described.isNull(2));
+    }
+
+    @Test
     void aSavedTypeIsDescribedWithItsTitleAndHighlightedEffects() throws Exception {
         JSONObject response = new JSONObject(new EditorDescriber().respond(request(savedTypes, "flux_capacity", null).toString()));
 

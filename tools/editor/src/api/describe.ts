@@ -31,3 +31,30 @@ export async function fetchDescription({ typesJson, typeId, hullSize, strings }:
     return { error: `In-game descriptions need the editor server - ${SERVER_HINT}.` };
   }
 }
+
+export interface DescribedModifierLines {
+  pending?: boolean;
+  error?: string;
+  message?: string;
+  lines?: (string | null)[];
+}
+
+export interface ModifierLineRequest {
+  effect: string;
+  min?: number;
+  max?: number;
+  hullValues?: number[];
+}
+
+export async function fetchModifierLineDescriptions(modifierLines: ModifierLineRequest[]): Promise<DescribedModifierLines> {
+  try {
+    const response = await fetch('/api/describe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Skill-Tree-Editor': '1' },
+      body: JSON.stringify({ modifierLines }),
+    });
+    return (await response.json()) as DescribedModifierLines;
+  } catch {
+    return { error: `In-game descriptions need the editor server - ${SERVER_HINT}.` };
+  }
+}
