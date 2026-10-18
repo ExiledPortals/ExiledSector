@@ -39,7 +39,6 @@ import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.cargo.CargoIconLooks;
 import exiledsector.ui.chart.StarChartCrafting;
 import exiledsector.ui.chart.StarChartOpening;
-import exiledsector.ui.chart.StarChartPreviewText;
 import exiledsector.ui.chart.WormholeOpenCheck;
 import exiledsector.ui.util.GLDraw;
 import com.fs.starfarer.api.input.InputEventAPI;
@@ -990,9 +989,6 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             float paraPad = GAP * 2f;
             addDetailSection(element, "hullItem.tooltip.implicit", loadedItem.implicitLines(detailsShowRollRanges), paraPad);
             addDetailSection(element, "socketable.tooltip.primaryData", loadedItem.effectLines(detailsShowRollRanges), paraPad);
-            if (benchMode == BenchMode.STAR_CHARTS) {
-                addChartPreview(element, loadedItem);
-            }
         }
         detailsElement = placedComponent(replaceElement(detailsElement, element, artX(BenchScene.DETAILS_LEFT), artY(BenchScene.DETAILS_TOP)));
     }
@@ -1007,17 +1003,6 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             VanillaText.addPara(element, line, linePad, Misc.getTextColor());
             linePad = LINE_PAD;
         }
-    }
-
-    private static void addChartPreview(TooltipMakerAPI element, Item chart) {
-        List<StyledText> previewLines = StarChartPreviewText.modifierLines(chart);
-        if (previewLines.isEmpty()) {
-            element.addSectionHeading(Translation.text("chart.ui.preview.heading"), Alignment.MID, GAP * 2f);
-            VanillaText.plainPara(element, Translation.text("chart.ui.preview.neutral"), GAP, Misc.getGrayColor());
-        } else {
-            addDetailSection(element, "chart.ui.preview.heading", previewLines, GAP * 2f);
-        }
-        VanillaText.addPara(element, StarChartPreviewText.tierLine(chart.tier()), GAP, Misc.getGrayColor());
     }
 
     private static void centred(LabelAPI label) {

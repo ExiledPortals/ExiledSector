@@ -1,6 +1,5 @@
 package exiledsector.ui.chart;
 
-import exiledsector.charts.ChartPreview;
 import exiledsector.charts.ChartRunActions.OpenResult;
 import exiledsector.i18n.RealCatalogue;
 import exiledsector.items.CraftingCurrency;
@@ -37,9 +36,6 @@ class StarChartUiStringKeysTest {
         }
         for (OpenResult result : OpenResult.values()) {
             require(catalogue, new StarChartOpening.Outcome(result, null).messageKey(), missing);
-        }
-        for (ChartPreview.Stat stat : ChartPreview.Stat.values()) {
-            require(catalogue, StarChartPreviewText.statKey(stat), missing);
         }
         for (String key : List.of("chart.ui.currency.alsoStarCharts", "ui.workbench.confirm.useTitle", "ui.workbench.confirm.growTitle", "ui.workbench.confirm.growBody",
                 "ui.workbench.confirm.skipHint", "ui.workbench.confirm.use", "ui.workbench.confirm.grow", "ui.workbench.confirm.cancel")) {
