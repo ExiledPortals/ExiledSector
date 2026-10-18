@@ -206,6 +206,9 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
             return;
         }
         for (InputEventAPI event : events) {
+            if (event.isConsumed()) {
+                continue;
+            }
             boolean inside = contains(event.getX(), event.getY());
             if (event.isMouseDownEvent() && inside) {
                 onPressInside();
