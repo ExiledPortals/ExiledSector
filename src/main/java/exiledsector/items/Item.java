@@ -5,8 +5,12 @@ import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierCategory;
+import exiledsector.modifiers.ModifierEffect;
+import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
+import exiledsector.modifiers.ScaleContext;
+import exiledsector.modifiers.TierRange;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
@@ -67,6 +71,18 @@ public abstract class Item {
     }
 
     public abstract ItemType type();
+
+    public ModifierEffects modifierEffects() {
+        return ItemEffects.forType(type());
+    }
+
+    public int tier() {
+        return TierRange.NO_TIER;
+    }
+
+    public ScaleContext scaleContext(HullSize hullSize) {
+        return ScaleContext.of(hullSize, tier());
+    }
 
     protected Object readResolve() {
         definitionId = ItemIdAliases.currentId(definitionId);
@@ -311,12 +327,14 @@ public abstract class Item {
 
     public List<SkillTypeEffect> skillEffects(HullSize hullSize) {
         List<SkillTypeEffect> appliedEffects = new ArrayList<>();
+        ModifierEffects effects = modifierEffects();
+        ScaleContext context = scaleContext(hullSize);
         for (SlottedRoll slottedRoll : rolls()) {
-            SkillEffect resolvedEffect = slottedRoll.roll().effect();
-            if (resolvedEffect != null) {
+            ModifierEffect resolvedEffect = slottedRoll.roll().effect(effects);
+            if (resolvedEffect instanceof SkillEffect skillEffect) {
                 float rolledMagnitude = slottedRoll.roll().magnitude();
-                float magnitude = slottedRoll.line() == null ? rolledMagnitude : slottedRoll.line().valueFor(rolledMagnitude, hullSize);
-                appliedEffects.add(new SkillTypeEffect(resolvedEffect, magnitude));
+                float magnitude = slottedRoll.line() == null ? rolledMagnitude : slottedRoll.line().valueFor(rolledMagnitude, context);
+                appliedEffects.add(new SkillTypeEffect(skillEffect, magnitude));
             }
         }
         return appliedEffects;
@@ -324,8 +342,9 @@ public abstract class Item {
 
     public List<StyledText> implicitLines(boolean withRollRanges) {
         List<StyledText> lines = new ArrayList<>();
+        ModifierEffects effects = modifierEffects();
         for (SlottedRoll implicit : rolls(ModifierCategory.IMPLICIT)) {
-            StyledText description = implicit.roll().description(withRollRanges ? implicit.line() : null);
+            StyledText description = implicit.roll().description(effects, withRollRanges ? implicit.line() : null);
             if (description != null) {
                 lines.add(description);
             }
@@ -343,12 +362,14 @@ public abstract class Item {
 
     public List<StyledText> effectLines(boolean withRollRanges, HullSize hullSize) {
         List<StyledText> lines = new ArrayList<>();
+        ModifierEffects effects = modifierEffects();
+        ScaleContext context = scaleContext(hullSize);
         for (RolledModifier explicitModifier : explicits()) {
             Modifier modifier = explicitModifier(explicitModifier.modifierId());
             int firstLineIndex = lines.size();
             for (RolledEffect effect : explicitModifier.lines()) {
-                StyledText description = explicitLine(effect, modifier == null ? null : modifier.line(effect.effectName()),
-                        withRollRanges, hullSize);
+                StyledText description = explicitLine(effects, effect, modifier == null ? null : modifier.line(effect.effectName()),
+                        withRollRanges, context);
                 if (description != null) {
                     lines.add(description);
                 }
@@ -361,14 +382,15 @@ public abstract class Item {
         return lines;
     }
 
-    private static StyledText explicitLine(RolledEffect effect, ModifierLine line, boolean withRollRanges, HullSize hullSize) {
+    private static StyledText explicitLine(ModifierEffects effects, RolledEffect effect, ModifierLine line, boolean withRollRanges,
+                                           ScaleContext context) {
         if (line == null) {
-            return effect.description(null);
+            return effect.description(effects, null);
         }
-        if (line.listsEveryHullValueFor(hullSize)) {
-            return effect.hullValuesDescription(line.hullValues());
+        if (line.listsEveryValueFor(context)) {
+            return effect.scaledValuesDescription(effects, line.scaledValues());
         }
-        RolledEffect shownEffect = new RolledEffect(effect.effectName(), line.valueFor(effect.magnitude(), hullSize));
-        return shownEffect.description(withRollRanges ? line : null);
+        RolledEffect shownEffect = new RolledEffect(effect.effectName(), line.valueFor(effect.magnitude(), context));
+        return shownEffect.description(effects, withRollRanges ? line : null);
     }
 }

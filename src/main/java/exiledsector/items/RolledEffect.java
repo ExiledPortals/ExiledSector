@@ -1,10 +1,11 @@
 package exiledsector.items;
 
+import exiledsector.modifiers.ModifierEffect;
+import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.DescriptionLine;
-import exiledsector.skills.skilleffect.SkillEffect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,14 +24,8 @@ public final class RolledEffect {
     }
 
     static String currentName(String effectName) {
-        if (effectName == null) {
-            return null;
-        }
-        try {
-            return SkillEffect.byName(effectName).name();
-        } catch (IllegalArgumentException e) {
-            return effectName;
-        }
+        String currentName = ItemEffects.anyCurrentName(effectName);
+        return currentName == null ? effectName : currentName;
     }
 
     private Object readResolve() {
@@ -46,12 +41,12 @@ public final class RolledEffect {
         return magnitude;
     }
 
-    public SkillEffect effect() {
-        try {
-            return SkillEffect.byName(effectName);
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
+    public ModifierEffect effect() {
+        return effect(ItemEffects.SKILL_EFFECTS);
+    }
+
+    public ModifierEffect effect(ModifierEffects effects) {
+        return effects.byName(effectName);
     }
 
     public StyledText description() {
@@ -59,7 +54,11 @@ public final class RolledEffect {
     }
 
     public StyledText description(ModifierLine rollRange) {
-        SkillEffect effect = effect();
+        return description(ItemEffects.SKILL_EFFECTS, rollRange);
+    }
+
+    public StyledText description(ModifierEffects effects, ModifierLine rollRange) {
+        ModifierEffect effect = effect(effects);
         if (effect == null) {
             return null;
         }
@@ -76,14 +75,18 @@ public final class RolledEffect {
     }
 
     public StyledText hullValuesDescription(List<Float> hullValues) {
-        SkillEffect effect = effect();
-        if (effect == null || hullValues.isEmpty()) {
+        return scaledValuesDescription(ItemEffects.SKILL_EFFECTS, hullValues);
+    }
+
+    public StyledText scaledValuesDescription(ModifierEffects effects, List<Float> scaledValues) {
+        ModifierEffect effect = effect(effects);
+        if (effect == null || scaledValues.isEmpty()) {
             return effect == null ? null : display(effect, magnitude);
         }
-        StyledText firstValueText = display(effect, hullValues.get(0));
-        List<String> valueTexts = new ArrayList<>(hullValues.size());
-        for (float hullValue : hullValues) {
-            String valueText = valueText(effect, hullValue);
+        StyledText firstValueText = display(effect, scaledValues.get(0));
+        List<String> valueTexts = new ArrayList<>(scaledValues.size());
+        for (float scaledValue : scaledValues) {
+            String valueText = valueText(effect, scaledValue);
             if (valueText == null || firstValueText.spans().isEmpty()) {
                 return firstValueText;
             }
@@ -93,12 +96,16 @@ public final class RolledEffect {
     }
 
     public StyledText rangeDescription(ModifierLine rollRange) {
-        SkillEffect effect = effect();
+        return rangeDescription(ItemEffects.SKILL_EFFECTS, rollRange);
+    }
+
+    public StyledText rangeDescription(ModifierEffects effects, ModifierLine rollRange) {
+        ModifierEffect effect = effect(effects);
         if (effect == null) {
             return null;
         }
-        if (rollRange.scalesWithHullSize()) {
-            return hullValuesDescription(rollRange.hullValues());
+        if (rollRange.isScaled()) {
+            return scaledValuesDescription(effects, rollRange.scaledValues());
         }
         StyledText strongestText = display(effect, rollRange.boundFarthestFromZero());
         if (!rollRange.canVary() || strongestText.spans().isEmpty()) {
@@ -210,11 +217,11 @@ public final class RolledEffect {
         return leading ? first.substring(0, edgeLength) : first.substring(first.length() - edgeLength);
     }
 
-    private static StyledText display(SkillEffect effect, float magnitude) {
+    private static StyledText display(ModifierEffect effect, float magnitude) {
         return new DescriptionLine(effect.description(magnitude), effect.invertsDescriptionColours()).display();
     }
 
-    private static String valueText(SkillEffect effect, float magnitude) {
+    private static String valueText(ModifierEffect effect, float magnitude) {
         StyledText descriptionText = effect.description(magnitude);
         if (descriptionText.spans().isEmpty()) {
             return null;

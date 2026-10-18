@@ -4,13 +4,22 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
+import exiledsector.modifiers.TierRange;
 
 import java.util.List;
 import java.util.Random;
 
-public record PoolEntry(Modifier modifier, float weight) {
+public record PoolEntry(Modifier modifier, float weight, TierRange tiers) {
 
     private static final String WEIGHT_SEPARATOR = ":";
+
+    public PoolEntry {
+        tiers = tiers == null ? TierRange.ANY : tiers;
+    }
+
+    public PoolEntry(Modifier modifier, float weight) {
+        this(modifier, weight, TierRange.ANY);
+    }
 
     public static PoolEntry of(ModifierSlot slot, String effectName, float min, float max, float weight) {
         return new PoolEntry(Modifier.single(slot, ModifierLine.range(effectName, min, max)), weight);
@@ -30,7 +39,7 @@ public record PoolEntry(Modifier modifier, float weight) {
         }
         ModifierLine.Parsed parsed = ModifierLine.parse(entryText);
         float weight = parseWeight(parsed.trailingField(), entryText);
-        String effectName = ItemDefinition.currentEffectName(parsed.line().effectName());
+        String effectName = ItemDefinition.currentEffectName(parsed.line().effectName(), ItemEffects.forType(itemType));
         return effectName == null ? null : new PoolEntry(Modifier.single(slot, parsed.line().named(effectName)), weight);
     }
 
@@ -49,6 +58,14 @@ public record PoolEntry(Modifier modifier, float weight) {
             throw new IllegalArgumentException("entry \"" + entryText + "\" needs a weight above zero");
         }
         return weight;
+    }
+
+    public PoolEntry withTiers(TierRange allowedTiers) {
+        return new PoolEntry(modifier, weight, allowedTiers);
+    }
+
+    public boolean rollsAtTier(int tier) {
+        return tiers.allows(tier);
     }
 
     boolean isSingle() {

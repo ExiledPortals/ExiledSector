@@ -14,6 +14,7 @@ import exiledsector.modifiers.ModifierLine;
 import exiledsector.items.PoolEntry;
 import exiledsector.items.RolledEffect;
 import exiledsector.items.ItemDefinition;
+import exiledsector.items.ItemEffects;
 import exiledsector.items.ItemRarity;
 import exiledsector.items.ItemRollOdds;
 import exiledsector.ui.VanillaText;
@@ -115,8 +116,8 @@ public class ItemCodexEntry extends BoxedCodexEntry {
         writePool(info, "codex.socketables.suffixes", definition.suffixes(), weightShares, textWidth);
     }
 
-    private static void writePool(TooltipMakerAPI info, String headingKey, List<PoolEntry> pool, Map<String, Double> weightShares,
-                                  float textWidth) {
+    private void writePool(TooltipMakerAPI info, String headingKey, List<PoolEntry> pool, Map<String, Double> weightShares,
+                           float textWidth) {
         if (pool.isEmpty()) {
             return;
         }
@@ -150,7 +151,7 @@ public class ItemCodexEntry extends BoxedCodexEntry {
         }
     }
 
-    private static List<StyledText> effectTexts(Modifier modifier) {
+    private List<StyledText> effectTexts(Modifier modifier) {
         List<StyledText> effectTexts = new ArrayList<>(modifier.lines().size());
         for (ModifierLine line : modifier.lines()) {
             StyledText effectText = effectText(line);
@@ -161,8 +162,8 @@ public class ItemCodexEntry extends BoxedCodexEntry {
         return effectTexts;
     }
 
-    private static StyledText effectText(ModifierLine line) {
-        return new RolledEffect(line.effectName(), line.boundFarthestFromZero()).rangeDescription(line);
+    private StyledText effectText(ModifierLine line) {
+        return new RolledEffect(line.effectName(), line.boundFarthestFromZero()).rangeDescription(ItemEffects.forType(definition.type()), line);
     }
 
     static String percentText(double chance) {

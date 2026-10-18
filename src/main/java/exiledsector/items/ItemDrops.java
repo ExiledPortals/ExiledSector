@@ -158,7 +158,7 @@ public final class ItemDrops {
 
     static String pickKernel(Random random) {
         List<KernelDrop> kernelDrops = new ArrayList<>();
-        for (CraftingCurrency currency : CraftingCurrency.values()) {
+        for (ItemCurrency currency : ItemCurrencies.all()) {
             kernelDrops.add(new KernelDrop(currency.itemId(), currency.dropWeight()));
         }
         for (CraftingWard ward : CraftingWard.values()) {

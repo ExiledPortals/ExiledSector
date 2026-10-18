@@ -71,7 +71,7 @@ public final class ItemImplicits {
             if (parsed.line().scalesWithHullSize()) {
                 throw new IllegalArgumentException(parsed.line().effectName() + " must roll a min:max range, not per-hull-size values");
             }
-            String effectName = ItemDefinition.currentEffectName(parsed.line().effectName());
+            String effectName = ItemDefinition.currentEffectName(parsed.line().effectName(), ItemEffects.forType(kind.type()));
             if (effectName == null) {
                 continue;
             }

@@ -115,24 +115,28 @@ Main already did part of what the first draft asked for. What still needs work:
 | Need | State after main | Work left |
 |---|---|---|
 | A shared modifier catalogue | Done. `ItemModifiers` loads id, slot, `item_types` scoping, hybrid lines and names. Pools reference rows as `@ID:weight`. | Chart modifiers go in their own `star_chart_modifiers.csv`, loaded into the same `Modifier` records under `STAR_CHART`. Shipped hull item data and its released-item tests stay untouched. |
-| Effects not tied to ship skills | Partly done. Modifier records hold plain strings, but loading, validation and descriptions still go through `SkillEffect`. | An effect-resolver interface chosen per item type. `SkillEffect` becomes the first implementation; a chart effect registry is the second. A chart effect describes itself and supplies `beforeGeneration(ChartGenContext)` and `afterGeneration(ChartRun)` hooks. Every place that currently calls `SkillEffect.byName` switches to the resolver. |
-| Values that scale with tier | Not done. Lines scale by hull size only (four fixed values). | A value-scaling axis on `ModifierLine`: hull size for ship items, tier band for charts. Also a minimum-tier filter on pool entries, used by the roller. |
-| Rarities | Done. `ItemRarity` is Common, Rare and Unique. Rarity follows the explicit modifier count (2 or fewer is Common, 3 or more is Rare), and uniques come from their definition. | Nothing for rarity: charts use the same three rarities and rules (decided 2026-10-18). The layout constants (at most 4 explicits, 2 per side) only need a per-type value if charts should ever carry more modifiers than hull items. |
+| Effects not tied to ship skills | Done in phase 4. `ItemEffects` picks a `ModifierEffects` resolver per item type; skill effects are registered for subroutines and hull items. Loading, validation, descriptions and `Item.modifierEffects()` all go through it. | Register a chart effect resolver for `STAR_CHART`. Its effect names must not overlap skill effect names, because `RolledEffect` renames through every resolver. Chart effects supply `beforeGeneration(ChartGenContext)` and `afterGeneration(ChartRun)` hooks. |
+| Values that scale with tier | Done in phase 4, code only. `ModifierLine` has a `ValueScaling` (unscaled, per hull size, per tier band) read through a `ScaleContext`. Pool entries have a `TierRange`, and `ItemRoller.rollAtTier` and augment/substitute filter by tier. | Data syntax: a tier-band line format in `ModifierLine.parse` and min/max tier columns on pool entries, with the editor serialisers, `EditorRoundTripTest` and `ItemDataIntegrity` updated together. |
+| Rarities | Done. `ItemRarity` is Common, Rare and Unique, inferred from the explicit modifier count; uniques come from their definition. Since phase 4 the affix limits are a per-type `AffixLayout.Limits` policy. | Nothing for rarity (decided 2026-10-18). Register chart limits only if charts should carry more than 4 explicit modifiers. |
 | A chart codec | Partly done. The JSON codec and its modifier and name encoding are reusable, but there is one special-item id and no tier, quality or corrupted keys. | A separate special item `exiledSector_star_chart` with its own plugin and icon. Its data string reuses `ItemCodec`'s JSON, with optional `t`, `q` and `c` keys. `HullUpgradeData` is the precedent for a second id absorbed into storage. |
-| Open-ended currencies | Not done. `CraftingCurrency` is still a closed enum, hard-wired in five places, including the workbench recipe list. | A currency interface or data-driven registry keyed by commodity id, with `appliesTo(ItemType)`, `canUse(item)`, `use(item, random)`, a parts cost and a drop weight. The workbench builds its buttons from the currencies for the loaded item's type. `CraftingMaterials` and `item_crafting.csv` already work per commodity id, so they carry over unchanged. |
+| Open-ended currencies | Done in phase 4, except the workbench. `ItemCurrency` is an interface; the eight `CraftingCurrency` kernels implement it, and `ItemCurrencies` is the registry used by crafting, materials, drops and cargo icons. Wards stay separate materials. | The workbench (`SocketWorkbenchPanel`) still builds its buttons from `CraftingCurrency.values()`; it was left alone while another session had uncommitted changes there. Then: `ItemCurrency` parameters, `ItemCurrencies.forType(type)` for the buttons, `currency.key()` for text keys, and `createsCopy()` / `mayChangeDefinition()` instead of comparisons against Replication, Transposition and Corruption. |
 
 The base `Item` class carries ship-only methods (`skillEffects`, `canSocketInto`, `effectLines(hullSize)`). They are harmless for charts. A later refactor could move them into a ship-item intermediate class, but charts don't need it.
 
 Existing hull item and subroutine behaviour must not change. `ReleasedItemsTest`, `ItemCodecTest`, `ItemSaveTest` and `ItemDataIntegrityTest` already guard it.
 
-The chart currencies fit the three rarities. Main already has the first three:
-- augment: adds a modifier, up to the cap. A third modifier turns a Common chart Rare (main's Augmentation).
-- recalibrate: rerolls modifier values (main's Recalibration).
-- transpose: turns a unique chart into another unique of the same tier (main's Transposition).
-- reforge: rerolls every explicit modifier, with rarity following the new count.
+The chart currencies fit the three rarities. Main already has four of them as kernels (since commit e06f5104), and they can be extended to charts through `appliesTo`:
+- augment: adds a modifier, up to the cap. A third modifier turns a Common chart Rare (Augmentation).
+- recalibrate: rerolls modifier values (Recalibration).
+- transpose: turns a unique chart into another unique of the same tier (Transposition).
+- corrupt: Corruption already exists for hull items. It picks an outcome (nothing, implicit replaced, values stretched, modifiers rerolled) and makes the item permanent; charts need their own corruption pool.
+
+New chart-only currencies:
+- reforge: rerolls every explicit modifier, with rarity following the new count. This is close to Corruption's "modifiers rerolled" outcome.
 - annul: removes one random explicit modifier, which can turn a Rare chart Common.
-- corrupt: a step that can't be undone.
 - tier-up: the "cartographer's" step.
+
+Chart-only currencies must not drop from ship loot: `ItemDrops.pickKernel` picks from every registered currency, so they need a drop-source filter or a weight of 0 there.
 
 Charts drop:
 - from chart runs: the sustain loop, weighted towards the same tier or one above;
@@ -300,12 +304,17 @@ Each phase ends with tests passing and, from phase 1 onwards, the soak check.
 1. **Skeleton.** A wormhole entity, an empty pocket (one star), enter and exit, the full close sequence, the load sweep, and the soak command plus save grep. This proves cleanup before any content exists.
 2. **Generator layout.** Seeded vanilla stars, planets and terrain, the isolation tags, and blocking escape abilities.
 3. **Content.** Loot points of interest with salvage seeds, guard and patrol fleets, the boss, objectives, the NPC-levelling hook, and the drop-listener hooks.
-4. **Generalising the item layer.** These are refactors, with existing item behaviour unchanged and the released-item tests green:
+4. **Generalising the item layer (done 2026-10-18, except the workbench buttons).** These are refactors, with existing item behaviour unchanged and the released-item tests green:
    - the per-type effect resolver;
    - the value-scaling axis and the minimum-tier filter;
    - per-type affix layout constants, only if charts need more than 4 explicit modifiers;
    - the currency registry replacing `CraftingCurrency`, with the workbench recipe list built from it.
-5. **The Star Chart item and storage.** `ItemType.STAR_CHART` and the `StarChart` subclass, the chart effect registry with its generation hooks, the `exiledSector_star_chart` special item and codec keys, the chart store with cargo absorb, and tooltips.
+5. **The Star Chart item and storage.** `ItemType.STAR_CHART` and the `StarChart` subclass, the chart effect registry with its generation hooks, the `exiledSector_star_chart` special item and codec keys, the chart store with cargo absorb, and tooltips. Notes from phase 4:
+   - the tier must survive every path that rebuilds an item through `Item.create`: mirroring, copying, transposing, `ItemData.rolled` and re-rolls, and `ItemStore.add`;
+   - `Item.create` and `readResolve` need a `STAR_CHART` case;
+   - register the chart resolver, limits and currencies before modifiers and definitions load and before saves load (`AffixLayout.register` is package-private, so that code lives in `exiledsector.items`);
+   - charts need their own implicit table and corruption pool; `ItemImplicits` currently assumes hull items;
+   - pass the tier to `ItemRollOdds` and the codex when a chart is shown, and cache `ScaleContext` if chart tooltips build it every frame.
 6. **The Star Chart UI.** Tier columns or tabs, the selected-chart panel, the currency buttons, and the Open Wormhole button with the one-run lock and a dev switch in place of the colony building.
 7. **Crafting currencies and chart drops.** The sustain loop and tier progression.
 8. **Editor and localisation.** Editor pages, round-trip tests, and the zh_CN text.

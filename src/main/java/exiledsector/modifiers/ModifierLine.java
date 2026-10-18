@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public record ModifierLine(String effectName, float min, float max, List<Float> hullValues) {
+public record ModifierLine(String effectName, float min, float max, ValueScaling scaling) {
 
     public static final int MAX_DECIMAL_PLACES = 3;
     private static final float STEP_TOLERANCE = 0.001f;
@@ -15,15 +15,20 @@ public record ModifierLine(String effectName, float min, float max, List<Float> 
     private static final String HULL_VALUE_SEPARATOR = "/";
 
     public ModifierLine {
-        hullValues = hullValues == null ? List.of() : List.copyOf(hullValues);
+        scaling = scaling == null || !scaling.scales() ? ValueScaling.NONE : scaling;
     }
 
     public static ModifierLine range(String effectName, float firstBound, float secondBound) {
-        return new ModifierLine(effectName, Math.min(firstBound, secondBound), Math.max(firstBound, secondBound), List.of());
+        return new ModifierLine(effectName, Math.min(firstBound, secondBound), Math.max(firstBound, secondBound), ValueScaling.NONE);
     }
 
     public static ModifierLine perHullSize(String effectName, List<Float> hullValues) {
-        return new ModifierLine(effectName, hullValues.get(0), hullValues.get(0), hullValues);
+        return new ModifierLine(effectName, hullValues.get(0), hullValues.get(0), ValueScaling.perHullSize(hullValues));
+    }
+
+    public static ModifierLine perTierBand(String effectName, List<Integer> bandStartTiers, List<Float> bandValues) {
+        ValueScaling tierBands = ValueScaling.perTierBand(bandStartTiers, bandValues);
+        return new ModifierLine(effectName, bandValues.get(0), bandValues.get(0), tierBands);
     }
 
     public record Parsed(ModifierLine line, String trailingField) {
@@ -46,7 +51,7 @@ public record ModifierLine(String effectName, float min, float max, List<Float> 
     }
 
     public ModifierLine named(String currentEffectName) {
-        return new ModifierLine(currentEffectName, min, max, hullValues);
+        return new ModifierLine(currentEffectName, min, max, scaling);
     }
 
     public ModifierLine widened(float fraction) {
@@ -60,7 +65,7 @@ public record ModifierLine(String effectName, float min, float max, List<Float> 
         if (max < 0f && widenedMax >= 0f) {
             widenedMax = -oneStep;
         }
-        return new ModifierLine(effectName, widenedMin + 0f, widenedMax + 0f, hullValues);
+        return new ModifierLine(effectName, widenedMin + 0f, widenedMax + 0f, scaling);
     }
 
     public float roll(Random random) {
@@ -89,20 +94,49 @@ public record ModifierLine(String effectName, float min, float max, List<Float> 
         return stepCount() > 1;
     }
 
+    public boolean isScaled() {
+        return scaling.scales();
+    }
+
     public boolean scalesWithHullSize() {
-        return !hullValues.isEmpty();
+        return scaling instanceof ValueScaling.PerHullSize;
+    }
+
+    public boolean scalesWithTier() {
+        return scaling instanceof ValueScaling.PerTierBand;
+    }
+
+    public List<Float> hullValues() {
+        return scalesWithHullSize() ? scaling.values() : List.of();
+    }
+
+    public List<Float> scaledValues() {
+        return scaling.values();
     }
 
     public boolean hasHullValueFor(HullSize hullSize) {
-        return scalesWithHullSize() && ShipHullSizes.isShipSize(hullSize);
+        return hasValueFor(ScaleContext.ofHullSize(hullSize));
     }
 
     public boolean listsEveryHullValueFor(HullSize hullSize) {
-        return scalesWithHullSize() && !hasHullValueFor(hullSize);
+        return listsEveryValueFor(ScaleContext.ofHullSize(hullSize));
     }
 
     public float valueFor(float rolledMagnitude, HullSize hullSize) {
-        return hasHullValueFor(hullSize) ? hullValues.get(ShipHullSizes.ORDER.indexOf(hullSize)) : rolledMagnitude;
+        return valueFor(rolledMagnitude, ScaleContext.ofHullSize(hullSize));
+    }
+
+    public boolean hasValueFor(ScaleContext context) {
+        return scaling.pointFor(context) != ValueScaling.NO_POINT;
+    }
+
+    public boolean listsEveryValueFor(ScaleContext context) {
+        return isScaled() && !hasValueFor(context);
+    }
+
+    public float valueFor(float rolledMagnitude, ScaleContext context) {
+        int point = scaling.pointFor(context);
+        return point == ValueScaling.NO_POINT ? rolledMagnitude : scaling.values().get(point);
     }
 
     public float boundNearestZero() {

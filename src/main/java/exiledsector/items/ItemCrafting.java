@@ -18,8 +18,6 @@ public final class ItemCrafting {
     static final int MIN_FIXATION_MODIFIERS = 2;
     static final float CORRUPTION_RANGE_STRETCH = 0.35f;
     static final int CORRUPTION_REROLL_ATTEMPTS = 16;
-    private static final Set<CraftingCurrency> RESPECTS_WARDS =
-            EnumSet.of(CraftingCurrency.RECALIBRATION, CraftingCurrency.SUBSTITUTION, CraftingCurrency.FIXATION);
 
     private ItemCrafting() {
     }
@@ -28,7 +26,7 @@ public final class ItemCrafting {
         return materials.count(ItemDisassembly.PARTS_ITEM_ID);
     }
 
-    public static boolean synthesise(CraftingCurrency currency, CraftingMaterials materials) {
+    public static boolean synthesise(ItemCurrency currency, CraftingMaterials materials) {
         if (!currency.synthesisable() || !materials.take(ItemDisassembly.PARTS_ITEM_ID, currency.partsCost())) {
             return false;
         }
@@ -36,89 +34,57 @@ public final class ItemCrafting {
         return true;
     }
 
-    public static boolean canUse(CraftingCurrency currency, Item item, Predicate<ItemDefinition> allowedUniques) {
+    public static boolean canUse(ItemCurrency currency, Item item, Predicate<ItemDefinition> allowedUniques) {
         return canUse(currency, item, allowedUniques, Set.of());
     }
 
-    public static boolean canUse(CraftingCurrency currency, Item item, Predicate<ItemDefinition> allowedUniques,
+    public static boolean canUse(ItemCurrency currency, Item item, Predicate<ItemDefinition> allowedUniques,
                                  Collection<CraftingWard> wards) {
         ItemDefinition definition = item == null ? null : item.definition();
-        if (definition == null || item.mirrored() || item.corrupted()) {
+        if (definition == null || item.mirrored() || item.corrupted() || !currency.appliesTo(definition.type())) {
             return false;
         }
-        Set<ModifierSlot> guarded = CraftingWard.guardedSlots(wards);
-        return switch (currency) {
-            case AUGMENTATION -> !AffixLayout.openSides(definition, item.explicits()).isEmpty();
-            case ATTUNEMENT -> canAttune(item);
-            case RECALIBRATION -> canRecalibrate(item, definition, guarded);
-            case SUBSTITUTION -> canSubstitute(item, definition, guarded);
-            case TRANSPOSITION -> !wardBlocksTransposition(item, guarded) && canTranspose(definition, allowedUniques);
-            case FIXATION -> item.explicits().size() >= MIN_FIXATION_MODIFIERS && !item.hasLockedModifier()
-                    && !fixable(item.explicits(), guarded).isEmpty();
-            case CORRUPTION, REPLICATION -> true;
-        };
+        return currency.canUse(item, new CraftingContext(null, allowedUniques, CraftingWard.guardedSlots(wards)));
     }
 
     public static boolean wardBlocksTransposition(Item item, Set<ModifierSlot> guarded) {
         return item != null && item.explicits().stream().anyMatch(rolled -> guarded.contains(rolled.slot()));
     }
 
-    public static Set<CraftingWard> wardsSpentBy(CraftingCurrency currency, Item item, Collection<CraftingWard> wards) {
+    public static Set<CraftingWard> wardsSpentBy(ItemCurrency currency, Item item, Collection<CraftingWard> wards) {
         Set<CraftingWard> spent = EnumSet.noneOf(CraftingWard.class);
         ItemDefinition definition = item == null ? null : item.definition();
-        if (definition == null || !RESPECTS_WARDS.contains(currency)) {
+        if (definition == null || !currency.respectsWards()) {
             return spent;
         }
         for (CraftingWard ward : wards) {
             if (item.explicits().stream().anyMatch(rolled -> rolled.slot() == ward.guardedSlot()
-                    && wouldOtherwiseChange(currency, item, definition, rolled))) {
+                    && !rolled.locked() && currency.wouldChange(item, rolled))) {
                 spent.add(ward);
             }
         }
         return spent;
     }
 
-    private static boolean wouldOtherwiseChange(CraftingCurrency currency, Item item, ItemDefinition definition, RolledModifier rolled) {
-        if (rolled.locked()) {
-            return false;
-        }
-        return switch (currency) {
-            case RECALIBRATION -> canVary(rolled, definition);
-            case SUBSTITUTION -> !definition.unique() && !replacementSides(definition, item.explicits(), rolled).isEmpty();
-            case FIXATION -> true;
-            default -> false;
-        };
-    }
-
-    private static boolean canVary(RolledModifier rolled, ItemDefinition definition) {
+    static boolean canVary(RolledModifier rolled, ItemDefinition definition) {
         PoolEntry poolEntry = definition.poolEntryFor(rolled.modifierId());
         return poolEntry != null && rolled.lines().stream().map(line -> poolEntry.modifier().line(line.effectName()))
                 .anyMatch(line -> line != null && line.canVary());
     }
 
-    public static Item use(CraftingCurrency currency, Item item, CraftingMaterials materials, ItemStore store, Random random,
+    public static Item use(ItemCurrency currency, Item item, CraftingMaterials materials, ItemStore store, Random random,
                                  Predicate<ItemDefinition> allowedUniques) {
         return use(currency, item, materials, store, random, allowedUniques, Set.of());
     }
 
-    public static Item use(CraftingCurrency currency, Item item, CraftingMaterials materials, ItemStore store, Random random,
+    public static Item use(ItemCurrency currency, Item item, CraftingMaterials materials, ItemStore store, Random random,
                            Predicate<ItemDefinition> allowedUniques, Collection<CraftingWard> wards) {
         if (materials.count(currency.itemId()) < 1 || !canUse(currency, item, allowedUniques, wards)
                 || wards.stream().anyMatch(ward -> materials.count(ward.itemId()) < 1)) {
             return null;
         }
-        Set<ModifierSlot> guarded = CraftingWard.guardedSlots(wards);
         Set<CraftingWard> spentWards = wardsSpentBy(currency, item, wards);
-        Item craftedItem = switch (currency) {
-            case AUGMENTATION -> augment(item, random) == null ? null : item;
-            case ATTUNEMENT -> attune(item, random);
-            case RECALIBRATION -> recalibrate(item, random, guarded);
-            case SUBSTITUTION -> substitute(item, random, guarded);
-            case TRANSPOSITION -> transpose(store, item, random, allowedUniques);
-            case FIXATION -> fixate(item, random, guarded);
-            case CORRUPTION -> corrupt(store, item, random, allowedUniques);
-            case REPLICATION -> store.addMirrorOf(item);
-        };
+        Item craftedItem = currency.use(item, new CraftingContext(store, allowedUniques, CraftingWard.guardedSlots(wards)), random);
         if (craftedItem != null) {
             materials.take(currency.itemId(), 1);
             spentWards.forEach(ward -> materials.take(ward.itemId(), 1));
@@ -130,9 +96,13 @@ public final class ItemCrafting {
         return rolled.locked() || guarded.contains(rolled.slot());
     }
 
+    static boolean canAugment(Item item) {
+        return !AffixLayout.openSides(item.definition(), item.explicits(), item.tier()).isEmpty();
+    }
+
     static RolledModifier augment(Item item, Random random) {
         ItemDefinition definition = item.definition();
-        List<List<PoolEntry>> openSides = definition == null ? List.of() : AffixLayout.openSides(definition, item.explicits());
+        List<List<PoolEntry>> openSides = definition == null ? List.of() : AffixLayout.openSides(definition, item.explicits(), item.tier());
         if (definition == null || openSides.isEmpty()) {
             return null;
         }
@@ -149,7 +119,7 @@ public final class ItemCrafting {
         return addedModifier;
     }
 
-    private static boolean canRecalibrate(Item item, ItemDefinition definition, Set<ModifierSlot> guarded) {
+    static boolean canRecalibrate(Item item, ItemDefinition definition, Set<ModifierSlot> guarded) {
         return item.explicits().stream().anyMatch(rolled -> !guards(rolled, guarded) && canVary(rolled, definition));
     }
 
@@ -191,7 +161,7 @@ public final class ItemCrafting {
         return rerolled;
     }
 
-    private static boolean canAttune(Item item) {
+    static boolean canAttune(Item item) {
         ItemKind kind = item.kind();
         if (kind == null) {
             return false;
@@ -230,19 +200,24 @@ public final class ItemCrafting {
         return null;
     }
 
-    private static boolean canSubstitute(Item item, ItemDefinition definition, Set<ModifierSlot> guarded) {
+    static boolean canSubstitute(Item item, ItemDefinition definition, Set<ModifierSlot> guarded) {
         return !definition.unique() && !removableForSubstitution(item, definition, guarded).isEmpty();
+    }
+
+    static boolean canSubstituteAway(Item item, ItemDefinition definition, RolledModifier rolled) {
+        return !definition.unique() && !replacementSides(definition, item.explicits(), rolled, item.tier()).isEmpty();
     }
 
     private static List<RolledModifier> removableForSubstitution(Item item, ItemDefinition definition, Set<ModifierSlot> guarded) {
         return item.explicits().stream()
-                .filter(rolled -> !guards(rolled, guarded) && !replacementSides(definition, item.explicits(), rolled).isEmpty()).toList();
+                .filter(rolled -> !guards(rolled, guarded) && !replacementSides(definition, item.explicits(), rolled, item.tier()).isEmpty()).toList();
     }
 
-    private static List<List<PoolEntry>> replacementSides(ItemDefinition definition, List<RolledModifier> modifiers, RolledModifier removed) {
+    private static List<List<PoolEntry>> replacementSides(ItemDefinition definition, List<RolledModifier> modifiers, RolledModifier removed,
+                                                          int tier) {
         List<RolledModifier> remaining = new ArrayList<>(modifiers);
         remaining.remove(removed);
-        return AffixLayout.openSides(definition, remaining).stream()
+        return AffixLayout.openSides(definition, remaining, tier).stream()
                 .map(side -> side.stream().filter(entry -> entry.slot() == removed.slot() && !entry.modifier().id().equals(removed.modifierId()))
                         .toList())
                 .filter(side -> !side.isEmpty()).toList();
@@ -262,7 +237,7 @@ public final class ItemCrafting {
             return null;
         }
         RolledModifier removed = removable.get(random.nextInt(removable.size()));
-        List<List<PoolEntry>> openSides = replacementSides(definition, item.explicits(), removed);
+        List<List<PoolEntry>> openSides = replacementSides(definition, item.explicits(), removed, item.tier());
         List<PoolEntry> chosenSide = openSides.get(random.nextInt(openSides.size()));
         RolledModifier addedModifier = RolledModifier.roll(WeightedPick.pick(chosenSide, PoolEntry::weight, random).modifier(), random, false);
         List<RolledModifier> remaining = new ArrayList<>(item.explicits());
@@ -271,6 +246,10 @@ public final class ItemCrafting {
         item.replaceExplicits(remaining);
         item.refreezeName();
         return item;
+    }
+
+    static boolean canFixate(Item item, Set<ModifierSlot> guarded) {
+        return item.explicits().size() >= MIN_FIXATION_MODIFIERS && !item.hasLockedModifier() && !fixable(item.explicits(), guarded).isEmpty();
     }
 
     static Item fixate(Item item, Random random) {
@@ -369,7 +348,7 @@ public final class ItemCrafting {
         List<RolledEffect> lines = new ArrayList<>(rolled.lines().size());
         for (RolledEffect line : rolled.lines()) {
             ModifierLine lineDefinition = modifier.line(line.effectName());
-            boolean varies = lineDefinition != null && lineDefinition.canVary() && !lineDefinition.scalesWithHullSize();
+            boolean varies = lineDefinition != null && lineDefinition.canVary() && !lineDefinition.isScaled();
             lines.add(varies ? new RolledEffect(line.effectName(), lineDefinition.widened(CORRUPTION_RANGE_STRETCH).roll(random)) : line);
         }
         return rolled.withLines(lines);
@@ -388,7 +367,7 @@ public final class ItemCrafting {
         List<RolledModifier> best = null;
         long bestOverlap = Long.MAX_VALUE;
         for (int attempt = 0; attempt < CORRUPTION_REROLL_ATTEMPTS && bestOverlap > 0; attempt++) {
-            List<RolledModifier> candidate = ItemRoller.roll(definition, random.nextLong());
+            List<RolledModifier> candidate = ItemRoller.rollAtTier(definition, random.nextLong(), item.tier());
             long overlap = candidate.stream().filter(rolled -> previousIds.contains(rolled.modifierId())).count();
             if (overlap < bestOverlap) {
                 best = candidate;
@@ -398,26 +377,26 @@ public final class ItemCrafting {
         if (best == null) {
             return null;
         }
-        item.replaceExplicits(keepLocked(item.explicits(), best, random));
+        item.replaceExplicits(keepLocked(item.explicits(), best, AffixLayout.limits(definition.type()).maxPerSide(), random));
         item.refreezeName();
         return item;
     }
 
-    private static List<RolledModifier> keepLocked(List<RolledModifier> previous, List<RolledModifier> rerolled, Random random) {
+    private static List<RolledModifier> keepLocked(List<RolledModifier> previous, List<RolledModifier> rerolled, int maxPerSide, Random random) {
         RolledModifier locked = previous.stream().filter(RolledModifier::locked).findFirst().orElse(null);
         if (locked == null) {
             return rerolled;
         }
         List<RolledModifier> merged = new ArrayList<>(rerolled.stream().filter(rolled -> !rolled.modifierId().equals(locked.modifierId())).toList());
         List<RolledModifier> sameSide = merged.stream().filter(rolled -> rolled.slot() == locked.slot()).toList();
-        if (sameSide.size() >= AffixLayout.MAX_PER_SIDE) {
+        if (sameSide.size() >= maxPerSide) {
             merged.remove(sameSide.get(random.nextInt(sameSide.size())));
         }
         merged.add(AffixLayout.insertIndex(merged, locked.slot()), locked);
         return merged;
     }
 
-    private static boolean canTranspose(ItemDefinition currentDefinition, Predicate<ItemDefinition> allowedUniques) {
+    static boolean canTranspose(ItemDefinition currentDefinition, Predicate<ItemDefinition> allowedUniques) {
         if (!currentDefinition.unique()) {
             return false;
         }
@@ -439,7 +418,7 @@ public final class ItemCrafting {
             return null;
         }
         long seed = random.nextLong();
-        Item replacement = Item.create(item.id(), nextDefinition.id(), seed, ItemRoller.roll(nextDefinition, seed));
+        Item replacement = Item.create(item.id(), nextDefinition.id(), seed, ItemRoller.rollAtTier(nextDefinition, seed, item.tier()));
         replacement.freezeName();
         return store.replace(item, replacement) ? replacement : null;
     }

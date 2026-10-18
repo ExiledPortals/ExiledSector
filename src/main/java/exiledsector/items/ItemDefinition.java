@@ -1,9 +1,9 @@
 package exiledsector.items;
 
+import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierSlot;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
-import exiledsector.skills.skilleffect.SkillEffect;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
@@ -195,13 +195,12 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
         }
     }
 
-    static String currentEffectName(String listedName) {
-        try {
-            return SkillEffect.byName(listedName).name();
-        } catch (IllegalArgumentException e) {
+    static String currentEffectName(String listedName, ModifierEffects effects) {
+        String currentName = effects.currentName(listedName);
+        if (currentName == null) {
             LOG.warn("Skipping pool entry " + listedName + ": it is not a skill effect");
-            return null;
         }
+        return currentName;
     }
 
     public String displayName() {

@@ -1,9 +1,9 @@
 package exiledsector.items;
 
 import exiledsector.ModCsv;
+import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
-import exiledsector.skills.skilleffect.SkillEffect;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -111,7 +111,7 @@ public final class ItemDataIntegrity {
                 error(file, line, modifierId + " has slot \"" + slotText + "\"; expected implicit, prefix or suffix");
             }
             Set<ItemType> itemTypes = checkItemTypes(file, line, modifierId, ModCsv.text(row, "item_types"));
-            List<String> effectNames = checkLines(file, line, modifierId, slot, ModCsv.text(row, "lines"));
+            List<String> effectNames = checkLines(file, line, modifierId, slot, effectsFor(file, line, itemTypes), ModCsv.text(row, "lines"));
             checkIdConvention(file, line, modifierId, effectNames);
             modifiersById.put(modifierId, new ModifierRow(modifierId, slot, itemTypes, effectNames,
                     !ModCsv.text(row, "name").isEmpty(), line));
@@ -127,7 +127,16 @@ public final class ItemDataIntegrity {
         }
     }
 
-    private List<String> checkLines(String file, int line, String modifierId, ModifierSlot slot, String linesText) {
+    private ModifierEffects effectsFor(String file, int line, Set<ItemType> itemTypes) {
+        try {
+            return ItemEffects.forTypes(itemTypes);
+        } catch (IllegalArgumentException e) {
+            error(file, line, e.getMessage());
+            return ItemEffects.SKILL_EFFECTS;
+        }
+    }
+
+    private List<String> checkLines(String file, int line, String modifierId, ModifierSlot slot, ModifierEffects effects, String linesText) {
         List<String> effectNames = new ArrayList<>();
         for (String lineText : linesText.split(ENTRY_SEPARATOR)) {
             String trimmed = lineText.trim();
@@ -148,7 +157,7 @@ public final class ItemDataIntegrity {
             if (slot == ModifierSlot.IMPLICIT && parsed.line().scalesWithHullSize()) {
                 error(file, line, modifierId + " is an implicit, so " + effectName + " must roll a min:max range");
             }
-            checkEffectName(file, line, modifierId, effectName);
+            checkEffectName(file, line, modifierId, effects, effectName);
             if (effectNames.contains(effectName)) {
                 error(file, line, modifierId + " lists " + effectName + " more than once");
             }
@@ -160,14 +169,12 @@ public final class ItemDataIntegrity {
         return effectNames;
     }
 
-    private void checkEffectName(String file, int line, String modifierId, String effectName) {
-        try {
-            String currentName = SkillEffect.byName(effectName).name();
-            if (!currentName.equals(effectName)) {
-                error(file, line, modifierId + " uses the old effect name " + effectName + "; use " + currentName);
-            }
-        } catch (IllegalArgumentException e) {
+    private void checkEffectName(String file, int line, String modifierId, ModifierEffects effects, String effectName) {
+        String currentName = effects.currentName(effectName);
+        if (currentName == null) {
             error(file, line, modifierId + " uses " + effectName + ", which is not a skill effect");
+        } else if (!currentName.equals(effectName)) {
+            error(file, line, modifierId + " uses the old effect name " + effectName + "; use " + currentName);
         }
     }
 

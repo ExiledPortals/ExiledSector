@@ -3,6 +3,7 @@ package exiledsector.items;
 import exiledsector.ModCsv;
 import exiledsector.i18n.Translation;
 import exiledsector.modifiers.Modifier;
+import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
 import org.apache.log4j.Logger;
@@ -75,7 +76,8 @@ public final class ItemModifiers {
         if (slot == null) {
             throw new IllegalArgumentException(modifierId + " has slot \"" + slotText + "\"; expected implicit, prefix or suffix");
         }
-        return new Modifier(modifierId, slot, parseLines(modifierId, slot, ModCsv.text(row, "lines")));
+        ModifierEffects effects = effectsForListedTypes(ModCsv.text(row, "item_types"));
+        return new Modifier(modifierId, slot, parseLines(modifierId, slot, effects, ModCsv.text(row, "lines")));
     }
 
     static Set<ItemType> parseItemTypes(String modifierId, String itemTypesText) {
@@ -97,7 +99,17 @@ public final class ItemModifiers {
         return Collections.unmodifiableSet(itemTypes);
     }
 
-    private static List<ModifierLine> parseLines(String modifierId, ModifierSlot slot, String linesText) {
+    private static ModifierEffects effectsForListedTypes(String itemTypesText) {
+        Set<ItemType> itemTypes;
+        try {
+            itemTypes = parseItemTypes("", itemTypesText);
+        } catch (IllegalArgumentException e) {
+            return ItemEffects.SKILL_EFFECTS;
+        }
+        return ItemEffects.forTypes(itemTypes);
+    }
+
+    private static List<ModifierLine> parseLines(String modifierId, ModifierSlot slot, ModifierEffects effects, String linesText) {
         List<ModifierLine> lines = new ArrayList<>();
         for (String lineText : linesText.split(LINE_SEPARATOR)) {
             String trimmed = lineText.trim();
@@ -111,7 +123,7 @@ public final class ItemModifiers {
             if (slot == ModifierSlot.IMPLICIT && parsed.line().scalesWithHullSize()) {
                 throw new IllegalArgumentException(modifierId + " is an implicit, so " + parsed.line().effectName() + " must roll a min:max range");
             }
-            String effectName = ItemDefinition.currentEffectName(parsed.line().effectName());
+            String effectName = ItemDefinition.currentEffectName(parsed.line().effectName(), effects);
             if (effectName == null) {
                 throw new IllegalArgumentException(modifierId + " uses " + parsed.line().effectName() + ", which is not a skill effect");
             }

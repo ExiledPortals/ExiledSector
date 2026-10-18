@@ -3,6 +3,8 @@ package exiledsector.ui.cargo;
 import exiledsector.items.CraftingCurrency;
 import exiledsector.items.CraftingWard;
 import exiledsector.items.HullItem;
+import exiledsector.items.ItemCurrencies;
+import exiledsector.items.ItemCurrency;
 import exiledsector.items.Item;
 import exiledsector.items.ItemRarity;
 import exiledsector.items.MaterialItems;
@@ -26,15 +28,14 @@ public final class CargoIconLooks {
         if (CraftingWard.byItemId(itemId) != null) {
             return SwarmMotion.CONTAINED;
         }
-        CraftingCurrency currency = CraftingCurrency.byItemId(itemId);
+        ItemCurrency currency = ItemCurrencies.byItemId(itemId);
         if (currency == null) {
             return SwarmMotion.SLURRY;
         }
-        return switch (currency) {
-            case CORRUPTION -> SwarmMotion.FERAL;
-            case REPLICATION -> SwarmMotion.REPLICATING;
-            default -> SwarmMotion.ORBIT;
-        };
+        if (currency == CraftingCurrency.CORRUPTION) {
+            return SwarmMotion.FERAL;
+        }
+        return currency == CraftingCurrency.REPLICATION ? SwarmMotion.REPLICATING : SwarmMotion.ORBIT;
     }
 
     static CargoIconLook forMaterial(MaterialTier tier, Color color) {

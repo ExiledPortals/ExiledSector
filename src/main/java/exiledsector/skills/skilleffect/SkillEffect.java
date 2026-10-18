@@ -4,12 +4,14 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import exiledsector.i18n.StyledText;
+import exiledsector.modifiers.ModifierEffect;
 import exiledsector.skills.ShipFacts;
 
-public interface SkillEffect {
+public interface SkillEffect extends ModifierEffect {
 
     void apply(MutableShipStatsAPI stats, String modId, float magnitude);
 
+    @Override
     StyledText description(float magnitude);
 
     default StyledText description(float magnitude, ShipAPI.HullSize hullSize) {
@@ -28,6 +30,7 @@ public interface SkillEffect {
         return false;
     }
 
+    @Override
     default boolean invertsDescriptionColours() {
         return lowerIsBetter();
     }
@@ -65,6 +68,7 @@ public interface SkillEffect {
         return null;
     }
 
+    @Override
     String name();
 
     default StatMode statMode() {
