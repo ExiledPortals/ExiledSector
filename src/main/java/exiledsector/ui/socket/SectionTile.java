@@ -1,0 +1,85 @@
+package exiledsector.ui.socket;
+
+import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
+import com.fs.starfarer.api.input.InputEventAPI;
+import com.fs.starfarer.api.ui.PositionAPI;
+import exiledsector.items.ShipSection;
+import exiledsector.ui.socket.HullUpgradePanel.SectionState;
+import exiledsector.ui.section.SectionFlair;
+import exiledsector.ui.util.Fade;
+import exiledsector.ui.util.GLDraw;
+
+import java.awt.Color;
+import java.util.List;
+
+final class SectionTile extends BaseCustomUIPanelPlugin {
+
+    private static final Color BACKGROUND = new Color(0, 0, 0, 200);
+    private static final float BORDER_WIDTH = 1.5f;
+    private static final float FLAIR_SHARE = 0.42f;
+    private static final float HOVER_SECONDS = 0.15f;
+    private static final float DIMMED_ALPHA = 0.45f;
+    private static final float MAX_STEP_SECONDS = 0.1f;
+
+    private final ShipSection section;
+    private final SectionState state;
+    private final String itemIconPath;
+    private final TileInput tileInput;
+    private PositionAPI tilePosition;
+    private float hoverLevel;
+    private float elapsedSeconds;
+
+    SectionTile(ShipSection section, SectionState state, String itemIconPath, IconTileCell.Hooks hooks) {
+        this.section = section;
+        this.state = state;
+        this.itemIconPath = itemIconPath;
+        this.tileInput = TileInput.forHooks(hooks, !isClickable());
+    }
+
+    @Override
+    public void positionChanged(PositionAPI tilePosition) {
+        this.tilePosition = tilePosition;
+    }
+
+    @Override
+    public void advance(float amount) {
+        float step = Math.min(MAX_STEP_SECONDS, amount);
+        elapsedSeconds += step;
+        float hoverStep = step / HOVER_SECONDS;
+        hoverLevel = Fade.step(hoverLevel, tileInput.isHovered() && isClickable(), hoverStep);
+    }
+
+    @Override
+    public void renderBelow(float alphaMult) {
+        if (tilePosition == null) {
+            return;
+        }
+        Color accent = state == SectionState.RESTRICTED ? SectionFlair.inactiveColor() : SectionFlair.colorOf(section);
+        float x = tilePosition.getX();
+        float y = tilePosition.getY();
+        GLDraw.fillQuad(x, y, tilePosition.getWidth(), tilePosition.getHeight(), BACKGROUND, alphaMult);
+        GLDraw.strokeQuad(x, y, tilePosition.getWidth(), tilePosition.getHeight(), accent, BORDER_WIDTH,
+                (state == SectionState.UNLOCKED ? 1f : DIMMED_ALPHA + 0.5f * hoverLevel) * alphaMult);
+    }
+
+    @Override
+    public void render(float alphaMult) {
+        if (tilePosition == null) {
+            return;
+        }
+        boolean dimmed = state != SectionState.UNLOCKED;
+        SectionFlair.SectionLook look = new SectionFlair.SectionLook(hoverLevel, state == SectionState.UNLOCKED,
+                state != SectionState.RESTRICTED, state == SectionState.UNLOCKED ? itemIconPath : null);
+        SectionFlair.render(tilePosition.getCenterX(), tilePosition.getCenterY(), tilePosition.getWidth() * FLAIR_SHARE,
+                SectionFlair.colorOf(section), look, elapsedSeconds, (dimmed ? DIMMED_ALPHA : 1f) * alphaMult);
+    }
+
+    @Override
+    public void processInput(List<InputEventAPI> events) {
+        tileInput.process(events, tilePosition);
+    }
+
+    private boolean isClickable() {
+        return state == SectionState.UNLOCKED || state == SectionState.AVAILABLE;
+    }
+}

@@ -214,7 +214,7 @@ export const UNLOCK_CONDITION_LABELS: Record<string, string> = {
   ratPlayerExoship: 'RAT: player owns an Exoship',
   ratSingularityDefeated: 'RAT: Singularity defeated',
   nightcrossPascalVisited: 'Nightcross: player has entered Pascal',
-  nightcrossLunarFleetDefeated: 'Nightcross: Stargazer lunar fleet defeated',
+  nightcrossLunarFleetDefeated: 'Nightcross: Stargazer existential threat defeated',
   nightcrossAncientPrototypeFound: 'Nightcross: an Ancient Prototype found',
 };
 

@@ -37,8 +37,8 @@ class EscapeActionTest {
     }
 
     @Test
-    void followingTheFleetClosesTheFrameworkPanelBeforeStoppingTheFollow() {
-        assertEquals(EscapeAction.CLOSE_FRAMEWORK_PANEL, EscapeAction.resolve(CanvasMode.FLEET_FOLLOW, false, false, false, true, false));
+    void followingTheFleetClosesTheSectionPanelBeforeStoppingTheFollow() {
+        assertEquals(EscapeAction.CLOSE_HULL_UPGRADES_PANEL, EscapeAction.resolve(CanvasMode.FLEET_FOLLOW, false, false, false, true, false));
         assertEquals(EscapeAction.STOP_FOLLOWING, EscapeAction.resolve(CanvasMode.FLEET_FOLLOW, false, false, false, false, false));
     }
 

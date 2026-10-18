@@ -19,10 +19,10 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.npc.NpcFactionVolumes;
 import exiledsector.skills.skilleffect.FleetCrewLedger;
-import exiledsector.socketables.SocketLossListener;
-import exiledsector.socketables.SocketableDefinitions;
-import exiledsector.socketables.SocketType;
-import exiledsector.socketables.SocketableNames;
+import exiledsector.items.SocketLossListener;
+import exiledsector.items.ItemDefinitions;
+import exiledsector.items.ItemKind;
+import exiledsector.items.ItemNames;
 import exiledsector.ui.SkillTreeRefitButton;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
 import exiledsector.ui.inspect.SkillTreeCodexListener;
@@ -94,16 +94,20 @@ class ExiledSectorModPluginTest {
                 .thenReturn(new JSONArray());
         when(settings.getMergedSpreadsheetDataForMod("faction", "data/config/exiledSector/npc_faction_volumes.csv", "exiledSector"))
                 .thenReturn(new JSONArray("[{\"faction\": \"hegemony\", \"region\": \"hegemony\"}]"));
-        when(settings.getMergedSpreadsheetDataForMod("id", "data/config/exiledSector/socketables.csv", "exiledSector"))
-                .thenReturn(new JSONArray("[{\"id\": \"chip\", \"kind\": \"subroutine\", \"prefixes\": \"HULL_MULT:4:6\"}]"));
-        when(settings.getMergedJSONForMod("data/config/exiledSector/socketable_names.json", "exiledSector")).thenReturn(new JSONObject("{}"));
-        when(settings.getMergedSpreadsheetDataForMod("effect", "data/config/exiledSector/socketable_affixes.csv", "exiledSector"))
+        when(settings.getMergedSpreadsheetDataForMod("id", "data/config/exiledSector/subroutines.csv", "exiledSector"))
+                .thenReturn(new JSONArray("[{\"id\": \"chip\", \"prefixes\": \"HULL_MULT:4:6\"}]"));
+        when(settings.getMergedSpreadsheetDataForMod("id", "data/config/exiledSector/hull_items.csv", "exiledSector"))
+                .thenReturn(new JSONArray());
+        when(settings.getMergedSpreadsheetDataForMod("section", "data/config/exiledSector/hull_item_implicits.csv", "exiledSector"))
+                .thenReturn(new JSONArray());
+        when(settings.getMergedJSONForMod("data/config/exiledSector/item_names.json", "exiledSector")).thenReturn(new JSONObject("{}"));
+        when(settings.getMergedSpreadsheetDataForMod("id", "data/config/exiledSector/item_modifiers.csv", "exiledSector"))
                 .thenReturn(new JSONArray());
         when(settings.getMergedSpreadsheetDataForMod("old", "data/config/exiledSector/node_replacements.csv", "exiledSector"))
                 .thenReturn(new JSONArray());
-        when(settings.getMergedSpreadsheetDataForMod("site", "data/config/exiledSector/socketable_salvage.csv", "exiledSector"))
+        when(settings.getMergedSpreadsheetDataForMod("site", "data/config/exiledSector/item_salvage.csv", "exiledSector"))
                 .thenReturn(new JSONArray());
-        when(settings.getMergedSpreadsheetDataForMod("item", "data/config/exiledSector/socketable_crafting.csv", "exiledSector"))
+        when(settings.getMergedSpreadsheetDataForMod("item", "data/config/exiledSector/item_crafting.csv", "exiledSector"))
                 .thenReturn(new JSONArray());
 
         Logger logger = mock(Logger.class);
@@ -121,8 +125,8 @@ class ExiledSectorModPluginTest {
         loadTree("");
         SkillTree.clearTypes();
         NpcFactionVolumes.clear();
-        SocketableDefinitions.clear();
-        SocketableNames.clear();
+        ItemDefinitions.clear();
+        ItemNames.clear();
         settingsCreatorMock.close();
         globalMock.close();
         lunaSettingsMock.close();
@@ -312,10 +316,10 @@ class ExiledSectorModPluginTest {
     }
 
     @Test
-    void onApplicationLoadLoadsTheSocketableDefinitionsMergedAcrossMods() throws Exception {
+    void onApplicationLoadLoadsTheHullItemDefinitionsMergedAcrossMods() throws Exception {
         new ExiledSectorModPlugin().onApplicationLoad();
 
-        assertEquals(SocketType.SUBROUTINE, SocketableDefinitions.get("chip").kind());
+        assertEquals(ItemKind.SUBROUTINE, ItemDefinitions.get("chip").kind());
     }
 
     @Test

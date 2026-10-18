@@ -7,8 +7,9 @@ import exiledsector.skills.skilleffect.StatMode;
 import exiledsector.skills.tags.SkillTags;
 import exiledsector.skills.unlock.BlueprintCategory;
 import exiledsector.skills.unlock.UnlockConditionType;
-import exiledsector.socketables.SocketType;
-import exiledsector.socketables.SocketableUnlock;
+import exiledsector.items.ItemKind;
+import exiledsector.items.ItemType;
+import exiledsector.items.ItemUnlock;
 import org.json.JSONObject;
 
 import java.nio.file.Path;
@@ -50,9 +51,13 @@ final class EditorVocabulary {
                         .map(type -> camelCase(type.name())).toList())).append(",\n");
         json.append("  \"blueprintCategories\": ")
                 .append(list(Arrays.stream(BlueprintCategory.values()).map(category -> camelCase(category.name())).toList())).append(",\n");
-        json.append("  \"socketableKinds\": ").append(list(Arrays.stream(SocketType.values()).map(SocketType::id).toList())).append(",\n");
-        json.append("  \"socketableUnlocks\": ")
-                .append(list(Arrays.stream(SocketableUnlock.values()).map(SocketableUnlock::id).toList())).append("\n");
+        json.append("  \"itemTypes\": ").append(list(Arrays.stream(ItemType.values()).map(ItemType::id).toList())).append(",\n");
+        json.append("  \"itemKinds\": [")
+                .append(Arrays.stream(ItemKind.values()).map(kind -> "{\"id\": " + quote(kind.id()) + ", \"type\": " + quote(kind.type().id()) + "}")
+                        .collect(Collectors.joining(", ")))
+                .append("],\n");
+        json.append("  \"itemUnlocks\": ")
+                .append(list(Arrays.stream(ItemUnlock.values()).map(ItemUnlock::id).toList())).append("\n");
         return json.append("}\n").toString();
     }
 

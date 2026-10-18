@@ -14,7 +14,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
-import exiledsector.skills.FrameworkSlots;
+import exiledsector.skills.ShipSections;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.skilleffect.FleetWideEffects;
@@ -41,7 +41,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         if (shipData == null) return;
 
         ResolvedTree resolvedTree = ResolvedTree.of(shipData, hullSize, bonusScale(stats.getVariant()),
-                FrameworkSlots.forVariant(shipData, stats.getVariant()));
+                ShipSections.forVariant(shipData, stats.getVariant()));
         for (ResolvedTree.Entry entry : resolvedTree.entries()) {
             if (entry instanceof ResolvedTree.VanillaEntry vanillaEntry) {
                 vanillaEntry.effect().applyEffectsBeforeShipCreation(hullSize, stats, vanillaEntry.hullModId());
@@ -209,7 +209,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
     private static ResolvedTree treeFor(ShipAPI ship) {
         ShipVariantAPI variant = ship.getVariant();
         ShipSkillData shipData = SkillDataResolver.resolve(ship.getMutableStats().getFleetMember(), variant);
-        return ResolvedTree.of(shipData, ship.getHullSize(), bonusScale(variant), FrameworkSlots.forVariant(shipData, variant));
+        return ResolvedTree.of(shipData, ship.getHullSize(), bonusScale(variant), ShipSections.forVariant(shipData, variant));
     }
 
     private static float bonusScale(ShipVariantAPI variant) {

@@ -1,10 +1,10 @@
 package exiledsector.ui;
 
 enum EscapeAction {
-    NONE, SOCKET_PLACEMENT, CANCEL_ALLOCATION, CLOSE_DROPDOWN, CLOSE_FRAMEWORK_PANEL, STOP_FOLLOWING, EXIT_TEMPLATE_MODE;
+    NONE, SOCKET_PLACEMENT, CANCEL_ALLOCATION, CLOSE_DROPDOWN, CLOSE_HULL_UPGRADES_PANEL, STOP_FOLLOWING, EXIT_TEMPLATE_MODE;
 
     static EscapeAction resolve(CanvasMode mode, boolean allocationRunning, boolean socketEngaged, boolean dropdownOpen,
-                                boolean frameworkPanelOpen, boolean planning) {
+                                boolean hullUpgradesPanelOpen, boolean planning) {
         return switch (mode) {
             case MODAL, HYPERSPACE, ROOT_CHOICE -> NONE;
             case WORKBENCH -> SOCKET_PLACEMENT;
@@ -19,7 +19,7 @@ enum EscapeAction {
                     yield CLOSE_DROPDOWN;
                 }
                 if (mode == CanvasMode.FLEET_FOLLOW) {
-                    yield frameworkPanelOpen ? CLOSE_FRAMEWORK_PANEL : STOP_FOLLOWING;
+                    yield hullUpgradesPanelOpen ? CLOSE_HULL_UPGRADES_PANEL : STOP_FOLLOWING;
                 }
                 if (mode == CanvasMode.EXOSHIP_VIEW) {
                     yield STOP_FOLLOWING;

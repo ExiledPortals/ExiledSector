@@ -31,14 +31,14 @@ class EditorVocabularyTest {
                 + "=true";
         assertTrue(Files.isRegularFile(manifest), "Missing " + manifest + regenerate);
         String committed = Files.readString(manifest, StandardCharsets.UTF_8).replace("\r\n", "\n");
-        assertEquals(expected, committed, EditorVocabulary.FILE + " is out of date with the effect, tag and socketable registries" + regenerate);
+        assertEquals(expected, committed, EditorVocabulary.FILE + " is out of date with the effect, tag and item registries" + regenerate);
     }
 
     @Test
     void theManifestIsValidJsonWithEveryListTheEditorReads() throws JSONException {
         JSONObject manifest = new JSONObject(EditorVocabulary.generate());
         for (String key : new String[]{"effects", "tiers", "unlockConditionTypes", "parameterlessUnlockConditionTypes", "blueprintCategories",
-                "socketableKinds", "socketableUnlocks"}) {
+                "itemTypes", "itemKinds", "itemUnlocks"}) {
             assertTrue(manifest.getJSONArray(key).length() > 0, key);
         }
         JSONObject tags = manifest.getJSONObject("tags");

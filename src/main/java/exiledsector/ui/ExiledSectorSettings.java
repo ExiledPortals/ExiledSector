@@ -4,10 +4,10 @@ import exiledsector.ModSettingsListener;
 import exiledsector.compat.CombatGlow;
 import exiledsector.compat.SalvageSiteCompat;
 import exiledsector.effects.NpcBonusScale;
-import exiledsector.socketables.HullUpgradesSetting;
-import exiledsector.socketables.SocketMaterials;
-import exiledsector.socketables.SocketableDrops;
-import exiledsector.socketables.SocketableRoller;
+import exiledsector.items.HullUpgradesSetting;
+import exiledsector.items.CraftingMaterials;
+import exiledsector.items.ItemDrops;
+import exiledsector.items.ItemRoller;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.LanguageSetting;
 import exiledsector.i18n.Translation;
@@ -52,8 +52,8 @@ public final class ExiledSectorSettings {
         });
         SettingsCreator.refresh(MOD_ID);
         ModSettingsListener.ensureRegistered(NpcBonusScale.SettingsListener.class, NpcBonusScale.SettingsListener::new);
-        ModSettingsListener.ensureRegistered(SocketableRoller.SettingsListener.class, SocketableRoller.SettingsListener::new);
-        SocketableRoller.reloadSettings();
+        ModSettingsListener.ensureRegistered(ItemRoller.SettingsListener.class, ItemRoller.SettingsListener::new);
+        ItemRoller.reloadSettings();
         ModSettingsListener.ensureRegistered(HullUpgradesSetting.SettingsListener.class, HullUpgradesSetting.SettingsListener::new);
         HullUpgradesSetting.reloadSettings();
     }
@@ -82,15 +82,15 @@ public final class ExiledSectorSettings {
         SettingsCreator.addBoolean(MOD_ID, SalvageSiteCompat.DROPS_FIELD_ID,
                 Translation.text("settings.socketStorage.otherModDrops.name"), Translation.text("settings.socketStorage.otherModDrops.tooltip"),
                 SalvageSiteCompat.DEFAULT_DROPS, MAIN_TAB);
-        SettingsCreator.addInt(MOD_ID, SocketableDrops.BATTLE_PARTS_FIELD_ID,
+        SettingsCreator.addInt(MOD_ID, ItemDrops.BATTLE_PARTS_FIELD_ID,
                 Translation.text("settings.socketStorage.battleParts.name"), Translation.text("settings.socketStorage.battleParts.tooltip"),
-                SocketableDrops.DEFAULT_BATTLE_PARTS_PER_100_DP, 0, SocketableDrops.MAX_BATTLE_PARTS_PER_100_DP, MAIN_TAB);
-        SettingsCreator.addBoolean(MOD_ID, SocketMaterials.STORE_FIELD_ID,
+                ItemDrops.DEFAULT_BATTLE_PARTS_PER_100_DP, 0, ItemDrops.MAX_BATTLE_PARTS_PER_100_DP, MAIN_TAB);
+        SettingsCreator.addBoolean(MOD_ID, CraftingMaterials.STORE_FIELD_ID,
                 Translation.text("settings.socketStorage.storeMaterials.name"), Translation.text("settings.socketStorage.storeMaterials.tooltip"),
-                SocketMaterials.DEFAULT_STORE, MAIN_TAB);
-        SettingsCreator.addBoolean(MOD_ID, SocketableRoller.AVERAGE_ROLLS_FIELD_ID,
+                CraftingMaterials.DEFAULT_STORE, MAIN_TAB);
+        SettingsCreator.addBoolean(MOD_ID, ItemRoller.AVERAGE_ROLLS_FIELD_ID,
                 Translation.text("settings.socketStorage.averageRolls.name"), Translation.text("settings.socketStorage.averageRolls.tooltip"),
-                SocketableRoller.DEFAULT_AVERAGE_ROLLS, MAIN_TAB);
+                ItemRoller.DEFAULT_AVERAGE_ROLLS, MAIN_TAB);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_opCostHeader", Translation.text("settings.opCost.header"), MAIN_TAB);
         SettingsCreator.addText(MOD_ID, "exiledSector_opCostAbout", Translation.text("settings.opCost.about"), MAIN_TAB);

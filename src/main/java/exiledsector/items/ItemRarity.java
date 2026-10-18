@@ -1,0 +1,26 @@
+package exiledsector.items;
+
+import java.awt.Color;
+
+public enum ItemRarity {
+
+    COMMON(new Color(120, 150, 255), 3),
+    RARE(new Color(255, 225, 90), 5),
+    UNIQUE(new Color(255, 140, 40), 10);
+
+    private final Color color;
+    private final int disassemblyParts;
+
+    ItemRarity(Color color, int disassemblyParts) {
+        this.color = color;
+        this.disassemblyParts = disassemblyParts;
+    }
+
+    public Color color() {
+        return color;
+    }
+
+    public int disassemblyParts() {
+        return disassemblyParts;
+    }
+}

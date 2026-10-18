@@ -1,5 +1,6 @@
 package exiledsector.ui.node;
 
+import exiledsector.items.ShipSection;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.characters.SkillSpecAPI;
@@ -15,8 +16,8 @@ import exiledsector.effects.ShipTreeSync;
 import exiledsector.i18n.Translation;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocationGate;
-import exiledsector.skills.FrameworkFit;
-import exiledsector.skills.FrameworkSlots;
+import exiledsector.skills.FittedShipProfile;
+import exiledsector.skills.ShipSections;
 import exiledsector.skills.HullModNames;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.RespecPlan;
@@ -32,10 +33,9 @@ import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.skills.unlock.NodeGates;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.skills.tags.ShipProfile;
-import exiledsector.socketables.FrameworkSockets;
-import exiledsector.socketables.SocketType;
-import exiledsector.socketables.Socketable;
-import exiledsector.socketables.SocketableStore;
+import exiledsector.items.HullUpgradeRules;
+import exiledsector.items.Item;
+import exiledsector.items.ItemStore;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -255,8 +255,8 @@ final class NodeAllocator {
         return true;
     }
 
-    boolean socketItem(SkillNode node, String socketableId) {
-        return changed(data().socketItem(node.getId(), socketableId));
+    boolean socketItem(SkillNode node, String itemId) {
+        return changed(data().socketItem(node.getId(), itemId));
     }
 
     boolean unsocketItem(SkillNode node) {
@@ -264,39 +264,39 @@ final class NodeAllocator {
     }
 
     boolean installUpgrade() {
-        return changed(FrameworkSockets.installUpgrade(data(), hullSize(), SocketableStore.get()));
+        return changed(HullUpgradeRules.installUpgrade(data(), hullSize(), ItemStore.get()));
     }
 
-    boolean unlockSocket(SocketType socketType) {
-        return changed(FrameworkSockets.unlock(data(), socketType, currentFit()));
+    boolean unlockSection(ShipSection section) {
+        return changed(HullUpgradeRules.unlock(data(), section, currentFit()));
     }
 
-    boolean lockSocket(SocketType socketType) {
-        return changed(FrameworkSockets.lock(data(), socketType));
+    boolean lockSection(ShipSection section) {
+        return changed(HullUpgradeRules.lock(data(), section));
     }
 
-    boolean socketFrameworkItem(SocketType socketType, Socketable socketable) {
-        return changed(FrameworkSockets.socket(data(), socketType, socketable, ShipSkillDataManager.all()));
+    boolean installInSection(ShipSection section, Item item) {
+        return changed(HullUpgradeRules.socket(data(), section, item, ShipSkillDataManager.all()));
     }
 
-    boolean unsocketFrameworkItem(SocketType socketType) {
-        return changed(data().unsocketFrameworkItem(socketType.id()) != null);
+    boolean removeFromSection(ShipSection section) {
+        return changed(data().removeFromSection(section.id()) != null);
     }
 
-    List<FrameworkSlots.Slot> frameworkSlots() {
-        return FrameworkSlots.forVariant(data(), shipVariant);
+    List<ShipSections.UnlockedSection> sections() {
+        return ShipSections.forVariant(data(), shipVariant);
     }
 
-    FrameworkSockets.UnlockBlock unlockBlock(SocketType socketType) {
-        return FrameworkSockets.unlockBlock(data(), socketType, currentFit());
+    HullUpgradeRules.UnlockBlock unlockBlock(ShipSection section) {
+        return HullUpgradeRules.unlockBlock(data(), section, currentFit());
     }
 
-    String unmetRequirement(SocketType socketType) {
-        return FrameworkSlots.unmetRequirement(socketType, currentFit());
+    String unmetRequirement(ShipSection section) {
+        return ShipSections.unmetRequirement(section, currentFit());
     }
 
     private ShipProfile currentFit() {
-        return FrameworkFit.profile(fleetMember.getHullSpec(), shipVariant, data());
+        return FittedShipProfile.profile(fleetMember.getHullSpec(), shipVariant, data());
     }
 
     HullSize hullSize() {

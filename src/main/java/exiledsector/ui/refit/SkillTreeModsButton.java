@@ -38,6 +38,7 @@ final class SkillTreeModsButton extends BaseCustomUIPanelPlugin {
             boolean buttonWanted = RefitButtonConfig.buttonUnderHullMods();
             if (attachedContainer != null) {
                 if (attachedContainer.getPlugin() instanceof SkillTreeModsButton plugin) plugin.show(attachedContainer, buttonWanted);
+                HullUpgradesModsButton.updateVisibility(widget);
                 return;
             }
             if (!buttonWanted || !(call(widget, "getPerm") instanceof ButtonAPI buildIn)) return;
@@ -54,6 +55,7 @@ final class SkillTreeModsButton extends BaseCustomUIPanelPlugin {
             plugin.skillTreeButton = skillTreeButton;
             container.addUIElement(element);
             widget.addComponent(container).belowMid(buildIn, gapBelowBuildIn(buttonHeight)).setXAlignOffset(X_ALIGN_OFFSET);
+            HullUpgradesModsButton.attachBelow(widget, container, buttonWidth, buttonHeight);
         } catch (Throwable e) {
             disable(e);
         }

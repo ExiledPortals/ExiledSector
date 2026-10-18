@@ -57,6 +57,9 @@ public class SkillTreeFleetRenderer {
     private final float[] shipScreenScale;
     private final float[] shipAlpha;
     private FleetShip soloShip;
+    private FleetMemberAPI soloMember;
+    private VanillaShipView soloView;
+    private boolean soloViewTried;
     private boolean soloActive;
     private float soloLevel;
 
@@ -83,6 +86,8 @@ public class SkillTreeFleetRenderer {
         SkillTreeFleetRenderer renderer = build(shownMembers(playerFleet.getFleetData().getMembersListCopy(), viewedMemberId),
                 fleetRadius, flight, FLIGHT_RANDOM);
         renderer.soloShip = renderer.ships.stream().filter(ship -> ship.memberId().equals(viewedMemberId)).findFirst().orElse(null);
+        renderer.soloMember = playerFleet.getFleetData().getMembersListCopy().stream()
+                .filter(member -> member.getId().equals(viewedMemberId)).findFirst().orElse(null);
         return renderer;
     }
 
@@ -202,8 +207,21 @@ public class SkillTreeFleetRenderer {
     }
 
     private void drawHull(FleetShip ship, float screenX, float screenY, float screenScale, float alpha) {
+        VanillaShipView view = ship == soloShip ? soloView() : null;
+        if (view != null && view.draw(screenX, screenY, screenScale, ship.drift().facingDeg(), alpha)) {
+            return;
+        }
         ship.engines().drawHull(spriteCache, ship.spritePath(), screenX, screenY, ship.width() * screenScale, ship.height() * screenScale,
                 screenScale, ship.drift().facingDeg(), alpha);
+    }
+
+    private VanillaShipView soloView() {
+        if (!soloViewTried && soloMember != null && soloShip != null) {
+            soloViewTried = true;
+            soloView = VanillaShipView.of(soloMember, null, VanillaShipView.imageOffsetX(soloShip.visuals(), soloShip.width()),
+                    VanillaShipView.imageOffsetY(soloShip.visuals(), soloShip.height()));
+        }
+        return soloView;
     }
 
     private void renderFlames(float zoom) {

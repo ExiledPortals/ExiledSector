@@ -56,13 +56,13 @@ public class ShipSkillData {
         return socketedItems == null ? Map.of() : Collections.unmodifiableMap(socketedItems);
     }
 
-    public boolean socketItem(String nodeId, String socketableId) {
+    public boolean socketItem(String nodeId, String itemId) {
         revision++;
         if (!isAllocated(nodeId)) {
             return false;
         }
         if (socketedItems == null) socketedItems = new LinkedHashMap<>();
-        socketedItems.put(nodeId, socketableId);
+        socketedItems.put(nodeId, itemId);
         return true;
     }
 
@@ -71,15 +71,15 @@ public class ShipSkillData {
         return socketedItems == null ? null : socketedItems.remove(nodeId);
     }
 
-    public int getFrameworkPoints() {
+    public int getHullUpgradePoints() {
         return frameworkPoints;
     }
 
-    public int getUnspentFrameworkPoints() {
+    public int getUnspentHullUpgradePoints() {
         return Math.max(0, frameworkPoints - getUnlockedSocketTypeIds().size());
     }
 
-    public boolean addFrameworkPoint(int maxPoints) {
+    public boolean addHullUpgradePoint(int maxPoints) {
         revision++;
         if (frameworkPoints >= maxPoints) {
             return false;
@@ -98,7 +98,7 @@ public class ShipSkillData {
 
     public boolean unlockSocketType(String socketTypeId) {
         revision++;
-        if (socketTypeId == null || isSocketTypeUnlocked(socketTypeId) || getUnspentFrameworkPoints() <= 0) {
+        if (socketTypeId == null || isSocketTypeUnlocked(socketTypeId) || getUnspentHullUpgradePoints() <= 0) {
             return false;
         }
         if (unlockedSocketTypes == null) unlockedSocketTypes = new ArrayList<>();
@@ -124,35 +124,35 @@ public class ShipSkillData {
         return frameworkItemsBySocketType == null ? null : frameworkItemsBySocketType.remove(socketTypeId);
     }
 
-    public Map<String, String> getFrameworkSocketedItems() {
+    public Map<String, String> getSectionItems() {
         return frameworkItemsBySocketType == null ? Map.of() : Collections.unmodifiableMap(frameworkItemsBySocketType);
     }
 
-    public List<String> getInstalledSocketableIds() {
+    public List<String> getInstalledItemIds() {
         List<String> installedIds = new ArrayList<>(getSocketedItems().values());
-        installedIds.addAll(getFrameworkSocketedItems().values());
+        installedIds.addAll(getSectionItems().values());
         return installedIds;
     }
 
-    public boolean holdsSocketable(String socketableId) {
-        return getSocketedItems().containsValue(socketableId) || getFrameworkSocketedItems().containsValue(socketableId);
+    public boolean holdsItem(String itemId) {
+        return getSocketedItems().containsValue(itemId) || getSectionItems().containsValue(itemId);
     }
 
-    public String getFrameworkSocketedItem(String socketTypeId) {
+    public String getSectionItem(String socketTypeId) {
         return frameworkItemsBySocketType == null ? null : frameworkItemsBySocketType.get(socketTypeId);
     }
 
-    public boolean socketFrameworkItem(String socketTypeId, String socketableId) {
+    public boolean installInSection(String socketTypeId, String itemId) {
         revision++;
         if (!isSocketTypeUnlocked(socketTypeId)) {
             return false;
         }
         if (frameworkItemsBySocketType == null) frameworkItemsBySocketType = new LinkedHashMap<>();
-        frameworkItemsBySocketType.put(socketTypeId, socketableId);
+        frameworkItemsBySocketType.put(socketTypeId, itemId);
         return true;
     }
 
-    public String unsocketFrameworkItem(String socketTypeId) {
+    public String removeFromSection(String socketTypeId) {
         revision++;
         return frameworkItemsBySocketType == null ? null : frameworkItemsBySocketType.remove(socketTypeId);
     }

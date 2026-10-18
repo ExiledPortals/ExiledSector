@@ -44,7 +44,7 @@ export function existingVanillaFile(paths: ProjectPaths, relativePath: string | 
   return existingFile(resolveVanillaPath(paths, relativePath));
 }
 
-export const DEFAULT_SALVAGE_FILE = 'socketable_salvage.csv';
+export const DEFAULT_SALVAGE_FILE = 'item_salvage.csv';
 const COMPAT_SALVAGE_PREFIX = 'compat/salvage/';
 
 export function salvageDir(paths: ProjectPaths): string {

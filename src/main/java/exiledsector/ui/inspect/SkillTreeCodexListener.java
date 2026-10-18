@@ -7,11 +7,11 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.codex.CodexDataV2;
 import com.fs.starfarer.api.impl.codex.CodexEntryPlugin;
 import exiledsector.i18n.I18n;
-import exiledsector.skills.FrameworkSlots;
+import exiledsector.skills.ShipSections;
 import exiledsector.skills.InstalledHullMods;
 import exiledsector.skills.PhantomHullModStatus;
-import exiledsector.socketables.Socketable;
-import exiledsector.socketables.SocketableStore;
+import exiledsector.items.Item;
+import exiledsector.items.ItemStore;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class SkillTreeCodexListener implements CodexEventListener {
 
     @Override
     public void reportAboutToOpenCodex() {
-        SocketableCodex.refreshUnlocks(Global.getSector());
+        ItemCodex.refreshUnlocks(Global.getSector());
         try {
             for (CodexEntryPlugin entry : new ArrayList<>(CodexDataV2.ENTRIES.values())) {
                 if (entry.getParam() instanceof FleetMemberAPI member) {
@@ -56,27 +56,27 @@ public class SkillTreeCodexListener implements CodexEventListener {
         CodexDataV2.ENTRIES.put(treeEntry.getId(), treeEntry);
         memberEntry.addRelatedEntry(treeEntry);
         treeEntry.addRelatedEntry(memberEntry);
-        linkInstalledSocketables(treeEntry, shipTree);
+        linkInstalledItems(treeEntry, shipTree);
         addedEntries.add(treeEntry);
     }
 
-    private static void linkInstalledSocketables(SkillTreeCodexEntry treeEntry, ShipTreeLookup.ShipTree shipTree) {
-        List<Socketable> installed = new ArrayList<>();
-        for (String socketableId : shipTree.skillData().getSocketedItems().values()) {
-            Socketable socketable = SocketableStore.lookup(socketableId);
-            if (socketable != null) {
-                installed.add(socketable);
+    private static void linkInstalledItems(SkillTreeCodexEntry treeEntry, ShipTreeLookup.ShipTree shipTree) {
+        List<Item> installed = new ArrayList<>();
+        for (String itemId : shipTree.skillData().getSocketedItems().values()) {
+            Item item = ItemStore.lookup(itemId);
+            if (item != null) {
+                installed.add(item);
             }
         }
-        for (FrameworkSlots.Slot slot : shipTree.frameworkSlots()) {
+        for (ShipSections.UnlockedSection slot : shipTree.sections()) {
             if (slot.item() != null) {
                 installed.add(slot.item());
             }
         }
-        for (Socketable socketable : installed) {
-            CodexEntryPlugin socketableEntry = CodexDataV2.getEntry(SocketableCodex.entryId(socketable.definitionId()));
-            if (socketableEntry != null && socketableEntry.isVisible()) {
-                treeEntry.addRelatedEntry(socketableEntry);
+        for (Item item : installed) {
+            CodexEntryPlugin itemEntry = CodexDataV2.getEntry(ItemCodex.entryId(item.definitionId()));
+            if (itemEntry != null && itemEntry.isVisible()) {
+                treeEntry.addRelatedEntry(itemEntry);
             }
         }
     }

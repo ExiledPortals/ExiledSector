@@ -6,9 +6,10 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledsector.socketables.NpcSocketables;
-import exiledsector.socketables.RolledEffect;
-import exiledsector.socketables.SocketableDefinitions;
+import exiledsector.items.NpcItems;
+import exiledsector.items.RolledEffect;
+import exiledsector.items.RolledModifier;
+import exiledsector.items.ItemDefinitions;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -87,9 +88,9 @@ class NpcTreeTagTest {
     }
 
     @Test
-    void anNpcSocketableSurvivesEncodingAndDecodingInItsSocket() {
+    void anNpcHullItemSurvivesEncodingAndDecodingInItsSocket() {
         ShipSkillData data = withSocket();
-        data.socketItem("socket_1", NpcSocketables.id("domain_subroutine_military", -42L));
+        data.socketItem("socket_1", NpcItems.id("domain_subroutine_military", -42L));
 
         String tag = NpcTreeTag.encode(data);
         ShipSkillData decoded = NpcTreeTag.decode(tag);
@@ -101,11 +102,11 @@ class NpcTreeTagTest {
     @Test
     void aFlagshipsUnlockedSocketsAndTheirItemsSurviveTheTagAlongsideTreeSockets() {
         ShipSkillData data = withSocket();
-        data.socketItem("socket_1", NpcSocketables.id("domain_subroutine_military", -42L));
+        data.socketItem("socket_1", NpcItems.id("domain_subroutine_military", -42L));
         data.grantUnlockedSocketType("bridge");
         data.grantUnlockedSocketType("reactor");
         data.grantUnlockedSocketType("flight_deck");
-        data.socketFrameworkItem("flight_deck", NpcSocketables.id("deck_basic", 3L));
+        data.installInSection("flight_deck", NpcItems.id("deck_basic", 3L));
 
         String tag = NpcTreeTag.encode(data);
         ShipSkillData decoded = NpcTreeTag.decode(tag);
@@ -114,26 +115,26 @@ class NpcTreeTagTest {
                 + "|frameworkTypes:bridge+reactor+flight_deck|frameworkSockets:flight_deck=npc:deck_basic/3", tag);
         assertEquals("npc:domain_subroutine_military/-42", decoded.getSocketedItem("socket_1"));
         assertEquals(List.of("bridge", "reactor", "flight_deck"), decoded.getUnlockedSocketTypeIds());
-        assertEquals(3, decoded.getFrameworkPoints());
-        assertEquals(Map.of("flight_deck", "npc:deck_basic/3"), decoded.getFrameworkSocketedItems());
+        assertEquals(3, decoded.getHullUpgradePoints());
+        assertEquals(Map.of("flight_deck", "npc:deck_basic/3"), decoded.getSectionItems());
     }
 
     @Test
-    void aSavedTreeSocketHoldingAFrameworkItemIsDroppedOnRestore() throws Exception {
+    void aSavedTreeSocketHoldingASectionItemIsDroppedOnRestore() throws Exception {
         withSocket();
-        SocketableDefinitions.register(new JSONArray().put(new JSONObject().put("id", "gunners").put("kind", "weapon_mount")
+        ItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "gunners").put("section", "weapon_mount")
                 .put("name", "Gunners").put("prefixes", "HULL_MULT:4:6")));
         try {
             ShipSkillData decoded = NpcTreeTag.decode("exiledSector_npcTree|generated|2|root,a,socket_1|sockets:socket_1=npc:gunners/5");
 
             assertNull(decoded.getSocketedItem("socket_1"));
         } finally {
-            SocketableDefinitions.clear();
+            ItemDefinitions.clear();
         }
     }
 
     @Test
-    void socketsWithoutItemsRoundTripAndTagsFromEarlierFrameworkBuildsAreIgnored() {
+    void socketsWithoutItemsRoundTripAndTagsFromEarlierSectionBuildsAreIgnored() {
         ShipSkillData data = withSocket();
         data.grantUnlockedSocketType("bridge");
 
@@ -141,7 +142,7 @@ class NpcTreeTagTest {
         ShipSkillData legacy = NpcTreeTag.decode("exiledSector_npcTree|generated|2|root,a|framework:npcfw:CRUISER/RARE/bridge/1"
                 + "|frameworkSockets:0=npc:x/1");
         assertEquals(List.of(), legacy.getUnlockedSocketTypeIds());
-        assertEquals(Map.of(), legacy.getFrameworkSocketedItems());
+        assertEquals(Map.of(), legacy.getSectionItems());
     }
 
     @Test
@@ -157,11 +158,11 @@ class NpcTreeTagTest {
         assertEquals(rolled, legacy.getSocketedItem("socket_1"));
         assertEquals(saved, NpcTreeTag.encode(decoded));
         assertEquals(List.of(new RolledEffect("HULL_MULT", 5f), new RolledEffect("ARMOR_PERCENT", -0.25f)),
-                NpcSocketables.item(decoded.getSocketedItem("socket_1")).effects());
+                RolledModifier.lines(NpcItems.item(decoded.getSocketedItem("socket_1")).explicits()));
     }
 
     @Test
-    void aTreeWithoutSocketablesKeepsTheThreeFieldFormat() {
+    void aTreeWithoutHullItemsKeepsTheThreeFieldFormat() {
         assertEquals("exiledSector_npcTree|generated|2|root,a,socket_1", NpcTreeTag.encode(withSocket()));
     }
 

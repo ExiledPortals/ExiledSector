@@ -15,8 +15,9 @@ interface VocabularyFile {
   unlockConditionTypes: string[];
   parameterlessUnlockConditionTypes?: string[];
   blueprintCategories: string[];
-  socketableKinds: string[];
-  socketableUnlocks: string[];
+  itemTypes: string[];
+  itemKinds: { id: string; type: string }[];
+  itemUnlocks: string[];
 }
 
 export interface Vocabulary {
@@ -31,8 +32,10 @@ export interface Vocabulary {
   unlockConditionTypes: string[];
   parameterlessUnlockConditionTypes: string[];
   blueprintCategories: string[];
-  socketableKinds: string[];
-  socketableUnlocks: string[];
+  itemTypes: string[];
+  itemKinds: string[];
+  itemKindTypes: Map<string, string>;
+  itemUnlocks: string[];
 }
 
 export function buildVocabulary(file: VocabularyFile): Vocabulary {
@@ -48,8 +51,10 @@ export function buildVocabulary(file: VocabularyFile): Vocabulary {
     unlockConditionTypes: file.unlockConditionTypes.slice(),
     parameterlessUnlockConditionTypes: (file.parameterlessUnlockConditionTypes ?? []).slice(),
     blueprintCategories: file.blueprintCategories.slice(),
-    socketableKinds: file.socketableKinds.slice(),
-    socketableUnlocks: file.socketableUnlocks.slice(),
+    itemTypes: file.itemTypes.slice(),
+    itemKinds: file.itemKinds.map((kind) => kind.id),
+    itemKindTypes: new Map(file.itemKinds.map((kind) => [kind.id, kind.type])),
+    itemUnlocks: file.itemUnlocks.slice(),
   };
 }
 

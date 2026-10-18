@@ -7,10 +7,8 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import com.fs.starfarer.api.ui.UIPanelAPI;
 import exiledsector.i18n.Translation;
 import exiledsector.ui.refit.RefitButtonConfig;
-import lunalib.backend.ui.refit.RefitButtonAdder;
 import lunalib.backend.ui.refit.RefitPanelBackgroundPlugin;
 import lunalib.lunaRefit.BaseRefitButton;
 import lunalib.lunaRefit.LunaRefitManager;
@@ -21,7 +19,6 @@ import java.util.Collections;
 public class SkillTreeRefitButton extends BaseRefitButton {
 
     private static final float SCREEN_FRACTION = 1f;
-    private static final String CLICK_SOUND = "ui_button_pressed";
     static final float SHIP_CARD_ICON_SIZE = 128f;
 
     public static void addButton() {
@@ -29,46 +26,10 @@ public class SkillTreeRefitButton extends BaseRefitButton {
     }
 
     public static boolean openPanel(InputEventAPI event) {
-        RefitButtonAdder adder = refitButtonAdder();
-        if (adder == null || adder.getActivePanel() != null || adder.getCorePanel() == null) return false;
-        if (!(LunaRefitManager.getFirstButtonOfClass(SkillTreeRefitButton.class) instanceof SkillTreeRefitButton button)) return false;
-        FleetMemberAPI member = adder.getMember();
-        ShipVariantAPI variant = adder.getVariant();
-        MarketAPI market = adder.getMarket();
-        if (member == null || variant == null || !button.isClickable(member, variant, market) || !button.hasPanel(member, variant, market)) {
-            return false;
-        }
-        SkillTreeSounds.play(CLICK_SOUND);
-        button.onClick(member, variant, event, market);
-
-        UIPanelAPI corePanel = adder.getCorePanel();
-        float panelWidth = button.getPanelWidth(member, variant);
-        float panelHeight = button.getPanelHeight(member, variant);
-        RefitPanelBackgroundPlugin backgroundPlugin = new RefitPanelBackgroundPlugin(corePanel, true);
-        CustomPanelAPI skillTreePanel = Global.getSettings().createCustom(panelWidth, panelHeight, backgroundPlugin);
-        adder.setActivePanel(skillTreePanel);
-        adder.setActivePanelButton(button);
-        skillTreePanel.getPosition().inTL(Global.getSettings().getScreenWidth() / 2f - panelWidth / 2f, Global.getSettings().getScreenHeight() / 2f - panelHeight / 2f);
-        backgroundPlugin.setPanel(skillTreePanel);
-        corePanel.addComponent(skillTreePanel);
-        try {
-            button.initPanel(skillTreePanel, member, variant, market);
-        } catch (RuntimeException | LinkageError e) {
-            corePanel.removeComponent(skillTreePanel);
-            adder.setActivePanel(null);
-            adder.setActivePanelButton(null);
-            throw e;
-        }
-        return true;
-    }
-
-    private static RefitButtonAdder refitButtonAdder() {
-        for (Object script : Global.getSector().getTransientScripts()) {
-            if (script instanceof RefitButtonAdder adder) {
-                return adder;
-            }
-        }
-        return null;
+        return RefitPanelLauncher.open(SkillTreeRefitButton.class, event, context -> {
+            RefitPanelBackgroundPlugin backgroundPlugin = new RefitPanelBackgroundPlugin(context.corePanel(), true);
+            return new RefitPanelLauncher.Background(backgroundPlugin, backgroundPlugin::setPanel);
+        });
     }
 
     @Override

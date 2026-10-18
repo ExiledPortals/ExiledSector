@@ -180,7 +180,7 @@ public final class NpcSkillTreeBuilder {
         private final List<NpcBuildStep> steps = new ArrayList<>();
         private final List<String> strippedHullModIds = new ArrayList<>();
         private final List<String> claimedSockets = new ArrayList<>();
-        private final int socketableCount;
+        private final int itemCount;
         private final Predicate<SkillType> lockedWormhole;
         private int nodeBudget;
         private int nodesSpent;
@@ -200,7 +200,7 @@ public final class NpcSkillTreeBuilder {
             this.relevance = NpcRelevance.of(profile, hullMods.permanent());
             this.installedHullModIds = new TreeSet<>(hullMods.installed());
             this.nodeBudget = Math.min(targetNodeCount, maxNodes);
-            this.socketableCount = request.socketableCount();
+            this.itemCount = request.itemCount();
             Predicate<SkillType> lockedTypes = request.lockedTypes();
             this.lockedWormhole = type -> type.getTier() == SkillTier.WORMHOLE && lockedTypes.test(type);
         }
@@ -213,13 +213,13 @@ public final class NpcSkillTreeBuilder {
         }
 
         private void claimSockets() {
-            for (int i = 0; i < socketableCount; i++) {
+            for (int i = 0; i < itemCount; i++) {
                 String socketNodeId = unclaimedAllocatedSocket();
                 if (socketNodeId == null) {
                     socketNodeId = reachSocket();
                 }
                 if (socketNodeId == null) {
-                    steps.add(new NpcBuildStep("", NpcBuildStep.SOCKETABLE_DISCARDED));
+                    steps.add(new NpcBuildStep("", NpcBuildStep.HULL_ITEM_DISCARDED));
                 } else {
                     claimedSockets.add(socketNodeId);
                 }

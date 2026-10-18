@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
+import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.Fonts;
 import com.fs.starfarer.api.ui.LabelAPI;
@@ -14,9 +15,9 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.PlayerFleet;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
-import exiledsector.socketables.SocketMaterials;
-import exiledsector.socketables.SocketableCrafting;
-import exiledsector.socketables.SocketableDisassembly;
+import exiledsector.items.CraftingMaterials;
+import exiledsector.items.ItemCrafting;
+import exiledsector.items.ItemDisassembly;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.VanillaText;
 import exiledsector.ui.util.FramedPanelPlugin;
@@ -39,9 +40,14 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
     static final float PARTS_TEXT_TOP = 5f;
     private static final float PARTS_TOOLTIP_WIDTH = 300f;
     private static final float CONFIRM_BUTTON_HEIGHT = 26f;
+    private static final float TAB_TEXT_PADDING = 24f;
+    static final float PARTS_ROOM = 80f;
+
+    private record TabButton(SocketPanelTab tab) {
+    }
 
     protected final CustomPanelAPI hostPanel;
-    protected final SocketableHoverTooltip hoverTooltip;
+    protected final ItemHoverTooltip hoverTooltip;
     private final HoloFrame panelFrame;
     private final List<Runnable> queuedActions = new ArrayList<>();
     protected CustomPanelAPI panelRoot;
@@ -53,14 +59,16 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
     private CustomPanelAPI confirmPanel;
     private CustomPanelAPI confirmBlocker;
     private boolean closing;
+    private Consumer<SocketPanelTab> tabListener;
+    private ButtonAPI activeTabButton;
 
     HoloPanel(CustomPanelAPI hostPanel) {
         this.hostPanel = hostPanel;
-        this.hoverTooltip = new SocketableHoverTooltip(hostPanel);
+        this.hoverTooltip = new ItemHoverTooltip(hostPanel);
         this.panelFrame = new HoloFrame(HoloFrame.Look.VANILLA_HOST);
     }
 
-    final void attach(float left, float top, float width, float height) {
+    final void attach(float left, float top, float width, float height, boolean instantly) {
         panelLeft = left;
         panelTop = top;
         panelWidth = width;
@@ -68,11 +76,47 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
         panelRoot = Global.getSettings().createCustom(width, height, this);
         hostPanel.addComponent(panelRoot).inTL(left, top);
         I18n.forGameText(this::build);
-        panelFrame.open();
+        if (instantly) {
+            panelFrame.openInstantly();
+        } else {
+            panelFrame.open();
+        }
         refreshOpacity();
     }
 
     protected abstract void build();
+
+    protected SocketPanelTab tab() {
+        return null;
+    }
+
+    protected void rebuildHeader() {
+    }
+
+    public final void setTabListener(Consumer<SocketPanelTab> listener) {
+        if (listener == tabListener) {
+            return;
+        }
+        tabListener = listener;
+        if (panelRoot != null) {
+            queue(this::rebuildHeader);
+        }
+    }
+
+    public final void swapOut() {
+        if (panelRoot == null || closing) {
+            return;
+        }
+        closing = true;
+        hoverTooltip.hide();
+        closeConfirm();
+        onSwappedOut();
+        hostPanel.removeComponent(panelRoot);
+        panelRoot = null;
+    }
+
+    protected void onSwappedOut() {
+    }
 
     protected abstract UIComponentAPI[] chromeComponents();
 
@@ -204,15 +248,51 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
 
     final TooltipMakerAPI startHeader(String titleKey, String closeKey, Object closeId) {
         TooltipMakerAPI element = panelRoot.createUIElement(panelWidth - PAD * 2f, HEADER_HEIGHT, false);
-        element.setParaFont(Fonts.ORBITRON_20AABOLD);
-        VanillaText.plainPara(element, Translation.text(titleKey), 0f, Misc.getBasePlayerColor());
+        activeTabButton = null;
+        if (tabListener == null) {
+            element.setParaFont(Fonts.ORBITRON_20AABOLD);
+            VanillaText.plainPara(element, Translation.text(titleKey), 0f, Misc.getBasePlayerColor());
+        } else {
+            addTabs(element);
+        }
         element.addButton(Translation.text(closeKey), closeId, CLOSE_BUTTON_WIDTH, HEADER_BUTTON_HEIGHT, 0f).getPosition().inTR(0f, 0f);
         return element;
     }
 
-    final UIComponentAPI finishHeader(TooltipMakerAPI element, UIComponentAPI previousHeader, float partsRight) {
-        addPartsCount(element, partsRight);
+    final UIComponentAPI finishHeader(TooltipMakerAPI element, UIComponentAPI previousHeader) {
         return replaceElement(previousHeader, element, PAD, PAD);
+    }
+
+    private void addTabs(TooltipMakerAPI element) {
+        float tabLeft = 0f;
+        for (SocketPanelTab panelTab : SocketPanelTab.values()) {
+            String label = panelTab.label();
+            float tabWidth = Global.getSettings().computeStringWidth(label, Fonts.ORBITRON_20AABOLD) + TAB_TEXT_PADDING;
+            ButtonAPI tabButton = element.addAreaCheckbox(label, new TabButton(panelTab), Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
+                    Misc.getBrightPlayerColor(), tabWidth, HEADER_BUTTON_HEIGHT, 0f);
+            tabButton.setChecked(panelTab == tab());
+            tabButton.getPosition().inTL(tabLeft, 0f);
+            if (panelTab == tab()) {
+                activeTabButton = tabButton;
+            }
+            tabLeft += tabWidth + GAP;
+        }
+    }
+
+    final boolean tabPressed(Object id) {
+        if (!(id instanceof TabButton tabButton)) {
+            return false;
+        }
+        queue(() -> {
+            if (tabButton.tab() == tab() || tabListener == null) {
+                if (activeTabButton != null) {
+                    activeTabButton.setChecked(true);
+                }
+                return;
+            }
+            tabListener.accept(tabButton.tab());
+        });
+        return true;
     }
 
     final TooltipMakerAPI replaceElement(UIComponentAPI previous, TooltipMakerAPI replacement, float left, float top) {
@@ -264,16 +344,16 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
         return element.getExternalScroller() != null ? element.getExternalScroller() : element;
     }
 
-    static SocketMaterials playerMaterials() {
-        return SocketMaterials.forPlayer(PlayerFleet.cargoOrNull());
+    static CraftingMaterials playerMaterials() {
+        return CraftingMaterials.forPlayer(PlayerFleet.cargoOrNull());
     }
 
-    private static void addPartsCount(TooltipMakerAPI element, float countRight) {
-        CommoditySpecAPI partsSpec = Global.getSettings().getCommoditySpec(SocketableDisassembly.PARTS_COMMODITY_ID);
+    static void addPartsCount(TooltipMakerAPI element, float countRight) {
+        CommoditySpecAPI partsSpec = Global.getSettings().getCommoditySpec(ItemDisassembly.PARTS_COMMODITY_ID);
         if (partsSpec == null) {
             return;
         }
-        String countText = String.valueOf(SocketableCrafting.parts(playerMaterials()));
+        String countText = String.valueOf(ItemCrafting.parts(playerMaterials()));
         float countWidth = Global.getSettings().computeStringWidth(countText, Fonts.ORBITRON_12) + LINE_PAD;
         element.setParaFont(Fonts.ORBITRON_12);
         LabelAPI countLabel = VanillaText.plainPara(element, countText, 0f, Misc.getTextColor());

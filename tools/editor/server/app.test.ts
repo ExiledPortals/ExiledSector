@@ -44,7 +44,7 @@ beforeEach(() => {
   paths = { projectRoot, vanillaCoreDir: path.join(projectRoot, 'vanilla-core') };
   writeProjectFile('data/skilltrees/skill_types.json', Buffer.concat([Buffer.from([0xef, 0xbb, 0xbf]), Buffer.from(TYPES_TEXT)]));
   writeProjectFile('data/skilltrees/ship_skill_tree.json', TREE_TEXT);
-  writeProjectFile('data/config/exiledSector/socketables.csv', 'id,kind\r\nx,subroutine\r\n');
+  writeProjectFile('data/config/exiledSector/subroutines.csv', 'id,name\r\nx,X\r\n');
   writeProjectFile('tools/editor_vocabulary.json', '{"effects":[]}');
   app = createEditorServer({ paths, port: PORT, describe: new DescribeService(paths, { javaHome: null, maven: null }) });
 });
@@ -133,7 +133,7 @@ describe('data files', () => {
       method: 'POST',
       url: '/api/files',
       headers: EDITOR_HEADERS,
-      payload: { files: { socketables: { content: 'name,kind\n', baseHash: 'x' } } },
+      payload: { files: { subroutines: { content: 'name,kind\n', baseHash: 'x' } } },
     });
     expect(refused.statusCode).toBe(400);
     expect(refused.json().message).toContain('must start with the id column');
@@ -158,7 +158,7 @@ describe('data files', () => {
     writeProjectFile('data/config/exiledSector/compat/salvage/zzz.csv', 'site,chances\n');
     writeProjectFile('data/config/exiledSector/compat/salvage/aaa.csv', 'site,chances\n');
     expect((await app.inject({ method: 'GET', url: '/api/salvage-files' })).json()).toEqual([
-      'socketable_salvage.csv',
+      'item_salvage.csv',
       'compat/salvage/aaa.csv',
       'compat/salvage/zzz.csv',
     ]);

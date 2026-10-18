@@ -29,11 +29,10 @@ final class SkillTreeChrome {
     private final SkillTreeInfoTooltipRenderer infoTooltipRenderer;
     private final String readoutTooltipTitle = Translation.text("ui.readout.title");
     private final String readoutTooltipBody;
-    private final String storageTooltipTitle = Translation.text("ui.socketStorage.title");
+    private final String storageTooltipTitle = Translation.text("ui.hullItems.title");
     private final String storageTooltipHint = Translation.text("ui.socketStorage.hint");
     private final ChromeVisibility visibility = new ChromeVisibility();
     private final float shipCardHeight;
-    private boolean statsHiddenBySidePanel;
     private ScreenRect shipCardFrame = ScreenRect.NONE;
     private float shipCardFrameCanvasX = Float.NaN;
     private float shipCardFrameCanvasY = Float.NaN;
@@ -58,9 +57,8 @@ final class SkillTreeChrome {
         shipCardHidden = false;
     }
 
-    void advanceVisibility(float amount, CanvasMode mode, float chromeAlpha, float treeAlpha, boolean sidePanelOpen) {
+    void advanceVisibility(float amount, CanvasMode mode, float chromeAlpha, float treeAlpha) {
         visibility.advance(amount, mode, chromeAlpha, treeAlpha);
-        statsHiddenBySidePanel = sidePanelOpen;
     }
 
     void advance(float amount, PositionAPI canvasPosition, CanvasMode mode, ShipOpBudget budget, float mouseX, float mouseY,
@@ -121,7 +119,7 @@ final class SkillTreeChrome {
     }
 
     private boolean statsToggleLive(CanvasMode mode) {
-        return mode.enables(CanvasMode.Chrome.STATS_TOGGLE) && !statsHiddenBySidePanel;
+        return mode.enables(CanvasMode.Chrome.STATS_TOGGLE);
     }
 
     void render(PositionAPI canvasPosition, CanvasMode mode, float mouseX, float mouseY, float alphaMult, float workbenchDim) {

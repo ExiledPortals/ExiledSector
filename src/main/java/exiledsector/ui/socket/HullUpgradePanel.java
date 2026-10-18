@@ -14,17 +14,18 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.ShipHullSizes;
-import exiledsector.socketables.FrameworkSockets;
-import exiledsector.socketables.HullUpgradeData;
-import exiledsector.socketables.HullUpgradeTooltip;
-import exiledsector.socketables.SocketType;
-import exiledsector.socketables.SocketableRarity;
+import exiledsector.items.HullUpgradeRules;
+import exiledsector.items.HullUpgradeData;
+import exiledsector.items.HullUpgradeTooltip;
+import exiledsector.items.ShipSection;
+import exiledsector.items.ItemRarity;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.VanillaText;
-import exiledsector.ui.framework.FrameworkSocketFlair;
+import exiledsector.ui.section.SectionFlair;
 
 import java.awt.Color;
 import java.util.List;
+import java.util.function.Consumer;
 
 public final class HullUpgradePanel extends HoloPanel {
 
@@ -32,28 +33,32 @@ public final class HullUpgradePanel extends HoloPanel {
 
         void installUpgrade();
 
-        void toggleSocket(SocketType socketType);
+        void toggleSection(ShipSection section);
 
         void closed();
     }
 
-    public enum SocketState {UNLOCKED, AVAILABLE, RESTRICTED, NO_POINTS}
+    public enum SectionState {UNLOCKED, AVAILABLE, RESTRICTED, NO_POINTS}
 
-    public record SocketEntry(SocketType type, SocketState state, String requirementText, String itemIconPath) {
+    public record SectionEntry(ShipSection section, SectionState state, String requirementText, String itemIconPath) {
     }
 
     public record View(HullSize hullSize, int points, int unspentPoints, int upgradesInStorage,
-                       FrameworkSockets.UpgradeBlock upgradeBlock, List<SocketEntry> sockets) {
+                       HullUpgradeRules.UpgradeBlock upgradeBlock, List<SectionEntry> sections) {
     }
 
-    public static final float WIDTH = SocketStoragePanel.WIDTH;
-    private static final int MIN_SOCKET_COLUMNS = 3;
-    private static final int MAX_SOCKET_COLUMNS = 6;
-    private static final float UPGRADE_TILE_SCALE = 1.3f;
+    public static final float WIDTH = ItemStoragePanel.WIDTH;
+    private static final int MIN_SECTION_COLUMNS = 3;
+    private static final int MAX_SECTION_COLUMNS = 6;
+    private static final float UPGRADE_TILE_SIZE = 64f;
+    private static final float POINTS_WIDTH = 80f;
     private static final float MIN_TILE_SIZE = 64f;
+
+    public enum Sizing {FIT_HEIGHT, SCROLL}
     private static final float FIT_SLACK = 12f;
     private static final float SCROLLBAR_ROOM = 14f;
     private static final float NAME_HEIGHT = 22f;
+    private static final float SECTION_NAME_HEIGHT = 36f;
     private static final float STATE_HEIGHT = 20f;
     private static final float TOOLTIP_WIDTH = 520f;
     private static final Color BLOCKED_TEXT_COLOR = new Color(130, 130, 130);
@@ -62,11 +67,12 @@ public final class HullUpgradePanel extends HoloPanel {
 
     private enum Control {CLOSE, CONFIRM_INSTALL, CANCEL_INSTALL}
 
-    private record TileSizes(int socketColumns, float socketTile, float upgradeTile) {
+    record TileSizes(int sectionColumns, float columnWidth, float sectionTile) {
     }
 
     private final Listener panelListener;
     private View view;
+    private Sizing sizing = Sizing.FIT_HEIGHT;
     private UIComponentAPI headerElement;
     private TooltipMakerAPI listElement;
 
@@ -76,10 +82,12 @@ public final class HullUpgradePanel extends HoloPanel {
         this.panelListener = panelListener;
     }
 
-    public static HullUpgradePanel open(CustomPanelAPI hostPanel, float panelLeft, float panelTop, float panelHeight, View view,
-                                          Listener panelListener) {
+    public static HullUpgradePanel open(CustomPanelAPI hostPanel, SocketPanelPlacement placement, View view, Listener panelListener,
+                                        Consumer<SocketPanelTab> tabListener, Sizing sizing) {
         HullUpgradePanel panel = new HullUpgradePanel(hostPanel, view, panelListener);
-        panel.attach(panelLeft, panelTop, WIDTH, panelHeight);
+        panel.sizing = sizing;
+        panel.setTabListener(tabListener);
+        panel.attach(placement.panelLeft(), placement.panelTop(), placement.panelWidth(), placement.panelHeight(), placement.instantly());
         return panel;
     }
 
@@ -92,9 +100,20 @@ public final class HullUpgradePanel extends HoloPanel {
 
     @Override
     protected void build() {
-        TooltipMakerAPI element = startHeader("framework.panel.title", "ui.socketStorage.close", Control.CLOSE);
-        headerElement = finishHeader(element, headerElement, CLOSE_BUTTON_WIDTH + GAP);
+        rebuildHeader();
         rebuildList();
+    }
+
+    @Override
+    protected SocketPanelTab tab() {
+        return SocketPanelTab.HULL_UPGRADES;
+    }
+
+    @Override
+    protected void rebuildHeader() {
+        closeConfirm();
+        headerElement = finishHeader(startHeader("framework.panel.title", "ui.socketStorage.close", Control.CLOSE), headerElement);
+        refreshOpacity();
     }
 
     @Override
@@ -125,6 +144,9 @@ public final class HullUpgradePanel extends HoloPanel {
 
     @Override
     public void buttonPressed(Object id) {
+        if (tabPressed(id)) {
+            return;
+        }
         queue(() -> {
             if (id == Control.CLOSE) {
                 close();
@@ -148,10 +170,10 @@ public final class HullUpgradePanel extends HoloPanel {
     private void openInstallConfirm() {
         HullUpgradeData upgrade = new HullUpgradeData(view.hullSize());
         openConfirm(CONFIRM_HEIGHT, element -> {
-            Color uniqueColor = SocketableRarity.UNIQUE.color();
+            Color uniqueColor = ItemRarity.UNIQUE.color();
             VanillaText.plainPara(element, Translation.msg("framework.confirm.title").arg("name", upgrade.name()).text(), 0f, uniqueColor);
             VanillaText.plainPara(element, Translation.msg("framework.confirm.body")
-                    .arg("left", view.upgradesInStorage() - 1).arg("points", view.points() + 1).arg("max", FrameworkSockets.MAX_POINTS).text(),
+                    .arg("left", view.upgradesInStorage() - 1).arg("points", view.points() + 1).arg("max", HullUpgradeRules.MAX_POINTS).text(),
                     LINE_PAD * 2f, Misc.getTextColor());
         }, "framework.confirm.install", Control.CONFIRM_INSTALL, "framework.confirm.cancel", Control.CANCEL_INSTALL);
     }
@@ -161,27 +183,27 @@ public final class HullUpgradePanel extends HoloPanel {
         closeConfirm();
         float listWidth = panelWidth - PAD * 2f;
         float listTop = PAD + HEADER_HEIGHT + GAP;
-        TooltipMakerAPI element = panelRoot.createUIElement(listWidth, panelHeight - listTop - PAD, true);
-        VanillaText.plainPara(element, Translation.msg("framework.panel.hint").arg("max", FrameworkSockets.MAX_POINTS).text(), 0f,
-                Misc.getGrayColor());
+        float listHeight = panelHeight - listTop - PAD;
+        TooltipMakerAPI element = panelRoot.createUIElement(listWidth, listHeight, true);
         float gridWidth = listWidth - SCROLLBAR_ROOM;
-        float beforeHeading = element.getHeightSoFar();
-        element.addSectionHeading(Translation.text("framework.panel.upgrades"), Alignment.MID, GAP * 3f);
-        float headingHeight = element.getHeightSoFar() - beforeHeading;
-        float labelsHeight = NAME_HEIGHT + STATE_HEIGHT;
-        float fixedHeight = element.getHeightSoFar() + GAP * 2f + labelsHeight
-                + GAP * 3f + POINTS_LINE_HEIGHT + headingHeight + FIT_SLACK;
-        TileSizes tileSizes = tileSizes(gridWidth, panelHeight - listTop - PAD - fixedHeight, view.sockets().size());
-        float tileWidth = tileSizes.socketTile();
-        int socketColumns = tileSizes.socketColumns();
-        element.addCustom(upgradeRow(gridWidth, tileSizes.upgradeTile()), GAP * 2f);
-        addPointsLine(element, (view.points() - view.unspentPoints()) + "/" + view.points(), gridWidth);
+        element.addSectionHeading(Translation.text("framework.panel.upgrades"), Alignment.MID, 0f);
+        element.addCustom(upgradeRow(gridWidth), GAP * 2f);
+        VanillaText.plainPara(element, Translation.msg("framework.panel.hint").arg("max", HullUpgradeRules.MAX_POINTS).text(), GAP * 2f,
+                Misc.getGrayColor());
         element.addSectionHeading(Translation.text("framework.panel.sockets"), Alignment.MID, GAP * 3f);
-        List<SocketEntry> sockets = view.sockets();
-        for (int start = 0; start < sockets.size(); start += socketColumns) {
-            CustomPanelAPI rowPanel = Global.getSettings().createCustom(gridWidth, tileWidth + NAME_HEIGHT + STATE_HEIGHT, null);
-            for (int i = start; i < Math.min(sockets.size(), start + socketColumns); i++) {
-                rowPanel.addComponent(socketCell(sockets.get(i), tileWidth)).inTL((i - start) * (tileWidth + GAP), 0f);
+        TileSizes tileSizes = sizing == Sizing.SCROLL ? scrollingTileSizes(gridWidth)
+                : tileSizes(gridWidth, listHeight - element.getHeightSoFar() - FIT_SLACK, view.sections().size());
+        int sectionColumns = tileSizes.sectionColumns();
+        float columnWidth = tileSizes.columnWidth();
+        float cellHeight = tileSizes.sectionTile() + SECTION_NAME_HEIGHT + STATE_HEIGHT;
+        List<SectionEntry> sections = view.sections();
+        for (int start = 0; start < sections.size(); start += sectionColumns) {
+            int rowCount = Math.min(sections.size(), start + sectionColumns) - start;
+            float rowLeft = (gridWidth - rowCount * columnWidth - (rowCount - 1) * GAP) / 2f;
+            CustomPanelAPI rowPanel = Global.getSettings().createCustom(gridWidth, cellHeight, null);
+            for (int i = 0; i < rowCount; i++) {
+                rowPanel.addComponent(sectionCell(sections.get(start + i), columnWidth, tileSizes.sectionTile()))
+                        .inTL(rowLeft + i * (columnWidth + GAP), 0f);
             }
             element.addCustom(rowPanel, GAP * 2f);
         }
@@ -189,95 +211,98 @@ public final class HullUpgradePanel extends HoloPanel {
         refreshOpacity();
     }
 
-    private static TileSizes tileSizes(float gridWidth, float tileRoom, int socketCount) {
+    static TileSizes scrollingTileSizes(float gridWidth) {
+        float columnWidth = (gridWidth - GAP * (MIN_SECTION_COLUMNS - 1)) / MIN_SECTION_COLUMNS;
+        return new TileSizes(MIN_SECTION_COLUMNS, columnWidth, columnWidth);
+    }
+
+    static TileSizes tileSizes(float gridWidth, float tileRoom, int socketCount) {
         TileSizes best = null;
-        for (int socketColumns = MIN_SOCKET_COLUMNS; socketColumns <= MAX_SOCKET_COLUMNS; socketColumns++) {
-            int rows = (socketCount + socketColumns - 1) / socketColumns;
-            float widthLimit = (gridWidth - GAP * (socketColumns - 1)) / socketColumns;
-            float rowLabels = rows * (NAME_HEIGHT + STATE_HEIGHT + GAP * 2f);
-            float heightLimit = (tileRoom - rowLabels) / (UPGRADE_TILE_SCALE + rows);
-            float socketTile = Math.max(MIN_TILE_SIZE, Math.min(widthLimit, heightLimit));
-            if (best == null || socketTile > best.socketTile()) {
-                best = new TileSizes(socketColumns, socketTile, Math.min(gridWidth, socketTile * UPGRADE_TILE_SCALE));
+        for (int sectionColumns = MIN_SECTION_COLUMNS; sectionColumns <= MAX_SECTION_COLUMNS; sectionColumns++) {
+            int rows = (socketCount + sectionColumns - 1) / sectionColumns;
+            float columnWidth = (gridWidth - GAP * (sectionColumns - 1)) / sectionColumns;
+            float rowLabels = rows * (SECTION_NAME_HEIGHT + STATE_HEIGHT + GAP * 2f);
+            float heightLimit = (tileRoom - rowLabels) / rows;
+            float sectionTile = Math.min(columnWidth, Math.max(MIN_TILE_SIZE, heightLimit));
+            if (best == null || sectionTile > best.sectionTile()) {
+                best = new TileSizes(sectionColumns, columnWidth, sectionTile);
             }
         }
         return best;
     }
 
-    private CustomPanelAPI upgradeRow(float gridWidth, float tileWidth) {
+    private CustomPanelAPI upgradeRow(float gridWidth) {
         HullUpgradeData upgrade = new HullUpgradeData(view.hullSize());
         boolean blocked = view.upgradeBlock() != null;
-        CustomPanelAPI rowPanel = Global.getSettings().createCustom(gridWidth, tileWidth + NAME_HEIGHT + STATE_HEIGHT, null);
-        CustomPanelAPI cellPanel = Global.getSettings().createCustom(tileWidth, tileWidth + NAME_HEIGHT + STATE_HEIGHT, null);
-        TooltipMakerAPI cellElement = cellPanel.createUIElement(tileWidth, tileWidth + NAME_HEIGHT + STATE_HEIGHT, false);
+        CustomPanelAPI rowPanel = Global.getSettings().createCustom(gridWidth, UPGRADE_TILE_SIZE, null);
         IconTileCell.Hooks hooks = new IconTileCell.Hooks(() -> queue(this::openInstallConfirm),
                 tilePosition -> queue(() -> showUpgradeTooltip(upgrade, tilePosition)), () -> queue(() -> hideTooltipOf(upgrade)));
-        cellElement.addCustom(Global.getSettings().createCustom(tileWidth, tileWidth,
-                new IconTileCell(upgrade.iconPath(), SocketableRarity.UNIQUE.color(), blocked, hooks)), 0f);
-        addCentredLabel(cellElement, upgrade.name(), blocked ? BLOCKED_TEXT_COLOR : SocketableRarity.UNIQUE.color(), tileWidth);
-        addCentredLabel(cellElement, Translation.msg("framework.panel.inStorage").arg("count", view.upgradesInStorage()).text(),
-                Misc.getGrayColor(), tileWidth);
-        cellPanel.addUIElement(cellElement).inTL(0f, 0f);
-        rowPanel.addComponent(cellPanel).inTL((gridWidth - tileWidth) / 2f, 0f);
+        rowPanel.addComponent(Global.getSettings().createCustom(UPGRADE_TILE_SIZE, UPGRADE_TILE_SIZE,
+                new IconTileCell(upgrade.iconPath(), ItemRarity.UNIQUE.color(), blocked, hooks))).inTL(0f, 0f);
+        float textLeft = UPGRADE_TILE_SIZE + GAP * 2f;
+        float textWidth = gridWidth - textLeft - POINTS_WIDTH;
+        float textTop = (UPGRADE_TILE_SIZE - NAME_HEIGHT - STATE_HEIGHT) / 2f;
+        TooltipMakerAPI labelElement = rowPanel.createUIElement(textWidth, NAME_HEIGHT + STATE_HEIGHT, false);
+        addLabel(labelElement, upgrade.name(), blocked ? BLOCKED_TEXT_COLOR : ItemRarity.UNIQUE.color(), Alignment.LMID, textWidth, 0f,
+                NAME_HEIGHT);
+        addLabel(labelElement, Translation.msg("framework.panel.inStorage").arg("count", view.upgradesInStorage()).text(),
+                Misc.getGrayColor(), Alignment.LMID, textWidth, NAME_HEIGHT, STATE_HEIGHT);
+        rowPanel.addUIElement(labelElement).inTL(textLeft, textTop);
+        TooltipMakerAPI pointsElement = rowPanel.createUIElement(POINTS_WIDTH, POINTS_LINE_HEIGHT, false);
+        pointsElement.setParaFont(Fonts.ORBITRON_24AABOLD);
+        String points = (view.points() - view.unspentPoints()) + "/" + view.points();
+        addLabel(pointsElement, points, SkillTreePanelStyle.OP_TEXT_COLOR, Alignment.RMID, POINTS_WIDTH, 0f, POINTS_LINE_HEIGHT);
+        rowPanel.addUIElement(pointsElement).inTL(gridWidth - POINTS_WIDTH, (UPGRADE_TILE_SIZE - POINTS_LINE_HEIGHT) / 2f);
         return rowPanel;
     }
 
-    private static void addPointsLine(TooltipMakerAPI element, String points, float width) {
-        element.setParaFont(Fonts.ORBITRON_24AABOLD);
-        LabelAPI pointsLabel = VanillaText.plainPara(element, points, GAP * 3f, SkillTreePanelStyle.OP_TEXT_COLOR);
-        pointsLabel.setAlignment(Alignment.MID);
-        pointsLabel.getPosition().setSize(width, POINTS_LINE_HEIGHT);
-        element.setParaFontDefault();
-    }
-
     private String upgradeStateText() {
-        FrameworkSockets.UpgradeBlock block = view.upgradeBlock();
+        HullUpgradeRules.UpgradeBlock block = view.upgradeBlock();
         if (block == null) {
             return Translation.text("framework.panel.upgradeReady");
         }
         return switch (block) {
-            case AT_MAX_POINTS -> Translation.msg("framework.panel.upgradeAtMax").arg("max", FrameworkSockets.MAX_POINTS).text();
+            case AT_MAX_POINTS -> Translation.msg("framework.panel.upgradeAtMax").arg("max", HullUpgradeRules.MAX_POINTS).text();
             case NONE_IN_STORAGE -> Translation.msg("framework.panel.upgradeNone")
                     .arg("size", ShipHullSizes.displayName(view.hullSize())).text();
         };
     }
 
-    private CustomPanelAPI socketCell(SocketEntry entry, float tileWidth) {
-        CustomPanelAPI cellPanel = Global.getSettings().createCustom(tileWidth, tileWidth + NAME_HEIGHT + STATE_HEIGHT, null);
-        TooltipMakerAPI cellElement = cellPanel.createUIElement(tileWidth, tileWidth + NAME_HEIGHT + STATE_HEIGHT, false);
-        IconTileCell.Hooks hooks = new IconTileCell.Hooks(() -> queue(() -> panelListener.toggleSocket(entry.type())),
-                tilePosition -> queue(() -> showSocketTooltip(entry, tilePosition)), () -> queue(() -> hideTooltipOf(entry)));
-        cellElement.addCustom(Global.getSettings().createCustom(tileWidth, tileWidth, new SocketTypeTile(entry.type(), entry.state(),
-                entry.itemIconPath(), hooks)), 0f);
-        boolean blocked = entry.state() != SocketState.UNLOCKED;
-        addCentredLabel(cellElement, entry.type().displayName(), blocked ? BLOCKED_TEXT_COLOR : FrameworkSocketFlair.colorOf(entry.type()), tileWidth);
-        addCentredLabel(cellElement, stateText(entry), stateColor(entry.state()), tileWidth);
-        cellPanel.addUIElement(cellElement).inTL(0f, 0f);
+    private CustomPanelAPI sectionCell(SectionEntry entry, float columnWidth, float tileWidth) {
+        CustomPanelAPI cellPanel = Global.getSettings().createCustom(columnWidth, tileWidth + SECTION_NAME_HEIGHT + STATE_HEIGHT, null);
+        IconTileCell.Hooks hooks = new IconTileCell.Hooks(() -> queue(() -> panelListener.toggleSection(entry.section())),
+                tilePosition -> queue(() -> showSectionTooltip(entry, tilePosition)), () -> queue(() -> hideTooltipOf(entry)));
+        cellPanel.addComponent(Global.getSettings().createCustom(tileWidth, tileWidth, new SectionTile(entry.section(), entry.state(),
+                entry.itemIconPath(), hooks))).inTL((columnWidth - tileWidth) / 2f, 0f);
+        TooltipMakerAPI labelElement = cellPanel.createUIElement(columnWidth, SECTION_NAME_HEIGHT + STATE_HEIGHT, false);
+        boolean blocked = entry.state() != SectionState.UNLOCKED;
+        addLabel(labelElement, entry.section().displayName(), blocked ? BLOCKED_TEXT_COLOR : SectionFlair.colorOf(entry.section()),
+                Alignment.MID, columnWidth, 0f, SECTION_NAME_HEIGHT);
+        String stateText = stateText(entry.state());
+        if (stateText != null) {
+            addLabel(labelElement, stateText, stateColor(entry.state()), Alignment.MID, columnWidth, SECTION_NAME_HEIGHT, STATE_HEIGHT);
+        }
+        cellPanel.addUIElement(labelElement).inTL(0f, tileWidth);
         return cellPanel;
     }
 
-    private static String stateText(SocketEntry entry) {
-        return switch (entry.state()) {
+    private static String stateText(SectionState state) {
+        return switch (state) {
             case UNLOCKED -> Translation.text("framework.socketState.unlocked");
             case AVAILABLE -> Translation.text("framework.socketState.available");
-            case RESTRICTED -> Translation.msg("framework.socketState.restricted").arg("requirement", entry.requirementText()).text();
-            case NO_POINTS -> Translation.text("framework.socketState.noPoints");
+            case RESTRICTED, NO_POINTS -> null;
         };
     }
 
-    private static Color stateColor(SocketState state) {
-        return switch (state) {
-            case UNLOCKED -> Misc.getHighlightColor();
-            case AVAILABLE -> Misc.getPositiveHighlightColor();
-            case RESTRICTED -> Misc.getNegativeHighlightColor();
-            case NO_POINTS -> Misc.getGrayColor();
-        };
+    private static Color stateColor(SectionState state) {
+        return state == SectionState.UNLOCKED ? Misc.getHighlightColor() : Misc.getPositiveHighlightColor();
     }
 
-    private static void addCentredLabel(TooltipMakerAPI element, String text, Color color, float width) {
-        LabelAPI label = VanillaText.plainPara(element, text, LINE_PAD, color);
-        label.setAlignment(Alignment.MID);
-        label.getPosition().setSize(width, NAME_HEIGHT - LINE_PAD);
+    private static void addLabel(TooltipMakerAPI element, String text, Color color, Alignment alignment, float width, float top,
+                                 float height) {
+        LabelAPI label = VanillaText.plainPara(element, text, 0f, color);
+        label.setAlignment(alignment);
+        label.getPosition().setSize(width, height - LINE_PAD).inTL(0f, top + LINE_PAD);
     }
 
     private void hideTooltipOf(Object tooltipKey) {
@@ -294,16 +319,16 @@ public final class HullUpgradePanel extends HoloPanel {
                 () -> List.of(StyledText.of(upgradeStateText()))), tilePosition);
     }
 
-    private void showSocketTooltip(SocketEntry entry, PositionAPI tilePosition) {
+    private void showSectionTooltip(SectionEntry entry, PositionAPI tilePosition) {
         if (isConfirmOpen()) {
             return;
         }
         hoverTooltip.show(entry, TOOLTIP_WIDTH, (tooltip, expanded) -> I18n.forGameText(() -> {
             tooltip.setTitleOrbitronVeryLarge();
-            tooltip.addTitle(entry.type().displayName(), FrameworkSocketFlair.colorOf(entry.type()));
-            VanillaText.addPara(tooltip, Translation.styled("framework.socketDescription." + entry.type().id()), PAD, Misc.getTextColor());
-            if (entry.type().requirementTag() != null) {
-                VanillaText.addPara(tooltip, HullUpgradeTooltip.socketLine(entry.type()), LINE_PAD, Misc.getGrayColor());
+            tooltip.addTitle(entry.section().displayName(), SectionFlair.colorOf(entry.section()));
+            VanillaText.addPara(tooltip, Translation.styled("framework.socketDescription." + entry.section().id()), PAD, Misc.getTextColor());
+            if (entry.section().requirementTag() != null) {
+                VanillaText.addPara(tooltip, HullUpgradeTooltip.sectionLine(entry.section()), LINE_PAD, Misc.getGrayColor());
             }
             String hintKey = switch (entry.state()) {
                 case UNLOCKED -> "framework.socketHint.unlocked";

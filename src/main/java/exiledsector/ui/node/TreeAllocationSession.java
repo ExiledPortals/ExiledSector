@@ -1,11 +1,12 @@
 package exiledsector.ui.node;
 
+import exiledsector.items.ShipSection;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocationGate;
-import exiledsector.skills.FrameworkSlots;
+import exiledsector.skills.ShipSections;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -17,11 +18,10 @@ import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.StepVerdict;
 import exiledsector.skills.template.TemplateCapture;
 import exiledsector.skills.template.TemplateStep;
-import exiledsector.socketables.FrameworkSockets;
-import exiledsector.socketables.SocketCustody;
-import exiledsector.socketables.SocketType;
-import exiledsector.socketables.Socketable;
-import exiledsector.socketables.SocketableStore;
+import exiledsector.items.HullUpgradeRules;
+import exiledsector.items.SocketCustody;
+import exiledsector.items.Item;
+import exiledsector.items.ItemStore;
 import exiledsector.ui.SkillTreeSounds;
 import lunalib.lunaRefit.BaseRefitButton;
 
@@ -196,8 +196,8 @@ public final class TreeAllocationSession {
         return node != null && viewSnapshot().isHidden(node);
     }
 
-    public Socketable socketedItem(SkillNode node) {
-        return node == null ? null : SocketableStore.lookup(allocator.data().getSocketedItem(node.getId()));
+    public Item socketedItem(SkillNode node) {
+        return node == null ? null : ItemStore.lookup(allocator.data().getSocketedItem(node.getId()));
     }
 
     public boolean isAllocatedSocket(SkillNode node) {
@@ -566,10 +566,10 @@ public final class TreeAllocationSession {
         }
     }
 
-    public boolean installInSocket(SkillNode node, Socketable socketable) {
-        return apply(() -> socketable.canSocketInto(node)
-                && !SocketCustody.installations(ShipSkillDataManager.all()).containsKey(socketable.id())
-                && allocator.socketItem(node, socketable.id()), () -> {
+    public boolean installInSocket(SkillNode node, Item item) {
+        return apply(() -> item.canSocketInto(node)
+                && !SocketCustody.installations(ShipSkillDataManager.all()).containsKey(item.id())
+                && allocator.socketItem(node, item.id()), () -> {
             SkillTreeSounds.socketed();
             feedback.pulse(node);
         });
@@ -579,52 +579,52 @@ public final class TreeAllocationSession {
         return apply(() -> allocator.unsocketItem(node), () -> { });
     }
 
-    public List<FrameworkSlots.Slot> frameworkSlots() {
-        return allocator.frameworkSlots();
+    public List<ShipSections.UnlockedSection> sections() {
+        return allocator.sections();
     }
 
-    public int frameworkPoints() {
-        return allocator.data().getFrameworkPoints();
+    public int hullUpgradePoints() {
+        return allocator.data().getHullUpgradePoints();
     }
 
-    public int unspentFrameworkPoints() {
-        return allocator.data().getUnspentFrameworkPoints();
+    public int unspentHullUpgradePoints() {
+        return allocator.data().getUnspentHullUpgradePoints();
     }
 
-    public boolean isSocketTypeUnlocked(SocketType socketType) {
-        return allocator.data().isSocketTypeUnlocked(socketType.id());
+    public boolean isSectionUnlocked(ShipSection section) {
+        return allocator.data().isSocketTypeUnlocked(section.id());
     }
 
     public HullSize hullSize() {
         return allocator.hullSize();
     }
 
-    public FrameworkSockets.UnlockBlock unlockBlock(SocketType socketType) {
-        return allocator.unlockBlock(socketType);
+    public HullUpgradeRules.UnlockBlock unlockBlock(ShipSection section) {
+        return allocator.unlockBlock(section);
     }
 
-    public String unmetRequirement(SocketType socketType) {
-        return allocator.unmetRequirement(socketType);
+    public String unmetRequirement(ShipSection section) {
+        return allocator.unmetRequirement(section);
     }
 
     public boolean installUpgrade() {
         return apply(allocator::installUpgrade, SkillTreeSounds::socketed);
     }
 
-    public boolean unlockSocket(SocketType socketType) {
-        return apply(() -> allocator.unlockSocket(socketType), SkillTreeSounds::socketed);
+    public boolean unlockSection(ShipSection section) {
+        return apply(() -> allocator.unlockSection(section), SkillTreeSounds::socketed);
     }
 
-    public boolean lockSocket(SocketType socketType) {
-        return apply(() -> allocator.lockSocket(socketType), () -> { });
+    public boolean lockSection(ShipSection section) {
+        return apply(() -> allocator.lockSection(section), () -> { });
     }
 
-    public boolean socketFrameworkItem(SocketType socketType, Socketable socketable) {
-        return apply(() -> allocator.socketFrameworkItem(socketType, socketable), SkillTreeSounds::socketed);
+    public boolean installInSection(ShipSection section, Item item) {
+        return apply(() -> allocator.installInSection(section, item), SkillTreeSounds::socketed);
     }
 
-    public boolean unsocketFrameworkItem(SocketType socketType) {
-        return apply(() -> allocator.unsocketFrameworkItem(socketType), () -> { });
+    public boolean removeFromSection(ShipSection section) {
+        return apply(() -> allocator.removeFromSection(section), () -> { });
     }
 
     private boolean apply(BooleanSupplier change, Runnable afterChange) {
