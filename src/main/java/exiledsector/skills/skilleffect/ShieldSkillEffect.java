@@ -106,7 +106,12 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
     SHIELD_TURN_RATE_PERCENT(PERCENT, stat(MutableShipStatsAPI::getShieldTurnRateMult), "stat.shieldTurnRate", false),
     SHIELD_RAISE_RATE_PERCENT(PERCENT, stat(MutableShipStatsAPI::getShieldUnfoldRateMult), "stat.shieldRaiseRate", false),
     SHIELD_SOFT_FLUX_CONVERSION_PERCENT(PERCENT, new StatTarget.PercentagePoints(MutableShipStatsAPI::getShieldSoftFluxConversion),
-            "stat.shieldSoftFluxConversion", false),
+            "stat.shieldSoftFluxConversion", false) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.templated(this, magnitude);
+        }
+    },
     SHIELD_DAMAGE_SHARED_PERCENT(SharedShieldDamageListener.SHARED_PERCENT_KEY,
             SharedShieldDamageListener.class, SharedShieldDamageListener::new) {
         @Override

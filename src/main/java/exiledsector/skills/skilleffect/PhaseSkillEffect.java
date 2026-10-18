@@ -9,10 +9,12 @@ import com.fs.starfarer.api.combat.ShipSystemAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.HullDamageAboutToBeTakenListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.impl.campaign.skills.NeuralLinkScript;
 import com.fs.starfarer.api.util.FaderUtil;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.compat.CombatGlow;
+import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.ShipFacts;
 import org.lwjgl.util.vector.Vector2f;
@@ -20,17 +22,30 @@ import org.lwjgl.util.vector.Vector2f;
 import java.awt.Color;
 import java.util.Map;
 
+import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
 import static exiledsector.skills.skilleffect.StatTarget.all;
 import static exiledsector.skills.skilleffect.StatTarget.bonus;
 import static exiledsector.skills.skilleffect.StatTarget.dynamicMod;
+import static exiledsector.skills.skilleffect.StatTarget.dynamicStat;
 import static exiledsector.skills.skilleffect.StatTarget.stat;
 
 public enum PhaseSkillEffect implements BackedSkillEffect {
 
     PHASE_CLOAK_ACTIVATION_COST_MULT(MULT, bonus(MutableShipStatsAPI::getPhaseCloakActivationCostBonus),
             "stat.phaseCloakActivationCost", true),
+    PHASE_CLOAK_UPKEEP_COST_MULT(MULT, bonus(MutableShipStatsAPI::getPhaseCloakUpkeepCostBonus),
+            "stat.phaseCloakUpkeepCost", true),
+    PHASE_CLOAK_COOLDOWN_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getPhaseCloakCooldownBonus),
+            "stat.phaseCloakCooldown", true),
+    PHASE_CLOAK_ACCELERATION_PERCENT(FLAT, dynamicMod(Stats.PHASE_CLOAK_ACCEL_MOD), "stat.accelerationWhilePhased", false) {
+        @Override
+        public StyledText description(float magnitude) {
+            return PERCENT.describeStat(magnitude, "stat.accelerationWhilePhased");
+        }
+    },
+    PHASE_TIMEFLOW_PERCENT(PERCENT, dynamicStat(Stats.PHASE_TIME_BONUS_MULT), "stat.phaseTimeFlowBonus", false),
     PHASE_CLOAK_FLUX_THRESHOLD_PERCENT(PERCENT, dynamicMod("phase_cloak_flux_level_for_min_speed_mod"),
             "stat.hardFluxLevelForMinimumPhaseSpeed", false),
     COMBAT_BOOST_WHILE_PHASED(new ConditionalStatEffect(MULT, all(stat(MutableShipStatsAPI::getFluxDissipation),
