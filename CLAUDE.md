@@ -23,3 +23,4 @@ Starsector mod (Java 17, Maven) that gives every ship its own skill tree. Mod id
 - User-facing text goes through `exiledsector.i18n` (`I18n.forGameText(() -> Translation.msg("key")...)`), with message keys under `data/strings/exiledSector`, not hardcoded literals.
 - Magnitudes are placeholders pending balance (`docs/analysis/balance.csv`). Don't treat current values as intended.
 - Update `docs/docs.md` when you change how an effect behaves.
+- Line endings: git stores LF and `core.autocrlf=true` checks most files out as CRLF (some stay LF). That's expected and git normalises on commit, so don't report CRLF as a problem or convert files wholesale. Only mixed endings inside one file matter: the editor's byte-for-byte round-trip test fails on them. The Edit tool keeps a file's endings. Git Bash `sed -i` rewrites a CRLF file as LF, and scripts that split on `\n` leave stray `\r`, so when scripting an edit, write the file back with the ending it already had.
