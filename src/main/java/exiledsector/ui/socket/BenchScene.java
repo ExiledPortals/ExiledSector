@@ -8,17 +8,12 @@ import java.awt.Color;
 
 final class BenchScene {
 
-    static final String ART_PATH = "graphics/ui/exiledSector/modification_bench.png";
     static final float ART_WIDTH = 320f;
     static final float ART_HEIGHT = 180f;
-    static final float SOCKET_X = 159f;
-    static final float SOCKET_Y = 83.3f;
     static final float LEFT_CONSOLE_X = 72.2f;
     static final float LEFT_CONSOLE_Y = 118.8f;
     static final float RIGHT_CONSOLE_X = 241.2f;
     static final float RIGHT_CONSOLE_Y = 121.2f;
-    static final float ORBIT_RADIUS_X = 58f;
-    static final float ORBIT_RADIUS_Y = 42f;
     static final float ORBIT_DROP_RADIANS = (float) Math.toRadians(15.0);
     static final float SLOT_RADIUS = 24f;
     static final float TILE_SIZE = 15f;
@@ -45,8 +40,8 @@ final class BenchScene {
         return Math.max(44f, Math.min(80f, TILE_SIZE * scale));
     }
 
-    static void drawArt(float left, float bottom, float scale, float alpha) {
-        SpriteAPI art = SPRITES.sprite(ART_PATH);
+    static void drawArt(BenchMode mode, float left, float bottom, float scale, float alpha) {
+        SpriteAPI art = SPRITES.sprite(mode.artPath());
         if (art == null || alpha <= 0f) {
             return;
         }

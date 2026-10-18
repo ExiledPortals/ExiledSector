@@ -19,6 +19,7 @@ import exiledsector.ui.node.NodeSearch;
 import exiledsector.ui.node.TreeAllocationSession;
 import exiledsector.ui.chart.StarChartTab;
 import exiledsector.ui.refit.RefitScreenLayout;
+import exiledsector.ui.socket.BenchMode;
 import exiledsector.ui.socket.HullUpgradePanel;
 import exiledsector.ui.socket.SocketPanelPlacement;
 import exiledsector.ui.socket.SocketPanelTab;
@@ -177,19 +178,30 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     }
 
     private void openBay() {
-        if (bay != null || closing || storagePanel == null) {
+        if (storagePanel != null) {
+            openBay(BenchMode.HULL_ITEMS, null);
+        }
+    }
+
+    private void openBay(BenchMode mode, Item initialItem) {
+        if (bay != null || closing) {
             return;
         }
-        ItemStoragePanel swapped = storagePanel;
-        forgetStorage();
-        swapped.swapOut();
+        swapOutStorage();
+        swapOutCharts();
         SkillTreeSounds.panelOpened();
         bay = ModificationBay.open(hostPanel, ModificationBenchScreen.benchArea(Global.getSettings().getScreenWidth(),
-                Global.getSettings().getScreenHeight(), false), SocketCustody.shipNames(ownedShips), new ModificationBay.Listener() {
+                Global.getSettings().getScreenHeight(), false), SocketCustody.shipNames(ownedShips), mode, initialItem, new ModificationBay.Listener() {
             @Override
             public void closed() {
+                BenchMode closedMode = bay == null ? mode : bay.mode();
                 bay = null;
-                if (!closing) {
+                if (closing) {
+                    return;
+                }
+                if (closedMode == BenchMode.STAR_CHARTS) {
+                    openCharts();
+                } else {
                     showStorage(null);
                 }
             }
@@ -232,7 +244,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
         SocketPanelPlacement storagePlacement = placement(true);
         SocketPanelPlacement detailPlacement = StarChartTab.detailBeside(storagePlacement, HullUpgradesLayout.chartsRoomRight(layout),
                 Float.MAX_VALUE);
-        chartTab = StarChartTab.open(hostPanel, storagePlacement, detailPlacement, tabListener, EnumSet.allOf(SocketPanelTab.class),
+        chartTab = StarChartTab.open(hostPanel, storagePlacement, detailPlacement, detailPlacement, tabListener, EnumSet.allOf(SocketPanelTab.class),
                 new StarChartTab.Listener() {
                     @Override
                     public void closed() {
@@ -248,6 +260,12 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
                     @Override
                     public void pressedInside() {
                         sectionsDisplay.hideTooltip();
+                    }
+
+                    @Override
+                    public boolean openModifyScreen(Item chart) {
+                        openBay(BenchMode.STAR_CHARTS, chart);
+                        return true;
                     }
                 });
     }

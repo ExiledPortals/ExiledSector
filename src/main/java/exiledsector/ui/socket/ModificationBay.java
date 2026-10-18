@@ -1,9 +1,15 @@
 package exiledsector.ui.socket;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import exiledsector.items.Item;
+import exiledsector.items.ItemStore;
 import exiledsector.ui.SkillTreeSounds;
+import exiledsector.ui.chart.StarChartBrowser;
+import exiledsector.ui.chart.StarChartTab;
 
+import java.util.EnumSet;
+import java.util.List;
 import java.util.function.Function;
 
 public final class ModificationBay {
@@ -20,10 +26,14 @@ public final class ModificationBay {
 
     private final CustomPanelAPI hostPanel;
     private final Listener bayListener;
+    private final StarChartBrowser chartBrowser = new StarChartBrowser();
     private Function<Item, String> installedShipLookup;
     private SocketWorkbenchPanel benchPanel;
     private ItemStoragePanel storagePanel;
+    private StarChartStoragePanel chartStoragePanel;
     private SocketPanelPlacement drawerPlacement;
+    private SocketPanelPlacement sidePlacement;
+    private BenchMode benchMode = BenchMode.HULL_ITEMS;
     private boolean drawer;
     private boolean closing;
 
@@ -35,9 +45,29 @@ public final class ModificationBay {
 
     public static ModificationBay open(CustomPanelAPI hostPanel, SocketPanelPlacement area, Function<Item, String> installedShipLookup,
                                        Listener bayListener) {
+        return open(hostPanel, area, installedShipLookup, BenchMode.HULL_ITEMS, null, bayListener);
+    }
+
+    public static ModificationBay open(CustomPanelAPI hostPanel, SocketPanelPlacement area, Function<Item, String> installedShipLookup,
+                                       BenchMode initialMode, Item initialItem, Listener bayListener) {
         ModificationBay bay = new ModificationBay(hostPanel, installedShipLookup, bayListener);
+        bay.benchMode = initialMode;
         bay.layOut(area);
+        if (initialItem != null) {
+            bay.loadInitial(initialItem);
+        }
         return bay;
+    }
+
+    private void loadInitial(Item item) {
+        benchPanel.load(item);
+        if (storagePanel != null) {
+            storagePanel.setSelected(item);
+        }
+        if (chartStoragePanel != null) {
+            chartBrowser.select(item);
+            chartStoragePanel.refresh();
+        }
     }
 
     static boolean fitsSideBySide(float areaWidth, float areaHeight) {
@@ -55,13 +85,14 @@ public final class ModificationBay {
         float groupTop = area.panelTop() + (area.panelHeight() - benchHeight) / 2f;
         float benchLeft = drawer ? groupLeft : groupLeft + ItemStoragePanel.COMPACT_WIDTH + PANEL_GAP;
         benchPanel = SocketWorkbenchPanel.open(hostPanel, new SocketPanelPlacement(benchLeft, groupTop, benchWidth, benchHeight, area.instantly()),
-                false, benchListener());
+                false, benchMode, benchListener());
         if (drawer) {
             float inset = SocketWorkbenchPanel.FRAME_INSET;
             drawerPlacement = new SocketPanelPlacement(benchLeft + inset, groupTop + inset, ItemStoragePanel.COMPACT_WIDTH, benchHeight - inset * 2f,
                     false);
         } else {
-            openStorage(new SocketPanelPlacement(groupLeft, groupTop, ItemStoragePanel.COMPACT_WIDTH, benchHeight, area.instantly()));
+            sidePlacement = new SocketPanelPlacement(groupLeft, groupTop, ItemStoragePanel.COMPACT_WIDTH, benchHeight, area.instantly());
+            openPicker(sidePlacement);
         }
     }
 
@@ -72,6 +103,12 @@ public final class ModificationBay {
                 if (storagePanel != null) {
                     storagePanel.refresh(installedShipLookup);
                     storagePanel.setSelected(loaded);
+                }
+                if (chartStoragePanel != null) {
+                    ItemStore chartStore = ItemStore.starChartsIfCreated();
+                    chartBrowser.reload(chartStore == null ? List.of() : chartStore.owned());
+                    chartBrowser.select(loaded);
+                    chartStoragePanel.refresh();
                 }
             }
 
@@ -95,19 +132,107 @@ public final class ModificationBay {
             public void requestItem() {
                 toggleDrawer();
             }
+
+            @Override
+            public boolean offersModeSwitch() {
+                return true;
+            }
+
+            @Override
+            public void modeChanged(BenchMode mode) {
+                switchPicker(mode);
+            }
         };
+    }
+
+    private void switchPicker(BenchMode mode) {
+        benchMode = mode;
+        swapOutPickers();
+        if (!drawer && !closing) {
+            openPicker(new SocketPanelPlacement(sidePlacement.panelLeft(), sidePlacement.panelTop(), sidePlacement.panelWidth(),
+                    sidePlacement.panelHeight(), true));
+        }
+    }
+
+    private void swapOutPickers() {
+        if (storagePanel != null) {
+            ItemStoragePanel swapped = storagePanel;
+            storagePanel = null;
+            swapped.swapOut();
+        }
+        if (chartStoragePanel != null) {
+            StarChartStoragePanel swapped = chartStoragePanel;
+            chartStoragePanel = null;
+            swapped.swapOut();
+        }
+    }
+
+    private boolean pickerOpen() {
+        return storagePanel != null || chartStoragePanel != null;
+    }
+
+    private void closePicker() {
+        if (storagePanel != null) {
+            storagePanel.close();
+        }
+        if (chartStoragePanel != null) {
+            chartStoragePanel.close();
+        }
     }
 
     private void toggleDrawer() {
         if (closing) {
             return;
         }
-        if (storagePanel != null) {
-            storagePanel.close();
+        if (pickerOpen()) {
+            closePicker();
             return;
         }
         SkillTreeSounds.panelOpened();
-        openStorage(drawerPlacement);
+        openPicker(drawerPlacement);
+    }
+
+    private void openPicker(SocketPanelPlacement placement) {
+        if (benchMode == BenchMode.STAR_CHARTS) {
+            openChartStorage(placement);
+        } else {
+            openStorage(placement);
+        }
+    }
+
+    private void openChartStorage(SocketPanelPlacement placement) {
+        int moved = StarChartTab.prepare(Global.getSector(), chartBrowser);
+        if (benchPanel != null && benchPanel.loaded() != null) {
+            chartBrowser.select(benchPanel.loaded());
+        }
+        chartStoragePanel = StarChartStoragePanel.open(hostPanel, placement, chartBrowser, new StarChartStoragePanel.Listener() {
+            @Override
+            public void chartClicked(Item chart) {
+                if (benchPanel == null) {
+                    return;
+                }
+                chartBrowser.select(chart);
+                benchPanel.load(chart);
+                if (drawer && chartStoragePanel != null) {
+                    chartStoragePanel.close();
+                } else if (chartStoragePanel != null) {
+                    chartStoragePanel.refresh();
+                }
+            }
+
+            @Override
+            public void closed() {
+                chartStoragePanel = null;
+                if (!drawer) {
+                    close();
+                }
+            }
+
+            @Override
+            public void pressedInside() {
+                bayListener.pressedInside();
+            }
+        }, StarChartTab.movedNotice(moved), null, EnumSet.of(SocketPanelTab.STAR_CHARTS));
     }
 
     private void openStorage(SocketPanelPlacement placement) {
@@ -161,17 +286,25 @@ public final class ModificationBay {
         if (storagePanel != null) {
             storagePanel.refresh(lookup);
         }
+        if (chartStoragePanel != null) {
+            chartStoragePanel.refresh();
+        }
         if (benchPanel != null) {
             benchPanel.refresh();
         }
     }
 
     public boolean contains(float x, float y) {
-        return (benchPanel != null && benchPanel.contains(x, y)) || (storagePanel != null && storagePanel.contains(x, y));
+        return (benchPanel != null && benchPanel.contains(x, y)) || (storagePanel != null && storagePanel.contains(x, y))
+                || (chartStoragePanel != null && chartStoragePanel.contains(x, y));
     }
 
     public boolean isOpen() {
         return !closing;
+    }
+
+    public BenchMode mode() {
+        return benchMode;
     }
 
     public boolean escape() {
@@ -184,8 +317,8 @@ public final class ModificationBay {
         if (storagePanel != null && storagePanel.escape()) {
             return true;
         }
-        if (drawer && storagePanel != null) {
-            storagePanel.close();
+        if (drawer && pickerOpen()) {
+            closePicker();
             return true;
         }
         close();
@@ -197,9 +330,7 @@ public final class ModificationBay {
             return;
         }
         closing = true;
-        if (storagePanel != null) {
-            storagePanel.close();
-        }
+        closePicker();
         if (benchPanel != null) {
             benchPanel.close();
         }

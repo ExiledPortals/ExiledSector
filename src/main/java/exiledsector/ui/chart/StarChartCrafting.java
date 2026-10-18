@@ -54,6 +54,15 @@ public final class StarChartCrafting {
     private StarChartCrafting() {
     }
 
+    public static String currencyDescriptionKey(ItemCurrency currency) {
+        String chartKey = chartCurrencyDescriptionKey(currency);
+        return Translation.has(chartKey) ? chartKey : "material." + currency.itemId() + ".description";
+    }
+
+    static String chartCurrencyDescriptionKey(ItemCurrency currency) {
+        return "chart.currency." + currency.key() + ".description";
+    }
+
     public static List<ItemCurrency> currencies() {
         return ItemCurrencies.forType(ItemType.STAR_CHART);
     }

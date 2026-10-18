@@ -8,8 +8,11 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
+import exiledsector.ui.SkillTreeSounds;
+import exiledsector.ui.socket.BenchMode;
 import exiledsector.ui.socket.SocketPanelPlacement;
 import exiledsector.ui.socket.SocketPanelTab;
+import exiledsector.ui.socket.SocketWorkbenchPanel;
 import exiledsector.ui.socket.StarChartDetailPanel;
 import exiledsector.ui.socket.StarChartStoragePanel;
 
@@ -26,6 +29,10 @@ public final class StarChartTab {
         void wormholeOpened(String message);
 
         void pressedInside();
+
+        default boolean openModifyScreen(Item chart) {
+            return false;
+        }
     }
 
     public static final float DETAIL_WIDTH = 540f;
@@ -34,10 +41,15 @@ public final class StarChartTab {
 
     private final StarChartBrowser browser = new StarChartBrowser();
     private final Listener hostListener;
+    private CustomPanelAPI hostPanel;
+    private SocketPanelPlacement detailPlacement;
+    private SocketPanelPlacement benchPlacement;
     private ItemStore chartStore;
     private StarChartStoragePanel storagePanel;
     private StarChartDetailPanel detailPanel;
+    private SocketWorkbenchPanel chartBench;
     private boolean closedReported;
+    private boolean closing;
     private boolean wormholeOpened;
 
     StarChartTab(Listener hostListener) {
@@ -45,14 +57,17 @@ public final class StarChartTab {
     }
 
     public static StarChartTab open(CustomPanelAPI hostPanel, SocketPanelPlacement storagePlacement, SocketPanelPlacement detailPlacement,
-                                    Consumer<SocketPanelTab> tabListener, Set<SocketPanelTab> shownTabs, Listener hostListener) {
+                                    SocketPanelPlacement benchPlacement, Consumer<SocketPanelTab> tabListener, Set<SocketPanelTab> shownTabs,
+                                    Listener hostListener) {
         StarChartTab chartTab = new StarChartTab(hostListener);
         int moved = prepare(Global.getSector(), chartTab.browser);
+        chartTab.hostPanel = hostPanel;
+        chartTab.detailPlacement = detailPlacement;
+        chartTab.benchPlacement = benchPlacement;
         chartTab.chartStore = ItemStore.starChartsIfCreated();
         chartTab.storagePanel = StarChartStoragePanel.open(hostPanel, storagePlacement, chartTab.browser, chartTab.new StorageListener(),
                 movedNotice(moved), tabListener, shownTabs);
-        chartTab.detailPanel = StarChartDetailPanel.open(hostPanel, detailPlacement, chartTab.chartStore, StarChartOpening.FROM_STORE,
-                chartTab.browser.selectedChart(), chartTab.new DetailListener());
+        chartTab.openDetail(detailPlacement);
         return chartTab;
     }
 
@@ -63,22 +78,37 @@ public final class StarChartTab {
                 storagePlacement.instantly());
     }
 
-    static int prepare(SectorAPI sector, StarChartBrowser browser) {
+    public static int prepare(SectorAPI sector, StarChartBrowser browser) {
         int moved = sector == null ? 0 : StarCharts.absorbCharts(sector);
         ItemStore store = ItemStore.starChartsIfCreated();
         browser.reload(store == null ? List.of() : store.owned());
         return moved;
     }
 
-    static String movedNotice(int moved) {
+    public static String movedNotice(int moved) {
         return moved > 0 ? I18n.forGameText(() -> Translation.msg("chart.ui.storage.moved").count(moved).text()) : null;
     }
 
+    private void openDetail(SocketPanelPlacement placement) {
+        detailPanel = StarChartDetailPanel.open(hostPanel, placement, chartStore, StarChartOpening.FROM_STORE, browser.selectedChart(),
+                new DetailListener());
+    }
+
     public boolean escape() {
+        if (chartBench != null) {
+            if (!chartBench.escape()) {
+                chartBench.close();
+            }
+            return true;
+        }
         return detailPanel != null && detailPanel.escape();
     }
 
     public void close() {
+        closing = true;
+        if (chartBench != null) {
+            chartBench.close();
+        }
         if (storagePanel != null) {
             storagePanel.close();
         }
@@ -88,6 +118,11 @@ public final class StarChartTab {
     }
 
     public void swapOut() {
+        closing = true;
+        if (chartBench != null) {
+            chartBench.swapOut();
+            chartBench = null;
+        }
         if (storagePanel != null) {
             storagePanel.swapOut();
         }
@@ -97,11 +132,17 @@ public final class StarChartTab {
     }
 
     public boolean contains(float x, float y) {
-        return (storagePanel != null && storagePanel.contains(x, y)) || (detailPanel != null && detailPanel.contains(x, y));
+        return (storagePanel != null && storagePanel.contains(x, y)) || (detailPanel != null && detailPanel.contains(x, y))
+                || (chartBench != null && chartBench.contains(x, y));
     }
 
     public boolean isVisible() {
-        return (storagePanel != null && storagePanel.isVisible()) || (detailPanel != null && detailPanel.isVisible());
+        return (storagePanel != null && storagePanel.isVisible()) || (detailPanel != null && detailPanel.isVisible())
+                || (chartBench != null && chartBench.isVisible());
+    }
+
+    public boolean isWorkbenchOpen() {
+        return chartBench != null;
     }
 
     public void hideTooltips() {
@@ -124,7 +165,18 @@ public final class StarChartTab {
     }
 
     void chartClicked(Item chart) {
-        if (wormholeOpened || detailPanel == null) {
+        if (wormholeOpened) {
+            return;
+        }
+        if (chartBench != null) {
+            browser.select(chart);
+            chartBench.load(chart);
+            if (storagePanel != null) {
+                storagePanel.refresh();
+            }
+            return;
+        }
+        if (detailPanel == null) {
             return;
         }
         browser.toggle(chart);
@@ -142,7 +194,36 @@ public final class StarChartTab {
         }
     }
 
+    void modifyRequested() {
+        if (closing || wormholeOpened || chartBench != null || browser.selectedChart() == null) {
+            return;
+        }
+        Item selected = browser.selectedChart();
+        if (hostListener.openModifyScreen(selected)) {
+            return;
+        }
+        if (detailPanel != null) {
+            detailPanel.swapOut();
+            detailPanel = null;
+        }
+        SkillTreeSounds.panelOpened();
+        chartBench = SocketWorkbenchPanel.open(hostPanel, benchPlacement, false, BenchMode.STAR_CHARTS, new BenchListener());
+        chartBench.load(selected);
+    }
+
+    void benchClosed() {
+        chartBench = null;
+        if (!closing && detailPanel == null) {
+            openDetail(new SocketPanelPlacement(detailPlacement.panelLeft(), detailPlacement.panelTop(), detailPlacement.panelWidth(),
+                    detailPlacement.panelHeight(), true));
+        }
+    }
+
     void storageClosed() {
+        closing = true;
+        if (chartBench != null) {
+            chartBench.close();
+        }
         if (detailPanel != null) {
             detailPanel.close();
         }
@@ -184,13 +265,34 @@ public final class StarChartTab {
     private final class DetailListener implements StarChartDetailPanel.Listener {
 
         @Override
-        public void chartChanged(Item selectedAfter) {
-            StarChartTab.this.chartChanged(selectedAfter);
+        public void wormholeOpened(String message) {
+            StarChartTab.this.wormholeOpened(message);
         }
 
         @Override
-        public void wormholeOpened(String message) {
-            StarChartTab.this.wormholeOpened(message);
+        public void pressedInside() {
+            if (storagePanel != null) {
+                storagePanel.hideTooltip();
+            }
+            hostListener.pressedInside();
+        }
+
+        @Override
+        public void modifyRequested() {
+            StarChartTab.this.modifyRequested();
+        }
+    }
+
+    private final class BenchListener implements SocketWorkbenchPanel.Listener {
+
+        @Override
+        public void changed(Item loaded) {
+            chartChanged(loaded);
+        }
+
+        @Override
+        public void closed() {
+            benchClosed();
         }
 
         @Override

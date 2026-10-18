@@ -6,27 +6,17 @@ import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.CutStyle;
 import com.fs.starfarer.api.ui.Fonts;
-import com.fs.starfarer.api.ui.LabelAPI;
-import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
-import exiledsector.items.CraftingMaterials;
-import exiledsector.items.ItemCrafting;
 import exiledsector.items.Item;
-import exiledsector.items.ItemCurrency;
-import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemName;
 import exiledsector.items.ItemStore;
-import exiledsector.items.ItemUnlock;
-import exiledsector.items.MaterialItems;
 import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.VanillaText;
-import exiledsector.ui.cargo.CargoIconLooks;
-import exiledsector.ui.chart.StarChartCrafting;
 import exiledsector.ui.chart.StarChartOpening;
 import exiledsector.ui.chart.StarChartPreviewText;
 import exiledsector.ui.chart.WormholeOpenCheck;
@@ -34,48 +24,38 @@ import exiledsector.ui.chart.WormholeOpenCheck;
 import java.awt.Color;
 import java.util.List;
 import java.util.Random;
-import java.util.function.Predicate;
 
 public final class StarChartDetailPanel extends HoloPanel {
 
     public interface Listener {
 
-        void chartChanged(Item selectedAfter);
-
         void wormholeOpened(String message);
 
         void pressedInside();
+
+        void modifyRequested();
     }
 
-    private static final float TILE_SIZE = 52f;
-    private static final float MIN_TILE_SIZE = 36f;
-    private static final float COUNT_INSET = 4f;
-    private static final float CURRENCY_LABEL_HEIGHT = 20f;
-    private static final float CURRENCY_HEIGHT = CURRENCY_LABEL_HEIGHT + TILE_SIZE;
+    private static final float MODIFY_BUTTON_HEIGHT = 30f;
     private static final float NOTICE_HEIGHT = 36f;
     private static final float REASON_HEIGHT = 20f;
     private static final float OPEN_BUTTON_HEIGHT = 44f;
     private static final float CONFIRM_HEIGHT = 170f;
-    private static final float USE_CONFIRM_HEIGHT = 180f;
-    private static final float GROW_CONFIRM_HEIGHT = 140f;
     private static final float TOOLTIP_WIDTH = 340f;
-    private static final String FALLBACK_ICON = ItemDefinition.FALLBACK_ICON;
 
-    private enum Control {OPEN_WORMHOLE, CONFIRM_OPEN, CONFIRM_USE, CONFIRM_GROW, CANCEL_CONFIRM}
+    private enum Control {MODIFY, OPEN_WORMHOLE, CONFIRM_OPEN, CANCEL_CONFIRM}
 
     private final Listener detailListener;
     private final ItemStore chartStore;
     private final StarChartOpening.Opener opener;
-    private final Random craftingRandom = new Random();
     private final Random openingRandom = new Random();
     private UIComponentAPI headerElement;
     private UIComponentAPI detailsElement;
-    private UIComponentAPI currencyElement;
+    private UIComponentAPI modifyElement;
     private UIComponentAPI noticeElement;
     private UIComponentAPI openElement;
     private Item shownChart;
     private Item pendingChart;
-    private ItemCurrency pendingCurrency;
     private String noticeText;
     private boolean noticeIsWarning;
     private boolean wormholeOpened;
@@ -146,7 +126,7 @@ public final class StarChartDetailPanel extends HoloPanel {
 
     @Override
     protected UIComponentAPI[] contentComponents() {
-        return new UIComponentAPI[]{detailsElement, currencyElement, noticeElement, openElement};
+        return new UIComponentAPI[]{detailsElement, modifyElement, noticeElement, openElement};
     }
 
     @Override
@@ -158,12 +138,14 @@ public final class StarChartDetailPanel extends HoloPanel {
         if (wormholeOpened) {
             return;
         }
-        if (id == Control.OPEN_WORMHOLE) {
+        if (id == Control.MODIFY) {
+            if (!isConfirmOpen() && shownChart != null) {
+                detailListener.modifyRequested();
+            }
+        } else if (id == Control.OPEN_WORMHOLE) {
             openPressed();
         } else if (id == Control.CONFIRM_OPEN) {
             confirmOpen();
-        } else if (id == Control.CONFIRM_USE || id == Control.CONFIRM_GROW) {
-            confirmCraft(id == Control.CONFIRM_GROW);
         } else if (id == Control.CANCEL_CONFIRM) {
             cancelConfirm();
         }
@@ -190,8 +172,8 @@ public final class StarChartDetailPanel extends HoloPanel {
         return openTop() - GAP - NOTICE_HEIGHT;
     }
 
-    private float currencyTop() {
-        return noticeTop() - GAP - CURRENCY_HEIGHT;
+    private float modifyTop() {
+        return noticeTop() - GAP - MODIFY_BUTTON_HEIGHT;
     }
 
     private static float detailsTop() {
@@ -200,14 +182,14 @@ public final class StarChartDetailPanel extends HoloPanel {
 
     private void rebuildContent() {
         rebuildDetails();
-        rebuildCurrencies();
+        rebuildModifyButton();
         rebuildNotice();
         rebuildOpenButton();
         refreshOpacity();
     }
 
     private void rebuildDetails() {
-        float detailsHeight = Math.max(OPEN_BUTTON_HEIGHT, currencyTop() - GAP - detailsTop());
+        float detailsHeight = Math.max(OPEN_BUTTON_HEIGHT, modifyTop() - GAP - detailsTop());
         TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), detailsHeight, true);
         if (shownChart == null) {
             VanillaText.plainPara(element, Translation.text(chartStore == null || chartStore.owned().isEmpty()
@@ -255,248 +237,16 @@ public final class StarChartDetailPanel extends HoloPanel {
         }
     }
 
-    private static Predicate<ItemDefinition> allowedUniques() {
-        return definition -> ItemUnlock.unlockConditionMet(definition, Global.getSector());
-    }
-
-    private void rebuildCurrencies() {
-        hoverTooltip.hide();
-        TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), CURRENCY_HEIGHT, false);
-        VanillaText.plainPara(element, Translation.text("chart.ui.currency.heading"), 0f, Misc.getGrayColor());
-        List<ItemCurrency> currencies = StarChartCrafting.currencies();
-        if (currencies.isEmpty()) {
-            VanillaText.plainPara(element, Translation.text("chart.ui.currency.none"), LINE_PAD * 2f, Misc.getGrayColor());
-        } else {
-            CraftingMaterials materials = playerMaterials();
-            float tileSize = tileSizeFor(innerWidth(), currencies.size());
-            int perRow = Math.max(1, (int) ((innerWidth() + GAP) / (tileSize + GAP)));
-            for (int i = 0; i < Math.min(currencies.size(), perRow); i++) {
-                addTile(element, currencies.get(i), i * (tileSize + GAP), CURRENCY_LABEL_HEIGHT, tileSize, materials);
-            }
-        }
-        currencyElement = replaceElement(currencyElement, element, PAD, currencyTop());
-    }
-
-    static float tileSizeFor(float rowWidth, int tileCount) {
-        if (tileCount <= 0) {
-            return TILE_SIZE;
-        }
-        float fittingSize = (rowWidth - GAP * (tileCount - 1)) / tileCount;
-        return Math.max(MIN_TILE_SIZE, Math.min(TILE_SIZE, fittingSize));
-    }
-
-    private void addTile(TooltipMakerAPI element, ItemCurrency currency, float tileLeft, float tileTop, float tileSize,
-                         CraftingMaterials materials) {
-        String iconPath = MaterialItems.loadedIconPath(currency.itemId());
-        boolean owned = materials.count(currency.itemId()) > 0;
-        WorkbenchTile tile = new WorkbenchTile(List.of(iconPath == null ? FALLBACK_ICON : iconPath), CargoIconLooks.forMaterial(currency.itemId()),
-                () -> owned, false, tileHandler(currency));
-        CustomPanelAPI tilePanel = Global.getSettings().createCustom(tileSize, tileSize, tile);
-        element.addCustom(tilePanel, 0f).getPosition().inTL(tileLeft, tileTop);
-        int ownedCount = materials.count(currency.itemId());
-        element.setParaFont(Fonts.ORBITRON_12);
-        LabelAPI countLabel = VanillaText.plainPara(element, String.valueOf(ownedCount), 0f,
-                ownedCount > 0 ? Misc.getBrightPlayerColor() : Misc.getGrayColor());
-        countLabel.setAlignment(Alignment.RMID);
-        countLabel.autoSizeToWidth(tileSize - COUNT_INSET * 2f).inTL(tileLeft + COUNT_INSET,
-                tileTop + tileSize - countLabel.getPosition().getHeight() - COUNT_INSET);
-        element.setParaFontDefault();
-    }
-
-    private TileInput.Handler tileHandler(ItemCurrency currency) {
-        return new TileInput.Handler() {
-            @Override
-            public void entered(PositionAPI tilePosition) {
-                queue(() -> showCurrencyTooltip(currency, tilePosition));
-            }
-
-            @Override
-            public void left() {
-                queue(() -> {
-                    if (hoverTooltip.isShowing(currency)) {
-                        hoverTooltip.hide();
-                    }
-                });
-            }
-
-            @Override
-            public boolean clicked() {
-                boolean skipConfirm = ctrlHeld();
-                queue(() -> useClicked(currency, skipConfirm));
-                return true;
-            }
-
-            @Override
-            public boolean rightClicked() {
-                boolean skipConfirm = ctrlHeld();
-                queue(() -> growClicked(currency, skipConfirm));
-                return true;
-            }
-        };
-    }
-
-    private void growClicked(ItemCurrency currency, boolean skipConfirm) {
-        hoverTooltip.hide();
-        if (isConfirmOpen() || !growable(currency)) {
-            return;
-        }
-        if (skipConfirm) {
-            applyGrowth(currency);
-        } else {
-            openCraftConfirm(currency, Control.CONFIRM_GROW);
-        }
-    }
-
-    private boolean growable(ItemCurrency currency) {
-        if (!currency.synthesisable()) {
-            SkillTreeSounds.refused();
-            showNotice(Translation.msg("ui.workbench.notice.notSynthesisable").arg("name", MaterialItems.displayName(currency.itemId())).text(), true);
-            return false;
-        }
-        int ownedParts = ItemCrafting.parts(playerMaterials());
-        if (ownedParts < currency.partsCost()) {
-            refuseGrowth(currency, ownedParts);
-            return false;
-        }
-        return true;
-    }
-
-    private void refuseGrowth(ItemCurrency currency, int ownedParts) {
-        SkillTreeSounds.refused();
-        showNotice(Translation.msg("ui.workbench.notice.notEnoughParts").arg("cost", currency.partsCost()).arg("parts", ownedParts)
-                .arg("name", MaterialItems.displayName(currency.itemId())).text(), true);
-    }
-
-    private void applyGrowth(ItemCurrency currency) {
-        CraftingMaterials materials = playerMaterials();
-        int ownedParts = ItemCrafting.parts(materials);
-        if (ownedParts < currency.partsCost() || !ItemCrafting.synthesise(currency, materials)) {
-            refuseGrowth(currency, ownedParts);
-            return;
-        }
-        String currencyName = MaterialItems.displayName(currency.itemId());
-        noticeText = Translation.msg("ui.workbench.notice.synthesisedCurrency").arg("name", currencyName).text();
-        noticeIsWarning = false;
-        SkillTreeSounds.crafted();
-        rebuildContent();
-    }
-
-    private void showCurrencyTooltip(ItemCurrency currency, PositionAPI anchor) {
-        if (isClosing() || isConfirmOpen()) {
-            hoverTooltip.hide();
-            return;
-        }
-        hoverTooltip.show(currency, TOOLTIP_WIDTH, (element, expanded) -> writeCurrencyTooltip(element, currency), anchor);
-    }
-
-    private void writeCurrencyTooltip(TooltipMakerAPI element, ItemCurrency currency) {
-        element.setParaFont(Fonts.ORBITRON_20AA);
-        VanillaText.plainPara(element, MaterialItems.displayName(currency.itemId()), 0f, Misc.getBrightPlayerColor());
-        element.setParaFontDefault();
-        String descriptionKey = currencyDescriptionKey(currency);
-        if (Translation.has(descriptionKey)) {
-            VanillaText.plainPara(element, Translation.text(descriptionKey), GAP, Misc.getTextColor());
-        }
-        CraftingMaterials materials = playerMaterials();
-        VanillaText.plainPara(element, Translation.msg("ui.workbench.tile.inStorage").arg("count", materials.count(currency.itemId())).text(), GAP,
-                Misc.getGrayColor());
-        StarChartCrafting.Refusal refusal = StarChartCrafting.refusal(currency, shownChart, chartStore, materials, allowedUniques());
-        String hint = refusal == StarChartCrafting.Refusal.NONE
-                ? Translation.msg("chart.ui.currency.use").arg("target", shownChart.name()).text() : refusalText(currency, refusal);
-        VanillaText.plainPara(element, hint, GAP, refusal == StarChartCrafting.Refusal.NONE ? Misc.getPositiveHighlightColor() : Misc.getGrayColor());
-        String synthesiseHint = currency.synthesisable()
-                ? Translation.msg("ui.workbench.tile.synthesise").arg("cost", currency.partsCost()).text()
-                : Translation.text("ui.workbench.tile.notSynthesisable");
-        VanillaText.plainPara(element, synthesiseHint, GAP, Misc.getGrayColor());
-    }
-
-    static String currencyDescriptionKey(ItemCurrency currency) {
-        String chartKey = chartCurrencyDescriptionKey(currency);
-        return Translation.has(chartKey) ? chartKey : "material." + currency.itemId() + ".description";
-    }
-
-    static String chartCurrencyDescriptionKey(ItemCurrency currency) {
-        return "chart.currency." + currency.key() + ".description";
-    }
-
-    private String refusalText(ItemCurrency currency, StarChartCrafting.Refusal refusal) {
-        return Translation.msg(refusal.noticeKey()).arg("name", MaterialItems.displayName(currency.itemId()))
-                .arg("target", shownChart == null ? "" : shownChart.name()).text();
-    }
-
-    private void useClicked(ItemCurrency currency, boolean skipConfirm) {
-        hoverTooltip.hide();
-        if (isConfirmOpen() || !usable(currency)) {
-            return;
-        }
-        if (skipConfirm) {
-            applyUse(currency);
-        } else {
-            openCraftConfirm(currency, Control.CONFIRM_USE);
-        }
-    }
-
-    private boolean usable(ItemCurrency currency) {
-        StarChartCrafting.Refusal refusal = StarChartCrafting.refusal(currency, shownChart, chartStore, playerMaterials(), allowedUniques());
-        if (refusal != StarChartCrafting.Refusal.NONE) {
-            SkillTreeSounds.refused();
-            showNotice(refusalText(currency, refusal), true);
-            return false;
-        }
-        return true;
-    }
-
-    private void openCraftConfirm(ItemCurrency currency, Control confirmId) {
-        pendingCurrency = currency;
-        pendingChart = shownChart;
-        boolean growing = confirmId == Control.CONFIRM_GROW;
-        openConfirm(growing ? GROW_CONFIRM_HEIGHT : USE_CONFIRM_HEIGHT, element -> writeCraftConfirm(element, currency, growing),
-                growing ? "ui.workbench.confirm.grow" : "ui.workbench.confirm.use", confirmId, "ui.workbench.confirm.cancel", Control.CANCEL_CONFIRM);
-    }
-
-    private void writeCraftConfirm(TooltipMakerAPI element, ItemCurrency currency, boolean growing) {
-        String name = MaterialItems.displayName(currency.itemId());
-        String title = growing ? Translation.msg("ui.workbench.confirm.growTitle").arg("name", name).text()
-                : Translation.msg("ui.workbench.confirm.useTitle").arg("name", name).arg("target", shownChart.name()).text();
-        VanillaText.plainPara(element, title, 0f, Misc.getBasePlayerColor());
-        String body = growing
-                ? Translation.msg("ui.workbench.confirm.growBody").arg("cost", currency.partsCost()).arg("parts", ItemCrafting.parts(playerMaterials())).text()
-                : Translation.text(currencyDescriptionKey(currency));
-        VanillaText.plainPara(element, body, LINE_PAD * 2f, Misc.getTextColor());
-        VanillaText.plainPara(element, Translation.text("ui.workbench.confirm.skipHint"), LINE_PAD * 2f, Misc.getGrayColor());
-    }
-
-    private void confirmCraft(boolean growing) {
-        ItemCurrency currency = pendingCurrency;
-        Item chart = pendingChart;
-        cancelConfirm();
-        if (currency == null) {
-            return;
-        }
-        if (growing) {
-            if (growable(currency)) {
-                applyGrowth(currency);
-            }
-        } else if (chart == shownChart && usable(currency)) {
-            applyUse(currency);
-        }
-    }
-
-    private void applyUse(ItemCurrency currency) {
-        CraftingMaterials materials = playerMaterials();
-        String nameBefore = shownChart.name();
-        StarChartCrafting.Used used = StarChartCrafting.use(currency, shownChart, chartStore, materials, craftingRandom, allowedUniques());
-        if (used == null) {
-            SkillTreeSounds.refused();
-            showNotice(refusalText(currency, StarChartCrafting.Refusal.CANNOT_USE), true);
-            return;
-        }
-        shownChart = used.selectedAfter();
-        noticeText = StarChartCrafting.usedNotice(currency, nameBefore, used);
-        noticeIsWarning = false;
-        SkillTreeSounds.socketed();
-        rebuildContent();
-        detailListener.chartChanged(shownChart);
+    private void rebuildModifyButton() {
+        TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), MODIFY_BUTTON_HEIGHT, false);
+        ButtonAPI modifyButton = element.addButton(Translation.text("ui.socketStorage.workbench"), Control.MODIFY, Misc.getBasePlayerColor(),
+                Misc.getDarkPlayerColor(), Alignment.MID, CutStyle.ALL, innerWidth(), MODIFY_BUTTON_HEIGHT, 0f);
+        modifyButton.setEnabled(shownChart != null && !wormholeOpened);
+        modifyButton.setShowTooltipWhileInactive(true);
+        element.addTooltipToPrevious(new GameTextTooltip(TOOLTIP_WIDTH, tooltip -> VanillaText.plainPara(tooltip,
+                Translation.text(shownChart == null ? "chart.ui.modify.noChart" : "chart.ui.modify.tooltip"), 0f, Misc.getTextColor())),
+                TooltipMakerAPI.TooltipLocation.ABOVE);
+        modifyElement = replaceElement(modifyElement, element, PAD, modifyTop());
     }
 
     private void showNotice(String text, boolean warning) {
@@ -563,7 +313,6 @@ public final class StarChartDetailPanel extends HoloPanel {
 
     private void cancelConfirm() {
         pendingChart = null;
-        pendingCurrency = null;
         closeConfirm();
     }
 
@@ -579,6 +328,7 @@ public final class StarChartDetailPanel extends HoloPanel {
         if (outcome.opened()) {
             wormholeOpened = true;
             SkillTreeSounds.wormholeJumped();
+            rebuildModifyButton();
             rebuildOpenButton();
             refreshOpacity();
             detailListener.wormholeOpened(message);

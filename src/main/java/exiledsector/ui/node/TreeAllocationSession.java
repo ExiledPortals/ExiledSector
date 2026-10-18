@@ -608,27 +608,35 @@ public final class TreeAllocationSession {
     }
 
     public boolean installUpgrade() {
-        return apply(allocator::installUpgrade, SkillTreeSounds::socketed);
+        return applySectionChange(allocator::installUpgrade, SkillTreeSounds::socketed);
     }
 
     public boolean unlockSection(ShipSection section) {
-        return apply(() -> allocator.unlockSection(section), SkillTreeSounds::socketed);
+        return applySectionChange(() -> allocator.unlockSection(section), SkillTreeSounds::socketed);
     }
 
     public boolean lockSection(ShipSection section) {
-        return apply(() -> allocator.lockSection(section), () -> { });
+        return applySectionChange(() -> allocator.lockSection(section), () -> { });
     }
 
     public boolean installInSection(ShipSection section, Item item) {
-        return apply(() -> allocator.installInSection(section, item), SkillTreeSounds::socketed);
+        return applySectionChange(() -> allocator.installInSection(section, item), SkillTreeSounds::socketed);
     }
 
     public boolean removeFromSection(ShipSection section) {
-        return apply(() -> allocator.removeFromSection(section), () -> { });
+        return applySectionChange(() -> allocator.removeFromSection(section), () -> { });
     }
 
     private boolean apply(BooleanSupplier change, Runnable afterChange) {
-        if (isBusy() || !change.getAsBoolean()) {
+        return !isBusy() && applyChange(change, afterChange);
+    }
+
+    private boolean applySectionChange(BooleanSupplier change, Runnable afterChange) {
+        return autoAllocateRun == null && respecRun == null && applyChange(change, afterChange);
+    }
+
+    private boolean applyChange(BooleanSupplier change, Runnable afterChange) {
+        if (!change.getAsBoolean()) {
             return false;
         }
         refreshAfterAllocation();
