@@ -15,8 +15,6 @@ final class SocketWorkbenchFlair {
 
     private static final float LOAD_SECONDS = 0.45f;
     private static final float FLASH_SECONDS = 0.7f;
-    private static final float GRID_SPACING = 14f;
-    private static final float GRID_ALPHA = 0.06f;
     private static final float OUTER_RING_SPEED = 10f;
     private static final float TICK_RING_SPEED = -6f;
     private static final float SCANNER_SPEED = -40f;
@@ -64,7 +62,6 @@ final class SocketWorkbenchFlair {
         float half = radius * 0.42f;
         Color coreColor = subjectColor == null ? accent : subjectColor;
 
-        drawGrid(cx, cy, radius, accent, alpha);
         scope.untextured().additive();
         HoloShapes.radialGlow(cx, cy, half * 0.8f, radius * 1.05f, coreColor, (0.12f + 0.18f * easedLoad) * (0.7f + 0.3f * pulse) * alpha);
         HoloShapes.circle(cx, cy, radius, accent, 1f, 0.25f * alpha);
@@ -99,11 +96,6 @@ final class SocketWorkbenchFlair {
             scope.untextured().additive();
         }
         scope.normalBlend();
-    }
-
-    private void drawGrid(float cx, float cy, float radius, Color accent, float alpha) {
-        float extent = radius * 1.05f;
-        GLDraw.grid(cx - extent, cy - extent, extent * 2f, extent * 2f, GRID_SPACING, accent, GRID_ALPHA * alpha);
     }
 
     private void arms(float cx, float cy, float half, float reach, Color accent, Color coreColor, float easedLoad, float alpha) {

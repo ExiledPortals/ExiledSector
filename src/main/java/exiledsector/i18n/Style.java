@@ -5,7 +5,8 @@ public enum Style {
     BAD("bad"),
     HIGHLIGHT("hl"),
     HULLMOD("hullmod"),
-    NODE("node");
+    NODE("node"),
+    IMMUTABLE("immutable");
 
     private final String tag;
 

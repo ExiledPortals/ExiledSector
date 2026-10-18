@@ -20,6 +20,15 @@ class StyledTextTest {
     }
 
     @Test
+    void unstyledGapsTakeTheGivenStyleAndStyledSpansKeepTheirs() {
+        StyledText text = StyledText.parse("Ships gain <good>10%</good> more <bad>hull</bad>.");
+
+        assertEquals("<immutable>Ships gain </immutable><good>10%</good><immutable> more </immutable><bad>hull</bad><immutable>.</immutable>",
+                text.withUnstyledAs(Style.IMMUTABLE).toMarkup());
+        assertEquals("<good>a</good>", StyledText.styled("a", Style.GOOD).withUnstyledAs(Style.IMMUTABLE).toMarkup());
+    }
+
+    @Test
     void appendingAndJoiningShiftTheSpans() {
         StyledText joined = StyledText.join(StyledText.of(", "), List.of(
                 StyledText.styled("Heavy Armor", Style.HULLMOD), StyledText.of("x"), StyledText.styled("Flux", Style.NODE)));

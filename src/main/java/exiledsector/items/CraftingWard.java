@@ -9,8 +9,8 @@ import java.util.Set;
 
 public enum CraftingWard {
 
-    PREFIX("exiledSector_prefix_ward", ModifierSlot.PREFIX, 0.3f, new Color(80, 225, 205)),
-    SUFFIX("exiledSector_suffix_ward", ModifierSlot.SUFFIX, 0.3f, new Color(235, 110, 225));
+    PREFIX("exiledSector_prefix_ward", ModifierSlot.PREFIX, 0.5f, new Color(80, 225, 205)),
+    SUFFIX("exiledSector_suffix_ward", ModifierSlot.SUFFIX, 0.5f, new Color(235, 110, 225));
 
     private final String itemId;
     private final ModifierSlot guardedSlot;

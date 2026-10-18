@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.modifiers.Modifier;
@@ -15,6 +16,7 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -271,6 +273,10 @@ public abstract class Item {
         return displayName().title();
     }
 
+    public Color frameColor() {
+        return corrupted() ? CraftingCurrency.CORRUPTION.color() : rarity().color();
+    }
+
     public ItemRarity rarity() {
         return AffixLayout.rarityFor(definition(), explicits().size());
     }
@@ -411,9 +417,10 @@ public abstract class Item {
                     lines.add(description);
                 }
             }
-            if (explicitModifier.locked() && lines.size() > firstLineIndex) {
-                int lastLineIndex = lines.size() - 1;
-                lines.set(lastLineIndex, lines.get(lastLineIndex).append(Translation.styled("socketable.tooltip.lockedTag")));
+            if (explicitModifier.locked()) {
+                for (int lineIndex = firstLineIndex; lineIndex < lines.size(); lineIndex++) {
+                    lines.set(lineIndex, lines.get(lineIndex).withUnstyledAs(Style.IMMUTABLE));
+                }
             }
         }
         return lines;

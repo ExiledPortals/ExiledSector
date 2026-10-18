@@ -104,7 +104,7 @@ class CargoIconFxTest {
         assertNull(MaterialDropAnnouncer.bestTier(Map.of()));
         assertEquals(MaterialTier.BASIC, MaterialDropAnnouncer.bestTier(Map.of(ItemDisassembly.PARTS_ITEM_ID, 4)));
         assertEquals(MaterialTier.EXOTIC, MaterialDropAnnouncer.bestTier(Map.of(ItemDisassembly.PARTS_ITEM_ID, 4,
-                CraftingCurrency.FIXATION.itemId(), 1, CraftingCurrency.AUGMENTATION.itemId(), 1)));
+                CraftingCurrency.CORRUPTION.itemId(), 1, CraftingCurrency.AUGMENTATION.itemId(), 1)));
         assertTrue(MaterialTier.MYTHIC.announced());
         assertFalse(MaterialTier.MAJOR.announced());
     }

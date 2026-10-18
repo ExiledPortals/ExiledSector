@@ -1,8 +1,5 @@
 item,partsCost
 exiledSector_augmentation_kernel,10
-exiledSector_recalibration_kernel,20
-exiledSector_transposition_kernel,100
-exiledSector_attunement_kernel,10
+exiledSector_attunement_kernel,15
 exiledSector_substitution_kernel,20
-exiledSector_fixation_kernel,100
 exiledSector_corruption_kernel,50

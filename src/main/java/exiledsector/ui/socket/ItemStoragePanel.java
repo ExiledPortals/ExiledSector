@@ -44,6 +44,9 @@ public final class ItemStoragePanel extends HoloPanel {
         void closed();
 
         void pressedInside();
+
+        default void disassembled() {
+        }
     }
 
     private static final float FIELD_HEIGHT = 26f;
@@ -63,6 +66,7 @@ public final class ItemStoragePanel extends HoloPanel {
     public static final float WIDTH = widthFor(TREE_COLUMNS);
     private static final float CONFIRM_HEIGHT = 130f;
     private static final float WORKBENCH_GAP = 12f;
+    private static final float WORKBENCH_EDGE_MARGIN = 16f;
     private static final float BATCH_CONFIRM_HEIGHT = 170f;
     private static final float BUTTON_TEXT_PADDING = 30f;
     private static final float SEARCH_DELAY_SECONDS = 0.25f;
@@ -102,6 +106,7 @@ public final class ItemStoragePanel extends HoloPanel {
     private UIComponentAPI toolsElement;
     private UIComponentAPI controlsElement;
     private TooltipMakerAPI gridElement;
+    private boolean keepGridScroll;
     private UIComponentAPI noticeElement;
     private UIComponentAPI summaryElement;
     private TextFieldAPI searchField;
@@ -118,6 +123,8 @@ public final class ItemStoragePanel extends HoloPanel {
     private String materialsNotice;
     private String disassembledNotice;
     private ItemKind kindFilter;
+    private Runnable modifyHandler;
+    private boolean pickerMode;
 
     private ItemStoragePanel(CustomPanelAPI hostPanel, Function<Item, String> installedShipLookup, Listener storageListener,
                                ItemKind kindFilter) {
@@ -135,6 +142,20 @@ public final class ItemStoragePanel extends HoloPanel {
         storagePanel.setTabListener(tabListener);
         storagePanel.attach(placement.panelLeft(), placement.panelTop(), placement.panelWidth(), placement.panelHeight(), placement.instantly());
         return storagePanel;
+    }
+
+    public static ItemStoragePanel openPicker(CustomPanelAPI hostPanel, SocketPanelPlacement placement, Function<Item, String> installedShipLookup,
+                                              Listener storageListener) {
+        ItemStoragePanel storagePanel = new ItemStoragePanel(hostPanel, installedShipLookup, storageListener, null);
+        storagePanel.pickerMode = true;
+        storagePanel.movedFromCargo = absorbPlayerCargo();
+        storagePanel.materialsNotice = settleMaterials();
+        storagePanel.attach(placement.panelLeft(), placement.panelTop(), placement.panelWidth(), placement.panelHeight(), placement.instantly());
+        return storagePanel;
+    }
+
+    public void setModifyHandler(Runnable handler) {
+        modifyHandler = handler;
     }
 
     private static int absorbPlayerCargo() {
@@ -237,7 +258,8 @@ public final class ItemStoragePanel extends HoloPanel {
             reloadRows();
             markedForDisassembly.removeIf(item -> SocketCustody.isInstalled(item)
                     || !ItemStore.get().owned().contains(item));
-            rebuildGrid();
+            rebuildTools();
+            rebuildGridKeepingScroll();
             if (workbenchPanel != null) {
                 workbenchPanel.refresh();
             }
@@ -252,8 +274,11 @@ public final class ItemStoragePanel extends HoloPanel {
         if (disassemblyMode) {
             queue(() -> {
                 leaveDisassemblyMode();
-                rebuildGrid();
+                rebuildGridKeepingScroll();
             });
+            return true;
+        }
+        if (workbenchPanel != null && workbenchPanel.escape()) {
             return true;
         }
         if (workbenchPanel != null) {
@@ -261,6 +286,29 @@ public final class ItemStoragePanel extends HoloPanel {
             return true;
         }
         return false;
+    }
+
+    private void disassembleNow(List<Item> requested, boolean leaveMode) {
+        List<Item> targets = requested.stream().filter(item -> !SocketCustody.isInstalled(item) && ItemStore.get().owned().contains(item)).toList();
+        if (targets.isEmpty()) {
+            return;
+        }
+        if (selectedItem != null && targets.contains(selectedItem)) {
+            storageListener.selected(null);
+        }
+        disassemble(targets);
+        if (workbenchPanel != null) {
+            workbenchPanel.refresh();
+        }
+        storageListener.disassembled();
+        markedForDisassembly.removeAll(targets);
+        if (leaveMode && disassemblyMode) {
+            leaveDisassemblyMode();
+        }
+        reloadRows();
+        rebuildTools();
+        keepGridScroll = true;
+        rebuildControls();
     }
 
     private void leaveDisassemblyMode() {
@@ -308,21 +356,9 @@ public final class ItemStoragePanel extends HoloPanel {
     private void handleButton(Object id) {
         if (isConfirmOpen()) {
             if (id == Control.CONFIRM_DISASSEMBLE) {
-                List<Item> targets = pendingDisassembly.stream().filter(item -> !SocketCustody.isInstalled(item)).toList();
-                if (selectedItem != null && targets.contains(selectedItem)) {
-                    storageListener.selected(null);
-                }
-                disassemble(targets);
-                if (workbenchPanel != null) {
-                    workbenchPanel.refresh();
-                }
-                if (disassemblyMode) {
-                    leaveDisassemblyMode();
-                }
+                List<Item> targets = pendingDisassembly;
                 closeDisassemblyConfirm();
-                reloadRows();
-                rebuildTools();
-                rebuildControls();
+                disassembleNow(targets, true);
             } else if (id == Control.CANCEL_DISASSEMBLE) {
                 closeDisassemblyConfirm();
             }
@@ -366,6 +402,10 @@ public final class ItemStoragePanel extends HoloPanel {
         if (isConfirmOpen() || row.installed()) {
             return;
         }
+        if (disassemblyMode && ctrlHeld()) {
+            queue(() -> disassembleNow(List.of(row.item()), false));
+            return;
+        }
         if (disassemblyMode) {
             queue(() -> {
                 if (!markedForDisassembly.remove(row.item())) {
@@ -395,11 +435,17 @@ public final class ItemStoragePanel extends HoloPanel {
             workbenchPanel.close();
             return;
         }
+        if (modifyHandler != null) {
+            modifyHandler.run();
+            return;
+        }
         if (selectedItem != null) {
             storageListener.selected(null);
         }
         SkillTreeSounds.panelOpened();
-        workbenchPanel = SocketWorkbenchPanel.open(hostPanel, panelLeft + panelWidth + WORKBENCH_GAP, panelTop, panelHeight,
+        float benchLeft = panelLeft + panelWidth + WORKBENCH_GAP;
+        float benchWidth = hostPanel.getPosition().getWidth() - benchLeft - WORKBENCH_EDGE_MARGIN;
+        workbenchPanel = SocketWorkbenchPanel.open(hostPanel, new SocketPanelPlacement(benchLeft, panelTop, benchWidth, panelHeight, false), false,
                 new SocketWorkbenchPanel.Listener() {
                     @Override
                     public void changed(Item loaded) {
@@ -414,7 +460,7 @@ public final class ItemStoragePanel extends HoloPanel {
                         markedForDisassembly.removeIf(item -> !owned.contains(item));
                         reloadRows();
                         rebuildTools();
-                        rebuildGrid();
+                        rebuildGridKeepingScroll();
                     }
 
                     @Override
@@ -491,11 +537,15 @@ public final class ItemStoragePanel extends HoloPanel {
     }
 
     private void rebuildTools() {
-        float workbenchWidth = workbenchButtonWidth();
         TooltipMakerAPI element = panelRoot.createUIElement(toolsWidth(), FIELD_HEIGHT, false);
-        element.addButton(Translation.text("ui.socketStorage.workbench"), Control.WORKBENCH, workbenchWidth, HEADER_BUTTON_HEIGHT, 0f)
-                .getPosition().inTR(0f, (FIELD_HEIGHT - HEADER_BUTTON_HEIGHT) / 2f);
-        addPartsCount(element, workbenchWidth + GAP);
+        if (pickerMode) {
+            addPartsCount(element, 0f);
+        } else {
+            float workbenchWidth = workbenchButtonWidth();
+            element.addButton(Translation.text("ui.socketStorage.workbench"), Control.WORKBENCH, workbenchWidth, HEADER_BUTTON_HEIGHT, 0f)
+                    .getPosition().inTR(0f, (FIELD_HEIGHT - HEADER_BUTTON_HEIGHT) / 2f);
+            addPartsCount(element, workbenchWidth + GAP);
+        }
         toolsElement = replaceElement(toolsElement, element, PAD + innerWidth() - toolsWidth(), searchRowTop());
         refreshOpacity();
     }
@@ -586,7 +636,21 @@ public final class ItemStoragePanel extends HoloPanel {
         return chipWidth;
     }
 
+    private void rebuildGridKeepingScroll() {
+        keepGridScroll = true;
+        rebuildGrid();
+    }
+
+    private float gridScrollOffset() {
+        if (gridElement == null || gridElement.getExternalScroller() == null) {
+            return 0f;
+        }
+        return gridElement.getExternalScroller().getYOffset();
+    }
+
     private void rebuildGrid() {
+        float restoredScroll = keepGridScroll ? gridScrollOffset() : 0f;
+        keepGridScroll = false;
         hideHoverTooltip();
         List<ItemStorageRow> matching = ItemStorageQuery.apply(storageRows, storageFilter);
         int columns = columnsFor(panelWidth);
@@ -612,6 +676,9 @@ public final class ItemStoragePanel extends HoloPanel {
             element.addCustom(rowPanel, start == 0 ? 0f : GAP);
         }
         gridElement = replaceElement(placedComponent(gridElement), element, PAD, gridTop);
+        if (restoredScroll > 0f && element.getExternalScroller() != null) {
+            element.getExternalScroller().setYOffset(Math.min(restoredScroll, Math.max(0f, element.getHeightSoFar() - gridHeight)));
+        }
         rebuildFooter(matching);
     }
 
@@ -624,7 +691,7 @@ public final class ItemStoragePanel extends HoloPanel {
                     : Translation.msg("ui.socketStorage.disassemblyMarked").arg("count", markedForDisassembly.size()).arg("parts", markedParts)
                     .text();
             VanillaText.plainPara(newNotice, hint, 0f, Misc.getNegativeHighlightColor());
-        } else if (selectedItem != null) {
+        } else if (selectedItem != null && !pickerMode) {
             VanillaText.plainPara(newNotice,
                     placingHint != null ? placingHint : Translation.msg("ui.socketStorage.placingHint").arg("name", selectedItem.name()).text(),
                     0f, Misc.getPositiveHighlightColor());
@@ -744,7 +811,7 @@ public final class ItemStoragePanel extends HoloPanel {
             return List.of(Translation.msg(key).count(partCount).arg("count", partCount).styled());
         }
         StyledText installHint;
-        if (workbenchPanel != null) {
+        if (workbenchPanel != null || pickerMode) {
             installHint = Translation.styled("ui.socketStorage.cell.workbench");
         } else if (targetingSocket) {
             installHint = Translation.styled("ui.socketStorage.cell.freeTarget");

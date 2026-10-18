@@ -45,6 +45,7 @@ final class HullUpgradesModsButton extends BaseCustomUIPanelPlugin {
             container.addUIElement(element);
             widget.addComponent(container).belowMid(skillTreeContainer, GAP_BELOW_SKILL_TREE);
             plugin.show(container, wanted());
+            ModificationBenchModsButton.attachBelow(widget, container, buttonWidth, buttonHeight);
         } catch (Throwable e) {
             disable(e);
         }
@@ -56,6 +57,7 @@ final class HullUpgradesModsButton extends BaseCustomUIPanelPlugin {
             for (Object child : UiReflection.children(widget)) {
                 if (child instanceof CustomPanelAPI panel && panel.getPlugin() instanceof HullUpgradesModsButton plugin) {
                     plugin.show(panel, wanted());
+                    ModificationBenchModsButton.updateVisibility(widget);
                     return;
                 }
             }

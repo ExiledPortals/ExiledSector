@@ -102,7 +102,7 @@ public final class ItemCell extends BaseCustomUIPanelPlugin {
         float y = cellPosition.getY();
         float width = cellPosition.getWidth();
         float height = cellPosition.getHeight();
-        Color rarityColor = item.rarity().color();
+        Color rarityColor = item.frameColor();
         GLDraw.fillQuad(x, y, width, height, BACKGROUND, alphaMult);
         if (look.rarityGlow()) {
             GLDraw.innerGlow(x, y, width, height, GLOW_WIDTH, rarityColor, GLOW_ALPHA * alphaMult);
