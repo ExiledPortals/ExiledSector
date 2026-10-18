@@ -372,7 +372,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     private void addWardTile(TooltipMakerAPI element, CraftingWard ward, float tileLeft, float tileTop, CraftingMaterials materials) {
         String iconPath = MaterialItems.loadedIconPath(ward.itemId());
         WorkbenchTile wardTile = new WorkbenchTile(List.of(iconPath == null ? FALLBACK_ICON : iconPath), CargoIconLooks.forMaterial(ward.itemId()),
-                () -> activeWards.contains(ward), tileHandler(ward, anchor -> showWardTooltip(ward, anchor), () -> toggleWard(ward),
+                () -> activeWards.contains(ward), true, tileHandler(ward, anchor -> showWardTooltip(ward, anchor), () -> toggleWard(ward),
                 () -> showNotice(Translation.msg("ui.workbench.notice.notSynthesisable").arg("name", MaterialItems.displayName(ward.itemId()))
                         .text())));
         CustomPanelAPI tilePanel = Global.getSettings().createCustom(WARD_TILE_SIZE, WARD_TILE_SIZE, wardTile);
@@ -470,8 +470,9 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     private void addTile(TooltipMakerAPI element, CraftingCurrency currency, float tileLeft, float tileTop, float tileSize,
                          CraftingMaterials materials) {
+        boolean owned = materials.count(currency.itemId()) > 0;
         CustomPanelAPI tilePanel = Global.getSettings().createCustom(tileSize, tileSize, new WorkbenchTile(recipeIcons(currency), recipeLook(currency),
-                tileHandler(currency, anchor -> showTooltip(currency, anchor), () -> tileClicked(currency), () -> tileRightClicked(currency))));
+                () -> owned, false, tileHandler(currency, anchor -> showTooltip(currency, anchor), () -> tileClicked(currency), () -> tileRightClicked(currency))));
         element.addCustom(tilePanel, 0f).getPosition().inTL(tileLeft, tileTop);
         addCount(element, currency.itemId(), tileLeft, tileTop, tileSize, materials);
     }
