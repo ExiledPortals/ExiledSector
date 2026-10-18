@@ -23,6 +23,10 @@ final class CyclingIcon extends BaseCustomUIPanelPlugin {
         this.iconPaths = List.copyOf(iconPaths);
     }
 
+    String firstIconPath() {
+        return iconPaths.isEmpty() ? null : iconPaths.get(0);
+    }
+
     @Override
     public void positionChanged(PositionAPI iconPosition) {
         this.iconPosition = iconPosition;

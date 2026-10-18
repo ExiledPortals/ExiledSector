@@ -6,20 +6,21 @@ export const MATERIAL_ICON_COLUMN = 'plugin params';
 export interface CraftingItem {
   id: string;
   label: string;
-  material: boolean;
   cost: boolean;
 }
 
 export const CRAFTING_ITEMS: CraftingItem[] = [
-  { id: 'exiledSector_socketable_parts', label: 'Hull Item Parts', material: true, cost: false },
-  { id: 'common_subroutine', label: 'New common subroutine', material: false, cost: true },
-  { id: 'exiledSector_augmentation_kernel', label: 'Augmentation Kernel', material: true, cost: true },
-  { id: 'exiledSector_attunement_kernel', label: 'Attunement Kernel', material: true, cost: true },
-  { id: 'exiledSector_recalibration_kernel', label: 'Recalibration Kernel', material: true, cost: true },
-  { id: 'exiledSector_substitution_kernel', label: 'Substitution Kernel', material: true, cost: true },
-  { id: 'exiledSector_transposition_kernel', label: 'Transposition Kernel', material: true, cost: true },
-  { id: 'exiledSector_fixation_kernel', label: 'Fixation Kernel', material: true, cost: true },
-  { id: 'exiledSector_replication_kernel', label: 'Replication Kernel', material: true, cost: false },
+  { id: 'exiledSector_socketable_parts', label: 'Nanite Feedstock', cost: false },
+  { id: 'exiledSector_augmentation_kernel', label: 'Augmentation Swarm', cost: true },
+  { id: 'exiledSector_attunement_kernel', label: 'Fundamental Swarm', cost: true },
+  { id: 'exiledSector_recalibration_kernel', label: 'Tuning Swarm', cost: true },
+  { id: 'exiledSector_substitution_kernel', label: 'Reshaping Swarm', cost: true },
+  { id: 'exiledSector_transposition_kernel', label: 'Metamorph Swarm', cost: true },
+  { id: 'exiledSector_fixation_kernel', label: 'Immutable Swarm', cost: true },
+  { id: 'exiledSector_corruption_kernel', label: 'Corrupted Swarm', cost: true },
+  { id: 'exiledSector_replication_kernel', label: 'Replicator Nanoseed', cost: false },
+  { id: 'exiledSector_prefix_ward', label: 'Prefix Inhibitor', cost: false },
+  { id: 'exiledSector_suffix_ward', label: 'Suffix Inhibitor', cost: false },
 ];
 
 export interface CostRow {
@@ -72,17 +73,15 @@ export function costRow(model: Pick<CraftingModel, 'costs'>, id: string): CostRo
 export function validateCrafting(model: CraftingModel): string[] {
   const issues: string[] = [];
   for (const item of CRAFTING_ITEMS) {
-    if (item.material) {
-      const icon = materialIcon(model.specialItems, item.id);
-      if (!materialRow(model.specialItems, item.id)) {
-        issues.push(`${item.label}: no row in special_items.csv`);
-      }
-      if (!icon) {
-        issues.push(`${item.label}: needs an image`);
-      }
-      if (isUnshippedImagePath(icon)) {
-        issues.push(`${item.label}: its image is in a folder that is not deployed`);
-      }
+    const icon = materialIcon(model.specialItems, item.id);
+    if (!materialRow(model.specialItems, item.id)) {
+      issues.push(`${item.label}: no row in special_items.csv`);
+    }
+    if (!icon) {
+      issues.push(`${item.label}: needs an image`);
+    }
+    if (isUnshippedImagePath(icon)) {
+      issues.push(`${item.label}: its image is in a folder that is not deployed`);
     }
     if (item.cost && !/^\d+$/.test(costRow(model, item.id)?.partsCost ?? '')) {
       issues.push(`${item.label}: the cost must be a whole number of parts`);

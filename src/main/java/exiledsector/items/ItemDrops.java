@@ -139,7 +139,7 @@ public final class ItemDrops {
             droppedMaterials.put(ItemDisassembly.PARTS_ITEM_ID, partsFound);
         }
         if (random.nextFloat() < rule.chances().get(0) * KERNEL_CHANCE_SHARE * chanceMult) {
-            droppedMaterials.put(pickKernel(random).itemId(), 1);
+            droppedMaterials.put(pickKernel(random), 1);
         }
         return droppedMaterials;
     }
@@ -156,8 +156,18 @@ public final class ItemDrops {
         return wholePartCount + (random.nextFloat() < exactParts - wholePartCount ? 1 : 0);
     }
 
-    static CraftingCurrency pickKernel(Random random) {
-        return WeightedPick.pick(List.of(CraftingCurrency.values()), CraftingCurrency::dropWeight, random);
+    static String pickKernel(Random random) {
+        List<KernelDrop> kernelDrops = new ArrayList<>();
+        for (CraftingCurrency currency : CraftingCurrency.values()) {
+            kernelDrops.add(new KernelDrop(currency.itemId(), currency.dropWeight()));
+        }
+        for (CraftingWard ward : CraftingWard.values()) {
+            kernelDrops.add(new KernelDrop(ward.itemId(), ward.dropWeight()));
+        }
+        return WeightedPick.pick(kernelDrops, KernelDrop::weight, random).itemId();
+    }
+
+    private record KernelDrop(String itemId, float weight) {
     }
 
     public static ItemDefinition pickBasic(Random random) {

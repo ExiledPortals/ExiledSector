@@ -58,6 +58,8 @@ class AffixLayoutTest {
 
     @Test
     void theSplitPutsTheOddEffectOnEitherSide() {
+        assertEquals(1, AffixLayout.prefixCount(1, true));
+        assertEquals(0, AffixLayout.prefixCount(1, false));
         assertEquals(1, AffixLayout.prefixCount(2, true));
         assertEquals(2, AffixLayout.prefixCount(3, true));
         assertEquals(1, AffixLayout.prefixCount(3, false));
@@ -66,7 +68,9 @@ class AffixLayoutTest {
 
     @Test
     void theEffectCountThresholdsFollowTheProposedOdds() {
-        assertEquals(2, AffixLayout.rolledEffectCount(0f));
+        assertEquals(1, AffixLayout.rolledEffectCount(0f));
+        assertEquals(1, AffixLayout.rolledEffectCount(0.349f));
+        assertEquals(2, AffixLayout.rolledEffectCount(0.35f));
         assertEquals(2, AffixLayout.rolledEffectCount(0.549f));
         assertEquals(3, AffixLayout.rolledEffectCount(0.55f));
         assertEquals(3, AffixLayout.rolledEffectCount(0.899f));

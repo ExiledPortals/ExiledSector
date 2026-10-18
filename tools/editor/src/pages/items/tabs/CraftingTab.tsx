@@ -54,22 +54,9 @@ export function CraftingTab() {
                 const cost = costRow(model, item.id);
                 return (
                   <Group key={item.id} align="flex-end" wrap="nowrap">
-                    {item.material ? (
-                      <>
-                        <Avatar src={fileUrl(icon)} radius="sm" size={56} />
-                        <TextInput style={{ flex: 2 }} label={`${item.label} - image`} value={icon} onChange={(event) => setIcon(event.currentTarget.value.trim())} />
-                        <ImagePickButton targetFolder="graphics/icons/cargo/" onPicked={setIcon} />
-                      </>
-                    ) : (
-                      <Stack gap={2} style={{ flex: 2 }}>
-                        <Text size="sm" fw={500}>
-                          {item.label}
-                        </Text>
-                        <Text size="xs" c="dimmed">
-                          Cycles through the icons of every non-unique subroutine in hullItems.csv.
-                        </Text>
-                      </Stack>
-                    )}
+                    <Avatar src={fileUrl(icon)} radius="sm" size={56} />
+                    <TextInput style={{ flex: 2 }} label={`${item.label} - image`} value={icon} onChange={(event) => setIcon(event.currentTarget.value.trim())} />
+                    <ImagePickButton targetFolder="graphics/icons/cargo/" onPicked={setIcon} />
                     {item.cost && cost ? (
                       <DecimalInput
                         w={180}

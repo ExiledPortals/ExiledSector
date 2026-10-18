@@ -10,6 +10,7 @@ public enum CraftingCurrency {
     SUBSTITUTION("exiledSector_substitution_kernel", 20, 3, MaterialTier.MAJOR, new Color(255, 195, 80)),
     TRANSPOSITION("exiledSector_transposition_kernel", 100, 1, MaterialTier.EXOTIC, new Color(255, 140, 50)),
     FIXATION("exiledSector_fixation_kernel", 100, 1, MaterialTier.EXOTIC, new Color(255, 75, 70)),
+    CORRUPTION("exiledSector_corruption_kernel", 50, 1.5f, MaterialTier.EXOTIC, new Color(215, 35, 70)),
     REPLICATION("exiledSector_replication_kernel", 0, 0.035f, MaterialTier.MYTHIC, new Color(225, 240, 255));
 
     private final String itemId;

@@ -49,6 +49,20 @@ public record ModifierLine(String effectName, float min, float max, List<Float> 
         return new ModifierLine(currentEffectName, min, max, hullValues);
     }
 
+    public ModifierLine widened(float fraction) {
+        float stepsPerUnit = steps().perUnit();
+        float oneStep = 1f / stepsPerUnit;
+        float widenedMin = Math.round((min - Math.abs(min) * fraction) * stepsPerUnit) / stepsPerUnit;
+        float widenedMax = Math.round((max + Math.abs(max) * fraction) * stepsPerUnit) / stepsPerUnit;
+        if (min > 0f && widenedMin <= 0f) {
+            widenedMin = oneStep;
+        }
+        if (max < 0f && widenedMax >= 0f) {
+            widenedMax = -oneStep;
+        }
+        return new ModifierLine(effectName, widenedMin + 0f, widenedMax + 0f, hullValues);
+    }
+
     public float roll(Random random) {
         RollSteps steps = steps();
         if (steps.highest() < steps.lowest()) {

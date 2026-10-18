@@ -1,5 +1,7 @@
 package exiledsector.ui.cargo;
 
+import exiledsector.items.CraftingCurrency;
+import exiledsector.items.CraftingWard;
 import exiledsector.items.HullItem;
 import exiledsector.items.Item;
 import exiledsector.items.ItemRarity;
@@ -11,11 +13,28 @@ import java.awt.Color;
 
 public final class CargoIconLooks {
 
+    private static final float CORRUPTED_GLOW = 0.45f;
+
     private CargoIconLooks() {
     }
 
     public static CargoIconLook forMaterial(String itemId) {
-        return forMaterial(MaterialItems.tier(itemId), MaterialItems.color(itemId));
+        return forMaterial(MaterialItems.tier(itemId), MaterialItems.color(itemId)).withSwarm(swarmFor(itemId));
+    }
+
+    static SwarmMotion swarmFor(String itemId) {
+        if (CraftingWard.byItemId(itemId) != null) {
+            return SwarmMotion.CONTAINED;
+        }
+        CraftingCurrency currency = CraftingCurrency.byItemId(itemId);
+        if (currency == null) {
+            return SwarmMotion.SLURRY;
+        }
+        return switch (currency) {
+            case CORRUPTION -> SwarmMotion.FERAL;
+            case REPLICATION -> SwarmMotion.REPLICATING;
+            default -> SwarmMotion.ORBIT;
+        };
     }
 
     static CargoIconLook forMaterial(MaterialTier tier, Color color) {
@@ -40,6 +59,8 @@ public final class CargoIconLooks {
         };
         if (item.mirrored()) {
             look = CargoIconLook.refracting(rarity.color(), look.glow());
+        } else if (item.corrupted()) {
+            look = CargoIconLook.charged(CraftingCurrency.CORRUPTION.color(), Math.max(CORRUPTED_GLOW, look.glow()));
         }
         return item instanceof HullItem hullItem && hullItem.section() != null
                 ? look.withBadge(SectionFlair.colorOf(hullItem.section())) : look;

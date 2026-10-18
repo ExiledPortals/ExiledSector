@@ -5,6 +5,8 @@ import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.HoloShapes;
 import exiledsector.ui.util.SpriteCache;
+import exiledsector.ui.cargo.CargoIconFx;
+import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.util.SpriteDraw;
 
 import java.awt.Color;
@@ -46,17 +48,17 @@ final class SocketWorkbenchFlair {
         flashColor = color;
     }
 
-    void render(float cx, float cy, float radius, Color accent, Color subjectColor, String iconPath, float alpha) {
+    void render(float cx, float cy, float radius, Color accent, Color subjectColor, String iconPath, CargoIconLook iconLook, float alpha) {
         if (alpha <= 0f) {
             return;
         }
         try (GlScope scope = GlScope.save(GlScope.DRAW_ATTRIBS)) {
-            renderLayers(scope, cx, cy, radius, accent, subjectColor, iconPath, alpha);
+            renderLayers(scope, cx, cy, radius, accent, subjectColor, iconPath, iconLook, alpha);
         }
     }
 
     private void renderLayers(GlScope scope, float cx, float cy, float radius, Color accent, Color subjectColor, String iconPath,
-                              float alpha) {
+                              CargoIconLook iconLook, float alpha) {
         float easedLoad = 1f - (1f - loadProgress) * (1f - loadProgress);
         float pulse = 0.5f + 0.5f * (float) Math.sin(elapsedSeconds * 2.2f);
         float half = radius * 0.42f;
@@ -77,7 +79,12 @@ final class SocketWorkbenchFlair {
         GLDraw.strokeQuad(cx - half, cy - half, half * 2f, half * 2f, coreColor, 1.5f, (0.5f + 0.4f * easedLoad) * alpha);
         if (iconPath != null) {
             float size = half * 2f * (1f - ICON_INSET * 2f);
-            SpriteDraw.drawAtCenter(ICONS, iconPath, cx, cy, size, size, Color.WHITE, easedLoad * alpha);
+            if (iconLook == null) {
+                SpriteDraw.drawAtCenter(ICONS, iconPath, cx, cy, size, size, Color.WHITE, easedLoad * alpha);
+            } else {
+                CargoIconFx.render(ICONS, iconPath, iconLook.unframed(), cx - size / 2f, cy - size / 2f, size, size, easedLoad * alpha, 0f,
+                        System.identityHashCode(this), -1f);
+            }
         }
         scope.untextured().additive();
         HoloShapes.brackets(cx, cy, half + 6f + (1f - easedLoad) * BRACKET_TRAVEL, half * 0.35f, accent, (0.6f + 0.4f * easedLoad) * alpha);

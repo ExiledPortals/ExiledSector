@@ -176,25 +176,9 @@ class ItemCraftingTest {
     }
 
     @Test
-    void synthesisingACommonSpendsPartsAndStoresAOnePrefixOneSuffixSubroutine() {
-        owns(PARTS, 12f);
-
-        Item created = ItemCrafting.synthesiseCommon(CraftingMaterials.cargoOnly(cargo), store, new Random(4L));
-
-        assertNotNull(created);
-        assertEquals(ItemRarity.COMMON, created.rarity());
-        assertEquals(2, created.effects().size());
-        assertTrue(created.definition().isPrefix(created.effects().get(0).effectName()));
-        assertTrue(created.definition().isSuffix(created.effects().get(1).effectName()));
-        assertTrue(store.owned().contains(created));
-        verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(PARTS), ItemCrafting.commonSynthesisParts());
-    }
-
-    @Test
     void synthesisNeedsEnoughParts() {
         owns(PARTS, 2f);
 
-        assertNull(ItemCrafting.synthesiseCommon(CraftingMaterials.cargoOnly(cargo), store, new Random(4L)));
         assertFalse(ItemCrafting.synthesise(CraftingCurrency.AUGMENTATION, CraftingMaterials.cargoOnly(cargo)));
         assertTrue(store.owned().isEmpty());
         verify(cargo, never()).removeItems(Mockito.any(), Mockito.any(), anyFloat());
@@ -231,15 +215,12 @@ class ItemCraftingTest {
 
     @Test
     void costsComeFromTheCraftingCsvAndFallBackToTheDefaults() throws Exception {
-        assertEquals(10, ItemCrafting.commonSynthesisParts());
         assertEquals(100, CraftingCurrency.TRANSPOSITION.partsCost());
 
         ItemCraftingCosts.register(new JSONArray()
-                .put(new JSONObject().put("item", ItemCraftingCosts.COMMON_SUBROUTINE).put("partsCost", "7"))
                 .put(new JSONObject().put("item", CraftingCurrency.TRANSPOSITION.itemId()).put("partsCost", "55"))
                 .put(new JSONObject().put("item", CraftingCurrency.RECALIBRATION.itemId()).put("partsCost", "lots")));
 
-        assertEquals(7, ItemCrafting.commonSynthesisParts());
         assertEquals(55, CraftingCurrency.TRANSPOSITION.partsCost());
         assertEquals(20, CraftingCurrency.RECALIBRATION.partsCost());
     }
@@ -258,7 +239,7 @@ class ItemCraftingTest {
             ItemCrafting.recalibrate(item, new Random(seed));
             assertTrue(item.explicits().contains(locked), "the fixed effect keeps its rolled value");
         }
-        assertTrue(item.effectLines().stream().anyMatch(line -> line.plain().endsWith("(Fixed)")));
+        assertTrue(item.effectLines().stream().anyMatch(line -> line.plain().endsWith("(Immutable)")));
     }
 
     @Test
