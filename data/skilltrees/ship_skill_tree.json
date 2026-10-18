@@ -894,7 +894,7 @@
 			"id": "operations_center_1",
 			"type": "operations_center",
 			"connectedTo": [
-				"modular_hull_socket_1"
+				"small_flux_optional_15"
 			],
 			"x": 351,
 			"y": 4158,
@@ -967,8 +967,8 @@
 			]
 		},
 		{
-			"id": "modular_hull_socket_1",
-			"type": "modular_hull_socket",
+			"id": "small_flux_optional_15",
+			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_16",
 				"small_flux_optional_14",
@@ -1588,7 +1588,7 @@
 			"connectedTo": [
 				"small_flux_optional_6",
 				"small_flux_optional_26",
-				"modular_hull_socket_2"
+				"small_flux_optional_8"
 			],
 			"x": 2645,
 			"y": -3641,
@@ -1604,7 +1604,7 @@
 			"connectedTo": [
 				"small_flux_optional_10",
 				"small_flux_optional_28",
-				"modular_hull_socket_2",
+				"small_flux_optional_8",
 				"less_energy_damage_taken_4"
 			],
 			"x": 4280,
@@ -1689,7 +1689,7 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_13",
-				"modular_hull_socket_1",
+				"small_flux_optional_15",
 				"small_flux_optional_96"
 			],
 			"x": 1391,
@@ -1705,7 +1705,7 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_17",
-				"modular_hull_socket_1",
+				"small_flux_optional_15",
 				"engine_durability_2"
 			],
 			"x": -1391,
@@ -1792,7 +1792,7 @@
 			"connectedTo": [
 				"small_flux_optional_20",
 				"small_flux_optional_41",
-				"modular_hull_socket_4"
+				"small_flux_optional_22"
 			],
 			"x": -4280,
 			"y": -1391,
@@ -1808,7 +1808,7 @@
 			"connectedTo": [
 				"small_flux_optional_24",
 				"small_flux_optional_43",
-				"modular_hull_socket_4",
+				"small_flux_optional_22",
 				"reduced_monthly_supplies_1"
 			],
 			"x": -2645,
@@ -2136,7 +2136,7 @@
 				"small_flux_optional_3",
 				"ballistic_damage_5",
 				"missile_damage_2",
-				"modular_hull_socket_1",
+				"small_flux_optional_15",
 				"ballistic_and_energy_weapon_range_while_escorting_1"
 			],
 			"x": 0,
@@ -2919,7 +2919,7 @@
 			"type": "pd_damage_to_missiles",
 			"connectedTo": [
 				"pd_damage_to_missiles_1",
-				"modular_hull_socket_2"
+				"small_flux_optional_8"
 			],
 			"x": 3430,
 			"y": -2276,
@@ -3237,7 +3237,7 @@
 			"connectedTo": [
 				"tritach_2",
 				"engine_durability_3",
-				"modular_hull_socket_6"
+				"small_flux_optional_47"
 			],
 			"x": -1311,
 			"y": -12998,
@@ -3298,7 +3298,7 @@
 			"connectedTo": [
 				"non_beam_energy_damage_4",
 				"tritach_2",
-				"modular_hull_socket_6"
+				"small_flux_optional_47"
 			],
 			"x": 1309,
 			"y": -12998,
@@ -3328,7 +3328,7 @@
 			"type": "wormhole",
 			"connectedTo": [
 				"REDACTED_2",
-				"modular_hull_socket_2"
+				"small_flux_optional_8"
 			],
 			"x": 4214,
 			"y": -3047,
@@ -3345,7 +3345,7 @@
 			"connectedTo": [
 				"REDACTED_2",
 				"small_flux_optional_66",
-				"modular_hull_socket_5",
+				"small_flux_optional_50",
 				"stargazer_wormhole_2"
 			],
 			"x": 11465,
@@ -3362,7 +3362,7 @@
 			"connectedTo": [
 				"REDACTED_2",
 				"small_flux_optional_72",
-				"modular_hull_socket_5"
+				"small_flux_optional_50"
 			],
 			"x": 8865,
 			"y": -8107,
@@ -3396,7 +3396,7 @@
 			"connectedTo": [
 				"dictat_wormhole_2",
 				"beam_damage_4",
-				"modular_hull_socket_11"
+				"small_flux_optional_52"
 			],
 			"x": -10169,
 			"y": -9322,
@@ -3425,7 +3425,7 @@
 			"type": "wormhole",
 			"connectedTo": [
 				"dictat_wormhole_2",
-				"modular_hull_socket_4"
+				"small_flux_optional_22"
 			],
 			"x": -4145,
 			"y": -3140,
@@ -3459,7 +3459,7 @@
 			"connectedTo": [
 				"dictat_wormhole_2",
 				"less_energy_damage_taken_2",
-				"modular_hull_socket_11",
+				"small_flux_optional_52",
 				"nightcross_wormhole_2"
 			],
 			"x": -10169,
@@ -3494,7 +3494,7 @@
 			"connectedTo": [
 				"luddic_2",
 				"top_speed_3",
-				"modular_hull_socket_7"
+				"small_flux_optional_55"
 			],
 			"x": 4339,
 			"y": 11717,
@@ -3525,7 +3525,7 @@
 			"connectedTo": [
 				"luddic_2",
 				"reduced_D_mod_effect_1",
-				"modular_hull_socket_7"
+				"small_flux_optional_55"
 			],
 			"x": 6959,
 			"y": 11717,
@@ -3647,7 +3647,7 @@
 			"connectedTo": [
 				"hegemony_2",
 				"ballistic_damage_6",
-				"modular_hull_socket_8"
+				"small_flux_optional_58"
 			],
 			"x": -4340,
 			"y": 11713,
@@ -3693,7 +3693,7 @@
 			"connectedTo": [
 				"hegemony_2",
 				"missile_top_speed_2",
-				"modular_hull_socket_8",
+				"small_flux_optional_58",
 				"rat_abyss_wormhole_2"
 			],
 			"x": -6940,
@@ -3790,7 +3790,7 @@
 			"connectedTo": [
 				"pirate_wormhole_2",
 				"turn_acceleration_percent_2",
-				"modular_hull_socket_3"
+				"small_flux_optional_61"
 			],
 			"x": 12674,
 			"y": 1675,
@@ -3866,7 +3866,7 @@
 			"connectedTo": [
 				"pirate_wormhole_2",
 				"reduced_D_mod_effect_3",
-				"modular_hull_socket_3"
+				"small_flux_optional_61"
 			],
 			"x": 12674,
 			"y": 4111,
@@ -3958,7 +3958,7 @@
 			"connectedTo": [
 				"league_wormhole_2",
 				"increased_sensor_strength_4",
-				"modular_hull_socket_9"
+				"small_flux_optional_64"
 			],
 			"x": -12674,
 			"y": 1688,
@@ -3990,7 +3990,7 @@
 				"league_wormhole_2",
 				"ammo_capacity_2",
 				"kesteven_wormhole2",
-				"modular_hull_socket_9"
+				"small_flux_optional_64"
 			],
 			"x": -12674,
 			"y": 4096,
@@ -4073,7 +4073,7 @@
 			"type": "combat_readiness",
 			"connectedTo": [
 				"combat_readiness_3",
-				"modular_hull_socket_5"
+				"small_flux_optional_50"
 			],
 			"x": 9610,
 			"y": -8909,
@@ -4187,7 +4187,7 @@
 			"type": "ballistic_and_energy_weapon_range",
 			"connectedTo": [
 				"beam_split_1",
-				"modular_hull_socket_11"
+				"small_flux_optional_52"
 			],
 			"x": -11143,
 			"y": -8100,
@@ -4398,7 +4398,7 @@
 			"connectedTo": [
 				"ballistic_projectile_speed_1",
 				"ballistic_projectile_speed_4",
-				"modular_hull_socket_8"
+				"small_flux_optional_58"
 			],
 			"x": -5643,
 			"y": 12734,
@@ -4473,7 +4473,7 @@
 			"connectedTo": [
 				"shared_damage_taken",
 				"shared_damage_taken_2",
-				"modular_hull_socket_9"
+				"small_flux_optional_64"
 			],
 			"x": -13656,
 			"y": 2888,
@@ -4641,7 +4641,7 @@
 			"connectedTo": [
 				"temporary_acceleration_1",
 				"temporary_acceleration_2",
-				"modular_hull_socket_7"
+				"small_flux_optional_55"
 			],
 			"x": 5645,
 			"y": 12790,
@@ -4657,7 +4657,7 @@
 			"connectedTo": [
 				"objective_capture_range_1",
 				"objective_capture_range_3",
-				"modular_hull_socket_6"
+				"small_flux_optional_47"
 			],
 			"x": 2,
 			"y": -14085,
@@ -4838,7 +4838,7 @@
 			"type": "crew_capacity_flat",
 			"connectedTo": [
 				"crew_capacity_flat_3",
-				"modular_hull_socket_3",
+				"small_flux_optional_61",
 				"crew_capacity_flat_8"
 			],
 			"x": 13664,
@@ -4902,7 +4902,7 @@
 			"type": "wormhole",
 			"connectedTo": [
 				"lost_sector_wormhole1",
-				"modular_hull_socket_5"
+				"small_flux_optional_50"
 			],
 			"x": 9965,
 			"y": -10004,
@@ -5053,7 +5053,7 @@
 			"type": "shield_damage_taken_multi",
 			"connectedTo": [
 				"shield_damage_taken_multi_4",
-				"modular_hull_socket_10"
+				"small_flux_optional_69"
 			],
 			"x": -15814,
 			"y": 10216,
@@ -5114,7 +5114,7 @@
 			"connectedTo": [
 				"top_speed_7",
 				"kesteven_wormhole1",
-				"modular_hull_socket_10"
+				"small_flux_optional_69"
 			],
 			"x": -14818,
 			"y": 11513,
@@ -5130,7 +5130,7 @@
 			"connectedTo": [
 				"energy_flux_cost_2",
 				"kesteven_wormhole1",
-				"modular_hull_socket_10"
+				"small_flux_optional_69"
 			],
 			"x": -14818,
 			"y": 8913,
@@ -5433,8 +5433,8 @@
 			]
 		},
 		{
-			"id": "modular_hull_socket_2",
-			"type": "modular_hull_socket",
+			"id": "small_flux_optional_8",
+			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_9",
 				"small_flux_optional_7",
@@ -5450,8 +5450,8 @@
 			]
 		},
 		{
-			"id": "modular_hull_socket_4",
-			"type": "modular_hull_socket",
+			"id": "small_flux_optional_22",
+			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_23",
 				"dictat_wormhole_1",
@@ -5466,8 +5466,8 @@
 			]
 		},
 		{
-			"id": "modular_hull_socket_3",
-			"type": "modular_hull_socket",
+			"id": "small_flux_optional_61",
+			"type": "small_flux_optional",
 			"connectedTo": [
 				"crew_capacity_flat_4",
 				"small_flux_optional_60",
@@ -5482,8 +5482,8 @@
 			]
 		},
 		{
-			"id": "modular_hull_socket_5",
-			"type": "modular_hull_socket",
+			"id": "small_flux_optional_50",
+			"type": "small_flux_optional",
 			"connectedTo": [
 				"combat_readiness_4",
 				"lost_sector_wormhole2",
@@ -5499,8 +5499,8 @@
 			]
 		},
 		{
-			"id": "modular_hull_socket_6",
-			"type": "modular_hull_socket",
+			"id": "small_flux_optional_47",
+			"type": "small_flux_optional",
 			"connectedTo": [
 				"objective_capture_range_2",
 				"small_flux_optional_46",
@@ -5515,8 +5515,8 @@
 			]
 		},
 		{
-			"id": "modular_hull_socket_7",
-			"type": "modular_hull_socket",
+			"id": "small_flux_optional_55",
+			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_54",
 				"small_flux_optional_56",
@@ -5531,8 +5531,8 @@
 			]
 		},
 		{
-			"id": "modular_hull_socket_8",
-			"type": "modular_hull_socket",
+			"id": "small_flux_optional_58",
+			"type": "small_flux_optional",
 			"connectedTo": [
 				"ballistic_projectile_speed_2",
 				"small_flux_optional_59",
@@ -5547,8 +5547,8 @@
 			]
 		},
 		{
-			"id": "modular_hull_socket_9",
-			"type": "modular_hull_socket",
+			"id": "small_flux_optional_64",
+			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_65",
 				"shared_damage_taken_1",
@@ -5563,8 +5563,8 @@
 			]
 		},
 		{
-			"id": "modular_hull_socket_10",
-			"type": "modular_hull_socket",
+			"id": "small_flux_optional_69",
+			"type": "small_flux_optional",
 			"connectedTo": [
 				"shield_damage_taken_multi_3",
 				"small_flux_optional_70",
@@ -5579,8 +5579,8 @@
 			]
 		},
 		{
-			"id": "modular_hull_socket_11",
-			"type": "modular_hull_socket",
+			"id": "small_flux_optional_52",
+			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_5",
 				"small_flux_optional_53",
@@ -5772,8 +5772,8 @@
 			]
 		},
 		{
-			"id": "modular_hull_socket_14",
-			"type": "modular_hull_socket",
+			"id": "small_flux_optional_107",
+			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_71",
 				"small_flux_optional_74",
@@ -5792,7 +5792,7 @@
 			"id": "small_flux_optional_71",
 			"type": "small_flux_optional",
 			"connectedTo": [
-				"modular_hull_socket_14",
+				"small_flux_optional_107",
 				"nightcross_wormhole_1",
 				"hull_multi_7"
 			],
@@ -5809,7 +5809,7 @@
 			"id": "small_flux_optional_74",
 			"type": "small_flux_optional",
 			"connectedTo": [
-				"modular_hull_socket_14",
+				"small_flux_optional_107",
 				"nightcross_wormhole_1",
 				"fighter_weapon_damage_3"
 			],
@@ -5861,7 +5861,7 @@
 			"type": "energy_weapon_fire_rate",
 			"connectedTo": [
 				"energy_weapon_fire_rate_2",
-				"modular_hull_socket_14",
+				"small_flux_optional_107",
 				"energy_weapon_fire_rate_3"
 			],
 			"x": -18539,
@@ -5973,7 +5973,7 @@
 			"connectedTo": [
 				"maneuverability_percent_3",
 				"maneuverability_percent_4",
-				"modular_hull_socket_15"
+				"small_flux_optional_108"
 			],
 			"x": 18149,
 			"y": -5279,
@@ -6070,7 +6070,7 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"stargazer_wormhole_1",
-				"modular_hull_socket_15",
+				"small_flux_optional_108",
 				"ecm_resistance_3"
 			],
 			"x": 17365,
@@ -6086,7 +6086,7 @@
 			"id": "small_flux_optional_76",
 			"type": "small_flux_optional",
 			"connectedTo": [
-				"modular_hull_socket_15",
+				"small_flux_optional_108",
 				"stargazer_wormhole_1",
 				"energy_weapon_fire_rate_4"
 			],
@@ -6100,8 +6100,8 @@
 			]
 		},
 		{
-			"id": "modular_hull_socket_15",
-			"type": "modular_hull_socket",
+			"id": "small_flux_optional_108",
+			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_76",
 				"small_flux_optional_75",
@@ -6157,7 +6157,7 @@
 			"connectedTo": [
 				"beam_damage_7",
 				"beam_damage_8",
-				"modular_hull_socket_15"
+				"small_flux_optional_108"
 			],
 			"x": 18164,
 			"y": -4279,
@@ -6534,7 +6534,7 @@
 			"id": "small_flux_optional_105",
 			"type": "small_flux_optional",
 			"connectedTo": [
-				"modular_hull_socket_13",
+				"small_flux_optional_109",
 				"rat_abyss_wormhole_1",
 				"system_cooldown_1"
 			],
@@ -6551,7 +6551,7 @@
 			"id": "small_flux_optional_106",
 			"type": "small_flux_optional",
 			"connectedTo": [
-				"modular_hull_socket_13",
+				"small_flux_optional_109",
 				"rat_abyss_wormhole_1",
 				"armor_8"
 			],
@@ -6565,8 +6565,8 @@
 			]
 		},
 		{
-			"id": "modular_hull_socket_13",
-			"type": "modular_hull_socket",
+			"id": "small_flux_optional_109",
+			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_106",
 				"small_flux_optional_105",
@@ -6717,7 +6717,7 @@
 			"id": "weapon_durability_6",
 			"type": "weapon_durability",
 			"connectedTo": [
-				"modular_hull_socket_13",
+				"small_flux_optional_109",
 				"weapon_durability_7",
 				"weapon_durability_8"
 			],
@@ -8390,139 +8390,139 @@
 			"controlY": -699
 		},
 		{
-			"a": "modular_hull_socket_6",
+			"a": "small_flux_optional_47",
 			"b": "small_flux_optional_46",
 			"controlX": -927,
 			"controlY": -13924
 		},
 		{
-			"a": "modular_hull_socket_6",
+			"a": "small_flux_optional_47",
 			"b": "small_flux_optional_48",
 			"controlX": 925,
 			"controlY": -13924
 		},
 		{
-			"a": "modular_hull_socket_5",
+			"a": "small_flux_optional_50",
 			"b": "small_flux_optional_51",
 			"controlX": 9246,
 			"controlY": -9026
 		},
 		{
-			"a": "modular_hull_socket_5",
+			"a": "small_flux_optional_50",
 			"b": "small_flux_optional_49",
 			"controlX": 11084,
 			"controlY": -9026
 		},
 		{
-			"a": "modular_hull_socket_3",
+			"a": "small_flux_optional_61",
 			"b": "small_flux_optional_60",
 			"controlX": 13535,
 			"controlY": 2032
 		},
 		{
-			"a": "modular_hull_socket_3",
+			"a": "small_flux_optional_61",
 			"b": "small_flux_optional_62",
 			"controlX": 13535,
 			"controlY": 3754
 		},
 		{
-			"a": "modular_hull_socket_7",
+			"a": "small_flux_optional_55",
 			"b": "small_flux_optional_54",
 			"controlX": 4723,
 			"controlY": 12643
 		},
 		{
-			"a": "modular_hull_socket_7",
+			"a": "small_flux_optional_55",
 			"b": "small_flux_optional_56",
 			"controlX": 6575,
 			"controlY": 12643
 		},
 		{
-			"a": "modular_hull_socket_8",
+			"a": "small_flux_optional_58",
 			"b": "small_flux_optional_59",
 			"controlX": -6559,
 			"controlY": 12632
 		},
 		{
-			"a": "modular_hull_socket_8",
+			"a": "small_flux_optional_58",
 			"b": "small_flux_optional_57",
 			"controlX": -4721,
 			"controlY": 12632
 		},
 		{
-			"a": "modular_hull_socket_10",
+			"a": "small_flux_optional_69",
 			"b": "small_flux_optional_70",
 			"controlX": -15737,
 			"controlY": 9294
 		},
 		{
-			"a": "modular_hull_socket_10",
+			"a": "small_flux_optional_69",
 			"b": "small_flux_optional_68",
 			"controlX": -15737,
 			"controlY": 11132
 		},
 		{
-			"a": "modular_hull_socket_9",
+			"a": "small_flux_optional_64",
 			"b": "small_flux_optional_65",
 			"controlX": -13525,
 			"controlY": 3743
 		},
 		{
-			"a": "modular_hull_socket_9",
+			"a": "small_flux_optional_64",
 			"b": "small_flux_optional_63",
 			"controlX": -13525,
 			"controlY": 2041
 		},
 		{
-			"a": "modular_hull_socket_11",
+			"a": "small_flux_optional_52",
 			"b": "small_flux_optional_5",
 			"controlX": -11030,
 			"controlY": -8965
 		},
 		{
-			"a": "modular_hull_socket_11",
+			"a": "small_flux_optional_52",
 			"b": "small_flux_optional_53",
 			"controlX": -11030,
 			"controlY": -7243
 		},
 		{
 			"a": "combat_readiness_4",
-			"b": "modular_hull_socket_5",
+			"b": "small_flux_optional_50",
 			"controlX": 9824,
 			"controlY": -9211
 		},
 		{
-			"a": "modular_hull_socket_2",
+			"a": "small_flux_optional_8",
 			"b": "small_flux_optional_9",
 			"controlX": 4018,
 			"controlY": -2027
 		},
 		{
-			"a": "modular_hull_socket_2",
+			"a": "small_flux_optional_8",
 			"b": "small_flux_optional_7",
 			"controlX": 3195,
 			"controlY": -3169
 		},
 		{
-			"a": "modular_hull_socket_4",
+			"a": "small_flux_optional_22",
 			"b": "small_flux_optional_21",
 			"controlX": -4010,
 			"controlY": -2043
 		},
 		{
-			"a": "modular_hull_socket_4",
+			"a": "small_flux_optional_22",
 			"b": "small_flux_optional_23",
 			"controlX": -3182,
 			"controlY": -3182
 		},
 		{
-			"a": "modular_hull_socket_1",
+			"a": "small_flux_optional_15",
 			"b": "small_flux_optional_16",
 			"controlX": -704,
 			"controlY": 4445
 		},
 		{
-			"a": "modular_hull_socket_1",
+			"a": "small_flux_optional_15",
 			"b": "small_flux_optional_14",
 			"controlX": 704,
 			"controlY": 4445
@@ -8906,13 +8906,13 @@
 			"controlY": 3503
 		},
 		{
-			"a": "modular_hull_socket_14",
+			"a": "small_flux_optional_107",
 			"b": "small_flux_optional_71",
 			"controlX": -18435,
 			"controlY": -4703
 		},
 		{
-			"a": "modular_hull_socket_14",
+			"a": "small_flux_optional_107",
 			"b": "small_flux_optional_74",
 			"controlX": -18435,
 			"controlY": -3005
@@ -9002,7 +9002,7 @@
 			"controlY": -5166
 		},
 		{
-			"a": "modular_hull_socket_15",
+			"a": "small_flux_optional_108",
 			"b": "small_flux_optional_76",
 			"controlX": 18214,
 			"controlY": -3896
@@ -9021,7 +9021,7 @@
 		},
 		{
 			"a": "small_flux_optional_75",
-			"b": "modular_hull_socket_15",
+			"b": "small_flux_optional_108",
 			"controlX": 18214,
 			"controlY": -5594
 		},
@@ -9110,13 +9110,13 @@
 			"controlY": -7860
 		},
 		{
-			"a": "modular_hull_socket_13",
+			"a": "small_flux_optional_109",
 			"b": "small_flux_optional_106",
 			"controlX": -46356,
 			"controlY": 26866
 		},
 		{
-			"a": "modular_hull_socket_13",
+			"a": "small_flux_optional_109",
 			"b": "small_flux_optional_105",
 			"controlX": -46356,
 			"controlY": 28564

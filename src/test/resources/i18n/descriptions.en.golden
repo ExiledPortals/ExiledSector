@@ -4547,7 +4547,7 @@ summary|option0|FRIGATE|91	0	When this ship isn't flown by you, it flies straigh
 summary|option0|FRIGATE|92	0	Increases shield arc by <good>100</good>.
 summary|option0|FRIGATE|93	0	<good>20%</good> increased top speed of fighters launched from this ship.
 summary|option0|FRIGATE|94	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
-summary|option0|FRIGATE|95	0	<good>174%</good> more flux capacity.
+summary|option0|FRIGATE|95	0	<good>202%</good> more flux capacity.
 summary|option0|FRIGATE|96	0	<good>104%</good> more flux dissipation.
 summary|option0|FRIGATE|97	0	<good>100%</good> increased shield arc.
 summary|option0|FRIGATE|98	0	Converts this ship's shield to front-facing.
@@ -4758,7 +4758,7 @@ summary|option0|DESTROYER|91	0	When this ship isn't flown by you, it flies strai
 summary|option0|DESTROYER|92	0	Increases shield arc by <good>100</good>.
 summary|option0|DESTROYER|93	0	<good>20%</good> increased top speed of fighters launched from this ship.
 summary|option0|DESTROYER|94	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
-summary|option0|DESTROYER|95	0	<good>174%</good> more flux capacity.
+summary|option0|DESTROYER|95	0	<good>202%</good> more flux capacity.
 summary|option0|DESTROYER|96	0	<good>104%</good> more flux dissipation.
 summary|option0|DESTROYER|97	0	<good>100%</good> increased shield arc.
 summary|option0|DESTROYER|98	0	Converts this ship's shield to front-facing.
@@ -4969,7 +4969,7 @@ summary|option0|CRUISER|91	0	When this ship isn't flown by you, it flies straigh
 summary|option0|CRUISER|92	0	Increases shield arc by <good>100</good>.
 summary|option0|CRUISER|93	0	<good>20%</good> increased top speed of fighters launched from this ship.
 summary|option0|CRUISER|94	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
-summary|option0|CRUISER|95	0	<good>174%</good> more flux capacity.
+summary|option0|CRUISER|95	0	<good>202%</good> more flux capacity.
 summary|option0|CRUISER|96	0	<good>104%</good> more flux dissipation.
 summary|option0|CRUISER|97	0	<good>100%</good> increased shield arc.
 summary|option0|CRUISER|98	0	Converts this ship's shield to front-facing.
@@ -5180,7 +5180,7 @@ summary|option0|CAPITAL_SHIP|91	0	When this ship isn't flown by you, it flies st
 summary|option0|CAPITAL_SHIP|92	0	Increases shield arc by <good>100</good>.
 summary|option0|CAPITAL_SHIP|93	0	<good>20%</good> increased top speed of fighters launched from this ship.
 summary|option0|CAPITAL_SHIP|94	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
-summary|option0|CAPITAL_SHIP|95	0	<good>174%</good> more flux capacity.
+summary|option0|CAPITAL_SHIP|95	0	<good>202%</good> more flux capacity.
 summary|option0|CAPITAL_SHIP|96	0	<good>104%</good> more flux dissipation.
 summary|option0|CAPITAL_SHIP|97	0	<good>100%</good> increased shield arc.
 summary|option0|CAPITAL_SHIP|98	0	Converts this ship's shield to front-facing.
@@ -5392,7 +5392,7 @@ summary|option1|FRIGATE|92	0	Increases shield arc by <good>100</good>.
 summary|option1|FRIGATE|93	0	<good>20%</good> increased top speed of fighters launched from this ship.
 summary|option1|FRIGATE|94	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
 summary|option1|FRIGATE|95	0	<good>4%</good> more flux capacity.
-summary|option1|FRIGATE|96	0	<good>274%</good> more flux dissipation.
+summary|option1|FRIGATE|96	0	<good>302%</good> more flux dissipation.
 summary|option1|FRIGATE|97	0	<good>100%</good> increased shield arc.
 summary|option1|FRIGATE|98	0	Converts this ship's shield to front-facing.
 summary|option1|FRIGATE|99	0	<bad>20%</bad> less top speed.
@@ -5603,7 +5603,7 @@ summary|option1|DESTROYER|92	0	Increases shield arc by <good>100</good>.
 summary|option1|DESTROYER|93	0	<good>20%</good> increased top speed of fighters launched from this ship.
 summary|option1|DESTROYER|94	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
 summary|option1|DESTROYER|95	0	<good>4%</good> more flux capacity.
-summary|option1|DESTROYER|96	0	<good>274%</good> more flux dissipation.
+summary|option1|DESTROYER|96	0	<good>302%</good> more flux dissipation.
 summary|option1|DESTROYER|97	0	<good>100%</good> increased shield arc.
 summary|option1|DESTROYER|98	0	Converts this ship's shield to front-facing.
 summary|option1|DESTROYER|99	0	<bad>20%</bad> less top speed.
@@ -5814,7 +5814,7 @@ summary|option1|CRUISER|92	0	Increases shield arc by <good>100</good>.
 summary|option1|CRUISER|93	0	<good>20%</good> increased top speed of fighters launched from this ship.
 summary|option1|CRUISER|94	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
 summary|option1|CRUISER|95	0	<good>4%</good> more flux capacity.
-summary|option1|CRUISER|96	0	<good>274%</good> more flux dissipation.
+summary|option1|CRUISER|96	0	<good>302%</good> more flux dissipation.
 summary|option1|CRUISER|97	0	<good>100%</good> increased shield arc.
 summary|option1|CRUISER|98	0	Converts this ship's shield to front-facing.
 summary|option1|CRUISER|99	0	<bad>20%</bad> less top speed.
@@ -6025,7 +6025,7 @@ summary|option1|CAPITAL_SHIP|92	0	Increases shield arc by <good>100</good>.
 summary|option1|CAPITAL_SHIP|93	0	<good>20%</good> increased top speed of fighters launched from this ship.
 summary|option1|CAPITAL_SHIP|94	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
 summary|option1|CAPITAL_SHIP|95	0	<good>4%</good> more flux capacity.
-summary|option1|CAPITAL_SHIP|96	0	<good>274%</good> more flux dissipation.
+summary|option1|CAPITAL_SHIP|96	0	<good>302%</good> more flux dissipation.
 summary|option1|CAPITAL_SHIP|97	0	<good>100%</good> increased shield arc.
 summary|option1|CAPITAL_SHIP|98	0	Converts this ship's shield to front-facing.
 summary|option1|CAPITAL_SHIP|99	0	<bad>20%</bad> less top speed.
@@ -6260,7 +6260,7 @@ summary|option2|FRIGATE|116	0	Increases this ship's sensor strength by <good>90<
 summary|option2|FRIGATE|117	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option2|FRIGATE|118	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 summary|option2|FRIGATE|119	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-summary|option2|FRIGATE|120	0	<good>205%</good> more hull points.
+summary|option2|FRIGATE|120	0	<good>233%</good> more hull points.
 summary|option2|FRIGATE|121	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option2|FRIGATE|122	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
 summary|option2|FRIGATE|123	0	Each Heartless stack reduces top speed and maneuverability by <bad>3%</bad>.
@@ -6471,7 +6471,7 @@ summary|option2|DESTROYER|116	0	Increases this ship's sensor strength by <good>1
 summary|option2|DESTROYER|117	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option2|DESTROYER|118	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 summary|option2|DESTROYER|119	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-summary|option2|DESTROYER|120	0	<good>205%</good> more hull points.
+summary|option2|DESTROYER|120	0	<good>233%</good> more hull points.
 summary|option2|DESTROYER|121	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option2|DESTROYER|122	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
 summary|option2|DESTROYER|123	0	Each Heartless stack reduces top speed and maneuverability by <bad>3%</bad>.
@@ -6682,7 +6682,7 @@ summary|option2|CRUISER|116	0	Increases this ship's sensor strength by <good>160
 summary|option2|CRUISER|117	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option2|CRUISER|118	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 summary|option2|CRUISER|119	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-summary|option2|CRUISER|120	0	<good>205%</good> more hull points.
+summary|option2|CRUISER|120	0	<good>233%</good> more hull points.
 summary|option2|CRUISER|121	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option2|CRUISER|122	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
 summary|option2|CRUISER|123	0	Each Heartless stack reduces top speed and maneuverability by <bad>3%</bad>.
@@ -6893,7 +6893,7 @@ summary|option2|CAPITAL_SHIP|116	0	Increases this ship's sensor strength by <goo
 summary|option2|CAPITAL_SHIP|117	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option2|CAPITAL_SHIP|118	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 summary|option2|CAPITAL_SHIP|119	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-summary|option2|CAPITAL_SHIP|120	0	<good>205%</good> more hull points.
+summary|option2|CAPITAL_SHIP|120	0	<good>233%</good> more hull points.
 summary|option2|CAPITAL_SHIP|121	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option2|CAPITAL_SHIP|122	0	Each Heartless stack increases the maximum armor of every cell by <good>2%</good>.
 summary|option2|CAPITAL_SHIP|123	0	Each Heartless stack reduces top speed and maneuverability by <bad>3%</bad>.
