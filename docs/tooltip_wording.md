@@ -4,6 +4,16 @@ Every modifier, effect and stat line the player reads follows these rules: skill
 
 Before writing a line, find out how the value is combined in code. The wording is decided by what the value stacks with, not by how the effect is named or what the designer intended.
 
+## Less is more
+
+Write the shortest line that tells the player what happens. Don't over-explain anything, and when in doubt, cut it. This applies to every player-facing text, including flavour descriptions, settings tooltips and notices.
+
+- Don't add a bracketed reminder of what a stat or category covers: "maneuverability", not "maneuverability (acceleration, deceleration and turn rate)".
+- Don't name what is already on screen. A refusal says "Augmentation Nanoswarm can't modify a unique chart", not "...a unique chart like Silent Reach".
+- State the rule, not the mechanism behind it: "can't be used while an inhibitor is on", not "reshapes every modifier, so it can't be used while an inhibitor is protecting one".
+- Don't repeat what the UI already shows elsewhere, such as rarity, where an item is used, or the item's own name.
+- Describe an outcome rather than listing every case when the cases don't help the player decide: "Corrupts a Star Chart, modifying it unpredictably."
+
 ## Percentages: increased/reduced vs more/less
 
 Use "increased" and "reduced" when the value is summed with every other source of the same stat before it is applied. Several 10% increased sources make 20% increased, applied once to the base.
