@@ -122,6 +122,10 @@ public enum ChartEffect implements ModifierEffect {
     CHART_STAR_CHART_PERCENT(DropType.STAR_CHART),
     CHART_CURRENCY_PERCENT(DropType.CURRENCY),
     CHART_FEEDSTOCK_PERCENT(DropType.FEEDSTOCK),
+    CHART_WEAPON_PERCENT(DropType.WEAPON),
+    CHART_RESOURCE_PERCENT(DropType.RESOURCE),
+    CHART_BLUEPRINT_PERCENT(DropType.BLUEPRINT),
+    CHART_AI_CORE_PERCENT(DropType.AI_CORE),
     CHART_WARDEN_SPOILS_PERCENT(false) {
         @Override
         public void beforeGeneration(ChartGenContext context, float value) {

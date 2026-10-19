@@ -72,6 +72,8 @@ export const CHART_DROP_COLUMNS = [
   'max_tier',
   'note',
 ] as const;
+export const CHART_LOOT_COLUMNS = ['id', 'drop_type', 'scope', 'group', 'mode', 'amount', 'min_tier', 'note'] as const;
+export const CHART_LOOT_MODES = ['random', 'value'];
 export const ALWAYS_BLOCKED_ABILITY = 'fracture_jump';
 const FLEET_STRENGTH_RANGE = [0, 300];
 const MAX_CHARTS_PER_DROP = 4;
@@ -515,4 +517,83 @@ export const CHART_DROP_SPEC: ChartTableSpec = {
   summary: dropTierSummary,
 };
 
-export const CHART_TABLE_SPECS: ChartTableSpec[] = [CHART_TIER_SPEC, CHART_POI_SPEC, CHART_FACTION_SPEC, CHART_DROP_SPEC, CHART_BLOCKED_ABILITY_SPEC];
+export const CHART_LOOT_SPEC: ChartTableSpec = {
+  resource: 'chart-loot',
+  fileName: 'chart_loot.csv',
+  noun: 'chart loot row',
+  keyColumn: 'id',
+  description:
+    'Vanilla loot in chart systems. A row with no scope puts a vanilla drop group under a drop type, so that type\'s bonus scales every site entry from that group (groups that are not listed, such as colony items, are never scaled). A row with a scope adds a base entry: to every site of that category, to every chart fleet (fleet), or to the warden on top of its fleet rows (warden). Random rows roll the group amount times; value rows give that much value from it. Fleet and warden amounts are per 100 fleet points, and every base entry is scaled by its drop type bonus. Groups the game has not loaded are skipped.',
+  columns: columnsOf(CHART_LOOT_COLUMNS, {
+    id: { label: 'Id', kind: 'text', help: 'Any unique name; by convention the group for mappings and scope_group for base entries' },
+    drop_type: { label: 'Drop type', kind: 'choice', choices: (vocabulary) => vocabulary.chartLootDropTypes },
+    scope: { label: 'Scope', kind: 'choice', choices: (vocabulary) => vocabulary.chartLootScopes },
+    group: { label: 'Drop group', kind: 'text', help: 'A vanilla (or modded) drop group from drop_groups.csv' },
+    mode: { label: 'Mode', kind: 'choice', choices: () => CHART_LOOT_MODES },
+    amount: { label: 'Amount', kind: 'number', help: 'Chances for random rows, value for value rows; per 100 fleet points for fleet and warden' },
+    min_tier: { label: 'Min tier', kind: 'integer' },
+    note: NOTE_COLUMN,
+  }),
+  newRow: () => ({ id: '', drop_type: 'weapon', scope: '', group: '', mode: '', amount: '', min_tier: '' }),
+  issues: (model, vocabulary) => {
+    const issues: string[] = [];
+    const mappedTypes = new Map<string, string>();
+    model.rows.forEach((row, index) => {
+      const label = rowLabel(CHART_LOOT_SPEC, row, index);
+      if (value(row, 'id') === '') {
+        issues.push(`${label}: needs an id`);
+      }
+      if (value(row, 'group') === '') {
+        issues.push(`${label}: needs a drop group`);
+      } else if (vocabulary.chartColonyItemGroups.includes(value(row, 'group'))) {
+        issues.push(`${label}: group ${value(row, 'group')} holds colony items, which only come from the run's single capped roll`);
+      }
+      const dropType = value(row, 'drop_type').toLowerCase();
+      if (!vocabulary.chartLootDropTypes.includes(dropType)) {
+        issues.push(`${label}: drop_type must be one of ${vocabulary.chartLootDropTypes.join(', ')}`);
+      }
+      issues.push(...columnFormatIssues(CHART_LOOT_SPEC.columns.filter((column) => column.column !== 'drop_type'), row, label, vocabulary));
+      if (value(row, 'scope') === '') {
+        const mapped = mappedTypes.get(value(row, 'group'));
+        if (mapped !== undefined && mapped !== dropType) {
+          issues.push(`${label}: group ${value(row, 'group')} already belongs to ${mapped}`);
+        }
+        mappedTypes.set(value(row, 'group'), mapped ?? dropType);
+      } else {
+        if (!CHART_LOOT_MODES.includes(value(row, 'mode').toLowerCase())) {
+          issues.push(`${label}: a base entry needs a mode, random or value`);
+        }
+        if (!(numberValue(row, 'amount', 0) > 0)) {
+          issues.push(`${label}: a base entry needs an amount above 0`);
+        }
+      }
+    });
+    return [...issues, ...duplicateKeyIssues(CHART_LOOT_SPEC, model)];
+  },
+  warnings: (model, vocabulary) => {
+    const warnings: string[] = [];
+    const mappedGroups = new Map(model.rows.filter((row) => value(row, 'scope') === '').map((row) => [value(row, 'group'), value(row, 'drop_type').toLowerCase()]));
+    model.rows.forEach((row, index) => {
+      const label = rowLabel(CHART_LOOT_SPEC, row, index);
+      warnings.push(...roundedIntegerWarnings(CHART_LOOT_SPEC.columns, row, label));
+      if (value(row, 'scope') === '' && (value(row, 'mode') !== '' || value(row, 'amount') !== '')) {
+        warnings.push(`${label}: a row with no scope only maps its group, so mode and amount are ignored`);
+      }
+      const mappedType = mappedGroups.get(value(row, 'group'));
+      if (value(row, 'scope') !== '' && mappedType !== undefined && mappedType !== value(row, 'drop_type').toLowerCase()) {
+        warnings.push(`${label}: group ${value(row, 'group')} is mapped to ${mappedType}, but this entry is scaled as ${value(row, 'drop_type')}`);
+      }
+      const minTierText = value(row, 'min_tier');
+      if (minTierText !== '' && isNumberText(minTierText)) {
+        const minTier = Math.round(Number.parseFloat(minTierText));
+        if (minTier < vocabulary.lowestChartTier || minTier > vocabulary.highestChartTier) {
+          warnings.push(`${label}: min_tier is clamped to ${vocabulary.lowestChartTier}-${vocabulary.highestChartTier}`);
+        }
+      }
+    });
+    return warnings;
+  },
+  summary: (row) => (value(row, 'scope') === '' ? `${value(row, 'drop_type')} group` : `${value(row, 'scope')} ${value(row, 'mode')} ${value(row, 'amount')}`),
+};
+
+export const CHART_TABLE_SPECS: ChartTableSpec[] = [CHART_TIER_SPEC, CHART_POI_SPEC, CHART_FACTION_SPEC, CHART_DROP_SPEC, CHART_LOOT_SPEC, CHART_BLOCKED_ABILITY_SPEC];

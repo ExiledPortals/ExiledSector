@@ -131,6 +131,8 @@ export function resolveDataResource(paths: ProjectPaths, name: string): DataReso
       };
     case 'chart-drops':
       return { filePath: path.join(configDir, 'chart_drops.csv'), check: (text) => checkCsvHeader(text, 'source,', 'the source column') };
+    case 'chart-loot':
+      return { filePath: path.join(configDir, 'chart_loot.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
     case 'strings-en':
       return { filePath: path.join(paths.projectRoot, 'data', 'strings', 'exiledSector', 'en.json'), check: checkStringCatalogue };
     case 'commodities':

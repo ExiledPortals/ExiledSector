@@ -49,6 +49,7 @@ public final class ChartContentGenerator {
     static final long PLACEMENT_SALT = 0x43485053504f54L;
     static final long SALVAGE_SALT = 0x434853414c5647L;
     static final long FLEET_BUILD_SALT = 0x43484255494c44L;
+    static final long LOOT_SALT = 0x43484c4f4f5453L;
     static final List<String> HOSTILITY_FLAGS = List.of(MemFlags.MEMORY_KEY_MAKE_HOSTILE, MemFlags.MEMORY_KEY_MAKE_AGGRESSIVE,
             MemFlags.MEMORY_KEY_ALLOW_LONG_PURSUIT, MemFlags.MEMORY_KEY_NO_JUMP, MemFlags.MEMORY_KEY_SAW_PLAYER_WITH_TRANSPONDER_ON,
             MemFlags.MEMORY_KEY_NO_REP_IMPACT, MemFlags.MEMORY_KEY_LOW_REP_IMPACT);
@@ -80,7 +81,7 @@ public final class ChartContentGenerator {
             report("plan the content", seed, e);
             return ChartContent.none(clampedTier);
         }
-        Build build = new Build(system, runId, clampedTier, seed, innerWormhole);
+        Build build = new Build(system, runId, clampedTier, seed, innerWormhole, chartContext == null ? ChartGenContext.none() : chartContext);
         try {
             build.placePois(plan);
             build.spawnFleets(plan);
@@ -268,9 +269,11 @@ public final class ChartContentGenerator {
         private final int tier;
         private final long seed;
         private final Vector2f innerWormhole;
+        private final ChartGenContext chartContext;
         private final Random placementRandom;
         private final Random salvageRandom;
         private final Random fleetRandom;
+        private final Random lootRandom;
         private final List<SectorEntityToken> poiEntities = new ArrayList<>();
         private final List<CampaignFleetAPI> fleets = new ArrayList<>();
         private final List<String> guardFleetIds = new ArrayList<>();
@@ -278,15 +281,17 @@ public final class ChartContentGenerator {
         private List<Hazard> hazards = List.of();
         private String bossFleetId;
 
-        Build(StarSystemAPI system, String runId, int tier, long seed, Vector2f innerWormhole) {
+        Build(StarSystemAPI system, String runId, int tier, long seed, Vector2f innerWormhole, ChartGenContext chartContext) {
             this.system = system;
             this.runId = runId;
             this.tier = tier;
             this.seed = seed;
             this.innerWormhole = innerWormhole == null ? null : new Vector2f(innerWormhole);
+            this.chartContext = chartContext;
             this.placementRandom = ChartLayoutGenerator.derivedRandom(seed, PLACEMENT_SALT);
             this.salvageRandom = ChartLayoutGenerator.derivedRandom(seed, SALVAGE_SALT);
             this.fleetRandom = ChartLayoutGenerator.derivedRandom(seed, FLEET_BUILD_SALT);
+            this.lootRandom = ChartLayoutGenerator.derivedRandom(seed, LOOT_SALT);
         }
 
         void placePois(ChartContentPlan plan) {
@@ -326,10 +331,21 @@ public final class ChartContentGenerator {
                 if (poi.kind() != ChartPoi.Kind.CACHE && spot.focus() != null) {
                     usedFoci.add(spot.focus());
                 }
-                return entity;
             } catch (RuntimeException | LinkageError e) {
                 system.removeEntity(entity);
                 throw e;
+            }
+            addVanillaLoot(entity, poi);
+            return entity;
+        }
+
+        private void addVanillaLoot(SectorEntityToken site, ChartPoi poi) {
+            try {
+                ChartVanillaLoot.SiteDrops specDrops = poi.kind() == ChartPoi.Kind.DERELICT ? ChartVanillaLoot.SiteDrops.NONE
+                        : engine.siteDrops(poi.specForSalvage());
+                ChartVanillaLoot.addToSite(site, poi.kind(), specDrops, chartContext, tier, lootRandom);
+            } catch (RuntimeException | LinkageError e) {
+                report("add loot to a " + poi.id() + " point of interest", seed, e);
             }
         }
 
@@ -351,6 +367,11 @@ public final class ChartContentGenerator {
                 return;
             }
             prepareFleet(fleet, runId, tier, planned.role(), planned.strengthBonus(), fleetSeed);
+            try {
+                ChartVanillaLoot.addToFleet(fleet, planned.role() == FleetRole.BOSS, chartContext, tier);
+            } catch (RuntimeException | LinkageError e) {
+                report("add loot to a " + planned.role().name().toLowerCase(Locale.ROOT) + " fleet", seed, e);
+            }
             SectorEntityToken guarded = planned.guardsPoi() && planned.poiIndex() < poiEntities.size() ? poiEntities.get(planned.poiIndex()) : null;
             Vector2f spawnAt = spawnLocation(planned.role(), guarded, oneFleetRandom);
             system.addEntity(fleet);

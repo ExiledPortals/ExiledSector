@@ -56,10 +56,11 @@ class EditorRoundTripTest {
     private static final String CHART_FACTIONS = "exiledsector/charts/ChartFactions.java";
     private static final String CHART_BLOCKED_ABILITIES = "exiledsector/charts/ChartBlockedAbilities.java";
     private static final String CHART_DROPS = "exiledsector/charts/ChartDrops.java";
+    private static final String CHART_LOOT = "exiledsector/charts/ChartLoot.java";
 
     private static final List<String> LOADERS = List.of(TYPE_LOADER, TREE_LOADER, ITEM_DEFINITIONS, ITEM_DEFINITION,
             ITEM_NAMES, ITEM_DROPS, SALVAGE_COMPAT, ITEM_CRAFTING, HULL_ITEM_IMPLICITS, ITEM_MODIFIERS, STAR_CHART_DEFINITIONS, STAR_CHART_IMPLICITS,
-            STAR_CHART_ITEMS, STAR_CHART_NAMES, CHART_TIERS, CHART_POIS, CHART_FACTIONS, CHART_BLOCKED_ABILITIES, CHART_DROPS);
+            STAR_CHART_ITEMS, STAR_CHART_NAMES, CHART_TIERS, CHART_POIS, CHART_FACTIONS, CHART_BLOCKED_ABILITIES, CHART_DROPS, CHART_LOOT);
 
     private static final List<String> EDITED_DATA_PATHS = List.of("data/skilltrees/skill_types.json", "data/skilltrees/ship_skill_tree.json",
             "data/config/exiledSector/item_modifiers", "data/config/exiledSector/item_names", "data/config/exiledSector/item_crafting",
@@ -142,7 +143,9 @@ class EditorRoundTripTest {
             new Pin("chart_blocked_abilities.csv columns", CHART_BLOCKED_ABILITIES, List.of("load"),
                     List.of(new EditorSource(CHART_TABLES_MODEL, "CHART_BLOCKED_ABILITY_COLUMNS")), true),
             new Pin("chart_drops.csv columns", CHART_DROPS, List.of("load", "register"),
-                    List.of(new EditorSource(CHART_TABLES_MODEL, "CHART_DROP_COLUMNS")), true));
+                    List.of(new EditorSource(CHART_TABLES_MODEL, "CHART_DROP_COLUMNS")), true),
+            new Pin("chart_loot.csv columns", CHART_LOOT, List.of("load", "register", "parse"),
+                    List.of(new EditorSource(CHART_TABLES_MODEL, "CHART_LOOT_COLUMNS")), true));
 
     private static final String JAVA_KEY_READ_PREFIX = "(?:\\.\\s*(?:opt|get|has|isNull)[A-Za-z]*\\s*\\(\\s*"
             + "|\\bModCsv\\.text\\s*\\([^,()\"]*,\\s*|\\bModCsv\\.(?:load|rows)\\s*\\(\\s*|\\bcsv\\.(?:integer|number|flag)\\s*\\([^,()\"]*,\\s*)";

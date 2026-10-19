@@ -120,4 +120,10 @@ final class VanillaChartContentEngine implements ChartContentEngine {
     public CampaignFleetAPI createFleet(FleetParamsV3 params) {
         return FleetFactoryV3.createFleet(params);
     }
+
+    @Override
+    public ChartVanillaLoot.SiteDrops siteDrops(String salvageSpec) {
+        SalvageEntityGenDataSpec spec = SalvageEntityGeneratorOld.getSalvageSpec(salvageSpec);
+        return spec == null ? ChartVanillaLoot.SiteDrops.NONE : new ChartVanillaLoot.SiteDrops(spec.getDropRandom(), spec.getDropValue());
+    }
 }

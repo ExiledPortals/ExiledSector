@@ -5,6 +5,7 @@ import {
   CHART_BLOCKED_ABILITY_SPEC,
   CHART_DROP_SPEC,
   CHART_FACTION_SPEC,
+  CHART_LOOT_SPEC,
   CHART_POI_SPEC,
   CHART_TIER_SPEC,
   dropTierSummary,
@@ -36,6 +37,9 @@ const vocabulary = buildVocabulary({
     { id: 'run_reward', insideSystem: true },
     { id: 'battle', insideSystem: false },
   ],
+  chartLootDropTypes: ['weapon', 'resource', 'blueprint', 'ai_core'],
+  chartLootScopes: ['cache', 'domain', 'station', 'derelict', 'fleet', 'warden'],
+  chartColonyItemGroups: ['rare_tech'],
 });
 
 const CHART_MODIFIERS_CSV =
@@ -309,6 +313,32 @@ describe('chart tables', () => {
       'No row for run_reward, so it never drops charts',
     ]);
     expect(dropTierSummary(model.rows[0], vocabulary)).toBe('1% from 150, +1 tier per 120 more, up to t6');
+  });
+
+  it('mirrors the chart loot loader: one drop type per group, base entries need a scope, mode and amount', () => {
+    const text =
+      'id,drop_type,scope,group,mode,amount,min_tier,note\r\n' +
+      'weapons1,weapon,,weapons1,,,,\r\n' +
+      'goods,weapon,,goods,,,,\r\n' +
+      'goods_again,resource,,goods,,,,\r\n' +
+      'fleet_weapons1,weapon,fleet,weapons1,random,1,1,\r\n' +
+      'bad_scope,weapon,vault,weapons1,random,1,1,\r\n' +
+      'no_mode,ai_core,warden,weapons1,,2,20,\r\n' +
+      'coins,currency,,basic,,,,\r\n' +
+      'colony,resource,,rare_tech,,,,\r\n';
+    const model = chartTable(CHART_LOOT_SPEC, text);
+    expect(serializeChartTable(model, CHART_LOOT_SPEC.columns)).toBe(text);
+    expect(CHART_LOOT_SPEC.issues(model, vocabulary)).toEqual([
+      'goods_again: group goods already belongs to weapon',
+      'bad_scope: scope must be one of cache, domain, station, derelict, fleet, warden',
+      'no_mode: a base entry needs a mode, random or value',
+      'coins: drop_type must be one of weapon, resource, blueprint, ai_core',
+      "colony: group rare_tech holds colony items, which only come from the run's single capped roll",
+    ]);
+    expect(CHART_LOOT_SPEC.warnings(model, vocabulary)).toEqual([
+      'no_mode: group weapons1 is mapped to weapon, but this entry is scaled as ai_core',
+      'no_mode: min_tier is clamped to 1-15',
+    ]);
   });
 
   it('mirrors the tier loader', () => {

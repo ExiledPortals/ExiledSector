@@ -86,7 +86,7 @@ Each of these is its own drop type: the nine hull sections, subroutines and star
 
 Ciphers still only drop inside chart systems (the existing `ChartDrops` rule). The Currency bonus raises the nanoswarm rolls and the cipher roll together.
 
-### Vanilla loot
+### Vanilla loot (done)
 
 The game rolls these from drop entries that we attach to sites and fleets (`addDropRandom` / `addDropValue`).
 
@@ -112,7 +112,7 @@ Colony items (nanoforges, synchrotrons, fusion lamps and the rest of vanilla's `
 
 ## 4. Sources
 
-### Site salvage (our drop types done; vanilla entries are step 5)
+### Site salvage (done)
 
 Vanilla drop types. When the system is built (`afterGeneration`), each site gets extra entries:
 - Weapons, resources, blueprints and AI cores scale what the site already has. For each entry in the site's own spec whose group belongs to the drop type, a copy is added with `chances × bonus` or `value × bonus`. For example, +30% weapons on a weapons cache adds 30% of that cache's own weapon chances.
@@ -120,7 +120,7 @@ Vanilla drop types. When the system is built (`afterGeneration`), each site gets
 
 Our drop types. `ItemSalvageListener` stops reading the multiplier stamped on the entity (`ITEM_CHANCE_MEMORY_KEY`) and looks up the live run instead, the same way `ChartDrops.forSystem` already does. That removes `markSalvageChances`. `rollMaterials` takes one multiplier per material, so Currency and Feedstock scale separately. It also fixes today's bug where salvage materials ignore the chance multiplier altogether (`ItemSalvageListener.java:49`).
 
-### Chart fleets (our drop types done; vanilla entries are step 5)
+### Chart fleets (done)
 
 This is the piece that's missing today.
 
@@ -132,7 +132,7 @@ This replaces the single `system_battle` roll in `chart_drops.csv`. Its chart an
 
 `ChartContentListener.reportBattleOccurred` and its TODO are removed, because the work lives in `ItemLootListener`, next to the existing battle loot.
 
-### Warden spoils (our spoils done; vanilla spoils are step 5, the colony item step 6)
+### Warden spoils (done except the colony item, which is step 6)
 
 The warden takes over the vault's role as the big payout. It exists from tier 4 on, under both objectives. It carries everything a normal fleet does, plus spoils:
 - Vanilla spoils. The vault's old drop list becomes `warden` rows in `chart_loot.csv`, attached to the warden at spawn: `basic` 20000 (resources), `ai_cores3` 6 (AI cores), `high_weapons2` 20 (weapons), and `any_hullmod_high` 8, `blueprints_low` 12 and `package_bp` 3 (blueprints). The vault's `rare_tech_low` entry is dropped, because colony items only come from the capped roll. Unlike the old flat vault, the spoils scale per 100 warden fleet points, so they grow with the warden's size from tier to tier.
@@ -214,7 +214,7 @@ Checked against IndEvo 4.1.b (decompiled): a station placed through `BaseThemeGe
 
 The salvage spec and its drop groups (`indEvo_weapons`, `indEvo_missiles`, `indEvo_missiles_always`, `indEvo_consumables`) are IndEvo data, and `SalvageEntityGeneratorOld.getSalvageSpec` throws without them. So the row must never be built while IndEvo is absent, and `VanillaChartContentEngine` keeps its existing path that removes the entity when spawning fails. `chart_loot.csv` lists `indEvo_weapons` and `indEvo_missiles` as optional weapon groups, so the Weapons bonus scales them too, and loot scaling must skip them when IndEvo isn't loaded. If a later IndEvo version renames the entity, the existing `CompatTarget` check for missing sites catches it.
 
-## 7. New data file
+## 7. New data file (chart_loot.csv done; chart_colony_items.csv is step 6)
 
 `data/config/exiledSector/chart_loot.csv` is the framework table. Each row is a drop type, a source scope (a site category, `fleet` or `warden`), the vanilla group (for vanilla drop types), a base amount (chances, value, or chances per 100 fleet points) and a min tier. Our own drop types keep their base chances in `item_salvage.csv` and `chart_drops.csv`. `chart_loot.csv` only maps drop types to vanilla groups and holds the base entries for sources that have none, including the warden's spoils.
 
@@ -263,8 +263,8 @@ Points 1 to 4 make one consistent rule: a modifier means the same thing at every
 1. Delete the vault (section 1). It removes a branch from the planner before step 2 reshapes it. Done (d56abc58).
 2. Site categories: `Kind.DOMAIN`, four tier budget columns, per-category spending with fractional leftover, editor columns and tests. Rename Plenty and add the four category effects. Done (merged in c3687c86).
 3. Drop types and the context: the `DropType` enum (one entry per hull section, plus subroutines, star charts, currency, feedstock, the four vanilla types and colony items), `ChartGenContext` maps and `dropMult`, `ItemSalvageListener` live lookup, per-material multipliers, targeted per-type rolls, the tooltip totals block. Salvage, the nine section effects, Subroutine, Star Chart, Currency and Feedstock effects. Done (8692db2f, d0996373).
-4. Fleet loot for our items: record starting DP at spawn, per-fleet rolls in `ItemLootListener`, the `exiledSector_chart_fleet` and `exiledSector_chart_warden` rules, the Hoard as warden spoils, the Warden's Vigil update. Remove `system_battle`. Done. The Hoard and the Warden's Vigil scale only our spoils until step 5 adds the vanilla ones.
-5. Vanilla drop types: `chart_loot.csv`, entries on sites (scaled copies plus base) and on fleets (per fleet point), warden spoils rows. Weapon, Resource, Blueprint and AI Core effects.
+4. Fleet loot for our items: record starting DP at spawn, per-fleet rolls in `ItemLootListener`, the `exiledSector_chart_fleet` and `exiledSector_chart_warden` rules, the Hoard as warden spoils, the Warden's Vigil update. Remove `system_battle`. Done (db4c5f25).
+5. Vanilla drop types: `chart_loot.csv`, entries on sites (scaled copies plus base) and on fleets (per fleet point), warden spoils rows. Weapon, Resource, Blueprint and AI Core effects. Done. Fleet and warden amounts are per 100 fleet points at spawn. Site bonuses add whole extra chances, rounded with the run seed, because a debris field overwrites valueMult on random entries; value entries use valueMult, which the debris field keeps.
 6. Colony items: `colony_item_chance` tier column, `chart_colony_items.csv`, the single seeded roll with the soft ceiling, extra salvage on the warden or a site. Colony Item effect.
 7. Arsenal station with IndEvo compat. Done (555e1e86, merged into main).
 8. `docs/docs.md` chart loot section, `docs/plans/star_charts.md` cross-reference, strings in both languages.
