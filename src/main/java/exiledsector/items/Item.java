@@ -428,21 +428,24 @@ public abstract class Item {
 
     public List<StyledText> effectLines(boolean withRollRanges, HullSize hullSize) {
         List<StyledText> lines = new ArrayList<>();
+        for (SlottedLine line : slottedEffectLines(withRollRanges, hullSize)) {
+            lines.add(line.text());
+        }
+        return lines;
+    }
+
+    public List<SlottedLine> slottedEffectLines(boolean withRollRanges, HullSize hullSize) {
+        List<SlottedLine> lines = new ArrayList<>();
         ModifierEffects effects = modifierEffects();
         ScaleContext context = scaleContext(hullSize);
         for (RolledModifier explicitModifier : explicits()) {
             Modifier modifier = explicitModifier(explicitModifier.modifierId());
-            int firstLineIndex = lines.size();
             for (RolledEffect effect : explicitModifier.lines()) {
                 StyledText description = explicitLine(effects, effect, modifier == null ? null : modifier.line(effect.effectName()),
                         withRollRanges, context);
                 if (description != null) {
-                    lines.add(description);
-                }
-            }
-            if (explicitModifier.locked()) {
-                for (int lineIndex = firstLineIndex; lineIndex < lines.size(); lineIndex++) {
-                    lines.set(lineIndex, lines.get(lineIndex).withUnstyledAs(Style.IMMUTABLE));
+                    StyledText shownText = explicitModifier.locked() ? description.withUnstyledAs(Style.IMMUTABLE) : description;
+                    lines.add(new SlottedLine(explicitModifier.slot(), shownText));
                 }
             }
         }

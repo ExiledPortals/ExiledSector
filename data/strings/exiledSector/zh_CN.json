@@ -1033,6 +1033,8 @@
     "ui.workbench.notice.wardMissing": "你已没有{name}，因此它已关闭。没有任何改动。",
     "ui.workbench.empty": "点击船体物品仓库中的船体物品即可将其载入改造台。载入期间它仍留在仓库中。",
     "ui.workbench.empty.starCharts": "点击星图仓库中的星图即可将其载入星图装置。载入期间它仍留在仓库中。",
+    "ui.workbench.slotTag.prefix": "前",
+    "ui.workbench.slotTag.suffix": "后",
     "ui.workbench.notice.synthesisedCurrency": "培育了一个{name}。",
     "ui.workbench.notice.used.augmentation.hardware": "纳米群在{name}上生长出一项新功能。",
     "ui.workbench.notice.used.augmentation.crew": "神经网络为{name}植入了一项新技能。",

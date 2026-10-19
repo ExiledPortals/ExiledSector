@@ -31,7 +31,9 @@ import exiledsector.items.ItemRarity;
 import exiledsector.items.ItemStore;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemUnlock;
+import exiledsector.items.SlottedLine;
 import exiledsector.items.StarChart;
+import exiledsector.modifiers.ModifierSlot;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.TooltipExpansion;
@@ -94,6 +96,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     private static final float VIGNETTE_SHARE = 0.06f;
     private static final float PICK_BUTTON_WIDTH = 120f;
     private static final float TOOLTIP_WIDTH = 340f;
+    private static final float SLOT_TAG_WIDTH = 20f;
     private static final float MIN_OPEN_BUTTON_HEIGHT = 26f;
     private static final float OPEN_CONFIRM_HEIGHT = 170f;
     private static final Color PLATE_COLOR = Color.BLACK;
@@ -1008,7 +1011,12 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             }
             float paraPad = GAP * 2f;
             addDetailSection(element, "hullItem.tooltip.implicit", loadedItem.implicitLines(detailsShowRollRanges), paraPad);
-            addDetailSection(element, "socketable.tooltip.primaryData", loadedItem.effectLines(detailsShowRollRanges), paraPad);
+            if (detailsShowRollRanges) {
+                addSlottedDetailSection(element, "socketable.tooltip.primaryData", loadedItem.slottedEffectLines(true, null), paraPad,
+                        detailsWidth);
+            } else {
+                addDetailSection(element, "socketable.tooltip.primaryData", loadedItem.effectLines(false), paraPad);
+            }
             if (loadedItem instanceof StarChart chart) {
                 addDetailSection(element, StarChart.LOOT_TOTALS_HEADING_KEY, chart.lootTotalLines(), paraPad);
             }
@@ -1026,6 +1034,31 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             VanillaText.addPara(element, line, linePad, Misc.getTextColor());
             linePad = LINE_PAD;
         }
+    }
+
+    private static void addSlottedDetailSection(TooltipMakerAPI element, String headingKey, List<SlottedLine> lines, float headingPad,
+                                                float sectionWidth) {
+        if (lines.isEmpty()) {
+            return;
+        }
+        element.addSectionHeading(Translation.text(headingKey), Alignment.MID, headingPad);
+        float textWidth = sectionWidth - SLOT_TAG_WIDTH - GAP;
+        float linePad = GAP;
+        for (SlottedLine line : lines) {
+            TooltipMakerAPI textCell = element.beginSubTooltip(textWidth);
+            VanillaText.addPara(textCell, line.text(), 0f, Misc.getTextColor());
+            element.endSubTooltip();
+            TooltipMakerAPI slotCell = element.beginSubTooltip(SLOT_TAG_WIDTH);
+            VanillaText.plainPara(slotCell, Translation.text(slotTagKey(line.slot())), 0f, Misc.getGrayColor()).setAlignment(Alignment.RMID);
+            element.endSubTooltip();
+            element.addCustom(textCell, linePad);
+            element.addCustomDoNotSetPosition(slotCell).getPosition().rightOfTop(textCell, GAP);
+            linePad = LINE_PAD;
+        }
+    }
+
+    static String slotTagKey(ModifierSlot slot) {
+        return slot == ModifierSlot.PREFIX ? "ui.workbench.slotTag.prefix" : "ui.workbench.slotTag.suffix";
     }
 
     private static void centred(LabelAPI label) {

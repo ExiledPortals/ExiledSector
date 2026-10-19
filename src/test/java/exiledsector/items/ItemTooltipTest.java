@@ -8,6 +8,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.i18n.Catalogue;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
+import exiledsector.modifiers.ModifierSlot;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -63,6 +64,19 @@ class ItemTooltipTest {
         assertEquals("<good>12%</good> (10%-15%) less damage taken by shields.", expanded.get(1).toMarkup());
         assertEquals(List.of("12% increased beam weapon damage.", "12% less damage taken by shields."),
                 item.effectLines(false).stream().map(StyledText::plain).toList());
+    }
+
+    @Test
+    void slottedEffectLinesTagEachExplicitAsPrefixOrSuffix() throws Exception {
+        ItemFixtures.registerMilitary();
+        Item item = Item.withEffects("socketable_6", ItemFixtures.MILITARY, 1L,
+                List.of(new RolledEffect("BEAM_WEAPON_DAMAGE_PERCENT", 12f), new RolledEffect("SHIELD_DAMAGE_TAKEN_MULT", -12f)));
+
+        List<SlottedLine> lines = item.slottedEffectLines(true, null);
+
+        assertEquals(List.of(ModifierSlot.PREFIX, ModifierSlot.SUFFIX), lines.stream().map(SlottedLine::slot).toList());
+        assertEquals(item.effectLines(true).stream().map(StyledText::plain).toList(),
+                lines.stream().map(line -> line.text().plain()).toList());
     }
 
     @Test

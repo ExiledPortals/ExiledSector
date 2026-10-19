@@ -688,6 +688,8 @@
     "ui.workbench.notice.wardMissing": "You no longer have a {name}, so it was turned off. Nothing was changed.",
     "ui.workbench.empty": "Click a hull item in Hull Item Storage to load it onto the workbench. It stays in storage while it is loaded.",
     "ui.workbench.empty.starCharts": "Click a Star Chart in Star Chart storage to load it into the map device. It stays in storage while it is loaded.",
+    "ui.workbench.slotTag.prefix": "P",
+    "ui.workbench.slotTag.suffix": "S",
     "ui.workbench.notice.synthesisedCurrency": "Grew one {name}.",
     "ui.workbench.notice.used.augmentation.hardware": "The nanoswarm grew a new function onto {name}.",
     "ui.workbench.notice.used.augmentation.crew": "A neural lace laid down a new skill in {name}.",
