@@ -416,16 +416,13 @@ public abstract class Item {
     }
 
     public List<StyledText> implicitLines(boolean withRollRanges) {
-        List<StyledText> lines = new ArrayList<>();
+        List<SlottedLine> lines = new ArrayList<>();
         ModifierEffects effects = modifierEffects();
         ScaleContext context = scaleContext(null);
-        for (SlottedRoll implicit : rolls(ModifierCategory.IMPLICIT)) {
-            StyledText description = explicitLine(effects, implicit.roll(), implicit.line(), withRollRanges, context);
-            if (description != null) {
-                lines.add(description);
-            }
+        for (RolledModifier implicit : implicits()) {
+            addModifierLines(lines, implicit, implicitModifier(implicit.modifierId()), effects, withRollRanges, context);
         }
-        return lines;
+        return texts(lines);
     }
 
     public List<StyledText> effectLines() {
@@ -437,26 +434,43 @@ public abstract class Item {
     }
 
     public List<StyledText> effectLines(boolean withRollRanges, HullSize hullSize) {
-        List<StyledText> lines = new ArrayList<>();
+        return texts(slottedEffectLines(withRollRanges, hullSize));
+    }
+
+    public List<SlottedLine> slottedEffectLines(boolean withRollRanges, HullSize hullSize) {
+        List<SlottedLine> lines = new ArrayList<>();
         ModifierEffects effects = modifierEffects();
         ScaleContext context = scaleContext(hullSize);
         for (RolledModifier explicitModifier : explicits()) {
-            Modifier modifier = explicitModifier(explicitModifier.modifierId());
-            int firstLineIndex = lines.size();
-            for (RolledEffect effect : explicitModifier.lines()) {
-                StyledText description = explicitLine(effects, effect, modifier == null ? null : modifier.line(effect.effectName()),
-                        withRollRanges, context);
-                if (description != null) {
-                    lines.add(description);
-                }
-            }
-            if (explicitModifier.locked()) {
-                for (int lineIndex = firstLineIndex; lineIndex < lines.size(); lineIndex++) {
-                    lines.set(lineIndex, lines.get(lineIndex).withUnstyledAs(Style.IMMUTABLE));
-                }
-            }
+            addModifierLines(lines, explicitModifier, explicitModifier(explicitModifier.modifierId()), effects, withRollRanges, context);
         }
         return lines;
+    }
+
+    private void addModifierLines(List<SlottedLine> lines, RolledModifier rolledModifier, Modifier modifier, ModifierEffects effects,
+                                  boolean withRollRanges, ScaleContext context) {
+        List<StyledText> descriptions = new ArrayList<>();
+        for (RolledEffect effect : rolledModifier.lines()) {
+            StyledText description = explicitLine(effects, effect, modifier == null ? null : modifier.line(effect.effectName()),
+                    withRollRanges, context);
+            if (description != null) {
+                descriptions.add(rolledModifier.locked() ? description.withUnstyledAs(Style.IMMUTABLE) : description);
+            }
+        }
+        if (!withRollRanges || descriptions.size() < 2) {
+            descriptions.forEach(description -> lines.add(new SlottedLine(rolledModifier.slot(), description)));
+            return;
+        }
+        lines.add(new SlottedLine(rolledModifier.slot(), Translation.styled("socketable.tooltip.hybrid")));
+        for (StyledText description : descriptions) {
+            lines.add(new SlottedLine(null, Translation.msg("socketable.tooltip.hybridLine").arg("line", description).styled()));
+        }
+    }
+
+    private static List<StyledText> texts(List<SlottedLine> lines) {
+        List<StyledText> texts = new ArrayList<>(lines.size());
+        lines.forEach(line -> texts.add(line.text()));
+        return texts;
     }
 
     StyledText unresolvedLine(ModifierEffects effects, RolledEffect effect) {

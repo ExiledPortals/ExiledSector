@@ -19,7 +19,6 @@ public final class StarChart extends Item {
     public static final int HIGHEST_TIER = 15;
     public static final int LOWEST_QUALITY = 0;
     public static final int HIGHEST_QUALITY = 20;
-    public static final String LOOT_TOTALS_HEADING_KEY = "chart.totals.heading";
 
     private static volatile Function<StarChart, List<StyledText>> lootTotals = chart -> List.of();
 

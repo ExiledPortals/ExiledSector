@@ -55,6 +55,10 @@ public enum DropType {
         return quantityApplies;
     }
 
+    public boolean isVanilla() {
+        return this == WEAPON || this == RESOURCE || this == BLUEPRINT || this == AI_CORE;
+    }
+
     public boolean isSection() {
         return itemKind != null && itemKind.fitsSection();
     }

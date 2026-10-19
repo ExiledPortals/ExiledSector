@@ -190,7 +190,7 @@ class ChartGenContextTest {
 
         List<String> lines = ChartLootTotals.lines(context).stream().map(StyledText::plain).toList();
 
-        assertEquals(List.of("Quantity +23%", "Currency +47%"), lines);
+        assertEquals(List.of("Item quantity +23%", "Currency items +47%"), lines);
         ChartGenContext sites = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_STATION_BUDGET_PERCENT, 30f)));
         assertEquals(List.of("Stations +30%"), ChartLootTotals.lines(sites).stream().map(StyledText::plain).toList());
         assertTrue(ChartLootTotals.lines(with(ChartEffect.CHART_FLEET_SIZE_PERCENT, 30f)).isEmpty());
@@ -344,7 +344,7 @@ class ChartGenContextTest {
         assertEquals(plainContext.rewardMult() + 0.12f, polishedContext.rewardMult(), TOLERANCE);
         assertEquals(plainContext.siteBudgetMult(ChartPoi.Kind.STATION), polishedContext.siteBudgetMult(ChartPoi.Kind.STATION), TOLERANCE);
         assertTrue(ChartRewards.creditsFor(5, polishedContext.rewardMult()) >= ChartRewards.creditsFor(5, plainContext.rewardMult()));
-        assertTrue(polishedChart.headerLines().stream().anyMatch(line -> line.plain().contains("12% more loot and completion reward")),
+        assertTrue(polishedChart.headerLines().stream().anyMatch(line -> line.plain().contains("12% increased quantity of items found in the system and completion reward")),
                 polishedChart.headerLines().toString());
         assertTrue(plainChart.headerLines().stream().noneMatch(line -> line.plain().contains("Quality")));
     }

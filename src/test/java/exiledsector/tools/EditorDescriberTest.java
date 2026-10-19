@@ -66,8 +66,8 @@ class EditorDescriberTest {
                 .getJSONArray("lines");
 
         String fleetSize = described.getString(0);
-        assertTrue(fleetSize.startsWith("Enemy fleet size") && fleetSize.contains("15") && fleetSize.contains("70"), fleetSize);
-        assertTrue(described.getString(1).contains("more sites to salvage in the system"), described.getString(1));
+        assertTrue(fleetSize.contains("increased enemy fleet size") && fleetSize.contains("15") && fleetSize.contains("70"), fleetSize);
+        assertTrue(described.getString(1).contains("increased number of points of interest in the system"), described.getString(1));
         assertTrue(described.isNull(2), "without the star chart item type a chart effect is not a hull item effect");
     }
 

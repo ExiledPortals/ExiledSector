@@ -35,6 +35,13 @@ public final class ItemTooltip {
                 VanillaText.plainPara(tooltip, itemName.baseName(), 0f, Misc.getGrayColor());
             }
             addLines(tooltip, item.headerLines(), Misc.getGrayColor());
+            if (item instanceof StarChart chart) {
+                float linePad = PAD;
+                for (StyledText line : chart.lootTotalLines()) {
+                    VanillaText.addPara(tooltip, line, linePad, Misc.getTextColor()).setAlignment(Alignment.MID);
+                    linePad = LINE_PAD;
+                }
+            }
             List<StyledText> implicitLines = item.implicitLines(showRollRanges);
             if (!implicitLines.isEmpty()) {
                 tooltip.addSectionHeading(Translation.text("hullItem.tooltip.implicit"), Alignment.MID, PAD);

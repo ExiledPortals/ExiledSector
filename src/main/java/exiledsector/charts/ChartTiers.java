@@ -19,7 +19,9 @@ public final class ChartTiers {
     static final String PATH = "data/config/exiledSector/star_chart_tiers.csv";
     static final String TIER_COLUMN = "tier";
     private static final Logger LOG = Logger.getLogger(ChartTiers.class);
+    static final float MAX_COLONY_ITEM_CHANCE = 1f;
     private static volatile Map<Integer, ChartTier> tiers = Map.of();
+    private static volatile Map<Integer, Float> colonyItemChances = Map.of();
 
     private ChartTiers() {
     }
@@ -30,6 +32,7 @@ public final class ChartTiers {
 
     static void register(JSONArray rows) throws JSONException {
         Map<Integer, ChartTier> loaded = new HashMap<>();
+        Map<Integer, Float> loadedColonyItemChances = new HashMap<>();
         ChartCsv csv = new ChartCsv(PATH);
         if (rows != null) {
             ModCsv.forEach(rows, (index, row) -> {
@@ -60,6 +63,11 @@ public final class ChartTiers {
                         csv.number(row, "warden_size", fallback.wardenSize(), label),
                         csv.number(row, "weight_clear", fallback.clearWeight(), label),
                         csv.number(row, "weight_boss", fallback.bossWeight(), label)));
+                float colonyItemChance = csv.number(row, "colony_item_chance", 0f, label);
+                if (colonyItemChance < 0f || colonyItemChance > MAX_COLONY_ITEM_CHANCE) {
+                    csv.problem(label, "colony_item_chance", colonyItemChance + " is outside 0 to 1 (a fraction, so 0.04 is 4%)");
+                }
+                loadedColonyItemChances.put(tier, Math.max(0f, Math.min(MAX_COLONY_ITEM_CHANCE, colonyItemChance)));
             });
         }
         csv.report(LOG);
@@ -70,9 +78,23 @@ public final class ChartTiers {
             }
         }
         if (!missing.isEmpty()) {
-            LOG.warn("[ExiledSector] " + PATH + " has no row for tier(s) " + missing + "; those tiers use built-in values");
+            LOG.warn("[ExiledSector] " + PATH + " has no row for tier(s) " + missing + "; those tiers use built-in values and have no colony item chance");
         }
         tiers = Map.copyOf(loaded);
+        colonyItemChances = Map.copyOf(loadedColonyItemChances);
+    }
+
+    public static float colonyItemChance(int tier) {
+        return colonyItemChances.getOrDefault(clamp(tier), 0f);
+    }
+
+    public static int firstColonyItemTier() {
+        for (int tier = LOWEST_TIER; tier <= HIGHEST_TIER; tier++) {
+            if (colonyItemChance(tier) > 0f) {
+                return tier;
+            }
+        }
+        return 0;
     }
 
     public static int clamp(int tier) {
@@ -103,5 +125,6 @@ public final class ChartTiers {
 
     static void resetForTests() {
         tiers = Map.of();
+        colonyItemChances = Map.of();
     }
 }

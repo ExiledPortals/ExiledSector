@@ -3,8 +3,10 @@ import { buildVocabulary } from '../../../api/vocabulary.ts';
 import { parseCsvTable, serializeCsvTable } from '../../../shared/csv.ts';
 import {
   CHART_BLOCKED_ABILITY_SPEC,
+  CHART_COLONY_ITEM_SPEC,
   CHART_DROP_SPEC,
   CHART_FACTION_SPEC,
+  CHART_LOOT_SPEC,
   CHART_POI_SPEC,
   CHART_TIER_SPEC,
   dropTierSummary,
@@ -39,6 +41,9 @@ const vocabulary = buildVocabulary({
     { id: 'run_reward', insideSystem: true },
     { id: 'battle', insideSystem: false },
   ],
+  chartLootDropTypes: ['weapon', 'resource', 'blueprint', 'ai_core'],
+  chartLootScopes: ['cache', 'domain', 'station', 'derelict', 'fleet', 'warden'],
+  chartColonyItemGroups: ['rare_tech'],
 });
 
 const CHART_MODIFIERS_CSV =
@@ -314,6 +319,45 @@ describe('chart tables', () => {
     expect(dropTierSummary(model.rows[0], vocabulary)).toBe('1% from 150, +1 tier per 120 more, up to t6');
   });
 
+  it('mirrors the colony item loader: the ceiling row is a fraction, items need a weight', () => {
+    const text = 'id,value,note\r\nceiling,1.5,\r\nsynchrotron,10,\r\nmantle_bore,0,\r\n';
+    const model = chartTable(CHART_COLONY_ITEM_SPEC, text);
+    expect(serializeChartTable(model, CHART_COLONY_ITEM_SPEC.columns)).toBe(text);
+    expect(CHART_COLONY_ITEM_SPEC.issues(model, vocabulary)).toEqual([
+      'ceiling: the ceiling must be above 0 and below 1, so an item is never certain',
+      'mantle_bore: an item needs a weight above 0',
+    ]);
+    expect(CHART_COLONY_ITEM_SPEC.warnings(chartTable(CHART_COLONY_ITEM_SPEC, 'id,value\nsynchrotron,10\n'), vocabulary)).toEqual([
+      'No ceiling row, so the ceiling is 25%',
+    ]);
+  });
+
+  it('mirrors the chart loot loader: one drop type per group, base entries need a scope, mode and amount', () => {
+    const text =
+      'id,drop_type,scope,group,mode,amount,min_tier,note\r\n' +
+      'weapons1,weapon,,weapons1,,,,\r\n' +
+      'goods,weapon,,goods,,,,\r\n' +
+      'goods_again,resource,,goods,,,,\r\n' +
+      'fleet_weapons1,weapon,fleet,weapons1,random,1,1,\r\n' +
+      'bad_scope,weapon,vault,weapons1,random,1,1,\r\n' +
+      'no_mode,ai_core,warden,weapons1,,2,20,\r\n' +
+      'coins,currency,,basic,,,,\r\n' +
+      'colony,resource,,rare_tech,,,,\r\n';
+    const model = chartTable(CHART_LOOT_SPEC, text);
+    expect(serializeChartTable(model, CHART_LOOT_SPEC.columns)).toBe(text);
+    expect(CHART_LOOT_SPEC.issues(model, vocabulary)).toEqual([
+      'goods_again: group goods already belongs to weapon',
+      'bad_scope: scope must be one of cache, domain, station, derelict, fleet, warden',
+      'no_mode: a base entry needs a mode, random or value',
+      'coins: drop_type must be one of weapon, resource, blueprint, ai_core',
+      "colony: group rare_tech holds colony items, which only come from the run's single capped roll",
+    ]);
+    expect(CHART_LOOT_SPEC.warnings(model, vocabulary)).toEqual([
+      'no_mode: group weapons1 is mapped to weapon, but this entry is scaled as ai_core',
+      'no_mode: min_tier is clamped to 1-15',
+    ]);
+  });
+
   it('mirrors the tier loader', () => {
     const model = chartTable(
       CHART_TIER_SPEC,
@@ -333,6 +377,14 @@ describe('chart tables', () => {
       'tier 16: fleets_min 1.5 is rounded to a whole number',
       'No row for tier 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15; the game uses built-in values for them',
     ]);
+  });
+
+  it('warns when a colony item chance looks like a percentage or is negative', () => {
+    const model = chartTable(CHART_TIER_SPEC, 'tier,colony_item_chance\n1,4\n2,-0.01\n');
+    expect(CHART_TIER_SPEC.warnings(model, vocabulary)).toEqual(
+      expect.arrayContaining(['tier 1: colony_item_chance above 100% counts as 100%; it is a fraction, so 0.04 is 4%']),
+    );
+    expect(CHART_TIER_SPEC.warnings(model, vocabulary).filter((warning) => warning.startsWith('tier 2: colony_item_chance'))).toHaveLength(1);
   });
 
   it('gives each site category its own tier budget column and checks them like the tier loader', () => {

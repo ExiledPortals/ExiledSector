@@ -13,7 +13,6 @@ import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.cargo.CargoIconLooks;
 import exiledsector.ui.util.SpriteCache;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class StarChartItemPlugin extends BaseSpecialItemPlugin {
@@ -53,14 +52,7 @@ public class StarChartItemPlugin extends BaseSpecialItemPlugin {
     }
 
     private List<StyledText> footerLines() {
-        List<StyledText> lines = new ArrayList<>();
-        List<StyledText> lootTotals = previewChart instanceof StarChart chart ? chart.lootTotalLines() : List.of();
-        if (!lootTotals.isEmpty()) {
-            lines.add(Translation.styled(StarChart.LOOT_TOTALS_HEADING_KEY));
-            lines.addAll(lootTotals);
-        }
-        lines.add(Translation.styled("chart.item.storage"));
-        return lines;
+        return List.of(Translation.styled("chart.item.storage"));
     }
 
     @Override

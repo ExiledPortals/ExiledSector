@@ -9,7 +9,7 @@ Exiled Space is PureTilt's "PoE maps in Starsector". Its ideas are the right one
 Worth keeping:
 - Chips carry rolled modifiers loaded from CSV. Each modifier is a plugin with before-generation hooks (which change the fleet parameters) and after-generation hooks (which change the finished system).
 - A modifier's cost feeds both its drop weight and the reward.
-- A loot budget is spent on points of interest, weighted towards ones whose cost is close to the average.
+- A loot budget is spent on points of interest, weighted towards ones whose cost is close to the average. (Since 2026-10-19 this is four site budgets, one per site category; see `chart_loot.md` section 2 and the Star Chart loot section of `docs/docs.md`.)
 - Above a set FP, a commander skill shrinks deployment cost, so huge fleets can still be fought.
 - The chip UI previews a sample fleet.
 - Battle drops are seeded per ship, which resists save-scumming.
@@ -133,7 +133,7 @@ The chart currencies fit the three rarities. Main already has four of them as ke
 
 New chart-only currencies:
 - reforge: rerolls every explicit modifier, with rarity following the new count. This is close to Corruption's "modifiers rerolled" outcome.
-- annul: removes one random explicit modifier, which can turn a Rare chart Common.
+- annul: removes every explicit modifier, or only the unprotected side while an inhibitor is on.
 - tier-up: the "cartographer's" step.
 
 Chart-only currencies must not drop from ship loot: `ItemDrops.pickKernel` picks from every registered currency, so they need a drop-source filter or a weight of 0 there.
@@ -362,14 +362,17 @@ Corruption's "values stretched" outcome now reaches tier-band lines too. Their r
 
 Three chart-only currencies are `StarChartCurrency` entries, each a special item that reuses a kernel icon tinted with its own colour:
 - the Reforging Cipher rerolls every explicit modifier at the chart's tier, and the rarity follows the new count;
-- the Annulment Cipher removes one random explicit modifier, so a Rare chart can turn Common;
+- the Annulment Cipher removes every explicit modifier, so the chart turns Common;
 - the Cartographer's Cipher raises the tier by one, up to 15. Modifiers keep their roll positions and take the new tier's values, and a unique starts from its minimum tier.
 
-Uniques refuse the reforge and the annulment, and corrupted or mirrored charts refuse everything. All three can be grown from Nanite Feedstock by right-clicking their tile in the Crafting window's Star Charts mode, at the costs in `item_crafting.csv`. Their `dropsFromShipLoot()` is false, so `ItemDrops.pickKernel` never picks them and ship kernel drops are unchanged.
+Uniques refuse the reforge and the annulment, and corrupted or mirrored charts refuse everything.
+
+The Prefix and Suffix Inhibitors work at the Star Chart bench too, on the two side consoles of the map device art. With one on, the Reforging Cipher keeps every modifier on the protected side and rerolls only the other side, the Annulment Cipher removes only the unprotected side, and Tuning skips the protected side as it does on hull items. An inhibitor is used up only when the craft would have changed a modifier it protected, and a craft that would leave nothing to change is refused. All three can be grown from Nanite Feedstock by right-clicking their tile in the Crafting window's Star Charts mode, at the costs in `item_crafting.csv`. Their `dropsFromShipLoot()` is false, so `ItemDrops.pickKernel` never picks them and ship kernel drops are unchanged.
 
 Chart drops come from `chart_drops.csv`, one row per source, through `ChartDrops`:
 - run_reward: completing an objective drops one chart and a 25 percent chance of a second, scaled by the chart's reward multiplier and capped at four. Each chart is 40 percent likely to be one tier higher. A chart-only currency comes with it 75 percent of the time.
-- system_salvage and system_battle: each salvaged point of interest and each won battle inside a chart system has a 4 percent chance of a chart at the run tier, scaled by the chart's quantity multiplier, and a small chance of a chart-only currency.
+- system_salvage: each salvaged point of interest inside a chart system has a 4 percent chance of a chart at the run tier, scaled by the chart's Star Chart bonus (which Quantity and Salvage also raise), and a small chance of a chart-only currency.
+- chart_fleet and chart_warden: these replaced system_battle on 2026-10-19. Each defeated fleet of the live run rolls once in total, scaled by the share of its starting deployment points destroyed, and the warden adds a richer roll scaled by the Hoard. The Star Chart loot section of `docs/docs.md` has the details.
 - battle: won battles outside chart systems that defeat at least 150 enemy deployment points have a 1 percent chance, at tier 1 plus one per 120 more points, up to tier 6.
 - salvage, techmining_first_find and techmining_monthly: rare finds at a tier from the player's level, up to tier 5.
 

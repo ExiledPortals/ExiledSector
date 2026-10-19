@@ -88,7 +88,10 @@ final class EditorVocabulary {
                 .append(Arrays.stream(ChartDrops.Source.values())
                         .map(source -> "{\"id\": " + quote(source.id()) + ", \"insideSystem\": " + source.insideSystem() + "}")
                         .collect(Collectors.joining(", ")))
-                .append("]\n");
+                .append("],\n");
+        json.append("  \"chartLootDropTypes\": ").append(list(ChartEditorVocabulary.lootDropTypes())).append(",\n");
+        json.append("  \"chartLootScopes\": ").append(list(ChartEditorVocabulary.lootScopes())).append(",\n");
+        json.append("  \"chartColonyItemGroups\": ").append(list(ChartEditorVocabulary.colonyItemGroups())).append("\n");
         return json.append("}\n").toString();
     }
 

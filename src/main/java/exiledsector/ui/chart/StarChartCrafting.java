@@ -3,6 +3,7 @@ package exiledsector.ui.chart;
 import exiledsector.i18n.Translation;
 import exiledsector.items.CraftingCurrency;
 import exiledsector.items.CraftingMaterials;
+import exiledsector.items.CraftingWard;
 import exiledsector.items.Item;
 import exiledsector.items.ItemCrafting;
 import exiledsector.items.ItemCurrencies;
@@ -14,9 +15,11 @@ import exiledsector.items.MaterialItems;
 import exiledsector.items.StarChart;
 import exiledsector.items.StarChartCurrency;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import java.util.Set;
 import java.util.function.Predicate;
 
 public final class StarChartCrafting {
@@ -32,6 +35,8 @@ public final class StarChartCrafting {
         NOT_UNIQUE,
         NO_MODIFIERS,
         FULL,
+        WARD_BLOCKS,
+        WARD_BLOCKS_TRANSPOSITION,
         CANNOT_USE;
 
         public String noticeKey() {
@@ -69,14 +74,22 @@ public final class StarChartCrafting {
 
     public static Refusal refusal(ItemCurrency currency, Item chart, ItemStore store, CraftingMaterials materials,
                                   Predicate<ItemDefinition> allowedUniques) {
+        return refusal(currency, chart, store, materials, allowedUniques, Set.of());
+    }
+
+    public static Refusal refusal(ItemCurrency currency, Item chart, ItemStore store, CraftingMaterials materials,
+                                  Predicate<ItemDefinition> allowedUniques, Collection<CraftingWard> wards) {
         if (chart == null || chart.type() != ItemType.STAR_CHART || store == null || !store.holdsStarCharts() || store.find(chart.id()) != chart) {
             return Refusal.NO_CHART;
         }
         if (materials.count(currency.itemId()) < 1) {
             return Refusal.NONE_OWNED;
         }
-        if (ItemCrafting.canUse(currency, chart, allowedUniques)) {
+        if (ItemCrafting.canUse(currency, chart, allowedUniques, wards)) {
             return Refusal.NONE;
+        }
+        if (ItemCrafting.canUse(currency, chart, allowedUniques)) {
+            return currency == CraftingCurrency.TRANSPOSITION ? Refusal.WARD_BLOCKS_TRANSPOSITION : Refusal.WARD_BLOCKS;
         }
         if (chart.mirrored()) {
             return Refusal.MIRRORED;
@@ -108,10 +121,15 @@ public final class StarChartCrafting {
 
     public static Used use(ItemCurrency currency, Item chart, ItemStore store, CraftingMaterials materials, Random random,
                            Predicate<ItemDefinition> allowedUniques) {
-        if (refusal(currency, chart, store, materials, allowedUniques) != Refusal.NONE) {
+        return use(currency, chart, store, materials, random, allowedUniques, Set.of());
+    }
+
+    public static Used use(ItemCurrency currency, Item chart, ItemStore store, CraftingMaterials materials, Random random,
+                           Predicate<ItemDefinition> allowedUniques, Collection<CraftingWard> wards) {
+        if (refusal(currency, chart, store, materials, allowedUniques, wards) != Refusal.NONE) {
             return null;
         }
-        Item result = ItemCrafting.use(currency, chart, materials, store, random, allowedUniques);
+        Item result = ItemCrafting.use(currency, chart, materials, store, random, allowedUniques, wards);
         if (result == null) {
             return null;
         }

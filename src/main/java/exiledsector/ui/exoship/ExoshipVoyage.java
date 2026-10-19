@@ -1,5 +1,6 @@
 package exiledsector.ui.exoship;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -16,7 +17,7 @@ public final class ExoshipVoyage {
         void arrived(float shipX, float shipY, float headingX, float headingY);
     }
 
-    public record Anchor(float x, float y) {
+    public record Anchor(float x, float y, boolean core) {
     }
 
     static final float JUMP_INTERVAL_SECONDS = 30f;
@@ -196,32 +197,33 @@ public final class ExoshipVoyage {
 
     private int pickDestination() {
         Anchor current = anchors.get(anchorIndex);
-        int farEnough = 0;
-        int farthest = anchorIndex == 0 ? 1 : 0;
-        float farthestDistance = -1f;
+        List<Integer> candidates = new ArrayList<>();
         for (int index = 0; index < anchors.size(); index++) {
-            if (index == anchorIndex) {
-                continue;
+            if (index != anchorIndex && anchors.get(index).core() != current.core()) {
+                candidates.add(index);
             }
+        }
+        if (candidates.isEmpty()) {
+            for (int index = 0; index < anchors.size(); index++) {
+                if (index != anchorIndex) {
+                    candidates.add(index);
+                }
+            }
+        }
+        List<Integer> farEnough = new ArrayList<>();
+        int farthest = candidates.get(0);
+        float farthestDistance = -1f;
+        for (int index : candidates) {
             float distance = distanceBetween(current, anchors.get(index));
             if (distance >= MIN_JUMP_DISTANCE) {
-                farEnough++;
+                farEnough.add(index);
             }
             if (distance > farthestDistance) {
                 farthestDistance = distance;
                 farthest = index;
             }
         }
-        if (farEnough == 0) {
-            return farthest;
-        }
-        int pick = random.nextInt(farEnough);
-        for (int index = 0; index < anchors.size(); index++) {
-            if (index != anchorIndex && distanceBetween(current, anchors.get(index)) >= MIN_JUMP_DISTANCE && pick-- == 0) {
-                return index;
-            }
-        }
-        return farthest;
+        return farEnough.isEmpty() ? farthest : farEnough.get(random.nextInt(farEnough.size()));
     }
 
     private void enter(Phase next) {

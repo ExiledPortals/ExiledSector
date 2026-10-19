@@ -187,8 +187,8 @@ class StarChartTest {
         String lowText = lowTier.effectLines().get(0).plain();
         String highText = highTier.effectLines().get(0).plain();
 
-        assertTrue(lowText.contains("+200%"), lowText);
-        assertTrue(highText.contains("+700%"), highText);
+        assertTrue(lowText.contains("200% increased"), lowText);
+        assertTrue(highText.contains("700% increased"), highText);
         assertTrue(lowTier.effectLines(true).stream().anyMatch(line -> line.plain().contains("(")),
                 "ranged tier bands show the band's range: " + lowTier.effectLines(true));
     }
@@ -494,11 +494,11 @@ class StarChartTest {
         ModifierEffects chartEffects = ItemEffects.forType(ItemType.STAR_CHART);
 
         assertTrue(fleetSize.listsEveryValueFor(ScaleContext.NONE));
-        assertEquals("Enemy fleet size +15-20/50-70/150-200%",
+        assertEquals("15-20/50-70/150-200% increased enemy fleet size",
                 new RolledEffect("CHART_FLEET_SIZE_PERCENT", 50f).scaledValuesDescription(chartEffects, fleetSize).plain());
-        assertEquals("Enemy fleet size +15-20/50-70/150-200%",
+        assertEquals("15-20/50-70/150-200% increased enemy fleet size",
                 new RolledEffect("CHART_FLEET_SIZE_PERCENT", 45f).rangeDescription(chartEffects, fleetSize).plain());
-        assertEquals("Your sensor range is 15-25/25-35% shorter inside the system",
+        assertEquals("Your fleet has 15-25/25-35% less sensor range while in the system",
                 new RolledEffect("CHART_SENSOR_RANGE_PERCENT", -35f).scaledValuesDescription(chartEffects, sensorRange).plain());
         assertTrue(new RolledEffect("CHART_EXTRA_FLEETS", 3f).scaledValuesDescription(chartEffects, extraFleets).plain().startsWith("1/2/3 "));
         ModifierLine hullValues = ModifierLine.parse("ARMOR_FLAT:5/10/15/20").line();

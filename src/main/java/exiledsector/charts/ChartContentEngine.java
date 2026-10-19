@@ -20,4 +20,8 @@ interface ChartContentEngine {
     void place(SectorEntityToken entity, ChartSpot spot);
 
     CampaignFleetAPI createFleet(FleetParamsV3 params);
+
+    ChartVanillaLoot.SiteDrops siteDrops(String salvageSpec);
+
+    void addColonyItem(SectorEntityToken holder, String itemId);
 }

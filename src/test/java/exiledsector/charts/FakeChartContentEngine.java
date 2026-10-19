@@ -29,6 +29,9 @@ final class FakeChartContentEngine implements ChartContentEngine {
     record Assignment(FleetAssignment assignment, SectorEntityToken target) {
     }
 
+    record ColonyItem(SectorEntityToken holder, String itemId) {
+    }
+
     final List<Vector2f> spotPositions = new ArrayList<>();
     final List<SectorEntityToken> salvageEntities = new ArrayList<>();
     final List<String> salvageTypes = new ArrayList<>();
@@ -37,6 +40,8 @@ final class FakeChartContentEngine implements ChartContentEngine {
     final List<CampaignFleetAPI> fleets = new ArrayList<>();
     final Map<CampaignFleetAPI, List<Assignment>> assignments = new HashMap<>();
     final Map<SectorEntityToken, Set<String>> tags = new HashMap<>();
+    final Map<String, ChartVanillaLoot.SiteDrops> siteDropsBySpec = new HashMap<>();
+    final List<ColonyItem> colonyItems = new ArrayList<>();
     boolean failFleets;
     boolean emptyFleets;
     int spotCalls;
@@ -123,6 +128,16 @@ final class FakeChartContentEngine implements ChartContentEngine {
     @Override
     public void place(SectorEntityToken entity, ChartSpot spot) {
         entity.getLocation().set(spot.position());
+    }
+
+    @Override
+    public ChartVanillaLoot.SiteDrops siteDrops(String salvageSpec) {
+        return siteDropsBySpec.getOrDefault(salvageSpec, ChartVanillaLoot.SiteDrops.NONE);
+    }
+
+    @Override
+    public void addColonyItem(SectorEntityToken holder, String itemId) {
+        colonyItems.add(new ColonyItem(holder, itemId));
     }
 
     @Override

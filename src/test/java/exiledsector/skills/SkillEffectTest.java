@@ -97,7 +97,7 @@ class SkillEffectTest {
 
     @Test
     void hullFlatDescribesAFlatChangeToHullPoints() {
-        assertEquals("Increases hull points by 250.", DefenseSkillEffect.HULL_FLAT.description(250f).plain());
+        assertEquals("+250 to hull points.", DefenseSkillEffect.HULL_FLAT.description(250f).plain());
     }
 
     @Test
@@ -364,7 +364,7 @@ class SkillEffectTest {
         FluxSkillEffect.FLUX_DISSIPATION_PER_FLUX_VENT_FLAT.apply(stats, "mod_id", -5f);
 
         verify(fluxDissipation).modifyFlat("mod_id_vents", -100f);
-        assertEquals("Decreases flux dissipation per flux vent by 5.",
+        assertEquals("-5 to flux dissipation per flux vent.",
                 FluxSkillEffect.FLUX_DISSIPATION_PER_FLUX_VENT_FLAT.description(-5f).plain());
     }
 
@@ -730,7 +730,7 @@ class SkillEffectTest {
 
     @Test
     void fighterBaysFlatDescribesTheBayCountOnly() {
-        assertEquals("Increases number of fighter bays by 1.", FighterSkillEffect.FIGHTER_BAYS_FLAT.description(1f).plain());
+        assertEquals("+1 to number of fighter bays.", FighterSkillEffect.FIGHTER_BAYS_FLAT.description(1f).plain());
     }
 
     @Test
