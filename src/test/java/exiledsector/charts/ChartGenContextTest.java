@@ -79,8 +79,9 @@ class ChartGenContextTest {
         assertTrue(first.applied().contains(new AppliedEffect(ChartEffect.CHART_WARDEN_SIZE_PERCENT, 700f)), first.applied().toString());
         assertTrue(first.applied().contains(new AppliedEffect(ChartEffect.CHART_VAULT_RICHNESS_PERCENT, 150f)), first.applied().toString());
         assertTrue(first.applied().contains(new AppliedEffect(ChartEffect.CHART_OFFICER_LEVEL_BONUS, 2f)), first.applied().toString());
-        assertTrue(first.applied().stream().anyMatch(applied -> applied.effect() == ChartEffect.CHART_LOOT_BUDGET_PERCENT),
-                "the trinary implicit is read too");
+        assertEquals(chart.implicits().get(0).modifierId(), "CHART_FACTION_" + first.factionId().toUpperCase(java.util.Locale.ROOT),
+                "the faction implicit is read too");
+        assertEquals(first.factionId(), second.factionId());
         assertEquals(700f, first.wardenSizePercent(), TOLERANCE);
         assertEquals(BASE.wardenSize() + 700f, first.adjust(BASE).wardenSize(), TOLERANCE, "warden size modifiers add percentage points");
     }
@@ -229,7 +230,7 @@ class ChartGenContextTest {
 
     @Test
     void wardenSizeModifiersAddUpAndOverflowPastTheCapIntoFleetStrength() {
-        ChartFaction plainFaction = new ChartFaction("pirates", 1f, ChartTiers.LOWEST_TIER, 0f, 0f);
+        ChartFaction plainFaction = new ChartFaction("pirates", 1f, 0f, 0f);
         boolean sawOverflow = false;
         boolean sawUnderCap = false;
         for (int tier = 10; tier <= 15; tier++) {

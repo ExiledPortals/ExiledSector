@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 public final class StarChart extends Item {
 
@@ -83,14 +84,13 @@ public final class StarChart extends Item {
     @Override
     public ItemTraits traits() {
         List<RolledModifier> currentImplicits = implicits();
-        boolean seededImplicits = currentImplicits.equals(StarChartImplicits.roll(systemType(), seed()));
-        return new ItemTraits(tier(), quality(), corruption(), seededImplicits ? null : currentImplicits, mirrored());
+        return new ItemTraits(tier(), quality(), corruption(), currentImplicits.isEmpty() ? null : currentImplicits, mirrored());
     }
 
     @Override
     public List<RolledModifier> implicits() {
         List<RolledModifier> stored = storedImplicits();
-        if (stored != null) {
+        if (stored != null && !(StarChartImplicits.isLoaded() && noneResolve(stored))) {
             return Collections.unmodifiableList(stored);
         }
         List<RolledModifier> rolled = StarChartImplicits.roll(systemType(), seed());
@@ -98,6 +98,10 @@ public final class StarChart extends Item {
             replaceImplicits(rolled);
         }
         return rolled;
+    }
+
+    private boolean noneResolve(List<RolledModifier> stored) {
+        return stored.stream().noneMatch(implicit -> implicitModifier(implicit.modifierId()) != null);
     }
 
     @Override
@@ -134,6 +138,23 @@ public final class StarChart extends Item {
     @Override
     List<Modifier> implicitCorruptionPool() {
         return StarChartImplicits.corruptionPool();
+    }
+
+    @Override
+    boolean implicitCanVary(RolledModifier implicit) {
+        if (StarChartImplicits.sharedChoice(implicit.modifierId()) != null) {
+            return StarChartImplicits.sharedChoiceCanVary(implicit.modifierId());
+        }
+        return super.implicitCanVary(implicit);
+    }
+
+    @Override
+    RolledModifier rerolledImplicit(RolledModifier implicit, Random random) {
+        if (StarChartImplicits.sharedChoice(implicit.modifierId()) != null) {
+            RolledModifier rerolled = StarChartImplicits.rollSharedChoice(random);
+            return rerolled == null ? implicit : rerolled;
+        }
+        return super.rerolledImplicit(implicit, random);
     }
 
     @Override

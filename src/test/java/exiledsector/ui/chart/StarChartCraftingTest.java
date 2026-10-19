@@ -124,14 +124,14 @@ class StarChartCraftingTest {
 
         StarChartCurrency.registerAll();
 
-        assertEquals(List.of(CraftingCurrency.AUGMENTATION, CraftingCurrency.CORRUPTION, CraftingCurrency.TRANSPOSITION,
+        assertEquals(List.of(CraftingCurrency.AUGMENTATION, CraftingCurrency.ATTUNEMENT, CraftingCurrency.CORRUPTION, CraftingCurrency.TRANSPOSITION,
                 CraftingCurrency.RECALIBRATION, StarChartCurrency.REFORGE, StarChartCurrency.ANNULMENT, StarChartCurrency.CARTOGRAPHY),
                 StarChartCrafting.currencies());
-        for (ItemCurrency currency : List.of(CraftingCurrency.AUGMENTATION, CraftingCurrency.RECALIBRATION, CraftingCurrency.CORRUPTION,
+        for (ItemCurrency currency : List.of(CraftingCurrency.AUGMENTATION, CraftingCurrency.ATTUNEMENT, CraftingCurrency.RECALIBRATION, CraftingCurrency.CORRUPTION,
                 StarChartCurrency.REFORGE, StarChartCurrency.ANNULMENT, StarChartCurrency.CARTOGRAPHY)) {
             assertEquals(Refusal.NONE, refusalWithOne(currency), currency.key());
         }
-        for (CraftingCurrency currency : List.of(CraftingCurrency.ATTUNEMENT, CraftingCurrency.SUBSTITUTION, CraftingCurrency.FIXATION,
+        for (CraftingCurrency currency : List.of(CraftingCurrency.SUBSTITUTION, CraftingCurrency.FIXATION,
                 CraftingCurrency.REPLICATION)) {
             assertEquals(Refusal.CANNOT_USE, refusalWithOne(currency), currency.key());
         }

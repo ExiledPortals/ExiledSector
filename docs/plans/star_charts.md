@@ -209,7 +209,7 @@ Stage 2 is content, spending the tier's loot and fleet budgets:
   - a boss fleet at higher tiers;
   - every fleet is recorded in the run.
 - Every fleet gets `$exiledSector_chartTier` before levelling, so `NpcFleetLeveller` scales NPC trees and carried hull items by tier instead of by player power.
-- Factions are picked from `chart_factions.csv` with weights, like Exiled Space, but fleets stay on their real faction and hostility is enforced through memory flags. Exiled Space's "unknown faction" trick isn't needed.
+- Factions come from `chart_factions.csv`, but fleets stay on their real faction and hostility is enforced through memory flags. Exiled Space's "unknown faction" trick isn't needed. Since 2026-10-19 the faction is the implicit every chart shares ("The system is inhabited by X"): the chart rolls it by weight when it drops and stores it, so a later change to the list leaves charts already rolled alone. The list holds only vanilla factions for now and has no tier gating. A chart whose faction isn't loaded, or an opening without a chart, picks one by weight when the system generates. Corruption's implicit replacement swaps the faction for another listed one.
 - Objectives can be "clear the guardians", "kill the boss" or "loot the vault". Finishing one gives a completion reward and a chance at a chart drop, and the objective's intel ends with the run.
 
 ## Isolation
@@ -273,7 +273,7 @@ Main's editor already has an Items page with Definitions, Modifiers, Implicits, 
 New data files:
 - `star_charts.csv`: definitions and unique charts;
 - `star_chart_modifiers.csv`, loaded into the shared modifier records;
-- `star_chart_implicits.csv` for the system-type implicits;
+- `star_chart_implicits.csv` for the system-type implicits, which roll after the shared faction implicit (empty since 2026-10-19);
 - `star_chart_tiers.csv`;
 - `chart_poi.csv`;
 - `chart_factions.csv`.
@@ -355,7 +355,7 @@ Atlas progression is deferred to a later project.
 
 Phase 7 built the sustain loop. This section records how it works.
 
-Four kernels also work on charts: Augmentation, Recalibration, Transposition and Corruption. Their code is not changed for it. Instead, `ItemCurrencies` keeps an overlay of extra item types per registered currency (`extend`, `retract` and `appliesTo(currency, type)`), and `StarChartCurrency.registerAll()` extends those four kernels to `STAR_CHART` at application load. Crafting and the currency row both read the overlay, so hull items and subroutines see exactly the same currencies as before. The kernels' own code was already type-aware: augment uses the chart limits (six modifiers, three a side) and the tier filter, recalibrate rerolls roll positions, transpose only picks a unique that rolls at the chart's tier and keeps the tier, and corruption uses the chart implicit pool.
+Five kernels also work on charts: Augmentation, Recalibration, Transposition, Corruption and, since 2026-10-19, Attunement (the Fundamental Nanoswarm). Attunement treats the faction implicit as the implicit's value: it re-picks the faction by weight from `chart_factions.csv`, retrying until the faction changes, through the `implicitCanVary`/`rerolledImplicit` hooks that `StarChart` overrides. Their code is not changed for it. Instead, `ItemCurrencies` keeps an overlay of extra item types per registered currency (`extend`, `retract` and `appliesTo(currency, type)`), and `StarChartCurrency.registerAll()` extends those four kernels to `STAR_CHART` at application load. Crafting and the currency row both read the overlay, so hull items and subroutines see exactly the same currencies as before. The kernels' own code was already type-aware: augment uses the chart limits (six modifiers, three a side) and the tier filter, recalibrate rerolls roll positions, transpose only picks a unique that rolls at the chart's tier and keeps the tier, and corruption uses the chart implicit pool.
 
 Corruption's "values stretched" outcome now reaches tier-band lines too. Their roll positions are rerolled from -35 to 135 instead of 0 to 100, and `ValueScaling.PerTierBand` reads a position outside 0 to 100 as a value up to 35 percent of the band's bound past that bound, never crossing zero. Positions inside 0 to 100 read exactly as before. Hull items have no tier, so their values never reach this code, and their own stretch is unchanged.
 

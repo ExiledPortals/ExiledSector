@@ -143,10 +143,24 @@ class ChartContentPlannerTest {
     }
 
     @Test
+    void theChartsFactionInhabitsTheSystemWhenItIsLoaded() {
+        ChartTier tier = new ChartTier(8, 200f, 3, 3, 0, 0, 60f, 100, 100, 0f, true, 400f, 1f, 0f, 0f);
+        List<ChartFaction> factions = List.of(new ChartFaction("pirates", 10f, 0f, 0f), new ChartFaction("remnant", 1f, -10f, 15f));
+        ChartGenContext remnantChart = ChartGenContext.of(List.of(), 0, "remnant");
+
+        for (long seed = 0; seed < 20; seed++) {
+            ChartContentPlan plan = ChartContentPlanner.plan(seed, tier, List.of(), factions, EVERY_FACTION, remnantChart);
+            assertEquals(factions.get(1), plan.faction());
+            assertEquals("pirates", ChartContentPlanner.plan(seed, tier, List.of(), factions, id -> !id.equals("remnant"), remnantChart)
+                    .faction().factionId());
+        }
+    }
+
+    @Test
     void aFactionsFleetSizeBonusAddsToEveryFleetAndTheWarden() {
         ChartTier tier = new ChartTier(8, 200f, 3, 3, 0, 0, 60f, 100, 100, 0f, true, 400f, 1f, 0f, 0f);
-        ChartFaction plain = new ChartFaction("hegemony", 1f, 1, 0f, 0f);
-        ChartFaction bigger = new ChartFaction("derelict", 1f, 1, 20f, -10f);
+        ChartFaction plain = new ChartFaction("hegemony", 1f, 0f, 0f);
+        ChartFaction bigger = new ChartFaction("derelict", 1f, 20f, -10f);
 
         ChartContentPlan plainPlan = ChartContentPlanner.plan(3L, tier, List.of(), List.of(plain), EVERY_FACTION);
         ChartContentPlan biggerPlan = ChartContentPlanner.plan(3L, tier, List.of(), List.of(bigger), EVERY_FACTION);

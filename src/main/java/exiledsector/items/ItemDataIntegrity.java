@@ -405,6 +405,9 @@ public final class ItemDataIntegrity {
     }
 
     private void checkStarChartImplicits(JSONArray rows) throws JSONException {
+        if (rows == null) {
+            return;
+        }
         String file = StarChartImplicits.DATA_PATH;
         Map<String, Integer> linesByType = new HashMap<>();
         ModCsv.forEach(rows, (index, row) -> {

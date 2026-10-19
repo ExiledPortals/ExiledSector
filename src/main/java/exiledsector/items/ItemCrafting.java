@@ -162,15 +162,7 @@ public final class ItemCrafting {
     }
 
     static boolean canAttune(Item item) {
-        for (RolledModifier implicit : item.implicits()) {
-            for (RolledEffect line : implicit.lines()) {
-                ModifierLine lineDefinition = item.implicitLine(line.effectName());
-                if (lineDefinition != null && lineDefinition.canVary()) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return item.implicits().stream().anyMatch(item::implicitCanVary);
     }
 
     static Item attune(Item item, Random random) {
@@ -180,12 +172,7 @@ public final class ItemCrafting {
         for (int attempt = 0; attempt < MAX_RECALIBRATION_ATTEMPTS; attempt++) {
             List<RolledModifier> rerolled = new ArrayList<>(item.implicits().size());
             for (RolledModifier implicit : item.implicits()) {
-                List<RolledEffect> rerolledLines = new ArrayList<>(implicit.lines().size());
-                for (RolledEffect line : implicit.lines()) {
-                    ModifierLine lineDefinition = item.implicitLine(line.effectName());
-                    rerolledLines.add(lineDefinition == null ? line : new RolledEffect(line.effectName(), lineDefinition.roll(random)));
-                }
-                rerolled.add(implicit.withLines(rerolledLines));
+                rerolled.add(item.rerolledImplicit(implicit, random));
             }
             if (!rerolled.equals(item.implicits())) {
                 item.replaceImplicits(rerolled);

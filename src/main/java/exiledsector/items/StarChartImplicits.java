@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import exiledsector.ModCsv;
+import exiledsector.Seeds;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 
 public final class StarChartImplicits {
 
@@ -24,8 +26,13 @@ public final class StarChartImplicits {
     private static final long IMPLICIT_SEED_SALT = 0x43484152544D50L;
     private static final Logger LOG = Logger.getLogger(StarChartImplicits.class);
     private static final AtomicReference<Loaded> LOADED = new AtomicReference<>();
+    private static final AtomicReference<List<Choice>> SHARED_CHOICE = new AtomicReference<>(List.of());
+    private static final AtomicReference<Function<String, Modifier>> UNLISTED_CHOICE = new AtomicReference<>(modifierId -> null);
 
     private record Loaded(Map<String, List<Modifier>> bySystemType, List<Modifier> corruptionPool) {
+    }
+
+    public record Choice(Modifier modifier, float weight) {
     }
 
     private StarChartImplicits() {
@@ -82,6 +89,38 @@ public final class StarChartImplicits {
         return List.copyOf(implicits);
     }
 
+    public static void registerSharedChoice(List<Choice> choices) {
+        registerSharedChoice(choices, modifierId -> null);
+    }
+
+    public static void registerSharedChoice(List<Choice> choices, Function<String, Modifier> unlistedChoice) {
+        SHARED_CHOICE.set(choices == null ? List.of() : List.copyOf(choices));
+        UNLISTED_CHOICE.set(unlistedChoice == null ? modifierId -> null : unlistedChoice);
+    }
+
+    static boolean sharedChoiceCanVary(String currentModifierId) {
+        return SHARED_CHOICE.get().stream().anyMatch(choice -> !choice.modifier().id().equals(currentModifierId));
+    }
+
+    static RolledModifier rollSharedChoice(Random random) {
+        List<Choice> choices = SHARED_CHOICE.get();
+        Choice picked = choices.isEmpty() ? null : WeightedPick.pick(choices, Choice::weight, random);
+        return picked == null ? null : RolledModifier.roll(picked.modifier(), random, false);
+    }
+
+    static Modifier sharedChoice(String modifierId) {
+        for (Modifier choice : sharedChoices()) {
+            if (choice.id().equals(modifierId)) {
+                return choice;
+            }
+        }
+        return modifierId == null ? null : UNLISTED_CHOICE.get().apply(modifierId);
+    }
+
+    public static List<Modifier> sharedChoices() {
+        return SHARED_CHOICE.get().stream().map(Choice::modifier).toList();
+    }
+
     public static boolean isLoaded() {
         return LOADED.get() != null;
     }
@@ -96,7 +135,14 @@ public final class StarChartImplicits {
 
     public static List<Modifier> corruptionPool() {
         Loaded loaded = LOADED.get();
-        return loaded == null ? List.of() : loaded.corruptionPool();
+        List<Modifier> shared = sharedChoices();
+        if (loaded == null || loaded.corruptionPool().isEmpty()) {
+            return shared;
+        }
+        Map<String, Modifier> distinctById = new LinkedHashMap<>();
+        shared.forEach(choice -> distinctById.putIfAbsent(choice.id(), choice));
+        loaded.corruptionPool().forEach(implicit -> distinctById.putIfAbsent(implicit.id(), implicit));
+        return List.copyOf(distinctById.values());
     }
 
     static Modifier anyById(String modifierId) {
@@ -105,10 +151,14 @@ public final class StarChartImplicits {
                 return implicit;
             }
         }
-        return null;
+        return sharedChoice(modifierId);
     }
 
     static ModifierLine line(String systemType, String effectName) {
+        Modifier sharedChoice = sharedChoice(effectName);
+        if (sharedChoice != null && sharedChoice.line(effectName) != null) {
+            return sharedChoice.line(effectName);
+        }
         for (Modifier implicit : forSystemType(systemType)) {
             ModifierLine line = implicit.line(effectName);
             if (line != null) {
@@ -120,11 +170,16 @@ public final class StarChartImplicits {
 
     static List<RolledModifier> roll(String systemType, long seed) {
         List<Modifier> implicits = forSystemType(systemType);
-        if (implicits.isEmpty()) {
+        List<Choice> choices = SHARED_CHOICE.get();
+        if (implicits.isEmpty() && choices.isEmpty()) {
             return List.of();
         }
-        Random random = new Random(seed ^ IMPLICIT_SEED_SALT);
-        List<RolledModifier> rolled = new ArrayList<>(implicits.size());
+        Random random = Seeds.random(seed ^ IMPLICIT_SEED_SALT);
+        List<RolledModifier> rolled = new ArrayList<>(implicits.size() + 1);
+        Choice shared = choices.isEmpty() ? null : WeightedPick.pick(choices, Choice::weight, random);
+        if (shared != null) {
+            rolled.add(RolledModifier.roll(shared.modifier(), random, false));
+        }
         for (Modifier implicit : implicits) {
             rolled.add(RolledModifier.roll(implicit, random, false));
         }
