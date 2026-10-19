@@ -1,13 +1,15 @@
 package exiledsector.charts;
 
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.ChartContentPlan.FleetRole;
 import exiledsector.charts.ChartContentPlan.PlannedFleet;
 import exiledsector.charts.ChartGenContext.AppliedEffect;
+import exiledsector.i18n.StyledText;
+import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
+import exiledsector.items.ItemKind;
 import exiledsector.items.ItemTraits;
 import exiledsector.items.StarChart;
 import exiledsector.items.StarChartFixtures;
@@ -30,11 +32,9 @@ import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 class ChartGenContextTest {
@@ -110,12 +110,12 @@ class ChartGenContextTest {
     void eachRewardEffectChangesTheLootOrTheReward() {
         ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_LOOT_BUDGET_PERCENT, 30f),
                 new AppliedEffect(ChartEffect.CHART_QUANTITY_PERCENT, 10f), new AppliedEffect(ChartEffect.CHART_REWARD_PERCENT, 20f),
-                new AppliedEffect(ChartEffect.CHART_EXTRA_POIS, 3f), new AppliedEffect(ChartEffect.CHART_ITEM_DROP_CHANCE_PERCENT, 50f)));
+                new AppliedEffect(ChartEffect.CHART_EXTRA_POIS, 3f), new AppliedEffect(ChartEffect.CHART_ITEM_PERCENT, 50f)));
 
         assertEquals(BASE.lootBudget() * 1.4f, context.adjust(BASE).lootBudget(), TOLERANCE);
         assertEquals(1.3f, context.rewardMult(), TOLERANCE);
         assertEquals(3, context.extraPois());
-        assertEquals(1.5f, context.itemChanceMult(), TOLERANCE);
+        assertEquals(1.6f, context.itemChances().general(), TOLERANCE);
         assertEquals(BASE.fleetSize(), context.adjust(BASE).fleetSize(), TOLERANCE);
         assertEquals(0.7f, with(ChartEffect.CHART_SENSOR_RANGE_PERCENT, -30f).sensorRangeMult(), TOLERANCE);
         assertEquals(ChartGenContext.MIN_SENSOR_RANGE_MULT, with(ChartEffect.CHART_SENSOR_RANGE_PERCENT, -400f).sensorRangeMult(), TOLERANCE);
@@ -156,21 +156,42 @@ class ChartGenContextTest {
     }
 
     @Test
-    void afterGenerationMarksOnlyThisRunsSalvage() {
-        StarSystemAPI system = mock(StarSystemAPI.class);
-        MemoryAPI cacheMemory = mock(MemoryAPI.class);
-        SectorEntityToken cache = entity("cache_1", "run1", cacheMemory);
-        SectorEntityToken otherRun = entity("cache_2", "run2", mock(MemoryAPI.class));
-        CampaignFleetAPI guard = mock(CampaignFleetAPI.class);
-        when(system.getEntitiesWithTag(ChartIds.CONTENT_TAG)).thenReturn(List.of(cache, otherRun, guard));
-        ChartContent content = new ChartContent(5, "pirates", ChartObjective.CLEAR, List.of("guard_1"), null, 1, 2);
-        ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_ITEM_DROP_CHANCE_PERCENT, 50f)));
+    void dropBonusesAddWithinATypeAndStayApartAcrossTypes() {
+        ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_QUANTITY_PERCENT, 10f),
+                new AppliedEffect(ChartEffect.CHART_ITEM_PERCENT, 20f), new AppliedEffect(ChartEffect.CHART_REACTOR_ITEM_PERCENT, 40f),
+                new AppliedEffect(ChartEffect.CHART_REACTOR_ITEM_PERCENT, 10f), new AppliedEffect(ChartEffect.CHART_CURRENCY_PERCENT, 30f)));
 
-        context.afterGeneration(new ChartGenerated(system, "run1", content, context));
+        assertEquals(1.8f, context.dropMult(DropType.REACTOR), TOLERANCE);
+        assertEquals(1.3f, context.dropMult(DropType.BRIDGE), TOLERANCE);
+        assertEquals(1.3f, context.dropMult(DropType.STAR_CHART), TOLERANCE);
+        assertEquals(1.4f, context.dropMult(DropType.CURRENCY), TOLERANCE, "Salvage only reaches item types");
+        assertEquals(1.1f, context.dropMult(DropType.WEAPON), TOLERANCE);
+        assertEquals(1f, context.dropMult(DropType.COLONY_ITEM), TOLERANCE, "Quantity leaves colony items out");
+        assertEquals(1.3f, context.itemChances().general(), TOLERANCE);
+        assertEquals(0.5f, context.itemChances().targeted(ItemKind.REACTOR), TOLERANCE);
+        assertEquals(0f, context.itemChances().targeted(ItemKind.BRIDGE), TOLERANCE);
+        assertTrue(context.describe().contains("reactor +50%"), context.describe());
+    }
 
-        verify(cacheMemory, atLeastOnce()).set(ChartIds.ITEM_CHANCE_MEMORY_KEY, 1.5f);
-        verify(otherRun, never()).getMemoryWithoutUpdate();
-        verifyNoInteractions(guard);
+    @Test
+    void chartQualityCountsAsQuantityForEveryDropTypeButColonyItems() {
+        ChartGenContext polished = ChartGenContext.of(List.of(), 12);
+
+        assertEquals(12f, polished.quantityPercent(), TOLERANCE);
+        assertEquals(1.12f, polished.dropMult(DropType.FEEDSTOCK), TOLERANCE);
+        assertEquals(1f, polished.dropMult(DropType.COLONY_ITEM), TOLERANCE);
+        assertSame(ItemChances.BASE, ChartGenContext.none().itemChances());
+    }
+
+    @Test
+    void theLootTotalsListOnlyTheBonusesThatAreNotZero() {
+        ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_QUANTITY_PERCENT, 23f),
+                new AppliedEffect(ChartEffect.CHART_CURRENCY_PERCENT, 47f), new AppliedEffect(ChartEffect.CHART_FLEET_SIZE_PERCENT, 30f)));
+
+        List<String> lines = ChartLootTotals.lines(context).stream().map(StyledText::plain).toList();
+
+        assertEquals(List.of("Quantity +23%", "Currency +47%"), lines);
+        assertTrue(ChartLootTotals.lines(with(ChartEffect.CHART_FLEET_SIZE_PERCENT, 30f)).isEmpty());
     }
 
     @Test

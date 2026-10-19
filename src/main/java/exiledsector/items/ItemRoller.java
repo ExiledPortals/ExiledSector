@@ -63,8 +63,8 @@ public final class ItemRoller {
 
     private static List<RolledModifier> rollAffixes(ItemDefinition definition, AffixLayout.Limits limits, int modifierCount, Random random,
                                                     boolean averageRolls, int tier) {
-        List<PoolEntry> prefixes = AffixLayout.rollableAt(definition.prefixes(), tier);
-        List<PoolEntry> suffixes = AffixLayout.rollableAt(definition.suffixes(), tier);
+        List<PoolEntry> prefixes = AffixLayout.rollableAt(definition.type(), definition.prefixes(), tier);
+        List<PoolEntry> suffixes = AffixLayout.rollableAt(definition.type(), definition.suffixes(), tier);
         int prefixCount = AffixLayout.prefixCount(modifierCount, random.nextBoolean());
         int suffixCount = modifierCount - prefixCount;
         int prefixRoom = Math.min(limits.maxPerSide(), prefixes.size());

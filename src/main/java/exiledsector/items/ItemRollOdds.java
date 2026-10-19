@@ -17,8 +17,8 @@ public final class ItemRollOdds {
 
     public static Map<String, Double> weightShares(ItemDefinition definition, int tier) {
         Map<String, Double> shares = new LinkedHashMap<>();
-        addPoolShares(AffixLayout.rollableAt(definition.prefixes(), tier), shares);
-        addPoolShares(AffixLayout.rollableAt(definition.suffixes(), tier), shares);
+        addPoolShares(AffixLayout.rollableAt(definition.type(), definition.prefixes(), tier), shares);
+        addPoolShares(AffixLayout.rollableAt(definition.type(), definition.suffixes(), tier), shares);
         return shares;
     }
 

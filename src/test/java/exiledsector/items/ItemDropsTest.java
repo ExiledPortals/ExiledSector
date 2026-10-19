@@ -250,6 +250,18 @@ class ItemDropsTest {
     }
 
     @Test
+    void feedstockAndCurrencyScaleSeparately() {
+        Random random = new Random(17L);
+        List<Map<String, Integer>> currencyOnly = new java.util.ArrayList<>();
+        for (int i = 0; i < TRIALS; i++) {
+            currencyOnly.add(ItemDrops.rollMaterials("probe", random, 0f, 2f));
+        }
+
+        assertEquals(0.0, materialShare(currencyOnly, roll -> roll.containsKey(ItemDisassembly.PARTS_ITEM_ID)), 0.0);
+        assertEquals(2 * 0.5 * ItemDrops.KERNEL_CHANCE_SHARE, materialShare(currencyOnly, ItemDropsTest::hasKernel), 0.02);
+    }
+
+    @Test
     void sitesWithoutARuleDropNoMaterials() {
         assertTrue(ItemDrops.rollMaterials("nowhere", new Random(1L)).isEmpty());
         assertTrue(ItemDrops.rollMaterials(null, new Random(1L)).isEmpty());

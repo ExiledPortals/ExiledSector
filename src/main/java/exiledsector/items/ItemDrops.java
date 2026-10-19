@@ -105,17 +105,26 @@ public final class ItemDrops {
 
     public static List<ItemData> roll(String siteId, Random random, float chanceMult,
                                                 Predicate<ItemDefinition> uniqueAllowed) {
+        return roll(siteId, random, ItemChances.of(chanceMult), uniqueAllowed);
+    }
+
+    public static List<ItemData> roll(String siteId, Random random, ItemChances chances) {
+        return roll(siteId, random, chances, definition -> ItemUnlock.canDrop(definition, Global.getSector()));
+    }
+
+    public static List<ItemData> roll(String siteId, Random random, ItemChances chances, Predicate<ItemDefinition> uniqueAllowed) {
         Rule rule = activeRule(siteId);
         if (rule == null) {
             return new ArrayList<>();
         }
-        List<ItemData> droppedItems = rollCascade(rule, random, chanceMult, ItemDrops::pickBasic);
-        if (random.nextFloat() < rule.uniqueChance() * chanceMult) {
+        List<ItemData> droppedItems = rollCascade(rule, random, chances.general(), ItemDrops::pickBasic);
+        if (random.nextFloat() < rule.uniqueChance() * chances.general()) {
             ItemDefinition uniqueDefinition = pickUnique(random, uniqueAllowed);
             if (uniqueDefinition != null) {
                 droppedItems.add(ItemData.rolled(uniqueDefinition, random.nextLong()));
             }
         }
+        rollTargeted(rule, random, chances.targeted(ItemKind.SUBROUTINE), 1, ItemKind.SUBROUTINE, droppedItems);
         return droppedItems;
     }
 
@@ -124,6 +133,10 @@ public final class ItemDrops {
     }
 
     public static Map<String, Integer> rollMaterials(String siteId, Random random, float chanceMult) {
+        return rollMaterials(siteId, random, chanceMult, chanceMult);
+    }
+
+    public static Map<String, Integer> rollMaterials(String siteId, Random random, float feedstockMult, float currencyMult) {
         Map<String, Integer> droppedMaterials = new LinkedHashMap<>();
         Rule rule = activeRule(siteId);
         if (rule == null || rule.chances().isEmpty()) {
@@ -131,14 +144,14 @@ public final class ItemDrops {
         }
         int partsFound = 0;
         for (float chance : rule.chances()) {
-            if (random.nextFloat() < chance * chanceMult) {
+            if (random.nextFloat() < chance * feedstockMult) {
                 partsFound += MIN_PARTS_PER_FIND + random.nextInt(MAX_PARTS_PER_FIND - MIN_PARTS_PER_FIND + 1);
             }
         }
         if (partsFound > 0) {
             droppedMaterials.put(ItemDisassembly.PARTS_ITEM_ID, partsFound);
         }
-        if (random.nextFloat() < rule.chances().get(0) * KERNEL_CHANCE_SHARE * chanceMult) {
+        if (random.nextFloat() < rule.chances().get(0) * KERNEL_CHANCE_SHARE * currencyMult) {
             droppedMaterials.put(pickKernel(random), 1);
         }
         return droppedMaterials;
@@ -201,16 +214,61 @@ public final class ItemDrops {
     }
 
     public static SectionItemLoot rollSectionItemLoot(String siteId, Random random, float chanceMult) {
+        return rollSectionItemLoot(siteId, random, ItemChances.of(chanceMult));
+    }
+
+    public static SectionItemLoot rollSectionItemLoot(String siteId, Random random, ItemChances chances) {
         Rule rule = activeRule(siteId);
         if (rule == null || rule.chances().isEmpty()) {
             return SectionItemLoot.NONE;
         }
-        List<ItemData> droppedItems = rollCascade(rule, random, chanceMult, ItemDrops::pickSectionItemBasic);
+        List<ItemData> droppedItems = rollCascade(rule, random, chances.general(), ItemDrops::pickSectionItemBasic);
         List<HullUpgradeData> droppedUpgrades = new ArrayList<>();
-        if (random.nextFloat() < rule.chances().get(0) * chanceMult) {
+        if (random.nextFloat() < rule.chances().get(0) * chances.general()) {
             droppedUpgrades.add(new HullUpgradeData(HullUpgradeRoller.rollHullSize(random)));
         }
+        List<ItemKind> kindsWithBasics = sectionKindsWithBasics();
+        for (ItemKind kind : kindsWithBasics) {
+            rollTargeted(rule, random, chances.targeted(kind), kindsWithBasics.size(), kind, droppedItems);
+        }
         return new SectionItemLoot(List.copyOf(droppedItems), List.copyOf(droppedUpgrades));
+    }
+
+    private static void rollTargeted(Rule rule, Random random, float extraShare, int sharedKinds, ItemKind kind, List<ItemData> droppedItems) {
+        if (!(extraShare > 0f) || !hasDroppableBasic(kind)) {
+            return;
+        }
+        int extraCount = wholeParts(expectedCascadeCount(rule.chances()) * extraShare / sharedKinds, random);
+        for (int i = 0; i < extraCount; i++) {
+            ItemDefinition definition = pickSectionItemBasic(kind, random);
+            if (definition != null) {
+                droppedItems.add(ItemData.rolled(definition, random.nextLong()));
+            }
+        }
+    }
+
+    static float expectedCascadeCount(List<Float> chances) {
+        float reachChance = 1f;
+        float expectedCount = 0f;
+        for (float chance : chances) {
+            reachChance *= Math.max(0f, Math.min(1f, chance));
+            expectedCount += reachChance;
+        }
+        return expectedCount;
+    }
+
+    public static boolean hasDroppableBasic(ItemKind kind) {
+        return ItemDefinitions.all().stream().anyMatch(definition -> isDroppableBasic(definition, kind));
+    }
+
+    private static List<ItemKind> sectionKindsWithBasics() {
+        List<ItemKind> kindsWithBasics = new ArrayList<>();
+        for (ItemKind kind : ItemKind.sectionItemTypes()) {
+            if (hasDroppableBasic(kind)) {
+                kindsWithBasics.add(kind);
+            }
+        }
+        return kindsWithBasics;
     }
 
     private static List<ItemData> rollCascade(Rule rule, Random random, float chanceMult,
@@ -229,12 +287,7 @@ public final class ItemDrops {
     }
 
     public static ItemDefinition pickSectionItemBasic(Random random) {
-        List<ItemKind> typesWithBasics = new ArrayList<>();
-        for (ItemKind socketType : ItemKind.sectionItemTypes()) {
-            if (ItemDefinitions.all().stream().anyMatch(definition -> isDroppableBasic(definition, socketType))) {
-                typesWithBasics.add(socketType);
-            }
-        }
+        List<ItemKind> typesWithBasics = sectionKindsWithBasics();
         return typesWithBasics.isEmpty() ? null : pickSectionItemBasic(typesWithBasics.get(random.nextInt(typesWithBasics.size())), random);
     }
 

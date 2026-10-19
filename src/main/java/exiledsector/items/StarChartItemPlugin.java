@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.CargoTransferHandlerAPI;
 import com.fs.starfarer.api.campaign.impl.items.BaseSpecialItemPlugin;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.i18n.I18n;
+import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.ui.cargo.CargoIconAnimation;
 import exiledsector.ui.cargo.CargoIconFx;
@@ -12,6 +13,7 @@ import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.cargo.CargoIconLooks;
 import exiledsector.ui.util.SpriteCache;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class StarChartItemPlugin extends BaseSpecialItemPlugin {
@@ -46,8 +48,19 @@ public class StarChartItemPlugin extends BaseSpecialItemPlugin {
 
     @Override
     public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, CargoTransferHandlerAPI transferHandler, Object stackSource) {
-        ItemTooltip.write(tooltip, previewChart, () -> List.of(Translation.styled("chart.item.storage")), expanded);
+        ItemTooltip.write(tooltip, previewChart, this::footerLines, expanded);
         addCostLabel(tooltip, ItemTooltip.PAD, transferHandler, stackSource);
+    }
+
+    private List<StyledText> footerLines() {
+        List<StyledText> lines = new ArrayList<>();
+        List<StyledText> lootTotals = previewChart instanceof StarChart chart ? chart.lootTotalLines() : List.of();
+        if (!lootTotals.isEmpty()) {
+            lines.add(Translation.styled(StarChart.LOOT_TOTALS_HEADING_KEY));
+            lines.addAll(lootTotals);
+        }
+        lines.add(Translation.styled("chart.item.storage"));
+        return lines;
     }
 
     @Override

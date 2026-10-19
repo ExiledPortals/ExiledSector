@@ -141,13 +141,17 @@ public final class ChartDrops {
     }
 
     public static Loot roll(Source source, int tier, float chanceMult, Random random, Predicate<ItemDefinition> allowedUniques) {
+        return roll(source, tier, chanceMult, chanceMult, random, allowedUniques);
+    }
+
+    public static Loot roll(Source source, int tier, float chartMult, float currencyMult, Random random, Predicate<ItemDefinition> allowedUniques) {
         Rule rule = rule(source);
-        if (rule == null || tier == NO_TIER || !(chanceMult > 0f)) {
+        if (rule == null || tier == NO_TIER || !(chartMult > 0f) && !(currencyMult > 0f)) {
             return Loot.NONE;
         }
         int baseTier = Math.min(rule.maxTier(), ChartTiers.clamp(tier));
         List<ItemData> charts = new ArrayList<>();
-        int chartCount = chartCount(rule, chanceMult, random);
+        int chartCount = chartMult > 0f ? chartCount(rule, chartMult, random) : 0;
         for (int i = 0; i < chartCount; i++) {
             int dropTier = random.nextFloat() < rule.tierUpChance() ? Math.min(rule.maxTier(), baseTier + 1) : baseTier;
             ItemDefinition definition = ItemDrops.pickChartAtTier(random, dropTier, allowedUniques);
@@ -156,7 +160,7 @@ public final class ChartDrops {
             }
         }
         Map<String, Integer> currencies = new LinkedHashMap<>();
-        if (source.insideSystem() && random.nextFloat() < rule.currencyChance() * chanceMult) {
+        if (source.insideSystem() && random.nextFloat() < rule.currencyChance() * Math.max(0f, currencyMult)) {
             String currencyId = ItemDrops.pickChartCurrency(random);
             if (currencyId != null) {
                 currencies.merge(currencyId, 1, Integer::sum);
@@ -222,7 +226,13 @@ public final class ChartDrops {
         if (systemRun == null) {
             return Loot.NONE;
         }
-        return roll(source, systemRun.tier(), ChartRunEffects.contextOf(systemRun).chartDropMult(), random, uniquesFor(sector));
+        ChartGenContext context = ChartRunEffects.contextOf(systemRun);
+        return roll(source, systemRun.tier(), context.dropMult(DropType.STAR_CHART), context.dropMult(DropType.CURRENCY), random, uniquesFor(sector));
+    }
+
+    public static ChartGenContext liveContextAt(LocationAPI location) {
+        ChartRun run = liveSystemRun(location);
+        return run == null ? ChartGenContext.none() : ChartRunEffects.contextOf(run);
     }
 
     static boolean isSystem(LocationAPI location) {

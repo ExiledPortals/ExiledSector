@@ -1,5 +1,6 @@
 package exiledsector.charts;
 
+import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.i18n.Message;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
@@ -78,17 +79,25 @@ public enum ChartEffect implements ModifierEffect {
             context.addExtraPois(Math.round(value));
         }
     },
-    CHART_ITEM_DROP_CHANCE_PERCENT(false) {
+    CHART_ITEM_PERCENT(false) {
         @Override
         public void beforeGeneration(ChartGenContext context, float value) {
-            context.addItemChancePercent(value);
-        }
-
-        @Override
-        public void afterGeneration(ChartGenerated generated, float value) {
-            ChartGenContext.markSalvageChances(generated);
+            context.addItemPercent(value);
         }
     },
+    CHART_BRIDGE_ITEM_PERCENT(DropType.BRIDGE),
+    CHART_CREW_QUARTERS_ITEM_PERCENT(DropType.CREW_QUARTERS),
+    CHART_ENGINE_ROOM_ITEM_PERCENT(DropType.ENGINE_ROOM),
+    CHART_REACTOR_ITEM_PERCENT(DropType.REACTOR),
+    CHART_ARMOR_PLATING_ITEM_PERCENT(DropType.ARMOR_PLATING),
+    CHART_WEAPON_MOUNT_ITEM_PERCENT(DropType.WEAPON_MOUNT),
+    CHART_SHIELD_GENERATOR_ITEM_PERCENT(DropType.SHIELD_GENERATOR),
+    CHART_PHASE_COIL_ITEM_PERCENT(DropType.PHASE_COIL),
+    CHART_FLIGHT_DECK_ITEM_PERCENT(DropType.FLIGHT_DECK),
+    CHART_SUBROUTINE_PERCENT(DropType.SUBROUTINE),
+    CHART_STAR_CHART_PERCENT(DropType.STAR_CHART),
+    CHART_CURRENCY_PERCENT(DropType.CURRENCY),
+    CHART_FEEDSTOCK_PERCENT(DropType.FEEDSTOCK),
     CHART_REWARD_PERCENT(false) {
         @Override
         public void beforeGeneration(ChartGenContext context, float value) {
@@ -99,9 +108,24 @@ public enum ChartEffect implements ModifierEffect {
     static final String KEY_PREFIX = "chart.effect.";
 
     private final boolean counted;
+    private final DropType dropType;
 
     ChartEffect(boolean counted) {
         this.counted = counted;
+        this.dropType = null;
+    }
+
+    ChartEffect(DropType dropType) {
+        this.counted = false;
+        this.dropType = dropType;
+    }
+
+    public DropType dropType() {
+        return dropType;
+    }
+
+    public boolean canRoll(SectorAPI sector) {
+        return dropType == null || dropType.canDrop(sector);
     }
 
     String key() {
@@ -118,7 +142,9 @@ public enum ChartEffect implements ModifierEffect {
         return message.arg("value", magnitude).styled();
     }
 
-    public abstract void beforeGeneration(ChartGenContext context, float value);
+    public void beforeGeneration(ChartGenContext context, float value) {
+        context.addDropPercent(dropType, value);
+    }
 
     public void afterGeneration(ChartGenerated generated, float value) {
     }

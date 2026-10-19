@@ -3,6 +3,7 @@ package exiledsector.effects;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
+import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
@@ -15,6 +16,7 @@ import exiledsector.items.StarChartCurrency;
 import exiledsector.items.StarChartFixtures;
 import exiledsector.charts.ChartContent;
 import exiledsector.charts.ChartDrops;
+import exiledsector.charts.ChartGenContext;
 import exiledsector.charts.ChartObjective;
 import exiledsector.charts.ChartRun;
 import exiledsector.charts.ChartRuns;
@@ -36,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
@@ -108,18 +111,13 @@ class ItemSalvageListenerTest {
     }
 
     @Test
-    void aChartSystemsiteCanRaiseTheHullItemChance() {
-        MemoryAPI plain = mock(MemoryAPI.class);
-        MemoryAPI boosted = mock(MemoryAPI.class);
-        MemoryAPI broken = mock(MemoryAPI.class);
-        when(boosted.contains(ChartIds.ITEM_CHANCE_MEMORY_KEY)).thenReturn(true);
-        when(boosted.getFloat(ChartIds.ITEM_CHANCE_MEMORY_KEY)).thenReturn(1.5f);
-        when(broken.contains(ChartIds.ITEM_CHANCE_MEMORY_KEY)).thenReturn(true);
-        when(broken.getFloat(ChartIds.ITEM_CHANCE_MEMORY_KEY)).thenReturn(-2f);
+    void salvageOutsideALiveChartSystemGetsNoChartBonuses() {
+        SectorEntityToken outside = mock(SectorEntityToken.class);
+        when(outside.getContainingLocation()).thenReturn(mock(LocationAPI.class));
+        SectorEntityToken nowhere = mock(SectorEntityToken.class);
 
-        assertEquals(1f, ItemSalvageListener.itemChanceMult(plain));
-        assertEquals(1.5f, ItemSalvageListener.itemChanceMult(boosted));
-        assertEquals(1f, ItemSalvageListener.itemChanceMult(broken));
+        assertSame(ChartGenContext.none(), ItemSalvageListener.chartContext(outside));
+        assertSame(ChartGenContext.none(), ItemSalvageListener.chartContext(nowhere));
     }
 
     @Test

@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import java.util.function.Function;
 
 public final class StarChart extends Item {
 
@@ -18,6 +19,9 @@ public final class StarChart extends Item {
     public static final int HIGHEST_TIER = 15;
     public static final int LOWEST_QUALITY = 0;
     public static final int HIGHEST_QUALITY = 20;
+    public static final String LOOT_TOTALS_HEADING_KEY = "chart.totals.heading";
+
+    private static volatile Function<StarChart, List<StyledText>> lootTotals = chart -> List.of();
 
     private int tier = LOWEST_TIER;
     private int quality;
@@ -166,6 +170,14 @@ public final class StarChart extends Item {
         }
         lines.addAll(super.headerLines());
         return lines;
+    }
+
+    public static void useLootTotals(Function<StarChart, List<StyledText>> totals) {
+        lootTotals = totals == null ? chart -> List.of() : totals;
+    }
+
+    public List<StyledText> lootTotalLines() {
+        return lootTotals.apply(this);
     }
 
     public static String systemTypeName(String systemType) {

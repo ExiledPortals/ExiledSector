@@ -127,8 +127,8 @@ public enum StarChartCurrency implements ItemCurrency {
 
     static boolean canReforge(StarChart chart) {
         ItemDefinition definition = chart.definition();
-        return !definition.unique() && (!AffixLayout.rollableAt(definition.prefixes(), chart.tier()).isEmpty()
-                || !AffixLayout.rollableAt(definition.suffixes(), chart.tier()).isEmpty());
+        return !definition.unique() && (!AffixLayout.rollableAt(definition.type(), definition.prefixes(), chart.tier()).isEmpty()
+                || !AffixLayout.rollableAt(definition.type(), definition.suffixes(), chart.tier()).isEmpty());
     }
 
     static StarChart reforge(StarChart chart, Random random) {

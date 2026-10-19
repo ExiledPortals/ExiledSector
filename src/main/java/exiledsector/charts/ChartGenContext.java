@@ -1,9 +1,8 @@
 package exiledsector.charts;
 
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.items.Item;
+import exiledsector.items.ItemChances;
+import exiledsector.items.ItemKind;
 import exiledsector.items.SlottedRoll;
 import exiledsector.items.StarChart;
 import exiledsector.modifiers.ModifierEffect;
@@ -12,8 +11,10 @@ import exiledsector.modifiers.ScaleContext;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -45,7 +46,8 @@ public final class ChartGenContext {
     private float quantityPercent;
     private float lootBudgetPercent;
     private int extraPois;
-    private float itemChancePercent;
+    private float itemPercent;
+    private final Map<DropType, Float> dropPercents = new EnumMap<>(DropType.class);
     private float rewardPercent;
 
     private ChartGenContext(List<AppliedEffect> applied, int quality, String factionId) {
@@ -167,8 +169,12 @@ public final class ChartGenContext {
         extraPois += value;
     }
 
-    void addItemChancePercent(float value) {
-        itemChancePercent += value;
+    void addItemPercent(float value) {
+        itemPercent += value;
+    }
+
+    void addDropPercent(DropType type, float value) {
+        dropPercents.merge(type, value, Float::sum);
     }
 
     void addRewardPercent(float value) {
@@ -227,16 +233,42 @@ public final class ChartGenContext {
         return multiplier(lootBudgetPercent + quantityPercent + qualityQuantityPercent());
     }
 
-    public float chartDropMult() {
-        return multiplier(quantityPercent + qualityQuantityPercent());
-    }
-
     public float rewardMult() {
         return multiplier(rewardPercent + quantityPercent + qualityQuantityPercent());
     }
 
-    public float itemChanceMult() {
-        return multiplier(itemChancePercent);
+    public float quantityPercent() {
+        return quantityPercent + qualityQuantityPercent();
+    }
+
+    public float itemPercent() {
+        return itemPercent;
+    }
+
+    public float dropPercent(DropType type) {
+        return dropPercents.getOrDefault(type, 0f);
+    }
+
+    public float dropMult(DropType type) {
+        float percent = dropPercent(type);
+        if (type.isItem()) {
+            percent += itemPercent;
+        }
+        if (type.quantityApplies()) {
+            percent += quantityPercent();
+        }
+        return multiplier(percent);
+    }
+
+    public ItemChances itemChances() {
+        Map<ItemKind, Float> targetedShares = new EnumMap<>(ItemKind.class);
+        dropPercents.forEach((type, percent) -> {
+            if (type.itemKind() != null && percent != 0f) {
+                targetedShares.put(type.itemKind(), percent / PERCENT);
+            }
+        });
+        float generalMult = multiplier(itemPercent + quantityPercent());
+        return targetedShares.isEmpty() ? ItemChances.of(generalMult) : new ItemChances(generalMult, targetedShares);
     }
 
     public float sensorRangeMult() {
@@ -249,32 +281,25 @@ public final class ChartGenContext {
         }
     }
 
-    static void markSalvageChances(ChartGenerated generated) {
-        if (generated.system() == null) {
-            return;
-        }
-        float chanceMult = generated.context().itemChanceMult();
-        for (SectorEntityToken entity : generated.system().getEntitiesWithTag(ChartIds.CONTENT_TAG)) {
-            if (entity instanceof CampaignFleetAPI || !ChartIds.belongsToRun(entity, generated.runId())) {
-                continue;
-            }
-            MemoryAPI memory = entity.getMemoryWithoutUpdate();
-            if (memory != null && chanceMult != 1f) {
-                memory.set(ChartIds.ITEM_CHANCE_MEMORY_KEY, chanceMult);
-            }
-        }
-    }
-
     public String describe() {
         String factionText = factionId == null ? "" : "faction " + factionId + ", ";
         if (isEmpty()) {
             return factionText + "no chart modifiers";
         }
         return factionText + String.format(Locale.ROOT, "fleet size %+.0f%%, %+d rolled fleet(s), %+d added fleet(s), %+d officer level(s), %+d officer(s), warden size %+.0f%%, "
-                        + "fleet quality %+.0f%%, loot x%.2f, %+d point(s) of interest, hull item chance x%.2f, "
+                        + "fleet quality %+.0f%%, loot x%.2f, %+d point(s) of interest, item drops %+.0f%%, drop types %s, "
                         + "reward x%.2f, sensor range x%.2f, chart quality %d",
                 fleetSizePercent, baseFleets, extraFleets, officerLevelBonus, extraOfficers, wardenSizePercent,
-                fleetQualityPercent, lootMult(), extraPois(), itemChanceMult(), rewardMult(),
+                fleetQualityPercent, lootMult(), extraPois(), itemPercent, describeDropPercents(), rewardMult(),
                 sensorRangeMult(), quality);
+    }
+
+    private String describeDropPercents() {
+        if (dropPercents.isEmpty()) {
+            return "none";
+        }
+        List<String> parts = new ArrayList<>();
+        dropPercents.forEach((type, percent) -> parts.add(String.format(Locale.ROOT, "%s %+.0f%%", type.name().toLowerCase(Locale.ROOT), percent)));
+        return String.join(" ", parts);
     }
 }

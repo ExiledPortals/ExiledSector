@@ -1,5 +1,7 @@
 package exiledsector.items;
 
+import exiledsector.modifiers.ModifierEffects;
+import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
 import exiledsector.modifiers.TierRange;
 
@@ -115,16 +117,26 @@ final class AffixLayout {
             }
         }
         List<List<PoolEntry>> sides = new ArrayList<>();
-        addOpenSide(sides, definition.prefixes(), takenPrefixes < limits.maxPerSide(), presentModifiers, tier);
-        addOpenSide(sides, definition.suffixes(), takenSuffixes < limits.maxPerSide(), presentModifiers, tier);
+        addOpenSide(sides, rollableAt(definition.type(), definition.prefixes(), tier), takenPrefixes < limits.maxPerSide(), presentModifiers);
+        addOpenSide(sides, rollableAt(definition.type(), definition.suffixes(), tier), takenSuffixes < limits.maxPerSide(), presentModifiers);
         return sides;
     }
 
-    static List<PoolEntry> rollableAt(List<PoolEntry> pool, int tier) {
-        if (tier == TierRange.NO_TIER) {
-            return pool;
+    static List<PoolEntry> rollableAt(ItemType type, List<PoolEntry> pool, int tier) {
+        ModifierEffects effects = ItemEffects.forType(type);
+        return pool.stream().filter(entry -> rollable(entry, effects, tier)).toList();
+    }
+
+    private static boolean rollable(PoolEntry entry, ModifierEffects effects, int tier) {
+        if (tier != TierRange.NO_TIER && !entry.rollsAtTier(tier)) {
+            return false;
         }
-        return pool.stream().filter(entry -> entry.rollsAtTier(tier)).toList();
+        for (ModifierLine line : entry.modifier().lines()) {
+            if (!effects.canRoll(line.effectName())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     static int insertIndex(List<RolledModifier> modifiers, ModifierSlot addedSlot) {
@@ -134,13 +146,12 @@ final class AffixLayout {
         return (int) modifiers.stream().filter(modifier -> modifier.slot() == ModifierSlot.PREFIX).count();
     }
 
-    private static void addOpenSide(List<List<PoolEntry>> sides, List<PoolEntry> sidePool, boolean hasRoom, Set<String> presentModifiers,
-                                    int tier) {
+    private static void addOpenSide(List<List<PoolEntry>> sides, List<PoolEntry> rollablePool, boolean hasRoom, Set<String> presentModifiers) {
         if (!hasRoom) {
             return;
         }
-        List<PoolEntry> openEntries = sidePool.stream()
-                .filter(entry -> !presentModifiers.contains(entry.modifier().id()) && entry.rollsAtTier(tier)).toList();
+        List<PoolEntry> openEntries = rollablePool.stream()
+                .filter(entry -> !presentModifiers.contains(entry.modifier().id())).toList();
         if (!openEntries.isEmpty()) {
             sides.add(openEntries);
         }

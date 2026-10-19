@@ -31,6 +31,7 @@ import exiledsector.items.ItemRarity;
 import exiledsector.items.ItemStore;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemUnlock;
+import exiledsector.items.StarChart;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.TooltipExpansion;
@@ -989,6 +990,9 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             float paraPad = GAP * 2f;
             addDetailSection(element, "hullItem.tooltip.implicit", loadedItem.implicitLines(detailsShowRollRanges), paraPad);
             addDetailSection(element, "socketable.tooltip.primaryData", loadedItem.effectLines(detailsShowRollRanges), paraPad);
+            if (loadedItem instanceof StarChart chart) {
+                addDetailSection(element, StarChart.LOOT_TOTALS_HEADING_KEY, chart.lootTotalLines(), paraPad);
+            }
         }
         detailsElement = placedComponent(replaceElement(detailsElement, element, artX(BenchScene.DETAILS_LEFT), artY(BenchScene.DETAILS_TOP)));
     }

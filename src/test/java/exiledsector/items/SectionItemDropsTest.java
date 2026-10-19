@@ -107,6 +107,45 @@ class SectionItemDropsTest {
     }
 
     @Test
+    void aTargetedSectionBonusAddsOnlyItsOwnTypeByItsPercent() {
+        Random random = new Random(3L);
+        ItemChances bridgeBonus = new ItemChances(1f, Map.of(ItemKind.BRIDGE, 0.4f));
+        Map<ItemKind, Integer> counts = new HashMap<>();
+        for (int i = 0; i < TRIALS; i++) {
+            for (ItemData item : ItemDrops.rollSectionItemLoot("station", random, bridgeBonus).items()) {
+                counts.merge(item.definition().kind(), 1, Integer::sum);
+            }
+        }
+
+        assertEquals(0.75, counts.get(ItemKind.SHIELD_GENERATOR) / (double) TRIALS, 0.03);
+        assertEquals(0.75 * 1.4, counts.get(ItemKind.BRIDGE) / (double) TRIALS, 0.03);
+    }
+
+    @Test
+    void aBonusForATypeThatCannotDropChangesNothing() {
+        ItemChances phaseCoilBonus = new ItemChances(1f, Map.of(ItemKind.PHASE_COIL, 2f));
+
+        assertEquals(ItemDrops.rollSectionItemLoot("station", new Random(4L), 1f).items(),
+                ItemDrops.rollSectionItemLoot("station", new Random(4L), phaseCoilBonus).items());
+        assertFalse(ItemDrops.hasDroppableBasic(ItemKind.PHASE_COIL));
+        assertTrue(ItemDrops.hasDroppableBasic(ItemKind.SUBROUTINE));
+    }
+
+    @Test
+    void aSubroutineBonusAddsSubroutinesOnTopOfTheGeneralRoll() {
+        Random random = new Random(6L);
+        ItemChances subroutineBonus = new ItemChances(1f, Map.of(ItemKind.SUBROUTINE, 0.5f));
+        int subroutines = 0;
+        for (int i = 0; i < TRIALS; i++) {
+            subroutines += ItemDrops.roll("station", random, subroutineBonus, definition -> true).size();
+        }
+
+        assertEquals(1.5 * 1.5, subroutines / (double) TRIALS, 0.04);
+        assertEquals(1.5f, ItemDrops.expectedCascadeCount(List.of(1f, 0.5f)), 0.0001f);
+        assertEquals(0.75f, ItemDrops.expectedCascadeCount(List.of(0.5f, 0.5f, 0f)), 0.0001f);
+    }
+
+    @Test
     void sitesWithoutChancesOrRulesDropNoSectionLoot() {
         assertTrue(ItemDrops.rollSectionItemLoot("empty", new Random(1L), 1f).isEmpty());
         assertTrue(ItemDrops.rollSectionItemLoot("unknown", new Random(1L), 1f).isEmpty());
