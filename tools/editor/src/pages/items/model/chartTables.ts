@@ -58,7 +58,7 @@ export const CHART_TIER_COLUMNS = [
   'weight_boss',
   'note',
 ] as const;
-export const CHART_POI_COLUMNS = ['id', 'kind', 'entity', 'salvage_spec', 'derelict_type', 'cost', 'weight', 'min_tier', 'max_tier', 'guarded', 'note'] as const;
+export const CHART_POI_COLUMNS = ['id', 'kind', 'entity', 'salvage_spec', 'derelict_type', 'cost', 'weight', 'min_tier', 'max_tier', 'guarded', 'requires_mod', 'note'] as const;
 export const CHART_FACTION_COLUMNS = ['faction', 'weight', 'fleet_size_bonus', 'fleet_quality_bonus', 'note'] as const;
 export const CHART_BLOCKED_ABILITY_COLUMNS = ['ability_id', 'note'] as const;
 export const CHART_DROP_COLUMNS = [
@@ -332,6 +332,11 @@ export const CHART_POI_SPEC: ChartTableSpec = {
     min_tier: { label: 'Min tier', kind: 'integer' },
     max_tier: { label: 'Max tier', kind: 'integer' },
     guarded: { label: 'Guarded', kind: 'flag' },
+    requires_mod: {
+      label: 'Requires mod',
+      kind: 'text',
+      help: 'Optional mod id; the site is only placed while that mod is enabled (for IndEvo, also while its derelict stations are turned on)',
+    },
     note: NOTE_COLUMN,
   }),
   newRow: () => ({ id: '', kind: 'cache', entity: '', cost: '1', weight: '1', min_tier: '1', max_tier: '15', guarded: 'no' }),

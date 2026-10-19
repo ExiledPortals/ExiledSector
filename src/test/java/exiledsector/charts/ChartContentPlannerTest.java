@@ -78,7 +78,7 @@ class ChartContentPlannerTest {
     }
 
     private static ChartPoi site(String id, ChartPoi.Kind kind, float cost) {
-        return new ChartPoi(id, kind, "supply_cache", "", kind == ChartPoi.Kind.DERELICT ? "SMALL" : "", cost, 1f, 1, 15, false);
+        return new ChartPoi(id, kind, "supply_cache", "", kind == ChartPoi.Kind.DERELICT ? "SMALL" : "", cost, 1f, 1, 15, false, "");
     }
 
     @Test
@@ -160,8 +160,8 @@ class ChartContentPlannerTest {
 
     @Test
     void picksLeanTowardsTheAverageCostOfWhatIsLeft() {
-        ChartPoi cheap = new ChartPoi("cheap", ChartPoi.Kind.CACHE, "supply_cache_small", "", "", 1f, 10f, 1, 15, false);
-        ChartPoi mid = new ChartPoi("mid", ChartPoi.Kind.CACHE, "supply_cache", "", "", 5f, 10f, 1, 15, false);
+        ChartPoi cheap = new ChartPoi("cheap", ChartPoi.Kind.CACHE, "supply_cache_small", "", "", 1f, 10f, 1, 15, false, "");
+        ChartPoi mid = new ChartPoi("mid", ChartPoi.Kind.CACHE, "supply_cache", "", "", 5f, 10f, 1, 15, false, "");
 
         assertEquals(10f / 3f, ChartContentPlanner.targetCost(List.of(cheap, mid), 10f), 0.001f);
         assertEquals(5f, ChartContentPlanner.targetCost(List.of(mid), 10f), 0.001f);
