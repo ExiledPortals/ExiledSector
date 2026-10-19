@@ -800,7 +800,6 @@
     "socketable.tooltip.storage": "从舰船技能树打开船体物品仓库，或安装此物品，都会把它从货舱移入船体物品仓库。",
     "socketable.tooltip.mirrored": "<hl>镜像</hl>",
     "socketable.tooltip.corrupted": "<bad>已腐化</bad>",
-    "socketable.tooltip.corruptedInnate": "<bad>先天腐化</bad>",
     "socketable.tooltip.rolledNode": "编码节点：<hl>{node}</hl>",
     "socketable.tooltip.rolledNodeUnknown": "编码节点：<bad>未知</bad>（已不在技能树中）",
     "socketable.doctrine.revision": "固件版本：<hl>Rev. {revision}</hl>",

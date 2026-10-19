@@ -51,12 +51,15 @@ final class SkillTreeNodeConnectorRenderer {
     private final Segment scratchPart = new Segment();
     private final float[] cumulativeArcLength = new float[CURVE_ARC_SAMPLES + 1];
     private final WormholeOpenness wormholeOpenness;
+    private final SocketWormholes socketWormholes;
     private float exoshipRadius;
 
-    SkillTreeNodeConnectorRenderer(SkillTreePanelStyle panelStyle, NodeSearch nodeSearch, WormholeOpenness wormholeOpenness) {
+    SkillTreeNodeConnectorRenderer(SkillTreePanelStyle panelStyle, NodeSearch nodeSearch, WormholeOpenness wormholeOpenness,
+                                    SocketWormholes socketWormholes) {
         this.panelStyle = panelStyle;
         this.nodeSearch = nodeSearch;
         this.wormholeOpenness = wormholeOpenness;
+        this.socketWormholes = socketWormholes;
     }
 
     void draw(TreeLayers layers, NodeAllocator.Snapshot allocation, Set<String> templateNodeIds, Set<String> plannedOnlyNodeIds,
@@ -133,10 +136,19 @@ final class SkillTreeNodeConnectorRenderer {
         if (ExoshipNodes.isExoship(node)) return exoshipRadius * zoom * EXOSHIP_ENDPOINT_SHARE;
         SkillTier tier = node.getType().getTier();
         float footprintSize = NODE_SIZE * zoom * tier.getSizeMultiplier();
-        if (tier == SkillTier.SOCKET) return SkillTreeSocketRenderer.visibleEdgeDistance(footprintSize, towardX, towardY);
+        if (tier == SkillTier.SOCKET) return socketEndpointRadius(node.getId(), footprintSize, zoom, towardX, towardY);
         float fullRadius = connectorEndpointRadius(tier, footprintSize, zoom);
         if (!tier.isWormhole()) return fullRadius;
         return fullRadius * (1f - wormholeOpenness.of(node.getId()));
+    }
+
+    private float socketEndpointRadius(String socketId, float footprintSize, float zoom, float towardX, float towardY) {
+        float socketEdge = SkillTreeSocketRenderer.visibleEdgeDistance(footprintSize, towardX, towardY);
+        float morph = socketWormholes.morph(socketId);
+        if (morph <= 0f) return socketEdge;
+        float wormholeFootprint = NODE_SIZE * zoom * SkillTier.WORMHOLE_EXIT.getSizeMultiplier();
+        float wormholeEdge = connectorEndpointRadius(SkillTier.WORMHOLE_EXIT, wormholeFootprint, zoom) * (1f - socketWormholes.openness(socketId));
+        return socketEdge + (wormholeEdge - socketEdge) * morph;
     }
 
     private static boolean isOpenWormhole(SkillNode node, ShipSkillData skillData, String satisfiedRootId) {

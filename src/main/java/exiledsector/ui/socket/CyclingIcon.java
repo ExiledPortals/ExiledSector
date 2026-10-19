@@ -3,8 +3,8 @@ package exiledsector.ui.socket;
 import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.ui.util.Fade;
+import exiledsector.ui.cargo.AnimatedItemIcons;
 import exiledsector.ui.util.SpriteCache;
-import exiledsector.ui.util.SpriteDraw;
 
 import java.awt.Color;
 import java.util.List;
@@ -54,7 +54,7 @@ final class CyclingIcon extends BaseCustomUIPanelPlugin {
     }
 
     private void draw(String path, float alpha) {
-        SpriteDraw.drawAtCenter(ICONS, path, iconPosition.getCenterX(), iconPosition.getCenterY(), iconPosition.getWidth(),
+        AnimatedItemIcons.drawAtCenter(ICONS, path, iconPosition.getCenterX(), iconPosition.getCenterY(), iconPosition.getWidth(),
                 iconPosition.getHeight(), Color.WHITE, alpha);
     }
 }

@@ -6,8 +6,8 @@ import exiledsector.items.ShipSection;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.HoloShapes;
+import exiledsector.ui.cargo.AnimatedItemIcons;
 import exiledsector.ui.util.SpriteCache;
-import exiledsector.ui.util.SpriteDraw;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
@@ -98,7 +98,7 @@ public final class SectionFlair {
         GLDraw.strokeQuad(cx - half, cy - half, half * 2f, half * 2f, accent, 1.5f, (0.55f + 0.35f * hover) * alpha);
         if (filled) {
             float size = half * 2f * (1f - ICON_INSET * 2f);
-            SpriteDraw.drawAtCenter(ICONS, look.iconPath(), cx, cy, size, size, Color.WHITE, alpha);
+            AnimatedItemIcons.drawAtCenter(ICONS, look.iconPath(), cx, cy, size, size, Color.WHITE, alpha);
         }
         scope.untextured().additive();
         if (!filled) {

@@ -194,7 +194,7 @@ final class SkillTreeNodeRingRenderer {
                 drawKeystoneRingBelt(cx, cy, footprintSize, ringBeltWidth, ringBeltPath, stateAlpha, alphaMult);
             }
         } else if (tier.isWormhole()) {
-            drawWormhole(cx, cy, footprintSize, alphaMult, nodeId, resolveWormholeColor(node));
+            drawWormhole(cx, cy, footprintSize, alphaMult, nodeId, resolveWormholeColor(node), wormholeOpenness.of(nodeId));
         }
 
         GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -310,8 +310,16 @@ final class SkillTreeNodeRingRenderer {
                 tint, stateAlpha * alphaMult, animationElapsedSeconds, SmoothZoom.MAX_ZOOM / zoom);
     }
 
-    private void drawWormhole(float cx, float cy, float footprintSize, float alphaMult, String nodeId, Color wormholeColor) {
-        float rawOpenness = wormholeOpenness.of(nodeId);
+    void drawSocketWormhole(float cx, float cy, float footprintSize, float alphaMult, String socketId, SkillNode exit, float rawOpenness) {
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        drawWormhole(cx, cy, footprintSize, alphaMult, socketId, resolveWormholeColor(exit), rawOpenness);
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glDisable(GL11.GL_BLEND);
+    }
+
+    private void drawWormhole(float cx, float cy, float footprintSize, float alphaMult, String nodeId, Color wormholeColor, float rawOpenness) {
         float openness = rawOpenness * rawOpenness;
         float visualScale = WORMHOLE_MIN_SCALE + (1f - WORMHOLE_MIN_SCALE) * openness;
         float baseRadius = footprintSize / 2f * visualScale;

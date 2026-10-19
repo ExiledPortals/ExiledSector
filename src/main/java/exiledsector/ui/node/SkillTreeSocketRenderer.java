@@ -2,6 +2,7 @@ package exiledsector.ui.node;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.ui.cargo.AnimatedItemIcons;
 import exiledsector.ui.util.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
 import org.lwjgl.opengl.GL11;
@@ -78,7 +79,7 @@ final class SkillTreeSocketRenderer {
     void drawContent(float cx, float cy, float frameSize, String contentIconPath, Color iconTint, float alphaMult) {
         if (contentIconPath != null && !contentIconPath.isEmpty()) {
             float contentSize = frameSize * CONTENT_RATIO;
-            SpriteDraw.drawAtCenter(spriteCache, contentIconPath, cx, cy, contentSize, contentSize, iconTint, alphaMult);
+            AnimatedItemIcons.drawAtCenter(spriteCache, contentIconPath, cx, cy, contentSize, contentSize, iconTint, alphaMult);
         }
     }
 

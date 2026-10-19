@@ -38,6 +38,8 @@ public final class SkillTreeNodeDrawer {
     private static final Color TRANSFORMED_UNALLOCATED_TINT = scaled(TRANSFORMED_TINT, UNALLOCATED_TINT_SCALE);
     private static final Color AUGMENTED_UNALLOCATED_TINT = scaled(AUGMENTED_TINT, UNALLOCATED_TINT_SCALE);
     private static final float EXOSHIP_HIT_SHARE = 0.6f;
+    private static final float SOCKET_COLLAPSE_SHARE = 0.4f;
+    private static final float SOCKET_WORMHOLE_START_SCALE = 0.3f;
 
     private final TreeAllocationSession session;
     private final SkillTreePanelStyle panelStyle;
@@ -53,6 +55,7 @@ public final class SkillTreeNodeDrawer {
     private final SkillTreeNodeTooltipRenderer tooltipRenderer;
     private final SkillTreeNodeDropdownRenderer dropdownRenderer;
     private final WormholeOpenness wormholeOpenness = new WormholeOpenness();
+    private final SocketWormholes socketWormholes = new SocketWormholes();
     private final ConnectorFills connectorFills = new ConnectorFills();
     private final Consumer<String> startPulse;
     private final TreeFeedback feedback = new DrawerFeedback();
@@ -65,7 +68,7 @@ public final class SkillTreeNodeDrawer {
         this.nodeSearch = nodeSearch;
         this.ringRenderer = new SkillTreeNodeRingRenderer(panelStyle, wormholeOpenness);
         this.startPulse = ringRenderer::startPulse;
-        this.connectorRenderer = new SkillTreeNodeConnectorRenderer(panelStyle, nodeSearch, wormholeOpenness);
+        this.connectorRenderer = new SkillTreeNodeConnectorRenderer(panelStyle, nodeSearch, wormholeOpenness, socketWormholes);
         this.tooltipRenderer = new SkillTreeNodeTooltipRenderer(member, panelStyle);
         this.dropdownRenderer = new SkillTreeNodeDropdownRenderer(panelStyle);
     }
@@ -102,6 +105,7 @@ public final class SkillTreeNodeDrawer {
         ShipSkillData drawnData = session.viewSnapshot().skillData();
         wormholeGhostFlights.advance(amount, drawnData);
         wormholeOpenness.advance(amount, drawnData);
+        socketWormholes.advance(amount, drawnData);
     }
 
     public void launchWormholeGhosts(SkillNode from, SkillNode to) {
@@ -164,16 +168,25 @@ public final class SkillTreeNodeDrawer {
         float iconSize = footprintSize * ICON_INSET_RATIO;
 
         float nodeAlpha = alphaMult * nodeSearch.nodeAlpha(node, allocation);
-        if (tier == SkillTier.SOCKET) {
-            socketRenderer.drawFrame(nodeX, nodeY, footprintSize, live, panelStyle.getAccentColor(), nodeAlpha);
-            socketRenderer.drawContent(nodeX, nodeY, footprintSize, socketedIcon(skillData, node), iconTint(node, allocation, allocated),
-                    nodeAlpha);
+        float wormholeMorph = tier == SkillTier.SOCKET ? socketWormholes.morph(node.getId()) : 0f;
+        float socketAlpha = nodeAlpha * (1f - wormholeMorph);
+        float socketSize = footprintSize * (1f - SOCKET_COLLAPSE_SHARE * wormholeMorph);
+        if (wormholeMorph > 0f) {
+            float wormholeSize = NODE_SIZE * zoom * SkillTier.WORMHOLE_EXIT.getSizeMultiplier()
+                    * (SOCKET_WORMHOLE_START_SCALE + (1f - SOCKET_WORMHOLE_START_SCALE) * wormholeMorph);
+            ringRenderer.drawSocketWormhole(nodeX, nodeY, wormholeSize, nodeAlpha * wormholeMorph, node.getId(),
+                    socketWormholes.exit(node.getId()), socketWormholes.openness(node.getId()));
+        }
+        if (tier == SkillTier.SOCKET && socketAlpha > 0f) {
+            socketRenderer.drawFrame(nodeX, nodeY, socketSize, live, panelStyle.getAccentColor(), socketAlpha);
+            socketRenderer.drawContent(nodeX, nodeY, socketSize, socketedIcon(skillData, node), iconTint(node, allocation, allocated),
+                    socketAlpha);
         }
         ringRenderer.draw(nodeX, nodeY, footprintSize, nodeAlpha, SkillTreeNodeRingRenderer.RingState.of(live, breathing), zoom, node);
 
         if (tier == SkillTier.SOCKET) {
-            if (live) {
-                socketRenderer.drawArcs(node.getId(), nodeX, nodeY, footprintSize, panelStyle.getAccentColor(), nodeAlpha);
+            if (live && socketAlpha > 0f) {
+                socketRenderer.drawArcs(node.getId(), nodeX, nodeY, socketSize, panelStyle.getAccentColor(), socketAlpha);
             }
         } else if (!tier.isWormhole()) {
             Color tint = doctrineTint(DoctrineOverrides.rewrite(skillData, node.getId()), iconTint(node, allocation, allocated));

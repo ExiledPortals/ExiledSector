@@ -11,12 +11,4 @@ public enum CorruptionOutcome {
     INNATE;
 
     public static final List<CorruptionOutcome> NANOSWARM_OUTCOMES = List.of(NOTHING, IMPLICIT_REPLACED, VALUES_RANDOMISED, MODIFIERS_RANDOMISED);
-
-    public boolean innate() {
-        return this == INNATE;
-    }
-
-    public String tooltipKey() {
-        return innate() ? "socketable.tooltip.corruptedInnate" : "socketable.tooltip.corrupted";
-    }
 }

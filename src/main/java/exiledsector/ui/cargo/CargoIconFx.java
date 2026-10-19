@@ -414,6 +414,10 @@ public final class CargoIconFx {
         if (iconPath == null) {
             return;
         }
+        if (AnimatedItemIcons.isAnimated(iconPath)) {
+            AnimatedItemIcons.drawAtCenter(sprites, iconPath, cx, cy, size, size, null, alphaMult);
+            return;
+        }
         SpriteAPI sprite = sprites.sprite(iconPath);
         if (sprite == null) {
             return;

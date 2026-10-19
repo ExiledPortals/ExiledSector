@@ -4,10 +4,10 @@ import exiledsector.ui.util.Fade;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.HoloShapes;
+import exiledsector.ui.cargo.AnimatedItemIcons;
 import exiledsector.ui.util.SpriteCache;
 import exiledsector.ui.cargo.CargoIconFx;
 import exiledsector.ui.cargo.CargoIconLook;
-import exiledsector.ui.util.SpriteDraw;
 
 import java.awt.Color;
 
@@ -77,7 +77,7 @@ final class SocketWorkbenchFlair {
         if (iconPath != null) {
             float size = half * 2f * (1f - ICON_INSET * 2f);
             if (iconLook == null) {
-                SpriteDraw.drawAtCenter(ICONS, iconPath, cx, cy, size, size, Color.WHITE, easedLoad * alpha);
+                AnimatedItemIcons.drawAtCenter(ICONS, iconPath, cx, cy, size, size, Color.WHITE, easedLoad * alpha);
             } else {
                 CargoIconFx.render(ICONS, iconPath, iconLook.unframed(), cx - size / 2f, cy - size / 2f, size, size, easedLoad * alpha, 0f,
                         System.identityHashCode(this), -1f);

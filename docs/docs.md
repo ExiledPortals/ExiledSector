@@ -397,8 +397,7 @@ claiming or previewing an `npc:<definition>/<seed>` id, absorbing a cargo stack,
 yet gets `CorruptionOutcome.INNATE`. That counts as corrupted everywhere, so every currency refuses it
 exactly as it refuses an item a Corrupted Nanoswarm has touched, and its frame takes the corruption colour.
 A Corrupted Nanoswarm only ever rolls the other four outcomes (`CorruptionOutcome.NANOSWARM_OUTCOMES`). The
-tooltip and the workbench show "Corrupted from the start" for `INNATE`, which claims nothing was changed,
-and plain "Corrupted" for the rest.
+tooltip and the workbench show plain "Corrupted" for every outcome, `INNATE` included.
 
 Volume and Bypass subroutines also roll one tree node when they are created (`SubroutineKind.rollsNode`).
 The candidates come from `SubroutineNodePools`, where each kind plugs in a function from the definition to
@@ -621,6 +620,15 @@ Exoship, so ctrl clicking the socket boards it, and ctrl clicking the Exoship re
 hyperspace overlay draws a route for each open anchor wormhole from the core to the volume, alongside the core
 shortcuts, and the ghost flights fly along open anchor wormholes too.
 
+A socket linked to a faction exit draws as a wormhole. `SocketWormholes` eases each such socket from socket to
+wormhole over 3 seconds once the link exists (the socket is allocated and holds the anchor), and back over 3
+seconds once the link goes away: the frame, anchor icon and arcs shrink and fade while the exit's wormhole art
+grows in, in the exit's `wormholeColor`. The wormhole shows closed until the exit is allocated, then opens over
+`WormholeOpenness.OPEN_SECONDS` like any other wormhole, and connector ends follow the same blend. Sockets
+already linked when the tree opens start as wormholes. The Hyper-Nav Beacon's socket stays a socket, because its
+exit is the Exoship, and so does an inert duplicate anchor, which has no link. The connector line styling at the
+socket end stays the socket's.
+
 The socket's tooltip shows the anchor's volume and whether its wormhole is open, closed for want of a free node
 slot, inert because another anchor on the ship already opens that volume, or inert and why: its area is off, its
 unlock is unmet (for the beacon, until the Exoship is recovered or owned), or its exit's gate is unmet. An open
@@ -751,8 +759,11 @@ only the named volume's, to the player's cargo.
 ### ExoTech and the Exoship
 
 The Exoship is the ExoTech exit. It keeps its carried branches (`ExoshipNodes.isCarried`), its voyage, escorts
-and boarding view, and the ghost-flight and connector rules for carried nodes. The beacon node and its own
-drawing are gone; a socket holding the beacon draws like any socket holding an item.
+and boarding view, and the ghost-flight and connector rules for carried nodes. The beacon node is gone, but
+the Hyper-Nav Beacon item keeps its look: its icon is vanilla's `graphics/stations/buoy00.png`, and
+`AnimatedItemIcons` draws that path at 1.6 times the icon box with `buoy00glow.png` pulsing orange over it,
+wherever item icons are drawn (cargo, sockets, the workbench and the section flair). The glow is steady when
+item animations are set to Calm or Off. The codex and tooltip images show the plain buoy sprite.
 
 ## Node radii
 
