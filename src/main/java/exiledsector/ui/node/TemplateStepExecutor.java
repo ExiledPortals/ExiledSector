@@ -49,7 +49,7 @@ final class TemplateStepExecutor {
         if (currentSnapshot != pointsLeftSnapshot) {
             pointsLeftSnapshot = currentSnapshot;
             ShipSkillData skillData = currentSnapshot.skillData();
-            cachedPointsLeft = TemplateBudget.hasPointsLeft(skillData.getAllocatedNodeIds().size(), currentSnapshot.maxAllocatedNodes(),
+            cachedPointsLeft = TemplateBudget.hasPointsLeft(skillData.usedNodeSlots(), currentSnapshot.maxAllocatedNodes(),
                     skillData.getBankedFreeAllocations(), currentSnapshot.gate().spentOp(), currentSnapshot.opCostPerNode(),
                     currentSnapshot.totalOpBudget());
         }

@@ -11,6 +11,7 @@ import exiledsector.skills.SkillTree;
 import exiledsector.skills.unlock.NodeGates;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +44,19 @@ public final class WormholeAnchor extends Item {
 
     public boolean areaActive() {
         return WormholeAnchorDefinitions.areaActive(definitionId());
+    }
+
+    public Color color() {
+        return WormholeAnchorDefinitions.style(definitionId()).color();
+    }
+
+    public String crestFactionId() {
+        return WormholeAnchorDefinitions.style(definitionId()).crestFactionId();
+    }
+
+    @Override
+    public Color frameColor() {
+        return color();
     }
 
     public boolean unlocked(SectorAPI sector) {

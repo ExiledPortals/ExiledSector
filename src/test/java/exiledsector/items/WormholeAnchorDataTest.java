@@ -8,20 +8,25 @@ import exiledsector.skills.SkillType;
 import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.npc.RealSkillData;
 import exiledsector.skills.tags.SkillTags;
-import exiledsector.ui.cargo.AnimatedItemIcons;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import java.awt.Color;
+import java.io.File;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class WormholeAnchorDataTest {
@@ -65,11 +70,27 @@ class WormholeAnchorDataTest {
         assertEquals(volumes, exitsByVolume.keySet());
         ItemDefinition beacon = ItemDefinitions.get("wormhole_anchor_exotech");
         assertEquals("Hyper-Nav Beacon", beacon.name());
-        assertEquals(AnimatedItemIcons.BEACON_PATH, beacon.icon());
         assertEquals(ItemUnlock.RAT_PLAYER_EXOSHIP.id(), beacon.unlock());
         assertTrue(ItemDefinitions.ofType(ItemType.WORMHOLE_ANCHOR).stream()
                 .filter(definition -> definition != beacon).allMatch(definition -> definition.unlock().isEmpty()));
         assertTrue(ItemDefinitions.ofType(ItemType.WORMHOLE_ANCHOR).stream().noneMatch(ItemDefinition::unique));
+    }
+
+    @Test
+    void everyShippedAnchorHasItsOwnBakedIconColourAndCrest() throws Exception {
+        WormholeAnchorDefinitions.register(shippedAnchors());
+
+        Set<Color> colors = new HashSet<>();
+        for (ItemDefinition definition : ItemDefinitions.ofType(ItemType.WORMHOLE_ANCHOR)) {
+            String volume = WormholeAnchorDefinitions.volume(definition.id());
+            WormholeAnchorDefinitions.AnchorStyle style = WormholeAnchorDefinitions.style(definition.id());
+            assertEquals("graphics/icons/cargo/exiledSector_wormhole_anchor_" + volume.toLowerCase(Locale.ROOT) + ".png", definition.icon());
+            assertTrue(new File(definition.icon()).isFile(), definition.icon() + " is missing");
+            assertNotEquals(WormholeAnchorDefinitions.DEFAULT_COLOR, style.color(), definition.id() + " has no colour");
+            assertNotNull(style.crestFactionId(), definition.id() + " has no crest faction");
+            colors.add(style.color());
+        }
+        assertEquals(EXPECTED_EXITS.size(), colors.size());
     }
 
     @Test
@@ -111,7 +132,8 @@ class WormholeAnchorDataTest {
                 .put(WormholeAnchorTest.anchorRow("core_anchor", "core", ""))
                 .put(WormholeAnchorTest.anchorRow("taken", "luddic", "luddic_2"))
                 .put(WormholeAnchorTest.anchorRow("odd_unlock", "abyss", "luddic_2").put("unlock", "made_up"))
-                .put(WormholeAnchorTest.anchorRow("chart_unlock", "stargazer", "stargazer_wormhole_1").put("unlock", "cleared_chart_tier_3"))
+                .put(WormholeAnchorTest.anchorRow("chart_unlock", "stargazer", "stargazer_wormhole_1").put("unlock", "cleared_chart_tier_3")
+                        .put("color", "orange"))
                 .put(new JSONObject().put("volume", "enigma"));
 
         List<String> messages = ItemDataIntegrity.checkWormholeAnchors(rows, tree, Set.of("taken")).stream()
@@ -128,6 +150,7 @@ class WormholeAnchorDataTest {
                 "line 8: id taken is already used by a subroutine, hull item or star chart",
                 "line 9: odd_unlock exits at luddic_2, which is in luddic rather than abyss",
                 "line 9: odd_unlock has the unknown unlock \"made_up\"; use an item unlock id, cleared_chart_tier_N or leave it blank",
+                "line 10: chart_unlock has the color \"orange\"; expected #RRGGBB or blank",
                 "line 11: the row has no id"), messages);
     }
 

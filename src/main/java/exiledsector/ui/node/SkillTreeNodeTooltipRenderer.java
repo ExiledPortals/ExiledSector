@@ -19,7 +19,7 @@ import exiledsector.items.DoctrineText;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
 import exiledsector.items.Subroutine;
-import exiledsector.items.VolumeGrantStatus;
+import exiledsector.items.NodeGrantStatus;
 import exiledsector.items.WormholeAnchor;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeTooltipTable;
@@ -75,14 +75,14 @@ final class SkillTreeNodeTooltipRenderer {
         boolean allocatedSocket = node.getType().getTier() == SkillTier.SOCKET && skillData.isAllocated(node.getId());
         Item socketed = allocatedSocket ? ItemStore.lookup(skillData.getSocketedItem(node.getId())) : null;
         String refusalReason = allocation.refusalReason(node);
-        VolumeGrantStatus socketGrantStatus = socketed instanceof Subroutine ? allocation.volumeGrantStatus(node.getId()) : null;
+        List<NodeGrantStatus> socketGrantStatuses = socketed instanceof Subroutine ? allocation.nodeGrantStatuses(node.getId()) : List.of();
         int anchorStateRevision = socketed instanceof WormholeAnchor ? skillData.revision() : 0;
         Item grantingItem = hidden ? null : grantingItem(node, allocation);
         DoctrineRewrite rewrite = hidden ? null : DoctrineOverrides.rewrite(skillData, node.getId());
         List<Object> signature = List.of(effectiveType.getId(), hidden, showOptionalHint, expanded, allocatedSocket,
                 socketed == null ? "" : socketed.id(), refusalReason == null ? "" : refusalReason, anchorStateRevision,
                 rewrite == null ? "" : rewrite, tooltipWarning == null ? "" : tooltipWarning,
-                socketGrantStatus == null ? "" : socketGrantStatus, grantingItem == null ? "" : grantingItem.id());
+                socketGrantStatuses, grantingItem == null ? "" : grantingItem.id());
 
         TextLabel title = tooltipTitles.computeIfAbsent(node.getId(), id -> titleLabel()).refresh(signature, label -> {
             if (socketed != null) {
@@ -92,7 +92,7 @@ final class SkillTreeNodeTooltipRenderer {
             }
         });
         TextLabel body = body(tooltipBodies, node.getId(), signature,
-                () -> withGrantLine(withDoctrineLines(describe(node, skillData, effectiveType, hidden, showOptionalHint, socketed, socketGrantStatus,
+                () -> withGrantLine(withDoctrineLines(describe(node, skillData, effectiveType, hidden, showOptionalHint, socketed, socketGrantStatuses,
                         expanded), rewrite), grantingItem),
                 expanded, tooltipWarning != null ? tooltipWarning : refusalReason);
 
@@ -173,8 +173,8 @@ final class SkillTreeNodeTooltipRenderer {
             return null;
         }
         String grantingSocketId = skillData.grantingSocket(node.getId());
-        VolumeGrantStatus grantStatus = grantingSocketId == null ? null : allocation.volumeGrantStatus(grantingSocketId);
-        if (grantStatus == null || grantStatus.state() != VolumeGrantStatus.State.ACTIVE) {
+        NodeGrantStatus grantStatus = grantingSocketId == null ? null : allocation.nodeGrantStatus(grantingSocketId, node.getId());
+        if (grantStatus == null || grantStatus.state() != NodeGrantStatus.State.ACTIVE) {
             return null;
         }
         return ItemStore.lookup(skillData.getSocketedItem(grantingSocketId));
@@ -185,12 +185,12 @@ final class SkillTreeNodeTooltipRenderer {
             return description;
         }
         List<DescriptionLine> effects = new ArrayList<>(description.effects());
-        effects.add(new DescriptionLine(Translation.msg("socketable.volume.grantedBy").arg("item", grantingItem.name()).styled(), false));
+        effects.add(new DescriptionLine(Translation.msg("socketable.cache.grantedBy").arg("item", grantingItem.name()).styled(), false));
         return new NodeDescription(effects, description.details());
     }
 
     private NodeDescription describe(SkillNode node, ShipSkillData skillData, SkillType effectiveType, boolean hidden, boolean showOptionalHint,
-                                     Item socketed, VolumeGrantStatus socketGrantStatus, boolean expanded) {
+                                     Item socketed, List<NodeGrantStatus> socketGrantStatuses, boolean expanded) {
         boolean allocatedSocket = node.getType().getTier() == SkillTier.SOCKET && skillData.isAllocated(node.getId());
         if (hidden) {
             return new NodeDescription(List.of(plainLine("ui.node.lockedBody"), plainLine("ui.node.lockedHint")), List.of());
@@ -206,7 +206,7 @@ final class SkillTreeNodeTooltipRenderer {
                     lines.add(new DescriptionLine(limitLine, false));
                 }
                 subroutine.doctrineLines().forEach(doctrineLine -> lines.add(new DescriptionLine(doctrineLine, false)));
-                subroutine.volumeSocketLines(socketGrantStatus).forEach(volumeLine -> lines.add(new DescriptionLine(volumeLine, false)));
+                subroutine.allocationLines(socketGrantStatuses).forEach(allocationLine -> lines.add(new DescriptionLine(allocationLine, false)));
             }
             for (StyledText effectLine : socketed.effectLines(expanded, fleetMember.getHullSpec().getHullSize())) {
                 lines.add(new DescriptionLine(effectLine, false));

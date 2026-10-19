@@ -121,23 +121,13 @@ public final class AllocationGate {
 
     public Verdict grant(SkillNode node) {
         return grantVerdictsByNodeId.computeIfAbsent(node.getId(), id -> {
-            Verdict budgetVerdict = grantBudget(node);
-            return budgetVerdict.allowed() ? eligibility(node, null) : budgetVerdict;
+            if (data.isAllocated(node.getId())) {
+                return Verdict.refused(Refusal.ALREADY_ALLOCATED);
+            }
+            Verdict eligibilityVerdict = eligibility(node, null);
+            boolean onlyItemCost = eligibilityVerdict.block() != null && eligibilityVerdict.block().kind() == NodeEligibility.Kind.ITEM_COST;
+            return onlyItemCost ? Verdict.GRANTED : eligibilityVerdict;
         });
-    }
-
-    private Verdict grantBudget(SkillNode node) {
-        if (data.isAllocated(node.getId())) {
-            return Verdict.refused(Refusal.ALREADY_ALLOCATED);
-        }
-        if (data.getAllocatedNodeIds().size() + 1 > budget.maxAllocatedNodes()) {
-            return Verdict.refused(Refusal.NODE_CAP);
-        }
-        int opCost = opCostFor(node);
-        if (opCost > 0 && data.getBankedFreeAllocations() <= 0 && spentOp + opCost > budget.totalOp()) {
-            return Verdict.refused(Refusal.OUT_OF_OP);
-        }
-        return Verdict.GRANTED;
     }
 
     public Set<String> grantOnlyNodeIds() {
@@ -201,7 +191,7 @@ public final class AllocationGate {
         }
         String pairedId = data.wormholePartner(node);
         int slotsNeeded = pairedId != null && !data.isAllocated(pairedId) ? 2 : 1;
-        if (data.getAllocatedNodeIds().size() + slotsNeeded > budget.maxAllocatedNodes()) {
+        if (data.usedNodeSlots() + slotsNeeded > budget.maxAllocatedNodes()) {
             return Verdict.refused(Refusal.NODE_CAP);
         }
         int opCost = opCostFor(node);

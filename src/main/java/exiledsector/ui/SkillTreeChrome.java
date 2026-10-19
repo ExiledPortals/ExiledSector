@@ -72,7 +72,7 @@ final class SkillTreeChrome {
         boolean readoutsLive = mouseKnown && mode.enables(CanvasMode.Chrome.READOUTS);
         ordnancePointsBar.advance(amount, canvasPosition, budget.usedOp, budget.totalOp, mouseX, mouseY, readoutsLive);
         levelBar.advance(amount, canvasPosition, mouseX, mouseY, readoutsLive);
-        nodesBar.advance(amount, canvasPosition, ShipSkillDataManager.get(member.getId()).getAllocatedNodeIds().size(), maxAllocatedNodes, mouseX,
+        nodesBar.advance(amount, canvasPosition, ShipSkillDataManager.get(member.getId()).usedNodeSlots(), maxAllocatedNodes, mouseX,
                 mouseY, readoutsLive);
     }
 

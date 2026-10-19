@@ -49,7 +49,7 @@ class SubroutineSocketLimitsTest {
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSector).thenReturn(sector);
         ItemDefinitions.register(new JSONArray()
-                .put(subroutineRow(VOLUME, SubroutineKind.VOLUME))
+                .put(subroutineRow(VOLUME, SubroutineKind.MODSPEC_CACHE))
                 .put(subroutineRow(BYPASS, SubroutineKind.BYPASS))
                 .put(subroutineRow(DOCTRINE, SubroutineKind.DOCTRINE))
                 .put(subroutineRow(UNIQUE, SubroutineKind.UNIQUE).put("unique", "true"))

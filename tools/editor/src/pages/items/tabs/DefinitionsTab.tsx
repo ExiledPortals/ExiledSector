@@ -15,10 +15,10 @@ import {
   ANY_SYSTEM_TYPE,
   definitionWarnings,
   editablePool,
-  hasVolumeFields,
+  hasModspecCacheFields,
+  isModspecCacheSubroutine,
   isTrueText,
   isUniqueSubroutine,
-  isVolumeSubroutine,
   markDefinitionsSaved,
   itemTypeOfKind,
   ITEM_TYPE_LABELS,
@@ -407,35 +407,37 @@ function StarChartFields({ definition, vocabulary, edit }: { definition: ItemDef
   );
 }
 
-function VolumeFields({ definition, vocabulary, edit }: { definition: ItemDefinition; vocabulary: Vocabulary; edit: (recipe: (draft: ItemDefinition) => void) => void }) {
-  const current = definition.volume ?? '';
-  const options = current === '' || vocabulary.regionTags.includes(current) ? vocabulary.regionTags : [current, ...vocabulary.regionTags];
+function ModspecCacheFields({ definition, edit }: { definition: ItemDefinition; edit: (recipe: (draft: ItemDefinition) => void) => void }) {
+  const nodeCountChances = definition.nodeCountChances ?? '';
   return (
     <>
       <Divider />
       <Group grow align="flex-start">
-        <Select
-          label="Volume"
-          description="The tree volume whose notables this subroutine rolls from; one volume subroutine per volume"
-          data={options}
-          value={current === '' ? null : current}
-          onChange={(value) => edit((draft) => void (draft.volume = value ?? ''))}
-          error={current === '' ? 'Pick a volume' : undefined}
-        />
         <TextInput
           label="Excluded nodes"
-          description="Notable node ids of this volume that never roll, separated by ;"
+          description="Notable node ids that never roll, separated by ;"
           value={definition.excludedNodes ?? ''}
           onChange={(event) => {
             const text = event.currentTarget.value;
             edit((draft) => void (draft.excludedNodes = text));
           }}
         />
+        <TextInput
+          label="Node count chances"
+          description="Relative chances of rolling 1, 2, 3... nodes, separated by ;"
+          placeholder="0.9;0.09;0.01"
+          value={nodeCountChances}
+          onChange={(event) => {
+            const text = event.currentTarget.value;
+            edit((draft) => void (draft.nodeCountChances = text));
+          }}
+          error={nodeCountChances.trim() === '' ? 'Enter at least one chance' : undefined}
+        />
       </Group>
       <Group grow align="flex-start">
         <DecimalInput
           label="Fleet drop chance"
-          description="Chance per 100 deployment points destroyed of fleets whose faction maps to this volume in npc_faction_volumes.csv"
+          description="Chance per 100 deployment points destroyed, from fleets of any faction"
           placeholder="never"
           value={definition.dropChance ?? ''}
           onChange={(text) => edit((draft) => void (draft.dropChance = text))}
@@ -628,9 +630,7 @@ function DefinitionForm({ document, family, definition, index, vocabulary, catal
           onChange={(text) => edit((draft) => void (draft.socketLimit = text))}
         />
       )}
-      {isSubroutine && (isVolumeSubroutine(definition) || hasVolumeFields(definition)) && (
-        <VolumeFields definition={definition} vocabulary={vocabulary} edit={edit} />
-      )}
+      {isSubroutine && (isModspecCacheSubroutine(definition) || hasModspecCacheFields(definition)) && <ModspecCacheFields definition={definition} edit={edit} />}
       <Checkbox
         label={isSubroutine ? 'Unique - shown with the name above in orange' : 'Unique - shown with the name above in orange, and rolls every prefix and suffix'}
         checked={unique}

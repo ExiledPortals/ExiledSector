@@ -152,7 +152,7 @@ class DoctrineArchiveDataTest {
         return new JSONArray()
                 .put(ItemFixtures.subroutineRow("doc_a", SubroutineKind.DOCTRINE))
                 .put(ItemFixtures.subroutineRow("doc_b", SubroutineKind.DOCTRINE))
-                .put(ItemFixtures.subroutineRow("volume_chip", SubroutineKind.VOLUME));
+                .put(ItemFixtures.subroutineRow("volume_chip", SubroutineKind.MODSPEC_CACHE));
     }
 
     private static Map<String, SkillType> types() {

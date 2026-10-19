@@ -55,7 +55,7 @@ class ItemDataIntegrityTest {
     }
 
     private static JSONArray validSubroutines() throws JSONException {
-        return new JSONArray().put(subroutine("chip", "VOLUME"));
+        return new JSONArray().put(subroutine("chip", "MODSPEC_CACHE"));
     }
 
     private static JSONArray validHullItems() throws JSONException {
@@ -146,12 +146,12 @@ class ItemDataIntegrityTest {
                 .put(subroutine("doctrine", " doctrine "))
                 .put(subroutine("expansion", "EXPANSION"))
                 .put(subroutine("kindless", ""))
-                .put(subroutine("pooled", "VOLUME").put("prefixes", "@HULL_MULT").put("suffixes", "@ARMOR_PERCENT"));
+                .put(subroutine("pooled", "MODSPEC_CACHE").put("prefixes", "@HULL_MULT").put("suffixes", "@ARMOR_PERCENT"));
 
         List<String> errors = errors(validModifiers(), subroutines, validImplicits());
 
-        assertEquals(List.of("expansion has kind \"EXPANSION\"; expected one of VOLUME, DOCTRINE, BYPASS, UNIQUE",
-                "kindless has kind \"\"; expected one of VOLUME, DOCTRINE, BYPASS, UNIQUE",
+        assertEquals(List.of("expansion has kind \"EXPANSION\"; expected one of MODSPEC_CACHE, DOCTRINE, BYPASS, UNIQUE",
+                "kindless has kind \"\"; expected one of MODSPEC_CACHE, DOCTRINE, BYPASS, UNIQUE",
                 "pooled lists prefixes or suffixes, but subroutines do not roll them"), errors);
     }
 
@@ -188,7 +188,7 @@ class ItemDataIntegrityTest {
                 .put(uniqueSubroutine("weighted", "@TOP_SPEED_PERCENT_RELIC:5; HULL_PERCENT:1:2:3", "site:wreck"))
                 .put(uniqueSubroutine("hull_only", "@HULL_MULT", "site:wreck"))
                 .put(uniqueSubroutine("doubled", "@TOP_SPEED_PERCENT_RELIC; TOP_SPEED_PERCENT:1:1", "site:wreck"))
-                .put(subroutine("volume_lines", "VOLUME").put(ItemDefinition.UNIQUE_LINES_COLUMN, "HULL_PERCENT:1:2"));
+                .put(subroutine("volume_lines", "MODSPEC_CACHE").put(ItemDefinition.UNIQUE_LINES_COLUMN, "HULL_PERCENT:1:2"));
 
         List<String> errors = errors(modifiersWithUniqueLines(), subroutines, validImplicits());
 

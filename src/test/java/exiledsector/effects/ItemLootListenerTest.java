@@ -84,7 +84,7 @@ class ItemLootListenerTest {
         SkillTree.registerType(socketType);
         SkillTree.register(new SkillNode("root", rootType, List.of(), 0f, 0f));
         SkillTree.register(new SkillNode("socket_1", socketType, List.of("root"), 0f, 0f));
-        ItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "volume_subroutine").put("kind", "VOLUME")));
+        ItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "volume_subroutine").put("kind", "MODSPEC_CACHE")));
     }
 
     @AfterEach

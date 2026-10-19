@@ -10,7 +10,8 @@ export const WORMHOLE_EXIT_TIER = 'WORMHOLE_EXIT';
 export const DEFAULT_ANCHOR_ICON = 'graphics/icons/nav_relay.png';
 export const DEFAULT_ANCHOR_DROP_CHANCE = '0.06';
 export const DROP_FACTION_SEPARATOR = ';';
-export const WORMHOLE_ANCHOR_COLUMNS = ['id', 'volume', 'exit_node', 'name', 'icon', 'rarity', 'description', 'unlock', 'drop_factions', 'drop_chance'] as const;
+export const ANCHOR_COLOR_PATTERN = /^#[0-9A-Fa-f]{6}$/;
+export const WORMHOLE_ANCHOR_COLUMNS = ['id', 'volume', 'exit_node', 'name', 'icon', 'color', 'crest_faction', 'rarity', 'description', 'unlock', 'drop_factions', 'drop_chance'] as const;
 
 export interface WormholeAnchor {
   cells: string[];
@@ -19,6 +20,8 @@ export interface WormholeAnchor {
   exitNode: string;
   name: string;
   icon: string;
+  color: string;
+  crestFaction: string;
   rarity: string;
   description: string;
   unlock: string;
@@ -48,6 +51,8 @@ export function parseWormholeAnchorsCsv(text: string): WormholeAnchorsModel {
       exitNode: columns.exit_node,
       name: columns.name,
       icon: columns.icon,
+      color: columns.color,
+      crestFaction: columns.crest_faction,
       rarity: columns.rarity,
       description: columns.description,
       unlock: columns.unlock,
@@ -66,6 +71,8 @@ function anchorColumnValues(anchor: WormholeAnchor): Record<(typeof WORMHOLE_ANC
     exit_node: anchor.exitNode,
     name: anchor.name,
     icon: anchor.icon,
+    color: anchor.color,
+    crest_faction: anchor.crestFaction,
     rarity: anchor.rarity,
     description: anchor.description,
     unlock: anchor.unlock,
@@ -117,6 +124,8 @@ export function newWormholeAnchor(anchors: WormholeAnchor[], vocabulary: Vocabul
     exitNode: exitCandidates(nodeFacts, volume)[0] ?? '',
     name: 'New Wormhole Anchor',
     icon: DEFAULT_ANCHOR_ICON,
+    color: '',
+    crestFaction: '',
     rarity: '10',
     description: '',
     unlock: '',
@@ -210,6 +219,12 @@ export function validateWormholeAnchors(
     }
     if (dropFactionIds(anchor.dropFactions).some((factionId) => !/^[A-Za-z0-9_.-]+$/.test(factionId))) {
       issues.push(`${label}: drop factions must be faction ids separated by ${DROP_FACTION_SEPARATOR}`);
+    }
+    if (anchor.color !== '' && !ANCHOR_COLOR_PATTERN.test(anchor.color)) {
+      issues.push(`${label}: color must be #RRGGBB or blank`);
+    }
+    if (anchor.crestFaction !== '' && !/^[A-Za-z0-9_.-]+$/.test(anchor.crestFaction)) {
+      issues.push(`${label}: crest faction must be a single faction id`);
     }
     if (!isKnownAnchorUnlock(anchor.unlock, vocabulary)) {
       issues.push(`${label}: unknown unlock condition ${anchor.unlock}`);

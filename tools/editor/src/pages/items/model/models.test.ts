@@ -33,7 +33,7 @@ const vocabulary = buildVocabulary({
     { id: 'subroutine', type: 'subroutine' },
     { id: 'bridge', type: 'hull_item' },
   ],
-  subroutineKinds: ['VOLUME', 'DOCTRINE', 'BYPASS', 'UNIQUE'],
+  subroutineKinds: ['MODSPEC_CACHE', 'DOCTRINE', 'BYPASS', 'UNIQUE'],
   itemUnlocks: ['defeated_ziggurat'],
 });
 
@@ -127,15 +127,15 @@ describe('item definitions', () => {
   });
 
   it('needs a known kind on every subroutine and keeps prefixes and suffixes off it', () => {
-    const volume = definition({ id: 'volume', kind: 'subroutine', subroutineKind: 'VOLUME', prefixes: [], suffixes: [] });
+    const bypass = definition({ id: 'bypass', kind: 'subroutine', subroutineKind: 'BYPASS', prefixes: [], suffixes: [] });
     const pooled = definition({ id: 'pooled', kind: 'subroutine', subroutineKind: 'EXPANSION', prefixes: parsePool('@HULL_MULT'), suffixes: [] });
     const kindless = definition({ id: 'kindless', kind: 'subroutine', prefixes: [], suffixes: [] });
 
-    expect(validateItemDefinitions([volume, pooled, kindless], vocabulary, catalogue)).toEqual([
-      'pooled: subroutine kind must be one of VOLUME, DOCTRINE, BYPASS, UNIQUE',
+    expect(validateItemDefinitions([bypass, pooled, kindless], vocabulary, catalogue)).toEqual([
+      'pooled: subroutine kind must be one of MODSPEC_CACHE, DOCTRINE, BYPASS, UNIQUE',
       'pooled: subroutines do not roll prefixes or suffixes; remove them',
       'pooled: HULL_MULT only rolls on hull_item, not subroutine',
-      'kindless: subroutine kind must be one of VOLUME, DOCTRINE, BYPASS, UNIQUE',
+      'kindless: subroutine kind must be one of MODSPEC_CACHE, DOCTRINE, BYPASS, UNIQUE',
     ]);
   });
 
@@ -150,12 +150,12 @@ describe('item definitions', () => {
   it('reads subroutines and hull items from their own files and saves each back to its file', () => {
     const subroutineHeader = 'id,name,icon,rarity,unique,kind,description,unlock,notes\n';
     const hullItemHeader = 'id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock\n';
-    const subroutinesText = `${subroutineHeader}chip,Chip,,10,,VOLUME,,,keep\n`;
+    const subroutinesText = `${subroutineHeader}chip,Chip,,10,,DOCTRINE,,,keep\n`;
     const hullItemsText = `${hullItemHeader}plate,bridge,Plate,,10,,,@HULL_MULT_BRIDGE,,\n`;
     const model = parseItemDefinitions(subroutinesText, hullItemsText);
 
     expect(model.definitions.map((entry) => [entry.id, entry.kind, entry.subroutineKind])).toEqual([
-      ['chip', 'subroutine', 'VOLUME'],
+      ['chip', 'subroutine', 'DOCTRINE'],
       ['plate', 'bridge', undefined],
     ]);
     expect(serializeSubroutinesCsv(model)).toBe(subroutinesText);
@@ -218,7 +218,7 @@ describe('unique subroutines', () => {
   });
 
   it('adds the lines and source columns to an older file only once a subroutine uses them', () => {
-    const olderText = 'id,name,icon,rarity,unique,kind,description,unlock\nchip,Chip,,10,,VOLUME,,\n';
+    const olderText = 'id,name,icon,rarity,unique,kind,description,unlock\nchip,Chip,,10,,DOCTRINE,,\n';
     const model = parseItemDefinitions(olderText, 'id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock\n');
 
     expect(serializeSubroutinesCsv(model)).toBe(olderText);
@@ -232,14 +232,14 @@ describe('unique subroutines', () => {
   it('reads and writes the socket limit, adding its column to an older file only once it is set', () => {
     const withLimit = 'id,name,icon,rarity,unique,kind,description,lines,source,socket_limit,unlock\nrelic,Relic,,10,true,UNIQUE,,@HULL_MULT_RELIC,site:wreck,1,\n';
     const limited = parseItemDefinitions(withLimit, 'id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock\n');
-    const olderText = 'id,name,icon,rarity,unique,kind,description,unlock\nchip,Chip,,10,,VOLUME,,\n';
+    const olderText = 'id,name,icon,rarity,unique,kind,description,unlock\nchip,Chip,,10,,DOCTRINE,,\n';
     const older = parseItemDefinitions(olderText, 'id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock\n');
 
     expect(limited.definitions[0].socketLimit).toBe('1');
     expect(serializeSubroutinesCsv(limited)).toBe(withLimit);
     expect(serializeSubroutinesCsv(older)).toBe(olderText);
     older.definitions[0].socketLimit = '2';
-    expect(serializeSubroutinesCsv(older)).toBe('id,name,icon,rarity,unique,kind,description,unlock,socket_limit\nchip,Chip,,10,,VOLUME,,,2\n');
+    expect(serializeSubroutinesCsv(older)).toBe('id,name,icon,rarity,unique,kind,description,unlock,socket_limit\nchip,Chip,,10,,DOCTRINE,,,2\n');
   });
 
   it('accepts a blank or whole socket limit and refuses anything else', () => {
@@ -262,7 +262,7 @@ describe('unique subroutines', () => {
         relic({ id: 'misplaced', source: 'colony:jangala; faction:pirates; faction:pirates' }),
         relic({ id: 'weighted', lines: parsePool('@HULL_MULT_RELIC:4; HULL_MULT:1:2:3') }),
         relic({ id: 'wrong_scope', lines: parsePool('@HULL_MULT; @ARMOR_FLAT_RELIC; @MISSING') }),
-        relic({ id: 'volume', subroutineKind: 'VOLUME', lines: parsePool('@HULL_MULT_RELIC'), source: '' }),
+        relic({ id: 'bypass', subroutineKind: 'BYPASS', lines: parsePool('@HULL_MULT_RELIC'), source: '' }),
       ],
       vocabulary,
       uniqueCatalogue,
@@ -280,64 +280,83 @@ describe('unique subroutines', () => {
       'wrong_scope: HULL_MULT only rolls on hull_item, not unique_subroutine',
       'wrong_scope: ARMOR_FLAT_RELIC is a suffix, but unique subroutine lines are prefixes',
       'wrong_scope: line MISSING is not in item_modifiers.csv',
-      'volume: only UNIQUE subroutines have lines; remove them',
+      'bypass: only UNIQUE subroutines have lines; remove them',
     ]);
   });
 });
 
-describe('volume subroutines', () => {
-  const regionVocabulary = buildVocabulary({
-    effects: [],
-    tags: { theme: [], region: ['core', 'hegemony'], requirement: [] },
-    tiers: [],
-    unlockConditionTypes: [],
-    blueprintCategories: [],
-    itemTypes: ['subroutine'],
-    itemKinds: [{ id: 'subroutine', type: 'subroutine' }],
-    subroutineKinds: ['VOLUME', 'DOCTRINE', 'BYPASS', 'UNIQUE'],
-    itemUnlocks: [],
-  });
-
-  function volumeChip(overrides: Partial<ItemDefinition>): ItemDefinition {
-    return definition({ kind: 'subroutine', subroutineKind: 'VOLUME', prefixes: [], suffixes: [], volume: 'core', salvageChance: '0.02', ...overrides });
+describe('modspec cache subroutines', () => {
+  function cache(overrides: Partial<ItemDefinition>): ItemDefinition {
+    return definition({ kind: 'subroutine', subroutineKind: 'MODSPEC_CACHE', prefixes: [], suffixes: [], nodeCountChances: '0.9;0.09;0.01', salvageChance: '0.02', ...overrides });
   }
 
-  it('reads and writes the volume columns, adding them to an older file only once they are set', () => {
-    const withVolume =
-      'id,name,icon,rarity,unique,kind,description,lines,source,socket_limit,unlock,volume,excluded_nodes,drop_chance,salvage_chance\n' +
-      'chip,Chip,,10,,VOLUME,,,,,,hegemony,hull_breacher_1; torpedo_specialisation_1,0.02,\n';
-    const model = parseItemDefinitions(withVolume, 'id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock\n');
-    const olderText = 'id,name,icon,rarity,unique,kind,description,unlock\nchip,Chip,,10,,VOLUME,,\n';
+  it('reads and writes the cache columns, adding them to an older file only once they are set', () => {
+    const withCache =
+      'id,name,icon,rarity,unique,kind,description,lines,source,socket_limit,unlock,excluded_nodes,node_count_chances,drop_chance,salvage_chance,notes\n' +
+      'cache,Cache,,10,true,MODSPEC_CACHE,,,,,,hull_breacher_1; torpedo_specialisation_1,0.9;0.09;0.01,0.02,,keep\n';
+    const model = parseItemDefinitions(withCache, 'id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock\n');
+    const olderText = 'id,name,icon,rarity,unique,kind,description,unlock\ncache,Cache,,10,true,MODSPEC_CACHE,,\n';
     const older = parseItemDefinitions(olderText, 'id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock\n');
 
-    expect(model.definitions[0]).toMatchObject({ volume: 'hegemony', excludedNodes: 'hull_breacher_1; torpedo_specialisation_1', dropChance: '0.02', salvageChance: '' });
-    expect(serializeSubroutinesCsv(model)).toBe(withVolume);
+    expect(model.definitions[0]).toMatchObject({
+      excludedNodes: 'hull_breacher_1; torpedo_specialisation_1',
+      nodeCountChances: '0.9;0.09;0.01',
+      dropChance: '0.02',
+      salvageChance: '',
+    });
+    expect(serializeSubroutinesCsv(model)).toBe(withCache);
+    model.definitions[0].nodeCountChances = '1';
+    expect(serializeSubroutinesCsv(model)).toBe(withCache.replace('0.9;0.09;0.01', '1'));
     expect(serializeSubroutinesCsv(older)).toBe(olderText);
-    older.definitions[0].volume = 'core';
-    expect(serializeSubroutinesCsv(older)).toBe('id,name,icon,rarity,unique,kind,description,unlock,volume\nchip,Chip,,10,,VOLUME,,,core\n');
+    older.definitions[0].nodeCountChances = '0.5;0.5';
+    expect(serializeSubroutinesCsv(older)).toBe('id,name,icon,rarity,unique,kind,description,unlock,node_count_chances\ncache,Cache,,10,true,MODSPEC_CACHE,,,0.5;0.5\n');
   });
 
-  it('checks the volume, exclusions and chances, one volume subroutine per volume, and keeps the fields off other kinds', () => {
+  it('keeps an older volume column as an unknown column', () => {
+    const withVolume =
+      'id,name,icon,rarity,unique,kind,description,lines,source,socket_limit,unlock,volume,excluded_nodes,drop_chance,salvage_chance\n' +
+      'chip,Chip,,10,,BYPASS,,,,,,hegemony,,,\n';
+    const model = parseItemDefinitions(withVolume, 'id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock\n');
+
+    expect(serializeSubroutinesCsv(model)).toBe(withVolume);
+  });
+
+  it('starts a new cache subroutine with every cache field blank', () => {
+    expect(newItemDefinition([], 'subroutine', [], [], 'MODSPEC_CACHE')).toMatchObject({
+      subroutineKind: 'MODSPEC_CACHE',
+      excludedNodes: '',
+      nodeCountChances: '',
+      dropChance: '',
+      salvageChance: '',
+    });
+  });
+
+  it('checks the exclusions, node count chances and chances, allows several caches, and keeps the fields off other kinds', () => {
     const issues = validateItemDefinitions(
       [
-        volumeChip({ id: 'good', excludedNodes: 'hull_breacher_1' }),
-        volumeChip({ id: 'second_core' }),
-        volumeChip({ id: 'nowhere', volume: 'ocean' }),
-        volumeChip({ id: 'messy', volume: 'hegemony', excludedNodes: 'a b; hull_breacher_1; hull_breacher_1', dropChance: '-1', salvageChance: 'often' }),
-        definition({ id: 'doctrine', kind: 'subroutine', subroutineKind: 'DOCTRINE', prefixes: [], suffixes: [], volume: 'core' }),
+        cache({ id: 'good', excludedNodes: 'hull_breacher_1; exoship_core', dropChance: '0.02' }),
+        cache({ id: 'second_good', nodeCountChances: '0;1' }),
+        cache({ id: 'messy', excludedNodes: 'a b; hull_breacher_1; hull_breacher_1', dropChance: '-1', salvageChance: 'often' }),
+        cache({ id: 'no_counts', nodeCountChances: '' }),
+        cache({ id: 'bad_counts', nodeCountChances: '0.9;;-1;lots' }),
+        cache({ id: 'zero_counts', nodeCountChances: '0;0' }),
+        definition({ id: 'doctrine', kind: 'subroutine', subroutineKind: 'DOCTRINE', prefixes: [], suffixes: [], nodeCountChances: '1' }),
       ],
-      regionVocabulary,
+      vocabulary,
       new Map(),
     );
 
     expect(issues).toEqual([
-      'nowhere: volume must be one of core, hegemony',
       'messy: excluded node "a b" is not a node id',
       'messy: excluded node hull_breacher_1 is listed more than once',
       'messy: drop chance must be blank or a number of 0 or more',
       'messy: salvage chance must be blank or a number of 0 or more',
-      'doctrine: only VOLUME subroutines have a volume, excluded nodes or drop chances; clear them',
-      'second_core: the core volume already has the volume subroutine good',
+      'no_counts: a MODSPEC_CACHE subroutine needs node count chances, such as 0.9;0.09;0.01',
+      'bad_counts: node count chance "" must be a number of 0 or more',
+      'bad_counts: node count chance "-1" must be a number of 0 or more',
+      'bad_counts: node count chance "lots" must be a number of 0 or more',
+      'zero_counts: at least one node count chance must be above 0',
+      'doctrine: only MODSPEC_CACHE subroutines have excluded nodes, node count chances or drop chances; clear them',
     ]);
   });
 });

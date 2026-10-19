@@ -104,7 +104,7 @@ class DeletedSubroutinesTest {
         assertNull(store.find("socketable_1").definition());
         assertEquals(UnresolvedItem.class, store.find("socketable_2").getClass());
         assertEquals(Subroutine.class, store.find("socketable_3").getClass());
-        assertEquals(SubroutineKind.VOLUME, store.find("socketable_3").definition().subroutineKind());
+        assertEquals(SubroutineKind.MODSPEC_CACHE, store.find("socketable_3").definition().subroutineKind());
     }
 
     @Test

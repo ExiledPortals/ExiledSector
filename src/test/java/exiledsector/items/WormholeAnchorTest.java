@@ -12,6 +12,8 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.layout.SkillNodeDecoration;
+import exiledsector.ui.cargo.CargoIconLook;
+import exiledsector.ui.cargo.CargoIconLooks;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -19,6 +21,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -101,6 +104,29 @@ class WormholeAnchorTest {
         assertEquals("hegemony", WormholeAnchorDefinitions.volume(HEGEMONY_ANCHOR));
         assertEquals("hegemony_2", WormholeAnchorDefinitions.exitNodeId(HEGEMONY_ANCHOR));
         assertEquals(ItemUnlock.RAT_PLAYER_EXOSHIP.id(), ItemDefinitions.get(BEACON).unlock());
+    }
+
+    @Test
+    void anAnchorCarriesItsFactionColourAndCrestAndFramesInThatColour() throws Exception {
+        WormholeAnchorDefinitions.register(new JSONArray()
+                .put(anchorRow(HEGEMONY_ANCHOR, "hegemony", "hegemony_2").put("color", "#F5961E").put("crest_faction", "hegemony"))
+                .put(anchorRow(BEACON, "exotech", "exoship").put("color", "orange")));
+
+        WormholeAnchor hegemony = assertInstanceOf(WormholeAnchor.class, anchor(HEGEMONY_ANCHOR));
+        WormholeAnchor beacon = assertInstanceOf(WormholeAnchor.class, anchor(BEACON));
+
+        assertEquals(new Color(245, 150, 30), hegemony.color());
+        assertEquals(hegemony.color(), hegemony.frameColor());
+        assertEquals("hegemony", hegemony.crestFactionId());
+        assertEquals(WormholeAnchorDefinitions.DEFAULT_COLOR, beacon.color());
+        assertNull(beacon.crestFactionId());
+        assertEquals(WormholeAnchorDefinitions.DEFAULT_COLOR, WormholeAnchorDefinitions.style("missing_anchor").color());
+        CargoIconLook look = CargoIconLooks.forItem(hegemony);
+        assertEquals(hegemony.color(), look.color());
+        assertEquals("hegemony", look.anchor().crestFactionId());
+        assertTrue(look.framed());
+        assertEquals(look.anchor(), look.unframed().anchor());
+        assertNull(CargoIconLooks.forItem(anchor(ItemFixtures.SUBROUTINE)).anchor());
     }
 
     @Test

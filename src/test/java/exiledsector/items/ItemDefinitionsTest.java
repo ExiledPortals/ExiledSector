@@ -78,13 +78,13 @@ class ItemDefinitionsTest {
     @Test
     void aSubroutineReadsItsKindFromItsRowAndRollsNoPrefixesOrSuffixes() throws Exception {
         ItemDefinitions.register(new JSONArray()
-                .put(subroutineRow("volume", SubroutineKind.VOLUME).put("prefixes", "HULL_MULT:4:6").put("suffixes", "ARMOR_PERCENT:6:9"))
+                .put(subroutineRow("volume", SubroutineKind.MODSPEC_CACHE).put("prefixes", "HULL_MULT:4:6").put("suffixes", "ARMOR_PERCENT:6:9"))
                 .put(subroutineRow("bypass").put(ItemDefinition.SUBROUTINE_KIND_COLUMN, " bypass ")), new JSONArray());
 
         ItemDefinition volume = ItemDefinitions.get("volume");
         assertEquals(ItemKind.SUBROUTINE, volume.kind());
         assertEquals(ItemType.SUBROUTINE, volume.type());
-        assertEquals(SubroutineKind.VOLUME, volume.subroutineKind());
+        assertEquals(SubroutineKind.MODSPEC_CACHE, volume.subroutineKind());
         assertTrue(volume.pool().isEmpty());
         assertEquals(List.of(), ItemRoller.roll(volume, 3L));
         assertEquals(SubroutineKind.BYPASS, ItemDefinitions.get("bypass").subroutineKind());

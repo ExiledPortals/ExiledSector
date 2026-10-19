@@ -13,7 +13,7 @@ The names below are working names. Where a design comes from a Path of Exile ite
 ## The pieces
 
 1. Delete the existing subroutines entirely.
-2. Volume subroutines: one per tree volume, corrupted from the start, each granting a random notable from its volume.
+2. Contraband Modspec Cache (replaced the Volume subroutines on 2026-10-19): one unique subroutine, corrupted from the start, granting 1 to 3 random notables from anywhere in the tree for free.
 3. Doctrine Archives (PoE: Timeless): one per vanilla faction. Each either transforms the nodes in its radius or adds modifiers to them.
 4. Bypass subroutine (PoE: Impossible Escape): corrupted, rolls a random core keystone, and lets nodes near that keystone be allocated without a path.
 5. Unique subroutines: hand-made subroutines that cross the item identity line and carry small, themed sets of SkillEffects.
@@ -50,52 +50,33 @@ Most kinds need the following:
 - Overrides per ship. Doctrine Archives change what a node does on one ship only. `SkillTree` is one global registry, so overrides have to be a per-ship layer applied when effects are gathered (`AllocatedSkillEffects`) and when tooltips and names are drawn, never a change to the shared tree. (done: `DoctrineOverrides`, resolved through `SkillNode.resolveEffectiveType`)
 - Socket kinds. The existing `modular_hull_socket` becomes the standard socket, which holds Volume, Doctrine, Bypass and Unique subroutines, and wormhole anchors. `Subroutine.canSocketInto` and the anchor's own override check that the item fits the socket. (subroutine side done: a kind is required, and `SubroutineSocketLimits` caps Doctrine and Bypass at one per ship when socketing, on transposition, for NPC rolls, and in a load sweep.)
 - Socket placement. All sockets are placed by hand once this plan is settled, using the 14 flux nodes from `49ebd8f6` as candidate spots. Three of those still carry gate tags. The core ends of the faction wormholes (section 6) free up more spots in places the tree already expects travel to start. (done in `f9a5898a`: six standard sockets in the core, `modular_hull_socket_12` and `_16` to `_20`, none gated. The wormhole core ends get no sockets (decided 2026-10-19).)
-- NPCs. NPC trees already fill sockets. `NpcSkillTreeBuilder` claims sockets, and `NpcFleetLeveller.decide` fills each one with `NpcItems.pickDefinition`, which takes any non-unique subroutine through `ItemDrops.pickBasic`. That finds nothing only because `subroutines.csv` has no non-unique rows. In the first version NPCs socket none of the new kinds, so the pick must be restricted by kind before the first Volume subroutine row lands. Otherwise NPC trees would socket Volume subroutines immediately. Wormhole anchors are the exception (section 6), because NPC trees already take one notable from their faction's volume. (done: `SubroutineKind.inGenericPools` keeps VOLUME, DOCTRINE and BYPASS out of NPC socket picks and every generic drop picker, so each kind needs its own drop path)
+- NPCs. NPC trees already fill sockets. `NpcSkillTreeBuilder` claims sockets, and `NpcFleetLeveller.decide` fills each one with `NpcItems.pickDefinition`, which takes any non-unique subroutine through `ItemDrops.pickBasic`. That finds nothing only because `subroutines.csv` has no non-unique rows. In the first version NPCs socket none of the new kinds, so the pick must be restricted by kind before the first Volume subroutine row lands. Otherwise NPC trees would socket Volume subroutines immediately. Wormhole anchors are the exception (section 6), because NPC trees already take one notable from their faction's volume. (done: `SubroutineKind.inGenericPools` keeps MODSPEC_CACHE, DOCTRINE and BYPASS out of NPC socket picks and every generic drop picker, so each kind needs its own drop path)
 - Data and editor. Every new column and file needs the editor's serialisers and `EditorRoundTripTest`, or editor saves will delete them. Player text goes through `Translation`, with en and zh_CN keys under the existing `socketable.*` prefix. `docs/docs.md` gets a section for each kind once it's built.
 
-## 2. Volume subroutines
+## 2. Contraband Modspec Cache (was Volume subroutines)
 
-Status: done (wave 3, uncommitted on `parallel-work`). The following are built:
-- 14 rows in `subroutines.csv`, one per volume, with the `volume`, `excluded_nodes`, `drop_chance` and `salvage_chance` columns. The columns go through the editor and are pinned in both round-trip tests.
-- The pool is `VolumeSubroutines`: the volume's non-optional notables minus `excluded_nodes`, which is empty for now.
-- The grant goes through `NodeAllocator.grantVolumeNotables` and `AllocationGate.grant`. The socket to notable mapping is derived from the socketed items through `NodeGrants` and nothing is persisted.
+Status: done (uncommitted on `parallel-work`, 2026-10-19). The 14 per-volume subroutines from wave 3 were merged into one unique-rarity subroutine, the Contraband Modspec Cache (kind `MODSPEC_CACHE`), on the owner's request. They were never released, so there is no save migration. What is built:
+- One row in `subroutines.csv` with `excluded_nodes`, `node_count_chances` (`0.9;0.09;0.01`), `drop_chance` and `salvage_chance`. The `volume` column is gone. The columns go through the editor and are pinned in both round-trip tests.
+- The pool is `ModspecCaches`: every active non-optional notable in the tree, from any volume, minus `excluded_nodes` (empty for now). The item rolls 1, 2 or 3 distinct notables, frozen in `Subroutine.rolledNodeIds`.
+- The grant goes through `NodeAllocator.grantSocketedNodes` and `AllocationGate.grant`. Granted nodes are free: no node slot, no OP, no banked free allocation and no item cost (`ShipSkillData.grantFreeNodeIds`, `usedNodeSlots`). Eligibility still applies.
 - A granted notable joins reachability only after the path search, so it never acts as a path source. That includes waking dormant nodes.
-- Removal releases the notable with refunds and the arm-and-repeat confirmation. A ship destroyed in battle gets no refund.
-- Drops: the 7 vanilla faction volumes drop from faction fleets (`FactionFleetDrops`, group `volume_subroutine`); core and the 6 modded volumes from salvage, tech mining and chart loot.
-- Status lines in the socket and item tooltips, and the console command `ExiledSectorGrantVolumeSubroutines`.
+- Removal releases every free node the cache granted, even one a path also reaches, and whatever only it held up. Only the release of paid nodes asks for confirmation. A ship destroyed in battle gets no refund.
+- Drops: fleets of any faction (`FactionFleetDrops`, group `modspec_cache`), plus salvage, tech mining and chart loot.
+- The item and socket tooltips show one "Allocates X" line per node, with a short bracketed problem when there is one. Console command `ExiledSectorGrantModspecCache [nodes]`.
 
-Differences from the plan:
-- A path built to a granted notable takes it over, so removing the subroutine then releases nothing.
-- When two subroutines roll the same notable, the one in the lowest socket id is active.
-- A subroutine for a volume whose area is off can't be socketed.
+Differences from the old Volume plan:
+- No per-volume bases and no volume restriction on the roll or the socket.
+- Granted nodes cost nothing, where the old plan charged a slot and OP like any node.
+- A path built to a granted notable no longer takes it over: it stays free while the cache is socketed and is released with the cache.
+- An item whose nodes are in an area that is off can still be socketed; those nodes read inert.
 
 Still to do:
-- Owner review of the 14 names, the flavour text, the zh drafts and the drop chances.
-- Real icons; the current ones are placeholders from `graphics/icons/socketables/`.
+- Owner review of the name, the flavour text, the zh draft and the drop chances.
+- Whether the cache should get the level 15 gate other uniques have.
+- A real icon; the current one is a placeholder from `graphics/icons/socketables/`.
 - A visual marker on the tree for a granted node.
 
-Known leftover: a few rare unsocket paths leave a granted notable allocated with nothing holding it. These are the deleted-subroutine sweep, the socket-limit, misfit and type migrations, and a dormant socket.
-
-There is one base per tree volume. Each is corrupted when created and rolls a random notable from its volume. While socketed in an allocated standard socket, it allocates that notable on the ship without a path to it. Theme: a pirated modspec that cracks the DRM on one faction's technique, so the crew can install it without the path leading there.
-
-Volumes and their current notable counts:
-
-| Volume | Notables | Notes |
-|---|---|---|
-| core | 45 | large pool, so the most varied rolls |
-| hegemony, tritachyon, pirate, REDACTED, kesteven | 4 each | |
-| luddic, persean_league, enigma, nightcross, exotech, abyss | 3 each | |
-| stargazer | 4 | |
-| sindrian_dictat | 2 | |
-
-The nightcross and stargazer bases exist only when RAT's areas are active, since those volumes need RAT.
-
-The rules:
-- The granted notable needs an unoccupied node slot under the allocated-node cap, and it costs OP as normal. Free allocations bank as they do now. Removing the subroutine releases the notable and refunds its cost.
-- If the ship already has the notable allocated by path, the subroutine does nothing and its tooltip says so. Bonuses never stack.
-- Exclusivity and hull requirements still apply through `NodeEligibility`. If the notable is ineligible on this ship, the subroutine stays inactive and its tooltip names the reason.
-- The granted notable doesn't count as connected for pathing. Nodes beyond it still need a real path. Otherwise this would quietly become a Bypass subroutine.
-- Drops: a volume's base drops from fleets of the factions mapped to it in `npc_faction_volumes.csv`. Core and non-faction volumes drop from general salvage. All of them are rare.
+Known leftover: a few rare unsocket paths leave a granted notable allocated with nothing holding it until the tree next refreshes, which now releases it. These are the deleted-subroutine sweep, the socket-limit, misfit and type migrations. A dormant socket keeps its grant.
 
 ## 3. Doctrine Archives (PoE: Timeless)
 
@@ -163,7 +144,7 @@ Today every faction volume is reached through a fixed wormhole pair in the tree.
 
 Theme: a recovered navigation lock for one faction's tech corridor. The crew can't reach the techniques on the other side until they've got a fix on where they are.
 
-Status: done (wave 3, uncommitted on `parallel-work`). The design differs from the text below in four places. A socket and exit stay linked while an inert anchor merely can't open, so a false reading never strands a volume. Releases happen only for nodes the player's action strands. The close confirmation is arm-and-repeat, not a dialog. `SocketCustody.reconcile` releases nothing, because of Nexerelin's task groups. Still to do: owner review of the drop rates, exit and Exoship descriptions and zh drafts; unit tests for `HyperNavBeaconGrant` and the confirmation click flow; an in-game check of the UI flows.
+Status: done (wave 3, uncommitted on `parallel-work`). The design differs from the text below in four places. A socket and exit stay linked while an inert anchor merely can't open, so a false reading never strands a volume. Releases happen only for nodes the player's action strands. The close confirmation is arm-and-repeat, not a dialog. `SocketCustody.reconcile` releases nothing, because of Nexerelin's task groups. Still to do: owner review of the drop rates, exit and Exoship descriptions and zh drafts; unit tests for `HyperNavBeaconGrant` and the confirmation click flow; an in-game check of the UI flows. Faction icons are done too (uncommitted on `parallel-work`): a baked recolour per volume, plus the `AnchorIconFx` frame, crest badge and wormhole animation in cargo, with the Hyper-Nav Beacon moved onto the anchor art (docs.md "Anchor icons"). Still to do for them: an in-game look at every faction, and a simplified glyph for crests that read poorly at badge size (Nightcross, Stargazer, Persean League).
 
 ### Which wormholes become anchors
 
@@ -263,7 +244,7 @@ Ships in existing saves may have nodes allocated in faction volumes through worm
 1. Delete the old subroutines and clean up loading (section 1). Add the `kind` column and `SubroutineKind`. (done)
 2. Place the standard sockets by hand, using the core ends of the faction wormholes as candidate spots. (done)
 3. Wormhole anchors (section 6): the per-ship partner lookup first (done), then the item and data (done), tree changes, save migration and NPC implicit anchors together, since the tree changes cut off every volume until anchors exist. (done in wave 3, uncommitted on `parallel-work`; owner review of drops and text remains)
-4. Volume subroutines. They need born corruption and the frozen rolled node, but no radius. (done in wave 3, uncommitted on `parallel-work`; owner content review remains)
+4. Volume subroutines. They need born corruption and the frozen rolled node, but no radius. (done in wave 3; merged into the Contraband Modspec Cache on 2026-10-19, uncommitted on `parallel-work`; owner content review remains)
 5. Unique subroutines, a first handful. (done, drafts awaiting review)
 6. Radius groundwork (done), then the Bypass subroutine. It reuses the reachability hook, so it's the cheapest radius kind. (Bypass left out 2026-10-19 by owner decision; only the radius groundwork stands)
 7. The per-ship override layer, then Doctrine Archives: augment doctrines first, transform doctrines second. (done in wave 3, uncommitted on `parallel-work`; drops and owner content review remain)

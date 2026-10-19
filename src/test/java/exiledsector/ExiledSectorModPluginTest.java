@@ -99,7 +99,7 @@ class ExiledSectorModPluginTest {
         when(settings.getMergedSpreadsheetDataForMod("faction", "data/config/exiledSector/npc_faction_volumes.csv", "exiledSector"))
                 .thenReturn(new JSONArray("[{\"faction\": \"hegemony\", \"region\": \"hegemony\"}]"));
         when(settings.getMergedSpreadsheetDataForMod("id", "data/config/exiledSector/subroutines.csv", "exiledSector"))
-                .thenReturn(new JSONArray("[{\"id\": \"chip\", \"kind\": \"VOLUME\"}]"));
+                .thenReturn(new JSONArray("[{\"id\": \"chip\", \"kind\": \"MODSPEC_CACHE\"}]"));
         when(settings.getMergedSpreadsheetDataForMod("id", "data/config/exiledSector/hull_items.csv", "exiledSector"))
                 .thenReturn(new JSONArray());
         when(settings.getMergedSpreadsheetDataForMod("section", "data/config/exiledSector/hull_item_implicits.csv", "exiledSector"))
@@ -326,7 +326,7 @@ class ExiledSectorModPluginTest {
         new ExiledSectorModPlugin().onApplicationLoad();
 
         assertEquals(ItemKind.SUBROUTINE, ItemDefinitions.get("chip").kind());
-        assertEquals(SubroutineKind.VOLUME, ItemDefinitions.get("chip").subroutineKind());
+        assertEquals(SubroutineKind.MODSPEC_CACHE, ItemDefinitions.get("chip").subroutineKind());
     }
 
     @Test

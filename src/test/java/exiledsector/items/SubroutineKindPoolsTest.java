@@ -24,7 +24,7 @@ class SubroutineKindPoolsTest {
     @BeforeEach
     void setUp() throws Exception {
         ItemDefinitions.register(new JSONArray()
-                .put(ItemFixtures.subroutineRow("volume_chip", SubroutineKind.VOLUME))
+                .put(ItemFixtures.subroutineRow("volume_chip", SubroutineKind.MODSPEC_CACHE))
                 .put(ItemFixtures.subroutineRow("doctrine_chip", SubroutineKind.DOCTRINE))
                 .put(ItemFixtures.subroutineRow("bypass_chip", SubroutineKind.BYPASS))
                 .put(ItemFixtures.subroutineRow("relic", SubroutineKind.UNIQUE).put("unique", "true").put("lines", "HULL_MULT:5:5")

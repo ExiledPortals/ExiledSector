@@ -132,7 +132,7 @@ public final class ItemDrops {
         }
         rollTargeted(rule, random, chances.targeted(ItemKind.SUBROUTINE), 1, ItemKind.SUBROUTINE, droppedItems);
         if (!rule.chances().isEmpty()) {
-            droppedItems.addAll(VolumeSubroutines.rollSalvage(random, rule.chances().get(0) * chances.general()));
+            droppedItems.addAll(ModspecCaches.rollSalvage(random, rule.chances().get(0) * chances.general()));
         }
         return droppedItems;
     }

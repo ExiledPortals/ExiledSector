@@ -40,11 +40,11 @@ final class ItemFixtures {
     }
 
     static JSONObject withKind(JSONObject row, String kind) throws JSONException {
-        return ItemKind.SUBROUTINE.id().equals(kind) ? row.put(ItemDefinition.SUBROUTINE_KIND_COLUMN, SubroutineKind.VOLUME.id()) : row.put("section", kind);
+        return ItemKind.SUBROUTINE.id().equals(kind) ? row.put(ItemDefinition.SUBROUTINE_KIND_COLUMN, SubroutineKind.MODSPEC_CACHE.id()) : row.put("section", kind);
     }
 
     static JSONObject subroutineRow(String id) throws JSONException {
-        return subroutineRow(id, SubroutineKind.VOLUME);
+        return subroutineRow(id, SubroutineKind.MODSPEC_CACHE);
     }
 
     static JSONObject subroutineRow(String id, SubroutineKind subroutineKind) throws JSONException {

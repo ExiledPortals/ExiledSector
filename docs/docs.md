@@ -322,18 +322,18 @@ skipped with a warning; the rest of the definition still loads.
 Subroutines are the socketables that go in tree sockets. They never roll prefixes or suffixes: a row in
 `data/config/exiledSector/subroutines.csv` has no pool columns, and no row of `item_modifiers.csv` may list
 `subroutine` in its `item_types` (`ItemDataIntegrity` reports it). What a subroutine does comes from its
-`kind` column, one of `VOLUME`, `DOCTRINE`, `BYPASS` or `UNIQUE`, read into `SubroutineKind` on the
+`kind` column, one of `MODSPEC_CACHE`, `DOCTRINE`, `BYPASS` or `UNIQUE`, read into `SubroutineKind` on the
 definition and never stored on the item. A row with a missing or unknown kind is skipped with an error in
-the log. `UNIQUE`, `VOLUME` (see "Volume subroutines" below) and `DOCTRINE` (see "Doctrine Archives") are
+the log. `UNIQUE`, `MODSPEC_CACHE` (see "Modspec caches" below) and `DOCTRINE` (see "Doctrine Archives") are
 built. `BYPASS` is parked: the kind exists but no row uses it, and its design and the code already built
 for it are in `docs/plans/bypass_subroutine.md`.
 
 Only some kinds take part in the generic item pools: the drop pickers in `ItemDrops` (salvage sites, battle
 loot, chart loot, tech-mining and the targeted subroutine bonus) and the subroutines NPC trees put in their
 sockets (`NpcItems.pickDefinition`). `SubroutineKind.inGenericPools` decides it per kind, and
-`ItemDrops.isDroppable` applies it to every picker at once. `VOLUME`, `DOCTRINE` and `BYPASS` are left out,
-so NPCs never socket them and nothing drops them by chance; each gets a drop path of its own (Volume
-subroutines have theirs, see "Volume subroutines"). Only `UNIQUE` stays in, and unique subroutines are still
+`ItemDrops.isDroppable` applies it to every picker at once. `MODSPEC_CACHE`, `DOCTRINE` and `BYPASS` are left out,
+so NPCs never socket them and nothing drops them by chance; each gets a drop path of its own (modspec
+caches have theirs, see "Modspec caches"). Only `UNIQUE` stays in, and unique subroutines are still
 limited to their own sources. Since no non-unique kind is in the generic pools, the general salvage roll's
 basic pick and an NPC's basic socket roll currently find no subroutine at all.
 
@@ -390,7 +390,7 @@ rolls and its socket, and comes back once the definition loads again. So a broke
 mod that fails to load never deletes anything. Retiring another subroutine later means adding its id to
 `DELETED_DEFINITION_IDS`.
 
-Volume and Bypass subroutines are born corrupted (`SubroutineKind.bornCorrupted`). Every way a subroutine
+Modspec caches and Bypass subroutines are born corrupted (`SubroutineKind.bornCorrupted`). Every way a subroutine
 comes into being ends in the `Subroutine` constructors or its `readResolve`: rolling a drop, a console grant,
 claiming or previewing an `npc:<definition>/<seed>` id, absorbing a cargo stack, a transposition, and an
 `UnresolvedItem` turning back into a subroutine. There, an item of a born-corrupted kind with no corruption
@@ -399,23 +399,23 @@ exactly as it refuses an item a Corrupted Nanoswarm has touched, and its frame t
 A Corrupted Nanoswarm only ever rolls the other four outcomes (`CorruptionOutcome.NANOSWARM_OUTCOMES`). The
 tooltip and the workbench show plain "Corrupted" for every outcome, `INNATE` included.
 
-Volume and Bypass subroutines also roll one tree node when they are created (`SubroutineKind.rollsNode`).
+Modspec caches and Bypass subroutines also roll tree nodes when they are created (`SubroutineKind.rollsNode`).
 The candidates come from `SubroutineNodePools`, where each kind plugs in a function from the definition to
-its candidate node ids. Volume subroutines register theirs (the notables of one volume, see "Volume
-subroutines"). Bypass is parked and registers no pool, so a Bypass item would roll nothing. The pick is a pure function of the candidates and the
-item's seed: the ids are trimmed, de-duplicated and sorted, then one is chosen with a `SplittableRandom`
-seeded from the item seed and a fixed salt. So the same seed always lands on the same node, and an NPC's
-`npc:` id decodes to the node the player gets when the ship is recovered. The chosen id is stored in the
-`rolledNodeId` field of `Subroutine` and never rolled again, so a later change to the tree or the pool
+its candidate node ids, and optionally a node count rolled from the seed (one by default). Modspec caches register
+theirs (every notable of the tree and a count from their chances, see "Modspec caches"). Bypass is parked and registers no pool, so a Bypass item would roll nothing. The pick is a pure function of the candidates and the
+item's seed: the ids are trimmed, de-duplicated and sorted, then the nodes are chosen with a `SplittableRandom`
+seeded from the item seed and a fixed salt. So the same seed always lands on the same nodes, and an NPC's
+`npc:` id decodes to the node the player gets when the ship is recovered. The chosen ids are stored in the
+`rolledNodeIds` field of `Subroutine` and never rolled again, so a later change to the tree or the pool
 cannot reroll an existing item. It is copied by mirroring and by every conversion, and an `UnresolvedItem`
 keeps it while the definition is missing. If the kind has no pool, the pool is empty or it throws, the field
 stays empty and nothing crashes; an item loaded with an empty field tries again on the next load. A
-subroutine in cargo carries only its seed, so it takes its node when it is absorbed into item storage. The
-tooltip names the node through the tree's node and type names, and a stored id that is no longer in the
+subroutine in cargo carries only its seed, so it takes its nodes when it is absorbed into item storage. The
+tooltip names the nodes through the tree's node and type names, and a stored id that is no longer in the
 tree shows as an unknown node.
 
 A subroutine fits a tree socket only if its definition has a kind. Doctrine and Bypass subroutines are
-limited to one per ship and Volume and Unique ones are not (`SubroutineKind.socketLimitPerShip`).
+limited to one per ship and modspec caches and Unique ones are not (`SubroutineKind.socketLimitPerShip`).
 `SubroutineSocketLimits` counts the other subroutines of the same kind already in the ship's tree sockets,
 leaving out the socket being filled and the item itself, so swapping one for another in the same socket is
 allowed. Installing from the subroutine storage panel checks it and shows the refusal in the panel's notice
@@ -440,94 +440,104 @@ socket node id, keeps the first subroutines of each limited kind and of each lim
 limits, and unsockets the rest. An item unsocketed for one limit does not count towards the other. They stay in
 item storage. One info line in the log names what was returned.
 
-## Volume subroutines
+## Modspec caches
 
-A Volume subroutine is a subroutine of kind `VOLUME`, one per tree volume: the core and all thirteen faction
-volumes. It is a pirated modspec with the lock on one technique cracked. It is corrupted from the start and
-rolls one notable of its volume when it is created. While it sits in an allocated standard socket, that notable
-is allocated on the ship without a path to it. It fits any standard socket, wherever it is on the tree, and
-several can sit on one ship. NPC trees never socket one.
+A modspec cache is a subroutine of kind `MODSPEC_CACHE`. The one shipped row is the Contraband Modspec Cache
+(`contraband_modspec_cache`), a unique-rarity subroutine: a smuggler's cache of cracked modspecs from every
+faction. It is corrupted from the start and rolls one, two or three notables from anywhere in the tree when it
+is created. While it sits in an allocated standard socket, those notables are allocated on the ship without a
+path to them, and they cost nothing: no node slot, no OP, no banked free allocation and no item. The socket
+the player allocated is the price. It fits any standard socket and several can sit on one ship. NPC trees never
+socket one.
+
+The row has `unique` set to `true`, so it shows in the unique colour and the codex treats it as a unique, but
+its kind keeps it out of the generic pools (`SubroutineKind.inGenericPools`), so no generic unique roll, NPC
+socket roll or transposition ever picks it; it drops only through its own paths (see "Drops" below). Unlike
+other uniques it has no player level gate.
 
 ### Definitions and the node pool
 
-The rows are ordinary rows of `subroutines.csv` with `kind` set to `VOLUME`. Four columns are only for them:
-`volume` names the tree region the subroutine rolls from, `excluded_nodes` lists notable node ids of that
-volume that never roll (separated by `;`), and `drop_chance` and `salvage_chance` set its drops (see below).
-`VolumeSubroutines` reads these columns after the item definitions load. A row whose volume is not a tree
-region, or whose volume already has a Volume subroutine, is logged and grants nothing, and so is a `VOLUME`
-definition with no usable row. Exclusions live on the definition rather than as a node or type tag so that a
-Volume subroutine's whole set-up sits in one row, the editor shows it next to the volume it belongs to, and a
-tag could not say which volume's pool it leaves out. Nothing is excluded today.
+Four columns of `subroutines.csv` are only for this kind: `excluded_nodes` lists notable node ids that never
+roll (separated by `;`), `node_count_chances` holds the relative chances of rolling one, two, three or more
+nodes (`0.9;0.09;0.01` today, so 90%, 9% and 1%), and `drop_chance` and `salvage_chance` set its drops.
+`ModspecCaches` reads them after the item definitions load. A row whose `node_count_chances` is not a list of
+numbers of 0 or more with at least one above 0 is logged and rolls nothing, and so is a `MODSPEC_CACHE`
+definition with no usable row. Nothing is excluded today.
 
-The candidates for a definition are the declared tree's nodes whose region is the volume, whose tier is
-`NOTABLE` and whose type is not optional (a grant cannot choose an option), minus the excluded ids. Declared
-nodes are used, so a volume whose area is off still rolls the same way. The pool is registered with
-`SubroutineNodePools.use` and the roll is frozen on the item as described under "Subroutines". If the frozen
-node is later renamed through `node_replacements.csv`, the grant and the tooltips follow the replacement
-(`Subroutine.currentNodeId`), the same way saved allocations are moved onto it. Notables with
-an item cost (the Abyss notables, Crustacean Integration) stay in the pool: the grant charges the item from
-cargo like a normal allocation, and refunds it when the notable is released.
+The candidates are the active tree's notables (tier `NOTABLE`, type not optional, since a grant cannot choose
+an option) in every region, minus the excluded ids. Only active nodes are used, so a node whose area is off
+never rolls. The node count is rolled from the item seed with its own salt, then that many distinct
+candidates are picked from the seed by `SubroutineNodePools` (a seeded partial shuffle of the sorted
+candidates), capped at the number of candidates. The rolled ids are frozen on the item as described under
+"Subroutines". If a frozen node is later renamed through `node_replacements.csv`, the grant and the tooltips
+follow the replacement (`Subroutine.currentNodeIds`).
 
-`ItemDataIntegrity.checkVolumeSubroutines` checks at startup that each `VOLUME` row names a tree region, that
-no volume has two, that every excluded id is a notable of that volume, that something is left to roll, and that
-both chances are numbers of 0 or more. It also reports the Volume columns filled on another kind, warns about a
-row that can never drop, and warns about a volume of the tree that has no Volume subroutine.
+`ItemDataIntegrity.checkModspecCaches` checks at startup that each `MODSPEC_CACHE` row has valid node count
+chances, that every excluded id is a notable in the tree, that something is left to roll, and that both drop
+chances are numbers of 0 or more. It also reports the cache columns filled on another kind and warns about a
+row that can never drop.
 
 ### The grant
 
-The skills side never reads item storage. `NodeGrants` holds a lookup from a socketed item id to the node it
-grants, which `VolumeGrantLinks` installs at startup; it returns the rolled node of a Volume subroutine and
-nothing for `npc:` ids. `ShipSkillData.grantedNodesBySocket` maps every allocated socket that holds such an
-item to its node. It is cached against the ship's data revision and the lookup's revision, which is bumped on
-load and whenever the tree opens, so nothing is looked up per frame.
+The skills side never reads item storage. `NodeGrants` holds a lookup from a socketed item id to the nodes it
+grants, which `NodeGrantLinks` installs at startup; it returns the rolled nodes of a modspec cache and nothing
+for `npc:` ids. `ShipSkillData.grantedNodesBySocket` maps every allocated socket that holds such an item to its
+nodes. It is cached against the ship's data revision and the lookup's revision, which is bumped on load and
+whenever the tree opens, so nothing is looked up per frame.
 
-When the tree opens, after every allocation change and after socketing, `NodeAllocator.grantVolumeNotables`
-allocates each linked notable that is not allocated yet, through `AllocationGate.grant`. That verdict skips the
-path check but keeps everything else an allocation needs: a free node slot under the allocated-node cap, the
-node's OP (or a banked free allocation, which is used first the usual way), and `NodeEligibility` with the
-ship's facts, so hull size, hull and ship requirements, hull mod and learned conflicts, exclusivity, effect
-blocks, locked types, gate tags and item costs all apply. A notable that cannot be granted yet stays
-unallocated, and the grant is tried again at the next change, so a subroutine waiting for a slot or OP takes
-effect as soon as it can. Like opening an anchor's wormhole, the grant only ever allocates; it never releases.
+When the tree opens, after every allocation change and after socketing, `NodeAllocator.grantSocketedNodes`
+first releases granted nodes whose grant has gone (see "Removal"), then allocates each linked notable that is
+not allocated yet, through `AllocationGate.grant`. That verdict skips the path check, the node cap and the OP
+check, and ignores an item cost, but keeps the rest of `NodeEligibility` with the ship's facts, so hull size,
+hull and ship requirements, hull mod and learned conflicts, exclusivity, effect blocks, locked types and gate
+tags all apply. A notable that cannot be granted stays unallocated and is tried again at the next change.
+
+`ShipSkillData.allocateGranted` allocates the node and records it in the persisted `grantFreeNodeIds` set.
+A node in that set counts as free (`isFreeNode`), so it is left out of the spent OP, and it is left out of
+`usedNodeSlots`, which every node cap check uses instead of the allocated count: `AllocationGate`, opening an
+anchor's wormhole, waking dormant nodes, the template step budget, the nodes bar and the template bar. It
+never consumes or returns a banked free allocation and no item is charged for it.
 
 A granted notable counts as reachable, so no check releases it or refuses because of it, but it is never a
 path seed. `ShipSkillData.reachableAllocatedNodeIds` adds it after the path search, without searching onwards
 from it, and only while its socket is itself reachable. Every reachability and stranding check goes through
 that search: `canDeallocate`, `releaseNewlyStranded` and `previewRelease`, `releaseUnreachable` (used by
 `WormholeAnchorMigration` and when a recovered NPC tree is adopted), `RespecPlan`, and the planning copy of
-`TemplatePlanner`, which mirrors the live sockets. `AllocationGate.isConnected` does not count a granted
-notable as a connection, so the nodes beyond it still need a real path; otherwise a Volume subroutine would
+`TemplatePlanner`, which mirrors the live sockets and the free set. `AllocationGate.isConnected` does not count
+a granted notable as a connection, so the nodes beyond it still need a real path; otherwise a cache would
 quietly work like a Bypass subroutine. `wakeDormantNodes` follows the same rule: it first wakes dormant nodes
 whose neighbours are allocated, to a fixed point, without counting a notable that only a grant holds as a
-neighbour, and only then wakes, in a last pass that cascades no further, the dormant notables whose grant still
-holds them. So when an area comes back, a granted notable returns but the nodes behind it return only if a real
-path (or an open anchor) reaches them, and the rest are released as usual. `forgetUnknownNodes` treats a
-granted notable like any other node. Templates captured from the ship leave out granted
+neighbour and without waking a free node whose grant has gone, and only then wakes, in a last pass that
+cascades no further, the dormant notables whose grant still holds them; those need no node slot. So when an
+area comes back, a granted notable returns but the nodes behind it return only if a real path (or an open
+anchor) reaches them, and the rest are released as usual. Templates captured from the ship leave out granted
 notables.
 
 ### Removal
 
-Removing the subroutine, replacing it, unallocating its socket or stranding the socket releases the granted
-notable and refunds it like any unallocation: its OP is free again, a free allocation goes back to the bank,
-and an item charge is returned. Only the granted notable is released, since nothing beyond it depended on it.
-The release goes through the same `releaseNewlyStranded` call and the same arm-and-repeat confirmation as
-closing an anchor's wormhole, with its own message (`socketable.volume.releaseConfirm`) naming the notable and
-the OP it returns. When the notable was paid for with a free allocation, no OP comes back and no confirmation
-is asked. While the grant alone holds the notable, it cannot be unallocated on its own
-(`AllocationGate.Refusal.HELD_BY_SUBROUTINE`), since the next refresh would grant it again; its tooltip names
-the subroutine and says to remove it instead. A notable that is also reached by path unallocates as usual, and
-the subroutine then grants it again at the next refresh, now without a path. A respec of the socket removes the socket first and the notable
-after it. `SocketCustody.reconcile`, which unsockets the items of a ship that has left the player's custody,
-also releases the notables those items granted and refunds their item charges to the player's cargo. A ship
-destroyed or disabled in battle and not recovered gets no release or refund: its whole tree is forgotten, the
-same as a notable it had allocated by path, so a grant never works as insurance for an item cost.
+A granted node is free only while its cache grants it. Removing the cache, replacing it, unallocating its
+socket or stranding the socket releases every node in `grantFreeNodeIds` that no allocated socket grants any
+more, whether or not a path also reaches it, and then anything that only that node held up. `releaseUnreachable`
+does this before its reachability pass, so `releaseNewlyStranded`, `previewRelease` and the refresh sweep
+(`releaseUngrantedFreeNodes`) all agree. A socket that went dormant with its area still holds its grant, so turning an area off and on never
+releases the nodes its cache granted. Releasing a granted node returns nothing, since it cost nothing, so
+removing a cache asks no confirmation unless paid nodes that depended on a granted node would go too; then the
+socket uses the arm-and-repeat confirmation with `socketable.cache.releaseConfirm`, naming how many nodes go and
+the OP they return.
 
-If the ship already has the notable allocated by path when the subroutine is socketed, the subroutine does
-nothing and its tooltip says so. If a path is built to a granted notable later, the path takes it over: the
-notable is now reachable by path, nodes beyond it can be allocated through it, and removing the subroutine
-releases nothing. Either way the node is allocated once, so bonuses never stack. If two Volume subroutines on
-one ship roll the same notable, the one in the socket with the lowest node id is the active one and the other
-idles; removing either keeps the notable as long as one is left.
+While the grant alone holds a notable, it cannot be unallocated on its own
+(`AllocationGate.Refusal.HELD_BY_SUBROUTINE`), since the next refresh would grant it again; its tooltip names
+the cache. A granted notable that a path also reaches can be unallocated, and the cache grants it again, free,
+at the next refresh. A respec of the socket removes the socket first and the notables after it.
+`SocketCustody.reconcile`, which unsockets the items of a ship that has left the player's custody, also releases
+the free nodes those items granted, any node only a grant held, and anything stranded by those releases, and
+refunds item charges of released paid nodes to the player's cargo. It leaves an anchor's volume alone as before.
+A ship destroyed or disabled in battle and not recovered gets no release or refund: its whole tree is forgotten.
+
+If the ship already has a notable allocated and paid for (by path) when the cache is socketed, the cache does
+nothing for that node and its tooltip says so; it is not made free, and removing the cache leaves it. If two
+caches on one ship roll the same notable, the one in the socket with the lowest node id is the active one and
+the other idles; removing either keeps the notable as long as one is left.
 
 A granted notable inside a Doctrine Archive's radius is rewritten or augmented like any other allocated node
 in range, since the doctrine acts on whatever nodes are allocated there however they got there. A transformed
@@ -536,32 +546,28 @@ described for that item.
 
 ### Display
 
-The item tooltip and the socket's tree tooltip name the encoded notable and its volume, explain the grant, and
-add one status line. In a socket it is computed from the tree's allocation snapshot (`Snapshot.volumeGrantStatus`,
-cached per snapshot): active, ready (granted at the next refresh), idle because the notable is allocated by
-path, idle because another subroutine on the ship installs it, inactive with the eligibility reason, waiting
-with the slot, OP or missing-item reason, inert because its area is off, or inert because its node left the tree. The item
-tooltip shows the last status the tree computed for the ship holding it (`VolumeGrantStatus`, a transient cache
-cleared on load and forgotten when the item leaves custody), or only the area and unknown-node cases when it is
-not socketed. Like an anchor, a Volume subroutine whose notable's area is off cannot be socketed: the storage
-panel shows `socketable.volume.areaOffRefusal`. One that was already socketed when the area went off stays in
-its socket and reads inert; its notable goes dormant with the area and wakes through the grant when it returns.
+The item tooltip and the socket's tree tooltip show one "Allocates X" line per rolled node and nothing else
+about the grant. A node with a problem gets it in brackets on its line: idle because the ship already has it
+allocated and paid for, idle because another cache on the ship allocates it, inactive (followed by the
+eligibility reason on its own line), inert because its area is off, or an unknown node that left the tree. In a
+socket the states come from the tree's allocation snapshot (`Snapshot.nodeGrantStatuses`, cached per
+snapshot). The item tooltip shows the last states the tree computed for the ship holding it
+(`NodeGrantStatus`, a transient cache cleared on load and forgotten when the item leaves custody), or only the
+area and unknown-node cases when it is not socketed. A cache can be socketed even when some or all of its nodes
+are inert; a node whose area goes off goes dormant with the area, stays free, and wakes through the grant when
+it returns. A granted node's own tooltip adds "Allocated by" with the cache's name.
 
 ### Drops
 
-Each Volume subroutine drops rarely, from one of two data-driven paths, with no change to the generic pools.
-`drop_chance` registers it with `FactionFleetDrops` under its own source group (`volume_subroutine`): after a
-won battle it rolls the same way anchors do, at `drop_chance` per 100 deployment points of destroyed or disabled
-ships whose fleet faction maps to its volume in `npc_faction_volumes.csv`, capped at one in two. The seven
-vanilla faction volumes use this path. `salvage_chance` adds a roll to every item roll of a salvage site
+The cache drops rarely, from two data-driven paths, with no change to the generic pools. `drop_chance`
+registers it with `FactionFleetDrops` under its own source group (`modspec_cache`) as an any-faction source:
+after a won battle it rolls at `drop_chance` per 100 deployment points of destroyed or disabled ships of any
+faction, capped at one in two. `salvage_chance` adds a roll to every item roll of a salvage site
 (`ItemDrops.roll`, which also serves tech mining, chart fleet loot and chart rewards): the chance is
-`salvage_chance` times the site's first item chance times the chart's item multiplier. The core and the six
-volumes with no vanilla faction (Kesteven, Enigma, Nightcross, Stargazer, ExoTech, Abyss) use this path. A
-Volume subroutine whose area is off never drops (`FactionFleetDrops.available`), but its definition stays
-loaded, so one the player owns stays inert rather than disappearing. Rates are placeholders.
+`salvage_chance` times the site's first item chance times the chart's item multiplier. Rates are placeholders.
 
-For testing, the console command `ExiledSectorGrantVolumeSubroutines [volume]` adds one Volume subroutine per
-volume, or only the named volume's, to the player's cargo, each with a random seed.
+For testing, the console command `ExiledSectorGrantModspecCache [nodes]` adds one cache to the player's cargo
+with a random seed, or with a seed that rolls the given number of nodes.
 
 ## Wormhole anchors
 
@@ -664,7 +670,7 @@ panel's notice line for an install, or a right click while the panel is open, na
 same thing again within a few seconds confirms it. The preview is `ShipSkillData.previewRelease`, which applies
 the change to a copy of the ship and runs the release there. The confirmation is generic over socket changes, so
 a later radius subroutine whose removal strands nodes gets the same warning by going through the same calls.
-Volume subroutines already do (see "Volume subroutines"). A notable granted by a Volume subroutine is never
+Modspec caches already do (see "Modspec caches"). A notable granted by a modspec cache is never
 released by closing a wormhole, even inside the volume being closed, because the reachability search counts it
 through its grant rather than through a path.
 
@@ -672,7 +678,7 @@ Nothing else releases nodes. An anchor that reads inert, waits for a slot, or wh
 volume's allocated nodes alone. When a ship leaves the player's custody, `SocketCustody.reconcile` unsockets its
 items as before but releases nothing of an anchor's volume, because a ship can be out of reach only for a while,
 for example in a Nexerelin special task group's fleet that has not spawned yet. It only releases the notables
-granted by the Volume subroutines it unsockets, since nothing depends on those, and not for a ship lost in battle. A ship lost in battle and not recovered has its
+granted by the modspec caches it unsockets (see "Modspec caches"), and not for a ship lost in battle. A ship lost in battle and not recovered has its
 whole tree forgotten. When an area is turned off, `forgetUnknownNodes` makes its exit and volume nodes dormant
 rather than releasing them, and they wake through the anchor's link when the area returns.
 
@@ -693,9 +699,9 @@ reconnect.
 ### Definitions and drops
 
 The definitions are in `data/config/exiledSector/wormhole_anchors.csv`, one row per tree volume, with the
-columns `id`, `volume`, `exit_node`, `name`, `icon`, `rarity`, `description`, `unlock`, `drop_factions` and
-`drop_chance`. `volume` is a tree region other than `core`, and `exit_node` is the volume's exit (`exoship` for
-ExoTech). `WormholeAnchorDefinitions` loads the file after the star charts
+columns `id`, `volume`, `exit_node`, `name`, `icon`, `color`, `crest_faction`, `rarity`, `description`, `unlock`,
+`drop_factions` and `drop_chance`. `volume` is a tree region other than `core`, and `exit_node` is the volume's
+exit (`exoship` for ExoTech). `color` and `crest_faction` style the icon (see "Anchor icons"). `WormholeAnchorDefinitions` loads the file after the star charts
 and keeps the volume and exit of each anchor. It skips, with an error in the log, a row whose volume is not a
 region, a row without an exit, a second row for a volume that already has an anchor, and an id that a
 subroutine, hull item or star chart already uses. The definitions sit in their own registry, like star charts,
@@ -711,7 +717,7 @@ are all accepted, the same set the runtime honours). A modifier row listing `wor
 
 Anchors drop from battles, through `FactionFleetDrops`, a drop path keyed by item definition. Sources are
 registered in named groups, so each kind of item replaces only its own: anchors register under their item type
-and Volume subroutines under `volume_subroutine`. Each anchor registers its volume, the extra faction ids in
+and modspec caches under `modspec_cache`. Each anchor registers its volume, the extra faction ids in
 `drop_factions` (separated by `;`) and its `drop_chance`. A defeated ship counts towards an anchor if its
 fleet's faction maps to the anchor's volume in `npc_faction_volumes.csv`, or is one of its extra factions.
 After a won battle, `ItemLootListener` sums the deployment points the player destroyed or disabled per faction
@@ -759,11 +765,52 @@ only the named volume's, to the player's cargo.
 ### ExoTech and the Exoship
 
 The Exoship is the ExoTech exit. It keeps its carried branches (`ExoshipNodes.isCarried`), its voyage, escorts
-and boarding view, and the ghost-flight and connector rules for carried nodes. The beacon node is gone, but
-the Hyper-Nav Beacon item keeps its look: its icon is vanilla's `graphics/stations/buoy00.png`, and
-`AnimatedItemIcons` draws that path at 1.6 times the icon box with `buoy00glow.png` pulsing orange over it,
-wherever item icons are drawn (cargo, sockets, the workbench and the section flair). The glow is steady when
-item animations are set to Calm or Off. The codex and tooltip images show the plain buoy sprite.
+and boarding view, and the ghost-flight and connector rules for carried nodes. The beacon node is gone. The
+Hyper-Nav Beacon item looks like every other anchor (see "Anchor icons"), in ExoTech gold with the ExoTech
+crest. `AnimatedItemIcons` still draws `graphics/stations/buoy00.png` at 1.6 times the icon box with
+`buoy00glow.png` pulsing orange over it, for any data that uses that path, but no anchor does any more.
+
+### Anchor icons
+
+Each anchor has its own icon and a cargo animation in its faction's colour. The `color` column (`#RRGGBB`) is the
+faction colour and `crest_faction` names the faction whose crest is the badge. A blank colour falls back to the
+anchor's default purple, a colour that is not `#RRGGBB` logs an error and does the same, and a blank crest
+faction shows no badge. `ItemDataIntegrity` reports a bad colour. The anchor's `frameColor` is its faction colour,
+so item storage frames it in that colour too.
+
+The icons are baked, not tinted in game. `tools/WormholeAnchorIcons.java` takes vanilla's
+`graphics/icons/cargo/wormhole_anchor.png`, recolours its purple glow (hue 265 to 345, ramping in with
+saturation) to each row's colour while keeping the brightness, and writes
+`graphics/icons/cargo/exiledSector_wormhole_anchor_<volume>.png`. Rerun it with `--overwrite` after changing a
+colour. The baked icon is what the codex, tooltips, tree sockets and item storage show.
+
+Wherever a `CargoIconLook` is drawn (cargo, the workbench and its tiles), `CargoIconLooks.forItem` gives an anchor
+an anchor look, and `CargoIconFx.render` hands it to `AnchorIconFx` instead of the rarity brackets and glows. All
+sizes are in an 80 by 80 design box scaled to the icon. When the look is framed, the icon is inset as framed
+items are, a faction-coloured frame with a soft additive inner band surrounds it, and ten small lights
+(`graphics/fx/glow64.png`) sit along each half of the frame, from the top-left corner to the bottom-right one. A
+lit light grows, and slides inward just enough that its glow stays inside the icon box. The
+crest of `crest_faction` (read from the faction spec, so mod crests are never copied) sits in a circle in the
+bottom-right corner, drawn as a textured fan with a dark rim, plus a faction-coloured ring when framed. A faction
+that isn't loaded shows no badge.
+
+With item animations on Full, each icon runs a six-second cycle, offset per stack so a cargo grid never pulses in
+step:
+
+- Behind the icon, a tunnel of vanilla's `graphics/fx/radial_fx.png` is mapped around the gem (texture u around
+  the circle, v as 1/radius plus a scroll), so streaks stream outward while the mesh slowly spins. It fades at
+  the centre and the rim, and its radius is the gem's distance to the nearest box edge, so it never leaves the
+  icon. It brightens while the aperture is open.
+- 0 to 22% of the cycle, four chevrons spiral in onto the gem's diagonals and close on it, then blink twice.
+  They start no further out than the gem's distance to the nearest edge allows.
+- 30 to 78%, the gem opens: a dark core with a `star_halo.png` rim in the faction colour.
+- 34 to 78%, three `shields256ringd.png` rings fall into the aperture one after another, spinning.
+- From about 30%, a light wave runs along both halves of the frame and meets at the crest at the very end of
+  the cycle, where the badge flashes, just before the next lock-on.
+
+On Calm or Off the icon is still: frame, dim lights and badge, no tunnel, aperture or motion. The socket
+workbench draws the anchor unframed, so it has no frame or lights there. Nothing here polls or allocates more
+than a few colours per frame, and the vanilla textures are loaded on first use through `SpriteCache`.
 
 ## Node radii
 

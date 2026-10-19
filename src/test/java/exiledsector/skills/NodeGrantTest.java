@@ -19,12 +19,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class VolumeGrantTest {
+class NodeGrantTest {
 
-    private static final String VOLUME_CHIP = "volume_chip";
-    private static final String SECOND_CHIP = "second_chip";
+    private static final String CACHE = "cache";
+    private static final String SECOND_CACHE = "second_cache";
+    private static final String DOUBLE_CACHE = "double_cache";
 
-    private final Map<String, String> grantedNodeByItemId = new HashMap<>();
+    private final Map<String, List<String>> grantedNodesByItemId = new HashMap<>();
     private SkillNode root;
     private SkillNode coreNode;
     private SkillNode socket;
@@ -32,6 +33,7 @@ class VolumeGrantTest {
     private SkillNode pathNode;
     private SkillNode notable;
     private SkillNode beyond;
+    private SkillNode farNotable;
     private Map<String, SkillNode> nodesById;
     private SkillTreeTopology topology;
 
@@ -46,18 +48,20 @@ class VolumeGrantTest {
         pathNode = node("core_b", SkillTier.SMALL, "core", "core_a", "notable");
         notable = node("notable", SkillTier.NOTABLE, "hegemony", "core_b", "beyond");
         beyond = node("beyond", SkillTier.SMALL, "hegemony", "notable");
+        farNotable = node("far_notable", SkillTier.NOTABLE, "abyss", "beyond");
         nodesById = new LinkedHashMap<>();
-        for (SkillNode node : List.of(root, coreNode, socket, secondSocket, pathNode, notable, beyond)) {
+        for (SkillNode node : List.of(root, coreNode, socket, secondSocket, pathNode, notable, beyond, farNotable)) {
             nodesById.put(node.getId(), node);
             SkillTree.register(node);
         }
         topology = SkillTreeTopology.of(nodesById.values());
-        grantedNodeByItemId.put(VOLUME_CHIP, "notable");
-        grantedNodeByItemId.put(SECOND_CHIP, "notable");
+        grantedNodesByItemId.put(CACHE, List.of("notable"));
+        grantedNodesByItemId.put(SECOND_CACHE, List.of("notable"));
+        grantedNodesByItemId.put(DOUBLE_CACHE, List.of("notable", "far_notable"));
         NodeGrants.install(new NodeGrants.GrantLookup() {
             @Override
-            public String grantedNodeId(String socketedItemId) {
-                return grantedNodeByItemId.get(socketedItemId);
+            public List<String> grantedNodeIds(String socketedItemId) {
+                return grantedNodesByItemId.getOrDefault(socketedItemId, List.of());
             }
 
             @Override
@@ -79,13 +83,18 @@ class VolumeGrantTest {
         return new SkillNode(id, type, List.of(connectedTo), 0f, 0f, SkillNodeDecoration.NONE, List.of(region));
     }
 
-    private ShipSkillData shipWithGrantedNotable() {
+    private ShipSkillData shipWithSocketed(String itemId) {
         ShipSkillData data = new ShipSkillData();
         data.chooseStartingRoot(root);
         data.allocate(coreNode, 1);
         data.allocate(socket, 1);
-        data.socketItem("socket", VOLUME_CHIP);
-        data.allocate(notable, 1);
+        data.socketItem("socket", itemId);
+        return data;
+    }
+
+    private ShipSkillData shipWithGrantedNotable() {
+        ShipSkillData data = shipWithSocketed(CACHE);
+        data.allocateGranted(notable);
         return data;
     }
 
@@ -95,17 +104,65 @@ class VolumeGrantTest {
         return new AllocationGate(data, topology, "root", new AllocationGate.Budget(totalOp, 1, maxAllocatedNodes), eligibility);
     }
 
+    private Map<String, SkillType> types() {
+        Map<String, SkillType> types = new HashMap<>();
+        nodesById.values().forEach(node -> types.put(node.getType().getId(), node.getType()));
+        return types;
+    }
+
     @Test
     void aGrantedNotableIsReachableWithoutAPathButDoesNotConnectTheNodesBeyondIt() {
         ShipSkillData data = shipWithGrantedNotable();
 
-        assertEquals(Map.of("socket", "notable"), data.grantedNodesBySocket());
+        assertEquals(Map.of("socket", List.of("notable")), data.grantedNodesBySocket());
         assertTrue(data.reachableAllocatedNodeIds(topology, "root").contains("notable"));
         assertFalse(data.pathReachableAllocatedNodeIds(topology, "root").contains("notable"));
         assertEquals(Set.of("notable"), data.grantOnlyNodeIds(topology, "root"));
         AllocationGate gate = gate(data, 100, 100);
         assertEquals(AllocationGate.Refusal.NOT_CONNECTED, gate.allocation(beyond).refusal());
         assertTrue(gate.allocation(pathNode).allowed());
+    }
+
+    @Test
+    void aGrantedNodeCostsNoOpNoNodeSlotAndNoFreeAllocation() {
+        ShipSkillData data = shipWithSocketed(CACHE);
+        data.addFreeAllocationCredit();
+        int spentBefore = data.getSpentOp(1);
+        int slotsBefore = data.usedNodeSlots();
+
+        data.allocateGranted(notable);
+
+        assertTrue(data.isAllocated("notable"));
+        assertTrue(data.isGrantFree("notable"));
+        assertTrue(data.isFreeNode("notable"));
+        assertEquals(spentBefore, data.getSpentOp(1));
+        assertEquals(slotsBefore, data.usedNodeSlots());
+        assertEquals(1, data.getBankedFreeAllocations());
+        assertEquals(AllocationGate.Refusal.NODE_CAP, gate(data, 100, slotsBefore).allocation(pathNode).refusal());
+        assertTrue(gate(data, 100, slotsBefore + 1).allocation(pathNode).allowed());
+    }
+
+    @Test
+    void theGrantVerdictNeedsNoSlotNoOpAndNoPath() {
+        ShipSkillData data = shipWithSocketed(CACHE);
+        int slots = data.usedNodeSlots();
+
+        assertTrue(gate(data, 0, slots).grant(notable).allowed());
+        assertEquals(AllocationGate.Refusal.NOT_CONNECTED, gate(data, 100, slots + 1).allocation(notable).refusal());
+        data.allocateGranted(notable);
+        assertEquals(AllocationGate.Refusal.ALREADY_ALLOCATED, gate(data, 100, 100).grant(notable).refusal());
+    }
+
+    @Test
+    void aCacheGrantsEveryNodeItRolled() {
+        ShipSkillData data = shipWithSocketed(DOUBLE_CACHE);
+        data.allocateGranted(notable);
+        data.allocateGranted(farNotable);
+
+        assertEquals(Map.of("socket", List.of("notable", "far_notable")), data.grantedNodesBySocket());
+        assertEquals("socket", data.grantingSocket("far_notable"));
+        assertEquals(Set.of("notable", "far_notable"), data.grantOnlyNodeIds(topology, "root"));
+        assertEquals(Set.of("notable", "far_notable"), data.previewRelease(topology, "root", planned -> planned.unsocketItem("socket")));
     }
 
     @Test
@@ -119,16 +176,9 @@ class VolumeGrantTest {
     }
 
     @Test
-    void removingTheSubroutineReleasesOnlyTheGrantedNotableAndBanksItsFreeAllocation() {
-        ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(root);
-        data.allocate(coreNode, 1);
-        data.allocate(socket, 1);
-        data.socketItem("socket", VOLUME_CHIP);
+    void removingTheSubroutineReleasesTheGrantedNotableWithoutTouchingBankedAllocations() {
+        ShipSkillData data = shipWithGrantedNotable();
         data.addFreeAllocationCredit();
-        data.allocate(notable, 1);
-        assertTrue(data.isFreeNode("notable"));
-        assertEquals(0, data.getBankedFreeAllocations());
 
         assertEquals(Set.of("notable"), data.previewRelease(topology, "root", planned -> planned.unsocketItem("socket")));
         Set<String> reachableBefore = data.reachableAllocatedNodeIds(topology, "root");
@@ -137,7 +187,19 @@ class VolumeGrantTest {
 
         assertEquals(List.of("notable"), released.nodeIds());
         assertEquals(Set.of("root", "core_a", "socket"), data.getAllocatedNodeIds());
+        assertFalse(data.isGrantFree("notable"));
         assertEquals(1, data.getBankedFreeAllocations());
+    }
+
+    @Test
+    void aGrantedNodeLeftWithoutItsGrantIsReleasedByTheRefreshSweep() {
+        ShipSkillData data = shipWithGrantedNotable();
+        data.unsocketItem("socket");
+
+        ReleasedNodes released = data.releaseUngrantedFreeNodes(topology, "root");
+
+        assertEquals(List.of("notable"), released.nodeIds());
+        assertTrue(data.releaseUngrantedFreeNodes(topology, "root").nodeIds().isEmpty());
     }
 
     @Test
@@ -148,42 +210,37 @@ class VolumeGrantTest {
     }
 
     @Test
-    void aPathBuiltToTheGrantedNotableTakesItOverSoRemovingTheSubroutineReleasesNothing() {
+    void aPathBuiltToTheGrantedNotableKeepsItFreeUntilTheSubroutineIsRemoved() {
         ShipSkillData data = shipWithGrantedNotable();
         data.allocate(pathNode, 1);
 
         assertEquals(Set.of(), data.grantOnlyNodeIds(topology, "root"));
         assertTrue(gate(data, 100, 100).allocation(beyond).allowed());
-        assertTrue(gate(data, 100, 100).deallocation(notable).allowed());
         data.allocate(beyond, 1);
+        assertTrue(data.isGrantFree("notable"));
 
-        assertEquals(Set.of(), data.previewRelease(topology, "root", planned -> planned.unsocketItem("socket")));
+        assertEquals(Set.of("notable", "beyond"), data.previewRelease(topology, "root", planned -> planned.unsocketItem("socket")));
         assertFalse(data.canDeallocate(pathNode, topology, "root"));
+    }
+
+    @Test
+    void aNotableAllocatedByPathBeforeSocketingIsNotFreeAndStaysWhenTheSubroutineIsRemoved() {
+        ShipSkillData data = shipWithSocketed(CACHE);
+        data.allocate(pathNode, 1);
+        data.allocate(notable, 1);
+
+        assertFalse(data.isGrantFree("notable"));
+        assertEquals(Set.of(), data.previewRelease(topology, "root", planned -> planned.unsocketItem("socket")));
     }
 
     @Test
     void aSecondSubroutineForTheSameNotableKeepsItWhenTheFirstIsRemoved() {
         ShipSkillData data = shipWithGrantedNotable();
         data.allocate(secondSocket, 1);
-        data.socketItem("socket_b", SECOND_CHIP);
+        data.socketItem("socket_b", SECOND_CACHE);
 
         assertEquals("socket", data.grantingSocket("notable"));
         assertEquals(Set.of(), data.previewRelease(topology, "root", planned -> planned.unsocketItem("socket")));
-    }
-
-    @Test
-    void theGrantVerdictNeedsASlotAndOpButNoPath() {
-        ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(root);
-        data.allocate(coreNode, 1);
-        data.allocate(socket, 1);
-        data.socketItem("socket", VOLUME_CHIP);
-        int allocatedCount = data.getAllocatedNodeIds().size();
-
-        assertTrue(gate(data, 100, allocatedCount + 1).grant(notable).allowed());
-        assertEquals(AllocationGate.Refusal.NODE_CAP, gate(data, 100, allocatedCount).grant(notable).refusal());
-        assertEquals(AllocationGate.Refusal.OUT_OF_OP, gate(data, data.getSpentOp(1), allocatedCount + 1).grant(notable).refusal());
-        assertEquals(AllocationGate.Refusal.NOT_CONNECTED, gate(data, 100, allocatedCount + 1).allocation(notable).refusal());
     }
 
     @Test
@@ -205,31 +262,63 @@ class VolumeGrantTest {
     }
 
     @Test
-    void aDormantGrantedNotableWakesThroughItsGrant() {
+    void aDormantGrantedNotableWakesThroughItsGrantWithoutANodeSlot() {
         ShipSkillData data = shipWithGrantedNotable();
+        int slots = data.usedNodeSlots();
         Map<String, SkillNode> withoutVolume = new LinkedHashMap<>(nodesById);
         withoutVolume.remove("notable");
         withoutVolume.remove("beyond");
-        Map<String, SkillType> types = new HashMap<>();
-        nodesById.values().forEach(node -> types.put(node.getType().getId(), node.getType()));
 
-        data.forgetUnknownNodes(withoutVolume, nodesById, types);
+        data.forgetUnknownNodes(withoutVolume, nodesById, types());
         assertTrue(data.getDormantNodeIds().contains("notable"));
 
-        assertEquals(List.of(), data.wakeDormantNodes(nodesById, 100, dormant -> true));
+        assertEquals(List.of(), data.wakeDormantNodes(nodesById, slots, dormant -> true));
         assertTrue(data.isAllocated("notable"));
+        assertTrue(data.isGrantFree("notable"));
+    }
+
+    @Test
+    void aDormantSocketKeepsItsGrantedNodeAndThePaidNodesBeyondIt() {
+        ShipSkillData data = shipWithGrantedNotable();
+        data.allocate(pathNode, 1);
+        data.allocate(beyond, 1);
+        Map<String, SkillNode> withoutSocket = new LinkedHashMap<>(nodesById);
+        withoutSocket.remove("socket");
+        data.forgetUnknownNodes(withoutSocket, nodesById, types());
+        assertTrue(data.getDormantNodeIds().contains("socket"));
+
+        assertTrue(data.releaseUngrantedFreeNodes(topology, "root").nodeIds().isEmpty());
+        assertTrue(data.isAllocated("notable"));
+        assertTrue(data.isAllocated("beyond"));
+        assertTrue(data.isGrantFree("notable"));
+    }
+
+    @Test
+    void aDormantFreeNodeWhoseGrantIsGoneIsReleasedNotWokenByPath() {
+        ShipSkillData data = shipWithGrantedNotable();
+        data.allocate(pathNode, 1);
+        Map<String, SkillNode> withoutVolume = new LinkedHashMap<>(nodesById);
+        withoutVolume.remove("notable");
+        withoutVolume.remove("beyond");
+        data.forgetUnknownNodes(withoutVolume, nodesById, types());
+        data.unsocketItem("socket");
+
+        assertEquals(List.of("notable"), data.wakeDormantNodes(nodesById, 100, dormant -> true));
+        assertFalse(data.isAllocated("notable"));
+        assertFalse(data.isGrantFree("notable"));
     }
 
     @Test
     void aNotableWokenThroughItsGrantDoesNotReconnectItsDormantNeighbours() {
-        ShipSkillData data = shipWithGrantedNotable();
+        ShipSkillData data = shipWithSocketed(CACHE);
+        data.allocate(pathNode, 1);
+        data.allocate(notable, 1);
         data.allocate(beyond, 1);
+        data.deallocate(pathNode);
         Map<String, SkillNode> withoutVolume = new LinkedHashMap<>(nodesById);
         withoutVolume.remove("notable");
         withoutVolume.remove("beyond");
-        Map<String, SkillType> types = new HashMap<>();
-        nodesById.values().forEach(node -> types.put(node.getType().getId(), node.getType()));
-        data.forgetUnknownNodes(withoutVolume, nodesById, types);
+        data.forgetUnknownNodes(withoutVolume, nodesById, types());
         assertEquals(Set.of("notable", "beyond"), data.getDormantNodeIds());
 
         assertEquals(List.of("beyond"), data.wakeDormantNodes(nodesById, 100, dormant -> true));
@@ -246,9 +335,7 @@ class VolumeGrantTest {
         data.allocate(beyond, 1);
         Map<String, SkillNode> withoutBeyond = new LinkedHashMap<>(nodesById);
         withoutBeyond.remove("beyond");
-        Map<String, SkillType> types = new HashMap<>();
-        nodesById.values().forEach(node -> types.put(node.getType().getId(), node.getType()));
-        data.forgetUnknownNodes(withoutBeyond, nodesById, types);
+        data.forgetUnknownNodes(withoutBeyond, nodesById, types());
 
         assertEquals(List.of(), data.wakeDormantNodes(nodesById, 100, dormant -> true));
         assertTrue(data.isAllocated("beyond"));

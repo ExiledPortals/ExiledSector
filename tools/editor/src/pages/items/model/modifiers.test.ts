@@ -31,11 +31,11 @@ const vocabulary = buildVocabulary({
     { id: 'subroutine', type: 'subroutine' },
     { id: 'armor_plating', type: 'hull_item' },
   ],
-  subroutineKinds: ['VOLUME', 'DOCTRINE', 'BYPASS', 'UNIQUE'],
+  subroutineKinds: ['MODSPEC_CACHE', 'DOCTRINE', 'BYPASS', 'UNIQUE'],
   itemUnlocks: [],
 });
 
-const SUBROUTINES_CSV = 'id,name,icon,rarity,unique,kind,description,unlock\nvolume,Volume,,10,,VOLUME,,\n';
+const SUBROUTINES_CSV = 'id,name,icon,rarity,unique,kind,description,unlock\ncache,Cache,,10,,MODSPEC_CACHE,,\n';
 const HULL_ITEMS_CSV =
   'id,section,name,rarity,unique,prefixes,suffixes\n' +
   'chip,armor_plating,Chip,10,,@HULL_MULT:5,@ARMOR_FLAT\n' +

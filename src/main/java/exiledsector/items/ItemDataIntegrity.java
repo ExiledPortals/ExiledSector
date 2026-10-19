@@ -99,7 +99,7 @@ public final class ItemDataIntegrity {
             violations.addAll(checkWormholeAnchors(anchorRows, SkillTree.getDeclaredNodes(), definitionIds(orEmpty(subroutineRows), hullItemRows, chartRows)));
             JSONArray doctrineRows = orEmpty(ModCsv.rows(DoctrineArchives.ID_COLUMN, DoctrineArchives.DATA_PATH));
             violations.addAll(checkDoctrineArchives(modifierRows, orEmpty(subroutineRows), doctrineRows, SkillTree.getAllTypes()));
-            violations.addAll(checkVolumeSubroutines(orEmpty(subroutineRows), SkillTree.getDeclaredNodes()));
+            violations.addAll(checkModspecCaches(orEmpty(subroutineRows), SkillTree.getDeclaredNodes()));
             for (Violation violation : violations) {
                 if (violation.severity() == Severity.ERROR) {
                     LOG.error(violation);
@@ -134,55 +134,42 @@ public final class ItemDataIntegrity {
         return List.copyOf(integrity.violations);
     }
 
-    public static List<Violation> checkVolumeSubroutines(JSONArray subroutineRows, Map<String, SkillNode> treeNodes) throws JSONException {
+    public static List<Violation> checkModspecCaches(JSONArray subroutineRows, Map<String, SkillNode> treeNodes) throws JSONException {
         ItemDataIntegrity integrity = new ItemDataIntegrity();
-        integrity.checkVolumeRows(orEmpty(subroutineRows), treeNodes);
+        integrity.checkCacheRows(orEmpty(subroutineRows), treeNodes);
         return List.copyOf(integrity.violations);
     }
 
-    private void checkVolumeRows(JSONArray subroutineRows, Map<String, SkillNode> treeNodes) throws JSONException {
+    private void checkCacheRows(JSONArray subroutineRows, Map<String, SkillNode> treeNodes) throws JSONException {
         String file = ItemDefinitions.SUBROUTINES_PATH;
-        Map<String, Integer> linesByVolume = new HashMap<>();
         ModCsv.forEach(subroutineRows, (index, row) -> {
             int line = index + FIRST_DATA_LINE;
             String definitionId = ModCsv.text(row, "id");
-            if (SubroutineKind.byIdOrNull(ModCsv.text(row, ItemDefinition.SUBROUTINE_KIND_COLUMN)) != SubroutineKind.VOLUME) {
-                for (String column : VolumeSubroutines.VOLUME_ONLY_COLUMNS) {
+            if (SubroutineKind.byIdOrNull(ModCsv.text(row, ItemDefinition.SUBROUTINE_KIND_COLUMN)) != SubroutineKind.MODSPEC_CACHE) {
+                for (String column : ModspecCaches.CACHE_ONLY_COLUMNS) {
                     if (!ModCsv.text(row, column).isEmpty()) {
-                        error(file, line, definitionId + " fills " + column + ", but only " + SubroutineKind.VOLUME.id() + " subroutines use it");
+                        error(file, line, definitionId + " fills " + column + ", but only " + SubroutineKind.MODSPEC_CACHE.id() + " subroutines use it");
                     }
                 }
                 return;
             }
-            String volume = ModCsv.text(row, VolumeSubroutines.VOLUME_COLUMN);
-            if (!SkillTags.isRegion(volume)) {
-                error(file, line, definitionId + " has volume \"" + volume + "\"; expected a tree region");
-                return;
+            String nodeCountChances = ModCsv.text(row, ModspecCaches.NODE_COUNT_CHANCES_COLUMN);
+            if (!ModspecCaches.isValidNodeCountChances(nodeCountChances)) {
+                error(file, line, definitionId + " has the node count chances \"" + nodeCountChances
+                        + "\"; expected numbers of 0 or more separated by ;, at least one above 0");
             }
-            Integer volumeLine = linesByVolume.putIfAbsent(volume, line);
-            if (volumeLine != null) {
-                error(file, line, definitionId + " grants from " + volume + ", which already has a volume subroutine on line " + volumeLine);
-            }
-            checkVolumeChances(file, line, definitionId, row);
-            checkVolumePool(file, line, definitionId, volume, VolumeSubroutines.nodeIds(ModCsv.text(row, VolumeSubroutines.EXCLUDED_NODES_COLUMN)),
-                    treeNodes);
+            checkCacheChances(file, line, definitionId, row);
+            checkCachePool(file, line, definitionId, ModspecCaches.nodeIds(ModCsv.text(row, ModspecCaches.EXCLUDED_NODES_COLUMN)), treeNodes);
         });
-        Set<String> treeRegions = new LinkedHashSet<>();
-        treeNodes.values().forEach(node -> treeRegions.add(node.getRegion()));
-        for (String region : SkillTags.REGION) {
-            if (treeRegions.contains(region) && !linesByVolume.containsKey(region)) {
-                warning(file, 0, "the " + region + " volume has no " + SubroutineKind.VOLUME.id() + " subroutine");
-            }
-        }
     }
 
-    private void checkVolumeChances(String file, int line, String definitionId, JSONObject row) {
-        String dropChance = ModCsv.text(row, VolumeSubroutines.DROP_CHANCE_COLUMN);
-        String salvageChance = ModCsv.text(row, VolumeSubroutines.SALVAGE_CHANCE_COLUMN);
-        if (!VolumeSubroutines.isValidChance(dropChance)) {
+    private void checkCacheChances(String file, int line, String definitionId, JSONObject row) {
+        String dropChance = ModCsv.text(row, ModspecCaches.DROP_CHANCE_COLUMN);
+        String salvageChance = ModCsv.text(row, ModspecCaches.SALVAGE_CHANCE_COLUMN);
+        if (!ModspecCaches.isValidChance(dropChance)) {
             error(file, line, definitionId + " has the drop chance \"" + dropChance + "\"; expected a number of 0 or more");
         }
-        if (!VolumeSubroutines.isValidChance(salvageChance)) {
+        if (!ModspecCaches.isValidChance(salvageChance)) {
             error(file, line, definitionId + " has the salvage chance \"" + salvageChance + "\"; expected a number of 0 or more");
         }
         if (isZeroChance(dropChance) && isZeroChance(salvageChance)) {
@@ -198,8 +185,7 @@ public final class ItemDataIntegrity {
         }
     }
 
-    private void checkVolumePool(String file, int line, String definitionId, String volume, Set<String> excludedNodeIds,
-                                 Map<String, SkillNode> treeNodes) {
+    private void checkCachePool(String file, int line, String definitionId, Set<String> excludedNodeIds, Map<String, SkillNode> treeNodes) {
         if (treeNodes.isEmpty()) {
             return;
         }
@@ -207,13 +193,13 @@ public final class ItemDataIntegrity {
             SkillNode excludedNode = treeNodes.get(excludedNodeId);
             if (excludedNode == null) {
                 error(file, line, definitionId + " excludes " + excludedNodeId + ", which is not in the skill tree");
-            } else if (!volume.equals(excludedNode.getRegion()) || !VolumeSubroutines.isGrantable(excludedNode)) {
-                error(file, line, definitionId + " excludes " + excludedNodeId + ", which is not a notable of the " + volume + " volume");
+            } else if (!ModspecCaches.isGrantable(excludedNode)) {
+                error(file, line, definitionId + " excludes " + excludedNodeId + ", which is not a notable");
             }
         }
-        VolumeSubroutines.VolumeBase base = new VolumeSubroutines.VolumeBase(definitionId, volume, excludedNodeIds, 0f, 0f);
-        if (VolumeSubroutines.candidateNodeIds(base, treeNodes.values()).isEmpty()) {
-            error(file, line, definitionId + " has no notable left to roll in the " + volume + " volume");
+        ModspecCaches.CacheBase base = new ModspecCaches.CacheBase(definitionId, excludedNodeIds, List.of(), 0f, 0f);
+        if (ModspecCaches.candidateNodeIds(base, treeNodes.values()).isEmpty()) {
+            error(file, line, definitionId + " has no notable left to roll");
         }
     }
 
@@ -371,6 +357,10 @@ public final class ItemDataIntegrity {
             String dropChance = ModCsv.text(row, WormholeAnchorDefinitions.DROP_CHANCE_COLUMN);
             if (!WormholeAnchorDefinitions.isValidDropChance(dropChance)) {
                 error(file, line, definitionId + " has the drop chance \"" + dropChance + "\"; expected a number of 0 or more");
+            }
+            String color = ModCsv.text(row, WormholeAnchorDefinitions.COLOR_COLUMN);
+            if (!WormholeAnchorDefinitions.isValidColor(color)) {
+                error(file, line, definitionId + " has the color \"" + color + "\"; expected #RRGGBB or blank");
             }
         });
     }

@@ -24,10 +24,9 @@ import exiledsector.items.HullUpgradeRules;
 import exiledsector.items.SocketCustody;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
-import exiledsector.items.Subroutine;
 import exiledsector.items.SubroutineRadius;
 import exiledsector.items.SubroutineSocketLimits;
-import exiledsector.items.VolumeGrantLinks;
+import exiledsector.items.NodeGrantLinks;
 import exiledsector.items.WormholeAnchor;
 import exiledsector.items.WormholeAnchorLinks;
 import exiledsector.items.WormholeAnchorSocketLimits;
@@ -85,9 +84,9 @@ public final class TreeAllocationSession {
         this.pointsLeftCheck = stepExecutor::hasPointsLeft;
         this.planner = new TemplatePlanner(allocator, this::snapshot);
         WormholeAnchorLinks.refresh();
-        VolumeGrantLinks.refresh();
+        NodeGrantLinks.refresh();
         allocator.openAnchorWormholes();
-        allocator.grantVolumeNotables();
+        allocator.grantSocketedNodes();
     }
 
     private static StartingRootChoice initialRootChoice(ShipSkillData skillData) {
@@ -272,7 +271,7 @@ public final class TreeAllocationSession {
     }
 
     public int allocatedNodeCount() {
-        return snapshot().skillData().getAllocatedNodeIds().size();
+        return snapshot().skillData().usedNodeSlots();
     }
 
     public List<TemplateStep> captureTemplateSteps() {
@@ -654,9 +653,6 @@ public final class TreeAllocationSession {
                 return anchorRefusal;
             }
         }
-        if (item instanceof Subroutine subroutine && subroutine.volumeSocketRefusal() != null) {
-            return subroutine.volumeSocketRefusal();
-        }
         return SubroutineSocketLimits.refusal(item, node.getId(), allocator.data().getSocketedItems());
     }
 
@@ -699,29 +695,20 @@ public final class TreeAllocationSession {
         if (partnerId != null) {
             released.remove(partnerId);
         }
+        List<String> grantedNodeIds = skillData.grantedNodesBySocket().getOrDefault(node.getId(), List.of());
+        grantedNodeIds.stream().filter(skillData::isGrantFree).forEach(released::remove);
         if (released.isEmpty()) {
             return true;
         }
         int returnedOp = skillData.paidNodeCount(released) * snapshot().opCostPerNode();
-        String grantedNodeId = skillData.grantedNodesBySocket().get(node.getId());
-        boolean onlyGrantReleased = grantedNodeId != null && released.equals(Set.of(grantedNodeId));
-        if (onlyGrantReleased && returnedOp == 0) {
-            return true;
-        }
-        String warning = onlyGrantReleased ? volumeReleaseWarning(grantedNodeId, returnedOp)
-                : Translation.msg("socketable.anchor.closeConfirm").count(released.size()).arg("op", returnedOp).text();
+        String warningKey = partnerId == null && !grantedNodeIds.isEmpty() ? "socketable.cache.releaseConfirm" : "socketable.anchor.closeConfirm";
+        String warning = Translation.msg(warningKey).count(released.size()).arg("op", returnedOp).text();
         releaseConfirmation.arm(actionKey, node.getId(), warning);
         if (!INSTALL_ACTION.equals(action)) {
             SkillTreeSounds.refused();
         }
         feedback.pulse(node);
         return false;
-    }
-
-    private static String volumeReleaseWarning(String grantedNodeId, int returnedOp) {
-        SkillNode grantedNode = SkillTree.getDeclared(grantedNodeId);
-        String nodeName = grantedNode == null ? grantedNodeId : grantedNode.getDisplayName();
-        return Translation.msg("socketable.volume.releaseConfirm").arg("node", nodeName).arg("op", returnedOp).text();
     }
 
     private void reportReleased(Set<String> allocatedBefore, SkillNode node) {
@@ -800,7 +787,7 @@ public final class TreeAllocationSession {
 
     private void refreshAfterAllocation() {
         allocator.openAnchorWormholes();
-        allocator.grantVolumeNotables();
+        allocator.grantSocketedNodes();
         allocationSnapshot = null;
         if (refitButton != null) {
             refitButton.refreshVariant();

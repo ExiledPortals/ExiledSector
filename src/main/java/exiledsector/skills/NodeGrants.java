@@ -1,20 +1,21 @@
 package exiledsector.skills;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 public final class NodeGrants {
 
     public interface GrantLookup {
 
-        String grantedNodeId(String socketedItemId);
+        List<String> grantedNodeIds(String socketedItemId);
 
         int revision();
     }
 
     public static final GrantLookup NONE = new GrantLookup() {
         @Override
-        public String grantedNodeId(String socketedItemId) {
-            return null;
+        public List<String> grantedNodeIds(String socketedItemId) {
+            return List.of();
         }
 
         @Override
