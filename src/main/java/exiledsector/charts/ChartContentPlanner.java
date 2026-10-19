@@ -47,7 +47,7 @@ final class ChartContentPlanner {
     static ChartContentPlan plan(long seed, ChartTier baseTier, List<ChartPoi> pois, List<ChartFaction> factions, Predicate<String> factionLoaded,
                                  ChartGenContext chartContext, int fleetLimit) {
         ChartTier tier = chartContext.adjust(baseTier);
-        ChartFaction faction = ChartFactions.pick(factions, tier.tier(), factionLoaded, ChartLayoutGenerator.derivedRandom(seed, FACTION_SALT));
+        ChartFaction faction = ChartFactions.resolve(chartContext.factionId(), factions, factionLoaded, ChartLayoutGenerator.derivedRandom(seed, FACTION_SALT));
         List<ChartPoi> vaults = affordableVaults(pois, tier);
         ChartObjective objective = pickObjective(tier, !vaults.isEmpty(), ChartLayoutGenerator.derivedRandom(seed, OBJECTIVE_SALT));
         boolean vaultPlanned = objective == ChartObjective.VAULT;

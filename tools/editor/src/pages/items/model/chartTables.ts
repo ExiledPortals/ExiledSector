@@ -57,7 +57,7 @@ export const CHART_TIER_COLUMNS = [
   'note',
 ] as const;
 export const CHART_POI_COLUMNS = ['id', 'kind', 'entity', 'salvage_spec', 'derelict_type', 'cost', 'weight', 'min_tier', 'max_tier', 'guarded', 'note'] as const;
-export const CHART_FACTION_COLUMNS = ['faction', 'weight', 'min_tier', 'fleet_size_bonus', 'fleet_quality_bonus', 'note'] as const;
+export const CHART_FACTION_COLUMNS = ['faction', 'weight', 'fleet_size_bonus', 'fleet_quality_bonus', 'note'] as const;
 export const CHART_BLOCKED_ABILITY_COLUMNS = ['ability_id', 'note'] as const;
 export const CHART_DROP_COLUMNS = [
   'source',
@@ -372,16 +372,15 @@ export const CHART_FACTION_SPEC: ChartTableSpec = {
   noun: 'chart faction',
   keyColumn: 'faction',
   description:
-    'Which factions guard a system, picked by weight among those whose minimum tier the chart has reached. Every faction can guard tier 15 charts. Factions from mods that are not installed are skipped. The fleet size bonus adds percentage points to the tier fleet size and warden size; the fleet quality bonus adds percentage points to the tier fleet quality.',
+    'Which factions can inhabit a system. Every Star Chart rolls one of them by weight as its implicit when it drops, and keeps it. A chart whose faction is not installed gets a random one when its wormhole opens. The fleet size bonus adds percentage points to the tier fleet size and warden size; the fleet quality bonus adds percentage points to the tier fleet quality.',
   columns: columnsOf(CHART_FACTION_COLUMNS, {
     faction: { label: 'Faction id', kind: 'text' },
     weight: { label: 'Weight', kind: 'number' },
-    min_tier: { label: 'Min tier', kind: 'integer' },
     fleet_size_bonus: { label: 'Fleet size bonus', kind: 'number', help: 'Percentage points added to fleet size and warden size' },
     fleet_quality_bonus: { label: 'Fleet quality bonus', kind: 'number', help: 'Percentage points added to fleet quality' },
     note: NOTE_COLUMN,
   }),
-  newRow: () => ({ faction: '', weight: '1', min_tier: '1', fleet_size_bonus: '0', fleet_quality_bonus: '0' }),
+  newRow: () => ({ faction: '', weight: '1', fleet_size_bonus: '0', fleet_quality_bonus: '0' }),
   issues: (model, vocabulary) => {
     const issues: string[] = [];
     model.rows.forEach((row, index) => {
@@ -393,16 +392,16 @@ export const CHART_FACTION_SPEC: ChartTableSpec = {
     });
     return [...issues, ...duplicateKeyIssues(CHART_FACTION_SPEC, model)];
   },
-  warnings: (model, vocabulary) =>
+  warnings: (model) =>
     model.rows.flatMap((row, index) => {
       const label = rowLabel(CHART_FACTION_SPEC, row, index);
-      const warnings = [...roundedIntegerWarnings(CHART_FACTION_SPEC.columns, row, label), ...tierSpanWarnings(row, label, vocabulary)];
+      const warnings = roundedIntegerWarnings(CHART_FACTION_SPEC.columns, row, label);
       if (!(numberValue(row, 'weight', 1) > 0)) {
         warnings.push(`${label}: a weight of 0 or less means it is never picked`);
       }
       return warnings;
     }),
-  summary: tierSpanSummary,
+  summary: (row) => `weight ${value(row, 'weight') || '1'}`,
 };
 
 export const CHART_BLOCKED_ABILITY_SPEC: ChartTableSpec = {

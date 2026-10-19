@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.items.Item;
 import exiledsector.items.SlottedRoll;
 import exiledsector.items.StarChart;
+import exiledsector.modifiers.ModifierEffect;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ScaleContext;
 import org.apache.log4j.Logger;
@@ -30,10 +31,11 @@ public final class ChartGenContext {
     public record AppliedEffect(ChartEffect effect, float value) {
     }
 
-    private static final ChartGenContext NONE = new ChartGenContext(List.of(), 0);
+    private static final ChartGenContext NONE = new ChartGenContext(List.of(), 0, null);
 
     private final List<AppliedEffect> applied;
     private final int quality;
+    private final String factionId;
     private float fleetSizePercent;
     private int baseFleets;
     private int extraFleets;
@@ -49,9 +51,10 @@ public final class ChartGenContext {
     private float vaultRichnessPercent;
     private float rewardPercent;
 
-    private ChartGenContext(List<AppliedEffect> applied, int quality) {
+    private ChartGenContext(List<AppliedEffect> applied, int quality, String factionId) {
         this.applied = List.copyOf(applied);
         this.quality = Math.max(0, quality);
+        this.factionId = factionId;
         for (AppliedEffect effect : this.applied) {
             effect.effect().beforeGeneration(this, effect.value());
         }
@@ -66,11 +69,15 @@ public final class ChartGenContext {
     }
 
     public static ChartGenContext of(List<AppliedEffect> applied, int quality) {
+        return of(applied, quality, null);
+    }
+
+    public static ChartGenContext of(List<AppliedEffect> applied, int quality, String factionId) {
         boolean noEffects = applied == null || applied.isEmpty();
-        if (noEffects && quality <= 0) {
+        if (noEffects && quality <= 0 && factionId == null) {
             return NONE;
         }
-        return new ChartGenContext(noEffects ? List.of() : applied, quality);
+        return new ChartGenContext(noEffects ? List.of() : applied, quality, factionId);
     }
 
     public static ChartGenContext from(Item chart) {
@@ -80,8 +87,12 @@ public final class ChartGenContext {
         ModifierEffects effects = chart.modifierEffects();
         ScaleContext scale = chart.scaleContext(null);
         List<AppliedEffect> applied = new ArrayList<>();
+        String factionId = null;
         for (SlottedRoll roll : chart.rolls()) {
-            if (roll.roll().effect(effects) instanceof ChartEffect effect) {
+            ModifierEffect rolledEffect = roll.roll().effect(effects);
+            if (rolledEffect instanceof ChartFactionEffect faction) {
+                factionId = factionId == null ? faction.factionId() : factionId;
+            } else if (rolledEffect instanceof ChartEffect effect) {
                 if (roll.line() == null) {
                     reportUnresolved(chart, effect);
                 } else {
@@ -89,7 +100,7 @@ public final class ChartGenContext {
                 }
             }
         }
-        return of(applied, chart instanceof StarChart starChart ? starChart.quality() : 0);
+        return of(applied, chart instanceof StarChart starChart ? starChart.quality() : 0, factionId);
     }
 
     private static void reportUnresolved(Item chart, ChartEffect effect) {
@@ -105,6 +116,10 @@ public final class ChartGenContext {
 
     public int quality() {
         return quality;
+    }
+
+    public String factionId() {
+        return factionId;
     }
 
     public boolean isEmpty() {
@@ -288,10 +303,11 @@ public final class ChartGenContext {
     }
 
     public String describe() {
+        String factionText = factionId == null ? "" : "faction " + factionId + ", ";
         if (isEmpty()) {
-            return "no chart modifiers";
+            return factionText + "no chart modifiers";
         }
-        return String.format(Locale.ROOT, "fleet size %+.0f%%, %+d rolled fleet(s), %+d added fleet(s), %+d officer level(s), %+d officer(s), warden size %+.0f%%, "
+        return factionText + String.format(Locale.ROOT, "fleet size %+.0f%%, %+d rolled fleet(s), %+d added fleet(s), %+d officer level(s), %+d officer(s), warden size %+.0f%%, "
                         + "fleet quality %+.0f%%, loot x%.2f (x%.2f without a vault), %+d point(s) of interest, hull item chance x%.2f, vault x%.2f, "
                         + "reward x%.2f, sensor range x%.2f, chart quality %d",
                 fleetSizePercent, baseFleets, extraFleets, officerLevelBonus, extraOfficers, wardenSizePercent,

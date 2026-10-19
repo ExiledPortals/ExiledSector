@@ -18,6 +18,7 @@ public final class ChartEffects implements ModifierEffects {
 
     @Override
     public ModifierEffect byName(String effectName) {
-        return ChartEffect.byNameOrNull(effectName);
+        ChartEffect effect = ChartEffect.byNameOrNull(effectName);
+        return effect != null ? effect : ChartFactions.effectByName(effectName);
     }
 }

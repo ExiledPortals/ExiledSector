@@ -34,8 +34,13 @@ public record ItemData(String definitionId, long seed, List<RolledModifier> expl
         boolean starChart = definition.type() == ItemType.STAR_CHART;
         int rolledTier = starChart ? StarChartDefinitions.tierAtLeastMinimum(definition.id(), tier) : tier;
         List<RolledModifier> modifiers = ItemRoller.rollAtTier(definition, seed, rolledTier);
-        ItemTraits tierTraits = starChart ? ItemTraits.ofTier(rolledTier) : null;
+        ItemTraits tierTraits = starChart ? chartTraits(definition, seed, rolledTier) : null;
         return new ItemData(definition.id(), seed, modifiers, ItemNames.freeze(definition, seed, modifiers), tierTraits);
+    }
+
+    private static ItemTraits chartTraits(ItemDefinition definition, long seed, int tier) {
+        List<RolledModifier> implicits = StarChartImplicits.isLoaded() ? StarChartImplicits.roll(StarChartDefinitions.systemType(definition.id()), seed) : List.of();
+        return new ItemTraits(tier, 0, null, implicits.isEmpty() ? null : implicits);
     }
 
     public static ItemData of(Item item) {

@@ -1,6 +1,8 @@
 package exiledsector.charts;
 
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import exiledsector.items.StarChartImplicits;
+import exiledsector.modifiers.Modifier;
 import exiledsector.skills.npc.NpcTreeSize;
 import exiledsector.skills.npc.RealSkillData;
 import org.json.CDL;
@@ -14,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -183,22 +186,45 @@ class ChartContentDataTest {
     }
 
     @Test
-    void factionsAreFilteredByTierAndByWhetherTheirModIsLoaded() throws Exception {
+    void onlyVanillaFactionsAreListedAndUnloadedOnesAreSkipped() throws Exception {
         ChartFactions.register(csvRows(ChartFactions.PATH));
-        Set<String> loaded = Set.of("pirates", "hegemony", "remnant", "luddic_path", "independent", "mercenary", "sindrian_diktat",
+        Set<String> vanilla = Set.of("pirates", "hegemony", "remnant", "luddic_path", "independent", "mercenary", "sindrian_diktat",
                 "persean", "luddic_church", "tritachyon", "derelict");
 
-        List<ChartFaction> atOne = ChartFactions.availableAt(ChartFactions.all(), 1, loaded::contains);
-        List<ChartFaction> atFifteen = ChartFactions.availableAt(ChartFactions.all(), 15, loaded::contains);
-
-        assertTrue(atOne.stream().anyMatch(faction -> faction.factionId().equals("pirates")));
-        assertTrue(atOne.stream().noneMatch(faction -> faction.factionId().equals("remnant")));
-        assertTrue(atFifteen.stream().anyMatch(faction -> faction.factionId().equals("remnant")));
-        assertEquals(loaded, atFifteen.stream().map(ChartFaction::factionId).collect(Collectors.toSet()), "every loaded faction can guard tier 15");
-        assertTrue(atFifteen.stream().noneMatch(faction -> faction.factionId().equals("diableavionics")));
-        assertEquals(ChartFaction.FALLBACK, ChartFactions.pick(ChartFactions.all(), 5, id -> false, new Random(1)));
+        assertEquals(vanilla, ChartFactions.all().stream().map(ChartFaction::factionId).collect(Collectors.toSet()));
+        assertEquals(vanilla, ChartFactions.available(ChartFactions.all(), vanilla::contains).stream().map(ChartFaction::factionId)
+                .collect(Collectors.toSet()));
+        assertEquals(ChartFaction.FALLBACK, ChartFactions.pick(ChartFactions.all(), id -> false, new Random(1)));
         for (int seed = 0; seed < 50; seed++) {
-            assertTrue(loaded.contains(ChartFactions.pick(ChartFactions.all(), 8, loaded::contains, new Random(seed)).factionId()));
+            assertTrue(vanilla.contains(ChartFactions.pick(ChartFactions.all(), vanilla::contains, new Random(seed)).factionId()));
         }
+    }
+
+    @Test
+    void aChartsFactionIsUsedWhenLoadedAndRandomOtherwise() throws Exception {
+        ChartFactions.register(csvRows(ChartFactions.PATH));
+        Predicate<String> everyFaction = id -> true;
+
+        ChartFaction remnant = ChartFactions.resolve("remnant", ChartFactions.all(), everyFaction, new Random(1));
+        assertEquals("remnant", remnant.factionId());
+        assertEquals(15f, remnant.fleetQualityBonus());
+        assertEquals(ChartFaction.unlisted("diableavionics"), ChartFactions.resolve("diableavionics", ChartFactions.all(), everyFaction, new Random(1)));
+        assertNotEquals("diableavionics", ChartFactions.resolve("diableavionics", ChartFactions.all(), id -> !id.equals("diableavionics"),
+                new Random(1)).factionId());
+        assertTrue(ChartFactions.all().contains(ChartFactions.resolve(null, ChartFactions.all(), everyFaction, new Random(1))));
+    }
+
+    @Test
+    void everyListedFactionIsAWeightedChartImplicit() throws Exception {
+        ChartFactions.register(csvRows(ChartFactions.PATH));
+
+        List<String> implicitIds = StarChartImplicits.sharedChoices().stream().map(Modifier::id).toList();
+        assertEquals(ChartFactions.all().size(), implicitIds.size());
+        assertTrue(implicitIds.contains("CHART_FACTION_LUDDIC_PATH"));
+        assertEquals(new ChartFactionEffect("luddic_path"), ChartEffects.RESOLVER.byName("CHART_FACTION_LUDDIC_PATH"));
+        assertEquals(new ChartFactionEffect("diableavionics"), ChartEffects.RESOLVER.byName("CHART_FACTION_DIABLEAVIONICS"),
+                "a faction removed from the list still reads, so old charts fall back to a random faction instead of an unreadable line");
+        ChartFactions.resetForTests();
+        assertTrue(StarChartImplicits.sharedChoices().isEmpty());
     }
 }

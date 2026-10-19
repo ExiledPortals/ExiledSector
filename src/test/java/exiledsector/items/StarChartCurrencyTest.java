@@ -97,7 +97,7 @@ class StarChartCurrencyTest {
 
     @Test
     void theChartRowListsTheExtendedKernelsThenTheChartCurrenciesAndShipTypesStayAsTheyWere() {
-        assertEquals(List.of(CraftingCurrency.AUGMENTATION, CraftingCurrency.CORRUPTION, CraftingCurrency.TRANSPOSITION,
+        assertEquals(List.of(CraftingCurrency.AUGMENTATION, CraftingCurrency.ATTUNEMENT, CraftingCurrency.CORRUPTION, CraftingCurrency.TRANSPOSITION,
                         CraftingCurrency.RECALIBRATION, StarChartCurrency.REFORGE, StarChartCurrency.ANNULMENT, StarChartCurrency.CARTOGRAPHY),
                 ItemCurrencies.forType(ItemType.STAR_CHART));
         assertEquals(Arrays.asList(CraftingCurrency.values()), ItemCurrencies.forType(ItemType.SUBROUTINE));
@@ -113,7 +113,7 @@ class StarChartCurrencyTest {
         }
 
         StarChartCurrency.registerAll();
-        assertEquals(7, ItemCurrencies.forType(ItemType.STAR_CHART).size());
+        assertEquals(8, ItemCurrencies.forType(ItemType.STAR_CHART).size());
         StarChartCurrency.unregisterAll();
         assertEquals(List.of(), ItemCurrencies.forType(ItemType.STAR_CHART));
         assertEquals(Arrays.asList(CraftingCurrency.values()), ItemCurrencies.all());
@@ -132,7 +132,6 @@ class StarChartCurrencyTest {
             assertNull(ItemCrafting.use(currency, hullItem, materials, shipStore, new Random(1L), ANY_UNIQUE), currency.name());
         }
         assertEquals(ItemCrafting.canAugment(hullItem), ItemCrafting.canUse(CraftingCurrency.AUGMENTATION, hullItem, ANY_UNIQUE));
-        assertFalse(ItemCrafting.canUse(CraftingCurrency.ATTUNEMENT, stored(SINGLE, 3L, 4), ANY_UNIQUE));
         assertFalse(ItemCrafting.canUse(CraftingCurrency.REPLICATION, stored(SINGLE, 3L, 4), ANY_UNIQUE));
     }
 
@@ -208,6 +207,37 @@ class StarChartCurrencyTest {
         assertSame(transposed, store.find(transposed.id()));
         assertNotSame(highTier, store.find(highTier.id()));
         assertFalse(ItemCrafting.canUse(CraftingCurrency.TRANSPOSITION, stored(SINGLE, 2L, 6), ANY_UNIQUE));
+    }
+
+    @Test
+    void attunementRerollsTheChartsFactionAndLeavesItsModifiersAlone() {
+        Set<String> factionsSeen = new java.util.HashSet<>();
+        for (long seed = 0; seed < 40; seed++) {
+            StarChart chart = stored(SINGLE, seed, 8);
+            String factionBefore = chart.implicits().get(0).modifierId();
+            List<RolledModifier> explicitsBefore = List.copyOf(chart.explicits());
+            assertTrue(ItemCrafting.canUse(CraftingCurrency.ATTUNEMENT, chart, ANY_UNIQUE));
+
+            assertSame(chart, use(CraftingCurrency.ATTUNEMENT, chart, seed * 0x9E3779B97F4A7C15L));
+
+            String factionAfter = chart.implicits().get(0).modifierId();
+            assertEquals(1, chart.implicits().size());
+            assertNotEquals(factionBefore, factionAfter);
+            assertTrue(factionAfter.startsWith("CHART_FACTION_"), factionAfter);
+            assertEquals(explicitsBefore, chart.explicits());
+            assertEquals(chart.implicits(), ((StarChart) ItemData.parse(ItemData.of(chart).encode()).preview()).implicits());
+            factionsSeen.add(factionAfter);
+        }
+        assertTrue(factionsSeen.size() > 5, factionsSeen.toString());
+    }
+
+    @Test
+    void attunementCannotChangeTheFactionWhenOnlyThatFactionIsListed() throws Exception {
+        StarChart chart = stored(SINGLE, 3L, 8);
+        String faction = chart.implicits().get(0).modifierId().substring("CHART_FACTION_".length()).toLowerCase(java.util.Locale.ROOT);
+        exiledsector.charts.ChartFactions.register(new org.json.JSONArray("[{\"faction\": \"" + faction + "\", \"weight\": \"1\"}]"));
+
+        assertFalse(ItemCrafting.canUse(CraftingCurrency.ATTUNEMENT, chart, ANY_UNIQUE));
     }
 
     @Test

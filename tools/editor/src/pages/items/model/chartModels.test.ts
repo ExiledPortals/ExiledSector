@@ -348,10 +348,9 @@ describe('chart tables', () => {
       'odd: a cost or weight of 0 or less means it is never placed',
       'No vault point of interest, so the vault objective is never picked',
     ]);
-    const factions = chartTable(CHART_FACTION_SPEC, 'faction,weight,min_tier\npirates,0,0\npirates,1,1\n');
+    const factions = chartTable(CHART_FACTION_SPEC, 'faction,weight\npirates,0\npirates,1\n');
     expect(CHART_FACTION_SPEC.issues(factions, vocabulary)).toEqual(['pirates: listed more than once, so only its last row is used']);
     expect(CHART_FACTION_SPEC.warnings(factions, vocabulary)).toEqual([
-      'pirates: min_tier 0 is outside tiers 1 to 15, so it is clamped',
       'pirates: a weight of 0 or less means it is never picked',
     ]);
     const abilities = chartTable(CHART_BLOCKED_ABILITY_SPEC, 'ability_id,note\nfracture_jump,\nfracture_jump,\n');

@@ -20,6 +20,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public abstract class Item {
 
@@ -358,6 +359,25 @@ public abstract class Item {
 
     List<Modifier> implicitCorruptionPool() {
         return ItemImplicits.corruptionPool();
+    }
+
+    boolean implicitCanVary(RolledModifier implicit) {
+        for (RolledEffect line : implicit.lines()) {
+            ModifierLine lineDefinition = implicitLine(line.effectName());
+            if (lineDefinition != null && lineDefinition.canVary()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    RolledModifier rerolledImplicit(RolledModifier implicit, Random random) {
+        List<RolledEffect> rerolledLines = new ArrayList<>(implicit.lines().size());
+        for (RolledEffect line : implicit.lines()) {
+            ModifierLine lineDefinition = implicitLine(line.effectName());
+            rerolledLines.add(lineDefinition == null ? line : new RolledEffect(line.effectName(), lineDefinition.roll(random)));
+        }
+        return implicit.withLines(rerolledLines);
     }
 
     Modifier explicitModifier(String modifierId) {

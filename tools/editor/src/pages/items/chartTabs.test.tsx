@@ -111,22 +111,14 @@ describe('star chart editing', () => {
     expect(server.readProjectFile(CHART_MODIFIERS_FILE)).toBe(before.replace('CHART_REWARD_PERCENT:t1=10-20/', 'CHART_REWARD_PERCENT:t1=10-22/'));
   }, 90000);
 
-  it('edits a system-type implicit and saves it to star_chart_modifiers.csv', async () => {
+  it('shows the star chart system types without implicits and points to the faction table', async () => {
     renderWithProviders(<ImplicitsTab vocabulary={vocabulary} />);
     await screen.findByLabelText('ARMOR_PERCENT max', undefined, { timeout: 30000 });
     await switchToStarCharts();
 
-    const maxInput = await screen.findByLabelText('CHART_ITEM_DROP_CHANCE_PERCENT max', undefined, { timeout: 30000 });
-    expect(screen.getAllByText(/CHART_BASE_FLEETS_BINARY is shared/).length).toBeGreaterThan(0);
-    const implicitsBefore = server.readProjectFile(CHART_IMPLICITS_FILE);
-    const modifiersBefore = server.readProjectFile(CHART_MODIFIERS_FILE);
-
-    fireEvent.change(maxInput, { target: { value: '12' } });
-    fireEvent.click(saveButton());
-    await screen.findByText('Saved star_chart_implicits.csv and star_chart_modifiers.csv', undefined, { timeout: 30000 });
-
-    expect(server.readProjectFile(CHART_MODIFIERS_FILE)).toBe(modifiersBefore.replace('CHART_ITEM_DROP_CHANCE_PERCENT:5:10,', 'CHART_ITEM_DROP_CHANCE_PERCENT:5:12,'));
-    expect(server.readProjectFile(CHART_IMPLICITS_FILE)).toBe(implicitsBefore);
+    await screen.findByText(/first rolls one inhabiting faction by weight from chart_factions\.csv/, undefined, { timeout: 30000 });
+    expect(screen.getAllByText('No implicits.').length).toBe(vocabulary.chartSystemTypes.length + 1);
+    expect(server.readProjectFile(CHART_IMPLICITS_FILE).trim()).toBe('system_type,implicits');
   }, 90000);
 
   it('shows and edits the star chart codename words with sample names', async () => {
