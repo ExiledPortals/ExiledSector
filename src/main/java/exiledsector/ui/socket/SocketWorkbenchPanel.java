@@ -1013,7 +1013,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
                     centred(VanillaText.addPara(element, Translation.styled("socketable.tooltip.mirrored"), LINE_PAD, Misc.getGrayColor()));
                 }
                 if (loadedItem.corrupted()) {
-                    centred(VanillaText.addPara(element, Translation.styled(loadedItem.corruption().tooltipKey()), LINE_PAD, Misc.getGrayColor()));
+                    centred(VanillaText.addPara(element, Translation.styled("socketable.tooltip.corrupted"), LINE_PAD, Misc.getGrayColor()));
                 }
             }
             float paraPad = GAP * 2f;

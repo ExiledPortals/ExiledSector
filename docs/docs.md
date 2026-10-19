@@ -397,8 +397,7 @@ claiming or previewing an `npc:<definition>/<seed>` id, absorbing a cargo stack,
 yet gets `CorruptionOutcome.INNATE`. That counts as corrupted everywhere, so every currency refuses it
 exactly as it refuses an item a Corrupted Nanoswarm has touched, and its frame takes the corruption colour.
 A Corrupted Nanoswarm only ever rolls the other four outcomes (`CorruptionOutcome.NANOSWARM_OUTCOMES`). The
-tooltip and the workbench show "Corrupted from the start" for `INNATE`, which claims nothing was changed,
-and plain "Corrupted" for the rest.
+tooltip and the workbench show plain "Corrupted" for every outcome, `INNATE` included.
 
 Volume and Bypass subroutines also roll one tree node when they are created (`SubroutineKind.rollsNode`).
 The candidates come from `SubroutineNodePools`, where each kind plugs in a function from the definition to

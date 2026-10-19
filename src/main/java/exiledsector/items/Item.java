@@ -320,7 +320,7 @@ public abstract class Item {
             lines.add(Translation.styled("socketable.tooltip.mirrored"));
         }
         if (corruption != null) {
-            lines.add(Translation.styled(corruption.tooltipKey()));
+            lines.add(Translation.styled("socketable.tooltip.corrupted"));
         }
         return lines;
     }

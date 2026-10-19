@@ -130,11 +130,10 @@ class SubroutineCreationRollsTest {
     }
 
     @Test
-    void theTooltipSaysCorruptedWithoutClaimingAnythingChanged() {
+    void theTooltipSaysCorrupted() {
         List<String> lines = plainLines(stored(VOLUME, 3L));
 
-        assertTrue(lines.contains("Corrupted from the start"), lines.toString());
-        assertFalse(lines.contains("Corrupted"), lines.toString());
+        assertTrue(lines.contains("Corrupted"), lines.toString());
     }
 
     @Test

@@ -600,7 +600,6 @@
     "socketable.tooltip.storage": "Opening Hull Item Storage from a ship's skill tree, or installing this, moves it from your cargo into hull item storage.",
     "socketable.tooltip.mirrored": "<hl>Mirrored</hl>",
     "socketable.tooltip.corrupted": "<bad>Corrupted</bad>",
-    "socketable.tooltip.corruptedInnate": "<bad>Corrupted</bad> from the start",
     "socketable.tooltip.rolledNode": "Encoded node: <hl>{node}</hl>",
     "socketable.tooltip.rolledNodeUnknown": "Encoded node: <bad>unknown</bad> (no longer in the skill tree)",
     "socketable.doctrine.revision": "Firmware revision: <hl>Rev. {revision}</hl>",
