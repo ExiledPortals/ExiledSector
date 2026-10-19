@@ -2,7 +2,10 @@ package exiledsector.charts;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
+import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.campaign.SectorEntityToken;
+import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.items.ItemDrops;
@@ -36,22 +39,69 @@ public final class ChartFleetLoot {
     }
 
     public static boolean isChartFleet(CampaignFleetAPI fleet) {
+        return ledgerOf(fleet) != null;
+    }
+
+    static MemoryAPI ledgerOf(CampaignFleetAPI fleet) {
         MemoryAPI fleetMemory = fleet == null ? null : fleet.getMemoryWithoutUpdate();
-        return fleetMemory != null && fleetMemory.contains(ChartIds.START_DP_MEMORY_KEY);
+        if (fleetMemory == null) {
+            return null;
+        }
+        if (fleetMemory.contains(ChartIds.START_DP_MEMORY_KEY)) {
+            return fleetMemory;
+        }
+        return fleetMemory.get(ChartIds.DEFENDED_SITE_MEMORY_KEY) instanceof SectorEntityToken site ? site.getMemoryWithoutUpdate() : null;
+    }
+
+    public static boolean adoptDefender(CampaignFleetAPI fleet, LocationAPI battleLocation) {
+        if (fleet == null || isChartFleet(fleet)) {
+            return fleet != null;
+        }
+        ChartRun run = ChartDrops.liveSystemRun(battleLocation);
+        SectorEntityToken site = run == null ? null : defendedSite(fleet, (StarSystemAPI) battleLocation, run.runId());
+        float defenderDeploymentPoints = site == null ? 0f : deploymentPoints(fleet);
+        if (!(defenderDeploymentPoints > 0f)) {
+            return false;
+        }
+        MemoryAPI siteMemory = site.getMemoryWithoutUpdate();
+        if (!siteMemory.contains(ChartIds.START_DP_MEMORY_KEY)) {
+            siteMemory.set(ChartIds.START_DP_MEMORY_KEY, defenderDeploymentPoints);
+        }
+        MemoryAPI fleetMemory = fleet.getMemoryWithoutUpdate();
+        fleetMemory.set(ChartIds.fleetRunKey(run.runId()), true);
+        fleetMemory.set(ChartIds.DEFENDED_SITE_MEMORY_KEY, site);
+        if (!siteMemory.getBoolean(ChartIds.DEFENDER_LOOT_ADDED_MEMORY_KEY)) {
+            ChartVanillaLoot.addToFleet(fleet, false, ChartRunEffects.contextOf(run), run.tier());
+            siteMemory.set(ChartIds.DEFENDER_LOOT_ADDED_MEMORY_KEY, true);
+        }
+        return true;
+    }
+
+    static SectorEntityToken defendedSite(CampaignFleetAPI fleet, StarSystemAPI system, String runId) {
+        for (SectorEntityToken entity : system.getEntitiesWithTag(ChartIds.CONTENT_TAG)) {
+            if (entity instanceof CampaignFleetAPI || !ChartIds.belongsToRun(entity, runId)) {
+                continue;
+            }
+            MemoryAPI entityMemory = entity.getMemoryWithoutUpdate();
+            if (entityMemory != null && entityMemory.get(ChartIds.VANILLA_DEFENDER_FLEET_MEMORY_KEY) == fleet) {
+                return entity;
+            }
+        }
+        return null;
     }
 
     static float claimShare(CampaignFleetAPI fleet, float defeatedDeploymentPoints) {
-        MemoryAPI fleetMemory = fleet.getMemoryWithoutUpdate();
-        float startDeploymentPoints = fleetMemory.getFloat(ChartIds.START_DP_MEMORY_KEY);
+        MemoryAPI ledger = ledgerOf(fleet);
+        float startDeploymentPoints = ledger == null ? 0f : ledger.getFloat(ChartIds.START_DP_MEMORY_KEY);
         if (!(startDeploymentPoints > 0f) || !(defeatedDeploymentPoints > 0f)) {
             return 0f;
         }
-        float paidDeploymentPoints = Math.max(0f, fleetMemory.getFloat(ChartIds.LOOT_DP_PAID_MEMORY_KEY));
+        float paidDeploymentPoints = Math.max(0f, ledger.getFloat(ChartIds.LOOT_DP_PAID_MEMORY_KEY));
         float claimedDeploymentPoints = Math.min(defeatedDeploymentPoints, startDeploymentPoints - paidDeploymentPoints);
         if (!(claimedDeploymentPoints > 0f)) {
             return 0f;
         }
-        fleetMemory.set(ChartIds.LOOT_DP_PAID_MEMORY_KEY, paidDeploymentPoints + claimedDeploymentPoints);
+        ledger.set(ChartIds.LOOT_DP_PAID_MEMORY_KEY, paidDeploymentPoints + claimedDeploymentPoints);
         return claimedDeploymentPoints / startDeploymentPoints;
     }
 

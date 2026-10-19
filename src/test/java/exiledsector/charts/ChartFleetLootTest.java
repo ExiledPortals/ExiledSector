@@ -3,11 +3,15 @@ package exiledsector.charts;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
+import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.campaign.SectorEntityToken;
+import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec;
 import exiledsector.charts.ChartGenContext.AppliedEffect;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDrops;
@@ -137,6 +141,76 @@ class ChartFleetLootTest {
         assertTrue(ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("other", "otherRun", 100f), 100f, new Random(1L)).isEmpty());
         assertTrue(ChartFleetLoot.roll(sector, mock(CampaignFleetAPI.class), 100f, new Random(1L)).isEmpty());
         assertEquals(1, chartCount(ChartFleetLoot.roll(sector, fleet, 100f, new Random(1L))));
+    }
+
+    private static StarSystemAPI chartSystem(SectorEntityToken... runEntities) {
+        StarSystemAPI system = mock(StarSystemAPI.class);
+        when(system.hasTag(ChartIds.SYSTEM_TAG)).thenReturn(true);
+        when(system.getTags()).thenReturn(List.of(ChartIds.SYSTEM_TAG, ChartIds.runTag(RUN_ID)));
+        when(system.getEntitiesWithTag(ChartIds.CONTENT_TAG)).thenReturn(List.of(runEntities));
+        return system;
+    }
+
+    private static SectorEntityToken siteDefendedBy(CampaignFleetAPI defenders) {
+        SectorEntityToken site = mock(SectorEntityToken.class);
+        when(site.hasTag(ChartIds.runTag(RUN_ID))).thenReturn(true);
+        MemoryAPI siteMemory = FakeChartContentEngine.memory();
+        siteMemory.set(ChartIds.VANILLA_DEFENDER_FLEET_MEMORY_KEY, defenders);
+        when(site.getMemoryWithoutUpdate()).thenReturn(siteMemory);
+        return site;
+    }
+
+    private static CampaignFleetAPI defenders(float deploymentPoints) {
+        CampaignFleetAPI fleet = mock(CampaignFleetAPI.class);
+        when(fleet.getId()).thenReturn("defenders");
+        MemoryAPI fleetMemory = FakeChartContentEngine.memory();
+        when(fleet.getMemoryWithoutUpdate()).thenReturn(fleetMemory);
+        FleetDataAPI fleetData = mock(FleetDataAPI.class);
+        FleetMemberAPI drone = mock(FleetMemberAPI.class);
+        when(drone.getDeploymentPointsCost()).thenReturn(deploymentPoints);
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(drone));
+        when(fleet.getFleetData()).thenReturn(fleetData);
+        when(fleet.getFleetPoints()).thenReturn(200);
+        return fleet;
+    }
+
+    @Test
+    void aSitesSpawnedDefendersBecomeAChartFleetWithTheirLedgerOnTheSite() throws Exception {
+        ChartDrops.register(new JSONArray().put(rule("chart_fleet", 2f)));
+        ChartLoot.register(new JSONArray().put(new JSONObject().put("id", "fleet_weapons1").put("drop_type", "weapon").put("scope", "fleet")
+                .put("group", "weapons1").put("mode", "random").put("amount", "1")), group -> true);
+        try {
+            storeLiveRun(9);
+            CampaignFleetAPI drones = defenders(40f);
+            SectorEntityToken probe = siteDefendedBy(drones);
+            StarSystemAPI system = chartSystem(probe);
+
+            assertTrue(ChartFleetLoot.adoptDefender(drones, system));
+            assertTrue(ChartFleetLoot.isChartFleet(drones));
+            assertEquals(40f, probe.getMemoryWithoutUpdate().getFloat(ChartIds.START_DP_MEMORY_KEY));
+            Mockito.verify(drones).addDropRandom(Mockito.<SalvageEntityGenDataSpec.DropData>argThat(drop -> "weapons1".equals(drop.group)));
+            assertEquals(1, chartCount(ChartFleetLoot.roll(sector, drones, 20f, new Random(3L))));
+
+            MemoryAPI wipedByVanilla = FakeChartContentEngine.memory();
+            when(drones.getMemoryWithoutUpdate()).thenReturn(wipedByVanilla);
+            assertTrue(ChartFleetLoot.adoptDefender(drones, system));
+            Mockito.verify(drones, Mockito.times(1)).addDropRandom(Mockito.any(SalvageEntityGenDataSpec.DropData.class));
+            assertEquals(1, chartCount(ChartFleetLoot.roll(sector, drones, 40f, new Random(3L))), "a rematch pays only the half not yet paid");
+            assertTrue(ChartFleetLoot.roll(sector, drones, 40f, new Random(3L)).isEmpty());
+        } finally {
+            ChartLoot.clear();
+        }
+    }
+
+    @Test
+    void fleetsThatDefendNoSiteOfTheLiveRunAreNotAdopted() {
+        storeLiveRun(9);
+        CampaignFleetAPI stray = defenders(40f);
+        StarSystemAPI system = chartSystem(siteDefendedBy(defenders(10f)));
+
+        assertFalse(ChartFleetLoot.adoptDefender(stray, system));
+        assertFalse(ChartFleetLoot.adoptDefender(defenders(40f), mock(LocationAPI.class)));
+        assertFalse(ChartFleetLoot.isChartFleet(stray));
     }
 
     @Test

@@ -382,8 +382,18 @@ Battles inside a chart system don't roll the general battle chart drop.
 
 The vanilla fleet rows in `chart_loot.csv` are sized per 100 fleet points at spawn and scaled by the bonus;
 the warden adds its spoils rows on top, also scaled by the Hoard. Vanilla pays a fleet's drop entries the
-first time it is on the losing side of a battle, even if most of it retreats. Salvage defenders spawned by
-vanilla don't carry any of this yet.
+first time it is on the losing side of a battle, even if most of it retreats.
+
+Defenders that vanilla spawns at a site (`SalvageGenFromSeed`, such as the drones at Domain sites) are adopted
+the first time the player wins an engagement against them: `ChartFleetLoot.adoptDefender` finds the run's
+site whose `$defenderFleet` is that fleet and gives the fleet the run key. Their starting points and paid
+total live on the site's memory, not the fleet's, because vanilla clears a defender fleet's memory every
+time the player leaves the fight and, unless the player won outright, may keep the fleet for a rematch. A
+defender's starting points are recorded at the first engagement the player wins, so a rematch against a
+fleet already worn down in a lost engagement pays its remainder as a full share, still capped at one roll. The vanilla fleet rows go onto
+the defenders once per site, for the same reason. Defenders roll the fleet rule, never the warden's, and
+don't count towards the objective. Vanilla's defender plugin is left alone: it is picked by priority, so
+registering our own would take over other mods' strength and size choices.
 
 ### Colony items
 

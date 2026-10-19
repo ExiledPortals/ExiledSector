@@ -135,9 +135,22 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         }
         for (FleetMemberAPI member : lostMembers) {
             CampaignFleetAPI sourceFleet = member == null ? null : battle.getSourceFleet(member);
-            if (ChartFleetLoot.isChartFleet(sourceFleet)) {
+            if (ChartFleetLoot.isChartFleet(sourceFleet) || adoptedAsDefender(sourceFleet)) {
                 pendingLoot.chartFleetDeploymentPoints.merge(sourceFleet, member.getDeploymentPointsCost(), Float::sum);
             }
+        }
+    }
+
+    private static boolean adoptedAsDefender(CampaignFleetAPI sourceFleet) {
+        CampaignFleetAPI playerFleet = PlayerFleet.orNull();
+        if (sourceFleet == null || playerFleet == null) {
+            return false;
+        }
+        try {
+            return ChartFleetLoot.adoptDefender(sourceFleet, playerFleet.getContainingLocation());
+        } catch (RuntimeException e) {
+            LOG.error("[ExiledSector] Checking whether a fleet defends a Star Chart site failed", e);
+            return false;
         }
     }
 

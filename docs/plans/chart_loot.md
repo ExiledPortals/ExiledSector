@@ -143,7 +143,7 @@ The warden takes over the vault's role as the big payout. It exists from tier 4 
 
 There are no spoils at tiers 1 to 3, because there is no warden there.
 
-### Salvage defenders
+### Salvage defenders (done, without the plugin)
 
 Some sites spawn their own defenders when the player arrives, for example the Domain drones that guard probes and survey ships (`probDefenders` in the salvage spec). Since step 4 these fleets get nothing of ours: they don't carry the run key or a starting deployment point count, and the old `system_battle` roll is gone. They should count as chart fleets, so the loot bonuses reach them too.
 
@@ -268,7 +268,7 @@ Points 1 to 4 make one consistent rule: a modifier means the same thing at every
 6. Colony items: `colony_item_chance` tier column, `chart_colony_items.csv`, the single seeded roll with the soft ceiling, extra salvage on the warden or a site. Colony Item effect. Done (67826c45). The tier chance lives in ChartTiers.colonyItemChance rather than on the ChartTier record, because chart modifiers never adjust it, and the ceiling is the reserved ceiling row of chart_colony_items.csv.
 7. Arsenal station with IndEvo compat. Done (555e1e86, merged into main).
 8. `docs/docs.md` chart loot section, `docs/plans/star_charts.md` cross-reference, strings in both languages. Done. Each step added its own strings in both languages; the docs section is "Star Chart loot".
-9. Salvage defenders (section 4): tag defender fleets that spawn at the run's sites as chart fleets, so they roll fleet loot and, once step 5 is in, get the vanilla fleet entries. Needs steps 4 and 5. Update `docs/docs.md` with it.
+9. Salvage defenders (section 4): tag defender fleets that spawn at the run's sites as chart fleets, so they roll fleet loot and, once step 5 is in, get the vanilla fleet entries. Needs steps 4 and 5. Update `docs/docs.md` with it. Done. Built without the defender plugin: vanilla picks one by priority, so ours would have taken over other mods' strength and size choices. Instead ItemLootListener adopts a defender fleet the first time the player wins an engagement against it, matching it to the run site whose $defenderFleet it is, and keeps its ledger on the site because vanilla clears the fleet's memory between attempts.
 
 Each step builds and passes tests on its own. Steps 4, 5 and 6 touch the same generator and listeners, so they run one after the other, not in parallel.
 
