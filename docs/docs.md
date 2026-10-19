@@ -316,6 +316,85 @@ other sprites (relative to `--ships`, which defaults to the dev install's `graph
 `--preview <file>` writes a sheet of all twelve icons. The rarity colours are copied from `ItemRarity`,
 so change both together.
 
+## Star Chart loot
+
+Loot in a chart system has three layers: the sites placed in it, the sources loot comes out of (salvaging a
+site, beating a chart fleet, finishing the objective) and the drop types (hull items, weapons, currency and
+so on). A drop bonus raises its type at every source in the system, and a site bonus only changes what gets
+placed. The completion reward is the exception: only Bounty and Quantity scale it. The full design is in
+`docs/plans/chart_loot.md`; every amount in the data is a placeholder.
+
+### Sites
+
+Each tier has four site budgets in `star_chart_tiers.csv`, one per category: caches, Domain sites, stations
+and derelicts. `ChartContentPlanner` spends them in the order Domain, stations, derelicts, caches, each with
+the usual pick weighted towards sites whose cost is near the average. When what is left is smaller than the
+cheapest member's cost, one more of the cheapest is bought with a chance of leftover ÷ cost, so a small
+budget bonus still adds sites on average. The 24-site cap counts all categories together, so it cuts the
+cheap caches first. Plenty multiplies all four budgets and Stockpiles, Relics, Outposts and Wreckage one
+each. Domain sites can bring their vanilla drone defenders, so a Domain bonus also adds fights.
+
+A row in `chart_poi.csv` with `requires_mod` is only placed while that mod is enabled. The Industrial
+Evolution arsenal station also needs IndEvo's derelict and derelict station settings on.
+
+### Drop bonuses
+
+`ChartGenContext` adds up the percentages for each drop type. `dropMult(type)` is 1 plus the type's own
+bonus, plus Salvage for the item types (hull sections, subroutines, star charts), plus Quantity for every
+type except colony items, all divided by 100. Chart quality counts as 1% Quantity per point. The chart
+tooltip lists the totals that aren't zero.
+
+### Our items and materials
+
+The general hull item and subroutine rolls in `item_salvage.csv` are scaled by Salvage and Quantity. A
+bonus to one type, such as Reactor items, adds a separate targeted roll instead of changing the general
+odds: the expected number of extra items is the bonus times the rule's base expected item count, divided
+by the number of hull sections that can drop (subroutines are their own share). The targeted items are
+only ever of that type, and a type that can't drop yet gets nothing. Nanite Feedstock and Currency scale
+the material rolls separately. Currency covers the nanoswarms, the Inhibitors and the ciphers, and ciphers
+still only drop inside chart systems. Star charts use the Star Chart bonus.
+
+### Vanilla loot
+
+`chart_loot.csv` maps vanilla drop groups to the weapon, resource, blueprint and AI core types, and holds
+base entries per site category, per chart fleet and for the warden. When a site is placed, each mapped
+entry in its salvage spec, and each of the site's own entries such as a wreck's hull-sized value drop, gets
+a copy for the bonus. A random entry's copy gets the extra share of its chances as whole chances, rounded
+with the run seed. Scaling its `valueMult` instead would not survive: when a site turns into a debris field,
+vanilla resets `valueMult` on every random entry to 0.25, which would turn the copy into a full duplicate.
+A value entry's copy scales `valueMult`, which the debris field keeps. Base entries for the site's category
+are added on top, scaled by the bonus.
+
+Groups the game hasn't loaded are skipped, because vanilla throws on an unknown group. Colony item groups
+(`rare_tech` and its variants) can't be mapped at all, so no bonus scales the colony items in vanilla's own
+site specs. A wreck the player recovers as a ship pays none of its salvage loot, as in vanilla.
+
+### Chart fleets and the warden
+
+Each fleet records its starting deployment points (`$exiledSector_chartStartDp`) when it spawns. In every
+engagement the player wins, `ItemLootListener` traces each destroyed or disabled enemy ship to its fleet
+with `BattleAPI.getSourceFleet`. When the battle's loot is built, each chart fleet of the live run rolls the
+`exiledSector_chart_fleet` rule and the `chart_fleet` chart drop once, scaled by the share of its starting
+points destroyed. A running total in fleet memory (`$exiledSector_chartLootDpPaid`) caps a fleet at one
+full roll however many battles it takes. The warden also rolls `exiledSector_chart_warden` and
+`chart_warden`, scaled by the Hoard. Each fleet rolls on its own, so an error only loses that fleet's loot.
+Battles inside a chart system don't roll the general battle chart drop.
+
+The vanilla fleet rows in `chart_loot.csv` are sized per 100 fleet points at spawn and scaled by the bonus;
+the warden adds its spoils rows on top, also scaled by the Hoard. Vanilla pays a fleet's drop entries the
+first time it is on the losing side of a battle, even if most of it retreats. Salvage defenders spawned by
+vanilla don't carry any of this yet.
+
+### Colony items
+
+Each run makes exactly one colony item roll when its system is built, from its own seeded random. The
+chance is `ceiling × (1 − e^(−t × m ÷ ceiling))`, where `t` is the tier's `colony_item_chance` and `m` is 1
+plus the Providence bonus. Small chances come through almost unchanged and large ones bend towards the
+ceiling without reaching it. The ceiling is the reserved `ceiling` row of `chart_colony_items.csv` and must
+be below 1. On a success the item is picked by the weights in that file and goes to the warden, or else a
+random station or Domain site, or else any site, as vanilla extra salvage. It is paid once, in the battle
+loot or when the site is salvaged.
+
 ## Reflection
 
 Starsector's script class loader won't load a mod class whose source names `java.lang.reflect` (it also

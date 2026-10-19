@@ -9,7 +9,7 @@ Exiled Space is PureTilt's "PoE maps in Starsector". Its ideas are the right one
 Worth keeping:
 - Chips carry rolled modifiers loaded from CSV. Each modifier is a plugin with before-generation hooks (which change the fleet parameters) and after-generation hooks (which change the finished system).
 - A modifier's cost feeds both its drop weight and the reward.
-- A loot budget is spent on points of interest, weighted towards ones whose cost is close to the average.
+- A loot budget is spent on points of interest, weighted towards ones whose cost is close to the average. (Since 2026-10-19 this is four site budgets, one per site category; see `chart_loot.md` section 2 and the Star Chart loot section of `docs/docs.md`.)
 - Above a set FP, a commander skill shrinks deployment cost, so huge fleets can still be fought.
 - The chip UI previews a sample fleet.
 - Battle drops are seeded per ship, which resists save-scumming.
@@ -369,7 +369,8 @@ Uniques refuse the reforge and the annulment, and corrupted or mirrored charts r
 
 Chart drops come from `chart_drops.csv`, one row per source, through `ChartDrops`:
 - run_reward: completing an objective drops one chart and a 25 percent chance of a second, scaled by the chart's reward multiplier and capped at four. Each chart is 40 percent likely to be one tier higher. A chart-only currency comes with it 75 percent of the time.
-- system_salvage and system_battle: each salvaged point of interest and each won battle inside a chart system has a 4 percent chance of a chart at the run tier, scaled by the chart's quantity multiplier, and a small chance of a chart-only currency.
+- system_salvage: each salvaged point of interest inside a chart system has a 4 percent chance of a chart at the run tier, scaled by the chart's Star Chart bonus (which Quantity and Salvage also raise), and a small chance of a chart-only currency.
+- chart_fleet and chart_warden: these replaced system_battle on 2026-10-19. Each defeated fleet of the live run rolls once in total, scaled by the share of its starting deployment points destroyed, and the warden adds a richer roll scaled by the Hoard. The Star Chart loot section of `docs/docs.md` has the details.
 - battle: won battles outside chart systems that defeat at least 150 enemy deployment points have a 1 percent chance, at tier 1 plus one per 120 more points, up to tier 6.
 - salvage, techmining_first_find and techmining_monthly: rare finds at a tier from the player's level, up to tier 5.
 
