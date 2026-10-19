@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -18,6 +19,7 @@ public final class ChartPois {
     static final String PATH = "data/config/exiledSector/chart_poi.csv";
     static final String ID_COLUMN = "id";
     static final Set<String> DERELICT_TYPES = Set.of("CIVILIAN", "SMALL", "MEDIUM", "LARGE");
+    static final List<String> KIND_NAMES = Arrays.stream(ChartPoi.Kind.values()).map(kind -> kind.name().toLowerCase(Locale.ROOT)).toList();
     private static final Logger LOG = Logger.getLogger(ChartPois.class);
     private static volatile List<ChartPoi> pois = List.of();
 
@@ -52,7 +54,7 @@ public final class ChartPois {
         ChartPoi.Kind kind = ChartPoi.Kind.parse(ModCsv.text(row, "kind"));
         String entityType = ModCsv.text(row, "entity");
         if (kind == null) {
-            csv.skipRow(id, "kind must be cache, station or derelict");
+            csv.skipRow(id, "kind must be one of " + KIND_NAMES);
             return null;
         }
         if (entityType.isEmpty()) {
@@ -82,6 +84,16 @@ public final class ChartPois {
             }
         }
         return eligible;
+    }
+
+    static List<ChartPoi> ofKind(List<ChartPoi> candidates, ChartPoi.Kind kind) {
+        List<ChartPoi> members = new ArrayList<>();
+        for (ChartPoi poi : candidates) {
+            if (poi.kind() == kind) {
+                members.add(poi);
+            }
+        }
+        return members;
     }
 
     static void resetForTests() {

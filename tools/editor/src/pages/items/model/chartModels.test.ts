@@ -28,9 +28,9 @@ const vocabulary = buildVocabulary({
   itemUnlocks: ['defeated_ziggurat'],
   clearedChartTierPrefix: 'cleared_chart_tier_',
   chartTierRange: [1, 15],
-  chartEffects: ['CHART_EXTRA_FLEETS', 'CHART_QUANTITY_PERCENT', 'CHART_LOOT_BUDGET_PERCENT'],
+  chartEffects: ['CHART_EXTRA_FLEETS', 'CHART_QUANTITY_PERCENT', 'CHART_POI_BUDGET_PERCENT'],
   chartSystemTypes: ['SINGLE', 'BINARY_CLOSE'],
-  chartPoiKinds: ['cache', 'station', 'derelict'],
+  chartPoiKinds: ['cache', 'domain', 'station', 'derelict'],
   chartDerelictTypes: ['CIVILIAN', 'LARGE', 'MEDIUM', 'SMALL'],
   chartDropSources: [
     { id: 'run_reward', insideSystem: true },
@@ -41,8 +41,8 @@ const vocabulary = buildVocabulary({
 const CHART_MODIFIERS_CSV =
   'id,slot,item_types,lines,name\n' +
   'HYBRID_CHART_EXTRA_FLEETS,prefix,star_chart,CHART_EXTRA_FLEETS:t1=1/t8=2; CHART_QUANTITY_PERCENT:t1=5-7/t8=8-10,Crowded\n' +
-  'CHART_LOOT_BUDGET_PERCENT,suffix,star_chart,CHART_LOOT_BUDGET_PERCENT:t1=10-20,Plenty\n' +
-  'CHART_LOOT_BUDGET_PERCENT_SINGLE,implicit,star_chart,CHART_LOOT_BUDGET_PERCENT:5:10,\n';
+  'CHART_POI_BUDGET_PERCENT,suffix,star_chart,CHART_POI_BUDGET_PERCENT:t1=10-20,Plenty\n' +
+  'CHART_POI_BUDGET_PERCENT_SINGLE,implicit,star_chart,CHART_POI_BUDGET_PERCENT:5:10,\n';
 const chartCatalogue = modifierById(parseModifiersCsv(CHART_MODIFIERS_CSV).modifiers);
 
 function chartTable(spec: typeof CHART_TIER_SPEC, csv: string) {
@@ -51,7 +51,7 @@ function chartTable(spec: typeof CHART_TIER_SPEC, csv: string) {
 
 describe('star chart modifiers', () => {
   it('parses tier bands, including negative ranges and fixed values, and formats them back', () => {
-    const text = 'CHART_SENSOR_RANGE_PERCENT:t1=-25--15/t6=-35--25; CHART_EXTRA_FLEETS:t1=1/t8=2; CHART_LOOT_BUDGET_PERCENT:5:10';
+    const text = 'CHART_SENSOR_RANGE_PERCENT:t1=-25--15/t6=-35--25; CHART_EXTRA_FLEETS:t1=1/t8=2; CHART_POI_BUDGET_PERCENT:5:10';
     const lines = parseModifierLines(text);
     expect(lines[0].tierBands).toEqual([
       { tier: '1', min: '-25', max: '-15' },
@@ -65,11 +65,11 @@ describe('star chart modifiers', () => {
   });
 
   it('switches a range to tier bands and back, keeping every band for the next switch', () => {
-    const [line] = parseModifierLines('CHART_LOOT_BUDGET_PERCENT:5:10');
+    const [line] = parseModifierLines('CHART_POI_BUDGET_PERCENT:5:10');
     togglePerTierBand(line, true);
     expect(line.tierBands).toEqual([{ tier: '1', min: '5', max: '10' }]);
     togglePerTierBand(line, false);
-    expect(formatModifierLines([line])).toBe('CHART_LOOT_BUDGET_PERCENT:5:10');
+    expect(formatModifierLines([line])).toBe('CHART_POI_BUDGET_PERCENT:5:10');
     const [banded] = parseModifierLines('CHART_REWARD_PERCENT:t1=10-20/t6=20-35');
     togglePerTierBand(banded, false);
     togglePerTierBand(banded, true);
@@ -83,11 +83,11 @@ describe('star chart modifiers', () => {
   });
 
   it('keeps a band with a trailing dash as written and flags it, and accepts trailing colons like the game', () => {
-    const lines = parseModifierLines('CHART_LOOT_BUDGET_PERCENT:t1=5-; CHART_EXTRA_FLEETS:5:10:');
-    expect(formatModifierLines(lines)).toBe('CHART_LOOT_BUDGET_PERCENT:t1=5-; CHART_EXTRA_FLEETS:5:10:');
-    const modifier = { cells: [], id: 'HYBRID_CHART_LOOT_BUDGET_EXTRA_FLEETS', slot: 'prefix', itemTypes: ['star_chart'], lines, name: 'x' };
+    const lines = parseModifierLines('CHART_POI_BUDGET_PERCENT:t1=5-; CHART_EXTRA_FLEETS:5:10:');
+    expect(formatModifierLines(lines)).toBe('CHART_POI_BUDGET_PERCENT:t1=5-; CHART_EXTRA_FLEETS:5:10:');
+    const modifier = { cells: [], id: 'HYBRID_CHART_POI_BUDGET_EXTRA_FLEETS', slot: 'prefix', itemTypes: ['star_chart'], lines, name: 'x' };
     expect(validateModifiers([modifier], vocabulary, new Map(), 'chart')).toEqual([
-      'HYBRID_CHART_LOOT_BUDGET_EXTRA_FLEETS: CHART_LOOT_BUDGET_PERCENT has the tier band "t1=5-"; write each band as tN=value or tN=min-max',
+      'HYBRID_CHART_POI_BUDGET_EXTRA_FLEETS: CHART_POI_BUDGET_PERCENT has the tier band "t1=5-"; write each band as tN=value or tN=min-max',
     ]);
   });
 
@@ -101,7 +101,7 @@ describe('star chart modifiers', () => {
         'CHART_EXTRA_FLEETS,prefix,star_chart;hull_item,CHART_EXTRA_FLEETS:t2=1/t1=2,\n' +
         'HULL_MULT,prefix,star_chart,HULL_MULT:1:2,\n' +
         'CHART_QUANTITY_PERCENT,suffix,star_chart,CHART_QUANTITY_PERCENT:1/2/3/4,\n' +
-        'CHART_LOOT_BUDGET_PERCENT,suffix,star_chart,CHART_LOOT_BUDGET_PERCENT:t1=5-x/t16=9,\n',
+        'CHART_POI_BUDGET_PERCENT,suffix,star_chart,CHART_POI_BUDGET_PERCENT:t1=5-x/t16=9,\n',
     ).modifiers;
     expect(validateModifiers(modifiers, vocabulary, new Map(), 'chart', new Set(['HULL_MULT']))).toEqual([
       'CHART_EXTRA_FLEETS: CHART_EXTRA_FLEETS must start its first tier band at t1',
@@ -110,8 +110,8 @@ describe('star chart modifiers', () => {
       'HULL_MULT: item_modifiers.csv already has this id, and ids must be unique across both modifier files',
       'HULL_MULT: unknown star chart effect HULL_MULT',
       'CHART_QUANTITY_PERCENT: CHART_QUANTITY_PERCENT has hull size values, but star charts have no hull size; use tier bands or a min-max range',
-      'CHART_LOOT_BUDGET_PERCENT: CHART_LOOT_BUDGET_PERCENT has a t1 value that is not a plain number',
-      'CHART_LOOT_BUDGET_PERCENT: CHART_LOOT_BUDGET_PERCENT has a band at t16, above the highest tier 15',
+      'CHART_POI_BUDGET_PERCENT: CHART_POI_BUDGET_PERCENT has a t1 value that is not a plain number',
+      'CHART_POI_BUDGET_PERCENT: CHART_POI_BUDGET_PERCENT has a band at t16, above the highest tier 15',
     ]);
   });
 
@@ -134,25 +134,25 @@ describe('star chart definitions', () => {
   const header = 'id,system_type,name,icon,rarity,unique,min_tier,description,prefixes,suffixes,unlock\n';
 
   it('keeps pool tier ranges with and without a weight', () => {
-    const pool = parsePool('@HYBRID_CHART_EXTRA_FLEETS:6:t3+; @CHART_LOOT_BUDGET_PERCENT:t2-6; @CHART_LOOT_BUDGET_PERCENT:4');
+    const pool = parsePool('@HYBRID_CHART_EXTRA_FLEETS:6:t3+; @CHART_POI_BUDGET_PERCENT:t2-6; @CHART_POI_BUDGET_PERCENT:4');
     expect(pool).toEqual([
       { modifierId: 'HYBRID_CHART_EXTRA_FLEETS', weight: '6', tiers: 't3+' },
-      { modifierId: 'CHART_LOOT_BUDGET_PERCENT', weight: '', tiers: 't2-6' },
-      { modifierId: 'CHART_LOOT_BUDGET_PERCENT', weight: '4' },
+      { modifierId: 'CHART_POI_BUDGET_PERCENT', weight: '', tiers: 't2-6' },
+      { modifierId: 'CHART_POI_BUDGET_PERCENT', weight: '4' },
     ]);
-    expect(formatPool(pool)).toBe('@HYBRID_CHART_EXTRA_FLEETS:6:t3+; @CHART_LOOT_BUDGET_PERCENT:t2-6; @CHART_LOOT_BUDGET_PERCENT:4');
+    expect(formatPool(pool)).toBe('@HYBRID_CHART_EXTRA_FLEETS:6:t3+; @CHART_POI_BUDGET_PERCENT:t2-6; @CHART_POI_BUDGET_PERCENT:4');
   });
 
   it('round-trips quoted descriptions and unknown columns', () => {
-    const text = `${header.trim()},extra\r\nchart_a,SINGLE,A,,1,,,"No comma here",@HYBRID_CHART_EXTRA_FLEETS,@CHART_LOOT_BUDGET_PERCENT,,keep\r\n`;
+    const text = `${header.trim()},extra\r\nchart_a,SINGLE,A,,1,,,"No comma here",@HYBRID_CHART_EXTRA_FLEETS,@CHART_POI_BUDGET_PERCENT,,keep\r\n`;
     expect(serializeStarChartsCsv(parseStarChartDefinitions(text))).toBe(text);
   });
 
   it('accepts the shipped kind of chart', () => {
     const model = parseStarChartDefinitions(
       header +
-        'chart_a,SINGLE,A,,30,,,,@HYBRID_CHART_EXTRA_FLEETS:6:t3+,@CHART_LOOT_BUDGET_PERCENT,\n' +
-        'unique_b,binary_close,B,,1,true,4,,@HYBRID_CHART_EXTRA_FLEETS,@CHART_LOOT_BUDGET_PERCENT,cleared_chart_tier_3\n' +
+        'chart_a,SINGLE,A,,30,,,,@HYBRID_CHART_EXTRA_FLEETS:6:t3+,@CHART_POI_BUDGET_PERCENT,\n' +
+        'unique_b,binary_close,B,,1,true,4,,@HYBRID_CHART_EXTRA_FLEETS,@CHART_POI_BUDGET_PERCENT,cleared_chart_tier_3\n' +
         'chart_c,,C,,1,,,,@HYBRID_CHART_EXTRA_FLEETS,,defeated_ziggurat\n',
     );
     expect(validateItemDefinitions(model.definitions, vocabulary, chartCatalogue, 'chart')).toEqual([]);
@@ -161,7 +161,7 @@ describe('star chart definitions', () => {
   it('reports what the chart loader refuses', () => {
     const model = parseStarChartDefinitions(
       header +
-        'chart_a,TRINARY,A,,1,true,16,,@HYBRID_CHART_EXTRA_FLEETS:6:t0+; @CHART_LOOT_BUDGET_PERCENT_SINGLE,@CHART_LOOT_BUDGET_PERCENT:x,cleared_chart_tier_16\n' +
+        'chart_a,TRINARY,A,,1,true,16,,@HYBRID_CHART_EXTRA_FLEETS:6:t0+; @CHART_POI_BUDGET_PERCENT_SINGLE,@CHART_POI_BUDGET_PERCENT:x,cleared_chart_tier_16\n' +
         'taken_id,SINGLE,B,,1,,,,@HYBRID_CHART_EXTRA_FLEETS:t4-2,,\n',
     );
     expect(validateItemDefinitions(model.definitions, vocabulary, chartCatalogue, 'chart', ['taken_id'])).toEqual([
@@ -169,9 +169,9 @@ describe('star chart definitions', () => {
       'chart_a: minimum tier must be blank or a whole number from 1 to 15',
       'chart_a: unknown drop condition cleared_chart_tier_16; use an unlock id or cleared_chart_tier_N with N from 1 to 15',
       'chart_a: HYBRID_CHART_EXTRA_FLEETS has the tier range "t0+", but tiers run from 1 to 15',
-      'chart_a: CHART_LOOT_BUDGET_PERCENT_SINGLE is a implicit, so it cannot be one of its prefixes',
-      'chart_a: CHART_LOOT_BUDGET_PERCENT has the weight "x", which is not a number',
-      'chart_a: CHART_LOOT_BUDGET_PERCENT is listed twice, as CHART_LOOT_BUDGET_PERCENT_SINGLE and CHART_LOOT_BUDGET_PERCENT',
+      'chart_a: CHART_POI_BUDGET_PERCENT_SINGLE is a implicit, so it cannot be one of its prefixes',
+      'chart_a: CHART_POI_BUDGET_PERCENT has the weight "x", which is not a number',
+      'chart_a: CHART_POI_BUDGET_PERCENT is listed twice, as CHART_POI_BUDGET_PERCENT_SINGLE and CHART_POI_BUDGET_PERCENT',
       'taken_id: id is already used by a hull item or subroutine',
       'taken_id: HYBRID_CHART_EXTRA_FLEETS has the tier range "t4-2", whose highest tier must be from t4 to t15',
     ]);
@@ -227,8 +227,8 @@ describe('review findings', () => {
   it('warns that unique charts ignore pool tier ranges and that non-uniques ignore drop conditions, and flags an empty weight', () => {
     const model = parseStarChartDefinitions(
       'id,system_type,name,icon,rarity,unique,min_tier,description,prefixes,suffixes,unlock\n' +
-        'unique_a,SINGLE,A,,1,true,,,@HYBRID_CHART_EXTRA_FLEETS:t9+,@CHART_LOOT_BUDGET_PERCENT,\n' +
-        'chart_b,SINGLE,B,,1,,,,@HYBRID_CHART_EXTRA_FLEETS:,@CHART_LOOT_BUDGET_PERCENT,defeated_ziggurat\n',
+        'unique_a,SINGLE,A,,1,true,,,@HYBRID_CHART_EXTRA_FLEETS:t9+,@CHART_POI_BUDGET_PERCENT,\n' +
+        'chart_b,SINGLE,B,,1,,,,@HYBRID_CHART_EXTRA_FLEETS:,@CHART_POI_BUDGET_PERCENT,defeated_ziggurat\n',
     );
     expect(definitionWarnings(model.definitions, 'chart')).toEqual([
       'unique_a: a unique chart rolls every entry at every tier, so the tier ranges on HYBRID_CHART_EXTRA_FLEETS are ignored',
@@ -243,7 +243,7 @@ describe('review findings', () => {
 
 describe('star chart implicits', () => {
   it('keeps the system_type column, adds empty rows for missing types without saving them, and normalises like the game', () => {
-    const text = 'system_type,implicits\r\nSINGLE,@CHART_LOOT_BUDGET_PERCENT_SINGLE\r\n';
+    const text = 'system_type,implicits\r\nSINGLE,@CHART_POI_BUDGET_PERCENT_SINGLE\r\n';
     const model = parseStarChartImplicitsCsv(text, vocabulary);
     expect(model.rows.map((row) => row.section)).toEqual(['SINGLE', 'BINARY_CLOSE', 'any']);
     expect(serializeStarChartImplicitsCsv(model)).toBe(text);
@@ -253,17 +253,17 @@ describe('star chart implicits', () => {
   it('reports bad system types, repeats, weights and non-chart modifiers', () => {
     const model = parseStarChartImplicitsCsv(
       'system_type,implicits\n' +
-        'single,@CHART_LOOT_BUDGET_PERCENT_SINGLE; @CHART_LOOT_BUDGET_PERCENT_SINGLE\n' +
-        'SINGLE,@CHART_LOOT_BUDGET_PERCENT_SINGLE:5\n' +
-        'NOWHERE,@CHART_LOOT_BUDGET_PERCENT\n',
+        'single,@CHART_POI_BUDGET_PERCENT_SINGLE; @CHART_POI_BUDGET_PERCENT_SINGLE\n' +
+        'SINGLE,@CHART_POI_BUDGET_PERCENT_SINGLE:5\n' +
+        'NOWHERE,@CHART_POI_BUDGET_PERCENT\n',
       vocabulary,
     );
     expect(validateImplicits(model, vocabulary, chartCatalogue, 'chart')).toEqual([
-      'single: CHART_LOOT_BUDGET_PERCENT_SINGLE is listed more than once',
+      'single: CHART_POI_BUDGET_PERCENT_SINGLE is listed more than once',
       'SINGLE: listed more than once',
-      'SINGLE: @CHART_LOOT_BUDGET_PERCENT_SINGLE:5 has a weight, but implicits always roll',
+      'SINGLE: @CHART_POI_BUDGET_PERCENT_SINGLE:5 has a weight, but implicits always roll',
       'NOWHERE: system type must be any or one of SINGLE, BINARY_CLOSE',
-      'NOWHERE: CHART_LOOT_BUDGET_PERCENT is a suffix, not an implicit',
+      'NOWHERE: CHART_POI_BUDGET_PERCENT is a suffix, not an implicit',
     ]);
   });
 });
@@ -332,6 +332,16 @@ describe('chart tables', () => {
     ]);
   });
 
+  it('gives each site category its own tier budget column and checks them like the tier loader', () => {
+    expect(CHART_TIER_SPEC.columns.map((column) => column.column)).toEqual(expect.arrayContaining(['cache_budget', 'domain_budget', 'station_budget', 'derelict_budget']));
+    expect(CHART_TIER_SPEC.columns.map((column) => column.column)).not.toContain('loot_budget');
+    const text = 'tier,cache_budget,domain_budget,station_budget,derelict_budget\r\n1,3.5,0,-2,x\r\n';
+    const model = chartTable(CHART_TIER_SPEC, text);
+    expect(serializeChartTable(model, CHART_TIER_SPEC.columns)).toBe(text);
+    expect(CHART_TIER_SPEC.issues(model, vocabulary)).toEqual(['tier 1: derelict_budget "x" is not a number']);
+    expect(CHART_TIER_SPEC.warnings(model, vocabulary)).toContain('tier 1: station_budget below 0 counts as 0');
+  });
+
   it('mirrors the point of interest, faction and blocked ability loaders', () => {
     const pois = chartTable(
       CHART_POI_SPEC,
@@ -339,7 +349,7 @@ describe('chart tables', () => {
     );
     expect(CHART_POI_SPEC.issues(pois, vocabulary)).toEqual([
       'wreck: a derelict needs a derelict type, one of CIVILIAN, LARGE, MEDIUM, SMALL',
-      'odd: kind must be one of cache, station, derelict',
+      'odd: kind must be one of cache, domain, station, derelict',
       'odd: needs an entity type',
       'odd: guarded "sometimes" must be yes or no',
     ]);

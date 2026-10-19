@@ -7,6 +7,7 @@ public record ChartPoi(String id, Kind kind, String entityType, String salvageSp
 
     public enum Kind {
         CACHE,
+        DOMAIN,
         STATION,
         DERELICT;
 

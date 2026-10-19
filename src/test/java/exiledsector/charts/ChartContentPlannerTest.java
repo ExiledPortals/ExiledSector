@@ -55,13 +55,43 @@ class ChartContentPlannerTest {
         assertTrue(plans.size() > 15, "only " + plans.size() + " distinct plans");
     }
 
+    private static float spentOn(List<PlannedPoi> pois, ChartPoi.Kind kind) {
+        float spent = 0f;
+        for (PlannedPoi planned : pois) {
+            if (planned.poi().kind() == kind) {
+                spent += planned.poi().cost();
+            }
+        }
+        return spent;
+    }
+
+    private static float cheapestAt(ChartPoi.Kind kind, int tier) {
+        float cheapest = Float.MAX_VALUE;
+        for (ChartPoi poi : ChartPois.ofKind(ChartPois.lootAt(ChartPois.all(), tier), kind)) {
+            cheapest = Math.min(cheapest, poi.cost());
+        }
+        return cheapest;
+    }
+
+    private static ChartTier withSiteBudgets(int tier, float cacheBudget, float domainBudget, float stationBudget, float derelictBudget) {
+        return new ChartTier(tier, 100f, 2, 2, 0, 0, 50f, 100, 100, cacheBudget, domainBudget, stationBudget, derelictBudget, false, 0f, 1f, 0f);
+    }
+
+    private static ChartPoi site(String id, ChartPoi.Kind kind, float cost) {
+        return new ChartPoi(id, kind, "supply_cache", "", kind == ChartPoi.Kind.DERELICT ? "SMALL" : "", cost, 1f, 1, 15, false);
+    }
+
     @Test
-    void lootNeverOverspendsAndOnlyUsesPointsOfInterestAllowedAtTheTier() {
+    void eachCategoryOverspendsByLessThanOneCheapestSiteAndOnlyUsesPointsOfInterestAllowedAtTheTier() {
         for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_TIER; tier++) {
             ChartTier tierData = ChartTiers.forTier(tier);
             for (long seed = 0; seed < 30; seed++) {
                 ChartContentPlan plan = plan(seed, tier);
-                assertTrue(plan.lootSpent() <= tierData.lootBudget() + 0.001f, "tier " + tier + " seed " + seed + " spent " + plan.lootSpent());
+                for (ChartPoi.Kind kind : ChartPoi.Kind.values()) {
+                    float spent = spentOn(plan.pois(), kind);
+                    assertTrue(spent == 0f || spent < tierData.siteBudget(kind) + cheapestAt(kind, tier),
+                            "tier " + tier + " seed " + seed + " spent " + spent + " on " + kind);
+                }
                 assertTrue(plan.pois().size() <= ChartContentPlanner.MAX_POIS);
                 for (PlannedPoi planned : plan.pois()) {
                     assertTrue(planned.poi().allowedAt(tier), planned.poi().id() + " at tier " + tier);
@@ -71,12 +101,61 @@ class ChartContentPlannerTest {
     }
 
     @Test
-    void theLootBudgetIsMostlySpent() {
+    void eachSiteBudgetIsSpentDownToLessThanItsCheapestSite() {
         for (long seed = 0; seed < 30; seed++) {
             ChartContentPlan plan = plan(seed, 10);
-            float budget = ChartTiers.forTier(10).lootBudget();
-            assertTrue(budget - plan.lootSpent() < 2f, "left " + (budget - plan.lootSpent()) + " unspent");
+            for (ChartPoi.Kind kind : ChartPoi.Kind.values()) {
+                float left = ChartTiers.forTier(10).siteBudget(kind) - spentOn(plan.pois(), kind);
+                assertTrue(left < cheapestAt(kind, 10), "left " + left + " of the " + kind + " budget unspent");
+            }
         }
+    }
+
+    @Test
+    void eachCategorySpendsOnlyItsOwnBudget() {
+        for (ChartPoi.Kind kind : ChartPoi.Kind.values()) {
+            ChartTier onlyThisKind = withSiteBudgets(15, kind == ChartPoi.Kind.CACHE ? 12f : 0f, kind == ChartPoi.Kind.DOMAIN ? 12f : 0f,
+                    kind == ChartPoi.Kind.STATION ? 12f : 0f, kind == ChartPoi.Kind.DERELICT ? 12f : 0f);
+            for (long seed = 0; seed < 30; seed++) {
+                List<PlannedPoi> planned = ChartContentPlanner.spendLoot(onlyThisKind, ChartPois.all(), new Random(seed));
+                assertFalse(planned.isEmpty(), kind + " seed " + seed);
+                assertTrue(planned.stream().allMatch(poi -> poi.poi().kind() == kind), kind + " seed " + seed + ": " + planned);
+            }
+        }
+        assertTrue(ChartContentPlanner.spendLoot(withSiteBudgets(15, 0f, 0f, 0f, 0f), ChartPois.all(), new Random(1)).isEmpty());
+    }
+
+    @Test
+    void aFractionalLeftoverBuysOneMoreCheapestSiteWithTheMatchingChance() {
+        List<ChartPoi> pois = List.of(site("probe", ChartPoi.Kind.DOMAIN, 3f), site("survey", ChartPoi.Kind.DOMAIN, 6f));
+        int seeds = 4000;
+        for (float budget : new float[]{1.5f, 7.5f}) {
+            float spentTotal = 0f;
+            for (long seed = 0; seed < seeds; seed++) {
+                List<PlannedPoi> planned = ChartContentPlanner.spendLoot(withSiteBudgets(15, 0f, budget, 0f, 0f), pois,
+                        ChartLayoutGenerator.derivedRandom(seed, ChartContentPlanner.LOOT_SALT));
+                float spent = spentOn(planned, ChartPoi.Kind.DOMAIN);
+                assertTrue(budget - spent < 3f && spent < budget + 3f, "budget " + budget + " spent " + spent);
+                spentTotal += spent;
+            }
+            assertEquals(budget, spentTotal / seeds, 0.1f, "budget " + budget + " buys its worth in sites on average");
+        }
+        List<PlannedPoi> leftoverOnly = ChartContentPlanner.spendLoot(withSiteBudgets(15, 0f, 2.9f, 0f, 0f), pois, new Random(5));
+        assertTrue(leftoverOnly.stream().allMatch(planned -> planned.poi().id().equals("probe")), "the leftover only ever buys the cheapest site");
+    }
+
+    @Test
+    void theSiteCapCutsCachesFirst() {
+        List<ChartPoi> pois = List.of(site("cache", ChartPoi.Kind.CACHE, 1f), site("domain", ChartPoi.Kind.DOMAIN, 1f),
+                site("station", ChartPoi.Kind.STATION, 1f), site("derelict", ChartPoi.Kind.DERELICT, 1f));
+
+        List<PlannedPoi> planned = ChartContentPlanner.spendLoot(withSiteBudgets(15, 10f, 10f, 10f, 10f), pois, new Random(7));
+
+        assertEquals(ChartContentPlanner.MAX_POIS, planned.size());
+        assertEquals(10f, spentOn(planned, ChartPoi.Kind.DOMAIN));
+        assertEquals(10f, spentOn(planned, ChartPoi.Kind.STATION));
+        assertEquals(ChartContentPlanner.MAX_POIS - 20f, spentOn(planned, ChartPoi.Kind.DERELICT));
+        assertEquals(0f, spentOn(planned, ChartPoi.Kind.CACHE));
     }
 
     @Test
@@ -122,7 +201,7 @@ class ChartContentPlannerTest {
 
     @Test
     void fleetsOverTheSizeCapAreCappedAndTurnTheRestIntoFleetStrength() {
-        ChartTier huge = new ChartTier(15, 1200f, 2, 2, 1, 1, 50f, 100, 100, 0f, true, 2000f, 1f, 0f);
+        ChartTier huge = new ChartTier(15, 1200f, 2, 2, 1, 1, 50f, 100, 100, 0f, 0f, 0f, 0f, true, 2000f, 1f, 0f);
 
         ChartContentPlan plan = ChartContentPlanner.plan(5L, huge, List.of(), List.of(), EVERY_FACTION);
 
@@ -142,7 +221,7 @@ class ChartContentPlannerTest {
 
     @Test
     void theChartsFactionInhabitsTheSystemWhenItIsLoaded() {
-        ChartTier tier = new ChartTier(8, 200f, 3, 3, 0, 0, 60f, 100, 100, 0f, true, 400f, 1f, 0f);
+        ChartTier tier = new ChartTier(8, 200f, 3, 3, 0, 0, 60f, 100, 100, 0f, 0f, 0f, 0f, true, 400f, 1f, 0f);
         List<ChartFaction> factions = List.of(new ChartFaction("pirates", 10f, 0f, 0f), new ChartFaction("remnant", 1f, -10f, 15f));
         ChartGenContext remnantChart = ChartGenContext.of(List.of(), 0, "remnant");
 
@@ -156,7 +235,7 @@ class ChartContentPlannerTest {
 
     @Test
     void aFactionsFleetSizeBonusAddsToEveryFleetAndTheWarden() {
-        ChartTier tier = new ChartTier(8, 200f, 3, 3, 0, 0, 60f, 100, 100, 0f, true, 400f, 1f, 0f);
+        ChartTier tier = new ChartTier(8, 200f, 3, 3, 0, 0, 60f, 100, 100, 0f, 0f, 0f, 0f, true, 400f, 1f, 0f);
         ChartFaction plain = new ChartFaction("hegemony", 1f, 0f, 0f);
         ChartFaction bigger = new ChartFaction("derelict", 1f, 20f, -10f);
 
@@ -172,7 +251,7 @@ class ChartContentPlannerTest {
 
     @Test
     void theClearObjectiveAlwaysHasAGuardEvenWithoutGuardedLoot() {
-        ChartTier clearOnly = new ChartTier(2, 100f, 2, 3, 0, 0, 40f, 60, 90, 0f, false, 0f, 1f, 0f);
+        ChartTier clearOnly = new ChartTier(2, 100f, 2, 3, 0, 0, 40f, 60, 90, 0f, 0f, 0f, 0f, false, 0f, 1f, 0f);
 
         ChartContentPlan noLoot = ChartContentPlanner.plan(9L, clearOnly, List.of(), List.of(), EVERY_FACTION);
 
@@ -201,7 +280,7 @@ class ChartContentPlannerTest {
             }
         }
         assertEquals(EnumSet.allOf(ChartObjective.class), seenAtFifteen);
-        ChartTier noWeights = new ChartTier(6, 200f, 3, 3, 0, 0, 50f, 100, 100, 20f, false, 0f, 0f, 5f);
+        ChartTier noWeights = new ChartTier(6, 200f, 3, 3, 0, 0, 50f, 100, 100, 20f, 0f, 0f, 0f, false, 0f, 0f, 5f);
         assertEquals(ChartObjective.CLEAR, ChartContentPlanner.pickObjective(noWeights, new Random(3)));
     }
 

@@ -93,7 +93,7 @@ class ChartGenContextTest {
         assertEquals(BASE.fleetsMax() + 2, moreRolled.fleetsMax());
         assertEquals(BASE.fleetSize(), moreRolled.fleetSize(), TOLERANCE, "extra fleets are full size, not a thinner split");
         ChartGenContext crowded = with(ChartEffect.CHART_EXTRA_FLEETS, 2f);
-        assertEquals(BASE, crowded.adjust(BASE).withLootBudget(BASE.lootBudget()), "crowded fleets are added after the soft limit, not to the roll");
+        assertEquals(BASE, crowded.adjust(BASE), "crowded fleets are added after the soft limit, not to the roll");
         assertEquals(2, crowded.extraFleets());
         assertEquals(BASE.officerLevelBonus() + 1, with(ChartEffect.CHART_OFFICER_LEVEL_BONUS, 1f).adjust(BASE).officerLevelBonus());
         assertEquals(BASE.officerCountBonus() + 2, with(ChartEffect.CHART_EXTRA_OFFICERS, 2f).adjust(BASE).officerCountBonus());
@@ -103,16 +103,16 @@ class ChartGenContextTest {
         assertEquals(BASE.fleetQuality() + 20f, with(ChartEffect.CHART_FLEET_QUALITY_PERCENT, 20f).adjust(BASE).fleetQuality(), TOLERANCE);
         assertEquals(BASE.fleetSize(), with(ChartEffect.CHART_FLEET_QUALITY_PERCENT, 20f).adjust(BASE).fleetSize(), TOLERANCE,
                 "fleet quality and fleet size are separate");
-        assertEquals(BASE.lootBudget(), with(ChartEffect.CHART_FLEET_SIZE_PERCENT, 50f).adjust(BASE).lootBudget(), TOLERANCE);
+        assertEquals(BASE.poiBudget(), with(ChartEffect.CHART_FLEET_SIZE_PERCENT, 50f).adjust(BASE).poiBudget(), TOLERANCE);
     }
 
     @Test
     void eachRewardEffectChangesTheLootOrTheReward() {
-        ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_LOOT_BUDGET_PERCENT, 30f),
+        ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_POI_BUDGET_PERCENT, 30f),
                 new AppliedEffect(ChartEffect.CHART_QUANTITY_PERCENT, 10f), new AppliedEffect(ChartEffect.CHART_REWARD_PERCENT, 20f),
                 new AppliedEffect(ChartEffect.CHART_EXTRA_POIS, 3f), new AppliedEffect(ChartEffect.CHART_ITEM_DROP_CHANCE_PERCENT, 50f)));
 
-        assertEquals(BASE.lootBudget() * 1.4f, context.adjust(BASE).lootBudget(), TOLERANCE);
+        assertEquals(BASE.poiBudget() * 1.3f, context.adjust(BASE).poiBudget(), TOLERANCE, "quantity does not raise the site budgets");
         assertEquals(1.3f, context.rewardMult(), TOLERANCE);
         assertEquals(3, context.extraPois());
         assertEquals(1.5f, context.itemChanceMult(), TOLERANCE);
@@ -137,7 +137,7 @@ class ChartGenContextTest {
         ChartGenContext harder = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_FLEET_SIZE_PERCENT, 60f),
                 new AppliedEffect(ChartEffect.CHART_EXTRA_FLEETS, 2f), new AppliedEffect(ChartEffect.CHART_OFFICER_LEVEL_BONUS, 2f)));
         ChartGenContext richer = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_EXTRA_POIS, 3f),
-                new AppliedEffect(ChartEffect.CHART_LOOT_BUDGET_PERCENT, 50f)));
+                new AppliedEffect(ChartEffect.CHART_POI_BUDGET_PERCENT, 50f)));
 
         assertEquals(plan(harder, seed), plan(harder, seed));
         assertEquals(plan(richer, seed), plan(richer, seed));
@@ -279,7 +279,7 @@ class ChartGenContextTest {
         assertEquals(ChartContentPlanner.FLEET_SIZE_CAP, squeezed.cappedFleetSize(), TOLERANCE);
         assertEquals(ChartContentPlanner.MAX_OVERFLOW_STRENGTH, squeezed.totalStrengthBonus(), "size past the cap adds strength too");
 
-        ChartTier overRolled = new ChartTier(15, 200f, limit * 2, limit * 2, 0, 0, 50f, 100, 100, 0f, false, 0f, 1f, 0f);
+        ChartTier overRolled = new ChartTier(15, 200f, limit * 2, limit * 2, 0, 0, 50f, 100, 100, 0f, 0f, 0f, 0f, false, 0f, 1f, 0f);
         for (long seed = 0; seed < 20; seed++) {
             ChartContentPlan plain = ChartContentPlanner.plan(seed, overRolled, List.of(), List.of(), faction -> true);
             assertEquals(limit, plain.count(FleetRole.GUARD) + plain.count(FleetRole.PATROL), "seed " + seed);
@@ -304,9 +304,9 @@ class ChartGenContextTest {
     void chartQualityAddsOnePercentLootAndRewardPerPoint() {
         ChartGenContext polished = ChartGenContext.of(List.of(), 12);
         assertFalse(polished.isEmpty());
-        assertEquals(1.12f, polished.lootMult(), TOLERANCE);
+        assertEquals(1f, polished.siteBudgetMult(ChartPoi.Kind.CACHE), TOLERANCE);
         assertEquals(1.12f, polished.rewardMult(), TOLERANCE);
-        assertEquals(BASE.lootBudget() * 1.12f, polished.adjust(BASE).lootBudget(), TOLERANCE);
+        assertEquals(BASE.poiBudget(), polished.adjust(BASE).poiBudget(), TOLERANCE);
         assertEquals(BASE.fleetSize(), polished.adjust(BASE).fleetSize(), TOLERANCE);
         assertSame(ChartGenContext.none(), ChartGenContext.of(List.of(), 0));
 
@@ -319,10 +319,46 @@ class ChartGenContextTest {
         assertEquals(0, plainContext.quality());
         assertEquals(12, polishedContext.quality());
         assertEquals(plainContext.rewardMult() + 0.12f, polishedContext.rewardMult(), TOLERANCE);
-        assertEquals(plainContext.lootMult() + 0.12f, polishedContext.lootMult(), TOLERANCE);
+        assertEquals(plainContext.siteBudgetMult(ChartPoi.Kind.STATION), polishedContext.siteBudgetMult(ChartPoi.Kind.STATION), TOLERANCE);
         assertTrue(ChartRewards.creditsFor(5, polishedContext.rewardMult()) >= ChartRewards.creditsFor(5, plainContext.rewardMult()));
         assertTrue(polishedChart.headerLines().stream().anyMatch(line -> line.plain().contains("12% more loot and completion reward")),
                 polishedChart.headerLines().toString());
         assertTrue(plainChart.headerLines().stream().noneMatch(line -> line.plain().contains("Quality")));
+    }
+
+    @Test
+    void eachSiteBudgetEffectRaisesOnlyItsOwnCategory() {
+        assertEquals(1.25f, with(ChartEffect.CHART_CACHE_BUDGET_PERCENT, 25f).siteBudgetMult(ChartPoi.Kind.CACHE), TOLERANCE);
+        assertEquals(1.25f, with(ChartEffect.CHART_DOMAIN_BUDGET_PERCENT, 25f).siteBudgetMult(ChartPoi.Kind.DOMAIN), TOLERANCE);
+        assertEquals(1.25f, with(ChartEffect.CHART_STATION_BUDGET_PERCENT, 25f).siteBudgetMult(ChartPoi.Kind.STATION), TOLERANCE);
+        assertEquals(1.25f, with(ChartEffect.CHART_DERELICT_BUDGET_PERCENT, 25f).siteBudgetMult(ChartPoi.Kind.DERELICT), TOLERANCE);
+
+        ChartTier moreStations = with(ChartEffect.CHART_STATION_BUDGET_PERCENT, 50f).adjust(BASE);
+        assertEquals(BASE.stationBudget() * 1.5f, moreStations.stationBudget(), TOLERANCE);
+        assertEquals(BASE.cacheBudget(), moreStations.cacheBudget(), TOLERANCE);
+        assertEquals(BASE.domainBudget(), moreStations.domainBudget(), TOLERANCE);
+        assertEquals(BASE.derelictBudget(), moreStations.derelictBudget(), TOLERANCE);
+    }
+
+    @Test
+    void siteBudgetPercentsAddWithinACategoryAndThePoiBudgetReachesEveryCategory() {
+        ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_POI_BUDGET_PERCENT, 20f),
+                new AppliedEffect(ChartEffect.CHART_DOMAIN_BUDGET_PERCENT, 30f), new AppliedEffect(ChartEffect.CHART_DOMAIN_BUDGET_PERCENT, 10f)));
+
+        assertEquals(1.6f, context.siteBudgetMult(ChartPoi.Kind.DOMAIN), TOLERANCE, "percents add before they multiply");
+        assertEquals(1.2f, context.siteBudgetMult(ChartPoi.Kind.CACHE), TOLERANCE);
+        assertEquals(1.2f, context.siteBudgetMult(ChartPoi.Kind.STATION), TOLERANCE);
+        assertEquals(1.2f, context.siteBudgetMult(ChartPoi.Kind.DERELICT), TOLERANCE);
+        assertEquals(0f, with(ChartEffect.CHART_CACHE_BUDGET_PERCENT, -150f).siteBudgetMult(ChartPoi.Kind.CACHE), TOLERANCE);
+        assertTrue(context.describe().contains("site budgets cache x1.20 domain x1.60 station x1.20 derelict x1.20"), context.describe());
+    }
+
+    @Test
+    void quantityDoesNotRaiseTheSiteBudgets() {
+        ChartGenContext context = with(ChartEffect.CHART_QUANTITY_PERCENT, 40f);
+        for (ChartPoi.Kind kind : ChartPoi.Kind.values()) {
+            assertEquals(1f, context.siteBudgetMult(kind), TOLERANCE, kind.name());
+        }
+        assertEquals(BASE.poiBudget(), context.adjust(BASE).poiBudget(), TOLERANCE);
     }
 }

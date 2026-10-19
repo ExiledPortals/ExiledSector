@@ -12,8 +12,10 @@ import exiledsector.modifiers.ScaleContext;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -43,7 +45,7 @@ public final class ChartGenContext {
     private float fleetQualityPercent;
     private float sensorRangePercent;
     private float quantityPercent;
-    private float lootBudgetPercent;
+    private final Map<ChartPoi.Kind, Float> siteBudgetPercents = new EnumMap<>(ChartPoi.Kind.class);
     private int extraPois;
     private float itemChancePercent;
     private float rewardPercent;
@@ -159,8 +161,14 @@ public final class ChartGenContext {
         quantityPercent += value;
     }
 
-    void addLootBudgetPercent(float value) {
-        lootBudgetPercent += value;
+    void addSiteBudgetPercent(ChartPoi.Kind kind, float value) {
+        siteBudgetPercents.merge(kind, value, Float::sum);
+    }
+
+    void addAllSiteBudgetsPercent(float value) {
+        for (ChartPoi.Kind kind : ChartPoi.Kind.values()) {
+            addSiteBudgetPercent(kind, value);
+        }
     }
 
     void addExtraPois(int value) {
@@ -183,7 +191,9 @@ public final class ChartGenContext {
         int fleetsMax = Math.max(fleetsMin, base.fleetsMax() + baseFleets);
         return new ChartTier(base.tier(), base.fleetSize() + fleetSizePercent, fleetsMin, fleetsMax, base.officerLevelBonus() + officerLevelBonus,
                 base.officerCountBonus() + extraOfficers, base.fleetQuality() + fleetQualityPercent, base.fleetStrengthMin(), base.fleetStrengthMax(),
-                base.lootBudget() * lootMult(), base.boss(), base.boss() ? Math.max(0f, base.wardenSize() + wardenSizePercent) : base.wardenSize(),
+                base.cacheBudget() * siteBudgetMult(ChartPoi.Kind.CACHE), base.domainBudget() * siteBudgetMult(ChartPoi.Kind.DOMAIN),
+                base.stationBudget() * siteBudgetMult(ChartPoi.Kind.STATION), base.derelictBudget() * siteBudgetMult(ChartPoi.Kind.DERELICT),
+                base.boss(), base.boss() ? Math.max(0f, base.wardenSize() + wardenSizePercent) : base.wardenSize(),
                 base.clearWeight(), base.bossWeight());
     }
 
@@ -223,8 +233,17 @@ public final class ChartGenContext {
         return quality * QUANTITY_PERCENT_PER_QUALITY;
     }
 
-    public float lootMult() {
-        return multiplier(lootBudgetPercent + quantityPercent + qualityQuantityPercent());
+    public float siteBudgetMult(ChartPoi.Kind kind) {
+        return multiplier(siteBudgetPercents.getOrDefault(kind, 0f));
+    }
+
+    private String siteBudgetText() {
+        StringBuilder text = new StringBuilder();
+        for (ChartPoi.Kind kind : ChartPoi.Kind.values()) {
+            text.append(text.isEmpty() ? "" : " ").append(kind.name().toLowerCase(Locale.ROOT))
+                    .append(String.format(Locale.ROOT, " x%.2f", siteBudgetMult(kind)));
+        }
+        return text.toString();
     }
 
     public float chartDropMult() {
@@ -271,10 +290,10 @@ public final class ChartGenContext {
             return factionText + "no chart modifiers";
         }
         return factionText + String.format(Locale.ROOT, "fleet size %+.0f%%, %+d rolled fleet(s), %+d added fleet(s), %+d officer level(s), %+d officer(s), warden size %+.0f%%, "
-                        + "fleet quality %+.0f%%, loot x%.2f, %+d point(s) of interest, hull item chance x%.2f, "
+                        + "fleet quality %+.0f%%, site budgets %s, %+d point(s) of interest, hull item chance x%.2f, "
                         + "reward x%.2f, sensor range x%.2f, chart quality %d",
                 fleetSizePercent, baseFleets, extraFleets, officerLevelBonus, extraOfficers, wardenSizePercent,
-                fleetQualityPercent, lootMult(), extraPois(), itemChanceMult(), rewardMult(),
+                fleetQualityPercent, siteBudgetText(), extraPois(), itemChanceMult(), rewardMult(),
                 sensorRangeMult(), quality);
     }
 }
