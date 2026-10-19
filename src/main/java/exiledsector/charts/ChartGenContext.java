@@ -237,8 +237,12 @@ public final class ChartGenContext {
         return quality * QUANTITY_PERCENT_PER_QUALITY;
     }
 
+    public float siteBudgetPercent(ChartPoi.Kind kind) {
+        return siteBudgetPercents.getOrDefault(kind, 0f);
+    }
+
     public float siteBudgetMult(ChartPoi.Kind kind) {
-        return multiplier(siteBudgetPercents.getOrDefault(kind, 0f));
+        return multiplier(siteBudgetPercent(kind));
     }
 
     private String siteBudgetText() {

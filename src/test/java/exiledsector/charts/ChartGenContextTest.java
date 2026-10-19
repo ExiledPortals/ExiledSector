@@ -191,6 +191,8 @@ class ChartGenContextTest {
         List<String> lines = ChartLootTotals.lines(context).stream().map(StyledText::plain).toList();
 
         assertEquals(List.of("Quantity +23%", "Currency +47%"), lines);
+        ChartGenContext sites = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_STATION_BUDGET_PERCENT, 30f)));
+        assertEquals(List.of("Stations +30%"), ChartLootTotals.lines(sites).stream().map(StyledText::plain).toList());
         assertTrue(ChartLootTotals.lines(with(ChartEffect.CHART_FLEET_SIZE_PERCENT, 30f)).isEmpty());
     }
 

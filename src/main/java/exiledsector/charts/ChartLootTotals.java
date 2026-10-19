@@ -10,6 +10,7 @@ import java.util.List;
 final class ChartLootTotals {
 
     static final String DROP_TYPE_KEY_PREFIX = "chart.dropType.";
+    static final String SITE_CATEGORY_KEY_PREFIX = "chart.siteCategory.";
 
     private ChartLootTotals() {
     }
@@ -24,6 +25,9 @@ final class ChartLootTotals {
         addLine(lines, Translation.text("chart.totals.items"), context.itemPercent());
         for (DropType type : DropType.values()) {
             addLine(lines, Translation.text(DROP_TYPE_KEY_PREFIX + type.name()), context.dropPercent(type));
+        }
+        for (ChartPoi.Kind category : ChartPoi.Kind.values()) {
+            addLine(lines, Translation.text(SITE_CATEGORY_KEY_PREFIX + category.name()), context.siteBudgetPercent(category));
         }
         return lines;
     }
