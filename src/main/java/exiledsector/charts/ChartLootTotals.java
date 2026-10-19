@@ -26,6 +26,7 @@ final class ChartLootTotals {
         for (DropType type : DropType.values()) {
             addLine(lines, Translation.text(DROP_TYPE_KEY_PREFIX + type.name()), context.dropPercent(type));
         }
+        addLine(lines, Translation.text("chart.totals.wardenSpoils"), context.wardenSpoilsPercent());
         for (ChartPoi.Kind category : ChartPoi.Kind.values()) {
             addLine(lines, Translation.text(SITE_CATEGORY_KEY_PREFIX + category.name()), context.siteBudgetPercent(category));
         }

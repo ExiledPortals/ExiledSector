@@ -15,6 +15,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.PlayerFleet;
 import exiledsector.charts.ChartDrops;
+import exiledsector.charts.ChartFleetLoot;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.ShipSkillData;
@@ -46,6 +47,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
     private static final class Pending {
         private final Map<String, List<ItemData>> itemsByMemberId = new LinkedHashMap<>();
         private final Map<String, HullUpgradeData> upgradeByMemberId = new LinkedHashMap<>();
+        private final Map<CampaignFleetAPI, Float> chartFleetDeploymentPoints = new LinkedHashMap<>();
         private boolean playerWon;
         private float partsEarned;
         private float deploymentPointsDefeated;
@@ -87,6 +89,10 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
             if (fleetResult != null && !fleetResult.isPlayer()) {
                 hold(pendingLoot, fleetResult.getDestroyed(), lootRandom);
                 hold(pendingLoot, fleetResult.getDisabled(), lootRandom);
+                if (engagement.playerWon()) {
+                    holdChartFleetLosses(pendingLoot, engagementResult.getBattle(), fleetResult.getDestroyed());
+                    holdChartFleetLosses(pendingLoot, engagementResult.getBattle(), fleetResult.getDisabled());
+                }
             }
         }
         float defeatedDp = engagement.enemyDeploymentPointsDefeated();
@@ -98,17 +104,40 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         }
     }
 
-    private ChartDrops.Loot chartLoot(Pending pendingLoot) {
+    private ItemDrops.SiteLoot chartLoot(Pending pendingLoot) {
         SectorAPI sector = Global.getSector();
         CampaignFleetAPI playerFleet = PlayerFleet.orNull();
-        if (sector == null || playerFleet == null || !pendingLoot.playerWon || !(pendingLoot.deploymentPointsDefeated > 0f)) {
-            return ChartDrops.Loot.NONE;
+        if (sector == null || playerFleet == null || !(pendingLoot.deploymentPointsDefeated > 0f)) {
+            return ItemDrops.SiteLoot.NONE;
         }
-        try {
-            return ChartDrops.forBattle(sector, playerFleet.getContainingLocation(), pendingLoot.deploymentPointsDefeated, chartRandom);
-        } catch (RuntimeException e) {
-            LOG.error("[ExiledSector] Rolling Star Chart battle drops failed", e);
-            return ChartDrops.Loot.NONE;
+        ItemDrops.SiteLoot chartLoot = ItemDrops.SiteLoot.NONE;
+        if (pendingLoot.playerWon) {
+            try {
+                ChartDrops.Loot battleLoot = ChartDrops.forBattle(sector, playerFleet.getContainingLocation(), pendingLoot.deploymentPointsDefeated, chartRandom);
+                chartLoot = chartLoot.plus(battleLoot.charts(), List.of(), battleLoot.currencies());
+            } catch (RuntimeException e) {
+                LOG.error("[ExiledSector] Rolling Star Chart battle drops failed", e);
+            }
+        }
+        for (Map.Entry<CampaignFleetAPI, Float> fleetLosses : pendingLoot.chartFleetDeploymentPoints.entrySet()) {
+            try {
+                chartLoot = chartLoot.plus(ChartFleetLoot.roll(sector, fleetLosses.getKey(), fleetLosses.getValue(), chartRandom));
+            } catch (RuntimeException e) {
+                LOG.error("[ExiledSector] Rolling Star Chart fleet loot failed for fleet " + fleetLosses.getKey().getId(), e);
+            }
+        }
+        return chartLoot;
+    }
+
+    private static void holdChartFleetLosses(Pending pendingLoot, BattleAPI battle, List<FleetMemberAPI> lostMembers) {
+        if (lostMembers == null) {
+            return;
+        }
+        for (FleetMemberAPI member : lostMembers) {
+            CampaignFleetAPI sourceFleet = member == null ? null : battle.getSourceFleet(member);
+            if (ChartFleetLoot.isChartFleet(sourceFleet)) {
+                pendingLoot.chartFleetDeploymentPoints.merge(sourceFleet, member.getDeploymentPointsCost(), Float::sum);
+            }
         }
     }
 
@@ -156,9 +185,10 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
             if (wholeParts > 0) {
                 MaterialItems.add(loot, ItemDisassembly.PARTS_ITEM_ID, wholeParts);
             }
-            ChartDrops.Loot chartLoot = chartLoot(pendingLoot);
-            chartLoot.charts().forEach(chart -> loot.addSpecial(chart.toSpecialItem(), 1f));
-            chartLoot.currencies().forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
+            ItemDrops.SiteLoot chartLoot = chartLoot(pendingLoot);
+            chartLoot.items().forEach(item -> loot.addSpecial(item.toSpecialItem(), 1f));
+            chartLoot.upgrades().forEach(upgrade -> loot.addSpecial(upgrade.toSpecialItem(), 1f));
+            chartLoot.materials().forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
         }
         pendingByBattle.keySet().removeIf(BattleAPI::isDone);
     }
@@ -191,16 +221,20 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
                 CampaignMessages.plain(salvageMessage, Misc.getPositiveHighlightColor());
             }
         }
-        ChartDrops.Loot chartLoot = chartLoot(pendingLoot);
-        for (ItemData chart : chartLoot.charts()) {
-            playerFleet.getCargo().addSpecial(chart.toSpecialItem(), 1f);
-            Item previewChart = chart.preview();
-            if (previewChart != null) {
-                announceSalvaged(previewChart::name);
+        ItemDrops.SiteLoot chartLoot = chartLoot(pendingLoot);
+        for (ItemData item : chartLoot.items()) {
+            playerFleet.getCargo().addSpecial(item.toSpecialItem(), 1f);
+            Item previewItem = item.preview();
+            if (previewItem != null) {
+                announceSalvaged(previewItem::name);
             }
         }
-        chartLoot.currencies().forEach((itemId, quantity) -> MaterialItems.add(playerFleet.getCargo(), itemId, quantity));
-        MaterialDropAnnouncer.announce(chartLoot.currencies());
+        for (HullUpgradeData upgrade : chartLoot.upgrades()) {
+            playerFleet.getCargo().addSpecial(upgrade.toSpecialItem(), 1f);
+            announceSalvaged(upgrade::name);
+        }
+        chartLoot.materials().forEach((itemId, quantity) -> MaterialItems.add(playerFleet.getCargo(), itemId, quantity));
+        MaterialDropAnnouncer.announce(chartLoot.materials());
     }
 
     private static void announceSalvaged(Supplier<String> itemName) {

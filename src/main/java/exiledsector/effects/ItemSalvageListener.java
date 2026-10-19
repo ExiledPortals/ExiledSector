@@ -13,15 +13,12 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.charts.ChartDrops;
 import exiledsector.charts.ChartGenContext;
 import exiledsector.charts.DropType;
-import exiledsector.items.ItemChances;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.MaterialItems;
-import exiledsector.items.ItemData;
 import exiledsector.items.ItemUnlock;
 import exiledsector.ui.cargo.MaterialDropAnnouncer;
 import org.apache.log4j.Logger;
 
-import java.util.Map;
 import java.util.Random;
 
 public class ItemSalvageListener implements ShowLootListener {
@@ -45,19 +42,12 @@ public class ItemSalvageListener implements ShowLootListener {
         entityMemory.set(ROLLED_KEY, true);
         Random random = new Random(Misc.getSalvageSeed(salvageEntity) ^ SEED_SALT);
         ChartGenContext chartContext = chartContext(salvageEntity);
-        ItemChances itemChances = chartContext.itemChances();
-        for (ItemData item : ItemDrops.roll(siteId, random, itemChances)) {
-            loot.addSpecial(item.toSpecialItem(), 1f);
-        }
-        Map<String, Integer> droppedMaterials = ItemDrops.rollMaterials(siteId, random, chartContext.dropMult(DropType.FEEDSTOCK),
-                chartContext.dropMult(DropType.CURRENCY));
-        droppedMaterials.forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
-        MaterialDropAnnouncer.announce(droppedMaterials);
-        if (ItemUnlock.sectionsOpen(Global.getSector())) {
-            ItemDrops.SectionItemLoot sectionItemLoot = ItemDrops.rollSectionItemLoot(siteId, random, itemChances);
-            sectionItemLoot.items().forEach(item -> loot.addSpecial(item.toSpecialItem(), 1f));
-            sectionItemLoot.upgrades().forEach(upgrade -> loot.addSpecial(upgrade.toSpecialItem(), 1f));
-        }
+        ItemDrops.SiteLoot siteLoot = ItemDrops.rollSite(siteId, random, chartContext.itemChances(), chartContext.dropMult(DropType.FEEDSTOCK),
+                chartContext.dropMult(DropType.CURRENCY), ItemUnlock.sectionsOpen(Global.getSector()));
+        siteLoot.items().forEach(item -> loot.addSpecial(item.toSpecialItem(), 1f));
+        siteLoot.upgrades().forEach(upgrade -> loot.addSpecial(upgrade.toSpecialItem(), 1f));
+        siteLoot.materials().forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
+        MaterialDropAnnouncer.announce(siteLoot.materials());
         ChartDrops.Loot chartLoot = chartLoot(Global.getSector(), salvageEntity);
         chartLoot.charts().forEach(chart -> loot.addSpecial(chart.toSpecialItem(), 1f));
         chartLoot.currencies().forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));

@@ -26,7 +26,6 @@ public class ChartContentListener implements FleetEventListener {
 
     @Override
     public void reportBattleOccurred(CampaignFleetAPI fleet, CampaignFleetAPI primaryWinner, BattleAPI battle) {
-        // TODO phase 4+: battle-scoped chart rules (for example drops seeded per destroyed ship) hook in here
     }
 
     private void reportFailure(Throwable cause) {

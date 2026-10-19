@@ -7,6 +7,7 @@ import com.fs.starfarer.api.campaign.CargoAPI;
 import exiledsector.items.MaterialItems;
 import exiledsector.charts.ChartContent;
 import exiledsector.charts.ChartDrops;
+import exiledsector.charts.ChartFleetFixtures;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.ChartObjective;
 import exiledsector.charts.ChartRun;
@@ -335,10 +336,10 @@ private static List<SpecialItemData> starCharts(CargoAPI cargo) {
     }
 
     @Test
-    void wonBattlesRollStarChartsInsideASystemAtTheRunTierAndOutsideOnlyFromStrongEnemies() throws Exception {
+    void wonBattlesRollStarChartsFromChartFleetsAtTheRunTierAndOutsideOnlyFromStrongEnemies() throws Exception {
         StarChartFixtures.registerShipped();
         ChartDrops.register(new JSONArray()
-                .put(new JSONObject().put("source", "system_battle").put("chance", "1"))
+                .put(new JSONObject().put("source", "chart_fleet").put("chance", "1"))
                 .put(new JSONObject().put("source", "battle").put("chance", "1").put("min_strength", "150").put("strength_per_tier", "100")
                         .put("max_tier", "6")));
         try (MockedStatic<LunaSettings> luna = Mockito.mockStatic(LunaSettings.class)) {
@@ -357,8 +358,17 @@ private static List<SpecialItemData> starCharts(CargoAPI cargo) {
             when(playerFleet.getContainingLocation()).thenReturn(system);
             ItemLootListener chartListener = new ItemLootListener(new Random(1L), new Random(2L));
 
+            BattleAPI strayBattle = mock(BattleAPI.class);
+            chartListener.holdLoot(PlayerEngagement.of(engagement(strayBattle, List.of(warship("stray", 400f)), List.of()), 1f));
+            CargoAPI strayLoot = mock(CargoAPI.class);
+            chartListener.reportEncounterLootGenerated(context(strayBattle), strayLoot);
+            assertEquals(List.of(), starCharts(strayLoot), "ships that are not from a chart fleet drop no charts inside the system");
+
             BattleAPI systemBattle = mock(BattleAPI.class);
-            chartListener.holdLoot(PlayerEngagement.of(engagement(systemBattle, List.of(warship("a", 20f)), List.of()), 1f));
+            FleetMemberAPI guardShip = warship("a", 20f);
+            CampaignFleetAPI guardFleet = ChartFleetFixtures.chartFleet("g1", "lootRun", 20f);
+            when(systemBattle.getSourceFleet(guardShip)).thenReturn(guardFleet);
+            chartListener.holdLoot(PlayerEngagement.of(engagement(systemBattle, List.of(guardShip), List.of()), 1f));
             CargoAPI systemLoot = mock(CargoAPI.class);
             chartListener.reportEncounterLootGenerated(context(systemBattle), systemLoot);
             List<SpecialItemData> systemCharts = starCharts(systemLoot);

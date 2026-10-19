@@ -237,8 +237,8 @@ class ChartDropsTest {
     }
 
     @Test
-    void systemsalvageAndBattlesDropAtTheRunTierAndOnlyWhileTheRunIsLive() throws Exception {
-        ChartDrops.register(new JSONArray().put(rule("system_salvage", 1f, 0f, 0f, 1f)).put(rule("system_battle", 1f, 0f, 0f, 0f))
+    void systemSalvageDropsAtTheRunTierOnlyWhileTheRunIsLiveAndBattlesInsideLeaveItToTheFleetRolls() throws Exception {
+        ChartDrops.register(new JSONArray().put(rule("system_salvage", 1f, 0f, 0f, 1f)).put(rule("chart_fleet", 1f, 0f, 0f, 0f))
                 .put(rule("salvage", 1f, 0f, 0f, 0f)).put(rule("battle", 1f, 0f, 0f, 0f)));
         StarSystemAPI system = system(RUN_ID);
 
@@ -248,8 +248,7 @@ class ChartDropsTest {
         ChartDrops.Loot salvage = ChartDrops.forSalvage(sector, system, new Random(1L));
         assertEquals(9, tierOf(salvage.charts().get(0)));
         assertEquals(1, salvage.currencies().size());
-        ChartDrops.Loot battle = ChartDrops.forBattle(sector, system, 40f, new Random(1L));
-        assertEquals(9, tierOf(battle.charts().get(0)));
+        assertTrue(ChartDrops.forBattle(sector, system, 400f, new Random(1L)).isEmpty());
         assertTrue(ChartDrops.forSalvage(sector, system("otherRun"), new Random(1L)).isEmpty());
 
         LocationAPI outside = mock(LocationAPI.class);

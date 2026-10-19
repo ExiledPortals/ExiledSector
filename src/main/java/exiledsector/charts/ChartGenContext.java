@@ -48,6 +48,7 @@ public final class ChartGenContext {
     private int extraPois;
     private float itemPercent;
     private final Map<DropType, Float> dropPercents = new EnumMap<>(DropType.class);
+    private float wardenSpoilsPercent;
     private float rewardPercent;
 
     private ChartGenContext(List<AppliedEffect> applied, int quality, String factionId) {
@@ -183,6 +184,10 @@ public final class ChartGenContext {
         dropPercents.merge(type, value, Float::sum);
     }
 
+    void addWardenSpoilsPercent(float value) {
+        wardenSpoilsPercent += value;
+    }
+
     void addRewardPercent(float value) {
         rewardPercent += value;
     }
@@ -281,6 +286,14 @@ public final class ChartGenContext {
         return multiplier(percent);
     }
 
+    public float wardenSpoilsPercent() {
+        return wardenSpoilsPercent;
+    }
+
+    public float wardenSpoilsMult() {
+        return multiplier(wardenSpoilsPercent);
+    }
+
     public ItemChances itemChances() {
         Map<ItemKind, Float> targetedShares = new EnumMap<>(ItemKind.class);
         dropPercents.forEach((type, percent) -> {
@@ -309,9 +322,9 @@ public final class ChartGenContext {
         }
         return factionText + String.format(Locale.ROOT, "fleet size %+.0f%%, %+d rolled fleet(s), %+d added fleet(s), %+d officer level(s), %+d officer(s), warden size %+.0f%%, "
                         + "fleet quality %+.0f%%, site budgets %s, %+d point(s) of interest, item drops %+.0f%%, drop types %s, "
-                        + "reward x%.2f, sensor range x%.2f, chart quality %d",
+                        + "warden spoils x%.2f, reward x%.2f, sensor range x%.2f, chart quality %d",
                 fleetSizePercent, baseFleets, extraFleets, officerLevelBonus, extraOfficers, wardenSizePercent,
-                fleetQualityPercent, siteBudgetText(), extraPois(), itemPercent, describeDropPercents(), rewardMult(),
+                fleetQualityPercent, siteBudgetText(), extraPois(), itemPercent, describeDropPercents(), wardenSpoilsMult(), rewardMult(),
                 sensorRangeMult(), quality);
     }
 

@@ -208,6 +208,7 @@ public final class ChartContentGenerator {
         }
         memory.set(ChartIds.SEED_MEMORY_KEY, Long.toString(fleetSeed, Character.MAX_RADIX));
         memory.set(ChartIds.fleetRunKey(runId), true);
+        ChartFleetLoot.recordStart(fleet);
         for (String flag : HOSTILITY_FLAGS) {
             memory.set(flag, true);
         }

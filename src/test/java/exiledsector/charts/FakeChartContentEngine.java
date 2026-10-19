@@ -66,6 +66,8 @@ final class FakeChartContentEngine implements ChartContentEngine {
         when(memory.get(anyString())).thenAnswer(invocation -> stored.get((String) invocation.getArgument(0)));
         when(memory.contains(anyString())).thenAnswer(invocation -> stored.containsKey((String) invocation.getArgument(0)));
         when(memory.getBoolean(anyString())).thenAnswer(invocation -> Boolean.TRUE.equals(stored.get((String) invocation.getArgument(0))));
+        when(memory.getFloat(anyString())).thenAnswer(invocation -> stored.get((String) invocation.getArgument(0)) instanceof Number number
+                ? number.floatValue() : 0f);
         when(memory.getString(anyString())).thenAnswer(invocation -> {
             Object value = stored.get((String) invocation.getArgument(0));
             return value == null ? null : value.toString();

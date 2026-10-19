@@ -34,7 +34,8 @@ public final class ChartDrops {
     public enum Source {
         RUN_REWARD(true),
         SYSTEM_SALVAGE(true),
-        SYSTEM_BATTLE(true),
+        CHART_FLEET(true),
+        CHART_WARDEN(true),
         BATTLE(false),
         SALVAGE(false),
         TECHMINING_FIRST_FIND(false),
@@ -200,7 +201,7 @@ public final class ChartDrops {
 
     public static Loot forBattle(SectorAPI sector, LocationAPI battleLocation, float defeatedDeploymentPoints, Random random) {
         if (isSystem(battleLocation)) {
-            return forSystem(sector, Source.SYSTEM_BATTLE, liveSystemRun(battleLocation), random);
+            return Loot.NONE;
         }
         return roll(Source.BATTLE, tierForStrength(Source.BATTLE, defeatedDeploymentPoints), 1f, random, uniquesFor(sector));
     }

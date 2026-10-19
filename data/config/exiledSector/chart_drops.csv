@@ -1,7 +1,8 @@
 source,chance,extra_chance,tier_up_chance,currency_chance,min_strength,strength_per_tier,max_tier,note
 run_reward,1,0.25,0.4,0.75,,,15,"Finishing a chart objective: one chart and a chance of a second, each possibly a tier higher, scaled by the chart reward multiplier; usually a chart currency too"
 system_salvage,0.04,0,0.3,0.12,,,15,"Each salvaged point of interest inside a chart system, at the run tier, scaled by the chart quantity multiplier"
-system_battle,0.04,0,0.3,0.15,,,15,"Each won battle inside a chart system, at the run tier, scaled by the chart quantity multiplier"
+chart_fleet,0.04,0,0.3,0.15,,,15,"Each defeated fleet of the live chart run, at the run tier, scaled by the chart star chart and currency bonuses and by the share of the fleet's starting deployment points destroyed"
+chart_warden,0.5,0.25,0.4,0.6,,,15,"The warden's spoils, on top of its chart_fleet roll; also scaled by the Hoard"
 battle,0.01,0,0,0,150,120,6,"Won battles outside chart systems that defeated at least 150 enemy deployment points; tier 1 plus one per 120 more, up to tier 6"
 salvage,0.004,0,0,0,5,3,5,"Salvage sites that can hold hull items, outside chart systems, from player level 5; tier 1 plus one per 3 levels, up to tier 5"
 techmining_first_find,0.1,0,0,0,1,3,5,"A colony's first tech mining find; tier 1 plus one per 3 player levels, up to tier 5"

@@ -10,6 +10,7 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -211,6 +212,51 @@ public final class ItemDrops {
         public boolean isEmpty() {
             return items.isEmpty() && upgrades.isEmpty();
         }
+    }
+
+    public record SiteLoot(List<ItemData> items, List<HullUpgradeData> upgrades, Map<String, Integer> materials) {
+
+        public static final SiteLoot NONE = new SiteLoot(List.of(), List.of(), Map.of());
+
+        public SiteLoot {
+            items = List.copyOf(items);
+            upgrades = List.copyOf(upgrades);
+            materials = Collections.unmodifiableMap(new LinkedHashMap<>(materials));
+        }
+
+        public boolean isEmpty() {
+            return items.isEmpty() && upgrades.isEmpty() && materials.isEmpty();
+        }
+
+        public SiteLoot plus(List<ItemData> moreItems, List<HullUpgradeData> moreUpgrades, Map<String, Integer> moreMaterials) {
+            if (moreItems.isEmpty() && moreUpgrades.isEmpty() && moreMaterials.isEmpty()) {
+                return this;
+            }
+            List<ItemData> allItems = new ArrayList<>(items);
+            allItems.addAll(moreItems);
+            List<HullUpgradeData> allUpgrades = new ArrayList<>(upgrades);
+            allUpgrades.addAll(moreUpgrades);
+            Map<String, Integer> allMaterials = new LinkedHashMap<>(materials);
+            moreMaterials.forEach((itemId, quantity) -> allMaterials.merge(itemId, quantity, Integer::sum));
+            return new SiteLoot(allItems, allUpgrades, allMaterials);
+        }
+
+        public SiteLoot plus(SiteLoot other) {
+            return plus(other.items(), other.upgrades(), other.materials());
+        }
+    }
+
+    public static SiteLoot rollSite(String siteId, Random random, ItemChances chances, float feedstockMult, float currencyMult,
+                                    boolean sectionsOpen) {
+        List<ItemData> droppedItems = new ArrayList<>(roll(siteId, random, chances));
+        Map<String, Integer> droppedMaterials = rollMaterials(siteId, random, feedstockMult, currencyMult);
+        List<HullUpgradeData> droppedUpgrades = new ArrayList<>();
+        if (sectionsOpen) {
+            SectionItemLoot sectionItemLoot = rollSectionItemLoot(siteId, random, chances);
+            droppedItems.addAll(sectionItemLoot.items());
+            droppedUpgrades.addAll(sectionItemLoot.upgrades());
+        }
+        return new SiteLoot(droppedItems, droppedUpgrades, droppedMaterials);
     }
 
     public static SectionItemLoot rollSectionItemLoot(String siteId, Random random, float chanceMult) {

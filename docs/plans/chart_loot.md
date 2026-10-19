@@ -14,7 +14,7 @@ The rule that holds the framework together: a drop bonus raises its drop type at
 
 Every loot effect is an ordinary `ChartEffect`, and a modifier can carry any number of effect lines. So a modifier can be pure loot (a suffix such as "+30% currency") or a drawback bundled with loot (a hybrid such as "bigger fleets, +5% quantity"). Charts where every modifier is a drawback paying a targeted reward (like Path of Exile's tier 17 maps) are possible later as pure data, but they wait until there are many more drawbacks.
 
-## 1. Delete the vault
+## 1. Delete the vault (done)
 
 The vault objective, the vault point of interest and its salvage spec all go. The warden fleet becomes the system's jackpot (section 4). Two objectives remain: Clear and Boss.
 
@@ -38,7 +38,7 @@ Tier 3 was the only tier where the vault was the sole alternative to Clear (no w
 
 `VaultsOfKnowledgeCompat` is about the Ashes of the Domain mod, not our vault, and stays as it is.
 
-## 2. Site budgets
+## 2. Site budgets (done)
 
 "Loot budget" becomes "POI budget", split into four category budgets.
 
@@ -65,7 +65,7 @@ Domain sites can bring vanilla Domain drone defenders (`probDefenders` in their 
 
 There are three ways to make "more" of something.
 
-### Our items
+### Our items (done)
 
 Our own code rolls these, and their bonuses are chance multipliers on those rolls.
 
@@ -77,7 +77,7 @@ Our own code rolls these, and their bonuses are chance multipliers on those roll
 
 Each of these is its own drop type: the nine hull sections, subroutines and star charts. A bonus to one of them leaves the general item rolls alone. Instead it adds a targeted roll for that type, at `base chance × bonus`. Hull sections pick through `ItemDrops.pickSectionItemBasic(ItemKind, random)`, and star charts through `ItemDrops.pickChartAtTier`. So "+40% Reactor items" literally means 40% more Reactor items, and "+40% star charts" means 40% more charts, without thinning out anything else. Quantity raises the general rolls and every targeted roll alike.
 
-### Our materials
+### Our materials (done)
 
 | Drop type | Items | Rolled by |
 |---|---|---|
@@ -112,7 +112,7 @@ Colony items (nanoforges, synchrotrons, fusion lamps and the rest of vanilla's `
 
 ## 4. Sources
 
-### Site salvage
+### Site salvage (our drop types done; vanilla entries are step 5)
 
 Vanilla drop types. When the system is built (`afterGeneration`), each site gets extra entries:
 - Weapons, resources, blueprints and AI cores scale what the site already has. For each entry in the site's own spec whose group belongs to the drop type, a copy is added with `chances × bonus` or `value × bonus`. For example, +30% weapons on a weapons cache adds 30% of that cache's own weapon chances.
@@ -120,7 +120,7 @@ Vanilla drop types. When the system is built (`afterGeneration`), each site gets
 
 Our drop types. `ItemSalvageListener` stops reading the multiplier stamped on the entity (`ITEM_CHANCE_MEMORY_KEY`) and looks up the live run instead, the same way `ChartDrops.forSystem` already does. That removes `markSalvageChances`. `rollMaterials` takes one multiplier per material, so Currency and Feedstock scale separately. It also fixes today's bug where salvage materials ignore the chance multiplier altogether (`ItemSalvageListener.java:49`).
 
-### Chart fleets
+### Chart fleets (our drop types done; vanilla entries are step 5)
 
 This is the piece that's missing today.
 
@@ -132,7 +132,7 @@ This replaces the single `system_battle` roll in `chart_drops.csv`. Its chart an
 
 `ChartContentListener.reportBattleOccurred` and its TODO are removed, because the work lives in `ItemLootListener`, next to the existing battle loot.
 
-### Warden spoils
+### Warden spoils (our spoils done; vanilla spoils are step 5, the colony item step 6)
 
 The warden takes over the vault's role as the big payout. It exists from tier 4 on, under both objectives. It carries everything a normal fleet does, plus spoils:
 - Vanilla spoils. The vault's old drop list becomes `warden` rows in `chart_loot.csv`, attached to the warden at spawn: `basic` 20000 (resources), `ai_cores3` 6 (AI cores), `high_weapons2` 20 (weapons), and `any_hullmod_high` 8, `blueprints_low` 12 and `package_bp` 3 (blueprints). The vault's `rare_tech_low` entry is dropped, because colony items only come from the capped roll. Unlike the old flat vault, the spoils scale per 100 warden fleet points, so they grow with the warden's size from tier to tier.
@@ -142,6 +142,18 @@ The warden takes over the vault's role as the big payout. It exists from tier 4 
 - Spoils announce themselves in the loot screen the same way battle drops do now. No new UI.
 
 There are no spoils at tiers 1 to 3, because there is no warden there.
+
+### Salvage defenders
+
+Some sites spawn their own defenders when the player arrives, for example the Domain drones that guard probes and survey ships (`probDefenders` in the salvage spec). Since step 4 these fleets get nothing of ours: they don't carry the run key or a starting deployment point count, and the old `system_battle` roll is gone. They should count as chart fleets, so the loot bonuses reach them too.
+
+Vanilla builds them in `SalvageGenFromSeed` and lets a `SalvageDefenderModificationPlugin` (a generic plugin) change the fleet in `modifyFleet(SDMParams, fleet, random, withOverride)`. `SDMParams.entity` is the site being defended. Our plugin checks that the entity belongs to the live run (`ChartIds.belongsToRun`) and then prepares the fleet the way `prepareFleet` does for loot: the run key, the starting deployment points, and the content tags, but not the hostility flags, the removed abilities or the warden name. From then on `ItemLootListener` treats it like any other chart fleet. Defenders roll the normal fleet rule, never the warden's spoils.
+
+Two things to check before building it:
+- The plugin manager picks one plugin by priority, so ours must not take over vanilla's (or another mod's) strength, size and quality choices. Either ours only claims chart system sites and passes every other method through to `SalvageDefenderModificationPluginImpl`, or the tagging moves somewhere that doesn't compete, for example a listener on the defender fleet's first engagement. Decompile `SalvageGenFromSeed` to see how the plugin is picked and whether `modifyFleet` runs for every defender spawn.
+- Vanilla drop types (step 5) should reach defenders too. They get the per-100-fleet-point entries from `chart_loot.csv` in the same hook, scaled by the bonuses.
+
+Defenders already have their own vanilla loot through the site, which is unchanged. They do not count towards the Clear objective.
 
 ### Completion reward
 
@@ -186,7 +198,7 @@ Star Charts have not been released (they arrived after the `0.8.0-alpha` tag), s
 
 Strings: `chart.effect.<NAME>` in `en.json` and `zh_CN.json` for every new effect, plus modifier names and the totals block. The Quantity tooltip is reworded to say it covers everything except colony items.
 
-## 6. Arsenal station
+## 6. Arsenal station (done)
 
 The arsenal station comes from Industrial Evolution (`IndEvo_arsenalStation`, SirHartley, tested here with 4.1.b). Its salvage spec draws on IndEvo's own drop groups (`indEvo_weapons`, `indEvo_missiles`, `indEvo_consumables`), so it only works while IndEvo is loaded. We already ship `compat/salvage/IndEvo.csv` with hull item chances for it.
 
@@ -248,14 +260,15 @@ Points 1 to 4 make one consistent rule: a modifier means the same thing at every
 
 ## Build order
 
-1. Delete the vault (section 1). It removes a branch from the planner before step 2 reshapes it.
-2. Site categories: `Kind.DOMAIN`, four tier budget columns, per-category spending with fractional leftover, editor columns and tests. Rename Plenty and add the four category effects.
-3. Drop types and the context: the `DropType` enum (one entry per hull section, plus subroutines, star charts, currency, feedstock, the four vanilla types and colony items), `ChartGenContext` maps and `dropMult`, `ItemSalvageListener` live lookup, per-material multipliers, targeted per-type rolls, the tooltip totals block. Salvage, the nine section effects, Subroutine, Star Chart, Currency and Feedstock effects.
-4. Fleet loot for our items: record starting DP at spawn, per-fleet rolls in `ItemLootListener`, the `exiledSector_chart_fleet` and `exiledSector_chart_warden` rules, the Hoard as warden spoils, the Warden's Vigil update. Remove `system_battle`.
+1. Delete the vault (section 1). It removes a branch from the planner before step 2 reshapes it. Done (d56abc58).
+2. Site categories: `Kind.DOMAIN`, four tier budget columns, per-category spending with fractional leftover, editor columns and tests. Rename Plenty and add the four category effects. Done (merged in c3687c86).
+3. Drop types and the context: the `DropType` enum (one entry per hull section, plus subroutines, star charts, currency, feedstock, the four vanilla types and colony items), `ChartGenContext` maps and `dropMult`, `ItemSalvageListener` live lookup, per-material multipliers, targeted per-type rolls, the tooltip totals block. Salvage, the nine section effects, Subroutine, Star Chart, Currency and Feedstock effects. Done (8692db2f, d0996373).
+4. Fleet loot for our items: record starting DP at spawn, per-fleet rolls in `ItemLootListener`, the `exiledSector_chart_fleet` and `exiledSector_chart_warden` rules, the Hoard as warden spoils, the Warden's Vigil update. Remove `system_battle`. Done. The Hoard and the Warden's Vigil scale only our spoils until step 5 adds the vanilla ones.
 5. Vanilla drop types: `chart_loot.csv`, entries on sites (scaled copies plus base) and on fleets (per fleet point), warden spoils rows. Weapon, Resource, Blueprint and AI Core effects.
 6. Colony items: `colony_item_chance` tier column, `chart_colony_items.csv`, the single seeded roll with the soft ceiling, extra salvage on the warden or a site. Colony Item effect.
-7. Arsenal station with IndEvo compat.
+7. Arsenal station with IndEvo compat. Done (555e1e86, merged into main).
 8. `docs/docs.md` chart loot section, `docs/plans/star_charts.md` cross-reference, strings in both languages.
+9. Salvage defenders (section 4): tag defender fleets that spawn at the run's sites as chart fleets, so they roll fleet loot and, once step 5 is in, get the vanilla fleet entries. Needs steps 4 and 5. Update `docs/docs.md` with it.
 
 Each step builds and passes tests on its own. Steps 4, 5 and 6 touch the same generator and listeners, so they run one after the other, not in parallel.
 
