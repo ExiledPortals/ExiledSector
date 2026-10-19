@@ -21,6 +21,7 @@ beforeAll(() => {
     ANCHORS_FILE,
     ...[
       'item_modifiers.csv',
+      'doctrine_archives.csv',
       'subroutines.csv',
       'hull_items.csv',
       'hull_item_implicits.csv',

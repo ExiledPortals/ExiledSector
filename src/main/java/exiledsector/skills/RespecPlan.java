@@ -25,6 +25,9 @@ public final class RespecPlan {
             removed.add(pairedId);
         }
         Set<String> dependents = dependents(data, topology, startingRootId, selected, removed);
+        Set<String> grantedDependents = new LinkedHashSet<>(data.grantOnlyNodeIds(topology, startingRootId));
+        grantedDependents.retainAll(dependents);
+        dependents.removeAll(grantedDependents);
         Map<String, Integer> distanceById = distancesAwayFrom(removed, dependents, topology, data);
 
         List<String> ordered = new ArrayList<>(dependents);
@@ -43,7 +46,20 @@ public final class RespecPlan {
             }
             plan.add(node);
         }
-        plan.add(selected);
+        List<SkillNode> grantedNodes = new ArrayList<>();
+        for (String grantedId : grantedDependents) {
+            SkillNode grantedNode = topology.node(grantedId);
+            if (grantedNode != null) {
+                grantedNodes.add(grantedNode);
+            }
+        }
+        if (selected.getId().equals(startingRootId)) {
+            plan.addAll(grantedNodes);
+            plan.add(selected);
+        } else {
+            plan.add(selected);
+            plan.addAll(grantedNodes);
+        }
         return plan;
     }
 

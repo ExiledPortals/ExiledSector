@@ -105,21 +105,21 @@ class NpcItemsTest {
     }
 
     @Test
-    void onlyWeightedNonUniqueSubroutinesCanBeDrawnForFleets() {
-        Set<String> drawn = new HashSet<>();
+    void fleetsNeverDrawAPlayerOnlySubroutineKind() {
         Random random = new Random(3L);
         for (int i = 0; i < 200; i++) {
-            drawn.add(NpcItems.pickDefinition(random, definition -> false).id());
+            assertNull(NpcItems.pickDefinition(random, definition -> false));
         }
-
-        assertEquals(Set.of(SUBROUTINE), drawn);
     }
 
     @Test
     void fleetTreeSocketsNeverDrawASectionUnique() {
         Random random = new Random(11L);
         for (int i = 0; i < 20000; i++) {
-            assertEquals(ItemKind.SUBROUTINE, NpcItems.pickDefinition(random, definition -> true).kind());
+            ItemDefinition picked = NpcItems.pickDefinition(random, definition -> true);
+            if (picked != null) {
+                assertEquals(ItemKind.SUBROUTINE, picked.kind());
+            }
         }
     }
 
@@ -129,7 +129,8 @@ class NpcItemsTest {
         int uniques = 0;
         int trials = 20000;
         for (int i = 0; i < trials; i++) {
-            if (NpcItems.pickDefinition(random, definition -> true).unique()) {
+            ItemDefinition picked = NpcItems.pickDefinition(random, definition -> true);
+            if (picked != null && picked.unique()) {
                 uniques++;
             }
         }

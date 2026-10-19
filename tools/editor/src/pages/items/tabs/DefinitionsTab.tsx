@@ -15,8 +15,10 @@ import {
   ANY_SYSTEM_TYPE,
   definitionWarnings,
   editablePool,
+  hasVolumeFields,
   isTrueText,
   isUniqueSubroutine,
+  isVolumeSubroutine,
   markDefinitionsSaved,
   itemTypeOfKind,
   ITEM_TYPE_LABELS,
@@ -64,6 +66,16 @@ import {
 import { implicitItemType, parseFamilyImplicits, type ImplicitsModel } from '../model/implicits.ts';
 import { AnchorDefinitionsPanel } from './AnchorDefinitionsPanel.tsx';
 import { DefinitionView } from './DefinitionView.tsx';
+import { DoctrineArchivesPanel } from './DoctrineArchivesPanel.tsx';
+import {
+  DOCTRINE_ARCHIVE_FILE_NAME,
+  DOCTRINE_ARCHIVE_RESOURCE,
+  DOCTRINE_SUBROUTINE_KIND,
+  parseDoctrineArchivesCsv,
+  renameDoctrineArchive,
+  serializeDoctrineArchivesCsv,
+  type DoctrineArchivesModel,
+} from '../model/doctrines.ts';
 import { FamilyOptionSwitch } from './FamilySwitch.tsx';
 import { PoolEntryRow } from './PoolEntryRow.tsx';
 
@@ -83,6 +95,8 @@ interface DefinitionsModel extends FamilyDefinitions {
   catalogueChanged: boolean;
   otherCatalogueIds: string[];
   implicitIdsBySection: Record<string, string[]>;
+  doctrines: DoctrineArchivesModel | null;
+  doctrinesChanged: boolean;
 }
 
 function otherFamily(family: ItemFamily): ItemFamily {
@@ -90,7 +104,8 @@ function otherFamily(family: ItemFamily): ItemFamily {
 }
 
 function definitionFileNames(family: ItemFamily): string[] {
-  return [...DEFINITION_RESOURCES[family], ...DEFINITION_RESOURCES[otherFamily(family)], MODIFIER_RESOURCES[family], IMPLICIT_RESOURCES[family], MODIFIER_RESOURCES[otherFamily(family)]];
+  const doctrineFiles = family === 'ship' ? [DOCTRINE_ARCHIVE_RESOURCE] : [];
+  return [...doctrineFiles, ...DEFINITION_RESOURCES[family], ...DEFINITION_RESOURCES[otherFamily(family)], MODIFIER_RESOURCES[family], IMPLICIT_RESOURCES[family], MODIFIER_RESOURCES[otherFamily(family)]];
 }
 
 function implicitGroupOf(definition: ItemDefinition, family: ItemFamily, vocabulary: Vocabulary): string {
@@ -101,6 +116,9 @@ export function DefinitionsTab({ vocabulary }: { vocabulary: Vocabulary }) {
   const [family, setFamily] = useState<DefinitionFamily>('ship');
   if (family === 'anchor') {
     return <AnchorDefinitionsPanel vocabulary={vocabulary} onFamily={setFamily} />;
+  }
+  if (family === 'doctrine') {
+    return <DoctrineArchivesPanel vocabulary={vocabulary} onFamily={setFamily} />;
   }
   return <ItemDefinitionsPanel vocabulary={vocabulary} family={family} onFamily={setFamily} />;
 }
@@ -128,6 +146,8 @@ function ItemDefinitionsPanel({ vocabulary, family, onFamily }: ItemDefinitionsP
         catalogueChanged: false,
         otherCatalogueIds: parseModifiersCsv(files[MODIFIER_RESOURCES[otherFamily(family)]].content).modifiers.map((modifier) => modifier.id),
         implicitIdsBySection: implicitIdsBySection(parseFamilyImplicits(family, files[IMPLICIT_RESOURCES[family]].content, vocabulary)),
+        doctrines: family === 'ship' ? parseDoctrineArchivesCsv(files[DOCTRINE_ARCHIVE_RESOURCE].content) : null,
+        doctrinesChanged: false,
       };
     },
     serialize: (model) => ({
@@ -135,6 +155,7 @@ function ItemDefinitionsPanel({ vocabulary, family, onFamily }: ItemDefinitionsP
       ...(model.catalogueChanged
         ? { [MODIFIER_RESOURCES[model.family]]: serializeModifiersCsv({ table: model.catalogueTable, modifiers: model.catalogue }) }
         : {}),
+      ...(model.doctrinesChanged && model.doctrines ? { [DOCTRINE_ARCHIVE_RESOURCE]: serializeDoctrineArchivesCsv(model.doctrines) } : {}),
     }),
     validate: (model) => [
       ...validateItemDefinitions(model.definitions, vocabulary, modifierById(model.catalogue), model.family, model.otherFamilyIds),
@@ -143,15 +164,24 @@ function ItemDefinitionsPanel({ vocabulary, family, onFamily }: ItemDefinitionsP
         : []),
     ],
     warnings: (model) => definitionWarnings(model.definitions, model.family),
-    savedMessage: (model) =>
-      model.catalogueChanged
-        ? `Saved ${DEFINITION_FILE_NAMES[model.family].replace(' and ', ', ')} and ${MODIFIER_FILE_NAMES[model.family]}`
-        : `Saved ${DEFINITION_FILE_NAMES[model.family]}`,
+    savedMessage: (model) => {
+      const savedFiles = DEFINITION_FILE_NAMES[model.family].split(' and ');
+      if (model.catalogueChanged) {
+        savedFiles.push(MODIFIER_FILE_NAMES[model.family]);
+      }
+      if (model.doctrinesChanged) {
+        savedFiles.push(DOCTRINE_ARCHIVE_FILE_NAME);
+      }
+      return `Saved ${savedFiles.length === 1 ? savedFiles[0] : `${savedFiles.slice(0, -1).join(', ')} and ${savedFiles[savedFiles.length - 1]}`}`;
+    },
     afterSave: (draft, saved) => {
       markDefinitionsSaved(draft, saved);
       markModifiersSaved({ table: draft.catalogueTable, modifiers: draft.catalogue }, { table: saved.catalogueTable, modifiers: saved.catalogue });
       if (saved.catalogueChanged) {
         draft.catalogueChanged = false;
+      }
+      if (saved.doctrinesChanged) {
+        draft.doctrinesChanged = false;
       }
     },
   });
@@ -377,6 +407,51 @@ function StarChartFields({ definition, vocabulary, edit }: { definition: ItemDef
   );
 }
 
+function VolumeFields({ definition, vocabulary, edit }: { definition: ItemDefinition; vocabulary: Vocabulary; edit: (recipe: (draft: ItemDefinition) => void) => void }) {
+  const current = definition.volume ?? '';
+  const options = current === '' || vocabulary.regionTags.includes(current) ? vocabulary.regionTags : [current, ...vocabulary.regionTags];
+  return (
+    <>
+      <Divider />
+      <Group grow align="flex-start">
+        <Select
+          label="Volume"
+          description="The tree volume whose notables this subroutine rolls from; one volume subroutine per volume"
+          data={options}
+          value={current === '' ? null : current}
+          onChange={(value) => edit((draft) => void (draft.volume = value ?? ''))}
+          error={current === '' ? 'Pick a volume' : undefined}
+        />
+        <TextInput
+          label="Excluded nodes"
+          description="Notable node ids of this volume that never roll, separated by ;"
+          value={definition.excludedNodes ?? ''}
+          onChange={(event) => {
+            const text = event.currentTarget.value;
+            edit((draft) => void (draft.excludedNodes = text));
+          }}
+        />
+      </Group>
+      <Group grow align="flex-start">
+        <DecimalInput
+          label="Fleet drop chance"
+          description="Chance per 100 deployment points destroyed of fleets whose faction maps to this volume in npc_faction_volumes.csv"
+          placeholder="never"
+          value={definition.dropChance ?? ''}
+          onChange={(text) => edit((draft) => void (draft.dropChance = text))}
+        />
+        <DecimalInput
+          label="Salvage chance"
+          description="Chance per salvaged site, scaled by the site's first item chance"
+          placeholder="never"
+          value={definition.salvageChance ?? ''}
+          onChange={(text) => edit((draft) => void (draft.salvageChance = text))}
+        />
+      </Group>
+    </>
+  );
+}
+
 function DefinitionForm({ document, family, definition, index, vocabulary, catalogue, otherCatalogueIds, otherFamilyIds, usage, onSelect }: DefinitionFormProps) {
   const [idText, setIdText] = useState(definition.id);
   useEffect(() => setIdText(definition.id), [definition.id]);
@@ -436,11 +511,13 @@ function DefinitionForm({ document, family, definition, index, vocabulary, catal
     if (newId === definition.id) {
       return;
     }
+    const isDoctrine = definition.subroutineKind === DOCTRINE_SUBROUTINE_KIND;
     if (definition.loadedId && definition.id === definition.loadedId) {
       const rename = await confirmAction({
         title: `Rename "${definition.loadedId}" to "${newId}"?`,
         message:
           'Saved games store this id on every item players own. Once it has shipped, add a row to item_id_aliases.csv mapping the old id to the new one, or those items turn into unknown items. ' +
+          (isDoctrine ? `Its row in ${DOCTRINE_ARCHIVE_FILE_NAME} is renamed and saved with it. ` : '') +
           `${isChart ? 'Its' : 'Its rare-name words in item_names.json and its'} socketable.${definition.loadedId}.* keys in zh_CN.json keep the old id and must be renamed by hand.`,
         confirmLabel: 'Rename',
         danger: true,
@@ -450,7 +527,13 @@ function DefinitionForm({ document, family, definition, index, vocabulary, catal
         return;
       }
     }
-    edit((draft) => void (draft.id = newId));
+    const oldId = definition.id;
+    updateDocument((draft) => {
+      draft.definitions[index].id = newId;
+      if (isDoctrine && draft.doctrines && renameDoctrineArchive(draft.doctrines.archives, oldId, newId) > 0) {
+        draft.doctrinesChanged = true;
+      }
+    });
   };
 
   const kinds = vocabulary.itemKinds.includes(definition.kind) ? vocabulary.itemKinds : [definition.kind, ...vocabulary.itemKinds];
@@ -544,6 +627,9 @@ function DefinitionForm({ document, family, definition, index, vocabulary, catal
           value={definition.socketLimit ?? ''}
           onChange={(text) => edit((draft) => void (draft.socketLimit = text))}
         />
+      )}
+      {isSubroutine && (isVolumeSubroutine(definition) || hasVolumeFields(definition)) && (
+        <VolumeFields definition={definition} vocabulary={vocabulary} edit={edit} />
       )}
       <Checkbox
         label={isSubroutine ? 'Unique - shown with the name above in orange' : 'Unique - shown with the name above in orange, and rolls every prefix and suffix'}

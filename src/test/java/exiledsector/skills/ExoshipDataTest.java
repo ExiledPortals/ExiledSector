@@ -1,8 +1,6 @@
 package exiledsector.skills;
 
 import exiledsector.skills.npc.RealSkillData;
-import exiledsector.skills.unlock.UnlockCondition;
-import exiledsector.skills.unlock.UnlockConditionType;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -16,63 +14,55 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ExoshipDataTest {
 
+    private static final String BEACON_ITEM_ID = "socketable_beacon";
     private static SkillNode exoship;
-    private static SkillNode beacon;
 
     @BeforeAll
     static void loadRealTree() throws Exception {
         RealSkillData.load();
         exoship = ExoshipNodes.exoship();
-        beacon = exoship == null ? null : SkillTree.get(exoship.getPairedNodeId());
     }
 
     @AfterAll
     static void clear() {
+        AnchorLinks.install(null);
         RealSkillData.clear();
     }
 
     @Test
-    void theTreeHasOneExoshipPairedWithOneHyperNavBeacon() {
+    void theTreeHasOneExoshipAndItIsTheExoTechExit() {
         long exoships = SkillTree.getAllNodes().values().stream().filter(ExoshipNodes::isExoship).count();
-        long beacons = SkillTree.getAllNodes().values().stream().filter(ExoshipNodes::isBeacon).count();
 
         assertEquals(1, exoships);
-        assertEquals(1, beacons);
-        assertNotNull(beacon);
-        assertTrue(ExoshipNodes.isBeacon(beacon));
-        assertEquals(exoship.getId(), beacon.getPairedNodeId());
+        assertEquals(SkillTier.WORMHOLE_EXIT, exoship.getType().getTier());
+        assertNull(exoship.getPairedNodeId());
         assertTrue(ExoshipNodes.isCarried(exoship));
-        assertFalse(ExoshipNodes.isCarried(beacon));
+        assertNull(SkillTree.getType("exotech_beacon"));
     }
 
     @Test
-    void bothEndsOfTheDockingLinkWaitForThePlayerToOwnAnExoshipInRat() {
-        for (SkillNode end : List.of(beacon, exoship)) {
-            assertEquals(List.of(UnlockConditionType.RAT_PLAYER_EXOSHIP),
-                    end.getType().getUnlockConditions().stream().map(UnlockCondition::getType).toList(), end.getId());
-        }
+    void theExoshipNodeIsNotGatedBecauseTheBeaconAnchorCarriesTheRatUnlock() {
+        assertEquals(List.of(), exoship.getType().getUnlockConditions());
     }
 
     @Test
-    void theBeaconIsTheOnlyWayOntoTheExoship() {
+    void noPathLeadsOntoTheExoship() {
         List<String> leaks = new ArrayList<>();
         for (SkillNode node : SkillTree.getAllNodes().values()) {
             for (String connectedId : node.getConnectedNodeIds()) {
                 SkillNode connected = SkillTree.get(connectedId);
-                boolean crossesOver = ExoshipNodes.isCarried(node) != ExoshipNodes.isCarried(connected);
-                boolean dockingLink = node == exoship && connected == beacon || node == beacon && connected == exoship;
-                if (crossesOver && !dockingLink) {
+                if (ExoshipNodes.isCarried(node) != ExoshipNodes.isCarried(connected)) {
                     leaks.add(node.getId() + " -> " + connectedId);
                 }
             }
         }
 
-        assertTrue(leaks.isEmpty(), "Links onto the Exoship that skip the beacon: " + leaks);
+        assertTrue(leaks.isEmpty(), "Links onto the Exoship from outside it: " + leaks);
     }
 
     @Test
@@ -98,12 +88,35 @@ class ExoshipDataTest {
     }
 
     @Test
-    void allocatingTheBeaconDocksTheExoshipForFreeAndOpensItsBranches() {
-        ShipSkillData shipData = new ShipSkillData();
+    void socketingTheHyperNavBeaconDocksTheExoshipForFreeAndOpensItsBranches() {
+        AnchorLinks.install(new AnchorLinks.ExitLookup() {
+            @Override
+            public String exitNodeId(String socketedItemId) {
+                return BEACON_ITEM_ID.equals(socketedItemId) ? exoship.getId() : null;
+            }
 
-        shipData.allocate(beacon, 1);
+            @Override
+            public boolean canOpen(String socketedItemId) {
+                return true;
+            }
+
+            @Override
+            public int revision() {
+                return 0;
+            }
+        });
+        SkillNode socket = SkillTree.getAllNodes().values().stream().filter(node -> node.getType().getTier() == SkillTier.SOCKET)
+                .findFirst().orElseThrow();
+        ShipSkillData shipData = new ShipSkillData();
+        shipData.allocate(socket, 1);
+
+        shipData.socketItem(socket.getId(), BEACON_ITEM_ID);
+        shipData.openAnchorWormholes(Integer.MAX_VALUE);
 
         assertTrue(shipData.isAllocated(exoship.getId()));
+        assertTrue(shipData.isFreeNode(exoship.getId()));
+        assertEquals(exoship.getId(), shipData.wormholePartner(socket));
+        assertEquals(socket.getId(), shipData.wormholePartner(exoship));
         List<SkillNode> hub = exoship.getConnectedNodeIds().stream().map(SkillTree::get).filter(ExoshipNodes::isCarried).toList();
         assertFalse(hub.isEmpty());
         for (SkillNode hubNode : hub) {

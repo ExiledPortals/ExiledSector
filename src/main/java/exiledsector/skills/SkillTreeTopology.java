@@ -49,7 +49,7 @@ public final class SkillTreeTopology {
             } else {
                 otherNodes.add(node);
             }
-            if (tier == SkillTier.WORMHOLE) {
+            if (tier.isWormhole()) {
                 wormholeNodes.add(node);
             }
         }

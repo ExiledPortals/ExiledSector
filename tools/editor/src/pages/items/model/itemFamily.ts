@@ -7,11 +7,12 @@ export const ITEM_FAMILY_OPTIONS: { value: ItemFamily; label: string }[] = [
   { value: 'chart', label: 'Star charts' },
 ];
 
-export type DefinitionFamily = ItemFamily | 'anchor';
+export type DefinitionFamily = ItemFamily | 'anchor' | 'doctrine';
 
 export const DEFINITION_FAMILY_OPTIONS: { value: DefinitionFamily; label: string }[] = [
   ...ITEM_FAMILY_OPTIONS,
   { value: 'anchor', label: 'Wormhole anchors' },
+  { value: 'doctrine', label: 'Doctrine Archives' },
 ];
 
 export const MODIFIER_FILE_NAMES: Record<ItemFamily, string> = { ship: 'item_modifiers.csv', chart: 'star_chart_modifiers.csv' };

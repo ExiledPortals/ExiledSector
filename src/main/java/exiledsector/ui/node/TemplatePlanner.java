@@ -165,7 +165,7 @@ final class TemplatePlanner {
                 orderedNodeIds.add(step.nodeId());
             }
         }
-        orderedNodeIds.addAll(planData.getAllocatedNodeIds());
+        orderedNodeIds.addAll(TemplateCapture.pathAllocatedNodeIds(planData, planData.getAllocatedNodeIds(), startingRootId));
         ShipSkillData liveData = liveSnapshotSupplier.get().skillData();
         List<TemplateStep> steps = new ArrayList<>(TemplateCapture.capture(orderedNodeIds, nodeId -> {
             String templateOption = templateOptionsByNodeId.get(nodeId);

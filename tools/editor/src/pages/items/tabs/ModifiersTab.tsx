@@ -19,7 +19,8 @@ import {
   MODIFIER_RESOURCES,
   type ItemFamily,
 } from '../model/itemFamily.ts';
-import { isUsed, modifierUsage, referenceIssues, renameModifierReferences } from '../model/modifierUsage.ts';
+import { DOCTRINE_ARCHIVE_FILE_NAME, DOCTRINE_ARCHIVE_RESOURCE, parseDoctrineArchivesCsv, serializeDoctrineArchivesCsv, type DoctrineArchivesModel } from '../model/doctrines.ts';
+import { isUsed, modifierUsage, referenceIssues, renameModifierReferences, usedByText } from '../model/modifierUsage.ts';
 import {
   familyItemTypes,
   idConventionIssue,
@@ -48,6 +49,7 @@ interface ModifiersTabModel {
   catalogue: ModifiersModel;
   items: FamilyDefinitions;
   implicits: ImplicitsModel;
+  doctrines: DoctrineArchivesModel | null;
   otherFileIds: string[];
   referencesChanged: boolean;
 }
@@ -57,11 +59,12 @@ function otherFamily(family: ItemFamily): ItemFamily {
 }
 
 function modifiersFileNames(family: ItemFamily): string[] {
-  return [MODIFIER_RESOURCES[family], ...DEFINITION_RESOURCES[family], IMPLICIT_RESOURCES[family], MODIFIER_RESOURCES[otherFamily(family)]];
+  const fileNames = [MODIFIER_RESOURCES[family], ...DEFINITION_RESOURCES[family], IMPLICIT_RESOURCES[family], MODIFIER_RESOURCES[otherFamily(family)]];
+  return family === 'ship' ? [...fileNames, DOCTRINE_ARCHIVE_RESOURCE] : fileNames;
 }
 
 function usageOf(model: ModifiersTabModel): Map<string, ModifierUsage> {
-  return modifierUsage(model.items.definitions, model.implicits.rows, implicitItemType(model.family));
+  return modifierUsage(model.items.definitions, model.implicits.rows, implicitItemType(model.family), model.doctrines?.archives ?? []);
 }
 
 export function ModifiersTab({ vocabulary }: { vocabulary: Vocabulary }) {
@@ -75,22 +78,27 @@ export function ModifiersTab({ vocabulary }: { vocabulary: Vocabulary }) {
       catalogue: parseModifiersCsv(files[MODIFIER_RESOURCES[family]].content),
       items: parseFamilyDefinitions(family, Object.fromEntries(DEFINITION_RESOURCES[family].map((name) => [name, files[name].content]))),
       implicits: parseFamilyImplicits(family, files[IMPLICIT_RESOURCES[family]].content, vocabulary),
+      doctrines: family === 'ship' ? parseDoctrineArchivesCsv(files[DOCTRINE_ARCHIVE_RESOURCE].content) : null,
       otherFileIds: parseModifiersCsv(files[MODIFIER_RESOURCES[otherFamily(family)]].content).modifiers.map((modifier) => modifier.id),
       referencesChanged: false,
     }),
     serialize: (model) => ({
       [MODIFIER_RESOURCES[model.family]]: serializeModifiersCsv(model.catalogue),
       ...(model.referencesChanged
-        ? { ...serializeFamilyDefinitions(model.items), [IMPLICIT_RESOURCES[model.family]]: serializeFamilyImplicits(model.family, model.implicits) }
+        ? {
+            ...serializeFamilyDefinitions(model.items),
+            [IMPLICIT_RESOURCES[model.family]]: serializeFamilyImplicits(model.family, model.implicits),
+            ...(model.doctrines ? { [DOCTRINE_ARCHIVE_RESOURCE]: serializeDoctrineArchivesCsv(model.doctrines) } : {}),
+          }
         : {}),
     }),
     validate: (model) => [
       ...validateModifiers(model.catalogue.modifiers, vocabulary, usageOf(model), model.family, new Set(model.otherFileIds)),
-      ...referenceIssues(model.items.definitions, model.implicits.rows, modifierById(model.catalogue.modifiers)),
+      ...referenceIssues(model.items.definitions, model.implicits.rows, modifierById(model.catalogue.modifiers), model.doctrines?.archives ?? []),
     ],
     savedMessage: (model) =>
       model.referencesChanged
-        ? `Saved ${MODIFIER_FILE_NAMES[model.family]} and the renamed references in ${DEFINITION_FILE_NAMES[model.family]} and ${IMPLICIT_FILE_NAMES[model.family]}`
+        ? `Saved ${MODIFIER_FILE_NAMES[model.family]} and the renamed references in ${DEFINITION_FILE_NAMES[model.family]}, ${IMPLICIT_FILE_NAMES[model.family]}${model.doctrines ? ` and ${DOCTRINE_ARCHIVE_FILE_NAME}` : ''}`
         : `Saved ${MODIFIER_FILE_NAMES[model.family]}`,
     afterSave: (draft, saved) => {
       markModifiersSaved(draft.catalogue, saved.catalogue);
@@ -272,7 +280,7 @@ function ModifierForm({ document, family, otherFileIds, modifier, index, usage, 
       const draftModifier = draft.catalogue.modifiers[index];
       const oldId = draftModifier.id;
       draftModifier.id = newId;
-      if (renameModifierReferences(draft.items.definitions, draft.implicits.rows, oldId, newId) > 0) {
+      if (renameModifierReferences(draft.items.definitions, draft.implicits.rows, oldId, newId, draft.doctrines?.archives ?? []) > 0) {
         draft.referencesChanged = true;
       }
     });
@@ -287,7 +295,7 @@ function ModifierForm({ document, family, otherFileIds, modifier, index, usage, 
         message:
           'Saved games store this id on every item that rolled it. Items whose id matches its effect name still find it, but other ids are only matched by ' +
           'their effect within the same slot, and common items whose frozen name used it take the word of their current first prefix or suffix. ' +
-          `References in ${DEFINITION_FILE_NAMES[family]} and ${IMPLICIT_FILE_NAMES[family]} are renamed and saved with it. ` +
+          `References in ${DEFINITION_FILE_NAMES[family]}, ${IMPLICIT_FILE_NAMES[family]}${family === 'ship' ? ` and ${DOCTRINE_ARCHIVE_FILE_NAME}` : ''} are renamed and saved with it. ` +
           `Its socketable.modifier.${modifier.loadedId} key in zh_CN.json keeps the old id and must be renamed by hand.`,
         confirmLabel: 'Rename',
         danger: true,
@@ -318,7 +326,7 @@ function ModifierForm({ document, family, otherFileIds, modifier, index, usage, 
 
   const remove = async () => {
     if (isUsed(usage)) {
-      notifyError(`${modifier.id} is used by ${[...(usage?.items ?? []), ...(usage?.implicitSections ?? [])].join(', ')}. Remove those references first.`);
+      notifyError(`${modifier.id} is used by ${usedByText(usage)}. Remove those references first.`);
       return;
     }
     const confirmed = await confirmAction({
@@ -420,6 +428,7 @@ function ModifierForm({ document, family, otherFileIds, modifier, index, usage, 
         <Stack gap={2}>
           {usage && usage.items.length > 0 && <Text size="sm">Items: {usage.items.join(', ')}</Text>}
           {usage && usage.implicitSections.length > 0 && <Text size="sm">Implicit of: {usage.implicitSections.join(', ')}</Text>}
+          {usage?.doctrineArchives && usage.doctrineArchives.length > 0 && <Text size="sm">Doctrine archives: {usage.doctrineArchives.join(', ')}</Text>}
         </Stack>
       ) : (
         <Text size="sm" c="dimmed">

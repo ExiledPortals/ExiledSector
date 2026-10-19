@@ -81,10 +81,10 @@ class AreaToggleDataTest {
                     problems.add(area + " off: wormhole " + node.getId() + " lost its pair " + node.getPairedNodeId());
                 }
             }
-            Set<String> reached = TreeReachability.fromRoots(filtered.nodes, node -> true);
+            Set<String> reached = TreeReachability.fromRootsAndExits(filtered.nodes, node -> true);
             for (SkillNode node : filtered.nodes) {
                 if (!reached.contains(node.getId())) {
-                    problems.add(area + " off: " + node.getId() + " can no longer be reached from any root");
+                    problems.add(area + " off: " + node.getId() + " can no longer be reached from any root or wormhole exit");
                 }
             }
         }

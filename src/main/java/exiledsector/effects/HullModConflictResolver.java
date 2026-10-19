@@ -78,7 +78,7 @@ public final class HullModConflictResolver {
         return true;
     }
 
-    private static boolean isRemovableConflict(ShipVariantAPI variant, String hullModId) {
+    static boolean isRemovableConflict(ShipVariantAPI variant, String hullModId) {
         return variant.hasHullMod(hullModId) && InstalledHullMods.isRemovable(variant, hullModId)
                 && !InstalledHullMods.isInstalledBySkillTree(variant, hullModId);
     }

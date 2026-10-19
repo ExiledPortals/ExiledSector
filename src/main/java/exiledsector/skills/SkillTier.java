@@ -6,6 +6,7 @@ public enum SkillTier {
     NOTABLE(1f),
     KEYSTONE(1f),
     WORMHOLE(1.3f),
+    WORMHOLE_EXIT(1.3f),
     ROOT(2.5f),
     SOCKET(1.2f);
 
@@ -17,5 +18,9 @@ public enum SkillTier {
 
     public float getSizeMultiplier() {
         return sizeMultiplier;
+    }
+
+    public boolean isWormhole() {
+        return this == WORMHOLE || this == WORMHOLE_EXIT;
     }
 }

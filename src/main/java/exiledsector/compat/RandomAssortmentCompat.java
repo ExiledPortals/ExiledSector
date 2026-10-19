@@ -30,7 +30,7 @@ public final class RandomAssortmentCompat {
             List.of(EXO_UTILS_INSTANCE, GET_EXO_DATA, GET_RECOVERED_EXOSHIP, GET_PLAYER_EXOSHIP),
             Logger.getLogger(RandomAssortmentCompat.class), Level.WARN,
             "Random Assortment of Things' Exoship state can't be read, probably because RAT changed it; "
-                    + "the ExoTech beacon node unlocks so its area stays usable, but the Hyper-Nav Beacon anchor stays inert",
+                    + "the Exoship node stays hidden and the Hyper-Nav Beacon anchor stays inert",
             OptionalApi.RuntimeFailure.RETRY_NEXT_CALL);
 
     private RandomAssortmentCompat() {
@@ -40,15 +40,7 @@ public final class RandomAssortmentCompat {
         return TARGET.isEnabled();
     }
 
-    public static boolean exoshipGateOpen() {
-        return exoshipRecoveredOr(true);
-    }
-
     public static boolean exoshipConfirmedRecovered() {
-        return exoshipRecoveredOr(false);
-    }
-
-    private static boolean exoshipRecoveredOr(boolean unreadableFallback) {
         SectorAPI sector = Global.getSector();
         if (sector == null) {
             return false;
@@ -57,7 +49,7 @@ public final class RandomAssortmentCompat {
             Object exoData = api.handle(GET_EXO_DATA).invoke(api.handle(EXO_UTILS_INSTANCE).invoke());
             return exoData != null && ((boolean) api.handle(GET_RECOVERED_EXOSHIP).invoke(exoData)
                     || api.handle(GET_PLAYER_EXOSHIP).invoke(exoData) != null);
-        }, unreadableFallback);
+        }, false);
     }
 
     static void clearCachedLookups() {
@@ -67,8 +59,8 @@ public final class RandomAssortmentCompat {
     static List<String> missingFeatures() {
         List<String> missing = new ArrayList<>(CompatTarget.missingHullMods(REQUIRED_HULL_MOD_IDS));
         if (!EXOSHIP_API.missingMembers().isEmpty()) {
-            missing.add("ExoUtils.getExoData and ExoData.getRecoveredExoship/getPlayerExoship, used to unlock the ExoTech beacon "
-                    + "(the beacon unlocks without them)");
+            missing.add("ExoUtils.getExoData and ExoData.getRecoveredExoship/getPlayerExoship, used to unlock the Exoship and its "
+                    + "Hyper-Nav Beacon (both stay locked without them)");
         }
         SettingsAPI settings = Global.getSettings();
         if (!CompatTarget.specExists(() -> settings.getHullSpec(AbyssSingularity.GENESIS_HULL_ID))) {

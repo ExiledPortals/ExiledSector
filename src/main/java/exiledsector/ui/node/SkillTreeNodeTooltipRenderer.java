@@ -1,5 +1,6 @@
 package exiledsector.ui.node;
 
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.Style;
@@ -11,8 +12,14 @@ import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillType;
+import exiledsector.skills.SkillTypeEffect;
+import exiledsector.items.DoctrineOverrides;
+import exiledsector.items.DoctrineRewrite;
+import exiledsector.items.DoctrineText;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
+import exiledsector.items.Subroutine;
+import exiledsector.items.VolumeGrantStatus;
 import exiledsector.items.WormholeAnchor;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeTooltipTable;
@@ -55,7 +62,7 @@ final class SkillTreeNodeTooltipRenderer {
         this.panelStyle = panelStyle;
     }
 
-    void renderTooltip(SkillNode node, NodeAllocator.Snapshot allocation, float mouseX, float mouseY, float alphaMult) {
+    void renderTooltip(SkillNode node, NodeAllocator.Snapshot allocation, String tooltipWarning, float mouseX, float mouseY, float alphaMult) {
         LazyFont font = SkillTreePanelStyle.font();
         if (font == null) return;
 
@@ -68,8 +75,14 @@ final class SkillTreeNodeTooltipRenderer {
         boolean allocatedSocket = node.getType().getTier() == SkillTier.SOCKET && skillData.isAllocated(node.getId());
         Item socketed = allocatedSocket ? ItemStore.lookup(skillData.getSocketedItem(node.getId())) : null;
         String refusalReason = allocation.refusalReason(node);
+        VolumeGrantStatus socketGrantStatus = socketed instanceof Subroutine ? allocation.volumeGrantStatus(node.getId()) : null;
+        int anchorStateRevision = socketed instanceof WormholeAnchor ? skillData.revision() : 0;
+        Item grantingItem = hidden ? null : grantingItem(node, allocation);
+        DoctrineRewrite rewrite = hidden ? null : DoctrineOverrides.rewrite(skillData, node.getId());
         List<Object> signature = List.of(effectiveType.getId(), hidden, showOptionalHint, expanded, allocatedSocket,
-                socketed == null ? "" : socketed.id(), refusalReason == null ? "" : refusalReason);
+                socketed == null ? "" : socketed.id(), refusalReason == null ? "" : refusalReason, anchorStateRevision,
+                rewrite == null ? "" : rewrite, tooltipWarning == null ? "" : tooltipWarning,
+                socketGrantStatus == null ? "" : socketGrantStatus, grantingItem == null ? "" : grantingItem.id());
 
         TextLabel title = tooltipTitles.computeIfAbsent(node.getId(), id -> titleLabel()).refresh(signature, label -> {
             if (socketed != null) {
@@ -79,7 +92,9 @@ final class SkillTreeNodeTooltipRenderer {
             }
         });
         TextLabel body = body(tooltipBodies, node.getId(), signature,
-                () -> describe(effectiveType, hidden, showOptionalHint, allocatedSocket, socketed, expanded), expanded, refusalReason);
+                () -> withGrantLine(withDoctrineLines(describe(node, skillData, effectiveType, hidden, showOptionalHint, socketed, socketGrantStatus,
+                        expanded), rewrite), grantingItem),
+                expanded, tooltipWarning != null ? tooltipWarning : refusalReason);
 
         List<SkillTreeTooltipTable> tables = showOptionalHint || hidden ? List.of() : tablesFor(font, effectiveType);
         TextLabel flavour = hidden || socketed != null ? null : flavourFor(effectiveType);
@@ -152,15 +167,42 @@ final class SkillTreeNodeTooltipRenderer {
         return hidden ? Translation.text("ui.node.lockedTitle") : effectiveType.getDisplayName();
     }
 
-    private NodeDescription describe(SkillType effectiveType, boolean hidden, boolean showOptionalHint, boolean allocatedSocket,
-                                     Item socketed, boolean expanded) {
+    private static Item grantingItem(SkillNode node, NodeAllocator.Snapshot allocation) {
+        ShipSkillData skillData = allocation.skillData();
+        if (node.getType().getTier() == SkillTier.SOCKET || !skillData.isAllocated(node.getId())) {
+            return null;
+        }
+        String grantingSocketId = skillData.grantingSocket(node.getId());
+        VolumeGrantStatus grantStatus = grantingSocketId == null ? null : allocation.volumeGrantStatus(grantingSocketId);
+        if (grantStatus == null || grantStatus.state() != VolumeGrantStatus.State.ACTIVE) {
+            return null;
+        }
+        return ItemStore.lookup(skillData.getSocketedItem(grantingSocketId));
+    }
+
+    private static NodeDescription withGrantLine(NodeDescription description, Item grantingItem) {
+        if (grantingItem == null) {
+            return description;
+        }
+        List<DescriptionLine> effects = new ArrayList<>(description.effects());
+        effects.add(new DescriptionLine(Translation.msg("socketable.volume.grantedBy").arg("item", grantingItem.name()).styled(), false));
+        return new NodeDescription(effects, description.details());
+    }
+
+    private NodeDescription describe(SkillNode node, ShipSkillData skillData, SkillType effectiveType, boolean hidden, boolean showOptionalHint,
+                                     Item socketed, VolumeGrantStatus socketGrantStatus, boolean expanded) {
+        boolean allocatedSocket = node.getType().getTier() == SkillTier.SOCKET && skillData.isAllocated(node.getId());
         if (hidden) {
             return new NodeDescription(List.of(plainLine("ui.node.lockedBody"), plainLine("ui.node.lockedHint")), List.of());
         }
         if (socketed != null) {
             List<DescriptionLine> lines = new ArrayList<>();
             if (socketed instanceof WormholeAnchor anchor) {
-                anchor.statusLines().forEach(statusLine -> lines.add(new DescriptionLine(statusLine, false)));
+                anchor.socketStatusLines(skillData, node.getId()).forEach(statusLine -> lines.add(new DescriptionLine(statusLine, false)));
+            }
+            if (socketed instanceof Subroutine subroutine) {
+                subroutine.doctrineLines().forEach(doctrineLine -> lines.add(new DescriptionLine(doctrineLine, false)));
+                subroutine.volumeSocketLines(socketGrantStatus).forEach(volumeLine -> lines.add(new DescriptionLine(volumeLine, false)));
             }
             for (StyledText effectLine : socketed.effectLines(expanded, fleetMember.getHullSpec().getHullSize())) {
                 lines.add(new DescriptionLine(effectLine, false));
@@ -183,6 +225,26 @@ final class SkillTreeNodeTooltipRenderer {
             effects.add(plainLine("ui.node.socket.installHint"));
         }
         return new NodeDescription(effects, details);
+    }
+
+    private NodeDescription withDoctrineLines(NodeDescription description, DoctrineRewrite rewrite) {
+        if (rewrite == null) {
+            return description;
+        }
+        List<DescriptionLine> effects = new ArrayList<>(description.effects());
+        HullSize hullSize = fleetMember.getHullSpec().getHullSize();
+        for (SkillTypeEffect effect : rewrite.addedEffects(hullSize)) {
+            StyledText line = effect.effect().description(effect.magnitude(), hullSize);
+            if (line != null) {
+                effects.add(new DescriptionLine(line, effect.effect().invertsDescriptionColours()));
+            }
+        }
+        if (rewrite.transformed()) {
+            effects.add(new DescriptionLine(Translation.msg("socketable.doctrine.originally").arg("node", rewrite.originalType().getDisplayName())
+                    .styled(), false));
+        }
+        effects.add(new DescriptionLine(DoctrineText.rewrittenBy(rewrite), false));
+        return new NodeDescription(effects, description.details());
     }
 
     private static DescriptionLine plainLine(String key) {

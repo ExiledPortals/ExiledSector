@@ -37,6 +37,7 @@ class EditorRoundTripTest {
     private static final String ITEM_MODIFIERS_MODEL = "pages/items/model/modifiers.ts";
     private static final String CHART_TABLES_MODEL = "pages/items/model/chartTables.ts";
     private static final String WORMHOLE_ANCHORS_MODEL = "pages/items/model/anchors.ts";
+    private static final String DOCTRINE_ARCHIVES_MODEL = "pages/items/model/doctrines.ts";
 
     private static final String TYPE_LOADER = "exiledsector/skills/loader/SkillTypeLoader.java";
     private static final String TREE_LOADER = "exiledsector/skills/loader/SkillTreeLoader.java";
@@ -58,15 +59,19 @@ class EditorRoundTripTest {
     private static final String CHART_BLOCKED_ABILITIES = "exiledsector/charts/ChartBlockedAbilities.java";
     private static final String CHART_DROPS = "exiledsector/charts/ChartDrops.java";
     private static final String WORMHOLE_ANCHOR_DEFINITIONS = "exiledsector/items/WormholeAnchorDefinitions.java";
+    private static final String DOCTRINE_ARCHIVES = "exiledsector/items/DoctrineArchives.java";
+    private static final String VOLUME_SUBROUTINES = "exiledsector/items/VolumeSubroutines.java";
 
     private static final List<String> LOADERS = List.of(TYPE_LOADER, TREE_LOADER, ITEM_DEFINITIONS, ITEM_DEFINITION,
             ITEM_NAMES, ITEM_DROPS, SALVAGE_COMPAT, ITEM_CRAFTING, HULL_ITEM_IMPLICITS, ITEM_MODIFIERS, STAR_CHART_DEFINITIONS, STAR_CHART_IMPLICITS,
-            STAR_CHART_ITEMS, STAR_CHART_NAMES, CHART_TIERS, CHART_POIS, CHART_FACTIONS, CHART_BLOCKED_ABILITIES, CHART_DROPS, WORMHOLE_ANCHOR_DEFINITIONS);
+            STAR_CHART_ITEMS, STAR_CHART_NAMES, CHART_TIERS, CHART_POIS, CHART_FACTIONS, CHART_BLOCKED_ABILITIES, CHART_DROPS, WORMHOLE_ANCHOR_DEFINITIONS,
+            DOCTRINE_ARCHIVES, VOLUME_SUBROUTINES);
 
     private static final List<String> EDITED_DATA_PATHS = List.of("data/skilltrees/skill_types.json", "data/skilltrees/ship_skill_tree.json",
             "data/config/exiledSector/item_modifiers", "data/config/exiledSector/item_names", "data/config/exiledSector/item_crafting",
             "data/config/exiledSector/item_salvage", "data/config/exiledSector/hull_item", "data/config/exiledSector/subroutines", "compat/salvage/",
-            "data/config/exiledSector/star_chart", "data/config/exiledSector/chart_", "data/config/exiledSector/wormhole_anchors");
+            "data/config/exiledSector/star_chart", "data/config/exiledSector/chart_", "data/config/exiledSector/wormhole_anchors",
+            "data/config/exiledSector/doctrine_archives");
 
     private record EditorSource(String file, String symbol) {
         String label() {
@@ -148,7 +153,11 @@ class EditorRoundTripTest {
             new Pin("wormhole_anchors.csv columns", WORMHOLE_ANCHOR_DEFINITIONS, List.of("load", "register"),
                     List.of(new EditorSource(WORMHOLE_ANCHORS_MODEL, "WORMHOLE_ANCHOR_COLUMNS")), true),
             new Pin("wormhole_anchors.csv shared item columns", ITEM_DEFINITION, List.of("definitionId", "parseCommon"),
-                    List.of(new EditorSource(WORMHOLE_ANCHORS_MODEL, "WORMHOLE_ANCHOR_COLUMNS")), true));
+                    List.of(new EditorSource(WORMHOLE_ANCHORS_MODEL, "WORMHOLE_ANCHOR_COLUMNS")), true),
+            new Pin("doctrine_archives.csv columns", DOCTRINE_ARCHIVES, List.of("load", "parse"),
+                    List.of(new EditorSource(DOCTRINE_ARCHIVES_MODEL, "DOCTRINE_ARCHIVE_COLUMNS")), true),
+            new Pin("subroutines.csv volume subroutine columns", VOLUME_SUBROUTINES, List.of("load", "register", "parse"),
+                    List.of(new EditorSource(ITEM_DEFINITIONS_MODEL, "SUBROUTINE_COLUMNS")), true));
 
     private static final String JAVA_KEY_READ_PREFIX = "(?:\\.\\s*(?:opt|get|has|isNull)[A-Za-z]*\\s*\\(\\s*"
             + "|\\bModCsv\\.text\\s*\\([^,()\"]*,\\s*|\\bModCsv\\.(?:load|rows)\\s*\\(\\s*|\\bcsv\\.(?:integer|number|flag)\\s*\\([^,()\"]*,\\s*)";

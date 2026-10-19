@@ -25,6 +25,7 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.progression.ShipLevelConfig;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
@@ -355,6 +356,30 @@ class ShipTreeSyncTest {
         assertEquals(List.of("root_1", "a_1", "b_1"), List.copyOf(adopted.getAllocatedNodeIds()));
         assertEquals(0, adopted.paidNodeCount());
         assertEquals(0, adopted.getBankedFreeAllocations());
+    }
+
+    @Test
+    void aRecoveredFactionShipLosesTheVolumeItReachedThroughItsImplicitAnchor() {
+        registerNpcTreeNodes();
+        SkillTree.register(new SkillNode("socket_1", new SkillType.Builder("socket", "Socket", "a.png", SkillTier.SOCKET).build(),
+                List.of("a_1"), 0f, 0f, SkillNodeDecoration.NONE, List.of("core")));
+        SkillTree.register(new SkillNode("gate_far", new SkillType.Builder("wormhole_exit", "Exit", "a.png", SkillTier.WORMHOLE_EXIT).build(),
+                List.of("pride"), 0f, 0f, SkillNodeDecoration.NONE, List.of("hegemony")));
+        SkillTree.register(new SkillNode("pride", new SkillType.Builder("pride", "Pride", "a.png", SkillTier.NOTABLE).build(),
+                List.of("gate_far"), 0f, 0f, SkillNodeDecoration.NONE, List.of("hegemony")));
+        Set<String> hullMods = new HashSet<>(Set.of(SkillTreeHullMod.ID));
+        List<String> tags = new ArrayList<>(List.of("exiledSector_npcTree|generated|5|root_1,a_1,socket_1,gate_far,pride|anchors:socket_1=gate_far"));
+        FleetMemberAPI member = recoveredNpc("captured", hullMods, tags);
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
+
+        ShipTreeSync.fleetChanged(playerFleet());
+
+        ShipSkillData adopted = ShipSkillDataManager.get("captured");
+        assertEquals(List.of("root_1", "a_1", "socket_1"), List.copyOf(adopted.getAllocatedNodeIds()));
+        assertTrue(adopted.getImplicitAnchorExits().isEmpty());
+        assertTrue(adopted.getSocketedItems().isEmpty());
+        assertEquals(0, adopted.getSpentOp(1));
+        assertEquals(3, adopted.getBankedFreeAllocations());
     }
 
     @Test

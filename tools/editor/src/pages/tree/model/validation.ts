@@ -7,7 +7,12 @@ function validateWormholes(document: TreeDocument, issues: string[]): void {
   const typeMap = new Map(document.types.map((type) => [type.id, type]));
   const nodeMap = new Map(document.nodes.map((node) => [node.id, node]));
   for (const node of document.nodes) {
-    if (tierOf(typeMap.get(node.type)) !== 'WORMHOLE') {
+    const tier = tierOf(typeMap.get(node.type));
+    if (tier === 'WORMHOLE_EXIT' && node.pairedWith) {
+      issues.push(`Wormhole exit "${node.id}" is paired with "${node.pairedWith}"; exits are opened by a wormhole anchor and take no pair`);
+      continue;
+    }
+    if (tier !== 'WORMHOLE') {
       continue;
     }
     if (!node.pairedWith) {

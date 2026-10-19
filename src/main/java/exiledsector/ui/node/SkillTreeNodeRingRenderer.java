@@ -193,7 +193,7 @@ final class SkillTreeNodeRingRenderer {
             } else {
                 drawKeystoneRingBelt(cx, cy, footprintSize, ringBeltWidth, ringBeltPath, stateAlpha, alphaMult);
             }
-        } else if (tier == SkillTier.WORMHOLE) {
+        } else if (tier.isWormhole()) {
             drawWormhole(cx, cy, footprintSize, alphaMult, nodeId, resolveWormholeColor(node));
         }
 
@@ -206,7 +206,7 @@ final class SkillTreeNodeRingRenderer {
                 drawBreathingOutline(cx, cy, halfSize, scale, zoom, alphaMult, SOCKET_OUTLINE_RADII);
             }
             drawPulseOutline(cx, cy, halfSize, nodeId, zoom, alphaMult, SOCKET_OUTLINE_RADII);
-        } else if (tier != SkillTier.WORMHOLE) {
+        } else if (!tier.isWormhole()) {
             drawNodeDonut(cx, cy, ringRadius, scale, zoom, allocated, alphaMult);
             if (ringState.breathing) {
                 drawBreathingOutline(cx, cy, ringRadius, scale, zoom, alphaMult, CIRCLE_OUTLINE_RADII);

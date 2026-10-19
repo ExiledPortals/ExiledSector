@@ -1082,8 +1082,7 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_91",
-				"root_high_tech_1",
-				"exotech_beacon"
+				"root_high_tech_1"
 			],
 			"x": -750,
 			"y": -1299,
@@ -1556,7 +1555,6 @@
 				"small_flux_optional_24",
 				"small_flux_optional_6",
 				"small_flux_optional_4",
-				"tritach_1",
 				"hightech_wormhole_2",
 				"increased_sensor_strength_1"
 			],
@@ -1623,7 +1621,6 @@
 			"connectedTo": [
 				"small_flux_optional_9",
 				"small_flux_optional_11",
-				"pirate_wormhole_1",
 				"missile_autoloader_1"
 			],
 			"x": 4500,
@@ -1675,8 +1672,7 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_12",
-				"small_flux_optional_14",
-				"luddic_1"
+				"small_flux_optional_14"
 			],
 			"x": 2645,
 			"y": 3641,
@@ -1724,7 +1720,6 @@
 			"connectedTo": [
 				"small_flux_optional_16",
 				"small_flux_optional_18",
-				"hegemony_1",
 				"safety_overrides_1"
 			],
 			"x": -2645,
@@ -1760,7 +1755,6 @@
 				"small_flux_optional_20",
 				"small_flux_optional_18",
 				"small_flux_optional_39",
-				"league_wormhole_1",
 				"armor_2",
 				"midline_wormhole_1"
 			],
@@ -3202,26 +3196,9 @@
 			]
 		},
 		{
-			"id": "tritach_1",
-			"type": "wormhole",
-			"connectedTo": [
-				"tritach_2",
-				"small_flux_optional_2"
-			],
-			"x": 0,
-			"y": -5200,
-			"orbitAnchorId": "wormhole_anchor",
-			"orbitAngle": 270,
-			"pairedWith": "tritach_2",
-			"tags": [
-				"core"
-			]
-		},
-		{
 			"id": "tritach_2",
-			"type": "wormhole",
+			"type": "wormhole_exit",
 			"connectedTo": [
-				"tritach_1",
 				"small_flux_optional_46",
 				"small_flux_optional_48",
 				"fighter_speed_4"
@@ -3230,7 +3207,6 @@
 			"y": -11688,
 			"orbitAnchorId": "tritach_inner",
 			"orbitAngle": 90,
-			"pairedWith": "tritach_1",
 			"tags": [
 				"tritachyon"
 			]
@@ -3328,29 +3304,12 @@
 			]
 		},
 		{
-			"id": "REDACTED_1",
-			"type": "wormhole",
-			"connectedTo": [
-				"REDACTED_2",
-				"small_flux_optional_8"
-			],
-			"x": 4214,
-			"y": -3047,
-			"orbitAnchorId": "wormhole_anchor",
-			"orbitAngle": -35.86842290241297,
-			"pairedWith": "REDACTED_2",
-			"tags": [
-				"core"
-			]
-		},
-		{
 			"id": "small_flux_optional_49",
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"REDACTED_2",
 				"small_flux_optional_66",
-				"small_flux_optional_50",
-				"stargazer_wormhole_2"
+				"small_flux_optional_50"
 			],
 			"x": 11465,
 			"y": -8107,
@@ -3378,18 +3337,16 @@
 		},
 		{
 			"id": "REDACTED_2",
-			"type": "wormhole",
+			"type": "wormhole_exit",
 			"connectedTo": [
 				"small_flux_optional_49",
 				"small_flux_optional_51",
-				"combat_readiness_1",
-				"REDACTED_1"
+				"combat_readiness_1"
 			],
 			"x": 10165,
 			"y": -6807,
 			"orbitAnchorId": "REDACTED_inner",
 			"orbitAngle": 90,
-			"pairedWith": "REDACTED_1",
 			"tags": [
 				"REDACTED"
 			]
@@ -3425,26 +3382,9 @@
 			]
 		},
 		{
-			"id": "dictat_wormhole_1",
-			"type": "wormhole",
-			"connectedTo": [
-				"dictat_wormhole_2",
-				"small_flux_optional_22"
-			],
-			"x": -4145,
-			"y": -3140,
-			"orbitAnchorId": "wormhole_anchor",
-			"orbitAngle": -142.8476655621318,
-			"pairedWith": "dictat_wormhole_2",
-			"tags": [
-				"core"
-			]
-		},
-		{
 			"id": "dictat_wormhole_2",
-			"type": "wormhole",
+			"type": "wormhole_exit",
 			"connectedTo": [
-				"dictat_wormhole_1",
 				"small_flux_optional_5",
 				"small_flux_optional_53"
 			],
@@ -3452,7 +3392,6 @@
 			"y": -8104,
 			"orbitAnchorId": "dictat_inner",
 			"orbitAngle": 0,
-			"pairedWith": "dictat_wormhole_1",
 			"tags": [
 				"sindrian_dictat"
 			]
@@ -3463,8 +3402,7 @@
 			"connectedTo": [
 				"dictat_wormhole_2",
 				"less_energy_damage_taken_2",
-				"small_flux_optional_52",
-				"nightcross_wormhole_2"
+				"small_flux_optional_52"
 			],
 			"x": -10169,
 			"y": -6886,
@@ -3476,9 +3414,8 @@
 		},
 		{
 			"id": "luddic_2",
-			"type": "wormhole",
+			"type": "wormhole_exit",
 			"connectedTo": [
-				"luddic_1",
 				"small_flux_optional_54",
 				"small_flux_optional_56",
 				"fighter_speed_1"
@@ -3487,7 +3424,6 @@
 			"y": 10407,
 			"orbitAnchorId": "luddic_inner",
 			"orbitAngle": 270,
-			"pairedWith": "luddic_1",
 			"tags": [
 				"luddic"
 			]
@@ -3600,26 +3536,9 @@
 			]
 		},
 		{
-			"id": "luddic_1",
-			"type": "wormhole",
-			"connectedTo": [
-				"luddic_2",
-				"small_flux_optional_13"
-			],
-			"x": 2943,
-			"y": 4287,
-			"orbitAnchorId": "wormhole_anchor",
-			"orbitAngle": 55.53061572690851,
-			"pairedWith": "luddic_2",
-			"tags": [
-				"core"
-			]
-		},
-		{
 			"id": "hegemony_2",
-			"type": "wormhole",
+			"type": "wormhole_exit",
 			"connectedTo": [
-				"hegemony_1",
 				"small_flux_optional_57",
 				"small_flux_optional_59",
 				"ballistic_projectile_speed_5"
@@ -3628,7 +3547,6 @@
 			"y": 10413,
 			"orbitAnchorId": "hegemony_inner",
 			"orbitAngle": 270,
-			"pairedWith": "hegemony_1",
 			"tags": [
 				"hegemony"
 			]
@@ -3697,8 +3615,7 @@
 			"connectedTo": [
 				"hegemony_2",
 				"missile_top_speed_2",
-				"small_flux_optional_58",
-				"rat_abyss_wormhole_2"
+				"small_flux_optional_58"
 			],
 			"x": -6940,
 			"y": 11713,
@@ -3755,26 +3672,9 @@
 			]
 		},
 		{
-			"id": "hegemony_1",
-			"type": "wormhole",
-			"connectedTo": [
-				"small_flux_optional_17",
-				"hegemony_2"
-			],
-			"x": -2904,
-			"y": 4313,
-			"orbitAnchorId": "wormhole_anchor",
-			"orbitAngle": 123.95503606696852,
-			"pairedWith": "hegemony_2",
-			"tags": [
-				"core"
-			]
-		},
-		{
 			"id": "pirate_wormhole_2",
-			"type": "wormhole",
+			"type": "wormhole_exit",
 			"connectedTo": [
-				"pirate_wormhole_1",
 				"small_flux_optional_60",
 				"small_flux_optional_62",
 				"combat_readiness_6"
@@ -3783,7 +3683,6 @@
 			"y": 2893,
 			"orbitAnchorId": "pirate_inner",
 			"orbitAngle": 180,
-			"pairedWith": "pirate_wormhole_1",
 			"tags": [
 				"pirate"
 			]
@@ -3896,20 +3795,6 @@
 			]
 		},
 		{
-			"id": "pirate_wormhole_1",
-			"type": "wormhole",
-			"connectedTo": [
-				"pirate_wormhole_2",
-				"small_flux_optional_10"
-			],
-			"x": 5124,
-			"y": 234,
-			"pairedWith": "pirate_wormhole_2",
-			"tags": [
-				"core"
-			]
-		},
-		{
 			"id": "top_speed_4",
 			"type": "top_speed",
 			"connectedTo": [
@@ -3923,26 +3808,9 @@
 			]
 		},
 		{
-			"id": "league_wormhole_1",
-			"type": "wormhole",
-			"connectedTo": [
-				"league_wormhole_2",
-				"small_flux_optional_19"
-			],
-			"x": -4968,
-			"y": 1537,
-			"orbitAnchorId": "wormhole_anchor",
-			"orbitAngle": 162.8041643784659,
-			"pairedWith": "league_wormhole_2",
-			"tags": [
-				"core"
-			]
-		},
-		{
 			"id": "league_wormhole_2",
-			"type": "wormhole",
+			"type": "wormhole_exit",
 			"connectedTo": [
-				"league_wormhole_1",
 				"small_flux_optional_63",
 				"small_flux_optional_65",
 				"wing_scramble_1"
@@ -3951,7 +3819,6 @@
 			"y": 2892,
 			"orbitAnchorId": "anchor_29",
 			"orbitAngle": 0,
-			"pairedWith": "league_wormhole_1",
 			"tags": [
 				"persean_league"
 			]
@@ -3993,7 +3860,6 @@
 			"connectedTo": [
 				"league_wormhole_2",
 				"ammo_capacity_2",
-				"kesteven_wormhole2",
 				"small_flux_optional_64"
 			],
 			"x": -12674,
@@ -4886,9 +4752,8 @@
 		},
 		{
 			"id": "lost_sector_wormhole1",
-			"type": "wormhole",
+			"type": "wormhole_exit",
 			"connectedTo": [
-				"lost_sector_wormhole2",
 				"frozen_heart_1"
 			],
 			"x": 8386,
@@ -4896,24 +4761,8 @@
 			"orbitAnchorId": "anchor_51",
 			"orbitAngle": 90,
 			"wormholeColor": "#3254fb",
-			"pairedWith": "lost_sector_wormhole2",
 			"tags": [
 				"enigma"
-			]
-		},
-		{
-			"id": "lost_sector_wormhole2",
-			"type": "wormhole",
-			"connectedTo": [
-				"lost_sector_wormhole1",
-				"small_flux_optional_50"
-			],
-			"x": 9965,
-			"y": -10004,
-			"wormholeColor": "#3254fb",
-			"pairedWith": "lost_sector_wormhole1",
-			"tags": [
-				"REDACTED"
 			]
 		},
 		{
@@ -5146,11 +4995,10 @@
 		},
 		{
 			"id": "kesteven_wormhole1",
-			"type": "wormhole",
+			"type": "wormhole_exit",
 			"connectedTo": [
 				"small_flux_optional_70",
 				"small_flux_optional_68",
-				"kesteven_wormhole2",
 				"armor_6"
 			],
 			"x": -13518,
@@ -5158,24 +5006,8 @@
 			"orbitAnchorId": "kesteven_inner",
 			"orbitAngle": 0,
 			"wormholeColor": "#fbb434",
-			"pairedWith": "kesteven_wormhole2",
 			"tags": [
 				"kesteven"
-			]
-		},
-		{
-			"id": "kesteven_wormhole2",
-			"type": "wormhole",
-			"connectedTo": [
-				"kesteven_wormhole1",
-				"small_flux_optional_65"
-			],
-			"x": -12746,
-			"y": 4616,
-			"wormholeColor": "#fbb434",
-			"pairedWith": "kesteven_wormhole1",
-			"tags": [
-				"persean_league"
 			]
 		},
 		{
@@ -5442,7 +5274,6 @@
 			"connectedTo": [
 				"small_flux_optional_9",
 				"small_flux_optional_7",
-				"REDACTED_1",
 				"pd_damage_to_missiles_2",
 				"modular_hull_socket_19"
 			],
@@ -5459,7 +5290,6 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"small_flux_optional_23",
-				"dictat_wormhole_1",
 				"small_flux_optional_21",
 				"modular_hull_socket_12"
 			],
@@ -5492,7 +5322,6 @@
 			"type": "small_flux_optional",
 			"connectedTo": [
 				"combat_readiness_4",
-				"lost_sector_wormhole2",
 				"small_flux_optional_51",
 				"small_flux_optional_49"
 			],
@@ -5830,35 +5659,18 @@
 		},
 		{
 			"id": "nightcross_wormhole_1",
-			"type": "wormhole",
+			"type": "wormhole_exit",
 			"connectedTo": [
 				"small_flux_optional_71",
 				"small_flux_optional_74",
-				"nightcross_wormhole_2",
 				"dynamic_grid_1"
 			],
 			"x": -16386,
 			"y": -3854,
 			"orbitAnchorId": "nightcross_inner",
 			"orbitAngle": 0,
-			"pairedWith": "nightcross_wormhole_2",
 			"tags": [
 				"nightcross",
-				"gate_pascal_visited"
-			]
-		},
-		{
-			"id": "nightcross_wormhole_2",
-			"type": "wormhole",
-			"connectedTo": [
-				"nightcross_wormhole_1",
-				"small_flux_optional_53"
-			],
-			"x": -10704,
-			"y": -6625,
-			"pairedWith": "nightcross_wormhole_1",
-			"tags": [
-				"sindrian_dictat",
 				"gate_pascal_visited"
 			]
 		},
@@ -6125,9 +5937,8 @@
 		},
 		{
 			"id": "stargazer_wormhole_1",
-			"type": "wormhole",
+			"type": "wormhole_exit",
 			"connectedTo": [
-				"stargazer_wormhole_2",
 				"small_flux_optional_76",
 				"small_flux_optional_75",
 				"beautiful_nightmare_1"
@@ -6136,24 +5947,8 @@
 			"y": -4745,
 			"orbitAnchorId": "stargazer_inner",
 			"orbitAngle": 180,
-			"pairedWith": "stargazer_wormhole_2",
 			"tags": [
 				"stargazer",
-				"gate_lunar_fleet_defeated"
-			]
-		},
-		{
-			"id": "stargazer_wormhole_2",
-			"type": "wormhole",
-			"connectedTo": [
-				"stargazer_wormhole_1",
-				"small_flux_optional_49"
-			],
-			"x": 11974,
-			"y": -7743,
-			"pairedWith": "stargazer_wormhole_1",
-			"tags": [
-				"REDACTED",
 				"gate_lunar_fleet_defeated"
 			]
 		},
@@ -6324,7 +6119,6 @@
 			"id": "exoship",
 			"type": "exoship",
 			"connectedTo": [
-				"exotech_beacon",
 				"energy_flux_cost_3",
 				"phase_cloak_flux_threshold_3",
 				"timeflow_1",
@@ -6332,23 +6126,8 @@
 			],
 			"x": -3764,
 			"y": -7758,
-			"pairedWith": "exotech_beacon",
 			"tags": [
 				"exotech"
-			]
-		},
-		{
-			"id": "exotech_beacon",
-			"type": "exotech_beacon",
-			"connectedTo": [
-				"exoship",
-				"small_flux_optional_90"
-			],
-			"x": -947,
-			"y": -1635,
-			"pairedWith": "exoship",
-			"tags": [
-				"core"
 			]
 		},
 		{
@@ -6589,9 +6368,8 @@
 		},
 		{
 			"id": "rat_abyss_wormhole_1",
-			"type": "wormhole",
+			"type": "wormhole_exit",
 			"connectedTo": [
-				"rat_abyss_wormhole_2",
 				"small_flux_optional_105",
 				"small_flux_optional_106",
 				"non_beam_energy_damage_6"
@@ -6600,24 +6378,8 @@
 			"y": 27715,
 			"orbitAnchorId": "abyss_inner",
 			"orbitAngle": 0,
-			"pairedWith": "rat_abyss_wormhole_2",
 			"tags": [
 				"abyss",
-				"gate_singularity_defeated"
-			]
-		},
-		{
-			"id": "rat_abyss_wormhole_2",
-			"type": "wormhole",
-			"connectedTo": [
-				"rat_abyss_wormhole_1",
-				"small_flux_optional_59"
-			],
-			"x": -7603,
-			"y": 11997,
-			"pairedWith": "rat_abyss_wormhole_1",
-			"tags": [
-				"hegemony",
 				"gate_singularity_defeated"
 			]
 		},
@@ -9466,10 +9228,6 @@
 	],
 	"hiddenConnectors": [
 		{
-			"a": "REDACTED_1",
-			"b": "REDACTED_2"
-		},
-		{
 			"a": "midline_wormhole_1",
 			"b": "hightech_wormhole_1"
 		},
@@ -9480,54 +9238,6 @@
 		{
 			"a": "wormhole_6",
 			"b": "lowtech_wormhole_1"
-		},
-		{
-			"a": "tritach_1",
-			"b": "tritach_2"
-		},
-		{
-			"a": "dictat_wormhole_2",
-			"b": "dictat_wormhole_1"
-		},
-		{
-			"a": "luddic_2",
-			"b": "luddic_1"
-		},
-		{
-			"a": "league_wormhole_1",
-			"b": "league_wormhole_2"
-		},
-		{
-			"a": "hegemony_1",
-			"b": "hegemony_2"
-		},
-		{
-			"a": "pirate_wormhole_2",
-			"b": "pirate_wormhole_1"
-		},
-		{
-			"a": "lost_sector_wormhole2",
-			"b": "lost_sector_wormhole1"
-		},
-		{
-			"a": "kesteven_wormhole2",
-			"b": "kesteven_wormhole1"
-		},
-		{
-			"a": "nightcross_wormhole_2",
-			"b": "nightcross_wormhole_1"
-		},
-		{
-			"a": "stargazer_wormhole_2",
-			"b": "stargazer_wormhole_1"
-		},
-		{
-			"a": "exotech_beacon",
-			"b": "exoship"
-		},
-		{
-			"a": "rat_abyss_wormhole_2",
-			"b": "rat_abyss_wormhole_1"
 		}
 	],
 	"orbitAnchors": [
@@ -10024,7 +9734,7 @@
 			"radius": 180
 		},
 		{
-			"id": "wormhole_anchor",
+			"id": "core_ring_anchor",
 			"x": 0,
 			"y": 0,
 			"radius": 5200

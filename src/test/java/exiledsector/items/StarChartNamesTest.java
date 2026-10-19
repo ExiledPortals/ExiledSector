@@ -66,7 +66,8 @@ class StarChartNamesTest {
 
     @Test
     void theChartWordsNeverNameAShipItem() {
-        ItemDefinition shipItem = ItemDefinitions.all().stream().filter(definition -> !definition.unique()).findFirst().orElseThrow();
+        ItemDefinition shipItem = ItemDefinitions.all().stream().filter(definition -> definition.type() == ItemType.HULL_ITEM && !definition.unique())
+                .findFirst().orElseThrow();
         List<RolledModifier> threeModifiers = new ArrayList<>();
         for (long seed = 0; threeModifiers.size() < 3 && seed < 500; seed++) {
             List<RolledModifier> rolled = ItemRoller.roll(shipItem, seed);

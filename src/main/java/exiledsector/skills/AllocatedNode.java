@@ -22,16 +22,25 @@ public record AllocatedNode(SkillNode node, SkillType effectiveType) {
         return new AllocatedNode(node, option != null ? option : node.getType());
     }
 
+    public boolean isRewritten() {
+        SkillType ownType = node.getType();
+        return effectiveType != ownType && !ownType.getOptionalOptionIds().contains(effectiveType.getId());
+    }
+
+    private SkillType declaredType() {
+        return isRewritten() ? effectiveType : node.getType();
+    }
+
     public boolean isExclusiveWith(SkillType other) {
-        return node.getType().isExclusiveWith(other) || effectiveType.isExclusiveWith(other);
+        return declaredType().isExclusiveWith(other) || effectiveType.isExclusiveWith(other);
     }
 
     public boolean isExclusiveWith(AllocatedNode other) {
-        return isExclusiveWith(other.node().getType()) || isExclusiveWith(other.effectiveType());
+        return isExclusiveWith(other.declaredType()) || isExclusiveWith(other.effectiveType());
     }
 
     public Set<String> exclusiveHullModIds() {
-        Set<String> ids = new LinkedHashSet<>(node.getType().getExclusiveHullModIds());
+        Set<String> ids = new LinkedHashSet<>(declaredType().getExclusiveHullModIds());
         ids.addAll(effectiveType.getExclusiveHullModIds());
         return ids;
     }

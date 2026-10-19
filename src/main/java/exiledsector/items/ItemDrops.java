@@ -131,6 +131,9 @@ public final class ItemDrops {
             }
         }
         rollTargeted(rule, random, chances.targeted(ItemKind.SUBROUTINE), 1, ItemKind.SUBROUTINE, droppedItems);
+        if (!rule.chances().isEmpty()) {
+            droppedItems.addAll(VolumeSubroutines.rollSalvage(random, rule.chances().get(0) * chances.general()));
+        }
         return droppedItems;
     }
 
@@ -351,7 +354,8 @@ public final class ItemDrops {
     }
 
     private static boolean isDroppable(ItemDefinition definition) {
-        return definition.type() != ItemType.WORMHOLE_ANCHOR && definition.rarity() > 0f && SAFE_ID.matcher(definition.id()).matches();
+        return definition.type() != ItemType.WORMHOLE_ANCHOR && SubroutineKind.inGenericPools(definition) && definition.rarity() > 0f
+                && SAFE_ID.matcher(definition.id()).matches();
     }
 
     public static ItemDefinition pickUnique(Random random, Predicate<ItemDefinition> allowedUniques) {

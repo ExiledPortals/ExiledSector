@@ -2,6 +2,7 @@ import type { Vocabulary } from '../../../api/vocabulary.ts';
 import { csvTableFromRows, parseCsvTable, serializeCsvTable, trimmedCsvCells, type CsvTable } from '../../../shared/csv.ts';
 import { isNumberText } from '../../../shared/decimalText.ts';
 import { WORMHOLE_ANCHOR_TYPE } from './anchors.ts';
+import { DOCTRINE_TYPE } from './doctrines.ts';
 import { familyEffectNames, isFamilyEffect, MODIFIER_FILE_NAMES, type ItemFamily } from './itemFamily.ts';
 
 export const MODIFIER_COLUMNS = ['id', 'slot', 'item_types', 'lines', 'name'] as const;
@@ -62,6 +63,7 @@ export interface ModifierUsage {
   nonUniqueItems: string[];
   itemTypes: string[];
   implicitSections: string[];
+  doctrineArchives?: string[];
 }
 
 export function isTierBandText(text: string | undefined): boolean {
@@ -318,6 +320,9 @@ function itemTypeIssues(label: string, modifier: ItemModifier, vocabulary: Vocab
   }
   if (modifier.itemTypes.includes(UNIQUE_SUBROUTINE_TYPE) && modifier.slot !== 'prefix') {
     issues.push(`${label}: unique subroutine lines are prefixes, so a modifier for ${UNIQUE_SUBROUTINE_TYPE} must be a prefix`);
+  }
+  if (modifier.itemTypes.includes(DOCTRINE_TYPE) && modifier.slot !== 'prefix') {
+    issues.push(`${label}: doctrine lines are prefixes, so a modifier for ${DOCTRINE_TYPE} must be a prefix`);
   }
   return issues;
 }

@@ -7,6 +7,7 @@ public enum ModifierScope {
 
     SUBROUTINE("subroutine", ItemType.SUBROUTINE),
     UNIQUE_SUBROUTINE("unique_subroutine", ItemType.SUBROUTINE),
+    DOCTRINE("doctrine", ItemType.SUBROUTINE),
     HULL_ITEM("hull_item", ItemType.HULL_ITEM),
     STAR_CHART("star_chart", ItemType.STAR_CHART),
     WORMHOLE_ANCHOR("wormhole_anchor", ItemType.WORMHOLE_ANCHOR);

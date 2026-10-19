@@ -1,4 +1,5 @@
 import { HULL_ITEM_TYPE, isTrueText, poolEntries, referenceGroups, type ItemDefinition } from './definitions.ts';
+import { DOCTRINE_TYPE, doctrineModifierReferences, doctrineReferenceIssues, renameDoctrineModifier, type DoctrineArchive } from './doctrines.ts';
 import type { ImplicitRow } from './implicits.ts';
 import type { ItemModifier, ModifierUsage } from './modifiers.ts';
 
@@ -8,7 +9,12 @@ function addOnce(values: string[], value: string): void {
   }
 }
 
-export function modifierUsage(definitions: ItemDefinition[], implicitRows: ImplicitRow[], implicitItemType: string = HULL_ITEM_TYPE): Map<string, ModifierUsage> {
+export function modifierUsage(
+  definitions: ItemDefinition[],
+  implicitRows: ImplicitRow[],
+  implicitItemType: string = HULL_ITEM_TYPE,
+  doctrineArchives: readonly DoctrineArchive[] = [],
+): Map<string, ModifierUsage> {
   const usage = new Map<string, ModifierUsage>();
   const usageOf = (modifierId: string) => {
     let entry = usage.get(modifierId);
@@ -42,15 +48,33 @@ export function modifierUsage(definitions: ItemDefinition[], implicitRows: Impli
       }
     }
   }
+  for (const archive of doctrineArchives) {
+    for (const reference of doctrineModifierReferences(archive)) {
+      const referenceUsage = usageOf(reference.modifierId);
+      referenceUsage.doctrineArchives = referenceUsage.doctrineArchives ?? [];
+      addOnce(referenceUsage.doctrineArchives, archive.id);
+      addOnce(referenceUsage.itemTypes, DOCTRINE_TYPE);
+    }
+  }
   return usage;
 }
 
 export function isUsed(usage: ModifierUsage | undefined): boolean {
-  return Boolean(usage && (usage.items.length > 0 || usage.implicitSections.length > 0));
+  return Boolean(usage && (usage.items.length > 0 || usage.implicitSections.length > 0 || (usage.doctrineArchives?.length ?? 0) > 0));
 }
 
-export function renameModifierReferences(definitions: ItemDefinition[], implicitRows: ImplicitRow[], fromId: string, toId: string): number {
-  let renamed = 0;
+export function usedByText(usage: ModifierUsage | undefined): string {
+  return [...(usage?.items ?? []), ...(usage?.implicitSections ?? []), ...(usage?.doctrineArchives ?? [])].join(', ');
+}
+
+export function renameModifierReferences(
+  definitions: ItemDefinition[],
+  implicitRows: ImplicitRow[],
+  fromId: string,
+  toId: string,
+  doctrineArchives: DoctrineArchive[] = [],
+): number {
+  let renamed = renameDoctrineModifier(doctrineArchives, fromId, toId);
   for (const definition of definitions) {
     for (const group of referenceGroups(definition)) {
       for (const entry of poolEntries(definition, group.key)) {
@@ -72,8 +96,13 @@ export function renameModifierReferences(definitions: ItemDefinition[], implicit
   return renamed;
 }
 
-export function referenceIssues(definitions: ItemDefinition[], implicitRows: ImplicitRow[], catalogue: Map<string, ItemModifier>): string[] {
-  const issues: string[] = [];
+export function referenceIssues(
+  definitions: ItemDefinition[],
+  implicitRows: ImplicitRow[],
+  catalogue: Map<string, ItemModifier>,
+  doctrineArchives: readonly DoctrineArchive[] = [],
+): string[] {
+  const issues: string[] = doctrineReferenceIssues(doctrineArchives, catalogue);
   for (const definition of definitions) {
     for (const group of referenceGroups(definition)) {
       for (const entry of poolEntries(definition, group.key)) {

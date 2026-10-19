@@ -285,6 +285,63 @@ describe('unique subroutines', () => {
   });
 });
 
+describe('volume subroutines', () => {
+  const regionVocabulary = buildVocabulary({
+    effects: [],
+    tags: { theme: [], region: ['core', 'hegemony'], requirement: [] },
+    tiers: [],
+    unlockConditionTypes: [],
+    blueprintCategories: [],
+    itemTypes: ['subroutine'],
+    itemKinds: [{ id: 'subroutine', type: 'subroutine' }],
+    subroutineKinds: ['VOLUME', 'DOCTRINE', 'BYPASS', 'UNIQUE'],
+    itemUnlocks: [],
+  });
+
+  function volumeChip(overrides: Partial<ItemDefinition>): ItemDefinition {
+    return definition({ kind: 'subroutine', subroutineKind: 'VOLUME', prefixes: [], suffixes: [], volume: 'core', salvageChance: '0.02', ...overrides });
+  }
+
+  it('reads and writes the volume columns, adding them to an older file only once they are set', () => {
+    const withVolume =
+      'id,name,icon,rarity,unique,kind,description,lines,source,socket_limit,unlock,volume,excluded_nodes,drop_chance,salvage_chance\n' +
+      'chip,Chip,,10,,VOLUME,,,,,,hegemony,hull_breacher_1; torpedo_specialisation_1,0.02,\n';
+    const model = parseItemDefinitions(withVolume, 'id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock\n');
+    const olderText = 'id,name,icon,rarity,unique,kind,description,unlock\nchip,Chip,,10,,VOLUME,,\n';
+    const older = parseItemDefinitions(olderText, 'id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock\n');
+
+    expect(model.definitions[0]).toMatchObject({ volume: 'hegemony', excludedNodes: 'hull_breacher_1; torpedo_specialisation_1', dropChance: '0.02', salvageChance: '' });
+    expect(serializeSubroutinesCsv(model)).toBe(withVolume);
+    expect(serializeSubroutinesCsv(older)).toBe(olderText);
+    older.definitions[0].volume = 'core';
+    expect(serializeSubroutinesCsv(older)).toBe('id,name,icon,rarity,unique,kind,description,unlock,volume\nchip,Chip,,10,,VOLUME,,,core\n');
+  });
+
+  it('checks the volume, exclusions and chances, one volume subroutine per volume, and keeps the fields off other kinds', () => {
+    const issues = validateItemDefinitions(
+      [
+        volumeChip({ id: 'good', excludedNodes: 'hull_breacher_1' }),
+        volumeChip({ id: 'second_core' }),
+        volumeChip({ id: 'nowhere', volume: 'ocean' }),
+        volumeChip({ id: 'messy', volume: 'hegemony', excludedNodes: 'a b; hull_breacher_1; hull_breacher_1', dropChance: '-1', salvageChance: 'often' }),
+        definition({ id: 'doctrine', kind: 'subroutine', subroutineKind: 'DOCTRINE', prefixes: [], suffixes: [], volume: 'core' }),
+      ],
+      regionVocabulary,
+      new Map(),
+    );
+
+    expect(issues).toEqual([
+      'nowhere: volume must be one of core, hegemony',
+      'messy: excluded node "a b" is not a node id',
+      'messy: excluded node hull_breacher_1 is listed more than once',
+      'messy: drop chance must be blank or a number of 0 or more',
+      'messy: salvage chance must be blank or a number of 0 or more',
+      'doctrine: only VOLUME subroutines have a volume, excluded nodes or drop chances; clear them',
+      'second_core: the core volume already has the volume subroutine good',
+    ]);
+  });
+});
+
 describe('drops', () => {
   function row(chances: string[]): DropRow {
     return { cells: [], passthrough: false, site: 'derelict', chances, unique: '' };

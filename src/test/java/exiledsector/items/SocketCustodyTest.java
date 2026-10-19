@@ -1,10 +1,12 @@
 package exiledsector.items;
 
+import exiledsector.skills.AnchorLinks;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
+import exiledsector.skills.layout.SkillNodeDecoration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,6 +69,49 @@ class SocketCustodyTest {
         Item item = install("ship-a");
 
         assertEquals(Map.of(item.id(), new SocketCustody.Installation("ship-a", "socket")), SocketCustody.installations(ships));
+    }
+
+    @Test
+    void aShipOutOfCustodyKeepsTheVolumeItsAnchorOpenedEvenThoughTheAnchorReturnsToStorage() {
+        SkillNode root = new SkillNode("root", new SkillType.Builder("root_type", "Root", "", SkillTier.ROOT).build(), List.of(), 0f, 0f);
+        SkillNode anchorSocket = new SkillNode("anchor_socket", socket.getType(), List.of("root"), 0f, 0f);
+        SkillNode exit = new SkillNode("exit", new SkillType.Builder("exit_type", "Exit", "", SkillTier.WORMHOLE_EXIT).build(),
+                List.of("volume_node"), 0f, 0f, SkillNodeDecoration.NONE, List.of("hegemony"));
+        SkillNode volumeNode = new SkillNode("volume_node", new SkillType.Builder("volume_type", "Volume", "", SkillTier.SMALL).build(),
+                List.of("exit"), 0f, 0f, SkillNodeDecoration.NONE, List.of("hegemony"));
+        List.of(root, anchorSocket, exit, volumeNode).forEach(SkillTree::register);
+        AnchorLinks.install(new AnchorLinks.ExitLookup() {
+            @Override
+            public String exitNodeId(String socketedItemId) {
+                return "anchor_item".equals(socketedItemId) ? "exit" : null;
+            }
+
+            @Override
+            public boolean canOpen(String socketedItemId) {
+                return true;
+            }
+
+            @Override
+            public int revision() {
+                return 0;
+            }
+        });
+        try {
+            ShipSkillData data = new ShipSkillData();
+            data.chooseStartingRoot(root);
+            data.allocate(anchorSocket, 1);
+            data.socketItem("anchor_socket", "anchor_item");
+            data.openAnchorWormholes(10);
+            data.allocate(volumeNode, 1);
+            ships.put("ship-a", data);
+
+            SocketCustody.reconcile(ships, Set.of(), lost, store);
+
+            assertTrue(data.getSocketedItems().isEmpty());
+            assertTrue(data.isAllocated("exit") && data.isAllocated("volume_node") && data.isAllocated("anchor_socket"));
+        } finally {
+            AnchorLinks.install(null);
+        }
     }
 
     @Test

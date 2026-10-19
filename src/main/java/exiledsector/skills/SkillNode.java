@@ -4,6 +4,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.items.DoctrineOverrides;
 import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.layout.SkillTreeObject;
 import exiledsector.skills.skilleffect.WeaponEffectTooltipAggregator;
@@ -159,6 +160,11 @@ public class SkillNode extends SkillTreeObject {
     }
 
     public SkillType resolveEffectiveType(ShipSkillData data) {
+        SkillType rewritten = DoctrineOverrides.replacementType(data, this);
+        return rewritten != null ? rewritten : resolveBaseType(data);
+    }
+
+    public SkillType resolveBaseType(ShipSkillData data) {
         if (!type.isOptional()) return type;
         SkillType chosen = NodeEligibility.validOption(type, data.getOptionalSelection(getId()));
         return chosen != null ? chosen : type;

@@ -4,6 +4,8 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.HullModEffect;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
+import exiledsector.items.DoctrineLayer;
+import exiledsector.items.DoctrineOverrides;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.AllocatedSkillEffects;
 import exiledsector.skills.DamageTakenCaps;
@@ -48,6 +50,7 @@ public final class ResolvedTree {
     private final HullSize hullSize;
     private final float bonusScale;
     private final int shipDataRevision;
+    private final DoctrineLayer doctrineLayer;
     private final List<ShipSections.UnlockedSection> sections;
     private final List<AllocatedNode> allocatedNodes;
     private final List<Entry> entries;
@@ -58,6 +61,7 @@ public final class ResolvedTree {
         this.hullSize = hullSize;
         this.bonusScale = bonusScale;
         this.shipDataRevision = shipData.revision();
+        this.doctrineLayer = DoctrineOverrides.layer(shipData);
         this.sections = sections;
         this.allocatedNodes = List.copyOf(AllocatedNode.of(shipData));
         EffectTotals effectTotals = EffectTotals.of(shipData, allocatedNodes, hullSize, bonusScale, sections);
@@ -67,6 +71,7 @@ public final class ResolvedTree {
             SkillType type = nodeEffects.node().effectiveType();
             if (AllocatedSkillEffects.isVanillaPassthrough(nodeEffects.node())) {
                 addVanillaEntry(type.getVanillaHullModId(), resolvedEntries);
+                addEffects(nodeEffects, resolvedEntries);
             } else if (type.getTemporaryAfterDeploymentSeconds() != null) {
                 addTemporaryNode(nodeEffects, resolvedEntries, resolvedTemporaryNodes);
             } else {
@@ -174,7 +179,8 @@ public final class ResolvedTree {
             return null;
         }
         ResolvedTree cachedTree = CACHE.get(shipData);
-        if (cachedTree != null && cachedTree.shipDataRevision == shipData.revision() && cachedTree.hullSize == hullSize
+        if (cachedTree != null && cachedTree.shipDataRevision == shipData.revision() && cachedTree.doctrineLayer == DoctrineOverrides.layer(shipData)
+                && cachedTree.hullSize == hullSize
                 && Float.compare(cachedTree.bonusScale, bonusScale) == 0 && cachedTree.sections.equals(sections)) {
             return cachedTree;
         }

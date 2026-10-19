@@ -2,6 +2,7 @@ import type { Vocabulary } from '../../../api/vocabulary.ts';
 import { csvCell, csvTableFromRows, dropCsvColumn, parseCsvTable, serializeCsvTable, trimmedCsvCells, type CsvTable } from '../../../shared/csv.ts';
 import { isNumberText } from '../../../shared/decimalText.ts';
 import { isUnshippedImagePath } from '../../../shared/imagePaths.ts';
+import { DOCTRINE_TYPE } from './doctrines.ts';
 import { isFamilyEffect, MODIFIER_FILE_NAMES, type ItemFamily } from './itemFamily.ts';
 import {
   MODIFIER_REFERENCE_MARK,
@@ -19,14 +20,34 @@ export const HULL_ITEM_TYPE = 'hull_item';
 export const STAR_CHART_KIND = 'star_chart';
 export const ANY_SYSTEM_TYPE = 'any';
 export const UNIQUE_SUBROUTINE_KIND = 'UNIQUE';
+export const VOLUME_SUBROUTINE_KIND = 'VOLUME';
 export const ITEM_TYPE_LABELS: Record<string, string> = {
   [SUBROUTINE_TYPE]: 'Subroutine',
   [UNIQUE_SUBROUTINE_TYPE]: 'Unique subroutine',
+  [DOCTRINE_TYPE]: 'Doctrine Archive',
   [HULL_ITEM_TYPE]: 'Hull item',
   [STAR_CHART_TYPE]: 'Star chart',
 };
-export const SUBROUTINE_COLUMNS = ['id', 'name', 'icon', 'rarity', 'unique', 'kind', 'description', 'lines', 'source', 'socket_limit', 'unlock'] as const;
-export const OPTIONAL_SUBROUTINE_FIELDS: readonly string[] = ['lines', 'source', 'socket_limit'];
+export const SUBROUTINE_COLUMNS = [
+  'id',
+  'name',
+  'icon',
+  'rarity',
+  'unique',
+  'kind',
+  'description',
+  'lines',
+  'source',
+  'socket_limit',
+  'unlock',
+  'volume',
+  'excluded_nodes',
+  'drop_chance',
+  'salvage_chance',
+] as const;
+export const VOLUME_SUBROUTINE_FIELDS: readonly string[] = ['volume', 'excluded_nodes', 'drop_chance', 'salvage_chance'];
+export const OPTIONAL_SUBROUTINE_FIELDS: readonly string[] = ['lines', 'source', 'socket_limit', ...VOLUME_SUBROUTINE_FIELDS];
+const NODE_ID_TEXT = /^[A-Za-z0-9_.-]+$/;
 const UNIQUE_SOURCE_ID = /^[A-Za-z0-9_.-]+$/;
 const SOCKET_LIMIT_TEXT = /^\d{1,9}$/;
 export const HULL_ITEM_COLUMNS = ['id', 'section', 'name', 'icon', 'rarity', 'unique', 'description', 'prefixes', 'suffixes', 'unlock'] as const;
@@ -78,6 +99,10 @@ export interface ItemDefinition {
   lines?: PoolEntry[];
   source?: string;
   socketLimit?: string;
+  volume?: string;
+  excludedNodes?: string;
+  dropChance?: string;
+  salvageChance?: string;
   systemType?: string;
   minTier?: string;
   loadedId?: string;
@@ -110,6 +135,21 @@ export function itemTypeOfKind(kind: string): string {
 
 export function isUniqueSubroutine(definition: Pick<ItemDefinition, 'kind' | 'subroutineKind'>): boolean {
   return itemTypeOfKind(definition.kind) === SUBROUTINE_TYPE && definition.subroutineKind === UNIQUE_SUBROUTINE_KIND;
+}
+
+export function isVolumeSubroutine(definition: Pick<ItemDefinition, 'kind' | 'subroutineKind'>): boolean {
+  return itemTypeOfKind(definition.kind) === SUBROUTINE_TYPE && definition.subroutineKind === VOLUME_SUBROUTINE_KIND;
+}
+
+export function hasVolumeFields(definition: Pick<ItemDefinition, 'volume' | 'excludedNodes' | 'dropChance' | 'salvageChance'>): boolean {
+  return [definition.volume, definition.excludedNodes, definition.dropChance, definition.salvageChance].some((value) => (value ?? '').trim() !== '');
+}
+
+export function excludedNodeIds(text: string | undefined): string[] {
+  return String(text ?? '')
+    .split(';')
+    .map((nodeId) => nodeId.trim())
+    .filter((nodeId) => nodeId !== '');
 }
 
 export function poolEntries(definition: ItemDefinition, group: PoolGroup): PoolEntry[] {
@@ -210,6 +250,10 @@ export function parseItemDefinitions(subroutinesText: string, hullItemsText: str
         lines: parsePool(csvCell(subroutineTable, definition.cells, 'lines')),
         source: csvCell(subroutineTable, definition.cells, 'source').trim(),
         socketLimit: csvCell(subroutineTable, definition.cells, 'socket_limit').trim(),
+        volume: csvCell(subroutineTable, definition.cells, 'volume').trim(),
+        excludedNodes: csvCell(subroutineTable, definition.cells, 'excluded_nodes').trim(),
+        dropChance: csvCell(subroutineTable, definition.cells, 'drop_chance').trim(),
+        salvageChance: csvCell(subroutineTable, definition.cells, 'salvage_chance').trim(),
       })),
       ...parseDefinitionRows(hullItemTable, (cells) => csvCell(hullItemTable, cells, 'section').trim()),
     ],
@@ -240,6 +284,14 @@ function definitionColumnValue(definition: ItemDefinition, column: string): unkn
       return definition.source ?? '';
     case 'socket_limit':
       return definition.socketLimit ?? '';
+    case 'volume':
+      return definition.volume ?? '';
+    case 'excluded_nodes':
+      return definition.excludedNodes ?? '';
+    case 'drop_chance':
+      return definition.dropChance ?? '';
+    case 'salvage_chance':
+      return definition.salvageChance ?? '';
     case 'section':
       return definition.kind;
     case 'system_type':
@@ -373,6 +425,10 @@ export function newItemDefinition(
       lines: [],
       source: '',
       socketLimit: '',
+      volume: '',
+      excludedNodes: '',
+      dropChance: '',
+      salvageChance: '',
     };
   }
   const definition: ItemDefinition = {
@@ -573,6 +629,33 @@ function uniqueLineIssues(label: string, definition: ItemDefinition, catalogue: 
   return issues;
 }
 
+function chanceIssue(label: string, name: string, text: string | undefined): string[] {
+  const trimmed = (text ?? '').trim();
+  return trimmed === '' || (isNumberText(trimmed) && Number.parseFloat(trimmed) >= 0) ? [] : [`${label}: ${name} must be blank or a number of 0 or more`];
+}
+
+function volumeIssues(label: string, definition: ItemDefinition, vocabulary: Vocabulary): string[] {
+  if (!isVolumeSubroutine(definition)) {
+    return hasVolumeFields(definition) ? [`${label}: only ${VOLUME_SUBROUTINE_KIND} subroutines have a volume, excluded nodes or drop chances; clear them`] : [];
+  }
+  const issues: string[] = [];
+  const volume = (definition.volume ?? '').trim();
+  if (volume !== '' && !vocabulary.regionTags.includes(volume)) {
+    issues.push(`${label}: volume must be one of ${vocabulary.regionTags.join(', ')}`);
+  }
+  const seenNodeIds = new Set<string>();
+  for (const nodeId of excludedNodeIds(definition.excludedNodes)) {
+    if (!NODE_ID_TEXT.test(nodeId)) {
+      issues.push(`${label}: excluded node "${nodeId}" is not a node id`);
+    } else if (seenNodeIds.has(nodeId)) {
+      issues.push(`${label}: excluded node ${nodeId} is listed more than once`);
+    }
+    seenNodeIds.add(nodeId);
+  }
+  issues.push(...chanceIssue(label, 'drop chance', definition.dropChance), ...chanceIssue(label, 'salvage chance', definition.salvageChance));
+  return issues;
+}
+
 function subroutineIssues(label: string, definition: ItemDefinition, vocabulary: Vocabulary, catalogue: Map<string, ItemModifier>): string[] {
   const issues: string[] = [];
   if (!vocabulary.subroutineKinds.includes(definition.subroutineKind ?? '')) {
@@ -586,6 +669,7 @@ function subroutineIssues(label: string, definition: ItemDefinition, vocabulary:
   if (socketLimit !== '' && !SOCKET_LIMIT_TEXT.test(socketLimit)) {
     issues.push(`${label}: socket limit must be blank or a whole number of 0 or more`);
   }
+  issues.push(...volumeIssues(label, definition, vocabulary));
   if (!isUniqueSubroutine(definition)) {
     if ((definition.lines ?? []).length > 0) {
       issues.push(`${label}: only ${UNIQUE_SUBROUTINE_KIND} subroutines have lines; remove them`);
@@ -647,6 +731,25 @@ export function validateItemDefinitions(
     }
     issues.push(...poolIssues(label, definition, catalogue, vocabulary, family));
   });
+  issues.push(...duplicateVolumeIssues(definitions));
+  return issues;
+}
+
+function duplicateVolumeIssues(definitions: ItemDefinition[]): string[] {
+  const issues: string[] = [];
+  const definitionIdsByVolume = new Map<string, string>();
+  for (const definition of definitions) {
+    const volume = (definition.volume ?? '').trim();
+    if (!isVolumeSubroutine(definition) || volume === '') {
+      continue;
+    }
+    const earlierId = definitionIdsByVolume.get(volume);
+    if (earlierId === undefined) {
+      definitionIdsByVolume.set(volume, definition.id);
+    } else {
+      issues.push(`${definition.id}: the ${volume} volume already has the volume subroutine ${earlierId}`);
+    }
+  }
   return issues;
 }
 

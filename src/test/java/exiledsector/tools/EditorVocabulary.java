@@ -4,6 +4,7 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.SkillEffectNames;
 import exiledsector.skills.skilleffect.StatMode;
+import exiledsector.skills.radius.RadiusSize;
 import exiledsector.skills.tags.SkillTags;
 import exiledsector.skills.unlock.BlueprintCategory;
 import exiledsector.skills.unlock.UnlockConditionType;
@@ -12,6 +13,7 @@ import exiledsector.charts.ChartEditorVocabulary;
 import exiledsector.charts.ChartEffect;
 import exiledsector.charts.ChartPoi;
 import exiledsector.charts.ChartTiers;
+import exiledsector.items.DoctrineBehaviour;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemUnlock;
@@ -68,6 +70,8 @@ final class EditorVocabulary {
                 .append("],\n");
         json.append("  \"subroutineKinds\": ").append(list(Arrays.stream(SubroutineKind.values()).map(SubroutineKind::id).toList())).append(",\n");
         json.append("  \"modifierScopes\": ").append(list(Arrays.stream(ModifierScope.values()).map(ModifierScope::id).toList())).append(",\n");
+        json.append("  \"doctrineBehaviours\": ").append(list(Arrays.stream(DoctrineBehaviour.values()).map(DoctrineBehaviour::id).toList())).append(",\n");
+        json.append("  \"radiusSizes\": ").append(list(Arrays.stream(RadiusSize.values()).map(RadiusSize::dataKey).toList())).append(",\n");
         json.append("  \"uniqueSourceKinds\": ")
                 .append(list(Arrays.stream(UniqueSource.Kind.values()).map(UniqueSource.Kind::prefix).toList())).append(",\n");
         json.append("  \"itemUnlocks\": ")

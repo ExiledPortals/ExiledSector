@@ -51,7 +51,7 @@ class WormholeAnchorTest {
     void setUp() throws Exception {
         SkillTree.clearNodes();
         SkillType socketType = new SkillType.Builder("socket_type", "Socket", "", SkillTier.SOCKET).build();
-        SkillType wormholeType = new SkillType.Builder("wormhole_type", "Wormhole", "", SkillTier.WORMHOLE).build();
+        SkillType wormholeType = new SkillType.Builder("wormhole_exit_type", "Wormhole Exit", "", SkillTier.WORMHOLE_EXIT).build();
         socket = new SkillNode("socket", socketType, List.of(), 0f, 0f);
         SkillTree.register(socket);
         SkillTree.register(new SkillNode("hegemony_2", wormholeType, List.of(), 100f, 0f, SkillNodeDecoration.NONE, List.of("hegemony")));

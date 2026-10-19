@@ -8,6 +8,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.PlayerFleet;
+import exiledsector.effects.DoctrineRevertConflicts;
 import exiledsector.effects.FighterBayOverflow;
 import exiledsector.effects.OpReserveParity;
 import exiledsector.effects.PhantomConflictWatch;
@@ -21,6 +22,7 @@ import exiledsector.skills.ShipSections;
 import exiledsector.skills.HullModNames;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.RespecPlan;
+import exiledsector.skills.ShipFacts;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillNode;
@@ -33,15 +35,20 @@ import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.skills.unlock.NodeGates;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.skills.tags.ShipProfile;
+import exiledsector.items.DoctrineOverrides;
 import exiledsector.items.HullUpgradeRules;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
+import exiledsector.items.VolumeGrantStatus;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 final class NodeAllocator {
@@ -58,6 +65,8 @@ final class NodeAllocator {
         private final AllocationGate gate;
         private final RefusalDescriber describer;
         private final Map<String, String> reasonsByKey = new HashMap<>();
+        private final Map<String, VolumeGrantStatus> grantStatusBySocketId = new HashMap<>();
+        private Set<String> pathReachableNodeIds;
 
         Snapshot(ShipSkillData skillData, ShipOpBudget opBudget, int statsRevision, Set<String> hiddenNodeIds, AllocationGate gate,
                  RefusalDescriber describer) {
@@ -145,6 +154,51 @@ final class NodeAllocator {
             }
             return reasonsByKey.computeIfAbsent(key, ignored -> describer.describe(verdict, gate, refund));
         }
+
+        VolumeGrantStatus volumeGrantStatus(String socketId) {
+            if (!grantStatusBySocketId.containsKey(socketId)) {
+                grantStatusBySocketId.put(socketId, computeVolumeGrantStatus(socketId));
+            }
+            return grantStatusBySocketId.get(socketId);
+        }
+
+        private VolumeGrantStatus computeVolumeGrantStatus(String socketId) {
+            String grantedNodeId = skillData.grantedNodesBySocket().get(socketId);
+            if (grantedNodeId == null) {
+                return null;
+            }
+            if (SkillTree.getDeclared(grantedNodeId) == null) {
+                return VolumeGrantStatus.of(VolumeGrantStatus.State.UNKNOWN_NODE);
+            }
+            SkillNode grantedNode = SkillTree.get(grantedNodeId);
+            if (grantedNode == null) {
+                return VolumeGrantStatus.of(VolumeGrantStatus.State.AREA_OFF);
+            }
+            if (skillData.isAllocated(grantedNodeId)) {
+                if (pathReachableNodeIds().contains(grantedNodeId)) {
+                    return VolumeGrantStatus.of(VolumeGrantStatus.State.BY_PATH);
+                }
+                String grantingSocketId = skillData.grantingSocket(grantedNodeId);
+                return grantingSocketId == null || grantingSocketId.equals(socketId) ? VolumeGrantStatus.of(VolumeGrantStatus.State.ACTIVE)
+                        : VolumeGrantStatus.of(VolumeGrantStatus.State.DUPLICATE);
+            }
+            AllocationGate.Verdict verdict = gate.grant(grantedNode);
+            if (verdict.allowed()) {
+                return VolumeGrantStatus.of(VolumeGrantStatus.State.READY);
+            }
+            String refusalReason = reason("grant/" + grantedNodeId, verdict, null);
+            boolean waitsForItem = verdict.block() != null && verdict.block().kind() == NodeEligibility.Kind.ITEM_COST;
+            VolumeGrantStatus.State state = verdict.refusal() == AllocationGate.Refusal.INELIGIBLE && !waitsForItem
+                    ? VolumeGrantStatus.State.INELIGIBLE : VolumeGrantStatus.State.WAITING;
+            return new VolumeGrantStatus(state, refusalReason);
+        }
+
+        private Set<String> pathReachableNodeIds() {
+            if (pathReachableNodeIds == null) {
+                pathReachableNodeIds = skillData.pathReachableAllocatedNodeIds(SkillTree.topology(), gate.rootId());
+            }
+            return pathReachableNodeIds;
+        }
     }
 
     private final FleetMemberAPI fleetMember;
@@ -173,6 +227,10 @@ final class NodeAllocator {
         return root != null && node.getId().equals(root.getId());
     }
 
+    List<String> hullModNamesLostOnDoctrineRemoval(SkillNode socket) {
+        return socket == null ? List.of() : DoctrineRevertConflicts.hullModNamesLostOnRemoval(data(), shipVariant, socket.getId());
+    }
+
     Snapshot snapshot() {
         refreshVariantHullModsOnce();
         ShipSkillData skillData = data();
@@ -182,7 +240,9 @@ final class NodeAllocator {
         OpReserveParity.warnIfOutOfSync(fleetMember, shipVariant, skillData.getSpentOp(opCostPerNode), reservedOp, "while allocating nodes");
         int totalOpBudget = OpReserveParity.availableOp(opBudget, reservedOp);
         AllocationGate.Budget budget = new AllocationGate.Budget(totalOpBudget, opCostPerNode, ShipLevelConfig.maxAllocatedNodes());
-        NodeEligibility.Context eligibility = NodeEligibility.Context.of(skillData, PlayerShipFacts.of(fleetMember, shipVariant),
+        ShipFacts shipFacts = PlayerShipFacts.of(fleetMember, shipVariant);
+        DoctrineOverrides.bindShipFacts(skillData, () -> shipFacts);
+        NodeEligibility.Context eligibility = NodeEligibility.Context.of(skillData, shipFacts,
                 SkillTypeUnlockStatus.lockedFor(skillData), NodeAllocator::heldInCargo);
         AllocationGate gate = new AllocationGate(skillData, SkillTree.topology(), satisfiedRootId(), budget, eligibility);
         return new Snapshot(skillData, opBudget, statsRevision, hiddenNodeIds(skillData), gate, this::describe);
@@ -191,7 +251,10 @@ final class NodeAllocator {
     Snapshot planningSnapshot(ShipSkillData planData, Snapshot liveSnapshot) {
         ShipSkillData liveData = liveSnapshot.skillData();
         AllocationGate.Budget budget = new AllocationGate.Budget(Integer.MAX_VALUE, 0, ShipLevelConfig.maxAllocatedNodes());
-        NodeEligibility.Context eligibility = NodeEligibility.Context.of(planData, PlayerShipFacts.of(fleetMember, shipVariant),
+        ShipFacts shipFacts = PlayerShipFacts.of(fleetMember, shipVariant);
+        DoctrineOverrides.forget(planData);
+        DoctrineOverrides.bindShipFacts(planData, () -> shipFacts);
+        NodeEligibility.Context eligibility = NodeEligibility.Context.of(planData, shipFacts,
                 SkillTypeUnlockStatus.lockedFor(liveData), itemId -> Double.MAX_VALUE);
         AllocationGate gate = new AllocationGate(planData, SkillTree.topology(), satisfiedRootId(), budget, eligibility);
         return new Snapshot(planData, liveSnapshot.opBudget(), liveSnapshot.statsRevision(), liveSnapshot.hiddenNodeIds, gate, this::describe);
@@ -250,17 +313,90 @@ final class NodeAllocator {
             return false;
         }
         CargoAPI cargo = PlayerFleet.cargoOrNull();
-        snapshot.skillData().deallocateReleasingCharges(node).forEach(charged -> charged.refundTo(cargo));
+        ShipSkillData skillData = snapshot.skillData();
+        Set<String> reachableBefore = reachable(skillData);
+        skillData.deallocateReleasingCharges(node).forEach(charged -> charged.refundTo(cargo));
+        releaseStranded(skillData, reachableBefore);
         refreshShipStats();
         return true;
     }
 
     boolean socketItem(SkillNode node, String itemId) {
-        return changed(data().socketItem(node.getId(), itemId));
+        ShipSkillData skillData = data();
+        Set<String> reachableBefore = reachable(skillData);
+        if (!skillData.socketItem(node.getId(), itemId)) {
+            return false;
+        }
+        releaseStranded(skillData, reachableBefore);
+        skillData.openAnchorWormholes(ShipLevelConfig.maxAllocatedNodes());
+        return changed(true);
     }
 
     boolean unsocketItem(SkillNode node) {
-        return changed(data().unsocketItem(node.getId()) != null);
+        ShipSkillData skillData = data();
+        Set<String> reachableBefore = reachable(skillData);
+        if (skillData.unsocketItem(node.getId()) == null) {
+            return false;
+        }
+        releaseStranded(skillData, reachableBefore);
+        return changed(true);
+    }
+
+    boolean openAnchorWormholes() {
+        return changed(!data().openAnchorWormholes(ShipLevelConfig.maxAllocatedNodes()).isEmpty());
+    }
+
+    boolean grantVolumeNotables() {
+        ShipSkillData skillData = data();
+        Map<String, String> grantedNodesBySocket = skillData.grantedNodesBySocket();
+        if (grantedNodesBySocket.isEmpty()) {
+            VolumeGrantStatus.rememberForShip(fleetMember.getId(), Map.of());
+            return false;
+        }
+        boolean grantedAny = false;
+        for (String grantedNodeId : new LinkedHashSet<>(grantedNodesBySocket.values())) {
+            SkillNode grantedNode = SkillTree.get(grantedNodeId);
+            if (grantedNode == null || skillData.isAllocated(grantedNodeId)) {
+                continue;
+            }
+            Snapshot snapshot = snapshot();
+            if (snapshot.gate().grant(grantedNode).allowed()) {
+                skillData.allocate(grantedNode, snapshot.opCostFor(grantedNode));
+                chargeItems(skillData, grantedNodeId, NodeEligibility.itemCost(grantedNode, null));
+                grantedAny = true;
+            }
+        }
+        if (grantedAny) {
+            refreshShipStats();
+        }
+        rememberGrantStatuses(skillData, snapshot());
+        return grantedAny;
+    }
+
+    private void rememberGrantStatuses(ShipSkillData skillData, Snapshot snapshot) {
+        Map<String, VolumeGrantStatus> statusesByItemId = new LinkedHashMap<>();
+        for (String socketId : skillData.grantedNodesBySocket().keySet()) {
+            VolumeGrantStatus status = snapshot.volumeGrantStatus(socketId);
+            String itemId = skillData.getSocketedItem(socketId);
+            if (status != null && itemId != null) {
+                statusesByItemId.put(itemId, status);
+            }
+        }
+        VolumeGrantStatus.rememberForShip(fleetMember.getId(), statusesByItemId);
+    }
+
+    Set<String> previewRelease(Consumer<ShipSkillData> change) {
+        return data().previewRelease(SkillTree.topology(), satisfiedRootId(), change);
+    }
+
+    private Set<String> reachable(ShipSkillData skillData) {
+        return skillData.reachableAllocatedNodeIds(SkillTree.topology(), satisfiedRootId());
+    }
+
+    private void releaseStranded(ShipSkillData skillData, Set<String> reachableBefore) {
+        CargoAPI cargo = PlayerFleet.cargoOrNull();
+        skillData.releaseNewlyStranded(SkillTree.topology(), satisfiedRootId(), reachableBefore).charges()
+                .forEach(charged -> charged.refundTo(cargo));
     }
 
     boolean installUpgrade() {

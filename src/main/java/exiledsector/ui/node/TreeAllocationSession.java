@@ -1,5 +1,6 @@
 package exiledsector.ui.node;
 
+import exiledsector.i18n.Translation;
 import exiledsector.items.ShipSection;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
@@ -23,18 +24,30 @@ import exiledsector.items.HullUpgradeRules;
 import exiledsector.items.SocketCustody;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
+import exiledsector.items.Subroutine;
 import exiledsector.items.SubroutineSocketLimits;
+import exiledsector.items.VolumeGrantLinks;
 import exiledsector.items.WormholeAnchor;
+import exiledsector.items.WormholeAnchorLinks;
+import exiledsector.items.WormholeAnchorSocketLimits;
+import exiledsector.i18n.Translation;
 import exiledsector.ui.SkillTreeSounds;
 import lunalib.lunaRefit.BaseRefitButton;
 
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 public final class TreeAllocationSession {
+
+    private static final String DEALLOCATE_ACTION = "deallocate:";
+    private static final String INSTALL_ACTION = "install:";
+    private static final String EMPTY_ACTION = "empty:";
 
     private final BaseRefitButton refitButton;
     private final NodeSearch nodeSearch;
@@ -45,6 +58,7 @@ public final class TreeAllocationSession {
     private final Predicate<SkillNode> respecStep = this::removeForRespec;
     private final Predicate<SkillType> dropdownOptionUsable = this::isDropdownOptionUsable;
     private final TemplatePlanner planner;
+    private final ReleaseConfirmation releaseConfirmation = new ReleaseConfirmation();
 
     private TreeFeedback feedback = TreeFeedback.NONE;
     private StartingRootChoice rootChoice;
@@ -69,6 +83,10 @@ public final class TreeAllocationSession {
         this.attemptStep = stepExecutor::attempt;
         this.pointsLeftCheck = stepExecutor::hasPointsLeft;
         this.planner = new TemplatePlanner(allocator, this::snapshot);
+        WormholeAnchorLinks.refresh();
+        VolumeGrantLinks.refresh();
+        allocator.openAnchorWormholes();
+        allocator.grantVolumeNotables();
     }
 
     private static StartingRootChoice initialRootChoice(ShipSkillData skillData) {
@@ -129,6 +147,7 @@ public final class TreeAllocationSession {
             SkillTreeSounds.refused();
         }
         rootChoice.advance(amount);
+        releaseConfirmation.advance(amount);
         advanceAutoAllocate(amount);
         advanceRespec(amount);
     }
@@ -204,11 +223,29 @@ public final class TreeAllocationSession {
     }
 
     public List<SkillTreeTopology.WormholePair> wormholePairs() {
-        return allocator.data().wormholePairs(SkillTree.topology());
+        return viewSnapshot().skillData().wormholePairs(SkillTree.topology());
     }
 
     public Item socketedItem(SkillNode node) {
         return node == null ? null : ItemStore.lookup(allocator.data().getSocketedItem(node.getId()));
+    }
+
+    public String doctrineRemovalWarning(SkillNode socket) {
+        List<String> lostHullModNames = allocator.hullModNamesLostOnDoctrineRemoval(socket);
+        return lostHullModNames.isEmpty() ? null
+                : Translation.msg("socketable.doctrine.revertConflict").arg("hullMods", String.join(", ", lostHullModNames)).text();
+    }
+
+    public String socketHolding(Item item) {
+        if (item == null) {
+            return null;
+        }
+        for (Map.Entry<String, String> socketed : allocator.data().getSocketedItems().entrySet()) {
+            if (item.id().equals(socketed.getValue())) {
+                return socketed.getKey();
+            }
+        }
+        return null;
     }
 
     public boolean isAllocatedSocket(SkillNode node) {
@@ -263,8 +300,16 @@ public final class TreeAllocationSession {
     }
 
     private void removeOrSwitchOption(SkillNode node, NodeAllocator.Snapshot allocation) {
+        boolean anchorLinked = allocation.skillData().anchorPartner(node.getId()) != null;
+        boolean holdsGrant = allocation.skillData().grantedNodesBySocket().containsKey(node.getId());
+        if ((anchorLinked || holdsGrant) && allocation.gate().deallocation(node).allowed()
+                && !confirmRelease(DEALLOCATE_ACTION, node, planned -> planned.deallocate(node))) {
+            return;
+        }
+        Set<String> allocatedBefore = Set.copyOf(allocation.skillData().getAllocatedNodeIds());
         if (allocator.deallocate(node, allocation)) {
             afterAllocationChange(node, false);
+            reportReleased(allocatedBefore, node);
         } else if (node.getType().isOptional()) {
             dropdownNode = node;
         } else {
@@ -276,9 +321,12 @@ public final class TreeAllocationSession {
         if (!ctrlDown) {
             return null;
         }
+        ShipSkillData liveData = allocator.data();
         String pairedId = wormholePartner(node);
         SkillNode paired = pairedId == null ? null : SkillTree.get(pairedId);
-        if (paired == null) {
+        boolean closedAnchorWormhole = liveData.anchorPartner(node.getId()) != null
+                && !(liveData.isAllocated(node.getId()) && liveData.isAllocated(pairedId));
+        if (paired == null || closedAnchorWormhole) {
             return null;
         }
         NodeAllocator.Snapshot allocation = snapshot();
@@ -581,22 +629,97 @@ public final class TreeAllocationSession {
         if (node == null || item == null) {
             return null;
         }
-        String anchorRefusal = item instanceof WormholeAnchor anchor ? anchor.socketRefusal() : null;
-        return anchorRefusal != null ? anchorRefusal : SubroutineSocketLimits.refusal(item, node.getId(), allocator.data().getSocketedItems());
+        String refusal = blockingSocketRefusal(node, item);
+        return refusal != null ? refusal : releaseConfirmation.warningForAction(INSTALL_ACTION + node.getId());
+    }
+
+    private String blockingSocketRefusal(SkillNode node, Item item) {
+        if (item instanceof WormholeAnchor anchor) {
+            String anchorRefusal = anchor.socketRefusal();
+            if (anchorRefusal == null) {
+                anchorRefusal = WormholeAnchorSocketLimits.refusal(anchor, node.getId(), allocator.data().getSocketedItems());
+            }
+            if (anchorRefusal != null) {
+                return anchorRefusal;
+            }
+        }
+        if (item instanceof Subroutine subroutine && subroutine.volumeSocketRefusal() != null) {
+            return subroutine.volumeSocketRefusal();
+        }
+        return SubroutineSocketLimits.refusal(item, node.getId(), allocator.data().getSocketedItems());
     }
 
     public boolean installInSocket(SkillNode node, Item item) {
-        return apply(() -> item.canSocketInto(node)
-                && !SocketCustody.installations(ShipSkillDataManager.all()).containsKey(item.id())
-                && socketRefusal(node, item) == null
-                && allocator.socketItem(node, item.id()), () -> {
+        if (isBusy() || node == null || item == null || !item.canSocketInto(node)
+                || SocketCustody.installations(ShipSkillDataManager.all()).containsKey(item.id())
+                || blockingSocketRefusal(node, item) != null
+                || !confirmRelease(INSTALL_ACTION, node, planned -> planned.socketItem(node.getId(), item.id()))) {
+            return false;
+        }
+        Set<String> allocatedBefore = Set.copyOf(allocator.data().getAllocatedNodeIds());
+        return apply(() -> allocator.socketItem(node, item.id()), () -> {
             SkillTreeSounds.socketed();
             feedback.pulse(node);
+            reportReleased(allocatedBefore, node);
         });
     }
 
     public boolean emptySocket(SkillNode node) {
-        return apply(() -> allocator.unsocketItem(node), () -> { });
+        if (isBusy() || node == null || !confirmRelease(EMPTY_ACTION, node, planned -> planned.unsocketItem(node.getId()))) {
+            return false;
+        }
+        Set<String> allocatedBefore = Set.copyOf(allocator.data().getAllocatedNodeIds());
+        return apply(() -> allocator.unsocketItem(node), () -> reportReleased(allocatedBefore, node));
+    }
+
+    public String releaseWarning(SkillNode node) {
+        return node == null ? null : releaseConfirmation.warningFor(node.getId());
+    }
+
+    private boolean confirmRelease(String action, SkillNode node, Consumer<ShipSkillData> change) {
+        String actionKey = action + node.getId();
+        if (releaseConfirmation.confirm(actionKey)) {
+            return true;
+        }
+        ShipSkillData skillData = allocator.data();
+        Set<String> released = new LinkedHashSet<>(allocator.previewRelease(change));
+        released.remove(node.getId());
+        String partnerId = skillData.anchorPartner(node.getId());
+        if (partnerId != null) {
+            released.remove(partnerId);
+        }
+        if (released.isEmpty()) {
+            return true;
+        }
+        int returnedOp = skillData.paidNodeCount(released) * snapshot().opCostPerNode();
+        String grantedNodeId = skillData.grantedNodesBySocket().get(node.getId());
+        boolean onlyGrantReleased = grantedNodeId != null && released.equals(Set.of(grantedNodeId));
+        if (onlyGrantReleased && returnedOp == 0) {
+            return true;
+        }
+        String warning = onlyGrantReleased ? volumeReleaseWarning(grantedNodeId, returnedOp)
+                : Translation.msg("socketable.anchor.closeConfirm").count(released.size()).arg("op", returnedOp).text();
+        releaseConfirmation.arm(actionKey, node.getId(), warning);
+        if (!INSTALL_ACTION.equals(action)) {
+            SkillTreeSounds.refused();
+        }
+        feedback.pulse(node);
+        return false;
+    }
+
+    private static String volumeReleaseWarning(String grantedNodeId, int returnedOp) {
+        SkillNode grantedNode = SkillTree.getDeclared(grantedNodeId);
+        String nodeName = grantedNode == null ? grantedNodeId : grantedNode.getDisplayName();
+        return Translation.msg("socketable.volume.releaseConfirm").arg("node", nodeName).arg("op", returnedOp).text();
+    }
+
+    private void reportReleased(Set<String> allocatedBefore, SkillNode node) {
+        Set<String> released = new LinkedHashSet<>(allocatedBefore);
+        released.removeAll(allocator.data().getAllocatedNodeIds());
+        released.remove(node.getId());
+        if (!released.isEmpty()) {
+            feedback.released(released);
+        }
     }
 
     public List<ShipSections.UnlockedSection> sections() {
@@ -665,6 +788,8 @@ public final class TreeAllocationSession {
     }
 
     private void refreshAfterAllocation() {
+        allocator.openAnchorWormholes();
+        allocator.grantVolumeNotables();
         allocationSnapshot = null;
         if (refitButton != null) {
             refitButton.refreshVariant();

@@ -12,10 +12,12 @@ import exiledsector.effects.PhantomConflictWatch;
 import exiledsector.effects.ShipTreeSync;
 import exiledsector.skills.ExoshipNodes;
 import exiledsector.skills.SkillNode;
+import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.radius.RadiusSize;
 import exiledsector.items.SocketCustody;
 import exiledsector.items.Item;
+import exiledsector.items.SubroutineRadius;
 import exiledsector.ui.decoration.AbyssDarknessRenderer;
 import exiledsector.ui.decoration.AbyssSerpentRenderer;
 import exiledsector.ui.decoration.SkillTreeFleetRenderer;
@@ -69,6 +71,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private boolean mouseKnown = false;
     private boolean swallowEscapeUp;
     private float workbenchDimProgress;
+    private boolean hoverRingShown;
 
     public SkillTreeCanvasPlugin(FleetMemberAPI member, ShipVariantAPI variant, float shipCardHeight, BaseRefitButton refitButton,
                                  CustomPanelAPI hostPanel) {
@@ -440,7 +443,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             treeSession.startRespec(node);
             return;
         }
-        if (socketPlacement.handleSocketClick(node, ctrlDown, canvasPosition, chrome.shipCardFrame(canvasPosition))) {
+        if (jumpTarget == null && socketPlacement.handleSocketClick(node, ctrlDown, canvasPosition, chrome.shipCardFrame(canvasPosition))) {
             return;
         }
         if (jumpTarget != null && ExoshipNodes.isExoship(jumpTarget)) {
@@ -505,6 +508,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         exoshipView.setHovered(shipHovered);
         TreeLayers layers = exoshipView.layers(viewport, alphaMult * treeAlpha);
         if (treeAlpha > 0f) {
+            refreshRadiusRing(layers, treeHovered);
             radiusRingRenderer.render(layers);
             nodeDrawer.render(layers, mouseX, mouseY, treeHovered);
         }
@@ -527,6 +531,30 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             chrome.renderTooltips(canvasPosition, mode, mouseX, mouseY, alphaMult);
         }
         templateUi.renderModals(canvasPosition, mouseX, mouseY, alphaMult);
+    }
+
+    private void refreshRadiusRing(TreeLayers layers, boolean treeHovered) {
+        SubroutineRadius.Footprint footprint = treeHovered ? socketFootprint(nodeDrawer.findSocketAt(layers, mouseX, mouseY)) : null;
+        if (footprint == null) {
+            footprint = socketPlacement.hoveredStorageFootprint();
+        }
+        SkillNode centre = footprint == null ? null : SkillTree.get(footprint.centreNodeId());
+        if (centre != null) {
+            radiusRingRenderer.setHighlightedRadius(centre, footprint.size());
+            hoverRingShown = true;
+        } else if (hoverRingShown) {
+            radiusRingRenderer.clearHighlightedRadius();
+            hoverRingShown = false;
+        }
+    }
+
+    private SubroutineRadius.Footprint socketFootprint(SkillNode socket) {
+        if (socket == null) {
+            return null;
+        }
+        Item placing = socketPlacement.placingItem();
+        Item item = placing != null && treeSession.isAllocatedSocket(socket) ? placing : treeSession.socketedItem(socket);
+        return SubroutineRadius.footprint(item, socket.getId());
     }
 
     private TreeViewport viewport() {

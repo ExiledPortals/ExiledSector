@@ -36,7 +36,7 @@ class ItemDropsTest {
     @BeforeEach
     void setUp() throws Exception {
         ItemDefinitions.register(new JSONArray()
-                .put(ItemFixtures.subroutineRow(MILITARY))
+                .put(row(MILITARY, ItemFixtures.MILITARY_SECTION, MILITARY_PREFIXES, MILITARY_SUFFIXES))
                 .put(ItemFixtures.subroutineRow("relic", SubroutineKind.UNIQUE).put("unique", "true")));
         ItemDrops.register(new JSONArray()
                 .put(new JSONObject().put("site", "probe").put("chances", "0.5").put("uniqueChance", "0"))
@@ -66,17 +66,28 @@ class ItemDropsTest {
         return hits / (double) TRIALS;
     }
 
+    private static double basicShare(String site, float mult, java.util.function.Predicate<List<ItemData>> test) {
+        Random random = new Random(11L);
+        int hits = 0;
+        for (int i = 0; i < TRIALS; i++) {
+            if (test.test(ItemDrops.rollSectionItemLoot(site, random, mult).items())) {
+                hits++;
+            }
+        }
+        return hits / (double) TRIALS;
+    }
+
     private static long basics(List<ItemData> items) {
         return items.stream().filter(item -> MILITARY.equals(item.definitionId())).count();
     }
 
     @Test
     void theFirstChanceIsTheChanceOfAtLeastOneAndEachExtraNeedsThePreviousToLand() {
-        assertEquals(0.5, share("probe", 1f, items -> basics(items) >= 1), 0.02);
-        assertEquals(1.0, share("station", 1f, items -> basics(items) >= 1), 0.0);
-        assertEquals(0.6, share("station", 1f, items -> basics(items) >= 2), 0.02);
-        assertEquals(0.18, share("station", 1f, items -> basics(items) >= 3), 0.02);
-        assertEquals(0.0, share("station", 1f, items -> basics(items) >= 4), 0.0);
+        assertEquals(0.5, basicShare("probe", 1f, items -> basics(items) >= 1), 0.02);
+        assertEquals(1.0, basicShare("station", 1f, items -> basics(items) >= 1), 0.0);
+        assertEquals(0.6, basicShare("station", 1f, items -> basics(items) >= 2), 0.02);
+        assertEquals(0.18, basicShare("station", 1f, items -> basics(items) >= 3), 0.02);
+        assertEquals(0.0, basicShare("station", 1f, items -> basics(items) >= 4), 0.0);
     }
 
     @Test
@@ -96,7 +107,7 @@ class ItemDropsTest {
 
     @Test
     void aChanceMultiplierScalesEveryRoll() {
-        assertEquals(0.25, share("probe", 0.5f, items -> !items.isEmpty()), 0.02);
+        assertEquals(0.25, basicShare("probe", 0.5f, items -> !items.isEmpty()), 0.02);
     }
 
     @Test
@@ -110,7 +121,7 @@ class ItemDropsTest {
     void basicDrawsNeverPickAUniqueAndUniqueDrawsOnlyPickUniques() {
         Random random = new Random(5L);
         for (int i = 0; i < 200; i++) {
-            assertEquals(MILITARY, ItemDrops.pickBasic(random).id());
+            assertEquals(MILITARY, ItemDrops.pickSectionItemBasic(ItemKind.BRIDGE, random).id());
             assertEquals("relic", ItemDrops.pickUnique(random, definition -> true).id());
         }
     }
@@ -149,12 +160,12 @@ class ItemDropsTest {
         try (MockedStatic<LunaSettings> luna = Mockito.mockStatic(LunaSettings.class)) {
             luna.when(() -> LunaSettings.getBoolean("exiledSector", SalvageSiteCompat.DROPS_FIELD_ID)).thenReturn(true);
             assertTrue(ItemDrops.hasRule("rat_abyss_research"));
-            assertEquals(1, ItemDrops.roll("rat_abyss_research", new Random(1L)).size());
-            assertEquals(0.5, share("probe", 1f, items -> !items.isEmpty()), 0.02);
+            assertEquals(1, ItemDrops.rollSectionItemLoot("rat_abyss_research", new Random(1L), 1f).items().size());
+            assertEquals(0.5, basicShare("probe", 1f, items -> !items.isEmpty()), 0.02);
 
             luna.when(() -> LunaSettings.getBoolean("exiledSector", SalvageSiteCompat.DROPS_FIELD_ID)).thenReturn(false);
             assertFalse(ItemDrops.hasRule("rat_abyss_research"));
-            assertTrue(ItemDrops.roll("rat_abyss_research", new Random(1L)).isEmpty());
+            assertTrue(ItemDrops.rollSectionItemLoot("rat_abyss_research", new Random(1L), 1f).items().isEmpty());
             assertTrue(ItemDrops.hasRule("probe"));
         }
     }

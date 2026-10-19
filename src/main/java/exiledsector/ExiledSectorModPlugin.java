@@ -62,6 +62,8 @@ import exiledsector.items.ItemIdAliases;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.DeletedSubroutines;
+import exiledsector.items.DoctrineArchives;
+import exiledsector.items.DoctrineOverrides;
 import exiledsector.items.MaterialMigration;
 import exiledsector.items.ItemNames;
 import exiledsector.items.NpcItems;
@@ -71,10 +73,16 @@ import exiledsector.items.SocketLossListener;
 import exiledsector.items.ItemSaveAliases;
 import exiledsector.items.ItemStore;
 import exiledsector.items.SocketTypeMigration;
+import exiledsector.items.WormholeAnchorLinks;
+import exiledsector.items.WormholeAnchorMigration;
+import exiledsector.effects.HyperNavBeaconGrant;
 import exiledsector.items.StarChartCurrency;
 import exiledsector.items.StarChartItems;
 import exiledsector.items.UniqueSourceCheck;
 import exiledsector.items.WormholeAnchorDefinitions;
+import exiledsector.items.VolumeGrantLinks;
+import exiledsector.items.VolumeGrantStatus;
+import exiledsector.items.VolumeSubroutines;
 import exiledsector.ui.ExiledSectorSettings;
 import exiledsector.ui.HullUpgradesRefitButton;
 import exiledsector.ui.ModificationBenchRefitButton;
@@ -126,6 +134,10 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         ItemImplicits.load();
         StarChartItems.load();
         WormholeAnchorDefinitions.load();
+        WormholeAnchorLinks.install();
+        DoctrineArchives.load();
+        VolumeSubroutines.load();
+        VolumeGrantLinks.install();
         ItemDataIntegrity.logLoaded();
         ItemCraftingCosts.load();
         ItemNames.load();
@@ -231,6 +243,9 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         SkillTree.applyDisabledRegions(AreaToggles.disabledRegions());
         SkillDataResolver.clearCache();
         ResolvedTree.clearCache();
+        DoctrineOverrides.clearCache();
+        VolumeGrantLinks.refresh();
+        VolumeGrantStatus.forgetAll();
         PhantomConflictWatch.clearPendingReverts();
         TreeCameraMemory.forgetAll();
         FleetCrewLedger.discardPending();
@@ -274,6 +289,9 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         }
         SocketTypeMigration.run();
         SocketCustody.reconcile();
+        WormholeAnchorMigration.run();
+        Global.getSector().getListenerManager().addListener(new HyperNavBeaconGrant(), true);
+        HyperNavBeaconGrant.grantOnce(Global.getSector());
         StarCharts.onGameLoad(Global.getSector());
         PlayerTreePower.logNpcScaling();
     }

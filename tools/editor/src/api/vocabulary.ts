@@ -19,6 +19,8 @@ interface VocabularyFile {
   itemKinds: { id: string; type: string }[];
   subroutineKinds?: string[];
   modifierScopes?: string[];
+  doctrineBehaviours?: string[];
+  radiusSizes?: string[];
   uniqueSourceKinds?: string[];
   itemUnlocks: string[];
   clearedChartTierPrefix?: string;
@@ -62,6 +64,8 @@ export interface Vocabulary {
   itemKindTypes: Map<string, string>;
   subroutineKinds: string[];
   modifierScopes: string[];
+  doctrineBehaviours: string[];
+  radiusSizes: string[];
   uniqueSourceKinds: string[];
   itemUnlocks: string[];
   clearedChartTierPrefix: string;
@@ -93,6 +97,8 @@ export function buildVocabulary(file: VocabularyFile): Vocabulary {
     itemKindTypes: new Map(file.itemKinds.map((kind) => [kind.id, kind.type])),
     subroutineKinds: (file.subroutineKinds ?? []).slice(),
     modifierScopes: (file.modifierScopes ?? file.itemTypes).slice(),
+    doctrineBehaviours: (file.doctrineBehaviours ?? ['TRANSFORM', 'AUGMENT']).slice(),
+    radiusSizes: (file.radiusSizes ?? ['small', 'medium', 'large']).slice(),
     uniqueSourceKinds: (file.uniqueSourceKinds ?? ['faction', 'site']).slice(),
     itemUnlocks: file.itemUnlocks.slice(),
     clearedChartTierPrefix: file.clearedChartTierPrefix ?? 'cleared_chart_tier_',

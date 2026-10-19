@@ -131,12 +131,11 @@ final class SkillTreeNodeConnectorRenderer {
 
     private float endpointRadius(SkillNode node, float zoom, float towardX, float towardY) {
         if (ExoshipNodes.isExoship(node)) return exoshipRadius * zoom * EXOSHIP_ENDPOINT_SHARE;
-        if (ExoshipNodes.isBeacon(node)) return 0f;
         SkillTier tier = node.getType().getTier();
         float footprintSize = NODE_SIZE * zoom * tier.getSizeMultiplier();
         if (tier == SkillTier.SOCKET) return SkillTreeSocketRenderer.visibleEdgeDistance(footprintSize, towardX, towardY);
         float fullRadius = connectorEndpointRadius(tier, footprintSize, zoom);
-        if (tier != SkillTier.WORMHOLE) return fullRadius;
+        if (!tier.isWormhole()) return fullRadius;
         return fullRadius * (1f - wormholeOpenness.of(node.getId()));
     }
 
@@ -145,7 +144,7 @@ final class SkillTreeNodeConnectorRenderer {
     }
 
     private static boolean isWormhole(SkillNode node) {
-        return node.getType().getTier() == SkillTier.WORMHOLE && !ExoshipNodes.isBeacon(node) && !ExoshipNodes.isExoship(node);
+        return node.getType().getTier().isWormhole() && !ExoshipNodes.isExoship(node);
     }
 
     private void drawStraightNodeConnectorLine(ConnectorEndpoint a, ConnectorEndpoint b, LineStyle lineStyle) {

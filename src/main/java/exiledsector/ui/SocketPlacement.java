@@ -11,6 +11,7 @@ import exiledsector.items.SocketCustody;
 import exiledsector.items.ItemKind;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
+import exiledsector.items.SubroutineRadius;
 import exiledsector.ui.node.NodeSearch;
 import exiledsector.ui.node.TreeAllocationSession;
 import exiledsector.ui.socket.SocketPanelPlacement;
@@ -31,6 +32,7 @@ final class SocketPlacement {
     private final SkillTreeUiButton storageButton = new SkillTreeUiButton("");
     private ItemStoragePanel storagePanel;
     private Item placingItem;
+    private Item hoveredStorageItem;
     private SkillNode targetSocket;
     private int storageRevision;
     private int countedStoreSize = -1;
@@ -48,6 +50,21 @@ final class SocketPlacement {
     private static float sidePanelHeight(PositionAPI canvasPosition, ScreenRect shipCard) {
         float reservedBottom = shipCard.bottom() + shipCard.height() - canvasPosition.getY() + PANEL_GAP;
         return canvasPosition.getHeight() - PANEL_TOP - reservedBottom;
+    }
+
+    Item placingItem() {
+        return placingItem;
+    }
+
+    SubroutineRadius.Footprint hoveredStorageFootprint() {
+        if (storagePanel == null || hoveredStorageItem == null || !SubroutineRadius.hasRadius(hoveredStorageItem)) {
+            return null;
+        }
+        String socketId = treeSession.socketHolding(hoveredStorageItem);
+        if (socketId == null && targetSocket != null) {
+            socketId = targetSocket.getId();
+        }
+        return socketId == null ? null : SubroutineRadius.footprint(hoveredStorageItem, socketId);
     }
 
     boolean isEngaged() {
@@ -89,6 +106,8 @@ final class SocketPlacement {
         }
         if (treeSession.emptySocket(node)) {
             refresh();
+        } else if (storagePanel != null && treeSession.releaseWarning(node) != null) {
+            storagePanel.showRefusal(treeSession.releaseWarning(node));
         }
         return true;
     }
@@ -236,14 +255,21 @@ final class SocketPlacement {
             public void pressedInside() {
                 searchBar.unfocus();
             }
+
+            @Override
+            public void hovered(Item item) {
+                hoveredStorageItem = item;
+            }
         });
         storagePanel.setTargetingSocket(targetSocket != null);
+        showDoctrineRemovalWarning(targetSocket);
         refreshButtonLabel();
         refreshButtonSelected();
     }
 
     private void forgetStorage() {
         storagePanel = null;
+        hoveredStorageItem = null;
         stopPlacing();
         clearTargetSocket();
         refreshButtonLabel();
@@ -276,6 +302,14 @@ final class SocketPlacement {
         treeSession.setTargetedSocket(socket);
         if (storagePanel != null) {
             storagePanel.setTargetingSocket(socket != null);
+            showDoctrineRemovalWarning(socket);
+        }
+    }
+
+    private void showDoctrineRemovalWarning(SkillNode socket) {
+        String warning = treeSession.doctrineRemovalWarning(socket);
+        if (warning != null && storagePanel != null) {
+            storagePanel.showRefusal(warning);
         }
     }
 

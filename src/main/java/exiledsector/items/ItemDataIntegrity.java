@@ -9,6 +9,8 @@ import exiledsector.modifiers.ValueScaling;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
+import exiledsector.skills.SkillType;
+import exiledsector.skills.radius.RadiusSize;
 import exiledsector.skills.tags.SkillTags;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -21,6 +23,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -94,6 +97,9 @@ public final class ItemDataIntegrity {
                     chartModifierRows, chartRows, chartImplicitRows));
             JSONArray anchorRows = orEmpty(ModCsv.rows("id", WormholeAnchorDefinitions.DATA_PATH));
             violations.addAll(checkWormholeAnchors(anchorRows, SkillTree.getDeclaredNodes(), definitionIds(orEmpty(subroutineRows), hullItemRows, chartRows)));
+            JSONArray doctrineRows = orEmpty(ModCsv.rows(DoctrineArchives.ID_COLUMN, DoctrineArchives.DATA_PATH));
+            violations.addAll(checkDoctrineArchives(modifierRows, orEmpty(subroutineRows), doctrineRows, SkillTree.getAllTypes()));
+            violations.addAll(checkVolumeSubroutines(orEmpty(subroutineRows), SkillTree.getDeclaredNodes()));
             for (Violation violation : violations) {
                 if (violation.severity() == Severity.ERROR) {
                     LOG.error(violation);
@@ -117,6 +123,217 @@ public final class ItemDataIntegrity {
         ItemDataIntegrity integrity = new ItemDataIntegrity();
         integrity.checkAnchorRows(orEmpty(anchorRows), treeNodes, otherDefinitionIds);
         return List.copyOf(integrity.violations);
+    }
+
+    public static List<Violation> checkDoctrineArchives(JSONArray modifierRows, JSONArray subroutineRows, JSONArray doctrineRows,
+                                                        Map<String, SkillType> types) throws JSONException {
+        ItemDataIntegrity integrity = new ItemDataIntegrity();
+        integrity.checkModifiers(orEmpty(modifierRows), ItemModifiers.DATA_PATH, false);
+        integrity.violations.clear();
+        integrity.checkDoctrineRows(orEmpty(subroutineRows), orEmpty(doctrineRows), types);
+        return List.copyOf(integrity.violations);
+    }
+
+    public static List<Violation> checkVolumeSubroutines(JSONArray subroutineRows, Map<String, SkillNode> treeNodes) throws JSONException {
+        ItemDataIntegrity integrity = new ItemDataIntegrity();
+        integrity.checkVolumeRows(orEmpty(subroutineRows), treeNodes);
+        return List.copyOf(integrity.violations);
+    }
+
+    private void checkVolumeRows(JSONArray subroutineRows, Map<String, SkillNode> treeNodes) throws JSONException {
+        String file = ItemDefinitions.SUBROUTINES_PATH;
+        Map<String, Integer> linesByVolume = new HashMap<>();
+        ModCsv.forEach(subroutineRows, (index, row) -> {
+            int line = index + FIRST_DATA_LINE;
+            String definitionId = ModCsv.text(row, "id");
+            if (SubroutineKind.byIdOrNull(ModCsv.text(row, ItemDefinition.SUBROUTINE_KIND_COLUMN)) != SubroutineKind.VOLUME) {
+                for (String column : VolumeSubroutines.VOLUME_ONLY_COLUMNS) {
+                    if (!ModCsv.text(row, column).isEmpty()) {
+                        error(file, line, definitionId + " fills " + column + ", but only " + SubroutineKind.VOLUME.id() + " subroutines use it");
+                    }
+                }
+                return;
+            }
+            String volume = ModCsv.text(row, VolumeSubroutines.VOLUME_COLUMN);
+            if (!SkillTags.isRegion(volume)) {
+                error(file, line, definitionId + " has volume \"" + volume + "\"; expected a tree region");
+                return;
+            }
+            Integer volumeLine = linesByVolume.putIfAbsent(volume, line);
+            if (volumeLine != null) {
+                error(file, line, definitionId + " grants from " + volume + ", which already has a volume subroutine on line " + volumeLine);
+            }
+            checkVolumeChances(file, line, definitionId, row);
+            checkVolumePool(file, line, definitionId, volume, VolumeSubroutines.nodeIds(ModCsv.text(row, VolumeSubroutines.EXCLUDED_NODES_COLUMN)),
+                    treeNodes);
+        });
+        Set<String> treeRegions = new LinkedHashSet<>();
+        treeNodes.values().forEach(node -> treeRegions.add(node.getRegion()));
+        for (String region : SkillTags.REGION) {
+            if (treeRegions.contains(region) && !linesByVolume.containsKey(region)) {
+                warning(file, 0, "the " + region + " volume has no " + SubroutineKind.VOLUME.id() + " subroutine");
+            }
+        }
+    }
+
+    private void checkVolumeChances(String file, int line, String definitionId, JSONObject row) {
+        String dropChance = ModCsv.text(row, VolumeSubroutines.DROP_CHANCE_COLUMN);
+        String salvageChance = ModCsv.text(row, VolumeSubroutines.SALVAGE_CHANCE_COLUMN);
+        if (!VolumeSubroutines.isValidChance(dropChance)) {
+            error(file, line, definitionId + " has the drop chance \"" + dropChance + "\"; expected a number of 0 or more");
+        }
+        if (!VolumeSubroutines.isValidChance(salvageChance)) {
+            error(file, line, definitionId + " has the salvage chance \"" + salvageChance + "\"; expected a number of 0 or more");
+        }
+        if (isZeroChance(dropChance) && isZeroChance(salvageChance)) {
+            warning(file, line, definitionId + " has no drop chance and no salvage chance, so it never drops");
+        }
+    }
+
+    private static boolean isZeroChance(String chanceText) {
+        try {
+            return chanceText.isEmpty() || !(Float.parseFloat(chanceText) > 0f);
+        } catch (NumberFormatException e) {
+            return true;
+        }
+    }
+
+    private void checkVolumePool(String file, int line, String definitionId, String volume, Set<String> excludedNodeIds,
+                                 Map<String, SkillNode> treeNodes) {
+        if (treeNodes.isEmpty()) {
+            return;
+        }
+        for (String excludedNodeId : excludedNodeIds) {
+            SkillNode excludedNode = treeNodes.get(excludedNodeId);
+            if (excludedNode == null) {
+                error(file, line, definitionId + " excludes " + excludedNodeId + ", which is not in the skill tree");
+            } else if (!volume.equals(excludedNode.getRegion()) || !VolumeSubroutines.isGrantable(excludedNode)) {
+                error(file, line, definitionId + " excludes " + excludedNodeId + ", which is not a notable of the " + volume + " volume");
+            }
+        }
+        VolumeSubroutines.VolumeBase base = new VolumeSubroutines.VolumeBase(definitionId, volume, excludedNodeIds, 0f, 0f);
+        if (VolumeSubroutines.candidateNodeIds(base, treeNodes.values()).isEmpty()) {
+            error(file, line, definitionId + " has no notable left to roll in the " + volume + " volume");
+        }
+    }
+
+    private void checkDoctrineRows(JSONArray subroutineRows, JSONArray doctrineRows, Map<String, SkillType> types) throws JSONException {
+        String file = DoctrineArchives.DATA_PATH;
+        Set<String> doctrineIds = new LinkedHashSet<>();
+        ModCsv.forEach(subroutineRows, (index, row) -> {
+            if (SubroutineKind.byIdOrNull(ModCsv.text(row, ItemDefinition.SUBROUTINE_KIND_COLUMN)) == SubroutineKind.DOCTRINE) {
+                doctrineIds.add(ModCsv.text(row, "id"));
+            }
+        });
+        Map<String, Integer> linesById = new HashMap<>();
+        ModCsv.forEach(doctrineRows, (index, row) -> {
+            int line = index + FIRST_DATA_LINE;
+            String definitionId = ModCsv.text(row, DoctrineArchives.ID_COLUMN);
+            if (definitionId.isEmpty()) {
+                error(file, line, "the row has no id");
+                return;
+            }
+            Integer earlierLine = linesById.putIfAbsent(definitionId, line);
+            if (earlierLine != null) {
+                error(file, line, "id " + definitionId + " is already used on line " + earlierLine);
+            }
+            if (!doctrineIds.contains(definitionId)) {
+                error(file, line, definitionId + " is not a " + SubroutineKind.DOCTRINE.id() + " subroutine in " + ItemDefinitions.SUBROUTINES_PATH);
+            }
+            checkDoctrineRow(file, line, definitionId, row, types);
+        });
+        for (String doctrineId : doctrineIds) {
+            if (!linesById.containsKey(doctrineId)) {
+                error(ItemDefinitions.SUBROUTINES_PATH, 0, doctrineId + " is a " + SubroutineKind.DOCTRINE.id() + " subroutine with no row in " + file);
+            }
+        }
+        for (ModifierRow modifier : modifiersById.values()) {
+            if (modifier.scopes().contains(ModifierScope.DOCTRINE) && !referencedIds.contains(modifier.id())) {
+                warning(modifier.file(), modifier.line(), modifier.id() + " is not used by any doctrine archive");
+            }
+        }
+    }
+
+    private void checkDoctrineRow(String file, int line, String definitionId, JSONObject row, Map<String, SkillType> types) {
+        String behaviourText = ModCsv.text(row, DoctrineArchives.BEHAVIOUR_COLUMN);
+        DoctrineBehaviour behaviour = DoctrineBehaviour.byIdOrNull(behaviourText);
+        if (behaviour == null) {
+            error(file, line, definitionId + " has behaviour \"" + behaviourText + "\"; expected one of " + DoctrineBehaviour.ids());
+        }
+        String radiusText = ModCsv.text(row, DoctrineArchives.RADIUS_COLUMN);
+        if (RadiusSize.byDataKeyOrNull(radiusText) == null) {
+            error(file, line, definitionId + " has radius \"" + radiusText + "\"; expected small, medium or large");
+        }
+        Integer minLines = DoctrineArchives.lineCount(ModCsv.text(row, DoctrineArchives.MIN_LINES_COLUMN));
+        Integer maxLines = DoctrineArchives.lineCount(ModCsv.text(row, DoctrineArchives.MAX_LINES_COLUMN));
+        if (minLines == null || maxLines == null || minLines < 1 || maxLines < minLines) {
+            error(file, line, definitionId + " needs min_lines of 1 or more and max_lines of at least min_lines");
+        }
+        int listedTypes = checkReplacementPool(file, line, definitionId, ModCsv.text(row, DoctrineArchives.NOTABLES_COLUMN), SkillTier.NOTABLE, types)
+                + checkReplacementPool(file, line, definitionId, ModCsv.text(row, DoctrineArchives.KEYSTONES_COLUMN), SkillTier.KEYSTONE, types)
+                + checkReplacementPool(file, line, definitionId, ModCsv.text(row, DoctrineArchives.SMALL_NODES_COLUMN), SkillTier.SMALL, types);
+        String modifiersText = ModCsv.text(row, DoctrineArchives.MODIFIERS_COLUMN);
+        if (behaviour == DoctrineBehaviour.TRANSFORM) {
+            if (listedTypes == 0) {
+                error(file, line, definitionId + " transforms nodes but lists no replacement notables, keystones or small nodes");
+            }
+            if (!modifiersText.isEmpty()) {
+                error(file, line, definitionId + " transforms nodes, so it lists no modifiers");
+            }
+        } else if (behaviour == DoctrineBehaviour.AUGMENT) {
+            if (listedTypes > 0) {
+                error(file, line, definitionId + " augments nodes, so it lists no replacement nodes");
+            }
+            if (checkDoctrineModifiers(file, line, definitionId, modifiersText) == 0) {
+                error(file, line, definitionId + " augments nodes but lists no modifiers");
+            }
+        }
+    }
+
+    private int checkReplacementPool(String file, int line, String definitionId, String poolText, SkillTier tier, Map<String, SkillType> types) {
+        List<String> typeIds = DoctrineArchives.typeIds(poolText);
+        for (String typeId : typeIds) {
+            SkillType type = types.get(typeId);
+            if (type == null) {
+                error(file, line, definitionId + " lists " + typeId + ", which is not a skill type");
+                continue;
+            }
+            if (type.getTier() != tier) {
+                error(file, line, definitionId + " lists " + typeId + " as a " + tier + " replacement, but it is a " + type.getTier() + " node");
+            }
+            if (type.isOptional() || type.getItemCost() != null) {
+                error(file, line, definitionId + " lists " + typeId + ", but optional nodes and nodes with an item cost can't be replacements");
+            }
+        }
+        return typeIds.size();
+    }
+
+    private int checkDoctrineModifiers(String file, int line, String definitionId, String modifiersText) {
+        List<ModifierRow> pool = new ArrayList<>();
+        for (String entryText : modifiersText.split(ENTRY_SEPARATOR)) {
+            String trimmed = entryText.trim();
+            if (trimmed.isEmpty()) {
+                continue;
+            }
+            if (!ItemModifiers.isReference(trimmed)) {
+                error(file, line, definitionId + " lists \"" + trimmed + "\" inline; reference a modifier as @ID or @ID:weight");
+                continue;
+            }
+            String[] fields = trimmed.substring(ItemModifiers.REFERENCE_MARK.length()).split(WEIGHT_SEPARATOR, -1);
+            if (fields.length > 2) {
+                error(file, line, definitionId + " entry \"" + trimmed + "\" is not @ID or @ID:weight");
+                continue;
+            }
+            if (fields.length == 2) {
+                checkWeight(file, line, definitionId, trimmed, fields[1]);
+            }
+            ModifierRow modifier = referencedModifier(file, line, definitionId, fields[0].trim(), ModifierSlot.PREFIX, ModifierScope.DOCTRINE);
+            if (modifier != null) {
+                checkRepeats(file, line, definitionId, modifier, pool);
+                pool.add(modifier);
+            }
+        }
+        return pool.size();
     }
 
     private void checkAnchorRows(JSONArray rows, Map<String, SkillNode> treeNodes, Collection<String> otherDefinitionIds) throws JSONException {
@@ -151,6 +368,10 @@ public final class ItemDataIntegrity {
                 error(file, line, definitionId + " has the unknown unlock \"" + unlock + "\"; use an item unlock id, "
                         + ItemUnlock.CLEARED_CHART_TIER_PREFIX + "N or leave it blank");
             }
+            String dropChance = ModCsv.text(row, WormholeAnchorDefinitions.DROP_CHANCE_COLUMN);
+            if (!WormholeAnchorDefinitions.isValidDropChance(dropChance)) {
+                error(file, line, definitionId + " has the drop chance \"" + dropChance + "\"; expected a number of 0 or more");
+            }
         });
     }
 
@@ -168,8 +389,8 @@ public final class ItemDataIntegrity {
             error(file, line, definitionId + " exits at " + exitNodeId + ", which is in " + exitNode.getRegion() + " rather than " + volume);
         }
         SkillTier exitTier = exitNode.getType().getTier();
-        if (exitTier != SkillTier.WORMHOLE) {
-            error(file, line, definitionId + " exits at " + exitNodeId + ", which is a " + exitTier + " node rather than a wormhole");
+        if (exitTier != SkillTier.WORMHOLE_EXIT) {
+            error(file, line, definitionId + " exits at " + exitNodeId + ", which is a " + exitTier + " node rather than a wormhole exit");
         }
     }
 
@@ -212,6 +433,9 @@ public final class ItemDataIntegrity {
             if (scopes.contains(ModifierScope.UNIQUE_SUBROUTINE) && slot != null && slot != ModifierSlot.PREFIX) {
                 error(file, line, modifierId + " rolls on " + ModifierScope.UNIQUE_SUBROUTINE.id() + ", so its slot must be "
                         + ModifierSlot.PREFIX.id());
+            }
+            if (scopes.contains(ModifierScope.DOCTRINE) && slot != null && slot != ModifierSlot.PREFIX) {
+                error(file, line, modifierId + " rolls on " + ModifierScope.DOCTRINE.id() + ", so its slot must be " + ModifierSlot.PREFIX.id());
             }
             List<String> effectNames = checkLines(file, line, modifierId, slot, effectsFor(file, line, scopes), ModCsv.text(row, "lines"),
                     starChartFile);
@@ -655,7 +879,7 @@ public final class ItemDataIntegrity {
 
     private void checkReferences() {
         for (ModifierRow modifier : modifiersById.values()) {
-            if (!referencedIds.contains(modifier.id())) {
+            if (!referencedIds.contains(modifier.id()) && !modifier.scopes().contains(ModifierScope.DOCTRINE)) {
                 warning(modifier.file(), modifier.line(), modifier.id() + " is not used by any item or implicit");
             }
         }

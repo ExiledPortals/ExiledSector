@@ -204,13 +204,16 @@ class UniqueSubroutinesTest {
         Random random = new Random(3L);
         Set<String> picked = new HashSet<>();
         for (int trial = 0; trial < TRIALS; trial++) {
-            picked.add(ItemDrops.pickBasic(random).id());
-            picked.add(NpcItems.pickDefinition(random, definition -> true).id());
-            ItemDefinition unique = ItemDrops.pickUnique(random, definition -> true);
-            picked.add(unique == null ? "" : unique.id());
+            picked.add(idOrBlank(ItemDrops.pickBasic(random)));
+            picked.add(idOrBlank(NpcItems.pickDefinition(random, definition -> true)));
+            picked.add(idOrBlank(ItemDrops.pickUnique(random, definition -> true)));
         }
 
-        assertEquals(Set.of(ItemFixtures.SUBROUTINE, HULL_RELIC_A, HULL_RELIC_B), picked);
+        assertEquals(Set.of("", HULL_RELIC_A, HULL_RELIC_B), picked);
+    }
+
+    private static String idOrBlank(ItemDefinition definition) {
+        return definition == null ? "" : definition.id();
     }
 
     @Test
@@ -218,13 +221,13 @@ class UniqueSubroutinesTest {
         Random random = new Random(5L);
         int carried = 0;
         for (int trial = 0; trial < TRIALS; trial++) {
-            String pickedId = NpcItems.pickDefinition(random, "pirates", definition -> true).id();
+            String pickedId = idOrBlank(NpcItems.pickDefinition(random, "pirates", definition -> true));
             assertFalse(pickedId.equals(SITE_RELIC) || pickedId.equals(HULL_RELIC_A), pickedId);
             if (pickedId.equals(FLEET_RELIC)) {
                 carried++;
             }
-            assertEquals(ItemFixtures.SUBROUTINE, NpcItems.pickDefinition(random, "hegemony", definition -> true).id());
-            assertEquals(ItemFixtures.SUBROUTINE, NpcItems.pickDefinition(random, "pirates", definition -> false).id());
+            assertEquals("", idOrBlank(NpcItems.pickDefinition(random, "hegemony", definition -> true)));
+            assertEquals("", idOrBlank(NpcItems.pickDefinition(random, "pirates", definition -> false)));
         }
 
         assertEquals(NpcItems.UNIQUE_SHARE, carried / (float) TRIALS, 0.004f);
@@ -272,7 +275,13 @@ class UniqueSubroutinesTest {
 
         List<ItemDefinition> uniques = ItemDefinitions.ofType(ItemType.SUBROUTINE).stream().filter(ItemDefinition::isUniqueSubroutine).toList();
 
-        assertEquals(shippedRows.length(), uniques.size());
+        int uniqueRows = 0;
+        for (int index = 0; index < shippedRows.length(); index++) {
+            if (SubroutineKind.UNIQUE.id().equals(shippedRows.getJSONObject(index).optString(ItemDefinition.SUBROUTINE_KIND_COLUMN))) {
+                uniqueRows++;
+            }
+        }
+        assertEquals(uniqueRows, uniques.size());
         assertTrue(uniques.size() >= 4 && uniques.size() <= 6, String.valueOf(uniques.size()));
         for (ItemDefinition unique : uniques) {
             assertTrue(unique.unique(), unique.id());
@@ -280,7 +289,7 @@ class UniqueSubroutinesTest {
             assertFalse(unique.uniqueSources().isEmpty(), unique.id());
             assertEquals(1, unique.socketLimit(), unique.id() + " is limited to one per ship");
             assertFalse(unique.description().isEmpty(), unique.id());
-            assertFalse(unique.description().matches(".*\\d.*"), unique.id() + " has a number in its description");
+            assertFalse(unique.description().chars().anyMatch(Character::isDigit), unique.id() + " has a number in its description");
             Item item = store.add(ItemData.rolled(unique, 11L));
             assertEquals(unique.pool().size(), item.skillEffects().size(), unique.id());
         }

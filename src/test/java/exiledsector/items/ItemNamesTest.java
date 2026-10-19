@@ -166,7 +166,7 @@ class ItemNamesTest {
         ItemDefinitions.register(csvRows(ItemDefinitions.SUBROUTINES_PATH), csvRows(ItemDefinitions.HULL_ITEMS_PATH));
         JSONObject words = new JSONObject(Files.readString(RealSkillData.projectRoot().resolve(NAMES), StandardCharsets.UTF_8));
         for (ItemDefinition definition : ItemDefinitions.all()) {
-            if (definition.unique()) {
+            if (definition.unique() || definition.type() == ItemType.SUBROUTINE) {
                 continue;
             }
             assertTrue(words.has(definition.id()), definition.id() + " has no rare name words");

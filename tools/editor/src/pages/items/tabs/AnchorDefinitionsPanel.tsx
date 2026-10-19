@@ -82,9 +82,9 @@ export function AnchorDefinitionsPanel({ vocabulary, onFamily }: { vocabulary: V
           </Button>
         </DataToolbar>
         <Text size="xs" c="dimmed" mt={4}>
-          Edits data/config/exiledSector/wormhole_anchors.csv. Each tree volume has exactly one anchor, and its exit node must be a wormhole node in that
-          volume. Anchors roll nothing and never drop yet. Names and descriptions are English; add zh text under socketable.&lt;id&gt;.name / .description
-          in zh_CN.json.
+          Edits data/config/exiledSector/wormhole_anchors.csv. Each tree volume has exactly one anchor, and its exit node must be a wormhole exit node in
+          that volume. Anchors roll nothing. They drop from fleets of the factions mapped to their volume in npc_faction_volumes.csv and of any extra drop
+          factions listed here. Names and descriptions are English; add zh text under socketable.&lt;id&gt;.name / .description in zh_CN.json.
         </Text>
       </Box>
       <Divider />
@@ -243,7 +243,7 @@ function AnchorForm({ document, anchor, index, vocabulary, nodeFacts, onSelect }
         />
         <Select
           label="Exit node"
-          description="A wormhole node in the volume; the far end the anchor opens onto"
+          description="A wormhole exit node in the volume; the far end the anchor opens onto"
           data={exits}
           value={anchor.exitNode === '' ? null : anchor.exitNode}
           onChange={(value) => edit((draft) => void (draft.exitNode = value ?? ''))}
@@ -253,6 +253,23 @@ function AnchorForm({ document, anchor, index, vocabulary, nodeFacts, onSelect }
       </Group>
       <TextInput label="Name" value={anchor.name} onChange={(event) => { const text = event.currentTarget.value; edit((draft) => void (draft.name = text)); }} />
       <DecimalInput w={220} label="Rarity (loot weight)" value={anchor.rarity} onChange={(text) => edit((draft) => void (draft.rarity = text))} />
+      <Group grow align="flex-start">
+        <TextInput
+          label="Extra drop factions"
+          description="Faction ids separated by ; whose fleets also drop this anchor, on top of the factions mapped to its volume"
+          value={anchor.dropFactions}
+          onChange={(event) => {
+            const text = event.currentTarget.value;
+            edit((draft) => void (draft.dropFactions = text));
+          }}
+        />
+        <DecimalInput
+          label="Drop chance per 100 DP defeated"
+          description="Rolled once per won battle, capped at one in two"
+          value={anchor.dropChance}
+          onChange={(text) => edit((draft) => void (draft.dropChance = text))}
+        />
+      </Group>
       <Select
         label="Unlock condition (the anchor stays inert until it is met)"
         data={unlockOptions}

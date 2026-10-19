@@ -182,6 +182,7 @@ public final class NpcSkillTreeBuilder {
         private final List<String> claimedSockets = new ArrayList<>();
         private final int itemCount;
         private final Predicate<SkillType> lockedWormhole;
+        private final String factionExitId;
         private int nodeBudget;
         private int nodesSpent;
         private final String hullId;
@@ -202,7 +203,17 @@ public final class NpcSkillTreeBuilder {
             this.nodeBudget = Math.min(targetNodeCount, maxNodes);
             this.itemCount = request.itemCount();
             Predicate<SkillType> lockedTypes = request.lockedTypes();
-            this.lockedWormhole = type -> type.getTier() == SkillTier.WORMHOLE && lockedTypes.test(type);
+            this.lockedWormhole = type -> type.getTier().isWormhole() && lockedTypes.test(type);
+            this.factionExitId = factionRegion == null ? null : openableExitOf(topology, factionRegion, lockedWormhole);
+        }
+
+        private static String openableExitOf(SkillTreeTopology topology, String region, Predicate<SkillType> lockedWormhole) {
+            for (SkillNode node : topology.sortedById()) {
+                if (node.getType().getTier() == SkillTier.WORMHOLE_EXIT && region.equals(node.getRegion())) {
+                    return lockedWormhole.test(node.getType()) ? null : node.getId();
+                }
+            }
+            return null;
         }
 
         void run() {
@@ -229,7 +240,8 @@ public final class NpcSkillTreeBuilder {
         private String unclaimedAllocatedSocket() {
             for (String nodeId : shipData.getAllocatedNodeIds()) {
                 SkillNode node = topology.node(nodeId);
-                if (node != null && node.getType().getTier() == SkillTier.SOCKET && !claimedSockets.contains(nodeId)) {
+                if (node != null && node.getType().getTier() == SkillTier.SOCKET && !claimedSockets.contains(nodeId)
+                        && !shipData.getImplicitAnchorExits().containsKey(nodeId)) {
                     return nodeId;
                 }
             }
@@ -316,7 +328,7 @@ public final class NpcSkillTreeBuilder {
             for (SkillNode node : topology.sortedById()) {
                 String hullModId = node.getType().getEquivalentHullModId();
                 SkillTier tier = node.getType().getTier();
-                if (hullModId != null && removableHullModIds.contains(hullModId) && tier != SkillTier.WORMHOLE && tier != SkillTier.ROOT) {
+                if (hullModId != null && removableHullModIds.contains(hullModId) && !tier.isWormhole() && tier != SkillTier.ROOT) {
                     equivalentsByHullMod.computeIfAbsent(hullModId, key -> new ArrayList<>()).add(node);
                 }
             }
@@ -333,6 +345,7 @@ public final class NpcSkillTreeBuilder {
             if (factionRegion == null || remaining() <= 0) {
                 return;
             }
+            anchorAllocatedSocket();
             Search search = search(currentInstalled());
             List<String> candidates = new ArrayList<>();
             for (String nodeId : search.reached()) {
@@ -448,7 +461,7 @@ public final class NpcSkillTreeBuilder {
             Map<String, SkillType> searchOptions = new HashMap<>();
             return Search.of(TreeSearch.from(topology, new TreeSet<>(shipData.getAllocatedNodeIds()),
                     candidate -> traversable(candidate, fitState, searchOptions),
-                    shipData::wormholePartner), fitInstalled, searchOptions);
+                    this::jumpTarget), fitInstalled, searchOptions);
         }
 
         private State state(Set<String> fitInstalled) {
@@ -479,7 +492,7 @@ public final class NpcSkillTreeBuilder {
             if (shipData.isAllocated(node.getId()) || !regionAllowed(node.getRegion())) {
                 return false;
             }
-            if (node.getType().getTier() == SkillTier.WORMHOLE && !wormholeAllowed(node)) {
+            if (node.getType().getTier().isWormhole()) {
                 return false;
             }
             SkillType chosenOption = option(node, fitState, searchOptions);
@@ -517,17 +530,6 @@ public final class NpcSkillTreeBuilder {
             return region == null || SkillTags.CORE_REGION.equals(region) || region.equals(factionRegion);
         }
 
-        private boolean wormholeAllowed(SkillNode wormhole) {
-            SkillNode exitNode = topology.node(shipData.wormholePartner(wormhole));
-            if (factionRegion == null || exitNode == null) {
-                return false;
-            }
-            String entryRegion = wormhole.getRegion();
-            String exitRegion = exitNode.getRegion();
-            return SkillTags.CORE_REGION.equals(entryRegion) && factionRegion.equals(exitRegion)
-                    || factionRegion.equals(entryRegion) && SkillTags.CORE_REGION.equals(exitRegion);
-        }
-
         private SkillType option(SkillNode node, State fitState, Map<String, SkillType> searchOptions) {
             if (!node.getType().isOptional()) {
                 return null;
@@ -555,6 +557,31 @@ public final class NpcSkillTreeBuilder {
                 chosenOptions.put(node.getId(), pickedOption);
             }
             return pickedOption;
+        }
+
+        private void anchorAllocatedSocket() {
+            if (factionExitId == null || !shipData.getImplicitAnchorExits().isEmpty() || slotsLeft() <= 0) {
+                return;
+            }
+            String socketId = unclaimedAllocatedSocket();
+            if (socketId != null) {
+                shipData.setImplicitAnchor(socketId, factionExitId);
+                shipData.openAnchorWormholes(maxNodes + 1);
+                steps.add(new NpcBuildStep(factionExitId, NpcBuildStep.WORMHOLE_EXIT));
+            }
+        }
+
+        private String jumpTarget(SkillNode node) {
+            String partnerId = shipData.wormholePartner(node);
+            if (partnerId != null) {
+                return partnerId;
+            }
+            return canTakeImplicitAnchor(node) ? factionExitId : null;
+        }
+
+        private boolean canTakeImplicitAnchor(SkillNode socket) {
+            return factionExitId != null && socket.getType().getTier() == SkillTier.SOCKET && shipData.getImplicitAnchorExits().isEmpty()
+                    && !claimedSockets.contains(socket.getId()) && !shipData.isAllocated(factionExitId);
         }
 
         private int pathSize(Search search, String targetId) {
@@ -586,15 +613,17 @@ public final class NpcSkillTreeBuilder {
             }
             int stepsBefore = steps.size();
             List<SkillNode> placedNodes = new ArrayList<>();
+            boolean anchoredInPath = false;
             for (int i = 0; i < pathSteps.size(); i++) {
                 PathStep step = pathSteps.get(i);
                 String outcome = i == pathSteps.size() - 1 ? goalOutcome : pathOutcome;
                 if (step.wormholeExit()) {
+                    anchoredInPath = openImplicitAnchor(search, step.node()) || anchoredInPath;
                     steps.add(new NpcBuildStep(step.node().getId(), NpcBuildStep.WORMHOLE_EXIT));
                     continue;
                 }
                 if (!placedNodes.isEmpty() && !placeable(step, state(search.fitInstalled()))) {
-                    undoPath(placedNodes, stepsBefore);
+                    undoPath(placedNodes, stepsBefore, anchoredInPath);
                     return false;
                 }
                 placedNodes.add(step.node());
@@ -609,10 +638,22 @@ public final class NpcSkillTreeBuilder {
             return true;
         }
 
-        private void undoPath(List<SkillNode> placedNodes, int stepsBefore) {
+        private boolean openImplicitAnchor(Search search, SkillNode exit) {
+            if (shipData.isAllocated(exit.getId())) {
+                return false;
+            }
+            shipData.setImplicitAnchor(search.parent(exit.getId()), exit.getId());
+            shipData.openAnchorWormholes(maxNodes + 1);
+            return true;
+        }
+
+        private void undoPath(List<SkillNode> placedNodes, int stepsBefore, boolean anchoredInPath) {
             for (int i = placedNodes.size() - 1; i >= 0; i--) {
                 shipData.deallocate(placedNodes.get(i));
                 nodesSpent--;
+            }
+            if (anchoredInPath) {
+                shipData.dropImplicitAnchors();
             }
             steps.subList(stepsBefore, steps.size()).clear();
         }

@@ -451,12 +451,11 @@ class NpcFleetLevellerTest {
     }
 
     @Test
-    void aFactionShipCrossesItsOwnWormholeForANotableInItsFactionVolume() throws Exception {
-        SkillType wormhole = type("wormhole", SkillTier.WORMHOLE).build();
-        SkillTree.register(new SkillNode("gate_core", wormhole, List.of("a_1", "gate_far"), 0f, 0f,
-                new SkillNodeDecoration(null, null, null, null, "gate_far"), List.of("core")));
-        SkillTree.register(new SkillNode("gate_far", wormhole, List.of("gate_core"), 0f, 0f,
-                new SkillNodeDecoration(null, null, null, null, "gate_core"), List.of("hegemony")));
+    void aFactionShipAnchorsASocketToReachANotableInItsFactionVolumeAndLeavesThatSocketEmpty() throws Exception {
+        SkillTree.register(new SkillNode("socket_1", type("socket", SkillTier.SOCKET).build(), List.of("a_1"), 0f, 0f,
+                SkillNodeDecoration.NONE, List.of("core")));
+        SkillTree.register(new SkillNode("gate_far", type("wormhole_exit", SkillTier.WORMHOLE_EXIT).build(), List.of(), 0f, 0f,
+                SkillNodeDecoration.NONE, List.of("hegemony")));
         SkillTree.register(new SkillNode("hegemony_notable", type("pride", SkillTier.NOTABLE).build(), List.of("gate_far"), 0f, 0f,
                 SkillNodeDecoration.NONE, List.of("hegemony")));
         NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"hegemony\", \"region\": \"hegemony\"}]"));
@@ -467,7 +466,9 @@ class NpcFleetLevellerTest {
         NpcFleetLeveller.ensure(fleet);
 
         String tag = NpcTreeTag.find(officered.getVariant());
-        assertTrue(tag.contains("gate_core") && tag.contains("gate_far") && tag.contains("hegemony_notable"), tag);
+        assertTrue(tag.contains("socket_1") && tag.contains("gate_far") && tag.contains("hegemony_notable"), tag);
+        assertTrue(tag.contains("anchors:socket_1=gate_far"), tag);
+        assertNull(NpcTreeTag.decode(tag).getSocketedItem("socket_1"), tag);
     }
 
     @Test

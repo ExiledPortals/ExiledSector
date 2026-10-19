@@ -111,6 +111,8 @@ export function resolveDataResource(paths: ProjectPaths, name: string): DataReso
       return { filePath: path.join(configDir, 'star_charts.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
     case 'wormhole-anchors':
       return { filePath: path.join(configDir, 'wormhole_anchors.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
+    case 'doctrine-archives':
+      return { filePath: path.join(configDir, 'doctrine_archives.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
     case 'star-chart-modifiers':
       return { filePath: path.join(configDir, 'star_chart_modifiers.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
     case 'star-chart-implicits':

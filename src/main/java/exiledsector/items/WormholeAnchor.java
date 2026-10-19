@@ -4,13 +4,21 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
+import exiledsector.skills.SkillTree;
+import exiledsector.skills.unlock.NodeGates;
+import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public final class WormholeAnchor extends Item {
+
+    public enum Inertness {
+        AREA_OFF, LOCKED, GATED, EXIT_LOCKED
+    }
 
     WormholeAnchor(String id, String definitionId, long seed) {
         super(id, definitionId, seed, List.of());
@@ -40,6 +48,34 @@ public final class WormholeAnchor extends Item {
     public boolean unlocked(SectorAPI sector) {
         ItemDefinition definition = definition();
         return definition != null && ItemUnlock.unlockConditionMet(definition, sector);
+    }
+
+    public Inertness inertness(SectorAPI sector) {
+        SkillNode exitNode = exitNode();
+        if (exitNode == null) {
+            return Inertness.AREA_OFF;
+        }
+        if (!unlocked(sector)) {
+            return Inertness.LOCKED;
+        }
+        if (NodeGates.isLocked(exitNode, null)) {
+            return Inertness.GATED;
+        }
+        return SkillTypeUnlockStatus.isLocked(exitNode.getType(), null) ? Inertness.EXIT_LOCKED : null;
+    }
+
+    public String linkedExitNodeId() {
+        return exitNode() == null ? null : exitNodeId();
+    }
+
+    public boolean canOpen(SectorAPI sector) {
+        return inertness(sector) == null;
+    }
+
+    private SkillNode exitNode() {
+        String exitNodeId = exitNodeId();
+        SkillNode exitNode = exitNodeId == null ? null : SkillTree.get(exitNodeId);
+        return exitNode != null && exitNode.getType().getTier() == SkillTier.WORMHOLE_EXIT ? exitNode : null;
     }
 
     @Override
@@ -101,19 +137,63 @@ public final class WormholeAnchor extends Item {
         String volume = volume();
         if (volume != null) {
             lines.add(Translation.msg("socketable.anchor.volume").arg("volume", volumeName(volume)).styled());
-            if (!areaActive()) {
-                lines.add(Translation.msg("socketable.anchor.areaOff").arg("volume", volumeName(volume)).styled());
-            }
         }
-        ItemDefinition definition = definition();
-        if (definition != null && !definition.unlock().isEmpty() && !unlocked(Global.getSector())) {
-            lines.add(Translation.styled(ItemUnlock.RAT_PLAYER_EXOSHIP.id().equals(definition.unlock())
-                    ? "socketable.anchor.lockedUntilExoship" : "socketable.anchor.locked"));
+        SectorAPI sector = Global.getSector();
+        Inertness inertness = inertness(sector);
+        if (inertness != null) {
+            lines.add(inertLine(inertness, volume));
         }
         return lines;
     }
 
-    private static String volumeName(String volume) {
+    public List<StyledText> socketStatusLines(ShipSkillData shipData, String socketNodeId) {
+        String exitNodeId = exitNodeId();
+        if (shipData == null || exitNodeId == null) {
+            return statusLines();
+        }
+        List<StyledText> lines = new ArrayList<>();
+        String volume = volume();
+        String volumeName = volumeName(volume);
+        lines.add(Translation.msg("socketable.anchor.volume").arg("volume", volumeName).styled());
+        boolean linked = exitNodeId.equals(shipData.anchorExit(socketNodeId));
+        Inertness inertness = inertness(Global.getSector());
+        if (linked && shipData.isAllocated(exitNodeId)) {
+            lines.add(Translation.msg("socketable.anchor.open").arg("volume", volumeName).styled());
+        } else if (inertness != null) {
+            lines.add(inertLine(inertness, volume));
+        } else if (!linked) {
+            lines.add(Translation.msg("socketable.anchor.duplicate").arg("volume", volumeName).styled());
+        } else {
+            lines.add(Translation.msg("socketable.anchor.noFreeSlot").arg("volume", volumeName).styled());
+        }
+        return lines;
+    }
+
+    private StyledText inertLine(Inertness inertness, String volume) {
+        String volumeName = volume == null ? "" : volumeName(volume);
+        return switch (inertness) {
+            case AREA_OFF -> Translation.msg("socketable.anchor.areaOff").arg("volume", volumeName).styled();
+            case LOCKED -> {
+                ItemDefinition definition = definition();
+                boolean exoship = definition != null && ItemUnlock.RAT_PLAYER_EXOSHIP.id().equals(definition.unlock());
+                yield Translation.styled(exoship ? "socketable.anchor.lockedUntilExoship" : "socketable.anchor.locked");
+            }
+            case GATED -> gateLine(volumeName);
+            case EXIT_LOCKED -> Translation.msg("socketable.anchor.exitLocked").arg("volume", volumeName).styled();
+        };
+    }
+
+    private StyledText gateLine(String volumeName) {
+        SkillNode exitNode = exitNode();
+        String gateTag = exitNode == null ? null : NodeGates.lockingGateTag(exitNode, null);
+        String gateKey = "socketable.anchor.gate." + gateTag;
+        if (gateTag != null && Translation.has(gateKey)) {
+            return Translation.styled(gateKey);
+        }
+        return Translation.msg("socketable.anchor.exitLocked").arg("volume", volumeName).styled();
+    }
+
+    static String volumeName(String volume) {
         return Translation.text("hyperspace.region." + volume);
     }
 }

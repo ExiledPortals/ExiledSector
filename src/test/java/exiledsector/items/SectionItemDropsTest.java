@@ -128,11 +128,11 @@ class SectionItemDropsTest {
         assertEquals(ItemDrops.rollSectionItemLoot("station", new Random(4L), 1f).items(),
                 ItemDrops.rollSectionItemLoot("station", new Random(4L), phaseCoilBonus).items());
         assertFalse(ItemDrops.hasDroppableBasic(ItemKind.PHASE_COIL));
-        assertTrue(ItemDrops.hasDroppableBasic(ItemKind.SUBROUTINE));
+        assertFalse(ItemDrops.hasDroppableBasic(ItemKind.SUBROUTINE));
     }
 
     @Test
-    void aSubroutineBonusAddsSubroutinesOnTopOfTheGeneralRoll() {
+    void aSubroutineBonusAddsNothingWhileNoSubroutineKindDropsFromGenericLoot() {
         Random random = new Random(6L);
         ItemChances subroutineBonus = new ItemChances(1f, Map.of(ItemKind.SUBROUTINE, 0.5f));
         int subroutines = 0;
@@ -140,7 +140,7 @@ class SectionItemDropsTest {
             subroutines += ItemDrops.roll("station", random, subroutineBonus, definition -> true).size();
         }
 
-        assertEquals(1.5 * 1.5, subroutines / (double) TRIALS, 0.04);
+        assertEquals(0, subroutines);
         assertEquals(1.5f, ItemDrops.expectedCascadeCount(List.of(1f, 0.5f)), 0.0001f);
         assertEquals(0.75f, ItemDrops.expectedCascadeCount(List.of(0.5f, 0.5f, 0f)), 0.0001f);
     }

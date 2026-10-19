@@ -93,7 +93,7 @@ class WormholeAnchorDataTest {
 
     @Test
     void theIntegrityCheckReportsBadExitsVolumesIdsAndUnlocks() throws Exception {
-        SkillType wormhole = new SkillType.Builder("wormhole_type", "Wormhole", "", SkillTier.WORMHOLE).build();
+        SkillType wormhole = new SkillType.Builder("wormhole_exit_type", "Wormhole Exit", "", SkillTier.WORMHOLE_EXIT).build();
         SkillType notable = new SkillType.Builder("notable_type", "Notable", "", SkillTier.NOTABLE).build();
         Map<String, SkillNode> tree = Map.of(
                 "hegemony_2", node("hegemony_2", wormhole, "hegemony"),
@@ -120,7 +120,7 @@ class WormholeAnchorDataTest {
                 "line 3: good exits at missing_exit, which is not in the skill tree",
                 "line 4: second_hegemony leads to hegemony, which already has an anchor on line 2",
                 "line 5: wrong_volume exits at luddic_2, which is in luddic rather than tritachyon",
-                "line 6: not_a_wormhole exits at pirate_notable, which is a NOTABLE node rather than a wormhole",
+                "line 6: not_a_wormhole exits at pirate_notable, which is a NOTABLE node rather than a wormhole exit",
                 "line 7: core_anchor has volume \"core\"; expected a tree region other than core",
                 "line 7: core_anchor has no exit node",
                 "line 8: id taken is already used by a subroutine, hull item or star chart",

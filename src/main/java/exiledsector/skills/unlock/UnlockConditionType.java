@@ -14,7 +14,7 @@ public enum UnlockConditionType {
     CHARACTER_STAT(UnlockConditionOverrides.DISABLE_CHARACTER_STAT_FIELD_ID, null),
     MIN_SHIP_LEVEL(UnlockConditionOverrides.DISABLE_MIN_SHIP_LEVEL_FIELD_ID, null),
     MEMORY_FLAG(UnlockConditionOverrides.DISABLE_MEMORY_FLAG_FIELD_ID, null),
-    RAT_PLAYER_EXOSHIP(new ModGate(RandomAssortmentCompat::isModEnabled, sector -> RandomAssortmentCompat.exoshipGateOpen())),
+    RAT_PLAYER_EXOSHIP(new ModGate(RandomAssortmentCompat::isModEnabled, sector -> RandomAssortmentCompat.exoshipConfirmedRecovered())),
     RAT_SINGULARITY_DEFEATED(new ModGate(RandomAssortmentCompat::isModEnabled, AbyssSingularity::isGateOpen)),
     NIGHTCROSS_PASCAL_VISITED(new ModGate(NightcrossCompat::isModEnabled, NightcrossUnlocks::isPascalVisited)),
     NIGHTCROSS_LUNAR_FLEET_DEFEATED(new ModGate(NightcrossCompat::isModEnabled, NightcrossUnlocks::isLunarFleetDefeated)),

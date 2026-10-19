@@ -4,14 +4,9 @@ import exiledsector.skills.tags.SkillTags;
 
 public final class ExoshipNodes {
 
-    public static final String BEACON_TYPE_ID = "exotech_beacon";
     public static final String EXOSHIP_TYPE_ID = "exoship";
 
     private ExoshipNodes() {
-    }
-
-    public static boolean isBeacon(SkillNode node) {
-        return node != null && BEACON_TYPE_ID.equals(node.getType().getId());
     }
 
     public static boolean isExoship(SkillNode node) {

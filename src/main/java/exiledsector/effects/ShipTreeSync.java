@@ -14,6 +14,7 @@ import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.npc.NpcTreeTag;
+import exiledsector.skills.tags.SkillTags;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.ShipLevelSystem;
 import exiledsector.items.NpcItems;
@@ -213,6 +214,7 @@ public final class ShipTreeSync {
         ShipSkillData npcTree = NpcTreeTag.decode(npcTreeTag);
         if (npcTree != null && ShipSkillDataManager.get(member.getId()).isBlank()) {
             npcTree.clearNpcBuild();
+            dropImplicitAnchors(npcTree);
             NpcItems.claimForPlayer(npcTree);
             npcTree.capLevel(ShipLevelConfig.maxLevel());
             List<String> trimmedNodeIds = new ArrayList<>(npcTree.trimFreeAllocationsToLevel(SkillTree.getAllNodes(), SkillTree.topology()));
@@ -228,6 +230,12 @@ public final class ShipTreeSync {
 
         clearNpcTree(ownedVariant(member));
         return true;
+    }
+
+    static List<String> dropImplicitAnchors(ShipSkillData adoptedTree) {
+        adoptedTree.dropImplicitAnchors();
+        return adoptedTree.releaseUnreachable(SkillTree.topology(), adoptedTree.resolveStartingRootId(),
+                node -> !SkillTags.CORE_REGION.equals(node.getRegion())).nodeIds();
     }
 
     static void dropNpcTree(FleetMemberAPI member) {

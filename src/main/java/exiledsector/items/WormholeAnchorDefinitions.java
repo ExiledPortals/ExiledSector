@@ -10,8 +10,10 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 public final class WormholeAnchorDefinitions {
@@ -19,6 +21,9 @@ public final class WormholeAnchorDefinitions {
     public static final String DATA_PATH = "data/config/exiledSector/wormhole_anchors.csv";
     static final String VOLUME_COLUMN = "volume";
     static final String EXIT_NODE_COLUMN = "exit_node";
+    static final String DROP_FACTIONS_COLUMN = "drop_factions";
+    static final String DROP_CHANCE_COLUMN = "drop_chance";
+    static final String LIST_SEPARATOR = ";";
     private static final Logger LOG = Logger.getLogger(WormholeAnchorDefinitions.class);
     private static final AtomicReference<Map<String, AnchorTarget>> TARGETS_BY_ID = new AtomicReference<>(Map.of());
 
@@ -36,6 +41,7 @@ public final class WormholeAnchorDefinitions {
         List<ItemDefinition> definitions = new ArrayList<>();
         Map<String, AnchorTarget> targets = new LinkedHashMap<>();
         Map<String, String> definitionIdsByVolume = new LinkedHashMap<>();
+        Map<String, FactionFleetDrops.Source> dropSources = new LinkedHashMap<>();
         ModCsv.forEach(rows == null ? new JSONArray() : rows, (index, row) -> {
             try {
                 ItemDefinition definition = ItemDefinition.parseWormholeAnchor(row);
@@ -60,14 +66,61 @@ public final class WormholeAnchorDefinitions {
                     LOG.warn(definition.id() + " in " + DATA_PATH + " has the unknown unlock \"" + definition.unlock()
                             + "\", so it stays inert; use an item unlock id, " + ItemUnlock.CLEARED_CHART_TIER_PREFIX + "N or leave it blank");
                 }
+                float dropChance = dropChance(definition.id(), ModCsv.text(row, DROP_CHANCE_COLUMN));
                 definitions.add(definition);
                 targets.put(definition.id(), new AnchorTarget(volume, exitNodeId));
+                dropSources.put(definition.id(), new FactionFleetDrops.Source(volume, dropFactions(ModCsv.text(row, DROP_FACTIONS_COLUMN)), dropChance));
             } catch (IllegalArgumentException e) {
                 LOG.error("Skipping row " + (index + 1) + " of " + DATA_PATH + ": " + e.getMessage());
             }
         });
         ItemDefinitions.registerWormholeAnchors(definitions);
         TARGETS_BY_ID.set(Collections.unmodifiableMap(targets));
+        FactionFleetDrops.register(ItemType.WORMHOLE_ANCHOR, dropSources);
+    }
+
+    static float dropChance(String definitionId, String chanceText) {
+        if (chanceText.isEmpty()) {
+            return 0f;
+        }
+        if (!isValidDropChance(chanceText)) {
+            LOG.error(definitionId + " in " + DATA_PATH + " has the drop chance \"" + chanceText
+                    + "\"; expected a number of 0 or more, so it never drops from fleets");
+            return 0f;
+        }
+        return parsedOrNaN(chanceText);
+    }
+
+    static boolean isValidDropChance(String chanceText) {
+        float chance = parsedOrNaN(chanceText);
+        return chanceText.isEmpty() || chance >= 0f && !Float.isInfinite(chance);
+    }
+
+    private static float parsedOrNaN(String numberText) {
+        try {
+            return Float.parseFloat(numberText);
+        } catch (NumberFormatException e) {
+            return Float.NaN;
+        }
+    }
+
+    static Set<String> dropFactions(String factionsText) {
+        Set<String> factionIds = new LinkedHashSet<>();
+        for (String factionId : factionsText.split(LIST_SEPARATOR)) {
+            if (!factionId.isBlank()) {
+                factionIds.add(factionId.trim());
+            }
+        }
+        return factionIds;
+    }
+
+    public static String definitionIdFor(String volume) {
+        for (Map.Entry<String, AnchorTarget> target : TARGETS_BY_ID.get().entrySet()) {
+            if (target.getValue().volume().equals(volume)) {
+                return target.getKey();
+            }
+        }
+        return null;
     }
 
     static boolean isKnownUnlock(String unlockId) {
@@ -100,5 +153,6 @@ public final class WormholeAnchorDefinitions {
     public static void clear() {
         TARGETS_BY_ID.set(Map.of());
         ItemDefinitions.clearWormholeAnchors();
+        FactionFleetDrops.clear(ItemType.WORMHOLE_ANCHOR);
     }
 }

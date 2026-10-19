@@ -22,6 +22,7 @@ import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.npc.NpcTreeTag;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.ShipLevelSystem;
+import exiledsector.items.FactionFleetDrops;
 import exiledsector.items.HullUpgradeData;
 import exiledsector.items.HullUpgradesSetting;
 import exiledsector.items.NpcItems;
@@ -48,6 +49,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         private final Map<String, List<ItemData>> itemsByMemberId = new LinkedHashMap<>();
         private final Map<String, HullUpgradeData> upgradeByMemberId = new LinkedHashMap<>();
         private final Map<CampaignFleetAPI, Float> chartFleetDeploymentPoints = new LinkedHashMap<>();
+        private final Map<String, Float> defeatedDeploymentPointsByFaction = new LinkedHashMap<>();
         private boolean playerWon;
         private float partsEarned;
         private float deploymentPointsDefeated;
@@ -92,6 +94,8 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
                 if (engagement.playerWon()) {
                     holdChartFleetLosses(pendingLoot, engagementResult.getBattle(), fleetResult.getDestroyed());
                     holdChartFleetLosses(pendingLoot, engagementResult.getBattle(), fleetResult.getDisabled());
+                    holdFactionLosses(pendingLoot, engagementResult.getBattle(), fleetResult.getDestroyed());
+                    holdFactionLosses(pendingLoot, engagementResult.getBattle(), fleetResult.getDisabled());
                 }
             }
         }
@@ -141,6 +145,31 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         }
     }
 
+    private static void holdFactionLosses(Pending pendingLoot, BattleAPI battle, List<FleetMemberAPI> lostMembers) {
+        if (lostMembers == null) {
+            return;
+        }
+        for (FleetMemberAPI member : lostMembers) {
+            CampaignFleetAPI sourceFleet = member == null ? null : battle.getSourceFleet(member);
+            String factionId = sourceFleet == null || sourceFleet.getFaction() == null ? null : sourceFleet.getFaction().getId();
+            if (factionId != null) {
+                pendingLoot.defeatedDeploymentPointsByFaction.merge(factionId, member.getDeploymentPointsCost(), Float::sum);
+            }
+        }
+    }
+
+    private List<ItemData> factionFleetDrops(Pending pendingLoot) {
+        if (!pendingLoot.playerWon) {
+            return List.of();
+        }
+        try {
+            return FactionFleetDrops.roll(pendingLoot.defeatedDeploymentPointsByFaction, lootRandom, FactionFleetDrops::available);
+        } catch (RuntimeException e) {
+            LOG.error("[ExiledSector] Rolling faction fleet item drops failed", e);
+            return List.of();
+        }
+    }
+
     private static void hold(Pending pendingLoot, List<FleetMemberAPI> lostMembers, Random random) {
         if (lostMembers == null) {
             return;
@@ -180,6 +209,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         Pending pendingLoot = encounterPlugin == null ? null : pendingByBattle.remove(encounterPlugin.getBattle());
         if (pendingLoot != null && loot != null) {
             pendingLoot.items().forEach(item -> loot.addSpecial(item.toSpecialItem(), 1f));
+            factionFleetDrops(pendingLoot).forEach(item -> loot.addSpecial(item.toSpecialItem(), 1f));
             pendingLoot.upgradeByMemberId.values().forEach(upgrade -> loot.addSpecial(upgrade.toSpecialItem(), 1f));
             int wholeParts = ItemDrops.wholeParts(pendingLoot.partsEarned, lootRandom);
             if (wholeParts > 0) {
@@ -200,7 +230,9 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         if (pendingLoot == null || !pendingLoot.playerWon || playerFleet == null) {
             return;
         }
-        for (ItemData item : pendingLoot.items()) {
+        List<ItemData> wonItems = new ArrayList<>(pendingLoot.items());
+        wonItems.addAll(factionFleetDrops(pendingLoot));
+        for (ItemData item : wonItems) {
             playerFleet.getCargo().addSpecial(item.toSpecialItem(), 1f);
             Item previewItem = item.preview();
             if (previewItem != null) {

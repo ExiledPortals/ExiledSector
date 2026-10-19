@@ -4,6 +4,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.items.DoctrineOverrides;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
 
@@ -40,7 +41,16 @@ public final class AllocatedSkillEffects {
     }
 
     public static List<SkillTypeEffect> treeEffects(ShipSkillData data, AllocatedNode allocated, HullSize hullSize) {
-        return isVanillaPassthrough(allocated) ? List.of() : appliedEffects(data, allocated, hullSize);
+        return isVanillaPassthrough(allocated) ? doctrineEffects(data, allocated, hullSize, new ArrayList<>()) : appliedEffects(data, allocated, hullSize);
+    }
+
+    private static List<SkillTypeEffect> doctrineEffects(ShipSkillData data, AllocatedNode allocated, HullSize hullSize, List<SkillTypeEffect> applied) {
+        for (SkillTypeEffect effect : DoctrineOverrides.addedEffects(data, allocated.node(), hullSize)) {
+            if (appliesTo(data, effect.effect())) {
+                applied.add(effect);
+            }
+        }
+        return applied;
     }
 
     public static boolean isVanillaPassthrough(AllocatedNode allocated) {
@@ -57,7 +67,7 @@ public final class AllocatedSkillEffects {
                 }
             }
         }
-        return applied;
+        return doctrineEffects(data, allocated, hullSize, applied);
     }
 
     public static List<SkillTypeEffect> appliedEffects(ShipSkillData data, SkillType type, HullSize hullSize) {

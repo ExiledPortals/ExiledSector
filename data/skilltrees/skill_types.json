@@ -3249,28 +3249,18 @@
 			"description": "Allocating this wormhole automatically allocates its paired wormhole as well at no extra cost, connecting both branches of the tree. \n\nDeallocating either end deallocates both.\n\nCtrl click on a wormhole to travel through it."
 		},
 		{
-			"id": "exotech_beacon",
-			"name": "Hyper-Nav Beacon",
+			"id": "wormhole_exit",
+			"name": "Wormhole Exit",
 			"icon": "",
-			"tier": "WORMHOLE",
-			"unlockConditions": [
-				{
-					"type": "ratPlayerExoship"
-				}
-			],
-			"description": "A beacon left by the Exo-Tech faction to guide their Exoship's warp drive. Allocate this node to dock your ship with the Exoship, granting access to Exo-Tech hull modifications.\n\nCtrl click on the beacon, or click the Exoship wherever it is, to travel to it."
+			"tier": "WORMHOLE_EXIT",
+			"description": "The far end of a faction's wormhole. It opens only while a wormhole anchor for this volume sits in an allocated Subroutine Socket, and opening allocates it at no cost. No path leads to it from inside its volume.\n\nRemoving the anchor or deallocating its socket closes the wormhole and releases every node reached through it.\n\nCtrl click on an open exit to travel back to the anchor's socket."
 		},
 		{
 			"id": "exoship",
 			"name": "Exoship",
 			"icon": "",
-			"tier": "WORMHOLE",
-			"unlockConditions": [
-				{
-					"type": "ratPlayerExoship"
-				}
-			],
-			"description": "The last Exoship of the Exo-Tech faction, warping from system to system across the sector. Its branches travel with it.\n\nAllocated together with its Hyper-Nav Beacon. Deallocating either deallocates both.\n\nCtrl click on the Exoship to return to the beacon."
+			"tier": "WORMHOLE_EXIT",
+			"description": "The last Exoship of the Exo-Tech faction, warping from system to system across the sector. Its branches travel with it.\n\nIt docks with your ship only while a Hyper-Nav Beacon sits in an allocated Subroutine Socket, and docking allocates it at no cost. Removing the beacon or deallocating its socket undocks the Exoship and releases every node reached through it.\n\nCtrl click on the Exoship to return to the beacon's socket."
 		},
 		{
 			"id": "modular_hull_socket",
@@ -4097,6 +4087,271 @@
 					"effect": "SYSTEM_COOLDOWN_PERCENT",
 					"magnitude": -5
 				}
+			]
+		},
+		{
+			"id": "doctrine_tt_alpha_fire_control",
+			"name": "Alpha-Grade Fire Control",
+			"icon": "graphics/icons/dedicated_targeting_core.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "WEAPON_AUTOFIRE_ACCURACY_PERCENT",
+					"magnitude": 50
+				},
+				{
+					"effect": "ENERGY_WEAPON_RANGE_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"description": "Fire-control routines lifted from a Tri-Tachyon line ship, written by an Alpha core that never meant to share them. Patched into this ship's targeting, they steady its autofiring weapons and stretch the reach of its energy weapons.",
+			"tags": [
+				"weapons",
+				"energy",
+				"range"
+			]
+		},
+		{
+			"id": "doctrine_tt_flux_arbitrage",
+			"name": "Flux Arbitrage",
+			"icon": "graphics/icons/efficient_vents.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "FLUX_DISSIPATION_PERCENT",
+					"magnitude": 10
+				},
+				{
+					"effect": "VENT_RATE_PERCENT",
+					"magnitude": 25
+				}
+			],
+			"description": "Corporate engineers treat flux like capital: borrow hard and repay fast. Their venting schedules, copied from a captured Aurora's maintenance logs, let this ship dump heat faster and bleed it off steadily between volleys.",
+			"tags": [
+				"flux"
+			]
+		},
+		{
+			"id": "doctrine_tt_quarterly_targets",
+			"name": "Quarterly Targets",
+			"icon": "graphics/icons/targetingunit.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "DAMAGE_TO_CRUISER_PERCENT",
+					"magnitude": 10
+				},
+				{
+					"effect": "DAMAGE_TO_CAPITAL_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"description": "Tri-Tachyon fleet doctrine ranks every target by the value it carries, and its threat tables push gunners toward the largest hulls on the field. This ship hits cruisers and capital ships harder.",
+			"tags": [
+				"weapons"
+			]
+		},
+		{
+			"id": "doctrine_tt_hostile_takeover",
+			"name": "Hostile Takeover",
+			"icon": "graphics/icons/tactical_superiority.png",
+			"tier": "KEYSTONE",
+			"effects": [
+				{
+					"effect": "ENERGY_WEAPON_DAMAGE_PERCENT",
+					"magnitude": 20
+				},
+				{
+					"effect": "TIMEFLOW_PERCENT",
+					"magnitude": 5
+				},
+				{
+					"effect": "PEAK_CR_DURATION_PERCENT",
+					"magnitude": -30
+				}
+			],
+			"description": "Tri-Tachyon's boardroom answer to every fight: commit everything and win before the bill arrives. The ship's energy weapons and reflexes run far past spec, and its peak readiness burns away much sooner.",
+			"tags": [
+				"energy",
+				"combat_readiness"
+			]
+		},
+		{
+			"id": "doctrine_luddic_blessed_plating",
+			"name": "Blessed Plating",
+			"icon": "graphics/icons/heavyarmor.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "ARMOR_PERCENT",
+					"magnitude": 20
+				},
+				{
+					"effect": "HULL_PERCENT",
+					"magnitude": 15
+				}
+			],
+			"description": "Luddic shipwrights bless every plate they hang, and they hang far more of them than any yard would allow. Learning their slow, devout layering lets the crew build this ship's armour and hull up thicker.",
+			"tags": [
+				"armour",
+				"hull"
+			]
+		},
+		{
+			"id": "doctrine_luddic_faithful_hands",
+			"name": "Faithful Hands",
+			"icon": "graphics/icons/autorepair.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "REPAIR_TIME_MULT",
+					"magnitude": -25
+				},
+				{
+					"effect": "CR_RECOVERY_RATE_PERCENT",
+					"magnitude": 25
+				}
+			],
+			"description": "The faithful do not trust machines to mend machines. Hand-repair crews drilled in the Church's way can keep this ship's systems fighting through damage and bring it back to readiness faster after battle.",
+			"tags": [
+				"repair",
+				"combat_readiness"
+			]
+		},
+		{
+			"id": "doctrine_luddic_pilgrims_burn",
+			"name": "Pilgrim's Burn",
+			"icon": "graphics/icons/augmentedengines.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "BURN_LEVEL_FLAT",
+					"magnitude": 1
+				},
+				{
+					"effect": "FUEL_USE_MULT",
+					"magnitude": -15
+				}
+			],
+			"description": "Pilgrim fleets cross the Sector on whatever drives they can keep lit. Their frugal burn discipline lets this ship travel faster on less fuel.",
+			"tags": [
+				"logistics",
+				"speed"
+			]
+		},
+		{
+			"id": "doctrine_luddic_righteous_fury",
+			"name": "Righteous Fury",
+			"icon": "graphics/icons/reckless_assault.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "BALLISTIC_WEAPON_DAMAGE_PERCENT",
+					"magnitude": 15
+				},
+				{
+					"effect": "MISSILE_WEAPON_DAMAGE_PERCENT",
+					"magnitude": 15
+				}
+			],
+			"description": "Knights of Ludd gunners load each round with a prayer and fire it as a verdict. Taking up their crude, patient gunnery lets this ship's ballistic and missile weapons strike harder.",
+			"tags": [
+				"ballistic",
+				"missile",
+				"weapons"
+			]
+		},
+		{
+			"id": "doctrine_luddic_plain_rites",
+			"name": "Plain Rites",
+			"icon": "graphics/icons/combat_readiness.png",
+			"description": "Luddic doctrine calls this refinement vanity. Following it means stripping the system back to plain, honest machinery that offers nothing beyond its purpose."
+		},
+		{
+			"id": "doctrine_remnant_swarm_logic",
+			"name": "Swarm Logic",
+			"icon": "graphics/icons/expanded_deck_crew.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "FIGHTER_REPLACEMENT_RECOVERY_PERCENT",
+					"magnitude": 25
+				},
+				{
+					"effect": "FIGHTER_WEAPON_DAMAGE_PERCENT",
+					"magnitude": 15
+				}
+			],
+			"description": "[REDACTED] carriers launch their drones like a single thought spread across many bodies. Rebuilding this ship's flight control around their coordination routines lets its wings regroup faster and strike harder.",
+			"tags": [
+				"fighter",
+				"req_fighter_bays"
+			]
+		},
+		{
+			"id": "doctrine_remnant_unblinking_watch",
+			"name": "Unblinking Watch",
+			"icon": "graphics/icons/pointdefenseai.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "PD_DAMAGE_TO_MISSILES_PERCENT",
+					"magnitude": 50
+				},
+				{
+					"effect": "WEAPON_TURN_RATE_PERCENT",
+					"magnitude": 30
+				}
+			],
+			"description": "[REDACTED] point defence never tires and never flinches. Its tracking routines, recovered from a gutted drone, swing this ship's turrets faster and make its point defence far deadlier to missiles.",
+			"tags": [
+				"point_defense",
+				"weapons"
+			]
+		},
+		{
+			"id": "doctrine_remnant_cold_logic",
+			"name": "Cold Logic",
+			"icon": "graphics/icons/hardened_subsystems.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CR_LOSS_PER_SECOND_MULT",
+					"magnitude": -25
+				},
+				{
+					"effect": "MAX_COMBAT_READINESS_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"description": "Machines do not tire. Rewriting this ship's duty cycles the way [REDACTED] cores run their own would keep its readiness higher and slow its decay through a long fight.",
+			"tags": [
+				"combat_readiness"
+			]
+		},
+		{
+			"id": "doctrine_remnant_automated_command",
+			"name": "Automated Command",
+			"icon": "graphics/icons/dedicated_targeting_core.png",
+			"tier": "KEYSTONE",
+			"effects": [
+				{
+					"effect": "TIMEFLOW_PERCENT",
+					"magnitude": 10
+				},
+				{
+					"effect": "FLUX_DISSIPATION_PERCENT",
+					"magnitude": 15
+				},
+				{
+					"effect": "CR_RECOVERY_RATE_PERCENT",
+					"magnitude": -50
+				}
+			],
+			"description": "[REDACTED] warships answer to no captain, only to the fight in front of them. Handing combat control to a recovered core's routines would make this ship react faster than any crew could, but nothing aboard would understand the machine well enough to restore it afterwards.",
+			"tags": [
+				"flux",
+				"combat_readiness"
 			]
 		}
 	]

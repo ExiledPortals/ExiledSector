@@ -41,13 +41,15 @@ class NodeRadiiTest {
     }
 
     @Test
-    void sizesThatShrinkFromSmallToLargeAreRejected() {
-        assertThrows(JSONException.class, () -> NodeRadii.register(new JSONObject("{ \"small\": 3, \"medium\": 2, \"large\": 4 }")));
+    void sizesThatShrinkFromSmallToLargeAreRejected() throws Exception {
+        JSONObject shrinkingSizes = new JSONObject("{ \"small\": 3, \"medium\": 2, \"large\": 4 }");
+        assertThrows(JSONException.class, () -> NodeRadii.register(shrinkingSizes));
     }
 
     @Test
-    void aMissingSizeIsRejected() {
-        assertThrows(JSONException.class, () -> NodeRadii.register(new JSONObject("{ \"small\": 1, \"large\": 4 }")));
+    void aMissingSizeIsRejected() throws Exception {
+        JSONObject missingMedium = new JSONObject("{ \"small\": 1, \"large\": 4 }");
+        assertThrows(JSONException.class, () -> NodeRadii.register(missingMedium));
     }
 
     @Test

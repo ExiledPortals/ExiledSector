@@ -14,6 +14,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
+import exiledsector.items.DoctrineOverrides;
 import exiledsector.skills.ShipSections;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
@@ -40,6 +41,12 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         ShipSkillData shipData = SkillDataResolver.resolve(stats.getFleetMember(), stats.getVariant());
         if (shipData == null) return;
 
+        FleetMemberAPI member = stats.getFleetMember();
+        ShipVariantAPI variant = stats.getVariant();
+        if (member != null && variant != null && !shipData.isNpcBuild() && !shipData.getSocketedItems().isEmpty()
+                && !SkillDataResolver.isNpcTree(variant)) {
+            DoctrineOverrides.bindShipFacts(shipData, () -> PlayerShipFacts.of(member, variant));
+        }
         ResolvedTree resolvedTree = ResolvedTree.of(shipData, hullSize, bonusScale(stats.getVariant()),
                 ShipSections.forVariant(shipData, stats.getVariant()));
         for (ResolvedTree.Entry entry : resolvedTree.entries()) {

@@ -13,13 +13,14 @@ const MODIFIERS_FILE = `${CONFIG_DIR}/item_modifiers.csv`;
 const HULL_ITEMS_FILE = `${CONFIG_DIR}/hull_items.csv`;
 const SUBROUTINES_FILE = `${CONFIG_DIR}/subroutines.csv`;
 const IMPLICITS_FILE = `${CONFIG_DIR}/hull_item_implicits.csv`;
+const DOCTRINES_FILE = `${CONFIG_DIR}/doctrine_archives.csv`;
 const CHART_FILES = ['star_charts.csv', 'star_chart_modifiers.csv', 'star_chart_implicits.csv'].map((name) => `${CONFIG_DIR}/${name}`);
 const vocabulary = buildVocabulary(JSON.parse(readRepositoryFile('tools/editor_vocabulary.json')));
 
 let server: TestServer;
 
 beforeAll(() => {
-  server = startTestServer(['tools/editor_vocabulary.json', MODIFIERS_FILE, SUBROUTINES_FILE, HULL_ITEMS_FILE, IMPLICITS_FILE, ...CHART_FILES]);
+  server = startTestServer(['tools/editor_vocabulary.json', MODIFIERS_FILE, SUBROUTINES_FILE, HULL_ITEMS_FILE, IMPLICITS_FILE, DOCTRINES_FILE, ...CHART_FILES]);
 });
 
 afterAll(async () => {
@@ -165,6 +166,50 @@ describe('hull item tabs', () => {
     expect(server.readProjectFile(SUBROUTINES_FILE)).toBe(filesBefore[SUBROUTINES_FILE]);
   });
 
+  it('counts doctrine archives as users of a modifier and renames their references with it', async () => {
+    const filesBefore = Object.fromEntries([MODIFIERS_FILE, DOCTRINES_FILE, HULL_ITEMS_FILE].map((file) => [file, server.readProjectFile(file)]));
+    await renderModifiersTab();
+    await selectModifier('ARMOR_PERCENT_HEGEMONY_DOCTRINE');
+
+    expect(screen.getByText('Doctrine archives: doctrine_archive_hegemony')).toBeTruthy();
+    const idInput = screen.getByLabelText(/^Id/);
+    fireEvent.change(idInput, { target: { value: 'ARMOR_PERCENT_HEGEMONY_PLATING' } });
+    fireEvent.blur(idInput);
+    fireEvent.click(await screen.findByRole('button', { name: 'Rename' }));
+    await waitFor(() => expect(screen.getByLabelText(/^Id/)).toHaveProperty('value', 'ARMOR_PERCENT_HEGEMONY_PLATING'));
+    fireEvent.click(saveButton());
+    await screen.findByText(/Saved item_modifiers.csv and the renamed references/, undefined, { timeout: 15000 });
+
+    expect(server.readProjectFile(DOCTRINES_FILE)).toBe(
+      filesBefore[DOCTRINES_FILE].replace('@ARMOR_PERCENT_HEGEMONY_DOCTRINE;', '@ARMOR_PERCENT_HEGEMONY_PLATING;'),
+    );
+    expect(server.readProjectFile(MODIFIERS_FILE)).toBe(
+      filesBefore[MODIFIERS_FILE].replace('ARMOR_PERCENT_HEGEMONY_DOCTRINE,prefix', 'ARMOR_PERCENT_HEGEMONY_PLATING,prefix'),
+    );
+    expect(server.readProjectFile(HULL_ITEMS_FILE)).toBe(filesBefore[HULL_ITEMS_FILE]);
+  }, 90000);
+
+  it('renames the doctrine_archives.csv row when its doctrine subroutine is renamed', async () => {
+    const doctrinesBefore = server.readProjectFile(DOCTRINES_FILE);
+    const subroutinesBefore = server.readProjectFile(SUBROUTINES_FILE);
+    renderWithProviders(<DefinitionsTab vocabulary={vocabulary} />);
+    fireEvent.click(await screen.findByText('Pirate Doctrine Archive', undefined, { timeout: 30000 }));
+    await waitFor(() => expect(screen.getByLabelText(/^Id/)).toHaveProperty('value', 'doctrine_archive_pirate'));
+
+    const idInput = screen.getByLabelText(/^Id/);
+    fireEvent.change(idInput, { target: { value: 'doctrine_archive_raider' } });
+    fireEvent.blur(idInput);
+    const confirmation = await screen.findByRole('dialog');
+    expect(within(confirmation).getByText(/Its row in doctrine_archives.csv is renamed and saved with it/)).toBeTruthy();
+    fireEvent.click(within(confirmation).getByRole('button', { name: 'Rename' }));
+    await waitFor(() => expect(screen.getByLabelText(/^Id/)).toHaveProperty('value', 'doctrine_archive_raider'));
+    fireEvent.click(saveButton());
+    await screen.findByText('Saved subroutines.csv, hull_items.csv and doctrine_archives.csv', undefined, { timeout: 30000 });
+
+    expect(server.readProjectFile(DOCTRINES_FILE)).toBe(doctrinesBefore.replace('doctrine_archive_pirate,', 'doctrine_archive_raider,'));
+    expect(server.readProjectFile(SUBROUTINES_FILE)).toBe(subroutinesBefore.replace('doctrine_archive_pirate,', 'doctrine_archive_raider,'));
+  }, 90000);
+
   it('refuses to save a modifier that a common hull item rolls without a name', async () => {
     await renderModifiersTab();
     await selectModifier('SUPPLIES_PER_MONTH_MULT_CREW_QUARTERS');
@@ -188,11 +233,12 @@ describe('hull item tabs', () => {
     expect(await findLabelled('Subroutine kind')).toHaveProperty('value', 'VOLUME');
     expect(screen.queryByText('Add prefix')).toBeNull();
     expect(screen.queryByText('Add line')).toBeNull();
+    expect(await findLabelled('Volume')).toBeTruthy();
     fireEvent.click(saveButton());
     await screen.findByText('Saved subroutines.csv and hull_items.csv', undefined, { timeout: 30000 });
 
     const lineEnding = subroutinesBefore.includes('\r\n') ? '\r\n' : '\n';
-    expect(server.readProjectFile(SUBROUTINES_FILE)).toBe(`${subroutinesBefore}new_subroutine,New Subroutine,,10,,VOLUME,,,,,${lineEnding}`);
+    expect(server.readProjectFile(SUBROUTINES_FILE)).toBe(`${subroutinesBefore}new_subroutine,New Subroutine,,10,,VOLUME,,,,,,,,,${lineEnding}`);
     expect(server.readProjectFile(HULL_ITEMS_FILE)).toBe(hullItemsBefore);
   }, 90000);
 

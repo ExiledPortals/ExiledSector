@@ -47,6 +47,9 @@ public final class ItemStoragePanel extends HoloPanel {
 
         default void disassembled() {
         }
+
+        default void hovered(Item item) {
+        }
     }
 
     private static final float FIELD_HEIGHT = 26f;
@@ -940,10 +943,12 @@ public final class ItemStoragePanel extends HoloPanel {
     }
 
     private void cellHovered(ItemStorageRow row, PositionAPI cellPosition) {
+        storageListener.hovered(row.item());
         queue(() -> showHoverTooltip(row, cellPosition));
     }
 
     private void cellLeft(ItemStorageRow row) {
+        storageListener.hovered(null);
         queue(() -> {
             if (hoverTooltip.isShowing(row)) {
                 hideHoverTooltip();

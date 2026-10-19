@@ -6,9 +6,11 @@ export const WORMHOLE_ANCHOR_TYPE = 'wormhole_anchor';
 export const WORMHOLE_ANCHOR_RESOURCE = 'wormhole-anchors';
 export const WORMHOLE_ANCHOR_FILE_NAME = 'wormhole_anchors.csv';
 export const CORE_REGION = 'core';
-export const WORMHOLE_TIER = 'WORMHOLE';
+export const WORMHOLE_EXIT_TIER = 'WORMHOLE_EXIT';
 export const DEFAULT_ANCHOR_ICON = 'graphics/icons/nav_relay.png';
-export const WORMHOLE_ANCHOR_COLUMNS = ['id', 'volume', 'exit_node', 'name', 'icon', 'rarity', 'description', 'unlock'] as const;
+export const DEFAULT_ANCHOR_DROP_CHANCE = '0.06';
+export const DROP_FACTION_SEPARATOR = ';';
+export const WORMHOLE_ANCHOR_COLUMNS = ['id', 'volume', 'exit_node', 'name', 'icon', 'rarity', 'description', 'unlock', 'drop_factions', 'drop_chance'] as const;
 
 export interface WormholeAnchor {
   cells: string[];
@@ -20,6 +22,8 @@ export interface WormholeAnchor {
   rarity: string;
   description: string;
   unlock: string;
+  dropFactions: string;
+  dropChance: string;
   loadedId?: string;
 }
 
@@ -47,6 +51,8 @@ export function parseWormholeAnchorsCsv(text: string): WormholeAnchorsModel {
       rarity: columns.rarity,
       description: columns.description,
       unlock: columns.unlock,
+      dropFactions: columns.drop_factions,
+      dropChance: columns.drop_chance,
       loadedId: columns.id,
     };
   });
@@ -63,6 +69,8 @@ function anchorColumnValues(anchor: WormholeAnchor): Record<(typeof WORMHOLE_ANC
     rarity: anchor.rarity,
     description: anchor.description,
     unlock: anchor.unlock,
+    drop_factions: anchor.dropFactions,
+    drop_chance: anchor.dropChance,
   };
 }
 
@@ -88,7 +96,7 @@ export function treeNodeFacts(treeText: string, typesText: string, vocabulary: V
 
 export function exitCandidates(nodeFacts: Readonly<Record<string, TreeNodeFacts>>, volume: string): string[] {
   return Object.entries(nodeFacts)
-    .filter(([, facts]) => facts.region === volume && facts.tier === WORMHOLE_TIER)
+    .filter(([, facts]) => facts.region === volume && facts.tier === WORMHOLE_EXIT_TIER)
     .map(([nodeId]) => nodeId)
     .sort((first, second) => first.localeCompare(second));
 }
@@ -112,7 +120,16 @@ export function newWormholeAnchor(anchors: WormholeAnchor[], vocabulary: Vocabul
     rarity: '10',
     description: '',
     unlock: '',
+    dropFactions: '',
+    dropChance: DEFAULT_ANCHOR_DROP_CHANCE,
   };
+}
+
+export function dropFactionIds(dropFactions: string): string[] {
+  return dropFactions
+    .split(DROP_FACTION_SEPARATOR)
+    .map((factionId) => factionId.trim())
+    .filter((factionId) => factionId !== '');
 }
 
 export function markAnchorsSaved(model: Pick<WormholeAnchorsModel, 'anchors'>, saved: Pick<WormholeAnchorsModel, 'anchors'>): void {
@@ -150,8 +167,8 @@ function exitIssues(label: string, anchor: WormholeAnchor, nodeFacts: Readonly<R
   if (exit.region !== anchor.volume) {
     issues.push(`${label}: exit node ${anchor.exitNode} is in ${exit.region ?? 'no volume'}, not ${anchor.volume || 'the anchor volume'}`);
   }
-  if (exit.tier !== WORMHOLE_TIER) {
-    issues.push(`${label}: exit node ${anchor.exitNode} is a ${exit.tier} node, not a wormhole`);
+  if (exit.tier !== WORMHOLE_EXIT_TIER) {
+    issues.push(`${label}: exit node ${anchor.exitNode} is a ${exit.tier} node, not a wormhole exit`);
   }
   return issues;
 }
@@ -187,6 +204,12 @@ export function validateWormholeAnchors(
     issues.push(...exitIssues(label, anchor, nodeFacts));
     if (!(Number.parseFloat(anchor.rarity) >= 0)) {
       issues.push(`${label}: rarity must be zero or more`);
+    }
+    if (anchor.dropChance.trim() !== '' && !(Number.parseFloat(anchor.dropChance) >= 0)) {
+      issues.push(`${label}: drop chance must be a number of 0 or more`);
+    }
+    if (dropFactionIds(anchor.dropFactions).some((factionId) => !/^[A-Za-z0-9_.-]+$/.test(factionId))) {
+      issues.push(`${label}: drop factions must be faction ids separated by ${DROP_FACTION_SEPARATOR}`);
     }
     if (!isKnownAnchorUnlock(anchor.unlock, vocabulary)) {
       issues.push(`${label}: unknown unlock condition ${anchor.unlock}`);

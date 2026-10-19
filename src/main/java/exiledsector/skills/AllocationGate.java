@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public final class AllocationGate {
 
     public enum Refusal {
-        ALREADY_ALLOCATED, NOT_ALLOCATED, NOT_CONNECTED, NODE_CAP, OUT_OF_OP, INELIGIBLE, STARTING_ROOT, STRANDS_NODES, SAME_OPTION
+        ALREADY_ALLOCATED, NOT_ALLOCATED, NOT_CONNECTED, NODE_CAP, OUT_OF_OP, INELIGIBLE, STARTING_ROOT, STRANDS_NODES, SAME_OPTION,
+        HELD_BY_SUBROUTINE
     }
 
     public record Verdict(Refusal refusal, NodeEligibility.Block block) {
@@ -50,6 +52,8 @@ public final class AllocationGate {
     private final NodeEligibility.Context eligibility;
     private final int spentOp;
     private final Map<String, NodeVerdicts> verdictsByNodeId = new HashMap<>();
+    private final Map<String, Verdict> grantVerdictsByNodeId = new HashMap<>();
+    private Set<String> grantOnlyNodeIds;
 
     public AllocationGate(ShipSkillData data, SkillTreeTopology topology, String rootId, Budget budget, NodeEligibility.Context eligibility) {
         this.data = data;
@@ -113,6 +117,34 @@ public final class AllocationGate {
         }
         return verdicts.optionEligibilities.computeIfAbsent(optionKey(option),
                 key -> Verdict.fromBlock(NodeEligibility.check(node, option, eligibility)));
+    }
+
+    public Verdict grant(SkillNode node) {
+        return grantVerdictsByNodeId.computeIfAbsent(node.getId(), id -> {
+            Verdict budgetVerdict = grantBudget(node);
+            return budgetVerdict.allowed() ? eligibility(node, null) : budgetVerdict;
+        });
+    }
+
+    private Verdict grantBudget(SkillNode node) {
+        if (data.isAllocated(node.getId())) {
+            return Verdict.refused(Refusal.ALREADY_ALLOCATED);
+        }
+        if (data.getAllocatedNodeIds().size() + 1 > budget.maxAllocatedNodes()) {
+            return Verdict.refused(Refusal.NODE_CAP);
+        }
+        int opCost = opCostFor(node);
+        if (opCost > 0 && data.getBankedFreeAllocations() <= 0 && spentOp + opCost > budget.totalOp()) {
+            return Verdict.refused(Refusal.OUT_OF_OP);
+        }
+        return Verdict.GRANTED;
+    }
+
+    public Set<String> grantOnlyNodeIds() {
+        if (grantOnlyNodeIds == null) {
+            grantOnlyNodeIds = data.grantOnlyNodeIds(topology, rootId);
+        }
+        return grantOnlyNodeIds;
     }
 
     public Verdict deallocation(SkillNode node) {
@@ -180,11 +212,14 @@ public final class AllocationGate {
     }
 
     private boolean isConnected(SkillNode node) {
+        if (node.getType().getTier() == SkillTier.WORMHOLE_EXIT) {
+            return false;
+        }
         if (node.getConnectedNodeIds().isEmpty()) {
             return true;
         }
         for (String connectedId : node.getConnectedNodeIds()) {
-            if (data.isSatisfied(connectedId, rootId)) {
+            if (data.isSatisfied(connectedId, rootId) && !grantOnlyNodeIds().contains(connectedId)) {
                 return true;
             }
         }
@@ -197,6 +232,9 @@ public final class AllocationGate {
         }
         if (node.getId().equals(rootId)) {
             return Verdict.refused(Refusal.STARTING_ROOT);
+        }
+        if (grantOnlyNodeIds().contains(node.getId())) {
+            return Verdict.refused(Refusal.HELD_BY_SUBROUTINE);
         }
         return data.canDeallocate(node, topology, rootId) ? Verdict.GRANTED : Verdict.refused(Refusal.STRANDS_NODES);
     }

@@ -31,8 +31,9 @@ public final class NpcTreeTag {
     static final String UNLOCKED_SECTIONS_MARKER = "frameworkTypes:";
     private static final String TYPE_SEPARATOR = "+";
     static final String SECTION_ITEMS_MARKER = "frameworkSockets:";
+    static final String IMPLICIT_ANCHORS_MARKER = "anchors:";
     private static final int MIN_FIELDS = 3;
-    private static final int MAX_FIELDS = 6;
+    private static final int MAX_FIELDS = 7;
     private static final String[] NO_FIELDS = new String[0];
     private static final Logger LOG = Logger.getLogger(NpcTreeTag.class);
 
@@ -55,6 +56,11 @@ public final class NpcTreeTag {
         StringBuilder encodedTag = new StringBuilder(tag);
         if (!socketEntries.isEmpty()) {
             encodedTag.append(FIELD_SEPARATOR).append(SOCKETS_MARKER).append(String.join(NODE_SEPARATOR, socketEntries));
+        }
+        if (!shipData.getImplicitAnchorExits().isEmpty()) {
+            List<String> anchorEntries = new ArrayList<>();
+            shipData.getImplicitAnchorExits().forEach((socketNodeId, exitNodeId) -> anchorEntries.add(socketNodeId + OPTION_SEPARATOR + exitNodeId));
+            encodedTag.append(FIELD_SEPARATOR).append(IMPLICIT_ANCHORS_MARKER).append(String.join(NODE_SEPARATOR, anchorEntries));
         }
         if (!shipData.getUnlockedSocketTypeIds().isEmpty()) {
             encodedTag.append(FIELD_SEPARATOR).append(UNLOCKED_SECTIONS_MARKER)
@@ -107,6 +113,11 @@ public final class NpcTreeTag {
         if (shipData == null) {
             return NpcSkillTreeBuilder.emptyTree();
         }
+        for (int fieldIndex = MIN_FIELDS; fieldIndex < tagFields.length; fieldIndex++) {
+            if (tagFields[fieldIndex].startsWith(IMPLICIT_ANCHORS_MARKER)) {
+                restoreImplicitAnchors(shipData, tagFields[fieldIndex].substring(IMPLICIT_ANCHORS_MARKER.length()));
+            }
+        }
         for (int i = 1; i < nodeEntries.length; i++) {
             restore(shipData, nodeEntries[i]);
         }
@@ -128,6 +139,23 @@ public final class NpcTreeTag {
             }
         } else if (tagField.startsWith(SECTION_ITEMS_MARKER)) {
             restoreSections(shipData, tagField.substring(SECTION_ITEMS_MARKER.length()));
+        }
+    }
+
+    private static void restoreImplicitAnchors(ShipSkillData shipData, String anchorEntries) {
+        for (String entry : anchorEntries.split(NODE_SEPARATOR)) {
+            int separator = entry.indexOf(OPTION_SEPARATOR);
+            if (separator <= 0) {
+                continue;
+            }
+            String socketNodeId = NodeReplacements.resolve(entry.substring(0, separator));
+            String exitNodeId = entry.substring(separator + 1);
+            SkillNode socket = SkillTree.get(socketNodeId);
+            SkillNode exit = SkillTree.get(exitNodeId);
+            if (socket != null && socket.getType().getTier() == SkillTier.SOCKET && exit != null
+                    && exit.getType().getTier() == SkillTier.WORMHOLE_EXIT) {
+                shipData.setImplicitAnchor(socketNodeId, exitNodeId);
+            }
         }
     }
 

@@ -124,13 +124,14 @@ export interface TreeDocument {
   stars: Star[];
 }
 
-export type Tier = 'SMALL' | 'NOTABLE' | 'KEYSTONE' | 'WORMHOLE' | 'ROOT' | 'SOCKET';
+export type Tier = 'SMALL' | 'NOTABLE' | 'KEYSTONE' | 'WORMHOLE' | 'WORMHOLE_EXIT' | 'ROOT' | 'SOCKET';
 
 export const TIER_RADIUS: Record<Tier, number> = {
   SMALL: 32,
   NOTABLE: 38.4,
   KEYSTONE: 44.8,
   WORMHOLE: 41.6,
+  WORMHOLE_EXIT: 41.6,
   ROOT: 80,
   SOCKET: 38.4,
 };
@@ -140,6 +141,7 @@ export const TIER_LABELS: Record<string, string> = {
   NOTABLE: 'Notable',
   KEYSTONE: 'Keystone',
   WORMHOLE: 'Wormhole',
+  WORMHOLE_EXIT: 'Wormhole Exit',
   SOCKET: 'Modular Hull Socket',
   ROOT: 'Root',
 };
@@ -149,6 +151,7 @@ export const TIER_COLOR_VARIABLES: Record<Tier, string> = {
   NOTABLE: 'var(--tree-notable)',
   KEYSTONE: 'var(--tree-keystone)',
   WORMHOLE: 'var(--tree-wormhole)',
+  WORMHOLE_EXIT: 'var(--tree-wormhole)',
   ROOT: 'var(--tree-root)',
   SOCKET: 'var(--tree-socket)',
 };

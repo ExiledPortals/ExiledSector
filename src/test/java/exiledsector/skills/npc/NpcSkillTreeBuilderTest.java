@@ -80,6 +80,16 @@ class NpcSkillTreeBuilderTest {
         }
     }
 
+    private static void anchorVolume(String socketId, String coreLink, String exitId, String volume) {
+        SkillType socket = SkillTree.getType("socket") != null ? SkillTree.getType("socket") : registerType(builder("socket", SkillTier.SOCKET).build());
+        SkillType exit = SkillTree.getType("wormhole_exit") != null ? SkillTree.getType("wormhole_exit")
+                : registerType(builder("wormhole_exit", SkillTier.WORMHOLE_EXIT).build());
+        if (socketId != null) {
+            node(socketId, socket, List.of("core"), coreLink);
+        }
+        node(exitId, exit, List.of(volume));
+    }
+
     private static void wormholePair(String core, String far, String coreRegion, String farRegion, String coreLink) {
         SkillType wormhole = SkillTree.getType("wormhole") != null ? SkillTree.getType("wormhole")
                 : registerType(builder("wormhole", SkillTier.WORMHOLE).build());
@@ -316,27 +326,30 @@ class NpcSkillTreeBuilderTest {
     }
 
     @Test
-    void aLockedWormholeIsNeverCrossedUntilItUnlocks() {
+    void aLockedWormholeExitIsNeverOpenedUntilItUnlocks() {
         root();
         small("s1", ROOT);
-        wormholePair("gate_core", "gate_far", "core", "hegemony", "s1");
+        anchorVolume("socket", "s1", "gate_far", "hegemony");
         node("pride", registerType(builder("pride_type", SkillTier.NOTABLE).build()), List.of("hegemony"), "gate_far");
         notable("core_notable", ROOT);
 
         NpcTreeBuild locked = NpcSkillTreeBuilder.generate(new NpcBuildRequest(BALLISTIC_FRIGATE, null, "hegemony", NpcHullMods.NONE,
-                NpcFreedOp.NONE, 3, 0, type -> type.getTier() == SkillTier.WORMHOLE), new Random(1L));
+                NpcFreedOp.NONE, 3, 0, type -> type.getTier() == SkillTier.WORMHOLE_EXIT), new Random(1L));
         NpcTreeBuild unlocked = NpcSkillTreeBuilder.generate(new NpcBuildRequest(BALLISTIC_FRIGATE, null, "hegemony", NpcHullMods.NONE,
                 NpcFreedOp.NONE, 3, 0, type -> false), new Random(1L));
 
-        assertFalse(locked.shipData().isAllocated("gate_core") || locked.shipData().isAllocated("gate_far") || locked.shipData().isAllocated("pride"));
+        assertFalse(locked.shipData().isAllocated("gate_far") || locked.shipData().isAllocated("pride"));
+        assertTrue(locked.shipData().getImplicitAnchorExits().isEmpty());
         assertTrue(unlocked.shipData().isAllocated("gate_far") && unlocked.shipData().isAllocated("pride"));
     }
 
     @Test
-    void aFactionShipCrossesItsOwnWormholeForANotableInItsVolume() {
+    void aFactionShipAnchorsTheNearestSocketToReachANotableInItsVolume() {
         root();
         small("s1", ROOT);
-        wormholePair("gate_core", "gate_far", "core", "hegemony", "s1");
+        anchorVolume("near_socket", "s1", "gate_far", "hegemony");
+        chain("far", 3, ROOT);
+        anchorVolume("far_socket", "far3", "gate_far", "hegemony");
         node("pride", registerType(builder("pride_type", SkillTier.NOTABLE).build()), List.of("hegemony"), "gate_far");
         notable("core_notable", ROOT);
 
@@ -344,14 +357,54 @@ class NpcSkillTreeBuilderTest {
 
         assertTrue(build.shipData().isAllocated("pride"));
         assertTrue(build.shipData().isAllocated("gate_far"));
+        assertTrue(build.shipData().isFreeNode("gate_far"));
+        assertEquals(Map.of("near_socket", "gate_far"), build.shipData().getImplicitAnchorExits());
+        assertEquals("gate_far", build.shipData().anchorExit("near_socket"));
+        assertTrue(build.claimedSockets().isEmpty());
+        assertFalse(build.shipData().isAllocated("far_socket"));
         assertTrue(build.steps().stream().anyMatch(step -> step.outcome().equals(NpcBuildStep.FACTION_GOAL)));
+    }
+
+    @Test
+    void anAlreadyAllocatedSocketTakesTheImplicitAnchorAndAnItemClaimsAnother() {
+        root();
+        anchorVolume("socket", ROOT, "gate_far", "hegemony");
+        node("pride", registerType(builder("pride_type", SkillTier.NOTABLE).build()), List.of("hegemony"), "gate_far");
+        node("item_socket", SkillTree.getType("socket"), List.of("core"), ROOT);
+
+        NpcTreeBuild build = NpcSkillTreeBuilder.generate(new NpcBuildRequest(BALLISTIC_FRIGATE, null, "hegemony", NpcHullMods.NONE,
+                NpcFreedOp.NONE, 4, 1), new Random(1L));
+
+        assertTrue(build.shipData().isAllocated("pride"));
+        assertEquals(1, build.claimedSockets().size());
+        String anchorSocket = build.shipData().getImplicitAnchorExits().keySet().iterator().next();
+        assertFalse(build.claimedSockets().contains(anchorSocket));
+        assertEquals("gate_far", build.shipData().getImplicitAnchorExits().get(anchorSocket));
+    }
+
+    @Test
+    void theImplicitAnchorSurvivesTheTreeTag() {
+        root();
+        anchorVolume("socket", ROOT, "gate_far", "hegemony");
+        node("pride", registerType(builder("pride_type", SkillTier.NOTABLE).build()), List.of("hegemony"), "gate_far");
+        NpcTreeBuild build = generate(2, "hegemony", NpcHullMods.NONE, NpcFreedOp.NONE, 1L);
+
+        String tag = NpcTreeTag.encode(build.shipData());
+        ShipSkillData decoded = NpcTreeTag.decode(tag);
+
+        assertTrue(tag.contains(NpcTreeTag.IMPLICIT_ANCHORS_MARKER + "socket=gate_far"), tag);
+        assertTrue(decoded.getSocketedItems().isEmpty());
+        assertEquals(Map.of("socket", "gate_far"), decoded.getImplicitAnchorExits());
+        assertEquals(allocated(build), List.copyOf(decoded.getAllocatedNodeIds()));
+        assertTrue(decoded.isFreeNode("gate_far"));
+        assertEquals("socket", decoded.wormholePartner(SkillTree.get("gate_far")));
     }
 
     @Test
     void theFactionNotableIsSkippedWhenTheBudgetCannotReachIt() {
         root();
         small("s1", ROOT);
-        wormholePair("gate_core", "gate_far", "core", "hegemony", "s1");
+        anchorVolume("socket", "s1", "gate_far", "hegemony");
         node("pride", registerType(builder("pride_type", SkillTier.NOTABLE).build()), List.of("hegemony"), "gate_far");
         notable("core_notable", ROOT);
 
@@ -362,28 +415,29 @@ class NpcSkillTreeBuilderTest {
     }
 
     @Test
-    void shipsNeverCrossAnyWormholeButTheirOwnFactions() {
+    void shipsOnlyEverOpenTheirOwnFactionsVolume() {
         root();
         chain("c", 3, ROOT);
-        wormholePair("heg_core", "heg_far", "core", "hegemony", "c1");
+        anchorVolume("socket", "c1", "heg_far", "hegemony");
         node("heg_notable", registerType(builder("heg_type", SkillTier.NOTABLE).build()), List.of("hegemony"), "heg_far");
-        wormholePair("tt_core", "tt_far", "core", "tritachyon", "c2");
+        anchorVolume(null, null, "tt_far", "tritachyon");
         node("tt_notable", registerType(builder("tt_type", SkillTier.NOTABLE).build()), List.of("tritachyon"), "tt_far");
         wormholePair("short_a", "short_b", "core", "core", "c3");
         node("beyond_shortcut", registerType(builder("beyond_type", SkillTier.NOTABLE).build()), List.of("core"), "short_b");
-        wormholePair("lost_a", "lost_b", "hegemony", "enigma", "heg_notable");
-        node("enigma_notable", registerType(builder("enigma_type", SkillTier.NOTABLE).build()), List.of("enigma"), "lost_b");
+        anchorVolume(null, null, "lost_far", "enigma");
+        node("enigma_notable", registerType(builder("enigma_type", SkillTier.NOTABLE).build()), List.of("enigma"), "lost_far");
 
         NpcTreeBuild hegemony = generate(30, "hegemony", NpcHullMods.NONE, NpcFreedOp.NONE, 1L);
         NpcTreeBuild independent = generate(30, null, NpcHullMods.NONE, NpcFreedOp.NONE, 1L);
 
         assertTrue(hegemony.shipData().isAllocated("heg_notable"));
-        for (String forbidden : List.of("tt_core", "tt_notable", "short_a", "beyond_shortcut", "lost_a", "enigma_notable")) {
+        for (String forbidden : List.of("tt_far", "tt_notable", "short_a", "beyond_shortcut", "lost_far", "enigma_notable")) {
             assertFalse(hegemony.shipData().isAllocated(forbidden), forbidden);
         }
-        for (String forbidden : List.of("heg_core", "heg_notable", "tt_core", "short_a")) {
+        for (String forbidden : List.of("heg_far", "heg_notable", "tt_far", "short_a")) {
             assertFalse(independent.shipData().isAllocated(forbidden), forbidden);
         }
+        assertTrue(independent.shipData().getImplicitAnchorExits().isEmpty());
     }
 
     @Test
@@ -471,10 +525,12 @@ class NpcSkillTreeBuilderTest {
     @Test
     void theFactionPickCanLandOnAKeystone() {
         root();
-        wormholePair("gate_core", "gate_far", "core", "sindrian_dictat", ROOT);
+        anchorVolume("socket", ROOT, "gate_far", "sindrian_dictat");
         node("lions_gaze", registerType(builder("lions_gaze_type", SkillTier.KEYSTONE).build()), List.of("sindrian_dictat"), "gate_far");
 
         NpcTreeBuild build = generate(2, "sindrian_dictat", NpcHullMods.NONE, NpcFreedOp.NONE, 1L);
+
+        assertTrue(build.shipData().isAllocated("socket"));
 
         assertTrue(build.shipData().isAllocated("lions_gaze"));
         assertTrue(build.steps().stream().anyMatch(step -> step.outcome().equals(NpcBuildStep.FACTION_GOAL)));

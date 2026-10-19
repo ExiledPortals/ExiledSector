@@ -33,7 +33,7 @@ public final class SkillTreeSounds {
     public static void allocated(SkillTier tier) {
         playNodeSound(switch (tier) {
             case KEYSTONE, ROOT -> ALLOCATE_LARGE;
-            case NOTABLE, WORMHOLE -> ALLOCATE_MEDIUM;
+            case NOTABLE, WORMHOLE, WORMHOLE_EXIT -> ALLOCATE_MEDIUM;
             case SMALL, SOCKET -> ALLOCATE_SMALL;
         });
     }

@@ -14,4 +14,17 @@ public enum RadiusSize {
     public String dataKey() {
         return dataKey;
     }
+
+    public static RadiusSize byDataKeyOrNull(String key) {
+        if (key == null) {
+            return null;
+        }
+        String trimmedKey = key.trim();
+        for (RadiusSize size : values()) {
+            if (size.dataKey.equalsIgnoreCase(trimmedKey)) {
+                return size;
+            }
+        }
+        return null;
+    }
 }

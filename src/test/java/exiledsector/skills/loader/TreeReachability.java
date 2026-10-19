@@ -17,7 +17,7 @@ final class TreeReachability {
     private TreeReachability() {
     }
 
-    static Set<String> fromRoots(List<SkillNode> nodes, Predicate<SkillNode> passable) {
+    static Set<String> fromRootsAndExits(List<SkillNode> nodes, Predicate<SkillNode> passable) {
         Map<String, SkillNode> byId = new HashMap<>();
         nodes.forEach(node -> byId.put(node.getId(), node));
         Map<String, Set<String>> links = new HashMap<>();
@@ -30,7 +30,8 @@ final class TreeReachability {
         Set<String> reached = new HashSet<>();
         Deque<String> queue = new ArrayDeque<>();
         for (SkillNode node : nodes) {
-            if (node.getType().getTier() == SkillTier.ROOT && reached.add(node.getId())) {
+            SkillTier tier = node.getType().getTier();
+            if ((tier == SkillTier.ROOT || tier == SkillTier.WORMHOLE_EXIT) && reached.add(node.getId())) {
                 queue.add(node.getId());
             }
         }

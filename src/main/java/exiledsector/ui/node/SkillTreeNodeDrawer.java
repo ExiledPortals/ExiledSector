@@ -7,7 +7,10 @@ import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
+import exiledsector.skills.SkillTreeTopology;
 import exiledsector.skills.SkillType;
+import exiledsector.items.DoctrineOverrides;
+import exiledsector.items.DoctrineRewrite;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
 import exiledsector.ui.SkillTreePanelStyle;
@@ -17,7 +20,7 @@ import exiledsector.ui.util.TextLabel;
 import org.lazywizard.lazylib.ui.LazyFont;
 
 import java.awt.Color;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
@@ -29,6 +32,11 @@ public final class SkillTreeNodeDrawer {
 
     private static final Color ALLOCATED_TINT = Color.WHITE;
     private static final Color UNALLOCATED_TINT = new Color(90, 90, 90);
+    private static final Color TRANSFORMED_TINT = new Color(255, 196, 120);
+    private static final Color AUGMENTED_TINT = new Color(150, 220, 255);
+    private static final float UNALLOCATED_TINT_SCALE = UNALLOCATED_TINT.getRed() / 255f;
+    private static final Color TRANSFORMED_UNALLOCATED_TINT = scaled(TRANSFORMED_TINT, UNALLOCATED_TINT_SCALE);
+    private static final Color AUGMENTED_UNALLOCATED_TINT = scaled(AUGMENTED_TINT, UNALLOCATED_TINT_SCALE);
     private static final float EXOSHIP_HIT_SHARE = 0.6f;
 
     private final TreeAllocationSession session;
@@ -37,8 +45,8 @@ public final class SkillTreeNodeDrawer {
     private final SkillTreeNodeRingRenderer ringRenderer;
     private final SkillTreeNodeIconRenderer iconRenderer = new SkillTreeNodeIconRenderer();
     private final SkillTreeSocketRenderer socketRenderer = new SkillTreeSocketRenderer();
-    private final SkillTreeBeaconRenderer beaconRenderer = new SkillTreeBeaconRenderer();
-    private final List<SkillNode> beaconsOverConnectors = new ArrayList<>();
+    private SkillTreeTopology socketTopology;
+    private List<SkillNode> socketNodesCache = List.of();
     private final SkillTreeNodeGhostRenderer ghostRenderer = new SkillTreeNodeGhostRenderer();
     private final SkillTreeWormholeGhostFlights wormholeGhostFlights = new SkillTreeWormholeGhostFlights(new Random());
     private final SkillTreeNodeConnectorRenderer connectorRenderer;
@@ -91,10 +99,9 @@ public final class SkillTreeNodeDrawer {
         connectorFills.advance(amount, startPulse);
         ghostRenderer.advance(amount);
         socketRenderer.advance(amount);
-        beaconRenderer.advance(amount);
-        ShipSkillData skillData = session.snapshot().skillData();
-        wormholeGhostFlights.advance(amount, skillData);
-        wormholeOpenness.advance(amount, session.viewSnapshot().skillData());
+        ShipSkillData drawnData = session.viewSnapshot().skillData();
+        wormholeGhostFlights.advance(amount, drawnData);
+        wormholeOpenness.advance(amount, drawnData);
     }
 
     public void launchWormholeGhosts(SkillNode from, SkillNode to) {
@@ -108,23 +115,14 @@ public final class SkillTreeNodeDrawer {
         float alphaMult = layers.treeAlpha();
         TreeLayers shownLayers = layers.withAlpha(rootChoice.treeAlpha());
 
-        beaconsOverConnectors.clear();
         for (SkillNode node : SkillTree.topology().nonRoots()) {
             float nodeAlpha = shownLayers.alphaFor(node);
-            if (ExoshipNodes.isBeacon(node)) {
-                beaconsOverConnectors.add(node);
-            } else if (nodeAlpha > 0f && !ExoshipNodes.isExoship(node)) {
+            if (nodeAlpha > 0f && !ExoshipNodes.isExoship(node)) {
                 renderNode(node, shownLayers.viewportFor(node), nodeAlpha, allocation);
             }
         }
 
         connectorRenderer.draw(shownLayers, allocation, session.templateNodeIds(), session.plannedOnlyNodeIds(), connectorFills);
-        for (SkillNode beacon : beaconsOverConnectors) {
-            float beaconAlpha = shownLayers.alphaFor(beacon);
-            if (beaconAlpha > 0f) {
-                renderNode(beacon, shownLayers.viewportFor(beacon), beaconAlpha, allocation);
-            }
-        }
         wormholeGhostFlights.draw(viewport, shownLayers.treeAlpha() * nodeSearch.backgroundAlpha());
 
         boolean choosing = rootChoice.phase() == StartingRootChoice.Phase.CHOOSING;
@@ -166,10 +164,6 @@ public final class SkillTreeNodeDrawer {
         float iconSize = footprintSize * ICON_INSET_RATIO;
 
         float nodeAlpha = alphaMult * nodeSearch.nodeAlpha(node, allocation);
-        if (ExoshipNodes.isBeacon(node)) {
-            beaconRenderer.draw(nodeX, nodeY, footprintSize, live, breathing, nodeAlpha);
-            return;
-        }
         if (tier == SkillTier.SOCKET) {
             socketRenderer.drawFrame(nodeX, nodeY, footprintSize, live, panelStyle.getAccentColor(), nodeAlpha);
             socketRenderer.drawContent(nodeX, nodeY, footprintSize, socketedIcon(skillData, node), iconTint(node, allocation, allocated),
@@ -181,8 +175,8 @@ public final class SkillTreeNodeDrawer {
             if (live) {
                 socketRenderer.drawArcs(node.getId(), nodeX, nodeY, footprintSize, panelStyle.getAccentColor(), nodeAlpha);
             }
-        } else if (tier != SkillTier.WORMHOLE) {
-            Color tint = iconTint(node, allocation, allocated);
+        } else if (!tier.isWormhole()) {
+            Color tint = doctrineTint(DoctrineOverrides.rewrite(skillData, node.getId()), iconTint(node, allocation, allocated));
             if (effectiveType.isOptional()) {
                 iconRenderer.drawSplitIcon(effectiveType, nodeX, nodeY, iconSize, nodeAlpha, tint);
             } else {
@@ -213,6 +207,21 @@ public final class SkillTreeNodeDrawer {
         return allocated || nodeSearch.matches(node, allocation) ? ALLOCATED_TINT : UNALLOCATED_TINT;
     }
 
+    private static Color doctrineTint(DoctrineRewrite rewrite, Color tint) {
+        if (rewrite == null) {
+            return tint;
+        }
+        boolean lit = tint == ALLOCATED_TINT;
+        if (rewrite.transformed()) {
+            return lit ? TRANSFORMED_TINT : TRANSFORMED_UNALLOCATED_TINT;
+        }
+        return lit ? AUGMENTED_TINT : AUGMENTED_UNALLOCATED_TINT;
+    }
+
+    private static Color scaled(Color color, float scale) {
+        return new Color(Math.round(color.getRed() * scale), Math.round(color.getGreen() * scale), Math.round(color.getBlue() * scale));
+    }
+
     private static String socketedIcon(ShipSkillData skillData, SkillNode node) {
         Item socketed = ItemStore.lookup(skillData.getSocketedItem(node.getId()));
         return socketed == null ? null : socketed.iconPath();
@@ -231,7 +240,11 @@ public final class SkillTreeNodeDrawer {
 
         SkillNode hoveredNode = findNodeAt(layers, mouseX, mouseY);
         if (hoveredNode != null) {
-            tooltipRenderer.renderTooltip(hoveredNode, session.viewSnapshot(), mouseX, mouseY, alphaMult);
+            String tooltipWarning = session.releaseWarning(hoveredNode);
+            if (tooltipWarning == null && hoveredNode.getType().getTier() == SkillTier.SOCKET) {
+                tooltipWarning = session.doctrineRemovalWarning(hoveredNode);
+            }
+            tooltipRenderer.renderTooltip(hoveredNode, session.viewSnapshot(), tooltipWarning, mouseX, mouseY, alphaMult);
         }
     }
 
@@ -255,6 +268,33 @@ public final class SkillTreeNodeDrawer {
             }
         }
         return null;
+    }
+
+    public SkillNode findSocketAt(TreeLayers layers, float screenX, float screenY) {
+        if (session.rootChoice().isMoving()) {
+            return null;
+        }
+        for (SkillNode socket : socketNodes()) {
+            if (!layers.isInteractive(socket)) {
+                continue;
+            }
+            TreeViewport viewport = layers.viewportFor(socket);
+            float halfSize = NODE_SIZE * viewport.zoom() * SkillTier.SOCKET.getSizeMultiplier() / 2f;
+            if (Math.abs(screenX - viewport.screenX(socket.getOffsetX())) <= halfSize
+                    && Math.abs(screenY - viewport.screenY(socket.getOffsetY())) <= halfSize) {
+                return socket;
+            }
+        }
+        return null;
+    }
+
+    private List<SkillNode> socketNodes() {
+        SkillTreeTopology topology = SkillTree.topology();
+        if (socketTopology != topology) {
+            socketTopology = topology;
+            socketNodesCache = SkillTree.getAllNodes().values().stream().filter(node -> node.getType().getTier() == SkillTier.SOCKET).toList();
+        }
+        return socketNodesCache;
     }
 
     public SkillType findDropdownOptionAt(TreeLayers layers, float screenX, float screenY) {
@@ -281,6 +321,11 @@ public final class SkillTreeNodeDrawer {
             if (partnerId != null) {
                 connectorFills.cancel(partnerId);
             }
+        }
+
+        @Override
+        public void released(Collection<String> releasedNodeIds) {
+            releasedNodeIds.forEach(connectorFills::cancel);
         }
 
         @Override

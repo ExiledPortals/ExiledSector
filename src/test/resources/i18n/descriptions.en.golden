@@ -2709,6 +2709,201 @@ type|disintegration|CRUISER|0	0	Hulls killed by [REDACTED] energy weapons come a
 type|disintegration|CRUISER|1	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.
 type|disintegration|CAPITAL_SHIP|0	0	Hulls killed by [REDACTED] energy weapons come apart around every impact in a way no human weapon manages, and taking those wrecks apart shows the crew how to tune this ship's energy weapons the same way.
 type|disintegration|CAPITAL_SHIP|1	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.
+type|doctrine_luddic_blessed_plating|null|0	0	Luddic shipwrights bless every plate they hang, and they hang far more of them than any yard would allow. Learning their slow, devout layering lets the crew build this ship's armour and hull up thicker.
+type|doctrine_luddic_blessed_plating|null|1	0	<good>20%</good> increased armor.
+type|doctrine_luddic_blessed_plating|null|2	0	<good>15%</good> increased hull points.
+type|doctrine_luddic_blessed_plating|FRIGATE|0	0	Luddic shipwrights bless every plate they hang, and they hang far more of them than any yard would allow. Learning their slow, devout layering lets the crew build this ship's armour and hull up thicker.
+type|doctrine_luddic_blessed_plating|FRIGATE|1	0	<good>20%</good> increased armor.
+type|doctrine_luddic_blessed_plating|FRIGATE|2	0	<good>15%</good> increased hull points.
+type|doctrine_luddic_blessed_plating|DESTROYER|0	0	Luddic shipwrights bless every plate they hang, and they hang far more of them than any yard would allow. Learning their slow, devout layering lets the crew build this ship's armour and hull up thicker.
+type|doctrine_luddic_blessed_plating|DESTROYER|1	0	<good>20%</good> increased armor.
+type|doctrine_luddic_blessed_plating|DESTROYER|2	0	<good>15%</good> increased hull points.
+type|doctrine_luddic_blessed_plating|CRUISER|0	0	Luddic shipwrights bless every plate they hang, and they hang far more of them than any yard would allow. Learning their slow, devout layering lets the crew build this ship's armour and hull up thicker.
+type|doctrine_luddic_blessed_plating|CRUISER|1	0	<good>20%</good> increased armor.
+type|doctrine_luddic_blessed_plating|CRUISER|2	0	<good>15%</good> increased hull points.
+type|doctrine_luddic_blessed_plating|CAPITAL_SHIP|0	0	Luddic shipwrights bless every plate they hang, and they hang far more of them than any yard would allow. Learning their slow, devout layering lets the crew build this ship's armour and hull up thicker.
+type|doctrine_luddic_blessed_plating|CAPITAL_SHIP|1	0	<good>20%</good> increased armor.
+type|doctrine_luddic_blessed_plating|CAPITAL_SHIP|2	0	<good>15%</good> increased hull points.
+type|doctrine_luddic_faithful_hands|null|0	0	The faithful do not trust machines to mend machines. Hand-repair crews drilled in the Church's way can keep this ship's systems fighting through damage and bring it back to readiness faster after battle.
+type|doctrine_luddic_faithful_hands|null|1	0	Reduces weapon and engine repair time by <good>25%</good>.
+type|doctrine_luddic_faithful_hands|null|2	0	<good>25%</good> increased combat readiness recovery rate.
+type|doctrine_luddic_faithful_hands|FRIGATE|0	0	The faithful do not trust machines to mend machines. Hand-repair crews drilled in the Church's way can keep this ship's systems fighting through damage and bring it back to readiness faster after battle.
+type|doctrine_luddic_faithful_hands|FRIGATE|1	0	Reduces weapon and engine repair time by <good>25%</good>.
+type|doctrine_luddic_faithful_hands|FRIGATE|2	0	<good>25%</good> increased combat readiness recovery rate.
+type|doctrine_luddic_faithful_hands|DESTROYER|0	0	The faithful do not trust machines to mend machines. Hand-repair crews drilled in the Church's way can keep this ship's systems fighting through damage and bring it back to readiness faster after battle.
+type|doctrine_luddic_faithful_hands|DESTROYER|1	0	Reduces weapon and engine repair time by <good>25%</good>.
+type|doctrine_luddic_faithful_hands|DESTROYER|2	0	<good>25%</good> increased combat readiness recovery rate.
+type|doctrine_luddic_faithful_hands|CRUISER|0	0	The faithful do not trust machines to mend machines. Hand-repair crews drilled in the Church's way can keep this ship's systems fighting through damage and bring it back to readiness faster after battle.
+type|doctrine_luddic_faithful_hands|CRUISER|1	0	Reduces weapon and engine repair time by <good>25%</good>.
+type|doctrine_luddic_faithful_hands|CRUISER|2	0	<good>25%</good> increased combat readiness recovery rate.
+type|doctrine_luddic_faithful_hands|CAPITAL_SHIP|0	0	The faithful do not trust machines to mend machines. Hand-repair crews drilled in the Church's way can keep this ship's systems fighting through damage and bring it back to readiness faster after battle.
+type|doctrine_luddic_faithful_hands|CAPITAL_SHIP|1	0	Reduces weapon and engine repair time by <good>25%</good>.
+type|doctrine_luddic_faithful_hands|CAPITAL_SHIP|2	0	<good>25%</good> increased combat readiness recovery rate.
+type|doctrine_luddic_pilgrims_burn|null|0	0	Pilgrim fleets cross the Sector on whatever drives they can keep lit. Their frugal burn discipline lets this ship travel faster on less fuel.
+type|doctrine_luddic_pilgrims_burn|null|1	0	Increases max burn level by <good>1</good>.
+type|doctrine_luddic_pilgrims_burn|null|2	1	<bad>15%</bad> less fuel consumption rate.
+type|doctrine_luddic_pilgrims_burn|FRIGATE|0	0	Pilgrim fleets cross the Sector on whatever drives they can keep lit. Their frugal burn discipline lets this ship travel faster on less fuel.
+type|doctrine_luddic_pilgrims_burn|FRIGATE|1	0	Increases max burn level by <good>1</good>.
+type|doctrine_luddic_pilgrims_burn|FRIGATE|2	1	<bad>15%</bad> less fuel consumption rate.
+type|doctrine_luddic_pilgrims_burn|DESTROYER|0	0	Pilgrim fleets cross the Sector on whatever drives they can keep lit. Their frugal burn discipline lets this ship travel faster on less fuel.
+type|doctrine_luddic_pilgrims_burn|DESTROYER|1	0	Increases max burn level by <good>1</good>.
+type|doctrine_luddic_pilgrims_burn|DESTROYER|2	1	<bad>15%</bad> less fuel consumption rate.
+type|doctrine_luddic_pilgrims_burn|CRUISER|0	0	Pilgrim fleets cross the Sector on whatever drives they can keep lit. Their frugal burn discipline lets this ship travel faster on less fuel.
+type|doctrine_luddic_pilgrims_burn|CRUISER|1	0	Increases max burn level by <good>1</good>.
+type|doctrine_luddic_pilgrims_burn|CRUISER|2	1	<bad>15%</bad> less fuel consumption rate.
+type|doctrine_luddic_pilgrims_burn|CAPITAL_SHIP|0	0	Pilgrim fleets cross the Sector on whatever drives they can keep lit. Their frugal burn discipline lets this ship travel faster on less fuel.
+type|doctrine_luddic_pilgrims_burn|CAPITAL_SHIP|1	0	Increases max burn level by <good>1</good>.
+type|doctrine_luddic_pilgrims_burn|CAPITAL_SHIP|2	1	<bad>15%</bad> less fuel consumption rate.
+type|doctrine_luddic_plain_rites|null|0	0	Luddic doctrine calls this refinement vanity. Following it means stripping the system back to plain, honest machinery that offers nothing beyond its purpose.
+type|doctrine_luddic_plain_rites|FRIGATE|0	0	Luddic doctrine calls this refinement vanity. Following it means stripping the system back to plain, honest machinery that offers nothing beyond its purpose.
+type|doctrine_luddic_plain_rites|DESTROYER|0	0	Luddic doctrine calls this refinement vanity. Following it means stripping the system back to plain, honest machinery that offers nothing beyond its purpose.
+type|doctrine_luddic_plain_rites|CRUISER|0	0	Luddic doctrine calls this refinement vanity. Following it means stripping the system back to plain, honest machinery that offers nothing beyond its purpose.
+type|doctrine_luddic_plain_rites|CAPITAL_SHIP|0	0	Luddic doctrine calls this refinement vanity. Following it means stripping the system back to plain, honest machinery that offers nothing beyond its purpose.
+type|doctrine_luddic_righteous_fury|null|0	0	Knights of Ludd gunners load each round with a prayer and fire it as a verdict. Taking up their crude, patient gunnery lets this ship's ballistic and missile weapons strike harder.
+type|doctrine_luddic_righteous_fury|null|1	0	<good>15%</good> increased ballistic weapon damage.
+type|doctrine_luddic_righteous_fury|null|2	0	<good>15%</good> increased missile weapon damage.
+type|doctrine_luddic_righteous_fury|FRIGATE|0	0	Knights of Ludd gunners load each round with a prayer and fire it as a verdict. Taking up their crude, patient gunnery lets this ship's ballistic and missile weapons strike harder.
+type|doctrine_luddic_righteous_fury|FRIGATE|1	0	<good>15%</good> increased ballistic weapon damage.
+type|doctrine_luddic_righteous_fury|FRIGATE|2	0	<good>15%</good> increased missile weapon damage.
+type|doctrine_luddic_righteous_fury|DESTROYER|0	0	Knights of Ludd gunners load each round with a prayer and fire it as a verdict. Taking up their crude, patient gunnery lets this ship's ballistic and missile weapons strike harder.
+type|doctrine_luddic_righteous_fury|DESTROYER|1	0	<good>15%</good> increased ballistic weapon damage.
+type|doctrine_luddic_righteous_fury|DESTROYER|2	0	<good>15%</good> increased missile weapon damage.
+type|doctrine_luddic_righteous_fury|CRUISER|0	0	Knights of Ludd gunners load each round with a prayer and fire it as a verdict. Taking up their crude, patient gunnery lets this ship's ballistic and missile weapons strike harder.
+type|doctrine_luddic_righteous_fury|CRUISER|1	0	<good>15%</good> increased ballistic weapon damage.
+type|doctrine_luddic_righteous_fury|CRUISER|2	0	<good>15%</good> increased missile weapon damage.
+type|doctrine_luddic_righteous_fury|CAPITAL_SHIP|0	0	Knights of Ludd gunners load each round with a prayer and fire it as a verdict. Taking up their crude, patient gunnery lets this ship's ballistic and missile weapons strike harder.
+type|doctrine_luddic_righteous_fury|CAPITAL_SHIP|1	0	<good>15%</good> increased ballistic weapon damage.
+type|doctrine_luddic_righteous_fury|CAPITAL_SHIP|2	0	<good>15%</good> increased missile weapon damage.
+type|doctrine_remnant_automated_command|null|0	0	[REDACTED] warships answer to no captain, only to the fight in front of them. Handing combat control to a recovered core's routines would make this ship react faster than any crew could, but nothing aboard would understand the machine well enough to restore it afterwards.
+type|doctrine_remnant_automated_command|null|1	0	<good>10%</good> increased timeflow.
+type|doctrine_remnant_automated_command|null|2	0	<good>15%</good> increased flux dissipation.
+type|doctrine_remnant_automated_command|null|3	0	<bad>50%</bad> reduced combat readiness recovery rate.
+type|doctrine_remnant_automated_command|FRIGATE|0	0	[REDACTED] warships answer to no captain, only to the fight in front of them. Handing combat control to a recovered core's routines would make this ship react faster than any crew could, but nothing aboard would understand the machine well enough to restore it afterwards.
+type|doctrine_remnant_automated_command|FRIGATE|1	0	<good>10%</good> increased timeflow.
+type|doctrine_remnant_automated_command|FRIGATE|2	0	<good>15%</good> increased flux dissipation.
+type|doctrine_remnant_automated_command|FRIGATE|3	0	<bad>50%</bad> reduced combat readiness recovery rate.
+type|doctrine_remnant_automated_command|DESTROYER|0	0	[REDACTED] warships answer to no captain, only to the fight in front of them. Handing combat control to a recovered core's routines would make this ship react faster than any crew could, but nothing aboard would understand the machine well enough to restore it afterwards.
+type|doctrine_remnant_automated_command|DESTROYER|1	0	<good>10%</good> increased timeflow.
+type|doctrine_remnant_automated_command|DESTROYER|2	0	<good>15%</good> increased flux dissipation.
+type|doctrine_remnant_automated_command|DESTROYER|3	0	<bad>50%</bad> reduced combat readiness recovery rate.
+type|doctrine_remnant_automated_command|CRUISER|0	0	[REDACTED] warships answer to no captain, only to the fight in front of them. Handing combat control to a recovered core's routines would make this ship react faster than any crew could, but nothing aboard would understand the machine well enough to restore it afterwards.
+type|doctrine_remnant_automated_command|CRUISER|1	0	<good>10%</good> increased timeflow.
+type|doctrine_remnant_automated_command|CRUISER|2	0	<good>15%</good> increased flux dissipation.
+type|doctrine_remnant_automated_command|CRUISER|3	0	<bad>50%</bad> reduced combat readiness recovery rate.
+type|doctrine_remnant_automated_command|CAPITAL_SHIP|0	0	[REDACTED] warships answer to no captain, only to the fight in front of them. Handing combat control to a recovered core's routines would make this ship react faster than any crew could, but nothing aboard would understand the machine well enough to restore it afterwards.
+type|doctrine_remnant_automated_command|CAPITAL_SHIP|1	0	<good>10%</good> increased timeflow.
+type|doctrine_remnant_automated_command|CAPITAL_SHIP|2	0	<good>15%</good> increased flux dissipation.
+type|doctrine_remnant_automated_command|CAPITAL_SHIP|3	0	<bad>50%</bad> reduced combat readiness recovery rate.
+type|doctrine_remnant_cold_logic|null|0	0	Machines do not tire. Rewriting this ship's duty cycles the way [REDACTED] cores run their own would keep its readiness higher and slow its decay through a long fight.
+type|doctrine_remnant_cold_logic|null|1	1	<bad>25%</bad> less rate of combat readiness loss from extended deployment.
+type|doctrine_remnant_cold_logic|null|2	0	<good>10%</good> increased maximum combat readiness.
+type|doctrine_remnant_cold_logic|FRIGATE|0	0	Machines do not tire. Rewriting this ship's duty cycles the way [REDACTED] cores run their own would keep its readiness higher and slow its decay through a long fight.
+type|doctrine_remnant_cold_logic|FRIGATE|1	1	<bad>25%</bad> less rate of combat readiness loss from extended deployment.
+type|doctrine_remnant_cold_logic|FRIGATE|2	0	<good>10%</good> increased maximum combat readiness.
+type|doctrine_remnant_cold_logic|DESTROYER|0	0	Machines do not tire. Rewriting this ship's duty cycles the way [REDACTED] cores run their own would keep its readiness higher and slow its decay through a long fight.
+type|doctrine_remnant_cold_logic|DESTROYER|1	1	<bad>25%</bad> less rate of combat readiness loss from extended deployment.
+type|doctrine_remnant_cold_logic|DESTROYER|2	0	<good>10%</good> increased maximum combat readiness.
+type|doctrine_remnant_cold_logic|CRUISER|0	0	Machines do not tire. Rewriting this ship's duty cycles the way [REDACTED] cores run their own would keep its readiness higher and slow its decay through a long fight.
+type|doctrine_remnant_cold_logic|CRUISER|1	1	<bad>25%</bad> less rate of combat readiness loss from extended deployment.
+type|doctrine_remnant_cold_logic|CRUISER|2	0	<good>10%</good> increased maximum combat readiness.
+type|doctrine_remnant_cold_logic|CAPITAL_SHIP|0	0	Machines do not tire. Rewriting this ship's duty cycles the way [REDACTED] cores run their own would keep its readiness higher and slow its decay through a long fight.
+type|doctrine_remnant_cold_logic|CAPITAL_SHIP|1	1	<bad>25%</bad> less rate of combat readiness loss from extended deployment.
+type|doctrine_remnant_cold_logic|CAPITAL_SHIP|2	0	<good>10%</good> increased maximum combat readiness.
+type|doctrine_remnant_swarm_logic|null|0	0	[REDACTED] carriers launch their drones like a single thought spread across many bodies. Rebuilding this ship's flight control around their coordination routines lets its wings regroup faster and strike harder.
+type|doctrine_remnant_swarm_logic|null|1	0	<good>25%</good> increased rate at which fighter replacement capability recovers.
+type|doctrine_remnant_swarm_logic|null|2	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
+type|doctrine_remnant_swarm_logic|FRIGATE|0	0	[REDACTED] carriers launch their drones like a single thought spread across many bodies. Rebuilding this ship's flight control around their coordination routines lets its wings regroup faster and strike harder.
+type|doctrine_remnant_swarm_logic|FRIGATE|1	0	<good>25%</good> increased rate at which fighter replacement capability recovers.
+type|doctrine_remnant_swarm_logic|FRIGATE|2	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
+type|doctrine_remnant_swarm_logic|DESTROYER|0	0	[REDACTED] carriers launch their drones like a single thought spread across many bodies. Rebuilding this ship's flight control around their coordination routines lets its wings regroup faster and strike harder.
+type|doctrine_remnant_swarm_logic|DESTROYER|1	0	<good>25%</good> increased rate at which fighter replacement capability recovers.
+type|doctrine_remnant_swarm_logic|DESTROYER|2	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
+type|doctrine_remnant_swarm_logic|CRUISER|0	0	[REDACTED] carriers launch their drones like a single thought spread across many bodies. Rebuilding this ship's flight control around their coordination routines lets its wings regroup faster and strike harder.
+type|doctrine_remnant_swarm_logic|CRUISER|1	0	<good>25%</good> increased rate at which fighter replacement capability recovers.
+type|doctrine_remnant_swarm_logic|CRUISER|2	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
+type|doctrine_remnant_swarm_logic|CAPITAL_SHIP|0	0	[REDACTED] carriers launch their drones like a single thought spread across many bodies. Rebuilding this ship's flight control around their coordination routines lets its wings regroup faster and strike harder.
+type|doctrine_remnant_swarm_logic|CAPITAL_SHIP|1	0	<good>25%</good> increased rate at which fighter replacement capability recovers.
+type|doctrine_remnant_swarm_logic|CAPITAL_SHIP|2	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
+type|doctrine_remnant_unblinking_watch|null|0	0	[REDACTED] point defence never tires and never flinches. Its tracking routines, recovered from a gutted drone, swing this ship's turrets faster and make its point defence far deadlier to missiles.
+type|doctrine_remnant_unblinking_watch|null|1	0	<good>50%</good> increased damage dealt to missiles by point defence weapons.
+type|doctrine_remnant_unblinking_watch|null|2	0	<good>30%</good> increased weapon turn rate.
+type|doctrine_remnant_unblinking_watch|FRIGATE|0	0	[REDACTED] point defence never tires and never flinches. Its tracking routines, recovered from a gutted drone, swing this ship's turrets faster and make its point defence far deadlier to missiles.
+type|doctrine_remnant_unblinking_watch|FRIGATE|1	0	<good>50%</good> increased damage dealt to missiles by point defence weapons.
+type|doctrine_remnant_unblinking_watch|FRIGATE|2	0	<good>30%</good> increased weapon turn rate.
+type|doctrine_remnant_unblinking_watch|DESTROYER|0	0	[REDACTED] point defence never tires and never flinches. Its tracking routines, recovered from a gutted drone, swing this ship's turrets faster and make its point defence far deadlier to missiles.
+type|doctrine_remnant_unblinking_watch|DESTROYER|1	0	<good>50%</good> increased damage dealt to missiles by point defence weapons.
+type|doctrine_remnant_unblinking_watch|DESTROYER|2	0	<good>30%</good> increased weapon turn rate.
+type|doctrine_remnant_unblinking_watch|CRUISER|0	0	[REDACTED] point defence never tires and never flinches. Its tracking routines, recovered from a gutted drone, swing this ship's turrets faster and make its point defence far deadlier to missiles.
+type|doctrine_remnant_unblinking_watch|CRUISER|1	0	<good>50%</good> increased damage dealt to missiles by point defence weapons.
+type|doctrine_remnant_unblinking_watch|CRUISER|2	0	<good>30%</good> increased weapon turn rate.
+type|doctrine_remnant_unblinking_watch|CAPITAL_SHIP|0	0	[REDACTED] point defence never tires and never flinches. Its tracking routines, recovered from a gutted drone, swing this ship's turrets faster and make its point defence far deadlier to missiles.
+type|doctrine_remnant_unblinking_watch|CAPITAL_SHIP|1	0	<good>50%</good> increased damage dealt to missiles by point defence weapons.
+type|doctrine_remnant_unblinking_watch|CAPITAL_SHIP|2	0	<good>30%</good> increased weapon turn rate.
+type|doctrine_tt_alpha_fire_control|null|0	0	Fire-control routines lifted from a Tri-Tachyon line ship, written by an Alpha core that never meant to share them. Patched into this ship's targeting, they steady its autofiring weapons and stretch the reach of its energy weapons.
+type|doctrine_tt_alpha_fire_control|null|1	0	<good>50%</good> increased target leading accuracy of autofiring weapons.
+type|doctrine_tt_alpha_fire_control|null|2	0	<good>10%</good> increased energy weapon range.
+type|doctrine_tt_alpha_fire_control|FRIGATE|0	0	Fire-control routines lifted from a Tri-Tachyon line ship, written by an Alpha core that never meant to share them. Patched into this ship's targeting, they steady its autofiring weapons and stretch the reach of its energy weapons.
+type|doctrine_tt_alpha_fire_control|FRIGATE|1	0	<good>50%</good> increased target leading accuracy of autofiring weapons.
+type|doctrine_tt_alpha_fire_control|FRIGATE|2	0	<good>10%</good> increased energy weapon range.
+type|doctrine_tt_alpha_fire_control|DESTROYER|0	0	Fire-control routines lifted from a Tri-Tachyon line ship, written by an Alpha core that never meant to share them. Patched into this ship's targeting, they steady its autofiring weapons and stretch the reach of its energy weapons.
+type|doctrine_tt_alpha_fire_control|DESTROYER|1	0	<good>50%</good> increased target leading accuracy of autofiring weapons.
+type|doctrine_tt_alpha_fire_control|DESTROYER|2	0	<good>10%</good> increased energy weapon range.
+type|doctrine_tt_alpha_fire_control|CRUISER|0	0	Fire-control routines lifted from a Tri-Tachyon line ship, written by an Alpha core that never meant to share them. Patched into this ship's targeting, they steady its autofiring weapons and stretch the reach of its energy weapons.
+type|doctrine_tt_alpha_fire_control|CRUISER|1	0	<good>50%</good> increased target leading accuracy of autofiring weapons.
+type|doctrine_tt_alpha_fire_control|CRUISER|2	0	<good>10%</good> increased energy weapon range.
+type|doctrine_tt_alpha_fire_control|CAPITAL_SHIP|0	0	Fire-control routines lifted from a Tri-Tachyon line ship, written by an Alpha core that never meant to share them. Patched into this ship's targeting, they steady its autofiring weapons and stretch the reach of its energy weapons.
+type|doctrine_tt_alpha_fire_control|CAPITAL_SHIP|1	0	<good>50%</good> increased target leading accuracy of autofiring weapons.
+type|doctrine_tt_alpha_fire_control|CAPITAL_SHIP|2	0	<good>10%</good> increased energy weapon range.
+type|doctrine_tt_flux_arbitrage|null|0	0	Corporate engineers treat flux like capital: borrow hard and repay fast. Their venting schedules, copied from a captured Aurora's maintenance logs, let this ship dump heat faster and bleed it off steadily between volleys.
+type|doctrine_tt_flux_arbitrage|null|1	0	<good>10%</good> increased flux dissipation.
+type|doctrine_tt_flux_arbitrage|null|2	0	<good>25%</good> increased venting speed.
+type|doctrine_tt_flux_arbitrage|FRIGATE|0	0	Corporate engineers treat flux like capital: borrow hard and repay fast. Their venting schedules, copied from a captured Aurora's maintenance logs, let this ship dump heat faster and bleed it off steadily between volleys.
+type|doctrine_tt_flux_arbitrage|FRIGATE|1	0	<good>10%</good> increased flux dissipation.
+type|doctrine_tt_flux_arbitrage|FRIGATE|2	0	<good>25%</good> increased venting speed.
+type|doctrine_tt_flux_arbitrage|DESTROYER|0	0	Corporate engineers treat flux like capital: borrow hard and repay fast. Their venting schedules, copied from a captured Aurora's maintenance logs, let this ship dump heat faster and bleed it off steadily between volleys.
+type|doctrine_tt_flux_arbitrage|DESTROYER|1	0	<good>10%</good> increased flux dissipation.
+type|doctrine_tt_flux_arbitrage|DESTROYER|2	0	<good>25%</good> increased venting speed.
+type|doctrine_tt_flux_arbitrage|CRUISER|0	0	Corporate engineers treat flux like capital: borrow hard and repay fast. Their venting schedules, copied from a captured Aurora's maintenance logs, let this ship dump heat faster and bleed it off steadily between volleys.
+type|doctrine_tt_flux_arbitrage|CRUISER|1	0	<good>10%</good> increased flux dissipation.
+type|doctrine_tt_flux_arbitrage|CRUISER|2	0	<good>25%</good> increased venting speed.
+type|doctrine_tt_flux_arbitrage|CAPITAL_SHIP|0	0	Corporate engineers treat flux like capital: borrow hard and repay fast. Their venting schedules, copied from a captured Aurora's maintenance logs, let this ship dump heat faster and bleed it off steadily between volleys.
+type|doctrine_tt_flux_arbitrage|CAPITAL_SHIP|1	0	<good>10%</good> increased flux dissipation.
+type|doctrine_tt_flux_arbitrage|CAPITAL_SHIP|2	0	<good>25%</good> increased venting speed.
+type|doctrine_tt_hostile_takeover|null|0	0	Tri-Tachyon's boardroom answer to every fight: commit everything and win before the bill arrives. The ship's energy weapons and reflexes run far past spec, and its peak readiness burns away much sooner.
+type|doctrine_tt_hostile_takeover|null|1	0	<good>20%</good> increased energy weapon damage.
+type|doctrine_tt_hostile_takeover|null|2	0	<good>5%</good> increased timeflow.
+type|doctrine_tt_hostile_takeover|null|3	0	<bad>30%</bad> reduced peak combat readiness duration.
+type|doctrine_tt_hostile_takeover|FRIGATE|0	0	Tri-Tachyon's boardroom answer to every fight: commit everything and win before the bill arrives. The ship's energy weapons and reflexes run far past spec, and its peak readiness burns away much sooner.
+type|doctrine_tt_hostile_takeover|FRIGATE|1	0	<good>20%</good> increased energy weapon damage.
+type|doctrine_tt_hostile_takeover|FRIGATE|2	0	<good>5%</good> increased timeflow.
+type|doctrine_tt_hostile_takeover|FRIGATE|3	0	<bad>30%</bad> reduced peak combat readiness duration.
+type|doctrine_tt_hostile_takeover|DESTROYER|0	0	Tri-Tachyon's boardroom answer to every fight: commit everything and win before the bill arrives. The ship's energy weapons and reflexes run far past spec, and its peak readiness burns away much sooner.
+type|doctrine_tt_hostile_takeover|DESTROYER|1	0	<good>20%</good> increased energy weapon damage.
+type|doctrine_tt_hostile_takeover|DESTROYER|2	0	<good>5%</good> increased timeflow.
+type|doctrine_tt_hostile_takeover|DESTROYER|3	0	<bad>30%</bad> reduced peak combat readiness duration.
+type|doctrine_tt_hostile_takeover|CRUISER|0	0	Tri-Tachyon's boardroom answer to every fight: commit everything and win before the bill arrives. The ship's energy weapons and reflexes run far past spec, and its peak readiness burns away much sooner.
+type|doctrine_tt_hostile_takeover|CRUISER|1	0	<good>20%</good> increased energy weapon damage.
+type|doctrine_tt_hostile_takeover|CRUISER|2	0	<good>5%</good> increased timeflow.
+type|doctrine_tt_hostile_takeover|CRUISER|3	0	<bad>30%</bad> reduced peak combat readiness duration.
+type|doctrine_tt_hostile_takeover|CAPITAL_SHIP|0	0	Tri-Tachyon's boardroom answer to every fight: commit everything and win before the bill arrives. The ship's energy weapons and reflexes run far past spec, and its peak readiness burns away much sooner.
+type|doctrine_tt_hostile_takeover|CAPITAL_SHIP|1	0	<good>20%</good> increased energy weapon damage.
+type|doctrine_tt_hostile_takeover|CAPITAL_SHIP|2	0	<good>5%</good> increased timeflow.
+type|doctrine_tt_hostile_takeover|CAPITAL_SHIP|3	0	<bad>30%</bad> reduced peak combat readiness duration.
+type|doctrine_tt_quarterly_targets|null|0	0	Tri-Tachyon fleet doctrine ranks every target by the value it carries, and its threat tables push gunners toward the largest hulls on the field. This ship hits cruisers and capital ships harder.
+type|doctrine_tt_quarterly_targets|null|1	0	<good>10%</good> increased damage to cruisers.
+type|doctrine_tt_quarterly_targets|null|2	0	<good>10%</good> increased damage to capital ships and stations.
+type|doctrine_tt_quarterly_targets|FRIGATE|0	0	Tri-Tachyon fleet doctrine ranks every target by the value it carries, and its threat tables push gunners toward the largest hulls on the field. This ship hits cruisers and capital ships harder.
+type|doctrine_tt_quarterly_targets|FRIGATE|1	0	<good>10%</good> increased damage to cruisers.
+type|doctrine_tt_quarterly_targets|FRIGATE|2	0	<good>10%</good> increased damage to capital ships and stations.
+type|doctrine_tt_quarterly_targets|DESTROYER|0	0	Tri-Tachyon fleet doctrine ranks every target by the value it carries, and its threat tables push gunners toward the largest hulls on the field. This ship hits cruisers and capital ships harder.
+type|doctrine_tt_quarterly_targets|DESTROYER|1	0	<good>10%</good> increased damage to cruisers.
+type|doctrine_tt_quarterly_targets|DESTROYER|2	0	<good>10%</good> increased damage to capital ships and stations.
+type|doctrine_tt_quarterly_targets|CRUISER|0	0	Tri-Tachyon fleet doctrine ranks every target by the value it carries, and its threat tables push gunners toward the largest hulls on the field. This ship hits cruisers and capital ships harder.
+type|doctrine_tt_quarterly_targets|CRUISER|1	0	<good>10%</good> increased damage to cruisers.
+type|doctrine_tt_quarterly_targets|CRUISER|2	0	<good>10%</good> increased damage to capital ships and stations.
+type|doctrine_tt_quarterly_targets|CAPITAL_SHIP|0	0	Tri-Tachyon fleet doctrine ranks every target by the value it carries, and its threat tables push gunners toward the largest hulls on the field. This ship hits cruisers and capital ships harder.
+type|doctrine_tt_quarterly_targets|CAPITAL_SHIP|1	0	<good>10%</good> increased damage to cruisers.
+type|doctrine_tt_quarterly_targets|CAPITAL_SHIP|2	0	<good>10%</good> increased damage to capital ships and stations.
 type|dynamic_grid|null|0	0	Nightcross fits its dynamic coils to almost every hull it builds and never sells them on their own, so the crew pulls a set from a boarded Nightcross wreck and retrofits them into a hull that never shipped with one. The moment the shields come down, the power that fed them is routed to the energy weapons. The warranty, naturally, does not cover third-party installation.
 type|dynamic_grid|null|1	0	Once shields have been down for 0.75/1.1/2/3 seconds (frigate to capital) while not venting or overloaded, energy weapon rate of fire rises by <good>15%</good> and their flux cost falls by <good>15%</good>.
 type|dynamic_grid|null|2	0	<good>25%</good> increased shield raise rate.
@@ -2942,16 +3137,11 @@ type|exogrid|CAPITAL_SHIP|4	1	<bad>25%</bad> reduced EMP damage taken.
 type|exogrid|CAPITAL_SHIP|5	0	<bad>25%</bad> reduced venting speed.
 type|exogrid|CAPITAL_SHIP|6	0	Decreases flux dissipation per flux vent by <bad>5</bad>.
 type-detail|exogrid|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Exogrid</hullmod>
-type|exoship|null|0	0	The last Exoship of the Exo-Tech faction, warping from system to system across the sector. Its branches travel with it.\n\nAllocated together with its Hyper-Nav Beacon. Deallocating either deallocates both.\n\nCtrl click on the Exoship to return to the beacon.
-type|exoship|FRIGATE|0	0	The last Exoship of the Exo-Tech faction, warping from system to system across the sector. Its branches travel with it.\n\nAllocated together with its Hyper-Nav Beacon. Deallocating either deallocates both.\n\nCtrl click on the Exoship to return to the beacon.
-type|exoship|DESTROYER|0	0	The last Exoship of the Exo-Tech faction, warping from system to system across the sector. Its branches travel with it.\n\nAllocated together with its Hyper-Nav Beacon. Deallocating either deallocates both.\n\nCtrl click on the Exoship to return to the beacon.
-type|exoship|CRUISER|0	0	The last Exoship of the Exo-Tech faction, warping from system to system across the sector. Its branches travel with it.\n\nAllocated together with its Hyper-Nav Beacon. Deallocating either deallocates both.\n\nCtrl click on the Exoship to return to the beacon.
-type|exoship|CAPITAL_SHIP|0	0	The last Exoship of the Exo-Tech faction, warping from system to system across the sector. Its branches travel with it.\n\nAllocated together with its Hyper-Nav Beacon. Deallocating either deallocates both.\n\nCtrl click on the Exoship to return to the beacon.
-type|exotech_beacon|null|0	0	A beacon left by the Exo-Tech faction to guide their Exoship's warp drive. Allocate this node to dock your ship with the Exoship, granting access to Exo-Tech hull modifications.\n\nCtrl click on the beacon, or click the Exoship wherever it is, to travel to it.
-type|exotech_beacon|FRIGATE|0	0	A beacon left by the Exo-Tech faction to guide their Exoship's warp drive. Allocate this node to dock your ship with the Exoship, granting access to Exo-Tech hull modifications.\n\nCtrl click on the beacon, or click the Exoship wherever it is, to travel to it.
-type|exotech_beacon|DESTROYER|0	0	A beacon left by the Exo-Tech faction to guide their Exoship's warp drive. Allocate this node to dock your ship with the Exoship, granting access to Exo-Tech hull modifications.\n\nCtrl click on the beacon, or click the Exoship wherever it is, to travel to it.
-type|exotech_beacon|CRUISER|0	0	A beacon left by the Exo-Tech faction to guide their Exoship's warp drive. Allocate this node to dock your ship with the Exoship, granting access to Exo-Tech hull modifications.\n\nCtrl click on the beacon, or click the Exoship wherever it is, to travel to it.
-type|exotech_beacon|CAPITAL_SHIP|0	0	A beacon left by the Exo-Tech faction to guide their Exoship's warp drive. Allocate this node to dock your ship with the Exoship, granting access to Exo-Tech hull modifications.\n\nCtrl click on the beacon, or click the Exoship wherever it is, to travel to it.
+type|exoship|null|0	0	The last Exoship of the Exo-Tech faction, warping from system to system across the sector. Its branches travel with it.\n\nIt docks with your ship only while a Hyper-Nav Beacon sits in an allocated Subroutine Socket, and docking allocates it at no cost. Removing the beacon or deallocating its socket undocks the Exoship and releases every node reached through it.\n\nCtrl click on the Exoship to return to the beacon's socket.
+type|exoship|FRIGATE|0	0	The last Exoship of the Exo-Tech faction, warping from system to system across the sector. Its branches travel with it.\n\nIt docks with your ship only while a Hyper-Nav Beacon sits in an allocated Subroutine Socket, and docking allocates it at no cost. Removing the beacon or deallocating its socket undocks the Exoship and releases every node reached through it.\n\nCtrl click on the Exoship to return to the beacon's socket.
+type|exoship|DESTROYER|0	0	The last Exoship of the Exo-Tech faction, warping from system to system across the sector. Its branches travel with it.\n\nIt docks with your ship only while a Hyper-Nav Beacon sits in an allocated Subroutine Socket, and docking allocates it at no cost. Removing the beacon or deallocating its socket undocks the Exoship and releases every node reached through it.\n\nCtrl click on the Exoship to return to the beacon's socket.
+type|exoship|CRUISER|0	0	The last Exoship of the Exo-Tech faction, warping from system to system across the sector. Its branches travel with it.\n\nIt docks with your ship only while a Hyper-Nav Beacon sits in an allocated Subroutine Socket, and docking allocates it at no cost. Removing the beacon or deallocating its socket undocks the Exoship and releases every node reached through it.\n\nCtrl click on the Exoship to return to the beacon's socket.
+type|exoship|CAPITAL_SHIP|0	0	The last Exoship of the Exo-Tech faction, warping from system to system across the sector. Its branches travel with it.\n\nIt docks with your ship only while a Hyper-Nav Beacon sits in an allocated Subroutine Socket, and docking allocates it at no cost. Removing the beacon or deallocating its socket undocks the Exoship and releases every node reached through it.\n\nCtrl click on the Exoship to return to the beacon's socket.
 type|expanded_cargo_holds|null|0	0	<good>20%</good> increased cargo capacity.
 type-detail|expanded_cargo_holds|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Expanded Cargo Holds</hullmod>
 type|expanded_cargo_holds|FRIGATE|0	0	<good>20%</good> increased cargo capacity.
@@ -4452,6 +4642,11 @@ type|wormhole|FRIGATE|0	0	Allocating this wormhole automatically allocates its p
 type|wormhole|DESTROYER|0	0	Allocating this wormhole automatically allocates its paired wormhole as well at no extra cost, connecting both branches of the tree. \n\nDeallocating either end deallocates both.\n\nCtrl click on a wormhole to travel through it.
 type|wormhole|CRUISER|0	0	Allocating this wormhole automatically allocates its paired wormhole as well at no extra cost, connecting both branches of the tree. \n\nDeallocating either end deallocates both.\n\nCtrl click on a wormhole to travel through it.
 type|wormhole|CAPITAL_SHIP|0	0	Allocating this wormhole automatically allocates its paired wormhole as well at no extra cost, connecting both branches of the tree. \n\nDeallocating either end deallocates both.\n\nCtrl click on a wormhole to travel through it.
+type|wormhole_exit|null|0	0	The far end of a faction's wormhole. It opens only while a wormhole anchor for this volume sits in an allocated Subroutine Socket, and opening allocates it at no cost. No path leads to it from inside its volume.\n\nRemoving the anchor or deallocating its socket closes the wormhole and releases every node reached through it.\n\nCtrl click on an open exit to travel back to the anchor's socket.
+type|wormhole_exit|FRIGATE|0	0	The far end of a faction's wormhole. It opens only while a wormhole anchor for this volume sits in an allocated Subroutine Socket, and opening allocates it at no cost. No path leads to it from inside its volume.\n\nRemoving the anchor or deallocating its socket closes the wormhole and releases every node reached through it.\n\nCtrl click on an open exit to travel back to the anchor's socket.
+type|wormhole_exit|DESTROYER|0	0	The far end of a faction's wormhole. It opens only while a wormhole anchor for this volume sits in an allocated Subroutine Socket, and opening allocates it at no cost. No path leads to it from inside its volume.\n\nRemoving the anchor or deallocating its socket closes the wormhole and releases every node reached through it.\n\nCtrl click on an open exit to travel back to the anchor's socket.
+type|wormhole_exit|CRUISER|0	0	The far end of a faction's wormhole. It opens only while a wormhole anchor for this volume sits in an allocated Subroutine Socket, and opening allocates it at no cost. No path leads to it from inside its volume.\n\nRemoving the anchor or deallocating its socket closes the wormhole and releases every node reached through it.\n\nCtrl click on an open exit to travel back to the anchor's socket.
+type|wormhole_exit|CAPITAL_SHIP|0	0	The far end of a faction's wormhole. It opens only while a wormhole anchor for this volume sits in an allocated Subroutine Socket, and opening allocates it at no cost. No path leads to it from inside its volume.\n\nRemoving the anchor or deallocating its socket closes the wormhole and releases every node reached through it.\n\nCtrl click on an open exit to travel back to the anchor's socket.
 summary|option0|FRIGATE|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option0|FRIGATE|1	0	Increases energy weapon range by <good>100</good>.
 summary|option0|FRIGATE|2	1	<bad>50%</bad> reduced EMP damage taken.

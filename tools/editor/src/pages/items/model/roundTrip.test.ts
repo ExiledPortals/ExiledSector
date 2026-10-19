@@ -6,6 +6,7 @@ import { parseCsvTable, serializeCsvTable } from '../../../shared/csv.ts';
 import { parseWormholeAnchorsCsv, serializeWormholeAnchorsCsv } from './anchors.ts';
 import { CHART_TABLE_SPECS, parseChartTable, serializeChartTable } from './chartTables.ts';
 import { parseCraftingCsv, serializeCraftingCsv } from './crafting.ts';
+import { parseDoctrineArchivesCsv, serializeDoctrineArchivesCsv } from './doctrines.ts';
 import {
   parseFamilyDefinitions,
   parseItemDefinitions,
@@ -57,6 +58,23 @@ describe('saving unchanged item data reproduces the files byte for byte', () => 
     }
   });
 
+  it('keeps every volume subroutine volume, exclusions and drop chances through a save', () => {
+    const model = parseItemDefinitions(readData(path.join(configDir, 'subroutines.csv')), readData(path.join(configDir, 'hull_items.csv')));
+    const volumeSubroutines = model.definitions.filter((definition) => definition.subroutineKind === 'VOLUME');
+    const resaved = parseItemDefinitions(serializeSubroutinesCsv(model), serializeHullItemsCsv(model)).definitions;
+
+    expect(volumeSubroutines.length).toBe(vocabulary.regionTags.length);
+    expect(new Set(volumeSubroutines.map((definition) => definition.volume))).toEqual(new Set(vocabulary.regionTags));
+    for (const volumeSubroutine of volumeSubroutines) {
+      const saved = resaved.find((definition) => definition.id === volumeSubroutine.id);
+      expect(Number.parseFloat(volumeSubroutine.dropChance || volumeSubroutine.salvageChance || '0'), volumeSubroutine.id).toBeGreaterThan(0);
+      expect(saved?.volume, volumeSubroutine.id).toBe(volumeSubroutine.volume);
+      expect(saved?.excludedNodes, volumeSubroutine.id).toBe(volumeSubroutine.excludedNodes);
+      expect(saved?.dropChance, volumeSubroutine.id).toBe(volumeSubroutine.dropChance);
+      expect(saved?.salvageChance, volumeSubroutine.id).toBe(volumeSubroutine.salvageChance);
+    }
+  });
+
   it('item_modifiers.csv', () => {
     const text = readData(path.join(configDir, 'item_modifiers.csv'));
     expect(serializeModifiersCsv(parseModifiersCsv(text))).toBe(text);
@@ -99,6 +117,13 @@ describe('saving unchanged item data reproduces the files byte for byte', () => 
   it('wormhole_anchors.csv', () => {
     const text = readData(path.join(configDir, 'wormhole_anchors.csv'));
     expect(serializeWormholeAnchorsCsv(parseWormholeAnchorsCsv(text))).toBe(text);
+  });
+
+  it('doctrine_archives.csv', () => {
+    const text = readData(path.join(configDir, 'doctrine_archives.csv'));
+    const model = parseDoctrineArchivesCsv(text);
+    expect(model.archives.length).toBeGreaterThan(0);
+    expect(serializeDoctrineArchivesCsv(model)).toBe(text);
   });
 
   it('star_chart_modifiers.csv', () => {

@@ -33,7 +33,7 @@ import { validateTree } from './validation.ts';
 const vocabularyFile = {
   effects: [{ name: 'HULL_PERCENT', statMode: 'PERCENT', lowerIsBetter: false }],
   tags: { theme: ['armor'], region: ['north', 'south'], requirement: ['req_civilian_hull'] },
-  tiers: ['SMALL', 'NOTABLE', 'KEYSTONE', 'WORMHOLE', 'ROOT', 'SOCKET'],
+  tiers: ['SMALL', 'NOTABLE', 'KEYSTONE', 'WORMHOLE', 'WORMHOLE_EXIT', 'ROOT', 'SOCKET'],
   unlockConditionTypes: ['blueprint'],
   blueprintCategories: ['hullmod'],
   itemTypes: [],
@@ -51,6 +51,7 @@ function makeDocument(nodes: TreeNode[], extra: Partial<TreeDocument> = {}): Tre
     types: [
       { id: 'small', name: 'Small', icon: '' },
       { id: 'hole', name: 'Hole', icon: '', tier: 'WORMHOLE' },
+      { id: 'exit', name: 'Exit', icon: '', tier: 'WORMHOLE_EXIT' },
     ],
     nodes,
     curves: [],
@@ -199,6 +200,16 @@ describe('validation and tags', () => {
       'Type "small" carries region tag "north", region tags belong on nodes',
     ]);
     expect(validateTree(makeDocument([node('a', 0, 0)]), vocabulary)).toEqual([]);
+  });
+
+  it('accepts a wormhole exit with no partner and flags one that was given a pair', () => {
+    expect(validateTree(makeDocument([node('far', 0, 0, [], { type: 'exit' })]), vocabulary)).toEqual([]);
+    expect(
+      validateTree(makeDocument([node('far', 0, 0, ['near'], { type: 'exit', pairedWith: 'near' }), node('near', 1, 0, ['far'], { type: 'hole', pairedWith: 'far' })]), vocabulary),
+    ).toEqual([
+      'Wormhole exit "far" is paired with "near"; exits are opened by a wormhole anchor and take no pair',
+      'Wormhole node "near" is paired with "far", which is not a wormhole-tier node',
+    ]);
   });
 
   it('flags a node that reuses an id retired in node_replacements.csv', () => {

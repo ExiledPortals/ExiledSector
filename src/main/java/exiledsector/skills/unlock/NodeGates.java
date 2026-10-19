@@ -49,17 +49,21 @@ public final class NodeGates {
     }
 
     public static boolean isLocked(SkillNode node, ShipSkillData shipData) {
+        return lockingGateTag(node, shipData) != null;
+    }
+
+    public static String lockingGateTag(SkillNode node, ShipSkillData shipData) {
         Map<String, List<UnlockCondition>> conditionsByGateTag = CONDITIONS_BY_GATE_TAG.get();
         if (node == null || conditionsByGateTag.isEmpty()) {
-            return false;
+            return null;
         }
         for (String tag : node.getTags()) {
             List<UnlockCondition> conditions = conditionsByGateTag.get(tag);
             if (conditions != null && SkillTypeUnlockStatus.isLocked(conditions, shipData)) {
-                return true;
+                return tag;
             }
         }
-        return false;
+        return null;
     }
 
     public static boolean isHidden(SkillNode node, ShipSkillData shipData) {

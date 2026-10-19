@@ -103,7 +103,11 @@ public final class ItemNames {
         FrozenName nameParts = frozen == null ? FrozenName.NONE : frozen;
         return switch (rarity) {
             case UNIQUE -> new ItemName(definition.displayName(), null, rarity);
-            case COMMON -> new ItemName(commonName(definition, kind, modifiers, frozen), definition.displayName(), rarity);
+            case COMMON -> {
+                String commonText = commonName(definition, kind, modifiers, frozen);
+                boolean plainSubroutine = definition.type() == ItemType.SUBROUTINE && commonText.equals(definition.displayName());
+                yield new ItemName(commonText, plainSubroutine ? null : definition.displayName(), rarity);
+            }
             case RARE -> {
                 String rareText = rareName(nameParts);
                 yield rareText == null ? new ItemName(definition.displayName(), null, rarity)

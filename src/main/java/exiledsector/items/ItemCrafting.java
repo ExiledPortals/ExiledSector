@@ -76,7 +76,7 @@ public final class ItemCrafting {
     }
 
     static boolean canVary(RolledModifier rolled, ItemDefinition definition) {
-        PoolEntry poolEntry = definition.poolEntryFor(rolled.modifierId());
+        PoolEntry poolEntry = definition == null ? null : definition.poolEntryFor(rolled.modifierId());
         return poolEntry != null && rolled.lines().stream().map(line -> poolEntry.modifier().line(line.effectName()))
                 .anyMatch(line -> line != null && line.canVary());
     }
@@ -192,11 +192,11 @@ public final class ItemCrafting {
     }
 
     static boolean canSubstitute(Item item, ItemDefinition definition, Set<ModifierSlot> guarded) {
-        return !definition.unique() && !removableForSubstitution(item, definition, guarded).isEmpty();
+        return definition != null && !definition.unique() && !removableForSubstitution(item, definition, guarded).isEmpty();
     }
 
     static boolean canSubstituteAway(Item item, ItemDefinition definition, RolledModifier rolled) {
-        return !definition.unique() && !replacementSides(definition, item.explicits(), rolled, item.tier()).isEmpty();
+        return definition != null && !definition.unique() && !replacementSides(definition, item.explicits(), rolled, item.tier()).isEmpty();
     }
 
     private static List<RolledModifier> removableForSubstitution(Item item, ItemDefinition definition, Set<ModifierSlot> guarded) {
@@ -270,6 +270,9 @@ public final class ItemCrafting {
     }
 
     static Item corrupt(ItemStore store, Item item, Random random, Predicate<ItemDefinition> allowedUniques) {
+        if (item == null) {
+            return null;
+        }
         List<CorruptionOutcome> outcomes = CorruptionOutcome.NANOSWARM_OUTCOMES;
         CorruptionOutcome outcome = outcomes.get(random.nextInt(outcomes.size()));
         Item corrupted = switch (outcome) {

@@ -70,6 +70,18 @@ class ItemFreezingTest {
                 .put("first", new JSONArray(List.of("Sunny"))).put("second", new JSONArray(List.of("Pal")))));
     }
 
+    private static String withoutElement(String xml, String element) {
+        String opening = "<" + element + ">";
+        String closing = "</" + element + ">";
+        StringBuilder remaining = new StringBuilder(xml);
+        int start = remaining.indexOf(opening);
+        while (start >= 0) {
+            remaining.delete(start, remaining.indexOf(closing, start) + closing.length());
+            start = remaining.indexOf(opening, start);
+        }
+        return remaining.toString();
+    }
+
     @Test
     void consumerProductNamesFreezeTheirWordsSoTheyCanBeTranslated() throws Exception {
         registerGadget();
@@ -153,7 +165,7 @@ class ItemFreezingTest {
         ItemSaveAliases.register(xstream);
 
         String xml = xstream.toXML(store);
-        String olderXml = xml.replaceAll("(?s)\\s*<frozenName>.*?</frozenName>", "");
+        String olderXml = withoutElement(xml, "frozenName");
         rebalance();
         ItemStore loaded = (ItemStore) xstream.fromXML(xml);
 
