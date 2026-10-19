@@ -1,8 +1,6 @@
 package exiledsector.ui;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
-import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
@@ -28,6 +26,7 @@ import exiledsector.ui.decoration.SkillTreeStarRenderer;
 import exiledsector.ui.decoration.SkillTreeStarfieldRenderer;
 import exiledsector.ui.decoration.SkillTreeStaticImageRenderer;
 import exiledsector.ui.inspect.ItemCodex;
+import exiledsector.ui.node.DoctrineColors;
 import exiledsector.ui.node.NodeRadiusRingRenderer;
 import exiledsector.ui.node.NodeSearch;
 import exiledsector.ui.node.SkillTreeNodeDrawer;
@@ -39,7 +38,6 @@ import org.lwjgl.input.Keyboard;
 
 import java.awt.Color;
 import java.util.List;
-import java.util.Objects;
 
 public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
@@ -75,8 +73,6 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private boolean swallowEscapeUp;
     private float workbenchDimProgress;
     private boolean hoverRingShown;
-    private String socketedFactionId;
-    private Color socketedFactionColor;
 
     public SkillTreeCanvasPlugin(FleetMemberAPI member, ShipVariantAPI variant, float shipCardHeight, BaseRefitButton refitButton,
                                  CustomPanelAPI hostPanel) {
@@ -559,13 +555,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private void refreshSocketedRadiusRing() {
         SubroutineRadius.Footprint footprint = treeSession.socketedRadiusFootprint();
         SkillNode centre = footprint == null ? null : SkillTree.get(footprint.centreNodeId());
-        String factionId = footprint == null ? null : footprint.factionId();
-        if (!Objects.equals(factionId, socketedFactionId)) {
-            socketedFactionId = factionId;
-            FactionAPI faction = factionId == null || Global.getSector() == null ? null : Global.getSector().getFaction(factionId);
-            socketedFactionColor = faction == null ? null : faction.getBaseUIColor();
-        }
-        radiusRingRenderer.setSocketedRadius(centre, footprint == null ? null : footprint.size(), socketedFactionColor);
+        Color factionColor = footprint == null ? null : DoctrineColors.forFaction(footprint.factionId());
+        radiusRingRenderer.setSocketedRadius(centre, footprint == null ? null : footprint.size(), factionColor);
     }
 
     private SubroutineRadius.Footprint socketFootprint(SkillNode socket) {

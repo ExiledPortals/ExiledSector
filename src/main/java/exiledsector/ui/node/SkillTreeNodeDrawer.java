@@ -177,19 +177,27 @@ public final class SkillTreeNodeDrawer {
             ringRenderer.drawSocketWormhole(nodeX, nodeY, wormholeSize, nodeAlpha * wormholeMorph, node.getId(),
                     socketWormholes.exit(node.getId()), socketWormholes.openness(node.getId()));
         }
+        DoctrineRewrite rewrite = tier == SkillTier.SOCKET || tier.isWormhole() ? null : DoctrineOverrides.rewrite(skillData, node.getId());
         if (tier == SkillTier.SOCKET && socketAlpha > 0f) {
+            Item socketed = ItemStore.lookup(skillData.getSocketedItem(node.getId()));
+            Color socketDoctrineColor = socketed == null ? null : DoctrineColors.forDoctrine(socketed.definitionId());
+            if (socketDoctrineColor != null) {
+                ringRenderer.drawDoctrineSocketBelt(nodeX, nodeY, socketSize, socketDoctrineColor, live, socketAlpha, zoom);
+            }
             socketRenderer.drawFrame(nodeX, nodeY, socketSize, live, panelStyle.getAccentColor(), socketAlpha);
-            socketRenderer.drawContent(nodeX, nodeY, socketSize, socketedIcon(skillData, node), iconTint(node, allocation, allocated),
-                    socketAlpha);
+            socketRenderer.drawContent(nodeX, nodeY, socketSize, socketed == null ? null : socketed.iconPath(),
+                    iconTint(node, allocation, allocated), socketAlpha);
         }
-        ringRenderer.draw(nodeX, nodeY, footprintSize, nodeAlpha, SkillTreeNodeRingRenderer.RingState.of(live, breathing), zoom, node);
+        Color notableDoctrineColor = rewrite != null && tier == SkillTier.NOTABLE ? DoctrineColors.forDoctrine(rewrite.doctrineDefinitionId()) : null;
+        ringRenderer.draw(nodeX, nodeY, footprintSize, nodeAlpha, SkillTreeNodeRingRenderer.RingState.of(live, breathing), zoom, node,
+                notableDoctrineColor);
 
         if (tier == SkillTier.SOCKET) {
             if (live && socketAlpha > 0f) {
                 socketRenderer.drawArcs(node.getId(), nodeX, nodeY, socketSize, panelStyle.getAccentColor(), socketAlpha);
             }
         } else if (!tier.isWormhole()) {
-            Color tint = doctrineTint(DoctrineOverrides.rewrite(skillData, node.getId()), iconTint(node, allocation, allocated));
+            Color tint = doctrineTint(rewrite, iconTint(node, allocation, allocated));
             if (effectiveType.isOptional()) {
                 iconRenderer.drawSplitIcon(effectiveType, nodeX, nodeY, iconSize, nodeAlpha, tint);
             } else {
@@ -233,11 +241,6 @@ public final class SkillTreeNodeDrawer {
 
     private static Color scaled(Color color, float scale) {
         return new Color(Math.round(color.getRed() * scale), Math.round(color.getGreen() * scale), Math.round(color.getBlue() * scale));
-    }
-
-    private static String socketedIcon(ShipSkillData skillData, SkillNode node) {
-        Item socketed = ItemStore.lookup(skillData.getSocketedItem(node.getId()));
-        return socketed == null ? null : socketed.iconPath();
     }
 
     public void renderHoverTooltip(TreeLayers layers, float mouseX, float mouseY, float alphaMult) {

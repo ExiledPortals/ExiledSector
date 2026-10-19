@@ -163,13 +163,18 @@ final class SkillTreeNodeRingRenderer {
 
     float reach(float footprintSize, SkillNode node) {
         float reachRadius = footprintSize * REACH_FOOTPRINT_RATIO;
-        if (node.getType().getTier() == SkillTier.KEYSTONE) {
+        SkillTier tier = node.getType().getTier();
+        if (tier == SkillTier.KEYSTONE || tier == SkillTier.SOCKET) {
             reachRadius = Math.max(reachRadius, beltOuterRadius(footprintSize, resolveRingBeltWidth(node)) * KEYSTONE_BELT_REACH_MARGIN);
         }
         return reachRadius;
     }
 
     void draw(float cx, float cy, float footprintSize, float alphaMult, RingState ringState, float zoom, SkillNode node) {
+        draw(cx, cy, footprintSize, alphaMult, ringState, zoom, node, null);
+    }
+
+    void draw(float cx, float cy, float footprintSize, float alphaMult, RingState ringState, float zoom, SkillNode node, Color doctrineColor) {
         boolean allocated = ringState.allocated;
         SkillTier tier = node.getType().getTier();
         String nodeId = node.getId();
@@ -182,8 +187,9 @@ final class SkillTreeNodeRingRenderer {
         float ringRadius = donutRadius(footprintSize);
         if (tier == SkillTier.NOTABLE) {
             float stateAlpha = allocated ? 1f : UNALLOCATED_ALPHA_MULT;
-            drawNotableRingStack(cx, cy, footprintSize * NOTABLE_RING_OUTER_RADIUS_RATIO, nodeId, stateAlpha * alphaMult);
-            drawAmbientGlow(cx, cy, footprintSize, stateAlpha, alphaMult);
+            drawNotableRingStack(cx, cy, footprintSize * NOTABLE_RING_OUTER_RADIUS_RATIO, nodeId, stateAlpha * alphaMult,
+                    doctrineColor == null ? RING_PINK_COLOR : doctrineColor);
+            drawAmbientGlow(cx, cy, footprintSize, stateAlpha, alphaMult, doctrineColor == null ? AMBIENT_GLOW_COLOR : doctrineColor);
         } else if (tier == SkillTier.KEYSTONE) {
             float stateAlpha = allocated ? 1f : UNALLOCATED_ALPHA_MULT;
             String ringBeltPath = resolveRingBeltPath(node);
@@ -261,10 +267,10 @@ final class SkillTreeNodeRingRenderer {
         drawRingOutline(cx, cy, radius + gapRadius, RING_DULL_COLOR, alphaMult * RING_DULL_ALPHA);
     }
 
-    private void drawNotableRingStack(float cx, float cy, float outerRadius, String nodeId, float alpha) {
+    private void drawNotableRingStack(float cx, float cy, float outerRadius, String nodeId, float alpha, Color accentColor) {
         drawRingStackPass(cx, cy, outerRadius, ringStacks.computeIfAbsent(nodeId, NOTABLE_RINGS), Color.WHITE, 1f, alpha);
         drawRingStackPass(cx, cy, outerRadius, pinkRingStacks.computeIfAbsent(nodeId, NOTABLE_PINK_RINGS),
-                RING_PINK_COLOR, RING_PINK_SCALE_RATIO, alpha);
+                accentColor, RING_PINK_SCALE_RATIO, alpha);
     }
 
     private void drawRingStackPass(float cx, float cy, float outerRadius, List<RingInstance> instances,
@@ -287,11 +293,21 @@ final class SkillTreeNodeRingRenderer {
         }
     }
 
-    private void drawAmbientGlow(float cx, float cy, float footprintSize, float stateAlpha, float alphaMult) {
+    private void drawAmbientGlow(float cx, float cy, float footprintSize, float stateAlpha, float alphaMult, Color glowColor) {
         float size = footprintSize * AMBIENT_GLOW_SIZE_RATIO;
 
         SpriteDraw.drawAdditiveAtCenter(spriteCache, GLOW_TEXTURE_PATH, cx, cy, size, size,
-                AMBIENT_GLOW_COLOR, AMBIENT_GLOW_ALPHA * stateAlpha * alphaMult);
+                glowColor, AMBIENT_GLOW_ALPHA * stateAlpha * alphaMult);
+    }
+
+    void drawDoctrineSocketBelt(float cx, float cy, float footprintSize, Color doctrineColor, boolean live, float alphaMult, float zoom) {
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        drawKeystoneAuroraBelt(cx, cy, footprintSize, KEYSTONE_BELT_WIDTH_RATIO, doctrineColor, live ? 1f : UNALLOCATED_ALPHA_MULT,
+                alphaMult, zoom);
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glDisable(GL11.GL_BLEND);
     }
 
     private void drawKeystoneRingBelt(float cx, float cy, float footprintSize, float widthRatio, String ringArtPath, float stateAlpha, float alphaMult) {

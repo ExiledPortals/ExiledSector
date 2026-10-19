@@ -884,7 +884,10 @@ targets that socket) name the removable hull mods that removing the doctrine or 
 would strip (`DoctrineRevertConflicts`). The phantom case is not predicted, since a conflict MagicLib has not
 reported yet is not known in advance.
 
-On the tree, rewritten node icons are tinted (amber for transformed, light blue for augmented). A
+On the tree, rewritten node icons are tinted (amber for transformed, light blue for augmented). A rewritten
+notable's coloured ring stack and ambient glow take the doctrine's faction colour in place of pink, and a socket
+holding a doctrine is ringed by the keystone aurora belt in that colour, dimmed while the socket is unallocated
+(`DoctrineColors` turns a doctrine or faction id into the colour, shared with the radius band). A
 transformed node shows its replacement's name, icon and tooltip, then "Originally: <name>"; an augmented
 node lists its added lines; both name the doctrine and its revision. The archive's tooltip, and the tooltip
 of a socket holding one, shows "Limited to 1 doctrine archive" under the title, then its firmware revision
