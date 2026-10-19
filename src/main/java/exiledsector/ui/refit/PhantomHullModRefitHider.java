@@ -67,7 +67,7 @@ public class PhantomHullModRefitHider implements CharacterStatsRefreshListener {
         }
     }
 
-    static Object coreUI(CampaignUIAPI campaignUI) throws Throwable {
+    public static Object coreUI(CampaignUIAPI campaignUI) throws Throwable {
         InteractionDialogAPI dialog = campaignUI.getCurrentInteractionDialog();
         Object dialogCore = call(dialog, "getCoreUI");
         return dialogCore != null ? dialogCore : call(campaignUI, "getCore");

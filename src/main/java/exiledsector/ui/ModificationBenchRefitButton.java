@@ -22,7 +22,7 @@ public class ModificationBenchRefitButton extends BaseRefitButton {
 
     public static boolean openPanel(InputEventAPI event) {
         return RefitPanelLauncher.open(ModificationBenchRefitButton.class, event, context -> {
-            ModificationBenchScreen screen = new ModificationBenchScreen(context.button());
+            ModificationBenchScreen screen = new ModificationBenchScreen(new ModificationBenchScreen.RefitHost(context.button()));
             return new RefitPanelLauncher.Background(screen, screen::attach);
         });
     }
@@ -62,7 +62,7 @@ public class ModificationBenchRefitButton extends BaseRefitButton {
         if (backgroundPanel.getPlugin() instanceof ModificationBenchScreen) {
             return;
         }
-        ModificationBenchScreen screen = new ModificationBenchScreen(this);
+        ModificationBenchScreen screen = new ModificationBenchScreen(new ModificationBenchScreen.RefitHost(this));
         PositionAPI backgroundPosition = backgroundPanel.getPosition();
         CustomPanelAPI screenPanel = Global.getSettings().createCustom(backgroundPosition.getWidth(), backgroundPosition.getHeight(), screen);
         backgroundPanel.addComponent(screenPanel).inTL(0f, 0f);

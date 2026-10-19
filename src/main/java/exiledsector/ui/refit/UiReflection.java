@@ -58,11 +58,11 @@ public final class UiReflection {
         return target != null && method(target.getClass(), name, parameterCount) != NONE;
     }
 
-    static List<?> children(Object panel) throws Throwable {
+    public static List<?> children(Object panel) throws Throwable {
         return call(panel, "getChildrenNonCopy") instanceof List<?> children ? children : List.of();
     }
 
-    static Object childWithMethod(Object panel, String name, int parameterCount) throws Throwable {
+    public static Object childWithMethod(Object panel, String name, int parameterCount) throws Throwable {
         for (Object child : children(panel)) {
             if (hasMethod(child, name, parameterCount)) {
                 return child;

@@ -23,7 +23,25 @@ final class ModificationBenchScreen extends BaseCustomUIPanelPlugin {
     private static final float OPEN_SECONDS = 0.2f;
     private static final float BACKDROP_ALPHA = 0.8f;
 
-    private final BaseRefitButton refitButton;
+    interface Host {
+        void close();
+
+        void leave(String wormholeMessage);
+    }
+
+    record RefitHost(BaseRefitButton refitButton) implements Host {
+        @Override
+        public void close() {
+            refitButton.closePanel();
+        }
+
+        @Override
+        public void leave(String wormholeMessage) {
+            RefitScreenExit.leave(refitButton, wormholeMessage);
+        }
+    }
+
+    private final Host host;
     private CustomPanelAPI hostPanel;
     private ModificationBay bay;
     private Map<String, FleetMemberAPI> ownedShips = Map.of();
@@ -33,8 +51,8 @@ final class ModificationBenchScreen extends BaseCustomUIPanelPlugin {
     private boolean closeRequested;
     private String wormholeMessage;
 
-    ModificationBenchScreen(BaseRefitButton refitButton) {
-        this.refitButton = refitButton;
+    ModificationBenchScreen(Host host) {
+        this.host = host;
     }
 
     void attach(CustomPanelAPI panel) {
@@ -75,9 +93,9 @@ final class ModificationBenchScreen extends BaseCustomUIPanelPlugin {
         if (closing && openLevel <= 0f && !closeRequested) {
             closeRequested = true;
             if (wormholeMessage != null) {
-                RefitScreenExit.leave(refitButton, wormholeMessage);
+                host.leave(wormholeMessage);
             } else {
-                refitButton.closePanel();
+                host.close();
             }
         }
     }
