@@ -31,6 +31,7 @@ final class ChartContentPlanner {
     static final int BOSS_OFFICER_COUNT_BONUS = 2;
     static final float MAX_QUALITY = 150f;
     static final int NO_POI = -1;
+    static final List<ChartPoi.Kind> SPEND_ORDER = List.of(ChartPoi.Kind.DOMAIN, ChartPoi.Kind.STATION, ChartPoi.Kind.DERELICT, ChartPoi.Kind.CACHE);
 
     private ChartContentPlanner() {
     }
@@ -74,24 +75,49 @@ final class ChartContentPlanner {
 
     static List<PlannedPoi> spendLoot(ChartTier tier, List<ChartPoi> pois, Random random) {
         List<PlannedPoi> planned = new ArrayList<>();
-        float remaining = tier.lootBudget();
         List<ChartPoi> eligible = ChartPois.lootAt(pois, tier.tier());
-        while (planned.size() < MAX_POIS) {
+        for (ChartPoi.Kind kind : SPEND_ORDER) {
+            spendSiteBudget(tier.siteBudget(kind), ChartPois.ofKind(eligible, kind), planned, random);
+        }
+        return planned;
+    }
+
+    private static void spendSiteBudget(float budget, List<ChartPoi> members, List<PlannedPoi> planned, Random random) {
+        float remaining = budget;
+        while (planned.size() < MAX_POIS && remaining > 0f && !members.isEmpty()) {
             List<ChartPoi> affordable = new ArrayList<>();
-            for (ChartPoi poi : eligible) {
+            for (ChartPoi poi : members) {
                 if (poi.cost() <= remaining) {
                     affordable.add(poi);
                 }
             }
             if (affordable.isEmpty()) {
-                break;
+                buyLeftover(remaining, members, planned, random);
+                return;
             }
             float target = targetCost(affordable, remaining);
             ChartPoi picked = WeightedPick.pick(affordable, poi -> poi.weight() / (1f + Math.abs(poi.cost() - target) / target), random);
             planned.add(new PlannedPoi(picked, picked.guarded()));
             remaining -= picked.cost();
         }
-        return planned;
+    }
+
+    private static void buyLeftover(float remaining, List<ChartPoi> members, List<PlannedPoi> planned, Random random) {
+        float cheapestCost = Float.MAX_VALUE;
+        for (ChartPoi poi : members) {
+            cheapestCost = Math.min(cheapestCost, poi.cost());
+        }
+        if (random.nextFloat() >= remaining / cheapestCost) {
+            return;
+        }
+        List<ChartPoi> cheapest = new ArrayList<>();
+        for (ChartPoi poi : members) {
+            if (poi.cost() == cheapestCost) {
+                cheapest.add(poi);
+            }
+        }
+        ChartPoi picked = WeightedPick.pick(cheapest, ChartPoi::weight, random);
+        planned.add(new PlannedPoi(picked, picked.guarded()));
     }
 
     static List<PlannedPoi> addExtraPois(ChartTier tier, List<ChartPoi> pois, List<PlannedPoi> planned, int extraPois, Random random) {

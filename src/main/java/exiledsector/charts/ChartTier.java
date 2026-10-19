@@ -1,8 +1,8 @@
 package exiledsector.charts;
 
 public record ChartTier(int tier, float fleetSize, int fleetsMin, int fleetsMax, int officerLevelBonus, int officerCountBonus,
-                        float fleetQuality, int fleetStrengthMin, int fleetStrengthMax, float lootBudget, boolean boss,
-                        float wardenSize, float clearWeight, float bossWeight) {
+                        float fleetQuality, int fleetStrengthMin, int fleetStrengthMax, float cacheBudget, float domainBudget,
+                        float stationBudget, float derelictBudget, boolean boss, float wardenSize, float clearWeight, float bossWeight) {
 
     public static final float FLEET_SIZE_BASE_POINTS = 50f;
     static final float PERCENT = 100f;
@@ -10,8 +10,14 @@ public record ChartTier(int tier, float fleetSize, int fleetsMin, int fleetsMax,
     static final float FALLBACK_FLEET_SIZE_PER_TIER = 32f;
     static final float FALLBACK_FIRST_WARDEN_SIZE = 300f;
     static final float FALLBACK_WARDEN_SIZE_PER_TIER = 70f;
-    static final float FALLBACK_LOOT_PER_TIER = 3f;
-    static final float FALLBACK_FIRST_TIER_LOOT = 6f;
+    static final float FALLBACK_POI_BUDGET_PER_TIER = 3f;
+    static final float FALLBACK_FIRST_TIER_POI_BUDGET = 6f;
+    static final float FALLBACK_CACHE_SHARE = 0.35f;
+    static final float FALLBACK_DOMAIN_SHARE = 0.15f;
+    static final float FALLBACK_STATION_SHARE = 0.2f;
+    static final float FALLBACK_DERELICT_SHARE = 0.3f;
+    static final int FALLBACK_FIRST_DOMAIN_TIER = 2;
+    static final int FALLBACK_FIRST_STATION_TIER = 3;
     static final int FALLBACK_FIRST_BOSS_TIER = 4;
 
     public ChartTier {
@@ -25,7 +31,10 @@ public record ChartTier(int tier, float fleetSize, int fleetsMin, int fleetsMax,
         int upperPercent = Math.max(0, Math.max(fleetStrengthMin, fleetStrengthMax));
         fleetStrengthMin = lowerPercent;
         fleetStrengthMax = upperPercent;
-        lootBudget = Math.max(0f, lootBudget);
+        cacheBudget = Math.max(0f, cacheBudget);
+        domainBudget = Math.max(0f, domainBudget);
+        stationBudget = Math.max(0f, stationBudget);
+        derelictBudget = Math.max(0f, derelictBudget);
         wardenSize = Math.max(0f, wardenSize);
         boss = boss && wardenSize > 0f;
         clearWeight = Math.max(0f, clearWeight);
@@ -36,9 +45,17 @@ public record ChartTier(int tier, float fleetSize, int fleetsMin, int fleetsMax,
         return FLEET_SIZE_BASE_POINTS * Math.max(0f, sizePercent) / PERCENT;
     }
 
-    public ChartTier withLootBudget(float replacementLootBudget) {
-        return new ChartTier(tier, fleetSize, fleetsMin, fleetsMax, officerLevelBonus, officerCountBonus, fleetQuality, fleetStrengthMin,
-                fleetStrengthMax, replacementLootBudget, boss, wardenSize, clearWeight, bossWeight);
+    public float siteBudget(ChartPoi.Kind kind) {
+        return switch (kind) {
+            case CACHE -> cacheBudget;
+            case DOMAIN -> domainBudget;
+            case STATION -> stationBudget;
+            case DERELICT -> derelictBudget;
+        };
+    }
+
+    public float poiBudget() {
+        return cacheBudget + domainBudget + stationBudget + derelictBudget;
     }
 
     public float weightFor(ChartObjective objective) {
@@ -52,10 +69,12 @@ public record ChartTier(int tier, float fleetSize, int fleetsMin, int fleetsMax,
         int steps = Math.max(0, tier - 1);
         boolean hasBoss = tier >= FALLBACK_FIRST_BOSS_TIER;
         int strengthMin = Math.min(200, 50 + 10 * steps);
+        float poiBudget = FALLBACK_FIRST_TIER_POI_BUDGET + FALLBACK_POI_BUDGET_PER_TIER * steps;
         return new ChartTier(tier, FALLBACK_FIRST_TIER_FLEET_SIZE + FALLBACK_FLEET_SIZE_PER_TIER * steps, 2 + steps / 3,
                 4 + steps / 3,
                 steps / 3, steps / 3, Math.min(100f, 30f + 5f * steps), strengthMin, Math.min(300, strengthMin + 40),
-                FALLBACK_FIRST_TIER_LOOT + FALLBACK_LOOT_PER_TIER * steps, hasBoss,
+                poiBudget * FALLBACK_CACHE_SHARE, tier >= FALLBACK_FIRST_DOMAIN_TIER ? poiBudget * FALLBACK_DOMAIN_SHARE : 0f,
+                tier >= FALLBACK_FIRST_STATION_TIER ? poiBudget * FALLBACK_STATION_SHARE : 0f, poiBudget * FALLBACK_DERELICT_SHARE, hasBoss,
                 hasBoss ? FALLBACK_FIRST_WARDEN_SIZE + FALLBACK_WARDEN_SIZE_PER_TIER * (tier - FALLBACK_FIRST_BOSS_TIER) : 0f,
                 1f, hasBoss ? 1f : 0f);
     }

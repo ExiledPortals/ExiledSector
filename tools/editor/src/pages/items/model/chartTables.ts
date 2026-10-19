@@ -48,7 +48,10 @@ export const CHART_TIER_COLUMNS = [
   'fleet_quality',
   'fleet_strength_min',
   'fleet_strength_max',
-  'loot_budget',
+  'cache_budget',
+  'domain_budget',
+  'station_budget',
+  'derelict_budget',
   'boss',
   'warden_size',
   'weight_clear',
@@ -198,7 +201,7 @@ export const CHART_TIER_SPEC: ChartTableSpec = {
   noun: 'chart tier',
   keyColumn: 'tier',
   description:
-    'One row per tier from 1 to 15. A blank value, or a missing tier, uses the built-in value. Fleet size and warden size are percents of a standard fleet of 50 fleet points (about a vanilla heavy patrol); the loot budget is spent on points of interest; the two weights pick the objective.',
+    'One row per tier from 1 to 15. A blank value, or a missing tier, uses the built-in value. Fleet size and warden size are percents of a standard fleet of 50 fleet points (about a vanilla heavy patrol); each site budget is spent on points of interest of its kind, in the order domain, stations, derelicts, caches, until the 24-site cap; a leftover smaller than the cheapest site of its kind buys one more with the matching chance; the two weights pick the objective.',
   columns: columnsOf(CHART_TIER_COLUMNS, {
     tier: { label: 'Tier', kind: 'integer' },
     fleet_size: {
@@ -217,7 +220,14 @@ export const CHART_TIER_SPEC: ChartTableSpec = {
     fleet_quality: { label: 'Fleet quality %', kind: 'number', help: 'Controls d-mods and weapon quality, 0 to 150; 100% means no d-mods' },
     fleet_strength_min: { label: 'Fleet strength % min', kind: 'integer', help: 'Enemy Exiled Sector skill tree size, 0 to 300 percent' },
     fleet_strength_max: { label: 'Fleet strength % max', kind: 'integer' },
-    loot_budget: { label: 'Loot budget', kind: 'number', help: 'Spent on points of interest by their cost' },
+    cache_budget: { label: 'Cache budget', kind: 'number', help: 'Spent on cache points of interest by their cost' },
+    domain_budget: {
+      label: 'Domain budget',
+      kind: 'number',
+      help: 'Spent on Domain points of interest (probes, survey ships, motherships) by their cost; these can bring Domain drone defenders',
+    },
+    station_budget: { label: 'Station budget', kind: 'number', help: 'Spent on station points of interest by their cost' },
+    derelict_budget: { label: 'Derelict budget', kind: 'number', help: 'Spent on derelict ship points of interest by their cost' },
     boss: { label: 'Boss', kind: 'flag' },
     warden_size: { label: 'Warden size %', kind: 'number', help: 'Size of the warden fleet, where 100% is a standard fleet of 50 fleet points, capped at 1200%' },
     weight_clear: { label: 'Clear weight', kind: 'number' },
@@ -259,7 +269,10 @@ export const CHART_TIER_SPEC: ChartTableSpec = {
           'officer_level_bonus',
           'officer_count_bonus',
           'fleet_quality',
-          'loot_budget',
+          'cache_budget',
+          'domain_budget',
+          'station_budget',
+          'derelict_budget',
           'warden_size',
           'weight_clear',
           'weight_boss',
@@ -307,7 +320,7 @@ export const CHART_POI_SPEC: ChartTableSpec = {
   noun: 'point of interest',
   keyColumn: 'id',
   description:
-    'Loot points of interest the generator places in a system, spending the tier loot budget by cost and picking by weight. Derelicts need a derelict type.',
+    'Loot points of interest the generator places in a system. The kind is the site category: each one spends its own tier budget by cost and picks by weight. Derelicts need a derelict type.',
   columns: columnsOf(CHART_POI_COLUMNS, {
     id: { label: 'Id', kind: 'text' },
     kind: { label: 'Kind', kind: 'choice', choices: (vocabulary) => vocabulary.chartPoiKinds },

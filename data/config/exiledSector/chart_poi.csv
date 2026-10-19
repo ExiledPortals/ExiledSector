@@ -7,13 +7,13 @@ weapons,cache,weapons_cache,,,3,6,2,15,no,
 weapons_high,cache,weapons_cache_high,,,4,4,6,15,no,
 equipment_small,cache,equipment_cache_small,,,2,6,1,10,no,
 equipment,cache,equipment_cache,,,4,5,3,15,no,
-probe,cache,derelict_probe,,,3,4,2,15,no,"Vanilla Domain drones may defend it"
+probe,domain,derelict_probe,,,3,4,2,15,no,"Vanilla Domain drones may defend it"
 derelict_civilian,derelict,wreck,,CIVILIAN,2,4,1,15,no,
 derelict_small,derelict,wreck,,SMALL,2,8,1,15,no,
 derelict_medium,derelict,wreck,,MEDIUM,3,5,3,15,no,
 derelict_large,derelict,wreck,,LARGE,5,3,6,15,yes,
 orbital_habitat,station,orbital_habitat,,,5,4,3,15,yes,
 mining_station,station,station_mining,,,6,4,4,15,yes,
-survey_ship,station,derelict_survey_ship,,,6,3,5,15,yes,"Vanilla Domain drones may defend it"
+survey_ship,domain,derelict_survey_ship,,,6,3,5,15,yes,"Vanilla Domain drones may defend it"
 research_station,station,station_research,,,8,3,6,15,yes,
-mothership,station,derelict_mothership,,,14,1,12,15,yes,"Vanilla Domain drones may defend it"
+mothership,domain,derelict_mothership,,,14,1,12,15,yes,"Vanilla Domain drones may defend it"

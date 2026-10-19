@@ -67,10 +67,34 @@ public enum ChartEffect implements ModifierEffect {
             context.addQuantityPercent(value);
         }
     },
-    CHART_LOOT_BUDGET_PERCENT(false) {
+    CHART_POI_BUDGET_PERCENT(false) {
         @Override
         public void beforeGeneration(ChartGenContext context, float value) {
-            context.addLootBudgetPercent(value);
+            context.addAllSiteBudgetsPercent(value);
+        }
+    },
+    CHART_CACHE_BUDGET_PERCENT(false) {
+        @Override
+        public void beforeGeneration(ChartGenContext context, float value) {
+            context.addSiteBudgetPercent(ChartPoi.Kind.CACHE, value);
+        }
+    },
+    CHART_DOMAIN_BUDGET_PERCENT(false) {
+        @Override
+        public void beforeGeneration(ChartGenContext context, float value) {
+            context.addSiteBudgetPercent(ChartPoi.Kind.DOMAIN, value);
+        }
+    },
+    CHART_STATION_BUDGET_PERCENT(false) {
+        @Override
+        public void beforeGeneration(ChartGenContext context, float value) {
+            context.addSiteBudgetPercent(ChartPoi.Kind.STATION, value);
+        }
+    },
+    CHART_DERELICT_BUDGET_PERCENT(false) {
+        @Override
+        public void beforeGeneration(ChartGenContext context, float value) {
+            context.addSiteBudgetPercent(ChartPoi.Kind.DERELICT, value);
         }
     },
     CHART_EXTRA_POIS(true) {

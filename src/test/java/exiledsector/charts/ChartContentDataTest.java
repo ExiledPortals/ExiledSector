@@ -48,6 +48,24 @@ class ChartContentDataTest {
     }
 
     @Test
+    void eachShippedSiteBudgetStartsAtItsFirstSiteAndTheDomainBudgetAffordsTheMothership() throws Exception {
+        loadShippedTables();
+
+        for (ChartPoi.Kind kind : ChartPoi.Kind.values()) {
+            List<ChartPoi> members = ChartPois.ofKind(ChartPois.all(), kind);
+            assertFalse(members.isEmpty(), kind + " has no point of interest");
+            int firstTier = members.stream().mapToInt(ChartPoi::minTier).min().orElseThrow();
+            for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_TIER; tier++) {
+                float budget = ChartTiers.forTier(tier).siteBudget(kind);
+                assertTrue(tier < firstTier ? budget == 0f : budget > 0f, kind + " budget " + budget + " at tier " + tier);
+            }
+        }
+        ChartPoi mothership = ChartPois.all().stream().filter(poi -> poi.id().equals("mothership")).findFirst().orElseThrow();
+        assertEquals(ChartPoi.Kind.DOMAIN, mothership.kind());
+        assertTrue(ChartTiers.forTier(mothership.minTier()).domainBudget() >= mothership.cost(), "the domain budget can buy a mothership at its first tier");
+    }
+
+    @Test
     void theShippedTierTableCoversEveryTierAndGetsHarderEachTier() throws Exception {
         ChartTiers.register(csvRows(ChartTiers.PATH));
 
@@ -58,7 +76,9 @@ class ChartContentDataTest {
             assertNotEquals(ChartTier.fallback(tier), current, "tier " + tier + " should come from the CSV");
             if (previous != null) {
                 assertTrue(current.fleetSize() > previous.fleetSize(), "fleet size rises at tier " + tier);
-                assertTrue(current.lootBudget() >= previous.lootBudget(), "loot budget never drops at tier " + tier);
+                for (ChartPoi.Kind kind : ChartPoi.Kind.values()) {
+                    assertTrue(current.siteBudget(kind) >= previous.siteBudget(kind), kind + " budget never drops at tier " + tier);
+                }
                 assertTrue(current.fleetStrengthMax() >= previous.fleetStrengthMax(), "fleet strength never drops at tier " + tier);
             }
             assertTrue(current.fleetStrengthMax() <= NpcTreeSize.HIGHEST_PERCENT);
